@@ -600,6 +600,45 @@ def test_ptdf_projected_ts_slack_remove():
     # Compare flows
     assert np.allclose(Flows_orig_internal, Flows_red, atol=1e-4)
 
+    
+def test_ptdf_projected_ts_simple_ree():
+    """
+    Test to check the reduction flows with time series (6-bus grid REE provided)
+    :return:
+    """
+
+    # fname = os.path.join('src', 'tests', 'data', 'grids', 'red_test_6bus.veragrid')
+    fname = os.path.join('data', 'grids', 'red_test_6bus.veragrid')
+        
+    grid = gce.open_file(filename=fname)
+
+    # First run time series linear analysis
+    lin_ts = gce.LinearAnalysisTs(grid=grid, distributed_slack=False)
+    P_orig = grid.get_Pbus_prof()
+    Flows_orig = lin_ts.get_flows_ts(P=P_orig)
+
+    # Then reduce the network
+    bus_to_remove = np.array([0, 3, 4])
+    
+    # Get internal branches before reduction to compare later
+    external, boundary, internal, boundary_branches, internal_branches = grid.get_reduction_sets(reduction_bus_indices=bus_to_remove)
+    
+    red_grid, logger = ptdf_reduction_projected(grid=grid, reduction_bus_indices=bus_to_remove, distribute_slack=False)
+    
+    # Run time series linear analysis on reduced grid
+    lin_ts_red = gce.LinearAnalysisTs(grid=red_grid, distributed_slack=False)
+    P_red = red_grid.get_Pbus_prof()
+    Flows_red = lin_ts_red.get_flows_ts(P=P_red)
+
+    # Compare flows on internal branches
+    Flows_orig_internal = Flows_orig[:, internal_branches]
+
+    # Check if dimensions match
+    assert Flows_red.shape[1] == len(internal_branches)
+
+    # Compare flows
+    assert np.allclose(Flows_orig_internal, Flows_red, atol=1e-4)
+
 
 if __name__ == '__main__':
     # test_ward_reduction()
@@ -612,6 +651,7 @@ if __name__ == '__main__':
     # test_ptdf_projected_antena()
     # test_ptdf_projected_gb()
     # test_ptdf_projected_ts()
-    test_ptdf_projected_slack_remove()
+    # test_ptdf_projected_slack_remove()
     # test_ptdf_projected_ts_slack_remove()
     # test_ptdf_projected_ts_gb_full()
+    test_ptdf_projected_ts_simple_ree()

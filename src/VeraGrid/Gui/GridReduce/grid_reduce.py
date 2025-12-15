@@ -150,11 +150,19 @@ class GridReduceDialogue(QtWidgets.QDialog):
 
                     # NOTE: self._grid gets reduced in-place
 
-                    # get the options from the linear analysis driver
-                    lin_drv, _ = self._session.linear_power_flow
+                    # get the options from the linear analysis drivers (prefer TS if available)
                     distribute_slack = True
-                    if lin_drv is not None:
+                    lin_drv_ts, _ = self._session.linear_power_flow_ts
+                    lin_drv, _ = self._session.linear_power_flow
+
+                    if lin_drv_ts is not None:
+                        distribute_slack = lin_drv_ts.options.distribute_slack
+
+                    elif lin_drv is not None:
                         distribute_slack = lin_drv.options.distribute_slack
+
+                    else:
+                        pass
 
                     grid_reduced, logger = ptdf_reduction_projected(
                         grid=self._grid,

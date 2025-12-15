@@ -73,7 +73,12 @@ class LinearAnalysisTimeSeriesDriver(TimeSeriesDriverTemplate):
         self.tic()
         self.__cancel__ = False
         self.report_text('Computing TS linear analysis...')
-        lin_ts = LinearAnalysisTs(grid=self.grid, time_indices=self.time_indices)
+        lin_ts = LinearAnalysisTs(
+            grid=self.grid,
+            distributed_slack=self.options.distribute_slack,
+            correct_values=self.options.correct_values,
+            time_indices=self.time_indices
+        )
 
         self.report_text('Computing flows...')
 

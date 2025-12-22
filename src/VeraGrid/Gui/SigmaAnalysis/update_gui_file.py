@@ -8,6 +8,6 @@ Script to update correctly the main GUI (.py) file from the Qt design (.ui) file
 from VeraGrid.Gui.update_gui_common import convert_resource_file, convert_ui_file
 
 if __name__ == '__main__':
-    convert_resource_file(source='icons.qrc')
-    for f in ['gui.ui']:
+
+    for f in ['sigma_analysis_gui.ui']:
         convert_ui_file(source=f)

@@ -5,7 +5,7 @@
 
 from typing import List
 from PySide6 import QtWidgets
-from VeraGrid.Gui.Analysis.gui import Ui_MainWindow
+from VeraGrid.Gui.Analysis.analysis_gui import Ui_MainWindow
 from VeraGrid.Gui.Analysis.object_plot_analysis import grid_analysis, GridErrorLog, FixableErrorOutOfRange
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGrid.Gui.general_dialogues import LogsDialogue, Logger

@@ -69,7 +69,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="../Icons/icons.qrc">
               <normaloff>:/Icons/icons/import_profiles.png</normaloff>:/Icons/icons/import_profiles.png</iconset>
             </property>
            </widget>
@@ -83,7 +83,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="../Icons/icons.qrc">
               <normaloff>:/Icons/icons/plot.png</normaloff>:/Icons/icons/plot.png</iconset>
             </property>
            </widget>
@@ -145,7 +145,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="../Icons/icons.qrc">
               <normaloff>:/Icons/icons/transform.png</normaloff>:/Icons/icons/transform.png</iconset>
             </property>
            </widget>
@@ -221,7 +221,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="../Icons/icons.qrc">
               <normaloff>:/Icons/icons/auto-link.png</normaloff>:/Icons/icons/auto-link.png</iconset>
             </property>
            </widget>
@@ -254,7 +254,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="../Icons/icons.qrc">
               <normaloff>:/Icons/icons/auto-link-rnd.png</normaloff>:/Icons/icons/auto-link-rnd.png</iconset>
             </property>
            </widget>
@@ -268,7 +268,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="../Icons/icons.qrc">
               <normaloff>:/Icons/icons/link-to-all.png</normaloff>:/Icons/icons/link-to-all.png</iconset>
             </property>
            </widget>
@@ -282,7 +282,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="../Icons/icons.qrc">
               <normaloff>:/Icons/icons/link-to-selection.png</normaloff>:/Icons/icons/link-to-selection.png</iconset>
             </property>
            </widget>
@@ -333,7 +333,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="../Icons/icons.qrc">
               <normaloff>:/Icons/icons/multiply.png</normaloff>:/Icons/icons/multiply.png</iconset>
             </property>
            </widget>
@@ -396,7 +396,7 @@
              <string>Accept</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="../Icons/icons.qrc">
               <normaloff>:/Icons/icons/gear.png</normaloff>:/Icons/icons/gear.png</iconset>
             </property>
            </widget>
@@ -410,7 +410,7 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="../Icons/icons.qrc">
               <normaloff>:/Icons/icons/clear_runs.png</normaloff>:/Icons/icons/clear_runs.png</iconset>
             </property>
            </widget>
@@ -425,7 +425,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="../Icons/icons.qrc"/>
  </resources>
  <connections/>
 </ui>

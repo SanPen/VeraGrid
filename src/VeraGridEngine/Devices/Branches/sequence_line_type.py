@@ -194,7 +194,7 @@ class SequenceLineType(EditableDevice):
         except np.linalg.LinAlgError:
             adm.values = np.linalg.pinv(zabc)
 
-        adm.phN = 0
+        adm.phN = 1
         adm.phA = 1
         adm.phB = 1
         adm.phC = 1
@@ -222,7 +222,7 @@ class SequenceLineType(EditableDevice):
         adm = AdmittanceMatrix(size=4)
         adm.values = yabc
 
-        adm.phN = 0
+        adm.phN = 1
         adm.phA = 1
         adm.phB = 1
         adm.phC = 1

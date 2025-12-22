@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'rms_model_editor.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.7.2
+## Created by: Qt User Interface Compiler version 6.9.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -19,7 +19,7 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
 from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QHBoxLayout,
     QLabel, QMainWindow, QPushButton, QSizePolicy,
     QSpacerItem, QVBoxLayout, QWidget)
-from .icons_rc import *
+from VeraGrid.Gui.Icons.icons_rc import *
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):

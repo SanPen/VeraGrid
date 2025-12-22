@@ -1,4 +1,3 @@
-
 import os
 
 import numpy as np
@@ -14,7 +13,7 @@ def test_linear_time_series_with_time_simplification():
 
     grid = vg.open_file(fname)
 
-    # first run a lieear power flow time series to compare to
+    # first run a linear power flow time series to compare to
     opts = vg.PowerFlowOptions(solver_type=vg.SolverType.Linear)
     pf_ts = vg.PowerFlowTimeSeriesDriver(grid=grid, options=opts)
     pf_ts.run()
@@ -46,7 +45,7 @@ def test_linear_time_series_with_time_simplification_randomized():
         br_idx = np.random.randint(low=0, high=nbr)
         branches[br_idx].active_prof[t_idx] = 0
 
-    # first run a lieear power flow time series to compare to
+    # first run a linear power flow time series to compare to
     opts = vg.PowerFlowOptions(solver_type=vg.SolverType.Linear)
     pf_ts = vg.PowerFlowTimeSeriesDriver(grid=grid, options=opts)
     pf_ts.run()
@@ -57,6 +56,28 @@ def test_linear_time_series_with_time_simplification_randomized():
     Pf = lin_ts.get_flows_ts(P=P)
 
     assert np.allclose(Pf, Pf_true)
+
+
+def test_simple_grid_kirchhoff_bug():
+    fname = os.path.join('data', 'grids', 'red_test_lin.veragrid')
+    grid = vg.open_file(fname)
+
+    opt = vg.LinearAnalysisOptions(distribute_slack=False, correct_values=False)
+
+    lin_ts_1 = vg.LinearAnalysisTimeSeriesDriver(grid=grid, options=opt,
+                                                 simplified_compilation=False)
+    lin_ts_1.run()
+    P_1 = lin_ts_1.results.S.real
+    Pf_1 = lin_ts_1.results.Sf.real
+
+    lin_ts_2 = vg.LinearAnalysisTimeSeriesDriver(grid=grid, options=opt,
+                                                 simplified_compilation=True)
+    lin_ts_2.run()
+    P_2 = lin_ts_2.results.S.real
+    Pf_2 = lin_ts_2.results.Sf.real
+
+    assert np.allclose(P_1, P_2)
+    assert np.allclose(Pf_1, Pf_2)
 
 
 if __name__ == '__main__':

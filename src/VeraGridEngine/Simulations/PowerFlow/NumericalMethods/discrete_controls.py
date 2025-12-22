@@ -229,10 +229,9 @@ def control_q_for_generalized_method(Scalc: CxVec, S0: CxVec,
     :param i_k_q: array of buses with known Q (changed inside)
     :param Qmin: Array of lower bus reactive power limits per bus in p.u.
     :param Qmax: Array of upper bus reactive power limits per bus in p.u.
-    :return: any change?, i_u_vm, i_k_q
+    :return: list of changed buses, i_u_vm, i_k_q
     """
     changed = list()
-
 
     for k, i in enumerate(pv):
         Q = Scalc[i].imag

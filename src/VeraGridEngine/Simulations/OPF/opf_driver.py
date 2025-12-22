@@ -170,7 +170,7 @@ class OptimalPowerFlowDriver(TimeSeriesDriverTemplate):
             self.results.overloads = (opf_vars.branch_vars.flow_slacks_pos[0, :]
                                       - opf_vars.branch_vars.flow_slacks_neg[0, :])
             self.results.loading = opf_vars.branch_vars.loading[0, :]
-            self.results.phase_shift = opf_vars.branch_vars.tap_angles[0, :]
+            self.results.tap_angle = opf_vars.branch_vars.tap_angles[0, :]
             self.results.losses = opf_vars.branch_vars.losses[0, :]
 
             # self.results.Sbus = problem.get_power_injections()[0, :]
@@ -267,7 +267,8 @@ class OptimalPowerFlowDriver(TimeSeriesDriverTemplate):
             self.results.overloads = (res.sl_sf - res.sl_st) * Sbase
             self.results.loading = res.loading
             self.results.losses = (self.results.Sf.real + self.results.St.real)
-            self.results.phase_shift = res.tap_phase
+            self.results.tap_angle = res.tap_phase
+            self.results.tap_module = res.tap_module
 
             self.results.hvdc_Pf = res.hvdc_Pf
             self.results.hvdc_loading = res.hvdc_loading
@@ -324,7 +325,7 @@ class OptimalPowerFlowDriver(TimeSeriesDriverTemplate):
                 self.results.St = -npa_res.branch_flows[0, :]
                 self.results.overloads = npa_res.branch_overloads[0, :]
                 self.results.loading = npa_res.branch_loading[0, :]
-                self.results.phase_shift = npa_res.branch_tap_angle[0, :]
+                self.results.tap_angle = npa_res.branch_tap_angle[0, :]
 
                 # self.results.Sbus = npa_res.
                 self.results.hvdc_Pf = npa_res.hvdc_flows[0, :]
@@ -353,7 +354,7 @@ class OptimalPowerFlowDriver(TimeSeriesDriverTemplate):
                 self.results.overloads = npa_res.branch_overload[0, :]
                 self.results.loading = npa_res.Loading[0, :]
                 # self.results.losses =
-                self.results.phase_shift = npa_res.tap_angle[0, :]
+                self.results.tap_angle = npa_res.tap_angle[0, :]
 
                 self.results.hvdc_Pf = npa_res.hvdc_Pf[0, :]
                 self.results.hvdc_loading = npa_res.hvdc_loading[0, :]

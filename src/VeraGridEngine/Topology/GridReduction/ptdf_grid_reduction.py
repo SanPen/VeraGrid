@@ -7,20 +7,17 @@ from __future__ import annotations
 import numpy as np
 import networkx as nx
 from typing import Tuple, Sequence, TYPE_CHECKING
-from VeraGridEngine.basic_structures import IntVec, Mat, Logger, Vector, Vec
-from VeraGridEngine.enumerations import DeviceType
+from VeraGridEngine.basic_structures import IntVec, Mat, Logger, Vec
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGridEngine.Devices.Injections.generator import Generator
 from VeraGridEngine.Devices.Injections.battery import Battery
 from VeraGridEngine.Devices.Injections.static_generator import StaticGenerator
 from VeraGridEngine.Devices.Injections.load import Load
 from VeraGridEngine.Simulations.LinearFactors.linear_analysis import LinearAnalysisTs, LinearAnalysis
-from VeraGridEngine.Simulations.PowerFlow.power_flow_worker import multi_island_pf_nc, PowerFlowOptions
-from VeraGridEngine.enumerations import SolverType
+
 
 if TYPE_CHECKING:
     from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-    from VeraGridEngine.Simulations.LinearFactors.linear_analysis import LinearAnalysisTs
 
 
 def get_Pgen(grid: MultiCircuit) -> Tuple[Vec, Vec]:
@@ -291,7 +288,7 @@ def ptdf_reduction(grid: MultiCircuit,
         bus = grid.buses[i]
         if abs(dPbus[i]) > tol:
             elm = Load(name=f"compensation load {i}", P=dPbus[i])
-            elm.comment = "complensation load"
+            elm.comment = "Reduction compensation load"
 
             if dPbus_ts is not None:
                 elm.P_prof = dPbus_ts[:, i]
@@ -314,8 +311,6 @@ def ptdf_reduction_ree_bad(grid: MultiCircuit,
     No theory available
     :param grid: MultiCircuit
     :param reduction_bus_indices: Bus indices of the buses to delete
-    :param PTDF: PTDF matrix
-    :param lin_ts: LinearAnalysisTs
     :param tol: Tolerance, any equivalent power value under this is omitted
     """
     logger = Logger()
@@ -406,8 +401,6 @@ def ptdf_reduction_ree_less_bad(grid: MultiCircuit,
     No theory available
     :param grid: MultiCircuit
     :param reduction_bus_indices: Bus indices of the buses to delete
-    :param PTDF: PTDF matrix
-    :param lin_ts: LinearAnalysisTs
     :param tol: Tolerance, any equivalent power value under this is omitted
     """
     logger = Logger()
@@ -498,20 +491,25 @@ def ptdf_reduction_projected(grid: MultiCircuit,
     original_slack_indices = [i for i, bus in enumerate(grid.buses) if bus.is_slack]
     external_set = set(e_buses)
     slack_is_removed = any(idx in external_set for idx in original_slack_indices)
-    
-    # If the slack is being removed, we need to relocate injections from the slack
-    # to boundary buses, so the power is not lost when we delete the slack bus
-    if slack_is_removed:
-        relocate_injections(grid=grid, reduction_bus_indices=reduction_bus_indices)
 
+    # Compute original flows BEFORE any modifications to the grid
+    # This is critical: we want to preserve flows from the ORIGINAL grid topology
     nc = compile_numerical_circuit_at(circuit=grid, t_idx=None)
     lin = LinearAnalysis(nc=nc, distributed_slack=distribute_slack)
 
-    # base flows
+    # base flows (BEFORE relocation)
     Pload = get_Pload(grid)
     Pgen, Pgen_srap = get_Pgen(grid)
 
-    # flows
+    # Get HVDC power contribution (HVDC lines inject/withdraw power at their terminals)
+    if nc.hvdc_data.nelm > 0:
+        _, _, Pf_hvdc_pu, _, _, _ = nc.hvdc_data.get_power(Sbase=nc.Sbase, theta=np.zeros(nc.nbus))
+        Flow0_hvdc = lin.HvdcDF @ (Pf_hvdc_pu * nc.Sbase)
+    else:
+        Flow0_hvdc = np.zeros(nc.nbr)
+
+    # flows (these are the ORIGINAL flows we want to preserve on internal branches)
+    # Include HVDC contribution to AC branch flows
     Flow0_load = lin.get_flows(Pload)
     Flow0_gen = lin.get_flows(Pgen)
     Flow0_gen_srap = lin.get_flows(Pgen_srap)
@@ -529,6 +527,11 @@ def ptdf_reduction_projected(grid: MultiCircuit,
         Flows0_load_ts = None
         Flows0_gen_ts = None
         Flows0_gen_srap_ts = None
+    
+    # Now relocate injections if the slack is being removed
+    # This moves devices from external buses to internal buses so they aren't lost during deletion
+    if slack_is_removed:
+        relocate_injections(grid=grid, reduction_bus_indices=reduction_bus_indices)
 
     # Identify boundary buses (internal buses connected to external buses)
     bus_idx_dict = grid.get_bus_index_dict()
@@ -546,7 +549,7 @@ def ptdf_reduction_projected(grid: MultiCircuit,
             
     boundary_buses = np.sort(np.array(list(boundary_set)))
     
-    # Eliminate the external buses (but not relocating injections)
+    # Eliminate the external buses (but not relocating injections) -----------------------------------------------------
     # We rely on solving for the necessary compensation on the boundary buses
     grid.delete_buses(lst=[grid.buses[e] for e in e_buses], delete_associated=True)
     
@@ -571,6 +574,43 @@ def ptdf_reduction_projected(grid: MultiCircuit,
         if not new_slack_assigned and grid.get_bus_number() > 0:
             grid.buses[0].is_slack = True
 
+    # Ensure the grid has an explicit slack bus per resulting island (only if missing)
+    has_any_explicit_slack = any(b.is_slack for b in grid.buses)
+    nc_tmp = compile_numerical_circuit_at(circuit=grid, t_idx=0 if grid.has_time_series else None)
+    islands_tmp = nc_tmp.split_into_islands()
+    n_islands_tmp = len(islands_tmp)
+
+    for island in islands_tmp:
+        island_global_bus_idx = [int(x) for x in island.bus_data.original_idx]
+
+        # Keep at most one explicit slack per island
+        island_slacks = [i for i in island_global_bus_idx if grid.buses[i].is_slack]
+
+        if len(island_slacks) > 1:
+            keep = island_slacks[0]
+            for i in island_slacks[1:]:
+                grid.buses[i].is_slack = False
+            island_slacks = [keep]
+
+        # Do something when there is no explicit slack in the island
+        if len(island_slacks) != 1:
+            # if (n_islands_tmp <= 1) and has_any_explicit_slack:
+            #     pass
+
+            # else:
+            if not (n_islands_tmp <= 1) or not has_any_explicit_slack:
+                sim_idx = island.get_simulation_indices()
+
+                if len(sim_idx.vd) == 1:
+                    global_slack_idx = int(island.bus_data.original_idx[int(sim_idx.vd[0])])
+                    if 0 <= global_slack_idx < grid.get_bus_number():
+                        grid.buses[global_slack_idx].is_slack = True
+
+                else:
+                    # Fallback: pick the first bus in the island (maybe no PV buses)
+                    if island_global_bus_idx:
+                        grid.buses[island_global_bus_idx[0]].is_slack = True
+
     # Injections that remain (internal only, since external are gone)
     Pload2 = get_Pload(grid)
     Pgen2, Pgen_srap2 = get_Pgen(grid)
@@ -583,12 +623,21 @@ def ptdf_reduction_projected(grid: MultiCircuit,
     # We want to find dP such that: PTDF @ (Pbus2 + dP) = Flow0
     # So: PTDF @ dP = Flow0 - PTDF @ Pbus2
 
-    # Target flows in the original grid
-    Flow0_total = Flow0_load + Flow0_gen + Flow0_gen_srap
+    # Target flows in the original grid (including HVDC contribution)
+    Flow0_total = Flow0_load + Flow0_gen + Flow0_gen_srap + Flow0_hvdc
     
     # Total injections and flows in the reduced grid
     Pbus2_total = Pload2 + Pgen2 + Pgen_srap2
-    Flow2 = lin2.PTDF @ Pbus2_total
+    
+    # Get HVDC contribution in the reduced grid (some HVDC lines may have been deleted)
+    # Note: get_power returns Pf in p.u., need to convert to MW
+    if nc2.hvdc_data.nelm > 0:
+        _, _, Pf_hvdc2_pu, _, _, _ = nc2.hvdc_data.get_power(Sbase=nc2.Sbase, theta=np.zeros(nc2.nbus))
+        Flow2_hvdc = lin2.HvdcDF @ (Pf_hvdc2_pu * nc2.Sbase)
+    else:
+        Flow2_hvdc = np.zeros(nc2.nbr)
+    
+    Flow2 = lin2.PTDF @ Pbus2_total + Flow2_hvdc
 
     Flow2_load = lin2.get_flows(Pload2)
     Flow2_gen = lin2.get_flows(Pgen2)
@@ -600,30 +649,28 @@ def ptdf_reduction_projected(grid: MultiCircuit,
     residual_flow_gen = Flow0_gen[i_branches] - Flow2_gen
     residual_flow_gen_srap = Flow0_gen_srap[i_branches] - Flow2_gen_srap
     
-    # Solve for dP, but ONLY for boundary buses
+    # Solve for compensation across all remaining buses (minimum-norm solution).
+    dP, _, _, _ = np.linalg.lstsq(lin2.PTDF, residual_flow, rcond=None)
+    dP_load, _, _, _ = np.linalg.lstsq(lin2.PTDF, residual_flow_load, rcond=None)
+    dP_gen, _, _, _ = np.linalg.lstsq(lin2.PTDF, residual_flow_gen, rcond=None)
+    dP_gen_srap, _, _, _ = np.linalg.lstsq(lin2.PTDF, residual_flow_gen_srap, rcond=None)
+    
+    # We need to add the HVDC correction to ensure the applied compensation matches the total
+    dP_hvdc_correction = dP - (dP_load + dP_gen + dP_gen_srap)
+    dP_gen_srap = dP_gen_srap + dP_hvdc_correction
+    
+    # Boundary indices in the reduced grid (kept for allocating the extra balancing terms below)
     boundary_indices_new = np.searchsorted(i_buses, boundary_buses)
-    PTDF_boundary = lin2.PTDF[:, boundary_indices_new]
-    
-    # Solve: PTDF_boundary @ dP_boundary = residual_flow
-    dP_boundary, _, _, _ = np.linalg.lstsq(PTDF_boundary, residual_flow, rcond=None)
-    dP_boundary_load, _, _, _ = np.linalg.lstsq(PTDF_boundary, residual_flow_load, rcond=None)
-    dP_boundary_gen, _, _, _ = np.linalg.lstsq(PTDF_boundary, residual_flow_gen, rcond=None)
-    dP_boundary_gen_srap, _, _, _ = np.linalg.lstsq(PTDF_boundary, residual_flow_gen_srap, rcond=None)
-    
-    # Create full dP vector for all new buses (initialized to 0)
-    n_i_buses = grid.get_bus_number()
-    dP = np.zeros(n_i_buses)
-    dP_load = np.zeros(n_i_buses)
-    dP_gen = np.zeros(n_i_buses)
-    dP_gen_srap = np.zeros(n_i_buses)
-
-    dP[boundary_indices_new] = dP_boundary
-    dP_load[boundary_indices_new] = dP_boundary_load
-    dP_gen[boundary_indices_new] = dP_boundary_gen
-    dP_gen_srap[boundary_indices_new] = dP_boundary_gen_srap
 
     ptdf_col_norms = np.linalg.norm(lin2.PTDF, axis=0)
     zero_influence_mask = ptdf_col_norms < tol
+    
+    # Zero out columns that cannot influence any flow (e.g., disconnected/island-slack degrees of freedom)
+    # to avoid creating meaningless compensated devices.
+    dP[zero_influence_mask] = 0.0
+    dP_load[zero_influence_mask] = 0.0
+    dP_gen[zero_influence_mask] = 0.0
+    dP_gen_srap[zero_influence_mask] = 0.0
 
     if grid.has_time_series:
 
@@ -763,13 +810,13 @@ def ptdf_reduction_projected(grid: MultiCircuit,
     return grid, logger
 
 
-if __name__ == "__main__":
-    import VeraGridEngine as vg
-
-    circuit = vg.open_file("/home/santi/Documentos/Git/eRoots/VeraGrid/src/trunk/equivalents/completo.veragrid")
-
-    ptdf_reduction_projected(
-        grid=circuit,
-        reduction_bus_indices=[4],
-        tol=1e-8
-    )
+# if __name__ == "__main__":
+#     import VeraGridEngine as vg
+#
+#     circuit = vg.open_file("/trunk/equivalents/completo.veragrid")
+#
+#     ptdf_reduction_projected(
+#         grid=circuit,
+#         reduction_bus_indices=[4],
+#         tol=1e-8
+#     )

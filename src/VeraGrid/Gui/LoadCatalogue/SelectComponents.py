@@ -18,8 +18,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QCheckBox, QDialog,
     QDialogButtonBox, QFrame, QGridLayout, QLabel,
     QSizePolicy, QVBoxLayout, QWidget)
-from .icons_rc import *
-from .icons_rc import *
+from VeraGrid.Gui.Icons.icons_rc import *
+from VeraGrid.Gui.Icons.icons_rc import *
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):

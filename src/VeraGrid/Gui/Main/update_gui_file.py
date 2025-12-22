@@ -19,6 +19,5 @@ if __name__ == '__main__':
         rcc_cmd += '.exe'
         uic_cmd += '.exe'
 
-    convert_resource_file(source='icons.qrc', rcc_cmd=rcc_cmd)
-    for f in ['MainWindow.ui', 'ConsoleLog.ui']:
+    for f in ['MainWindow.ui']:
         convert_ui_file(source=f, uic_cmd=uic_cmd)

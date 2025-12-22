@@ -7,10 +7,11 @@ from __future__ import annotations
 import sys
 from typing import List
 from PySide6.QtWidgets import (
-    QApplication, QDialog, QVBoxLayout, QHBoxLayout,
+    QWidget, QDialog, QVBoxLayout, QHBoxLayout,
     QComboBox, QCheckBox, QTableWidget, QTableWidgetItem,
     QPushButton, QHeaderView, QStyledItemDelegate, QSpinBox
 )
+from PySide6.QtCore import QModelIndex, QPersistentModelIndex
 import VeraGridEngine.Devices as dev
 from VeraGridEngine.enumerations import VoltageLevelTypes
 
@@ -38,7 +39,7 @@ class SpinBoxDelegate(QStyledItemDelegate):
         spinbox.setMaximum(self.maximum)
         return spinbox
 
-    def setEditorData(self, editor, index):
+    def setEditorData(self, editor: QWidget, index: QModelIndex | QPersistentModelIndex):
         """
 
         :param editor:
@@ -63,7 +64,7 @@ class SpinBoxDelegate(QStyledItemDelegate):
 class ComboBoxDelegate(QStyledItemDelegate):
     """Delegate for restricted values (Posición, Barra)."""
 
-    def __init__(self, items, parent=None):
+    def __init__(self, items: List[str], parent: QTableWidget = None) -> None:
         super().__init__(parent)
         self.items = items
 
@@ -203,18 +204,6 @@ class VoltageLevelConversionWizard(QDialog):
 
         # --- Bottom buttons layout ---
         bottom_layout = QHBoxLayout()
-
-        # Left side: add/remove buttons
-        # self.add_button = QPushButton("+")
-        # self.add_button.setFixedWidth(40)
-        # self.add_button.clicked.connect(self.add_row)
-
-        # self.remove_button = QPushButton("-")
-        # self.remove_button.setFixedWidth(40)
-        # self.remove_button.clicked.connect(self.remove_row)
-
-        # bottom_layout.addWidget(self.add_button)
-        # bottom_layout.addWidget(self.remove_button)
         bottom_layout.addStretch()  # spacer pushes "Do it" button to the right
 
         # Right side: Do it button
@@ -228,7 +217,7 @@ class VoltageLevelConversionWizard(QDialog):
 
         self.reset_all()
 
-    def reset_all(self):
+    def reset_all(self) -> None:
         """
 
         :return:
@@ -262,24 +251,6 @@ class VoltageLevelConversionWizard(QDialog):
             self.table.setItem(row, 1, QTableWidgetItem(entry.bay))
             self.table.setItem(row, 2, QTableWidgetItem(entry.main_bar))
 
-    # def add_row(self):
-    #     """
-    #     Insert an empty row with defaults.
-    #     """
-    #     row = self.table.rowCount()
-    #     self.table.insertRow(row)
-    #     self.table.setItem(row, 0, QTableWidgetItem(self.all_dev[0].name))
-    #     self.table.setItem(row, 1, QTableWidgetItem(self.bays_list[0]))
-    #     self.table.setItem(row, 2, QTableWidgetItem(self.main_bars_list[0]))
-    #
-    # def remove_row(self):
-    #     """
-    #     Remove the currently selected row.
-    #     """
-    #     row = self.table.currentRow()
-    #     if row >= 0:
-    #         self.table.removeRow(row)
-
     def get_vl_type(self) -> VoltageLevelTypes:
         """
 
@@ -287,7 +258,7 @@ class VoltageLevelConversionWizard(QDialog):
         """
         return self.vl_dict[self.combo.currentText()]
 
-    def do_it(self):
+    def do_it(self) -> None:
         """
         Perform whatever is selected and qut
         :return:

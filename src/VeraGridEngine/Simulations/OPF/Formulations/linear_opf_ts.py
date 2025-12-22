@@ -2152,14 +2152,35 @@ def add_linear_branches_contingencies_formulation(t_idx: int,
     return f_obj
 
 
-def pmode3_formulation_impr(prob, t_idx, m, rate, P0, droop, theta_f, theta_t, base_name: str = "hvdc"):
+def pmode3_formulation_impr(prob: LpModel,
+                            elm_idx: int,
+                            t_idx: int, m: float, rate: float, P0: float,
+                            droop: float, theta_f: float, theta_t: float, base_name: str,
+                            logger: Logger):
     """
     Formulation for HVDC link with three operating regions using big-M and binary variables.
+    :param prob:
+    :param elm_idx:
+    :param t_idx:
+    :param m:
+    :param rate:
+    :param P0:
+    :param droop:
+    :param theta_f:
+    :param theta_t:
+    :param base_name:
+    :param logger:
+    :return:
     """
+
     # Ensure droop is not zero or too small to avoid division issues
-    if abs(droop) < 1e-10:
-        droop = 1e-20
-    
+    if abs(droop) < 1e-5:
+        logger.add_warning("droop below threshold set to 1",
+                           device=f"HVDC line {elm_idx}",
+                           value=droop,
+                           expected_value="abs(droop) < 1e-5")
+        droop = 1.0
+
     # Variables
     flow = prob.add_var(
         lb=-rate,
@@ -2212,7 +2233,8 @@ def add_linear_hvdc_formulation(t: int,
                                 hvdc_data_t: HvdcData,
                                 hvdc_vars: HvdcVars,
                                 bus_vars: BusVars,
-                                prob: LpModel):
+                                prob: LpModel,
+                                logger: Logger):
     """
 
     :param t:
@@ -2221,6 +2243,7 @@ def add_linear_hvdc_formulation(t: int,
     :param hvdc_vars:
     :param bus_vars:
     :param prob:
+    :param logger:
     :return:
     """
     f_obj = 0.0
@@ -2247,6 +2270,7 @@ def add_linear_hvdc_formulation(t: int,
                 
                 hvdc_vars.flows[t, m] = pmode3_formulation_impr(
                     prob=prob,
+                    elm_idx=m,
                     t_idx=t,
                     m=m,
                     rate=rate,
@@ -2254,7 +2278,8 @@ def add_linear_hvdc_formulation(t: int,
                     droop=droop,
                     theta_f=bus_vars.Va[t, fr],
                     theta_t=bus_vars.Va[t, to],
-                    base_name="hvdc"
+                    base_name="hvdc",
+                    logger=logger
                 )
 
                 # add the injections matching the flow
@@ -2946,7 +2971,8 @@ def run_linear_opf_ts(grid: MultiCircuit,
                 hvdc_data_t=nc.hvdc_data,
                 hvdc_vars=mip_vars.hvdc_vars,
                 bus_vars=mip_vars.bus_vars,
-                prob=lp_model
+                prob=lp_model,
+                logger=logger
             )
 
             # formulate vsc --------------------------------------------------------------------------------------------

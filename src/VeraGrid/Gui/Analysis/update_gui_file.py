@@ -17,9 +17,7 @@ if __name__ == '__main__':
         rcc_cmd += '.exe'
         uic_cmd += '.exe'
 
-    convert_resource_file(source='icons.qrc', rcc_cmd=rcc_cmd)
-
-    for f in ['gui.ui']:
+    for f in ['analysis_gui.ui']:
         convert_ui_file(source=f, uic_cmd=uic_cmd)
 
 

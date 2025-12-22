@@ -670,18 +670,100 @@ class PowerFlowResults3Ph(ResultsTemplate):
 
     def get_current_3ph_df(self) -> pd.DataFrame:
         """
-        Get a DataFrame with the buses results, Vm in p.u., Va in deg
+        Get a DataFrame with the current results in p.u.
         :return: DataFrame
         """
         df = pd.DataFrame(data={
-            'If_N': np.abs(self.If_N).round(5),
-            'If_A': np.abs(self.If_A).round(5),
-            'If_B': np.abs(self.If_B).round(5),
-            'If_C': np.abs(self.If_C).round(5),
-            'It_N': np.abs(self.It_N).round(5),
-            'It_A': np.abs(self.It_A).round(5),
-            'It_B': np.abs(self.It_B).round(5),
-            'It_C': np.abs(self.It_C).round(5),
+            'Im_N': np.abs(self.If_N).round(5),
+            'Im_A': np.abs(self.If_A).round(5),
+            'Im_B': np.abs(self.If_B).round(5),
+            'Im_C': np.abs(self.If_C).round(5),
+            'Ia_N': np.angle(self.If_N, deg=True).round(1),
+            'Ia_A': np.angle(self.If_A, deg=True).round(1),
+            'Ia_B': np.angle(self.If_B, deg=True).round(1),
+            'Ia_C': np.angle(self.If_C, deg=True).round(1)
+        }, index=self.branch_names)
+
+        return df
+
+    def get_voltage_unbalance_factor_df(self) -> pd.DataFrame:
+        """
+        Get the Voltage Unbalance Factor (VUF)
+        :return: DataFrame
+        """
+
+        U0 = np.zeros(len(self.voltage_A), dtype=complex)
+        U1 = np.zeros(len(self.voltage_A), dtype=complex)
+        U2 = np.zeros(len(self.voltage_A), dtype=complex)
+        VUF = np.zeros(len(self.voltage_A), dtype=float)
+
+        for i in range(len(self.voltage_A)):
+            Ua = self.voltage_A[i]
+            Ub = self.voltage_B[i]
+            Uc = self.voltage_C[i]
+            Uabc = np.array([
+                [Ua],
+                [Ub],
+                [Uc]
+            ])
+
+            a = np.exp(120j * np.pi / 180)
+            F = np.array([
+                [1, 1, 1],
+                [1, a, a ** 2],
+                [1, a ** 2, a]
+            ])
+
+            U012 = 1 / 3 * F @ Uabc
+            U0[i] = U012[0, 0]
+            U1[i] = U012[1, 0]
+            U2[i] = U012[2, 0]
+
+            VUF[i] = abs(U2[i]) / abs(U1[i]) * 100
+
+        df = pd.DataFrame(data={
+            'VUF': VUF.round(3)
+        }, index=self.bus_names)
+
+        return df
+
+    def get_current_unbalance_factor_df(self) -> pd.DataFrame:
+        """
+        Get the Current Unbalance Factor (IUF)
+        :return: DataFrame
+        """
+
+        I0 = np.zeros(len(self.If_A), dtype=complex)
+        I1 = np.zeros(len(self.If_A), dtype=complex)
+        I2 = np.zeros(len(self.If_A), dtype=complex)
+        IUF = np.zeros(len(self.If_A), dtype=float)
+
+        for i in range(len(self.If_A)):
+            Ia = self.If_A[i]
+            Ib = self.If_B[i]
+            Ic = self.If_C[i]
+            Iabc = np.array([
+                [Ia],
+                [Ib],
+                [Ic]
+            ])
+
+            a = np.exp(120j * np.pi / 180)
+            F = np.array([
+                [1, 1, 1],
+                [1, a, a ** 2],
+                [1, a ** 2, a]
+            ])
+
+            I012 = 1 / 3 * F @ Iabc
+            I0[i] = I012[0, 0]
+            I1[i] = I012[1, 0]
+            I2[i] = I012[2, 0]
+
+            IUF[i] = abs(I2[i]) / abs(I1[i]) * 100
+
+        df = pd.DataFrame(data={
+            'IUF': IUF.round(3)
         }, index=self.branch_names)
 
         return df

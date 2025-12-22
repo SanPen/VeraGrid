@@ -1568,7 +1568,7 @@ def translate_newton_pa_opf_results(grid: MultiCircuit, res: "npa.NonlinearOpfRe
     results.load_shedding = res.load_shedding[0, :],
     results.hvdc_power = res.hvdc_Pf[0, :],
     results.hvdc_loading = res.hvdc_loading[0, :] * 100.0,
-    results.phase_shift = res.tap_angle[0, :],
+    results.tap_angle = res.tap_angle[0, :],
     results.bus_shadow_prices = res.bus_shadow_prices[0, :],
     results.generator_shedding = res.generator_shedding[0, :],
     results.battery_power = res.battery_p[0, :],

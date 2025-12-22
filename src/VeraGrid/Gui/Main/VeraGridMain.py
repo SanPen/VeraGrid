@@ -262,7 +262,7 @@ def runVeraGrid() -> None:
     # MacOS: display icons in menus
     app.setAttribute(Qt.ApplicationAttribute.AA_DontShowIconsInMenus, False)
 
-    icon_name = ':/Program icon/VeraGrid_icon.png'
+    icon_name = ':/Program icon/icons/VeraGrid_icon.png'
     icon = QtGui.QIcon(icon_name)
 
     # will check os internally

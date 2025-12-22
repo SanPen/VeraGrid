@@ -7,7 +7,7 @@ import sys
 import pandas as pd
 from PySide6 import QtGui, QtCore, QtWidgets
 from typing import List, Tuple, Union
-from VeraGrid.Gui.CoordinatesInput.gui import Ui_Dialog
+from VeraGrid.Gui.CoordinatesInput.coordinates_input_gui import Ui_Dialog
 from VeraGrid.Gui.ProfilesInput.excel_dialog import ExcelDialog
 from VeraGrid.Gui.general_dialogues import LogsDialogue
 from VeraGridEngine.Devices.Substation import Bus

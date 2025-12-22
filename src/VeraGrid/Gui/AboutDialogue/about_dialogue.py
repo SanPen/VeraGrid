@@ -10,7 +10,7 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QClipboard
 from typing import List
-from VeraGrid.Gui.AboutDialogue.gui import Ui_AboutDialog
+from VeraGrid.Gui.AboutDialogue.about_gui import Ui_AboutDialog
 from VeraGrid.__version__ import __VeraGrid_VERSION__
 from VeraGrid.update import check_version, get_upgrade_command
 from VeraGridEngine.__version__ import __VeraGridEngine_VERSION__, copyright_msg, contributors_msg

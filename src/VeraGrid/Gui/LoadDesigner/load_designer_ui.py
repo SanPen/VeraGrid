@@ -21,7 +21,7 @@ from PySide6.QtWidgets import (QApplication, QDialog, QDoubleSpinBox, QFrame,
     QTimeEdit, QToolBox, QVBoxLayout, QWidget)
 
 from VeraGrid.Gui.Widgets.matplotlibwidget import MatplotlibWidget
-from .icons_rc import *
+from VeraGrid.Gui.Icons.icons_rc import *
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):

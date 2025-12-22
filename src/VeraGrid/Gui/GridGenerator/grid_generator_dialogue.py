@@ -9,7 +9,7 @@ from numpy.random import default_rng
 import networkx as nx
 from PySide6 import QtWidgets
 
-from VeraGrid.Gui.GridGenerator.gui import Ui_MainWindow
+from VeraGrid.Gui.GridGenerator.grid_generator_gui import Ui_MainWindow
 import VeraGridEngine.Devices as dev
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Utils.ThirdParty.SyntheticNetworks.rpgm_algo import RpgAlgorithm

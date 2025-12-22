@@ -10,6 +10,86 @@ from VeraGridEngine.Topology.GridReduction.ward_equivalents import ward_standard
 from VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction import di_shi_reduction
 
 
+def get_total_generation(grid: gce.MultiCircuit) -> float:
+    """
+    Get total generation for snapshot
+    :param grid: MultiCircuit instance
+    :return: Total generation in MW
+    """
+    total = 0.0
+    for gen in grid.generators:
+        total += gen.P * gen.active
+    for batt in grid.batteries:
+        total += batt.P * batt.active
+    for stagen in grid.static_generators:
+        total += stagen.P * stagen.active
+    return total
+
+
+def get_total_load(grid: gce.MultiCircuit) -> float:
+    """
+    Get total load for snapshot
+    :param grid: MultiCircuit instance
+    :return: Total load in MW
+    """
+    total = 0.0
+    for load in grid.loads:
+        total += load.P * load.active
+    return total
+
+
+def get_total_generation_ts(grid: gce.MultiCircuit, time_indices: np.ndarray = None) -> np.ndarray:
+    """
+    Get total generation profile for time series
+    :param grid: MultiCircuit instance
+    :param time_indices: Optional array of time indices to select
+    :return: Total generation profile in MW (nt,)
+    """
+    if time_indices is None:
+        time_indices = grid.get_all_time_indices()
+    
+    nt = len(time_indices)
+    total = np.zeros(nt, dtype=float)
+    
+    for gen in grid.generators:
+        if gen.P_prof is not None:
+            prof = gen.P_prof.toarray()[time_indices] * gen.active_prof.toarray()[time_indices]
+            total += prof
+    
+    for batt in grid.batteries:
+        if batt.P_prof is not None:
+            prof = batt.P_prof.toarray()[time_indices] * batt.active_prof.toarray()[time_indices]
+            total += prof
+    
+    for stagen in grid.static_generators:
+        if stagen.P_prof is not None:
+            prof = stagen.P_prof.toarray()[time_indices] * stagen.active_prof.toarray()[time_indices]
+            total += prof
+    
+    return total
+
+
+def get_total_load_ts(grid: gce.MultiCircuit, time_indices: np.ndarray = None) -> np.ndarray:
+    """
+    Get total load profile for time series
+    :param grid: MultiCircuit instance
+    :param time_indices: Optional array of time indices to select
+    :return: Total load profile in MW (nt,)
+    """
+    if time_indices is None:
+        time_indices = grid.get_all_time_indices()
+    
+    nt = len(time_indices)
+    total = np.zeros(nt, dtype=float)
+    
+    for load in grid.loads:
+        if load.P_prof is not None:
+            prof = load.P_prof.toarray()[time_indices] * load.active_prof.toarray()[time_indices]
+            total += prof
+    
+    return total
+
+
 def test_ward_reduction():
     """
     Test to check the PTDF reduction
@@ -424,14 +504,6 @@ def test_ptdf_projected_gb():
     # fname = os.path.join('src', 'tests', 'data', 'grids', 'gb_t0.veragrid')
     grid = gce.open_file(filename=fname)
 
-    P_original_gen = 0.0
-    for gen in grid.generators:
-        P_original_gen += gen.P
-
-    P_original_load = 0.0
-    for load in grid.loads:
-        P_original_load += load.P
-
     # First run basic linear analysis
     flows_dr = gce.LinearAnalysisDriver(grid=grid, options=gce.LinearAnalysisOptions(distribute_slack=False))
     flows_dr.run()
@@ -455,24 +527,19 @@ def test_ptdf_projected_gb():
     flows_dr_red.run()
     flows_branches_red = flows_dr_red.results.Sf
 
-    P_reduced_gen = 0.0
-    for gen in red_grid.generators:
-        P_reduced_gen += gen.P
-
-    P_reduced_load = 0.0
-    for load in red_grid.loads:
-        P_reduced_load += load.P
-
-    # Check net balance instead of gross balance, as reduction adds compensation power
-    net_original = P_original_gen - P_original_load
-    net_reduced = P_reduced_gen - P_reduced_load
-    
     # Check that flows on remaining branches match
     assert np.allclose(flows_branches[internal_branches], flows_branches_red, atol=1e-4)
 
-    assert abs(net_reduced) < 1e-4
-    assert abs(P_original_gen - P_reduced_gen) < 1e-4
-    assert abs(P_original_load - P_reduced_load) < 1e-4
+    # Check power balance: total generation and demand should not change
+    P_orig_gen_total = get_total_generation(grid)
+    P_orig_load_total = get_total_load(grid)
+    P_red_gen_total = get_total_generation(red_grid)
+    P_red_load_total = get_total_load(red_grid)
+    
+    assert abs(P_orig_gen_total - P_red_gen_total) < 1e-4, \
+        "Total generation should not change after reduction"
+    assert abs(P_orig_load_total - P_red_load_total) < 1e-4, \
+        "Total demand should not change after reduction"
 
 
 def test_ptdf_projected_ts():
@@ -535,7 +602,14 @@ def test_ptdf_projected_ts_gb_full():
     Flows_orig = lin_ts.get_flows_ts(P=P_orig)
 
     # Then reduce the network
-    bus_to_remove = np.array([6, 8])
+    bus_to_remove = []
+    bus_idx_dict = grid.get_bus_index_dict()
+    for bus in grid.buses:
+        if bus.Vnom < 400:
+            bus_remove_idx = bus_idx_dict[bus]
+            bus_to_remove.append(bus_remove_idx)
+
+    bus_to_remove = np.array(bus_to_remove)
     
     # Get internal branches before reduction to compare later
     external, boundary, internal, boundary_branches, internal_branches = grid.get_reduction_sets(reduction_bus_indices=bus_to_remove)
@@ -553,13 +627,94 @@ def test_ptdf_projected_ts_gb_full():
     # Check if dimensions match
     assert Flows_red.shape[1] == len(internal_branches)
 
-    print('Flow orig')
-    print(Flows_orig_internal)
-    print('Flow red')
-    print(Flows_red)
-
     # Compare flows
     assert np.allclose(Flows_orig_internal, Flows_red, atol=1e-4)
+    
+    # Check power balance for all time steps: total generation and demand should not change
+    all_time_indices = grid.get_all_time_indices()
+    P_orig_gen_ts = get_total_generation_ts(grid, time_indices=all_time_indices)
+    P_orig_load_ts = get_total_load_ts(grid, time_indices=all_time_indices)
+    P_red_gen_ts = get_total_generation_ts(red_grid, time_indices=all_time_indices)
+    P_red_load_ts = get_total_load_ts(red_grid, time_indices=all_time_indices)
+    
+    assert np.allclose(P_orig_gen_ts, P_red_gen_ts, atol=1e-4), \
+        "Total generation should not change after reduction at any time step"
+    assert np.allclose(P_orig_load_ts, P_red_load_ts, atol=1e-4), \
+        "Total demand should not change after reduction at any time step"
+
+
+def test_ptdf_projected_ts_gb_selected_middle_steps():
+    """
+    Test to check the reduction flows with time series for selected time steps in the middle of the year.
+    Performs grid reduction for 3 hours that are neither the first nor the last ones.
+    :return:
+    """
+    fname = os.path.join('data', 'grids', 'GB Network.gridcal')
+    grid = gce.open_file(filename=fname)
+
+    # Get all available time indices
+    all_time_indices = grid.get_all_time_indices()
+    n_times = len(all_time_indices)
+    
+    # Select 3 time steps in the middle (not first, not last)
+    middle_idx = n_times // 2
+    selected_time_indices = np.array([
+        middle_idx - 1,
+        middle_idx,
+        middle_idx + 1
+    ])
+    
+    # Ensure indices are valid and not at the boundaries
+    assert selected_time_indices[0] > 0
+    assert selected_time_indices[-1] < n_times - 1
+    
+    # First run time series linear analysis for selected time steps only
+    lin_ts = gce.LinearAnalysisTs(grid=grid, distributed_slack=False, time_indices=selected_time_indices)
+    P_orig_full = grid.get_Pbus_prof()
+    P_orig = P_orig_full[selected_time_indices, :]  # Select only the time steps we're testing
+    Flows_orig = lin_ts.get_flows_ts(P=P_orig)
+
+    # Then reduce the network
+    bus_to_remove = []
+    bus_idx_dict = grid.get_bus_index_dict()
+    for bus in grid.buses:
+        if bus.Vnom < 400:
+            bus_remove_idx = bus_idx_dict[bus]
+            bus_to_remove.append(bus_remove_idx)
+
+    bus_to_remove = np.array(bus_to_remove)
+    
+    # Get internal branches before reduction to compare later
+    external, boundary, internal, boundary_branches, internal_branches = grid.get_reduction_sets(reduction_bus_indices=bus_to_remove)
+    
+    red_grid, logger = ptdf_reduction_projected(grid=grid, reduction_bus_indices=bus_to_remove, distribute_slack=False)
+    
+    # Run time series linear analysis on reduced grid for the same selected time steps
+    lin_ts_red = gce.LinearAnalysisTs(grid=red_grid, distributed_slack=False, time_indices=selected_time_indices)
+    P_red_full = red_grid.get_Pbus_prof()
+    P_red = P_red_full[selected_time_indices, :]  # Select only the time steps we're testing
+    Flows_red = lin_ts_red.get_flows_ts(P=P_red)
+
+    # Compare flows on internal branches
+    Flows_orig_internal = Flows_orig[:, internal_branches]
+    
+    # Check if dimensions match
+    assert Flows_red.shape[0] == len(selected_time_indices)
+    assert Flows_red.shape[1] == len(internal_branches)
+
+    # Compare flows for the selected time steps
+    assert np.allclose(Flows_orig_internal, Flows_red, atol=1e-4)
+    
+    # Check power balance for selected time steps: total generation and demand should not change
+    P_orig_gen_ts = get_total_generation_ts(grid, time_indices=selected_time_indices)
+    P_orig_load_ts = get_total_load_ts(grid, time_indices=selected_time_indices)
+    P_red_gen_ts = get_total_generation_ts(red_grid, time_indices=selected_time_indices)
+    P_red_load_ts = get_total_load_ts(red_grid, time_indices=selected_time_indices)
+    
+    assert np.allclose(P_orig_gen_ts, P_red_gen_ts, atol=1e-4), \
+        "Total generation should not change after reduction at selected time steps"
+    assert np.allclose(P_orig_load_ts, P_red_load_ts, atol=1e-4), \
+        "Total demand should not change after reduction at selected time steps"
 
 
 def test_ptdf_projected_ts_slack_remove():
@@ -640,6 +795,219 @@ def test_ptdf_projected_ts_simple_ree():
     assert np.allclose(Flows_orig_internal, Flows_red, atol=1e-4)
 
 
+def test_grid_reduction_with_multiple_islands_after():
+    """
+    This test checks that the reduction is perfect even when the original system is split into more than one island
+    """
+
+    fname = os.path.join('data', 'grids', 'grid_reduction_1_island.veragrid')
+
+    grid = gce.open_file(filename=fname)
+
+    # First run time series linear analysis
+    lin_ts = gce.LinearAnalysisTs(grid=grid, distributed_slack=False)
+    P_orig = grid.get_Pbus_prof()
+    Flows_orig = lin_ts.get_flows_ts(P=P_orig)
+
+    # Then reduce the network
+    bus_to_remove = np.array([3, 4])
+
+    # Get internal branches before reduction to compare later
+    (external, boundary,
+     internal, boundary_branches,
+     internal_branches) = grid.get_reduction_sets(reduction_bus_indices=bus_to_remove)
+
+    red_grid, logger = ptdf_reduction_projected(grid=grid,
+                                                reduction_bus_indices=bus_to_remove,
+                                                distribute_slack=False)
+
+    # Run time series linear analysis on reduced grid
+    lin_ts_red = gce.LinearAnalysisTs(grid=red_grid, distributed_slack=False)
+    P_red = red_grid.get_Pbus_prof()
+    Flows_red = lin_ts_red.get_flows_ts(P=P_red)
+
+    # Compare flows on internal branches
+    Flows_orig_internal = Flows_orig[:, internal_branches]
+
+    # Check if dimensions match
+    assert (Flows_red.shape[1] == len(internal_branches))
+
+    # Compare flows
+    assert np.allclose(Flows_orig_internal, Flows_red, atol=1e-4)
+
+    # Check power balance for all time steps: total generation and demand should not change
+    all_time_indices = grid.get_all_time_indices()
+    P_orig_gen_ts = get_total_generation_ts(grid, time_indices=all_time_indices)
+    P_orig_load_ts = get_total_load_ts(grid, time_indices=all_time_indices)
+    P_red_gen_ts = get_total_generation_ts(red_grid, time_indices=all_time_indices)
+    P_red_load_ts = get_total_load_ts(red_grid, time_indices=all_time_indices)
+
+    assert np.allclose(P_orig_gen_ts, P_red_gen_ts, atol=1e-4)
+    assert np.allclose(P_orig_load_ts, P_red_load_ts, atol=1e-4)
+
+    return None
+
+
+def test_grid_reduction_with_multiple_islands_before():
+    """
+    This test checks that the reduction is perfect even when the original system has more than one island
+    """
+    fname = os.path.join('data', 'grids', 'grid_reduction_2_island.veragrid')
+
+    grid_ = gce.open_file(filename=fname)
+
+    # First run time series linear analysis
+    lin_ts = gce.LinearAnalysisTs(grid=grid_, distributed_slack=False)
+    P_orig = grid_.get_Pbus_prof()
+    Flows_orig = lin_ts.get_flows_ts(P=P_orig)
+
+    # Then reduce the network
+    bus_to_remove = list()
+    bus_idx_dict = grid_.get_bus_index_dict()
+    for bus in grid_.buses:
+        if bus.Vnom < 400:
+            bus_remove_idx = bus_idx_dict[bus]
+            bus_to_remove.append(bus_remove_idx)
+
+    # Get internal branches before reduction to compare later
+    (external, boundary,
+     internal, boundary_branches,
+     internal_branches) = grid_.get_reduction_sets(reduction_bus_indices=bus_to_remove)
+
+    red_grid, logger = ptdf_reduction_projected(grid=grid_,
+                                                reduction_bus_indices=bus_to_remove,
+                                                distribute_slack=False)
+
+    # Run time series linear analysis on reduced grid
+    lin_ts_red = gce.LinearAnalysisTs(grid=red_grid, distributed_slack=False)
+    P_red = red_grid.get_Pbus_prof()
+    Flows_red = lin_ts_red.get_flows_ts(P=P_red)
+
+    # Compare flows on internal branches
+    Flows_orig_internal = Flows_orig[:, internal_branches]
+
+    # Check if dimensions match
+    assert (Flows_red.shape[1] == len(internal_branches))
+
+    # Compare flows
+    assert np.allclose(Flows_orig_internal, Flows_red, atol=1e-4)
+
+    # Check power balance for all time steps: total generation and demand should not change
+    all_time_indices = grid_.get_all_time_indices()
+    P_orig_gen_ts = get_total_generation_ts(grid_, time_indices=all_time_indices)
+    P_orig_load_ts = get_total_load_ts(grid_, time_indices=all_time_indices)
+    P_red_gen_ts = get_total_generation_ts(red_grid, time_indices=all_time_indices)
+    P_red_load_ts = get_total_load_ts(red_grid, time_indices=all_time_indices)
+
+    assert np.allclose(P_orig_gen_ts, P_red_gen_ts, atol=1e-4)
+    assert np.allclose(P_orig_load_ts, P_red_load_ts, atol=1e-4)
+
+
+def ptdf_projected_large_real_syst_snapshot():
+    """
+    Test to check if the snapshot reduction works well in a large grid
+    :return:
+    """
+
+    # fname = '/Users/josep/Documents/Grids/100h_nohvdc_noshunts.gridcal'
+    # fname = '/Users/josep/Documents/Grids/100h_nohvdc.gridcal'
+    fname = '/Users/josep/Documents/Grids/100h.gridcal'
+    grid = gce.open_file(filename=fname)
+
+    # First run basic linear analysis
+    flows_dr = gce.LinearAnalysisDriver(grid=grid, options=gce.LinearAnalysisOptions(distribute_slack=False))
+    flows_dr.run()
+    flows_branches = flows_dr.results.Sf
+
+    # Then reduce the network
+    bus_to_remove = []
+    bus_idx_dict = grid.get_bus_index_dict()
+    for bus in grid.buses:
+        if bus.Vnom < 400:
+            bus_remove_idx = bus_idx_dict[bus]
+            bus_to_remove.append(bus_remove_idx)
+
+    bus_to_remove = np.array(bus_to_remove)
+
+    # Determine internal branches before reduction
+    external, boundary, internal, boundary_branches, internal_branches = grid.get_reduction_sets(reduction_bus_indices=bus_to_remove)
+
+    red_grid, logger = ptdf_reduction_projected(grid=grid, reduction_bus_indices=bus_to_remove, distribute_slack=False)
+    flows_dr_red = gce.LinearAnalysisDriver(grid=red_grid, options=gce.LinearAnalysisOptions(distribute_slack=False))
+    flows_dr_red.run()
+    flows_branches_red = flows_dr_red.results.Sf
+
+    # Check that flows on remaining branches match
+    assert np.allclose(flows_branches[internal_branches], flows_branches_red, atol=1e-4)
+
+    # Check power balance: total generation and demand should not change
+    P_orig_gen_total = get_total_generation(grid)
+    P_orig_load_total = get_total_load(grid)
+    P_red_gen_total = get_total_generation(red_grid)
+    P_red_load_total = get_total_load(red_grid)
+    
+    assert abs(P_orig_gen_total - P_red_gen_total) < 1e-4, \
+        "Total generation should not change after reduction"
+    assert abs(P_orig_load_total - P_red_load_total) < 1e-4, \
+        "Total demand should not change after reduction"
+
+
+def ptdf_projected_large_real_syst_time_series():
+    """
+    Test to check if the time series reduction works well in a large grid
+    """
+    # fname = '/Users/josep/Documents/Grids/100h.gridcal'
+    fname = '/Users/josep/Documents/Grids/6000h.gridcal'
+
+    grid_ = gce.open_file(filename=fname)
+
+    # First run time series linear analysis
+    lin_ts = gce.LinearAnalysisTs(grid=grid_, distributed_slack=False)
+    P_orig = grid_.get_Pbus_prof()
+    Flows_orig = lin_ts.get_flows_ts(P=P_orig)
+
+    # Then reduce the network
+    bus_to_remove = list()
+    bus_idx_dict = grid_.get_bus_index_dict()
+    for bus in grid_.buses:
+        if bus.Vnom < 400:
+            bus_remove_idx = bus_idx_dict[bus]
+            bus_to_remove.append(bus_remove_idx)
+
+    # Get internal branches before reduction to compare later
+    (external, boundary,
+     internal, boundary_branches,
+     internal_branches) = grid_.get_reduction_sets(reduction_bus_indices=bus_to_remove)
+
+    red_grid, logger = ptdf_reduction_projected(grid=grid_,
+                                                reduction_bus_indices=bus_to_remove,
+                                                distribute_slack=False)
+
+    # Run time series linear analysis on reduced grid
+    lin_ts_red = gce.LinearAnalysisTs(grid=red_grid, distributed_slack=False)
+    P_red = red_grid.get_Pbus_prof()
+    Flows_red = lin_ts_red.get_flows_ts(P=P_red)
+
+    # Compare flows on internal branches
+    Flows_orig_internal = Flows_orig[:, internal_branches]
+
+    # Check if dimensions match
+    assert (Flows_red.shape[1] == len(internal_branches))
+
+    # Compare flows
+    assert np.allclose(Flows_orig_internal, Flows_red, atol=1e-4)
+
+    # Check power balance for all time steps: total generation and demand should not change
+    all_time_indices = grid_.get_all_time_indices()
+    P_orig_gen_ts = get_total_generation_ts(grid_, time_indices=all_time_indices)
+    P_orig_load_ts = get_total_load_ts(grid_, time_indices=all_time_indices)
+    P_red_gen_ts = get_total_generation_ts(red_grid, time_indices=all_time_indices)
+    P_red_load_ts = get_total_load_ts(red_grid, time_indices=all_time_indices)
+
+    assert np.allclose(P_orig_gen_ts, P_red_gen_ts, atol=1e-4)
+    assert np.allclose(P_orig_load_ts, P_red_load_ts, atol=1e-4)
+
+
 if __name__ == '__main__':
     # test_ward_reduction()
     # test_ptdf_projected_14_reduction()
@@ -654,4 +1022,5 @@ if __name__ == '__main__':
     # test_ptdf_projected_slack_remove()
     # test_ptdf_projected_ts_slack_remove()
     # test_ptdf_projected_ts_gb_full()
-    test_ptdf_projected_ts_simple_ree()
+    # ptdf_projected_large_real_syst_snapshot()
+    ptdf_projected_large_real_syst_time_series()

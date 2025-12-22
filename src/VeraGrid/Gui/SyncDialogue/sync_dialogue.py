@@ -6,7 +6,7 @@
 import sys
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
-from VeraGrid.Gui.SyncDialogue.gui import Ui_Dialog
+from VeraGrid.Gui.SyncDialogue.sync_gui import Ui_Dialog
 from VeraGrid.Session.synchronization_driver import get_issues_tree_view_model, FileSyncThread
 
 

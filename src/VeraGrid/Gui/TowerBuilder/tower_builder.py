@@ -21,7 +21,7 @@ from PySide6.QtWidgets import (QApplication, QComboBox, QDialog, QDoubleSpinBox,
     QSplitter, QTableView, QVBoxLayout, QWidget)
 
 from VeraGrid.Gui.Widgets.matplotlibwidget import MatplotlibWidget
-from .icons_rc import *
+from VeraGrid.Gui.Icons.icons_rc import *
 
 class Ui_TowerBuilderDialog(object):
     def setupUi(self, TowerBuilderDialog):

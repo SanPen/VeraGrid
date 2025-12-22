@@ -73,17 +73,15 @@ class LinearAnalysisTimeSeriesDriver(TimeSeriesDriverTemplate):
         self.tic()
         self.__cancel__ = False
         self.report_text('Computing TS linear analysis...')
-        lin_ts = LinearAnalysisTs(
-            grid=self.grid,
-            distributed_slack=self.options.distribute_slack,
-            correct_values=self.options.correct_values,
-            time_indices=self.time_indices
-        )
+        lin_ts = LinearAnalysisTs(grid=self.grid,
+                                  distributed_slack=self.options.distribute_slack,
+                                  correct_values=self.options.correct_values,
+                                  time_indices=self.time_indices)
 
         self.report_text('Computing flows...')
 
         if self.simplified_compilation:
-            # Theoretically equivallent but cannot be ensured 100%
+            # Theoretically equivalent but cannot be ensured 100%
             self.results.S = self.grid.get_Pbus_prof(apply_active=True)[self.time_indices]
             self.results.Sf = lin_ts.get_flows_ts(P=self.results.S,
                                                   progress_func=self.report_progress,
@@ -99,7 +97,7 @@ class LinearAnalysisTimeSeriesDriver(TimeSeriesDriverTemplate):
                                                                     opf_results=self.opf_time_series_results,
                                                                     logger=self.logger)
 
-                driver_ = LinearAnalysis(
+                lin = LinearAnalysis(
                     nc=nc,
                     distributed_slack=self.options.distribute_slack,
                     correct_values=self.options.correct_values,
@@ -107,7 +105,7 @@ class LinearAnalysisTimeSeriesDriver(TimeSeriesDriverTemplate):
 
                 Sbus = nc.get_power_injections_pu()
                 self.results.S[it, :] = Sbus * nc.Sbase
-                self.results.Sf[it, :] = driver_.get_flows(Sbus=Sbus) * nc.Sbase
+                self.results.Sf[it, :] = lin.get_flows(Sbus=Sbus) * nc.Sbase
 
         rates = self.grid.get_branch_rates()
         self.results.loading = self.results.Sf.real / (rates + 1e-9)

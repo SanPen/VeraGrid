@@ -65,7 +65,7 @@
       <item>
        <widget class="QComboBox" name="busModeComboBox">
         <property name="placeholderText">
-         <string>Buses</string>
+         <string>Reduce / Keep</string>
         </property>
        </widget>
       </item>
@@ -90,12 +90,30 @@
        </spacer>
       </item>
       <item>
+       <widget class="QPushButton" name="copyIndicesButton">
+        <property name="toolTip">
+         <string>Copy the reduction indices as a list</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="../Main/icons.qrc">
+          <normaloff>:/Icons/icons/copy.png</normaloff>:/Icons/icons/copy.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="reduceButton">
         <property name="toolTip">
-         <string>Aply the selected changes</string>
+         <string>Reduce the grid using the selected method</string>
         </property>
         <property name="text">
          <string>Reduce</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../Main/icons.qrc">
+          <normaloff>:/Icons/icons/grid_reduction.png</normaloff>:/Icons/icons/grid_reduction.png</iconset>
         </property>
        </widget>
       </item>
@@ -104,6 +122,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../Main/icons.qrc"/>
+ </resources>
  <connections/>
 </ui>

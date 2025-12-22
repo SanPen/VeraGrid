@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'block_data_dialogue.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.7.2
+## Created by: Qt User Interface Compiler version 6.9.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -39,23 +39,23 @@ class Ui_Dialog(object):
         self.verticalLayout_7.setContentsMargins(-1, 8, -1, -1)
         self.datalistWidget = QListWidget(self.frame_8)
         brush = QBrush(QColor(64, 191, 83, 255))
-        brush.setStyle(Qt.NoBrush)
+        brush.setStyle(Qt.BrushStyle.NoBrush)
         __qlistwidgetitem = QListWidgetItem(self.datalistWidget)
         __qlistwidgetitem.setForeground(brush);
         brush1 = QBrush(QColor(64, 191, 83, 255))
-        brush1.setStyle(Qt.NoBrush)
+        brush1.setStyle(Qt.BrushStyle.NoBrush)
         __qlistwidgetitem1 = QListWidgetItem(self.datalistWidget)
         __qlistwidgetitem1.setForeground(brush1);
         brush2 = QBrush(QColor(26, 95, 180, 255))
-        brush2.setStyle(Qt.NoBrush)
+        brush2.setStyle(Qt.BrushStyle.NoBrush)
         __qlistwidgetitem2 = QListWidgetItem(self.datalistWidget)
         __qlistwidgetitem2.setForeground(brush2);
         brush3 = QBrush(QColor(26, 95, 180, 255))
-        brush3.setStyle(Qt.NoBrush)
+        brush3.setStyle(Qt.BrushStyle.NoBrush)
         __qlistwidgetitem3 = QListWidgetItem(self.datalistWidget)
         __qlistwidgetitem3.setForeground(brush3);
         brush4 = QBrush(QColor(255, 120, 0, 255))
-        brush4.setStyle(Qt.NoBrush)
+        brush4.setStyle(Qt.BrushStyle.NoBrush)
         __qlistwidgetitem4 = QListWidgetItem(self.datalistWidget)
         __qlistwidgetitem4.setForeground(brush4);
         self.datalistWidget.setObjectName(u"datalistWidget")

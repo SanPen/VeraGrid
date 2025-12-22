@@ -6,7 +6,7 @@ import sys
 import numpy as np
 from PySide6 import QtWidgets
 
-from VeraGrid.Gui.SigmaAnalysis.gui import Ui_MainWindow
+from VeraGrid.Gui.SigmaAnalysis.sigma_analysis_gui import Ui_MainWindow
 from VeraGrid.Gui.results_model import ResultsModel
 from VeraGridEngine.enumerations import ResultTypes
 from VeraGridEngine.Simulations.SigmaAnalysis.sigma_analysis_driver import SigmaAnalysisResults

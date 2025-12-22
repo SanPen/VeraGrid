@@ -410,9 +410,10 @@ class LagVar(Var):
             res = x0 - dt * dx0[0]
 
         for i in range(1, diff_order + 1):
-            val = (diff_order + 1 - i) * (dt ** (i)) * ((-1) ** (i)) * dx0[i - 1]
+            val = (diff_order + 1 - i) * (dt ** i) * ((-1) ** i) * dx0[i - 1]
             res += val
         return res.eval(dt=h)
+
 
 @dataclass(frozen=True)
 class DiffVar(Var):
@@ -489,7 +490,7 @@ class DiffVar(Var):
         # function that initializes the lag of the same order for the same original_var
         diff_order = self.diff_order
         central_difference = True
-
+        res = Expr()
         for i in range(diff_order):
             res += (dt ** (i + 1)) * (-1) ** (i + 1) * dx0[i]
         return res.eval()
@@ -1234,8 +1235,8 @@ def symbolic_to_string(expr: Expr) -> str:
     elif isinstance(expr, Func):
         return f"{expr.name}({symbolic_to_string(expr.arg)})"
     elif isinstance(expr, Comparison):
-        left = symbolic_to_string(expr.left)
-        right = symbolic_to_string(expr.right)
+        left = symbolic_to_string(expr.lhs)
+        right = symbolic_to_string(expr.rhs)
         return f"({left} {expr.op} {right})"
     else:
         raise TypeError(f"Unsupported expression type: {type(expr)}")

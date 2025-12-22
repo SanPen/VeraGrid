@@ -1,7 +1,0 @@
-<RCC>
-  <qresource prefix="Icons">
-    <file>icons/automatic_layout.png</file>
-    <file>icons/color_grid.png</file>
-    <file>icons/run_cascade_step.png</file>
-  </qresource>
-</RCC>

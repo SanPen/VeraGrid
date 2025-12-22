@@ -1146,8 +1146,7 @@ def data_to_grid_object(data: Dict[str, pd.DataFrame],
                 Vnom = bus_obj.Vnom,
                 xpos = bus_obj.x,
                 ypos = bus_obj.y + 20,
-                is_dc = True,
-                is_slack= True
+                is_dc = True
             )
             circuit.add_bus(bus_dc)
 
@@ -1156,20 +1155,17 @@ def data_to_grid_object(data: Dict[str, pd.DataFrame],
                 bus_to = bus_obj,
                 name = bus_obj.name,
                 rate = static_generators['sgn'][i],
-                kdp=-0.05,
-                alpha1=0.0001,
-                alpha2=0.015,
-                alpha3=0.2,
-                control1 = ConverterControlType.Pac,
+                control1 = ConverterControlType.Vm_dc,
                 control2 = ConverterControlType.Qac,
-                control1_val = static_generators['pgini'][i] * num_machines,
-                control2_val = static_generators['qgini'][i] * num_machines,
-                control1_dev = None,
-                control2_dev = None,
+                control1_val = 1.0,
+                control2_val = -1 * static_generators['qgini'][i] * num_machines,
+                alpha1=0.0,
+                alpha2=0.0,
+                alpha3=0.0,
             )
             circuit.add_vsc(vsc)
 
-            gen = dev.Generator()
+            gen = dev.Generator(P = static_generators['pgini'][i] * num_machines)
             circuit.add_generator(bus=bus_dc, api_obj=gen)
 
         else:

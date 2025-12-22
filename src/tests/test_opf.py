@@ -306,7 +306,7 @@ def test_opf_hvdc_controls():
 
     # check that no error or warning is generated
     assert opf.logger.error_count() == 0
-    assert pf_free != pf_pset  # TODO: this one is failing
+    assert pf_free != pf_pset
     assert np.isclose(pf_pset2, 50, atol=1e-5)
 
 

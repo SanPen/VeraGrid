@@ -175,7 +175,7 @@ class NodalCapacityTimeSeriesDriver(TimeSeriesDriverTemplate):
         self.results.overloads = opf_vars.branch_vars.flow_slacks_pos - opf_vars.branch_vars.flow_slacks_neg
 
         self.results.loading = opf_vars.branch_vars.loading
-        self.results.phase_shift = opf_vars.branch_vars.tap_angles
+        self.results.tap_angle = opf_vars.branch_vars.tap_angles
 
         self.results.hvdc_Pf = opf_vars.hvdc_vars.flows
         self.results.hvdc_loading = opf_vars.hvdc_vars.loading
@@ -255,7 +255,7 @@ class NodalCapacityTimeSeriesDriver(TimeSeriesDriverTemplate):
             self.results.St[it, :] = res.St * Sbase
             self.results.overloads[it, :] = (res.sl_sf - res.sl_st) * Sbase
             self.results.loading[it, :] = res.loading
-            self.results.phase_shift[it, :] = res.tap_phase
+            self.results.tap_angle[it, :] = res.tap_phase
 
             self.results.hvdc_Pf[it, :] = res.hvdc_Pf
             self.results.hvdc_loading[it, :] = res.hvdc_loading

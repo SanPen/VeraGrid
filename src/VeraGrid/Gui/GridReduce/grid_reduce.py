@@ -6,6 +6,7 @@ from __future__ import annotations
 
 from typing import Set
 from PySide6 import QtWidgets
+from PySide6.QtGui import QClipboard
 import numpy as np
 from VeraGrid.Gui.GridReduce.grid_reduce_gui import Ui_ReduceDialog
 from VeraGrid.Gui.general_dialogues import LogsDialogue
@@ -15,8 +16,7 @@ from VeraGrid.Session.session import SimulationSession
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction import di_shi_reduction
-from VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction import ptdf_reduction, ptdf_reduction_projected, \
-    ptdf_reduction_ree_bad, ptdf_reduction_ree_less_bad
+from VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction import ptdf_reduction, ptdf_reduction_projected
 from VeraGridEngine.Topology.GridReduction.ward_equivalents import ward_standard_reduction
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.enumerations import GridReductionMethod, BusReductionMethod
@@ -65,6 +65,7 @@ class GridReduceDialogue(QtWidgets.QDialog):
         self.did_reduce = False
 
         self.ui.reduceButton.clicked.connect(self.reduce_grid)
+        self.ui.copyIndicesButton.clicked.connect(self.copy_indices)
 
     def reduce_grid(self) -> None:
         """
@@ -195,3 +196,11 @@ class GridReduceDialogue(QtWidgets.QDialog):
 
         # exit
         self.close()
+
+    def copy_indices(self):
+        """
+        Copy the bus indices to the clipboard
+        """
+        tsv_text = ", ".join(list(self._selected_buses_set))
+
+        QtWidgets.QApplication.clipboard().setText(tsv_text, QClipboard.Mode.Clipboard)

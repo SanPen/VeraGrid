@@ -631,11 +631,11 @@ def expandVoltage3ph(V0: CxVec) -> CxVec:
     n = len(V0)
     idx4 = np.array([0, 1, 2, 3])
 
-    magnitudes_slack = np.array([-1 + 1e-10, 0, 0, 0])
+    magnitudes_slack = np.array([-1 + 1e-5, 0, 0, 0])
     angles_slack = np.array([0, 0, -2 * np.pi / 3, 2 * np.pi / 3])
 
-    magnitudes = np.array([-1 + 1e-5, 0, 0, 0])
-    angles = np.array([1e-5 * np.pi / 180, 0, -2 * np.pi / 3, 2 * np.pi / 3])
+    magnitudes = np.array([-1 + 1e-4, 0, 0, 0])
+    angles = np.array([10 * np.pi / 180, 0, -2 * np.pi / 3, 2 * np.pi / 3])
 
     Vm = np.abs(V0)
     Va = np.angle(V0)

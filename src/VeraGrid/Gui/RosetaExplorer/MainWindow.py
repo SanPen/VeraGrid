@@ -22,7 +22,7 @@ from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QGridLayout,
     QProgressBar, QPushButton, QSizePolicy, QSpacerItem,
     QSplitter, QTabWidget, QTableView, QTreeView,
     QVBoxLayout, QWidget)
-from .icons_rc import *
+from VeraGrid.Gui.Icons.icons_rc import *
 
 class Ui_mainWindow(object):
     def setupUi(self, mainWindow):

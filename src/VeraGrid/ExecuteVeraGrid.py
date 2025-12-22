@@ -40,8 +40,6 @@ elif os.name == "posix" or sys.platform.startswith("linux"):
             print(f"Could not set process name: {e}")
 
 
-
-
 if __name__ == "__main__":
     print('Loading VeraGrid...')
     # check_all_svgs()

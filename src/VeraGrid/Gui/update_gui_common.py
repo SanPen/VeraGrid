@@ -21,7 +21,7 @@ def correct_file_imports(filename):
         file_data = file.read()
 
     # Replace the target string
-    file_data = file_data.replace('import icons_rc', 'from .icons_rc import *')
+    file_data = file_data.replace('import icons_rc', 'from VeraGrid.Gui.Icons.icons_rc import *')
     file_data = file_data.replace('from .matplotlibwidget import MatplotlibWidget', 'from VeraGrid.Gui.Widgets.matplotlibwidget import MatplotlibWidget')
     file_data = file_data.replace('from qrangeslider3 import QRangeSlider3', 'from VeraGrid.Gui.Widgets.custom_qrangeslider import QRangeSlider3')
     # file_data = file_data.replace('PySide6', 'qtpy')

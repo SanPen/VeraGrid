@@ -6,7 +6,7 @@ import sys
 from PySide6 import QtWidgets
 from typing import List
 
-from VeraGrid.Gui.ContingencyPlanner.gui import Ui_MainWindow
+from VeraGrid.Gui.ContingencyPlanner.contingency_planner_gui import Ui_MainWindow
 import VeraGridEngine.Devices as dev
 from VeraGridEngine.enumerations import DeviceType
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit

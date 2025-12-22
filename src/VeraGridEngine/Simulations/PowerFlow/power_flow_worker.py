@@ -13,6 +13,7 @@ from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowRes
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import NumericPowerFlowResults
 from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_basic_formulation import PfBasicFormulation
+from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_full_acdc_with_negative_poles import PfAcDcWithNegativePoles
 from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_generalized_formulation import PfGeneralizedFormulation
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.newton_raphson_fx import newton_raphson_fx
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.powell_fx import powell_fx
@@ -173,7 +174,7 @@ def __solve_island_complete_support(nc: NumericalCircuit,
 
             if solver_type == SolverType.LM:
 
-                problem = PfGeneralizedFormulation(V0=final_solution.V,
+                problem = PfAcDcWithNegativePoles(V0=final_solution.V,
                                                    S0=S0,
                                                    I0=I0,
                                                    Y0=Y0,
@@ -191,7 +192,7 @@ def __solve_island_complete_support(nc: NumericalCircuit,
 
             elif solver_type == SolverType.NR:
 
-                problem = PfGeneralizedFormulation(V0=final_solution.V,
+                problem = PfAcDcWithNegativePoles(V0=final_solution.V,
                                                    S0=S0,
                                                    I0=I0,
                                                    Y0=Y0,
@@ -210,7 +211,7 @@ def __solve_island_complete_support(nc: NumericalCircuit,
 
             elif solver_type == SolverType.PowellDogLeg:
 
-                problem = PfGeneralizedFormulation(V0=final_solution.V,
+                problem = PfAcDcWithNegativePoles(V0=final_solution.V,
                                                    S0=S0,
                                                    I0=I0,
                                                    Y0=Y0,

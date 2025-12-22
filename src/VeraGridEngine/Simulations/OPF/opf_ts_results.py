@@ -96,7 +96,8 @@ class OptimalPowerFlowTimeSeriesResults(ResultsTemplate):
                                                                                 ResultTypes.BranchLoading,
                                                                                 ResultTypes.BranchOverloads,
                                                                                 ResultTypes.BranchOverloadsCost,
-                                                                                ResultTypes.BranchTapAngle],
+                                                                                ResultTypes.BranchTapAngle,
+                                                                                ResultTypes.BranchTapModule],
 
                                                     ResultTypes.ReportsResults: [ResultTypes.ContingencyFlowsReport],
 
@@ -169,7 +170,8 @@ class OptimalPowerFlowTimeSeriesResults(ResultsTemplate):
         self.St = np.zeros((nt, m), dtype=complex)
         self.loading = np.zeros((nt, m), dtype=float)
         self.losses = np.zeros((nt, m), dtype=float)
-        self.phase_shift = np.zeros((nt, m), dtype=float)
+        self.tap_angle = np.zeros((nt, m), dtype=float)
+        self.tap_module = np.ones((nt, m), dtype=float)
         self.overloads = np.zeros((nt, m), dtype=float)
         self.overloads_cost = np.zeros((nt, m), dtype=float)
         self.rates = np.zeros(m)
@@ -241,7 +243,8 @@ class OptimalPowerFlowTimeSeriesResults(ResultsTemplate):
         self.register(name='St', tpe=CxMat)
         self.register(name='loading', tpe=Mat)
         self.register(name='losses', tpe=Mat)
-        self.register(name='phase_shift', tpe=Mat)
+        self.register(name='tap_angle', tpe=Mat)
+        self.register(name='tap_module', tpe=Mat)
         self.register(name='overloads', tpe=Mat)
         self.register(name='overloads_cost', tpe=Mat)
         self.register(name='rates', tpe=Vec)
@@ -285,6 +288,14 @@ class OptimalPowerFlowTimeSeriesResults(ResultsTemplate):
         self.register(name='power_by_technology', tpe=Mat)
 
         self.register(name='converged', tpe=BoolVec)
+
+    @property
+    def phase_shift(self) -> Mat:
+        """
+        Cover for old API
+        :return: tap angles in rad
+        """
+        return self.tap_angle
 
     def apply_new_time_series_rates(self, nc: NumericalCircuit):
         """
@@ -432,7 +443,19 @@ class OptimalPowerFlowTimeSeriesResults(ResultsTemplate):
 
         elif result_type == ResultTypes.BranchTapAngle:
 
-            return ResultsTable(data=np.rad2deg(self.phase_shift),
+            return ResultsTable(data=np.rad2deg(self.tap_angle),
+                                index=pd.to_datetime(self.time_array),
+                                idx_device_type=DeviceType.TimeDevice,
+                                columns=self.branch_names,
+                                cols_device_type=DeviceType.BranchDevice,
+                                title=str(result_type.value),
+                                ylabel='(deg)',
+                                xlabel='',
+                                units='(deg)')
+
+        elif result_type == ResultTypes.BranchTapModule:
+
+            return ResultsTable(data=np.rad2deg(self.tap_module),
                                 index=pd.to_datetime(self.time_array),
                                 idx_device_type=DeviceType.TimeDevice,
                                 columns=self.branch_names,

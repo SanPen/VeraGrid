@@ -20,7 +20,7 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDialog,
     QHeaderView, QLabel, QListView, QPushButton,
     QSizePolicy, QSlider, QSpacerItem, QSplitter,
     QTableView, QVBoxLayout, QWidget)
-from .icons_rc import *
+from VeraGrid.Gui.Icons.icons_rc import *
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):

@@ -78,7 +78,8 @@ class OptimalPowerFlowResults(ResultsTemplate):
                                                                                 ResultTypes.BranchLosses,
                                                                                 ResultTypes.BranchOverloads,
                                                                                 ResultTypes.BranchOverloadsCost,
-                                                                                ResultTypes.BranchTapAngle],
+                                                                                ResultTypes.BranchTapAngle,
+                                                                                ResultTypes.BranchTapModule],
 
                                                     ResultTypes.HvdcResults: [ResultTypes.HvdcPowerFrom,
                                                                               ResultTypes.HvdcLoading],
@@ -140,7 +141,8 @@ class OptimalPowerFlowResults(ResultsTemplate):
         self.overloads_cost = np.zeros(m, dtype=float)
         self.loading = np.zeros(m, dtype=float)
         self.losses = np.zeros(m, dtype=float)
-        self.phase_shift = np.zeros(m, dtype=float)
+        self.tap_angle = np.zeros(m, dtype=float)
+        self.tap_module = np.ones(m, dtype=float)
         self.rates = np.zeros(m, dtype=float)
         self.contingency_rates = np.zeros(m, dtype=float)
 
@@ -212,7 +214,8 @@ class OptimalPowerFlowResults(ResultsTemplate):
         self.register(name='overloads_cost', tpe=Vec)
         self.register(name='loading', tpe=Vec)
         self.register(name='losses', tpe=Vec)
-        self.register(name='phase_shift', tpe=Vec)
+        self.register(name='tap_angle', tpe=Vec)
+        self.register(name='tap_module', tpe=Vec)
         self.register(name='rates', tpe=Vec)
         self.register(name='contingency_rates', tpe=Vec)
 
@@ -256,6 +259,14 @@ class OptimalPowerFlowResults(ResultsTemplate):
 
         self.plot_bars_limit = 100
 
+    @property
+    def phase_shift(self) -> Vec:
+        """
+        Cover for old API
+        :return: tap angles in rad
+        """
+        return self.tap_angle
+
     def get_bus_df(self) -> pd.DataFrame:
         """
         Get a DataFrame with the buses results
@@ -284,13 +295,13 @@ class OptimalPowerFlowResults(ResultsTemplate):
                                       'Pt': self.St.real,
                                       'Qf': self.Sf.imag,
                                       'Qt': self.St.imag,
-                                      'Tap angle': self.phase_shift,
+                                      'Tap angle': self.tap_angle,
                                       'loading': self.loading.real * 100.0},
                                 index=self.branch_names)
         else:
             return pd.DataFrame(data={'Pf': self.Sf.real,
                                       'Pt': self.St.real,
-                                      'Tap angle': self.phase_shift,
+                                      'Tap angle': self.tap_angle,
                                       'loading': self.loading.real * 100.0},
                                 index=self.branch_names)
 
@@ -480,7 +491,19 @@ class OptimalPowerFlowResults(ResultsTemplate):
 
         elif result_type == ResultTypes.BranchTapAngle:
 
-            return ResultsTable(data=np.rad2deg(self.phase_shift),
+            return ResultsTable(data=np.rad2deg(self.tap_angle),
+                                index=self.branch_names,
+                                idx_device_type=DeviceType.BranchDevice,
+                                columns=[result_type.value],
+                                cols_device_type=DeviceType.NoDevice,
+                                title=str(result_type.value),
+                                ylabel='(deg)',
+                                xlabel='',
+                                units='(deg)')
+
+        elif result_type == ResultTypes.BranchTapModule:
+
+            return ResultsTable(data=np.rad2deg(self.tap_module),
                                 index=self.branch_names,
                                 idx_device_type=DeviceType.BranchDevice,
                                 columns=[result_type.value],

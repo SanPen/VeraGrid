@@ -401,13 +401,15 @@ class LinearAnalysis:
 
         self.logger: Logger = logger
 
-        islands: List[NumericalCircuit] = nc.split_into_islands()
+        self.islands: List[NumericalCircuit] = nc.split_into_islands()
         n_br = nc.nbr
         n_bus = nc.nbus
         n_hvdc = nc.hvdc_data.nelm
         n_vsc = nc.vsc_data.nelm
 
         self.PTDF = np.zeros((n_br, n_bus))
+        self.PTDF_by_island: List[Mat] = list()
+
         self.LODF = np.zeros((n_br, n_br))
 
         self.HvdcDF: Mat = np.zeros((n_br, n_hvdc))
@@ -417,8 +419,8 @@ class LinearAnalysis:
         self.VscODF: Mat = np.zeros((n_br, n_vsc))
 
         # compute the PTDF per islands
-        if len(islands) > 0:
-            for n_island, island in enumerate(islands):
+        if len(self.islands) > 0:
+            for n_island, island in enumerate(self.islands):
 
                 indices = island.get_simulation_indices()
 
@@ -441,6 +443,9 @@ class LinearAnalysis:
                                                     Bf=adml.Bf,
                                                     no_slack=indices.no_slack,
                                                     distribute_slack=distributed_slack)
+
+                        # store maybe for later
+                        self.PTDF_by_island.append(ptdf_island)
 
                         # assign the PTDF to the main PTDF matrix
                         self.PTDF[np.ix_(island.passive_branch_data.original_idx,
@@ -1023,7 +1028,7 @@ class LinearAnalysisTs:
     """
 
     def __init__(self, grid: MultiCircuit,
-                 distributed_slack: bool = True,
+                 distributed_slack: bool = False,
                  correct_values: bool = False,
                  time_indices: IntVec | None = None):
         """

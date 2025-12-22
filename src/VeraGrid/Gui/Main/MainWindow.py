@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MainWindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.3
+## Created by: Qt User Interface Compiler version 6.9.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -25,7 +25,8 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QComb
     QSpacerItem, QSpinBox, QSplitter, QTabWidget,
     QTableView, QTextEdit, QToolBar, QTreeView,
     QVBoxLayout, QWidget)
-from .icons_rc import *
+from VeraGrid.Gui.Icons.icons_rc import *
+from VeraGrid.Gui.Icons.icons_rc import *
 
 class Ui_mainWindow(object):
     def setupUi(self, mainWindow):
@@ -38,7 +39,7 @@ class Ui_mainWindow(object):
         font.setPointSize(10)
         mainWindow.setFont(font)
         icon = QIcon()
-        icon.addFile(u":/Program icon/VeraGrid_icon.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        icon.addFile(u":/Program icon/icons/VeraGrid_icon.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         mainWindow.setWindowIcon(icon)
         mainWindow.setAutoFillBackground(False)
         mainWindow.setIconSize(QSize(48, 48))

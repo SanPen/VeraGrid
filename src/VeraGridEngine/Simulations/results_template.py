@@ -517,24 +517,4 @@ class ResultsTemplate:
                     setattr(self, res_prop.name, array)
 
 
-class DriverToSave:
-    """
-    Wrapper to save a driver
-    """
 
-    def __init__(self,
-                 name: str,
-                 tpe: SimulationTypes,
-                 results: ResultsTemplate,
-                 logger: Logger):
-        """
-
-        :param name:
-        :param tpe:
-        :param results:
-        :param logger:
-        """
-        self.name = name
-        self.tpe: SimulationTypes = tpe
-        self.results: ResultsTemplate = results
-        self.logger: Logger = logger

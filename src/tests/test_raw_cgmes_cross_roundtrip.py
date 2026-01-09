@@ -10,7 +10,7 @@ import numpy as np
 from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 from VeraGridEngine.IO.file_handler import FileSavingOptions, FileOpenOptions, FileOpen, FileSave
 from VeraGridEngine.Simulations import PowerFlowOptions
-from VeraGridEngine.Simulations.results_template import DriverToSave
+from VeraGridEngine.Simulations.driver_template import DriverToSave
 from VeraGridEngine.enumerations import CGMESVersions, SolverType, SimulationTypes
 from VeraGridEngine.basic_structures import Logger
 import VeraGridEngine.api as gce

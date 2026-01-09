@@ -189,7 +189,6 @@ class InjectionTemplateGraphicItem(GenericDiagramWidget, QGraphicsItemGroup):
 
         deleted, delete_from_db_final = self.editor.delete_with_dialogue(selected=[self], delete_from_db=False)
 
-
     def plot(self):
         """
         Plot API objects profiles
@@ -213,6 +212,13 @@ class InjectionTemplateGraphicItem(GenericDiagramWidget, QGraphicsItemGroup):
         Change the generator bus
         """
         self._editor.change_injection_bus(injection_graphics=self)
+
+    def move_behind_converter(self):
+        """
+        Create a DC bus and a converter and move the injection there
+        :return:
+        """
+        self._editor.move_behind_converter(injection_graphics=self)
 
     def rescale(self, scale: float = 1.0):
         """
@@ -239,6 +245,11 @@ class InjectionTemplateGraphicItem(GenericDiagramWidget, QGraphicsItemGroup):
                        text="Change bus",
                        function_ptr=self.change_bus,
                        icon_path=":/Icons/icons/move_bus.png")
+
+        add_menu_entry(menu=menu,
+                       text="Move behind converter",
+                       function_ptr=self.move_behind_converter,
+                       icon_path=":/Icons/icons/to_vsc.png")
 
         add_menu_entry(menu=menu,
                        text="Plot profiles",

@@ -147,18 +147,6 @@ class DiagramsMain(CompiledArraysMain):
 
         # map tile sources
         self.tile_sources = [
-            # Carto layers:
-            # light_all,
-            # dark_all,
-            # light_nolabels,
-            # light_only_labels,
-            # dark_nolabels,
-            # dark_only_labels,
-            # rastertiles/voyager,
-            # rastertiles/voyager_nolabels,
-            # rastertiles/voyager_only_labels,
-            # rastertiles/voyager_labels_under
-
             CartoDbTiles(
                 name='Carto voyager',
                 tiles_dir=os.path.join(tiles_path(), 'carto_db_voyager'),
@@ -303,6 +291,10 @@ class DiagramsMain(CompiledArraysMain):
         # check boxes
         self.ui.branch_width_based_on_flow_checkBox.clicked.connect(self.set_diagrams_size_constraints)
         self.ui.use_schematic_objects_color_checkBox.clicked.connect(self.re_colour_schematic)
+
+        # TreeView
+        self.ui.combinationsTreeView.clicked.connect(self.combinations_tree_clicked)
+
         # context menu
         self.ui.diagramsListView.customContextMenuRequested.connect(self.show_diagrams_context_menu)
 
@@ -566,7 +558,7 @@ class DiagramsMain(CompiledArraysMain):
                 hvdc_losses=results.losses_hvdc,
                 hvdc_loading=results.loading_hvdc,
                 hvdc_active=hvdc_active,
-                vsc_Pf=results.Pf_vsc,
+                vsc_Pf=results.Pfp_vsc,
                 vsc_PtA=results.St_vsc_A.real,
                 vsc_PtB=results.St_vsc_B.real,
                 vsc_PtC=results.St_vsc_C.real,
@@ -600,7 +592,7 @@ class DiagramsMain(CompiledArraysMain):
                 hvdc_losses=results.losses_hvdc,
                 hvdc_loading=results.loading_hvdc,
                 hvdc_active=hvdc_active,
-                vsc_Pf=results.Pf_vsc,
+                vsc_Pf=results.Pfp_vsc,
                 vsc_Pt=results.St_vsc.real,
                 vsc_Qt=results.St_vsc.imag,
                 vsc_losses=results.losses_vsc,
@@ -656,7 +648,7 @@ class DiagramsMain(CompiledArraysMain):
             hvdc_losses=results.losses_hvdc,
             hvdc_loading=results.loading_hvdc,
             hvdc_active=hvdc_active,
-            vsc_Pf=results.Pf_vsc,
+            vsc_Pf=results.Pfp_vsc,
             vsc_Pt=results.St_vsc.real,
             vsc_Qt=results.St_vsc.imag,
             vsc_losses=results.losses_vsc,
@@ -814,7 +806,8 @@ class DiagramsMain(CompiledArraysMain):
                      min_branch_width: int = 2,
                      max_branch_width: int = 5,
                      min_bus_width: int = 2,
-                     max_bus_width: int = 5):
+                     max_bus_width: int = 5,
+                     sc_index: int = 0):
         """
 
         :param diagram_widget:
@@ -825,6 +818,7 @@ class DiagramsMain(CompiledArraysMain):
         :param max_branch_width:
         :param min_bus_width:
         :param max_bus_width:
+        :param sc_index:
         :return:
         """
         bus_active = self.circuit.get_bus_actives(t_idx=None)
@@ -832,19 +826,25 @@ class DiagramsMain(CompiledArraysMain):
         hvdc_active = self.circuit.get_hvdc_actives(t_idx=None)
         vsc_active = self.circuit.get_vsc_actives(t_idx=None)
 
-        return diagram_widget.colour_results(Sbus=results.Sbus1[:, 0],
+        return diagram_widget.colour_results(Sbus=results.Sbus1[:, sc_index],
                                              bus_active=bus_active,
-                                             Sf=results.Sf1[:, 0],
-                                             St=results.St1[:, 0],
-                                             voltages=results.voltage1[:, 0],
+                                             Sf=results.Sf1[:, sc_index],
+                                             St=results.St1[:, sc_index],
+                                             voltages=results.voltage1[:, sc_index],
                                              types=results.bus_types,
-                                             loadings=results.loading1[:, 0],
+                                             loadings=results.loading1[:, sc_index],
                                              br_active=br_active,
                                              hvdc_Pf=None,
                                              hvdc_Pt=None,
                                              hvdc_losses=None,
                                              hvdc_loading=None,
                                              hvdc_active=hvdc_active,
+                                             vsc_Pf=results.vsc_Pfp[:, sc_index],
+                                             vsc_Pt=results.vsc_St.real[:, sc_index],
+                                             vsc_Qt=results.vsc_St.imag[:, sc_index],
+                                             vsc_losses=results.vsc_losses[:, sc_index],
+                                             vsc_loading=results.vsc_loading[:, sc_index],
+                                             vsc_active=vsc_active,
                                              use_flow_based_width=use_flow_based_width,
                                              min_branch_width=min_branch_width,
                                              max_branch_width=max_branch_width,
@@ -3122,6 +3122,45 @@ class DiagramsMain(CompiledArraysMain):
         self.select_bus_dlg.exec()
 
         return self.select_bus_dlg.get_selected_buses()
+
+    def combinations_tree_clicked(self):
+        """
+        On combinations tree click
+        """
+        indices = self.ui.combinationsTreeView.selectedIndexes()
+
+        if len(indices) > 0:
+
+            diagram_widget = self.get_selected_diagram_widget()
+            use_flow_based_width = self.ui.branch_width_based_on_flow_checkBox.isChecked()
+            min_branch_width = self.ui.min_branch_size_spinBox.value()
+            max_branch_width = self.ui.max_branch_size_spinBox.value()
+            min_bus_width = self.ui.min_node_size_spinBox.value()
+            max_bus_width = self.ui.max_node_size_spinBox.value()
+            cmap_text = self.ui.palette_comboBox.currentText()
+            cmap = self.cmap_dict[cmap_text]
+
+            text = indices[0].data(role=QtCore.Qt.ItemDataRole.DisplayRole)
+            sel_idx = indices[0].row()
+            if self.ui.available_results_to_color_comboBox.currentIndex() > -1 and sel_idx > -1:
+                current_study = self.ui.available_results_to_color_comboBox.currentText()
+
+                if current_study == sim.ShortCircuitDriver.tpe.value:
+
+                    results: sim.ShortCircuitResults = self.session.get_results(SimulationTypes.ShortCircuit_run)
+                    self.sc_colouring(diagram_widget=diagram_widget,
+                                      results=results,
+                                      cmap=cmap,
+                                      use_flow_based_width=use_flow_based_width,
+                                      min_branch_width=min_branch_width,
+                                      max_branch_width=max_branch_width,
+                                      min_bus_width=min_bus_width,
+                                      max_bus_width=max_bus_width,
+                                      sc_index=sel_idx)
+
+        else:
+            #  no indices selected
+            pass
 
     def reset_diagram_coordinates(self):
         """

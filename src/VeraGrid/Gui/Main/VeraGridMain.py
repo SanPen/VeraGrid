@@ -168,7 +168,7 @@ def create_linux_desktop_entry(app_name: str, qrc_icon_path: str):
         Path to the icon inside the .qrc (e.g. ':/icons/app_icon.svg')
     """
     if not sys.platform.startswith("linux"):
-        print("[INFO] Not running on Linux, skipping .desktop creation.")
+        # print("[INFO] Not running on Linux, skipping .desktop creation.")
         return None
 
     # Extract icon from Qt resource to a real file

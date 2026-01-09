@@ -293,8 +293,8 @@ def create_single_bar_with_bypass_with_disconnectors(
         substation: dev.Substation,
         country: dev.Country = None,
         bar_by_segments: bool = False,
-        offset_x: int = 0,
-        offset_y: int = 0
+        offset_x: float = 0.0,
+        offset_y: float = 0.0
 ) -> Tuple[dev.VoltageLevel, List[dev.Bus], List[dev.Bus], float, float]:
     """
     Create a single-bar with by-pass voltage level
@@ -305,9 +305,9 @@ def create_single_bar_with_bypass_with_disconnectors(
     :param substation: Substation where it belongs
     :param country: Country (Optional)
     :param bar_by_segments: Split the bar into segments
-    :param offset_x: x ofsset (px)
-    :param offset_y: y ofsset (px)
-    :return: Voltage level object, list of busses where connections are allowed, offset x, offset y
+    :param offset_x: x offset (px)
+    :param offset_y: y offset (px)
+    :return: Voltage level object, list of buses where connections are allowed, offset x, offset y
     """
 
     vl = dev.VoltageLevel(name=name, substation=substation, Vnom=v_nom)
@@ -448,8 +448,8 @@ def create_single_bar_with_bypass(
         substation: dev.Substation,
         country: dev.Country = None,
         bar_by_segments: bool = False,
-        offset_x: int = 0,
-        offset_y: int = 0
+        offset_x: float = 0.0,
+        offset_y: float = 0.0
 ) -> Tuple[dev.VoltageLevel, List[dev.Bus], List[dev.Bus], float, float]:
     """
     Create a single-bar with by-pass voltage level
@@ -460,9 +460,9 @@ def create_single_bar_with_bypass(
     :param substation: Substation where it belongs
     :param country: Country (Optional)
     :param bar_by_segments: Split the bar into segments
-    :param offset_x: x ofsset (px)
-    :param offset_y: y ofsset (px)
-    :return: Voltage level object, list of busses where connections are allowed, offset x, offset y
+    :param offset_x: x offset (px)
+    :param offset_y: y offset (px)
+    :return: Voltage level object, list of buses where connections are allowed, offset x, offset y
     """
 
     vl = dev.VoltageLevel(name=name, substation=substation, Vnom=v_nom)

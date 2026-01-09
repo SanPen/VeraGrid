@@ -512,7 +512,7 @@ def test_power_flow_12bus_acdc() -> None:
     """
     Check that a transformer can regulate the voltage at a bus
     """
-    fname = os.path.join('data', 'grids', 'AC-DC with all and DCload.gridcal')
+    fname = os.path.join(SCRIPT_DIR, 'data', 'grids', 'AC-DC with all and DCload.gridcal')
 
     grid = gce.open_file(fname)
 
@@ -554,7 +554,7 @@ def test_power_flow_12bus_acdc() -> None:
 
         assert np.allclose(expected_v, solution.voltage, atol=1e-6)
 
-        assert np.allclose(grid.vsc_devices[0].control1_val, solution.Pf_vsc[0])
+        assert np.allclose(grid.vsc_devices[0].control1_val, solution.Pfp_vsc[0])
         assert np.allclose(grid.vsc_devices[0].control2_val, solution.St_vsc[0].imag)
 
         assert np.allclose(grid.vsc_devices[1].control1_val, abs(solution.voltage[3]))
@@ -563,7 +563,7 @@ def test_power_flow_12bus_acdc() -> None:
         assert np.allclose(grid.vsc_devices[2].control1_val, abs(solution.voltage[6]))
         assert np.allclose(grid.vsc_devices[2].control2_val, solution.St_vsc[2].imag)
 
-        assert np.allclose(grid.vsc_devices[3].control1_val, solution.Pf_vsc[3])
+        assert np.allclose(grid.vsc_devices[3].control1_val, solution.Pfp_vsc[3])
         assert np.allclose(grid.vsc_devices[3].control2_val, solution.St_vsc[3].imag)
 
         assert np.allclose(grid.transformers2w[2].vset, abs(solution.voltage[13]))
@@ -575,7 +575,7 @@ def test_vsc_current_limitation() -> None:
     """
     Full AC/DC Power Flow simulation with converter's current limitation and negative poles
     """
-    fname = os.path.join('data', 'grids', 'vsc_current_limitation.veragrid')
+    fname = os.path.join(SCRIPT_DIR, 'data', 'grids', 'vsc_current_limitation.veragrid')
 
     grid = gce.open_file(fname)
 

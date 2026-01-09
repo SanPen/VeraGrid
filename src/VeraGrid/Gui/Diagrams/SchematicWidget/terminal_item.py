@@ -263,7 +263,8 @@ class BarTerminalItem(BaseTerminal, QGraphicsRectItem):
         dx = w / (n + 1)
 
         for i, (connection, call_back) in enumerate(self._hosting_connections.items()):
-            call_back(value + QPointF(float(i + 1) * dx, h2))
+            if call_back is not None:
+                call_back(value + QPointF(float(i + 1) * dx, h2))
 
     def itemChange(self, change: QGraphicsItem.GraphicsItemChange, value: Any) -> Any:
         """
@@ -393,7 +394,8 @@ class RoundTerminalItem(BaseTerminal, QGraphicsEllipseItem):
         """
 
         for i, (connection, call_back) in enumerate(self._hosting_connections.items()):
-            call_back(value + self.center)
+            if call_back is not None:
+                call_back(value + self.center)
 
     def itemChange(self, change: QGraphicsItem.GraphicsItemChange, value: QPointF) -> QPointF:
         """

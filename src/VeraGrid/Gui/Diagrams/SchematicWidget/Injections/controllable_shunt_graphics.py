@@ -47,34 +47,13 @@ class ControllableShuntGraphicItem(InjectionTemplateGraphicItem):
         @param event:
         @return:
         """
-        menu = QtWidgets.QMenu()
+        menu = self.get_base_context_menu()
         menu.addSection("Controllable shunt")
-
-        add_menu_entry(menu=menu,
-                       text="Active",
-                       checkeable=True,
-                       checked_value=self.api_object.active,
-                       function_ptr=self.enable_disable_toggle)
 
         add_menu_entry(menu=menu,
                        text="Editor",
                        function_ptr=self.edit,
                        icon_path=":/Icons/icons/edit.png")
-
-        add_menu_entry(menu=menu,
-                       text="Plot profiles",
-                       function_ptr=self.plot,
-                       icon_path=":/Icons/icons/plot.png")
-
-        add_menu_entry(menu=menu,
-                       text="Delete",
-                       function_ptr=self.delete,
-                       icon_path=":/Icons/icons/delete3.png")
-
-        add_menu_entry(menu=menu,
-                       text="Change bus",
-                       function_ptr=self.change_bus,
-                       icon_path=":/Icons/icons/move_bus.png")
 
         menu.exec_(event.screenPos())
 

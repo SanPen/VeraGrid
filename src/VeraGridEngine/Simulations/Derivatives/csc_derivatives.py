@@ -35,7 +35,7 @@ def dSbus_dV_numba_sparse_csc(Yx: CxVec, Yp: IntVec, Yi: IntVec, V: CxVec, Vm: V
     diagIbus = diags(Ibus)
 
     dSbus_dVa = 1j * diagV * np.conj(diagIbus - Ybus * diagV)
-    dSbus_dVm = diagV * np.conj(Ybus * diagE) + np.conj(diagIbus) * diagE    
+    dSbus_dVm = diagV * np.conj(Ybus * diagE) + np.conj(diagIbus) * diagE
     """
 
     # init buffer vector
@@ -91,6 +91,75 @@ def dSbus_dV_numba_sparse_csc(Yx: CxVec, Yp: IntVec, Yi: IntVec, V: CxVec, Vm: V
 
             # 1j * diagV * conj(diagIbus - Ybus * diagV)
             dS_dVa_x[k] = (1j * V[i]) * np.conj(dS_dVa_x[k])
+
+    return dS_dVm_x, dS_dVa_x
+
+
+@njit(cache=True)
+def dSbus_dV_with_I0_numba_sparse_csc(Yx: CxVec, Yp: IntVec, Yi: IntVec,
+                                       V: CxVec, Vm: Vec, I0: CxVec) -> Tuple[CxVec, CxVec]:
+    """
+    Compute the power injection derivatives w.r.t the voltage module and angle,
+    including the contribution from Norton current injections I0.
+
+    The power balance is: dS = V * conj(Ybus @ V) - Sbus
+    where Sbus includes: V * conj(I0)
+
+    The I0 contribution to derivatives (diagonal only):
+        dS/dVa from -V*conj(I0): -j * V * conj(I0)
+        dS/dVm from -V*conj(I0): -E * conj(I0)  where E = V/|V|
+
+    :param Yx: data of Ybus in CSC format
+    :param Yp: indptr of Ybus in CSC format
+    :param Yi: indices of Ybus in CSC format
+    :param V: Voltages vector
+    :param Vm: voltage modules vector
+    :param I0: Norton current injections vector
+    :return: dS_dVm, dS_dVa data ordered in the CSC format to match the indices of Ybus
+    """
+    # init buffer vector
+    n = len(Yp) - 1
+    Ibus = np.zeros(n, dtype=complex128)
+    dS_dVm_x = Yx.copy()
+    dS_dVa_x = Yx.copy()
+    E = V.copy()
+
+    # pass 1: perform the matrix-vector products
+    for j in range(n):  # for each column ...
+
+        # compute the unitary vector of the voltage
+        if Vm[j] != 0.0:
+            E[j] /= Vm[j]
+
+        for k in range(Yp[j], Yp[j + 1]):  # for each row ...
+            i = Yi[k]
+            I = Yx[k] * V[j]
+            Ibus[i] += I
+            dS_dVm_x[k] = Yx[k] * E[j]
+            dS_dVa_x[k] = -I
+
+    # pass 2: finalize the operations
+    for j in range(n):  # for each column ...
+
+        buffer = np.conj(Ibus[j]) * E[j]
+
+        for k in range(Yp[j], Yp[j + 1]):  # for each row ...
+            i = Yi[k]
+            dS_dVm_x[k] = V[i] * np.conj(dS_dVm_x[k])
+
+            if j == i:
+                # diagonal elements - standard Ybus contribution
+                dS_dVa_x[k] += Ibus[j]
+                dS_dVm_x[k] += buffer
+
+            dS_dVa_x[k] = (1j * V[i]) * np.conj(dS_dVa_x[k])
+
+            if j == i:
+                # Add I0 contribution to diagonal elements
+                # d/dVa[-V * conj(I0)] = -j * V * conj(I0)
+                # d/dVm[-V * conj(I0)] = -E * conj(I0)
+                dS_dVa_x[k] += -1j * V[j] * np.conj(I0[j])
+                dS_dVm_x[k] += -E[j] * np.conj(I0[j])
 
     return dS_dVm_x, dS_dVa_x
 

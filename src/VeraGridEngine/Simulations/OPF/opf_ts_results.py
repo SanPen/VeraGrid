@@ -812,6 +812,7 @@ class OptimalPowerFlowTimeSeriesResults(ResultsTemplate):
                                 ylabel='(MW)',
                                 xlabel='',
                                 units='(MW)')
+
         elif result_type == ResultTypes.ContingencyFlowsReport:
             y = list()
             index = list()

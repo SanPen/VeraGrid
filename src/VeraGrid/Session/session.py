@@ -42,19 +42,18 @@ from VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver import Inp
 from VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver import (InvestmentsEvaluationDriver,
                                                                                             InvestmentsEvaluationResults)
 from VeraGridEngine.Simulations.SigmaAnalysis.sigma_analysis_driver import SigmaAnalysisResults
-from VeraGridEngine.Simulations.NTC.ntc_driver import OptimalNetTransferCapacityResults, \
-    OptimalNetTransferCapacityDriver
+from VeraGridEngine.Simulations.NTC.ntc_driver import (OptimalNetTransferCapacityResults,
+                                                       OptimalNetTransferCapacityDriver)
 from VeraGridEngine.Simulations.NodalCapacity.nodal_capacity_ts_driver import (NodalCapacityTimeSeriesDriver,
                                                                                NodalCapacityTimeSeriesResults)
 from VeraGridEngine.Simulations.Reliability.reliability_driver import ReliabilityStudyDriver, ReliabilityResults
-from VeraGridEngine.Simulations.StateEstimation.state_stimation_driver import StateEstimationDriver, \
-    StateEstimationResults
+from VeraGridEngine.Simulations.StateEstimation.state_stimation_driver import (StateEstimationDriver,
+                                                                               StateEstimationResults)
 from VeraGridEngine.Simulations.SmallSignalStability.small_signal_driver import (SmallSignalStabilityDriver,
                                                                                  SmallSignalStabilityResults)
 from VeraGridEngine.Simulations.Rms.rms_driver import RmsSimulationDriver, RmsResults
 from VeraGridEngine.Simulations.Topology.node_groups_driver import NodeGroupsDriver
-from VeraGridEngine.Simulations.driver_template import DriverTemplate
-from VeraGridEngine.Simulations.results_template import DriverToSave
+from VeraGridEngine.Simulations.driver_template import DriverTemplate, DriverToSave
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.enumerations import ResultTypes, SimulationTypes
 from VeraGridEngine.Simulations.driver_handler import create_driver
@@ -165,10 +164,7 @@ class SimulationSession:
         """
         data = list()
         for tpe, drv in self.drivers.items():
-            data.append(DriverToSave(name=self.name,
-                                     tpe=tpe,
-                                     results=drv.results,
-                                     logger=drv.logger))
+            data.append(drv.get_save_data())
         return data
 
     def run(self,

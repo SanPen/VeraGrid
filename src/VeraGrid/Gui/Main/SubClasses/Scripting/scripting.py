@@ -55,7 +55,7 @@ class ScriptingMain(IoMain):
         # actions ------------------------------------------------------------------------------------------------------
         self.ui.actionReset_console.triggered.connect(self.reset_console)
 
-        # button clicks -------------------------------------------------------------------------------------------------
+        # button clicks ------------------------------------------------------------------------------------------------
         self.ui.runSourceCodeButton.clicked.connect(self.run_source_code)
         self.ui.saveSourceCodeButton.clicked.connect(self.save_source_code)
         self.ui.clearSourceCodeButton.clicked.connect(self.clear_source_code)

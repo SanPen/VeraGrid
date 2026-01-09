@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
-
+from __future__ import annotations
 
 import numpy as np
 import pandas as pd
@@ -342,6 +342,16 @@ class Generator(GeneratorParent):
         :return:
         """
         return get_at(self.Pf, self.Pf_prof, t)
+
+    def get_Q_at(self, t: int | None) -> float:
+        """
+        :param t:
+        :return:
+        """
+        p = self.get_P_at(t)
+        pf = get_at(self.Pf, self.Pf_prof, t)
+
+        return p * np.sqrt(1.0 / (pf * pf) - 1.0)
 
     @property
     def Vset_prof(self) -> Profile:

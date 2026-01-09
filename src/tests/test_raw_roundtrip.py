@@ -6,7 +6,7 @@ import os
 
 from VeraGridEngine.enumerations import SimulationTypes
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.Simulations.results_template import DriverToSave
+from VeraGridEngine.Simulations.driver_template import DriverToSave
 from VeraGridEngine.IO.file_handler import FileSavingOptions, FileOpenOptions, FileSave
 import VeraGridEngine.api as gc
 

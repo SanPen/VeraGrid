@@ -21,6 +21,11 @@ from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_basic_formulation_3ph 
                                                                                         expand_magnitudes,
                                                                                         expand_indices_3ph,
                                                                                         expand3ph)
+from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
+from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
+from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_full_acdc_with_negative_poles import PfAcDcWithNegativePoles
+from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.newton_raphson_fx import newton_raphson_fx
+from VeraGridEngine.basic_structures import Logger
 
 
 def short_circuit_post_process(
@@ -121,46 +126,46 @@ def short_circuit_post_process_phases_abc(
     return Sfb_expanded, Stb_expanded, If_expanded, It_expanded, Vbranch_expanded, loading_expanded, losses_expanded
 
 
-def short_circuit_post_process_phases(
-        calculation_inputs: NumericalCircuit,
-        V: CxVec,
-        branch_rates: Vec,
-        Yf: sp.csc_matrix,
-        Yt: sp.csc_matrix
-) -> Tuple[CxVec, CxVec, CxVec, CxVec, CxVec, CxVec, CxVec]:
-    """
-    Compute the important results for short-circuits
-    :param calculation_inputs: instance of Circuit
-    :param V: Voltage solution array for the circuit buses
-    :param branch_rates: Array of branch ratings
-    :param Yf: From admittance matrix
-    :param Yt: To admittance matrix
-    :return: Sf (MVA), If (p.u.), loading (p.u.), losses (MVA), Sbus(MVA)
-    """
-
-    Vf = V[calculation_inputs.passive_branch_data.F]
-    Vt = V[calculation_inputs.passive_branch_data.T]
-
-    # Branches current, loading, etc
-    If = Yf * V
-    It = Yt * V
-    Sf = Vf * np.conj(If)
-    St = Vt * np.conj(It)
-
-    # Branch losses in MVA (not really important for short-circuits)
-    losses = (Sf + St) * calculation_inputs.Sbase
-
-    # branch voltage increment
-    Vbranch = Vf - Vt
-
-    # Branch power in MVA
-    Sfb = Sf * calculation_inputs.Sbase
-    Stb = St * calculation_inputs.Sbase
-
-    # Branch loading in p.u.
-    loading = Sfb / (branch_rates + 1e-9)
-
-    return Sfb, Stb, If, It, Vbranch, loading, losses
+# def short_circuit_post_process_phases(
+#         calculation_inputs: NumericalCircuit,
+#         V: CxVec,
+#         branch_rates: Vec,
+#         Yf: sp.csc_matrix,
+#         Yt: sp.csc_matrix
+# ) -> Tuple[CxVec, CxVec, CxVec, CxVec, CxVec, CxVec, CxVec]:
+#     """
+#     Compute the important results for short-circuits
+#     :param calculation_inputs: instance of Circuit
+#     :param V: Voltage solution array for the circuit buses
+#     :param branch_rates: Array of branch ratings
+#     :param Yf: From admittance matrix
+#     :param Yt: To admittance matrix
+#     :return: Sf (MVA), If (p.u.), loading (p.u.), losses (MVA), Sbus(MVA)
+#     """
+#
+#     Vf = V[calculation_inputs.passive_branch_data.F]
+#     Vt = V[calculation_inputs.passive_branch_data.T]
+#
+#     # Branches current, loading, etc
+#     If = Yf * V
+#     It = Yt * V
+#     Sf = Vf * np.conj(If)
+#     St = Vt * np.conj(It)
+#
+#     # Branch losses in MVA (not really important for short-circuits)
+#     losses = (Sf + St) * calculation_inputs.Sbase
+#
+#     # branch voltage increment
+#     Vbranch = Vf - Vt
+#
+#     # Branch power in MVA
+#     Sfb = Sf * calculation_inputs.Sbase
+#     Stb = St * calculation_inputs.Sbase
+#
+#     # Branch loading in p.u.
+#     loading = Sfb / (branch_rates + 1e-9)
+#
+#     return Sfb, Stb, If, It, Vbranch, loading, losses
 
 
 def short_circuit_ph3(nc: NumericalCircuit, Vpf: CxVec, Zf: CxVec, bus_index: int):
@@ -198,9 +203,11 @@ def short_circuit_ph3(nc: NumericalCircuit, Vpf: CxVec, Zf: CxVec, bus_index: in
         n=nc.nbus,
         m=nc.nbr,
         n_hvdc=nc.nhvdc,
+        n_vsc=nc.nvsc,
         bus_names=nc.bus_data.names,
         branch_names=nc.passive_branch_data.names,
         hvdc_names=nc.hvdc_data.names,
+        vsc_names=nc.vsc_data.names,
         sc_names=np.array(["SC"]),
         bus_types=nc.bus_data.bus_types,
         area_names=None
@@ -394,9 +401,11 @@ def short_circuit_unbalanced(nc: NumericalCircuit,
         n=nc.nbus,
         m=nc.nbr,
         n_hvdc=nc.nhvdc,
+        n_vsc=nc.nvsc,
         bus_names=nc.bus_data.names,
         branch_names=nc.passive_branch_data.names,
         hvdc_names=nc.hvdc_data.names,
+        vsc_names=nc.vsc_data.names,
         sc_names=np.array(["SC"]),
         bus_types=nc.bus_data.bus_types,
         area_names=None
@@ -679,9 +688,11 @@ def short_circuit_abc(nc: NumericalCircuit,
         n=nc.nbus,
         m=nc.nbr,
         n_hvdc=nc.nhvdc,
+        n_vsc=nc.nvsc,
         bus_names=nc.bus_data.names,
         branch_names=nc.passive_branch_data.names,
         hvdc_names=nc.hvdc_data.names,
+        vsc_names=nc.vsc_data.names,
         sc_names=np.array(["SC"]),
         bus_types=nc.bus_data.bus_types,
         area_names=None
@@ -736,3 +747,170 @@ def short_circuit_abc(nc: NumericalCircuit,
     results.lossesC[:, 0] = losses[3::4]
 
     return results
+
+
+def short_circuit_vsc(nc: NumericalCircuit,
+                      V_pf: CxVec,
+                      S_pf: CxVec,
+                      Z_fault: CxVec,
+                      fault_bus: int,
+                      options: PowerFlowOptions,
+                      logger: Logger):
+
+    if logger is None:
+        logger = Logger()
+
+    # declare results
+    pf_results = PowerFlowResults(
+        n=nc.nbus,
+        m=nc.nbr,
+        n_hvdc=nc.nhvdc,
+        n_vsc=nc.nvsc,
+        n_gen=nc.ngen,
+        n_batt=nc.nbatt,
+        n_sh=nc.nshunt,
+        bus_names=nc.bus_data.names,
+        branch_names=nc.passive_branch_data.names,
+        hvdc_names=nc.hvdc_data.names,
+        vsc_names=nc.vsc_data.names,
+        gen_names=nc.generator_data.names,
+        batt_names=nc.battery_data.names,
+        sh_names=nc.shunt_data.names,
+        bus_types=nc.bus_data.bus_types,
+    )
+
+    # Disable voltage magnitude and angle control for all generators during short-circuit
+    bus_gen_idx = nc.generator_data.bus_idx
+    
+    original_is_vm_controlled = nc.bus_data.is_vm_controlled[bus_gen_idx].copy()
+    original_is_va_controlled = nc.bus_data.is_va_controlled[bus_gen_idx].copy()
+    original_is_p_controlled = nc.bus_data.is_p_controlled[bus_gen_idx].copy()
+    original_is_q_controlled = nc.bus_data.is_q_controlled[bus_gen_idx].copy()
+
+    for gen in bus_gen_idx:
+
+        if nc.bus_data.is_dc[gen] == False:
+            nc.bus_data.is_vm_controlled[gen] = False
+            nc.bus_data.is_va_controlled[gen] = False
+            nc.bus_data.is_p_controlled[gen] = True
+            nc.bus_data.is_q_controlled[gen] = True
+
+    # compute islands
+    islands = nc.split_into_islands(ignore_single_node_islands=options.ignore_single_node_islands,
+                                    consider_hvdc_as_island_links=True,
+                                    logger=logger)
+
+    for i, island in enumerate(islands):
+
+        indices = island.get_simulation_indices()
+
+        Qmax, Qmin = island.get_reactive_power_limits()
+
+        S0 = island.get_power_injections_pu()
+        I0 = island.get_current_injections_pu()
+        Y0 = island.get_admittance_injections_pu()
+
+        nbus = nc.nbus
+
+        S0_linear = np.zeros(shape=nbus, dtype=complex)
+        S0_non_gen = S0 - nc.generator_data.get_injections_per_bus() / nc.Sbase
+        S0_gen = S_pf / nc.Sbase - S0_non_gen - I0 + Y0
+
+        Yfault = np.zeros(shape=nbus, dtype=complex)
+        Yfault[fault_bus] = 1 / Z_fault[fault_bus]
+
+        Ygen = np.zeros(shape=nbus, dtype=complex)
+        gen_idx = nc.generator_data.original_idx
+        for gen_i in range(len(gen_idx)):
+            Ygen[bus_gen_idx[gen_i]] += 1 / (nc.generator_data.r1[gen_i] + 1j * nc.generator_data.x1[gen_i])
+
+        Y0_linear = - np.conj(S0_non_gen / (np.conj(V_pf) * V_pf)) - I0 / V_pf + Y0 + Ygen + Yfault
+
+        I0_linear = np.zeros(shape=nbus, dtype=complex) # Add generator's norton
+        for gen_i in range(len(bus_gen_idx)):
+            Ugen = V_pf[bus_gen_idx[gen_i]]
+            Sgen = S0_gen[bus_gen_idx[gen_i]]
+            Igen = np.conj(Sgen / Ugen)
+            Egen = Ugen + Igen / Ygen[bus_gen_idx[gen_i]]
+            I0_linear[bus_gen_idx[gen_i]] += Ygen[bus_gen_idx[gen_i]] * Egen
+
+        if len(indices.vd) > 0:
+
+            problem = PfAcDcWithNegativePoles(V0=V_pf,
+                                              S0=S0_linear,
+                                              I0=I0_linear,
+                                              Y0=Y0_linear,
+                                              Qmin=Qmin,
+                                              Qmax=Qmax,
+                                              nc=nc,
+                                              options=options,
+                                              logger=logger)
+
+            solution = newton_raphson_fx(problem=problem,
+                                         tol=options.tolerance,
+                                         max_iter=options.max_iter,
+                                         trust=options.trust_radius,
+                                         verbose=options.verbose,
+                                         logger=logger)
+
+            # merge the results from this island
+            pf_results.apply_from_island(
+                results=solution,
+                b_idx=island.bus_data.original_idx,
+                br_idx=island.passive_branch_data.original_idx,
+                hvdc_idx=island.hvdc_data.original_idx,
+                vsc_idx=island.vsc_data.original_idx
+            )
+
+        else:
+            logger.add_info('No slack nodes in the island', str(i))
+
+    # voltage, Sf, loading, losses, error, converged, Qpv
+    sc_results = ShortCircuitResults(
+        nsc=1,
+        n=nc.nbus,
+        m=nc.nbr,
+        n_hvdc=nc.nhvdc,
+        n_vsc=nc.nvsc,
+        bus_names=nc.bus_data.names,
+        branch_names=nc.passive_branch_data.names,
+        hvdc_names=nc.hvdc_data.names,
+        vsc_names=nc.vsc_data.names,
+        sc_names=np.array(["SC"]),
+        bus_types=nc.bus_data.bus_types,
+        area_names=None
+    )
+
+    sc_results.SCpower[:, 0] = pf_results.voltage[fault_bus] * pf_results.voltage[fault_bus] * Yfault[fault_bus]
+    sc_results.ICurrent[:, 0] = pf_results.voltage[fault_bus] * Yfault[fault_bus]
+
+    sc_results.Sbus1[:, 0] = nc.get_power_injections_pu() * nc.Sbase  # MVA
+    sc_results.voltage1[:, 0] = pf_results.voltage
+    sc_results.Sf1[:, 0] = pf_results.Sf  # in MVA already
+    sc_results.St1[:, 0] = pf_results.St  # in MVA already
+    sc_results.If1[:, 0] = pf_results.If  # in p.u.
+    sc_results.It1[:, 0] = pf_results.It  # in p.u.
+    sc_results.Vbranch1[:, 0] = pf_results.Vbranch
+    sc_results.loading1[:, 0] = pf_results.loading
+    sc_results.losses1[:, 0] = pf_results.losses
+
+    sc_results.hvdc_losses[:, 0] = pf_results.losses_hvdc
+    sc_results.hvdc_Pf[:, 0] = pf_results.Pf_hvdc
+    sc_results.hvdc_Pt[:, 0] = pf_results.Pt_hvdc
+    sc_results.hvdc_loading[:, 0] = pf_results.loading_hvdc
+
+    sc_results.vsc_Pfp[:, 0] = pf_results.Pfp_vsc  # in MVA already
+    sc_results.vsc_Pfn[:, 0] = pf_results.Pfn_vsc  # in MVA already
+    sc_results.vsc_St[:, 0] = pf_results.St_vsc  # in MVA already
+    sc_results.vsc_If[:, 0] = pf_results.If_vsc  # in p.u.
+    sc_results.vsc_It[:, 0] = pf_results.It_vsc  # in p.u.
+    sc_results.vsc_losses[:, 0] = pf_results.losses_vsc # in MVA already
+    sc_results.vsc_loading[:, 0] = pf_results.loading_vsc
+
+    # Restore original generator control flags
+    nc.bus_data.is_vm_controlled[bus_gen_idx] = original_is_vm_controlled
+    nc.bus_data.is_va_controlled[bus_gen_idx] = original_is_va_controlled
+    nc.bus_data.is_p_controlled[bus_gen_idx] = original_is_p_controlled
+    nc.bus_data.is_q_controlled[bus_gen_idx] = original_is_q_controlled
+
+    return sc_results

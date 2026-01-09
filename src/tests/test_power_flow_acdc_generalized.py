@@ -512,7 +512,7 @@ def test_power_flow_12bus_acdc() -> None:
 
     assert np.allclose(expected_v, solution.V, atol=1e-6)
 
-    assert grid.vsc_devices[0].control1_val == solution.Pf_vsc[0]
+    assert grid.vsc_devices[0].control1_val == solution.Pfp_vsc[0]
     assert grid.vsc_devices[0].control2_val == solution.St_vsc[0].imag
 
     assert grid.vsc_devices[1].control1_val == abs(solution.V[3])
@@ -521,7 +521,7 @@ def test_power_flow_12bus_acdc() -> None:
     assert grid.vsc_devices[2].control1_val == abs(solution.V[6])
     assert grid.vsc_devices[2].control2_val == solution.St_vsc[2].imag
 
-    assert grid.vsc_devices[3].control1_val == solution.Pf_vsc[3]
+    assert grid.vsc_devices[3].control1_val == solution.Pfp_vsc[3]
     assert grid.vsc_devices[3].control2_val == solution.St_vsc[3].imag
 
     assert grid.transformers2w[2].vset == abs(solution.V[13])

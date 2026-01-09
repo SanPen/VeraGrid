@@ -12,6 +12,8 @@ from VeraGridEngine.api import power_flow
 from VeraGridEngine.Topology.topology import compute_connectivity_flexible
 from VeraGridEngine.Simulations.PowerFlow.power_flow_worker import multi_island_pf_nc
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
 def test_topology_4_nodes_A():
     """
     Topology test 4 Node A
@@ -609,7 +611,7 @@ def test_nc_active_works() -> None:
     the numerical circuit active status
     has zero flow, for many power flow algorithms
     """
-    fname = os.path.join('data', 'grids', 'RAW', 'IEEE 14 bus.raw')
+    fname = os.path.join(SCRIPT_DIR, 'data', 'grids', 'RAW', 'IEEE 14 bus.raw')
     main_circuit = FileOpen(fname).open()
     nc = compile_numerical_circuit_at(main_circuit, t_idx=None)
 

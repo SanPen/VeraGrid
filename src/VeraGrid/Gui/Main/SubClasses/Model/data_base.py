@@ -21,7 +21,7 @@ import VeraGrid.Gui.gui_functions as gf
 from VeraGrid.Gui.object_model import ObjectsModel
 from VeraGrid.Gui.object_proxy_model import ObjectModelFilterProxy
 from VeraGrid.Gui.profiles_model import ProfilesModel
-from VeraGridEngine.enumerations import DeviceType
+from VeraGridEngine.enumerations import DeviceType, TimeSeriesSearchPoint
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.Topology.detect_substations import detect_substations, detect_facilities
 from VeraGrid.Gui.Analysis.object_plot_analysis import object_histogram_analysis
@@ -65,6 +65,13 @@ class DataBaseTableMain(DiagramsMain):
         # setup the tree for compiled arrays
         self.setup_compiled_arrays_tree()
 
+        (self.ts_search_points_dict,
+         ts_search_points_mdl) = gf.enums_to_model(
+            [TimeSeriesSearchPoint.HighestLoad,
+             TimeSeriesSearchPoint.LowestLoad]
+        )
+        self.ui.goToTsPointComboBox.setModel(ts_search_points_mdl)
+
         self.ui.smart_search_lineEdit.setPlaceholderText("Type the object name or a smart filter expression ...")
 
         # Buttons
@@ -72,6 +79,7 @@ class DataBaseTableMain(DiagramsMain):
         self.ui.delete_selected_objects_pushButton.clicked.connect(self.delete_selected_db_table_objects)
         self.ui.add_object_pushButton.clicked.connect(self.add_objects)
         self.ui.structure_analysis_pushButton.clicked.connect(self.objects_histogram_analysis_plot)
+        self.ui.goToTsPointButton.clicked.connect(self.search_ts_point)
 
         # menu trigger
         self.ui.actionDelete_inconsistencies.triggered.connect(self.delete_inconsistencies)
@@ -1557,3 +1565,35 @@ class DataBaseTableMain(DiagramsMain):
             else:
                 # not imported
                 return
+
+    def search_ts_point(self):
+        """
+
+        :return:
+        """
+
+        txt = self.ui.goToTsPointComboBox.currentText()
+        mode: TimeSeriesSearchPoint = self.ts_search_points_dict[txt]
+
+        if mode == TimeSeriesSearchPoint.LowestLoad:
+
+            total = 0
+            for elm in self.circuit.loads:
+                total += elm.P_prof.toarray()
+
+            idx = np.argmin(total)
+            self.ui.db_step_slider.setValue(idx)
+
+        elif mode == TimeSeriesSearchPoint.HighestLoad:
+
+            total = 0
+            for elm in self.circuit.loads:
+                total += elm.P_prof.toarray()
+
+            idx = np.argmax(total)
+            self.ui.db_step_slider.setValue(idx)
+
+        else:
+            return
+
+

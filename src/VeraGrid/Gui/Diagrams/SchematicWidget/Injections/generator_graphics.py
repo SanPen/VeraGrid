@@ -55,15 +55,8 @@ class GeneratorGraphicItem(InjectionTemplateGraphicItem):
         @param event:
         @return:
         """
-        menu = QMenu()
+        menu = self.get_base_context_menu()
         menu.addSection("Generator")
-
-        add_menu_entry(menu=menu,
-                       text="Active",
-                       icon_path="",
-                       function_ptr=self.enable_disable_toggle,
-                       checkeable=True,
-                       checked_value=self.api_object.active)
 
         add_menu_entry(menu=menu,
                        text="Voltage control",
@@ -90,13 +83,6 @@ class GeneratorGraphicItem(InjectionTemplateGraphicItem):
         menu.addSeparator()
 
         add_menu_entry(menu=menu,
-                       text="Plot profiles",
-                       icon_path=":/Icons/icons/plot.png",
-                       function_ptr=self.plot)
-
-        menu.addSeparator()
-
-        add_menu_entry(menu=menu,
                        text="Solar photovoltaic wizard",
                        icon_path=":/Icons/icons/solar_power.png",
                        function_ptr=self.solar_pv_wizard)
@@ -108,19 +94,10 @@ class GeneratorGraphicItem(InjectionTemplateGraphicItem):
 
         menu.addSeparator()
 
-        add_menu_entry(menu, text='Remove',
-                       icon_path=":/Icons/icons/delete_schematic.png",
-                       function_ptr=self.delete)
-
         add_menu_entry(menu=menu,
                        text="Convert to battery",
                        icon_path=":/Icons/icons/add_batt.png",
                        function_ptr=self.to_battery)
-
-        add_menu_entry(menu=menu,
-                       text="Change bus",
-                       icon_path=":/Icons/icons/move_bus.png",
-                       function_ptr=self.change_bus)
 
         menu.exec_(event.screenPos())
 

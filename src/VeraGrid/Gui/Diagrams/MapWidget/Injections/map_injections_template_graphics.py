@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 from typing import TYPE_CHECKING, List, Union
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QPointF
 from PySide6.QtGui import QPen, QCursor, QColor, QBrush
 from PySide6.QtWidgets import (QGraphicsEllipseItem, QMenu,
                                QGraphicsSceneContextMenuEvent,
@@ -100,6 +100,37 @@ class MapInjectionTemplateGraphicItem(NodeTemplate, QGraphicsEllipseItem):
 
         return color
 
+    def mousePressEvent(self, event: QGraphicsSceneMouseEvent):
+        """
+        Event handler for mouse press events.
+        """
+        super().mousePressEvent(event)
+        # selected_items = self.editor.map.view.selected_items()
+        # if len(selected_items) < 2:
+        self.setSelected(True)
+
+        event.setAccepted(True)
+        self.editor.map.view.disable_move = True
+
+        if self.api_object is not None:
+            self.editor.set_editor_model(api_object=self.api_object)
+
+    def mouseReleaseEvent(self, event: QGraphicsSceneMouseEvent):
+        """
+        Event handler for mouse release events.
+        """
+        # super().mouseReleaseEvent(event)
+        self.editor.disableMove = True
+        self.update_position_at_the_diagram()  # always update
+
+    def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent) -> None:
+        """
+        Event handler for mouse move events.
+        """
+
+        pos = self.mapToScene(event.pos())
+        self.refresh(pos=pos)
+
     def update_position_at_the_diagram(self) -> None:
         """
         Updates the element position in the diagram (to save)
@@ -114,6 +145,21 @@ class MapInjectionTemplateGraphicItem(NodeTemplate, QGraphicsEllipseItem):
                                            latitude=lat,
                                            longitude=long,
                                            graphic_object=self)
+
+    def refresh(self, pos: QPointF):
+        """
+        This function refreshes the x, y coordinates of the graphic item
+        Returns:
+
+        """
+
+        x = pos.x() - self.rect().width() / 2
+        y = pos.y() - self.rect().height() / 2
+        self.setRect(x, y, self.rect().width(), self.rect().height())
+        self.set_callbacks(pos.x(), pos.y())
+
+
+        self.update_position_at_the_diagram()  # always update
 
     def set_size(self, r: float):
         """
@@ -162,22 +208,6 @@ class MapInjectionTemplateGraphicItem(NodeTemplate, QGraphicsEllipseItem):
         # plot the profiles
         self.api_object.plot_profiles(time=ts)
 
-    def mousePressEvent(self, event: QGraphicsSceneMouseEvent):
-        """
-        mouse press: display the editor
-        :param event:
-        :return:
-        """
-        super().mousePressEvent(event)
-        self._editor.set_editor_model(api_object=self.api_object)
-
-    def mouseReleaseEvent(self, event: QGraphicsSceneMouseEvent):
-        """
-        Event handler for mouse release events.
-        """
-        super().mouseReleaseEvent(event)
-        # self.editor.disableMove = True
-        self.update_position_at_the_diagram()  # always update
 
     def mouseDoubleClickEvent(self, event, /):
         """
@@ -202,7 +232,7 @@ class MapInjectionTemplateGraphicItem(NodeTemplate, QGraphicsEllipseItem):
 
         add_menu_entry(menu=menu,
                        text="Consolidate coordinates",
-                       function_ptr=self.consolidate_coordinates,
+                       function_ptr=self.editor.consolidate_object_coordinates,
                        icon_path=":/Icons/icons/assign_to_profile.png")
 
         menu.addSeparator()

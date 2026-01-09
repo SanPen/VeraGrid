@@ -3075,3 +3075,45 @@ class MultiCircuit(Assets):
                 branch_active, branch_F, branch_T,
                 hvdc_active, hvdc_F, hvdc_T,
                 vsc_active, vsc_F, vsc_T)
+
+    def move_behind_converter(self, api_object: INJECTION_DEVICE_TYPES) -> Tuple[dev.Bus, dev.VSC]:
+        """
+
+        :param api_object:
+        :return:
+        """
+        old_bus = api_object.bus
+        new_bus = dev.Bus(
+            name=old_bus.name + "_dc",
+            Vnom=old_bus.Vnom,
+            is_dc=True,
+            xpos=old_bus.x,
+            ypos=old_bus.y + 20,
+        )
+        self.add_bus(obj=new_bus)
+
+        converter = dev.VSC(
+            name=api_object.name,
+            bus_from=new_bus,
+            bus_to=old_bus,
+            control1=ConverterControlType.Vm_dc,
+            control2=ConverterControlType.Qac,
+            control1_val=1.0,
+            rate=9999.0
+        )
+        self.add_vsc(obj=converter)
+
+        if api_object.device_type == DeviceType.LoadDevice:
+            converter.control2_val = api_object.P
+            if self.has_time_series:
+                converter.control2_val_prof = api_object.P_prof.toarray()
+
+        if api_object.device_type == DeviceType.StaticGeneratorDevice:
+            converter.control2_val = -1 * api_object.P
+            if self.has_time_series:
+                converter.control2_val_prof = -1 * api_object.P_prof.toarray()
+
+        # set the API object new bus
+        api_object.bus = new_bus
+
+        return new_bus, converter

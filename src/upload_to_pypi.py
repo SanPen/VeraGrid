@@ -43,8 +43,6 @@ def update_gui_to_make_sure():
         convert_ui_file(source=os.path.join(path, f), uic_cmd=uic_cmd)
 
 
-
-
 def search_text_in_python_files(directory, search_terms):
     """
     Search for a list of text strings in all Python files within a directory and its subdirectories.
@@ -85,7 +83,7 @@ def search_text_in_python_files(directory, search_terms):
 
     if len(results) > 0:
 
-        for file,matches in results.items():
+        for file, matches in results.items():
             print(file, matches)
 
         raise Exception("Forbidden text found")

@@ -154,7 +154,7 @@ QProgressBar::chunk{
        </font>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="GridTab">
        <attribute name="icon">
@@ -194,7 +194,7 @@ QProgressBar::chunk{
            <enum>QTabWidget::TabShape::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <property name="elideMode">
            <enum>Qt::TextElideMode::ElideNone</enum>
@@ -1717,6 +1717,33 @@ QProgressBar::chunk{
                        <property name="bottomMargin">
                         <number>0</number>
                        </property>
+                       <item>
+                        <widget class="QComboBox" name="goToTsPointComboBox">
+                         <property name="minimumSize">
+                          <size>
+                           <width>150</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                         <property name="toolTip">
+                          <string>Select the time series point to search</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="goToTsPointButton">
+                         <property name="toolTip">
+                          <string>Search and navigate to the selected time series point</string>
+                         </property>
+                         <property name="text">
+                          <string/>
+                         </property>
+                         <property name="icon">
+                          <iconset resource="../Icons/icons.qrc">
+                           <normaloff>:/Icons/icons/time_series (search).png</normaloff>:/Icons/icons/time_series (search).png</iconset>
+                         </property>
+                        </widget>
+                       </item>
                        <item>
                         <widget class="QPushButton" name="set_profile_state_button">
                          <property name="toolTip">
@@ -4196,7 +4223,7 @@ QProgressBar::chunk{
            <enum>QTabWidget::TabPosition::South</enum>
           </property>
           <property name="currentIndex">
-           <number>8</number>
+           <number>0</number>
           </property>
           <property name="iconSize">
            <size>
@@ -13387,7 +13414,6 @@ QProgressBar::chunk{
   </action>
  </widget>
  <resources>
-  <include location="../Icons/icons.qrc"/>
   <include location="../Icons/icons.qrc"/>
  </resources>
  <connections/>

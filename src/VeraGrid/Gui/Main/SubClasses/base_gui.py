@@ -72,10 +72,11 @@ def terminate_thread(thread):
         return False
 
     exc = ctypes.py_object(SystemExit)
-    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(
-        ctypes.c_long(thread.ident), exc)
+    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(thread.ident), exc)
     if res == 0:
-        raise ValueError("nonexistent thread id")
+        print("nonexistent thread id")
+        return True
+
     elif res > 1:
         # """if it returns a number greater than one, you're in trouble,
         # and you should call it again with exc=NULL to revert the effect"""

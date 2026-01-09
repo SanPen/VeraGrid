@@ -32,7 +32,7 @@ from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.current_injection_graphics
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.controllable_shunt_graphics import (
     ControllableShuntGraphicItem,
     ControllableShunt)
-from VeraGridEngine.enumerations import DeviceType, FaultType, BusGraphicType, MethodShortCircuit, PhasesShortCircuit
+from VeraGridEngine.enumerations import DeviceType, BusGraphicType
 from VeraGridEngine.Devices.types import INJECTION_DEVICE_TYPES
 from VeraGridEngine.Devices.Substation import Bus
 from VeraGridEngine.Devices.Aggregation.short_cirtcuit_event import ShortCircuitEvent
@@ -640,7 +640,7 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
     def convert_to_connectivity_grid(self) -> None:
         """
         Transform this bus into a grid of buses to be able to compute the bus currents
-        and delete this bus afterwards
+        and delete this bus afterward
         """
         self.editor.transform_busbar_to_connectivity_grid(bus_graphics=self)
 

@@ -2,6 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
+from __future__ import annotations
 
 import json
 from typing import List, Union, Any, Dict
@@ -14,8 +15,9 @@ from VeraGridEngine.IO.veragrid.generic_io_functions import CustomJSONizer
 import VeraGridEngine.Devices as dev
 from VeraGridEngine.Devices.profile import Profile
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
+from VeraGridEngine.Simulations.driver_template import DriverToSave
 from VeraGridEngine.enumerations import (DeviceType, HvdcControlType, BuildStatus,
-                                         TapModuleControl, TapPhaseControl)
+                                         TapModuleControl, TapPhaseControl, SimulationTypes)
 
 
 def add_to_dict(main_dict: Dict[str, List[Any]], data_to_append: Dict[Any, Any], key: str):
@@ -1340,7 +1342,7 @@ def get_obj_ref(elm):
     return elm.idtag if elm is not None else ''
 
 
-def save_json_file_v3(file_path: str, circuit: MultiCircuit, simulation_drivers: Union[None, List[Any]] = None):
+def save_json_file_v3(file_path: str, circuit: MultiCircuit, simulation_drivers: List[DriverToSave] | None = None):
     """
     Save JSON file
     :param file_path: file path
@@ -1438,21 +1440,12 @@ def save_json_file_v3(file_path: str, circuit: MultiCircuit, simulation_drivers:
                                 'active': profile_to_json(elm.active_prof)} for elm in
                                circuit.get_buses()]
 
-    # connectivity nodes
-    elements['Connectivity Node'] = [{'id': elm.idtag,
-                                      'phases': 'ps',
-                                      'name': elm.name,
-                                      'name_code': elm.code,
-                                      'dc': elm.dc,
-                                      'default_bus': get_obj_ref(elm.bus)} for elm in
-                                     circuit.get_connectivity_nodes()]
-
     # bus bars
     elements["BusBar"] = [{'id': elm.idtag,
                            'name': elm.name,
                            'code': elm.code,
                            'voltage_level': get_obj_ref(elm.voltage_level),
-                           'cn': get_obj_ref(elm.bus)} for elm in circuit.get_bus_bars()]
+                           } for elm in circuit.get_bus_bars()]
 
     # load
     elements['Load'] = [{'id': elm.idtag,
@@ -1461,7 +1454,6 @@ def save_json_file_v3(file_path: str, circuit: MultiCircuit, simulation_drivers:
                          'name': elm.name,
                          'name_code': elm.code,
                          'bus': get_obj_ref(elm.bus),
-                         'cn': get_obj_ref(elm.cn),
                          'active': bool(elm.active),
                          'g': elm.G,
                          'b': elm.B,
@@ -1487,7 +1479,6 @@ def save_json_file_v3(file_path: str, circuit: MultiCircuit, simulation_drivers:
                                      'name': elm.name,
                                      'name_code': elm.code,
                                      'bus': get_obj_ref(elm.bus),
-                                     'cn': get_obj_ref(elm.cn),
                                      'active': bool(elm.active),
                                      'p': elm.P,
                                      'q': elm.Q,
@@ -1506,7 +1497,6 @@ def save_json_file_v3(file_path: str, circuit: MultiCircuit, simulation_drivers:
                                        'name': elm.name,
                                        'name_code': elm.code,
                                        'bus': get_obj_ref(elm.bus),
-                                       'cn': get_obj_ref(elm.cn),
                                        'active': bool(elm.active),
                                        'g_steps': elm.g_steps.tolist(),
                                        'b_steps': elm.b_steps.tolist(),
@@ -1526,7 +1516,6 @@ def save_json_file_v3(file_path: str, circuit: MultiCircuit, simulation_drivers:
                                       'name': elm.name,
                                       'name_code': elm.code,
                                       'bus': get_obj_ref(elm.bus),
-                                      'cn': get_obj_ref(elm.cn),
                                       'active': bool(elm.active),
                                       'ir': elm.Ir,
                                       'ii': elm.Ii,
@@ -1545,7 +1534,6 @@ def save_json_file_v3(file_path: str, circuit: MultiCircuit, simulation_drivers:
                                   'name': elm.name,
                                   'name_code': elm.code,
                                   'bus': get_obj_ref(elm.bus),
-                                  'cn': get_obj_ref(elm.cn),
                                   'active': bool(elm.active),
                                   'Vm': elm.Vm,
                                   'Va': elm.Va,
@@ -1570,7 +1558,6 @@ def save_json_file_v3(file_path: str, circuit: MultiCircuit, simulation_drivers:
                               'name': elm.name,
                               'name_code': elm.code,
                               'bus': get_obj_ref(elm.bus),
-                              'cn': get_obj_ref(elm.cn),
                               'active': elm.active,
                               'is_controlled': elm.is_controlled,
                               'p': elm.P,
@@ -1613,7 +1600,6 @@ def save_json_file_v3(file_path: str, circuit: MultiCircuit, simulation_drivers:
                             'name': elm.name,
                             'name_code': elm.code,
                             'bus': get_obj_ref(elm.bus),
-                            'cn': get_obj_ref(elm.cn),
                             'active': elm.active,
                             'is_controlled': elm.is_controlled,
                             'p': elm.P,
@@ -1665,7 +1651,6 @@ def save_json_file_v3(file_path: str, circuit: MultiCircuit, simulation_drivers:
                           'name': elm.name,
                           'name_code': elm.code,
                           'bus': get_obj_ref(elm.bus),
-                          'cn': get_obj_ref(elm.cn),
                           'active': bool(elm.active),
                           'g': elm.G,
                           'b': elm.B,
@@ -2106,7 +2091,7 @@ def save_json_file_v3(file_path: str, circuit: MultiCircuit, simulation_drivers:
         for driver in simulation_drivers:
             if driver is not None:
 
-                if driver.name == 'Power Flow':
+                if driver.tpe == SimulationTypes.PowerFlow_run:
 
                     bus_data = dict()
                     for i, elm in enumerate(circuit.buses):
@@ -2127,7 +2112,7 @@ def save_json_file_v3(file_path: str, circuit: MultiCircuit, simulation_drivers:
                     results["power_flow"] = {'bus': bus_data,
                                              'branch': branch_data}
 
-                elif driver.name == 'Time Series':
+                elif driver.tpe == SimulationTypes.PowerFlowTimeSeries_run:
 
                     bus_data = dict()
                     for i, elm in enumerate(circuit.buses):

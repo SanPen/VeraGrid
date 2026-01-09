@@ -19,6 +19,7 @@ from PySide6.QtCore import (Qt, QMimeData, QIODevice, QByteArray, QDataStream, Q
 from PySide6.QtGui import (QIcon, QPixmap, QImage, QStandardItemModel, QStandardItem, QColor, QDropEvent)
 
 from VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container import MapLineContainer
+from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics import GeneratorGraphicItem
 from VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics import BusGraphicItem
 from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget
 from VeraGrid.Gui.SubstationDesigner.substation_designer import SubstationDesigner
@@ -372,6 +373,18 @@ class GridMapWidget(BaseDiagramWidget):
             if hasattr(item, 'api_object') and isinstance(item, SubstationGraphicItem):
                 selected_substations.append((item.api_object, item))
         return selected_substations
+
+    def get_selected_generators_tup(self) -> List[Tuple[Generator, MapGeneratorGraphicItem]]:
+        """
+        Get only selected generators from the scene
+
+        :return: List of (Generator, GeneratorGraphicItem) tuples
+        """
+        selected_generators = []
+        for item in self.diagram_scene.selectedItems():
+            if hasattr(item, 'api_object') and isinstance(item, MapGeneratorGraphicItem):
+                selected_generators.append((item.api_object, item))
+        return selected_generators
 
     def get_selected_linelocations_tup(self) -> List[Tuple[LineLocation, LineLocationGraphicItem]]:
         """
@@ -2087,6 +2100,7 @@ class GridMapWidget(BaseDiagramWidget):
     def consolidate_object_coordinates(self):
         selected_lines = self.get_selected_line_segments_tup()
         selected_substations = self.get_selected_substations_tup()
+        selected_generators = self.get_selected_generators_tup()
         line_graphics_list = []
         for subst, subst_graphic in selected_substations:
             subst.latitude = subst_graphic.lat
@@ -2097,6 +2111,10 @@ class GridMapWidget(BaseDiagramWidget):
             for gelm in line_graphic.nodes_list:
                 gelm.api_object.lat = gelm.lat
                 gelm.api_object.long = gelm.lon
+
+        for gen, gen_graphic in selected_generators:
+            gen.latitude = gen_graphic.lat
+            gen.longitude = gen_graphic.lon
 
         ok = yes_no_question(title='Update lengths?',
                              text='Do you want to update lengths of lines? \n'

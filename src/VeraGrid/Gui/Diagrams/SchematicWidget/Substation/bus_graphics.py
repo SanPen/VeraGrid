@@ -16,7 +16,7 @@ from VeraGrid.Gui.messages import yes_no_question, warning_msg
 from VeraGrid.Gui.gui_functions import add_menu_entry
 from VeraGrid.Gui.general_dialogues import ShortCircuitSelector
 from VeraGrid.Gui.Diagrams.generic_graphics import (GenericDiagramWidget, ACTIVE, DEACTIVATED,
-                                                    FONT_SCALE, EMERGENCY, TRANSPARENT)
+                                                    FONT_SCALE, TRANSPARENT)
 from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import BarTerminalItem, HandleItem, RoundTerminalItem
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics import LoadGraphicItem, Load
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics import GeneratorGraphicItem, Generator
@@ -699,7 +699,7 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         """
         self.w = ShortCircuitSelector()
         self.w.exec()
-        
+
         if self.w.was_accepted:
             sc = ShortCircuitEvent(
                 name=f"{self.api_object.name} {self.w.fault.value}",
@@ -708,7 +708,7 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
                 method=self.w.method,
                 phases=self.w.phases
             )
-    
+
             self.editor.circuit.add_short_circuit_definition(sc)
 
     def enable_disable_dc(self):
@@ -921,7 +921,8 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
 
         return _grph
 
-    def set_values(self, i: int, Vm: float, Va: float, P: float, Q: float, tpe: str, format_str="{:10.2f}"):
+    def set_values(self, i: int, Vm: float, Va: float, P: float | None, Q: float | None,
+                   tpe: str, format_str="{:10.2f}"):
         """
 
         :param i:

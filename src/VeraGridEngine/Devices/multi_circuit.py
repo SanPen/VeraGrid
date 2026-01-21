@@ -17,7 +17,6 @@ from scipy.sparse import csc_matrix, lil_matrix
 
 from VeraGridEngine.Devices.assets import Assets
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
-from VeraGridEngine.Utils.Symbolic import Var
 from VeraGridEngine.basic_structures import IntVec, Vec, Mat, CxVec, IntMat, CxMat
 
 import VeraGridEngine.Devices as dev
@@ -76,7 +75,7 @@ def get_fused_device_lst(elm_list: List[INJECTION_DEVICE_TYPES], property_names:
             act_final = bool(act_final + elm2.active)  # equivalent to OR
 
             if act_prof_final is not None:
-                act_prof_final = (act_prof_final.toarray() + elm2.active_prof.toarray()).astype(bool)
+                act_prof_final = (act_prof_final + elm2.active_prof.toarray()).astype(bool)
 
         for prop in property_names:  # sum the properties
 
@@ -860,7 +859,7 @@ class MultiCircuit(Assets):
         Get the branch-bus dictionary
         :return: dict[bus] -> list of branches
         """
-        d: Dict[dev.Bus, List[dev.BranchType]] = {b: list() for b in self._buses}
+        d: Dict[dev.Bus, List[BRANCH_TYPES]] = {b: list() for b in self._buses}
 
         for branch_list in self.get_branch_lists(add_vsc=True, add_hvdc=True, add_switch=True):
             for br in branch_list:
@@ -3117,3 +3116,53 @@ class MultiCircuit(Assets):
         api_object.bus = new_bus
 
         return new_bus, converter
+
+    def slice_buses(self, buses: List[dev.Bus]) -> "MultiCircuit":
+        """
+        Get a subset of the grid
+        :param buses: list of buses to slice te grid
+        :return: new MultiCircuit
+        """
+        other = MultiCircuit()
+
+        bus_set = set(buses)
+
+        # add the branches and extend the set of buses
+        for br in self.get_branches_iter(add_vsc=True, add_hvdc=True, add_switch=True):
+
+            if br.bus_from in bus_set:
+                bus_set.add(br.bus_to)
+                other.add_element(br)
+
+            elif br.bus_to in bus_set:
+                bus_set.add(br.bus_from)
+                other.add_element(br)
+
+            else:
+                pass
+
+        # search for voltage levels and substations
+        vl_set = set()
+        se_set = set()
+        for bus in bus_set:
+            other.add_bus(bus)
+
+            if bus.voltage_level is not None:
+                vl_set.add(bus.voltage_level)
+                if bus.substation is not None:
+                    se_set.add(bus.substation)
+
+        # add substations
+        for se in se_set:
+            other.add_substation(se)
+
+        # add voltage level
+        for vl in vl_set:
+            other.add_voltage_level(vl)
+
+        # add injections
+        for inj in self.get_injection_devices_iter():
+            if inj.bus in bus_set:
+                other.add_element(inj)
+
+        return other

@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import ast
 import os
-from typing import Union, List, Set, Tuple, Dict, TYPE_CHECKING
+from typing import Union, List, Tuple, Dict, TYPE_CHECKING
 import json
 import numpy as np
 import math
@@ -19,7 +19,6 @@ from PySide6.QtCore import (Qt, QMimeData, QIODevice, QByteArray, QDataStream, Q
 from PySide6.QtGui import (QIcon, QPixmap, QImage, QStandardItemModel, QStandardItem, QColor, QDropEvent)
 
 from VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container import MapLineContainer
-from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics import GeneratorGraphicItem
 from VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics import BusGraphicItem
 from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget
 from VeraGrid.Gui.SubstationDesigner.substation_designer import SubstationDesigner
@@ -136,7 +135,7 @@ class MapLibraryModel(QStandardItemModel):
         :return: QByteArray
         """
         data = QByteArray()
-        stream = QDataStream(data, QIODevice.WriteOnly)
+        stream = QDataStream(data, QIODevice.OpenModeFlag.WriteOnly)
         stream.writeQString(val)
         return data
 
@@ -166,7 +165,7 @@ class MapLibraryModel(QStandardItemModel):
                 txt = self.data(idx, Qt.ItemDataRole.DisplayRole)
 
                 data = QByteArray()
-                stream = QDataStream(data, QIODevice.WriteOnly)
+                stream = QDataStream(data, QIODevice.OpenModeFlag.WriteOnly)
                 stream.writeQString(txt)
 
                 mime_data.setData('component/name', data)
@@ -3129,154 +3128,3 @@ def generate_map_diagram(
 
     return diagram
 
-
-def get_devices_to_expand(circuit: MultiCircuit, substations: List[Substation], max_level: int = 1,
-                          expand_outside: bool = True) -> Tuple[
-    List[Substation],
-    List[VoltageLevel],
-    List[Line],
-    List[DcLine],
-    List[HvdcLine]]:
-    """
-    get lists of devices to expand given a root bus
-    :param circuit: MultiCircuit
-    :param substations: List of Bus
-    :param max_level: max expansion level
-    :param expand_outside: whether to expand outside of the given references using the branches
-    :return:
-    """
-
-    # get all Branches
-    all_branches = circuit.lines + circuit.dc_lines + circuit.hvdc_lines
-
-    # create a pool of buses that belong to the substations
-    # store the bus objects and their level from the root
-    bus_pool = [(b, 0) for b in circuit.buses if b.substation in substations]
-
-    voltage_levels = set()
-    substations_extended = set()
-    selected_branches = set()
-
-    while len(bus_pool) > 0:
-
-        # search the next bus
-        bus, level = bus_pool.pop()
-
-        if bus.voltage_level is not None:
-            voltage_levels.add(bus.voltage_level)
-            if bus.substation not in substations_extended:
-                substations_extended.add(bus.substation)
-
-        if level < max_level:
-
-            for i, br in enumerate(all_branches):
-
-                if br.bus_from == bus:
-                    if expand_outside:
-                        bus_pool.append((br.bus_to, level + 1))
-                    selected_branches.add(br)
-
-                elif br.bus_to == bus:
-                    if expand_outside:
-                        bus_pool.append((br.bus_from, level + 1))
-                    selected_branches.add(br)
-
-                else:
-                    pass
-
-    # sort Branches
-    lines: List[Line] = list()
-    dc_lines: List[DcLine] = list()
-    hvdc_lines: List[HvdcLine] = list()
-
-    for obj in selected_branches:
-
-        if obj.device_type == DeviceType.LineDevice:
-            lines.append(obj)
-
-        elif obj.device_type == DeviceType.DCLineDevice:
-            dc_lines.append(obj)
-
-
-        elif obj.device_type == DeviceType.HVDCLineDevice:
-            hvdc_lines.append(obj)
-
-        else:
-            raise Exception(f'Unrecognized branch type {obj.device_type.value}')
-
-    list_substations_extended = list(substations_extended)
-
-    for substation in substations:
-        if substation not in list_substations_extended:
-            list_substations_extended.append(substation)
-
-    return list_substations_extended, list(voltage_levels), lines, dc_lines, hvdc_lines
-
-
-def make_diagram_from_substations(circuit: MultiCircuit,
-                                  substations: List[Substation] | Set[Substation],
-                                  prog_func: Union[Callable, None] = None,
-                                  text_func: Union[Callable, None] = None,
-                                  use_flow_based_width: bool = False,
-                                  min_branch_width: int = 1.0,
-                                  max_branch_width=5,
-                                  min_bus_width=1.0,
-                                  max_bus_width=20,
-                                  arrow_size=20,
-                                  palette: Colormaps = Colormaps.VeraGrid,
-                                  default_bus_voltage: float = 10,
-                                  expand_outside: bool = True,
-                                  name="Map diagram"):
-    """
-    Create a vicinity diagram
-    :param circuit: MultiCircuit
-    :param substations: List of Bus
-    :param prog_func:
-    :param text_func:
-    :param use_flow_based_width: use flow based width
-    :param min_branch_width: minimum branch width
-    :param max_branch_width: maximum branch width
-    :param min_bus_width:
-    :param max_bus_width: maximum bus width
-    :param arrow_size: arrow size
-    :param palette: Colormaps
-    :param default_bus_voltage: default bus voltage
-    :param expand_outside: whether to expand outside the given references using the branches
-    :param name: Name of the diagram
-    :return:
-    """
-
-    (substations_extended, voltage_levels,
-     lines, dc_lines, hvdc_lines) = get_devices_to_expand(circuit=circuit,
-                                                          substations=substations,
-                                                          max_level=1,
-                                                          expand_outside=expand_outside)
-
-    # Draw schematic subset
-    diagram = generate_map_diagram(
-        substations=substations_extended,
-        voltage_levels=voltage_levels,
-        lines=lines,
-        dc_lines=dc_lines,
-        hvdc_lines=hvdc_lines,
-        fluid_nodes=list(),
-        fluid_paths=list(),
-        external_grids=list(),
-        static_generators=list(),
-        loads=list(),
-        batteries=list(),
-        generators=list(),
-        prog_func=prog_func,
-        text_func=text_func,
-        name=name,
-        use_flow_based_width=use_flow_based_width,
-        min_branch_width=min_branch_width,
-        max_branch_width=max_branch_width,
-        min_bus_width=min_bus_width,
-        max_bus_width=max_bus_width,
-        arrow_size=arrow_size,
-        palette=palette,
-        default_bus_voltage=default_bus_voltage
-    )
-
-    return diagram

@@ -165,15 +165,15 @@ class BaseDiagramWidget(QSplitter):
 
         # Table to display object's properties
         self.object_editor_table = QTableView(self)
-        change_font_size(self.object_editor_table, 9)
-        change_font_size(self.object_editor_table.verticalHeader(), 9)
-        change_font_size(self.object_editor_table.horizontalHeader(), 9)
+        # change_font_size(self.object_editor_table, 9)
+        # change_font_size(self.object_editor_table.verticalHeader(), 9)
+        # change_font_size(self.object_editor_table.horizontalHeader(), 9)
 
         # Actual libraryView object
         self.library_view = QListView(self)
         self.library_view.setViewMode(self.library_view.ViewMode.ListMode)
         self.library_view.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
-        change_font_size(self.library_view, 9)
+        # change_font_size(self.library_view, 9)
 
         # library model
         self.library_model = library_model

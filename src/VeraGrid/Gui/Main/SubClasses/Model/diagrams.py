@@ -399,7 +399,7 @@ class DiagramsMain(CompiledArraysMain):
         widget = self.get_selected_diagram_widget()
         if widget is not None:
             if isinstance(widget, SchematicWidget):
-                selected = self.get_selected_buses()
+                selected = self.get_diagram_selected_buses()
 
                 if len(selected) == 0:
                     widget.center_nodes(elements=None)
@@ -410,7 +410,7 @@ class DiagramsMain(CompiledArraysMain):
             elif isinstance(widget, GridMapWidget):
                 widget.center()
 
-    def get_selected_buses(self) -> List[Tuple[int, dev.Bus, BusGraphicItem | None]]:
+    def get_diagram_selected_buses(self) -> List[Tuple[int, dev.Bus, BusGraphicItem | None]]:
         """
         Get the selected buses
         :return: list of (bus position, bus object, bus_graphics object)
@@ -2077,7 +2077,7 @@ class DiagramsMain(CompiledArraysMain):
             diagram = self.diagram_widgets_list[0]
             self.set_diagram_widget(diagram)
 
-    def add_map_diagram(self, ask: bool = True) -> None:
+    def add_map_diagram(self) -> None:
         """
         Adds a Map diagram
         """
@@ -2103,6 +2103,7 @@ class DiagramsMain(CompiledArraysMain):
             self.new_se_dlg.exec()
         else:
             self.show_warning_toast("No substations to draw...")
+            return
 
         # if ok:
         cmap_text = self.ui.palette_comboBox.currentText()
@@ -2708,7 +2709,7 @@ class DiagramsMain(CompiledArraysMain):
         if self.circuit.valid_for_simulation():
 
             # get the selected investment devices
-            selected: List[Tuple[int, dev.Bus, BusGraphicItem | None]] = self.get_selected_buses()
+            selected: List[Tuple[int, dev.Bus, BusGraphicItem | None]] = self.get_diagram_selected_buses()
 
             if len(selected) > 0:
 
@@ -2805,7 +2806,7 @@ class DiagramsMain(CompiledArraysMain):
             self.object_select_window.exec()
 
             if self.object_select_window.selected_object is not None:
-                for k, bus, graphic_obj in self.get_selected_buses():
+                for k, bus, graphic_obj in self.get_diagram_selected_buses():
                     bus.area = self.object_select_window.selected_object
                     print('Set {0} into bus {1}'.format(self.object_select_window.selected_object.name, bus.name))
 
@@ -2817,7 +2818,7 @@ class DiagramsMain(CompiledArraysMain):
             self.object_select_window.exec()
 
             if self.object_select_window.selected_object is not None:
-                for k, bus, graphic_obj in self.get_selected_buses():
+                for k, bus, graphic_obj in self.get_diagram_selected_buses():
                     bus.country = self.object_select_window.selected_object
                     print('Set {0} into bus {1}'.format(self.object_select_window.selected_object.name, bus.name))
 
@@ -2829,7 +2830,7 @@ class DiagramsMain(CompiledArraysMain):
             self.object_select_window.exec()
 
             if self.object_select_window.selected_object is not None:
-                for k, bus, graphic_pbj in self.get_selected_buses():
+                for k, bus, graphic_pbj in self.get_diagram_selected_buses():
                     bus.zone = self.object_select_window.selected_object
                     print('Set {0} into bus {1}'.format(self.object_select_window.selected_object.name, bus.name))
         else:
@@ -2989,7 +2990,7 @@ class DiagramsMain(CompiledArraysMain):
         gf.add_menu_entry(menu=context_menu,
                           text="New map",
                           icon_path=":/Icons/icons/map (add).png",
-                          function_ptr=lambda: self.add_map_diagram(True))
+                          function_ptr=self.add_map_diagram)
 
         gf.add_menu_entry(menu=context_menu,
                           text="Duplicate",

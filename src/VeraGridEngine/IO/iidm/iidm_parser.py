@@ -26,6 +26,7 @@ from VeraGridEngine.IO.iidm.devices.iidm_circuit import IidmCircuit
     https://powsybl.readthedocs.io/projects/powsybl-core/en/stable/grid_model/network_subnetwork.html
 """
 
+
 def strip_ns(tag: str) -> str:
     """
 
@@ -84,7 +85,7 @@ def parse_xiidm_file(file_path: str) -> IidmCircuit:
                 _id=elem.attrib.get("id", ""),
                 area_number=elem.attrib.get("areaNumber", -1),
                 status=elem.attrib.get("status", ""),
-                nodes=[int(e) for e in elem.attrib.get("nodes", []).split(",")],
+                nodes=[int(e) for e in elem.attrib.get("nodes", "").split(",")],
             ))
 
         elif tag == "generator":
@@ -183,11 +184,9 @@ def parse_xiidm_file(file_path: str) -> IidmCircuit:
 
 
 if __name__ == "__main__":
-
-
-
     # fname = "/home/santi/Documentos/Git/GitHub/RTE7000/2021/01/01/recollement-auto-20210101-0000-enrichi.xiidm"
-    fname = "/home/santi/Documentos/Git/GitHub/RTE7000/2021/01/01/recollement-auto-20210101-0000-enrichi.xiidm.bz2"
+    # fname = "/home/santi/Documentos/Git/GitHub/RTE7000/2021/01/01/recollement-auto-20210101-0000-enrichi.xiidm.bz2"
+    fname = "/Users/santi/Git/eRoots/VeraGrid/src/tests/data/grids/ucte/network.xiidm"
 
     # import pypowsybl as pp
     # grid = pp.network.load(fname)
@@ -196,4 +195,3 @@ if __name__ == "__main__":
     iidm_circuit = parse_xiidm_file(fname)
 
     print()
-

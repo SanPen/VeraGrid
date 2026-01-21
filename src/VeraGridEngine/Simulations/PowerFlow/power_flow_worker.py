@@ -66,6 +66,17 @@ def __split_reactive_power_into_devices(nc: NumericalCircuit, Qbus: Vec, results
     results.battery_q = Qvar[bus_idx_bat] * batt_q_share
     results.shunt_q = Qvar[bus_idx_sh] * sh_q_share
 
+    # For non-controlled generators, their Q is fixed based on power factor
+    # The sharing mechanism gives them 0 since their q_share = 0, so we must set their Q explicitly
+    _, idx_non_ctrl = nc.generator_data.get_controllable_and_not_controllable_indices()
+    if len(idx_non_ctrl) > 0:
+        pf = nc.generator_data.pf[idx_non_ctrl]
+        pf2 = pf ** 2
+        pf_sign = (pf + 1e-20) / np.abs(pf + 1e-20)
+        q_fixed_gen = pf_sign * nc.generator_data.p[idx_non_ctrl] * np.sqrt((1.0 - pf2) / (pf2 + 1e-20))
+        # Only set for active generators
+        results.gen_q[idx_non_ctrl] = q_fixed_gen * nc.generator_data.active[idx_non_ctrl]
+
 
 def __solve_island_complete_support(nc: NumericalCircuit,
                                     indices: SimulationIndices,

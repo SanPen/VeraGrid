@@ -449,37 +449,60 @@ def build_switch_by_cubic_id(staswitchs: List[StaSwitch]) -> Dict[str, StaSwitch
         d[cubic_id] = sw
     return d
 
-
-def convert_dgs_to_switches_by_elements(cubics_by_objid: Dict[str, List[StaCubic]],
-                                        switch_by_cubic_id: Dict[str, StaSwitch],
+def convert_dgs_to_switches_from_elmcoup(elmcoups: List[ElmCoup],
+                                        cubics_by_objid: Dict[str, List[StaCubic]],
                                         bus_by_term_id: Dict[str, dev.Bus],
-                                        tr3_ids: Set[str],
+                                        switch_by_cubic_id: Dict[str, StaSwitch],
                                         logger: Logger) -> List[dev.Switch]:
     """
-    Create one VeraGrid Switch per 2-terminal element (line/trafo/etc.) when both ends have StaSwitch.
-    This function filters out "internal" PowerFactory switches (closed and without type) unless
-    they belong to a 3-Winding Transformer.
+    Create VeraGrid Switch devices from ElmCoup.
 
-    :param cubics_by_objid: Dictionary mapping Element ID -> List of Cubicles
-    :param switch_by_cubic_id: Dictionary mapping Cubic ID -> Switch Object
-    :param bus_by_term_id: Dictionary mapping Terminal ID -> Bus Object
-    :param tr3_ids: Set of IDs belonging to 3-Winding Transformers (to force visibility)
-    :param logger: Logger object
+    :param elmcoups: List of ElmCoup objects from DGS
+    :param cubics_by_objid: Dictionary mapping Element ID -> List of StaCubic cubicles
+    :param bus_by_term_id: Dictionary mapping ElmTerm.ID -> VeraGrid Bus
+    :param switch_by_cubic_id: Dictionary mapping StaCubic.ID -> StaSwitch (via StaSwitch.fold_id)
+    :param logger: Logger instance to report warnings
     :return: List of VeraGrid Switch objects
     """
     switches: List[dev.Switch] = list()
 
-    for obj_id, cubics in cubics_by_objid.items():
-        obj_id_ref: str | None = _ref_id(obj_id)
-        if obj_id_ref is None or obj_id_ref == "":
+    for coup in elmcoups:
+        coup_id: str | None = _ref_id(coup.ID)
+        if coup_id is None or coup_id == "":
             continue
 
-        # Avoid duplicates because cubics_by_objid may contain both raw and ref keys
-        if obj_id != obj_id_ref:
+        # Resolve connectivity
+        term_ids_raw: List[str] = get_terminal_ids(element_id=coup_id, cubics_by_objid=cubics_by_objid)
+
+        # Deduplicate terminals while preserving order
+        term_ids: List[str] = list()
+        for tid in term_ids_raw:
+            if tid not in term_ids:
+                term_ids.append(tid)
+
+        if len(term_ids) != 2:
+            logger.add_warning(
+                f"ElmCoup '{coup.loc_name}' (ID={coup.ID}) skipped: "
+                f"expected 2 terminals, got {len(term_ids)}."
+            )
             continue
 
-        ends: List[Tuple[dev.Bus, StaSwitch]] = list()
+        bus_from: dev.Bus = bus_by_term_id[term_ids[0]]
+        bus_to: dev.Bus = bus_by_term_id[term_ids[1]]
 
+        # Skip degenerate cases
+        if bus_from is bus_to:
+            logger.add_warning(
+                f"ElmCoup '{coup.loc_name}' (ID={coup.ID}) skipped: both ends connect to the same bus."
+            )
+            continue
+
+        # ElmCoup.on_off is the authoritative electrical state
+        is_closed: bool = (int(coup.on_off) != 0)
+
+        # Validation using StaSwitch on each cubicle
+        # (StaSwitch.on_off may represent a cubicle-end representation, not the physical device state)
+        cubics: List[StaCubic] = cubics_by_objid.get(coup_id, list())
         for cb in cubics:
             cb_id: str | None = _ref_id(cb.ID)
             if cb_id is None or cb_id == "":
@@ -489,71 +512,33 @@ def convert_dgs_to_switches_by_elements(cubics_by_objid: Dict[str, List[StaCubic
             if stasw is None:
                 continue
 
-            term_id: str | None = _ref_id(cb.fold_id)
-            if term_id is None or term_id == "":
-                continue
+            stasw_closed: bool = (int(stasw.on_off) != 0)
+            if stasw_closed != is_closed:
+                logger.add_warning(
+                    f"ElmCoup '{coup.loc_name}' (ID={coup.ID}) state differs from StaSwitch "
+                    f"'{stasw.loc_name}' (ID={stasw.ID}): "
+                    f"ElmCoup.on_off={int(coup.on_off)} vs StaSwitch.on_off={int(stasw.on_off)}. "
+                    f"Using ElmCoup.on_off as truth."
+                )
 
-            bus: dev.Bus = bus_by_term_id[term_id]
-            ends.append((bus, stasw))
+        graphic_type: SwitchGraphicType = _convert_pf_switch_graphic_type(iuse=0, ausage=coup.aUsage)
 
-        if len(ends) != 2:
-            continue
-
-        bus_from: dev.Bus = ends[0][0]
-        bus_to: dev.Bus = ends[1][0]
-
-        # Skip degenerate cases
-        if bus_from is bus_to:
-            continue
-
-        sw_a: StaSwitch = ends[0][1]
-        sw_b: StaSwitch = ends[1][1]
-
-        # Physical state
-        is_closed: bool = (int(sw_a.on_off) != 0) and (int(sw_b.on_off) != 0)
-
-        # --- VISIBILITY FILTER ---
-        # 1. Check if switches have a specific Type assigned (Real Device)
-        #    In DGS, an empty type usually means it is a logical connector.
-        has_type_a: bool = (sw_a.typ_id is not None) and (str(sw_a.typ_id).strip() != "")
-        has_type_b: bool = (sw_b.typ_id is not None) and (str(sw_b.typ_id).strip() != "")
-        is_real_device: bool = has_type_a or has_type_b
-
-        # 2. Check if it belongs to a 3-Winding Transformer (User requirement)
-        is_tr3: bool = obj_id_ref in tr3_ids
-
-        # 3. Logic: Show if OPEN or REAL DEVICE or TR3. Hide otherwise.
-        should_render: bool = (not is_closed) or is_real_device or is_tr3
-
-        if not should_render:
-            continue
-        # -------------------------
-
-        # Calculate graphical position (midpoint between buses)
-        mid_x: float = (float(bus_from.x) + float(bus_to.x)) / 2.0
-        mid_y: float = (float(bus_from.y) + float(bus_to.y)) / 2.0
-
-        normal_open: bool = not is_closed
-        graphic_type: SwitchGraphicType = _convert_pf_switch_graphic_type(iuse=sw_a.iUse, ausage=sw_a.aUsage)
-
-        sw = dev.Switch(bus_from=bus_from,
-                        bus_to=bus_to,
-                        name=f"SW_{obj_id_ref}",
-                        idtag=obj_id_ref,
-                        code=sw_a.typ_id,
-                        active=is_closed,
-                        normal_open=normal_open,
-                        retained=False,
-                        rated_current=0.0,
-                        graphic_type=graphic_type,
-                        # x=mid_x,
-                        # y=mid_y
-                        )
+        sw = dev.Switch(
+            bus_from=bus_from,
+            bus_to=bus_to,
+            name=coup.loc_name or f"ElmCoup_{coup_id}",
+            idtag=coup_id,
+            code=coup.typ_id,
+            active=is_closed,
+            normal_open=not is_closed,
+            retained=False,
+            rated_current=0.0,
+            graphic_type=graphic_type
+        )
 
         switches.append(sw)
 
     return switches
-
 
 def _convert_pf_switch_graphic_type(iuse: int, ausage: str) -> SwitchGraphicType:
     """
@@ -567,6 +552,7 @@ def _convert_pf_switch_graphic_type(iuse: int, ausage: str) -> SwitchGraphicType
     usage_to_member: Dict[str, str] = {
         "CB": "CircuitBreaker",
         "BREAKER": "CircuitBreaker",
+        "CBK": "CircuitBreaker",
         "DIS": "Disconnector",
         "DISCONNECTOR": "Disconnector",
         "LBS": "LoadBreakSwitch",
@@ -1587,28 +1573,19 @@ def dgs_to_circuit(path: str, logger: Logger | None = None) -> dev.MultiCircuit:
         # MultiCircuit supports generic branch insertion
         grid.add_series_reactance(obj=sr)
 
-    # switches (PowerFactory/DGS: StaSwitch.fold_id -> StaCubic.ID -> ElmTerm.ID -> Bus)
+    # switches (PowerFactory/DGS: ElmCoup is the real device; StaCubic resolves connectivity)
     switch_by_cubic_id: Dict[str, StaSwitch] = build_switch_by_cubic_id(staswitchs=dgs_grid.staswitchs)
 
-    # Collect 3-Winding Transformers IDs to force switch visibility
-    tr3_set: Set[str] = set()
-    for elmtr3 in dgs_grid.elmtr3s:
-        tid = _ref_id(elmtr3.ID)
-        if tid is not None and tid != "":
-            tr3_set.add(tid)
-
-    # Convert Switches with visibility filter
-    vg_switches: List[dev.Switch] = convert_dgs_to_switches_by_elements(
+    vg_switches: List[dev.Switch] = convert_dgs_to_switches_from_elmcoup(
+        elmcoups=dgs_grid.elmcoups,
         cubics_by_objid=cubics_by_objid,
-        switch_by_cubic_id=switch_by_cubic_id,
         bus_by_term_id=bus_by_term_id,
-        tr3_ids=tr3_set,
+        switch_by_cubic_id=switch_by_cubic_id,
         logger=logger
     )
 
     for sw in vg_switches:
         grid.add_switch(obj=sw)
-
     # Transformers 2W
     for elmtr2 in dgs_grid.elmtr2s:
         trafo = convert_dgs_to_transformer(
@@ -1662,3 +1639,112 @@ def dgs_to_circuit(path: str, logger: Logger | None = None) -> dev.MultiCircuit:
         grid.add_transformer3w(obj=trafo3w)
 
     return grid
+
+
+"""
+Funcion usada antes para los switches a partir de los StaSwitch. Era erronea, deviamos parsearlos a partir de los ElmCoup:
+def convert_dgs_to_switches_by_elements(cubics_by_objid: Dict[str, List[StaCubic]],
+                                        switch_by_cubic_id: Dict[str, StaSwitch],
+                                        bus_by_term_id: Dict[str, dev.Bus],
+                                        tr3_ids: Set[str],
+                                        logger: Logger) -> List[dev.Switch]:
+    
+    Create one VeraGrid Switch per 2-terminal element (line/trafo/etc.) when both ends have StaSwitch.
+    This function filters out "internal" PowerFactory switches (closed and without type) unless
+    they belong to a 3-Winding Transformer.
+
+    :param cubics_by_objid: Dictionary mapping Element ID -> List of Cubicles
+    :param switch_by_cubic_id: Dictionary mapping Cubic ID -> Switch Object
+    :param bus_by_term_id: Dictionary mapping Terminal ID -> Bus Object
+    :param tr3_ids: Set of IDs belonging to 3-Winding Transformers (to force visibility)
+    :param logger: Logger object
+    :return: List of VeraGrid Switch objects
+   
+    switches: List[dev.Switch] = list()
+
+    for obj_id, cubics in cubics_by_objid.items():
+        obj_id_ref: str | None = _ref_id(obj_id)
+        if obj_id_ref is None or obj_id_ref == "":
+            continue
+
+        # Avoid duplicates because cubics_by_objid may contain both raw and ref keys
+        if obj_id != obj_id_ref:
+            continue
+
+        ends: List[Tuple[dev.Bus, StaSwitch]] = list()
+
+        for cb in cubics:
+            cb_id: str | None = _ref_id(cb.ID)
+            if cb_id is None or cb_id == "":
+                continue
+
+            stasw: StaSwitch | None = switch_by_cubic_id.get(cb_id, None)
+            if stasw is None:
+                continue
+
+            term_id: str | None = _ref_id(cb.fold_id)
+            if term_id is None or term_id == "":
+                continue
+
+            bus: dev.Bus = bus_by_term_id[term_id]
+            ends.append((bus, stasw))
+
+        if len(ends) != 2:
+            continue
+
+        bus_from: dev.Bus = ends[0][0]
+        bus_to: dev.Bus = ends[1][0]
+
+        # Skip degenerate cases
+        if bus_from is bus_to:
+            continue
+
+        sw_a: StaSwitch = ends[0][1]
+        sw_b: StaSwitch = ends[1][1]
+
+        # Physical state
+        is_closed: bool = (int(sw_a.on_off) != 0) and (int(sw_b.on_off) != 0)
+
+        # --- VISIBILITY FILTER ---
+        # 1. Check if switches have a specific Type assigned (Real Device)
+        #    In DGS, an empty type usually means it is a logical connector.
+        has_type_a: bool = (sw_a.typ_id is not None) and (str(sw_a.typ_id).strip() != "")
+        has_type_b: bool = (sw_b.typ_id is not None) and (str(sw_b.typ_id).strip() != "")
+        is_real_device: bool = has_type_a or has_type_b
+
+        # 2. Check if it belongs to a 3-Winding Transformer (User requirement)
+        is_tr3: bool = obj_id_ref in tr3_ids
+
+        # 3. Logic: Show if OPEN or REAL DEVICE or TR3. Hide otherwise.
+        should_render: bool = (not is_closed) or is_real_device or is_tr3
+
+        if not should_render:
+            continue
+        # -------------------------
+
+        # Calculate graphical position (midpoint between buses)
+        mid_x: float = (float(bus_from.x) + float(bus_to.x)) / 2.0
+        mid_y: float = (float(bus_from.y) + float(bus_to.y)) / 2.0
+
+        normal_open: bool = not is_closed
+        graphic_type: SwitchGraphicType = _convert_pf_switch_graphic_type(iuse=sw_a.iUse, ausage=sw_a.aUsage)
+
+        sw = dev.Switch(bus_from=bus_from,
+                        bus_to=bus_to,
+                        name=f"SW_{obj_id_ref}",
+                        idtag=obj_id_ref,
+                        code=sw_a.typ_id,
+                        active=is_closed,
+                        normal_open=normal_open,
+                        retained=False,
+                        rated_current=0.0,
+                        graphic_type=graphic_type,
+                        # x=mid_x,
+                        # y=mid_y
+                        )
+
+        switches.append(sw)
+
+    return switches
+
+"""

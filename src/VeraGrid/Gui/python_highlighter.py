@@ -4,77 +4,163 @@
 # SPDX-License-Identifier: MPL-2.0
 
 import re
-
-from PySide6.QtGui import QSyntaxHighlighter, QBrush
-from PySide6.QtGui import QTextCharFormat, QColor, QFont
+from PySide6.QtGui import (
+    QSyntaxHighlighter,
+    QTextCharFormat,
+    QColor,
+    QFont,
+)
 
 
 class PythonHighlighter(QSyntaxHighlighter):
     """
-    PythonHighlighter
+    High-quality Python syntax highlighter for interactive consoles.
     """
 
-    def __init__(self, document):
+    NORMAL = 0
+    TRIPLE_SINGLE = 1
+    TRIPLE_DOUBLE = 2
 
+    def __init__(self, document):
         super().__init__(document)
 
-        # Define RGB colors for a dark theme
-        cyan = QColor(0, 183, 235)
-        magenta = QColor(233, 30, 99)
-        # yellow = QColor(255, 235, 59)
-        red = QColor(244, 67, 54)
-        dark_gray = QColor(96, 125, 139)
-        dark_green = QColor(76, 175, 80)
-        green = QColor(139, 195, 74)
-        light_blue = QColor(33, 150, 243)
-        orange = QColor(255, 152, 0)
-        purple = QColor(156, 39, 176)
-        pink = QColor(233, 30, 99)
-        teal = QColor(0, 150, 136)
-        deep_purple = QColor(103, 58, 183)
-        amber = QColor(255, 193, 7)
+        # ----------------------------
+        # Formats (created ONCE)
+        # ----------------------------
 
-        self.highlight_rules = [
-            (r'\bdef\b\s+([a-zA-Z_]\w*)', cyan, False),  # Highlight function names
-            (r'\bclass\b\s+([a-zA-Z_]\w*)', magenta, False),  # Highlight class names
-            (r'\bif\b|\belse\b|\bwhile\b|\bfor\b|\bin\b|\bbreak\b|'
-             r'\bcontinue\b|\bpass\b|\btry\b|\bexcept\b|\bfinally\b|\bassert\b', light_blue, True),
-            (r'\bimport\b|\bfrom\b|\bas\b|\bglobal\b|\bnonlocal\b|\breturn\b|\byield\b|\bwith\b', teal, True),
-            (r'\b|\band\b|\bor\b|\bnot\b|\bin\b', teal, True),
-            (r'\bTrue\b|\bFalse', magenta, True),
-            (r'\bNone\b|\bint\b|\bfloat\b|\bstr\b|\blist\b|\btuple\b|\bset\b|\bdict\b|\blen\b', deep_purple, True),
-            (r'\binput\b|\bopen\b|\bmin\b|\bmax\b|\bsum\b|\babs\b|\bround\b|\bord\b|\bchr\b|\brange\b', amber, True),
-            (r'\ball\b|\bany\b|\bzip\b|\benumerate\b|\bsorted\b', pink, True),
-            (r'#.*$', dark_gray, False),
-            (r'".*?"', pink, False),
-            (r"'.*?'", pink, False),
-            (r'\b(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?\b', dark_green, False),
-            (r'\bprint\b', green, True),  # Highlight 'print' in green
-            (r'\+', purple, False),  # Highlight math operations
-            (r'-', purple, False),
-            (r'\*', purple, False),
-            (r'/', purple, False),
-            (r'def', red, True),
-            (r'=', orange, False),
-            (r'<', orange, False),
-            (r'>', orange, False),
-            (r'class', red, True),
-            (r'self', dark_green, False),
-            # Add more highlighting rules as needed
-        ]
+        def fmt(color, bold=False):
+            f = QTextCharFormat()
+            f.setForeground(QColor(color))
+            if bold:
+                f.setFontWeight(QFont.Weight.Bold)
+            return f
+
+        self.formats = {
+            "prompt": fmt("#64B5F6", True),
+            "keyword": fmt("#82AAFF", True),
+            "builtin": fmt("#FFCB6B"),
+            "number": fmt("#C3E88D"),
+            "string": fmt("#F07178"),
+            "comment": fmt("#546E7A"),
+            "operator": fmt("#89DDFF"),
+            "identifier": fmt("#FFFFFF"),
+            "defclass": fmt("#C792EA", True),
+        }
+
+        # ----------------------------
+        # Keyword sets
+        # ----------------------------
+
+        self.keywords = {
+            "and", "as", "assert", "break", "class", "continue",
+            "def", "del", "elif", "else", "except", "False",
+            "finally", "for", "from", "global", "if", "import",
+            "in", "is", "lambda", "None", "nonlocal", "not",
+            "or", "pass", "raise", "return", "True", "try",
+            "while", "with", "yield",
+        }
+
+        self.builtins = {
+            "print", "len", "range", "open", "min", "max",
+            "sum", "abs", "round", "zip", "enumerate", "sorted",
+            "map", "filter", "list", "dict", "set", "tuple",
+            "int", "float", "str", "bool",
+        }
+
+        # ----------------------------
+        # Precompiled regexes
+        # ----------------------------
+
+        self.re_prompt = re.compile(r"^(>>> |\.\.\. )")
+        self.re_identifier = re.compile(r"\b[A-Za-z_]\w*\b")
+        self.re_number = re.compile(r"\b\d+(\.\d+)?([eE][+-]?\d+)?\b")
+        self.re_comment = re.compile(r"#.*$")
+        self.re_operator = re.compile(r"[+\-*/%=<>!&|^~]+")
+
+        self.re_string_single = re.compile(r"'([^'\\]|\\.)*'")
+        self.re_string_double = re.compile(r'"([^"\\]|\\.)*"')
+
+        self.re_triple_single = re.compile(r"'''")
+        self.re_triple_double = re.compile(r'"""')
+
+    # ----------------------------
+    # Core highlighter
+    # ----------------------------
 
     def highlightBlock(self, text):
-        """
-        Search the text to highlight
-        :param text: some text to highlight
-        """
-        for pattern, color, bold in self.highlight_rules:
-            frmt = QTextCharFormat()
-            frmt.setForeground(QBrush(color))
+        self.setCurrentBlockState(self.NORMAL)
 
-            if bold:
-                frmt.setFontWeight(QFont.Weight.Bold)
+        # ---- Prompt ----
+        m = self.re_prompt.match(text)
+        if m:
+            self.setFormat(0, m.end(), self.formats["prompt"])
 
-            for match in re.finditer(pattern, text, re.IGNORECASE):
-                start, end = match.span()
-                self.setFormat(start, end - start, frmt)
+        # ---- Multiline strings ----
+        if self._handle_multiline_strings(text):
+            return
+
+        # ---- Comments ----
+        for m in self.re_comment.finditer(text):
+            self.setFormat(m.start(), m.end() - m.start(), self.formats["comment"])
+
+        # ---- Strings ----
+        for rx in (self.re_string_single, self.re_string_double):
+            for m in rx.finditer(text):
+                self.setFormat(m.start(), m.end() - m.start(), self.formats["string"])
+
+        # ---- Numbers ----
+        for m in self.re_number.finditer(text):
+            self.setFormat(m.start(), m.end() - m.start(), self.formats["number"])
+
+        # ---- Operators ----
+        for m in self.re_operator.finditer(text):
+            self.setFormat(m.start(), m.end() - m.start(), self.formats["operator"])
+
+        # ---- Identifiers, keywords, builtins ----
+        for m in self.re_identifier.finditer(text):
+            word = m.group()
+            if word in self.keywords:
+                self.setFormat(m.start(), len(word), self.formats["keyword"])
+            elif word in self.builtins:
+                self.setFormat(m.start(), len(word), self.formats["builtin"])
+
+    # ----------------------------
+    # Multiline string handling
+    # ----------------------------
+
+    def _handle_multiline_strings(self, text):
+        if self.previousBlockState() == self.TRIPLE_SINGLE:
+            end = self.re_triple_single.search(text)
+            if end:
+                self.setFormat(0, end.end(), self.formats["string"])
+                self.setCurrentBlockState(self.NORMAL)
+                return False
+            else:
+                self.setFormat(0, len(text), self.formats["string"])
+                self.setCurrentBlockState(self.TRIPLE_SINGLE)
+                return True
+
+        if self.previousBlockState() == self.TRIPLE_DOUBLE:
+            end = self.re_triple_double.search(text)
+            if end:
+                self.setFormat(0, end.end(), self.formats["string"])
+                self.setCurrentBlockState(self.NORMAL)
+                return False
+            else:
+                self.setFormat(0, len(text), self.formats["string"])
+                self.setCurrentBlockState(self.TRIPLE_DOUBLE)
+                return True
+
+        start = self.re_triple_single.search(text)
+        if start:
+            self.setFormat(start.start(), len(text) - start.start(), self.formats["string"])
+            self.setCurrentBlockState(self.TRIPLE_SINGLE)
+            return True
+
+        start = self.re_triple_double.search(text)
+        if start:
+            self.setFormat(start.start(), len(text) - start.start(), self.formats["string"])
+            self.setCurrentBlockState(self.TRIPLE_DOUBLE)
+            return True
+
+        return False

@@ -647,8 +647,7 @@ class SimulationsMain(TimeEventsMain):
             if isinstance(self.open_file_thread_object.file_name, str):
                 self.ui.file_information_label.setText(self.open_file_thread_object.file_name)
 
-        self.clear_console()
-        self.add_console_vars()
+        self.reset_console()
 
         self.ui.units_label.setText("")
 
@@ -1975,7 +1974,7 @@ class SimulationsMain(TimeEventsMain):
                             # incompatible areas...exit
                             return
                     else:
-                        sel_buses = self.get_selected_buses()
+                        sel_buses = self.get_diagram_selected_buses()
                         if len(sel_buses) == 0:
                             # all nodes
                             alpha_vec *= alpha
@@ -3104,7 +3103,7 @@ class SimulationsMain(TimeEventsMain):
         """
 
         bus_dict = self.circuit.get_bus_index_dict()
-        sel_buses = self.get_selected_buses()
+        sel_buses = self.get_diagram_selected_buses()
         capacity_nodes_idx = np.array([bus_dict[b] for _, b, _ in sel_buses])
 
         method = self.nodal_capacity_methods_dict[self.ui.nodal_capacity_method_comboBox.currentText()]

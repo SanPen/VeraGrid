@@ -59,6 +59,7 @@ from VeraGrid.Gui.Diagrams.SchematicWidget.diagram_bus_selection_dialogue import
 from VeraGrid.Gui.rms_events_editor_dialog import RmsEventEditor
 from VeraGrid.Gui.Diagrams.generic_graphics import IS_DARK
 from VeraGrid.Gui.python_console import PythonConsole
+from VeraGrid.Gui.python_script_editor import PythonCodeEditor
 from VeraGrid.Gui.toast_widget import ToastManager
 
 
@@ -171,6 +172,15 @@ class BaseMainGui(QMainWindow):
         # Add console --------------------------------------------------------------------------------------------------
         self.console = PythonConsole(banner="VeraGrid Python Console!")
         self.ui.consoleLayout.addWidget(self.console)
+
+        self.code_editor = PythonCodeEditor(namespace={
+                    "__builtins__": __builtins__,  # dict or module, both fine
+                    "app": self,
+                    "np": np,
+                    "pd": pd,
+                    "plt": plt,
+                },)
+        self.ui.codeEditorLayout.addWidget(self.code_editor)
 
         # window pointers ----------------------------------------------------------------------------------------------
         self.file_sync_window: Union[SyncDialogueWindow, None] = None
@@ -817,7 +827,7 @@ class BaseMainGui(QMainWindow):
         self.console.add_var("np", np)
         self.console.add_var("pd", pd)
         self.console.add_var("plt", plt)
-        self.console.add_var("clc", self.clear_console)
+        self.console.add_var("clc", self.console.clear)
         self.console.add_var('app', self)
         self.console.add_var('circuit', self.circuit)
         self.console.add_var('user_folder', get_create_veragrid_folder)

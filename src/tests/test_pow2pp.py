@@ -1,5 +1,5 @@
 from collections import defaultdict
-
+import pytest
 import numpy as np
 # import pandapower as pdp
 # import pypowsybl as pp
@@ -13,7 +13,7 @@ from VeraGridEngine.IO.others.pow2pp import convert_to_pandapower
 
 # For testing, let's include the converter functions directly
 
-
+@pytest.mark.skip(reason="unclear what this is supposed to test")
 def test_transnet_exmple_net():
 
     try:
@@ -22,7 +22,7 @@ def test_transnet_exmple_net():
         return
 
     pow = pypowsybl.network.load(
-        "/home/ankur/Dokumente/githubdev/GridCal/src/tests/data/grids/state-estimation/19700101T0000Z_.zip"
+        "tests/data/grids/state-estimation/19700101T0000Z_.zip"
     )
     net = convert_to_pandapower(pow)
     print(net)

@@ -262,7 +262,19 @@ class BarTerminalItem(BaseTerminal, QGraphicsRectItem):
         n = len(self._hosting_connections)
         dx = w / (n + 1)
 
-        for i, (connection, call_back) in enumerate(self._hosting_connections.items()):
+        # Sort connections by the x position  to avoid crossing lines
+        def get_other_end_x(connection: "LineGraphicTemplateItem") -> float:
+            """Get the x position of the other end of the line"""
+            if connection.get_terminal_to() is self:
+                # This terminal is the 'to' port, so use the 'from' position
+                return connection.pos1.x() if connection.pos1 else 0.0
+            else:
+                # This terminal is the 'from' port, so use the 'to' position
+                return connection.pos2.x() if connection.pos2 else 0.0
+
+        sorted_connections = sorted(self._hosting_connections.items(), key=lambda item: get_other_end_x(item[0]))
+
+        for i, (connection, call_back) in enumerate(sorted_connections):
             if call_back is not None:
                 call_back(value + QPointF(float(i + 1) * dx, h2))
 

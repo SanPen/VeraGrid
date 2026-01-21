@@ -32,11 +32,11 @@ from VeraGrid.Gui.TowerBuilder.LineBuilderDialogue import TowerBuilderGUI
 from VeraGrid.Gui.RmsModelEditor.rms_model_editor_engine import RmsModelEditorGUI
 from VeraGrid.Gui.rms_events_editor_dialog import RmsEventEditor
 from VeraGrid.Gui.SystemScaler.system_scaler import SystemScaler
-from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import GridMapWidget, make_diagram_from_substations
+from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import GridMapWidget, generate_map_diagram
 from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget, make_diagram_from_buses
 from VeraGrid.Gui.GridReduce.grid_reduce import GridReduceDialogue
 from VeraGrid.Gui.SubstationDesigner.substation_designer import SubstationDesigner
-from VeraGrid.Gui.general_dialogues import LogsDialogue, CustomQuestionDialogue
+from VeraGrid.Gui.general_dialogues import LogsDialogue, CustomQuestionDialogue, CheckListDialogue
 from VeraGrid.Gui.Diagrams.Editors.transformer_editor import TransformerEditor
 from VeraGrid.Gui.Diagrams.Editors.transformer3w_editor import Transformer3WEditor
 from VeraGrid.Gui.Diagrams.Editors.controllable_shunt_editor import ControllableShuntEditor
@@ -432,7 +432,7 @@ class DataBaseTableMain(DiagramsMain):
 
         return buses, selected_objects
 
-    def get_selected_substations(self) -> Tuple[Set[dev.Substation], List[ALL_DEV_TYPES]]:
+    def get_selected_table_substations(self) -> Tuple[Set[dev.Substation], List[ALL_DEV_TYPES]]:
         """
         Get the substations matching the table selection
         :return:  set of substations, list of selected objects originating the substation set
@@ -619,18 +619,63 @@ class DataBaseTableMain(DiagramsMain):
         """
         Create a New map from a buses selection
         """
-        selected_substations, selected_objects = self.get_selected_substations()
 
-        if len(selected_substations):
+        # from whatever, get the selected substations
+        selected_buses, selected_objects = self.get_selected_table_buses()
+
+        if len(selected_buses):
+
+            tpes = [
+                DeviceType.SubstationDevice,
+                DeviceType.LineDevice,
+                DeviceType.DCLineDevice,
+                DeviceType.HVDCLineDevice,
+                DeviceType.GeneratorDevice,
+                DeviceType.BatteryDevice,
+                DeviceType.LoadDevice,
+                DeviceType.StaticGeneratorDevice,
+                DeviceType.ExternalGridDevice
+            ]
+
+            self.new_se_dlg = CheckListDialogue(
+                objects_list=[e.value for e in tpes]
+            )
+
+            if self.circuit.get_substation_number() > 0:
+                # showing this menu only makes sense if there is anything there
+                self.new_se_dlg.exec()
+            else:
+                self.show_warning_toast("No substations to draw...")
+                return
+
             cmap_text = self.ui.palette_comboBox.currentText()
             cmap = self.cmap_dict[cmap_text]
+            subgrid = self.circuit.slice_buses(buses=list(selected_buses))
 
-            expand_outside = yes_no_question(text="Expand outside of the given selection using the branches?",
-                                             title="Expand outside")
-
-            diagram = make_diagram_from_substations(
-                circuit=self.circuit,
-                substations=selected_substations,
+            diagram = generate_map_diagram(
+                substations=subgrid.get_substations() if self.new_se_dlg.selected(
+                    DeviceType.SubstationDevice.value) else list(),
+                voltage_levels=subgrid.get_voltage_levels() if self.new_se_dlg.selected(
+                    DeviceType.SubstationDevice.value) else list(),
+                lines=subgrid.get_lines() if self.new_se_dlg.selected(DeviceType.LineDevice.value) else list(),
+                dc_lines=subgrid.get_dc_lines() if self.new_se_dlg.selected(
+                    DeviceType.DCLineDevice.value) else list(),
+                hvdc_lines=subgrid.get_hvdc() if self.new_se_dlg.selected(
+                    DeviceType.HVDCLineDevice.value) else list(),
+                fluid_nodes=subgrid.get_fluid_nodes(),
+                fluid_paths=subgrid.get_fluid_paths(),
+                external_grids=subgrid.external_grids if self.new_se_dlg.selected(
+                    DeviceType.ExternalGridDevice.value) else list(),
+                static_generators=subgrid.static_generators if self.new_se_dlg.selected(
+                    DeviceType.StaticGeneratorDevice.value) else list(),
+                loads=subgrid.loads if self.new_se_dlg.selected(DeviceType.LoadDevice.value) else list(),
+                batteries=subgrid.batteries if self.new_se_dlg.selected(
+                    DeviceType.BatteryDevice.value) else list(),
+                generators=subgrid.generators if self.new_se_dlg.selected(
+                    DeviceType.GeneratorDevice.value) else list(),
+                prog_func=None,
+                text_func=None,
+                name='Map diagram',
                 use_flow_based_width=self.ui.branch_width_based_on_flow_checkBox.isChecked(),
                 min_branch_width=self.ui.min_branch_size_spinBox.value(),
                 max_branch_width=self.ui.max_branch_size_spinBox.value(),
@@ -638,9 +683,7 @@ class DataBaseTableMain(DiagramsMain):
                 max_bus_width=self.ui.max_node_size_spinBox.value(),
                 arrow_size=self.ui.arrow_size_size_spinBox.value(),
                 palette=cmap,
-                default_bus_voltage=self.ui.defaultBusVoltageSpinBox.value(),
-                expand_outside=expand_outside,
-                name=f"{selected_objects[0].name} diagram"
+                default_bus_voltage=self.ui.defaultBusVoltageSpinBox.value()
             )
 
             default_tile_source = self.tile_name_dict[self.ui.tile_provider_comboBox.currentText()]
@@ -1531,7 +1574,7 @@ class DataBaseTableMain(DiagramsMain):
         """
 
         # Get selected buses from the current diagram if any
-        selected_buses_tuples = self.get_selected_buses()
+        selected_buses_tuples = self.get_diagram_selected_buses()
         buses_to_replace = [bus for _, bus, _ in selected_buses_tuples] if selected_buses_tuples else None
 
         kv = self.get_default_voltage()

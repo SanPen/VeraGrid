@@ -5,7 +5,7 @@
 Have you found a bug in **VeraGrid** or have a suggestion for a new functionality? Then
 get in touch with us by opening up an issue on the 
 [issue board](https://github.com/SanPen/VeraGrid/issues) 
-or [join the community discord chat](https://discord.com/invite/dzxctaNbvu) 
+or [join the community discord chat](https://discord.gg/ypgmWvT5) 
 to discuss possible new
 developments with the community and the maintainers.
 

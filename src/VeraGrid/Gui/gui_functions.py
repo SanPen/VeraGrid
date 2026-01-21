@@ -14,6 +14,7 @@ from VeraGridEngine.data_logger import DataLogger
 from VeraGridEngine.IO.cim.cgmes.cgmes_circuit import CgmesCircuit, CGMES_ASSETS
 from VeraGridEngine.Devices.Branches.line_locations import LineLocations
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
+from VeraGrid.Gui.font_config import MENU_FONT_SIZE
 
 if TYPE_CHECKING:
     from VeraGrid.Gui.object_model import ObjectsModel
@@ -854,7 +855,7 @@ def fill_model_from_dict(parent: QtGui.QStandardItem,
                          d: Dict[str, Union[Dict[str, Any], List[str]]],
                          editable=False,
                          icons: Dict[str, str] = None,
-                         font_size: int = 9):
+                         font_size: int = MENU_FONT_SIZE):
     """
     Fill TreeViewModel from dictionary
     :param parent: Parent QStandardItem
@@ -1090,7 +1091,7 @@ def add_menu_entry(menu: QtWidgets.QMenu,
                    function_ptr=None,
                    checkeable=False,
                    checked_value=False,
-                   font_size: int = 9) -> QtGui.QAction:
+                   font_size: int = MENU_FONT_SIZE) -> QtGui.QAction:
     """
     Add a context menu entry
     :param menu:

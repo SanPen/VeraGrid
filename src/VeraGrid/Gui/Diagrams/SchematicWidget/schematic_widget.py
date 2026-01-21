@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 from typing import List, Set, Dict, Union, Tuple, TYPE_CHECKING
 from collections.abc import Callable
+from collections import defaultdict
 from warnings import warn
 import networkx as nx
 import pyproj
@@ -20,14 +21,12 @@ from PySide6.QtCore import (Qt, QPoint, QSize, QPointF, QRect, QRectF, QMimeData
 from PySide6.QtGui import (QIcon, QPixmap, QImage, QPainter, QStandardItemModel, QStandardItem, QColor, QPen, QBrush,
                            QDragEnterEvent, QDragMoveEvent, QDropEvent, QWheelEvent, QKeyEvent, QMouseEvent,
                            QContextMenuEvent)
-from PySide6.QtWidgets import (QGraphicsView, QGraphicsScene, QGraphicsSceneMouseEvent, QGraphicsItem, QDialog,
-                               QPushButton)
+from PySide6.QtWidgets import (QGraphicsView, QGraphicsScene, QGraphicsSceneMouseEvent, QGraphicsItem)
 from PySide6.QtSvg import QSvgGenerator
 
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES, INJECTION_DEVICE_TYPES, FLUID_TYPES, BRANCH_TYPES
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.Devices.Substation.substation import Substation
 from VeraGridEngine.Devices.Branches.line import Line
 from VeraGridEngine.Devices.Branches.dc_line import DcLine
 from VeraGridEngine.Devices.Branches.transformer import Transformer2W
@@ -140,7 +139,7 @@ class SchematicLibraryModel(QStandardItemModel):
         :return: QByteArray
         """
         data = QByteArray()
-        stream = QDataStream(data, QIODevice.WriteOnly)
+        stream = QDataStream(data, QIODevice.OpenModeFlag.WriteOnly)
         stream.writeQString(val)
         return data
 
@@ -198,7 +197,7 @@ class SchematicLibraryModel(QStandardItemModel):
                 txt = self.data(idx, Qt.ItemDataRole.DisplayRole)
 
                 data = QByteArray()
-                stream = QDataStream(data, QIODevice.WriteOnly)
+                stream = QDataStream(data, QIODevice.OpenModeFlag.WriteOnly)
                 stream.writeQString(txt)
 
                 mimedata.setData('component/name', data)
@@ -4800,7 +4799,7 @@ class SchematicWidget(BaseDiagramWidget):
                 grid=self.circuit,
                 bus=bus_graphics.api_object,
                 vl_type=vl_wizard.get_vl_type(),
-                add_disconnectors=vl_wizard.add_brakers_checkbox.isChecked(),
+                add_disconnectors=vl_wizard.add_breakers_checkbox.isChecked(),
                 bar_by_segments=vl_wizard.bar_by_segments_checkbox.isChecked(),
                 skip_injections_reconnection=True,
                 enable_transfer_bus=vl_wizard.enable_transfer_bus_checkbox.isChecked(),
@@ -5119,6 +5118,17 @@ List[FluidPath]]:
     all_branches = circuit.get_branches(add_vsc=True, add_hvdc=True, add_switch=True)
     branch_dict = {b: i for i, b in enumerate(all_branches)}
 
+    # Build index of branches by bus for O(1) lookup instead of scanning all branches
+    # This changes the algorithm complexity from O(n*m) to O(n+m) where n=buses, m=branches
+    # Hence drawing voltage level conversions should be much faster, thus fixing REE complaints
+    branches_by_bus = defaultdict(list)
+    has_winding = False
+    for br in all_branches:
+        branches_by_bus[br.bus_from].append(br)
+        branches_by_bus[br.bus_to].append(br)
+        if isinstance(br, Winding):
+            has_winding = True
+
     # create a pool of buses
     bus_pool = [(b, 0) for b in buses]  # store the bus objects and their level from the root
 
@@ -5134,7 +5144,8 @@ List[FluidPath]]:
     fluid_nodes = set()
     selected_branches = set()
     visited = set()
-    max_level_offset = 0
+    # If there are windings, we need an extra level to represent whole 3-winding transformers
+    max_level_offset = 1 if has_winding else 0
 
     while len(bus_pool) > 0:
 
@@ -5149,31 +5160,23 @@ List[FluidPath]]:
 
         if level < (max_level + max_level_offset):
 
-            for i, br in enumerate(all_branches):
+            # Use the built index for O(1) lookup of branches connected to this bus
+            for br in branches_by_bus.get(bus, []):
 
-                if isinstance(br, Winding):
-                    # if we find a winding, we need to add 1 extra search level
-                    # to be able to represent the whole 3-winding transformer
-                    max_level_offset = 1
+                # Always add the branch if connected to current bus
+                selected_branches.add(br)
 
+                # Determine the other bus and add if not visited
                 if br.bus_from == bus:
-                    # Always add the branch if connected to current bus
-                    selected_branches.add(br)
-                    # Only add the other bus to pool if not visited
-                    if br.bus_to not in visited:
-                        bus_pool.append((br.bus_to, level + 1))
-                        visited.add(br.bus_to)
-
+                    other_bus = br.bus_to
                 elif br.bus_to == bus:
-                    # Always add the branch if connected to current bus
-                    selected_branches.add(br)
-                    # Only add the other bus to pool if not visited
-                    if br.bus_from not in visited:
-                        bus_pool.append((br.bus_from, level + 1))
-                        visited.add(br.bus_from)
-
+                    other_bus = br.bus_from
                 else:
-                    pass
+                    other_bus = None
+
+                if other_bus not in visited:
+                    bus_pool.append((other_bus, level + 1))
+                    visited.add(other_bus)
 
     # sort Branches
     lines: List[Line] = list()

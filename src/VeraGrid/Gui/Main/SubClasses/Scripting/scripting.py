@@ -3,11 +3,13 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 import os
-import io
-import sys
-
+import numpy as np
+import rlcompleter
 from PySide6.QtGui import QFont, QFontMetrics, Qt
 from PySide6 import QtWidgets, QtCore
+from PySide6.QtWidgets import QCompleter, QPlainTextEdit
+from PySide6.QtCore import Qt, QStringListModel
+from PySide6.QtGui import QTextCursor
 
 from VeraGridEngine.IO.file_system import scripts_path
 from VeraGrid.Gui.Main.SubClasses.io import IoMain
@@ -15,6 +17,7 @@ from VeraGrid.Gui.python_highlighter import PythonHighlighter
 from VeraGrid.Gui.gui_functions import CustomFileSystemModel
 import VeraGrid.Gui.gui_functions as gf
 from VeraGrid.Gui.messages import error_msg, yes_no_question
+from VeraGrid.Gui.font_config import CONSOLE_TEXT_SIZE
 
 
 class ScriptingMain(IoMain):
@@ -31,20 +34,6 @@ class ScriptingMain(IoMain):
         # create main window
         IoMain.__init__(self, parent)
 
-        # Source code text ---------------------------------------------------------------------------------------------
-        # Set the font for your widget
-        font = QFont("Consolas", 10)  # Replace "Consolas" with your preferred monospaced font
-
-
-        # Source code
-        self.ui.sourceCodeTextEdit.setFont(font)
-        font_metrics = QFontMetrics(font)  # Set tab width to 4 spaces
-        tab_stop_width = font_metrics.horizontalAdvance(' ' * 4)  # Width of 4 spaces in the selected font
-        self.ui.sourceCodeTextEdit.setTabStopDistance(tab_stop_width)
-        self.ui.sourceCodeTextEdit.highlighter = PythonHighlighter(self.ui.sourceCodeTextEdit.document())
-        self.ui.sourceCodeTextEdit.setPlaceholderText("Enter or load Python code here\nType Ctrl + Enter to run")
-        self.ui.sourceCodeTextEdit.installEventFilter(self)  # Install event filter to handle Ctrl+Enter
-
         self.add_console_vars()
 
         # scripts tree view --------------------------------------------------------------------------------------------
@@ -59,7 +48,7 @@ class ScriptingMain(IoMain):
         self.ui.runSourceCodeButton.clicked.connect(self.run_source_code)
         self.ui.saveSourceCodeButton.clicked.connect(self.save_source_code)
         self.ui.clearSourceCodeButton.clicked.connect(self.clear_source_code)
-        self.ui.clearConsoleButton.clicked.connect(self.clear_console)
+        self.ui.clearConsoleButton.clicked.connect(self.reset_console)
 
         # double clicked -----------------------------------------------------------------------------------------------
         self.ui.sourceCodeTreeView.doubleClicked.connect(self.source_code_tree_clicked)
@@ -70,61 +59,20 @@ class ScriptingMain(IoMain):
         # Set context menu policy to CustomContextMenu
         self.ui.sourceCodeTreeView.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
 
-
-
-
-    def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent):
-        """
-        Event filter to capture Ctrl + Enter
-        :param watched:
-        :param event:
-        :return:
-        """
-
-        if watched == self.ui.sourceCodeTextEdit and event.type() == QtCore.QEvent.Type.KeyPress:
-            if event.key() == Qt.Key.Key_Return and event.modifiers() & Qt.KeyboardModifier.ControlModifier:
-                self.run_source_code()
-                return True
-
-        return super().eventFilter(watched, event)
-
-    def execute_command(self, command: str, silent: bool = False):
-        """
-        Run a command
-        :param command: Python command to run
-        :param silent: Silent mode
-        """
-
-        if not silent:
-            self.append_output(f">>> {command}")
-
-        try:
-
-            if silent:
-                ret = self.interpreter.runcode(command)
-            else:
-                old_stdout = sys.stdout
-                old_stderr = sys.stderr
-                sys.stdout = io.StringIO()
-                sys.stderr = io.StringIO()
-
-                ret = self.interpreter.runcode(command)
-
-                stdout_output = sys.stdout.getvalue()
-                stderr_output = sys.stderr.getvalue()
-                sys.stdout = old_stdout
-                sys.stderr = old_stderr
-
-                if stdout_output:
-                    self.append_output(stdout_output)
-                if stderr_output:
-                    self.append_output(stderr_output)
-
-                if ret:
-                    self.append_output(str(ret))
-
-        except Exception as e:
-            self.append_output(str(e))
+    # def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent):
+    #     """
+    #     Event filter to capture Ctrl + Enter
+    #     :param watched:
+    #     :param event:
+    #     :return:
+    #     """
+    #
+    #     if watched == self.ui.sourceCodeTextEdit and event.type() == QtCore.QEvent.Type.KeyPress:
+    #         if event.key() == Qt.Key.Key_Return and event.modifiers() & Qt.KeyboardModifier.ControlModifier:
+    #             self.run_source_code()
+    #             return True
+    #
+    #     return super().eventFilter(watched, event)
 
     def append_output(self, text: str):
         """
@@ -137,7 +85,7 @@ class ScriptingMain(IoMain):
         """
         Run the source code in the IPython console
         """
-        source_code = self.ui.sourceCodeTextEdit.toPlainText()
+        source_code = self.code_editor.toPlainText()
 
         if source_code[-1] != '\n':
             source_code += "\n"
@@ -154,7 +102,7 @@ class ScriptingMain(IoMain):
         if os.path.exists(pth):
             with open(pth, 'r') as f:
                 txt = "\n".join(line.rstrip() for line in f)
-                self.ui.sourceCodeTextEdit.setPlainText(txt)
+                self.code_editor.setPlainText(txt)
 
             name = os.path.basename(pth)
             self.ui.sourceCodeNameLineEdit.setText(name.replace('.py', ''))
@@ -170,7 +118,7 @@ class ScriptingMain(IoMain):
 
         if ok:
             self.ui.sourceCodeNameLineEdit.setText("")
-            self.ui.sourceCodeTextEdit.setPlainText("")
+            self.code_editor.setPlainText("")
 
     def save_source_code(self):
         """
@@ -182,7 +130,7 @@ class ScriptingMain(IoMain):
             fname = name + '.py'
             pth = os.path.join(scripts_path(), fname)
             with open(pth, 'w') as f:
-                f.write(self.ui.sourceCodeTextEdit.toPlainText())
+                f.write(self.code_editor.toPlainText())
         else:
             error_msg("Please enter a name for the script", title="Save script")
 
@@ -193,7 +141,8 @@ class ScriptingMain(IoMain):
         index = self.ui.sourceCodeTreeView.currentIndex()
         pth = self.python_fs_model.filePath(index)
         if os.path.exists(pth):
-            ok = yes_no_question(text="Do you want to delete_with_dialogue {}?".format(pth), title="Delete source code file")
+            ok = yes_no_question(text="Do you want to delete_with_dialogue {}?".format(pth),
+                                 title="Delete source code file")
 
             if ok:
                 os.remove(pth)

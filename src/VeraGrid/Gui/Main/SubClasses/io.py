@@ -207,7 +207,7 @@ class IoMain(ConfigurationMain):
 
         if create_default_diagrams:
             self.add_complete_bus_branch_diagram()
-            self.add_map_diagram(ask=False)
+            self.add_map_diagram()
             self.set_diagram_widget(self.diagram_widgets_list[0])
 
         self.collect_memory()
@@ -325,14 +325,14 @@ class IoMain(ConfigurationMain):
             self.last_file_driver = self.open_file_thread_object
 
             # register thread
-            self.stuff_running_now.append('file_open')
+            self.stuff_running_now.append(SimulationTypes.FileOpen)
 
     def post_open_file(self) -> None:
         """
         Actions to perform after a file has been loaded
         """
 
-        self.stuff_running_now.remove('file_open')
+        self.stuff_running_now.remove(SimulationTypes.FileOpen)
 
         if self.open_file_thread_object is not None:
 
@@ -493,7 +493,7 @@ class IoMain(ConfigurationMain):
         Stuff to do after opening another circuit
         :return: Nothing
         """
-        self.stuff_running_now.remove('file_open')
+        self.stuff_running_now.remove(SimulationTypes.FileOpen)
 
         if self.open_file_thread_object is not None:
 
@@ -733,7 +733,7 @@ class IoMain(ConfigurationMain):
             # register as the latest file driver
             self.last_file_driver = self.save_file_thread_object
 
-            self.stuff_running_now.append("file_save")
+            self.stuff_running_now.append(SimulationTypes.FileSave)
 
         else:
             warning_msg('There is a file being processed..')
@@ -747,7 +747,7 @@ class IoMain(ConfigurationMain):
                 dlg = LogsDialogue('Save file logger', self.save_file_thread_object.logger)
                 dlg.exec()
 
-        self.stuff_running_now.remove('file_save')
+        self.stuff_running_now.remove(SimulationTypes.FileSave)
 
         self.ui.model_version_label.setText('Model v. ' + str(self.circuit.model_version))
         self.ui.grid_idtag_label.setText('idtag. ' + str(self.circuit.idtag))
@@ -858,7 +858,7 @@ class IoMain(ConfigurationMain):
             if filename != "":
                 self.LOCK()
 
-                self.stuff_running_now.append('export_all')
+                self.stuff_running_now.append(SimulationTypes.ExportAll)
                 self.export_all_thread_object = exprtdrv.ExportAllThread(circuit=self.circuit,
                                                                          drivers_list=available_results,
                                                                          file_name=filename)
@@ -874,7 +874,7 @@ class IoMain(ConfigurationMain):
         """
         Actions post export all
         """
-        self.stuff_running_now.remove('export_all')
+        self.stuff_running_now.remove(SimulationTypes.ExportAll)
 
         if self.export_all_thread_object is not None:
             if self.export_all_thread_object.logger.has_logs():

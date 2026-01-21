@@ -188,6 +188,7 @@ def transform_bus_into_voltage_level(
                 bar_by_segments=bar_by_segments,
                 offset_x=x0,
                 offset_y=y0,
+                vl0=bus.voltage_level
             )
         else:
             vl, conn_buses, all_buses, offset_total_x, offset_total_y = create_single_bar(
@@ -200,13 +201,15 @@ def transform_bus_into_voltage_level(
                 bar_by_segments=bar_by_segments,
                 offset_x=x0,
                 offset_y=y0,
+                vl0=bus.voltage_level
             )
 
     # Invisible since not requested by REE
     elif vl_type == VoltageLevelTypes.SingleBarWithBypass:
 
         if add_disconnectors:
-            vl, conn_buses, all_buses, offset_total_x, offset_total_y = create_single_bar_with_bypass_with_disconnectors(
+            (vl, conn_buses, all_buses,
+             offset_total_x, offset_total_y) = create_single_bar_with_bypass_with_disconnectors(
                 name=bus.name,
                 grid=grid,
                 n_bays=n_bays,
@@ -215,6 +218,7 @@ def transform_bus_into_voltage_level(
                 country=bus.country,
                 offset_x=x0,
                 offset_y=y0,
+                vl0=bus.voltage_level
             )
         else:
             vl, conn_buses, all_buses, offset_total_x, offset_total_y = create_single_bar_with_bypass(
@@ -226,6 +230,7 @@ def transform_bus_into_voltage_level(
                 country=bus.country,
                 offset_x=x0,
                 offset_y=y0,
+                vl0=bus.voltage_level
             )
 
     # Invisible since not requested by REE
@@ -242,6 +247,7 @@ def transform_bus_into_voltage_level(
                 country=bus.country,
                 offset_x=x0,
                 offset_y=y0,
+                vl0=bus.voltage_level
             )
         else:
             vl, conn_buses, all_buses, offset_total_x, offset_total_y = create_single_bar_with_splitter(
@@ -253,6 +259,7 @@ def transform_bus_into_voltage_level(
                 country=bus.country,
                 offset_x=x0,
                 offset_y=y0,
+                vl0=bus.voltage_level
             )
 
     elif vl_type == VoltageLevelTypes.DoubleBar:
@@ -267,6 +274,7 @@ def transform_bus_into_voltage_level(
                 country=bus.country,
                 offset_x=x0,
                 offset_y=y0,
+                vl0=bus.voltage_level
             )
         else:
             vl, conn_buses, all_buses, offset_total_x, offset_total_y = create_double_bar(
@@ -278,6 +286,7 @@ def transform_bus_into_voltage_level(
                 country=bus.country,
                 offset_x=x0,
                 offset_y=y0,
+                vl0=bus.voltage_level
             )
 
     # Invisible since not requested by REE
@@ -299,6 +308,7 @@ def transform_bus_into_voltage_level(
                 country=bus.country,
                 offset_x=x0,
                 offset_y=y0,
+                vl0=bus.voltage_level
             )
         else:
             vl, conn_buses, all_buses, offset_total_x, offset_total_y = create_double_bar_with_transference_bar(
@@ -310,6 +320,7 @@ def transform_bus_into_voltage_level(
                 country=bus.country,
                 offset_x=x0,
                 offset_y=y0,
+                vl0=bus.voltage_level
             )
 
     # Invisible since not requested by REE
@@ -329,6 +340,7 @@ def transform_bus_into_voltage_level(
                 country=bus.country,
                 offset_x=x0,
                 offset_y=y0,
+                vl0=bus.voltage_level
             )
         else:
             vl, conn_buses, all_buses, offset_total_x, offset_total_y = create_ring(
@@ -340,6 +352,7 @@ def transform_bus_into_voltage_level(
                 country=bus.country,
                 offset_x=x0,
                 offset_y=y0,
+                vl0=bus.voltage_level
             )
 
     elif vl_type == VoltageLevelTypes.BreakerAndAHalf:
@@ -354,6 +367,7 @@ def transform_bus_into_voltage_level(
                 country=bus.country,
                 offset_x=x0,
                 offset_y=y0,
+                vl0=bus.voltage_level
             )
         else:
             vl, conn_buses, all_buses, offset_total_x, offset_total_y = create_breaker_and_a_half(
@@ -365,6 +379,7 @@ def transform_bus_into_voltage_level(
                 country=bus.country,
                 offset_x=x0,
                 offset_y=y0,
+                vl0=bus.voltage_level
             )
 
     else:

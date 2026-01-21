@@ -19,7 +19,8 @@ def create_double_bar_with_disconnectors(
         country: dev.Country = None,
         bar_by_segments: bool = False,
         offset_x: float = 0,
-        offset_y: float = 0
+        offset_y: float = 0,
+        vl0: dev.VoltageLevel | None = None
 ) -> Tuple[dev.VoltageLevel, List[dev.Bus], List[dev.Bus], float, float]:
     """
     Create a double-bar voltage level
@@ -32,11 +33,15 @@ def create_double_bar_with_disconnectors(
     :param bar_by_segments: Split the bar into segments
     :param offset_x: x ofsset (px)
     :param offset_y: y ofsset (px)
-    :return: Voltage level object, list of busses where connections are allowed, offset x, offset y
+    :param vl0: VoltageLevel to reuse (optional)
+    :return: Voltage level object, list of buses where connections are allowed, offset x, offset y
     """
 
-    vl = dev.VoltageLevel(name=name, substation=substation, Vnom=v_nom)
-    grid.add_voltage_level(vl)
+    if vl0 is None:
+        vl = dev.VoltageLevel(name=name, substation=substation, Vnom=v_nom)
+        grid.add_voltage_level(vl)
+    else:
+        vl = vl0
 
     bus_width = 120
     x_dist = bus_width * 2
@@ -237,7 +242,8 @@ def create_double_bar(
         country: dev.Country = None,
         bar_by_segments: bool = False,
         offset_x: float = 0,
-        offset_y: float = 0
+        offset_y: float = 0,
+        vl0: dev.VoltageLevel | None = None
 ) -> Tuple[dev.VoltageLevel, List[dev.Bus], List[dev.Bus], float, float]:
     """
     Create a double-bar voltage level
@@ -250,11 +256,15 @@ def create_double_bar(
     :param bar_by_segments: Split the bar into segments
     :param offset_x: x ofsset (px)
     :param offset_y: y ofsset (px)
-    :return: Voltage level object, list of busses where connections are allowed, offset x, offset y
+    :param vl0: VoltageLevel to reuse vl0
+    :return: Voltage level object, list of buses where connections are allowed, offset x, offset y
     """
 
-    vl = dev.VoltageLevel(name=name, substation=substation, Vnom=v_nom)
-    grid.add_voltage_level(vl)
+    if vl0 is None:
+        vl = dev.VoltageLevel(name=name, substation=substation, Vnom=v_nom)
+        grid.add_voltage_level(vl)
+    else:
+        vl = vl0
 
     bus_width = 120
     x_dist = bus_width * 2
@@ -387,7 +397,8 @@ def create_double_bar_with_transference_bar_with_disconnectors(
         country: dev.Country = None,
         bar_by_segments: bool = False,
         offset_x=0,
-        offset_y=0
+        offset_y=0,
+        vl0: dev.VoltageLevel | None = None
 ) -> Tuple[dev.VoltageLevel, List[dev.Bus], List[dev.Bus], float, float]:
     """
     Create a double-bar with transference bar voltage level
@@ -400,11 +411,15 @@ def create_double_bar_with_transference_bar_with_disconnectors(
     :param bar_by_segments: Split the bar into segments
     :param offset_x: x ofsset (px)
     :param offset_y: y ofsset (px)
-    :return: Voltage level object, list of busses where connections are allowed, offset x, offset y
+    :param vl0: VoltageLevel to reuse (optional)
+    :return: Voltage level object, list of buses where connections are allowed, offset x, offset y
     """
 
-    vl = dev.VoltageLevel(name=name, substation=substation, Vnom=v_nom)
-    grid.add_voltage_level(vl)
+    if vl0 is None:
+        vl = dev.VoltageLevel(name=name, substation=substation, Vnom=v_nom)
+        grid.add_voltage_level(vl)
+    else:
+        vl = vl0
 
     bus_width = 120
     x_dist = bus_width * 2
@@ -613,7 +628,8 @@ def create_double_bar_with_transference_bar(
         country: dev.Country = None,
         bar_by_segments: bool = False,
         offset_x=0,
-        offset_y=0
+        offset_y=0,
+        vl0: dev.VoltageLevel | None = None
 ) -> Tuple[dev.VoltageLevel, List[dev.Bus], List[dev.Bus], float, float]:
     """
     Create a double-bar with transference bar voltage level
@@ -626,11 +642,15 @@ def create_double_bar_with_transference_bar(
     :param bar_by_segments: Split the bar into segments
     :param offset_x: x ofsset (px)
     :param offset_y: y ofsset (px)
-    :return: Voltage level object, list of busses where connections are allowed, offset x, offset y
+    :param vl0: VoltageLevel to reuse (optional)
+    :return: Voltage level object, list of buses where connections are allowed, offset x, offset y
     """
 
-    vl = dev.VoltageLevel(name=name, substation=substation, Vnom=v_nom)
-    grid.add_voltage_level(vl)
+    if vl0 is None:
+        vl = dev.VoltageLevel(name=name, substation=substation, Vnom=v_nom)
+        grid.add_voltage_level(vl)
+    else:
+        vl = vl0
 
     bus_width = 120
     x_dist = bus_width * 2

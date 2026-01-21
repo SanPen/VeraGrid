@@ -2064,6 +2064,10 @@ class SimulationTypes(Enum):
     RmsDynamic_run = "RMS Dynamic"
     SmallSignal_run = "Small Signal stability"
 
+    FileOpen = "file open"
+    FileSave = "file save"
+    ExportAll = "export all"
+
     NoSim = "No simulation"
 
     def __str__(self):

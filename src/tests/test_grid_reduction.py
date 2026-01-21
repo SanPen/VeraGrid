@@ -903,6 +903,100 @@ def test_grid_reduction_with_multiple_islands_before():
     assert np.allclose(P_orig_load_ts, P_red_load_ts, atol=1e-4)
 
 
+def test_compact_devices_reduces_device_count():
+    """
+    Test that compact_devices=True results in fewer loads and generators
+    compared to compact_devices=False, while maintaining the same power flows.
+
+    Uses a scenario that removes the slack bus to ensure device relocation
+    occurs, which creates multiple devices per bus that can be compacted.
+    """
+    # Use the time-series grid with slack removal - this creates multiple
+    # compensation devices and relocated devices per bus
+    fname = os.path.join('data', 'grids', 'ptdf_ts.veragrid')
+
+    # Remove buses including the slack (bus 0) to trigger relocation
+    bus_to_remove = np.array([0, 1])
+
+    # ---- Run with compact_devices=False ----
+    grid_no_compact = gce.open_file(filename=fname)
+
+    # Get internal branches before reduction
+    external, boundary, internal, boundary_branches, internal_branches = \
+        grid_no_compact.get_reduction_sets(reduction_bus_indices=bus_to_remove)
+
+    # Run linear analysis on original grid
+    lin_ts_orig = gce.LinearAnalysisTs(grid=grid_no_compact, distributed_slack=False)
+    P_orig = grid_no_compact.get_Pbus_prof()
+    Flows_orig = lin_ts_orig.get_flows_ts(P=P_orig)
+
+    # Reduce without compaction
+    red_grid_no_compact, _ = ptdf_reduction_projected(
+        grid=grid_no_compact,
+        reduction_bus_indices=bus_to_remove,
+        distribute_slack=False,
+        compact_devices=False
+    )
+
+    n_loads_no_compact = len(red_grid_no_compact.loads)
+    n_gens_no_compact = len(red_grid_no_compact.generators)
+
+    # ---- Run with compact_devices=True ----
+    grid_compact = gce.open_file(filename=fname)
+
+    # Reduce with compaction
+    red_grid_compact, _ = ptdf_reduction_projected(
+        grid=grid_compact,
+        reduction_bus_indices=bus_to_remove,
+        distribute_slack=False,
+        compact_devices=True
+    )
+
+    n_loads_compact = len(red_grid_compact.loads)
+    n_gens_compact = len(red_grid_compact.generators)
+
+    # ---- Verify compaction reduces device count ----
+    assert n_loads_compact <= n_loads_no_compact, \
+        f"Compacted grid should have <= loads: {n_loads_compact} vs {n_loads_no_compact}"
+    assert n_gens_compact <= n_gens_no_compact, \
+        f"Compacted grid should have <= generators: {n_gens_compact} vs {n_gens_no_compact}"
+
+    # At least one category should be strictly less (otherwise compaction did nothing)
+    assert (n_loads_compact < n_loads_no_compact) or (n_gens_compact < n_gens_no_compact), \
+        f"Compaction should reduce at least one device category: " \
+        f"loads {n_loads_compact} vs {n_loads_no_compact}, " \
+        f"gens {n_gens_compact} vs {n_gens_no_compact}"
+
+    # ---- Verify power flows are unchanged ----
+    lin_ts_compact = gce.LinearAnalysisTs(grid=red_grid_compact, distributed_slack=False)
+    P_compact = red_grid_compact.get_Pbus_prof()
+    Flows_compact = lin_ts_compact.get_flows_ts(P=P_compact)
+
+    lin_ts_no_compact = gce.LinearAnalysisTs(grid=red_grid_no_compact, distributed_slack=False)
+    P_no_compact = red_grid_no_compact.get_Pbus_prof()
+    Flows_no_compact = lin_ts_no_compact.get_flows_ts(P=P_no_compact)
+
+    # Both should match original flows on internal branches
+    Flows_orig_internal = Flows_orig[:, internal_branches]
+    assert np.allclose(Flows_orig_internal, Flows_compact, atol=1e-4), \
+        "Compacted grid flows should match original"
+    assert np.allclose(Flows_orig_internal, Flows_no_compact, atol=1e-4), \
+        "Non-compacted grid flows should match original"
+
+    # ---- Verify total generation and load are unchanged ----
+    all_time_indices = grid_compact.get_all_time_indices()
+
+    P_compact_gen_ts = get_total_generation_ts(red_grid_compact, time_indices=all_time_indices)
+    P_compact_load_ts = get_total_load_ts(red_grid_compact, time_indices=all_time_indices)
+    P_no_compact_gen_ts = get_total_generation_ts(red_grid_no_compact, time_indices=all_time_indices)
+    P_no_compact_load_ts = get_total_load_ts(red_grid_no_compact, time_indices=all_time_indices)
+
+    assert np.allclose(P_compact_gen_ts, P_no_compact_gen_ts, atol=1e-4), \
+        "Total generation should be same with and without compaction"
+    assert np.allclose(P_compact_load_ts, P_no_compact_load_ts, atol=1e-4), \
+        "Total load should be same with and without compaction"
+
+
 def ptdf_projected_large_real_syst_snapshot():
     """
     Test to check if the snapshot reduction works well in a large grid
@@ -912,28 +1006,58 @@ def ptdf_projected_large_real_syst_snapshot():
     # fname = '/Users/josep/Documents/Grids/100h_nohvdc_noshunts.gridcal'
     # fname = '/Users/josep/Documents/Grids/100h_nohvdc.gridcal'
     fname = '/Users/josep/Documents/Grids/100h.gridcal'
-    grid = gce.open_file(filename=fname)
 
-    # First run basic linear analysis
-    flows_dr = gce.LinearAnalysisDriver(grid=grid, options=gce.LinearAnalysisOptions(distribute_slack=False))
-    flows_dr.run()
-    flows_branches = flows_dr.results.Sf
-
-    # Then reduce the network
+    # Determine buses to remove (Vnom < 400)
+    grid_orig = gce.open_file(filename=fname)
     bus_to_remove = []
-    bus_idx_dict = grid.get_bus_index_dict()
-    for bus in grid.buses:
+    bus_idx_dict = grid_orig.get_bus_index_dict()
+    for bus in grid_orig.buses:
         if bus.Vnom < 400:
-            bus_remove_idx = bus_idx_dict[bus]
-            bus_to_remove.append(bus_remove_idx)
-
+            bus_to_remove.append(bus_idx_dict[bus])
     bus_to_remove = np.array(bus_to_remove)
 
     # Determine internal branches before reduction
-    external, boundary, internal, boundary_branches, internal_branches = grid.get_reduction_sets(reduction_bus_indices=bus_to_remove)
+    _, _, _, _, internal_branches = grid_orig.get_reduction_sets(reduction_bus_indices=bus_to_remove)
 
-    red_grid, logger = ptdf_reduction_projected(grid=grid, reduction_bus_indices=bus_to_remove, distribute_slack=False)
-    flows_dr_red = gce.LinearAnalysisDriver(grid=red_grid, options=gce.LinearAnalysisOptions(distribute_slack=False))
+    # First run basic linear analysis on original grid
+    flows_dr = gce.LinearAnalysisDriver(grid=grid_orig, options=gce.LinearAnalysisOptions(distribute_slack=False))
+    flows_dr.run()
+    flows_branches = flows_dr.results.Sf
+
+    # ---- Reduce WITHOUT compaction ----
+    grid_no_compact = gce.open_file(filename=fname)
+    red_grid_no_compact, _ = ptdf_reduction_projected(
+        grid=grid_no_compact,
+        reduction_bus_indices=bus_to_remove,
+        distribute_slack=False,
+        compact_devices=False
+    )
+    n_loads_no_compact = len(red_grid_no_compact.loads)
+    n_gens_no_compact = len(red_grid_no_compact.generators)
+
+    # ---- Reduce WITH compaction ----
+    grid_compact = gce.open_file(filename=fname)
+    red_grid_compact, _ = ptdf_reduction_projected(
+        grid=grid_compact,
+        reduction_bus_indices=bus_to_remove,
+        distribute_slack=False,
+        compact_devices=True
+    )
+    n_loads_compact = len(red_grid_compact.loads)
+    n_gens_compact = len(red_grid_compact.generators)
+
+    # Print device counts comparison
+    print(f"\n{'='*60}")
+    print(f"SNAPSHOT REDUCTION - Device Count Comparison")
+    print(f"{'='*60}")
+    print(f"WITHOUT compaction: {n_loads_no_compact} loads, {n_gens_no_compact} generators")
+    print(f"WITH compaction:    {n_loads_compact} loads, {n_gens_compact} generators")
+    print(f"Reduction:          {n_loads_no_compact - n_loads_compact} loads, "
+          f"{n_gens_no_compact - n_gens_compact} generators")
+    print(f"{'='*60}\n")
+
+    # Verify flows on compacted grid
+    flows_dr_red = gce.LinearAnalysisDriver(grid=red_grid_compact, options=gce.LinearAnalysisOptions(distribute_slack=False))
     flows_dr_red.run()
     flows_branches_red = flows_dr_red.results.Sf
 
@@ -941,11 +1065,11 @@ def ptdf_projected_large_real_syst_snapshot():
     assert np.allclose(flows_branches[internal_branches], flows_branches_red, atol=1e-4)
 
     # Check power balance: total generation and demand should not change
-    P_orig_gen_total = get_total_generation(grid)
-    P_orig_load_total = get_total_load(grid)
-    P_red_gen_total = get_total_generation(red_grid)
-    P_red_load_total = get_total_load(red_grid)
-    
+    P_orig_gen_total = get_total_generation(grid_orig)
+    P_orig_load_total = get_total_load(grid_orig)
+    P_red_gen_total = get_total_generation(red_grid_compact)
+    P_red_load_total = get_total_load(red_grid_compact)
+
     assert abs(P_orig_gen_total - P_red_gen_total) < 1e-4, \
         "Total generation should not change after reduction"
     assert abs(P_orig_load_total - P_red_load_total) < 1e-4, \
@@ -959,33 +1083,58 @@ def ptdf_projected_large_real_syst_time_series():
     # fname = '/Users/josep/Documents/Grids/100h.gridcal'
     fname = '/Users/josep/Documents/Grids/6000h.gridcal'
 
-    grid_ = gce.open_file(filename=fname)
-
-    # First run time series linear analysis
-    lin_ts = gce.LinearAnalysisTs(grid=grid_, distributed_slack=False)
-    P_orig = grid_.get_Pbus_prof()
-    Flows_orig = lin_ts.get_flows_ts(P=P_orig)
-
-    # Then reduce the network
-    bus_to_remove = list()
-    bus_idx_dict = grid_.get_bus_index_dict()
-    for bus in grid_.buses:
+    # Determine buses to remove (Vnom < 400)
+    grid_orig = gce.open_file(filename=fname)
+    bus_to_remove = []
+    bus_idx_dict = grid_orig.get_bus_index_dict()
+    for bus in grid_orig.buses:
         if bus.Vnom < 400:
-            bus_remove_idx = bus_idx_dict[bus]
-            bus_to_remove.append(bus_remove_idx)
+            bus_to_remove.append(bus_idx_dict[bus])
+    bus_to_remove = np.array(bus_to_remove)
 
     # Get internal branches before reduction to compare later
-    (external, boundary,
-     internal, boundary_branches,
-     internal_branches) = grid_.get_reduction_sets(reduction_bus_indices=bus_to_remove)
+    _, _, _, _, internal_branches = grid_orig.get_reduction_sets(reduction_bus_indices=bus_to_remove)
 
-    red_grid, logger = ptdf_reduction_projected(grid=grid_,
-                                                reduction_bus_indices=bus_to_remove,
-                                                distribute_slack=False)
+    # First run time series linear analysis on original grid
+    lin_ts = gce.LinearAnalysisTs(grid=grid_orig, distributed_slack=False)
+    P_orig = grid_orig.get_Pbus_prof()
+    Flows_orig = lin_ts.get_flows_ts(P=P_orig)
 
-    # Run time series linear analysis on reduced grid
-    lin_ts_red = gce.LinearAnalysisTs(grid=red_grid, distributed_slack=False)
-    P_red = red_grid.get_Pbus_prof()
+    # ---- Reduce WITHOUT compaction ----
+    grid_no_compact = gce.open_file(filename=fname)
+    red_grid_no_compact, _ = ptdf_reduction_projected(
+        grid=grid_no_compact,
+        reduction_bus_indices=bus_to_remove,
+        distribute_slack=False,
+        compact_devices=False
+    )
+    n_loads_no_compact = len(red_grid_no_compact.loads)
+    n_gens_no_compact = len(red_grid_no_compact.generators)
+
+    # ---- Reduce WITH compaction ----
+    grid_compact = gce.open_file(filename=fname)
+    red_grid_compact, _ = ptdf_reduction_projected(
+        grid=grid_compact,
+        reduction_bus_indices=bus_to_remove,
+        distribute_slack=False,
+        compact_devices=True
+    )
+    n_loads_compact = len(red_grid_compact.loads)
+    n_gens_compact = len(red_grid_compact.generators)
+
+    # Print device counts comparison
+    print(f"\n{'='*60}")
+    print(f"TIME SERIES REDUCTION - Device Count Comparison")
+    print(f"{'='*60}")
+    print(f"WITHOUT compaction: {n_loads_no_compact} loads, {n_gens_no_compact} generators")
+    print(f"WITH compaction:    {n_loads_compact} loads, {n_gens_compact} generators")
+    print(f"Reduction:          {n_loads_no_compact - n_loads_compact} loads, "
+          f"{n_gens_no_compact - n_gens_compact} generators")
+    print(f"{'='*60}\n")
+
+    # Run time series linear analysis on compacted reduced grid
+    lin_ts_red = gce.LinearAnalysisTs(grid=red_grid_compact, distributed_slack=False)
+    P_red = red_grid_compact.get_Pbus_prof()
     Flows_red = lin_ts_red.get_flows_ts(P=P_red)
 
     # Compare flows on internal branches
@@ -997,15 +1146,17 @@ def ptdf_projected_large_real_syst_time_series():
     # Compare flows
     assert np.allclose(Flows_orig_internal, Flows_red, atol=1e-4)
 
-    # Check power balance for all time steps: total generation and demand should not change
-    all_time_indices = grid_.get_all_time_indices()
-    P_orig_gen_ts = get_total_generation_ts(grid_, time_indices=all_time_indices)
-    P_orig_load_ts = get_total_load_ts(grid_, time_indices=all_time_indices)
-    P_red_gen_ts = get_total_generation_ts(red_grid, time_indices=all_time_indices)
-    P_red_load_ts = get_total_load_ts(red_grid, time_indices=all_time_indices)
+    # Check power balance for all time steps: compacted should match non-compacted
+    all_time_indices = grid_orig.get_all_time_indices()
+    P_no_compact_gen_ts = get_total_generation_ts(red_grid_no_compact, time_indices=all_time_indices)
+    P_no_compact_load_ts = get_total_load_ts(red_grid_no_compact, time_indices=all_time_indices)
+    P_compact_gen_ts = get_total_generation_ts(red_grid_compact, time_indices=all_time_indices)
+    P_compact_load_ts = get_total_load_ts(red_grid_compact, time_indices=all_time_indices)
 
-    assert np.allclose(P_orig_gen_ts, P_red_gen_ts, atol=1e-4)
-    assert np.allclose(P_orig_load_ts, P_red_load_ts, atol=1e-4)
+    assert np.allclose(P_no_compact_gen_ts, P_compact_gen_ts, atol=1e-4), \
+        "Compacted generation should match non-compacted"
+    assert np.allclose(P_no_compact_load_ts, P_compact_load_ts, atol=1e-4), \
+        "Compacted load should match non-compacted"
 
 
 if __name__ == '__main__':
@@ -1022,5 +1173,5 @@ if __name__ == '__main__':
     # test_ptdf_projected_slack_remove()
     # test_ptdf_projected_ts_slack_remove()
     # test_ptdf_projected_ts_gb_full()
-    # ptdf_projected_large_real_syst_snapshot()
+    ptdf_projected_large_real_syst_snapshot()
     ptdf_projected_large_real_syst_time_series()

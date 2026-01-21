@@ -129,7 +129,7 @@ html_theme_options = {
     "awesome_external_links": True,
     "main_nav_links": { "GitHub": "https://github.com/SanPen/VeraGrid"},
     "extra_header_link_icons": {
-        "Discord": {"link": "https://discord.gg/xxx", "icon": "<svg>...</svg>"}
+        "Discord": {"link": "https://discord.gg/ypgmWvT5", "icon": "<svg>...</svg>"}
     },
     "logo_light": "img/VeraGrid3_icon.svg",
     "logo_dark": "img/VeraGrid3_icon.svg",

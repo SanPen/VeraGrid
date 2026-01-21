@@ -39,7 +39,7 @@ def update_gui_to_make_sure():
 
     convert_resource_file(source=os.path.join(path, 'icons.qrc'), rcc_cmd=rcc_cmd)
 
-    for f in ['MainWindow.ui', 'ConsoleLog.ui']:
+    for f in ['MainWindow.ui']:
         convert_ui_file(source=os.path.join(path, f), uic_cmd=uic_cmd)
 
 

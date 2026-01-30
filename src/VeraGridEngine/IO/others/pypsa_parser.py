@@ -289,7 +289,7 @@ class PyPSAParser:
         Parses the stores data from the PyPSA network.
         """
         if len(self.pypsa_grid.stores) > 0:
-            self.logger.add_warning('Shunt impedances not currently supported')
+            self.logger.add_warning('Stores not currently supported')
 
     def _parse_loads(self):
         """

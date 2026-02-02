@@ -36,7 +36,7 @@ def expand(n, arr: Vec, idx: IntVec, default: float) -> Vec:
 
 
 @nb.njit(cache=True, fastmath=True)
-def compute_zip_power(S0: CxVec, I0: CxVec, Y0: CxVec, Vm: Vec) -> CxVec:
+def compute_zip_power(S0: CxVec, I0: CxVec, Y0: CxVec, Vm: CxVec) -> CxVec:
     """
     Compute the equivalent power injection
     :param S0: Base power (P + jQ)
@@ -48,7 +48,7 @@ def compute_zip_power(S0: CxVec, I0: CxVec, Y0: CxVec, Vm: Vec) -> CxVec:
     return S0 + np.conj(I0 + Y0 * Vm) * Vm
 
 
-def compute_zip_current(S0: CxVec, I0: CxVec, Y0: CxVec, Vm: Vec) -> CxVec:
+def compute_zip_current(S0: CxVec, I0: CxVec, Y0: CxVec, Vm: CxVec) -> CxVec:
     """
     Compute the equivalent current injection
     :param S0: Base power (P + jQ)

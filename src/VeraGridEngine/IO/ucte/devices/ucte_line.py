@@ -62,7 +62,7 @@ class UcteLine:
 
         device = "Line"
         if len(line) == 66:
-            # canonical parsing
+            # cannonical parsing
             self.node1 = sub_str(line, 0, 8, device, "node1", logger)
             self.node2 = sub_str(line, 9, 17, device, "node2", logger)
             self.order_code = sub_str(line, 18, 19, device, "", logger)
@@ -80,35 +80,40 @@ class UcteLine:
 
             chunks = line.split()
 
-            if len(chunks) >= 1:
-                self.node1 = chunks[0].strip()
-
-            if len(chunks) >= 2:
-                self.node2 = chunks[1].strip()
-
-            if len(chunks) >= 3:
-                self.order_code = chunks[2].strip()
-
-            if len(chunks) >= 4:
-                self.status = try_int(chunks[3].strip(), device, "status", logger)
-
-            if len(chunks) >= 5:
-                self.resistance = try_float(chunks[4].strip(), device, "resistance", logger)
-
-            if len(chunks) >= 6:
-                self.reactance = try_float(chunks[5].strip(), device, "reactance", logger)
-
-            if len(chunks) >= 7:
-                self.susceptance = try_float(chunks[6].strip(), device, "susceptance", logger)
-
-            if len(chunks) >= 8:
-                self.current_limit = try_float(chunks[7].strip(), device, "current_limit", logger,
-                                               9999.0)
-
             if len(chunks) >= 9:
+
+                self.node1 = chunks[0].strip()
+                self.node2 = chunks[1].strip()
+                self.order_code = chunks[2].strip()
+                self.status = try_int(chunks[3].strip(), device, "status", logger)
+                self.resistance = try_float(chunks[4].strip(), device, "resistance", logger)
+                self.reactance = try_float(chunks[5].strip(), device, "reactance", logger)
+                self.susceptance = try_float(chunks[6].strip(), device, "susceptance", logger)
+                self.current_limit = try_float(chunks[7].strip(), device, "current_limit", logger, 9999.0)
                 self.name = chunks[8].strip()
+
+            elif len(chunks) == 8:
+
+                self.node1 = chunks[0].strip()
+                self.node2 = chunks[1].strip()
+                self.order_code = chunks[2].strip()
+                self.status = try_int(chunks[3].strip(), device, "status", logger)
+                self.resistance = try_float(chunks[4].strip(), device, "resistance", logger)
+                self.reactance = try_float(chunks[5].strip(), device, "reactance", logger)
+                self.susceptance = try_float(chunks[6].strip(), device, "susceptance", logger)
+                self.current_limit = try_float(chunks[7].strip(), device, "current_limit", logger, 9999.0)
+                self.name = "No name provided"
+
+                logger.add_warning("Incorrect number of parameters",
+                                   device_class=device,
+                                   value=len(chunks),
+                                   expected_value=9)
+
+            else:
+                logger.add_error("Incorrect number of parameters",
+                                 device_class=device,
+                                 value=len(chunks),
+                                 expected_value=9)
 
         if self.current_limit < 0:
             self.current_limit = 9999.0
-
-

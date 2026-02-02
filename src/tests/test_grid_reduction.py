@@ -95,7 +95,7 @@ def test_ward_reduction():
     Test to check the PTDF reduction
     :return:
     """
-    fname = os.path.join('data', 'grids', 'case89pegase.m')
+    fname = os.path.join('data', 'grids', 'case89pegase.matpower')
     grid = gce.open_file(filename=fname)
 
     remove_bus_idx = np.array([21, 36, 44, 50, 53])
@@ -351,8 +351,8 @@ def test_reduction_flows():
     Test to check the reduction flows
     :return:
     """
-    # fname = os.path.join('data', 'grids', 'case14.m')
-    fname = os.path.join('data', 'grids', 'case14.m')
+    # fname = os.path.join('data', 'grids', 'case14.matpower')
+    fname = os.path.join('data', 'grids', 'case14.matpower')
     grid = gce.open_file(filename=fname)
     pf_options = gce.PowerFlowOptions(solver_type=gce.SolverType.NR)
 
@@ -362,7 +362,7 @@ def test_reduction_flows():
     reduction_buses = np.array([10, 13])
 
     # Reduced grid with ward equivalent
-    fname = os.path.join('data', 'grids', 'case14.m')
+    fname = os.path.join('data', 'grids', 'case14.matpower')
     grid = gce.open_file(filename=fname)
     red_grid, logger = ward_standard_reduction(grid=grid,
                                                reduction_bus_indices=reduction_buses,
@@ -372,7 +372,7 @@ def test_reduction_flows():
     assert np.allclose(abs(pf_reduced_res.voltage), Vabs_ward, atol=1e-4)
 
     # Reduced grid with di-shi equivalent
-    fname = os.path.join('data', 'grids', 'case14.m')
+    fname = os.path.join('data', 'grids', 'case14.matpower')
     grid = gce.open_file(filename=fname)
     red_grid, logger = di_shi_reduction(grid=grid,
                                         reduction_bus_indices=reduction_buses,
@@ -382,7 +382,7 @@ def test_reduction_flows():
     assert np.allclose(abs(pf_reduced_res.voltage), Vabs_dishi, atol=1e-4)
 
     # Reduced grid with ptdf equivalent
-    fname = os.path.join('data', 'grids', 'case14.m')
+    fname = os.path.join('data', 'grids', 'case14.matpower')
     grid = gce.open_file(filename=fname)
     red_grid, logger = ptdf_reduction(grid=grid,
                                         reduction_bus_indices=reduction_buses)

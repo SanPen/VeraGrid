@@ -1,5 +1,14 @@
 <RCC>
   <qresource prefix="Icons">
+    <file>icons/json.png</file>
+    <file>icons/h5.png</file>
+    <file>icons/sqlite.png</file>
+    <file>icons/pgm.png</file>
+    <file>icons/cgmes.png</file>
+    <file>icons/cim.png</file>
+    <file>icons/excel.png</file>
+    <file>icons/psse.png</file>
+    <file>icons/pfdgs.png</file>
     <file>icons/transform.png</file>
     <file>icons/auto-link.png</file>
     <file>icons/auto-link-rnd.png</file>

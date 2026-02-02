@@ -160,8 +160,7 @@ class PowerFlowResults3Ph(ResultsTemplate):
                 ],
 
                 ResultTypes.VscResults: [
-                    ResultTypes.VscPowerFromPositive,
-                    ResultTypes.VscPowerFromNegative,
+                    ResultTypes.VscPowerFrom,
 
                     ResultTypes.VscPowerToA,
                     ResultTypes.VscPowerToB,
@@ -279,7 +278,7 @@ class PowerFlowResults3Ph(ResultsTemplate):
         self.loading_hvdc: Vec = np.zeros(n_hvdc)
 
         # VSC
-        self.Pfp_vsc = np.zeros(n_vsc, dtype=float)  # DC
+        self.Pf_vsc = np.zeros(n_vsc, dtype=float)  # DC
 
         self.St_vsc_A = np.zeros(n_vsc, dtype=complex)
         self.St_vsc_B = np.zeros(n_vsc, dtype=complex)
@@ -389,7 +388,7 @@ class PowerFlowResults3Ph(ResultsTemplate):
 
         self.register(name='losses_vsc', tpe=Vec)
 
-        self.register(name='Pfp_vsc', tpe=Vec)
+        self.register(name='Pf_vsc', tpe=Vec)
 
         self.register(name='St_vsc_A', tpe=CxVec)
         self.register(name='St_vsc_B', tpe=CxVec)
@@ -534,7 +533,7 @@ class PowerFlowResults3Ph(ResultsTemplate):
         self.loading_hvdc[hvdc_idx] = results.loading_hvdc.real
 
         # VSC
-        self.Pfp_vsc[vsc_idx] = results.Pfp_vsc
+        self.Pf_vsc[vsc_idx] = results.Pf_vsc
 
         self.St_vsc_A[vsc_idx] = results.St_vsc[vsc_a]
         self.St_vsc_B[vsc_idx] = results.St_vsc[vsc_b]
@@ -1549,7 +1548,7 @@ class PowerFlowResults3Ph(ResultsTemplate):
 
         elif result_type == ResultTypes.VscPowerFrom:
 
-            return ResultsTable(data=self.Pfp_vsc,
+            return ResultsTable(data=self.Pf_vsc,
                                 index=self.vsc_names,
                                 idx_device_type=DeviceType.VscDevice,
                                 columns=np.array([result_type.value]),

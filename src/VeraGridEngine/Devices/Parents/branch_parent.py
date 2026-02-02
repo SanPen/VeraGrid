@@ -497,18 +497,6 @@ class BranchParent(PhysicalDevice):
         else:
             return bus_t_v, bus_f_v
 
-    def get_buses_sorted_by_voltage(self):
-        """
-        Get the sorted buses
-        :return: HV bus, LV bus
-        """
-        bus_f_v = self.bus_from.Vnom
-        bus_t_v = self.bus_to.Vnom
-        if bus_f_v > bus_t_v:
-            return self.bus_from, self.bus_to
-        else:
-            return self.bus_to, self.bus_from
-
     def get_virtual_taps(self) -> Tuple[float, float]:
         """
         Get the branch virtual taps

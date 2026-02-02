@@ -15,8 +15,7 @@ from VeraGridEngine.Simulations.PowerFlow.power_flow_driver_3ph import PowerFlow
 from VeraGridEngine.Simulations.OPF.opf_results import OptimalPowerFlowResults
 from VeraGridEngine.Simulations.ShortCircuitStudies.short_circuit_worker import (short_circuit_ph3,
                                                                                  short_circuit_unbalanced,
-                                                                                 short_circuit_abc,
-                                                                                 short_circuit_vsc,)
+                                                                                 short_circuit_abc)
 from VeraGridEngine.Simulations.ShortCircuitStudies.short_circuit_results import ShortCircuitResults
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 from VeraGridEngine.Devices import Line, Bus
@@ -63,11 +62,9 @@ class ShortCircuitDriver(DriverTemplate):
             n=n,
             m=grid.get_branch_number(add_hvdc=False, add_vsc=False, add_switch=True),
             n_hvdc=grid.get_hvdc_number(),
-            n_vsc=grid.get_vsc_number(),
             bus_names=grid.get_bus_names(),
             branch_names=grid.get_branch_names(add_hvdc=False, add_vsc=False, add_switch=True),
             hvdc_names=grid.get_hvdc_names(),
-            vsc_names=grid.get_vsc_names(),
             sc_names=grid.get_short_circuit_definition_names(),
             bus_types=np.ones(n),
             area_names=grid.get_area_names()
@@ -191,11 +188,9 @@ class ShortCircuitDriver(DriverTemplate):
             n=nc.nbus,
             m=nc.nbr,
             n_hvdc=nc.nhvdc,
-            n_vsc=nc.nvsc,
             bus_names=nc.bus_data.names,
             branch_names=nc.passive_branch_data.names,
             hvdc_names=nc.hvdc_data.names,
-            vsc_names=nc.vsc_data.names,
             sc_names=np.array(["SC"]),
             bus_types=nc.bus_data.bus_types,
             area_names=None
@@ -366,63 +361,9 @@ class ShortCircuitDriver(DriverTemplate):
             n=nc.nbus,
             m=nc.nbr,
             n_hvdc=nc.nhvdc,
-            n_vsc=nc.nvsc,
             bus_names=nc.bus_data.names,
             branch_names=nc.passive_branch_data.names,
             hvdc_names=nc.hvdc_data.names,
-            vsc_names=nc.vsc_data.names,
-            sc_names=np.array(["SC"]),
-            bus_types=nc.bus_data.bus_types,
-            area_names=None
-        )
-
-        results.Sbus1[:, 0] = nc.get_power_injections_pu()
-        results.voltage1[:, 0] = np.zeros(nbus, dtype=complex)
-        results.Sf1[:, 0] = np.zeros(nbr, dtype=complex)
-        results.If1[:, 0] = np.zeros(nbr, dtype=complex)
-        results.losses1[:, 0] = np.zeros(nbr, dtype=complex)
-        results.SCpower[:, 0] = np.zeros(nbus, dtype=complex)
-
-        return results
-
-    @staticmethod
-    def single_short_circuit_vsc(nc: NumericalCircuit,
-                                 V_pf: CxVec,
-                                 S_pf: CxVec,
-                                 Z_fault: CxVec,
-                                 fault_bus: int,
-                                 options: PowerFlowOptions,
-                                 logger: Logger):
-
-        options.limit_i_vsc = True
-
-        adm = nc.get_admittance_matrices()
-        # compute Zbus
-        # is dense, so no need to store it as sparse
-        if adm.Ybus.shape[0] > 1:
-            return short_circuit_vsc(nc=nc,
-                                     V_pf=V_pf,
-                                     S_pf=S_pf,
-                                     Z_fault=Z_fault,
-                                     fault_bus=fault_bus,
-                                     options=options,
-                                     logger=logger)
-
-        # if we get here, no short circuit was done, so declare empty results and exit --------------------------------
-        nbus = nc.bus_data.nbus
-        nbr = nc.nbr
-
-        # voltage, Sf, loading, losses, error, converged, Qpv
-        results = ShortCircuitResults(
-            nsc=1,  # we are doing just one short circuit for one island
-            n=nc.nbus,
-            m=nc.nbr,
-            n_hvdc=nc.nhvdc,
-            n_vsc=nc.nvsc,
-            bus_names=nc.bus_data.names,
-            branch_names=nc.passive_branch_data.names,
-            hvdc_names=nc.hvdc_data.names,
-            vsc_names=nc.vsc_data.names,
             sc_names=np.array(["SC"]),
             bus_types=nc.bus_data.bus_types,
             area_names=None
@@ -487,11 +428,9 @@ class ShortCircuitDriver(DriverTemplate):
             n=nc.nbus,
             m=nc.nbr,
             n_hvdc=nc.nhvdc,
-            n_vsc=nc.nvsc,
             bus_names=nc.bus_data.names,
             branch_names=nc.passive_branch_data.names,
             hvdc_names=nc.hvdc_data.names,
-            vsc_names=nc.vsc_data.names,
             sc_names=grid.get_short_circuit_definition_names(),
             bus_types=nc.bus_data.bus_types
         )
@@ -530,32 +469,7 @@ class ShortCircuitDriver(DriverTemplate):
                             results.apply_from_island(k_sc,
                                                       res,
                                                       island.bus_data.original_idx,
-                                                      island.passive_branch_data.original_idx,
-                                                      island.hvdc_data.original_idx,
-                                                      island.vsc_data.original_idx)
-                        else:
-                            self.logger.add_error("Sequence power flow results missing")
-
-                    elif sc_definition.method == MethodShortCircuit.sequences_vsc:
-
-                        if self.pf_results is not None:
-                            res = self.single_short_circuit_vsc(
-                                nc=island,
-                                V_pf=self.pf_results.voltage[island.bus_data.original_idx],
-                                S_pf=self.pf_results.Sbus[island.bus_data.original_idx],
-                                Z_fault=Zf[island.bus_data.original_idx],
-                                fault_bus=island_bus_index,
-                                options=self.pf_options,
-                                logger=self.logger
-                            )
-
-                            # merge results
-                            results.apply_from_island(k_sc,
-                                                      res,
-                                                      island.bus_data.original_idx,
-                                                      island.passive_branch_data.original_idx,
-                                                      island.hvdc_data.original_idx,
-                                                      island.vsc_data.original_idx)
+                                                      island.passive_branch_data.original_idx)
                         else:
                             self.logger.add_error("Sequence power flow results missing")
 
@@ -584,9 +498,7 @@ class ShortCircuitDriver(DriverTemplate):
                             results.apply_from_island(k_sc,
                                                       res,
                                                       island.bus_data.original_idx,
-                                                      island.passive_branch_data.original_idx,
-                                                      island.hvdc_data.original_idx,
-                                                      island.vsc_data.original_idx)
+                                                      island.passive_branch_data.original_idx)
                         else:
                             self.logger.add_error("3ph power flow results missing")
 

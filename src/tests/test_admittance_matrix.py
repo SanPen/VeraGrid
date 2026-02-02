@@ -70,26 +70,26 @@ def test_fast_admittance():
 
     :return:
     """
-    # path = os.path.join('data', 'grids', "case14.m")
+    # path = os.path.join('data', 'grids', "case14.matpower")
 
     profiling = list()
 
     # run this one to compile the stuff
     files = [
-        "case5.m",
-        "case14.m",
-        "case18.m",
-        "case39.m",
-        "case57.m",
-        "case69.m",
-        "case60nordic.m",
-        "case118.m",
-        "case89pegase.m",
-        "case2868rte.m",
-        "case6515rte.m",
-        "case9241pegase.m",
-        "case_ACTIVSg2000.m",
-        "case_ACTIVSg500.m",
+        "case5.matpower",
+        "case14.matpower",
+        "case18.matpower",
+        "case39.matpower",
+        "case57.matpower",
+        "case69.matpower",
+        "case60nordic.matpower",
+        "case118.matpower",
+        "case89pegase.matpower",
+        "case2868rte.matpower",
+        "case6515rte.matpower",
+        "case9241pegase.matpower",
+        "case_ACTIVSg2000.matpower",
+        "case_ACTIVSg500.matpower",
     ]
 
     # run this one to compile the stuff
@@ -165,20 +165,20 @@ def test_fast_admittance_update():
     :return:
     """
     files = [
-        "case5.m",
-        "case14.m",
-        "case18.m",
-        "case39.m",
-        "case57.m",
-        "case69.m",
-        "case60nordic.m",
-        "case118.m",
-        "case89pegase.m",
-        "case2868rte.m",
-        "case6515rte.m",
-        "case9241pegase.m",
-        "case_ACTIVSg2000.m",
-        "case_ACTIVSg500.m",
+        "case5.matpower",
+        "case14.matpower",
+        "case18.matpower",
+        "case39.matpower",
+        "case57.matpower",
+        "case69.matpower",
+        "case60nordic.matpower",
+        "case118.matpower",
+        "case89pegase.matpower",
+        "case2868rte.matpower",
+        "case6515rte.matpower",
+        "case9241pegase.matpower",
+        "case_ACTIVSg2000.matpower",
+        "case_ACTIVSg500.matpower",
     ]
 
     # run this one to compile the stuff

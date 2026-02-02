@@ -14,7 +14,7 @@ from typing import List, Dict, Union, Callable, Tuple, Any
 from VeraGridEngine.Devices.types import VERAGRID_FILE_TYPE
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.IO.veragrid.generic_io_functions import parse_config_df, CustomJSONizer
-from VeraGridEngine.Simulations.driver_template import DriverToSave
+from VeraGridEngine.Simulations.results_template import DriverToSave
 import VeraGridEngine.Devices as dev
 
 

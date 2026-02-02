@@ -11,7 +11,6 @@ from VeraGridEngine.basic_structures import IntVec, Vec
 from VeraGridEngine.basic_structures import Logger, Mat
 from VeraGridEngine.enumerations import EngineType, SimulationTypes
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-from VeraGridEngine.Simulations.results_template import ResultsTemplate
 
 if TYPE_CHECKING:
     from VeraGridEngine.Simulations.Clustering.clustering_results import ClusteringResults
@@ -34,29 +33,6 @@ class DummySignal:
         :param val:
         """
         pass
-
-
-class DriverToSave:
-    """
-    Wrapper to save a driver
-    """
-
-    def __init__(self,
-                 name: str,
-                 tpe: SimulationTypes,
-                 results: ResultsTemplate,
-                 logger: Logger):
-        """
-
-        :param name:
-        :param tpe:
-        :param results:
-        :param logger:
-        """
-        self.name = name
-        self.tpe: SimulationTypes = tpe
-        self.results: ResultsTemplate = results
-        self.logger: Logger = logger
 
 
 class DriverTemplate:
@@ -190,16 +166,6 @@ class DriverTemplate:
         :return:
         """
         return self._is_running
-
-    def get_save_data(self) -> DriverToSave:
-        """
-        Get save data representation of this driver
-        :return: DriverToSave
-        """
-        return DriverToSave(name=self.name,
-                            tpe=self.tpe,
-                            results=self.results,
-                            logger=self.logger)
 
 
 class TimeSeriesDriverTemplate(DriverTemplate):

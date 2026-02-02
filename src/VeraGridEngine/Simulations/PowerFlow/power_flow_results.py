@@ -32,8 +32,7 @@ class NumericPowerFlowResults:
                  It: CxVec,
                  loading: CxVec,
                  losses: CxVec,
-                 Pfp_vsc: Vec,
-                 Pfn_vsc: Vec,
+                 Pf_vsc: Vec,
                  St_vsc: CxVec,
                  If_vsc: Vec,
                  It_vsc: CxVec,
@@ -59,8 +58,7 @@ class NumericPowerFlowResults:
         :param It: Current to vector for all the Branches
         :param loading: Loading vector for all the Branches
         :param losses: Losses vector for all the Branches
-        :param Pfp_vsc: Active power of the positive pole
-        :param Pfn_vsc: Active power of the negative pole
+        :param Pf_vsc:
         :param St_vsc:
         :param If_vsc:
         :param It_vsc:
@@ -89,8 +87,7 @@ class NumericPowerFlowResults:
         self.tap_angle = tau
 
         # VSC
-        self.Pfp_vsc = Pfp_vsc
-        self.Pfn_vsc = Pfn_vsc
+        self.Pf_vsc = Pf_vsc
         self.St_vsc = St_vsc
         self.If_vsc = If_vsc
         self.It_vsc = It_vsc
@@ -182,8 +179,7 @@ class PowerFlowResults(ResultsTemplate):
                 ],
 
                 ResultTypes.VscResults: [
-                    ResultTypes.VscPowerFromPositive,
-                    ResultTypes.VscPowerFromNegative,
+                    ResultTypes.VscPowerFrom,
                     ResultTypes.VscPowerTo,
                     ResultTypes.VscLosses,
                 ],
@@ -245,8 +241,7 @@ class PowerFlowResults(ResultsTemplate):
         self.loading_hvdc: Vec = np.zeros(n_hvdc)
 
         # VSC
-        self.Pfp_vsc = np.zeros(n_vsc, dtype=float)
-        self.Pfn_vsc = np.zeros(n_vsc, dtype=float)
+        self.Pf_vsc = np.zeros(n_vsc, dtype=float)
         self.St_vsc = np.zeros(n_vsc, dtype=complex)
         self.If_vsc = np.zeros(n_vsc, dtype=float)
         self.It_vsc = np.zeros(n_vsc, dtype=complex)
@@ -298,8 +293,7 @@ class PowerFlowResults(ResultsTemplate):
         self.register(name='loading_hvdc', tpe=Vec)
 
         self.register(name='losses_vsc', tpe=Vec)
-        self.register(name='Pfp_vsc', tpe=Vec)
-        self.register(name='Pfn_vsc', tpe=Vec)
+        self.register(name='Pf_vsc', tpe=Vec)
         self.register(name='St_vsc', tpe=CxVec)
         self.register(name='If_vsc', tpe=Vec)
         self.register(name='It_vsc', tpe=CxVec)
@@ -402,8 +396,7 @@ class PowerFlowResults(ResultsTemplate):
         self.loading_hvdc[hvdc_idx] = results.loading_hvdc.real
 
         # VSC
-        self.Pfp_vsc[vsc_idx] = results.Pfp_vsc
-        self.Pfn_vsc[vsc_idx] = results.Pfn_vsc
+        self.Pf_vsc[vsc_idx] = results.Pf_vsc
         self.St_vsc[vsc_idx] = results.St_vsc
         self.If_vsc[vsc_idx] = results.If_vsc
         self.It_vsc[vsc_idx] = results.It_vsc
@@ -778,20 +771,9 @@ class PowerFlowResults(ResultsTemplate):
                                 ylabel='(MW)',
                                 units='(MW)')
 
-        elif result_type == ResultTypes.VscPowerFromPositive:
+        elif result_type == ResultTypes.VscPowerFrom:
 
-            return ResultsTable(data=self.Pfp_vsc,
-                                index=self.vsc_names,
-                                idx_device_type=DeviceType.VscDevice,
-                                columns=np.array([result_type.value]),
-                                cols_device_type=DeviceType.NoDevice,
-                                title=result_type.value,
-                                ylabel='(MW)',
-                                units='(MW)')
-
-        elif result_type == ResultTypes.VscPowerFromNegative:
-
-            return ResultsTable(data=self.Pfn_vsc,
+            return ResultsTable(data=self.Pf_vsc,
                                 index=self.vsc_names,
                                 idx_device_type=DeviceType.VscDevice,
                                 columns=np.array([result_type.value]),

@@ -173,7 +173,7 @@ def test_grid_profile_initialization():
     """
     This test checks that when creating a profile, the profile slices are identical to the snapshot
     """
-    fname1 = os.path.join('data', 'grids', 'Matpower', 'case14.m')
+    fname1 = os.path.join('data', 'grids', 'Matpower', 'case14.matpower')
     fname2 = os.path.join('data', 'grids', 'ACTIVSg2000.gridcal')
 
     for fname in [fname1, fname2]:

@@ -182,8 +182,7 @@ class StateEstimationResults(ResultsTemplate):
                 ],
 
                 ResultTypes.VscResults: [
-                    ResultTypes.VscPowerFromPositive,
-                    ResultTypes.VscPowerFromNegative,
+                    ResultTypes.VscPowerFrom,
                     ResultTypes.VscPowerTo,
                     ResultTypes.VscLosses,
                 ],
@@ -757,7 +756,7 @@ class StateEstimationResults(ResultsTemplate):
                                 ylabel='(MW)',
                                 units='(MW)')
 
-        elif result_type == ResultTypes.VscPowerFromPositive:
+        elif result_type == ResultTypes.VscPowerFrom:
 
             return ResultsTable(data=self.Pf_vsc,
                                 index=self.vsc_names,

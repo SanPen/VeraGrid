@@ -74,7 +74,7 @@ def adv_jacobian(nbus: int,
                  i_k_q: IntVec,
 
                  # Unknowns
-                 Pfp_vsc: Vec,
+                 Pf_vsc: Vec,
                  Pt_vsc: Vec,
                  Qt_vsc: Vec,
                  Pf_hvdc: Vec,
@@ -126,7 +126,7 @@ def adv_jacobian(nbus: int,
     :param i_u_va:
     :param i_k_p:
     :param i_k_q:
-    :param Pfp_vsc:
+    :param Pf_vsc:
     :param Pt_vsc:
     :param Qt_vsc:
     :param Pf_hvdc:
@@ -376,7 +376,7 @@ def calcSt(k: IntVec, V: CxVec, F: IntVec, T: IntVec,
 def calc_flows_summation_per_bus(nbus: int,
                                  F_br: IntVec, T_br: IntVec, Sf_br: CxVec, St_br: CxVec,
                                  F_hvdc: IntVec, T_hvdc: IntVec, Sf_hvdc: CxVec, St_hvdc: CxVec,
-                                 F_vsc: IntVec, T_vsc: IntVec, Pfp_vsc: Vec, St_vsc: CxVec) -> CxVec:
+                                 F_vsc: IntVec, T_vsc: IntVec, Pf_vsc: Vec, St_vsc: CxVec) -> CxVec:
     """
     Summation of magnitudes per bus (complex)
     Includes everything: VSCs, HVDCs, and all
@@ -392,7 +392,7 @@ def calc_flows_summation_per_bus(nbus: int,
     :param St_hvdc:
     :param F_vsc:
     :param T_vsc:
-    :param Pfp_vsc:
+    :param Pf_vsc:
     :param St_vsc:
     :return:
     """
@@ -411,7 +411,7 @@ def calc_flows_summation_per_bus(nbus: int,
 
     # Add VSC
     for i in range(len(F_vsc)):
-        res[F_vsc[i]] += Pfp_vsc[i]
+        res[F_vsc[i]] += Pf_vsc[i]
         res[T_vsc[i]] += St_vsc[i]
 
     return res
@@ -420,7 +420,7 @@ def calc_flows_summation_per_bus(nbus: int,
 @njit(cache=True)
 def calc_flows_active_branch_per_bus(nbus: int,
                                      F_hvdc: IntVec, T_hvdc: IntVec, Sf_hvdc: CxVec, St_hvdc: CxVec,
-                                     F_vsc: IntVec, T_vsc: IntVec, Pfp_vsc: Vec, St_vsc: CxVec) -> CxVec:
+                                     F_vsc: IntVec, T_vsc: IntVec, Pf_vsc: Vec, St_vsc: CxVec) -> CxVec:
     """
     Summation of magnitudes per bus (complex)
     Used to add effects of VSCs and HVDCs to
@@ -432,7 +432,7 @@ def calc_flows_active_branch_per_bus(nbus: int,
     :param St_hvdc:
     :param F_vsc:
     :param T_vsc:
-    :param Pfp_vsc:
+    :param Pf_vsc:
     :param St_vsc:
     :return:
     """
@@ -446,7 +446,7 @@ def calc_flows_active_branch_per_bus(nbus: int,
 
     # Add VSC
     for i in range(len(F_vsc)):
-        res[F_vsc[i]] += Pfp_vsc[i]
+        res[F_vsc[i]] += Pf_vsc[i]
         res[T_vsc[i]] += St_vsc[i]
 
     return res
@@ -561,8 +561,7 @@ class PfGeneralizedFormulation(PfFormulationTemplate):
 
         # Unknowns -----------------------------------------------------------------------------------------------------
         # Va and Vm are set at the parent
-        self.Pfp_vsc = np.zeros(nc.vsc_data.nelm)
-        self.Pfn_vsc = np.zeros(nc.vsc_data.nelm)
+        self.Pf_vsc = np.zeros(nc.vsc_data.nelm)
         self.Pt_vsc = np.zeros(nc.vsc_data.nelm)
         self.Qt_vsc = np.zeros(nc.vsc_data.nelm)
         self.Pf_hvdc = np.zeros(nc.hvdc_data.nelm)
@@ -573,7 +572,7 @@ class PfGeneralizedFormulation(PfFormulationTemplate):
         self.tau = self.nc.active_branch_data.tap_angle[self.u_cbr_tau]
 
         # set the VSC set-points
-        self.Pfp_vsc[self.k_vsc_pf] = self.vsc_pf_set / self.nc.Sbase
+        self.Pf_vsc[self.k_vsc_pf] = self.vsc_pf_set / self.nc.Sbase
         self.Pt_vsc[self.k_vsc_pt] = self.vsc_pt_set / self.nc.Sbase
         self.Qt_vsc[self.k_vsc_qt] = self.vsc_qt_set / self.nc.Sbase
 
@@ -1157,7 +1156,7 @@ class PfGeneralizedFormulation(PfFormulationTemplate):
         # update the vectors
         self.Va[self.i_u_va] = x[0:a]
         self.Vm[self.i_u_vm] = x[a:b]
-        self.Pfp_vsc[self.u_vsc_pf] = x[b:c]
+        self.Pf_vsc[self.u_vsc_pf] = x[b:c]
         self.Pt_vsc[self.u_vsc_pt] = x[c:d]
         self.Qt_vsc[self.u_vsc_qt] = x[d:e]
         self.Pf_hvdc = x[e:f]
@@ -1175,7 +1174,7 @@ class PfGeneralizedFormulation(PfFormulationTemplate):
         return np.r_[
             self.Va[self.i_u_va],
             self.Vm[self.i_u_vm],
-            self.Pfp_vsc[self.u_vsc_pf],
+            self.Pf_vsc[self.u_vsc_pf],
             self.Pt_vsc[self.u_vsc_pt],
             self.Qt_vsc[self.u_vsc_qt],
             self.Pf_hvdc,
@@ -1230,14 +1229,14 @@ class PfGeneralizedFormulation(PfFormulationTemplate):
         # copy the sliceable vectors
         Vm_ = self.Vm.copy()
         Va_ = self.Va.copy()
-        Pfp_vsc_ = self.Pfp_vsc.copy()
+        Pf_vsc_ = self.Pf_vsc.copy()
         Pt_vsc_ = self.Pt_vsc.copy()
         Qt_vsc_ = self.Qt_vsc.copy()
 
         # update the vectors
         Va_[self.i_u_va] = x[0:a]
         Vm_[self.i_u_vm] = x[a:b]
-        Pfp_vsc_[self.u_vsc_pf] = x[b:c]
+        Pf_vsc_[self.u_vsc_pf] = x[b:c]
         Pt_vsc_[self.u_vsc_pt] = x[c:d]
         Qt_vsc_[self.u_vsc_qt] = x[d:e]
         Pf_hvdc_ = x[e:f]
@@ -1350,9 +1349,9 @@ class PfGeneralizedFormulation(PfFormulationTemplate):
                      + self.nc.vsc_data.alpha2 * It
                      + self.nc.vsc_data.alpha1)
 
-        loss_vsc = PLoss_IEC - Pt_vsc_ - Pfp_vsc_
+        loss_vsc = PLoss_IEC - Pt_vsc_ - Pf_vsc_
         St_vsc = make_complex(Pt_vsc_, Qt_vsc_)
-        # Scalc_vsc = Pfp_vsc_ @ self.nc.vsc_data.Cf + St_vsc @ self.nc.vsc_data.Ct
+        # Scalc_vsc = Pf_vsc_ @ self.nc.vsc_data.Cf + St_vsc @ self.nc.vsc_data.Ct
 
         # HVDC ---------------------------------------------------------------------------------------------------------
         tm[4] = time.time()
@@ -1384,7 +1383,7 @@ class PfGeneralizedFormulation(PfFormulationTemplate):
             St_hvdc=St_hvdc,
             F_vsc=self.nc.vsc_data.F,
             T_vsc=self.nc.vsc_data.T,
-            Pfp_vsc=Pfp_vsc_,
+            Pf_vsc=Pf_vsc_,
             St_vsc=St_vsc)
         Scalc_ = Scalc_active + Scalc_passive
 
@@ -1411,7 +1410,7 @@ class PfGeneralizedFormulation(PfFormulationTemplate):
         if update_class_vars:
             self._Va = Va_
             self._Vm = Vm_
-            self.Pfp_vsc = Pfp_vsc_
+            self.Pf_vsc = Pf_vsc_
             self.Pt_vsc = Pt_vsc_
             self.Qt_vsc = Qt_vsc_
             self.Pf_hvdc = Pf_hvdc_
@@ -1720,7 +1719,7 @@ class PfGeneralizedFormulation(PfFormulationTemplate):
                      + self.nc.vsc_data.alpha2 * It
                      + self.nc.vsc_data.alpha1)
 
-        dloss_vsc = PLoss_IEC - self.Pt_vsc - self.Pfp_vsc
+        dloss_vsc = PLoss_IEC - self.Pt_vsc - self.Pf_vsc
         St_vsc = make_complex(self.Pt_vsc, self.Qt_vsc)
 
         # HVDC ---------------------------------------------------------------------------------------------------------
@@ -1748,7 +1747,7 @@ class PfGeneralizedFormulation(PfFormulationTemplate):
             St_hvdc=St_hvdc,
             F_vsc=self.nc.vsc_data.F,
             T_vsc=self.nc.vsc_data.T,
-            Pfp_vsc=self.Pfp_vsc,
+            Pf_vsc=self.Pf_vsc,
             St_vsc=St_vsc)
 
         self.Scalc = Scalc_active + Scalc_passive
@@ -1846,7 +1845,7 @@ class PfGeneralizedFormulation(PfFormulationTemplate):
                 i_k_q=self.i_k_q,
 
                 # Unknowns
-                Pfp_vsc=self.Pfp_vsc,
+                Pf_vsc=self.Pf_vsc,
                 Pt_vsc=self.Pt_vsc,
                 Qt_vsc=self.Qt_vsc,
                 Pf_hvdc=self.Pf_hvdc,
@@ -1875,7 +1874,7 @@ class PfGeneralizedFormulation(PfFormulationTemplate):
         cols = [f'dVa_{i}' for i in self.i_u_va]
         cols += [f'dVm_{i}' for i in self.i_u_vm]
 
-        cols += [f'dPfp_vsc_{i}' for i in self.u_vsc_pf]
+        cols += [f'dPf_vsc_{i}' for i in self.u_vsc_pf]
         cols += [f'dPt_vsc_{i}' for i in self.u_vsc_pt]
         cols += [f'dQt_vsc_{i}' for i in self.u_vsc_qt]
 
@@ -1934,13 +1933,12 @@ class PfGeneralizedFormulation(PfFormulationTemplate):
         loading = Sf / (self.nc.passive_branch_data.rates + 1e-9)
 
         # VSC ----------------------------------------------------------------------------------------------------------
-        Pfp_vsc = self.Pfp_vsc * self.nc.Sbase
-        Pfn_vsc = self.Pfn_vsc * self.nc.Sbase
+        Pf_vsc = self.Pf_vsc * self.nc.Sbase
         St_vsc = make_complex(self.Pt_vsc, self.Qt_vsc) * self.nc.Sbase
-        If_vsc = self.Pfp_vsc / self.Vm[self.nc.vsc_data.F]
+        If_vsc = self.Pf_vsc / self.Vm[self.nc.vsc_data.F]
         It_vsc = St_vsc / self.Vm[self.nc.vsc_data.T]
         loading_vsc = np.abs(St_vsc) / (self.nc.vsc_data.rates + 1e-20)
-        losses_vsc = Pfp_vsc + St_vsc.real
+        losses_vsc = Pf_vsc + St_vsc.real
 
         # HVDC ---------------------------------------------------------------------------------------------------------
         Sf_hvdc = make_complex(self.Pf_hvdc, self.Qf_hvdc) * self.nc.Sbase
@@ -1963,7 +1961,7 @@ class PfGeneralizedFormulation(PfFormulationTemplate):
             St_hvdc=St_hvdc,
             F_vsc=self.nc.vsc_data.F,
             T_vsc=self.nc.vsc_data.T,
-            Pfp_vsc=self.Pfp_vsc,
+            Pf_vsc=self.Pf_vsc,
             St_vsc=St_vsc
         )
 
@@ -1983,8 +1981,7 @@ class PfGeneralizedFormulation(PfFormulationTemplate):
             It=It,
             loading=loading,
             losses=losses,
-            Pfp_vsc=Pfp_vsc,
-            Pfn_vsc=Pfn_vsc,
+            Pf_vsc=Pf_vsc,
             St_vsc=St_vsc,
             If_vsc=If_vsc,
             It_vsc=It_vsc,

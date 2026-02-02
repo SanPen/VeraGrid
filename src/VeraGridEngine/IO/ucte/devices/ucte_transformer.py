@@ -92,44 +92,68 @@ class UcteTransformer:
 
             chunks = line.split()
 
-            if len(chunks) >= 1:
-                self.node1 = chunks[0].strip()
-
-            if len(chunks) >= 2:
-                self.node2 = chunks[1].strip()
-
-            if len(chunks) >= 3:
-                self.order_code = chunks[2].strip()
-
-            if len(chunks) >= 4:
-                self.status = try_int(chunks[3].strip(), device, "status", logger)
-
-            if len(chunks) >= 5:
-                self.rated_voltage1 = try_float(chunks[4].strip(), device, "rated_voltage1", logger)
-
-            if len(chunks) >= 6:
-                self.rated_voltage2 = try_float(chunks[5].strip(), device, "rated_voltage2", logger)
-
-            if len(chunks) >= 7:
-                self.nominal_power = try_float(chunks[6].strip(), device, "nominal_power", logger)
-
-            if len(chunks) >= 8:
-                self.resistance = try_float(chunks[7].strip(), device, "resistance", logger)
-
-            if len(chunks) >= 9:
-                self.reactance = try_float(chunks[8].strip(), device, "reactance", logger)
-
-            if len(chunks) >= 10:
-                self.susceptance = try_float(chunks[9].strip(), device, "susceptance", logger)
-
-            if len(chunks) >= 11:
-                self.conductance = try_float(chunks[10].strip(), device, "conductance", logger)
-
-            if len(chunks) >= 12:
-                self.current_limit = try_int(chunks[11].strip(), device, "current_limit", logger)
-
             if len(chunks) >= 13:
+
+                self.node1 = chunks[0].strip()
+                self.node2 = chunks[1].strip()
+                self.order_code = chunks[2].strip()
+                self.status = try_int(chunks[3].strip(), device, "status", logger)
+                self.rated_voltage1 = try_float(chunks[4].strip(), device, "rated_voltage1", logger)
+                self.rated_voltage2 = try_float(chunks[5].strip(), device, "rated_voltage2", logger)
+                self.nominal_power = try_float(chunks[6].strip(), device, "nominal_power", logger)
+                self.resistance = try_float(chunks[7].strip(), device, "resistance", logger)
+                self.reactance = try_float(chunks[8].strip(), device, "reactance", logger)
+                self.susceptance = try_float(chunks[9].strip(), device, "susceptance", logger)
+                self.conductance = try_float(chunks[10].strip(), device, "conductance", logger)
+                self.current_limit = try_int(chunks[11].strip(), device, "current_limit", logger)
                 self.name = chunks[12].strip()
+
+            elif len(chunks) == 12:
+
+                self.node1 = chunks[0].strip()
+                self.node2 = chunks[1].strip()
+                self.order_code = chunks[2].strip()
+                self.status = try_int(chunks[3].strip(), device, "status", logger)
+                self.rated_voltage1 = try_float(chunks[4].strip(), device, "rated_voltage1", logger)
+                self.rated_voltage2 = try_float(chunks[5].strip(), device, "rated_voltage2", logger)
+                self.nominal_power = try_float(chunks[6].strip(), device, "nominal_power", logger)
+                self.resistance = try_float(chunks[7].strip(), device, "resistance", logger)
+                self.reactance = try_float(chunks[8].strip(), device, "reactance", logger)
+                self.susceptance = try_float(chunks[9].strip(), device, "susceptance", logger)
+                self.conductance = try_float(chunks[10].strip(), device, "conductance", logger)
+                self.current_limit = try_int(chunks[11].strip(), device, "current_limit", logger)
+                self.name = "No name provided"
+
+                logger.add_warning("Incorrect number of parameters",
+                                   device_class=device,
+                                   value=len(chunks),
+                                   expected_value=13)
+            elif len(chunks) == 11:
+
+                self.node1 = chunks[0].strip()
+                self.node2 = chunks[1].strip()
+                self.order_code = chunks[2].strip()
+                self.status = try_int(chunks[3].strip(), device, "status", logger)
+                self.rated_voltage1 = try_float(chunks[4].strip(), device, "rated_voltage1", logger)
+                self.rated_voltage2 = try_float(chunks[5].strip(), device, "rated_voltage2", logger)
+                self.nominal_power = 9999.0  # WTF!!!!
+                self.resistance = try_float(chunks[6].strip(), device, "resistance", logger)
+                self.reactance = try_float(chunks[7].strip(), device, "reactance", logger)
+                self.susceptance = try_float(chunks[8].strip(), device, "susceptance", logger)
+                self.conductance = try_float(chunks[9].strip(), device, "conductance", logger)
+                self.current_limit = try_int(chunks[10].strip(), device, "current_limit", logger)
+                self.name = "No name provided"
+
+                logger.add_warning("Incorrect number of parameters",
+                                   device_class=device,
+                                   value=len(chunks),
+                                   expected_value=13)
+
+            else:
+                logger.add_error("Incorrect number of parameters",
+                                 device_class=device,
+                                 value=len(chunks),
+                                 expected_value=13)
 
         if self.current_limit < 0:
             self.current_limit = 9999.0

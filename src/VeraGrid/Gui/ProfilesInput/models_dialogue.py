@@ -335,7 +335,7 @@ class ModelsInputGUI(QtWidgets.QDialog):
         Add the selected models
         """
         # declare the allowed file types
-        files_types = "Formats (*.raw *.RAW *.rawx *.xml *.m *.epc *.EPC)"
+        files_types = "Formats (*.raw *.RAW *.rawx *.xml *.m *.matpower *.epc *.EPC)"
 
         # call dialog to select the file
         filenames, type_selected = QtWidgets.QFileDialog.getOpenFileNames(self, 'Add files', filter=files_types)

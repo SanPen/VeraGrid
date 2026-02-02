@@ -136,7 +136,7 @@ class MapInjectionTemplateGraphicItem(NodeTemplate, QGraphicsEllipseItem):
         Updates the element position in the diagram (to save)
         :return:
         """
-        lat, long = self.editor.to_lat_lon(self.rect().x(), self.rect().y())
+        lat, long = self.editor.to_lat_lon(self.get_xc(), self.get_yc())
 
         self.lat = lat
         self.lon = long
@@ -253,11 +253,17 @@ class MapInjectionTemplateGraphicItem(NodeTemplate, QGraphicsEllipseItem):
         menu = self.get_base_context_menu()
         menu.exec(event.screenPos())
 
+    def get_xc(self) -> float:
+        return self.rect().x() + self.size/2
+
+    def get_yc(self) -> float:
+        return self.rect().y() + self.size/2
+
     def consolidate_coordinates(self):
         """
         Consolidate coordinates in to the DB
         """
-        lat, long = self.editor.to_lat_lon(self.rect().x(), self.rect().y())
+        lat, long = self.editor.to_lat_lon(self.get_xc(), self.get_yc())
         self.api_object.latitude = lat
         self.api_object.longitude = long
         self.editor.gui.show_info_toast("Coordinates consolidated!")

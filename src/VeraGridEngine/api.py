@@ -32,20 +32,13 @@ def open_file(filename: Union[str, List[str]]) -> MultiCircuit:
     return FileOpen(file_name=filename).open()
 
 
-def save_file(grid: MultiCircuit, filename: str, drivers_to_save: List[DriverToSave] | None = None):
+def save_file(grid: MultiCircuit, filename: str):
     """
     Save file
     :param grid: MultiCircuit instance
     :param filename: name of the file (.veragrid, .ejson)
-    :param drivers_to_save: List of drivers to save, this structures can be obtained from driver.get_save_data()
     """
-    FileSave(
-        circuit=grid,
-        file_name=filename,
-        options=FileSavingOptions(
-            sessions_data=list() if drivers_to_save is None else drivers_to_save,
-        ),
-    ).save()
+    FileSave(circuit=grid, file_name=filename).save()
 
 
 def save_cgmes_file(grid: MultiCircuit,

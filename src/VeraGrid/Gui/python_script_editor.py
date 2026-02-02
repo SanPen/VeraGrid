@@ -20,7 +20,12 @@ class PythonCodeEditor(QPlainTextEdit):
     def __init__(
             self,
             parent=None,
-            namespace: Dict[str, Any] | None = None, ):
+            vars_dict: Dict[str, Any] | None = None, ):
+        """
+
+        :param parent:
+        :param vars_dict:
+        """
         super().__init__(parent)
 
         font = QFont("Consolas", CONSOLE_TEXT_SIZE)
@@ -34,7 +39,11 @@ class PythonCodeEditor(QPlainTextEdit):
         PythonHighlighter(self.document())
 
         # Normalize namespace exactly like the console
-        self._namespace = self._normalize_namespace(namespace or {})
+        self._vars_dict = dict() if vars_dict is None else vars_dict
+
+        self._vars_dict["__builtins__"] = __builtins__  # dict or module, both fine]
+
+        self._namespace = self._normalize_namespace(self._vars_dict)
 
         # rlcompleter backend (same as console)
         self._completer_backend = rlcompleter.Completer(self._namespace)
@@ -52,9 +61,15 @@ class PythonCodeEditor(QPlainTextEdit):
         # Remember what we replace
         self._last_prefix = ""
 
-    # ------------------------------------------------------------------
-    # Namespace handling (same logic you already fixed)
-    # ------------------------------------------------------------------
+    def add_var(self, name: str, val: Any) -> None:
+        """
+        Add variable to the interpreter
+        :param name: name of the variable
+        :param val: value or pointer
+        """
+        self._vars_dict[name] = val
+        self._namespace = self._normalize_namespace(self._vars_dict)
+        self._completer_backend = rlcompleter.Completer(self._namespace)
 
     @staticmethod
     def _normalize_namespace(ns: Dict[str, Any]) -> Dict[str, Any]:
@@ -108,7 +123,7 @@ class PythonCodeEditor(QPlainTextEdit):
                 self._trigger_completion()
                 return True
 
-            if (e.key() == Qt.Key.Key_Space and e.modifiers() & Qt.KeyboardModifier.ControlModifier):
+            if e.key() == Qt.Key.Key_Space and e.modifiers() & Qt.KeyboardModifier.ControlModifier:
                 self._trigger_completion()
                 return True
 
@@ -207,7 +222,7 @@ if __name__ == "__main__":
             super().__init__()
             self.setWindowTitle("PySide6 Python Console")
             console = PythonCodeEditor(
-                namespace={
+                vars_dict={
                     "__builtins__": __builtins__,  # dict or module, both fine
                     "app": self,
                     "np": np,

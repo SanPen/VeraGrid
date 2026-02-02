@@ -5822,6 +5822,7 @@ class Assets:
         """
         for elm in self.contingencies:
             if elm.device_idtag == obj.idtag:
+                print(elm)
                 self.delete_contingency(elm, del_group=delete_groups)
 
         for elm in self.remedial_actions:

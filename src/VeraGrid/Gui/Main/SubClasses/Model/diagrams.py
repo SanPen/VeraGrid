@@ -3176,7 +3176,8 @@ class DiagramsMain(CompiledArraysMain):
                                  title="Reset diagram coordinates using the DB")
             if ok:
                 diagram_widget.reset_coordinates()
-                self.show_info_toast(message='Coordinates of substations and linelocations set to its database values.')
+                self.show_info_toast(message='Coordinates of substations and line '
+                                             'locations set to its database values.')
 
     def rotate(self):
         """

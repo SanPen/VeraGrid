@@ -397,7 +397,7 @@ def test_power_flow_control_with_pst_pt() -> None:
 #
 #     :return:
 #     """
-#     fname = os.path.join('data', 'grids', 'fubm_caseHVDC_vt.m')
+#     fname = os.path.join('data', 'grids', 'fubm_caseHVDC_vt.matpower')
 #     grid = gce.open_file(fname)
 #
 #     options = gce.PowerFlowOptions(solver_type=gce.SolverType.NR,

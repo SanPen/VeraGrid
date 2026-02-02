@@ -8,9 +8,11 @@ from typing import Union, TYPE_CHECKING
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
+import matplotlib.colors as plt_colors
 from VeraGridEngine.Simulations.OPF.opf_results import OptimalPowerFlowResults
 from VeraGridEngine.Simulations.results_table import ResultsTable
 from VeraGridEngine.Simulations.results_template import ResultsTemplate
+from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.basic_structures import IntVec, Vec, StrVec, CxMat, Mat, BoolVec
 from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
 
@@ -810,7 +812,6 @@ class OptimalPowerFlowTimeSeriesResults(ResultsTemplate):
                                 ylabel='(MW)',
                                 xlabel='',
                                 units='(MW)')
-
         elif result_type == ResultTypes.ContingencyFlowsReport:
             y = list()
             index = list()

@@ -2097,6 +2097,10 @@ class GridMapWidget(BaseDiagramWidget):
             merging_substation.remove_function_from_schematic_and_db()
 
     def consolidate_object_coordinates(self):
+        """
+
+        :return:
+        """
         selected_lines = self.get_selected_line_segments_tup()
         selected_substations = self.get_selected_substations_tup()
         selected_generators = self.get_selected_generators_tup()
@@ -3128,3 +3132,30 @@ def generate_map_diagram(
 
     return diagram
 
+
+def generate_map_diagram2(circuit: MultiCircuit):
+    return generate_map_diagram(
+        substations=circuit.get_substations(),
+        voltage_levels=circuit.get_voltage_levels(),
+        lines=circuit.get_lines(),
+        dc_lines=circuit.get_dc_lines(),
+        hvdc_lines=circuit.get_hvdc(),
+        fluid_nodes=circuit.get_fluid_nodes(),
+        fluid_paths=circuit.get_fluid_paths(),
+        external_grids=circuit.external_grids,
+        static_generators=circuit.static_generators,
+        loads=circuit.loads,
+        batteries=circuit.batteries ,
+        generators=circuit.generators,
+        prog_func=None,
+        text_func=None,
+        name='Map diagram',
+        use_flow_based_width=False,
+        min_branch_width=0.01,
+        max_branch_width=0.02,
+        min_bus_width=0.1,
+        max_bus_width=0.2,
+        arrow_size=0.015,
+        palette=Colormaps.VeraGrid,
+        default_bus_voltage=20
+    )

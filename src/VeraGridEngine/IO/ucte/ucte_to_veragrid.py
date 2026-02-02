@@ -268,15 +268,3 @@ def convert_ucte_to_veragrid(ucte_grid: UcteCircuit, logger: Logger) -> MultiCir
     parse_exchange_power(ucte_grid=ucte_grid, grid=grid, bus_dict=bus_dict, logger=logger)
 
     return grid
-
-
-if __name__ == "__main__":
-    # fname = "/Users/santi/Git/eRoots/VeraGrid/src/tests/data/grids/ucte/12_node_network.uct"
-    fname = "/Users/santi/Git/eRoots/VeraGrid/src/tests/data/grids/ucte/tapPositionsRange.uct"
-
-    logger = Logger()
-    g = UcteCircuit()
-    g.parse_file([fname], logger)
-    parser = convert_ucte_to_veragrid(g, logger)
-
-    print()

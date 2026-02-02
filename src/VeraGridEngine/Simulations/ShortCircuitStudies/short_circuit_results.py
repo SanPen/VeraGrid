@@ -20,12 +20,10 @@ class ShortCircuitResults(ResultsTemplate):
                  n: int,
                  m: int,
                  n_hvdc: int,
-                 n_vsc: int,
                  sc_names: StrVec,
                  bus_names: StrVec,
                  branch_names: StrVec,
                  hvdc_names: StrVec,
-                 vsc_names: StrVec,
                  bus_types: IntVec,
                  area_names: StrVec | None = None):
         """
@@ -233,14 +231,6 @@ class ShortCircuitResults(ResultsTemplate):
         self.hvdc_Pt = np.zeros((n_hvdc, nsc))
         self.hvdc_loading = np.zeros((n_hvdc, nsc))
 
-        self.vsc_If = np.zeros((n_vsc, nsc))
-        self.vsc_It = np.zeros((n_vsc, nsc), dtype=complex)
-        self.vsc_Pfp = np.zeros((n_vsc, nsc))
-        self.vsc_Pfn = np.zeros((n_vsc, nsc))
-        self.vsc_St = np.zeros((n_vsc, nsc), dtype=complex)
-        self.vsc_losses = np.zeros((n_vsc, nsc), dtype=float)
-        self.vsc_loading = np.zeros((n_vsc, nsc), dtype=float)
-
         self.SCpower = np.zeros((n, nsc), dtype=complex)
         self.SCpowerA = np.zeros((n, nsc), dtype=complex)
         self.SCpowerB = np.zeros((n, nsc), dtype=complex)
@@ -340,14 +330,6 @@ class ShortCircuitResults(ResultsTemplate):
         self.register(name='hvdc_Pt', tpe=Vec)
         self.register(name='hvdc_loading', tpe=Vec)
 
-        self.register(name='vsc_If', tpe=Vec)
-        self.register(name='vsc_It', tpe=CxVec)
-        self.register(name='vsc_Pfp', tpe=Vec)
-        self.register(name='vsc_Pfn', tpe=Vec)
-        self.register(name='vsc_St', tpe=CxVec)
-        self.register(name='vsc_losses', tpe=Vec)
-        self.register(name='vsc_loading', tpe=Vec)
-
         self.register(name='SCpower', tpe=CxVec)
         self.register(name='SCpowerA', tpe=CxVec)
         self.register(name='SCpowerB', tpe=CxVec)
@@ -367,8 +349,7 @@ class ShortCircuitResults(ResultsTemplate):
         val = 0.0
         return val
 
-    def apply_from_island(self, sc_idx: int, results: "ShortCircuitResults", b_idx: IntVec, br_idx: IntVec,
-                          hvdc_idx: IntVec, vsc_idx: IntVec):
+    def apply_from_island(self, sc_idx: int, results: "ShortCircuitResults", b_idx: IntVec, br_idx: IntVec):
         """
         Apply results from another island circuit to the circuit results represented
         here.
@@ -453,19 +434,6 @@ class ShortCircuitResults(ResultsTemplate):
         self.VbranchC[br_idx, sc_idx] = results.VbranchC[:, 0]
         self.loadingC[br_idx, sc_idx] = results.loadingC[:, 0]
         self.lossesC[br_idx, sc_idx] = results.lossesC[:, 0]
-
-        self.hvdc_losses[hvdc_idx, sc_idx] = results.hvdc_losses[:, 0]
-        self.hvdc_Pf[hvdc_idx, sc_idx] = results.hvdc_Pf[:, 0]
-        self.hvdc_Pt[hvdc_idx, sc_idx] = results.hvdc_Pt[:, 0]
-        self.hvdc_loading[hvdc_idx, sc_idx] = results.hvdc_loading[:, 0]
-
-        self.vsc_If[vsc_idx, sc_idx] = results.vsc_If[:, 0]
-        self.vsc_It[vsc_idx, sc_idx] = results.vsc_It[:, 0]
-        self.vsc_Pfp[vsc_idx, sc_idx] = results.vsc_Pfp[:, 0]
-        self.vsc_Pfn[vsc_idx, sc_idx] = results.vsc_Pfn[:, 0]
-        self.vsc_St[vsc_idx, sc_idx] = results.vsc_St[:, 0]
-        self.vsc_losses[vsc_idx, sc_idx] = results.vsc_losses[:, 0]
-        self.vsc_loading[vsc_idx, sc_idx] = results.vsc_loading[:, 0]
 
     def mdl(self, result_type: ResultTypes) -> ResultsTable:
         """

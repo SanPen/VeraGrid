@@ -262,7 +262,7 @@ class PowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
         results.hvdc_losses = res.losses_hvdc
         results.error_values = res.error_values
 
-        results.Pf_vsc = res.Pfp_vsc
+        results.Pf_vsc = res.Pf_vsc
         results.St_vsc = res.St_vsc
         results.loading_vsc = res.loading_vsc
         results.losses_vsc = res.losses_vsc

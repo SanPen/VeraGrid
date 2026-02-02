@@ -219,9 +219,9 @@ def test_results_compatibility():
         return
 
     paths = [
-        # "data/grids/Matpower/case57.m",
-        # "data/grids/Matpower/case3012wp.m"
-        # "data/grids/Matpower/case16am.m"
+        # "data/grids/Matpower/case57.matpower",
+        # "data/grids/Matpower/case3012wp.matpower"
+        # "data/grids/Matpower/case16am.matpower"
     ]
 
     # run this one to compile the stuff

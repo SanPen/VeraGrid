@@ -676,7 +676,7 @@ def data_to_grid_object(data: Dict[str, pd.DataFrame],
         else:
             x, y = 0.0, 0.0
         buses_dict[ID] = i
-        bus_name = buses['loc_name'][i]  # .decode(codification)  # BUS_Name
+        bus_name = buses['loc_name'][i] # .decode(codification)  # BUS_Name
         vnom = buses['uknom'][i]
         bus = dev.Bus(name=bus_name, Vnom=vnom, vmin=0.9, vmax=1.1, xpos=x, ypos=-y, active=True)
         circuit.add_bus(bus)
@@ -1142,30 +1142,30 @@ def data_to_grid_object(data: Dict[str, pd.DataFrame],
         if options == "statgen_to_vsc":
 
             bus_dc = dev.Bus(
-                name=f'{bus_obj.name}_dc',
-                Vnom=bus_obj.Vnom,
-                xpos=bus_obj.x,
-                ypos=bus_obj.y + 20,
-                is_dc=True
+                name = f'{bus_obj.name}_dc',
+                Vnom = bus_obj.Vnom,
+                xpos = bus_obj.x,
+                ypos = bus_obj.y + 20,
+                is_dc = True
             )
             circuit.add_bus(bus_dc)
 
             vsc = dev.VSC(
-                bus_from=bus_dc,
-                bus_to=bus_obj,
-                name=bus_obj.name,
-                rate=static_generators['sgn'][i],
-                control1=ConverterControlType.Vm_dc,
-                control2=ConverterControlType.Qac,
-                control1_val=1.0,
-                control2_val=-1 * static_generators['qgini'][i] * num_machines,
+                bus_from = bus_dc,
+                bus_to = bus_obj,
+                name = bus_obj.name,
+                rate = static_generators['sgn'][i],
+                control1 = ConverterControlType.Vm_dc,
+                control2 = ConverterControlType.Qac,
+                control1_val = 1.0,
+                control2_val = -1 * static_generators['qgini'][i] * num_machines,
                 alpha1=0.0,
                 alpha2=0.0,
                 alpha3=0.0,
             )
             circuit.add_vsc(vsc)
 
-            gen = dev.Generator(P=static_generators['pgini'][i] * num_machines)
+            gen = dev.Generator(P = static_generators['pgini'][i] * num_machines)
             circuit.add_generator(bus=bus_dc, api_obj=gen)
 
         else:
@@ -1228,8 +1228,6 @@ def data_to_grid_object(data: Dict[str, pd.DataFrame],
         *  rstr: Stator Resistance: rstr in p.u.
         *  xdsat: For single fed short-circuit: Reciprocal of short-circuit ratio (xdsat) in p.u.
         *  satur: For single fed short-circuit: Machine Type IEC909/IEC60909
-        
-        
         ********************************************************************************
         '''
         typ = synchronous_machine_type[synchronous_machine_type.ID == synchronous_machine['typ_id'][i]]

@@ -72,7 +72,7 @@ def test_all_matpower_grids():
     """
     # run this one to compile the stuff
     folder = os.path.join("data", "grids", "Matpower")
-    gce.power_flow(gce.open_file(os.path.join(folder, "case_ieee30.m")))
+    gce.power_flow(gce.open_file(os.path.join(folder, "case_ieee30.matpower")))
 
 
     start_time = time.time()

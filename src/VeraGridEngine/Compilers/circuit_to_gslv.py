@@ -2407,7 +2407,7 @@ def translate_gslv_pf_results(grid: MultiCircuit, res: "pg.PowerFlowResults", lo
     results.loading_hvdc = res.loading_hvdc[0, :]
     results.losses_hvdc = res.losses_hvdc[0, :]
 
-    results.Pfp_vsc = res.Pfp_vsc[0, :]
+    results.Pf_vsc = res.Pf_vsc[0, :]
     results.St_vsc = res.St_vsc[0, :]
     results.loading_vsc = res.loading_vsc[0, :]
     results.losses_vsc = res.losses_vsc[0, :]

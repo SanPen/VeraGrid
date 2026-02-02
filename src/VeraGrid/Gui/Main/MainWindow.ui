@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1411</width>
+    <width>1198</width>
     <height>827</height>
    </rect>
   </property>
@@ -72,6 +72,80 @@
     <property name="bottomMargin">
      <number>2</number>
     </property>
+    <item row="2" column="0">
+     <widget class="QFrame" name="progress_frame">
+      <property name="frameShape">
+       <enum>QFrame::Shape::NoFrame</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Shadow::Raised</enum>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_7">
+       <item row="2" column="3">
+        <widget class="QLabel" name="progress_label">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="3">
+        <widget class="QProgressBar" name="progressBar">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QProgressBar {
+	border: 1px solid rgb(186, 189, 182);
+    border-radius: 5px;
+	text-align: center;
+}
+QProgressBar::chunk{
+	background-color: rgb(0, 180, 136)
+}</string>
+         </property>
+         <property name="value">
+          <number>20</number>
+         </property>
+         <property name="invertedAppearance">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QPushButton" name="cancelButton">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="toolTip">
+          <string>Cancel process</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../Icons/icons.qrc">
+           <normaloff>:/Icons/icons/delete.png</normaloff>:/Icons/icons/delete.png</iconset>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
     <item row="0" column="0">
      <widget class="QTabWidget" name="mainTabWidget">
       <property name="currentIndex">
@@ -171,6 +245,12 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>500</width>
+                    <height>0</height>
+                   </size>
                   </property>
                   <property name="frameShape">
                    <enum>QFrame::Shape::NoFrame</enum>
@@ -313,7 +393,7 @@
                         <normaloff>:/Icons/icons/data.png</normaloff>:/Icons/icons/data.png</iconset>
                       </attribute>
                       <attribute name="title">
-                       <string>Combinations</string>
+                       <string>Variations</string>
                       </attribute>
                       <layout class="QVBoxLayout" name="verticalLayout">
                        <property name="leftMargin">
@@ -572,19 +652,6 @@
                                 </property>
                                </widget>
                               </item>
-                              <item row="0" column="0">
-                               <widget class="QLabel" name="label_43">
-                                <property name="sizePolicy">
-                                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                                  <horstretch>0</horstretch>
-                                  <verstretch>0</verstretch>
-                                 </sizepolicy>
-                                </property>
-                                <property name="text">
-                                 <string>Palette</string>
-                                </property>
-                               </widget>
-                              </item>
                               <item row="15" column="0">
                                <spacer name="verticalSpacer_13">
                                 <property name="orientation">
@@ -682,13 +749,6 @@
                                <widget class="QComboBox" name="tile_provider_comboBox">
                                 <property name="toolTip">
                                  <string>Map tile provides (map background)</string>
-                                </property>
-                               </widget>
-                              </item>
-                              <item row="0" column="1">
-                               <widget class="QComboBox" name="palette_comboBox">
-                                <property name="toolTip">
-                                 <string>Select the colour palette</string>
                                 </property>
                                </widget>
                               </item>
@@ -858,7 +918,7 @@
                             <normaloff>:/Icons/icons/picture.png</normaloff>:/Icons/icons/picture.png</iconset>
                           </attribute>
                           <attribute name="title">
-                           <string>Export</string>
+                           <string>Shared</string>
                           </attribute>
                           <layout class="QVBoxLayout" name="verticalLayout_4">
                            <property name="leftMargin">
@@ -894,20 +954,14 @@
                               <property name="bottomMargin">
                                <number>0</number>
                               </property>
-                              <item row="2" column="0">
-                               <spacer name="verticalSpacer_14">
-                                <property name="orientation">
-                                 <enum>Qt::Orientation::Vertical</enum>
+                              <item row="1" column="0">
+                               <widget class="QLabel" name="label_32">
+                                <property name="text">
+                                 <string>Export resolution</string>
                                 </property>
-                                <property name="sizeHint" stdset="0">
-                                 <size>
-                                  <width>20</width>
-                                  <height>40</height>
-                                 </size>
-                                </property>
-                               </spacer>
+                               </widget>
                               </item>
-                              <item row="0" column="1">
+                              <item row="1" column="1">
                                <widget class="QSpinBox" name="resolution_factor_spinBox">
                                 <property name="toolTip">
                                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Resolution factor.&lt;/p&gt;&lt;p&gt;1K = 1920 x 1080 pixels&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -926,7 +980,20 @@
                                 </property>
                                </widget>
                               </item>
-                              <item row="1" column="1">
+                              <item row="3" column="0">
+                               <spacer name="verticalSpacer_14">
+                                <property name="orientation">
+                                 <enum>Qt::Orientation::Vertical</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>20</width>
+                                  <height>40</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                              <item row="2" column="1">
                                <widget class="QSpinBox" name="fps_spinBox">
                                 <property name="toolTip">
                                  <string>Video frames per second</string>
@@ -945,17 +1012,30 @@
                                 </property>
                                </widget>
                               </item>
-                              <item row="0" column="0">
-                               <widget class="QLabel" name="label_32">
-                                <property name="text">
-                                 <string>Export resolution</string>
-                                </property>
-                               </widget>
-                              </item>
-                              <item row="1" column="0">
+                              <item row="2" column="0">
                                <widget class="QLabel" name="label_150">
                                 <property name="text">
                                  <string>Video FPS</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="0" column="0">
+                               <widget class="QLabel" name="label_43">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="text">
+                                 <string>Palette</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="0" column="1">
+                               <widget class="QComboBox" name="palette_comboBox">
+                                <property name="toolTip">
+                                 <string>Select the colour palette</string>
                                 </property>
                                </widget>
                               </item>
@@ -3546,7 +3626,7 @@
            <enum>QTabWidget::TabPosition::South</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>11</number>
           </property>
           <property name="iconSize">
            <size>
@@ -9406,8 +9486,74 @@
                <enum>QFrame::Shadow::Raised</enum>
               </property>
               <layout class="QGridLayout" name="gridLayout_11">
-               <item row="11" column="1">
-                <widget class="QComboBox" name="raw_export_version_comboBox"/>
+               <item row="7" column="0" colspan="2">
+                <widget class="QCheckBox" name="saveResultsCheckBox">
+                 <property name="toolTip">
+                  <string>If checked, the results are stored inside the VeraGrid file in a compressed format.</string>
+                 </property>
+                 <property name="text">
+                  <string>Save results in .veragrid files</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_136">
+                 <property name="minimumSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>24</width>
+                   <height>24</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="pixmap">
+                  <pixmap resource="../Icons/icons.qrc">:/Icons/icons/new2c.png</pixmap>
+                 </property>
+                 <property name="scaledContents">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0" colspan="2">
+                <widget class="QLabel" name="model_version_label">
+                 <property name="text">
+                  <string>...</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0" colspan="2">
+                <widget class="QLabel" name="label_39">
+                 <property name="text">
+                  <string>File path</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="0" colspan="2">
+                <widget class="QLabel" name="grid_idtag_label">
+                 <property name="text">
+                  <string>...</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0" colspan="2">
+                <widget class="QLabel" name="file_information_label">
+                 <property name="text">
+                  <string>...</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
+                 </property>
+                </widget>
                </item>
                <item row="1" column="0" colspan="2">
                 <widget class="Line" name="line_28">
@@ -9459,191 +9605,10 @@
                  </property>
                 </widget>
                </item>
-               <item row="12" column="1">
-                <spacer name="verticalSpacer_20">
-                 <property name="orientation">
-                  <enum>Qt::Orientation::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>436</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item row="3" column="0" colspan="2">
-                <widget class="QLabel" name="file_information_label">
+               <item row="5" column="0" colspan="2">
+                <widget class="QLabel" name="user_name_label">
                  <property name="text">
                   <string>...</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="9" column="1">
-                <widget class="QLabel" name="label_131">
-                 <property name="palette">
-                  <palette>
-                   <active>
-                    <colorrole role="WindowText">
-                     <brush brushstyle="SolidPattern">
-                      <color alpha="255">
-                       <red>85</red>
-                       <green>87</green>
-                       <blue>83</blue>
-                      </color>
-                     </brush>
-                    </colorrole>
-                   </active>
-                   <inactive>
-                    <colorrole role="WindowText">
-                     <brush brushstyle="SolidPattern">
-                      <color alpha="255">
-                       <red>0</red>
-                       <green>0</green>
-                       <blue>0</blue>
-                      </color>
-                     </brush>
-                    </colorrole>
-                   </inactive>
-                   <disabled>
-                    <colorrole role="WindowText">
-                     <brush brushstyle="SolidPattern">
-                      <color alpha="255">
-                       <red>190</red>
-                       <green>190</green>
-                       <blue>190</blue>
-                      </color>
-                     </brush>
-                    </colorrole>
-                   </disabled>
-                  </palette>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>16</pointsize>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Raw files</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="7" column="0" colspan="2">
-                <widget class="QCheckBox" name="saveResultsCheckBox">
-                 <property name="toolTip">
-                  <string>If checked, the results are stored inside the VeraGrid file in a compressed format.</string>
-                 </property>
-                 <property name="text">
-                  <string>Save results in .veragrid files</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="0" colspan="2">
-                <widget class="QLabel" name="model_version_label">
-                 <property name="text">
-                  <string>...</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="9" column="0">
-                <widget class="QLabel" name="label_145">
-                 <property name="minimumSize">
-                  <size>
-                   <width>24</width>
-                   <height>24</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>24</width>
-                   <height>24</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="pixmap">
-                  <pixmap resource="../Icons/icons.qrc">:/Icons/icons/new2c.png</pixmap>
-                 </property>
-                 <property name="scaledContents">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="8" column="0">
-                <widget class="QLabel" name="label_155">
-                 <property name="text">
-                  <string/>
-                 </property>
-                </widget>
-               </item>
-               <item row="10" column="0" colspan="2">
-                <widget class="Line" name="line_33">
-                 <property name="palette">
-                  <palette>
-                   <active>
-                    <colorrole role="WindowText">
-                     <brush brushstyle="SolidPattern">
-                      <color alpha="255">
-                       <red>186</red>
-                       <green>189</green>
-                       <blue>182</blue>
-                      </color>
-                     </brush>
-                    </colorrole>
-                   </active>
-                   <inactive>
-                    <colorrole role="WindowText">
-                     <brush brushstyle="SolidPattern">
-                      <color alpha="255">
-                       <red>186</red>
-                       <green>189</green>
-                       <blue>182</blue>
-                      </color>
-                     </brush>
-                    </colorrole>
-                   </inactive>
-                   <disabled>
-                    <colorrole role="WindowText">
-                     <brush brushstyle="SolidPattern">
-                      <color alpha="255">
-                       <red>190</red>
-                       <green>190</green>
-                       <blue>190</blue>
-                      </color>
-                     </brush>
-                    </colorrole>
-                   </disabled>
-                  </palette>
-                 </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Shadow::Plain</enum>
-                 </property>
-                 <property name="lineWidth">
-                  <number>4</number>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item row="11" column="0">
-                <widget class="QLabel" name="label_112">
-                 <property name="text">
-                  <string>Export version</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0" colspan="2">
-                <widget class="QLabel" name="label_39">
-                 <property name="text">
-                  <string>File path</string>
                  </property>
                 </widget>
                </item>
@@ -9696,273 +9661,25 @@
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="label_136">
-                 <property name="minimumSize">
-                  <size>
-                   <width>24</width>
-                   <height>24</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>24</width>
-                   <height>24</height>
-                  </size>
-                 </property>
+               <item row="8" column="0">
+                <widget class="QLabel" name="label_155">
                  <property name="text">
                   <string/>
                  </property>
-                 <property name="pixmap">
-                  <pixmap resource="../Icons/icons.qrc">:/Icons/icons/new2c.png</pixmap>
-                 </property>
-                 <property name="scaledContents">
-                  <bool>true</bool>
-                 </property>
                 </widget>
                </item>
-               <item row="5" column="0" colspan="2">
-                <widget class="QLabel" name="user_name_label">
-                 <property name="text">
-                  <string>...</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="6" column="0" colspan="2">
-                <widget class="QLabel" name="grid_idtag_label">
-                 <property name="text">
-                  <string>...</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QFrame" name="frame_79">
-              <property name="minimumSize">
-               <size>
-                <width>300</width>
-                <height>0</height>
-               </size>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::Shape::NoFrame</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Shadow::Raised</enum>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_5">
-               <item row="1" column="0" colspan="3">
-                <widget class="Line" name="line_31">
-                 <property name="palette">
-                  <palette>
-                   <active>
-                    <colorrole role="WindowText">
-                     <brush brushstyle="SolidPattern">
-                      <color alpha="255">
-                       <red>186</red>
-                       <green>189</green>
-                       <blue>182</blue>
-                      </color>
-                     </brush>
-                    </colorrole>
-                   </active>
-                   <inactive>
-                    <colorrole role="WindowText">
-                     <brush brushstyle="SolidPattern">
-                      <color alpha="255">
-                       <red>186</red>
-                       <green>189</green>
-                       <blue>182</blue>
-                      </color>
-                     </brush>
-                    </colorrole>
-                   </inactive>
-                   <disabled>
-                    <colorrole role="WindowText">
-                     <brush brushstyle="SolidPattern">
-                      <color alpha="255">
-                       <red>190</red>
-                       <green>190</green>
-                       <blue>190</blue>
-                      </color>
-                     </brush>
-                    </colorrole>
-                   </disabled>
-                  </palette>
-                 </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Shadow::Plain</enum>
-                 </property>
-                 <property name="lineWidth">
-                  <number>4</number>
-                 </property>
+               <item row="9" column="1">
+                <spacer name="verticalSpacer_20">
                  <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
+                  <enum>Qt::Orientation::Vertical</enum>
                  </property>
-                </widget>
-               </item>
-               <item row="0" column="1" colspan="2">
-                <widget class="QLabel" name="label_134">
-                 <property name="palette">
-                  <palette>
-                   <active>
-                    <colorrole role="WindowText">
-                     <brush brushstyle="SolidPattern">
-                      <color alpha="255">
-                       <red>85</red>
-                       <green>87</green>
-                       <blue>83</blue>
-                      </color>
-                     </brush>
-                    </colorrole>
-                   </active>
-                   <inactive>
-                    <colorrole role="WindowText">
-                     <brush brushstyle="SolidPattern">
-                      <color alpha="255">
-                       <red>0</red>
-                       <green>0</green>
-                       <blue>0</blue>
-                      </color>
-                     </brush>
-                    </colorrole>
-                   </inactive>
-                   <disabled>
-                    <colorrole role="WindowText">
-                     <brush brushstyle="SolidPattern">
-                      <color alpha="255">
-                       <red>190</red>
-                       <green>190</green>
-                       <blue>190</blue>
-                      </color>
-                     </brush>
-                    </colorrole>
-                   </disabled>
-                  </palette>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>16</pointsize>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>CGMES</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="10" column="0">
-                <widget class="QLabel" name="label_102">
-                 <property name="text">
-                  <string/>
-                 </property>
-                </widget>
-               </item>
-               <item row="11" column="0" colspan="3">
-                <widget class="QLabel" name="label_139">
-                 <property name="text">
-                  <string>Profiles to export</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="15" column="0" colspan="3">
-                <widget class="QCheckBox" name="cgmes_dc_as_hvdclines_checkBox">
-                 <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Converters and DC lines in CGMES are attempted to be converted to the simplified HvdcLine objects in VeraGrid&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
-                 <property name="text">
-                  <string>Treat DC equipement as HvdcLines</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="13" column="0" colspan="3">
-                <widget class="QCheckBox" name="cgmes_single_profile_per_file_checkBox">
-                 <property name="text">
-                  <string>One file per profile</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="9" column="2">
-                <widget class="QPushButton" name="selectCGMESBoundarySetButton">
-                 <property name="maximumSize">
+                 <property name="sizeHint" stdset="0">
                   <size>
-                   <width>80</width>
-                   <height>16777215</height>
+                   <width>20</width>
+                   <height>436</height>
                   </size>
                  </property>
-                 <property name="toolTip">
-                  <string>Select the CGMES boundary set (single zip file)</string>
-                 </property>
-                 <property name="text">
-                  <string>Select</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="0" colspan="3">
-                <widget class="QComboBox" name="cgmes_version_comboBox"/>
-               </item>
-               <item row="14" column="0" colspan="3">
-                <widget class="QCheckBox" name="cgmes_map_regions_like_raw_checkBox">
-                 <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If active the CGMEs mapping will be:&lt;/p&gt;&lt;p&gt;GeographicalRegion &amp;lt;-&amp;gt; Area&lt;/p&gt;&lt;p&gt;SubGeographicalRegion &amp;lt;-&amp;gt; Zone&lt;/p&gt;&lt;p&gt;Otherwise:&lt;/p&gt;&lt;p&gt;GeographicalRegion &amp;lt;-&amp;gt; Country&lt;/p&gt;&lt;p&gt;SubGeographicalRegion &amp;lt;-&amp;gt; Community&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
-                 <property name="text">
-                  <string>Map regions like raw files</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0" colspan="3">
-                <widget class="QLabel" name="label_135">
-                 <property name="text">
-                  <string>Export version</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="8" column="0" colspan="3">
-                <widget class="QLabel" name="label_90">
-                 <property name="text">
-                  <string>Boundary set</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="9" column="0" colspan="2">
-                <widget class="QLabel" name="cgmes_boundary_set_label">
-                 <property name="toolTip">
-                  <string>Path of the CGMES default boundary set (single zip file)</string>
-                 </property>
-                 <property name="text">
-                  <string>...</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="label_137">
-                 <property name="minimumSize">
-                  <size>
-                   <width>24</width>
-                   <height>24</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>24</width>
-                   <height>24</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="pixmap">
-                  <pixmap resource="../Icons/icons.qrc">:/Icons/icons/new2.png</pixmap>
-                 </property>
-                 <property name="scaledContents">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="12" column="0" colspan="3">
-                <widget class="QListView" name="cgmes_profiles_listView"/>
+                </spacer>
                </item>
               </layout>
              </widget>
@@ -10108,80 +9825,6 @@
       </widget>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QFrame" name="progress_frame">
-      <property name="frameShape">
-       <enum>QFrame::Shape::NoFrame</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Shadow::Raised</enum>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_7">
-       <item row="2" column="3">
-        <widget class="QLabel" name="progress_label">
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="3">
-        <widget class="QProgressBar" name="progressBar">
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-          </font>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">QProgressBar {
-	border: 1px solid rgb(186, 189, 182);
-    border-radius: 5px;
-	text-align: center;
-}
-QProgressBar::chunk{
-	background-color: rgb(0, 180, 136)
-}</string>
-         </property>
-         <property name="value">
-          <number>20</number>
-         </property>
-         <property name="invertedAppearance">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QPushButton" name="cancelButton">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>10</pointsize>
-          </font>
-         </property>
-         <property name="toolTip">
-          <string>Cancel process</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="../Icons/icons.qrc">
-           <normaloff>:/Icons/icons/delete.png</normaloff>:/Icons/icons/delete.png</iconset>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -10189,8 +9832,8 @@ QProgressBar::chunk{
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1411</width>
-     <height>30</height>
+     <width>1198</width>
+     <height>23</height>
     </rect>
    </property>
    <property name="font">
@@ -10202,6 +9845,36 @@ QProgressBar::chunk{
     <property name="title">
      <string>File</string>
     </property>
+    <widget class="QMenu" name="menuExport_grid">
+     <property name="title">
+      <string>Export grid</string>
+     </property>
+     <addaction name="actionPSS_e_Raw_Rawx"/>
+     <addaction name="actionPower_Factory_DGS"/>
+     <addaction name="actionCIM"/>
+     <addaction name="actionCGMES"/>
+     <addaction name="actionPower_Grid_Models"/>
+     <addaction name="actionH5"/>
+     <addaction name="actionJSON"/>
+     <addaction name="actionMicrosoft_Excel"/>
+     <addaction name="actionSQLite"/>
+    </widget>
+    <widget class="QMenu" name="menuExport_data">
+     <property name="title">
+      <string>Export data</string>
+     </property>
+     <addaction name="actionExport_all_results"/>
+     <addaction name="actionExport_all_the_device_s_profiles"/>
+     <addaction name="actionExport_contingencies"/>
+     <addaction name="actionExportCatalogue"/>
+    </widget>
+    <widget class="QMenu" name="menuImport_data">
+     <property name="title">
+      <string>Import data</string>
+     </property>
+     <addaction name="actionImport_contingencies"/>
+     <addaction name="actionAdd_custom_catalogue"/>
+    </widget>
     <addaction name="actionNew_project"/>
     <addaction name="actiongrid_Generator"/>
     <addaction name="actionOpen_file"/>
@@ -10211,15 +9884,10 @@ QProgressBar::chunk{
     <addaction name="actionSave"/>
     <addaction name="actionSave_as"/>
     <addaction name="actionExport_circuit_differential"/>
+    <addaction name="menuExport_grid"/>
     <addaction name="separator"/>
-    <addaction name="actionExport_all_the_device_s_profiles"/>
-    <addaction name="actionExport_all_results"/>
-    <addaction name="separator"/>
-    <addaction name="actionExport_contingencies"/>
-    <addaction name="actionImport_contingencies"/>
-    <addaction name="separator"/>
-    <addaction name="actionExportCatalogue"/>
-    <addaction name="actionAdd_custom_catalogue"/>
+    <addaction name="menuExport_data"/>
+    <addaction name="menuImport_data"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="title">
@@ -10734,18 +10402,6 @@ QProgressBar::chunk{
     <font/>
    </property>
   </action>
-  <action name="actionExport_all_the_device_s_profiles">
-   <property name="icon">
-    <iconset resource="../Icons/icons.qrc">
-     <normaloff>:/Icons/icons/save.png</normaloff>:/Icons/icons/save.png</iconset>
-   </property>
-   <property name="text">
-    <string>Export devices' profiles</string>
-   </property>
-   <property name="font">
-    <font/>
-   </property>
-  </action>
   <action name="actionStorage_location_suggestion">
    <property name="checkable">
     <bool>true</bool>
@@ -10795,21 +10451,6 @@ QProgressBar::chunk{
    </property>
    <property name="shortcut">
     <string>F1</string>
-   </property>
-  </action>
-  <action name="actionExport_all_results">
-   <property name="icon">
-    <iconset resource="../Icons/icons.qrc">
-     <normaloff>:/Icons/icons/export_pickle.png</normaloff>:/Icons/icons/export_pickle.png</iconset>
-   </property>
-   <property name="text">
-    <string>Export results</string>
-   </property>
-   <property name="toolTip">
-    <string>Export all the results</string>
-   </property>
-   <property name="font">
-    <font/>
    </property>
   </action>
   <action name="actionSave_as">
@@ -11322,18 +10963,6 @@ QProgressBar::chunk{
     <font/>
    </property>
   </action>
-  <action name="actionImport_contingencies">
-   <property name="icon">
-    <iconset resource="../Icons/icons.qrc">
-     <normaloff>:/Icons/icons/load_add.png</normaloff>:/Icons/icons/load_add.png</iconset>
-   </property>
-   <property name="text">
-    <string>Import contingencies</string>
-   </property>
-   <property name="font">
-    <font/>
-   </property>
-  </action>
   <action name="actionInitialize_contingencies">
    <property name="icon">
     <iconset resource="../Icons/icons.qrc">
@@ -11344,18 +10973,6 @@ QProgressBar::chunk{
    </property>
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Contingencies wizard&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Launch the contingencies wizard to automatically set up the contingency objects&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-   </property>
-   <property name="font">
-    <font/>
-   </property>
-  </action>
-  <action name="actionExport_contingencies">
-   <property name="icon">
-    <iconset resource="../Icons/icons.qrc">
-     <normaloff>:/Icons/icons/save.png</normaloff>:/Icons/icons/save.png</iconset>
-   </property>
-   <property name="text">
-    <string>Export contingencies</string>
    </property>
    <property name="font">
     <font/>
@@ -11721,33 +11338,6 @@ QProgressBar::chunk{
     <font/>
    </property>
   </action>
-  <action name="actionAdd_custom_catalogue">
-   <property name="icon">
-    <iconset resource="../Icons/icons.qrc">
-     <normaloff>:/Icons/icons/CataloguePrivate.png</normaloff>:/Icons/icons/CataloguePrivate.png</iconset>
-   </property>
-   <property name="text">
-    <string>Import catalogue</string>
-   </property>
-   <property name="iconText">
-    <string>Catalogue</string>
-   </property>
-   <property name="font">
-    <font/>
-   </property>
-  </action>
-  <action name="actionExportCatalogue">
-   <property name="icon">
-    <iconset resource="../Icons/icons.qrc">
-     <normaloff>:/Icons/icons/CataloguePrivate.png</normaloff>:/Icons/icons/CataloguePrivate.png</iconset>
-   </property>
-   <property name="text">
-    <string>Export catalogue</string>
-   </property>
-   <property name="font">
-    <font/>
-   </property>
-  </action>
   <action name="actionConsolidate_diagram_coordinates">
    <property name="icon">
     <iconset resource="../Icons/icons.qrc">
@@ -11989,6 +11579,141 @@ QProgressBar::chunk{
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionPSS_e_Raw_Rawx">
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/psse.png</normaloff>:/Icons/icons/psse.png</iconset>
+   </property>
+   <property name="text">
+    <string>PSS/e Raw / Rawx</string>
+   </property>
+  </action>
+  <action name="actionPower_Factory_DGS">
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/pfdgs.png</normaloff>:/Icons/icons/pfdgs.png</iconset>
+   </property>
+   <property name="text">
+    <string>Power Factory DGS</string>
+   </property>
+  </action>
+  <action name="actionCGMES">
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/cgmes.png</normaloff>:/Icons/icons/cgmes.png</iconset>
+   </property>
+   <property name="text">
+    <string>CGMES</string>
+   </property>
+  </action>
+  <action name="actionPower_Grid_Models">
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/pgm.png</normaloff>:/Icons/icons/pgm.png</iconset>
+   </property>
+   <property name="text">
+    <string>Power Grid Models</string>
+   </property>
+  </action>
+  <action name="actionCIM">
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/cim.png</normaloff>:/Icons/icons/cim.png</iconset>
+   </property>
+   <property name="text">
+    <string>CIM</string>
+   </property>
+  </action>
+  <action name="actionH5">
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/h5.png</normaloff>:/Icons/icons/h5.png</iconset>
+   </property>
+   <property name="text">
+    <string>H5</string>
+   </property>
+  </action>
+  <action name="actionJSON">
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/json.png</normaloff>:/Icons/icons/json.png</iconset>
+   </property>
+   <property name="text">
+    <string>JSON</string>
+   </property>
+  </action>
+  <action name="actionMicrosoft_Excel">
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/excel.png</normaloff>:/Icons/icons/excel.png</iconset>
+   </property>
+   <property name="text">
+    <string>Microsoft Excel</string>
+   </property>
+  </action>
+  <action name="actionSQLite">
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/sqlite.png</normaloff>:/Icons/icons/sqlite.png</iconset>
+   </property>
+   <property name="text">
+    <string>SQLite</string>
+   </property>
+  </action>
+  <action name="actionExport_all_the_device_s_profiles">
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/array.png</normaloff>:/Icons/icons/array.png</iconset>
+   </property>
+   <property name="text">
+    <string>Profiles</string>
+   </property>
+  </action>
+  <action name="actionExport_contingencies">
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/Catalogue.png</normaloff>:/Icons/icons/Catalogue.png</iconset>
+   </property>
+   <property name="text">
+    <string>Contingencies</string>
+   </property>
+  </action>
+  <action name="actionExport_all_results">
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/array.png</normaloff>:/Icons/icons/array.png</iconset>
+   </property>
+   <property name="text">
+    <string>Results</string>
+   </property>
+  </action>
+  <action name="actionExportCatalogue">
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/Catalogue.png</normaloff>:/Icons/icons/Catalogue.png</iconset>
+   </property>
+   <property name="text">
+    <string>Catalogue</string>
+   </property>
+  </action>
+  <action name="actionImport_contingencies">
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/CatalogueAdd.png</normaloff>:/Icons/icons/CatalogueAdd.png</iconset>
+   </property>
+   <property name="text">
+    <string>Contingencies</string>
+   </property>
+  </action>
+  <action name="actionAdd_custom_catalogue">
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/CatalogueAdd.png</normaloff>:/Icons/icons/CatalogueAdd.png</iconset>
+   </property>
+   <property name="text">
+    <string>Catalogue</string>
    </property>
   </action>
  </widget>

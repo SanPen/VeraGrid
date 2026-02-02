@@ -6,7 +6,7 @@ np.set_printoptions(linewidth=10000)
 
 def test_14_bus_matpower():
     # Go back two directories
-    file_path = os.path.join('data', 'grids', 'case14.m')
+    file_path = os.path.join('data', 'grids', 'case14.matpower')
 
     grid = FileOpen(file_path).open()
 

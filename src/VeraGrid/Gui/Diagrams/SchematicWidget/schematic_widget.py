@@ -4608,12 +4608,19 @@ class SchematicWidget(BaseDiagramWidget):
         :param buses: List or Set of Buses
         """
 
+        # Extract voltage levels from the input buses to restrict expansion
+        # This prevents expanding into the external network when drawing voltage level conversions
+        voltage_levels = {b.voltage_level for b in buses if b.voltage_level is not None}
+
         (buses,
          lines, dc_lines, transformers2w,
          transformers3w, windings, hvdc_lines,
          vsc_converters, upfc_devices,
          series_reactances, switches,
-         fluid_nodes, fluid_paths) = get_devices_to_expand(circuit=self.circuit, buses=buses, max_level=5)
+         fluid_nodes, fluid_paths) = get_devices_to_expand(circuit=self.circuit,
+                                                           buses=buses,
+                                                           max_level=5,
+                                                           restrict_to_voltage_levels=voltage_levels)
 
         # Draw schematic subset
         diagram = generate_schematic_diagram(buses=list(buses),
@@ -5088,24 +5095,30 @@ def generate_grid_diagram(circuit: MultiCircuit,
                                       name=name)
 
 
-def get_devices_to_expand(circuit: MultiCircuit, buses: List[Bus], max_level: int = 1) -> Tuple[List[Bus],
-List[Line],
-List[DcLine],
-List[Transformer2W],
-List[Transformer3W],
-List[Winding],
-List[HvdcLine],
-List[VSC],
-List[UPFC],
-List[SeriesReactance],
-List[Switch],
-List[FluidNode],
-List[FluidPath]]:
+def get_devices_to_expand(circuit: MultiCircuit,
+                          buses: List[Bus],
+                          max_level: int = 1,
+                          restrict_to_voltage_levels: Set | None = None) -> Tuple[List[Bus],
+                                                                                   List[Line],
+                                                                                   List[DcLine],
+                                                                                   List[Transformer2W],
+                                                                                   List[Transformer3W],
+                                                                                   List[Winding],
+                                                                                   List[HvdcLine],
+                                                                                   List[VSC],
+                                                                                   List[UPFC],
+                                                                                   List[SeriesReactance],
+                                                                                   List[Switch],
+                                                                                   List[FluidNode],
+                                                                                   List[FluidPath]]:
     """
     get lists of devices to expand given a root bus
     :param circuit: MultiCircuit
     :param buses: List of Bus
     :param max_level: max expansion level
+    :param restrict_to_voltage_levels: If provided, only expand to buses within these voltage levels.
+                                       This prevents expansion into the external network when drawing
+                                       voltage level conversions.
     :return:
     """
 
@@ -5175,8 +5188,15 @@ List[FluidPath]]:
                     other_bus = None
 
                 if other_bus not in visited:
-                    bus_pool.append((other_bus, level + 1))
-                    visited.add(other_bus)
+                    # If voltage level restriction is active, only follow to buses within allowed voltage levels
+                    should_expand = True
+                    if restrict_to_voltage_levels is not None:
+                        other_vl = other_bus.voltage_level if other_bus is not None else None
+                        should_expand = other_vl in restrict_to_voltage_levels
+
+                    if should_expand:
+                        bus_pool.append((other_bus, level + 1))
+                        visited.add(other_bus)
 
     # sort Branches
     lines: List[Line] = list()

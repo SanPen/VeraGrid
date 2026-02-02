@@ -70,7 +70,7 @@ def test_linear_contingency():
 #     Check that the contingencies match conceptually
 #     :return:
 #     """
-#     fname = os.path.join('data', 'grids', 'Matpower', 'case14.m')
+#     fname = os.path.join('data', 'grids', 'Matpower', 'case14.matpower')
 #
 #     res_file = os.path.join('data', 'results', 'IEEE14_con_results_matpower.xlsx')
 #     main_circuit = FileOpen(fname).open()

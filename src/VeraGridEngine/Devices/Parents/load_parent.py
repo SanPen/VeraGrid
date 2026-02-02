@@ -370,17 +370,6 @@ class LoadParent(InjectionParent):
         """
         return complex(self.get_Pc_at(t), self.get_Qc_at(t))
 
-    def get_Pf_at(self, t: int | None) -> float:
-        """
-        Get power factor
-        :param t:
-        :return:
-        """
-        p = self.get_P_at(t)
-        q = self.get_Q_at(t)
-        s = np.sqrt(p*p + q*q)
-        return p / s if s > 0.0 else 0.0
-
     def split_sequence_load_in_3_phase(self, share_a=1.0, share_b=1.0, share_c=1.0):
         """
         Initializes the 3-phase properties using the positive sequence ones

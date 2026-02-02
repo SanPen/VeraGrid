@@ -69,9 +69,6 @@ class UcteCircuit:
                                 current_block = "comments"
                             elif line.startswith("##N"):
                                 current_block = "nodes"
-                            elif line.startswith("##Z"):
-                                current_block = "nodes"
-                                current_country = line[3:] if line[2] == "Z" else line[2:]  # line[-3:-1]
                             elif line.startswith("##L"):
                                 current_block = "lines"
                             elif line.startswith("##T"):
@@ -84,6 +81,9 @@ class UcteCircuit:
                                 current_block = "exchange_powers"
                             else:
                                 pass
+
+                            if line.startswith("##Z"):
+                                current_country = line[-3:-1]
 
                         else:
                             if current_block == "comments":

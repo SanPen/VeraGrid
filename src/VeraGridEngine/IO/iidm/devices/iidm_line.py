@@ -2,12 +2,33 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
-from VeraGridEngine.IO.iidm.devices.rte_object import RteObject, Unit
+from VeraGridEngine.IO.iidm.devices.iidm_object import IidmObject, Unit
 
 
-class Line(RteObject):
-    def __init__(self, id: str, voltageLevelId1: str, bus1: str, voltageLevelId2: str, bus2: str,
-                 r: float, x: float, g1: float, b1: float, g2: float, b2: float):
+class IidmLine(IidmObject):
+    def __init__(self, 
+                 id: str, 
+                 voltageLevelId1: str, 
+                 bus1: str, 
+                 voltageLevelId2: str, 
+                 bus2: str,
+                 r: float, x: float, 
+                 g1: float, b1: float, 
+                 g2: float, b2: float):
+        """
+        
+        :param id: 
+        :param voltageLevelId1: 
+        :param bus1: 
+        :param voltageLevelId2: 
+        :param bus2: 
+        :param r: 
+        :param x: 
+        :param g1: 
+        :param b1: 
+        :param g2: 
+        :param b2: 
+        """
         super().__init__("Line")
         self.id = id
         self.voltageLevelId1 = voltageLevelId1

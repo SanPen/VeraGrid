@@ -59,7 +59,8 @@ class OptimalNetTransferCapacityTimeSeriesResults(ResultsTemplate):
                     ResultTypes.HvdcPowerFrom,
                 ],
                 ResultTypes.VscResults: [
-                    ResultTypes.VscPowerFrom,
+                    ResultTypes.VscPowerFromPositive,
+                    ResultTypes.VscPowerFromNegative,
                 ],
                 ResultTypes.FlowReports: [
                     ResultTypes.ContingencyFlowsReport,
@@ -275,7 +276,7 @@ class OptimalNetTransferCapacityTimeSeriesResults(ResultsTemplate):
                 idx_device_type=DeviceType.HVDCLineDevice
             )
 
-        elif result_type == ResultTypes.VscPowerFrom:
+        elif result_type == ResultTypes.VscPowerFromPositive:
             return ResultsTable(
                 data=self.vsc_Pf,
                 index=self.time_array,

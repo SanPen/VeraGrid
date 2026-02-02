@@ -56,7 +56,7 @@ package_data = {'VeraGridEngine': ['LICENSE.txt', 'setup.py'], }
 
 dependencies = ['setuptools>=41.0.1',
                 'wheel>=0.37.2',
-                "numpy>=2.2.0",
+                "numpy>=2.2.0, <=2.3.0",
                 "autograd>=1.7.0",
                 "scipy>=1.0.0",
                 "networkx>=2.1",

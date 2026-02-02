@@ -717,12 +717,12 @@ def parse_object_type_from_dataframe(
         elm.disable_auto_updates()
 
         # ensure the profiles existence
-        if time_profile is not None:
+        if time_profile is None or time_profile is pd.NaT:
+            nt = 0
+        else:
             nt = len(time_profile)
             if nt > 0:
                 elm.ensure_profiles_exist(index=time_profile)
-        else:
-            nt = 0
 
         # parse each property of the row
         for property_name_, property_value in row.items():

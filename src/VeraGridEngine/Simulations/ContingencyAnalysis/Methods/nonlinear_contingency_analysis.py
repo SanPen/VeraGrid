@@ -3,27 +3,23 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
-from typing import TYPE_CHECKING, Union, Callable, List
+from typing import Union, Callable, List
 import numpy as np
 
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
-from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGridEngine.Simulations.ContingencyAnalysis.contingency_analysis_results import ContingencyAnalysisResults
 from VeraGridEngine.Simulations.PowerFlow.power_flow_worker import multi_island_pf_nc
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions, SolverType
 from VeraGridEngine.Simulations.LinearFactors.linear_analysis import LinearAnalysis, LinearMultiContingencies
 from VeraGridEngine.Simulations.ContingencyAnalysis.contingency_analysis_options import ContingencyAnalysisOptions
-from VeraGridEngine.basic_structures import Logger, CxVec, IntVec, StrVec, Mat, Vec
-
-if TYPE_CHECKING:
-    from VeraGridEngine.Simulations.ContingencyAnalysis.contingency_analysis_driver import ContingencyAnalysisDriver
+from VeraGridEngine.basic_structures import Logger, IntVec, StrVec
 
 
 def nonlinear_contingency_analysis(nc: NumericalCircuit,
                                    options: ContingencyAnalysisOptions,
                                    linear_multiple_contingencies: LinearMultiContingencies,
                                    area_names: StrVec | List[str],
-                                   bus_area_indices: StrVec,
+                                   bus_area_indices: IntVec,
                                    F: IntVec,
                                    T: IntVec,
                                    report_text: Callable[[str], None] | None,

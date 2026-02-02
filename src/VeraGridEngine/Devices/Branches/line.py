@@ -662,8 +662,16 @@ class Line(BranchParent):
 
         return elm
 
-    def fill_design_properties(self, r_ohm: float, x_ohm: float, c_nf: float, length: float,
-                               Imax: float, freq: float, Sbase: float, apply_to_profile: bool = True, ) -> "Line":
+    def fill_design_properties(self,
+                               r_ohm: float,
+                               x_ohm: float,
+                               c_nf: float,
+                               length: float,
+                               Imax: float,
+                               freq: float,
+                               Sbase: float,
+                               apply_to_profile: bool = True,
+                               logger: Logger = Logger()) -> "Line":
         """
         Fill R, X, B from not-in-per-unit parameters
         :param r_ohm: Resistance per km in OHM/km
@@ -674,28 +682,36 @@ class Line(BranchParent):
         :param freq: System frequency in Hz
         :param Sbase: Base power in MVA (take always 100 MVA)
         :param apply_to_profile: modify the ratings profile if checked
+        :param logger: Logger
         :return self pointer
         """
-        self.R, self.X, self.B, new_rate = get_line_impedances_with_c(r_ohm=r_ohm,
-                                                                      x_ohm=x_ohm,
-                                                                      c_nf=c_nf,
-                                                                      length=length,
-                                                                      Imax=Imax,
-                                                                      freq=freq,
-                                                                      Sbase=Sbase,
-                                                                      Vnom=self.get_max_bus_nominal_voltage())
+        Vnom = self.get_max_bus_nominal_voltage()
 
-        old_rate = float(self.rate)
+        if Vnom > 0:
 
-        self.rate = new_rate
-        self._length = length
+            self.R, self.X, self.B, new_rate = get_line_impedances_with_c(r_ohm=r_ohm,
+                                                                          x_ohm=x_ohm,
+                                                                          c_nf=c_nf,
+                                                                          length=length,
+                                                                          Imax=Imax,
+                                                                          freq=freq,
+                                                                          Sbase=Sbase,
+                                                                          Vnom=Vnom,
+                                                                          logger=logger)
 
-        if apply_to_profile:
-            if old_rate != 0.0:
-                prof_old = self.rate_prof.toarray()
-                self.rate_prof.set(prof_old * new_rate / old_rate)
-            else:
-                self.rate_prof.fill(new_rate)
+            old_rate = float(self.rate)
+
+            self.rate = new_rate
+            self._length = length
+
+            if apply_to_profile:
+                if old_rate != 0.0:
+                    prof_old = self.rate_prof.toarray()
+                    self.rate_prof.set(prof_old * new_rate / old_rate)
+                else:
+                    self.rate_prof.fill(new_rate)
+        else:
+            logger.add_error("Nominal voltage is zero", device_class="Line", device=self.name)
 
         return self
 

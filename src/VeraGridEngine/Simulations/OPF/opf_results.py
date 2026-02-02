@@ -84,7 +84,7 @@ class OptimalPowerFlowResults(ResultsTemplate):
                                                     ResultTypes.HvdcResults: [ResultTypes.HvdcPowerFrom,
                                                                               ResultTypes.HvdcLoading],
 
-                                                    ResultTypes.VscResults: [ResultTypes.VscPowerFrom,
+                                                    ResultTypes.VscResults: [ResultTypes.VscPowerFromPositive,
                                                                              ResultTypes.VscLoading],
 
                                                     ResultTypes.ReportsResults: [ResultTypes.ContingencyFlowsReport],
@@ -633,7 +633,7 @@ class OptimalPowerFlowResults(ResultsTemplate):
                                 xlabel='',
                                 units='(%)')
 
-        elif result_type == ResultTypes.VscPowerFrom:
+        elif result_type == ResultTypes.VscPowerFromPositive:
 
             return ResultsTable(data=self.vsc_Pf,
                                 index=self.vsc_names,

@@ -9,7 +9,7 @@ from VeraGridEngine.IO.base.units import Unit
 from VeraGridEngine.IO.base.base_property import BaseProperty
 
 
-class RteObject:
+class IidmObject:
     """
     RteObject
     """

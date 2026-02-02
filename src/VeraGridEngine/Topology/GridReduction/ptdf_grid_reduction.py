@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import numpy as np
 import networkx as nx
-from typing import Tuple, Sequence, TYPE_CHECKING
+from typing import Tuple, Sequence, Set, List, TYPE_CHECKING
 from VeraGridEngine.basic_structures import IntVec, Mat, Logger, Vec
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGridEngine.Devices.Injections.generator import Generator
@@ -18,6 +18,7 @@ from VeraGridEngine.Simulations.LinearFactors.linear_analysis import LinearAnaly
 
 if TYPE_CHECKING:
     from VeraGridEngine.Devices.multi_circuit import MultiCircuit
+    from VeraGridEngine.Devices.Substation.bus import Bus
 
 
 def get_Pgen(grid: MultiCircuit) -> Tuple[Vec, Vec]:
@@ -97,13 +98,14 @@ def get_Pload_ts(grid: MultiCircuit) -> Mat:
 
 
 def relocate_injections(grid: MultiCircuit,
-                        reduction_bus_indices: Sequence[int]):
+                        reduction_bus_indices: Sequence[int]) -> Set[str]:
     """
     Relocate injection devices (generators, loads, etc.) from external buses to internal buses
     :param grid: MultiCircuit
     :param reduction_bus_indices: array of bus indices to reduce (external set)
-    :return: None
+    :return: Set of relocated device idtags
     """
+    relocated_device_ids: Set[str] = set()
     G = nx.Graph()
     bus_idx_dict = grid.get_bus_index_dict()
     external_set = set(reduction_bus_indices)
@@ -158,6 +160,216 @@ def relocate_injections(grid: MultiCircuit,
             # relocate
             if tpe == 'injection':
                 elm.bus = grid.buses[closest]
+                relocated_device_ids.add(elm.idtag)
+
+    return relocated_device_ids
+
+
+def _collapse_loads(loads: List[Load], bus: "Bus", has_ts: bool, nt: int) -> Load:
+    """
+    Sum loads into a single collapsed load with time-series support.
+
+    :param loads: List of loads to collapse
+    :param bus: Bus where the collapsed load will be placed
+    :param has_ts: Whether the grid has time series
+    :param nt: Number of time steps
+    :return: Single collapsed Load object
+    """
+    total_P = 0.0
+    total_Q = 0.0
+
+    # Sum P and Q (weighted by active status)
+    for load in loads:
+        if load.active:
+            total_P += load.P
+            total_Q += load.Q
+
+    # Create the collapsed load
+    collapsed_load = Load(name=f"collapsed load @ {bus.name}", P=total_P, Q=total_Q)
+
+    if has_ts and nt > 0:
+        # Sum time-series profiles (already weighted by active status)
+        P_prof = np.zeros(nt, dtype=float)
+        Q_prof = np.zeros(nt, dtype=float)
+
+        for load in loads:
+            load_active = load.active_prof.toarray().flatten().astype(bool)
+            P_prof += load.P_prof.toarray().flatten() * load_active
+            Q_prof += load.Q_prof.toarray().flatten() * load_active
+
+        collapsed_load.P_prof = P_prof
+        collapsed_load.Q_prof = Q_prof
+        # Set active_prof to all ones since effective power is already in P_prof
+        collapsed_load.active_prof = np.ones(nt, dtype=float)
+
+    return collapsed_load
+
+
+def _collapse_generators(generators: List[Generator], bus: "Bus",
+                         has_ts: bool, nt: int, srap_enabled: bool) -> Generator:
+    """
+    Sum generators into a single collapsed generator with time-series support.
+
+    :param generators: List of generators to collapse
+    :param bus: Bus where the collapsed generator will be placed
+    :param has_ts: Whether the grid has time series
+    :param nt: Number of time steps
+    :param srap_enabled: Whether the collapsed generator should have SRAP enabled
+    :return: Single collapsed Generator object
+    """
+    total_P = 0.0
+
+    # Sum P (weighted by active status)
+    for gen in generators:
+        if gen.active:
+            total_P += gen.P
+
+    # Create the collapsed generator
+    name = f"collapsed SRAP gen @ {bus.name}" if srap_enabled else f"collapsed non-SRAP gen @ {bus.name}"
+    collapsed_gen = Generator(name=name, P=total_P, srap_enabled=srap_enabled)
+
+    if has_ts and nt > 0:
+        # Sum time-series profiles (already weighted by active status)
+        P_prof = np.zeros(nt, dtype=float)
+
+        for gen in generators:
+            gen_active = gen.active_prof.toarray().flatten().astype(bool)
+            P_prof += gen.P_prof.toarray().flatten() * gen_active
+
+        collapsed_gen.P_prof = P_prof
+        # Set active_prof to all ones since effective power is already in P_prof
+        collapsed_gen.active_prof = np.ones(nt, dtype=float)
+
+    return collapsed_gen
+
+
+def compact_devices_after_reduction(
+    grid: MultiCircuit,
+    relocated_device_ids: Set[str],
+    compensation_prefix: str = "compensated"
+) -> Logger:
+    """
+    Compact devices on each bus after PTDF reduction.
+
+    Per bus, keeps original devices individual and collapses:
+    - External + compensation loads into one collapsed load
+    - External + compensation non-SRAP gens into one collapsed generator
+    - External + compensation SRAP gens into one collapsed generator
+
+    :param grid: MultiCircuit (modified in place)
+    :param relocated_device_ids: Set of device idtags that were relocated from external buses
+    :param compensation_prefix: Prefix used to identify compensation devices
+    :return: Logger with info about collapsed devices
+    """
+    logger = Logger()
+
+    has_ts = grid.has_time_series
+    nt = grid.get_time_number() if has_ts else 0
+
+    # Build bus -> devices mapping
+    bus_to_loads: dict = {bus: [] for bus in grid.buses}
+    bus_to_gens: dict = {bus: [] for bus in grid.buses}
+
+    for load in grid.loads:
+        if load.bus is not None:
+            bus_to_loads[load.bus].append(load)
+
+    for gen in grid.generators:
+        if gen.bus is not None:
+            bus_to_gens[gen.bus].append(gen)
+
+    # Process each bus
+    for bus in grid.buses:
+        loads = bus_to_loads.get(bus, [])
+        gens = bus_to_gens.get(bus, [])
+
+        # Categorize loads
+        loads_original: List[Load] = []
+        loads_to_collapse: List[Load] = []
+
+        for load in loads:
+            is_compensation = compensation_prefix in load.name
+            is_relocated = load.idtag in relocated_device_ids
+
+            if is_compensation or is_relocated:
+                loads_to_collapse.append(load)
+            else:
+                loads_original.append(load)
+
+        # Categorize generators
+        gens_original_srap: List[Generator] = []
+        gens_original_non_srap: List[Generator] = []
+        gens_to_collapse_srap: List[Generator] = []
+        gens_to_collapse_non_srap: List[Generator] = []
+
+        for gen in gens:
+            is_compensation = compensation_prefix in gen.name
+            is_relocated = gen.idtag in relocated_device_ids
+
+            if is_compensation or is_relocated:
+                if gen.srap_enabled:
+                    gens_to_collapse_srap.append(gen)
+                else:
+                    gens_to_collapse_non_srap.append(gen)
+            else:
+                if gen.srap_enabled:
+                    gens_original_srap.append(gen)
+                else:
+                    gens_original_non_srap.append(gen)
+
+        # Collapse loads if there are any to collapse
+        if len(loads_to_collapse) > 0:
+            collapsed_load = _collapse_loads(loads_to_collapse, bus, has_ts, nt)
+
+            # Delete old loads
+            for load in loads_to_collapse:
+                grid.delete_load(load)
+
+            # Add collapsed load
+            grid.add_load(bus=bus, api_obj=collapsed_load)
+
+            logger.add_info(
+                msg=f"Collapsed {len(loads_to_collapse)} loads into '{collapsed_load.name}'",
+                device=bus.name
+            )
+
+        # Collapse non-SRAP generators if there are any to collapse
+        if len(gens_to_collapse_non_srap) > 0:
+            collapsed_gen = _collapse_generators(
+                gens_to_collapse_non_srap, bus, has_ts, nt, srap_enabled=False
+            )
+
+            # Delete old generators
+            for gen in gens_to_collapse_non_srap:
+                grid.delete_generator(gen)
+
+            # Add collapsed generator
+            grid.add_generator(bus=bus, api_obj=collapsed_gen)
+
+            logger.add_info(
+                msg=f"Collapsed {len(gens_to_collapse_non_srap)} non-SRAP gens into '{collapsed_gen.name}'",
+                device=bus.name
+            )
+
+        # Collapse SRAP generators if there are any to collapse
+        if len(gens_to_collapse_srap) > 0:
+            collapsed_gen = _collapse_generators(
+                gens_to_collapse_srap, bus, has_ts, nt, srap_enabled=True
+            )
+
+            # Delete old generators
+            for gen in gens_to_collapse_srap:
+                grid.delete_generator(gen)
+
+            # Add collapsed generator
+            grid.add_generator(bus=bus, api_obj=collapsed_gen)
+
+            logger.add_info(
+                msg=f"Collapsed {len(gens_to_collapse_srap)} SRAP gens into '{collapsed_gen.name}'",
+                device=bus.name
+            )
+
+    return logger
 
 
 def get_reduction_sets(grid: MultiCircuit, reduction_bus_indices: Sequence[int],
@@ -465,7 +677,8 @@ def ptdf_reduction_ree_less_bad(grid: MultiCircuit,
 def ptdf_reduction_projected(grid: MultiCircuit,
                              reduction_bus_indices: IntVec,
                              tol=1e-8,
-                             distribute_slack: bool = True) -> Tuple[MultiCircuit, Logger]:
+                             distribute_slack: bool = True,
+                             compact_devices: bool = True) -> Tuple[MultiCircuit, Logger]:
     """
     In-place Grid reduction using the PTDF injection by projecting
     the generation and loads from the removed buses into the PTDF-sensitive buses
@@ -473,6 +686,7 @@ def ptdf_reduction_projected(grid: MultiCircuit,
     :param reduction_bus_indices: Bus indices of the buses to delete
     :param tol: Tolerance, any equivalent power value under this is omitted
     :param distribute_slack: Distribute the slack?
+    :param compact_devices: Collapse relocated and compensation devices after reduction
     """
     logger = Logger()
 
@@ -529,9 +743,11 @@ def ptdf_reduction_projected(grid: MultiCircuit,
         Flows0_gen_srap_ts = None
     
     # Now relocate injections if the slack is being removed
-    # This moves devices from external buses to internal buses so they aren't lost during deletion
+    # This moves devices from external buses to internal buses so they are not lost during deletion
     if slack_is_removed:
-        relocate_injections(grid=grid, reduction_bus_indices=reduction_bus_indices)
+        relocated_ids = relocate_injections(grid=grid, reduction_bus_indices=reduction_bus_indices)
+    else:
+        relocated_ids: Set[str] = set()
 
     # Identify boundary buses (internal buses connected to external buses)
     bus_idx_dict = grid.get_bus_index_dict()
@@ -806,7 +1022,16 @@ def ptdf_reduction_projected(grid: MultiCircuit,
                 elm_load.active_prof = np.ones(grid.get_time_number())
 
             grid.add_load(bus=bus, api_obj=elm_load)
-       
+
+    # Compact devices after reduction
+    if compact_devices:
+        compact_logger = compact_devices_after_reduction(
+            grid=grid,
+            relocated_device_ids=relocated_ids,
+            compensation_prefix="compensated"
+        )
+        logger += compact_logger
+
     return grid, logger
 
 

@@ -3,11 +3,11 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from VeraGridEngine.IO.iidm.devices.rte_object import RteObject, Unit
+from VeraGridEngine.IO.iidm.devices.iidm_object import IidmObject, Unit
 from VeraGridEngine.Devices.Substation.voltage_level import VoltageLevel
 
 
-class RteVoltageLevel(RteObject):
+class IidmVoltageLevel(IidmObject):
     def __init__(self, _id, nominalV, topologyKind, name=""):
         super().__init__("VoltageLevel")
         self.id = _id

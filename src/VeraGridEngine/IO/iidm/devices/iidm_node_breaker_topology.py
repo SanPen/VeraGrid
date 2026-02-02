@@ -2,10 +2,10 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
-from VeraGridEngine.IO.iidm.devices.rte_object import RteObject
+from VeraGridEngine.IO.iidm.devices.iidm_object import IidmObject
 
 
-class NodeBreakerTopology(RteObject):
+class IidmNodeBreakerTopology(IidmObject):
     def __init__(self, id: str):
         super().__init__("NodeBreakerTopology")
         self.id = id

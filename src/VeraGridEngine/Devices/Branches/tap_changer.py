@@ -56,7 +56,7 @@ class TapChanger:
         self._asymmetry_angle = float(asymmetry_angle)
 
         # total number of positions
-        self._total_positions = int(total_positions)
+        self._total_positions = int(total_positions) if total_positions > 0 else 1
 
         # voltage increment in p.u.
         self._dV = float(dV)
@@ -100,15 +100,6 @@ class TapChanger:
     @dV.setter
     def dV(self, dV: float) -> None:
         self._dV = float(dV)
-        self.recalc()
-
-    @property
-    def neutral_position(self) -> int:
-        return self._neutral_position
-
-    @neutral_position.setter
-    def neutral_position(self, neutral_position: int) -> None:
-        self._neutral_position = int(neutral_position)
         self.recalc()
 
     @property
@@ -249,7 +240,7 @@ class TapChanger:
         self.tc_type = TapChangerTypes(data.get("type", TapChangerTypes.NoRegulation.value))
         self._negative_low = data.get("negative_low", False)
 
-        # parse the impedance corerction factors
+        # parse the impedance correction factors
 
         _k_re_array = data.get("impedance_correction_real", None)
         if _k_re_array is not None:

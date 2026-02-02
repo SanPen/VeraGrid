@@ -42,20 +42,29 @@ def sub_float(line: str, a: int, b: int, device: str, prop_name: str, logger: Lo
     if len(line) > b:
         chunk = line[a:b].strip()
 
-        try:
-            return float(chunk)
-        except ValueError as e:
-            logger.add_error(msg=str(e),
+        if chunk == "":
+            logger.add_error(msg="Property not provided",
                              device=device,
                              device_property=prop_name,
-                             value=chunk)
+                             value=line)
             return fallback_value
+        else:
+            try:
+                return float(chunk)
+            except ValueError as e:
+                logger.add_error(msg=str(e),
+                                 device=device,
+                                 device_property=prop_name,
+                                 value=chunk)
+                return fallback_value
     else:
-        logger.add_error(msg=f"Could not parse {prop_name} because the file row is too short",
-                         device=device,
-                         device_property=prop_name,
-                         value=line,
-                         expected_value=b)
+        logger.add_warning(msg=f"Could not parse property <{prop_name}> "
+                               f"because the file row is too short, "
+                               f"setting fallback value",
+                           device=device,
+                           device_property=prop_name,
+                           value=line,
+                           expected_value=b)
         return fallback_value
 
 
@@ -72,11 +81,21 @@ def try_int(val: str, device: str, prop_name: str, logger: Logger, fallback_valu
     try:
         return int(val)
     except ValueError as e:
-        logger.add_error(msg=str(e),
+
+        val2 = try_float(val=val,
                          device=device,
-                         device_property=prop_name,
-                         value=val)
-        return fallback_value
+                         prop_name=prop_name,
+                         logger=logger,
+                         fallback_value=0)
+
+        try:
+            return int(val2)
+        except ValueError as e:
+            logger.add_error(msg=str(e),
+                             device=device,
+                             device_property=prop_name,
+                             value=val)
+            return fallback_value
 
 
 def sub_int(line: str, a: int, b: int, device: str, prop_name: str, logger: Logger,
@@ -95,16 +114,23 @@ def sub_int(line: str, a: int, b: int, device: str, prop_name: str, logger: Logg
     if len(line) > b:
         chunk = line[a:b].strip()
 
-        try:
-            return int(chunk)
-        except ValueError as e:
-            logger.add_error(msg=str(e),
+        if chunk == "":
+            logger.add_error(msg="Property not provided",
                              device=device,
                              device_property=prop_name,
-                             value=chunk)
+                             value=line)
             return fallback_value
+        else:
+            try:
+                return int(chunk)
+            except ValueError as e:
+                logger.add_error(msg=str(e),
+                                 device=device,
+                                 device_property=prop_name,
+                                 value=chunk)
+                return fallback_value
     else:
-        logger.add_error(msg=f"Could not parse {prop_name} because the file row is too short",
+        logger.add_error(msg=f"Could not parse <{prop_name}> because the file row is too short",
                          device=device,
                          device_property=prop_name,
                          value=line,
@@ -130,7 +156,7 @@ def sub_str(line: str, a: int, b: int, device: str, prop_name: str, logger: Logg
         chunk = line[a:b].strip()
         return chunk
     else:
-        logger.add_error(msg=f"Could not parse {prop_name} because the file row is too short",
+        logger.add_error(msg=f"Could not parse <{prop_name}> because the file row is too short",
                          device=device,
                          device_property=prop_name,
                          value=line,

@@ -5,18 +5,18 @@
 from typing import List
 import bz2
 import xml.etree.ElementTree as ET
-from VeraGridEngine.IO.iidm.devices.rtesubstation import RteSubstation
-from VeraGridEngine.IO.iidm.devices.voltage_level import RteVoltageLevel
-from VeraGridEngine.IO.iidm.devices.rte_area import RteArea
-from VeraGridEngine.IO.iidm.devices.rte_bus import RteBus
-from VeraGridEngine.IO.iidm.devices.generator import Generator
+from VeraGridEngine.IO.iidm.devices.rtesubstation import IidmSubstation
+from VeraGridEngine.IO.iidm.devices.voltage_level import IidmVoltageLevel
+from VeraGridEngine.IO.iidm.devices.rte_area import IidmArea
+from VeraGridEngine.IO.iidm.devices.rte_bus import IidmBus
+from VeraGridEngine.IO.iidm.devices.generator import IidmGenerator
 from VeraGridEngine.IO.iidm.devices.load import Load
-from VeraGridEngine.IO.iidm.devices.line import Line
+from VeraGridEngine.IO.iidm.devices.line import IidmLine
 from VeraGridEngine.IO.iidm.devices.two_winding_transformer import TwoWindingsTransformer
-from VeraGridEngine.IO.iidm.devices.rte_dangling_line import RteDanglingLine
+from VeraGridEngine.IO.iidm.devices.rte_dangling_line import IidmDanglingLine
 from VeraGridEngine.IO.iidm.devices.shunt import Shunt
 from VeraGridEngine.IO.iidm.devices.switch import Switch
-from VeraGridEngine.IO.iidm.devices.rte_busbar_section import RteBusbarSection
+from VeraGridEngine.IO.iidm.devices.rte_busbar_section import IidmBusbarSection
 from VeraGridEngine.IO.iidm.devices.static_var_compensator import StaticVarCompensator
 from VeraGridEngine.IO.iidm.devices.iidm_circuit import IidmCircuit
 
@@ -25,6 +25,7 @@ from VeraGridEngine.IO.iidm.devices.iidm_circuit import IidmCircuit
     https://powsybl.readthedocs.io/projects/pypowsybl/en/latest/reference/network.html
     https://powsybl.readthedocs.io/projects/powsybl-core/en/stable/grid_model/network_subnetwork.html
 """
+
 
 def strip_ns(tag: str) -> str:
     """
@@ -56,7 +57,7 @@ def parse_xiidm_file(file_path: str) -> IidmCircuit:
         tag = strip_ns(elem.tag)
 
         if tag == "substation":
-            circuit.substations.append(RteSubstation(
+            circuit.substations.append(IidmSubstation(
                 id=elem.attrib.get("id", ""),
                 country=elem.attrib.get("country", ""),
                 tso=elem.attrib.get("tso", ""),
@@ -64,7 +65,7 @@ def parse_xiidm_file(file_path: str) -> IidmCircuit:
             ))
 
         elif tag == "voltageLevel":
-            circuit.voltage_levels.append(RteVoltageLevel(
+            circuit.voltage_levels.append(IidmVoltageLevel(
                 _id=elem.attrib.get("id", ""),
                 name=elem.attrib.get("name", ""),
                 nominalV=float(elem.attrib.get("nominalV", 0)),
@@ -72,7 +73,7 @@ def parse_xiidm_file(file_path: str) -> IidmCircuit:
             ))
 
         elif tag == "area":
-            circuit.areas.append(RteArea(
+            circuit.areas.append(IidmArea(
                 _id=elem.attrib.get("id", ""),
                 name=elem.attrib.get("Name", ""),
                 area_type=elem.attrib.get("AreaType", ""),
@@ -80,15 +81,15 @@ def parse_xiidm_file(file_path: str) -> IidmCircuit:
             ))
 
         elif tag == "bus":
-            circuit.buses.append(RteBus(
+            circuit.buses.append(IidmBus(
                 _id=elem.attrib.get("id", ""),
                 area_number=elem.attrib.get("areaNumber", -1),
                 status=elem.attrib.get("status", ""),
-                nodes=[int(e) for e in elem.attrib.get("nodes", []).split(",")],
+                nodes=[int(e) for e in elem.attrib.get("nodes", "").split(",")],
             ))
 
         elif tag == "generator":
-            circuit.generators.append(Generator(
+            circuit.generators.append(IidmGenerator(
                 id=elem.attrib.get("id", ""),
                 bus=elem.attrib.get("bus", ""),
                 targetP=float(elem.attrib.get("targetP", 0)),
@@ -105,7 +106,7 @@ def parse_xiidm_file(file_path: str) -> IidmCircuit:
             ))
 
         elif tag == "line":
-            circuit.lines.append(Line(
+            circuit.lines.append(IidmLine(
                 id=elem.attrib.get("id", ""),
                 voltageLevelId1=elem.attrib.get("voltageLevelId1", ""),
                 bus1=elem.attrib.get("bus1", ""),
@@ -135,7 +136,7 @@ def parse_xiidm_file(file_path: str) -> IidmCircuit:
             ))
 
         elif tag == "danglingLine":
-            circuit.dangling_lines.append(RteDanglingLine(
+            circuit.dangling_lines.append(IidmDanglingLine(
                 _id=elem.attrib.get("id", ""),
                 bus=elem.attrib.get("bus", ""),
                 p0=float(elem.attrib.get("p0", 0)),
@@ -166,7 +167,7 @@ def parse_xiidm_file(file_path: str) -> IidmCircuit:
             ))
 
         elif tag == "busbarSection":
-            circuit.busbar_sections.append(RteBusbarSection(
+            circuit.busbar_sections.append(IidmBusbarSection(
                 _id=elem.attrib.get("id", "")
             ))
 
@@ -183,11 +184,9 @@ def parse_xiidm_file(file_path: str) -> IidmCircuit:
 
 
 if __name__ == "__main__":
-
-
-
     # fname = "/home/santi/Documentos/Git/GitHub/RTE7000/2021/01/01/recollement-auto-20210101-0000-enrichi.xiidm"
-    fname = "/home/santi/Documentos/Git/GitHub/RTE7000/2021/01/01/recollement-auto-20210101-0000-enrichi.xiidm.bz2"
+    # fname = "/home/santi/Documentos/Git/GitHub/RTE7000/2021/01/01/recollement-auto-20210101-0000-enrichi.xiidm.bz2"
+    fname = "/Users/santi/Git/eRoots/VeraGrid/src/tests/data/grids/ucte/network.xiidm"
 
     # import pypowsybl as pp
     # grid = pp.network.load(fname)
@@ -196,4 +195,3 @@ if __name__ == "__main__":
     iidm_circuit = parse_xiidm_file(fname)
 
     print()
-

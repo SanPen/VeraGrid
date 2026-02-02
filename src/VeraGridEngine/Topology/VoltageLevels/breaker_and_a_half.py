@@ -19,7 +19,8 @@ def create_breaker_and_a_half_with_disconnectors(
         country: dev.Country = None,
         bar_by_segments: bool = False,
         offset_x=0,
-        offset_y=0
+        offset_y=0,
+        vl0: dev.VoltageLevel | None = None
 ) -> Tuple[dev.VoltageLevel, List[dev.Bus], List[dev.Bus], float, float]:
     """
     Create a breaker-and-a-half voltage level
@@ -32,11 +33,15 @@ def create_breaker_and_a_half_with_disconnectors(
     :param bar_by_segments: Split the bar into segments
     :param offset_x: x ofsset (px)
     :param offset_y: y ofsset (px)
-    :return: Voltage level object, list of busses where connections are allowed, offset x, offset y
+    :param vl0: VoltageLevel to reuse (optional)
+    :return: Voltage level object, list of buses where connections are allowed, offset x, offset y
     """
 
-    vl = dev.VoltageLevel(name=name, substation=substation, Vnom=v_nom)
-    grid.add_voltage_level(vl)
+    if vl0 is None:
+        vl = dev.VoltageLevel(name=name, substation=substation, Vnom=v_nom)
+        grid.add_voltage_level(vl)
+    else:
+        vl = vl0
 
     bus_width = 120
     x_dist = bus_width * 2
@@ -106,15 +111,15 @@ def create_breaker_and_a_half_with_disconnectors(
             # already assigned outside the loop
             pass
 
-        bus1 = dev.Bus(f"LineBus1_{i}", substation=substation, Vnom=v_nom, voltage_level=vl,
+        bus1 = dev.Bus(f"{name}_LineBus1_{i}", substation=substation, Vnom=v_nom, voltage_level=vl,
                        xpos=offset_x + i * x_dist - bus_width / 2, ypos=offset_y + y_dist, width=bus_width,
                        country=country,
                        graphic_type=BusGraphicType.Connectivity)
-        bus2 = dev.Bus(f"LineBus2_{i}", substation=substation, Vnom=v_nom, voltage_level=vl,
+        bus2 = dev.Bus(f"{name}_LineBus2_{i}", substation=substation, Vnom=v_nom, voltage_level=vl,
                        xpos=offset_x + i * x_dist - bus_width / 2, ypos=offset_y + y_dist * 2, width=bus_width,
                        country=country,
                        graphic_type=BusGraphicType.Connectivity)
-        bus3 = dev.Bus(f"LineBus3_{i}", substation=substation, Vnom=v_nom, voltage_level=vl,
+        bus3 = dev.Bus(f"{name}_LineBus3_{i}", substation=substation, Vnom=v_nom, voltage_level=vl,
                        xpos=offset_x + i * x_dist - bus_width / 2, ypos=offset_y + y_dist * 3, width=bus_width,
                        country=country,
                        graphic_type=BusGraphicType.Connectivity)
@@ -124,15 +129,15 @@ def create_breaker_and_a_half_with_disconnectors(
                                         ypos=offset_y + y_dist * 2.7, width=0,
                                         country=country,
                                         graphic_type=BusGraphicType.Connectivity)
-        bus4 = dev.Bus(f"LineBus4_{i}", substation=substation, Vnom=v_nom, voltage_level=vl,
+        bus4 = dev.Bus(f"{name}_LineBus4_{i}", substation=substation, Vnom=v_nom, voltage_level=vl,
                        xpos=offset_x + i * x_dist - bus_width / 2, ypos=offset_y + y_dist * 4, width=bus_width,
                        country=country,
                        graphic_type=BusGraphicType.Connectivity)
-        bus5 = dev.Bus(f"LineBus4_{i}", substation=substation, Vnom=v_nom, voltage_level=vl,
+        bus5 = dev.Bus(f"{name}_LineBus5_{i}", substation=substation, Vnom=v_nom, voltage_level=vl,
                        xpos=offset_x + i * x_dist - bus_width / 2, ypos=offset_y + y_dist * 5, width=bus_width,
                        country=country,
                        graphic_type=BusGraphicType.Connectivity)
-        bus6 = dev.Bus(f"LineBus6_{i}", substation=substation, Vnom=v_nom, voltage_level=vl,
+        bus6 = dev.Bus(f"{name}_LineBus6_{i}", substation=substation, Vnom=v_nom, voltage_level=vl,
                        xpos=offset_x + i * x_dist - bus_width / 2, ypos=offset_y + y_dist * 6, width=bus_width,
                        country=country,
                        graphic_type=BusGraphicType.Connectivity)
@@ -142,27 +147,27 @@ def create_breaker_and_a_half_with_disconnectors(
                                         ypos=offset_y + y_dist * 5.7, width=0,
                                         country=country,
                                         graphic_type=BusGraphicType.Connectivity)
-        bus7 = dev.Bus(f"LineBus7_{i}", substation=substation, Vnom=v_nom, voltage_level=vl,
+        bus7 = dev.Bus(f"{name}_LineBus7_{i}", substation=substation, Vnom=v_nom, voltage_level=vl,
                        xpos=offset_x + i * x_dist - bus_width / 2, ypos=offset_y + y_dist * 7, width=bus_width,
                        country=country,
                        graphic_type=BusGraphicType.Connectivity)
-        bus8 = dev.Bus(f"LineBus8_{i}", substation=substation, Vnom=v_nom, voltage_level=vl,
+        bus8 = dev.Bus(f"{name}_LineBus8_{i}", substation=substation, Vnom=v_nom, voltage_level=vl,
                        xpos=offset_x + i * x_dist - bus_width / 2, ypos=offset_y + y_dist * 8, width=bus_width,
                        country=country,
                        graphic_type=BusGraphicType.Connectivity)
-        dis1 = dev.Switch(name=f"Dis1_{i}", bus_from=bar1, bus_to=bus1, graphic_type=SwitchGraphicType.Disconnector)
-        cb1 = dev.Switch(name=f"SW1_{i}", bus_from=bus1, bus_to=bus2, graphic_type=SwitchGraphicType.CircuitBreaker)
-        dis2 = dev.Switch(name=f"Dis2_{i}", bus_from=bus2, bus_to=bus3, graphic_type=SwitchGraphicType.Disconnector)
-        dis3 = dev.Switch(name=f"Dis3_{i}", bus_from=bus3, bus_to=bus_line_connection_1,
-                          graphic_type=SwitchGraphicType.CircuitBreaker)
-        dis4 = dev.Switch(name=f"Dis4_{i}", bus_from=bus3, bus_to=bus4, graphic_type=SwitchGraphicType.Disconnector)
-        cb2 = dev.Switch(name=f"SW2_{i}", bus_from=bus4, bus_to=bus5, graphic_type=SwitchGraphicType.Disconnector)
-        dis5 = dev.Switch(name=f"Dis5_{i}", bus_from=bus5, bus_to=bus6, graphic_type=SwitchGraphicType.Disconnector)
-        dis6 = dev.Switch(name=f"Dis6_{i}", bus_from=bus6, bus_to=bus_line_connection_2,
-                          graphic_type=SwitchGraphicType.CircuitBreaker)
-        dis7 = dev.Switch(name=f"Dis6_{i}", bus_from=bus6, bus_to=bus7, graphic_type=SwitchGraphicType.Disconnector)
-        cb3 = dev.Switch(name=f"SW3_{i}", bus_from=bus7, bus_to=bus8, graphic_type=SwitchGraphicType.Disconnector)
-        dis8 = dev.Switch(name=f"Dis6_{i}", bus_from=bus8, bus_to=bar2, graphic_type=SwitchGraphicType.Disconnector)
+        dis1 = dev.Switch(name=f"{name}_Dis1_{i}", bus_from=bar1, bus_to=bus1, graphic_type=SwitchGraphicType.Disconnector)
+        cb1 = dev.Switch(name=f"{name}_SW1_{i}", bus_from=bus1, bus_to=bus2, graphic_type=SwitchGraphicType.CircuitBreaker)
+        dis2 = dev.Switch(name=f"{name}_Dis2_{i}", bus_from=bus2, bus_to=bus3, graphic_type=SwitchGraphicType.Disconnector)
+        dis3 = dev.Switch(name=f"{name}_Dis3_{i}", bus_from=bus3, bus_to=bus_line_connection_1,
+                          graphic_type=SwitchGraphicType.Disconnector)
+        dis4 = dev.Switch(name=f"{name}_Dis4_{i}", bus_from=bus3, bus_to=bus4, graphic_type=SwitchGraphicType.Disconnector)
+        cb2 = dev.Switch(name=f"{name}_SW2_{i}", bus_from=bus4, bus_to=bus5, graphic_type=SwitchGraphicType.CircuitBreaker)
+        dis5 = dev.Switch(name=f"{name}_Dis5_{i}", bus_from=bus5, bus_to=bus6, graphic_type=SwitchGraphicType.Disconnector)
+        dis6 = dev.Switch(name=f"{name}_Dis6_{i}", bus_from=bus6, bus_to=bus_line_connection_2,
+                          graphic_type=SwitchGraphicType.Disconnector)
+        dis7 = dev.Switch(name=f"{name}_Dis7_{i}", bus_from=bus6, bus_to=bus7, graphic_type=SwitchGraphicType.Disconnector)
+        cb3 = dev.Switch(name=f"{name}_SW3_{i}", bus_from=bus7, bus_to=bus8, graphic_type=SwitchGraphicType.CircuitBreaker)
+        dis8 = dev.Switch(name=f"{name}_Dis8_{i}", bus_from=bus8, bus_to=bar2, graphic_type=SwitchGraphicType.Disconnector)
 
         grid.add_bus(bus1)
         all_buses.append(bus1)
@@ -252,7 +257,8 @@ def create_breaker_and_a_half(
         country: dev.Country = None,
         bar_by_segments: bool = False,
         offset_x=0,
-        offset_y=0
+        offset_y=0,
+        vl0: dev.VoltageLevel | None = None
 ) -> Tuple[dev.VoltageLevel, List[dev.Bus], List[dev.Bus], float, float]:
     """
     Create a breaker-and-a-half with disconnectors voltage level
@@ -265,11 +271,15 @@ def create_breaker_and_a_half(
     :param bar_by_segments: Split the bar into segments
     :param offset_x: x ofsset (px)
     :param offset_y: y ofsset (px)
-    :return: Voltage level object, list of busses where connections are allowed, offset x, offset y
+    :param vl0: VoltageLevel to reuse (optional)
+    :return: Voltage level object, list of buses where connections are allowed, offset x, offset y
     """
 
-    vl = dev.VoltageLevel(name=name, substation=substation, Vnom=v_nom)
-    grid.add_voltage_level(vl)
+    if vl0 is None:
+        vl = dev.VoltageLevel(name=name, substation=substation, Vnom=v_nom)
+        grid.add_voltage_level(vl)
+    else:
+        vl = vl0
 
     bus_width = 120
     x_dist = bus_width * 2
@@ -350,11 +360,11 @@ def create_breaker_and_a_half(
                                         width=0,
                                         country=country,
                                         graphic_type=BusGraphicType.Connectivity)
-        cb1 = dev.Switch(name=f"SW1_{i}", bus_from=bar1, bus_to=bus_line_connection_1,
+        cb1 = dev.Switch(name=f"{name}_SW1_{i}", bus_from=bar1, bus_to=bus_line_connection_1,
                          graphic_type=SwitchGraphicType.CircuitBreaker)
-        cb2 = dev.Switch(name=f"SW2_{i}", bus_from=bus_line_connection_1, bus_to=bus_line_connection_2,
+        cb2 = dev.Switch(name=f"{name}_SW2_{i}", bus_from=bus_line_connection_1, bus_to=bus_line_connection_2,
                          graphic_type=SwitchGraphicType.CircuitBreaker)
-        cb3 = dev.Switch(name=f"SW3_{i}", bus_from=bus_line_connection_2, bus_to=bar2,
+        cb3 = dev.Switch(name=f"{name}_SW3_{i}", bus_from=bus_line_connection_2, bus_to=bar2,
                          graphic_type=SwitchGraphicType.CircuitBreaker)
 
         grid.add_bus(bus_line_connection_1)

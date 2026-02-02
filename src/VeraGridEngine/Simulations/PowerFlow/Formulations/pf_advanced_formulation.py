@@ -858,7 +858,7 @@ class PfAdvancedFormulation(PfFormulationTemplate):
                                        It=It,
                                        loading=loading,
                                        losses=losses,
-                                       Pf_vsc=np.zeros(self.nc.nvsc, dtype=float),
+                                       Pfp_vsc=np.zeros(self.nc.nvsc, dtype=float),
                                        St_vsc=np.zeros(self.nc.nvsc, dtype=complex),
                                        If_vsc=np.zeros(self.nc.nvsc, dtype=float),
                                        It_vsc=np.zeros(self.nc.nvsc, dtype=complex),

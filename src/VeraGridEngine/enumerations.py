@@ -735,6 +735,7 @@ class MethodShortCircuit(Enum):
     Short circuit type
     """
     sequences = 'sequences'
+    sequences_vsc = 'sequences_vsc'
     phases = 'phases'
 
     def __str__(self):
@@ -1645,7 +1646,8 @@ class ResultTypes(Enum):
     HvdcPowerToC = 'HVDC power "to" C'
 
     VscLosses = 'Vsc losses'
-    VscPowerFrom = 'Vsc power "from"'
+    VscPowerFromPositive = 'Vsc power "from" positive pole'
+    VscPowerFromNegative = 'Vsc power "from" negative pole'
     VscLoading = 'Vsc loading'
 
     VscPowerTo = 'Vsc power "to"'
@@ -2061,6 +2063,10 @@ class SimulationTypes(Enum):
     Reliability_run = "Reliability"
     RmsDynamic_run = "RMS Dynamic"
     SmallSignal_run = "Small Signal stability"
+
+    FileOpen = "file open"
+    FileSave = "file save"
+    ExportAll = "export all"
 
     NoSim = "No simulation"
 
@@ -2496,3 +2502,29 @@ class OpfDispatchMode(Enum):
             return OpfDispatchMode[s]
         except KeyError:
             return s
+
+
+class TimeSeriesSearchPoint(Enum):
+    """
+    TimeSeriesSearchPoint
+    """
+    HighestLoad = "Highest Load"
+    LowestLoad = "Lowest load"
+
+    def __str__(self):
+        return self.value
+
+    def __repr__(self):
+        return str(self)
+
+    @staticmethod
+    def argparse(s):
+        """
+        :param s:
+        :return:
+        """
+        try:
+            return TimeSeriesSearchPoint[s]
+        except KeyError:
+            return s
+

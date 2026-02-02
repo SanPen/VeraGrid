@@ -17,7 +17,7 @@ def linear_contingency_analysis(nc: NumericalCircuit,
                                 options: ContingencyAnalysisOptions,
                                 linear_multiple_contingencies: LinearMultiContingencies,
                                 area_names: StrVec | List[str],
-                                bus_area_indices: StrVec,
+                                bus_area_indices: IntVec,
                                 F: IntVec,
                                 T: IntVec,
                                 report_text: Callable[[str], None] | None,
@@ -152,10 +152,16 @@ def linear_contingency_analysis(nc: NumericalCircuit,
 
 
 @nb.njit()
-def linear_contingency_scan_numba(nbr: int, n_con_groups: int,
-                                  Pbus: Vec, rates: Vec, con_rates: Vec,
-                                  PTDF: Mat, LODF: Mat, mon_idx: IntVec,
-                                  single_con_br_idx: IntVec, single_con_cg_idx: IntVec):
+def linear_contingency_scan_numba(nbr: int,
+                                  n_con_groups: int,
+                                  Pbus: Vec,
+                                  rates: Vec,
+                                  con_rates: Vec,
+                                  PTDF: Mat,
+                                  LODF: Mat,
+                                  mon_idx: IntVec,
+                                  single_con_br_idx: IntVec,
+                                  single_con_cg_idx: IntVec):
     """
     Fast contingency scan using the PTDF
     :param nbr: Number of branches
@@ -177,7 +183,7 @@ def linear_contingency_scan_numba(nbr: int, n_con_groups: int,
     LoadingCon = np.zeros((n_con_groups, nbr))
 
     # base flow
-    Sbr0 = PTDF @ Pbus
+    Sbr0 = np.dot(PTDF, Pbus)
     problems = list()
 
     for mm in nb.prange(len(mon_idx)):

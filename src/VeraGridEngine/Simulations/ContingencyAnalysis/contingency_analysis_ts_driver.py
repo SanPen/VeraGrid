@@ -32,7 +32,7 @@ from VeraGridEngine.Utils.NumericalMethods.weldorf_online_stddev import WeldorfO
 
 @nb.njit()
 def max_abs_per_col(A: Mat) -> Vec:
-    res = np.zeros(A.shape[1], dtype=float)
+    res = np.zeros(A.shape[1], dtype=nb.float64)
 
     for j in range(A.shape[1]):  # for each col (device)
         for i in range(A.shape[0]):  # for each row (contingency)
@@ -402,7 +402,7 @@ class ContingencyAnalysisTimeSeriesDriver(TimeSeriesDriverTemplate):
                 single_con_cg_idx=single_con_cg_idx
             )
 
-            results.S[it, :] = max_abs_per_col(Pbus_mat[t, :])
+            results.S[it, :] = np.max(np.abs(Pbus_mat[t, :]))
 
             results.max_flows[it, :] = max_abs_per_col(SbrCon)
 

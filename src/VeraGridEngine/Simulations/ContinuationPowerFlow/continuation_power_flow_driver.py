@@ -2,17 +2,24 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
+
+from __future__ import annotations
 import numpy as np
-from typing import Union
+from typing import Union, TYPE_CHECKING
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGridEngine.Simulations.PowerFlow.power_flow_worker import PowerFlowOptions
 from VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow import continuation_nr
-from VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options import ContinuationPowerFlowOptions
+from VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_options import \
+    ContinuationPowerFlowOptions
 from VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_input import ContinuationPowerFlowInput
-from VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results import ContinuationPowerFlowResults
+from VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_results import \
+    ContinuationPowerFlowResults
 from VeraGridEngine.enumerations import SimulationTypes
 from VeraGridEngine.Simulations.driver_template import DriverTemplate
+
+if TYPE_CHECKING:  # Only imports the below statements during type checking
+    from VeraGridEngine.Simulations.OPF.opf_results import OptimalPowerFlowResults
 
 
 class ContinuationPowerFlowDriver(DriverTemplate):
@@ -23,7 +30,8 @@ class ContinuationPowerFlowDriver(DriverTemplate):
                  options: ContinuationPowerFlowOptions,
                  inputs: ContinuationPowerFlowInput,
                  pf_options: PowerFlowOptions,
-                 opf_results=None, t=0):
+                 opf_results: OptimalPowerFlowResults | None = None,
+                 t: int | None = None):
         """
         ContinuationPowerFlowDriver constructor
         :param grid: NumericalCircuit instance
@@ -44,11 +52,12 @@ class ContinuationPowerFlowDriver(DriverTemplate):
 
         self.opf_results = opf_results
 
-        self.t = t
+        self.t_idx = t
 
         self.results = ContinuationPowerFlowResults(nval=0,
                                                     nbus=self.grid.get_bus_number(),
-                                                    nbr=self.grid.get_branch_number(add_hvdc=False, add_vsc=False, add_switch=True),
+                                                    nbr=self.grid.get_branch_number(add_hvdc=False, add_vsc=False,
+                                                                                    add_switch=True),
                                                     bus_names=self.grid.get_bus_names(),
                                                     branch_names=self.grid.get_branch_names(add_hvdc=False,
                                                                                             add_vsc=False,
@@ -100,7 +109,6 @@ class ContinuationPowerFlowDriver(DriverTemplate):
             idx = nc.get_simulation_indices()
 
             if len(idx.vd) > 0 and len(idx.no_slack) > 0:
-
                 Qmax_bus, Qmin_bus = island.get_reactive_power_limits()
 
                 results = continuation_nr(Ybus=adm.Ybus,
@@ -176,4 +184,4 @@ class ContinuationPowerFlowDriver(DriverTemplate):
         run the voltage collapse simulation
         @return:
         """
-        self.run_at(t_idx=None)
+        self.run_at(t_idx=self.t_idx)

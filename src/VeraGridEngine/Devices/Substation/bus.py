@@ -24,6 +24,7 @@ class Bus(PhysicalDevice):
     __slots__ = (
         'active',
         '_active_prof',
+        'color',
         'Vnom',
         'Vmin',
         'Vm_cost',
@@ -93,7 +94,8 @@ class Bus(PhysicalDevice):
                  Va0=0,
                  graphic_type: BusGraphicType = BusGraphicType.BusBar,
                  bus_bar: BusBar | None = None,
-                 build_status: BuildStatus = BuildStatus.Commissioned):
+                 build_status: BuildStatus = BuildStatus.Commissioned,
+                 color: str | None = None):
         """
         The Bus object is the container of all the possible devices that can be attached to
         a bus bar or Substation. Such objects can be loads, voltage controlled generators,
@@ -127,6 +129,7 @@ class Bus(PhysicalDevice):
         :param Vm0: initial solution for the voltage module (p.u.)
         :param Va0: initial solution for the voltage angle (rad)
         :param graphic_type: BusGraphicType to represent the bus in the schematic
+        :param color: Bus color mark
         """
 
         PhysicalDevice.__init__(self,
@@ -230,9 +233,10 @@ class Bus(PhysicalDevice):
         self.ph_n: bool = True
         self.is_grounded: bool = True
 
+        self.color = color if color is not None else "#000000"
+
         # The model of the bus is fixed, then it can already be defined here
         self._rms_model: DynamicModelHost = DynamicModelHost()
-
 
         self.register(key='active', units='', tpe=bool, definition='Is the bus active? used to disable the bus.',
                       profile_name='active_prof')
@@ -287,6 +291,8 @@ class Bus(PhysicalDevice):
         self.register(key='is_grounded', units='', tpe=bool, definition='Is this bus neutral grounded?.')
         self.register(key='rms_model', units='', tpe=SubObjectType.DynamicModelHostType,
                       definition='RMS dynamic model', display=False)
+        self.register(key='color', units='', tpe=str, definition='Color to paint the element in the diagram',
+                      is_color=True)
 
     @property
     def rms_model(self) -> DynamicModelHost:

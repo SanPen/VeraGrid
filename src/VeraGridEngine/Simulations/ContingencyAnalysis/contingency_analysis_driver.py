@@ -139,7 +139,8 @@ class ContingencyAnalysisDriver(DriverTemplate):
                     logger=self.logger
                 )
 
-            elif self.options.contingency_method == ContingencyMethod.Linear:
+            elif (self.options.contingency_method == ContingencyMethod.Linear
+                  or self.options.contingency_method == ContingencyMethod.PTDF_scan):
 
                 area_names, bus_area_indices, F, T, hvdc_F, hvdc_T = self.grid.get_branch_areas_info()
 
@@ -176,16 +177,16 @@ class ContingencyAnalysisDriver(DriverTemplate):
                 )
 
             # elif self.options.contingency_method == ContingencyMethod.OptimalPowerFlow:
-                # self.results = optimal_linear_contingency_analysis(
-                #     grid=self.grid,
-                #     options=self.options,
-                #     opf_options=None,  # TODO: finalize this
-                #     linear_multiple_contingencies=self.linear_multiple_contingencies,
-                #     calling_class=self,
-                #     t=t_idx,
-                #     t_prob=t_prob,
-                #     logger=self.logger
-                # )
+            # self.results = optimal_linear_contingency_analysis(
+            #     grid=self.grid,
+            #     options=self.options,
+            #     opf_options=None,  # TODO: finalize this
+            #     linear_multiple_contingencies=self.linear_multiple_contingencies,
+            #     calling_class=self,
+            #     t=t_idx,
+            #     t_prob=t_prob,
+            #     logger=self.logger
+            # )
             else:
                 raise Exception(f'Unknown contingency engine {self.options.contingency_method}')
 

@@ -508,9 +508,9 @@ class ContingencyResultsReport:
                 PTDF: Mat = None,
                 available_power: Vec = None,
                 srap_used_power: Mat = None,
-                F: Vec = None,
-                T: Vec = None,
-                bus_area_indices: Vec = None,
+                F: IntVec | None = None,
+                T: IntVec | None = None,
+                bus_area_indices: IntVec | None = None,
                 area_names: Vec = None,
                 top_n: int = 5,
                 detailed_massive_report: bool = True):

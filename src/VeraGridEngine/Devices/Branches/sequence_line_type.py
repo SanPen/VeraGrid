@@ -6,11 +6,18 @@ from typing import Tuple
 import numpy as np
 from VeraGridEngine.Devices.admittance_matrix import AdmittanceMatrix
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType
+from VeraGridEngine.basic_structures import Logger
 
 
-def get_line_impedances_with_c(r_ohm: float, x_ohm: float, c_nf: float,
-                               length: float, Imax: float,
-                               freq: float, Sbase: float, Vnom: float) -> Tuple[float, float, float, float]:
+def get_line_impedances_with_c(r_ohm: float,
+                               x_ohm: float,
+                               c_nf: float,
+                               length: float,
+                               Imax: float,
+                               freq: float,
+                               Sbase: float,
+                               Vnom: float,
+                               logger: Logger = Logger()) -> Tuple[float, float, float, float]:
     """
     Fill R, X, B from not-in-per-unit parameters
     :param r_ohm: Resistance per km in OHM/km
@@ -21,26 +28,31 @@ def get_line_impedances_with_c(r_ohm: float, x_ohm: float, c_nf: float,
     :param freq: System frequency in Hz
     :param Sbase: Base power in MVA (take always 100 MVA)
     :param Vnom: nominal voltage (kV)
+    :param logger: logger
     :return R, X, B, rate
     """
     r_ohm_total = r_ohm * length
     x_ohm_total = x_ohm * length
     b_siemens_total = (2 * np.pi * freq * c_nf * 1e-9) * length
 
-    Zbase = (Vnom * Vnom) / Sbase
-    Ybase = 1.0 / Zbase
+    if Vnom > 0.0:
+        Zbase = (Vnom * Vnom) / Sbase
+        Ybase = 1.0 / Zbase
 
-    R = np.round(r_ohm_total / Zbase, 6)
-    X = np.round(x_ohm_total / Zbase, 6)
-    B = np.round(b_siemens_total / Ybase, 6)
+        R: float = np.round(r_ohm_total / Zbase, 6)
+        X: float = np.round(x_ohm_total / Zbase, 6)
+        B: float = np.round(b_siemens_total / Ybase, 6)
+        rate: float = np.round(Imax * Vnom * 1.73205080757, 6)  # nominal power in MVA = kA * kV * sqrt(3)
 
-    rate = np.round(Imax * Vnom * 1.73205080757, 6)  # nominal power in MVA = kA * kV * sqrt(3)
-
-    return R, X, B, rate
+        return R, X, B, rate
+    else:
+        logger.add_error("Nominal voltage is zero", device_class="SequenceLineType")
+        return 1e-20, 1e-20, 0, 1e-20
 
 
 def get_line_impedances_with_b(r_ohm: float, x_ohm: float, b_us: float, length: float,
-                               Imax: float, Sbase: float, Vnom: float) -> Tuple[float, float, float, float]:
+                               Imax: float, Sbase: float, Vnom: float,
+                               logger: Logger = Logger()) -> Tuple[float, float, float, float]:
     """
     Fill R, X, B from not-in-per-unit parameters
     :param r_ohm: Resistance per km in OHM/km
@@ -56,16 +68,20 @@ def get_line_impedances_with_b(r_ohm: float, x_ohm: float, b_us: float, length: 
     x_ohm_total = x_ohm * length
     b_siemens_total = (b_us * 1e-6) * length
 
-    Zbase = (Vnom * Vnom) / Sbase
-    Ybase = 1.0 / Zbase
+    if Vnom > 0:
+        Zbase = (Vnom * Vnom) / Sbase
+        Ybase = 1.0 / Zbase
 
-    R = np.round(r_ohm_total / Zbase, 6)
-    X = np.round(x_ohm_total / Zbase, 6)
-    B = np.round(b_siemens_total / Ybase, 6)
+        R: float = np.round(r_ohm_total / Zbase, 6)
+        X: float = np.round(x_ohm_total / Zbase, 6)
+        B: float = np.round(b_siemens_total / Ybase, 6)
+        rate: float = np.round(Imax * Vnom * 1.73205080757, 6)  # nominal power in MVA = kA * kV * sqrt(3)
 
-    rate = np.round(Imax * Vnom * 1.73205080757, 6)  # nominal power in MVA = kA * kV * sqrt(3)
+        return R, X, B, rate
+    else:
+        logger.add_error("Nominal voltage is zero", device_class="SequenceLineType")
 
-    return R, X, B, rate
+        return 1e-20, 1e-20, 0, 1e-20
 
 
 class SequenceLineType(EditableDevice):
@@ -139,7 +155,8 @@ class SequenceLineType(EditableDevice):
                       definition='Use conductance? else the susceptance is used')
         self.register(key='n_circuits', units='', tpe=int, definition='number of circuits')
 
-    def get_values(self, Sbase: float, freq: float, length: float, line_Vnom: float, ):
+    def get_values(self, Sbase: float, freq: float, length: float, line_Vnom: float,
+                   logger: Logger = Logger()):
         """
         Get the per-unit values
         :param Sbase: Base power (MVA, always use 100MVA)
@@ -153,24 +170,38 @@ class SequenceLineType(EditableDevice):
             R, X, B, rate = get_line_impedances_with_c(r_ohm=self.R,
                                                        x_ohm=self.X,
                                                        c_nf=self.Cnf,
-                                                       length=length, Imax=self.Imax,
-                                                       freq=freq, Sbase=Sbase, Vnom=line_Vnom)
+                                                       length=length,
+                                                       Imax=self.Imax,
+                                                       freq=freq,
+                                                       Sbase=Sbase,
+                                                       Vnom=line_Vnom,
+                                                       logger=logger)
+
             R0, X0, B0, _ = get_line_impedances_with_c(r_ohm=self.R0,
                                                        x_ohm=self.X0,
                                                        c_nf=self.Cnf0,
-                                                       length=length, Imax=self.Imax,
-                                                       freq=freq, Sbase=Sbase, Vnom=line_Vnom)
+                                                       length=length,
+                                                       Imax=self.Imax,
+                                                       freq=freq,
+                                                       Sbase=Sbase,
+                                                       Vnom=line_Vnom,
+                                                       logger=logger)
         else:
             R, X, B, rate = get_line_impedances_with_b(r_ohm=self.R,
                                                        x_ohm=self.X,
                                                        b_us=self.B,
-                                                       length=length, Imax=self.Imax,
-                                                       Sbase=Sbase, Vnom=line_Vnom)
+                                                       length=length,
+                                                       Imax=self.Imax,
+                                                       Sbase=Sbase,
+                                                       Vnom=line_Vnom)
+
             R0, X0, B0, _ = get_line_impedances_with_b(r_ohm=self.R0,
                                                        x_ohm=self.X0,
                                                        b_us=self.B0,
-                                                       length=length, Imax=self.Imax,
-                                                       Sbase=Sbase, Vnom=line_Vnom)
+                                                       length=length,
+                                                       Imax=self.Imax,
+                                                       Sbase=Sbase,
+                                                       Vnom=line_Vnom)
 
         return R, X, B, R0, X0, B0, rate
 

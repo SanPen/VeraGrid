@@ -24,7 +24,8 @@ from VeraGridEngine.IO.veragrid.pack_unpack import (gather_model_as_data_frames,
 from VeraGridEngine.IO.matpower.legacy.matpower_parser import interpret_data_v1
 from VeraGridEngine.IO.matpower.matpower_circuit import MatpowerCircuit
 from VeraGridEngine.IO.matpower.matpower_to_veragrid import matpower_to_veragrid
-from VeraGridEngine.IO.dgs.dgs_parser import dgs_to_circuit
+from VeraGridEngine.IO.dgs.veragrid_to_dgs import circuit_to_dgs
+from VeraGridEngine.IO.dgs.dgs_to_veragrid import dgs_to_circuit
 from VeraGridEngine.IO.others.dpx_parser import load_dpx
 from VeraGridEngine.IO.others.ipa_parser import load_iPA
 from VeraGridEngine.IO.veragrid.json_parser import parse_json, parse_json_data_v2, parse_json_data_v3
@@ -46,8 +47,9 @@ from VeraGridEngine.IO.ucte.devices.ucte_circuit import UcteCircuit
 from VeraGridEngine.IO.ucte.ucte_to_veragrid import convert_ucte_to_veragrid
 from VeraGridEngine.IO.others.rte_parser import rte2veragrid
 from VeraGridEngine.IO.others.anarede import PWFParser
+from VeraGridEngine.IO.iidm.iidm_parser_pypowsybl import IidmParser
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-from VeraGridEngine.Simulations.results_template import DriverToSave
+from VeraGridEngine.Simulations.driver_template import DriverToSave
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
 from VeraGridEngine.enumerations import CGMESVersions, SimulationTypes
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
@@ -88,25 +90,23 @@ class FileSavingOptions:
 
         self.cgmes_boundary_set: str = cgmes_boundary_set
 
-        self.simulation_drivers: List[DRIVER_OBJECTS] = simulation_drivers if simulation_drivers else list()
+        self.sessions_data: List[DriverToSave] = list() if sessions_data is None else sessions_data
 
-        self.sessions_data: List[DriverToSave] = sessions_data if sessions_data else list()
-
-        self.dictionary_of_json_files = dictionary_of_json_files if dictionary_of_json_files else dict()
+        self.dictionary_of_json_files = dict() if dictionary_of_json_files is None else dictionary_of_json_files
 
         # File type description as it appears in the file saving dialogue i.e. VeraGrid zip (*.veragrid)
         self.type_selected: str = ""
 
         # CGMES profile list
-        self.cgmes_profiles = cgmes_profiles if cgmes_profiles is not None else [CgmesProfileType.EQ,
-                                                                                 CgmesProfileType.OP,
-                                                                                 CgmesProfileType.SC,
-                                                                                 CgmesProfileType.TP,
-                                                                                 CgmesProfileType.SV,
-                                                                                 CgmesProfileType.SSH,
-                                                                                 CgmesProfileType.DY,
-                                                                                 CgmesProfileType.DL,
-                                                                                 CgmesProfileType.GL]
+        self.cgmes_profiles = [CgmesProfileType.EQ,
+                               CgmesProfileType.OP,
+                               CgmesProfileType.SC,
+                               CgmesProfileType.TP,
+                               CgmesProfileType.SV,
+                               CgmesProfileType.SSH,
+                               CgmesProfileType.DY,
+                               CgmesProfileType.DL,
+                               CgmesProfileType.GL] if cgmes_profiles is None else cgmes_profiles
 
         # use one file per profile?
         self.cgmes_one_file_per_profile = cgmes_one_file_per_profile
@@ -337,7 +337,7 @@ class FileOpen:
                 elif file_extension.lower() == '.gch5':
                     self.circuit = open_h5(self.file_name, text_func=text_func, prog_func=progress_func)
 
-                elif file_extension.lower() == '.m':
+                elif file_extension.lower() in ['.m', '.matpower']:
                     m_grid = MatpowerCircuit()
                     m_grid.read_file(file_name=self.file_name)
                     self.circuit = matpower_to_veragrid(m_grid, self.logger)
@@ -462,6 +462,10 @@ class FileOpen:
                     ucte_grid.parse_file(files=[self.file_name], logger=self.logger)
                     self.circuit = convert_ucte_to_veragrid(ucte_grid=ucte_grid, logger=self.logger)
 
+                elif file_extension.lower() == '.iidm' or file_extension.lower() == '.xiidm':
+                    parser = IidmParser(self.file_name, self.logger)
+                    self.circuit = parser.parse()
+
             else:
                 # warn('The file does not exist.')
                 self.logger.add_error('Does not exist', self.file_name)
@@ -496,14 +500,14 @@ class FileSave:
     def __init__(self,
                  circuit: MultiCircuit,
                  file_name: str,
-                 options: FileSavingOptions = FileSavingOptions(),
+                 options: FileSavingOptions | None = None,
                  text_func=None,
                  progress_func=None):
         """
         File saver
         :param circuit: MultiCircuit
         :param file_name: file name to save to
-        :param options: FileSavingOptions
+        :param options: FileSavingOptions (optional)
         :param text_func: Pointer to the text function
         :param progress_func: Pointer to the progress function
         """
@@ -511,7 +515,7 @@ class FileSave:
 
         self.file_name = file_name
 
-        self.options = options
+        self.options = FileSavingOptions() if options is None else options
 
         self.text_func = text_func
 
@@ -556,6 +560,9 @@ class FileSave:
 
         elif self.file_name.endswith('.pgm'):
             logger = self.save_pgm()
+
+        elif self.file_name.endswith('.dgs'):
+            logger = self.save_dgs()
 
         else:
             logger = Logger()
@@ -624,7 +631,7 @@ class FileSave:
 
         logger = save_json_file_v3(self.file_name,
                                    self.circuit,
-                                   self.options.simulation_drivers)
+                                   self.options.sessions_data)
         return logger
 
     def save_cim(self) -> Logger:
@@ -759,6 +766,19 @@ class FileSave:
         from VeraGridEngine.Compilers.circuit_to_pgm import save_pgm
         logger = Logger()
 
-        save_pgm(filename=self.file_name, circuit=self.circuit, logger=logger, time_series=self.circuit.has_time_series)
+        save_pgm(filename=self.file_name,
+                 circuit=self.circuit,
+                 logger=logger,
+                 time_series=self.circuit.has_time_series)
 
+        return logger
+
+    def save_dgs(self) -> Logger:
+        """
+
+        :return:
+        """
+        logger = Logger()
+        dgs = circuit_to_dgs(grid=self.circuit)
+        dgs.write_dgs(path=self.file_name)
         return logger

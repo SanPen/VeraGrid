@@ -449,10 +449,10 @@ class Assets:
         Return the number of buses
         :return: number
         """
-        if self._time_profile is not None:
-            return len(self._time_profile)
-        else:
+        if self._time_profile is None or self._time_profile is pd.NaT:
             return 0
+        else:
+            return len(self._time_profile)
 
     def get_time_array(self) -> pd.DatetimeIndex:
         """
@@ -478,10 +478,17 @@ class Assets:
         if isinstance(value, pd.DatetimeIndex):
             self._time_profile = value
         else:
-            try:
-                self._time_profile = pd.to_datetime(value)
-            except TypeError:
-                warnings.warn(f"Trying to set time profile with something else {type(value)}")
+            if value is None or value is pd.NaT:
+                if self._time_profile is None:
+                    # the time profile is None al ready
+                    pass
+                else:
+                    raise ValueError("Cannot set the time profile to None because it is already not None")
+            else:
+                try:
+                    self._time_profile = pd.to_datetime(value)
+                except TypeError:
+                    warnings.warn(f"Trying to set time profile with something else {type(value)}")
 
     def get_all_time_indices(self) -> IntVec:
         """
@@ -641,7 +648,7 @@ class Assets:
         """
         for elm in self.items():
             elm.delete_profiles()
-        self.time_profile = None
+        self._time_profile = None
 
     def resample_profiles(self, indices: IntVec):
         """
@@ -5822,7 +5829,6 @@ class Assets:
         """
         for elm in self.contingencies:
             if elm.device_idtag == obj.idtag:
-                print(elm)
                 self.delete_contingency(elm, del_group=delete_groups)
 
         for elm in self.remedial_actions:

@@ -52,22 +52,34 @@ def try_parse_voltage(val: str | float, name: str, logger: Logger) -> float:
 
     :return:
     """
-    try:
-        return float(val)
-    except ValueError:
-        val2 = UCTE_VOLTAGE_MAP.get(val, None)
-        if val2 is None:
+    val2 = UCTE_VOLTAGE_MAP.get(val, None)
+    if val2 is None:
+        try:
+            f = float(val)
+        except ValueError as e:
             logger.add_error('Could not parse UCTE voltage',
                              device=name, value=f"'{val}'")
             return 1.0
+
+        if f > 0.0:
+            logger.add_warning('UCTE Voltage was not provided as a value from the standard, but directly as a float',
+                               device=name,
+                               value=f"'{val}'")
+            return f
         else:
-            return val2
+            logger.add_error('Provided UCTE voltage is zero',
+                             device=name,
+                             value=f"'{val} -> {f}'")
+            return 1.0
+    else:
+        return val2
 
 
 class UcteNode:
     """
     UcteNode
     """
+
     def __init__(self):
 
         self.current_country = ""
@@ -131,24 +143,96 @@ class UcteNode:
 
         device = "Node"
 
-        self.node_code = sub_str(line, 0, 8, device, "node_code", logger)
-        self.geo_name = sub_str(line, 9, 21, device, "geo_name", logger)
-        self.status = sub_int(line, 22, 23, device, "status", logger)
-        self.node_type = sub_int(line, 24, 25, device, "node_type", logger)
-        self.voltage = try_parse_voltage(val=line[26:32].strip(), name=self.node_code, logger=logger)
-        self.active_load = sub_float(line, 33, 40, device, "active_load", logger)
-        self.reactive_load = sub_float(line, 41, 48, device, "reactive_load", logger)
-        self.active_gen = sub_float(line, 49, 56, device, "active_gen", logger)
-        self.reactive_gen = sub_float(line, 57, 64, device, "reactive_gen", logger)
-        self.min_gen_mw = sub_float(line, 65, 72, device, "min_gen_mw", logger, -9999.0)
-        self.max_gen_mw = sub_float(line, 73, 80, device, "max_gen_mw", logger, 9999.0)
-        self.min_gen_mvar = sub_float(line, 81, 88, device, "min_gen_mvar", logger, -9999.0)
-        self.max_gen_mvar = sub_float(line, 89, 96, device, "max_gen_mvar", logger, 9999.0)
-        self.static_primary_control = sub_float(line, 97, 102, device, "static_primary_control", logger)
-        self.nominal_power_primary_control = sub_float(line, 103, 110, device, "nominal_power_primary_control", logger)
-        self.short_circuit_power = sub_float(line, 111, 118, device, "short_circuit_power", logger)
-        self.xr_ratio = sub_float(line, 119, 126, device, "xr_ratio", logger)
-        self.plant_type = sub_str(line, 127, 128, device, "plant_type", logger)
+        voltage_code = line[26:32].strip()
+        if voltage_code != "" and len(line) == 129:
+            # Things may seem canonical
+            self.node_code = sub_str(line, 0, 8, device, "node_code", logger)
+            self.geo_name = sub_str(line, 9, 21, device, "geo_name", logger)
+            self.status = sub_int(line, 22, 23, device, "status", logger)
+            self.node_type = sub_int(line, 24, 25, device, "node_type", logger)
+            self.voltage = try_parse_voltage(val=line[26:32].strip(), name=self.node_code, logger=logger)
+            self.active_load = sub_float(line, 33, 40, device, "active_load", logger)
+            self.reactive_load = sub_float(line, 41, 48, device, "reactive_load", logger)
+            self.active_gen = sub_float(line, 49, 56, device, "active_gen", logger)
+            self.reactive_gen = sub_float(line, 57, 64, device, "reactive_gen", logger)
+            self.min_gen_mw = sub_float(line, 65, 72, device, "min_gen_mw", logger, -9999.0)
+            self.max_gen_mw = sub_float(line, 73, 80, device, "max_gen_mw", logger, 9999.0)
+            self.min_gen_mvar = sub_float(line, 81, 88, device, "min_gen_mvar", logger, -9999.0)
+            self.max_gen_mvar = sub_float(line, 89, 96, device, "max_gen_mvar", logger, 9999.0)
+            self.static_primary_control = sub_float(line, 97, 102, device, "static_primary_control", logger)
+            self.nominal_power_primary_control = sub_float(line, 103, 110, device, "nominal_power_primary_control",
+                                                           logger)
+            self.short_circuit_power = sub_float(line, 111, 118, device, "short_circuit_power", logger)
+            self.xr_ratio = sub_float(line, 119, 126, device, "xr_ratio", logger)
+            self.plant_type = sub_str(line, 127, 128, device, "plant_type", logger)
+        else:
+
+            if len(line) != 129:
+                logger.add_warning("Non canonical line length",
+                                   device_class=device,
+                                   value=len(line),
+                                   expected_value=128)
+            elif voltage_code == "":
+                logger.add_warning("Incorrect line formatting impede finding the voltage code",
+                                   device_class=device,
+                                   value=line, )
+
+            chunks = line.split()
+
+            if len(chunks) >= 1:
+                self.node_code = chunks[0]
+
+            if len(chunks) >= 2:
+                self.geo_name = chunks[1]
+
+            if len(chunks) >= 3:
+                self.status = try_int(chunks[2], device, "status", logger)
+
+            if len(chunks) >= 4:
+                self.node_type = try_int(chunks[3], device, "node_type", logger)
+
+            if len(chunks) >= 5:
+                self.voltage = try_parse_voltage(val=chunks[4], name=self.node_code, logger=logger)
+
+            if len(chunks) >= 6:
+                self.active_load = try_float(chunks[5], device, "active_load", logger)
+
+            if len(chunks) >= 7:
+                self.reactive_load = try_float(chunks[6], device, "reactive_load", logger)
+
+            if len(chunks) >= 8:
+                self.active_gen = try_float(chunks[7], device, "active_gen", logger)
+
+            if len(chunks) >= 9:
+                self.reactive_gen = try_float(chunks[8], device, "reactive_gen", logger)
+
+            if len(chunks) >= 10:
+                self.min_gen_mw = try_float(chunks[9], device, "min_gen_mw", logger, -9999.0)
+
+            if len(chunks) >= 11:
+                self.max_gen_mw = try_float(chunks[10], device, "max_gen_mw", logger, 9999.0)
+
+            if len(chunks) >= 12:
+                self.min_gen_mvar = try_float(chunks[11], device, "min_gen_mvar", logger, -9999.0)
+
+            if len(chunks) >= 13:
+                self.max_gen_mvar = try_float(chunks[12], device, "max_gen_mvar", logger, 9999.0)
+
+            if len(chunks) >= 14:
+                self.static_primary_control = try_float(chunks[13], device, "static_primary_control", logger)
+
+            if len(chunks) >= 15:
+                self.nominal_power_primary_control = try_float(chunks[14], device, "nominal_power_primary_control",
+                                                               logger)
+
+            if len(chunks) >= 16:
+                self.short_circuit_power = try_float(chunks[15], device, "short_circuit_power", logger)
+
+            if len(chunks) >= 17:
+                self.xr_ratio = try_float(chunks[16], device, "xr_ratio", logger)
+
+            if len(chunks) >= 18:
+                self.plant_type = try_float(chunks[17], device, "plant_type", logger)
 
         if self.min_gen_mw > self.max_gen_mw:
             # switch order

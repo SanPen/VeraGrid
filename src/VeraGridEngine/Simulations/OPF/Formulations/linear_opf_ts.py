@@ -758,14 +758,10 @@ def add_linear_simple_generation_formulation(local_t: Union[int, None],
     :param gen_data_t: GeneratorData structure
     :param gen_vars: GenerationVars structure
     :param prob: LpModel
-    :param unit_commitment: formulate unit commitment?
     :param ramp_constraints: formulate ramp constraints?
     :param consider_time_up_down: consider time up/down?
     :param area_spinning_reserve: area spinning reserve?
     :param skip_generation_limits: skip the generation limits?
-    :param vd: slack indices
-    :param nodal_capacity_active: nodal capacity active?
-    :param generation_expansion_planning: generation expansion plan?
     :param use_glsk_as_cost: if true, the GLSK values are used instead of the traditional costs
     :param logger: Logger object
     :return objective function

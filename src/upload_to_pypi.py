@@ -39,10 +39,8 @@ def update_gui_to_make_sure():
 
     convert_resource_file(source=os.path.join(path, 'icons.qrc'), rcc_cmd=rcc_cmd)
 
-    for f in ['MainWindow.ui', 'ConsoleLog.ui']:
+    for f in ['MainWindow.ui']:
         convert_ui_file(source=os.path.join(path, f), uic_cmd=uic_cmd)
-
-
 
 
 def search_text_in_python_files(directory, search_terms):
@@ -85,7 +83,7 @@ def search_text_in_python_files(directory, search_terms):
 
     if len(results) > 0:
 
-        for file,matches in results.items():
+        for file, matches in results.items():
             print(file, matches)
 
         raise Exception("Forbidden text found")

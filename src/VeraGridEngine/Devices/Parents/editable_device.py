@@ -796,7 +796,7 @@ class EditableDevice:
                 # set the profile variable associated with the magnitude
                 setattr(self, self.properties_with_profile[magnitude], val2)
 
-    def create_profile(self, magnitude, index):
+    def create_profile(self, magnitude, index: pd.DatetimeIndex):
         """
         Create power profile based on index
         :param magnitude: name of the property
@@ -810,6 +810,8 @@ class EditableDevice:
 
         if prof is None:
             print("The profile is none, this is a bug!")
+        elif index is pd.NaT:
+            pass
         else:
             prof.create_sparse(size=len(index), default_value=snapshot_value)
 
@@ -823,7 +825,9 @@ class EditableDevice:
         :param index: Time series index (timestamps)
         :param set_profile_default_as_snapshot: set the bool default profile value as the snapshot
         """
-        if index is not None:
+        if index is None or index is pd.NaT:
+            raise Exception("ensure_profiles_exist: No index provided")
+        else:
             for magnitude, prof_attr in self.properties_with_profile.items():
 
                 # get the profile
@@ -846,9 +850,6 @@ class EditableDevice:
                     prop = self.registered_properties[magnitude]
                     val = getattr(self, magnitude)
                     profile.default_value = val
-
-        else:
-            raise Exception("ensure_profiles_exist: No index provided")
 
     def delete_profiles(self):
         """

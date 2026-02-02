@@ -2,10 +2,10 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
-from VeraGridEngine.IO.iidm.devices.rte_object import RteObject, Unit
+from VeraGridEngine.IO.iidm.devices.iidm_object import IidmObject, Unit
 
 
-class RteDanglingLine(RteObject):
+class IidmDanglingLine(IidmObject):
     def __init__(self, _id: str, bus: str, p0: float, q0: float, u0: float, r: float, x: float, g: float, b: float):
         super().__init__("DanglingLine")
         self.id = _id

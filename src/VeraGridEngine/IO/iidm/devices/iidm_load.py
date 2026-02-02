@@ -2,10 +2,10 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
-from VeraGridEngine.IO.iidm.devices.rte_object import RteObject, Unit
+from VeraGridEngine.IO.iidm.devices.iidm_object import IidmObject, Unit
 
 
-class Load(RteObject):
+class IidmLoad(IidmObject):
     def __init__(self, id, bus, p0, q0):
         super().__init__("Load")
         self.id = id

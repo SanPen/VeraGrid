@@ -18,7 +18,8 @@ def create_ring_with_disconnectors(
         substation: dev.Substation,
         country: dev.Country = None,
         offset_x=0,
-        offset_y=0
+        offset_y=0,
+        vl0: dev.VoltageLevel | None = None
 ) -> Tuple[dev.VoltageLevel, List[dev.Bus], List[dev.Bus], float, float]:
     """
     Create a ring voltage level
@@ -30,11 +31,15 @@ def create_ring_with_disconnectors(
     :param country: Country (Optional)
     :param offset_x: x ofsset (px)
     :param offset_y: y ofsset (px)
+    :param vl0: VoltageLevel to reuse (optional)
     :return: Voltage level object, list of busses where connections are allowed, offset x, offset y
     """
 
-    vl = dev.VoltageLevel(name=name, substation=substation, Vnom=v_nom)
-    grid.add_voltage_level(vl)
+    if vl0 is None:
+        vl = dev.VoltageLevel(name=name, substation=substation, Vnom=v_nom)
+        grid.add_voltage_level(vl)
+    else:
+        vl = vl0
 
     bus_width = 80
     bus_height = 80
@@ -134,7 +139,8 @@ def create_ring(
         substation: dev.Substation,
         country: dev.Country = None,
         offset_x=0,
-        offset_y=0
+        offset_y=0,
+        vl0: dev.VoltageLevel | None = None
 ) -> Tuple[dev.VoltageLevel, List[dev.Bus], List[dev.Bus], float, float]:
     """
     Create a ring voltage level
@@ -146,11 +152,15 @@ def create_ring(
     :param country: Country (Optional)
     :param offset_x: x ofsset (px)
     :param offset_y: y ofsset (px)
-    :return: Voltage level object, list of busses where connections are allowed, offset x, offset y
+    :param vl0: VoltageLevel to reuse (optional)
+    :return: Voltage level object, list of buses where connections are allowed, offset x, offset y
     """
 
-    vl = dev.VoltageLevel(name=name, substation=substation, Vnom=v_nom)
-    grid.add_voltage_level(vl)
+    if vl0 is None:
+        vl = dev.VoltageLevel(name=name, substation=substation, Vnom=v_nom)
+        grid.add_voltage_level(vl)
+    else:
+        vl = vl0
 
     bus_width = 80
     bus_height = 80

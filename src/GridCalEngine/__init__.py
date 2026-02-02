@@ -27,7 +27,27 @@ except NameError as e:
     print("Name not found :/", e)
     PROPERLY_LOADED_API = False
 
+__UPDATE_MESSAGE__ = """GridCal has changed name to VeraGrid.
+
+The gridcal package cannot be updated anymore, instead install
+the also free and open source 'veragrid' witch is just the new name
+of the software.
+
+Consider installing veragrid or veragridengine with:
+
+pip install veragrid
+
+or
+
+pip install veragridengine
+
+Thanks!"""
+
 if PROPERLY_LOADED_API:
+
+    print(__UPDATE_MESSAGE__)
+
+
     def open_file(filename: Union[str, List[str]]) -> MultiCircuit:
         """
         Open file
@@ -354,6 +374,7 @@ if PROPERLY_LOADED_API:
         driver.run()
 
         return driver.results
+
 
     def balanced_pf(grid: MultiCircuit,
                     options: PowerFlowOptions = None,

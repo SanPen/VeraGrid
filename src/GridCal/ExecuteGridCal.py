@@ -24,8 +24,8 @@ if platform.system() == 'Windows':
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 if __name__ == "__main__":
-    print('Loading GridCal...')
-    print(about_msg)
+    # print('Loading GridCal...')
+    # print(about_msg)
 
     # Set the application style to the clear theme
     os.environ["QT_QUICK_CONTROLS_STYLE"] = "Basic"

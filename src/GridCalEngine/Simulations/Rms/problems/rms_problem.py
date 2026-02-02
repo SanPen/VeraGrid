@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 from typing import List, Tuple
 import numpy as np
-import sympy as sym
+# import sympy as sym
 import scipy.sparse as sp
 
 from GridCalEngine.Devices.multi_circuit import MultiCircuit

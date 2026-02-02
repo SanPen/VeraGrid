@@ -12,7 +12,9 @@ from PySide6 import QtWidgets, QtGui
 from GridCal.Gui.Main.MainWindow import QApplication
 from GridCal.Gui.Main.SubClasses.Scripting.scripting import ScriptingMain
 import GridCal.ThirdParty.qdarktheme as qdarktheme
+from GridCal.Gui.messages import info_msg
 from GridCal.__version__ import __GridCal_VERSION__
+from GridCalEngine import __UPDATE_MESSAGE__
 
 __author__ = 'Santiago Peñate Vera'
 
@@ -137,6 +139,8 @@ def runGridCal() -> None:
 
     app = QApplication(sys.argv)
     # app.setStyle('Fusion')  # ['Breeze', 'Oxygen', 'QtCurve', 'Windows', 'Fusion']
+
+    info_msg(__UPDATE_MESSAGE__)
 
     window_ = GridCalMainGUI()
 

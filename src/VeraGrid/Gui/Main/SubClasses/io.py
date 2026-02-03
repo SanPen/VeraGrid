@@ -305,7 +305,7 @@ class IoMain(ConfigurationMain):
             self.open_file_thread_object = filedrv.FileOpenThread(
                 file_name=filenames if len(filenames) > 1 else filenames[0],
                 previous_circuit=self.circuit,
-                options=self.get_file_open_options()
+                options=filedrv.FileOpenOptions()
             )
 
             # make connections
@@ -637,20 +637,6 @@ class IoMain(ConfigurationMain):
         options = filedrv.FileSavingOptions(cgmes_boundary_set=self.current_boundary_set,
                                             sessions_data=sessions_data,
                                             dictionary_of_json_files=json_files)
-
-        return options
-
-    def get_file_open_options(self) -> filedrv.FileOpenOptions:
-        """
-        Compose the file open options
-        :return: FileOpenOptions
-        """
-
-        cgmes_map_areas_like_raw = self.ui.cgmes_map_regions_like_raw_checkBox.isChecked()
-        try_to_map_dc_to_hvdc_line = self.ui.cgmes_dc_as_hvdclines_checkBox.isChecked()
-
-        options = filedrv.FileOpenOptions(cgmes_map_areas_like_raw=cgmes_map_areas_like_raw,
-                                          try_to_map_dc_to_hvdc_line=try_to_map_dc_to_hvdc_line)
 
         return options
 

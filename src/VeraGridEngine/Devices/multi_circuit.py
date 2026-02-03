@@ -811,27 +811,27 @@ class MultiCircuit(Assets):
                 V_gen.append(elm.Vset_prof)
 
             # form DataFrames
-            P = pd.DataFrame(data=np.array(P).transpose(), index=self.time_profile, columns=load_names)
-            Q = pd.DataFrame(data=np.array(Q).transpose(), index=self.time_profile, columns=load_names)
-            Ir = pd.DataFrame(data=np.array(Ir).transpose(), index=self.time_profile, columns=load_names)
-            Ii = pd.DataFrame(data=np.array(Ii).transpose(), index=self.time_profile, columns=load_names)
-            G = pd.DataFrame(data=np.array(G).transpose(), index=self.time_profile, columns=load_names)
-            B = pd.DataFrame(data=np.array(B).transpose(), index=self.time_profile, columns=load_names)
-            P_gen = pd.DataFrame(data=np.array(P_gen).transpose(), index=self.time_profile, columns=gen_names)
-            V_gen = pd.DataFrame(data=np.array(V_gen).transpose(), index=self.time_profile, columns=gen_names)
+            P_df = pd.DataFrame(data=np.array(P).transpose(), index=self.time_profile, columns=load_names)
+            Q_df = pd.DataFrame(data=np.array(Q).transpose(), index=self.time_profile, columns=load_names)
+            Ir_df = pd.DataFrame(data=np.array(Ir).transpose(), index=self.time_profile, columns=load_names)
+            Ii_df = pd.DataFrame(data=np.array(Ii).transpose(), index=self.time_profile, columns=load_names)
+            G_df = pd.DataFrame(data=np.array(G).transpose(), index=self.time_profile, columns=load_names)
+            B_df = pd.DataFrame(data=np.array(B).transpose(), index=self.time_profile, columns=load_names)
+            P_gen_df = pd.DataFrame(data=np.array(P_gen).transpose(), index=self.time_profile, columns=gen_names)
+            V_gen_df = pd.DataFrame(data=np.array(V_gen).transpose(), index=self.time_profile, columns=gen_names)
 
             with pd.ExcelWriter(file_name) as writer:  # pylint: disable=abstract-class-instantiated
-                P.to_excel(writer, 'P loads')
-                Q.to_excel(writer, 'Q loads')
+                P_df.to_excel(writer, sheet_name='P loads')
+                Q_df.to_excel(writer, sheet_name='Q loads')
 
-                Ir.to_excel(writer, 'Ir loads')
-                Ii.to_excel(writer, 'Ii loads')
+                Ir_df.to_excel(writer, sheet_name='Ir loads')
+                Ii_df.to_excel(writer, sheet_name='Ii loads')
 
-                G.to_excel(writer, 'G loads')
-                B.to_excel(writer, 'B loads')
+                G_df.to_excel(writer, sheet_name='G loads')
+                B_df.to_excel(writer, sheet_name='B loads')
 
-                P_gen.to_excel(writer, 'P generators')
-                V_gen.to_excel(writer, 'V generators')
+                P_gen_df.to_excel(writer, sheet_name='P generators')
+                V_gen_df.to_excel(writer, sheet_name='V generators')
 
         else:
             raise Exception('There are no time series!')
@@ -1006,8 +1006,8 @@ class MultiCircuit(Assets):
         """
 
         n = len(self.buses)
-        lon = np.zeros(n)
-        lat = np.zeros(n)
+        lon: Vec = np.zeros(n)
+        lat: Vec = np.zeros(n)
         for i, bus in enumerate(self.buses):
             lon[i] = bus.longitude
             lat[i] = bus.latitude

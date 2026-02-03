@@ -10,7 +10,7 @@ import pandas as pd
 from typing import List, Dict, Tuple, Union, Any, Set, Generator, Sequence
 import datetime as dateslib
 
-from VeraGridEngine.basic_structures import IntVec, StrVec, Vec, Mat
+from VeraGridEngine.basic_structures import IntVec, StrVec, Vec, Mat, ObjVec, BoolVec
 import VeraGridEngine.Devices as dev
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES, BRANCH_TYPES, INJECTION_DEVICE_TYPES, FLUID_TYPES
 from VeraGridEngine.Devices.Parents.editable_device import GCPROP_TYPES
@@ -590,7 +590,7 @@ class Assets:
         :param time_base: Date to start from
         """
 
-        index = np.empty(steps, dtype=object)
+        index: ObjVec = np.empty(steps, dtype=object)
         for i in range(steps):
             if step_unit == 'h':
                 index[i] = time_base + dateslib.timedelta(hours=i * step_length)
@@ -920,7 +920,7 @@ class Assets:
         get a vector of actives
         :return: Array of bus active
         """
-        data = np.zeros(len(self._hvdc_lines), dtype=int)
+        data: IntVec = np.zeros(len(self._hvdc_lines), dtype=int)
         for i, b in enumerate(self._hvdc_lines):
             data[i] = b.active if t_idx is None else b.active_prof[t_idx]
         return data
@@ -1001,7 +1001,7 @@ class Assets:
         get a vector of actives
         :return: Array of bus active
         """
-        data = np.zeros(len(self._vsc_devices), dtype=int)
+        data: IntVec = np.zeros(len(self._vsc_devices), dtype=int)
         for i, b in enumerate(self._vsc_devices):
             data[i] = b.active if t_idx is None else b.active_prof[t_idx]
         return data
@@ -1414,7 +1414,7 @@ class Assets:
         get a vector of actives
         :return: Array of bus active
         """
-        data = np.zeros(len(self._buses), dtype=int)
+        data: IntVec = np.zeros(len(self._buses), dtype=int)
         for i, b in enumerate(self._buses):
             data[i] = b.active if t_idx is None else b.active_prof[t_idx]
         return data
@@ -4211,7 +4211,7 @@ class Assets:
         """
 
         d = self.get_contingency_branch_indices_by_group()
-        sensitive = np.zeros(self.get_contingency_groups_number(), dtype=bool)
+        sensitive: BoolVec = np.zeros(self.get_contingency_groups_number(), dtype=bool)
 
         for cg_idx, con_group in enumerate(self.contingency_groups):  # for every contingency group
 
@@ -4331,7 +4331,7 @@ class Assets:
         """
 
         # we initialize with the capex of the group, then we add the capex of the individual investments
-        capex = np.array([elm.CAPEX for elm in self.investments_groups])
+        capex: Vec = np.array([elm.CAPEX for elm in self.investments_groups])
 
         # pre-compute the capex of each investment group
         d = self.get_investment_by_groups_index_dict()
@@ -5717,7 +5717,7 @@ class Assets:
         :return: StrVec
         """
         n = self.get_branch_number(add_vsc=add_vsc, add_hvdc=add_hvdc, add_switch=add_switch)
-        data = np.zeros(n, dtype=int)
+        data: IntVec = np.zeros(n, dtype=int)
         i = 0
         for elm in self.get_branches_iter(add_vsc=add_vsc, add_hvdc=add_hvdc, add_switch=add_switch):
             data[i] = elm.active_prof[t_idx] if t_idx is not None else elm.active
@@ -5792,8 +5792,8 @@ class Assets:
         :return: IntVec, IntVec
         """
         m = self.get_branch_number(add_vsc=add_vsc, add_hvdc=add_hvdc, add_switch=add_switch)
-        F = np.zeros(m, dtype=int)
-        T = np.zeros(m, dtype=int)
+        F: IntVec = np.zeros(m, dtype=int)
+        T: IntVec = np.zeros(m, dtype=int)
         bus_dict = self.get_bus_index_dict()
         for i, elm in enumerate(self.get_branches_iter(add_vsc=add_vsc, add_hvdc=add_hvdc, add_switch=add_switch)):
             F[i] = bus_dict[elm.bus_from]
@@ -5845,8 +5845,8 @@ class Assets:
         :return: IntVec, IntVec
         """
         m = len(self._hvdc_lines)
-        F = np.zeros(m, dtype=int)
-        T = np.zeros(m, dtype=int)
+        F: IntVec = np.zeros(m, dtype=int)
+        T: IntVec = np.zeros(m, dtype=int)
         bus_dict = self.get_bus_index_dict()
         for i, elm in enumerate(self._hvdc_lines):
             F[i] = bus_dict[elm.bus_from]

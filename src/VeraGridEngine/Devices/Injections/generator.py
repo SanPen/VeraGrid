@@ -59,9 +59,6 @@ class Generator(GeneratorParent):
         'Kp',
         'Ki',
         'Kw',
-        'init_params',
-        'P_g',
-        'Q_g',
         'must_run',
         '_must_run_prof'
     )
@@ -106,7 +103,6 @@ class Generator(GeneratorParent):
                  capex: float = 0,
                  opex: float = 0,
                  srap_enabled: bool = True,
-                 init_params: dict[str, float] = {"tm0": 0.0, "vf0": 0.0},  ###
                  build_status: BuildStatus = BuildStatus.Commissioned,
                  must_run: bool = False):
         """
@@ -150,7 +146,6 @@ class Generator(GeneratorParent):
         :param capex:
         :param opex:
         :param srap_enabled:
-        :param init_params:
         :param build_status:
         :param must_run:
         """
@@ -264,9 +259,6 @@ class Generator(GeneratorParent):
         self.vf = vf
         self.Kp = Kp
         self.Ki = Ki
-        self.init_params = init_params
-        self.P_g = Var("P_g")
-        self.Q_g = Var("Q_g")
 
         self.register(key='is_controlled', units='', tpe=bool, definition='Is this generator voltage-controlled?')
 
@@ -637,10 +629,7 @@ class Generator(GeneratorParent):
         Initialize the RMS model
         """
 
-
-        empty = self.rms_model.empty()
         if self.rms_model.empty():
-            empty = True
             delta = Var("delta")
             omega = Var("omega")
             psid = Var("psid")
@@ -701,12 +690,8 @@ class Generator(GeneratorParent):
                     omega: omega_ref,
                     v_d: real((Vm * exp(1j * Va)) * exp(-1j * (delta - np.pi / 2))),
                     v_q: imag((Vm * exp(1j * Va)) * exp(-1j * (delta - np.pi / 2))),
-                    i_d: real(
-                        conj((P_g + 1j * Q_g) / (Vm * exp(1j * Va))) * exp(
-                            -1j * (delta - np.pi / 2))),
-                    i_q: imag(
-                        conj((P_g + 1j * Q_g) / (Vm * exp(1j * Va))) * exp(
-                            -1j * (delta - np.pi / 2))),
+                    i_d: real(conj((P_g + 1j * Q_g) / (Vm * exp(1j * Va))) * exp(-1j * (delta - np.pi / 2))),
+                    i_q: imag(conj((P_g + 1j * Q_g) / (Vm * exp(1j * Va))) * exp(-1j * (delta - np.pi / 2))),
                     psid: R1 * i_q + v_q,
                     psiq: -R1 * i_d - v_d,
                     te: psid * i_q - psiq * i_d,
@@ -715,8 +700,10 @@ class Generator(GeneratorParent):
                 })
 
             block.fix_vars = [tm0, vf]
-            block.fix_vars_eqs = {tm0.uid: tm,
-                                  vf.uid: psid + X1 * i_d}
+            block.fix_vars_eqs = {
+                tm0.uid: tm,
+                vf.uid: psid + X1 * i_d
+            }
 
             block.external_mapping = {
                 VarPowerFlowRefferenceType.P: P_g,

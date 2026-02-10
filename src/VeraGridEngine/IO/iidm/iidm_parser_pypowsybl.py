@@ -32,12 +32,16 @@ class IidmParser:
 
         :param fname: xiidm file
         """
+        self.logger = Logger() if logger is None else logger
+
         if os.path.exists(fname):
-            self.ps_grid = pp.network.load(fname)
+            if PYPOWSYBL_AVAILABLE:
+                self.ps_grid = pp.network.load(fname)
+            else:
+                self.ps_grid = None
+                self.logger.add_error("pypowsybl not installed")
         else:
             self.ps_grid = None
-
-        self.logger = Logger() if logger is None else logger
 
     def parse(self) -> dev.MultiCircuit:
         """
@@ -50,6 +54,38 @@ class IidmParser:
         if self.ps_grid is None:
             return grid
         else:
+
+            """
+            - Expected objects:   
+            - areas    
+            - buses (from bus view)    
+            - buses from bus/breaker view    
+            - lines    
+            - 2 windings transformers    
+            - 3 windings transformers    
+            - generators    
+            - loads    
+            - shunt compensators    
+            - dangling lines    
+            - LCC and VSC converters stations    
+            - static var compensators    
+            - switches    
+            - voltage levels    
+            - substations    
+            - busbar sections    
+            - HVDC lines    
+            - ratio and phase tap changer steps associated to a 2 windings transformers    
+            - identifiables that are all the equipment on the network    
+            - injections    
+            - branches (lines and two windings transformers)    
+            - terminals are a practical view of those objects 
+              which are very important in the java implementation    
+            - DC nodes    
+            - DC lines    
+            - voltage source converters    
+            - DC grounds
+            """
+
             substations = self.ps_grid.get_substations(all_attributes=True)
             voltage_levels = self.ps_grid.get_voltage_levels(all_attributes=True)
             buses = self.ps_grid.get_buses(all_attributes=True)
@@ -57,7 +93,8 @@ class IidmParser:
             lines = self.ps_grid.get_lines(all_attributes=True)
             # branches = self.ps_grid.get_branches(all_attributes=True)
             switches = self.ps_grid.get_switches(all_attributes=True)
-            transformers = self.ps_grid.get_2_windings_transformers(all_attributes=True)
+            transformers2w = self.ps_grid.get_2_windings_transformers(all_attributes=True)
+            transformers3w = self.ps_grid.get_3_windings_transformers(all_attributes=True)
 
             self.ps_grid.get_phase_tap_changers(all_attributes=True)
             self.ps_grid.get_phase_tap_changer_steps(all_attributes=True)
@@ -76,12 +113,12 @@ class IidmParser:
             """
             Substation
             0 = {str} 'name'
-            1 = {str} 'TSO'
-            2 = {str} 'geo_tags'
-            3 = {str} 'country'
+            1 = {str} 'TSO': To track to which Transmission System Operator the substation belongs
+            2 = {str} 'geo_tags': They make it possible to accurately locate the substation
+            3 = {str} 'country': To specify in which country the substation is located
             4 = {str} 'fictitious'
             """
-            country_dict: Dict[str, dev.Substation] = dict()
+            country_dict: Dict[str, dev.Country] = dict()
             se_dict: Dict[str, dev.Substation] = dict()
             for i, row in substations.iterrows():
 
@@ -107,9 +144,13 @@ class IidmParser:
             Voltage Level
             0 = {str} 'name'
             1 = {str} 'substation_id'
-            2 = {str} 'nominal_v'
-            3 = {str} 'high_voltage_limit'
-            4 = {str} 'low_voltage_limit'
+            2 = {str} 'nominal_v': kV, Nominal base voltage
+            3 = {str} 'high_voltage_limit' kV, Low voltage limit magnitude
+            4 = {str} 'low_voltage_limit' kV, High voltage limit magnitude
+            
+            In the docs 
+            (https://powsybl.readthedocs.io/projects/powsybl-core/en/stable/grid_model/network_subnetwork.html)
+            it says that topology_kind is required, but doesn't seem to be present
             """
             vl_dict: Dict[str, dev.VoltageLevel] = dict()
             for i, row in voltage_levels.iterrows():
@@ -196,28 +237,42 @@ class IidmParser:
             25 = {str} 'selected_limits_group_2'
             """
             for i, row in lines.iterrows():
-                bus1: dev.Bus = bus_dict[row["bus1_id"]]
-                bus2: dev.Bus = bus_dict[row["bus2_id"]]
+                bus1: dev.Bus | None = bus_dict.get(row["bus1_id"], None)
+                bus2: dev.Bus | None = bus_dict.get(row["bus2_id"], None)
 
-                Vn = max(bus1.Vnom, bus2.Vnom)
-                Zbase = Vn * Vn / grid.Sbase
-                Ybase = 1.0 / Zbase
-                elm = dev.Line(
-                    name=row["name"] if row["name"] != "" else i,
-                    code=i,
-                    bus_from=bus1,
-                    bus_to=bus2,
-                    r=row["r"] / Zbase,
-                    x=row["x"] / Zbase,
-                    b=row["b1"] / Ybase,
-                )
+                if bus1 is None:
+                    self.logger.add_error("Bus from not found",
+                                          device_class="Line",
+                                          device=i)
 
-                grid.add_line(obj=elm, logger=self.logger)
+                if bus2 is None:
+                    self.logger.add_error("Bus to not found",
+                                          device_class="Line",
+                                          device=i)
+
+                if bus1 is not None and bus2 is not None:
+
+                    Vn = max(bus1.Vnom, bus2.Vnom)
+                    Zbase = Vn * Vn / grid.Sbase
+                    Ybase = 1.0 / Zbase
+                    elm = dev.Line(
+                        name=row["name"] if row["name"] != "" else i,
+                        code=i,
+                        bus_from=bus1,
+                        bus_to=bus2,
+                        r=row["r"] / Zbase,
+                        x=row["x"] / Zbase,
+                        b=row["b1"] / Ybase,
+                    )
+
+                    grid.add_line(obj=elm, logger=self.logger)
+                else:
+                    pass
 
             """
             Switch
             00 = {str} 'name'
-            01 = {str} 'kind'
+            01 = {str} 'kind' {'DISCONNECTOR', 'BREAKER'}
             02 = {str} 'open'
             03 = {str} 'retained'
             04 = {str} 'voltage_level_id'
@@ -245,74 +300,173 @@ class IidmParser:
 
             """
             Transformer
+            https://powsybl.readthedocs.io/projects/pypowsybl/en/stable/reference/api/pypowsybl.network.Network.get_2_windings_transformers.html#pypowsybl.network.Network.get_2_windings_transformers
             00 = {str} 'name'
-            01 = {str} 'r'
-            02 = {str} 'x'
-            03 = {str} 'g'
-            04 = {str} 'b'
-            05 = {str} 'rated_u1'
-            06 = {str} 'rated_u2'
-            07 = {str} 'rated_s'
-            08 = {str} 'p1'
-            09 = {str} 'q1'
-            10 = {str} 'i1'
+            01 = {str} 'r': the resistance of the transformer at its “2” side (in Ohm)
+            02 = {str} 'x': x: the reactance of the transformer at its “2” side (in Ohm)
+            03 = {str} 'g': b: the susceptance of transformer at its “2” side (in Siemens)
+            04 = {str} 'b': the conductance of transformer at its “2” side (in Siemens)
+            05 = {str} 'rated_u1': the rated voltage of the transformer at side 1 (in kV)
+            06 = {str} 'rated_u2': the rated voltage of the transformer at side 2 (in kV)
+            07 = {str} 'rated_s': the rated apparent power of the transformer (in MVA)
+            08 = {str} 'p1': the active flow on the transformer at its “1” side, NaN if no loadflow has been computed (in MW)
+            09 = {str} 'q1': the reactive flow on the transformer at its “1” side, NaN if no loadflow has been computed (in MVAr)
+            10 = {str} 'i1': the current on the transformer at its “1” side, NaN if no loadflow has been computed (in A)
             11 = {str} 'p2'
             12 = {str} 'q2'
             13 = {str} 'i2'
-            14 = {str} 'voltage_level1_id'
-            15 = {str} 'voltage_level2_id'
-            16 = {str} 'bus1_id'
-            17 = {str} 'bus_breaker_bus1_id'
-            18 = {str} 'node1'
-            19 = {str} 'bus2_id'
+            14 = {str} 'voltage_level1_id': voltage level where the transformer is connected, on side 1
+            15 = {str} 'voltage_level2_id': voltage level where the transformer is connected, on side 2
+            16 = {str} 'bus1_id': bus where this transformer is connected, on side 1
+            17 = {str} 'bus_breaker_bus1_id' (optional): bus of the bus-breaker view where this transformer is connected, on side 1
+            18 = {str} 'node1': (optional): node where this transformer is connected on side 1, in node-breaker voltage levels
+            19 = {str} 'bus2_id': bus where this transformer is connected, on side 2
             20 = {str} 'bus_breaker_bus2_id'
             21 = {str} 'node2'
-            22 = {str} 'connected1'
-            23 = {str} 'connected2'
-            24 = {str} 'fictitious'
-            25 = {str} 'selected_limits_group_1'
-            26 = {str} 'selected_limits_group_2'
-            27 = {str} 'rho'
-            28 = {str} 'alpha'
-            29 = {str} 'r_at_current_tap'
-            30 = {str} 'x_at_current_tap'
-            31 = {str} 'g_at_current_tap'
-            32 = {str} 'b_at_current_tap'
+            22 = {str} 'connected1': the side “1” of the transformer is connected to a bus
+            23 = {str} 'connected2': the side “2” of the transformer is connected to a bus
+            24 = {str} 'fictitious': the transformer is part of the model and not of the actual network
+            25 = {str} 'selected_limits_group_1': (optional): Name of the selected operational limits group selected for side 1
+            26 = {str} 'selected_limits_group_2': (optional): Name of the selected operational limits group selected for side 2
+            27 = {str} 'rho'(optional): the voltage ratio of the transformer at current tap position
+            28 = {str} 'alpha'(optional): the phase shift of the transformer at current tap position (in degree)
+            29 = {str} 'r_at_current_tap'(optional): the resistance of the transformer at current tap position (in Ohm)
+            30 = {str} 'x_at_current_tap'(optional): the reactance of the transformer at current tap position (in Ohm)
+            31 = {str} 'g_at_current_tap'(optional): the susceptance of the transformer at current tap position (in Ohm)
+            32 = {str} 'b_at_current_tap'(optional): the conductance of the transformer at current tap position (in Ohm)
             """
-            for i, row in transformers.iterrows():
-                bus1: dev.Bus = bus_dict[row["bus1_id"]]
-                bus2: dev.Bus = bus_dict[row["bus2_id"]]
+            for i, row in transformers2w.iterrows():
+                bus1: dev.Bus | None = bus_dict.get(row["bus1_id"], None)
+                bus2: dev.Bus | None = bus_dict.get(row["bus2_id"], None)
 
-                rated_u1 = float(row["rated_u1"])
-                rated_u2 = float(row["rated_u2"])
-                if rated_u1 > rated_u2:
-                    HV = rated_u1
-                    LV = rated_u2
+                if bus1 is None:
+                    self.logger.add_error("Bus from not found",
+                                          device_class="Line",
+                                          device=i)
+
+                if bus2 is None:
+                    self.logger.add_error("Bus to not found",
+                                          device_class="Line",
+                                          device=i)
+
+                if bus1 is not None and bus2 is not None:
+
+                    rated_u1 = float(row["rated_u1"])
+                    rated_u2 = float(row["rated_u2"])
+                    if rated_u1 > rated_u2:
+                        HV = rated_u1
+                        LV = rated_u2
+                    else:
+                        HV = rated_u2
+                        LV = rated_u1
+
+                    Sn = float(row["rated_s"])
+                    if np.isnan(Sn):
+                        Sn = 9999.0
+
+                    # The per unit is referred to the bus 2
+                    Zbase = bus2.Vnom * bus2.Vnom / grid.Sbase
+                    Ybase = 1.0 / Zbase
+                    r = float(row["r"]) / Zbase
+                    x = float(row["x"]) / Zbase
+                    g = float(row["g"]) / Ybase
+                    b = float(row["b"]) / Ybase
+
+                    elm = dev.Transformer2W(
+                        name=row["name"] if row["name"] != "" else i,
+                        code=i,
+                        bus_from=bus1,
+                        bus_to=bus2,
+                        r=r,
+                        x=x,
+                        g=g,
+                        b=b,
+                        HV=HV,
+                        LV=LV,
+                        rate=Sn,
+                        tap_module=float(row["rho"]),
+                        tap_phase=float(row["alpha"]),  # TODO in deg or rad? we need rad
+                    )
+
+                    grid.add_transformer2w(obj=elm)
                 else:
-                    HV = rated_u2
-                    LV = rated_u1
+                    pass
 
-                rate = float(row["rated_s"])
-                if np.isnan(rate):
-                    rate = 9999.0
-
-                elm = dev.Transformer2W(
-                    name=row["name"] if row["name"] != "" else i,
-                    code=i,
-                    bus_from=bus1,
-                    bus_to=bus2,
-                    r=float(row["r"]),
-                    x=float(row["x"]),
-                    g=float(row["g"]),
-                    b=float(row["b"]),
-                    HV=HV,
-                    LV=LV,
-                    rate=rate,
-                    tap_module=float(row["rho"]),
-                    tap_phase=float(row["alpha"]),  # TODO in deg or rad? we need rad
-                )
-
-                grid.add_transformer2w(obj=elm)
+            """
+            rated_u0: the rated voltage of the transformer at middle point od the star model (in kV)
+            fictitious (optional): True if the transformer is part of the model and not of the actual network
+            r1: the leg 1 resistance of the transformer (in Ohm)
+            x1: the leg 1 reactance of the transformer (in Ohm)
+            b1: the leg 1 susceptance of transformer (in Siemens)
+            g1: the leg 1 conductance of transformer (in Siemens)
+            rated_u1: the leg 1 rated voltage of the transformer (in kV)
+            rated_s1: the leg 1 rated apparent power of the transformer (in MVA)
+            ratio_tap_position1: the leg 1 ratio tap changer current position
+            phase_tap_position1: the leg 1 phase tap changer current position
+            p1: the leg 1 active power flow on the transformer, NaN if no loadflow has been computed (in MW)
+            q1: the leg 1 reactive power flow on the transformer, NaN if no loadflow has been computed (in MVAr)
+            i1: the leg 1 current on the transformer, NaN if no loadflow has been computed (in A)
+            voltage_level1_id: the voltage level where the leg 1 of the transformer is connected
+            bus1_id: the bus where the leg 1 of the transformer is connected
+            bus_breaker_bus1_id (optional): the bus of the bus-breaker view where leg 1 of the transformer is connected
+            node1 (optional): the node where the leg 1 transformer is connected (only in node-breaker voltage levels)
+            connected1: True if the leg 1 of the transformer is connected to a bus
+            selected_limits_group_1 (optional): the name of the selected operational limits group selected for the leg 1 of the transformer
+            rho1 (optional): the leg 1 voltage ratio of the transformer at current tap position
+            alpha1 (optional): the leg 1 phase shift of the transformer at current tap position (in degree)
+            r1_at_current_tap (optional): the leg 1 resistance of the transformer at current tap position (in Ohm)
+            x1_at_current_tap (optional): the leg 1 reactance of the transformer at current tap position (in Ohm)
+            g1_at_current_tap (optional): the leg 1 susceptance of the transformer at current tap position (in Ohm)
+            b1_at_current_tap (optional): the leg 1 conductance of the transformer at current tap position (in Ohm)
+            r2: the leg 2 resistance of the transformer (in Ohm)
+            x2: the leg 2 reactance of the transformer (in Ohm)
+            b2: the leg 2 susceptance of transformer (in Siemens)
+            g2: the leg 2 conductance of transformer (in Siemens)
+            rated_u2: the leg 2 rated voltage of the transformer (in kV)
+            rated_s2: the leg 2 rated apparent power of the transformer (in MVA)
+            ratio_tap_position2: the leg 2 ratio tap changer current position
+            phase_tap_position2: the leg 2 phase tap changer current position
+            p2: the leg 2 active power flow on the transformer, NaN if no loadflow has been computed (in MW)
+            q2: the leg 2 reactive power flow on the transformer, NaN if no loadflow has been computed (in MVAr)
+            i2: the leg 2 current on the transformer, NaN if no loadflow has been computed (in A)
+            voltage_level2_id: the voltage level where the leg 2 of the transformer is connected
+            bus2_id: the bus where the leg 2 of the transformer is connected
+            bus_breaker_bus2_id (optional): the bus of the bus-breaker view where leg 2 of the transformer is connected
+            node2 (optional): the node where the leg 2 transformer is connected (only in node-breaker voltage levels)
+            connected2: True if the leg 2 of the transformer is connected to a bus
+            selected_limits_group_2 (optional): the name of the selected operational limits group selected for the leg 2 of the transformer
+            rho2 (optional): the leg 2 voltage ratio of the transformer at current tap position
+            alpha2 (optional): the leg 2 phase shift of the transformer at current tap position (in degree)
+            r2_at_current_tap (optional): the leg 2 resistance of the transformer at current tap position (in Ohm)
+            x2_at_current_tap (optional): the leg 2 reactance of the transformer at current tap position (in Ohm)
+            g2_at_current_tap (optional): the leg 2 susceptance of the transformer at current tap position (in Ohm)
+            b2_at_current_tap (optional): the leg 2 conductance of the transformer at current tap position (in Ohm)
+            r3: the leg 3 resistance of the transformer (in Ohm)
+            x3: the leg 3 reactance of the transformer (in Ohm)
+            b3: the leg 3 susceptance of transformer (in Siemens)
+            g3: the leg 3 conductance of transformer (in Siemens)
+            rated_u3: the leg 3 rated voltage of the transformer (in kV)
+            rated_s3: the leg 3 rated apparent power of the transformer (in MVA)
+            ratio_tap_position3: the leg 3 ratio tap changer current position
+            phase_tap_position3: the leg 3 phase tap changer current position
+            p3: the leg 3 active power flow on the transformer, NaN if no loadflow has been computed (in MW)
+            q3: the leg 3 reactive power flow on the transformer, NaN if no loadflow has been computed (in MVAr)
+            i3: the leg 3 current on the transformer, NaN if no loadflow has been computed (in A)
+            voltage_level3_id: the voltage level where the leg 3 of the transformer is connected
+            bus3_id: the bus where the leg 3 of the transformer is connected
+            bus_breaker_bus3_id (optional): the bus of the bus-breaker view where leg 3 of the transformer is connected
+            node3 (optional): the node where the leg 3 transformer is connected (only in node-breaker voltage levels)
+            connected3: True if the leg 3 of the transformer is connected to a bus
+            selected_limits_group_3 (optional): the name of the selected operational limits group selected for the leg 3 of the transformer
+            rho3 (optional): the leg 3 voltage ratio of the transformer at current tap position
+            alpha3 (optional): the leg 3 phase shift of the transformer at current tap position (in degree)
+            r3_at_current_tap (optional): the leg 3 resistance of the transformer at current tap position (in Ohm)
+            x3_at_current_tap (optional): the leg 3 reactance of the transformer at current tap position (in Ohm)
+            g3_at_current_tap (optional): the leg 3 susceptance of the transformer at current tap position (in Ohm)
+            b3_at_current_tap (optional): the leg 3 conductance of the transformer at current tap position (in Ohm)
+            """
+            for i, row in transformers3w.iterrows():
+                pass
 
             """
             HVDC
@@ -329,26 +483,38 @@ class IidmParser:
             10 = {str} 'fictitious'
             """
             for i, row in hvdc.iterrows():
-                bus1: dev.Bus = bus_dict[row["converter_station1_id"]]
-                bus2: dev.Bus = bus_dict[row["converter_station2_id"]]
 
-                connected1 = bool(row["connected1"])
-                connected2 = bool(row["connected2"])
+                bus1: dev.Bus | None = bus_dict.get(row["converter_station1_id"], None)
+                bus2: dev.Bus | None = bus_dict.get(row["converter_station2_id"], None)
 
-                # TODO, what is the content of converters_mode? PMODE1, PMODE3 stuff probably but investigate
+                if bus1 is None:
+                    self.logger.add_error("Bus from not found",
+                                          device_class="Line",
+                                          device=i)
 
-                elm = dev.HvdcLine(
-                    name=row["name"] if row["name"] != "" else i,
-                    bus_from=bus1,
-                    bus_to=bus2,
-                    dc_link_voltage=float(row["nominal_v"]),
-                    Pset=float(row["target_p"]),
-                    rate=float(row["max_p"]),
-                    r=float(row["r"]),  # TODO: Ohm?, we need Ohm
-                    active=connected1 and connected2
-                )
+                if bus2 is None:
+                    self.logger.add_error("Bus to not found",
+                                          device_class="Line",
+                                          device=i)
 
-                grid.add_hvdc(obj=elm)
+                if bus1 is not None and bus2 is not None:
+                    connected1 = bool(row["connected1"])
+                    connected2 = bool(row["connected2"])
+
+                    # TODO, what is the content of converters_mode? PMODE1, PMODE3 stuff probably but investigate
+
+                    elm = dev.HvdcLine(
+                        name=row["name"] if row["name"] != "" else i,
+                        bus_from=bus1,
+                        bus_to=bus2,
+                        dc_link_voltage=float(row["nominal_v"]),
+                        Pset=float(row["target_p"]),
+                        rate=float(row["max_p"]),
+                        r=float(row["r"]),  # TODO: Ohm?, we need Ohm
+                        active=connected1 and connected2
+                    )
+
+                    grid.add_hvdc(obj=elm)
 
             """
             Load
@@ -367,33 +533,39 @@ class IidmParser:
             12 = {str} 'fictitious'
             """
             for i, row in loads.iterrows():
-                bus1 = bus_dict[row["bus_id"]]
-                elm = dev.Load(
-                    name=row["name"] if row["name"] != "" else i,
-                    code=i,
-                    P1=float(row["p"]),
-                    Q1=float(row["q"]),
-                    active=bool(row["connected"])
-                )
-                grid.add_load(bus=bus1, api_obj=elm)
+                bus1: dev.Bus | None = bus_dict.get(row["bus_id"], None)
+
+                if bus1 is None:
+                    self.logger.add_error("Bus not found",
+                                          device_class="Load",
+                                          device=i)
+                else:
+                    elm = dev.Load(
+                        name=row["name"] if row["name"] != "" else i,
+                        code=i,
+                        P1=float(row["p"]),
+                        Q1=float(row["q"]),
+                        active=bool(row["connected"])
+                    )
+                    grid.add_load(bus=bus1, api_obj=elm)
 
             """
             Generator
             00 = {str} 'name'
             01 = {str} 'energy_source'
-            02 = {str} 'target_p'
-            03 = {str} 'min_p'
-            04 = {str} 'max_p'
-            05 = {str} 'min_q'
-            06 = {str} 'max_q'
-            07 = {str} 'min_q_at_target_p'
+            02 = {str} 'target_p' MW, The active power target
+            03 = {str} 'min_p' MW, Minimum generator active power output
+            04 = {str} 'max_p' MW, Maximum generator active power output
+            05 = {str} 'min_q' MVAr
+            06 = {str} 'max_q' MVAr
+            07 = {str} 'min_q_at_target_p' 
             08 = {str} 'max_q_at_target_p'
             09 = {str} 'min_q_at_p'
             10 = {str} 'max_q_at_p'
-            11 = {str} 'rated_s'
+            11 = {str} 'rated_s' MVA, The rated nominal power
             12 = {str} 'reactive_limits_kind'
-            13 = {str} 'target_v'
-            14 = {str} 'target_q'
+            13 = {str} 'target_v' kV, The voltage target at regulating terminal which can be remote or local
+            14 = {str} 'target_q' MVAr, The reactive power target at local terminal
             15 = {str} 'voltage_regulator_on'
             16 = {str} 'regulated_element_id'
             17 = {str} 'regulated_bus_id'
@@ -410,33 +582,39 @@ class IidmParser:
             28 = {str} 'fictitious'
             """
             for i, row in gens.iterrows():
-                bus1 = bus_dict[row["bus_id"]]
+                bus1: dev.Bus | None = bus_dict.get(row["bus_id"], None)
 
-                p = float(row["p"])
-                q = float(row["q"])
-                S = p + 1j * q
-                Sabs = abs(S)
-                if Sabs > 0.0:
-                    pf = p / Sabs
+                if bus1 is None:
+                    self.logger.add_error("Bus not found",
+                                          device_class="Generator",
+                                          device=i)
                 else:
-                    pf = 0.0
 
-                elm = dev.Generator(
-                    name=row["name"] if row["name"] != "" else i,
-                    code=i,
-                    P=row["p"],
-                    power_factor=pf,
-                    vset=float(row["target_v"]),
-                    Pmin=float(row["min_p"]),
-                    Pmax=float(row["max_p"]),
-                    Qmin=float(row["min_q"]),
-                    Qmax=float(row["max_q"]),
-                    Snom=float(row["rated_s"]),
-                    active=bool(row["connected"]),
-                    is_controlled=bool(row["voltage_regulator_on"]),
-                )
-                elm.control_bus = bus_dict.get(row["regulated_bus_id"], None)
-                grid.add_generator(bus=bus1, api_obj=elm)
+                    p = float(row["p"])
+                    q = float(row["q"])
+                    S = p + 1j * q
+                    Sabs = abs(S)
+                    if Sabs > 0.0:
+                        pf = p / Sabs
+                    else:
+                        pf = 0.0
+
+                    elm = dev.Generator(
+                        name=row["name"] if row["name"] != "" else i,
+                        code=i,
+                        P=row["p"],
+                        power_factor=pf,
+                        vset=float(row["target_v"]),
+                        Pmin=float(row["min_p"]),
+                        Pmax=float(row["max_p"]),
+                        Qmin=float(row["min_q"]),
+                        Qmax=float(row["max_q"]),
+                        Snom=float(row["rated_s"]),
+                        active=bool(row["connected"]),
+                        is_controlled=bool(row["voltage_regulator_on"]),
+                    )
+                    elm.control_bus = bus_dict.get(row["regulated_bus_id"], None)
+                    grid.add_generator(bus=bus1, api_obj=elm)
 
             """
             Capacitor bank
@@ -462,15 +640,21 @@ class IidmParser:
             19 = {str} 'fictitious'
             """
             for i, row in capacitor_banks.iterrows():
-                bus1 = bus_dict[row["bus_id"]]
-                elm = dev.Shunt(
-                    name=row["name"] if row["name"] != "" else i,
-                    code=i,
-                    G1=float(row["g"]),
-                    B1=float(row["b"]),
-                    active=bool(row["connected"])
-                )
-                grid.add_shunt(bus=bus1, api_obj=elm)
+                bus1: dev.Bus | None = bus_dict.get(row["bus_id"], None)
+
+                if bus1 is None:
+                    self.logger.add_error("Bus not found",
+                                          device_class="Capacitor Bank",
+                                          device=i)
+                else:
+                    elm = dev.Shunt(
+                        name=row["name"] if row["name"] != "" else i,
+                        code=i,
+                        G1=float(row["g"]),
+                        B1=float(row["b"]),
+                        active=bool(row["connected"])
+                    )
+                    grid.add_shunt(bus=bus1, api_obj=elm)
 
             """
             SVC
@@ -495,19 +679,25 @@ class IidmParser:
             18 = {str} 'fictitious'
             """
             for i, row in svc.iterrows():
-                bus1 = bus_dict[row["bus_id"]]
-                elm = dev.ControllableShunt(
-                    name=row["name"] if row["name"] != "" else i,
-                    code=i,
-                    G1=float(row["g"]),
-                    B1=float(row["b"]),
-                    active=bool(row["connected"]),
-                    Bmin=float(row["b_min"]),
-                    Bmax=float(row["b_max"]),
-                    vset=float(row["target_v"]),
-                    is_controlled=bool(row["regulating"]),
-                )
-                elm.control_bus = bus_dict.get(row["regulated_bus_id"], None)
-                grid.add_controllable_shunt(bus=bus1, api_obj=elm)
+                bus1: dev.Bus | None = bus_dict.get(row["bus_id"], None)
+
+                if bus1 is None:
+                    self.logger.add_error("Bus not found",
+                                          device_class="SVC",
+                                          device=i)
+                else:
+                    elm = dev.ControllableShunt(
+                        name=row["name"] if row["name"] != "" else i,
+                        code=i,
+                        G1=float(row["p"]),  # TODO: Make sure about the units
+                        B1=float(row["q"]),
+                        active=bool(row["connected"]),
+                        Bmin=float(row["b_min"]),
+                        Bmax=float(row["b_max"]),
+                        vset=float(row["target_v"]),
+                        is_controlled=bool(row["regulating"]),
+                    )
+                    elm.control_bus = bus_dict.get(row["regulated_bus_id"], None)
+                    grid.add_controllable_shunt(bus=bus1, api_obj=elm)
 
             return grid

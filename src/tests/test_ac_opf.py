@@ -21,7 +21,7 @@ def case9() -> NonlinearOPFResults:
     print(cwd)
 
     # Go back two directories
-    file_path = os.path.join('data', 'grids', 'case9.matpower')
+    file_path = os.path.join('data', 'grids', 'Matpower', 'case9.matpower')
 
     grid = gce.FileOpen(file_path).open()
     opf_options = gce.OptimalPowerFlowOptions(ips_method=gce.SolverType.NR, ips_tolerance=1e-8)
@@ -37,7 +37,7 @@ def case14() -> tuple[NonlinearOPFResults, NonlinearOPFResults, NonlinearOPFResu
     print(cwd)
 
     # Go back two directories
-    file_path = os.path.join('data', 'grids', 'case14.matpower')
+    file_path = os.path.join('data', 'grids', 'Matpower', 'case14.matpower')
 
     grid = gce.FileOpen(file_path).open()
 
@@ -95,7 +95,7 @@ def case14_ctrlQ_shunts() -> NonlinearOPFResults:
     print(cwd)
 
     # Go back two directories
-    file_path = os.path.join('data', 'grids', 'case14.matpower')
+    file_path = os.path.join('data', 'grids', 'Matpower', 'case14.matpower')
 
     grid = gce.FileOpen(file_path).open()
 
@@ -139,7 +139,7 @@ def case_pegase89() -> NonlinearOPFResults:
     cwd = os.getcwd()
     print(cwd)
     # Go back two directories
-    file_path = os.path.join('data', 'grids', 'case89pegase.matpower')
+    file_path = os.path.join('data', 'grids', 'Matpower', 'case89pegase.matpower')
 
     grid = gce.FileOpen(file_path).open()
     pf_options = gce.PowerFlowOptions(control_q=False)
@@ -324,7 +324,7 @@ def superconductor() -> NonlinearOPFResults:
     print(cwd)
 
     # Go back two directories
-    file_path = os.path.join('data', 'grids', 'case9.matpower')
+    file_path = os.path.join('data', 'grids', 'Matpower', 'case9.matpower')
     grid = gce.FileOpen(file_path).open()
     grid.lines[0].R = 0.0
     grid.lines[0].X = 0.0

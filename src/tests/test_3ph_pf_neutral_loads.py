@@ -29,11 +29,11 @@ def test_impedance_groundedstar_3ph():
     # Load
     # ----------------------------------------------------------------------------------------------------------------------
     load_634 = gce.Load(G1=0.7,
-                        B1=0.5,
+                        B1=-0.5,
                         G2=0.6,
-                        B2=0.45,
+                        B2=-0.45,
                         G3=0.5,
-                        B3=0.4)
+                        B3=-0.4)
     load_634.conn = ShuntConnectionType.GroundedStar
     grid.add_load(bus=bus_634, api_obj=load_634)
 
@@ -103,11 +103,11 @@ def test_impedance_floatingstar_3ph():
     # Load
     # ----------------------------------------------------------------------------------------------------------------------
     load_634 = gce.Load(G1=0.7,
-                        B1=0.5,
+                        B1=-0.5,
                         G2=0.6,
-                        B2=0.45,
+                        B2=-0.45,
                         G3=0.5,
-                        B3=0.4)
+                        B3=-0.4)
     load_634.conn = ShuntConnectionType.FloatingStar
     grid.add_load(bus=bus_634, api_obj=load_634)
 
@@ -182,11 +182,11 @@ def test_impedance_neutralstar_3ph():
     # Load
     # ----------------------------------------------------------------------------------------------------------------------
     load_634 = gce.Load(G1=0.7,
-                        B1=0.5,
+                        B1=-0.5,
                         G2=0.6,
-                        B2=0.45,
+                        B2=-0.45,
                         G3=0.5,
-                        B3=0.4)
+                        B3=-0.4)
     load_634.conn = ShuntConnectionType.NeutralStar
     grid.add_load(bus=bus_634, api_obj=load_634)
 
@@ -270,11 +270,11 @@ def test_impedance_delta_3ph():
     # Load
     # ----------------------------------------------------------------------------------------------------------------------
     load_634 = gce.Load(G1=0.7,
-                        B1=0.5,
+                        B1=-0.5,
                         G2=0.6,
-                        B2=0.45,
+                        B2=-0.45,
                         G3=0.5,
-                        B3=0.4)
+                        B3=-0.4)
     load_634.conn = ShuntConnectionType.Delta
     grid.add_load(bus=bus_634, api_obj=load_634)
 
@@ -344,11 +344,11 @@ def test_impedance_delta_2ph():
     # Load
     # ----------------------------------------------------------------------------------------------------------------------
     load_634 = gce.Load(G1=0.7,
-                        B1=0.5,
+                        B1=-0.5,
                         G2=0.0,
-                        B2=0.0,
+                        B2=-0.0,
                         G3=0.0,
-                        B3=0.0)
+                        B3=-0.0)
     load_634.conn = ShuntConnectionType.Delta
     grid.add_load(bus=bus_634, api_obj=load_634)
 
@@ -418,11 +418,11 @@ def test_impedance_groundedstar_1ph():
     # Load
     # ----------------------------------------------------------------------------------------------------------------------
     load_634 = gce.Load(G1=0.7,
-                        B1=0.5,
+                        B1=-0.5,
                         G2=0.0,
-                        B2=0.0,
+                        B2=-0.0,
                         G3=0.0,
-                        B3=0.0)
+                        B3=-0.0)
     load_634.conn = ShuntConnectionType.GroundedStar
     grid.add_load(bus=bus_634, api_obj=load_634)
 
@@ -492,11 +492,11 @@ def test_impedance_neutralstar_1ph():
     # Load
     # ----------------------------------------------------------------------------------------------------------------------
     load_634 = gce.Load(G1=0.7,
-                        B1=0.5,
+                        B1=-0.5,
                         G2=0.0,
-                        B2=0.0,
+                        B2=-0.0,
                         G3=0.0,
-                        B3=0.0)
+                        B3=-0.0)
     load_634.conn = ShuntConnectionType.NeutralStar
     grid.add_load(bus=bus_634, api_obj=load_634)
 
@@ -580,11 +580,11 @@ def test_current_groundedstar_3ph():
     # Load
     # ----------------------------------------------------------------------------------------------------------------------
     load_634 = gce.Load(Ir1=0.7,
-                        Ii1=0.5,
+                        Ii1=-0.5,
                         Ir2=0.6,
-                        Ii2=0.45,
+                        Ii2=-0.45,
                         Ir3=0.5,
-                        Ii3=0.4)
+                        Ii3=-0.4)
     load_634.conn = ShuntConnectionType.GroundedStar
     grid.add_load(bus=bus_634, api_obj=load_634)
 
@@ -654,11 +654,11 @@ def test_current_floatingstar_3ph():
     # Load
     # ----------------------------------------------------------------------------------------------------------------------
     load_634 = gce.Load(Ir1=0.7,
-                        Ii1=0.5,
+                        Ii1=-0.5,
                         Ir2=0.6,
-                        Ii2=0.45,
+                        Ii2=-0.45,
                         Ir3=0.5,
-                        Ii3=0.4)
+                        Ii3=-0.4)
     load_634.conn = ShuntConnectionType.FloatingStar
     grid.add_load(bus=bus_634, api_obj=load_634)
 
@@ -733,11 +733,11 @@ def test_current_neutralstar_3ph():
     # Load
     # ----------------------------------------------------------------------------------------------------------------------
     load_634 = gce.Load(Ir1=0.7,
-                        Ii1=0.5,
+                        Ii1=-0.5,
                         Ir2=0.6,
-                        Ii2=0.45,
+                        Ii2=-0.45,
                         Ir3=0.5,
-                        Ii3=0.4)
+                        Ii3=-0.4)
     load_634.conn = ShuntConnectionType.NeutralStar
     grid.add_load(bus=bus_634, api_obj=load_634)
 
@@ -821,11 +821,11 @@ def test_current_delta_3ph():
     # Load
     # ----------------------------------------------------------------------------------------------------------------------
     load_634 = gce.Load(Ir1=0.7,
-                        Ii1=0.5,
+                        Ii1=-0.5,
                         Ir2=0.6,
-                        Ii2=0.45,
+                        Ii2=-0.45,
                         Ir3=0.5,
-                        Ii3=0.4)
+                        Ii3=-0.4)
     load_634.conn = ShuntConnectionType.Delta
     grid.add_load(bus=bus_634, api_obj=load_634)
 
@@ -895,7 +895,7 @@ def test_current_delta_2ph():
     # Load
     # ----------------------------------------------------------------------------------------------------------------------
     load_634 = gce.Load(Ir1=0.7,
-                        Ii1=0.5)
+                        Ii1=-0.5)
     load_634.conn = ShuntConnectionType.Delta
     grid.add_load(bus=bus_634, api_obj=load_634)
 
@@ -965,11 +965,11 @@ def test_current_groundedstar_1ph():
     # Load
     # ----------------------------------------------------------------------------------------------------------------------
     load_634 = gce.Load(Ir1=0.7,
-                        Ii1=0.5,
+                        Ii1=-0.5,
                         Ir2=0.0,
-                        Ii2=0.0,
+                        Ii2=-0.0,
                         Ir3=0.0,
-                        Ii3=0.0)
+                        Ii3=-0.0)
     load_634.conn = ShuntConnectionType.GroundedStar
     grid.add_load(bus=bus_634, api_obj=load_634)
 
@@ -1039,7 +1039,7 @@ def test_current_neutralstar_1ph():
     # Load
     # ----------------------------------------------------------------------------------------------------------------------
     load_634 = gce.Load(Ir1=0.7,
-                        Ii1=0.5)
+                        Ii1=-0.5)
     load_634.conn = ShuntConnectionType.NeutralStar
     grid.add_load(bus=bus_634, api_obj=load_634)
 

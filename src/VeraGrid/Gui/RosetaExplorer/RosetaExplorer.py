@@ -167,10 +167,11 @@ class RosetaExplorerGUI(QMainWindow):
         self.ui.consoleLayout.layout().addWidget(self.console)
 
         # push some variables to the console
-        self.console.push_vars({"np": np,
-                                "pd": pd,
-                                'app': self,
-                                'circuit': self.circuit})
+        for key, val in {"np": np,
+                         "pd": pd,
+                         'app': self,
+                         'circuit': self.circuit}.items():
+            self.console.add_var(key, val)
 
     def update_combo_boxes(self):
         """
@@ -305,8 +306,9 @@ class RosetaExplorerGUI(QMainWindow):
             self.available_db_combo_box_changed()
 
             if self.console:
-                self.console.push_vars({'app': self,
-                                        'circuit': self.circuit})
+                for key, val in {'app': self,
+                                 'circuit': self.circuit}.items():
+                    self.console.add_var(key, val)
 
     def set_model_label(self):
         """

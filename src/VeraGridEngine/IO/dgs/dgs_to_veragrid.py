@@ -4,10 +4,13 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 import math
+import re
 import numpy as np
 from typing import Dict, List, Tuple, Set
 from VeraGridEngine.enumerations import WindingType, SwitchGraphicType
 import VeraGridEngine.Devices as dev
+from VeraGridEngine.Devices.Branches.wire import Wire
+from VeraGridEngine.Devices.Branches.overhead_line_type import OverheadLineType, WireInTower
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.IO.dgs.dgs_circuit import DgsCircuit
 from VeraGridEngine.IO.dgs.dgs_objects import *
@@ -146,6 +149,170 @@ def convert_dgs_to_sequence_line(typlne: TypLne) -> dev.SequenceLineType:
     return elm
 
 
+def _bundle_offsets(n_sub: int, spacing_m: float) -> List[Tuple[float, float]]:
+    """Generate bundle offsets (dx, dy) in meters for a bundle of subconductors.
+
+    The arrangement is assumed to be evenly spaced on a circle, such that the
+    distance between adjacent subconductors is approximately ``spacing_m``.
+
+    Notes
+    -----
+    - This is a geometric approximation used when PowerFactory provides only
+      ``ncsub`` (number of subconductors) and ``dsubc`` (bundle spacing).
+    - If ``n_sub <= 1`` or ``spacing_m <= 0``, a single conductor at (0, 0) is returned.
+    """
+    if n_sub <= 1:
+        return [(0.0, 0.0)]
+    if spacing_m <= 0.0:
+        return [(0.0, 0.0)]
+
+    # Radius of the circumcircle for a regular n-gon with side length = spacing.
+    # r = s / (2*sin(pi/n))
+    radius = spacing_m / (2.0 * math.sin(math.pi / float(n_sub)))
+
+    offsets: List[Tuple[float, float]] = list()
+    for k in range(n_sub):
+        ang = 2.0 * math.pi * float(k) / float(n_sub)
+        dx = radius * math.cos(ang)
+        dy = radius * math.sin(ang)
+        offsets.append((dx, dy))
+
+    return offsets
+
+
+def convert_dgs_to_wire(typcon: TypCon) -> Wire:
+    """Convert a PowerFactory TypCon into a VeraGrid Wire."""
+    tid = _ref_id(typcon.ID)
+    name = typcon.loc_name if typcon.loc_name is not None and str(typcon.loc_name).strip() != '' else f"Wire_{tid}"
+
+    # PowerFactory: diatub may be 0/empty for non-tubular conductors.
+    diatub = float(typcon.diatub)
+    is_tube = diatub > 0.0
+
+    # Keep a compact but informative stranding label.
+    stranding = f"ncsub={int(typcon.ncsub)}, dsubc={float(typcon.dsubc)}"
+
+    wire = Wire(
+        name=name,
+        idtag=tid,
+        r=float(typcon.rpha),
+        max_current=float(typcon.sline),
+        stranding=stranding,
+        material=str(typcon.mlei),
+        diameter=float(typcon.diaco),
+        diameter_internal=diatub,
+        is_tube=is_tube,
+        code=str(typcon.loc_name),
+    )
+
+    return wire
+
+
+def _convert_gearth_us_per_cm_to_resistivity_ohm_m(gearth_us_per_cm: float) -> float:
+    """Convert PowerFactory earth conductivity (uS/cm) to resistivity (Ohm*m)."""
+    # uS/cm -> S/m: 1 uS = 1e-6 S; 1/cm = 100/m
+    conductivity_s_per_m = float(gearth_us_per_cm) * 1e-4
+    if conductivity_s_per_m <= 0.0:
+        return 100.0
+    return 1.0 / conductivity_s_per_m
+
+
+def convert_dgs_to_overhead_line_type(
+        typtow: TypTow,
+        typcon_by_id: Dict[str, TypCon],
+        wire_by_id: Dict[str, Wire],
+        default_frequency_hz: float,
+) -> OverheadLineType:
+    """Convert a PowerFactory TypTow into a VeraGrid OverheadLineType.
+
+    This conversion builds the wire geometry (positions) and assigns Wire templates.
+    It supports multi-circuit towers by defining phases 1..3 for circuit 1,
+    4..6 for circuit 2, etc (as required by VeraGrid's OverheadLineType).
+    """
+    tid = _ref_id(typtow.ID)
+    name = typtow.loc_name if typtow.loc_name is not None and str(typtow.loc_name).strip() != '' else f"Tower_{tid}"
+
+    # Frequency / earth parameters
+    freq = float(typtow.frnom) if typtow.frnom is not None and float(typtow.frnom) > 0.0 else float(default_frequency_hz)
+    earth_res = _convert_gearth_us_per_cm_to_resistivity_ohm_m(float(typtow.gearth))
+
+    # Determine nominal voltage from referenced conductor types.
+    v_candidates: List[float] = list()
+    for ptr in typtow.pcond_c:
+        if ptr is None:
+            continue
+        cid = _ref_id(ptr)
+        tc = typcon_by_id.get(cid)
+        if tc is not None:
+            v_candidates.append(float(tc.uline))
+    for ptr in typtow.pcond_e:
+        if ptr is None:
+            continue
+        cid = _ref_id(ptr)
+        tc = typcon_by_id.get(cid)
+        if tc is not None:
+            v_candidates.append(float(tc.uline))
+
+    vnom = max(v_candidates) if len(v_candidates) > 0 else 0.0
+
+    ohl_type = OverheadLineType(
+        name=name,
+        idtag=tid,
+        Vnom=vnom,
+        earth_resistivity=earth_res,
+        frequency=freq,
+    )
+
+    # Earth wires (phase 0)
+    for ew_idx, ptr in enumerate(typtow.pcond_e):
+        if ptr is None:
+            continue
+        cid = _ref_id(ptr)
+        wire = wire_by_id.get(cid)
+        tc = typcon_by_id.get(cid)
+        if wire is None or tc is None:
+            continue
+        if ew_idx < len(typtow.xy_e) and len(typtow.xy_e[ew_idx]) >= 2:
+            x0 = float(typtow.xy_e[ew_idx][0])
+            y0 = float(typtow.xy_e[ew_idx][1])
+        else:
+            x0 = 0.0
+            y0 = 0.0
+
+        offsets = _bundle_offsets(n_sub=int(tc.ncsub), spacing_m=float(tc.dsubc))
+        for dx, dy in offsets:
+            ohl_type.wires_in_tower.append(WireInTower(wire=wire, xpos=x0 + dx, ypos=y0 + dy, phase=0))
+
+    # Phase wires per circuit
+    # Expected xy_c row format: [xA, xB, xC, yA, yB, yC]
+    for c_idx, ptr in enumerate(typtow.pcond_c):
+        if ptr is None:
+            continue
+        cid = _ref_id(ptr)
+        wire = wire_by_id.get(cid)
+        tc = typcon_by_id.get(cid)
+        if wire is None or tc is None:
+            continue
+
+        if c_idx < len(typtow.xy_c) and len(typtow.xy_c[c_idx]) >= 6:
+            row = typtow.xy_c[c_idx]
+            xA, xB, xC = float(row[0]), float(row[1]), float(row[2])
+            yA, yB, yC = float(row[3]), float(row[4]), float(row[5])
+        else:
+            xA, xB, xC = 0.0, 0.0, 0.0
+            yA, yB, yC = 0.0, 0.0, 0.0
+
+        offsets = _bundle_offsets(n_sub=int(tc.ncsub), spacing_m=float(tc.dsubc))
+
+        base_phase = 3 * int(c_idx)  # circuit 0 -> 0, circuit 1 -> 3, ...
+        for dx, dy in offsets:
+            ohl_type.wires_in_tower.append(WireInTower(wire=wire, xpos=xA + dx, ypos=yA + dy, phase=base_phase + 1))
+            ohl_type.wires_in_tower.append(WireInTower(wire=wire, xpos=xB + dx, ypos=yB + dy, phase=base_phase + 2))
+            ohl_type.wires_in_tower.append(WireInTower(wire=wire, xpos=xC + dx, ypos=yC + dy, phase=base_phase + 3))
+
+    return ohl_type
+
+
 def _convert_pf_tr2_connection(code: str) -> WindingType | None:
     """
     Convert a PowerFactory 2-character transformer connection code to VeraGrid WindingType.
@@ -218,6 +385,31 @@ def _order_hv_lv(bus_a: dev.Bus, bus_b: dev.Bus, logger: Logger, tr_name: str) -
     if va == 0.0 or vb == 0.0:
         logger.add_warning(f"Transformer '{tr_name}': one or both buses have Vnom=0.0 (va={va}, vb={vb}).")
         return bus_a, bus_b
+
+    if va > vb:
+        return bus_a, bus_b
+    if vb > va:
+        return bus_b, bus_a
+
+    # Equal-Vnom transformers: HV/LV is ambiguous. Make ordering deterministic so that
+    # RAW and DGS imports end up with the same 'from/to' orientation.
+    m = re.search(r"_(\d+)_(\d+)(?:_|$)", tr_name or "")
+    if m:
+        i = int(m.group(1))
+        j = int(m.group(2))
+
+        sa = (str(bus_a.name or "").strip().split() or [""])[0]
+        sb = (str(bus_b.name or "").strip().split() or [""])[0]
+        ida = int(sa) if sa.isdigit() else None
+        idb = int(sb) if sb.isdigit() else None
+
+        if ida == j and idb == i:
+            return bus_b, bus_a
+        if ida == i and idb == j:
+            return bus_a, bus_b
+
+    logger.add_warning(f"Transformer '{tr_name}': HV/LV ambiguous (equal Vnom={va}). Keeping original order.")
+    return bus_a, bus_b
 
     if va > vb:
         return bus_a, bus_b
@@ -371,20 +563,8 @@ def convert_dgs_to_transformer3w(tr3: ElmTr3,
     if template is None:
         template = templates_dict.get(_ref_id(tr3.typ_id), None)
 
-    if template is None:
-        raise ValueError(f"No template for the transformer3w {tr3.ID}")
-
     # Check connectivity through robust StaCubic.fold_id mapping first (preferred)
     term_ids = get_terminal_ids(element_id=tr3.ID, cubics_by_objid=cubics_by_objid)
-    if len(term_ids) != 3:
-        # Fall back to legacy check only if terminal mapping is not available
-        bus_ids = stacubic_dict.get(_ref_id(tr3.ID), None)
-        if bus_ids is None:
-            raise ValueError(f"No buses for the transformer3w {tr3.ID}")
-
-        if len(bus_ids) != 3:
-            raise ValueError(f"Not exactly 3 buses for the transformer3w {tr3.ID}")
-
     if len(term_ids) == 3:
         bus_a = bus_by_term_id[term_ids[0]]
         bus_b = bus_by_term_id[term_ids[1]]
@@ -449,11 +629,12 @@ def build_switch_by_cubic_id(staswitchs: List[StaSwitch]) -> Dict[str, StaSwitch
         d[cubic_id] = sw
     return d
 
+
 def convert_dgs_to_switches_from_elmcoup(elmcoups: List[ElmCoup],
-                                        cubics_by_objid: Dict[str, List[StaCubic]],
-                                        bus_by_term_id: Dict[str, dev.Bus],
-                                        switch_by_cubic_id: Dict[str, StaSwitch],
-                                        logger: Logger) -> List[dev.Switch]:
+                                         cubics_by_objid: Dict[str, List[StaCubic]],
+                                         bus_by_term_id: Dict[str, dev.Bus],
+                                         switch_by_cubic_id: Dict[str, StaSwitch],
+                                         logger: Logger) -> List[dev.Switch]:
     """
     Create VeraGrid Switch devices from ElmCoup.
 
@@ -540,6 +721,7 @@ def convert_dgs_to_switches_from_elmcoup(elmcoups: List[ElmCoup],
 
     return switches
 
+
 def _convert_pf_switch_graphic_type(iuse: int, ausage: str) -> SwitchGraphicType:
     """
     Convert PowerFactory/DGS switch usage fields to a VeraGrid SwitchGraphicType.
@@ -623,57 +805,127 @@ def convert_dgs_to_switch(stasw: StaSwitch,
     return sw
 
 
-def convert_dgs_to_line(lne: ElmLne,
-                        buses: List[dev.Bus],
-                        stacubic_dict: Dict[str, List[int]],
-                        templates_dict: Dict[str, dev.SequenceLineType],
-                        freq: float,
-                        baseMVA: float,
-                        logger: Logger,
-                        cubics_by_objid: Dict[str, List[StaCubic]],
-                        bus_by_term_id: Dict[str, dev.Bus]) -> dev.Line:
+def convert_dgs_to_line(
+        lne: ElmLne,
+        buses: List[dev.Bus],
+        stacubic_dict: Dict[str, List[int]],
+        templates_dict: Dict[str, dev.SequenceLineType],
+        overhead_line_type_dict: Dict[str, OverheadLineType],
+        line_type_by_line_id: Dict[str, str],
+        tower_template_by_line_id: Dict[str, OverheadLineType],
+        freq: float,
+        baseMVA: float,
+        logger: Logger,
+        cubics_by_objid: Dict[str, List[StaCubic]],
+        bus_by_term_id: Dict[str, dev.Bus]
+) -> dev.Line:
+    """Convert a PowerFactory/DGS ElmLne into a VeraGrid Line.
+
+    Template resolution order
+    -------------------------
+    1) Use ElmLne.typ_id if present.
+    2) If missing/empty, use ``line_type_by_line_id`` (built from ElmLnesec / IntFolder hierarchy).
+    3) First try TypLne -> SequenceLineType, otherwise try TypTow -> OverheadLineType.
+
+    Notes
+    -----
+    - Connectivity is resolved via StaCubic.fold_id -> ElmTerm.ID (preferred), with a legacy index-based fallback.
+    - This function must not reference the DGS container (dgs_grid). All required mappings are passed in.
     """
 
-    :param lne:
-    :param buses:
-    :param stacubic_dict:
-    :param templates_dict:
-    :param freq:
-    :param baseMVA:
-    :param logger:
-    :param cubics_by_objid:
-    :param bus_by_term_id:
-    :return:
-    """
+    # ------------------------------------------------------------
+    # Resolve typ_id (some PF exports store the type in ElmLnesec instead of ElmLne).
+    # If the line is part of an ElmTow (tower coupling), it may legitimately have no typ_id.
+    # In that case, we defer the template to the tower mapping.
+    # ------------------------------------------------------------
+    typ_id: str | None = lne.typ_id
+    if typ_id is None or typ_id == "":
+        # Try raw line ID and normalized pointer ID
+        typ_id = line_type_by_line_id.get(lne.ID, None)
+        if typ_id is None or typ_id == "":
+            lid = _ref_id(lne.ID)
+            if lid is not None and lid != "":
+                typ_id = line_type_by_line_id.get(lid, None)
 
-    template = templates_dict.get(lne.typ_id, None)
-    if template is None:
-        raise ValueError(f"No template for the line {lne.ID}")
+    # Tower-derived template (ElmTow -> TypTow). This is used only when typ_id is missing.
+    tower_template: OverheadLineType | None = None
+    if typ_id is None or typ_id == "":
+        tower_template = tower_template_by_line_id.get(lne.ID, None)
+        if tower_template is None:
+            lid = _ref_id(lne.ID)
+            if lid is not None and lid != "":
+                tower_template = tower_template_by_line_id.get(lid, None)
 
-    # Check connectivity through robust StaCubic.fold_id mapping first (preferred)
+    if (typ_id is None or typ_id == "") and tower_template is None:
+        raise ValueError(
+            f"ElmLne '{lne.loc_name}' (ID={lne.ID}): missing typ_id in ElmLne and no ElmLnesec fallback found."
+        )
+
+    # ------------------------------------------------------------
+    # Resolve the line template (TypLne or TypTow)
+    # ------------------------------------------------------------
+    seq_template: dev.SequenceLineType | None = None
+    ohl_template: OverheadLineType | None = None
+
+    if typ_id is not None and typ_id != "":
+        seq_template = templates_dict.get(typ_id, None)
+        if seq_template is None:
+            tid = _ref_id(typ_id)
+            if tid is not None and tid != "":
+                seq_template = templates_dict.get(tid, None)
+
+        if seq_template is None:
+            ohl_template = overhead_line_type_dict.get(typ_id, None)
+            if ohl_template is None:
+                tid = _ref_id(typ_id)
+                if tid is not None and tid != "":
+                    ohl_template = overhead_line_type_dict.get(tid, None)
+    else:
+        # typ_id is missing: rely on tower coupling template
+        ohl_template = tower_template
+
+    if seq_template is None and ohl_template is None:
+        raise ValueError(
+            f"ElmLne '{lne.loc_name}' (ID={lne.ID}): no line template found for typ_id='{typ_id}'. "
+            f"Expected TypLne (SequenceLineType) or TypTow (OverheadLineType)."
+        )
+
+    # ------------------------------------------------------------
+    # Connectivity via StaCubic.fold_id -> ElmTerm.ID (preferred)
+    # ------------------------------------------------------------
     term_ids = get_terminal_ids(element_id=lne.ID, cubics_by_objid=cubics_by_objid)
     if len(term_ids) != 2:
-        # Fall back to legacy check only if terminal mapping is not available
         bus_ids = stacubic_dict.get(_ref_id(lne.ID), None)
         if bus_ids is None:
             raise ValueError(f"No buses for the line {lne.ID}")
-
         if len(bus_ids) != 2:
             raise ValueError(f"Not exactly 2 buses for the line {lne.ID}")
 
-    bus_from, bus_to = get_branch_buses(elm_id=lne.ID,
-                                        stacubic_dict=stacubic_dict,
-                                        buses=buses,
-                                        cubics_by_objid=cubics_by_objid,
-                                        bus_by_term_id=bus_by_term_id)
+    bus_from, bus_to = get_branch_buses(
+        elm_id=lne.ID,
+        stacubic_dict=stacubic_dict,
+        buses=buses,
+        cubics_by_objid=cubics_by_objid,
+        bus_by_term_id=bus_by_term_id
+    )
 
-    line = dev.Line(bus_from=bus_from,
-                    bus_to=bus_to,
-                    name=lne.loc_name,
-                    active=not lne.outserv,
-                    length=lne.dline)
+    line = dev.Line(
+        bus_from=bus_from,
+        bus_to=bus_to,
+        name=lne.loc_name,
+        active=not lne.outserv,
+        length=lne.dline
+    )
 
-    line.apply_template(obj=template, Sbase=baseMVA, freq=freq, logger=logger)
+    # ------------------------------------------------------------
+    # Apply the resolved template
+    # ------------------------------------------------------------
+    if seq_template is not None:
+        line.apply_template(obj=seq_template, Sbase=baseMVA, freq=freq, logger=logger)
+    else:
+        # OverheadLineType uses a 1-based circuit index. Default to circuit 1 here.
+        line.set_circuit_idx(val=1, obj=ohl_template)
+        line.apply_template(obj=ohl_template, Sbase=baseMVA, freq=freq, logger=logger)
 
     return line
 
@@ -867,6 +1119,11 @@ def convert_dgs_to_static_gen(elmgenstat: ElmGenstat,
                             cubics_by_objid=cubics_by_objid,
                             bus_by_term_id=bus_by_term_id)
 
+    # Slack/reference machine indicator (PowerFactory exports ip_ctrl=1 on the slack generator)
+    if int(elmgenstat.ip_ctrl) == 1:
+        bus.is_slack = True
+
+
     stagen = dev.StaticGenerator(
         name=elmgenstat.loc_name or f"SatticGen_{_ref_id(elmgenstat.ID)}",
         P=elmgenstat.pgini,
@@ -874,6 +1131,8 @@ def convert_dgs_to_static_gen(elmgenstat: ElmGenstat,
         active=0 if elmgenstat.outserv else 1
     )
 
+    # Preserve PowerFactory 'ip_ctrl' (1 means this is the reference/slack machine)
+    stagen.ip_ctrl = int(elmgenstat.ip_ctrl)
     return bus, stagen
 
 
@@ -916,33 +1175,60 @@ def _extract_shunt_gb(elmshnt: ElmShnt, logger: Logger) -> Tuple[float, float]:
     Extract (G, B) from an ElmShnt.
     VeraGrid expects:
       - G in MW @ v=1 p.u.
-      - B in MVAr @ v=1 p.u.
-    PowerFactory DGS provides qcapn as MVAr per step and ncapa as connected steps.
+      - B in MVAr @ v=1 p.u. (positive capacitive, negative inductive)
+
+    PowerFactory DGS typically provides:
+      - qcapn / ncapa for capacitor steps
+      - qrean for reactor MVAr
+      - qtotn as total rated MVAr magnitude (often positive regardless of type)
+      - shtype: 1 = reactor, 2 = capacitor
     """
     name = elmshnt.loc_name or _ref_id(elmshnt.ID) or "Shunt"
 
     # Active losses are not provided in the common DGS export, assume 0.0 MW @ v=1 p.u.
     g_mw: float = 0.0
 
-    # Reactive power per step (MVAr) and connected steps
-    q_step: float = elmshnt.qcapn
-    n_on: int = elmshnt.ncapa
-
-    if n_on <= 0:
-        n_on = 1
-
-    b_mvar: float = q_step * float(n_on)
-
-    # If total rated MVAr is present in schema, prefer it when non-zero
+    shtype: int = elmshnt.shtype  # 1 reactor, 2 capacitor
     qtotn: float = elmshnt.qtotn
+
+    # Default to 0.0 in case the element is not energized or data is missing
+    b_mvar: float = 0.0
+
+    # Prefer total rating when available, but apply sign from shtype (PF export often stores magnitude)
     if qtotn != 0.0:
-        b_mvar = qtotn
+        b_mvar = abs(qtotn)
+    else:
+        if shtype == 1:
+            # Reactor
+            b_mvar = abs(elmshnt.qrean)
+        elif shtype == 2:
+            # Capacitor (may be step-based)
+            q_step: float = elmshnt.qcapn
+            n_on: int = elmshnt.ncapa
+            if n_on <= 0:
+                n_on = 1
+            b_mvar = abs(q_step) * float(n_on)
+        else:
+            # Fallback: net MVAr = qcapn - qrean
+            q_step: float = elmshnt.qcapn
+            n_on: int = elmshnt.ncapa
+            if n_on <= 0:
+                n_on = 1
+            b_mvar = (q_step * float(n_on)) - elmshnt.qrean
+
+    # Apply sign convention
+    if shtype == 1:
+        b_mvar = -abs(b_mvar)
+    elif shtype == 2:
+        b_mvar = abs(b_mvar)
+    # else: keep computed sign (fallback branch)
 
     if b_mvar == 0.0:
-        logger.add_warning(f"Shunt '{name}': computed B=0.0 MVAr (qcapn={q_step}, ncapa={n_on}).")
+        logger.add_warning(
+            f"Shunt '{name}': computed B=0.0 MVAr (shtype={shtype}, qcapn={elmshnt.qcapn}, ncapa={elmshnt.ncapa}, qrean={elmshnt.qrean}, qtotn={qtotn})."
+        )
 
     return g_mw, b_mvar
-
 
 def convert_dgs_to_shunt(elmshnt: ElmShnt,
                          stacubic_dict: Dict[str, List[int]],
@@ -954,12 +1240,6 @@ def convert_dgs_to_shunt(elmshnt: ElmShnt,
     Convert ElmShnt to VeraGrid fixed Shunt.
     """
     name = elmshnt.loc_name or f"Shunt_{_ref_id(elmshnt.ID)}"
-
-    # Fixed shunts only: if max steps > 1, the device is stepped/controllable in PF
-    ncapx: int = elmshnt.ncapx
-    if ncapx > 1:
-        logger.add_warning(f"ElmShnt '{name}': ncapx={ncapx} indicates stepped shunt. Skipping fixed conversion.")
-        raise ValueError("ElmShnt is stepped/controllable (ncapx>1).")
 
     bus = get_injection_bus(elm_id=elmshnt.ID,
                             stacubic_dict=stacubic_dict,
@@ -976,6 +1256,106 @@ def convert_dgs_to_shunt(elmshnt: ElmShnt,
 
     return bus, shunt
 
+
+
+def _build_elmshnt_step_model(elmshnt: ElmShnt, logger: Logger) -> Tuple[np.ndarray, int, float, float]:
+    """
+    Build the step model (b_steps, initial_step, Bmin, Bmax) for an ElmShnt with ncapx > 1.
+
+    Notes
+    -----
+    - The ControllableShunt step setter sums step increments up to index 'step' (inclusive).
+      To represent an OFF state (0 MVAr), we insert an explicit 0.0 increment as the first entry.
+    - PowerFactory exports qcapn as MVAr per step at v=1 p.u. and ncapa as connected steps.
+    """
+    name: str = elmshnt.loc_name or _ref_id(elmshnt.ID) or "ElmShnt"
+    ncapx: int = int(elmshnt.ncapx)
+    q_step: float = float(elmshnt.qcapn)
+    qtotn: float = float(elmshnt.qtotn)
+    if q_step == 0.0 and qtotn != 0.0:
+        q_step = qtotn / float(ncapx)
+        logger.add_warning(
+            f"ElmShnt '{name}': qcapn=0.0 but qtotn={qtotn}; using q_step=qtotn/ncapx={q_step}."
+        )
+
+    # Step increments: [0.0, q_step, q_step, ..., q_step] with length ncapx+1
+    b_steps: np.ndarray = np.concatenate((np.array([0.0], dtype=float), np.full(ncapx, q_step, dtype=float)))
+
+    # Initial step index equals the number of connected steps (ncapa) because b_steps[0] is OFF (0 MVAr).
+    n_on: int = int(elmshnt.ncapa)
+
+    initial_step: int = n_on
+
+    # Bounds (MVAr @ v=1 p.u.) inferred from the step size sign
+    total: float = q_step * float(ncapx)
+    if total >= 0.0:
+        bmin: float = 0.0
+        bmax: float = total
+    else:
+        bmin = total
+        bmax = 0.0
+
+    return b_steps, initial_step, bmin, bmax
+
+
+def convert_dgs_to_controllable_shunt_from_elmshnt(elmshnt: ElmShnt,
+                                                  stacubic_dict: Dict[str, List[int]],
+                                                  buses: List[dev.Bus],
+                                                  logger: Logger,
+                                                  cubics_by_objid: Dict[str, List[StaCubic]],
+                                                  bus_by_term_id: Dict[str, dev.Bus]) -> Tuple[dev.Bus, dev.ControllableShunt]:
+    """
+    Convert stepped ElmShnt (ncapx > 1) to VeraGrid ControllableShunt.
+
+    Mapping
+    -------
+    - Steps: ncapa (connected steps) is mapped to the initial ControllableShunt.step.
+    - Reactive increments: qcapn is used as MVAr per step at v=1 p.u. (positive = capacitor, negative = reactor).
+    - Voltage control: If 'iswitch' indicates controlled operation and the DGS provides 'usetp', we propagate it.
+      Otherwise, the device is modeled as an operator-controllable stepped shunt (no automatic control).
+    """
+    name: str = elmshnt.loc_name or f"ElmShnt_{_ref_id(elmshnt.ID)}"
+
+    bus: dev.Bus = get_injection_bus(elm_id=elmshnt.ID,
+                                     stacubic_dict=stacubic_dict,
+                                     buses=buses,
+                                     cubics_by_objid=cubics_by_objid,
+                                     bus_by_term_id=bus_by_term_id)
+
+    b_steps, initial_step, bmin, bmax = _build_elmshnt_step_model(elmshnt=elmshnt, logger=logger)
+
+    # DGS does not reliably encode automatic voltage control semantics for ElmShnt.
+    # Stepped shunts are imported as operator-controlled devices (no automatic regulation).
+    is_controlled: bool = False
+    vset: float = float(elmshnt.usetp)
+
+    cshunt: dev.ControllableShunt = dev.ControllableShunt(
+        name=name,
+        idtag=_ref_id(elmshnt.ID),
+        is_nonlinear=False,
+        number_of_steps=int(len(b_steps)),
+        step=int(initial_step),
+        g_per_step=0.0,
+        b_per_step=0.0,
+        Bmin=bmin,
+        Bmax=bmax,
+        Gmin=0.0,
+        Gmax=0.0,
+        active=(elmshnt.outserv == 0),
+        vset=vset,
+        is_controlled=is_controlled,
+        control_bus=bus,
+    )
+
+    # Override step arrays to match the DGS stepped-bank model (OFF + ncapx identical increments).
+    cshunt.b_steps = b_steps
+    cshunt.g_steps = np.zeros(len(b_steps), dtype=float)
+    cshunt.active_steps = np.ones(len(b_steps), dtype=int)
+
+    # Ensure B/G are coherent with the initial step after overriding arrays
+    cshunt.step = int(initial_step)
+
+    return bus, cshunt
 
 def convert_dgs_to_controllable_shunt(elmsvs: ElmSvs,
                                       stacubic_dict: Dict[str, List[int]],
@@ -1101,18 +1481,18 @@ def convert_dgs_to_generator(elmsym: ElmSym,
     """
     name = elmsym.loc_name or f"Gen_{_ref_id(elmsym.ID)}"
 
-    # Skip motors (ElmSym can represent synchronous motors too)
-    if elmsym.i_mot != 0:
-        logger.add_warning(f"ElmSym '{name}' is marked as motor (i_mot=1). Skipping Generator conversion.")
-        raise ValueError("ElmSym is a motor, not a generator.")
-
     bus = get_injection_bus(elm_id=elmsym.ID,
                             stacubic_dict=stacubic_dict,
                             buses=buses,
                             cubics_by_objid=cubics_by_objid,
                             bus_by_term_id=bus_by_term_id)
 
-    # Resolve type (optional but recommended)
+    # Slack/reference machine indicator (PowerFactory exports ip_ctrl=1 on the slack generator)
+    if int(elmsym.ip_ctrl) == 1:
+        bus.is_slack = True
+
+
+    # Resolve type
     typsym = typsym_dict.get(elmsym.typ_id, None)
     if typsym is None:
         typsym = typsym_dict.get(_ref_id(elmsym.typ_id), None)
@@ -1175,9 +1555,7 @@ def convert_dgs_to_generator(elmsym: ElmSym,
                         Pmax=pmax,
                         Sbase=baseMVA)
 
-    # slack
-    if elmsym.ip_ctrl == 1:
-        bus.is_slack = True
+
 
     # Optional sequence data from type (best-effort, may not exist in all exports)
     if typsym is not None:
@@ -1370,6 +1748,25 @@ def dgs_to_circuit(path: str, logger: Logger | None = None) -> dev.MultiCircuit:
         if zid is not None:
             zone_by_id[zid] = zone
 
+    # Branch groups (ElmBranch)
+    # ElmBranch is a hierarchical container in PowerFactory and does not define electrical connectivity.
+    # We map it to VeraGridEngine BranchGroup for metadata/grouping only.
+    branch_group_by_id: Dict[str, dev.BranchGroup] = dict()
+    for elmbranch in dgs_grid.elmbranches:
+        bid = _ref_id(elmbranch.ID)
+        name = elmbranch.loc_name if elmbranch.loc_name != "" else f"BranchGroup_{bid}"
+
+        bg = dev.BranchGroup(
+            name=name,
+            code="",
+            idtag=bid
+        )
+
+        grid.add_branch_group(obj=bg)
+
+        if bid is not None and bid != "":
+            branch_group_by_id[bid] = bg
+
     # Buses
     bus_by_term_id: Dict[str, dev.Bus] = dict()
     for elmterm in dgs_grid.elmterms:
@@ -1479,16 +1876,28 @@ def dgs_to_circuit(path: str, logger: Logger | None = None) -> dev.MultiCircuit:
 
     # Shunts (fixed)
     for elmshnt in dgs_grid.elmshnts:
-        bus, shunt = convert_dgs_to_shunt(
-            elmshnt=elmshnt,
-            stacubic_dict=stacubic_dict,
-            buses=grid.buses,
-            logger=logger,
-            cubics_by_objid=cubics_by_objid,
-            bus_by_term_id=bus_by_term_id
-        )
+        if int(elmshnt.ncapx) > 1:
+            bus, cshunt = convert_dgs_to_controllable_shunt_from_elmshnt(
+                elmshnt=elmshnt,
+                stacubic_dict=stacubic_dict,
+                buses=grid.buses,
+                logger=logger,
+                cubics_by_objid=cubics_by_objid,
+                bus_by_term_id=bus_by_term_id
+            )
 
-        grid.add_shunt(bus=bus, api_obj=shunt)
+            grid.add_controllable_shunt(bus=bus, api_obj=cshunt)
+        else:
+            bus, shunt = convert_dgs_to_shunt(
+                elmshnt=elmshnt,
+                stacubic_dict=stacubic_dict,
+                buses=grid.buses,
+                logger=logger,
+                cubics_by_objid=cubics_by_objid,
+                bus_by_term_id=bus_by_term_id
+            )
+
+            grid.add_shunt(bus=bus, api_obj=shunt)
 
     # Controllable shunts (SVC/SVS)
     for elmsvs in dgs_grid.elmsvss:
@@ -1513,6 +1922,41 @@ def dgs_to_circuit(path: str, logger: Logger | None = None) -> dev.MultiCircuit:
         seq_lne = convert_dgs_to_sequence_line(typlne=typlne)
         grid.add_sequence_line(obj=seq_lne)
         typlne_dict[typlne.ID] = seq_lne
+
+    # Conductor / tower catalogues (overhead line modelling)
+    typcon_raw_dict: Dict[str, TypCon] = dict()
+    wire_type_dict: Dict[str, Wire] = dict()
+    for typcon in dgs_grid.typcons:
+        # Map both raw pointer and ref-id variant
+        cid = _ref_id(typcon.ID)
+        if cid is None:
+            continue
+        typcon_raw_dict[cid] = typcon
+        typcon_raw_dict[typcon.ID] = typcon
+
+        wire = convert_dgs_to_wire(typcon=typcon)
+        wire_type_dict[cid] = wire
+        wire_type_dict[typcon.ID] = wire
+
+        # MultiCircuit stores these templates under Assets (catalogue)
+        grid.wire_types.append(wire)
+
+    overhead_line_type_dict: Dict[str, OverheadLineType] = dict()
+    for typtow in dgs_grid.typtows:
+        tow_id = _ref_id(typtow.ID)
+        if tow_id is None:
+            continue
+
+        ohl_type = convert_dgs_to_overhead_line_type(
+            typtow=typtow,
+            typcon_by_id=typcon_raw_dict,
+            wire_by_id=wire_type_dict,
+            default_frequency_hz=frequency,
+        )
+        overhead_line_type_dict[tow_id] = ohl_type
+        overhead_line_type_dict[typtow.ID] = ohl_type
+
+        grid.overhead_line_types.append(ohl_type)
 
     # Transformer types
     typtr2_dict: Dict[str, dev.TransformerType] = dict()
@@ -1543,20 +1987,213 @@ def dgs_to_circuit(path: str, logger: Logger | None = None) -> dev.MultiCircuit:
         if tid is not None:
             typsind_raw_dict[tid] = typsind
 
-    # lines
+    # ------------------------------------------------------------
+    # Fallback map: ElmLne.ID -> typ_id from ElmLnesec
+    # Some PowerFactory exports omit ElmLne.typ_id and store it in ElmLnesec.typ_id.
+    # In some cases, ElmLnesec.fold_id references an IntFolder chain; we climb until we reach an ElmLne.
+    # ------------------------------------------------------------
+    line_type_by_line_id: Dict[str, str] = dict()
+
+    # Fast lookup of line IDs (raw and normalized)
+    line_ids: Set[str] = set()
     for elmlne in dgs_grid.elmlnes:
+        if elmlne.ID != "":
+            line_ids.add(elmlne.ID)
+            rid = _ref_id(elmlne.ID)
+            if rid is not None and rid != "":
+                line_ids.add(rid)
+
+    # Folder -> parent pointer map (raw and normalized keys)
+    folder_parent: Dict[str, str] = dict()
+    for folder in dgs_grid.intfolders:
+        if folder.ID == "":
+            continue
+        folder_parent[folder.ID] = folder.fold_id
+        fid = _ref_id(folder.ID)
+        if fid is not None and fid != "":
+            folder_parent[fid] = folder.fold_id
+
+    # Name-based helper maps. Some PF exports place ElmLnesec under folders that are not in the
+    # IntFolder chain of the ElmLne, so fold_id climbing cannot reach the line. In that case,
+    # the best available fallback is matching by loc_name / chr_name.
+    line_id_by_loc_name: Dict[str, str] = dict()
+    line_id_by_chr_name: Dict[str, str] = dict()
+    for elmlne in dgs_grid.elmlnes:
+        if elmlne.loc_name != "":
+            line_id_by_loc_name[elmlne.loc_name] = _ref_id(elmlne.ID) or elmlne.ID
+        if elmlne.chr_name != "":
+            line_id_by_chr_name[elmlne.chr_name] = _ref_id(elmlne.ID) or elmlne.ID
+
+    # Resolve each section to its owning line by climbing the folder chain
+    for sec in dgs_grid.elmlnesecs:
+        if sec.typ_id == "":
+            continue
+
+        current = sec.fold_id
+        if current == "":
+            continue
+
+        cur = _ref_id(current)
+        if cur is None or cur == "":
+            cur = current
+
+        owner_line_id: str = ""
+        for _ in range(25):
+            if cur in line_ids:
+                owner_line_id = cur
+                break
+
+            parent_ptr = folder_parent.get(cur)
+            if parent_ptr is None or parent_ptr == "":
+                break
+
+            nxt = _ref_id(parent_ptr)
+            cur = nxt if (nxt is not None and nxt != "") else parent_ptr
+
+        if owner_line_id == "":
+            # Fallback: try matching by section names.
+            if sec.loc_name != "" and sec.loc_name in line_id_by_loc_name:
+                owner_line_id = line_id_by_loc_name[sec.loc_name]
+            elif sec.chr_name != "" and sec.chr_name in line_id_by_chr_name:
+                owner_line_id = line_id_by_chr_name[sec.chr_name]
+
+        if owner_line_id == "":
+            # Name-based fallback: try to match the section to a line by loc_name or chr_name.
+            # This is used only if the folder-climb mechanism cannot resolve ownership.
+            if sec.loc_name != "":
+                owner_line_id = line_id_by_loc_name.get(sec.loc_name, "")
+            if owner_line_id == "" and sec.chr_name != "":
+                owner_line_id = line_id_by_chr_name.get(sec.chr_name, "")
+
+        if owner_line_id != "":
+            tid = _ref_id(sec.typ_id)
+            typ_id = tid if (tid is not None and tid != "") else sec.typ_id
+            line_type_by_line_id[owner_line_id] = typ_id
+            # Store a normalized key too, because lne.ID might come with or without PF path prefix.
+            oid = _ref_id(owner_line_id)
+            if oid is not None and oid != "":
+                line_type_by_line_id[oid] = typ_id
+
+    # ------------------------------------------------------------
+    # Tower coupling helper: ElmTow may define the line template (TypTow) instead of ElmLne.typ_id.
+    # We build a direct mapping Line.ID -> OverheadLineType so convert_dgs_to_line can proceed
+    # even when typ_id is missing, and apply the proper template immediately.
+    # ------------------------------------------------------------
+    tower_template_by_line_id: Dict[str, OverheadLineType] = dict()
+    for elmtow in dgs_grid.elmtows:
+        if len(elmtow.pGeo) == 0:
+            continue
+        geo_ptr = elmtow.pGeo[0]
+        if geo_ptr is None or geo_ptr == "":
+            continue
+
+        geo_id = _ref_id(geo_ptr)
+        ohl_type = overhead_line_type_dict.get(geo_id, None)
+        if ohl_type is None:
+            ohl_type = overhead_line_type_dict.get(geo_ptr, None)
+        if ohl_type is None:
+            continue
+
+        for line_ptr in elmtow.plines:
+            if line_ptr is None or line_ptr == "":
+                continue
+            tower_template_by_line_id[line_ptr] = ohl_type
+            lid = _ref_id(line_ptr)
+            if lid is not None and lid != "":
+                tower_template_by_line_id[lid] = ohl_type
+
+    # lines
+    line_by_dgs_id: Dict[str, dev.Line] = dict()
+    for elmlne in dgs_grid.elmlnes:
+
+        # ------------------------------------------------------------
+        # Pre-check: skip orphan lines (no StaCubic connectivity)
+        # This avoids failing on missing typ_id for elements that are not
+        # electrically connected in the exported DGS (e.g., '*_2a' duplicates).
+        # ------------------------------------------------------------
+        term_ids: List[str] = get_terminal_ids(element_id=elmlne.ID, cubics_by_objid=cubics_by_objid)
+        if len(term_ids) != 2:
+            bus_ids: List[int] | None = stacubic_dict.get(_ref_id(elmlne.ID), None)
+            if bus_ids is None or len(bus_ids) != 2:
+                logger.add_warning(
+                    f"ElmLne '{elmlne.loc_name}' (ID={elmlne.ID}) skipped: "
+                    f"not connected to exactly 2 terminals (StaCubic terminals={len(term_ids)}). "
+                    f"typ_id='{elmlne.typ_id}'."
+                )
+                continue
+
         line = convert_dgs_to_line(
             lne=elmlne,
             buses=grid.buses,
             stacubic_dict=stacubic_dict,
             templates_dict=typlne_dict,
+            overhead_line_type_dict=overhead_line_type_dict,
+            line_type_by_line_id=line_type_by_line_id,
+            tower_template_by_line_id=tower_template_by_line_id,
             freq=frequency,
             baseMVA=baseMVA,
             logger=logger,
             cubics_by_objid=cubics_by_objid,
             bus_by_term_id=bus_by_term_id
         )
+
+        # Optional grouping metadata...
+        fold_id = _ref_id(elmlne.fold_id)
+        if fold_id is not None and fold_id != "":
+            bg = branch_group_by_id.get(fold_id)
+            if bg is not None:
+                line.group = bg
+
         grid.add_line(obj=line, logger=logger)
+
+        lid_raw = elmlne.ID
+        lid = _ref_id(lid_raw)
+        if lid is not None:
+            line_by_dgs_id[lid] = line
+        if lid_raw is not None and lid_raw != "":
+            line_by_dgs_id[lid_raw] = line
+
+    # Tower coupling (ElmTow): bind the created Line objects to OverheadLineType templates.
+    # IMPORTANT: the Line objects must exist first (created above).
+    for elmtow in dgs_grid.elmtows:
+        if int(elmtow.outserv) != 0:
+            continue
+
+        if len(elmtow.pGeo) == 0:
+            logger.add_warning(f"ElmTow '{elmtow.loc_name}': no pGeo specified, skipping tower binding.")
+            continue
+
+        geo_ptr = elmtow.pGeo[0]
+        if geo_ptr is None:
+            logger.add_warning(f"ElmTow '{elmtow.loc_name}': pGeo[0] is empty, skipping tower binding.")
+            continue
+
+        geo_id = _ref_id(geo_ptr)
+        ohl_type = overhead_line_type_dict.get(geo_id)
+        if ohl_type is None:
+            ohl_type = overhead_line_type_dict.get(geo_ptr)
+
+        if ohl_type is None:
+            logger.add_warning(f"ElmTow '{elmtow.loc_name}': referenced tower type '{geo_ptr}' not found.")
+            continue
+
+        for idx, line_ptr in enumerate(elmtow.plines):
+            if line_ptr is None:
+                continue
+
+            line_id = _ref_id(line_ptr)
+            api_line = line_by_dgs_id.get(line_id)
+            if api_line is None:
+                api_line = line_by_dgs_id.get(line_ptr)
+
+            if api_line is None:
+                logger.add_warning(f"ElmTow '{elmtow.loc_name}': referenced line '{line_ptr}' not found.")
+                continue
+
+            # VeraGrid OverheadLineType uses a 1-based circuit index.
+            circuit_idx = int(idx) + 1
+            api_line.set_circuit_idx(val=circuit_idx, obj=ohl_type)
+            api_line.apply_template(obj=ohl_type, Sbase=baseMVA, freq=frequency, logger=logger)
 
     # series reactances / impedances
     for elmsind in dgs_grid.elmsinds:
@@ -1571,6 +2208,14 @@ def dgs_to_circuit(path: str, logger: Logger | None = None) -> dev.MultiCircuit:
             sbase_mva=baseMVA
         )
         # MultiCircuit supports generic branch insertion
+        # Optional grouping metadata: assign BranchGroup based on the DGS hierarchical folder reference.
+        # IMPORTANT: this does not affect electrical connectivity.
+        fold_id = _ref_id(elmsind.fold_id)
+        if fold_id is not None and fold_id != "":
+            bg = branch_group_by_id.get(fold_id)
+            if bg is not None:
+                sr.group = bg
+
         grid.add_series_reactance(obj=sr)
 
     # switches (PowerFactory/DGS: ElmCoup is the real device; StaCubic resolves connectivity)
@@ -1600,6 +2245,14 @@ def dgs_to_circuit(path: str, logger: Logger | None = None) -> dev.MultiCircuit:
             cubics_by_objid=cubics_by_objid,
             bus_by_term_id=bus_by_term_id
         )
+
+        # Optional grouping metadata: assign BranchGroup based on the DGS hierarchical folder reference.
+        # IMPORTANT: this does not affect electrical connectivity.
+        fold_id = _ref_id(elmtr2.fold_id)
+        if fold_id is not None and fold_id != "":
+            bg = branch_group_by_id.get(fold_id)
+            if bg is not None:
+                trafo.group = bg
 
         grid.add_transformer2w(obj=trafo)
 
@@ -1636,6 +2289,14 @@ def dgs_to_circuit(path: str, logger: Logger | None = None) -> dev.MultiCircuit:
         )
 
         grid.add_bus(obj=trafo3w.bus0)
+        # Optional grouping metadata: assign BranchGroup based on the DGS hierarchical folder reference.
+        # IMPORTANT: this does not affect electrical connectivity.
+        fold_id = _ref_id(elmtr3.fold_id)
+        if fold_id is not None and fold_id != "":
+            bg = branch_group_by_id.get(fold_id)
+            if bg is not None:
+                trafo3w.group = bg
+
         grid.add_transformer3w(obj=trafo3w)
 
     return grid
@@ -1648,7 +2309,7 @@ def convert_dgs_to_switches_by_elements(cubics_by_objid: Dict[str, List[StaCubic
                                         bus_by_term_id: Dict[str, dev.Bus],
                                         tr3_ids: Set[str],
                                         logger: Logger) -> List[dev.Switch]:
-    
+
     Create one VeraGrid Switch per 2-terminal element (line/trafo/etc.) when both ends have StaSwitch.
     This function filters out "internal" PowerFactory switches (closed and without type) unless
     they belong to a 3-Winding Transformer.
@@ -1659,7 +2320,7 @@ def convert_dgs_to_switches_by_elements(cubics_by_objid: Dict[str, List[StaCubic
     :param tr3_ids: Set of IDs belonging to 3-Winding Transformers (to force visibility)
     :param logger: Logger object
     :return: List of VeraGrid Switch objects
-   
+
     switches: List[dev.Switch] = list()
 
     for obj_id, cubics in cubics_by_objid.items():
@@ -1748,3 +2409,4 @@ def convert_dgs_to_switches_by_elements(cubics_by_objid: Dict[str, List[StaCubic
     return switches
 
 """
+#TODO: There might be an error with 3W trafos impedances

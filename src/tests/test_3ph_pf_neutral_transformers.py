@@ -79,11 +79,11 @@ def test_yy_impedance_neutralstar_3ph():
     # Load
     # ----------------------------------------------------------------------------------------------------------------------
     load_636 = gce.Load(G1=0.3,
-                        B1=0.3,
+                        B1=-0.3,
                         G2=0.2,
-                        B2=0.2,
+                        B2=-0.2,
                         G3=0.1,
-                        B3=0.1)
+                        B3=-0.1)
     load_636.conn = ShuntConnectionType.NeutralStar
     grid.add_load(bus=bus_636, api_obj=load_636)
 
@@ -190,7 +190,7 @@ def test_yy_impedance_neutralstar_1ph():
     # Load
     # ----------------------------------------------------------------------------------------------------------------------
     load_636 = gce.Load(G1=0.3,
-                        B1=0.3)
+                        B1=-0.3)
     load_636.conn = ShuntConnectionType.NeutralStar
     grid.add_load(bus=bus_636, api_obj=load_636)
 
@@ -297,11 +297,11 @@ def test_yy_current_neutralstar_3ph():
     # Load
     # ----------------------------------------------------------------------------------------------------------------------
     load_636 = gce.Load(Ir1=0.3,
-                        Ii1=0.3,
+                        Ii1=-0.3,
                         Ir2=0.2,
-                        Ii2=0.2,
+                        Ii2=-0.2,
                         Ir3=0.1,
-                        Ii3=0.1)
+                        Ii3=-0.1)
     load_636.conn = ShuntConnectionType.NeutralStar
     grid.add_load(bus=bus_636, api_obj=load_636)
 
@@ -408,7 +408,7 @@ def test_yy_current_neutralstar_1ph():
     # Load
     # ----------------------------------------------------------------------------------------------------------------------
     load_636 = gce.Load(Ir1=0.3,
-                        Ii1=0.3)
+                        Ii1=-0.3)
     load_636.conn = ShuntConnectionType.NeutralStar
     grid.add_load(bus=bus_636, api_obj=load_636)
 
@@ -733,11 +733,11 @@ def test_dy_impedance_neutralstar_3ph():
     # Load
     # ----------------------------------------------------------------------------------------------------------------------
     load_636 = gce.Load(G1=0.3,
-                        B1=0.3,
+                        B1=-0.3,
                         G2=0.2,
-                        B2=0.2,
+                        B2=-0.2,
                         G3=0.1,
-                        B3=0.1)
+                        B3=-0.1)
     load_636.conn = ShuntConnectionType.NeutralStar
     grid.add_load(bus=bus_636, api_obj=load_636)
 
@@ -844,7 +844,7 @@ def test_dy_impedance_neutralstar_1ph():
     # Load
     # ----------------------------------------------------------------------------------------------------------------------
     load_636 = gce.Load(G1=0.3,
-                        B1=0.3)
+                        B1=-0.3)
     load_636.conn = ShuntConnectionType.NeutralStar
     grid.add_load(bus=bus_636, api_obj=load_636)
 
@@ -951,11 +951,11 @@ def test_dy_current_neutralstar_3ph():
     # Load
     # ----------------------------------------------------------------------------------------------------------------------
     load_636 = gce.Load(Ir1=0.3,
-                        Ii1=0.3,
+                        Ii1=-0.3,
                         Ir2=0.2,
-                        Ii2=0.2,
+                        Ii2=-0.2,
                         Ir3=0.1,
-                        Ii3=0.1)
+                        Ii3=-0.1)
     load_636.conn = ShuntConnectionType.NeutralStar
     grid.add_load(bus=bus_636, api_obj=load_636)
 
@@ -1062,7 +1062,7 @@ def test_dy_current_neutralstar_1ph():
     # Load
     # ----------------------------------------------------------------------------------------------------------------------
     load_636 = gce.Load(Ir1=0.3,
-                        Ii1=0.3)
+                        Ii1=-0.3)
     load_636.conn = ShuntConnectionType.NeutralStar
     grid.add_load(bus=bus_636, api_obj=load_636)
 

@@ -4,19 +4,14 @@
 # SPDX-License-Identifier: MPL-2.0
 from typing import List, Tuple, Dict
 import pandas as pd
-from VeraGridEngine.Utils.Symbolic.block import Block, Var, Const, VarPowerFlowRefferenceType
 from VeraGridEngine.Devices.Branches.transformer_type import TransformerType
 from VeraGridEngine.Devices.Branches.sequence_line_type import SequenceLineType
 from VeraGridEngine.Devices.Branches.underground_line_type import UndergroundLineType
 from VeraGridEngine.Devices.Branches.wire import Wire
 from VeraGridEngine.Devices.assets import Assets
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-from VeraGridEngine.enumerations import DeviceType
 from VeraGridEngine.basic_structures import Logger
-
 from VeraGridEngine.enumerations import DeviceType
-
-
 
 
 def get_transformers_catalogue_df(grid: MultiCircuit):
@@ -117,16 +112,20 @@ def parse_transformer_types(df: pd.DataFrame) -> List[TransformerType]:
     """
     lst = list()
     for i, item in df.iterrows():
-        tpe = TransformerType(hv_nominal_voltage=item.get('HV (kV)', 0.0),
-                              lv_nominal_voltage=item.get('LV (kV)', 0.0),
-                              nominal_power=item.get('Rate (MVA)', 0.001),
-                              copper_losses=item.get('Copper losses (kW)', 0.0),
-                              iron_losses=item.get('No load losses (kW)', 0.0),
-                              no_load_current=item.get('No load current (%)', 0.0),
-                              short_circuit_voltage=item.get('V short circuit (%)', 0.0),
-                              gr_hv1=item.get("gr_hv1", 0.5),
-                              gx_hv1=item.get("gx_hv1", 0.5),
-                              name=item.get('Name', "TransformerType_{}".format(i)))
+        tpe = TransformerType(
+            hv_nominal_voltage=item.get('HV (kV)', 0.0),
+            lv_nominal_voltage=item.get('LV (kV)', 0.0),
+            nominal_power=item.get('Rate (MVA)', 0.001),
+            copper_losses=item.get('Copper losses (kW)', 0.0),
+            iron_losses=item.get('No load losses (kW)', 0.0),
+            no_load_current=item.get('No load current (%)', 0.0),
+            short_circuit_voltage=item.get('V short circuit (%)', 0.0),
+            gr_hv1=item.get("gr_hv1", 0.5),
+            gx_hv1=item.get("gx_hv1", 0.5),
+            name=item.get('Name', "TransformerType_{}".format(i)),
+            capex=item.get("CAPEX [currency]", 0.0),
+            opex = item.get("OPEX [currency/MWh]", 0.0)
+        )
         lst.append(tpe)
 
     return lst
@@ -140,15 +139,19 @@ def parse_cable_types(df: pd.DataFrame) -> List[UndergroundLineType]:
     """
     lst = list()
     for i, item in df.iterrows():
-        tpe = UndergroundLineType(name=item.get('Name', "UndergroundLine_{}".format(i)),
-                                  Imax=item.get('Rated current [kA]', 1.0),
-                                  Vnom=item.get('Rated voltage [kV]', 1.0),
-                                  R=item.get('R [Ohm/km AC@20°C]', 0.0),
-                                  X=item.get('X [Ohm/km]', 0.0),
-                                  B=item.get('B [uS/km]', 0.0),
-                                  R0=item.get('R0 (AC) [Ohm/km]', 0.0),
-                                  X0=item.get('X0  [Ohm/km]', 0.0),
-                                  B0=item.get('B0 [uS/km]', 0.0))
+        tpe = UndergroundLineType(
+            name=item.get('Name', "UndergroundLine_{}".format(i)),
+            Imax=item.get('Rated current [kA]', 1.0),
+            Vnom=item.get('Rated voltage [kV]', 1.0),
+            R=item.get('R [Ohm/km AC@20°C]', 0.0),
+            X=item.get('X [Ohm/km]', 0.0),
+            B=item.get('B [uS/km]', 0.0),
+            R0=item.get('R0 (AC) [Ohm/km]', 0.0),
+            X0=item.get('X0  [Ohm/km]', 0.0),
+            B0=item.get('B0 [uS/km]', 0.0),
+            capex=item.get("CAPEX [currency/km]", 0.0),
+            opex = item.get("OPEX [currency/MWh]", 0.0)
+        )
         lst.append(tpe)
 
     return lst
@@ -181,15 +184,19 @@ def parse_sequence_line_types(df: pd.DataFrame) -> List[SequenceLineType]:
     """
     lst = list()
     for i, item in df.iterrows():
-        tpe = SequenceLineType(name=item.get('Name', 'SequenceLine_{}'.format(i)),
-                               Vnom=item.get('Vnom (kV)', 1),
-                               Imax=item.get('Imax (kA)', 1),
-                               R=item.get('r (ohm/km)', 0),
-                               X=item.get('x (ohm/km)', 0),
-                               B=item.get('b (uS/km)', 0),
-                               R0=item.get('r0 (ohm/km)', 0),
-                               X0=item.get('x0 (ohm/km)', 0),
-                               B0=item.get('b0 (uS/km)', 0))
+        tpe = SequenceLineType(
+            name=item.get('Name', 'SequenceLine_{}'.format(i)),
+            Vnom=item.get('Vnom (kV)', 1),
+            Imax=item.get('Imax (kA)', 1),
+            R=item.get('r (ohm/km)', 0),
+            X=item.get('x (ohm/km)', 0),
+            B=item.get('b (uS/km)', 0),
+            R0=item.get('r0 (ohm/km)', 0),
+            X0=item.get('x0 (ohm/km)', 0),
+            B0=item.get('b0 (uS/km)', 0),
+            capex=item.get("CAPEX [currency/km]", 0.0),
+            opex = item.get("OPEX [currency/MWh]", 0.0)
+        )
         lst.append(tpe)
 
     return lst

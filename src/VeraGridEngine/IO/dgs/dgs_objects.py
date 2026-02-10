@@ -299,6 +299,34 @@ class ElmCoup(DGSElement):
         self.for_name: str = ""
 
 
+class ElmBranch(DGSElement):
+    """
+    Branch element container (PowerFactory/DGS).
+
+    Notes
+    -----
+    ElmBranch is a hierarchical container used to organize the project/model and
+    the single-line diagram. It does NOT define electrical connectivity.
+    """
+    element_type = 'ElmBranch'
+    properties_list = [
+        DgsProperty('ID', 'a:40', 'DGS field ID (a:40)', py_name='ID'),
+        DgsProperty('loc_name', 'a:80', 'DGS field loc_name (a:80)', py_name='loc_name'),
+        DgsProperty('for_name', 'a:100', 'DGS field for_name (a:100)', py_name='for_name'),
+        DgsProperty('fold_id', 'p', 'DGS field fold_id (p)', py_name='fold_id'),
+        DgsProperty('iDatCon0', 'i', 'DGS field iDatCon0 (i)', py_name='iDatCon0'),
+        DgsProperty('iDatCon1', 'i', 'DGS field iDatCon1 (i)', py_name='iDatCon1'),
+    ]
+
+    def __init__(self) -> None:
+        self.ID: str = ""
+        self.loc_name: str = ""
+        self.for_name: str = ""
+        self.fold_id: str = ""
+        self.iDatCon0: int = 0
+        self.iDatCon1: int = 0
+
+
 class ElmFeeder(DGSElement):
     element_type = 'ElmFeeder'
     properties_list = [
@@ -600,11 +628,15 @@ class ElmShnt(DGSElement):
         DgsProperty('ncapx', 'i', 'DGS field ncapx (i)', py_name='ncapx'),
         DgsProperty('ncapa', 'i', 'DGS field ncapa (i)', py_name='ncapa'),
         DgsProperty('outserv', 'i', 'DGS field outserv (i)', py_name='outserv'),
+        DgsProperty('qrean', 'r', 'DGS field qrean (r)', py_name='qrean'),
         DgsProperty('ctech', 'i', 'DGS field ctech (i)', py_name='ctech'),
         DgsProperty('fres', 'r', 'DGS field fres (r)', py_name='fres'),
         DgsProperty('greaf0', 'r', 'DGS field greaf0 (r)', py_name='greaf0'),
         DgsProperty('iswitch', 'i', 'DGS field iswitch (i)', py_name='iswitch'),
         DgsProperty('qtotn', 'r', 'DGS field qtotn (r)', py_name='qtotn'),
+        # Voltage setpoint for controlled operation (p.u.). Not always present in the DGS header.
+        # If absent in the file, it will remain at its default value (1.0).
+        DgsProperty('usetp', 'r', 'DGS field usetp (r)', py_name='usetp'),
     ]
 
     def __init__(self) -> None:
@@ -618,11 +650,13 @@ class ElmShnt(DGSElement):
         self.ncapx: int = 0
         self.ncapa: int = 0
         self.outserv: int = 0
+        self.qrean: float = 0.0
         self.ctech: int = 0
         self.fres: float = 0.0
         self.greaf0: float = 0.0
         self.iswitch: int = 0
         self.qtotn: float = 0.0
+        self.usetp: float = 1.0
 
 
 class ElmSvs(DGSElement):
@@ -753,7 +787,7 @@ class ElmSym(DGSElement):
         DgsProperty('pf_recap', 'i', 'DGS field pf_recap (i)', py_name='pf_recap'),
         DgsProperty('av_mode', 'a', 'DGS field av_mode (a)', py_name='av_mode'),
         DgsProperty('phtech', 'i', 'DGS field phtech (i)', py_name='phtech'),
-        DgsProperty('phtech', 'i', 'Reference machine', py_name='ip_ctrl'),
+        DgsProperty('ip_ctrl', 'i', 'Reference machine', py_name='ip_ctrl'),
         DgsProperty('c_pmod', 'a:40', 'plant model', py_name='c_pmod'),
     ]
 
@@ -1665,51 +1699,252 @@ class TypTr3(DGSElement):
         DgsProperty('i3loc', 'i', 'DGS field i3loc (i)', py_name='i3loc'),
     ]
 
-    def __init__(self) -> None:
-        self.ID: str = ""
-        self.loc_name: str = ""
-        self.fold_id: str = ""
-        self.curm3: float = 0.0
-        self.du3tp_h: float = 0.0
-        self.du3tp_l: float = 0.0
-        self.du3tp_m: float = 0.0
-        self.n3tmn_h: int = 0
-        self.n3tmn_l: int = 0
-        self.n3tmn_m: int = 0
-        self.n3tmx_h: int = 0
-        self.n3tmx_l: int = 0
-        self.n3tmx_m: int = 0
-        self.n3tp0_h: int = 0
-        self.n3tp0_l: int = 0
-        self.n3tp0_m: int = 0
-        self.nt3ag_h: float = 0.0
-        self.nt3ag_l: float = 0.0
-        self.nt3ag_m: float = 0.0
-        self.pcut3_h: float = 0.0
-        self.pcut3_l: float = 0.0
-        self.pcut3_m: float = 0.0
-        self.pfe: float = 0.0
-        self.ph3tr_h: float = 0.0
-        self.ph3tr_l: float = 0.0
-        self.ph3tr_m: float = 0.0
-        self.strn3_h: float = 0.0
-        self.strn3_l: float = 0.0
-        self.strn3_m: float = 0.0
-        self.tr3cn_h: str = ""
-        self.tr3cn_l: str = ""
-        self.tr3cn_m: str = ""
-        self.uk0hl: float = 0.0
-        self.uk0hm: float = 0.0
-        self.uk0ml: float = 0.0
-        self.uktr3_h: float = 0.0
-        self.uktr3_l: float = 0.0
-        self.uktr3_m: float = 0.0
-        self.ur0hl: float = 0.0
-        self.ur0hm: float = 0.0
-        self.ur0ml: float = 0.0
-        self.utrn3_h: float = 0.0
-        self.utrn3_l: float = 0.0
-        self.utrn3_m: float = 0.0
-        self.for_name: str = ""
-        self.itapos: int = 0
-        self.i3loc: int = 0
+
+# ----------------------------------------------------------------------------------------------------------------------
+# Overhead line modelling (PowerFactory: conductor / tower / line coupling)
+# ----------------------------------------------------------------------------------------------------------------------
+
+
+def _dgs_get(parts: List[str], header_map: Dict[str, int], key: str) -> str | None:
+    """Get the raw column value for a given DGS key."""
+    idx = header_map.get(key)
+    if idx is None:
+        return None
+    if 0 <= idx < len(parts):
+        return parts[idx]
+    return None
+
+
+class TypCon(DGSElement):
+    """PowerFactory conductor type (TypCon) mapped to VeraGrid Wire."""
+
+    element_type = 'TypCon'
+
+    properties_list = [
+        DgsProperty(name='ID', dgs_type='a:40', description='Unique identifier for DGS file', py_name='ID'),
+        DgsProperty(name='OP', dgs_type='a:1', description='Operation', py_name='OP'),
+        DgsProperty(name='loc_name', dgs_type='a:80', description='Name', py_name='loc_name'),
+        DgsProperty(name='fold_id', dgs_type='p', description='In Folder', py_name='fold_id'),
+        DgsProperty(name='uline', dgs_type='r', description='Rated Voltage in kV', py_name='uline'),
+        DgsProperty(name='sline', dgs_type='r', description='Rated Current in kA', py_name='sline'),
+        DgsProperty(name='ncsub', dgs_type='i', description='Number of Subconductors', py_name='ncsub'),
+        DgsProperty(name='dsubc', dgs_type='r', description='Bundle Spacing in m', py_name='dsubc'),
+        DgsProperty(name='rpha', dgs_type='r', description='DC-Resistance (20C) in Ohm/km', py_name='rpha'),
+        DgsProperty(name='diaco', dgs_type='r', description='Outer Diameter in mm', py_name='diaco'),
+        DgsProperty(name='diatub', dgs_type='r', description='Inner Diameter in mm', py_name='diatub'),
+        DgsProperty(name='mlei', dgs_type='a:20', description='Conductor Material', py_name='mlei'),
+    ]
+
+    def __init__(self):
+        self.ID: str = ''
+        self.OP: str = ''
+        self.loc_name: str = ''
+        self.fold_id: str | None = None
+        self.uline: float = 0.0
+        self.sline: float = 0.0
+        self.ncsub: int = 1
+        self.dsubc: float = 0.0
+        self.rpha: float = 0.0
+        self.diaco: float = 0.0
+        self.diatub: float = 0.0
+        self.mlei: str = ''
+
+
+class TypTow(DGSElement):
+    """PowerFactory tower type (TypTow) mapped to VeraGrid OverheadLineType."""
+
+    element_type = 'TypTow'
+
+    # Keep the schema minimal and parse the dynamic arrays/matrices manually in parse_line.
+    properties_list = [
+        DgsProperty(name='ID', dgs_type='a:40', description='Unique identifier for DGS file', py_name='ID'),
+        DgsProperty(name='OP', dgs_type='a:1', description='Operation', py_name='OP'),
+        DgsProperty(name='loc_name', dgs_type='a:80', description='Name', py_name='loc_name'),
+        DgsProperty(name='fold_id', dgs_type='p', description='In Folder', py_name='fold_id'),
+        DgsProperty(name='frnom', dgs_type='r', description='Nominal Frequency in Hz', py_name='frnom'),
+        DgsProperty(name='nlear', dgs_type='i', description='Number of Earth Wires', py_name='nlear'),
+        DgsProperty(name='nlcir', dgs_type='i', description='Number of Line Circuits', py_name='nlcir'),
+        DgsProperty(name='gearth', dgs_type='r', description='Earth conductivity in uS/cm', py_name='gearth'),
+    ]
+
+    def __init__(self):
+        # Base scalar fields
+        self.ID: str = ''
+        self.OP: str = ''
+        self.loc_name: str = ''
+        self.fold_id: str | None = None
+        self.frnom: float = 50.0
+        self.nlear: int = 0
+        self.nlcir: int = 1
+        self.gearth: float = 0.0
+
+        # Dynamic fields (variable-size vectors/matrices)
+        self.pcond_e: List[str | None] = list()
+        self.pcond_c: List[str | None] = list()
+        self.nphas: List[float] = list()
+        self.ktrto: List[float] = list()
+        self.xy_e: List[List[float]] = list()  # Each row: [x, y]
+        self.xy_c: List[List[float]] = list()  # Each row: [xA, xB, xC, yA, yB, yC]
+
+    @classmethod
+    def parse_line(cls, line: str, header_map: dict[str, int]):
+        """Parse TypTow data line including variable-sized arrays/matrices."""
+        parts = line.rstrip('\n').split(';')
+        obj = cls()
+
+        # Parse the scalar fields via the base schema
+        for prop in cls.properties_list:
+            idx = header_map.get(prop.name)
+            if idx is None and prop.name == 'ID':
+                idx = header_map.get('FID')
+
+            if idx is not None and 0 <= idx < len(parts):
+                raw = parts[idx]
+                val = prop.parse(raw)
+                setattr(obj, prop.py_name, val)
+
+        # Variable-size vectors
+        # Conductor types for earth wires
+        raw_n = _dgs_get(parts, header_map, 'pcond_e:SIZEROW')
+        n = int(float(raw_n.replace(',', '.'))) if raw_n is not None and raw_n.strip() != '' else 0
+        obj.pcond_e = list()
+        for i in range(n):
+            raw_ptr = _dgs_get(parts, header_map, f'pcond_e:{i}')
+            raw_ptr = raw_ptr.strip() if raw_ptr is not None else ''
+            obj.pcond_e.append(raw_ptr if raw_ptr != '' and raw_ptr != '*' else None)
+
+        # Num. of phases per circuit (often 3)
+        raw_nphas = _dgs_get(parts, header_map, 'nphas:SIZEROW')
+        nphas_n = int(float(raw_nphas.replace(',', '.'))) if raw_nphas is not None and raw_nphas.strip() != '' else 0
+        obj.nphas = list()
+        for i in range(nphas_n):
+            raw_v = _dgs_get(parts, header_map, f'nphas:{i}')
+            raw_v = raw_v.strip() if raw_v is not None else ''
+            obj.nphas.append(float(raw_v.replace(',', '.')) if raw_v != '' and raw_v != '*' else 0.0)
+
+        # Transposition flags per circuit
+        raw_ktrto = _dgs_get(parts, header_map, 'ktrto:SIZEROW')
+        ktrto_n = int(float(raw_ktrto.replace(',', '.'))) if raw_ktrto is not None and raw_ktrto.strip() != '' else 0
+        obj.ktrto = list()
+        for i in range(ktrto_n):
+            raw_v = _dgs_get(parts, header_map, f'ktrto:{i}')
+            raw_v = raw_v.strip() if raw_v is not None else ''
+            obj.ktrto.append(float(raw_v.replace(',', '.')) if raw_v != '' and raw_v != '*' else 0.0)
+
+        # Conductor types for line circuits
+        raw_pc = _dgs_get(parts, header_map, 'pcond_c:SIZEROW')
+        pc_n = int(float(raw_pc.replace(',', '.'))) if raw_pc is not None and raw_pc.strip() != '' else 0
+        obj.pcond_c = list()
+        for i in range(pc_n):
+            raw_ptr = _dgs_get(parts, header_map, f'pcond_c:{i}')
+            raw_ptr = raw_ptr.strip() if raw_ptr is not None else ''
+            obj.pcond_c.append(raw_ptr if raw_ptr != '' and raw_ptr != '*' else None)
+
+        # Earth wire coordinates: xy_e is a matrix with 2 columns (x, y) in meters
+        raw_xy_e_rows = _dgs_get(parts, header_map, 'xy_e:SIZEROW')
+        xy_e_rows = int(float(raw_xy_e_rows.replace(',', '.'))) if raw_xy_e_rows is not None and raw_xy_e_rows.strip() != '' else 0
+        raw_xy_e_cols = _dgs_get(parts, header_map, 'xy_e:SIZECOL')
+        xy_e_cols = int(float(raw_xy_e_cols.replace(',', '.'))) if raw_xy_e_cols is not None and raw_xy_e_cols.strip() != '' else 0
+
+        obj.xy_e = list()
+        for r in range(xy_e_rows):
+            row: List[float] = list()
+            for c in range(xy_e_cols):
+                raw_v = _dgs_get(parts, header_map, f'xy_e:{r}:{c}')
+                raw_v = raw_v.strip() if raw_v is not None else ''
+                row.append(float(raw_v.replace(',', '.')) if raw_v != '' and raw_v != '*' else 0.0)
+            obj.xy_e.append(row)
+
+        # Circuit coordinates: xy_c is a matrix; in this dataset it uses 6 columns:
+        # [xA, xB, xC, yA, yB, yC] in meters.
+        raw_xy_c_rows = _dgs_get(parts, header_map, 'xy_c:SIZEROW')
+        xy_c_rows = int(float(raw_xy_c_rows.replace(',', '.'))) if raw_xy_c_rows is not None and raw_xy_c_rows.strip() != '' else 0
+        raw_xy_c_cols = _dgs_get(parts, header_map, 'xy_c:SIZECOL')
+        xy_c_cols = int(float(raw_xy_c_cols.replace(',', '.'))) if raw_xy_c_cols is not None and raw_xy_c_cols.strip() != '' else 0
+
+        obj.xy_c = list()
+        for r in range(xy_c_rows):
+            row: List[float] = list()
+            for c in range(xy_c_cols):
+                raw_v = _dgs_get(parts, header_map, f'xy_c:{r}:{c}')
+                raw_v = raw_v.strip() if raw_v is not None else ''
+                row.append(float(raw_v.replace(',', '.')) if raw_v != '' and raw_v != '*' else 0.0)
+            obj.xy_c.append(row)
+
+        return obj
+
+
+class ElmTow(DGSElement):
+    """PowerFactory line coupling (ElmTow) that binds ElmLne circuits to a tower geometry."""
+
+    element_type = 'ElmTow'
+
+    properties_list = [
+        DgsProperty(name='ID', dgs_type='a:40', description='Unique identifier for DGS file', py_name='ID'),
+        DgsProperty(name='OP', dgs_type='a:1', description='Operation', py_name='OP'),
+        DgsProperty(name='loc_name', dgs_type='a:80', description='Name', py_name='loc_name'),
+        DgsProperty(name='fold_id', dgs_type='p', description='In Folder', py_name='fold_id'),
+        DgsProperty(name='outserv', dgs_type='i', description='Out of Service', py_name='outserv'),
+        DgsProperty(name='i_dist', dgs_type='i', description='Line Model', py_name='i_dist'),
+        DgsProperty(name='ngeo', dgs_type='i', description='Number of overhead line systems', py_name='ngeo'),
+    ]
+
+    def __init__(self):
+        self.ID: str = ''
+        self.OP: str = ''
+        self.loc_name: str = ''
+        self.fold_id: str | None = None
+        self.outserv: int = 0
+        self.i_dist: int = 0
+        self.ngeo: int = 0
+
+        # Dynamic vectors
+        self.pGeo: List[str | None] = list()     # Pointers to TypTow/TypGeo
+        self.plines: List[str | None] = list()   # Pointers to ElmLne / ElmLneRoute
+        self.dpolar: List[float] = list()        # Polarity flags
+
+    @classmethod
+    def parse_line(cls, line: str, header_map: dict[str, int]):
+        """Parse ElmTow data line including variable-sized vectors."""
+        parts = line.rstrip('\n').split(';')
+        obj = cls()
+
+        # Parse scalars
+        for prop in cls.properties_list:
+            idx = header_map.get(prop.name)
+            if idx is None and prop.name == 'ID':
+                idx = header_map.get('FID')
+
+            if idx is not None and 0 <= idx < len(parts):
+                raw = parts[idx]
+                val = prop.parse(raw)
+                setattr(obj, prop.py_name, val)
+
+        # Geometry pointers
+        raw_ng = _dgs_get(parts, header_map, 'pGeo:SIZEROW')
+        ng = int(float(raw_ng.replace(',', '.'))) if raw_ng is not None and raw_ng.strip() != '' else 0
+        obj.pGeo = list()
+        for i in range(ng):
+            raw_ptr = _dgs_get(parts, header_map, f'pGeo:{i}')
+            raw_ptr = raw_ptr.strip() if raw_ptr is not None else ''
+            obj.pGeo.append(raw_ptr if raw_ptr != '' and raw_ptr != '*' else None)
+
+        # Circuit pointers (ElmLne)
+        raw_nl = _dgs_get(parts, header_map, 'plines:SIZEROW')
+        nl = int(float(raw_nl.replace(',', '.'))) if raw_nl is not None and raw_nl.strip() != '' else 0
+        obj.plines = list()
+        for i in range(nl):
+            raw_ptr = _dgs_get(parts, header_map, f'plines:{i}')
+            raw_ptr = raw_ptr.strip() if raw_ptr is not None else ''
+            obj.plines.append(raw_ptr if raw_ptr != '' and raw_ptr != '*' else None)
+
+        # Polarity flags (optional)
+        raw_np = _dgs_get(parts, header_map, 'dpolar:SIZEROW')
+        np = int(float(raw_np.replace(',', '.'))) if raw_np is not None and raw_np.strip() != '' else 0
+        obj.dpolar = list()
+        for i in range(np):
+            raw_v = _dgs_get(parts, header_map, f'dpolar:{i}')
+            raw_v = raw_v.strip() if raw_v is not None else ''
+            obj.dpolar.append(float(raw_v.replace(',', '.')) if raw_v != '' and raw_v != '*' else 0.0)
+
+        return obj

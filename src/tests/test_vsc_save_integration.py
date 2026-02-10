@@ -16,7 +16,7 @@ def test_vsc_save_integration():
     Test case24_7_jb.matpower containing 7 converters
     """
 
-    fname = os.path.join('data', 'grids', 'case24_7_jb.matpower')
+    fname = os.path.join('data', 'grids', 'Matpower', 'case24_7_jb.matpower')
     grid = FileOpen(fname).open()
 
     control1_vsc0 = grid.vsc_devices[0].control1

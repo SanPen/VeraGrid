@@ -25,14 +25,14 @@ def find_islands_numba(node_number: int, indptr: IntVec, indices: IntVec, active
     """
 
     # Mark all the vertices as not visited
-    visited = np.zeros(node_number, dtype=np.int32)
+    visited: IntVec = np.zeros(node_number, dtype=np.int32)
 
     # storage structure for the islands (2D Numpy array)
     # there can be as many islands as nodes
     islands = list()  # type: List[Vec]
 
     node_count = 0
-    current_island = np.empty(node_number, dtype=np.int64)
+    current_island: IntVec = np.empty(node_number, dtype=np.int64)
 
     # set the island index
     island_idx = 0
@@ -109,17 +109,17 @@ def get_elements_of_the_island_numba(n_rows: int,
     :return: array of indices of the elements that match that island
     """
 
-    visited = np.zeros(n_rows, dtype=nb.int32)
-    elm_idx = np.zeros(n_rows, dtype=nb.int32)
+    visited: IntVec = np.zeros(n_rows, dtype=nb.int32)
+    elm_idx: IntVec = np.zeros(n_rows, dtype=nb.int32)
     n_visited = 0
 
     for k in range(len(island)):
 
         j = island[k]  # column index
 
-        for l in range(indptr[j], indptr[j + 1]):
+        for i_ptr in range(indptr[j], indptr[j + 1]):
 
-            i = indices[l]  # row index
+            i = indices[i_ptr]  # row index
 
             if not visited[i] and active[i]:
                 visited[i] = 1
@@ -183,7 +183,7 @@ def get_island_monopole_indices(bus_map: IntVec, elm_active: BoolVec, elm_bus: I
     :return:
     """
     n_elm = len(elm_active)
-    indices = np.zeros(n_elm, dtype=np.int64)
+    indices: IntVec = np.zeros(n_elm, dtype=np.int64)
 
     ii = 0
     for k in range(n_elm):
@@ -205,7 +205,7 @@ def get_island_branch_indices(bus_map: IntVec, elm_active: BoolVec, F: IntVec, T
     :return:
     """
     n_elm = len(elm_active)
-    indices = np.zeros(n_elm, dtype=np.int64)
+    indices: IntVec = np.zeros(n_elm, dtype=np.int64)
 
     ii = 0
     for k in range(n_elm):
@@ -240,9 +240,9 @@ def build_reducible_branches_C_coo(F: IntVec, T: IntVec, reducible: IntVec, acti
                 n_red += 1 
     """
     nelm = len(F)
-    i = np.empty(nelm * 2, dtype=np.int64)
-    j = np.empty(nelm * 2, dtype=np.int64)
-    data = np.empty(nelm * 2, dtype=np.int64)
+    i: IntVec = np.empty(nelm * 2, dtype=np.int64)
+    j: IntVec = np.empty(nelm * 2, dtype=np.int64)
+    data: IntVec = np.empty(nelm * 2, dtype=np.int64)
     ii = 0
     n_red = 0
     for k in range(nelm):
@@ -293,9 +293,9 @@ def build_branches_C_coo_2(bus_active: IntVec,
                     C[k, t] = 1
     """
     nelm = len(F1) + 2 * len(F2)
-    i = np.empty(nelm * 2, dtype=np.int64)
-    j = np.empty(nelm * 2, dtype=np.int64)
-    data = np.empty(nelm * 2, dtype=np.int64)
+    i: IntVec = np.empty(nelm * 2, dtype=np.int64)
+    j: IntVec = np.empty(nelm * 2, dtype=np.int64)
+    data: IntVec = np.empty(nelm * 2, dtype=np.int64)
 
     ii = 0
     br_count = 0
@@ -390,9 +390,9 @@ def build_branches_C_coo_3(bus_active: IntVec,
                     C[k, t] = 1
     """
     nelm = len(F1) + 2 * len(F2) + len(F3)
-    i = np.empty(nelm * 2, dtype=np.int64)
-    j = np.empty(nelm * 2, dtype=np.int64)
-    data = np.empty(nelm * 2, dtype=np.int64)
+    i: IntVec = np.empty(nelm * 2, dtype=np.int64)
+    j: IntVec = np.empty(nelm * 2, dtype=np.int64)
+    data: IntVec = np.empty(nelm * 2, dtype=np.int64)
 
     ii = 0
     br_count = 0
@@ -483,7 +483,7 @@ def get_adjacency_matrix(C_branch_bus_f: csc_matrix, C_branch_bus_t: csc_matrix,
     :return: Adjacency matrix
     """
 
-    br_states_diag = diags(branch_active)
+    br_states_diag = diags(branch_active, dtype=branch_active.dtype)
     Cf = br_states_diag * C_branch_bus_f
     Ct = br_states_diag * C_branch_bus_t
 
@@ -491,7 +491,7 @@ def get_adjacency_matrix(C_branch_bus_f: csc_matrix, C_branch_bus_t: csc_matrix,
     C_branch_bus = Cf + Ct
 
     # Connectivity node - Connectivity node connectivity matrix
-    C_bus_bus = diags(bus_active) * (C_branch_bus.T * C_branch_bus)
+    C_bus_bus = diags(bus_active, dtype=bus_active.dtype) * (C_branch_bus.T * C_branch_bus)
 
     return C_bus_bus
 
@@ -564,7 +564,7 @@ def get_csr_bus_indices(C: csr_matrix) -> IntVec:
     :param C: CSR connectivity matrix
     :return: Bus indices
     """
-    arr = np.zeros(C.shape[1], dtype=int)
+    arr: IntVec = np.zeros(C.shape[1], dtype=int)
     for j in range(C.shape[0]):  # para cada columna j ...
         for k in range(C.indptr[j], C.indptr[j + 1]):  # para cada entrada de la columna ....
             i = C.indices[k]  # obtener el índice de la fila
@@ -704,7 +704,7 @@ def sum_per_bus(nbus: int, bus_indices: IntVec, magnitude: Vec) -> Vec:
     :return: array of size nbus
     """
     assert len(bus_indices) == len(magnitude)
-    res = np.zeros(nbus, dtype=np.float64)
+    res: Vec = np.zeros(nbus, dtype=np.float64)
     for i in range(len(bus_indices)):
         res[bus_indices[i]] += magnitude[i]
     return res
@@ -720,7 +720,7 @@ def sum_per_bus_cx(nbus: int, bus_indices: IntVec, magnitude: CxVec) -> CxVec:
     :return: array of size nbus
     """
     assert len(bus_indices) == len(magnitude)
-    res = np.zeros(nbus, dtype=np.complex128)
+    res: CxVec = np.zeros(nbus, dtype=np.complex128)
     for i in range(len(bus_indices)):
         res[bus_indices[i]] += magnitude[i]
     return res
@@ -736,7 +736,7 @@ def sum_per_bus_bool(nbus: int, bus_indices: IntVec, magnitude: BoolVec) -> Bool
     :return: array of size nbus
     """
     assert len(bus_indices) == len(magnitude)
-    res = np.zeros(nbus, dtype=np.bool_)
+    res: BoolVec = np.zeros(nbus, dtype=np.bool_)
     for i in range(len(bus_indices)):
         res[bus_indices[i]] += magnitude[i]
     return res
@@ -750,7 +750,7 @@ def dev_per_bus(nbus: int, bus_indices: IntVec) -> IntVec:
     :param bus_indices: elements' bus indices
     :return: array of size nbus
     """
-    res = np.zeros(nbus, dtype=np.int64)
+    res: IntVec = np.zeros(nbus, dtype=np.int64)
     for i in range(len(bus_indices)):
         res[bus_indices[i]] += 1
     return res

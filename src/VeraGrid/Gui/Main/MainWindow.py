@@ -31,7 +31,7 @@ class Ui_mainWindow(object):
     def setupUi(self, mainWindow):
         if not mainWindow.objectName():
             mainWindow.setObjectName(u"mainWindow")
-        mainWindow.resize(1198, 827)
+        mainWindow.resize(1255, 772)
         mainWindow.setMinimumSize(QSize(1198, 742))
         mainWindow.setBaseSize(QSize(0, 0))
         font = QFont()
@@ -2402,12 +2402,6 @@ class Ui_mainWindow(object):
 
         self.gridLayout_14.addWidget(self.ptdf_correct_nonsense_values_checkBox, 3, 0, 1, 2)
 
-        self.usePfValuesForAtcCheckBox = QCheckBox(self.frame_32)
-        self.usePfValuesForAtcCheckBox.setObjectName(u"usePfValuesForAtcCheckBox")
-        self.usePfValuesForAtcCheckBox.setChecked(True)
-
-        self.gridLayout_14.addWidget(self.usePfValuesForAtcCheckBox, 4, 0, 1, 2)
-
         self.ptdf_distributed_slack_checkBox = QCheckBox(self.frame_32)
         self.ptdf_distributed_slack_checkBox.setObjectName(u"ptdf_distributed_slack_checkBox")
         self.ptdf_distributed_slack_checkBox.setChecked(False)
@@ -3324,7 +3318,6 @@ class Ui_mainWindow(object):
         palette15.setBrush(QPalette.ColorGroup.Inactive, QPalette.ColorRole.WindowText, brush5)
         palette15.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.WindowText, brush1)
         self.label_105.setPalette(palette15)
-        self.label_105.setFont(font4)
 
         self.gridLayout_15.addWidget(self.label_105, 10, 0, 1, 2)
 
@@ -3415,9 +3408,10 @@ class Ui_mainWindow(object):
         self.groupBox_6.setCheckable(False)
         self.gridLayout_29 = QGridLayout(self.groupBox_6)
         self.gridLayout_29.setObjectName(u"gridLayout_29")
-        self.verticalSpacer_24 = QSpacerItem(20, 393, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        self.label_62 = QLabel(self.groupBox_6)
+        self.label_62.setObjectName(u"label_62")
 
-        self.gridLayout_29.addItem(self.verticalSpacer_24, 3, 0, 1, 1)
+        self.gridLayout_29.addWidget(self.label_62, 0, 0, 1, 2)
 
         self.n1ConsiderationCheckBox = QCheckBox(self.groupBox_6)
         self.n1ConsiderationCheckBox.setObjectName(u"n1ConsiderationCheckBox")
@@ -3425,10 +3419,9 @@ class Ui_mainWindow(object):
 
         self.gridLayout_29.addWidget(self.n1ConsiderationCheckBox, 2, 0, 1, 2)
 
-        self.label_62 = QLabel(self.groupBox_6)
-        self.label_62.setObjectName(u"label_62")
+        self.verticalSpacer_24 = QSpacerItem(20, 393, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
-        self.gridLayout_29.addWidget(self.label_62, 0, 0, 1, 2)
+        self.gridLayout_29.addItem(self.verticalSpacer_24, 4, 0, 1, 1)
 
         self.atcThresholdSpinBox = QDoubleSpinBox(self.groupBox_6)
         self.atcThresholdSpinBox.setObjectName(u"atcThresholdSpinBox")
@@ -3438,6 +3431,12 @@ class Ui_mainWindow(object):
         self.atcThresholdSpinBox.setValue(0.050000000000000)
 
         self.gridLayout_29.addWidget(self.atcThresholdSpinBox, 1, 0, 1, 2)
+
+        self.usePfValuesForAtcCheckBox = QCheckBox(self.groupBox_6)
+        self.usePfValuesForAtcCheckBox.setObjectName(u"usePfValuesForAtcCheckBox")
+        self.usePfValuesForAtcCheckBox.setChecked(True)
+
+        self.gridLayout_29.addWidget(self.usePfValuesForAtcCheckBox, 3, 0, 1, 1)
 
 
         self.gridLayout_13.addWidget(self.groupBox_6, 2, 3, 2, 1)
@@ -4823,7 +4822,7 @@ class Ui_mainWindow(object):
         mainWindow.setCentralWidget(self.centralwidget)
         self.menuBar = QMenuBar(mainWindow)
         self.menuBar.setObjectName(u"menuBar")
-        self.menuBar.setGeometry(QRect(0, 0, 1198, 23))
+        self.menuBar.setGeometry(QRect(0, 0, 1255, 23))
         self.menuBar.setFont(font)
         self.menuProject = QMenu(self.menuBar)
         self.menuProject.setObjectName(u"menuProject")
@@ -5026,12 +5025,12 @@ class Ui_mainWindow(object):
 
         self.mainTabWidget.setCurrentIndex(0)
         self.modelTabWidget.setCurrentIndex(0)
-        self.tabWidget_6.setCurrentIndex(0)
+        self.tabWidget_6.setCurrentIndex(2)
         self.tabWidget.setCurrentIndex(0)
         self.tabWidget_5.setCurrentIndex(0)
         self.resultsTabWidget.setCurrentIndex(2)
         self.tabWidget_2.setCurrentIndex(0)
-        self.settingsTabWidget.setCurrentIndex(11)
+        self.settingsTabWidget.setCurrentIndex(4)
 
 
         QMetaObject.connectSlotsByName(mainWindow)
@@ -5792,10 +5791,6 @@ class Ui_mainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.ptdf_correct_nonsense_values_checkBox.setText(QCoreApplication.translate("mainWindow", u"Correct nonsense values", None))
 #if QT_CONFIG(tooltip)
-        self.usePfValuesForAtcCheckBox.setToolTip(QCoreApplication.translate("mainWindow", u"Use existing power flow values for the contingency initialization in the net transfer capacity and contingency simulations", None))
-#endif // QT_CONFIG(tooltip)
-        self.usePfValuesForAtcCheckBox.setText(QCoreApplication.translate("mainWindow", u"Use power flow values for initialization", None))
-#if QT_CONFIG(tooltip)
         self.ptdf_distributed_slack_checkBox.setToolTip(QCoreApplication.translate("mainWindow", u"<html><head/><body><p>With this option, the PTDF is computed such that the slack effects are distributed</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.ptdf_distributed_slack_checkBox.setText(QCoreApplication.translate("mainWindow", u"Distributed slack", None))
@@ -6088,11 +6083,15 @@ class Ui_mainWindow(object):
         self.ntcReportLoadingThresholdSpinBox.setSuffix(QCoreApplication.translate("mainWindow", u"%", None))
         self.label_97.setText("")
         self.groupBox_6.setTitle(QCoreApplication.translate("mainWindow", u"Linear", None))
-        self.n1ConsiderationCheckBox.setText(QCoreApplication.translate("mainWindow", u"n-1 sensibility consideration", None))
         self.label_62.setText(QCoreApplication.translate("mainWindow", u"Transfer sensitivity threshold", None))
+        self.n1ConsiderationCheckBox.setText(QCoreApplication.translate("mainWindow", u"n-1 sensibility consideration", None))
 #if QT_CONFIG(tooltip)
         self.atcThresholdSpinBox.setToolTip(QCoreApplication.translate("mainWindow", u"Threshold used to discard insensitive branches", None))
 #endif // QT_CONFIG(tooltip)
+#if QT_CONFIG(tooltip)
+        self.usePfValuesForAtcCheckBox.setToolTip(QCoreApplication.translate("mainWindow", u"Use existing power flow values for the contingency initialization in the net transfer capacity and contingency simulations", None))
+#endif // QT_CONFIG(tooltip)
+        self.usePfValuesForAtcCheckBox.setText(QCoreApplication.translate("mainWindow", u"Use power flow values for initialization", None))
 #if QT_CONFIG(tooltip)
         self.label_96.setToolTip(QCoreApplication.translate("mainWindow", u"Select the solver in the OPF tab and the areas in the areas tab", None))
 #endif // QT_CONFIG(tooltip)

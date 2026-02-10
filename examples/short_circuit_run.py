@@ -13,7 +13,7 @@ pf.run()
 fault_index = 2
 sc_options = gce.ShortCircuitOptions()
 
-grid.add_short_circuit_definition(
+grid.add_short_circuit_event(
     gce.ShortCircuitEvent(
         device=grid.buses[fault_index],
         fault_type=gce.FaultType.LG,

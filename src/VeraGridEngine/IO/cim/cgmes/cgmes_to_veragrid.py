@@ -177,7 +177,9 @@ def get_gcdev_device_to_terminal_dict(cgmes_model: CgmesCircuit,
 def get_gcdev_dc_device_to_terminal_dict(
         cgmes_model: CgmesCircuit,
         logger: DataLogger) -> tuple[
-    dict[str, list[CGMES_DC_TERMINAL]], list[CGMES_TOPOLOGICAL_NODE], list[CGMES_DC_TERMINAL]]:
+    dict[str, list[CGMES_DC_TERMINAL]],
+    list[CGMES_TOPOLOGICAL_NODE],
+    list[CGMES_DC_TERMINAL]]:
     """
     Dictionary relating the DC conducting equipment to the DC terminal object(s)
     :param cgmes_model:
@@ -325,7 +327,11 @@ def get_gcdev_buses(cgmes_model: CgmesCircuit,
     :param gc_model: gcdevCircuit
     :param v_dict: Dict[str, Terminal]
     :param cn_look_up: CnLookup
+    :param default_nominal_voltage:
+    :param buses_to_skip:
+    :param skip_dc_import:
     :param logger: DataLogger
+
     :return: dictionary relating the TopologicalNode uuid to the gcdev CalculationNode
              Dict[str, gcdev.Bus], fatal error?
     """
@@ -2129,16 +2135,19 @@ def get_gcdev_switches(cgmes_model: CgmesCircuit,
 
             if not isinstance(e.OperationalLimitSet, str):
 
-                if hasattr(e.OperationalLimitSet.Terminal, "ConductingEquipment"):
-                    conducting_equipment = e.OperationalLimitSet.Terminal.ConductingEquipment
-                    if isinstance(conducting_equipment, (sw_type, br_type, ds_type, lbs_type)):
-                        branch_id = conducting_equipment.uuid
-                        rates_dict[branch_id] = e.value
+                if e.OperationalLimitSet.Terminal is not None:
+                    if hasattr(e.OperationalLimitSet.Terminal, "ConductingEquipment"):
+                        conducting_equipment = e.OperationalLimitSet.Terminal.ConductingEquipment
+                        if isinstance(conducting_equipment, (sw_type, br_type, ds_type, lbs_type)):
+                            branch_id = conducting_equipment.uuid
+                            rates_dict[branch_id] = e.value
+                    else:
+                        logger.add_error("No ConductingEquipment",
+                                         device_class=e.OperationalLimitSet.Terminal.tpe,
+                                         device_property="ConductingEquipment",
+                                         device=e.OperationalLimitSet.Terminal.rdfid, )
                 else:
-                    logger.add_error("No ConductingEquipment",
-                                     device_class=e.OperationalLimitSet.Terminal.tpe,
-                                     device_property="ConductingEquipment",
-                                     device=e.OperationalLimitSet.Terminal.rdfid, )
+                    pass
             else:
                 logger.add_error("OperationalLimitSet reference not found",
                                  device_class=e.tpe,

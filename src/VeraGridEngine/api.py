@@ -230,7 +230,7 @@ def short_circuit(grid: MultiCircuit,
 
     sc_options = ShortCircuitOptions()
 
-    grid.add_short_circuit_definition(
+    grid.add_short_circuit_event(
         ShortCircuitEvent(
             device=grid.buses[fault_index],
             fault_type=fault_type,

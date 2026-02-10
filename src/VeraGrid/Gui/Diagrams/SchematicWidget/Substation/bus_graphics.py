@@ -709,7 +709,7 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
                 phases=self.w.phases
             )
 
-            self.editor.circuit.add_short_circuit_definition(sc)
+            self.editor.circuit.add_short_circuit_event(sc)
 
     def enable_disable_dc(self):
         """

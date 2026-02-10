@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1198</width>
-    <height>827</height>
+    <width>1255</width>
+    <height>772</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -314,7 +314,7 @@ QProgressBar::chunk{
                       <enum>QTabWidget::TabPosition::North</enum>
                      </property>
                      <property name="currentIndex">
-                      <number>0</number>
+                      <number>2</number>
                      </property>
                      <widget class="QWidget" name="tab_3">
                       <attribute name="icon">
@@ -3626,7 +3626,7 @@ QProgressBar::chunk{
            <enum>QTabWidget::TabPosition::South</enum>
           </property>
           <property name="currentIndex">
-           <number>11</number>
+           <number>4</number>
           </property>
           <property name="iconSize">
            <size>
@@ -3953,19 +3953,6 @@ QProgressBar::chunk{
                  </property>
                  <property name="checked">
                   <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="0" colspan="2">
-                <widget class="QCheckBox" name="usePfValuesForAtcCheckBox">
-                 <property name="toolTip">
-                  <string>Use existing power flow values for the contingency initialization in the net transfer capacity and contingency simulations</string>
-                 </property>
-                 <property name="text">
-                  <string>Use power flow values for initialization</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -6046,12 +6033,6 @@ QProgressBar::chunk{
                    </disabled>
                   </palette>
                  </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>12</pointsize>
-                   <bold>false</bold>
-                  </font>
-                 </property>
                  <property name="text">
                   <string>Contingencies</string>
                  </property>
@@ -6258,18 +6239,12 @@ QProgressBar::chunk{
                <bool>false</bool>
               </property>
               <layout class="QGridLayout" name="gridLayout_29">
-               <item row="3" column="0">
-                <spacer name="verticalSpacer_24">
-                 <property name="orientation">
-                  <enum>Qt::Orientation::Vertical</enum>
+               <item row="0" column="0" colspan="2">
+                <widget class="QLabel" name="label_62">
+                 <property name="text">
+                  <string>Transfer sensitivity threshold</string>
                  </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>393</height>
-                  </size>
-                 </property>
-                </spacer>
+                </widget>
                </item>
                <item row="2" column="0" colspan="2">
                 <widget class="QCheckBox" name="n1ConsiderationCheckBox">
@@ -6281,12 +6256,18 @@ QProgressBar::chunk{
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0" colspan="2">
-                <widget class="QLabel" name="label_62">
-                 <property name="text">
-                  <string>Transfer sensitivity threshold</string>
+               <item row="4" column="0">
+                <spacer name="verticalSpacer_24">
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Vertical</enum>
                  </property>
-                </widget>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>393</height>
+                  </size>
+                 </property>
+                </spacer>
                </item>
                <item row="1" column="0" colspan="2">
                 <widget class="QDoubleSpinBox" name="atcThresholdSpinBox">
@@ -6304,6 +6285,19 @@ QProgressBar::chunk{
                  </property>
                  <property name="value">
                   <double>0.050000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QCheckBox" name="usePfValuesForAtcCheckBox">
+                 <property name="toolTip">
+                  <string>Use existing power flow values for the contingency initialization in the net transfer capacity and contingency simulations</string>
+                 </property>
+                 <property name="text">
+                  <string>Use power flow values for initialization</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -9832,7 +9826,7 @@ QProgressBar::chunk{
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1198</width>
+     <width>1255</width>
      <height>23</height>
     </rect>
    </property>

@@ -2727,7 +2727,7 @@ class DiagramsMain(CompiledArraysMain):
                             phases=self.sc_selector_dialogue.phases
                         )
 
-                        self.circuit.add_short_circuit_definition(sc)
+                        self.circuit.add_short_circuit_event(sc)
 
                     self.show_info_toast(f"{len(selected)} short circuit events added!")
             else:

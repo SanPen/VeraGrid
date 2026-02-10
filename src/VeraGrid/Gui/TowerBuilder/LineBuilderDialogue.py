@@ -189,8 +189,8 @@ class TowerBuilderGUI(QtWidgets.QDialog):
 
         elif idx == 3:
             # Admittances in uS/km
-            cols = ['Phase' + str(i) for i in self.tower_driver.tower.y_phases_abcn]
-            z_df = pd.DataFrame(data=self.tower_driver.tower.y_abcn.imag * 1e6, columns=cols, index=cols)
+            cols = ['Phase' + str(i) for i in self.tower_driver.tower.y_phases_nabc]
+            z_df = pd.DataFrame(data=self.tower_driver.tower.y_nabc.imag * 1e6, columns=cols, index=cols)
             self.ui.matrixTableView.setModel(PandasModel(z_df))
 
         elif idx == 4:
@@ -327,7 +327,7 @@ class TowerBuilderGUI(QtWidgets.QDialog):
         x = 0  # ohm / km
         gmr = 0.002481072  # m
 
-        wire = dev.Wire(name=name, r_ext=gmr, r=r, x=x)
+        wire = dev.Wire(name=name, diameter=gmr, r=r)
 
         self.tower_driver.add(WireInTower(wire=wire, xpos=1.5, ypos=10, phase=0))
         self.tower_driver.add(WireInTower(wire=wire, xpos=1, ypos=7, phase=1))

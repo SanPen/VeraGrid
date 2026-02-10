@@ -452,7 +452,7 @@ class Line(BranchParent):
 
         :return:
         """
-        if self._ys.size != 4:
+        if self._ys.size == 0:
             self.fill_3_phase_from_sequence()
 
         return self._ys
@@ -470,7 +470,7 @@ class Line(BranchParent):
 
         :return:
         """
-        if self._ysh.size != 4:
+        if self._ysh.size == 0:
             self.fill_3_phase_from_sequence()
 
         return self._ysh

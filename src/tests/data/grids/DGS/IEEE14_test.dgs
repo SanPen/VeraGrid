@@ -1,0 +1,301 @@
+********************************************************************************
+*
+* DIgSILENT (R) DGS Export V1.8.4
+* Copyright 1997-2026 DIgSILENT GmbH. All rights reserved.
+*
+* DIgSILENT (C) PowerFactory V25.0.3.0
+*
+* Date:     01/22/2026 12:54
+* Project:  Import (Study Case: Study Case)
+*
+********************************************************************************
+
+
+$$General;FID(a:40);Descr(a:40);Val(a:255)
+  1;Version;7.0
+
+
+$$ChaRef;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p)
+  2;C;vmax;ElmTerm_1
+  3;C;vmin;ElmTerm_1
+  4;C;vmax;ElmTerm_10
+  5;C;vmin;ElmTerm_10
+  6;C;vmax;ElmTerm_11
+  7;C;vmin;ElmTerm_11
+  8;C;vmax;ElmTerm_12
+  9;C;vmin;ElmTerm_12
+  10;C;vmax;ElmTerm_13
+  11;C;vmin;ElmTerm_13
+  12;C;vmax;ElmTerm_14
+  13;C;vmin;ElmTerm_14
+  14;C;vmax;ElmTerm_2
+  15;C;vmin;ElmTerm_2
+  16;C;vmax;ElmTerm_3
+  17;C;vmin;ElmTerm_3
+  18;C;vmax;ElmTerm_4
+  19;C;vmin;ElmTerm_4
+  20;C;vmax;ElmTerm_5
+  21;C;vmin;ElmTerm_5
+  22;C;vmax;ElmTerm_6
+  23;C;vmin;ElmTerm_6
+  24;C;vmax;ElmTerm_7
+  25;C;vmin;ElmTerm_7
+  26;C;vmax;ElmTerm_8
+  27;C;vmin;ElmTerm_8
+  28;C;vmax;ElmTerm_9
+  29;C;vmin;ElmTerm_9
+
+
+$$ChaVec;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);scale(p);usage(i);approx(i);vector:SIZEROW(i);vector:0(r);vector:1(r)
+  30;C;0.9_0.9;;;2;0;2;0,9;0,9
+  31;C;1.1_1.1;;;2;0;2;1,1;1,1
+
+
+$$ElmLne;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);dline(r);fline(r);GPScoords:MATRIX(a);nlnum(i);inAir(i)
+  32;C;lne_10_11_1;49;173;1;1;;1;0
+  33;C;lne_12_13_1;49;174;1;1;;1;0
+  34;C;lne_13_14_1;49;175;1;1;;1;0
+  35;C;lne_1_2_1;49;176;1;1;;1;0
+  36;C;lne_1_5_1;49;177;1;1;;1;0
+  37;C;lne_2_3_1;49;178;1;1;;1;0
+  38;C;lne_2_4_1;49;179;1;1;;1;0
+  39;C;lne_2_5_1;49;180;1;1;;1;0
+  40;C;lne_3_4_1;49;181;1;1;;1;0
+  41;C;lne_4_5_1;49;182;1;1;;1;0
+  42;C;lne_6_11_1;49;183;1;1;;1;0
+  43;C;lne_6_12_1;49;184;1;1;;1;0
+  44;C;lne_6_13_1;49;185;1;1;;1;0
+  45;C;lne_7_8_1;49;186;1;1;;1;0
+  46;C;lne_7_9_1;49;187;1;1;;1;0
+  47;C;lne_9_10_1;49;188;1;1;;1;0
+  48;C;lne_9_14_1;49;189;1;1;;1;0
+
+
+$$ElmLod;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);mode_inp(a:6);slini(r);plini(r);qlini(r);coslini(r);pf_recap(i);scale0(r);i_scale(i);outserv(i);classif(a:40)
+  ElmLod_10_1;C;lod_10_1;49;190;DEF;10,70701;9;5,8;0,840571;0;1;1;0;
+  ElmLod_11_1;C;lod_11_1;49;191;DEF;3,935734;3,5;1,8;0,889287;0;1;1;0;
+  ElmLod_12_1;C;lod_12_1;49;192;DEF;6,306346;6,1;1,6;0,967279;0;1;1;0;
+  ElmLod_13_1;C;lod_13_1;49;193;DEF;14,6932;13,5;5,8;0,918792;0;1;1;0;
+  ElmLod_14_1;C;lod_14_1;49;194;DEF;15,71655;14,9;5;0,948045;0;1;1;0;
+  ElmLod_2_1;C;lod_2_1;49;195;DEF;25,14319;21,7;12,7;0,863056;0;1;1;0;
+  ElmLod_3_1;C;lod_3_1;49;196;DEF;96,09703;94,2;19;0,980259;0;1;1;0;
+  ElmLod_4_1;C;lod_4_1;49;197;DEF;47,95884;47,8;-3,9;0,996688;1;1;1;0;
+  ElmLod_5_1;C;lod_5_1;49;198;DEF;7,766595;7,6;1,6;0,978549;0;1;1;0;
+  ElmLod_6_1;C;lod_6_1;49;199;DEF;13,47924;11,2;7,5;0,830907;0;1;1;0;
+  ElmLod_9_1;C;lod_9_1;49;200;DEF;33,84982;29,5;16,6;0,871496;0;1;1;0;
+
+
+$$ElmNet;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);frnom(r);pDiagram(p)
+  49;C;1 IEEE14;;60;
+  50;C;Summary Grid;;50;
+
+
+$$ElmShnt;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);systp(i);ctech(i);shtype(i);ushnm(r);mode_inp(a:6);qcapn(r);ncapx(i);ncapa(i);outserv(i);qrean(r);qtotn(r);tandc(r);fres(r);greaf0(r);grea(r);bcap(r);xrea(r);rrea(r);gparac(r);iswitch(i);imldc(a:2);usetp_mx(r);usetp_mn(r);qsetp_mx(r);qsetp_mn(r);iQorient(i);ilcph(i)
+  51;C;shntfix_9_1;49;0;1;2;138;LAY;19;1;1;0;0;19;0;0;0;0;997,6896;1163,98;0;0;0;V;1,05;0,95;0;0;0;0
+
+
+$$ElmSym;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);cCategory(a);ngnum(i);i_mot(i);pgini(r);qgini(r);cosgini(r);usetp(r);pf_recap(i);q_min(r);q_max(r);outserv(i);av_mode(a);phtech(i)
+  52;C;sym_1_1;49;201;Others;1;0;232,392;-16,549;0,997474;1,06;1;0;0;0;constv;1
+  53;C;sym_2_1;49;202;Others;1;0;40;43,556;0,676401;1,045;0;-0,666666;0,833333;0;constv;1
+  54;C;sym_3_1;49;203;Others;1;0;0;25,075;0;1,01;0;0;0,666666;0;constv;1
+  55;C;sym_6_1;49;204;Others;1;0;0;12,73;0;1,07;0;-0,24;0,96;0;constv;1
+  56;C;sym_8_1;49;205;Others;1;0;0;17,623;0;1,09;0;-0,24;0,96;0;constv;1
+
+
+$$ElmTerm;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);systype(i);iUsage(i);uknom(r);unknom(r);iminus(i);outserv(i);GPSlat(r);GPSlon(r);vtarget(r)
+  ElmTerm_1;C;1 BUS 1;49;;0;0;138;79,67434;0;0;0;0;1
+  ElmTerm_2;C;2 BUS 2;49;;0;0;138;79,67434;0;0;0;0;1
+  ElmTerm_3;C;3 BUS 3;49;;0;0;138;79,67434;0;0;0;0;1
+  ElmTerm_4;C;4 BUS 4;49;;0;0;138;79,67434;0;0;0;0;1
+  ElmTerm_5;C;5 BUS 5;49;;0;0;138;79,67434;0;0;0;0;1
+  ElmTerm_6;C;6 BUS 6;49;;0;0;138;79,67434;0;0;0;0;1
+  ElmTerm_7;C;7 BUS 7;49;;0;0;138;79,67434;0;0;0;0;1
+  ElmTerm_8;C;8 BUS 8;49;;0;0;138;79,67434;0;0;0;0;1
+  ElmTerm_9;C;9 BUS 9;49;;0;0;138;79,67434;0;0;0;0;1
+  ElmTerm_10;C;10 BUS 10;49;;0;0;138;79,67434;0;0;0;0;1
+  ElmTerm_11;C;11 BUS 11;49;;0;0;138;79,67434;0;0;0;0;1
+  ElmTerm_12;C;12 BUS 12;49;;0;0;138;79,67434;0;0;0;0;1
+  ElmTerm_13;C;13 BUS 13;49;;0;0;138;79,67434;0;0;0;0;1
+  ElmTerm_14;C;14 BUS 14;49;;0;0;138;79,67434;0;0;0;0;1
+
+
+$$ElmTr2;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);ntnum(i);outserv(i);nntap(i);i_auto(i);ntrcn(i);usetp(r);usp_low(r);usp_up(r);t2ldc(i)
+  ElmTr2_4_7_1;C;trf_4_7_1;49;206;1;0;-1;0;0;1;0,99;1,01;0
+  ElmTr2_4_9_1;C;trf_4_9_1;49;207;1;0;-1;0;0;1;0,99;1,01;0
+  ElmTr2_5_6_1;C;trf_5_6_1;49;208;1;0;-1;0;0;1;0,99;1,01;0
+
+
+$$ElmZone;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);icolor(i);curscale(r)
+  57;C;1_IEEE 14;;1;1
+
+
+$$IntRef;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);obj_id(p)
+  58;C;Ref0;50;49
+
+
+$$StaCubic;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);obj_bus(i);obj_id(p);it2p1(i);it2p2(i);it2p3(i)
+  59;C;lne_1_2_1;ElmTerm_1;0;35;0;1;2
+  60;C;lne_1_5_1;ElmTerm_1;0;36;0;1;2
+  61;C;sym_1_1;ElmTerm_1;0;52;0;1;2
+  62;C;lne_10_11_1;ElmTerm_10;0;32;0;1;2
+  63;C;lne_9_10_1;ElmTerm_10;1;47;0;1;2
+  64;C;lod_10_1;ElmTerm_10;0;ElmLod_10_1;0;1;2
+  65;C;lne_10_11_1;ElmTerm_11;1;32;0;1;2
+  66;C;lne_6_11_1;ElmTerm_11;1;42;0;1;2
+  67;C;lod_11_1;ElmTerm_11;0;ElmLod_11_1;0;1;2
+  68;C;lne_12_13_1;ElmTerm_12;0;33;0;1;2
+  69;C;lne_6_12_1;ElmTerm_12;1;43;0;1;2
+  70;C;lod_12_1;ElmTerm_12;0;ElmLod_12_1;0;1;2
+  71;C;lne_12_13_1;ElmTerm_13;1;33;0;1;2
+  72;C;lne_13_14_1;ElmTerm_13;0;34;0;1;2
+  73;C;lne_6_13_1;ElmTerm_13;1;44;0;1;2
+  74;C;lod_13_1;ElmTerm_13;0;ElmLod_13_1;0;1;2
+  75;C;lne_13_14_1;ElmTerm_14;1;34;0;1;2
+  76;C;lne_9_14_1;ElmTerm_14;1;48;0;1;2
+  77;C;lod_14_1;ElmTerm_14;0;ElmLod_14_1;0;1;2
+  78;C;lne_1_2_1;ElmTerm_2;1;35;0;1;2
+  79;C;lne_2_3_1;ElmTerm_2;0;37;0;1;2
+  80;C;lne_2_4_1;ElmTerm_2;0;38;0;1;2
+  81;C;lne_2_5_1;ElmTerm_2;0;39;0;1;2
+  82;C;lod_2_1;ElmTerm_2;0;ElmLod_2_1;0;1;2
+  83;C;sym_2_1;ElmTerm_2;0;53;0;1;2
+  84;C;lne_2_3_1;ElmTerm_3;1;37;0;1;2
+  85;C;lne_3_4_1;ElmTerm_3;0;40;0;1;2
+  86;C;lod_3_1;ElmTerm_3;0;ElmLod_3_1;0;1;2
+  87;C;sym_3_1;ElmTerm_3;0;54;0;1;2
+  88;C;lne_2_4_1;ElmTerm_4;1;38;0;1;2
+  89;C;lne_3_4_1;ElmTerm_4;1;40;0;1;2
+  90;C;lne_4_5_1;ElmTerm_4;0;41;0;1;2
+  91;C;lod_4_1;ElmTerm_4;0;ElmLod_4_1;0;1;2
+  92;C;trf_4_7_1;ElmTerm_4;0;ElmTr2_4_7_1;0;1;2
+  93;C;trf_4_9_1;ElmTerm_4;0;ElmTr2_4_9_1;0;1;2
+  94;C;lne_1_5_1;ElmTerm_5;1;36;0;1;2
+  95;C;lne_2_5_1;ElmTerm_5;1;39;0;1;2
+  96;C;lne_4_5_1;ElmTerm_5;1;41;0;1;2
+  97;C;lod_5_1;ElmTerm_5;0;ElmLod_5_1;0;1;2
+  98;C;trf_5_6_1;ElmTerm_5;0;ElmTr2_5_6_1;0;1;2
+  99;C;lne_6_11_1;ElmTerm_6;0;42;0;1;2
+  100;C;lne_6_12_1;ElmTerm_6;0;43;0;1;2
+  101;C;lne_6_13_1;ElmTerm_6;0;44;0;1;2
+  102;C;lod_6_1;ElmTerm_6;0;ElmLod_6_1;0;1;2
+  103;C;sym_6_1;ElmTerm_6;0;55;0;1;2
+  104;C;trf_5_6_1;ElmTerm_6;1;ElmTr2_5_6_1;0;1;2
+  105;C;lne_7_8_1;ElmTerm_7;0;45;0;1;2
+  106;C;lne_7_9_1;ElmTerm_7;0;46;0;1;2
+  107;C;trf_4_7_1;ElmTerm_7;1;ElmTr2_4_7_1;0;1;2
+  108;C;lne_7_8_1;ElmTerm_8;1;45;0;1;2
+  109;C;sym_8_1;ElmTerm_8;0;56;0;1;2
+  110;C;lne_7_9_1;ElmTerm_9;1;46;0;1;2
+  111;C;lne_9_10_1;ElmTerm_9;0;47;0;1;2
+  112;C;lne_9_14_1;ElmTerm_9;0;48;0;1;2
+  113;C;lod_9_1;ElmTerm_9;0;ElmLod_9_1;0;1;2
+  114;C;shntfix_9_1;ElmTerm_9;0;51;0;1;2
+  115;C;trf_4_9_1;ElmTerm_9;1;ElmTr2_4_9_1;0;1;2
+
+
+$$StaSwitch;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);on_off(i);typ_id(p);aUsage(a)
+  116;C;Switch;59;1;;cbk
+  117;C;Switch;60;1;;cbk
+  118;C;Switch;61;1;;cbk
+  119;C;Switch;62;1;;cbk
+  120;C;Switch;63;1;;cbk
+  121;C;Switch;64;1;;cbk
+  122;C;Switch;65;1;;cbk
+  123;C;Switch;66;1;;cbk
+  124;C;Switch;67;1;;cbk
+  125;C;Switch;68;1;;cbk
+  126;C;Switch;69;1;;cbk
+  127;C;Switch;70;1;;cbk
+  128;C;Switch;71;1;;cbk
+  129;C;Switch;72;1;;cbk
+  130;C;Switch;73;1;;cbk
+  131;C;Switch;74;1;;cbk
+  132;C;Switch;75;1;;cbk
+  133;C;Switch;76;1;;cbk
+  134;C;Switch;77;1;;cbk
+  135;C;Switch;78;1;;cbk
+  136;C;Switch;79;1;;cbk
+  137;C;Switch;80;1;;cbk
+  138;C;Switch;81;1;;cbk
+  139;C;Switch;82;1;;cbk
+  140;C;Switch;83;1;;cbk
+  141;C;Switch;84;1;;cbk
+  142;C;Switch;85;1;;cbk
+  143;C;Switch;86;1;;cbk
+  144;C;Switch;87;1;;cbk
+  145;C;Switch;88;1;;cbk
+  146;C;Switch;89;1;;cbk
+  147;C;Switch;90;1;;cbk
+  148;C;Switch;91;1;;cbk
+  149;C;Switch;92;1;;cbk
+  150;C;Switch;93;1;;cbk
+  151;C;Switch;94;1;;cbk
+  152;C;Switch;95;1;;cbk
+  153;C;Switch;96;1;;cbk
+  154;C;Switch;97;1;;cbk
+  155;C;Switch;98;1;;cbk
+  156;C;Switch;99;1;;cbk
+  157;C;Switch;100;1;;cbk
+  158;C;Switch;101;1;;cbk
+  159;C;Switch;102;1;;cbk
+  160;C;Switch;103;1;;cbk
+  161;C;Switch;104;1;;cbk
+  162;C;Switch;105;1;;cbk
+  163;C;Switch;106;1;;cbk
+  164;C;Switch;107;1;;cbk
+  165;C;Switch;108;1;;cbk
+  166;C;Switch;109;1;;cbk
+  167;C;Switch;110;1;;cbk
+  168;C;Switch;111;1;;cbk
+  169;C;Switch;112;1;;cbk
+  170;C;Switch;113;1;;cbk
+  171;C;Switch;114;1;;cbk
+  172;C;Switch;115;1;;cbk
+
+
+$$TypLne;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);uline(r);sline(r);InomAir(r);cohl_(i);rline(r);xline(r);rline0(r);xline0(r);Ithr(r);tmax(r);rtemp(r);systp(i);nlnph(i);nneutral(i);frnom(r);mlei(a:4);bline(r);bline0(r)
+  173;C;tlne_10_11_1;49;138;99999;1;0;15,6256;36,57781;1e+08;1e+08;0;80;80;0;3;0;60;Cu;0;0
+  174;C;tlne_12_13_1;49;138;99999;1;0;42,07201;38,06515;1e+08;1e+08;0;80;80;0;3;0;60;Cu;0;0
+  175;C;tlne_13_14_1;49;138;99999;1;0;32,55191;66,27693;1e+08;1e+08;0;80;80;0;3;0;60;Cu;0;0
+  176;C;tlne_1_2_1;49;138;99999;1;0;3,690727;11,26833;1e+08;1e+08;0;80;80;0;3;0;60;Cu;277,2527;0
+  177;C;tlne_1_5_1;49;138;99999;1;0;10,28947;42,47574;1e+08;1e+08;0;80;80;0;3;0;60;Cu;258,3491;0
+  178;C;tlne_2_3_1;49;138;99999;1;0;8,948775;37,70141;1e+08;1e+08;0;80;80;0;3;0;60;Cu;229,9937;0
+  179;C;tlne_2_4_1;49;138;99999;1;0;11,06647;33,57838;1e+08;1e+08;0;80;80;0;3;0;60;Cu;178,5339;0
+  180;C;tlne_2_5_1;49;138;99999;1;0;10,84556;33,11371;1e+08;1e+08;0;80;80;0;3;0;60;Cu;181,6845;0
+  181;C;tlne_3_4_1;49;138;99999;1;0;12,76138;32,57095;1e+08;1e+08;0;80;80;0;3;0;60;Cu;67,21277;0
+  182;C;tlne_4_5_1;49;138;99999;1;0;2,542374;8,019428;1e+08;1e+08;0;80;80;0;3;0;60;Cu;0;0
+  183;C;tlne_6_11_1;49;138;99999;1;0;18,08799;37,87852;1e+08;1e+08;0;80;80;0;3;0;60;Cu;0;0
+  184;C;tlne_6_12_1;49;138;99999;1;0;23,40698;48,71646;1e+08;1e+08;0;80;80;0;3;0;60;Cu;0;0
+  185;C;tlne_6_13_1;49;138;99999;1;0;12,59761;24,80862;1e+08;1e+08;0;80;80;0;3;0;60;Cu;0;0
+  186;C;tlne_7_8_1;49;138;99999;1;0;0;33,54601;1e+08;1e+08;0;80;80;0;3;0;60;Cu;0;0
+  187;C;tlne_7_9_1;49;138;99999;1;0;0;20,9503;1e+08;1e+08;0;80;80;0;3;0;60;Cu;0;0
+  188;C;tlne_9_10_1;49;138;99999;1;0;6,057897;16,09218;1e+08;1e+08;0;80;80;0;3;0;60;Cu;0;0
+  189;C;tlne_9_14_1;49;138;99999;1;0;24,20683;51,49117;1e+08;1e+08;0;80;80;0;3;0;60;Cu;0;0
+
+
+$$TypLod;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);systp(i);phtech(i);aP(r);bP(r);kpu0(r);kpu1(r);kpu(r);aQ(r);bQ(r);kqu0(r);kqu1(r);kqu(r)
+  190;C;typ_lod_10_1;49;0;0;1;0;0;1;2;0,999999;0;0;1;2
+  191;C;typ_lod_11_1;49;0;0;1;0;0;1;2;1;0;0;1;2
+  192;C;typ_lod_12_1;49;0;0;1;0;0;1;2;1;0;0;1;2
+  193;C;typ_lod_13_1;49;0;0;1;0;0;1;2;0,999999;0;0;1;2
+  194;C;typ_lod_14_1;49;0;0;1;0;0;1;2;1;0;0;1;2
+  195;C;typ_lod_2_1;49;0;0;0,999999;0;0;1;2;1;0;0;1;2
+  196;C;typ_lod_3_1;49;0;0;1;0;0;1;2;1;0;0;1;2
+  197;C;typ_lod_4_1;49;0;0;1;0;0;1;2;1;-0;0;1;2
+  198;C;typ_lod_5_1;49;0;0;1;0;0;1;2;1;0;0;1;2
+  199;C;typ_lod_6_1;49;0;0;1;0;0;1;2;1;0;0;1;2
+  200;C;typ_lod_9_1;49;0;0;1;0;0;1;2;1;0;0;1;2
+
+
+$$TypSym;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);sgn(r);ugn(r);cosn(r);xd(r);xq(r);xdsss(r);rstr(r);xdsat(r);satur(i);nphase(i);nslty(i);x0sy(r);r0sy(r);x2sy(r);r2sy(r);iopt_data(i);xds(r);xqs(r);xl(r);xdss(r);xqss(r);xrlq(r);tds(r);tqs(r);tdss(r);tqss(r)
+  201;C;tsym_1_1;49;615;138;1;2;2;1;0;1,2;0;3;2;0;0;1;0;1;0,3;0,3;0,5;1;1;0;1;1;0,05;0,05
+  202;C;tsym_2_1;49;60;138;1;2;2;1;0;1,2;0;3;2;0;0;1;0;1;0,3;0,3;0,5;1;1;0;1;1;0,05;0,05
+  203;C;tsym_3_1;49;60;138;1;2;2;1;0;1,2;0;3;2;0;0;1;0;1;0,3;0,3;0,5;1;1;0;1;1;0,05;0,05
+  204;C;tsym_6_1;49;25;138;1;2;2;1;0;1,2;0;3;2;0;0;1;0;1;0,3;0,3;0,5;1;1;0;1;1;0,05;0,05
+  205;C;tsym_8_1;49;25;138;1;2;2;1;0;1,2;0;3;2;0;0;1;0;1;0,3;0,3;0,5;1;1;0;1;1;0,05;0,05
+
+
+$$TypTr2;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);nt2ph(i);strn(r);frnom(r);utrn_h(r);utrn_l(r);uktr(r);pcutr(r);uk0tr(r);ur0tr(r);tr2cn_h(a:4);tr2cn_l(a:4);nt2ag(r);curmg(r);pfe(r);zx0hl_n(r);itapch(i);tap_side(i);dutap(r);phitr(r);nntap0(i);ntpmn(i);ntpmx(i);manuf(a:40)
+  206;C;ttrf_4_7_1;49;3;100;60;138;138;20,912;0;3;0;YN;YN;0;0;0;100;1;0;2,2;0;0;-1;0;
+  207;C;ttrf_4_9_1;49;3;100;60;138;138;55,618;0;3;0;YN;YN;0;0;0;100;1;0;3,1;0;0;-1;0;
+  208;C;ttrf_5_6_1;49;3;100;60;138;138;25,202;0;3;0;YN;YN;0;0;0;100;1;0;6,8;0;0;-1;0;

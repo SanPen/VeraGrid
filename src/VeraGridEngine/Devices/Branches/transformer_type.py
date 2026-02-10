@@ -23,7 +23,9 @@ class TransformerType(EditableDevice):
         '_tap_changer',
         'conn_hv',
         'conn_lv',
-        'vector_group_number'
+        'vector_group_number',
+        'capex',
+        'opex'
     )
 
     def __init__(self,
@@ -42,7 +44,9 @@ class TransformerType(EditableDevice):
                  asymmetry_angle: float = 90.0,
                  tc_type: TapChangerTypes = TapChangerTypes.NoRegulation,
                  name: str = 'TransformerType',
-                 idtag: Union[None, str] = None) -> None:
+                 idtag: Union[None, str] = None,
+                 capex: float = 0.0,
+                 opex: float = 0.0) -> None:
         """
         Transformer template from the short circuit study
         :param hv_nominal_voltage: Nominal voltage of the high voltage side in kV
@@ -61,6 +65,8 @@ class TransformerType(EditableDevice):
         :param tc_type: Tap changer type
         :param name: Name of the device template
         :param idtag: device UUID
+        :param capex: Capital expenditures
+        :param opex: Operating expenditures
         """
         EditableDevice.__init__(self,
                                 name=name,
@@ -86,6 +92,9 @@ class TransformerType(EditableDevice):
 
         self.GX_hv1 = float(gx_hv1)
 
+        self.capex = float(capex)
+        self.opex = float(opex)
+
         self.conn_hv: WindingType = WindingType.GroundedStar
         self.conn_lv: WindingType = WindingType.Delta
         self.vector_group_number: int = 0
@@ -104,6 +113,9 @@ class TransformerType(EditableDevice):
         self.register(key='Pfe', units='kW', tpe=float, definition='Iron losses')
         self.register(key='I0', units='%', tpe=float, definition='No-load current')
         self.register(key='Vsc', units='%', tpe=float, definition='Short-circuit voltage')
+
+        self.register(key='capex', units='currency', tpe=float, definition='Capital expenditure')
+        self.register(key='opex', units='currency/MWh', tpe=float, definition='Operational expenditure')
 
         self.register(key='tc_type', units='', tpe=TapChangerTypes, definition='Regulation type')
         self.register(key='total_positions', units='', tpe=int, definition='Number of tap positions')

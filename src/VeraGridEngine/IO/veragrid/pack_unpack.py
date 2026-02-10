@@ -42,6 +42,8 @@ def get_objects_dictionary() -> Dict[str, ALL_DEV_TYPES]:
         'region': dev.Region(),
         'municipality': dev.Municipality(),
 
+        'owner': dev.Owner(),
+
         'substation': dev.Substation(),
         'voltage_level': dev.VoltageLevel(),
 
@@ -255,7 +257,7 @@ def gather_model_as_data_frames(circuit: MultiCircuit,
     return dfs
 
 
-def profile_todict(profile: Profile) -> Dict[str, str]:
+def profile_todict(profile: Profile) -> Dict[str, str | bool]:
     """
     Get a dictionary representation of the profile
     :return:

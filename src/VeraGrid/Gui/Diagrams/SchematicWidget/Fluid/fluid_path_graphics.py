@@ -87,10 +87,10 @@ class FluidPathGraphicItem(LineGraphicTemplateItem):
         # pen.setDashPattern([5, 3, 2, 3])
 
         self.setPen(pen)
-        self.arrow_p_from.set_colour(color, w, style)
-        self.arrow_q_from.set_colour(color, w, style)
-        self.arrow_p_to.set_colour(color, w, style)
-        self.arrow_q_to.set_colour(color, w, style)
+        self.arrow_p_from.set_colour(color)
+        self.arrow_q_from.set_colour(color)
+        self.arrow_p_to.set_colour(color)
+        self.arrow_q_to.set_colour(color)
 
         if self.symbol is not None:
             self.symbol.set_colour(color, w, style)

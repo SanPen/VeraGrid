@@ -391,7 +391,7 @@ def test_three_phase_to_ground_fault():
     # ----------------------------------------------------------------------------------------------------------------------
     sc_options = gce.ShortCircuitOptions()
 
-    grid.add_short_circuit_definition(
+    grid.add_short_circuit_event(
         gce.ShortCircuitEvent(
             device=grid.buses[4],
             fault_type=FaultType.LLLG,
@@ -801,7 +801,7 @@ def test_single_line_to_ground_fault():
     # ----------------------------------------------------------------------------------------------------------------------
     sc_options = gce.ShortCircuitOptions()
 
-    grid.add_short_circuit_definition(
+    grid.add_short_circuit_event(
         gce.ShortCircuitEvent(
             device=grid.buses[4],
             fault_type=FaultType.LG,
@@ -1211,7 +1211,7 @@ def test_double_line_to_ground_fault():
     # ----------------------------------------------------------------------------------------------------------------------
     sc_options = gce.ShortCircuitOptions()
 
-    grid.add_short_circuit_definition(
+    grid.add_short_circuit_event(
         gce.ShortCircuitEvent(
             device=grid.buses[4],
             fault_type=FaultType.LLG,
@@ -1621,7 +1621,7 @@ def test_line_to_line_fault():
     # ----------------------------------------------------------------------------------------------------------------------
     sc_options = gce.ShortCircuitOptions()
 
-    grid.add_short_circuit_definition(
+    grid.add_short_circuit_event(
         gce.ShortCircuitEvent(
             device=grid.buses[4],
             fault_type=FaultType.LL,
@@ -2031,7 +2031,7 @@ def test_three_phase_fault():
     # ----------------------------------------------------------------------------------------------------------------------
     sc_options = gce.ShortCircuitOptions()
 
-    grid.add_short_circuit_definition(
+    grid.add_short_circuit_event(
         gce.ShortCircuitEvent(
             device=grid.buses[4],
             fault_type=FaultType.LLL,

@@ -266,12 +266,15 @@ class OverheadLineType(EditableDevice):
         '_y_phases_abc',
         '_y_seq',
         '_y_0123',
+        'capex',
+        'opex'
     )
 
     def __init__(self, name='Tower', idtag: str | None = None,
                  Vnom: float = 1.0,
                  earth_resistivity: float = 100,
-                 frequency: float = 50):
+                 frequency: float = 50,
+                 capex: float = 0.0, opex: float = 0.0):
         """
         Overhead line editor
         :param name: name
@@ -279,6 +282,8 @@ class OverheadLineType(EditableDevice):
         :param Vnom: Nominal voltage (kV)
         :param earth_resistivity: Earth resistivity (ohm/m3)
         :param frequency: system frequency (Hz)
+        :param capex: Capital expenditures
+        :param opex: Operating expenditures
         """
         super().__init__(name=name,
                          idtag=idtag,
@@ -294,6 +299,9 @@ class OverheadLineType(EditableDevice):
         self.earth_resistivity = earth_resistivity  # ohm/m3
 
         self.frequency = frequency  # Hz
+
+        self.capex = float(capex)
+        self.opex = float(opex)
 
         # current rating of the tower in kA
         self._Imax: Vec | None = None
@@ -318,6 +326,8 @@ class OverheadLineType(EditableDevice):
         self.register(key='Vnom', units='kV', tpe=float, definition='Voltage rating of the line')
         self.register(key='wires_in_tower', units='', tpe=SubObjectType.ListOfWires,
                       definition='List of wires', editable=False, display=False)
+        self.register(key='capex', units='currency/km', tpe=float, definition='Capital expenditure per km')
+        self.register(key='opex', units='currency/MWh', tpe=float, definition='Operational expenditure')
 
     @property
     def Vnom(self) -> float:

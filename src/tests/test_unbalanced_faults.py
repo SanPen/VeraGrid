@@ -30,7 +30,7 @@ def test_unbalanced_short_circuit():
 
     sc_options = ShortCircuitOptions()
 
-    grid.add_short_circuit_definition(
+    grid.add_short_circuit_event(
         ShortCircuitEvent(
             device=grid.buses[2],
             fault_type=FaultType.LG,

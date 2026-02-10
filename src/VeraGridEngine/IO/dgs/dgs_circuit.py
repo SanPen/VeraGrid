@@ -40,6 +40,11 @@ def parse_header(line: str) -> Tuple[str, Dict[str, int]]:
         prop_name = stubs[0] if len(stubs) > 0 else name_stub
         header_map[prop_name] = i
 
+        # PowerFactory exports commonly use 'FID' as the unique identifier column.
+        # The schema in dgs_objects.py uses the python attribute name 'ID'. Map both.
+        if prop_name == 'FID':
+            header_map['ID'] = i
+
     return element_type, header_map
 
 
@@ -52,11 +57,13 @@ class DgsCircuit:
         ChaVec,
         ElmComp,
         ElmDsl,
+        ElmBranch,
         ElmAsm,
         ElmCoup,
         ElmFeeder,
         ElmGenstat,
         ElmLne,
+        ElmTow,
         ElmSind,
         ElmLnesec,
         ElmLod,
@@ -84,7 +91,9 @@ class DgsCircuit:
         StaSwitch,
         TypAsmo,
         TypFuse,
+        TypCon,
         TypLne,
+        TypTow,
         TypSind,
         TypLod,
         TypSym,
@@ -103,6 +112,7 @@ class DgsCircuit:
         self.generals: List[General] = list()
         self.elmcomps: List[ElmComp] = list()
         self.elmdsls: List[ElmDsl] = list()
+        self.elmbranches: List[ElmBranch] = list()
         self.charefs: List[ChaRef] = list()
         self.chavecs: List[ChaVec] = list()
         self.elmasms: List[ElmAsm] = list()
@@ -110,6 +120,7 @@ class DgsCircuit:
         self.elmfeeders: List[ElmFeeder] = list()
         self.elmgenstats: List[ElmGenstat] = list()
         self.elmlnes: List[ElmLne] = list()
+        self.elmtows: List[ElmTow] = list()
         self.elmsinds: List[ElmSind] = list()
         self.elmlnesecs: List[ElmLnesec] = list()
         self.elmlods: List[ElmLod] = list()
@@ -136,7 +147,9 @@ class DgsCircuit:
         self.staswitchs: List[StaSwitch] = list()
         self.typasmos: List[TypAsmo] = list()
         self.typfuses: List[TypFuse] = list()
+        self.typcons: List[TypCon] = list()
         self.typlnes: List[TypLne] = list()
+        self.typtows: List[TypTow] = list()
         self.typsinds: List[TypSind] = list()
         self.typlods: List[TypLod] = list()
         self.typsyms: List[TypSym] = list()
@@ -149,11 +162,13 @@ class DgsCircuit:
             ChaVec: self.chavecs,
             ElmComp: self.elmcomps,
             ElmDsl: self.elmdsls,
+            ElmBranch: self.elmbranches,
             ElmAsm: self.elmasms,
             ElmCoup: self.elmcoups,
             ElmFeeder: self.elmfeeders,
             ElmGenstat: self.elmgenstats,
             ElmLne: self.elmlnes,
+            ElmTow: self.elmtows,
             ElmSind: self.elmsinds,
             ElmLnesec: self.elmlnesecs,
             ElmLod: self.elmlods,
@@ -179,7 +194,9 @@ class DgsCircuit:
             StaSwitch: self.staswitchs,
             TypAsmo: self.typasmos,
             TypFuse: self.typfuses,
+            TypCon: self.typcons,
             TypLne: self.typlnes,
+            TypTow: self.typtows,
             TypSind: self.typsinds,
             TypLod: self.typlods,
             TypSym: self.typsyms,

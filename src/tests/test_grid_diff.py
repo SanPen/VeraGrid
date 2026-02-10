@@ -101,10 +101,12 @@ def test_grid_modifications() -> None:
     ok_diff2, diff_logger2, diff2 = grid2.differentiate_circuits(base_grid=original)
 
     merge_logger1 = original.merge_circuit(diff1)
-    gce.save_file(grid=original, filename=os.path.join("data", "grids", "case14_merge1.gridcal"))
+    f1 = os.path.join("data", "grids", "case14_merge1.gridcal")
+    gce.save_file(grid=original, filename=f1)
 
     merge_logger2 = original.merge_circuit(diff2)
-    gce.save_file(grid=original, filename=os.path.join("data", "grids", "case14_merge2.gridcal"))
+    f2 = os.path.join("data", "grids", "case14_merge2.gridcal")
+    gce.save_file(grid=original, filename=f2)
 
     # the calculated difference should be equal to the grid we added
     ok_compare, comp_logger = original.compare_circuits(grid2=merged_grid, skip_internals=True)
@@ -114,4 +116,6 @@ def test_grid_modifications() -> None:
     #
     assert ok_compare
 
+    os.remove(f1)
+    os.remove(f2)
     return

@@ -20,13 +20,16 @@ class UndergroundLineType(EditableDevice):
         'X0',
         'B0',
         '_C0',
-        'n_circuits'
+        'n_circuits',
+        'capex',
+        'opex'
     )
 
     def __init__(self, name: str = 'UndergroundLine', idtag: None | str = None, Imax: float = 1.0,
                  Vnom: float = 1.0, R: float = 0.0, X: float = 0.0, B: float = 0.0, C: float = 0.0,
                  R0: float = 0.0, X0: float = 0.0, B0: float = 0.0, C0: float = 0.0,
-                 freq: float = 50.0) -> None:
+                 freq: float = 50.0,
+                 capex: float = 0.0, opex: float = 0.0) -> None:
         """
         Constructor
         :param name: name of the device
@@ -40,6 +43,8 @@ class UndergroundLineType(EditableDevice):
         :param B0: Susceptance of zero sequence in uS/km
         :param C0: Capacitance of zero sequence in uF/km (alternative to B0)
         :param freq: Frequency of underground line (Hz)
+        :param capex: Capital expenditures
+        :param opex: Operating expenditures
         """
         EditableDevice.__init__(self,
                                 name=name,
@@ -64,6 +69,9 @@ class UndergroundLineType(EditableDevice):
 
         self.n_circuits = 1
 
+        self.capex = float(capex)
+        self.opex = float(opex)
+
         self.register(key='Imax', units='kA', tpe=float, definition='Current rating of the line', old_names=['rating'])
         self.register(key='Vnom', units='kV', tpe=float, definition='Voltage rating of the line')
         self.register(key='freq', units='Hz', tpe=float, definition='Cable frequency')
@@ -78,6 +86,8 @@ class UndergroundLineType(EditableDevice):
         self.register(key='C0', units='uF/km', tpe=float,
                       definition='Zero-sequence shunt capacitance per km (alternative to B0')
         self.register(key='n_circuits', units='', tpe=int, definition='number of circuits')
+        self.register(key='capex', units='currency/km', tpe=float, definition='Capital expenditure per km')
+        self.register(key='opex', units='currency/MWh', tpe=float, definition='Operational expenditure')
 
     def get_values(self, Sbase: float, length: float):
         """

@@ -1025,6 +1025,62 @@ def test_ntc_vsc_contingencies():
     assert abs(res.nodal_balance.sum()) < 1e-8
     assert np.isclose(res.inter_area_flows, 2000.0)  # 2000 is the summation of the inter-area branches (N-1) rates
 
+    
+def test_ntc_vsc_8_buses_REE_contingencies():
+    """
+    This test runs a test grid with VSC systems where controllers pairs are in Pset and Vdc modes
+    Contingencies are enabled
+    """
+    fname = os.path.join('data', 'grids', 'NTC_8_bus_vsc_REE.veragrid')
+    # fname = os.path.join('src', 'tests', 'data', 'grids', 'NTC_8_bus_vsc_REE.veragrid')
+
+    grid = gce.open_file(fname)
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Modify initial conditions
+    # ------------------------------------------------------------------------------------------------------------------
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # run study
+    # ------------------------------------------------------------------------------------------------------------------
+    a1 = [grid.areas[0]]
+    a2 = [grid.areas[1]]
+
+    info = grid.get_inter_aggregation_info(objects_from=a1,
+                                           objects_to=a2)
+
+    opf_options = gce.OptimalPowerFlowOptions(contingency_groups_used=grid.contingency_groups)
+    lin_options = gce.LinearAnalysisOptions()
+
+    ntc_options = gce.OptimalNetTransferCapacityOptions(
+        sending_bus_idx=info.idx_bus_from,
+        receiving_bus_idx=info.idx_bus_to,
+        transfer_method=gce.AvailableTransferMode.InstalledPower,
+        loading_threshold_to_report=98.0,
+        skip_generation_limits=True,
+        transmission_reliability_margin=0.1,
+        branch_exchange_sensitivity=0.01,
+        use_branch_exchange_sensitivity=False,
+        branch_rating_contribution=1.0,
+        monitor_only_ntc_load_rule_branches=False,
+        consider_contingencies=True,
+        opf_options=opf_options,
+        lin_options=lin_options
+    )
+
+    drv = gce.OptimalNetTransferCapacityDriver(grid, ntc_options)
+
+    drv.run()
+
+    res = drv.results
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # asserts
+    # ------------------------------------------------------------------------------------------------------------------
+    print(res.inter_area_flows)
+    assert abs(res.nodal_balance.sum()) < 1e-8
+    assert np.isclose(res.inter_area_flows, 5000.0)  # 2000 is the summation of the inter-area branches (N-1) rates
+
 
 def test_2_node_several_conditions_ntc():
     """
@@ -1528,5 +1584,6 @@ if __name__ == '__main__':
     # test_ntc_pmode_saturation()
     # test_ntc_pmode_non_saturation()
     # test_issue_372_3()
-    test_hvdc_lines_tests()
+    # test_hvdc_lines_tests()
     # test_activs_2000_acdc()
+    test_ntc_vsc_8_buses_REE_contingencies()

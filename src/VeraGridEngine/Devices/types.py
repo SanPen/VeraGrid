@@ -110,6 +110,7 @@ ALL_DEV_TYPES = Union[
     RemedialAction,
     RemedialActionGroup,
     Technology,
+    Owner,
     UndergroundLineType,
     SequenceLineType,
     RmsModelTemplate
@@ -117,7 +118,7 @@ ALL_DEV_TYPES = Union[
 
 CONNECTION_TYPE = Union[Bus, None]
 
-ASSOCIATION_TYPES = Union[Fuel, Technology, EmissionGas]
+ASSOCIATION_TYPES = Union[Fuel, Technology, EmissionGas, Owner]
 
 # this is the data type of the VeraGrid Json
 VERAGRID_FILE_TYPE = Dict[str, Union[str, float, pd.DataFrame, Dict[str, Any], List[Dict[str, Any]]]]

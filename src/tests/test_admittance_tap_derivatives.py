@@ -403,7 +403,7 @@ def case9() -> NumericalCircuit:
     print(cwd)
 
     # Go back two directories
-    file_path = os.path.join('data', 'grids', 'case9.matpower')
+    file_path = os.path.join('data', 'grids', 'Matpower', 'case9.matpower')
 
     grid = gce.FileOpen(file_path).open()
     nc = gce.compile_numerical_circuit_at(grid)
@@ -420,7 +420,7 @@ def case14() -> NumericalCircuit:
     print(cwd)
 
     # Go back two directories
-    file_path = os.path.join('data', 'grids', 'case14.matpower')
+    file_path = os.path.join('data', 'grids', 'Matpower', 'case14.matpower')
 
     grid = gce.FileOpen(file_path).open()
     for l in grid.get_transformers2w():
@@ -438,7 +438,7 @@ def case_pegase89() -> NumericalCircuit:
     cwd = os.getcwd()
     print(cwd)
     # Go back two directories
-    file_path = os.path.join('data', 'grids', 'case89pegase.matpower')
+    file_path = os.path.join('data', 'grids', 'Matpower', 'case89pegase.matpower')
 
     grid = gce.FileOpen(file_path).open()
     grid.get_transformers2w()[3].set_tap_controls(TapPhaseControl.Pt, TapModuleControl.Qt)

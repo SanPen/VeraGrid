@@ -76,7 +76,7 @@ def get_veragrid_bus(psse_bus: RawBus,
                       Vm0=psse_bus.VM,
                       Va0=np.deg2rad(psse_bus.VA))
 
-        if psse_bus.GL > 0 or psse_bus.BL > 0:
+        if psse_bus.GL != 0 or psse_bus.BL != 0:
             sh = dev.Shunt(name='Shunt_' + str(psse_bus.I),
                            G=psse_bus.GL, B=psse_bus.BL,
                            active=True)

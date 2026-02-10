@@ -672,6 +672,14 @@ class Load(LoadParent):
         """
         return complex(self.get_G3_at(t), self.get_B3_at(t))
 
+    def get_Y_conj_at(self, t: int | None) -> complex:
+        """
+        :param t:
+        :return:
+        """
+        return complex(self.get_G_at(t), -self.get_B_at(t))
+
+
     def get_Y1_conj_at(self, t: int | None) -> complex:
         """
         :param t:

@@ -169,7 +169,7 @@ $$
 import VeraGridEngine.api as gce
 from VeraGridEngine.enumerations import FaultType, MethodShortCircuit, PhasesShortCircuit
 
-grid.add_short_circuit_definition(
+grid.add_short_circuit_event(
     gce.ShortCircuitEvent(
         device=grid.buses[4],
         fault_type=FaultType.LG,
@@ -204,7 +204,7 @@ $$
 import VeraGridEngine.api as gce
 from VeraGridEngine.enumerations import FaultType, MethodShortCircuit, PhasesShortCircuit
 
-grid.add_short_circuit_definition(
+grid.add_short_circuit_event(
     gce.ShortCircuitEvent(
         device=grid.buses[4],
         fault_type=FaultType.LL,
@@ -240,7 +240,7 @@ $$
 import VeraGridEngine.api as gce
 from VeraGridEngine.enumerations import FaultType, MethodShortCircuit, PhasesShortCircuit
 
-grid.add_short_circuit_definition(
+grid.add_short_circuit_event(
     gce.ShortCircuitEvent(
         device=grid.buses[4],
         fault_type=FaultType.LLG,
@@ -277,7 +277,7 @@ $$
 import VeraGridEngine.api as gce
 from VeraGridEngine.enumerations import FaultType, MethodShortCircuit, PhasesShortCircuit
 
-grid.add_short_circuit_definition(
+grid.add_short_circuit_event(
     gce.ShortCircuitEvent(
         device=grid.buses[4],
         fault_type=FaultType.LLL,
@@ -313,7 +313,7 @@ $$
 import VeraGridEngine.api as gce
 from VeraGridEngine.enumerations import FaultType, MethodShortCircuit, PhasesShortCircuit
 
-grid.add_short_circuit_definition(
+grid.add_short_circuit_event(
     gce.ShortCircuitEvent(
         device=grid.buses[4],
         fault_type=FaultType.LLLG,
@@ -716,7 +716,7 @@ res_pf = gce.power_flow(grid=grid, options=gce.PowerFlowOptions(three_phase_unba
 # Short-circuit
 # ----------------------------------------------------------------------------------------------------------------------
 
-grid.add_short_circuit_definition(
+grid.add_short_circuit_event(
     gce.ShortCircuitEvent(
         device=grid.buses[4],
         fault_type=FaultType.LG,
@@ -811,7 +811,7 @@ pf.run()
 
 fault_index = 2
 
-grid.add_short_circuit_definition(
+grid.add_short_circuit_event(
     gce.ShortCircuitEvent(
         device=grid.buses[fault_index],
         fault_type=FaultType.LG,

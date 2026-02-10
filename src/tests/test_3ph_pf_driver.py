@@ -158,22 +158,14 @@ def test_ieee_13_bus_feeder_driver():
     grid.add_load(bus=bus_645, api_obj=load_645)
 
     # Two-phase impedance load
-    load_646 = gce.Load(G1=0.0,
-                        B1=0.0,
-                        G2=0.230,
-                        B2=0.132,
-                        G3=0.0,
-                        B3=0.0)
+    load_646 = gce.Load(G2=0.230,
+                        B2=-0.132)
     load_646.conn = ShuntConnectionType.Delta
     grid.add_load(bus=bus_646, api_obj=load_646)
 
     # Single-phase impedance load
     load_652 = gce.Load(G1=0.128,
-                        B1=0.086,
-                        G2=0.0,
-                        B2=0.0,
-                        G3=0.0,
-                        B3=0.0)
+                        B1=-0.086)
     load_652.conn = ShuntConnectionType.GroundedStar
     grid.add_load(bus=bus_652, api_obj=load_652)
 
@@ -198,22 +190,14 @@ def test_ieee_13_bus_feeder_driver():
     grid.add_load(bus=bus_675, api_obj=load_675)
 
     # Two-phase current load
-    load_671_692 = gce.Load(Ir1=0.0,
-                            Ii1=0.0,
-                            Ir2=0.0,
-                            Ii2=0.0,
-                            Ir3=0.170,
-                            Ii3=0.151)
+    load_671_692 = gce.Load(Ir3=0.170,
+                            Ii3=-0.151)
     load_671_692.conn = ShuntConnectionType.Delta
     grid.add_load(bus=bus_671, api_obj=load_671_692)
 
     # Single-phase current load
-    load_611 = gce.Load(Ir1=0.0,
-                        Ii1=0.0,
-                        Ir2=0.0,
-                        Ii2=0.0,
-                        Ir3=0.170,
-                        Ii3=0.080)
+    load_611 = gce.Load(Ir3=0.170,
+                        Ii3=-0.080)
     load_611.conn = ShuntConnectionType.GroundedStar
     grid.add_load(bus=bus_611, api_obj=load_611)
 
@@ -244,9 +228,7 @@ def test_ieee_13_bus_feeder_driver():
     cap_675.conn = ShuntConnectionType.GroundedStar
     grid.add_shunt(bus=bus_675, api_obj=cap_675)
 
-    cap_611 = gce.Shunt(B1=0.0,
-                        B2=0.0,
-                        B3=0.1)
+    cap_611 = gce.Shunt(B3=0.1)
     cap_611.conn = ShuntConnectionType.GroundedStar
     grid.add_shunt(bus=bus_611, api_obj=cap_611)
 
@@ -416,6 +398,9 @@ def test_ieee_13_bus_feeder_driver():
         - 0.45148771 + 0.84389416j, - 0.45219352 + 0.84581629j,
         0. + 0.j]
     )
+
+    Ua_comp = np.array([abs(res.voltage_A), abs(Ua_reference)])
+    # Ub_comp = np.array([res.voltage_B, Ub_reference])
 
     assert np.allclose(res.voltage_A, Ua_reference, atol=1e-4)
     assert np.allclose(res.voltage_B, Ub_reference, atol=1e-4)

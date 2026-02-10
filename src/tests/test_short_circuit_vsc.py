@@ -77,7 +77,7 @@ def test_short_circuit_vsc_3buses():
                                     limit_i_vsc=True,
                                     verbose=1)
 
-    grid.add_short_circuit_definition(
+    grid.add_short_circuit_event(
         vge.ShortCircuitEvent(
             device=grid.buses[1],
             method=MethodShortCircuit.sequences_vsc

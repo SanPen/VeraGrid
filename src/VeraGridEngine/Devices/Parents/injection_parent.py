@@ -17,7 +17,7 @@ from VeraGridEngine.Devices.Dynamic.dynamic_model_host import DynamicModelHost
 from VeraGridEngine.Devices.Parents.editable_device import get_at
 
 if TYPE_CHECKING:
-    from VeraGridEngine.Devices import Technology
+    from VeraGridEngine.Devices.Associations.technology import Technology
     from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 
 
@@ -150,7 +150,7 @@ class InjectionParent(PhysicalDevice):
                       definition='Facility where this is located', editable=True)
 
         self.register(key='technologies', units='p.u.', tpe=SubObjectType.Associations,
-                      definition='List of technologies', display=False)
+                      definition='Technologies associations to injections', display=False)
 
         self.register(key='scalable', units='', tpe=bool, definition='Is the injection scalable?')
 
@@ -386,6 +386,17 @@ class InjectionParent(PhysicalDevice):
         mx = 0.0
         col = self.color
         for _, val in self.technologies.data.items():
+            if val.value > mx:
+                col = val.api_object.color
+        self.color = col
+
+    def color_by_main_owner(self):
+        """
+        Set the color of the dominant owner
+        """
+        mx = 0.0
+        col = self.color
+        for _, val in self.owners.data.items():
             if val.value > mx:
                 col = val.api_object.color
         self.color = col

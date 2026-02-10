@@ -1359,7 +1359,7 @@ class SimulationsMain(TimeEventsMain):
 
                 if pf_results is not None:
 
-                    if self.circuit.get_short_circuit_definition_number() == 0:
+                    if self.circuit.get_short_circuit_event_number() == 0:
                         warning_msg('You need to define short circuits in the Database.'
                                     + '\nAdd them by right click on a bus and selecting on the context menu.')
                     else:

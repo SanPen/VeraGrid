@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'tower_builder.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.2
+## Created by: Qt User Interface Compiler version 6.10.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -15,10 +15,11 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QDialog, QDoubleSpinBox,
-    QFrame, QHBoxLayout, QHeaderView, QLabel,
-    QLineEdit, QPushButton, QSizePolicy, QSpacerItem,
-    QSplitter, QTableView, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QComboBox, QDialog,
+    QDoubleSpinBox, QFrame, QHBoxLayout, QHeaderView,
+    QLabel, QLineEdit, QPushButton, QSizePolicy,
+    QSpacerItem, QSplitter, QTableView, QVBoxLayout,
+    QWidget)
 
 from VeraGrid.Gui.Widgets.matplotlibwidget import MatplotlibWidget
 from VeraGrid.Gui.Icons.icons_rc import *
@@ -27,7 +28,7 @@ class Ui_TowerBuilderDialog(object):
     def setupUi(self, TowerBuilderDialog):
         if not TowerBuilderDialog.objectName():
             TowerBuilderDialog.setObjectName(u"TowerBuilderDialog")
-        TowerBuilderDialog.resize(934, 714)
+        TowerBuilderDialog.resize(979, 663)
         font = QFont()
         font.setPointSize(9)
         TowerBuilderDialog.setFont(font)
@@ -127,6 +128,8 @@ class Ui_TowerBuilderDialog(object):
 
         self.wires_tableView = QTableView(self.frame_3)
         self.wires_tableView.setObjectName(u"wires_tableView")
+        self.wires_tableView.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+        self.wires_tableView.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
 
         self.verticalLayout_8.addWidget(self.wires_tableView)
 
@@ -248,7 +251,7 @@ class Ui_TowerBuilderDialog(object):
         self.compute_pushButton = QPushButton(self.frame_9)
         self.compute_pushButton.setObjectName(u"compute_pushButton")
         icon2 = QIcon()
-        icon2.addFile(u":/Icons/icons/calc.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        icon2.addFile(u":/Icons/icons/calculator.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.compute_pushButton.setIcon(icon2)
         self.compute_pushButton.setIconSize(QSize(16, 16))
 

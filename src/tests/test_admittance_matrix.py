@@ -70,7 +70,7 @@ def test_fast_admittance():
 
     :return:
     """
-    # path = os.path.join('data', 'grids', "case14.matpower")
+    # path = os.path.join('data', 'grids', 'Matpower', "case14.matpower")
 
     profiling = list()
 

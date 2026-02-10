@@ -3,12 +3,18 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
-
+from __future__ import annotations
+from typing import TYPE_CHECKING, List
 import datetime
 from typing import Union
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
 from VeraGridEngine.Devices.Aggregation.modelling_authority import ModellingAuthority
-from VeraGridEngine.enumerations import DeviceType, BuildStatus
+from VeraGridEngine.Devices.Associations.association import Associations
+from VeraGridEngine.enumerations import DeviceType, BuildStatus, SubObjectType
+
+if TYPE_CHECKING:
+    from VeraGridEngine.Devices.Associations.owner import Owner
+    from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 
 
 class PhysicalDevice(EditableDevice):
@@ -19,7 +25,8 @@ class PhysicalDevice(EditableDevice):
         "modelling_authority",
         "_commissioned_date",
         "_decommissioned_date",
-        'build_status'
+        'build_status',
+        'owners',
     )
 
     def __init__(self,
@@ -50,6 +57,8 @@ class PhysicalDevice(EditableDevice):
 
         self.build_status = build_status
 
+        self.owners: Associations = Associations(device_type=DeviceType.Owner)
+
         self.register(key='modelling_authority', units='', tpe=DeviceType.ModellingAuthority,
                       definition='Modelling authority of this asset')
         self.register(key='commissioned_date', units='', tpe=int, definition='Commissioned date of the asset',
@@ -59,6 +68,9 @@ class PhysicalDevice(EditableDevice):
 
         self.register('build_status', units="", tpe=BuildStatus,
                       definition="Device build status. Used in expansion planning.")
+
+        self.register(key='owners', units='p.u.', tpe=SubObjectType.Associations,
+                      definition='Owners associations to injections', display=False)
 
     @property
     def commissioned_date(self) -> int:
@@ -121,6 +133,23 @@ class PhysicalDevice(EditableDevice):
         :return:
         """
         return datetime.datetime.fromtimestamp(self._decommissioned_date)
+
+    def associate_owner(self, owner: Owner, val=1.0):
+        """
+        Associate a technology with this injection device
+        :param owner:
+        :param val:
+        :return:
+        """
+        self.owners.add_object(owner, val=val)
+
+    @property
+    def owners_list(self) -> List[ALL_DEV_TYPES]:
+        """
+        Bus
+        :return: Bus
+        """
+        return self.owners.to_list()
 
     def initialize_rms(self):
         pass

@@ -182,6 +182,7 @@ class DataBaseTableMain(DiagramsMain):
             DeviceType.Technology.value: ":/Icons/icons/technology.png",
             DeviceType.FuelDevice.value: ":/Icons/icons/fuel.png",
             DeviceType.EmissionGasDevice.value: ":/Icons/icons/emission.png",
+            DeviceType.Owner.value: ":/Icons/icons/owner.png",
 
             "Measurements": ":/Icons/icons/measurement.png",
             DeviceType.PMeasurementDevice.value: ":/Icons/icons/measurement.png",
@@ -931,6 +932,12 @@ class DataBaseTableMain(DiagramsMain):
                 name = f'Gas {len(self.circuit.emission_gases) + 1}'
                 obj = dev.EmissionGas(name=name)
                 self.circuit.add_emission_gas(obj)
+
+            elif elm_type == DeviceType.Owner.value:
+
+                name = f'Owner {len(self.circuit.owners) + 1}'
+                obj = dev.Owner(name=name)
+                self.circuit.add_owner(obj)
 
             elif elm_type == DeviceType.ModellingAuthority.value:
 

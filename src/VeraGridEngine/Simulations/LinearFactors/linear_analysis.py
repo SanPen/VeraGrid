@@ -24,7 +24,7 @@ from VeraGridEngine.Simulations.Derivatives.csc_derivatives import dSf_dV_csc
 from VeraGridEngine.Utils.Sparse.csc import dense_to_csc
 import VeraGridEngine.Utils.Sparse.csc2 as csc
 from VeraGridEngine.Utils.MIP.selected_interface import lpDot1D_changes
-from VeraGridEngine.enumerations import ContingencyOperationTypes, ConverterControlType
+from VeraGridEngine.enumerations import ContingencyOperationTypes, ConverterControlType, HvdcControlType
 from VeraGridEngine.Topology.topology import find_different_states
 
 if TYPE_CHECKING:
@@ -49,7 +49,7 @@ def make_contingency_flows(base_flow: Vec,
     branch_number = lodf_factors.shape[0]
     branch_contingency_number = lodf_factors.shape[1]
     injection_number = ptdf_factors.shape[1]
-    flow_n1 = np.zeros(branch_number)
+    flow_n1: Vec = np.zeros(branch_number)
 
     if branch_number < 100:
         for m in range(branch_number):
@@ -115,7 +115,7 @@ def make_jacobian_ptdf(Ybus: sp.csc_matrix,
     J = AC_jacobian(Ybus, V, pvpq, pq)
 
     if distribute_slack:
-        dP = np.ones((n, n)) * (-1 / (n - 1))
+        dP: Mat = np.ones((n, n)) * (-1 / (n - 1))
         for i in range(n):
             dP[i, i] = 1.0
     else:
@@ -159,11 +159,11 @@ def make_ptdf(Bpqpv: sp.csc_matrix,
     # noslack = no_slack
 
     if distribute_slack:
-        dP = np.ones((n, n)) * (-1 / (n - 1))
+        dP: Mat = np.ones((n, n)) * (-1 / (n - 1))
         for i in range(n):
             dP[i, i] = 1.0
     else:
-        dP = np.eye(n, n)
+        dP: Mat = np.eye(n, n)
 
     # solve for change in voltage angles
     dTheta = np.zeros((n, n))
@@ -232,10 +232,10 @@ def make_acdc_ptdf(nc: NumericalCircuit, logger: Logger,
             # P-MODE 3: The VSC behaves as a droop control
             # P = P0 + k * (theta_f - theta_t)
             # k is in MW/deg, we need it in p.u./rad
-            droop_mw_deg = nc.vsc_data.control1_val[k]
-            ys = droop_mw_deg * 57.295779513 / nc.Sbase
+            ys = nc.vsc_data.control1_val[k] * 57.295779513 / nc.Sbase
         else:
-            ys = 1e15
+            # Non-droop VSCs: small coupling to keep the AC-DC topology visible
+            ys = 0.01
 
         A[f, f] += ys
         A[f, t] -= ys
@@ -246,7 +246,15 @@ def make_acdc_ptdf(nc: NumericalCircuit, logger: Logger,
     for k in range(nc.nhvdc):
         f = nc.hvdc_data.F[k]
         t = nc.hvdc_data.T[k]
-        ys = 1e15
+
+        if nc.hvdc_data.control_mode[k] == HvdcControlType.type_0_free:
+            # Free mode: P = Pset + angle_droop * (theta_f - theta_t)
+            # angle_droop is in MW/deg, we need it in p.u./rad
+            ys = nc.hvdc_data.angle_droop[k] * 57.295779513 / nc.Sbase
+        else:
+            # Pset mode: small coupling to keep the AC-DC topology visible
+            ys = 0.01
+
         A[f, f] += ys
         A[f, t] -= ys
         A[t, f] -= ys
@@ -269,7 +277,7 @@ def make_acdc_ptdf(nc: NumericalCircuit, logger: Logger,
                 no_slack.append(i)
 
     if distribute_slack:
-        dP = np.ones((n, n)) * (-1 / (n - 1))
+        dP: Mat = np.ones((n, n)) * (-1 / (n - 1))
         for i in range(n):
             dP[i, i] = 1.0
     else:
@@ -315,7 +323,7 @@ def make_lodf(Cf: sp.csc_matrix,
 
     # this loop avoids the divisions by zero
     # in those cases the LODF column should be zero
-    LODF = np.zeros((nl, nl))
+    LODF: Mat = np.zeros((nl, nl))
     div = 1 - H.diagonal()
     for j in range(H.shape[1]):
         if abs(div[j]) > numerical_zero:
@@ -349,7 +357,7 @@ def make_transfer_limits(ptdf: Mat,
     """
     nbr = ptdf.shape[0]
     nbus = ptdf.shape[1]
-    tmc = np.zeros(nbr)
+    tmc: Vec = np.zeros(nbr)
 
     for m in range(nbr):
         for i in range(nbus):
@@ -372,7 +380,7 @@ def create_M_numba(lodf: Mat, branch_contingency_indices) -> Mat:
     :param branch_contingency_indices:
     :return:
     """
-    M = np.empty((len(branch_contingency_indices), len(branch_contingency_indices)))
+    M: Mat = np.empty((len(branch_contingency_indices), len(branch_contingency_indices)))
     for i in range(len(branch_contingency_indices)):
         for j in range(len(branch_contingency_indices)):
             if i == j:
@@ -407,10 +415,10 @@ class LinearAnalysis:
         n_hvdc = nc.hvdc_data.nelm
         n_vsc = nc.vsc_data.nelm
 
-        self.PTDF = np.zeros((n_br, n_bus))
+        self.PTDF: Mat = np.zeros((n_br, n_bus))
         self.PTDF_by_island: List[Mat] = list()
 
-        self.LODF = np.zeros((n_br, n_br))
+        self.LODF: Mat = np.zeros((n_br, n_br))
 
         self.HvdcDF: Mat = np.zeros((n_br, n_hvdc))
         self.HvdcODF: Mat = np.zeros((n_br, n_hvdc))
@@ -691,9 +699,9 @@ class LinearMultiContingency:
         :param vsc_flow: Base Vsc flows (n_vsc)
         :return: New flows (nbranch)
         """
-        mask = np.zeros(len(base_flow), dtype=bool)
-        flow = base_flow.copy()
-        changed_idx = np.zeros(0, dtype=int)
+        mask: BoolVec = np.zeros(len(base_flow), dtype=bool)
+        flow: ObjVec = base_flow.copy()
+        changed_idx: IntVec = np.zeros(0, dtype=int)
 
         if len(self.branch_indices) > 0:
             inc, changed_idx = lpDot1D_changes(self.mlodf_factors, base_flow[self.branch_indices])
@@ -818,11 +826,11 @@ class ContingencyIndices:
             else:
                 print(f'Unknown branch contingency property {cnt.prop} at {cnt.name} {cnt.idtag}')
 
-        self.branch_contingency_indices = np.array(branch_contingency_indices_list, dtype=int)
-        self.hvdc_contingency_indices = np.array(hvdc_contingency_indices_list, dtype=int)
-        self.vsc_contingency_indices = np.array(vsc_contingency_indices_list, dtype=int)
-        self.bus_contingency_indices = np.array(bus_contingency_indices_list, dtype=int)
-        self.injections_factors = np.array(injections_factors_list, dtype=float)
+        self.branch_contingency_indices: IntVec = np.array(branch_contingency_indices_list, dtype=int)
+        self.hvdc_contingency_indices: IntVec = np.array(hvdc_contingency_indices_list, dtype=int)
+        self.vsc_contingency_indices: IntVec = np.array(vsc_contingency_indices_list, dtype=int)
+        self.bus_contingency_indices: IntVec = np.array(bus_contingency_indices_list, dtype=int)
+        self.injections_factors: Vec = np.array(injections_factors_list, dtype=float)
 
 
 class LinearMultiContingencies:
@@ -1100,7 +1108,7 @@ class LinearAnalysisTs:
         # must have the same size
         assert len(P) == self.nt
 
-        flow_ts = np.zeros_like(P)
+        flow_ts: Vec = np.zeros_like(P)
 
         for t_idx, list_of_represented_time_steps in self.groups.items():
             # get the linear analysis

@@ -97,12 +97,15 @@ class SequenceLineType(EditableDevice):
         'B0',
         'Cnf0',
         'use_conductance',
-        'n_circuits'
+        'n_circuits',
+        'capex',
+        'opex'
     )
 
     def __init__(self, name='SequenceLine', idtag=None, Imax=1, Vnom=1,
                  R=1e-20, X=1e-20, B=1e-20, R0=1e-20, X0=1e-20, B0=1e-20, CnF=1e-20, CnF0=1e-20,
-                 use_conductance: bool = False):
+                 use_conductance: bool = False,
+                 capex: float = 0.0, opex: float = 0.0):
         """
         Constructor
         :param name: name of the model
@@ -115,6 +118,8 @@ class SequenceLineType(EditableDevice):
         :param B0: Susceptance of zero sequence in uS/km
         :param CnF: Conductivity of positive sequence in uS/km
         :param CnF0: Conductivity of zero sequence in uS/km
+        :param capex: Capital expenditures
+        :param opex: Operating expenditures
         """
 
         EditableDevice.__init__(self,
@@ -141,6 +146,9 @@ class SequenceLineType(EditableDevice):
 
         self.n_circuits = 1
 
+        self.capex = float(capex)
+        self.opex = float(opex)
+
         self.register(key='Imax', units='kA', tpe=float, definition='Current rating of the line', old_names=['rating'])
         self.register(key='Vnom', units='kV', tpe=float, definition='Voltage rating of the line')
         self.register(key='R', units='Ohm/km', tpe=float, definition='Positive-sequence resistance per km')
@@ -154,6 +162,8 @@ class SequenceLineType(EditableDevice):
         self.register(key='use_conductance', units='', tpe=bool,
                       definition='Use conductance? else the susceptance is used')
         self.register(key='n_circuits', units='', tpe=int, definition='number of circuits')
+        self.register(key='capex', units='currency/km', tpe=float, definition='Capital expenditure per km')
+        self.register(key='opex', units='currency/MWh', tpe=float, definition='Operational expenditure')
 
     def get_values(self, Sbase: float, freq: float, length: float, line_Vnom: float,
                    logger: Logger = Logger()):
@@ -216,16 +226,16 @@ class SequenceLineType(EditableDevice):
         diag = (2 * z1 + z0) / 3
         off_diag = (z0 - z1) / 3
 
-        zabc = np.full((4, 4), off_diag)
-        np.fill_diagonal(zabc, diag)
+        z_abc = np.full((3, 3), off_diag)
+        np.fill_diagonal(z_abc, diag)
 
         adm = AdmittanceMatrix(size=4)
         try:
-            adm.values = np.linalg.inv(zabc)
+            adm.values[1:4,1:4] = np.linalg.inv(z_abc)
         except np.linalg.LinAlgError:
-            adm.values = np.linalg.pinv(zabc)
+            adm.values[1:4,1:4]  = np.linalg.pinv(z_abc)
 
-        adm.phN = 1
+        adm.phN = 0
         adm.phA = 1
         adm.phB = 1
         adm.phC = 1
@@ -247,13 +257,13 @@ class SequenceLineType(EditableDevice):
         diag = (2.0 * y1 + y0) / 3.0
         off_diag = (y0 - y1) / 3.0
 
-        yabc = np.full((4, 4), off_diag)
-        np.fill_diagonal(yabc, diag)
+        y_abc = np.full((3, 3), off_diag)
+        np.fill_diagonal(y_abc, diag)
 
         adm = AdmittanceMatrix(size=4)
-        adm.values = yabc
+        adm.values[1:4,1:4] = y_abc
 
-        adm.phN = 1
+        adm.phN = 0
         adm.phA = 1
         adm.phB = 1
         adm.phC = 1

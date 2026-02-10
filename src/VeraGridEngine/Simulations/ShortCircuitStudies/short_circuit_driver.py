@@ -59,7 +59,7 @@ class ShortCircuitDriver(DriverTemplate):
         # declare an empty results object
         n = grid.get_bus_number()
         self.results: ShortCircuitResults = ShortCircuitResults(
-            nsc=grid.get_short_circuit_definition_number(),
+            nsc=grid.get_short_circuit_event_number(),
             n=n,
             m=grid.get_branch_number(add_hvdc=False, add_vsc=False, add_switch=True),
             n_hvdc=grid.get_hvdc_number(),
@@ -68,7 +68,7 @@ class ShortCircuitDriver(DriverTemplate):
             branch_names=grid.get_branch_names(add_hvdc=False, add_vsc=False, add_switch=True),
             hvdc_names=grid.get_hvdc_names(),
             vsc_names=grid.get_vsc_names(),
-            sc_names=grid.get_short_circuit_definition_names(),
+            sc_names=grid.get_short_circuit_event_names(),
             bus_types=np.ones(n),
             area_names=grid.get_area_names()
         )
@@ -483,7 +483,7 @@ class ShortCircuitDriver(DriverTemplate):
         )
 
         results = ShortCircuitResults(
-            nsc=grid.get_short_circuit_definition_number(),
+            nsc=grid.get_short_circuit_event_number(),
             n=nc.nbus,
             m=nc.nbr,
             n_hvdc=nc.nhvdc,
@@ -492,13 +492,13 @@ class ShortCircuitDriver(DriverTemplate):
             branch_names=nc.passive_branch_data.names,
             hvdc_names=nc.hvdc_data.names,
             vsc_names=nc.vsc_data.names,
-            sc_names=grid.get_short_circuit_definition_names(),
+            sc_names=grid.get_short_circuit_event_names(),
             bus_types=nc.bus_data.bus_types
         )
 
         Zf = self.compile_zf(grid)
 
-        for k_sc, sc_definition in enumerate(grid.short_circuit_definitions):
+        for k_sc, sc_definition in enumerate(grid.short_circuit_event):
 
             for i, island in enumerate(calculation_inputs):
 

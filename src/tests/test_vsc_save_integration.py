@@ -6,7 +6,7 @@
 import os
 
 from VeraGridEngine.api import *
-from VeraGridEngine.IO.file_handler import FileOpen
+from VeraGridEngine.IO.file_open import FileOpen
 from VeraGridEngine.enumerations import FaultType
 import VeraGridEngine as gce
 

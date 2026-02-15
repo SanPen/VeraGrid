@@ -3,7 +3,8 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 import os
-from VeraGridEngine.IO.file_handler import FileOpen, FileSave
+from VeraGridEngine.IO.file_open import FileOpen
+from VeraGridEngine.IO.file_save import FileSave
 
 
 def test_all_grids():

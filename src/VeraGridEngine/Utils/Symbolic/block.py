@@ -475,10 +475,11 @@ class Block:
             ],
             "fix_vars": _serialize_undefinedconst_list(self.fix_vars),
             "fix_vars_eqs": [
-                {"uid": undef.uid, "expr": expr.to_dict()}
-                for undef, expr in self.fix_vars_eqs.items()
+                # {"uid": undef.uid, "expr": expr.to_dict()}
+                # for undef, expr in self.fix_vars_eqs.items()
             ],
-            "external_mapping": {str(dynvartype): var.to_dict() for dynvartype, var in self.external_mapping.items()},
+            "external_mapping": {str(dynvartype): var.to_dict()
+                                 for dynvartype, var in self.external_mapping.items()},
             "event_dict": [
                 {"var": var.to_dict(), "expr": expr.to_dict()}
                 for var, expr in self.event_dict.items()

@@ -1,11 +1,11 @@
 import numpy as np
-import VeraGridEngine.api as gce
+import VeraGridEngine.api as vge
 
 def test_2x2_bc():
 
-    line = gce.OverheadLineType()
+    line = vge.OverheadLineType()
 
-    wire = gce.Wire(name="Panther 30/7 ACSR",
+    wire = vge.Wire(name="Panther 30/7 ACSR",
                     diameter=21.0,
                     diameter_internal=9.0,
                     is_tube=True,
@@ -48,9 +48,9 @@ def test_2x2_bc():
 
 def test_3x3_abc():
 
-    line = gce.OverheadLineType()
+    line = vge.OverheadLineType()
 
-    wire = gce.Wire(name="Panther 30/7 ACSR",
+    wire = vge.Wire(name="Panther 30/7 ACSR",
                     diameter=21.0,
                     diameter_internal=9.0,
                     is_tube=True,
@@ -96,3 +96,71 @@ def test_3x3_abc():
 
     assert np.allclose(obtained_ys.values, correct_ys, atol=1e-4)
     assert np.allclose(obtained_ysh.values, correct_ysh, atol=1e-4)
+
+
+def test_order_phases():
+    """
+    This test intentionally modifies the defined phase order (NABC) by modelling an overhead line in which the neutral
+    conductor is placed in the third position (ABNC).
+
+    VeraGrid handles this configuration internally by automatically reordering the phases to the predefined reference
+    order (NABC) before solving the system.
+    """
+
+    logger = vge.Logger()
+    grid = vge.MultiCircuit()
+    grid.fBase = 60
+
+    # ----------------------------------------------------------------------------------------------------------------------
+    # Buses
+    # ----------------------------------------------------------------------------------------------------------------------
+    bus_slack = vge.Bus(name='Slack', Vnom=4.16, xpos=0, ypos=0)
+    bus_slack.is_slack = True
+    grid.add_bus(obj=bus_slack)
+    gen = vge.Generator()
+    grid.add_generator(bus=bus_slack, api_obj=gen)
+
+    bus_load = vge.Bus(name='Load', Vnom=4.16, xpos=400 * 5, ypos=0)
+    grid.add_bus(obj=bus_load)
+
+    # ----------------------------------------------------------------------------------------------------------------------
+    # Line
+    # ----------------------------------------------------------------------------------------------------------------------
+    Zbase = (4.16 * 4.16) / 100
+    z_nabc = np.array([
+        [1j * (1 / 1), 1j * 0.0, 1j * 0.0, 1j * 0.0],
+        [1j * 0.0, 1j * (1 / 2), 1j * 0.0, 1j * 0.0],
+        [1j * 0.0, 1j * 0.0, 1j * (1 / 0.001), 1j * 0.0],
+        [1j * 0.0, 1j * 0.0, 1j * 0.0, 1j * (1 / 3)]
+    ], dtype=complex) * Zbase
+
+    Ybase = 1 / Zbase
+    y_nabc = np.array([
+        [1j * 1.0, 0.0, 0.0, 0.0],
+        [0.0, 1j * 2.0, 0.0, 0.0],
+        [0.0, 0.0, 1j * 0.001, 0.0],
+        [0.0, 0.0, 0.0, 1j * 3.0]
+    ], dtype=complex) / 1e6 * Ybase
+
+    configuration = vge.create_known_abc_overhead_template(name='4 wire line',
+                                                           z_nabc=z_nabc,
+                                                           ysh_nabc=y_nabc,
+                                                           phases=np.array([1, 2, 0, 3]),
+                                                           Vnom=4.16,
+                                                           frequency=60)
+    grid.add_overhead_line(configuration)
+
+    line = vge.Line(bus_from=bus_slack,
+                    bus_to=bus_load)
+    line.apply_template(configuration, grid.Sbase, grid.fBase, logger)
+    grid.add_line(obj=line)
+
+    y_ref = np.array([
+        [1j * 0.001, 0.0, 0.0, 0.0],
+        [0.0, 1j * 1, 0.0, 0.0],
+        [0.0, 0.0, 1j * 2, 0.0],
+        [0.0, 0.0, 0.0, 1j * 3]
+    ], dtype=complex)
+
+    assert np.allclose(line.ys.values, y_ref * -1, atol=1e-4)
+    assert np.allclose(line.ysh.values, y_ref, atol=1e-4)

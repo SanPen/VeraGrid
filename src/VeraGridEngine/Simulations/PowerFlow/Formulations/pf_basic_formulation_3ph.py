@@ -224,6 +224,42 @@ def compute_ybus(nc: NumericalCircuit) -> Tuple[csc_matrix, csc_matrix, csc_matr
     return Ybus.tocsc(), Yf.tocsc(), Yt.tocsc(), Ysh_bus, binary_bus_mask, bus_idx_lookup, branch_lookup
 
 
+def compute_generators(bus_idx: IntVec,
+                       bus_lookup: IntVec,
+                       V: CxVec,
+                       P: CxVec,
+                       PF: CxVec,
+                       is_controlled) -> CxVec:
+
+    n = len(V)
+    nelm = len(bus_idx)
+    Igen = np.zeros(n, dtype=complex)
+    Q = np.zeros_like(P)
+
+    for k in range(nelm):
+
+        if is_controlled[k]:
+            Q[k] = 0.0
+        else:
+            Q[k] = P[k] * np.tan(np.acos(PF[k]))
+
+        f = bus_idx[k]
+
+        a = 4 * f + 1
+        b = 4 * f + 2
+        c = 4 * f + 3
+
+        a2 = bus_lookup[a]
+        b2 = bus_lookup[b]
+        c2 = bus_lookup[c]
+
+        Igen[a2] = np.conj((P[k] + Q[k] * 1j) / 3 / V[a2])
+        Igen[b2] = np.conj((P[k] + Q[k] * 1j) / 3 / V[b2])
+        Igen[c2] = np.conj((P[k] + Q[k] * 1j) / 3 / V[c2])
+
+    return Igen
+
+
 @nb.njit(cache=True)
 def compute_current_loads(bus_idx: IntVec,
                           bus_lookup: IntVec,
@@ -844,6 +880,13 @@ class PfBasicFormulation3Ph(PfFormulationTemplate):
         # compute the function residual
         # Assumes the internal vars were updated already with self.x2var()
 
+        Igen = compute_generators(bus_idx=self.nc.generator_data.bus_idx,
+                                  bus_lookup=self.bus_lookup,
+                                  V=V,
+                                  P=self.nc.generator_data.p,
+                                  PF=self.nc.generator_data.pf,
+                                  is_controlled=self.nc.generator_data.controllable)
+
         (Ipower,
          Y_power_linear,
          self.Un_floating_power) = compute_power_loads(bus_idx=self.nc.load_data.bus_idx,
@@ -862,10 +905,10 @@ class PfBasicFormulation3Ph(PfFormulationTemplate):
                                                            Idelta=self.nc.load_data.I3_delta,
                                                            Ifloating=self.nc.load_data.I3_floatingstar)
 
-        Ibus = (Ipower + Icurrent) / (self.nc.Sbase / 3)
-        Icalc = compute_current(self.Ybus, V)
+        Ibus = (Igen + Ipower + Icurrent) / (self.nc.Sbase / 3) / (V / np.abs(V))
+        Icalc = compute_current(self.Ybus, V) / (V / np.abs(V))
 
-        dI = Icalc - Ibus  # compute the mismatch
+        dI = (Icalc - Ibus)  # compute the mismatch
         _f = np.r_[
             dI[self.idx_dP].real,
             dI[self.idx_dQ].imag
@@ -894,6 +937,13 @@ class PfBasicFormulation3Ph(PfFormulationTemplate):
         # compute the function residual
         # Assumes the internal vars were updated already with self.x2var()
 
+        Igen = compute_generators(bus_idx=self.nc.generator_data.bus_idx,
+                                  bus_lookup=self.bus_lookup,
+                                  V=V,
+                                  P=self.nc.generator_data.p,
+                                  PF=self.nc.generator_data.pf,
+                                  is_controlled=self.nc.generator_data.controllable)
+
         (Ipower,
          Y_power_linear,
          self.Un_floating_power) = compute_power_loads(bus_idx=self.nc.load_data.bus_idx,
@@ -912,10 +962,13 @@ class PfBasicFormulation3Ph(PfFormulationTemplate):
                                                            Idelta=self.nc.load_data.I3_delta,
                                                            Ifloating=self.nc.load_data.I3_floatingstar)
 
-        Ibus = (Ipower + Icurrent) / (self.nc.Sbase / 3)
-        Icalc = compute_current(self.Ybus, V)
+        Ibus = (Igen + Ipower + Icurrent) / (self.nc.Sbase / 3) / (V / np.abs(V))
+        Icalc = compute_current(self.Ybus, V) / (V / np.abs(V))
 
-        dI = Icalc - Ibus  # compute the mismatch
+        # print('\nIbus =', abs(Ibus))
+        # print('Icalc =', abs(Icalc))
+
+        dI = (Icalc - Ibus)  # compute the mismatch
         _f = np.r_[
             dI[self.idx_dP].real,
             dI[self.idx_dQ].imag
@@ -940,6 +993,13 @@ class PfBasicFormulation3Ph(PfFormulationTemplate):
         # compute the function residual
         # Assumes the internal vars were updated already with self.x2var()
 
+        Igen = compute_generators(bus_idx=self.nc.generator_data.bus_idx,
+                                  bus_lookup=self.bus_lookup,
+                                  V=self.V,
+                                  P=self.nc.generator_data.p,
+                                  PF=self.nc.generator_data.pf,
+                                  is_controlled=self.nc.generator_data.controllable)
+
         (Ipower,
          Y_power_linear,
          self.Un_floating_power) = compute_power_loads(bus_idx=self.nc.load_data.bus_idx,
@@ -958,10 +1018,10 @@ class PfBasicFormulation3Ph(PfFormulationTemplate):
                                                            Idelta=self.nc.load_data.I3_delta,
                                                            Ifloating=self.nc.load_data.I3_floatingstar)
 
-        Ibus = (Ipower + Icurrent) / (self.nc.Sbase / 3)
-        Icalc = compute_current(self.Ybus, self.V)
+        Ibus = (Igen + Ipower + Icurrent) / (self.nc.Sbase / 3) / (self.V / np.abs(self.V))
+        Icalc = compute_current(self.Ybus, self.V) / (self.V / np.abs(self.V))
 
-        dI = Icalc - Ibus  # compute the mismatch
+        dI = (Icalc - Ibus)  # compute the mismatch
         self._f = np.r_[
             dI[self.idx_dP].real,
             dI[self.idx_dQ].imag
@@ -1030,6 +1090,13 @@ class PfBasicFormulation3Ph(PfFormulationTemplate):
 
         # NOTE: Assumes the internal vars were updated already with self.x2var()
 
+        Igen = compute_generators(bus_idx=self.nc.generator_data.bus_idx,
+                                  bus_lookup=self.bus_lookup,
+                                  V=self.V,
+                                  P=self.nc.generator_data.p,
+                                  PF=self.nc.generator_data.pf,
+                                  is_controlled=self.nc.generator_data.controllable)
+
         Ipower, Y_power_linear, self.Un_floating_power = compute_power_loads(bus_idx=self.nc.load_data.bus_idx,
                                                                              bus_lookup=self.bus_lookup,
                                                                              V=self.V,
@@ -1044,8 +1111,8 @@ class PfBasicFormulation3Ph(PfFormulationTemplate):
                                                                                      Idelta=self.nc.load_data.I3_delta,
                                                                                      Ifloating=self.nc.load_data.I3_floatingstar)
 
-        Ibus = (Ipower + Icurrent) / (self.nc.Sbase / 3)
-        Icalc = compute_current(self.Ybus, self.V)
+        Ibus = (Igen + Ipower + Icurrent) / (self.nc.Sbase / 3) / (self.V / np.abs(self.V))
+        Icalc = compute_current(self.Ybus, self.V) / (self.V / np.abs(self.V))
 
         self._f = compute_fx(Icalc, Ibus, self.idx_dP, self.idx_dQ)
 

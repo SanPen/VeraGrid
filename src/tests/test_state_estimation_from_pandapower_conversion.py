@@ -6,7 +6,7 @@ import os
 
 import VeraGridEngine as vg
 from VeraGridEngine import power_flow, SolverType
-from VeraGridEngine.IO.file_handler import FileOpen
+from VeraGridEngine.IO.file_open import FileOpen
 from VeraGridEngine.IO.others.pandapower_parser import Panda2VeraGrid, PANDAPOWER_AVAILABLE
 from VeraGridEngine.Simulations.StateEstimation.state_stimation_driver import StateEstimationDriver, StateEstimationOptions
 

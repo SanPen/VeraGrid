@@ -233,7 +233,7 @@ class Transformer2W(ControllableBranchParent):
         # association with transformer templates
         # self.possible_transformer_types: Associations = Associations(device_type=DeviceType.TransformerTypeDevice)
 
-        self._conn_f: WindingType = WindingType.Delta
+        self._conn_f: WindingType = WindingType.GroundedStar
         self._conn_t: WindingType = WindingType.GroundedStar
         self._vector_group_number: int = 0
         self._phases: IntVec = np.array([1, 2, 3])

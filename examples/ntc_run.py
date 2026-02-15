@@ -2,8 +2,8 @@ import os
 from VeraGridEngine.api import *
 from VeraGridEngine.Simulations.ATC.available_transfer_capacity_driver import AvailableTransferMode
 import time
-from VeraGridEngine.basic_structures import BranchImpedanceMode
-from VeraGridEngine.IO.file_handler import FileOpen
+from VeraGridEngine.enumerations import BranchImpedanceMode
+from VeraGridEngine.IO.file_open import FileOpen
 from VeraGridEngine.Simulations.ATC.available_transfer_capacity_driver import compute_alpha, compute_dP
 
 folder = r'\\mornt4\DESRED\DPE-Internacional\Interconexiones\FRANCIA\2022 MoU\5GW 8.0\Con N-x\merged\GridCal'

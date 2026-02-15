@@ -10,7 +10,7 @@ from PySide6 import QtWidgets
 from VeraGrid.Gui.CGMESDialogue.cgmes_export_gui import Ui_CgmesExportDialog
 import VeraGrid.Session.file_handler as filedrv
 import VeraGrid.Gui.gui_functions as gf
-from VeraGridEngine.enumerations import CGMESVersions
+from VeraGridEngine.enumerations import CGMESVersions, FileType
 from VeraGridEngine.IO.cim.cgmes.cgmes_export import get_available_cgmes_profiles
 from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 
@@ -107,7 +107,8 @@ class CgmesExportDialogue(QtWidgets.QDialog):
                                             cgmes_version=cgmes_version,
                                             cgmes_profiles=cgmes_profiles,
                                             cgmes_one_file_per_profile=cgmes_one_file_per_profile,
-                                            cgmes_map_areas_like_raw=cgmes_map_areas_like_raw)
+                                            cgmes_map_areas_like_raw=cgmes_map_areas_like_raw,
+                                            file_type=FileType.CGMES)
 
         # if the global file_name is empty, ask where to save
         fname = os.path.join(self.project_directory, self.app.ui.grid_name_line_edit.text())

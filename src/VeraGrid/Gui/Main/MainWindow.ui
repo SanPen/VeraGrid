@@ -149,7 +149,7 @@ QProgressBar::chunk{
     <item row="0" column="0">
      <widget class="QTabWidget" name="mainTabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="GridTab">
        <attribute name="icon">
@@ -314,7 +314,7 @@ QProgressBar::chunk{
                       <enum>QTabWidget::TabPosition::North</enum>
                      </property>
                      <property name="currentIndex">
-                      <number>2</number>
+                      <number>0</number>
                      </property>
                      <widget class="QWidget" name="tab_3">
                       <attribute name="icon">
@@ -3626,7 +3626,7 @@ QProgressBar::chunk{
            <enum>QTabWidget::TabPosition::South</enum>
           </property>
           <property name="currentIndex">
-           <number>4</number>
+           <number>9</number>
           </property>
           <property name="iconSize">
            <size>
@@ -4718,7 +4718,7 @@ QProgressBar::chunk{
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="tab_8">
+          <widget class="QWidget" name="seTab">
            <attribute name="icon">
             <iconset resource="../Icons/icons.qrc">
              <normaloff>:/Icons/icons/SE.png</normaloff>:/Icons/icons/SE.png</iconset>
@@ -5043,7 +5043,7 @@ QProgressBar::chunk{
                 <widget class="QComboBox" name="opf_time_grouping_comboBox">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5056,7 +5056,7 @@ QProgressBar::chunk{
                 <widget class="QCheckBox" name="opfSpinningReserveCheckBox">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5072,7 +5072,7 @@ QProgressBar::chunk{
                 <widget class="QCheckBox" name="useGslkAsCostsOpfCheckBox">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5088,7 +5088,7 @@ QProgressBar::chunk{
                 <widget class="QLabel" name="label_15">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5101,7 +5101,7 @@ QProgressBar::chunk{
                 <widget class="QComboBox" name="opfZonalGroupByComboBox">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5114,7 +5114,7 @@ QProgressBar::chunk{
                 <widget class="QComboBox" name="mip_framework_comboBox">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5127,7 +5127,7 @@ QProgressBar::chunk{
                 <widget class="QLabel" name="label_4">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5160,7 +5160,7 @@ QProgressBar::chunk{
                 <widget class="QCheckBox" name="opfConsiderUpDownTimeCheckBox">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5176,7 +5176,7 @@ QProgressBar::chunk{
                 <widget class="QCheckBox" name="approximateLossesOpfCheckBox">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5192,7 +5192,7 @@ QProgressBar::chunk{
                 <widget class="QComboBox" name="opfDispatchModeComboBox">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5205,7 +5205,7 @@ QProgressBar::chunk{
                 <widget class="QLabel" name="label_104">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5218,7 +5218,7 @@ QProgressBar::chunk{
                 <widget class="QDoubleSpinBox" name="opfContingencyToleranceSpinBox">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5240,7 +5240,7 @@ QProgressBar::chunk{
                 <widget class="QCheckBox" name="considerContingenciesOpfCheckBox">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5256,7 +5256,7 @@ QProgressBar::chunk{
                 <widget class="QCheckBox" name="save_mip_checkBox">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5272,7 +5272,7 @@ QProgressBar::chunk{
                 <widget class="QCheckBox" name="fixOpfCheckBox">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5288,7 +5288,7 @@ QProgressBar::chunk{
                 <widget class="QCheckBox" name="opfConsiderRampsCheckBox">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5304,7 +5304,7 @@ QProgressBar::chunk{
                 <widget class="QLabel" name="label_9">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5317,7 +5317,7 @@ QProgressBar::chunk{
                 <widget class="QComboBox" name="mip_solver_comboBox">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5330,7 +5330,7 @@ QProgressBar::chunk{
                 <widget class="QLabel" name="label_103">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5371,7 +5371,7 @@ QProgressBar::chunk{
                 <widget class="QLabel" name="label_129">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5387,7 +5387,7 @@ QProgressBar::chunk{
                 <widget class="QCheckBox" name="ips_initialize_with_pf_checkBox">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5403,7 +5403,7 @@ QProgressBar::chunk{
                 <widget class="QComboBox" name="ips_method_comboBox">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5413,7 +5413,7 @@ QProgressBar::chunk{
                 <widget class="QSpinBox" name="ips_iterations_spinBox">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5442,7 +5442,7 @@ QProgressBar::chunk{
                 <widget class="QLabel" name="label_126">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5458,7 +5458,7 @@ QProgressBar::chunk{
                 <widget class="QSpinBox" name="ips_tolerance_spinBox">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5483,7 +5483,7 @@ QProgressBar::chunk{
                 <widget class="QLabel" name="label_125">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5499,7 +5499,7 @@ QProgressBar::chunk{
                 <widget class="QDoubleSpinBox" name="ips_trust_radius_doubleSpinBox">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5521,7 +5521,7 @@ QProgressBar::chunk{
                 <widget class="QLabel" name="label_127">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5537,7 +5537,7 @@ QProgressBar::chunk{
                 <widget class="QCheckBox" name="ips_control_Qlimits_checkBox">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5568,7 +5568,7 @@ QProgressBar::chunk{
                 <widget class="QSpinBox" name="ips_verbose_spinBox">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5581,7 +5581,7 @@ QProgressBar::chunk{
                 <widget class="QCheckBox" name="skipOpfGenerationLimitsCheckBox">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5594,7 +5594,7 @@ QProgressBar::chunk{
                 <widget class="QLabel" name="label_128">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5614,7 +5614,7 @@ QProgressBar::chunk{
                 <widget class="QComboBox" name="lpf_solver_comboBox">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5627,7 +5627,7 @@ QProgressBar::chunk{
                 <widget class="QLabel" name="label_42">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5640,7 +5640,7 @@ QProgressBar::chunk{
                 <widget class="QCheckBox" name="addOptimalPowerFlowReportCheckBox">
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -5838,6 +5838,11 @@ QProgressBar::chunk{
               <layout class="QGridLayout" name="gridLayout_15">
                <item row="7" column="0">
                 <widget class="QCheckBox" name="ntcSelectBasedOnAcerCriteriaCheckBox">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="toolTip">
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This criteria springs from the ACER (Agency for the Cooperation for Energy Regulators).&lt;/p&gt;&lt;p&gt;It determines that a branch is only relevant to be considered in a NTC calculation if the flow due to the exchange is over a percentage (70%) &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;A branch is monitored only if:&lt;/p&gt;&lt;p&gt;(branch_rate * 70%) / branch_alpha &amp;lt;= total exchange rating&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
@@ -5848,6 +5853,11 @@ QProgressBar::chunk{
                </item>
                <item row="0" column="0" colspan="2">
                 <widget class="QCheckBox" name="skipNtcGenerationLimitsCheckBox">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="toolTip">
                   <string>If activated, the generation limits are not considered</string>
                  </property>
@@ -5861,6 +5871,11 @@ QProgressBar::chunk{
                </item>
                <item row="2" column="0">
                 <widget class="QSpinBox" name="trmSpinBox">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="suffix">
                   <string> MW</string>
                  </property>
@@ -5880,6 +5895,11 @@ QProgressBar::chunk{
                </item>
                <item row="11" column="0" colspan="2">
                 <widget class="QCheckBox" name="consider_ntc_contingencies_checkBox">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="toolTip">
                   <string>If checked, the NTC optimization will use the system declared contingencies</string>
                  </property>
@@ -5890,6 +5910,11 @@ QProgressBar::chunk{
                </item>
                <item row="5" column="0">
                 <widget class="QCheckBox" name="ntcSelectBasedOnExchangeSensitivityCheckBox">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="toolTip">
                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A branch is monitored solely based on its contribution to the inter-area excahge sensitivity. Therefore a branch is selected if it's alpha value is greater than the set alpha %&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
@@ -5903,6 +5928,11 @@ QProgressBar::chunk{
                </item>
                <item row="8" column="0">
                 <widget class="QSpinBox" name="ntcLoadRuleSpinBox">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="suffix">
                   <string>%</string>
                  </property>
@@ -5982,7 +6012,7 @@ QProgressBar::chunk{
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>12</pointsize>
+                   <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -6033,6 +6063,11 @@ QProgressBar::chunk{
                    </disabled>
                   </palette>
                  </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="text">
                   <string>Contingencies</string>
                  </property>
@@ -6040,6 +6075,11 @@ QProgressBar::chunk{
                </item>
                <item row="6" column="0">
                 <widget class="QSpinBox" name="ntcAlphaSpinBox">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="toolTip">
                   <string>Minimum exchange contribution (Alpha)</string>
                  </property>
@@ -6056,6 +6096,11 @@ QProgressBar::chunk{
                </item>
                <item row="1" column="0">
                 <widget class="QLabel" name="label_231">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="toolTip">
                   <string>Transmission reliability margin (TRM)</string>
                  </property>
@@ -6066,6 +6111,11 @@ QProgressBar::chunk{
                </item>
                <item row="12" column="0" colspan="2">
                 <widget class="QCheckBox" name="strict_ntc_formulation_checkBox">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="toolTip">
                   <string>More strict NTC Formulation: No slacks of any type and specific monitoring criteria</string>
                  </property>
@@ -6103,6 +6153,11 @@ QProgressBar::chunk{
                </item>
                <item row="3" column="0">
                 <widget class="QLabel" name="label_30">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="text">
                   <string>Loading threshold to report</string>
                  </property>
@@ -6110,6 +6165,11 @@ QProgressBar::chunk{
                </item>
                <item row="1" column="0">
                 <widget class="QLabel" name="label_77">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="text">
                   <string>Transfer method</string>
                  </property>
@@ -6117,6 +6177,11 @@ QProgressBar::chunk{
                </item>
                <item row="4" column="0">
                 <widget class="QSpinBox" name="ntcReportLoadingThresholdSpinBox">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="suffix">
                   <string>%</string>
                  </property>
@@ -6129,7 +6194,13 @@ QProgressBar::chunk{
                 </widget>
                </item>
                <item row="2" column="0">
-                <widget class="QComboBox" name="transferMethodComboBox"/>
+                <widget class="QComboBox" name="transferMethodComboBox">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
+                </widget>
                </item>
               </layout>
              </widget>
@@ -6241,6 +6312,11 @@ QProgressBar::chunk{
               <layout class="QGridLayout" name="gridLayout_29">
                <item row="0" column="0" colspan="2">
                 <widget class="QLabel" name="label_62">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="text">
                   <string>Transfer sensitivity threshold</string>
                  </property>
@@ -6248,6 +6324,11 @@ QProgressBar::chunk{
                </item>
                <item row="2" column="0" colspan="2">
                 <widget class="QCheckBox" name="n1ConsiderationCheckBox">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="text">
                   <string>n-1 sensibility consideration</string>
                  </property>
@@ -6271,6 +6352,11 @@ QProgressBar::chunk{
                </item>
                <item row="1" column="0" colspan="2">
                 <widget class="QDoubleSpinBox" name="atcThresholdSpinBox">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="toolTip">
                   <string>Threshold used to discard insensitive branches</string>
                  </property>
@@ -6290,6 +6376,11 @@ QProgressBar::chunk{
                </item>
                <item row="3" column="0">
                 <widget class="QCheckBox" name="usePfValuesForAtcCheckBox">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="toolTip">
                   <string>Use existing power flow values for the contingency initialization in the net transfer capacity and contingency simulations</string>
                  </property>
@@ -6386,6 +6477,11 @@ QProgressBar::chunk{
               <layout class="QGridLayout" name="gridLayout_12">
                <item row="3" column="0">
                 <widget class="QLabel" name="label_143">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="toolTip">
                   <string>If the sense is positive, the algorithm will assess the maximum generation capacity in the selected nodes. If it is negative it will asses the maximum loading capacity in the selected nodes.</string>
                  </property>
@@ -6399,6 +6495,11 @@ QProgressBar::chunk{
                </item>
                <item row="3" column="1">
                 <widget class="QDoubleSpinBox" name="nodal_capacity_sense_SpinBox">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="toolTip">
                   <string>If the sense is positive, the algorithm will assess the maximum generation capacity in the selected nodes. If it is negative it will asses the maximum loading capacity in the selected nodes.</string>
                  </property>
@@ -6415,6 +6516,11 @@ QProgressBar::chunk{
                </item>
                <item row="0" column="0">
                 <widget class="QLabel" name="label_142">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="text">
                   <string>Method</string>
                  </property>
@@ -6422,6 +6528,11 @@ QProgressBar::chunk{
                </item>
                <item row="1" column="0" colspan="2">
                 <widget class="QComboBox" name="nodal_capacity_method_comboBox">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
                  <property name="toolTip">
                   <string>Optimization method to use</string>
                  </property>
@@ -8421,7 +8532,7 @@ QProgressBar::chunk{
              <widget class="QFrame" name="frame_15">
               <property name="minimumSize">
                <size>
-                <width>300</width>
+                <width>350</width>
                 <height>0</height>
                </size>
               </property>
@@ -9693,7 +9804,7 @@ QProgressBar::chunk{
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="tab_5">
+          <widget class="QWidget" name="serverTab">
            <attribute name="icon">
             <iconset resource="../Icons/icons.qrc">
              <normaloff>:/Icons/icons/server.png</normaloff>:/Icons/icons/server.png</iconset>

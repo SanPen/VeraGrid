@@ -5,11 +5,11 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-from VeraGridEngine.IO.file_handler import FileOpen
+from VeraGridEngine.IO.file_open import FileOpen
 import VeraGridEngine.Devices as dev
 import VeraGridEngine.Simulations as sim
 from VeraGridEngine.enumerations import InvestmentEvaluationMethod, ResultTypes
-from VeraGridEngine.DataStructures.numerical_circuit import compile_numerical_circuit_at
+from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGridEngine.Simulations.PowerFlow.power_flow_worker import multi_island_pf_nc
 
 

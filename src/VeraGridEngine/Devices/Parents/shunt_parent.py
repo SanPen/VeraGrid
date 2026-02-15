@@ -410,7 +410,7 @@ class ShuntParent(InjectionParent):
         Shunt admittance matrix (4x4)
         :return:
         """
-        if self._ysh.size == 0:
+        if self._ysh.size <= 0:
             self.fill_3_phase_from_sequence()
 
         return self._ysh

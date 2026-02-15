@@ -2788,11 +2788,11 @@ class Ui_mainWindow(object):
         self.horizontalLayout_10.addItem(self.horizontalSpacer_24)
 
         self.settingsTabWidget.addTab(self.cpf_tab, icon10, "")
-        self.tab_8 = QWidget()
-        self.tab_8.setObjectName(u"tab_8")
-        self.horizontalLayout_24 = QHBoxLayout(self.tab_8)
+        self.seTab = QWidget()
+        self.seTab.setObjectName(u"seTab")
+        self.horizontalLayout_24 = QHBoxLayout(self.seTab)
         self.horizontalLayout_24.setObjectName(u"horizontalLayout_24")
-        self.frame_45 = QFrame(self.tab_8)
+        self.frame_45 = QFrame(self.seTab)
         self.frame_45.setObjectName(u"frame_45")
         self.frame_45.setFrameShape(QFrame.Shape.NoFrame)
         self.frame_45.setFrameShadow(QFrame.Shadow.Raised)
@@ -2915,7 +2915,7 @@ class Ui_mainWindow(object):
 
         self.horizontalLayout_24.addItem(self.horizontalSpacer_14)
 
-        self.settingsTabWidget.addTab(self.tab_8, icon82, "")
+        self.settingsTabWidget.addTab(self.seTab, icon82, "")
         self.opf_tab = QWidget()
         self.opf_tab.setObjectName(u"opf_tab")
         self.gridLayout_10 = QGridLayout(self.opf_tab)
@@ -2930,43 +2930,46 @@ class Ui_mainWindow(object):
         self.gridLayout_18.setObjectName(u"gridLayout_18")
         self.opf_time_grouping_comboBox = QComboBox(self.groupBox)
         self.opf_time_grouping_comboBox.setObjectName(u"opf_time_grouping_comboBox")
-        self.opf_time_grouping_comboBox.setFont(font4)
+        font5 = QFont()
+        font5.setPointSize(10)
+        font5.setBold(False)
+        self.opf_time_grouping_comboBox.setFont(font5)
 
         self.gridLayout_18.addWidget(self.opf_time_grouping_comboBox, 3, 1, 1, 2)
 
         self.opfSpinningReserveCheckBox = QCheckBox(self.groupBox)
         self.opfSpinningReserveCheckBox.setObjectName(u"opfSpinningReserveCheckBox")
-        self.opfSpinningReserveCheckBox.setFont(font4)
+        self.opfSpinningReserveCheckBox.setFont(font5)
 
         self.gridLayout_18.addWidget(self.opfSpinningReserveCheckBox, 10, 0, 1, 3)
 
         self.useGslkAsCostsOpfCheckBox = QCheckBox(self.groupBox)
         self.useGslkAsCostsOpfCheckBox.setObjectName(u"useGslkAsCostsOpfCheckBox")
-        self.useGslkAsCostsOpfCheckBox.setFont(font4)
+        self.useGslkAsCostsOpfCheckBox.setFont(font5)
 
         self.gridLayout_18.addWidget(self.useGslkAsCostsOpfCheckBox, 13, 0, 1, 3)
 
         self.label_15 = QLabel(self.groupBox)
         self.label_15.setObjectName(u"label_15")
-        self.label_15.setFont(font4)
+        self.label_15.setFont(font5)
 
         self.gridLayout_18.addWidget(self.label_15, 5, 0, 1, 1)
 
         self.opfZonalGroupByComboBox = QComboBox(self.groupBox)
         self.opfZonalGroupByComboBox.setObjectName(u"opfZonalGroupByComboBox")
-        self.opfZonalGroupByComboBox.setFont(font4)
+        self.opfZonalGroupByComboBox.setFont(font5)
 
         self.gridLayout_18.addWidget(self.opfZonalGroupByComboBox, 4, 1, 1, 2)
 
         self.mip_framework_comboBox = QComboBox(self.groupBox)
         self.mip_framework_comboBox.setObjectName(u"mip_framework_comboBox")
-        self.mip_framework_comboBox.setFont(font4)
+        self.mip_framework_comboBox.setFont(font5)
 
         self.gridLayout_18.addWidget(self.mip_framework_comboBox, 5, 1, 1, 1)
 
         self.label_4 = QLabel(self.groupBox)
         self.label_4.setObjectName(u"label_4")
-        self.label_4.setFont(font4)
+        self.label_4.setFont(font5)
 
         self.gridLayout_18.addWidget(self.label_4, 3, 0, 1, 1)
 
@@ -2981,31 +2984,31 @@ class Ui_mainWindow(object):
 
         self.opfConsiderUpDownTimeCheckBox = QCheckBox(self.groupBox)
         self.opfConsiderUpDownTimeCheckBox.setObjectName(u"opfConsiderUpDownTimeCheckBox")
-        self.opfConsiderUpDownTimeCheckBox.setFont(font4)
+        self.opfConsiderUpDownTimeCheckBox.setFont(font5)
 
         self.gridLayout_18.addWidget(self.opfConsiderUpDownTimeCheckBox, 9, 0, 1, 3)
 
         self.approximateLossesOpfCheckBox = QCheckBox(self.groupBox)
         self.approximateLossesOpfCheckBox.setObjectName(u"approximateLossesOpfCheckBox")
-        self.approximateLossesOpfCheckBox.setFont(font4)
+        self.approximateLossesOpfCheckBox.setFont(font5)
 
         self.gridLayout_18.addWidget(self.approximateLossesOpfCheckBox, 14, 0, 1, 3)
 
         self.opfDispatchModeComboBox = QComboBox(self.groupBox)
         self.opfDispatchModeComboBox.setObjectName(u"opfDispatchModeComboBox")
-        self.opfDispatchModeComboBox.setFont(font4)
+        self.opfDispatchModeComboBox.setFont(font5)
 
         self.gridLayout_18.addWidget(self.opfDispatchModeComboBox, 0, 1, 1, 2)
 
         self.label_104 = QLabel(self.groupBox)
         self.label_104.setObjectName(u"label_104")
-        self.label_104.setFont(font4)
+        self.label_104.setFont(font5)
 
         self.gridLayout_18.addWidget(self.label_104, 12, 0, 1, 1)
 
         self.opfContingencyToleranceSpinBox = QDoubleSpinBox(self.groupBox)
         self.opfContingencyToleranceSpinBox.setObjectName(u"opfContingencyToleranceSpinBox")
-        self.opfContingencyToleranceSpinBox.setFont(font4)
+        self.opfContingencyToleranceSpinBox.setFont(font5)
         self.opfContingencyToleranceSpinBox.setDecimals(4)
         self.opfContingencyToleranceSpinBox.setSingleStep(0.010000000000000)
         self.opfContingencyToleranceSpinBox.setValue(0.050000000000000)
@@ -3014,43 +3017,43 @@ class Ui_mainWindow(object):
 
         self.considerContingenciesOpfCheckBox = QCheckBox(self.groupBox)
         self.considerContingenciesOpfCheckBox.setObjectName(u"considerContingenciesOpfCheckBox")
-        self.considerContingenciesOpfCheckBox.setFont(font4)
+        self.considerContingenciesOpfCheckBox.setFont(font5)
 
         self.gridLayout_18.addWidget(self.considerContingenciesOpfCheckBox, 11, 0, 1, 3)
 
         self.save_mip_checkBox = QCheckBox(self.groupBox)
         self.save_mip_checkBox.setObjectName(u"save_mip_checkBox")
-        self.save_mip_checkBox.setFont(font4)
+        self.save_mip_checkBox.setFont(font5)
 
         self.gridLayout_18.addWidget(self.save_mip_checkBox, 18, 0, 1, 3)
 
         self.fixOpfCheckBox = QCheckBox(self.groupBox)
         self.fixOpfCheckBox.setObjectName(u"fixOpfCheckBox")
-        self.fixOpfCheckBox.setFont(font4)
+        self.fixOpfCheckBox.setFont(font5)
 
         self.gridLayout_18.addWidget(self.fixOpfCheckBox, 15, 0, 1, 3)
 
         self.opfConsiderRampsCheckBox = QCheckBox(self.groupBox)
         self.opfConsiderRampsCheckBox.setObjectName(u"opfConsiderRampsCheckBox")
-        self.opfConsiderRampsCheckBox.setFont(font4)
+        self.opfConsiderRampsCheckBox.setFont(font5)
 
         self.gridLayout_18.addWidget(self.opfConsiderRampsCheckBox, 8, 0, 1, 3)
 
         self.label_9 = QLabel(self.groupBox)
         self.label_9.setObjectName(u"label_9")
-        self.label_9.setFont(font4)
+        self.label_9.setFont(font5)
 
         self.gridLayout_18.addWidget(self.label_9, 0, 0, 1, 1)
 
         self.mip_solver_comboBox = QComboBox(self.groupBox)
         self.mip_solver_comboBox.setObjectName(u"mip_solver_comboBox")
-        self.mip_solver_comboBox.setFont(font4)
+        self.mip_solver_comboBox.setFont(font5)
 
         self.gridLayout_18.addWidget(self.mip_solver_comboBox, 5, 2, 1, 1)
 
         self.label_103 = QLabel(self.groupBox)
         self.label_103.setObjectName(u"label_103")
-        self.label_103.setFont(font4)
+        self.label_103.setFont(font5)
 
         self.gridLayout_18.addWidget(self.label_103, 4, 0, 1, 1)
 
@@ -3068,25 +3071,25 @@ class Ui_mainWindow(object):
 
         self.label_129 = QLabel(self.groupBox_3)
         self.label_129.setObjectName(u"label_129")
-        self.label_129.setFont(font4)
+        self.label_129.setFont(font5)
 
         self.gridLayout_27.addWidget(self.label_129, 2, 0, 1, 1)
 
         self.ips_initialize_with_pf_checkBox = QCheckBox(self.groupBox_3)
         self.ips_initialize_with_pf_checkBox.setObjectName(u"ips_initialize_with_pf_checkBox")
-        self.ips_initialize_with_pf_checkBox.setFont(font4)
+        self.ips_initialize_with_pf_checkBox.setFont(font5)
 
         self.gridLayout_27.addWidget(self.ips_initialize_with_pf_checkBox, 6, 0, 1, 2)
 
         self.ips_method_comboBox = QComboBox(self.groupBox_3)
         self.ips_method_comboBox.setObjectName(u"ips_method_comboBox")
-        self.ips_method_comboBox.setFont(font4)
+        self.ips_method_comboBox.setFont(font5)
 
         self.gridLayout_27.addWidget(self.ips_method_comboBox, 0, 1, 1, 1)
 
         self.ips_iterations_spinBox = QSpinBox(self.groupBox_3)
         self.ips_iterations_spinBox.setObjectName(u"ips_iterations_spinBox")
-        self.ips_iterations_spinBox.setFont(font4)
+        self.ips_iterations_spinBox.setFont(font5)
         self.ips_iterations_spinBox.setMinimum(1)
         self.ips_iterations_spinBox.setMaximum(9999999)
         self.ips_iterations_spinBox.setValue(100)
@@ -3100,13 +3103,13 @@ class Ui_mainWindow(object):
 
         self.label_126 = QLabel(self.groupBox_3)
         self.label_126.setObjectName(u"label_126")
-        self.label_126.setFont(font4)
+        self.label_126.setFont(font5)
 
         self.gridLayout_27.addWidget(self.label_126, 1, 0, 1, 1)
 
         self.ips_tolerance_spinBox = QSpinBox(self.groupBox_3)
         self.ips_tolerance_spinBox.setObjectName(u"ips_tolerance_spinBox")
-        self.ips_tolerance_spinBox.setFont(font4)
+        self.ips_tolerance_spinBox.setFont(font5)
         self.ips_tolerance_spinBox.setMinimum(1)
         self.ips_tolerance_spinBox.setMaximum(15)
         self.ips_tolerance_spinBox.setValue(4)
@@ -3115,13 +3118,13 @@ class Ui_mainWindow(object):
 
         self.label_125 = QLabel(self.groupBox_3)
         self.label_125.setObjectName(u"label_125")
-        self.label_125.setFont(font4)
+        self.label_125.setFont(font5)
 
         self.gridLayout_27.addWidget(self.label_125, 0, 0, 1, 1)
 
         self.ips_trust_radius_doubleSpinBox = QDoubleSpinBox(self.groupBox_3)
         self.ips_trust_radius_doubleSpinBox.setObjectName(u"ips_trust_radius_doubleSpinBox")
-        self.ips_trust_radius_doubleSpinBox.setFont(font4)
+        self.ips_trust_radius_doubleSpinBox.setFont(font5)
         self.ips_trust_radius_doubleSpinBox.setDecimals(4)
         self.ips_trust_radius_doubleSpinBox.setSingleStep(0.100000000000000)
         self.ips_trust_radius_doubleSpinBox.setValue(1.000000000000000)
@@ -3130,13 +3133,13 @@ class Ui_mainWindow(object):
 
         self.label_127 = QLabel(self.groupBox_3)
         self.label_127.setObjectName(u"label_127")
-        self.label_127.setFont(font4)
+        self.label_127.setFont(font5)
 
         self.gridLayout_27.addWidget(self.label_127, 3, 0, 1, 1)
 
         self.ips_control_Qlimits_checkBox = QCheckBox(self.groupBox_3)
         self.ips_control_Qlimits_checkBox.setObjectName(u"ips_control_Qlimits_checkBox")
-        self.ips_control_Qlimits_checkBox.setFont(font4)
+        self.ips_control_Qlimits_checkBox.setFont(font5)
 
         self.gridLayout_27.addWidget(self.ips_control_Qlimits_checkBox, 7, 0, 1, 2)
 
@@ -3150,19 +3153,19 @@ class Ui_mainWindow(object):
         self.gridLayout_26.setObjectName(u"gridLayout_26")
         self.ips_verbose_spinBox = QSpinBox(self.groupBox_2)
         self.ips_verbose_spinBox.setObjectName(u"ips_verbose_spinBox")
-        self.ips_verbose_spinBox.setFont(font4)
+        self.ips_verbose_spinBox.setFont(font5)
 
         self.gridLayout_26.addWidget(self.ips_verbose_spinBox, 1, 1, 1, 1)
 
         self.skipOpfGenerationLimitsCheckBox = QCheckBox(self.groupBox_2)
         self.skipOpfGenerationLimitsCheckBox.setObjectName(u"skipOpfGenerationLimitsCheckBox")
-        self.skipOpfGenerationLimitsCheckBox.setFont(font4)
+        self.skipOpfGenerationLimitsCheckBox.setFont(font5)
 
         self.gridLayout_26.addWidget(self.skipOpfGenerationLimitsCheckBox, 3, 0, 1, 2)
 
         self.label_128 = QLabel(self.groupBox_2)
         self.label_128.setObjectName(u"label_128")
-        self.label_128.setFont(font4)
+        self.label_128.setFont(font5)
 
         self.gridLayout_26.addWidget(self.label_128, 1, 0, 1, 1)
 
@@ -3173,19 +3176,19 @@ class Ui_mainWindow(object):
 
         self.lpf_solver_comboBox = QComboBox(self.groupBox_2)
         self.lpf_solver_comboBox.setObjectName(u"lpf_solver_comboBox")
-        self.lpf_solver_comboBox.setFont(font4)
+        self.lpf_solver_comboBox.setFont(font5)
 
         self.gridLayout_26.addWidget(self.lpf_solver_comboBox, 0, 1, 1, 1)
 
         self.label_42 = QLabel(self.groupBox_2)
         self.label_42.setObjectName(u"label_42")
-        self.label_42.setFont(font4)
+        self.label_42.setFont(font5)
 
         self.gridLayout_26.addWidget(self.label_42, 0, 0, 1, 1)
 
         self.addOptimalPowerFlowReportCheckBox = QCheckBox(self.groupBox_2)
         self.addOptimalPowerFlowReportCheckBox.setObjectName(u"addOptimalPowerFlowReportCheckBox")
-        self.addOptimalPowerFlowReportCheckBox.setFont(font4)
+        self.addOptimalPowerFlowReportCheckBox.setFont(font5)
 
         self.gridLayout_26.addWidget(self.addOptimalPowerFlowReportCheckBox, 5, 0, 1, 2)
 
@@ -3246,17 +3249,20 @@ class Ui_mainWindow(object):
         self.gridLayout_15.setObjectName(u"gridLayout_15")
         self.ntcSelectBasedOnAcerCriteriaCheckBox = QCheckBox(self.groupBox_5)
         self.ntcSelectBasedOnAcerCriteriaCheckBox.setObjectName(u"ntcSelectBasedOnAcerCriteriaCheckBox")
+        self.ntcSelectBasedOnAcerCriteriaCheckBox.setFont(font)
 
         self.gridLayout_15.addWidget(self.ntcSelectBasedOnAcerCriteriaCheckBox, 7, 0, 1, 1)
 
         self.skipNtcGenerationLimitsCheckBox = QCheckBox(self.groupBox_5)
         self.skipNtcGenerationLimitsCheckBox.setObjectName(u"skipNtcGenerationLimitsCheckBox")
+        self.skipNtcGenerationLimitsCheckBox.setFont(font)
         self.skipNtcGenerationLimitsCheckBox.setChecked(True)
 
         self.gridLayout_15.addWidget(self.skipNtcGenerationLimitsCheckBox, 0, 0, 1, 2)
 
         self.trmSpinBox = QSpinBox(self.groupBox_5)
         self.trmSpinBox.setObjectName(u"trmSpinBox")
+        self.trmSpinBox.setFont(font)
         self.trmSpinBox.setMaximum(1500)
         self.trmSpinBox.setSingleStep(10)
         self.trmSpinBox.setValue(400)
@@ -3266,17 +3272,20 @@ class Ui_mainWindow(object):
 
         self.consider_ntc_contingencies_checkBox = QCheckBox(self.groupBox_5)
         self.consider_ntc_contingencies_checkBox.setObjectName(u"consider_ntc_contingencies_checkBox")
+        self.consider_ntc_contingencies_checkBox.setFont(font)
 
         self.gridLayout_15.addWidget(self.consider_ntc_contingencies_checkBox, 11, 0, 1, 2)
 
         self.ntcSelectBasedOnExchangeSensitivityCheckBox = QCheckBox(self.groupBox_5)
         self.ntcSelectBasedOnExchangeSensitivityCheckBox.setObjectName(u"ntcSelectBasedOnExchangeSensitivityCheckBox")
+        self.ntcSelectBasedOnExchangeSensitivityCheckBox.setFont(font)
         self.ntcSelectBasedOnExchangeSensitivityCheckBox.setChecked(True)
 
         self.gridLayout_15.addWidget(self.ntcSelectBasedOnExchangeSensitivityCheckBox, 5, 0, 1, 1)
 
         self.ntcLoadRuleSpinBox = QSpinBox(self.groupBox_5)
         self.ntcLoadRuleSpinBox.setObjectName(u"ntcLoadRuleSpinBox")
+        self.ntcLoadRuleSpinBox.setFont(font)
         self.ntcLoadRuleSpinBox.setMaximum(100)
         self.ntcLoadRuleSpinBox.setValue(70)
 
@@ -3307,7 +3316,7 @@ class Ui_mainWindow(object):
         palette14.setBrush(QPalette.ColorGroup.Inactive, QPalette.ColorRole.WindowText, brush5)
         palette14.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.WindowText, brush1)
         self.label_64.setPalette(palette14)
-        self.label_64.setFont(font4)
+        self.label_64.setFont(font5)
 
         self.gridLayout_15.addWidget(self.label_64, 4, 0, 1, 2)
 
@@ -3318,11 +3327,13 @@ class Ui_mainWindow(object):
         palette15.setBrush(QPalette.ColorGroup.Inactive, QPalette.ColorRole.WindowText, brush5)
         palette15.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.WindowText, brush1)
         self.label_105.setPalette(palette15)
+        self.label_105.setFont(font)
 
         self.gridLayout_15.addWidget(self.label_105, 10, 0, 1, 2)
 
         self.ntcAlphaSpinBox = QSpinBox(self.groupBox_5)
         self.ntcAlphaSpinBox.setObjectName(u"ntcAlphaSpinBox")
+        self.ntcAlphaSpinBox.setFont(font)
         self.ntcAlphaSpinBox.setMaximum(100)
         self.ntcAlphaSpinBox.setValue(5)
 
@@ -3330,11 +3341,13 @@ class Ui_mainWindow(object):
 
         self.label_231 = QLabel(self.groupBox_5)
         self.label_231.setObjectName(u"label_231")
+        self.label_231.setFont(font)
 
         self.gridLayout_15.addWidget(self.label_231, 1, 0, 1, 1)
 
         self.strict_ntc_formulation_checkBox = QCheckBox(self.groupBox_5)
         self.strict_ntc_formulation_checkBox.setObjectName(u"strict_ntc_formulation_checkBox")
+        self.strict_ntc_formulation_checkBox.setFont(font)
 
         self.gridLayout_15.addWidget(self.strict_ntc_formulation_checkBox, 12, 0, 1, 2)
 
@@ -3352,16 +3365,19 @@ class Ui_mainWindow(object):
 
         self.label_30 = QLabel(self.groupBox_4)
         self.label_30.setObjectName(u"label_30")
+        self.label_30.setFont(font)
 
         self.gridLayout_20.addWidget(self.label_30, 3, 0, 1, 1)
 
         self.label_77 = QLabel(self.groupBox_4)
         self.label_77.setObjectName(u"label_77")
+        self.label_77.setFont(font)
 
         self.gridLayout_20.addWidget(self.label_77, 1, 0, 1, 1)
 
         self.ntcReportLoadingThresholdSpinBox = QSpinBox(self.groupBox_4)
         self.ntcReportLoadingThresholdSpinBox.setObjectName(u"ntcReportLoadingThresholdSpinBox")
+        self.ntcReportLoadingThresholdSpinBox.setFont(font)
         self.ntcReportLoadingThresholdSpinBox.setMaximum(9999)
         self.ntcReportLoadingThresholdSpinBox.setValue(98)
 
@@ -3369,6 +3385,7 @@ class Ui_mainWindow(object):
 
         self.transferMethodComboBox = QComboBox(self.groupBox_4)
         self.transferMethodComboBox.setObjectName(u"transferMethodComboBox")
+        self.transferMethodComboBox.setFont(font)
 
         self.gridLayout_20.addWidget(self.transferMethodComboBox, 2, 0, 1, 1)
 
@@ -3410,11 +3427,13 @@ class Ui_mainWindow(object):
         self.gridLayout_29.setObjectName(u"gridLayout_29")
         self.label_62 = QLabel(self.groupBox_6)
         self.label_62.setObjectName(u"label_62")
+        self.label_62.setFont(font)
 
         self.gridLayout_29.addWidget(self.label_62, 0, 0, 1, 2)
 
         self.n1ConsiderationCheckBox = QCheckBox(self.groupBox_6)
         self.n1ConsiderationCheckBox.setObjectName(u"n1ConsiderationCheckBox")
+        self.n1ConsiderationCheckBox.setFont(font)
         self.n1ConsiderationCheckBox.setChecked(True)
 
         self.gridLayout_29.addWidget(self.n1ConsiderationCheckBox, 2, 0, 1, 2)
@@ -3425,6 +3444,7 @@ class Ui_mainWindow(object):
 
         self.atcThresholdSpinBox = QDoubleSpinBox(self.groupBox_6)
         self.atcThresholdSpinBox.setObjectName(u"atcThresholdSpinBox")
+        self.atcThresholdSpinBox.setFont(font)
         self.atcThresholdSpinBox.setDecimals(4)
         self.atcThresholdSpinBox.setMaximum(1.000000000000000)
         self.atcThresholdSpinBox.setSingleStep(0.010000000000000)
@@ -3434,6 +3454,7 @@ class Ui_mainWindow(object):
 
         self.usePfValuesForAtcCheckBox = QCheckBox(self.groupBox_6)
         self.usePfValuesForAtcCheckBox.setObjectName(u"usePfValuesForAtcCheckBox")
+        self.usePfValuesForAtcCheckBox.setFont(font)
         self.usePfValuesForAtcCheckBox.setChecked(True)
 
         self.gridLayout_29.addWidget(self.usePfValuesForAtcCheckBox, 3, 0, 1, 1)
@@ -3464,11 +3485,13 @@ class Ui_mainWindow(object):
         self.gridLayout_12.setObjectName(u"gridLayout_12")
         self.label_143 = QLabel(self.groupBox_7)
         self.label_143.setObjectName(u"label_143")
+        self.label_143.setFont(font)
 
         self.gridLayout_12.addWidget(self.label_143, 3, 0, 1, 1)
 
         self.nodal_capacity_sense_SpinBox = QDoubleSpinBox(self.groupBox_7)
         self.nodal_capacity_sense_SpinBox.setObjectName(u"nodal_capacity_sense_SpinBox")
+        self.nodal_capacity_sense_SpinBox.setFont(font)
         self.nodal_capacity_sense_SpinBox.setMinimum(-1.000000000000000)
         self.nodal_capacity_sense_SpinBox.setMaximum(1.000000000000000)
         self.nodal_capacity_sense_SpinBox.setValue(1.000000000000000)
@@ -3477,11 +3500,13 @@ class Ui_mainWindow(object):
 
         self.label_142 = QLabel(self.groupBox_7)
         self.label_142.setObjectName(u"label_142")
+        self.label_142.setFont(font)
 
         self.gridLayout_12.addWidget(self.label_142, 0, 0, 1, 1)
 
         self.nodal_capacity_method_comboBox = QComboBox(self.groupBox_7)
         self.nodal_capacity_method_comboBox.setObjectName(u"nodal_capacity_method_comboBox")
+        self.nodal_capacity_method_comboBox.setFont(font)
 
         self.gridLayout_12.addWidget(self.nodal_capacity_method_comboBox, 1, 0, 1, 2)
 
@@ -4275,7 +4300,7 @@ class Ui_mainWindow(object):
 
         self.frame_15 = QFrame(self.ml_tab)
         self.frame_15.setObjectName(u"frame_15")
-        self.frame_15.setMinimumSize(QSize(300, 0))
+        self.frame_15.setMinimumSize(QSize(350, 0))
         self.frame_15.setFrameShape(QFrame.Shape.NoFrame)
         self.frame_15.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayout_6 = QGridLayout(self.frame_15)
@@ -4745,16 +4770,16 @@ class Ui_mainWindow(object):
         self.horizontalLayout_40.addItem(self.horizontalSpacer_27)
 
         self.settingsTabWidget.addTab(self.file_tab, icon4, "")
-        self.tab_5 = QWidget()
-        self.tab_5.setObjectName(u"tab_5")
-        self.verticalLayout_7 = QVBoxLayout(self.tab_5)
+        self.serverTab = QWidget()
+        self.serverTab.setObjectName(u"serverTab")
+        self.verticalLayout_7 = QVBoxLayout(self.serverTab)
         self.verticalLayout_7.setObjectName(u"verticalLayout_7")
-        self.server_tableView = QTableView(self.tab_5)
+        self.server_tableView = QTableView(self.serverTab)
         self.server_tableView.setObjectName(u"server_tableView")
 
         self.verticalLayout_7.addWidget(self.server_tableView)
 
-        self.frame_2 = QFrame(self.tab_5)
+        self.frame_2 = QFrame(self.serverTab)
         self.frame_2.setObjectName(u"frame_2")
         self.frame_2.setFrameShape(QFrame.Shape.NoFrame)
         self.frame_2.setFrameShadow(QFrame.Shadow.Raised)
@@ -4811,7 +4836,7 @@ class Ui_mainWindow(object):
 
         self.verticalLayout_7.addWidget(self.frame_2)
 
-        self.settingsTabWidget.addTab(self.tab_5, icon70, "")
+        self.settingsTabWidget.addTab(self.serverTab, icon70, "")
 
         self.gridLayout_8.addWidget(self.settingsTabWidget, 0, 1, 1, 1)
 
@@ -5023,14 +5048,14 @@ class Ui_mainWindow(object):
 
         self.retranslateUi(mainWindow)
 
-        self.mainTabWidget.setCurrentIndex(0)
+        self.mainTabWidget.setCurrentIndex(3)
         self.modelTabWidget.setCurrentIndex(0)
-        self.tabWidget_6.setCurrentIndex(2)
+        self.tabWidget_6.setCurrentIndex(0)
         self.tabWidget.setCurrentIndex(0)
         self.tabWidget_5.setCurrentIndex(0)
         self.resultsTabWidget.setCurrentIndex(2)
         self.tabWidget_2.setCurrentIndex(0)
-        self.settingsTabWidget.setCurrentIndex(4)
+        self.settingsTabWidget.setCurrentIndex(9)
 
 
         QMetaObject.connectSlotsByName(mainWindow)
@@ -5918,7 +5943,7 @@ class Ui_mainWindow(object):
         self.se_prefer_correct_checkBox.setText(QCoreApplication.translate("mainWindow", u"Prefer correct", None))
         self.se_add_pseudo_measurements_checkBox.setText(QCoreApplication.translate("mainWindow", u"Add pseudo measurements", None))
         self.se_measurements_profiling_checkBox.setText(QCoreApplication.translate("mainWindow", u"Measurements profiling", None))
-        self.settingsTabWidget.setTabText(self.settingsTabWidget.indexOf(self.tab_8), QCoreApplication.translate("mainWindow", u"SE", None))
+        self.settingsTabWidget.setTabText(self.settingsTabWidget.indexOf(self.seTab), QCoreApplication.translate("mainWindow", u"SE", None))
 #if QT_CONFIG(tooltip)
         self.opf_tab.setToolTip(QCoreApplication.translate("mainWindow", u"Optimal power flow settings", None))
 #endif // QT_CONFIG(tooltip)
@@ -6370,7 +6395,7 @@ class Ui_mainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.secureServerConnectionCheckBox.setText(QCoreApplication.translate("mainWindow", u"Secure", None))
         self.server_status_label.setText(QCoreApplication.translate("mainWindow", u"...", None))
-        self.settingsTabWidget.setTabText(self.settingsTabWidget.indexOf(self.tab_5), QCoreApplication.translate("mainWindow", u"Server", None))
+        self.settingsTabWidget.setTabText(self.settingsTabWidget.indexOf(self.serverTab), QCoreApplication.translate("mainWindow", u"Server", None))
         self.mainTabWidget.setTabText(self.mainTabWidget.indexOf(self.SettingsTab), QCoreApplication.translate("mainWindow", u"Settings", None))
         self.menuProject.setTitle(QCoreApplication.translate("mainWindow", u"File", None))
         self.menuExport_grid.setTitle(QCoreApplication.translate("mainWindow", u"Export grid", None))

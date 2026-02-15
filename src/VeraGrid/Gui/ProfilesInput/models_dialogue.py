@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 
 from VeraGrid.Gui.messages import yes_no_question
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-from VeraGridEngine.IO.file_handler import FileOpen
+from VeraGridEngine.IO.file_open import FileOpen
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Utils.progress_bar import print_progress_bar
 from VeraGrid.Gui.ProfilesInput.profiles_from_models_gui import Ui_Dialog

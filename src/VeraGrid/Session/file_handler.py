@@ -10,7 +10,8 @@ from PySide6.QtCore import QThread, Signal
 from VeraGrid.Session.session import SimulationSession
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.IO.veragrid.zip_interface import get_session_tree, load_session_driver_objects
-from VeraGridEngine.IO.file_handler import FileOpen, FileSave, FileSavingOptions, FileOpenOptions
+from VeraGridEngine.IO.file_open import FileOpen, FileOpenOptions
+from VeraGridEngine.IO.file_save import FileSavingOptions, FileSave
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.IO.cim.cgmes.cgmes_circuit import CgmesCircuit
 from VeraGridEngine.data_logger import DataLogger

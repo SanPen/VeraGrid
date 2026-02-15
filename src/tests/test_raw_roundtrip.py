@@ -7,7 +7,8 @@ import os
 from VeraGridEngine.enumerations import SimulationTypes
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Simulations.driver_template import DriverToSave
-from VeraGridEngine.IO.file_handler import FileSavingOptions, FileOpenOptions, FileSave
+from VeraGridEngine.IO.file_open import FileOpenOptions
+from VeraGridEngine.IO.file_save import FileSavingOptions, FileSave, FileType
 import VeraGridEngine.api as gc
 
 
@@ -31,22 +32,14 @@ def run_import_export_test(import_path: str, export_fname: str, version=33):
                                    tpe=SimulationTypes.PowerFlow_run,
                                    results=pf_results,
                                    logger=logger)
-    options = FileSavingOptions()
+    options = FileSavingOptions(file_type=FileType.CGMES)
     options.raw_version = version
     options.sessions_data.append(pf_session_data)
 
     raw_export = FileSave(circuit=circuit_1,
                           file_name=export_fname,
                           options=options)
-
-    file_name, file_extension = os.path.splitext(export_fname)
-
-    if file_extension == '.raw':
-        raw_export.save_raw()
-    elif file_extension == '.rawx':
-        raw_export.save_rawx()
-    else:
-        raise NotImplementedError(f"Not supported file extension: {file_extension}")
+    raw_export.save()
 
     circuit_2 = gc.FileOpen(file_name=import_path, options=FileOpenOptions()).open()
     nc_2 = gc.compile_numerical_circuit_at(circuit_2)

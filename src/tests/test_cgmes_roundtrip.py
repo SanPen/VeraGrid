@@ -9,11 +9,11 @@ import os
 import pytest
 import numpy as np
 from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
-from VeraGridEngine.IO.file_handler import FileSavingOptions, FileOpenOptions, FileSave
+from VeraGridEngine.IO.file_open import FileOpenOptions
+from VeraGridEngine.IO.file_save import FileSavingOptions, FileSave, FileType
 from VeraGridEngine.Simulations import PowerFlowOptions
 from VeraGridEngine.Simulations.driver_template import DriverToSave
-from VeraGridEngine.enumerations import CGMESVersions, SimulationTypes, \
-    SolverType
+from VeraGridEngine.enumerations import CGMESVersions, SimulationTypes, SolverType
 from VeraGridEngine.basic_structures import Logger
 import VeraGridEngine.api as gc
 
@@ -24,7 +24,7 @@ def create_file_save_options(boundary_zip_path: str) -> FileSavingOptions:
     :param boundary_zip_path:
     :return:
     """
-    options = FileSavingOptions()
+    options = FileSavingOptions(file_type=FileType.CGMES)
     options.cgmes_one_file_per_profile = False
     options.cgmes_profiles = [CgmesProfileType.EQ,
                               CgmesProfileType.OP,
@@ -58,7 +58,7 @@ def get_power_flow_options() -> PowerFlowOptions:
     """
     pfo = PowerFlowOptions(
         solver_type=SolverType.NR,
-        retry_with_other_methods=False,     # default: True
+        retry_with_other_methods=False,  # default: True
         # verbose=0,
         # initialize_with_existing_solution=False,
         # tolerance=1e-6,
@@ -95,7 +95,7 @@ def run_import_export_test(import_path: str | list[str],
     # Import 1 ----------------------------------------------------
     # CGMES model import to MultiCircuit
     circuit_1 = gc.FileOpen(file_name=import_path, options=FileOpenOptions()).open()
-    circuit_1.buses.sort(key=lambda obj: obj.name, reverse=False)      # SORTING
+    circuit_1.buses.sort(key=lambda obj: obj.name, reverse=False)  # SORTING
     # circuit_1.buses.sort(key=lambda obj: obj.idtag)     # SORTING by idtag
     nc_1 = gc.compile_numerical_circuit_at(circuit_1)
     # run power flow
@@ -122,7 +122,7 @@ def run_import_export_test(import_path: str | list[str],
 
     # Import 2 ---------------------------------------------
     circuit_2 = gc.FileOpen(file_name=[export_fname, boundary_zip_path], options=FileOpenOptions()).open()
-    circuit_2.buses.sort(key=lambda obj: obj.name, reverse=False)      # SORTING
+    circuit_2.buses.sort(key=lambda obj: obj.name, reverse=False)  # SORTING
     # Move the first element to the last position, if sorting doesn't work
     if not circuit_1.buses[0].name == circuit_2.buses[0].name:
         circuit_2.buses.append(circuit_2.buses.pop(0))
@@ -136,7 +136,7 @@ def run_import_export_test(import_path: str | list[str],
         logger.print()
 
     # COMPARING Numerical Circuits
-    ok, logger = nc_1.compare(nc_2=nc_2, tol=1e-4)      # 1e-6
+    ok, logger = nc_1.compare(nc_2=nc_2, tol=1e-4)  # 1e-6
 
     if ok:
         print("\nOK! SUCCESS for Numerical Circuit!\n")
@@ -173,6 +173,7 @@ def run_import_export_test(import_path: str | list[str],
         print(adm2.Ybus.A - adm1.Ybus.A)
 
     assert ok
+
 
 @pytest.mark.skip(reason="Not passing because VeraGrid ConnectivityNodes were removed and this needs rethinking")
 def test_cgmes_roundtrip():

@@ -1451,6 +1451,57 @@ class LogSeverity(Enum):
             return s
 
 
+class FileType(Enum):
+    """
+    Enumeration of logs severities
+    """
+    VeraGrid = "VeraGrid"
+    VeraGrid_xlsx1 = "VeraGrid Excel 1"
+    VeraGrid_xlsx2 = "VeraGrid Excel 2"
+    VeraGrid_xlsx3 = "VeraGrid Excel 3"
+    VeraGrid_xlsx4 = "VeraGrid Excel 4"
+    VeraGrid_delta = "VeraGrid Delta"
+    VeraGrid_sqlite = "VeraGrid SQLite"
+    VeraGrid_h5 = "VeraGrid H5"
+    VeraGrid_json = "VeraGrid Json"
+    VeraGrid_ejson3 = "Ejson3"
+    Matpower = "Matpower"
+    DPX = "DPX"
+    PWF = "PWF"
+    EPC = "EPC"
+    PyPsa_h5 = "PyPSA H5"
+    PyPsa = "PyPsa"
+    PandaPower = "Pandapower"
+    Iidm = "Iidm"
+    PSSE_raw = "PSS/e raw"
+    PSSE_rawx = "PSS/e rawx"
+    DGS = "DGS"
+    CGMES = 'CGMES'
+    CIM = "CIM"
+    UCTE = 'UCTE'
+    RTE_xml = "RTE_XML"
+    IPA = "IPA"
+    PGM = "Power grid models"
+    generic_excel = "Generic Excel"
+
+    def __str__(self):
+        return self.value
+
+    def __repr__(self):
+        return str(self)
+
+    @staticmethod
+    def argparse(s):
+        """
+
+        :param s:
+        :return:
+        """
+        try:
+            return FileType[s]
+        except KeyError:
+            return s
+
 class CGMESVersions(Enum):
     """
     Enumeration of logs severities

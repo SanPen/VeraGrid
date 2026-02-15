@@ -6,7 +6,6 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QPushButton, QVBoxLayout, QHBoxLayout, QDialog, QLabel, QFrame
 from VeraGrid.Gui.gui_functions import create_spinbox
-from VeraGrid.ThirdParty.qdarktheme.qtpy.QtWidgets import QApplication
 from VeraGridEngine.Devices.Branches.transformer3w import Transformer3W
 from VeraGridEngine.Devices.Substation.bus import Bus
 

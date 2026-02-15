@@ -5937,6 +5937,20 @@ class Assets:
             except ValueError:  # element not found ...
                 pass
 
+    def get_injections_device_types(self) -> List[DeviceType]:
+        """
+        Get a list of all devices types that can inject or subtract power from a node
+        :return: List of DeviceType
+        """
+        return [DeviceType.GeneratorDevice,
+                DeviceType.BatteryDevice,
+                DeviceType.LoadDevice,
+                DeviceType.ExternalGridDevice,
+                DeviceType.StaticGeneratorDevice,
+                DeviceType.ShuntDevice,
+                DeviceType.ControllableShuntDevice,
+                DeviceType.CurrentInjectionDevice]
+
     def get_injection_devices_lists(self) -> List[List[INJECTION_DEVICE_TYPES]]:
         """
         Get a list of all devices that can inject or subtract power from a node

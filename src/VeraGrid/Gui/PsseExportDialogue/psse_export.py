@@ -10,6 +10,7 @@ from VeraGrid.Gui.PsseExportDialogue.psse_export_gui import Ui_PsseExportDialog
 from VeraGrid.Gui.general_dialogues import LogsDialogue
 import VeraGrid.Session.file_handler as filedrv
 from VeraGridEngine.basic_structures import Logger
+from VeraGridEngine.enumerations import FileType
 
 if TYPE_CHECKING:
     from VeraGrid.Gui.Main.SubClasses.io import IoMain
@@ -47,8 +48,6 @@ class PsseExportDialogue(QtWidgets.QDialog):
         """
         raw_version = self.ui.raw_export_version_comboBox.currentText()
 
-        options = filedrv.FileSavingOptions(raw_version=raw_version)
-
         # if the global file_name is empty, ask where to save
         fname = os.path.join(self.app.project_directory, self.app.ui.grid_name_line_edit.text())
 
@@ -63,13 +62,26 @@ class PsseExportDialogue(QtWidgets.QDialog):
             # if the user did not enter the extension, add it automatically
             name, file_extension = os.path.splitext(filename)
 
+            if filename.endswith(".raw"):
+                file_type = FileType.PSSE_raw
+            elif filename.endswith(".rawx"):
+                file_type = FileType.PSSE_rawx
+            else:
+                file_type = FileType.PSSE_raw
+
             if file_extension == '':
                 filename = name + '.raw'
+                file_type = FileType.PSSE_raw
 
             # we were able to compose the file correctly, now save it
-            self.app.save_file_now(filename=filename,
-                                   type_selected=type_selected,
-                                   options=options)
+            self.app.save_file_now(
+                filename=filename,
+                type_selected=type_selected,
+                options=filedrv.FileSavingOptions(
+                    raw_version=raw_version,
+                    file_type=file_type
+                )
+            )
 
             self.app.show_info_toast("PSS/e export done!")
             self.close()

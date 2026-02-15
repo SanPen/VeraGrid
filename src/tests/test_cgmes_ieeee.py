@@ -7,7 +7,7 @@ import pytest
 import numpy as np
 import pandas as pd
 import VeraGridEngine.api as gce
-from VeraGridEngine.IO.file_handler import FileOpen, FileOpenOptions
+from VeraGridEngine.IO.file_open import FileOpen, FileOpenOptions
 
 pd.set_option('display.max_colwidth', None)
 

@@ -7,7 +7,7 @@ import sys
 import numpy as np
 from typing import Union, TYPE_CHECKING
 from PySide6.QtCore import Qt, QLineF, QPointF, QRectF
-from PySide6.QtGui import QPen, QCursor, QPixmap, QBrush, QColor, QTransform, QPolygonF
+from PySide6.QtGui import QPen, QCursor, QPixmap, QBrush, QColor, QTransform, QPolygonF, QFont
 from PySide6.QtWidgets import (QGraphicsLineItem, QGraphicsRectItem, QGraphicsPolygonItem,
                                QGraphicsEllipseItem, QGraphicsSceneMouseEvent, QGraphicsTextItem)
 from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE, DEACTIVATED, OTHER, GenericDiagramWidget, TRANSPARENT, WHITE
@@ -137,7 +137,7 @@ class VscSymbol(QGraphicsRectItem):
     VscSymbol
     """
 
-    def __init__(self, parent, pen_width, h=48, w=48, icon_route=":/Icons/icons/vsc.png"):
+    def __init__(self, parent, pen_width, h=68, w=68, icon_route: str | None = None):
         QGraphicsRectItem.__init__(self, parent=parent)
 
         self.parent = parent
@@ -146,13 +146,95 @@ class VscSymbol(QGraphicsRectItem):
         self.pen_width = pen_width
         self.color = ACTIVE['color']
         self.style = ACTIVE['style']
+        self.icon_route = icon_route
+        self.icon_graphic = None
+        self.body = None
+        self.divider = None
+        self.text_ac = None
+        self.text_dc = None
 
         self.setPen(QPen(TRANSPARENT))
         self.setRect(QRectF(0, 0, w, h))
 
-        graphic = QGraphicsRectItem(QRectF(0, 0, w, h), parent=self)
-        graphic.setBrush(QBrush(QPixmap(icon_route)))
-        graphic.setPen(QPen(TRANSPARENT, self.width, self.style))
+        if self.icon_route is None:
+            self.body = QGraphicsRectItem(QRectF(0, 0, w, h), parent=self)
+            self.divider = QGraphicsLineItem(QLineF(w, 0, 0, h), parent=self)
+
+            self.text_ac = QGraphicsTextItem("~", parent=self)
+            self.text_dc = QGraphicsTextItem("=", parent=self)
+            self.text_ac.document().setDocumentMargin(0.0)
+            self.text_dc.document().setDocumentMargin(0.0)
+
+            txt_font = QFont()
+            txt_font.setBold(True)
+            txt_font.setPointSizeF(max(15.0, 0.34 * h))
+
+            self.text_ac.setFont(txt_font)
+            self.text_dc.setFont(txt_font)
+
+            self._layout_vector_labels()
+            self._apply_vector_style(color=self.color, w=self.width, style=self.style)
+        else:
+            self.icon_graphic = QGraphicsRectItem(QRectF(0, 0, w, h), parent=self)
+            self.icon_graphic.setBrush(QBrush(QPixmap(self.icon_route)))
+            self.icon_graphic.setPen(QPen(TRANSPARENT, self.width, self.style))
+
+    @staticmethod
+    def _contrast_fill(color: QColor) -> QColor:
+        """
+        Get a subtle fill that keeps contrast in dark and light mode.
+        """
+        if color.lightness() > 127:
+            return QColor(30, 30, 30, 255)
+        else:
+            return QColor(245, 245, 245, 255)
+
+    def _apply_vector_style(self, color: QColor, w: float, style: Qt.PenStyle) -> None:
+        """
+        Apply colors and stroke for the vector VSC symbol.
+        """
+        if self.body is None:
+            return
+
+        line_w = max(2.0, float(w) * 0.45)
+        pen = QPen(color, line_w, style)
+        self.body.setPen(pen)
+        self.body.setBrush(QBrush(self._contrast_fill(color)))
+        self.divider.setPen(pen)
+        self._layout_diagonal(line_w=line_w)
+
+        self.text_ac.setDefaultTextColor(color)
+        self.text_dc.setDefaultTextColor(color)
+
+    @staticmethod
+    def _place_text_center(item: QGraphicsTextItem, x: float, y: float) -> None:
+        """
+        Place text item by center coordinates.
+        """
+        rect = item.boundingRect()
+        item.setPos(x - (rect.x() + rect.width() * 0.5),
+                    y - (rect.y() + rect.height() * 0.5))
+
+    def _layout_vector_labels(self) -> None:
+        """
+        Center AC/DC text symbols in their visual zones.
+        """
+        w = self.rect().width()
+        h = self.rect().height()
+        y_center = h * 0.475
+        self._place_text_center(self.text_ac, w * 0.84, y_center)
+        self._place_text_center(self.text_dc, w * 0.18, y_center)
+
+    def _layout_diagonal(self, line_w: float) -> None:
+        """
+        Inset diagonal so stroke never protrudes out of the box corners.
+        """
+        if self.divider is None:
+            return
+        w = self.rect().width()
+        h = self.rect().height()
+        inset = max(1.0, line_w * 0.6)
+        self.divider.setLine(QLineF(w - inset, inset, inset, h - inset))
 
     def set_colour(self, color: QColor, w, style: Qt.PenStyle):
         """
@@ -162,8 +244,11 @@ class VscSymbol(QGraphicsRectItem):
         :param style: PenStyle instance
         :return:
         """
-        self.setBrush(color)
-        self.setPen(QPen(color, w, style))
+        if self.icon_route is None:
+            self._apply_vector_style(color=color, w=w, style=style)
+        else:
+            self.setBrush(color)
+            self.setPen(QPen(color, w, style))
 
     def set_pen(self, pen: QPen):
         """
@@ -171,7 +256,12 @@ class VscSymbol(QGraphicsRectItem):
         :param pen:
         :return:
         """
-        self.setPen(pen)
+        if self.icon_route is None:
+            self._apply_vector_style(color=pen.color(),
+                                     w=max(1.2, pen.widthF()),
+                                     style=pen.style())
+        else:
+            self.setPen(pen)
 
     def setToolTipText(self, toolTip: str):
         """
@@ -484,7 +574,7 @@ class LineGraphicTemplateItem(GenericDiagramWidget, QGraphicsLineItem):
             else:
                 self.symbol = TransformerSymbol(parent=self, pen_width=width, h=80, w=80)
         elif isinstance(api_object, VSC):
-            self.symbol = VscSymbol(parent=self, pen_width=width, h=48, w=48)
+            self.symbol = VscSymbol(parent=self, pen_width=width, h=68, w=68, icon_route=None)
         elif isinstance(api_object, UPFC):
             self.symbol = UpfcSymbol(parent=self, pen_width=width, h=48, w=48)
         elif isinstance(api_object, HvdcLine):
@@ -978,6 +1068,32 @@ class LineGraphicTemplateItem(GenericDiagramWidget, QGraphicsLineItem):
         else:
             return False
 
+    def is_from_port_a_vsc3(self) -> bool:
+        """
+
+        :return:
+        """
+        if self._from_port:
+            if 'VscGraphicItem3Term' not in sys.modules:
+                # keep this here, we need an actual instance
+                from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term import VscGraphicItem3Term
+            return isinstance(self.get_terminal_from_parent(), VscGraphicItem3Term)
+        else:
+            return False
+
+    def is_to_port_a_vsc3(self) -> bool:
+        """
+
+        :return:
+        """
+        if self._to_port:
+            if 'VscGraphicItem3Term' not in sys.modules:
+                # keep this here, we need an actual instance
+                from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term import VscGraphicItem3Term
+            return isinstance(self.get_terminal_to_parent(), VscGraphicItem3Term)
+        else:
+            return False
+
     def get_bus_from(self) -> Bus:
         """
 
@@ -1089,6 +1205,20 @@ class LineGraphicTemplateItem(GenericDiagramWidget, QGraphicsLineItem):
         :return:
         """
         return self.is_from_port_a_bus() and self.is_to_port_a_fluid_node()
+
+    def connected_between_bus_and_vsc3(self):
+        """
+
+        :return:
+        """
+        return self.is_from_port_a_bus() and self.is_to_port_a_vsc3()
+
+    def connected_between_vsc3_and_bus(self):
+        """
+
+        :return:
+        """
+        return self.is_from_port_a_vsc3() and self.is_to_port_a_bus()
 
     def should_be_a_converter(self) -> bool:
         """

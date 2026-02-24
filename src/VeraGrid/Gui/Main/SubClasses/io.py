@@ -21,7 +21,8 @@ from VeraGrid.Gui.GridGenerator.grid_generator_dialogue import GridGeneratorGUI
 from VeraGrid.Gui.RosetaExplorer.RosetaExplorer import RosetaExplorerGUI
 from VeraGrid.Gui.Main.SubClasses.Settings.configuration import ConfigurationMain
 from VeraGrid.Gui.CGMESDialogue.cgmes_export import CgmesExportDialogue
-from VeraGrid.Gui.PsseExportDialogue.psse_export import PsseExportDialogue
+from VeraGrid.Gui.PsseDialogue.psse_export import PsseExportDialogue
+from VeraGrid.Gui.PsseDialogue.psse_import import PsseImportDialogue
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Compilers.circuit_to_pgm import PGM_AVAILABLE
 from VeraGridEngine.IO.file_save import FileSavingOptions
@@ -321,6 +322,11 @@ class IoMain(ConfigurationMain):
                     self.cgmes_selector = CgmesOptionsSelector()
                     self.cgmes_selector.exec()
                     options.cgmes_version = self.cgmes_selector.version
+
+            elif options.file_type == FileType.PSSE_raw or options.file_type == FileType.PSSE_rawx:
+                self.psse_import_dialogue = PsseImportDialogue(app=self, options=options)
+                self.psse_import_dialogue.exec()
+                # NOTE: options will be modified inside
 
             # create thread
             self.open_file_thread_object = filedrv.FileOpenThread(

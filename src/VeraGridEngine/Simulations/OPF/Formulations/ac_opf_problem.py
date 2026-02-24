@@ -366,11 +366,11 @@ class NonLinearOptimalPfProblem:
 
         if options.ips_control_q_limits:
             self.nineq = (2 * self.n_br_mon + 2 * self.npq + self.n_gen_disp + 4 * self.n_gen_disp_sh + 2 * self.ntapm
-                          + 2 * self.ntapt + 2 * self.n_disp_hvdc + self.nsl)
+                          + 2 * self.ntapt + 2 * self.n_disp_hvdc + self.nsl + self.nslcap)
         else:
             # No Reactive constraint (power curve)
             self.nineq = (2 * self.n_br_mon + 2 * self.npq + 4 * self.n_gen_disp_sh + 2 * self.ntapm + 2 * self.ntapt
-                          + 2 * self.n_disp_hvdc + self.nsl)
+                          + 2 * self.n_disp_hvdc + self.nsl + self.nslcap)
 
         # Variables
 
@@ -691,6 +691,14 @@ class NonLinearOptimalPfProblem:
             hvdc_ineq1 = np.zeros(0)
             hvdc_ineq2 = np.zeros(0)
 
+        # Nodal capacity sign constraint: bound slcap to the right direction
+        # sign > 0 (maximize generation): slcap <= 0 -> slcap <= 0
+        # sign < 0 (maximize load): slcap >= 0 -> -slcap <= 0
+        if self.nslcap != 0:
+            slcap_ineq = np.sign(self.nodal_capacity_sign) * self.slcap
+        else:
+            slcap_ineq = np.zeros(0)
+
         hval = np.r_[
             self.Sf2.real - self.rates2 - sl_sf,  # rates "lower limit"
             self.St2.real - self.rates2 - sl_st,  # rates "upper limit"
@@ -710,7 +718,8 @@ class NonLinearOptimalPfProblem:
             self.tapt_min - self.tap_tau,  # Tap phase lower bound
             ctrlq_ineq,
             hvdc_ineq1,
-            hvdc_ineq2
+            hvdc_ineq2,
+            slcap_ineq,  # Nodal capacity sign bound
         ]
 
         return fval, gval, hval
@@ -914,6 +923,8 @@ class NonLinearOptimalPfProblem:
         +---------+
         | Hdcl    | ndc
         +---------+
+        | Hslcap  | nslcap
+        +---------+
         """
         ts_hx = timeit.default_timer()
 
@@ -1110,6 +1121,14 @@ class NonLinearOptimalPfProblem:
         Hdcu = sp.hstack([lil_matrix((self.n_disp_hvdc, self.NV - self.n_disp_hvdc)), diags_disp_hvdc_ones])
         Hdcl = sp.hstack([lil_matrix((self.n_disp_hvdc, self.NV - self.n_disp_hvdc)), - diags_disp_hvdc_ones])
 
+        # Nodal capacity sign constraint Jacobian: d/dx(sign * slcap) = sign * I at slcap positions
+        if self.nslcap != 0:
+            Hslcap = sp.hstack([lil_matrix((self.nslcap, npfvar + self.nsl)),
+                                diags(np.sign(self.nodal_capacity_sign) * np.ones(self.nslcap)),
+                                lil_matrix((self.nslcap, self.ntapm + self.ntapt + self.n_disp_hvdc))])
+        else:
+            Hslcap = lil_matrix((0, self.NV))
+
         Hx = sp.vstack([
             HSf,
             HSt,
@@ -1129,7 +1148,8 @@ class NonLinearOptimalPfProblem:
             Htaptl,
             Hqmax,
             Hdcu,
-            Hdcl
+            Hdcl,
+            Hslcap,
         ])
 
         Hx = Hx.tocsc()

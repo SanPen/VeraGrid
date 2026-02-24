@@ -17,20 +17,22 @@ from VeraGridEngine.Devices import *
 from VeraGridEngine.DataStructures import *
 from VeraGridEngine.Topology import *
 from VeraGridEngine.Compilers import *
-from VeraGridEngine.IO.file_open import FileOpen
+from VeraGridEngine.IO.file_open import FileOpen, FileOpenOptions
 from VeraGridEngine.IO.file_save import FileSave, FileSavingOptions
 from VeraGridEngine.IO.veragrid.remote import (gather_model_as_jsons_for_communication, RemoteInstruction,
                                                SimulationTypes, send_json_data, get_certificate_path, get_certificate)
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at, NumericalCircuit
 
 
-def open_file(filename: Union[str, List[str]]) -> MultiCircuit:
+def open_file(filename: Union[str, List[str]],
+              options: FileOpenOptions | None = None) -> MultiCircuit:
     """
     Open file
     :param filename: name of the file (.veragrid, .ejson, .m, .xml, .zip, etc.) or list of files (.xml, .zip)
+    :param options: FileOpenOptions instance (optional)
     :return: MultiCircuit instance
     """
-    return FileOpen(file_name=filename).open()
+    return FileOpen(file_name=filename, options=options).open()
 
 
 def save_file(grid: MultiCircuit, filename: str, drivers_to_save: List[DriverToSave] | None = None):

@@ -42,9 +42,9 @@ def create_file_open_options() -> FileOpenOptions:
     """
     options = FileOpenOptions(
         cgmes_map_areas_like_raw=True,
-        try_to_map_dc_to_hvdc_line=True,
+        cgmes_try_to_map_dc_to_hvdc_line=True,
         # crash_on_errors=True,
-        adjust_taps_to_discrete_positions=True,
+        psse_adjust_taps_to_discrete_positions=True,
     )
 
     return options

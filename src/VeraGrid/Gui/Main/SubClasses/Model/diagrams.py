@@ -15,6 +15,8 @@ from pandas.plotting import register_matplotlib_converters
 
 import VeraGridEngine.Devices.Diagrams.palettes as palettes
 from VeraGridEngine import ContingencyOperationTypes
+from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
+from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
 from VeraGridEngine.IO.file_system import tiles_path
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.Simulations import PowerFlowResults, ContinuationPowerFlowResults, PowerFlowTimeSeriesResults
@@ -1854,44 +1856,14 @@ class DiagramsMain(CompiledArraysMain):
             if isinstance(sel_obj, dev.Bus):
                 root_bus = sel_obj
 
-            elif isinstance(sel_obj, dev.Generator):
+            elif isinstance(sel_obj, InjectionParent):
                 root_bus = sel_obj.bus
 
-            elif isinstance(sel_obj, dev.Battery):
-                root_bus = sel_obj.bus
-
-            elif isinstance(sel_obj, dev.Load):
-                root_bus = sel_obj.bus
-
-            elif isinstance(sel_obj, dev.Shunt):
-                root_bus = sel_obj.bus
-
-            elif isinstance(sel_obj, dev.Line):
-                root_bus = sel_obj.bus_from
-
-            elif isinstance(sel_obj, dev.Transformer2W):
-                root_bus = sel_obj.bus_from
-
-            elif isinstance(sel_obj, dev.Winding):
+            elif isinstance(sel_obj, BranchParent):
                 root_bus = sel_obj.bus_from
 
             elif isinstance(sel_obj, dev.Transformer3W):
-                root_bus = sel_obj.bus1
-
-            elif isinstance(sel_obj, dev.DcLine):
-                root_bus = sel_obj.bus_from
-
-            elif isinstance(sel_obj, dev.HvdcLine):
-                root_bus = sel_obj.bus_from
-
-            elif isinstance(sel_obj, dev.VSC):
-                root_bus = sel_obj.bus_from
-
-            elif isinstance(sel_obj, dev.UPFC):
-                root_bus = sel_obj.bus_from
-
-            elif isinstance(sel_obj, dev.Switch):
-                root_bus = sel_obj.bus_from
+                root_bus = sel_obj.bus0
 
             elif isinstance(sel_obj, dev.VoltageLevel):
                 root_bus = None

@@ -1190,7 +1190,7 @@ class RawTransformer(RawObject):
             """
             # Series impedance
             Pcu = self.R1_2 / 1000.0  # Pcu comes in W from PSSe, we want it in kW
-            Vsc = self.X1_2 * 100  # Vsc comes in p.u. from Psse, we want it in %
+            Vsc = self.X1_2 * 100.0  # Vsc comes in p.u. from Psse, we want it in %
             GR_hv1 = 0.5
             Sn = self.SBASE1_2
             HV = max(NOMV1, NOMV2)
@@ -1266,6 +1266,7 @@ class RawTransformer(RawObject):
         else:
             raise Exception("Invalid value of CM")
 
+        # NOTE: ANG1 seems to be related to the vector group and not the tap angle...
         tap_angle = np.deg2rad(self.ANG1)  # ANG2 is ignored for 2W transformers
 
         return r, x, g, b, tap_module, tap_angle

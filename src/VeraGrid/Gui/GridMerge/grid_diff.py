@@ -25,7 +25,7 @@ def handle_item_changed(item: QtWidgets.QTreeWidgetItem, column: int):
     """
 
     :param item:
-    :param column: THis must be here because this is an event handler
+    :param column: This must be here because this is an event handler
     :return:
     """
     if item.parent() is None:  # Root item

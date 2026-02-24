@@ -33,6 +33,13 @@ def delta_to_star(z12: float, z23: float, z31: float) -> Tuple[float, float, flo
         return 1e-20, 1e-20, 1e-20
 
 
+# def delta_to_star2(z12: float, z23: float, z31: float) -> Tuple[float, float, float]:
+#     z1 = (z12 + z31 - z23) / 2
+#     z2 = (z12 + z23 - z31) / 2
+#     z3 = (z31 + z23 - z12) / 2
+#     return z1, z2, z3
+
+
 def star_to_delta(z1: float, z2: float, z3: float) -> Tuple[float, float, float]:
     """
     Perform the star->delta transformation
@@ -389,25 +396,34 @@ class Transformer3W(PhysicalDevice):
 
         self.winding1.R = r1
         self.winding1.X = x1
+        self.winding1.G = 0.0
+        self.winding1.B = 0.0
         self.winding1.rate = self.rate1
+        self.winding1.Sn = self.rate1
 
         self.winding2.R = r2
         self.winding2.X = x2
+        self.winding2.G = 0.0
+        self.winding2.B = 0.0
         self.winding2.rate = self.rate2
+        self.winding2.Sn = self.rate2
 
         self.winding3.R = r3
         self.winding3.X = x3
+        self.winding3.G = 0.0
+        self.winding3.B = 0.0
         self.winding3.rate = self.rate3
+        self.winding3.Sn = self.rate3
 
     def fill_from_star(self, r1: float, r2: float, r3: float, x1: float, x2: float, x3: float) -> None:
         """
         Fill from Star values
-        :param r1: resistance of the branch 1 (p.u.)
-        :param r2: resistance of the branch 2 (p.u.)
-        :param r3: resistance of the branch 3 (p.u.)
-        :param x1: reactance of the branch 1 (p.u.)
-        :param x2: reactance of the branch 2 (p.u.)
-        :param x3: reactance of the branch 3 (p.u.)
+        :param r1: resistance of branch 1 (p.u.)
+        :param r2: resistance of branch 2 (p.u.)
+        :param r3: resistance of branch 3 (p.u.)
+        :param x1: reactance of branch 1 (p.u.)
+        :param x2: reactance of branch 2 (p.u.)
+        :param x3: reactance of branch 3 (p.u.)
         """
         self._r12, self._r23, self._r31 = star_to_delta(z1=r1, z2=r2, z3=r3)
         self._x12, self._x23, self._x31 = star_to_delta(z1=x1, z2=x2, z3=x3)

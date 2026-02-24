@@ -11,20 +11,21 @@ From there you may further edit or export in any of the supported formats.
 
 VeraGrid supports a great deal of file formats. 
 
-|                    |read   | write |
-|--------------------|-------|-------|
-| VeraGrid           |✅      | ✅     |
-| Json               |✅      | ✅     |
-| CIM                |✅      | ✅     |
-| CGMES 2.4.15       |✅      | ✅     |
-| CGMES 3.0          |✅      | ✅     |
-| ucte (UCTE)        |✅      |       |
-| m (Matpower)       |✅      |       |
-| p (PandaPower)*    |✅      |       |
-| nc (PyPSA)*        |✅      |       |
-| raw/rawx (PSS/e)   |✅      | ✅     |
-| epc (PSLF)         |✅      |       |
-| dgs (PowerFactory) |✅      |       |
+|                    |read | write |
+|--------------------|-----|-------|
+| VeraGrid           |✅    | ✅     |
+| Json               |✅    | ✅     |
+| CIM 16             |✅    | ✅     |
+| CGMES 2.4.15       |✅    | ✅     |
+| CGMES 3.0          |✅    | ✅     |
+| raw/rawx (PSS/e)   |✅    | ✅     |
+| dgs (PowerFactory) |✅    | ✅     |
+| ucte (UCTE)        |✅    |       |
+| m (Matpower)       |✅    |       |
+| p (PandaPower)*    |✅    |       |
+| nc (PyPSA)*        |✅    |       |
+| epc (PSLF)         |✅    |       |
+| Power grid models  |     | ✅     |
 
 
 **Compatibility caveat**

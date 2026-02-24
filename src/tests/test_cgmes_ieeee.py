@@ -21,9 +21,9 @@ def test_ieee14_cgmes() -> None:
     # load IEEE14 ------------------------------------------------------------------------------------------------------
     file_open_options = FileOpenOptions(
         cgmes_map_areas_like_raw=True,
-        try_to_map_dc_to_hvdc_line=True,
+        cgmes_try_to_map_dc_to_hvdc_line=True,
         # crash_on_errors=True,
-        adjust_taps_to_discrete_positions=True,
+        psse_adjust_taps_to_discrete_positions=True,
     )
     # RAW model import to MultiCircuit
     file_open1 = FileOpen(file_name=os.path.join("data", "grids", "RAW", "IEEE 14 bus.raw"),

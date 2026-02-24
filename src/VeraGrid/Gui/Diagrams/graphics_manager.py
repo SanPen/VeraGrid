@@ -4,8 +4,6 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from typing import List, Dict, Union
-from warnings import warn
-
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.enumerations import DeviceType
 from VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics import BusGraphicItem
@@ -68,7 +66,7 @@ ALL_GRAPHICS = Union[ALL_BUS_BRACH_GRAPHICS, ALL_MAP_GRAPHICS]
 
 class GraphicsManager:
     """
-    Class to handle the correspondance between graphics and database devices
+    Class to handle the correspondence between graphics and database devices
     """
 
     def __init__(self) -> None:
@@ -125,7 +123,7 @@ class GraphicsManager:
                 # the category does exist, delete_with_dialogue from it
                 graphic = elm_dict.get(device.idtag, None)
 
-                if graphic:
+                if graphic is not None:
                     del elm_dict[device.idtag]
                     return graphic
 
@@ -151,14 +149,6 @@ class GraphicsManager:
                 return None
             else:
                 return elm_dict.get(elm.idtag, None)
-
-    def query_preferring_busbars(self, elm: ALL_DEV_TYPES) -> Union[None, ALL_GRAPHICS]:
-        """
-        Because some connectivity nodes are graphically substituted by BusBars, we need to do this
-        :param elm: Any device
-        :return: Any graphic element if found, None otherwise
-        """
-        return self.query(elm=elm)
 
     def get_device_type_list(self, device_type: DeviceType) -> List[ALL_GRAPHICS]:
         """

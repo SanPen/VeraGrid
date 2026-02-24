@@ -504,7 +504,7 @@ class BranchParent(PhysicalDevice):
         """
         bus_f_v = self.bus_from.Vnom
         bus_t_v = self.bus_to.Vnom
-        if bus_f_v > bus_t_v:
+        if bus_f_v >= bus_t_v:
             return self.bus_from, self.bus_to
         else:
             return self.bus_to, self.bus_from

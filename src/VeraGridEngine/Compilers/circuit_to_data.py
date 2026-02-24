@@ -765,7 +765,7 @@ def get_shunt_data(
     """
 
     ii = 0
-    for k, elm in enumerate(circuit.get_shunts()):
+    for k, elm in enumerate(circuit.shunts):
 
         if elm.bus is None:
             data.bus_idx[k] = -1
@@ -879,7 +879,7 @@ def get_shunt_data(
         # data.C_bus_elm[i, k] = 1
         ii += 1
 
-    for elm in circuit.get_controllable_shunts():
+    for elm in circuit.controllable_shunts:
 
         if elm.bus is None:
             data.bus_idx[ii] = -1

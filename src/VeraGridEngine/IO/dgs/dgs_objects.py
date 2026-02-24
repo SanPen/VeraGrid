@@ -1699,6 +1699,69 @@ class TypTr3(DGSElement):
         DgsProperty('i3loc', 'i', 'DGS field i3loc (i)', py_name='i3loc'),
     ]
 
+    def __init__(self) -> None:
+        self.ID: str = ""
+        self.loc_name: str = ""
+        self.fold_id: str = ""
+
+        # reals (r)
+        self.curm3: float = 0.0
+        self.du3tp_h: float = 0.0
+        self.du3tp_l: float = 0.0
+        self.du3tp_m: float = 0.0
+
+        # ints (i)
+        self.n3tmn_h: int = 0
+        self.n3tmn_l: int = 0
+        self.n3tmn_m: int = 0
+        self.n3tmx_h: int = 0
+        self.n3tmx_l: int = 0
+        self.n3tmx_m: int = 0
+        self.n3tp0_h: int = 0
+        self.n3tp0_l: int = 0
+        self.n3tp0_m: int = 0
+
+        # reals (r)
+        self.nt3ag_h: float = 0.0
+        self.nt3ag_l: float = 0.0
+        self.nt3ag_m: float = 0.0
+        self.pcut3_h: float = 0.0
+        self.pcut3_l: float = 0.0
+        self.pcut3_m: float = 0.0
+        self.pfe: float = 0.0
+        self.ph3tr_h: float = 0.0
+        self.ph3tr_l: float = 0.0
+        self.ph3tr_m: float = 0.0
+        self.strn3_h: float = 0.0
+        self.strn3_l: float = 0.0
+        self.strn3_m: float = 0.0
+
+        # strings (a)
+        self.tr3cn_h: str = ""
+        self.tr3cn_l: str = ""
+        self.tr3cn_m: str = ""
+
+        # reals (r)
+        self.uk0hl: float = 0.0
+        self.uk0hm: float = 0.0
+        self.uk0ml: float = 0.0
+        self.uktr3_h: float = 0.0
+        self.uktr3_l: float = 0.0
+        self.uktr3_m: float = 0.0
+        self.ur0hl: float = 0.0
+        self.ur0hm: float = 0.0
+        self.ur0ml: float = 0.0
+        self.utrn3_h: float = 0.0
+        self.utrn3_l: float = 0.0
+        self.utrn3_m: float = 0.0
+
+        # strings (a:50)
+        self.for_name: str = ""
+
+        # ints (i)
+        self.itapos: int = 0
+        self.i3loc: int = 0
+
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Overhead line modelling (PowerFactory: conductor / tower / line coupling)

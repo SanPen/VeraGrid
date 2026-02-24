@@ -58,6 +58,7 @@ from VeraGrid.Gui.Diagrams.generic_graphics import IS_DARK
 from VeraGrid.Gui.python_console import PythonConsole
 from VeraGrid.Gui.python_script_editor import PythonCodeEditor
 from VeraGrid.Gui.toast_widget import ToastManager
+from VeraGrid.Gui.PsseDialogue.psse_import import PsseImportDialogue
 
 
 
@@ -204,6 +205,7 @@ class BaseMainGui(QMainWindow):
         self.select_bus_dlg: DiagramBusSelectorDialogue | None = None
         self.file_selector: FileTypeSelector | None = None
         self.cgmes_selector: CgmesOptionsSelector | None = None
+        self.psse_import_dialogue: PsseImportDialogue | None = None
 
         # available engines --------------------------------------------------------------------------------------------
         engine_lst = [EngineType.VeraGrid]

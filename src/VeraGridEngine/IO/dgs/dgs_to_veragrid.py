@@ -6,7 +6,7 @@ from __future__ import annotations
 import math
 import re
 import numpy as np
-from typing import Dict, List, Tuple, Set
+from typing import Tuple, Set
 from VeraGridEngine.enumerations import WindingType, SwitchGraphicType
 import VeraGridEngine.Devices as dev
 from VeraGridEngine.Devices.Branches.wire import Wire
@@ -32,9 +32,13 @@ def get_terminal_ids(element_id: str, cubics_by_objid: Dict[str, List[StaCubic]]
     Get the connected terminal IDs (ElmTerm.ID) for a given branch/injection element ID
     using the StaCubic.fold_id -> ElmTerm.ID mapping.
     """
-    cbs = cubics_by_objid.get(_ref_id(element_id), [])
-    # StaCubic.fold_id typically points to the parent ElmTerm of the connection
-    return [_ref_id(cb.fold_id) for cb in cbs if _ref_id(cb.fold_id) is not None and _ref_id(cb.fold_id) != ""]
+    cbs = [cb for cb in cubics_by_objid.get(_ref_id(element_id), [])
+           if _ref_id(cb.fold_id)]
+
+    if len(cbs) == 2:
+        cbs = sorted(cbs, key=lambda cb: int(cb.obj_bus))
+
+    return [_ref_id(cb.fold_id) for cb in cbs]
 
 
 def get_branch_buses(elm_id: str,
@@ -500,13 +504,15 @@ def convert_dgs_to_transformer(tr2: ElmTr2,
                                         cubics_by_objid=cubics_by_objid,
                                         bus_by_term_id=bus_by_term_id)
 
-    bus_hv, bus_lv = _order_hv_lv(bus_a=bus_from,
-                                  bus_b=bus_to,
-                                  logger=logger,
-                                  tr_name=tr2.loc_name)
+    cbs = cubics_by_objid.get(_ref_id(tr2.ID), [])
+    has_dgs_from_to = (len(cbs) == 2) and ({int(cb.obj_bus) for cb in cbs} == {0, 1})
 
-    trafo = dev.Transformer2W(bus_from=bus_hv,
-                              bus_to=bus_lv,
+    if has_dgs_from_to:
+        bus_vg_from, bus_vg_to = bus_from, bus_to
+    else:
+        bus_vg_from, bus_vg_to = _order_hv_lv(bus_a=bus_from, bus_b=bus_to, logger=logger, tr_name=tr2.loc_name)
+
+    trafo = dev.Transformer2W(bus_from=bus_vg_from, bus_to=bus_vg_to,
                               name=tr2.loc_name,
                               active=not tr2.outserv,
                               template=template)
@@ -533,10 +539,15 @@ def convert_dgs_to_transformer(tr2: ElmTr2,
         tap_min, tap_max = tap_max, tap_min
 
     # If tap-changer is on LV side, move it to HV side by inversion to match VeraGrid model
-    if int(typtr2_raw.tap_side) != 0:
+    if float(bus_vg_from.Vnom) >= float(bus_vg_to.Vnom):
+        hv_bus, lv_bus = bus_vg_from, bus_vg_to
+    else:
+        hv_bus, lv_bus = bus_vg_to, bus_vg_from
+    tap_on_bus = hv_bus if int(typtr2_raw.tap_side) == 0 else lv_bus
+    if tap_on_bus is not bus_vg_from:
         tap = 1.0 / tap
-        tap_min_i: float = 1.0 / tap_min
-        tap_max_i: float = 1.0 / tap_max
+        tap_min_i = 1.0 / tap_min
+        tap_max_i = 1.0 / tap_max
         tap_min = min(tap_min_i, tap_max_i)
         tap_max = max(tap_min_i, tap_max_i)
 
@@ -1098,7 +1109,7 @@ def convert_dgs_to_load(elmlod: ElmLod,
         name=elmlod.loc_name or f"Load_{_ref_id(elmlod.ID)}",
         P=p_mw,
         Q=q_mvar,
-        active=0 if elmlod.outserv else 1
+        active=False if elmlod.outserv else True
     )
 
     return bus, load
@@ -1128,11 +1139,13 @@ def convert_dgs_to_static_gen(elmgenstat: ElmGenstat,
         name=elmgenstat.loc_name or f"SatticGen_{_ref_id(elmgenstat.ID)}",
         P=elmgenstat.pgini,
         Q=elmgenstat.qgini,
-        active=0 if elmgenstat.outserv else 1
+        active=False if elmgenstat.outserv else True
     )
 
     # Preserve PowerFactory 'ip_ctrl' (1 means this is the reference/slack machine)
-    stagen.ip_ctrl = int(elmgenstat.ip_ctrl)
+    if int(elmgenstat.ip_ctrl) == 1:
+        stagen.bus.is_slack = True
+
     return bus, stagen
 
 
@@ -1153,7 +1166,7 @@ def convert_dgs_to_external_grid(elmxnet: ElmXnet,
 
     xgrid = dev.ExternalGrid(
         name=elmxnet.loc_name or f"Load_{_ref_id(elmxnet.ID)}",
-        active=0 if elmxnet.outserv else 1
+        active=False if elmxnet.outserv else True
     )
 
     if elmxnet.bustp == b'SL':
@@ -2277,7 +2290,7 @@ def dgs_to_circuit(path: str, logger: Logger | None = None) -> dev.MultiCircuit:
                 )
                 continue
 
-        trafo3w = convert_dgs_to_transformer3w(
+        trafo3w: dev.Transformer3W = convert_dgs_to_transformer3w(
             tr3=elmtr3,
             buses=grid.buses,
             stacubic_dict=stacubic_dict,
@@ -2295,7 +2308,9 @@ def dgs_to_circuit(path: str, logger: Logger | None = None) -> dev.MultiCircuit:
         if fold_id is not None and fold_id != "":
             bg = branch_group_by_id.get(fold_id)
             if bg is not None:
-                trafo3w.group = bg
+                trafo3w.winding1.group = bg
+                trafo3w.winding2.group = bg
+                trafo3w.winding3.group = bg
 
         grid.add_transformer3w(obj=trafo3w)
 

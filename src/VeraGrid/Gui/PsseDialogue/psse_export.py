@@ -6,7 +6,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 import os
 from PySide6 import QtWidgets
-from VeraGrid.Gui.PsseExportDialogue.psse_export_gui import Ui_PsseExportDialog
+from VeraGrid.Gui.PsseDialogue.psse_export_gui import Ui_PsseExportDialog
 from VeraGrid.Gui.general_dialogues import LogsDialogue
 import VeraGrid.Session.file_handler as filedrv
 from VeraGridEngine.basic_structures import Logger

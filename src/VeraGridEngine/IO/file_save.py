@@ -413,7 +413,7 @@ class FileSave:
                 file_name=self.file_name
             )
 
-        elif self.options.file_type == FileType.VeraGrid:
+        elif self.options.file_type == FileType.VeraGrid or self.options.file_type == FileType.VeraGrid_delta:
             logger = save_veragrid(
                 circuit=self.circuit,
                 file_name=self.file_name,

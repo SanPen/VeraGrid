@@ -56,7 +56,7 @@ package_data = {'VeraGridEngine': ['LICENSE.txt', 'setup.py'], }
 
 dependencies = ['setuptools>=41.0.1',
                 'wheel>=0.37.2',
-                "numpy>=2.2.0, <=2.3.0",
+                "numpy>=2.2.0",
                 "autograd>=1.7.0",
                 "scipy>=1.0.0",
                 "networkx>=2.1",
@@ -73,7 +73,7 @@ dependencies = ['setuptools>=41.0.1',
                 "h5py>=3.12.0",
                 "numba>=0.61",  # to compile routines natively
                 'pyproj',
-                'pulp',
+                'pulp>=3.3.0',
                 'pyarrow>=15',
                 "windpowerlib>=0.2.2",
                 "pvlib>=0.11",

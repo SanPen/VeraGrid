@@ -214,9 +214,8 @@ class DgsCircuit:
 
     def add_element_cubicles(self, element_id: str, dgs_buses: List[ElmTerm]):
         """
-        Add cubicles
-        :param element_id: Element ID
-        :param dgs_buses: list of ElmTerm
+        Add cubicles + their StaSwitch objects.
+        IMPORTANT: Import expects StaSwitch.fold_id == StaCubic.ID.
         """
         for i, b in enumerate(dgs_buses):
             c = StaCubic()
@@ -225,7 +224,22 @@ class DgsCircuit:
             c.obj_id = element_id
             c.obj_bus = i
             c.fold_id = b.ID
+            c.it2p1 = 0
+            c.it2p2 = 1
+            c.it2p3 = 2
             self.stacubics.append(c)
+
+            # Create the switch that belongs to this cubicle
+            sw = StaSwitch()
+            sw.ID = self.new_id()
+            sw.loc_name = f"StaSwitch_{sw.ID}"
+            sw.fold_id = c.ID  # points to StaCubic.ID
+            sw.on_off = 1  # default closed
+            sw.typ_id = ""
+            sw.iUse = 0
+            sw.for_name = ""
+            sw.aUsage = "cbk"  # matches typical PF exports
+            self.staswitchs.append(sw)
 
     def parse_dgs(self, path: str):
         """

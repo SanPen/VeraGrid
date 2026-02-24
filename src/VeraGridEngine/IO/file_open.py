@@ -48,31 +48,47 @@ class FileOpenOptions:
     """
 
     def __init__(self,
-                 cgmes_map_areas_like_raw: bool = False,
-                 try_to_map_dc_to_hvdc_line: bool = True,
-                 crash_on_errors: bool = True,
-                 adjust_taps_to_discrete_positions: bool = False,
+                 # General
                  file_type: FileType | None = None,
-                 cgmes_version: CGMESVersions | None = None):
+                 crash_on_errors: bool = True,
+                 # CGMEs
+                 cgmes_version: CGMESVersions | None = None,
+                 cgmes_map_areas_like_raw: bool = False,
+                 cgmes_try_to_map_dc_to_hvdc_line: bool = True,
+                 # PSSe
+                 psse_adjust_taps_to_discrete_positions: bool = False,
+                 psse_use_short_names: bool = True,
+                 psse_flatten_virtual_taps: bool = False):
         """
-
+        :param file_type: FileType to load, none is unsure
+        :param crash_on_errors: Mainly debug feature to allow finding the exact crash issue when loading files
+        :param cgmes_version: CGMES version to load
         :param cgmes_map_areas_like_raw: If active the CGMEs mapping will be:
                                             GeographicalRegion <-> Area
                                             SubGeographicalRegion <-> Zone
                                         Otherwise:
                                             GeographicalRegion <-> Country
                                             SubGeographicalRegion <-> Community
-        :param try_to_map_dc_to_hvdc_line: Converters and DC lines in CGMES are attempted to be converted
+        :param cgmes_try_to_map_dc_to_hvdc_line: Converters and DC lines in CGMES are attempted to be converted
                                             to the simplified HvdcLine objects in VeraGrid
-        :param crash_on_errors: Mainly debug feature to allow finding the exact crash issue when loading files
-        :param adjust_taps_to_discrete_positions: Modify the tap angle and module to the discrete positions
+        :param psse_adjust_taps_to_discrete_positions: Modify the tap angle and module to the discrete positions
         """
-        self.cgmes_map_areas_like_raw = cgmes_map_areas_like_raw
-        self.try_to_map_dc_to_hvdc_line = try_to_map_dc_to_hvdc_line
-        self.crash_on_errors = crash_on_errors
-        self.adjust_taps_to_discrete_positions = adjust_taps_to_discrete_positions
+
+        # General
         self.file_type: FileType | None = file_type
+        self.crash_on_errors = crash_on_errors
+
+        # CGMES options
         self.cgmes_version: CGMESVersions | None = cgmes_version
+        self.cgmes_map_areas_like_raw = cgmes_map_areas_like_raw
+        self.cgmes_try_to_map_dc_to_hvdc_line = cgmes_try_to_map_dc_to_hvdc_line
+
+        # PSS/e options
+        self.psse_adjust_taps_to_discrete_positions = psse_adjust_taps_to_discrete_positions
+        self.psse_use_short_names = psse_use_short_names
+        self.psse_flatten_virtual_taps = psse_flatten_virtual_taps
+
+
 
 
 def open_cgmes(files: List[str] | str,
@@ -460,7 +476,9 @@ class FileOpen:
             self.circuit = psse_to_veragrid(
                 psse_circuit=pss_grid,
                 logger=self.logger,
-                adjust_taps_to_discrete_positions=self.options.adjust_taps_to_discrete_positions
+                adjust_taps_to_discrete_positions=self.options.psse_adjust_taps_to_discrete_positions,
+                use_short_names=self.options.psse_use_short_names,
+                flatten_virtual_taps=self.options.psse_flatten_virtual_taps
             )
 
         elif self.file_type == FileType.PSSE_rawx:
@@ -468,7 +486,9 @@ class FileOpen:
             self.circuit = psse_to_veragrid(
                 psse_circuit=pss_grid,
                 logger=self.logger,
-                adjust_taps_to_discrete_positions=self.options.adjust_taps_to_discrete_positions
+                adjust_taps_to_discrete_positions=self.options.psse_adjust_taps_to_discrete_positions,
+                use_short_names=self.options.psse_use_short_names,
+                flatten_virtual_taps=self.options.psse_flatten_virtual_taps
             )
 
         elif self.file_type == FileType.DGS:
@@ -484,7 +504,7 @@ class FileOpen:
                 files=self.file_name,
                 version=self.options.cgmes_version,  # will be determined inside if possible
                 cgmes_map_areas_like_raw=self.options.cgmes_map_areas_like_raw,
-                try_to_map_dc_to_hvdc_line=self.options.try_to_map_dc_to_hvdc_line,
+                try_to_map_dc_to_hvdc_line=self.options.cgmes_try_to_map_dc_to_hvdc_line,
                 text_func=text_func,
                 progress_func=progress_func,
                 cgmes_logger=self.cgmes_logger

@@ -4,8 +4,8 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import Union
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType
+from typing import Union, Tuple
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType, GCProp
 from VeraGridEngine.Devices.Aggregation.contingency_group import ContingencyGroup
 
 
@@ -14,6 +14,11 @@ class RemedialActionGroup(EditableDevice):
     The RemedialAction group
     """
     __slots__ = ('category', '_conn_group')
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='category', units='', tpe=str, definition='Some tag to category the contingency group'),
+        GCProp(key='conn_group', units='', tpe=DeviceType.ContingencyGroupDevice, definition='Contingency group'),
+    )
 
     def __init__(self,
                  idtag: Union[str, None] = None,
@@ -38,9 +43,7 @@ class RemedialActionGroup(EditableDevice):
 
         self._conn_group: ContingencyGroup = conn_group
 
-        self.register(key='category', units='', tpe=str, definition='Some tag to category the contingency group')
 
-        self.register(key='conn_group', units='', tpe=DeviceType.ContingencyGroupDevice, definition='Contingency group')
 
     @property
     def conn_group(self) -> ContingencyGroup:

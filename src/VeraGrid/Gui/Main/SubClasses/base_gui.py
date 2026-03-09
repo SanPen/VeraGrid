@@ -59,6 +59,7 @@ from VeraGrid.Gui.python_console import PythonConsole
 from VeraGrid.Gui.python_script_editor import PythonCodeEditor
 from VeraGrid.Gui.toast_widget import ToastManager
 from VeraGrid.Gui.PsseDialogue.psse_import import PsseImportDialogue
+from VeraGrid.Gui.ProceduralGrid.procedural_grid import ProceduralGridWindow
 
 
 
@@ -206,6 +207,7 @@ class BaseMainGui(QMainWindow):
         self.file_selector: FileTypeSelector | None = None
         self.cgmes_selector: CgmesOptionsSelector | None = None
         self.psse_import_dialogue: PsseImportDialogue | None = None
+        self.procedural_grid_window : ProceduralGridWindow | None = None
 
         # available engines --------------------------------------------------------------------------------------------
         engine_lst = [EngineType.VeraGrid]

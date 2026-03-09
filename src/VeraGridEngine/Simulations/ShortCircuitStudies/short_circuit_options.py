@@ -2,14 +2,31 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
+from typing import Tuple
+
 from VeraGridEngine.enumerations import FaultType, MethodShortCircuit, PhasesShortCircuit
 from VeraGridEngine.Simulations.options_template import OptionsTemplate
+from VeraGridEngine.Devices.Parents.editable_device import GCProp
+
 
 
 class ShortCircuitOptions(OptionsTemplate):
     """
     Short circuit options
     """
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key="bus_index", tpe=int),
+        GCProp(key="fault_type", tpe=FaultType),
+        GCProp(key="method", tpe=MethodShortCircuit),
+        GCProp(key="phases", tpe=PhasesShortCircuit),
+        GCProp(key="mid_line_fault", tpe=bool),
+        GCProp(key="branch_index", tpe=int),
+        GCProp(key="branch_fault_locations", tpe=float),
+        GCProp(key="branch_fault_r", tpe=int),
+        GCProp(key="branch_fault_x", tpe=int),
+        GCProp(key="verbose", tpe=int),
+    )
 
     def __init__(self,
                  bus_index: int = 0,
@@ -55,13 +72,3 @@ class ShortCircuitOptions(OptionsTemplate):
 
         self.verbose = verbose
 
-        self.register(key="bus_index", tpe=int)
-        self.register(key="fault_type", tpe=FaultType)
-        self.register(key="method", tpe=MethodShortCircuit)
-        self.register(key="phases", tpe=PhasesShortCircuit)
-        self.register(key="mid_line_fault", tpe=bool)
-        self.register(key="branch_index", tpe=int)
-        self.register(key="branch_fault_locations", tpe=float)
-        self.register(key="branch_fault_r", tpe=int)
-        self.register(key="branch_fault_x", tpe=int)
-        self.register(key="verbose", tpe=int)

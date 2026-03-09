@@ -84,7 +84,7 @@ MAP_BRANCH_GRAPHIC_TYPES = Union[
 
 def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     """
-
+    Distance between two lat,lon points
     :param lat1:
     :param lon1:
     :param lat2:

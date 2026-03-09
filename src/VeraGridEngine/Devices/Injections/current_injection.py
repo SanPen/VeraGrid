@@ -4,13 +4,13 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import Union
+from typing import Union, Tuple
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from VeraGridEngine.enumerations import DeviceType, BuildStatus
 from VeraGridEngine.Devices.Parents.load_parent import InjectionParent
-from VeraGridEngine.Devices.Parents.editable_device import get_at
+from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 from VeraGridEngine.Devices.profile import Profile
 
 
@@ -39,6 +39,33 @@ class CurrentInjection(InjectionParent):
         '_Ir3_prof',
         '_Ii3_prof',
 
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='Ir', units='MW', tpe=float,
+                      definition='Active power of the current component at V=1.0 p.u.',
+                      profile_name='Ir_prof'),
+        GCProp(key='Ir1', units='MW', tpe=float,
+                      definition='Active power of the current component at V=1.0 p.u.',
+                      profile_name='Ir1_prof'),
+        GCProp(key='Ir2', units='MW', tpe=float,
+                      definition='Active power of the current component at V=1.0 p.u.',
+                      profile_name='Ir2_prof'),
+        GCProp(key='Ir3', units='MW', tpe=float,
+                      definition='Active power of the current component at V=1.0 p.u.',
+                      profile_name='Ir3_prof'),
+        GCProp(key='Ii', units='MVAr', tpe=float,
+                      definition='Reactive power of the current component at V=1.0 p.u.',
+                      profile_name='Ii_prof'),
+        GCProp(key='Ii1', units='MVAr', tpe=float,
+                      definition='Reactive power of the current component at V=1.0 p.u.',
+                      profile_name='Ii1_prof'),
+        GCProp(key='Ii2', units='MVAr', tpe=float,
+                      definition='Reactive power of the current component at V=1.0 p.u.',
+                      profile_name='Ii2_prof'),
+        GCProp(key='Ii3', units='MVAr', tpe=float,
+                      definition='Reactive power of the current component at V=1.0 p.u.',
+                      profile_name='Ii3_prof'),
     )
 
     def __init__(self, name='CurrentInjection', idtag=None, code='', Ir=0.0, Ii=0.0, Cost=1200.0,
@@ -97,30 +124,6 @@ class CurrentInjection(InjectionParent):
         self._Ii2_prof = Profile(default_value=self.Ii2, data_type=float)
         self._Ii3_prof = Profile(default_value=self.Ii3, data_type=float)
 
-        self.register(key='Ir', units='MW', tpe=float,
-                      definition='Active power of the current component at V=1.0 p.u.',
-                      profile_name='Ir_prof')
-        self.register(key='Ir1', units='MW', tpe=float,
-                      definition='Active power of the current component at V=1.0 p.u.',
-                      profile_name='Ir1_prof')
-        self.register(key='Ir2', units='MW', tpe=float,
-                      definition='Active power of the current component at V=1.0 p.u.',
-                      profile_name='Ir2_prof')
-        self.register(key='Ir3', units='MW', tpe=float,
-                      definition='Active power of the current component at V=1.0 p.u.',
-                      profile_name='Ir3_prof')
-        self.register(key='Ii', units='MVAr', tpe=float,
-                      definition='Reactive power of the current component at V=1.0 p.u.',
-                      profile_name='Ii_prof')
-        self.register(key='Ii1', units='MVAr', tpe=float,
-                      definition='Reactive power of the current component at V=1.0 p.u.',
-                      profile_name='Ii1_prof')
-        self.register(key='Ii2', units='MVAr', tpe=float,
-                      definition='Reactive power of the current component at V=1.0 p.u.',
-                      profile_name='Ii2_prof')
-        self.register(key='Ii3', units='MVAr', tpe=float,
-                      definition='Reactive power of the current component at V=1.0 p.u.',
-                      profile_name='Ii3_prof')
 
     @property
     def Ir_prof(self) -> Profile:

@@ -4,13 +4,18 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import List
+from typing import List, Tuple
 from VeraGridEngine.IO.base.units import Unit
 from VeraGridEngine.IO.raw.devices.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
+from VeraGridEngine.IO.raw.devices.psse_property import PsseProperty
 
 
 class RawImpedanceCorrectionTable(RawObject):
+    LOCAL_PROPERTIES: Tuple[PsseProperty, ...] = (
+        PsseProperty(property_name='I', rawx_key='iarea', class_type=int, description='Area number', min_value=1,
+                     max_value=9999),
+    )
 
     def __init__(self) -> None:
         RawObject.__init__(self, "Impedance Correction Table")
@@ -20,13 +25,6 @@ class RawImpedanceCorrectionTable(RawObject):
         self.T: List[int] = list()
         self.F_re: List[float] = list()
         self.F_im: List[float] = list()
-
-        self.register_property(property_name="I",
-                               rawx_key='iarea',
-                               class_type=int,
-                               description="Area number",
-                               min_value=1,
-                               max_value=9999)
 
     def parse(self, data: List[List[int | float]], version, logger: Logger):
         """

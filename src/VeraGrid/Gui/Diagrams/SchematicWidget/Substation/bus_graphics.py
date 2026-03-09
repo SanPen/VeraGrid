@@ -963,8 +963,6 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
     def set_values_3ph(self, i: int,
                        VmA: float, VmB: float, VmC: float,
                        VaA: float, VaB: float, VaC: float,
-                       PA: float, PB: float, PC: float,
-                       QA: float, QB: float, QC: float,
                        tpe: str, format_str="{:10.2f}"):
         """
         Set three phase tags
@@ -997,12 +995,6 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
                     vm_kv = format_str.format(Vm_i * self._api_object.Vnom)
                     va = format_str.format(Va_i)
                     msg += f"V{ph}={vm_kv} kV / {vm}&lt;{va}º p.u.<br>"
-
-            for P_i, Q_i, ph in zip([PA, PB, PC], [QA, QB, QC], ["a", "b", "c"]):
-                if not (P_i == 0.0 and Q_i == 0.0):
-                    p = format_str.format(P_i)
-                    q = format_str.format(Q_i)
-                    msg += f"P{ph}={p} MW<br>Q{ph}={q} MVAr<br>"
 
         else:
             msg = ""

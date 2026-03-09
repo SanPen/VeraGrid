@@ -17,7 +17,7 @@ class WrappableTableModel(QtCore.QAbstractTableModel):
         """
         QtCore.QAbstractTableModel.__init__(self, parent)
 
-        # flag for the headers text wraper: HeaderViewWithWordWrap
+        # flag for the headers text wrapper: HeaderViewWithWordWrap
         self._hide_headers_mode = False
 
     def hide_headers(self) -> None:

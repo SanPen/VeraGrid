@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import Union
+from typing import Union, Tuple
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -13,7 +13,7 @@ from VeraGridEngine.enumerations import BuildStatus, DeviceType
 from VeraGridEngine.basic_structures import CxVec
 from VeraGridEngine.Devices.profile import Profile
 from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
-from VeraGridEngine.Devices.Parents.editable_device import get_at
+from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 
 
 class LoadParent(InjectionParent):
@@ -41,6 +41,17 @@ class LoadParent(InjectionParent):
         '_Pc_prof',
         'Qc',
         '_Qc_prof',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='P', units='MW', tpe=float, definition='Active power', profile_name='P_prof'),
+        GCProp(key='Pa', units='MW', tpe=float, definition='Phase A active power', profile_name='Pa_prof'),
+        GCProp(key='Pb', units='MW', tpe=float, definition='Phase B active power', profile_name='Pb_prof'),
+        GCProp(key='Pc', units='MW', tpe=float, definition='Phase C active power', profile_name='Pc_prof'),
+        GCProp(key='Q', units='MVAr', tpe=float, definition='Reactive power', profile_name='Q_prof'),
+        GCProp(key='Qa', units='MVAr', tpe=float, definition='Phase A reactive power', profile_name='Qa_prof'),
+        GCProp(key='Qb', units='MVAr', tpe=float, definition='Phase B reactive power', profile_name='Qb_prof'),
+        GCProp(key='Qc', units='MVAr', tpe=float, definition='Phase C reactive power', profile_name='Qc_prof'),
     )
 
     def __init__(self,
@@ -126,14 +137,6 @@ class LoadParent(InjectionParent):
         self.Qc = float(Q3)
         self._Qc_prof = Profile(default_value=self.Qc, data_type=float)
 
-        self.register(key='P', units='MW', tpe=float, definition='Active power', profile_name='P_prof')
-        self.register(key='Pa', units='MW', tpe=float, definition='Phase A active power', profile_name='Pa_prof')
-        self.register(key='Pb', units='MW', tpe=float, definition='Phase B active power', profile_name='Pb_prof')
-        self.register(key='Pc', units='MW', tpe=float, definition='Phase C active power', profile_name='Pc_prof')
-        self.register(key='Q', units='MVAr', tpe=float, definition='Reactive power', profile_name='Q_prof')
-        self.register(key='Qa', units='MVAr', tpe=float, definition='Phase A reactive power', profile_name='Qa_prof')
-        self.register(key='Qb', units='MVAr', tpe=float, definition='Phase B reactive power', profile_name='Qb_prof')
-        self.register(key='Qc', units='MVAr', tpe=float, definition='Phase C reactive power', profile_name='Qc_prof')
 
     @property
     def P_prof(self) -> Profile:

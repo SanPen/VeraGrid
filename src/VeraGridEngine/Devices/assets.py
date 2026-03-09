@@ -12,9 +12,10 @@ import datetime as dateslib
 
 from VeraGridEngine.basic_structures import IntVec, StrVec, Vec, Mat, ObjVec, BoolVec
 import VeraGridEngine.Devices as dev
+import VeraGridEngine.Templates as tem
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES, BRANCH_TYPES, INJECTION_DEVICE_TYPES, FLUID_TYPES
 from VeraGridEngine.Devices.Parents.editable_device import GCPROP_TYPES
-from VeraGridEngine.enumerations import DeviceType, ActionType
+from VeraGridEngine.enumerations import DeviceType, ActionType, SubObjectType
 from VeraGridEngine.basic_structures import Logger, ListSet
 from VeraGridEngine.data_logger import DataLogger
 
@@ -114,7 +115,8 @@ class Assets:
         'device_type_name_dict',
         'device_associations',
         '_rms_events',
-        '_rms_events_groups'
+        '_rms_events_groups',
+        '_var_factory'
     )
 
     def __init__(self):
@@ -293,6 +295,9 @@ class Assets:
 
         # list of declared diagrams
         self._diagrams: List[Union[dev.MapDiagram, dev.SchematicDiagram]] = list()
+
+        # Class to handle the dynamic Vars and Consts
+        self._var_factory: dev.VarFactory = dev.VarFactory()
 
         # objects with profiles
         self.template_objects_dict = {
@@ -720,6 +725,17 @@ class Assets:
                                                     microsecond=val.microsecond)
         else:
             raise Exception(f'unsupported value set {val} for snapshot_time')
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Var Factory
+    # ------------------------------------------------------------------------------------------------------------------
+    @property
+    def var_factory(self) -> dev.VarFactory:
+        """
+        Get the VarFactory object
+        :return: VarFactory
+        """
+        return self._var_factory
 
     # ------------------------------------------------------------------------------------------------------------------
     # AC line
@@ -4421,7 +4437,7 @@ class Assets:
     def add_rms_events_group(self, obj: dev.RmsEventsGroup):
         """
         Add rms events group
-        :param obj: InvestmentsGroup
+        :param obj: RmsEventsGroup
         """
         self._rms_events_groups.append(obj)
 
@@ -7110,10 +7126,9 @@ class Assets:
 
                 if elm_from_base is not None:
 
-                    for prop in api_obj.property_list:
-                        if prop.selected_to_merge:
-                            val = api_obj.get_property_value(prop=prop, t_idx=None)
-                            elm_from_base.set_property_value(prop=prop, value=val, t_idx=None)
+                    for prop in api_obj.iter_properties_selected_to_merge():
+                        val = api_obj.get_property_value(prop=prop, t_idx=None)
+                        elm_from_base.set_property_value(prop=prop, value=val, t_idx=None)
                 else:
                     self.add_element(obj=api_obj)
 
@@ -7669,3 +7684,19 @@ class Assets:
         # Delete the elements that don't point to the right element
         for elm in objects_to_remove:
             self.delete_element(obj=elm)
+
+    def add_rms_model_catalogue(self):
+        """
+        Here the list of all rms templates must be returned in a list
+        :return:
+        """
+        self.rms_models = [
+            tem.get_genqec(vfactory=self._var_factory),
+            tem.get_governor(vfactory=self._var_factory),
+            tem.get_stabilizer(vfactory=self._var_factory),
+            tem.get_exciter(vfactory=self._var_factory),
+            tem.get_complete_generator_template(vfactory=self._var_factory),
+            tem.get_genrow_rms_template(vfactory=self._var_factory),
+            tem.get_line_rms_template(vfactory=self._var_factory),
+            tem.get_load_rms_template(vfactory=self._var_factory)
+        ]

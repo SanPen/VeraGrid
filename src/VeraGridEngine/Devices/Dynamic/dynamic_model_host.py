@@ -6,9 +6,10 @@ from __future__ import annotations
 
 from typing import List, Dict, Any, Sequence
 from dataclasses import dataclass
+import uuid
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
+from VeraGridEngine.Utils.Symbolic.symbolic_io import block_deep_copy, compare_blocks
 from VeraGridEngine.enumerations import DeviceType
 
 
@@ -99,7 +100,6 @@ class BlockDiagramConnection:
                 'color': self.color}
 
     def copy(self):
-
         return BlockDiagramConnection(
             from_uid=self.from_uid,
             to_uid=self.to_uid,
@@ -114,13 +114,26 @@ class BlockDiagram:
     Diagram
     """
 
-    def __init__(self):
+    # Todo: add parse and to_dict functions
+
+    def __init__(self) -> None:
         """
 
         """
         self.status: str | None = None
         self.node_data: Dict[int, BlockDiagramNode] = dict()
         self.con_data: Dict[int, BlockDiagramConnection] = dict()
+
+    def to_dict(self):
+        """
+        to dictionary function
+        """
+        return {
+            "status": self.status,
+            # "block_counters": self.block_counters,
+            "nodes_data": self.get_node_data_dict(),
+            "cons_data": self.get_con_data_dict()
+        }
 
     def copy(self):
         """
@@ -130,20 +143,26 @@ class BlockDiagram:
         diag = BlockDiagram()
 
         diag.status = self.status
+        # diag.block_counters = self.block_counters
 
         diag.node_data = {key: val.copy() for key, val in self.node_data.items()}
         diag.con_data = {key: val.copy() for key, val in self.con_data.items()}
 
         return diag
 
-    def add_node(self, name: str, x: float, y: float,
-                 tpe: str, device_uid: int, api_object_name: str = "",
+    def add_node(self,
+                 name: str,
+                 x: float,
+                 y: float,
+                 tpe: str,
+                 device_uid: int,
+                 api_object_name: str = "",
                  state_ins: int = 0,
-                 state_outs: Sequence[str] = [],
+                 state_outs: Sequence[str] | None = None,
                  algeb_ins: int = 0,
-                 algeb_outs: Sequence[str] = [],
+                 algeb_outs: Sequence[str] | None = None,
                  color=None,
-                 subdiagram: BlockDiagram = None):
+                 subdiagram: BlockDiagram | None = None):
         """
         :param api_object_name:
         :param state_ins:
@@ -160,8 +179,6 @@ class BlockDiagram:
         :return:
         """
 
-        if color is None:
-            color = "#C0C0C0"  # light blue
         self.node_data[device_uid] = BlockDiagramNode(
             name=name,
             x=x,
@@ -170,15 +187,20 @@ class BlockDiagram:
             device_uid=device_uid,
             api_object_name=api_object_name,
             state_ins=state_ins,
-            state_outs=state_outs,
+            state_outs=list() if state_outs is None else state_outs,
             algeb_ins=algeb_ins,
-            algeb_outs=algeb_outs,
-            color=color,
+            algeb_outs=list() if algeb_outs is None else algeb_outs,
+            color="#C0C0C0" if color is None else color,  # light blue as default
             sub_diagram=subdiagram
         )
 
-    def add_branch(self, connectionitem_uid: int, device_uid_from: int, device_uid_to: int,
-                   port_number_from: int, port_number_to: int, color: str):
+    def add_branch(self,
+                   connectionitem_uid: int,
+                   device_uid_from: int,
+                   device_uid_to: int,
+                   port_number_from: int,
+                   port_number_to: int,
+                   color: str):
         """
         :param connectionitem_uid:
         :param device_uid_from:
@@ -213,6 +235,20 @@ class BlockDiagram:
         graph_info = {connection_uid: connection.get_connection_dict() for connection_uid, connection in
                       self.con_data.items()}
         return graph_info
+
+    @staticmethod
+    def parse(data: Dict[str, Any]) -> "BlockDiagram":
+        """
+
+        :param data:
+        :return:
+        """
+        diagram = BlockDiagram()
+        diagram.parse_nodes(data["nodes_data"])
+        diagram.parse_branches(data["cons_data"])
+        # diagram.block_counters = data["block_counters"]
+        diagram.status = data["status"]
+        return diagram
 
     def parse_nodes(self, nodes_data) -> None:
         """
@@ -261,20 +297,24 @@ class DynamicModelHost(EditableDevice):
     This class serves to give flexible access to either a template or a custom model
     """
 
-    def __init__(self, name=""):
+    def __init__(self, name: str = "",
+                 idtag: str | None = None,
+                 code: str = "") -> None:
         """
 
         :param name:
+        :param idtag:
+        :param code:
         """
         super().__init__(name=name,
-                         idtag=None,
-                         code="",
+                         idtag=idtag,
+                         code=code,
                          device_type=DeviceType.DynamicModelHostDevice)
 
         self._template: Block | None = None
 
         # a custom model always exits although it may be empty
-        self._custom_model: Block = Block()
+        self._model: Block = Block()
         self._diagram: BlockDiagram = BlockDiagram()
 
     @property
@@ -292,51 +332,34 @@ class DynamicModelHost(EditableDevice):
         :param val:
         :return:
         """
+        # prop template is a pointer and prop model is a copy
         if isinstance(val, Block):
             self._template = val
+            self._model = val.deep_copy()
         elif val is None:
             self._template = None
         else:
             raise ValueError(f"Cannot set template with {val}")
 
     @property
-    def custom_model(self):
+    def model(self):
         """
         Return custom
         :return:
         """
-        return self._custom_model
+        return self._model
 
-    @custom_model.setter
-    def custom_model(self, val: Block):
+    @model.setter
+    def model(self, val: Block):
         """
 
         :param val:
         :return:
         """
         if isinstance(val, Block):
-            self._custom_model = val
-        elif val is None:
-            self._custom_model = None
+            self._model = val
         else:
             raise ValueError(f"Cannot set template with {val}")
-
-    @property
-    def model(self) -> Block:
-        """
-        Returns whatever is available with preference to the custom model if any
-        :return: DynamicModel (even if it is empty)
-        """
-        if self.template is None:
-            return self.custom_model
-        else:
-            return self.template
-
-    @model.setter
-    def model(self, val: Block):
-        if not isinstance(val, Block):
-            raise ValueError(f"Cannot set model with {val}")
-        self._custom_model = val
 
     @property
     def diagram(self) -> BlockDiagram:
@@ -357,6 +380,8 @@ class DynamicModelHost(EditableDevice):
                 diagram.parse_nodes(val["nodes"])
             if "connections" in val:
                 diagram.parse_branches(val["connections"])
+            if "block_counters" in val:
+                diagram.parse_block_counters(val["block_counters"])
             self._diagram = diagram
         else:
             raise ValueError(f"Cannot set diagram with {val}")
@@ -367,36 +392,57 @@ class DynamicModelHost(EditableDevice):
         :return: Data to save
         """
         return {
+            "idtag": self.idtag,
             "template": self.template.uid if self.template is not None else None,
-            "custom_model": self.custom_model.to_dict()
+            "model": self.model.uid,
+            "diagram": self.diagram.to_dict()
         }
 
-    def parse(self, data: Dict[str, str | Dict[str, List[Dict[str, Any]]]],
-              models_dict: Dict[str, RmsModelTemplate]):
+    def parse(self,
+              data: Dict[str, str | Dict[str, List[Dict[str, Any]]]],
+              blocks_dict: Dict[int, Block]):
         """
         Parse the data
         :param data: data generated by to_dict
-        :param models_dict: dictionary of DynamicModel to find the template reference
+        :param blocks_dict: dictionary of DynamicModel to find the template reference
         """
-        template_id = data.get("template", None)
-        if template_id is not None:
-            self.template = models_dict.get(template_id, None)
+        # template_id = data.get("template", None)
+        # if template_id is not None:
+        #     self.template = models_dict.get(template_id, None)
 
-        custom_data = data.get("custom_model", None)
-        self._custom_model = Block.parse(data=custom_data)
+        self.idtag = data.get("idtag", None)
 
-    def empty(self):
-        if self._template is None:
-            return self._custom_model.empty()
-        else:
-            return self._template.empty()
+        template_uid = data.get("template", None)
+        if template_uid is not None:
+            self.template = blocks_dict.get(int(template_uid), None)
 
-    def __eq__(self, other):
+        model_uid = data.get("model", None)
+        if model_uid is not None:
+            self.model = blocks_dict.get(int(model_uid), None)
+
+        diagram_data = data.get("diagram", None)
+        if diagram_data is not None:
+            self.diagram = BlockDiagram.parse(data=diagram_data)
+
+    def empty(self) -> bool:
+        """
+
+        :return:
+        """
+
+        return self.model.empty()
+
+    def __eq__(self, other: DynamicModelHost) -> bool:
+        """
+
+        :param other:
+        :return:
+        """
         if isinstance(other, DynamicModelHost):
 
             if self.template is None:
                 if other.template is None:
-                    return self.custom_model == other.custom_model
+                    return self.model.compare(other.model)
                 else:
                     return False
             else:
@@ -407,12 +453,20 @@ class DynamicModelHost(EditableDevice):
         else:
             return False
 
-    def copy(self) -> "DynamicModelHost":
+        #     return True
+        # else:
+        #     return False
+
+    def copy(self, forced_new_idtag: bool = False) -> "DynamicModelHost":
         """
         Deep copy of DynamicModelHost
         :return: DynamicModelHost
         """
-        obj = DynamicModelHost()
-        obj._custom_model = self._custom_model.copy()
+        obj = DynamicModelHost(
+            name=self.name,
+            idtag=uuid.uuid4().hex if forced_new_idtag else self.idtag,
+            code=self.code
+        )
+        obj._model = self._model.deep_copy()
         obj._template = self._template
         return obj

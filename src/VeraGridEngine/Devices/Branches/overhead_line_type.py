@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import List, Dict
+from typing import List, Dict, Tuple
 from warnings import warn
 import numpy as np
 from numpy import pi, log, sqrt
@@ -13,7 +13,7 @@ import math
 
 from VeraGridEngine.Devices.admittance_matrix import AdmittanceMatrix
 from VeraGridEngine.basic_structures import Logger, Mat, IntVec, Vec, CxMat
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType, GCProp
 from VeraGridEngine.Devices.Branches.wire import Wire
 from VeraGridEngine.enumerations import SubObjectType
 
@@ -270,6 +270,16 @@ class OverheadLineType(EditableDevice):
         'opex'
     )
 
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='earth_resistivity', units='Ohm/m3', tpe=float, definition='Earth resistivity'),
+        GCProp(key='frequency', units='Hz', tpe=float, definition='Frequency'),
+        GCProp(key='Vnom', units='kV', tpe=float, definition='Voltage rating of the line'),
+        GCProp(key='wires_in_tower', units='', tpe=SubObjectType.ListOfWires,
+                      definition='List of wires', editable=False, display=False),
+        GCProp(key='capex', units='currency/km', tpe=float, definition='Capital expenditure per km'),
+        GCProp(key='opex', units='currency/MWh', tpe=float, definition='Operational expenditure'),
+    )
+
     def __init__(self, name='Tower', idtag: str | None = None,
                  Vnom: float = 1.0,
                  earth_resistivity: float = 100,
@@ -321,13 +331,6 @@ class OverheadLineType(EditableDevice):
         self._y_seq: CxMat | None = None
         self._y_0123: CxMat | None = None
 
-        self.register(key='earth_resistivity', units='Ohm/m3', tpe=float, definition='Earth resistivity')
-        self.register(key='frequency', units='Hz', tpe=float, definition='Frequency')
-        self.register(key='Vnom', units='kV', tpe=float, definition='Voltage rating of the line')
-        self.register(key='wires_in_tower', units='', tpe=SubObjectType.ListOfWires,
-                      definition='List of wires', editable=False, display=False)
-        self.register(key='capex', units='currency/km', tpe=float, definition='Capital expenditure per km')
-        self.register(key='opex', units='currency/MWh', tpe=float, definition='Operational expenditure')
 
     @property
     def Vnom(self) -> float:

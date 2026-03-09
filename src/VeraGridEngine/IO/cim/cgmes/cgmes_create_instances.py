@@ -41,11 +41,36 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_enums import (CgmesProfileType,
                                                      VsPpccControlKind,
                                                      VsQpccControlKind)
 
-from VeraGridEngine.IO.cim.cgmes.cgmes_utils import find_object_by_uuid, get_voltage_terminal
+from VeraGridEngine.IO.cim.cgmes.cgmes_utils import get_voltage_terminal
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.full_model import FullModel
 import VeraGridEngine.Devices as gcdev
 from VeraGridEngine.enumerations import CGMESVersions
 from VeraGridEngine.data_logger import DataLogger
+
+
+def find_topological_node_for_bus(cgmes_model: CgmesCircuit,
+                                  mc_bus: Bus) -> Union[cgmes24.TopologicalNode,
+                                                         cgmes30.TopologicalNode,
+                                                         None]:
+    """
+    Resolve the TopologicalNode for a bus.
+
+    Primary key is bus UUID. If UUID lookup fails (for example after UUID
+    collision remapping during export), fallback to unique bus name.
+
+    :param cgmes_model: CgmesCircuit
+    :param mc_bus: MultiCircuit bus
+    :return: TopologicalNode or None
+    """
+    for topo_node in cgmes_model.cgmes_assets.TopologicalNode_list:
+        if topo_node.uuid == mc_bus.idtag:
+            return topo_node
+
+    for topo_node in cgmes_model.cgmes_assets.TopologicalNode_list:
+        if topo_node.name == mc_bus.name:
+            return topo_node
+
+    return None
 
 
 def create_cgmes_headers(cgmes_model: CgmesCircuit,
@@ -209,10 +234,9 @@ def create_cgmes_terminal(mc_bus: Bus,
     new_rdf_id = get_new_rdfid()
     name = f'{cond_eq.name} - T{seq_num}' if cond_eq is not None else ""
 
-    tn = find_object_by_uuid(
+    tn = find_topological_node_for_bus(
         cgmes_model=cgmes_model,
-        object_list=cgmes_model.cgmes_assets.TopologicalNode_list,
-        target_uuid=mc_bus.idtag
+        mc_bus=mc_bus
     )
 
     if ver == CGMESVersions.v2_4_15:
@@ -230,7 +254,7 @@ def create_cgmes_terminal(mc_bus: Bus,
                              device=mc_bus,
                              device_class=gcdev.Bus)
 
-    elif CGMESVersions.v3_0_0:
+    elif ver == CGMESVersions.v3_0_0:
         term = cgmes30.Terminal(rdfid=new_rdf_id)
         term.name = name
 
@@ -541,7 +565,7 @@ def create_cgmes_current_limit(terminal,
 
     voltage: float | None = get_voltage_terminal(terminal, logger)
 
-    if voltage is not None:
+    if voltage is not None and voltage > 0.0:
         sqrt_3 = 1.73205080756888
         current_rate = rate_mw * 1e3 / (voltage * sqrt_3)
         current_rate = np.round(current_rate, 4)
@@ -559,6 +583,14 @@ def create_cgmes_current_limit(terminal,
         curr_lim.OperationalLimitType = op_limit_type
 
         cgmes_model.add(curr_lim)
+    else:
+        logger.add_warning(
+            msg='CurrentLimit skipped due invalid terminal voltage',
+            device=terminal.rdfid,
+            device_class=terminal.tpe,
+            value=voltage,
+            expected_value='> 0.0'
+        )
     return
 
 

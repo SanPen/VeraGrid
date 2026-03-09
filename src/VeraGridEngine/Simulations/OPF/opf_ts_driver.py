@@ -90,6 +90,336 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
         """
         return [l.strftime('%d-%m-%Y %H:%M') for l in pd.to_datetime(self.grid.time_profile)]
 
+    def run_linear_opf(self):
+        """
+
+        :return:
+        """
+        # DC optimal power flow
+        opf_vars, model = run_linear_opf_ts(
+            grid=self.grid,
+            time_indices=self.time_indices,
+            dispatch_mode=self.options.dispatch_mode,
+            solver_type=self.options.mip_solver,
+            zonal_grouping=self.options.zonal_grouping,
+            skip_generation_limits=self.options.skip_generation_limits,
+            consider_contingencies=self.options.consider_contingencies,
+            contingency_groups_used=self.grid.contingency_groups,
+            ramp_constraints=self.options.consider_ramps,
+            consider_time_up_down=self.options.consider_time_up_down,
+            area_spinning_reserve=self.options.area_spinning_reserve,
+            lodf_threshold=self.options.lodf_tolerance,
+            inter_aggregation_info=self.options.inter_aggregation_info,
+            use_glsk_as_cost=self.options.use_glsk_as_cost,
+            add_losses_approximation=self.options.add_losses_approximation,
+            logger=self.logger,
+            progress_text=self.report_text,
+            progress_func=self.report_progress,
+            verbose=self.options.verbose,
+            robust=self.options.robust,
+            mip_framework=self.options.mip_framework
+        )
+
+        self.results.voltage = opf_vars.bus_vars.Vm * np.exp(1j * opf_vars.bus_vars.Va)
+        self.results.bus_shadow_prices = opf_vars.bus_vars.shadow_prices
+
+        self.results.load_power = opf_vars.load_vars.p
+        self.results.load_shedding = opf_vars.load_vars.shedding
+        self.results.load_shedding_cost = opf_vars.load_vars.shedding_cost
+
+        self.results.battery_power = opf_vars.batt_vars.p
+        self.results.battery_energy = opf_vars.batt_vars.e
+
+        self.results.generator_power = opf_vars.gen_vars.p
+        self.results.generator_shedding = opf_vars.gen_vars.shedding
+        self.results.generator_cost = opf_vars.gen_vars.cost
+        # self.results.generator_fuel = opf_vars.gen_vars.fuel
+        # self.results.generator_emissions = opf_vars.gen_vars.emissions
+        self.results.generator_producing = opf_vars.gen_vars.producing
+        self.results.generator_starting_up = opf_vars.gen_vars.starting_up
+        self.results.generator_shutting_down = opf_vars.gen_vars.shedding
+        self.results.generator_invested = opf_vars.gen_vars.invested
+
+        self.results.Sf = opf_vars.branch_vars.flows
+        self.results.St = -opf_vars.branch_vars.flows
+        self.results.overloads = opf_vars.branch_vars.flow_slacks_pos - opf_vars.branch_vars.flow_slacks_neg
+        self.results.overloads_cost = opf_vars.branch_vars.overload_cost
+        self.results.losses = opf_vars.branch_vars.losses
+
+        self.results.loading = opf_vars.branch_vars.loading
+        self.results.tap_angle = opf_vars.branch_vars.tap_angles
+
+        self.results.hvdc_Pf = opf_vars.hvdc_vars.flows
+        self.results.hvdc_loading = opf_vars.hvdc_vars.loading
+
+        self.results.vsc_Pf = opf_vars.vsc_vars.flows
+        self.results.vsc_loading = opf_vars.vsc_vars.loading
+
+        self.results.fluid_node_current_level = opf_vars.fluid_node_vars.current_level
+        self.results.fluid_node_flow_in = opf_vars.fluid_node_vars.flow_in
+        self.results.fluid_node_flow_out = opf_vars.fluid_node_vars.flow_out
+        self.results.fluid_node_p2x_flow = opf_vars.fluid_node_vars.p2x_flow
+        self.results.fluid_node_spillage = opf_vars.fluid_node_vars.spillage
+        self.results.fluid_path_flow = opf_vars.fluid_path_vars.flow
+        self.results.fluid_injection_flow = opf_vars.fluid_inject_vars.flow
+
+        self.results.system_fuel = opf_vars.sys_vars.system_fuel
+        self.results.system_emissions = opf_vars.sys_vars.system_emissions
+        self.results.system_energy_cost = opf_vars.sys_vars.system_unit_energy_cost
+        self.results.system_total_energy_cost = opf_vars.sys_vars.system_total_energy_cost
+        self.results.power_by_technology = opf_vars.sys_vars.power_by_technology
+
+        # set converged for all t to the value of acceptable solution
+        self.results.converged = np.array([opf_vars.acceptable_solution] * opf_vars.nt)
+
+        if self.options.report_formulation:
+            self.results.report_text = model.model_as_string()
+
+    def run_linear_opf_indices(self, time_indices: IntVec, energy_0: Vec, fluid_level_0: Vec):
+
+        # run an opf for the group interval only if the group is within the start:end boundaries
+        # DC optimal power flow
+        opf_vars, model = run_linear_opf_ts(
+            grid=self.grid,
+            time_indices=time_indices,
+            dispatch_mode=self.options.dispatch_mode,
+            solver_type=self.options.mip_solver,
+            zonal_grouping=self.options.zonal_grouping,
+            skip_generation_limits=self.options.skip_generation_limits,
+            consider_contingencies=self.options.consider_contingencies,
+            contingency_groups_used=self.options.contingency_groups_used,
+            ramp_constraints=self.options.consider_ramps,
+            consider_time_up_down=self.options.consider_time_up_down,
+            area_spinning_reserve=self.options.area_spinning_reserve,
+            lodf_threshold=self.options.lodf_tolerance,
+            inter_aggregation_info=self.options.inter_aggregation_info,
+            energy_0=energy_0,
+            fluid_level_0=fluid_level_0,
+            use_glsk_as_cost=self.options.use_glsk_as_cost,
+            add_losses_approximation=self.options.add_losses_approximation,
+            logger=self.logger,
+            verbose=self.options.verbose,
+            robust=self.options.robust,
+            mip_framework=self.options.mip_framework
+        )
+
+        self.results.voltage[time_indices, :] = opf_vars.bus_vars.Vm * np.exp(1j * opf_vars.bus_vars.Va)
+        self.results.bus_shadow_prices[time_indices, :] = opf_vars.bus_vars.shadow_prices
+
+        self.results.load_power[time_indices, :] = opf_vars.load_vars.p
+        self.results.load_shedding[time_indices, :] = opf_vars.load_vars.shedding
+        self.results.load_shedding_cost[time_indices, :] = opf_vars.load_vars.shedding_cost
+
+        self.results.battery_power[time_indices, :] = opf_vars.batt_vars.p
+        self.results.battery_energy[time_indices, :] = opf_vars.batt_vars.e
+
+        self.results.generator_power[time_indices, :] = opf_vars.gen_vars.p
+        self.results.generator_shedding[time_indices, :] = opf_vars.gen_vars.shedding
+        self.results.generator_cost[time_indices, :] = opf_vars.gen_vars.cost
+        self.results.generator_producing[time_indices, :] = opf_vars.gen_vars.producing
+        self.results.generator_starting_up[time_indices, :] = opf_vars.gen_vars.starting_up
+        self.results.generator_shutting_down[time_indices, :] = opf_vars.gen_vars.shedding
+        self.results.generator_invested[time_indices, :] = opf_vars.gen_vars.invested
+
+        self.results.Sf[time_indices, :] = opf_vars.branch_vars.flows
+        self.results.St[time_indices, :] = -opf_vars.branch_vars.flows
+        self.results.overloads[time_indices, :] = (opf_vars.branch_vars.flow_slacks_pos
+                                                   - opf_vars.branch_vars.flow_slacks_neg)
+        self.results.overloads_cost[time_indices, :] = opf_vars.branch_vars.overload_cost
+        self.results.losses[time_indices, :] = opf_vars.branch_vars.losses
+
+        self.results.loading[time_indices, :] = opf_vars.branch_vars.loading
+        self.results.tap_angle[time_indices, :] = opf_vars.branch_vars.tap_angles
+
+        self.results.hvdc_Pf[time_indices, :] = opf_vars.hvdc_vars.flows
+        self.results.hvdc_loading[time_indices, :] = opf_vars.hvdc_vars.loading
+
+        self.results.vsc_Pf[time_indices, :] = opf_vars.vsc_vars.flows
+        self.results.vsc_loading[time_indices, :] = opf_vars.vsc_vars.loading
+
+        self.results.fluid_node_current_level[time_indices, :] = opf_vars.fluid_node_vars.current_level
+        self.results.fluid_node_flow_in[time_indices, :] = opf_vars.fluid_node_vars.flow_in
+        self.results.fluid_node_flow_out[time_indices, :] = opf_vars.fluid_node_vars.flow_out
+        self.results.fluid_node_p2x_flow[time_indices, :] = opf_vars.fluid_node_vars.p2x_flow
+        self.results.fluid_node_spillage[time_indices, :] = opf_vars.fluid_node_vars.spillage
+        self.results.fluid_path_flow[time_indices, :] = opf_vars.fluid_path_vars.flow
+        self.results.fluid_injection_flow[time_indices, :] = opf_vars.fluid_inject_vars.flow
+
+        self.results.system_fuel[time_indices, :] = opf_vars.sys_vars.system_fuel
+        self.results.system_emissions[time_indices, :] = opf_vars.sys_vars.system_emissions
+        self.results.system_energy_cost[time_indices] = opf_vars.sys_vars.system_unit_energy_cost
+        self.results.system_total_energy_cost[time_indices] = opf_vars.sys_vars.system_total_energy_cost
+        self.results.power_by_technology[time_indices] = opf_vars.sys_vars.power_by_technology
+
+        # set converged for all t to the value of acceptable solution
+        self.results.converged[time_indices] = np.array([opf_vars.acceptable_solution] * opf_vars.nt)
+
+        return model
+
+    def run_greedy_dispatch(self):
+        """
+
+        :return:
+        """
+        # AC optimal power flow
+        (load_profile, gen_dispatch,
+         batt_dispatch, battery_energy,
+         load_shedding, gen_curtailment) = run_greedy_dispatch_ts(
+            grid=self.grid,
+            time_indices=self.time_indices,
+            text_prog=self.report_text,
+            prog_func=self.report_progress,
+            logger=self.logger
+        )
+
+        self.results.generator_power[self.time_indices, :] = gen_dispatch  # already in MW
+        self.results.generator_shedding[self.time_indices, :] = gen_curtailment
+        self.results.battery_power[self.time_indices, :] = batt_dispatch
+        self.results.battery_energy[self.time_indices, :] = battery_energy
+
+        self.results.load_shedding[self.time_indices, :] = load_shedding
+        self.results.load_power[self.time_indices, :] = load_profile
+
+        self.results.converged[self.time_indices] = True
+
+    def run_greedy_dispatch_indices(self, time_indices: IntVec):
+        """
+
+        :param time_indices:
+        :return:
+        """
+        # Greedy dispatch
+        (load_profile, gen_dispatch,
+         batt_dispatch, battery_energy,
+         load_shedding, gen_curtailment) = run_greedy_dispatch_ts(
+            grid=self.grid,
+            time_indices=time_indices,
+            text_prog=self.report_text,
+            prog_func=self.report_progress,
+            logger=self.logger
+        )
+
+        self.results.generator_power[time_indices, :] = gen_dispatch  # already in MW
+        self.results.generator_shedding[time_indices, :] = gen_curtailment
+        self.results.battery_power[time_indices, :] = batt_dispatch
+        self.results.battery_energy[time_indices, :] = battery_energy
+
+        self.results.load_shedding[time_indices, :] = load_shedding
+        self.results.load_power[time_indices, :] = load_profile
+
+        self.results.converged[time_indices] = True
+
+    def run_non_linear_opf(self):
+        """
+
+        :return:
+        """
+        self.report_progress(0.0)
+        for it, t in enumerate(self.time_indices):
+
+            # report progress
+            self.report_text('Nonlinear OPF at ' + str(self.grid.time_profile[t]) + '...')
+            self.report_progress2(it, len(self.time_indices))
+
+            # run opf
+            res = run_nonlinear_opf(
+                grid=self.grid,
+                opf_options=self.options,
+                t_idx=t,
+                # for the first power flow, use the given strategy
+                # for the successive ones, use the previous solution
+                # Sbus_pf0=self.results.Sbus[it - 1, :] if it > 0 else None,
+                # voltage_pf0=self.results.voltage[it - 1, :] if it > 0 else None,
+                logger=self.logger
+            )
+            Sbase = self.grid.Sbase
+            self.results.voltage[it, :] = res.V
+            self.results.Sbus[it, :] = res.S * Sbase
+            self.results.bus_shadow_prices[it, :] = res.lam_p
+            # self.results.load_shedding = npa_res.load_shedding[0, :]
+            # self.results.battery_power = npa_res.battery_p[0, :]
+            # self.results.battery_energy = npa_res.battery_energy[0, :]
+            self.results.generator_power[it, :] = res.Pg * Sbase
+            self.results.generator_reactive_power[it, :] = res.Qg * Sbase
+            self.results.generator_cost[it, :] = res.Pcost
+
+            self.results.shunt_like_reactive_power[it, :] = res.Qsh * Sbase
+
+            self.results.Sf[it, :] = res.Sf * Sbase
+            self.results.St[it, :] = res.St * Sbase
+            self.results.overloads[it, :] = (res.sl_sf - res.sl_st) * Sbase
+            self.results.loading[it, :] = res.loading
+            self.results.tap_angle[it, :] = res.tap_phase
+            self.results.tap_module[it, :] = res.tap_module
+
+            self.results.hvdc_Pf[it, :] = res.hvdc_Pf
+            self.results.hvdc_loading[it, :] = res.hvdc_loading
+            self.results.converged[it] = res.converged
+
+            if self.__cancel__:
+                return None
+
+        # Compute the emissions, fuel costs and energy used
+        (self.results.system_fuel,
+         self.results.system_emissions,
+         self.results.system_energy_cost) = self.get_fuel_emissions_energy_calculations(
+            gen_p=self.results.generator_power,
+            gen_cost=self.results.generator_cost
+        )
+
+        return None
+
+    def run_nonlinear_opf_indices(self, time_indices: IntVec):
+        """
+
+        :param time_indices:
+        :return:
+        """
+        self.report_progress(0.0)
+        for it, t in enumerate(time_indices):
+            # report progress
+            self.report_text('Nonlinear OPF at ' + str(self.grid.time_profile[t]) + '...')
+
+            # run opf
+            res = run_nonlinear_opf(
+                grid=self.grid,
+                opf_options=self.options,
+                t_idx=t,
+                # for the first power flow, use the given strategy
+                # for the successive ones, use the previous solution
+                # Sbus_pf0=self.results.Sbus[it - 1, :] if it > 0 else None,
+                # voltage_pf0=self.results.voltage[it - 1, :] if it > 0 else None,
+                logger=self.logger
+            )
+            Sbase = self.grid.Sbase
+            self.results.voltage[it, :] = res.V
+            self.results.Sbus[it, :] = res.S * Sbase
+            self.results.bus_shadow_prices[it, :] = res.lam_p
+            # self.results.load_shedding = npa_res.load_shedding[0, :]
+            # self.results.battery_power = npa_res.battery_p[0, :]
+            # self.results.battery_energy = npa_res.battery_energy[0, :]
+            self.results.generator_power[it, :] = res.Pg * Sbase
+            self.results.generator_reactive_power[it, :] = res.Qg * Sbase
+            self.results.generator_cost[it, :] = res.Pcost
+
+            self.results.shunt_like_reactive_power[it, :] = res.Qsh * Sbase
+
+            self.results.Sf[it, :] = res.Sf * Sbase
+            self.results.St[it, :] = res.St * Sbase
+            self.results.overloads[it, :] = (res.sl_sf - res.sl_st) * Sbase
+            self.results.loading[it, :] = res.loading
+            self.results.tap_angle[it, :] = res.tap_phase
+            self.results.tap_module[it, :] = res.tap_module
+
+            self.results.hvdc_Pf[it, :] = res.hvdc_Pf
+            self.results.hvdc_loading[it, :] = res.hvdc_loading
+            self.results.converged[it] = res.converged
+
+            if self.__cancel__:
+                return None
+
+        return None
+
     def opf(self, remote=False, batteries_energy_0=None):
         """
         Run a power flow for every circuit
@@ -104,167 +434,19 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
 
         if self.options.solver == SolverType.LINEAR_OPF:
 
-            # DC optimal power flow
-            opf_vars, model = run_linear_opf_ts(
-                grid=self.grid,
-                time_indices=self.time_indices,
-                dispatch_mode=self.options.dispatch_mode,
-                solver_type=self.options.mip_solver,
-                zonal_grouping=self.options.zonal_grouping,
-                skip_generation_limits=self.options.skip_generation_limits,
-                consider_contingencies=self.options.consider_contingencies,
-                contingency_groups_used=self.grid.contingency_groups,
-                ramp_constraints=self.options.consider_ramps,
-                consider_time_up_down=self.options.consider_time_up_down,
-                area_spinning_reserve=self.options.area_spinning_reserve,
-                lodf_threshold=self.options.lodf_tolerance,
-                inter_aggregation_info=self.options.inter_aggregation_info,
-                use_glsk_as_cost=self.options.use_glsk_as_cost,
-                add_losses_approximation=self.options.add_losses_approximation,
-                logger=self.logger,
-                progress_text=self.report_text,
-                progress_func=self.report_progress,
-                verbose=self.options.verbose,
-                robust=self.options.robust,
-                mip_framework=self.options.mip_framework
-            )
-
-            self.results.voltage = opf_vars.bus_vars.Vm * np.exp(1j * opf_vars.bus_vars.Va)
-            self.results.bus_shadow_prices = opf_vars.bus_vars.shadow_prices
-
-            self.results.load_power = opf_vars.load_vars.p
-            self.results.load_shedding = opf_vars.load_vars.shedding
-            self.results.load_shedding_cost = opf_vars.load_vars.shedding_cost
-
-            self.results.battery_power = opf_vars.batt_vars.p
-            self.results.battery_energy = opf_vars.batt_vars.e
-
-            self.results.generator_power = opf_vars.gen_vars.p
-            self.results.generator_shedding = opf_vars.gen_vars.shedding
-            self.results.generator_cost = opf_vars.gen_vars.cost
-            # self.results.generator_fuel = opf_vars.gen_vars.fuel
-            # self.results.generator_emissions = opf_vars.gen_vars.emissions
-            self.results.generator_producing = opf_vars.gen_vars.producing
-            self.results.generator_starting_up = opf_vars.gen_vars.starting_up
-            self.results.generator_shutting_down = opf_vars.gen_vars.shedding
-            self.results.generator_invested = opf_vars.gen_vars.invested
-
-            self.results.Sf = opf_vars.branch_vars.flows
-            self.results.St = -opf_vars.branch_vars.flows
-            self.results.overloads = opf_vars.branch_vars.flow_slacks_pos - opf_vars.branch_vars.flow_slacks_neg
-            self.results.overloads_cost = opf_vars.branch_vars.overload_cost
-            self.results.losses = opf_vars.branch_vars.losses
-
-            self.results.loading = opf_vars.branch_vars.loading
-            self.results.tap_angle = opf_vars.branch_vars.tap_angles
-
-            self.results.hvdc_Pf = opf_vars.hvdc_vars.flows
-            self.results.hvdc_loading = opf_vars.hvdc_vars.loading
-
-            self.results.vsc_Pf = opf_vars.vsc_vars.flows
-            self.results.vsc_loading = opf_vars.vsc_vars.loading
-
-            self.results.fluid_node_current_level = opf_vars.fluid_node_vars.current_level
-            self.results.fluid_node_flow_in = opf_vars.fluid_node_vars.flow_in
-            self.results.fluid_node_flow_out = opf_vars.fluid_node_vars.flow_out
-            self.results.fluid_node_p2x_flow = opf_vars.fluid_node_vars.p2x_flow
-            self.results.fluid_node_spillage = opf_vars.fluid_node_vars.spillage
-            self.results.fluid_path_flow = opf_vars.fluid_path_vars.flow
-            self.results.fluid_injection_flow = opf_vars.fluid_inject_vars.flow
-
-            self.results.system_fuel = opf_vars.sys_vars.system_fuel
-            self.results.system_emissions = opf_vars.sys_vars.system_emissions
-            self.results.system_energy_cost = opf_vars.sys_vars.system_unit_energy_cost
-            self.results.system_total_energy_cost = opf_vars.sys_vars.system_total_energy_cost
-            self.results.power_by_technology = opf_vars.sys_vars.power_by_technology
-
-            # set converged for all t to the value of acceptable solution
-            self.results.converged = np.array([opf_vars.acceptable_solution] * opf_vars.nt)
-
-            if self.options.report_formulation:
-                self.results.report_text = model.model_as_string()
+            self.run_linear_opf()
 
         elif self.options.solver == SolverType.NONLINEAR_OPF:
 
-            self.report_progress(0.0)
-            for it, t in enumerate(self.time_indices):
-
-                # report progress
-                self.report_text('Nonlinear OPF at ' + str(self.grid.time_profile[t]) + '...')
-                self.report_progress2(it, len(self.time_indices))
-
-                # run opf
-                res = run_nonlinear_opf(
-                    grid=self.grid,
-                    opf_options=self.options,
-                    t_idx=t,
-                    # for the first power flow, use the given strategy
-                    # for the successive ones, use the previous solution
-                    # Sbus_pf0=self.results.Sbus[it - 1, :] if it > 0 else None,
-                    # voltage_pf0=self.results.voltage[it - 1, :] if it > 0 else None,
-                    logger=self.logger
-                )
-                Sbase = self.grid.Sbase
-                self.results.voltage[it, :] = res.V
-                self.results.Sbus[it, :] = res.S * Sbase
-                self.results.bus_shadow_prices[it, :] = res.lam_p
-                # self.results.load_shedding = npa_res.load_shedding[0, :]
-                # self.results.battery_power = npa_res.battery_p[0, :]
-                # self.results.battery_energy = npa_res.battery_energy[0, :]
-                self.results.generator_power[it, :] = res.Pg * Sbase
-                self.results.generator_reactive_power[it, :] = res.Qg * Sbase
-                self.results.generator_cost[it, :] = res.Pcost
-
-                self.results.shunt_like_reactive_power[it, :] = res.Qsh * Sbase
-
-                self.results.Sf[it, :] = res.Sf * Sbase
-                self.results.St[it, :] = res.St * Sbase
-                self.results.overloads[it, :] = (res.sl_sf - res.sl_st) * Sbase
-                self.results.loading[it, :] = res.loading
-                self.results.tap_angle[it, :] = res.tap_phase
-                self.results.tap_module[it, :] = res.tap_module
-
-                self.results.hvdc_Pf[it, :] = res.hvdc_Pf
-                self.results.hvdc_loading[it, :] = res.hvdc_loading
-                self.results.converged[it] = res.converged
-
-                if self.__cancel__:
-                    return self.results
-
-            # Compute the emissions, fuel costs and energy used
-            (self.results.system_fuel,
-             self.results.system_emissions,
-             self.results.system_energy_cost) = self.get_fuel_emissions_energy_calculations(
-                gen_p=self.results.generator_power,
-                gen_cost=self.results.generator_cost
-            )
+            self.run_non_linear_opf()
 
         elif self.options.solver == SolverType.GREEDY_DISPATCH_OPF:
 
-            # AC optimal power flow
-            (load_profile, gen_dispatch,
-             batt_dispatch, battery_energy,
-             load_shedding, gen_curtailment) = run_greedy_dispatch_ts(
-                grid=self.grid,
-                time_indices=self.time_indices,
-                text_prog=self.report_text,
-                prog_func=self.report_progress,
-                logger=self.logger
-            )
-
-            self.results.generator_power[self.time_indices, :] = gen_dispatch  # already in MW
-            self.results.generator_shedding[self.time_indices, :] = gen_curtailment
-            self.results.battery_power[self.time_indices, :] = batt_dispatch
-            self.results.battery_energy[self.time_indices, :] = battery_energy
-
-            self.results.load_shedding[self.time_indices, :] = load_shedding
-            self.results.load_power[self.time_indices, :] = load_profile
-
-            self.results.converged[self.time_indices] = True
+            self.run_greedy_dispatch()
 
         else:
             self.logger.add_error('Solver not supported in this mode', str(self.options.solver))
-            return
+            return self.results
 
         if not remote:
             self.report_progress(0.0)
@@ -308,82 +490,9 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
 
             if self.options.solver == SolverType.LINEAR_OPF:
 
-                # run an opf for the group interval only if the group is within the start:end boundaries
-                # DC optimal power flow
-                opf_vars, model = run_linear_opf_ts(
-                    grid=self.grid,
-                    time_indices=time_indices,
-                    dispatch_mode=self.options.dispatch_mode,
-                    solver_type=self.options.mip_solver,
-                    zonal_grouping=self.options.zonal_grouping,
-                    skip_generation_limits=self.options.skip_generation_limits,
-                    consider_contingencies=self.options.consider_contingencies,
-                    contingency_groups_used=self.options.contingency_groups_used,
-                    ramp_constraints=self.options.consider_ramps,
-                    consider_time_up_down=self.options.consider_time_up_down,
-                    area_spinning_reserve=self.options.area_spinning_reserve,
-                    lodf_threshold=self.options.lodf_tolerance,
-                    inter_aggregation_info=self.options.inter_aggregation_info,
-                    energy_0=energy_0,
-                    fluid_level_0=fluid_level_0,
-                    use_glsk_as_cost=self.options.use_glsk_as_cost,
-                    add_losses_approximation=self.options.add_losses_approximation,
-                    logger=self.logger,
-                    verbose=self.options.verbose,
-                    robust=self.options.robust,
-                    mip_framework=self.options.mip_framework
-                )
-
-                self.results.voltage[time_indices, :] = opf_vars.bus_vars.Vm * np.exp(1j * opf_vars.bus_vars.Va)
-                self.results.bus_shadow_prices[time_indices, :] = opf_vars.bus_vars.shadow_prices
-
-                self.results.load_power[time_indices, :] = opf_vars.load_vars.p
-                self.results.load_shedding[time_indices, :] = opf_vars.load_vars.shedding
-                self.results.load_shedding_cost[time_indices, :] = opf_vars.load_vars.shedding_cost
-
-                self.results.battery_power[time_indices, :] = opf_vars.batt_vars.p
-                self.results.battery_energy[time_indices, :] = opf_vars.batt_vars.e
-
-                self.results.generator_power[time_indices, :] = opf_vars.gen_vars.p
-                self.results.generator_shedding[time_indices, :] = opf_vars.gen_vars.shedding
-                self.results.generator_cost[time_indices, :] = opf_vars.gen_vars.cost
-                self.results.generator_producing[time_indices, :] = opf_vars.gen_vars.producing
-                self.results.generator_starting_up[time_indices, :] = opf_vars.gen_vars.starting_up
-                self.results.generator_shutting_down[time_indices, :] = opf_vars.gen_vars.shedding
-                self.results.generator_invested[time_indices, :] = opf_vars.gen_vars.invested
-
-                self.results.Sf[time_indices, :] = opf_vars.branch_vars.flows
-                self.results.St[time_indices, :] = -opf_vars.branch_vars.flows
-                self.results.overloads[time_indices, :] = (opf_vars.branch_vars.flow_slacks_pos
-                                                           - opf_vars.branch_vars.flow_slacks_neg)
-                self.results.overloads_cost[time_indices, :] = opf_vars.branch_vars.overload_cost
-                self.results.losses[time_indices, :] = opf_vars.branch_vars.losses
-
-                self.results.loading[time_indices, :] = opf_vars.branch_vars.loading
-                self.results.tap_angle[time_indices, :] = opf_vars.branch_vars.tap_angles
-
-                self.results.hvdc_Pf[time_indices, :] = opf_vars.hvdc_vars.flows
-                self.results.hvdc_loading[time_indices, :] = opf_vars.hvdc_vars.loading
-
-                self.results.vsc_Pf[time_indices, :] = opf_vars.vsc_vars.flows
-                self.results.vsc_loading[time_indices, :] = opf_vars.vsc_vars.loading
-
-                self.results.fluid_node_current_level[time_indices, :] = opf_vars.fluid_node_vars.current_level
-                self.results.fluid_node_flow_in[time_indices, :] = opf_vars.fluid_node_vars.flow_in
-                self.results.fluid_node_flow_out[time_indices, :] = opf_vars.fluid_node_vars.flow_out
-                self.results.fluid_node_p2x_flow[time_indices, :] = opf_vars.fluid_node_vars.p2x_flow
-                self.results.fluid_node_spillage[time_indices, :] = opf_vars.fluid_node_vars.spillage
-                self.results.fluid_path_flow[time_indices, :] = opf_vars.fluid_path_vars.flow
-                self.results.fluid_injection_flow[time_indices, :] = opf_vars.fluid_inject_vars.flow
-
-                self.results.system_fuel[time_indices, :] = opf_vars.sys_vars.system_fuel
-                self.results.system_emissions[time_indices, :] = opf_vars.sys_vars.system_emissions
-                self.results.system_energy_cost[time_indices] = opf_vars.sys_vars.system_unit_energy_cost
-                self.results.system_total_energy_cost[time_indices] = opf_vars.sys_vars.system_total_energy_cost
-                self.results.power_by_technology[time_indices] = opf_vars.sys_vars.power_by_technology
-
-                # set converged for all t to the value of acceptable solution
-                self.results.converged[time_indices] = np.array([opf_vars.acceptable_solution] * opf_vars.nt)
+                model = self.run_linear_opf_indices(time_indices=time_indices,
+                                                    energy_0=energy_0,
+                                                    fluid_level_0=fluid_level_0)
 
                 energy_0 = self.results.battery_energy[end_ - 1, :]
                 fluid_level_0 = self.results.fluid_node_current_level[end_ - 1, :]
@@ -393,77 +502,27 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
 
             elif self.options.solver == SolverType.NONLINEAR_OPF:
 
-                self.report_progress(0.0)
-                for it, t in enumerate(time_indices):
-                    # report progress
-                    self.report_text('Nonlinear OPF at ' + str(self.grid.time_profile[t]) + '...')
 
-                    # run opf
-                    res = run_nonlinear_opf(
-                        grid=self.grid,
-                        opf_options=self.options,
-                        t_idx=t,
-                        # for the first power flow, use the given strategy
-                        # for the successive ones, use the previous solution
-                        # Sbus_pf0=self.results.Sbus[it - 1, :] if it > 0 else None,
-                        # voltage_pf0=self.results.voltage[it - 1, :] if it > 0 else None,
-                        logger=self.logger
-                    )
-                    Sbase = self.grid.Sbase
-                    self.results.voltage[it, :] = res.V
-                    self.results.Sbus[it, :] = res.S * Sbase
-                    self.results.bus_shadow_prices[it, :] = res.lam_p
-                    # self.results.load_shedding = npa_res.load_shedding[0, :]
-                    # self.results.battery_power = npa_res.battery_p[0, :]
-                    # self.results.battery_energy = npa_res.battery_energy[0, :]
-                    self.results.generator_power[it, :] = res.Pg * Sbase
-                    self.results.generator_reactive_power[it, :] = res.Qg * Sbase
-                    self.results.generator_cost[it, :] = res.Pcost
+                self.run_nonlinear_opf_indices(time_indices=time_indices)
 
-                    self.results.shunt_like_reactive_power[it, :] = res.Qsh * Sbase
-
-                    self.results.Sf[it, :] = res.Sf * Sbase
-                    self.results.St[it, :] = res.St * Sbase
-                    self.results.overloads[it, :] = (res.sl_sf - res.sl_st) * Sbase
-                    self.results.loading[it, :] = res.loading
-                    self.results.tap_angle[it, :] = res.tap_phase
-                    self.results.tap_module[it, :] = res.tap_module
-
-                    self.results.hvdc_Pf[it, :] = res.hvdc_Pf
-                    self.results.hvdc_loading[it, :] = res.hvdc_loading
-                    self.results.converged[it] = res.converged
 
             elif self.options.solver == SolverType.GREEDY_DISPATCH_OPF:
 
-                # Greedy dispatch
-                (load_profile, gen_dispatch,
-                 batt_dispatch, battery_energy,
-                 load_shedding, gen_curtailment) = run_greedy_dispatch_ts(
-                    grid=self.grid,
-                    time_indices=time_indices,
-                    text_prog=self.report_text,
-                    prog_func=self.report_progress,
-                    logger=self.logger
-                )
-
-                self.results.generator_power[time_indices, :] = gen_dispatch  # already in MW
-                self.results.generator_shedding[time_indices, :] = gen_curtailment
-                self.results.battery_power[time_indices, :] = batt_dispatch
-                self.results.battery_energy[time_indices, :] = battery_energy
-
-                self.results.load_shedding[time_indices, :] = load_shedding
-                self.results.load_power[time_indices, :] = load_profile
-
-                self.results.converged[time_indices] = True
+                self.run_greedy_dispatch_indices(time_indices=time_indices)
 
             else:
                 self.logger.add_error('Solver not supported in this mode', str(self.options.solver))
-                return
+                return None
 
             # update progress bar
             self.report_progress2(i, len(groups))
 
+            if self.__cancel__:
+                return None
+
             i += 1
+
+        return None
 
     def add_report(self, eps: float = 1e-6) -> None:
         """
@@ -587,6 +646,7 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
                 self.results.fluid_path_flow[ti, :] = npa_res.fluid_path_vars.flow
                 self.results.fluid_injection_flow[ti, :] = npa_res.fluid_inject_vars.flow
 
+
             if self.options.solver == SolverType.NONLINEAR_OPF:
                 self.report_text('Running Non-Linear OPF with Newton...')
 
@@ -612,6 +672,51 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
 
                 # self.results.Sbus[ti, :] = problem.get_power_injections()
                 self.results.hvdc_Pf[ti, :] = npa_res.hvdc_Pf
+                self.results.hvdc_loading[ti, :] = npa_res.hvdc_loading
+
+                self.results.fluid_node_current_level[ti, :] = npa_res.fluid_node_vars.current_level
+                self.results.fluid_node_flow_in[ti, :] = npa_res.fluid_node_vars.flow_in
+                self.results.fluid_node_flow_out[ti, :] = npa_res.fluid_node_vars.flow_out
+                self.results.fluid_node_p2x_flow[ti, :] = npa_res.fluid_node_vars.p2x_flow
+                self.results.fluid_node_spillage[ti, :] = npa_res.fluid_node_vars.spillage
+                self.results.fluid_path_flow[ti, :] = npa_res.fluid_path_vars.flow
+                self.results.fluid_injection_flow[ti, :] = npa_res.fluid_inject_vars.flow
+
+        elif self.engine == EngineType.GSLV:
+
+            if self.time_indices is None:
+                ti = 0
+                use_time_series = False
+            else:
+                use_time_series = True
+                if self.using_clusters:
+                    ti = np.arange(0, len(self.time_indices))
+                else:
+                    ti = self.time_indices
+
+            if self.options.solver == SolverType.LINEAR_OPF:
+                self.report_text('Running Linear OPF with Newton...')
+
+                npa_res = newton_pa_linear_opf(circuit=self.grid,
+                                               opf_options=self.options,
+                                               pf_opt=PowerFlowOptions(),
+                                               time_series=use_time_series,
+                                               time_indices=self.time_indices)
+
+                self.results.voltage[ti, :] = npa_res.voltage_module * np.exp(1j * npa_res.voltage_angle)
+                self.results.bus_shadow_prices[ti, :] = npa_res.nodal_shadow_prices
+                self.results.load_shedding[ti, :] = npa_res.load_shedding
+                self.results.battery_power[ti, :] = npa_res.battery_power
+                self.results.battery_energy[ti, :] = npa_res.battery_energy
+                self.results.generator_power[ti, :] = npa_res.generator_power
+                self.results.Sf[ti, :] = npa_res.branch_flows
+                self.results.St[ti, :] = -npa_res.branch_flows
+                self.results.overloads[ti, :] = npa_res.branch_overloads
+                self.results.loading[ti, :] = npa_res.branch_loading
+                self.results.tap_angle[ti, :] = npa_res.branch_tap_angle
+
+                # self.results.Sbus[ti, :] = problem.get_power_injections()
+                self.results.hvdc_Pf[ti, :] = npa_res.hvdc_flows
                 self.results.hvdc_loading[ti, :] = npa_res.hvdc_loading
 
                 self.results.fluid_node_current_level[ti, :] = npa_res.fluid_node_vars.current_level

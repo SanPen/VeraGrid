@@ -7,14 +7,14 @@ from __future__ import annotations
 import numpy as np
 from typing import Tuple
 
+from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
 from VeraGridEngine.basic_structures import Logger, Mat, IntVec
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import (WindingsConnection, BuildStatus, TapPhaseControl,
                                          TapModuleControl, TapChangerTypes, WindingType)
 from VeraGridEngine.Devices.Parents.controllable_branch_parent import ControllableBranchParent
 from VeraGridEngine.Devices.Branches.transformer_type import TransformerType, reverse_transformer_short_circuit_study
-from VeraGridEngine.Devices.Parents.editable_device import DeviceType
-from VeraGridEngine.Utils.Symbolic.block import Block, Var, Const, VarPowerFlowRefferenceType
+from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
 from VeraGridEngine.Utils.Symbolic.symbolic import cos, sin
 
 
@@ -34,6 +34,27 @@ class Transformer2W(ControllableBranchParent):
         '_conn_t',
         '_vector_group_number',
         '_phases'
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='HV', units='kV', tpe=float, definition='High voltage rating'),
+        GCProp(key='LV', units='kV', tpe=float, definition='Low voltage rating'),
+        GCProp(key='Sn', units='MVA', tpe=float, definition='Nominal power'),
+        GCProp(key='Pcu', units='kW', tpe=float, definition='Copper losses (optional)'),
+        GCProp(key='Pfe', units='kW', tpe=float, definition='Iron losses (optional)'),
+        GCProp(key='I0', units='%', tpe=float, definition='No-load current (optional)'),
+        GCProp(key='Vsc', units='%', tpe=float, definition='Short-circuit voltage (optional)'),
+        GCProp(key='conn', units='', tpe=WindingsConnection,
+                      definition='Windings connection (from, to):G: grounded starS: ungrounded starD: delta'),
+        GCProp(key='conn_f', units='', tpe=WindingType,
+                      definition='Winding 3 phase connection at the from side'),
+        GCProp(key='conn_t', units='', tpe=WindingType,
+                      definition='Winding 3 phase connection at the to side'),
+        GCProp(key='vector_group_number', units='', tpe=int,
+                      definition='Vector group number. It indicates the structural phase:'
+                                 'phase = vector_group_number · 30º'),
+        # GCProp(key='phases', units='', tpe=IntVec, definition='Which phases are present at the transformer'),
+        GCProp(key='template', units='', tpe=DeviceType.TransformerTypeDevice, definition='', editable=False),
     )
 
     def __init__(self,
@@ -239,31 +260,13 @@ class Transformer2W(ControllableBranchParent):
         self._phases: IntVec = np.array([1, 2, 3])
 
         # register
-        self.register(key='HV', units='kV', tpe=float, definition='High voltage rating')
-        self.register(key='LV', units='kV', tpe=float, definition='Low voltage rating')
-        self.register(key='Sn', units='MVA', tpe=float, definition='Nominal power')
-        self.register(key='Pcu', units='kW', tpe=float, definition='Copper losses (optional)')
-        self.register(key='Pfe', units='kW', tpe=float, definition='Iron losses (optional)')
-        self.register(key='I0', units='%', tpe=float, definition='No-load current (optional)')
-        self.register(key='Vsc', units='%', tpe=float, definition='Short-circuit voltage (optional)')
 
-        self.register(key='conn', units='', tpe=WindingsConnection,
-                      definition='Windings connection (from, to):G: grounded starS: ungrounded starD: delta')
 
-        self.register(key='conn_f', units='', tpe=WindingType,
-                      definition='Winding 3 phase connection at the from side')
 
-        self.register(key='conn_t', units='', tpe=WindingType,
-                      definition='Winding 3 phase connection at the to side')
 
-        self.register(key='vector_group_number', units='', tpe=int,
-                      definition='Vector group number. It indicates the structural phase:'
-                                 'phase = vector_group_number · 30º')
 
         # TODO: do we need to edit the phases vector?
-        # self.register(key='phases', units='', tpe=IntVec, definition='Which phases are present at the transformer')
 
-        self.register(key='template', units='', tpe=DeviceType.TransformerTypeDevice, definition='', editable=False)
 
     @property
     def conn_f(self) -> WindingType:
@@ -854,47 +857,3 @@ class Transformer2W(ControllableBranchParent):
 
         return Yff, Yft, Ytf, Ytt
 
-    def initialize_rms(self):
-        if self.rms_model.empty():
-            Qf = Var("Qf")
-            Qt = Var("Qt")
-            Pf = Var("Pf")
-            Pt = Var("Pt")
-
-            ys = 1.0 / complex(self.R, self.X)
-            g = Var("g")
-            b = Var("b")
-            bsh = Var("bsh")
-
-            Vmf = self.bus_from.rms_model.model.E(VarPowerFlowRefferenceType.Vm)
-            Vaf = self.bus_from.rms_model.model.E(VarPowerFlowRefferenceType.Va)
-            Vmt = self.bus_to.rms_model.model.E(VarPowerFlowRefferenceType.Vm)
-            Vat = self.bus_to.rms_model.model.E(VarPowerFlowRefferenceType.Va)
-
-            block = Block(
-                algebraic_vars=[Pf, Pt, Qf, Qt],
-                algebraic_eqs=[
-                    Pf - ((Vmf ** 2 * g) - g * Vmf * Vmt * cos(
-                        Vaf - Vat) + b * Vmf * Vmt * cos(Vaf - Vat + np.pi / 2)),
-                    Qf - (Vmf ** 2 * (-bsh / 2 - b) - g * Vmf * Vmt * sin(
-                        Vaf - Vat) + b * Vmf * Vmt * sin(
-                        Vaf - Vat + np.pi / 2)),
-                    Pt - ((Vmt ** 2 * g) - g * Vmt * Vmf * cos(
-                        Vat - Vaf) + b * Vmt * Vmf * cos(Vat - Vaf + np.pi / 2)),
-                    Qt - (Vmt ** 2 * (-bsh / 2 - b) - g * Vmt * Vmf * sin(
-                        Vat - Vaf) + b * Vmt * Vmf * sin(
-                        Vat - Vaf + np.pi / 2)),
-                ])
-
-            block.external_mapping = {
-                VarPowerFlowRefferenceType.Pf: Pf,
-                VarPowerFlowRefferenceType.Pt: Pt,
-                VarPowerFlowRefferenceType.Qf: Qf,
-                VarPowerFlowRefferenceType.Qt: Qt,
-            }
-
-            block.event_dict = {g: Const(ys.real),
-                                b: Const(ys.imag),
-                                bsh: Const(self.B)}
-
-            self.rms_model.model = block

@@ -12,7 +12,7 @@ from VeraGridEngine.Devices.profile import Profile
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import BuildStatus, ConverterControlType
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
-from VeraGridEngine.Devices.Parents.editable_device import DeviceType
+from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
 from VeraGridEngine.Devices.Parents.editable_device import get_at
 
 if TYPE_CHECKING:
@@ -38,8 +38,50 @@ class VSC(BranchParent):
         '_control2_val',
         '_control2_val_prof',
         '_bus_dc_n',
+        'min_ac_voltage',
         'x',
         'y'
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        # GCProp(key='bus_dc_p', units="", tpe=DeviceType.BusDevice,
+        #               definition='DC positive bus', editable=False),
+        GCProp(key='bus_dc_n', units="", tpe=DeviceType.BusDevice,
+                      definition='DC negative bus', editable=False),
+        # GCProp(key='bus_ac', units="", tpe=DeviceType.BusDevice,
+        #               definition='AC bus', editable=False),
+        GCProp(key='alpha1', units='', tpe=float,
+                      definition='Losses constant parameter (IEC 62751-2 loss Correction).'),
+        GCProp(key='alpha2', units='', tpe=float,
+                      definition='Losses linear parameter (IEC 62751-2 loss Correction).'),
+        GCProp(key='alpha3', units='', tpe=float,
+                      definition='Losses quadratic parameter (IEC 62751-2 loss Correction).'),
+        GCProp(key='kdp', units='p.u./p.u.', tpe=float, definition='Droop Power/Voltage slope.'),
+        GCProp(key='control1', units='', tpe=ConverterControlType, profile_name="control1_prof",
+                      definition='Control mode 1.'),
+        GCProp(key='control2', units='', tpe=ConverterControlType, profile_name="control2_prof",
+                      definition='Control mode 2.'),
+        GCProp(key='control1_val', units='', tpe=float, profile_name="control1_val_prof",
+                      definition='Control value 1.'
+                                 'p.u. for voltage\n'
+                                 'rad for angles\n'
+                                 'MW for P\n'
+                                 'MVAr for Q'),
+        GCProp(key='control2_val', units='', tpe=float, profile_name="control2_val_prof",
+                      definition='Control value 2.'
+                                 'p.u. for voltage\n'
+                                 'rad for angles\n'
+                                 'MW for P\n'
+                                 'MVAr for Q'),
+        GCProp(key='control1_dev', units="", tpe=DeviceType.BusOrBranch, profile_name="control1_dev_prof",
+                      definition='Controlled device, None to apply to this converter', editable=False),
+        GCProp(key='control2_dev', units="", tpe=DeviceType.BusOrBranch, profile_name="control2_dev_prof",
+                      definition='Controlled device, None to apply to this converter', editable=False),
+        GCProp(key='min_ac_voltage', units='p.u.', tpe=float,
+                      definition='Minimum AC voltage threshold. '
+                                 'If the AC bus voltage drops below this value, the VSC is disconnected.'),
+        GCProp(key='x', units='px', tpe=float, definition='x position'),
+        GCProp(key='y', units='px', tpe=float, definition='y position'),
     )
 
     def __init__(self,
@@ -71,6 +113,7 @@ class VSC(BranchParent):
                  control2_val: float = 0.0,
                  control1_dev: Bus | BRANCH_TYPES | None = None,
                  control2_dev: Bus | BRANCH_TYPES | None = None,
+                 min_ac_voltage: float = 0.1,
                  x: float = 0.0,
                  y: float = 0.0):
         """
@@ -209,52 +252,19 @@ class VSC(BranchParent):
         self._control2_val = float(control2_val)
         self._control2_val_prof: Profile = Profile(default_value=self._control2_val, data_type=float)
 
+        self.min_ac_voltage = float(min_ac_voltage)
+
         self.x = float(x)
         self.y = float(y)
 
-        # self.register(key='bus_dc_p', units="", tpe=DeviceType.BusDevice,
-        #               definition='DC positive bus', editable=False)
-        self.register(key='bus_dc_n', units="", tpe=DeviceType.BusDevice,
-                      definition='DC negative bus', editable=False)
-        # self.register(key='bus_ac', units="", tpe=DeviceType.BusDevice,
-        #               definition='AC bus', editable=False)
 
-        self.register(key='alpha1', units='', tpe=float,
-                      definition='Losses constant parameter (IEC 62751-2 loss Correction).')
-        self.register(key='alpha2', units='', tpe=float,
-                      definition='Losses linear parameter (IEC 62751-2 loss Correction).')
-        self.register(key='alpha3', units='', tpe=float,
-                      definition='Losses quadratic parameter (IEC 62751-2 loss Correction).')
 
-        self.register(key='kdp', units='p.u./p.u.', tpe=float, definition='Droop Power/Voltage slope.')
 
-        self.register(key='control1', units='', tpe=ConverterControlType, profile_name="control1_prof",
-                      definition='Control mode 1.')
 
-        self.register(key='control2', units='', tpe=ConverterControlType, profile_name="control2_prof",
-                      definition='Control mode 2.')
 
-        self.register(key='control1_val', units='', tpe=float, profile_name="control1_val_prof",
-                      definition='Control value 1.'
-                                 'p.u. for voltage\n'
-                                 'rad for angles\n'
-                                 'MW for P\n'
-                                 'MVAr for Q')
-        self.register(key='control2_val', units='', tpe=float, profile_name="control2_val_prof",
-                      definition='Control value 2.'
-                                 'p.u. for voltage\n'
-                                 'rad for angles\n'
-                                 'MW for P\n'
-                                 'MVAr for Q')
 
-        self.register(key='control1_dev', units="", tpe=DeviceType.BusOrBranch, profile_name="control1_dev_prof",
-                      definition='Controlled device, None to apply to this converter', editable=False)
 
-        self.register(key='control2_dev', units="", tpe=DeviceType.BusOrBranch, profile_name="control2_dev_prof",
-                      definition='Controlled device, None to apply to this converter', editable=False)
 
-        self.register(key='x', units='px', tpe=float, definition='x position')
-        self.register(key='y', units='px', tpe=float, definition='y position')
 
     @property
     def bus_from(self) -> Bus:

@@ -5,13 +5,13 @@
 from __future__ import annotations
 
 import numpy as np
-from typing import Union
+from typing import Union, Tuple
 
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import (BuildStatus, TapModuleControl, TapPhaseControl, SubObjectType, TapChangerTypes)
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 from VeraGridEngine.Devices.Branches.tap_changer import TapChanger
-from VeraGridEngine.Devices.Parents.editable_device import DeviceType, get_at
+from VeraGridEngine.Devices.Parents.editable_device import DeviceType, get_at, GCProp
 from VeraGridEngine.Devices.profile import Profile
 
 
@@ -43,6 +43,57 @@ class ControllableBranchParent(BranchParent):
         'regulation_branch',
         'regulation_bus',
         'regulation_cn',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='R', units='p.u.', tpe=float, definition='Total positive sequence resistance.',
+                      old_names=['R1', 'Rl']),
+        GCProp(key='X', units='p.u.', tpe=float, definition='Total positive sequence reactance.',
+                      old_names=['X1', 'Xl']),
+        GCProp(key='G', units='p.u.', tpe=float, definition='Total positive sequence shunt conductance.'),
+        GCProp(key='B', units='p.u.', tpe=float, definition='Total positive sequence shunt susceptance.'),
+        GCProp(key='R0', units='p.u.', tpe=float, definition='Total zero sequence resistance.'),
+        GCProp(key='X0', units='p.u.', tpe=float, definition='Total zero sequence reactance.'),
+        GCProp(key='G0', units='p.u.', tpe=float, definition='Total zero sequence shunt conductance.'),
+        GCProp(key='B0', units='p.u.', tpe=float, definition='Total zero sequence shunt susceptance.'),
+        GCProp(key='R2', units='p.u.', tpe=float, definition='Total negative sequence resistance.'),
+        GCProp(key='X2', units='p.u.', tpe=float, definition='Total negative sequence reactance.'),
+        GCProp(key='G2', units='p.u.', tpe=float, definition='Total negative sequence shunt conductance.'),
+        GCProp(key='B2', units='p.u.', tpe=float, definition='Total negative sequence shunt susceptance.'),
+        GCProp(key='tolerance', units='%', tpe=float,
+                      definition='Tolerance expected for the impedance values% '
+                                 'is expected for transformers0% for lines.'),
+        GCProp(key='tap_changer', units='', tpe=SubObjectType.TapChanger, definition='Tap changer object',
+                      editable=False, display=False),
+        GCProp(key='tap_module', units='', tpe=float, definition='Tap changer module, it a value close to 1.0',
+                      profile_name='tap_module_prof', old_names=['tap', 'm']),
+        GCProp(key='tap_module_max', units='', tpe=float, definition='Tap changer module max value',
+                      old_names=['m_max']),
+        GCProp(key='tap_module_min', units='', tpe=float, definition='Tap changer module min value',
+                      old_names=['m_min']),
+        GCProp(key='tap_module_control_mode', units='', tpe=TapModuleControl,
+                      definition='Control available with the tap module',
+                      profile_name='tap_module_control_mode_prof'),
+        GCProp(key='vset', units='p.u.', tpe=float,
+                      definition='Objective voltage at the "to" side of the bus when regulating the tap.',
+                      profile_name='vset_prof', old_names=['Vdc_set']),
+        GCProp(key='Qset', units='MVAr', tpe=float,
+                      definition='Objective power at the selected side.',
+                      profile_name='Qset_prof'),
+        GCProp(key='regulation_bus', units='', tpe=DeviceType.BusDevice,
+                      definition='Bus where the regulation is applied.', editable=True),
+        GCProp(key='tap_phase', units='rad', tpe=float, definition='Angle shift of the tap changer.',
+                      profile_name='tap_phase_prof', old_names=['angle', 'theta']),
+        GCProp(key='tap_phase_max', units='rad', tpe=float, definition='Max angle.',
+                      old_names=['angle_max', 'theta_max']),
+        GCProp(key='tap_phase_min', units='rad', tpe=float, definition='Min angle.',
+                      old_names=['angle_min', 'theta_min']),
+        GCProp(key='tap_phase_control_mode', units='', tpe=TapPhaseControl,
+                      definition='Control available with the tap angle', old_names=['tap_angle_control_mode'],
+                      profile_name='tap_phase_control_mode_prof'),
+        GCProp(key='Pset', units='MW', tpe=float,
+                      definition='Objective power at the selected side.',
+                      profile_name='Pset_prof', old_names=['Pdc_set']),
     )
 
     def __init__(self,
@@ -237,64 +288,16 @@ class ControllableBranchParent(BranchParent):
 
         self.regulation_bus: Bus = regulation_bus
 
-        self.register(key='R', units='p.u.', tpe=float, definition='Total positive sequence resistance.',
-                      old_names=['R1', 'Rl'])
-        self.register(key='X', units='p.u.', tpe=float, definition='Total positive sequence reactance.',
-                      old_names=['X1', 'Xl'])
-        self.register(key='G', units='p.u.', tpe=float, definition='Total positive sequence shunt conductance.')
-        self.register(key='B', units='p.u.', tpe=float, definition='Total positive sequence shunt susceptance.')
-        self.register(key='R0', units='p.u.', tpe=float, definition='Total zero sequence resistance.')
-        self.register(key='X0', units='p.u.', tpe=float, definition='Total zero sequence reactance.')
-        self.register(key='G0', units='p.u.', tpe=float, definition='Total zero sequence shunt conductance.')
-        self.register(key='B0', units='p.u.', tpe=float, definition='Total zero sequence shunt susceptance.')
-        self.register(key='R2', units='p.u.', tpe=float, definition='Total negative sequence resistance.')
-        self.register(key='X2', units='p.u.', tpe=float, definition='Total negative sequence reactance.')
-        self.register(key='G2', units='p.u.', tpe=float, definition='Total negative sequence shunt conductance.')
-        self.register(key='B2', units='p.u.', tpe=float, definition='Total negative sequence shunt susceptance.')
 
-        self.register(key='tolerance', units='%', tpe=float,
-                      definition='Tolerance expected for the impedance values% '
-                                 'is expected for transformers0% for lines.')
 
-        self.register(key='tap_changer', units='', tpe=SubObjectType.TapChanger, definition='Tap changer object',
-                      editable=False, display=False)
 
-        self.register(key='tap_module', units='', tpe=float, definition='Tap changer module, it a value close to 1.0',
-                      profile_name='tap_module_prof', old_names=['tap', 'm'])
-        self.register(key='tap_module_max', units='', tpe=float, definition='Tap changer module max value',
-                      old_names=['m_max'])
-        self.register(key='tap_module_min', units='', tpe=float, definition='Tap changer module min value',
-                      old_names=['m_min'])
 
-        self.register(key='tap_module_control_mode', units='', tpe=TapModuleControl,
-                      definition='Control available with the tap module',
-                      profile_name='tap_module_control_mode_prof')
 
-        self.register(key='vset', units='p.u.', tpe=float,
-                      definition='Objective voltage at the "to" side of the bus when regulating the tap.',
-                      profile_name='vset_prof', old_names=['Vdc_set'])
 
-        self.register(key='Qset', units='MVAr', tpe=float,
-                      definition='Objective power at the selected side.',
-                      profile_name='Qset_prof')
 
-        self.register(key='regulation_bus', units='', tpe=DeviceType.BusDevice,
-                      definition='Bus where the regulation is applied.', editable=True)
 
-        self.register(key='tap_phase', units='rad', tpe=float, definition='Angle shift of the tap changer.',
-                      profile_name='tap_phase_prof', old_names=['angle', 'theta'])
-        self.register(key='tap_phase_max', units='rad', tpe=float, definition='Max angle.',
-                      old_names=['angle_max', 'theta_max'])
-        self.register(key='tap_phase_min', units='rad', tpe=float, definition='Min angle.',
-                      old_names=['angle_min', 'theta_min'])
 
-        self.register(key='tap_phase_control_mode', units='', tpe=TapPhaseControl,
-                      definition='Control available with the tap angle', old_names=['tap_angle_control_mode'],
-                      profile_name='tap_phase_control_mode_prof')
 
-        self.register(key='Pset', units='MW', tpe=float,
-                      definition='Objective power at the selected side.',
-                      profile_name='Pset_prof', old_names=['Pdc_set'])
 
     @property
     def tap_module_prof(self) -> Profile:

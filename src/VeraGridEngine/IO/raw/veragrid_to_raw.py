@@ -332,9 +332,14 @@ def get_psse_transformer3w(transformer: dev.Transformer3W,
     psse_transformer.RATE2_3 = transformer.rate2 * transformer.winding2.protection_rating_factor
     psse_transformer.RATE3_3 = transformer.rate3 * transformer.winding3.protection_rating_factor
 
-    psse_transformer.ANG1 = transformer.winding1.tap_phase
-    psse_transformer.ANG2 = transformer.winding2.tap_phase
-    psse_transformer.ANG3 = transformer.winding3.tap_phase
+    psse_transformer.CW = 1
+    psse_transformer.WINDV1 = transformer.winding1.tap_module
+    psse_transformer.WINDV2 = transformer.winding2.tap_module
+    psse_transformer.WINDV3 = transformer.winding3.tap_module
+
+    psse_transformer.ANG1 = np.rad2deg(transformer.winding1.tap_phase)
+    psse_transformer.ANG2 = np.rad2deg(transformer.winding2.tap_phase)
+    psse_transformer.ANG3 = np.rad2deg(transformer.winding3.tap_phase)
 
     i, j, k, ckt = transformer.code.split("_", 3)
 
@@ -349,6 +354,8 @@ def get_psse_transformer3w(transformer: dev.Transformer3W,
     psse_transformer.X2_3 = transformer.x23
     psse_transformer.R3_1 = transformer.r31
     psse_transformer.X3_1 = transformer.x31
+    psse_transformer.VMSTAR = transformer.bus0.Vm0
+    psse_transformer.ANSTAR = np.rad2deg(transformer.bus0.Va0)
 
     return psse_transformer
 
@@ -393,8 +400,23 @@ def get_vsc_dc_line(hvdc_line: dev.HvdcLine, bus_dict: Dict[dev.Bus, int]) -> Ra
     """
     psse_vsc_dc_line = RawVscDCLine()
     psse_vsc_dc_line.NAME = hvdc_line.name
+    psse_vsc_dc_line.MDC = 1
+    psse_vsc_dc_line.IBUS1 = bus_dict[hvdc_line.bus_from]
+    psse_vsc_dc_line.IBUS2 = bus_dict[hvdc_line.bus_to]
+    psse_vsc_dc_line.TYPE1 = 1
+    psse_vsc_dc_line.TYPE2 = 2
+    psse_vsc_dc_line.MODE1 = 1
+    psse_vsc_dc_line.MODE2 = 1
     psse_vsc_dc_line.ACSET1 = hvdc_line.Vset_f
     psse_vsc_dc_line.ACSET2 = hvdc_line.Vset_t
+    psse_vsc_dc_line.DCSET1 = hvdc_line.Pset
+    psse_vsc_dc_line.DCSET2 = -hvdc_line.Pset
+    psse_vsc_dc_line.SMAX1 = hvdc_line.rate
+    psse_vsc_dc_line.SMAX2 = hvdc_line.rate
+    psse_vsc_dc_line.VSREG1 = psse_vsc_dc_line.IBUS1
+    psse_vsc_dc_line.VSREG2 = psse_vsc_dc_line.IBUS2
+    psse_vsc_dc_line.RMPCT1 = 100.0
+    psse_vsc_dc_line.RMPCT2 = 100.0
 
     V1 = hvdc_line.bus_from.Vnom * psse_vsc_dc_line.ACSET1
     V2 = hvdc_line.bus_to.Vnom * psse_vsc_dc_line.ACSET2
@@ -627,14 +649,15 @@ def veragrid_to_raw(grid: MultiCircuit, logger: Logger) -> PsseCircuit:
         psse_circuit.transformers.append(get_psse_transformer3w(transformer=transformer,
                                                                 bus_dict=counter.psse_numbers_dict))
 
-    # TODO: Decide whether to convert hvdc_lines into vsc_dc_lines or two_terminal_dc_lines.
     for hvdc_line in grid.hvdc_lines:
-        psse_circuit.vsc_dc_lines.append(get_vsc_dc_line(hvdc_line,
-                                                         bus_dict=counter.psse_numbers_dict))
-
-    for hvdc_line in grid.hvdc_lines:
-        psse_circuit.two_terminal_dc_lines.append(get_psse_two_terminal_dc_line(hvdc_line,
-                                                                                bus_dict=counter.psse_numbers_dict))
+        if abs(hvdc_line.Vset_f - 1.0) > 1e-9 or abs(hvdc_line.Vset_t - 1.0) > 1e-9:
+            psse_circuit.vsc_dc_lines.append(get_vsc_dc_line(hvdc_line,
+                                                             bus_dict=counter.psse_numbers_dict))
+        else:
+            psse_circuit.two_terminal_dc_lines.append(get_psse_two_terminal_dc_line(
+                hvdc_line,
+                bus_dict=counter.psse_numbers_dict
+            ))
 
     for upfc_device in grid.upfc_devices:
         psse_circuit.facts.append(get_psse_facts(upfc_device,

@@ -152,11 +152,7 @@ def make_ptdf(Bpqpv: sp.csc_matrix,
     :return: PTDF matrix. It is a full matrix of dimensions Branches x buses
     """
 
-    n = Bf.shape[1]
-    # nb = n
-    # nbi = n
-    # noref = no_slack  # np.arange(1, nb)
-    # noslack = no_slack
+    n = Bf.shape[1]  # number of buses
 
     if distribute_slack:
         dP: Mat = np.ones((n, n)) * (-1 / (n - 1))
@@ -175,7 +171,7 @@ def make_ptdf(Bpqpv: sp.csc_matrix,
     else:
         dTheta[no_slack, :] = dtheta_ref
 
-    # compute corresponding change in branch Sf
+    # compute the corresponding change in branch Sf
     # Bf is a sparse matrix
     H = Bf @ dTheta
 
@@ -631,6 +627,8 @@ class LinearMultiContingency:
         self.mlodf_factors: sp.csc_matrix = mlodf_factors
 
         # MLODF[k, βδ] x PTDF[βδ, i] + PTDF[k, i]
+        if not isinstance(compensated_ptdf_factors, sp.csc_matrix):
+            print()
         self.compensated_ptdf_factors: sp.csc_matrix = compensated_ptdf_factors
 
         # percentage to decrease an injection, used to compute ΔP
@@ -705,24 +703,28 @@ class LinearMultiContingency:
 
         if len(self.branch_indices) > 0:
             inc, changed_idx = lpDot1D_changes(self.mlodf_factors, base_flow[self.branch_indices])
-            mask[changed_idx] = True
-            flow[changed_idx] += inc[changed_idx]
+            if len(changed_idx) > 0:
+                mask[changed_idx] = True
+                flow[changed_idx] += inc[changed_idx]
 
         if len(self.hvdc_indices) > 0 and hvdc_flow is not None:
             inc, changed_idx = lpDot1D_changes(self.hvdc_odf, hvdc_flow[self.hvdc_indices])
-            mask[changed_idx] = True
-            flow[changed_idx] += inc[changed_idx]
+            if len(changed_idx) > 0:
+                mask[changed_idx] = True
+                flow[changed_idx] += inc[changed_idx]
 
         if len(self.vsc_indices) > 0 and vsc_flow is not None:
             inc, changed_idx = lpDot1D_changes(self.vsc_odf, vsc_flow[self.vsc_indices])
-            mask[changed_idx] = True
-            flow[changed_idx] += inc[changed_idx]
+            if len(changed_idx) > 0:
+                mask[changed_idx] = True
+                flow[changed_idx] += inc[changed_idx]
 
         if len(self.bus_indices) > 0:
-            injection_delta = self.injections_factor * injections[self.bus_indices]
-            inc, changed_idx = lpDot1D_changes(self.compensated_ptdf_factors, injection_delta[self.bus_indices])
-            mask[changed_idx] = True
-            flow[changed_idx] += inc[changed_idx]
+            injection_delta: ObjVec = self.injections_factor * injections[self.bus_indices]
+            inc, changed_idx = lpDot1D_changes(self.compensated_ptdf_factors, injection_delta)
+            if len(changed_idx) > 0:
+                mask[changed_idx] = True
+                flow[changed_idx] += inc[changed_idx]
 
         return flow, mask, changed_idx
 
@@ -985,7 +987,10 @@ class LinearMultiContingencies:
                 mlodf_factors = sp.csc_matrix(([], [], [0]), shape=(lin.LODF.shape[0], 0))
                 if len(contingency_indices.bus_contingency_indices) > 0:
                     # only bus contingencies
-                    compensated_ptdf_factors = lin.PTDF[:, contingency_indices.bus_contingency_indices]
+                    compensated_ptdf_factors = dense_to_csc(
+                        mat=lin.PTDF[:, contingency_indices.bus_contingency_indices],
+                        threshold=ptdf_threshold
+                    )
                 else:
                     # no bus or branch contingencies
                     compensated_ptdf_factors = sp.csc_matrix(([], [], [0]), shape=(lin.LODF.shape[0], 0))

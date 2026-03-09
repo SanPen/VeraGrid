@@ -4,11 +4,11 @@
 # SPDX-License-Identifier: MPL-2.0
 
 import os
-from typing import Dict, List, Union, Callable, Tuple
+import zipfile
+from typing import BinaryIO, Dict, List, Union, Callable, Tuple, Optional
 import xml.etree.ElementTree as ET
 from VeraGridEngine.data_logger import DataLogger
 from VeraGridEngine.IO.base.base_circuit import BaseCircuit
-from VeraGridEngine.IO.veragrid.zip_interface import get_xml_from_zip, get_xml_content
 from VeraGridEngine.enumerations import CGMESVersions
 
 
@@ -57,58 +57,100 @@ def fix_child_result_datatype(child_result: Dict):
     return child_result
 
 
-def parse_xml_to_dict(xml_element: ET.Element):
+def _convert_leaf_value(value: str) -> Union[str, bool]:
     """
-    Parse element into dictionary
-    :param xml_element: XML element
-    :return: Dictionary representing the XML
+    Convert XML leaf text to the expected scalar type.
+
+    :param value: XML leaf text value
+    :return: Converted scalar value
     """
-    result = dict()
+    if value == "true":
+        return True
+    elif value == "false":
+        return False
+    else:
+        return value
 
-    for child in xml_element:
-        # key = child.tag
 
-        obj_id = find_id(child)
-        class_name = find_class_name(child)
+def _append_unique_value(container: Dict[str, Union[str, bool, dict, list]],
+                         key: str,
+                         value: Union[str, bool, dict]) -> None:
+    """
+    Append a value in a stable manner, preserving scalar form when unique.
 
-        if len(child) > 0:
-            child_result = parse_xml_to_dict(child)
-            child_result = fix_child_result_datatype(child_result)
-            objects_list = result.get(class_name, None)
-
-            if objects_list is None:
-                result[class_name] = {obj_id: child_result}
-            else:
-                objects_list[obj_id] = child_result
+    :param container: Property dictionary to modify in place
+    :param key: Property name
+    :param value: Property value
+    """
+    current_value = container.get(key, None)
+    if current_value is None:
+        container[key] = value
+    else:
+        if isinstance(current_value, list):
+            if value not in current_value:
+                current_value.append(value)
         else:
-            if class_name not in result:
-                if child.text is None:
-                    result[class_name] = obj_id  # it is a resource id
-                else:
-                    result[class_name] = child.text
-            else:
-                if child.text is None:
-                    t_set = set()
-                    if isinstance(result[class_name], list):
-                        t_set.update(result[class_name])
-                    else:
-                        t_set.add(result[class_name])
+            if current_value != value:
+                container[key] = [current_value, value]
 
-                    t_set.update([obj_id])  # it is a resource id
-                    if len(t_set) > 1:
-                        result[class_name] = list(t_set)
-                    else:
-                        result[class_name] = list(t_set)[0]
+
+def parse_xml_stream_to_dict(xml_stream: BinaryIO) -> Dict[str, Dict[str, Dict[str, str]]]:
+    """
+    Parse XML stream to CGMES dictionary format using streaming events.
+
+    :param xml_stream: Binary file-like XML stream
+    :return: Dictionary representing parsed CGMES objects
+    """
+    result: Dict[str, Dict[str, Dict[str, str]]] = dict()
+    stack: List[Dict[str, Union[str, bool, Dict[str, Union[str, bool, dict]], int]]] = list()
+
+    for event, element in ET.iterparse(xml_stream, events=("start", "end")):
+        if event == "start":
+            frame = {
+                "class_name": find_class_name(element),
+                "obj_id": find_id(element),
+                "props": dict(),
+                "depth": len(stack)
+            }
+            stack.append(frame)
+        else:
+            frame = stack.pop()
+            class_name = frame["class_name"]
+            obj_id = frame["obj_id"]
+            props = frame["props"]
+            depth = frame["depth"]
+
+            if depth == 0:
+                # root rdf:RDF element
+                element.clear()
+                continue
+
+            if depth == 1:
+                class_objects = result.get(class_name, None)
+                if class_objects is None:
+                    class_objects = dict()
+                    result[class_name] = class_objects
+                class_objects[obj_id] = props
+            else:
+                parent_frame = stack[-1]
+                parent_props = parent_frame["props"]
+
+                if len(props) > 0:
+                    # Keep compatibility with legacy recursive parser for nested object values.
+                    nested_value = {obj_id: fix_child_result_datatype(props)}
+                    _append_unique_value(parent_props, class_name, nested_value)
                 else:
-                    t_set = {child.text}
-                    if isinstance(result[class_name], list):
-                        t_set.update(result[class_name])
+                    text_value = element.text
+                    if text_value is None:
+                        _append_unique_value(parent_props, class_name, obj_id)
                     else:
-                        t_set.add(result[class_name])
-                    if len(t_set) > 1:
-                        result[class_name] = list(t_set)
-                    else:
-                        result[class_name] = list(t_set)[0]
+                        stripped = text_value.strip()
+                        if stripped == "":
+                            _append_unique_value(parent_props, class_name, obj_id)
+                        else:
+                            _append_unique_value(parent_props, class_name, _convert_leaf_value(stripped))
+
+            element.clear()
 
     return result
 
@@ -167,55 +209,6 @@ def merge(A: Dict[str, Dict[str, Dict[str, str]]],
                                 pass
 
 
-def read_cgmes_files(cim_files: Union[List[str], str], logger: DataLogger) -> Dict[str, List[str]]:
-    """
-    Reads a list of .zip or xml into a dictionary of file name -> list of text lines
-    :param cim_files: list of file names
-    :param logger: DataLogger instance
-    :return: dictionary of file name -> list of text lines
-    """
-    # read files and sort them in the preferred reading order
-    data: Dict[str, List[str]] = dict()
-
-    if isinstance(cim_files, list):
-
-        for f in cim_files:
-            _, file_extension = os.path.splitext(f)
-            name = os.path.basename(f)
-
-            if file_extension == '.xml':
-                file_ptr = open(f, 'rb')
-                data[name] = get_xml_content(file_ptr)
-                file_ptr.close()
-            elif file_extension == '.zip':
-                # read the content of a zip file
-                d = get_xml_from_zip(file_name_zip=f)
-                if d is not None:
-                    for key, value in d.items():
-                        data[key] = value
-                else:
-                    logger.add_error("BadZipFile", value=f)
-                    print(f"BadZipFile {f}")
-    else:
-        name, file_extension = os.path.splitext(cim_files)
-
-        if file_extension == '.xml':
-            with open(cim_files, 'rb') as file_ptr:
-                data[name] = get_xml_content(file_ptr=file_ptr)
-
-        elif file_extension == '.zip':
-            # read the content of a zip file
-            d = get_xml_from_zip(file_name_zip=cim_files)
-            if d is not None:
-                for key, value in d.items():
-                    data[key] = value
-            else:
-                logger.add_error("BadZipFile", value=cim_files)
-                print(f"BadZipFile {cim_files}")
-
-    return data
-
-
 def sort_cgmes_files(links: List[Tuple[str, str, str]]) -> List[str]:
     """
     Sorts the CIM files in the preferred reading order
@@ -253,17 +246,98 @@ def sort_cgmes_files(links: List[Tuple[str, str, str]]) -> List[str]:
     return items
 
 
-def parse_xml_text(text_lines: List[str]) -> Dict:
+def process_cgmes_file_data(file_name: str,
+                            file_cgmes_data: Dict[str, Dict[str, Dict[str, str]]],
+                            cgmes2_4_15_uri: List[str],
+                            cgmes3_0_0_uri: List[str],
+                            parsed_data: Optional[Dict[str, Dict[str, Dict[str, str]]]],
+                            data: Dict[str, Dict[str, Dict[str, str]]],
+                            boundary_set: Dict[str, Dict[str, Dict[str, str]]],
+                            logger: DataLogger) -> Union[CGMESVersions, None]:
     """
-    Fill the XML into the objects
-    :param text_lines: list of text lines
-    :return Dictionary representing the XML
+    Process one parsed CGMES file dictionary and route objects to normal/boundary stores.
+
+    :param file_name: Source file name
+    :param file_cgmes_data: Parsed CGMES dictionary
+    :param cgmes2_4_15_uri: Known CGMES v2.4.15 profile URIs
+    :param cgmes3_0_0_uri: Known CGMES v3.0.0 profile URIs
+    :param parsed_data: Optional per-file parsed dictionary output
+    :param data: Normal model dictionary store
+    :param boundary_set: Boundary model dictionary store
+    :param logger: Logger instance
+    :return: Detected CGMES version for this file, or None
     """
+    detected_version: Union[CGMESVersions, None] = None
+    full_models_dict = file_cgmes_data.get('FullModel', None)
+    difference_full_models_dict = file_cgmes_data.get('DifferenceModel', None)
 
-    xml_string = "".join(text_lines)
+    if full_models_dict:
+        model_keys = list(file_cgmes_data['FullModel'])
+        if len(model_keys) == 1:  # there must be exacly one FullModel
+            model_info = file_cgmes_data['FullModel'][model_keys[0]]
+            if parsed_data is not None:
+                parsed_data[file_name] = file_cgmes_data
+            profile = model_info.get('profile', '')
 
-    root = ET.fromstring(xml_string)
-    return parse_xml_to_dict(root)
+            if isinstance(profile, list):
+                for prof in profile:
+                    if prof in cgmes2_4_15_uri:
+                        detected_version = CGMESVersions.v2_4_15
+                    elif prof in cgmes3_0_0_uri:
+                        detected_version = CGMESVersions.v3_0_0
+
+                if len(profile) > 0 and 'Boundary' in profile[0]:
+                    merge(boundary_set, file_cgmes_data, logger)
+                else:
+                    merge(data, file_cgmes_data, logger)
+            else:
+                if profile in cgmes2_4_15_uri:
+                    detected_version = CGMESVersions.v2_4_15
+                elif profile in cgmes3_0_0_uri:
+                    detected_version = CGMESVersions.v3_0_0
+
+                if 'Boundary' in profile:
+                    merge(boundary_set, file_cgmes_data, logger)
+                else:
+                    merge(data, file_cgmes_data, logger)
+        else:
+            logger.add_error("File does not contain exactly one FullModel",
+                             device=file_name,
+                             device_class="",
+                             device_property='FullModel', value="", expected_value="FullModel",
+                             comment="This is not a proper CGMES file")
+    elif difference_full_models_dict:
+        model_keys = list(file_cgmes_data['DifferenceModel'])
+        if len(model_keys) == 1:  # there must be exacly one Ontology
+            model_info = file_cgmes_data['DifferenceModel'][model_keys[0]]
+            if parsed_data is not None:
+                parsed_data[file_name] = file_cgmes_data
+            profile = model_info.get('priorVersion', '')
+
+            for prof in profile:
+                if prof in cgmes2_4_15_uri:
+                    detected_version = CGMESVersions.v2_4_15
+                elif prof in cgmes3_0_0_uri:
+                    detected_version = CGMESVersions.v3_0_0
+
+            if 'Boundary' in profile:
+                merge(boundary_set, file_cgmes_data, logger)
+            else:
+                merge(data, file_cgmes_data, logger)
+        else:
+            logger.add_error("File does not contain exactly one DifferenceModel",
+                             device=file_name,
+                             device_class="",
+                             device_property='DifferenceModel', value="", expected_value="DifferenceModel",
+                             comment="This is not a proper CGMES file")
+    else:
+        logger.add_error("File does not contain any FullModel or DifferenceModel",
+                         device=file_name,
+                         device_class="",
+                         device_property='FullModel', value="", expected_value="FullModel",
+                         comment="This is not a proper CGMES file")
+
+    return detected_version
 
 
 class CgmesDataParser(BaseCircuit):
@@ -274,20 +348,24 @@ class CgmesDataParser(BaseCircuit):
     def __init__(self,
                  text_func: Union[Callable, None] = None,
                  progress_func: Union[Callable, None] = None,
+                 keep_parsed_data: bool = False,
                  logger=DataLogger()):
         """
         CIM circuit constructor
         :param text_func: text callback function (optional)
         :param progress_func: progress callback function (optional)
+        :param keep_parsed_data: Keep per-file parsed dictionaries in memory
         :param logger: DataLogger
         """
         BaseCircuit.__init__(self)
 
         self.text_func = text_func
         self.progress_func = progress_func
+        self.keep_parsed_data: bool = keep_parsed_data
         self.logger: DataLogger = logger
 
-        # file: Cim data of the file
+        # Optional per-file parsed snapshots. This is useful for debugging,
+        # but it duplicates the parsed model in memory, so it is disabled by default.
         self.parsed_data = dict()
 
         # merged CGMES data (dictionary representation of the xml data)
@@ -320,6 +398,10 @@ class CgmesDataParser(BaseCircuit):
         Load CIM file
         :param files: list of CIM files (.xml or .zip)
         """
+        self.parsed_data = dict()
+        self.data = dict()
+        self.boundary_set = dict()
+        self.cgmes_version = None
 
         cgmes2_4_15_uri = ["http://entsoe.eu/CIM/EquipmentCore/3/1",
                            "http://entsoe.eu/CIM/EquipmentOperation/3/1",
@@ -331,93 +413,54 @@ class CgmesDataParser(BaseCircuit):
                           "http://iec.ch/TC57/ns/CIM/SteadyStateHypothesis-EU/3.0",
                           "http://iec.ch/TC57/ns/CIM/StateVariables-EU/3.0",
                           "http://iec.ch/TC57/ns/CIM/Topology-EU/3.0"]
-        # import the cim files' content into a dictionary
-        data = read_cgmes_files(cim_files=files, logger=self.logger)
-        # Parse the files
-        i = 0
-        for file_name, file_data in data.items():
-            name, file_extension = os.path.splitext(file_name)
+        parse_jobs: List[Tuple[str, Union[str, None], str]] = list()
+        for path in files:
+            _, file_extension = os.path.splitext(path)
+            ext = file_extension.lower()
+            if ext == ".xml":
+                parse_jobs.append((path, None, os.path.basename(path)))
+            elif ext == ".zip":
+                try:
+                    with zipfile.ZipFile(path) as zip_ptr:
+                        for member in zip_ptr.namelist():
+                            _, member_ext = os.path.splitext(member)
+                            if member_ext.lower() == ".xml":
+                                parse_jobs.append((path, member, os.path.basename(member)))
+                except zipfile.BadZipFile:
+                    self.logger.add_error("BadZipFile", value=path)
+                    print(f"BadZipFile {path}")
+
+        n_items = len(parse_jobs)
+        parsed_data_store: Optional[Dict[str, Dict[str, Dict[str, str]]]]
+        if self.keep_parsed_data:
+            parsed_data_store = self.parsed_data
+        else:
+            parsed_data_store = None
+
+        for i, (path, member_name, file_name) in enumerate(parse_jobs):
+            name, _ = os.path.splitext(file_name)
             self.emit_text('Parsing xml structure of ' + name)
-            file_cgmes_data = parse_xml_text(file_data)
 
-            full_models_dict = file_cgmes_data.get('FullModel', None)
-            difference_full_models_dict = file_cgmes_data.get('DifferenceModel', None)
-
-            if full_models_dict:
-
-                # get all the FullModel id's (should only be one of these)
-                model_keys = list(file_cgmes_data['FullModel'])
-
-                if len(model_keys) == 1:  # there must be exacly one FullModel
-                    model_info = file_cgmes_data['FullModel'][model_keys[0]]
-                    self.parsed_data[file_name] = file_cgmes_data
-                    profile = model_info.get('profile', '')
-
-                    if isinstance(profile, list):
-                        for prof in profile:
-                            if prof in cgmes2_4_15_uri:
-                                self.cgmes_version = CGMESVersions.v2_4_15
-                            elif prof in cgmes3_0_0_uri:
-                                self.cgmes_version = CGMESVersions.v3_0_0
-
-                        if 'Boundary' in profile[0]:
-                            merge(self.boundary_set, file_cgmes_data, self.logger)
-                        else:
-                            merge(self.data, file_cgmes_data, self.logger)
-                    else:
-                        if profile in cgmes2_4_15_uri:
-                            self.cgmes_version = CGMESVersions.v2_4_15
-                        elif profile in cgmes3_0_0_uri:
-                            self.cgmes_version = CGMESVersions.v3_0_0
-
-                        if 'Boundary' in profile:
-                            merge(self.boundary_set, file_cgmes_data, self.logger)
-                        else:
-                            merge(self.data, file_cgmes_data, self.logger)
-
-                else:
-                    self.logger.add_error("File does not contain exactly one FullModel",
-                                          device=file_name,
-                                          device_class="",
-                                          device_property='FullModel', value="", expected_value="FullModel",
-                                          comment="This is not a proper CGMES file")
-
-            elif difference_full_models_dict:
-
-                model_keys = list(file_cgmes_data['DifferenceModel'])
-                if len(model_keys) == 1:  # there must be exacly one Ontology
-                    model_info = file_cgmes_data['DifferenceModel'][model_keys[0]]
-                    self.parsed_data[file_name] = file_cgmes_data
-                    profile = model_info.get('priorVersion', '')
-                    self.cgmes_version = model_info.get('versionInfo', '')
-
-                    for prof in profile:
-                        if prof in cgmes2_4_15_uri:
-                            self.cgmes_version = CGMESVersions.v2_4_15
-                        elif prof in cgmes3_0_0_uri:
-                            self.cgmes_version = CGMESVersions.v3_0_0
-
-                    if 'Boundary' in profile:
-                        merge(self.boundary_set, file_cgmes_data, self.logger)
-                    else:
-                        merge(self.data, file_cgmes_data, self.logger)
-                else:
-                    self.logger.add_error("File does not contain exactly one DifferenceModel",
-                                          device=file_name,
-                                          device_class="",
-                                          device_property='DifferenceModel', value="", expected_value="DifferenceModel",
-                                          comment="This is not a proper CGMES file")
-
+            if member_name is None:
+                with open(path, "rb") as file_ptr:
+                    file_cgmes_data = parse_xml_stream_to_dict(file_ptr)
             else:
-                self.logger.add_error("File does not contain any FullModel or DifferenceModel",
-                                      device=file_name,
-                                      device_class="",
-                                      device_property='FullModel', value="", expected_value="FullModel",
-                                      comment="This is not a proper CGMES file")
+                with zipfile.ZipFile(path) as zip_ptr:
+                    with zip_ptr.open(member_name) as file_ptr:
+                        file_cgmes_data = parse_xml_stream_to_dict(file_ptr)
 
-            # emit progress
-            self.emit_progress((i + 1) / len(data) * 100)
-            i += 1
+            detected_version = process_cgmes_file_data(file_name=file_name,
+                                                       file_cgmes_data=file_cgmes_data,
+                                                       cgmes2_4_15_uri=cgmes2_4_15_uri,
+                                                       cgmes3_0_0_uri=cgmes3_0_0_uri,
+                                                       parsed_data=parsed_data_store,
+                                                       data=self.data,
+                                                       boundary_set=self.boundary_set,
+                                                       logger=self.logger)
+            if detected_version is not None:
+                self.cgmes_version = detected_version
+            if n_items > 0:
+                self.emit_progress((i + 1) / n_items * 100)
 
         self.emit_text('Parsing done!')
 

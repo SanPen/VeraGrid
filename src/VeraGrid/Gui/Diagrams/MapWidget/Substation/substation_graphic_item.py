@@ -707,7 +707,7 @@ class SubstationGraphicItem(NodeTemplate, QGraphicsRectItem):
                 dlg.setModal(True)
                 dlg.exec()
 
-                if dlg.accepted:
+                if dlg.is_accepted:
 
                     if 1 in dlg.selected_indices:
                         recipient_buses = {}

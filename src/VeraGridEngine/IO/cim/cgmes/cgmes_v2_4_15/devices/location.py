@@ -8,14 +8,19 @@ from typing import TYPE_CHECKING
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.identified_object import IdentifiedObject
 from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
+from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
-#if TYPE_CHECKING:
-from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.coordinate_system import CoordinateSystem
-from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.power_system_resource import PowerSystemResource
-from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.position_point import PositionPoint
-
+if TYPE_CHECKING:
+	from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.coordinate_system import CoordinateSystem
+	from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.position_point import PositionPoint
+	from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.power_system_resource import PowerSystemResource
 
 class Location(IdentifiedObject):
+    LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
+        CgmesProperty(property_name='CoordinateSystem', class_type='CoordinateSystem', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Coordinate system used to describe position points of this location.''', profiles=[]),
+        CgmesProperty(property_name='PowerSystemResources', class_type='PowerSystemResource', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''All power system resources at this location.''', profiles=[]),
+        CgmesProperty(property_name='PositionPoints', class_type='PositionPoint', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Sequence of position points describing this location, expressed in coordinate system 'Location.CoordinateSystem'.''', profiles=[]),
+    )
     def __init__(self, rdfid='', tpe='Location'):
         IdentifiedObject.__init__(self, rdfid, tpe)
 
@@ -24,28 +29,3 @@ class Location(IdentifiedObject):
         self.PowerSystemResources: PowerSystemResource | None = None
 
         self.PositionPoints: PositionPoint | None = None
-
-        self.register_property(
-            name='CoordinateSystem',
-            class_type=CoordinateSystem,
-            multiplier=UnitMultiplier.none,
-            unit=UnitSymbol.none,
-            description='''Coordinate system used to describe position points of this location.''',
-            profiles=[]
-        )
-        self.register_property(
-            name='PowerSystemResources',
-            class_type=PowerSystemResource,
-            multiplier=UnitMultiplier.none,
-            unit=UnitSymbol.none,
-            description='''All power system resources at this location.''',
-            profiles=[]
-        )
-        self.register_property(
-            name='PositionPoints',
-            class_type=PositionPoint,
-            multiplier=UnitMultiplier.none,
-            unit=UnitSymbol.none,
-            description='''Sequence of position points describing this location, expressed in coordinate system 'Location.CoordinateSystem'.''',
-            profiles=[]
-        )

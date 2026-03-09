@@ -4,7 +4,6 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-import sys
 import io
 import numpy as np
 import pandas as pd
@@ -15,7 +14,7 @@ from PySide6.QtWidgets import (QApplication, QDialog, QTableView, QVBoxLayout, Q
                                QLabel, QComboBox, QSpacerItem, QSizePolicy)
 
 from PySide6.QtCore import Qt, QAbstractTableModel, QModelIndex
-from VeraGridEngine.basic_structures import Logger
+from VeraGridEngine.basic_structures import Logger, IntVec
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGrid.Gui.gui_functions import get_list_model, get_checked_indices, get_chck_list_model
 from VeraGrid.Gui.object_model import ObjectsModel
@@ -26,6 +25,7 @@ class CenteredDialog(QDialog):
     """
     Class to make the dialogues centered
     """
+
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -214,7 +214,7 @@ class LogsDialogue(CenteredDialog):
     New profile dialogue window
     """
 
-    def __init__(self, name: str, logger: Logger(), expand_all=True):
+    def __init__(self, name: str, logger: Logger, expand_all=True):
         super(LogsDialogue, self).__init__()
         self.setObjectName("self")
         self.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.NoContextMenu)
@@ -326,7 +326,7 @@ class ElementsDialogue(CenteredDialog):
             if len(elements) > 0:
                 model = ObjectsModel(objects=elements,
                                      time_index=None,
-                                     property_list=elements[0].property_list,
+                                     property_list=list(elements[0].property_list),
                                      parent=self.objects_table,
                                      editable=False)
 
@@ -390,7 +390,7 @@ class TimeReIndexDialogue(CenteredDialog):
         # year
         d2 = datetime.now()
         self.date_time_editor = QtWidgets.QDateTimeEdit()
-        self.date_time_editor.setDateTime(QtCore.QDateTime(d2.year, d2.month, d2.day, d2.hour, d2.minute))
+        self.date_time_editor.setDateTime(QtCore.QDateTime(d2.year, d2.month, d2.day, d2.hour, d2.minute, d2.second))
 
         # time step length
         self.step_length = QtWidgets.QDoubleSpinBox()
@@ -612,7 +612,7 @@ class CheckListDialogue(CenteredDialog):
         """
         self.is_accepted = True
 
-        self.selected_indices = get_checked_indices(self.mdl)
+        self.selected_indices: IntVec = get_checked_indices(self.mdl)
 
         for row in range(self.mdl.rowCount()):
             item = self.mdl.item(row)
@@ -712,7 +712,7 @@ class DeleteDialogue(CenteredDialog):
         """
         self.is_accepted = True
 
-        self.selected_indices = get_checked_indices(self.mdl)
+        self.selected_indices: IntVec = get_checked_indices(self.mdl)
         self.accept()
 
 
@@ -1055,7 +1055,7 @@ class ArrayTableModel(QAbstractTableModel):
         if not index.isValid():
             return False
 
-        if role == Qt.EditRole:
+        if role == Qt.ItemDataRole.EditRole:
             row = index.row()
             column = index.column()
             try:
@@ -1231,7 +1231,7 @@ class ShortCircuitSelector(CenteredDialog):
         layout.addWidget(self.cb_phases)
 
         # --- VERTICAL SPACER ---
-        layout.addSpacerItem(QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))
+        layout.addSpacerItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
 
         # Accept button
         self.btn_accept = QPushButton("Accept")
@@ -1402,7 +1402,6 @@ class FileTypeSelector(CenteredDialog):
         self.was_accepted = False
         self.file_type: FileType | None = None
 
-
     def accept_clicked(self):
         """Check if values are valid and close dialog."""
         self.file_type = self.tpe_dict[self.cb_method.currentText()]
@@ -1443,12 +1442,12 @@ class CgmesOptionsSelector(CenteredDialog):
         self.was_accepted = False
         self.version: CGMESVersions | None = None
 
-
     def accept_clicked(self):
         """Check if values are valid and close dialog."""
         self.version = self.tpe_dict[self.cb_method.currentText()]
         self.was_accepted = True
         self.close()
+
 
 if __name__ == "__main__":
     import sys

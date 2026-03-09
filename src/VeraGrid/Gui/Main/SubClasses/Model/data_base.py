@@ -237,7 +237,7 @@ class DataBaseTableMain(DiagramsMain):
         template_elm, dictionary_of_lists = self.circuit.get_dictionary_of_lists(elm_type=elm_type)
 
         mdl = ObjectsModel(objects=elements,
-                           property_list=template_elm.property_list,
+                           property_list=list(template_elm.property_list),
                            time_index=self.get_db_slider_index(),
                            parent=self.ui.dataStructureTableView,
                            editable=True,
@@ -1038,7 +1038,12 @@ class DataBaseTableMain(DiagramsMain):
 
                     elif elm_type == DeviceType.DynamicModelHostDevice.value:
 
-                        self.rms_model_Editor_window = RmsModelEditorGUI(self.circuit.rms_models, model_host=elm)
+                        self.rms_model_Editor_window = RmsModelEditorGUI(
+                            var_factory=self.circuit.var_factory,
+                            templates_list=self.circuit.rms_models,
+                            model_host=elm
+                        )
+
                         self.rms_model_Editor_window.resize(int(1.81 * 700.0), 700)
                         self.rms_model_Editor_window.show()
 
@@ -1072,14 +1077,16 @@ class DataBaseTableMain(DiagramsMain):
 
                         all_devices = lines + injections
 
+                        idx = self.ui.dataStructureTableView.currentIndex()
+
                         self.rms_events_Editor_window = RmsEventEditor(devices=all_devices,
                                                                        event=elm)
                         self.rms_events_Editor_window.resize(int(1.81 * 700.0), 700)
 
                         # TODO: check if we are actually editing the object directly
-                        # if self.rms_events_Editor_window.exec() == QtWidgets.QDialog.DialogCode.Accepted:
-                        #     # update event
-                        #     self.circuit.rms_events[idx] = self.rms_events_Editor_window.get_updated_event()
+                        if self.rms_events_Editor_window.exec() == QtWidgets.QDialog.DialogCode.Accepted:
+                            # update event
+                            self.circuit.rms_events[idx_proxy] = self.rms_events_Editor_window.get_updated_event()
 
                     else:
 
@@ -1645,5 +1652,3 @@ class DataBaseTableMain(DiagramsMain):
 
         else:
             return
-
-

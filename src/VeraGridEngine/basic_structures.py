@@ -15,7 +15,6 @@ import copy
 
 IntList = List[int]
 Numeric = Union[int, float, bool, complex]
-
 NumericVec = npt.NDArray[np.float64]
 DateVec = pd.DatetimeIndex
 IntVec = npt.NDArray[np.int_]

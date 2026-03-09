@@ -2,14 +2,20 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
-from typing import Union
+from typing import Union, Tuple
 import numpy as np
 from VeraGridEngine.Devices.profile import Profile
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType, GCProp
 
 
 class Fuel(EditableDevice):
     __slots__ = ('cost', '_cost_prof', 'color')
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='cost', units='e/t', tpe=float, definition='Cost of fuel (e / ton)',
+                      profile_name='cost_prof'),
+        GCProp(key='color', units='', tpe=str, definition='Color to paint', is_color=True),
+    )
 
     def __init__(self, name='',
                  code='',
@@ -36,9 +42,6 @@ class Fuel(EditableDevice):
 
         self.color = color if color is not None else self.rnd_color()
 
-        self.register(key='cost', units='e/t', tpe=float, definition='Cost of fuel (e / ton)',
-                      profile_name='cost_prof')
-        self.register(key='color', units='', tpe=str, definition='Color to paint', is_color=True)
 
     @property
     def cost_prof(self) -> Profile:

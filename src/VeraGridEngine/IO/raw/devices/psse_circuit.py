@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import List, Dict
+from typing import List, Dict, Tuple
 
 from VeraGridEngine.IO.raw.devices.multi_section_line import RawMultiLineSection
 from VeraGridEngine.IO.raw.devices.psse_object import RawObject, PsseProperty
@@ -29,9 +29,32 @@ from VeraGridEngine.IO.raw.devices.impedance_correction_table import RawImpedanc
 from VeraGridEngine.IO.raw.devices.system_switching_device import RawSystemSwitchingDevice
 from VeraGridEngine.IO.base.base_circuit import BaseCircuit
 from VeraGridEngine.basic_structures import Logger
+from VeraGridEngine.IO.raw.devices.psse_property import PsseProperty
 
 
 class PsseCircuit(RawObject, BaseCircuit):
+    LOCAL_PROPERTIES: Tuple[PsseProperty, ...] = (
+        PsseProperty(property_name='areas', rawx_key='area', class_type=RawArea),
+        PsseProperty(property_name='inter_areas', rawx_key='iatrans', class_type=RawInterArea),
+        PsseProperty(property_name='zones', rawx_key='zone', class_type=RawZone),
+        PsseProperty(property_name='owners', rawx_key='owner', class_type=RawOwner),
+        PsseProperty(property_name='buses', rawx_key='bus', class_type=RawBus),
+        PsseProperty(property_name='branches', rawx_key='acline', class_type=RawBranch),
+        PsseProperty(property_name='transformers', rawx_key='transformer', class_type=RawTransformer),
+        PsseProperty(property_name='two_terminal_dc_lines', rawx_key='twotermdc', class_type=RawTwoTerminalDCLine),
+        PsseProperty(property_name='vsc_dc_lines', rawx_key='vscdc', class_type=RawVscDCLine),
+        PsseProperty(property_name='facts', rawx_key='facts', class_type=RawFACTS),
+        PsseProperty(property_name='loads', rawx_key='load', class_type=RawLoad),
+        PsseProperty(property_name='generators', rawx_key='generator', class_type=RawGenerator),
+        PsseProperty(property_name='induction_machines', rawx_key='indmach', class_type=RawInductionMachine),
+        PsseProperty(property_name='fixed_shunts', rawx_key='fixshunt', class_type=RawFixedShunt),
+        PsseProperty(property_name='switched_shunts', rawx_key='swshunt', class_type=RawSwitchedShunt),
+        PsseProperty(property_name='substations', rawx_key='sub', class_type=RawSubstation),
+        PsseProperty(property_name='switches', rawx_key='subswd', class_type=RawSystemSwitchingDevice),
+        PsseProperty(property_name='gne', rawx_key='gne', class_type=RawGneDevice),
+        PsseProperty(property_name='indiction_tables', rawx_key='impcor', class_type=RawImpedanceCorrectionTable),
+        PsseProperty(property_name='multi_line_sections', rawx_key='msline', class_type=RawMultiLineSection),
+    )
 
     def __init__(self):
         RawObject.__init__(self, "Circuit")
@@ -83,30 +106,6 @@ class PsseCircuit(RawObject, BaseCircuit):
         self.indiction_tables: List[RawImpedanceCorrectionTable] = list()
 
         self.multi_line_sections: List[RawMultiLineSection] = list()
-
-        self.register_property(property_name="areas", rawx_key="area", class_type=RawArea)
-        self.register_property(property_name="inter_areas", rawx_key="iatrans", class_type=RawInterArea)
-        self.register_property(property_name="zones", rawx_key="zone", class_type=RawZone)
-        self.register_property(property_name="owners", rawx_key="owner", class_type=RawOwner)
-        self.register_property(property_name="buses", rawx_key="bus", class_type=RawBus)
-        self.register_property(property_name="branches", rawx_key="acline", class_type=RawBranch)
-        self.register_property(property_name="transformers", rawx_key="transformer", class_type=RawTransformer)
-        self.register_property(property_name="two_terminal_dc_lines", rawx_key="twotermdc",
-                               class_type=RawTwoTerminalDCLine)
-        self.register_property(property_name="vsc_dc_lines", rawx_key="vscdc", class_type=RawVscDCLine)
-        self.register_property(property_name="facts", rawx_key="facts", class_type=RawFACTS)
-        self.register_property(property_name="loads", rawx_key="load", class_type=RawLoad)
-        self.register_property(property_name="generators", rawx_key="generator", class_type=RawGenerator)
-        self.register_property(property_name="induction_machines", rawx_key="indmach", class_type=RawInductionMachine)
-        self.register_property(property_name="fixed_shunts", rawx_key="fixshunt", class_type=RawFixedShunt)
-        self.register_property(property_name="switched_shunts", rawx_key="swshunt", class_type=RawSwitchedShunt)
-        self.register_property(property_name="substations", rawx_key="sub", class_type=RawSubstation)
-        self.register_property(property_name="switches", rawx_key="subswd", class_type=RawSystemSwitchingDevice)
-        self.register_property(property_name="gne", rawx_key="gne", class_type=RawGneDevice)
-        self.register_property(property_name="indiction_tables", rawx_key="impcor",
-                               class_type=RawImpedanceCorrectionTable)
-        self.register_property(property_name="multi_line_sections", rawx_key="msline",
-                               class_type=RawMultiLineSection)
 
     def parse(self, data: List[int | float], logger: Logger) -> None:
         """
@@ -163,4 +162,3 @@ class PsseCircuit(RawObject, BaseCircuit):
                                      comment="Found {}:{}".format(found_elm.class_name, found_elm.get_id()))
                 else:
                     global_index[uuid_] = elm
-

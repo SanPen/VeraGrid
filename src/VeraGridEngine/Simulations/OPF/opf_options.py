@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import List, Union
+from typing import List, Union, Tuple
 from VeraGridEngine.enumerations import (SolverType, MIPSolvers, ZonalGrouping, TimeGrouping, AcOpfMode, DeviceType,
                                          SubObjectType, MIPFramework, OpfDispatchMode)
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
@@ -12,12 +12,46 @@ from VeraGridEngine.Devices.Aggregation.contingency_group import ContingencyGrou
 from VeraGridEngine.Devices.Aggregation.inter_aggregation_info import InterAggregationInfo
 from VeraGridEngine.Simulations.options_template import OptionsTemplate
 from VeraGridEngine.basic_structures import Vec
+from VeraGridEngine.Devices.Parents.editable_device import GCProp
+
 
 
 class OptimalPowerFlowOptions(OptionsTemplate):
     """
     OptimalPowerFlowOptions
     """
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key="verbose", tpe=int),
+        GCProp(key="solver", tpe=SolverType),
+        GCProp(key="time_grouping", tpe=TimeGrouping),
+        GCProp(key="zonal_grouping", tpe=ZonalGrouping),
+        GCProp(key="mip_solver", tpe=MIPSolvers),
+        GCProp(key="dispatch_mode", tpe=OpfDispatchMode),
+        GCProp(key="power_flow_options", tpe=DeviceType.SimulationOptionsDevice),
+        GCProp(key="skip_generation_limits", tpe=bool),
+        GCProp(key="consider_contingencies", tpe=bool),
+        GCProp(key="contingency_groups_used", tpe=SubObjectType.Array),
+        GCProp(key="lodf_tolerance", tpe=float),
+        GCProp(key="add_losses_approximation", tpe=bool),
+        GCProp(key="use_glsk_as_cost", tpe=bool),
+        GCProp(key="inter_aggregation_info", tpe=DeviceType.InterAggregationInfo),
+        GCProp(key="consider_ramps", tpe=bool),
+        GCProp(key="consider_time_up_down", tpe=bool),
+        GCProp(key="area_spinning_reserve", tpe=bool),
+        GCProp(key="report_formulation", tpe=bool),
+        GCProp(key="generate_report", tpe=bool),
+        GCProp(key="acopf_mode", tpe=AcOpfMode),
+        GCProp(key="ips_method", tpe=SolverType),
+        GCProp(key="ips_tolerance", tpe=float),
+        GCProp(key="ips_iterations", tpe=int),
+        GCProp(key="ips_trust_radius", tpe=float),
+        GCProp(key="ips_init_with_pf", tpe=bool),
+        GCProp(key="ips_control_q_limits", tpe=bool),
+        GCProp(key="robust", tpe=bool),
+        GCProp(key="acopf_v0", tpe=Vec),
+        GCProp(key="acopf_S0", tpe=Vec),
+    )
 
     def __init__(self,
                  verbose: int = 0,
@@ -140,34 +174,5 @@ class OptimalPowerFlowOptions(OptionsTemplate):
         self.acopf_v0 = acopf_v0
         self.acopf_S0 = acopf_S0
 
-        self.register(key="verbose", tpe=int)
-        self.register(key="solver", tpe=SolverType)
-        self.register(key="time_grouping", tpe=TimeGrouping)
-        self.register(key="zonal_grouping", tpe=ZonalGrouping)
-        self.register(key="mip_solver", tpe=MIPSolvers)
-        self.register(key="dispatch_mode", tpe=OpfDispatchMode)
-        self.register(key="power_flow_options", tpe=DeviceType.SimulationOptionsDevice)
-        self.register(key="skip_generation_limits", tpe=bool)
-        self.register(key="consider_contingencies", tpe=bool)
-        self.register(key="contingency_groups_used", tpe=SubObjectType.Array)
-        self.register(key="lodf_tolerance", tpe=float)
-        self.register(key="add_losses_approximation", tpe=bool)
-        self.register(key="use_glsk_as_cost", tpe=bool)
-        self.register(key="inter_aggregation_info", tpe=DeviceType.InterAggregationInfo)
-        self.register(key="consider_ramps", tpe=bool)
-        self.register(key="consider_time_up_down", tpe=bool)
-        self.register(key="area_spinning_reserve", tpe=bool)
-        self.register(key="report_formulation", tpe=bool)
-        self.register(key="generate_report", tpe=bool)
-        self.register(key="acopf_mode", tpe=AcOpfMode)
 
-        self.register(key="ips_method", tpe=SolverType)
-        self.register(key="ips_tolerance", tpe=float)
-        self.register(key="ips_iterations", tpe=int)
-        self.register(key="ips_trust_radius", tpe=float)
-        self.register(key="ips_init_with_pf", tpe=bool)
-        self.register(key="ips_control_q_limits", tpe=bool)
-        self.register(key="robust", tpe=bool)
 
-        self.register(key="acopf_v0", tpe=Vec)
-        self.register(key="acopf_S0", tpe=Vec)

@@ -2,12 +2,30 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
+from typing import Tuple
+
 from VeraGridEngine.IO.base.units import Unit
 from VeraGridEngine.IO.raw.devices.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
+from VeraGridEngine.IO.raw.devices.psse_property import PsseProperty
 
 
 class RawNode(RawObject):
+    LOCAL_PROPERTIES: Tuple[PsseProperty, ...] = (
+        PsseProperty(property_name='ISUB', rawx_key='isub', class_type=int, description='Substation number',
+                     min_value=1, max_value=99999),
+        PsseProperty(property_name='NI', rawx_key='inode', class_type=int, description='Node number', min_value=1,
+                     max_value=9999),
+        PsseProperty(property_name='NAME', rawx_key='name', class_type=str, description='Node name.', max_chars=12),
+        PsseProperty(property_name='I', rawx_key='ibus', class_type=int, description='Bus number', min_value=1,
+                     max_value=999997),
+        PsseProperty(property_name='STATUS', rawx_key='stat', class_type=int,
+                     description='Switch status, 1: closed, 0: open'),
+        PsseProperty(property_name='VM', rawx_key='vm', class_type=float, description='Bus voltage magnitude',
+                     unit=Unit.get_pu(), min_value=0.0, max_value=2.0),
+        PsseProperty(property_name='VA', rawx_key='va', class_type=float, description='Bus voltage angle',
+                     unit=Unit.get_deg(), min_value=0.0, max_value=360.0),
+    )
 
     def __init__(self):
         RawObject.__init__(self, "node")
@@ -19,54 +37,6 @@ class RawNode(RawObject):
         self.STATUS: int = 0
         self.VM: float = 0.0
         self.VA: float = 0.0
-
-        self.register_property(property_name="ISUB",
-                               rawx_key='isub',
-                               class_type=int,
-                               description="Substation number",
-                               min_value=1,
-                               max_value=99999)
-
-        self.register_property(property_name="NI",
-                               rawx_key='inode',
-                               class_type=int,
-                               description="Node number",
-                               min_value=1,
-                               max_value=9999)
-
-        self.register_property(property_name="NAME",
-                               rawx_key='name',
-                               class_type=str,
-                               description="Node name.",
-                               max_chars=12)
-
-        self.register_property(property_name="I",
-                               rawx_key='ibus',
-                               class_type=int,
-                               description="Bus number",
-                               min_value=1,
-                               max_value=999997)
-
-        self.register_property(property_name="STATUS",
-                               rawx_key="stat",
-                               class_type=int,
-                               description="Switch status, 1: closed, 0: open")
-
-        self.register_property(property_name="VM",
-                               rawx_key="vm",
-                               class_type=float,
-                               description="Bus voltage magnitude",
-                               unit=Unit.get_pu(),
-                               min_value=0.0,
-                               max_value=2.0)
-
-        self.register_property(property_name="VA",
-                               rawx_key="va",
-                               class_type=float,
-                               description="Bus voltage angle",
-                               unit=Unit.get_deg(),
-                               min_value=0.0,
-                               max_value=360.0)
 
     def parse(self, data, version, logger: Logger):
         """

@@ -24,7 +24,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from VeraGrid.ThirdParty.qdarktheme.qtpy.QtCore import QAbstractTableModel, QModelIndex, Qt
+from VeraGrid.ThirdParty.qdarktheme.qtpy.QtCore import QAbstractTableModel, QModelIndex, Qt, QPersistentModelIndex
 from VeraGrid.ThirdParty.qdarktheme.qtpy.QtGui import QIcon, QStandardItem, QStandardItemModel, QTextOption
 from VeraGrid.ThirdParty.qdarktheme.qtpy.QtWidgets import (
     QCheckBox,
@@ -187,7 +187,7 @@ class _TableModel(QAbstractTableModel):
         super().__init__()
         self._data = [[i * 10 + j for j in range(4)] for i in range(5)]
 
-    def data(self, index: QModelIndex, role: int) -> Any:
+    def data(self, index: QModelIndex | QPersistentModelIndex, /, role: int = ...) -> Any:
         if role == Qt.ItemDataRole.DisplayRole:
             return self._data[index.row()][index.column()]
         if role == Qt.ItemDataRole.CheckStateRole and index.column() == 1:

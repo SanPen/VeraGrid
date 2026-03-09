@@ -6,9 +6,23 @@
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.base import Base
 from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType, Source, Validity
-
+from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
 class Quality61850(Base):
+	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
+		CgmesProperty(property_name='badReference', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Measurement value may be incorrect due to a reference being out of calibration.''', profiles=[]),
+		CgmesProperty(property_name='estimatorReplaced', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Value has been replaced by State Estimator. estimatorReplaced is not an IEC61850 quality bit but has been put in this class for convenience.''', profiles=[]),
+		CgmesProperty(property_name='failure', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''This identifier indicates that a supervision function has detected an internal or external failure, e.g. communication failure.''', profiles=[]),
+		CgmesProperty(property_name='oldData', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Measurement value is old and possibly invalid, as it has not been successfully updated during a specified time interval.''', profiles=[]),
+		CgmesProperty(property_name='operatorBlocked', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Measurement value is blocked and hence unavailable for transmission. ''', profiles=[]),
+		CgmesProperty(property_name='oscillatory', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''To prevent some overload of the communication it is sensible to detect and suppress oscillating (fast changing) binary inputs. If a signal changes in a defined time (tosc) twice in the same direction (from 0 to 1 or from 1 to 0) then oscillation is detected and the detail quality identifier &quot;oscillatory&quot; is set. If it is detected a configured numbers of transient changes could be passed by. In this time the validity status &quot;questionable&quot; is set. If after this defined numbers of changes the signal is still in the oscillating state the value shall be set either to the opposite state of the previous stable value or to a defined default value. In this case the validity status &quot;questionable&quot; is reset and &quot;invalid&quot; is set as long as the signal is oscillating. If it is configured such that no transient changes should be passed by then the validity status &quot;invalid&quot; is set immediately in addition to the detail quality identifier &quot;oscillatory&quot; (used for status information only).''', profiles=[]),
+		CgmesProperty(property_name='outOfRange', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Measurement value is beyond a predefined range of value.''', profiles=[]),
+		CgmesProperty(property_name='overFlow', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Measurement value is beyond the capability of being  represented properly. For example, a counter value overflows from maximum count back to a value of zero. ''', profiles=[]),
+		CgmesProperty(property_name='source', class_type=Source, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Source gives information related to the origin of a value. The value may be acquired from the process, defaulted or substituted.''', profiles=[]),
+		CgmesProperty(property_name='suspect', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''A correlation function has detected that the value is not consitent with other values. Typically set by a network State Estimator.''', profiles=[]),
+		CgmesProperty(property_name='test', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Measurement value is transmitted for test purposes.''', profiles=[]),
+		CgmesProperty(property_name='validity', class_type=Validity, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Validity of the measurement value.''', profiles=[]),
+	)
 	def __init__(self, rdfid, tpe, resources=list(), class_replacements=dict()):
 		Base.__init__(self, rdfid=rdfid, tpe=tpe, resources=resources, class_replacements=class_replacements)
 
@@ -24,100 +38,3 @@ class Quality61850(Base):
 		self.suspect: bool = None
 		self.test: bool = None
 		self.validity: Validity = None
-
-		self.register_property(
-			name='badReference',
-			class_type=bool,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''Measurement value may be incorrect due to a reference being out of calibration.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='estimatorReplaced',
-			class_type=bool,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''Value has been replaced by State Estimator. estimatorReplaced is not an IEC61850 quality bit but has been put in this class for convenience.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='failure',
-			class_type=bool,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''This identifier indicates that a supervision function has detected an internal or external failure, e.g. communication failure.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='oldData',
-			class_type=bool,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''Measurement value is old and possibly invalid, as it has not been successfully updated during a specified time interval.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='operatorBlocked',
-			class_type=bool,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''Measurement value is blocked and hence unavailable for transmission. ''',
-			profiles=[]
-		)
-		self.register_property(
-			name='oscillatory',
-			class_type=bool,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''To prevent some overload of the communication it is sensible to detect and suppress oscillating (fast changing) binary inputs. If a signal changes in a defined time (tosc) twice in the same direction (from 0 to 1 or from 1 to 0) then oscillation is detected and the detail quality identifier &quot;oscillatory&quot; is set. If it is detected a configured numbers of transient changes could be passed by. In this time the validity status &quot;questionable&quot; is set. If after this defined numbers of changes the signal is still in the oscillating state the value shall be set either to the opposite state of the previous stable value or to a defined default value. In this case the validity status &quot;questionable&quot; is reset and &quot;invalid&quot; is set as long as the signal is oscillating. If it is configured such that no transient changes should be passed by then the validity status &quot;invalid&quot; is set immediately in addition to the detail quality identifier &quot;oscillatory&quot; (used for status information only).''',
-			profiles=[]
-		)
-		self.register_property(
-			name='outOfRange',
-			class_type=bool,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''Measurement value is beyond a predefined range of value.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='overFlow',
-			class_type=bool,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''Measurement value is beyond the capability of being  represented properly. For example, a counter value overflows from maximum count back to a value of zero. ''',
-			profiles=[]
-		)
-		self.register_property(
-			name='source',
-			class_type=Source,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''Source gives information related to the origin of a value. The value may be acquired from the process, defaulted or substituted.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='suspect',
-			class_type=bool,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''A correlation function has detected that the value is not consitent with other values. Typically set by a network State Estimator.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='test',
-			class_type=bool,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''Measurement value is transmitted for test purposes.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='validity',
-			class_type=Validity,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''Validity of the measurement value.''',
-			profiles=[]
-		)

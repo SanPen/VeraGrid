@@ -6,4 +6,3 @@
 
 from VeraGridEngine.Utils.Symbolic.symbolic import *
 from VeraGridEngine.Utils.Symbolic.block import *
-from VeraGridEngine.Utils.Symbolic.block_solver import BlockSolver

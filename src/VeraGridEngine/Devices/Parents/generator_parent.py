@@ -4,14 +4,14 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import Union
+from typing import Union, Tuple
 import numpy as np
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import BuildStatus, DeviceType
 from VeraGridEngine.basic_structures import CxVec
 from VeraGridEngine.Devices.profile import Profile
 from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
-from VeraGridEngine.Devices.Parents.editable_device import get_at
+from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 
 
 class GeneratorParent(InjectionParent):
@@ -30,6 +30,19 @@ class GeneratorParent(InjectionParent):
         '_Pmin_prof',
         'srap_enabled',
         '_srap_enabled_prof',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='control_bus', units='', tpe=DeviceType.BusDevice, definition='Control bus',
+                      editable=True),
+        GCProp(key='P', units='MW', tpe=float, definition='Active power', profile_name='P_prof'),
+        GCProp(key='Pmin', units='MW', tpe=float, definition='Minimum active power. Used in OPF.',
+                      profile_name='Pmin_prof'),
+        GCProp(key='Pmax', units='MW', tpe=float, definition='Maximum active power. Used in OPF.',
+                      profile_name='Pmax_prof'),
+        GCProp(key='srap_enabled', units='', tpe=bool,
+                      definition='Is the unit available for SRAP participation?',
+                      editable=True, profile_name="srap_enabled_prof"),
     )
 
     def __init__(self,
@@ -100,17 +113,7 @@ class GeneratorParent(InjectionParent):
         self.srap_enabled = bool(srap_enabled)
         self._srap_enabled_prof = Profile(default_value=self.srap_enabled, data_type=bool)
 
-        self.register(key='control_bus', units='', tpe=DeviceType.BusDevice, definition='Control bus',
-                      editable=True)
 
-        self.register(key='P', units='MW', tpe=float, definition='Active power', profile_name='P_prof')
-        self.register(key='Pmin', units='MW', tpe=float, definition='Minimum active power. Used in OPF.',
-                      profile_name='Pmin_prof')
-        self.register(key='Pmax', units='MW', tpe=float, definition='Maximum active power. Used in OPF.',
-                      profile_name='Pmax_prof')
-        self.register(key='srap_enabled', units='', tpe=bool,
-                      definition='Is the unit available for SRAP participation?',
-                      editable=True, profile_name="srap_enabled_prof")
 
     @property
     def P(self) -> float:

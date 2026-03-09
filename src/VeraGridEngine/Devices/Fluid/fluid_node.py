@@ -4,14 +4,14 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import Union
+from typing import Union, Tuple
 import numpy as np
 
 from VeraGridEngine.Devices.Parents.physical_device import PhysicalDevice
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import BuildStatus, DeviceType
 from VeraGridEngine.Devices.profile import Profile
-from VeraGridEngine.Devices.Parents.editable_device import get_at
+from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 
 
 class FluidNode(PhysicalDevice):
@@ -30,6 +30,31 @@ class FluidNode(PhysicalDevice):
         '_spillage_cost_prof',
         '_max_soc_prof',
         '_min_soc_prof',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='min_level', units='hm3', tpe=float,
+                      definition="Minimum amount of fluid at the node/reservoir"),
+        GCProp(key='max_level', units='hm3', tpe=float,
+                      definition="Maximum amount of fluid at the node/reservoir"),
+        GCProp(key='min_soc', units='p.u.', tpe=float,
+                      definition="Minimum SOC of fluid at the node/reservoir",
+                      profile_name='min_soc_prof'),
+        GCProp(key='max_soc', units='p.u.', tpe=float,
+                      definition="Maximum SOC of fluid at the node/reservoir",
+                      profile_name='max_soc_prof'),
+        GCProp(key='initial_level', units='hm3', tpe=float,
+                      definition="Initial level of the node/reservoir"),
+        GCProp(key='bus', units='', tpe=DeviceType.BusDevice,
+                      definition='Electrical bus.', editable=False),
+        GCProp(key='spillage_cost', units='e/(m3/s)', tpe=float,
+                      definition='Cost of nodal spillage',
+                      profile_name='spillage_cost_prof'),
+        GCProp(key='inflow', units='m3/s', tpe=float,
+                      definition='Flow of fluid coming from the rain',
+                      profile_name='inflow_prof'),
+        GCProp(key='color', units='', tpe=str, definition='Color to paint the device in the map diagram',
+                      is_color=True),
     )
 
     def __init__(self,
@@ -83,36 +108,14 @@ class FluidNode(PhysicalDevice):
         self._max_soc_prof = Profile(default_value=self.max_soc, data_type=float)  # p.u.
         self._min_soc_prof = Profile(default_value=self.min_soc, data_type=float)  # p.u.
 
-        self.register(key='min_level', units='hm3', tpe=float,
-                      definition="Minimum amount of fluid at the node/reservoir")
 
-        self.register(key='max_level', units='hm3', tpe=float,
-                      definition="Maximum amount of fluid at the node/reservoir")
 
-        self.register(key='min_soc', units='p.u.', tpe=float,
-                      definition="Minimum SOC of fluid at the node/reservoir",
-                      profile_name='min_soc_prof')
 
-        self.register(key='max_soc', units='p.u.', tpe=float,
-                      definition="Maximum SOC of fluid at the node/reservoir",
-                      profile_name='max_soc_prof')
 
-        self.register(key='initial_level', units='hm3', tpe=float,
-                      definition="Initial level of the node/reservoir")
 
-        self.register(key='bus', units='', tpe=DeviceType.BusDevice,
-                      definition='Electrical bus.', editable=False)
 
-        self.register(key='spillage_cost', units='e/(m3/s)', tpe=float,
-                      definition='Cost of nodal spillage',
-                      profile_name='spillage_cost_prof')
 
-        self.register(key='inflow', units='m3/s', tpe=float,
-                      definition='Flow of fluid coming from the rain',
-                      profile_name='inflow_prof')
 
-        self.register(key='color', units='', tpe=str, definition='Color to paint the device in the map diagram',
-                      is_color=True)
 
     @property
     def spillage_cost_prof(self) -> Profile:

@@ -22,6 +22,64 @@ from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.IO.cim.cgmes.cgmes_enums import LimitTypeKind
 
 
+def normalize_cgmes_reference_uuid(reference) -> str | None:
+    """
+    Normalize a CGMES reference into VeraGrid UUID format (no hyphens/underscores).
+
+    :param reference: CGMES object reference or serialized string reference.
+    :return: Normalized UUID string or None.
+    """
+    if reference is None:
+        return None
+
+    if isinstance(reference, str):
+        value = reference.strip()
+        if value == '':
+            return None
+
+        if value.startswith('#'):
+            value = value[1:]
+
+        if value.lower().startswith('urn:uuid:'):
+            value = value[9:]
+
+        return rfid2uuid(value)
+
+    if hasattr(reference, 'uuid'):
+        uuid_value = getattr(reference, 'uuid')
+        if isinstance(uuid_value, str):
+            if uuid_value.strip() == '':
+                return None
+            return rfid2uuid(uuid_value)
+
+    if hasattr(reference, 'rdfid'):
+        rdfid_value = getattr(reference, 'rdfid')
+        if isinstance(rdfid_value, str):
+            if rdfid_value.strip() == '':
+                return None
+            return rfid2uuid(rdfid_value)
+
+    return None
+
+
+def is_reference_priority_one(reference_priority) -> bool:
+    """
+    Check if a referencePriority value represents slack priority 1.
+
+    :param reference_priority: Any deserialized referencePriority representation.
+    :return: True if referencePriority equals one.
+    """
+    if reference_priority == 1:
+        return True
+    if isinstance(reference_priority, str):
+        if reference_priority.strip() == '1':
+            return True
+        else:
+            return False
+    else:
+        return False
+
+
 def find_terminal_bus(cgmes_terminal: CGMES_TERMINAL,
                       bus_dict: Dict[str, gcdev.Bus],
                       TopologicalNode_tpe,
@@ -42,13 +100,21 @@ def find_terminal_bus(cgmes_terminal: CGMES_TERMINAL,
             if isinstance(cgmes_terminal.TopologicalNode, TopologicalNode_tpe):
                 return bus_dict.get(cgmes_terminal.TopologicalNode.uuid, None)
             else:
-                return None
+                topological_node_uuid = normalize_cgmes_reference_uuid(cgmes_terminal.TopologicalNode)
+                if topological_node_uuid is not None:
+                    return bus_dict.get(topological_node_uuid, None)
+                else:
+                    return None
 
         elif hasattr(cgmes_terminal, "DCTopologicalNode"):  # get the rosetta calculation node if exists
             if isinstance(cgmes_terminal.DCTopologicalNode, DCTopologicalNode_tpe):
                 return bus_dict.get(cgmes_terminal.DCTopologicalNode.uuid, None)
             else:
-                return None
+                dc_topological_node_uuid = normalize_cgmes_reference_uuid(cgmes_terminal.DCTopologicalNode)
+                if dc_topological_node_uuid is not None:
+                    return bus_dict.get(dc_topological_node_uuid, None)
+                else:
+                    return None
         else:
             return None
     else:
@@ -86,7 +152,7 @@ def get_slack_id(machines):
 
     for m in machines:
         # Check if the machine has a referencePriority attribute
-        if hasattr(m, 'referencePriority') and m.referencePriority == 1:
+        if hasattr(m, 'referencePriority') and is_reference_priority_one(m.referencePriority):
             # Check if Terminals attribute exists
             if hasattr(m, 'Terminals'):
                 terminals = m.Terminals
@@ -99,10 +165,14 @@ def get_slack_id(machines):
                 else:
                     continue  # Skip to the next machine if terminals is an empty list
 
-                # Check if TopologicalNode exists and has rdfid
-                if hasattr(terminal, 'TopologicalNode') and hasattr(
-                        terminal.TopologicalNode, 'rdfid'):
-                    return terminal.TopologicalNode.rdfid
+                # Check if TopologicalNode exists and has a valid reference
+                if hasattr(terminal, 'TopologicalNode'):
+                    topological_node_uuid = normalize_cgmes_reference_uuid(terminal.TopologicalNode)
+                    if topological_node_uuid is not None:
+                        return topological_node_uuid
+                    else:
+                        print(
+                            f"Warning: TopologicalNode or rdfid missing in machine {m}.")
                 else:
                     print(
                         f"Warning: TopologicalNode or rdfid missing in machine {m}.")
@@ -146,6 +216,17 @@ def build_cgmes_limit_dicts(cgmes_model: CgmesCircuit,
 
             if volt is not None and cl.value is not None:
                 rate_mva = np.round(cl.value * volt * sqrt_3 / 1e3, 4)
+
+                if rate_mva <= 0.0:
+                    logger.add_warning(
+                        msg='Ignoring non-positive imported CurrentLimit conversion result',
+                        device=cl.rdfid,
+                        device_class=cl.tpe,
+                        device_property='CurrentLimit.value',
+                        value=rate_mva,
+                        expected_value='> 0.0 MVA'
+                    )
+                    continue
 
                 if isinstance(op_lim_set.Terminal.ConductingEquipment, device_type):
                     branch_id = op_lim_set.Terminal.ConductingEquipment.uuid
@@ -500,6 +581,17 @@ def get_voltage_terminal(terminal: CGMES_TERMINAL | CGMES_ACDC_TERMINAL,
     Get the voltage of this terminal
     :return: Voltage or None
     """
+    recovered_voltage = recover_terminal_base_voltage(terminal)
+    if recovered_voltage is not None:
+        if recovered_voltage > 0.0:
+            return recovered_voltage
+        else:
+            logger.add_warning(msg='Recovered terminal voltage is non-positive',
+                               device=getattr(terminal, 'rdfid', None),
+                               device_class=getattr(terminal, 'tpe', None),
+                               value=recovered_voltage,
+                               expected_value='> 0.0')
+
     if hasattr(terminal, "TopologicalNode"):
         if terminal.TopologicalNode is not None:
             return get_nominal_voltage(terminal.TopologicalNode, logger=logger)
@@ -728,6 +820,116 @@ def base_voltage_to_str(base_voltage: CGMES_BASE_VOLTAGE) -> str:
 
 # ----------------------------------------------------------------------------------------------------------------------
 
+def extract_base_voltage_value(base_voltage_obj) -> float | None:
+    """
+    Extract nominal voltage value from a BaseVoltage-like object.
+
+    :param base_voltage_obj: BaseVoltage object, scalar token or None
+    :return: Nominal voltage in kV if available
+    """
+    if base_voltage_obj is None:
+        return None
+    if isinstance(base_voltage_obj, str):
+        return None
+    if hasattr(base_voltage_obj, "nominalVoltage"):
+        try:
+            return float(base_voltage_obj.nominalVoltage)
+        except (TypeError, ValueError):
+            return None
+    return None
+
+
+def recover_base_voltage_from_container(container_obj) -> float | None:
+    """
+    Recover nominal voltage from a ConnectivityNodeContainer/VoltageLevel-like object.
+
+    :param container_obj: Container object
+    :return: Nominal voltage in kV if available
+    """
+    if container_obj is None:
+        return None
+    if hasattr(container_obj, "VoltageLevel"):
+        voltage_level = container_obj.VoltageLevel
+        if voltage_level is not None and hasattr(voltage_level, "BaseVoltage"):
+            recovered = extract_base_voltage_value(voltage_level.BaseVoltage)
+            if recovered is not None:
+                return recovered
+    if hasattr(container_obj, "BaseVoltage"):
+        recovered = extract_base_voltage_value(container_obj.BaseVoltage)
+        if recovered is not None:
+            return recovered
+    return None
+
+
+def recover_base_voltage_from_topological_node(topological_node) -> float | None:
+    """
+    Recover nominal voltage from a TopologicalNode-like object with fallback paths.
+
+    :param topological_node: Topological node object
+    :return: Nominal voltage in kV if available
+    """
+    if topological_node is None:
+        return None
+    if hasattr(topological_node, "BaseVoltage"):
+        recovered = extract_base_voltage_value(topological_node.BaseVoltage)
+        if recovered is not None:
+            return recovered
+    if hasattr(topological_node, "ConnectivityNodeContainer"):
+        recovered = recover_base_voltage_from_container(topological_node.ConnectivityNodeContainer)
+        if recovered is not None:
+            return recovered
+    return None
+
+
+def recover_terminal_base_voltage(controlled_terminal) -> float | None:
+    """
+    Recover terminal nominal voltage using tolerant fallback chain.
+
+    :param controlled_terminal: Terminal-like object (or a list containing one)
+    :return: Nominal voltage in kV if available
+    """
+    terminal_obj = controlled_terminal
+    if isinstance(controlled_terminal, list):
+        if len(controlled_terminal) > 0:
+            terminal_obj = controlled_terminal[0]
+        else:
+            terminal_obj = None
+
+    if terminal_obj is None:
+        return None
+
+    if hasattr(terminal_obj, "TopologicalNode"):
+        recovered = recover_base_voltage_from_topological_node(terminal_obj.TopologicalNode)
+        if recovered is not None:
+            return recovered
+
+    if hasattr(terminal_obj, "ConnectivityNode"):
+        connectivity_node = terminal_obj.ConnectivityNode
+        if connectivity_node is not None:
+            if hasattr(connectivity_node, "TopologicalNode"):
+                recovered = recover_base_voltage_from_topological_node(connectivity_node.TopologicalNode)
+                if recovered is not None:
+                    return recovered
+            if hasattr(connectivity_node, "ConnectivityNodeContainer"):
+                recovered = recover_base_voltage_from_container(connectivity_node.ConnectivityNodeContainer)
+                if recovered is not None:
+                    return recovered
+
+    if hasattr(terminal_obj, "ConductingEquipment"):
+        equipment = terminal_obj.ConductingEquipment
+        if equipment is not None:
+            if hasattr(equipment, "BaseVoltage"):
+                recovered = extract_base_voltage_value(equipment.BaseVoltage)
+                if recovered is not None:
+                    return recovered
+            if hasattr(equipment, "EquipmentContainer"):
+                recovered = recover_base_voltage_from_container(equipment.EquipmentContainer)
+                if recovered is not None:
+                    return recovered
+
+    return None
+
+
 def get_regulating_control_params(cgmes_elm,
                                   cgmes_enums,
                                   bus_dict,
@@ -780,41 +982,54 @@ def get_regulating_control_params(cgmes_elm,
             # control_node = # TODO get gc.cn from terminal
 
             base_voltage = 0  # default
-            if controlled_terminal.TopologicalNode:
-                if controlled_terminal.TopologicalNode.BaseVoltage is not None:
-                    base_voltage = controlled_terminal.TopologicalNode.BaseVoltage.nominalVoltage
-                else:
-                    pass
+            recovered_base_voltage = recover_terminal_base_voltage(controlled_terminal)
+            if recovered_base_voltage is not None:
+                base_voltage = recovered_base_voltage
             else:
-                if controlled_terminal.ConnectivityNode:
-                    tn = controlled_terminal.ConnectivityNode.TopologicalNode
-                    base_voltage = tn.BaseVoltage.nominalVoltage
+                logger.add_warning(msg='Unable to recover BaseVoltage from regulating terminal',
+                                   device=cgmes_elm.rdfid,
+                                   device_class=cgmes_elm.tpe,
+                                   device_property="RegulatingControl.Terminal")
 
             if base_voltage != 0:
                 v_set = v_control_value / base_voltage
             else:
                 v_set = 1.0
 
-            if cgmes_elm.EquipmentContainer.tpe == 'VoltageLevel':
-                # find the control node
-                control_terminal = cgmes_elm.RegulatingControl.Terminal
-                control_bus = find_terminal_bus(
-                    cgmes_terminal=control_terminal,
-                    bus_dict=bus_dict,
-                    TopologicalNode_tpe=TopologicalNode_tpe,
-                    DCTopologicalNode_tpe=DCTopologicalNode_tpe
-                )
-                control_node = None
-            else:
-                control_node = None
-                v_set = 1.0
-                is_controlled = False
-                logger.add_warning(msg='RegulatingCondEq has no voltage control',
+            equipment_container = cgmes_elm.EquipmentContainer
+            control_terminal = cgmes_elm.RegulatingControl.Terminal
+            control_bus = find_terminal_bus(
+                cgmes_terminal=control_terminal,
+                bus_dict=bus_dict,
+                TopologicalNode_tpe=TopologicalNode_tpe,
+                DCTopologicalNode_tpe=DCTopologicalNode_tpe
+            )
+            control_node = None
+
+            if equipment_container is None:
+                logger.add_warning(msg='RegulatingCondEq EquipmentContainer is missing; terminal fallback applied',
                                    device=cgmes_elm.rdfid,
                                    device_class=cgmes_elm.tpe,
                                    device_property="EquipmentContainer",
                                    value='None',
-                                   expected_value='BaseVoltage')
+                                   expected_value='VoltageLevel')
+                if control_bus is None:
+                    v_set = 1.0
+                    is_controlled = False
+            elif equipment_container.tpe != 'VoltageLevel':
+                logger.add_warning(msg='RegulatingCondEq container is not VoltageLevel; terminal fallback applied',
+                                   device=cgmes_elm.rdfid,
+                                   device_class=cgmes_elm.tpe,
+                                   device_property="EquipmentContainer",
+                                   value=equipment_container.tpe,
+                                   expected_value='VoltageLevel')
+                if control_bus is None:
+                    v_set = 1.0
+                    is_controlled = False
+            else:
+                if control_bus is None:
+                    v_set = 1.0
+                    is_controlled = False
 
         else:
             control_node = None

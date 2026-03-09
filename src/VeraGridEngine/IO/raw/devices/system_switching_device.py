@@ -2,12 +2,36 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
+from typing import Tuple
+
 from VeraGridEngine.IO.base.units import Unit
 from VeraGridEngine.IO.raw.devices.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
+from VeraGridEngine.IO.raw.devices.psse_property import PsseProperty
 
 
 class RawSystemSwitchingDevice(RawObject):
+    LOCAL_PROPERTIES: Tuple[PsseProperty, ...] = (
+        PsseProperty(property_name='I', rawx_key='ibus', class_type=int, description='From bus number.', min_value=1,
+                     max_value=999997),
+        PsseProperty(property_name='J', rawx_key='jbus', class_type=int, description='From bus number.', min_value=1,
+                     max_value=999997),
+        PsseProperty(property_name='CKT', rawx_key='ckt', class_type=str, description='Owner number', max_chars=2),
+        PsseProperty(property_name='X', rawx_key='xpu', class_type=float, description='Branch reactance'),
+        PsseProperty(property_name='STATUS', rawx_key='stat', class_type=int,
+                     description='Switch status, 1: closed, 0: open'),
+        PsseProperty(property_name='NSTATUS', rawx_key='nstat', class_type=int,
+                     description='Normal service status, 1 for normally open and 0 for normally close'),
+        PsseProperty(property_name='METERED', rawx_key='met', class_type=int, description='Metered end'),
+        PsseProperty(property_name='STYPE', rawx_key='stype', class_type=int,
+                     description='Switching device type:\n1 - Generic connector\n2 - Circuit breaker\n3 - Disconnect switch'),
+        PsseProperty(property_name='NAME', rawx_key='name', class_type=str, description='Device name', max_chars=12),
+        *(PsseProperty(property_name='RATE{}'.format(i),
+                       rawx_key='rate{}'.format(i),
+                       class_type=float,
+                       description='Rating power',
+                       unit=Unit.get_mva()) for i in range(1, 13)),
+    )
 
     def __init__(self):
         RawObject.__init__(self, "System switching device")
@@ -33,67 +57,6 @@ class RawSystemSwitchingDevice(RawObject):
         self.METERED = 0
         self.STYPE = 1
         self.NAME = ""
-
-        self.register_property(property_name="I",
-                               rawx_key='ibus',
-                               class_type=int,
-                               description="From bus number.",
-                               min_value=1,
-                               max_value=999997)
-
-        self.register_property(property_name="J",
-                               rawx_key='jbus',
-                               class_type=int,
-                               description="From bus number.",
-                               min_value=1,
-                               max_value=999997)
-
-        self.register_property(property_name="CKT",
-                               rawx_key="ckt",
-                               class_type=str,
-                               description="Owner number",
-                               max_chars=2)
-
-        self.register_property(property_name="X",
-                               rawx_key="xpu",
-                               class_type=float,
-                               description="Branch reactance")
-
-        self.register_property(property_name="STATUS",
-                               rawx_key="stat",
-                               class_type=int,
-                               description="Switch status, 1: closed, 0: open")
-
-        self.register_property(property_name="NSTATUS",
-                               rawx_key="nstat",
-                               class_type=int,
-                               description="Normal service status, 1 for normally open and 0 for normally close")
-
-        self.register_property(property_name="METERED",
-                               rawx_key="met",
-                               class_type=int,
-                               description="Metered end")
-
-        self.register_property(property_name="STYPE",
-                               rawx_key="stype",
-                               class_type=int,
-                               description="Switching device type:\n"
-                                           "1 - Generic connector\n"
-                                           "2 - Circuit breaker\n"
-                                           "3 - Disconnect switch")
-
-        self.register_property(property_name="NAME",
-                               rawx_key='name',
-                               class_type=str,
-                               description="Device name",
-                               max_chars=12)
-
-        for i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]:
-            self.register_property(property_name="RATE{}".format(i),
-                                   rawx_key="rate{}".format(i),
-                                   class_type=float,
-                                   description="Rating power",
-                                   unit=Unit.get_mva())
 
     def parse(self, data, version, logger: Logger):
         """
@@ -130,10 +93,10 @@ class RawSystemSwitchingDevice(RawObject):
 
     def get_raw_line(self, version):
 
-        if version >= 35:
+        if version >= 34:
             return self.format_raw_line(["I", "J", "CKT", "X", "RATE1", "RATE2", "RATE3",
                                          "RATE4", "RATE5", "RATE6", "RATE7", "RATE8", "RATE9",
-                                         "RATE10", "RATE11", "RATE12", "STAT", "NSTAT", "MET",
+                                         "RATE10", "RATE11", "RATE12", "STATUS", "NSTATUS", "METERED",
                                          "STYPE", "NAME"])
         else:
             raise Exception('System switching not defined for version', str(version))

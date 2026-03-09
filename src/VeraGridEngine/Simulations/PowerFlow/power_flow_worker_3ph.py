@@ -306,7 +306,6 @@ def __multi_island_pf_nc_limited_support_3ph(nc: NumericalCircuit,
 
             V0 = island.bus_data.Vbus if V_guess is None else V_guess[island.bus_data.original_idx]
             S_base = Sbus_base if Sbus_input is None else Sbus_input[island.bus_data.original_idx]
-            Shvdc = Shvdc[island.bus_data.original_idx]
 
             # call the numerical methods
             solution, report = __solve_island_limited_support_3ph(
@@ -315,7 +314,7 @@ def __multi_island_pf_nc_limited_support_3ph(nc: NumericalCircuit,
                 options=options,
                 V0=expandVoltage3ph(V0),
                 S_base=expand3ph(S_base),
-                Shvdc=expand3ph(Shvdc),
+                Shvdc=expand3ph(Shvdc[island.bus_data.original_idx]),
                 logger=logger
             )
 

@@ -24,6 +24,8 @@ from VeraGridEngine.Devices.types import ALL_DEV_TYPES, INJECTION_DEVICE_TYPES, 
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Topology.topology import find_different_states
 from VeraGridEngine.enumerations import DeviceType, ActionType, SubObjectType, ConverterControlType, ExternalGridMode
+from VeraGridEngine.Utils.Symbolic.block import Block
+from VeraGridEngine.Utils.Symbolic.symbolic_io import compare_blocks
 
 if TYPE_CHECKING:
     from VeraGridEngine.Simulations.OPF.opf_ts_results import OptimalPowerFlowTimeSeriesResults
@@ -1476,6 +1478,8 @@ class MultiCircuit(Assets):
 
         return groups
 
+
+
     def get_injection_devices_grouped_by_bus(self) -> Dict[dev.Bus, Dict[DeviceType, List[INJECTION_DEVICE_TYPES]]]:
         """
         Get the injection devices grouped by bus and by device type
@@ -1615,6 +1619,27 @@ class MultiCircuit(Assets):
             result.append(devices_by_type)
 
         return result
+
+    def compose_bus_blocks(self) -> Dict[dev.bus, Block]:
+        """
+        this function returns a dictionary with keys, the device bus, mand values, a block containing all the rms models of the elements connected to that bus.
+        Returns
+        -------
+
+        """
+        syst_blocks: Dict[dev.bus, Block] = dict()
+
+        bus_regions_dict = self.get_injection_devices_grouped_by_bus()
+
+        for bus, region in bus_regions_dict.items():
+            bus_block = Block(children=[], in_vars=[])
+            for dev_type, dev_list in region.items():
+                for elm in dev_list:
+                    elm_mdl = elm.rms_model.model
+                    bus_block.add(elm_mdl)
+            syst_blocks[bus] = bus_block
+
+        return syst_blocks
 
     def get_batteries_by_bus(self) -> Dict[dev.Bus, List[dev.Battery]]:
         """
@@ -2194,6 +2219,14 @@ class MultiCircuit(Assets):
                                             device_property=prop.name,
                                             value=v2,
                                             expected_value=v1)
+
+                            elif prop.tpe == SubObjectType.DaeBlockType:
+                                if not compare_blocks(v1, v2, self.var_factory, grid2.var_factory):
+                                    logger.add_error(msg="Different snapshot values",
+                                                     device_class=template_elm.device_type.value,
+                                                     device_property=prop.name,
+                                                     value=v2,
+                                                     expected_value=v1)
                             else:
                                 if v1 != v2:
                                     logger.add_error(msg="Different snapshot values",
@@ -2302,6 +2335,7 @@ class MultiCircuit(Assets):
             return True, logger, dgrid
 
         for new_elm in self.items():  # for every device...
+
             action = ActionType.NoAction
 
             # try to search for the counterpart in the base circuit
@@ -2887,6 +2921,7 @@ class MultiCircuit(Assets):
         self.wire_types += data.wire_types
         self.sequence_line_types += data.sequence_line_types
         self.rms_models += data.rms_models
+        print("done 2")
 
     def set_opf_ts_results(self, results: OptimalPowerFlowTimeSeriesResults):
         """
@@ -3197,3 +3232,26 @@ class MultiCircuit(Assets):
                 other.add_element(inj)
 
         return other
+
+    def check_rms_models(self) -> List[str]:
+        """
+        This function checks that a device has a valid rms model
+        :return:
+        """
+        empty_elem:List[str] = list()
+        for elm in self.buses:
+            if elm.rms_model.model.empty():
+                empty_elem.append(elm.name)
+        for elm in self.get_branches_iter():
+            if elm.rms_model.model.empty():
+                empty_elem.append(elm.name)
+        for elm in self.get_injection_devices_iter():
+            if elm.rms_model.model.empty():
+                empty_elem.append(elm.name)
+        return empty_elem
+
+
+
+
+
+

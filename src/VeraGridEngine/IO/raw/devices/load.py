@@ -2,13 +2,54 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
+from typing import Tuple
+
 from VeraGridEngine.IO.base.units import Unit
 from VeraGridEngine.IO.raw.devices.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
 import numpy as np
+from VeraGridEngine.IO.raw.devices.psse_property import PsseProperty
 
 
 class RawLoad(RawObject):
+    LOCAL_PROPERTIES: Tuple[PsseProperty, ...] = (
+        PsseProperty(property_name='I', rawx_key='ibus', class_type=int, description='Bus number', min_value=1,
+                     max_value=999997, max_chars=6),
+        PsseProperty(property_name='ID', rawx_key='loadid', class_type=str, description='Load 2-character ID',
+                     max_chars=2),
+        PsseProperty(property_name='STATUS', rawx_key='stat', class_type=int, description='Status', min_value=0,
+                     max_value=1),
+        PsseProperty(property_name='AREA', rawx_key='area', class_type=int, description='Area number', min_value=1,
+                     max_value=9999),
+        PsseProperty(property_name='ZONE', rawx_key='zone', class_type=int, description='Zone number', min_value=1,
+                     max_value=9999),
+        PsseProperty(property_name='PL', rawx_key='pl', class_type=float, unit=Unit.get_mw(),
+                     description='Active power load'),
+        PsseProperty(property_name='QL', rawx_key='ql', class_type=float, unit=Unit.get_mvar(),
+                     description='Reactive power load'),
+        PsseProperty(property_name='IP', rawx_key='ip', class_type=float, unit=Unit.get_mw(),
+                     description='Active current load @v=1 p.u.'),
+        PsseProperty(property_name='IQ', rawx_key='iq', class_type=float, unit=Unit.get_mvar(),
+                     description='Reactive current load @v=1 p.u.'),
+        PsseProperty(property_name='YP', rawx_key='yp', class_type=float, unit=Unit.get_mw(),
+                     description='Active admittance power load @v=1 p.u.'),
+        PsseProperty(property_name='YQ', rawx_key='yq', class_type=float, unit=Unit.get_mvar(),
+                     description='Reactive admittance power load @v=1 p.u.'),
+        PsseProperty(property_name='OWNER', rawx_key='owner', class_type=int, description='Owner number', min_value=1,
+                     max_value=9999),
+        PsseProperty(property_name='SCALE', rawx_key='scale', class_type=float, unit=Unit.get_pu(),
+                     description='Load scaling flag of one for a scalable load and zero for a fixed load'),
+        PsseProperty(property_name='INTRPT', rawx_key='intrpt', class_type=float,
+                     description='Interruptible load flag.', min_value=0, max_value=1),
+        PsseProperty(property_name='DGENP', rawx_key='dgenp', class_type=float, unit=Unit.get_mw(),
+                     description='Distributed Generation active power component'),
+        PsseProperty(property_name='DGENQ', rawx_key='dgenq', class_type=float, unit=Unit.get_mvar(),
+                     description='Distributed Generation reactive power component'),
+        PsseProperty(property_name='DGENM', rawx_key='dgenm', class_type=int,
+                     description='Distributed generation mode 0:off, 1: on.', min_value=0, max_value=1),
+        PsseProperty(property_name='LOADTYPE', rawx_key='loadtype', class_type=str, description='Load type',
+                     max_chars=12),
+    )
 
     def __init__(self):
         RawObject.__init__(self, "load")
@@ -32,122 +73,6 @@ class RawLoad(RawObject):
         self.DGENQ = 0
         self.DGENM = 0
         self.LOADTYPE = ''
-
-        self.register_property(property_name="I",
-                               rawx_key="ibus",
-                               class_type=int,
-                               description="Bus number",
-                               min_value=1,
-                               max_value=999997,
-                               max_chars=6)
-
-        self.register_property(property_name="ID",
-                               rawx_key="loadid",
-                               class_type=str,
-                               description="Load 2-character ID",
-                               max_chars=2)
-
-        self.register_property(property_name="STATUS",
-                               rawx_key="stat",
-                               class_type=int,
-                               description="Status",
-                               min_value=0,
-                               max_value=1)
-
-        self.register_property(property_name="AREA",
-                               rawx_key="area",
-                               class_type=int,
-                               description="Area number",
-                               min_value=1,
-                               max_value=9999)
-
-        self.register_property(property_name="ZONE",
-                               rawx_key="zone",
-                               class_type=int,
-                               description="Zone number",
-                               min_value=1,
-                               max_value=9999)
-
-        self.register_property(property_name="PL",
-                               rawx_key="pl",
-                               class_type=float,
-                               unit=Unit.get_mw(),
-                               description="Active power load")
-
-        self.register_property(property_name="QL",
-                               rawx_key="ql",
-                               class_type=float,
-                               unit=Unit.get_mvar(),
-                               description="Reactive power load")
-
-        self.register_property(property_name="IP",
-                               rawx_key="ip",
-                               class_type=float,
-                               unit=Unit.get_mw(),
-                               description="Active current load @v=1 p.u.")
-
-        self.register_property(property_name="IQ",
-                               rawx_key="iq",
-                               class_type=float,
-                               unit=Unit.get_mvar(),
-                               description="Reactive current load @v=1 p.u.")
-
-        self.register_property(property_name="YP",
-                               rawx_key="yp",
-                               class_type=float,
-                               unit=Unit.get_mw(),
-                               description="Active admittance power load @v=1 p.u.")
-
-        self.register_property(property_name="YQ",
-                               rawx_key="yq",
-                               class_type=float,
-                               unit=Unit.get_mvar(),
-                               description="Reactive admittance power load @v=1 p.u.")
-
-        self.register_property(property_name="OWNER",
-                               rawx_key="owner",
-                               class_type=int,
-                               description="Owner number",
-                               min_value=1,
-                               max_value=9999)
-
-        self.register_property(property_name="SCALE",
-                               rawx_key="scale",
-                               class_type=float,
-                               unit=Unit.get_pu(),
-                               description="Load scaling flag of one for a scalable load and zero for a fixed load")
-
-        self.register_property(property_name="INTRPT",
-                               rawx_key="intrpt",
-                               class_type=float,
-                               description="Interruptible load flag.",
-                               min_value=0,
-                               max_value=1)
-
-        self.register_property(property_name="DGENP",
-                               rawx_key="dgenp",
-                               class_type=float,
-                               unit=Unit.get_mw(),
-                               description="Distributed Generation active power component")
-
-        self.register_property(property_name="DGENQ",
-                               rawx_key="dgenq",
-                               class_type=float,
-                               unit=Unit.get_mvar(),
-                               description="Distributed Generation reactive power component")
-
-        self.register_property(property_name="DGENM",
-                               rawx_key="dgenm",
-                               class_type=int,
-                               description="Distributed generation mode 0:off, 1: on.",
-                               min_value=0,
-                               max_value=1)
-
-        self.register_property(property_name="LOADTYPE",
-                               rawx_key="loadtype",
-                               class_type=str,
-                               description="Load type",
-                               max_chars=12)
 
     def parse(self, data, version, logger: Logger):
 

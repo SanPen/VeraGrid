@@ -3,18 +3,27 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Union
+from typing import Union, Tuple
 import numpy as np
 from VeraGridEngine.Simulations.options_template import OptionsTemplate
 from VeraGridEngine.Simulations import OptimalPowerFlowOptions
 from VeraGridEngine.enumerations import NodalCapacityMethod, SubObjectType, DeviceType
 from VeraGridEngine.basic_structures import IntVec
+from VeraGridEngine.Devices.Parents.editable_device import GCProp
+
 
 
 class NodalCapacityOptions(OptionsTemplate):
     """
     Nodal Capacity Options
     """
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key="opf_options", tpe=DeviceType.SimulationOptionsDevice),
+        GCProp(key="capacity_nodes_idx", tpe=SubObjectType.Array),
+        GCProp(key="method", tpe=NodalCapacityMethod),
+        GCProp(key="nodal_capacity_sign", tpe=float),
+    )
 
     def __init__(self,
                  opf_options: Union[None, OptimalPowerFlowOptions] = None,
@@ -35,7 +44,3 @@ class NodalCapacityOptions(OptionsTemplate):
         self.method: NodalCapacityMethod = method
         self.nodal_capacity_sign = nodal_capacity_sign
 
-        self.register(key="opf_options", tpe=DeviceType.SimulationOptionsDevice)
-        self.register(key="capacity_nodes_idx", tpe=SubObjectType.Array)
-        self.register(key="method", tpe=NodalCapacityMethod)
-        self.register(key="nodal_capacity_sign", tpe=float)

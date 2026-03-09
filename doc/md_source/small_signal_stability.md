@@ -43,24 +43,26 @@ Using the simplified API:
 
 ```python
 import os
-from VeraGridEngine.Utils.Symbolic.block_solver import BlockSolver
+from VeraGridEngine.Utils.Symbolic.block_solver_no_diff import BlockSolverNoDiff
 from VeraGridEngine.Simulations.Rms.initialization import initialize_rms
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowOptions
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowDriver
-from VeraGridEngine.Simulations.SmallSignalStability.small_signal_driver import run_small_signal_stability, plot_stability
+from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_driver import run_small_signal_stability,
+
+plot_stability
 import VeraGridEngine.api as gce
 
 folder = os.path.join('..', 'Grids_and_profiles', 'grids')
 fname = os.path.join(folder, 'IEEE39_1W.veragrid')
 grid = gce.open_file(fname)
 
-#power flow
+# power flow
 pf_options = gce.PowerFlowOptions(gce.SolverType.NR, verbose=False)
 power_flow = gce.PowerFlowDriver(grid, pf_options)
 power_flow.run()
 res = power_flow.results
 
-#initialization of variables
+# initialization of variables
 ss, init_guess = initialize_rms(grid, res)
 params_mapping = {}
 
@@ -72,7 +74,7 @@ params_mapping = {}
 
 t_assess = 20.0
 h = 0.001
-slv = BlockSolver(ss, grid.time)
+slv = BlockSolverNoDiff(ss, grid.time)
 
 params0 = slv.build_init_params_vector(params_mapping)
 x0 = slv.build_init_vars_vector_from_uid(init_guess)
@@ -95,7 +97,7 @@ t, y = slv.simulate(
  conjugate_frequencies) = run_small_signal_stability(slv=slv,
                                                      x=x0,
                                                      params=params0,
-                                                     verbose = 1)
+                                                     verbose=1)
 
 # - If the Stability assessment time is not zero:
 
@@ -106,7 +108,7 @@ i = t_assess / h
  conjugate_frequencies) = run_small_signal_stability(slv=slv,
                                                      x=y[i],
                                                      params=params0,
-                                                     verbose = 1)
+                                                     verbose=1)
 
 ```
  
@@ -436,9 +438,11 @@ from VeraGridEngine.Devices.Injections.load import Load
 from VeraGridEngine.Devices.Branches.line import Line
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-from VeraGridEngine.Utils.Symbolic.block_solver import BlockSolver
+from VeraGridEngine.Utils.Symbolic.block_solver_no_diff import BlockSolverNoDiff
 from VeraGridEngine.Simulations.Rms.initialization import initialize_rms
-from VeraGridEngine.Simulations.SmallSignalStability.small_signal_driver import run_small_signal_stability, plot_stability
+from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_driver import run_small_signal_stability,
+
+plot_stability
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowResults, PowerFlowOptions
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowDriver
 import VeraGridEngine.api as gce
@@ -675,11 +679,10 @@ print(init_guess)
 params_mapping = {}
 
 # Solver
-slv = BlockSolver(ss, grid.time, use_jit=False)
+slv = BlockSolverNoDiff(ss, grid.time, use_jit=False)
 
 params0 = slv.build_init_params_vector(params_mapping)
 x0 = slv.build_init_vars_vector_from_uid(init_guess)
-
 
 # stability assessment
 (Eigenvalues,
@@ -688,7 +691,7 @@ x0 = slv.build_init_vars_vector_from_uid(init_guess)
  conjugate_frequencies) = run_small_signal_stability(slv=slv,
                                                      x=x0,
                                                      params=params0,
-                                                     verbose = 1)
+                                                     verbose=1)
 
-plot_stability(Eigenvalues, plot_units = "rad/s" )
+plot_stability(Eigenvalues, plot_units="rad/s")
 ```

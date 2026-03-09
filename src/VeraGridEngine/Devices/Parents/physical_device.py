@@ -4,10 +4,10 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 from __future__ import annotations
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Tuple
 import datetime
 from typing import Union
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp
 from VeraGridEngine.Devices.Aggregation.modelling_authority import ModellingAuthority
 from VeraGridEngine.Devices.Associations.association import Associations
 from VeraGridEngine.enumerations import DeviceType, BuildStatus, SubObjectType
@@ -27,6 +27,19 @@ class PhysicalDevice(EditableDevice):
         "_decommissioned_date",
         'build_status',
         'owners',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='modelling_authority', units='', tpe=DeviceType.ModellingAuthority,
+                      definition='Modelling authority of this asset'),
+        GCProp(key='commissioned_date', units='', tpe=int, definition='Commissioned date of the asset',
+                      is_date=True),
+        GCProp(key='decommissioned_date', units='', tpe=int, definition='Decommissioned date of the asset',
+                      is_date=True),
+        GCProp('build_status', units="", tpe=BuildStatus,
+                      definition="Device build status. Used in expansion planning."),
+        GCProp(key='owners', units='p.u.', tpe=SubObjectType.Associations,
+                      definition='Owners associations to injections', display=False),
     )
 
     def __init__(self,
@@ -59,18 +72,8 @@ class PhysicalDevice(EditableDevice):
 
         self.owners: Associations = Associations(device_type=DeviceType.Owner)
 
-        self.register(key='modelling_authority', units='', tpe=DeviceType.ModellingAuthority,
-                      definition='Modelling authority of this asset')
-        self.register(key='commissioned_date', units='', tpe=int, definition='Commissioned date of the asset',
-                      is_date=True)
-        self.register(key='decommissioned_date', units='', tpe=int, definition='Decommissioned date of the asset',
-                      is_date=True)
 
-        self.register('build_status', units="", tpe=BuildStatus,
-                      definition="Device build status. Used in expansion planning.")
 
-        self.register(key='owners', units='p.u.', tpe=SubObjectType.Associations,
-                      definition='Owners associations to injections', display=False)
 
     @property
     def commissioned_date(self) -> int:
@@ -151,5 +154,3 @@ class PhysicalDevice(EditableDevice):
         """
         return self.owners.to_list()
 
-    def initialize_rms(self):
-        pass

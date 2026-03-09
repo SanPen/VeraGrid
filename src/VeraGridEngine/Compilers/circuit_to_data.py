@@ -1970,6 +1970,7 @@ def get_vsc_data(
         data.alpha1[ii] = elm.alpha1
         data.alpha2[ii] = elm.alpha2
         data.alpha3[ii] = elm.alpha3
+        data.min_ac_voltage[ii] = elm.min_ac_voltage
 
         ii += 1
 

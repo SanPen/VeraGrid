@@ -5,20 +5,14 @@
 
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.connector import Connector
-from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType, UnitSymbol
-
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import UnitSymbol
+from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
 class BusbarSection(Connector):
+	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
+		CgmesProperty(property_name='ipMax', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.A, description='''Electrical current with sign convention: positive flow is out of the conducting equipment into the connectivity node. Can be both AC and DC.''', profiles=[]),
+	)
 	def __init__(self, rdfid='', tpe='BusbarSection'):
 		Connector.__init__(self, rdfid, tpe)
 
 		self.ipMax: float = None
-
-		self.register_property(
-			name='ipMax',
-			class_type=float,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.A,
-			description='''Electrical current with sign convention: positive flow is out of the conducting equipment into the connectivity node. Can be both AC and DC.''',
-			profiles=[]
-		)

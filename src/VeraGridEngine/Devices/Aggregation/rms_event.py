@@ -3,44 +3,19 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Union, Any
+from typing import Union, Any, Tuple
 import numpy as np
 
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
+from VeraGridEngine import SubObjectType
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp
 #
 # from VeraGridEngine.Devices.Branches import *
 # from VeraGridEngine.Devices.Injections import *
 
 from VeraGridEngine.Devices.Parents.pointer_device_parent import PointerDeviceParent
 from VeraGridEngine.Devices.Aggregation.rms_events_group import RmsEventsGroup
+from VeraGridEngine.Utils.Symbolic.symbolic import Var
 from VeraGridEngine.enumerations import DeviceType
-#
-# INJECTION_DEVICE_TYPES = Union[
-#     Generator,
-#     Battery,
-#     Load,
-#     ExternalGrid,
-#     StaticGenerator,
-#     Shunt,
-#     ControllableShunt,
-#     CurrentInjection,
-# ]
-#
-# BRANCH_TYPES = Union[
-#     Line,
-#     DcLine,
-#     Transformer2W,
-#     HvdcLine,
-#     VSC,
-#     UPFC,
-#     Winding,
-#     Switch,
-#     SeriesReactance
-# ]
-#
-# INJECTIONS_BRANCHES_TYPES = Union[
-#     INJECTION_DEVICE_TYPES,
-#     BRANCH_TYPES]
 
 
 class RmsEvent(PointerDeviceParent):
@@ -48,16 +23,25 @@ class RmsEvent(PointerDeviceParent):
     Investment
     """
     __slots__ = (
-        'device',
         'parameter',
         'time',
         'value',
         '_group'
     )
 
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='parameter', units='', tpe=SubObjectType.VarType,
+                      definition='parameter that the event changes'),
+        GCProp(key='time', units='', tpe=float,
+                      definition='Time when the event occurs'),
+        GCProp(key='value', units='', tpe=float,
+                      definition='New value for the parameter'),
+        GCProp(key='group', units='', tpe=DeviceType.RmsEventsGroupDevice, definition='RmsEvent group'),
+    )
+
     def __init__(self,
                  device: EditableDevice | None = None,
-                 parameter: Any = None,
+                 parameter: Var = None,
                  time: float = None,
                  value: float = None,
                  idtag: Union[str, None] = None,
@@ -88,18 +72,10 @@ class RmsEvent(PointerDeviceParent):
 
 
         self._group: RmsEventsGroup = group
-        self.device = device
         self.parameter: Any = parameter
         self.time: float = time
         self.value: float = value
 
-        self.register(key='parameter', units='', tpe=str,
-                      definition='parameter that the event changes')
-        self.register(key='time', units='', tpe=float,
-                      definition='Time when the event occurs')
-        self.register(key='value', units='', tpe=float,
-                      definition='New value for the parameter')
-        self.register(key='group', units='', tpe=DeviceType.RmsEventsGroupDevice, definition='RmsEvent group')
 
     @property
     def group(self) -> RmsEventsGroup:

@@ -1,7 +1,7 @@
 # VeraGrid
 
 VeraGrid is a top tier power systems planning and simulation software.
-As such it has all the static analysis studies that you can think of, plus
+As such, it has all the static analysis studies that you can think of, plus
 linear and non-linear optimization functions. Some of these functions are
 well known, while others you may have never heard of as they are a
 product of cutting-edge research.
@@ -21,7 +21,7 @@ This straightforward approach sparked many innovations — some driven by the ne
 for commercial use, and others fueled by curiosity and research.
 
 Whether you're a pro needing free tools, a researcher wanting a real-world tested platform,
-a teacher sharing commercial-grade software insights, or a student diving into practical algorithms,
+a teacher sharing commercial-grade software insights, or student diving into practical algorithms,
 VeraGrid's got your back. It's a high quality product made for all of us now and
 for the future generations.
 
@@ -44,7 +44,7 @@ To install everything, you only need to install the VeraGrid package and the oth
 
 ### Standalone setup
 
-If you don't know what is this Python thing, we offer a windows installation:
+If you don't know what is this Python thing, we offer a Windows installation:
 
 [Windows setup](https://www.eroots.tech/software)
 
@@ -54,14 +54,14 @@ following video might be of assistance: [Setup tutorial (video)](https://youtu.b
 
 ### Package installation
 
-We recommend to install the latest version of [Python](www.python.org) and then,
+We recommend installing the latest version of [Python](www.python.org) and then,
 install VeraGrid with the following terminal command:
 
 ```
 pip install VeraGrid
 ```
 
-You may need to use `pip3` if you are under Linux or MacOS, both of which
+You may need to use `pip3` if you are under Linux or macOS, both of which
 come with Python pre-installed already.
 
 ### Install into an environment
@@ -161,8 +161,7 @@ cases out of the box, without you having to do anything special.
 And of course, VeraGrid solves all Matpower 8 provided grids, solving the continental USA case in about 1 second:
 
 
-[![VeraGrid](Grids_and_profiles/matpower_benchmark/n_buses_vs_time.png)]([![VeraGrid](Grids_and_profiles/matpower_benchmark/n_buses_vs_time.png)](https://www.youtube.com/watch?v=O-tb_um8YtU)
-)
+[![VeraGrid](Grids_and_profiles/matpower_benchmark/n_buses_vs_time.png)]
 
 Find the results at the [benchmarks page](https://veragrid.readthedocs.io/en/latest/rst_source/development/benchmarks.html) 
 for more details.
@@ -176,14 +175,14 @@ Cool right?
 
 ## API
 
-Since day one, VeraGrid was meant to be used as a library as much as it was meant
+Since day one, VeraGrid has been meant to be used as a library as much as it was meant
 to be used from the user interface. Following, we include some usage examples, but
 feel free to check the [documentation](https://veragrid.readthedocs.io) out where you will find a complete
 description of the theory, the models and the objects.
 
 ### Understanding the program structure
 
-VeraGrid structure is composed by objects arranged in a "database" and  by "structs" at a deeper level.
+VeraGrid structure is composed by objects arranged in a "database" and by "structs" at a deeper level.
 Learn [here](https://veragrid.readthedocs.io/en/latest/rst_source/development/structure.html) why.
 
 All simulations in VeraGrid are handled by the simulation drivers. The structure is as follows:
@@ -204,12 +203,12 @@ VeraGrid has dual structure to handle legacy cases (snapshot), as well as cases 
   This includes the infrastructure plus the variable values of that infrastructure
   such as the load, the generation, the rating, etc.
 
-- The **time series** record the variations of the magnitudes that can vary. These are applied along with
+- The **time series** records the variations of the magnitudes that can vary. These are applied along with
   the infrastructure definition.
 
-In VeraGrid, the inputs do not get modified by the simulation results. This very important concept, helps
+In VeraGrid, the inputs do not get modified by the simulation results. This essential concept helps
 to maintain the independence of the inputs and outputs, allowing the replicability of the results.
-This key feature is not true for other open-source of commercial programs.
+This key feature is not true for other open-source or commercial programs.
 
 A snapshot or any point of the time series, may be compiled to a `NumericalCircuit`. This object holds the
 numerical arrays and matrices of a time step, ready for the numerical methods.
@@ -218,53 +217,53 @@ For those simulations that require many time steps, a collection of `NumericalCi
 <img height="280" src="doc/rst_source/figures/DataModel.png"/>
 
 It may seem that this extra step is redundant. However, the compilation step is composed by mere copy operations,
-which are fast. This steps benefits greatly the efficiency of the numerical calculations since the arrays are
+which are fast. These steps greatly benefit the efficiency of the numerical calculations since the arrays are
 aligned in memory. The VeraGrid data model is object-oriented, while the numerical circuit is array-oriented
-(despite beign packed into objects)
+(despite being packed into objects)
 
 
 
 ### Loading a grid
 
 ```python
-import VeraGridEngine as gce
+import VeraGridEngine as vg
 
 # load a grid (.veragrid, .m (Matpower), .raw (PSS/e) .rawx (PSS/e), .epc (PSLF), .dgs (PowerFactory)
-my_grid = gce.open_file("my_file.veragrid")
+my_grid = vg.open_file("my_file.veragrid")
 ```
 
 In the case of CIM/CGMES, you may need to pass a list of files or a single zip file:
 
 ```python
-import VeraGridEngine as gce
+import VeraGridEngine as vg
 
 # load a grid from many xml files
-my_grid = gce.open_file(["grid_EQ.xml", "grid_TP.xml", "grid_SV.xml", ])
+my_grid = vg.open_file(["grid_EQ.xml", "grid_TP.xml", "grid_SV.xml", ])
 
 # or from a single zip assumed to contain CGMES files
-my_grid = gce.open_file("my_cgmes_set_of_files.zip")
+my_grid = vg.open_file("my_cgmes_set_of_files.zip")
 
 # or load a grid from a combination of xml and zip files assumed to be CGMES
-my_grid = gce.open_file(["grid_EQ.xml", "grid_TP.xml", "grid_SV.xml", "boundary.zip"])
+my_grid = vg.open_file(["grid_EQ.xml", "grid_TP.xml", "grid_SV.xml", "boundary.zip"])
 ```
 
 If you need to explore the CGMEs assets before conversion, you'll need to dive deeper in the API:
 
 ```python
-import VeraGridEngine as gce
+import VeraGridEngine as vg
 
 fname = "tests/data/grids/CGMES_2_4_15/IEEE 118 Bus v2.zip"
 
-logger = gce.Logger()
-data_parser = gce.CgmesDataParser()
+logger = vg.Logger()
+data_parser = vg.CgmesDataParser()
 data_parser.load_files(files=[fname])
-cgmes_circuit = gce.CgmesCircuit(cgmes_version=data_parser.cgmes_version,
-                                 cgmes_map_areas_like_raw=False, logger=logger)
+cgmes_circuit = vg.CgmesCircuit(cgmes_version=data_parser.cgmes_version,
+                                cgmes_map_areas_like_raw=False, logger=logger)
 cgmes_circuit.parse_files(data_parser=data_parser)
 
 # print all the ac line segment names
 for ac_line_segment in cgmes_circuit.cgmes_assets.ACLineSegment_list:
-    print(ac_line_segment.name)
+  print(ac_line_segment.name)
 
 # print the logs
 logger.print()
@@ -285,33 +284,33 @@ Similarly to CGMES you may be able to use the conversion objects to explore the 
 ### Save a grid
 
 ```python
-import VeraGridEngine as gce
+import VeraGridEngine as vg
 
 # load a grid
-my_grid = gce.open_file("my_file.veragrid")
+my_grid = vg.open_file("my_file.veragrid")
 
 # save
-gce.save_file(my_grid, "my_file_2.veragrid")
+vg.save_file(my_grid, "my_file_2.veragrid")
 ```
 
 In the case of saving a model in CGMES mode, we need to specify some extra parameters.
 To simplify we can use the API function `save_cgmes_file`:
 
 ```python
-import VeraGridEngine as gce
+import VeraGridEngine as vg
 
 # load a grid
-my_grid = gce.open_file("my_file.veragrid")
+my_grid = vg.open_file("my_file.veragrid")
 
 # run power flow (this is optional and it is used to generate the SV profile)
-pf_results = gce.power_flow(my_grid)
+pf_results = vg.power_flow(my_grid)
 
 # save the grid in CGMES mode
-gce.save_cgmes_file(grid=my_grid,
-                    filename="My_cgmes_model.zip",
-                    cgmes_boundary_set_path="path_to_the_boundary_set.zip",
-                    cgmes_version=gce.CGMESVersions.v2_4_15,
-                    pf_results=pf_results)
+vg.save_cgmes_file(grid=my_grid,
+                   filename="My_cgmes_model.zip",
+                   cgmes_boundary_set_path="path_to_the_boundary_set.zip",
+                   cgmes_version=vg.CGMESVersions.v2_4_15,
+                   pf_results=pf_results)
 
 ```
 
@@ -323,48 +322,48 @@ We are going to create a very simple 5-node grid from the excellent book
 #### Lynn 5 buses
 
 ```python
-import VeraGridEngine as gce
+import VeraGridEngine as vg
 
 # declare a circuit object
-grid = gce.MultiCircuit()
+grid = vg.MultiCircuit()
 
 # Add the buses and the generators and loads attached
-bus1 = gce.Bus('Bus 1', Vnom=20)
+bus1 = vg.Bus('Bus 1', Vnom=20)
 # bus1.is_slack = True  # we may mark the bus a slack
 grid.add_bus(bus1)
 
 # add a generator to the bus 1
-gen1 = gce.Generator('Slack Generator', vset=1.0)
+gen1 = vg.Generator('Slack Generator', vset=1.0)
 grid.add_generator(bus1, gen1)
 
 # add bus 2 with a load attached
-bus2 = gce.Bus('Bus 2', Vnom=20)
+bus2 = vg.Bus('Bus 2', Vnom=20)
 grid.add_bus(bus2)
-grid.add_load(bus2, gce.Load('load 2', P=40, Q=20))
+grid.add_load(bus2, vg.Load('load 2', P=40, Q=20))
 
 # add bus 3 with a load attached
-bus3 = gce.Bus('Bus 3', Vnom=20)
+bus3 = vg.Bus('Bus 3', Vnom=20)
 grid.add_bus(bus3)
-grid.add_load(bus3, gce.Load('load 3', P=25, Q=15))
+grid.add_load(bus3, vg.Load('load 3', P=25, Q=15))
 
 # add bus 4 with a load attached
-bus4 = gce.Bus('Bus 4', Vnom=20)
+bus4 = vg.Bus('Bus 4', Vnom=20)
 grid.add_bus(bus4)
-grid.add_load(bus4, gce.Load('load 4', P=40, Q=20))
+grid.add_load(bus4, vg.Load('load 4', P=40, Q=20))
 
 # add bus 5 with a load attached
-bus5 = gce.Bus('Bus 5', Vnom=20)
+bus5 = vg.Bus('Bus 5', Vnom=20)
 grid.add_bus(bus5)
-grid.add_load(bus5, gce.Load('load 5', P=50, Q=20))
+grid.add_load(bus5, vg.Load('load 5', P=50, Q=20))
 
 # add Lines connecting the buses
-grid.add_line(gce.Line(bus1, bus2, name='line 1-2', r=0.05, x=0.11, b=0.02))
-grid.add_line(gce.Line(bus1, bus3, name='line 1-3', r=0.05, x=0.11, b=0.02))
-grid.add_line(gce.Line(bus1, bus5, name='line 1-5', r=0.03, x=0.08, b=0.02))
-grid.add_line(gce.Line(bus2, bus3, name='line 2-3', r=0.04, x=0.09, b=0.02))
-grid.add_line(gce.Line(bus2, bus5, name='line 2-5', r=0.04, x=0.09, b=0.02))
-grid.add_line(gce.Line(bus3, bus4, name='line 3-4', r=0.06, x=0.13, b=0.03))
-grid.add_line(gce.Line(bus4, bus5, name='line 4-5', r=0.04, x=0.09, b=0.02))
+grid.add_line(vg.Line(bus1, bus2, name='line 1-2', r=0.05, x=0.11, b=0.02))
+grid.add_line(vg.Line(bus1, bus3, name='line 1-3', r=0.05, x=0.11, b=0.02))
+grid.add_line(vg.Line(bus1, bus5, name='line 1-5', r=0.03, x=0.08, b=0.02))
+grid.add_line(vg.Line(bus2, bus3, name='line 2-3', r=0.04, x=0.09, b=0.02))
+grid.add_line(vg.Line(bus2, bus5, name='line 2-5', r=0.04, x=0.09, b=0.02))
+grid.add_line(vg.Line(bus3, bus4, name='line 3-4', r=0.06, x=0.13, b=0.03))
+grid.add_line(vg.Line(bus4, bus5, name='line 4-5', r=0.04, x=0.09, b=0.02))
 ```
 
 #### IEEE9
@@ -375,53 +374,43 @@ instead of per-unit values:
 
 ```python
 import numpy as np
-import VeraGridEngine.api as gce
+import VeraGridEngine.api as vg
 
 # ieee9 grid
-grid9 = gce.MultiCircuit('IEEE-9', Sbase=100, fbase=50)
+grid9 = vg.MultiCircuit('IEEE-9', Sbase=100, fbase=50)
 
 # Add the buses
-bus1 = gce.Bus(name='Bus 1', Vnom=17.16, is_slack=True)
-bus2 = gce.Bus(name='Bus 2', Vnom=18.45)
-bus3 = gce.Bus(name='Bus 3', Vnom=14.145)
-bus4 = gce.Bus(name='Bus 4', Vnom=230)
-bus5 = gce.Bus(name='Bus 5', Vnom=230)
-bus6 = gce.Bus(name='Bus 6', Vnom=230)
-bus7 = gce.Bus(name='Bus 7', Vnom=230)
-bus8 = gce.Bus(name='Bus 8', Vnom=230)
-bus9 = gce.Bus(name='Bus 9', Vnom=230)
-
-grid9.add_bus(bus1)
-grid9.add_bus(bus2)
-grid9.add_bus(bus3)
-grid9.add_bus(bus4)
-grid9.add_bus(bus5)
-grid9.add_bus(bus6)
-grid9.add_bus(bus7)
-grid9.add_bus(bus8)
-grid9.add_bus(bus9)
+bus1 = grid9.add_bus(vg.Bus(name='Bus 1', Vnom=17.16, is_slack=True))
+bus2 = grid9.add_bus(vg.Bus(name='Bus 2', Vnom=18.45))
+bus3 = grid9.add_bus(vg.Bus(name='Bus 3', Vnom=14.145))
+bus4 = grid9.add_bus(vg.Bus(name='Bus 4', Vnom=230))
+bus5 = grid9.add_bus(vg.Bus(name='Bus 5', Vnom=230))
+bus6 = grid9.add_bus(vg.Bus(name='Bus 6', Vnom=230))
+bus7 = grid9.add_bus(vg.Bus(name='Bus 7', Vnom=230))
+bus8 = grid9.add_bus(vg.Bus(name='Bus 8', Vnom=230))
+bus9 = grid9.add_bus(vg.Bus(name='Bus 9', Vnom=230))
 
 # add generators
-grid9.add_generator(bus1, gce.Generator(name='Slack Generator', P=0.0, vset=1.0))
-grid9.add_generator(bus2, gce.Generator(name='Gen2', P=163, Sbase=100, vset=1.0))
-grid9.add_generator(bus3, gce.Generator(name='Gen3', P=85, vset=1.0))
+grid9.add_generator(bus1, vg.Generator(name='Slack Generator', P=0.0, vset=1.0))
+grid9.add_generator(bus2, vg.Generator(name='Gen2', P=163, Sbase=100, vset=1.0))
+grid9.add_generator(bus3, vg.Generator(name='Gen3', P=85, vset=1.0))
 
 # add loads
-grid9.add_load(bus5, gce.Load(name='Load 1', P=125, Q=50))
-grid9.add_load(bus6, gce.Load(name='Load 2', P=90, Q=30))
-grid9.add_load(bus8, gce.Load(name='Load 3', P=100, Q=35))
+grid9.add_load(bus5, vg.Load(name='Load 1', P=125, Q=50))
+grid9.add_load(bus6, vg.Load(name='Load 2', P=90, Q=30))
+grid9.add_load(bus8, vg.Load(name='Load 3', P=100, Q=35))
 
 # add transformers
-tr1 = gce.Transformer2W(bus_from=bus4, bus_to=bus1, name='T1', HV=230, LV=16.5, nominal_power=247.5, rate=247.5,
-                        tap_phase=150 * np.pi / 180)
+tr1 = vg.Transformer2W(bus_from=bus4, bus_to=bus1, name='T1', HV=230, LV=16.5, nominal_power=247.5, rate=247.5,
+                       tap_phase=150 * np.pi / 180)
 tr1.fill_design_properties(Pcu=0.0, Pfe=0.0, I0=0.0, Vsc=14.3, Sbase=grid9.Sbase)
 
-tr2 = gce.Transformer2W(bus_from=bus7, bus_to=bus2, name='T2', HV=230, LV=18, nominal_power=192, rate=192,
-                        tap_phase=150 * np.pi / 180)
+tr2 = vg.Transformer2W(bus_from=bus7, bus_to=bus2, name='T2', HV=230, LV=18, nominal_power=192, rate=192,
+                       tap_phase=150 * np.pi / 180)
 tr2.fill_design_properties(Pcu=0.0, Pfe=0.0, I0=0.0, Vsc=12.0, Sbase=grid9.Sbase)
 
-tr3 = gce.Transformer2W(bus_from=bus9, bus_to=bus3, name='T3', HV=230, LV=13.8, nominal_power=128, rate=128,
-                        tap_phase=150 * np.pi / 180)
+tr3 = vg.Transformer2W(bus_from=bus9, bus_to=bus3, name='T3', HV=230, LV=13.8, nominal_power=128, rate=128,
+                       tap_phase=150 * np.pi / 180)
 tr3.fill_design_properties(Pcu=0.0, Pfe=0.0, I0=0.0, Vsc=7.5, Sbase=grid9.Sbase)
 
 grid9.add_transformer2w(tr1)  # 0.5236 => 30°#2.618
@@ -429,47 +418,40 @@ grid9.add_transformer2w(tr2)  # 2.618#2.618#0.5236
 grid9.add_transformer2w(tr3)  # 0.5236
 
 # add lines
-l1 = gce.Line(bus_from=bus4, bus_to=bus5, name='line 4-5')
+l1 = grid9.add_line(vg.Line(bus_from=bus4, bus_to=bus5, name='line 4-5'))
 l1.fill_design_properties(r_ohm=5.3, x_ohm=45.0, c_nf=1060, length=1.0, Imax=1.0, freq=grid9.fBase, Sbase=grid9.Sbase)
 
-l2 = gce.Line(bus_from=bus4, bus_to=bus6, name='line 4-6')
+l2 = grid9.add_line(vg.Line(bus_from=bus4, bus_to=bus6, name='line 4-6'))
 l2.fill_design_properties(r_ohm=9.0, x_ohm=48.7, c_nf=950, length=1.0, Imax=1.0, freq=grid9.fBase, Sbase=grid9.Sbase)
 
-l3 = gce.Line(bus_from=bus5, bus_to=bus7, name='line 5-7')
+l3 = grid9.add_line(vg.Line(bus_from=bus5, bus_to=bus7, name='line 5-7'))
 l3.fill_design_properties(r_ohm=16.9, x_ohm=85.2, c_nf=1840, length=1.0, Imax=1.0, freq=grid9.fBase, Sbase=grid9.Sbase)
 
-l4 = gce.Line(bus_from=bus6, bus_to=bus9, name='line 6-9')
+l4 = grid9.add_line(vg.Line(bus_from=bus6, bus_to=bus9, name='line 6-9'))
 l4.fill_design_properties(r_ohm=20.6, x_ohm=89.9, c_nf=2150, length=1.0, Imax=1.0, freq=grid9.fBase, Sbase=grid9.Sbase)
 
-l5 = gce.Line(bus_from=bus7, bus_to=bus8, name='line 7-8')
+l5 = grid9.add_line(vg.Line(bus_from=bus7, bus_to=bus8, name='line 7-8'))
 l5.fill_design_properties(r_ohm=4.5, x_ohm=38.1, c_nf=870, length=1.0, Imax=1.0, freq=grid9.fBase, Sbase=grid9.Sbase)
 
-l6 = gce.Line(bus_from=bus8, bus_to=bus9, name='line 8-9')
+l6 = grid9.add_line(vg.Line(bus_from=bus8, bus_to=bus9, name='line 8-9'))
 l6.fill_design_properties(r_ohm=6.3, x_ohm=53.3, c_nf=1260, length=1.0, Imax=1.0, freq=grid9.fBase, Sbase=grid9.Sbase)
 
-grid9.add_line(l1)
-grid9.add_line(l2)
-grid9.add_line(l3)
-grid9.add_line(l4)
-grid9.add_line(l5)
-grid9.add_line(l6)
-
 # save (optional)
-gce.save_file(grid9, "IEEE9.veragrid")
+vg.save_file(grid9, "IEEE9.veragrid")
 
 # Power flow
-options = gce.PowerFlowOptions(gce.SolverType.NR,
-                               retry_with_other_methods=False,
-                               tolerance=1e-6,
-                               control_q=False,
-                               control_taps_phase=False,
-                               control_taps_modules=False,
-                               apply_temperature_correction=False,
-                               use_stored_guess=False,
-                               initialize_angles=True,
-                               verbose=False)
+options = vg.PowerFlowOptions(vg.SolverType.NR,
+                              retry_with_other_methods=False,
+                              tolerance=1e-6,
+                              control_q=False,
+                              control_taps_phase=False,
+                              control_taps_modules=False,
+                              apply_temperature_correction=False,
+                              use_stored_guess=False,
+                              initialize_angles=True,
+                              verbose=False)
 
-power_flow = gce.PowerFlowDriver(grid9, options)
+power_flow = vg.PowerFlowDriver(grid9, options)
 power_flow.run()
 
 # print the results
@@ -519,13 +501,13 @@ Using the simplified API:
 
 ```python
 import os
-import VeraGridEngine as gce
+import VeraGridEngine as vg
 
 folder = os.path.join('..', 'Grids_and_profiles', 'grids')
 fname = os.path.join(folder, 'IEEE39_1W.veragrid')
-main_circuit = gce.open_file(fname)
+main_circuit = vg.open_file(fname)
 
-results = gce.power_flow(main_circuit)
+results = vg.power_flow(main_circuit)
 
 print(main_circuit.name)
 print('Converged:', results.converged, 'error:', results.error)
@@ -537,14 +519,14 @@ Using the more complex library objects:
 
 ```python
 import os
-import VeraGridEngine as gce
+import VeraGridEngine as vg
 
 folder = os.path.join('..', 'Grids_and_profiles', 'grids')
 fname = os.path.join(folder, 'IEEE14_from_raw.veragrid')
-main_circuit = gce.open_file(fname)
+main_circuit = vg.open_file(fname)
 
-options = gce.PowerFlowOptions(gce.SolverType.NR, verbose=False)
-power_flow = gce.PowerFlowDriver(main_circuit, options)
+options = vg.PowerFlowOptions(vg.SolverType.NR, verbose=False)
+power_flow = vg.PowerFlowDriver(main_circuit, options)
 power_flow.run()
 
 print(main_circuit.name)
@@ -607,15 +589,15 @@ VeraGrid can perform a summary of the inputs with the `InputsAnalysisDriver`:
 
 ```python
 import os
-import VeraGridEngine as gce
+import VeraGridEngine as vg
 
 folder = os.path.join('..', 'Grids_and_profiles', 'grids')
 fname = os.path.join(folder, 'IEEE 118 Bus - ntc_areas.veragrid')
 
-main_circuit = gce.open_file(fname)
+main_circuit = vg.open_file(fname)
 
-drv = gce.InputsAnalysisDriver(grid=main_circuit)
-mdl = drv.results.mdl(gce.ResultTypes.AreaAnalysis)
+drv = vg.InputsAnalysisDriver(grid=main_circuit)
+mdl = drv.results.mdl(vg.ResultTypes.AreaAnalysis)
 df = mdl.to_df()
 
 print(df)
@@ -636,43 +618,43 @@ We can run an PTDF equivalent of the power flow with the linear analysis drivers
 
 ```python
 import os
-import VeraGridEngine as gce
+import VeraGridEngine as vg
 
 folder = os.path.join('..', 'Grids_and_profiles', 'grids')
 fname = os.path.join(folder, 'IEEE 5 Bus.xlsx')
 
-main_circuit = gce.open_file(fname)
+main_circuit = vg.open_file(fname)
 
 # snapshot
-results = gce.linear_power_flow(grid=main_circuit)
+results = vg.linear_power_flow(grid=main_circuit)
 
 print("Bus results:\n", results.get_bus_df())
 print("Branch results:\n", results.get_branch_df())
-print("PTDF:\n", results.mdl(gce.ResultTypes.PTDF).to_df())
-print("LODF:\n", results.mdl(gce.ResultTypes.LODF).to_df())
+print("PTDF:\n", results.mdl(vg.ResultTypes.PTDF).to_df())
+print("LODF:\n", results.mdl(vg.ResultTypes.LODF).to_df())
 ```
 
 Simulating with a more detailed control of the objects:
 
 ```python
 import os
-import VeraGridEngine as gce
+import VeraGridEngine as vg
 
 folder = os.path.join('..', 'Grids_and_profiles', 'grids')
 fname = os.path.join(folder, 'IEEE 5 Bus.xlsx')
 
-main_circuit = gce.open_file(fname)
+main_circuit = vg.open_file(fname)
 
-options_ = gce.LinearAnalysisOptions(distribute_slack=False, correct_values=True)
+options_ = vg.LinearAnalysisOptions(distribute_slack=False, correct_values=True)
 
 # snapshot
-sn_driver = gce.LinearAnalysisDriver(grid=main_circuit, options=options_)
+sn_driver = vg.LinearAnalysisDriver(grid=main_circuit, options=options_)
 sn_driver.run()
 
 print("Bus results:\n", sn_driver.results.get_bus_df())
 print("Branch results:\n", sn_driver.results.get_branch_df())
-print("PTDF:\n", sn_driver.results.mdl(gce.ResultTypes.PTDF).to_df())
-print("LODF:\n", sn_driver.results.mdl(gce.ResultTypes.LODF).to_df())
+print("PTDF:\n", sn_driver.results.mdl(vg.ResultTypes.PTDF).to_df())
+print("LODF:\n", sn_driver.results.mdl(vg.ResultTypes.LODF).to_df())
 ```
 
 Output:
@@ -720,19 +702,19 @@ Now let's make a comparison between the linear flows and the non-linear flows fr
 ```python
 import os
 from matplotlib import pyplot as plt
-import VeraGridEngine as gce
+import VeraGridEngine as vg
 
 plt.style.use('fivethirtyeight')
 
 folder = os.path.join('..', 'Grids_and_profiles', 'grids')
 fname = os.path.join(folder, 'IEEE39_1W.veragrid')
-main_circuit = gce.open_file(fname)
+main_circuit = vg.open_file(fname)
 
-ptdf_driver = gce.LinearAnalysisTimeSeriesDriver(grid=main_circuit)
+ptdf_driver = vg.LinearAnalysisTimeSeriesDriver(grid=main_circuit)
 ptdf_driver.run()
 
-pf_options_ = gce.PowerFlowOptions(solver_type=gce.SolverType.NR)
-ts_driver = gce.PowerFlowTimeSeriesDriver(grid=main_circuit, options=pf_options_)
+pf_options_ = vg.PowerFlowOptions(solver_type=vg.SolverType.NR)
+ts_driver = vg.PowerFlowTimeSeriesDriver(grid=main_circuit, options=pf_options_)
 ts_driver.run()
 
 fig = plt.figure(figsize=(30, 6))
@@ -767,16 +749,16 @@ plt.show()
 ```python
 import os
 import numpy as np
-import VeraGridEngine as gce
+import VeraGridEngine as vg
 
 folder = os.path.join('..', 'Grids_and_profiles', 'grids')
 fname = os.path.join(folder, 'IEEE39_1W.veragrid')
 
-main_circuit = gce.open_file(fname)
+main_circuit = vg.open_file(fname)
 
 # declare the snapshot opf
-opf_options = gce.OptimalPowerFlowOptions(mip_solver=gce.MIPSolvers.HIGHS)
-opf_driver = gce.OptimalPowerFlowDriver(grid=main_circuit, options=opf_options)
+opf_options = vg.OptimalPowerFlowOptions(mip_solver=vg.MIPSolvers.HIGHS)
+opf_driver = vg.OptimalPowerFlowDriver(grid=main_circuit, options=opf_options)
 
 print('Solving...')
 opf_driver.run()
@@ -788,7 +770,7 @@ print('Gen power\n', opf_driver.results.generator_power)
 print('Nodal prices \n', opf_driver.results.bus_shadow_prices)
 
 # declare the time series opf
-opf_ts_driver = gce.OptimalPowerFlowTimeSeriesDriver(grid=main_circuit)
+opf_ts_driver = vg.OptimalPowerFlowTimeSeriesDriver(grid=main_circuit)
 
 print('Solving...')
 opf_ts_driver.run()
@@ -808,22 +790,22 @@ PowerFlowDriver:
 
 ```python
 import os
-import VeraGridEngine as gce
+import VeraGridEngine as vg
 
 folder = os.path.join('..', 'Grids_and_profiles', 'grids')
 fname = os.path.join(folder, 'IEEE39_1W.veragrid')
 
-main_circuit = gce.open_file(fname)
+main_circuit = vg.open_file(fname)
 
 # declare the snapshot opf
-opf_driver = gce.OptimalPowerFlowDriver(grid=main_circuit)
+opf_driver = vg.OptimalPowerFlowDriver(grid=main_circuit)
 opf_driver.run()
 
 # create the power flow driver, with the OPF results
-pf_options = gce.PowerFlowOptions(solver_type=gce.SolverType.NR)
-pf_driver = gce.PowerFlowDriver(grid=main_circuit,
-                                options=pf_options,
-                                opf_results=opf_driver.results)
+pf_options = vg.PowerFlowOptions(solver_type=vg.SolverType.NR)
+pf_driver = vg.PowerFlowDriver(grid=main_circuit,
+                               options=pf_options,
+                               opf_results=opf_driver.results)
 pf_driver.run()
 
 # Print results
@@ -933,14 +915,14 @@ electrical grid.
 
 ```python
 import os
-import VeraGridEngine as gce
+import VeraGridEngine as vg
 
 folder = os.path.join('..', 'Grids_and_profiles', 'grids')
 fname = os.path.join(folder, 'hydro_simple.veragrid')
-grid = gce.open_file(fname)
+grid = vg.open_file(fname)
 
 # Run the simulation
-opf_driver = gce.OptimalPowerFlowTimeSeriesDriver(grid=grid)
+opf_driver = vg.OptimalPowerFlowTimeSeriesDriver(grid=grid)
 
 print('Solving...')
 opf_driver.run()
@@ -1005,19 +987,19 @@ _Computer Analysis of Power Systems by J. Arrillaga and C.P. Arnold_
 
 ```python
 import os
-import VeraGridEngine as gce
+import VeraGridEngine as vg
 
 folder = os.path.join('..', 'Grids_and_profiles', 'grids')
 fname = os.path.join(folder, 'South Island of New Zealand.veragrid')
 
-grid = gce.open_file(filename=fname)
+grid = vg.open_file(filename=fname)
 
 # Define fault index explicitly
 fault_index = 2
 
 # Run a Line-Ground short circuit on the bus at index 2
 # Since we do not provide any power flow results, it will run one for us
-results = gce.short_circuit(grid, fault_index, fault_type=gce.FaultType.LG)
+results = vg.short_circuit(grid, fault_index, fault_type=vg.FaultType.LG)
 
 print("Short circuit power: ", results.SCpower[fault_index])
 ```
@@ -1026,33 +1008,33 @@ A more elaborated way to run the simulation, controlling all the steps:
 
 ```python
 import os
-import VeraGridEngine as gce
+import VeraGridEngine as vg
 
 folder = os.path.join('..', 'Grids_and_profiles', 'grids')
 fname = os.path.join(folder, 'South Island of New Zealand.veragrid')
 
-grid = gce.open_file(filename=fname)
+grid = vg.open_file(filename=fname)
 
-pf_options = gce.PowerFlowOptions()
-pf = gce.PowerFlowDriver(grid, pf_options)
+pf_options = vg.PowerFlowOptions()
+pf = vg.PowerFlowDriver(grid, pf_options)
 pf.run()
 
 fault_index = 2
-sc_options = gce.ShortCircuitOptions()
+sc_options = vg.ShortCircuitOptions()
 
 grid.add_short_circuit_event(
-  gce.ShortCircuitEvent(
+  vg.ShortCircuitEvent(
     device=grid.buses[fault_index],
-    fault_type=gce.FaultType.LG,
-    method=gce.MethodShortCircuit.sequences,
-    phases=gce.PhasesShortCircuit.a
+    fault_type=vg.FaultType.LG,
+    method=vg.MethodShortCircuit.sequences,
+    phases=vg.PhasesShortCircuit.a
   )
 )
 
-sc = gce.ShortCircuitDriver(grid, options=sc_options,
-                            pf_options=pf_options,
-                            pf_results=pf.results,
-                            pf_results3ph=None)
+sc = vg.ShortCircuitDriver(grid, options=sc_options,
+                           pf_options=pf_options,
+                           pf_results=pf.results,
+                           pf_results3ph=None)
 sc.run()
 
 print("Short circuit power: ", sc.results.SCpower[fault_index])
@@ -1075,7 +1057,7 @@ VeraGrid can run continuation power flows (voltage collapse studies)
 ```python
 import os
 from matplotlib import pyplot as plt
-import VeraGridEngine as gce
+import VeraGridEngine as vg
 
 plt.style.use('fivethirtyeight')
 
@@ -1083,23 +1065,23 @@ folder = os.path.join('..', 'Grids_and_profiles', 'grids')
 fname = os.path.join(folder, 'South Island of New Zealand.veragrid')
 
 # open the grid file
-main_circuit = gce.open_file(fname)
+main_circuit = vg.open_file(fname)
 
 # Run the continuation power flow with the default options
 # Since we do not provide any power flow results, it will run one for us
-results = gce.continuation_power_flow(grid=main_circuit,
-                                      factor=2.0,
-                                      stop_at=gce.CpfStopAt.Full)
+results = vg.continuation_power_flow(grid=main_circuit,
+                                     factor=2.0,
+                                     stop_at=vg.CpfStopAt.Full)
 
 # plot the results
 fig = plt.figure(figsize=(18, 6))
 
 ax1 = fig.add_subplot(121)
-res = results.mdl(gce.ResultTypes.BusActivePower)
+res = results.mdl(vg.ResultTypes.BusActivePower)
 res.plot(ax=ax1)
 
 ax2 = fig.add_subplot(122)
-res = results.mdl(gce.ResultTypes.BusVoltageModule)
+res = results.mdl(vg.ResultTypes.BusVoltageModule)
 res.plot(ax=ax2)
 
 plt.tight_layout()
@@ -1112,7 +1094,7 @@ A more elaborated way to run the simulation, controlling all the steps:
 ```python
 import os
 from matplotlib import pyplot as plt
-import VeraGridEngine as gce
+import VeraGridEngine as vg
 
 plt.style.use('fivethirtyeight')
 
@@ -1120,48 +1102,48 @@ folder = os.path.join('..', 'Grids_and_profiles', 'grids')
 fname = os.path.join(folder, 'South Island of New Zealand.veragrid')
 
 # open the grid file
-main_circuit = gce.FileOpen(fname).open()
+main_circuit = vg.FileOpen(fname).open()
 
 # we need to initialize with a power flow solution
-pf_options = gce.PowerFlowOptions()
-power_flow = gce.PowerFlowDriver(grid=main_circuit, options=pf_options)
+pf_options = vg.PowerFlowOptions()
+power_flow = vg.PowerFlowDriver(grid=main_circuit, options=pf_options)
 power_flow.run()
 
 # declare the CPF options
-vc_options = gce.ContinuationPowerFlowOptions(step=0.001,
-                                              approximation_order=gce.CpfParametrization.ArcLength,
-                                              adapt_step=True,
-                                              step_min=0.00001,
-                                              step_max=0.2,
-                                              error_tol=1e-3,
-                                              tol=1e-6,
-                                              max_it=20,
-                                              stop_at=gce.CpfStopAt.Full,
-                                              verbose=False)
+vc_options = vg.ContinuationPowerFlowOptions(step=0.001,
+                                             approximation_order=vg.CpfParametrization.ArcLength,
+                                             adapt_step=True,
+                                             step_min=0.00001,
+                                             step_max=0.2,
+                                             error_tol=1e-3,
+                                             tol=1e-6,
+                                             max_it=20,
+                                             stop_at=vg.CpfStopAt.Full,
+                                             verbose=False)
 
 # We compose the target direction
 factor = 2.0
 base_power = power_flow.results.Sbus / main_circuit.Sbase
-vc_inputs = gce.ContinuationPowerFlowInput(Sbase=base_power,
-                                           Vbase=power_flow.results.voltage,
-                                           Starget=base_power * factor)
+vc_inputs = vg.ContinuationPowerFlowInput(Sbase=base_power,
+                                          Vbase=power_flow.results.voltage,
+                                          Starget=base_power * factor)
 
 # declare the CPF driver and run
-vc = gce.ContinuationPowerFlowDriver(grid=main_circuit,
-                                     options=vc_options,
-                                     inputs=vc_inputs,
-                                     pf_options=pf_options)
+vc = vg.ContinuationPowerFlowDriver(grid=main_circuit,
+                                    options=vc_options,
+                                    inputs=vc_inputs,
+                                    pf_options=pf_options)
 vc.run()
 
 # plot the results
 fig = plt.figure(figsize=(18, 6))
 
 ax1 = fig.add_subplot(121)
-res = vc.results.mdl(gce.ResultTypes.BusActivePower)
+res = vc.results.mdl(vg.ResultTypes.BusActivePower)
 res.plot(ax=ax1)
 
 ax2 = fig.add_subplot(122)
-res = vc.results.mdl(gce.ResultTypes.BusVoltageModule)
+res = vc.results.mdl(vg.ResultTypes.BusVoltageModule)
 res.plot(ax=ax2)
 
 plt.tight_layout()
@@ -1179,56 +1161,56 @@ The simulation then tries all the contingency groups and apply the events regist
 
 ```python
 import os
-import VeraGridEngine as gce
+import VeraGridEngine as vg
 
 folder = os.path.join('Grids_and_profiles', 'grids')
 fname = os.path.join(folder, 'IEEE 5 Bus.xlsx')
 
-main_circuit = gce.open_file(fname)
+main_circuit = vg.open_file(fname)
 
 branches = main_circuit.get_branches()
 
 # manually generate the contingencies
 for i, br in enumerate(branches):
-    # add a contingency group
-    group = gce.ContingencyGroup(name="contingency {}".format(i + 1))
-    main_circuit.add_contingency_group(group)
+  # add a contingency group
+  group = vg.ContingencyGroup(name="contingency {}".format(i + 1))
+  main_circuit.add_contingency_group(group)
 
-    # add the branch contingency to the groups, only groups are failed at once
-    con = gce.Contingency(device=br, name=br.name, group=group)
-    main_circuit.add_contingency(con)
+  # add the branch contingency to the groups, only groups are failed at once
+  con = vg.Contingency(device=br, name=br.name, group=group)
+  main_circuit.add_contingency(con)
 
 # add a special contingency
-group = gce.ContingencyGroup(name="Special contingency")
+group = vg.ContingencyGroup(name="Special contingency")
 main_circuit.add_contingency_group(group)
-main_circuit.add_contingency(gce.Contingency(device=branches[3], name=branches[3].name, group=group))
-main_circuit.add_contingency(gce.Contingency(device=branches[5], name=branches[5].name, group=group))
+main_circuit.add_contingency(vg.Contingency(device=branches[3], name=branches[3].name, group=group))
+main_circuit.add_contingency(vg.Contingency(device=branches[5], name=branches[5].name, group=group))
 
-pf_options = gce.PowerFlowOptions(solver_type=gce.SolverType.NR)
+pf_options = vg.PowerFlowOptions(solver_type=vg.SolverType.NR)
 
 # declare the contingency options
-options_ = gce.ContingencyAnalysisOptions(use_provided_flows=False,
-                                          Pf=None,
-                                          contingency_method=gce.ContingencyMethod.PowerFlow,
-                                          # if no power flow options are provided
-                                          # a linear power flow is used
-                                          pf_options=pf_options)
+options_ = vg.ContingencyAnalysisOptions(use_provided_flows=False,
+                                         Pf=None,
+                                         contingency_method=vg.ContingencyMethod.PowerFlow,
+                                         # if no power flow options are provided
+                                         # a linear power flow is used
+                                         pf_options=pf_options)
 
 # Get all the defined contingency groups from the circuit
 contingency_groups = main_circuit.get_contingency_groups()
 
 # Pass the list of contingency groups as required
-linear_multiple_contingencies = gce.LinearMultiContingencies(grid=main_circuit,
-                                                             contingency_groups_used=contingency_groups)
+linear_multiple_contingencies = vg.LinearMultiContingencies(grid=main_circuit,
+                                                            contingency_groups_used=contingency_groups)
 
-simulation = gce.ContingencyAnalysisDriver(grid=main_circuit,
-                                           options=options_,
-                                           linear_multiple_contingencies=linear_multiple_contingencies)
+simulation = vg.ContingencyAnalysisDriver(grid=main_circuit,
+                                          options=options_,
+                                          linear_multiple_contingencies=linear_multiple_contingencies)
 
 simulation.run()
 
 # print results
-df = simulation.results.mdl(gce.ResultTypes.BranchActivePowerFrom).to_df()
+df = simulation.results.mdl(vg.ResultTypes.BranchActivePowerFrom).to_df()
 print("Contingency flows:\n", df)
 
 ```
@@ -1255,53 +1237,53 @@ To perform the contingency analysis of a time series, it's easier to directly us
 
 ```python
 import os
-import VeraGridEngine as gce
+import VeraGridEngine as vg
 
 folder = os.path.join('Grids_and_profiles', 'grids')
 fname = os.path.join(folder, 'IEEE39_1W.veragrid')
-main_circuit = gce.open_file(fname)
+main_circuit = vg.open_file(fname)
 
-results = gce.contingencies_ts(circuit=main_circuit,
-                               detailed_massive_report=False,
-                               contingency_deadband=0.0,
-                               contingency_method=gce.ContingencyMethod.PowerFlow)
+results = vg.contingencies_ts(circuit=main_circuit,
+                              detailed_massive_report=False,
+                              contingency_deadband=0.0,
+                              contingency_method=vg.ContingencyMethod.PowerFlow)
 ```
 
 Note that the grid must have the declared contingencies saved already.
 Also note that the results are statistics, and you will not get a cube because 
-for large grids that demands terabytes of RAM memory.
+for large grids that demand terabytes of RAM memory.
 
 
 ### State estimation
 
-Now lets program the example from the state estimation reference book
+Now let's program the example from the state estimation reference book
 _State Estimation in Electric Power Systems by A. Monticelli_.
 
 ```python
-import VeraGridEngine as gce
+import VeraGridEngine as vg
 
-m_circuit = gce.MultiCircuit()
+m_circuit = vg.MultiCircuit()
 
-b1 = gce.Bus('B1', is_slack=True)
-b2 = gce.Bus('B2')
-b3 = gce.Bus('B3')
+b1 = vg.Bus('B1', is_slack=True)
+b2 = vg.Bus('B2')
+b3 = vg.Bus('B3')
 
-br1 = gce.Line(b1, b2, name='Br1', r=0.01, x=0.03, rate=100.0)
-br2 = gce.Line(b1, b3, name='Br2', r=0.02, x=0.05, rate=100.0)
-br3 = gce.Line(b2, b3, name='Br3', r=0.03, x=0.08, rate=100.0)
+br1 = vg.Line(b1, b2, name='Br1', r=0.01, x=0.03, rate=100.0)
+br2 = vg.Line(b1, b3, name='Br2', r=0.02, x=0.05, rate=100.0)
+br3 = vg.Line(b2, b3, name='Br3', r=0.03, x=0.08, rate=100.0)
 
 # add measurements
-m_circuit.add_pf_measurement(gce.PfMeasurement(0.888, 0.008, br1))
-m_circuit.add_pf_measurement(gce.PfMeasurement(1.173, 0.008, br2))
+m_circuit.add_pf_measurement(vg.PfMeasurement(0.888, 0.008, br1))
+m_circuit.add_pf_measurement(vg.PfMeasurement(1.173, 0.008, br2))
 
-m_circuit.add_qf_measurement(gce.QfMeasurement(0.568, 0.008, br1))
-m_circuit.add_qf_measurement(gce.QfMeasurement(0.663, 0.008, br2))
+m_circuit.add_qf_measurement(vg.QfMeasurement(0.568, 0.008, br1))
+m_circuit.add_qf_measurement(vg.QfMeasurement(0.663, 0.008, br2))
 
-m_circuit.add_pi_measurement(gce.PiMeasurement(-0.501, 0.01, b2))
-m_circuit.add_qi_measurement(gce.QiMeasurement(-0.286, 0.01, b2))
+m_circuit.add_pi_measurement(vg.PiMeasurement(-0.501, 0.01, b2))
+m_circuit.add_qi_measurement(vg.QiMeasurement(-0.286, 0.01, b2))
 
-m_circuit.add_vm_measurement(gce.VmMeasurement(1.006, 0.004, b1))
-m_circuit.add_vm_measurement(gce.VmMeasurement(0.968, 0.004, b2))
+m_circuit.add_vm_measurement(vg.VmMeasurement(1.006, 0.004, b1))
+m_circuit.add_vm_measurement(vg.VmMeasurement(0.968, 0.004, b2))
 
 m_circuit.add_bus(b1)
 m_circuit.add_bus(b2)
@@ -1312,7 +1294,7 @@ m_circuit.add_line(br2)
 m_circuit.add_line(br3)
 
 # Declare the simulation driver and run
-se = gce.StateEstimationDriver(circuit=m_circuit)
+se = vg.StateEstimationDriver(circuit=m_circuit)
 se.run()
 
 print(se.results.get_bus_df())
@@ -1339,20 +1321,20 @@ A simple function is available to export the results of a driver.
 
 ```python
 import os
-import VeraGridEngine as gce
+import VeraGridEngine as vg
 
 fname = os.path.join("data", "grids", "IEEE39_1W.veragrid")
-grid = gce.open_file(fname)
+grid = vg.open_file(fname)
 
 # create the driver
-pf_driver = gce.PowerFlowTimeSeriesDriver(grid=grid,
-                                          options=gce.PowerFlowOptions(),
-                                          time_indices=grid.get_all_time_indices())
+pf_driver = vg.PowerFlowTimeSeriesDriver(grid=grid,
+                                         options=vg.PowerFlowOptions(),
+                                         time_indices=grid.get_all_time_indices())
 # run
 pf_driver.run()
 
 # Save the driver results in a zip file with CSV files inside
-gce.export_drivers(drivers_list=[pf_driver], file_name="IEEE39_1W_results.zip")
+vg.export_drivers(drivers_list=[pf_driver], file_name="IEEE39_1W_results.zip")
 ```
 
 You could save many drivers in the same zip file passing then into the list `drivers_list`.
@@ -1361,17 +1343,17 @@ Also there is a function to save from the results objects themselves:
 
 ```python
 import os
-import VeraGridEngine as gce
+import VeraGridEngine as vg
 
 fname = os.path.join("data", "grids", "IEEE39_1W.veragrid")
-grid = gce.open_file(fname)
+grid = vg.open_file(fname)
 
 # run with the API shortcut functions
-pf_results = gce.power_flow(grid)
-pf_ts_results = gce.power_flow_ts(grid)
+pf_results = vg.power_flow(grid)
+pf_ts_results = vg.power_flow_ts(grid)
 
 # Save the driver results in a zip file with CSV files inside
-gce.export_results(results_list=[pf_results, pf_ts_results], file_name="IEEE39_1W_results.zip")
+vg.export_results(results_list=[pf_results, pf_ts_results], file_name="IEEE39_1W_results.zip")
 ```
 
 ### Client - Server operation
@@ -1386,30 +1368,30 @@ An example on how to send a grid from a script to the server:
 ```python
 import os
 import asyncio
-import VeraGridEngine as gce
+import VeraGridEngine as vg
 
 # path to your file
 fname = os.path.join('..', '..', '..', 'Grids_and_profiles', 'grids', "IEEE57.veragrid")
 
 # read veragrid file
-grid_ = gce.open_file(fname)
+grid_ = vg.open_file(fname)
 
 # define instruction for the server
-instruction = gce.RemoteInstruction(operation=gce.SimulationTypes.NoSim)
+instruction = vg.RemoteInstruction(operation=vg.SimulationTypes.NoSim)
 
 # generate json to send
-model_data = gce.gather_model_as_jsons_for_communication(circuit=grid_, instruction=instruction)
+model_data = vg.gather_model_as_jsons_for_communication(circuit=grid_, instruction=instruction)
 
 # get the sever certificate
-gce.get_certificate(base_url="https://localhost:8000",
-                    certificate_path=gce.get_certificate_path(),
-                    pwd="")
+vg.get_certificate(base_url="https://localhost:8000",
+                   certificate_path=vg.get_certificate_path(),
+                   pwd="")
 
 # send json
 reply_from_server = asyncio.get_event_loop().run_until_complete(
-    gce.send_json_data(json_data=model_data,
-                       endpoint_url="https://localhost:8000/upload",
-                       certificate=gce.get_certificate_path())
+  vg.send_json_data(json_data=model_data,
+                    endpoint_url="https://localhost:8000/upload",
+                    certificate=vg.get_certificate_path())
 )
 
 print(reply_from_server)
@@ -1425,9 +1407,9 @@ If you make changes to **VeraGrid** that you plan to submit, first make sure tha
 tests are still passing. You can do this locally with `pytest`.
 
 If you have added new functionality, you should also add a new function that tests this
-functionality. pytest automatically detects all functions in the `src/tests` folder
+functionality. Pytest automatically detects all functions in the `src/tests` folder
 that start with `test_` and are located in a file that also starts with `test_` as
-relevant test cases. Unit test (for pytest) are included in `src/tests`. As defined in `pytest.ini`, all
+relevant test cases. Unit tests (for pytest) are included in `src/tests`. As defined in `pytest.ini`, all
 files matching `test_*.py` are executed by running `pytest`.
     
 
@@ -1447,7 +1429,7 @@ developments with the community and the maintainers.
 ## Contributing
 
 All contributions to the **VeraGrid** repository are made through pull requests to the
-`devel` branch. You can either submit a pull request from the develop branch of your
+`devel` branch. You can either submit a pull request from the devel branch of your
 fork or create a special feature branch that you keep the changes on. A feature branch
 is the way to go if you have multiple issues that you are working on in parallel and
 want to submit with separate pull requests. If you only have small, one-time changes
@@ -1475,7 +1457,7 @@ All contributions must come with testing.
 
 VeraGrid is licensed under the [Mozilla Public License 2.0](https://mozilla.org/MPL/2.0/) (MPLv2)
 
-In practical terms this means that:
+In practical terms, this means that:
 
 - You can use VeraGrid for commercial work.
 - You can sell commercial services based on VeraGrid.

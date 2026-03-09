@@ -116,6 +116,7 @@ def nonlinear_contingency_analysis(nc: NumericalCircuit,
         results.loading[ic, :] = pf_res.loading
         results.voltage[ic, :] = pf_res.voltage
         multi_contingency = linear_multiple_contingencies.multi_contingencies[ic] if options.use_srap else None
+        contingency_loadings = np.abs(pf_res.Sf / (nc.passive_branch_data.contingency_rates + 1e-9))
 
         results.report.analyze(t=t_idx,
                                t_prob=t_prob,
@@ -124,8 +125,8 @@ def nonlinear_contingency_analysis(nc: NumericalCircuit,
                                base_flow=np.abs(base_res.Sf),
                                base_loading=np.abs(base_res.loading),
                                contingency_flows=np.abs(pf_res.Sf),
-                               contingency_loadings=np.abs(pf_res.loading),
-                               contingency_idx=ic,
+                               contingency_loadings=contingency_loadings,
+                               contingency_group_idx=ic,
                                contingency_group=contingency_group,
                                using_srap=options.use_srap,
                                srap_ratings=nc.passive_branch_data.protection_rates,

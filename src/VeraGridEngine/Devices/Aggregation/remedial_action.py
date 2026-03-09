@@ -3,8 +3,8 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Union
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
+from typing import Union, Tuple
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp
 from VeraGridEngine.Devices.Parents.pointer_device_parent import PointerDeviceParent
 from VeraGridEngine.Devices.Aggregation.remedial_action_group import RemedialActionGroup
 from VeraGridEngine.enumerations import ContingencyOperationTypes, DeviceType
@@ -15,6 +15,14 @@ class RemedialAction(PointerDeviceParent):
     The RemedialAction object
     """
     __slots__ = ('_prop', '_value', '_group')
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='prop', units='', tpe=ContingencyOperationTypes,
+                      definition=f'Object property to change'),
+        GCProp(key='value', units='', tpe=float, definition='Property value'),
+        GCProp(key='group', units='', tpe=DeviceType.RemedialActionGroupDevice,
+                      definition='Remedial action group'),
+    )
 
     def __init__(self,
                  device: EditableDevice | None = None,
@@ -49,11 +57,6 @@ class RemedialAction(PointerDeviceParent):
         self._value = value
         self._group: RemedialActionGroup = group
 
-        self.register(key='prop', units='', tpe=ContingencyOperationTypes,
-                      definition=f'Object property to change')
-        self.register(key='value', units='', tpe=float, definition='Property value')
-        self.register(key='group', units='', tpe=DeviceType.RemedialActionGroupDevice,
-                      definition='Remedial action group')
 
     @property
     def name(self) -> str:

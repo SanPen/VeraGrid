@@ -4,9 +4,9 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import Union
+from typing import Union, Tuple
 import numpy as np
-from VeraGridEngine.Devices.Parents.editable_device import get_at
+from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 from VeraGridEngine.Devices.Parents.pointer_device_parent import PointerDeviceParent
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.Branches.line import Line
@@ -48,6 +48,13 @@ class MeasurementTemplate(PointerDeviceParent):
         '_sigma_prof',
     )
 
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp("value", tpe=float, profile_name="value_prof",
+                      definition="Value of the measurement"),
+        GCProp("sigma", tpe=float, profile_name="sigma_prof",
+                      definition="Uncertainty of the measurement"),
+    )
+
     def __init__(self, value: float,
                  uncertainty: float,
                  api_obj: MEASURABLE_OBJECT,
@@ -77,10 +84,6 @@ class MeasurementTemplate(PointerDeviceParent):
         self._value_prof = Profile(default_value=self.value, data_type=float)
         self._sigma_prof = Profile(default_value=self.sigma, data_type=float)
 
-        self.register("value", tpe=float, profile_name="value_prof",
-                      definition="Value of the measurement")
-        self.register("sigma", tpe=float, profile_name="sigma_prof",
-                      definition="Uncertainty of the measurement")
 
     @property
     def value_prof(self) -> Profile:

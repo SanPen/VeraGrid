@@ -8,7 +8,7 @@ import os
 import json
 import numpy as np
 import pandas as pd
-from typing import List, Set, Dict, Union, Tuple, TYPE_CHECKING
+from typing import List, Set, Dict, Union, Tuple, TYPE_CHECKING, Iterable
 from collections.abc import Callable
 from collections import defaultdict
 from warnings import warn
@@ -1923,7 +1923,7 @@ class SchematicWidget(BaseDiagramWidget):
             # could not find any graphics :(
             to_port = None
         else:
-            # the from bu is found, return its terminal
+            # the from bus is found, return its terminal
             to_port = bus_graphic1.get_terminal()
 
         return to_port
@@ -2985,7 +2985,7 @@ class SchematicWidget(BaseDiagramWidget):
 
     def set_big_bus_marker_colours(self,
                                    buses: List[Bus],
-                                   colors: List[type(QColor)],
+                                   colors: Iterable[QColor],
                                    tool_tips: Union[None, List[str]] = None):
         """
         Set a big marker at the selected buses with the matching colours
@@ -3566,8 +3566,6 @@ class SchematicWidget(BaseDiagramWidget):
                            lossesB: CxVec,
                            lossesC: CxVec,
                            br_active: IntVec,
-                           ma: Vec,
-                           tau: Vec,
                            hvdc_PfA: Vec,
                            hvdc_PfB: Vec,
                            hvdc_PfC: Vec,
@@ -3593,7 +3591,10 @@ class SchematicWidget(BaseDiagramWidget):
                            max_branch_width=5,
                            min_bus_width=20,
                            max_bus_width=20,
-                           cmap: palettes.Colormaps = None):
+                           cmap: palettes.Colormaps = None,
+                           ma: Vec | None = None,
+                           tau: Vec | None = None,
+                           ):
         """
         Color objects based on the results passed
         :param Sbus: Buses power (MVA)
@@ -3638,6 +3639,7 @@ class SchematicWidget(BaseDiagramWidget):
         VaB = np.angle(voltagesB, deg=True)
         VaC = np.angle(voltagesC, deg=True)
         vnorm = (VmA - vmin) / vrng
+
         nbus = self.circuit.get_bus_number()
         nbr = self.circuit.get_branch_number(add_vsc=False, add_hvdc=False, add_switch=True)
 
@@ -3670,11 +3672,23 @@ class SchematicWidget(BaseDiagramWidget):
                         graphic_object.set_values_3ph(i=i,
                                                       VmA=VmA[i], VmB=VmB[i], VmC=VmC[i],
                                                       VaA=VaA[i], VaB=VaB[i], VaC=VaC[i],
-                                                      PA=SbusA[i].real, PB=SbusB[i].real, PC=SbusC[i].real,
-                                                      QA=SbusA[i].imag, QB=SbusB[i].imag, QC=SbusC[i].imag,
                                                       tpe=bus_types[int(types[i])])
 
-                        v_to_colour = vnorm[i]
+                        vals = [VmA[i], VmB[i], VmC[i]]
+                        vals_nz = [v for v in vals if v != 0.0] # ignore exact zeros
+
+                        if vals_nz:  # at least one phase is not zero
+                            worst_Umax = max(vals_nz)
+                            worst_Umin = min(vals_nz)
+                            if abs(worst_Umax - 1.0) > abs(1.0 - worst_Umin):
+                                worst_U = worst_Umax
+                            else:
+                                worst_U = worst_Umin
+                        else:
+                            # the three-phases are zero
+                            worst_U = 0.0
+
+                        v_to_colour = (worst_U - vmin) / vrng
 
                         a = 255
                         if cmap == palettes.Colormaps.Green2Red:
@@ -3745,9 +3759,11 @@ class SchematicWidget(BaseDiagramWidget):
 
                     if br_active[i]:
 
-                        l_color_val = lnormA[i]
+                        l_color_val = max(lnormA[i], lnormB[i], lnormC[i])
                         tooltip = str(i) + ': ' + branch.name
                         tooltip += '\n' + loading_label + ': ' + "{:10.4f}".format(lnormA[i] * 100) + ' [%]'
+                        tooltip += '\n' + loading_label + ': ' + "{:10.4f}".format(lnormB[i] * 100) + ' [%]'
+                        tooltip += '\n' + loading_label + ': ' + "{:10.4f}".format(lnormC[i] * 100) + ' [%]'
 
                         tooltip += '\nPower A (from):\t' + "{:10.4f}".format(SfA[i]) + ' [MVA]'
                         tooltip += '\nPower B (from):\t' + "{:10.4f}".format(SfB[i]) + ' [MVA]'
@@ -3762,8 +3778,10 @@ class SchematicWidget(BaseDiagramWidget):
                         tooltip += '\nLoss C:\t\t' + "{:10.4f}".format(lossesC[i]) + ' [MVA]'
 
                         if branch.device_type == DeviceType.Transformer2WDevice:
-                            tooltip += '\ntap module:\t' + "{:10.4f}".format(ma[i])
-                            tooltip += '\ntap angle:\t' + "{:10.4f}".format(tau[i]) + ' rad'
+                            if ma is not None:
+                                tooltip += '\ntap module:\t' + "{:10.4f}".format(ma[i])
+                            if tau is not None:
+                                tooltip += '\ntap angle:\t' + "{:10.4f}".format(tau[i]) + ' rad'
 
                         if use_flow_based_width:
                             w = int((np.floor(min_branch_width + Sfnorm[i] * (max_branch_width - min_branch_width))))
@@ -3797,8 +3815,8 @@ class SchematicWidget(BaseDiagramWidget):
 
                         if hasattr(graphic_object, 'set_arrows_with_power'):
                             graphic_object.set_arrows_with_power(
-                                Sf=np.max([SfA[i], SfB[i], SfC[i]]),
-                                St=np.max([StA[i], StB[i], StC[i]])
+                                Sf=SfA[i] + SfB[i] + SfC[i],
+                                St=StA[i] + StB[i] + StC[i]
                             )
                     else:
                         w = graphic_object.pen_width

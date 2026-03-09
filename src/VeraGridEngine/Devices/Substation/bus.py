@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import Tuple, Union
+from typing import Tuple, Union, TYPE_CHECKING
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -16,8 +16,10 @@ from VeraGridEngine.Devices.Substation.busbar import BusBar
 from VeraGridEngine.Devices.Substation.voltage_level import VoltageLevel
 from VeraGridEngine.Devices.profile import Profile
 from VeraGridEngine.Devices.Dynamic.dynamic_model_host import DynamicModelHost
-from VeraGridEngine.Utils.Symbolic.block import Block, Var, VarPowerFlowRefferenceType
-from VeraGridEngine.Devices.Parents.editable_device import get_at
+from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
+
+if TYPE_CHECKING:
+    from VeraGridEngine.Utils.Symbolic.block import Var
 
 
 class Bus(PhysicalDevice):
@@ -54,14 +56,66 @@ class Bus(PhysicalDevice):
         'w',
         'longitude',
         'latitude',
-        'ph_a',
-        'ph_b',
-        'ph_c',
-        'ph_n',
         'is_grounded',
         'graphic_type',
         '_bus_bar',
         '_rms_model',
+        '_emt_model',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='active', units='', tpe=bool, definition='Is the bus active? used to disable the bus.',
+                      profile_name='active_prof'),
+        GCProp(key='is_slack', units='', tpe=bool, definition='Force the bus to be of slack type.',
+                      profile_name=''),
+        GCProp(key='is_dc', units='', tpe=bool, definition='Is this bus of DC type?.', profile_name=''),
+        GCProp(key='graphic_type', units='', tpe=BusGraphicType, definition='Graphic to use in the schematic.'),
+        GCProp(key='Vnom', units='kV', tpe=float, definition='Nominal line voltage of the bus.', profile_name=''),
+        GCProp(key='Vm0', units='p.u.', tpe=float, definition='Voltage module guess.', profile_name=''),
+        GCProp(key='Va0', units='rad.', tpe=float, definition='Voltage angle guess.', profile_name=''),
+        GCProp(key='Vmin', units='p.u.', tpe=float, definition='Lower range of allowed voltage module.',
+                      profile_name='Vmin_prof'),
+        GCProp(key='Vmax', units='p.u.', tpe=float, definition='Higher range of allowed voltage module.',
+                      profile_name='Vmax_prof'),
+        GCProp(key='Vm_cost', units='e/unit', tpe=float, definition='Cost of over and under voltages',
+                      old_names=['voltage_module_cost']),
+        GCProp(key='angle_min', units='rad.', tpe=float, definition='Lower range of allowed voltage angle.',
+                      profile_name=''),
+        GCProp(key='angle_max', units='rad.', tpe=float, definition='Higher range of allowed voltage angle.',
+                      profile_name=''),
+        GCProp(key='angle_cost', units='e/unit', tpe=float, definition='Cost of over and under angles',
+                      old_names=['voltage_angle_cost']),
+        GCProp(key='r_fault', units='p.u.', tpe=float,
+                      definition='Resistance of the fault.This is used for short circuit studies.', profile_name=''),
+        GCProp(key='x_fault', units='p.u.', tpe=float,
+                      definition='Reactance of the fault.This is used for short circuit studies.', profile_name=''),
+        GCProp(key='x', units='px', tpe=float, definition='x position in pixels.', profile_name='',
+                      editable=False),
+        GCProp(key='y', units='px', tpe=float, definition='y position in pixels.', profile_name='',
+                      editable=False),
+        GCProp(key='h', units='px', tpe=float, definition='height of the bus in pixels.', profile_name='',
+                      editable=False),
+        GCProp(key='w', units='px', tpe=float, definition='Width of the bus in pixels.', profile_name='',
+                      editable=False),
+        GCProp(key='country', units='', tpe=DeviceType.CountryDevice, definition='Country of the bus',
+                      profile_name=''),
+        GCProp(key='area', units='', tpe=DeviceType.AreaDevice, definition='Area of the bus', profile_name=''),
+        GCProp(key='zone', units='', tpe=DeviceType.ZoneDevice, definition='Zone of the bus', profile_name=''),
+        GCProp(key='substation', units='', tpe=DeviceType.SubstationDevice,
+                      definition='Substation of the bus.'),
+        GCProp(key='voltage_level', units='', tpe=DeviceType.VoltageLevelDevice,
+                      definition='Voltage level of the bus.'),
+        GCProp(key='bus_bar', units='', tpe=DeviceType.BusBarDevice,
+                      definition='Busbar associated to the bus.'),
+        GCProp(key='longitude', units='deg', tpe=float, definition='longitude of the bus.', profile_name=''),
+        GCProp(key='latitude', units='deg', tpe=float, definition='latitude of the bus.', profile_name=''),
+        GCProp(key='is_grounded', units='', tpe=bool, definition='Is this bus neutral grounded?.'),
+        GCProp(key='rms_model', units='', tpe=SubObjectType.DynamicModelHostType,
+                      definition='RMS dynamic model', display=False),
+        GCProp(key='emt_model', units='', tpe=SubObjectType.DynamicModelHostType,
+                      definition='EMT dynamic model', display=False),
+        GCProp(key='color', units='', tpe=str, definition='Color to paint the element in the diagram',
+                      is_color=True),
     )
 
     def __init__(self, name="Bus",
@@ -227,10 +281,6 @@ class Bus(PhysicalDevice):
         self.longitude = float(longitude)
         self.latitude = float(latitude)
 
-        self.ph_a: bool = True
-        self.ph_b: bool = True
-        self.ph_c: bool = True
-        self.ph_n: bool = True
         self.is_grounded: bool = True
 
         self.color = color if color is not None else "#000000"
@@ -238,67 +288,15 @@ class Bus(PhysicalDevice):
         # The model of the bus is fixed, then it can already be defined here
         self._rms_model: DynamicModelHost = DynamicModelHost()
 
-        self.register(key='active', units='', tpe=bool, definition='Is the bus active? used to disable the bus.',
-                      profile_name='active_prof')
-        self.register(key='is_slack', units='', tpe=bool, definition='Force the bus to be of slack type.',
-                      profile_name='')
-        self.register(key='is_dc', units='', tpe=bool, definition='Is this bus of DC type?.', profile_name='')
-        self.register(key='graphic_type', units='', tpe=BusGraphicType, definition='Graphic to use in the schematic.')
-        self.register(key='Vnom', units='kV', tpe=float, definition='Nominal line voltage of the bus.', profile_name='')
-        self.register(key='Vm0', units='p.u.', tpe=float, definition='Voltage module guess.', profile_name='')
-        self.register(key='Va0', units='rad.', tpe=float, definition='Voltage angle guess.', profile_name='')
-        self.register(key='Vmin', units='p.u.', tpe=float, definition='Lower range of allowed voltage module.',
-                      profile_name='Vmin_prof')
-        self.register(key='Vmax', units='p.u.', tpe=float, definition='Higher range of allowed voltage module.',
-                      profile_name='Vmax_prof')
-        self.register(key='Vm_cost', units='e/unit', tpe=float, definition='Cost of over and under voltages',
-                      old_names=['voltage_module_cost'])
-        self.register(key='angle_min', units='rad.', tpe=float, definition='Lower range of allowed voltage angle.',
-                      profile_name='')
-        self.register(key='angle_max', units='rad.', tpe=float, definition='Higher range of allowed voltage angle.',
-                      profile_name='')
-        self.register(key='angle_cost', units='e/unit', tpe=float, definition='Cost of over and under angles',
-                      old_names=['voltage_angle_cost'])
-        self.register(key='r_fault', units='p.u.', tpe=float,
-                      definition='Resistance of the fault.This is used for short circuit studies.', profile_name='')
-        self.register(key='x_fault', units='p.u.', tpe=float,
-                      definition='Reactance of the fault.This is used for short circuit studies.', profile_name='')
-        self.register(key='x', units='px', tpe=float, definition='x position in pixels.', profile_name='',
-                      editable=False)
-        self.register(key='y', units='px', tpe=float, definition='y position in pixels.', profile_name='',
-                      editable=False)
-        self.register(key='h', units='px', tpe=float, definition='height of the bus in pixels.', profile_name='',
-                      editable=False)
-        self.register(key='w', units='px', tpe=float, definition='Width of the bus in pixels.', profile_name='',
-                      editable=False)
-        self.register(key='country', units='', tpe=DeviceType.CountryDevice, definition='Country of the bus',
-                      profile_name='')
-        self.register(key='area', units='', tpe=DeviceType.AreaDevice, definition='Area of the bus', profile_name='')
-        self.register(key='zone', units='', tpe=DeviceType.ZoneDevice, definition='Zone of the bus', profile_name='')
-        self.register(key='substation', units='', tpe=DeviceType.SubstationDevice,
-                      definition='Substation of the bus.')
-        self.register(key='voltage_level', units='', tpe=DeviceType.VoltageLevelDevice,
-                      definition='Voltage level of the bus.')
-        self.register(key='bus_bar', units='', tpe=DeviceType.BusBarDevice,
-                      definition='Busbar associated to the bus.')
-        self.register(key='longitude', units='deg', tpe=float, definition='longitude of the bus.', profile_name='')
-        self.register(key='latitude', units='deg', tpe=float, definition='latitude of the bus.', profile_name='')
+        self._emt_model: DynamicModelHost = DynamicModelHost()
 
-        self.register(key='ph_a', units='', tpe=bool, definition='Has phase A?')
-        self.register(key='ph_b', units='', tpe=bool, definition='Has phase B?')
-        self.register(key='ph_c', units='', tpe=bool, definition='Has phase C?')
-        self.register(key='ph_n', units='', tpe=bool, definition='Has phase N?')
-        self.register(key='is_grounded', units='', tpe=bool, definition='Is this bus neutral grounded?.')
-        self.register(key='rms_model', units='', tpe=SubObjectType.DynamicModelHostType,
-                      definition='RMS dynamic model', display=False)
-        self.register(key='color', units='', tpe=str, definition='Color to paint the element in the diagram',
-                      is_color=True)
+
 
     @property
     def rms_model(self) -> DynamicModelHost:
         """
         RMS model
-        :return: DynamicMOdelHost
+        :return: DynamicModelHost
         """
         return self._rms_model
 
@@ -306,6 +304,15 @@ class Bus(PhysicalDevice):
     def rms_model(self, value: DynamicModelHost):
         if isinstance(value, DynamicModelHost):
             self._rms_model = value
+
+    @property
+    def emt_model(self) -> DynamicModelHost:
+        return self._emt_model
+
+    @emt_model.setter
+    def emt_model(self, value: DynamicModelHost):
+        if isinstance(value, DynamicModelHost):
+            self._emt_model = value
 
     @property
     def active_prof(self) -> Profile:
@@ -534,36 +541,3 @@ class Bus(PhysicalDevice):
             self._bus_bar = val
         else:
             raise ValueError("The value must be a BusBar")
-
-    def get_rms_algebraic_vars(self) -> Tuple[Var, Var] :
-        """
-        Initializes rms model if not initialized
-        :return: Vm, Va rms vars
-        """
-        if self.rms_model.model.empty():
-            self.initialize_rms()
-        assert len(self.rms_model.model.algebraic_vars) == 2
-        return self.rms_model.model.algebraic_vars[0], self.rms_model.model.algebraic_vars[1]
-
-
-    def initialize_rms(self):
-        """
-        Initialize the RMS model
-        """
-        if self.rms_model.empty():
-            Vm = Var("Vm")
-            Va = Var("Va")
-            P = Var("P")
-            Q = Var("Q")
-
-            block = Block(
-                algebraic_vars=[Vm, Va])
-
-            block.external_mapping = {
-                VarPowerFlowRefferenceType.Vm: Vm,
-                VarPowerFlowRefferenceType.Va: Va,
-                VarPowerFlowRefferenceType.P: P,
-                VarPowerFlowRefferenceType.Q: Q
-            }
-
-            self.rms_model.model = block

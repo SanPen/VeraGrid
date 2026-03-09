@@ -371,9 +371,12 @@ def power_flow_post_process_nonlinear_3ph(Sbus: CxVec,
     V_expanded = expand_magnitudes(V, bus_lookup)
     Vn_floating_expanded = expand_magnitudes(Vn_floating, bus_lookup)
 
+    # Compute the basic Sbus
+    Sbus = V * np.conj(Ybus @ V)
+
     # Add the shunt power V^2 x Y^*
     Vm = np.abs(V)
-    Sbus = np.conj(Yshunt_bus) @ (Vm * Vm)
+    Sbus += np.conj(Yshunt_bus) @ (Vm * Vm)
 
     # power at the slack nodes
     if len(vd) > 0:

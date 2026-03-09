@@ -4,8 +4,6 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-import os
-import datetime
 import numpy as np
 from collections import OrderedDict
 from typing import List, Tuple, Dict, Union
@@ -16,13 +14,13 @@ from matplotlib.colors import LinearSegmentedColormap
 
 import VeraGrid.Gui.gui_functions as gf
 import VeraGrid.Gui.Visualization.visualization as viz
-from VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics import BusGraphicItem
 from VeraGrid.Gui.general_dialogues import LogsDialogue
 from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
 from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import MapWidget
 from VeraGrid.Gui.messages import yes_no_question, error_msg, warning_msg, info_msg
 from VeraGrid.Gui.Main.SubClasses.Model.time_events import TimeEventsMain
 from VeraGrid.Gui.SigmaAnalysis.sigma_analysis_dialogue import SigmaAnalysisGUI
+from VeraGrid.Gui.ProceduralGrid.procedural_grid import ProceduralGridWindow
 from VeraGrid.Session.server_driver import RemoteJobDriver
 
 # Engine imports
@@ -31,16 +29,16 @@ import VeraGridEngine.Simulations as sim
 import VeraGridEngine.Simulations.PowerFlow.grid_analysis as grid_analysis
 from VeraGridEngine.Compilers.circuit_to_newton_pa import get_newton_mip_solvers_list
 from VeraGridEngine.Utils.MIP.selected_interface import get_available_mip_solvers, get_available_mip_frameworks
-from VeraGridEngine.IO.file_system import opf_file_path
 from VeraGridEngine.IO.veragrid.remote import RemoteInstruction
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGridEngine.Simulations.types import DRIVER_OBJECTS
-from VeraGridEngine.basic_structures import CxVec
+from VeraGridEngine.basic_structures import CxVec, IntVec, Vec
 from VeraGridEngine.enumerations import (DeviceType, AvailableTransferMode, SolverType, MIPSolvers, TimeGrouping,
                                          ZonalGrouping, ContingencyMethod, InvestmentEvaluationMethod, EngineType,
                                          BranchImpedanceMode, ResultTypes, SimulationTypes, NodalCapacityMethod,
                                          ContingencyFilteringMethods, InvestmentsEvaluationObjectives,
-                                         ReliabilityMode, OpfDispatchMode)
+                                         ReliabilityMode, OpfDispatchMode, DynamicIntegrationMethod,
+                                         RmsInitializationMethod)
 
 
 class SimulationsMain(TimeEventsMain):
@@ -233,6 +231,22 @@ class SimulationsMain(TimeEventsMain):
         )
         self.ui.investment_evaluation_objfunc_ComboBox.setModel(investment_evaluation_objfunc_mdl)
 
+        # rms simulation
+        self.rms_integration_method_dict, rms_integration_method_mdl = gf.enums_to_model(
+            [DynamicIntegrationMethod.DaeBackEuler,
+             DynamicIntegrationMethod.DaeTrapezoidal,
+             DynamicIntegrationMethod.DaeBDF2,
+             DynamicIntegrationMethod.DaeBackEuler,
+             DynamicIntegrationMethod.OdeEuler]
+        )
+        self.ui.rms_integration_method_comboBox.setModel(rms_integration_method_mdl)
+
+        self.rms_initialization_method_dict, rms_initialization_method_mdl = gf.enums_to_model(
+            [RmsInitializationMethod.Explicit,
+             RmsInitializationMethod.PseudoTransient]
+        )
+        self.ui.rms_initialization_method_comboBox.setModel(rms_initialization_method_mdl)
+
         # dictionaries for available results
         self.available_results_dict: Union[Dict[str, Dict[str, ResultTypes]], None] = dict()
 
@@ -266,6 +280,7 @@ class SimulationsMain(TimeEventsMain):
         self.ui.actionReliability.triggered.connect(self.reliability_dispatcher)
         self.ui.actionRun_Dynamic_RMS_Simulation.triggered.connect(self.rms_dispatcher)
         self.ui.actionRun_Small_Signal_RMS_Simulation.triggered.connect(self.small_signal_dispatcher)
+        self.ui.actionProcedural_grid_expansion.triggered.connect(self.procedural_grid_expansion)
 
         self.ui.actionUse_clustering.triggered.connect(self.activate_clustering)
         self.ui.actionNodal_capacity.triggered.connect(self.run_nodal_capacity)
@@ -647,8 +662,6 @@ class SimulationsMain(TimeEventsMain):
             if isinstance(self.open_file_thread_object.file_name, str):
                 self.ui.file_information_label.setText(self.open_file_thread_object.file_name)
 
-        self.reset_console()
-
         self.ui.units_label.setText("")
 
     @staticmethod
@@ -753,7 +766,7 @@ class SimulationsMain(TimeEventsMain):
         d = dict()
         lst = [SimulationTypes.DesignView.value]
         for driver in available_results:
-            name = driver.tpe.value
+            name: str = str(driver.tpe.value)
             lst.append(name)
             d[name] = driver.results.get_name_tree()
             self.available_results_dict[name] = driver.results.get_name_to_results_type_dict()
@@ -878,22 +891,21 @@ class SimulationsMain(TimeEventsMain):
             time_step=self.ui.h_spinBox.value(),
             simulation_time=self.ui.sim_time_spinBox.value(),
             tolerance=self.ui.tolerance_rms_spinBox.value(),
-            integration_method=self.ui.rms_int_method_comboBox.currentText(),
+            integration_method=self.rms_integration_method_dict[self.ui.rms_integration_method_comboBox.currentText()],
+            initialization_method=self.rms_initialization_method_dict[self.ui.rms_initialization_method_comboBox.currentText()],
             use_init_values=self.ui.rms_use_init_values_checkBox.isChecked()
         )
 
         return ops
 
-    def get_selected_small_signal_stability_options(self) -> sim.SmallSignalStabilityOptions:
+    def get_selected_small_signal_stability_options(self) -> sim.SmallSignalStabilityRmsOptions:
         """
         Gather SmallSignal simulation run options
         :return: sim.SmallSignalOptions
         """
-        ops = sim.SmallSignalStabilityOptions(
-            time_step=self.ui.h_spinBox.value(),
+        ops = sim.SmallSignalStabilityRmsOptions(
+            k=None,
             ss_assessment_time=self.ui.ss_assessment_time_spinBox_2.value(),
-            tolerance=self.ui.tolerance_rms_spinBox.value(),
-            integration_method=self.ui.rms_int_method_comboBox.currentText()
         )
 
         return ops
@@ -1713,14 +1725,14 @@ class SimulationsMain(TimeEventsMain):
                 if not info.valid:
                     return
 
-                idx_from = info.idx_bus_from
-                idx_to = info.idx_bus_to
-                idx_br = info.idx_branches
-                sense_br = info.sense_branches
+                idx_from: IntVec = info.idx_bus_from
+                idx_to: IntVec = info.idx_bus_to
+                idx_br: IntVec = info.idx_branches
+                sense_br: Vec = info.sense_branches
 
                 # HVDC
-                idx_hvdc_br = info.idx_hvdc
-                sense_hvdc_br = info.sense_hvdc
+                idx_hvdc_br: IntVec = info.idx_hvdc
+                sense_hvdc_br: Vec = info.sense_hvdc
 
                 if self.ui.usePfValuesForAtcCheckBox.isChecked():
                     _, pf_results = self.session.power_flow
@@ -2311,7 +2323,7 @@ class SimulationsMain(TimeEventsMain):
         if dispatch_mode == OpfDispatchMode.InterAreaRedispatch:
 
             # available transfer capacity inter areas
-            inter_aggregation_info: dev.InterAggregationInfo = self.get_compatible_from_to_buses_and_inter_branches()
+            inter_aggregation_info: dev.InterAggregationInfo | None = self.get_compatible_from_to_buses_and_inter_branches()
 
             if len(inter_aggregation_info.lst_from) == 0:
                 self.show_error_toast('The area "from" has no buses!', 5000)
@@ -3264,29 +3276,25 @@ class SimulationsMain(TimeEventsMain):
 
             if not self.session.is_this_running(SimulationTypes.RmsDynamic_run):
 
+                self.remove_simulation(SimulationTypes.RmsDynamic_run)
+
                 _, pf_results = self.session.power_flow
 
                 if pf_results is not None:
 
-                    self.add_simulation(SimulationTypes.RmsDynamic_run)
-
+                    # self.add_simulation(SimulationTypes.RmsDynamic_run)
+                    self.ui.progress_label.setText('Running rms simulation...')
+                    QtGui.QGuiApplication.processEvents()
                     self.LOCK()
 
-                    # Compile the grid
-                    self.ui.progress_label.setText('Compiling the grid...')
-                    QtGui.QGuiApplication.processEvents()
-
-                    # get the rms simulation options from the GUI
-                    options = self.get_selected_rms_simulation_options()
-
-                    self.ui.progress_label.setText('Running rms simulation...')
-
-                    drv = sim.RmsSimulationDriver(grid=self.circuit, options=options, pf_results=pf_results)
+                    drv = sim.RmsSimulationDriver(grid=self.circuit, options=self.get_selected_rms_simulation_options(), pf_results=pf_results)
 
                     self.session.run(drv,
                                      post_func=self.post_rms,
                                      prog_func=self.ui.progressBar.setValue,
                                      text_func=self.ui.progress_label.setText)
+
+
 
 
                 else:
@@ -3311,10 +3319,21 @@ class SimulationsMain(TimeEventsMain):
             self.remove_simulation(SimulationTypes.RmsDynamic_run)
             self.update_available_results()
 
-            # if results.converged:
-            #     self.show_info_toast("Power flow converged :)")
-            # else:
-            #     self.show_warning_toast("Power flow not converged :/")
+            if len(results.empty_rms_models) != 0:
+                self.show_info_toast(
+                    f"Missing RMS models in the following grid elements: "
+                    f"{', '.join(results.empty_rms_models)}"
+                )
+            else:
+                if results.well_initialized:
+                    self.show_info_toast("System well initialized:)")
+                else:
+                    self.show_warning_toast("System bad initialized :/")
+
+                if results.converged:
+                    self.show_info_toast("Simulation converged :)")
+                else:
+                    self.show_warning_toast("Simulation did not converge :/")
 
         else:
             warning_msg('There are no rms simulation results.', 'Rms simulation')
@@ -3399,10 +3418,14 @@ class SimulationsMain(TimeEventsMain):
 
                     # get the small signal stability analysis simulation options from the GUI
                     options = self.get_selected_small_signal_stability_options()
+                    rms_options = self.get_selected_rms_simulation_options()
 
                     self.ui.progress_label.setText('Performing Small Signal Stability analysis...')
 
-                    drv = sim.SmallSignalStabilityDriver(grid=self.circuit, options=options, pf_results=pf_results)
+                    drv = sim.SmallSignalStabilityRmsDriver(grid=self.circuit,
+                                                            rms_options=rms_options,
+                                                            sss_options=options,
+                                                            pf_results=pf_results)
 
                     self.session.run(drv,
                                      post_func=self.post_small_signal_stability,
@@ -3447,3 +3470,12 @@ class SimulationsMain(TimeEventsMain):
         current_mip_framework = self.opf_mip_framework_dict[self.ui.mip_framework_comboBox.currentText()]
         mip_solvers = get_available_mip_solvers(tpe=current_mip_framework)
         self.ui.mip_solver_comboBox.setModel(gf.get_list_model(mip_solvers))
+
+    def procedural_grid_expansion(self):
+        """
+
+        :return:
+        """
+        self.procedural_grid_window = ProceduralGridWindow(app=self)
+        self.procedural_grid_window.exec()
+

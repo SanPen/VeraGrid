@@ -4,12 +4,17 @@
 # SPDX-License-Identifier: MPL-2.0
 
 
-from typing import Union
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType
+from typing import Union, Tuple
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType, GCProp
 
 
 class Owner(EditableDevice):
     __slots__ = ('address', 'color')
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='address', units='', tpe=str, definition='Owner address'),
+        GCProp(key='color', units='', tpe=str, definition='Color to paint', is_color=True),
+    )
 
     def __init__(self, name: str = '',
                  code: str = '',
@@ -32,5 +37,3 @@ class Owner(EditableDevice):
 
         self.color = color if color is not None else self.rnd_color()
 
-        self.register(key='address', units='', tpe=str, definition='Owner address')
-        self.register(key='color', units='', tpe=str, definition='Color to paint', is_color=True)

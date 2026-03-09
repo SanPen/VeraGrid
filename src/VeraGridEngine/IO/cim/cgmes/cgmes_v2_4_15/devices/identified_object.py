@@ -6,9 +6,22 @@
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.base import Base
 from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
-
+from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
 class IdentifiedObject(Base):
+	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
+		CgmesProperty(property_name='description', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The description is a free human readable text describing or naming the object. It may be non unique and may not correlate to a naming hierarchy.''', profiles=[]),
+		CgmesProperty(property_name='energyIdentCodeEic', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The attribute is used for an exchange of the EIC code (Energy identification Code). The length of the string is 16 characters as defined by the EIC code.
+References: 
+<ul>
+	<li>Local issuing offices for EIC: <a href="https://www.entsoe.eu/publications/edi-library/links-to-eic-websites/"><font color="#0000ff"><u>https://www.entsoe.eu/publications/edi-library/links-to-eic-websites/</u></font></a> </li>
+	<li>EIC description: <a href="https://www.entsoe.eu/index.php?id=73&amp;libCat=eic"><font color="#0000ff"><u>https://www.entsoe.eu/index.php?id=73&amp;libCat=eic</u></font></a> .</li>
+</ul>''', profiles=[]),
+		CgmesProperty(property_name='mRID', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Master resource identifier issued by a model authority. The mRID is globally unique within an exchange context. Global uniqueness is easily achieved by using a UUID,  as specified in RFC 4122, for the mRID.  The use of UUID is strongly recommended.
+For CIMXML data files in RDF syntax conforming to IEC 61970-552 Edition 1, the mRID is mapped to rdf:ID or rdf:about attributes that identify CIM object elements.''', profiles=[]),
+		CgmesProperty(property_name='name', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The name is any free human readable and possibly non unique text naming the object.''', profiles=[]),
+		CgmesProperty(property_name='shortName', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The attribute is used for an exchange of a human readable short name with length of the string 12 characters maximum.''', profiles=[]),
+	)
 	def __init__(self, rdfid, tpe, resources=list(), class_replacements=dict()):
 		Base.__init__(self, rdfid=rdfid, tpe=tpe, resources=resources, class_replacements=class_replacements)
 
@@ -17,50 +30,3 @@ class IdentifiedObject(Base):
 		self.mRID: str = rdfid
 		self.name: str = None
 		self.shortName: str = None
-
-		self.register_property(
-			name='description',
-			class_type=str,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''The description is a free human readable text describing or naming the object. It may be non unique and may not correlate to a naming hierarchy.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='energyIdentCodeEic',
-			class_type=str,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''The attribute is used for an exchange of the EIC code (Energy identification Code). The length of the string is 16 characters as defined by the EIC code.
-References: 
-<ul>
-	<li>Local issuing offices for EIC: <a href="https://www.entsoe.eu/publications/edi-library/links-to-eic-websites/"><font color="#0000ff"><u>https://www.entsoe.eu/publications/edi-library/links-to-eic-websites/</u></font></a> </li>
-	<li>EIC description: <a href="https://www.entsoe.eu/index.php?id=73&amp;libCat=eic"><font color="#0000ff"><u>https://www.entsoe.eu/index.php?id=73&amp;libCat=eic</u></font></a> .</li>
-</ul>''',
-			profiles=[]
-		)
-		self.register_property(
-			name='mRID',
-			class_type=str,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''Master resource identifier issued by a model authority. The mRID is globally unique within an exchange context. Global uniqueness is easily achieved by using a UUID,  as specified in RFC 4122, for the mRID.  The use of UUID is strongly recommended.
-For CIMXML data files in RDF syntax conforming to IEC 61970-552 Edition 1, the mRID is mapped to rdf:ID or rdf:about attributes that identify CIM object elements.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='name',
-			class_type=str,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''The name is any free human readable and possibly non unique text naming the object.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='shortName',
-			class_type=str,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''The attribute is used for an exchange of a human readable short name with length of the string 12 characters maximum.''',
-			profiles=[]
-		)

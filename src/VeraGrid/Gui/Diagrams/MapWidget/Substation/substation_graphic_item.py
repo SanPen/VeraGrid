@@ -9,11 +9,13 @@ from PySide6 import QtWidgets
 from PySide6.QtWidgets import QMenu, QGraphicsSceneContextMenuEvent, QGraphicsSceneMouseEvent, QGraphicsRectItem
 from PySide6.QtCore import Qt, QPointF
 from PySide6.QtGui import QBrush, QColor
-from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_static_generator_graphics import (StaticGenerator)
-from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_external_grid_graphics import (ExternalGrid)
-from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_battery_graphics import Battery
-from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics import Generator
-from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_load_graphics import Load
+from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_static_generator_graphics import (MapStaticGeneratorGraphicItem,
+                                                                                      StaticGenerator)
+from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_external_grid_graphics import (MapExternalGridGraphicItem,
+                                                                                   ExternalGrid)
+from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_battery_graphics import MapBatteryGraphicItem, Battery
+from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics import MapGeneratorGraphicItem, Generator
+from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_load_graphics import MapLoadGraphicItem, Load
 from VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container import MapLineContainer
 from VeraGrid.Gui.Diagrams.MapWidget.Substation.node_template import NodeTemplate
 from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget
@@ -276,24 +278,12 @@ class SubstationGraphicItem(NodeTemplate, QGraphicsRectItem):
         for i, vl_graphics in enumerate(sorted_objects):
             vl_graphics.setZValue(i)
 
-    def get_xc(self) -> float:
-        return self.rect().x() + self.size/2
-
-    def get_yc(self) -> float:
-        return self.rect().y() + self.size/2
-
     def update_position_at_the_diagram(self) -> None:
         """
         Updates the element position in the diagram (to save)
         :return: 
         """
-        lat, long = self.editor.to_lat_lon(self.get_xc(), self.get_yc())
-
-        # if abs(self.lat - lat) > 1e-8:
-        #     print(f"LAT MOVED: {self.lat}, new: {lat}")
-        #
-        # if abs(self.lon - long) > 1e-8:
-        #     print(f"LON MOVED: {self.lon}, new: {long}")
+        lat, long = self.editor.to_lat_lon(self.rect().x(), self.rect().y())
 
         self.lat = lat
         self.lon = long
@@ -707,7 +697,7 @@ class SubstationGraphicItem(NodeTemplate, QGraphicsRectItem):
                 dlg.setModal(True)
                 dlg.exec()
 
-                if dlg.is_accepted:
+                if dlg.accepted:
 
                     if 1 in dlg.selected_indices:
                         recipient_buses = {}

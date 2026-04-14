@@ -4,19 +4,12 @@
 # SPDX-License-Identifier: MPL-2.0
 
 
-from typing import Tuple
-
 from VeraGridEngine.enumerations import BuildStatus, DeviceType
 from VeraGridEngine.Devices.Parents.load_parent import LoadParent
-from VeraGridEngine.Devices.Parents.editable_device import GCProp
 
 
 class StaticGenerator(LoadParent):
     __slots__ = ("_Snom")
-
-    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='Snom', units='MVA', tpe=float, definition='Nominal power.'),
-    )
 
     def __init__(self, name='StaticGen', idtag=None, code='', P=0.0, Q=0.0, active=True,
                  P1=0.0, P2=0.0, P3=0.0, Q1=0.0, Q2=0.0, Q3=0.0,
@@ -69,6 +62,7 @@ class StaticGenerator(LoadParent):
         # Nominal power in MVA (also the machine base)
         self._Snom = float(Snom)
 
+        self.register(key='Snom', units='MVA', tpe=float, definition='Nominal power.')
 
     @property
     def Snom(self):

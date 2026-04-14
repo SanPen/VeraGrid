@@ -25,9 +25,6 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.dc_shunt import DCShunt
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.dc_switch import DCSwitch
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.dc_terminal import DCTerminal
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.full_model import FullModel
-from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.cgm_region import CGMRegion
-from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.merging_agent import MergingAgent
-from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.modelling_authority import ModellingAuthority
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.per_lengthdc_line_parameter import PerLengthDCLineParameter
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.vs_capability_curve import VsCapabilityCurve
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.vs_converter import VsConverter
@@ -181,9 +178,6 @@ CGMES_2_4_15_ASSETS = (
         DCShunt |
         DCSwitch |
         DCTerminal |
-        CGMRegion |
-        MergingAgent |
-        ModellingAuthority |
         FullModel |
         PerLengthDCLineParameter |
         VsCapabilityCurve |
@@ -339,10 +333,6 @@ class Cgmes_2_4_15_Assets:
             'DCShunt': DCShunt,
             'DCSwitch': DCSwitch,
             'DCTerminal': DCTerminal,
-            'CGMRegion': CGMRegion,
-            'MergingAgent': MergingAgent,
-            'ModellingAuthority': ModellingAuthority,
-            'ModelingAuthority': ModellingAuthority,
             'PerLengthDCLineParameter': PerLengthDCLineParameter,
             'VsCapabilityCurve': VsCapabilityCurve,
             'VsConverter': VsConverter,
@@ -677,10 +667,6 @@ class Cgmes_2_4_15_Assets:
         self.DCShunt_list: List[DCShunt] = list()
         self.DCSwitch_list: List[DCSwitch] = list()
         self.DCTerminal_list: List[DCTerminal] = list()
-        self.CGMRegion_list: List[CGMRegion] = list()
-        self.MergingAgent_list: List[MergingAgent] = list()
-        self.ModellingAuthority_list: List[ModellingAuthority] = list()
-        self.ModelingAuthority_list: List[ModellingAuthority] = list()
         self.PerLengthDCLineParameter_list: List[PerLengthDCLineParameter] = list()
         self.VsCapabilityCurve_list: List[VsCapabilityCurve] = list()
         self.VsConverter_list: List[VsConverter] = list()

@@ -3,8 +3,8 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Union, Tuple
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType, GCProp
+from typing import Union
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType
 
 
 class ContingencyGroup(EditableDevice):
@@ -12,11 +12,6 @@ class ContingencyGroup(EditableDevice):
     The Contingency group
     """
     __slots__ = ('category', 'active')
-
-    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='category', units='', tpe=str, definition='Some tag to category the contingency group'),
-        GCProp(key='active', units='', tpe=bool, definition='Is the contingency group active for consideration?'),
-    )
 
     def __init__(self, idtag: Union[str, None] = None, name="ContingencyGroup", category='', active: bool = True):
         """
@@ -38,3 +33,5 @@ class ContingencyGroup(EditableDevice):
 
         self.active = bool(active)
 
+        self.register(key='category', units='', tpe=str, definition='Some tag to category the contingency group')
+        self.register(key='active', units='', tpe=bool, definition='Is the contingency group active for consideration?')

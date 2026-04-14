@@ -372,6 +372,7 @@ def parse_branches_data(circuit: MultiCircuit,
             else:
                 tap_module_control_mode = TapModuleControl.fixed
 
+
             if matpower_converter_mode > 0:  # it is a converter
 
                 """
@@ -485,8 +486,8 @@ def parse_branches_data(circuit: MultiCircuit,
                                  monitor_loading=monitor_loading,
                                  control1=control1,
                                  control2=control2,
-                                 control1_val=control1val,
-                                 control2_val=control2val)
+                                    control1_val=control1val,
+                                    control2_val=control2val)
 
                 branch.regulation_bus = control_bus
 
@@ -632,15 +633,16 @@ def parse_branches_data(circuit: MultiCircuit,
             logger.add_info('Converted to DC line', line.name)
 
 
-def interpret_data_v1(data, logger: Logger) -> MultiCircuit:
+def interpret_data_v1(circuit: MultiCircuit, data, logger: Logger) -> MultiCircuit:
     """
     Pass the loaded table-like data to the  structures
+    :param circuit:
     :param data: Data dictionary
     :param logger: Logger
     :return:
     """
 
-    circuit = MultiCircuit()
+    circuit.clear()
 
     # time profile
     if 'master_time' in data.keys():

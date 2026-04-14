@@ -34,20 +34,6 @@ from VeraGridEngine.IO.raw.devices.system_switching_device import RawSystemSwitc
 from VeraGridEngine.IO.raw.devices.multi_section_line import RawMultiLineSection
 from VeraGridEngine.IO.raw.devices.psse_circuit import PsseCircuit
 
-SYSTEM_WIDE_SECTION_KEYS: set[str] = {
-    "GENERAL",
-    "GAUSS",
-    "NEWTON",
-    "ADJUST",
-    "TYSL",
-    "SOLVER",
-    "RATING",
-}
-
-KNOWN_CONTINUATION_HEADER_KEYS: set[str] = {
-    "VSREG",
-}
-
 
 def delete_comment(raw_line):
     """
@@ -169,16 +155,6 @@ def read_and_split(file_name: str, text_func=None, progress_func=None) -> (List[
                 elif i == 2:
                     sections_dict['comment2'] = [lne]
                 else:
-                    record_key: str = lne.split(",", 1)[0].strip().upper()
-
-                    if record_key in SYSTEM_WIDE_SECTION_KEYS:
-                        block_category = "system-wide"
-                        if block_category not in sections_dict:
-                            sections_dict[block_category] = list()
-
-                    if record_key in KNOWN_CONTINUATION_HEADER_KEYS:
-                        i += 1
-                        continue
 
                     if lne.startswith("0 /"):
                         # this is a category splitter
@@ -448,7 +424,7 @@ def read_raw(filename, text_func=None, progress_func=None, logger=Logger()) -> P
                 pass
 
         else:
-            if len(lines) > 0 and key not in ['info', 'comment', 'comment2', 'system-wide']:
+            if len(lines) > 0 and key not in ['info', 'comment', 'comment2']:
                 # add logs for the non parsed objects
                 logger.add_warning('Not implemented in the parser', key)
 

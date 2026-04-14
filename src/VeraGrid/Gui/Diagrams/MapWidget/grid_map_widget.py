@@ -10,7 +10,6 @@ from typing import Union, List, Tuple, Dict, TYPE_CHECKING
 import json
 import numpy as np
 import math
-from warnings import warn
 import pandas as pd
 from matplotlib import pyplot as plt
 
@@ -20,7 +19,6 @@ from PySide6.QtCore import (Qt, QMimeData, QIODevice, QByteArray, QDataStream, Q
 from PySide6.QtGui import (QIcon, QPixmap, QImage, QStandardItemModel, QStandardItem, QColor, QDropEvent)
 
 from VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container import MapLineContainer
-from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics import MapInjectionTemplateGraphicItem
 from VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics import BusGraphicItem
 from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget
 from VeraGrid.Gui.SubstationDesigner.substation_designer import SubstationDesigner
@@ -65,8 +63,6 @@ from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_external_grid_graphics impor
 from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_static_generator_graphics import MapStaticGeneratorGraphicItem
 from VeraGrid.Gui.Diagrams.MapWidget.map_widget import MapWidget, MapDiagramScene
 from VeraGrid.Gui.Diagrams.Editors.new_line_dialogue import NewMapLineDialogue
-from VeraGrid.Gui.Diagrams.Editors.bus_selector import BusSelectorDialogue
-
 import VeraGrid.Gui.Visualization.visualization as viz
 from VeraGrid.Gui.Diagrams.graphics_manager import ALL_MAP_GRAPHICS
 from VeraGrid.Gui.Diagrams.MapWidget.Tiles.tiles import Tiles
@@ -84,7 +80,7 @@ MAP_BRANCH_GRAPHIC_TYPES = Union[
 
 def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     """
-    Distance between two lat,lon points
+
     :param lat1:
     :param lon1:
     :param lat2:
@@ -996,13 +992,9 @@ class GridMapWidget(BaseDiagramWidget):
                         # get the substation graphic object
                         substation_graphics = self.graphics_manager.query(elm=objectSubs)
 
-                        if substation_graphics is not None:
-                            # draw the voltage level
-                            self.add_api_voltage_level(substation_graphics=substation_graphics,
-                                                       api_object=location.api_object)
-                        else:
-                            warn(f'No substation graphic found for Voltage level: '
-                                 f'{location.api_object.name} :: {location.api_object.idtag}')
+                        # draw the voltage level
+                        self.add_api_voltage_level(substation_graphics=substation_graphics,
+                                                   api_object=location.api_object)
 
             elif category == DeviceType.LineDevice.value:
                 for idtag, location in points_group.locations.items():
@@ -1648,13 +1640,6 @@ class GridMapWidget(BaseDiagramWidget):
             gelm.api_object.lat = gelm.lat
             gelm.api_object.long = gelm.lon
 
-        for inj_type in self.circuit.get_injections_device_types():
-            graphics_injections: List[MapInjectionTemplateGraphicItem] = self.graphics_manager.get_device_type_list(
-                device_type=inj_type)
-            for gelm in graphics_injections:
-                gelm.api_object.latitude = gelm.lat
-                gelm.api_object.longitude = gelm.lon
-
         ok = yes_no_question(title='Update lengths?',
                              text='Do you want to update lengths of lines? \n'
                                   'IMPORTANT: This will take into account every movement of substation and line '
@@ -1961,34 +1946,6 @@ class GridMapWidget(BaseDiagramWidget):
                     'The waypoint selected is not included in the selected line\'s waypoint. Operation not performed.')
                 return
 
-    def change_generator_bus_connection(self):
-
-        selected_generators = self.get_selected_generators_tup()
-        selected_substations = self.get_selected_substations_tup()
-
-        if len(selected_substations) > 1:
-            self.gui.show_error_toast('More than one substation has been selected to reconnect generators. '
-                                      'Please, select only one.')
-            return
-        ss = selected_substations[0][0]
-
-        dialog = BusSelectorDialogue(grid=self.circuit, se=ss)
-        dialog.exec()
-        if dialog.is_valid():
-            bus = dialog.bus()
-            if bus is not None:
-                for gen in selected_generators:
-                    gen[0].bus = bus
-            else:
-                self.gui.show_error_toast('The selected bus appears as None. Check selection.')
-                return
-
-            self.gui.show_info_toast(f'Selected generators changed to bus {bus.name}.')
-            return
-
-        else:
-            self.gui.show_error_toast('Dialogue selection failed.')
-
     def merge_selected_lines(self):
 
         selected_lines = self.get_selected_line_segments_tup()
@@ -2140,10 +2097,6 @@ class GridMapWidget(BaseDiagramWidget):
             merging_substation.remove_function_from_schematic_and_db()
 
     def consolidate_object_coordinates(self):
-        """
-
-        :return:
-        """
         selected_lines = self.get_selected_line_segments_tup()
         selected_substations = self.get_selected_substations_tup()
         selected_generators = self.get_selected_generators_tup()
@@ -2737,18 +2690,15 @@ class GridMapWidget(BaseDiagramWidget):
                      rate=line_api.rate,
                      contingency_factor=line_api.contingency_factor,
                      protection_rating_factor=line_api.protection_rating_factor,
-                     circuit_idx=line_api.circuit_idx,
-                     active=line_api.active)
-        line1.color = line_api.color
+                     circuit_idx=line_api.circuit_idx)
 
-        # SPV: Never use hasattr, we work very hard for type consistency
-        # # Copy other properties from the original line
-        # if hasattr(line_api, 'color'):
-        #     line1.color = line_api.color
-        # if hasattr(line_api, 'tags') and line_api.tags:
-        #     line1.tags = line_api.tags.copy() if isinstance(line_api.tags, list) else line_api.tags
-        # if hasattr(line_api, 'active'):
-        #     line1.active = line_api.active
+        # Copy other properties from the original line
+        if hasattr(line_api, 'color'):
+            line1.color = line_api.color
+        if hasattr(line_api, 'tags') and line_api.tags:
+            line1.tags = line_api.tags.copy() if isinstance(line_api.tags, list) else line_api.tags
+        if hasattr(line_api, 'active'):
+            line1.active = line_api.active
 
         # Preserve waypoints for line 1 (from start to waypoint)
         # Add all waypoints from the original line up to the waypoint
@@ -2794,23 +2744,19 @@ class GridMapWidget(BaseDiagramWidget):
                      rate=line_api.rate,
                      contingency_factor=line_api.contingency_factor,
                      protection_rating_factor=line_api.protection_rating_factor,
-                     circuit_idx=line_api.circuit_idx,
-                     active=line_api.active)
+                     circuit_idx=line_api.circuit_idx)
 
         if line_api.template is not None:
             line1.apply_template(line_api.template, Sbase=self.circuit.Sbase, freq=self.circuit.fBase)
             line2.apply_template(line_api.template, Sbase=self.circuit.Sbase, freq=self.circuit.fBase)
 
-        line2.color = line_api.color
-
-        # SPV: never use hasattr, we work very hard for type consistency
         # Copy other properties from the original line
-        # if hasattr(line_api, 'color'):
-        #     line2.color = line_api.color
-        # if hasattr(line_api, 'tags') and line_api.tags:
-        #     line2.tags = line_api.tags.copy() if isinstance(line_api.tags, list) else line_api.tags
-        # if hasattr(line_api, 'active'):
-        #     line2.active = line_api.active
+        if hasattr(line_api, 'color'):
+            line2.color = line_api.color
+        if hasattr(line_api, 'tags') and line_api.tags:
+            line2.tags = line_api.tags.copy() if isinstance(line_api.tags, list) else line_api.tags
+        if hasattr(line_api, 'active'):
+            line2.active = line_api.active
 
         # Preserve waypoints for line 2 (from waypoint to end)
         # Add all remaining waypoints from the original line after the waypoint
@@ -2841,22 +2787,18 @@ class GridMapWidget(BaseDiagramWidget):
                                rate=line_api.rate,
                                contingency_factor=line_api.contingency_factor,
                                protection_rating_factor=line_api.protection_rating_factor,
-                               circuit_idx=line_api.circuit_idx,
-                               active = line_api.active)
+                               circuit_idx=line_api.circuit_idx)
 
         if line_api.template is not None:
             connection_line.apply_template(line_api.template, Sbase=self.circuit.Sbase, freq=self.circuit.fBase)
 
-        connection_line.color = line_api.color
-
-        # SPV: never use hasattr, we work very hard for type consistency
-        # # Copy other properties from the original line
-        # if hasattr(line_api, 'color'):
-        #     connection_line.color = line_api.color
-        # if hasattr(line_api, 'tags') and line_api.tags:
-        #     connection_line.tags = line_api.tags.copy() if isinstance(line_api.tags, list) else line_api.tags
-        # if hasattr(line_api, 'active'):
-        #     connection_line.active = line_api.active
+        # Copy other properties from the original line
+        if hasattr(line_api, 'color'):
+            connection_line.color = line_api.color
+        if hasattr(line_api, 'tags') and line_api.tags:
+            connection_line.tags = line_api.tags.copy() if isinstance(line_api.tags, list) else line_api.tags
+        if hasattr(line_api, 'active'):
+            connection_line.active = line_api.active
 
         # No waypoints needed for the connection line - it will go directly from one substation to the other
 
@@ -3186,30 +3128,3 @@ def generate_map_diagram(
 
     return diagram
 
-
-def generate_map_diagram2(circuit: MultiCircuit):
-    return generate_map_diagram(
-        substations=circuit.get_substations(),
-        voltage_levels=circuit.get_voltage_levels(),
-        lines=circuit.get_lines(),
-        dc_lines=circuit.get_dc_lines(),
-        hvdc_lines=circuit.get_hvdc(),
-        fluid_nodes=circuit.get_fluid_nodes(),
-        fluid_paths=circuit.get_fluid_paths(),
-        external_grids=circuit.external_grids,
-        static_generators=circuit.static_generators,
-        loads=circuit.loads,
-        batteries=circuit.batteries ,
-        generators=circuit.generators,
-        prog_func=None,
-        text_func=None,
-        name='Map diagram',
-        use_flow_based_width=False,
-        min_branch_width=0.01,
-        max_branch_width=0.02,
-        min_bus_width=0.1,
-        max_bus_width=0.2,
-        arrow_size=0.015,
-        palette=Colormaps.VeraGrid,
-        default_bus_voltage=20
-    )

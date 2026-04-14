@@ -4,14 +4,14 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import Union, Tuple
+from typing import Union
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from VeraGridEngine.enumerations import DeviceType, BuildStatus, ExternalGridMode
 from VeraGridEngine.Devices.Parents.load_parent import LoadParent
 from VeraGridEngine.Devices.profile import Profile
-from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
+from VeraGridEngine.Devices.Parents.editable_device import get_at
 
 
 class ExternalGrid(LoadParent):
@@ -22,15 +22,6 @@ class ExternalGrid(LoadParent):
         'Va',
         '_Vm_prof',
         '_Va_prof',
-    )
-
-    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='mode', units='', tpe=ExternalGridMode,
-                      definition='Operation mode of the external grid (voltage or load)'),
-        GCProp(key='substituted_device_id', units='', tpe=str,
-                      definition='idtag of the device that was substituted by this external grid equivalent'),
-        GCProp(key='Vm', units='p.u.', tpe=float, definition='Active power', profile_name='Vm_prof'),
-        GCProp(key='Va', units='radians', tpe=float, definition='Reactive power', profile_name='Va_prof'),
     )
 
     def __init__(self, name='External grid', idtag=None, code='', active=True, substituted_device_id: str = '',
@@ -90,6 +81,12 @@ class ExternalGrid(LoadParent):
         self._Vm_prof = Profile(default_value=self.Vm, data_type=float)
         self._Va_prof = Profile(default_value=self.Va, data_type=float)
 
+        self.register(key='mode', units='', tpe=ExternalGridMode,
+                      definition='Operation mode of the external grid (voltage or load)')
+        self.register(key='substituted_device_id', units='', tpe=str,
+                      definition='idtag of the device that was substituted by this external grid equivalent')
+        self.register(key='Vm', units='p.u.', tpe=float, definition='Active power', profile_name='Vm_prof')
+        self.register(key='Va', units='radians', tpe=float, definition='Reactive power', profile_name='Va_prof')
 
     @property
     def Vm_prof(self) -> Profile:

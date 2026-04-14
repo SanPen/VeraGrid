@@ -12,7 +12,7 @@ branches = main_circuit.get_branches()
 # manually generate the contingencies
 for i, br in enumerate(branches):
     # add a contingency group
-    group = ContingencyGroup(name="contingency {}".format(i+1))
+    group = ContingencyGroup(name="contingency {}".format(i + 1))
     main_circuit.add_contingency_group(group)
 
     # add the branch contingency to the groups, only groups are failed at once
@@ -28,15 +28,16 @@ main_circuit.add_contingency(Contingency(device=branches[5], name=branches[5].na
 pf_options = PowerFlowOptions(solver_type=SolverType.NR)
 
 # declare the contingency options
-options_ = ContingencyAnalysisOptions(use_provided_flows=False,
-                                      Pf=None,
-                                      contingency_method=en.ContingencyMethod.PowerFlow,
-                                      pf_options=pf_options)
+options_ = ContingencyAnalysisOptions(
+    contingency_method=en.ContingencyMethod.PowerFlow,
+    pf_options=pf_options
+)
 
-simulation = ContingencyAnalysisDriver(grid=main_circuit,
-                                       options=options_,
-                                       linear_multiple_contingencies=None  # it is computed inside
-                                       )
+simulation = ContingencyAnalysisDriver(
+    grid=main_circuit,
+    options=options_,
+    linear_multiple_contingencies=None  # it is computed inside
+)
 
 simulation.run()
 

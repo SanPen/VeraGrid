@@ -3,18 +3,12 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
-from __future__ import annotations
-from typing import TYPE_CHECKING, List, Tuple
+
 import datetime
 from typing import Union
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
 from VeraGridEngine.Devices.Aggregation.modelling_authority import ModellingAuthority
-from VeraGridEngine.Devices.Associations.association import Associations
-from VeraGridEngine.enumerations import DeviceType, BuildStatus, SubObjectType
-
-if TYPE_CHECKING:
-    from VeraGridEngine.Devices.Associations.owner import Owner
-    from VeraGridEngine.Devices.types import ALL_DEV_TYPES
+from VeraGridEngine.enumerations import DeviceType, BuildStatus
 
 
 class PhysicalDevice(EditableDevice):
@@ -25,21 +19,7 @@ class PhysicalDevice(EditableDevice):
         "modelling_authority",
         "_commissioned_date",
         "_decommissioned_date",
-        'build_status',
-        'owners',
-    )
-
-    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='modelling_authority', units='', tpe=DeviceType.ModellingAuthority,
-                      definition='Modelling authority of this asset'),
-        GCProp(key='commissioned_date', units='', tpe=int, definition='Commissioned date of the asset',
-                      is_date=True),
-        GCProp(key='decommissioned_date', units='', tpe=int, definition='Decommissioned date of the asset',
-                      is_date=True),
-        GCProp('build_status', units="", tpe=BuildStatus,
-                      definition="Device build status. Used in expansion planning."),
-        GCProp(key='owners', units='p.u.', tpe=SubObjectType.Associations,
-                      definition='Owners associations to injections', display=False),
+        'build_status'
     )
 
     def __init__(self,
@@ -70,10 +50,15 @@ class PhysicalDevice(EditableDevice):
 
         self.build_status = build_status
 
-        self.owners: Associations = Associations(device_type=DeviceType.Owner)
+        self.register(key='modelling_authority', units='', tpe=DeviceType.ModellingAuthority,
+                      definition='Modelling authority of this asset')
+        self.register(key='commissioned_date', units='', tpe=int, definition='Commissioned date of the asset',
+                      is_date=True)
+        self.register(key='decommissioned_date', units='', tpe=int, definition='Decommissioned date of the asset',
+                      is_date=True)
 
-
-
+        self.register('build_status', units="", tpe=BuildStatus,
+                      definition="Device build status. Used in expansion planning.")
 
     @property
     def commissioned_date(self) -> int:
@@ -137,20 +122,5 @@ class PhysicalDevice(EditableDevice):
         """
         return datetime.datetime.fromtimestamp(self._decommissioned_date)
 
-    def associate_owner(self, owner: Owner, val=1.0):
-        """
-        Associate a technology with this injection device
-        :param owner:
-        :param val:
-        :return:
-        """
-        self.owners.add_object(owner, val=val)
-
-    @property
-    def owners_list(self) -> List[ALL_DEV_TYPES]:
-        """
-        Bus
-        :return: Bus
-        """
-        return self.owners.to_list()
-
+    def initialize_rms(self):
+        pass

@@ -3,7 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Union, Tuple
+from typing import Union
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
@@ -16,7 +16,7 @@ from VeraGridEngine.Devices.Branches.transformer import Transformer2W
 from VeraGridEngine.Devices.Branches.line import Line
 from VeraGridEngine.Devices.profile import Profile
 
-from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
+from VeraGridEngine.Devices.Parents.editable_device import DeviceType
 
 # Global sqrt of 3 (bad practice?)
 SQRT3 = np.sqrt(3.0)
@@ -61,27 +61,6 @@ class BranchType(Enum):
 
 
 class Branch(BranchParent):
-
-    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='R', units='p.u.', tpe=float, definition='Total positive sequence resistance.'),
-        GCProp(key='X', units='p.u.', tpe=float, definition='Total positive sequence reactance.'),
-        GCProp(key='B', units='p.u.', tpe=float, definition='Total positive sequence shunt susceptance.'),
-        GCProp(key='G', units='p.u.', tpe=float, definition='Total positive sequence shunt conductance.'),
-        GCProp(key='tolerance', units='%', tpe=float,
-                      definition='Tolerance expected for the impedance values % is expected for '
-                                 'transformers0% for lines.'),
-        GCProp(key='length', units='km', tpe=float, definition='Length of the line (not used for calculation)'),
-        GCProp(key='tap_module', units='', tpe=float, definition='Tap changer module, it a value close to 1.0'),
-        GCProp(key='angle', units='rad', tpe=float, definition='Angle shift of the tap changer.'),
-        # GCProp(key='template', units='', tpe=BranchType, definition='', editable=False),
-        GCProp(key='bus_to_regulated', units='', tpe=bool, definition='Is the regulation at the bus to?'),
-        GCProp(key='vset', units='p.u.', tpe=float, definition='set control voltage.'),
-        GCProp(key='r_fault', units='p.u.', tpe=float, definition='Fault resistance.'),
-        GCProp(key='x_fault', units='p.u.', tpe=float, definition='Fault reactance.'),
-        GCProp(key='fault_pos', units='p.u.', tpe=float,
-                      definition='proportion of the fault location measured from the "from" bus.'),
-        # GCProp(key='branch_type', units='p.u.', tpe=DeviceType, definition='Fault resistance.'),
-    )
 
     def __init__(self,
                  bus_from: Bus = None,
@@ -227,9 +206,27 @@ class Branch(BranchParent):
 
         self.inv_conv = {val: key for key, val in self.conv.items()}
 
+        self.register(key='R', units='p.u.', tpe=float, definition='Total positive sequence resistance.')
+        self.register(key='X', units='p.u.', tpe=float, definition='Total positive sequence reactance.')
+        self.register(key='B', units='p.u.', tpe=float, definition='Total positive sequence shunt susceptance.')
+        self.register(key='G', units='p.u.', tpe=float, definition='Total positive sequence shunt conductance.')
+        self.register(key='tolerance', units='%', tpe=float,
+                      definition='Tolerance expected for the impedance values % is expected for '
+                                 'transformers0% for lines.')
+        self.register(key='length', units='km', tpe=float, definition='Length of the line (not used for calculation)')
 
+        self.register(key='tap_module', units='', tpe=float, definition='Tap changer module, it a value close to 1.0')
+        self.register(key='angle', units='rad', tpe=float, definition='Angle shift of the tap changer.')
+        # self.register(key='template', units='', tpe=BranchType, definition='', editable=False)
 
+        self.register(key='bus_to_regulated', units='', tpe=bool, definition='Is the regulation at the bus to?')
+        self.register(key='vset', units='p.u.', tpe=float, definition='set control voltage.')
 
+        self.register(key='r_fault', units='p.u.', tpe=float, definition='Fault resistance.')
+        self.register(key='x_fault', units='p.u.', tpe=float, definition='Fault reactance.')
+        self.register(key='fault_pos', units='p.u.', tpe=float,
+                      definition='proportion of the fault location measured from the "from" bus.')
+        # self.register(key='branch_type', units='p.u.', tpe=DeviceType, definition='Fault resistance.')
 
     @property
     def rate_prof(self) -> Profile:

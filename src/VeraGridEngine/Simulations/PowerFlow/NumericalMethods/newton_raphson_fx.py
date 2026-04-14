@@ -37,8 +37,8 @@ def newton_raphson_fx(problem: PfFormulationTemplate,
     x = problem.var2x()
 
     if len(x) == 0:
-        # if the length of x is zero, means that there's nothing to solve;
-        # for instance, there might be a single node that is a slack node
+        # if the length of x is zero, means that there's nothing to solve
+        # for instance there might be a single node that is a slack node
         return problem.get_solution(elapsed=time.time() - start, iterations=0)
 
     # set the problem state
@@ -81,7 +81,7 @@ def newton_raphson_fx(problem: PfFormulationTemplate,
             if J.shape[0] != J.shape[1]:
                 logger.add_error("Jacobian not square, check the controls!", "Newton-Raphson",
                                  value=J.shape[0], expected_value=J.shape[1])
-                return problem.get_solution(elapsed=time.time() - start, iterations=iteration)
+                return problem.get_solution(elapsed=time.time() - start, iterations=iteration, )
 
             if J.shape[0] != len(f):
                 logger.add_error("Jacobian and residuals have different sizes!", "Newton-Raphson",

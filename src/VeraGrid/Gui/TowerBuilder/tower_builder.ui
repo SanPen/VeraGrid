@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>979</width>
-    <height>663</height>
+    <width>934</width>
+    <height>714</height>
    </rect>
   </property>
   <property name="font">
@@ -207,14 +207,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QTableView" name="wires_tableView">
-             <property name="selectionMode">
-              <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
-             </property>
-             <property name="selectionBehavior">
-              <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
-             </property>
-            </widget>
+            <widget class="QTableView" name="wires_tableView"/>
            </item>
           </layout>
          </widget>
@@ -275,7 +268,7 @@
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../Icons/icons.qrc">
+                 <iconset resource="icons.qrc">
                   <normaloff>:/Icons/icons/plus.png</normaloff>:/Icons/icons/plus.png</iconset>
                 </property>
                </widget>
@@ -289,7 +282,7 @@
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../Icons/icons.qrc">
+                 <iconset resource="icons.qrc">
                   <normaloff>:/Icons/icons/minus.png</normaloff>:/Icons/icons/minus.png</iconset>
                 </property>
                </widget>
@@ -457,8 +450,8 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../Icons/icons.qrc">
-              <normaloff>:/Icons/icons/calculator.png</normaloff>:/Icons/icons/calculator.png</iconset>
+             <iconset resource="icons.qrc">
+              <normaloff>:/Icons/icons/calc.png</normaloff>:/Icons/icons/calc.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -506,7 +499,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../Icons/icons.qrc"/>
+  <include location="icons.qrc"/>
  </resources>
  <connections/>
 </ui>

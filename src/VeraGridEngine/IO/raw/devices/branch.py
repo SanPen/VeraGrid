@@ -2,64 +2,12 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
-from typing import Tuple
-
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol, Unit
 from VeraGridEngine.IO.raw.devices.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.IO.raw.devices.psse_property import PsseProperty
 
 
 class RawBranch(RawObject):
-    LOCAL_PROPERTIES: Tuple[PsseProperty, ...] = (
-        PsseProperty(property_name='I', rawx_key='ibus', class_type=int, description='Branch from bus number',
-                     min_value=1, max_value=999997, max_chars=6),
-        PsseProperty(property_name='J', rawx_key='jbus', class_type=int, description='Branch to bus number',
-                     min_value=1, max_value=999997, max_chars=6),
-        PsseProperty(property_name='CKT', rawx_key='ckt', class_type=str, description='Owner number', max_chars=2),
-        PsseProperty(property_name='R', rawx_key='rpu', class_type=float, description='Branch resistance',
-                     unit=Unit.get_pu()),
-        PsseProperty(property_name='X', rawx_key='xpu', class_type=float, description='Branch reactance',
-                     unit=Unit.get_pu()),
-        PsseProperty(property_name='B', rawx_key='bpu', class_type=float, description='Branch shunt susceptance',
-                     unit=Unit.get_pu()),
-        PsseProperty(property_name='NAME', rawx_key='name', class_type=str, description='Branch name', max_chars=40),
-        PsseProperty(property_name='GI', rawx_key='gi', class_type=float,
-                     description='Branch shunt conductance at the from side', unit=Unit.get_pu()),
-        PsseProperty(property_name='BI', rawx_key='bi', class_type=float,
-                     description='Branch shunt susceptance at the from side', unit=Unit.get_pu()),
-        PsseProperty(property_name='GJ', rawx_key='gj', class_type=float,
-                     description='Branch shunt condictance at the to side', unit=Unit.get_pu()),
-        PsseProperty(property_name='BJ', rawx_key='bj', class_type=float,
-                     description='Branch shunt susceptance at the to side', unit=Unit.get_pu()),
-        PsseProperty(property_name='ST', rawx_key='stat', class_type=int, description='Branch status', min_value=0,
-                     max_value=1),
-        PsseProperty(property_name='MET', rawx_key='met', class_type=int,
-                     description='Metered end flag, <=1: Bus from, >=2: bus to', min_value=0, max_value=999),
-        PsseProperty(property_name='LEN', rawx_key='len', class_type=float, description='Line length',
-                     unit=Unit.get_km()),
-        PsseProperty(property_name='O{}'.format(0 + 1), rawx_key='o{}'.format(0 + 1), class_type=int,
-                     description='Owner number', min_value=1, max_value=9999, max_chars=4),
-        PsseProperty(property_name='F{}'.format(0 + 1), rawx_key='f{}'.format(0 + 1), class_type=float,
-                     description='Ownership fraction', min_value=0.0, max_value=1.0),
-        PsseProperty(property_name='O{}'.format(1 + 1), rawx_key='o{}'.format(1 + 1), class_type=int,
-                     description='Owner number', min_value=1, max_value=9999, max_chars=4),
-        PsseProperty(property_name='F{}'.format(1 + 1), rawx_key='f{}'.format(1 + 1), class_type=float,
-                     description='Ownership fraction', min_value=0.0, max_value=1.0),
-        PsseProperty(property_name='O{}'.format(2 + 1), rawx_key='o{}'.format(2 + 1), class_type=int,
-                     description='Owner number', min_value=1, max_value=9999, max_chars=4),
-        PsseProperty(property_name='F{}'.format(2 + 1), rawx_key='f{}'.format(2 + 1), class_type=float,
-                     description='Ownership fraction', min_value=0.0, max_value=1.0),
-        PsseProperty(property_name='O{}'.format(3 + 1), rawx_key='o{}'.format(3 + 1), class_type=int,
-                     description='Owner number', min_value=1, max_value=9999, max_chars=4),
-        PsseProperty(property_name='F{}'.format(3 + 1), rawx_key='f{}'.format(3 + 1), class_type=float,
-                     description='Ownership fraction', min_value=0.0, max_value=1.0),
-        *(PsseProperty(property_name='RATE{}'.format(i),
-                       rawx_key='rate{}'.format(i),
-                       class_type=float,
-                       description='Branch rating power',
-                       unit=Unit(UnitMultiplier.M, UnitSymbol.VA)) for i in range(1, 13)),
-    )
 
     def __init__(self) -> None:
         RawObject.__init__(self, "Branch")
@@ -104,6 +52,118 @@ class RawBranch(RawObject):
         self._O4: int = 0
         self._F4: float = 0.0
 
+        self.register_property(property_name="I",
+                               rawx_key="ibus",
+                               class_type=int,
+                               description="Branch from bus number",
+                               min_value=1,
+                               max_value=999997,
+                               max_chars=6)
+
+        self.register_property(property_name="J",
+                               rawx_key="jbus",
+                               class_type=int,
+                               description="Branch to bus number",
+                               min_value=1,
+                               max_value=999997,
+                               max_chars=6)
+
+        self.register_property(property_name="CKT",
+                               rawx_key="ckt",
+                               class_type=str,
+                               description="Owner number",
+                               max_chars=2)
+
+        self.register_property(property_name="R",
+                               rawx_key="rpu",
+                               class_type=float,
+                               description="Branch resistance",
+                               unit=Unit.get_pu())
+
+        self.register_property(property_name="X",
+                               rawx_key="xpu",
+                               class_type=float,
+                               description="Branch reactance",
+                               unit=Unit.get_pu())
+
+        self.register_property(property_name="B",
+                               rawx_key="bpu",
+                               class_type=float,
+                               description="Branch shunt susceptance",
+                               unit=Unit.get_pu())
+
+        self.register_property(property_name="NAME",
+                               rawx_key="name",
+                               class_type=str,
+                               description="Branch name",
+                               max_chars=40)
+
+        for i in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]:
+            self.register_property(property_name="RATE{}".format(i),
+                                   rawx_key="rate{}".format(i),
+                                   class_type=float,
+                                   description="Branch rating power",
+                                   unit=Unit(UnitMultiplier.M, UnitSymbol.VA))
+
+        self.register_property(property_name="GI",
+                               rawx_key="gi",
+                               class_type=float,
+                               description="Branch shunt conductance at the from side",
+                               unit=Unit.get_pu())
+
+        self.register_property(property_name="BI",
+                               rawx_key="bi",
+                               class_type=float,
+                               description="Branch shunt susceptance at the from side",
+                               unit=Unit.get_pu())
+
+        self.register_property(property_name="GJ",
+                               rawx_key="gj",
+                               class_type=float,
+                               description="Branch shunt condictance at the to side",
+                               unit=Unit.get_pu())
+
+        self.register_property(property_name="BJ",
+                               rawx_key="bj",
+                               class_type=float,
+                               description="Branch shunt susceptance at the to side",
+                               unit=Unit.get_pu())
+
+        self.register_property(property_name="ST",
+                               rawx_key="stat",
+                               class_type=int,
+                               description="Branch status",
+                               min_value=0,
+                               max_value=1)
+
+        self.register_property(property_name="MET",
+                               rawx_key="met",
+                               class_type=int,
+                               description="Metered end flag, <=1: Bus from, >=2: bus to",
+                               min_value=0,
+                               max_value=999)
+
+        self.register_property(property_name="LEN",
+                               rawx_key="len",
+                               class_type=float,
+                               description="Line length",
+                               unit=Unit.get_km())
+
+        for i in range(4):
+            self.register_property(property_name="O{}".format(i + 1),
+                                   rawx_key="o{}".format(i + 1),
+                                   class_type=int,
+                                   description="Owner number",
+                                   min_value=1,
+                                   max_value=9999,
+                                   max_chars=4)
+            self.register_property(property_name="F{}".format(i + 1),
+                                   rawx_key="f{}".format(i + 1),
+                                   class_type=float,
+                                   description="Ownership fraction",
+                                   min_value=0.0,
+                                   max_value=1.0)
+
     def parse(self, data, version, logger: Logger):
         """
 
@@ -147,9 +207,9 @@ class RawBranch(RawObject):
             """
 
             (self.I, self.J, self.CKT, self.R, self.X, self.B, self.NAME,
-             self.RATE1, self.RATE2, self.RATE3, self.RATE4, self.RATE5, self.RATE6,
-             self.RATE7, self.RATE8, self.RATE9, self.RATE10, self.RATE11, self.RATE12,
-             self.GI, self.BI, self.GJ, self.BJ, self.ST, self.MET, self.LEN, *var) = data[0]
+                self.RATE1, self.RATE2, self.RATE3, self.RATE4, self.RATE5, self.RATE6,
+                self.RATE7, self.RATE8, self.RATE9, self.RATE10, self.RATE11, self.RATE12,
+                self.GI, self.BI, self.GJ, self.BJ, self.ST, self.MET, self.LEN, *var) = data[0]
 
         elif version in [32, 33]:
 
@@ -158,7 +218,7 @@ class RawBranch(RawObject):
             '''
 
             (self.I, self.J, self.CKT, self.R, self.X, self.B, self.RATE1, self.RATE2, self.RATE3,
-             self.GI, self.BI, self.GJ, self.BJ, self.ST, self.MET, self.LEN, *var) = data[0]
+                self.GI, self.BI, self.GJ, self.BJ, self.ST, self.MET, self.LEN, *var) = data[0]
 
         elif version in [29, 30]:
             """
@@ -167,7 +227,7 @@ class RawBranch(RawObject):
             """
 
             (self.I, self.J, self.CKT, self.R, self.X, self.B, self.RATE1, self.RATE2, self.RATE3,
-             self.GI, self.BI, self.GJ, self.BJ, self.ST, self.LEN, *var) = data[0]
+                self.GI, self.BI, self.GJ, self.BJ, self.ST, self.LEN, *var) = data[0]
 
         else:
 

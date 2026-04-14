@@ -2,7 +2,9 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
+
 import numpy as np
+
 from VeraGridEngine.enumerations import CpfParametrization, CpfStopAt
 from VeraGridEngine.Simulations.Derivatives.ac_jacobian import AC_jacobianVc
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls import control_q_direct

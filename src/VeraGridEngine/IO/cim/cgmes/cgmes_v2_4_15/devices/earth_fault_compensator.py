@@ -6,13 +6,19 @@
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.conducting_equipment import ConductingEquipment
 from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType, UnitSymbol
-from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
+
 
 class EarthFaultCompensator(ConductingEquipment):
-	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='r', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.ohm, description='''Resistance (real part of impedance).''', profiles=[]),
-	)
 	def __init__(self, rdfid='', tpe='EarthFaultCompensator'):
 		ConductingEquipment.__init__(self, rdfid, tpe)
 
 		self.r: float = None
+
+		self.register_property(
+			name='r',
+			class_type=float,
+			multiplier=UnitMultiplier.none,
+			unit=UnitSymbol.ohm,
+			description='''Resistance (real part of impedance).''',
+			profiles=[]
+		)

@@ -2,10 +2,10 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
-from VeraGridEngine.IO.iidm.devices.iidm_object import IidmObject, Unit
+from VeraGridEngine.IO.iidm.devices.rte_object import RteObject, Unit
 
 
-class RatioTapChangerStep(IidmObject):
+class RatioTapChangerStep(RteObject):
     def __init__(self, rho: float, r: float = 0.0, x: float = 0.0, g: float = 0.0, b: float = 0.0):
         super().__init__("RatioTapChangerStep")
         self.rho = rho
@@ -21,7 +21,7 @@ class RatioTapChangerStep(IidmObject):
         self.register_property("b", "step:b", float, Unit("S"), description="Step susceptance")
 
 
-class RatioTapChanger(IidmObject):
+class RatioTapChanger(RteObject):
     def __init__(self, lowTapPosition: int, tapPosition: int,
                  regulationMode: str, regulationValue: float,
                  loadTapChangingCapabilities: bool, regulating: bool, targetDeadband: float):
@@ -47,7 +47,7 @@ class RatioTapChanger(IidmObject):
 
 
 
-class PhaseTapChanger(IidmObject):
+class PhaseTapChanger(RteObject):
     def __init__(self, regulationMode: str, tapPosition: int, regulationValue: float, regulating: bool):
         super().__init__("PhaseTapChanger")
         self.regulationMode = regulationMode
@@ -62,7 +62,7 @@ class PhaseTapChanger(IidmObject):
 
 
 
-class TwoWindingsTransformer(IidmObject):
+class TwoWindingsTransformer(RteObject):
     def __init__(self, id: str,
                  voltageLevelId1: str, bus1: str,
                  voltageLevelId2: str, bus2: str,

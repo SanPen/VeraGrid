@@ -17,22 +17,19 @@ from VeraGridEngine.Devices import *
 from VeraGridEngine.DataStructures import *
 from VeraGridEngine.Topology import *
 from VeraGridEngine.Compilers import *
-from VeraGridEngine.IO.file_open import FileOpen, FileOpenOptions
-from VeraGridEngine.IO.file_save import FileSave, FileSavingOptions
+from VeraGridEngine.IO.file_handler import FileOpen, FileSave, FileSavingOptions
 from VeraGridEngine.IO.veragrid.remote import (gather_model_as_jsons_for_communication, RemoteInstruction,
                                                SimulationTypes, send_json_data, get_certificate_path, get_certificate)
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at, NumericalCircuit
 
 
-def open_file(filename: Union[str, List[str]],
-              options: FileOpenOptions | None = None) -> MultiCircuit:
+def open_file(filename: Union[str, List[str]]) -> MultiCircuit:
     """
     Open file
     :param filename: name of the file (.veragrid, .ejson, .m, .xml, .zip, etc.) or list of files (.xml, .zip)
-    :param options: FileOpenOptions instance (optional)
     :return: MultiCircuit instance
     """
-    return FileOpen(file_name=filename, options=options).open()
+    return FileOpen(file_name=filename).open()
 
 
 def save_file(grid: MultiCircuit, filename: str, drivers_to_save: List[DriverToSave] | None = None):
@@ -69,7 +66,7 @@ def save_cgmes_file(grid: MultiCircuit,
     logger = Logger()
 
     # define the export options
-    options = FileSavingOptions(file_type=FileType.CGMES)
+    options = FileSavingOptions()
     options.cgmes_one_file_per_profile = False
     options.cgmes_profiles = [CgmesProfileType.EQ,
                               CgmesProfileType.OP,
@@ -93,7 +90,7 @@ def save_cgmes_file(grid: MultiCircuit,
 
     # save in CGMES format
     handler = FileSave(circuit=grid, file_name=filename, options=options)
-    logger += handler.save()
+    logger += handler.save_cgmes()
 
     return logger
 
@@ -143,7 +140,7 @@ def power_flow_ts(grid: MultiCircuit,
                   time_indices: Union[IntVec, None] = None,
                   clustering_results: Union[ClusteringResults, None] = None,
                   auto_expand: bool = True,
-                  engine=EngineType.VeraGrid) -> PowerFlowTimeSeriesResults:
+                  engine=EngineType.VeraGrid) -> PowerFlowResults:
     """
     Run power flow on the time series
     :param grid: MultiCircuit instance
@@ -233,7 +230,7 @@ def short_circuit(grid: MultiCircuit,
 
     sc_options = ShortCircuitOptions()
 
-    grid.add_short_circuit_event(
+    grid.add_short_circuit_definition(
         ShortCircuitEvent(
             device=grid.buses[fault_index],
             fault_type=fault_type,
@@ -357,7 +354,7 @@ def simple_opf(grid: MultiCircuit,
 def balanced_pf(grid: MultiCircuit,
                 options: PowerFlowOptions = None,
                 opf_options: OptimalPowerFlowOptions = None,
-                engine=EngineType.VeraGrid) -> PowerFlowResults:
+                engine=EngineType.VeraGrid) -> OptimalPowerFlowResults:
     """
     Run Linear Optimal Power Flow
     :param engine:

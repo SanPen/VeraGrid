@@ -5,7 +5,7 @@
 
 import PySide6  # this line is necessary so that Matplotlib recognises that PySide is the Qt Backend
 import matplotlib
-matplotlib.use('QtAgg')
+matplotlib.use('Qt6Agg')
 from matplotlib import pyplot as plt  # leave here
 
 

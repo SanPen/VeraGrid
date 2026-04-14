@@ -3,121 +3,12 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Tuple
-
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol, Unit
 from VeraGridEngine.IO.raw.devices.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.IO.raw.devices.psse_property import PsseProperty
 
 
 class RawTwoTerminalDCLine(RawObject):
-    LOCAL_PROPERTIES: Tuple[PsseProperty, ...] = (
-        PsseProperty(property_name='NAME', rawx_key='name', class_type=str, description='Line name', max_chars=12),
-        PsseProperty(property_name='MDC', rawx_key='mdc', class_type=int,
-                     description='Control mode: 0 for blocked, 1 for power, 2 for current.', min_value=0, max_value=2),
-        PsseProperty(property_name='RDC', rawx_key='rdc', class_type=float, description='DC line resistance',
-                     unit=Unit(UnitMultiplier.none, UnitSymbol.ohm)),
-        PsseProperty(property_name='SETVL', rawx_key='setvl', class_type=float, description='Sending power',
-                     unit=Unit(UnitMultiplier.M, UnitSymbol.W)),
-        PsseProperty(property_name='VSCHD', rawx_key='vschd', class_type=float, description='DC voltage',
-                     unit=Unit(UnitMultiplier.k, UnitSymbol.V)),
-        PsseProperty(property_name='VCMOD', rawx_key='vcmod', class_type=float, description='Mode switch dc voltage',
-                     unit=Unit(UnitMultiplier.k, UnitSymbol.V)),
-        PsseProperty(property_name='RCOMP', rawx_key='rcomp', class_type=float, description='Compounding resistance',
-                     unit=Unit(UnitMultiplier.none, UnitSymbol.ohm)),
-        PsseProperty(property_name='DELTI', rawx_key='delti', class_type=float,
-                     description='Margin entered in per unit of desired dc power',
-                     unit=Unit(UnitMultiplier.none, UnitSymbol.pu)),
-        PsseProperty(property_name='METER', rawx_key='meter', class_type=str,
-                     description='Metered end code of either R (for rectifier) or I (for inverter).'),
-        PsseProperty(property_name='DCVMIN', rawx_key='dcvmin', class_type=float, description='Minimum dc voltage;',
-                     unit=Unit(UnitMultiplier.k, UnitSymbol.V)),
-        PsseProperty(property_name='CCCITMX', rawx_key='cccitmx', class_type=int,
-                     description='Iteration limit for capacitor commutated two-terminal dc line Newton solution procedure.'),
-        PsseProperty(property_name='CCCACC', rawx_key='cccacc', class_type=float,
-                     description='Acceleration factor for capacitor commutated two-terminal dc line Newton solution procedure'),
-        PsseProperty(property_name='IPR', rawx_key='ipr', class_type=int, description='Rectifier converter bus number',
-                     min_value=0, max_value=999997, max_chars=6),
-        PsseProperty(property_name='NBR', rawx_key='nbr', class_type=int,
-                     description='Rectifier number of bridges in series'),
-        PsseProperty(property_name='ANMXR', rawx_key='anmxr', class_type=float,
-                     description='Rectifier nominal maximum rectifier firing angle',
-                     unit=Unit(UnitMultiplier.none, UnitSymbol.deg)),
-        PsseProperty(property_name='ANMNR', rawx_key='anmnr', class_type=float,
-                     description='Rectifier minimum steady-state rectifier firing angle',
-                     unit=Unit(UnitMultiplier.none, UnitSymbol.deg)),
-        PsseProperty(property_name='RCR', rawx_key='rcr', class_type=float,
-                     description='Rectifier commutating transformer resistance per bridge',
-                     unit=Unit(UnitMultiplier.none, UnitSymbol.ohm)),
-        PsseProperty(property_name='XCR', rawx_key='xcr', class_type=float,
-                     description='Rectifier commutating transformer reactance per bridge',
-                     unit=Unit(UnitMultiplier.none, UnitSymbol.ohm)),
-        PsseProperty(property_name='EBASR', rawx_key='ebasr', class_type=float,
-                     description='Rectifier primary base ac voltage', unit=Unit(UnitMultiplier.k, UnitSymbol.V)),
-        PsseProperty(property_name='TRR', rawx_key='trr', class_type=float, description='Rectifier transformer ratio.'),
-        PsseProperty(property_name='TAPR', rawx_key='tapr', class_type=float, description='Rectifier tap setting',
-                     unit=Unit(UnitMultiplier.none, UnitSymbol.pu)),
-        PsseProperty(property_name='TMXR', rawx_key='tmxr', class_type=float,
-                     description='Maximum rectifier tap setting.', unit=Unit(UnitMultiplier.none, UnitSymbol.pu)),
-        PsseProperty(property_name='TMNR', rawx_key='tmnr', class_type=float,
-                     description='Minimum rectifier tap setting', unit=Unit(UnitMultiplier.none, UnitSymbol.pu)),
-        PsseProperty(property_name='STPR', rawx_key='stpr', class_type=float, description='Rectifier tap step;',
-                     unit=Unit(UnitMultiplier.none, UnitSymbol.pu), min_value=0, max_value=999999),
-        PsseProperty(property_name='ICR', rawx_key='icr', class_type=int,
-                     description='Bus number of the rectifier commutating bus', min_value=0, max_value=999999,
-                     max_chars=6),
-        PsseProperty(property_name='NDR', rawx_key='ndr', class_type=int, description='A node number of bus ICR',
-                     min_value=0, max_value=999999),
-        PsseProperty(property_name='IFR', rawx_key='ifr', class_type=int, description='Winding 1 side from bus number',
-                     max_chars=6),
-        PsseProperty(property_name='ITR', rawx_key='itr', class_type=int, description='Winding 2 side to bus number',
-                     max_chars=6),
-        PsseProperty(property_name='IDR', rawx_key='idr', class_type=str,
-                     description='Circuit identifier; the branch described by IFR, ITR, and IDR must have been entered as a two-winding transformer'),
-        PsseProperty(property_name='XCAPR', rawx_key='xcapr', class_type=float,
-                     description='Commutating capacitor reactance magnitude per bridge',
-                     unit=Unit(UnitMultiplier.none, UnitSymbol.ohm)),
-        PsseProperty(property_name='IPI', rawx_key='ipi', class_type=int, description='Inverter converter bus number',
-                     min_value=0, max_value=999997, max_chars=6),
-        PsseProperty(property_name='NBI', rawx_key='nbi', class_type=int,
-                     description='Inverter number of bridges in series'),
-        PsseProperty(property_name='ANMXI', rawx_key='anmxi', class_type=float,
-                     description='Inverter nominal maximum Inverter firing angle',
-                     unit=Unit(UnitMultiplier.none, UnitSymbol.deg)),
-        PsseProperty(property_name='ANMNI', rawx_key='anmni', class_type=float,
-                     description='Inverter minimum steady-state Inverter firing angle',
-                     unit=Unit(UnitMultiplier.none, UnitSymbol.deg)),
-        PsseProperty(property_name='RCI', rawx_key='rci', class_type=float,
-                     description='Inverter commutating transformer resistance per bridge',
-                     unit=Unit(UnitMultiplier.none, UnitSymbol.ohm)),
-        PsseProperty(property_name='XCI', rawx_key='xci', class_type=float,
-                     description='Inverter commutating transformer reactance per bridge',
-                     unit=Unit(UnitMultiplier.none, UnitSymbol.ohm)),
-        PsseProperty(property_name='EBASI', rawx_key='ebasi', class_type=float,
-                     description='Inverter primary base ac voltage', unit=Unit(UnitMultiplier.k, UnitSymbol.V)),
-        PsseProperty(property_name='TRI', rawx_key='tri', class_type=float, description='Inverter transformer ratio.'),
-        PsseProperty(property_name='TAPI', rawx_key='tapi', class_type=float, description='Inverter tap setting',
-                     unit=Unit(UnitMultiplier.none, UnitSymbol.pu)),
-        PsseProperty(property_name='TMXI', rawx_key='tmxi', class_type=float,
-                     description='Maximum Inverter tap setting.', unit=Unit(UnitMultiplier.none, UnitSymbol.pu)),
-        PsseProperty(property_name='TMNI', rawx_key='tmni', class_type=float,
-                     description='Minimum Inverter tap setting', unit=Unit(UnitMultiplier.none, UnitSymbol.pu)),
-        PsseProperty(property_name='STPI', rawx_key='stpi', class_type=float, description='Inverter tap step;',
-                     unit=Unit(UnitMultiplier.none, UnitSymbol.pu), min_value=0, max_value=999999),
-        PsseProperty(property_name='ICI', rawx_key='ici', class_type=int,
-                     description='Bus number of the Inverter commutating bus', min_value=0, max_value=999999),
-        PsseProperty(property_name='NDI', rawx_key='ndi', class_type=int, description='A node number of bus ICR',
-                     min_value=0, max_value=999999),
-        PsseProperty(property_name='IFI', rawx_key='ifi', class_type=int, description='Winding 1 side from bus number'),
-        PsseProperty(property_name='ITI', rawx_key='iti', class_type=int, description='Winding 2 side to bus number',
-                     max_chars=6),
-        PsseProperty(property_name='IDI', rawx_key='idi', class_type=str,
-                     description='Circuit identifier; the branch described by IFR, ITR, and IDR must have been entered as a two-winding transformer'),
-        PsseProperty(property_name='XCAPI', rawx_key='xcapi', class_type=float,
-                     description='Commutating capacitor reactance magnitude per bridge',
-                     unit=Unit(UnitMultiplier.none, UnitSymbol.ohm)),
-    )
 
     def __init__(self):
         RawObject.__init__(self, "Two-terminal DC line")
@@ -172,6 +63,302 @@ class RawTwoTerminalDCLine(RawObject):
         self.ITI = 0
         self.IDI = '1'
         self.XCAPI = 0
+
+        self.register_property(property_name='NAME',
+                               rawx_key='name',
+                               class_type=str,
+                               description='Line name',
+                               max_chars=12)
+
+        self.register_property(property_name='MDC',
+                               rawx_key='mdc',
+                               class_type=int,
+                               description='Control mode: 0 for blocked, 1 for power, 2 for current.',
+                               min_value=0,
+                               max_value=2)
+
+        self.register_property(property_name='RDC',
+                               rawx_key='rdc',
+                               class_type=float,
+                               description='DC line resistance',
+                               unit=Unit(UnitMultiplier.none, UnitSymbol.ohm))
+
+        self.register_property(property_name='SETVL',
+                               rawx_key='setvl',
+                               class_type=float,
+                               description='Sending power',
+                               unit=Unit(UnitMultiplier.M, UnitSymbol.W))
+
+        self.register_property(property_name='VSCHD',
+                               rawx_key='vschd',
+                               class_type=float,
+                               description='DC voltage',
+                               unit=Unit(UnitMultiplier.k, UnitSymbol.V))
+
+        self.register_property(property_name='VCMOD',
+                               rawx_key='vcmod',
+                               class_type=float,
+                               description='Mode switch dc voltage',
+                               unit=Unit(UnitMultiplier.k, UnitSymbol.V))
+
+        self.register_property(property_name='RCOMP',
+                               rawx_key='rcomp',
+                               class_type=float,
+                               description='Compounding resistance',
+                               unit=Unit(UnitMultiplier.none, UnitSymbol.ohm))
+
+        self.register_property(property_name='DELTI',
+                               rawx_key='delti',
+                               class_type=float,
+                               description='Margin entered in per unit of desired dc power',
+                               unit=Unit(UnitMultiplier.none, UnitSymbol.pu))
+
+        self.register_property(property_name='METER',
+                               rawx_key='meter',
+                               class_type=str,
+                               description='Metered end code of either R (for rectifier) or I (for inverter).')
+
+        self.register_property(property_name='DCVMIN',
+                               rawx_key='dcvmin',
+                               class_type=float,
+                               description='Minimum dc voltage;',
+                               unit=Unit(UnitMultiplier.k, UnitSymbol.V))
+
+        self.register_property(property_name='CCCITMX',
+                               rawx_key='cccitmx',
+                               class_type=int,
+                               description='Iteration limit for capacitor commutated two-terminal dc line '
+                                           'Newton solution procedure.')
+
+        self.register_property(property_name='CCCACC',
+                               rawx_key='cccacc',
+                               class_type=float,
+                               description='Acceleration factor for capacitor commutated two-terminal dc '
+                                           'line Newton solution procedure')
+
+        self.register_property(property_name='IPR',
+                               rawx_key='ipr',
+                               class_type=int,
+                               description='Rectifier converter bus number',
+                               min_value=0,
+                               max_value=999997,
+                               max_chars=6)
+
+        self.register_property(property_name='NBR',
+                               rawx_key='nbr',
+                               class_type=int,
+                               description='Rectifier number of bridges in series')
+
+        self.register_property(property_name='ANMXR',
+                               rawx_key='anmxr',
+                               class_type=float,
+                               description='Rectifier nominal maximum rectifier firing angle',
+                               unit=Unit(UnitMultiplier.none, UnitSymbol.deg))
+
+        self.register_property(property_name='ANMNR',
+                               rawx_key='anmnr',
+                               class_type=float,
+                               description='Rectifier minimum steady-state rectifier firing angle',
+                               unit=Unit(UnitMultiplier.none, UnitSymbol.deg))
+
+        self.register_property(property_name='RCR',
+                               rawx_key='rcr',
+                               class_type=float,
+                               description='Rectifier commutating transformer resistance per bridge',
+                               unit=Unit(UnitMultiplier.none, UnitSymbol.ohm))
+
+        self.register_property(property_name='XCR',
+                               rawx_key='xcr',
+                               class_type=float,
+                               description='Rectifier commutating transformer reactance per bridge',
+                               unit=Unit(UnitMultiplier.none, UnitSymbol.ohm))
+
+        self.register_property(property_name='EBASR',
+                               rawx_key='ebasr',
+                               class_type=float,
+                               description='Rectifier primary base ac voltage',
+                               unit=Unit(UnitMultiplier.k, UnitSymbol.V))
+
+        self.register_property(property_name='TRR',
+                               rawx_key='trr',
+                               class_type=float,
+                               description='Rectifier transformer ratio.')
+
+        self.register_property(property_name='TAPR',
+                               rawx_key='tapr',
+                               class_type=float,
+                               description='Rectifier tap setting',
+                               unit=Unit(UnitMultiplier.none, UnitSymbol.pu))
+
+        self.register_property(property_name='TMXR',
+                               rawx_key='tmxr',
+                               class_type=float,
+                               description='Maximum rectifier tap setting.',
+                               unit=Unit(UnitMultiplier.none, UnitSymbol.pu))
+
+        self.register_property(property_name='TMNR',
+                               rawx_key='tmnr',
+                               class_type=float,
+                               description='Minimum rectifier tap setting',
+                               unit=Unit(UnitMultiplier.none, UnitSymbol.pu))
+
+        self.register_property(property_name='STPR',
+                               rawx_key='stpr',
+                               class_type=float,
+                               description='Rectifier tap step;',
+                               unit=Unit(UnitMultiplier.none, UnitSymbol.pu),
+                               min_value=0,
+                               max_value=999999)
+
+        self.register_property(property_name='ICR',
+                               rawx_key='icr',
+                               class_type=int,
+                               description='Bus number of the rectifier commutating bus',
+                               min_value=0,
+                               max_value=999999,
+                               max_chars=6)
+
+        self.register_property(property_name='NDR',
+                               rawx_key='ndr',
+                               class_type=int,
+                               description='A node number of bus ICR',
+                               min_value=0,
+                               max_value=999999)
+
+        self.register_property(property_name='IFR',
+                               rawx_key='ifr',
+                               class_type=int,
+                               description='Winding 1 side from bus number',
+                               max_chars=6)
+
+        self.register_property(property_name='ITR',
+                               rawx_key='itr',
+                               class_type=int,
+                               description='Winding 2 side to bus number',
+                               max_chars=6)
+
+        self.register_property(property_name='IDR',
+                               rawx_key='idr',
+                               class_type=str,
+                               description='Circuit identifier; the branch described by IFR, ITR, and IDR must have '
+                                           'been entered as a two-winding transformer')
+
+        self.register_property(property_name='XCAPR',
+                               rawx_key='xcapr',
+                               class_type=float,
+                               description='Commutating capacitor reactance magnitude per bridge',
+                               unit=Unit(UnitMultiplier.none, UnitSymbol.ohm))
+
+        self.register_property(property_name='IPI',
+                               rawx_key='ipi',
+                               class_type=int,
+                               description='Inverter converter bus number',
+                               min_value=0,
+                               max_value=999997,
+                               max_chars=6)
+
+        self.register_property(property_name='NBI',
+                               rawx_key='nbi',
+                               class_type=int,
+                               description='Inverter number of bridges in series')
+
+        self.register_property(property_name='ANMXI',
+                               rawx_key='anmxi',
+                               class_type=float,
+                               description='Inverter nominal maximum Inverter firing angle',
+                               unit=Unit(UnitMultiplier.none, UnitSymbol.deg))
+
+        self.register_property(property_name='ANMNI',
+                               rawx_key='anmni',
+                               class_type=float,
+                               description='Inverter minimum steady-state Inverter firing angle',
+                               unit=Unit(UnitMultiplier.none, UnitSymbol.deg))
+
+        self.register_property(property_name='RCI',
+                               rawx_key='rci',
+                               class_type=float,
+                               description='Inverter commutating transformer resistance per bridge',
+                               unit=Unit(UnitMultiplier.none, UnitSymbol.ohm))
+
+        self.register_property(property_name='XCI',
+                               rawx_key='xci',
+                               class_type=float,
+                               description='Inverter commutating transformer reactance per bridge',
+                               unit=Unit(UnitMultiplier.none, UnitSymbol.ohm))
+
+        self.register_property(property_name='EBASI',
+                               rawx_key='ebasi',
+                               class_type=float,
+                               description='Inverter primary base ac voltage',
+                               unit=Unit(UnitMultiplier.k, UnitSymbol.V))
+
+        self.register_property(property_name='TRI',
+                               rawx_key='tri',
+                               class_type=float,
+                               description='Inverter transformer ratio.')
+
+        self.register_property(property_name='TAPI',
+                               rawx_key='tapi',
+                               class_type=float,
+                               description='Inverter tap setting',
+                               unit=Unit(UnitMultiplier.none, UnitSymbol.pu))
+
+        self.register_property(property_name='TMXI',
+                               rawx_key='tmxi',
+                               class_type=float,
+                               description='Maximum Inverter tap setting.',
+                               unit=Unit(UnitMultiplier.none, UnitSymbol.pu))
+
+        self.register_property(property_name='TMNI',
+                               rawx_key='tmni',
+                               class_type=float,
+                               description='Minimum Inverter tap setting',
+                               unit=Unit(UnitMultiplier.none, UnitSymbol.pu))
+
+        self.register_property(property_name='STPI',
+                               rawx_key='stpi',
+                               class_type=float,
+                               description='Inverter tap step;',
+                               unit=Unit(UnitMultiplier.none, UnitSymbol.pu),
+                               min_value=0,
+                               max_value=999999)
+
+        self.register_property(property_name='ICI',
+                               rawx_key='ici',
+                               class_type=int,
+                               description='Bus number of the Inverter commutating bus',
+                               min_value=0,
+                               max_value=999999)
+
+        self.register_property(property_name='NDI',
+                               rawx_key='ndi',
+                               class_type=int,
+                               description='A node number of bus ICR',
+                               min_value=0,
+                               max_value=999999)
+
+        self.register_property(property_name='IFI',
+                               rawx_key='ifi',
+                               class_type=int,
+                               description='Winding 1 side from bus number')
+
+        self.register_property(property_name='ITI',
+                               rawx_key='iti',
+                               class_type=int,
+                               description='Winding 2 side to bus number',
+                               max_chars=6)
+
+        self.register_property(property_name='IDI',
+                               rawx_key='idi',
+                               class_type=str,
+                               description='Circuit identifier; the branch described by IFR, ITR, and IDR must have '
+                                           'been entered as a two-winding transformer')
+
+        self.register_property(property_name='XCAPI',
+                               rawx_key='xcapi',
+                               class_type=float,
+                               description='Commutating capacitor reactance magnitude per bridge',
+                               unit=Unit(UnitMultiplier.none, UnitSymbol.ohm))
 
     def parse(self, data, version, logger: Logger):
         """

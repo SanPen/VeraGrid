@@ -2,29 +2,19 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
-from typing import Callable, Union, Tuple
+from typing import Callable, Union
 from VeraGridEngine.enumerations import InvestmentsEvaluationObjectives, InvestmentEvaluationMethod, DeviceType
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
 from VeraGridEngine.Simulations.OPF.opf_options import OptimalPowerFlowOptions
 from VeraGridEngine.Simulations.options_template import OptionsTemplate
 from typing import Union
 from VeraGridEngine.enumerations import SolverType
-from VeraGridEngine.Devices.Parents.editable_device import GCProp
-
 
 
 class InvestmentsEvaluationOptions(OptionsTemplate):
     """
     Investments Evaluation Options
     """
-
-    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key="max_eval", tpe=int),
-        GCProp(key="pf_options", tpe=DeviceType.SimulationOptionsDevice),
-        GCProp(key="opf_options", tpe=DeviceType.SimulationOptionsDevice),
-        GCProp(key="solver", tpe=InvestmentEvaluationMethod),
-        GCProp(key="objf_tpe", tpe=InvestmentsEvaluationObjectives),
-    )
 
     def __init__(self, max_eval: int,
                  pf_options: Union[PowerFlowOptions, None] = None,
@@ -55,3 +45,8 @@ class InvestmentsEvaluationOptions(OptionsTemplate):
 
         self.plugin_fcn_ptr = plugin_fcn_ptr
 
+        self.register(key="max_eval", tpe=int)
+        self.register(key="pf_options", tpe=DeviceType.SimulationOptionsDevice)
+        self.register(key="opf_options", tpe=DeviceType.SimulationOptionsDevice)
+        self.register(key="solver", tpe=InvestmentEvaluationMethod)
+        self.register(key="objf_tpe", tpe=InvestmentsEvaluationObjectives)

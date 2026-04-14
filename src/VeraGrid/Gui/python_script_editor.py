@@ -20,12 +20,7 @@ class PythonCodeEditor(QPlainTextEdit):
     def __init__(
             self,
             parent=None,
-            vars_dict: Dict[str, Any] | None = None, ):
-        """
-
-        :param parent:
-        :param vars_dict:
-        """
+            namespace: Dict[str, Any] | None = None, ):
         super().__init__(parent)
 
         font = QFont("Consolas", CONSOLE_TEXT_SIZE)
@@ -39,11 +34,7 @@ class PythonCodeEditor(QPlainTextEdit):
         PythonHighlighter(self.document())
 
         # Normalize namespace exactly like the console
-        self._vars_dict = dict() if vars_dict is None else vars_dict
-
-        self._vars_dict["__builtins__"] = __builtins__  # dict or module, both fine]
-
-        self._namespace = self._normalize_namespace(self._vars_dict)
+        self._namespace = self._normalize_namespace(namespace or {})
 
         # rlcompleter backend (same as console)
         self._completer_backend = rlcompleter.Completer(self._namespace)
@@ -61,15 +52,9 @@ class PythonCodeEditor(QPlainTextEdit):
         # Remember what we replace
         self._last_prefix = ""
 
-    def add_var(self, name: str, val: Any) -> None:
-        """
-        Add variable to the interpreter
-        :param name: name of the variable
-        :param val: value or pointer
-        """
-        self._vars_dict[name] = val
-        self._namespace = self._normalize_namespace(self._vars_dict)
-        self._completer_backend = rlcompleter.Completer(self._namespace)
+    # ------------------------------------------------------------------
+    # Namespace handling (same logic you already fixed)
+    # ------------------------------------------------------------------
 
     @staticmethod
     def _normalize_namespace(ns: Dict[str, Any]) -> Dict[str, Any]:
@@ -87,7 +72,7 @@ class PythonCodeEditor(QPlainTextEdit):
     # THIS is the key part: intercept Tab at event() level
     # ------------------------------------------------------------------
 
-    def keyPressEvent(self, e: QEvent):
+    def event(self, e: QEvent):
         if e.type() == QEvent.Type.KeyPress:
 
             popup = self._qt_completer.popup()
@@ -97,7 +82,10 @@ class PythonCodeEditor(QPlainTextEdit):
             # --------------------------------------------------
             if popup.isVisible():
                 if e.key() in (Qt.Key.Key_Tab, Qt.Key.Key_Return, Qt.Key.Key_Enter):
-                    # If popup is visible, accept the completion
+                    # current = self._qt_completer.currentCompletion()
+                    # if current:
+                    #     self._insert_completion(current)
+                    popup = self._qt_completer.popup()
                     index = popup.currentIndex()
                     if index.isValid():
                         completion = index.data()
@@ -105,44 +93,26 @@ class PythonCodeEditor(QPlainTextEdit):
                     popup.hide()
                     return True
 
-                elif e.key() == Qt.Key.Key_Escape:
-                    # If Escape is pressed, hide the popup
+                if e.key() == Qt.Key.Key_Escape:
                     popup.hide()
                     return True
 
-                # Let popup handle navigation keys like Up/Down/PageUp/PageDown
-                if e.key() in (Qt.Key.Key_Up, Qt.Key.Key_Down, Qt.Key.Key_PageUp, Qt.Key.Key_PageDown):
+                # Let popup handle navigation keys
+                if e.key() in (Qt.Key.Key_Up, Qt.Key.Key_Down, Qt.Key.Key_PageUp, Qt.Key.Key_PageDown,):
                     return super().event(e)
 
-                # Prevent left/right arrow from inserting characters
-                if e.key() in (Qt.Key.Key_Left, Qt.Key.Key_Right):
-                    return  # Prevent left/right arrow key from inserting text while popup is visible
-
-                # Update the completion model as text changes
-                self._trigger_completion()
-
             # --------------------------------------------------
-            # No popup → insert tab space or trigger completion
+            # No popup → trigger completion
             # --------------------------------------------------
-            elif e.key() == Qt.Key.Key_Tab:
-                if not popup.isVisible():
-                    # Insert tab space if no popup is visible
-                    cursor = self.textCursor()
-                    cursor.insertText("\t")  # Insert tab space
-                    self.setTextCursor(cursor)
-                    return True
-
-                # Trigger completion if popup is not visible
+            if e.key() == Qt.Key.Key_Tab and e.modifiers() == Qt.KeyboardModifier.NoModifier:
                 self._trigger_completion()
                 return True
 
-            elif e.key() == Qt.Key.Key_Space and e.modifiers() & Qt.KeyboardModifier.ControlModifier:
-                # Trigger the completion popup when Ctrl + Space is pressed
+            if (e.key() == Qt.Key.Key_Space and e.modifiers() & Qt.KeyboardModifier.ControlModifier):
                 self._trigger_completion()
                 return True
 
-        # Let the base class handle other key press events
-        super().keyPressEvent(e)
+        return super().event(e)
 
     # ------------------------------------------------------------------
     # Completion logic (console-style)
@@ -237,7 +207,7 @@ if __name__ == "__main__":
             super().__init__()
             self.setWindowTitle("PySide6 Python Console")
             console = PythonCodeEditor(
-                vars_dict={
+                namespace={
                     "__builtins__": __builtins__,  # dict or module, both fine
                     "app": self,
                     "np": np,

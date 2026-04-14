@@ -33,14 +33,19 @@ class RmsPlotDialog(QDialog):
     def __init__(self, grid: MultiCircuit, results: RmsResults, parent=None):
         super().__init__(parent)
 
-        devices = results.devices
+        # --- Preparar dispositivos y variables ---
+        buses = [bus for bus in grid.get_buses()]
+        branches = [branch for branch in grid.get_branches_iter()]
+        injections = [injection for injection in grid.get_injection_devices_iter()]
+        devices = buses + branches + injections
 
         devices_options = {}
         for device in devices:
             devices_options[device.name] = [
-                var.name+device.name
+                results.uid2vars_glob_name[var.uid]
                 for var in (
-                    results.devices_vars_info[device]
+                    device.rms_model.model.state_vars +
+                    device.rms_model.model.algebraic_vars
                 )
             ]
 
@@ -64,10 +69,10 @@ class RmsPlotDialog(QDialog):
 
         self.selected_vars = []
 
-        # main layout
+        # --- Layout principal ---
         layout = QVBoxLayout(self)
 
-        # device selector
+        # --- Selector de dispositivo ---
         dev_layout = QHBoxLayout()
         dev_layout.addWidget(QLabel("Device:"))
         self.device_combo = QComboBox()
@@ -76,19 +81,19 @@ class RmsPlotDialog(QDialog):
         dev_layout.addWidget(self.device_combo)
         layout.addLayout(dev_layout)
 
-        # variable selector
+        # --- Selector de variable ---
         var_layout = QHBoxLayout()
         var_layout.addWidget(QLabel("Variable:"))
         self.var_combo = QComboBox()
         var_layout.addWidget(self.var_combo)
         layout.addLayout(var_layout)
 
-        # add variables button
+        # --- Botón para añadir variable ---
         add_btn = QPushButton("Add")
         add_btn.clicked.connect(self.add_variable)
         layout.addWidget(add_btn)
 
-        # selected vars list
+        # --- Lista de variables seleccionadas ---
         self.list_widget = QListWidget()
         self.list_widget.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.list_widget.customContextMenuRequested.connect(self.show_variable_context_menu)
@@ -100,7 +105,7 @@ class RmsPlotDialog(QDialog):
         self.canvas = FigureCanvas(self.figure)
         layout.addWidget(self.canvas)
 
-        # accept reject buttons layout
+        # --- Botones inferiores ---
         buttons_layout = QHBoxLayout()
 
         self.buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
@@ -108,21 +113,25 @@ class RmsPlotDialog(QDialog):
         self.buttons.rejected.connect(self.reject)
         buttons_layout.addWidget(self.buttons)
 
-        # show in separate window button
+        # --- Botón ventana separada ---
         show_window_btn = QPushButton("Show in new window")
         show_window_btn.clicked.connect(self.show_external_plot)
         buttons_layout.addWidget(show_window_btn)
 
         layout.addLayout(buttons_layout)
 
-        # update variables
+        # --- Inicializar variables ---
         self.update_variables(0)
+
+    # -------------------------------------------------------------
 
     def update_variables(self, index):
 
         device = self.device_combo.currentText()
         self.var_combo.clear()
         self.var_combo.addItems(self.devices[device])
+
+    # -------------------------------------------------------------
 
     def add_variable(self):
 
@@ -131,6 +140,8 @@ class RmsPlotDialog(QDialog):
             self.selected_vars.append(self.vars_glob_name2uid[var])
             self.list_widget.addItem(var)
             self.plot_selected()
+
+    # -------------------------------------------------------------
 
     def show_variable_context_menu(self, pos: QPoint):
 
@@ -141,6 +152,8 @@ class RmsPlotDialog(QDialog):
             action = menu.exec(self.list_widget.mapToGlobal(pos))
             if action == remove_action:
                 self.remove_variable(item)
+
+    # -------------------------------------------------------------
 
     def remove_variable(self, item):
 
@@ -154,6 +167,7 @@ class RmsPlotDialog(QDialog):
         self.list_widget.takeItem(row)
         self.plot_selected()
 
+    # -------------------------------------------------------------
 
     def plot_selected(self):
 
@@ -165,6 +179,8 @@ class RmsPlotDialog(QDialog):
         selected_col_idx = [self.uid2idx[uid] for uid in self.selected_vars]
         self.results_table.plot(ax=self.ax, selected_col_idx=selected_col_idx)
         self.canvas.draw()
+
+    # -------------------------------------------------------------
 
     def show_external_plot(self):
         if not self.selected_vars:

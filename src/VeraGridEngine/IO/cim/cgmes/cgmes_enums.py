@@ -37,29 +37,6 @@ class CgmesProfileType(Enum):
         return list(map(lambda c: c.value, cls))
 
 
-class CgmesRecoveryMode(Enum):
-    Strict = "Strict"
-    Auto = "Auto"
-    Recover = "Recover"
-
-    def __str__(self):
-        return "CgmesRecoveryMode." + str(self.value)
-
-    def __repr__(self):
-        return str(self)
-
-    @staticmethod
-    def argparse(s):
-        try:
-            return CgmesRecoveryMode[s]
-        except KeyError:
-            return s
-
-    @classmethod
-    def list(cls):
-        return list(map(lambda c: c.value, cls))
-
-
 class GeneratorControlSource(Enum):
     onAGC = 'onAGC'
     unavailable = 'unavailable'

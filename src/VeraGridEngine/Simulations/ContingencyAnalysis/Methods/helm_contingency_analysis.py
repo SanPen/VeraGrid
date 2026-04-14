@@ -120,7 +120,7 @@ def helm_contingency_analysis(grid: MultiCircuit,
                                base_loading=np.abs(pf_res_0.loading),
                                contingency_flows=np.abs(Sf),
                                contingency_loadings=np.abs(loading),
-                               contingency_group_idx=ic,
+                               contingency_idx=ic,
                                contingency_group=contingency_group,
                                srap_ratings=nc.passive_branch_data.protection_rates, )
 

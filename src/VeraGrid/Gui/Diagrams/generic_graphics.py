@@ -63,14 +63,6 @@ def is_dark_mode() -> bool:
     return IS_DARK
 
 
-def is_light_mode() -> bool:
-    """
-
-    :return:
-    """
-    return not IS_DARK
-
-
 if IS_DARK:
     set_dark_mode()
 else:

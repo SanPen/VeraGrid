@@ -12,12 +12,11 @@ from VeraGridEngine.enumerations import TapChangerTypes
 import VeraGridEngine.Devices as dev
 
 
-def parse_nodes(ucte_grid: UcteCircuit, grid: MultiCircuit, logger: Logger) -> Dict[str, dev.Bus]:
+def parse_nodes(ucte_grid: UcteCircuit, grid: MultiCircuit) -> Dict[str, dev.Bus]:
     """
 
     :param ucte_grid:
     :param grid:
-    :param logger:
     :return:
     """
     bus_dict: Dict[str, dev.Bus] = dict()
@@ -41,7 +40,7 @@ def parse_nodes(ucte_grid: UcteCircuit, grid: MultiCircuit, logger: Logger) -> D
     country_dict = dict()
 
     # create buses
-    for k, ucte_elm in enumerate(ucte_grid.nodes):
+    for ucte_elm in ucte_grid.nodes:
 
         if ucte_elm.current_country != "":
             country = country_dict.get(ucte_elm.current_country, None)
@@ -52,15 +51,6 @@ def parse_nodes(ucte_grid: UcteCircuit, grid: MultiCircuit, logger: Logger) -> D
                 grid.add_country(country)
         else:
             country = None
-
-        name = f"Bus {ucte_elm.node_code} {ucte_elm.geo_name}"
-
-        if ucte_elm.voltage <= 0:
-            logger.add_error("Bus nominal voltage is invalid",
-                             device_class="Bus",
-                             device=name,
-                             value=ucte_elm.voltage,
-                             expected_value=">0")
 
         elm = dev.Bus(
             name=ucte_elm.geo_name,
@@ -146,7 +136,6 @@ def parse_lines(ucte_grid: UcteCircuit, grid: MultiCircuit, bus_dict: Dict[str, 
                 Imax=ucte_elm.current_limit / 1000.0,  # A to kA
                 freq=grid.fBase,
                 Sbase=grid.Sbase,
-                logger=logger
             )
 
             grid.add_line(obj=elm, logger=logger)
@@ -199,7 +188,7 @@ def parse_transformer(ucte_grid: UcteCircuit, grid: MultiCircuit, bus_dict: Dict
                 tc_asymmetry_angle = 90
                 tc_type: TapChangerTypes = TapChangerTypes.NoRegulation
             else:
-                tc_total_positions: int = regulator.n1 if regulator.n1 > 0 else 1
+                tc_total_positions: int = regulator.n1
                 tc_neutral_position: int = int(regulator.n1 / 2) if regulator.n1 > 0 else 0
                 tc_normal_position: int = regulator.n1_prime
                 tc_dV: float = regulator.delta_u1
@@ -273,7 +262,7 @@ def convert_ucte_to_veragrid(ucte_grid: UcteCircuit, logger: Logger) -> MultiCir
     grid.Sbase = 100.0
     grid.comments = ucte_grid.fuse_comments()
 
-    bus_dict: Dict[str, dev.Bus] = parse_nodes(ucte_grid=ucte_grid, grid=grid, logger=logger)
+    bus_dict: Dict[str, dev.Bus] = parse_nodes(ucte_grid=ucte_grid, grid=grid)
     parse_lines(ucte_grid=ucte_grid, grid=grid, bus_dict=bus_dict, logger=logger)
     parse_transformer(ucte_grid=ucte_grid, grid=grid, bus_dict=bus_dict, logger=logger)
     parse_exchange_power(ucte_grid=ucte_grid, grid=grid, bus_dict=bus_dict, logger=logger)

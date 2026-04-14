@@ -3,19 +3,14 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Union, Tuple
-from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
+from typing import Union
+from VeraGridEngine.Devices.Parents.editable_device import DeviceType
 from VeraGridEngine.Devices.Aggregation.area import GenericAreaGroup
 from VeraGridEngine.Devices.Aggregation.region import Region
 
 
 class Municipality(GenericAreaGroup):
     __slots__ = ('region',)
-
-    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key="region", units="", tpe=DeviceType.RegionDevice,
-                      definition="Substation region, alternatively this can be obtained from the municipality"),
-    )
 
     def __init__(self, name='Municipality', idtag: Union[str, None] = None, code='', latitude=0.0, longitude=0.0,
                  region: Union[Region, None] = None):
@@ -37,3 +32,5 @@ class Municipality(GenericAreaGroup):
 
         self.region: Union[Region, None] = region
 
+        self.register(key="region", units="", tpe=DeviceType.RegionDevice,
+                      definition="Substation region, alternatively this can be obtained from the municipality")

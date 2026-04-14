@@ -22,7 +22,7 @@ import VeraGridEngine.Devices as dev
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
 from VeraGridEngine.enumerations import TapModuleControl, TapPhaseControl
-from VeraGridEngine.enumerations import SolverType, OpfDispatchMode, MIPSolvers, ZonalGrouping, TimeGrouping
+from VeraGridEngine.enumerations import SolverType
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 
 from VeraGridEngine.basic_structures import Logger
@@ -2321,7 +2321,6 @@ def gslv_pf(circuit: MultiCircuit,
             logger: Logger = Logger()) -> "pg.PowerFlowResults":
     """
     GSLV power flow
-    :param logger:
     :param circuit: MultiCircuit instance
     :param pf_opt: Power Flow Options
     :param time_series: Compile with VeraGrid time series?
@@ -2408,7 +2407,7 @@ def translate_gslv_pf_results(grid: MultiCircuit, res: "pg.PowerFlowResults", lo
     results.loading_hvdc = res.loading_hvdc[0, :]
     results.losses_hvdc = res.losses_hvdc[0, :]
 
-    results.Pfp_vsc = res.Pf_vsc[0, :]
+    results.Pfp_vsc = res.Pfp_vsc[0, :]
     results.St_vsc = res.St_vsc[0, :]
     results.loading_vsc = res.loading_vsc[0, :]
     results.losses_vsc = res.losses_vsc[0, :]
@@ -2434,126 +2433,9 @@ def translate_gslv_pf_results(grid: MultiCircuit, res: "pg.PowerFlowResults", lo
     return results
 
 
-def get_gslv_opf_options(opt: OptimalPowerFlowOptions,
-                         circuit: MultiCircuit,
-                         gslv_circuit: "pg.MultiCircuit") -> "pg.OptimalPowerFlowOptions":
-    """
-    Translate VeraGrid power flow options to GSLV power flow options
-    :param opt:
-    :return:
-    """
-    # OpfDispatchMode, MIPSolvers, ZonalGrouping, TimeGrouping
-
-    dispatch_mode_dict = {
-        OpfDispatchMode.Normal: pg.OpfDispatchMode.Normal,
-        OpfDispatchMode.InterAreaRedispatch: pg.OpfDispatchMode.InterAreaRedispatch,
-        OpfDispatchMode.UnitCommitment: pg.OpfDispatchMode.UnitCommitment,
-        OpfDispatchMode.NodalCapacity: pg.OpfDispatchMode.NodalCapacity,
-        OpfDispatchMode.GenerationExpansionPlanning: pg.OpfDispatchMode.GenerationExpansionPlanning,
-    }
-
-    mip_solver_dict = {
-        MIPSolvers.HIGHS: pg.MIPSolvers.HIGHS,
-        MIPSolvers.SCIP: pg.MIPSolvers.SCIP,
-        MIPSolvers.CPLEX: pg.MIPSolvers.CPLEX,
-        MIPSolvers.GUROBI: pg.MIPSolvers.GUROBI,
-        MIPSolvers.XPRESS: pg.MIPSolvers.XPRESS,
-        # MIPSolvers.CBC: pg.MIPSolvers.CBC,
-        # MIPSolvers.PDLP: pg.MIPSolvers.PDLP,
-    }
-
-    zonal_grouping_dict = {
-        ZonalGrouping.NoGrouping: pg.ZonalGrouping.NoGrouping,
-        ZonalGrouping.Area: pg.ZonalGrouping.Area,
-        ZonalGrouping.All: pg.ZonalGrouping.All,
-    }
-
-    time_grouping_dict = {
-        TimeGrouping.NoGrouping: pg.TimeGrouping.NoGrouping,
-        TimeGrouping.Monthly: pg.TimeGrouping.Monthly,
-        TimeGrouping.Weekly: pg.TimeGrouping.Weekly,
-        TimeGrouping.Daily: pg.TimeGrouping.Daily,
-        TimeGrouping.Hourly: pg.TimeGrouping.Hourly,
-    }
-
-    cg_dict = {elm.get_idtag(): elm for elm in gslv_circuit.contingency_groups}
-
-    contingency_groups_used = [cg_dict[cg.idtag] for cg in opt.contingency_groups_used]
-
-    return pg.OptimalPowerFlowOptions(
-        dispatch_mode=dispatch_mode_dict[opt.dispatch_mode],
-        solver_type=mip_solver_dict[opt.mip_solver],
-        zonal_grouping=zonal_grouping_dict[opt.zonal_grouping],
-        time_grouping=time_grouping_dict[opt.time_grouping],
-        skip_generation_limits=opt.skip_generation_limits,
-        consider_contingencies=opt.consider_contingencies,
-        contingency_groups_used=contingency_groups_used,
-        ramp_constraints=opt.consider_ramps,
-        consider_time_up_down=opt.consider_time_up_down,
-        area_spinning_reserve=opt.area_spinning_reserve,
-        lodf_threshold=opt.lodf_tolerance,
-        inter_aggregation_info=opt.inter_aggregation_info,  # translate
-        nodal_capacity_sign=1.0,
-        capacity_nodes_idx_in=None,
-        use_glsk_as_cost=opt.use_glsk_as_cost,
-        add_losses_approximation=opt.add_losses_approximation,
-        verbose=opt.verbose,
-        robust=opt.robust,
-    )
-
-
-def gslv_opf(circuit: MultiCircuit,
-             opf_opt: OptimalPowerFlowOptions,
-             time_series: bool = False,
-             time_indices: Union[IntVec, None] = None,
-             opf_results: Union[None, OptimalPowerFlowResults] = None,
-             logger: Logger = Logger()) -> "pg.OptimalPowerFlowResults":
-    """
-    GSLV power flow
-    :param logger:
-    :param circuit: MultiCircuit instance
-    :param opf_opt: Power Flow Options
-    :param time_series: Compile with VeraGrid time series?
-    :param time_indices: Array of time indices
-    :param opf_results: Instance of
-    :return: GSLV Power flow results object
-    """
-    gslv_grid, _ = to_gslv(circuit,
-                           use_time_series=time_series,
-                           time_indices=None,
-                           override_branch_controls=False,
-                           opf_results=opf_results)
-
-    opf_options = get_gslv_opf_options(opf_opt)
-
-    if time_series:
-        # it is already sliced to the relevant time indices
-        if time_indices is None:
-            time_indices = [i for i in range(circuit.get_time_number())]
-        else:
-            time_indices = list(time_indices)
-        n_threads = 0  # max threads
-    else:
-        time_indices = [0]
-        n_threads = 1
-
-    t0 = time.time()
-
-    opf_res = pg.optimal_power_flow(
-        grid=gslv_grid,
-        options=opf_options,
-        n_threads=0
-    )
-
-    logger.add_info("gslv time", value=f"{(time.time() - t0)} s")
-
-    return opf_res
-
-
 def gslv_contingencies_snapshot(circuit: MultiCircuit,
                                 con_opt: ContingencyAnalysisOptions,
-                                opf_results: Union[
-                                    None, OptimalPowerFlowResults] = None, ) -> "pg.ContingencyResultsSnapshot":
+                                opf_results: Union[None, OptimalPowerFlowResults] = None,) -> "pg.ContingencyResultsSnapshot":
     """
     GSLV power flow
     :param circuit: MultiCircuit instance

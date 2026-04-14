@@ -1063,9 +1063,6 @@ class DeviceType(Enum):
     LoadLikeDevice = 'Load like'
     BranchGroupDevice = 'Branch group'
     LambdaDevice = r"Loading from the base situation ($\lambda$)"
-    ExciterDevice = "Exciter"
-    GovernorDevice = "Governor"
-    StabilizerDevice = "Stabilizer"
 
     PMeasurementDevice = 'Pi Measurement'
     QMeasurementDevice = 'Qi Measurement'
@@ -1103,7 +1100,6 @@ class DeviceType(Enum):
     Technology = 'Technology'
     TechnologyGroup = 'Technology Group'
     TechnologyCategory = 'Technology Category'
-    Owner = 'Owner'
 
     ContingencyDevice = 'Contingency'
     ContingencyGroupDevice = 'Contingency Group'
@@ -1148,10 +1144,10 @@ class DeviceType(Enum):
     DynamicModelHostDevice = "Dynamic Model Host"
 
     RmsModelTemplateDevice = "RMS template"
-    RmsEventDevice = "Rms Event"
-    RmsEventsGroupDevice = "Rms Events Group"
 
-    VarFactory = "Var Factory"
+    RmsEventDevice = "Rms Event"
+
+    RmsEventsGroupDevice = "Rms Events Group"
 
     def __str__(self) -> str:
         return str(self.value)
@@ -1195,8 +1191,6 @@ class SubObjectType(Enum):
     AdmittanceMatrix = "Admittance Matrix"
     DynamicModelHostType = "DynamicModuleHost"
     DaeBlockType = "DaeBlock"
-    VarType = "VarType"
-    ConstType = "ConstType"
 
     def __str__(self) -> str:
         return str(self.value)
@@ -1456,57 +1450,6 @@ class LogSeverity(Enum):
             return s
 
 
-class FileType(Enum):
-    """
-    Enumeration of logs severities
-    """
-    VeraGrid = "VeraGrid"
-    VeraGrid_xlsx1 = "VeraGrid Excel 1"
-    VeraGrid_xlsx2 = "VeraGrid Excel 2"
-    VeraGrid_xlsx3 = "VeraGrid Excel 3"
-    VeraGrid_xlsx4 = "VeraGrid Excel 4"
-    VeraGrid_delta = "VeraGrid Delta"
-    VeraGrid_sqlite = "VeraGrid SQLite"
-    VeraGrid_h5 = "VeraGrid H5"
-    VeraGrid_json = "VeraGrid Json"
-    VeraGrid_ejson3 = "Ejson3"
-    Matpower = "Matpower"
-    DPX = "DPX"
-    PWF = "PWF"
-    EPC = "EPC"
-    PyPsa_h5 = "PyPSA H5"
-    PyPsa = "PyPsa"
-    PandaPower = "Pandapower"
-    Iidm = "Iidm"
-    PSSE_raw = "PSS/e raw"
-    PSSE_rawx = "PSS/e rawx"
-    DGS = "DGS"
-    CGMES = 'CGMES'
-    CIM = "CIM"
-    UCTE = 'UCTE'
-    RTE_xml = "RTE_XML"
-    IPA = "IPA"
-    PGM = "Power grid models"
-    generic_excel = "Generic Excel"
-
-    def __str__(self):
-        return self.value
-
-    def __repr__(self):
-        return str(self)
-
-    @staticmethod
-    def argparse(s):
-        """
-
-        :param s:
-        :return:
-        """
-        try:
-            return FileType[s]
-        except KeyError:
-            return s
-
 class CGMESVersions(Enum):
     """
     Enumeration of logs severities
@@ -1529,33 +1472,6 @@ class CGMESVersions(Enum):
         """
         try:
             return CGMESVersions[s]
-        except KeyError:
-            return s
-
-
-class CgmesTopologyMode(Enum):
-    """
-    Topology conversion mode for CGMES imports.
-    """
-    Auto = "Auto"
-    ConnectivityNode = "ConnectivityNode"
-    TopologicalNode = "TopologicalNode"
-
-    def __str__(self):
-        return self.value
-
-    def __repr__(self):
-        return str(self)
-
-    @staticmethod
-    def argparse(s):
-        """
-
-        :param s:
-        :return:
-        """
-        try:
-            return CgmesTopologyMode[s]
         except KeyError:
             return s
 
@@ -1943,20 +1859,6 @@ class ResultTypes(Enum):
     RmsSimulationReport = 'Rms time series report'
     RmsPlotResults = 'Rms plot results'
 
-    # RmsGeneratorResults = 'Rms Generator results'
-    # RmsLineResults = 'Rms Line results'
-    # RmsLoadResults = 'Rms load results'
-    #
-    #
-    # RmsGeneratorOmegaResults = 'Rms Genqec omega results'
-    # RmsGeneratorDeltaResults = 'Rms Genqec delta results'
-    #
-    # RmsLoadPResults = 'Rms Load P results'
-    # RmsLoadQResults = 'Rms Load Q results'
-    #
-    # RmsLinePResults = 'Rms Simple Line P results'
-    # RmsLineQResults = 'Rms Simple Line Q results'
-
     # Small Signal Stability
     ParticipationFactors = "Participation Factors"
     StateMatrix = "State Matrix"
@@ -2100,8 +2002,6 @@ class ResultTypes(Enum):
     ReliabilityLOLETResults = "LOLET"
     ReliabilityLOLFTResults = "LOLFT"
 
-
-
     def __str__(self):
         return self.value
 
@@ -2134,7 +2034,6 @@ class SimulationTypes(Enum):
     MonteCarlo_run = 'Monte Carlo'
     PowerFlowTimeSeries_run = 'Power flow time series'
     ClusteringAnalysis_run = 'Clustering Analysis'
-    CleanRoom_run = 'Clean room'
     ContinuationPowerFlow_run = 'Voltage collapse'
     LatinHypercube_run = 'Latin Hypercube'
     StochasticPowerFlow = 'Stochastic Power Flow'
@@ -2164,7 +2063,6 @@ class SimulationTypes(Enum):
     Reliability_run = "Reliability"
     RmsDynamic_run = "RMS Dynamic"
     SmallSignal_run = "Small Signal stability"
-    EmtDynamic_run = "EMT Dynamic"
 
     FileOpen = "file open"
     FileSave = "file save"
@@ -2429,19 +2327,10 @@ class CascadeType(Enum):
         """
         return list(map(lambda c: c.value, cls))
 
-class DynamicIntegrationMethod(Enum):
-    """
-    Dynamic integration methods.
-    """
-    # Implicit time-stepping (DAE form)
-    DaeTrapezoidal = "DAE_Trapezoidal"
-    DaeBackEuler = "DAE_BackEuler"
-    DaeBDF2 = "DAE_bdf2"
-    DaeContinuous = "DAE_Continuous"
 
-    # Explicit time-stepping (ODE form)
-    OdeRungeKutta4 = "ODE_Runge_Kutta 4"
-    OdeEuler = "ODE_Euler"
+class DynamicIntegrationMethod(Enum):
+    Trapezoid = "Trapezoid",
+    BackEuler = "BackEuler"
 
     def __str__(self) -> str:
         return str(self.value)
@@ -2451,104 +2340,13 @@ class DynamicIntegrationMethod(Enum):
 
     @staticmethod
     def argparse(s):
+        """
+
+        :param s:
+        :return:
+        """
         try:
             return DynamicIntegrationMethod[s]
-        except KeyError:
-            return s
-
-    @classmethod
-    def list(cls):
-        return list(map(lambda c: c.value, cls))
-
-
-class EmtSolverTypes(Enum):
-    """
-    Jacobian construction backends for implicit solvers.
-    """
-    Symbolic = "symbolic"  # Symbolic differentiation (SD)
-    Automatic = "automatic"  # Sparse forward-mode AD + graph coloring
-    StructuralAD = "structuralAD"  # Sparse structural automatic differentiation
-
-    def __str__(self) -> str:
-        return str(self.value)
-
-    def __repr__(self):
-        return str(self)
-
-    @staticmethod
-    def argparse(s):
-        """
-
-        :param s:
-        :return:
-        """
-        try:
-            return EmtSolverTypes[s]
-        except KeyError:
-            return s
-
-    @classmethod
-    def list(cls):
-        """
-
-        :return:
-        """
-        return list(map(lambda c: c.value, cls))
-
-
-class SmallSignalEmtBuildTypes(Enum):
-    """
-    Jacobian construction backends for implicit solvers.
-    """
-    Arnoldi = "Arnoldi"
-    HybridArnoldi = "Hybrid Arnoldi"
-
-    def __str__(self) -> str:
-        return str(self.value)
-
-    def __repr__(self):
-        return str(self)
-
-    @staticmethod
-    def argparse(s):
-        """
-
-        :param s:
-        :return:
-        """
-        try:
-            return SmallSignalEmtBuildTypes[s]
-        except KeyError:
-            return s
-
-    @classmethod
-    def list(cls):
-        """
-
-        :return:
-        """
-        return list(map(lambda c: c.value, cls))
-
-
-class RmsInitializationMethod(Enum):
-    Explicit = "Explicit"
-    PseudoTransient = "PseudoTransient"
-
-    def __str__(self) -> str:
-        return str(self.value)
-
-    def __repr__(self):
-        return str(self)
-
-    @staticmethod
-    def argparse(s):
-        """
-
-        :param s:
-        :return:
-        """
-        try:
-            return RmsInitializationMethod[s]
         except KeyError:
             return s
 
@@ -2618,83 +2416,21 @@ class BusReductionMethod(Enum):
 
 class VarPowerFlowRefferenceType(Enum):
     """
-    VarPowerFlowRefferenceType
+    GridReductionMethod
     """
     NOTHING = "nothing"
     Vm = "Vm"  # Bus voltage module in p.u.
     Va = "Va"  # Bus voltage angle in rad
-    Vmf = "Vmf"  # Bus voltage module in p.u.
-    Vaf = "Vaf"  # Bus voltage angle in rad
-    Vmt = "Vmt"  # Bus voltage module in p.u.
-    Vat = "Vat"  # Bus voltage angle in rad
+    Vmf = "Vm"  # Bus voltage module in p.u.
+    Vaf = "Va"  # Bus voltage angle in rad
+    Vmt = "Vm"  # Bus voltage module in p.u.
+    Vat = "Va"  # Bus voltage angle in rad
     P = "P"  # Bus active power in p.u.
     Q = "Q"  # Bus reactive power in p.u.
     Pf = "Pf"  # Branch active power from in p.u.
     Qf = "Qf"  # Branch reactive power from in p.u.
     Pt = "Pt"  # Branch active power to in p.u.
     Qt = "Qt"  # Branch reactive power to in p.u.
-    Vdc = "Vdc"  # Bus voltage for DC voltage in p.u.
-    Idc = "Idc"  # Bus current for DC Bus in p.u.
-
-    # from Power Flow 3ph
-    v_N = "v_N"  # Bus voltage at phase N.
-    v_A = "v_A"  # Bus voltage at phase A.
-    v_B = "v_B"  # Bus voltage at phase B.
-    v_C = "v_C"  # Bus voltage at phase C.
-    d_v_N = "d_v_N"  # Bus voltage derivative at phase N.
-    d_v_A = "d_v_A"  # Bus voltage derivative at phase A.
-    d_v_B = "d_v_B"  # Bus voltage derivative at phase B.
-    d_v_C = "d_v_C"  # Bus voltage derivative at phase C.
-
-    i_N = "i_N"  # Injection current at phase N in p.u.
-    i_A = "i_A"  # Injection current at phase A in p.u.
-    i_B = "i_B"  # Injection current at phase B in p.u.
-    i_C = "i_C"  # Injection current at phase C in p.u.
-    theta = "theta"  # Rotor angle in a synchronous generator in rad
-
-    P_N = "P_N"  # Bus active power in phase N in p.u.
-    P_A = "P_A"  # Bus active power in phase A in p.u.
-    P_B = "P_B"  # Bus active power in phase B in p.u.
-    P_C = "P_C"  # Bus active power in phase C in p.u.
-    Q_N = "Q_N"  # Bus reactive power in phase N in p.u.
-    Q_A = "Q_A"  # Bus reactive power in phase A in p.u.
-    Q_B = "Q_B"  # Bus reactive power in phase B in p.u.
-    Q_C = "Q_C"  # Bus reactive power in phase C in p.u.
-
-    Sf_A = "Sf_A"  # Branch power from in phase A in p.u.
-    Sf_B = "Sf_B"  # Branch power from in phase B in p.u.
-    Sf_C = "Sf_C"  # Branch power from in phase C in p.u.
-    St_A = "St_A"  # Branch power from in phase A in p.u.
-    St_B = "St_B"  # Branch power from in phase B in p.u.
-    St_C = "St_C"  # Branch power from in phase C in p.u.
-
-    if_N = "if_N"  # Branch current from in phase N in p.u.
-    if_A = "if_A"  # Branch current from in phase A in p.u.
-    if_B = "if_B"  # Branch current from in phase B in p.u.
-    if_C = "if_C"  # Branch current from in phase C in p.u.
-    it_N = "it_N"  # Branch current to in phase N in p.u.
-    it_A = "it_A"  # Branch current to in phase A in p.u.
-    it_B = "it_B"  # Branch current to in phase B in p.u.
-    it_C = "it_C"  # Branch current to in phase C in p.u.
-
-    # Phasor representation (real/imaginary components)
-    Vr = "Vr"  # Bus voltage real part in p.u.
-    Vi = "Vi"  # Bus voltage imaginary part in p.u.
-    Vrf = "Vrf"  # From-bus voltage real part in p.u.
-    Vif = "Vif"  # From-bus voltage imaginary part in p.u.
-    Vrt = "Vrt"  # To-bus voltage real part in p.u.
-    Vit = "Vit"  # To-bus voltage imaginary part in p.u.
-
-    # Complex phasor representation (single complex variable)
-    V_complex = "V_complex"  # Complex voltage phasor V = Vr + j*Vi
-    Vf_complex = "Vf_complex"  # Complex voltage at from bus
-    Vt_complex = "Vt_complex"  # Complex voltage at to bus
-    I_complex = "I_complex"  # Complex current phasor I = Ir + j*Ii
-    If_complex = "If_complex"  # Complex current at from bus
-    It_complex = "It_complex"  # Complex current at to bus
-    S_complex = "S_complex"  # Complex power S = P + j*Q
-    Sf_complex = "Sf_complex"  # Complex power at from bus
-    St_complex = "St_complex"  # Complex power at to bus
 
     def __str__(self):
         return self.value
@@ -2711,109 +2447,6 @@ class VarPowerFlowRefferenceType(Enum):
         """
         try:
             return VarPowerFlowRefferenceType[s]
-        except KeyError:
-            return s
-
-
-class ParamPowerFlowRefferenceType(Enum):
-    """
-    ParamPowerFlowRefferenceType
-    """
-    NOTHING = "nothing"
-    #General
-    dt = "dt"  # time step for dynamic simulations
-    
-    # Branch / load parameters
-    g = "g"  # Branch resistance in per unit
-    b = "b"  # Branch reactance in per unit
-    bsh = "bsh"  # Branch shunt susceptance in per unit
-    Pl0 = "Pl0"  # Load active power
-    Ql0 = "Ql0"  # Load reactive power
-
-    # 3phase load power
-    Pl0_A = "Pl0_A"  # Load active power phase A
-    Ql0_A = "Ql0_A"  # Load reactive power phase A
-    Pl0_B = "Pl0_B"  # Load active power phase B
-    Ql0_B = "Ql0_B"  # Load reactive power phase B
-    Pl0_C = "Pl0_C"  # Load active power phase C
-    Ql0_C = "Ql0_C"  # Load reactive power phase C
-
-    # Machine / power flow parameters
-    fn = "fn"
-    ws = "ws"
-    M = "M"
-    D = "D"
-    Rs = "Rs"
-    Ra = "Ra"
-
-    # Reactances
-    Xd = "Xd"
-    Xq = "Xq"
-    Xd_prime = "Xd_prime"
-    Xq_prime = "Xq_prime"
-    Xd_2prime = "Xd_2prime"
-    Xq_2prime = "Xq_2prime"
-    Xl = "Xl"
-
-    # Time constants
-    Td0_prime = "Td0_prime"
-    Tq0_prime = "Tq0_prime"
-    Td0_2prime = "Td0_2prime"
-    Tq0_2prime = "Tq0_2prime"
-
-    # Auxiliary parameters
-    Xd_prime_minus_Xl = "Xd_prime_minus_Xl"
-    Xq_prime_minus_Xl = "Xq_prime_minus_Xl"
-    Xdaux = "Xdaux"
-    Xdaux2 = "Xdaux2"
-    Xdaux3 = "Xdaux3"
-    Xqaux = "Xqaux"
-    Xqaux2 = "Xqaux2"
-    Xqaux3 = "Xqaux3"
-
-    # Control / extra parameters
-    A = "A"
-    B = "B"
-
-    # Governor / control gains and limits
-    K = "K"  # governor gain (inverse droop)
-    Pmax = "Pmax"  # max mechanical power (pu)
-    Pmin = "Pmin"  # min mechanical power (pu)
-    Uc = "Uc"  # max valve closing rate (pu/s)
-    Uo = "Uo"  # max valve opening rate (pu/s)
-    T_aux = "T_aux"
-
-    # Control parameters
-    Kp = "Kp"
-    Ki = "Ki"
-    omega_ref = "omega_ref"
-    p0 = "p0"
-    P0 = "P0"
-
-    # Electrical / additional machine parameters
-    R1 = "R1"
-    X1 = "X1"
-    freq = "freq"  # corresponds to Var("frequ")
-    vf = "vf"
-    tm0 = "tm0"
-
-
-
-    def __str__(self):
-        return self.value
-
-    def __repr__(self):
-        return str(self)
-
-    @staticmethod
-    def argparse(s):
-        """
-
-        :param s:
-        :return:
-        """
-        try:
-            return ParamPowerFlowRefferenceType[s]
         except KeyError:
             return s
 
@@ -2895,94 +2528,3 @@ class TimeSeriesSearchPoint(Enum):
         except KeyError:
             return s
 
-
-class EmtLineTypes(Enum):
-    """
-    EmtLineTypes
-    """
-    Bergeron = "Bergeron"
-    J_Marti = "J_Marti"
-    PI = "Pi"
-
-    def __str__(self):
-        return self.value
-
-    def __repr__(self):
-        return str(self)
-
-    @staticmethod
-    def argparse(s):
-        """
-        :param s:
-        :return:
-        """
-        try:
-            return EmtLineTypes[s]
-        except KeyError:
-            return s
-
-
-class BlockType(Enum):
-    """
-    this class contains the existing types of blocks
-    """
-    CONST = "CONST"
-    GAIN = "GAIN"
-    SUM = "SUM"
-    SUBSTR = "SUBSTR"
-    PRODUCT = "PRODUCT"
-    DIVIDE = "Divide"
-    ABS = "Abs"
-    GENRAW = "GENRAW"
-    GENQEC = "GENQEC"
-    GOV = "Gov"
-    STAB = "Stab"
-    EXCITER = "Exciter"
-    LINE = "Line"
-    LOAD = "Load"
-    GENERIC = "Generic"
-    BUS_CONNECTION = "Bus Connection"
-    EXTERNAL_MAPPING = "EXTERNAL_MAPPING"
-
-    def __str__(self):
-        return self.value
-
-    def __repr__(self):
-        return str(self)
-
-    @staticmethod
-    def argparse(s):
-        """
-        :param s:
-        :return:
-        """
-        try:
-            return BlockType[s]
-        except KeyError:
-            return s
-
-
-
-class ProceduralGridMethods(Enum):
-    """
-    this class contains the existing types of blocks
-    """
-    SteinerAlone = "Steiner tree"
-    SteinerAndOptimization = "Steiner tree + optimization"
-
-    def __str__(self):
-        return self.value
-
-    def __repr__(self):
-        return str(self)
-
-    @staticmethod
-    def argparse(s):
-        """
-        :param s:
-        :return:
-        """
-        try:
-            return ProceduralGridMethods[s]
-        except KeyError:
-            return s

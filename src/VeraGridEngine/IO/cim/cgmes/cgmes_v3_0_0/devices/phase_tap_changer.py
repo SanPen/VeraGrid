@@ -4,19 +4,24 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from __future__ import annotations
-from typing import TYPE_CHECKING
 
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.tap_changer import TapChanger
-from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
-if TYPE_CHECKING:
-	from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.transformer_end import TransformerEnd
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
+
 
 class PhaseTapChanger(TapChanger):
-	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='TransformerEnd', class_type='TransformerEnd', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Transformer end to which this phase tap changer belongs.''', profiles=[]),
-	)
 	def __init__(self, rdfid='', tpe='PhaseTapChanger'):
 		TapChanger.__init__(self, rdfid, tpe)
 
+		from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.transformer_end import TransformerEnd
 		self.TransformerEnd: TransformerEnd | None = None
+
+		self.register_property(
+			name='TransformerEnd',
+			class_type=TransformerEnd,
+			multiplier=UnitMultiplier.none,
+			unit=UnitSymbol.none,
+			description='''Transformer end to which this phase tap changer belongs.''',
+			profiles=[]
+		)

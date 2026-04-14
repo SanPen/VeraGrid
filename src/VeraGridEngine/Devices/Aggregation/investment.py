@@ -3,9 +3,9 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Union, Tuple
+from typing import Union
 
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
 from VeraGridEngine.Devices.Parents.pointer_device_parent import PointerDeviceParent
 from VeraGridEngine.Devices.Aggregation.investments_group import InvestmentsGroup
 from VeraGridEngine.enumerations import DeviceType
@@ -19,15 +19,6 @@ class Investment(PointerDeviceParent):
         'CAPEX',
         '_group',
         'status',
-    )
-
-    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='CAPEX', units='M€', tpe=float,
-                      definition='Capital expenditures. This is the investment value, '
-                                 'it overrides the CAPEX value of the device if it exits.'),
-        GCProp(key='status', units='', tpe=bool,
-                      definition='If true the investment activates when applied, otherwise is deactivated.'),
-        GCProp(key='group', units='', tpe=DeviceType.InvestmentsGroupDevice, definition='Investment group'),
     )
 
     def __init__(self,
@@ -63,6 +54,12 @@ class Investment(PointerDeviceParent):
         self._group: InvestmentsGroup = group
         self.status: bool = status
 
+        self.register(key='CAPEX', units='M€', tpe=float,
+                      definition='Capital expenditures. This is the investment value, '
+                                 'it overrides the CAPEX value of the device if it exits.')
+        self.register(key='status', units='', tpe=bool,
+                      definition='If true the investment activates when applied, otherwise is deactivated.')
+        self.register(key='group', units='', tpe=DeviceType.InvestmentsGroupDevice, definition='Investment group')
 
     @property
     def group(self) -> InvestmentsGroup:

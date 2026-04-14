@@ -6,17 +6,37 @@
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.phase_tap_changer import PhaseTapChanger
 from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType, UnitSymbol
-from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
+
 
 class PhaseTapChangerLinear(PhaseTapChanger):
-	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='stepPhaseShiftIncrement', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.deg, description='''Measurement of angle in degrees.''', profiles=[]),
-		CgmesProperty(property_name='xMax', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.ohm, description='''Reactance (imaginary part of impedance), at rated frequency.''', profiles=[]),
-		CgmesProperty(property_name='xMin', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.ohm, description='''Reactance (imaginary part of impedance), at rated frequency.''', profiles=[]),
-	)
 	def __init__(self, rdfid='', tpe='PhaseTapChangerLinear'):
 		PhaseTapChanger.__init__(self, rdfid, tpe)
 
 		self.stepPhaseShiftIncrement: float = None
 		self.xMax: float = None
 		self.xMin: float = None
+
+		self.register_property(
+			name='stepPhaseShiftIncrement',
+			class_type=float,
+			multiplier=UnitMultiplier.none,
+			unit=UnitSymbol.deg,
+			description='''Measurement of angle in degrees.''',
+			profiles=[]
+		)
+		self.register_property(
+			name='xMax',
+			class_type=float,
+			multiplier=UnitMultiplier.none,
+			unit=UnitSymbol.ohm,
+			description='''Reactance (imaginary part of impedance), at rated frequency.''',
+			profiles=[]
+		)
+		self.register_property(
+			name='xMin',
+			class_type=float,
+			multiplier=UnitMultiplier.none,
+			unit=UnitSymbol.ohm,
+			description='''Reactance (imaginary part of impedance), at rated frequency.''',
+			profiles=[]
+		)

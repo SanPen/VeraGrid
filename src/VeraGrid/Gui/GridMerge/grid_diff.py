@@ -18,14 +18,13 @@ import VeraGrid.Session.file_handler as filedrv
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
-from VeraGridEngine.enumerations import FileType
 
 
 def handle_item_changed(item: QtWidgets.QTreeWidgetItem, column: int):
     """
 
     :param item:
-    :param column: This must be here because this is an event handler
+    :param column: THis must be here because this is an event handler
     :return:
     """
     if item.parent() is None:  # Root item
@@ -36,7 +35,7 @@ def handle_item_changed(item: QtWidgets.QTreeWidgetItem, column: int):
 
 class GridDiffDialogue(QtWidgets.QDialog):
     """
-    GridDiffDialogue
+    GridMergeDialogue
     """
 
     def __init__(self, grid: MultiCircuit):
@@ -97,12 +96,12 @@ class GridDiffDialogue(QtWidgets.QDialog):
                 self.open_file_thread_object = filedrv.FileOpenThread(
                     file_name=filename,
                     previous_circuit=None,
-                    options=filedrv.FileOpenOptions(
-                        file_type=FileType.VeraGrid
-                    )
+                    options=filedrv.FileOpenOptions()
                 )
 
                 # make connections
+                # self.open_file_thread_object.progress_signal.connect(self.ui.progressBar.setValue)
+                # self.open_file_thread_object.progress_text.connect(self.ui.progress_label.setText)
                 self.open_file_thread_object.done_signal.connect(self.post_open_base_grid)
 
                 # thread start
@@ -171,11 +170,12 @@ class GridDiffDialogue(QtWidgets.QDialog):
 
                 self.save_file_thread_object = filedrv.FileSaveThread(circuit=self._diff,
                                                                       file_name=filename,
-                                                                      options=filedrv.FileSavingOptions(
-                                                                          file_type=FileType.VeraGrid_delta
-                                                                      ))
+                                                                      options=filedrv.FileSavingOptions())
 
                 # make connections
+                # self.save_file_thread_object.progress_signal.connect(self.ui.progressBar.setValue)
+                # self.save_file_thread_object.progress_text.connect(self.ui.progress_label.setText)
+                # self.save_file_thread_object.done_signal.connect(self.UNLOCK)
                 self.save_file_thread_object.done_signal.connect(self.post_save_diff)
 
                 # thread start

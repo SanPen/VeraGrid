@@ -4,9 +4,9 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import Union, Tuple
+from typing import Union
 
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
 from VeraGridEngine.Devices.Parents.pointer_device_parent import PointerDeviceParent
 from VeraGridEngine.enumerations import DeviceType, FaultType, MethodShortCircuit, PhasesShortCircuit
 
@@ -20,14 +20,6 @@ class ShortCircuitEvent(PointerDeviceParent):
         '_method',
         '_phases',
         'active',
-    )
-
-    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='fault_type', units='', tpe=FaultType, definition='Type of short circuit'),
-        GCProp(key='method', units='', tpe=MethodShortCircuit, definition='Method of short circuit'),
-        GCProp(key='phases', units='', tpe=PhasesShortCircuit, definition='Phases involved'),
-        GCProp(key='active', units='', tpe=bool,
-                      definition='If true the short-circuit activates when calculated, otherwise is deactivated.'),
     )
 
     def __init__(self,
@@ -63,6 +55,11 @@ class ShortCircuitEvent(PointerDeviceParent):
         self._phases: PhasesShortCircuit = phases
         self.active: bool = active
 
+        self.register(key='fault_type', units='', tpe=FaultType, definition='Type of short circuit')
+        self.register(key='method', units='', tpe=MethodShortCircuit, definition='Method of short circuit')
+        self.register(key='phases', units='', tpe=PhasesShortCircuit, definition='Phases involved')
+        self.register(key='active', units='', tpe=bool,
+                      definition='If true the short-circuit activates when calculated, otherwise is deactivated.')
 
     def _check(self):
 

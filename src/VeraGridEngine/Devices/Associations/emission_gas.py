@@ -4,20 +4,14 @@
 # SPDX-License-Identifier: MPL-2.0
 
 
-from typing import Union, Tuple
+from typing import Union
 import numpy as np
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType, GCProp
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType
 from VeraGridEngine.Devices.profile import Profile
 
 
 class EmissionGas(EditableDevice):
     __slots__ = ('cost', '_cost_prof', 'color')
-
-    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='cost', units='e/t', tpe=float, definition='Cost of emissions (e / ton)',
-                      profile_name='cost_prof'),
-        GCProp(key='color', units='', tpe=str, definition='Color to paint', is_color=True),
-    )
 
     def __init__(self,
                  name: str = '',
@@ -45,6 +39,9 @@ class EmissionGas(EditableDevice):
 
         self.color = color if color is not None else self.rnd_color()
 
+        self.register(key='cost', units='e/t', tpe=float, definition='Cost of emissions (e / ton)',
+                      profile_name='cost_prof')
+        self.register(key='color', units='', tpe=str, definition='Color to paint', is_color=True)
 
     @property
     def cost_prof(self) -> Profile:

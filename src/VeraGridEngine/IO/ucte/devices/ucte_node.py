@@ -52,34 +52,22 @@ def try_parse_voltage(val: str | float, name: str, logger: Logger) -> float:
 
     :return:
     """
-    val2 = UCTE_VOLTAGE_MAP.get(val, None)
-    if val2 is None:
-        try:
-            f = float(val)
-        except ValueError as e:
+    try:
+        return float(val)
+    except ValueError:
+        val2 = UCTE_VOLTAGE_MAP.get(val, None)
+        if val2 is None:
             logger.add_error('Could not parse UCTE voltage',
                              device=name, value=f"'{val}'")
             return 1.0
-
-        if f > 0.0:
-            logger.add_warning('UCTE Voltage was not provided as a value from the standard, but directly as a float',
-                               device=name,
-                               value=f"'{val}'")
-            return f
         else:
-            logger.add_error('Provided UCTE voltage is zero',
-                             device=name,
-                             value=f"'{val} -> {f}'")
-            return 1.0
-    else:
-        return val2
+            return val2
 
 
 class UcteNode:
     """
     UcteNode
     """
-
     def __init__(self):
 
         self.current_country = ""
@@ -160,8 +148,7 @@ class UcteNode:
             self.min_gen_mvar = sub_float(line, 81, 88, device, "min_gen_mvar", logger, -9999.0)
             self.max_gen_mvar = sub_float(line, 89, 96, device, "max_gen_mvar", logger, 9999.0)
             self.static_primary_control = sub_float(line, 97, 102, device, "static_primary_control", logger)
-            self.nominal_power_primary_control = sub_float(line, 103, 110, device, "nominal_power_primary_control",
-                                                           logger)
+            self.nominal_power_primary_control = sub_float(line, 103, 110, device, "nominal_power_primary_control", logger)
             self.short_circuit_power = sub_float(line, 111, 118, device, "short_circuit_power", logger)
             self.xr_ratio = sub_float(line, 119, 126, device, "xr_ratio", logger)
             self.plant_type = sub_str(line, 127, 128, device, "plant_type", logger)
@@ -175,7 +162,7 @@ class UcteNode:
             elif voltage_code == "":
                 logger.add_warning("Incorrect line formatting impede finding the voltage code",
                                    device_class=device,
-                                   value=line, )
+                                   value=line,)
 
             chunks = line.split()
 
@@ -222,8 +209,7 @@ class UcteNode:
                 self.static_primary_control = try_float(chunks[13], device, "static_primary_control", logger)
 
             if len(chunks) >= 15:
-                self.nominal_power_primary_control = try_float(chunks[14], device, "nominal_power_primary_control",
-                                                               logger)
+                self.nominal_power_primary_control = try_float(chunks[14], device, "nominal_power_primary_control", logger)
 
             if len(chunks) >= 16:
                 self.short_circuit_power = try_float(chunks[15], device, "short_circuit_power", logger)

@@ -5,20 +5,12 @@
 from typing import Tuple
 import numpy as np
 from VeraGridEngine.Devices.admittance_matrix import AdmittanceMatrix
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType, GCProp
-from VeraGridEngine.basic_structures import Logger
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType
 
 
-def get_line_impedances_with_c(r_ohm: float,
-                               x_ohm: float,
-                               c_nf: float,
-                               length: float,
-                               Imax: float,
-                               freq: float,
-                               Sbase: float,
-                               Vnom: float,
-                               logger: Logger = Logger(),
-                               decimals_rounding: int = 6) -> Tuple[float, float, float, float]:
+def get_line_impedances_with_c(r_ohm: float, x_ohm: float, c_nf: float,
+                               length: float, Imax: float,
+                               freq: float, Sbase: float, Vnom: float) -> Tuple[float, float, float, float]:
     """
     Fill R, X, B from not-in-per-unit parameters
     :param r_ohm: Resistance per km in OHM/km
@@ -29,33 +21,26 @@ def get_line_impedances_with_c(r_ohm: float,
     :param freq: System frequency in Hz
     :param Sbase: Base power in MVA (take always 100 MVA)
     :param Vnom: nominal voltage (kV)
-    :param logger: logger
-    :param decimals_rounding: Number of decimals to round to
     :return R, X, B, rate
     """
     r_ohm_total = r_ohm * length
     x_ohm_total = x_ohm * length
     b_siemens_total = (2 * np.pi * freq * c_nf * 1e-9) * length
 
-    if Vnom > 0.0:
-        Zbase = (Vnom * Vnom) / Sbase
-        Ybase = 1.0 / Zbase
+    Zbase = (Vnom * Vnom) / Sbase
+    Ybase = 1.0 / Zbase
 
-        R: float = np.round(r_ohm_total / Zbase, decimals_rounding)
-        X: float = np.round(x_ohm_total / Zbase, decimals_rounding)
-        B: float = np.round(b_siemens_total / Ybase, decimals_rounding)
-        rate: float = np.round(Imax * Vnom * 1.73205080757, decimals_rounding)  # nominal power in MVA = kA * kV * sqrt(3)
+    R = np.round(r_ohm_total / Zbase, 6)
+    X = np.round(x_ohm_total / Zbase, 6)
+    B = np.round(b_siemens_total / Ybase, 6)
 
-        return R, X, B, rate
-    else:
-        logger.add_error("Nominal voltage is zero", device_class="SequenceLineType")
-        return 1e-20, 1e-20, 0, 1e-20
+    rate = np.round(Imax * Vnom * 1.73205080757, 6)  # nominal power in MVA = kA * kV * sqrt(3)
+
+    return R, X, B, rate
 
 
 def get_line_impedances_with_b(r_ohm: float, x_ohm: float, b_us: float, length: float,
-                               Imax: float, Sbase: float, Vnom: float,
-                               logger: Logger = Logger(),
-                               decimals_rounding: int = 6) -> Tuple[float, float, float, float]:
+                               Imax: float, Sbase: float, Vnom: float) -> Tuple[float, float, float, float]:
     """
     Fill R, X, B from not-in-per-unit parameters
     :param r_ohm: Resistance per km in OHM/km
@@ -65,28 +50,22 @@ def get_line_impedances_with_b(r_ohm: float, x_ohm: float, b_us: float, length: 
     :param Imax: Maximum current in kA
     :param Sbase: Base power in MVA (take always 100 MVA)
     :param Vnom: nominal voltage (kV)
-    :param logger: Logger (optional)
-    :param decimals_rounding: number of decimals to round
     :return R, X, B, rate
     """
     r_ohm_total = r_ohm * length
     x_ohm_total = x_ohm * length
     b_siemens_total = (b_us * 1e-6) * length
 
-    if Vnom > 0:
-        Zbase = (Vnom * Vnom) / Sbase
-        Ybase = 1.0 / Zbase
+    Zbase = (Vnom * Vnom) / Sbase
+    Ybase = 1.0 / Zbase
 
-        R: float = np.round(r_ohm_total / Zbase, decimals_rounding)
-        X: float = np.round(x_ohm_total / Zbase, decimals_rounding)
-        B: float = np.round(b_siemens_total / Ybase, decimals_rounding)
-        rate: float = np.round(Imax * Vnom * 1.73205080757, decimals_rounding)  # nominal power in MVA = kA * kV * sqrt(3)
+    R = np.round(r_ohm_total / Zbase, 6)
+    X = np.round(x_ohm_total / Zbase, 6)
+    B = np.round(b_siemens_total / Ybase, 6)
 
-        return R, X, B, rate
-    else:
-        logger.add_error("Nominal voltage is zero", device_class="SequenceLineType")
+    rate = np.round(Imax * Vnom * 1.73205080757, 6)  # nominal power in MVA = kA * kV * sqrt(3)
 
-        return 1e-20, 1e-20, 0, 1e-20
+    return R, X, B, rate
 
 
 class SequenceLineType(EditableDevice):
@@ -102,33 +81,12 @@ class SequenceLineType(EditableDevice):
         'B0',
         'Cnf0',
         'use_conductance',
-        'n_circuits',
-        'capex',
-        'opex'
-    )
-
-    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='Imax', units='kA', tpe=float, definition='Current rating of the line', old_names=['rating']),
-        GCProp(key='Vnom', units='kV', tpe=float, definition='Voltage rating of the line'),
-        GCProp(key='R', units='Ohm/km', tpe=float, definition='Positive-sequence resistance per km'),
-        GCProp(key='X', units='Ohm/km', tpe=float, definition='Positive-sequence reactance per km'),
-        GCProp(key='B', units='uS/km', tpe=float, definition='Positive-sequence shunt susceptance per km'),
-        GCProp(key='R0', units='Ohm/km', tpe=float, definition='Zero-sequence resistance per km'),
-        GCProp(key='X0', units='Ohm/km', tpe=float, definition='Zero-sequence reactance per km'),
-        GCProp(key='B0', units='uS/km', tpe=float, definition='Zero-sequence shunt susceptance per km'),
-        GCProp(key='Cnf', units='nF/km', tpe=float, definition='Positive-sequence shunt conductance per km'),
-        GCProp(key='Cnf0', units='nF/km', tpe=float, definition='Zero-sequence shunt conductance per km'),
-        GCProp(key='use_conductance', units='', tpe=bool,
-               definition='Use conductance? else the susceptance is used'),
-        GCProp(key='n_circuits', units='', tpe=int, definition='number of circuits'),
-        GCProp(key='capex', units='currency/km', tpe=float, definition='Capital expenditure per km'),
-        GCProp(key='opex', units='currency/MWh', tpe=float, definition='Operational expenditure'),
+        'n_circuits'
     )
 
     def __init__(self, name='SequenceLine', idtag=None, Imax=1, Vnom=1,
                  R=1e-20, X=1e-20, B=1e-20, R0=1e-20, X0=1e-20, B0=1e-20, CnF=1e-20, CnF0=1e-20,
-                 use_conductance: bool = False,
-                 capex: float = 0.0, opex: float = 0.0):
+                 use_conductance: bool = False):
         """
         Constructor
         :param name: name of the model
@@ -141,8 +99,6 @@ class SequenceLineType(EditableDevice):
         :param B0: Susceptance of zero sequence in uS/km
         :param CnF: Conductivity of positive sequence in uS/km
         :param CnF0: Conductivity of zero sequence in uS/km
-        :param capex: Capital expenditures
-        :param opex: Operating expenditures
         """
 
         EditableDevice.__init__(self,
@@ -169,19 +125,27 @@ class SequenceLineType(EditableDevice):
 
         self.n_circuits = 1
 
-        self.capex = float(capex)
-        self.opex = float(opex)
+        self.register(key='Imax', units='kA', tpe=float, definition='Current rating of the line', old_names=['rating'])
+        self.register(key='Vnom', units='kV', tpe=float, definition='Voltage rating of the line')
+        self.register(key='R', units='Ohm/km', tpe=float, definition='Positive-sequence resistance per km')
+        self.register(key='X', units='Ohm/km', tpe=float, definition='Positive-sequence reactance per km')
+        self.register(key='B', units='uS/km', tpe=float, definition='Positive-sequence shunt susceptance per km')
+        self.register(key='R0', units='Ohm/km', tpe=float, definition='Zero-sequence resistance per km')
+        self.register(key='X0', units='Ohm/km', tpe=float, definition='Zero-sequence reactance per km')
+        self.register(key='B0', units='uS/km', tpe=float, definition='Zero-sequence shunt susceptance per km')
+        self.register(key='Cnf', units='nF/km', tpe=float, definition='Positive-sequence shunt conductance per km')
+        self.register(key='Cnf0', units='nF/km', tpe=float, definition='Zero-sequence shunt conductance per km')
+        self.register(key='use_conductance', units='', tpe=bool,
+                      definition='Use conductance? else the susceptance is used')
+        self.register(key='n_circuits', units='', tpe=int, definition='number of circuits')
 
-    def get_values(self, Sbase: float, freq: float, length: float, line_Vnom: float,
-                   logger: Logger = Logger(), decimals_rounding: int = 6):
+    def get_values(self, Sbase: float, freq: float, length: float, line_Vnom: float, ):
         """
         Get the per-unit values
         :param Sbase: Base power (MVA, always use 100MVA)
         :param freq: Frequency (Hz)
         :param length: length in km
         :param line_Vnom: Line nominal voltage
-        :param logger: Logger instance
-        :param decimals_rounding: Number of decimal digits to display
         :return: R (p.u.), x(p.u.), B(p.u.), Rate (MVA)
         """
 
@@ -189,42 +153,24 @@ class SequenceLineType(EditableDevice):
             R, X, B, rate = get_line_impedances_with_c(r_ohm=self.R,
                                                        x_ohm=self.X,
                                                        c_nf=self.Cnf,
-                                                       length=length,
-                                                       Imax=self.Imax,
-                                                       freq=freq,
-                                                       Sbase=Sbase,
-                                                       Vnom=line_Vnom,
-                                                       logger=logger,
-                                                       decimals_rounding=decimals_rounding)
-
+                                                       length=length, Imax=self.Imax,
+                                                       freq=freq, Sbase=Sbase, Vnom=line_Vnom)
             R0, X0, B0, _ = get_line_impedances_with_c(r_ohm=self.R0,
                                                        x_ohm=self.X0,
                                                        c_nf=self.Cnf0,
-                                                       length=length,
-                                                       Imax=self.Imax,
-                                                       freq=freq,
-                                                       Sbase=Sbase,
-                                                       Vnom=line_Vnom,
-                                                       logger=logger,
-                                                       decimals_rounding=decimals_rounding)
+                                                       length=length, Imax=self.Imax,
+                                                       freq=freq, Sbase=Sbase, Vnom=line_Vnom)
         else:
             R, X, B, rate = get_line_impedances_with_b(r_ohm=self.R,
                                                        x_ohm=self.X,
                                                        b_us=self.B,
-                                                       length=length,
-                                                       Imax=self.Imax,
-                                                       Sbase=Sbase,
-                                                       Vnom=line_Vnom,
-                                                       decimals_rounding=decimals_rounding)
-
+                                                       length=length, Imax=self.Imax,
+                                                       Sbase=Sbase, Vnom=line_Vnom)
             R0, X0, B0, _ = get_line_impedances_with_b(r_ohm=self.R0,
                                                        x_ohm=self.X0,
                                                        b_us=self.B0,
-                                                       length=length,
-                                                       Imax=self.Imax,
-                                                       Sbase=Sbase,
-                                                       Vnom=line_Vnom,
-                                                       decimals_rounding=decimals_rounding)
+                                                       length=length, Imax=self.Imax,
+                                                       Sbase=Sbase, Vnom=line_Vnom)
 
         return R, X, B, R0, X0, B0, rate
 
@@ -239,16 +185,16 @@ class SequenceLineType(EditableDevice):
         diag = (2 * z1 + z0) / 3
         off_diag = (z0 - z1) / 3
 
-        z_abc = np.full((3, 3), off_diag)
-        np.fill_diagonal(z_abc, diag)
+        zabc = np.full((4, 4), off_diag)
+        np.fill_diagonal(zabc, diag)
 
         adm = AdmittanceMatrix(size=4)
         try:
-            adm.values[1:4, 1:4] = np.linalg.inv(z_abc)
+            adm.values = np.linalg.inv(zabc)
         except np.linalg.LinAlgError:
-            adm.values[1:4, 1:4] = np.linalg.pinv(z_abc)
+            adm.values = np.linalg.pinv(zabc)
 
-        adm.phN = 0
+        adm.phN = 1
         adm.phA = 1
         adm.phB = 1
         adm.phC = 1
@@ -270,13 +216,13 @@ class SequenceLineType(EditableDevice):
         diag = (2.0 * y1 + y0) / 3.0
         off_diag = (y0 - y1) / 3.0
 
-        y_abc = np.full((3, 3), off_diag)
-        np.fill_diagonal(y_abc, diag)
+        yabc = np.full((4, 4), off_diag)
+        np.fill_diagonal(yabc, diag)
 
         adm = AdmittanceMatrix(size=4)
-        adm.values[1:4, 1:4] = y_abc
+        adm.values = yabc
 
-        adm.phN = 0
+        adm.phN = 1
         adm.phA = 1
         adm.phB = 1
         adm.phC = 1

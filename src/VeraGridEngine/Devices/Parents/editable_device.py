@@ -2,14 +2,11 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
-from __future__ import annotations
-
 import random
 import uuid
 import numpy as np
 import pandas as pd
 
-from VeraGridEngine import RmsInitializationMethod, EmtSolverTypes
 from VeraGridEngine.Devices.profile import Profile
 from typing import List, Dict, AnyStr, Any, Union, Type, Tuple
 from VeraGridEngine.basic_structures import Logger, IntVec
@@ -21,8 +18,7 @@ from VeraGridEngine.enumerations import (DeviceType, TimeFrame, BuildStatus, Win
                                          ZonalGrouping, MIPSolvers, AcOpfMode, VoltageLevelTypes, BranchGroupTypes,
                                          BranchImpedanceMode, FaultType, TapChangerTypes, ContingencyOperationTypes,
                                          WindingType, MethodShortCircuit, PhasesShortCircuit, ShuntConnectionType,
-                                         BusGraphicType, SwitchGraphicType, DynamicIntegrationMethod, OpfDispatchMode,
-                                         EmtLineTypes,SmallSignalEmtBuildTypes)
+                                         BusGraphicType, SwitchGraphicType, DynamicIntegrationMethod, OpfDispatchMode)
 
 # types that can be assigned to a VeraGrid property
 GCPROP_TYPES = Union[
@@ -65,11 +61,7 @@ GCPROP_TYPES = Union[
     Type[BusGraphicType],
     Type[SwitchGraphicType],
     Type[DynamicIntegrationMethod],
-    Type[RmsInitializationMethod],
-    Type[OpfDispatchMode],
-    Type[EmtLineTypes],
-    Type[EmtSolverTypes],
-    Type[SmallSignalEmtBuildTypes]
+    Type[OpfDispatchMode]
 ]
 
 
@@ -123,33 +115,20 @@ def smart_compare(a, b, atol=1.e-10):
 
 class GCProp:
     """
-    VeraGrid property, this class must remain immutable
+    VeraGrid property
     """
-    __slots__ = (
-        "_name",
-        "_units",
-        "_tpe",
-        "_definition",
-        "_profile_name",
-        "_display",
-        "_editable",
-        "_old_names",
-        "_is_color",
-        "_is_date",
-    )
 
     def __init__(self,
-                 prop_name: Union[str, None] = None,
-                 units: str = "",
-                 tpe: Union[GCPROP_TYPES, None] = None,
-                 definition: str = "",
+                 prop_name: str,
+                 units: str,
+                 tpe: GCPROP_TYPES,
+                 definition: str,
                  profile_name: str = '',
                  display: bool = True,
                  editable: bool = True,
-                 old_names: Union[List[str], Tuple[str, ...], None] = None,
+                 old_names: List[str] = None,
                  is_color: bool = False,
-                 is_date: bool = False,
-                 key: Union[str, None] = None):
+                 is_date: bool = False):
         """
         VeraGrid property
         :param prop_name:
@@ -163,109 +142,27 @@ class GCProp:
         :param is_date: Is this a date? i.e. the tpe is int but represents a date
         """
 
-        if prop_name is None:
-            if key is None:
-                raise ValueError("Either 'prop_name' or 'key' must be provided.")
-            else:
-                self._name = key
-        else:
-            self._name = prop_name
-        if tpe is None:
-            raise ValueError("The 'tpe' argument must be provided.")
-        else:
-            pass
-        self._units: str = units
-        self._tpe: GCPROP_TYPES = tpe
-        self._definition: str = definition
-        self._profile_name: str = profile_name
-        self._display: bool = display
-        self._editable: bool = editable
-        self._is_color: bool = is_color
-        self._is_date: bool = is_date
-        if old_names is None:
-            self._old_names: Tuple[str, ...] = tuple()
-        else:
-            self._old_names = tuple(old_names)
+        self.name = prop_name
 
-    @property
-    def name(self) -> str:
-        """
-        Property name.
-        :return: str
-        """
-        return self._name
+        self.units = units
 
-    @property
-    def units(self) -> str:
-        """
-        Property units.
-        :return: str
-        """
-        return self._units
+        self.tpe = tpe
 
-    @property
-    def tpe(self) -> GCPROP_TYPES:
-        """
-        Property type.
-        :return: GCPROP_TYPES
-        """
-        return self._tpe
+        self.definition = definition
 
-    @property
-    def definition(self) -> str:
-        """
-        Property definition.
-        :return: str
-        """
-        return self._definition
+        self.profile_name = profile_name
 
-    @property
-    def profile_name(self) -> str:
-        """
-        Linked profile name.
-        :return: str
-        """
-        return self._profile_name
+        self.display = display
 
-    @property
-    def display(self) -> bool:
-        """
-        Display flag.
-        :return: bool
-        """
-        return self._display
+        self.editable = editable
 
-    @property
-    def editable(self) -> bool:
-        """
-        Editable flag.
-        :return: bool
-        """
-        return self._editable
+        self.is_color = is_color
 
-    @property
-    def old_names(self) -> Tuple[str, ...]:
-        """
-        Compatibility aliases.
-        :return: Tuple[str, ...]
-        """
-        return self._old_names
+        self.is_date = is_date
 
-    @property
-    def is_color(self) -> bool:
-        """
-        Color flag.
-        :return: bool
-        """
-        return self._is_color
+        self.old_names = old_names if old_names is not None else list()
 
-    @property
-    def is_date(self) -> bool:
-        """
-        Date flag.
-        :return: bool
-        """
-        return self._is_date
+        self.selected_to_merge = True  # only applicable if we want to apply the value of this property on merge
 
     def has_profile(self) -> bool:
         """
@@ -312,7 +209,6 @@ class GCProp:
         return "prop:" + self.name
 
 
-
 def get_action_symbol(action: ActionType):
     """
 
@@ -347,62 +243,7 @@ def get_at(snapshot_val: float | bool | int,
         return profile[t]
 
 
-class EditableDeviceMeta(type):
-    """
-    Metaclass that pre-builds inherited class schema declarations.
-    """
-
-    def __new__(mcs, name, bases, namespace):
-        """
-        Build a new class and aggregate property declarations from base to child.
-        :param name: Class name
-        :param bases: Base classes
-        :param namespace: Class namespace
-        :return: New class
-        """
-        cls = super().__new__(mcs, name, bases, namespace)
-
-        aggregated_declarations: List[GCProp] = list()
-        for base in bases:
-            base_declarations: Tuple[GCProp, ...] = getattr(base, "CLASS_PROPERTY_DECLARATIONS", tuple())
-            for declaration in base_declarations:
-                aggregated_declarations.append(declaration)
-
-        local_declarations: Tuple[GCProp, ...] = namespace.get("LOCAL_PROPERTY_DECLARATIONS", tuple())
-        for declaration in local_declarations:
-            aggregated_declarations.append(declaration)
-
-        cls.CLASS_PROPERTY_DECLARATIONS = tuple(aggregated_declarations)
-
-        class_property_list: List[GCProp] = list()
-        class_registered_properties: Dict[str, GCProp] = dict()
-        class_non_editable_properties: List[str] = list()
-        class_properties_with_profile: Dict[str, str] = dict()
-
-        for declaration in cls.CLASS_PROPERTY_DECLARATIONS:
-            prop: GCProp = declaration
-            class_registered_properties[prop.name] = prop
-            class_property_list.append(prop)
-
-            if prop.profile_name != '':
-                class_properties_with_profile[prop.name] = prop.profile_name
-            else:
-                pass
-
-            if prop.editable:
-                pass
-            else:
-                class_non_editable_properties.append(prop.name)
-
-        cls.CLASS_PROPERTY_LIST = tuple(class_property_list)
-        cls.CLASS_REGISTERED_PROPERTIES = class_registered_properties
-        cls.CLASS_NON_EDITABLE_PROPERTIES = tuple(class_non_editable_properties)
-        cls.CLASS_PROPERTIES_WITH_PROFILE = class_properties_with_profile
-
-        return cls
-
-
-class EditableDevice(metaclass=EditableDeviceMeta):
+class EditableDevice:
     """
     This is the main device class from which all inherit
     """
@@ -415,24 +256,12 @@ class EditableDevice(metaclass=EditableDeviceMeta):
         'comment',
         'action',
         'selected_to_merge',
-        'property_merge_selections',
+        'property_list',
+        'registered_properties',
+        'non_editable_properties',
+        'properties_with_profile',
         '__auto_update_enabled',
     )
-    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='idtag', units='', tpe=str, definition='Unique ID', editable=False),
-        GCProp(key='name', units='', tpe=str, definition='Name of the device.'),
-        GCProp(key='code', units='', tpe=str, definition='Secondary ID'),
-        GCProp(key='rdfid', units='', tpe=str, definition='RDF ID for further compatibility'),
-        GCProp(key='action', units='', tpe=ActionType,
-                   definition='Object action to perform.\nOnly used for model merging.',
-                   display=False),
-        GCProp(key='comment', units='', tpe=str, definition='User comment'),
-    )
-    CLASS_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = tuple()
-    CLASS_PROPERTY_LIST: Tuple[GCProp, ...] = tuple()
-    CLASS_REGISTERED_PROPERTIES: Dict[str, GCProp] = dict()
-    CLASS_NON_EDITABLE_PROPERTIES: Tuple[str, ...] = tuple()
-    CLASS_PROPERTIES_WITH_PROFILE: Dict[str, str] = dict()
 
     def __init__(self,
                  name: str,
@@ -468,80 +297,30 @@ class EditableDevice(metaclass=EditableDeviceMeta):
         self.action: ActionType = ActionType.NoAction
         self.selected_to_merge = True
 
-        # This per-instance map stores merge toggles to avoid mutating shared schema objects.
-        self.property_merge_selections: Dict[str, bool] = dict()
+        # list of registered properties. This is supremely useful when accessing via the Table and Tree models
+        self.property_list: List[GCProp] = list()
+
+        # dictionary of properties
+        self.registered_properties: Dict[str, GCProp] = dict()
+
+        # list of properties that cannot be edited
+        self.non_editable_properties: List[str] = list()
+
+        # dictionary with property name -> profile name
+        self.properties_with_profile: Dict[str, str] = dict()
 
         # some devices have an auto update of a property when another property changes
         # (i.e. Line's R, X, B when the length changes) this controls that behaviour and disables it during loading
         self.__auto_update_enabled = True
 
-    @property
-    def property_list(self) -> Tuple[GCProp, ...]:
-        """
-        Class-level property list exposed as read-only instance view.
-        :return: Tuple of GCProp
-        """
-        self_cls: type = type(self)
-        return self_cls.CLASS_PROPERTY_LIST
-
-    @property
-    def registered_properties(self) -> Dict[str, GCProp]:
-        """
-        Class-level registered properties exposed as read-only instance view.
-        :return: Dict[str, GCProp]
-        """
-        self_cls: type = type(self)
-        return self_cls.CLASS_REGISTERED_PROPERTIES
-
-    @property
-    def non_editable_properties(self) -> Tuple[str, ...]:
-        """
-        Class-level non-editable property names exposed as read-only instance view.
-        :return: Tuple[str, ...]
-        """
-        self_cls: type = type(self)
-        return self_cls.CLASS_NON_EDITABLE_PROPERTIES
-
-    @property
-    def properties_with_profile(self) -> Dict[str, str]:
-        """
-        Class-level property/profile map exposed as read-only instance view.
-        :return: Dict[str, str]
-        """
-        self_cls: type = type(self)
-        return self_cls.CLASS_PROPERTIES_WITH_PROFILE
-
-    def set_property_selected_to_merge(self, property_name: str, selected: bool) -> None:
-        """
-        Set merge-selection state for one property in this instance.
-        :param property_name: Property name
-        :param selected: Should this property be merged
-        :return: None
-        """
-        self.property_merge_selections[property_name] = selected
-
-    def get_property_selected_to_merge(self, property_name: str) -> bool:
-        """
-        Query merge-selection state for one property in this instance.
-        :param property_name: Property name
-        :return: True if selected for merge
-        """
-        selected = self.property_merge_selections.get(property_name, None)
-        if selected is None:
-            return True
-        else:
-            return selected
-
-    def iter_properties_selected_to_merge(self):
-        """
-        Iterate over properties selected to be merged for this instance.
-        :return: Generator[GCProp, None, None]
-        """
-        for prop in self.property_list:
-            if self.get_property_selected_to_merge(property_name=prop.name):
-                yield prop
-            else:
-                pass
+        self.register(key='idtag', units='', tpe=str, definition='Unique ID', editable=False)
+        self.register(key='name', units='', tpe=str, definition='Name of the device.')
+        self.register(key='code', units='', tpe=str, definition='Secondary ID')
+        self.register(key='rdfid', units='', tpe=str, definition='RDF ID for further compatibility')
+        self.register(key='action', units='', tpe=ActionType,
+                      definition='Object action to perform.\nOnly used for model merging.',
+                      display=False)
+        self.register(key='comment', units='', tpe=str, definition='User comment')
 
     @property
     def auto_update_enabled(self):
@@ -686,7 +465,8 @@ class EditableDevice(metaclass=EditableDeviceMeta):
                  is_color: bool = False,
                  is_date: bool = False):
         """
-        Runtime registration is intentionally disabled.
+        Register property
+        The property must exist, and if provided, the profile_name property must exist too
         :param key: key (this is the displayed name)
         :param units: string with the declared units
         :param tpe: type of the attribute [Type[int], Type[bool], Type[float], Type[str], DeviceType, Type[BuildStatus]]
@@ -698,10 +478,34 @@ class EditableDevice(metaclass=EditableDeviceMeta):
         :param is_color: is this a color property?
         :param is_date: Is this a date property?
         """
-        raise RuntimeError(
-            "Runtime property registration is disabled. "
-            "Declare properties in LOCAL_PROPERTY_DECLARATIONS."
-        )
+        assert (hasattr(self, key))  # the property must exist, this avoids bugs when registering
+
+        # create GCProp object
+        prop = GCProp(prop_name=key,
+                      units=units,
+                      tpe=tpe,
+                      definition=definition,
+                      profile_name=profile_name,
+                      display=display,
+                      editable=editable,
+                      old_names=old_names,
+                      is_color=is_color,
+                      is_date=is_date)
+
+        if key in self.registered_properties.keys():
+            raise Exception(f"Property {key} already registered!")
+
+        self.registered_properties[key] = prop
+
+        self.property_list.append(prop)
+
+        if profile_name != '':
+            assert (hasattr(self, profile_name))  # the profile property must exist, this avoids bugs in registering
+            assert (isinstance(getattr(self, profile_name), Profile))  # the profile must be of type "Profile"
+            self.properties_with_profile[key] = profile_name
+
+        if not editable:
+            self.non_editable_properties.append(key)
 
     def get_property_name_replacements_dict(self) -> Dict[str, str]:
         """
@@ -812,15 +616,6 @@ class EditableDevice(metaclass=EditableDeviceMeta):
         :return: Whatever value is there
         """
         return getattr(self, prop.name)
-
-    def set_snapshot_value(self, property_name, value: Any) -> None:
-        """
-        Set the value of a snapshot property
-        :param property_name: name of the property
-        :param value: Any
-        """
-        # set the snapshot value whatever it is
-        setattr(self, property_name, value)
 
     def get_snapshot_value_by_name(self, name) -> Any:
         """
@@ -959,6 +754,15 @@ class EditableDevice(metaclass=EditableDeviceMeta):
                 # return the normal property
                 setattr(self, prop.name, value)
 
+    def set_snapshot_value(self, property_name, value: Any) -> None:
+        """
+        Set the value of a snapshot property
+        :param property_name: name of the property
+        :param value: Any
+        """
+        # set the snapshot value whatever it is
+        setattr(self, property_name, value)
+
     def create_profiles(self, index):
         """
         Create the load object default profiles
@@ -992,7 +796,7 @@ class EditableDevice(metaclass=EditableDeviceMeta):
                 # set the profile variable associated with the magnitude
                 setattr(self, self.properties_with_profile[magnitude], val2)
 
-    def create_profile(self, magnitude, index: pd.DatetimeIndex):
+    def create_profile(self, magnitude, index):
         """
         Create power profile based on index
         :param magnitude: name of the property
@@ -1006,8 +810,6 @@ class EditableDevice(metaclass=EditableDeviceMeta):
 
         if prof is None:
             print("The profile is none, this is a bug!")
-        elif index is pd.NaT:
-            pass
         else:
             prof.create_sparse(size=len(index), default_value=snapshot_value)
 
@@ -1021,9 +823,7 @@ class EditableDevice(metaclass=EditableDeviceMeta):
         :param index: Time series index (timestamps)
         :param set_profile_default_as_snapshot: set the bool default profile value as the snapshot
         """
-        if index is None or index is pd.NaT:
-            raise Exception("ensure_profiles_exist: No index provided")
-        else:
+        if index is not None:
             for magnitude, prof_attr in self.properties_with_profile.items():
 
                 # get the profile
@@ -1046,6 +846,9 @@ class EditableDevice(metaclass=EditableDeviceMeta):
                     prop = self.registered_properties[magnitude]
                     val = getattr(self, magnitude)
                     profile.default_value = val
+
+        else:
+            raise Exception("ensure_profiles_exist: No index provided")
 
     def delete_profiles(self):
         """
@@ -1105,11 +908,8 @@ class EditableDevice(metaclass=EditableDeviceMeta):
                           idtag=uuid.uuid4().hex if forced_new_idtag else self.idtag,
                           code=self.code,
                           device_type=self.device_type)
-            new_obj.disable_auto_updates()
-
         except TypeError:
             new_obj = tpe()
-            new_obj.disable_auto_updates()
 
         for prop_name, gc_prop in self.registered_properties.items():
             value = getattr(self, prop_name)
@@ -1126,7 +926,6 @@ class EditableDevice(metaclass=EditableDeviceMeta):
         if forced_new_idtag:
             new_obj.idtag = uuid.uuid4().hex
 
-        new_obj.enable_auto_updates()
         return new_obj
 
     @staticmethod

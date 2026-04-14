@@ -633,14 +633,14 @@ class PowerFlowResults3Ph(ResultsTemplate):
         :return: DataFrame
         """
         df = pd.DataFrame(data={
-            'Um_N': np.abs(self.voltage_N).round(5),
-            'Um_A': np.abs(self.voltage_A).round(5),
-            'Um_B': np.abs(self.voltage_B).round(5),
-            'Um_C': np.abs(self.voltage_C).round(5),
-            'Ua_N': np.angle(self.voltage_N, deg=True).round(5),
-            'Ua_A': np.angle(self.voltage_A, deg=True).round(5),
-            'Ua_B': np.angle(self.voltage_B, deg=True).round(5),
-            'Ua_C': np.angle(self.voltage_C, deg=True).round(5)
+            'Vm_N': np.abs(self.voltage_N).round(5),
+            'Vm_A': np.abs(self.voltage_A).round(5),
+            'Vm_B': np.abs(self.voltage_B).round(5),
+            'Vm_C': np.abs(self.voltage_C).round(5),
+            'Va_N': np.angle(self.voltage_N, deg=True).round(1),
+            'Va_A': np.angle(self.voltage_A, deg=True).round(1),
+            'Va_B': np.angle(self.voltage_B, deg=True).round(1),
+            'Va_C': np.angle(self.voltage_C, deg=True).round(1)
         }, index=self.bus_names)
 
         return df

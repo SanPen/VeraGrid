@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import List, Dict, Tuple
+from typing import List, Dict
 from warnings import warn
 import numpy as np
 from numpy import pi, log, sqrt
@@ -13,7 +13,7 @@ import math
 
 from VeraGridEngine.Devices.admittance_matrix import AdmittanceMatrix
 from VeraGridEngine.basic_structures import Logger, Mat, IntVec, Vec, CxMat
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType, GCProp
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType
 from VeraGridEngine.Devices.Branches.wire import Wire
 from VeraGridEngine.enumerations import SubObjectType
 
@@ -266,25 +266,12 @@ class OverheadLineType(EditableDevice):
         '_y_phases_abc',
         '_y_seq',
         '_y_0123',
-        'capex',
-        'opex'
-    )
-
-    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='earth_resistivity', units='Ohm/m3', tpe=float, definition='Earth resistivity'),
-        GCProp(key='frequency', units='Hz', tpe=float, definition='Frequency'),
-        GCProp(key='Vnom', units='kV', tpe=float, definition='Voltage rating of the line'),
-        GCProp(key='wires_in_tower', units='', tpe=SubObjectType.ListOfWires,
-                      definition='List of wires', editable=False, display=False),
-        GCProp(key='capex', units='currency/km', tpe=float, definition='Capital expenditure per km'),
-        GCProp(key='opex', units='currency/MWh', tpe=float, definition='Operational expenditure'),
     )
 
     def __init__(self, name='Tower', idtag: str | None = None,
                  Vnom: float = 1.0,
                  earth_resistivity: float = 100,
-                 frequency: float = 50,
-                 capex: float = 0.0, opex: float = 0.0):
+                 frequency: float = 50):
         """
         Overhead line editor
         :param name: name
@@ -292,8 +279,6 @@ class OverheadLineType(EditableDevice):
         :param Vnom: Nominal voltage (kV)
         :param earth_resistivity: Earth resistivity (ohm/m3)
         :param frequency: system frequency (Hz)
-        :param capex: Capital expenditures
-        :param opex: Operating expenditures
         """
         super().__init__(name=name,
                          idtag=idtag,
@@ -309,9 +294,6 @@ class OverheadLineType(EditableDevice):
         self.earth_resistivity = earth_resistivity  # ohm/m3
 
         self.frequency = frequency  # Hz
-
-        self.capex = float(capex)
-        self.opex = float(opex)
 
         # current rating of the tower in kA
         self._Imax: Vec | None = None
@@ -331,6 +313,11 @@ class OverheadLineType(EditableDevice):
         self._y_seq: CxMat | None = None
         self._y_0123: CxMat | None = None
 
+        self.register(key='earth_resistivity', units='Ohm/m3', tpe=float, definition='Earth resistivity')
+        self.register(key='frequency', units='Hz', tpe=float, definition='Frequency')
+        self.register(key='Vnom', units='kV', tpe=float, definition='Voltage rating of the line')
+        self.register(key='wires_in_tower', units='', tpe=SubObjectType.ListOfWires,
+                      definition='List of wires', editable=False, display=False)
 
     @property
     def Vnom(self) -> float:
@@ -1442,5 +1429,4 @@ def create_known_abc_overhead_template(name: str,
     template._z_phases_nabc = phases
     template._z_nabc = z_nabc
     template._y_nabc = ysh_nabc
-
     return template

@@ -14,9 +14,10 @@ from VeraGrid.Gui.gui_functions import get_list_model, get_logger_tree_model
 
 from PySide6 import QtGui, QtCore
 from VeraGrid.Gui.messages import *
-from VeraGrid.Gui.RosetaExplorer.roseta_explorer import Ui_RosetaExplorer, QMainWindow
-from VeraGrid.Gui.RosetaExplorer.roseta_objects_model import RosetaObjectsModel
-from VeraGrid.Gui.gui_functions import add_menu_entry, populate_cim_item_children, get_cim_tree_model
+from VeraGrid.Gui.RosetaExplorer.MainWindow import Ui_mainWindow, QMainWindow
+from VeraGrid.Gui.RosetaExplorer.roseta_objects_model import RosetaObjectsModel, ObjectsModelOld
+from VeraGrid.Gui.TreeModelViewer.TreeModelViewer import TreeModelViewerGUI
+from VeraGrid.Gui.gui_functions import add_menu_entry
 from VeraGrid.Gui.object_model import ObjectsModel
 from VeraGrid.Gui.pandas_model import PandasModel
 from VeraGridEngine.IO.cim.cgmes.cgmes_circuit import CgmesCircuit
@@ -53,7 +54,7 @@ class RosetaExplorerGUI(QMainWindow):
 
         # create main window
         QMainWindow.__init__(self, parent)
-        self.ui = Ui_RosetaExplorer()
+        self.ui = Ui_mainWindow()
         self.ui.setupUi(self)
         self.title = 'Roseta Explorer'
         self.setWindowTitle(self.title)
@@ -62,6 +63,8 @@ class RosetaExplorerGUI(QMainWindow):
         # 1:4
         self.ui.main_splitter.setStretchFactor(0, 1)
         self.ui.main_splitter.setStretchFactor(1, 8)
+        self.ui.lookup_db_splitter.setStretchFactor(0, 1)
+        self.ui.lookup_db_splitter.setStretchFactor(1, 6)
 
         self.open_file_thread_object = None
 
@@ -69,7 +72,7 @@ class RosetaExplorerGUI(QMainWindow):
         self.project_directory = ''
         self.lock_ui = True
 
-        self.tree_navigation_windows: List["RosetaExplorerGUI"] = list()
+        self.tree_navigation_windows: List[TreeModelViewerGUI] = list()
 
         self.circuit: Union[CgmesCircuit, PsseCircuit, None] = None
 
@@ -82,17 +85,6 @@ class RosetaExplorerGUI(QMainWindow):
         self.properties_proxy_model.setRecursiveFilteringEnabled(False)
         self.properties_proxy_model.setFilterKeyColumn(0)
         self.ui.propertiesTableView.setSortingEnabled(True)
-
-        # Tree
-        self.treeProxyModel = QtCore.QSortFilterProxyModel(self.ui.mainTreeView)
-        self.treeProxyModel.setRecursiveFilteringEnabled(True)
-        self.treeProxyModel.setFilterKeyColumn(0)
-        self.ui.mainTreeView.setSortingEnabled(True)
-
-        self.ui.treeFilterComboBox.setModel(get_list_model(['Class', 'Property', 'Value']))
-        self.ui.treeFilterComboBox.setCurrentIndex(0)
-
-        self.current_model = None
 
         # DB
         self.db_handler: DbHandler = DbHandler(new_db=False) if db_handler is None else db_handler
@@ -107,22 +99,34 @@ class RosetaExplorerGUI(QMainWindow):
         # triggered
         self.ui.actionSave_logs.triggered.connect(self.save_logs)
 
+        self.ui.actionNavigation_tree.triggered.connect(self.launch_tree_view)
+
+        self.ui.actionNew.triggered.connect(self.new_rosetta_explorer)
+
+        self.ui.actionDocumentation.triggered.connect(self.show_docs)
+
+        self.ui.actionAbout.triggered.connect(self.about)
+
         # clicked
+
         self.ui.filterButton.clicked.connect(self.filter_properties_table)
         self.ui.modelTypeLabel.mouseDoubleClickEvent = self.display_circuit
-        self.ui.treeFilterButton.clicked.connect(self.filter_main_tree)
-        self.ui.mainTreeView.clicked.connect(self.update_main_tree_on_click)
-        self.ui.mainTreeView.expanded.connect(self.on_tree_expanded)
 
         # text changed
+
         self.ui.filterComboBox.currentTextChanged.connect(self.on_filter_combobox_changed)
-        self.ui.treeFilterComboBox.currentTextChanged.connect(self.on_tree_filter_combobox_changed)
+
+        self.ui.availableDBsComboBox.currentTextChanged.connect(self.available_db_combo_box_changed)
 
         # lineedit enter
+
         self.ui.filterLineEdit.returnPressed.connect(self.filter_properties_table)
 
         # list clicks
+
         self.ui.clasesListView.clicked.connect(self.on_class_click)
+
+        self.ui.dbTablesListView.clicked.connect(self.on_look_up_db_class_click)
 
         # context menu
         self.ui.propertiesTableView.customContextMenuRequested.connect(self.show_objects_context_menu)
@@ -163,15 +167,14 @@ class RosetaExplorerGUI(QMainWindow):
         self.ui.consoleLayout.layout().addWidget(self.console)
 
         # push some variables to the console
-        for key, val in {"np": np,
-                         "pd": pd,
-                         'app': self,
-                         'circuit': self.circuit}.items():
-            self.console.add_var(key, val)
+        self.console.push_vars({"np": np,
+                                "pd": pd,
+                                'app': self,
+                                'circuit': self.circuit})
 
     def update_combo_boxes(self):
         """
-        Properly update the combo boxes
+        Properly update te combo boxes
         """
         if isinstance(self.circuit, PsseCircuit):
             # we do this first so that the model changing does not trigger the on_combo_box_text_change function
@@ -180,6 +183,9 @@ class RosetaExplorerGUI(QMainWindow):
                     self.db_handler.psse_lookup_db.last_file_opened)
             else:
                 idx = 0
+
+            self.ui.availableDBsComboBox.setModel(get_list_model(self.db_handler.psse_lookup_db.list_of_db_files))
+            self.ui.availableDBsComboBox.setCurrentIndex(idx)
 
         elif isinstance(self.circuit, CgmesCircuit):
 
@@ -190,6 +196,8 @@ class RosetaExplorerGUI(QMainWindow):
             else:
                 idx = 0
 
+            self.ui.availableDBsComboBox.setModel(get_list_model(self.db_handler.cgmes_lookup_db.list_of_db_files))
+            self.ui.availableDBsComboBox.setCurrentIndex(idx)
 
         else:
             pass
@@ -288,21 +296,17 @@ class RosetaExplorerGUI(QMainWindow):
             if trim_empty:
                 classes = [cl for cl in classes if len(self.circuit.get_objects_list(elm_type=cl)) > 0]
 
-            # Table
             self.classes_model = get_list_model(classes)
+
             self.ui.clasesListView.setModel(self.classes_model)
+
             self.set_model_label()
             self.update_combo_boxes()
-
-            # Tree
-            self.current_model = get_cim_tree_model(self.circuit)
-            self.treeProxyModel.setSourceModel(self.current_model)
-            self.ui.mainTreeView.setModel(self.treeProxyModel)
+            self.available_db_combo_box_changed()
 
             if self.console:
-                for key, val in {'app': self,
-                                 'circuit': self.circuit}.items():
-                    self.console.add_var(key, val)
+                self.console.push_vars({'app': self,
+                                        'circuit': self.circuit})
 
     def set_model_label(self):
         """
@@ -393,25 +397,25 @@ class RosetaExplorerGUI(QMainWindow):
         else:
             warning_msg('There no logs :)')
 
-    # def launch_tree_view(self):
-    #     """
-    #     Launch tree view of the model
-    #     """
-    #     if self.circuit is not None:
-    #
-    #         if isinstance(self.circuit, CgmesCircuit):
-    #             window = TreeModelViewerGUI()
-    #             self.tree_navigation_windows.append(window)
-    #             h = 740
-    #             window.resize(int(1.61 * h), h)  # golden ratio :)
-    #
-    #             window.set_circuit(self.circuit)
-    #
-    #             window.show()
-    #         else:
-    #             info_msg("Only CGMES models are available for the tree view :/")
-    #     else:
-    #         warning_msg("There is not model :/")
+    def launch_tree_view(self):
+        """
+        Launch tree view of the model
+        """
+        if self.circuit is not None:
+
+            if isinstance(self.circuit, CgmesCircuit):
+                window = TreeModelViewerGUI()
+                self.tree_navigation_windows.append(window)
+                h = 740
+                window.resize(int(1.61 * h), h)  # golden ratio :)
+
+                window.set_circuit(self.circuit)
+
+                window.show()
+            else:
+                info_msg("Only CGMES models are available for the tree view :/")
+        else:
+            warning_msg("There is not model :/")
 
     def new_rosetta_explorer(self, model: Union[PsseCircuit, CgmesCircuit, None] = None,
                              logger: Union[DataLogger, None] = None):
@@ -432,6 +436,59 @@ class RosetaExplorerGUI(QMainWindow):
             window.set_logger(logger)
 
         window.show()
+
+    def available_db_combo_box_changed(self):
+        """
+        Read PSSe lookup DB
+        """
+        name = self.ui.availableDBsComboBox.currentText()
+
+        if isinstance(self.circuit, PsseCircuit):
+            self.db_handler.psse_lookup_db.read_db_file(name)
+            self.ui.dbTablesListView.setModel(get_list_model(self.db_handler.psse_lookup_db.get_structures_names()))
+            self.on_look_up_db_class_click()
+
+        elif isinstance(self.circuit, CgmesCircuit):
+            self.db_handler.cgmes_lookup_db.read_db_file(name)
+            self.ui.dbTablesListView.setModel(get_list_model(self.db_handler.cgmes_lookup_db.get_structures_names()))
+            self.on_look_up_db_class_click()
+
+    def on_look_up_db_class_click(self):
+        """
+
+        :return:
+        """
+
+        if len(self.ui.dbTablesListView.selectedIndexes()) > 0:
+            elm_type = self.ui.dbTablesListView.selectedIndexes()[0].data(role=QtCore.Qt.ItemDataRole.DisplayRole)
+
+            if isinstance(self.circuit, PsseCircuit):
+                db = self.db_handler.psse_lookup_db
+                df = getattr(db, elm_type)
+                mdl = PandasModel(data=df)
+
+            elif isinstance(self.circuit, CgmesCircuit):
+                objects = self.db_handler.cgmes_lookup_db.circuit.elements_by_type.get(elm_type, [])
+                if len(objects) > 0:
+                    editable_headers = {p.property_name: p for p in objects[0].get_properties()}
+                    headers = [p.property_name for p in objects[0].get_properties()]
+
+                else:
+                    editable_headers = dict()
+                    headers = list()
+
+                mdl = ObjectsModelOld(objects=objects,
+                                      editable_headers=editable_headers,
+                                      parent=self.ui.propertiesTableView,
+                                      editable=True,
+                                      dictionary_of_lists={})
+            else:
+                return
+
+            # set the model
+            self.ui.dbTableView.setModel(mdl)
+        else:
+            self.ui.dbTableView.setModel(None)
 
     def show_objects_context_menu(self, pos: QtCore.QPoint):
         """
@@ -483,32 +540,3 @@ class RosetaExplorerGUI(QMainWindow):
         :return:
         """
         pass
-
-
-    def filter_main_tree(self):
-        self.treeProxyModel.setFilterRegularExpression(self.ui.filterLineEdit.text())
-
-    def update_main_tree_on_click(self, index):
-        # ix = self.proxyModel.mapToSource(index)
-        # parent = self.current_model.itemFromIndex(ix)
-        # for text in ['Object class', 'Property', 'Value']:
-        #     children = QtGui.QStandardItem("{}_{}".format(parent.text(), text))
-        #     parent.appendRow(children)
-        # self.ui.mainTreeView.expand(index)
-        pass
-
-    def on_tree_expanded(self, index):
-        if self.current_model is None:
-            return
-        src_index = self.treeProxyModel.mapToSource(index)
-        item = self.current_model.itemFromIndex(src_index)
-        if item is None:
-            return
-        populate_cim_item_children(item, editable=False)
-
-    def on_tree_filter_combobox_changed(self):
-
-        idx = self.ui.treeFilterComboBox.currentIndex()
-
-        if idx > -1:
-            self.treeProxyModel.setFilterKeyColumn(idx)

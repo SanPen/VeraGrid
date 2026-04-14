@@ -11,7 +11,12 @@ from VeraGridEngine.basic_structures import Vec, IntVec, BoolVec
 
 @nb.njit(cache=True)
 def compile_types(Pbus: Vec,
-                  types: IntVec) -> Tuple[IntVec, IntVec, IntVec, IntVec, IntVec, IntVec]:
+                  types: IntVec,
+                  pq_val=1,
+                  pv_val=2,
+                  vd_val=3,
+                  pqv_val=4,
+                  p_val=5) -> Tuple[IntVec, IntVec, IntVec, IntVec, IntVec, IntVec]:
     """
     Compile the types.
     :param Pbus: array of real power Injections per node used to choose the slack as
@@ -27,13 +32,6 @@ def compile_types(Pbus: Vec,
 
     # check that Sbus is a 1D array
     assert (len(Pbus.shape) == 1)
-
-    # Define what number is what
-    pq_val = 1
-    pv_val = 2
-    vd_val = 3
-    pqv_val = 4
-    p_val = 5
 
     pq = np.where(types == pq_val)[0]
     pv = np.where(types == pv_val)[0]
@@ -56,7 +54,7 @@ def compile_types(Pbus: Vec,
                 # all the generators are injecting zero, pick the first pv
                 i = pv[0]
 
-            # delete the selected pv bus from the pv list and put it in the slack list
+            # delete_with_dialogue the selected pv bus from the pv list and put it in the slack list
             pv = np.delete(pv, np.where(pv == i)[0])
             ref = np.array([i])
 

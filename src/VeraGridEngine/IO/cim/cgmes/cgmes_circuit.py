@@ -3,110 +3,18 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Dict, List, Set, Union, Tuple, Callable
+from typing import Dict, List, Union, Tuple, Callable
 from enum import Enum, EnumMeta
+import pandas as pd
 import VeraGridEngine.IO.cim.cgmes.cgmes_assets.cgmes_2_4_15_assets as cgmes24
 import VeraGridEngine.IO.cim.cgmes.cgmes_assets.cgmes_3_0_0_assets as cgmes30
 from VeraGridEngine.data_logger import DataLogger
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 from VeraGridEngine.IO.base.base_circuit import BaseCircuit
-from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType, CgmesRecoveryMode
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 from VeraGridEngine.IO.cim.cgmes.cgmes_typing import CGMES_ASSETS
 from VeraGridEngine.IO.cim.cgmes.cgmes_data_parser import CgmesDataParser
 from VeraGridEngine.enumerations import CGMESVersions
-
-
-class ReferenceIndex:
-    __slots__ = ("values", "ambiguous")
-
-    def __init__(self):
-        self.values: Dict[str, CGMES_ASSETS] = dict()
-        self.ambiguous: Set[str] = set()
-
-
-class ReferenceResolutionContext:
-    """
-    Cache-aware reference resolver context for one linking pass.
-    """
-
-    __slots__ = ("all_objects_dict",
-                 "all_objects_dict_boundary",
-                 "allow_recovery",
-                 "recovery_active",
-                 "model_index",
-                 "boundary_index",
-                 "candidate_cache",
-                 "strict_resolution_cache",
-                 "recovery_resolution_cache")
-
-    def __init__(self,
-                 all_objects_dict: Dict[str, CGMES_ASSETS],
-                 all_objects_dict_boundary: Union[Dict[str, CGMES_ASSETS], None],
-                 recovery_mode: CgmesRecoveryMode):
-        """
-        Build a context for fast, repeated token resolution.
-
-        :param all_objects_dict: Main object dictionary
-        :param all_objects_dict_boundary: Boundary object dictionary
-        :param recovery_mode: Recovery strategy
-        """
-        self.all_objects_dict: Dict[str, CGMES_ASSETS] = all_objects_dict
-        self.all_objects_dict_boundary: Union[Dict[str, CGMES_ASSETS], None] = all_objects_dict_boundary
-        self.allow_recovery: bool = (recovery_mode != CgmesRecoveryMode.Strict)
-        self.recovery_active: bool = (recovery_mode == CgmesRecoveryMode.Recover)
-        self.model_index: Union[ReferenceIndex, None] = None
-        self.boundary_index: Union[ReferenceIndex, None] = None
-        self.candidate_cache: Dict[str, List[str]] = dict()
-        self.strict_resolution_cache: Dict[str, Tuple[Union[CGMES_ASSETS, None], bool, bool]] = dict()
-        self.recovery_resolution_cache: Dict[str, Tuple[Union[CGMES_ASSETS, None], bool, bool]] = dict()
-
-    def _ensure_recovery_indexes(self) -> None:
-        """
-        Lazily build tolerant indexes only when recovery is actually needed.
-        """
-        if self.model_index is None:
-            self.model_index = build_reference_index(self.all_objects_dict)
-            if self.all_objects_dict_boundary is not None:
-                self.boundary_index = build_reference_index(self.all_objects_dict_boundary)
-
-    def resolve(self, token: str) -> Tuple[Union[CGMES_ASSETS, None], bool, bool]:
-        """
-        Resolve one token using strict cache first and tolerant cache second.
-
-        :param token: Raw reference token
-        :return: (resolved object, came_from_boundary, is_ambiguous)
-        """
-        strict_result = resolve_reference_token(
-            token=token,
-            all_objects_dict=self.all_objects_dict,
-            all_objects_dict_boundary=self.all_objects_dict_boundary,
-            enable_reference_recovery=False,
-            model_index=None,
-            boundary_index=None,
-            reference_candidates_cache=None,
-            resolution_cache=self.strict_resolution_cache
-        )
-        if strict_result[0] is not None:
-            return strict_result
-
-        if not self.allow_recovery:
-            return strict_result
-
-        if not self.recovery_active:
-            self.recovery_active = True
-
-        self._ensure_recovery_indexes()
-        recovery_result = resolve_reference_token(
-            token=token,
-            all_objects_dict=self.all_objects_dict,
-            all_objects_dict_boundary=self.all_objects_dict_boundary,
-            enable_reference_recovery=True,
-            model_index=self.model_index,
-            boundary_index=self.boundary_index,
-            reference_candidates_cache=self.candidate_cache,
-            resolution_cache=self.recovery_resolution_cache
-        )
-        return recovery_result
 
 
 def find_attribute(obj: CGMES_ASSETS,
@@ -122,218 +30,12 @@ def find_attribute(obj: CGMES_ASSETS,
     return association_inverse_dict.get((obj.tpe, property_name))
 
 
-def normalize_reference_token(value: str) -> str:
-    """
-    Normalize a CGMES reference token to a canonical lookup string.
-
-    :param value: Raw reference token
-    :return: Normalized token
-    """
-    token = value.strip()
-    if token.startswith("urn:uuid:"):
-        token = token[9:]
-    if token.startswith("#"):
-        token = token[1:]
-    if token.startswith("_"):
-        token = token[1:]
-    return token
-
-
-def form_uuid_hyphenated(value: str) -> Union[str, None]:
-    """
-    Convert a 32-hex UUID token to hyphenated UUID form.
-
-    :param value: UUID-like token
-    :return: Hyphenated UUID string or None if not convertible
-    """
-    if len(value) == 32:
-        return f"{value[:8]}-{value[8:12]}-{value[12:16]}-{value[16:20]}-{value[20:]}"
-    else:
-        return None
-
-
-def get_reference_candidates(value: str) -> List[str]:
-    """
-    Build candidate reference keys for tolerant reference resolution.
-
-    :param value: Raw reference token
-    :return: Ordered unique candidate keys
-    """
-    normalized = normalize_reference_token(value)
-    no_dash = normalized.replace("-", "")
-    hyphenated = form_uuid_hyphenated(no_dash)
-    candidates = list()
-    for token in [value, normalized, no_dash, hyphenated]:
-        if token is not None:
-            stripped = token.strip()
-            if stripped != "":
-                candidates.append(stripped)
-                candidates.append(stripped.lower())
-    unique_candidates = list()
-    seen = set()
-    for candidate in candidates:
-        if candidate not in seen:
-            seen.add(candidate)
-            unique_candidates.append(candidate)
-    return unique_candidates
-
-
-def get_reference_candidates_cached(value: str,
-                                    reference_candidates_cache: Dict[str, List[str]]) -> List[str]:
-    """
-    Fetch cached reference candidates for a token.
-
-    :param value: Raw reference token
-    :param reference_candidates_cache: Cache dictionary
-    :return: Ordered unique candidate keys
-    """
-    cached_value = reference_candidates_cache.get(value, None)
-    if cached_value is not None:
-        return cached_value
-
-    candidates = get_reference_candidates(value=value)
-    reference_candidates_cache[value] = candidates
-    return candidates
-
-
-def add_index_entry(index: ReferenceIndex, key: str, obj: CGMES_ASSETS) -> None:
-    """
-    Add an object to a reference index, tracking ambiguous keys.
-
-    :param index: Index to update
-    :param key: Candidate key
-    :param obj: Object instance
-    """
-    if key == "":
-        return
-    current = index.values.get(key, None)
-    if current is None and key not in index.ambiguous:
-        index.values[key] = obj
-    elif current is obj:
-        return
-    elif key in index.ambiguous:
-        return
-    else:
-        index.ambiguous.add(key)
-        if key in index.values:
-            del index.values[key]
-
-
-def build_reference_index(objects_dict: Dict[str, CGMES_ASSETS]) -> ReferenceIndex:
-    """
-    Build tolerant reference index from subject IDs, UUIDs and mRIDs.
-
-    :param objects_dict: Object dictionary keyed by rdfid
-    :return: Tolerant lookup index
-    """
-    index = ReferenceIndex()
-    for key, obj in objects_dict.items():
-        if isinstance(key, str):
-            for candidate in get_reference_candidates(key):
-                add_index_entry(index=index, key=candidate, obj=obj)
-        rdfid = getattr(obj, "rdfid", None)
-        if isinstance(rdfid, str):
-            for candidate in get_reference_candidates(rdfid):
-                add_index_entry(index=index, key=candidate, obj=obj)
-        uuid_value = getattr(obj, "uuid", None)
-        if isinstance(uuid_value, str):
-            for candidate in get_reference_candidates(uuid_value):
-                add_index_entry(index=index, key=candidate, obj=obj)
-        mrid = getattr(obj, "mRID", None)
-        if isinstance(mrid, str):
-            for candidate in get_reference_candidates(mrid):
-                add_index_entry(index=index, key=candidate, obj=obj)
-    return index
-
-
-def resolve_reference_token(token: str,
-                            all_objects_dict: Dict[str, CGMES_ASSETS],
-                            all_objects_dict_boundary: Union[Dict[str, CGMES_ASSETS], None],
-                            enable_reference_recovery: bool,
-                            model_index: Union[ReferenceIndex, None],
-                            boundary_index: Union[ReferenceIndex, None],
-                            reference_candidates_cache: Union[Dict[str, List[str]], None],
-                            resolution_cache: Union[Dict[str, Tuple[Union[CGMES_ASSETS, None], bool, bool]], None]
-                            ) -> Tuple[Union[CGMES_ASSETS, None], bool, bool]:
-    """
-    Resolve reference token with strict and recovery fallback chains.
-
-    :param token: Raw reference token
-    :param all_objects_dict: Main object dictionary
-    :param all_objects_dict_boundary: Boundary object dictionary
-    :param enable_reference_recovery: Enable tolerant fallback lookup
-    :param model_index: Main tolerant index
-    :param boundary_index: Boundary tolerant index
-    :return: (resolved object, came_from_boundary, is_ambiguous)
-    """
-    if resolution_cache is not None:
-        cached = resolution_cache.get(token, None)
-        if cached is not None:
-            return cached
-
-    direct = all_objects_dict.get(token, None)
-    if direct is not None:
-        result_direct = (direct, False, False)
-        if resolution_cache is not None:
-            resolution_cache[token] = result_direct
-        return result_direct
-
-    if all_objects_dict_boundary is not None:
-        boundary_direct = all_objects_dict_boundary.get(token, None)
-        if boundary_direct is not None:
-            result_boundary = (boundary_direct, True, False)
-            if resolution_cache is not None:
-                resolution_cache[token] = result_boundary
-            return result_boundary
-
-    if not enable_reference_recovery:
-        result_none = (None, False, False)
-        if resolution_cache is not None:
-            resolution_cache[token] = result_none
-        return result_none
-
-    ambiguous = False
-    if reference_candidates_cache is None:
-        candidate_values = get_reference_candidates(token)
-    else:
-        candidate_values = get_reference_candidates_cached(value=token,
-                                                           reference_candidates_cache=reference_candidates_cache)
-    for candidate in candidate_values:
-        if model_index is not None:
-            if candidate in model_index.ambiguous:
-                ambiguous = True
-            else:
-                model_hit = model_index.values.get(candidate, None)
-                if model_hit is not None:
-                    result_model = (model_hit, False, False)
-                    if resolution_cache is not None:
-                        resolution_cache[token] = result_model
-                    return result_model
-
-        if boundary_index is not None:
-            if candidate in boundary_index.ambiguous:
-                ambiguous = True
-            else:
-                boundary_hit = boundary_index.values.get(candidate, None)
-                if boundary_hit is not None:
-                    result_boundary_hit = (boundary_hit, True, False)
-                    if resolution_cache is not None:
-                        resolution_cache[token] = result_boundary_hit
-                    return result_boundary_hit
-
-    result_ambiguous = (None, False, ambiguous)
-    if resolution_cache is not None:
-        resolution_cache[token] = result_ambiguous
-    return result_ambiguous
-
-
 def find_references(elements_by_type: Dict[str, List[CGMES_ASSETS]],
                     all_objects_dict: Dict[str, CGMES_ASSETS],
                     all_objects_dict_boundary: Union[Dict[str, CGMES_ASSETS], None],
                     association_inverse_dict: Dict[Tuple[str, str], str],
                     logger: DataLogger,
-                    mark_used: bool,
-                    recovery_mode: CgmesRecoveryMode = CgmesRecoveryMode.Auto) -> None:
+                    mark_used: bool) -> None:
     """
     Replaces the references in the "actual" properties of the objects
     :param elements_by_type: Dictionary of elements by type to fill in (same as all_objects_dict but by categories)
@@ -342,40 +44,24 @@ def find_references(elements_by_type: Dict[str, List[CGMES_ASSETS]],
                                       add Parsed objects used to find references
     :param logger: DataLogger
     :param mark_used: mark objects as used?
-    :param recovery_mode: Reference recovery mode
     :return: Nothing, it is done in place
     :param association_inverse_dict: Containing the name of the attributes which associate with each other.
     """
     added_from_the_boundary_set = list()
-    reference_context = ReferenceResolutionContext(
-        all_objects_dict=all_objects_dict,
-        all_objects_dict_boundary=all_objects_dict_boundary,
-        recovery_mode=recovery_mode
-    )
-
-    # Resolve only properties that were actually present in the XML.
-    # Missing mandatory properties are reported explicitly in a second pass.
-    for class_name, elements in elements_by_type.items():
+    # Store dictionary values in local variables
+    elements_by_type_items = elements_by_type.items()
+    # find cross-references
+    for class_name, elements in elements_by_type_items:
         for element in elements:  # for every element of the type
-            element_dict = element.__dict__
             if mark_used:
                 element.used = True
 
-            parsed_property_names = set(element.parsed_properties.keys())
-
-            for property_name in parsed_property_names:
-                cim_prop = element.declared_properties.get(property_name, None)
-                if cim_prop is None:
-                    continue
-
-                use_direct_storage = property_name in element_dict
+            # check the declared properties
+            for property_name, cim_prop in element.declared_properties.items():
 
                 # try to get the property value, else, fill with None
                 # at this point val is always the string that came in the XML
-                if use_direct_storage:
-                    value = element_dict.get(property_name, None)
-                else:
-                    value = getattr(element, property_name)
+                value = getattr(element, property_name)
                 if value is not None and isinstance(value, CGMES_ASSETS):
                     continue
 
@@ -385,15 +71,9 @@ def find_references(elements_by_type: Dict[str, List[CGMES_ASSETS]],
                         # set the referenced object in the property
                         try:
                             if isinstance(value, list):
-                                if use_direct_storage:
-                                    element_dict[property_name] = value
-                                else:
-                                    setattr(element, property_name, value)
+                                setattr(element, property_name, value)
                             else:
-                                if use_direct_storage:
-                                    element_dict[property_name] = cim_prop.class_type(value)
-                                else:
-                                    setattr(element, property_name, cim_prop.class_type(value))
+                                setattr(element, property_name, cim_prop.class_type(value))
 
                         except ValueError:
                             logger.add_error(msg='Value error',
@@ -410,10 +90,7 @@ def find_references(elements_by_type: Dict[str, List[CGMES_ASSETS]],
                             value2 = chunks[-1]
                             try:
                                 enum_val = cim_prop.class_type(value2)
-                                if use_direct_storage:
-                                    element_dict[property_name] = enum_val
-                                else:
-                                    setattr(element, property_name, enum_val)
+                                setattr(element, property_name, enum_val)
 
                             except TypeError as e:
                                 logger.add_error(msg='Could not convert Enum',
@@ -426,27 +103,14 @@ def find_references(elements_by_type: Dict[str, List[CGMES_ASSETS]],
                     else:
                         # search for the reference, if not found -> return None
                         if not isinstance(value, list):
-                            if not isinstance(value, str):
-                                element.missing_references[property_name] = value
-                                if use_direct_storage:
-                                    element_dict[property_name] = None
-                                else:
-                                    setattr(element, property_name, None)
-                                logger.add_error(msg='Invalid reference token type',
-                                                 device=element.rdfid,
-                                                 device_class=class_name,
-                                                 device_property=property_name,
-                                                 value=str(type(value)),
-                                                 expected_value='str')
-                                continue
+                            referenced_object = all_objects_dict.get(value, None)
 
-                            is_ambiguous = False
-                            referenced_object, referenced_from_boundary, is_ambiguous = reference_context.resolve(
-                                token=value
-                            )
+                            if referenced_object is None and all_objects_dict_boundary:
+                                # search for the reference in the boundary set
+                                referenced_object = all_objects_dict_boundary.get(value, None)
 
-                            if referenced_object is not None and referenced_from_boundary:
-                                if referenced_object.rdfid not in all_objects_dict:
+                                # add to the normal data if it wasn't added before
+                                if referenced_object is not None and referenced_object.rdfid not in all_objects_dict:
                                     all_objects_dict[referenced_object.rdfid] = referenced_object
                                     added_from_the_boundary_set.append(referenced_object)
 
@@ -456,10 +120,7 @@ def find_references(elements_by_type: Dict[str, List[CGMES_ASSETS]],
                                     referenced_object.used = True
 
                                 # set the referenced object in the property
-                                if use_direct_storage:
-                                    element_dict[property_name] = referenced_object
-                                else:
-                                    setattr(element, property_name, referenced_object)
+                                setattr(element, property_name, referenced_object)
                                 # register the inverse reference
                                 ref_attribute = find_attribute(obj=element,
                                                                property_name=property_name,
@@ -473,10 +134,7 @@ def find_references(elements_by_type: Dict[str, List[CGMES_ASSETS]],
                                 element.missing_references[property_name] = value
 
                                 # set the referencing property to None:
-                                if use_direct_storage:
-                                    element_dict[property_name] = None
-                                else:
-                                    setattr(element, property_name, None)
+                                setattr(element, property_name, None)
 
                                 if hasattr(element, 'rdfid'):
                                     logger.add_error(msg='Reference not found',
@@ -485,12 +143,6 @@ def find_references(elements_by_type: Dict[str, List[CGMES_ASSETS]],
                                                      device_property=property_name,
                                                      value='Not found',
                                                      expected_value=value)
-                                    if is_ambiguous:
-                                        logger.add_warning(msg='Ambiguous reference during tolerant resolution',
-                                                           device=element.rdfid,
-                                                           device_class=class_name,
-                                                           device_property=property_name,
-                                                           value=value)
                                 else:
                                     logger.add_error(msg='Reference not found for (debugger error)',
                                                      device=element.rdfid,
@@ -503,23 +155,15 @@ def find_references(elements_by_type: Dict[str, List[CGMES_ASSETS]],
                             for v in value:
                                 if isinstance(v, CGMES_ASSETS):
                                     continue
-                                if not isinstance(v, str):
-                                    element.missing_references[property_name] = v
-                                    logger.add_error(msg='Invalid reference token type',
-                                                     device=element.rdfid,
-                                                     device_class=class_name,
-                                                     device_property=property_name,
-                                                     value=str(type(v)),
-                                                     expected_value='str')
-                                    continue
 
-                                is_ambiguous = False
-                                referenced_object, referenced_from_boundary, is_ambiguous = reference_context.resolve(
-                                    token=v
-                                )
+                                referenced_object = all_objects_dict.get(v, None)
 
-                                if referenced_object is not None and referenced_from_boundary:
-                                    if referenced_object.rdfid not in all_objects_dict:
+                                if referenced_object is None and all_objects_dict_boundary:
+                                    # search for the reference in the boundary set
+                                    referenced_object = all_objects_dict_boundary.get(v, None)
+
+                                    # add to the normal data if it wasn't added before
+                                    if referenced_object is not None and referenced_object.rdfid not in all_objects_dict:
                                         all_objects_dict[referenced_object.rdfid] = referenced_object
                                         added_from_the_boundary_set.append(referenced_object)
 
@@ -543,10 +187,7 @@ def find_references(elements_by_type: Dict[str, List[CGMES_ASSETS]],
                                     element.missing_references[property_name] = v
 
                                     # set the referencing property to None:
-                                    if use_direct_storage:
-                                        element_dict[property_name] = None
-                                    else:
-                                        setattr(element, property_name, None)
+                                    setattr(element, property_name, None)
 
                                     if hasattr(element, 'rdfid'):
                                         logger.add_error(msg='Reference not found',
@@ -555,12 +196,6 @@ def find_references(elements_by_type: Dict[str, List[CGMES_ASSETS]],
                                                          device_property=property_name,
                                                          value='Not found',
                                                          expected_value=v)
-                                        if is_ambiguous:
-                                            logger.add_warning(msg='Ambiguous reference during tolerant resolution',
-                                                               device=element.rdfid,
-                                                               device_class=class_name,
-                                                               device_property=property_name,
-                                                               value=v)
                                     else:
                                         logger.add_error(msg='Reference not found for (debugger error)',
                                                          device=element.rdfid,
@@ -569,15 +204,9 @@ def find_references(elements_by_type: Dict[str, List[CGMES_ASSETS]],
                                                          value='Not found',
                                                          expected_value=v)
                             if len(referenced_object_list) > 1:
-                                if use_direct_storage:
-                                    element_dict[property_name] = list(referenced_object_list)
-                                else:
-                                    setattr(element, property_name, list(referenced_object_list))
+                                setattr(element, property_name, list(referenced_object_list))
                             elif len(referenced_object_list) == 1:
-                                if use_direct_storage:
-                                    element_dict[property_name] = list(referenced_object_list)[0]
-                                else:
-                                    setattr(element, property_name, list(referenced_object_list)[0])
+                                setattr(element, property_name, list(referenced_object_list)[0])
 
                     if cim_prop.out_of_the_standard:
                         logger.add_warning(msg='Property supported but out of the standard',
@@ -587,14 +216,16 @@ def find_references(elements_by_type: Dict[str, List[CGMES_ASSETS]],
                                            value=value,
                                            expected_value="")
 
-            for property_name, cim_prop in element.declared_properties.items():
-                if cim_prop.mandatory and property_name not in parsed_property_names:
-                    logger.add_error(msg='Required property not provided',
-                                     device=element.rdfid,
-                                     device_class=class_name,
-                                     device_property=property_name,
-                                     value='not provided',
-                                     expected_value=property_name)
+                else:
+                    if cim_prop.mandatory:
+                        logger.add_error(msg='Required property not provided',
+                                         device=element.rdfid,
+                                         device_class=class_name,
+                                         device_property=property_name,
+                                         value='not provided',
+                                         expected_value=property_name)
+                    else:
+                        pass
 
     # modify the elements_by_type here adding the elements from the boundary set
     # all_elements_dict was modified in the previous loop
@@ -612,8 +243,7 @@ def convert_data_to_objects(data: Dict[str, Dict[str, Dict[str, str]]],
                             elements_by_type: Dict[str, List[CGMES_ASSETS]],
                             class_dict: Dict[str, CGMES_ASSETS],
                             association_inverse_dict,
-                            logger: DataLogger,
-                            cgmes_recovery_mode: CgmesRecoveryMode = CgmesRecoveryMode.Auto) -> None:
+                            logger: DataLogger) -> None:
     """
     Convert CGMES data dictionaries to proper CGMES objects
     :param data: source data to convert
@@ -624,7 +254,6 @@ def convert_data_to_objects(data: Dict[str, Dict[str, Dict[str, str]]],
     :param class_dict: CgmesCircuit or None
     :param association_inverse_dict:
     :param logger:DataLogger
-    :param cgmes_recovery_mode: Reference recovery mode
     :return: None
     """
     if not isinstance(data, dict):
@@ -673,8 +302,7 @@ def convert_data_to_objects(data: Dict[str, Dict[str, Dict[str, str]]],
                         all_objects_dict_boundary=all_objects_dict_boundary,
                         association_inverse_dict=association_inverse_dict,
                         logger=logger,
-                        mark_used=True,
-                        recovery_mode=cgmes_recovery_mode)
+                        mark_used=True)
 
 
 def is_valid_cgmes(cgmes_version) -> bool:
@@ -701,8 +329,7 @@ class CgmesCircuit(BaseCircuit):
                  cgmes_map_areas_like_raw: bool = False,
                  text_func: Union[Callable, None] = None,
                  progress_func: Union[Callable, None] = None,
-                 logger=DataLogger(),
-                 cgmes_recovery_mode: CgmesRecoveryMode = CgmesRecoveryMode.Auto):
+                 logger=DataLogger()):
         """
         CIM circuit constructor
         :param cgmes_version:
@@ -715,7 +342,6 @@ class CgmesCircuit(BaseCircuit):
 
         self.cgmes_version: CGMESVersions = cgmes_version
         self.cgmes_map_areas_like_raw = cgmes_map_areas_like_raw
-        self.cgmes_recovery_mode: CgmesRecoveryMode = cgmes_recovery_mode
         self.logger: DataLogger = logger
 
         self.text_func = text_func
@@ -784,8 +410,7 @@ class CgmesCircuit(BaseCircuit):
                                 elements_by_type=self.elements_by_type_boundary,
                                 class_dict=self.cgmes_assets.class_dict,
                                 association_inverse_dict=self.cgmes_assets.association_inverse_dict,
-                                logger=self.logger,
-                                cgmes_recovery_mode=self.cgmes_recovery_mode)
+                                logger=self.logger)
 
         self.emit_progress(33)
         # convert the dictionaries to the internal class model,
@@ -797,8 +422,7 @@ class CgmesCircuit(BaseCircuit):
                                 elements_by_type=self.elements_by_type,
                                 class_dict=self.cgmes_assets.class_dict,
                                 association_inverse_dict=self.cgmes_assets.association_inverse_dict,
-                                logger=self.logger,
-                                cgmes_recovery_mode=self.cgmes_recovery_mode)
+                                logger=self.logger)
 
         # Assign the data from all_objects_dict to the appropriate lists in the circuit
         self.emit_progress(42)
@@ -818,12 +442,12 @@ class CgmesCircuit(BaseCircuit):
         Assign the data from all_objects_dict to the appropriate lists in the circuit
         :return: Nothing
         """
-        for class_name, elements in self.elements_by_type.items():
-            list_name = class_name + '_list'
+        for object_id, parsed_object in self.all_objects_dict.items():
+
+            # add to its list
+            list_name = parsed_object.tpe + '_list'
             if hasattr(self.cgmes_assets, list_name):
-                target_list = getattr(self.cgmes_assets, list_name)
-                target_list.clear()
-                target_list.extend(elements)
+                getattr(self.cgmes_assets, list_name).append(parsed_object)
             else:
                 print('Missing list:', list_name)
 
@@ -1133,8 +757,6 @@ class CgmesCircuit(BaseCircuit):
         Get dictionary of DataFrames
         :return: dictionary of DataFrames
         """
-        import pandas as pd
-
         dfs = dict()
         for class_name, elements in self.elements_by_type.items():
             values = [element.get_dict() for element in elements]
@@ -1148,8 +770,6 @@ class CgmesCircuit(BaseCircuit):
         :param fname:
         :return:
         """
-        import pandas as pd
-
         if self.text_func is not None:
             self.text_func('Saving to excel')
 

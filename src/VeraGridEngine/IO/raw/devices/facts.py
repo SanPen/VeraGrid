@@ -2,41 +2,12 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
-from typing import Tuple
-
 from VeraGridEngine.IO.base.units import Unit
 from VeraGridEngine.IO.raw.devices.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.IO.raw.devices.psse_property import PsseProperty
 
 
 class RawFACTS(RawObject):
-
-    LOCAL_PROPERTIES: Tuple[PsseProperty, ...] = (
-        PsseProperty(property_name='NAME', rawx_key='name', class_type=str, description='Device name', max_chars=12),
-        PsseProperty(property_name='I', rawx_key='ibus', class_type=int, description='Bus from number', min_value=1, max_value=999997),
-        PsseProperty(property_name='J', rawx_key='jbus', class_type=int, description='Bus to number', min_value=0, max_value=999997),
-        PsseProperty(property_name='MODE', rawx_key='mode', class_type=int, description='Control mode', min_value=0, max_value=8),
-        PsseProperty(property_name='PDES', rawx_key='pdes', class_type=float, description='Desired active power flow arriving at the "to" bus;', unit=Unit.get_mw()),
-        PsseProperty(property_name='QDES', rawx_key='qdes', class_type=float, description='Desired reactive power flow arriving at the "to" bus', unit=Unit.get_mvar()),
-        PsseProperty(property_name='VSET', rawx_key='vset', class_type=float, description='Voltage set point at the "from" bus', unit=Unit.get_pu()),
-        PsseProperty(property_name='SHMX', rawx_key='shmx', class_type=float, description='Maximum shunt current at the "from" bus', unit=Unit.get_mva()),
-        PsseProperty(property_name='TRMX', rawx_key='trmx', class_type=float, description='Maximum bridge active power transfer', unit=Unit.get_mw()),
-        PsseProperty(property_name='VTMN', rawx_key='vtmn', class_type=float, description='Minimum voltage at the "to" bus', unit=Unit.get_pu()),
-        PsseProperty(property_name='VTMX', rawx_key='vtmx', class_type=float, description='Maximum voltage at the "to" bus', unit=Unit.get_pu()),
-        PsseProperty(property_name='VSMX', rawx_key='vsmx', class_type=float, description='Maximum series voltage', unit=Unit.get_pu()),
-        PsseProperty(property_name='IMX', rawx_key='imx', class_type=int, description='Maximum series current. Zero for no series current limit', unit=Unit.get_mva()),
-        PsseProperty(property_name='LINX', rawx_key='linx', class_type=float, description='Reactance of the series element used during power flow solutions', unit=Unit.get_pu()),
-        PsseProperty(property_name='RMPCT', rawx_key='rmpct', class_type=float, description='Percentage of the total Mvar required to hold the voltage at the bus controlled by the shunt element', min_value=0.0, max_value=100.0, unit=Unit.get_percent()),
-        PsseProperty(property_name='OWNER', rawx_key='owner', class_type=int, description='Owner number', min_value=0, max_value=999999),
-        PsseProperty(property_name='SET1', rawx_key='set1', class_type=float, description='Set value 1 (see manual)'),
-        PsseProperty(property_name='SET2', rawx_key='set2', class_type=float, description='Set value  (see manual)'),
-        PsseProperty(property_name='VSREF', rawx_key='vsref', class_type=int, description='Series voltage reference code', min_value=0, max_value=1),
-        PsseProperty(property_name='FCREG', rawx_key='fcreg', class_type=int, description='Bus number, or extended bus name enclosed in single quotes', min_value=0, max_value=1),
-        PsseProperty(property_name='NREG', rawx_key='nreg', class_type=int, description='A node number of bus FCREG', min_value=0, max_value=1),
-        PsseProperty(property_name='REMOT', rawx_key='remot', class_type=int, description='Remote bus number', min_value=0, max_value=999999),
-        PsseProperty(property_name='MNAME', rawx_key='mname', class_type=str, description='device name'),
-    )
 
     def __init__(self):
         RawObject.__init__(self, "FACTS")
@@ -64,6 +35,152 @@ class RawFACTS(RawObject):
         self.NREG = 0
         self.REMOT = 0
         self.MNAME = ""
+
+        self.register_property(property_name='NAME',
+                               rawx_key='name',
+                               class_type=str,
+                               description='Device name',
+                               max_chars=12)
+
+        self.register_property(property_name='I',
+                               rawx_key='ibus',
+                               class_type=int,
+                               description='Bus from number',
+                               min_value=1,
+                               max_value=999997)
+
+        self.register_property(property_name='J',
+                               rawx_key='jbus',
+                               class_type=int,
+                               description='Bus to number',
+                               min_value=0,
+                               max_value=999997)
+
+        self.register_property(property_name='MODE',
+                               rawx_key='mode',
+                               class_type=int,
+                               description='Control mode',
+                               min_value=0,
+                               max_value=8)
+
+        self.register_property(property_name='PDES',
+                               rawx_key='pdes',
+                               class_type=float,
+                               description='Desired active power flow arriving at the "to" bus;',
+                               unit=Unit.get_mw())
+
+        self.register_property(property_name='QDES',
+                               rawx_key='qdes',
+                               class_type=float,
+                               description='Desired reactive power flow arriving at the "to" bus',
+                               unit=Unit.get_mvar())
+
+        self.register_property(property_name='VSET',
+                               rawx_key='vset',
+                               class_type=float,
+                               description='Voltage set point at the "from" bus',
+                               unit=Unit.get_pu())
+
+        self.register_property(property_name='SHMX',
+                               rawx_key='shmx',
+                               class_type=float,
+                               description='Maximum shunt current at the "from" bus',
+                               unit=Unit.get_mva())
+
+        self.register_property(property_name='TRMX',
+                               rawx_key='trmx',
+                               class_type=float,
+                               description='Maximum bridge active power transfer',
+                               unit=Unit.get_mw())
+
+        self.register_property(property_name='VTMN',
+                               rawx_key='vtmn',
+                               class_type=float,
+                               description='Minimum voltage at the "to" bus',
+                               unit=Unit.get_pu())
+
+        self.register_property(property_name='VTMX',
+                               rawx_key='vtmx',
+                               class_type=float,
+                               description='Maximum voltage at the "to" bus',
+                               unit=Unit.get_pu())
+
+        self.register_property(property_name='VSMX',
+                               rawx_key='vsmx',
+                               class_type=float,
+                               description='Maximum series voltage',
+                               unit=Unit.get_pu())
+
+        self.register_property(property_name='IMX',
+                               rawx_key='imx',
+                               class_type=int,
+                               description='Maximum series current. Zero for no series current limit',
+                               unit=Unit.get_mva())
+
+        self.register_property(property_name='LINX',
+                               rawx_key='linx',
+                               class_type=float,
+                               description='Reactance of the series element used during power flow solutions',
+                               unit=Unit.get_pu())
+
+        self.register_property(property_name='RMPCT',
+                               rawx_key='rmpct',
+                               class_type=float,
+                               description='Percentage of the total Mvar required to hold the voltage at the bus '
+                                           'controlled by the shunt element',
+                               min_value=0.0,
+                               max_value=100.0,
+                               unit=Unit.get_percent())
+
+        self.register_property(property_name='OWNER',
+                               rawx_key='owner',
+                               class_type=int,
+                               description='Owner number',
+                               min_value=0,
+                               max_value=999999)
+
+        self.register_property(property_name='SET1',
+                               rawx_key='set1',
+                               class_type=float,
+                               description='Set value 1 (see manual)')
+
+        self.register_property(property_name='SET2',
+                               rawx_key='set2',
+                               class_type=float,
+                               description='Set value  (see manual)')
+
+        self.register_property(property_name='VSREF',
+                               rawx_key='vsref',
+                               class_type=int,
+                               description='Series voltage reference code',
+                               min_value=0,
+                               max_value=1)
+
+        self.register_property(property_name='FCREG',
+                               rawx_key='fcreg',
+                               class_type=int,
+                               description='Bus number, or extended bus name enclosed in single quotes',
+                               min_value=0,
+                               max_value=1)
+
+        self.register_property(property_name='NREG',
+                               rawx_key='nreg',
+                               class_type=int,
+                               description='A node number of bus FCREG',
+                               min_value=0,
+                               max_value=1)
+
+        self.register_property(property_name='REMOT',
+                               rawx_key='remot',
+                               class_type=int,
+                               description='Remote bus number',
+                               min_value=0,
+                               max_value=999999)
+
+        self.register_property(property_name='MNAME',
+                               rawx_key='mname',
+                               class_type=str,
+                               description='device name')
 
     def parse(self, data, version, logger: Logger):
         """

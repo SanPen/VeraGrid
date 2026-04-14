@@ -455,7 +455,7 @@ class BaseDiagramWidget(QSplitter):
         """
         template_elm, dictionary_of_lists = self.circuit.get_dictionary_of_lists(api_object.device_type)
         mdl = ObjectsModel(objects=[api_object],
-                           property_list=list(api_object.property_list),
+                           property_list=api_object.property_list,
                            time_index=self.get_time_index(),
                            parent=self.object_editor_table,
                            editable=True,

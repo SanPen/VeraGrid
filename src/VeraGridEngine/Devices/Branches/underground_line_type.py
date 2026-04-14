@@ -1,11 +1,10 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
-from typing import Tuple
 import numpy as np
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType, GCProp
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType
 
 
 class UndergroundLineType(EditableDevice):
@@ -21,35 +20,13 @@ class UndergroundLineType(EditableDevice):
         'X0',
         'B0',
         '_C0',
-        'n_circuits',
-        'capex',
-        'opex'
-    )
-
-    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='Imax', units='kA', tpe=float, definition='Current rating of the line', old_names=['rating']),
-        GCProp(key='Vnom', units='kV', tpe=float, definition='Voltage rating of the line'),
-        GCProp(key='freq', units='Hz', tpe=float, definition='Cable frequency'),
-        GCProp(key='R', units='Ohm/km', tpe=float, definition='Positive-sequence resistance per km'),
-        GCProp(key='X', units='Ohm/km', tpe=float, definition='Positive-sequence reactance per km'),
-        GCProp(key='B', units='uS/km', tpe=float, definition='Positive-sequence shunt susceptance per km'),
-        GCProp(key='C', units='uF/km', tpe=float,
-                   definition='Positive-sequence shunt capacitance per km (alternative to B'),
-        GCProp(key='R0', units='Ohm/km', tpe=float, definition='Zero-sequence resistance per km'),
-        GCProp(key='X0', units='Ohm/km', tpe=float, definition='Zero-sequence reactance per km'),
-        GCProp(key='B0', units='uS/km', tpe=float, definition='Zero-sequence shunt susceptance per km'),
-        GCProp(key='C0', units='uF/km', tpe=float,
-                   definition='Zero-sequence shunt capacitance per km (alternative to B0'),
-        GCProp(key='n_circuits', units='', tpe=int, definition='number of circuits'),
-        GCProp(key='capex', units='currency/km', tpe=float, definition='Capital expenditure per km'),
-        GCProp(key='opex', units='currency/MWh', tpe=float, definition='Operational expenditure'),
+        'n_circuits'
     )
 
     def __init__(self, name: str = 'UndergroundLine', idtag: None | str = None, Imax: float = 1.0,
                  Vnom: float = 1.0, R: float = 0.0, X: float = 0.0, B: float = 0.0, C: float = 0.0,
                  R0: float = 0.0, X0: float = 0.0, B0: float = 0.0, C0: float = 0.0,
-                 freq: float = 50.0,
-                 capex: float = 0.0, opex: float = 0.0) -> None:
+                 freq: float = 50.0) -> None:
         """
         Constructor
         :param name: name of the device
@@ -63,8 +40,6 @@ class UndergroundLineType(EditableDevice):
         :param B0: Susceptance of zero sequence in uS/km
         :param C0: Capacitance of zero sequence in uF/km (alternative to B0)
         :param freq: Frequency of underground line (Hz)
-        :param capex: Capital expenditures
-        :param opex: Operating expenditures
         """
         EditableDevice.__init__(self,
                                 name=name,
@@ -89,8 +64,20 @@ class UndergroundLineType(EditableDevice):
 
         self.n_circuits = 1
 
-        self.capex = float(capex)
-        self.opex = float(opex)
+        self.register(key='Imax', units='kA', tpe=float, definition='Current rating of the line', old_names=['rating'])
+        self.register(key='Vnom', units='kV', tpe=float, definition='Voltage rating of the line')
+        self.register(key='freq', units='Hz', tpe=float, definition='Cable frequency')
+        self.register(key='R', units='Ohm/km', tpe=float, definition='Positive-sequence resistance per km')
+        self.register(key='X', units='Ohm/km', tpe=float, definition='Positive-sequence reactance per km')
+        self.register(key='B', units='uS/km', tpe=float, definition='Positive-sequence shunt susceptance per km')
+        self.register(key='C', units='uF/km', tpe=float,
+                      definition='Positive-sequence shunt capacitance per km (alternative to B')
+        self.register(key='R0', units='Ohm/km', tpe=float, definition='Zero-sequence resistance per km')
+        self.register(key='X0', units='Ohm/km', tpe=float, definition='Zero-sequence reactance per km')
+        self.register(key='B0', units='uS/km', tpe=float, definition='Zero-sequence shunt susceptance per km')
+        self.register(key='C0', units='uF/km', tpe=float,
+                      definition='Zero-sequence shunt capacitance per km (alternative to B0')
+        self.register(key='n_circuits', units='', tpe=int, definition='number of circuits')
 
     def get_values(self, Sbase: float, length: float):
         """

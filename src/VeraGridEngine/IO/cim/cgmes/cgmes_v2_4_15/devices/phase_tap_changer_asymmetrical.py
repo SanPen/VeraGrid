@@ -6,13 +6,19 @@
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.phase_tap_changer_non_linear import PhaseTapChangerNonLinear
 from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType, UnitSymbol
-from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
+
 
 class PhaseTapChangerAsymmetrical(PhaseTapChangerNonLinear):
-	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='windingConnectionAngle', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.deg, description='''Measurement of angle in degrees.''', profiles=[]),
-	)
 	def __init__(self, rdfid='', tpe='PhaseTapChangerAsymmetrical'):
 		PhaseTapChangerNonLinear.__init__(self, rdfid, tpe)
 
 		self.windingConnectionAngle: float = None
+
+		self.register_property(
+			name='windingConnectionAngle',
+			class_type=float,
+			multiplier=UnitMultiplier.none,
+			unit=UnitSymbol.deg,
+			description='''Measurement of angle in degrees.''',
+			profiles=[]
+		)

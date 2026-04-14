@@ -4,15 +4,15 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Union
 from PySide6.QtCore import Qt, QPointF
-from PySide6.QtGui import QCursor, QColor, QBrush
+from PySide6.QtGui import QPen, QCursor, QColor, QBrush
 from PySide6.QtWidgets import (QGraphicsEllipseItem, QMenu,
                                QGraphicsSceneContextMenuEvent,
                                QGraphicsSceneMouseEvent)
 from VeraGrid.Gui.gui_functions import add_menu_entry
 from VeraGrid.Gui.Diagrams.MapWidget.Substation.node_template import NodeTemplate
-from VeraGridEngine.enumerations import DeviceType
+
 from VeraGridEngine.Devices.types import INJECTION_DEVICE_TYPES
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
@@ -136,7 +136,7 @@ class MapInjectionTemplateGraphicItem(NodeTemplate, QGraphicsEllipseItem):
         Updates the element position in the diagram (to save)
         :return:
         """
-        lat, long = self.editor.to_lat_lon(self.get_xc(), self.get_yc())
+        lat, long = self.editor.to_lat_lon(self.rect().x(), self.rect().y())
 
         self.lat = lat
         self.lon = long
@@ -235,33 +235,12 @@ class MapInjectionTemplateGraphicItem(NodeTemplate, QGraphicsEllipseItem):
                        function_ptr=self.editor.consolidate_object_coordinates,
                        icon_path=":/Icons/icons/assign_to_profile.png")
 
-
         menu.addSeparator()
 
         add_menu_entry(menu=menu,
                        text="Delete",
                        function_ptr=self.delete,
                        icon_path=":/Icons/icons/delete_schematic.png")
-
-
-        ss_counter = 0
-        gen_counter = 0
-
-        for graphic_obj in self.editor._get_selected():
-            if hasattr(graphic_obj, 'api_object'):
-                if hasattr(graphic_obj.api_object, 'device_type'):
-                    if graphic_obj.api_object.device_type == DeviceType.SubstationDevice:
-                        has_substation = True
-                        ss_counter += 1
-                    elif graphic_obj.api_object.device_type == DeviceType.GeneratorDevice:
-                        gen_counter += 1
-        if ss_counter == 1 and gen_counter > 0:
-            menu.addSeparator()
-
-            add_menu_entry(menu=menu,
-                           text="Change bus connection for the generator",
-                           function_ptr=self.editor.change_generator_bus_connection,
-                           icon_path=":/Icons/icons/move_bus.png")
 
         return menu
 
@@ -274,18 +253,11 @@ class MapInjectionTemplateGraphicItem(NodeTemplate, QGraphicsEllipseItem):
         menu = self.get_base_context_menu()
         menu.exec(event.screenPos())
 
-    def get_xc(self) -> float:
-        return self.rect().x() + self.size/2
-
-    def get_yc(self) -> float:
-        return self.rect().y() + self.size/2
-
     def consolidate_coordinates(self):
         """
         Consolidate coordinates in to the DB
         """
-        lat, long = self.editor.to_lat_lon(self.get_xc(), self.get_yc())
+        lat, long = self.editor.to_lat_lon(self.rect().x(), self.rect().y())
         self.api_object.latitude = lat
         self.api_object.longitude = long
         self.editor.gui.show_info_toast("Coordinates consolidated!")
-

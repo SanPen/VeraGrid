@@ -6,17 +6,37 @@
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.power_electronics_unit import PowerElectronicsUnit
 from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType, BatteryStateKind, UnitSymbol
-from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
+
 
 class BatteryUnit(PowerElectronicsUnit):
-	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='ratedE', class_type=float, multiplier=UnitMultiplier.M, unit=UnitSymbol.Wh, description='''Real electrical energy.''', profiles=[]),
-		CgmesProperty(property_name='batteryState', class_type=BatteryStateKind, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The current state of the battery (charging, full, etc.).''', profiles=[]),
-		CgmesProperty(property_name='storedE', class_type=float, multiplier=UnitMultiplier.M, unit=UnitSymbol.Wh, description='''Real electrical energy.''', profiles=[]),
-	)
 	def __init__(self, rdfid='', tpe='BatteryUnit'):
 		PowerElectronicsUnit.__init__(self, rdfid, tpe)
 
 		self.ratedE: float = None
 		self.batteryState: BatteryStateKind = None
 		self.storedE: float = None
+
+		self.register_property(
+			name='ratedE',
+			class_type=float,
+			multiplier=UnitMultiplier.M,
+			unit=UnitSymbol.Wh,
+			description='''Real electrical energy.''',
+			profiles=[]
+		)
+		self.register_property(
+			name='batteryState',
+			class_type=BatteryStateKind,
+			multiplier=UnitMultiplier.none,
+			unit=UnitSymbol.none,
+			description='''The current state of the battery (charging, full, etc.).''',
+			profiles=[]
+		)
+		self.register_property(
+			name='storedE',
+			class_type=float,
+			multiplier=UnitMultiplier.M,
+			unit=UnitSymbol.Wh,
+			description='''Real electrical energy.''',
+			profiles=[]
+		)

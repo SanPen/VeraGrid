@@ -6,17 +6,9 @@
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.regulating_cond_eq import RegulatingCondEq
 from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType, UnitSymbol, SVCControlMode
-from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
+
 
 class StaticVarCompensator(RegulatingCondEq):
-	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='capacitiveRating', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.ohm, description='''Reactance (imaginary part of impedance), at rated frequency.''', profiles=[]),
-		CgmesProperty(property_name='inductiveRating', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.ohm, description='''Reactance (imaginary part of impedance), at rated frequency.''', profiles=[]),
-		CgmesProperty(property_name='slope', class_type=float, multiplier=UnitMultiplier.k, unit=UnitSymbol.V, description='''Voltage variation with reactive power.''', profiles=[]),
-		CgmesProperty(property_name='sVCControlMode', class_type=SVCControlMode, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''SVC control mode.''', profiles=[]),
-		CgmesProperty(property_name='voltageSetPoint', class_type=float, multiplier=UnitMultiplier.k, unit=UnitSymbol.V, description='''Electrical voltage, can be both AC and DC.''', profiles=[]),
-		CgmesProperty(property_name='q', class_type=float, multiplier=UnitMultiplier.M, unit=UnitSymbol.VAr, description='''Product of RMS value of the voltage and the RMS value of the quadrature component of the current.''', profiles=[]),
-	)
 	def __init__(self, rdfid='', tpe='StaticVarCompensator'):
 		RegulatingCondEq.__init__(self, rdfid, tpe)
 
@@ -26,3 +18,52 @@ class StaticVarCompensator(RegulatingCondEq):
 		self.sVCControlMode: SVCControlMode = None
 		self.voltageSetPoint: float = None
 		self.q: float = None
+
+		self.register_property(
+			name='capacitiveRating',
+			class_type=float,
+			multiplier=UnitMultiplier.none,
+			unit=UnitSymbol.ohm,
+			description='''Reactance (imaginary part of impedance), at rated frequency.''',
+			profiles=[]
+		)
+		self.register_property(
+			name='inductiveRating',
+			class_type=float,
+			multiplier=UnitMultiplier.none,
+			unit=UnitSymbol.ohm,
+			description='''Reactance (imaginary part of impedance), at rated frequency.''',
+			profiles=[]
+		)
+		self.register_property(
+			name='slope',
+			class_type=float,
+			multiplier=UnitMultiplier.k,
+			unit=UnitSymbol.V,
+			description='''Voltage variation with reactive power.''',
+			profiles=[]
+		)
+		self.register_property(
+			name='sVCControlMode',
+			class_type=SVCControlMode,
+			multiplier=UnitMultiplier.none,
+			unit=UnitSymbol.none,
+			description='''SVC control mode.''',
+			profiles=[]
+		)
+		self.register_property(
+			name='voltageSetPoint',
+			class_type=float,
+			multiplier=UnitMultiplier.k,
+			unit=UnitSymbol.V,
+			description='''Electrical voltage, can be both AC and DC.''',
+			profiles=[]
+		)
+		self.register_property(
+			name='q',
+			class_type=float,
+			multiplier=UnitMultiplier.M,
+			unit=UnitSymbol.VAr,
+			description='''Product of RMS value of the voltage and the RMS value of the quadrature component of the current.''',
+			profiles=[]
+		)

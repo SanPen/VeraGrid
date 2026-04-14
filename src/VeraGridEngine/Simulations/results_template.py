@@ -50,7 +50,6 @@ class ResultsTemplate:
             self,
             name: str,
             available_results: Union[Dict[ResultTypes, List[ResultTypes]], List[ResultTypes]],
-            # available_results: Union[Dict[ResultTypes, List[ResultTypes]], List[ResultTypes], Dict[ResultTypes, Dict[ResultTypes, List[ResultTypes]]], List[ResultTypes, Dict[ResultTypes, Dict[ResultTypes, List[ResultTypes]]]]],
             time_array: Union[DateVec, None],
             clustering_results: Union[ClusteringResults, None],
             study_results_type: StudyResultsType,

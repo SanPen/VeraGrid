@@ -4,19 +4,12 @@
 # SPDX-License-Identifier: MPL-2.0
 
 
-from typing import Union, Tuple
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType, GCProp
+from typing import Union
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType
 
 
 class Technology(EditableDevice):
     __slots__ = ('name2', 'name3', 'name4', 'color')
-
-    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='name2', units='', tpe=str, definition='Name 2 of the technology'),
-        GCProp(key='name3', units='', tpe=str, definition='Name 3 of the technology'),
-        GCProp(key='name4', units='', tpe=str, definition='Name 4 of the technology'),
-        GCProp(key='color', units='', tpe=str, definition='Color to paint', is_color=True),
-    )
 
     def __init__(self, name: str = '',
                  code: str = '',
@@ -41,3 +34,7 @@ class Technology(EditableDevice):
 
         self.color = color if color is not None else self.rnd_color()
 
+        self.register(key='name2', units='', tpe=str, definition='Name 2 of the technology')
+        self.register(key='name3', units='', tpe=str, definition='Name 3 of the technology')
+        self.register(key='name4', units='', tpe=str, definition='Name 4 of the technology')
+        self.register(key='color', units='', tpe=str, definition='Color to paint', is_color=True)

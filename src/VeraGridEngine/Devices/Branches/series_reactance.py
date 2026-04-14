@@ -4,13 +4,12 @@
 # SPDX-License-Identifier: MPL-2.0
 
 import numpy as np
-from typing import Union, Tuple
+from typing import Union
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import BuildStatus, DeviceType
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 from VeraGridEngine.Devices.profile import Profile
-from VeraGridEngine.Devices.Parents.editable_device import GCProp
 
 
 class SeriesReactance(BranchParent):
@@ -25,27 +24,6 @@ class SeriesReactance(BranchParent):
         'X0',
         'R2',
         'X2'
-    )
-
-    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='R', units='p.u.', tpe=float, definition='Total positive sequence resistance.'),
-        GCProp(key='X', units='p.u.', tpe=float, definition='Total positive sequence reactance.'),
-        GCProp(key='R0', units='p.u.', tpe=float, definition='Total zero sequence resistance.'),
-        GCProp(key='X0', units='p.u.', tpe=float, definition='Total zero sequence reactance.'),
-        GCProp(key='R2', units='p.u.', tpe=float, definition='Total negative sequence resistance.'),
-        GCProp(key='X2', units='p.u.', tpe=float, definition='Total negative sequence reactance.'),
-        GCProp(key='tolerance', units='%', tpe=float,
-                      definition='Tolerance expected for the impedance values % is expected '
-                                 'for transformers0% for lines.'),
-        GCProp(key='r_fault', units='p.u.', tpe=float,
-                      definition='Resistance of the mid-line fault.Used in short circuit studies.'),
-        GCProp(key='x_fault', units='p.u.', tpe=float,
-                      definition='Reactance of the mid-line fault.Used in short circuit studies.'),
-        GCProp(key='fault_pos', units='p.u.', tpe=float,
-                      definition='Per-unit positioning of the fault:'
-                                 '0 would be at the "from" side,'
-                                 '1 would be at the "to" side,'
-                                 'therefore 0.5 is at the middle.'),
     )
 
     def __init__(self,
@@ -141,10 +119,28 @@ class SeriesReactance(BranchParent):
         self.R2 = r2
         self.X2 = x2
 
+        self.register(key='R', units='p.u.', tpe=float, definition='Total positive sequence resistance.')
+        self.register(key='X', units='p.u.', tpe=float, definition='Total positive sequence reactance.')
 
+        self.register(key='R0', units='p.u.', tpe=float, definition='Total zero sequence resistance.')
+        self.register(key='X0', units='p.u.', tpe=float, definition='Total zero sequence reactance.')
 
+        self.register(key='R2', units='p.u.', tpe=float, definition='Total negative sequence resistance.')
+        self.register(key='X2', units='p.u.', tpe=float, definition='Total negative sequence reactance.')
 
+        self.register(key='tolerance', units='%', tpe=float,
+                      definition='Tolerance expected for the impedance values % is expected '
+                                 'for transformers0% for lines.')
 
+        self.register(key='r_fault', units='p.u.', tpe=float,
+                      definition='Resistance of the mid-line fault.Used in short circuit studies.')
+        self.register(key='x_fault', units='p.u.', tpe=float,
+                      definition='Reactance of the mid-line fault.Used in short circuit studies.')
+        self.register(key='fault_pos', units='p.u.', tpe=float,
+                      definition='Per-unit positioning of the fault:'
+                                 '0 would be at the "from" side,'
+                                 '1 would be at the "to" side,'
+                                 'therefore 0.5 is at the middle.')
 
     @property
     def R_corrected(self):

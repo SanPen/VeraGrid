@@ -113,22 +113,13 @@ def save_veragrid_data_to_zip(dfs: Dict[str, pd.DataFrame],
             f_zip_ptr.writestr(filename, json.dumps(value))
 
         # save the VeraGrid object as json data
-        for key, data in model_data.items():
-
-            if key == "model_data":
-                ext = ".model"
-            elif key == "symbolic_data":
-                ext = ".symbolic"
-            else:
-                raise ValueError(f"Unhandled data package to save {key}")
-
-            for object_type_name, object_data in data.items():
-                filename = key + "/" + object_type_name + ext
-                try:
-                    f_zip_ptr.writestr(filename, json.dumps(object_data, indent=4, cls=CustomJSONizer))
-                except TypeError as e:
-                    logger.add_error(msg=str(e), device_class=object_type_name)
-                    warn(f"{object_type_name}: {e}")
+        for object_type_name, object_data in model_data.items():
+            filename = "model_data/" + object_type_name + ".model"
+            try:
+                f_zip_ptr.writestr(filename, json.dumps(object_data, indent=4, cls=CustomJSONizer))
+            except TypeError as e:
+                logger.add_error(msg=str(e), device_class=object_type_name)
+                warn(f"{object_type_name}: {e}")
 
         # save diagrams
         for diagram in diagrams:
@@ -289,8 +280,7 @@ def get_frames_from_zip(file_name_zip: str,
     :return: list of DataFrames
     """
     data = {'diagrams': list(),
-            'model_data': dict(),
-            'symbolic_data': dict()}
+            'model_data': dict()}
     json_files = dict()
 
     # open the zip file
@@ -332,10 +322,6 @@ def get_frames_from_zip(file_name_zip: str,
             elif extension == '.model':
                 folder, object_name = name.split("/")
                 data['model_data'][object_name] = json.load(file_pointer)
-
-            elif extension == '.symbolic':
-                folder, object_name = name.split("/")
-                data['symbolic_data'][object_name] = json.load(file_pointer)
 
             elif extension == '.csv':
                 df = pd.read_csv(file_pointer, index_col=None)

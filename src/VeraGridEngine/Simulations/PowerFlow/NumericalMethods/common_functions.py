@@ -7,7 +7,6 @@ import numba as nb
 import numpy as np
 from scipy.sparse import csc_matrix
 from VeraGridEngine.basic_structures import Vec, CxVec, IntVec, CscMat, CxMat
-from typing import Tuple
 
 
 @nb.njit(cache=True, fastmath=True)
@@ -231,31 +230,25 @@ def expand_magnitudes(magnitude: CxVec, lookup: IntVec):
     return magnitude_expanded
 
 
-@nb.njit(cache=True)
-def floating_star_currents(Va, Vb, Vc, Istar_a, Istar_b, Istar_c, Vn0) -> Tuple[complex, complex, complex, complex]:
+def floating_star_currents(Va, Vb, Vc, Istar_a, Istar_b, Istar_c, Vn0):
     """
-    Given the phase voltages and currents of a floating star connected current load,
-    this function calculates the phase currents (Ia, Ib, Ic) and the neutral voltage (Vn),
-    such that they meet the condition that the current flowing through the neutral point is equal to zero,
-    since the neutral point of the star is floating -> In = Ia + Ib + Ic = 0
-    :param Va: Phase A load voltage
-    :param Vb: Phase B load voltage
-    :param Vc: Phase C load voltage
-    :param Istar_a: Phase A load current
-    :param Istar_b: Phase B load current
-    :param Istar_c: Phase C load current
-    :param Vn0: Last-iteration neutral point voltage or
-                just the center of the phase voltages (Va,Vb,Vc) at the first iteration
-    :return: Ia, Ib, Ic, Vn
+
+    :param Va:
+    :param Vb:
+    :param Vc:
+    :param Istar_a:
+    :param Istar_b:
+    :param Istar_c:
+    :param Vn0:
+    :return:
     """
     # unknown: Vn (complex). Start from last-iter Vn0 or center of Va,Vb,Vc
     Vn = Vn0
 
-    # Remove @nb.njit decorator - nested functions can't be decorated
     def Iphase(U, Istar):
         Umag = abs(U)
         if Umag < 1e-12:  # guard
-            return nb.complex128(0.0)  # Changed from complex64 to complex128
+            return 0j
         return np.conj(Istar) * (U / Umag)
 
     for _ in range(10):  # few Newton steps are usually enough
@@ -288,28 +281,26 @@ def floating_star_currents(Va, Vb, Vc, Istar_a, Istar_b, Istar_c, Vn0) -> Tuple[
     Ib = Iphase(Ub, Istar_b)
     Ic = Iphase(Uc, Istar_c)
 
+    # print('In =', Ia + Ib + Ic)
+
     return Ia, Ib, Ic, Vn
 
 
-@nb.njit(cache=True)
 def floating_star_powers(Ua,
                          Ub,
                          Uc,
                          Sa,
                          Sb,
-                         Sc) -> Tuple[complex, complex, complex, complex]:
+                         Sc):
     """
-    Given the phase voltages and complex powers of a floating star connected power load,
-    this function calculates the phase currents (Ia, Ib, Ic) and the neutral voltage (Un),
-    such that they meet the condition that the current flowing through the neutral point is equal to zero,
-    since the neutral point of the star is floating -> In = Ia + Ib + Ic = 0
-    :param Ua: Phase A load voltage
-    :param Ub: Phase B load voltage
-    :param Uc: Phase C load voltage
-    :param Sa: Phase A load complex power
-    :param Sb: Phase B load complex power
-    :param Sc: Phase C load complex power
-    :return: Ia, Ib, Ic, Un
+
+    :param Ua:
+    :param Ub:
+    :param Uc:
+    :param Sa:
+    :param Sb:
+    :param Sc:
+    :return:
     """
     # A·x2 + B·x + c = 0
     # x = (-B +- sqrt(B2 - 4·A·C)) / 2·A
@@ -329,6 +320,12 @@ def floating_star_powers(Ua,
     Ia = np.conj(Sa / (Ua - Un))
     Ib = np.conj(Sb / (Ub - Un))
     Ic = np.conj(Sc / (Uc - Un))
+
+    # print('\nUn_p = ', abs(Un_p), '<', np.angle(Un_p, deg=True), 'º')
+    # print('\nUn_n = ', abs(Un_n), '<', np.angle(Un_n, deg=True), 'º')
+    # print('\nIn = ', Ia + Ib + Ic)
+
+    Un_abs = abs(Un)
 
     return Ia, Ib, Ic, Un
 
@@ -371,12 +368,9 @@ def power_flow_post_process_nonlinear_3ph(Sbus: CxVec,
     V_expanded = expand_magnitudes(V, bus_lookup)
     Vn_floating_expanded = expand_magnitudes(Vn_floating, bus_lookup)
 
-    # Compute the basic Sbus
-    Sbus = V * np.conj(Ybus @ V)
-
     # Add the shunt power V^2 x Y^*
     Vm = np.abs(V)
-    Sbus += np.conj(Yshunt_bus) @ (Vm * Vm)
+    Sbus = np.conj(Yshunt_bus) @ (Vm * Vm)
 
     # power at the slack nodes
     if len(vd) > 0:

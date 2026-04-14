@@ -472,7 +472,7 @@ class PowerFlowResults(ResultsTemplate):
 
     def get_voltage_df(self):
 
-        return pd.DataFrame(data={'Um 1 [p.u.]': np.abs(self.voltage).round(5),
+        return pd.DataFrame(data={'Um 1 [p.u.]': np.abs(self.voltage),
                                   'Ua 1 [º]': np.angle(self.voltage, deg=True)},
                             index=self.bus_names)
 

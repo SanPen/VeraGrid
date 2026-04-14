@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 import hashlib
 import uuid as uuidlib
-from typing import List, Dict, TypeVar, Any, Sequence, Tuple
+from typing import List, Dict, TypeVar, Any, Sequence
 from VeraGridEngine.IO.base.units import Unit
 from VeraGridEngine.IO.raw.devices.psse_property import PsseProperty
 
@@ -47,53 +47,7 @@ def format_raw_float(value: float) -> str:
         return f"{value:.5g}"
 
 
-class RawObjectMeta(type):
-    """
-    Metaclass that builds RAW property schema per class from class-level declarations.
-    """
-
-    def __new__(mcs, name, bases, namespace):
-        """
-        Build class-level schema by aggregating base + local property declarations.
-        :param name: Class name
-        :param bases: Base classes
-        :param namespace: Class namespace
-        :return: class object
-        """
-        cls = super().__new__(mcs, name, bases, namespace)
-
-        aggregated_props: List[PsseProperty] = list()
-        for base in bases:
-            base_props: Tuple[PsseProperty, ...] = getattr(base, "CLASS_PROPERTIES", tuple())
-            for prop in base_props:
-                aggregated_props.append(prop)
-
-        local_props: Tuple[PsseProperty, ...] = namespace.get("LOCAL_PROPERTIES", tuple())
-        for prop in local_props:
-            aggregated_props.append(prop)
-
-        cls.CLASS_PROPERTIES = tuple(aggregated_props)
-        cls.CLASS_REGISTERED_PROPERTIES = dict()
-        for prop in cls.CLASS_PROPERTIES:
-            cls.CLASS_REGISTERED_PROPERTIES[prop.property_name] = prop
-
-        return cls
-
-
-class RawObject(metaclass=RawObjectMeta):
-    """
-    PSSeObject
-    """
-    LOCAL_PROPERTIES: Tuple[PsseProperty, ...] = (
-        PsseProperty(property_name="idtag",
-                     rawx_key="uuid:string",
-                     class_type=str,
-                     description="Element UUID",
-                     unit=Unit()),
-    )
-    CLASS_REGISTERED_PROPERTIES: Dict[str, PsseProperty] = dict()
-    CLASS_PROPERTIES: Tuple[PsseProperty, ...] = tuple()
-
+class RawObject:
     """
     PSSeObject
     """
@@ -106,9 +60,13 @@ class RawObject(metaclass=RawObjectMeta):
 
         self.idtag = uuidlib.uuid4().hex  # always initialize with random  uuid
 
-        self_cls: type = type(self)
-        self.__registered_properties = self_cls.CLASS_REGISTERED_PROPERTIES
-        self.__properties = self_cls.CLASS_PROPERTIES
+        self.__registered_properties: Dict[str, PsseProperty] = dict()
+        self.__properties: List[PsseProperty] = list()
+
+        self.register_property(property_name="idtag",
+                               rawx_key="uuid:string",
+                               class_type=str,
+                               description="Element UUID")
 
     def get_rdfid(self) -> str:
         """
@@ -172,7 +130,21 @@ class RawObject(metaclass=RawObjectMeta):
         :param max_value:
         :param format_rule: some formatting rule
         """
-        raise RuntimeError("RawObject.register_property() is disabled. Use class-level LOCAL_PROPERTIES.")
+        if hasattr(self, property_name):
+            gc_prop = PsseProperty(property_name=property_name,
+                                   rawx_key=rawx_key,
+                                   class_type=class_type,
+                                   unit=unit,
+                                   denominator_unit=denominator_unit,
+                                   description=description,
+                                   max_chars=max_chars,
+                                   min_value=min_value,
+                                   max_value=max_value,
+                                   format_rule=format_rule)
+            self.__registered_properties[property_name] = gc_prop
+            self.__properties.append(gc_prop)
+        else:
+            raise Exception('Property not found when trying to declare it :(')
 
     def format_raw_line_prop(self, props: List[str]):
         """

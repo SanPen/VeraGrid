@@ -59,8 +59,6 @@ lin_power_flow.run()
 pf_contingencies = gce.ContingencyAnalysisDriver(
     grid=grid,
     options=gce.ContingencyAnalysisOptions(
-        use_provided_flows=True,
-        Pf=nl_power_flow,
         contingency_method=gce.ContingencyMethod.PowerFlow,
         contingency_groups=grid.contingency_groups,
         pf_options=gce.PowerFlowOptions(solver_type=gce.SolverType.NR)

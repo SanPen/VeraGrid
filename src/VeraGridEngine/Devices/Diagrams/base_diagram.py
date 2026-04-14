@@ -476,7 +476,7 @@ class BaseDiagram:
 
                     if f is not None and t is not None:
                         if hasattr(branch, 'X'):
-                            w = abs(branch.X)
+                            w = branch.X
                         else:
                             w = 1e-6
 
@@ -493,7 +493,7 @@ class BaseDiagram:
                     t = graph_node_dictionary.get(branch.bus_to.idtag, None)
 
                     if f is not None and t is not None:
-                        w = abs(branch.R)
+                        w = branch.R
                         tuples.append((f, t, w))
 
         for dev_type in [DeviceType.HVDCLineDevice]:

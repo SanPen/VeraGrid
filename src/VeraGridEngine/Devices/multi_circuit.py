@@ -17,15 +17,13 @@ from scipy.sparse import csc_matrix, lil_matrix
 
 from VeraGridEngine.Devices.assets import Assets
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
-from VeraGridEngine.basic_structures import IntVec, Vec, Mat, CxVec, IntMat, CxMat, BoolVec
+from VeraGridEngine.basic_structures import IntVec, Vec, Mat, CxVec, IntMat, CxMat
 
 import VeraGridEngine.Devices as dev
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES, INJECTION_DEVICE_TYPES, FLUID_TYPES, AREA_TYPES, BRANCH_TYPES
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Topology.topology import find_different_states
 from VeraGridEngine.enumerations import DeviceType, ActionType, SubObjectType, ConverterControlType, ExternalGridMode
-from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.Utils.Symbolic.symbolic_io import compare_blocks
 
 if TYPE_CHECKING:
     from VeraGridEngine.Simulations.OPF.opf_ts_results import OptimalPowerFlowTimeSeriesResults
@@ -414,7 +412,7 @@ class MultiCircuit(Assets):
         """
         graph_real_power_flow = nx.DiGraph()
 
-        current_flow_direction: BoolVec = np.real(current_flow) > 0
+        current_flow_direction = np.real(current_flow) > 0
         bus_dictionary = self.get_elements_dict_by_type(element_type=DeviceType.BusDevice,
                                                         use_secondary_key=False)
 
@@ -527,8 +525,8 @@ class MultiCircuit(Assets):
 
         batt.active_prof = gen.active_prof
         batt.P_prof = gen.P_prof
-        batt.Pf_prof = gen.Pf_prof
-        batt.Vset_prof = gen.Vset_prof
+        batt.power_factor_prof = gen.Pf_prof
+        batt.vset_prof = gen.Vset_prof
         batt.enabled_dispatch_prof = gen.enabled_dispatch_prof
         batt.must_run_prof = gen.must_run_prof
 
@@ -776,71 +774,64 @@ class MultiCircuit(Assets):
         if self.time_profile is not None:
 
             # collect data
-            nt = self.get_time_number()
-            nl = self.get_loads_number()
-            ng = self.get_generators_number()
-            nb = self.get_batteries_number()
-
-            P: Vec = np.zeros((nt, nl))
-            Q: Vec = np.zeros((nt, nl))
-            Ir: Vec = np.zeros((nt, nl))
-            Ii: Vec = np.zeros((nt, nl))
-            G: Vec = np.zeros((nt, nl))
-            B: Vec = np.zeros((nt, nl))
-
-            P_gen: Vec = np.zeros((nt, ng + nb))
-            V_gen: Vec = np.zeros((nt, ng + nb))
+            P = list()
+            Q = list()
+            Ir = list()
+            Ii = list()
+            G = list()
+            B = list()
+            P_gen = list()
+            V_gen = list()
 
             load_names = list()
             gen_names = list()
             bat_names = list()
 
-            for i, elm in enumerate(self._loads):
+            for elm in self._loads:
                 load_names.append(elm.name)
-                P[:, i] = elm.P_prof.toarray()
-                Q[:, i] = elm.Q_prof.toarray()
+                P.append(elm.P_prof)
+                Q.append(elm.Q_prof)
 
-                Ir[:, i] = elm.Ir_prof.toarray()
-                Ii[:, i] = elm.Ii_prof.toarray()
+                Ir.append(elm.Ir_prof)
+                Ii.append(elm.Ii_prof)
 
-                G[:, i] = elm.G_prof.toarray()
-                B[:, i] = elm.B_prof.toarray()
+                G.append(elm.G_prof)
+                B.append(elm.B_prof)
 
-            for i, elm in enumerate(self._generators):
+            for elm in self._generators:
                 gen_names.append(elm.name)
 
-                P_gen[:, i] = elm.P_prof.toarray()
-                V_gen[:, i] = elm.Vset_prof.toarray()
+                P_gen.append(elm.P_prof)
+                V_gen.append(elm.Vset_prof)
 
-            for k, elm in enumerate(self._batteries):
-                i = k + ng
+            for elm in self._batteries:
                 bat_names.append(elm.name)
                 gen_names.append(elm.name)
-                P_gen[:, i] = elm.P_prof.toarray()
-                V_gen[:, i] = elm.Vset_prof.toarray()
+                P_gen.append(elm.P_prof)
+                V_gen.append(elm.Vset_prof)
 
             # form DataFrames
-            P_df = pd.DataFrame(data=P.transpose(), index=self.time_profile, columns=load_names)
-            Q_df = pd.DataFrame(data=Q.transpose(), index=self.time_profile, columns=load_names)
-            Ir_df = pd.DataFrame(data=Ir.transpose(), index=self.time_profile, columns=load_names)
-            Ii_df = pd.DataFrame(data=Ii.transpose(), index=self.time_profile, columns=load_names)
-            G_df = pd.DataFrame(data=G.transpose(), index=self.time_profile, columns=load_names)
-            B_df = pd.DataFrame(data=B.transpose(), index=self.time_profile, columns=load_names)
-            P_gen_df = pd.DataFrame(data=P_gen.transpose(), index=self.time_profile, columns=gen_names)
-            V_gen_df = pd.DataFrame(data=V_gen.transpose(), index=self.time_profile, columns=gen_names)
+            P = pd.DataFrame(data=np.array(P).transpose(), index=self.time_profile, columns=load_names)
+            Q = pd.DataFrame(data=np.array(Q).transpose(), index=self.time_profile, columns=load_names)
+            Ir = pd.DataFrame(data=np.array(Ir).transpose(), index=self.time_profile, columns=load_names)
+            Ii = pd.DataFrame(data=np.array(Ii).transpose(), index=self.time_profile, columns=load_names)
+            G = pd.DataFrame(data=np.array(G).transpose(), index=self.time_profile, columns=load_names)
+            B = pd.DataFrame(data=np.array(B).transpose(), index=self.time_profile, columns=load_names)
+            P_gen = pd.DataFrame(data=np.array(P_gen).transpose(), index=self.time_profile, columns=gen_names)
+            V_gen = pd.DataFrame(data=np.array(V_gen).transpose(), index=self.time_profile, columns=gen_names)
 
             with pd.ExcelWriter(file_name) as writer:  # pylint: disable=abstract-class-instantiated
-                P_df.to_excel(writer, sheet_name='P loads')
-                Q_df.to_excel(writer, sheet_name='Q loads')
+                P.to_excel(writer, 'P loads')
+                Q.to_excel(writer, 'Q loads')
 
-                Ir_df.to_excel(writer, sheet_name='Ir loads')
-                Ii_df.to_excel(writer, sheet_name='Ii loads')
+                Ir.to_excel(writer, 'Ir loads')
+                Ii.to_excel(writer, 'Ii loads')
 
-                G_df.to_excel(writer, sheet_name='G loads')
-                B_df.to_excel(writer, sheet_name='B loads')
+                G.to_excel(writer, 'G loads')
+                B.to_excel(writer, 'B loads')
 
-                P_gen_df.to_excel(writer, sheet_name='P generators')
-                V_gen_df.to_excel(writer, sheet_name='V generators')
+                P_gen.to_excel(writer, 'P generators')
+                V_gen.to_excel(writer, 'V generators')
 
         else:
             raise Exception('There are no time series!')
@@ -923,23 +914,13 @@ class MultiCircuit(Assets):
         """
         return A.indices[A.indptr[bus_idx]:A.indptr[bus_idx + 1]]
 
-    def get_center_location(self) -> Tuple[float, float]:
+    def get_center_location(self):
         """
         Get the mean coordinates of the system (lat, lon)
         """
+        coord = np.array([b.get_coordinates() for b in self.buses])
 
-        lat = 0.0
-        lon = 0.0
-        nb = self.get_bus_number()
-        for b in self.buses:
-            lon_i, lat_i = b.get_coordinates()
-            lat += lat_i
-            lon += lon_i
-
-        lat /= nb
-        lon /= nb
-
-        return lat, lon
+        return np.mean(coord, axis=0).tolist()
 
     def snapshot_balance(self):
         """
@@ -1025,8 +1006,8 @@ class MultiCircuit(Assets):
         """
 
         n = len(self.buses)
-        lon: Vec = np.zeros(n)
-        lat: Vec = np.zeros(n)
+        lon = np.zeros(n)
+        lat = np.zeros(n)
         for i, bus in enumerate(self.buses):
             lon[i] = bus.longitude
             lat[i] = bus.latitude
@@ -1071,8 +1052,8 @@ class MultiCircuit(Assets):
         :return:
         """
         n = len(self.buses)
-        x: Vec = np.zeros(n)
-        y: Vec = np.zeros(n)
+        x = np.zeros(n)
+        y = np.zeros(n)
         for i, bus in enumerate(self.buses):
             x[i] = bus.x * factor + offset_x
             y[i] = bus.y * factor + offset_y
@@ -1139,7 +1120,7 @@ class MultiCircuit(Assets):
         """
         areas_dict = {elm: k for k, elm in enumerate(self.get_areas())}
 
-        lst: IntVec = np.zeros(len(self.buses), dtype=int)
+        lst = np.zeros(len(self.buses), dtype=int)
         for k, bus in enumerate(self.buses):
             if bus.area is not None:
                 lst[k] = areas_dict.get(bus.area, 0)
@@ -1200,16 +1181,14 @@ class MultiCircuit(Assets):
 
         raise TypeError("Aggregation type not supported")
 
-    def get_inter_areas_branches(self,
-                                 a1: List[dev.Area],
-                                 a2: List[dev.Area]) -> List[Tuple[int, BRANCH_TYPES, float]]:
+    def get_inter_areas_branches(self, a1: List[dev.Area], a2: List[dev.Area]) -> List[Tuple[int, object, float]]:
         """
         Get the inter-area Branches. HVDC Branches are not considered
         :param a1: Area from
         :param a2: Area to
         :return: List of (branch index, branch object, flow sense w.r.t the area exchange)
         """
-        lst: List[Tuple[int, BRANCH_TYPES, float]] = list()
+        lst: List[Tuple[int, object, float]] = list()
         for k, branch in enumerate(self.get_branches(add_hvdc=False, add_vsc=False, add_switch=True)):
             if branch.bus_from.area in a1 and branch.bus_to.area in a2:
                 lst.append((k, branch, 1.0))
@@ -1219,16 +1198,14 @@ class MultiCircuit(Assets):
                 pass
         return lst
 
-    def get_inter_buses_branches(self,
-                                 a1: Set[dev.Bus],
-                                 a2: Set[dev.Bus]) -> List[Tuple[int, BRANCH_TYPES, float]]:
+    def get_inter_buses_branches(self, a1: Set[dev.Bus], a2: Set[dev.Bus]) -> List[Tuple[int, object, float]]:
         """
         Get the inter-buses Branches. HVDC Branches are not considered
         :param a1: Group of Buses 1
         :param a2: Group of Buses 1
         :return: List of (branch index, branch object, flow sense w.r.t the area exchange)
         """
-        lst: List[Tuple[int, BRANCH_TYPES, float]] = list()
+        lst: List[Tuple[int, object, float]] = list()
         for k, branch in enumerate(self.get_branches(add_hvdc=False, add_vsc=False, add_switch=True)):
             if branch.bus_from in a1 and branch.bus_to in a2:
                 lst.append((k, branch, 1.0))
@@ -1236,16 +1213,14 @@ class MultiCircuit(Assets):
                 lst.append((k, branch, -1.0))
         return lst
 
-    def get_inter_areas_hvdc_branches(self,
-                                      a1: List[dev.Area],
-                                      a2: List[dev.Area]) -> List[Tuple[int, BRANCH_TYPES, float]]:
+    def get_inter_areas_hvdc_branches(self, a1: List[dev.Area], a2: List[dev.Area]) -> List[Tuple[int, object, float]]:
         """
         Get the inter-area Branches
         :param a1: Area from
         :param a2: Area to
         :return: List of (branch index, branch object, flow sense w.r.t the area exchange)
         """
-        lst: List[Tuple[int, BRANCH_TYPES, float]] = list()
+        lst: List[Tuple[int, object, float]] = list()
         for k, branch in enumerate(self._hvdc_lines):
             if branch.bus_from.area in a1 and branch.bus_to.area in a2:
                 lst.append((k, branch, 1.0))
@@ -1255,16 +1230,14 @@ class MultiCircuit(Assets):
                 pass
         return lst
 
-    def get_inter_buses_hvdc_branches(self,
-                                      a1: Set[dev.Bus],
-                                      a2: Set[dev.Bus]) -> List[Tuple[int, dev.HvdcLine, float]]:
+    def get_inter_buses_hvdc_branches(self, a1: Set[dev.Bus], a2: Set[dev.Bus]) -> List[Tuple[int, object, float]]:
         """
         Get the inter-area Branches
         :param a1: Group of Buses 1
         :param a2: Group of Buses 1
         :return: List of (branch index, branch object, flow sense w.r.t the area exchange)
         """
-        lst: List[Tuple[int, dev.HvdcLine, float]] = list()
+        lst: List[Tuple[int, object, float]] = list()
         for k, branch in enumerate(self._hvdc_lines):
             if branch.bus_from in a1 and branch.bus_to in a2:
                 lst.append((k, branch, 1.0))
@@ -1272,16 +1245,14 @@ class MultiCircuit(Assets):
                 lst.append((k, branch, -1.0))
         return lst
 
-    def get_inter_areas_vsc_branches(self,
-                                     a1: List[dev.Area],
-                                     a2: List[dev.Area]) -> List[Tuple[int, dev.VSC, float]]:
+    def get_inter_areas_vsc_branches(self, a1: List[dev.Area], a2: List[dev.Area]) -> List[Tuple[int, object, float]]:
         """
         Get the inter-area VSC
         :param a1: Area from
         :param a2: Area to
         :return: List of (branch index, branch object, flow sense w.r.t the area exchange)
         """
-        lst: List[Tuple[int, dev.VSC, float]] = list()
+        lst: List[Tuple[int, object, float]] = list()
         for k, branch in enumerate(self.vsc_devices):
             if branch.bus_from.area in a1 and branch.bus_to.area in a2:
                 lst.append((k, branch, 1.0))
@@ -1291,16 +1262,14 @@ class MultiCircuit(Assets):
                 pass
         return lst
 
-    def get_inter_buses_vsc_branches(self,
-                                     a1: Set[dev.Bus],
-                                     a2: Set[dev.Bus]) -> List[Tuple[int, dev.VSC, float]]:
+    def get_inter_buses_vsc_branches(self, a1: Set[dev.Bus], a2: Set[dev.Bus]) -> List[Tuple[int, object, float]]:
         """
         Get the inter-area VSC
         :param a1: Group of Buses 1
         :param a2: Group of Buses 1
         :return: List of (branch index, branch object, flow sense w.r.t the area exchange)
         """
-        lst: List[Tuple[int, dev.VSC, float]] = list()
+        lst: List[Tuple[int, object, float]] = list()
         for k, branch in enumerate(self.vsc_devices):
             if branch.bus_from in a1 and branch.bus_to in a2:
                 lst.append((k, branch, 1.0))
@@ -1308,16 +1277,14 @@ class MultiCircuit(Assets):
                 lst.append((k, branch, -1.0))
         return lst
 
-    def get_inter_zone_branches(self,
-                                z1: dev.Zone,
-                                z2: dev.Zone) -> List[Tuple[int, BRANCH_TYPES, float]]:
+    def get_inter_zone_branches(self, z1: dev.Zone, z2: dev.Zone) -> List[Tuple[int, object, float]]:
         """
         Get the inter-area Branches
         :param z1: Zone from
         :param z2: Zone to
         :return: List of (branch index, branch object, flow sense w.r.t the area exchange)
         """
-        lst: List[Tuple[int, BRANCH_TYPES, float]] = list()
+        lst: List[Tuple[int, object, float]] = list()
         for k, branch in enumerate(self.get_branches(add_vsc=False, add_hvdc=False, add_switch=True)):
             if branch.bus_from.zone == z1 and branch.bus_to.zone == z2:
                 lst.append((k, branch, 1.0))
@@ -1368,15 +1335,15 @@ class MultiCircuit(Assets):
         bus_area_indices = np.array([area_dict.get(b.area, 0) for b in self.get_buses()])
 
         branches = self.get_branches(add_vsc=False, add_hvdc=False, add_switch=True)
-        F: IntVec = np.zeros(len(branches), dtype=int)
-        T: IntVec = np.zeros(len(branches), dtype=int)
+        F = np.zeros(len(branches), dtype=int)
+        T = np.zeros(len(branches), dtype=int)
         for k, elm in enumerate(branches):
             F[k] = bus_dict[elm.bus_from]
             T[k] = bus_dict[elm.bus_to]
 
         hvdc = self.get_hvdc()
-        hvdc_F: IntVec = np.zeros(len(hvdc), dtype=int)
-        hvdc_T: IntVec = np.zeros(len(hvdc), dtype=int)
+        hvdc_F = np.zeros(len(hvdc), dtype=int)
+        hvdc_T = np.zeros(len(hvdc), dtype=int)
         for k, elm in enumerate(hvdc):
             hvdc_F[k] = bus_dict[elm.bus_from]
             hvdc_T[k] = bus_dict[elm.bus_to]
@@ -1451,8 +1418,8 @@ class MultiCircuit(Assets):
         # assign the new base
         self.Sbase = Sbase_new
 
-    def get_injection_devices_grouped_by_substation(self) -> Dict[dev.Substation,
-    Dict[DeviceType, List[INJECTION_DEVICE_TYPES]]]:
+    def get_injection_devices_grouped_by_substation(self) -> Dict[
+        dev.Substation, Dict[DeviceType, List[INJECTION_DEVICE_TYPES]]]:
         """
         Get the injection devices grouped by bus and by device type
         :return: Dict[bus, Dict[DeviceType, List[Injection devs]]
@@ -1477,8 +1444,6 @@ class MultiCircuit(Assets):
                             devices_by_type[elm.device_type].append(elm)
 
         return groups
-
-
 
     def get_injection_devices_grouped_by_bus(self) -> Dict[dev.Bus, Dict[DeviceType, List[INJECTION_DEVICE_TYPES]]]:
         """
@@ -1620,27 +1585,6 @@ class MultiCircuit(Assets):
 
         return result
 
-    def compose_bus_blocks(self) -> Dict[dev.bus, Block]:
-        """
-        this function returns a dictionary with keys, the device bus, mand values, a block containing all the rms models of the elements connected to that bus.
-        Returns
-        -------
-
-        """
-        syst_blocks: Dict[dev.bus, Block] = dict()
-
-        bus_regions_dict = self.get_injection_devices_grouped_by_bus()
-
-        for bus, region in bus_regions_dict.items():
-            bus_block = Block(children=[], in_vars=[])
-            for dev_type, dev_list in region.items():
-                for elm in dev_list:
-                    elm_mdl = elm.rms_model.model
-                    bus_block.add(elm_mdl)
-            syst_blocks[bus] = bus_block
-
-        return syst_blocks
-
     def get_batteries_by_bus(self) -> Dict[dev.Bus, List[dev.Battery]]:
         """
         Get the injection devices grouped by bus and by device type
@@ -1778,7 +1722,7 @@ class MultiCircuit(Assets):
         Get the buses stored voltage guess
         :return: array of complex voltages per bus
         """
-        v: CxVec = np.zeros(len(self.buses), dtype=complex)
+        v = np.zeros(len(self.buses), dtype=complex)
 
         for i, bus in enumerate(self.buses):
             if bus.active:
@@ -1792,7 +1736,7 @@ class MultiCircuit(Assets):
         :param apply_active: Apply the active state?
         :return: (nbus) [MW + j MVAr]
         """
-        val: CxVec = np.zeros(self.get_bus_number(), dtype=complex)
+        val = np.zeros(self.get_bus_number(), dtype=complex)
         bus_dict = self.get_bus_index_dict()
 
         for elm in self.get_injection_devices_iter():
@@ -1827,7 +1771,7 @@ class MultiCircuit(Assets):
         :param apply_active: Apply the active state?
         :return: (nbus) [MW + j MVAr]
         """
-        val: Vec = np.zeros(self.get_bus_number(), dtype=float)
+        val = np.zeros(self.get_bus_number(), dtype=float)
         bus_dict = self.get_bus_index_dict()
 
         for elm in self.generators:
@@ -1859,7 +1803,7 @@ class MultiCircuit(Assets):
         :param apply_active: Apply the active state?
         :return: (nbus) [MW + j MVAr]
         """
-        val: Vec = np.zeros(self.get_bus_number(), dtype=float)
+        val = np.zeros(self.get_bus_number(), dtype=float)
         bus_dict = self.get_bus_index_dict()
 
         for elm in self.loads:
@@ -1876,7 +1820,7 @@ class MultiCircuit(Assets):
         :param apply_active: Apply the active state?
         :return: (ntime, nbus) [MW + j MVAr]
         """
-        val: CxMat = np.zeros((self.get_time_number(), self.get_bus_number()), dtype=complex)
+        val = np.zeros((self.get_time_number(), self.get_bus_number()), dtype=complex)
         bus_dict = self.get_bus_index_dict()
 
         for elm in self.get_load_like_devices():
@@ -1912,8 +1856,7 @@ class MultiCircuit(Assets):
             if elm.bus is not None:
                 k = bus_dict[elm.bus]
                 if apply_active:
-                    val[:,
-                    k] += elm.get_Sprof_with_sign() * elm.active_prof.toarray() * elm.enabled_dispatch_prof.toarray()
+                    val[:, k] += elm.get_Sprof_with_sign() * elm.active_prof.toarray() * elm.enabled_dispatch_prof.toarray()
                 else:
                     val[:, k] += elm.get_Sprof_with_sign() * elm.enabled_dispatch_prof.toarray()
 
@@ -1966,7 +1909,7 @@ class MultiCircuit(Assets):
         Get the complex bus power Injections
         :return: (nbr) [MVA]
         """
-        val: Vec = np.zeros(self.get_branch_number(add_hvdc=add_hvdc, add_vsc=add_vsc, add_switch=add_switch))
+        val = np.zeros(self.get_branch_number(add_hvdc=add_hvdc, add_vsc=add_vsc, add_switch=add_switch))
 
         for i, branch in enumerate(self.get_branches(add_hvdc=add_hvdc, add_vsc=add_vsc, add_switch=add_switch)):
             val[i] = branch.rate
@@ -1991,7 +1934,7 @@ class MultiCircuit(Assets):
         Get the complex bus power Injections
         :return: (nbr) [MVA]
         """
-        val: Vec = np.zeros(self.get_branch_number(add_hvdc=add_hvdc, add_vsc=add_vsc, add_switch=add_switch))
+        val = np.zeros(self.get_branch_number(add_hvdc=add_hvdc, add_vsc=add_vsc, add_switch=add_switch))
 
         for i, branch in enumerate(self.get_branches(add_hvdc=add_hvdc, add_vsc=add_vsc, add_switch=add_switch)):
             val[i] = branch.rate_prof.toarray() * branch.contingency_factor.toarray()
@@ -2013,8 +1956,8 @@ class MultiCircuit(Assets):
 
         # create associations between generators and fuels
         for generator in self.generators:
-            gen_idx = gen_index_dict[generator.idtag]
             for assoc in generator.fuels:
+                gen_idx = gen_index_dict[generator.idtag]
                 fuel_idx = fuel_index_dict[assoc.api_object.idtag]
                 gen_fuel_rates_matrix[fuel_idx, gen_idx] = assoc.value
 
@@ -2035,9 +1978,8 @@ class MultiCircuit(Assets):
 
         # create associations between generators and emissions
         for generator in self.generators:
-            gen_idx = gen_index_dict[generator.idtag]
-
             for assoc in generator.emissions:
+                gen_idx = gen_index_dict[generator.idtag]
                 em_idx = em_index_dict[assoc.api_object.idtag]
                 gen_emissions_rates_matrix[em_idx, gen_idx] = assoc.value
 
@@ -2058,8 +2000,8 @@ class MultiCircuit(Assets):
 
         # create associations between generators and technologies
         for generator in self.generators:
-            gen_idx = gen_index_dict[generator.idtag]
             for assoc in generator.technologies:
+                gen_idx = gen_index_dict[generator.idtag]
                 tech_idx = tech_index_dict[assoc.api_object.idtag]
                 gen_tech_proportions_matrix[tech_idx, gen_idx] = assoc.value
 
@@ -2080,8 +2022,8 @@ class MultiCircuit(Assets):
 
         # create associations between generators and technologies
         for elm in self.batteries:
-            gen_idx = gen_index_dict[elm.idtag]
             for assoc in elm.technologies:
+                gen_idx = gen_index_dict[elm.idtag]
                 tech_idx = tech_index_dict[assoc.api_object.idtag]
                 gen_tech_proportions_matrix[tech_idx, gen_idx] = assoc.value
 
@@ -2219,14 +2161,6 @@ class MultiCircuit(Assets):
                                             device_property=prop.name,
                                             value=v2,
                                             expected_value=v1)
-
-                            elif prop.tpe == SubObjectType.DaeBlockType:
-                                if not compare_blocks(v1, v2, self.var_factory, grid2.var_factory):
-                                    logger.add_error(msg="Different snapshot values",
-                                                     device_class=template_elm.device_type.value,
-                                                     device_property=prop.name,
-                                                     value=v2,
-                                                     expected_value=v1)
                             else:
                                 if v1 != v2:
                                     logger.add_error(msg="Different snapshot values",
@@ -2335,7 +2269,6 @@ class MultiCircuit(Assets):
             return True, logger, dgrid
 
         for new_elm in self.items():  # for every device...
-
             action = ActionType.NoAction
 
             # try to search for the counterpart in the base circuit
@@ -2531,7 +2464,7 @@ class MultiCircuit(Assets):
                             device_class=elm.device_type.value)
 
         # pass 3: count how many times a group is refferenced
-        group_counter: IntVec = np.zeros(len(self._contingency_groups), dtype=int)
+        group_counter = np.zeros(len(self._contingency_groups), dtype=int)
         group_dict = {elm: i for i, elm in enumerate(self._contingency_groups)}
         for elm in self._contingencies:
             group_idx = group_dict[elm.group]
@@ -2566,7 +2499,7 @@ class MultiCircuit(Assets):
                             device_class=elm.device_type.value)
 
         # pass 3: count how many times a group is refferenced
-        group_counter: Vec = np.zeros(len(self._remedial_action_groups), dtype=int)
+        group_counter = np.zeros(len(self._remedial_action_groups), dtype=int)
         group_dict = {elm: i for i, elm in enumerate(self._remedial_action_groups)}
         for elm in self._remedial_actions:
             group_idx = group_dict[elm.group]
@@ -2601,7 +2534,7 @@ class MultiCircuit(Assets):
                             device_class=elm.device_type.value)
 
         # pass 3: count how many times a group is referenced
-        group_counter: Vec = np.zeros(len(self._investments_groups), dtype=int)
+        group_counter = np.zeros(len(self._investments_groups), dtype=int)
         group_dict = {elm: i for i, elm in enumerate(self._investments_groups)}
         for elm in self._investments:
             group_idx = group_dict[elm.group]
@@ -2637,6 +2570,7 @@ class MultiCircuit(Assets):
         logger = Logger()
         bus_set = set(self.buses)
         all_dev, dict_ok = self.get_all_elements_dict()
+        nt = self.get_time_number()
 
         self.clean_branches(bus_set=bus_set, logger=logger)
         self.clean_injections(bus_set=bus_set, logger=logger)
@@ -2921,7 +2855,7 @@ class MultiCircuit(Assets):
         self.wire_types += data.wire_types
         self.sequence_line_types += data.sequence_line_types
         self.rms_models += data.rms_models
-        print("done 2")
+
 
     def set_opf_ts_results(self, results: OptimalPowerFlowTimeSeriesResults):
         """
@@ -3106,31 +3040,31 @@ class MultiCircuit(Assets):
         nhvdc = self.get_hvdc_number()
         nvsc = self.get_vsc_number()
 
-        bus_active: IntVec = np.zeros(nbus, dtype=int)
+        bus_active = np.zeros(nbus, dtype=int)
         bus_dict: Dict[dev.Bus, int] = dict()
         for i, elm in enumerate(self.buses):
             bus_active[i] = elm.active if t_idx is None else elm.active_prof[t_idx]
             bus_dict[elm] = i
 
-        branch_active: IntVec = np.zeros(nbr, dtype=int)
-        branch_F: IntVec = np.zeros(nbr, dtype=int)
-        branch_T: IntVec = np.zeros(nbr, dtype=int)
+        branch_active = np.zeros(nbr, dtype=int)
+        branch_F = np.zeros(nbr, dtype=int)
+        branch_T = np.zeros(nbr, dtype=int)
         for i, elm in enumerate(self.get_branches(add_vsc=False, add_hvdc=False, add_switch=True)):
             branch_active[i] = elm.active if t_idx is None else elm.active_prof[t_idx]
             branch_F[i] = bus_dict[elm.bus_from]
             branch_T[i] = bus_dict[elm.bus_to]
 
-        hvdc_active: IntVec = np.zeros(nhvdc, dtype=int)
-        hvdc_F: IntVec = np.zeros(nhvdc, dtype=int)
-        hvdc_T: IntVec = np.zeros(nhvdc, dtype=int)
+        hvdc_active = np.zeros(nhvdc, dtype=int)
+        hvdc_F = np.zeros(nhvdc, dtype=int)
+        hvdc_T = np.zeros(nhvdc, dtype=int)
         for i, elm in enumerate(self.hvdc_lines):
             hvdc_active[i] = elm.active if t_idx is None else elm.active_prof[t_idx]
             hvdc_F[i] = bus_dict[elm.bus_from]
             hvdc_T[i] = bus_dict[elm.bus_to]
 
-        vsc_active: IntVec = np.zeros(nvsc, dtype=int)
-        vsc_F: IntVec = np.zeros(nvsc, dtype=int)
-        vsc_T: IntVec = np.zeros(nvsc, dtype=int)
+        vsc_active = np.zeros(nvsc, dtype=int)
+        vsc_F = np.zeros(nvsc, dtype=int)
+        vsc_T = np.zeros(nvsc, dtype=int)
         for i, elm in enumerate(self.vsc_devices):
             vsc_active[i] = elm.active if t_idx is None else elm.active_prof[t_idx]
             vsc_F[i] = bus_dict[elm.bus_from]
@@ -3232,26 +3166,3 @@ class MultiCircuit(Assets):
                 other.add_element(inj)
 
         return other
-
-    def check_rms_models(self) -> List[str]:
-        """
-        This function checks that a device has a valid rms model
-        :return:
-        """
-        empty_elem:List[str] = list()
-        for elm in self.buses:
-            if elm.rms_model.model.empty():
-                empty_elem.append(elm.name)
-        for elm in self.get_branches_iter():
-            if elm.rms_model.model.empty():
-                empty_elem.append(elm.name)
-        for elm in self.get_injection_devices_iter():
-            if elm.rms_model.model.empty():
-                empty_elem.append(elm.name)
-        return empty_elem
-
-
-
-
-
-

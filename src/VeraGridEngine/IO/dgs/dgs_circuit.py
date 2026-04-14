@@ -40,11 +40,6 @@ def parse_header(line: str) -> Tuple[str, Dict[str, int]]:
         prop_name = stubs[0] if len(stubs) > 0 else name_stub
         header_map[prop_name] = i
 
-        # PowerFactory exports commonly use 'FID' as the unique identifier column.
-        # The schema in dgs_objects.py uses the python attribute name 'ID'. Map both.
-        if prop_name == 'FID':
-            header_map['ID'] = i
-
     return element_type, header_map
 
 
@@ -53,18 +48,15 @@ class DgsCircuit:
 
     _ELEMENT_CLASSES: List[Type[DGSElement]] = [
         General,
-        BlkDef,
         ChaRef,
         ChaVec,
         ElmComp,
         ElmDsl,
-        ElmBranch,
         ElmAsm,
         ElmCoup,
         ElmFeeder,
         ElmGenstat,
         ElmLne,
-        ElmTow,
         ElmSind,
         ElmLnesec,
         ElmLod,
@@ -84,31 +76,20 @@ class DgsCircuit:
         ElmZone,
         General,
         IntFolder,
-        IntRef,
-        IntTemplate,
         IntGrf,
         IntGrfcon,
         IntGrfnet,
-        Matrix,
         RelFuse,
         StaCubic,
-        StaCt,
         StaSwitch,
-        StaVt,
-        TypSwitch,
         TypAsmo,
-        TypCt,
         TypFuse,
-        TypCon,
-        TypGeo,
         TypLne,
-        TypTow,
         TypSind,
         TypLod,
         TypSym,
         TypTr2,
         TypTr3,
-        TypVt,
     ]
 
     _REGISTRY: Dict[str, Type[DGSElement]] = {cls.element_type: cls for cls in _ELEMENT_CLASSES}
@@ -120,10 +101,8 @@ class DgsCircuit:
         self._id_counter = 0
 
         self.generals: List[General] = list()
-        self.blkdefs: List[BlkDef] = list()
         self.elmcomps: List[ElmComp] = list()
         self.elmdsls: List[ElmDsl] = list()
-        self.elmbranches: List[ElmBranch] = list()
         self.charefs: List[ChaRef] = list()
         self.chavecs: List[ChaVec] = list()
         self.elmasms: List[ElmAsm] = list()
@@ -131,7 +110,6 @@ class DgsCircuit:
         self.elmfeeders: List[ElmFeeder] = list()
         self.elmgenstats: List[ElmGenstat] = list()
         self.elmlnes: List[ElmLne] = list()
-        self.elmtows: List[ElmTow] = list()
         self.elmsinds: List[ElmSind] = list()
         self.elmlnesecs: List[ElmLnesec] = list()
         self.elmlods: List[ElmLod] = list()
@@ -150,46 +128,32 @@ class DgsCircuit:
         self.elmxnets: List[ElmXnet] = list()
         self.elmzones: List[ElmZone] = list()
         self.intfolders: List[IntFolder] = list()
-        self.intrefs: List[IntRef] = list()
-        self.inttemplates: List[IntTemplate] = list()
         self.intgrfs: List[IntGrf] = list()
         self.intgrfcons: List[IntGrfcon] = list()
         self.intgrfnets: List[IntGrfnet] = list()
-        self.matrixes: List[Matrix] = list()
         self.relfuses: List[RelFuse] = list()
         self.stacubics: List[StaCubic] = list()
-        self.stacts: List[StaCt] = list()
         self.staswitchs: List[StaSwitch] = list()
-        self.stavts: List[StaVt] = list()
-        self.typswitches: List[TypSwitch] = list()
         self.typasmos: List[TypAsmo] = list()
-        self.typcts: List[TypCt] = list()
         self.typfuses: List[TypFuse] = list()
-        self.typcons: List[TypCon] = list()
-        self.typgeos: List[TypGeo] = list()
         self.typlnes: List[TypLne] = list()
-        self.typtows: List[TypTow] = list()
         self.typsinds: List[TypSind] = list()
         self.typlods: List[TypLod] = list()
         self.typsyms: List[TypSym] = list()
         self.typtr2s: List[TypTr2] = list()
         self.typtr3s: List[TypTr3] = list()
-        self.typvts: List[TypVt] = list()
 
         self._CLASS_TO_LIST: Dict[Type[DGSElement], List[DGSElement]] = {
             General: self.generals,
-            BlkDef: self.blkdefs,
             ChaRef: self.charefs,
             ChaVec: self.chavecs,
             ElmComp: self.elmcomps,
             ElmDsl: self.elmdsls,
-            ElmBranch: self.elmbranches,
             ElmAsm: self.elmasms,
             ElmCoup: self.elmcoups,
             ElmFeeder: self.elmfeeders,
             ElmGenstat: self.elmgenstats,
             ElmLne: self.elmlnes,
-            ElmTow: self.elmtows,
             ElmSind: self.elmsinds,
             ElmLnesec: self.elmlnesecs,
             ElmLod: self.elmlods,
@@ -207,31 +171,20 @@ class DgsCircuit:
             ElmXnet: self.elmxnets,
             ElmZone: self.elmzones,
             IntFolder: self.intfolders,
-            IntRef: self.intrefs,
-            IntTemplate: self.inttemplates,
             IntGrf: self.intgrfs,
             IntGrfcon: self.intgrfcons,
             IntGrfnet: self.intgrfnets,
-            Matrix: self.matrixes,
             RelFuse: self.relfuses,
             StaCubic: self.stacubics,
-            StaCt: self.stacts,
             StaSwitch: self.staswitchs,
-            StaVt: self.stavts,
-            TypSwitch: self.typswitches,
             TypAsmo: self.typasmos,
-            TypCt: self.typcts,
             TypFuse: self.typfuses,
-            TypCon: self.typcons,
-            TypGeo: self.typgeos,
             TypLne: self.typlnes,
-            TypTow: self.typtows,
             TypSind: self.typsinds,
             TypLod: self.typlods,
             TypSym: self.typsyms,
             TypTr2: self.typtr2s,
             TypTr3: self.typtr3s,
-            TypVt: self.typvts,
         }
 
     def new_id(self) -> str:
@@ -244,8 +197,9 @@ class DgsCircuit:
 
     def add_element_cubicles(self, element_id: str, dgs_buses: List[ElmTerm]):
         """
-        Add cubicles + their StaSwitch objects.
-        IMPORTANT: Import expects StaSwitch.fold_id == StaCubic.ID.
+        Add cubicles
+        :param element_id: Element ID
+        :param dgs_buses: list of ElmTerm
         """
         for i, b in enumerate(dgs_buses):
             c = StaCubic()
@@ -254,22 +208,7 @@ class DgsCircuit:
             c.obj_id = element_id
             c.obj_bus = i
             c.fold_id = b.ID
-            c.it2p1 = 0
-            c.it2p2 = 1
-            c.it2p3 = 2
             self.stacubics.append(c)
-
-            # Create the switch that belongs to this cubicle
-            sw = StaSwitch()
-            sw.ID = self.new_id()
-            sw.loc_name = f"StaSwitch_{sw.ID}"
-            sw.fold_id = c.ID  # points to StaCubic.ID
-            sw.on_off = 1  # default closed
-            sw.typ_id = ""
-            sw.iUse = 0
-            sw.for_name = ""
-            sw.aUsage = "cbk"  # matches typical PF exports
-            self.staswitchs.append(sw)
 
     def parse_dgs(self, path: str):
         """

@@ -3,12 +3,11 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
-from typing import Tuple
-
+from typing import Dict
 from VeraGridEngine.Devices.Parents.pointer_device_parent import PointerDeviceParent
 from VeraGridEngine.Utils.Symbolic.block import Block
+from VeraGridEngine.Utils.Symbolic.symbolic import Var, Const
 from VeraGridEngine.enumerations import DeviceType, SubObjectType
-from VeraGridEngine.Devices.Parents.editable_device import GCProp
 
 
 class RmsModelTemplate(PointerDeviceParent):
@@ -18,13 +17,8 @@ class RmsModelTemplate(PointerDeviceParent):
 
     __slots__ = (
         '_block',
-        '_device_type'
-    )
-
-    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp('block', units="p.u.", tpe=SubObjectType.DaeBlockType,
-                      definition='DAE block', editable=False, display=False),
-    )
+        '_device_type',
+        '_init_values')
 
     def __init__(self, idtag="", name: str = ""):
         super().__init__(name=name,
@@ -34,22 +28,11 @@ class RmsModelTemplate(PointerDeviceParent):
                          comment="",
                          device_type=DeviceType.RmsModelTemplateDevice)
 
-        self.tpe: DeviceType = DeviceType.NoDevice
         self._block: Block = Block()
+        self._init_values: Dict[Var, Const] = dict()
 
-
-    def __deepcopy__(self, memo):
-        cls = self.__class__
-        result = cls.__new__(cls)  # bypass __init__
-        memo[id(self)] = result
-
-        # copy simple attributes
-        result._tpe = self._tpe
-
-        # deepcopy block safely
-        result._block = self._block.deep_copy()
-
-        return result
+        self.register('block', units="p.u.", tpe=SubObjectType.DaeBlockType,
+                      definition='DAE block', editable=False, display=False)
 
     @property
     def block(self):
@@ -62,3 +45,15 @@ class RmsModelTemplate(PointerDeviceParent):
     @block.setter
     def block(self, obj: Block):
         self._block = obj
+
+    @property
+    def init_values(self):
+        """
+
+        :return:
+        """
+        return self._init_values
+
+    @init_values.setter
+    def init_values(self, obj: Dict[Var, Const]):
+        self._init_values = obj

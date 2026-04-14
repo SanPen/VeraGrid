@@ -14,6 +14,10 @@ from typing import List, Union
 
 import numpy as np
 import pandas as pd
+from matplotlib import pyplot as plt
+
+
+from VeraGridEngine.IO.file_system import get_create_veragrid_folder
 
 # GUI imports
 from PySide6 import QtGui, QtWidgets, QtCore
@@ -37,8 +41,7 @@ from VeraGrid.Gui.AboutDialogue.about_dialogue import AboutDialogueGuiGUI
 from VeraGrid.Gui.Analysis.AnalysisDialogue import GridAnalysisGUI
 from VeraGrid.Gui.ContingencyPlanner.contingency_planner_dialogue import ContingencyPlannerGUI
 from VeraGrid.Gui.CoordinatesInput.coordinates_dialogue import CoordinatesInputGUI
-from VeraGrid.Gui.general_dialogues import CheckListDialogue, StartEndSelectionDialogue, FileTypeSelector, \
-    CgmesOptionsSelector
+from VeraGrid.Gui.general_dialogues import CheckListDialogue, StartEndSelectionDialogue
 from VeraGrid.Gui.messages import yes_no_question, warning_msg, info_msg, error_msg
 from VeraGrid.Gui.GridGenerator.grid_generator_dialogue import GridGeneratorGUI
 from VeraGrid.Gui.LoadCatalogue.catalogue_dialogue import CatalogueGUI
@@ -58,9 +61,6 @@ from VeraGrid.Gui.Diagrams.generic_graphics import IS_DARK
 from VeraGrid.Gui.python_console import PythonConsole
 from VeraGrid.Gui.python_script_editor import PythonCodeEditor
 from VeraGrid.Gui.toast_widget import ToastManager
-from VeraGrid.Gui.PsseDialogue.psse_import import PsseImportDialogue
-from VeraGrid.Gui.ProceduralGrid.procedural_grid import ProceduralGridWindow
-
 
 
 def terminate_thread(thread):
@@ -173,13 +173,13 @@ class BaseMainGui(QMainWindow):
         self.console = PythonConsole(banner="VeraGrid Python Console!")
         self.ui.consoleLayout.addWidget(self.console)
 
-        self.code_editor = PythonCodeEditor(vars_dict={
-
-            # "app": self,
-            # "np": np,
-            # "pd": pd,
-            # "plt": plt,
-        }, )
+        self.code_editor = PythonCodeEditor(namespace={
+                    "__builtins__": __builtins__,  # dict or module, both fine
+                    "app": self,
+                    "np": np,
+                    "pd": pd,
+                    "plt": plt,
+                },)
         self.ui.codeEditorLayout.addWidget(self.code_editor)
 
         # window pointers ----------------------------------------------------------------------------------------------
@@ -204,10 +204,6 @@ class BaseMainGui(QMainWindow):
         self.start_end_dialogue_window: Union[StartEndSelectionDialogue, None] = None
         self.grid_reduction_dialogue: GridReduceDialogue | None = None
         self.select_bus_dlg: DiagramBusSelectorDialogue | None = None
-        self.file_selector: FileTypeSelector | None = None
-        self.cgmes_selector: CgmesOptionsSelector | None = None
-        self.psse_import_dialogue: PsseImportDialogue | None = None
-        self.procedural_grid_window : ProceduralGridWindow | None = None
 
         # available engines --------------------------------------------------------------------------------------------
         engine_lst = [EngineType.VeraGrid]
@@ -708,6 +704,133 @@ class BaseMainGui(QMainWindow):
                 self.circuit.contingencies += self.contingency_planner_dialogue.contingencies
             else:
                 info_msg(text="No contingencies were generated :/", title="Contingency planner")
+
+    def clear_console(self):
+        """
+        Clear console output
+        """
+        self.console.clear()
+
+    def reset_console(self):
+        """
+        Reset console
+        :return:
+        """
+        self.console.reset()
+        self.add_console_vars()
+
+    def print_console_help(self):
+
+        self.console.append_output("")
+        self.console.append_output('VeraGrid internal commands.\n')
+        self.console.append_output('If a command is unavailable is because the study has not been executed yet.')
+
+        self.console.append_output('\n\nclc():\tclear the console.')
+
+        self.console.append_output('\n\nApp functions:')
+        self.console.append_output('\tapp.new_project(): Clear all.')
+        self.console.append_output('\tapp.open_file(): Prompt to load VeraGrid compatible file')
+        self.console.append_output('\tapp.save_file(): Prompt to save VeraGrid file')
+        self.console.append_output('\tapp.export_diagram(): Prompt to export the diagram in png.')
+        self.console.append_output(
+            '\tapp.create_schematic_from_api(): Create the schematic from the circuit information.')
+        self.console.append_output(
+            '\tapp.adjust_all_node_width(): Adjust the width of all the nodes according to their name.')
+        self.console.append_output('\tapp.numerical_circuit: get compilation of the assets.')
+        self.console.append_output('\tapp.islands: get compilation of the assets split into the topological islands.')
+
+        self.console.append_output('\n\nCircuit functions:')
+        self.console.append_output(
+            '\tapp.circuit.plot_graph(): Plot a graph in a Matplotlib window. Call plt.show() after.')
+
+        self.console.append_output('\n\nPower flow results:')
+        self.console.append_output('\tapp.session.power_flow.voltage:\t the nodal voltages in per unit')
+        self.console.append_output('\tapp.session.power_flow.current:\t the branch currents in per unit')
+        self.console.append_output('\tapp.session.power_flow.loading:\t the branch loading in %')
+        self.console.append_output('\tapp.session.power_flow.losses:\t the branch losses in per unit')
+        self.console.append_output('\tapp.session.power_flow.power:\t the nodal power Injections in per unit')
+        self.console.append_output(
+            '\tapp.session.power_flow.Sf:\t the branch power Injections in per unit at the "from" side')
+        self.console.append_output(
+            '\tapp.session.power_flow.St:\t the branch power Injections in per unit at the "to" side')
+
+        self.console.append_output('\n\nShort circuit results:')
+        self.console.append_output('\tapp.session.short_circuit.voltage:\t the nodal voltages in per unit')
+        self.console.append_output('\tapp.session.short_circuit.current:\t the branch currents in per unit')
+        self.console.append_output('\tapp.session.short_circuit.loading:\t the branch loading in %')
+        self.console.append_output('\tapp.session.short_circuit.losses:\t the branch losses in per unit')
+        self.console.append_output('\tapp.session.short_circuit.power:\t the nodal power Injections in per unit')
+        self.console.append_output(
+            '\tapp.session.short_circuit.power_from:\t the branch power Injections in per unit at the "from" side')
+        self.console.append_output(
+            '\tapp.session.short_circuit.power_to:\t the branch power Injections in per unit at the "to" side')
+        self.console.append_output(
+            '\tapp.session.short_circuit.short_circuit_power:\t Short circuit power in MVA of the grid nodes')
+
+        self.console.append_output('\n\nOptimal power flow results:')
+        self.console.append_output('\tapp.session.optimal_power_flow.voltage:\t the nodal voltages angles in rad')
+        self.console.append_output('\tapp.session.optimal_power_flow.load_shedding:\t the branch loading in %')
+        self.console.append_output('\tapp.session.optimal_power_flow.losses:\t the branch losses in per unit')
+        self.console.append_output('\tapp.session.optimal_power_flow.Sbus:\t the nodal power Injections in MW')
+        self.console.append_output('\tapp.session.optimal_power_flow.Sf:\t the branch power Sf')
+
+        self.console.append_output('\n\nTime series power flow results:')
+        self.console.append_output(
+            '\tapp.session.power_flow_ts.time:\t Profiles time index (pandas DateTimeIndex object)')
+        self.console.append_output(
+            '\tapp.session.power_flow_ts.load_profiles:\t Load profiles matrix (row: time, col: node)')
+        self.console.append_output(
+            '\tapp.session.power_flow_ts.gen_profiles:\t Generation profiles matrix (row: time, col: node)')
+        self.console.append_output(
+            '\tapp.session.power_flow_ts.voltages:\t nodal voltages results matrix (row: time, col: node)')
+        self.console.append_output(
+            '\tapp.session.power_flow_ts.currents:\t Branches currents results matrix (row: time, col: branch)')
+        self.console.append_output(
+            '\tapp.session.power_flow_ts.loadings:\t Branches loadings results matrix (row: time, col: branch)')
+        self.console.append_output(
+            '\tapp.session.power_flow_ts.losses:\t Branches losses results matrix (row: time, col: branch)')
+
+        self.console.append_output('\n\nVoltage stability power flow results:')
+        self.console.append_output(
+            '\tapp.session.continuation_power_flow.voltage:\t Voltage values for every power multiplication factor.')
+        self.console.append_output(
+            '\tapp.session.continuation_power_flow.lambda:\t Value of power multiplication factor applied')
+        self.console.append_output(
+            '\tapp.session.continuation_power_flow.Sf:\t Power values for every power multiplication factor.')
+
+        self.console.append_output('\n\nMonte Carlo power flow results:')
+        self.console.append_output('\tapp.session.stochastic_power_flow.V_avg:\t nodal voltage average result.')
+        self.console.append_output('\tapp.session.stochastic_power_flow.I_avg:\t branch current average result.')
+        self.console.append_output('\tapp.session.stochastic_power_flow.Loading_avg:\t branch loading average result.')
+        self.console.append_output('\tapp.session.stochastic_power_flow.Losses_avg:\t branch losses average result.')
+        self.console.append_output(
+            '\tapp.session.stochastic_power_flow.V_std:\t nodal voltage standard deviation result.')
+        self.console.append_output(
+            '\tapp.session.stochastic_power_flow.I_std:\t branch current standard deviation result.')
+        self.console.append_output(
+            '\tapp.session.stochastic_power_flow.Loading_std:\t branch loading standard deviation result.')
+        self.console.append_output(
+            '\tapp.session.stochastic_power_flow.Losses_std:\t branch losses standard deviation result.')
+        self.console.append_output('\tapp.session.stochastic_power_flow.V_avg_series:\t nodal voltage average series.')
+        self.console.append_output(
+            '\tapp.session.stochastic_power_flow.V_std_series:\t branch current standard deviation series.')
+        self.console.append_output(
+            '\tapp.session.stochastic_power_flow.error_series:\t Monte Carlo error series (the convergence value).')
+        self.console.append_output('The same for app.latin_hypercube_sampling')
+
+    def add_console_vars(self):
+        """
+        Add vars to the console
+        :return:
+        """
+        self.console.add_var("hlp", self.print_console_help)
+        self.console.add_var("np", np)
+        self.console.add_var("pd", pd)
+        self.console.add_var("plt", plt)
+        self.console.add_var("clc", self.console.clear)
+        self.console.add_var('app', self)
+        self.console.add_var('circuit', self.circuit)
+        self.console.add_var('user_folder', get_create_veragrid_folder)
 
     def show_toast(self, message: str, duration: int = 2000):
         """

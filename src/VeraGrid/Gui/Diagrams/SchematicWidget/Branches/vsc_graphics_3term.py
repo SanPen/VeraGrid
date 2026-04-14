@@ -6,7 +6,7 @@ from __future__ import annotations
 import numpy as np
 from typing import TYPE_CHECKING, List, Union, cast
 from PySide6.QtCore import Qt, QPoint, QRectF, QPointF
-from PySide6.QtGui import QIcon, QPixmap, QPainter, QPen, QBrush, QColor, QCursor, QTransform, QFont
+from PySide6.QtGui import QIcon, QPixmap, QPainter, QPen, QBrush, QColor, QCursor, QTransform
 from PySide6.QtWidgets import QMenu, QGraphicsItem, QGraphicsRectItem, QGraphicsSceneMouseEvent
 
 from VeraGrid.Gui.gui_functions import add_menu_entry
@@ -49,24 +49,23 @@ class VscGraphicItem3Term(GenericDiagramWidget, QGraphicsRectItem):
         QGraphicsRectItem.__init__(self, parent=parent)
 
         # Make it a square
-        self.w = 68  # Width of the VSC symbol (match 2-terminal size)
+        self.w = 60  # Width of the VSC symbol
         self.h = self.w  # Height of the VSC symbol
         self.setRect(0.0, 0.0, self.w, self.h)
 
         self.draw_labels = draw_labels
 
         # Color and style based on active state
-        self.pen_width = 2.2
+        self.pen_width = 2
         if self.api_object.active:
             self.color = ACTIVE['color']
             self.style = ACTIVE['style']
         else:
             self.color = DEACTIVATED['color']
-            self.style = DEACTIVATED['style']
 
         # Setup pen, brush, flags and cursor
         self.setPen(QPen(self.color, self.pen_width, self.style))
-        self.setBrush(QBrush(self._body_fill_color()))
+        self.setBrush(Qt.BrushStyle.NoBrush)  # Set transparent background
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable)
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable)
         self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
@@ -77,12 +76,13 @@ class VscGraphicItem3Term(GenericDiagramWidget, QGraphicsRectItem):
             self.setPos(QPoint(0, 0))
 
         # --- Create Terminals ---
-        self.terminal_size = 11.0
-        r = self.terminal_size / 2.0
-        # Terminal positions (top-left of the round marker)
-        t_ac_pos = QPointF(self.w + 6.0 - r, self.h * 0.5 - r)
-        t_dc_p_pos = QPointF(-6.0 - r, self.h * 0.34 - r)
-        t_dc_n_pos = QPointF(-6.0 - r, self.h * 0.66 - r)
+        # Terminal positions (relative to the item's top-left corner 0,0)
+        # AC terminal on the right middle
+        t_ac_pos = QPointF(self.w, self.h / 2)
+        # DC+ terminal on the left top
+        t_dc_p_pos = QPointF(-10, self.h * 0.2)
+        # DC- terminal on the left bottom
+        t_dc_n_pos = QPointF(-10, self.h * 0.8)
 
         # self.terminals: List[RoundTerminalItem] = list()
         self.terminal_ac: RoundTerminalItem | None = None
@@ -93,49 +93,26 @@ class VscGraphicItem3Term(GenericDiagramWidget, QGraphicsRectItem):
         self.conn_line_dc_n: LineGraphicTemplateItem | None = None
 
         # AC Terminal (Index 0)
-        self.terminal_ac = RoundTerminalItem("ac", parent=self, editor=self.editor, terminal_type=TerminalType.AC,
-                                             h=self.terminal_size, w=self.terminal_size)
+        self.terminal_ac = RoundTerminalItem("ac", parent=self, editor=self.editor, terminal_type=TerminalType.AC)
         self.terminal_ac.setPos(t_ac_pos)
         self.terminal_ac.setRotation(0)  # Points right
         self.terminal_ac.setPen(QPen(self.color, self.pen_width, self.style))
 
         # DC+ Terminal (Index 1)
-        self.terminal_dc_p = RoundTerminalItem("dc_p", parent=self, editor=self.editor, terminal_type=TerminalType.DC_P,
-                                               h=self.terminal_size, w=self.terminal_size)
+        self.terminal_dc_p = RoundTerminalItem("dc_p", parent=self, editor=self.editor, terminal_type=TerminalType.DC_P)
         self.terminal_dc_p.setPos(t_dc_p_pos)
         self.terminal_dc_p.setRotation(0)  # Points left
         self.terminal_dc_p.setPen(QPen(self.color, self.pen_width, self.style))
 
         # DC- Terminal (Index 2)
-        self.terminal_dc_n = RoundTerminalItem("dc_n", parent=self, editor=self.editor, terminal_type=TerminalType.DC_N,
-                                               h=self.terminal_size, w=self.terminal_size)
+        self.terminal_dc_n = RoundTerminalItem("dc_n", parent=self, editor=self.editor, terminal_type=TerminalType.DC_N)
         self.terminal_dc_n.setPos(t_dc_n_pos)
         self.terminal_dc_n.setRotation(0)  # Points left
         self.terminal_dc_n.setPen(QPen(self.color, self.pen_width, self.style))
-        self._style_terminals()
 
         self.set_terminal_tooltips()
 
         # self.setRotation(180)
-
-    def _body_fill_color(self) -> QColor:
-        """
-        Body fill with strong contrast in dark/light themes.
-        """
-        if self.color.lightness() > 127:
-            return QColor(35, 35, 35, 220)
-        else:
-            return QColor(245, 245, 245, 220)
-
-    def _style_terminals(self) -> None:
-        """
-        Keep terminal points readable and consistent with current color/style.
-        """
-        terminal_fill = QColor(self.color)
-        terminal_fill.setAlpha(220)
-        for terminal in (self.terminal_ac, self.terminal_dc_p, self.terminal_dc_n):
-            terminal.setBrush(QBrush(terminal_fill))
-            terminal.setPen(QPen(self.color, self.pen_width, self.style))
 
     @property
     def api_object(self) -> VSC:
@@ -147,39 +124,24 @@ class VscGraphicItem3Term(GenericDiagramWidget, QGraphicsRectItem):
 
     def paint(self, painter: QPainter, option, widget=None) -> None:
         """Paint the VSC symbol."""
-        painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
         # Draw the main rectangle (square)
         painter.setPen(QPen(self.color, self.pen_width, self.style))
-        painter.setBrush(QBrush(self._body_fill_color()))
+        painter.setBrush(Qt.BrushStyle.NoBrush)  # Ensure transparent background
         painter.drawRect(self.rect())
 
         # Draw a diagonal line from top-right to bottom-left
         pen = QPen(self.color, self.pen_width)
         painter.setPen(pen)
-        inset = max(1.0, self.pen_width * 0.7)
-        painter.drawLine(QPointF(self.w - inset, inset), QPointF(inset, self.h - inset))
+        painter.drawLine(QPoint(self.w, 0), QPoint(0, self.h))
 
         # Draw AC/DC symbols inside the box near terminals
-        txt_font = QFont(painter.font())
-        txt_font.setBold(True)
-        txt_font.setPointSizeF(self.h * 0.34)
-        painter.setFont(txt_font)
-
-        # Align each symbol center to the corresponding terminal centerline, shifted up slightly.
-        up_shift = 2.0
-        ac_y = self.terminal_ac.pos().y() + self.terminal_size * 0.5 - up_shift
-        dc_p_y = self.terminal_dc_p.pos().y() + self.terminal_size * 0.5 - up_shift
-        dc_n_y = self.terminal_dc_n.pos().y() + self.terminal_size * 0.5 - up_shift
-
-        text_rect_size = self.h * 0.34
-        ac_x = self.w * 0.82
-        dc_x = self.w * 0.13
+        text_rect_size = 15
         painter.drawText(
-            QRectF(ac_x - text_rect_size / 2, ac_y - text_rect_size / 2, text_rect_size,
+            QRectF(self.w * 0.8 - text_rect_size / 2, self.h / 2 - text_rect_size / 2 * 1.3, text_rect_size,
                    text_rect_size), Qt.AlignmentFlag.AlignCenter, "~")
-        painter.drawText(QRectF(dc_x - text_rect_size / 2, dc_p_y - text_rect_size / 2, text_rect_size,
+        painter.drawText(QRectF(self.w * 0.15 - text_rect_size / 2, self.h * 0.35 - text_rect_size / 2, text_rect_size,
                                 text_rect_size), Qt.AlignmentFlag.AlignCenter, "+")
-        painter.drawText(QRectF(dc_x - text_rect_size / 2, dc_n_y - text_rect_size / 2, text_rect_size,
+        painter.drawText(QRectF(self.w * 0.15 - text_rect_size / 2, self.h * 0.65 - text_rect_size / 2, text_rect_size,
                                 text_rect_size), Qt.AlignmentFlag.AlignCenter, "-")
 
     def set_terminal_tooltips(self):
@@ -217,15 +179,13 @@ class VscGraphicItem3Term(GenericDiagramWidget, QGraphicsRectItem):
         if self.api_object.active:
             self.color = ACTIVE['color']
             self.style = ACTIVE['style']
-        else:
-            self.color = DEACTIVATED['color']
-            self.style = DEACTIVATED['style']
 
         pen = QPen(self.color, self.pen_width, self.style)
         self.setPen(pen)
-        self.setBrush(QBrush(self._body_fill_color()))
 
-        self._style_terminals()
+        self.terminal_ac.setPen(pen)
+        self.terminal_dc_p.setPen(pen)
+        self.terminal_dc_n.setPen(pen)
 
         if self.conn_line_ac is not None:
             self.conn_line_ac.recolour_mode()
@@ -300,7 +260,7 @@ class VscGraphicItem3Term(GenericDiagramWidget, QGraphicsRectItem):
                 self.editor.gui.show_error_toast(
                     f"Connecting DC+ terminal of VSC '{self.api_object.name}' to AC bus '{bus.name}'")
             elif self.conn_line_dc_p is not None:
-                self.editor.gui.show_error_toast(f"DC+ terminal of VSC {self.api_object.name} is already connected.")
+                self.editor.gui.show_error_toast(f"AC terminal of VSC {self.api_object.name} is already connected.")
             else:
                 self.api_object.bus_from = bus
                 self.conn_line_dc_p = conn_line

@@ -43,7 +43,7 @@ from VeraGridEngine.Simulations.Topology.node_groups_driver import NodeGroupsDri
 from VeraGridEngine.Simulations.Reliability.reliability_driver import ReliabilityStudyDriver, ReliabilityResults
 
 from VeraGridEngine.Simulations.Rms.rms_driver import RmsSimulationDriver
-from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_driver import SmallSignalStabilityRmsDriver
+from VeraGridEngine.Simulations.SmallSignalStability.small_signal_driver import SmallSignalStabilityDriver
 from VeraGridEngine.Simulations.StateEstimation.state_stimation_driver import (StateEstimationDriver,
                                                                                StateEstimationResults)
 
@@ -74,7 +74,7 @@ DRIVER_OBJECTS = Union[
     NodalCapacityTimeSeriesDriver,
     ReliabilityStudyDriver,
     RmsSimulationDriver,
-    SmallSignalStabilityRmsDriver
+    SmallSignalStabilityDriver
 ]
 
 RESULTS_OBJECTS = Union[

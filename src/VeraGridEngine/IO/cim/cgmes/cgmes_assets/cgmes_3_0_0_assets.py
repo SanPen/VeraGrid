@@ -24,9 +24,6 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.bus_name_marker import Bus
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.caes_plant import CAESPlant
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.clamp import Clamp
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.full_model import FullModel
-from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.cgm_region import CGMRegion
-from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.merging_agent import MergingAgent
-from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.modelling_authority import ModellingAuthority
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.cogeneration_plant import CogenerationPlant
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.combined_cycle_plant import CombinedCyclePlant
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.conducting_equipment import ConductingEquipment
@@ -196,9 +193,6 @@ CGMES3_ASSETS = (ACDCConverter |
                  CAESPlant |
                  Clamp |
                  FullModel |
-                 CGMRegion |
-                 MergingAgent |
-                 ModellingAuthority |
                  CogenerationPlant |
                  CombinedCyclePlant |
                  ConductingEquipment |
@@ -404,10 +398,6 @@ class Cgmes_3_0_0_Assets:
             'DCShunt': DCShunt,
             'DCSwitch': DCSwitch,
             'DCTerminal': DCTerminal,
-            'CGMRegion': CGMRegion,
-            'MergingAgent': MergingAgent,
-            'ModellingAuthority': ModellingAuthority,
-            'ModelingAuthority': ModellingAuthority,
             'Disconnector': Disconnector,
             'DisconnectingCircuitBreaker': DisconnectingCircuitBreaker,
             'EarthFaultCompensator': EarthFaultCompensator,
@@ -800,10 +790,6 @@ class Cgmes_3_0_0_Assets:
         self.DCShunt_list: List[DCShunt] = list()
         self.DCSwitch_list: List[DCSwitch] = list()
         self.DCTerminal_list: List[DCTerminal] = list()
-        self.CGMRegion_list: List[CGMRegion] = list()
-        self.MergingAgent_list: List[MergingAgent] = list()
-        self.ModellingAuthority_list: List[ModellingAuthority] = list()
-        self.ModelingAuthority_list: List[ModellingAuthority] = list()
         self.Disconnector_list: List[Disconnector] = list()
         self.DisconnectingCircuitBreaker_list: List[DisconnectingCircuitBreaker] = list()
         self.EarthFaultCompensator_list: List[EarthFaultCompensator] = list()

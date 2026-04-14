@@ -117,15 +117,3 @@ class UcteTransformerRegulation:
 
         if self.n2 == 0:
             self.valid_regulation = False
-
-        if self.n1 < 0:
-            logger.add_warning("Negative number of taps (N1)",
-                               device_class=device,
-                               value=self.n1,
-                               expected_value=">0")
-
-        if self.n2 < 0:
-            logger.add_warning("Negative number of taps (N2)",
-                               device_class=device,
-                               value=self.n2,
-                               expected_value=">0")

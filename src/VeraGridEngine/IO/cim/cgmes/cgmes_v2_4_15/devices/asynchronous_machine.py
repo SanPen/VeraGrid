@@ -6,21 +6,9 @@
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.rotating_machine import RotatingMachine
 from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType, UnitSymbol, AsynchronousMachineKind
-from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
+
 
 class AsynchronousMachine(RotatingMachine):
-	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='converterFedDrive', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Indicates whether the machine is a converter fed drive. Used for short circuit data exchange according to IEC 60909''', profiles=[]),
-		CgmesProperty(property_name='efficiency', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Percentage on a defined base.   For example, specify as 100 to indicate at the defined base.''', profiles=[]),
-		CgmesProperty(property_name='iaIrRatio', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''A floating point number. The range is unspecified and not limited.''', profiles=[]),
-		CgmesProperty(property_name='nominalFrequency', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.Hz, description='''Cycles per second.''', profiles=[]),
-		CgmesProperty(property_name='nominalSpeed', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Number of revolutions per second.''', profiles=[]),
-		CgmesProperty(property_name='polePairNumber', class_type=int, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Number of pole pairs of stator. Used for short circuit data exchange according to IEC 60909''', profiles=[]),
-		CgmesProperty(property_name='ratedMechanicalPower', class_type=float, multiplier=UnitMultiplier.M, unit=UnitSymbol.W, description='''Product of RMS value of the voltage and the RMS value of the in-phase component of the current.''', profiles=[]),
-		CgmesProperty(property_name='reversible', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Indicates for converter drive motors if the power can be reversible. Used for short circuit data exchange according to IEC 60909''', profiles=[]),
-		CgmesProperty(property_name='rxLockedRotorRatio', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''A floating point number. The range is unspecified and not limited.''', profiles=[]),
-		CgmesProperty(property_name='asynchronousMachineType', class_type=AsynchronousMachineKind, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Indicates the type of Asynchronous Machine (motor or generator).''', profiles=[]),
-	)
 	def __init__(self, rdfid='', tpe='AsynchronousMachine'):
 		RotatingMachine.__init__(self, rdfid, tpe)
 
@@ -34,3 +22,84 @@ class AsynchronousMachine(RotatingMachine):
 		self.reversible: bool = None
 		self.rxLockedRotorRatio: float = None
 		self.asynchronousMachineType: AsynchronousMachineKind = None
+
+		self.register_property(
+			name='converterFedDrive',
+			class_type=bool,
+			multiplier=UnitMultiplier.none,
+			unit=UnitSymbol.none,
+			description='''Indicates whether the machine is a converter fed drive. Used for short circuit data exchange according to IEC 60909''',
+			profiles=[]
+		)
+		self.register_property(
+			name='efficiency',
+			class_type=float,
+			multiplier=UnitMultiplier.none,
+			unit=UnitSymbol.none,
+			description='''Percentage on a defined base.   For example, specify as 100 to indicate at the defined base.''',
+			profiles=[]
+		)
+		self.register_property(
+			name='iaIrRatio',
+			class_type=float,
+			multiplier=UnitMultiplier.none,
+			unit=UnitSymbol.none,
+			description='''A floating point number. The range is unspecified and not limited.''',
+			profiles=[]
+		)
+		self.register_property(
+			name='nominalFrequency',
+			class_type=float,
+			multiplier=UnitMultiplier.none,
+			unit=UnitSymbol.Hz,
+			description='''Cycles per second.''',
+			profiles=[]
+		)
+		self.register_property(
+			name='nominalSpeed',
+			class_type=float,
+			multiplier=UnitMultiplier.none,
+			unit=UnitSymbol.none,
+			description='''Number of revolutions per second.''',
+			profiles=[]
+		)
+		self.register_property(
+			name='polePairNumber',
+			class_type=int,
+			multiplier=UnitMultiplier.none,
+			unit=UnitSymbol.none,
+			description='''Number of pole pairs of stator. Used for short circuit data exchange according to IEC 60909''',
+			profiles=[]
+		)
+		self.register_property(
+			name='ratedMechanicalPower',
+			class_type=float,
+			multiplier=UnitMultiplier.M,
+			unit=UnitSymbol.W,
+			description='''Product of RMS value of the voltage and the RMS value of the in-phase component of the current.''',
+			profiles=[]
+		)
+		self.register_property(
+			name='reversible',
+			class_type=bool,
+			multiplier=UnitMultiplier.none,
+			unit=UnitSymbol.none,
+			description='''Indicates for converter drive motors if the power can be reversible. Used for short circuit data exchange according to IEC 60909''',
+			profiles=[]
+		)
+		self.register_property(
+			name='rxLockedRotorRatio',
+			class_type=float,
+			multiplier=UnitMultiplier.none,
+			unit=UnitSymbol.none,
+			description='''A floating point number. The range is unspecified and not limited.''',
+			profiles=[]
+		)
+		self.register_property(
+			name='asynchronousMachineType',
+			class_type=AsynchronousMachineKind,
+			multiplier=UnitMultiplier.none,
+			unit=UnitSymbol.none,
+			description='''Indicates the type of Asynchronous Machine (motor or generator).''',
+			profiles=[]
+		)

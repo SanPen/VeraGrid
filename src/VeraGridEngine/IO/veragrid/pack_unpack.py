@@ -16,7 +16,7 @@ import VeraGridEngine.Devices as dev
 from VeraGridEngine.Devices.Parents.editable_device import GCProp
 from VeraGridEngine.Devices.profile import Profile
 from VeraGridEngine.Devices.Dynamic.dynamic_model_host import DynamicModelHost
-from VeraGridEngine.Utils.Symbolic.symbolic_io import BlockSaver, BlockParser, Block
+from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES, VERAGRID_FILE_TYPE
 from VeraGridEngine.enumerations import (DiagramType, DeviceType, SubObjectType, TapPhaseControl, TapModuleControl,
                                          ContingencyOperationTypes)
@@ -42,8 +42,6 @@ def get_objects_dictionary() -> Dict[str, ALL_DEV_TYPES]:
         'region': dev.Region(),
         'municipality': dev.Municipality(),
 
-        'owner': dev.Owner(),
-
         'substation': dev.Substation(),
         'voltage_level': dev.VoltageLevel(),
 
@@ -56,10 +54,6 @@ def get_objects_dictionary() -> Dict[str, ALL_DEV_TYPES]:
         'facility': dev.Facility(),
 
         'rms_model_template': dev.RmsModelTemplate(),
-
-        'rms_event_group': dev.RmsEventsGroup(),
-
-        'rms_event': dev.RmsEvent(),
 
         'bus': dev.Bus(),
 
@@ -261,7 +255,7 @@ def gather_model_as_data_frames(circuit: MultiCircuit,
     return dfs
 
 
-def profile_todict(profile: Profile) -> Dict[str, str | bool]:
+def profile_todict(profile: Profile) -> Dict[str, str]:
     """
     Get a dictionary representation of the profile
     :return:
@@ -402,11 +396,10 @@ def get_profile_from_dict(profile: Profile,
     profile.set_initialized()
 
 
-def veragrid_object_to_json(elm: ALL_DEV_TYPES, block_saver: BlockSaver) -> Dict[str, str]:
+def veragrid_object_to_json(elm: ALL_DEV_TYPES) -> Dict[str, str]:
     """
 
     :param elm:
-    :param block_saver:
     :return:
     """
 
@@ -440,27 +433,9 @@ def veragrid_object_to_json(elm: ALL_DEV_TYPES, block_saver: BlockSaver) -> Dict
 
         elif prop.tpe == SubObjectType.DynamicModelHostType:
             data[name] = obj.to_dict()
-            if obj.model is not None:
-                block_saver.save_block(blk=obj.model, main=True)
 
         elif prop.tpe == SubObjectType.DaeBlockType:
-            block_saver.save_block(blk=obj, main=True)
-            if isinstance(obj, Block):
-                data[name] = obj.uid
-            else:
-                raise ValueError("must be a block")
-
-        elif prop.tpe == SubObjectType.VarType:
-            if obj is not None:
-                data[name] = obj.uid
-            else:
-                raise ValueError("var must not be None")
-
-        elif prop.tpe == SubObjectType.ConstType:
-            if obj is not None:
-                data[name] = obj.uid
-            else:
-                raise ValueError("const must not be None")
+            data[name] = obj.to_dict()
 
         elif prop.tpe == SubObjectType.Array:
             data[name] = list(obj)
@@ -495,8 +470,6 @@ def gather_model_as_jsons(circuit: MultiCircuit) -> Dict[str, Dict[str, str]]:
 
     data: Dict[str, Union[Dict[str, str], List[Dict[str, str]]]] = dict()
 
-    block_saver = BlockSaver(circuit.var_factory)
-
     # declare objects to iterate  name: [sample object, list of objects, headers]
     object_types = get_objects_dictionary()
 
@@ -512,7 +485,7 @@ def gather_model_as_jsons(circuit: MultiCircuit) -> Dict[str, Dict[str, str]]:
         if len(lists_of_objects) > 0:
 
             for k, elm in enumerate(lists_of_objects):
-                obj_data = veragrid_object_to_json(elm, block_saver=block_saver)
+                obj_data = veragrid_object_to_json(elm)
                 object_json.append(obj_data)
 
         data[object_type_name] = object_json
@@ -526,23 +499,8 @@ def gather_model_as_jsons(circuit: MultiCircuit) -> Dict[str, Dict[str, str]]:
     # gather the circuit
     circuit.model_version += 1
     data['circuit'] = circuit.to_dict()
-    blocks = block_saver.get_blocks()
-    vars = block_saver.get_vars_to_save()
-    consts = block_saver.get_const_to_save()
-    diff_vars = block_saver.get_diff_vars_to_save()
 
-    # At this point I already have the symbolic data stored in block_saver
-
-    return {
-        "model_data": data,
-        "symbolic_data": {
-            "vars": block_saver.get_vars_to_save(),
-            "consts": block_saver.get_const_to_save(),
-            "diff_vars": block_saver.get_diff_vars_to_save(),
-            "blocks": block_saver.get_blocks(),
-            "main_block_uids": block_saver.main_block_uids,
-        }
-    }
+    return data
 
 
 def search_property(template_elm: ALL_DEV_TYPES,
@@ -759,12 +717,12 @@ def parse_object_type_from_dataframe(
         elm.disable_auto_updates()
 
         # ensure the profiles existence
-        if time_profile is None or time_profile is pd.NaT:
-            nt = 0
-        else:
+        if time_profile is not None:
             nt = len(time_profile)
             if nt > 0:
                 elm.ensure_profiles_exist(index=time_profile)
+        else:
+            nt = 0
 
         # parse each property of the row
         for property_name_, property_value in row.items():
@@ -1048,7 +1006,6 @@ def parse_object_type_from_json(template_elm: ALL_DEV_TYPES,
                                 data_list: List[Dict[str, Dict[str, str]]],
                                 elements_dict_by_type: Dict[DeviceType, Dict[str, ALL_DEV_TYPES]],
                                 time_profile: pd.DatetimeIndex,
-                                block_parser: BlockParser,
                                 logger: Logger):
     """
 
@@ -1056,7 +1013,6 @@ def parse_object_type_from_json(template_elm: ALL_DEV_TYPES,
     :param data_list:
     :param elements_dict_by_type:
     :param time_profile:
-    :param block_parser:
     :param logger:
     :return:
     """
@@ -1187,26 +1143,14 @@ def parse_object_type_from_json(template_elm: ALL_DEV_TYPES,
                                     dyn_module: DynamicModelHost = elm.get_snapshot_value(prop=gc_prop)
                                     dyn_module.parse(
                                         data=property_value,
-                                        blocks_dict=block_parser.block_dict
+                                        models_dict=elements_dict_by_type.get(DeviceType.RmsModelTemplateDevice, {})
                                     )
 
                                 elif gc_prop.tpe == SubObjectType.DaeBlockType:
 
-                                    # set the value of the property
-                                    blk = block_parser.block_dict.get(property_value, None)
-                                    elm.set_snapshot_value(gc_prop.name, blk)
-
-                                elif gc_prop.tpe == SubObjectType.VarType:
-
-                                    # set the value of the property
-                                    vl = block_parser.var_factory.get_var(property_value)
-                                    elm.set_snapshot_value(gc_prop.name, vl)
-
-                                elif gc_prop.tpe == SubObjectType.ConstType:
-
-                                    # set the value of the property
-                                    vl = block_parser.var_factory.get_const(property_value)
-                                    elm.set_snapshot_value(gc_prop.name, vl)
+                                    # get the line locations object and fill it with the json data
+                                    blk: Block = Block()
+                                    blk.parse(data=property_value)
 
                                 elif gc_prop.tpe == SubObjectType.Associations:
 
@@ -1442,7 +1386,6 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
             text_func(f"Parsing {object_type_key} table data...")
 
         # try to get the DataFrame
-        # Todo: here we should get the data from template_object_types dict, not from data dict
         df = data.get(object_type_key, None)
 
         if df is not None:
@@ -1498,21 +1441,6 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
     # ------------------------------------------------------------------------------------------------------------------
     # New way of parsing information from .model files (Json files)
     # These files are just .json stored in the model_data inside the zip file
-
-    block_parser = BlockParser(circuit.var_factory)
-    symbolic_data = data.get('symbolic_data', None)
-    if symbolic_data is not None:
-        if len(symbolic_data) > 0:
-            block_parser.parse_consts(symbolic_data["consts"])
-            block_parser.parse_vars(symbolic_data["vars"])
-            block_parser.parse_diff_vars(symbolic_data["diff_vars"])
-            for block_uid in symbolic_data["main_block_uids"]:
-                block_parser.parse_block(symbolic_data["blocks"], block_uid)
-        else:
-            pass  # the symbolic data is empty
-    else:
-        pass  # there is no symbolic data records
-
     model_data = data.get('model_data', None)
     if model_data is not None:
 
@@ -1553,7 +1481,6 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
                         data_list=data_list,
                         elements_dict_by_type=elements_dict_by_type,
                         time_profile=circuit.time_profile,
-                        block_parser=block_parser,
                         logger=logger
                     )
 

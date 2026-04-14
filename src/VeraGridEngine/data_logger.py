@@ -5,6 +5,7 @@
 from typing import List
 from enum import Enum
 import datetime
+import pandas as pd
 from VeraGridEngine.basic_structures import LogEntry, LogSeverity, Logger
 
 class DataLogSeverity(Enum):
@@ -284,8 +285,6 @@ class DataLogger:
         Get DataFrame
         :return:
         """
-        import pandas as pd
-
         data = [e.to_list() for e in self.entries]
         df = pd.DataFrame(data=data, columns=['Time', 'Severity', 'Message', 'Device', 'Property',
                                               'Class', 'Value', 'Expected value', 'Comment'])

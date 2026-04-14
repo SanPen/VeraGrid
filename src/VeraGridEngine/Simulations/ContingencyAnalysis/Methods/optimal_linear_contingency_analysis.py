@@ -119,7 +119,7 @@ def optimal_linear_contingency_analysis(grid: MultiCircuit,
             injections = None
 
         c_flow = multi_contingency.get_contingency_flows(base_branches_flow=flows_n, injections=injections)
-        c_loading = c_flow / (nc.passive_branch_data.contingency_rates + 1e-9)
+        c_loading = c_flow / (nc.passive_branch_data.rates + 1e-9)
 
         results.Sf[ic, :] = c_flow  # already in MW
         results.Sbus[ic, :] = Pbus
@@ -132,7 +132,7 @@ def optimal_linear_contingency_analysis(grid: MultiCircuit,
                                base_loading=loadings_n,
                                contingency_flows=c_flow,
                                contingency_loadings=c_loading,
-                               contingency_group_idx=ic,
+                               contingency_idx=ic,
                                contingency_group=linear_multiple_contingencies.contingency_groups_used[ic],
                                using_srap=options.use_srap,
                                srap_ratings=nc.passive_branch_data.protection_rates,

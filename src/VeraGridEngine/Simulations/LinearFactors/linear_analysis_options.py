@@ -2,24 +2,13 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
-from typing import Tuple
-
 from VeraGridEngine.Simulations.options_template import OptionsTemplate
-from VeraGridEngine.Devices.Parents.editable_device import GCProp
-
 
 
 class LinearAnalysisOptions(OptionsTemplate):
     """
     LinearAnalysisOptions
     """
-
-    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key="distribute_slack", tpe=bool),
-        GCProp(key="correct_values", tpe=bool),
-        GCProp(key="ptdf_threshold", tpe=float),
-        GCProp(key="lodf_threshold", tpe=float),
-    )
 
     def __init__(self,
                  distribute_slack=False,
@@ -43,3 +32,7 @@ class LinearAnalysisOptions(OptionsTemplate):
 
         self.lodf_threshold = lodf_threshold
 
+        self.register(key="distribute_slack", tpe=bool)
+        self.register(key="correct_values", tpe=bool)
+        self.register(key="ptdf_threshold", tpe=float)
+        self.register(key="lodf_threshold", tpe=float)

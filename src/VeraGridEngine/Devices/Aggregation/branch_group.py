@@ -2,8 +2,8 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
-from typing import Union, Tuple
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType, GCProp
+from typing import Union
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType
 from VeraGridEngine.enumerations import BranchGroupTypes
 
 
@@ -11,11 +11,6 @@ class BranchGroup(EditableDevice):
     __slots__ = (
         '_group_type',
         'color'
-    )
-
-    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='group_type', units='', tpe=BranchGroupTypes, definition=f'Type of branch group'),
-        GCProp(key='color', units='', tpe=str, definition='Color to paint', is_color=True),
     )
 
     def __init__(self,
@@ -43,6 +38,8 @@ class BranchGroup(EditableDevice):
 
         self.color = color if color is not None else self.rnd_color()
 
+        self.register(key='group_type', units='', tpe=BranchGroupTypes, definition=f'Type of branch group')
+        self.register(key='color', units='', tpe=str, definition='Color to paint', is_color=True)
 
     @property
     def group_type(self) -> BranchGroupTypes:

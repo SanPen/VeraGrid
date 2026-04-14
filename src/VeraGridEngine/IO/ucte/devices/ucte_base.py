@@ -43,7 +43,7 @@ def sub_float(line: str, a: int, b: int, device: str, prop_name: str, logger: Lo
         chunk = line[a:b].strip()
 
         if chunk == "":
-            logger.add_error(msg="Property not provided",
+            logger.add_error(msg="Empty chunk",
                              device=device,
                              device_property=prop_name,
                              value=line)
@@ -81,21 +81,11 @@ def try_int(val: str, device: str, prop_name: str, logger: Logger, fallback_valu
     try:
         return int(val)
     except ValueError as e:
-
-        val2 = try_float(val=val,
+        logger.add_error(msg=str(e),
                          device=device,
-                         prop_name=prop_name,
-                         logger=logger,
-                         fallback_value=0)
-
-        try:
-            return int(val2)
-        except ValueError as e:
-            logger.add_error(msg=str(e),
-                             device=device,
-                             device_property=prop_name,
-                             value=val)
-            return fallback_value
+                         device_property=prop_name,
+                         value=val)
+        return fallback_value
 
 
 def sub_int(line: str, a: int, b: int, device: str, prop_name: str, logger: Logger,
@@ -115,7 +105,7 @@ def sub_int(line: str, a: int, b: int, device: str, prop_name: str, logger: Logg
         chunk = line[a:b].strip()
 
         if chunk == "":
-            logger.add_error(msg="Property not provided",
+            logger.add_error(msg="Empty chunk",
                              device=device,
                              device_property=prop_name,
                              value=line)

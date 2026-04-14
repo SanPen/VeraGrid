@@ -14,26 +14,24 @@ from VeraGrid.Gui.GridMerge.grid_diff import GridDiffDialogue
 from VeraGrid.Gui.GridMerge.grid_merge import GridMergeDialogue
 from VeraGrid.plugins import install_plugin, get_plugin_info
 from VeraGrid.Gui.CoordinatesInput.coordinates_dialogue import CoordinatesInputGUI
-from VeraGrid.Gui.general_dialogues import LogsDialogue, CustomQuestionDialogue, FileTypeSelector, CgmesOptionsSelector
+from VeraGrid.Gui.general_dialogues import LogsDialogue, CustomQuestionDialogue
 from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
 from VeraGrid.Gui.messages import yes_no_question, error_msg, warning_msg, info_msg
 from VeraGrid.Gui.GridGenerator.grid_generator_dialogue import GridGeneratorGUI
 from VeraGrid.Gui.RosetaExplorer.RosetaExplorer import RosetaExplorerGUI
 from VeraGrid.Gui.Main.SubClasses.Settings.configuration import ConfigurationMain
-from VeraGrid.Gui.CGMESDialogue.cgmes_export import CgmesExportDialogue
-from VeraGrid.Gui.PsseDialogue.psse_export import PsseExportDialogue
-from VeraGrid.Gui.PsseDialogue.psse_import import PsseImportDialogue
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
+from VeraGridEngine.Compilers.circuit_to_newton_pa import NEWTON_PA_AVAILABLE
 from VeraGridEngine.Compilers.circuit_to_pgm import PGM_AVAILABLE
-from VeraGridEngine.IO.file_save import FileSavingOptions
-from VeraGridEngine.IO.file_open import determine_file_type
-from VeraGridEngine.enumerations import SimulationTypes, FileType
+from VeraGridEngine.IO.cim.cgmes.cgmes_export import get_available_cgmes_profiles
+from VeraGridEngine.enumerations import CGMESVersions, SimulationTypes
 from VeraGridEngine.IO.veragrid.contingency_parser import import_contingencies_from_json, export_contingencies_json_file
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 from VeraGridEngine.IO.veragrid.remote import RemoteInstruction
 from VeraGridEngine.IO.veragrid.catalogue import save_catalogue, load_catalogue
 from VeraGridEngine.Utils.ThirdParty.gslv.gslv_activation import install_gslv_license
 from VeraGrid.templates import (get_cables_catalogue, get_transformer_catalogue, get_wires_catalogue,
-                                get_sequence_lines_catalogue)
+                                get_sequence_lines_catalogue, get_rms_model_catalogue)
 
 
 class IoMain(ConfigurationMain):
@@ -47,7 +45,7 @@ class IoMain(ConfigurationMain):
         @param parent:
         """
 
-        # create the main window
+        # create main window
         ConfigurationMain.__init__(self, parent)
 
         self.rosetta_gui: Union[RosetaExplorerGUI, None] = None
@@ -55,17 +53,23 @@ class IoMain(ConfigurationMain):
         self.accepted_extensions = ['.veragrid', '.dveragrid',
                                     '.gridcal', '.dgridcal',
                                     '.xlsx', '.xls', '.sqlite', '.gch5',
-                                    '.dgs', '.m', '.matpower', '.raw', '.RAW', '.json', '.uct',
-                                    '.iidm', '.xiidm',
+                                    '.dgs', '.m', '.raw', '.RAW', '.json', '.uct',
                                     '.ejson2', '.ejson3', '.p', '.nc', '.hdf5',
                                     '.xml', '.rawx', '.zip', '.dpx', '.pwf', '.epc', '.EPC',
                                     '.vgplugin', '.gslv']
 
-        # window pointers
-        self.cgmes_dialogue: CgmesExportDialogue | None = None
-        self.psse_export_dialogue: PsseExportDialogue | None = None
+        self.cgmes_version_dict = {x.value: x for x in [CGMESVersions.v2_4_15,
+                                                        CGMESVersions.v3_0_0]}
+        self.ui.cgmes_version_comboBox.setModel(gf.get_list_model(list(self.cgmes_version_dict.keys())))
 
-        # actions
+        self.cgmes_profiles_dict = {key: CgmesProfileType(key) for key, val in
+                                    get_available_cgmes_profiles(cgmes_version=CGMESVersions.v2_4_15).items()}
+
+        self.ui.cgmes_profiles_listView.setModel(gf.get_list_model(list(self.cgmes_profiles_dict.keys()),
+                                                                   checks=True, check_value=True))
+
+        self.ui.raw_export_version_comboBox.addItems(["33", "35"])
+
         self.ui.actionNew_project.triggered.connect(self.new_project)
         self.ui.actionOpen_file.triggered.connect(self.open_file)
         self.ui.actionAdd_circuit.triggered.connect(self.import_circuit)
@@ -82,19 +86,12 @@ class IoMain(ConfigurationMain):
         self.ui.actionAdd_custom_catalogue.triggered.connect(self.load_custom_catalogue)
         self.ui.actionExportCatalogue.triggered.connect(self.save_custom_catalogue)
 
-        self.ui.actionPSS_e_Raw_Rawx.triggered.connect(self.export_psse)
-        self.ui.actionPower_Factory_DGS.triggered.connect(self.export_power_factory)
-        self.ui.actionCIM.triggered.connect(self.export_cim)
-        self.ui.actionCGMES.triggered.connect(self.export_cgmes)
-        self.ui.actionPower_Grid_Models.triggered.connect(self.export_power_grid_models)
-        self.ui.actionJSON.triggered.connect(self.export_json)
-        self.ui.actionH5.triggered.connect(self.export_h5)
-        self.ui.actionMicrosoft_Excel.triggered.connect(self.export_excel)
-        self.ui.actionSQLite.triggered.connect(self.export_sqlite)
-
         # Buttons
         self.ui.exportSimulationDataButton.clicked.connect(self.export_simulation_data)
         self.ui.loadResultFromDiskButton.clicked.connect(self.load_results_driver)
+
+        # change
+        self.ui.cgmes_version_comboBox.currentTextChanged.connect(self.cgmes_version_change)
 
     def dragEnterEvent(self, event):
         """
@@ -154,7 +151,7 @@ class IoMain(ConfigurationMain):
                             any_normal_grid = True
 
                     else:
-                        self.show_error_toast('The file type ' + file_extension.lower() + ' is not accepted :(')
+                        error_msg('The file type ' + file_extension.lower() + ' is not accepted :(')
 
                 if self.circuit.valid_for_simulation() > 0:
 
@@ -268,8 +265,8 @@ class IoMain(ConfigurationMain):
         if allow_diff_file_format:
             files_types += "*.dgridcal *.dveragrid "
 
-        files_types += "*.gch5 *.xlsx *.xls *.sqlite *.dgs *.iidm *.xiidm"
-        files_types += "*.m *.matpower *.raw *.RAW *.rawx *.uct *.json *.ejson2 *.ejson3 *.xml "
+        files_types += "*.gch5 *.xlsx *.xls *.sqlite *.dgs "
+        files_types += "*.m *.raw *.RAW *.rawx *.uct *.json *.ejson2 *.ejson3 *.xml "
         files_types += "*.zip *.dpx *.pwf *.epc *.EPC *.nc *.hdf5 *.p"
 
         dialogue = QtWidgets.QFileDialog(None,
@@ -282,20 +279,18 @@ class IoMain(ConfigurationMain):
             self.open_file_now(filenames, post_function)
 
     def open_file_now(self, filenames: Union[str, List[str]],
-                      post_function: Union[None, Callable[[], None]] = None,
-                      bool_prompt_to_ask_if_unclear: bool = True) -> None:
+                      post_function: Union[None, Callable[[], None]] = None) -> None:
         """
         Open a file without questions
         :param filenames: list of file names (maybe more than one because of CIM TP and EQ files)
         :param post_function: function callback
-        :param bool_prompt_to_ask_if_unclear: if the extension is ambiguous like xml, zip or json, ask what to do
         :return: Nothing
         """
         if len(filenames) > 0:
 
             for f_name in filenames:
                 if not os.path.exists(f_name):
-                    error_msg(text=f"The file does not exists :( \n {f_name}", title="File opening")
+                    error_msg(text=f"The file does not exists :(\n{f_name}", title="File opening")
                     return
 
             self.file_name = filenames[0]
@@ -306,33 +301,11 @@ class IoMain(ConfigurationMain):
             # lock the ui
             self.LOCK()
 
-            options = filedrv.FileOpenOptions()
-
-            file_name = filenames if len(filenames) > 1 else filenames[0]
-
-            # try to determine the file type
-            options.file_type = determine_file_type(file_name)
-
-            if options.file_type is None and bool_prompt_to_ask_if_unclear:
-                self.file_selector = FileTypeSelector(file_name=file_name)
-                self.file_selector.exec()
-                options.file_type = self.file_selector.file_type
-
-                if options.file_type == FileType.CGMES:
-                    self.cgmes_selector = CgmesOptionsSelector()
-                    self.cgmes_selector.exec()
-                    options.cgmes_version = self.cgmes_selector.version
-
-            elif options.file_type == FileType.PSSE_raw or options.file_type == FileType.PSSE_rawx:
-                self.psse_import_dialogue = PsseImportDialogue(app=self, options=options)
-                self.psse_import_dialogue.exec()
-                # NOTE: options will be modified inside
-
             # create thread
             self.open_file_thread_object = filedrv.FileOpenThread(
-                file_name=file_name,
+                file_name=filenames if len(filenames) > 1 else filenames[0],
                 previous_circuit=self.circuit,
-                options=options
+                options=self.get_file_open_options()
             )
 
             # make connections
@@ -414,7 +387,7 @@ class IoMain(ConfigurationMain):
                 self.ui.grid_name_line_edit.setText(self.circuit.name)
 
                 # if this was a CGMES file, launch the Rosetta GUI
-                if self.open_file_thread_object.options.file_type == FileType.CGMES:
+                if self.open_file_thread_object.cgmes_circuit:
 
                     show_rosetta = yes_no_question(title="Show rosetta",
                                                    text="Do you want to open the Rosetta CGMEs browser?")
@@ -616,7 +589,22 @@ class IoMain(ConfigurationMain):
 
         else:
             # declare the allowed file types
-            files_types = "VeraGrid zip (*.veragrid)"
+            files_types = ("VeraGrid zip (*.veragrid);;"                        
+                           "VeraGrid HDF5 (*.gch5);;"
+                           "Excel (*.xlsx);;"
+                           "CGMES (*.zip);;"
+                           "CIM (*.xml);;"
+                           "Electrical Json V3 (*.ejson3);;"
+                           "Raw (*.raw);;"
+                           "Rawx (*.rawx);;"
+                           "DIgSILENT Power Factory DGS (*.dgs);;"
+                           "Sqlite (*.sqlite);;")
+
+            if NEWTON_PA_AVAILABLE:
+                files_types += "Newton (*.newton);;"
+
+            if PGM_AVAILABLE:
+                files_types += "PGM Json (*.pgm);;"
 
             # call dialog to select the file
             if self.project_directory is None:
@@ -629,28 +617,34 @@ class IoMain(ConfigurationMain):
                 # if the global file_name is empty, ask where to save
                 fname = os.path.join(self.project_directory, self.ui.grid_name_line_edit.text())
 
-                filename, type_selected = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                                                'Save file',
-                                                                                fname,
-                                                                                files_types)
+                filename, type_selected = QtWidgets.QFileDialog.getSaveFileName(self, 'Save file', fname, files_types)
 
                 if filename != '':
 
                     # if the user did not enter the extension, add it automatically
                     name, file_extension = os.path.splitext(filename)
 
+                    extension = dict()
+                    extension['Excel (*.xlsx)'] = '.xlsx'
+                    extension['CIM (*.xml)'] = '.xml'
+                    extension['CGMES (*.zip)'] = '.zip'
+                    extension['Electrical Json V2 (*.ejson2)'] = '.ejson2'
+                    extension['Electrical Json V3 (*.ejson3)'] = '.ejson3'
+                    extension['VeraGrid zip (*.veragrid)'] = '.veragrid'
+                    extension['Raw (*.raw)'] = '.raw'
+                    extension['Rawx (*.rawx)'] = '.rawx'
+                    extension['VeraGrid HDF5 (*.gch5)'] = '.gch5'
+                    extension['Sqlite (*.sqlite)'] = '.sqlite'
+                    extension['Newton (*.newton)'] = '.newton'
+                    extension['PGM Json (*.pgm)'] = '.pgm'
+                    extension['DIgSILENT Power Factory DGS (*.dgs)'] = '.dgs'
+
                     if file_extension == '':
-                        filename = name + ".veragrid"
+                        filename = name + extension[type_selected]
 
                     # we were able to compose the file correctly, now save it
                     self.file_name = filename
-                    self.save_file_now(
-                        self.file_name,
-                        type_selected=type_selected,
-                        options=FileSavingOptions(
-                            file_type=FileType.VeraGrid
-                        )
-                    )
+                    self.save_file_now(self.file_name, type_selected=type_selected)
             else:
                 # save directly
                 self.save_file_now(self.file_name)
@@ -667,22 +661,46 @@ class IoMain(ConfigurationMain):
         # get json files to store
         json_files = {"gui_config": self.get_gui_config_data()}
 
-        options = filedrv.FileSavingOptions(sessions_data=sessions_data,
-                                            dictionary_of_json_files=json_files)
+        cgmes_version = self.cgmes_version_dict[self.ui.cgmes_version_comboBox.currentText()]
+        cgmes_profiles_txt = gf.get_checked_values(mdl=self.ui.cgmes_profiles_listView.model())
+        cgmes_profiles = [self.cgmes_profiles_dict[e] for e in cgmes_profiles_txt]
+        cgmes_one_file_per_profile = self.ui.cgmes_single_profile_per_file_checkBox.isChecked()
+        cgmes_map_areas_like_raw = self.ui.cgmes_map_regions_like_raw_checkBox.isChecked()
+
+        raw_version = self.ui.raw_export_version_comboBox.currentText()
+
+        options = filedrv.FileSavingOptions(cgmes_boundary_set=self.current_boundary_set,
+                                            sessions_data=sessions_data,
+                                            dictionary_of_json_files=json_files,
+                                            cgmes_version=cgmes_version,
+                                            cgmes_profiles=cgmes_profiles,
+                                            cgmes_one_file_per_profile=cgmes_one_file_per_profile,
+                                            cgmes_map_areas_like_raw=cgmes_map_areas_like_raw,
+                                            raw_version=raw_version)
 
         return options
 
-    def save_file_now(self, filename: str,
-                      type_selected: str = "",
-                      grid: Union[MultiCircuit, None] = None,
-                      options: filedrv.FileSavingOptions | None = None):
+    def get_file_open_options(self) -> filedrv.FileOpenOptions:
+        """
+        Compose the file open options
+        :return: FileOpenOptions
+        """
+
+        cgmes_map_areas_like_raw = self.ui.cgmes_map_regions_like_raw_checkBox.isChecked()
+        try_to_map_dc_to_hvdc_line = self.ui.cgmes_dc_as_hvdclines_checkBox.isChecked()
+
+        options = filedrv.FileOpenOptions(cgmes_map_areas_like_raw=cgmes_map_areas_like_raw,
+                                          try_to_map_dc_to_hvdc_line=try_to_map_dc_to_hvdc_line)
+
+        return options
+
+    def save_file_now(self, filename: str, type_selected: str = "", grid: Union[MultiCircuit, None] = None):
         """
         Save the file right now, without questions
         :param filename: filename to save to
         :param type_selected: File type description as it appears
                               in the file saving dialogue i.e. VeraGrid zip (*.veragrid)
         :param grid: MultiCircuit or None, if None, self.circuit is taken
-        :param options: FileSavingOptions to override the default ones
         """
 
         if ('file_save' not in self.stuff_running_now) and ('file_open' not in self.stuff_running_now):
@@ -696,14 +714,12 @@ class IoMain(ConfigurationMain):
                     if ok:
                         self.save_file_thread_object.quit()
 
-            options2 = self.get_file_save_options() if options is None else options
-            options2.type_selected = type_selected
+            options = self.get_file_save_options()
+            options.type_selected = type_selected
 
-            self.save_file_thread_object = filedrv.FileSaveThread(
-                circuit=self.circuit if grid is None else grid,
-                file_name=filename,
-                options=options2
-            )
+            self.save_file_thread_object = filedrv.FileSaveThread(circuit=self.circuit if grid is None else grid,
+                                                                  file_name=filename,
+                                                                  options=options)
 
             # make connections
             self.save_file_thread_object.progress_signal.connect(self.ui.progressBar.setValue)
@@ -972,20 +988,12 @@ class IoMain(ConfigurationMain):
         """
         Add default catalogue to circuit
         """
-        if not self.circuit.transformer_types:
-            self.circuit.transformer_types += get_transformer_catalogue()
 
-        if not self.circuit.underground_cable_types:
-            self.circuit.underground_cable_types += get_cables_catalogue()
-
-        if not self.circuit.wire_types:
-            self.circuit.wire_types += get_wires_catalogue()
-
-        if not self.circuit.sequence_line_types:
-            self.circuit.sequence_line_types += get_sequence_lines_catalogue()
-
-        if not self.circuit.rms_models:
-            self.circuit.add_rms_model_catalogue()
+        self.circuit.transformer_types += get_transformer_catalogue()
+        self.circuit.underground_cable_types += get_cables_catalogue()
+        self.circuit.wire_types += get_wires_catalogue()
+        self.circuit.sequence_line_types += get_sequence_lines_catalogue()
+        self.circuit.rms_models += get_rms_model_catalogue()
 
     def load_custom_catalogue(self):
         """
@@ -1022,17 +1030,16 @@ class IoMain(ConfigurationMain):
         """
 
         # declare the allowed file types
-        files_types = "Catalogue Excel file (*.xlsx)"
+        files_types = "Catalogue file (*.xlsx)"
 
         # call dialog to select the file
         filename, type_selected = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                                        'Save catalogue',
-                                                                        '',
-                                                                        files_types)
-        if filename != "":
-            if not (filename.endswith('.xlsx')):
-                filename += ".xlsx"
+                                                                        'Save catalogue', '', files_types)
 
+        if not (filename.endswith('.xlsx')):
+            filename += ".xlsx"
+
+        if filename != "":
             save_catalogue(fname=filename, grid=self.circuit)
 
     def set_circuit(self, grid: MultiCircuit, create_diagram: bool = True):
@@ -1057,241 +1064,14 @@ class IoMain(ConfigurationMain):
         self.get_circuit_snapshot_datetime()
         self.change_theme_mode()
 
-    def export_psse(self):
+    def cgmes_version_change(self):
         """
-
-        :return:
+        On GUI cgmes version change, display only the supported profiles
         """
-        self.psse_export_dialogue = PsseExportDialogue(app=self)
-        self.psse_export_dialogue.show()
+        cgmes_version = self.cgmes_version_dict[self.ui.cgmes_version_comboBox.currentText()]
 
-    def export_power_factory(self):
-        """
+        self.cgmes_profiles_dict = {key: CgmesProfileType(key) for key, val in
+                                    get_available_cgmes_profiles(cgmes_version=cgmes_version).items()}
 
-        :return:
-        """
-        # if the global file_name is empty, ask where to save
-        fname = os.path.join(self.project_directory, self.ui.grid_name_line_edit.text())
-
-        files_types = "Power Factory (*.dgs)"
-        filename, type_selected = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                                        'Export to Power Factory',
-                                                                        fname,
-                                                                        files_types)
-
-        if filename != '':
-
-            # if the user did not enter the extension, add it automatically
-            name, file_extension = os.path.splitext(filename)
-
-            if file_extension == '':
-                filename = name + '.dgs'
-
-            # we were able to compose the file correctly, now save it
-            self.file_name = filename
-            self.save_file_now(self.file_name,
-                               type_selected=type_selected,
-                               options=FileSavingOptions(
-                                   file_type=FileType.DGS
-                               ))
-
-    def export_cim(self):
-        """
-
-        :return:
-        """
-        # if the global file_name is empty, ask where to save
-        fname = os.path.join(self.project_directory, self.ui.grid_name_line_edit.text())
-
-        files_types = "CIM (*.xml)"
-        filename, type_selected = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                                        'Export to CIM',
-                                                                        fname,
-                                                                        files_types)
-
-        if filename != '':
-
-            # if the user did not enter the extension, add it automatically
-            name, file_extension = os.path.splitext(filename)
-
-            if file_extension == '':
-                filename = name + '.xml'
-
-            # we were able to compose the file correctly, now save it
-            self.file_name = filename
-            self.save_file_now(self.file_name,
-                               type_selected=type_selected,
-                               options=FileSavingOptions(
-                                   file_type=FileType.CIM
-                               ))
-
-    def export_cgmes(self):
-        """
-
-        :return:
-        """
-        self.cgmes_dialogue = CgmesExportDialogue(app=self)
-        self.cgmes_dialogue.show()
-
-    def export_power_grid_models(self):
-        """
-
-        :return:
-        """
-
-        if PGM_AVAILABLE:
-            # if the global file_name is empty, ask where to save
-            fname = os.path.join(self.project_directory, self.ui.grid_name_line_edit.text())
-
-            files_types = "Power Grid Models (*.pgm)"
-            filename, type_selected = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                                            'Export to Power Grid Models',
-                                                                            fname,
-                                                                            files_types)
-
-            if filename != '':
-
-                # if the user did not enter the extension, add it automatically
-                name, file_extension = os.path.splitext(filename)
-
-                if file_extension == '':
-                    filename = name + '.pgm'
-
-                # we were able to compose the file correctly, now save it
-                self.file_name = filename
-                self.save_file_now(
-                    self.file_name,
-                    type_selected=type_selected,
-                    options=FileSavingOptions(
-                        file_type=FileType.PGM
-                    )
-                )
-        else:
-            self.show_warning_toast("Power Grid Models not installed :/")
-
-    def export_json(self):
-        """
-
-        :return:
-        """
-        # if the global file_name is empty, ask where to save
-        fname = os.path.join(self.project_directory, self.ui.grid_name_line_edit.text())
-
-        files_types = "Electrical Json V3 (*.ejson3)"
-        filename, type_selected = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                                        'Export to JSON',
-                                                                        fname,
-                                                                        files_types)
-
-        if filename != '':
-
-            # if the user did not enter the extension, add it automatically
-            name, file_extension = os.path.splitext(filename)
-
-            if file_extension == '':
-                filename = name + '.ejson3'
-
-            # we were able to compose the file correctly, now save it
-            self.file_name = filename
-            self.save_file_now(
-                self.file_name,
-                type_selected=type_selected,
-                options=FileSavingOptions(
-                    file_type=FileType.VeraGrid_json
-                )
-            )
-
-    def export_h5(self):
-        """
-
-        :return:
-        """
-        # if the global file_name is empty, ask where to save
-        fname = os.path.join(self.project_directory, self.ui.grid_name_line_edit.text())
-
-        files_types = "VeraGrid HDF5 (*.gch5)"
-        filename, type_selected = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                                        'Export to VeraGrid HDF5',
-                                                                        fname,
-                                                                        files_types)
-
-        if filename != '':
-
-            # if the user did not enter the extension, add it automatically
-            name, file_extension = os.path.splitext(filename)
-
-            if file_extension == '':
-                filename = name + '.gch5'
-
-            # we were able to compose the file correctly, now save it
-            self.file_name = filename
-            self.save_file_now(
-                self.file_name,
-                type_selected=type_selected,
-                options=FileSavingOptions(
-                    file_type=FileType.VeraGrid_h5
-                ))
-
-    def export_excel(self):
-        """
-
-        :return:
-        """
-        # if the global file_name is empty, ask where to save
-        fname = os.path.join(self.project_directory, self.ui.grid_name_line_edit.text())
-
-        files_types = "Excel (*.xlsx)"
-        filename, type_selected = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                                        'Export to Microsoft Excel',
-                                                                        fname,
-                                                                        files_types)
-
-        if filename != '':
-
-            # if the user did not enter the extension, add it automatically
-            name, file_extension = os.path.splitext(filename)
-
-            if file_extension == '':
-                filename = name + '.xlsx'
-
-            # we were able to compose the file correctly, now save it
-            self.file_name = filename
-            self.save_file_now(
-                self.file_name,
-                type_selected=type_selected,
-                options=FileSavingOptions(
-                    file_type=FileType.VeraGrid_xlsx4
-                )
-            )
-
-    def export_sqlite(self):
-        """
-
-        :return:
-        """
-        # if the global file_name is empty, ask where to save
-        fname = os.path.join(self.project_directory, self.ui.grid_name_line_edit.text())
-
-        files_types = "Sqlite (*.sqlite)"
-        filename, type_selected = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                                        'Export to Sqlite',
-                                                                        fname,
-                                                                        files_types)
-
-        if filename != '':
-
-            # if the user did not enter the extension, add it automatically
-            name, file_extension = os.path.splitext(filename)
-
-            if file_extension == '':
-                filename = name + '.sqlite'
-
-            # we were able to compose the file correctly, now save it
-            self.file_name = filename
-            self.save_file_now(
-                self.file_name,
-                type_selected=type_selected,
-                options=FileSavingOptions(
-                    file_type=FileType.VeraGrid_sqlite
-                )
-            )
+        self.ui.cgmes_profiles_listView.setModel(gf.get_list_model(list(self.cgmes_profiles_dict.keys()),
+                                                                   checks=True, check_value=True))

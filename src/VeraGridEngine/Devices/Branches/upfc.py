@@ -3,8 +3,6 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Tuple
-
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
@@ -12,7 +10,7 @@ from matplotlib import pyplot as plt
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import BuildStatus
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
-from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
+from VeraGridEngine.Devices.Parents.editable_device import DeviceType
 
 
 class UPFC(BranchParent):
@@ -32,30 +30,6 @@ class UPFC(BranchParent):
         'Vsh',
         'Pfset',
         'Qfset',
-    )
-
-    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='R', units='p.u.', tpe=float, definition='Series positive sequence resistance.',
-                      old_names=['Rs']),
-        GCProp(key='X', units='p.u.', tpe=float, definition='Series positive sequence reactance.',
-                      old_names=['Xs']),
-        GCProp(key='Rsh', units='p.u.', tpe=float, definition='Shunt positive sequence resistance.'),
-        GCProp(key='Xsh', units='p.u.', tpe=float, definition='Shunt positive sequence resistance.'),
-        GCProp(key='R0', units='p.u.', tpe=float, definition='Series zero sequence resistance.',
-                      old_names=['Rs0']),
-        GCProp(key='X0', units='p.u.', tpe=float, definition='Series zero sequence reactance.',
-                      old_names=['Xs0']),
-        GCProp(key='Rsh0', units='p.u.', tpe=float, definition='Shunt zero sequence resistance.'),
-        GCProp(key='Xsh0', units='p.u.', tpe=float, definition='Shunt zero sequence resistance.'),
-        GCProp(key='R2', units='p.u.', tpe=float, definition='Series negative sequence resistance.',
-                      old_names=['Rs2']),
-        GCProp(key='X2', units='p.u.', tpe=float, definition='Series negative sequence reactance.',
-                      old_names=['Xs2']),
-        GCProp(key='Rsh2', units='p.u.', tpe=float, definition='Shunt negative sequence resistance.'),
-        GCProp(key='Xsh2', units='p.u.', tpe=float, definition='Shunt negative sequence resistance.'),
-        GCProp(key='Vsh', units='p.u.', tpe=float, definition='Shunt voltage set point.'),
-        GCProp(key='Pfset', units='MW', tpe=float, definition='Active power set point.'),
-        GCProp(key='Qfset', units='MVAr', tpe=float, definition='Active power set point.'),
     )
 
     def __init__(self,
@@ -150,6 +124,27 @@ class UPFC(BranchParent):
         self.Pfset = float(Pset)
         self.Qfset = float(Qset)
 
+        self.register(key='R', units='p.u.', tpe=float, definition='Series positive sequence resistance.',
+                      old_names=['Rs'])
+        self.register(key='X', units='p.u.', tpe=float, definition='Series positive sequence reactance.',
+                      old_names=['Xs'])
+        self.register(key='Rsh', units='p.u.', tpe=float, definition='Shunt positive sequence resistance.')
+        self.register(key='Xsh', units='p.u.', tpe=float, definition='Shunt positive sequence resistance.')
+        self.register(key='R0', units='p.u.', tpe=float, definition='Series zero sequence resistance.',
+                      old_names=['Rs0'])
+        self.register(key='X0', units='p.u.', tpe=float, definition='Series zero sequence reactance.',
+                      old_names=['Xs0'])
+        self.register(key='Rsh0', units='p.u.', tpe=float, definition='Shunt zero sequence resistance.')
+        self.register(key='Xsh0', units='p.u.', tpe=float, definition='Shunt zero sequence resistance.')
+        self.register(key='R2', units='p.u.', tpe=float, definition='Series negative sequence resistance.',
+                      old_names=['Rs2'])
+        self.register(key='X2', units='p.u.', tpe=float, definition='Series negative sequence reactance.',
+                      old_names=['Xs2'])
+        self.register(key='Rsh2', units='p.u.', tpe=float, definition='Shunt negative sequence resistance.')
+        self.register(key='Xsh2', units='p.u.', tpe=float, definition='Shunt negative sequence resistance.')
+        self.register(key='Vsh', units='p.u.', tpe=float, definition='Shunt voltage set point.')
+        self.register(key='Pfset', units='MW', tpe=float, definition='Active power set point.')
+        self.register(key='Qfset', units='MVAr', tpe=float, definition='Active power set point.')
 
     def get_ysh1(self):
         """

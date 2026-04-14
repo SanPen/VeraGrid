@@ -13,7 +13,7 @@ from VeraGridEngine.enumerations import DeviceType, BuildStatus, SubObjectType
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 from VeraGridEngine.enumerations import HvdcControlType
 from VeraGridEngine.Devices.profile import Profile
-from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
+from VeraGridEngine.Devices.Parents.editable_device import get_at
 from VeraGridEngine.Devices.Branches.line_locations import LineLocations
 
 
@@ -152,31 +152,6 @@ class HvdcLine(BranchParent):
         '_locations',
     )
 
-    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='dispatchable', units='', tpe=bool, definition='Is the line power optimizable?'),
-        GCProp(key='control_mode', units='-', tpe=HvdcControlType, definition='Control type.'),
-        GCProp(key='Pset', units='MW', tpe=float, definition='Set power flow.', profile_name='Pset_prof'),
-        GCProp(key='r', units='Ohm', tpe=float, definition='line resistance.'),
-        GCProp(key='dc_link_voltage', units='kV', tpe=float,
-                      definition='line voltage (only for compatibility, not used in calcs.)'),
-        GCProp(key='angle_droop', units='MW/deg', tpe=float, definition='Power/angle rate control',
-                      profile_name='angle_droop_prof'),
-        GCProp(key='Vset_f', units='p.u.', tpe=float, definition='Set voltage at the from side',
-                      profile_name='Vset_f_prof'),
-        GCProp(key='Vset_t', units='p.u.', tpe=float, definition='Set voltage at the to side',
-                      profile_name='Vset_t_prof'),
-        GCProp(key='min_firing_angle_f', units='rad', tpe=float,
-                      definition='minimum firing angle at the "from" side.'),
-        GCProp(key='max_firing_angle_f', units='rad', tpe=float,
-                      definition='maximum firing angle at the "from" side.'),
-        GCProp(key='min_firing_angle_t', units='rad', tpe=float,
-                      definition='minimum firing angle at the "to" side.'),
-        GCProp(key='max_firing_angle_t', units='rad', tpe=float,
-                      definition='maximum firing angle at the "to" side.'),
-        GCProp(key='length', units='km', tpe=float, definition='Length of the branch (not used for calculation)'),
-        GCProp(key='locations', units='', tpe=SubObjectType.LineLocations, definition='', editable=False),
-    )
-
     def __init__(self,
                  bus_from: Bus = None,
                  bus_to: Bus = None,
@@ -303,6 +278,38 @@ class HvdcLine(BranchParent):
 
         # Line locations
         self._locations: LineLocations = LineLocations()
+
+        self.register(key='dispatchable', units='', tpe=bool, definition='Is the line power optimizable?')
+
+        self.register(key='control_mode', units='-', tpe=HvdcControlType, definition='Control type.')
+        self.register(key='Pset', units='MW', tpe=float, definition='Set power flow.', profile_name='Pset_prof')
+        self.register(key='r', units='Ohm', tpe=float, definition='line resistance.')
+        self.register(key='dc_link_voltage', units='kV', tpe=float,
+                      definition='line voltage (only for compatibility, not used in calcs.)')
+
+        self.register(key='angle_droop', units='MW/deg', tpe=float, definition='Power/angle rate control',
+                      profile_name='angle_droop_prof')
+
+        self.register(key='Vset_f', units='p.u.', tpe=float, definition='Set voltage at the from side',
+                      profile_name='Vset_f_prof')
+        self.register(key='Vset_t', units='p.u.', tpe=float, definition='Set voltage at the to side',
+                      profile_name='Vset_t_prof')
+
+        self.register(key='min_firing_angle_f', units='rad', tpe=float,
+                      definition='minimum firing angle at the "from" side.')
+        self.register(key='max_firing_angle_f', units='rad', tpe=float,
+                      definition='maximum firing angle at the "from" side.')
+        self.register(key='min_firing_angle_t', units='rad', tpe=float,
+                      definition='minimum firing angle at the "to" side.')
+        self.register(key='max_firing_angle_t', units='rad', tpe=float,
+                      definition='maximum firing angle at the "to" side.')
+
+        self.register(key='length', units='km', tpe=float, definition='Length of the branch (not used for calculation)')
+
+        self.register(key='locations', units='', tpe=SubObjectType.LineLocations, definition='', editable=False)
+
+        self.registered_properties['Cost'].old_names.append('overload_cost')
+
     @property
     def active_prof(self) -> Profile:
         """

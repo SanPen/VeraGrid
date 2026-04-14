@@ -14,11 +14,10 @@ from VeraGridEngine.basic_structures import CxVec
 from VeraGridEngine.Devices.profile import Profile
 from VeraGridEngine.Devices.Aggregation.facility import Facility
 from VeraGridEngine.Devices.Dynamic.dynamic_model_host import DynamicModelHost
-from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
-
+from VeraGridEngine.Devices.Parents.editable_device import get_at
 
 if TYPE_CHECKING:
-    from VeraGridEngine.Devices.Associations.technology import Technology
+    from VeraGridEngine.Devices import Technology
     from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 
 
@@ -48,41 +47,8 @@ class InjectionParent(PhysicalDevice):
         'bus_pos',
         '_conn',
         '_rms_model',
-        '_emt_model',
         'time',
         'color'
-    )
-
-    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='bus', units='', tpe=DeviceType.BusDevice, definition='Connection bus', editable=False),
-        GCProp(key='active', units='', tpe=bool, definition='Is the load active?', profile_name='active_prof'),
-        GCProp(key='color', units='', tpe=str, definition='Color to paint the element in the map diagram',
-                      is_color=True),
-        GCProp(key='mttf', units='h', tpe=float, definition='Mean time to failure'),
-        GCProp(key='mttr', units='h', tpe=float, definition='Mean time to recovery'),
-        GCProp(key='capex', units='e/MW', tpe=float,
-                      definition='Cost of investment. Used in expansion planning.'),
-        GCProp(key='opex', units='e/MWh', tpe=float, definition='Cost of operation. Used in expansion planning.'),
-        GCProp(key='Cost', units='e/MWh', tpe=float, definition='Cost of not served energy. Used in OPF.',
-                      profile_name='Cost_prof'),
-        GCProp(key='facility', units='', tpe=DeviceType.FacilityDevice,
-                      definition='Facility where this is located', editable=True),
-        GCProp(key='technologies', units='p.u.', tpe=SubObjectType.Associations,
-                      definition='Technologies associations to injections', display=False),
-        GCProp(key='scalable', units='', tpe=bool, definition='Is the injection scalable?'),
-        GCProp(key='shift_key', units='', tpe=float, definition='Shift key for net transfer capacity',
-                      profile_name="shift_key_prof"),
-        GCProp(key='longitude', units='deg', tpe=float,
-                      definition='longitude of the injection.', profile_name=''),
-        GCProp(key='latitude', units='deg', tpe=float,
-                      definition='latitude of the injection.', profile_name=''),
-        GCProp(key='use_kw', units='', tpe=bool, definition='Consider the injections in kW and kVAr?'),
-        GCProp(key='conn', units='', tpe=ShuntConnectionType,
-                      definition='Connection type for 3-phase studies'),
-        GCProp(key='rms_model', units='', tpe=SubObjectType.DynamicModelHostType,
-                      definition='RMS dynamic model', display=False),
-        GCProp(key='bus_pos', units='', tpe=int, definition='Aid to locate devices on a busbar',
-                      display=False),
     )
 
     def __init__(self,
@@ -158,26 +124,54 @@ class InjectionParent(PhysicalDevice):
         self._conn: ShuntConnectionType = ShuntConnectionType.GroundedStar
 
         self._rms_model: DynamicModelHost = DynamicModelHost()
-        self._emt_model: DynamicModelHost = DynamicModelHost()
 
         self.bus_pos: int = 0
 
         self.color = color if color is not None else "#909090"  # light gray
 
+        self.register(key='bus', units='', tpe=DeviceType.BusDevice, definition='Connection bus', editable=False)
 
+        self.register(key='active', units='', tpe=bool, definition='Is the load active?', profile_name='active_prof')
 
+        self.register(key='color', units='', tpe=str, definition='Color to paint the element in the map diagram',
+                      is_color=True)
 
+        self.register(key='mttf', units='h', tpe=float, definition='Mean time to failure')
+        self.register(key='mttr', units='h', tpe=float, definition='Mean time to recovery')
 
+        self.register(key='capex', units='e/MW', tpe=float,
+                      definition='Cost of investment. Used in expansion planning.')
+        self.register(key='opex', units='e/MWh', tpe=float, definition='Cost of operation. Used in expansion planning.')
 
+        self.register(key='Cost', units='e/MWh', tpe=float, definition='Cost of not served energy. Used in OPF.',
+                      profile_name='Cost_prof')
 
+        self.register(key='facility', units='', tpe=DeviceType.FacilityDevice,
+                      definition='Facility where this is located', editable=True)
 
+        self.register(key='technologies', units='p.u.', tpe=SubObjectType.Associations,
+                      definition='List of technologies', display=False)
 
+        self.register(key='scalable', units='', tpe=bool, definition='Is the injection scalable?')
 
+        self.register(key='shift_key', units='', tpe=float, definition='Shift key for net transfer capacity',
+                      profile_name="shift_key_prof")
 
+        self.register(key='longitude', units='deg', tpe=float,
+                      definition='longitude of the injection.', profile_name='')
+        self.register(key='latitude', units='deg', tpe=float,
+                      definition='latitude of the injection.', profile_name='')
 
+        self.register(key='use_kw', units='', tpe=bool, definition='Consider the injections in kW and kVAr?')
 
+        self.register(key='conn', units='', tpe=ShuntConnectionType,
+                      definition='Connection type for 3-phase studies')
 
+        self.register(key='rms_model', units='', tpe=SubObjectType.DynamicModelHostType,
+                      definition='RMS dynamic model', display=False)
 
+        self.register(key='bus_pos', units='', tpe=int, definition='Aid to locate devices on a busbar',
+                      display=False)
 
     @property
     def bus(self) -> Bus:
@@ -286,8 +280,19 @@ class InjectionParent(PhysicalDevice):
         if self.auto_update_enabled:
             if val != self._use_kw:
                 self._use_kw = val
-            else:
-                pass
+
+                if val:
+                    # is in kW, replace MW by kW
+                    for key, prp in self.registered_properties.items():
+                        prp.units = (prp.units.replace("MW", "kW")
+                                     .replace("MVAr", "kVAr")
+                                     .replace("MVA", "kVA"))
+                else:
+                    # is in MW, replace kW by MW
+                    for key, prp in self.registered_properties.items():
+                        prp.units = (prp.units.replace("kW", "MW")
+                                     .replace("kVAr", "MVAr")
+                                     .replace("kVA", "MVA"))
         else:
             self._use_kw = val
 
@@ -316,23 +321,6 @@ class InjectionParent(PhysicalDevice):
     def rms_model(self, value: DynamicModelHost):
         if isinstance(value, DynamicModelHost):
             self._rms_model = value
-        else:
-            raise ValueError(f"RMS model cannot accept {value}")
-
-    @property
-    def emt_model(self) -> DynamicModelHost:
-        """
-
-        :return:
-        """
-        return self._emt_model
-
-    @emt_model.setter
-    def emt_model(self, value: DynamicModelHost):
-        if isinstance(value, DynamicModelHost):
-            self._emt_model = value
-        else:
-            raise ValueError(f"RMS model cannot accept {value}")
 
     def get_S_with_sign(self) -> complex:
         """
@@ -401,16 +389,3 @@ class InjectionParent(PhysicalDevice):
             if val.value > mx:
                 col = val.api_object.color
         self.color = col
-
-    def color_by_main_owner(self):
-        """
-        Set the color of the dominant owner
-        """
-        mx = 0.0
-        col = self.color
-        for _, val in self.owners.data.items():
-            if val.value > mx:
-                col = val.api_object.color
-        self.color = col
-
-

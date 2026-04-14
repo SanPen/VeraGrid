@@ -7,9 +7,246 @@ from VeraGridEngine.IO.base.units import Unit
 from VeraGridEngine.IO.raw.devices.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
 import numpy as np
+from VeraGridEngine.IO.raw.devices.psse_property import PsseProperty
 
 
 class RawTransformer(RawObject):
+    LOCAL_PROPERTIES: Tuple[PsseProperty, ...] = (
+        PsseProperty(property_name='I', rawx_key='ibus', class_type=int, description='Bus I number', min_value=0,
+                     max_value=999999, max_chars=6),
+        PsseProperty(property_name='J', rawx_key='jbus', class_type=int, description='Bus J number', min_value=0,
+                     max_value=999999, max_chars=6),
+        PsseProperty(property_name='K', rawx_key='kbus', class_type=int, description='Bus K number', min_value=0,
+                     max_value=999999, max_chars=6),
+        PsseProperty(property_name='CKT', rawx_key='ckt', class_type=str, description='Circuit identifier',
+                     max_chars=2),
+        PsseProperty(property_name='CW', rawx_key='cw', class_type=int, description='Winding input mode', min_value=1,
+                     max_value=3, max_chars=1),
+        PsseProperty(property_name='CZ', rawx_key='cz', class_type=int, description='Series Impedance input mode',
+                     min_value=1, max_value=3, max_chars=1),
+        PsseProperty(property_name='CM', rawx_key='cm', class_type=int, description='Magnetizing impedance input mode',
+                     min_value=1, max_value=2, max_chars=1),
+        PsseProperty(property_name='MAG1', rawx_key='mag1', class_type=float, description='Magnetizing admittance 1'),
+        PsseProperty(property_name='MAG2', rawx_key='mag2', class_type=float, description='Magnetizing admittance 2'),
+        PsseProperty(property_name='NMETR', rawx_key='nmet', class_type=int, description='Non-metered end code',
+                     min_value=1, max_value=3, max_chars=1),
+        PsseProperty(property_name='NAME', rawx_key='name', class_type=str, description='Name', max_chars=12),
+        PsseProperty(property_name='STAT', rawx_key='stat', class_type=int,
+                     description='Status of the several windings', min_value=0, max_value=4, max_chars=1),
+        PsseProperty(property_name='VECGRP', rawx_key='vecgrp', class_type=str,
+                     description='Vector group (has zero effect, information only)', max_chars=12),
+        PsseProperty(property_name='ZCOD', rawx_key='zcod', class_type=int, description='Impedance code', min_value=0,
+                     max_value=1),
+        PsseProperty(property_name='R1_2', rawx_key='r1_2', class_type=float,
+                     description='1->2 resistance or other stuff', unit=Unit.get_pu(), format_rule='.5E'),
+        PsseProperty(property_name='X1_2', rawx_key='x1_2', class_type=float,
+                     description='1->2 reactance or other stuff', unit=Unit.get_pu(), format_rule='.5E'),
+        PsseProperty(property_name='R2_3', rawx_key='r2_3', class_type=float,
+                     description='2->3 resistance or other stuff', unit=Unit.get_pu(), format_rule='.5E'),
+        PsseProperty(property_name='X2_3', rawx_key='x2_3', class_type=float,
+                     description='2->3 reactance or other stuff', unit=Unit.get_pu(), format_rule='.5E'),
+        PsseProperty(property_name='R3_1', rawx_key='r3_1', class_type=float,
+                     description='3->1 resistance or other stuff', unit=Unit.get_pu(), format_rule='.5E'),
+        PsseProperty(property_name='X3_1', rawx_key='x3_1', class_type=float,
+                     description='3->1 reactance or other stuff', unit=Unit.get_pu(), format_rule='.5E'),
+        PsseProperty(property_name='SBASE1_2', rawx_key='sbase1_2', class_type=float, description='1->2 base power',
+                     unit=Unit.get_mvar(), format_rule='.2f'),
+        PsseProperty(property_name='SBASE2_3', rawx_key='sbase2_3', class_type=float, description='2->3 base power',
+                     unit=Unit.get_mvar(), format_rule='.2f'),
+        PsseProperty(property_name='SBASE3_1', rawx_key='sbase3_1', class_type=float, description='3->1 base power',
+                     unit=Unit.get_mvar(), format_rule='.2f'),
+        PsseProperty(property_name='VMSTAR', rawx_key='vmstar', class_type=float,
+                     description='The voltage magnitude at the center star point', unit=Unit.get_pu(),
+                     format_rule='.5f'),
+        PsseProperty(property_name='ANSTAR', rawx_key='anstar', class_type=float,
+                     description='The bus voltage phase angle at the center star point.', unit=Unit.get_deg(),
+                     format_rule='.4f'),
+        PsseProperty(property_name='WINDV1', rawx_key='windv1', class_type=float,
+                     description='Winding 1 off-nominal turns ratio or other stuff', format_rule='.5f'),
+        PsseProperty(property_name='NOMV1', rawx_key='nomv1', class_type=float,
+                     description='Winding 1 voltage base in kV or other stuff', unit=Unit.get_kv(), format_rule='.3f'),
+        PsseProperty(property_name='ANG1', rawx_key='ang1', class_type=float,
+                     description='Winding 1 phase shift angle in degrees.', unit=Unit.get_deg(), format_rule='.3f'),
+        PsseProperty(property_name='COD1', rawx_key='cod1', class_type=int, description='Winding 1 control mode.',
+                     min_value=-5, max_value=5),
+        PsseProperty(property_name='CONT1', rawx_key='cont1', class_type=int,
+                     description='Control bus for the winding 1.', min_value=0, max_value=999999),
+        PsseProperty(property_name='NODE1', rawx_key='node1', class_type=int, description='A node number of bus CONT1.',
+                     min_value=0, max_value=999999),
+        PsseProperty(property_name='RMA1', rawx_key='rma1', class_type=float,
+                     description='Winding 1 upper limit depending of COD1 and CW', format_rule='.5f'),
+        PsseProperty(property_name='RMI1', rawx_key='rmi1', class_type=float,
+                     description='Winding 1 lower limit depending of COD1 and CW', format_rule='.5f'),
+        PsseProperty(property_name='VMA1', rawx_key='vma1', class_type=float,
+                     description='Winding 1 upper voltage limit depending of COD1.', format_rule='.5f'),
+        PsseProperty(property_name='VMI1', rawx_key='vmi1', class_type=float,
+                     description='Winding 1 lower voltage limit depending of COD1.', format_rule='.5f'),
+        PsseProperty(property_name='NTP1', rawx_key='ntp1', class_type=int,
+                     description='Winding 1 number of tap positions available', min_value=2, max_value=9999),
+        PsseProperty(property_name='TAB1', rawx_key='tab1', class_type=int,
+                     description='Winding 1  number  of  a  transformer  impedance  correction  table', min_value=0,
+                     max_value=999999),
+        PsseProperty(property_name='CR1', rawx_key='cr1', class_type=float,
+                     description='Winding 1 load drop compensation resistance', unit=Unit.get_pu(), format_rule='.5f'),
+        PsseProperty(property_name='CX1', rawx_key='cx1', class_type=float,
+                     description='Winding 1 load drop compensation reactance', unit=Unit.get_pu(), format_rule='.5f'),
+        PsseProperty(property_name='CNXA1', rawx_key='cnxa1', class_type=float, description='', min_value=0,
+                     max_value=999999, format_rule='.3f'),
+        PsseProperty(property_name='RATE1_{}'.format(1), rawx_key='wdg1rate{}'.format(1), class_type=float,
+                     description='Winding rating {}'.format(1), unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE1_{}'.format(2), rawx_key='wdg1rate{}'.format(2), class_type=float,
+                     description='Winding rating {}'.format(2), unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE1_{}'.format(3), rawx_key='wdg1rate{}'.format(3), class_type=float,
+                     description='Winding rating {}'.format(3), unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE1_{}'.format(4), rawx_key='wdg1rate{}'.format(4), class_type=float,
+                     description='Winding rating {}'.format(4), unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE1_{}'.format(5), rawx_key='wdg1rate{}'.format(5), class_type=float,
+                     description='Winding rating {}'.format(5), unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE1_{}'.format(6), rawx_key='wdg1rate{}'.format(6), class_type=float,
+                     description='Winding rating {}'.format(6), unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE1_{}'.format(7), rawx_key='wdg1rate{}'.format(7), class_type=float,
+                     description='Winding rating {}'.format(7), unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE1_{}'.format(8), rawx_key='wdg1rate{}'.format(8), class_type=float,
+                     description='Winding rating {}'.format(8), unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE1_{}'.format(9), rawx_key='wdg1rate{}'.format(9), class_type=float,
+                     description='Winding rating {}'.format(9), unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE1_{}'.format(10), rawx_key='wdg1rate{}'.format(10), class_type=float,
+                     description='Winding rating {}'.format(10), unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE1_{}'.format(11), rawx_key='wdg1rate{}'.format(11), class_type=float,
+                     description='Winding rating {}'.format(11), unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE1_{}'.format(12), rawx_key='wdg1rate{}'.format(12), class_type=float,
+                     description='Winding rating {}'.format(12), unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='WINDV2', rawx_key='windv2', class_type=float,
+                     description='Winding 2 off-nominal turns ratio or other stuff', format_rule='.5f'),
+        PsseProperty(property_name='NOMV2', rawx_key='nomv2', class_type=float,
+                     description='Winding 2 voltage base in kV or other stuff', unit=Unit.get_kv(), format_rule='.3f'),
+        PsseProperty(property_name='ANG2', rawx_key='ang2', class_type=float,
+                     description='Winding 2 phase shift angle in degrees.', unit=Unit.get_deg(), format_rule='.3f'),
+        PsseProperty(property_name='COD2', rawx_key='cod2', class_type=int, description='Winding 2 control mode.',
+                     min_value=-5, max_value=5),
+        PsseProperty(property_name='CONT2', rawx_key='cont2', class_type=int,
+                     description='Control bus for the winding 2.', min_value=0, max_value=999999),
+        PsseProperty(property_name='NODE2', rawx_key='node2', class_type=int, description='A node number of bus CONT1.',
+                     min_value=0, max_value=999999),
+        PsseProperty(property_name='RMA2', rawx_key='rma2', class_type=float,
+                     description='Winding 2 upper limit depending of COD1 and CW', format_rule='.5f'),
+        PsseProperty(property_name='RMI2', rawx_key='rmi2', class_type=float,
+                     description='Winding 2 lower limit depending of COD1 and CW', format_rule='.5f'),
+        PsseProperty(property_name='VMA2', rawx_key='vma2', class_type=float,
+                     description='Winding 2 upper voltage limit depending of COD1.', format_rule='.5f'),
+        PsseProperty(property_name='VMI2', rawx_key='vmi2', class_type=float,
+                     description='Winding 2 lower voltage limit depending of COD1.', format_rule='.5f'),
+        PsseProperty(property_name='NTP2', rawx_key='ntp2', class_type=int,
+                     description='Winding 2 number of tap positions available', min_value=2, max_value=9999),
+        PsseProperty(property_name='TAB2', rawx_key='tab2', class_type=int,
+                     description='Winding 2 number  of  a  transformer  impedance  correction  table', min_value=0,
+                     max_value=999999),
+        PsseProperty(property_name='CR2', rawx_key='cr2', class_type=float,
+                     description='Winding 2 load drop compensation resistance', unit=Unit.get_pu(), format_rule='.5f'),
+        PsseProperty(property_name='CX2', rawx_key='cx2', class_type=float,
+                     description='Winding 1 load drop compensation reactance', unit=Unit.get_pu(), format_rule='.5f'),
+        PsseProperty(property_name='CNXA2', rawx_key='cnxa2', class_type=float, description='', min_value=0,
+                     max_value=999999, format_rule='.3f'),
+        PsseProperty(property_name='RATE2_{}'.format(1), rawx_key='wdg2rate{}'.format(1), class_type=float,
+                     description='Winding rating', unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE2_{}'.format(2), rawx_key='wdg2rate{}'.format(2), class_type=float,
+                     description='Winding rating', unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE2_{}'.format(3), rawx_key='wdg2rate{}'.format(3), class_type=float,
+                     description='Winding rating', unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE2_{}'.format(4), rawx_key='wdg2rate{}'.format(4), class_type=float,
+                     description='Winding rating', unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE2_{}'.format(5), rawx_key='wdg2rate{}'.format(5), class_type=float,
+                     description='Winding rating', unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE2_{}'.format(6), rawx_key='wdg2rate{}'.format(6), class_type=float,
+                     description='Winding rating', unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE2_{}'.format(7), rawx_key='wdg2rate{}'.format(7), class_type=float,
+                     description='Winding rating', unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE2_{}'.format(8), rawx_key='wdg2rate{}'.format(8), class_type=float,
+                     description='Winding rating', unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE2_{}'.format(9), rawx_key='wdg2rate{}'.format(9), class_type=float,
+                     description='Winding rating', unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE2_{}'.format(10), rawx_key='wdg2rate{}'.format(10), class_type=float,
+                     description='Winding rating', unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE2_{}'.format(11), rawx_key='wdg2rate{}'.format(11), class_type=float,
+                     description='Winding rating', unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE2_{}'.format(12), rawx_key='wdg2rate{}'.format(12), class_type=float,
+                     description='Winding rating', unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='WINDV3', rawx_key='windv3', class_type=float,
+                     description='Winding 3 off-nominal turns ratio or other stuff', format_rule='.5f'),
+        PsseProperty(property_name='NOMV3', rawx_key='nomv3', class_type=float,
+                     description='Winding 3 voltage base in kV or other stuff', unit=Unit.get_kv(), format_rule='.3f'),
+        PsseProperty(property_name='ANG3', rawx_key='ang3', class_type=float,
+                     description='Winding 3 phase shift angle in degrees.', unit=Unit.get_deg(), format_rule='.3f'),
+        PsseProperty(property_name='COD3', rawx_key='cod3', class_type=int, description='Winding 3 control mode.',
+                     min_value=-5, max_value=5),
+        PsseProperty(property_name='CONT3', rawx_key='cont3', class_type=int,
+                     description='Control bus for the winding 3', min_value=0, max_value=999999),
+        PsseProperty(property_name='NODE3', rawx_key='node3', class_type=int, description='A node number of bus CONT3.',
+                     min_value=0, max_value=999999),
+        PsseProperty(property_name='RMA3', rawx_key='rma3', class_type=float,
+                     description='Winding 3 upper limit depending of COD1 and CW', format_rule='.5f'),
+        PsseProperty(property_name='RMI3', rawx_key='rmi3', class_type=float,
+                     description='Winding 3 lower limit depending of COD1 and CW', format_rule='.5f'),
+        PsseProperty(property_name='VMA3', rawx_key='vma3', class_type=float,
+                     description='Winding 3 upper voltage limit depending of COD1.', format_rule='.5f'),
+        PsseProperty(property_name='VMI3', rawx_key='vmi3', class_type=float,
+                     description='Winding 3 lower voltage limit depending of COD1.', format_rule='.5f'),
+        PsseProperty(property_name='NTP3', rawx_key='ntp3', class_type=int,
+                     description='Winding 3 number of tap positions available', min_value=2, max_value=9999),
+        PsseProperty(property_name='TAB3', rawx_key='tab3', class_type=int,
+                     description='Winding 1 number of a transformer impedance correction table', min_value=0,
+                     max_value=999999),
+        PsseProperty(property_name='CR3', rawx_key='cr3', class_type=float,
+                     description='Winding 3 load drop compensation resistance', unit=Unit.get_pu(), format_rule='.5f'),
+        PsseProperty(property_name='CX3', rawx_key='cx3', class_type=float,
+                     description='Winding 3 load drop compensation reactance', unit=Unit.get_pu(), format_rule='.5f'),
+        PsseProperty(property_name='CNXA3', rawx_key='cnxa3', class_type=float, description='', min_value=0,
+                     max_value=999999, format_rule='.3f'),
+        PsseProperty(property_name='RATE3_{}'.format(1), rawx_key='wdg3rate{}'.format(1), class_type=float,
+                     description='Winding 3 rating {}'.format(1), unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE3_{}'.format(2), rawx_key='wdg3rate{}'.format(2), class_type=float,
+                     description='Winding 3 rating {}'.format(2), unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE3_{}'.format(3), rawx_key='wdg3rate{}'.format(3), class_type=float,
+                     description='Winding 3 rating {}'.format(3), unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE3_{}'.format(4), rawx_key='wdg3rate{}'.format(4), class_type=float,
+                     description='Winding 3 rating {}'.format(4), unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE3_{}'.format(5), rawx_key='wdg3rate{}'.format(5), class_type=float,
+                     description='Winding 3 rating {}'.format(5), unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE3_{}'.format(6), rawx_key='wdg3rate{}'.format(6), class_type=float,
+                     description='Winding 3 rating {}'.format(6), unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE3_{}'.format(7), rawx_key='wdg3rate{}'.format(7), class_type=float,
+                     description='Winding 3 rating {}'.format(7), unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE3_{}'.format(8), rawx_key='wdg3rate{}'.format(8), class_type=float,
+                     description='Winding 3 rating {}'.format(8), unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE3_{}'.format(9), rawx_key='wdg3rate{}'.format(9), class_type=float,
+                     description='Winding 3 rating {}'.format(9), unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE3_{}'.format(10), rawx_key='wdg3rate{}'.format(10), class_type=float,
+                     description='Winding 3 rating {}'.format(10), unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE3_{}'.format(11), rawx_key='wdg3rate{}'.format(11), class_type=float,
+                     description='Winding 3 rating {}'.format(11), unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='RATE3_{}'.format(12), rawx_key='wdg3rate{}'.format(12), class_type=float,
+                     description='Winding 3 rating {}'.format(12), unit=Unit.get_mva(), format_rule='.2f'),
+        PsseProperty(property_name='O{}'.format(0 + 1), rawx_key='o{}'.format(0 + 1), class_type=int,
+                     description='Owner number {}'.format(0 + 1), min_value=1, max_value=9999, max_chars=4),
+        PsseProperty(property_name='F{}'.format(0 + 1), rawx_key='f{}'.format(0 + 1), class_type=float,
+                     description='Ownership fraction {}'.format(0 + 1), min_value=0.0, max_value=1.0,
+                     format_rule='.4f'),
+        PsseProperty(property_name='O{}'.format(1 + 1), rawx_key='o{}'.format(1 + 1), class_type=int,
+                     description='Owner number {}'.format(1 + 1), min_value=1, max_value=9999, max_chars=4),
+        PsseProperty(property_name='F{}'.format(1 + 1), rawx_key='f{}'.format(1 + 1), class_type=float,
+                     description='Ownership fraction {}'.format(1 + 1), min_value=0.0, max_value=1.0,
+                     format_rule='.4f'),
+        PsseProperty(property_name='O{}'.format(2 + 1), rawx_key='o{}'.format(2 + 1), class_type=int,
+                     description='Owner number {}'.format(2 + 1), min_value=1, max_value=9999, max_chars=4),
+        PsseProperty(property_name='F{}'.format(2 + 1), rawx_key='f{}'.format(2 + 1), class_type=float,
+                     description='Ownership fraction {}'.format(2 + 1), min_value=0.0, max_value=1.0,
+                     format_rule='.4f'),
+        PsseProperty(property_name='O{}'.format(3 + 1), rawx_key='o{}'.format(3 + 1), class_type=int,
+                     description='Owner number {}'.format(3 + 1), min_value=1, max_value=9999, max_chars=4),
+        PsseProperty(property_name='F{}'.format(3 + 1), rawx_key='f{}'.format(3 + 1), class_type=float,
+                     description='Ownership fraction {}'.format(3 + 1), min_value=0.0, max_value=1.0,
+                     format_rule='.4f'),
+    )
 
     def __init__(self):
         RawObject.__init__(self, "Transformer")
@@ -146,520 +383,13 @@ class RawTransformer(RawObject):
         self.O4 = 0
         self.F4 = 1.0
 
-        self.register_property(property_name='I',
-                               rawx_key='ibus',
-                               class_type=int,
-                               description='Bus I number',
-                               min_value=0,
-                               max_value=999999,
-                               max_chars=6)
-
-        self.register_property(property_name='J',
-                               rawx_key='jbus',
-                               class_type=int,
-                               description='Bus J number',
-                               min_value=0,
-                               max_value=999999,
-                               max_chars=6)
-
-        self.register_property(property_name='K',
-                               rawx_key='kbus',
-                               class_type=int,
-                               description='Bus K number',
-                               min_value=0,
-                               max_value=999999,
-                               max_chars=6)
-
-        self.register_property(property_name='CKT',
-                               rawx_key='ckt',
-                               class_type=str,
-                               description='Circuit identifier',
-                               max_chars=2)
-
-        self.register_property(property_name='CW',
-                               rawx_key='cw',
-                               class_type=int,
-                               description='Winding input mode',
-                               min_value=1,
-                               max_value=3,
-                               max_chars=1)
-
-        self.register_property(property_name='CZ',
-                               rawx_key='cz',
-                               class_type=int,
-                               description='Series Impedance input mode',
-                               min_value=1,
-                               max_value=3,
-                               max_chars=1)
-
-        self.register_property(property_name='CM',
-                               rawx_key='cm',
-                               class_type=int,
-                               description='Magnetizing impedance input mode',
-                               min_value=1,
-                               max_value=2,
-                               max_chars=1)
-
-        self.register_property(property_name='MAG1',
-                               rawx_key='mag1',
-                               class_type=float,
-                               description='Magnetizing admittance 1')
-
-        self.register_property(property_name='MAG2',
-                               rawx_key='mag2',
-                               class_type=float,
-                               description='Magnetizing admittance 2')
-
-        self.register_property(property_name='NMETR',
-                               rawx_key='nmet',
-                               class_type=int,
-                               description='Non-metered end code',
-                               min_value=1,
-                               max_value=3,
-                               max_chars=1)
-
-        self.register_property(property_name='NAME',
-                               rawx_key='name',
-                               class_type=str,
-                               description='Name',
-                               max_chars=12)
-
-        self.register_property(property_name='STAT',
-                               rawx_key='stat',
-                               class_type=int,
-                               description='Status of the several windings',
-                               min_value=0,
-                               max_value=4,
-                               max_chars=1)
-
-        self.register_property(property_name='VECGRP',
-                               rawx_key='vecgrp',
-                               class_type=str,
-                               description='Vector group (has zero effect, information only)',
-                               max_chars=12)
-
-        self.register_property(property_name='ZCOD',
-                               rawx_key='zcod',
-                               class_type=int,
-                               description='Impedance code',
-                               min_value=0,
-                               max_value=1)
-
-        self.register_property(property_name='R1_2',
-                               rawx_key='r1_2',
-                               class_type=float,
-                               description='1->2 resistance or other stuff',
-                               unit=Unit.get_pu(),
-                               format_rule=".5E")
-
-        self.register_property(property_name='X1_2',
-                               rawx_key='x1_2',
-                               class_type=float,
-                               description='1->2 reactance or other stuff',
-                               unit=Unit.get_pu(),
-                               format_rule=".5E")
-
-        self.register_property(property_name='R2_3',
-                               rawx_key='r2_3',
-                               class_type=float,
-                               description='2->3 resistance or other stuff',
-                               unit=Unit.get_pu(),
-                               format_rule=".5E")
-
-        self.register_property(property_name='X2_3',
-                               rawx_key='x2_3',
-                               class_type=float,
-                               description='2->3 reactance or other stuff',
-                               unit=Unit.get_pu(),
-                               format_rule=".5E")
-
-        self.register_property(property_name='R3_1',
-                               rawx_key='r3_1',
-                               class_type=float,
-                               description='3->1 resistance or other stuff',
-                               unit=Unit.get_pu(),
-                               format_rule=".5E")
-
-        self.register_property(property_name='X3_1',
-                               rawx_key='x3_1',
-                               class_type=float,
-                               description='3->1 reactance or other stuff',
-                               unit=Unit.get_pu(),
-                               format_rule=".5E")
-
-        self.register_property(property_name='SBASE1_2',
-                               rawx_key='sbase1_2',
-                               class_type=float,
-                               description='1->2 base power',
-                               unit=Unit.get_mvar(),
-                               format_rule=".2f")
-
-        self.register_property(property_name='SBASE2_3',
-                               rawx_key='sbase2_3',
-                               class_type=float,
-                               description='2->3 base power',
-                               unit=Unit.get_mvar(),
-                               format_rule=".2f")
-
-        self.register_property(property_name='SBASE3_1',
-                               rawx_key='sbase3_1',
-                               class_type=float,
-                               description='3->1 base power',
-                               unit=Unit.get_mvar(),
-                               format_rule=".2f")
-
-        self.register_property(property_name='VMSTAR',
-                               rawx_key='vmstar',
-                               class_type=float,
-                               description='The voltage magnitude at the center star point',
-                               unit=Unit.get_pu(),
-                               format_rule=".5f")
-
-        self.register_property(property_name='ANSTAR',
-                               rawx_key='anstar',
-                               class_type=float,
-                               description='The bus voltage phase angle at the center star point.',
-                               unit=Unit.get_deg(),
-                               format_rule=".4f")
+        # --------------------------------------------------------------------------------------------------------------
 
         # --------------------------------------------------------------------------------------------------------------
 
-        self.register_property(property_name='WINDV1',
-                               rawx_key='windv1',
-                               class_type=float,
-                               description='Winding 1 off-nominal turns ratio or other stuff',
-                               format_rule=".5f")
-
-        self.register_property(property_name='NOMV1',
-                               rawx_key='nomv1',
-                               class_type=float,
-                               description='Winding 1 voltage base in kV or other stuff',
-                               unit=Unit.get_kv(),
-                               format_rule=".3f")
-
-        self.register_property(property_name='ANG1',
-                               rawx_key='ang1',
-                               class_type=float,
-                               description='Winding 1 phase shift angle in degrees.',
-                               unit=Unit.get_deg(),
-                               format_rule=".3f")
-
-        self.register_property(property_name='COD1',
-                               rawx_key='cod1',
-                               class_type=int,
-                               description='Winding 1 control mode.',
-                               min_value=-5,
-                               max_value=5)
-        self.register_property(property_name='CONT1',
-                               rawx_key='cont1',
-                               class_type=int,
-                               description='Control bus for the winding 1.',
-                               min_value=0,
-                               max_value=999999)
-        self.register_property(property_name='NODE1',
-                               rawx_key='node1',
-                               class_type=int,
-                               description='A node number of bus CONT1.',
-                               min_value=0,
-                               max_value=999999)
-
-        self.register_property(property_name='RMA1',
-                               rawx_key='rma1',
-                               class_type=float,
-                               description='Winding 1 upper limit depending of COD1 and CW',
-                               format_rule=".5f")
-
-        self.register_property(property_name='RMI1',
-                               rawx_key='rmi1',
-                               class_type=float,
-                               description='Winding 1 lower limit depending of COD1 and CW',
-                               format_rule=".5f")
-
-        self.register_property(property_name='VMA1',
-                               rawx_key='vma1',
-                               class_type=float,
-                               description='Winding 1 upper voltage limit depending of COD1.',
-                               format_rule=".5f")
-
-        self.register_property(property_name='VMI1',
-                               rawx_key='vmi1',
-                               class_type=float,
-                               description='Winding 1 lower voltage limit depending of COD1.',
-                               format_rule=".5f")
-
-        self.register_property(property_name='NTP1',
-                               rawx_key='ntp1',
-                               class_type=int,
-                               description='Winding 1 number of tap positions available',
-                               min_value=2,
-                               max_value=9999)
-
-        self.register_property(property_name='TAB1',
-                               rawx_key='tab1',
-                               class_type=int,
-                               description='Winding 1  number  of  a  transformer  impedance  correction  table',
-                               min_value=0,
-                               max_value=999999)
-
-        self.register_property(property_name='CR1',
-                               rawx_key='cr1',
-                               class_type=float,
-                               description='Winding 1 load drop compensation resistance',
-                               unit=Unit.get_pu(),
-                               format_rule=".5f")
-
-        self.register_property(property_name='CX1',
-                               rawx_key='cx1',
-                               class_type=float,
-                               description='Winding 1 load drop compensation reactance',
-                               unit=Unit.get_pu(),
-                               format_rule=".5f")
-
-        self.register_property(property_name='CNXA1',
-                               rawx_key='cnxa1',
-                               class_type=float,
-                               description='',
-                               min_value=0,
-                               max_value=999999,
-                               format_rule=".3f")
-
-        for i in range(1, 13):
-            self.register_property(property_name='RATE1_{}'.format(i),
-                                   rawx_key='wdg1rate{}'.format(i),
-                                   class_type=float,
-                                   description='Winding rating {}'.format(i),
-                                   unit=Unit.get_mva(),
-                                   format_rule=".2f")
-
         # --------------------------------------------------------------------------------------------------------------
 
-        self.register_property(property_name='WINDV2',
-                               rawx_key='windv2',
-                               class_type=float,
-                               description='Winding 2 off-nominal turns ratio or other stuff',
-                               format_rule=".5f")
-
-        self.register_property(property_name='NOMV2',
-                               rawx_key='nomv2',
-                               class_type=float,
-                               description='Winding 2 voltage base in kV or other stuff',
-                               unit=Unit.get_kv(),
-                               format_rule=".3f")
-
-        self.register_property(property_name='ANG2',
-                               rawx_key='ang2',
-                               class_type=float,
-                               description='Winding 2 phase shift angle in degrees.',
-                               unit=Unit.get_deg(),
-                               format_rule=".3f")
-
-        self.register_property(property_name='COD2',
-                               rawx_key='cod2',
-                               class_type=int,
-                               description='Winding 2 control mode.',
-                               min_value=-5,
-                               max_value=5)
-        self.register_property(property_name='CONT2',
-                               rawx_key='cont2',
-                               class_type=int,
-                               description='Control bus for the winding 2.',
-                               min_value=0,
-                               max_value=999999)
-        self.register_property(property_name='NODE2',
-                               rawx_key='node2',
-                               class_type=int,
-                               description='A node number of bus CONT1.',
-                               min_value=0,
-                               max_value=999999)
-        self.register_property(property_name='RMA2',
-                               rawx_key='rma2',
-                               class_type=float,
-                               description='Winding 2 upper limit depending of COD1 and CW',
-                               format_rule=".5f")
-        self.register_property(property_name='RMI2',
-                               rawx_key='rmi2',
-                               class_type=float,
-                               description='Winding 2 lower limit depending of COD1 and CW',
-                               format_rule=".5f")
-
-        self.register_property(property_name='VMA2',
-                               rawx_key='vma2',
-                               class_type=float,
-                               description='Winding 2 upper voltage limit depending of COD1.',
-                               format_rule=".5f")
-
-        self.register_property(property_name='VMI2',
-                               rawx_key='vmi2',
-                               class_type=float,
-                               description='Winding 2 lower voltage limit depending of COD1.',
-                               format_rule=".5f")
-
-        self.register_property(property_name='NTP2',
-                               rawx_key='ntp2',
-                               class_type=int,
-                               description='Winding 2 number of tap positions available',
-                               min_value=2,
-                               max_value=9999)
-        self.register_property(property_name='TAB2',
-                               rawx_key='tab2',
-                               class_type=int,
-                               description='Winding 2 number  of  a  transformer  impedance  correction  table',
-                               min_value=0,
-                               max_value=999999)
-        self.register_property(property_name='CR2',
-                               rawx_key='cr2',
-                               class_type=float,
-                               description='Winding 2 load drop compensation resistance',
-                               unit=Unit.get_pu(),
-                               format_rule=".5f")
-        self.register_property(property_name='CX2',
-                               rawx_key='cx2',
-                               class_type=float,
-                               description='Winding 1 load drop compensation reactance',
-                               unit=Unit.get_pu(),
-                               format_rule=".5f")
-        self.register_property(property_name='CNXA2',
-                               rawx_key='cnxa2',
-                               class_type=float,
-                               description='',
-                               min_value=0,
-                               max_value=999999,
-                               format_rule=".3f")
-
-        for i in range(1, 13):
-            self.register_property(property_name='RATE2_{}'.format(i),
-                                   rawx_key='wdg2rate{}'.format(i),
-                                   class_type=float,
-                                   description='Winding rating',
-                                   unit=Unit.get_mva(),
-                                   format_rule=".2f")
-
         # --------------------------------------------------------------------------------------------------------------
-
-        self.register_property(property_name='WINDV3',
-                               rawx_key='windv3',
-                               class_type=float,
-                               description='Winding 3 off-nominal turns ratio or other stuff',
-                               format_rule=".5f")
-
-        self.register_property(property_name='NOMV3',
-                               rawx_key='nomv3',
-                               class_type=float,
-                               description='Winding 3 voltage base in kV or other stuff',
-                               unit=Unit.get_kv(),
-                               format_rule=".3f")
-
-        self.register_property(property_name='ANG3',
-                               rawx_key='ang3',
-                               class_type=float,
-                               description='Winding 3 phase shift angle in degrees.',
-                               unit=Unit.get_deg(),
-                               format_rule=".3f")
-
-        self.register_property(property_name='COD3',
-                               rawx_key='cod3',
-                               class_type=int,
-                               description='Winding 3 control mode.',
-                               min_value=-5,
-                               max_value=5)
-        self.register_property(property_name='CONT3',
-                               rawx_key='cont3',
-                               class_type=int,
-                               description='Control bus for the winding 3',
-                               min_value=0,
-                               max_value=999999)
-        self.register_property(property_name='NODE3',
-                               rawx_key='node3',
-                               class_type=int,
-                               description='A node number of bus CONT3.',
-                               min_value=0,
-                               max_value=999999)
-
-        self.register_property(property_name='RMA3',
-                               rawx_key='rma3',
-                               class_type=float,
-                               description='Winding 3 upper limit depending of COD1 and CW',
-                               format_rule=".5f")
-
-        self.register_property(property_name='RMI3',
-                               rawx_key='rmi3',
-                               class_type=float,
-                               description='Winding 3 lower limit depending of COD1 and CW',
-                               format_rule=".5f")
-
-        self.register_property(property_name='VMA3',
-                               rawx_key='vma3',
-                               class_type=float,
-                               description='Winding 3 upper voltage limit depending of COD1.',
-                               format_rule=".5f")
-
-        self.register_property(property_name='VMI3',
-                               rawx_key='vmi3',
-                               class_type=float,
-                               description='Winding 3 lower voltage limit depending of COD1.',
-                               format_rule=".5f")
-
-        self.register_property(property_name='NTP3',
-                               rawx_key='ntp3',
-                               class_type=int,
-                               description='Winding 3 number of tap positions available',
-                               min_value=2,
-                               max_value=9999)
-
-        self.register_property(property_name='TAB3',
-                               rawx_key='tab3',
-                               class_type=int,
-                               description='Winding 1 number of a transformer impedance correction table',
-                               min_value=0,
-                               max_value=999999)
-
-        self.register_property(property_name='CR3',
-                               rawx_key='cr3',
-                               class_type=float,
-                               description='Winding 3 load drop compensation resistance',
-                               unit=Unit.get_pu(),
-                               format_rule=".5f")
-
-        self.register_property(property_name='CX3',
-                               rawx_key='cx3',
-                               class_type=float,
-                               description='Winding 3 load drop compensation reactance',
-                               unit=Unit.get_pu(),
-                               format_rule=".5f")
-
-        self.register_property(property_name='CNXA3',
-                               rawx_key='cnxa3',
-                               class_type=float,
-                               description='',
-                               min_value=0,
-                               max_value=999999,
-                               format_rule=".3f")
-
-        for i in range(1, 13):
-            self.register_property(property_name='RATE3_{}'.format(i),
-                                   rawx_key='wdg3rate{}'.format(i),
-                                   class_type=float,
-                                   description='Winding 3 rating {}'.format(i),
-                                   unit=Unit.get_mva(),
-                                   format_rule=".2f")
-
-        # --------------------------------------------------------------------------------------------------------------
-        for i in range(4):
-            self.register_property(property_name="O{}".format(i + 1),
-                                   rawx_key="o{}".format(i + 1),
-                                   class_type=int,
-                                   description="Owner number {}".format(i + 1),
-                                   min_value=1,
-                                   max_value=9999,
-                                   max_chars=4)
-
-            self.register_property(property_name="F{}".format(i + 1),
-                                   rawx_key="f{}".format(i + 1),
-                                   class_type=float,
-                                   description="Ownership fraction {}".format(i + 1),
-                                   min_value=0.0,
-                                   max_value=1.0,
-                                   format_rule=".4f")
 
     def parse(self, data: List[List[float | int | str]], version: int, logger: Logger):
         """
@@ -779,7 +509,7 @@ class RawTransformer(RawObject):
                  self.RMA1, self.RMI1, self.VMA1, self.VMI1, self.NTP1,
                  self.TAB1, self.CR1, self.CX1, self.CNXA1) = data[2]
 
-                (self.WINDV2, self.NOMV2, self.ANG2, self.RATE2_1, self.RATE2_1, self.RATE2_3, self.COD2, self.CONT2,
+                (self.WINDV2, self.NOMV2, self.ANG2, self.RATE2_1, self.RATE2_2, self.RATE2_3, self.COD2, self.CONT2,
                  self.RMA2, self.RMI2, self.VMA2, self.VMI2, self.NTP2,
                  self.TAB2, self.CR2, self.CX2, self.CNXA2) = data[3]
 
@@ -1082,7 +812,7 @@ class RawTransformer(RawObject):
                                            "RATE1_3", "COD1", "CONT1", "RMA1", "RMI1", "VMA1",
                                            "VMI1", "NTP1", "TAB1", "CR1", "CX1", "CNXA1"])
 
-                l3 = self.format_raw_line(["WINDV2", "NOMV2", "ANG2", "RATE2_1", "RATE2_1",
+                l3 = self.format_raw_line(["WINDV2", "NOMV2", "ANG2", "RATE2_1", "RATE2_2",
                                            "RATE2_3", "COD2", "CONT2", "RMA2", "RMI2", "VMA2",
                                            "VMI2", "NTP2", "TAB2", "CR2", "CX2", "CNXA2"])
 
@@ -1124,8 +854,22 @@ class RawTransformer(RawObject):
         # yeah, self.NOMV1 and self.NOMV2 may be zero....
         NOMV1 = self.NOMV1 if self.NOMV1 > 0 else v_bus_i
         NOMV2 = self.NOMV2 if self.NOMV2 > 0 else v_bus_j
-        z_base_winding = (NOMV1 * NOMV1) / self.SBASE1_2
-        z_base_sys = (v_bus_i * v_bus_i) / Sbase
+        if NOMV1 <= 0.0:
+            NOMV1 = 1.0
+        if NOMV2 <= 0.0:
+            NOMV2 = NOMV1
+
+        winding_base_power = self.SBASE1_2 if self.SBASE1_2 > 0.0 else Sbase
+        if winding_base_power <= 0.0:
+            winding_base_power = 100.0
+
+        bus_i_base_voltage = v_bus_i if v_bus_i > 0.0 else NOMV1
+        bus_j_base_voltage = v_bus_j if v_bus_j > 0.0 else NOMV2
+
+        system_base_power = Sbase if Sbase > 0.0 else 100.0
+
+        z_base_winding = (NOMV1 * NOMV1) / winding_base_power
+        z_base_sys = (bus_i_base_voltage * bus_i_base_voltage) / system_base_power
 
         'The winding data I/O code defines the units in which the turns ratios '
         'WINDV1, WINDV2 and WINDV3 are specified (the units of RMAn and RMIn are '
@@ -1145,8 +889,8 @@ class RawTransformer(RawObject):
             """
             WINDV1 is the actual Winding 1 voltage in kV; WINDV1 is equal to the base voltage of bus I by default.
             """
-            ti = self.WINDV1 / v_bus_i
-            tj = self.WINDV2 / v_bus_j
+            ti = self.WINDV1 / bus_i_base_voltage
+            tj = self.WINDV2 / bus_j_base_voltage
             tap_module = ti / tj
 
         elif self.CW == 3:
@@ -1190,13 +934,13 @@ class RawTransformer(RawObject):
             """
             # Series impedance
             Pcu = self.R1_2 / 1000.0  # Pcu comes in W from PSSe, we want it in kW
-            Vsc = self.X1_2 * 100  # Vsc comes in p.u. from Psse, we want it in %
+            Vsc = self.X1_2 * 100.0  # Vsc comes in p.u. from Psse, we want it in %
             GR_hv1 = 0.5
-            Sn = self.SBASE1_2
+            Sn = winding_base_power
             HV = max(NOMV1, NOMV2)
             LV = min(NOMV1, NOMV2)
-            VH_bus = max(v_bus_i, v_bus_j)
-            VL_bus = min(v_bus_i, v_bus_j)
+            VH_bus = max(bus_i_base_voltage, bus_j_base_voltage)
+            VL_bus = min(bus_i_base_voltage, bus_j_base_voltage)
 
             zsc = Vsc / 100.0
             rsc = (Pcu / 1000.0) / Sn
@@ -1216,8 +960,8 @@ class RawTransformer(RawObject):
             z_series_lv = zs * (1.0 - GR_hv1) * z_base_lv  # Ohm
 
             # convert impedances from ohms to system per unit
-            z_base_hv_sys = (VH_bus * VH_bus) / Sbase
-            z_base_lv_sys = (VL_bus * VL_bus) / Sbase
+            z_base_hv_sys = (VH_bus * VH_bus) / system_base_power
+            z_base_lv_sys = (VL_bus * VL_bus) / system_base_power
 
             z_series = z_series_hv / z_base_hv_sys + z_series_lv / z_base_lv_sys
 
@@ -1242,13 +986,13 @@ class RawTransformer(RawObject):
             """
             Pfe = self.MAG1 / 1000.0  # Iron losses, AKA magnetic losses (kW) Mag1 comes in W, convert it to kW
             I0 = self.MAG2 * 100  # No-load current (%), comes in p.u. from PSSe
-            Sn = self.SBASE1_2  # Base power MVA
+            Sn = winding_base_power  # Base power MVA
 
             # Shunt impedance (leakage)
             if Pfe > 0.0 and I0 > 0.0:
 
-                rm = Sbase / (Pfe / 1000.0)
-                I0 = I0 * Sn / Sbase
+                rm = system_base_power / (Pfe / 1000.0)
+                I0 = I0 * Sn / system_base_power
                 zm = 1.0 / (I0 / 100.0)
 
                 if zm < rm:  # only with this is possible to perform xm, otherwise we get div0 or sqrt(neg)
@@ -1266,6 +1010,7 @@ class RawTransformer(RawObject):
         else:
             raise Exception("Invalid value of CM")
 
+        # NOTE: ANG1 seems to be related to the vector group and not the tap angle...
         tap_angle = np.deg2rad(self.ANG1)  # ANG2 is ignored for 2W transformers
 
         return r, x, g, b, tap_module, tap_angle

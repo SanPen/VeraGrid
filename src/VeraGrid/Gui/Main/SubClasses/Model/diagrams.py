@@ -14,7 +14,9 @@ from matplotlib import pyplot as plt
 from pandas.plotting import register_matplotlib_converters
 
 import VeraGridEngine.Devices.Diagrams.palettes as palettes
-from VeraGridEngine import ContingencyOperationTypes
+from VeraGridEngine import ContingencyOperationTypes, MapDiagram
+from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
+from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
 from VeraGridEngine.IO.file_system import tiles_path
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.Simulations import PowerFlowResults, ContinuationPowerFlowResults, PowerFlowTimeSeriesResults
@@ -22,12 +24,14 @@ from VeraGridEngine.Simulations.PowerFlow.power_flow_results_3ph import PowerFlo
 from VeraGridEngine.Simulations.StateEstimation.state_estimation_results import StateEstimationResults
 from VeraGridEngine.Utils.progress_bar import print_progress_bar
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.enumerations import SimulationTypes, Colormaps, DeviceType
+from VeraGridEngine.enumerations import (SimulationTypes, Colormaps, DeviceType, MethodShortCircuit,
+                                         SchematicAutoRouteStyle)
 from VeraGridEngine.Devices.Diagrams.schematic_diagram import SchematicDiagram
 
 import VeraGridEngine.Devices as dev
 import VeraGridEngine.Simulations as sim
 import VeraGrid.Gui.gui_functions as gf
+import VeraGrid.Gui.Visualization.visualization as viz
 from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import (SchematicWidget,
                                                                     BusGraphicItem,
                                                                     generate_schematic_diagram,
@@ -42,10 +46,11 @@ from VeraGrid.Gui.Main.SubClasses.Model.compiled_arrays import CompiledArraysMai
 from VeraGrid.Gui.Main.object_select_window import ObjectSelectWindow, ListSelectWindow
 from VeraGrid.Gui.Diagrams.MapWidget.Tiles.TileProviders.cartodb import CartoDbTiles
 from VeraGrid.Gui.object_proxy_model import ObjectModelFilterProxy
-from VeraGrid.Gui.rms_events_editor_dialog import RmsEventDialogue
+from VeraGrid.Gui.rms_events_editor_dialog import RmsEventDialogue, RmsEventsGroupsDialog
 from VeraGrid.Gui.Diagrams.MapWidget.Substation.substation_graphic_item import SubstationGraphicItem
-from VeraGrid.Gui.general_dialogues import (CheckListDialogue, StartEndSelectionDialogue, InputSearchDialogue,
-                                            InputNumberDialogue, LogsDialogue, ShortCircuitSelector)
+from VeraGrid.Gui.ShortCircuitEditor.short_circuit_selector import ShortCircuitSelector
+from VeraGrid.Gui.general_dialogues import (CheckListDialogue, StartEndSelectionDialogue,
+                                            InputNumberDialogue, LogsDialogue)
 
 ALL_EDITORS = Union[SchematicWidget, GridMapWidget, BaseDiagramWidget]
 ALL_EDITORS_NONE = Union[None, SchematicWidget, GridMapWidget]
@@ -177,6 +182,7 @@ class DiagramsMain(CompiledArraysMain):
 
         # Automatic layout modes
         self.layout_algorithms_dict = dict()
+        self.layout_algorithms_dict['power_system_layout'] = nx.spring_layout
         self.layout_algorithms_dict['circular_layout'] = nx.circular_layout
         self.layout_algorithms_dict['random_layout'] = nx.random_layout
         self.layout_algorithms_dict['shell_layout'] = nx.shell_layout
@@ -191,7 +197,7 @@ class DiagramsMain(CompiledArraysMain):
 
         mdl = gf.get_list_model(list(self.layout_algorithms_dict.keys()))
         self.ui.automatic_layout_comboBox.setModel(mdl)
-        self.ui.automatic_layout_comboBox.setCurrentIndex(6)
+        self.ui.automatic_layout_comboBox.setCurrentText('power_system_layout')
 
         # list of steps in the schematic
         self.schematic_list_steps = list()
@@ -211,7 +217,7 @@ class DiagramsMain(CompiledArraysMain):
         # task watcher for video export
         self.video_thread: VideoExportWorker | None = None
 
-        self.sc_selector_dialogue: ShortCircuitSelector | None = None
+        self.sc_selector_dialogue: ShortCircuitSelector = ShortCircuitSelector()
 
         # --------------------------------------------------------------------------------------------------------------
         self.ui.actionTakePicture.triggered.connect(self.take_picture)
@@ -251,6 +257,9 @@ class DiagramsMain(CompiledArraysMain):
         self.ui.actionReset_coordinates.triggered.connect(self.reset_diagram_coordinates)
         self.ui.actionRotate.triggered.connect(self.rotate)
         self.ui.actionClear_highlights.triggered.connect(self.clear_big_bus_markers)
+
+        self.ui.actionSetReticularBranchStyles.triggered.connect(self.set_diagram_branches_reticular_style)
+        self.ui.actionSetStraightBranchStyles.triggered.connect(self.set_diagram_branches_straight_style)
 
         # Buttons
         self.ui.colour_results_pushButton.clicked.connect(self.colour_diagrams)
@@ -500,7 +509,7 @@ class DiagramsMain(CompiledArraysMain):
             self.show_error_toast("There are no time series :/")
 
     def pf_colouring(self, diagram_widget: ALL_EDITORS,
-                     results: PowerFlowResults | PowerFlowResults3Ph,
+                     results: PowerFlowResults,
                      cmap: Colormaps,
                      use_flow_based_width: bool = False,
                      min_branch_width: int = 2,
@@ -524,89 +533,112 @@ class DiagramsMain(CompiledArraysMain):
         hvdc_active = self.circuit.get_hvdc_actives(t_idx=None)
         vsc_active = self.circuit.get_vsc_actives(t_idx=None)
 
-        if results.is_3ph:
-            return diagram_widget.colour_results_3ph(
-                SbusA=results.Sbus_A,
-                SbusB=results.Sbus_B,
-                SbusC=results.Sbus_C,
-                voltagesA=results.voltage_A,
-                voltagesB=results.voltage_B,
-                voltagesC=results.voltage_C,
-                bus_active=bus_active,
-                types=results.bus_types,
-                SfA=results.Sf_A,
-                SfB=results.Sf_B,
-                SfC=results.Sf_C,
-                StA=results.St_A,
-                StB=results.St_B,
-                StC=results.St_C,
-                loadingsA=results.loading_A,
-                loadingsB=results.loading_B,
-                loadingsC=results.loading_C,
-                lossesA=results.losses_A,
-                lossesB=results.losses_B,
-                lossesC=results.losses_C,
-                br_active=br_active,
-                ma=results.tap_module,
-                tau=results.tap_angle,
-                hvdc_PfA=results.Pf_hvdc_A,
-                hvdc_PfB=results.Pf_hvdc_B,
-                hvdc_PfC=results.Pf_hvdc_C,
-                hvdc_PtA=results.Pt_hvdc_A,
-                hvdc_PtB=results.Pt_hvdc_B,
-                hvdc_PtC=results.Pt_hvdc_C,
-                hvdc_losses=results.losses_hvdc,
-                hvdc_loading=results.loading_hvdc,
-                hvdc_active=hvdc_active,
-                vsc_Pf=results.Pfp_vsc,
-                vsc_PtA=results.St_vsc_A.real,
-                vsc_PtB=results.St_vsc_B.real,
-                vsc_PtC=results.St_vsc_C.real,
-                vsc_QtA=results.St_vsc_A.imag,
-                vsc_QtB=results.St_vsc_B.imag,
-                vsc_QtC=results.St_vsc_C.imag,
-                vsc_losses=results.losses_vsc,
-                vsc_loading=results.loading_vsc,
-                vsc_active=vsc_active,
-                loading_label='loading',
-                use_flow_based_width=use_flow_based_width,
-                min_branch_width=min_branch_width,
-                max_branch_width=max_branch_width,
-                min_bus_width=min_bus_width,
-                max_bus_width=max_bus_width,
-                cmap=cmap)
-        else:
+        return diagram_widget.colour_results(
+            Sbus=results.Sbus,
+            bus_active=bus_active,
+            Sf=results.Sf,
+            St=results.St,
+            voltages=results.voltage,
+            loadings=np.abs(results.loading),
+            types=results.bus_types,
+            losses=results.losses,
+            br_active=br_active,
+            hvdc_Pf=results.Pf_hvdc,
+            hvdc_Pt=results.Pt_hvdc,
+            hvdc_losses=results.losses_hvdc,
+            hvdc_loading=results.loading_hvdc,
+            hvdc_active=hvdc_active,
+            vsc_Pf=results.Pfp_vsc,
+            vsc_Pt=results.St_vsc.real,
+            vsc_Qt=results.St_vsc.imag,
+            vsc_losses=results.losses_vsc,
+            vsc_loading=results.loading_vsc,
+            vsc_active=vsc_active,
+            ma=results.tap_module,
+            tau=results.tap_angle,
+            use_flow_based_width=use_flow_based_width,
+            min_branch_width=min_branch_width,
+            max_branch_width=max_branch_width,
+            min_bus_width=min_bus_width,
+            max_bus_width=max_bus_width,
+            cmap=cmap
+        )
 
-            return diagram_widget.colour_results(
-                Sbus=results.Sbus,
-                bus_active=bus_active,
-                Sf=results.Sf,
-                St=results.St,
-                voltages=results.voltage,
-                loadings=np.abs(results.loading),
-                types=results.bus_types,
-                losses=results.losses,
-                br_active=br_active,
-                hvdc_Pf=results.Pf_hvdc,
-                hvdc_Pt=results.Pt_hvdc,
-                hvdc_losses=results.losses_hvdc,
-                hvdc_loading=results.loading_hvdc,
-                hvdc_active=hvdc_active,
-                vsc_Pf=results.Pfp_vsc,
-                vsc_Pt=results.St_vsc.real,
-                vsc_Qt=results.St_vsc.imag,
-                vsc_losses=results.losses_vsc,
-                vsc_loading=results.loading_vsc,
-                vsc_active=vsc_active,
-                ma=results.tap_module,
-                tau=results.tap_angle,
-                use_flow_based_width=use_flow_based_width,
-                min_branch_width=min_branch_width,
-                max_branch_width=max_branch_width,
-                min_bus_width=min_bus_width,
-                max_bus_width=max_bus_width,
-                cmap=cmap
-            )
+    def pf_3ph_colouring(self, diagram_widget: ALL_EDITORS,
+                         results: PowerFlowResults3Ph,
+                         cmap: Colormaps,
+                         use_flow_based_width: bool = False,
+                         min_branch_width: int = 2,
+                         max_branch_width: int = 5,
+                         min_bus_width: int = 2,
+                         max_bus_width: int = 5):
+        """
+
+        :param diagram_widget:
+        :param results:
+        :param cmap:
+        :param use_flow_based_width:
+        :param min_branch_width:
+        :param max_branch_width:
+        :param min_bus_width:
+        :param max_bus_width:
+        :return:
+        """
+        bus_active = self.circuit.get_bus_actives(t_idx=None)
+        br_active = self.circuit.get_branch_actives(t_idx=None, add_vsc=False, add_hvdc=False, add_switch=True)
+        hvdc_active = self.circuit.get_hvdc_actives(t_idx=None)
+        vsc_active = self.circuit.get_vsc_actives(t_idx=None)
+
+        return diagram_widget.colour_results_3ph(
+            SbusA=results.Sbus_A,
+            SbusB=results.Sbus_B,
+            SbusC=results.Sbus_C,
+            voltagesA=results.voltage_A,
+            voltagesB=results.voltage_B,
+            voltagesC=results.voltage_C,
+            bus_active=bus_active,
+            types=results.bus_types,
+            SfA=results.Sf_A,
+            SfB=results.Sf_B,
+            SfC=results.Sf_C,
+            StA=results.St_A,
+            StB=results.St_B,
+            StC=results.St_C,
+            loadingsA=results.loading_A,
+            loadingsB=results.loading_B,
+            loadingsC=results.loading_C,
+            lossesA=results.losses_A,
+            lossesB=results.losses_B,
+            lossesC=results.losses_C,
+            br_active=br_active,
+            ma=results.tap_module,
+            tau=results.tap_angle,
+            hvdc_PfA=results.Pf_hvdc_A,
+            hvdc_PfB=results.Pf_hvdc_B,
+            hvdc_PfC=results.Pf_hvdc_C,
+            hvdc_PtA=results.Pt_hvdc_A,
+            hvdc_PtB=results.Pt_hvdc_B,
+            hvdc_PtC=results.Pt_hvdc_C,
+            hvdc_losses=results.losses_hvdc,
+            hvdc_loading=results.loading_hvdc,
+            hvdc_active=hvdc_active,
+            vsc_Pf=results.Pfp_vsc,
+            vsc_PtA=results.St_vsc_A.real,
+            vsc_PtB=results.St_vsc_B.real,
+            vsc_PtC=results.St_vsc_C.real,
+            vsc_QtA=results.St_vsc_A.imag,
+            vsc_QtB=results.St_vsc_B.imag,
+            vsc_QtC=results.St_vsc_C.imag,
+            vsc_losses=results.losses_vsc,
+            vsc_loading=results.loading_vsc,
+            vsc_active=vsc_active,
+            loading_label='loading',
+            use_flow_based_width=use_flow_based_width,
+            min_branch_width=min_branch_width,
+            max_branch_width=max_branch_width,
+            min_bus_width=min_bus_width,
+            max_bus_width=max_bus_width,
+            cmap=cmap)
 
     def se_colouring(self, diagram_widget: ALL_EDITORS,
                      results: StateEstimationResults,
@@ -648,7 +680,7 @@ class DiagramsMain(CompiledArraysMain):
             hvdc_losses=results.losses_hvdc,
             hvdc_loading=results.loading_hvdc,
             hvdc_active=hvdc_active,
-            vsc_Pf=results.Pfp_vsc,
+            vsc_Pf=results.Pf_vsc,
             vsc_Pt=results.St_vsc.real,
             vsc_Qt=results.St_vsc.imag,
             vsc_losses=results.losses_vsc,
@@ -801,7 +833,8 @@ class DiagramsMain(CompiledArraysMain):
                                              cmap=cmap)
 
     def sc_colouring(self, diagram_widget: ALL_EDITORS,
-                     results: sim.ShortCircuitResults, cmap: Colormaps,
+                     results: sim.ShortCircuitResults,
+                     cmap: Colormaps,
                      use_flow_based_width: bool = False,
                      min_branch_width: int = 2,
                      max_branch_width: int = 5,
@@ -825,32 +858,84 @@ class DiagramsMain(CompiledArraysMain):
         br_active = self.circuit.get_branch_actives(t_idx=None, add_vsc=False, add_hvdc=False, add_switch=True)
         hvdc_active = self.circuit.get_hvdc_actives(t_idx=None)
         vsc_active = self.circuit.get_vsc_actives(t_idx=None)
+        method = self.circuit.short_circuit_event[sc_index].method
 
-        return diagram_widget.colour_results(Sbus=results.Sbus1[:, sc_index],
-                                             bus_active=bus_active,
-                                             Sf=results.Sf1[:, sc_index],
-                                             St=results.St1[:, sc_index],
-                                             voltages=results.voltage1[:, sc_index],
-                                             types=results.bus_types,
-                                             loadings=results.loading1[:, sc_index],
-                                             br_active=br_active,
-                                             hvdc_Pf=None,
-                                             hvdc_Pt=None,
-                                             hvdc_losses=None,
-                                             hvdc_loading=None,
-                                             hvdc_active=hvdc_active,
-                                             vsc_Pf=results.vsc_Pfp[:, sc_index],
-                                             vsc_Pt=results.vsc_St.real[:, sc_index],
-                                             vsc_Qt=results.vsc_St.imag[:, sc_index],
-                                             vsc_losses=results.vsc_losses[:, sc_index],
-                                             vsc_loading=results.vsc_loading[:, sc_index],
-                                             vsc_active=vsc_active,
-                                             use_flow_based_width=use_flow_based_width,
-                                             min_branch_width=min_branch_width,
-                                             max_branch_width=max_branch_width,
-                                             min_bus_width=min_bus_width,
-                                             max_bus_width=max_bus_width,
-                                             cmap=cmap)
+        if method == MethodShortCircuit.phases:
+            return diagram_widget.colour_results_3ph(
+                SbusA=results.SbusA[:, sc_index],
+                SbusB=results.SbusB[:, sc_index],
+                SbusC=results.SbusC[:, sc_index],
+                bus_active=bus_active,
+                SfA=results.SfA[:, sc_index],
+                SfB=results.SfB[:, sc_index],
+                SfC=results.SfC[:, sc_index],
+                StA=results.StA[:, sc_index],
+                StB=results.StB[:, sc_index],
+                StC=results.StC[:, sc_index],
+                voltagesA=results.voltageA[:, sc_index],
+                voltagesB=results.voltageB[:, sc_index],
+                voltagesC=results.voltageC[:, sc_index],
+                types=results.bus_types,
+                loadingsA=results.loadingA[:, sc_index],
+                loadingsB=results.loadingB[:, sc_index],
+                loadingsC=results.loadingC[:, sc_index],
+                lossesA=results.lossesA[:, sc_index],
+                lossesB=results.lossesB[:, sc_index],
+                lossesC=results.lossesC[:, sc_index],
+                br_active=br_active,
+                hvdc_PfA=results.hvdc_Pf[:, sc_index],
+                hvdc_PfB=results.hvdc_Pf[:, sc_index],
+                hvdc_PfC=results.hvdc_Pf[:, sc_index],
+                hvdc_PtA=results.hvdc_Pt[:, sc_index],
+                hvdc_PtB=results.hvdc_Pt[:, sc_index],
+                hvdc_PtC=results.hvdc_Pt[:, sc_index],
+                hvdc_losses=results.hvdc_losses[:, sc_index],
+                hvdc_loading=results.hvdc_loading[:, sc_index],
+                hvdc_active=hvdc_active,
+                vsc_Pf=results.vsc_Pfp[:, sc_index],
+                vsc_PtA=results.vsc_St.real[:, sc_index],
+                vsc_PtB=results.vsc_St.real[:, sc_index],
+                vsc_PtC=results.vsc_St.real[:, sc_index],
+                vsc_QtA=results.vsc_St.imag[:, sc_index],
+                vsc_QtB=results.vsc_St.imag[:, sc_index],
+                vsc_QtC=results.vsc_St.imag[:, sc_index],
+                vsc_losses=results.vsc_losses[:, sc_index],
+                vsc_loading=results.vsc_loading[:, sc_index],
+                vsc_active=vsc_active,
+                use_flow_based_width=use_flow_based_width,
+                min_branch_width=min_branch_width,
+                max_branch_width=max_branch_width,
+                min_bus_width=min_bus_width,
+                max_bus_width=max_bus_width,
+                cmap=cmap,
+            )
+
+        else:
+            return diagram_widget.colour_results(Sbus=results.Sbus1[:, sc_index],
+                                                 bus_active=bus_active,
+                                                 Sf=results.Sf1[:, sc_index],
+                                                 St=results.St1[:, sc_index],
+                                                 voltages=results.voltage1[:, sc_index],
+                                                 types=results.bus_types,
+                                                 loadings=results.loading1[:, sc_index],
+                                                 br_active=br_active,
+                                                 hvdc_Pf=None,
+                                                 hvdc_Pt=None,
+                                                 hvdc_losses=None,
+                                                 hvdc_loading=None,
+                                                 hvdc_active=hvdc_active,
+                                                 vsc_Pf=results.vsc_Pfp[:, sc_index],
+                                                 vsc_Pt=results.vsc_St.real[:, sc_index],
+                                                 vsc_Qt=results.vsc_St.imag[:, sc_index],
+                                                 vsc_losses=results.vsc_losses[:, sc_index],
+                                                 vsc_loading=results.vsc_loading[:, sc_index],
+                                                 vsc_active=vsc_active,
+                                                 use_flow_based_width=use_flow_based_width,
+                                                 min_branch_width=min_branch_width,
+                                                 max_branch_width=max_branch_width,
+                                                 min_bus_width=min_bus_width,
+                                                 max_bus_width=max_bus_width,
+                                                 cmap=cmap)
 
     def opf_colouring(self, diagram_widget: ALL_EDITORS,
                       results: sim.OptimalPowerFlowResults, cmap: Colormaps,
@@ -1277,6 +1362,28 @@ class DiagramsMain(CompiledArraysMain):
                                              max_bus_width=max_bus_width,
                                              cmap=cmap)
 
+    def node_group_colouring(self,
+                             results: sim.NodeGroupsResults,
+                             diagram_widget: ALL_EDITORS):
+        """
+
+        :param results:
+        :param diagram_widget:
+        :return:
+        """
+        colours = viz.get_n_colours(n=len(results.groups_by_index))
+
+        bus_graphics_dict = diagram_widget.graphics_manager.get_device_type_dict(DeviceType.BusDevice)
+        for c, group in enumerate(results.groups_by_index):
+            for i in group:
+                bus = self.circuit.buses[i]
+                bus_graphic: BusGraphicItem = bus_graphics_dict.get(bus.idtag, None)
+                if bus_graphic is not None:
+                    r, g, b, a = colours[c]
+                    color = QtGui.QColor(r * 255, g * 255, b * 255, a * 255)
+                    bus_graphic.set_tile_color(brush=color)
+                    bus_graphic.setToolTip('Group ' + str(c))
+
     def default_colouring(self, t_idx: int | None,
                           diagram_widget: ALL_EDITORS,
                           cmap: Colormaps,
@@ -1362,6 +1469,22 @@ class DiagramsMain(CompiledArraysMain):
                                   max_branch_width=max_branch_width,
                                   min_bus_width=min_bus_width,
                                   max_bus_width=max_bus_width)
+
+            else:
+                if allow_popups:
+                    self.show_warning_toast(f"{current_study} only has values for the snapshot")
+
+        elif current_study == sim.PowerFlowDriver3Ph.tpe.value:
+            if t_idx is None:
+                results: sim.PowerFlowResults3Ph = self.session.get_results(SimulationTypes.PowerFlow3ph_run)
+                self.pf_3ph_colouring(diagram_widget=diagram_widget,
+                                      results=results,
+                                      cmap=cmap,
+                                      use_flow_based_width=use_flow_based_width,
+                                      min_branch_width=min_branch_width,
+                                      max_branch_width=max_branch_width,
+                                      min_bus_width=min_bus_width,
+                                      max_bus_width=max_bus_width)
 
             else:
                 if allow_popups:
@@ -1641,6 +1764,17 @@ class DiagramsMain(CompiledArraysMain):
                                    min_bus_width=min_bus_width,
                                    max_bus_width=max_bus_width)
 
+        elif current_study == SimulationTypes.NodeGrouping_run.value:
+            if t_idx is None:
+                results: sim.OptimalNetTransferCapacityResults = self.session.get_results(
+                    SimulationTypes.NodeGrouping_run
+                )
+                self.node_group_colouring(diagram_widget=diagram_widget,
+                                          results=results)
+            else:
+                if allow_popups:
+                    self.show_warning_toast(f"{current_study} only has values for the snapshot")
+
         elif current_study == 'Transient stability':
             raise Exception('Not implemented :(')
 
@@ -1712,11 +1846,12 @@ class DiagramsMain(CompiledArraysMain):
         """
         diagram = SchematicDiagram(name=name)
 
-        diagram_widget = SchematicWidget(gui=self,
-                                         circuit=self.circuit,
-                                         diagram=diagram,
-                                         default_bus_voltage=self.ui.defaultBusVoltageSpinBox.value(),
-                                         time_index=self.get_diagram_slider_index())
+        diagram_widget = SchematicWidget(
+            gui=self,
+            diagram=diagram,
+            default_bus_voltage=self.ui.defaultBusVoltageSpinBox.value(),
+            time_index=self.get_diagram_slider_index()
+        )
 
         diagram_widget.setStretchFactor(1, 10)
         diagram_widget.center_nodes()
@@ -1741,6 +1876,7 @@ class DiagramsMain(CompiledArraysMain):
                                                      dc_lines=self.circuit.get_dc_lines(),
                                                      transformers2w=self.circuit.get_transformers2w(),
                                                      transformers3w=self.circuit.get_transformers3w(),
+                                                     transformers_nw=self.circuit.get_transformers_nw(),
                                                      windings=self.circuit.get_windings(),
                                                      hvdc_lines=self.circuit.get_hvdc(),
                                                      vsc_devices=self.circuit.get_vsc(),
@@ -1753,7 +1889,7 @@ class DiagramsMain(CompiledArraysMain):
                                                      prog_func=None,
                                                      text_func=None)
 
-                diagram_widget.set_data(circuit=self.circuit, diagram=diagram)
+                diagram_widget.set_data(diagram=diagram)
 
             elif isinstance(diagram_widget, GridMapWidget):
                 diagram_widget.update_device_sizes(asynchronously=False)
@@ -1778,6 +1914,7 @@ class DiagramsMain(CompiledArraysMain):
                                              dc_lines=self.circuit.get_dc_lines(),
                                              transformers2w=self.circuit.get_transformers2w(),
                                              transformers3w=self.circuit.get_transformers3w(),
+                                             transformers_nw=self.circuit.get_transformers_nw(),
                                              windings=self.circuit.get_windings(),
                                              hvdc_lines=self.circuit.get_hvdc(),
                                              vsc_devices=self.circuit.get_vsc(),
@@ -1791,11 +1928,12 @@ class DiagramsMain(CompiledArraysMain):
                                              text_func=None,
                                              name=name)
 
-        diagram_widget = SchematicWidget(gui=self,
-                                         circuit=self.circuit,
-                                         diagram=diagram,
-                                         default_bus_voltage=self.ui.defaultBusVoltageSpinBox.value(),
-                                         time_index=self.get_diagram_slider_index())
+        diagram_widget = SchematicWidget(
+            gui=self,
+            diagram=diagram,
+            default_bus_voltage=self.ui.defaultBusVoltageSpinBox.value(),
+            time_index=self.get_diagram_slider_index()
+        )
 
         diagram_widget.setStretchFactor(1, 10)
         diagram_widget.center_nodes()
@@ -1822,11 +1960,12 @@ class DiagramsMain(CompiledArraysMain):
             if isinstance(widget, SchematicWidget):
                 diagram = widget.create_schematic_from_selection()
 
-                widget = SchematicWidget(gui=self,
-                                         circuit=self.circuit,
-                                         diagram=diagram,
-                                         default_bus_voltage=self.ui.defaultBusVoltageSpinBox.value(),
-                                         time_index=self.get_diagram_slider_index())
+                widget = SchematicWidget(
+                    gui=self,
+                    diagram=diagram,
+                    default_bus_voltage=self.ui.defaultBusVoltageSpinBox.value(),
+                    time_index=self.get_diagram_slider_index()
+                )
 
                 self.add_diagram_widget_and_diagram(diagram_widget=widget, diagram=diagram)
                 self.set_diagrams_list_view()
@@ -1854,44 +1993,17 @@ class DiagramsMain(CompiledArraysMain):
             if isinstance(sel_obj, dev.Bus):
                 root_bus = sel_obj
 
-            elif isinstance(sel_obj, dev.Generator):
+            elif isinstance(sel_obj, InjectionParent):
                 root_bus = sel_obj.bus
 
-            elif isinstance(sel_obj, dev.Battery):
-                root_bus = sel_obj.bus
-
-            elif isinstance(sel_obj, dev.Load):
-                root_bus = sel_obj.bus
-
-            elif isinstance(sel_obj, dev.Shunt):
-                root_bus = sel_obj.bus
-
-            elif isinstance(sel_obj, dev.Line):
-                root_bus = sel_obj.bus_from
-
-            elif isinstance(sel_obj, dev.Transformer2W):
-                root_bus = sel_obj.bus_from
-
-            elif isinstance(sel_obj, dev.Winding):
+            elif isinstance(sel_obj, BranchParent):
                 root_bus = sel_obj.bus_from
 
             elif isinstance(sel_obj, dev.Transformer3W):
-                root_bus = sel_obj.bus1
+                root_bus = sel_obj.bus0
 
-            elif isinstance(sel_obj, dev.DcLine):
-                root_bus = sel_obj.bus_from
-
-            elif isinstance(sel_obj, dev.HvdcLine):
-                root_bus = sel_obj.bus_from
-
-            elif isinstance(sel_obj, dev.VSC):
-                root_bus = sel_obj.bus_from
-
-            elif isinstance(sel_obj, dev.UPFC):
-                root_bus = sel_obj.bus_from
-
-            elif isinstance(sel_obj, dev.Switch):
-                root_bus = sel_obj.bus_from
+            elif isinstance(sel_obj, dev.TransformerNW):
+                root_bus = sel_obj.bus0
 
             elif isinstance(sel_obj, dev.VoltageLevel):
                 root_bus = None
@@ -1920,11 +2032,12 @@ class DiagramsMain(CompiledArraysMain):
                                                     root_bus=root_bus,
                                                     max_level=dlg.value)
 
-                    diagram_widget = SchematicWidget(gui=self,
-                                                     circuit=self.circuit,
-                                                     diagram=diagram,
-                                                     default_bus_voltage=self.ui.defaultBusVoltageSpinBox.value(),
-                                                     time_index=self.get_diagram_slider_index())
+                    diagram_widget = SchematicWidget(
+                        gui=self,
+                        diagram=diagram,
+                        default_bus_voltage=self.ui.defaultBusVoltageSpinBox.value(),
+                        time_index=self.get_diagram_slider_index()
+                    )
 
                     self.add_diagram_widget_and_diagram(diagram_widget=diagram_widget,
                                                         diagram=diagram)
@@ -1950,11 +2063,12 @@ class DiagramsMain(CompiledArraysMain):
                                             root_bus=root_bus,
                                             max_level=dlg.value)
 
-            diagram_widget = SchematicWidget(gui=self,
-                                             circuit=self.circuit,
-                                             diagram=diagram,
-                                             default_bus_voltage=self.ui.defaultBusVoltageSpinBox.value(),
-                                             time_index=self.get_diagram_slider_index())
+            diagram_widget = SchematicWidget(
+                gui=self,
+                diagram=diagram,
+                default_bus_voltage=self.ui.defaultBusVoltageSpinBox.value(),
+                time_index=self.get_diagram_slider_index()
+            )
 
             self.add_diagram_widget_and_diagram(diagram_widget=diagram_widget, diagram=diagram)
             self.set_diagrams_list_view()
@@ -1978,11 +2092,12 @@ class DiagramsMain(CompiledArraysMain):
                                               buses=selected_buses,
                                               name=substations[0].name + " diagram")
 
-            diagram_widget = SchematicWidget(gui=self,
-                                             circuit=self.circuit,
-                                             diagram=diagram,
-                                             default_bus_voltage=self.ui.defaultBusVoltageSpinBox.value(),
-                                             time_index=self.get_diagram_slider_index())
+            diagram_widget = SchematicWidget(
+                gui=self,
+                diagram=diagram,
+                default_bus_voltage=self.ui.defaultBusVoltageSpinBox.value(),
+                time_index=self.get_diagram_slider_index()
+            )
 
             self.add_diagram_widget_and_diagram(diagram_widget=diagram_widget,
                                                 diagram=diagram)
@@ -2038,11 +2153,12 @@ class DiagramsMain(CompiledArraysMain):
         for diagram in self.circuit.diagrams:
 
             if isinstance(diagram, dev.SchematicDiagram):
-                diagram_widget = SchematicWidget(gui=self,
-                                                 circuit=self.circuit,
-                                                 diagram=diagram,
-                                                 default_bus_voltage=self.ui.defaultBusVoltageSpinBox.value(),
-                                                 time_index=self.get_diagram_slider_index())
+                diagram_widget = SchematicWidget(
+                    gui=self,
+                    diagram=diagram,
+                    default_bus_voltage=self.ui.defaultBusVoltageSpinBox.value(),
+                    time_index=self.get_diagram_slider_index()
+                )
 
                 diagram_widget.setStretchFactor(1, 10)
                 diagram_widget.center_nodes()
@@ -2061,7 +2177,6 @@ class DiagramsMain(CompiledArraysMain):
                     longitude=diagram.longitude,
                     latitude=diagram.latitude,
                     name=diagram.name,
-                    circuit=self.circuit,
                     diagram=diagram
                 )
 
@@ -2094,52 +2209,58 @@ class DiagramsMain(CompiledArraysMain):
             DeviceType.ExternalGridDevice
         ]
 
-        self.new_se_dlg = CheckListDialogue(
-            objects_list=[e.value for e in tpes]
-        )
-
-        if self.circuit.get_substation_number() > 0:
-            # showing this menu only makes sense if there is anything there
-            self.new_se_dlg.exec()
-        else:
-            self.show_warning_toast("No substations to draw...")
-            return
-
-        # if ok:
         cmap_text = self.ui.palette_comboBox.currentText()
         cmap = self.cmap_dict[cmap_text]
 
-        diagram = generate_map_diagram(
-            substations=self.circuit.get_substations() if self.new_se_dlg.selected(DeviceType.SubstationDevice.value) else list(),
-            voltage_levels=self.circuit.get_voltage_levels() if self.new_se_dlg.selected(DeviceType.SubstationDevice.value) else list(),
-            lines=self.circuit.get_lines() if self.new_se_dlg.selected(DeviceType.LineDevice.value) else list(),
-            dc_lines=self.circuit.get_dc_lines() if self.new_se_dlg.selected(DeviceType.DCLineDevice.value) else list(),
-            hvdc_lines=self.circuit.get_hvdc() if self.new_se_dlg.selected(DeviceType.HVDCLineDevice.value) else list(),
-            fluid_nodes=self.circuit.get_fluid_nodes(),
-            fluid_paths=self.circuit.get_fluid_paths(),
-            external_grids=self.circuit.external_grids if self.new_se_dlg.selected(DeviceType.ExternalGridDevice.value) else list(),
-            static_generators=self.circuit.static_generators if self.new_se_dlg.selected(DeviceType.StaticGeneratorDevice.value) else list(),
-            loads=self.circuit.loads if self.new_se_dlg.selected(DeviceType.LoadDevice.value) else list(),
-            batteries=self.circuit.batteries if self.new_se_dlg.selected(DeviceType.BatteryDevice.value) else list(),
-            generators=self.circuit.generators if self.new_se_dlg.selected(DeviceType.GeneratorDevice.value) else list(),
-            prog_func=None,
-            text_func=None,
-            name='Map diagram',
-            use_flow_based_width=self.ui.branch_width_based_on_flow_checkBox.isChecked(),
-            min_branch_width=self.ui.min_branch_size_spinBox.value(),
-            max_branch_width=self.ui.max_branch_size_spinBox.value(),
-            min_bus_width=self.ui.min_node_size_spinBox.value(),
-            max_bus_width=self.ui.max_node_size_spinBox.value(),
-            arrow_size=self.ui.arrow_size_size_spinBox.value(),
-            palette=cmap,
-            default_bus_voltage=self.ui.defaultBusVoltageSpinBox.value()
-        )
+        if self.circuit.get_substation_number() > 0:
+            # showing this menu only makes sense if there is anything there
+
+            self.new_se_dlg = CheckListDialogue(
+                objects_list=[e.value for e in tpes]
+            )
+
+            self.new_se_dlg.exec()
+
+            diagram = generate_map_diagram(
+                substations=self.circuit.get_substations() if self.new_se_dlg.selected(
+                    DeviceType.SubstationDevice.value) else list(),
+                voltage_levels=self.circuit.get_voltage_levels() if self.new_se_dlg.selected(
+                    DeviceType.SubstationDevice.value) else list(),
+                lines=self.circuit.get_lines() if self.new_se_dlg.selected(DeviceType.LineDevice.value) else list(),
+                dc_lines=self.circuit.get_dc_lines() if self.new_se_dlg.selected(
+                    DeviceType.DCLineDevice.value) else list(),
+                hvdc_lines=self.circuit.get_hvdc() if self.new_se_dlg.selected(
+                    DeviceType.HVDCLineDevice.value) else list(),
+                fluid_nodes=self.circuit.get_fluid_nodes(),
+                fluid_paths=self.circuit.get_fluid_paths(),
+                external_grids=self.circuit.external_grids if self.new_se_dlg.selected(
+                    DeviceType.ExternalGridDevice.value) else list(),
+                static_generators=self.circuit.static_generators if self.new_se_dlg.selected(
+                    DeviceType.StaticGeneratorDevice.value) else list(),
+                loads=self.circuit.loads if self.new_se_dlg.selected(DeviceType.LoadDevice.value) else list(),
+                batteries=self.circuit.batteries if self.new_se_dlg.selected(
+                    DeviceType.BatteryDevice.value) else list(),
+                generators=self.circuit.generators if self.new_se_dlg.selected(
+                    DeviceType.GeneratorDevice.value) else list(),
+                prog_func=None,
+                text_func=None,
+                name='Map diagram',
+                use_flow_based_width=self.ui.branch_width_based_on_flow_checkBox.isChecked(),
+                min_branch_width=self.ui.min_branch_size_spinBox.value(),
+                max_branch_width=self.ui.max_branch_size_spinBox.value(),
+                min_bus_width=self.ui.min_node_size_spinBox.value(),
+                max_bus_width=self.ui.max_node_size_spinBox.value(),
+                arrow_size=self.ui.arrow_size_size_spinBox.value(),
+                palette=cmap,
+                default_bus_voltage=self.ui.defaultBusVoltageSpinBox.value()
+            )
+        else:
+            # self.show_warning_toast("No substations to draw...")
+            diagram = MapDiagram(name='Map diagram')
 
         # set other default properties of the diagram
         diagram.tile_source = self.ui.tile_provider_comboBox.currentText()
         diagram.start_level = 5
-        # else:
-        # diagram = dev.MapDiagram(name='Map diagram')
 
         # select the tile source
         tile_source = self.tile_name_dict[self.ui.tile_provider_comboBox.currentText()]
@@ -2151,7 +2272,6 @@ class DiagramsMain(CompiledArraysMain):
                                    longitude=diagram.longitude,
                                    latitude=diagram.latitude,
                                    name=diagram.name,
-                                   circuit=self.circuit,
                                    diagram=diagram)
 
         self.add_diagram_widget_and_diagram(diagram_widget=map_widget, diagram=diagram)
@@ -2457,7 +2577,7 @@ class DiagramsMain(CompiledArraysMain):
 
     def set_big_bus_marker_colours(self,
                                    buses: List[dev.Bus],
-                                   colors: Iterable[type(QtGui.QColor)],
+                                   colors: Iterable[QtGui.QColor],
                                    tool_tips: Union[None, List[str]] = None):
         """
         Set a big marker at the selected buses with the matching colours
@@ -2669,34 +2789,46 @@ class DiagramsMain(CompiledArraysMain):
 
             if len(target_devices) == 1:
 
-                group_name = "Rms Event " + str(len(self.circuit.get_rms_events_groups_names()))
                 target_device = target_devices[0]
                 # launch rms event editor dialogue
 
-                target_device_name = target_device.type_name + ": " + target_device.name
-                device_params = [var for var in
-                                 target_device.rms_model.model.event_dict.keys()]  # list of device parameters
-                device_params_str = [var.name for var in device_params]  # list of device parameters
-                rms_events_dialog = RmsEventDialogue(parameters_list=device_params_str,
-                                                     target_device_name=target_device_name)
+                events_groups = self.circuit.rms_events_groups
+                if len(events_groups) == 0:
 
-                if rms_events_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
-                    # create a new events group
-                    group = dev.RmsEventsGroup(idtag=None,
-                                               name='Rms Events Group 1',
-                                               category="single" if len(target_devices) == 1 else "multiple")
-                    self.circuit.add_rms_events_group(group)
+                    QtWidgets.QMessageBox.information(
+                        self,
+                        "No RMS Events Group",
+                        "No Rms Events Group found, please create one before adding an event."
+                    )
 
-                    events_data = rms_events_dialog.get_data()  # data for all the events affecting a device, it is structured in lists of floats for time and value info, and lists of parameters for parameter info
-                    events_list = []
-                    for i, event in enumerate(events_data["parameters"]):
-                        events_list.append(dev.RmsEvent(target_device, device_params[
-                            device_params_str.index(events_data["parameters"][i])],
-                                                        float(events_data["target_times"][i]),
-                                                        float(events_data["values"][i]), group=group))
+                    dialog = RmsEventsGroupsDialog(self)
+                    if dialog.exec():
+                        name = dialog.get_name()
+                        # build group
+                        if name:
+                            self.circuit.add_rms_events_group(dev.RmsEventsGroup(idtag=None,
+                                                                                 name=name))
 
-                    for event in events_list:
-                        self.circuit.add_rms_event(event)
+
+                else:
+                    rms_events_dialog = RmsEventDialogue(circuit=self.circuit,
+                                                         parameters_list=[var for var in
+                                                                          target_device.rms_model.event_dict.keys()],
+                                                         target_device_name=target_device.type_name + ": " + target_device.name)
+
+                    if rms_events_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
+
+                        events_data = rms_events_dialog.get_data()
+                        events_list = []
+                        for i, event in enumerate(events_data["parameters"]):
+                            events_list.append(dev.RmsEvent(device=target_device,
+                                                            parameter=events_data["parameters"][i],
+                                                            time=float(events_data["target_times"][i]),
+                                                            value=float(events_data["values"][i]),
+                                                            group=events_data["groups"][i]))
+
+                        for event in events_list:
+                            self.circuit.add_rms_event(event)
 
             else:
                 raise ValueError(f"Select one and only one device to add event to")
@@ -2713,21 +2845,25 @@ class DiagramsMain(CompiledArraysMain):
 
             if len(selected) > 0:
 
-                self.sc_selector_dialogue = ShortCircuitSelector()
+                self.sc_selector_dialogue: ShortCircuitSelector = ShortCircuitSelector()
                 self.sc_selector_dialogue.exec()
 
                 if self.sc_selector_dialogue.was_accepted:
 
                     for _, bus, _ in selected:
+                        z_pu: complex = self.sc_selector_dialogue.get_impedance_pu(Sbase=self.circuit.Sbase,
+                                                                                   Vbase=bus.Vnom)
                         sc = dev.ShortCircuitEvent(
                             name=f"{bus.name} {self.sc_selector_dialogue.fault.value}",
                             device=bus,
                             fault_type=self.sc_selector_dialogue.fault,
                             method=self.sc_selector_dialogue.method,
-                            phases=self.sc_selector_dialogue.phases
+                            phases=self.sc_selector_dialogue.phases,
+                            r_fault=z_pu.real,
+                            x_fault=z_pu.imag
                         )
 
-                        self.circuit.add_short_circuit_definition(sc)
+                        self.circuit.add_short_circuit_event(sc)
 
                     self.show_info_toast(f"{len(selected)} short circuit events added!")
             else:
@@ -3147,7 +3283,6 @@ class DiagramsMain(CompiledArraysMain):
                 current_study = self.ui.available_results_to_color_comboBox.currentText()
 
                 if current_study == sim.ShortCircuitDriver.tpe.value:
-
                     results: sim.ShortCircuitResults = self.session.get_results(SimulationTypes.ShortCircuit_run)
                     self.sc_colouring(diagram_widget=diagram_widget,
                                       results=results,
@@ -3176,7 +3311,8 @@ class DiagramsMain(CompiledArraysMain):
                                  title="Reset diagram coordinates using the DB")
             if ok:
                 diagram_widget.reset_coordinates()
-                self.show_info_toast(message='Coordinates of substations and linelocations set to its database values.')
+                self.show_info_toast(message='Coordinates of substations and line '
+                                             'locations set to its database values.')
 
     def rotate(self):
         """
@@ -3237,3 +3373,21 @@ class DiagramsMain(CompiledArraysMain):
         self.ui.max_branch_size_spinBox.setValue(0.002)
         self.ui.arrow_size_size_spinBox.setValue(0.0015)
         self.redraw_current_diagram()
+
+    def set_diagram_branches_reticular_style(self):
+        """
+        Set all branches drawing mode to reticular
+        """
+        diagram = self.get_selected_diagram_widget()
+
+        if isinstance(diagram, SchematicWidget):
+            diagram.set_all_branch_drawing_styles(SchematicAutoRouteStyle.RETICULAR)
+
+    def set_diagram_branches_straight_style(self):
+        """
+        Set all branches drawing mode to straight
+        """
+        diagram = self.get_selected_diagram_widget()
+
+        if isinstance(diagram, SchematicWidget):
+            diagram.set_all_branch_drawing_styles(SchematicAutoRouteStyle.STRAIGHT)

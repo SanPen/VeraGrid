@@ -3,13 +3,17 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Union
-from VeraGridEngine.Devices.Parents.editable_device import DeviceType
+from typing import Union, Tuple
+from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
 from VeraGridEngine.Devices.Aggregation.area import GenericAreaGroup, Area
 
 
 class Zone(GenericAreaGroup):
     __slots__ = ('area',)
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key="area", units="", tpe=DeviceType.AreaDevice, definition="Area of this zone."),
+    )
 
     def __init__(self, name='Zone',
                  idtag: Union[str, None] = None,
@@ -35,4 +39,3 @@ class Zone(GenericAreaGroup):
 
         self.area: Union[Area, None] = area
 
-        self.register(key="area", units="", tpe=DeviceType.AreaDevice, definition="Area of this zone.")

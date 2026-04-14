@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF  xmlns:cim="http://iec.ch/TC57/CIM100#" xmlns:dm="http://iec.ch/TC57/61970-552/DifferenceModel/1#" xmlns:eu="http://iec.ch/TC57/CIM100-European#" xmlns:md="http://iec.ch/TC57/61970-552/ModelDescription/1#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <dm:DifferenceModel rdf:about="urn:uuid:52014a99-7471-4361-9cad-4353f08a0efa">
+    <md:Model.created>2021-11-19T23:16:27Z</md:Model.created>
+    <md:Model.scenarioTime>2021-03-25T15:30:00Z</md:Model.scenarioTime>
+    <md:Model.description>CGMES Conformity Assessment Test Configuration. The Test Configuration is owned by ENTSO-E and is provided by ENTSO-E “as it is”. To the fullest extent permitted by law, ENTSO-E shall not be liable for any damages of any kind arising out of the use of the model (including any of its subsequent modifications). ENTSO-E neither warrants, nor represents that the use of the model will not infringe the rights of third parties. Any use of the model shall include a reference to ENTSO-E. ENTSO-E web site is the only official source of information related to the model.</md:Model.description>
+    <md:Model.modelingAuthoritySet>http://entsoe.eu/boundary</md:Model.modelingAuthoritySet>
+    <md:Model.profile>http://iec.ch/TC57/ns/CIM/EquipmentBoundary-EU/3.0</md:Model.profile>
+    <md:Model.version>006</md:Model.version>
+    <md:Model.Supersedes rdf:resource="urn:uuid:536f9bf1-3f8f-a546-87e3-7af2272f29b7" />
+      <dm:reverseDifferences rdf:parseType="Statements">
+      </dm:reverseDifferences>
+      <dm:forwardDifferences rdf:parseType="Statements">
+         <cim:ConnectivityNode rdf:ID="_1c4a9e9c-ef00-42c9-9845-f64f9ca1e57a">
+            <cim:IdentifiedObject.description>HVDC-AC; 220 kV; OHL</cim:IdentifiedObject.description>
+            <cim:IdentifiedObject.name>Border_HVDC-AC</cim:IdentifiedObject.name>
+            <eu:IdentifiedObject.shortName>HVDC-AC-1</eu:IdentifiedObject.shortName>
+            <eu:IdentifiedObject.energyIdentCodeEic>10T-DC-NL-00082X</eu:IdentifiedObject.energyIdentCodeEic>
+            <cim:ConnectivityNode.ConnectivityNodeContainer rdf:resource="#_2e08aa26-2719-4b3e-a0eb-a9bd0ddbcae2"/>
+            <cim:IdentifiedObject.mRID>1c4a9e9c-ef00-42c9-9845-f64f9ca1e57a</cim:IdentifiedObject.mRID>
+         </cim:ConnectivityNode>
+         <eu:BoundaryPoint rdf:ID="_af1d901f-98de-574f-abc3-6c3025e7a686">
+            <cim:IdentifiedObject.name>Border_HVDC-AC</cim:IdentifiedObject.name>
+            <cim:IdentifiedObject.description>HVDC-AC; 220 kV; OHL</cim:IdentifiedObject.description>
+            <eu:IdentifiedObject.shortName>HVDC-AC-1</eu:IdentifiedObject.shortName>
+            <eu:IdentifiedObject.energyIdentCodeEic>10T-DC-NL-00082X</eu:IdentifiedObject.energyIdentCodeEic>
+            <eu:BoundaryPoint.fromEndIsoCode>NL</eu:BoundaryPoint.fromEndIsoCode>
+            <eu:BoundaryPoint.fromEndName>HVDC/NL</eu:BoundaryPoint.fromEndName>
+            <eu:BoundaryPoint.fromEndNameTso>NL</eu:BoundaryPoint.fromEndNameTso>
+            <eu:BoundaryPoint.toEndIsoCode>BE</eu:BoundaryPoint.toEndIsoCode>
+            <eu:BoundaryPoint.toEndName>NL_AC-1</eu:BoundaryPoint.toEndName>
+            <eu:BoundaryPoint.toEndNameTso>NL-HVDC-1</eu:BoundaryPoint.toEndNameTso>
+            <eu:BoundaryPoint.ConnectivityNode rdf:resource="#_1c4a9e9c-ef00-42c9-9845-f64f9ca1e57a"/>
+            <cim:IdentifiedObject.mRID>af1d901f-98de-574f-abc3-6c3025e7a686</cim:IdentifiedObject.mRID>
+            <eu:BoundaryPoint.isDirectCurrent>true</eu:BoundaryPoint.isDirectCurrent>
+            <eu:BoundaryPoint.isExcludedFromAreaInterchange>false</eu:BoundaryPoint.isExcludedFromAreaInterchange>
+         </eu:BoundaryPoint>
+      </dm:forwardDifferences>
+   </dm:DifferenceModel>
+</rdf:RDF>

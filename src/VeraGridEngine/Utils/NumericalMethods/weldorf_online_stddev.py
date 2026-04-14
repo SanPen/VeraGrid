@@ -56,6 +56,15 @@ class WeldorfOnlineStdDevMat:
     """
     Weldorf's algorithm for online computation of the variance
     """
+    __slots__ = (
+        "count",
+        "mean",
+        "M2",
+        "steps",
+        "variance",
+        "sample_variance",
+        "std_dev",
+    )
 
     def __init__(self, nrow: int, ncol: int) -> None:
         """

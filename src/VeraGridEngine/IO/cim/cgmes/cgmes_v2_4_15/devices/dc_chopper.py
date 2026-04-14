@@ -9,6 +9,7 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 
 
 class DCChopper(DCConductingEquipment):
+	__slots__ = ()
 	def __init__(self, rdfid='', tpe='DCChopper'):
 		DCConductingEquipment.__init__(self, rdfid, tpe)
 

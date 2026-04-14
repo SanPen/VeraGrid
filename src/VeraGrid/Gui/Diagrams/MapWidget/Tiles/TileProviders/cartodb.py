@@ -96,7 +96,7 @@ class CartoDbTiles(Tiles):
                            tile_set_version=self.tile_set_version,
                            attribution=self.attribution_string,
                            min_zoom=self.min_level,
-                           max_zoom=self.max_level,
+                           max_zoom=self.max_level + 1,
                            tile_width=self.tile_width,
                            tile_height=self.tile_height
                            )

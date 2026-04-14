@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from uuid import uuid4, UUID
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
@@ -79,6 +79,21 @@ class Base:
     """
     Base
     """
+    __slots__ = (
+        "rdfid",
+        "uuid",
+        "tpe",
+        "class_replacements",
+        "resources",
+        "references_to_me",
+        "missing_references",
+        "declared_properties",
+        "parsed_properties",
+        "boundary_set",
+        "used",
+    )
+    LOCAL_CGMES_PROPERTIES: Tuple[CgmesProperty, ...] = tuple()
+    CLASS_REGISTERED_PROPERTIES: Dict[str, CgmesProperty] = dict()
 
     def __init__(self, rdfid: str, tpe, resources=None, class_replacements=None):
         """
@@ -112,8 +127,19 @@ class Base:
         # dictionary of missing references (those provided but not used)
         self.missing_references = dict()
 
-        # register the CIM properties
-        self.declared_properties: Dict[str, CgmesProperty] = dict()
+        # Register CIM properties at class level once (PSSe-like schema cache behavior).
+        # Each instance shares the same property schema dictionary for its concrete class.
+        cls: type = type(self)
+        if "CLASS_REGISTERED_PROPERTIES" not in cls.__dict__:
+            declared_props: Dict[str, CgmesProperty] = dict()
+            for base_cls in reversed(cls.__mro__):
+                local_props: Tuple[CgmesProperty, ...] | None = getattr(base_cls, "LOCAL_CGMES_PROPERTIES", None)
+                if isinstance(local_props, tuple):
+                    for prop in local_props:
+                        declared_props[prop.property_name] = prop
+            cls.CLASS_REGISTERED_PROPERTIES = declared_props
+
+        self.declared_properties: Dict[str, CgmesProperty] = cls.CLASS_REGISTERED_PROPERTIES
 
         self.parsed_properties = dict()
 
@@ -135,26 +161,94 @@ class Base:
         """
         return len(self.references_to_me) > 0
 
-    def parse_dict(self, data: Dict[str, str], logger: DataLogger):
+    def parse_dict(self, data: Dict[str, str], logger: DataLogger) -> None:
         """
 
         :param data:
         :param logger:
         """
         self.parsed_properties = data
+        declared_properties: Dict[str, CgmesProperty] = self.declared_properties
 
         for prop_name, prop_value in data.items():
-
-            prop = self.declared_properties.get(prop_name, None)
-
+            prop = declared_properties.get(prop_name, None)
             if prop is not None:
-                setattr(self, prop_name, prop_value)
+                try:
+                    self.store_parsed_property_value(prop_name=prop_name, prop_value=prop_value)
+                except AttributeError:
+                    if not self.boundary_set:
+                        logger.add_error("Declared property has no storage in CGMES class",
+                                         device_class=self.tpe,
+                                         device_property=prop_name,
+                                         device=self.rdfid)
             else:
                 if not self.boundary_set:
                     logger.add_error("Missing object property",
                                      device_class=self.tpe,
                                      device_property=prop_name,
                                      device=self.rdfid)
+
+    def store_parsed_property_value(self, prop_name: str, prop_value: object) -> None:
+        """
+        Store one raw parsed property value on a declared attribute slot.
+
+        This method exists for two reasons:
+
+        1. During CGMES import, object materialization is a very hot path. Every
+           parsed property of every parsed object is stored once before later
+           typing and reference resolution happen in ``find_references()``.
+        2. The storage path must stay compatible with fully slotted generated
+           CGMES classes. Unknown properties are filtered before this method is
+           called, so at this point we are writing only to a declared attribute.
+           Using ``object.__setattr__`` keeps that write explicit and avoids the
+           generic ``setattr()`` helper.
+
+        :param prop_name: Declared CGMES property name
+        :param prop_value: Raw parsed XML value
+        :return: Nothing
+        """
+        object.__setattr__(self, prop_name, prop_value)
+
+    def set_declared_property_value(self, prop_name: str, prop_value: object) -> None:
+        """
+        Store one value into a declared CGMES property.
+
+        :param prop_name: Declared property name
+        :param prop_value: Value to store
+        :return: Nothing
+        """
+        try:
+            object.__setattr__(self, prop_name, prop_value)
+        except AttributeError:
+            pass
+
+    def get_declared_property_value(self, prop_name: str) -> object:
+        """
+        Read one declared CGMES property value.
+
+        :param prop_name: Declared property name
+        :return: Stored value
+        """
+        return getattr(self, prop_name)
+
+    def get_declared_property_names(self) -> List[str]:
+        """
+        Get the declared CGMES property names for the concrete class.
+
+        :return: Declared property names
+        """
+        return [prop_name for prop_name in self.declared_properties.keys()]
+
+    def get_declared_property_map(self) -> Dict[str, object]:
+        """
+        Build a dictionary with the declared property values of the object.
+
+        :return: Dictionary of declared property values
+        """
+        property_map: Dict[str, object] = dict()
+        for property_name in self.get_declared_property_names():
+            property_map[property_name] = getattr(self, property_name)
+        return property_map
 
     def __repr__(self):
         return self.rdfid
@@ -199,21 +293,21 @@ class Base:
         :param logger:
         :return:
         """
-        if hasattr(self, attr_name):
+        if attr_name in self.get_declared_property_names():
             if obj.tpe in self.references_to_me:
                 self.references_to_me[obj.tpe].add(obj)
             else:
                 self.references_to_me[obj.tpe] = {obj}
             if attr_name is None:
                 return
-            current_value = getattr(self, attr_name)
+            current_value = self.get_declared_property_value(prop_name=attr_name)
 
             if current_value is None:
-                setattr(self, attr_name, obj)
+                self.set_declared_property_value(prop_name=attr_name, prop_value=obj)
             elif isinstance(current_value, list):
                 current_value.append(obj)
             else:
-                setattr(self, attr_name, [current_value, obj])
+                self.set_declared_property_value(prop_name=attr_name, prop_value=[current_value, obj])
         else:
             logger.add_error("Cannot add reference", device_class=self.tpe, device_property=attr_name)
 
@@ -229,27 +323,9 @@ class Base:
                           out_of_the_standard=False,
                           profiles: List[CgmesProfileType] = ()):
         """
-        Shortcut to add properties
-        :param name: name of the property
-        :param class_type: class type (actual python object)
-        :param multiplier: UnitMultiplier from CIM
-        :param unit: UnitSymbol from CIM
-        :param description: property description
-        :param max_chars: maximum number of characters (only for strings)
-        :param mandatory: is this property mandatory when parsing?
-        :param comment: Extra comments
+        Disabled runtime API. Use class-level LOCAL_CGMES_PROPERTIES declarations.
         """
-        self.declared_properties[name] = CgmesProperty(
-            property_name=name,
-            class_type=class_type,
-            multiplier=multiplier,
-            unit=unit,
-            description=description,
-            max_chars=max_chars,
-            mandatory=mandatory,
-            comment=comment,
-            out_of_the_standard=out_of_the_standard,
-            profiles=profiles)
+        raise RuntimeError("Base.register_property() is disabled. Use class-level LOCAL_CGMES_PROPERTIES.")
 
     def get_properties(self) -> List[CgmesProperty]:
         return [p for name, p in self.declared_properties.items()]
@@ -320,7 +396,7 @@ class Base:
         Get the list of properties of this object
         """
         res = list()
-        for prop_name, value in vars(self).items():
+        for prop_name in self.get_declared_property_names():
             obj = getattr(self, prop_name)
             T = type(obj)
             if T not in [list, dict]:

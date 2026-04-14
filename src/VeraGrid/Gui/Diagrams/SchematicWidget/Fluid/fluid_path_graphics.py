@@ -87,10 +87,10 @@ class FluidPathGraphicItem(LineGraphicTemplateItem):
         # pen.setDashPattern([5, 3, 2, 3])
 
         self.setPen(pen)
-        self.arrow_p_from.set_colour(color, w, style)
-        self.arrow_q_from.set_colour(color, w, style)
-        self.arrow_p_to.set_colour(color, w, style)
-        self.arrow_q_to.set_colour(color, w, style)
+        self.arrow_p_from.set_colour(color)
+        self.arrow_q_from.set_colour(color)
+        self.arrow_p_to.set_colour(color)
+        self.arrow_q_to.set_colour(color)
 
         if self.symbol is not None:
             self.symbol.set_colour(color, w, style)
@@ -138,6 +138,8 @@ class FluidPathGraphicItem(LineGraphicTemplateItem):
                            icon_path=":/Icons/icons/delete3.png",
                            function_ptr=self.delete)
 
+            menu.addSeparator()
+            self.add_auto_route_style_menu(menu=menu)
             menu.addSection('Convert to')
             add_menu_entry(menu=menu,
                            text="Convert to line",

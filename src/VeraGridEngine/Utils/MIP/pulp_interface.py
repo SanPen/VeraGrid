@@ -64,9 +64,10 @@ class PulpLpModel(AbstractLpModel):
     """
     LPModel implementation for PuLP
     """
+    __slots__ = ("model",)
+
     OPTIMAL = pulp.LpStatusOptimal
     INFINITY = 1e20
-    originally_infeasible = False
 
     def __init__(self, solver_type: MIPSolvers):
         """

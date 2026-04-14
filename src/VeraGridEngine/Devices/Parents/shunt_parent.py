@@ -4,16 +4,16 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import Union
+from typing import Union, Tuple
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import BuildStatus, DeviceType, SubObjectType
-from VeraGridEngine.Devices.profile import Profile
+from VeraGridEngine.Devices.Profiles import ProfileFloat
 from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
 from VeraGridEngine.Devices.admittance_matrix import AdmittanceMatrix
-from VeraGridEngine.Devices.Parents.editable_device import get_at
+from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 
 
 class ShuntParent(InjectionParent):
@@ -22,32 +22,46 @@ class ShuntParent(InjectionParent):
     """
 
     __slots__ = (
-        'G',
+        '_G',
         '_G_prof',
-        'B',
+        '_B',
         '_B_prof',
-
-        'G0',
+        '_G0',
         '_G0_prof',
-        'B0',
+        '_B0',
         '_B0_prof',
-
-        'Ga',
+        '_Ga',
         '_Ga_prof',
-        'Ba',
+        '_Ba',
         '_Ba_prof',
-
-        'Gb',
+        '_Gb',
         '_Gb_prof',
-        'Bb',
+        '_Bb',
         '_Bb_prof',
-
-        'Gc',
+        '_Gc',
         '_Gc_prof',
-        'Bc',
+        '_Bc',
         '_Bc_prof',
+        '_ysh',
+    )
 
-        '_ysh'
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='G', units='MW', tpe=float, definition='Active power', profile_name='G_prof'),
+        GCProp(key='G0', units='MW', tpe=float,
+                      definition='Zero sequence active power of the impedance component at V=1.0 p.u.',
+                      profile_name='G0_prof'),
+        GCProp(key='Ga', units='MW', tpe=float, definition='Active power', profile_name='Ga_prof'),
+        GCProp(key='Gb', units='MW', tpe=float, definition='Active power', profile_name='Gb_prof'),
+        GCProp(key='Gc', units='MW', tpe=float, definition='Active power', profile_name='Gc_prof'),
+        GCProp(key='B', units='MVAr', tpe=float, definition='Reactive power', profile_name='B_prof'),
+        GCProp(key='B0', units='MVAr', tpe=float,
+                      definition='Zero sequence reactive power of the impedance component at V=1.0 p.u.',
+                      profile_name='B0_prof'),
+        GCProp(key='Ba', units='MVAr', tpe=float, definition='Reactive power', profile_name='Ba_prof'),
+        GCProp(key='Bb', units='MVAr', tpe=float, definition='Reactive power', profile_name='Bb_prof'),
+        GCProp(key='Bc', units='MVAr', tpe=float, definition='Reactive power', profile_name='Bc_prof'),
+        GCProp('ysh', units="p.u.", tpe=SubObjectType.AdmittanceMatrix,
+                      definition='Shunt admittance matrix of the branch', editable=False, display=False),
     )
 
     def __init__(self,
@@ -114,58 +128,39 @@ class ShuntParent(InjectionParent):
                                  device_type=device_type)
 
         self.G = float(G)
-        self._G_prof = Profile(default_value=self.G, data_type=float)
+        self._G_prof = ProfileFloat(default_value=self.G)
 
         self.B = float(B)
-        self._B_prof = Profile(default_value=self.B, data_type=float)
+        self._B_prof = ProfileFloat(default_value=self.B)
 
         self.G0 = float(G0)
-        self._G0_prof = Profile(default_value=self.G0, data_type=float)
+        self._G0_prof = ProfileFloat(default_value=self.G0)
 
         self.B0 = float(B0)
-        self._B0_prof = Profile(default_value=self.B0, data_type=float)
+        self._B0_prof = ProfileFloat(default_value=self.B0)
 
         self.Ga = float(G1)
-        self._Ga_prof = Profile(default_value=self.Ga, data_type=float)
+        self._Ga_prof = ProfileFloat(default_value=self.Ga)
 
         self.Gb = float(G2)
-        self._Gb_prof = Profile(default_value=self.Gb, data_type=float)
+        self._Gb_prof = ProfileFloat(default_value=self.Gb)
 
         self.Gc = float(G3)
-        self._Gc_prof = Profile(default_value=self.Gc, data_type=float)
+        self._Gc_prof = ProfileFloat(default_value=self.Gc)
 
         self.Ba = float(B1)
-        self._Ba_prof = Profile(default_value=self.Ba, data_type=float)
+        self._Ba_prof = ProfileFloat(default_value=self.Ba)
 
         self.Bb = float(B2)
-        self._Bb_prof = Profile(default_value=self.Bb, data_type=float)
+        self._Bb_prof = ProfileFloat(default_value=self.Bb)
 
         self.Bc = float(B3)
-        self._Bc_prof = Profile(default_value=self.Bc, data_type=float)
+        self._Bc_prof = ProfileFloat(default_value=self.Bc)
 
         self._ysh = AdmittanceMatrix()
 
-        self.register(key='G', units='MW', tpe=float, definition='Active power', profile_name='G_prof')
-        self.register(key='G0', units='MW', tpe=float,
-                      definition='Zero sequence active power of the impedance component at V=1.0 p.u.',
-                      profile_name='G0_prof')
-        self.register(key='Ga', units='MW', tpe=float, definition='Active power', profile_name='Ga_prof')
-        self.register(key='Gb', units='MW', tpe=float, definition='Active power', profile_name='Gb_prof')
-        self.register(key='Gc', units='MW', tpe=float, definition='Active power', profile_name='Gc_prof')
-
-        self.register(key='B', units='MVAr', tpe=float, definition='Reactive power', profile_name='B_prof')
-        self.register(key='B0', units='MVAr', tpe=float,
-                      definition='Zero sequence reactive power of the impedance component at V=1.0 p.u.',
-                      profile_name='B0_prof')
-        self.register(key='Ba', units='MVAr', tpe=float, definition='Reactive power', profile_name='Ba_prof')
-        self.register(key='Bb', units='MVAr', tpe=float, definition='Reactive power', profile_name='Bb_prof')
-        self.register(key='Bc', units='MVAr', tpe=float, definition='Reactive power', profile_name='Bc_prof')
-
-        self.register('ysh', units="p.u.", tpe=SubObjectType.AdmittanceMatrix,
-                      definition='Shunt admittance matrix of the branch', editable=False, display=False)
-
     @property
-    def G_prof(self) -> Profile:
+    def G_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -173,8 +168,8 @@ class ShuntParent(InjectionParent):
         return self._G_prof
 
     @G_prof.setter
-    def G_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def G_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._G_prof = val
         elif isinstance(val, np.ndarray):
             self._G_prof.set(arr=val)
@@ -189,7 +184,7 @@ class ShuntParent(InjectionParent):
         return get_at(self.G, self.G_prof, t)
 
     @property
-    def Ga_prof(self) -> Profile:
+    def Ga_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -197,8 +192,8 @@ class ShuntParent(InjectionParent):
         return self._Ga_prof
 
     @Ga_prof.setter
-    def Ga_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Ga_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Ga_prof = val
         elif isinstance(val, np.ndarray):
             self._Ga_prof.set(arr=val)
@@ -213,7 +208,7 @@ class ShuntParent(InjectionParent):
         return get_at(self.Ga, self.Ga_prof, t)
 
     @property
-    def Gb_prof(self) -> Profile:
+    def Gb_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -221,8 +216,8 @@ class ShuntParent(InjectionParent):
         return self._Gb_prof
 
     @Gb_prof.setter
-    def Gb_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Gb_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Gb_prof = val
         elif isinstance(val, np.ndarray):
             self._Gb_prof.set(arr=val)
@@ -237,7 +232,7 @@ class ShuntParent(InjectionParent):
         return get_at(self.Gb, self.Gb_prof, t)
 
     @property
-    def Gc_prof(self) -> Profile:
+    def Gc_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -245,8 +240,8 @@ class ShuntParent(InjectionParent):
         return self._Gc_prof
 
     @Gc_prof.setter
-    def Gc_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Gc_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Gc_prof = val
         elif isinstance(val, np.ndarray):
             self._Gc_prof.set(arr=val)
@@ -261,7 +256,7 @@ class ShuntParent(InjectionParent):
         return get_at(self.Gc, self.Gc_prof, t)
 
     @property
-    def B_prof(self) -> Profile:
+    def B_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -269,8 +264,8 @@ class ShuntParent(InjectionParent):
         return self._B_prof
 
     @B_prof.setter
-    def B_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def B_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._B_prof = val
         elif isinstance(val, np.ndarray):
             self._B_prof.set(arr=val)
@@ -285,7 +280,7 @@ class ShuntParent(InjectionParent):
         return get_at(self.B, self.B_prof, t)
 
     @property
-    def Ba_prof(self) -> Profile:
+    def Ba_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -293,8 +288,8 @@ class ShuntParent(InjectionParent):
         return self._Ba_prof
 
     @Ba_prof.setter
-    def Ba_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Ba_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Ba_prof = val
         elif isinstance(val, np.ndarray):
             self._Ba_prof.set(arr=val)
@@ -309,7 +304,7 @@ class ShuntParent(InjectionParent):
         return get_at(self.Ba, self.Ba_prof, t)
 
     @property
-    def Bb_prof(self) -> Profile:
+    def Bb_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -317,8 +312,8 @@ class ShuntParent(InjectionParent):
         return self._Bb_prof
 
     @Bb_prof.setter
-    def Bb_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Bb_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Bb_prof = val
         elif isinstance(val, np.ndarray):
             self._Bb_prof.set(arr=val)
@@ -333,7 +328,7 @@ class ShuntParent(InjectionParent):
         return get_at(self.Bb, self.Bb_prof, t)
 
     @property
-    def Bc_prof(self) -> Profile:
+    def Bc_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -341,8 +336,8 @@ class ShuntParent(InjectionParent):
         return self._Bc_prof
 
     @Bc_prof.setter
-    def Bc_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Bc_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Bc_prof = val
         elif isinstance(val, np.ndarray):
             self._Bc_prof.set(arr=val)
@@ -357,7 +352,7 @@ class ShuntParent(InjectionParent):
         return get_at(self.Bc, self.Bc_prof, t)
 
     @property
-    def G0_prof(self) -> Profile:
+    def G0_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -365,8 +360,8 @@ class ShuntParent(InjectionParent):
         return self._G0_prof
 
     @G0_prof.setter
-    def G0_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def G0_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._G0_prof = val
         elif isinstance(val, np.ndarray):
             self._G0_prof.set(arr=val)
@@ -381,7 +376,7 @@ class ShuntParent(InjectionParent):
         return get_at(self.G0, self.G0_prof, t)
 
     @property
-    def B0_prof(self) -> Profile:
+    def B0_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -389,8 +384,8 @@ class ShuntParent(InjectionParent):
         return self._B0_prof
 
     @B0_prof.setter
-    def B0_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def B0_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._B0_prof = val
         elif isinstance(val, np.ndarray):
             self._B0_prof.set(arr=val)
@@ -410,7 +405,7 @@ class ShuntParent(InjectionParent):
         Shunt admittance matrix (4x4)
         :return:
         """
-        if self._ysh.size == 0:
+        if self._ysh.size <= 0:
             self.fill_3_phase_from_sequence()
 
         return self._ysh
@@ -503,3 +498,195 @@ class ShuntParent(InjectionParent):
         self.ysh.phA = 1
         self.ysh.phB = 1
         self.ysh.phC = 1
+
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def G(self) -> float:
+        """
+        Get ``G``.
+
+        :return: float
+        """
+        return self._G
+
+    @G.setter
+    def G(self, val: float) -> None:
+        """
+        Set ``G``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._G = float(val)
+
+    @property
+    def G0(self) -> float:
+        """
+        Get ``G0``.
+
+        :return: float
+        """
+        return self._G0
+
+    @G0.setter
+    def G0(self, val: float) -> None:
+        """
+        Set ``G0``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._G0 = float(val)
+
+    @property
+    def Ga(self) -> float:
+        """
+        Get ``Ga``.
+
+        :return: float
+        """
+        return self._Ga
+
+    @Ga.setter
+    def Ga(self, val: float) -> None:
+        """
+        Set ``Ga``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Ga = float(val)
+
+    @property
+    def Gb(self) -> float:
+        """
+        Get ``Gb``.
+
+        :return: float
+        """
+        return self._Gb
+
+    @Gb.setter
+    def Gb(self, val: float) -> None:
+        """
+        Set ``Gb``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Gb = float(val)
+
+    @property
+    def Gc(self) -> float:
+        """
+        Get ``Gc``.
+
+        :return: float
+        """
+        return self._Gc
+
+    @Gc.setter
+    def Gc(self, val: float) -> None:
+        """
+        Set ``Gc``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Gc = float(val)
+
+    @property
+    def B(self) -> float:
+        """
+        Get ``B``.
+
+        :return: float
+        """
+        return self._B
+
+    @B.setter
+    def B(self, val: float) -> None:
+        """
+        Set ``B``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._B = float(val)
+
+    @property
+    def B0(self) -> float:
+        """
+        Get ``B0``.
+
+        :return: float
+        """
+        return self._B0
+
+    @B0.setter
+    def B0(self, val: float) -> None:
+        """
+        Set ``B0``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._B0 = float(val)
+
+    @property
+    def Ba(self) -> float:
+        """
+        Get ``Ba``.
+
+        :return: float
+        """
+        return self._Ba
+
+    @Ba.setter
+    def Ba(self, val: float) -> None:
+        """
+        Set ``Ba``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Ba = float(val)
+
+    @property
+    def Bb(self) -> float:
+        """
+        Get ``Bb``.
+
+        :return: float
+        """
+        return self._Bb
+
+    @Bb.setter
+    def Bb(self, val: float) -> None:
+        """
+        Set ``Bb``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Bb = float(val)
+
+    @property
+    def Bc(self) -> float:
+        """
+        Get ``Bc``.
+
+        :return: float
+        """
+        return self._Bc
+
+    @Bc.setter
+    def Bc(self, val: float) -> None:
+        """
+        Set ``Bc``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Bc = float(val)

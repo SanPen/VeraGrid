@@ -1,0 +1,969 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can see it at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
+
+from typing import Any, List, Sequence, Tuple, cast
+
+import numba as nb
+import numpy as np
+from scipy.sparse import csc_matrix
+
+from VeraGridEngine.Utils.Symbolic.block import Block
+from VeraGridEngine.Utils.Symbolic.diagnostic import (
+    NewtonDiagnosticsConfig,
+    NewtonTraceCollector,
+    maybe_apply_backtracking,
+    maybe_check_index1,
+)
+from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var
+from VeraGridEngine.Utils.Symbolic.jit_compiler import EagerEquationCompiler
+from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import EmtProblemTemplate
+from VeraGridEngine.Simulations.EMT.solvers.StructuralVectorizedSolver import StructuralVectorizedSolver
+from VeraGridEngine.Simulations.EMT.solvers.structural_compiled_solver import (
+    StructuralCompiledBoundaryUpdateWrapper,
+    StructuralCompiledSolver,
+)
+from VeraGridEngine.enumerations import DynamicIntegrationMethod
+
+
+class GenericEmtProblem(EmtProblemTemplate):
+    """
+    Minimal EMT problem implementation for structural compiled solver tests.
+    """
+    __slots__ = []
+
+
+def build_full_params(problem: EmtProblemTemplate) -> np.ndarray:
+    """
+    Build full parameters array combining variable and static parameters.
+
+    :param problem: EMT problem instance.
+    :returns: Concatenated parameter array.
+    """
+    ev: np.ndarray = np.zeros(problem.get_variable_parameter_number(), dtype=np.float64)
+    static_vals: np.ndarray = np.array([float(p.value) for p in problem.get_parameters_values()], dtype=np.float64)
+    return np.concatenate((ev, static_vals))
+
+
+def build_repeated_decay_block(n_states: int = 4, k_val: float = 2.0) -> Tuple[Block, Var]:
+    """
+    Build a block with repeated decay equations sharing the same parameter.
+
+    Creates n_states identical decay equations: dx_i/dt = -k * x_i
+    for i in [0, n_states).
+
+    :param n_states: Number of decay state variables.
+    :param k_val: Decay rate constant.
+    :returns: Tuple of (block, k_var).
+    """
+    k: Var = Var("k")
+    state_vars: List[Var] = list()
+    diff_vars: List[Var] = list()
+    state_eqs: List[Expr] = list()
+
+    for i in range(n_states):
+        x_i: Var = Var(f"x_{i}")
+        dx_i: Var = Var(f"d_x_{i}", base_var=x_i)
+        state_vars.append(x_i)
+        diff_vars.append(dx_i)
+        state_eqs.append(-k * x_i)
+
+    block: Block = Block(
+        name="RepeatedDecay",
+        state_vars=state_vars,
+        state_eqs=state_eqs,
+        diff_vars=diff_vars,
+        parameters={k: Const(k_val)},
+    )
+    block.unify_blocks()
+    return block, k
+
+
+def build_zero_dynamics_block() -> Block:
+    """
+    Build a block with zero dynamics (constant state).
+
+    State equation is dx/dt = 0, so the state remains constant.
+
+    :returns: Block representing zero dynamics.
+    """
+    x: Var = Var("x")
+    dx: Var = Var("d_x", base_var=x)
+
+    block: Block = Block(
+        name="ZeroDynamics",
+        state_vars=[x],
+        state_eqs=[Const(0.0)],
+        diff_vars=[dx],
+        parameters=dict(),
+    )
+    block.unify_blocks()
+    return block
+
+
+def build_singular_dae_block() -> Block:
+    """
+    Build a singular DAE block for index-1 guard testing.
+
+    Creates a minimal DAE where the algebraic equation is identically zero,
+    which violates the index-1 condition and should trigger the runtime guard.
+
+    :returns: Block representing a singular DAE system.
+    """
+    x: Var = Var("x")
+    y: Var = Var("y")
+    dx: Var = Var("d_x", base_var=x)
+    block: Block = Block(
+        name="SingularDae",
+        state_vars=[x],
+        algebraic_vars=[y],
+        diff_vars=[dx],
+        state_eqs=[Const(0.0)],
+        algebraic_eqs=[Const(0.0)],
+        parameters=dict(),
+    )
+    block.unify_blocks()
+    return block
+
+
+def build_scalar_state_block() -> Block:
+    """
+    Build a scalar state block for backtracking tests.
+
+    :returns: Block with single state variable.
+    """
+    x: Var = Var("x")
+    dx: Var = Var("d_x", base_var=x)
+    block: Block = Block(
+        name="ScalarState",
+        state_vars=[x],
+        diff_vars=[dx],
+        state_eqs=[Const(0.0)],
+        parameters=dict(),
+    )
+    block.unify_blocks()
+    return block
+
+
+def array_ptr(arr: np.ndarray) -> int:
+    """
+    Get memory address of numpy array data buffer.
+
+    :param arr: NumPy array.
+    :returns: Integer memory address.
+    """
+    return int(arr.__array_interface__["data"][0])
+
+
+class InexactCompiledResidualAssembler:
+    """
+    Inexact residual assembler for backtracking tests.
+
+    Provides a residual function that produces inaccurate results,
+    requiring backtracking to converge properly.
+
+    :ivar _tag: Internal identifier.
+    """
+    __slots__ = ["_tag"]
+
+    def __init__(self) -> None:
+        self._tag = "compiled_inexact_residual"
+
+    def evaluate(self, states, params, history, d_history, h, history2, data_out) -> None:
+        """Compute inexact residual for testing backtracking."""
+        _unused = (self._tag, params, history, d_history, h, history2)
+        data_out[:] = 0.0
+        data_out[0] = states[0] ** 2 - 1.0
+
+
+class InexactCompiledJacobian:
+    """
+    Inexact Jacobian for backtracking tests.
+
+    :ivar _tag: Internal identifier.
+    """
+    __slots__ = ["_tag"]
+
+    def __init__(self) -> None:
+        self._tag = "compiled_inexact_jacobian"
+
+    def evaluate(self, states, params, history, d_history, h, history2) -> csc_matrix:
+        """Compute inexact Jacobian for testing backtracking."""
+        _unused = (self._tag, params, history, d_history, h, history2)
+        return csc_matrix([[0.2 * states[0]]], dtype=np.float64)
+
+    def get_data_buffer(self) -> np.ndarray:
+        """Return data buffer allocation."""
+        _unused = self._tag
+        return np.zeros(1, dtype=np.float64)
+
+
+class SingularCompiledResidualAssembler:
+    """
+    Singular residual assembler for index-1 guard tests.
+
+    :ivar _tag: Internal identifier.
+    """
+    __slots__ = ["_tag"]
+
+    def __init__(self) -> None:
+        self._tag = "compiled_singular_residual"
+
+    def evaluate(self, states, params, history, d_history, h, history2, data_out) -> None:
+        """Compute singular residual for testing index guard."""
+        _unused = (self._tag, states, params, history, d_history, h, history2)
+        data_out[:] = 0.0
+        data_out[0] = 1.0
+
+
+class SingularCompiledJacobian:
+    """
+    Near-singular Jacobian for index-1 guard tests.
+
+    :ivar _tag: Internal identifier.
+    """
+    __slots__ = ["_tag"]
+
+    def __init__(self) -> None:
+        self._tag = "compiled_singular_jacobian"
+
+    def evaluate(self, states, params, history, d_history, h, history2) -> csc_matrix:
+        """Compute near-singular Jacobian matrix."""
+        _unused = (self._tag, states, params, history, d_history, h, history2)
+        return csc_matrix(np.array([[1.0, 0.0], [0.0, 1.0e-16]], dtype=np.float64))
+
+    def get_data_buffer(self) -> np.ndarray:
+        """Return data buffer allocation."""
+        _unused = self._tag
+        return np.zeros(1, dtype=np.float64)
+
+
+def inexact_vectorized_residual(x_iter, full_params, x_prev, dx_prev, h, vec_flat_args, res_global, x_prev2) -> None:
+    """Vectorized inexact residual for backtracking tests."""
+    _unused = (full_params, x_prev, dx_prev, h, vec_flat_args, x_prev2)
+    res_global[:] = 0.0
+    res_global[0] = x_iter[0] ** 2 - 1.0
+
+
+class InexactVectorizedJacobian:
+    """
+    Inexact Jacobian for vectorized backtracking tests.
+
+    :ivar _tag: Internal identifier.
+    """
+    __slots__ = ["_tag"]
+
+    def __init__(self) -> None:
+        self._tag = "vectorized_inexact_jacobian"
+
+    def __call__(self, states, params, history, d_history, h, history2=None) -> csc_matrix:
+        """Compute inexact Jacobian for backtracking."""
+        _unused = (self._tag, params, history, d_history, h, history2)
+        return csc_matrix([[0.2 * states[0]]], dtype=np.float64)
+
+
+def singular_vectorized_residual(x_iter, full_params, x_prev, dx_prev, h, vec_flat_args, res_global, x_prev2) -> None:
+    """Vectorized singular residual for index-1 guard tests."""
+    _unused = (x_iter, full_params, x_prev, dx_prev, h, vec_flat_args, x_prev2)
+    res_global[:] = 0.0
+    res_global[0] = 1.0
+
+
+class SingularVectorizedJacobian:
+    """
+    Near-singular Jacobian for vectorized index-1 guard tests.
+
+    :ivar _tag: Internal identifier.
+    """
+    __slots__ = ["_tag"]
+
+    def __init__(self) -> None:
+        self._tag = "vectorized_singular_jacobian"
+
+    def __call__(self, states, params, history, d_history, h, history2=None) -> csc_matrix:
+        """Compute near-singular Jacobian matrix."""
+        _unused = (self._tag, states, params, history, d_history, h, history2)
+        return csc_matrix(np.array([[1.0, 0.0], [0.0, 1.0e-16]], dtype=np.float64))
+
+
+class ForcedEventTracker(StructuralCompiledBoundaryUpdateWrapper):
+    """
+    Boundary updater that tracks forced event times for alignment testing.
+
+    :ivar _forced_times: List of forced event times.
+    :ivar _tol: Tolerance for time comparisons.
+    :ivar _cursor: Current index in forced times.
+    :ivar query_calls: Record of get_next_forced_event_time calls.
+    :ivar update_calls: Record of update() calls.
+    """
+    __slots__ = ["_forced_times", "_tol", "_cursor", "query_calls", "update_calls"]
+
+    def __init__(self, forced_times: Sequence[float], tol: float = 1e-12) -> None:
+        self._forced_times = [float(v) for v in forced_times]
+        self._tol = float(tol)
+        self._cursor = 0
+        self.query_calls: List[Tuple[float, float]] = list()
+        self.update_calls: List[float] = list()
+
+    def get_next_forced_event_time(self, t_prev: float, t_target: float) -> float | None:
+        """Return next forced event time within the target interval."""
+        self.query_calls.append((float(t_prev), float(t_target)))
+
+        idx: int = self._cursor
+        while idx < len(self._forced_times):
+            event_time: float = self._forced_times[idx]
+            if (t_prev + self._tol) < event_time <= (t_target + self._tol):
+                return event_time
+            idx += 1
+
+        return None
+
+    def update(self, t: float, x: np.ndarray, params: np.ndarray) -> None:
+        """Record update call and advance cursor."""
+        _unused = (x, params)
+        t_float: float = float(t)
+        self.update_calls.append(t_float)
+
+        while self._cursor < len(self._forced_times):
+            if self._forced_times[self._cursor] <= t_float + self._tol:
+                self._cursor += 1
+            else:
+                break
+
+
+# =============================================================================
+# TESTS
+# =============================================================================
+
+def test_eager_compiler_smoke_for_residual_ad_and_matrix_kernels() -> None:
+    """
+    Test EagerEquationCompiler produces correct residual, AD, and matrix kernels.
+
+    Verifies that:
+    - Residual kernel: dx/dt + k*x with BackEuler gives correct residual
+    - AD kernel: produces correct Jacobian-vector product
+    - Matrix kernel: produces correct grouped outputs
+    """
+    x: Var = Var("x")
+    dx: Var = Var("d_x", base_var=x)
+    k: Var = Var("k")
+    eq: Expr = dx + k * x
+
+    compiler: EagerEquationCompiler = EagerEquationCompiler(
+        variables=[x],
+        parameters=[k],
+        method=DynamicIntegrationMethod.DaeBackEuler,
+    )
+
+    states: np.ndarray = np.array([2.0], dtype=np.float64)
+    params: np.ndarray = np.array([3.0], dtype=np.float64)
+    history: np.ndarray = np.array([1.0], dtype=np.float64)
+    d_history: np.ndarray = np.zeros(1, dtype=np.float64)
+    history2: np.ndarray = history.copy()
+
+    py_res, sig_res = compiler.compile(
+        equations=[eq],
+        func_name="unit_test_compiled_eager_residual",
+        use_cse=True,
+        offset=0,
+        inplace=True,
+    )
+    res_fn = nb.njit(sig_res, cache=False, fastmath=True)(py_res)
+    residual_out: np.ndarray = np.zeros(1, dtype=np.float64)
+    res_fn(states, params, history, d_history, 0.5, residual_out, history2)
+
+    assert abs(float(residual_out[0]) - 8.0) < 1e-11
+
+    py_ad, sig_ad = compiler.compile_ad_kernel(
+        equations=[eq],
+        func_name="unit_test_compiled_eager_ad",
+        use_cse=True,
+        active_indices={0},
+    )
+    ad_fn = nb.njit(sig_ad, cache=False, fastmath=True)(py_ad)
+    jvp_out: np.ndarray = np.zeros(1, dtype=np.float64)
+    seeds: np.ndarray = np.zeros(1, dtype=np.float64)
+    ad_fn(states, seeds, params, history, d_history, 0.5, jvp_out, history2)
+
+    assert abs(float(jvp_out[0]) - 5.0) < 1e-11
+
+    py_mat, sig_mat = compiler.compile_matrix_kernel(
+        template_eq=eq,
+        func_name="unit_test_compiled_eager_matrix",
+        template_vars=[x],
+    )
+    mat_fn = nb.njit(sig_mat, cache=False, fastmath=True)(py_mat)
+
+    grouped_states: np.ndarray = np.array([2.0, 4.0], dtype=np.float64)
+    grouped_history: np.ndarray = np.array([1.0, 3.0], dtype=np.float64)
+    grouped_d_history: np.ndarray = np.zeros(2, dtype=np.float64)
+    grouped_history2: np.ndarray = grouped_history.copy()
+    grouped_indices: np.ndarray = np.array([[0], [1]], dtype=np.int32)
+    grouped_out: np.ndarray = np.zeros(2, dtype=np.float64)
+
+    mat_fn(
+        grouped_states,
+        params,
+        grouped_history,
+        grouped_d_history,
+        0.5,
+        grouped_indices,
+        grouped_out,
+        grouped_history2,
+    )
+
+    np.testing.assert_allclose(
+        grouped_out,
+        np.array([8.0, 14.0], dtype=np.float64),
+        rtol=0.0,
+        atol=1e-12,
+    )
+
+
+def test_structural_compiled_backend_builds_and_collapses_repeated_structure() -> None:
+    """
+    Test StructuralCompiledSolver collapses repeated structure into single kernel.
+
+    Verifies that 4 identical decay equations with same k produce
+    exactly 1 kernel spec (not 4 separate kernels).
+    """
+    block, _ = build_repeated_decay_block(n_states=4, k_val=2.0)
+    problem: GenericEmtProblem = GenericEmtProblem(block, Var("t_glob"))
+
+    solver: StructuralCompiledSolver = StructuralCompiledSolver(
+        problem=problem,
+        t0=0.0,
+        t_end=1e-3,
+        h=1e-4,
+        method=DynamicIntegrationMethod.DaeBackEuler,
+        dense_threshold=100,
+        verbose=False,
+        auto_build=True,
+    )
+
+    assert solver.is_vectorized_ready() is True
+    assert solver._residual_assembler is not None
+    assert solver._jacobian_evaluator is not None
+    assert len(solver._residual_assembler._kernel_specs) == 1
+    assert solver.get_residual_buffer().shape == (4,)
+    assert solver.get_jacobian_data_buffer().size > 0
+    assert np.shares_memory(
+        solver.get_jacobian_data_buffer(),
+        solver._jacobian_evaluator.get_data_buffer(),
+    )
+    assert solver._residual_assembler.get_work_buffer().shape[0] == 1
+
+
+def test_structural_compiled_residual_and_jacobian_buffers_are_reused_in_place() -> None:
+    """
+    Test that residual and Jacobian buffers are reused across evaluations.
+
+    Verifies that calling evaluate() twice produces the same buffer
+    memory locations (no reallocation).
+    """
+    block, _ = build_repeated_decay_block(n_states=3, k_val=2.0)
+    problem: GenericEmtProblem = GenericEmtProblem(block, Var("t_glob"))
+
+    solver: StructuralCompiledSolver = StructuralCompiledSolver(
+        problem=problem,
+        t0=0.0,
+        t_end=1e-3,
+        h=1e-4,
+        method=DynamicIntegrationMethod.DaeBackEuler,
+        dense_threshold=100,
+        verbose=False,
+        auto_build=True,
+    )
+
+    full_params: np.ndarray = build_full_params(problem)
+    x: np.ndarray = np.array([1.0, -0.5, 2.0], dtype=np.float64)
+    dx: np.ndarray = np.zeros_like(x)
+    history2: np.ndarray = x.copy()
+
+    residual_ptr_before: int = array_ptr(solver.get_residual_buffer())
+    work_ptr_before: int = array_ptr(solver._residual_assembler.get_work_buffer())
+    jac_data_ptr_before: int = array_ptr(solver.get_jacobian_data_buffer())
+
+    solver._residual_assembler.evaluate(
+        x,
+        full_params,
+        x,
+        dx,
+        1e-4,
+        history2,
+        solver.get_residual_buffer(),
+    )
+    jacobian_1: csc_matrix = solver._jacobian_evaluator.evaluate(
+        x,
+        full_params,
+        x,
+        dx,
+        1e-4,
+        history2,
+    )
+
+    x_2: np.ndarray = np.array([0.75, -0.25, 1.5], dtype=np.float64)
+    history2_2: np.ndarray = x_2.copy()
+
+    solver._residual_assembler.evaluate(
+        x_2,
+        full_params,
+        x_2,
+        dx,
+        1e-4,
+        history2_2,
+        solver.get_residual_buffer(),
+    )
+    jacobian_2: csc_matrix = solver._jacobian_evaluator.evaluate(
+        x_2,
+        full_params,
+        x_2,
+        dx,
+        1e-4,
+        history2_2,
+    )
+
+    assert array_ptr(solver.get_residual_buffer()) == residual_ptr_before
+    assert array_ptr(solver._residual_assembler.get_work_buffer()) == work_ptr_before
+    assert array_ptr(solver.get_jacobian_data_buffer()) == jac_data_ptr_before
+    assert jacobian_1 is jacobian_2
+    assert np.all(np.isfinite(solver.get_residual_buffer()))
+    assert np.all(np.isfinite(jacobian_2.data))
+
+
+def test_structural_compiled_jacobian_matches_structural_vectorized_backend_and_csc_layout() -> None:
+    """
+    Test that compiled and vectorized Jacobians match numerically and structurally.
+
+    Verifies:
+    - Same sparse matrix shape
+    - Same CSC indptr and indices arrays
+    - Same data values within tolerance
+    """
+    block_fast, _ = build_repeated_decay_block(n_states=4, k_val=2.0)
+    block_base, _ = build_repeated_decay_block(n_states=4, k_val=2.0)
+
+    problem_fast: GenericEmtProblem = GenericEmtProblem(block_fast, Var("t_fast"))
+    problem_base: GenericEmtProblem = GenericEmtProblem(block_base, Var("t_base"))
+
+    compiled_solver: StructuralCompiledSolver = StructuralCompiledSolver(
+        problem=problem_fast,
+        t0=0.0,
+        t_end=1e-3,
+        h=1e-4,
+        method=DynamicIntegrationMethod.DaeBackEuler,
+        dense_threshold=100,
+        verbose=False,
+        auto_build=True,
+    )
+    base_solver: StructuralVectorizedSolver = StructuralVectorizedSolver(
+        problem=problem_base,
+        t0=0.0,
+        t_end=1e-3,
+        h=1e-4,
+        method=DynamicIntegrationMethod.DaeBackEuler,
+        dense_threshold=100,
+        verbose=False,
+        auto_vectorization=True,
+    )
+
+    x: np.ndarray = np.array([1.0, -0.5, 2.0, 0.25], dtype=np.float64)
+    dx: np.ndarray = np.zeros_like(x)
+    full_params_fast: np.ndarray = build_full_params(problem_fast)
+    full_params_base: np.ndarray = build_full_params(problem_base)
+    history2: np.ndarray = x.copy()
+
+    j_compiled: csc_matrix = compiled_solver._jacobian_evaluator.evaluate(
+        x,
+        full_params_fast,
+        x,
+        dx,
+        1e-4,
+        history2,
+    )
+    j_base: csc_matrix = base_solver.vec_jacobian(
+        states=x,
+        params=full_params_base,
+        history=x,
+        d_history=dx,
+        h=1e-4,
+        history2=history2,
+    )
+
+    assert j_compiled.shape == j_base.shape
+    assert np.array_equal(j_compiled.indptr, j_base.indptr)
+    assert np.array_equal(j_compiled.indices, j_base.indices)
+    np.testing.assert_allclose(j_compiled.data, j_base.data, rtol=1e-11, atol=1e-12)
+
+
+def test_structural_compiled_simulation_matches_structural_vectorized_solver() -> None:
+    """
+    Test that compiled and vectorized solvers produce identical trajectories.
+
+    Verifies:
+    - Same time array exactly
+    - Same state trajectories within tight tolerance
+    - Same derivative trajectories within tight tolerance
+    """
+    block_fast, _ = build_repeated_decay_block(n_states=3, k_val=1.5)
+    block_base, _ = build_repeated_decay_block(n_states=3, k_val=1.5)
+
+    problem_fast: GenericEmtProblem = GenericEmtProblem(block_fast, Var("t_fast"))
+    problem_base: GenericEmtProblem = GenericEmtProblem(block_base, Var("t_base"))
+
+    x0: np.ndarray = np.array([1.0, -0.5, 2.0], dtype=np.float64)
+    dx0: np.ndarray = -1.5 * x0
+    p0_fast: np.ndarray = np.zeros(problem_fast.get_variable_parameter_number(), dtype=np.float64)
+    p0_base: np.ndarray = np.zeros(problem_base.get_variable_parameter_number(), dtype=np.float64)
+
+    compiled_solver: StructuralCompiledSolver = StructuralCompiledSolver(
+        problem=problem_fast,
+        t0=0.0,
+        t_end=0.2,
+        h=0.01,
+        method=DynamicIntegrationMethod.DaeTrapezoidal,
+        pred_method=DynamicIntegrationMethod.OdeEuler,
+        dense_threshold=100,
+        verbose=False,
+        auto_build=True,
+    )
+    base_solver: StructuralVectorizedSolver = StructuralVectorizedSolver(
+        problem=problem_base,
+        t0=0.0,
+        t_end=0.2,
+        h=0.01,
+        method=DynamicIntegrationMethod.DaeTrapezoidal,
+        pred_method=DynamicIntegrationMethod.OdeEuler,
+        dense_threshold=100,
+        verbose=False,
+        auto_vectorization=True,
+    )
+
+    t_compiled, y_compiled, dy_compiled = compiled_solver.simulate(x0=x0, dx0=dx0, params0=p0_fast)
+    t_base, y_base, dy_base = base_solver.simulate(x0=x0.copy(), dx0=dx0.copy(), params0=p0_base)
+
+    np.testing.assert_allclose(t_compiled, t_base, rtol=0.0, atol=0.0)
+    np.testing.assert_allclose(y_compiled, y_base, rtol=1e-9, atol=1e-10)
+    np.testing.assert_allclose(dy_compiled, dy_base, rtol=1e-9, atol=1e-10)
+    assert compiled_solver.get_last_sim_loop_time() > 0.0
+
+
+def test_structural_compiled_solver_uses_forced_alignment_and_boundary_updates() -> None:
+    """
+    Test that boundary updater alignment works correctly.
+
+    Verifies:
+    - Time steps align to forced event times
+    - State remains constant (zero dynamics)
+    - All forced events are captured
+    """
+    block: Block = build_zero_dynamics_block()
+    problem: GenericEmtProblem = GenericEmtProblem(block, Var("t_glob"))
+
+    solver: StructuralCompiledSolver = StructuralCompiledSolver(
+        problem=problem,
+        t0=0.0,
+        t_end=0.2,
+        h=0.1,
+        method=DynamicIntegrationMethod.DaeBackEuler,
+        dense_threshold=100,
+        verbose=False,
+        auto_build=True,
+    )
+
+    updater: ForcedEventTracker = ForcedEventTracker(forced_times=[0.05, 0.15])
+
+    x0: np.ndarray = np.array([1.234], dtype=np.float64)
+    dx0: np.ndarray = np.array([0.0], dtype=np.float64)
+    p0: np.ndarray = np.zeros(problem.get_variable_parameter_number(), dtype=np.float64)
+
+    t, y, dy = solver.simulate(
+        x0=x0,
+        dx0=dx0,
+        params0=p0,
+        boundary_updater=updater,
+    )
+
+    np.testing.assert_allclose(t, np.array([0.0, 0.1, 0.2], dtype=np.float64), rtol=0.0, atol=0.0)
+    np.testing.assert_allclose(y[:, 0], np.array([1.234, 1.234, 1.234], dtype=np.float64), rtol=0.0, atol=1e-12)
+    np.testing.assert_allclose(dy[:, 0], np.array([0.0, 0.0, 0.0], dtype=np.float64), rtol=0.0, atol=1e-12)
+
+    assert len(updater.query_calls) >= 4
+    np.testing.assert_allclose(
+        np.array(updater.update_calls, dtype=np.float64),
+        np.array([0.0, 0.05, 0.10, 0.15, 0.20], dtype=np.float64),
+        rtol=0.0,
+        atol=1e-12,
+    )
+
+    rounded_updates: List[float] = [round(v, 8) for v in updater.update_calls]
+    assert 0.05 in rounded_updates
+    assert 0.15 in rounded_updates
+
+
+def test_structural_solvers_record_newton_trace_data() -> None:
+    """
+    Test that NewtonTraceCollector records diagnostic data during simulation.
+
+    Verifies:
+    - Records are populated during solve
+    - Each record contains solver identifier
+    - Each record contains residual norm
+    """
+    for solver_class in (StructuralVectorizedSolver, StructuralCompiledSolver):
+        block, _ = build_repeated_decay_block(n_states=2, k_val=1.5)
+        problem: GenericEmtProblem = GenericEmtProblem(block, Var(f"t_{solver_class.__name__}"))
+        collector: NewtonTraceCollector = NewtonTraceCollector()
+        problem.set_newton_trace_collector(collector)
+
+        solver: Any = solver_class(
+            problem=problem,
+            t0=0.0,
+            t_end=0.05,
+            h=0.01,
+            method=DynamicIntegrationMethod.DaeTrapezoidal,
+            pred_method=DynamicIntegrationMethod.OdeEuler,
+            dense_threshold=100,
+            verbose=False,
+        )
+
+        x0: np.ndarray = np.array([1.0, 0.5], dtype=np.float64)
+        dx0: np.ndarray = -1.5 * x0
+        p0: np.ndarray = np.zeros(problem.get_variable_parameter_number(), dtype=np.float64)
+
+        solver.simulate(x0=x0, dx0=dx0, params0=p0)
+
+        assert len(collector.records) > 0
+        assert "solver" in collector.records[0]
+        assert "res_norm_inf" in collector.records[0]
+
+
+def test_runtime_index1_check_detects_singular_algebraic_block() -> None:
+    """
+    Test that maybe_check_index1 raises RuntimeError for singular Jacobian.
+
+    A 2x2 matrix with second row being all zeros is rank-deficient
+    and should trigger the index-1 check.
+    """
+    jacobian: np.ndarray = np.array(
+        [
+            [1.0, 0.0],
+            [0.0, 0.0],
+        ],
+        dtype=np.float64,
+    )
+    config: NewtonDiagnosticsConfig = NewtonDiagnosticsConfig(
+        enable_index1_check=True,
+        index1_max_block_n=10,
+        enable_fallback=False,
+        compute_dense_cond=False,
+    )
+
+    try:
+        maybe_check_index1(jacobian, n_state=1, config=config)
+        assert False, "Expected RuntimeError to be raised"
+    except RuntimeError:
+        pass
+
+
+def test_backtracking_helper_reduces_step_when_full_newton_worsens_residual() -> None:
+    """
+    Test that backtracking reduces step magnitude when full Newton diverges.
+
+    Starting from x_iter=0 with delta=10, backtracking should move
+    x_iter toward 1 (where residual is 0).
+    """
+    x_iter: np.ndarray = np.array([0.0], dtype=np.float64)
+    delta: np.ndarray = np.array([10.0], dtype=np.float64)
+    trial_x: np.ndarray = np.zeros(1, dtype=np.float64)
+    trial_res: np.ndarray = np.zeros(1, dtype=np.float64)
+    config: NewtonDiagnosticsConfig = NewtonDiagnosticsConfig(
+        enable_backtracking=True,
+        backtracking_beta=0.5,
+        backtracking_min_alpha=1.0e-3,
+        backtracking_max_iter=6,
+        enable_fallback=False,
+        compute_dense_cond=False,
+    )
+
+    def evaluate_residual(candidate_x: np.ndarray, out_res: np.ndarray) -> float:
+        out_res[0] = (candidate_x[0] - 1.0) ** 2
+        return float(abs(out_res[0]))
+
+    maybe_apply_backtracking(
+        x_iter,
+        delta,
+        res_norm=1.0,
+        trial_x=trial_x,
+        trial_res=trial_res,
+        evaluate_residual=evaluate_residual,
+        config=config,
+    )
+
+    assert abs(x_iter[0] - 1.0) < abs(10.0 - 1.0)
+    assert (x_iter[0] - 1.0) ** 2 < 1.0
+
+
+def test_backtracking_improves_convergence_in_difficult_solve() -> None:
+    """
+    Test that backtracking produces better convergence in difficult solves.
+
+    For the same difficult problem, the solver WITH backtracking
+    should achieve lower residual than WITHOUT backtracking.
+
+    This is the actual integration test from demo_structural_newton_runtime_guards.py Demo 2.
+    """
+    for solver_name, solver_class in (("StructuralVectorized", StructuralVectorizedSolver), ("StructuralCompiled", StructuralCompiledSolver)):
+        cfg_bt: NewtonDiagnosticsConfig = NewtonDiagnosticsConfig(
+            enable_backtracking=True,
+            backtracking_beta=0.5,
+            backtracking_min_alpha=1e-3,
+            backtracking_max_iter=8,
+            compute_dense_cond=False,
+            enable_fallback=False,
+        )
+
+        if solver_class is StructuralVectorizedSolver:
+            solver_plain = solver_class(
+                problem=GenericEmtProblem(build_scalar_state_block(), Var(f"t_bt_{solver_name}_plain")),
+                t0=0.0,
+                t_end=0.1,
+                h=0.1,
+                method=DynamicIntegrationMethod.DaeBackEuler,
+                dense_threshold=100,
+                verbose=False,
+                auto_vectorization=False,
+                newton_diag_config=NewtonDiagnosticsConfig(enable_backtracking=False),
+            )
+            solver_plain.vectorized_ready = True
+            solver_plain.vec_flat_args = np.zeros(0, dtype=np.float64)
+            solver_plain.fused_residual = inexact_vectorized_residual
+            solver_plain.vec_jacobian = InexactVectorizedJacobian()
+
+            solver_bt = solver_class(
+                problem=GenericEmtProblem(build_scalar_state_block(), Var(f"t_bt_{solver_name}_bt")),
+                t0=0.0,
+                t_end=0.1,
+                h=0.1,
+                method=DynamicIntegrationMethod.DaeBackEuler,
+                dense_threshold=100,
+                verbose=False,
+                auto_vectorization=False,
+                newton_diag_config=cfg_bt,
+            )
+            solver_bt.vectorized_ready = True
+            solver_bt.vec_flat_args = np.zeros(0, dtype=np.float64)
+            solver_bt.fused_residual = inexact_vectorized_residual
+            solver_bt.vec_jacobian = InexactVectorizedJacobian()
+        else:
+            solver_plain = solver_class(
+                problem=GenericEmtProblem(build_scalar_state_block(), Var(f"t_bt_{solver_name}_plain")),
+                t0=0.0,
+                t_end=0.1,
+                h=0.1,
+                method=DynamicIntegrationMethod.DaeBackEuler,
+                dense_threshold=100,
+                verbose=False,
+                auto_build=False,
+                newton_diag_config=NewtonDiagnosticsConfig(enable_backtracking=False),
+            )
+            solver_plain._vectorized_ready = True
+            solver_plain._residual_assembler = cast(Any, InexactCompiledResidualAssembler())
+            solver_plain._jacobian_evaluator = cast(Any, InexactCompiledJacobian())
+
+            solver_bt = solver_class(
+                problem=GenericEmtProblem(build_scalar_state_block(), Var(f"t_bt_{solver_name}_bt")),
+                t0=0.0,
+                t_end=0.1,
+                h=0.1,
+                method=DynamicIntegrationMethod.DaeBackEuler,
+                dense_threshold=100,
+                verbose=False,
+                auto_build=False,
+                newton_diag_config=cfg_bt,
+            )
+            solver_bt._vectorized_ready = True
+            solver_bt._residual_assembler = cast(Any, InexactCompiledResidualAssembler())
+            solver_bt._jacobian_evaluator = cast(Any, InexactCompiledJacobian())
+
+        _, y_plain, _ = solver_plain.simulate(
+            x0=np.array([0.1], dtype=np.float64),
+            dx0=np.array([0.0], dtype=np.float64),
+            params0=np.zeros(0, dtype=np.float64),
+        )
+        _, y_bt, _ = solver_bt.simulate(
+            x0=np.array([0.1], dtype=np.float64),
+            dx0=np.array([0.0], dtype=np.float64),
+            params0=np.zeros(0, dtype=np.float64),
+        )
+
+        res_plain: float = abs(float(y_plain[-1, 0] ** 2 - 1.0))
+        res_bt: float = abs(float(y_bt[-1, 0] ** 2 - 1.0))
+
+        assert res_bt < res_plain, f"{solver_name}: Backtracking residual {res_bt} should be less than plain residual {res_plain}"
+
+
+def test_index1_guard_triggers_runtime_error_during_simulation() -> None:
+    """
+    Test that index-1 guard raises RuntimeError during actual solver simulation.
+
+    This tests the full guard integration through solver.simulate(),
+    not just the maybe_check_index1 function in isolation.
+
+    This is the test from demo_structural_newton_runtime_guards.py Demo 3.
+    """
+    for solver_name, solver_class in (("StructuralVectorized", StructuralVectorizedSolver), ("StructuralCompiled", StructuralCompiledSolver)):
+        cfg_idx: NewtonDiagnosticsConfig = NewtonDiagnosticsConfig(
+            enable_index1_check=True,
+            index1_max_block_n=8,
+            compute_dense_cond=False,
+            enable_fallback=False,
+        )
+
+        if solver_class is StructuralVectorizedSolver:
+            solver = solver_class(
+                problem=GenericEmtProblem(build_singular_dae_block(), Var(f"t_idx_{solver_name}")),
+                t0=0.0,
+                t_end=0.1,
+                h=0.1,
+                method=DynamicIntegrationMethod.DaeBackEuler,
+                dense_threshold=0,
+                verbose=False,
+                auto_vectorization=False,
+                newton_diag_config=cfg_idx,
+            )
+            solver.vectorized_ready = True
+            solver.vec_flat_args = np.zeros(0, dtype=np.float64)
+            solver.fused_residual = singular_vectorized_residual
+            solver.vec_jacobian = SingularVectorizedJacobian()
+        else:
+            solver = solver_class(
+                problem=GenericEmtProblem(build_singular_dae_block(), Var(f"t_idx_{solver_name}")),
+                t0=0.0,
+                t_end=0.1,
+                h=0.1,
+                method=DynamicIntegrationMethod.DaeBackEuler,
+                dense_threshold=0,
+                verbose=False,
+                auto_build=False,
+                newton_diag_config=cfg_idx,
+            )
+            solver._vectorized_ready = True
+            solver._residual_assembler = cast(Any, SingularCompiledResidualAssembler())
+            solver._jacobian_evaluator = cast(Any, SingularCompiledJacobian())
+
+        try:
+            solver.simulate(
+                x0=np.array([0.0, 0.0], dtype=np.float64),
+                dx0=np.array([0.0], dtype=np.float64),
+                params0=np.zeros(0, dtype=np.float64),
+            )
+            assert False, f"{solver_name}: Expected RuntimeError to be raised for singular DAE"
+        except RuntimeError:
+            pass
+
+
+if __name__ == "__main__":
+    import pytest
+    pytest.main([__file__, "-v"])

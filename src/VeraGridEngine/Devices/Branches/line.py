@@ -5,22 +5,21 @@
 
 import numpy as np
 import pandas as pd
-from typing import Union, List
-
+from typing import Union, List, Tuple
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.enumerations import BuildStatus, SubObjectType, DeviceType
+from VeraGridEngine.enumerations import (BuildStatus, SubObjectType, DeviceType,
+                                         ParamPowerFlowRefferenceType, EmtLineTypes)
 from VeraGridEngine.Devices.Branches.underground_line_type import UndergroundLineType
 from VeraGridEngine.Devices.Branches.overhead_line_type import OverheadLineType
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 from VeraGridEngine.Devices.Branches.sequence_line_type import SequenceLineType, get_line_impedances_with_c
 from VeraGridEngine.Devices.Branches.transformer import Transformer2W
-from VeraGridEngine.Devices.profile import Profile
 from VeraGridEngine.Devices.Associations.association import Associations
 from VeraGridEngine.Devices.Branches.line_locations import LineLocations
 from VeraGridEngine.Devices.admittance_matrix import AdmittanceMatrix
-from VeraGridEngine.Utils.Symbolic.block import Block, Var, Const, VarPowerFlowRefferenceType
-from VeraGridEngine.Utils.Symbolic.symbolic import cos, sin
+from VeraGridEngine.Utils.Symbolic.block import Const
+from VeraGridEngine.Devices.Parents.editable_device import GCProp
 
 
 def accept_line_connection(V1: float, V2: float, branch_connection_voltage_tolerance=0.1) -> float:
@@ -45,10 +44,10 @@ def accept_line_connection(V1: float, V2: float, branch_connection_voltage_toler
 class Line(BranchParent):
     __slots__ = (
         '_length',
-        'tolerance',
-        'r_fault',
-        'x_fault',
-        'fault_pos',
+        '_tolerance',
+        '_r_fault',
+        '_x_fault',
+        '_fault_pos',
         '_R',
         '_X',
         '_B',
@@ -77,7 +76,52 @@ class Line(BranchParent):
         'Pf',
         'Pt',
         'Qf',
-        'Qt'
+        'Qt',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='R', units='p.u.', tpe=float, definition='Total positive sequence resistance.'),
+        GCProp(key='X', units='p.u.', tpe=float, definition='Total positive sequence reactance.'),
+        GCProp(key='B', units='p.u.', tpe=float, definition='Total positive sequence shunt susceptance.'),
+        GCProp(key='R0', units='p.u.', tpe=float, definition='Total zero sequence resistance.'),
+        GCProp(key='X0', units='p.u.', tpe=float, definition='Total zero sequence reactance.'),
+        GCProp(key='B0', units='p.u.', tpe=float, definition='Total zero sequence shunt susceptance.'),
+        GCProp(key='R2', units='p.u.', tpe=float, definition='Total negative sequence resistance.'),
+        GCProp(key='X2', units='p.u.', tpe=float, definition='Total negative sequence reactance.'),
+        GCProp(key='B2', units='p.u.', tpe=float, definition='Total negative sequence shunt susceptance.'),
+        GCProp('ys', units="p.u.", tpe=SubObjectType.AdmittanceMatrix,
+               definition='Series admittance matrix of the branch', editable=False, display=False),
+        GCProp('ysh', units="p.u.", tpe=SubObjectType.AdmittanceMatrix,
+               definition='Shunt admittance matrix of the branch', editable=False, display=False),
+        GCProp(key='tolerance', units='%', tpe=float,
+               definition='Tolerance expected for the impedance values % is expected '
+                          'for transformers0% for lines.'),
+        GCProp(key='circuit_idx', units='', tpe=int,
+               definition='Circuit index, used for multiple circuits sharing towers (starts at zero)',
+               editable=False),
+        GCProp(key='length', units='km', tpe=float, definition='Length of the line (not used for calculation)'),
+        GCProp(key='r_fault', units='p.u.', tpe=float,
+               definition='Resistance of the mid-line fault.Used in short circuit studies.'),
+        GCProp(key='x_fault', units='p.u.', tpe=float,
+               definition='Reactance of the mid-line fault.Used in short circuit studies.'),
+        GCProp(key='fault_pos', units='p.u.', tpe=float,
+               definition='Per-unit positioning of the fault:'
+                          '0 would be at the "from" side,'
+                          '1 would be at the "to" side,'
+                          'therefore 0.5 is at the middle.'),
+        GCProp(key='template', units='', tpe=DeviceType.AnyLineTemplateDevice, definition='', editable=False),
+        GCProp(key='locations', units='', tpe=SubObjectType.LineLocations, definition='', editable=False),
+        GCProp(key='possible_tower_types', units='', tpe=SubObjectType.Associations,
+               definition='Possible overhead line types (>1 to denote association), - to denote no association',
+               display=False),
+        GCProp(key='possible_underground_line_types', units='', tpe=SubObjectType.Associations,
+               definition='Possible underground line types (>1 to denote association), '
+                          '- to denote no association',
+               display=False),
+        GCProp(key='possible_sequence_line_types', units='', tpe=SubObjectType.Associations,
+               definition='Possible sequence line types (>1 to denote association), - to denote no association',
+               display=False),
+
     )
 
     def __init__(self,
@@ -204,7 +248,7 @@ class Line(BranchParent):
         self._circuit_idx: int = int(circuit_idx)
 
         # type template
-        self.template: Union[OverheadLineType, SequenceLineType, UndergroundLineType] = template
+        self.template: OverheadLineType | SequenceLineType | UndergroundLineType | None = template
 
         # association with various templates
         self.possible_tower_types: Associations = Associations(device_type=DeviceType.OverheadLineTypeDevice)
@@ -214,55 +258,6 @@ class Line(BranchParent):
         # Line locations
         self._locations: LineLocations = LineLocations()
 
-        self.register(key='R', units='p.u.', tpe=float, definition='Total positive sequence resistance.')
-        self.register(key='X', units='p.u.', tpe=float, definition='Total positive sequence reactance.')
-        self.register(key='B', units='p.u.', tpe=float, definition='Total positive sequence shunt susceptance.')
-        self.register(key='R0', units='p.u.', tpe=float, definition='Total zero sequence resistance.')
-        self.register(key='X0', units='p.u.', tpe=float, definition='Total zero sequence reactance.')
-        self.register(key='B0', units='p.u.', tpe=float, definition='Total zero sequence shunt susceptance.')
-        self.register(key='R2', units='p.u.', tpe=float, definition='Total negative sequence resistance.')
-        self.register(key='X2', units='p.u.', tpe=float, definition='Total negative sequence reactance.')
-        self.register(key='B2', units='p.u.', tpe=float, definition='Total negative sequence shunt susceptance.')
-
-        self.register('ys', units="p.u.", tpe=SubObjectType.AdmittanceMatrix,
-                      definition='Series admittance matrix of the branch', editable=False, display=False)
-
-        self.register('ysh', units="p.u.", tpe=SubObjectType.AdmittanceMatrix,
-                      definition='Shunt admittance matrix of the branch', editable=False, display=False)
-
-        self.register(key='tolerance', units='%', tpe=float,
-                      definition='Tolerance expected for the impedance values % is expected '
-                                 'for transformers0% for lines.')
-
-        self.register(key='circuit_idx', units='', tpe=int,
-                      definition='Circuit index, used for multiple circuits sharing towers (starts at zero)',
-                      editable=False)
-
-        self.register(key='length', units='km', tpe=float, definition='Length of the line (not used for calculation)')
-
-        self.register(key='r_fault', units='p.u.', tpe=float,
-                      definition='Resistance of the mid-line fault.Used in short circuit studies.')
-        self.register(key='x_fault', units='p.u.', tpe=float,
-                      definition='Reactance of the mid-line fault.Used in short circuit studies.')
-        self.register(key='fault_pos', units='p.u.', tpe=float,
-                      definition='Per-unit positioning of the fault:'
-                                 '0 would be at the "from" side,'
-                                 '1 would be at the "to" side,'
-                                 'therefore 0.5 is at the middle.')
-        self.register(key='template', units='', tpe=DeviceType.AnyLineTemplateDevice, definition='', editable=False)
-        self.register(key='locations', units='', tpe=SubObjectType.LineLocations, definition='', editable=False)
-
-        self.register(key='possible_tower_types', units='', tpe=SubObjectType.Associations,
-                      definition='Possible overhead line types (>1 to denote association), - to denote no association',
-                      display=False)
-
-        self.register(key='possible_underground_line_types', units='', tpe=SubObjectType.Associations,
-                      definition='Possible underground line types (>1 to denote association), - to denote no association',
-                      display=False)
-
-        self.register(key='possible_sequence_line_types', units='', tpe=SubObjectType.Associations,
-                      definition='Possible sequence line types (>1 to denote association), - to denote no association',
-                      display=False)
 
     @property
     def R(self):
@@ -271,6 +266,14 @@ class Line(BranchParent):
     @R.setter
     def R(self, value):
         self._R = float(value)
+        if self.auto_update_enabled:
+            if not self.rms_model.empty():
+                g_param = self.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.g]
+                self.rms_model.parameters[g_param] = Const(float(self._R / (self._R ** 2 + self._X ** 2)))
+                b_param = self.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.b]
+                self.rms_model.parameters[b_param] = Const(float(-self._X / (self._R ** 2 + self._X ** 2)))
+                bsh_param = self.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.bsh]
+                self.rms_model.parameters[bsh_param] = Const(float(self._B))
 
     @property
     def X(self):
@@ -279,6 +282,14 @@ class Line(BranchParent):
     @X.setter
     def X(self, value):
         self._X = float(value)
+        if self.auto_update_enabled:
+            if not self.rms_model.empty():
+                g_param = self.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.g]
+                self.rms_model.parameters[g_param] = Const(float(self._R / (self._R ** 2 + self._X ** 2)))
+                b_param = self.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.b]
+                self.rms_model.parameters[b_param] = Const(float(-self._X / (self._R ** 2 + self._X ** 2)))
+                bsh_param = self.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.bsh]
+                self.rms_model.parameters[bsh_param] = Const(float(self._B))
 
     @property
     def B(self):
@@ -287,6 +298,14 @@ class Line(BranchParent):
     @B.setter
     def B(self, value):
         self._B = float(value)
+        if self.auto_update_enabled:
+            if not self.rms_model.empty():
+                g_param = self.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.g]
+                self.rms_model.parameters[g_param] = Const(float(self._R / (self._R ** 2 + self._X ** 2)))
+                b_param = self.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.b]
+                self.rms_model.parameters[b_param] = Const(float(-self._X / (self._R ** 2 + self._X ** 2)))
+                bsh_param = self.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.bsh]
+                self.rms_model.parameters[bsh_param] = Const(float(self._B))
 
     @property
     def R0(self):
@@ -346,12 +365,13 @@ class Line(BranchParent):
 
     @circuit_idx.setter
     def circuit_idx(self, value):
+        value = int(value)
         if value > 0:
             self._circuit_idx = int(value)
 
             if self.auto_update_enabled:
-                print(
-                    "No impedance updates are being done, use the apply_template method to update the impedance values")
+                print("No impedance updates are being done, "
+                      "use the apply_template method to update the impedance values")
 
     def set_circuit_idx(self, val: int, obj: Union[OverheadLineType, UndergroundLineType, SequenceLineType]):
         """
@@ -361,15 +381,19 @@ class Line(BranchParent):
         """
         # If the user is setting the circuit index, ensure that the template exists and is valid
         if obj is None:
-            raise Exception("Template must be set before changing the circuit index.")
+            raise ValueError("Template must be set before changing the circuit index.")
+
         if not isinstance(obj, (OverheadLineType, UndergroundLineType, SequenceLineType)):
-            raise Exception(
-                "Invalid template type. Must be OverheadLineType, UndergroundLineType, or SequenceLineType.")
+            raise ValueError(
+                "Invalid template type. Must be OverheadLineType, UndergroundLineType, or SequenceLineType."
+            )
+
         if isinstance(obj, OverheadLineType):
             if val > obj.n_circuits:
-                raise Exception("Circuit index exceeds the number of circuits in the template.")
+                raise ValueError("Circuit index exceeds the number of circuits in the template.")
+
         if val <= 0:
-            raise Exception("Circuit index must be greater than 0.")
+            raise ValueError("Circuit index must be greater than 0.")
         else:
             if val > 0:
                 self._circuit_idx = int(val)
@@ -389,6 +413,7 @@ class Line(BranchParent):
         :param val:
         :return:
         """
+        val = float(val)
         self.set_length(val)
 
     def set_length(self, val: float):
@@ -452,7 +477,7 @@ class Line(BranchParent):
 
         :return:
         """
-        if self._ys.size != 4:
+        if self._ys.size <= 0 and self.auto_update_enabled:
             self.fill_3_phase_from_sequence()
 
         return self._ys
@@ -470,7 +495,7 @@ class Line(BranchParent):
 
         :return:
         """
-        if self._ysh.size != 4:
+        if self._ysh.size <= 0 and self.auto_update_enabled:
             self.fill_3_phase_from_sequence()
 
         return self._ysh
@@ -481,13 +506,6 @@ class Line(BranchParent):
             self._ysh = val
         else:
             raise ValueError(f'{val} is not a AdmittanceMatrix')
-
-    def assign_input_vars_and_params(self):
-        self.Vmf = self.bus_from.rms_model.model.E(VarPowerFlowRefferenceType.Vm)
-        self.Vaf = self.bus_from.rms_model.model.E(VarPowerFlowRefferenceType.Va)
-        self.Vmt = self.bus_to.rms_model.model.E(VarPowerFlowRefferenceType.Vm)
-        self.Vat = self.bus_to.rms_model.model.E(VarPowerFlowRefferenceType.Va)
-
 
     def change_base(self, Sbase_old: float, Sbase_new: float):
         """
@@ -512,13 +530,15 @@ class Line(BranchParent):
     def apply_template(self,
                        obj: Union[OverheadLineType, UndergroundLineType, SequenceLineType],
                        Sbase: float, freq: float,
-                       logger=Logger()):
+                       logger=Logger(),
+                       decimals_rounding: int = 6):
         """
         Apply a line template to this object
         :param obj: OverheadLineType, UndergroundLineType, SequenceLineType
         :param Sbase: Nominal power in MVA
         :param freq: Frequency in Hz
         :param logger: Logger
+        :param decimals_rounding: Number of decimals to round to
         """
 
         if isinstance(obj, OverheadLineType):
@@ -550,6 +570,8 @@ class Line(BranchParent):
             self.ysh = obj.get_ysh(circuit_idx=self.circuit_idx, Sbase=Sbase, length=self.length, Vnom=vn)
 
             self.template = obj
+            self.rms_template = obj.rms_template
+            self.emt_template = obj.emt_template
 
         elif isinstance(obj, UndergroundLineType):
             (self.R, self.X, self.B,
@@ -557,6 +579,8 @@ class Line(BranchParent):
              self.rate) = obj.get_values(Sbase=Sbase, length=self.length)
 
             self.template = obj
+            self.rms_template = obj.rms_template
+            self.emt_template = obj.emt_template
 
         elif isinstance(obj, SequenceLineType):
             (self.R, self.X, self.B,
@@ -564,12 +588,15 @@ class Line(BranchParent):
              self.rate) = obj.get_values(Sbase=Sbase,
                                          freq=freq,
                                          length=self.length,
-                                         line_Vnom=self.get_max_bus_nominal_voltage())
+                                         line_Vnom=self.get_max_bus_nominal_voltage(),
+                                         decimals_rounding=decimals_rounding)
 
             self.ys = obj.get_ys_nabc()
             self.ysh = obj.get_ysh_nabc()
 
             self.template = obj
+            self.rms_template = obj.rms_template
+            self.emt_template = obj.emt_template
 
         else:
             logger.add_error('Template not recognised', self.name)
@@ -591,29 +618,29 @@ class Line(BranchParent):
                                 X0=self.X0 / self.length,
                                 B0=self.B0 / self.length)
 
-    def get_save_data(self) -> List[str]:
-        """
-        Return the data that matches the edit_headers
-        :return:
-        """
-        data = list()
-        for name, properties in self.registered_properties.items():
-            obj = getattr(self, name)
-
-            if obj is None:
-                data.append("")
-            else:
-
-                if hasattr(obj, 'idtag'):
-                    obj = obj.idtag
-                else:
-                    if properties.tpe not in [str, float, int, bool]:
-                        obj = str(obj)
-                    else:
-                        obj = str(obj)
-
-                data.append(obj)
-        return data
+    # def get_save_data(self) -> List[str]:
+    #     """
+    #     Return the data that matches the edit_headers
+    #     :return:
+    #     """
+    #     data = list()
+    #     for name, properties in self.registered_properties.items():
+    #         obj = getattr(self, name)
+    #
+    #         if obj is None:
+    #             data.append("")
+    #         else:
+    #
+    #             if hasattr(obj, 'idtag'):
+    #                 obj = obj.idtag
+    #             else:
+    #                 if properties.tpe not in [str, float, int, bool]:
+    #                     obj = str(obj)
+    #                 else:
+    #                     obj = str(obj)
+    #
+    #             data.append(obj)
+    #     return data
 
     def fix_inconsistencies(self, logger: Logger) -> bool:
         """
@@ -649,7 +676,9 @@ class Line(BranchParent):
                             LV=V1,
                             r=self.R,
                             x=self.X,
-                            b=self.B)
+                            b=self.B
+                            )
+        elm.rms_model = self.rms_model
 
         if index is not None:
             elm.ensure_profiles_exist(index=index)
@@ -662,8 +691,16 @@ class Line(BranchParent):
 
         return elm
 
-    def fill_design_properties(self, r_ohm: float, x_ohm: float, c_nf: float, length: float,
-                               Imax: float, freq: float, Sbase: float, apply_to_profile: bool = True, ) -> "Line":
+    def fill_design_properties(self,
+                               r_ohm: float,
+                               x_ohm: float,
+                               c_nf: float,
+                               length: float,
+                               Imax: float,
+                               freq: float,
+                               Sbase: float,
+                               apply_to_profile: bool = True,
+                               logger: Logger = Logger()) -> "Line":
         """
         Fill R, X, B from not-in-per-unit parameters
         :param r_ohm: Resistance per km in OHM/km
@@ -674,82 +711,155 @@ class Line(BranchParent):
         :param freq: System frequency in Hz
         :param Sbase: Base power in MVA (take always 100 MVA)
         :param apply_to_profile: modify the ratings profile if checked
+        :param logger: Logger
         :return self pointer
         """
-        self.R, self.X, self.B, new_rate = get_line_impedances_with_c(r_ohm=r_ohm,
-                                                                      x_ohm=x_ohm,
-                                                                      c_nf=c_nf,
-                                                                      length=length,
-                                                                      Imax=Imax,
-                                                                      freq=freq,
-                                                                      Sbase=Sbase,
-                                                                      Vnom=self.get_max_bus_nominal_voltage())
+        Vnom = self.get_max_bus_nominal_voltage()
 
-        old_rate = float(self.rate)
+        if Vnom > 0:
 
-        self.rate = new_rate
-        self._length = length
+            self.R, self.X, self.B, new_rate = get_line_impedances_with_c(r_ohm=r_ohm,
+                                                                          x_ohm=x_ohm,
+                                                                          c_nf=c_nf,
+                                                                          length=length,
+                                                                          Imax=Imax,
+                                                                          freq=freq,
+                                                                          Sbase=Sbase,
+                                                                          Vnom=Vnom,
+                                                                          logger=logger)
 
-        if apply_to_profile:
-            if old_rate != 0.0:
-                prof_old = self.rate_prof.toarray()
-                self.rate_prof.set(prof_old * new_rate / old_rate)
-            else:
-                self.rate_prof.fill(new_rate)
+            old_rate = float(self.rate)
+
+            self.rate = new_rate
+            self._length = length
+
+            if apply_to_profile:
+                if old_rate != 0.0:
+                    prof_old = self.rate_prof.toarray()
+                    self.rate_prof.set(prof_old * new_rate / old_rate)
+                else:
+                    self.rate_prof.fill(new_rate)
+        else:
+            logger.add_error("Nominal voltage is zero", device_class="Line", device=self.name)
 
         return self
+
+    def get_tau(self, w: float) -> float:
+        """
+        get EMT delay parameter (tau) in seconds
+        :param w: 2 * pi * freq
+        :return: tau value
+        """
+        if self.template is None:
+            return 0.0
+        else:
+            # TODO: consider using line.ys and line.ysh instead
+            # Physical Parameters from Carson's
+            Z = self.template.z_nabc  # from Carson ohm/km
+            Y = self.template.y_nabc  # from Carson ohm/km
+
+            Z_phys_m = Z / 1e3  # ohm/m
+            Y_phys_m = Y / 1e3  # S/m
+
+            # line parameters / meter
+            l_ = np.imag(Z_phys_m) / w  # H/m
+            c_ = np.imag(Y_phys_m) / w  # F/m
+
+            # v_wave and tau from the travelling wave are taken only from the diagonal components
+            L_w = l_[0, 0]
+            C_w = c_[0, 0]
+            v_wave = 1 / np.sqrt(L_w * C_w)
+
+            # line time delay (tau) (only relevant for Bergeron and JMartí)
+            return self.length * 1e3 / v_wave  # s
 
     def fill_3_phase_from_sequence(self) -> None:
         """
         Fill the 3x3 from the sequence values
         """
         if self.R0 > 1e-10 and self.X0 > 1e-10:
-            obj = SequenceLineType(R=self.R, R0=self.R0, X=self.X, X0=self.X0)
+            obj = SequenceLineType(R=self.R, R0=self.R0, X=self.X, X0=self.X0, B=self.B, B0=self.B0)
         else:
-            obj = SequenceLineType(R=self.R, R0=2.0 * self.R, X=self.X, X0=2.0 * self.X)
+            obj = SequenceLineType(R=self.R, R0=2.0 * self.R, X=self.X, X0=2.0 * self.X, B=self.B * 1e6,
+                                   B0=self.B * 1e6)
+            obj = SequenceLineType(R=self.R, R0=self.R, X=self.X, X0=self.X, B=self.B * 1e6, B0=self.B * 1e6)
         self.ys = obj.get_ys_nabc()
         self.ysh = obj.get_ysh_nabc()
 
-    def initialize_rms(self) -> None:
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def tolerance(self) -> float:
         """
+        Get ``tolerance``.
 
-        :return:
+        :return: float
         """
-        if self.rms_model.empty():
-            Qf = Var("Qf")
-            Qt = Var("Qt")
-            Pf = Var("Pf")
-            Pt = Var("Pt")
+        return self._tolerance
 
-            g = Const((1.0 / complex(self.R, self.X)).real)
-            b = Const((1.0 / complex(self.R, self.X)).imag)
-            bsh =  self.B
+    @tolerance.setter
+    def tolerance(self, val: float) -> None:
+        """
+        Set ``tolerance``.
 
-            Vmf = self.bus_from.rms_model.model.E(VarPowerFlowRefferenceType.Vm)
-            Vaf = self.bus_from.rms_model.model.E(VarPowerFlowRefferenceType.Va)
-            Vmt = self.bus_to.rms_model.model.E(VarPowerFlowRefferenceType.Vm)
-            Vat = self.bus_to.rms_model.model.E(VarPowerFlowRefferenceType.Va)
+        :param val: Value to assign.
+        :return: None
+        """
+        self._tolerance = float(val)
 
-            block = Block(
-                algebraic_vars=[Pf, Pt, Qf, Qt],
-                algebraic_eqs=[
-                    Pf - ((Vmf ** 2 * g) - g * Vmf * Vmt * cos(
-                        Vaf - Vat) + b * Vmf * Vmt * cos(Vaf - Vat + np.pi / 2)),
-                    Qf - (Vmf ** 2 * (-bsh / 2 - b) - g * Vmf * Vmt * sin(
-                        Vaf - Vat) + b * Vmf * Vmt * sin(
-                        Vaf - Vat + np.pi / 2)),
-                    Pt - ((Vmt ** 2 * g) - g * Vmt * Vmf * cos(
-                        Vat - Vaf) + b * Vmt * Vmf * cos(Vat - Vaf + np.pi / 2)),
-                    Qt - (Vmt ** 2 * (-bsh / 2 - b) - g * Vmt * Vmf * sin(
-                        Vat - Vaf) + b * Vmt * Vmf * sin(
-                        Vat - Vaf + np.pi / 2)),
-                ])
+    @property
+    def r_fault(self) -> float:
+        """
+        Get ``r_fault``.
 
-            block.external_mapping = {
-                VarPowerFlowRefferenceType.Pf: Pf,
-                VarPowerFlowRefferenceType.Pt: Pt,
-                VarPowerFlowRefferenceType.Qf: Qf,
-                VarPowerFlowRefferenceType.Qt: Qt,
-            }
+        :return: float
+        """
+        return self._r_fault
 
-            self.rms_model.model = block
+    @r_fault.setter
+    def r_fault(self, val: float) -> None:
+        """
+        Set ``r_fault``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._r_fault = float(val)
+
+    @property
+    def x_fault(self) -> float:
+        """
+        Get ``x_fault``.
+
+        :return: float
+        """
+        return self._x_fault
+
+    @x_fault.setter
+    def x_fault(self, val: float) -> None:
+        """
+        Set ``x_fault``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._x_fault = float(val)
+
+    @property
+    def fault_pos(self) -> float:
+        """
+        Get ``fault_pos``.
+
+        :return: float
+        """
+        return self._fault_pos
+
+    @fault_pos.setter
+    def fault_pos(self, val: float) -> None:
+        """
+        Set ``fault_pos``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._fault_pos = float(val)

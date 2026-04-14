@@ -6,49 +6,78 @@ from __future__ import annotations
 from typing import Union, List, TYPE_CHECKING, Tuple
 import numpy as np
 
-from VeraGridEngine.Devices.Parents.physical_device import PhysicalDevice
+from VeraGridEngine.Devices.Parents.dynamic_parent import DynamicDevice
 from VeraGridEngine.Devices.Associations.association import Associations
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import BuildStatus, DeviceType, SubObjectType, ShuntConnectionType
 from VeraGridEngine.basic_structures import CxVec
-from VeraGridEngine.Devices.profile import Profile
+from VeraGridEngine.Devices.Profiles import ProfileBool, ProfileFloat
 from VeraGridEngine.Devices.Aggregation.facility import Facility
-from VeraGridEngine.Devices.Dynamic.dynamic_model_host import DynamicModelHost
-from VeraGridEngine.Devices.Parents.editable_device import get_at
+from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 
 if TYPE_CHECKING:
-    from VeraGridEngine.Devices import Technology
+    from VeraGridEngine.Devices.Associations.technology import Technology
     from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 
 
-class InjectionParent(PhysicalDevice):
+class InjectionParent(DynamicDevice):
     """
     Parent class for Injections
     """
 
     __slots__ = (
         '_bus',
-        'active',
+        '_active',
         '_active_prof',
-        'mttf',
-        'mttr',
-        'Cost',
+        '_mttf',
+        '_mttr',
+        '_Cost',
         '_Cost_prof',
-        'capex',
-        'opex',
+        '_capex',
+        '_opex',
         'facility',
         'technologies',
-        'scalable',
-        'shift_key',
-        'longitude',
-        'latitude',
+        '_scalable',
+        '_shift_key',
+        '_longitude',
+        '_latitude',
         '_shift_key_prof',
         '_use_kw',
-        'bus_pos',
+        '_bus_pos',
         '_conn',
-        '_rms_model',
-        'time',
-        'color'
+
+        'color',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='bus', units='', tpe=DeviceType.BusDevice, definition='Connection bus', editable=False),
+        GCProp(key='active', units='', tpe=bool, definition='Is the load active?', profile_name='active_prof'),
+        GCProp(key='color', units='', tpe=str, definition='Color to paint the element in the map diagram',
+               is_color=True),
+        GCProp(key='mttf', units='h', tpe=float, definition='Mean time to failure'),
+        GCProp(key='mttr', units='h', tpe=float, definition='Mean time to recovery'),
+        GCProp(key='capex', units='e/MW', tpe=float,
+               definition='Cost of investment. Used in expansion planning.'),
+        GCProp(key='opex', units='e/MWh', tpe=float, definition='Cost of operation. Used in expansion planning.'),
+        GCProp(key='Cost', units='e/MWh', tpe=float, definition='Cost of not served energy. Used in OPF.',
+               profile_name='Cost_prof'),
+        GCProp(key='facility', units='', tpe=DeviceType.FacilityDevice,
+               definition='Facility where this is located', editable=True),
+        GCProp(key='technologies', units='p.u.', tpe=SubObjectType.Associations,
+               definition='Technologies associations to injections', display=False),
+        GCProp(key='scalable', units='', tpe=bool, definition='Is the injection scalable?'),
+        GCProp(key='shift_key', units='', tpe=float, definition='Shift key for net transfer capacity',
+               profile_name="shift_key_prof"),
+        GCProp(key='longitude', units='deg', tpe=float,
+               definition='longitude of the injection.', profile_name=''),
+        GCProp(key='latitude', units='deg', tpe=float,
+               definition='latitude of the injection.', profile_name=''),
+        GCProp(key='use_kw', units='', tpe=bool, definition='Consider the injections in kW and kVAr?'),
+        GCProp(key='conn', units='', tpe=ShuntConnectionType,
+               definition='Connection type for 3-phase studies'),
+
+        GCProp(key='bus_pos', units='', tpe=int, definition='Aid to locate devices on a busbar',
+               display=False),
     )
 
     def __init__(self,
@@ -83,7 +112,7 @@ class InjectionParent(PhysicalDevice):
         :param device_type: DeviceType
         """
 
-        PhysicalDevice.__init__(self,
+        DynamicDevice.__init__(self,
                                 name=name,
                                 idtag=idtag,
                                 code=code,
@@ -93,7 +122,7 @@ class InjectionParent(PhysicalDevice):
         self._bus = bus
 
         self.active = bool(active)
-        self._active_prof = Profile(default_value=self.active, data_type=bool)
+        self._active_prof = ProfileBool(default_value=self.active)
 
         self.mttf = mttf
 
@@ -101,7 +130,7 @@ class InjectionParent(PhysicalDevice):
 
         self.Cost = float(Cost)
 
-        self._Cost_prof = Profile(default_value=self.Cost, data_type=float)
+        self._Cost_prof = ProfileFloat(default_value=self.Cost)
 
         self.capex = capex
 
@@ -114,7 +143,7 @@ class InjectionParent(PhysicalDevice):
         self.scalable: bool = True
 
         self.shift_key: float = 1.0
-        self._shift_key_prof = Profile(default_value=self.shift_key, data_type=float)
+        self._shift_key_prof = ProfileFloat(default_value=self.shift_key)
 
         self.longitude = float(longitude)
         self.latitude = float(latitude)
@@ -123,58 +152,14 @@ class InjectionParent(PhysicalDevice):
 
         self._conn: ShuntConnectionType = ShuntConnectionType.GroundedStar
 
-        self._rms_model: DynamicModelHost = DynamicModelHost()
+
 
         self.bus_pos: int = 0
 
         self.color = color if color is not None else "#909090"  # light gray
 
-        self.register(key='bus', units='', tpe=DeviceType.BusDevice, definition='Connection bus', editable=False)
-
-        self.register(key='active', units='', tpe=bool, definition='Is the load active?', profile_name='active_prof')
-
-        self.register(key='color', units='', tpe=str, definition='Color to paint the element in the map diagram',
-                      is_color=True)
-
-        self.register(key='mttf', units='h', tpe=float, definition='Mean time to failure')
-        self.register(key='mttr', units='h', tpe=float, definition='Mean time to recovery')
-
-        self.register(key='capex', units='e/MW', tpe=float,
-                      definition='Cost of investment. Used in expansion planning.')
-        self.register(key='opex', units='e/MWh', tpe=float, definition='Cost of operation. Used in expansion planning.')
-
-        self.register(key='Cost', units='e/MWh', tpe=float, definition='Cost of not served energy. Used in OPF.',
-                      profile_name='Cost_prof')
-
-        self.register(key='facility', units='', tpe=DeviceType.FacilityDevice,
-                      definition='Facility where this is located', editable=True)
-
-        self.register(key='technologies', units='p.u.', tpe=SubObjectType.Associations,
-                      definition='List of technologies', display=False)
-
-        self.register(key='scalable', units='', tpe=bool, definition='Is the injection scalable?')
-
-        self.register(key='shift_key', units='', tpe=float, definition='Shift key for net transfer capacity',
-                      profile_name="shift_key_prof")
-
-        self.register(key='longitude', units='deg', tpe=float,
-                      definition='longitude of the injection.', profile_name='')
-        self.register(key='latitude', units='deg', tpe=float,
-                      definition='latitude of the injection.', profile_name='')
-
-        self.register(key='use_kw', units='', tpe=bool, definition='Consider the injections in kW and kVAr?')
-
-        self.register(key='conn', units='', tpe=ShuntConnectionType,
-                      definition='Connection type for 3-phase studies')
-
-        self.register(key='rms_model', units='', tpe=SubObjectType.DynamicModelHostType,
-                      definition='RMS dynamic model', display=False)
-
-        self.register(key='bus_pos', units='', tpe=int, definition='Aid to locate devices on a busbar',
-                      display=False)
-
     @property
-    def bus(self) -> Bus:
+    def bus(self) -> Bus | None:
         """
         Bus
         :return: Bus
@@ -192,7 +177,7 @@ class InjectionParent(PhysicalDevice):
                 raise Exception(str(type(val)) + 'not supported to be set into a bus')
 
     @property
-    def active_prof(self) -> Profile:
+    def active_prof(self) -> ProfileBool:
         """
         Cost profile
         :return: Profile
@@ -200,8 +185,8 @@ class InjectionParent(PhysicalDevice):
         return self._active_prof
 
     @active_prof.setter
-    def active_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def active_prof(self, val: Union[ProfileBool, np.ndarray]):
+        if isinstance(val, ProfileBool):
             self._active_prof = val
         elif isinstance(val, np.ndarray):
             self._active_prof.set(arr=val)
@@ -216,7 +201,7 @@ class InjectionParent(PhysicalDevice):
         return get_at(self.active, self.active_prof, t)
 
     @property
-    def Cost_prof(self) -> Profile:
+    def Cost_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -224,8 +209,8 @@ class InjectionParent(PhysicalDevice):
         return self._Cost_prof
 
     @Cost_prof.setter
-    def Cost_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Cost_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Cost_prof = val
         elif isinstance(val, np.ndarray):
             self._Cost_prof.set(arr=val)
@@ -240,7 +225,7 @@ class InjectionParent(PhysicalDevice):
         return get_at(self.Cost, self.Cost_prof, t)
 
     @property
-    def shift_key_prof(self) -> Profile:
+    def shift_key_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -248,8 +233,8 @@ class InjectionParent(PhysicalDevice):
         return self._shift_key_prof
 
     @shift_key_prof.setter
-    def shift_key_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def shift_key_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._shift_key_prof = val
         elif isinstance(val, np.ndarray):
             self._shift_key_prof.set(arr=val)
@@ -277,22 +262,12 @@ class InjectionParent(PhysicalDevice):
         Setter
         :param val: bool
         """
+        val = bool(val)
         if self.auto_update_enabled:
             if val != self._use_kw:
                 self._use_kw = val
-
-                if val:
-                    # is in kW, replace MW by kW
-                    for key, prp in self.registered_properties.items():
-                        prp.units = (prp.units.replace("MW", "kW")
-                                     .replace("MVAr", "kVAr")
-                                     .replace("MVA", "kVA"))
-                else:
-                    # is in MW, replace kW by MW
-                    for key, prp in self.registered_properties.items():
-                        prp.units = (prp.units.replace("kW", "MW")
-                                     .replace("kVAr", "MVAr")
-                                     .replace("kVA", "MVA"))
+            else:
+                pass
         else:
             self._use_kw = val
 
@@ -309,18 +284,7 @@ class InjectionParent(PhysicalDevice):
         if isinstance(val, ShuntConnectionType):
             self._conn = val
 
-    @property
-    def rms_model(self) -> DynamicModelHost:
-        """
 
-        :return:
-        """
-        return self._rms_model
-
-    @rms_model.setter
-    def rms_model(self, value: DynamicModelHost):
-        if isinstance(value, DynamicModelHost):
-            self._rms_model = value
 
     def get_S_with_sign(self) -> complex:
         """
@@ -389,3 +353,225 @@ class InjectionParent(PhysicalDevice):
             if val.value > mx:
                 col = val.api_object.color
         self.color = col
+
+    def color_by_main_owner(self):
+        """
+        Set the color of the dominant owner
+        """
+        mx = 0.0
+        col = self.color
+        for _, val in self.owners.data.items():
+            if val.value > mx:
+                col = val.api_object.color
+        self.color = col
+
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def active(self) -> bool:
+        """
+        Get ``active``.
+
+        :return: bool
+        """
+        return self._active
+
+    @active.setter
+    def active(self, val: bool) -> None:
+        """
+        Set ``active``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._active = bool(val)
+
+    @property
+    def mttf(self) -> float:
+        """
+        Get ``mttf``.
+
+        :return: float
+        """
+        return self._mttf
+
+    @mttf.setter
+    def mttf(self, val: float) -> None:
+        """
+        Set ``mttf``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._mttf = float(val)
+
+    @property
+    def mttr(self) -> float:
+        """
+        Get ``mttr``.
+
+        :return: float
+        """
+        return self._mttr
+
+    @mttr.setter
+    def mttr(self, val: float) -> None:
+        """
+        Set ``mttr``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._mttr = float(val)
+
+    @property
+    def capex(self) -> float:
+        """
+        Get ``capex``.
+
+        :return: float
+        """
+        return self._capex
+
+    @capex.setter
+    def capex(self, val: float) -> None:
+        """
+        Set ``capex``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._capex = float(val)
+
+    @property
+    def opex(self) -> float:
+        """
+        Get ``opex``.
+
+        :return: float
+        """
+        return self._opex
+
+    @opex.setter
+    def opex(self, val: float) -> None:
+        """
+        Set ``opex``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._opex = float(val)
+
+    @property
+    def Cost(self) -> float:
+        """
+        Get ``Cost``.
+
+        :return: float
+        """
+        return self._Cost
+
+    @Cost.setter
+    def Cost(self, val: float) -> None:
+        """
+        Set ``Cost``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Cost = float(val)
+
+    @property
+    def scalable(self) -> bool:
+        """
+        Get ``scalable``.
+
+        :return: bool
+        """
+        return self._scalable
+
+    @scalable.setter
+    def scalable(self, val: bool) -> None:
+        """
+        Set ``scalable``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._scalable = bool(val)
+
+    @property
+    def shift_key(self) -> float:
+        """
+        Get ``shift_key``.
+
+        :return: float
+        """
+        return self._shift_key
+
+    @shift_key.setter
+    def shift_key(self, val: float) -> None:
+        """
+        Set ``shift_key``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._shift_key = float(val)
+
+    @property
+    def longitude(self) -> float:
+        """
+        Get ``longitude``.
+
+        :return: float
+        """
+        return self._longitude
+
+    @longitude.setter
+    def longitude(self, val: float) -> None:
+        """
+        Set ``longitude``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._longitude = float(val)
+
+    @property
+    def latitude(self) -> float:
+        """
+        Get ``latitude``.
+
+        :return: float
+        """
+        return self._latitude
+
+    @latitude.setter
+    def latitude(self, val: float) -> None:
+        """
+        Set ``latitude``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._latitude = float(val)
+
+    @property
+    def bus_pos(self) -> int:
+        """
+        Get ``bus_pos``.
+
+        :return: int
+        """
+        return self._bus_pos
+
+    @bus_pos.setter
+    def bus_pos(self, val: int) -> None:
+        """
+        Set ``bus_pos``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._bus_pos = int(val)

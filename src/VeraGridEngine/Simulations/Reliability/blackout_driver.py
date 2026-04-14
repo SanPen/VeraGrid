@@ -17,6 +17,11 @@ from VeraGridEngine.Simulations.driver_template import DriverTemplate
 
 
 class CascadingReportElement:
+    __slots__ = (
+        "removed_idx",
+        "pf_results",
+        "criteria",
+    )
 
     def __init__(self, removed_idx, pf_results, criteria):
         """
@@ -31,6 +36,10 @@ class CascadingReportElement:
 
 
 class CascadingResults:
+    __slots__ = (
+        "cascade_type",
+        "events",
+    )
 
     # TODO: refactor this class
 
@@ -76,6 +85,16 @@ class CascadingResults:
 
 
 class CascadingDriver(DriverTemplate):
+    __slots__ = (
+        "options",
+        "triggering_idx",
+        "current_step",
+        "max_additional_islands",
+        "cascade_type",
+        "n_lhs_samples",
+    )
+
+    name = 'Cascading'
     tpe = SimulationTypes.Cascade_run
 
     # TODO: re-make this simulation class
@@ -94,8 +113,6 @@ class CascadingDriver(DriverTemplate):
         """
 
         DriverTemplate.__init__(self, grid=grid)
-
-        self.name = 'Cascading'
 
         self.options = options
 

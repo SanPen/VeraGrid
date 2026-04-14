@@ -167,8 +167,8 @@ class BusesForSrap:
         :param srap_pmax_mw: SRAP limit in MW
         :param available_power: Array of available power per bus
         :param srap_used_power: Matrix including power used in SRAP (nbranch,nbus)
-        :param branch_idx: overloaded branch
-        :param top_n: maximum number of nodes affecting the oveload
+        :param branch_idx: overloaded branch index
+        :param top_n: maximum number of nodes affecting the overload
         :return: min(srap_limit, sum(p_available))
         """
 

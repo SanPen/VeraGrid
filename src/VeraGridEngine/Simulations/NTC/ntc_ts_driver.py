@@ -18,6 +18,13 @@ from VeraGridEngine.enumerations import SimulationTypes
 
 
 class OptimalNetTransferCapacityTimeSeriesDriver(TimeSeriesDriverTemplate):
+    __slots__ = (
+        "options",
+        "unresolved_counter",
+        "installed_alpha",
+        "installed_alpha_n1",
+    )
+
     tpe = SimulationTypes.OptimalNetTransferCapacityTimeSeries_run
 
     def __init__(self, grid: MultiCircuit,
@@ -159,8 +166,8 @@ class OptimalNetTransferCapacityTimeSeriesDriver(TimeSeriesDriverTemplate):
             else:
                 print('Optimal net transfer capacity at ' + str(self.grid.time_profile[t]))
 
-            if self.__cancel__:
-                break
+            if self.is_cancel():
+                return
 
         self.report_text('Done!')
 

@@ -9,6 +9,7 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 
 
 class Disconnector(Switch):
+	__slots__ = ()
 	def __init__(self, rdfid='', tpe='Disconnector'):
 		Switch.__init__(self, rdfid, tpe)
 

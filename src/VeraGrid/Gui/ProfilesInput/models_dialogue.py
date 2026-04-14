@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 
 from VeraGrid.Gui.messages import yes_no_question
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-from VeraGridEngine.IO.file_handler import FileOpen
+from VeraGridEngine.IO.file_open import FileOpen
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Utils.progress_bar import print_progress_bar
 from VeraGrid.Gui.ProfilesInput.profiles_from_models_gui import Ui_Dialog
@@ -335,7 +335,7 @@ class ModelsInputGUI(QtWidgets.QDialog):
         Add the selected models
         """
         # declare the allowed file types
-        files_types = "Formats (*.raw *.RAW *.rawx *.xml *.m *.epc *.EPC)"
+        files_types = "Formats (*.raw *.RAW *.rawx *.xml *.m *.matpower *.epc *.EPC)"
 
         # call dialog to select the file
         filenames, type_selected = QtWidgets.QFileDialog.getOpenFileNames(self, 'Add files', filter=files_types)

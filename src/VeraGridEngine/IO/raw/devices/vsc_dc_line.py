@@ -2,12 +2,115 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
+from typing import Tuple
+
 from VeraGridEngine.IO.base.units import Unit
 from VeraGridEngine.IO.raw.devices.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
+from VeraGridEngine.IO.raw.devices.psse_property import PsseProperty
 
 
 class RawVscDCLine(RawObject):
+    LOCAL_PROPERTIES: Tuple[PsseProperty, ...] = (
+        PsseProperty(property_name='NAME', rawx_key='name', class_type=str, description='Device name', max_chars=12),
+        PsseProperty(property_name='MDC', rawx_key='mdc', class_type=int,
+                     description='Control mode:\n•  0 - for out-of-service\n•  1 - for in-service', min_value=0,
+                     max_value=1),
+        PsseProperty(property_name='RDC', rawx_key='rdc', class_type=float, description='The dc line resistance',
+                     min_value=0, max_value=999999, unit=Unit.get_ohm()),
+        PsseProperty(property_name='IBUS1', rawx_key='ibus1', class_type=int, description='Converter bus number, ',
+                     min_value=0, max_value=999999, max_chars=6),
+        PsseProperty(property_name='TYPE1', rawx_key='type1', class_type=int,
+                     description='Code for the type of converter dc control:\n•  0 - for converter out-of-service\n•  1 - for dc voltage control\n•  2 -for MW control\nWhen both converters are in-service, exactly one converter of each VSC dc line must be TYPE 1.',
+                     min_value=0, max_value=2),
+        PsseProperty(property_name='MODE1', rawx_key='mode1', class_type=int,
+                     description='Converter ac control mode:1 -> AC voltage control\n2 -> fixed AC power factor\n',
+                     min_value=0, max_value=2),
+        PsseProperty(property_name='DCSET1', rawx_key='dcset1', class_type=float,
+                     description='Converter dc setpoint (see manual)', unit=Unit.get_mw()),
+        PsseProperty(property_name='ACSET1', rawx_key='acset1', class_type=float,
+                     description='Converter ac setpoint. 1-> AC voltage, 2-> power factor', unit=Unit.get_pu()),
+        PsseProperty(property_name='ALOSS1', rawx_key='aloss1', class_type=float,
+                     description='Losses constant coefficient: loss = ALOSS + (Idc * BLOSS)', unit=Unit.get_kw()),
+        PsseProperty(property_name='BLOSS1', rawx_key='bloss1', class_type=float,
+                     description='Losses proportional coefficient: loss = ALOSS + (Idc * BLOSS)', unit=Unit.get_kw(),
+                     denominator_unit=Unit.get_a()),
+        PsseProperty(property_name='MINLOSS1', rawx_key='minloss1', class_type=int,
+                     description='Minimum converter losses', unit=Unit.get_kw()),
+        PsseProperty(property_name='SMAX1', rawx_key='smax1', class_type=float, description='Converter MVA rating',
+                     unit=Unit.get_mw()),
+        PsseProperty(property_name='IMAX1', rawx_key='imax1', class_type=float,
+                     description='Converter ac current rating', unit=Unit.get_a()),
+        PsseProperty(property_name='PWF1', rawx_key='pwf1', class_type=float,
+                     description='Power weighting factor fraction (see manual)', min_value=0.0, max_value=1.0),
+        PsseProperty(property_name='MAXQ1', rawx_key='maxq1', class_type=float,
+                     description='Reactive power upper limit (see manual)', unit=Unit.get_mvar()),
+        PsseProperty(property_name='MINQ1', rawx_key='minq1', class_type=float,
+                     description='Reactive power lower limit (see manual)', unit=Unit.get_mvar()),
+        PsseProperty(property_name='REMOT1', rawx_key='remot1', class_type=int, description='Control bus (see manual)',
+                     min_value=0, max_value=999999),
+        PsseProperty(property_name='VSREG1', rawx_key='vseg1', class_type=int, description='Control bus (see manual)',
+                     min_value=0, max_value=999999),
+        PsseProperty(property_name='NREG1', rawx_key='nreg1', class_type=int, description='Control node (see manual)',
+                     min_value=0, max_value=999999),
+        PsseProperty(property_name='RMPCT1', rawx_key='rmpct1', class_type=float,
+                     description='Percent of the total Mvar required to hold the voltage at the bus controlled by IBUS (see manual)',
+                     unit=Unit.get_percent()),
+        PsseProperty(property_name='IBUS2', rawx_key='ibus2', class_type=int, description='Converter bus number',
+                     min_value=0, max_value=999999, max_chars=6),
+        PsseProperty(property_name='TYPE2', rawx_key='type2', class_type=int,
+                     description='Converter ac control mode:0 -> out of service\n1 -> AC voltage control\n2 -> fixed AC power factor\n',
+                     min_value=0, max_value=2),
+        PsseProperty(property_name='MODE2', rawx_key='mode2', class_type=int,
+                     description='Converter ac control mode:1 -> AC voltage control\n2 -> fixed AC power factor\n',
+                     min_value=1, max_value=2),
+        PsseProperty(property_name='DCSET2', rawx_key='dcset2', class_type=float,
+                     description='Converter dc setpoint (see manual)', unit=Unit.get_mw()),
+        PsseProperty(property_name='ACSET2', rawx_key='acset2', class_type=float,
+                     description='Converter ac setpoint. 1-> AC voltage, 2-> power factor', unit=Unit.get_pu()),
+        PsseProperty(property_name='ALOSS2', rawx_key='aloss2', class_type=float,
+                     description='Losses constant coefficient: loss = ALOSS + (Idc * BLOSS)', unit=Unit.get_kw()),
+        PsseProperty(property_name='BLOSS2', rawx_key='bloss2', class_type=float,
+                     description='Losses proportional coefficient: loss = ALOSS + (Idc * BLOSS)', unit=Unit.get_kw(),
+                     denominator_unit=Unit.get_a()),
+        PsseProperty(property_name='MINLOSS2', rawx_key='minloss2', class_type=int,
+                     description='Minimum converter losses', unit=Unit.get_kw()),
+        PsseProperty(property_name='SMAX2', rawx_key='smax2', class_type=float, description='Converter MVA rating',
+                     unit=Unit.get_mw()),
+        PsseProperty(property_name='IMAX2', rawx_key='imax2', class_type=float,
+                     description='Converter ac current rating', unit=Unit.get_a()),
+        PsseProperty(property_name='PWF2', rawx_key='pwf2', class_type=float,
+                     description='Power weighting factor fraction (see manual)'),
+        PsseProperty(property_name='MAXQ2', rawx_key='maxq2', class_type=float,
+                     description='Reactive power upper limit (see manual)', unit=Unit.get_mvar()),
+        PsseProperty(property_name='MINQ2', rawx_key='minq2', class_type=float,
+                     description='Reactive power lower limit (see manual)', unit=Unit.get_mvar()),
+        PsseProperty(property_name='REMOT2', rawx_key='remot2', class_type=int, description='Control bus (see manual)',
+                     min_value=0, max_value=999999),
+        PsseProperty(property_name='VSREG2', rawx_key='vseg2', class_type=int, description='Control bus (see manual)',
+                     min_value=0, max_value=999999),
+        PsseProperty(property_name='NREG2', rawx_key='nreg2', class_type=int, description='Control node (see manual)',
+                     min_value=0, max_value=999999),
+        PsseProperty(property_name='RMPCT2', rawx_key='rmpct2', class_type=float,
+                     description='Percent of the total Mvar required to hold the voltage at the bus controlled by IBUS (see manual)',
+                     unit=Unit.get_percent()),
+        PsseProperty(property_name='O{}'.format(0 + 1), rawx_key='o{}'.format(0 + 1), class_type=int,
+                     description='Owner number {}'.format(0 + 1), min_value=1, max_value=9999),
+        PsseProperty(property_name='F{}'.format(0 + 1), rawx_key='f{}'.format(0 + 1), class_type=float,
+                     description='Ownership fraction {}'.format(0 + 1), min_value=0.0, max_value=1.0),
+        PsseProperty(property_name='O{}'.format(1 + 1), rawx_key='o{}'.format(1 + 1), class_type=int,
+                     description='Owner number {}'.format(1 + 1), min_value=1, max_value=9999),
+        PsseProperty(property_name='F{}'.format(1 + 1), rawx_key='f{}'.format(1 + 1), class_type=float,
+                     description='Ownership fraction {}'.format(1 + 1), min_value=0.0, max_value=1.0),
+        PsseProperty(property_name='O{}'.format(2 + 1), rawx_key='o{}'.format(2 + 1), class_type=int,
+                     description='Owner number {}'.format(2 + 1), min_value=1, max_value=9999),
+        PsseProperty(property_name='F{}'.format(2 + 1), rawx_key='f{}'.format(2 + 1), class_type=float,
+                     description='Ownership fraction {}'.format(2 + 1), min_value=0.0, max_value=1.0),
+        PsseProperty(property_name='O{}'.format(3 + 1), rawx_key='o{}'.format(3 + 1), class_type=int,
+                     description='Owner number {}'.format(3 + 1), min_value=1, max_value=9999),
+        PsseProperty(property_name='F{}'.format(3 + 1), rawx_key='f{}'.format(3 + 1), class_type=float,
+                     description='Ownership fraction {}'.format(3 + 1), min_value=0.0, max_value=1.0),
+    )
 
     def __init__(self):
         RawObject.__init__(self, "VSC DC line")
@@ -62,281 +165,11 @@ class RawVscDCLine(RawObject):
         self.NREG2 = 0  # from PSSe 35
         self.RMPCT2 = 100.0
 
-        self.register_property(property_name='NAME',
-                               rawx_key='name',
-                               class_type=str,
-                               description='Device name',
-                               max_chars=12)
-
-        self.register_property(property_name='MDC',
-                               rawx_key='mdc',
-                               class_type=int,
-                               description='Control mode:\n'
-                                           '•  0 - for out-of-service\n'
-                                           '•  1 - for in-service',
-                               min_value=0,
-                               max_value=1)
-
-        self.register_property(property_name='RDC',
-                               rawx_key='rdc',
-                               class_type=float,
-                               description='The dc line resistance',
-                               min_value=0,
-                               max_value=999999,
-                               unit=Unit.get_ohm())
+        # --------------------------------------------------------------------------------------------------------------
 
         # --------------------------------------------------------------------------------------------------------------
 
-        self.register_property(property_name='IBUS1',
-                               rawx_key='ibus1',
-                               class_type=int,
-                               description='Converter bus number, ',
-                               min_value=0,
-                               max_value=999999,
-                               max_chars=6)
-
-        self.register_property(property_name='TYPE1',
-                               rawx_key='type1',
-                               class_type=int,
-                               description='Code for the type of converter dc control:\n'
-                                           '•  0 - for converter out-of-service\n'
-                                           '•  1 - for dc voltage control\n'
-                                           '•  2 -for MW control\n'
-                                           'When both converters are in-service, exactly one '
-                                           'converter of each VSC dc line must be TYPE 1.',
-                               min_value=0,
-                               max_value=2)
-
-        self.register_property(property_name='MODE1',
-                               rawx_key='mode1',
-                               class_type=int,
-                               description='Converter ac control mode:'
-                                           '1 -> AC voltage control\n'
-                                           '2 -> fixed AC power factor\n',
-                               min_value=0,
-                               max_value=2)
-
-        self.register_property(property_name='DCSET1',
-                               rawx_key='dcset1',
-                               class_type=float,
-                               description='Converter dc setpoint (see manual)',
-                               unit=Unit.get_mw())
-
-        self.register_property(property_name='ACSET1',
-                               rawx_key='acset1',
-                               class_type=float,
-                               description='Converter ac setpoint. 1-> AC voltage, 2-> power factor',
-                               unit=Unit.get_pu())
-
-        self.register_property(property_name='ALOSS1',
-                               rawx_key='aloss1',
-                               class_type=float,
-                               description='Losses constant coefficient: loss = ALOSS + (Idc * BLOSS)',
-                               unit=Unit.get_kw())
-
-        self.register_property(property_name='BLOSS1',
-                               rawx_key='bloss1',
-                               class_type=float,
-                               description='Losses proportional coefficient: loss = ALOSS + (Idc * BLOSS)',
-                               unit=Unit.get_kw(),
-                               denominator_unit=Unit.get_a())
-
-        self.register_property(property_name='MINLOSS1',
-                               rawx_key='minloss1',
-                               class_type=int,
-                               description='Minimum converter losses',
-                               unit=Unit.get_kw())
-
-        self.register_property(property_name='SMAX1',
-                               rawx_key='smax1',
-                               class_type=float,
-                               description='Converter MVA rating',
-                               unit=Unit.get_mw())
-
-        self.register_property(property_name='IMAX1',
-                               rawx_key='imax1',
-                               class_type=float,
-                               description='Converter ac current rating',
-                               unit=Unit.get_a())
-
-        self.register_property(property_name='PWF1',
-                               rawx_key='pwf1',
-                               class_type=float,
-                               description='Power weighting factor fraction (see manual)',
-                               min_value=0.0,
-                               max_value=1.0)
-
-        self.register_property(property_name='MAXQ1',
-                               rawx_key='maxq1',
-                               class_type=float,
-                               description='Reactive power upper limit (see manual)',
-                               unit=Unit.get_mvar())
-
-        self.register_property(property_name='MINQ1',
-                               rawx_key='minq1',
-                               class_type=float,
-                               description='Reactive power lower limit (see manual)',
-                               unit=Unit.get_mvar())
-
-        self.register_property(property_name='REMOT1',
-                               rawx_key='remot1',
-                               class_type=int,
-                               description='Control bus (see manual)',
-                               min_value=0,
-                               max_value=999999)
-
-        self.register_property(property_name='VSREG1',
-                               rawx_key='vseg1',
-                               class_type=int,
-                               description='Control bus (see manual)',
-                               min_value=0,
-                               max_value=999999)
-
-        self.register_property(property_name='NREG1',
-                               rawx_key='nreg1',
-                               class_type=int,
-                               description='Control node (see manual)',
-                               min_value=0,
-                               max_value=999999)
-
-        self.register_property(property_name='RMPCT1',
-                               rawx_key='rmpct1',
-                               class_type=float,
-                               description='Percent of the total Mvar required to hold the voltage at '
-                                           'the bus controlled by IBUS (see manual)',
-                               unit=Unit.get_percent())
-
         # --------------------------------------------------------------------------------------------------------------
-
-        self.register_property(property_name='IBUS2',
-                               rawx_key='ibus2',
-                               class_type=int,
-                               description='Converter bus number',
-                               min_value=0,
-                               max_value=999999,
-                               max_chars=6)
-
-        self.register_property(property_name='TYPE2',
-                               rawx_key='type2',
-                               class_type=int,
-                               description='Converter ac control mode:'
-                                           '0 -> out of service\n'
-                                           '1 -> AC voltage control\n'
-                                           '2 -> fixed AC power factor\n',
-                               min_value=0,
-                               max_value=2)
-
-        self.register_property(property_name='MODE2',
-                               rawx_key='mode2',
-                               class_type=int,
-                               description='Converter ac control mode:'
-                                           '1 -> AC voltage control\n'
-                                           '2 -> fixed AC power factor\n',
-                               min_value=1,
-                               max_value=2)
-
-        self.register_property(property_name='DCSET2',
-                               rawx_key='dcset2',
-                               class_type=float,
-                               description='Converter dc setpoint (see manual)',
-                               unit=Unit.get_mw())
-
-        self.register_property(property_name='ACSET2',
-                               rawx_key='acset2',
-                               class_type=float,
-                               description='Converter ac setpoint. 1-> AC voltage, 2-> power factor',
-                               unit=Unit.get_pu())
-
-        self.register_property(property_name='ALOSS2',
-                               rawx_key='aloss2',
-                               class_type=float,
-                               description='Losses constant coefficient: loss = ALOSS + (Idc * BLOSS)',
-                               unit=Unit.get_kw())
-
-        self.register_property(property_name='BLOSS2',
-                               rawx_key='bloss2',
-                               class_type=float,
-                               description='Losses proportional coefficient: loss = ALOSS + (Idc * BLOSS)',
-                               unit=Unit.get_kw(),
-                               denominator_unit=Unit.get_a())
-
-        self.register_property(property_name='MINLOSS2',
-                               rawx_key='minloss2',
-                               class_type=int,
-                               description='Minimum converter losses',
-                               unit=Unit.get_kw())
-
-        self.register_property(property_name='SMAX2',
-                               rawx_key='smax2',
-                               class_type=float,
-                               description='Converter MVA rating',
-                               unit=Unit.get_mw())
-
-        self.register_property(property_name='IMAX2',
-                               rawx_key='imax2',
-                               class_type=float,
-                               description='Converter ac current rating',
-                               unit=Unit.get_a())
-
-        self.register_property(property_name='PWF2',
-                               rawx_key='pwf2',
-                               class_type=float,
-                               description='Power weighting factor fraction (see manual)')
-
-        self.register_property(property_name='MAXQ2',
-                               rawx_key='maxq2',
-                               class_type=float,
-                               description='Reactive power upper limit (see manual)',
-                               unit=Unit.get_mvar())
-
-        self.register_property(property_name='MINQ2',
-                               rawx_key='minq2',
-                               class_type=float,
-                               description='Reactive power lower limit (see manual)',
-                               unit=Unit.get_mvar())
-
-        self.register_property(property_name='REMOT2',
-                               rawx_key='remot2',
-                               class_type=int,
-                               description='Control bus (see manual)',
-                               min_value=0,
-                               max_value=999999)
-
-        self.register_property(property_name='VSREG2',
-                               rawx_key='vseg2',
-                               class_type=int,
-                               description='Control bus (see manual)',
-                               min_value=0,
-                               max_value=999999)
-
-        self.register_property(property_name='NREG2',
-                               rawx_key='nreg2',
-                               class_type=int,
-                               description='Control node (see manual)',
-                               min_value=0,
-                               max_value=999999)
-
-        self.register_property(property_name='RMPCT2',
-                               rawx_key='rmpct2',
-                               class_type=float,
-                               description='Percent of the total Mvar required to hold the voltage at '
-                                           'the bus controlled by IBUS (see manual)',
-                               unit=Unit.get_percent())
-
-        # --------------------------------------------------------------------------------------------------------------
-        for i in range(4):
-            self.register_property(property_name="O{}".format(i + 1),
-                                   rawx_key="o{}".format(i + 1),
-                                   class_type=int,
-                                   description="Owner number {}".format(i + 1),
-                                   min_value=1,
-                                   max_value=9999)
-            self.register_property(property_name="F{}".format(i + 1),
-                                   rawx_key="f{}".format(i + 1),
-                                   class_type=float,
-                                   description="Ownership fraction {}".format(i + 1),
-                                   min_value=0.0,
-                                   max_value=1.0)
 
     def parse(self, data, version, logger: Logger):
         """
@@ -372,10 +205,10 @@ class RawVscDCLine(RawObject):
             self.NAME, self.MDC, self.RDC, *var = data[0]
 
             (self.IBUS1, self.TYPE1, self.MODE1, self.DCSET1, self.ACSET1, self.ALOSS1, self.BLOSS1, self.MINLOSS1,
-                self.SMAX1, self.IMAX1, self.PWF1, self.MAXQ1, self.MINQ1, self.REMOT1, self.RMPCT1) = data[1]
+             self.SMAX1, self.IMAX1, self.PWF1, self.MAXQ1, self.MINQ1, self.REMOT1, self.RMPCT1) = data[1]
 
             (self.IBUS2, self.TYPE2, self.MODE2, self.DCSET2, self.ACSET2, self.ALOSS2, self.BLOSS2, self.MINLOSS2,
-                self.SMAX2, self.IMAX2, self.PWF2, self.MAXQ2, self.MINQ2, self.REMOT2, self.RMPCT2) = data[2]
+             self.SMAX2, self.IMAX2, self.PWF2, self.MAXQ2, self.MINQ2, self.REMOT2, self.RMPCT2) = data[2]
 
         elif version == 29:
 

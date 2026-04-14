@@ -15,7 +15,6 @@ import copy
 
 IntList = List[int]
 Numeric = Union[int, float, bool, complex]
-
 NumericVec = npt.NDArray[np.float64]
 DateVec = pd.DatetimeIndex
 IntVec = npt.NDArray[np.int_]
@@ -620,6 +619,13 @@ class Logger:
         :return:
         """
         return self.count_type(LogSeverity.Error)
+
+    def has_errors(self) -> bool:
+        """
+        Check if there are errors
+        :return:
+        """
+        return self.error_count() > 0
 
 
 class ConvergenceReport:

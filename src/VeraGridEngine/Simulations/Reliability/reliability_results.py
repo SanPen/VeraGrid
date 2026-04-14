@@ -12,6 +12,16 @@ from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceTyp
 
 
 class ReliabilityResults(ResultsTemplate):
+    __slots__ = (
+        "LOLE_evolution",
+        "ENS_evolution",
+        "LOLF_evolution",
+        "LOLET_evolution",
+        "LOLFT_evolution",
+        "SAIDI_evolution",
+        "SAIFI_evolution",
+        "CAIDI_evolution",
+    )
 
     def __init__(self, nsim: int):
         """
@@ -26,6 +36,9 @@ class ReliabilityResults(ResultsTemplate):
                 ResultTypes.ReliabilityLOLFResults,
                 ResultTypes.ReliabilityLOLETResults,
                 ResultTypes.ReliabilityLOLFTResults,
+                ResultTypes.ReliabilitySAIDIResults,
+                ResultTypes.ReliabilitySAIFIResults,
+                ResultTypes.ReliabilityCAIDIResults,
             ],
             clustering_results=None,
             time_array=None,
@@ -37,12 +50,18 @@ class ReliabilityResults(ResultsTemplate):
         self.LOLF_evolution = np.zeros(nsim)
         self.LOLET_evolution = np.zeros(nsim)
         self.LOLFT_evolution = np.zeros(nsim)
+        self.SAIDI_evolution = np.zeros(nsim)
+        self.SAIFI_evolution = np.zeros(nsim)
+        self.CAIDI_evolution = np.zeros(nsim)
 
         self.register(name='LOLE_evolution', tpe=Vec)
         self.register(name='ENS_evolution', tpe=Vec)
         self.register(name='LOLF_evolution', tpe=Vec)
         self.register(name='LOLET_evolution', tpe=Vec)
         self.register(name='LOLFT_evolution', tpe=Vec)
+        self.register(name='SAIDI_evolution', tpe=Vec)
+        self.register(name='SAIFI_evolution', tpe=Vec)
+        self.register(name='CAIDI_evolution', tpe=Vec)
 
     def mdl(self, result_type: ResultTypes) -> ResultsTable:
         """
@@ -100,6 +119,36 @@ class ReliabilityResults(ResultsTemplate):
                                 idx_device_type=DeviceType.NoDevice,
                                 cols_device_type=DeviceType.NoDevice,
                                 ylabel='nº of failures/year')
+
+        elif result_type == ResultTypes.ReliabilitySAIDIResults:
+            return ResultsTable(data=self.SAIDI_evolution,
+                                index=np.arange(len(self.SAIDI_evolution), dtype=int),
+                                columns=np.array(['SAIDI']),
+                                title=result_type.value,
+                                units="hours/customer",
+                                idx_device_type=DeviceType.NoDevice,
+                                cols_device_type=DeviceType.NoDevice,
+                                ylabel='customer_interruption_hours/customer')
+
+        elif result_type == ResultTypes.ReliabilitySAIFIResults:
+            return ResultsTable(data=self.SAIFI_evolution,
+                                index=np.arange(len(self.SAIFI_evolution), dtype=int),
+                                columns=np.array(['SAIFI']),
+                                title=result_type.value,
+                                units="interruptions/customer",
+                                idx_device_type=DeviceType.NoDevice,
+                                cols_device_type=DeviceType.NoDevice,
+                                ylabel='customer_interruptions/customer')
+
+        elif result_type == ResultTypes.ReliabilityCAIDIResults:
+            return ResultsTable(data=self.CAIDI_evolution,
+                                index=np.arange(len(self.CAIDI_evolution), dtype=int),
+                                columns=np.array(['CAIDI']),
+                                title=result_type.value,
+                                units="hours/interruption",
+                                idx_device_type=DeviceType.NoDevice,
+                                cols_device_type=DeviceType.NoDevice,
+                                ylabel='customer_interruption_hours/interruption')
 
         else:
             raise Exception('Result type not understood:' + str(result_type))

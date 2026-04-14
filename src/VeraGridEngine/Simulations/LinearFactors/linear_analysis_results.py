@@ -15,6 +15,23 @@ class LinearAnalysisResults(ResultsTemplate):
     """
     LinearAnalysisResults
     """
+    __slots__ = (
+        "branch_names",
+        "bus_names",
+        "hvdc_names",
+        "vsc_names",
+        "bus_types",
+        "PTDF",
+        "LODF",
+        "HvdcDF",
+        "HvdcODF",
+        "VscDF",
+        "VscODF",
+        "Sf",
+        "Sbus",
+        "voltage",
+        "loading",
+    )
 
     def __init__(self,
                  br_names=(), bus_names=(), hvdc_names=(), vsc_names=(),

@@ -3,10 +3,12 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
+from typing import Tuple
+
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import BuildStatus, SwitchGraphicType
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
-from VeraGridEngine.Devices.Parents.editable_device import DeviceType
+from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
 
 
 class Switch(BranchParent):
@@ -15,12 +17,25 @@ class Switch(BranchParent):
     :ref:`buses<bus>`) in **VeraGrid**. A Switch is a devices that cuts or allows the flow.
     """
     __slots__ = (
-        'R',
-        'X',
-        'retained',
-        'normal_open',
-        'rated_current',
-        'graphic_type'
+        '_R',
+        '_X',
+        '_retained',
+        '_normal_open',
+        '_rated_current',
+        'graphic_type',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='R', units='pu', tpe=float, definition='Positive-sequence resistance'),
+        GCProp(key='X', units='pu', tpe=float, definition='Positive-sequence reactance'),
+        GCProp(key='retained', units="", tpe=bool,
+                      definition='Switch is retained'),
+        GCProp(key='normal_open', units="", tpe=bool,
+                      definition='Normal position of the switch'),
+        GCProp(key='rated_current', units="kA", tpe=float,
+                      definition='Rated current of the switch device.'),
+        GCProp(key='graphic_type', units='', tpe=SwitchGraphicType,
+                      definition='Graphic to use in the schematic.'),
     )
 
     def __init__(self,
@@ -89,17 +104,100 @@ class Switch(BranchParent):
 
         self.graphic_type: SwitchGraphicType = graphic_type
 
-        self.register(key='R', units='pu', tpe=float, definition='Positive-sequence resistance')
-        self.register(key='X', units='pu', tpe=float, definition='Positive-sequence reactance')
+    @property
+    def R(self) -> float:
+        """
+        Get ``R``.
 
-        # self.register(key='is_open', units="", tpe=bool,
-        #               definition='Switch is open', old_names=['open'])
-        self.register(key='retained', units="", tpe=bool,
-                      definition='Switch is retained')
+        :return: float
+        """
+        return self._R
 
-        self.register(key='normal_open', units="", tpe=bool,
-                      definition='Normal position of the switch')
-        self.register(key='rated_current', units="kA", tpe=float,
-                      definition='Rated current of the switch device.')
-        self.register(key='graphic_type', units='', tpe=SwitchGraphicType,
-                      definition='Graphic to use in the schematic.')
+    @R.setter
+    def R(self, val: float) -> None:
+        """
+        Set ``R``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._R = float(val)
+
+    @property
+    def X(self) -> float:
+        """
+        Get ``X``.
+
+        :return: float
+        """
+        return self._X
+
+    @X.setter
+    def X(self, val: float) -> None:
+        """
+        Set ``X``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._X = float(val)
+
+    @property
+    def retained(self) -> bool:
+        """
+        Get ``retained``.
+
+        :return: bool
+        """
+        return self._retained
+
+    @retained.setter
+    def retained(self, val: bool) -> None:
+        """
+        Set ``retained``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._retained = bool(val)
+
+    @property
+    def normal_open(self) -> bool:
+        """
+        Get ``normal_open``.
+
+        :return: bool
+        """
+        return self._normal_open
+
+    @normal_open.setter
+    def normal_open(self, val: bool) -> None:
+        """
+        Set ``normal_open``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._normal_open = bool(val)
+
+    @property
+    def rated_current(self) -> float:
+        """
+        Get ``rated_current``.
+
+        :return: float
+        """
+        return self._rated_current
+
+    @rated_current.setter
+    def rated_current(self, val: float) -> None:
+        """
+        Set ``rated_current``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._rated_current = float(val)
+
+
+

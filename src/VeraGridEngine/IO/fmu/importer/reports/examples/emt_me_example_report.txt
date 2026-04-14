@@ -1,0 +1,4 @@
+fmu_path = C:\Users\andre\PycharmProjects\VeraGrid\trunk\veragrid_fmu_import\reports\examples\ExampleEmtMeDevice_ec06fc06.fmu
+mode = ModelExchange
+status = skipped
+reason = fmpy not installed in this Python environment

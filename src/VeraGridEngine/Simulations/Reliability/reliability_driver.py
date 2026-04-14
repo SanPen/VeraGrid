@@ -6,7 +6,7 @@ import numba as nb
 import numpy as np
 
 from VeraGridEngine.enumerations import SimulationTypes, ReliabilityMode
-from VeraGridEngine.basic_structures import Vec, BoolVec
+from VeraGridEngine.basic_structures import Vec, BoolVec, Mat
 from VeraGridEngine.Simulations.PowerFlow.power_flow_worker import PowerFlowOptions
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Simulations.driver_template import DriverTemplate
@@ -35,14 +35,48 @@ def get_gen_pmax(nt: int, k: int, Snom: float, P_array: Vec, active_array: BoolV
     gen_pmax = np.zeros(nt)
     for t in range(nt):
         if dispatchable_array[t]:
-            gen_pmax[t, k] = Snom * active_array[t]
+            gen_pmax[t] = Snom * active_array[t]
         else:
-            gen_pmax[t, k] = P_array[t] * active_array[t]
+            gen_pmax[t] = P_array[t] * active_array[t]
 
     return gen_pmax
 
 
+@nb.njit(cache=True)
+def count_device_incidences(active_states: Mat) -> int:
+    """
+    Count device incidence starts in an active-state matrix.
+    An incidence is counted when a device changes from active to inactive.
+    If a device is already inactive at t=0, that also counts as one incidence.
+    :param active_states: Boolean matrix of shape (time, device)
+    :return: Number of incidences
+    """
+    nt, n_devices = active_states.shape
+    n_incidences = 0
+
+    for device_idx in range(n_devices):
+        was_active = True
+
+        for t in range(nt):
+            is_active = active_states[t, device_idx]
+
+            if (not is_active) and was_active:
+                n_incidences += 1
+
+            was_active = is_active
+
+    return n_incidences
+
+
 class ReliabilityStudyDriver(DriverTemplate):
+    __slots__ = (
+        "pf_options",
+        "reliability_mode",
+        "n_sim",
+        "time_indices",
+        "greedy_dispatch_inputs",
+    )
+
     name = 'Reliability analysis'
     tpe = SimulationTypes.Reliability_run
 
@@ -123,12 +157,14 @@ class ReliabilityStudyDriver(DriverTemplate):
         for k, gen in enumerate(self.grid.generators):
             gen_mttf[k] = gen.mttf
             gen_mttr[k] = gen.mttr
-            gen_pmax[:, k] = get_gen_pmax(nt=horizon,
-                                          k=k,
-                                          Snom=gen.Snom,
-                                          P_array=gen.P_prof.toarray(),
-                                          active_array=gen.active_prof.toarray(),
-                                          dispatchable_array=gen.enabled_dispatch_prof.toarray())
+            gen_pmax[:, k] = get_gen_pmax(
+                nt=horizon,
+                k=k,
+                Snom=gen.Snom,
+                P_array=gen.P_prof.toarray(),
+                active_array=gen.active_prof.toarray(),
+                dispatchable_array=gen.enabled_dispatch_prof.toarray()
+            )
 
         lole, _, _ = reliability_simulation(
             n_sim=self.n_sim,
@@ -157,7 +193,7 @@ class ReliabilityStudyDriver(DriverTemplate):
             tol=1e-6
         )
 
-        self.results.lole_evolution = np.cumsum(lole) / (np.arange(len(lole)) + 1)
+        self.results.LOLE_evolution = np.cumsum(lole) / (np.arange(len(lole)) + 1)
         print(f"LOLE: {lole.mean()} MWh/year")
 
     def run_grid_reliability(self) -> None:
@@ -182,14 +218,25 @@ class ReliabilityStudyDriver(DriverTemplate):
         LOLF_arr = np.zeros(self.n_sim)
 
         # nº of hours with failures (independently of if it is possible to supply demand)
-        LOLE_total_arr = np.zeros( self.n_sim)
+        LOLE_total_arr = np.zeros(self.n_sim)
 
         # nº of failures (independently of if it is possible to supply demand)
         LOLF_total_arr = np.zeros(self.n_sim)
 
+        # Total customer interruption duration (customer-hours)
+        customer_interruption_hours_arr = np.zeros(self.n_sim)
+
+        # Total customer interruptions
+        customer_interruptions_arr = np.zeros(self.n_sim)
+
+        # compute the number of customers per bus for SAIDI, SAIFI, CAIDI
+        load_customers = np.array([self.grid.loads[idx].n_customers for idx in nc.load_data.original_idx], dtype=float)
+        customers_per_bus = nc.load_data.get_array_per_bus(load_customers)
+        total_n_customers = customers_per_bus.sum()
+
         for sim_idx in range(self.n_sim):
 
-            if self.__cancel__:
+            if self.is_cancel():
                 return
 
             gen_actives, gen_n_failures = generate_states_matrix(mttf=nc.generator_data.mttf,
@@ -207,44 +254,27 @@ class ReliabilityStudyDriver(DriverTemplate):
                                                                              horizon=horizon,
                                                                              initially_working=True)
 
-            total_n_customers = sum([load.n_customers for load in self.grid.loads])
-
             if gen_n_failures + br_n_failures:
 
                 all_actives = np.c_[gen_actives, batt_actives, simulated_branch_actives]
 
                 blocks = find_time_blocks(horizon, all_actives)
 
-                indices_of_branches_with_incidences = np.where(np.any(simulated_branch_actives == False, axis=0))[0]
-                indices_of_gens_with_incidences = np.where(np.any(gen_actives == False, axis=0))[0]
-
-                branches_with_incidences = simulated_branch_actives[:, indices_of_branches_with_incidences]
-                gens_with_indices = gen_actives[:, indices_of_gens_with_incidences]
-
-                # TODO: too convoluted, make a numba function if needed
-                total_number_of_branch_incidences = np.sum((~branches_with_incidences) & np.concatenate(
-                    [np.ones((1, branches_with_incidences.shape[1]), dtype=bool),
-                     branches_with_incidences[:-1, :]], axis=0))
-
-                # TODO: too convoluted, make a numba function if needed
-                total_number_of_gens_incidences = np.sum((~gens_with_indices) & np.concatenate(
-                    [np.ones((1, gens_with_indices.shape[1]), dtype=bool),
-                     gens_with_indices[:-1, :]], axis=0))
+                total_number_of_branch_incidences = count_device_incidences(simulated_branch_actives)
+                total_number_of_gens_incidences = count_device_incidences(gen_actives)
 
                 LOLF_total_arr[sim_idx] = total_number_of_branch_incidences + total_number_of_gens_incidences
 
                 for idx_list in blocks:
 
                     batt_e_nom = nc.battery_data.enom.copy()
-                    total_failure_time = 0
-                    total_affected_customers = 0
                     block_fail_to_meet_demand = False
+                    prev_interrupted_buses = np.zeros(nc.nbus, dtype=bool)
 
                     for t in idx_list:  # time_steps
 
                         # get the time increment
                         dt = self.greedy_dispatch_inputs.dt[t]
-                        total_failure_time += dt
 
                         fail_to_meet_demand = False
 
@@ -256,16 +286,14 @@ class ReliabilityStudyDriver(DriverTemplate):
                         nc2.battery_data.active = batt_actives[t, :]
 
                         E_not_supplied = 0.0
+                        interrupted_buses = np.zeros(nc.nbus, dtype=bool)
                         islands = nc2.split_into_islands(ignore_single_node_islands=False)
                         for island in islands:
-
-                            total_affected_customers += sum([self.grid.loads[ii].n_customers
-                                                             for ii in nc2.load_data.original_idx])
-
                             if island.generator_data.active.sum() == 0:
                                 if island.battery_data.active.sum() == 0:
                                     E_not_supplied += island.load_data.S.sum() * dt
                                     fail_to_meet_demand = True
+                                    interrupted_buses[island.bus_data.original_idx] = True
                                 else:
                                     # check the battery life
                                     island_energy_demand = island.load_data.S.sum().real * dt
@@ -276,17 +304,25 @@ class ReliabilityStudyDriver(DriverTemplate):
                                             # we deplete the battery
                                             unsatisfied_demand -= batt_e_nom[i]
                                             batt_e_nom[i] = 0
-                                            fail_to_meet_demand = True
                                         else:
                                             # there is less demand that battery capacity
                                             batt_e_nom[i] -= unsatisfied_demand
                                             unsatisfied_demand = 0
+
+                                    if unsatisfied_demand > 0:
+                                        fail_to_meet_demand = True
+                                        interrupted_buses[island.bus_data.original_idx] = True
 
                                     E_not_supplied += unsatisfied_demand
 
                         if fail_to_meet_demand:
                             LOLE_arr[sim_idx] += dt
                             block_fail_to_meet_demand = True
+                            customer_interruption_hours_arr[sim_idx] += dt * customers_per_bus[interrupted_buses].sum()
+                            new_interruptions = interrupted_buses & (~prev_interrupted_buses)
+                            customer_interruptions_arr[sim_idx] += customers_per_bus[new_interruptions].sum()
+
+                        prev_interrupted_buses = interrupted_buses
 
                         # revert active states
                         nc2.passive_branch_data.active = nc.passive_branch_data.active
@@ -307,6 +343,18 @@ class ReliabilityStudyDriver(DriverTemplate):
         self.results.LOLF_evolution = np.cumsum(LOLF_arr) / sim_array
         self.results.LOLET_evolution = np.cumsum(LOLE_total_arr) / sim_array
         self.results.LOLFT_evolution = np.cumsum(LOLF_total_arr) / sim_array
+        cumulative_customer_interruption_hours = np.cumsum(customer_interruption_hours_arr)
+        cumulative_customer_interruptions = np.cumsum(customer_interruptions_arr)
 
-    def cancel(self):
-        self.__cancel__ = True
+        if total_n_customers > 0:
+            customer_base = sim_array * total_n_customers
+            self.results.SAIDI_evolution = cumulative_customer_interruption_hours / customer_base
+            self.results.SAIFI_evolution = cumulative_customer_interruptions / customer_base
+        else:
+            self.results.SAIDI_evolution = np.zeros(self.n_sim)
+            self.results.SAIFI_evolution = np.zeros(self.n_sim)
+
+        self.results.CAIDI_evolution = np.divide(cumulative_customer_interruption_hours,
+                                                 cumulative_customer_interruptions,
+                                                 out=np.zeros(self.n_sim),
+                                                 where=cumulative_customer_interruptions > 0)

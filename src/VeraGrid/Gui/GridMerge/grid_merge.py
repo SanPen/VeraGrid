@@ -72,35 +72,43 @@ class GridMergeDialogue(QtWidgets.QDialog):
         :param column: THis must be here because this is an event handler
         :return:
         """
-        if item.parent() is None:  # Root item
+        if column != 0:
+            return
 
-            if item.parent() is None:
-                # the item is a parent
-                idtag = item.text(3)
-                elm = self.diff_objects_dict.get(idtag)
+        if item.parent() is None:
+            idtag = item.text(3)
+            elm = self.diff_objects_dict.get(idtag)
 
-                # set the "selected to merge" thing from the first column
-                elm.selected_to_merge = item.checkState(0) == Qt.CheckState.Checked
+            if elm is None:
+                return
 
-                # set the check status of the children to the same as the parent
-                state = item.checkState(0)
+            selected = item.checkState(0) == Qt.CheckState.Checked
+            elm.selected_to_merge = selected
+
+            previous_signals_blocked = self.ui.treeWidget.blockSignals(True)
+            try:
                 for i in range(item.childCount()):
-                    item.child(i).setCheckState(0, state)
+                    child = item.child(i)
+                    child.setCheckState(0, item.checkState(0))
+                    elm.set_diff_change(property_name=child.text(5), selected=selected)
+            finally:
+                self.ui.treeWidget.blockSignals(previous_signals_blocked)
 
-                print(f"obj: {elm.name}.selected_to_merge={elm.selected_to_merge}")
+            print(f"obj: {elm.name}.selected_to_merge={elm.selected_to_merge}")
+            return
 
-            else:
-                # if it is a child, then it represents the property of an object
-                parent_item = item.parent()
-                idtag = parent_item.text(3)
-                elm = self.diff_objects_dict.get(idtag)
-                prop_name = item.text(4)
-                prop = elm.get_property_by_name(prop_name=prop_name)
+        parent_item = item.parent()
+        idtag = parent_item.text(3)
+        elm = self.diff_objects_dict.get(idtag)
 
-                # we want to mark each property as selectable or not
-                prop.selected_to_merge = item.checkState(0) == Qt.CheckState.Checked
+        if elm is None:
+            return
 
-                print(f"prop: {elm.name}.{prop_name}.selected_to_merge={prop.selected_to_merge}")
+        prop_name = item.text(5)
+        selected = item.checkState(0) == Qt.CheckState.Checked
+        elm.set_diff_change(property_name=prop_name, selected=selected)
+
+        print(f"prop: {elm.name}.{prop_name}.selected_to_merge={selected}")
 
     def set_diff(self, diff: MultiCircuit):
         """

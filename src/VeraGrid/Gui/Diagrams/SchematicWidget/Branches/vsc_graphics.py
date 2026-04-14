@@ -112,6 +112,8 @@ class VscGraphicItem(LineGraphicTemplateItem):
                            icon_path=":/Icons/icons/move_bus.png")
 
             menu.addSeparator()
+            self.add_auto_route_style_menu(menu=menu)
+            menu.addSeparator()
 
             # ra2 = menu.addAction('Delete')
             # del_icon = QIcon()

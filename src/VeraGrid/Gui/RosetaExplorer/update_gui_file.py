@@ -19,5 +19,5 @@ if __name__ == '__main__':
         rcc_cmd += '.exe'
         uic_cmd += '.exe'
 
-    for f in ['MainWindow.ui']:
+    for f in ['roseta_explorer.ui']:
         convert_ui_file(source=f, uic_cmd=uic_cmd)

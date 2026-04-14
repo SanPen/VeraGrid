@@ -285,10 +285,11 @@ class CimExporter:
                         "description": "str"}
 
         for instance in self.cgmes_circuit.cgmes_assets.FullModel_list:
-            instance_dict = instance.__dict__
-            if self.is_in_profile(instance_profiles=instance_dict.get("profile"), model_profile=profile):
+            instance_profiles = getattr(instance, "profile", None)
+            if self.is_in_profile(instance_profiles=instance_profiles, model_profile=profile):
                 element = Et.Element("md:FullModel", {"rdf:about": "urn:uuid:" + instance.rdfid})
-                for attr_name, attr_value in instance_dict.items():
+                for attr_name in filter_props.keys():
+                    attr_value = getattr(instance, attr_name, None)
                     if attr_name not in filter_props or attr_value is None:
                         continue
                     child = Et.Element(f"md:Model.{attr_name}")
@@ -341,13 +342,13 @@ class CimExporter:
             if not self.in_profile(filters, profile):
                 continue
             for obj in objects:
-                obj_dict = obj.__dict__
                 if self.about_dict.get(profile) is not None and class_name in self.about_dict.get(profile):
                     element = Et.Element("cim:" + class_name, {"rdf:about": "#_" + obj.rdfid})
                 else:
                     element = Et.Element("cim:" + class_name, {"rdf:ID": "_" + obj.rdfid})
                 has_child = False
-                for attr_name, attr_value in obj_dict.items():
+                for attr_name in obj.get_declared_property_names():
+                    attr_value = obj.get_declared_property_value(prop_name=attr_name)
                     if attr_value is None:
                         continue
                     if attr_name not in filters or attr_name == "mRID":

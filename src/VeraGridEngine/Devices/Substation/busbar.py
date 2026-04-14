@@ -4,15 +4,21 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import Union
+from typing import Union, Tuple
 from VeraGridEngine.enumerations import DeviceType, BuildStatus
 from VeraGridEngine.Devices.Parents.physical_device import PhysicalDevice
 from VeraGridEngine.Devices.Substation.voltage_level import VoltageLevel
+from VeraGridEngine.Devices.Parents.editable_device import GCProp
 
 
 class BusBar(PhysicalDevice):
     __slots__ = (
         '_voltage_level',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key="voltage_level", tpe=DeviceType.BusDevice,
+                      definition="Voltage level of this BusBar"),
     )
 
     def __init__(self,
@@ -36,8 +42,6 @@ class BusBar(PhysicalDevice):
                                 build_status=build_status)
 
         self._voltage_level: VoltageLevel | None = voltage_level
-        self.register(key="voltage_level", tpe=DeviceType.BusDevice,
-                      definition="Voltage level of this BusBar")
 
     @property
     def voltage_level(self) -> VoltageLevel | None:

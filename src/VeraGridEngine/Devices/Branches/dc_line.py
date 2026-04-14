@@ -4,14 +4,15 @@
 # SPDX-License-Identifier: MPL-2.0
 
 import pandas as pd
-from typing import Union
+from typing import Union, Tuple
 from matplotlib import pyplot as plt
 import numpy as np
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
-from VeraGridEngine.Devices.profile import Profile
+from VeraGridEngine.Devices.Profiles import ProfileFloat
 from VeraGridEngine.enumerations import DeviceType, BuildStatus, SubObjectType
 from VeraGridEngine.Devices.Branches.line_locations import LineLocations
+from VeraGridEngine.Devices.Parents.editable_device import GCProp
 
 
 class DcLine(BranchParent):
@@ -19,11 +20,23 @@ class DcLine(BranchParent):
         'measurements',
         '_length',
         'tolerance',
-        'r_fault',
-        'fault_pos',
-        'R',
+        '_r_fault',
+        '_fault_pos',
+        '_R',
         'template',
         '_locations',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='R', units='p.u.', tpe=float, definition='Total positive sequence resistance.'),
+        GCProp(key='length', units='km', tpe=float, definition='Length of the line (not used for calculation)'),
+        GCProp(key='r_fault', units='p.u.', tpe=float,
+                      definition='Resistance of the mid-line fault.Used in short circuit studies.'),
+        GCProp(key='fault_pos', units='p.u.', tpe=float,
+                      definition='Per-unit positioning of the fault:0 would be at the "from" side,1 would '
+                                 'be at the "to" side,therefore 0.5 is at the middle.'),
+        GCProp(key='template', units='', tpe=DeviceType.AnyLineTemplateDevice, definition='', editable=False),
+        GCProp(key='locations', units='', tpe=SubObjectType.LineLocations, definition='', editable=False),
     )
 
     def __init__(self,
@@ -128,19 +141,10 @@ class DcLine(BranchParent):
         # Line locations
         self._locations: LineLocations = LineLocations()
 
-        self.register(key='R', units='p.u.', tpe=float, definition='Total positive sequence resistance.')
-        self.register(key='length', units='km', tpe=float, definition='Length of the line (not used for calculation)')
-        self.register(key='r_fault', units='p.u.', tpe=float,
-                      definition='Resistance of the mid-line fault.Used in short circuit studies.')
-        self.register(key='fault_pos', units='p.u.', tpe=float,
-                      definition='Per-unit positioning of the fault:0 would be at the "from" side,1 would '
-                                 'be at the "to" side,therefore 0.5 is at the middle.')
-        self.register(key='template', units='', tpe=DeviceType.AnyLineTemplateDevice, definition='', editable=False)
 
-        self.register(key='locations', units='', tpe=SubObjectType.LineLocations, definition='', editable=False)
 
     @property
-    def temp_oper_prof(self) -> Profile:
+    def temp_oper_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -148,8 +152,8 @@ class DcLine(BranchParent):
         return self._temp_oper_prof
 
     @temp_oper_prof.setter
-    def temp_oper_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def temp_oper_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._temp_oper_prof = val
         elif isinstance(val, np.ndarray):
             self._temp_oper_prof.set(arr=val)
@@ -193,6 +197,7 @@ class DcLine(BranchParent):
 
     @length.setter
     def length(self, val: float):
+        val = float(val)
         if isinstance(val, float):
             if val > 0.0:
 
@@ -258,29 +263,29 @@ class DcLine(BranchParent):
 
         return b
 
-    def get_save_data(self):
-        """
-        Return the data that matches the edit_headers
-        :return:
-        """
-        data = list()
-        for name, properties in self.registered_properties.items():
-            obj = getattr(self, name)
-
-            if obj is None:
-                data.append("")
-            else:
-
-                if hasattr(obj, 'idtag'):
-                    obj = obj.idtag
-                else:
-                    if properties.tpe not in [str, float, int, bool]:
-                        obj = str(obj)
-                    else:
-                        obj = str(obj)
-
-                data.append(obj)
-        return data
+    # def get_save_data(self):
+    #     """
+    #     Return the data that matches the edit_headers
+    #     :return:
+    #     """
+    #     data = list()
+    #     for name, properties in self.registered_properties.items():
+    #         obj = getattr(self, name)
+    #
+    #         if obj is None:
+    #             data.append("")
+    #         else:
+    #
+    #             if hasattr(obj, 'idtag'):
+    #                 obj = obj.idtag
+    #             else:
+    #                 if properties.tpe not in [str, float, int, bool]:
+    #                     obj = str(obj)
+    #                 else:
+    #                     obj = str(obj)
+    #
+    #             data.append(obj)
+    #     return data
 
     def plot_profiles(self, time_series=None, my_index=0, show_fig=True):
         """
@@ -323,5 +328,64 @@ class DcLine(BranchParent):
         Get the branch defining coordinates
         """
         return [self.bus_from.get_coordinates(), self.bus_to.get_coordinates()]
+
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def R(self) -> float:
+        """
+        Get ``R``.
+
+        :return: float
+        """
+        return self._R
+
+    @R.setter
+    def R(self, val: float) -> None:
+        """
+        Set ``R``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._R = float(val)
+
+    @property
+    def r_fault(self) -> float:
+        """
+        Get ``r_fault``.
+
+        :return: float
+        """
+        return self._r_fault
+
+    @r_fault.setter
+    def r_fault(self, val: float) -> None:
+        """
+        Set ``r_fault``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._r_fault = float(val)
+
+    @property
+    def fault_pos(self) -> float:
+        """
+        Get ``fault_pos``.
+
+        :return: float
+        """
+        return self._fault_pos
+
+    @fault_pos.setter
+    def fault_pos(self, val: float) -> None:
+        """
+        Set ``fault_pos``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._fault_pos = float(val)
 
 

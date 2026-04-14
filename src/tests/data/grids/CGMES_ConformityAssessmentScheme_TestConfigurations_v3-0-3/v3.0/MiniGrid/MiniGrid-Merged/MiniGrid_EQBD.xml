@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns:cim="http://iec.ch/TC57/CIM100#" xmlns:md="http://iec.ch/TC57/61970-552/ModelDescription/1#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:eu="http://iec.ch/TC57/CIM100-European#">
+  <md:FullModel rdf:about="urn:uuid:2399cbd0-9a39-11e0-aa80-0800200c9a66">
+    <md:Model.scenarioTime>2030-01-25T19:00:00Z</md:Model.scenarioTime>
+    <md:Model.created>2021-01-25T19:00:00Z</md:Model.created>
+    <md:Model.description>CGMES Conformity Assessment Test Configuration. The Test Configuration is owned by ENTSO-E and is provided by ENTSO-E “as it is”. To the fullest extent permitted by law, ENTSO-E shall not be liable for any damages of any kind arising out of the use of the model (including any of its subsequent modifications). ENTSO-E neither warrants, nor represents that the use of the model will not infringe the rights of third parties. Any use of the model shall include a reference to ENTSO-E. ENTSO-E web site is the only official source of information related to the model.</md:Model.description>
+    <md:Model.version>4</md:Model.version>
+    <md:Model.profile>http://iec.ch/TC57/ns/CIM/EquipmentBoundary-EU/3.0</md:Model.profile>
+    <md:Model.modelingAuthoritySet>http://entsoe.eu/Boundary/CGMES</md:Model.modelingAuthoritySet>
+  </md:FullModel>
+  <cim:BaseVoltage rdf:ID="_fe97b80b-3e0e-4a2c-964b-bc29b0dda632">
+    <cim:IdentifiedObject.description>BV 110 kV</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.name>BV_110</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>BV110</eu:IdentifiedObject.shortName>
+    <cim:BaseVoltage.nominalVoltage>110</cim:BaseVoltage.nominalVoltage>
+    <cim:IdentifiedObject.mRID>fe97b80b-3e0e-4a2c-964b-bc29b0dda632</cim:IdentifiedObject.mRID>
+  </cim:BaseVoltage>
+  <cim:BaseVoltage rdf:ID="_e9277658-07e5-4e84-aef8-a891d14e7c54">
+    <cim:IdentifiedObject.description>BV 380 kV</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.name>BV_380</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>BV380</eu:IdentifiedObject.shortName>
+    <cim:BaseVoltage.nominalVoltage>380</cim:BaseVoltage.nominalVoltage>
+    <cim:IdentifiedObject.mRID>e9277658-07e5-4e84-aef8-a891d14e7c54</cim:IdentifiedObject.mRID>
+  </cim:BaseVoltage>
+  <cim:ConnectivityNode rdf:ID="_183d126d-2522-4ff2-a8cd-c5016cf09c1b">
+    <cim:IdentifiedObject.description>OHL 380 kV</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.name>XQ1_EQIN</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-Z1-Z2-XQ01CN</eu:IdentifiedObject.energyIdentCodeEic>
+    <cim:ConnectivityNode.ConnectivityNodeContainer rdf:resource="#_41d4fafe-e4ce-4ca3-86d9-f181ae3f8ea3" />
+    <eu:IdentifiedObject.shortName>XQ1_EQIN</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.mRID>183d126d-2522-4ff2-a8cd-c5016cf09c1b</cim:IdentifiedObject.mRID>
+  </cim:ConnectivityNode>
+  <eu:BoundaryPoint rdf:ID="_4fe8c999-a939-5d43-b857-02dd312f2dea">
+    <cim:IdentifiedObject.name>XQ1_EQIN</cim:IdentifiedObject.name>
+    <cim:IdentifiedObject.description>OHL 380 kV</cim:IdentifiedObject.description>
+    <eu:IdentifiedObject.shortName>XQ1_EQIN</eu:IdentifiedObject.shortName>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-Z1-Z2-XQ01CN</eu:IdentifiedObject.energyIdentCodeEic>
+    <eu:BoundaryPoint.fromEndIsoCode>SI</eu:BoundaryPoint.fromEndIsoCode>
+    <eu:BoundaryPoint.fromEndName>Z1Wes</eu:BoundaryPoint.fromEndName>
+    <eu:BoundaryPoint.fromEndNameTso>ELES</eu:BoundaryPoint.fromEndNameTso>
+    <eu:BoundaryPoint.toEndIsoCode>HR</eu:BoundaryPoint.toEndIsoCode>
+    <eu:BoundaryPoint.toEndName>Z2Brs</eu:BoundaryPoint.toEndName>
+    <eu:BoundaryPoint.toEndNameTso>HOPS</eu:BoundaryPoint.toEndNameTso>
+    <eu:BoundaryPoint.ConnectivityNode rdf:resource="#_183d126d-2522-4ff2-a8cd-c5016cf09c1b" />
+    <cim:IdentifiedObject.mRID>4fe8c999-a939-5d43-b857-02dd312f2dea</cim:IdentifiedObject.mRID>
+  </eu:BoundaryPoint>
+  <cim:ConnectivityNode rdf:ID="_49831d24-33e9-4233-8424-3f88186a924e">
+    <cim:IdentifiedObject.description>OHL_and_CAB 110 kV</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.name>XQ2_EQIN</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-Z1-Z2-XQ02CN</eu:IdentifiedObject.energyIdentCodeEic>
+    <cim:ConnectivityNode.ConnectivityNodeContainer rdf:resource="#_c3f46fe5-0cd1-4a1c-b722-e967b9ab21e2" />
+    <eu:IdentifiedObject.shortName>2</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.mRID>49831d24-33e9-4233-8424-3f88186a924e</cim:IdentifiedObject.mRID>
+  </cim:ConnectivityNode>
+  <eu:BoundaryPoint rdf:ID="_5fe8c999-a939-5d43-b857-02dd312f2dea">
+    <cim:IdentifiedObject.name>XQ2_EQIN</cim:IdentifiedObject.name>
+    <cim:IdentifiedObject.description>OHL 380 kV</cim:IdentifiedObject.description>
+    <eu:IdentifiedObject.shortName>XQ2_EQIN</eu:IdentifiedObject.shortName>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-Z1-Z2-XQ01CN</eu:IdentifiedObject.energyIdentCodeEic>
+    <eu:BoundaryPoint.fromEndIsoCode>SI</eu:BoundaryPoint.fromEndIsoCode>
+    <eu:BoundaryPoint.fromEndName>Z1Teg</eu:BoundaryPoint.fromEndName>
+    <eu:BoundaryPoint.fromEndNameTso>ELES</eu:BoundaryPoint.fromEndNameTso>
+    <eu:BoundaryPoint.toEndIsoCode>HR</eu:BoundaryPoint.toEndIsoCode>
+    <eu:BoundaryPoint.toEndName>Z2arp</eu:BoundaryPoint.toEndName>
+    <eu:BoundaryPoint.toEndNameTso>HOPS</eu:BoundaryPoint.toEndNameTso>
+    <eu:BoundaryPoint.ConnectivityNode rdf:resource="#_49831d24-33e9-4233-8424-3f88186a924e" />
+    <cim:IdentifiedObject.mRID>5fe8c999-a939-5d43-b857-02dd312f2dea</cim:IdentifiedObject.mRID>
+  </eu:BoundaryPoint>
+  <cim:GeographicalRegion rdf:ID="_b4530622-ddd6-4d0e-9127-939adc037ec4">
+    <cim:IdentifiedObject.name>EU</cim:IdentifiedObject.name>
+    <cim:IdentifiedObject.description>Geographical Region of EU</cim:IdentifiedObject.description>
+    <eu:IdentifiedObject.energyIdentCodeEic>10Y-CB-EU-00001E</eu:IdentifiedObject.energyIdentCodeEic>
+    <eu:IdentifiedObject.shortName>EU</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.mRID>b4530622-ddd6-4d0e-9127-939adc037ec4</cim:IdentifiedObject.mRID>
+  </cim:GeographicalRegion>
+  <cim:Line rdf:ID="_c3f46fe5-0cd1-4a1c-b722-e967b9ab21e2">
+    <cim:IdentifiedObject.name>TieLine_XMO_TE31</cim:IdentifiedObject.name>
+    <cim:Line.Region rdf:resource="#_f00d3f9e-f076-45f6-b0ef-00f756352976" />
+    <cim:IdentifiedObject.description>l1</cim:IdentifiedObject.description>
+    <eu:IdentifiedObject.shortName>1</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.mRID>c3f46fe5-0cd1-4a1c-b722-e967b9ab21e2</cim:IdentifiedObject.mRID>
+  </cim:Line>
+  <cim:Line rdf:ID="_41d4fafe-e4ce-4ca3-86d9-f181ae3f8ea3">
+    <cim:IdentifiedObject.name>TieLine_XWE_BR21</cim:IdentifiedObject.name>
+    <cim:Line.Region rdf:resource="#_f00d3f9e-f076-45f6-b0ef-00f756352976" />
+    <cim:IdentifiedObject.description>l2</cim:IdentifiedObject.description>
+    <eu:IdentifiedObject.shortName>2</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.mRID>41d4fafe-e4ce-4ca3-86d9-f181ae3f8ea3</cim:IdentifiedObject.mRID>
+  </cim:Line>
+  <cim:SubGeographicalRegion rdf:ID="_f00d3f9e-f076-45f6-b0ef-00f756352976">
+    <cim:IdentifiedObject.name>ENTSO-E</cim:IdentifiedObject.name>
+    <cim:SubGeographicalRegion.Region rdf:resource="#_b4530622-ddd6-4d0e-9127-939adc037ec4" />
+    <cim:IdentifiedObject.description>SubGeographical Region of ENTSO-E</cim:IdentifiedObject.description>
+    <eu:IdentifiedObject.energyIdentCodeEic>10Y-CB-ENTSO-001</eu:IdentifiedObject.energyIdentCodeEic>
+    <eu:IdentifiedObject.shortName>ENTSO-E</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.mRID>f00d3f9e-f076-45f6-b0ef-00f756352976</cim:IdentifiedObject.mRID>
+  </cim:SubGeographicalRegion>
+</rdf:RDF>

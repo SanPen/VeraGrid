@@ -8,11 +8,11 @@ import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
 from typing import List, Tuple, TYPE_CHECKING
-from VeraGridEngine.Devices.profile import Profile
+from VeraGridEngine.Devices.Profiles import ProfileDevice, ProfileEnum, ProfileFloat
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import BuildStatus, ConverterControlType
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
-from VeraGridEngine.Devices.Parents.editable_device import DeviceType
+from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
 from VeraGridEngine.Devices.Parents.editable_device import get_at
 
 if TYPE_CHECKING:
@@ -21,10 +21,10 @@ if TYPE_CHECKING:
 
 class VSC(BranchParent):
     __slots__ = (
-        'kdp',
-        'alpha1',
-        'alpha2',
-        'alpha3',
+        '_kdp',
+        '_alpha1',
+        '_alpha2',
+        '_alpha3',
         '_control1',
         '_control1_prof',
         '_control2',
@@ -38,8 +38,46 @@ class VSC(BranchParent):
         '_control2_val',
         '_control2_val_prof',
         '_bus_dc_n',
-        'x',
-        'y'
+        '_min_ac_voltage',
+        '_x',
+        '_y',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='bus_dc_n', units="", tpe=DeviceType.BusDevice,
+                      definition='DC negative bus', editable=False),
+        GCProp(key='alpha1', units='', tpe=float,
+                      definition='Losses constant parameter (IEC 62751-2 loss Correction).'),
+        GCProp(key='alpha2', units='', tpe=float,
+                      definition='Losses linear parameter (IEC 62751-2 loss Correction).'),
+        GCProp(key='alpha3', units='', tpe=float,
+                      definition='Losses quadratic parameter (IEC 62751-2 loss Correction).'),
+        GCProp(key='kdp', units='p.u./p.u.', tpe=float, definition='Droop Power/Voltage slope.'),
+        GCProp(key='control1', units='', tpe=ConverterControlType, profile_name="control1_prof",
+                      definition='Control mode 1.'),
+        GCProp(key='control2', units='', tpe=ConverterControlType, profile_name="control2_prof",
+                      definition='Control mode 2.'),
+        GCProp(key='control1_val', units='', tpe=float, profile_name="control1_val_prof",
+                      definition='Control value 1.'
+                                 'p.u. for voltage\n'
+                                 'rad for angles\n'
+                                 'MW for P\n'
+                                 'MVAr for Q'),
+        GCProp(key='control2_val', units='', tpe=float, profile_name="control2_val_prof",
+                      definition='Control value 2.'
+                                 'p.u. for voltage\n'
+                                 'rad for angles\n'
+                                 'MW for P\n'
+                                 'MVAr for Q'),
+        GCProp(key='control1_dev', units="", tpe=DeviceType.BusOrBranch, profile_name="control1_dev_prof",
+                      definition='Controlled device, None to apply to this converter', editable=False),
+        GCProp(key='control2_dev', units="", tpe=DeviceType.BusOrBranch, profile_name="control2_dev_prof",
+                      definition='Controlled device, None to apply to this converter', editable=False),
+        GCProp(key='min_ac_voltage', units='p.u.', tpe=float,
+                      definition='Minimum AC voltage threshold. '
+                                 'If the AC bus voltage drops below this value, the VSC is disconnected.'),
+        GCProp(key='x', units='px', tpe=float, definition='x position'),
+        GCProp(key='y', units='px', tpe=float, definition='y position'),
     )
 
     def __init__(self,
@@ -71,6 +109,7 @@ class VSC(BranchParent):
                  control2_val: float = 0.0,
                  control1_dev: Bus | BRANCH_TYPES | None = None,
                  control2_dev: Bus | BRANCH_TYPES | None = None,
+                 min_ac_voltage: float = 0.1,
                  x: float = 0.0,
                  y: float = 0.0):
         """
@@ -192,69 +231,27 @@ class VSC(BranchParent):
         self.alpha3 = float(alpha3)
 
         self._control1: ConverterControlType = control1
-        self._control1_prof: Profile = Profile(default_value=control1, data_type=ConverterControlType)
+        self._control1_prof: ProfileEnum = ProfileEnum(default_value=control1, enum_type=ConverterControlType)
 
         self._control2: ConverterControlType = control2
-        self._control2_prof: Profile = Profile(default_value=control2, data_type=ConverterControlType)
+        self._control2_prof: ProfileEnum = ProfileEnum(default_value=control2, enum_type=ConverterControlType)
 
         self._control1_dev: Bus | BRANCH_TYPES | None = control1_dev
-        self._control1_dev_prof: Profile = Profile(default_value=control1_dev, data_type=DeviceType.BusOrBranch)
+        self._control1_dev_prof: ProfileDevice = ProfileDevice(default_value=control1_dev, device_type=DeviceType.BusOrBranch)
 
         self._control2_dev: Bus | BRANCH_TYPES | None = control2_dev
-        self._control2_dev_prof: Profile = Profile(default_value=control2_dev, data_type=DeviceType.BusOrBranch)
+        self._control2_dev_prof: ProfileDevice = ProfileDevice(default_value=control2_dev, device_type=DeviceType.BusOrBranch)
 
         self._control1_val = float(control1_val)
-        self._control1_val_prof: Profile = Profile(default_value=self._control1_val, data_type=float)
+        self._control1_val_prof: ProfileFloat = ProfileFloat(default_value=self._control1_val)
 
         self._control2_val = float(control2_val)
-        self._control2_val_prof: Profile = Profile(default_value=self._control2_val, data_type=float)
+        self._control2_val_prof: ProfileFloat = ProfileFloat(default_value=self._control2_val)
+
+        self.min_ac_voltage = float(min_ac_voltage)
 
         self.x = float(x)
         self.y = float(y)
-
-        # self.register(key='bus_dc_p', units="", tpe=DeviceType.BusDevice,
-        #               definition='DC positive bus', editable=False)
-        self.register(key='bus_dc_n', units="", tpe=DeviceType.BusDevice,
-                      definition='DC negative bus', editable=False)
-        # self.register(key='bus_ac', units="", tpe=DeviceType.BusDevice,
-        #               definition='AC bus', editable=False)
-
-        self.register(key='alpha1', units='', tpe=float,
-                      definition='Losses constant parameter (IEC 62751-2 loss Correction).')
-        self.register(key='alpha2', units='', tpe=float,
-                      definition='Losses linear parameter (IEC 62751-2 loss Correction).')
-        self.register(key='alpha3', units='', tpe=float,
-                      definition='Losses quadratic parameter (IEC 62751-2 loss Correction).')
-
-        self.register(key='kdp', units='p.u./p.u.', tpe=float, definition='Droop Power/Voltage slope.')
-
-        self.register(key='control1', units='', tpe=ConverterControlType, profile_name="control1_prof",
-                      definition='Control mode 1.')
-
-        self.register(key='control2', units='', tpe=ConverterControlType, profile_name="control2_prof",
-                      definition='Control mode 2.')
-
-        self.register(key='control1_val', units='', tpe=float, profile_name="control1_val_prof",
-                      definition='Control value 1.'
-                                 'p.u. for voltage\n'
-                                 'rad for angles\n'
-                                 'MW for P\n'
-                                 'MVAr for Q')
-        self.register(key='control2_val', units='', tpe=float, profile_name="control2_val_prof",
-                      definition='Control value 2.'
-                                 'p.u. for voltage\n'
-                                 'rad for angles\n'
-                                 'MW for P\n'
-                                 'MVAr for Q')
-
-        self.register(key='control1_dev', units="", tpe=DeviceType.BusOrBranch, profile_name="control1_dev_prof",
-                      definition='Controlled device, None to apply to this converter', editable=False)
-
-        self.register(key='control2_dev', units="", tpe=DeviceType.BusOrBranch, profile_name="control2_dev_prof",
-                      definition='Controlled device, None to apply to this converter', editable=False)
-
-        self.register(key='x', units='px', tpe=float, definition='x position')
-        self.register(key='y', units='px', tpe=float, definition='y position')
 
     @property
     def bus_from(self) -> Bus:
@@ -358,7 +355,7 @@ class VSC(BranchParent):
             self._control1 = value
 
     @property
-    def control1_prof(self) -> Profile:
+    def control1_prof(self) -> ProfileEnum:
         """
         Cost profile
         :return: Profile
@@ -366,8 +363,8 @@ class VSC(BranchParent):
         return self._control1_prof
 
     @control1_prof.setter
-    def control1_prof(self, val: Profile | np.ndarray):
-        if isinstance(val, Profile):
+    def control1_prof(self, val: ProfileEnum | np.ndarray):
+        if isinstance(val, ProfileEnum):
             self._control1_prof = val
         elif isinstance(val, np.ndarray):
             self._control1_prof.set(arr=val)
@@ -403,7 +400,7 @@ class VSC(BranchParent):
             self._control2 = value
 
     @property
-    def control2_prof(self) -> Profile:
+    def control2_prof(self) -> ProfileEnum:
         """
         Cost profile
         :return: Profile
@@ -411,8 +408,8 @@ class VSC(BranchParent):
         return self._control2_prof
 
     @control2_prof.setter
-    def control2_prof(self, val: Profile | np.ndarray):
-        if isinstance(val, Profile):
+    def control2_prof(self, val: ProfileEnum | np.ndarray):
+        if isinstance(val, ProfileEnum):
             self._control2_prof = val
         elif isinstance(val, np.ndarray):
             self._control2_prof.set(arr=val)
@@ -436,10 +433,11 @@ class VSC(BranchParent):
 
     @control1_val.setter
     def control1_val(self, value: float):
+        value = float(value)
         self._control1_val = value
 
     @property
-    def control1_val_prof(self) -> Profile:
+    def control1_val_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -447,8 +445,8 @@ class VSC(BranchParent):
         return self._control1_val_prof
 
     @control1_val_prof.setter
-    def control1_val_prof(self, val: Profile | np.ndarray):
-        if isinstance(val, Profile):
+    def control1_val_prof(self, val: ProfileFloat | np.ndarray):
+        if isinstance(val, ProfileFloat):
             self._control1_val_prof = val
         elif isinstance(val, np.ndarray):
             self._control1_val_prof.set(arr=val)
@@ -472,10 +470,11 @@ class VSC(BranchParent):
 
     @control2_val.setter
     def control2_val(self, value: float):
+        value = float(value)
         self._control2_val = value
 
     @property
-    def control2_val_prof(self) -> Profile:
+    def control2_val_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -483,8 +482,8 @@ class VSC(BranchParent):
         return self._control2_val_prof
 
     @control2_val_prof.setter
-    def control2_val_prof(self, val: Profile | np.ndarray):
-        if isinstance(val, Profile):
+    def control2_val_prof(self, val: ProfileFloat | np.ndarray):
+        if isinstance(val, ProfileFloat):
             self._control2_val_prof = val
         elif isinstance(val, np.ndarray):
             self._control2_val_prof.set(arr=val)
@@ -511,7 +510,7 @@ class VSC(BranchParent):
         self._control1_dev = value
 
     @property
-    def control1_dev_prof(self) -> Profile:
+    def control1_dev_prof(self) -> ProfileDevice:
         """
         Cost profile
         :return: Profile
@@ -519,8 +518,8 @@ class VSC(BranchParent):
         return self._control1_dev_prof
 
     @control1_dev_prof.setter
-    def control1_dev_prof(self, val: Profile | np.ndarray):
-        if isinstance(val, Profile):
+    def control1_dev_prof(self, val: ProfileDevice | np.ndarray):
+        if isinstance(val, ProfileDevice):
             self._control1_dev_prof = val
         elif isinstance(val, np.ndarray):
             self._control1_dev_prof.set(arr=val)
@@ -547,7 +546,7 @@ class VSC(BranchParent):
         self._control2_dev = value
 
     @property
-    def control2_dev_prof(self) -> Profile:
+    def control2_dev_prof(self) -> ProfileDevice:
         """
         Cost profile
         :return: Profile
@@ -555,8 +554,8 @@ class VSC(BranchParent):
         return self._control2_dev_prof
 
     @control2_dev_prof.setter
-    def control2_dev_prof(self, val: Profile | np.ndarray):
-        if isinstance(val, Profile):
+    def control2_dev_prof(self, val: ProfileDevice | np.ndarray):
+        if isinstance(val, ProfileDevice):
             self._control2_dev_prof = val
         elif isinstance(val, np.ndarray):
             self._control2_dev_prof.set(arr=val)
@@ -618,3 +617,138 @@ class VSC(BranchParent):
         Is this a 3-terminal VSC?
         """
         return self.bus_from is not None and self.bus_to is not None and self._bus_dc_n is not None
+
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def alpha1(self) -> float:
+        """
+        Get ``alpha1``.
+
+        :return: float
+        """
+        return self._alpha1
+
+    @alpha1.setter
+    def alpha1(self, val: float) -> None:
+        """
+        Set ``alpha1``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._alpha1 = float(val)
+
+    @property
+    def alpha2(self) -> float:
+        """
+        Get ``alpha2``.
+
+        :return: float
+        """
+        return self._alpha2
+
+    @alpha2.setter
+    def alpha2(self, val: float) -> None:
+        """
+        Set ``alpha2``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._alpha2 = float(val)
+
+    @property
+    def alpha3(self) -> float:
+        """
+        Get ``alpha3``.
+
+        :return: float
+        """
+        return self._alpha3
+
+    @alpha3.setter
+    def alpha3(self, val: float) -> None:
+        """
+        Set ``alpha3``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._alpha3 = float(val)
+
+    @property
+    def kdp(self) -> float:
+        """
+        Get ``kdp``.
+
+        :return: float
+        """
+        return self._kdp
+
+    @kdp.setter
+    def kdp(self, val: float) -> None:
+        """
+        Set ``kdp``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._kdp = float(val)
+
+    @property
+    def min_ac_voltage(self) -> float:
+        """
+        Get ``min_ac_voltage``.
+
+        :return: float
+        """
+        return self._min_ac_voltage
+
+    @min_ac_voltage.setter
+    def min_ac_voltage(self, val: float) -> None:
+        """
+        Set ``min_ac_voltage``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._min_ac_voltage = float(val)
+
+    @property
+    def x(self) -> float:
+        """
+        Get ``x``.
+
+        :return: float
+        """
+        return self._x
+
+    @x.setter
+    def x(self, val: float) -> None:
+        """
+        Set ``x``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._x = float(val)
+
+    @property
+    def y(self) -> float:
+        """
+        Get ``y``.
+
+        :return: float
+        """
+        return self._y
+
+    @y.setter
+    def y(self, val: float) -> None:
+        """
+        Set ``y``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._y = float(val)

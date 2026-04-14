@@ -41,11 +41,36 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_enums import (CgmesProfileType,
                                                      VsPpccControlKind,
                                                      VsQpccControlKind)
 
-from VeraGridEngine.IO.cim.cgmes.cgmes_utils import find_object_by_uuid, get_voltage_terminal
+from VeraGridEngine.IO.cim.cgmes.cgmes_utils import get_voltage_terminal
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.full_model import FullModel
 import VeraGridEngine.Devices as gcdev
-from VeraGridEngine.enumerations import CGMESVersions
+from VeraGridEngine.enumerations import CGMESVersions, ConverterControlType
 from VeraGridEngine.data_logger import DataLogger
+
+
+def find_topological_node_for_bus(cgmes_model: CgmesCircuit,
+                                  mc_bus: Bus) -> Union[cgmes24.TopologicalNode,
+                                                         cgmes30.TopologicalNode,
+                                                         None]:
+    """
+    Resolve the TopologicalNode for a bus.
+
+    Primary key is bus UUID. If UUID lookup fails (for example after UUID
+    collision remapping during export), fallback to unique bus name.
+
+    :param cgmes_model: CgmesCircuit
+    :param mc_bus: MultiCircuit bus
+    :return: TopologicalNode or None
+    """
+    for topo_node in cgmes_model.cgmes_assets.TopologicalNode_list:
+        if topo_node.uuid == mc_bus.idtag:
+            return topo_node
+
+    for topo_node in cgmes_model.cgmes_assets.TopologicalNode_list:
+        if topo_node.name == mc_bus.name:
+            return topo_node
+
+    return None
 
 
 def create_cgmes_headers(cgmes_model: CgmesCircuit,
@@ -209,10 +234,9 @@ def create_cgmes_terminal(mc_bus: Bus,
     new_rdf_id = get_new_rdfid()
     name = f'{cond_eq.name} - T{seq_num}' if cond_eq is not None else ""
 
-    tn = find_object_by_uuid(
+    tn = find_topological_node_for_bus(
         cgmes_model=cgmes_model,
-        object_list=cgmes_model.cgmes_assets.TopologicalNode_list,
-        target_uuid=mc_bus.idtag
+        mc_bus=mc_bus
     )
 
     if ver == CGMESVersions.v2_4_15:
@@ -230,7 +254,7 @@ def create_cgmes_terminal(mc_bus: Bus,
                              device=mc_bus,
                              device_class=gcdev.Bus)
 
-    elif CGMESVersions.v3_0_0:
+    elif ver == CGMESVersions.v3_0_0:
         term = cgmes30.Terminal(rdfid=new_rdf_id)
         term.name = name
 
@@ -276,16 +300,28 @@ def create_cgmes_load_response_char(load: gcdev.Load,
         raise NotImplemented()
 
     lrc.name = f'LoadRespChar_{load.name}'
-    # lrc.shortName = load.name
     lrc.exponentModel = False
-    # SUPPOSING that
-    lrc.pConstantImpedance = 0.0
-    lrc.qConstantImpedance = 0.0
-    # Expression got simpler
-    lrc.pConstantPower = np.round(load.P / (load.Ir + load.P), 4)
-    lrc.qConstantPower = np.round(load.Q / (load.Ii + load.Q), 4)
-    lrc.pConstantCurrent = np.round(1 - lrc.pConstantPower, 4)
-    lrc.qConstantCurrent = np.round(1 - lrc.qConstantPower, 4)
+
+    total_active: float = float(load.P + load.Ir + load.G)
+    total_reactive: float = float(load.Q + load.Ii + load.B)
+
+    if total_active != 0.0:
+        lrc.pConstantPower = np.round(load.P / total_active, 4)
+        lrc.pConstantCurrent = np.round(load.Ir / total_active, 4)
+        lrc.pConstantImpedance = np.round(load.G / total_active, 4)
+    else:
+        lrc.pConstantPower = 1.0
+        lrc.pConstantCurrent = 0.0
+        lrc.pConstantImpedance = 0.0
+
+    if total_reactive != 0.0:
+        lrc.qConstantPower = np.round(load.Q / total_reactive, 4)
+        lrc.qConstantCurrent = np.round(load.Ii / total_reactive, 4)
+        lrc.qConstantImpedance = np.round(load.B / total_reactive, 4)
+    else:
+        lrc.qConstantPower = 1.0
+        lrc.qConstantCurrent = 0.0
+        lrc.qConstantImpedance = 0.0
 
     # Legacy
     # lrc.pConstantCurrent = load.Ir / load.P if load.P != 0.0 else 0
@@ -442,7 +478,9 @@ def create_cgmes_regulating_control(cgmes_elm,
     rc.name = f'_RC_{mc_gen.name}'
     rc.shortName = rc.name
     rc.mode = RegulatingControlModeKind.voltage
-    rc.Terminal = cgmes_elm.Terminals  # TODO get a terminal from the controlled bus !!!
+    # Export the concrete terminal object instead of the generic list/scalar
+    # field so later import has an unambiguous control attachment point.
+    rc.Terminal = cgmes_elm.Terminals
 
     rc.RegulatingCondEq = cgmes_elm
     rc.discrete = False
@@ -541,7 +579,7 @@ def create_cgmes_current_limit(terminal,
 
     voltage: float | None = get_voltage_terminal(terminal, logger)
 
-    if voltage is not None:
+    if voltage is not None and voltage > 0.0:
         sqrt_3 = 1.73205080756888
         current_rate = rate_mw * 1e3 / (voltage * sqrt_3)
         current_rate = np.round(current_rate, 4)
@@ -559,6 +597,14 @@ def create_cgmes_current_limit(terminal,
         curr_lim.OperationalLimitType = op_limit_type
 
         cgmes_model.add(curr_lim)
+    else:
+        logger.add_warning(
+            msg='CurrentLimit skipped due invalid terminal voltage',
+            device=terminal.rdfid,
+            device_class=terminal.tpe,
+            value=voltage,
+            expected_value='> 0.0'
+        )
     return
 
 
@@ -711,7 +757,12 @@ def create_cgmes_vsc_converter(cgmes_model: CgmesCircuit,
     if gc_vsc is not None:
         vs_converter.name = gc_vsc.name
         vs_converter.description = gc_vsc.code
-        targetUpcc = gc_vsc.Vf
+        if gc_vsc.control1 in (ConverterControlType.Vm_ac, ConverterControlType.Vm_dc):
+            targetUpcc = gc_vsc.control1_val
+        elif gc_vsc.control2 in (ConverterControlType.Vm_ac, ConverterControlType.Vm_dc):
+            targetUpcc = gc_vsc.control2_val
+        else:
+            targetUpcc = v_set
     else:
         i = len(cgmes_model.cgmes_assets.VsConverter_list)
         vs_converter.name = f'VSC_{i + 1}'
@@ -1001,8 +1052,13 @@ def create_cgmes_location(cgmes_model: CgmesCircuit,
     else:
         raise NotImplemented()
 
-    location.CoordinateSystem = cgmes_model.cgmes_assets.CoordinateSystem_list[0]
-    location.PowerSystemResource = device
+    coordinate_system = cgmes_model.cgmes_assets.CoordinateSystem_list[0]
+
+    location.CoordinateSystem = coordinate_system
+    if "PowerSystemResources" in location.declared_properties:
+        location.PowerSystemResources = device
+    else:
+        location.PowerSystemResource = device
 
     if ver == CGMESVersions.v2_4_15:
         pos_point = cgmes24.PositionPoint(rdfid=get_new_rdfid())
@@ -1015,13 +1071,37 @@ def create_cgmes_location(cgmes_model: CgmesCircuit,
     pos_point.sequenceNumber = 1
     pos_point.xPosition = str(longitude)
     pos_point.yPosition = str(latitude)
-    location.PositionPoint = pos_point
+    if "PositionPoints" in location.declared_properties:
+        location.PositionPoints = pos_point
+    else:
+        location.PositionPoint = pos_point
 
-    cgmes_model.cgmes_assets.CoordinateSystem_list[0].Locations.append(location)
+    if "Locations" in coordinate_system.declared_properties:
+        current_locations = coordinate_system.Locations
+        if current_locations is None:
+            coordinate_system.Locations = [location]
+        elif isinstance(current_locations, list):
+            current_locations.append(location)
+        else:
+            coordinate_system.Locations = [current_locations, location]
+    else:
+        current_location = coordinate_system.Location
+        if current_location is None:
+            coordinate_system.Location = location
+        elif isinstance(current_location, list):
+            current_location.append(location)
+        else:
+            coordinate_system.Location = [current_location, location]
     cgmes_model.add(location)
     cgmes_model.add(pos_point)
 
-    device.Location = location
+    if "Location" in device.declared_properties:
+        device.Location = location
+    else:
+        logger.add_info(msg='Skipping location back-reference for CGMES class without Location property',
+                        device=device.rdfid,
+                        device_class=device.tpe,
+                        value='Location')
 
     return location
 
@@ -1107,7 +1187,7 @@ def create_sv_status(cgmes_model: CgmesCircuit,
         raise NotImplemented()
 
     sv_status.inService = in_service
-    # TODO sv_status.ConductingEquipment = cgmes_conducting_equipment
+    sv_status.ConductingEquipment = cgmes_conducting_equipment
 
     cgmes_model.add(sv_status)
 

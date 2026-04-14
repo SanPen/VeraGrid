@@ -4,24 +4,33 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import Union
+from typing import Union, Tuple
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from VeraGridEngine.enumerations import DeviceType, BuildStatus, ExternalGridMode
 from VeraGridEngine.Devices.Parents.load_parent import LoadParent
-from VeraGridEngine.Devices.profile import Profile
-from VeraGridEngine.Devices.Parents.editable_device import get_at
+from VeraGridEngine.Devices.Profiles import ProfileFloat
+from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 
 
 class ExternalGrid(LoadParent):
     __slots__ = (
         'mode',
         'substituted_device_id',
-        'Vm',
-        'Va',
+        '_Vm',
+        '_Va',
         '_Vm_prof',
         '_Va_prof',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='mode', units='', tpe=ExternalGridMode,
+                      definition='Operation mode of the external grid (voltage or load)'),
+        GCProp(key='substituted_device_id', units='', tpe=str,
+                      definition='idtag of the device that was substituted by this external grid equivalent'),
+        GCProp(key='Vm', units='p.u.', tpe=float, definition='Active power', profile_name='Vm_prof'),
+        GCProp(key='Va', units='radians', tpe=float, definition='Reactive power', profile_name='Va_prof'),
     )
 
     def __init__(self, name='External grid', idtag=None, code='', active=True, substituted_device_id: str = '',
@@ -78,18 +87,12 @@ class ExternalGrid(LoadParent):
         # Impedance in equivalent MVA
         self.Vm = float(Vm)
         self.Va = float(Va)
-        self._Vm_prof = Profile(default_value=self.Vm, data_type=float)
-        self._Va_prof = Profile(default_value=self.Va, data_type=float)
+        self._Vm_prof = ProfileFloat(default_value=self.Vm)
+        self._Va_prof = ProfileFloat(default_value=self.Va)
 
-        self.register(key='mode', units='', tpe=ExternalGridMode,
-                      definition='Operation mode of the external grid (voltage or load)')
-        self.register(key='substituted_device_id', units='', tpe=str,
-                      definition='idtag of the device that was substituted by this external grid equivalent')
-        self.register(key='Vm', units='p.u.', tpe=float, definition='Active power', profile_name='Vm_prof')
-        self.register(key='Va', units='radians', tpe=float, definition='Reactive power', profile_name='Va_prof')
 
     @property
-    def Vm_prof(self) -> Profile:
+    def Vm_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -97,8 +100,8 @@ class ExternalGrid(LoadParent):
         return self._Vm_prof
 
     @Vm_prof.setter
-    def Vm_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Vm_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Vm_prof = val
         elif isinstance(val, np.ndarray):
             self._Vm_prof.set(arr=val)
@@ -113,7 +116,7 @@ class ExternalGrid(LoadParent):
         return get_at(self.Vm, self.Vm_prof, t)
 
     @property
-    def Va_prof(self) -> Profile:
+    def Va_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -121,8 +124,8 @@ class ExternalGrid(LoadParent):
         return self._Va_prof
 
     @Va_prof.setter
-    def Va_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Va_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Va_prof = val
         elif isinstance(val, np.ndarray):
             self._Va_prof.set(arr=val)
@@ -185,3 +188,43 @@ class ExternalGrid(LoadParent):
 
             if show_fig:
                 plt.show()
+
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def Vm(self) -> float:
+        """
+        Get ``Vm``.
+
+        :return: float
+        """
+        return self._Vm
+
+    @Vm.setter
+    def Vm(self, val: float) -> None:
+        """
+        Set ``Vm``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Vm = float(val)
+
+    @property
+    def Va(self) -> float:
+        """
+        Get ``Va``.
+
+        :return: float
+        """
+        return self._Va
+
+    @Va.setter
+    def Va(self, val: float) -> None:
+        """
+        Set ``Va``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Va = float(val)

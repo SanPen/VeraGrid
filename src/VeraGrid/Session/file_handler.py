@@ -10,8 +10,10 @@ from PySide6.QtCore import QThread, Signal
 from VeraGrid.Session.session import SimulationSession
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.IO.veragrid.zip_interface import get_session_tree, load_session_driver_objects
-from VeraGridEngine.IO.file_handler import FileOpen, FileSave, FileSavingOptions, FileOpenOptions
+from VeraGridEngine.IO.file_open import FileOpen, FileOpenOptions
+from VeraGridEngine.IO.file_save import FileSavingOptions, FileSave
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
+from VeraGridEngine.Devices.multiverse import MultiVerse
 from VeraGridEngine.IO.cim.cgmes.cgmes_circuit import CgmesCircuit
 from VeraGridEngine.data_logger import DataLogger
 
@@ -43,6 +45,7 @@ class FileOpenThread(QThread):
         self.logger = Logger()
 
         self.circuit: Union[MultiCircuit, None] = None
+        self.multiverse: Union[MultiVerse, None] = None
 
         self.options = options if options is not None else FileOpenOptions()
 
@@ -120,6 +123,10 @@ class FileOpenThread(QThread):
                 return
 
         self.json_files = file_handler.json_files
+        self.multiverse = file_handler.multiverse
+
+        if self.circuit is None and self.multiverse is not None:
+            self.circuit = self.multiverse.current_model
 
         self.cgmes_circuit = file_handler.cgmes_circuit
         self.cgmes_logger = file_handler.cgmes_logger
@@ -150,7 +157,8 @@ class FileSaveThread(QThread):
     def __init__(self,
                  circuit: MultiCircuit,
                  file_name: str,
-                 options: FileSavingOptions):
+                 options: FileSavingOptions,
+                 multiverse: MultiVerse | None = None,):
         """
         Constructor
         :param circuit: MultiCircuit instance
@@ -160,6 +168,8 @@ class FileSaveThread(QThread):
         QThread.__init__(self)
 
         self.circuit = circuit
+
+        self.multiverse: MultiVerse | None = multiverse
 
         self.file_name = file_name
 
@@ -216,6 +226,7 @@ class FileSaveThread(QThread):
         file_handler = FileSave(circuit=self.circuit,
                                 file_name=self.file_name,
                                 options=self.options,
+                                multiverse=self.multiverse,
                                 text_func=self.progress_text.emit,
                                 progress_func=self.progress_signal.emit)
         try:

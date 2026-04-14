@@ -93,6 +93,8 @@ class ContingencyTableEntry:
     def __init__(self,
                  time_index: int,
                  t_prob: float,
+                 mon_idx: int,
+                 con_group_idx: int,
                  area_from: str,
                  area_to: str,
                  base_name: str,
@@ -134,6 +136,8 @@ class ContingencyTableEntry:
         """
         self.time_index: int = time_index
         self.t_prob: float = t_prob
+        self.mon_idx: int = mon_idx
+        self.con_group_idx: int = con_group_idx
         self.area_from: str = area_from
         self.area_to: str = area_to
         self.base_name: str = base_name
@@ -225,6 +229,8 @@ class ContingencyResultsReport:
     def add(self,
             time_index: int,
             t_prob: float,
+            mon_idx: int,
+            con_group_idx: int,
             area_from: str,
             area_to: str,
             base_name: str,
@@ -246,6 +252,8 @@ class ContingencyResultsReport:
         """
         Add report data
         :param time_index:
+        :param mon_idx:
+        :param con_group_idx:
         :param t_prob:
         :param area_from:
         :param area_to:
@@ -269,6 +277,8 @@ class ContingencyResultsReport:
         self.add_entry(ContingencyTableEntry(
             time_index=time_index,
             t_prob=t_prob,
+            mon_idx=mon_idx,
+            con_group_idx=con_group_idx,
             area_from=area_from,
             area_to=area_to,
             base_name=base_name,
@@ -357,7 +367,7 @@ class ContingencyResultsReport:
 
         df["Time idx"] = df["Time idx"].astype(int)
 
-        if "Probability cluster" in df:
+        if "Probability cluster" in df.columns:
             df["Probability cluster"] = df["Probability cluster"].astype(float)
         else:
             df["Probability cluster"] = np.ones(df.shape[0])
@@ -496,56 +506,56 @@ class ContingencyResultsReport:
                 base_loading: Vec,
                 contingency_flows: Vec,
                 contingency_loadings: Vec,
-                contingency_idx: int,
+                contingency_group_idx: int,
                 contingency_group: ContingencyGroup,
                 using_srap: bool = False,
                 srap_ratings: Union[Vec, None] = None,
                 srap_max_power: float = 1400.0,
                 srap_deadband: float = 0.0,
                 contingency_deadband: float = 0.0,
-                srap_rever_to_nominal_rating: bool = False,
-                multi_contingency: LinearMultiContingency = None,
+                srap_revert_to_nominal_rating: bool = False,
+                multi_contingency: LinearMultiContingency | None = None,
                 PTDF: Mat = None,
                 available_power: Vec = None,
                 srap_used_power: Mat = None,
-                F: Vec = None,
-                T: Vec = None,
-                bus_area_indices: Vec = None,
+                F: IntVec | None = None,
+                T: IntVec | None = None,
+                bus_area_indices: IntVec | None = None,
                 area_names: Vec = None,
                 top_n: int = 5,
                 detailed_massive_report: bool = True):
         """
         Analyze contingency results and add them to the report
         :param t: time index
-        :param t_prob: probability of te time
+        :param t_prob: probability of the time
         :param mon_idx: array of monitored branch indices
         :param nc: NumericalCircuit
         :param base_flow: base flows array
         :param base_loading: base loading array
         :param contingency_flows: flows array after the contingency
-        :param contingency_loadings: loading array after the contingency
-        :param contingency_idx: contingency group index
+        :param contingency_loadings: loading array after the contingency in the base of the normal rate
+        :param contingency_group_idx: contingency group index
         :param contingency_group: ContingencyGroup
         :param using_srap: Inspect contingency using the SRAP conditions
         :param srap_ratings: Array of protection ratings of the branches to use with SRAP
         :param srap_max_power: Max amount of power to lower using SRAP conditions
         :param srap_deadband: (in %)
         :param contingency_deadband:
-        :param srap_rever_to_nominal_rating:
+        :param srap_revert_to_nominal_rating:
         :param multi_contingency: list of buses for SRAP conditions
         :param PTDF: PTDF for SRAP conditions
-        :param available_power: Array of power avaiable for SRAP
+        :param available_power: Array of power available for SRAP
         :param srap_used_power: (branch, nbus) matrix to stre SRAP usage
-        :param F:
-        :param T:
-        :param bus_area_indices:
-        :param area_names:
+        :param F: Array of From branch indices
+        :param T: Array of To branch indices
+        :param bus_area_indices: Array of area indices per bus
+        :param area_names: Array of area names
         :param top_n: maximum number of nodes affecting the oveload
         :param detailed_massive_report: Generate massive report
         """
 
         # Reporting base case
-        if contingency_idx == 0:  # only doing it once per hour
+        if contingency_group_idx == 0:  # only doing it once per hour
 
             for m in mon_idx:
 
@@ -564,6 +574,8 @@ class ContingencyResultsReport:
 
                     self.add(time_index=t if t is not None else 0,
                              t_prob=t_prob,
+                             mon_idx=m,
+                             con_group_idx=contingency_group_idx,
                              area_from=area_from,
                              area_to=area_to,
                              base_name=nc.passive_branch_data.names[m],
@@ -612,7 +624,7 @@ class ContingencyResultsReport:
             # if it produces an overload, and if the variation affects negatively to the flow
             if affected_by_cont1 and affected_by_cont2 and c_load > 1 and c_flow > b_flow:
 
-                # Conditions to set behaviour
+                # Conditions to set behavior
                 if 1 < c_load <= rate_nx_pu:
                     ov_status = 1
                     msg_ov = 'Overload acceptable'
@@ -673,7 +685,7 @@ class ContingencyResultsReport:
                                                   bus_indices=indices,
                                                   sensitivities=sensitivities)
 
-                    if srap_rever_to_nominal_rating:
+                    if srap_revert_to_nominal_rating:
                         rate_goal = nc.passive_branch_data.rates[m]
 
                     else:
@@ -701,6 +713,8 @@ class ContingencyResultsReport:
                 if detailed_massive_report:
                     self.add(time_index=t if t is not None else 0,
                              t_prob=t_prob,
+                             mon_idx=m,
+                             con_group_idx=contingency_group_idx,
                              area_from=area_from,
                              area_to=area_to,
                              base_name=nc.passive_branch_data.names[m],

@@ -3,27 +3,22 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
-from typing import TYPE_CHECKING, Union, Callable, List
+from typing import Union, Callable, List
 import numpy as np
 
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
-from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGridEngine.Simulations.ContingencyAnalysis.contingency_analysis_results import ContingencyAnalysisResults
 from VeraGridEngine.Simulations.PowerFlow.power_flow_worker import multi_island_pf_nc
-from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions, SolverType
 from VeraGridEngine.Simulations.LinearFactors.linear_analysis import LinearAnalysis, LinearMultiContingencies
 from VeraGridEngine.Simulations.ContingencyAnalysis.contingency_analysis_options import ContingencyAnalysisOptions
-from VeraGridEngine.basic_structures import Logger, CxVec, IntVec, StrVec, Mat, Vec
-
-if TYPE_CHECKING:
-    from VeraGridEngine.Simulations.ContingencyAnalysis.contingency_analysis_driver import ContingencyAnalysisDriver
+from VeraGridEngine.basic_structures import Logger, IntVec, StrVec
 
 
 def nonlinear_contingency_analysis(nc: NumericalCircuit,
                                    options: ContingencyAnalysisOptions,
                                    linear_multiple_contingencies: LinearMultiContingencies,
                                    area_names: StrVec | List[str],
-                                   bus_area_indices: StrVec,
+                                   bus_area_indices: IntVec,
                                    F: IntVec,
                                    T: IntVec,
                                    report_text: Callable[[str], None] | None,
@@ -52,28 +47,22 @@ def nonlinear_contingency_analysis(nc: NumericalCircuit,
     if logger is None:
         logger = Logger()
 
-    if options.pf_options is None:
-        pf_opts = PowerFlowOptions(solver_type=SolverType.Linear,
-                                   ignore_single_node_islands=True)
-
-    else:
-        pf_opts = options.pf_options
-
     # declare the results
-    results = ContingencyAnalysisResults(ncon=len(linear_multiple_contingencies.contingency_groups_used),
+    results = ContingencyAnalysisResults(
+        ncon=len(linear_multiple_contingencies.contingency_groups_used),
                                          nbr=nc.nbr,
                                          nbus=nc.nbus,
                                          branch_names=nc.passive_branch_data.names,
                                          bus_names=nc.bus_data.names,
                                          bus_types=nc.bus_data.bus_types,
-                                         con_names=linear_multiple_contingencies.get_contingency_group_names())
+                                         con_names=linear_multiple_contingencies.get_contingency_group_names()
+    )
 
     # get contingency groups dictionary
     mon_idx = nc.passive_branch_data.get_monitor_enabled_indices()
 
     # run 0
-    base_res = multi_island_pf_nc(nc=nc,
-                                  options=pf_opts)
+    base_res = multi_island_pf_nc(nc=nc, options=options.pf_options)
 
     if options.use_srap:
 
@@ -110,16 +99,19 @@ def nonlinear_contingency_analysis(nc: NumericalCircuit,
             report_progress2(ic, len(linear_multiple_contingencies.contingency_groups_used) * 100)
 
         # run
-        pf_res = multi_island_pf_nc(nc=nc,
-                                    options=pf_opts,
+        con_pf_res = multi_island_pf_nc(nc=nc,
+                                    options=options.pf_options,
                                     V_guess=base_res.voltage,
                                     logger=logger)
 
-        results.Sf[ic, :] = pf_res.Sf
-        results.Sbus[ic, :] = pf_res.Sbus
-        results.loading[ic, :] = pf_res.loading
-        results.voltage[ic, :] = pf_res.voltage
+        results.Sf[ic, :] = con_pf_res.Sf
+        results.Sbus[ic, :] = con_pf_res.Sbus
+        results.loading[ic, :] = con_pf_res.loading
+        results.voltage[ic, :] = con_pf_res.voltage
         multi_contingency = linear_multiple_contingencies.multi_contingencies[ic] if options.use_srap else None
+
+        # NOTE: this is accounted for to be in the normal rate base in the analyze method
+        contingency_loadings = np.abs(con_pf_res.Sf / (nc.passive_branch_data.rates + 1e-9))
 
         results.report.analyze(t=t_idx,
                                t_prob=t_prob,
@@ -127,9 +119,9 @@ def nonlinear_contingency_analysis(nc: NumericalCircuit,
                                nc=nc,
                                base_flow=np.abs(base_res.Sf),
                                base_loading=np.abs(base_res.loading),
-                               contingency_flows=np.abs(pf_res.Sf),
-                               contingency_loadings=np.abs(pf_res.loading),
-                               contingency_idx=ic,
+                               contingency_flows=np.abs(con_pf_res.Sf),
+                               contingency_loadings=contingency_loadings,
+                               contingency_group_idx=ic,
                                contingency_group=contingency_group,
                                using_srap=options.use_srap,
                                srap_ratings=nc.passive_branch_data.protection_rates,

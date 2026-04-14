@@ -6,23 +6,21 @@ from __future__ import annotations
 import numpy as np
 from typing import Tuple, Union, TYPE_CHECKING
 
-from VeraGridEngine.enumerations import SubObjectType
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Devices.Substation.substation import Substation
 from VeraGridEngine.Devices.Substation.voltage_level import VoltageLevel
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import BuildStatus, DeviceType
-from VeraGridEngine.Devices.Parents.physical_device import PhysicalDevice
+from VeraGridEngine.Devices.Parents.dynamic_parent import DynamicDevice
 from VeraGridEngine.Devices.Aggregation.branch_group import BranchGroup
-from VeraGridEngine.Devices.profile import Profile
-from VeraGridEngine.Devices.Dynamic.dynamic_model_host import DynamicModelHost
-from VeraGridEngine.Devices.Parents.editable_device import get_at
+from VeraGridEngine.Devices.Profiles import ProfileBool, ProfileFloat
+from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 
 if TYPE_CHECKING:
     from VeraGridEngine.Devices.types import CONNECTION_TYPE
 
 
-class BranchParent(PhysicalDevice):
+class BranchParent(DynamicDevice):
     """
     This class serves to represent the basic branch
     All other branches inherit from this one
@@ -31,21 +29,21 @@ class BranchParent(PhysicalDevice):
     __slots__ = (
         '_bus_from',
         '_bus_to',
-        'active',
+        '_active',
         '_active_prof',
-        'temp_base',
-        'temp_oper',
+        '_temp_base',
+        '_temp_oper',
         '_temp_oper_prof',
-        'alpha',
-        'reducible',
+        '_alpha',
+        '_reducible',
         'contingency_enabled',
-        'monitor_loading',
-        'mttf',
-        'mttr',
-        'Cost',
+        '_monitor_loading',
+        '_mttf',
+        '_mttr',
+        '_Cost',
         '_Cost_prof',
-        'capex',
-        'opex',
+        '_capex',
+        '_opex',
         'build_status',
         '_rate',
         '_rate_prof',
@@ -54,10 +52,49 @@ class BranchParent(PhysicalDevice):
         '_protection_rating_factor',
         '_protection_rating_factor_prof',
         'color',
-        'bus_from_pos',
-        'bus_to_pos',
+        '_bus_from_pos',
+        '_bus_to_pos',
         'group',
-        '_rms_model',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp('bus_from', units="", tpe=DeviceType.BusDevice,
+               definition='Name of the bus at the "from" side', editable=False),
+        GCProp('bus_to', units="", tpe=DeviceType.BusDevice,
+               definition='Name of the bus at the "to" side', editable=False),
+        GCProp('active', units="", tpe=bool, definition='Is active?', profile_name="active_prof"),
+        GCProp('reducible', units="", tpe=bool,
+               definition='Is the branch to be reduced by the topology preprocessor?'),
+        GCProp('rate', units="MVA", tpe=float, definition='Thermal rating power', profile_name="rate_prof"),
+        GCProp('contingency_factor', units="p.u.", tpe=float,
+               definition='Rating multiplier for contingencies', profile_name="contingency_factor_prof"),
+        GCProp('protection_rating_factor', units="p.u.", tpe=float,
+               definition='Rating multiplier that indicates the maximum flow before the protections tripping',
+               profile_name="protection_rating_factor_prof"),
+        GCProp('monitor_loading', units="", tpe=bool,
+               definition="Monitor this device loading for OPF, NTC or contingency studies."),
+        GCProp('mttf', units="h", tpe=float, definition="Mean time to failure"),
+        GCProp('mttr', units="h", tpe=float, definition="Mean time to repair"),
+        GCProp('Cost', units="e/MWh", tpe=float,
+               definition="Cost of overloads. Used in OPF", profile_name="Cost_prof",
+               old_names=("overload_cost",)),
+        GCProp('capex', units="e/MW", tpe=float, definition="Cost of investment. Used in expansion planning."),
+        GCProp('opex', units="e/MWh", tpe=float, definition="Cost of operation. Used in expansion planning."),
+        GCProp('group', units="", tpe=DeviceType.BranchGroupDevice,
+               definition="Group where this branch belongs"),
+        GCProp(key='color', units='', tpe=str, definition='Color to paint the element in the map diagram',
+               is_color=True),
+        GCProp(key='bus_from_pos', units='', tpe=int, definition='Aid to locate devices on a busbar',
+               display=False),
+        GCProp(key='bus_to_pos', units='', tpe=int, definition='Aid to locate devices on a busbar',
+               display=False),
+        GCProp(key='temp_base', units='ºC', tpe=float, definition='Base temperature at which R was measured.'),
+        GCProp(key='temp_oper', units='ºC', tpe=float, definition='Operation temperature to modify R.',
+               profile_name='temp_oper_prof'),
+        GCProp(key='alpha', units='1/ºC', tpe=float,
+               definition='Thermal coefficient to modify R,around a reference temperature using a linear '
+                          'approximation.For example:Copper @ 20ºC: 0.004041,Copper @ 75ºC: 0.00323,'
+                          'Annealed copper @ 20ºC: 0.00393,Aluminum @ 20ºC: 0.004308,Aluminum @ 75ºC: 0.00330'),
     )
 
     def __init__(self,
@@ -106,7 +143,7 @@ class BranchParent(PhysicalDevice):
         :param color: Color of the branch
         """
 
-        PhysicalDevice.__init__(self,
+        DynamicDevice.__init__(self,
                                 name=name,
                                 idtag=idtag,
                                 code=code,
@@ -129,12 +166,12 @@ class BranchParent(PhysicalDevice):
             raise Exception(f"Bus from is a strange value {bus_from}")
 
         self.active = bool(active)
-        self._active_prof = Profile(default_value=self.active, data_type=bool)
+        self._active_prof = ProfileBool(default_value=self.active)
 
         # Conductor base and operating temperatures in ºC
         self.temp_base = float(temp_base)
         self.temp_oper = float(temp_oper)
-        self._temp_oper_prof = Profile(default_value=self.temp_oper, data_type=float)
+        self._temp_oper_prof = ProfileFloat(default_value=self.temp_oper)
 
         # Conductor thermal constant (1/ºC)
         self.alpha = float(alpha)
@@ -151,7 +188,7 @@ class BranchParent(PhysicalDevice):
 
         self.Cost = cost
 
-        self._Cost_prof = Profile(default_value=cost, data_type=float)
+        self._Cost_prof = ProfileFloat(default_value=cost)
 
         self.capex = capex
 
@@ -161,17 +198,17 @@ class BranchParent(PhysicalDevice):
         if not isinstance(rate, Union[float, int]):
             raise ValueError("Rate must be a float")
         self._rate = float(rate)
-        self._rate_prof = Profile(default_value=rate, data_type=float)
+        self._rate_prof = ProfileFloat(default_value=rate)
 
         if not isinstance(contingency_factor, Union[float, int]):
             raise ValueError("contingency_factor must be a float")
         self._contingency_factor = float(contingency_factor)
-        self._contingency_factor_prof = Profile(default_value=contingency_factor, data_type=float)
+        self._contingency_factor_prof = ProfileFloat(default_value=contingency_factor)
 
         if not isinstance(protection_rating_factor, Union[float, int]):
             raise ValueError("protection_rating_factor must be a float")
         self._protection_rating_factor = float(protection_rating_factor)
-        self._protection_rating_factor_prof = Profile(default_value=protection_rating_factor, data_type=float)
+        self._protection_rating_factor_prof = ProfileFloat(default_value=protection_rating_factor)
 
         self.color = color if color is not None else "#909090"  # light gray
 
@@ -180,71 +217,6 @@ class BranchParent(PhysicalDevice):
 
         # group of this branch
         self.group: Union[BranchGroup, None] = None
-
-        self._rms_model: DynamicModelHost = DynamicModelHost()
-
-        self.register('bus_from', units="", tpe=DeviceType.BusDevice,
-                      definition='Name of the bus at the "from" side', editable=False)
-
-        self.register('bus_to', units="", tpe=DeviceType.BusDevice,
-                      definition='Name of the bus at the "to" side', editable=False)
-
-        self.register('active', units="", tpe=bool, definition='Is active?', profile_name="active_prof")
-
-        self.register('reducible', units="", tpe=bool,
-                      definition='Is the branch to be reduced by the topology preprocessor?')
-
-        self.register('rate', units="MVA", tpe=float, definition='Thermal rating power', profile_name="rate_prof")
-        self.register('contingency_factor', units="p.u.", tpe=float,
-                      definition='Rating multiplier for contingencies', profile_name="contingency_factor_prof")
-
-        self.register('protection_rating_factor', units="p.u.", tpe=float,
-                      definition='Rating multiplier that indicates the maximum flow before the protections tripping',
-                      profile_name="protection_rating_factor_prof")
-
-        self.register('monitor_loading', units="", tpe=bool,
-                      definition="Monitor this device loading for OPF, NTC or contingency studies.")
-        self.register('mttf', units="h", tpe=float, definition="Mean time to failure")
-        self.register('mttr', units="h", tpe=float, definition="Mean time to repair")
-
-        self.register('Cost', units="e/MWh", tpe=float,
-                      definition="Cost of overloads. Used in OPF", profile_name="Cost_prof")
-
-        self.register('capex', units="e/MW", tpe=float, definition="Cost of investment. Used in expansion planning.")
-        self.register('opex', units="e/MWh", tpe=float, definition="Cost of operation. Used in expansion planning.")
-        self.register('group', units="", tpe=DeviceType.BranchGroupDevice,
-                      definition="Group where this branch belongs")
-
-        self.register(key='color', units='', tpe=str, definition='Color to paint the element in the map diagram',
-                      is_color=True)
-        self.register(key='rms_model', units='', tpe=SubObjectType.DynamicModelHostType,
-                      definition='RMS dynamic model', display=False)
-
-        self.register(key='bus_from_pos', units='', tpe=int, definition='Aid to locate devices on a busbar',
-                      display=False)
-
-        self.register(key='bus_to_pos', units='', tpe=int, definition='Aid to locate devices on a busbar',
-                      display=False)
-
-        self.register(key='temp_base', units='ºC', tpe=float, definition='Base temperature at which R was measured.')
-        self.register(key='temp_oper', units='ºC', tpe=float, definition='Operation temperature to modify R.',
-                      profile_name='temp_oper_prof')
-        self.register(key='alpha', units='1/ºC', tpe=float,
-                      definition='Thermal coefficient to modify R,around a reference temperature using a linear '
-                                 'approximation.For example:Copper @ 20ºC: 0.004041,Copper @ 75ºC: 0.00323,'
-                                 'Annealed copper @ 20ºC: 0.00393,Aluminum @ 20ºC: 0.004308,Aluminum @ 75ºC: 0.00330')
-
-    @property
-    def rms_model(self) -> DynamicModelHost:
-        """
-        Get the RMS model
-        """
-        return self._rms_model
-
-    @rms_model.setter
-    def rms_model(self, value: DynamicModelHost):
-        if isinstance(value, DynamicModelHost):
-            self._rms_model = value
 
     @property
     def bus_from(self) -> Bus:
@@ -283,7 +255,7 @@ class BranchParent(PhysicalDevice):
                 raise Exception(str(type(val)) + 'not supported to be set into a _bus_to')
 
     @property
-    def active_prof(self) -> Profile:
+    def active_prof(self) -> ProfileBool:
         """
         Cost profile
         :return: Profile
@@ -291,8 +263,8 @@ class BranchParent(PhysicalDevice):
         return self._active_prof
 
     @active_prof.setter
-    def active_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def active_prof(self, val: Union[ProfileBool, np.ndarray]):
+        if isinstance(val, ProfileBool):
             self._active_prof = val
         elif isinstance(val, np.ndarray):
             self._active_prof.set(arr=val)
@@ -307,7 +279,7 @@ class BranchParent(PhysicalDevice):
         return get_at(self.active, self.active_prof, t)
 
     @property
-    def rate_prof(self) -> Profile:
+    def rate_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -315,8 +287,8 @@ class BranchParent(PhysicalDevice):
         return self._rate_prof
 
     @rate_prof.setter
-    def rate_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def rate_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._rate_prof = val
         elif isinstance(val, np.ndarray):
             self._rate_prof.set(arr=val)
@@ -331,7 +303,7 @@ class BranchParent(PhysicalDevice):
         return get_at(self.rate, self.rate_prof, t)
 
     @property
-    def contingency_factor_prof(self) -> Profile:
+    def contingency_factor_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -339,8 +311,8 @@ class BranchParent(PhysicalDevice):
         return self._contingency_factor_prof
 
     @contingency_factor_prof.setter
-    def contingency_factor_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def contingency_factor_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._contingency_factor_prof = val
         elif isinstance(val, np.ndarray):
             self._contingency_factor_prof.set(arr=val)
@@ -355,7 +327,7 @@ class BranchParent(PhysicalDevice):
         return get_at(self.contingency_factor, self.contingency_factor_prof, t)
 
     @property
-    def protection_rating_factor_prof(self) -> Profile:
+    def protection_rating_factor_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -363,8 +335,8 @@ class BranchParent(PhysicalDevice):
         return self._protection_rating_factor_prof
 
     @protection_rating_factor_prof.setter
-    def protection_rating_factor_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def protection_rating_factor_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._protection_rating_factor_prof = val
         elif isinstance(val, np.ndarray):
             self._protection_rating_factor_prof.set(arr=val)
@@ -379,7 +351,7 @@ class BranchParent(PhysicalDevice):
         return get_at(self.protection_rating_factor, self.protection_rating_factor_prof, t)
 
     @property
-    def Cost_prof(self) -> Profile:
+    def Cost_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -387,8 +359,8 @@ class BranchParent(PhysicalDevice):
         return self._Cost_prof
 
     @Cost_prof.setter
-    def Cost_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Cost_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Cost_prof = val
         elif isinstance(val, np.ndarray):
             self._Cost_prof.set(arr=val)
@@ -403,7 +375,7 @@ class BranchParent(PhysicalDevice):
         return get_at(self.Cost, self.Cost_prof, t)
 
     @property
-    def temp_oper_prof(self) -> Profile:
+    def temp_oper_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -411,8 +383,8 @@ class BranchParent(PhysicalDevice):
         return self._temp_oper_prof
 
     @temp_oper_prof.setter
-    def temp_oper_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def temp_oper_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._temp_oper_prof = val
         elif isinstance(val, np.ndarray):
             self._temp_oper_prof.set(arr=val)
@@ -436,6 +408,7 @@ class BranchParent(PhysicalDevice):
 
     @rate.setter
     def rate(self, val: float):
+        val = float(val)
         if isinstance(val, float):
             self._rate = val
         else:
@@ -451,6 +424,7 @@ class BranchParent(PhysicalDevice):
 
     @contingency_factor.setter
     def contingency_factor(self, val: float):
+        val = float(val)
         if isinstance(val, float):
             self._contingency_factor = val
         else:
@@ -466,6 +440,7 @@ class BranchParent(PhysicalDevice):
 
     @protection_rating_factor.setter
     def protection_rating_factor(self, val: float):
+        val = float(val)
         if isinstance(val, float):
             self._protection_rating_factor = val
         else:
@@ -504,7 +479,7 @@ class BranchParent(PhysicalDevice):
         """
         bus_f_v = self.bus_from.Vnom
         bus_t_v = self.bus_to.Vnom
-        if bus_f_v > bus_t_v:
+        if bus_f_v >= bus_t_v:
             return self.bus_from, self.bus_to
         else:
             return self.bus_to, self.bus_from
@@ -683,3 +658,252 @@ class BranchParent(PhysicalDevice):
             self.bus_to = new_bus
         else:
             pass
+
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def active(self) -> bool:
+        """
+        Get ``active``.
+
+        :return: bool
+        """
+        return self._active
+
+    @active.setter
+    def active(self, val: bool) -> None:
+        """
+        Set ``active``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._active = bool(val)
+
+    @property
+    def reducible(self) -> bool:
+        """
+        Get ``reducible``.
+
+        :return: bool
+        """
+        return self._reducible
+
+    @reducible.setter
+    def reducible(self, val: bool) -> None:
+        """
+        Set ``reducible``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._reducible = bool(val)
+
+    @property
+    def monitor_loading(self) -> bool:
+        """
+        Get ``monitor_loading``.
+
+        :return: bool
+        """
+        return self._monitor_loading
+
+    @monitor_loading.setter
+    def monitor_loading(self, val: bool) -> None:
+        """
+        Set ``monitor_loading``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._monitor_loading = bool(val)
+
+    @property
+    def mttf(self) -> float:
+        """
+        Get ``mttf``.
+
+        :return: float
+        """
+        return self._mttf
+
+    @mttf.setter
+    def mttf(self, val: float) -> None:
+        """
+        Set ``mttf``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._mttf = float(val)
+
+    @property
+    def mttr(self) -> float:
+        """
+        Get ``mttr``.
+
+        :return: float
+        """
+        return self._mttr
+
+    @mttr.setter
+    def mttr(self, val: float) -> None:
+        """
+        Set ``mttr``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._mttr = float(val)
+
+    @property
+    def Cost(self) -> float:
+        """
+        Get ``Cost``.
+
+        :return: float
+        """
+        return self._Cost
+
+    @Cost.setter
+    def Cost(self, val: float) -> None:
+        """
+        Set ``Cost``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Cost = float(val)
+
+    @property
+    def capex(self) -> float:
+        """
+        Get ``capex``.
+
+        :return: float
+        """
+        return self._capex
+
+    @capex.setter
+    def capex(self, val: float) -> None:
+        """
+        Set ``capex``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._capex = float(val)
+
+    @property
+    def opex(self) -> float:
+        """
+        Get ``opex``.
+
+        :return: float
+        """
+        return self._opex
+
+    @opex.setter
+    def opex(self, val: float) -> None:
+        """
+        Set ``opex``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._opex = float(val)
+
+    @property
+    def bus_from_pos(self) -> int:
+        """
+        Get ``bus_from_pos``.
+
+        :return: int
+        """
+        return self._bus_from_pos
+
+    @bus_from_pos.setter
+    def bus_from_pos(self, val: int) -> None:
+        """
+        Set ``bus_from_pos``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._bus_from_pos = int(val)
+
+    @property
+    def bus_to_pos(self) -> int:
+        """
+        Get ``bus_to_pos``.
+
+        :return: int
+        """
+        return self._bus_to_pos
+
+    @bus_to_pos.setter
+    def bus_to_pos(self, val: int) -> None:
+        """
+        Set ``bus_to_pos``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._bus_to_pos = int(val)
+
+    @property
+    def temp_base(self) -> float:
+        """
+        Get ``temp_base``.
+
+        :return: float
+        """
+        return self._temp_base
+
+    @temp_base.setter
+    def temp_base(self, val: float) -> None:
+        """
+        Set ``temp_base``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._temp_base = float(val)
+
+    @property
+    def temp_oper(self) -> float:
+        """
+        Get ``temp_oper``.
+
+        :return: float
+        """
+        return self._temp_oper
+
+    @temp_oper.setter
+    def temp_oper(self, val: float) -> None:
+        """
+        Set ``temp_oper``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._temp_oper = float(val)
+
+    @property
+    def alpha(self) -> float:
+        """
+        Get ``alpha``.
+
+        :return: float
+        """
+        return self._alpha
+
+    @alpha.setter
+    def alpha(self, val: float) -> None:
+        """
+        Set ``alpha``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._alpha = float(val)

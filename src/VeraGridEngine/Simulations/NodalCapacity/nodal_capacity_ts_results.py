@@ -20,6 +20,10 @@ class NodalCapacityTimeSeriesResults(OptimalPowerFlowTimeSeriesResults):
     """
     Optimal power flow time series results
     """
+    __slots__ = (
+        "capacity_nodes_idx",
+        "nodal_capacity",
+    )
 
     def __init__(self,
                  bus_names: StrVec,

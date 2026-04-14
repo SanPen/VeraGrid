@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
-from VeraGridEngine.IO.ucte.devices.ucte_base import sub_str, sub_float, try_float
+from VeraGridEngine.IO.ucte.devices.ucte_base import sub_str, sub_float, try_float, ucte_split
 from VeraGridEngine.basic_structures import Logger
 
 
@@ -39,7 +39,8 @@ class UcteExchangePower:
                                value=len(line),
                                expected_value=27)
 
-            chunks = line.split()
+            chunks = ucte_split(line, prefix_lengths=(2, 2), total_fields=4, greedy_tail=True,
+                                skip_all_separators=True)
 
             if len(chunks) >= 1:
                 self.country1 = chunks[0]
@@ -48,7 +49,7 @@ class UcteExchangePower:
                 self.country2 = chunks[1]
 
             if len(chunks) >= 3:
-                self.active_power = try_float(chunks[3], device, "active_power", logger)
+                self.active_power = try_float(chunks[2], device, "active_power", logger)
 
             if len(chunks) >= 4:
-                self.comments = chunks[4]
+                self.comments = chunks[3]

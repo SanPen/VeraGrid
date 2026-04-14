@@ -16,5 +16,8 @@ from VeraGridEngine.Devices.Associations import *
 from VeraGridEngine.Devices.Diagrams import *
 from VeraGridEngine.Devices.Fluid import *
 from VeraGridEngine.Devices.Dynamic import *
+from VeraGridEngine.Devices.Events import *
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Devices.admittance_matrix import AdmittanceMatrix
+from VeraGridEngine.Devices.multiverse import MultiVerse, ScenarioNode
+

@@ -16,6 +16,28 @@ class ResultsTable:
     """
     Class to populate a Qt table view with data from the results
     """
+    __slots__ = (
+        "data_c",
+        "cols_c",
+        "index_c",
+        "editable",
+        "editable_min_idx",
+        "palette",
+        "title",
+        "x_label",
+        "y_label",
+        "units",
+        "r",
+        "c",
+        "isDate",
+        "decimals",
+        "format_string",
+        "formatter",
+        "cols_device_type",
+        "idx_device_type",
+        "_col_devices",
+        "_idx_devices",
+    )
 
     def __init__(self,
                  data: Union[Mat, Vec],

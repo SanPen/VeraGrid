@@ -207,12 +207,12 @@ class PyPSAParser:
             )
 
             elm.Cost2 = row.get('marginal_cost_quadratic', 0.0)
-            elm.StartupCost = row.get('start_up_cost', 0.0)
-            elm.ShutdownCost = row.get('shut_down_cost', 0.0)
-            elm.MinTimeUp = row.get('min_up_time', 0.0)
-            elm.MinTimeDown = row.get('min_down_time', 0.0)
-            elm.RampUp = row.get('ramp_limit_up', 1e20)
-            elm.RampDown = row.get('ramp_limit_down', 1e20)
+            elm.startup_cost = row.get('start_up_cost', 0.0)
+            elm.shutdown_cost = row.get('shut_down_cost', 0.0)
+            elm.min_time_up = row.get('min_up_time', 0.0)
+            elm.min_time_down = row.get('min_down_time', 0.0)
+            elm.ramp_up = row.get('ramp_limit_up', 1e20)
+            elm.ramp_down = row.get('ramp_limit_down', 1e20)
 
             self.grid.add_generator(bus=bus, api_obj=elm)
 
@@ -289,7 +289,7 @@ class PyPSAParser:
         Parses the stores data from the PyPSA network.
         """
         if len(self.pypsa_grid.stores) > 0:
-            self.logger.add_warning('Shunt impedances not currently supported')
+            self.logger.add_warning('Stores not currently supported')
 
     def _parse_loads(self):
         """

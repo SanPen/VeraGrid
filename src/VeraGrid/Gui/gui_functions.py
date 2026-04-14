@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 import numpy as np
-from typing import Dict, List, Union, Any, Tuple, TYPE_CHECKING
+from typing import Dict, List, Union, Any, Tuple, TYPE_CHECKING, Set, Sequence
 from PySide6 import QtCore, QtWidgets, QtGui
 from collections import defaultdict, OrderedDict
 
@@ -636,7 +636,7 @@ class DateTimeDelegate(QtWidgets.QItemDelegate):
         model.setData(index, epoch_seconds)
 
 
-def get_list_model(lst: List[Union[str, ALL_DEV_TYPES]],
+def get_list_model(lst: Sequence[Union[str, ALL_DEV_TYPES]],
                    checks=False,
                    check_value=False) -> QtGui.QStandardItemModel:
     """
@@ -808,9 +808,11 @@ def get_icon_list_model(lst: List[Tuple[str, str]], checks=False,
                 item.setIcon(icon)
                 list_model.appendRow(item)
         else:
-            for val, icon in lst:
+            for val, icon_path in lst:
                 # for the list model
                 item = QtGui.QStandardItem(str(val))
+                icon = QtGui.QIcon()
+                icon.addPixmap(QtGui.QPixmap(icon_path))
                 item.setIcon(icon)
                 item.setEditable(False)
                 item.setCheckable(True)
@@ -821,7 +823,7 @@ def get_icon_list_model(lst: List[Tuple[str, str]], checks=False,
     return list_model
 
 
-def get_checked_indices(mdl: QtGui.QStandardItemModel()) -> IntVec:
+def get_checked_indices(mdl: QtGui.QStandardItemModel) -> IntVec:
     """
     Get a list of the selected indices in a QStandardItemModel
     :param mdl:
@@ -836,7 +838,7 @@ def get_checked_indices(mdl: QtGui.QStandardItemModel()) -> IntVec:
     return np.array(idx)
 
 
-def get_checked_values(mdl: QtGui.QStandardItemModel()) -> List[str]:
+def get_checked_values(mdl: QtGui.QStandardItemModel) -> List[str]:
     """
     Get a list of the selected values in a QStandardItemModel
     :param mdl:
@@ -941,38 +943,71 @@ def get_tree_item_path(item: QtGui.QStandardItem) -> List[str]:
     return path
 
 
-def add_cim_object_node(class_tag,
-                        device: CGMES_ASSETS,
-                        editable=False,
-                        already_visited: Union[List, None] = None):
+CIM_OBJECT_ROLE = QtCore.Qt.UserRole + 120
+CIM_LOADED_ROLE = QtCore.Qt.UserRole + 121
+
+
+def _get_cim_object_id(obj: Any):
+    if hasattr(obj, 'rdfid') and obj.rdfid is not None:
+        return obj.rdfid
+    return id(obj)
+
+
+def _get_cim_object_label(class_tag, device):
+    if class_tag is not None:
+        return class_tag
+    if hasattr(device, 'name'):
+        if device.name is not None:
+            if device.name != '':
+                return device.name
+    if hasattr(device, 'rdfid'):
+        return device.rdfid
+    return str(device)
+
+
+def _collect_cim_ancestor_ids(item: QtGui.QStandardItem) -> Set[Any]:
+    ids: Set[Any] = set()
+    current = item
+    while current is not None:
+        obj = current.data(CIM_OBJECT_ROLE)
+        if obj is not None:
+            ids.add(_get_cim_object_id(obj))
+        current = current.parent()
+    return ids
+
+
+def create_cim_object_item(class_tag,
+                           device: CGMES_ASSETS,
+                           editable=False,
+                           lazy=True) -> QtGui.QStandardItem:
+    item = QtGui.QStandardItem(_get_cim_object_label(class_tag, device))
+    item.setEditable(editable)
+    item.setData(device, CIM_OBJECT_ROLE)
+    item.setData(False, CIM_LOADED_ROLE)
+
+    if lazy and getattr(device, 'declared_properties', None):
+        # Placeholder child to show expand arrow; removed on load.
+        item.appendRow(QtGui.QStandardItem(""))
+
+    if not lazy:
+        populate_cim_item_children(item, editable=editable)
+
+    return item
+
+
+def populate_cim_item_children(item: QtGui.QStandardItem, editable=False):
     """
-
-    :param class_tag:
-    :param device:
-    :param editable:
-    :param already_visited:
-    :return:
+    Populate immediate children for a CIM object item. Designed for lazy loading.
     """
-    if already_visited is None:
-        already_visited = list()
+    device = item.data(CIM_OBJECT_ROLE)
+    if device is None:
+        return
 
-    if class_tag is None:
-        if hasattr(device, 'name'):
-            if device.name is not None:
-                if device.name != '':
-                    class_tag = device.name
-                else:
-                    class_tag = device.rdfid
-            else:
-                class_tag = device.rdfid
-        else:
-            class_tag = device.rdfid
+    if item.data(CIM_LOADED_ROLE):
+        return
 
-    # create root node
-    device_child = QtGui.QStandardItem(class_tag)
-
-    # register visit to avoid cyclic recursion
-    already_visited.append(device)
+    ancestor_ids = _collect_cim_ancestor_ids(item)
+    item.removeRows(0, item.rowCount())
 
     for property_name, cim_prop in device.declared_properties.items():
 
@@ -980,20 +1015,15 @@ def add_cim_object_node(class_tag,
 
         if hasattr(property_value, 'rdfid'):
 
-            we_are_in_a_recursive_loop = False
-            if len(already_visited) > 7:
-                for e in already_visited:
-                    if property_value.rdfid == e.rdfid:
-                        we_are_in_a_recursive_loop = True
+            prop_id = _get_cim_object_id(property_value)
+            we_are_in_a_recursive_loop = prop_id in ancestor_ids
 
             if not we_are_in_a_recursive_loop:
-
-                # if the property is an object, recursively add it
                 tpe = str(property_value.tpe)
-                class_name_child = add_cim_object_node(class_tag=tpe,
-                                                       device=property_value,
-                                                       editable=editable,
-                                                       already_visited=already_visited)
+                class_name_child = create_cim_object_item(class_tag=tpe,
+                                                          device=property_value,
+                                                          editable=editable,
+                                                          lazy=True)
                 class_name_child.setEditable(editable)
 
                 property_name_child = QtGui.QStandardItem(tpe)
@@ -1002,9 +1032,7 @@ def add_cim_object_node(class_tag,
                 value_child = QtGui.QStandardItem(property_value.rdfid)
                 value_child.setEditable(editable)
             else:
-                # print('Recursive loop...')
-                # return device_child
-                class_name_child = QtGui.QStandardItem("Recursive object (" + str(len(already_visited)) + ")")
+                class_name_child = QtGui.QStandardItem("Recursive object (" + str(len(ancestor_ids)) + ")")
                 class_name_child.setEditable(editable)
 
                 property_name_child = QtGui.QStandardItem(property_name)
@@ -1013,8 +1041,6 @@ def add_cim_object_node(class_tag,
                 value_child = QtGui.QStandardItem(str(property_value))
                 value_child.setEditable(editable)
         else:
-            # if the property is a value (float, str, bool, etc.) just add it
-
             tpe = (str(type(property_value)).replace('class', '')
                    .replace("'", "")
                    .replace("<", "")
@@ -1029,7 +1055,92 @@ def add_cim_object_node(class_tag,
             value_child = QtGui.QStandardItem(str(property_value))
             value_child.setEditable(editable)
 
-        device_child.appendRow([class_name_child, property_name_child, value_child])
+        item.appendRow([class_name_child, property_name_child, value_child])
+
+    item.setData(True, CIM_LOADED_ROLE)
+
+
+def add_cim_object_node(class_tag,
+                        device: CGMES_ASSETS,
+                        editable=False,
+                        already_visited: Union[Set, None] = None):
+    """
+
+    :param class_tag:
+    :param device:
+    :param editable:
+    :param already_visited:
+    :return:
+    """
+    if already_visited is None:
+        already_visited = set()
+
+    if class_tag is None:
+        class_tag = _get_cim_object_label(class_tag=None, device=device)
+
+    # create root node
+    device_child = QtGui.QStandardItem(class_tag)
+
+    # register visit to avoid cyclic recursion
+    device_id = _get_cim_object_id(device)
+    already_visited.add(device_id)
+
+    try:
+        for property_name, cim_prop in device.declared_properties.items():
+
+            property_value = getattr(device, property_name)
+
+            if hasattr(property_value, 'rdfid'):
+
+                prop_id = _get_cim_object_id(property_value)
+                we_are_in_a_recursive_loop = prop_id in already_visited
+
+                if not we_are_in_a_recursive_loop:
+
+                    # if the property is an object, recursively add it
+                    tpe = str(property_value.tpe)
+                    class_name_child = add_cim_object_node(class_tag=tpe,
+                                                           device=property_value,
+                                                           editable=editable,
+                                                           already_visited=already_visited)
+                    class_name_child.setEditable(editable)
+
+                    property_name_child = QtGui.QStandardItem(tpe)
+                    property_name_child.setEditable(editable)
+
+                    value_child = QtGui.QStandardItem(property_value.rdfid)
+                    value_child.setEditable(editable)
+                else:
+                    # print('Recursive loop...')
+                    # return device_child
+                    class_name_child = QtGui.QStandardItem("Recursive object (" + str(len(already_visited)) + ")")
+                    class_name_child.setEditable(editable)
+
+                    property_name_child = QtGui.QStandardItem(property_name)
+                    property_name_child.setEditable(editable)
+
+                    value_child = QtGui.QStandardItem(str(property_value))
+                    value_child.setEditable(editable)
+            else:
+                # if the property is a value (float, str, bool, etc.) just add it
+
+                tpe = (str(type(property_value)).replace('class', '')
+                       .replace("'", "")
+                       .replace("<", "")
+                       .replace(">", "").strip())
+
+                class_name_child = QtGui.QStandardItem(tpe)
+                class_name_child.setEditable(editable)
+
+                property_name_child = QtGui.QStandardItem(property_name)
+                property_name_child.setEditable(editable)
+
+                value_child = QtGui.QStandardItem(str(property_value))
+                value_child.setEditable(editable)
+
+            device_child.appendRow([class_name_child, property_name_child, value_child])
+    finally:
+        already_visited.discard(device_id)
 
     return device_child
 
@@ -1052,7 +1163,10 @@ def get_cim_tree_model(cim_model: CgmesCircuit):
 
         for device in device_list:
             # add device with all it's properties
-            device_child = add_cim_object_node(class_tag=None, device=device, editable=editable, already_visited=list())
+            device_child = create_cim_object_item(class_tag=None,
+                                                  device=device,
+                                                  editable=editable,
+                                                  lazy=True)
 
             device_child.setEditable(editable)
 
@@ -1172,3 +1286,53 @@ class AsyncTask(QtCore.QRunnable):
     @QtCore.Slot()
     def run(self):
         self.task()
+
+
+def create_menu_button(parent,
+                       toolbar: QtWidgets.QToolBar,
+                       position: QtGui.QAction,
+                       actions: List[QtGui.QAction],
+                       pixmap_name: str="",
+                       tooltip_text: str = "",
+                       remove_actions: bool = True) -> QtWidgets.QToolButton:
+    """
+
+    :param parent: parent widget
+    :param toolbar: Toolbar to insert the button
+    :param position: Position at which to insert the button
+    :param actions: List of actions to pack
+    :param pixmap_name: optional button icon
+    :param tooltip_text: Tooltip text to show
+    :param remove_actions: optional remove actions
+    :return: QToolButton
+    """
+    button = QtWidgets.QToolButton(parent)
+
+    if pixmap_name != "":
+        button.setIcon(QtGui.QPixmap(pixmap_name))
+    else:
+        button.setIcon(actions[0].icon())
+
+    button.setPopupMode(QtWidgets.QToolButton.ToolButtonPopupMode.MenuButtonPopup)
+
+    if tooltip_text != "":
+        button.setToolTip(tooltip_text)
+    else:
+        button.setToolTip(actions[0].toolTip())
+
+    menu = QtWidgets.QMenu(button)
+    for action in actions:
+        menu.addAction(action)
+    button.setMenu(menu)
+
+    # Main click executes the first action
+    button.clicked.connect(actions[0].trigger)
+
+    toolbar.insertWidget(position, button)
+
+    # Remove the original actions from the toolbar so they are only available in the menu
+    if remove_actions:
+        for action in actions:
+            toolbar.removeAction(action)
+
+    return button

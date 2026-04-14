@@ -48,6 +48,7 @@ def FDPF(nc: NumericalCircuit,
     :param Ybus: Admittance matrix
     :param Yf: Admittance from matrix
     :param Yt: Admittance to matrix
+    :param Yshunt_bus: Array of shunts to add to the diagonal (from shunt devices)
     :param B1: B' matrix for the fast decoupled algorithm
     :param B2: B'' matrix for the fast decoupled algorithm
     :param pv_: Array with the indices of the PV buses
@@ -83,8 +84,64 @@ def FDPF(nc: NumericalCircuit,
     n_block1 = len(blck1_idx)
 
     # Factorize B1 and B2
-    B1_factorization = splu(B1[np.ix_(blck1_idx, blck1_idx)])
-    B2_factorization = splu(B2[np.ix_(blck3_idx, blck2_idx)])
+    try:
+        B1_factorization = splu(B1[np.ix_(blck1_idx, blck1_idx)])
+    except RuntimeError as e:
+        return NumericPowerFlowResults(V=voltage,
+                                       Scalc=S0 * nc.Sbase,
+                                       m=np.ones(nc.nbr, dtype=float),
+                                       tau=np.zeros(nc.nbr, dtype=float),
+                                       Sf=np.zeros(nc.nbr, dtype=float),
+                                       St=np.zeros(nc.nbr, dtype=float),
+                                       If=np.zeros(nc.nbr, dtype=float),
+                                       It=np.zeros(nc.nbr, dtype=float),
+                                       loading=np.zeros(nc.nbr, dtype=float),
+                                       losses=np.zeros(nc.nbr, dtype=float),
+                                       Pfp_vsc=np.zeros(nc.nvsc, dtype=float),
+                                       Pfn_vsc=np.zeros(nc.nvsc, dtype=float),
+                                       St_vsc=np.zeros(nc.nvsc, dtype=complex),
+                                       If_vsc=np.zeros(nc.nvsc, dtype=float),
+                                       It_vsc=np.zeros(nc.nvsc, dtype=complex),
+                                       losses_vsc=np.zeros(nc.nvsc, dtype=float),
+                                       loading_vsc=np.zeros(nc.nvsc, dtype=float),
+                                       Sf_hvdc=np.zeros(nc.nhvdc, dtype=complex),
+                                       St_hvdc=np.zeros(nc.nhvdc, dtype=complex),
+                                       losses_hvdc=np.zeros(nc.nhvdc, dtype=complex),
+                                       loading_hvdc=np.zeros(nc.nhvdc, dtype=complex),
+                                       norm_f=1e20,
+                                       converged=False,
+                                       iterations=0,
+                                       elapsed=0)
+
+    try:
+        B2_factorization = splu(B2[np.ix_(blck3_idx, blck2_idx)])
+    except RuntimeError as e:
+        return NumericPowerFlowResults(V=voltage,
+                                       Scalc=S0 * nc.Sbase,
+                                       m=np.ones(nc.nbr, dtype=float),
+                                       tau=np.zeros(nc.nbr, dtype=float),
+                                       Sf=np.zeros(nc.nbr, dtype=float),
+                                       St=np.zeros(nc.nbr, dtype=float),
+                                       If=np.zeros(nc.nbr, dtype=float),
+                                       It=np.zeros(nc.nbr, dtype=float),
+                                       loading=np.zeros(nc.nbr, dtype=float),
+                                       losses=np.zeros(nc.nbr, dtype=float),
+                                       Pfp_vsc=np.zeros(nc.nvsc, dtype=float),
+                                       Pfn_vsc=np.zeros(nc.nvsc, dtype=float),
+                                       St_vsc=np.zeros(nc.nvsc, dtype=complex),
+                                       If_vsc=np.zeros(nc.nvsc, dtype=float),
+                                       It_vsc=np.zeros(nc.nvsc, dtype=complex),
+                                       losses_vsc=np.zeros(nc.nvsc, dtype=float),
+                                       loading_vsc=np.zeros(nc.nvsc, dtype=float),
+                                       Sf_hvdc=np.zeros(nc.nhvdc, dtype=complex),
+                                       St_hvdc=np.zeros(nc.nhvdc, dtype=complex),
+                                       losses_hvdc=np.zeros(nc.nhvdc, dtype=complex),
+                                       loading_hvdc=np.zeros(nc.nhvdc, dtype=complex),
+                                       norm_f=1e20,
+                                       converged=False,
+                                       iterations=0,
+                                       elapsed=0)
+
 
     # evaluate initial mismatch
     Sbus = cf.compute_zip_power(S0, I0, Y0, Vm)  # compute the ZIP power injection

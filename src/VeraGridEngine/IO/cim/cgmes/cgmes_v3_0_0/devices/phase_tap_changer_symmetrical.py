@@ -9,6 +9,7 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 
 
 class PhaseTapChangerSymmetrical(PhaseTapChangerNonLinear):
+	__slots__ = ()
 	def __init__(self, rdfid='', tpe='PhaseTapChangerSymmetrical'):
 		PhaseTapChangerNonLinear.__init__(self, rdfid, tpe)
 

@@ -33,7 +33,7 @@ class UcteCircuit:
         self.exchange_powers: List[UcteExchangePower] = list()
 
         self.regulations_dict: Dict[str, UcteTransformerRegulation] = dict()
-        self.transformer_tap_tables_dict: Dict[str, UcteTransformerTapTable] = dict()
+        self.transformer_tap_tables_dict: Dict[str, List[UcteTransformerTapTable]] = dict()
 
     @staticmethod
     def check_file_extension(f_name: str) -> bool:
@@ -71,15 +71,15 @@ class UcteCircuit:
                                 current_block = "nodes"
                             elif line.startswith("##Z"):
                                 current_block = "nodes"
-                                current_country = line[3:] if line[2] == "Z" else line[2:]  # line[-3:-1]
+                                current_country = line[3:].strip() if line[2] == "Z" else line[2:].strip()
                             elif line.startswith("##L"):
                                 current_block = "lines"
+                            elif line.startswith("##TT"):
+                                current_block = "special_transformers"
                             elif line.startswith("##T"):
                                 current_block = "transformers"
                             elif line.startswith("##R"):
                                 current_block = "regulations"
-                            elif line.startswith("##TT"):
-                                current_block = "special_transformers"
                             elif line.startswith("##E"):
                                 current_block = "exchange_powers"
                             else:
@@ -117,8 +117,8 @@ class UcteCircuit:
                                 special_transformer = UcteTransformerTapTable()
                                 special_transformer.parse(line, logger)
                                 self.transformer_tap_tables.append(special_transformer)
-                                self.transformer_tap_tables_dict[
-                                    special_transformer.get_primary_key()] = special_transformer
+                                key = special_transformer.get_primary_key()
+                                self.transformer_tap_tables_dict.setdefault(key, list()).append(special_transformer)
 
                             elif current_block == "exchange_powers":
                                 exchange = UcteExchangePower()
@@ -127,6 +127,23 @@ class UcteCircuit:
             else:
                 logger.add_error("Passed non-ucte file to UCTE reading process",
                                  value=file_path)
+
+        self.normalize(logger)
+
+    def normalize(self, logger: Logger):
+        """
+        Normalize optional data after parsing.
+        """
+        for node in self.nodes:
+            node.normalize(logger)
+
+        node_voltage_by_code = {node.node_code: node.voltage for node in self.nodes}
+
+        for regulation in self.regulations:
+            regulation.normalize(node_voltage_by_code.get(regulation.node2, None), logger)
+
+        for tables in self.transformer_tap_tables_dict.values():
+            tables.sort(key=lambda table: table.tap_position)
 
     def get_transformer_regulation(self, elm: UcteTransformer) -> UcteTransformerRegulation | None:
         """
@@ -137,14 +154,14 @@ class UcteCircuit:
         key = elm.get_primary_key()
         return self.regulations_dict.get(key, None)
 
-    def get_transformers_tap_table(self, elm: UcteTransformer) -> UcteTransformerTapTable | None:
+    def get_transformers_tap_table(self, elm: UcteTransformer) -> List[UcteTransformerTapTable]:
         """
 
         :param elm:
         :return:
         """
         key = elm.get_primary_key()
-        return self.transformer_tap_tables_dict.get(key, None)
+        return self.transformer_tap_tables_dict.get(key, list())
 
     def summary(self):
         """

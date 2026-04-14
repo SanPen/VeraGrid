@@ -9,6 +9,7 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 
 
 class DCBreaker(DCSwitch):
+	__slots__ = ()
 	def __init__(self, rdfid='', tpe='DCBreaker'):
 		DCSwitch.__init__(self, rdfid, tpe)
 

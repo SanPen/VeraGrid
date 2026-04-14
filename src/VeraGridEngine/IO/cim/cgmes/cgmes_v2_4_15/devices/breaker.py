@@ -3,12 +3,11 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
 
-from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.protected_switch import ProtectedSwitch
-from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 
 
 class Breaker(ProtectedSwitch):
+	__slots__ = ()
 	def __init__(self, rdfid='', tpe='Breaker'):
 		ProtectedSwitch.__init__(self, rdfid, tpe)
 

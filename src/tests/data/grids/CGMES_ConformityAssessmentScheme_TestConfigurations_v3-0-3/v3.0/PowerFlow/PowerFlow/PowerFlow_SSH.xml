@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:cim="http://iec.ch/TC57/CIM100#" xmlns:eu="http://iec.ch/TC57/CIM100-European#" xmlns:md="http://iec.ch/TC57/61970-552/ModelDescription/1#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <md:FullModel rdf:about="urn:uuid:1effa012-f546-411a-b142-9762ece662c6">
+    <md:Model.DependentOn rdf:resource="urn:uuid:1c2ba832-cd6f-42a2-9a68-ced167d09ee3" />
+    <md:Model.created>2021-10-14T21:05:06Z</md:Model.created>
+    <md:Model.modelingAuthoritySet>http://entsoe.eu/PowerFlowTestConfiguration/CGMES/3.0</md:Model.modelingAuthoritySet>
+    <md:Model.profile>http://iec.ch/TC57/ns/CIM/SteadyStateHypothesis-EU/3.0</md:Model.profile>
+    <md:Model.scenarioTime>2021-03-25T15:30:00Z</md:Model.scenarioTime>
+    <md:Model.description>CGMES Conformity Assessment Test Configuration. The Test Configuration is owned by ENTSO-E and is provided by ENTSO-E “as it is”. To the fullest extent permitted by law, ENTSO-E shall not be liable for any damages of any kind arising out of the use of the model (including any of its subsequent modifications). ENTSO-E neither warrants, nor represents that the use of the model will not infringe the rights of third parties. Any use of the model shall include a reference to ENTSO-E. ENTSO-E web site is the only official source of information related to the model.</md:Model.description>
+    <md:Model.version>1</md:Model.version>
+  </md:FullModel>
+  <cim:Terminal rdf:about="#_5a378ab7-643d-41c0-a524-abec0e37ea77">
+    <cim:ACDCTerminal.connected>true</cim:ACDCTerminal.connected>
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_91b8e040-cd3e-4f71-aca8-97dca6e6520c">
+    <cim:ACDCTerminal.connected>true</cim:ACDCTerminal.connected>
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_1b9d0a4c-afd7-4660-a39a-8229a8f05093">
+    <cim:ACDCTerminal.connected>true</cim:ACDCTerminal.connected>
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_655dbb59-13be-4cba-8a9d-f3e17f973346">
+    <cim:ACDCTerminal.connected>true</cim:ACDCTerminal.connected>
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_5cec5df5-8051-4229-837c-e92722165151">
+    <cim:ACDCTerminal.connected>true</cim:ACDCTerminal.connected>
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_aa7b5c8c-c490-4fa0-b0db-c0398e105963">
+    <cim:ACDCTerminal.connected>true</cim:ACDCTerminal.connected>
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_55f33804-5a25-4694-a6f0-4a361f7fb4ef">
+    <cim:ACDCTerminal.connected>true</cim:ACDCTerminal.connected>
+  </cim:Terminal>
+  <cim:Equipment rdf:about="#_e7f39292-b64a-4cc5-8c49-8c6b66dd3195">
+    <cim:Equipment.inService>true</cim:Equipment.inService>
+  </cim:Equipment>
+  <cim:Equipment rdf:about="#_7dfc7fd8-c857-4845-8e4b-ce592f9e8cc2">
+    <cim:Equipment.inService>true</cim:Equipment.inService>
+  </cim:Equipment>
+  <cim:Equipment rdf:about="#_57d51918-bf39-40a1-9a23-fa176a309ca3">
+    <cim:Equipment.inService>true</cim:Equipment.inService>
+  </cim:Equipment>
+  <cim:CurrentLimit rdf:about="#_9911f26d-bb24-4c5c-b419-feb87b1c932f">
+    <cim:CurrentLimit.value>9998.99</cim:CurrentLimit.value>
+  </cim:CurrentLimit>
+  <cim:CurrentLimit rdf:about="#_00dfb75e-e166-438a-95f8-45145d3bf19d">
+    <cim:CurrentLimit.value>9998.99</cim:CurrentLimit.value>
+  </cim:CurrentLimit>
+  <cim:CurrentLimit rdf:about="#_37ab16bb-98e9-47e5-b857-cd527557a08c">
+    <cim:CurrentLimit.value>9999</cim:CurrentLimit.value>
+  </cim:CurrentLimit>
+  <cim:CurrentLimit rdf:about="#_d214fc6a-4977-41c7-90ae-33c04bc61f30">
+    <cim:CurrentLimit.value>9999</cim:CurrentLimit.value>
+  </cim:CurrentLimit>
+  <cim:TapChangerControl rdf:about="#_aaae0535-9ecc-4589-9775-953ec5337eb3">
+    <cim:RegulatingControl.discrete>true</cim:RegulatingControl.discrete>
+    <cim:RegulatingControl.enabled>false</cim:RegulatingControl.enabled>
+    <cim:RegulatingControl.targetDeadband>999.9</cim:RegulatingControl.targetDeadband>
+    <cim:RegulatingControl.targetValue>-9999</cim:RegulatingControl.targetValue>
+    <cim:RegulatingControl.targetValueUnitMultiplier rdf:resource="http://iec.ch/TC57/CIM100#UnitMultiplier.M" />
+  </cim:TapChangerControl>
+  <cim:ConformLoad rdf:about="#_aba53013-89a5-4578-a737-7de2293b2513">
+    <cim:EnergyConsumer.p>0</cim:EnergyConsumer.p>
+    <cim:EnergyConsumer.q>0</cim:EnergyConsumer.q>
+    <cim:Equipment.inService>true</cim:Equipment.inService>
+  </cim:ConformLoad>
+  <cim:ConformLoad rdf:about="#_87016153-597f-42ac-bc05-8489822f5231">
+    <cim:EnergyConsumer.p>332</cim:EnergyConsumer.p>
+    <cim:EnergyConsumer.q>78</cim:EnergyConsumer.q>
+    <cim:Equipment.inService>true</cim:Equipment.inService>
+  </cim:ConformLoad>
+  <cim:RegulatingControl rdf:about="#_aaa2b6d5-771c-4989-87d7-64acd684a2c7">
+    <cim:RegulatingControl.discrete>false</cim:RegulatingControl.discrete>
+    <cim:RegulatingControl.enabled>true</cim:RegulatingControl.enabled>
+    <cim:RegulatingControl.targetValue>397.1</cim:RegulatingControl.targetValue>
+    <cim:RegulatingControl.targetValueUnitMultiplier rdf:resource="http://iec.ch/TC57/CIM100#UnitMultiplier.k" />
+  </cim:RegulatingControl>
+  <cim:ControlArea rdf:about="#_486158f9-fcb7-4b1e-9812-87786e285d8d">
+    <cim:ControlArea.netInterchange>0</cim:ControlArea.netInterchange>
+    <cim:ControlArea.pTolerance>0</cim:ControlArea.pTolerance>
+  </cim:ControlArea>
+  <cim:PhaseTapChangerTabular rdf:about="#_af7334c8-a329-4bb4-ba16-b30ea9f44027">
+    <cim:TapChanger.controlEnabled>false</cim:TapChanger.controlEnabled>
+    <cim:TapChanger.step>15</cim:TapChanger.step>
+  </cim:PhaseTapChangerTabular>
+  <cim:HydroGeneratingUnit rdf:about="#_83796a6b-df8d-47f2-a848-2ebe91276668">
+    <cim:Equipment.inService>true</cim:Equipment.inService>
+    <cim:GeneratingUnit.normalPF>0.04</cim:GeneratingUnit.normalPF>
+  </cim:HydroGeneratingUnit>
+  <cim:SynchronousMachine rdf:about="#_4faedd52-613c-4091-826d-1502d9626644">
+    <cim:Equipment.inService>true</cim:Equipment.inService>
+    <cim:RegulatingCondEq.controlEnabled>true</cim:RegulatingCondEq.controlEnabled>
+    <cim:RotatingMachine.p>-341.59</cim:RotatingMachine.p>
+    <cim:RotatingMachine.q>-107.098</cim:RotatingMachine.q>
+    <cim:SynchronousMachine.operatingMode rdf:resource="http://iec.ch/TC57/CIM100#SynchronousMachineOperatingMode.generator" />
+    <cim:SynchronousMachine.referencePriority>1</cim:SynchronousMachine.referencePriority>
+  </cim:SynchronousMachine>
+</rdf:RDF>

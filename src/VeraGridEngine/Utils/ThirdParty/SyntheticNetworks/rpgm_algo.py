@@ -20,6 +20,28 @@ class RpgAlgorithm:
     """
     RpgAlgorithm
     """
+    __slots__ = (
+        "n",
+        "n0",
+        "p",
+        "q",
+        "r",
+        "s",
+        "lon",
+        "lat",
+        "distance",
+        "added_nodes",
+        "added_edges",
+        "distance_measure",
+        "sampling",
+        "low_memory",
+        "debug",
+        "init_edges",
+        "adjacency",
+        "dGmatrix",
+        "mst_edges",
+    )
+
     def __init__(self):
 
         # parameters for the algorithm
@@ -47,8 +69,8 @@ class RpgAlgorithm:
 
     def __str__(self):
         print("----------")
-        for attr in vars(self):
-            if attr in ["identifier", "added_nodes", "n", "n0", "p", "q", "r", "s"]:
+        for attr in ("identifier", "added_nodes", "n", "n0", "p", "q", "r", "s"):
+            if hasattr(self, attr):
                 print("{} : {}".format(attr, str(getattr(self, attr))))
         return "----------"
 
@@ -482,7 +504,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 
 
 

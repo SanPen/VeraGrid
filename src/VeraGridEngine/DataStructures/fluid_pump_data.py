@@ -19,3 +19,11 @@ class FluidPumpData(FluidTurbineData):
         FluidTurbineData.__init__(self,
                                   nelm=nelm)
 
+    def copy(self) -> "FluidPumpData":
+        """
+        Get deep copy of this structure
+        :return: new FluidPumpData instance
+        """
+        data: FluidPumpData = super().copy()
+        data.__class__ = FluidPumpData
+        return data

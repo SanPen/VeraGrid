@@ -3,7 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Union
+from typing import Union, Tuple
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
@@ -14,9 +14,9 @@ from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 from VeraGridEngine.Devices.Branches.tap_changer import TapChanger
 from VeraGridEngine.Devices.Branches.transformer import Transformer2W
 from VeraGridEngine.Devices.Branches.line import Line
-from VeraGridEngine.Devices.profile import Profile
+from VeraGridEngine.Devices.Profiles import ProfileFloat
 
-from VeraGridEngine.Devices.Parents.editable_device import DeviceType
+from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
 
 # Global sqrt of 3 (bad practice?)
 SQRT3 = np.sqrt(3.0)
@@ -61,6 +61,48 @@ class BranchType(Enum):
 
 
 class Branch(BranchParent):
+    __slots__ = (
+        'measurements',
+        '_length',
+        '_tolerance',
+        '_r_fault',
+        '_x_fault',
+        '_fault_pos',
+        '_R',
+        '_X',
+        '_B',
+        '_G',
+        'tap_changer',
+        '_tap_module',
+        '_angle',
+        'branch_type',
+        'template',
+        '_bus_to_regulated',
+        '_vset',
+        'conv',
+        'inv_conv',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='R', units='p.u.', tpe=float, definition='Total positive sequence resistance.'),
+        GCProp(key='X', units='p.u.', tpe=float, definition='Total positive sequence reactance.'),
+        GCProp(key='B', units='p.u.', tpe=float, definition='Total positive sequence shunt susceptance.'),
+        GCProp(key='G', units='p.u.', tpe=float, definition='Total positive sequence shunt conductance.'),
+        GCProp(key='tolerance', units='%', tpe=float,
+                      definition='Tolerance expected for the impedance values % is expected for '
+                                 'transformers0% for lines.'),
+        GCProp(key='length', units='km', tpe=float, definition='Length of the line (not used for calculation)'),
+        GCProp(key='tap_module', units='', tpe=float, definition='Tap changer module, it a value close to 1.0'),
+        GCProp(key='angle', units='rad', tpe=float, definition='Angle shift of the tap changer.'),
+        # GCProp(key='template', units='', tpe=BranchType, definition='', editable=False),
+        GCProp(key='bus_to_regulated', units='', tpe=bool, definition='Is the regulation at the bus to?'),
+        GCProp(key='vset', units='p.u.', tpe=float, definition='set control voltage.'),
+        GCProp(key='r_fault', units='p.u.', tpe=float, definition='Fault resistance.'),
+        GCProp(key='x_fault', units='p.u.', tpe=float, definition='Fault reactance.'),
+        GCProp(key='fault_pos', units='p.u.', tpe=float,
+                      definition='proportion of the fault location measured from the "from" bus.'),
+        # GCProp(key='branch_type', units='p.u.', tpe=DeviceType, definition='Fault resistance.'),
+    )
 
     def __init__(self,
                  bus_from: Bus = None,
@@ -167,7 +209,7 @@ class Branch(BranchParent):
         # Conductor base and operating temperatures in ºC
         self.temp_base = temp_base
         self.temp_oper = temp_oper
-        self._temp_oper_prof = Profile(default_value=temp_oper, data_type=float)
+        self._temp_oper_prof = ProfileFloat(default_value=temp_oper)
 
         # Conductor thermal constant (1/ºC)
         self.alpha = alpha
@@ -187,7 +229,7 @@ class Branch(BranchParent):
 
         # branch rating in MVA
         self.rate = rate
-        self._rate_prof = Profile(default_value=rate, data_type=float)
+        self._rate_prof = ProfileFloat(default_value=rate)
 
         # branch type: Line, Transformer, etc...
         self.branch_type = branch_type
@@ -206,30 +248,12 @@ class Branch(BranchParent):
 
         self.inv_conv = {val: key for key, val in self.conv.items()}
 
-        self.register(key='R', units='p.u.', tpe=float, definition='Total positive sequence resistance.')
-        self.register(key='X', units='p.u.', tpe=float, definition='Total positive sequence reactance.')
-        self.register(key='B', units='p.u.', tpe=float, definition='Total positive sequence shunt susceptance.')
-        self.register(key='G', units='p.u.', tpe=float, definition='Total positive sequence shunt conductance.')
-        self.register(key='tolerance', units='%', tpe=float,
-                      definition='Tolerance expected for the impedance values % is expected for '
-                                 'transformers0% for lines.')
-        self.register(key='length', units='km', tpe=float, definition='Length of the line (not used for calculation)')
 
-        self.register(key='tap_module', units='', tpe=float, definition='Tap changer module, it a value close to 1.0')
-        self.register(key='angle', units='rad', tpe=float, definition='Angle shift of the tap changer.')
-        # self.register(key='template', units='', tpe=BranchType, definition='', editable=False)
 
-        self.register(key='bus_to_regulated', units='', tpe=bool, definition='Is the regulation at the bus to?')
-        self.register(key='vset', units='p.u.', tpe=float, definition='set control voltage.')
 
-        self.register(key='r_fault', units='p.u.', tpe=float, definition='Fault resistance.')
-        self.register(key='x_fault', units='p.u.', tpe=float, definition='Fault reactance.')
-        self.register(key='fault_pos', units='p.u.', tpe=float,
-                      definition='proportion of the fault location measured from the "from" bus.')
-        # self.register(key='branch_type', units='p.u.', tpe=DeviceType, definition='Fault resistance.')
 
     @property
-    def rate_prof(self) -> Profile:
+    def rate_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -237,8 +261,8 @@ class Branch(BranchParent):
         return self._rate_prof
 
     @rate_prof.setter
-    def rate_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def rate_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._rate_prof = val
         elif isinstance(val, np.ndarray):
             self._rate_prof.set(arr=val)
@@ -246,7 +270,7 @@ class Branch(BranchParent):
             raise Exception(str(type(val)) + 'not supported to be set into a rate_prof')
 
     @property
-    def temp_oper_prof(self) -> Profile:
+    def temp_oper_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -254,8 +278,8 @@ class Branch(BranchParent):
         return self._temp_oper_prof
 
     @temp_oper_prof.setter
-    def temp_oper_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def temp_oper_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._temp_oper_prof = val
         elif isinstance(val, np.ndarray):
             self._temp_oper_prof.set(arr=val)
@@ -490,6 +514,255 @@ class Branch(BranchParent):
             elm.Cost_prof = self.Cost_prof
 
         return elm
+
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def R(self) -> float:
+        """
+        Get ``R``.
+
+        :return: float
+        """
+        return self._R
+
+    @R.setter
+    def R(self, val: float) -> None:
+        """
+        Set ``R``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._R = float(val)
+
+    @property
+    def X(self) -> float:
+        """
+        Get ``X``.
+
+        :return: float
+        """
+        return self._X
+
+    @X.setter
+    def X(self, val: float) -> None:
+        """
+        Set ``X``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._X = float(val)
+
+    @property
+    def B(self) -> float:
+        """
+        Get ``B``.
+
+        :return: float
+        """
+        return self._B
+
+    @B.setter
+    def B(self, val: float) -> None:
+        """
+        Set ``B``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._B = float(val)
+
+    @property
+    def G(self) -> float:
+        """
+        Get ``G``.
+
+        :return: float
+        """
+        return self._G
+
+    @G.setter
+    def G(self, val: float) -> None:
+        """
+        Set ``G``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._G = float(val)
+
+    @property
+    def tolerance(self) -> float:
+        """
+        Get ``tolerance``.
+
+        :return: float
+        """
+        return self._tolerance
+
+    @tolerance.setter
+    def tolerance(self, val: float) -> None:
+        """
+        Set ``tolerance``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._tolerance = float(val)
+
+    @property
+    def length(self) -> float:
+        """
+        Get ``length``.
+
+        :return: float
+        """
+        return self._length
+
+    @length.setter
+    def length(self, val: float) -> None:
+        """
+        Set ``length``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._length = float(val)
+
+    @property
+    def tap_module(self) -> float:
+        """
+        Get ``tap_module``.
+
+        :return: float
+        """
+        return self._tap_module
+
+    @tap_module.setter
+    def tap_module(self, val: float) -> None:
+        """
+        Set ``tap_module``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._tap_module = float(val)
+
+    @property
+    def angle(self) -> float:
+        """
+        Get ``angle``.
+
+        :return: float
+        """
+        return self._angle
+
+    @angle.setter
+    def angle(self, val: float) -> None:
+        """
+        Set ``angle``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._angle = float(val)
+
+    @property
+    def bus_to_regulated(self) -> bool:
+        """
+        Get ``bus_to_regulated``.
+
+        :return: bool
+        """
+        return self._bus_to_regulated
+
+    @bus_to_regulated.setter
+    def bus_to_regulated(self, val: bool) -> None:
+        """
+        Set ``bus_to_regulated``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._bus_to_regulated = bool(val)
+
+    @property
+    def vset(self) -> float:
+        """
+        Get ``vset``.
+
+        :return: float
+        """
+        return self._vset
+
+    @vset.setter
+    def vset(self, val: float) -> None:
+        """
+        Set ``vset``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._vset = float(val)
+
+    @property
+    def r_fault(self) -> float:
+        """
+        Get ``r_fault``.
+
+        :return: float
+        """
+        return self._r_fault
+
+    @r_fault.setter
+    def r_fault(self, val: float) -> None:
+        """
+        Set ``r_fault``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._r_fault = float(val)
+
+    @property
+    def x_fault(self) -> float:
+        """
+        Get ``x_fault``.
+
+        :return: float
+        """
+        return self._x_fault
+
+    @x_fault.setter
+    def x_fault(self, val: float) -> None:
+        """
+        Set ``x_fault``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._x_fault = float(val)
+
+    @property
+    def fault_pos(self) -> float:
+        """
+        Get ``fault_pos``.
+
+        :return: float
+        """
+        return self._fault_pos
+
+    @fault_pos.setter
+    def fault_pos(self, val: float) -> None:
+        """
+        Set ``fault_pos``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._fault_pos = float(val)
 
 
 def convert_branch(branch: Branch):

@@ -6,19 +6,14 @@
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.earth_fault_compensator import EarthFaultCompensator
 from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType, UnitSymbol
-
+from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
 class GroundingImpedance(EarthFaultCompensator):
+	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
+		CgmesProperty(property_name='x', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.ohm, description='''Reactance (imaginary part of impedance), at rated frequency.''', profiles=[]),
+	)
+	__slots__ = ('x',)
 	def __init__(self, rdfid='', tpe='GroundingImpedance'):
 		EarthFaultCompensator.__init__(self, rdfid, tpe)
 
 		self.x: float = None
-
-		self.register_property(
-			name='x',
-			class_type=float,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.ohm,
-			description='''Reactance (imaginary part of impedance), at rated frequency.''',
-			profiles=[]
-		)

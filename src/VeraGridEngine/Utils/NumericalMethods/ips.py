@@ -128,7 +128,7 @@ def calc_ocond(f: float, f_prev: float):
     return abs(f - f_prev) / (1.0 + abs(f_prev))
 
 
-@dataclass
+@dataclass(slots=True)
 class IpsFunctionReturn:
     """
     Represents the returning value of the interior point evaluation
@@ -191,7 +191,7 @@ class IpsFunctionReturn:
         return errors
 
 
-@dataclass
+@dataclass(slots=True)
 class IpsSolution:
     """
     Represents the returning value of the interior point solution

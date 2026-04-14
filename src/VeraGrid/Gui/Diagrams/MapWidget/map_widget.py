@@ -176,6 +176,8 @@ class MapView(QGraphicsView):
         self.scale(initial_zoom_factor, initial_zoom_factor)
 
         self.setRubberBandSelectionMode(Qt.ItemSelectionMode.IntersectsItemShape)
+        self.setViewportUpdateMode(QGraphicsView.ViewportUpdateMode.BoundingRectViewportUpdate)
+        self.setOptimizationFlag(QGraphicsView.OptimizationFlag.DontSavePainterState, True)
 
         self.setRenderHints(QPainter.RenderHint.Antialiasing | QPainter.RenderHint.SmoothPixmapTransform)
 
@@ -283,28 +285,15 @@ class MapView(QGraphicsView):
 
         if self.map_widget.tile_src.level_in_range(new_level):
 
-            val = self.map_widget.set_zoom_level(level=new_level,
-                                                 view_x=self.mouse_x,
-                                                 view_y=self.mouse_y)
+            val = self.map_widget.apply_zoom_level(level=new_level,
+                                                   view_x=self.mouse_x,
+                                                   view_y=self.mouse_y)
 
-            if val:
-                if event.angleDelta().y() > 0:
-                    self.schema_zoom *= self.map_widget.zoom_factor
-                    self.scale(
-                        self.map_widget.zoom_factor,
-                        self.map_widget.zoom_factor
-                    )
-                else:
-                    self.schema_zoom /= self.map_widget.zoom_factor
-                    self.scale(
-                        1.0 / self.map_widget.zoom_factor,
-                        1.0 / self.map_widget.zoom_factor
-                    )
-            else:
+            if not val:
                 # revert to the previous zoom
-                self.map_widget.set_zoom_level(level=zoom_0,
-                                               view_x=self.mouse_x,
-                                               view_y=self.mouse_y)
+                self.map_widget.apply_zoom_level(level=zoom_0,
+                                                view_x=self.mouse_x,
+                                                view_y=self.mouse_y)
 
             self.map_widget.wheelEvent(event)
             self.center_schema()
@@ -451,7 +440,7 @@ class MapWidget(QWidget):
                  start_level: int,
                  editor: GridMapWidget,
                  zoom_callback: Callable[[int], None],
-                 position_callback: Callable[[float, float, int, int], None]):
+                 position_callback: Callable[[float, float, float, float], None]):
         """
         Initialize the widget.
         :param parent: the GUI parent widget
@@ -492,7 +481,7 @@ class MapWidget(QWidget):
 
         # callbacks
         self.zoom_callback: Callable[[int], None] = zoom_callback
-        self.position_callback: Callable[[float, float, int, int], None] = position_callback
+        self.position_callback: Callable[[float, float, float, float], None] = position_callback
 
         # define position and tile coords of the "key" tile
         self.key_tile_left = 0  # tile coordinates of key tile
@@ -501,8 +490,8 @@ class MapWidget(QWidget):
         self.key_tile_y_offset = 0
 
         # we keep track of the cursor coordinates if cursor on map
-        self.mouse_x: int = 0
-        self.mouse_y: int = 0
+        self.mouse_x: float | None = 0
+        self.mouse_y: float | None = 0
 
         # state variables holding mouse buttons state
         self.left_button_down: bool = False
@@ -515,8 +504,8 @@ class MapWidget(QWidget):
         self.zoom_factor = 2
 
         # when dragging, remember the initial start point
-        self.start_drag_x: int = 0
-        self.start_drag_y: int = 0
+        self.start_drag_x: float | None = None
+        self.start_drag_y: float | None = None
 
         self.view_llon = 0
         self.view_rlon = 0
@@ -538,10 +527,11 @@ class MapWidget(QWidget):
         self.default_cursor = self.standard_cursor
         self.setCursor(self.standard_cursor)
 
-        # do a "resize" after this function
-        self.go_to_level_and_position(level=6, longitude=0, latitude=40)
-        self.go_to_level_and_position(level=7, longitude=0, latitude=40)
-        self.go_to_level_and_position(level=6, longitude=0, latitude=40)
+        # Initialize tile state at the requested level; the caller will position
+        # the map explicitly once the widget is constructed.
+        if not self.GotoLevel(start_level):
+            msg = f"Invalid initial zoom level {start_level} for tile source {self.tile_src.tile_set_name}"
+            raise ValueError(msg)
 
         # add the widgets in a layered manner
         # self.layout.addWidget(self.notice_widget)
@@ -697,6 +687,8 @@ class MapWidget(QWidget):
 
         elif b == Qt.MouseButton.LeftButton:
             self.left_button_down = True
+            self.start_drag_x = None
+            self.start_drag_y = None
             self.editor.object_editor_table.setModel(None)
 
         elif b == Qt.MouseButton.MiddleButton:
@@ -785,7 +777,8 @@ class MapWidget(QWidget):
             mouse_geo = self.view_to_geo(x, y)
 
             # update remembered mouse position in case of zoom
-            self.mouse_x = self.mouse_y = None
+            self.mouse_x = None
+            self.mouse_y = None
             if mouse_geo:
                 self.mouse_x = x
                 self.mouse_y = y
@@ -915,7 +908,7 @@ class MapWidget(QWidget):
             if x_coord >= self.num_tiles_x - 1:
                 break
             x_coord = (x_coord + 1) % self.num_tiles_x
-            x_pix_start += self.tile_height
+            x_pix_start += self.tile_width
 
         row_list = []
         y_coord = self.key_tile_top
@@ -1418,8 +1411,8 @@ class MapWidget(QWidget):
         :return:
         """
         point, extent = self.pex_point(place=Place.Center,
-                                       xgeo=lat,
-                                       latitude=lon,
+                                       xgeo=lon,
+                                       latitude=lat,
                                        x_off=0.0,
                                        y_off=0.0,
                                        radius=1)
@@ -1525,10 +1518,10 @@ class MapWidget(QWidget):
 
         # if not given cursor coordinates, assume view centre
         if view_x is None:
-            view_x = self.view_width // 4
+            view_x = self.view_width // 2
 
         if view_y is None:
-            view_y = self.view_height // 4
+            view_y = self.view_height // 2
 
         # get geo coordinates of view point
         longitude, latitude = self.view_to_geo_float(view_x, view_y)
@@ -1552,6 +1545,28 @@ class MapWidget(QWidget):
         self.zoom_callback(level)
 
         return result
+
+    def apply_zoom_level(self,
+                         level: int,
+                         view_x: float | None = None,
+                         view_y: float | None = None) -> bool:
+        """
+        Change map zoom and keep the graphics overlay transform in sync.
+        """
+        previous_level = self.level
+        if level == previous_level:
+            return True
+
+        if not self.set_zoom_level(level=level, view_x=view_x, view_y=view_y):
+            return False
+
+        level_delta = level - previous_level
+        scale_factor = self.zoom_factor ** level_delta
+        self.view.schema_zoom *= scale_factor
+        self.view.scale(scale_factor, scale_factor)
+        self.view.center_schema()
+        self.view.update_label_position()
+        return True
 
     def pan_position(self, longitude: float, latitude: float, view_x: int = None, view_y: int = None):
         """
@@ -1703,7 +1718,7 @@ class MapWidget(QWidget):
         posn  a tuple (xgeo, ygeo)
         """
 
-        if self.set_zoom_level(level):
+        if self.apply_zoom_level(level):
             self.pan_position(longitude, latitude)
 
     def get_level_and_position(self, place=Place.Center):

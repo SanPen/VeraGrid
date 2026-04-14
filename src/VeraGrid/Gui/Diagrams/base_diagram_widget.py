@@ -143,7 +143,6 @@ class BaseDiagramWidget(QSplitter):
 
     def __init__(self,
                  gui: VeraGridMainGUI | DiagramsMain,
-                 circuit: MultiCircuit,
                  diagram: Union[SchematicDiagram, MapDiagram],
                  library_model: Union[MapLibraryModel, SchematicLibraryModel],
                  time_index: Union[None, int] = None):
@@ -203,9 +202,6 @@ class BaseDiagramWidget(QSplitter):
         # self.setStretchFactor(1, 2000)
         # --------------------------------------------------------------------------------------------------------------
 
-        # store a reference to the multi circuit instance
-        self.circuit: MultiCircuit = circuit
-
         # diagram to store the objects locations
         self.diagram: Union[SchematicDiagram, MapDiagram] = diagram
 
@@ -231,6 +227,15 @@ class BaseDiagramWidget(QSplitter):
         for device_tpe, graphics_dict in self.graphics_manager.graphic_dict.items():
             for idtag, graphical_obj in graphics_dict.items():
                 yield graphical_obj
+
+    @property
+    def circuit(self) -> MultiCircuit:
+        """
+        Always returns the circuit that the main window currently considers active.
+        This ensures that any element added via the diagram goes to the correct
+        scenario circuit rather than a stale stored reference.
+        """
+        return self.gui.circuit
 
     @property
     def name(self):
@@ -427,8 +432,7 @@ class BaseDiagramWidget(QSplitter):
                 graphic_object=graphic_object
             )
 
-            self.delete_element_utility_function(elm,
-                                                 graphic_object=graphic_object)
+            self.delete_element_utility_function(elm, graphic_object=graphic_object)
 
     def set_time_index(self, time_index: Union[int, None]):
         """
@@ -455,7 +459,7 @@ class BaseDiagramWidget(QSplitter):
         """
         template_elm, dictionary_of_lists = self.circuit.get_dictionary_of_lists(api_object.device_type)
         mdl = ObjectsModel(objects=[api_object],
-                           property_list=api_object.property_list,
+                           property_list=list(api_object.property_list),
                            time_index=self.get_time_index(),
                            parent=self.object_editor_table,
                            editable=True,
@@ -657,14 +661,13 @@ class BaseDiagramWidget(QSplitter):
         """
         self.graphics_manager.clear()
 
-    def set_data(self, circuit: MultiCircuit, diagram: SchematicDiagram):
+    def set_data(self, diagram: SchematicDiagram):
         """
-        Set the widget data and redraw
-        :param circuit: MultiCircuit
+        Set the diagram layout and redraw.
+        The circuit is always taken from self.gui.circuit (the active scenario).
         :param diagram: SchematicDiagram
         """
         self.clear()
-        self.circuit = circuit
         self.diagram = diagram
         self.draw()
 

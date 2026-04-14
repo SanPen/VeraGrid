@@ -4,26 +4,47 @@
 # SPDX-License-Identifier: MPL-2.0
 
 import numpy as np
-from typing import Union
+from typing import Tuple
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import BuildStatus, DeviceType
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
-from VeraGridEngine.Devices.profile import Profile
+from VeraGridEngine.Devices.Parents.editable_device import GCProp
 
 
 class SeriesReactance(BranchParent):
     __slots__ = (
-        'tolerance',
-        'r_fault',
-        'x_fault',
-        'fault_pos',
-        'R',
-        'X',
-        'R0',
-        'X0',
-        'R2',
-        'X2'
+        '_tolerance',
+        '_r_fault',
+        '_x_fault',
+        '_fault_pos',
+        '_R',
+        '_X',
+        '_R0',
+        '_X0',
+        '_R2',
+        '_X2',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='R', units='p.u.', tpe=float, definition='Total positive sequence resistance.'),
+        GCProp(key='X', units='p.u.', tpe=float, definition='Total positive sequence reactance.'),
+        GCProp(key='R0', units='p.u.', tpe=float, definition='Total zero sequence resistance.'),
+        GCProp(key='X0', units='p.u.', tpe=float, definition='Total zero sequence reactance.'),
+        GCProp(key='R2', units='p.u.', tpe=float, definition='Total negative sequence resistance.'),
+        GCProp(key='X2', units='p.u.', tpe=float, definition='Total negative sequence reactance.'),
+        GCProp(key='tolerance', units='%', tpe=float,
+                      definition='Tolerance expected for the impedance values % is expected '
+                                 'for transformers0% for lines.'),
+        GCProp(key='r_fault', units='p.u.', tpe=float,
+                      definition='Resistance of the mid-line fault.Used in short circuit studies.'),
+        GCProp(key='x_fault', units='p.u.', tpe=float,
+                      definition='Reactance of the mid-line fault.Used in short circuit studies.'),
+        GCProp(key='fault_pos', units='p.u.', tpe=float,
+                      definition='Per-unit positioning of the fault:'
+                                 '0 would be at the "from" side,'
+                                 '1 would be at the "to" side,'
+                                 'therefore 0.5 is at the middle.'),
     )
 
     def __init__(self,
@@ -36,13 +57,21 @@ class SeriesReactance(BranchParent):
                  tolerance=0,
                  cost=100.0,
                  mttf=0, mttr=0,
-                 r_fault=0.0, x_fault=0.0,
+                 r_fault=0.0,
+                 x_fault=0.0,
                  fault_pos=0.5,
-                 temp_base=20, temp_oper=20, alpha=0.00330,
-                 contingency_factor=1.0, protection_rating_factor: float = 1.4,
-                 contingency_enabled=True, monitor_loading=True,
-                 r0=1e-20, x0=1e-20,  r2=1e-20, x2=1e-20,
-                 capex=0, opex=0, build_status: BuildStatus = BuildStatus.Commissioned):
+                 temp_base=20,
+                 temp_oper=20,
+                 alpha=0.00330,
+                 contingency_factor=1.0,
+                 protection_rating_factor: float = 1.4,
+                 contingency_enabled=True,
+                 monitor_loading=True,
+                 r0=1e-20, x0=1e-20,
+                 r2=1e-20, x2=1e-20,
+                 capex=0,
+                 opex=0,
+                 build_status: BuildStatus = BuildStatus.Commissioned):
         """
         AC current Line
         :param bus_from: "From" :ref:`bus<Bus>` object
@@ -119,29 +148,6 @@ class SeriesReactance(BranchParent):
         self.R2 = r2
         self.X2 = x2
 
-        self.register(key='R', units='p.u.', tpe=float, definition='Total positive sequence resistance.')
-        self.register(key='X', units='p.u.', tpe=float, definition='Total positive sequence reactance.')
-
-        self.register(key='R0', units='p.u.', tpe=float, definition='Total zero sequence resistance.')
-        self.register(key='X0', units='p.u.', tpe=float, definition='Total zero sequence reactance.')
-
-        self.register(key='R2', units='p.u.', tpe=float, definition='Total negative sequence resistance.')
-        self.register(key='X2', units='p.u.', tpe=float, definition='Total negative sequence reactance.')
-
-        self.register(key='tolerance', units='%', tpe=float,
-                      definition='Tolerance expected for the impedance values % is expected '
-                                 'for transformers0% for lines.')
-
-        self.register(key='r_fault', units='p.u.', tpe=float,
-                      definition='Resistance of the mid-line fault.Used in short circuit studies.')
-        self.register(key='x_fault', units='p.u.', tpe=float,
-                      definition='Reactance of the mid-line fault.Used in short circuit studies.')
-        self.register(key='fault_pos', units='p.u.', tpe=float,
-                      definition='Per-unit positioning of the fault:'
-                                 '0 would be at the "from" side,'
-                                 '1 would be at the "to" side,'
-                                 'therefore 0.5 is at the middle.')
-
     @property
     def R_corrected(self):
         """
@@ -204,4 +210,196 @@ class SeriesReactance(BranchParent):
         self.R = np.round(R / Zbase, 6)
         self.X = np.round(X / Zbase, 6)
         self.rate = np.round(Imax * Vf * 1.73205080757, 6)  # nominal power in MVA = kA * kV * sqrt(3)
+
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def R(self) -> float:
+        """
+        Get ``R``.
+
+        :return: float
+        """
+        return self._R
+
+    @R.setter
+    def R(self, val: float) -> None:
+        """
+        Set ``R``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._R = float(val)
+
+    @property
+    def X(self) -> float:
+        """
+        Get ``X``.
+
+        :return: float
+        """
+        return self._X
+
+    @X.setter
+    def X(self, val: float) -> None:
+        """
+        Set ``X``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._X = float(val)
+
+    @property
+    def R0(self) -> float:
+        """
+        Get ``R0``.
+
+        :return: float
+        """
+        return self._R0
+
+    @R0.setter
+    def R0(self, val: float) -> None:
+        """
+        Set ``R0``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._R0 = float(val)
+
+    @property
+    def X0(self) -> float:
+        """
+        Get ``X0``.
+
+        :return: float
+        """
+        return self._X0
+
+    @X0.setter
+    def X0(self, val: float) -> None:
+        """
+        Set ``X0``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._X0 = float(val)
+
+    @property
+    def R2(self) -> float:
+        """
+        Get ``R2``.
+
+        :return: float
+        """
+        return self._R2
+
+    @R2.setter
+    def R2(self, val: float) -> None:
+        """
+        Set ``R2``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._R2 = float(val)
+
+    @property
+    def X2(self) -> float:
+        """
+        Get ``X2``.
+
+        :return: float
+        """
+        return self._X2
+
+    @X2.setter
+    def X2(self, val: float) -> None:
+        """
+        Set ``X2``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._X2 = float(val)
+
+    @property
+    def tolerance(self) -> float:
+        """
+        Get ``tolerance``.
+
+        :return: float
+        """
+        return self._tolerance
+
+    @tolerance.setter
+    def tolerance(self, val: float) -> None:
+        """
+        Set ``tolerance``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._tolerance = float(val)
+
+    @property
+    def r_fault(self) -> float:
+        """
+        Get ``r_fault``.
+
+        :return: float
+        """
+        return self._r_fault
+
+    @r_fault.setter
+    def r_fault(self, val: float) -> None:
+        """
+        Set ``r_fault``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._r_fault = float(val)
+
+    @property
+    def x_fault(self) -> float:
+        """
+        Get ``x_fault``.
+
+        :return: float
+        """
+        return self._x_fault
+
+    @x_fault.setter
+    def x_fault(self, val: float) -> None:
+        """
+        Set ``x_fault``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._x_fault = float(val)
+
+    @property
+    def fault_pos(self) -> float:
+        """
+        Get ``fault_pos``.
+
+        :return: float
+        """
+        return self._fault_pos
+
+    @fault_pos.setter
+    def fault_pos(self, val: float) -> None:
+        """
+        Set ``fault_pos``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._fault_pos = float(val)
 

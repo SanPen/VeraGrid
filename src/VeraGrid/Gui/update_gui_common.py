@@ -95,7 +95,7 @@ def convert_ui_file(source, uic_cmd='pyside6-uic'):
     for cmd in possible_cmds:
 
         try:
-            call([sys.executable, os.path.join(fbase, cmd), source, '-o', target])
+            call([cmd, source, '-o', target])
             correct_file_imports(filename=target)
             print(uic_cmd, ' (py) ok')
             return True

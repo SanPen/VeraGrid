@@ -19,6 +19,29 @@ from VeraGridEngine.Simulations.Clustering.clustering_results import ClusteringR
 
 
 class PowerFlowTimeSeriesResults(ResultsTemplate):
+    __slots__ = (
+        "bus_names",
+        "branch_names",
+        "hvdc_names",
+        "bus_types",
+        "voltage",
+        "S",
+        "Sf",
+        "St",
+        "If",
+        "It",
+        "tap_module",
+        "tap_angle",
+        "Vbranch",
+        "loading",
+        "losses",
+        "hvdc_losses",
+        "hvdc_Pf",
+        "hvdc_Pt",
+        "hvdc_loading",
+        "error_values",
+        "converged_values",
+    )
 
     def __init__(self,
                  n: int,

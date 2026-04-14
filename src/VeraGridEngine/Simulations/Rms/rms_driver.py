@@ -2,43 +2,29 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
-from __future__ import annotations
 
-import numpy as np
+from __future__ import annotations
 import pandas as pd
-from typing import Dict
+import numpy as np
 
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-from VeraGridEngine.Utils.Symbolic import Var
-from VeraGridEngine.Utils.Symbolic.block_solver import BlockSolver
 from VeraGridEngine.Simulations.driver_template import DriverTemplate
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
 from VeraGridEngine.Simulations.Rms.rms_results import RmsResults
-from VeraGridEngine.Utils.Symbolic.block import Block, DiffBlock
-from VeraGridEngine.Simulations.Rms.problems.rms_problem import RmsProblem
-from VeraGridEngine.Simulations.Rms.numerical.integration_methods import Trapezoid, BackEuler
-from VeraGridEngine.Utils.Symbolic.block_solver_comb import DiffBlockSolver
+from VeraGridEngine.Simulations.Rms.rms_problem_factory import build_rms_problem
+from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae import RmsProblemDae
+from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx import BackEulerImplicitIntegration
 from VeraGridEngine.enumerations import EngineType, SimulationTypes, DynamicIntegrationMethod
-from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowResults, PowerFlowOptions
-from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowDriver
-from VeraGridEngine.Simulations.Rms.initialization import initialize_rms
-
-
-def check_if_diff_vars(system):
-    if isinstance(system, DiffBlock):
-        diff_vars = system.diff_vars
-        if diff_vars:
-            return diff_vars
-        else:
-            if system.children:
-                for child in system.children:
-                    diff_vars = check_if_diff_vars(child)
-        return diff_vars
-    else:
-        return False
+from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowResults
+from VeraGridEngine.basic_structures import Vec, StrVec
 
 
 class RmsSimulationDriver(DriverTemplate):
+    __slots__ = (
+        "pf_results",
+        "options",
+    )
+
     name = 'Rms Simulation'
     tpe = SimulationTypes.RmsDynamic_run
 
@@ -46,15 +32,15 @@ class RmsSimulationDriver(DriverTemplate):
     Dynamic wrapper to use with Qt
     """
 
-    def __init__(self, grid: MultiCircuit,
+    def __init__(self,
+                 grid: MultiCircuit,
                  options: RmsOptions,
-                 pf_results: PowerFlowResults | None,
+                 pf_results: PowerFlowResults,
                  engine: EngineType = EngineType.VeraGrid):
-
         """
         DynamicDriver class constructor
         :param grid: MultiCircuit instance
-        :param options: RmsOptions instance (optional)
+        :param options: RmsOptions instance
         :param pf_results: PowerFlowResults
         :param engine: EngineType (i.e., EngineType.VeraGrid) (optional)
         """
@@ -63,17 +49,12 @@ class RmsSimulationDriver(DriverTemplate):
 
         self.grid = grid
 
-        self.pf_results: PowerFlowResults | None = pf_results
+        self.pf_results: PowerFlowResults = pf_results
 
         self.options = options
 
-        self.results = RmsResults(values=np.empty(0),
-                                  time_array=pd.DatetimeIndex(pd.to_datetime(np.empty(0))),
-                                  stat_vars=list(),
-                                  algeb_vars=list(),
-                                  uid2idx=dict(),
-                                  vars_glob_name2uid=dict(),
-                                  devices=[])
+        self.results: RmsResults | None = None
+        self.problem: RmsProblemDae | None = None
 
     def run(self):
         """
@@ -91,77 +72,91 @@ class RmsSimulationDriver(DriverTemplate):
         Performs the numerical integration using the chosen method.
         :return:
         """
-        self.tic()
-        # Get integration method
-        if self.options.integration_method == "trapezoid":
-            integrator = "trapezoid"
-        elif self.options.integration_method == "implicit euler":
-            integrator = "implicit_euler"
-        else:
-            raise ValueError(f"integrator not implemented :( {self.options.integration_method}")
 
-        # TODO: Check if there is a cleaner way to get all the devices in a list
+        self.progress_signal.emit(0)
 
-        buses = [bus for bus in self.grid.get_buses()]
-        branches = [branch for branch in self.grid.get_branches_iter()]
-        injections = [injection for injection in self.grid.get_injection_devices_iter()]
+        rms_events_groups = (self.grid.rms_events_groups
+                             if self.grid.rms_events_groups is None
+                             else self.grid.rms_events_groups)
 
-        devices = buses + branches + injections
+        steps = int(np.ceil((self.options.simulation_time - 0) / self.options.time_step))
+        t: Vec = np.arange(steps + 1) * self.options.time_step
 
-        params_mapping: Dict = dict()
+        rms_events_group_names: StrVec = np.array([elm.name for elm in rms_events_groups])
 
-        sim_time, ss, init_guess = initialize_rms(self.grid, self.pf_results, self.options.use_init_values)
+        problem = build_rms_problem(
+            grid=self.grid,
+            options=self.options,
+            pf_results=self.pf_results,
+            progress_signal=self.progress_signal,
+        )
+        self.problem = problem
+        self.results = RmsResults(
+            time_array=pd.DatetimeIndex(pd.to_datetime(t * 1e9)),
+            rms_events_group_names=rms_events_group_names,
+            variables=problem.state_and_algebraic_vars,
+            uid2idx=problem.uid2idx_vars,
+            vars_glob_name2uid=problem.vars_glob_name2uid,
+            devices_vars_info=problem.get_device_vars_dict()
+        )
 
-        diff_vars = check_if_diff_vars(ss)
+        for group_idx, rms_events_group in enumerate(rms_events_groups):
 
-        if diff_vars:
-            slv = DiffBlockSolver(ss, sim_time)
+            self.report_text("Simulating RMS event group " + rms_events_group.name)
 
-            params0 = slv.build_init_params_vector(params_mapping)
-            x0 = slv.build_init_vars_vector_from_uid(init_guess)
+            self.progress_signal.emit(5)
 
-            dx0 = np.zeros(len(slv._diff_vars))
+            self.report_text("Simulating RMS event group " + rms_events_group.name)
+            problem.set_events_group(rms_events_group=rms_events_group)
 
-            t, y = slv.simulate(
-                t0=0,
-                t_end=self.options.simulation_time,
-                h=self.options.time_step,
-                x0=x0,
-                dx0=dx0,
-                params0=params0,
-                method="rk4",
-                newton_tol = 1e-8,
-                newton_max_iter = 1000,
-                followed_vars = None,
-                initialized = False,
-                verbose = False,
+            # DaeTrapezoidal = "DAE_Trapezoidal"
+            # DaeBackEuler = "DAE_BackEuler"
+            # DaeBDF2 = "DAE_bdf2"
+            # DaeContinuous = "DAE_Continuous"
+            # OdeRungeKutta4 = "ODE_Runge_Kutta 4"
+            # OdeEuler = "ODE_Euler"
 
-            )
+            if self.options.integration_method == DynamicIntegrationMethod.DaeBackEuler:
 
-        else:
-            slv = BlockSolver(ss, sim_time)
+                self.report_text(
+                    f"Simulating RMS event group  {rms_events_group.name} with "
+                    f"{self.options.integration_method.value}"
+                )
+                solver = BackEulerImplicitIntegration(
+                    problem=problem,
+                    t0=0,
+                    t_end=self.options.simulation_time,
+                    h=self.options.time_step,
+                    max_iter=self.options.max_iter
+                )
 
-            params0 = slv.build_init_params_vector(params_mapping)
-            x0 = slv.build_init_vars_vector_from_uid(init_guess)
+            else:
+                self.logger.add_info("Falling back to DAE-BackEuler method")
 
-            t, y = slv.simulate(
-                t0=0,
-                t_end=self.options.simulation_time,
-                h=self.options.time_step,
-                x0=x0,
-                params0=params0,
-                method="implicit_euler",
+                self.report_text(
+                    f"Simulating RMS event group  {rms_events_group.name} with back euler as fallback"
+                )
 
-            )
+                solver = BackEulerImplicitIntegration(
+                    problem=problem,
+                    t0=0,
+                    t_end=self.options.simulation_time,
+                    h=self.options.time_step,
+                    max_iter=self.options.max_iter
+                )
 
+            t, y, well_initialized, converged = solver.simulate()
 
-        self.results = RmsResults(values=y,
-                                  time_array=pd.DatetimeIndex(pd.to_datetime(t * 1e9)),
-                                  stat_vars=slv._state_vars,
-                                  algeb_vars=slv._algebraic_vars,
-                                  uid2idx=slv.uid2idx_vars,
-                                  vars_glob_name2uid=slv.v_glob_name2uid,
-                                  devices=devices)
+            self.results.converged[group_idx] = converged
+            self.results.well_initialized[group_idx] = well_initialized
+            self.results.values[:, :, group_idx] = y
 
-        self.toc()
+            if not well_initialized:
+                self.logger.add_warning("Not well initialized", device=rms_events_group.name)
 
+            if not converged:
+                self.logger.add_warning("Not converged", device=rms_events_group.name)
+
+            self.progress_signal.emit(90)
+
+        self.progress_signal.emit(100)

@@ -9,6 +9,7 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 
 
 class Junction(Connector):
+	__slots__ = ()
 	def __init__(self, rdfid='', tpe='Junction'):
 		Connector.__init__(self, rdfid, tpe)
 

@@ -9,7 +9,7 @@ import numpy as np
 from typing import List, Tuple
 
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-from VeraGridEngine.Devices.Aggregation.contingency import Contingency, ContingencyGroup
+from VeraGridEngine.Devices.Events.contingency import Contingency, ContingencyGroup
 from VeraGridEngine.Devices.Parents.editable_device import DeviceType
 from VeraGridEngine.Devices.types import BRANCH_TYPES
 from VeraGridEngine.enumerations import ContingencyOperationTypes

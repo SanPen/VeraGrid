@@ -13,7 +13,6 @@ from VeraGrid.Gui.Main.SubClasses.Results.results import ResultsMain
 from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
 from VeraGrid.Gui.Diagrams.generic_graphics import set_dark_mode, set_light_mode
 from VeraGrid.plugins import PluginsInfo, PluginFunction
-import VeraGrid.Gui.gui_functions as gf
 from VeraGrid.Gui.gui_functions import add_menu_entry
 
 
@@ -120,8 +119,7 @@ class ConfigurationMain(ResultsMain):
         # check boxes
         self.ui.dark_mode_checkBox.clicked.connect(self.change_theme_mode)
 
-        # buttons
-        self.ui.selectCGMESBoundarySetButton.clicked.connect(self.select_cgmes_boundary_set)
+        self.plugins_investment_evaluation_method_dict = dict()
 
         # DateTime change
         self.ui.snapshot_dateTimeEdit.dateTimeChanged.connect(self.snapshot_datetime_changed)
@@ -231,7 +229,6 @@ class ConfigurationMain(ResultsMain):
             "power_flow": {
                 "solver": self.ui.solver_comboBox,
                 "retry": self.ui.helm_retry_checkBox,
-                "three_phase": self.ui.pf_three_phase_checkBox,
                 "distributed_slack": self.ui.distributed_slack_checkBox,
                 "ignore_single_node_islands": self.ui.ignore_single_node_islands_checkBox,
                 "use_voltage_guess": self.ui.use_voltage_guess_checkBox,
@@ -334,20 +331,21 @@ class ConfigurationMain(ResultsMain):
             },
             "file": {
                 "store_results_in_file": self.ui.saveResultsCheckBox,
-                "current_boundary_set": self.current_boundary_set,
-                "cgmes_selected_version": self.ui.cgmes_version_comboBox,
-                "cgmes_single_profile_per_file": self.ui.cgmes_single_profile_per_file_checkBox,
-                "map_regions_like_raw": self.ui.cgmes_map_regions_like_raw_checkBox,
-                "raw_selected_version": self.ui.raw_export_version_comboBox,
-                "cgmes_dc_as_hvdclines": self.ui.cgmes_dc_as_hvdclines_checkBox,
+                # "current_boundary_set": self.current_boundary_set,
+                # "cgmes_selected_version": self.ui.cgmes_version_comboBox,
+                # "cgmes_single_profile_per_file": self.ui.cgmes_single_profile_per_file_checkBox,
+                # "map_regions_like_raw": self.ui.cgmes_map_regions_like_raw_checkBox,
+                # "raw_selected_version": self.ui.raw_export_version_comboBox,
+                # "cgmes_dc_as_hvdclines": self.ui.cgmes_dc_as_hvdclines_checkBox,
             },
             "dyn": {
-                "rms_int_method_comboBox": self.ui.rms_int_method_comboBox,
+                "rms_int_method_comboBox": self.ui.rms_integration_method_comboBox,
+                "rms_initialization_method": self.ui.rms_initialization_method_comboBox,
                 "tolerance_rms_spinBox": self.ui.tolerance_rms_spinBox,
-                "sim_time_spinBox": self.ui.sim_time_spinBox,
-                "h_spinBox": self.ui.h_spinBox,
+                "sim_time_spinBox": self.ui.rms_sim_time_spinBox,
+                "h_spinBox": self.ui.rms_h_spinBox,
 
-                "ss_assessment_time_spinBox_2": self.ui.ss_assessment_time_spinBox_2
+                "ss_assessment_time_spinBox_2": self.ui.rms_ss_assessment_time_spinBox
             }
         }
 
@@ -380,21 +378,6 @@ class ConfigurationMain(ResultsMain):
         struct = self.get_config_structure()
         config_data_to_struct(data_=data, struct_=struct)
 
-        # CGMES boundary set
-
-        """
-        "file": {
-                "store_results_in_file": self.ui.saveResultsCheckBox,
-                "current_boundary_set": self.current_boundary_set 
-            }
-        """
-
-        file_data: Dict[str, Any] = data.get("file", None)
-        if file_data is not None:
-            bd_path = file_data.get("current_boundary_set", "")
-            self.current_boundary_set = bd_path if os.path.exists(bd_path) else ""
-            self.ui.cgmes_boundary_set_label.setText(self.current_boundary_set)
-
         # light / dark mode
         if self.ui.dark_mode_checkBox.isChecked():
             set_dark_mode()
@@ -415,22 +398,6 @@ class ConfigurationMain(ResultsMain):
                     print(e)
                     self.save_gui_config()
                     print("GUI config file was erroneous, wrote a new one")
-
-    def select_cgmes_boundary_set(self):
-        """
-        Select the current boundary set
-        """
-        files_types = "Boundary set (*.zip)"
-
-        dialogue = QtWidgets.QFileDialog(None,
-                                         caption='Select Boundary set file',
-                                         directory=self.project_directory,
-                                         filter=files_types)
-        if dialogue.exec():
-            filenames = dialogue.selectedFiles()
-            if len(filenames) > 0:
-                self.current_boundary_set = filenames[0]
-                self.ui.cgmes_boundary_set_label.setText(self.current_boundary_set)
 
     def snapshot_datetime_changed(self):
         """

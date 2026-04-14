@@ -26,6 +26,12 @@ if TYPE_CHECKING:  # Only imports the below statements during type checking
 
 
 class LinearAnalysisDriver(DriverTemplate):
+    __slots__ = (
+        "options",
+        "opf_results",
+        "all_solved",
+    )
+
     name = 'Linear analysis'
     tpe = SimulationTypes.LinearAnalysis_run
 

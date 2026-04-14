@@ -18,7 +18,7 @@ if TYPE_CHECKING:  # Only imports the below statements during type checking
 
 class StaticGeneratorGraphicItem(InjectionTemplateGraphicItem):
 
-    def __init__(self, parent, api_obj: StaticGenerator, editor: "SchematicWidget"):
+    def __init__(self, parent, api_obj: StaticGenerator, editor: SchematicWidget):
         """
 
         :param parent:

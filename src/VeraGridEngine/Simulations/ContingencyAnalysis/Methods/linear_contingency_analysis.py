@@ -7,17 +7,19 @@ from typing import Callable, List
 import numpy as np
 import numba as nb
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
+from VeraGridEngine.Simulations.PowerFlow.power_flow_worker import multi_island_pf_nc
 from VeraGridEngine.Simulations.ContingencyAnalysis.contingency_analysis_results import ContingencyAnalysisResults
 from VeraGridEngine.Simulations.LinearFactors.linear_analysis import LinearAnalysis, LinearMultiContingencies
 from VeraGridEngine.Simulations.ContingencyAnalysis.contingency_analysis_options import ContingencyAnalysisOptions
 from VeraGridEngine.basic_structures import Logger, CxVec, IntVec, StrVec, Mat, Vec
+from VeraGridEngine.enumerations import SolverType
 
 
 def linear_contingency_analysis(nc: NumericalCircuit,
                                 options: ContingencyAnalysisOptions,
                                 linear_multiple_contingencies: LinearMultiContingencies,
                                 area_names: StrVec | List[str],
-                                bus_area_indices: StrVec,
+                                bus_area_indices: IntVec,
                                 F: IntVec,
                                 T: IntVec,
                                 report_text: Callable[[str], None] | None,
@@ -66,21 +68,19 @@ def linear_contingency_analysis(nc: NumericalCircuit,
                                           ptdf_threshold=options.lin_options.ptdf_threshold,
                                           lodf_threshold=options.lin_options.lodf_threshold)
 
+    # run 0
+    if options.pf_options.solver_type == SolverType.Linear:
+        # if linear, just re-use the linear analysis
+        Sbus: CxVec = nc.get_power_injections()  # MW
+        flows_n = linear_analysis.get_flows(Sbus=Sbus, P_hvdc=nc.hvdc_data.Pset)
+    else:
+        # Run a proper base power flow
+        base_res = multi_island_pf_nc(nc=nc, options=options.pf_options)
+        flows_n = base_res.Sf.real
+
     # get the contingency branch indices
     mon_idx = nc.passive_branch_data.get_monitor_enabled_indices()
     Pbus = nc.get_power_injections().real
-
-    # compute the branch Sf in "n"
-    if options.use_provided_flows:
-        flows_n = options.Pf
-
-        if options.Pf is None:
-            msg = 'The option to use the provided flows is enabled, but no flows are available'
-            logger.add_error(msg)
-            raise Exception(msg)
-    else:
-        Sbus: CxVec = nc.get_power_injections()  # MW
-        flows_n = linear_analysis.get_flows(Sbus=Sbus, P_hvdc=nc.hvdc_data.Pset)
 
     loadings_n = flows_n / (nc.passive_branch_data.rates + 1e-9)
 
@@ -102,6 +102,8 @@ def linear_contingency_analysis(nc: NumericalCircuit,
                 injections = None
 
             c_flow = multi_contingency.get_contingency_flows(base_branches_flow=flows_n, injections=injections)
+
+            # NOTE: this is accounted for to be in the normal rate base in the analyze method
             c_loading = c_flow / (nc.passive_branch_data.rates + 1e-9)
 
             results.Sf[ic, :] = c_flow  # already in MW
@@ -115,14 +117,14 @@ def linear_contingency_analysis(nc: NumericalCircuit,
                                    base_loading=loadings_n,
                                    contingency_flows=c_flow,
                                    contingency_loadings=c_loading,
-                                   contingency_idx=ic,
+                                   contingency_group_idx=ic,
                                    contingency_group=linear_multiple_contingencies.contingency_groups_used[ic],
                                    using_srap=options.use_srap,
                                    srap_ratings=nc.passive_branch_data.protection_rates,
                                    srap_max_power=options.srap_max_power,
                                    srap_deadband=options.srap_deadband,
                                    contingency_deadband=options.contingency_deadband,
-                                   srap_rever_to_nominal_rating=options.srap_rever_to_nominal_rating,
+                                   srap_revert_to_nominal_rating=options.srap_revert_to_nominal_rating,
                                    multi_contingency=multi_contingency,
                                    PTDF=linear_analysis.PTDF,
                                    available_power=nc.bus_data.srap_availbale_power,
@@ -146,16 +148,22 @@ def linear_contingency_analysis(nc: NumericalCircuit,
             if is_cancel():
                 return results
 
-    results.lodf = linear_analysis.LODF
+    # results.lodf = linear_analysis.LODF
 
     return results
 
 
 @nb.njit()
-def linear_contingency_scan_numba(nbr: int, n_con_groups: int,
-                                  Pbus: Vec, rates: Vec, con_rates: Vec,
-                                  PTDF: Mat, LODF: Mat, mon_idx: IntVec,
-                                  single_con_br_idx: IntVec, single_con_cg_idx: IntVec):
+def linear_contingency_scan_numba(nbr: int,
+                                  n_con_groups: int,
+                                  Pbus: Vec,
+                                  rates: Vec,
+                                  con_rates: Vec,
+                                  PTDF: Mat,
+                                  LODF: Mat,
+                                  mon_idx: IntVec,
+                                  single_con_br_idx: IntVec,
+                                  single_con_cg_idx: IntVec):
     """
     Fast contingency scan using the PTDF
     :param nbr: Number of branches
@@ -177,7 +185,7 @@ def linear_contingency_scan_numba(nbr: int, n_con_groups: int,
     LoadingCon = np.zeros((n_con_groups, nbr))
 
     # base flow
-    Sbr0 = PTDF @ Pbus
+    Sbr0 = np.dot(PTDF, Pbus)
     problems = list()
 
     for mm in nb.prange(len(mon_idx)):

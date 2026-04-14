@@ -57,8 +57,7 @@ comment_version_map = {
                                 "NDI,   IFI,   ITI,'IDI', XCAPI\n",
         "VSC DC LINE": "@!  'NAME',   MDC,  RDC,   O1,  F1,    O2,  F2,    O3,  F3,    O4,  F4\n"
                        "@!IBUS,TYPE,MODE,  DCSET,  ACSET,  ALOSS,  BLOSS,MINLOSS,  SMAX,   IMAX,"
-                       "   PWF,     MAXQ,   MINQ, \n"
-                       "VSREG,NREG, RMPCT\n",
+                       "   PWF,     MAXQ,   MINQ, VSREG,NREG, RMPCT\n",
         "IMPEDANCE CORRECTION": "@!I,  T1,   Re(F1), Im(F1),   T2,   Re(F2), Im(F2),"
                                 "   T3,   Re(F3), Im(F3),   T4,   Re(F4), Im(F4),  "
                                 " T5,   Re(F5), Im(F5),   T6,   Re(F6), Im(F6)\n"

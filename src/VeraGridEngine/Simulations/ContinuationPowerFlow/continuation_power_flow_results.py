@@ -14,6 +14,20 @@ class ContinuationPowerFlowResults(ResultsTemplate):
     """
     ContinuationPowerFlowResults
     """
+    __slots__ = (
+        "bus_names",
+        "branch_names",
+        "bus_types",
+        "voltages",
+        "lambdas",
+        "error",
+        "converged",
+        "Sf",
+        "St",
+        "loading",
+        "losses",
+        "Sbus",
+    )
 
     def __init__(self, nval, nbus, nbr, bus_names, branch_names, bus_types, area_names: StrVec = None):
         """
@@ -237,16 +251,21 @@ class ContinuationPowerFlowResults(ResultsTemplate):
                                 units='(%)')
 
         elif result_type == ResultTypes.InterAreaExchange:
-            index = [a + '->' for a in self.area_names]
+
             columns = ['->' + a for a in self.area_names]
-            data = self.get_inter_area_flows(area_names=self.area_names,
-                                             F=self.F,
-                                             T=self.T,
-                                             Sf=self.Sf[-1, :],
-                                             hvdc_F=self.hvdc_F,
-                                             hvdc_T=self.hvdc_T,
-                                             hvdc_Pf=np.zeros(len(self.hvdc_T)),
-                                             bus_area_indices=self.bus_area_indices).real
+            if self.Sf.shape[0] > 0:
+                index = [a + '->' for a in self.area_names]
+                data = self.get_inter_area_flows(area_names=self.area_names,
+                                                 F=self.F,
+                                                 T=self.T,
+                                                 Sf=self.Sf[-1, :],
+                                                 hvdc_F=self.hvdc_F,
+                                                 hvdc_T=self.hvdc_T,
+                                                 hvdc_Pf=np.zeros(len(self.hvdc_T)),
+                                                 bus_area_indices=self.bus_area_indices).real
+            else:
+                index = []
+                data = np.zeros((0, len(columns)))
 
             return ResultsTable(data=data,
                                 index=index,
@@ -257,27 +276,33 @@ class ContinuationPowerFlowResults(ResultsTemplate):
                                 units='(MW)')
 
         elif result_type == ResultTypes.LossesPercentPerArea:
-            index = [a + '->' for a in self.area_names]
+
             columns = ['->' + a for a in self.area_names]
-            Pf = self.get_branch_values_per_area(np.abs(self.Sf.real[-1, :]),
-                                                 self.area_names, self.bus_area_indices,
-                                                 self.F, self.T)
 
-            hvdc_Pf = np.zeros(len(self.hvdc_T))
-            Pf += self.get_hvdc_values_per_area(np.abs(hvdc_Pf),
-                                                self.area_names, self.bus_area_indices,
-                                                self.hvdc_F, self.hvdc_T)
+            if self.Sf.shape[0] > 0:
+                index = [a + '->' for a in self.area_names]
+                Pf = self.get_branch_values_per_area(np.abs(self.Sf.real[-1, :]),
+                                                     self.area_names, self.bus_area_indices,
+                                                     self.F, self.T)
 
-            Pl = self.get_branch_values_per_area(np.abs(self.losses.real[-1, :]),
-                                                 self.area_names, self.bus_area_indices,
-                                                 self.F, self.T)
+                hvdc_Pf = np.zeros(len(self.hvdc_T))
+                Pf += self.get_hvdc_values_per_area(np.abs(hvdc_Pf),
+                                                    self.area_names, self.bus_area_indices,
+                                                    self.hvdc_F, self.hvdc_T)
 
-            hvdc_losses = np.zeros(len(self.hvdc_T))
-            Pl += self.get_hvdc_values_per_area(np.abs(hvdc_losses),
-                                                self.area_names, self.bus_area_indices,
-                                                self.hvdc_F, self.hvdc_T)
+                Pl = self.get_branch_values_per_area(np.abs(self.losses.real[-1, :]),
+                                                     self.area_names, self.bus_area_indices,
+                                                     self.F, self.T)
 
-            data = Pl / (Pf + 1e-20) * 100.0
+                hvdc_losses = np.zeros(len(self.hvdc_T))
+                Pl += self.get_hvdc_values_per_area(np.abs(hvdc_losses),
+                                                    self.area_names, self.bus_area_indices,
+                                                    self.hvdc_F, self.hvdc_T)
+
+                data = Pl / (Pf + 1e-20) * 100.0
+            else:
+                index = []
+                data = np.zeros((0, len(columns)))
 
             return ResultsTable(data=data,
                                 index=index,
@@ -288,24 +313,30 @@ class ContinuationPowerFlowResults(ResultsTemplate):
                                 units='(%)')
 
         elif result_type == ResultTypes.LossesPerGenPerArea:
-            index = [a for a in self.area_names]
+
             columns = [result_type.value]
-            gen_bus = self.Sbus.copy().real
-            gen_bus[gen_bus < 0] = 0
-            Gf = self.get_bus_values_per_area(gen_bus, self.area_names, self.bus_area_indices)
 
-            Pl = self.get_branch_values_per_area(np.abs(self.losses.real[-1, :]),
-                                                 self.area_names, self.bus_area_indices,
-                                                 self.F, self.T)
+            if self.Sf.shape[0] > 0:
+                index = [a for a in self.area_names]
+                gen_bus = self.Sbus.copy().real
+                gen_bus[gen_bus < 0] = 0
+                Gf = self.get_bus_values_per_area(gen_bus, self.area_names, self.bus_area_indices)
 
-            hvdc_losses = np.zeros(len(self.hvdc_T))
-            Pl += self.get_hvdc_values_per_area(np.abs(hvdc_losses),
-                                                self.area_names, self.bus_area_indices,
-                                                self.hvdc_F, self.hvdc_T)
+                Pl = self.get_branch_values_per_area(np.abs(self.losses.real[-1, :]),
+                                                     self.area_names, self.bus_area_indices,
+                                                     self.F, self.T)
 
-            data = np.zeros(len(self.area_names))
-            for i in range(len(self.area_names)):
-                data[i] = Pl[i, i] / (Gf[i] + 1e-20) * 100.0
+                hvdc_losses = np.zeros(len(self.hvdc_T))
+                Pl += self.get_hvdc_values_per_area(np.abs(hvdc_losses),
+                                                    self.area_names, self.bus_area_indices,
+                                                    self.hvdc_F, self.hvdc_T)
+
+                data = np.zeros(len(self.area_names))
+                for i in range(len(self.area_names)):
+                    data[i] = Pl[i, i] / (Gf[i] + 1e-20) * 100.0
+            else:
+                index = []
+                data = np.zeros((0, len(columns)))
 
             return ResultsTable(data=data,
                                 index=index,
@@ -316,16 +347,22 @@ class ContinuationPowerFlowResults(ResultsTemplate):
                                 units='(%)')
 
         elif result_type == ResultTypes.LossesPerArea:
-            index = [a + '->' for a in self.area_names]
-            columns = ['->' + a for a in self.area_names]
-            data = self.get_branch_values_per_area(np.abs(self.losses.real[-1, :]),
-                                                   self.area_names, self.bus_area_indices,
-                                                   self.F, self.T)
 
-            hvdc_losses = np.zeros(len(self.hvdc_T))
-            data += self.get_hvdc_values_per_area(np.abs(hvdc_losses),
-                                                  self.area_names, self.bus_area_indices,
-                                                  self.hvdc_F, self.hvdc_T)
+            columns = ['->' + a for a in self.area_names]
+
+            if self.Sf.shape[0] > 0:
+                index = [a + '->' for a in self.area_names]
+                data = self.get_branch_values_per_area(np.abs(self.losses.real[-1, :]),
+                                                       self.area_names, self.bus_area_indices,
+                                                       self.F, self.T)
+
+                hvdc_losses = np.zeros(len(self.hvdc_T))
+                data += self.get_hvdc_values_per_area(np.abs(hvdc_losses),
+                                                      self.area_names, self.bus_area_indices,
+                                                      self.hvdc_F, self.hvdc_T)
+            else:
+                index = []
+                data = np.zeros((0, len(columns)))
 
             return ResultsTable(data=data,
                                 index=index,
@@ -336,17 +373,21 @@ class ContinuationPowerFlowResults(ResultsTemplate):
                                 units='(MW)')
 
         elif result_type == ResultTypes.ActivePowerFlowPerArea:
-            index = [a + '->' for a in self.area_names]
+
             columns = ['->' + a for a in self.area_names]
+            if self.Sf.shape[0] > 0:
+                index = [a + '->' for a in self.area_names]
+                data = self.get_branch_values_per_area(np.abs(self.Sf.real[-1, :]),
+                                                       self.area_names, self.bus_area_indices,
+                                                       self.F, self.T)
 
-            data = self.get_branch_values_per_area(np.abs(self.Sf.real[-1, :]),
-                                                   self.area_names, self.bus_area_indices,
-                                                   self.F, self.T)
-
-            hvdc_Pf = np.zeros(len(self.hvdc_T))
-            data += self.get_hvdc_values_per_area(np.abs(hvdc_Pf),
-                                                  self.area_names, self.bus_area_indices,
-                                                  self.hvdc_F, self.hvdc_T)
+                hvdc_Pf = np.zeros(len(self.hvdc_T))
+                data += self.get_hvdc_values_per_area(np.abs(hvdc_Pf),
+                                                      self.area_names, self.bus_area_indices,
+                                                      self.hvdc_F, self.hvdc_T)
+            else:
+                index = []
+                data = np.zeros((0, len(columns)))
 
             return ResultsTable(data=data,
                                 index=index,

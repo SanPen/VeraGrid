@@ -17,19 +17,28 @@ from VeraGridEngine.Devices import *
 from VeraGridEngine.DataStructures import *
 from VeraGridEngine.Topology import *
 from VeraGridEngine.Compilers import *
-from VeraGridEngine.IO.file_handler import FileOpen, FileSave, FileSavingOptions
+from VeraGridEngine.Templates import *
+from VeraGridEngine.IO.file_open import FileOpen, FileOpenOptions
+from VeraGridEngine.IO.file_save import FileSave, FileSavingOptions, save_veragrid_multiverse
 from VeraGridEngine.IO.veragrid.remote import (gather_model_as_jsons_for_communication, RemoteInstruction,
                                                SimulationTypes, send_json_data, get_certificate_path, get_certificate)
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at, NumericalCircuit
 
 
-def open_file(filename: Union[str, List[str]]) -> MultiCircuit:
+def open_file(filename: Union[str, List[str]],
+              options: FileOpenOptions | None = None) -> MultiCircuit:
     """
     Open file
     :param filename: name of the file (.veragrid, .ejson, .m, .xml, .zip, etc.) or list of files (.xml, .zip)
+    :param options: FileOpenOptions instance (optional)
     :return: MultiCircuit instance
     """
-    return FileOpen(file_name=filename).open()
+    drv = FileOpen(file_name=filename, options=options)
+    drv.open()
+    if drv.circuit is None:
+        drv.logger.print("Error")
+        raise Exception("File open error")
+    return drv.circuit
 
 
 def save_file(grid: MultiCircuit, filename: str, drivers_to_save: List[DriverToSave] | None = None):
@@ -37,7 +46,7 @@ def save_file(grid: MultiCircuit, filename: str, drivers_to_save: List[DriverToS
     Save file
     :param grid: MultiCircuit instance
     :param filename: name of the file (.veragrid, .ejson)
-    :param drivers_to_save: List of drivers to save, this structures can be obtained from driver.get_save_data()
+    :param drivers_to_save: List of drivers to save, this structure can be obtained from driver.get_save_data()
     """
     FileSave(
         circuit=grid,
@@ -46,6 +55,35 @@ def save_file(grid: MultiCircuit, filename: str, drivers_to_save: List[DriverToS
             sessions_data=list() if drivers_to_save is None else drivers_to_save,
         ),
     ).save()
+
+
+def save_multiverse(mv: MultiVerse, filename: str):
+    """
+    Save file
+    :param mv: MultiVerse instance
+    :param filename: name of the file (.veragrid)
+    """
+    save_veragrid_multiverse(
+        file_name=filename,
+        options=FileSavingOptions(),
+        multiverse=mv
+    )
+
+
+def open_cgmes(filenames: Union[str, List[str]], cgmes_version=CGMESVersions.v2_4_15) -> MultiCircuit | None:
+    """
+    Open CGMES files
+    :param filenames: name of the file (.xml, .zip) or list of files (.xml, .zip)
+    :param cgmes_version: CGMES version
+    :return: MultiCircuit instance
+    """
+    return FileOpen(
+        file_name=filenames,
+        options=FileOpenOptions(
+            cgmes_version=cgmes_version,
+            file_type=FileType.CGMES
+        )
+    ).open()
 
 
 def save_cgmes_file(grid: MultiCircuit,
@@ -66,7 +104,7 @@ def save_cgmes_file(grid: MultiCircuit,
     logger = Logger()
 
     # define the export options
-    options = FileSavingOptions()
+    options = FileSavingOptions(file_type=FileType.CGMES)
     options.cgmes_one_file_per_profile = False
     options.cgmes_profiles = [CgmesProfileType.EQ,
                               CgmesProfileType.OP,
@@ -90,7 +128,7 @@ def save_cgmes_file(grid: MultiCircuit,
 
     # save in CGMES format
     handler = FileSave(circuit=grid, file_name=filename, options=options)
-    logger += handler.save_cgmes()
+    logger += handler.save()
 
     return logger
 
@@ -140,7 +178,7 @@ def power_flow_ts(grid: MultiCircuit,
                   time_indices: Union[IntVec, None] = None,
                   clustering_results: Union[ClusteringResults, None] = None,
                   auto_expand: bool = True,
-                  engine=EngineType.VeraGrid) -> PowerFlowResults:
+                  engine=EngineType.VeraGrid) -> PowerFlowTimeSeriesResults:
     """
     Run power flow on the time series
     :param grid: MultiCircuit instance
@@ -230,7 +268,7 @@ def short_circuit(grid: MultiCircuit,
 
     sc_options = ShortCircuitOptions()
 
-    grid.add_short_circuit_definition(
+    grid.add_short_circuit_event(
         ShortCircuitEvent(
             device=grid.buses[fault_index],
             fault_type=fault_type,
@@ -267,31 +305,35 @@ def continuation_power_flow(grid: MultiCircuit,
     :return: Short circuit results
     """
     if pf_results is None:
-        pf_results = power_flow(grid=grid,
-                                options=pf_options)
+        pf_results2 = power_flow(grid=grid,
+                                 options=pf_options)
+    else:
+        pf_results2 = pf_results
 
     # declare the CPF options
     if options is None:
-        options = ContinuationPowerFlowOptions(step=0.001,
-                                               approximation_order=CpfParametrization.ArcLength,
-                                               adapt_step=True,
-                                               step_min=0.00001,
-                                               step_max=0.2,
-                                               error_tol=1e-3,
-                                               tol=1e-6,
-                                               max_it=20,
-                                               stop_at=stop_at,
-                                               verbose=False)
+        options2 = ContinuationPowerFlowOptions(step=0.001,
+                                                approximation_order=CpfParametrization.ArcLength,
+                                                adapt_step=True,
+                                                step_min=0.00001,
+                                                step_max=0.2,
+                                                error_tol=1e-3,
+                                                tol=1e-6,
+                                                max_it=20,
+                                                stop_at=stop_at,
+                                                verbose=False)
+    else:
+        options2 = options
 
     # We compose the target direction
-    base_power = pf_results.Sbus / grid.Sbase
+    base_power = pf_results2.Sbus / grid.Sbase
     vc_inputs = ContinuationPowerFlowInput(Sbase=base_power,
-                                           Vbase=pf_results.voltage,
+                                           Vbase=pf_results2.voltage,
                                            Starget=base_power * factor)
 
     # declare the CPF driver and run
     vc = ContinuationPowerFlowDriver(grid=grid,
-                                     options=options,
+                                     options=options2,
                                      inputs=vc_inputs,
                                      pf_options=pf_options)
     vc.run()
@@ -354,7 +396,7 @@ def simple_opf(grid: MultiCircuit,
 def balanced_pf(grid: MultiCircuit,
                 options: PowerFlowOptions = None,
                 opf_options: OptimalPowerFlowOptions = None,
-                engine=EngineType.VeraGrid) -> OptimalPowerFlowResults:
+                engine=EngineType.VeraGrid) -> PowerFlowResults:
     """
     Run Linear Optimal Power Flow
     :param engine:
@@ -452,8 +494,6 @@ def contingencies_ts(circuit: MultiCircuit,
 
     # declare the contingency analysis options
     options_contingencies = ContingencyAnalysisOptions(
-        use_provided_flows=False,
-        Pf=None,
         pf_options=PowerFlowOptions(SolverType.Linear),
         lin_options=LinearAnalysisOptions(),
         use_srap=use_srap,

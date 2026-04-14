@@ -6,19 +6,14 @@
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.identified_object import IdentifiedObject
 from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
-
+from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
 class LimitSet(IdentifiedObject):
+	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
+		CgmesProperty(property_name='isPercentageLimits', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Tells if the limit values are in percentage of normalValue or the specified Unit for Measurements and Controls.''', profiles=[]),
+	)
+	__slots__ = ('isPercentageLimits',)
 	def __init__(self, rdfid='', tpe='LimitSet'):
 		IdentifiedObject.__init__(self, rdfid, tpe)
 
 		self.isPercentageLimits: bool = None
-
-		self.register_property(
-			name='isPercentageLimits',
-			class_type=bool,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''Tells if the limit values are in percentage of normalValue or the specified Unit for Measurements and Controls.''',
-			profiles=[]
-		)

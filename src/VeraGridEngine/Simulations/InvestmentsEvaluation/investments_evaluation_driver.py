@@ -21,6 +21,11 @@ from VeraGridEngine.basic_structures import IntVec, Vec
 
 
 class InvestmentsEvaluationDriver(DriverTemplate):
+    __slots__ = (
+        "options",
+        "problem",
+    )
+
     name = 'Investments evaluation'
     tpe = SimulationTypes.InvestmentsEvaluation_run
 

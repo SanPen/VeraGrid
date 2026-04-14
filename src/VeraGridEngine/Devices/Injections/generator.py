@@ -6,64 +6,165 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
-from typing import Union
+from typing import Union, Tuple
 from matplotlib import pyplot as plt
-from VeraGridEngine.basic_structures import Logger
+
+from VeraGridEngine.basic_structures import Logger, CxVec
+from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import DeviceType, BuildStatus, SubObjectType
 from VeraGridEngine.Devices.Associations.association import Associations
-from VeraGridEngine.Devices.Parents.generator_parent import GeneratorParent
 from VeraGridEngine.Devices.Injections.generator_q_curve import GeneratorQCurve
-from VeraGridEngine.Devices.profile import Profile
-from VeraGridEngine.Utils.Symbolic.block import Block, Var, Const, VarPowerFlowRefferenceType
-from VeraGridEngine.Utils.Symbolic.symbolic import cos, sin, real, imag, conj, angle, exp, log, abs, UndefinedConst
-from VeraGridEngine.Devices.Parents.editable_device import get_at
+from VeraGridEngine.Devices.Profiles import ProfileBool, ProfileFloat
+from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
+from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
 
 
-class Generator(GeneratorParent):
+def compute_q(p: float, pf: float) -> float:
+    """
+    Compute the reactive power from p and the power factor
+    :param p: Active power
+    :param pf: power factor
+    :return: Reactive power
+    """
+    sign = 1.0 if pf >= 0.0 else -1.0
+    if -1.0 <= pf <= 1.0:
+        return sign * p * np.sqrt(1.0 / (pf * pf) - 1.0)
+    else:
+        return sign * p
+
+
+def compute_pf(p: float, q: float) -> float:
+    """
+    Compute the power factor from p and q
+    :param p: Active power
+    :param q: Reactive power
+    :return: Power factor
+    """
+    s = np.sqrt(p * p + q * q)
+    sign = 1.0 if q >= 0.0 else -1.0
+    if s > 0:
+        return sign * p / s
+    else:
+        return sign
+
+
+class Generator(InjectionParent):
     __slots__ = (
-        'enabled_dispatch',
-        '_enabled_dispatch_prof',
-        'R1', 'X1', 'R0', 'X0', 'R2', 'X2',
-        'Pf',
-        '_Pf_prof',
-        'is_controlled',
-        '_Snom',
-        'Vset',
-        '_Vset_prof',
-        'use_reactive_power_curve',
-        'qmin_set',
-        'qmax_set',
-        'q_curve',
-        'custom_q_points',
-        'Cost2',
-        'Cost0',
-        'StartupCost',
-        'ShutdownCost',
-        'MinTimeUp',
-        'MinTimeDown',
-        'RampUp',
-        'RampDown',
+        'control_bus',
+        'control_cn',
+        '_P',
+        '_P_prof',
+        '_Pmax',
+        '_Pmax_prof',
+        '_Pmin',
+        '_Pmin_prof',
+        '_Q',
+        '_Q_prof',
         '_Qmin_prof',
         '_Qmax_prof',
+        'qmin_set',
+        'qmax_set',
+        '_srap_enabled',
+        '_srap_enabled_prof',
+        '_enabled_dispatch',
+        '_enabled_dispatch_prof',
+        '_R1',
+        '_X1',
+        '_R0',
+        '_X0',
+        '_R2',
+        '_X2',
+        '_Pf',
+        '_Pf_prof',
+        '_is_controlled',
+        '_Snom',
+        '_Vset',
+        '_Vset_prof',
+        '_use_reactive_power_curve',
+        'q_curve',
+        'custom_q_points',
+        '_Cost2',
+        '_Cost0',
+        '_StartupCost',
+        '_ShutdownCost',
+        '_MinTimeUp',
+        '_MinTimeDown',
+        '_RampUp',
+        '_RampDown',
         '_Cost2_prof',
         '_Cost0_prof',
         'emissions',
         'fuels',
         'Sbase',
         'freq',
-        'M',
-        'D',
-        'tm0',
-        'omega_ref',
-        'vf',
-        'Kp',
-        'Ki',
-        'Kw',
-        'init_params',
-        'P_g',
-        'Q_g',
-        'must_run',
-        '_must_run_prof'
+        '_must_run',
+        '_must_run_prof',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+
+        GCProp(key='P', units='MW', tpe=float, definition='Active power', profile_name='P_prof'),
+        GCProp(key='Pmin', units='MW', tpe=float, definition='Minimum active power. Used in OPF.',
+               profile_name='Pmin_prof'),
+        GCProp(key='Pmax', units='MW', tpe=float, definition='Maximum active power. Used in OPF.',
+               profile_name='Pmax_prof'),
+        GCProp(key='Q', units='MVAr', tpe=float, definition='Reactive power', profile_name='Q_prof'),
+        GCProp(key='Qmin', units='MVAr', tpe=float, definition='Minimum reactive power.',
+               profile_name='Qmin_prof'),
+        GCProp(key='Qmax', units='MVAr', tpe=float, definition='Maximum reactive power.',
+               profile_name='Qmax_prof'),
+        GCProp(key='is_controlled', units='', tpe=bool, definition='Is this generator voltage-controlled?'),
+        GCProp(key='control_bus', units='', tpe=DeviceType.BusDevice, definition='Control bus',
+               editable=True),
+        GCProp(key='Pf', units='', tpe=float,
+               definition='Power factor (cos(phi)). This is used for non-controlled generators.',
+               profile_name='Pf_prof'),
+        GCProp(key='Vset', units='p.u.', tpe=float,
+               definition='Set voltage. This is used for controlled generators.', profile_name='Vset_prof'),
+        GCProp(key='Snom', units='MVA', tpe=float, definition='Nominal power.'),
+
+        GCProp(key='use_reactive_power_curve', units='', tpe=bool,
+               definition='Use the reactive power capability curve?'),
+        GCProp(key='q_curve', units='MVAr', tpe=SubObjectType.GeneratorQCurve,
+               definition='Capability curve data (double click on the generator to edit)',
+               editable=False, display=False),
+        GCProp(key='R1', units='p.u.', tpe=float, definition='Total positive sequence resistance.'),
+        GCProp(key='X1', units='p.u.', tpe=float, definition='Total positive sequence reactance.'),
+        GCProp(key='R0', units='p.u.', tpe=float, definition='Total zero sequence resistance.'),
+        GCProp(key='X0', units='p.u.', tpe=float, definition='Total zero sequence reactance.'),
+        GCProp(key='R2', units='p.u.', tpe=float, definition='Total negative sequence resistance.'),
+        GCProp(key='X2', units='p.u.', tpe=float, definition='Total negative sequence reactance.'),
+        GCProp(key='Cost2', units='e/MW²/h', tpe=float, definition='Generation quadratic cost. Used in OPF.',
+               profile_name='Cost2_prof'),
+        GCProp(key='Cost0', units='e/h', tpe=float, definition='Generation constant cost. Used in OPF.',
+               profile_name='Cost0_prof'),
+        GCProp(key='startup_cost', units='e/h', tpe=float, definition='Generation start-up cost. Used in OPF.',
+               old_names=["StartupCost"]),
+        GCProp(key='shutdown_cost', units='e/h', tpe=float, definition='Generation shut-down cost. Used in OPF.',
+               old_names=["ShutdownCost"]),
+        GCProp(key='min_time_up', units='h', tpe=float,
+               definition='Minimum time that the generator has to be on when started. Used in OPF.',
+               old_names=["MinTimeUp"]),
+        GCProp(key='min_time_down', units='h', tpe=float,
+               definition='Minimum time that the generator has to be off when shut down. Used in OPF.',
+               old_names=["MinTimeDown"]),
+        GCProp(key='ramp_up', units='MW/h', tpe=float,
+               definition='Maximum amount of generation increase per hour.',
+               old_names=["RampUp"]),
+        GCProp(key='ramp_down', units='MW/h', tpe=float,
+               definition='Maximum amount of generation decrease per hour.',
+               old_names=["RampDown"]),
+        GCProp(key='enabled_dispatch', units='', tpe=bool, profile_name="enabled_dispatch_prof",
+               definition='Enabled for dispatch? Used in OPF.'),
+        GCProp(key='must_run', units='', tpe=bool, profile_name="must_run_prof",
+               definition='P >= Pmin constraint. Used in OPF with unit commitment active.'),
+        GCProp(key='emissions', units='t/MWh', tpe=SubObjectType.Associations,
+               definition='List of emissions', display=False),
+        GCProp(key='fuels', units='t/MWh', tpe=SubObjectType.Associations,
+               definition='List of fuels', display=False),
+        GCProp(key='srap_enabled', units='', tpe=bool,
+               definition='Is the unit available for SRAP participation?',
+               editable=True, profile_name="srap_enabled_prof"),
     )
 
     def __init__(self,
@@ -71,6 +172,7 @@ class Generator(GeneratorParent):
                  idtag: Union[str, None] = None,
                  code: str = '',
                  P: float = 0.0,
+                 Q: float = 0.0,
                  power_factor: float = 0.8,
                  vset: float = 1.0,
                  is_controlled=True,
@@ -96,19 +198,17 @@ class Generator(GeneratorParent):
                  r2: float = 1e-20,
                  x2: float = 1e-20,
                  freq=60.0,
-                 tm0=0.0750281479189543,
-                 M=1.0 / 100.0 * 900.0,  # from Machine to System base
-                 D=4.0 / 100.0 * 900.0,  # from Machine to System base
-                 omega_ref=1.0,
-                 vf=0.9967798127873505,
-                 Kp=0.0,
-                 Ki=0.0,
                  capex: float = 0,
                  opex: float = 0,
                  srap_enabled: bool = True,
-                 init_params: dict[str, float] = {"tm0": 0.0, "vf0": 0.0},  ###
                  build_status: BuildStatus = BuildStatus.Commissioned,
-                 must_run: bool = False):
+                 must_run: bool = False,
+                 startup_cost=0.0,
+                 shutdown_cost=0.0,
+                 min_time_up=0.0,
+                 min_time_down=0.0,
+                 ramp_up=1e20,
+                 ramp_down=1e20):
         """
 
         :param name: Name of the generator
@@ -140,45 +240,56 @@ class Generator(GeneratorParent):
         :param r2:
         :param x2:
         :param freq:
-        :param tm0:
-        :param M:
-        :param D:
-        :param omega_ref:
-        :param vf:
-        :param Kp:
-        :param Ki:
         :param capex:
         :param opex:
         :param srap_enabled:
-        :param init_params:
         :param build_status:
         :param must_run:
         """
-        GeneratorParent.__init__(self,
+        InjectionParent.__init__(self,
                                  name=name,
                                  idtag=idtag,
                                  code=code,
                                  bus=None,
-                                 control_bus=None,
                                  active=active,
-                                 P=P,
-                                 Pmin=Pmin,
-                                 Pmax=Pmax,
                                  Cost=Cost,
                                  mttf=mttf,
                                  mttr=mttr,
                                  capex=capex,
                                  opex=opex,
-                                 srap_enabled=srap_enabled,
                                  build_status=build_status,
                                  device_type=DeviceType.GeneratorDevice)
 
+        self.control_bus: Bus | None = None
+        self.control_cn = None
+
+        self._P = float(P)
+        self._P_prof = ProfileFloat(default_value=self.P)
+
+        self.Pmax = float(Pmax)
+        self._Pmax_prof = ProfileFloat(default_value=self.Pmax)
+
+        self.Pmin = float(Pmin)
+        self._Pmin_prof = ProfileFloat(default_value=self.Pmin)
+
+        self._Q = float(Q)
+        self._Q_prof = ProfileFloat(default_value=self.Q)
+
+        self._Qmin_prof = ProfileFloat(default_value=Qmin)
+        self._Qmax_prof = ProfileFloat(default_value=Qmax)
+
+        self.qmin_set = float(Qmin)
+        self.qmax_set = float(Qmax)
+
+        self.srap_enabled = bool(srap_enabled)
+        self._srap_enabled_prof = ProfileBool(default_value=self.srap_enabled)
+
         # is the device active for active power dispatch?
         self.enabled_dispatch = bool(enabled_dispatch)
-        self._enabled_dispatch_prof = Profile(default_value=self.enabled_dispatch, data_type=bool)
+        self._enabled_dispatch_prof = ProfileBool(default_value=self.enabled_dispatch)
 
         self.must_run = bool(must_run)
-        self._must_run_prof = Profile(default_value=self.must_run, data_type=bool)
+        self._must_run_prof = ProfileBool(default_value=self.must_run)
 
         # positive sequence resistance
         self.R1 = float(r1)
@@ -199,10 +310,10 @@ class Generator(GeneratorParent):
         self.X2 = float(x2)
 
         # Power factor
-        self.Pf = float(power_factor)
+        self._Pf = float(power_factor)
 
         # voltage set profile for this load in p.u.
-        self._Pf_prof = Profile(default_value=self.Pf, data_type=float)
+        self._Pf_prof = ProfileFloat(default_value=self.Pf)
 
         # If this generator is voltage controlled it produces a PV node, otherwise the node remains as PQ
         self.is_controlled = bool(is_controlled)
@@ -214,15 +325,9 @@ class Generator(GeneratorParent):
         self.Vset = float(vset)
 
         # voltage set profile for this load in p.u.
-        self._Vset_prof = Profile(default_value=self.Vset, data_type=float)
+        self._Vset_prof = ProfileFloat(default_value=self.Vset)
 
         self.use_reactive_power_curve = bool(use_reactive_power_curve)
-
-        # minimum reactive power in MVAr
-        self.qmin_set = float(Qmin)
-
-        # Maximum reactive power in MVAr
-        self.qmax_set = float(Qmax)
 
         # declare the generation curve
         self.q_curve = GeneratorQCurve()
@@ -237,18 +342,15 @@ class Generator(GeneratorParent):
         self.Cost2 = float(Cost2)  # Cost of operation e/MW²
         self.Cost0 = float(Cost0)  # Cost of operation e
 
-        self.StartupCost = 0.0
-        self.ShutdownCost = 0.0
-        self.MinTimeUp = 0.0
-        self.MinTimeDown = 0.0
-        self.RampUp = 1e20
-        self.RampDown = 1e20
+        self.startup_cost = startup_cost
+        self.shutdown_cost = shutdown_cost
+        self.min_time_up = min_time_up
+        self.min_time_down = min_time_down
+        self.ramp_up = ramp_up
+        self.ramp_down = ramp_down
 
-        self._Qmin_prof = Profile(default_value=Qmin, data_type=float)
-        self._Qmax_prof = Profile(default_value=Qmax, data_type=float)
-
-        self._Cost2_prof = Profile(default_value=self.Cost2, data_type=float)
-        self._Cost0_prof = Profile(default_value=self.Cost0, data_type=float)
+        self._Cost2_prof = ProfileFloat(default_value=self.Cost2)
+        self._Cost0_prof = ProfileFloat(default_value=self.Cost0)
 
         self.emissions: Associations = Associations(device_type=DeviceType.EmissionGasDevice)
         self.fuels: Associations = Associations(device_type=DeviceType.FuelDevice)
@@ -257,128 +359,110 @@ class Generator(GeneratorParent):
         self.Sbase = float(Sbase)
 
         self.freq = freq
-        self.tm0 = tm0
-        self.M = M
-        self.D = D
-        self.omega_ref = omega_ref
-        self.vf = vf
-        self.Kp = Kp
-        self.Ki = Ki
-        self.init_params = init_params
-        self.P_g = Var("P_g")
-        self.Q_g = Var("Q_g")
-
-        self.register(key='is_controlled', units='', tpe=bool, definition='Is this generator voltage-controlled?')
-
-        self.register(key='Pf', units='', tpe=float,
-                      definition='Power factor (cos(phi)). This is used for non-controlled generators.',
-                      profile_name='Pf_prof')
-        self.register(key='Vset', units='p.u.', tpe=float,
-                      definition='Set voltage. This is used for controlled generators.', profile_name='Vset_prof')
-        self.register(key='Snom', units='MVA', tpe=float, definition='Nominal power.')
-        self.register(key='Qmin', units='MVAr', tpe=float, definition='Minimum reactive power.',
-                      profile_name='Qmin_prof')
-        self.register(key='Qmax', units='MVAr', tpe=float, definition='Maximum reactive power.',
-                      profile_name='Qmax_prof')
-        self.register(key='use_reactive_power_curve', units='', tpe=bool,
-                      definition='Use the reactive power capability curve?')
-        self.register(key='q_curve', units='MVAr', tpe=SubObjectType.GeneratorQCurve,
-                      definition='Capability curve data (double click on the generator to edit)',
-                      editable=False, display=False)
-
-        self.register(key='R1', units='p.u.', tpe=float, definition='Total positive sequence resistance.')
-        self.register(key='X1', units='p.u.', tpe=float, definition='Total positive sequence reactance.')
-        self.register(key='R0', units='p.u.', tpe=float, definition='Total zero sequence resistance.')
-        self.register(key='X0', units='p.u.', tpe=float, definition='Total zero sequence reactance.')
-        self.register(key='R2', units='p.u.', tpe=float, definition='Total negative sequence resistance.')
-        self.register(key='X2', units='p.u.', tpe=float, definition='Total negative sequence reactance.')
-        self.register(key='Cost2', units='e/MW²/h', tpe=float, definition='Generation quadratic cost. Used in OPF.',
-                      profile_name='Cost2_prof')
-
-        self.register(key='Cost0', units='e/h', tpe=float, definition='Generation constant cost. Used in OPF.',
-                      profile_name='Cost0_prof')
-        self.register(key='StartupCost', units='e/h', tpe=float, definition='Generation start-up cost. Used in OPF.')
-        self.register(key='ShutdownCost', units='e/h', tpe=float, definition='Generation shut-down cost. Used in OPF.')
-        self.register(key='MinTimeUp', units='h', tpe=float,
-                      definition='Minimum time that the generator has to be on when started. Used in OPF.')
-        self.register(key='MinTimeDown', units='h', tpe=float,
-                      definition='Minimum time that the generator has to be off when shut down. Used in OPF.')
-        self.register(key='RampUp', units='MW/h', tpe=float,
-                      definition='Maximum amount of generation increase per hour.')
-        self.register(key='RampDown', units='MW/h', tpe=float,
-                      definition='Maximum amount of generation decrease per hour.')
-
-        self.register(key='enabled_dispatch', units='', tpe=bool, profile_name="enabled_dispatch_prof",
-                      definition='Enabled for dispatch? Used in OPF.')
-        self.register(key='must_run', units='', tpe=bool, profile_name="must_run_prof",
-                      definition='P >= Pmin constraint. Used in OPF with unit commitment active.')
-
-        self.register(key='emissions', units='t/MWh', tpe=SubObjectType.Associations,
-                      definition='List of emissions', display=False)
-
-        self.register(key='fuels', units='t/MWh', tpe=SubObjectType.Associations,
-                      definition='List of fuels', display=False)
 
     @property
-    def Pf_prof(self) -> Profile:
+    def P(self) -> float:
+        """
+        Get the active power value
+        :return: float
+        """
+        return self._P
+
+    @P.setter
+    def P(self, val: float):
+        """
+        Set active power value
+        :param val: some float
+        """
+        val = float(val)
+        try:
+            self._P = float(val)
+        except ValueError:
+            print("The value you're trying to set into P is not a float :(")
+
+    @property
+    def P_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
         """
-        return self._Pf_prof
+        return self._P_prof
 
-    @Pf_prof.setter
-    def Pf_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
-            self._Pf_prof = val
+    @P_prof.setter
+    def P_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
+            self._P_prof = val
         elif isinstance(val, np.ndarray):
-            self._Pf_prof.set(arr=val)
+            self._P_prof.set(arr=val)
         else:
-            raise Exception(str(type(val)) + 'not supported to be set into a Pf_prof')
+            raise Exception(str(type(val)) + 'not supported to be set into a P_prof')
 
-    def get_Pf_at(self, t: int | None) -> float:
+    def get_P_at(self, t: int | None) -> float:
         """
         :param t:
         :return:
         """
-        return get_at(self.Pf, self.Pf_prof, t)
+        return get_at(self.P, self.P_prof, t)
+
+    @property
+    def Q(self) -> float:
+        """
+        Get the active power value
+        :return: float
+        """
+        return self._Q
+
+    @Q.setter
+    def Q(self, val: float):
+        """
+        Set active power value
+        :param val: some float
+        """
+        val = float(val)
+        try:
+            self._Q = float(val)
+        except ValueError:
+            print("The value you're trying to set into Q is not a float :(")
+
+    @property
+    def Q_prof(self) -> ProfileFloat:
+        """
+        Q profile
+        :return: Profile
+        """
+        return self._Q_prof
+
+    @Q_prof.setter
+    def Q_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
+            self._Q_prof = val
+        elif isinstance(val, np.ndarray):
+            self._Q_prof.set(arr=val)
+        else:
+            raise Exception(str(type(val)) + 'not supported to be set into a Q_prof')
 
     def get_Q_at(self, t: int | None) -> float:
         """
         :param t:
         :return:
         """
-        p = self.get_P_at(t)
-        pf = get_at(self.Pf, self.Pf_prof, t)
-
-        return p * np.sqrt(1.0 / (pf * pf) - 1.0)
+        return get_at(self.Q, self.Q_prof, t)
 
     @property
-    def Vset_prof(self) -> Profile:
+    def Qmin(self):
         """
-        Cost profile
-        :return: Profile
+        Return the reactive power lower limit
+        :return: value
         """
-        return self._Vset_prof
+        return self.qmin_set
 
-    @Vset_prof.setter
-    def Vset_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
-            self._Vset_prof = val
-        elif isinstance(val, np.ndarray):
-            self._Vset_prof.set(arr=val)
-        else:
-            raise Exception(str(type(val)) + 'not supported to be set into a Vset_prof')
-
-    def get_Vset_at(self, t: int | None) -> float:
-        """
-        :param t:
-        :return:
-        """
-        return get_at(self.Vset, self.Vset_prof, t)
+    @Qmin.setter
+    def Qmin(self, val):
+        val = float(val)
+        self.qmin_set = val
 
     @property
-    def Qmin_prof(self) -> Profile:
+    def Qmin_prof(self) -> ProfileFloat:
         """
         Qmin profile
         :return: Profile
@@ -386,8 +470,8 @@ class Generator(GeneratorParent):
         return self._Qmin_prof
 
     @Qmin_prof.setter
-    def Qmin_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Qmin_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Qmin_prof = val
         elif isinstance(val, np.ndarray):
             self._Qmin_prof.set(arr=val)
@@ -402,7 +486,20 @@ class Generator(GeneratorParent):
         return get_at(self.Qmin, self.Qmin_prof, t)
 
     @property
-    def Qmax_prof(self) -> Profile:
+    def Qmax(self):
+        """
+        Return the reactive power upper limit
+        :return: value
+        """
+        return self.qmax_set
+
+    @Qmax.setter
+    def Qmax(self, val):
+        val = float(val)
+        self.qmax_set = val
+
+    @property
+    def Qmax_prof(self) -> ProfileFloat:
         """
         Qmax profile
         :return: Profile
@@ -410,8 +507,8 @@ class Generator(GeneratorParent):
         return self._Qmax_prof
 
     @Qmax_prof.setter
-    def Qmax_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Qmax_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Qmax_prof = val
         elif isinstance(val, np.ndarray):
             self._Qmax_prof.set(arr=val)
@@ -426,7 +523,174 @@ class Generator(GeneratorParent):
         return get_at(self.Qmax, self.Qmax_prof, t)
 
     @property
-    def Cost2_prof(self) -> Profile:
+    def srap_enabled_prof(self) -> ProfileBool:
+        """
+        Control bus profile
+        :return: Profile
+        """
+        return self._srap_enabled_prof
+
+    @srap_enabled_prof.setter
+    def srap_enabled_prof(self, val: Union[ProfileBool, np.ndarray]):
+        if isinstance(val, ProfileBool):
+            self._srap_enabled_prof = val
+        elif isinstance(val, np.ndarray):
+            self._srap_enabled_prof.set(arr=val)
+        else:
+            raise Exception(str(type(val)) + 'not supported to be set into srap_enabled_prof')
+
+    def get_srap_enabled_at(self, t: int | None) -> float:
+        """
+        :param t:
+        :return:
+        """
+        return get_at(self.srap_enabled, self.srap_enabled_prof, t)
+
+    @property
+    def Pmax_prof(self) -> ProfileFloat:
+        """
+        Pmax profile
+        :return: Profile
+        """
+        return self._Pmax_prof
+
+    @Pmax_prof.setter
+    def Pmax_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
+            self._Pmax_prof = val
+        elif isinstance(val, np.ndarray):
+            self._Pmax_prof.set(arr=val)
+        else:
+            raise Exception(str(type(val)) + 'not supported to be set into a Pmax_prof')
+
+    def get_Pmax_at(self, t: int | None) -> float:
+        """
+        :param t:
+        :return:
+        """
+        return get_at(self.Pmax, self.Pmax_prof, t)
+
+    @property
+    def Pmin_prof(self) -> ProfileFloat:
+        """
+        Pmin profile
+        :return: Profile
+        """
+        return self._Pmin_prof
+
+    @Pmin_prof.setter
+    def Pmin_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
+            self._Pmin_prof = val
+        elif isinstance(val, np.ndarray):
+            self._Pmin_prof.set(arr=val)
+        else:
+            raise Exception(str(type(val)) + 'not supported to be set into a Pmin_prof')
+
+    def get_Pmin_at(self, t: int | None) -> float:
+        """
+        :param t:
+        :return:
+        """
+        return get_at(self.Pmin, self.Pmin_prof, t)
+
+    def get_S_with_sign(self) -> complex:
+        """
+
+        :return:
+        """
+        return complex(self.P, 0.0)
+
+    def get_Sprof_with_sign(self) -> CxVec:
+        """
+
+        :return:
+        """
+        return self.P_prof.toarray().astype(complex)
+
+    @property
+    def Pmin(self) -> float:
+        """
+        Get ``Pmin``.
+
+        :return: float
+        """
+        return self._Pmin
+
+    @Pmin.setter
+    def Pmin(self, val: float) -> None:
+        """
+        Set ``Pmin``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Pmin = float(val)
+
+    @property
+    def Pmax(self) -> float:
+        """
+        Get ``Pmax``.
+
+        :return: float
+        """
+        return self._Pmax
+
+    @Pmax.setter
+    def Pmax(self, val: float) -> None:
+        """
+        Set ``Pmax``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Pmax = float(val)
+
+    @property
+    def srap_enabled(self) -> bool:
+        """
+        Get ``srap_enabled``.
+
+        :return: bool
+        """
+        return self._srap_enabled
+
+    @srap_enabled.setter
+    def srap_enabled(self, val: bool) -> None:
+        """
+        Set ``srap_enabled``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._srap_enabled = bool(val)
+
+    @property
+    def Vset_prof(self) -> ProfileFloat:
+        """
+        Cost profile
+        :return: Profile
+        """
+        return self._Vset_prof
+
+    @Vset_prof.setter
+    def Vset_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
+            self._Vset_prof = val
+        elif isinstance(val, np.ndarray):
+            self._Vset_prof.set(arr=val)
+        else:
+            raise Exception(str(type(val)) + 'not supported to be set into a Vset_prof')
+
+    def get_Vset_at(self, t: int | None) -> float:
+        """
+        :param t:
+        :return:
+        """
+        return get_at(self.Vset, self.Vset_prof, t)
+
+    @property
+    def Cost2_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -434,8 +698,8 @@ class Generator(GeneratorParent):
         return self._Cost2_prof
 
     @Cost2_prof.setter
-    def Cost2_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Cost2_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Cost2_prof = val
         elif isinstance(val, np.ndarray):
             self._Cost2_prof.set(arr=val)
@@ -450,7 +714,7 @@ class Generator(GeneratorParent):
         return get_at(self.Cost2, self.Cost2_prof, t)
 
     @property
-    def Cost0_prof(self) -> Profile:
+    def Cost0_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -458,8 +722,8 @@ class Generator(GeneratorParent):
         return self._Cost0_prof
 
     @Cost0_prof.setter
-    def Cost0_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Cost0_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Cost0_prof = val
         elif isinstance(val, np.ndarray):
             self._Cost0_prof.set(arr=val)
@@ -474,7 +738,7 @@ class Generator(GeneratorParent):
         return get_at(self.Cost0, self.Cost0_prof, t)
 
     @property
-    def enabled_dispatch_prof(self) -> Profile:
+    def enabled_dispatch_prof(self) -> ProfileBool:
         """
         Cost profile
         :return: Profile
@@ -482,8 +746,8 @@ class Generator(GeneratorParent):
         return self._enabled_dispatch_prof
 
     @enabled_dispatch_prof.setter
-    def enabled_dispatch_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def enabled_dispatch_prof(self, val: Union[ProfileBool, np.ndarray]):
+        if isinstance(val, ProfileBool):
             self._enabled_dispatch_prof = val
         elif isinstance(val, np.ndarray):
             self._enabled_dispatch_prof.set(arr=val)
@@ -498,7 +762,7 @@ class Generator(GeneratorParent):
         return get_at(self.enabled_dispatch, self.enabled_dispatch_prof, t)
 
     @property
-    def must_run_prof(self) -> Profile:
+    def must_run_prof(self) -> ProfileBool:
         """
         Cost profile
         :return: Profile
@@ -506,8 +770,8 @@ class Generator(GeneratorParent):
         return self._must_run_prof
 
     @must_run_prof.setter
-    def must_run_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def must_run_prof(self, val: Union[ProfileBool, np.ndarray]):
+        if isinstance(val, ProfileBool):
             self._must_run_prof = val
         elif isinstance(val, np.ndarray):
             self._must_run_prof.set(arr=val)
@@ -577,30 +841,6 @@ class Generator(GeneratorParent):
         return errors
 
     @property
-    def Qmax(self):
-        """
-        Return the reactive power upper limit
-        :return: value
-        """
-        return self.qmax_set
-
-    @Qmax.setter
-    def Qmax(self, val):
-        self.qmax_set = val
-
-    @property
-    def Qmin(self):
-        """
-        Return the reactive power lower limit
-        :return: value
-        """
-        return self.qmin_set
-
-    @Qmin.setter
-    def Qmin(self, val):
-        self.qmin_set = val
-
-    @property
     def Snom(self):
         """
         Return the reactive power lower limit
@@ -615,6 +855,7 @@ class Generator(GeneratorParent):
         if the reactive power curve was generated automatically, then it is refreshed
         :param val: float value
         """
+        val = float(val)
         self._Snom = val
 
     def __iadd__(self, other: "Generator"):
@@ -632,104 +873,420 @@ class Generator(GeneratorParent):
         self.Qmax += other.Qmax
         self.Qmin += other.Qmin
 
-    def initialize_rms(self, rms_event=False):
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def is_controlled(self) -> bool:
         """
-        Initialize the RMS model
+        Get ``is_controlled``.
+
+        :return: bool
         """
+        return self._is_controlled
 
+    @is_controlled.setter
+    def is_controlled(self, val: bool) -> None:
+        """
+        Set ``is_controlled``.
 
-        empty = self.rms_model.empty()
-        if self.rms_model.empty():
-            empty = True
-            delta = Var("delta")
-            omega = Var("omega")
-            psid = Var("psid")
-            psiq = Var("psiq")
-            i_d = Var("i_d")
-            i_q = Var("i_q")
-            v_d = Var("v_d")
-            v_q = Var("v_q")
-            te = Var("te")
-            et = Var("et")
-            tm = Var("tm")
-            P_g = Var("P_g", pf_ref=VarPowerFlowRefferenceType.P)
-            Q_g = Var("Q_g", pf_ref=VarPowerFlowRefferenceType.Q)
+        :param val: Value to assign.
+        :return: None
+        """
+        self._is_controlled = bool(val)
 
-            R1 = Var("R1")
-            X1 = Var("X1")
-            freq = Var("frequ")
-            M = Var("M")
-            D = Var("D")
-            omega_ref = Var("omega_ref")
-            Kp = Var("Kp")
-            Ki = Var("Ki")
+    @property
+    def Pf(self) -> float:
+        """
+        Get ``Pf``.
 
-            vf = UndefinedConst()
-            tm0 = UndefinedConst()
+        :return: float
+        """
+        return self._Pf
 
-            Vm = self.bus.rms_model.model.E(VarPowerFlowRefferenceType.Vm)
-            Va = self.bus.rms_model.model.E(VarPowerFlowRefferenceType.Va)
+    @Pf.setter
+    def Pf(self, val: float) -> None:
+        """
+        Set ``Pf``.
 
-            block = Block(
-                state_vars=[delta, omega],
-                state_eqs=[
-                    (2 * np.pi * freq) * (omega - omega_ref),
-                    (tm - te - D * (omega - omega_ref)) / M,
-                ],
-                algebraic_vars=[P_g, Q_g, v_d, v_q, i_d, i_q, psid, psiq,
-                                te, tm, et],
-                algebraic_eqs=[
-                    psid - (R1 * i_q + v_q),
-                    psiq + (R1 * i_d + v_d),
-                    0 - (psid + X1 * i_d - vf),
-                    0 - (psiq + X1 * i_q),
-                    v_d - (Vm * sin(delta - Va)),
-                    v_q - (Vm * cos(delta - Va)),
-                    te - (psid * i_q - psiq * i_d),
-                    P_g - (v_d * i_d + v_q * i_q),
-                    Q_g - (v_q * i_d - v_d * i_q),
-                    tm - (self.tm0 + Kp * (omega - omega_ref) + Ki * et),
-                    2 * np.pi * freq * et - delta,
-                ],
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Pf = float(val)
 
-                init_eqs={
-                    delta: imag(
-                        log((Vm * exp(1j * Va) + (R1 + 1j * X1) * (
-                            conj((P_g + 1j * Q_g) / (Vm * exp(1j * Va))))) / (
-                                abs(Vm * exp(1j * Va) + (R1 + 1j * X1) * (
-                                    conj((P_g + 1j * Q_g) / (Vm * exp(1j * Va)))))))),
-                    omega: omega_ref,
-                    v_d: real((Vm * exp(1j * Va)) * exp(-1j * (delta - np.pi / 2))),
-                    v_q: imag((Vm * exp(1j * Va)) * exp(-1j * (delta - np.pi / 2))),
-                    i_d: real(
-                        conj((P_g + 1j * Q_g) / (Vm * exp(1j * Va))) * exp(
-                            -1j * (delta - np.pi / 2))),
-                    i_q: imag(
-                        conj((P_g + 1j * Q_g) / (Vm * exp(1j * Va))) * exp(
-                            -1j * (delta - np.pi / 2))),
-                    psid: R1 * i_q + v_q,
-                    psiq: -R1 * i_d - v_d,
-                    te: psid * i_q - psiq * i_d,
-                    tm: te,
-                    et: Const(0),
-                })
+        if self.auto_update_enabled:
+            self.Q = compute_q(p=self.P, pf=self._Pf)
 
-            block.fix_vars = [tm0, vf]
-            block.fix_vars_eqs = {tm0.uid: tm,
-                                  vf.uid: psid + X1 * i_d}
+    @property
+    def Pf_prof(self) -> ProfileFloat:
+        """
+        Cost profile
+        :return: Profile
+        """
+        return self._Pf_prof
 
-            block.external_mapping = {
-                VarPowerFlowRefferenceType.P: P_g,
-                VarPowerFlowRefferenceType.Q: Q_g
-            }
+    @Pf_prof.setter
+    def Pf_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
+            self._Pf_prof = val
+        elif isinstance(val, np.ndarray):
+            self._Pf_prof.set(arr=val)
+        else:
+            raise Exception(str(type(val)) + 'not supported to be set into a Pf_prof')
 
-            block.event_dict = {R1: Const(self.R1),
-                                X1: Const(self.X1),
-                                freq: Const(self.freq),
-                                M: Const(self.M),
-                                D: Const(self.D),
-                                omega_ref: Const(self.omega_ref),
-                                Kp: Const(self.Kp),
-                                Ki: Const(self.Ki)}
+    def get_Pf_at(self, t: int | None) -> float:
+        """
+        :param t:
+        :return:
+        """
+        return get_at(self.Pf, self.Pf_prof, t)
 
-            self.rms_model.model = block
+    @property
+    def Vset(self) -> float:
+        """
+        Get ``Vset``.
+
+        :return: float
+        """
+        return self._Vset
+
+    @Vset.setter
+    def Vset(self, val: float) -> None:
+        """
+        Set ``Vset``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Vset = float(val)
+
+    @property
+    def use_reactive_power_curve(self) -> bool:
+        """
+        Get ``use_reactive_power_curve``.
+
+        :return: bool
+        """
+        return self._use_reactive_power_curve
+
+    @use_reactive_power_curve.setter
+    def use_reactive_power_curve(self, val: bool) -> None:
+        """
+        Set ``use_reactive_power_curve``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._use_reactive_power_curve = bool(val)
+
+    @property
+    def R1(self) -> float:
+        """
+        Get ``R1``.
+
+        :return: float
+        """
+        return self._R1
+
+    @R1.setter
+    def R1(self, val: float) -> None:
+        """
+        Set ``R1``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._R1 = float(val)
+
+    @property
+    def X1(self) -> float:
+        """
+        Get ``X1``.
+
+        :return: float
+        """
+        return self._X1
+
+    @X1.setter
+    def X1(self, val: float) -> None:
+        """
+        Set ``X1``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._X1 = float(val)
+
+    @property
+    def R0(self) -> float:
+        """
+        Get ``R0``.
+
+        :return: float
+        """
+        return self._R0
+
+    @R0.setter
+    def R0(self, val: float) -> None:
+        """
+        Set ``R0``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._R0 = float(val)
+
+    @property
+    def X0(self) -> float:
+        """
+        Get ``X0``.
+
+        :return: float
+        """
+        return self._X0
+
+    @X0.setter
+    def X0(self, val: float) -> None:
+        """
+        Set ``X0``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._X0 = float(val)
+
+    @property
+    def R2(self) -> float:
+        """
+        Get ``R2``.
+
+        :return: float
+        """
+        return self._R2
+
+    @R2.setter
+    def R2(self, val: float) -> None:
+        """
+        Set ``R2``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._R2 = float(val)
+
+    @property
+    def X2(self) -> float:
+        """
+        Get ``X2``.
+
+        :return: float
+        """
+        return self._X2
+
+    @X2.setter
+    def X2(self, val: float) -> None:
+        """
+        Set ``X2``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._X2 = float(val)
+
+    @property
+    def Cost2(self) -> float:
+        """
+        Get ``Cost2``.
+
+        :return: float
+        """
+        return self._Cost2
+
+    @Cost2.setter
+    def Cost2(self, val: float) -> None:
+        """
+        Set ``Cost2``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Cost2 = float(val)
+
+    @property
+    def Cost0(self) -> float:
+        """
+        Get ``Cost0``.
+
+        :return: float
+        """
+        return self._Cost0
+
+    @Cost0.setter
+    def Cost0(self, val: float) -> None:
+        """
+        Set ``Cost0``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Cost0 = float(val)
+
+    @property
+    def startup_cost(self) -> float:
+        """
+        Get ``StartupCost``.
+
+        :return: float
+        """
+        return self._StartupCost
+
+    @startup_cost.setter
+    def startup_cost(self, val: float) -> None:
+        """
+        Set ``StartupCost``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._StartupCost = float(val)
+
+    @property
+    def shutdown_cost(self) -> float:
+        """
+        Get ``ShutdownCost``.
+
+        :return: float
+        """
+        return self._ShutdownCost
+
+    @shutdown_cost.setter
+    def shutdown_cost(self, val: float) -> None:
+        """
+        Set ``ShutdownCost``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._ShutdownCost = float(val)
+
+    @property
+    def min_time_up(self) -> float:
+        """
+        Get ``MinTimeUp``.
+
+        :return: float
+        """
+        return self._MinTimeUp
+
+    @min_time_up.setter
+    def min_time_up(self, val: float) -> None:
+        """
+        Set ``MinTimeUp``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._MinTimeUp = float(val)
+
+    @property
+    def min_time_down(self) -> float:
+        """
+        Get ``MinTimeDown``.
+
+        :return: float
+        """
+        return self._MinTimeDown
+
+    @min_time_down.setter
+    def min_time_down(self, val: float) -> None:
+        """
+        Set ``MinTimeDown``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._MinTimeDown = float(val)
+
+    @property
+    def ramp_up(self) -> float:
+        """
+        Get ``RampUp``.
+
+        :return: float
+        """
+        return self._RampUp
+
+    @ramp_up.setter
+    def ramp_up(self, val: float) -> None:
+        """
+        Set ``RampUp``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._RampUp = float(val)
+
+    @property
+    def ramp_down(self) -> float:
+        """
+        Get ``RampDown``.
+
+        :return: float
+        """
+        return self._RampDown
+
+    @ramp_down.setter
+    def ramp_down(self, val: float) -> None:
+        """
+        Set ``RampDown``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._RampDown = float(val)
+
+    @property
+    def enabled_dispatch(self) -> bool:
+        """
+        Get ``enabled_dispatch``.
+
+        :return: bool
+        """
+        return self._enabled_dispatch
+
+    @enabled_dispatch.setter
+    def enabled_dispatch(self, val: bool) -> None:
+        """
+        Set ``enabled_dispatch``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._enabled_dispatch = bool(val)
+
+    @property
+    def must_run(self) -> bool:
+        """
+        Get ``must_run``.
+
+        :return: bool
+        """
+        return self._must_run
+
+    @must_run.setter
+    def must_run(self, val: bool) -> None:
+        """
+        Set ``must_run``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._must_run = bool(val)
+
+    # def initialize_rms(self, var_factory: VarFactory):
+    #     """
+    #     Initialize the RMS model
+    #     """
+    #
+    #     if self._rms_model.empty():
+    #         generator_template = get_complete_generator_template(var_factory)
+    #         self.rms_model = generator_template.block

@@ -12,6 +12,7 @@ from VeraGridEngine.Devices.Substation import *
 from VeraGridEngine.Devices.Fluid import *
 from VeraGridEngine.Devices.measurement import *
 from VeraGridEngine.Devices.Dynamic import *
+from VeraGridEngine.Devices.Events import *
 from VeraGridEngine.Templates.Rms import *
 
 INJECTION_DEVICE_TYPES = Union[
@@ -23,9 +24,9 @@ INJECTION_DEVICE_TYPES = Union[
     Shunt,
     ControllableShunt,
     CurrentInjection,
-    FluidP2x,
-    FluidTurbine,
-    FluidPump
+    # FluidP2x,
+    # FluidTurbine,
+    # FluidPump
 ]
 
 BRANCH_TYPES = Union[
@@ -91,6 +92,7 @@ ALL_DEV_TYPES = Union[
         # MEASUREMENT_TYPES,
     AREA_TYPES,
     Transformer3W,
+    TransformerNW,
     OverheadLineType,
     Wire,
     Area,
@@ -110,14 +112,32 @@ ALL_DEV_TYPES = Union[
     RemedialAction,
     RemedialActionGroup,
     Technology,
+    Owner,
     UndergroundLineType,
     SequenceLineType,
-    RmsModelTemplate
+    RmsModelTemplate,
+    EmtModelTemplate,
+    FmuTemplate,
+    RmsEvent,
+    RmsEventsGroup,
+    ShortCircuitEvent,
+    IfMeasurement,
+    ItMeasurement,
+    QfMeasurement,
+    PfMeasurement,
+    QtMeasurement,
+    PtMeasurement,
+    QiMeasurement,
+    PiMeasurement,
+    VmMeasurement,
+    VaMeasurement,
+    PgMeasurement,
+    QgMeasurement,
 ]
 
 CONNECTION_TYPE = Union[Bus, None]
 
-ASSOCIATION_TYPES = Union[Fuel, Technology, EmissionGas]
+ASSOCIATION_TYPES = Union[Fuel, Technology, EmissionGas, Owner]
 
 # this is the data type of the VeraGrid Json
 VERAGRID_FILE_TYPE = Dict[str, Union[str, float, pd.DataFrame, Dict[str, Any], List[Dict[str, Any]]]]

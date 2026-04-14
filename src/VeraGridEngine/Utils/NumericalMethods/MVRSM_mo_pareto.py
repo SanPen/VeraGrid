@@ -51,6 +51,16 @@ class SurrogateModel:
     """
     SurrogateModel
     """
+    __slots__ = (
+        "n_obj",
+        "m",
+        "c",
+        "W",
+        "b",
+        "P",
+        "bounds",
+        "scratch",
+    )
 
     def __init__(self, n_obj: int, m: int, c: Mat, W: Mat, b: Vec, reg: float, bounds: List[Tuple[float, float]]):
         """

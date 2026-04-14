@@ -49,10 +49,12 @@ from VeraGridEngine.Simulations.NodalCapacity.nodal_capacity_ts_driver import (N
 from VeraGridEngine.Simulations.Reliability.reliability_driver import ReliabilityStudyDriver, ReliabilityResults
 from VeraGridEngine.Simulations.StateEstimation.state_stimation_driver import (StateEstimationDriver,
                                                                                StateEstimationResults)
-from VeraGridEngine.Simulations.SmallSignalStability.small_signal_driver import (SmallSignalStabilityDriver,
-                                                                                 SmallSignalStabilityResults)
+from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_driver import (SmallSignalStabilityRmsDriver,
+                                                                                    SmallSignalStabilityRmsResults)
 from VeraGridEngine.Simulations.Rms.rms_driver import RmsSimulationDriver, RmsResults
+from VeraGridEngine.Simulations.EMT.emt_driver import EmtSimulationDriver, EmtResults
 from VeraGridEngine.Simulations.Topology.node_groups_driver import NodeGroupsDriver
+from VeraGridEngine.Simulations.Topology.node_groups_results import NodeGroupsResults
 from VeraGridEngine.Simulations.driver_template import DriverTemplate, DriverToSave
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.enumerations import ResultTypes, SimulationTypes
@@ -75,7 +77,7 @@ class GcThread(QThread):
         QThread.__init__(self)
 
         # assign the driver and set the driver's reporting functions
-        self.driver = driver
+        self.driver: DriverTemplate = driver
         self.driver.progress_signal = self.progress_signal
         self.driver.progress_text = self.progress_text
         self.driver.done_signal = self.done_signal
@@ -116,7 +118,7 @@ class GcThread(QThread):
         Cancel the simulation
         """
         self.__cancel__ = True
-        self.driver.__cancel__ = True
+        self.driver.cancel()
 
 
 class SimulationSession:
@@ -137,8 +139,24 @@ class SimulationSession:
         self.name: str = name
 
         # dictionary of drivers
-        self.drivers: Dict[SimulationTypes, DRIVER_OBJECTS] = dict()
+        self._drivers: Dict[SimulationTypes, DRIVER_OBJECTS] = dict()
         self.threads: Dict[SimulationTypes, GcThread] = dict()
+
+    @property
+    def drivers(self) -> Dict[SimulationTypes, DRIVER_OBJECTS]:
+        """
+        get the drivers dictionary
+        :return: Dict[SimulationTypes, DRIVER_OBJECTS]
+        """
+        return self._drivers
+
+    @drivers.setter
+    def drivers(self, value: Dict[SimulationTypes, DRIVER_OBJECTS]):
+        """
+        set the drivers
+        :param value: Dict[SimulationTypes, DRIVER_OBJECTS]
+        """
+        self._drivers: Dict[SimulationTypes, DRIVER_OBJECTS] = value
 
     def __str__(self):
         return self.name
@@ -236,7 +254,8 @@ class SimulationSession:
 
     def get_driver_results(
             self,
-            driver_type: SimulationTypes) -> Tuple[Union[None, DRIVER_OBJECTS], Union[None, RESULTS_OBJECTS]]:
+            driver_type: SimulationTypes
+    ) -> Tuple[Union[None, DRIVER_OBJECTS], Union[None, RESULTS_OBJECTS]]:
         """
         Get the results of the driver
         :param driver_type: driver type
@@ -314,7 +333,11 @@ class SimulationSession:
         for driver_type, drv in self.drivers.items():
             if study_name == drv.tpe.value or study_name == drv.name:
                 if drv.results is not None:
-                    return ResultsModel(drv.results.mdl(result_type=study_type))
+                    tbl = drv.results.mdl(result_type=study_type)
+                    if tbl is None:
+                        return None
+                    else:
+                        return ResultsModel(tbl)
                 else:
                     print('There seem to be no results :(')
                     return None
@@ -572,6 +595,15 @@ class SimulationSession:
         return drv, results
 
     @property
+    def emt_dynamic_simulation(self) -> Tuple[EmtSimulationDriver, EmtResults]:
+        """
+
+        :return:
+        """
+        drv, results = self.get_driver_results(SimulationTypes.EmtDynamic_run)
+        return drv, results
+
+    @property
     def stochastic_power_flow(self) -> Tuple[StochasticPowerFlowDriver, StochasticPowerFlowResults]:
         """
 
@@ -617,19 +649,19 @@ class SimulationSession:
         return drv, results
 
     @property
-    def node_groups_driver(self) -> Tuple[NodeGroupsDriver, None]:
+    def node_groups_driver(self) -> Tuple[NodeGroupsDriver, NodeGroupsResults | None]:
         """
 
         :return:
         """
         drv, results = self.get_driver_results(SimulationTypes.NodeGrouping_run)
-        return drv, None
+        return drv, results
 
     @property
-    def small_signal_stability_simulation(self) -> Tuple[SmallSignalStabilityDriver, SmallSignalStabilityResults]:
+    def small_signal_stability_simulation(self) -> Tuple[SmallSignalStabilityRmsDriver, SmallSignalStabilityRmsResults]:
         """
 
         :return:
         """
-        drv, results = self.get_driver_results(SimulationTypes.SmallSignal_run)
+        drv, results = self.get_driver_results(SimulationTypes.RmsSmallSignal_run)
         return drv, results

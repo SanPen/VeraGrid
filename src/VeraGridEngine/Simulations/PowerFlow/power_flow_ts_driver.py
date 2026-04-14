@@ -20,6 +20,11 @@ from VeraGridEngine.enumerations import EngineType, SimulationTypes
 
 
 class PowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
+    __slots__ = (
+        "options",
+        "opf_time_series_results",
+    )
+
     tpe = SimulationTypes.PowerFlowTimeSeries_run
     name = tpe.value
 
@@ -124,7 +129,7 @@ class PowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
             time_series_results.error_values[it] = pf_res.error
             time_series_results.converged_values[it] = pf_res.converged
 
-            if self.__cancel__:
+            if self.is_cancel():
                 return time_series_results
 
         return time_series_results
@@ -241,31 +246,60 @@ class PowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
         # self.results.area_names = [a.name for a in self.grid.areas]
         # self.convergence_reports = self.results.convergence_reports
 
-        results.voltage = res.voltage
-        results.S = res.S
-        results.Sf = res.Sf
-        results.St = res.St
-        results.loading = res.loading
-        results.losses = res.losses
-        # results.Vbranch = res.Vbranch
-        # results.If = res.If
-        # results.It = res.It
-        results.tap_module = res.tap_module
-        results.tap_angle = res.tap_angle
-        # results.F = res.F
-        # results.T = res.T
-        # results.hvdc_F = res.hvdc_F
-        # results.hvdc_T = res.hvdc_T
-        results.hvdc_Pf = res.Pf_hvdc
-        results.hvdc_Pt = res.Pt_hvdc
-        results.hvdc_loading = res.loading_hvdc
-        results.hvdc_losses = res.losses_hvdc
-        results.error_values = res.error_values
+        if time_indices is None:
+            results.voltage = res.voltage
+            results.S = res.S
+            results.Sf = res.Sf
+            results.St = res.St
+            results.loading = res.loading
+            results.losses = res.losses
+            # results.Vbranch = res.Vbranch
+            # results.If = res.If
+            # results.It = res.It
+            results.tap_module = res.tap_module
+            results.tap_angle = res.tap_angle
+            # results.F = res.F
+            # results.T = res.T
+            # results.hvdc_F = res.hvdc_F
+            # results.hvdc_T = res.hvdc_T
+            results.hvdc_Pf = res.Pf_hvdc
+            results.hvdc_Pt = res.Pt_hvdc
+            results.hvdc_loading = res.loading_hvdc
+            results.hvdc_losses = res.losses_hvdc
 
-        results.Pf_vsc = res.Pfp_vsc
-        results.St_vsc = res.St_vsc
-        results.loading_vsc = res.loading_vsc
-        results.losses_vsc = res.losses_vsc
+            results.Pf_vsc = res.Pf_vsc
+            results.St_vsc = res.St_vsc
+            results.loading_vsc = res.loading_vsc
+            results.losses_vsc = res.losses_vsc
+
+            results.error_values = res.error_values
+        else:
+            results.voltage = res.voltage[time_indices, :]
+            results.S = res.S[time_indices, :]
+            results.Sf = res.Sf[time_indices, :]
+            results.St = res.St[time_indices, :]
+            results.loading = res.loading[time_indices, :]
+            results.losses = res.losses[time_indices, :]
+            # results.Vbranch = res.Vbranch[time_indices, :]
+            # results.If = res.If[time_indices, :]
+            # results.It = res.It[time_indices, :]
+            results.tap_module = res.tap_module[time_indices, :]
+            results.tap_angle = res.tap_angle[time_indices, :]
+            # results.F = res.F
+            # results.T = res.T
+            # results.hvdc_F = res.hvdc_F
+            # results.hvdc_T = res.hvdc_T
+            results.hvdc_Pf = res.Pf_hvdc[time_indices, :]
+            results.hvdc_Pt = res.Pt_hvdc[time_indices, :]
+            results.hvdc_loading = res.loading_hvdc[time_indices, :]
+            results.hvdc_losses = res.losses_hvdc[time_indices, :]
+
+            results.Pf_vsc = res.Pf_vsc[time_indices, :]
+            results.St_vsc = res.St_vsc[time_indices, :]
+            results.loading_vsc = res.loading_vsc[time_indices, :]
+            results.losses_vsc = res.losses_vsc[time_indices, :]
+
+            results.error_values = res.error_values
 
         return results
 
@@ -295,7 +329,7 @@ class PowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
         elif self.engine == EngineType.PGM:
             self.report_text('Running Power Grid Model... ')
             self.results = pgm_pf(self.grid, self.options, logger=self.logger, time_series=True)
-            self.results.area_names = [a.name for a in self.grid.areas]
+            self.results.area_names = np.array([a.name for a in self.grid.areas], dtype=str)
 
         else:
             raise Exception('Engine not implemented for Time Series:' + self.engine.value)

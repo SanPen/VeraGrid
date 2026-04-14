@@ -7,3 +7,4 @@ from VeraGridEngine.Devices.Associations.association import Association, Associa
 from VeraGridEngine.Devices.Associations.fuel import Fuel
 from VeraGridEngine.Devices.Associations.emission_gas import EmissionGas
 from VeraGridEngine.Devices.Associations.technology import Technology
+from VeraGridEngine.Devices.Associations.owner import Owner

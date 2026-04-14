@@ -23,6 +23,11 @@ class ResultsProperty:
     """
     ResultsProperty
     """
+    __slots__ = (
+        "name",
+        "tpe",
+        "old_names",
+    )
 
     def __init__(self, name: str,
                  tpe: Union[Vec, Mat, CxVec, CxMat],
@@ -45,11 +50,33 @@ class ResultsTemplate:
     """
     ResultsTemplate
     """
+    __slots__ = (
+        "name",
+        "report_text",
+        "study_results_type",
+        "available_results",
+        "_data_variables",
+        "_time_array",
+        "_is_3ph",
+        "clustering_results",
+        "using_clusters",
+        "time_indices",
+        "sampled_probabilities",
+        "original_sample_idx",
+        "F",
+        "T",
+        "hvdc_F",
+        "hvdc_T",
+        "bus_area_indices",
+        "area_names",
+        "_ResultsTemplate__show_plot",
+    )
 
     def __init__(
             self,
             name: str,
             available_results: Union[Dict[ResultTypes, List[ResultTypes]], List[ResultTypes]],
+            # available_results: Union[Dict[ResultTypes, List[ResultTypes]], List[ResultTypes], Dict[ResultTypes, Dict[ResultTypes, List[ResultTypes]]], List[ResultTypes, Dict[ResultTypes, Dict[ResultTypes, List[ResultTypes]]]]],
             time_array: Union[DateVec, None],
             clustering_results: Union[ClusteringResults, None],
             study_results_type: StudyResultsType,
@@ -415,6 +442,31 @@ class ResultsTemplate:
         """
         pass
 
+    def _iter_instance_items(self):
+        """
+        Iterate over instance attributes stored either in slots or in __dict__.
+        """
+        seen = set()
+
+        for cls in type(self).mro():
+            cls_slots = cls.__dict__.get("__slots__", ())
+
+            if isinstance(cls_slots, str):
+                cls_slots = (cls_slots,)
+
+            for slot in cls_slots:
+                if slot in {"__dict__", "__weakref__"} or slot in seen:
+                    continue
+
+                seen.add(slot)
+
+                if hasattr(self, slot):
+                    yield slot, getattr(self, slot)
+
+        for prop, value in getattr(self, "__dict__", {}).items():
+            if prop not in seen:
+                yield prop, value
+
     def expand_clustered_results(self):
         """
         Expand all arrays using the clustering info
@@ -427,7 +479,7 @@ class ResultsTemplate:
             # NOTE: You might be tempted to change this loop to use the registered properties.
             #       Don't do it, there may be unregistered properties that will fail if this doesn't
             #       traverse all te actual properties of the class... this may be a future topic
-            for prop, value in self.__dict__.items():
+            for prop, value in self._iter_instance_items():
 
                 if isinstance(value, np.ndarray):
 
@@ -515,6 +567,5 @@ class ResultsTemplate:
                                          expected_value=str(curr_value.shape))
                 else:
                     setattr(self, res_prop.name, array)
-
 
 

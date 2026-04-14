@@ -25,6 +25,20 @@ class StateEstimationOptions:
     """
     StateEstimationOptions
     """
+    __slots__ = (
+        "solver",
+        "tol",
+        "max_iter",
+        "verbose",
+        "prefer_correct",
+        "c_threshold",
+        "fixed_slack",
+        "observability_analysis",
+        "add_pseudo_measurements",
+        "pseudo_meas_std",
+        "run_meas_profiling",
+        "include_line_measurements_on_both_ends",
+    )
 
     def __init__(self,
                  solver: SolverType = SolverType.NR,
@@ -70,6 +84,15 @@ class StateEstimationOptions:
 
 
 class StateEstimationConvergenceReport(ConvergenceReport):
+    __slots__ = (
+        "bad_data_detected",
+        "unobservable_buses",
+        "bus_contribution",
+        "pseudo_measurements",
+        "_is_observable",
+        "measurement_profile",
+    )
+
     def __init__(self) -> None:
         """
         Constructor
@@ -79,7 +102,7 @@ class StateEstimationConvergenceReport(ConvergenceReport):
         self.unobservable_buses = list()
         self.bus_contribution = list()
         self.pseudo_measurements = list()
-        self.is_observable = True
+        self._is_observable = True
         self.measurement_profile = list()
 
     def add_se(self, method,
@@ -111,18 +134,23 @@ class StateEstimationConvergenceReport(ConvergenceReport):
         # Call parent's add method for common parameters
         self.add(method, converged, error, elapsed, iterations)
         self.bad_data_detected = bad_data_detected
-        self.is_observable = is_observable
+        self._is_observable = is_observable
         self.add_bus_contribution(bus_contribution)
         self.add_pseudo_measurements(pseudo_measurements)
         self.add_unobservable_buses(unobservable_buses)
         self.measurement_profile.append(measurement_profile)
 
+    @property
     def is_observable(self) -> bool:
         """
         Get info is the island was observable
         :return: List of is_obsevable booleans
         """
-        return self.is_observable
+        return self._is_observable
+
+    @is_observable.setter
+    def is_observable(self, value: bool) -> None:
+        self._is_observable = value
 
     def get_bad_data_detected(self) -> bool:
         """
@@ -195,6 +223,8 @@ class StateEstimationConvergenceReport(ConvergenceReport):
 
 
 class StateEstimationDriver(DriverTemplate):
+    __slots__ = ("options",)
+
     name = 'State estimation'
     tpe = SimulationTypes.StateEstimation_run
 

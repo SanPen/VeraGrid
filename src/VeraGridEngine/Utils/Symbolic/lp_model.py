@@ -18,18 +18,24 @@ Number = Union[int, float]
 
 @runtime_checkable
 class _AB(Protocol):
+    __slots__ = ()
+
     a: Expr
     b: Expr
 
 
 @runtime_checkable
 class _LeftRight(Protocol):
+    __slots__ = ()
+
     left: Expr
     right: Expr
 
 
 @runtime_checkable
 class _LhsRhs(Protocol):
+    __slots__ = ()
+
     lhs: Expr
     rhs: Expr
 
@@ -189,7 +195,7 @@ def _as_constraint(obj: Union[Constraint, Comparison, tuple["Expr | Number", Cmp
 
     raise TypeError("Invalid constraint specification")
 
-@dataclass
+@dataclass(slots=True)
 class Result:
     status: str
     objective: float | None
@@ -222,6 +228,17 @@ class LPModel:
     """
     LPModel
     """
+    __slots__ = (
+        "_var_dict",
+        "_low",
+        "_up",
+        "_integer",
+        "_start",
+        "_any_int",
+        "_constraints",
+        "_objective",
+        "_sense",
+    )
 
     def __init__(self) -> None:
 

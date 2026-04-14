@@ -2,34 +2,24 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
-
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.identified_object import IdentifiedObject
-from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
-
+from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
+if TYPE_CHECKING:
+	from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.control_area import ControlArea
+	from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.generating_unit import GeneratingUnit
 
 class ControlAreaGeneratingUnit(IdentifiedObject):
+	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
+		CgmesProperty(property_name='ControlArea', class_type='ControlArea', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The parent control area for the generating unit specifications.''', profiles=[]),
+		CgmesProperty(property_name='GeneratingUnit', class_type='GeneratingUnit', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The generating unit specified for this control area.  Note that a control area should include a GeneratingUnit only once.''', profiles=[]),
+	)
+	__slots__ = ('ControlArea', 'GeneratingUnit')
 	def __init__(self, rdfid='', tpe='ControlAreaGeneratingUnit'):
 		IdentifiedObject.__init__(self, rdfid, tpe)
 
-		from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.control_area import ControlArea
 		self.ControlArea: ControlArea | None = None
-		from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.generating_unit import GeneratingUnit
-		self.GeneratingUnit: GeneratingUnit | None = None
 
-		self.register_property(
-			name='ControlArea',
-			class_type=ControlArea,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''The parent control area for the generating unit specifications.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='GeneratingUnit',
-			class_type=GeneratingUnit,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''The generating unit specified for this control area.  Note that a control area should include a GeneratingUnit only once.''',
-			profiles=[]
-		)
+		self.GeneratingUnit: GeneratingUnit | None = None

@@ -5,3 +5,4 @@
 
 from VeraGridEngine.Simulations.Topology.topology_reduction_driver import TopologyReduction, TopologyReductionOptions, DeleteAndReduce
 from VeraGridEngine.Simulations.Topology.node_groups_driver import NodeGroupsDriver
+from VeraGridEngine.Simulations.Topology.node_groups_results import NodeGroupsResults

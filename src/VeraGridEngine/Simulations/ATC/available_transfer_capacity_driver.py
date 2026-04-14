@@ -14,11 +14,13 @@ from VeraGridEngine.Simulations.results_table import ResultsTable
 from VeraGridEngine.Simulations.results_template import ResultsTemplate
 from VeraGridEngine.Simulations.driver_template import DriverTemplate
 from VeraGridEngine.Simulations.ATC.available_transfer_capacity_options import AvailableTransferCapacityOptions
-from VeraGridEngine.enumerations import StudyResultsType, AvailableTransferMode, ResultTypes, DeviceType, SimulationTypes
+from VeraGridEngine.enumerations import StudyResultsType, AvailableTransferMode, ResultTypes, DeviceType, \
+    SimulationTypes
 from VeraGridEngine.basic_structures import Vec, IntVec, Mat
 
 if TYPE_CHECKING:
     from VeraGridEngine.Simulations import ClusteringResults
+    from VeraGridEngine.Simulations.OPF.opf_results import OptimalPowerFlowResults
 
 
 @nb.njit()
@@ -273,6 +275,17 @@ def compute_atc_list(br_idx: IntVec, contingency_br_idx: IntVec, lodf: Mat, alph
 
 
 class AvailableTransferCapacityResults(ResultsTemplate):
+    __slots__ = (
+        "branch_names",
+        "bus_names",
+        "rates",
+        "contingency_rates",
+        "base_exchange",
+        "report",
+        "report_headers",
+        "report_indices",
+        "raw_report",
+    )
 
     def __init__(self, br_names, bus_names, rates, contingency_rates: Vec,
                  clustering_results: Union[ClusteringResults, None]):
@@ -426,10 +439,20 @@ class AvailableTransferCapacityResults(ResultsTemplate):
 
 
 class AvailableTransferCapacityDriver(DriverTemplate):
+    __slots__ = (
+        "options",
+        "opf_results",
+        "t_idx",
+    )
+
     tpe = SimulationTypes.NetTransferCapacity_run
     name = tpe.value
 
-    def __init__(self, grid: MultiCircuit, options: AvailableTransferCapacityOptions | None):
+    def __init__(self,
+                 grid: MultiCircuit,
+                 options: AvailableTransferCapacityOptions | None,
+                 opf_results: Union[OptimalPowerFlowResults, None] = None,
+                 t_idx: int | None = None):
         """
         Power Transfer Distribution Factors class constructor
         @param grid: MultiCircuit Object
@@ -440,6 +463,10 @@ class AvailableTransferCapacityDriver(DriverTemplate):
 
         # Options to use
         self.options = options
+
+        self.opf_results: OptimalPowerFlowResults | None = opf_results
+
+        self.t_idx: int | None = t_idx
 
         # OPF results
         rates = self.grid.get_branch_rates()
@@ -465,7 +492,10 @@ class AvailableTransferCapacityDriver(DriverTemplate):
         idx2b = self.options.bus_idx_to
 
         # declare the numerical circuit
-        nc = compile_numerical_circuit_at(circuit=self.grid, t_idx=None, logger=self.logger)
+        nc = compile_numerical_circuit_at(circuit=self.grid,
+                                          t_idx=self.t_idx,
+                                          logger=self.logger,
+                                          opf_results=self.opf_results)
 
         # declare the linear analysis
         linear = LinearAnalysis(

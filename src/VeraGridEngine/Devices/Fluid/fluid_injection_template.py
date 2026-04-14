@@ -4,19 +4,41 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import Union
+from typing import Union, Tuple
 import numpy as np
 from VeraGridEngine.Devices.Parents.physical_device import PhysicalDevice
 from VeraGridEngine.Devices.Fluid.fluid_node import FluidNode
 from VeraGridEngine.Devices.Injections.generator import Generator
-from VeraGridEngine.Devices.profile import Profile
+from VeraGridEngine.Devices.Profiles import ProfileBool
 from VeraGridEngine.Devices.Aggregation.facility import Facility
 from VeraGridEngine.enumerations import BuildStatus, DeviceType
+from VeraGridEngine.Devices.Parents.editable_device import GCProp
 
 
 class FluidInjectionTemplate(PhysicalDevice):
-    __slots__ = ('active', '_active_prof', 'efficiency', 'max_flow_rate',
-                 '_plant', '_generator', 'build_status', 'facility')
+    __slots__ = (
+        '_active',
+        '_active_prof',
+        '_efficiency',
+        '_max_flow_rate',
+        '_plant',
+        '_generator',
+        'build_status',
+        'facility',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='active', units='', tpe=bool, definition='Is the load active?', profile_name='active_prof'),
+        GCProp(key='efficiency', units="MWh/m3", tpe=float,
+                      definition="Power plant energy production per fluid unit"),
+        GCProp(key='max_flow_rate', units="m3/s", tpe=float, definition="maximum fluid flow"),
+        GCProp(key='plant', units="", tpe=DeviceType.FluidNodeDevice, definition="Connection reservoir/node",
+                      editable=False),
+        GCProp(key='generator', units="", tpe=DeviceType.GeneratorDevice, definition="Electrical machine",
+                      editable=False),
+        GCProp(key='facility', units='', tpe=DeviceType.FacilityDevice,
+                      definition='Facility where this is located', editable=True),
+    )
 
     def __init__(self,
                  name: str = '',
@@ -48,7 +70,7 @@ class FluidInjectionTemplate(PhysicalDevice):
                                 build_status=build_status)
 
         self.active = True
-        self._active_prof = Profile(default_value=self.active, data_type=bool)
+        self._active_prof = ProfileBool(default_value=self.active)
 
         self.efficiency = float(efficiency)  # MWh/m3
         self.max_flow_rate = float(max_flow_rate)  # m3/s
@@ -57,17 +79,7 @@ class FluidInjectionTemplate(PhysicalDevice):
 
         self.facility: Facility | None = None
 
-        self.register(key='active', units='', tpe=bool, definition='Is the load active?', profile_name='active_prof')
 
-        self.register(key='efficiency', units="MWh/m3", tpe=float,
-                      definition="Power plant energy production per fluid unit")
-        self.register(key='max_flow_rate', units="m3/s", tpe=float, definition="maximum fluid flow")
-        self.register(key='plant', units="", tpe=DeviceType.FluidNodeDevice, definition="Connection reservoir/node",
-                      editable=False)
-        self.register(key='generator', units="", tpe=DeviceType.GeneratorDevice, definition="Electrical machine",
-                      editable=False)
-        self.register(key='facility', units='', tpe=DeviceType.FacilityDevice,
-                      definition='Facility where this is located', editable=True)
 
     @property
     def plant(self) -> FluidNode:
@@ -105,7 +117,7 @@ class FluidInjectionTemplate(PhysicalDevice):
             self._generator = val
 
     @property
-    def active_prof(self) -> Profile:
+    def active_prof(self) -> ProfileBool:
         """
         Cost profile
         :return: Profile
@@ -113,10 +125,69 @@ class FluidInjectionTemplate(PhysicalDevice):
         return self._active_prof
 
     @active_prof.setter
-    def active_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def active_prof(self, val: Union[ProfileBool, np.ndarray]):
+        if isinstance(val, ProfileBool):
             self._active_prof = val
         elif isinstance(val, np.ndarray):
             self._active_prof.set(arr=val)
         else:
             raise Exception(str(type(val)) + 'not supported to be set into a active_prof')
+
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def active(self) -> bool:
+        """
+        Get ``active``.
+
+        :return: bool
+        """
+        return self._active
+
+    @active.setter
+    def active(self, val: bool) -> None:
+        """
+        Set ``active``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._active = bool(val)
+
+    @property
+    def efficiency(self) -> float:
+        """
+        Get ``efficiency``.
+
+        :return: float
+        """
+        return self._efficiency
+
+    @efficiency.setter
+    def efficiency(self, val: float) -> None:
+        """
+        Set ``efficiency``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._efficiency = float(val)
+
+    @property
+    def max_flow_rate(self) -> float:
+        """
+        Get ``max_flow_rate``.
+
+        :return: float
+        """
+        return self._max_flow_rate
+
+    @max_flow_rate.setter
+    def max_flow_rate(self, val: float) -> None:
+        """
+        Set ``max_flow_rate``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._max_flow_rate = float(val)

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF  xmlns:cim="http://iec.ch/TC57/CIM100#" xmlns:dm="http://iec.ch/TC57/61970-552/DifferenceModel/1#" xmlns:eu="http://iec.ch/TC57/CIM100-European#" xmlns:md="http://iec.ch/TC57/61970-552/ModelDescription/1#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <dm:DifferenceModel rdf:about="urn:uuid:39d8d8fd-325d-4e29-9659-d7a1cca0615d">
+   <md:Model.created>2021-11-19T23:16:27Z</md:Model.created>
+    <md:Model.scenarioTime>2021-02-09T19:30:00Z</md:Model.scenarioTime>
+    <md:Model.description>CGMES Conformity Assessment Test Configuration. The Test Configuration is owned by ENTSO-E and is provided by ENTSO-E “as it is”. To the fullest extent permitted by law, ENTSO-E shall not be liable for any damages of any kind arising out of the use of the model (including any of its subsequent modifications). ENTSO-E neither warrants, nor represents that the use of the model will not infringe the rights of third parties. Any use of the model shall include a reference to ENTSO-E. ENTSO-E web site is the only official source of information related to the model.</md:Model.description>
+    <md:Model.modelingAuthoritySet>http://fullgrid.eu/CGMES/3.0</md:Model.modelingAuthoritySet>
+    <md:Model.profile>http://iec.ch/TC57/ns/CIM/ShortCircuit-EU/3.0</md:Model.profile>
+    <md:Model.version>001</md:Model.version>
+    <md:Model.DependentOn rdf:resource="urn:uuid:0cd6ada4-b6dc-4a36-a98c-877a39168cd3" />
+    <md:Model.Supersedes rdf:resource="urn:uuid:dd907125-7088-43fd-830d-5b0df36f4c71" />
+      <dm:reverseDifferences rdf:parseType="Statements">
+         <rdf:Description rdf:about="#_09cc4e0a-336f-43ee-b29a-43049904cea9">
+            <cim:EarthFaultCompensator.r>9.99</cim:EarthFaultCompensator.r>
+         </rdf:Description>
+         <rdf:Description rdf:about="#_62a4d7b2-acca-4726-8d47-a85afbcf0642">
+            <cim:SynchronousMachine.earthing>true</cim:SynchronousMachine.earthing>
+         </rdf:Description>
+      </dm:reverseDifferences>
+      <dm:forwardDifferences rdf:parseType="Statements">
+         <rdf:Description rdf:about="#_09cc4e0a-336f-43ee-b29a-43049904cea9">
+            <cim:EarthFaultCompensator.r>10</cim:EarthFaultCompensator.r>
+         </rdf:Description>
+         <rdf:Description rdf:about="#_62a4d7b2-acca-4726-8d47-a85afbcf0642">
+            <cim:SynchronousMachine.earthing>false</cim:SynchronousMachine.earthing>
+         </rdf:Description>
+      </dm:forwardDifferences>
+   </dm:DifferenceModel>
+</rdf:RDF>

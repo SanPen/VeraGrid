@@ -73,17 +73,8 @@ def optimal_linear_contingency_analysis(grid: MultiCircuit,
     mon_idx = nc.passive_branch_data.get_monitor_enabled_indices()
     Pbus = nc.get_power_injections().real
 
-    # compute the branch Sf in "n"
-    if options.use_provided_flows:
-        flows_n = options.Pf
-
-        if options.Pf is None:
-            msg = 'The option to use the provided flows is enabled, but no flows are available'
-            calling_class.logger.add_error(msg)
-            raise Exception(msg)
-    else:
-        Sbus: CxVec = nc.get_power_injections()
-        flows_n = linear_analysis.get_flows(Sbus=Sbus, P_hvdc=nc.hvdc_data.Pset)
+    Sbus: CxVec = nc.get_power_injections()
+    flows_n = linear_analysis.get_flows(Sbus=Sbus, P_hvdc=nc.hvdc_data.Pset)
 
     loadings_n = flows_n / (nc.passive_branch_data.rates + 1e-9)
 
@@ -119,6 +110,8 @@ def optimal_linear_contingency_analysis(grid: MultiCircuit,
             injections = None
 
         c_flow = multi_contingency.get_contingency_flows(base_branches_flow=flows_n, injections=injections)
+
+        # NOTE: this is accounted for to be in the normal rate base in the analyze method
         c_loading = c_flow / (nc.passive_branch_data.rates + 1e-9)
 
         results.Sf[ic, :] = c_flow  # already in MW
@@ -132,7 +125,7 @@ def optimal_linear_contingency_analysis(grid: MultiCircuit,
                                base_loading=loadings_n,
                                contingency_flows=c_flow,
                                contingency_loadings=c_loading,
-                               contingency_idx=ic,
+                               contingency_group_idx=ic,
                                contingency_group=linear_multiple_contingencies.contingency_groups_used[ic],
                                using_srap=options.use_srap,
                                srap_ratings=nc.passive_branch_data.protection_rates,

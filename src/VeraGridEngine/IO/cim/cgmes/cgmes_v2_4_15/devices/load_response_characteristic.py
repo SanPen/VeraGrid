@@ -2,17 +2,45 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
-
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.identified_object import IdentifiedObject
-from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
-
+from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
+if TYPE_CHECKING:
+	from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.energy_consumer import EnergyConsumer
 
 class LoadResponseCharacteristic(IdentifiedObject):
+	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
+		CgmesProperty(property_name='EnergyConsumer', class_type='EnergyConsumer', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The set of loads that have the response characteristics.''', profiles=[]),
+		CgmesProperty(property_name='exponentModel', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Indicates the exponential voltage dependency model is to be used.   If false, the coefficient model is to be used.
+The exponential voltage dependency model consist of the attributes
+- pVoltageExponent
+- qVoltageExponent.
+The coefficient model consist of the attributes
+- pConstantImpedance
+- pConstantCurrent
+- pConstantPower
+- qConstantImpedance
+- qConstantCurrent
+- qConstantPower.
+The sum of pConstantImpedance, pConstantCurrent and pConstantPower shall equal 1.
+The sum of qConstantImpedance, qConstantCurrent and qConstantPower shall equal 1.''', profiles=[]),
+		CgmesProperty(property_name='pConstantCurrent', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''A floating point number. The range is unspecified and not limited.''', profiles=[]),
+		CgmesProperty(property_name='pConstantImpedance', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''A floating point number. The range is unspecified and not limited.''', profiles=[]),
+		CgmesProperty(property_name='pConstantPower', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''A floating point number. The range is unspecified and not limited.''', profiles=[]),
+		CgmesProperty(property_name='pFrequencyExponent', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''A floating point number. The range is unspecified and not limited.''', profiles=[]),
+		CgmesProperty(property_name='pVoltageExponent', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''A floating point number. The range is unspecified and not limited.''', profiles=[]),
+		CgmesProperty(property_name='qConstantCurrent', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''A floating point number. The range is unspecified and not limited.''', profiles=[]),
+		CgmesProperty(property_name='qConstantImpedance', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''A floating point number. The range is unspecified and not limited.''', profiles=[]),
+		CgmesProperty(property_name='qConstantPower', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''A floating point number. The range is unspecified and not limited.''', profiles=[]),
+		CgmesProperty(property_name='qFrequencyExponent', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''A floating point number. The range is unspecified and not limited.''', profiles=[]),
+		CgmesProperty(property_name='qVoltageExponent', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''A floating point number. The range is unspecified and not limited.''', profiles=[]),
+	)
+	__slots__ = ('EnergyConsumer', 'exponentModel', 'pConstantCurrent', 'pConstantImpedance', 'pConstantPower', 'pFrequencyExponent', 'pVoltageExponent', 'qConstantCurrent', 'qConstantImpedance', 'qConstantPower', 'qFrequencyExponent', 'qVoltageExponent')
 	def __init__(self, rdfid='', tpe='LoadResponseCharacteristic'):
 		IdentifiedObject.__init__(self, rdfid, tpe)
 
-		from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.energy_consumer import EnergyConsumer
 		self.EnergyConsumer: EnergyConsumer | None = None
 		self.exponentModel: bool = None
 		self.pConstantCurrent: float = None
@@ -25,112 +53,3 @@ class LoadResponseCharacteristic(IdentifiedObject):
 		self.qConstantPower: float = None
 		self.qFrequencyExponent: float = None
 		self.qVoltageExponent: float = None
-
-		self.register_property(
-			name='EnergyConsumer',
-			class_type=EnergyConsumer,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''The set of loads that have the response characteristics.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='exponentModel',
-			class_type=bool,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''Indicates the exponential voltage dependency model is to be used.   If false, the coefficient model is to be used.
-The exponential voltage dependency model consist of the attributes
-- pVoltageExponent
-- qVoltageExponent.
-The coefficient model consist of the attributes
-- pConstantImpedance
-- pConstantCurrent
-- pConstantPower
-- qConstantImpedance
-- qConstantCurrent
-- qConstantPower.
-The sum of pConstantImpedance, pConstantCurrent and pConstantPower shall equal 1.
-The sum of qConstantImpedance, qConstantCurrent and qConstantPower shall equal 1.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='pConstantCurrent',
-			class_type=float,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''A floating point number. The range is unspecified and not limited.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='pConstantImpedance',
-			class_type=float,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''A floating point number. The range is unspecified and not limited.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='pConstantPower',
-			class_type=float,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''A floating point number. The range is unspecified and not limited.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='pFrequencyExponent',
-			class_type=float,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''A floating point number. The range is unspecified and not limited.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='pVoltageExponent',
-			class_type=float,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''A floating point number. The range is unspecified and not limited.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='qConstantCurrent',
-			class_type=float,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''A floating point number. The range is unspecified and not limited.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='qConstantImpedance',
-			class_type=float,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''A floating point number. The range is unspecified and not limited.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='qConstantPower',
-			class_type=float,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''A floating point number. The range is unspecified and not limited.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='qFrequencyExponent',
-			class_type=float,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''A floating point number. The range is unspecified and not limited.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='qVoltageExponent',
-			class_type=float,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''A floating point number. The range is unspecified and not limited.''',
-			profiles=[]
-		)

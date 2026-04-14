@@ -16,6 +16,7 @@ if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
     from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template import LineGraphicTemplateItem
     from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.transformer3w_graphics import Transformer3WGraphicItem
+    from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.transformerNw_graphics import TransformerNWGraphicItem
     from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term import VscGraphicItem3Term
     from VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics import BusGraphicItem
     from VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics import FluidNodeGraphicItem
@@ -29,7 +30,8 @@ class BaseTerminal:
     def __init__(self,
                  name: str,
                  editor: SchematicWidget,
-                 parent: Union[None, BusGraphicItem, Transformer3WGraphicItem, FluidNodeGraphicItem] = None,
+                 parent: Union[None, BusGraphicItem, Transformer3WGraphicItem, TransformerNWGraphicItem,
+                               FluidNodeGraphicItem] = None,
                  terminal_type: TerminalType = TerminalType.OTHER):
         """
 
@@ -41,7 +43,8 @@ class BaseTerminal:
         self.terminal_type = terminal_type
 
         # terminal parent object
-        self.parent: Union[BusGraphicItem, Transformer3WGraphicItem, FluidNodeGraphicItem] = parent
+        self.parent: Union[BusGraphicItem, Transformer3WGraphicItem, TransformerNWGraphicItem,
+                           FluidNodeGraphicItem] = parent
 
         # object -> callback
         self._hosting_connections: Dict[LineGraphicTemplateItem, Callable[[QPointF], None]] = dict()
@@ -52,7 +55,8 @@ class BaseTerminal:
         # Name:
         self.name = name
 
-    def get_parent(self) -> Union[None, BusGraphicItem, Transformer3WGraphicItem, VscGraphicItem3Term]:
+    def get_parent(self) -> Union[None, BusGraphicItem, Transformer3WGraphicItem, TransformerNWGraphicItem,
+                                  VscGraphicItem3Term]:
         """
         Returns the parent object
         :return: Union[None, BusGraphicItem, Transformer3WGraphicItem]
@@ -95,20 +99,30 @@ class BaseTerminal:
         else:
             print(f'No such hosting connection {self.name} -> {graphic_obj}')
 
-    def reassign_terminal(self, graphic_obj: LineGraphicTemplateItem,
-                          another_terminal: "BarTerminalItem"):
+    def reassign_terminal(self,
+                          graphic_obj: LineGraphicTemplateItem,
+                          another_terminal: "BaseTerminal") -> None:
         """
-        Re-assign hosting connection from another terminal to this one
-        :param graphic_obj:
-        :param another_terminal:
-        :return:
-        """
-        self.add_hosting_connection(
-            graphic_obj=graphic_obj,
-            callback=another_terminal.get_callback(graphic_obj=graphic_obj)
-        )
+        Reassign one branch graphic from another terminal to this one.
 
-        another_terminal.delete_hosting_connection(graphic_obj)
+        The branch graphic must update its endpoint port reference as well as
+        the callback registration. Otherwise deleting the old host graphic
+        leaves the branch visually attached to a dead terminal object.
+
+        :param graphic_obj: Branch graphic being moved.
+        :param another_terminal: Previously attached terminal.
+        :return: ``None``.
+        """
+        if graphic_obj.get_terminal_from() is another_terminal:
+            graphic_obj.set_from_port(self)
+        elif graphic_obj.get_terminal_to() is another_terminal:
+            graphic_obj.set_to_port(self)
+        else:
+            self.add_hosting_connection(
+                graphic_obj=graphic_obj,
+                callback=another_terminal.get_callback(graphic_obj=graphic_obj)
+            )
+            another_terminal.delete_hosting_connection(graphic_obj)
 
     def get_hosted_graphics(self) -> List[LineGraphicTemplateItem]:
         """
@@ -161,7 +175,8 @@ class BarTerminalItem(BaseTerminal, QGraphicsRectItem):
                  name: str,
                  editor: SchematicWidget,
                  parent: Union[
-                     None, BusGraphicItem, Transformer3WGraphicItem, FluidNodeGraphicItem] = None,
+                     None, BusGraphicItem, Transformer3WGraphicItem, TransformerNWGraphicItem,
+                     FluidNodeGraphicItem] = None,
                  h=10.0,
                  w=10.0):
         """
@@ -307,7 +322,8 @@ class RoundTerminalItem(BaseTerminal, QGraphicsEllipseItem):
     def __init__(self,
                  name: str,
                  editor: SchematicWidget,
-                 parent: Union[Transformer3WGraphicItem, VscGraphicItem3Term],
+                 parent: Union[Transformer3WGraphicItem, TransformerNWGraphicItem, VscGraphicItem3Term,
+                               BusGraphicItem],
                  terminal_type: TerminalType = TerminalType.OTHER,
                  h=10.0,
                  w=10.0):
@@ -397,17 +413,18 @@ class RoundTerminalItem(BaseTerminal, QGraphicsEllipseItem):
         :param value:
         :return:
         """
-        return value + self.center
+        return self.mapToScene(self.rect().center())
 
     def process_callbacks(self, value: QPointF):
         """
         Send the callbacks, usually setEndPos or setStartPos functions from the line template
         :param value: Parent position
         """
+        scene_center: QPointF = self.mapToScene(self.rect().center())
 
         for i, (connection, call_back) in enumerate(self._hosting_connections.items()):
             if call_back is not None:
-                call_back(value + self.center)
+                call_back(scene_center)
 
     def itemChange(self, change: QGraphicsItem.GraphicsItemChange, value: QPointF) -> QPointF:
         """

@@ -13,8 +13,7 @@ from VeraGridEngine.Utils.NumericalMethods.sparse_solve import get_sparse_type, 
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import NumericPowerFlowResults
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 import VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions as cf
-from VeraGridEngine.basic_structures import CxVec, Vec, IntVec, CscMat
-from VeraGridEngine.enumerations import ConverterControlType
+from VeraGridEngine.basic_structures import CxVec, Vec, IntVec, CscMat, Logger
 
 linear_solver = get_linear_solver()
 sparse = get_sparse_type()
@@ -29,7 +28,7 @@ def linear_pf(nc: NumericalCircuit,
     :param nc: NumericalCircuit instance
     :param Ybus: Normal circuit admittance matrix
     :param Bpqpv: Susceptance matrix reduced
-    :param Bref: Susceptane matrix sliced for the slack node
+    :param Bref: Susceptance matrix sliced for the slack node
     :param Bf: Susceptance matrix of the Branches to nodes (used to include the phase shifters)
     :param S0: Complex power Injections at all the nodes
     :param I0: Complex current Injections at all the nodes
@@ -337,7 +336,8 @@ def acdc_lin_pf(nc: NumericalCircuit,
 
 def lacpf(nc: NumericalCircuit,
           Ybus: CscMat, Yf: CscMat, Yt: CscMat, Ys: CscMat, Yshunt_bus: CxVec,
-          S0: CxVec, V0: CxVec, pq: IntVec, pv: IntVec, vd: IntVec) -> NumericPowerFlowResults:
+          S0: CxVec, V0: CxVec, pq: IntVec, pv: IntVec, vd: IntVec,
+          logger: Logger) -> NumericPowerFlowResults:
     """
     Linearized AC Load Flow
 
@@ -356,6 +356,7 @@ def lacpf(nc: NumericalCircuit,
     :param pq: list of indices of the pq nodes
     :param pv: list of indices of the pv nodes
     :param vd: Array with the indices of the slack buses
+    :param logger: Logger
     :return: NumericPowerFlowResults
     """
 
@@ -364,6 +365,8 @@ def lacpf(nc: NumericalCircuit,
     pvpq = np.r_[pv, pq]
     npq = len(pq)
     npv = len(pv)
+    npqpv = npq + npv
+    n = len(V0)
 
     if (npq + npv) > 0:
         # compose the system matrix
@@ -396,6 +399,10 @@ def lacpf(nc: NumericalCircuit,
             # check for convergence
             end = time.time()
             elapsed = end - start
+
+            logger.add_error("Failed linear system solution",
+                             device="Linear power flow with voltage modules",
+                             comment=str(e))
 
             return NumericPowerFlowResults(V=V,
                                            Scalc=Scalc * nc.Sbase,

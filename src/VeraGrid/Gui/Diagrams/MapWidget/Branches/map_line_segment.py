@@ -82,6 +82,10 @@ class MapLineSegment(QGraphicsLineItem):
                                     text_scale=0.01, show_text=False)
         self.arrow_q_to = ArrowHead(parent=self, arrow_size=self._arrow_size, position=0.8, under=True,
                                     text_scale=0.01, show_text=False)
+        self.arrow_p_from.setVisible(False)
+        self.arrow_q_from.setVisible(False)
+        self.arrow_p_to.setVisible(False)
+        self.arrow_q_to.setVisible(False)
 
         # set callbacks
         self.first.add_position_change_callback(self, self.set_from_side_coordinates)
@@ -212,10 +216,14 @@ class MapLineSegment(QGraphicsLineItem):
 
             # arrows
             if self.view_arrows:
-                self.arrow_p_from.redraw()
-                self.arrow_q_from.redraw()
-                self.arrow_p_to.redraw()
-                self.arrow_q_to.redraw()
+                if self.arrow_p_from.isVisible():
+                    self.arrow_p_from.redraw()
+                if self.arrow_q_from.isVisible():
+                    self.arrow_q_from.redraw()
+                if self.arrow_p_to.isVisible():
+                    self.arrow_p_to.redraw()
+                if self.arrow_q_to.isVisible():
+                    self.arrow_q_to.redraw()
 
     def end_update(self) -> None:
         """
@@ -485,6 +493,12 @@ class MapLineSegment(QGraphicsLineItem):
             self.arrow_q_from.set_value(Qf, True, Qf < 0, name="Qf", units="MVAr", draw_label=self.draw_labels)
             self.arrow_p_to.set_value(Pt, True, Pt > 0, name="Pt", units="MW", draw_label=self.draw_labels)
             self.arrow_q_to.set_value(Qt_, True, Qt_ > 0, name="Qt", units="MVAr", draw_label=self.draw_labels)
+        else:
+            if St is None:
+                self.arrow_p_from.setVisible(False)
+                self.arrow_q_from.setVisible(False)
+                self.arrow_p_to.setVisible(False)
+                self.arrow_q_to.setVisible(False)
 
     def set_arrows_with_hvdc_power(self, Pf: float, Pt: float) -> None:
         """

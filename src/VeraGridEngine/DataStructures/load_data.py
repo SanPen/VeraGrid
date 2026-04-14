@@ -91,6 +91,10 @@ class LoadData:
         data.S3_star = self.S3_star[elm_idx_4]
         data.S3_floatingstar = self.S3_floatingstar[elm_idx_4]
 
+        data.A_floatingstar = self.A_floatingstar[elm_idx]
+        data.B_floatingstar = self.B_floatingstar[elm_idx]
+        data.C_floatingstar = self.C_floatingstar[elm_idx]
+
         data.I3_delta = self.I3_delta[elm_idx_4]
         data.I3_star = self.I3_star[elm_idx_4]
         data.I3_floatingstar = self.I3_floatingstar[elm_idx_4]
@@ -148,6 +152,10 @@ class LoadData:
         data.S3_delta = self.S3_delta.copy()
         data.S3_star = self.S3_star.copy()
         data.S3_floatingstar = self.S3_floatingstar.copy()
+
+        data.A_floatingstar = self.A_floatingstar.copy()
+        data.B_floatingstar = self.B_floatingstar.copy()
+        data.C_floatingstar = self.C_floatingstar.copy()
 
         data.I3_delta = self.I3_delta.copy()
         data.I3_star = self.I3_star.copy()

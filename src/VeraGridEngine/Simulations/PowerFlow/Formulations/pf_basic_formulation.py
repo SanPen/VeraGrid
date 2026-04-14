@@ -19,6 +19,7 @@ from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions impo
 from VeraGridEngine.Topology.simulation_indices import compile_types
 from VeraGridEngine.basic_structures import Vec, IntVec, CxVec
 from VeraGridEngine.Utils.Sparse.csc2 import CSC
+from VeraGridEngine.enumerations import ShuntControlMode
 
 
 class PfBasicFormulation(PfFormulationTemplate):
@@ -57,6 +58,12 @@ class PfBasicFormulation(PfFormulationTemplate):
         self.idx_dVm = np.r_[self.pq, self.p]
         self.idx_dP = self.idx_dVa
         self.idx_dQ = np.r_[self.pq, self.pqv]
+
+        self.buses_with_discrete_shunts_control: List[Tuple[int, int]] = list()
+        self.shunt_step = self.nc.shunt_data.step.copy()
+        for sh_i, bus_i in enumerate(self.nc.shunt_data.bus_idx):
+            if self.nc.shunt_data.control_mode[sh_i] == ShuntControlMode.Discrete:
+                self.buses_with_discrete_shunts_control.append((bus_i, sh_i))
 
     def x2var(self, x: Vec):
         """
@@ -191,6 +198,37 @@ class PfBasicFormulation(PfFormulationTemplate):
 
                     # the composition of x may have changed, so recompute
                     x = self.var2x()
+
+            # discrete shunt logic
+            for bus_i, sh_i in self.buses_with_discrete_shunts_control:
+                if self.Vm[bus_i] > self.nc.shunt_data.vmax[sh_i]:
+                    # decrease B
+                    g_steps: IntVec = self.nc.shunt_data.g_steps[sh_i]
+                    b_steps: IntVec = self.nc.shunt_data.b_steps[sh_i]
+                    if self.shunt_step[sh_i] > 0:
+                        prev_g = g_steps[self.shunt_step[sh_i]] / self.nc.Sbase
+                        prev_b = b_steps[self.shunt_step[sh_i]] / self.nc.Sbase
+                        self.shunt_step[sh_i] -= 1
+                        g = prev_g - g_steps[self.shunt_step[sh_i]] / self.nc.Sbase
+                        b = prev_b - b_steps[self.shunt_step[sh_i]] / self.nc.Sbase
+                        self.adm.Ybus[bus_i, bus_i] += complex(g, b) - complex(prev_g, prev_b)
+                        any_change = True
+
+                elif self.Vm[bus_i] < self.nc.shunt_data.vmin[sh_i]:
+                    # increase B
+                    g_steps: IntVec = self.nc.shunt_data.g_steps[sh_i]
+                    b_steps: IntVec = self.nc.shunt_data.b_steps[sh_i]
+                    if self.shunt_step[sh_i] < (len(b_steps) - 1):
+                        prev_g = g_steps[self.shunt_step[sh_i]] / self.nc.Sbase
+                        prev_b = b_steps[self.shunt_step[sh_i]] / self.nc.Sbase
+                        self.shunt_step[sh_i] += 1
+                        g = prev_g + g_steps[self.shunt_step[sh_i]] / self.nc.Sbase
+                        b = prev_b + b_steps[self.shunt_step[sh_i]] / self.nc.Sbase
+                        self.adm.Ybus[bus_i, bus_i] += complex(g, b) - complex(prev_g, prev_b)
+                        any_change = True
+                else:
+                    # within boundaries
+                    pass
 
             # update Slack control
             if self.options.distributed_slack:

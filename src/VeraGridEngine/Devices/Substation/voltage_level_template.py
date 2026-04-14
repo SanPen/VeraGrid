@@ -3,15 +3,30 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
+from typing import Tuple
 
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp
 from VeraGridEngine.enumerations import DeviceType, VoltageLevelTypes
 
 
 class VoltageLevelTemplate(EditableDevice):
 
-    def __init__(self, name='', code='', idtag: str | None = None,
-                 device_type=DeviceType.GenericArea, voltage: float = 10):
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='vl_type', units='', tpe=VoltageLevelTypes, definition='Voltage level type', editable=True),
+        GCProp(key='voltage', units='kV', tpe=float, definition='Voltage.', editable=True),
+        GCProp(key='n_bays', units='', tpe=int,
+                      definition='Number of bays or modules to add.', editable=True),
+        GCProp(key='add_disconnectors', units='', tpe=bool,
+                      definition='Add disconnectors additionally to the circuit breakers', editable=True),
+    )
+
+    def __init__(self,
+                 name='',
+                 code='',
+                 idtag: str | None = None,
+                 device_type=DeviceType.GenericArea,
+                 voltage: float = 10,
+                 n_bays: int = 1):
         """
 
         :param name:
@@ -19,6 +34,7 @@ class VoltageLevelTemplate(EditableDevice):
         :param idtag:
         :param device_type:
         :param voltage:
+        :param n_bays:
         """
         EditableDevice.__init__(self,
                                 name=name,
@@ -28,15 +44,68 @@ class VoltageLevelTemplate(EditableDevice):
 
         self.vl_type: VoltageLevelTypes = VoltageLevelTypes.SingleBar
         self.voltage: float = voltage
-        self.n_bays: int = 1
+        self.n_bays: int = n_bays
         self.add_disconnectors: bool = False
 
-        self.register(key='vl_type', units='', tpe=VoltageLevelTypes, definition='Voltage level type', editable=True)
+    # Scalar property accessors coerce assignments to the declared schema types.
 
-        self.register(key='voltage', units='kV', tpe=float, definition='Voltage.', editable=True)
+    @property
+    def voltage(self) -> float:
+        """
+        Get ``voltage``.
 
-        self.register(key='n_bays', units='', tpe=int,
-                      definition='Number of bays or modules to add.', editable=True)
+        :return: float
+        """
+        return self._voltage
 
-        self.register(key='add_disconnectors', units='', tpe=bool,
-                      definition='Add disconnectors additionally to the circuit breakers', editable=True)
+    @voltage.setter
+    def voltage(self, val: float) -> None:
+        """
+        Set ``voltage``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._voltage = float(val)
+
+    @property
+    def n_bays(self) -> int:
+        """
+        Get ``n_bays``.
+
+        :return: int
+        """
+        return self._n_bays
+
+    @n_bays.setter
+    def n_bays(self, val: int) -> None:
+        """
+        Set ``n_bays``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._n_bays = int(val)
+
+    @property
+    def add_disconnectors(self) -> bool:
+        """
+        Get ``add_disconnectors``.
+
+        :return: bool
+        """
+        return self._add_disconnectors
+
+    @add_disconnectors.setter
+    def add_disconnectors(self, val: bool) -> None:
+        """
+        Set ``add_disconnectors``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._add_disconnectors = bool(val)
+
+
+
+

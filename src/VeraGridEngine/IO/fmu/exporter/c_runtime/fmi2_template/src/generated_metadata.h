@@ -1,0 +1,21 @@
+#ifndef GENERATED_METADATA_H
+#define GENERATED_METADATA_H
+
+#define VG_MODEL_NAME "placeholder"
+#define VG_MODEL_IDENTIFIER "placeholder"
+#define VG_MODEL_GUID "placeholder"
+#define VG_NUM_STATES 0
+#define VG_NUM_ALGEBRAICS 0
+#define VG_NUM_CONTINUOUS_VARS 0
+#define VG_NUM_INPUTS 0
+#define VG_NUM_CONST_PARAMS 0
+#define VG_NUM_RUNTIME_PARAMS 0
+#define VG_NUM_RESIDUALS 0
+#define VG_FIXED_STEP 1e-4
+#define VG_NEWTON_TOLERANCE 1e-9
+#define VG_MAX_NEWTON_ITERATIONS 8
+#define VG_LOGIC_ENTRY_COUNT 0
+#define VG_LOGIC_REAL_SLOTS 0
+#define VG_LOGIC_INT_SLOTS 0
+
+#endif

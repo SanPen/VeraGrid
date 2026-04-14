@@ -2,42 +2,25 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
-
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.base import Base
-from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType, UnitSymbol
-
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import UnitSymbol
+from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
+if TYPE_CHECKING:
+	from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.topological_node import TopologicalNode
 
 class SvInjection(Base):
+	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
+		CgmesProperty(property_name='pInjection', class_type=float, multiplier=UnitMultiplier.M, unit=UnitSymbol.W, description='''Product of RMS value of the voltage and the RMS value of the in-phase component of the current.''', profiles=[]),
+		CgmesProperty(property_name='qInjection', class_type=float, multiplier=UnitMultiplier.M, unit=UnitSymbol.VAr, description='''Product of RMS value of the voltage and the RMS value of the quadrature component of the current.''', profiles=[]),
+		CgmesProperty(property_name='TopologicalNode', class_type='TopologicalNode', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The injection flows state variables associated with the topological node.''', profiles=[]),
+	)
+	__slots__ = ('pInjection', 'qInjection', 'TopologicalNode')
 	def __init__(self, rdfid, tpe='SvInjection', resources=list(), class_replacements=dict()):
 		Base.__init__(self, rdfid=rdfid, tpe=tpe, resources=resources, class_replacements=class_replacements)
 
 		self.pInjection: float = None
 		self.qInjection: float = None
-		from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.topological_node import TopologicalNode
 		self.TopologicalNode: TopologicalNode | None = None
-
-		self.register_property(
-			name='pInjection',
-			class_type=float,
-			multiplier=UnitMultiplier.M,
-			unit=UnitSymbol.W,
-			description='''Product of RMS value of the voltage and the RMS value of the in-phase component of the current.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='qInjection',
-			class_type=float,
-			multiplier=UnitMultiplier.M,
-			unit=UnitSymbol.VAr,
-			description='''Product of RMS value of the voltage and the RMS value of the quadrature component of the current.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='TopologicalNode',
-			class_type=TopologicalNode,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''The injection flows state variables associated with the topological node.''',
-			profiles=[]
-		)

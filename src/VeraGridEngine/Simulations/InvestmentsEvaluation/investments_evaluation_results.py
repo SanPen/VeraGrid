@@ -15,6 +15,19 @@ from VeraGridEngine.Utils.NumericalMethods.MVRSM_mo_pareto import non_dominated_
 
 
 class InvestmentsEvaluationResults(ResultsTemplate):
+    __slots__ = (
+        "_max_eval",
+        "f_names",
+        "x_names",
+        "plot_x_idx",
+        "plot_y_idx",
+        "_x",
+        "_f",
+        "_f_best",
+        "_sorting_indices",
+        "_InvestmentsEvaluationResults__eval_index",
+    )
+
     tpe = 'Investments Evaluation Results'
 
     def __init__(self, f_names: StrVec, x_names: StrVec, max_eval: int, plot_x_idx: int, plot_y_idx: int):

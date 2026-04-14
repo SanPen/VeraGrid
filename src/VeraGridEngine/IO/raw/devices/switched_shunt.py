@@ -2,12 +2,102 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
+from typing import Tuple
+
 from VeraGridEngine.IO.base.units import Unit
 from VeraGridEngine.IO.raw.devices.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
+from VeraGridEngine.IO.raw.devices.psse_property import PsseProperty
 
 
 class RawSwitchedShunt(RawObject):
+    LOCAL_PROPERTIES: Tuple[PsseProperty, ...] = (
+        PsseProperty(property_name='I', rawx_key='ibus', class_type=int, description='Bus number', min_value=1,
+                     max_value=999997, max_chars=6),
+        PsseProperty(property_name='ID', rawx_key='shntid', class_type=str, description='Load 2-character ID',
+                     max_chars=2),
+        PsseProperty(property_name='MODSW', rawx_key='modsw', class_type=int, description='Control mode', min_value=0,
+                     max_value=6),
+        PsseProperty(property_name='ADJM', rawx_key='adjm', class_type=int, description='Adjustment method',
+                     min_value=0, max_value=1),
+        PsseProperty(property_name='STAT', rawx_key='stat', class_type=int, description='Status', min_value=0,
+                     max_value=1),
+        PsseProperty(property_name='VSWHI', rawx_key='vswhi', class_type=float,
+                     description='Controlled voltage upper limit', unit=Unit.get_pu()),
+        PsseProperty(property_name='VSWLO', rawx_key='vswlo', class_type=float,
+                     description='Controlled voltage upper limit', unit=Unit.get_pu()),
+        PsseProperty(property_name='SWREG', rawx_key='swreg', class_type=int, description='Controlled voltage bus',
+                     min_value=0, max_value=999997),
+        PsseProperty(property_name='SWREM', rawx_key='swrem', class_type=int,
+                     description='Controlled bus or plant bus for pre-35 switched shunt formats',
+                     min_value=0, max_value=999997),
+        PsseProperty(property_name='NREG', rawx_key='nreg', class_type=int,
+                     description="Node number of bus IREG when IREG's bus is a substation", min_value=0,
+                     max_value=999997),
+        PsseProperty(property_name='RMPCT', rawx_key='rmpct', class_type=float,
+                     description='Percent of the total Mvar required to hold the voltage at the control bus',
+                     min_value=0, max_value=100.0, unit=Unit.get_percent()),
+        PsseProperty(property_name='RMIDNT', rawx_key='rmidnt', class_type=str,
+                     description='Controlled branch for VSC like operation'),
+        PsseProperty(property_name='BINIT', rawx_key='binit', class_type=float,
+                     description='Initial switched shunt admittance', unit=Unit.get_pu()),
+        PsseProperty(property_name='S{}'.format(0 + 1), rawx_key='s{}'.format(0 + 1), class_type=int,
+                     description='Initial switched shunt status of one for in-service and zero for out-of-service for block i',
+                     min_value=0, max_value=1),
+        PsseProperty(property_name='S{}'.format(1 + 1), rawx_key='s{}'.format(1 + 1), class_type=int,
+                     description='Initial switched shunt status of one for in-service and zero for out-of-service for block i',
+                     min_value=0, max_value=1),
+        PsseProperty(property_name='S{}'.format(2 + 1), rawx_key='s{}'.format(2 + 1), class_type=int,
+                     description='Initial switched shunt status of one for in-service and zero for out-of-service for block i',
+                     min_value=0, max_value=1),
+        PsseProperty(property_name='S{}'.format(3 + 1), rawx_key='s{}'.format(3 + 1), class_type=int,
+                     description='Initial switched shunt status of one for in-service and zero for out-of-service for block i',
+                     min_value=0, max_value=1),
+        PsseProperty(property_name='S{}'.format(4 + 1), rawx_key='s{}'.format(4 + 1), class_type=int,
+                     description='Initial switched shunt status of one for in-service and zero for out-of-service for block i',
+                     min_value=0, max_value=1),
+        PsseProperty(property_name='S{}'.format(5 + 1), rawx_key='s{}'.format(5 + 1), class_type=int,
+                     description='Initial switched shunt status of one for in-service and zero for out-of-service for block i',
+                     min_value=0, max_value=1),
+        PsseProperty(property_name='S{}'.format(6 + 1), rawx_key='s{}'.format(6 + 1), class_type=int,
+                     description='Initial switched shunt status of one for in-service and zero for out-of-service for block i',
+                     min_value=0, max_value=1),
+        PsseProperty(property_name='S{}'.format(7 + 1), rawx_key='s{}'.format(7 + 1), class_type=int,
+                     description='Initial switched shunt status of one for in-service and zero for out-of-service for block i',
+                     min_value=0, max_value=1),
+        PsseProperty(property_name='N{}'.format(0 + 1), rawx_key='n{}'.format(0 + 1), class_type=int,
+                     description='Number of steps for block i', min_value=0, max_value=99999),
+        PsseProperty(property_name='N{}'.format(1 + 1), rawx_key='n{}'.format(1 + 1), class_type=int,
+                     description='Number of steps for block i', min_value=0, max_value=99999),
+        PsseProperty(property_name='N{}'.format(2 + 1), rawx_key='n{}'.format(2 + 1), class_type=int,
+                     description='Number of steps for block i', min_value=0, max_value=99999),
+        PsseProperty(property_name='N{}'.format(3 + 1), rawx_key='n{}'.format(3 + 1), class_type=int,
+                     description='Number of steps for block i', min_value=0, max_value=99999),
+        PsseProperty(property_name='N{}'.format(4 + 1), rawx_key='n{}'.format(4 + 1), class_type=int,
+                     description='Number of steps for block i', min_value=0, max_value=99999),
+        PsseProperty(property_name='N{}'.format(5 + 1), rawx_key='n{}'.format(5 + 1), class_type=int,
+                     description='Number of steps for block i', min_value=0, max_value=99999),
+        PsseProperty(property_name='N{}'.format(6 + 1), rawx_key='n{}'.format(6 + 1), class_type=int,
+                     description='Number of steps for block i', min_value=0, max_value=99999),
+        PsseProperty(property_name='N{}'.format(7 + 1), rawx_key='n{}'.format(7 + 1), class_type=int,
+                     description='Number of steps for block i', min_value=0, max_value=99999),
+        PsseProperty(property_name='B{}'.format(0 + 1), rawx_key='b{}'.format(0 + 1), class_type=float,
+                     description='Admittance increment for each of Ni steps in block i;', unit=Unit.get_mvar()),
+        PsseProperty(property_name='B{}'.format(1 + 1), rawx_key='b{}'.format(1 + 1), class_type=float,
+                     description='Admittance increment for each of Ni steps in block i;', unit=Unit.get_mvar()),
+        PsseProperty(property_name='B{}'.format(2 + 1), rawx_key='b{}'.format(2 + 1), class_type=float,
+                     description='Admittance increment for each of Ni steps in block i;', unit=Unit.get_mvar()),
+        PsseProperty(property_name='B{}'.format(3 + 1), rawx_key='b{}'.format(3 + 1), class_type=float,
+                     description='Admittance increment for each of Ni steps in block i;', unit=Unit.get_mvar()),
+        PsseProperty(property_name='B{}'.format(4 + 1), rawx_key='b{}'.format(4 + 1), class_type=float,
+                     description='Admittance increment for each of Ni steps in block i;', unit=Unit.get_mvar()),
+        PsseProperty(property_name='B{}'.format(5 + 1), rawx_key='b{}'.format(5 + 1), class_type=float,
+                     description='Admittance increment for each of Ni steps in block i;', unit=Unit.get_mvar()),
+        PsseProperty(property_name='B{}'.format(6 + 1), rawx_key='b{}'.format(6 + 1), class_type=float,
+                     description='Admittance increment for each of Ni steps in block i;', unit=Unit.get_mvar()),
+        PsseProperty(property_name='B{}'.format(7 + 1), rawx_key='b{}'.format(7 + 1), class_type=float,
+                     description='Admittance increment for each of Ni steps in block i;', unit=Unit.get_mvar()),
+    )
 
     def __init__(self):
         RawObject.__init__(self, "Switched shunt")
@@ -62,108 +152,6 @@ class RawSwitchedShunt(RawObject):
         self.B6 = 0.0
         self.B7 = 0.0
         self.B8 = 0.0
-
-        self.register_property(property_name="I",
-                               rawx_key="ibus",
-                               class_type=int,
-                               description="Bus number",
-                               min_value=1,
-                               max_value=999997,
-                               max_chars=6)
-
-        self.register_property(property_name="ID",
-                               rawx_key="shntid",
-                               class_type=str,
-                               description="Load 2-character ID",
-                               max_chars=2)
-
-        self.register_property(property_name="MODSW",
-                               rawx_key="modsw",
-                               class_type=int,
-                               description="Control mode",
-                               min_value=0,
-                               max_value=6)
-
-        self.register_property(property_name="ADJM",
-                               rawx_key="adjm",
-                               class_type=int,
-                               description="Adjustment method",
-                               min_value=0,
-                               max_value=1)
-
-        self.register_property(property_name="STAT",
-                               rawx_key="stat",
-                               class_type=int,
-                               description="Status",
-                               min_value=0,
-                               max_value=1)
-
-        self.register_property(property_name="VSWHI",
-                               rawx_key="vswhi",
-                               class_type=float,
-                               description="Controlled voltage upper limit",
-                               unit=Unit.get_pu())
-
-        self.register_property(property_name="VSWLO",
-                               rawx_key="vswlo",
-                               class_type=float,
-                               description="Controlled voltage upper limit",
-                               unit=Unit.get_pu())
-
-        self.register_property(property_name="SWREG",
-                               rawx_key="swreg",
-                               class_type=int,
-                               description="Controlled voltage bus",
-                               min_value=0,
-                               max_value=999997)
-
-        self.register_property(property_name="NREG",
-                               rawx_key="nreg",
-                               class_type=int,
-                               description="Node number of bus IREG when IREG's bus is a substation",
-                               min_value=0,
-                               max_value=999997)
-
-        self.register_property(property_name="RMPCT",
-                               rawx_key="rmpct",
-                               class_type=float,
-                               description="Percent of the total Mvar required to hold the voltage at the control bus",
-                               min_value=0,
-                               max_value=100.0,
-                               unit=Unit.get_percent())
-
-        self.register_property(property_name="RMIDNT",
-                               rawx_key="rmidnt",
-                               class_type=str,
-                               description="Controlled branch for VSC like operation")
-
-        self.register_property(property_name="BINIT",
-                               rawx_key="binit",
-                               class_type=float,
-                               description="Initial switched shunt admittance",
-                               unit=Unit.get_pu())
-
-        for i in range(8):
-            self.register_property(property_name="S{}".format(i + 1),
-                                   rawx_key="s{}".format(i + 1),
-                                   class_type=int,
-                                   description="Initial switched shunt status of one for in-service "
-                                               "and zero for out-of-service for block i",
-                                   min_value=0,
-                                   max_value=1)
-        for i in range(8):
-            self.register_property(property_name="N{}".format(i + 1),
-                                   rawx_key="n{}".format(i + 1),
-                                   class_type=int,
-                                   description="Number of steps for block i",
-                                   min_value=0,
-                                   max_value=99999)
-        for i in range(8):
-            self.register_property(property_name="B{}".format(i + 1),
-                                   rawx_key="b{}".format(i + 1),
-                                   class_type=float,
-                                   description="Admittance increment for each of Ni steps in block i;",
-                                   unit=Unit.get_mvar())
 
     def parse(self, data, version, logger: Logger):
         """
@@ -260,19 +248,19 @@ class RawSwitchedShunt(RawObject):
 
         if version >= 35:
 
-            var = ["N1", "B1",
-                   "N2", "B2",
-                   "N3", "B3",
-                   "N4", "B4",
-                   "N5", "B5",
-                   "N6", "B6",
-                   "N7", "B7",
-                   "N8", "B8"]
+            var = ["S1", "N1", "B1",
+                   "S2", "N2", "B2",
+                   "S3", "N3", "B3",
+                   "S4", "N4", "B4",
+                   "S5", "N5", "B5",
+                   "S6", "N6", "B6",
+                   "S7", "N7", "B7",
+                   "S8", "N8", "B8"]
 
             return self.format_raw_line(["I", "ID", "MODSW", "ADJM", "STAT", "VSWHI", "VSWLO",
                                          "SWREG", "NREG", "RMPCT", "RMIDNT", "BINIT"] + var)
 
-        elif version >= 29 <= 34:
+        elif 29 <= version <= 34:
 
             var = ["N1", "B1",
                    "N2", "B2",
@@ -284,7 +272,7 @@ class RawSwitchedShunt(RawObject):
                    "N8", "B8"]
 
             return self.format_raw_line(["I", "MODSW", "ADJM", "STAT", "VSWHI", "VSWLO",
-                                         "SWREG", "RMPCT", "RMIDNT", "BINIT"] + var)
+                                         "SWREM", "RMPCT", "RMIDNT", "BINIT"] + var)
         else:
             raise Exception('Shunt not implemented for the version ' + str(version))
 

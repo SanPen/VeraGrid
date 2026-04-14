@@ -70,12 +70,8 @@ def __split_reactive_power_into_devices(nc: NumericalCircuit, Qbus: Vec, results
     # The sharing mechanism gives them 0 since their q_share = 0, so we must set their Q explicitly
     _, idx_non_ctrl = nc.generator_data.get_controllable_and_not_controllable_indices()
     if len(idx_non_ctrl) > 0:
-        pf = nc.generator_data.pf[idx_non_ctrl]
-        pf2 = pf ** 2
-        pf_sign = (pf + 1e-20) / np.abs(pf + 1e-20)
-        q_fixed_gen = pf_sign * nc.generator_data.p[idx_non_ctrl] * np.sqrt((1.0 - pf2) / (pf2 + 1e-20))
         # Only set for active generators
-        results.gen_q[idx_non_ctrl] = q_fixed_gen * nc.generator_data.active[idx_non_ctrl]
+        results.gen_q[idx_non_ctrl] = nc.generator_data.q[idx_non_ctrl] * nc.generator_data.active[idx_non_ctrl]
 
 
 def __solve_island_complete_support(nc: NumericalCircuit,
@@ -517,6 +513,10 @@ def __solve_island_limited_support(island: NumericalCircuit,
                                                   pq=indices.pq,
                                                   pv=indices.pv)
 
+                if solver_idx > 0:
+                    # if we get to this solver, the converged tag should not tell me it worked
+                    solution.converged = solution.norm_f <= options.tolerance
+
             # LAC PF
             elif solver_type == SolverType.LACPF:
                 adms = island.get_series_admittance_matrices()
@@ -530,7 +530,8 @@ def __solve_island_limited_support(island: NumericalCircuit,
                                       V0=V0,
                                       pq=indices.pq,
                                       pv=indices.pv,
-                                      vd=indices.vd)
+                                      vd=indices.vd,
+                                      logger=logger)
                 if options.distributed_slack:
                     ok, delta = compute_slack_distribution(Scalc=solution.Scalc,
                                                            vd=indices.vd,
@@ -546,7 +547,11 @@ def __solve_island_limited_support(island: NumericalCircuit,
                                               V0=V0,
                                               pq=indices.pq,
                                               pv=indices.pv,
-                                              vd=indices.vd)
+                                              vd=indices.vd,
+                                              logger=logger)
+                if solver_idx > 0:
+                    # if we get to this solver, the converged tag should not tell me it worked
+                    solution.converged = solution.norm_f <= options.tolerance
 
             # Gauss-Seidel
             elif solver_type == SolverType.GAUSS:

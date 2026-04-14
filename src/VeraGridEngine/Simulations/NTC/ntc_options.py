@@ -3,18 +3,38 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
+from typing import Tuple
 
 from VeraGridEngine.Simulations.options_template import OptionsTemplate
 from VeraGridEngine.Simulations.OPF.opf_options import OptimalPowerFlowOptions
 from VeraGridEngine.Simulations.LinearFactors.linear_analysis_options import LinearAnalysisOptions
 from VeraGridEngine.basic_structures import IntVec
 from VeraGridEngine.enumerations import AvailableTransferMode, SubObjectType, DeviceType
+from VeraGridEngine.Devices.Parents.editable_device import GCProp
+
 
 
 class OptimalNetTransferCapacityOptions(OptionsTemplate):
     """
     OptimalNetTransferCapacityOptions
     """
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key="sending_bus_idx", tpe=SubObjectType.Array),
+        GCProp(key="receiving_bus_idx", tpe=SubObjectType.Array),
+        GCProp(key="transfer_method", tpe=AvailableTransferMode),
+        GCProp(key="loading_threshold_to_report", tpe=float),
+        GCProp(key="skip_generation_limits", tpe=bool),
+        GCProp(key="transmission_reliability_margin", tpe=float),
+        GCProp(key="branch_exchange_sensitivity", tpe=float),
+        GCProp(key="use_branch_exchange_sensitivity", tpe=bool),
+        GCProp(key="branch_rating_contribution", tpe=float),
+        GCProp(key="monitor_only_ntc_load_rule_branches", tpe=bool),
+        GCProp(key="consider_contingencies", tpe=bool),
+        GCProp(key="strict_formulation", tpe=bool),
+        GCProp(key="opf_options", tpe=DeviceType.SimulationOptionsDevice),
+        GCProp(key="lin_options", tpe=DeviceType.SimulationOptionsDevice),
+    )
 
     def __init__(self,
                  sending_bus_idx: IntVec,
@@ -75,17 +95,3 @@ class OptimalNetTransferCapacityOptions(OptionsTemplate):
         else:
             self.lin_options: LinearAnalysisOptions = lin_options
 
-        self.register(key="sending_bus_idx", tpe=SubObjectType.Array)
-        self.register(key="receiving_bus_idx", tpe=SubObjectType.Array)
-        self.register(key="transfer_method", tpe=AvailableTransferMode)
-        self.register(key="loading_threshold_to_report", tpe=float)
-        self.register(key="skip_generation_limits", tpe=bool)
-        self.register(key="transmission_reliability_margin", tpe=float)
-        self.register(key="branch_exchange_sensitivity", tpe=float)
-        self.register(key="use_branch_exchange_sensitivity", tpe=bool)
-        self.register(key="branch_rating_contribution", tpe=float)
-        self.register(key="monitor_only_ntc_load_rule_branches", tpe=bool)
-        self.register(key="consider_contingencies", tpe=bool)
-        self.register(key="strict_formulation", tpe=bool)
-        self.register(key="opf_options", tpe=DeviceType.SimulationOptionsDevice)
-        self.register(key="lin_options", tpe=DeviceType.SimulationOptionsDevice)

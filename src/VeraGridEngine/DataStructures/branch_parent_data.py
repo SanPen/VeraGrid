@@ -201,6 +201,7 @@ class BranchParentData:
         data.mttf = self.mttf.copy()
         data.mttr = self.mttr.copy()
 
+        data.dc = self.dc.copy()
         data.contingency_enabled = self.contingency_enabled.copy()
         data.monitor_loading = self.monitor_loading.copy()
 

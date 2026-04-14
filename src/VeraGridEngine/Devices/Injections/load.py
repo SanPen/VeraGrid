@@ -4,16 +4,17 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import Union, List
+from typing import Union, Tuple
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
+
+from VeraGridEngine.Templates.Rms.load_rms_template import get_load_rms_template
 from VeraGridEngine.enumerations import DeviceType, BuildStatus
 from VeraGridEngine.Devices.Parents.load_parent import LoadParent
-from VeraGridEngine.Devices.profile import Profile
-from VeraGridEngine.Utils.Symbolic.block import Block, Var, Const, VarPowerFlowRefferenceType
-from VeraGridEngine.Utils.Symbolic.symbolic import piecewise
-from VeraGridEngine.Devices.Parents.editable_device import get_at
+from VeraGridEngine.Devices.Profiles import ProfileFloat, ProfileInt
+from VeraGridEngine.Utils.Symbolic.block import VarPowerFlowRefferenceType
+from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 
 
 class Load(LoadParent):
@@ -21,66 +22,98 @@ class Load(LoadParent):
     Load
     """
     __slots__ = (
-        'G',
-        'B',
-        'Ir',
-        'Ii',
+        '_G',
+        '_B',
+        '_Ir',
+        '_Ii',
         '_G_prof',
         '_B_prof',
         '_Ir_prof',
         '_Ii_prof',
-
-        'G1',
-        'B1',
-        'Ir1',
-        'Ii1',
+        '_G1',
+        '_B1',
+        '_Ir1',
+        '_Ii1',
         '_G1_prof',
         '_B1_prof',
         '_Ir1_prof',
         '_Ii1_prof',
-
-        'G2',
-        'B2',
-        'Ir2',
-        'Ii2',
+        '_G2',
+        '_B2',
+        '_Ir2',
+        '_Ii2',
         '_G2_prof',
         '_B2_prof',
         '_Ir2_prof',
         '_Ii2_prof',
-
-        'G3',
-        'B3',
-        'Ir3',
-        'Ii3',
+        '_G3',
+        '_B3',
+        '_Ir3',
+        '_Ii3',
         '_G3_prof',
         '_B3_prof',
         '_Ir3_prof',
         '_Ii3_prof',
-
         '_contract_power',
         '_n_customers',
         '_n_customers_prof',
+    )
 
-        'Pl0',
-        'Ql0',
-        'Pl',
-        'Ql',
-        'init_params',
-        'Vm',
-        'Va',
-        'Pl_0',
-        'Ql_0'
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='Ir', units='MW', tpe=float,
+                      definition='Active power of the current component at V=1.0 p.u.', profile_name='Ir_prof'),
+        GCProp(key='Ir1', units='MW', tpe=float,
+                      definition='Active power of the phase 1 current component at V=1.0 p.u.', profile_name='Ir1_prof'),
+        GCProp(key='Ir2', units='MW', tpe=float,
+                      definition='Active power of the phase 2 current component at V=1.0 p.u.', profile_name='Ir2_prof'),
+        GCProp(key='Ir3', units='MW', tpe=float,
+                      definition='Active power of the phase 3 current component at V=1.0 p.u.', profile_name='Ir3_prof'),
+        GCProp(key='Ii', units='MVAr', tpe=float,
+                      definition='Reactive power of the current component at V=1.0 p.u.', profile_name='Ii_prof'),
+        GCProp(key='Ii1', units='MVAr', tpe=float,
+                      definition='Reactive power of the phase 1 current component at V=1.0 p.u.',
+                      profile_name='Ii1_prof'),
+        GCProp(key='Ii2', units='MVAr', tpe=float,
+                      definition='Reactive power of the phase 2 current component at V=1.0 p.u.',
+                      profile_name='Ii2_prof'),
+        GCProp(key='Ii3', units='MVAr', tpe=float,
+                      definition='Reactive power of the phase 3 current component at V=1.0 p.u.',
+                      profile_name='Ii3_prof'),
+        GCProp(key='G', units='MW', tpe=float,
+                      definition='Active power of the impedance component at V=1.0 p.u.', profile_name='G_prof'),
+        GCProp(key='G1', units='MW', tpe=float,
+                      definition='Active power of the phase 1 impedance component at V=1.0 p.u.',
+                      profile_name='G1_prof'),
+        GCProp(key='G2', units='MW', tpe=float,
+                      definition='Active power of the phase 2 impedance component at V=1.0 p.u.',
+                      profile_name='G2_prof'),
+        GCProp(key='G3', units='MW', tpe=float,
+                      definition='Active power of the phase 3 impedance component at V=1.0 p.u.',
+                      profile_name='G3_prof'),
+        GCProp(key='B', units='MVAr', tpe=float,
+                      definition='Reactive power of the impedance component at V=1.0 p.u.', profile_name='B_prof'),
+        GCProp(key='B1', units='MVAr', tpe=float,
+                      definition='Reactive power of the phase 1 impedance component at V=1.0 p.u.',
+                      profile_name='B1_prof'),
+        GCProp(key='B2', units='MVAr', tpe=float,
+                      definition='Reactive power of the phase 2 impedance component at V=1.0 p.u.',
+                      profile_name='B2_prof'),
+        GCProp(key='B3', units='MVAr', tpe=float,
+                      definition='Reactive power of the phase 3 impedance component at V=1.0 p.u.',
+                      profile_name='B3_prof'),
+        GCProp(key='n_customers', units='unit', tpe=int,
+                      definition='Number of customers represented by this load', profile_name='n_customers_prof'),
+        GCProp(key='contract_power', units='MW', tpe=float, definition='Nominal contracted power', ),
     )
 
     def __init__(self, name='Load', idtag=None, code='',
                  G=0.0, B=0.0, Ir=0.0, Ii=0.0, P=0.0, Q=0.0, Cost=1200.0,
                  P1=0.0, P2=0.0, P3=0.0, Q1=0.0, Q2=0.0, Q3=0.0,
                  G1=0.0, G2=0.0, G3=0.0, B1=0.0, B2=0.0, B3=0.0,
-                 Ir1=0.0, Ir2=0.0, Ir3=0.0, Ii1=0.0, Ii2=0.0, Ii3=0.0, Pl0=1.0, Ql0=1.0,
+                 Ir1=0.0, Ir2=0.0, Ir3=0.0, Ii1=0.0, Ii2=0.0, Ii3=0.0,
                  active=True, mttf=0.0, mttr=0.0, capex=0, opex=0,
                  n_customers: int = 0,
                  contracted_power: float = 0.0,
-                 init_params: dict[str, float] | None = None,
                  build_status: BuildStatus = BuildStatus.Commissioned):
         """
         The load object implements the so-called ZIP model, in which the load can be
@@ -157,83 +190,31 @@ class Load(LoadParent):
         self.Ii2 = float(Ii2)
         self.Ii3 = float(Ii3)
 
-        self._G_prof = Profile(default_value=self.G, data_type=float)
-        self._G1_prof = Profile(default_value=self.G1, data_type=float)
-        self._G2_prof = Profile(default_value=self.G2, data_type=float)
-        self._G3_prof = Profile(default_value=self.G3, data_type=float)
-        self._B_prof = Profile(default_value=self.B, data_type=float)
-        self._B1_prof = Profile(default_value=self.B1, data_type=float)
-        self._B2_prof = Profile(default_value=self.B2, data_type=float)
-        self._B3_prof = Profile(default_value=self.B3, data_type=float)
-        self._Ir_prof = Profile(default_value=self.Ir, data_type=float)
-        self._Ir1_prof = Profile(default_value=self.Ir1, data_type=float)
-        self._Ir2_prof = Profile(default_value=self.Ir2, data_type=float)
-        self._Ir3_prof = Profile(default_value=self.Ir3, data_type=float)
-        self._Ii_prof = Profile(default_value=self.Ii, data_type=float)
-        self._Ii1_prof = Profile(default_value=self.Ii1, data_type=float)
-        self._Ii2_prof = Profile(default_value=self.Ii2, data_type=float)
-        self._Ii3_prof = Profile(default_value=self.Ii3, data_type=float)
+        self._G_prof = ProfileFloat(default_value=self.G)
+        self._G1_prof = ProfileFloat(default_value=self.G1)
+        self._G2_prof = ProfileFloat(default_value=self.G2)
+        self._G3_prof = ProfileFloat(default_value=self.G3)
+        self._B_prof = ProfileFloat(default_value=self.B)
+        self._B1_prof = ProfileFloat(default_value=self.B1)
+        self._B2_prof = ProfileFloat(default_value=self.B2)
+        self._B3_prof = ProfileFloat(default_value=self.B3)
+        self._Ir_prof = ProfileFloat(default_value=self.Ir)
+        self._Ir1_prof = ProfileFloat(default_value=self.Ir1)
+        self._Ir2_prof = ProfileFloat(default_value=self.Ir2)
+        self._Ir3_prof = ProfileFloat(default_value=self.Ir3)
+        self._Ii_prof = ProfileFloat(default_value=self.Ii)
+        self._Ii1_prof = ProfileFloat(default_value=self.Ii1)
+        self._Ii2_prof = ProfileFloat(default_value=self.Ii2)
+        self._Ii3_prof = ProfileFloat(default_value=self.Ii3)
 
         self._n_customers: int = n_customers
-        self._n_customers_prof = Profile(default_value=self._n_customers, data_type=int)
+        self._n_customers_prof = ProfileInt(default_value=self._n_customers)
 
         self._contract_power: float = contracted_power
 
-        self.Pl0 = Pl0
-        self.Ql0 = Ql0
-
-        self.Pl_0 = Var('Pl_0')
-        self.Ql_0 = Var('Ql_0')
-
-        self.init_params = init_params if init_params is not None else dict()
-
-        self.register(key='Ir', units='MW', tpe=float,
-                      definition='Active power of the current component at V=1.0 p.u.', profile_name='Ir_prof')
-        self.register(key='Ir1', units='MW', tpe=float,
-                      definition='Active power of the phase 1 current component at V=1.0 p.u.', profile_name='Ir1_prof')
-        self.register(key='Ir2', units='MW', tpe=float,
-                      definition='Active power of the phase 2 current component at V=1.0 p.u.', profile_name='Ir2_prof')
-        self.register(key='Ir3', units='MW', tpe=float,
-                      definition='Active power of the phase 3 current component at V=1.0 p.u.', profile_name='Ir3_prof')
-        self.register(key='Ii', units='MVAr', tpe=float,
-                      definition='Reactive power of the current component at V=1.0 p.u.', profile_name='Ii_prof')
-        self.register(key='Ii1', units='MVAr', tpe=float,
-                      definition='Reactive power of the phase 1 current component at V=1.0 p.u.',
-                      profile_name='Ii1_prof')
-        self.register(key='Ii2', units='MVAr', tpe=float,
-                      definition='Reactive power of the phase 2 current component at V=1.0 p.u.',
-                      profile_name='Ii2_prof')
-        self.register(key='Ii3', units='MVAr', tpe=float,
-                      definition='Reactive power of the phase 3 current component at V=1.0 p.u.',
-                      profile_name='Ii3_prof')
-        self.register(key='G', units='MW', tpe=float,
-                      definition='Active power of the impedance component at V=1.0 p.u.', profile_name='G_prof')
-        self.register(key='G1', units='MW', tpe=float,
-                      definition='Active power of the phase 1 impedance component at V=1.0 p.u.',
-                      profile_name='G1_prof')
-        self.register(key='G2', units='MW', tpe=float,
-                      definition='Active power of the phase 2 impedance component at V=1.0 p.u.',
-                      profile_name='G2_prof')
-        self.register(key='G3', units='MW', tpe=float,
-                      definition='Active power of the phase 3 impedance component at V=1.0 p.u.',
-                      profile_name='G3_prof')
-        self.register(key='B', units='MVAr', tpe=float,
-                      definition='Reactive power of the impedance component at V=1.0 p.u.', profile_name='B_prof')
-        self.register(key='B1', units='MVAr', tpe=float,
-                      definition='Reactive power of the phase 1 impedance component at V=1.0 p.u.',
-                      profile_name='B1_prof')
-        self.register(key='B2', units='MVAr', tpe=float,
-                      definition='Reactive power of the phase 2 impedance component at V=1.0 p.u.',
-                      profile_name='B2_prof')
-        self.register(key='B3', units='MVAr', tpe=float,
-                      definition='Reactive power of the phase 3 impedance component at V=1.0 p.u.',
-                      profile_name='B3_prof')
-        self.register(key='n_customers', units='unit', tpe=int,
-                      definition='Number of customers represented by this load', profile_name='n_customers_prof')
-        self.register(key='contract_power', units='MW', tpe=float, definition='Nominal contracted power', )
 
     @property
-    def Ir_prof(self) -> Profile:
+    def Ir_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -241,8 +222,8 @@ class Load(LoadParent):
         return self._Ir_prof
 
     @Ir_prof.setter
-    def Ir_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Ir_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Ir_prof = val
         elif isinstance(val, np.ndarray):
             self._Ir_prof.set(arr=val)
@@ -257,7 +238,7 @@ class Load(LoadParent):
         return get_at(self.Ir, self.Ir_prof, t)
 
     @property
-    def Ir1_prof(self) -> Profile:
+    def Ir1_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -265,8 +246,8 @@ class Load(LoadParent):
         return self._Ir1_prof
 
     @Ir1_prof.setter
-    def Ir1_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Ir1_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Ir1_prof = val
         elif isinstance(val, np.ndarray):
             self._Ir1_prof.set(arr=val)
@@ -281,7 +262,7 @@ class Load(LoadParent):
         return get_at(self.Ir1, self.Ir1_prof, t)
 
     @property
-    def Ir2_prof(self) -> Profile:
+    def Ir2_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -289,8 +270,8 @@ class Load(LoadParent):
         return self._Ir2_prof
 
     @Ir2_prof.setter
-    def Ir2_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Ir2_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Ir2_prof = val
         elif isinstance(val, np.ndarray):
             self._Ir2_prof.set(arr=val)
@@ -305,7 +286,7 @@ class Load(LoadParent):
         return get_at(self.Ir2, self.Ir2_prof, t)
 
     @property
-    def Ir3_prof(self) -> Profile:
+    def Ir3_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -313,8 +294,8 @@ class Load(LoadParent):
         return self._Ir3_prof
 
     @Ir3_prof.setter
-    def Ir3_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Ir3_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Ir3_prof = val
         elif isinstance(val, np.ndarray):
             self._Ir3_prof.set(arr=val)
@@ -329,7 +310,7 @@ class Load(LoadParent):
         return get_at(self.Ir3, self.Ir3_prof, t)
 
     @property
-    def Ii_prof(self) -> Profile:
+    def Ii_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -337,8 +318,8 @@ class Load(LoadParent):
         return self._Ii_prof
 
     @Ii_prof.setter
-    def Ii_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Ii_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Ii_prof = val
         elif isinstance(val, np.ndarray):
             self._Ii_prof.set(arr=val)
@@ -353,7 +334,7 @@ class Load(LoadParent):
         return get_at(self.Ii, self.Ii_prof, t)
 
     @property
-    def Ii1_prof(self) -> Profile:
+    def Ii1_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -361,8 +342,8 @@ class Load(LoadParent):
         return self._Ii1_prof
 
     @Ii1_prof.setter
-    def Ii1_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Ii1_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Ii1_prof = val
         elif isinstance(val, np.ndarray):
             self._Ii1_prof.set(arr=val)
@@ -377,7 +358,7 @@ class Load(LoadParent):
         return get_at(self.Ii1, self.Ii1_prof, t)
 
     @property
-    def Ii2_prof(self) -> Profile:
+    def Ii2_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -385,8 +366,8 @@ class Load(LoadParent):
         return self._Ii2_prof
 
     @Ii2_prof.setter
-    def Ii2_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Ii2_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Ii2_prof = val
         elif isinstance(val, np.ndarray):
             self._Ii2_prof.set(arr=val)
@@ -401,7 +382,7 @@ class Load(LoadParent):
         return get_at(self.Ii2, self.Ii2_prof, t)
 
     @property
-    def Ii3_prof(self) -> Profile:
+    def Ii3_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -409,8 +390,8 @@ class Load(LoadParent):
         return self._Ii3_prof
 
     @Ii3_prof.setter
-    def Ii3_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Ii3_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Ii3_prof = val
         elif isinstance(val, np.ndarray):
             self._Ii3_prof.set(arr=val)
@@ -425,7 +406,7 @@ class Load(LoadParent):
         return get_at(self.Ii3, self.Ii3_prof, t)
 
     @property
-    def G_prof(self) -> Profile:
+    def G_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -433,8 +414,8 @@ class Load(LoadParent):
         return self._G_prof
 
     @G_prof.setter
-    def G_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def G_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._G_prof = val
         elif isinstance(val, np.ndarray):
             self._G_prof.set(arr=val)
@@ -449,7 +430,7 @@ class Load(LoadParent):
         return get_at(self.G, self.G_prof, t)
 
     @property
-    def G1_prof(self) -> Profile:
+    def G1_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -457,8 +438,8 @@ class Load(LoadParent):
         return self._G1_prof
 
     @G1_prof.setter
-    def G1_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def G1_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._G1_prof = val
         elif isinstance(val, np.ndarray):
             self._G1_prof.set(arr=val)
@@ -473,7 +454,7 @@ class Load(LoadParent):
         return get_at(self.G1, self.G1_prof, t)
 
     @property
-    def G2_prof(self) -> Profile:
+    def G2_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -481,8 +462,8 @@ class Load(LoadParent):
         return self._G2_prof
 
     @G2_prof.setter
-    def G2_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def G2_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._G2_prof = val
         elif isinstance(val, np.ndarray):
             self._G2_prof.set(arr=val)
@@ -497,7 +478,7 @@ class Load(LoadParent):
         return get_at(self.G2, self.G2_prof, t)
 
     @property
-    def G3_prof(self) -> Profile:
+    def G3_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -505,8 +486,8 @@ class Load(LoadParent):
         return self._G3_prof
 
     @G3_prof.setter
-    def G3_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def G3_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._G3_prof = val
         elif isinstance(val, np.ndarray):
             self._G3_prof.set(arr=val)
@@ -521,7 +502,7 @@ class Load(LoadParent):
         return get_at(self.G3, self.G3_prof, t)
 
     @property
-    def B_prof(self) -> Profile:
+    def B_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -529,8 +510,8 @@ class Load(LoadParent):
         return self._B_prof
 
     @B_prof.setter
-    def B_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def B_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._B_prof = val
         elif isinstance(val, np.ndarray):
             self._B_prof.set(arr=val)
@@ -545,7 +526,7 @@ class Load(LoadParent):
         return get_at(self.B, self.B_prof, t)
 
     @property
-    def B1_prof(self) -> Profile:
+    def B1_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -553,8 +534,8 @@ class Load(LoadParent):
         return self._B1_prof
 
     @B1_prof.setter
-    def B1_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def B1_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._B1_prof = val
         elif isinstance(val, np.ndarray):
             self._B1_prof.set(arr=val)
@@ -569,7 +550,7 @@ class Load(LoadParent):
         return get_at(self.B1, self.B1_prof, t)
 
     @property
-    def B2_prof(self) -> Profile:
+    def B2_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -577,8 +558,8 @@ class Load(LoadParent):
         return self._B2_prof
 
     @B2_prof.setter
-    def B2_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def B2_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._B2_prof = val
         elif isinstance(val, np.ndarray):
             self._B2_prof.set(arr=val)
@@ -593,7 +574,7 @@ class Load(LoadParent):
         return get_at(self.B2, self.B2_prof, t)
 
     @property
-    def B3_prof(self) -> Profile:
+    def B3_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -601,8 +582,8 @@ class Load(LoadParent):
         return self._B3_prof
 
     @B3_prof.setter
-    def B3_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def B3_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._B3_prof = val
         elif isinstance(val, np.ndarray):
             self._B3_prof.set(arr=val)
@@ -672,6 +653,14 @@ class Load(LoadParent):
         """
         return complex(self.get_G3_at(t), self.get_B3_at(t))
 
+    def get_Y_conj_at(self, t: int | None) -> complex:
+        """
+        :param t:
+        :return:
+        """
+        return complex(self.get_G_at(t), -self.get_B_at(t))
+
+
     def get_Y1_conj_at(self, t: int | None) -> complex:
         """
         :param t:
@@ -706,6 +695,7 @@ class Load(LoadParent):
         Set the number of customers
         :param val: value greater than 0
         """
+        val = int(val)
         try:
             val2 = int(val)
             if val2 > 0:
@@ -728,6 +718,7 @@ class Load(LoadParent):
         Set the contracted power
         :param val: value greater than 0
         """
+        val = float(val)
         try:
             val2 = float(val)
             if val2 > 0:
@@ -738,7 +729,7 @@ class Load(LoadParent):
             print(e)
 
     @property
-    def n_customers_prof(self) -> Profile:
+    def n_customers_prof(self) -> ProfileInt:
         """
         Cost profile
         :return: Profile
@@ -746,8 +737,8 @@ class Load(LoadParent):
         return self._n_customers_prof
 
     @n_customers_prof.setter
-    def n_customers_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def n_customers_prof(self, val: Union[ProfileInt, np.ndarray]):
+        if isinstance(val, ProfileInt):
             self._n_customers_prof = val
         elif isinstance(val, np.ndarray):
             self._n_customers_prof.set(arr=val)
@@ -755,8 +746,8 @@ class Load(LoadParent):
             raise Exception(str(type(val)) + 'not supported to be set into n_customers_prof')
 
     def assign_input_vars_and_params(self):
-        self.Vm = self.bus.rms_model.model.E(VarPowerFlowRefferenceType.Vm)
-        self.Va = self.bus.rms_model.model.E(VarPowerFlowRefferenceType.Va)
+        self.Vm = self.bus.rms_model.E(VarPowerFlowRefferenceType.Vm)
+        self.Va = self.bus.rms_model.E(VarPowerFlowRefferenceType.Va)
 
     def plot_profiles(self, time=None, show_fig=True):
         """
@@ -797,27 +788,315 @@ class Load(LoadParent):
         :param rms_event:
         :return:
         """
-        if self.rms_model.empty():
+        if self._rms_model.empty():
+            load_template = get_load_rms_template()
+            self.rms_model = load_template.block
 
-            Ql = Var("Ql")
-            Pl = Var("Pl")
-            # Pl_0 = Var("Pl0")
-            # Ql_0 = Var("Ql0")
+    # Scalar property accessors coerce assignments to the declared schema types.
 
-            block = Block(
-                algebraic_vars=[Pl, Ql],
-                algebraic_eqs=[
-                    Pl - self.Pl_0,
-                    Ql - self.Ql_0
-                ]
-            )
+    @property
+    def Ir(self) -> float:
+        """
+        Get ``Ir``.
 
-            block.event_dict = {self.Pl_0: Const(self.Pl0),
-                                self.Ql_0: Const(self.Ql0)}
-            block.external_mapping = {
-                VarPowerFlowRefferenceType.P: Pl,
-                VarPowerFlowRefferenceType.Q: Ql
-            }
+        :return: float
+        """
+        return self._Ir
 
-            self.rms_model.model = block
+    @Ir.setter
+    def Ir(self, val: float) -> None:
+        """
+        Set ``Ir``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Ir = float(val)
+
+    @property
+    def Ir1(self) -> float:
+        """
+        Get ``Ir1``.
+
+        :return: float
+        """
+        return self._Ir1
+
+    @Ir1.setter
+    def Ir1(self, val: float) -> None:
+        """
+        Set ``Ir1``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Ir1 = float(val)
+
+    @property
+    def Ir2(self) -> float:
+        """
+        Get ``Ir2``.
+
+        :return: float
+        """
+        return self._Ir2
+
+    @Ir2.setter
+    def Ir2(self, val: float) -> None:
+        """
+        Set ``Ir2``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Ir2 = float(val)
+
+    @property
+    def Ir3(self) -> float:
+        """
+        Get ``Ir3``.
+
+        :return: float
+        """
+        return self._Ir3
+
+    @Ir3.setter
+    def Ir3(self, val: float) -> None:
+        """
+        Set ``Ir3``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Ir3 = float(val)
+
+    @property
+    def Ii(self) -> float:
+        """
+        Get ``Ii``.
+
+        :return: float
+        """
+        return self._Ii
+
+    @Ii.setter
+    def Ii(self, val: float) -> None:
+        """
+        Set ``Ii``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Ii = float(val)
+
+    @property
+    def Ii1(self) -> float:
+        """
+        Get ``Ii1``.
+
+        :return: float
+        """
+        return self._Ii1
+
+    @Ii1.setter
+    def Ii1(self, val: float) -> None:
+        """
+        Set ``Ii1``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Ii1 = float(val)
+
+    @property
+    def Ii2(self) -> float:
+        """
+        Get ``Ii2``.
+
+        :return: float
+        """
+        return self._Ii2
+
+    @Ii2.setter
+    def Ii2(self, val: float) -> None:
+        """
+        Set ``Ii2``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Ii2 = float(val)
+
+    @property
+    def Ii3(self) -> float:
+        """
+        Get ``Ii3``.
+
+        :return: float
+        """
+        return self._Ii3
+
+    @Ii3.setter
+    def Ii3(self, val: float) -> None:
+        """
+        Set ``Ii3``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Ii3 = float(val)
+
+    @property
+    def G(self) -> float:
+        """
+        Get ``G``.
+
+        :return: float
+        """
+        return self._G
+
+    @G.setter
+    def G(self, val: float) -> None:
+        """
+        Set ``G``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._G = float(val)
+
+    @property
+    def G1(self) -> float:
+        """
+        Get ``G1``.
+
+        :return: float
+        """
+        return self._G1
+
+    @G1.setter
+    def G1(self, val: float) -> None:
+        """
+        Set ``G1``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._G1 = float(val)
+
+    @property
+    def G2(self) -> float:
+        """
+        Get ``G2``.
+
+        :return: float
+        """
+        return self._G2
+
+    @G2.setter
+    def G2(self, val: float) -> None:
+        """
+        Set ``G2``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._G2 = float(val)
+
+    @property
+    def G3(self) -> float:
+        """
+        Get ``G3``.
+
+        :return: float
+        """
+        return self._G3
+
+    @G3.setter
+    def G3(self, val: float) -> None:
+        """
+        Set ``G3``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._G3 = float(val)
+
+    @property
+    def B(self) -> float:
+        """
+        Get ``B``.
+
+        :return: float
+        """
+        return self._B
+
+    @B.setter
+    def B(self, val: float) -> None:
+        """
+        Set ``B``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._B = float(val)
+
+    @property
+    def B1(self) -> float:
+        """
+        Get ``B1``.
+
+        :return: float
+        """
+        return self._B1
+
+    @B1.setter
+    def B1(self, val: float) -> None:
+        """
+        Set ``B1``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._B1 = float(val)
+
+    @property
+    def B2(self) -> float:
+        """
+        Get ``B2``.
+
+        :return: float
+        """
+        return self._B2
+
+    @B2.setter
+    def B2(self, val: float) -> None:
+        """
+        Set ``B2``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._B2 = float(val)
+
+    @property
+    def B3(self) -> float:
+        """
+        Get ``B3``.
+
+        :return: float
+        """
+        return self._B3
+
+    @B3.setter
+    def B3(self, val: float) -> None:
+        """
+        Set ``B3``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._B3 = float(val)
+
+
 

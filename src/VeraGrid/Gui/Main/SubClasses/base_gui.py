@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import ctypes
 import gc
+import json
 import os.path
 import sys
 import threading
@@ -14,16 +15,14 @@ from typing import List, Union
 
 import numpy as np
 import pandas as pd
-from matplotlib import pyplot as plt
-
-
-from VeraGridEngine.IO.file_system import get_create_veragrid_folder
 
 # GUI imports
 from PySide6 import QtGui, QtWidgets, QtCore
 
+from VeraGrid.Gui.scenario_tree_model import ScenarioTreeModel
 # Engine imports
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
+from VeraGridEngine.Devices.multiverse import MultiVerse
 import VeraGridEngine.Simulations as sim
 from VeraGridEngine.enumerations import EngineType, DeviceType, SimulationTypes
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
@@ -38,10 +37,12 @@ from VeraGridEngine.Simulations.Clustering.clustering_results import ClusteringR
 import VeraGrid.Gui.gui_functions as gf
 import VeraGrid.Session.synchronization_driver as syncdrv
 from VeraGrid.Gui.AboutDialogue.about_dialogue import AboutDialogueGuiGUI
+
 from VeraGrid.Gui.Analysis.AnalysisDialogue import GridAnalysisGUI
 from VeraGrid.Gui.ContingencyPlanner.contingency_planner_dialogue import ContingencyPlannerGUI
 from VeraGrid.Gui.CoordinatesInput.coordinates_dialogue import CoordinatesInputGUI
-from VeraGrid.Gui.general_dialogues import CheckListDialogue, StartEndSelectionDialogue
+from VeraGrid.Gui.general_dialogues import CheckListDialogue, StartEndSelectionDialogue, FileTypeSelector, \
+    CgmesOptionsSelector
 from VeraGrid.Gui.messages import yes_no_question, warning_msg, info_msg, error_msg
 from VeraGrid.Gui.GridGenerator.grid_generator_dialogue import GridGeneratorGUI
 from VeraGrid.Gui.LoadCatalogue.catalogue_dialogue import CatalogueGUI
@@ -54,13 +55,17 @@ from VeraGrid.Gui.SigmaAnalysis.sigma_analysis_dialogue import SigmaAnalysisGUI
 from VeraGrid.Gui.SyncDialogue.sync_dialogue import SyncDialogueWindow
 from VeraGrid.Gui.TowerBuilder.LineBuilderDialogue import TowerBuilderGUI
 from VeraGrid.Gui.GridReduce.grid_reduce import GridReduceDialogue
-from VeraGrid.Gui.RmsModelEditor.rms_model_editor_engine import RmsModelEditorGUI
+from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI
 from VeraGrid.Gui.Diagrams.SchematicWidget.diagram_bus_selection_dialogue import DiagramBusSelectorDialogue
-from VeraGrid.Gui.rms_events_editor_dialog import RmsEventEditor
 from VeraGrid.Gui.Diagrams.generic_graphics import IS_DARK
 from VeraGrid.Gui.python_console import PythonConsole
 from VeraGrid.Gui.python_script_editor import PythonCodeEditor
 from VeraGrid.Gui.toast_widget import ToastManager
+from VeraGrid.Gui.PsseDialogue.psse_import import PsseImportDialogue
+from VeraGrid.Gui.ProceduralGrid.procedural_grid import ProceduralGridWindow
+from VeraGrid.Gui.AiAgent.ai_chat_dialogue import AiChatDialogue, AiBackendState
+from VeraGrid.Gui.AiAgent.ai_backend import ProviderType
+from VeraGridEngine.IO.file_system import get_create_veragrid_folder
 
 
 def terminate_thread(thread):
@@ -128,13 +133,15 @@ class BaseMainGui(QMainWindow):
 
         @param parent:
         """
-        # create main window
+        # create the main window
         QMainWindow.__init__(self, parent)
         self.ui = Ui_mainWindow()
         self.ui.setupUi(self)
 
         # Declare circuit
-        self.circuit: MultiCircuit = MultiCircuit()
+        # self.circuit: MultiCircuit = MultiCircuit()
+        self._multiverse: MultiVerse = MultiVerse(current_model=MultiCircuit())
+        self.scenario_tree_model: ScenarioTreeModel = ScenarioTreeModel(multiverse=self._multiverse)
 
         self.lock_ui = False
         self.ui.progress_frame.setVisible(self.lock_ui)
@@ -168,18 +175,63 @@ class BaseMainGui(QMainWindow):
         # simulation start end
         self.simulation_start_index: int = -1
         self.simulation_end_index: int = -1
+        # Menu buttons -------------------------------------------------------------------------------------------------
+
+        self.pf_menu_button = gf.create_menu_button(
+            parent=self,
+            toolbar=self.ui.toolBar,
+            actions=[self.ui.actionPower_flow,
+                     self.ui.actionPower_flow_3ph,
+                     self.ui.actionLinearAnalysis,
+                     self.ui.actionSigma_analysis],
+            position=self.ui.actionPower_flow,
+            remove_actions=True
+        )
+
+        self.rms_menu_button = gf.create_menu_button(
+            parent=self,
+            toolbar=self.ui.toolBar,
+            actions=[self.ui.actionRun_Dynamic_RMS_Simulation,
+                     self.ui.actionRun_Dynamic_EMT_Simulation,
+                     self.ui.actionRun_Small_Signal_RMS_Simulation,
+                     self.ui.actionRun_Small_Signal_EMT_Simulation],
+            position=self.ui.actionRun_Dynamic_RMS_Simulation,
+            remove_actions=True
+        )
+
+        self.opf_menu_button = gf.create_menu_button(
+            parent=self,
+            toolbar=self.ui.toolBar,
+            actions=[self.ui.actionOPF,
+                     self.ui.actionNodal_capacity,
+                     self.ui.actionOptimal_Net_Transfer_Capacity,
+                     self.ui.actionATC],
+            position=self.ui.actionNodal_capacity,
+            remove_actions=True
+        )
+
+        self.stochastic_menu_button = gf.create_menu_button(
+            parent=self,
+            toolbar=self.ui.toolBar,
+            actions=[self.ui.actionPower_flow_Stochastic,
+                     self.ui.actionBlackout_cascade,
+                     self.ui.actionReliability,
+                     self.ui.actionFind_node_groups],
+            position=self.ui.actionPower_flow_Stochastic,
+            remove_actions=True
+        )
 
         # Add console --------------------------------------------------------------------------------------------------
         self.console = PythonConsole(banner="VeraGrid Python Console!")
         self.ui.consoleLayout.addWidget(self.console)
 
-        self.code_editor = PythonCodeEditor(namespace={
-                    "__builtins__": __builtins__,  # dict or module, both fine
-                    "app": self,
-                    "np": np,
-                    "pd": pd,
-                    "plt": plt,
-                },)
+        self.code_editor = PythonCodeEditor(vars_dict={
+
+            # "app": self,
+            # "np": np,
+            # "pd": pd,
+            # "plt": plt,
+        }, )
         self.ui.codeEditorLayout.addWidget(self.code_editor)
 
         # window pointers ----------------------------------------------------------------------------------------------
@@ -195,8 +247,7 @@ class BaseMainGui(QMainWindow):
         self.coordinates_window: Union[CoordinatesInputGUI, None] = None
         self.about_msg_window: Union[AboutDialogueGuiGUI, None] = None
         self.tower_builder_window: Union[TowerBuilderGUI, None] = None
-        self.rms_model_Editor_window: Union[RmsModelEditorGUI, None] = None
-        self.rms_events_Editor_window: Union[RmsEventEditor, None] = None
+        self.rms_model_Editor_window: Union[DynamicBlockEditorGUI, None] = None
         self.investment_checks_diag: Union[CheckListDialogue, None] = None
         self.new_se_dlg: Union[CheckListDialogue, None] = None
         self.contingency_checks_diag: Union[CheckListDialogue, None] = None
@@ -204,6 +255,13 @@ class BaseMainGui(QMainWindow):
         self.start_end_dialogue_window: Union[StartEndSelectionDialogue, None] = None
         self.grid_reduction_dialogue: GridReduceDialogue | None = None
         self.select_bus_dlg: DiagramBusSelectorDialogue | None = None
+        self.file_selector: FileTypeSelector | None = None
+        self.cgmes_selector: CgmesOptionsSelector | None = None
+        self.psse_import_dialogue: PsseImportDialogue | None = None
+        self.procedural_grid_window: ProceduralGridWindow | None = None
+        self.ai_chat_dialogue: AiChatDialogue | None = None
+        self.ai_backend_state: AiBackendState = self.build_default_ai_backend_state()
+        self.ai_restore_visible: bool = False
 
         # available engines --------------------------------------------------------------------------------------------
         engine_lst = [EngineType.VeraGrid]
@@ -248,6 +306,7 @@ class BaseMainGui(QMainWindow):
         )
         self.ui.actionFix_loads_active_based_on_the_power.triggered.connect(self.fix_loads_active_based_on_the_power)
         self.ui.actionInitialize_contingencies.triggered.connect(self.initialize_contingencies)
+        self.ui.actionai_chat.triggered.connect(self.open_ai_chat_dialogue)
 
         # Buttons
         self.ui.cancelButton.clicked.connect(self.set_cancel_state)
@@ -257,10 +316,13 @@ class BaseMainGui(QMainWindow):
         self.ui.sbase_doubleSpinBox.valueChanged.connect(self.change_circuit_base)
 
         self.ui.grid_name_line_edit.textChanged.connect(self.change_circuit_name)
+        self.ui.grid_name_line_edit.textChanged.connect(self.refresh_ai_context_if_available)
 
         # combo-boxes
         self.ui.fromComboBox.currentTextChanged.connect(self.update_from_to_list_views)
         self.ui.toComboBox.currentTextChanged.connect(self.update_from_to_list_views)
+        self.ui.engineComboBox.currentTextChanged.connect(self.refresh_ai_context_if_available)
+        self.ui.available_results_to_color_comboBox.currentTextChanged.connect(self.refresh_ai_context_if_available)
 
     def LOCK(self, val: bool = True) -> None:
         """
@@ -278,6 +340,42 @@ class BaseMainGui(QMainWindow):
         """
         if not self.any_thread_running():
             self.LOCK(False)
+
+    @property
+    def multiverse(self) -> MultiVerse:
+        return self._multiverse
+
+    @multiverse.setter
+    def multiverse(self, val: MultiVerse):
+        self._multiverse = val
+        self.scenario_tree_model = ScenarioTreeModel(multiverse=val)
+        self.ui.multiverseTreeView.setModel(self.scenario_tree_model)
+        selection_model = self.ui.multiverseTreeView.selectionModel()
+
+        # A loaded multiverse should present the whole scenario tree immediately.
+        self.ui.multiverseTreeView.expandAll()
+
+        # Restore the saved active scenario visually so the tree selection matches the
+        # multiverse current_node/current_model pair as soon as the model is assigned.
+        current_index = self.scenario_tree_model.index_for_node(val.current_node)
+        if current_index.isValid():
+            self.ui.multiverseTreeView.setCurrentIndex(current_index)
+            if selection_model is not None:
+                selection_model.select(
+                    current_index,
+                    QtCore.QItemSelectionModel.SelectionFlag.ClearAndSelect
+                    | QtCore.QItemSelectionModel.SelectionFlag.Rows,
+                )
+            self.ui.multiverseTreeView.scrollTo(current_index)
+
+    @property
+    def circuit(self) -> MultiCircuit:
+        return self.multiverse.current_model
+
+    @circuit.setter
+    def circuit(self, val: MultiCircuit):
+        self.multiverse.current_model = val
+        self.multiverse.base_model = val
 
     @property
     def file_name(self) -> str:
@@ -554,6 +652,360 @@ class BaseMainGui(QMainWindow):
         self.about_msg_window.setVisible(True)
 
     @staticmethod
+    def ai_config_file_path() -> str:
+        """
+        Return the AI configuration file path.
+
+        :returns: AI configuration file path.
+        """
+        return os.path.join(get_create_veragrid_folder(), "ai_config.json")
+
+    def find_first_gguf_file(self, directory_path: str) -> str:
+        """
+        Find the first GGUF file in a directory in lexicographic order.
+
+        :param directory_path: Directory to inspect.
+        :returns: GGUF file name or an empty string.
+        """
+        expanded_directory_path: str = os.path.expanduser(directory_path)
+        entry_names: list[str]
+        sorted_entry_names: list[str]
+        index: int = 0
+
+        if os.path.isdir(expanded_directory_path):
+            try:
+                entry_names = os.listdir(expanded_directory_path)
+            except OSError:
+                return ""
+
+            sorted_entry_names = sorted(entry_names)
+
+            # Prefer a stable first GGUF file so the local backend opens ready to use.
+            while index < len(sorted_entry_names):
+                entry_name: str = sorted_entry_names[index]
+                if entry_name.lower().endswith(".gguf"):
+                    return entry_name
+                else:
+                    pass
+                index += 1
+
+            return ""
+        else:
+            return ""
+
+    def build_default_ai_backend_state(self) -> AiBackendState:
+        """
+        Build the default AI backend state for the main window.
+
+        :returns: Default backend state.
+        """
+        candidate_paths: list[str] = list()
+        home_models_path: str = os.path.expanduser("~/models")
+        home_downloads_path: str = os.path.expanduser("~/Downloads")
+        project_directory_path: str = os.path.expanduser(self.project_directory)
+        model_name: str = ""
+        model_path: str = ""
+        candidate_index: int = 0
+
+        candidate_paths.append(home_models_path)
+        candidate_paths.append(home_downloads_path)
+
+        if len(project_directory_path) > 0:
+            candidate_paths.append(project_directory_path)
+            candidate_paths.append(os.path.join(project_directory_path, "models"))
+        else:
+            pass
+
+        # Probe a few likely model directories so the floating AI window starts close to a usable local setup.
+        while candidate_index < len(candidate_paths):
+            candidate_path: str = candidate_paths[candidate_index]
+            model_name = self.find_first_gguf_file(candidate_path)
+            if len(model_name) > 0:
+                model_path = candidate_path
+                candidate_index = len(candidate_paths)
+            else:
+                candidate_index += 1
+
+        if len(model_path) == 0:
+            model_path = home_models_path
+        else:
+            pass
+
+        return AiBackendState(
+            provider_tpe=ProviderType.LOCAL_LLAMA_CPP,
+            model_name=model_name,
+            base_url=model_path,
+            api_key=None,
+            timeout_s=60.0,
+            context_window_tokens=4096,
+            completion_tokens=1024,
+            gpu_layers=33,
+            temperature=0.15,
+            top_p=0.90,
+            history_message_limit=6,
+            history_char_budget=2200,
+            grounding_char_budget=1800,
+        )
+
+    def build_ai_config_data(self) -> dict[str, str | float | bool]:
+        """
+        Build the persistable AI configuration dictionary.
+
+        :returns: AI configuration dictionary.
+        """
+        state_to_save: AiBackendState
+        data: dict[str, str | float | bool] = dict()
+
+        if self.ai_chat_dialogue is None:
+            state_to_save = self.ai_backend_state
+        else:
+            state_to_save = self.ai_chat_dialogue.get_backend_state()
+
+        data["provider_tpe"] = state_to_save.provider_tpe.value
+        data["model_name"] = state_to_save.model_name
+        data["base_url"] = state_to_save.base_url
+        data["api_key"] = state_to_save.api_key or ""
+        data["timeout_s"] = state_to_save.timeout_s
+        data["context_window_tokens"] = state_to_save.context_window_tokens
+        data["completion_tokens"] = state_to_save.completion_tokens
+        data["gpu_layers"] = state_to_save.gpu_layers
+        data["temperature"] = state_to_save.temperature
+        data["top_p"] = state_to_save.top_p
+        data["history_message_limit"] = state_to_save.history_message_limit
+        data["history_char_budget"] = state_to_save.history_char_budget
+        data["grounding_char_budget"] = state_to_save.grounding_char_budget
+        # The AI window must always stay hidden at startup until the user opens it manually.
+        data["visible"] = False
+
+        return data
+
+    def apply_ai_config_data(self, data: dict[str, object]) -> None:
+        """
+        Apply persisted AI configuration data.
+
+        :param data: Persisted AI configuration dictionary.
+        :returns: Nothing.
+        """
+        provider_value: object = data.get("provider_tpe", ProviderType.LOCAL_LLAMA_CPP.value)
+        provider_tpe: ProviderType = ProviderType.LOCAL_LLAMA_CPP
+        api_key_obj: object = data.get("api_key", "")
+        timeout_obj: object = data.get("timeout_s", 60.0)
+        context_window_tokens_obj: object = data.get("context_window_tokens", 4096)
+        completion_tokens_obj: object = data.get("completion_tokens", 1024)
+        gpu_layers_obj: object = data.get("gpu_layers", 33)
+        temperature_obj: object = data.get("temperature", 0.15)
+        top_p_obj: object = data.get("top_p", 0.90)
+        history_message_limit_obj: object = data.get("history_message_limit", 6)
+        history_char_budget_obj: object = data.get("history_char_budget", 2200)
+        grounding_char_budget_obj: object = data.get("grounding_char_budget", 1800)
+        provider_items: list[ProviderType] = list(ProviderType)
+        enum_index: int = 0
+
+        while enum_index < len(provider_items):
+            enum_item: ProviderType = provider_items[enum_index]
+            if provider_value == enum_item.value:
+                provider_tpe = enum_item
+                enum_index = len(provider_items)
+            else:
+                enum_index += 1
+
+        self.ai_backend_state = AiBackendState(
+            provider_tpe=provider_tpe,
+            model_name=str(data.get("model_name", "")),
+            base_url=str(data.get("base_url", self.build_default_ai_backend_state().base_url)),
+            api_key=str(api_key_obj) if isinstance(api_key_obj, str) and len(api_key_obj) > 0 else None,
+            timeout_s=float(timeout_obj) if isinstance(timeout_obj, (int, float)) else 60.0,
+            context_window_tokens=(
+                int(context_window_tokens_obj)
+                if isinstance(context_window_tokens_obj, int)
+                else 4096
+            ),
+            completion_tokens=(
+                int(completion_tokens_obj)
+                if isinstance(completion_tokens_obj, int)
+                else 1024
+            ),
+            gpu_layers=int(gpu_layers_obj) if isinstance(gpu_layers_obj, int) else 33,
+            temperature=(
+                float(temperature_obj)
+                if isinstance(temperature_obj, (int, float))
+                else 0.15
+            ),
+            top_p=float(top_p_obj) if isinstance(top_p_obj, (int, float)) else 0.90,
+            history_message_limit=(
+                int(history_message_limit_obj)
+                if isinstance(history_message_limit_obj, int)
+                else 6
+            ),
+            history_char_budget=(
+                int(history_char_budget_obj)
+                if isinstance(history_char_budget_obj, int)
+                else 2200
+            ),
+            grounding_char_budget=(
+                int(grounding_char_budget_obj)
+                if isinstance(grounding_char_budget_obj, int)
+                else 1800
+            ),
+        )
+        self.ai_restore_visible = False
+
+        if self.ai_chat_dialogue is None:
+            pass
+        else:
+            self.ai_chat_dialogue.apply_backend_state(self.ai_backend_state)
+
+    def save_ai_config(self) -> None:
+        """
+        Save the AI configuration to disk.
+
+        :returns: Nothing.
+        """
+        with open(self.ai_config_file_path(), "w") as file_pointer:
+            file_pointer.write(json.dumps(self.build_ai_config_data(), indent=4))
+
+    def load_ai_config(self) -> None:
+        """
+        Load the AI configuration from disk.
+
+        :returns: Nothing.
+        """
+        config_path: str = self.ai_config_file_path()
+
+        if os.path.exists(config_path):
+            with open(config_path, "r") as file_pointer:
+                try:
+                    self.apply_ai_config_data(json.load(file_pointer))
+                except json.decoder.JSONDecodeError:
+                    self.ai_backend_state = self.build_default_ai_backend_state()
+                    self.ai_restore_visible = False
+                    self.save_ai_config()
+                    self.show_warning_toast("AI config file was erroneous, wrote a new one")
+        else:
+            self.ai_backend_state = self.build_default_ai_backend_state()
+            self.ai_restore_visible = False
+
+        self.ai_restore_visible = False
+
+    def ensure_ai_dialogue(self) -> None:
+        """
+        Create the floating AI dialogue lazily and bind it to the live main window.
+
+        :returns: Nothing.
+        """
+        if self.ai_chat_dialogue is None:
+            self.ai_chat_dialogue = AiChatDialogue(parent=self, app=self)
+            self.ai_chat_dialogue.set_embedded_mode(False)
+            self.ai_chat_dialogue.apply_backend_state(self.ai_backend_state)
+            self.ai_chat_dialogue.dialogue_visibility_changed.connect(
+                self.handle_ai_dialogue_visibility_changed
+            )
+        else:
+            self.ai_chat_dialogue.apply_backend_state(self.ai_backend_state)
+
+    def sync_ai_dialogue_action_state(self, visible: bool) -> None:
+        """
+        Synchronize the floating dialogue visibility with the toolbar/menu action state.
+
+        :param visible: Dialogue visibility.
+        :returns: Nothing.
+        """
+        self.ui.actionai_chat.blockSignals(True)
+        self.ui.actionai_chat.setChecked(visible)
+        self.ui.actionai_chat.blockSignals(False)
+
+        self.ai_restore_visible = visible
+
+        if visible:
+            self.refresh_ai_context_if_available()
+        else:
+            pass
+
+    def refresh_ai_context_if_available(self) -> None:
+        """
+        Refresh the AI dialogue context when the floating window exists.
+
+        :returns: Nothing.
+        """
+        if self.ai_chat_dialogue is None:
+            pass
+        else:
+            self.ai_chat_dialogue.refresh_context_from_app()
+
+    def handle_ai_dialogue_visibility_changed(self, visible: bool) -> None:
+        """
+        Keep the AI action state synchronized with the persistent floating dialogue.
+
+        :param visible: Dialogue visibility state.
+        :returns: Nothing.
+        """
+        self.sync_ai_dialogue_action_state(visible)
+
+    def shutdown_ai_dialogue_if_available(self) -> None:
+        """
+        Stop the AI worker thread when the dialogue exists.
+
+        :returns: Nothing.
+        """
+        if self.ai_chat_dialogue is None:
+            pass
+        else:
+            self.ai_chat_dialogue.prepare_for_shutdown()
+            self.ai_chat_dialogue.shutdown_turn_thread()
+
+    def set_ai_dialogue_visible(self, visible: bool) -> None:
+        """
+        Show or hide the floating AI dialogue.
+
+        :param visible: Desired visibility.
+        :returns: Nothing.
+        """
+        self.ensure_ai_dialogue()
+
+        if self.ai_chat_dialogue is None:
+            pass
+        else:
+            if visible:
+                self.ai_chat_dialogue.show()
+                self.ai_chat_dialogue.raise_()
+                self.ai_chat_dialogue.activateWindow()
+                self.refresh_ai_context_if_available()
+                self.ai_backend_state = self.ai_chat_dialogue.get_backend_state()
+                if (
+                    self.ai_backend_state.provider_tpe == ProviderType.LOCAL_LLAMA_CPP
+                    and len(self.ai_backend_state.base_url.strip()) == 0
+                ):
+                    default_state: AiBackendState = self.build_default_ai_backend_state()
+                    self.ai_backend_state = default_state
+                    self.ai_chat_dialogue.apply_backend_state(default_state)
+                else:
+                    pass
+
+                if self.ai_backend_state.provider_tpe == ProviderType.LOCAL_LLAMA_CPP:
+                    self.ai_chat_dialogue.refresh_available_models()
+                    self.ai_backend_state = self.ai_chat_dialogue.get_backend_state()
+                else:
+                    pass
+
+                if len(self.ai_backend_state.model_name.strip()) == 0:
+                    self.show_info_toast("Configure a local GGUF model path for the AI window", duration=3500)
+                else:
+                    pass
+
+                self.sync_ai_dialogue_action_state(True)
+            else:
+                self.ai_chat_dialogue.hide()
+                self.sync_ai_dialogue_action_state(False)
+
+    def open_ai_chat_dialogue(self) -> None:
+        """
+        Open the AI dialogue connected to the live VeraGrid main window.
+
+        :returns: Nothing.
+        """
+        self.set_ai_dialogue_visible(True)
+
+    @staticmethod
     def show_online_docs():
         """
         Open the online documentation in a web browser
@@ -704,133 +1156,6 @@ class BaseMainGui(QMainWindow):
                 self.circuit.contingencies += self.contingency_planner_dialogue.contingencies
             else:
                 info_msg(text="No contingencies were generated :/", title="Contingency planner")
-
-    def clear_console(self):
-        """
-        Clear console output
-        """
-        self.console.clear()
-
-    def reset_console(self):
-        """
-        Reset console
-        :return:
-        """
-        self.console.reset()
-        self.add_console_vars()
-
-    def print_console_help(self):
-
-        self.console.append_output("")
-        self.console.append_output('VeraGrid internal commands.\n')
-        self.console.append_output('If a command is unavailable is because the study has not been executed yet.')
-
-        self.console.append_output('\n\nclc():\tclear the console.')
-
-        self.console.append_output('\n\nApp functions:')
-        self.console.append_output('\tapp.new_project(): Clear all.')
-        self.console.append_output('\tapp.open_file(): Prompt to load VeraGrid compatible file')
-        self.console.append_output('\tapp.save_file(): Prompt to save VeraGrid file')
-        self.console.append_output('\tapp.export_diagram(): Prompt to export the diagram in png.')
-        self.console.append_output(
-            '\tapp.create_schematic_from_api(): Create the schematic from the circuit information.')
-        self.console.append_output(
-            '\tapp.adjust_all_node_width(): Adjust the width of all the nodes according to their name.')
-        self.console.append_output('\tapp.numerical_circuit: get compilation of the assets.')
-        self.console.append_output('\tapp.islands: get compilation of the assets split into the topological islands.')
-
-        self.console.append_output('\n\nCircuit functions:')
-        self.console.append_output(
-            '\tapp.circuit.plot_graph(): Plot a graph in a Matplotlib window. Call plt.show() after.')
-
-        self.console.append_output('\n\nPower flow results:')
-        self.console.append_output('\tapp.session.power_flow.voltage:\t the nodal voltages in per unit')
-        self.console.append_output('\tapp.session.power_flow.current:\t the branch currents in per unit')
-        self.console.append_output('\tapp.session.power_flow.loading:\t the branch loading in %')
-        self.console.append_output('\tapp.session.power_flow.losses:\t the branch losses in per unit')
-        self.console.append_output('\tapp.session.power_flow.power:\t the nodal power Injections in per unit')
-        self.console.append_output(
-            '\tapp.session.power_flow.Sf:\t the branch power Injections in per unit at the "from" side')
-        self.console.append_output(
-            '\tapp.session.power_flow.St:\t the branch power Injections in per unit at the "to" side')
-
-        self.console.append_output('\n\nShort circuit results:')
-        self.console.append_output('\tapp.session.short_circuit.voltage:\t the nodal voltages in per unit')
-        self.console.append_output('\tapp.session.short_circuit.current:\t the branch currents in per unit')
-        self.console.append_output('\tapp.session.short_circuit.loading:\t the branch loading in %')
-        self.console.append_output('\tapp.session.short_circuit.losses:\t the branch losses in per unit')
-        self.console.append_output('\tapp.session.short_circuit.power:\t the nodal power Injections in per unit')
-        self.console.append_output(
-            '\tapp.session.short_circuit.power_from:\t the branch power Injections in per unit at the "from" side')
-        self.console.append_output(
-            '\tapp.session.short_circuit.power_to:\t the branch power Injections in per unit at the "to" side')
-        self.console.append_output(
-            '\tapp.session.short_circuit.short_circuit_power:\t Short circuit power in MVA of the grid nodes')
-
-        self.console.append_output('\n\nOptimal power flow results:')
-        self.console.append_output('\tapp.session.optimal_power_flow.voltage:\t the nodal voltages angles in rad')
-        self.console.append_output('\tapp.session.optimal_power_flow.load_shedding:\t the branch loading in %')
-        self.console.append_output('\tapp.session.optimal_power_flow.losses:\t the branch losses in per unit')
-        self.console.append_output('\tapp.session.optimal_power_flow.Sbus:\t the nodal power Injections in MW')
-        self.console.append_output('\tapp.session.optimal_power_flow.Sf:\t the branch power Sf')
-
-        self.console.append_output('\n\nTime series power flow results:')
-        self.console.append_output(
-            '\tapp.session.power_flow_ts.time:\t Profiles time index (pandas DateTimeIndex object)')
-        self.console.append_output(
-            '\tapp.session.power_flow_ts.load_profiles:\t Load profiles matrix (row: time, col: node)')
-        self.console.append_output(
-            '\tapp.session.power_flow_ts.gen_profiles:\t Generation profiles matrix (row: time, col: node)')
-        self.console.append_output(
-            '\tapp.session.power_flow_ts.voltages:\t nodal voltages results matrix (row: time, col: node)')
-        self.console.append_output(
-            '\tapp.session.power_flow_ts.currents:\t Branches currents results matrix (row: time, col: branch)')
-        self.console.append_output(
-            '\tapp.session.power_flow_ts.loadings:\t Branches loadings results matrix (row: time, col: branch)')
-        self.console.append_output(
-            '\tapp.session.power_flow_ts.losses:\t Branches losses results matrix (row: time, col: branch)')
-
-        self.console.append_output('\n\nVoltage stability power flow results:')
-        self.console.append_output(
-            '\tapp.session.continuation_power_flow.voltage:\t Voltage values for every power multiplication factor.')
-        self.console.append_output(
-            '\tapp.session.continuation_power_flow.lambda:\t Value of power multiplication factor applied')
-        self.console.append_output(
-            '\tapp.session.continuation_power_flow.Sf:\t Power values for every power multiplication factor.')
-
-        self.console.append_output('\n\nMonte Carlo power flow results:')
-        self.console.append_output('\tapp.session.stochastic_power_flow.V_avg:\t nodal voltage average result.')
-        self.console.append_output('\tapp.session.stochastic_power_flow.I_avg:\t branch current average result.')
-        self.console.append_output('\tapp.session.stochastic_power_flow.Loading_avg:\t branch loading average result.')
-        self.console.append_output('\tapp.session.stochastic_power_flow.Losses_avg:\t branch losses average result.')
-        self.console.append_output(
-            '\tapp.session.stochastic_power_flow.V_std:\t nodal voltage standard deviation result.')
-        self.console.append_output(
-            '\tapp.session.stochastic_power_flow.I_std:\t branch current standard deviation result.')
-        self.console.append_output(
-            '\tapp.session.stochastic_power_flow.Loading_std:\t branch loading standard deviation result.')
-        self.console.append_output(
-            '\tapp.session.stochastic_power_flow.Losses_std:\t branch losses standard deviation result.')
-        self.console.append_output('\tapp.session.stochastic_power_flow.V_avg_series:\t nodal voltage average series.')
-        self.console.append_output(
-            '\tapp.session.stochastic_power_flow.V_std_series:\t branch current standard deviation series.')
-        self.console.append_output(
-            '\tapp.session.stochastic_power_flow.error_series:\t Monte Carlo error series (the convergence value).')
-        self.console.append_output('The same for app.latin_hypercube_sampling')
-
-    def add_console_vars(self):
-        """
-        Add vars to the console
-        :return:
-        """
-        self.console.add_var("hlp", self.print_console_help)
-        self.console.add_var("np", np)
-        self.console.add_var("pd", pd)
-        self.console.add_var("plt", plt)
-        self.console.add_var("clc", self.console.clear)
-        self.console.add_var('app', self)
-        self.console.add_var('circuit', self.circuit)
-        self.console.add_var('user_folder', get_create_veragrid_folder)
 
     def show_toast(self, message: str, duration: int = 2000):
         """

@@ -9,6 +9,7 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 
 
 class SeasonDayTypeSchedule(RegularIntervalSchedule):
+	__slots__ = ()
 	def __init__(self, rdfid='', tpe='SeasonDayTypeSchedule'):
 		RegularIntervalSchedule.__init__(self, rdfid, tpe)
 

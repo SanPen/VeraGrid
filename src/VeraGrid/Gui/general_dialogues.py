@@ -4,7 +4,6 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-import sys
 import io
 import numpy as np
 import pandas as pd
@@ -15,17 +14,18 @@ from PySide6.QtWidgets import (QApplication, QDialog, QTableView, QVBoxLayout, Q
                                QLabel, QComboBox, QSpacerItem, QSizePolicy)
 
 from PySide6.QtCore import Qt, QAbstractTableModel, QModelIndex
-from VeraGridEngine.basic_structures import Logger
+from VeraGridEngine.basic_structures import Logger, IntVec
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGrid.Gui.gui_functions import get_list_model, get_checked_indices, get_chck_list_model
 from VeraGrid.Gui.object_model import ObjectsModel
-from VeraGridEngine.enumerations import FaultType, MethodShortCircuit, PhasesShortCircuit
+from VeraGridEngine.enumerations import FaultType, MethodShortCircuit, PhasesShortCircuit, FileType, CGMESVersions
 
 
 class CenteredDialog(QDialog):
     """
     Class to make the dialogues centered
     """
+
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -214,7 +214,7 @@ class LogsDialogue(CenteredDialog):
     New profile dialogue window
     """
 
-    def __init__(self, name: str, logger: Logger(), expand_all=True):
+    def __init__(self, name: str, logger: Logger, expand_all=True):
         super(LogsDialogue, self).__init__()
         self.setObjectName("self")
         self.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.NoContextMenu)
@@ -326,7 +326,7 @@ class ElementsDialogue(CenteredDialog):
             if len(elements) > 0:
                 model = ObjectsModel(objects=elements,
                                      time_index=None,
-                                     property_list=elements[0].property_list,
+                                     property_list=list(elements[0].property_list),
                                      parent=self.objects_table,
                                      editable=False)
 
@@ -390,7 +390,7 @@ class TimeReIndexDialogue(CenteredDialog):
         # year
         d2 = datetime.now()
         self.date_time_editor = QtWidgets.QDateTimeEdit()
-        self.date_time_editor.setDateTime(QtCore.QDateTime(d2.year, d2.month, d2.day, d2.hour, d2.minute))
+        self.date_time_editor.setDateTime(QtCore.QDateTime(d2.year, d2.month, d2.day, d2.hour, d2.minute, d2.second))
 
         # time step length
         self.step_length = QtWidgets.QDoubleSpinBox()
@@ -612,7 +612,7 @@ class CheckListDialogue(CenteredDialog):
         """
         self.is_accepted = True
 
-        self.selected_indices = get_checked_indices(self.mdl)
+        self.selected_indices: IntVec = get_checked_indices(self.mdl)
 
         for row in range(self.mdl.rowCount()):
             item = self.mdl.item(row)
@@ -712,7 +712,7 @@ class DeleteDialogue(CenteredDialog):
         """
         self.is_accepted = True
 
-        self.selected_indices = get_checked_indices(self.mdl)
+        self.selected_indices: IntVec = get_checked_indices(self.mdl)
         self.accept()
 
 
@@ -1055,7 +1055,7 @@ class ArrayTableModel(QAbstractTableModel):
         if not index.isValid():
             return False
 
-        if role == Qt.EditRole:
+        if role == Qt.ItemDataRole.EditRole:
             row = index.row()
             column = index.column()
             try:
@@ -1173,169 +1173,264 @@ class ArrayEditor(CenteredDialog):
 # ----------------------------------------------------
 
 
-def valid_methods_for_fault(fault: FaultType):
+
+
+# class ShortCircuitSelector(CenteredDialog):
+#     """
+#     ShortCircuitSelector
+#     """
+#
+#     def __init__(self) -> None:
+#         super().__init__()
+#         self.setWindowTitle("Short Circuit Configuration")
+#
+#         layout = QVBoxLayout(self)
+#
+#         # Fault type
+#         self.cb_fault = QComboBox()
+#         self.cb_fault.addItems([e.value for e in FaultType])
+#         layout.addWidget(QLabel("Fault type:"))
+#         layout.addWidget(self.cb_fault)
+#
+#         # Method
+#         self.cb_method = QComboBox()
+#         self.cb_method.addItems([e.value for e in MethodShortCircuit])
+#         layout.addWidget(QLabel("Method:"))
+#         layout.addWidget(self.cb_method)
+#
+#         # Phases
+#         self.cb_phases = QComboBox()
+#         self.cb_phases.addItems([e.value for e in PhasesShortCircuit])
+#         self.phases_label = QLabel("Phases:")
+#         layout.addWidget(self.phases_label)
+#         layout.addWidget(self.cb_phases)
+#
+#         # --- VERTICAL SPACER ---
+#         layout.addSpacerItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
+#
+#         # Accept button
+#         self.btn_accept = QPushButton("Accept")
+#         layout.addWidget(self.btn_accept)
+#
+#         # Logic connections
+#         self.cb_fault.currentIndexChanged.connect(self.update_logic)
+#         self.btn_accept.clicked.connect(self.accept_clicked)
+#
+#         self.update_logic()
+#         self.fault = FaultType(self.cb_fault.currentText())
+#         self.method = MethodShortCircuit(self.cb_method.currentText())
+#         self.phases = PhasesShortCircuit(self.cb_phases.currentText())
+#
+#         self.was_accepted = False
+#
+#         self.cb_method.currentTextChanged.connect(self.update_view)
+#
+#     def update_view(self):
+#         """
+#
+#         :return:
+#         """
+#
+#         fault = FaultType(self.cb_fault.currentText())
+#
+#         # -------- UPDATE PHASES --------
+#         if self.cb_method.currentText() == MethodShortCircuit.sequences.value:
+#             self.cb_phases.setVisible(False)
+#             self.phases_label.setVisible(False)
+#         else:
+#             self.cb_phases.setVisible(True)
+#             self.phases_label.setVisible(True)
+#             allowed_phases = valid_phases_for_fault(fault)
+#             current_phase = self.cb_phases.currentText()
+#
+#             self.cb_phases.clear()
+#             for p in allowed_phases:
+#                 self.cb_phases.addItem(p.value)
+#
+#             if current_phase in [p.value for p in allowed_phases]:
+#                 self.cb_phases.setCurrentText(current_phase)
+#
+#     def update_logic(self):
+#         """Update available method and phase options based on the fault type."""
+#
+#         fault = FaultType(self.cb_fault.currentText())
+#
+#         # -------- UPDATE METHOD --------
+#         allowed_methods = valid_methods_for_fault(fault)
+#         current_method = self.cb_method.currentText()
+#
+#         self.cb_method.clear()
+#         for m in allowed_methods:
+#             self.cb_method.addItem(m.value)
+#
+#         if current_method in [m.value for m in allowed_methods]:
+#             self.cb_method.setCurrentText(current_method)
+#
+#         # -------- UPDATE PHASES --------
+#         if current_method == MethodShortCircuit.sequences.value:
+#             self.cb_phases.setVisible(False)
+#             self.phases_label.setVisible(False)
+#         else:
+#             self.cb_phases.setVisible(True)
+#             self.phases_label.setVisible(True)
+#             allowed_phases = valid_phases_for_fault(fault)
+#             current_phase = self.cb_phases.currentText()
+#
+#             self.cb_phases.clear()
+#             for p in allowed_phases:
+#                 self.cb_phases.addItem(p.value)
+#
+#             if current_phase in [p.value for p in allowed_phases]:
+#                 self.cb_phases.setCurrentText(current_phase)
+#
+#         self.fault = FaultType(self.cb_fault.currentText())
+#         self.method = MethodShortCircuit(self.cb_method.currentText())
+#         self.phases = PhasesShortCircuit(self.cb_phases.currentText())
+#
+#     def get_selection(self):
+#         """Return the selected configuration as enums."""
+#         return (
+#             FaultType(self.cb_fault.currentText()),
+#             MethodShortCircuit(self.cb_method.currentText()),
+#             PhasesShortCircuit(self.cb_phases.currentText()),
+#         )
+#
+#     def accept_clicked(self):
+#         """Check if values are valid and close dialog."""
+#         self.fault = FaultType(self.cb_fault.currentText())
+#         self.method = MethodShortCircuit(self.cb_method.currentText())
+#         self.phases = PhasesShortCircuit(self.cb_phases.currentText())
+#         self.was_accepted = True
+#         self.close()
+
+
+class FileTypeSelector(CenteredDialog):
     """
-    :param fault:
-    :return:
-    """
-    # all other faults allow both
-    return list(MethodShortCircuit)
-
-
-def valid_phases_for_fault(fault: FaultType):
+    FileTypeSelector
     """
 
-    :param fault:
-    :return:
-    """
-    if fault in (FaultType.LLLG, FaultType.LLL):
-        return [PhasesShortCircuit.abc]
-
-    if fault == FaultType.LG:
-        return [PhasesShortCircuit.a, PhasesShortCircuit.b, PhasesShortCircuit.c]
-
-    if fault in (FaultType.LL, FaultType.LLG):
-        return [PhasesShortCircuit.ab, PhasesShortCircuit.bc, PhasesShortCircuit.ca]
-
-    return []
-
-
-class ShortCircuitSelector(CenteredDialog):
-    """
-    ShortCircuitSelector
-    """
-
-    def __init__(self) -> None:
+    def __init__(self, file_name: List[str] | str) -> None:
         super().__init__()
-        self.setWindowTitle("Short Circuit Configuration")
-
+        self.setWindowTitle("Select how to load the file")
+        self.setModal(False)
         layout = QVBoxLayout(self)
 
-        # Fault type
-        self.cb_fault = QComboBox()
-        self.cb_fault.addItems([e.value for e in FaultType])
-        layout.addWidget(QLabel("Fault type:"))
-        layout.addWidget(self.cb_fault)
+        if isinstance(file_name, list):
+            txt = "You've passed a generic list of files\nselect the expected processing format"
+
+            xml_types_count = 0
+            ucte_types_count = 0
+            for f in file_name:
+                if f.endswith(".xml"):
+                    xml_types_count += 1
+                elif f.endswith(".zip"):
+                    xml_types_count += 1
+                elif f.endswith(".uct"):
+                    ucte_types_count += 1
+                elif f.endswith(".ucte"):
+                    ucte_types_count += 1
+
+            if xml_types_count > 0:
+                tpes = [FileType.CGMES, FileType.CIM, FileType.Iidm]
+            elif ucte_types_count > 0:
+                tpes = [FileType.UCTE]
+            else:
+                tpes = []
+
+        elif isinstance(file_name, str):
+            txt = "You've passed a generic of file\nselect the expected processing format"
+
+            if file_name.endswith(".xml"):
+                tpes = [FileType.CGMES, FileType.CIM, FileType.Iidm]
+            elif file_name.endswith(".zip"):
+                tpes = [FileType.CGMES, FileType.CIM, FileType.Iidm]
+            elif file_name.endswith(".uct"):
+                tpes = [FileType.UCTE]
+            elif file_name.endswith(".ucte"):
+                tpes = [FileType.UCTE]
+            else:
+                tpes = []
+
+        else:
+            raise ValueError("Files should be a list of a string")
+
+        # Text
+        layout.addWidget(QLabel(txt))
 
         # Method
+        self.tpe_dict = {e.value: e for e in tpes}
         self.cb_method = QComboBox()
-        self.cb_method.addItems([e.value for e in MethodShortCircuit])
-        layout.addWidget(QLabel("Method:"))
+        self.cb_method.addItems([e.value for e in tpes])
+        layout.addWidget(QLabel("Format:"))
         layout.addWidget(self.cb_method)
 
-        # Phases
-        self.cb_phases = QComboBox()
-        self.cb_phases.addItems([e.value for e in PhasesShortCircuit])
-        self.phases_label = QLabel("Phases:")
-        layout.addWidget(self.phases_label)
-        layout.addWidget(self.cb_phases)
-
         # --- VERTICAL SPACER ---
-        layout.addSpacerItem(QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))
+        layout.addSpacerItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
 
         # Accept button
         self.btn_accept = QPushButton("Accept")
         layout.addWidget(self.btn_accept)
 
         # Logic connections
-        self.cb_fault.currentIndexChanged.connect(self.update_logic)
         self.btn_accept.clicked.connect(self.accept_clicked)
 
-        self.update_logic()
-        self.fault = FaultType(self.cb_fault.currentText())
-        self.method = MethodShortCircuit(self.cb_method.currentText())
-        self.phases = PhasesShortCircuit(self.cb_phases.currentText())
-
         self.was_accepted = False
-
-        self.cb_method.currentTextChanged.connect(self.update_view)
-
-    def update_view(self):
-        """
-
-        :return:
-        """
-
-        fault = FaultType(self.cb_fault.currentText())
-
-        # -------- UPDATE PHASES --------
-        if self.cb_method.currentText() == MethodShortCircuit.sequences.value:
-            self.cb_phases.setVisible(False)
-            self.phases_label.setVisible(False)
-        else:
-            self.cb_phases.setVisible(True)
-            self.phases_label.setVisible(True)
-            allowed_phases = valid_phases_for_fault(fault)
-            current_phase = self.cb_phases.currentText()
-
-            self.cb_phases.clear()
-            for p in allowed_phases:
-                self.cb_phases.addItem(p.value)
-
-            if current_phase in [p.value for p in allowed_phases]:
-                self.cb_phases.setCurrentText(current_phase)
-
-    def update_logic(self):
-        """Update available method and phase options based on the fault type."""
-
-        fault = FaultType(self.cb_fault.currentText())
-
-        # -------- UPDATE METHOD --------
-        allowed_methods = valid_methods_for_fault(fault)
-        current_method = self.cb_method.currentText()
-
-        self.cb_method.clear()
-        for m in allowed_methods:
-            self.cb_method.addItem(m.value)
-
-        if current_method in [m.value for m in allowed_methods]:
-            self.cb_method.setCurrentText(current_method)
-
-        # -------- UPDATE PHASES --------
-        if current_method == MethodShortCircuit.sequences.value:
-            self.cb_phases.setVisible(False)
-            self.phases_label.setVisible(False)
-        else:
-            self.cb_phases.setVisible(True)
-            self.phases_label.setVisible(True)
-            allowed_phases = valid_phases_for_fault(fault)
-            current_phase = self.cb_phases.currentText()
-
-            self.cb_phases.clear()
-            for p in allowed_phases:
-                self.cb_phases.addItem(p.value)
-
-            if current_phase in [p.value for p in allowed_phases]:
-                self.cb_phases.setCurrentText(current_phase)
-
-        self.fault = FaultType(self.cb_fault.currentText())
-        self.method = MethodShortCircuit(self.cb_method.currentText())
-        self.phases = PhasesShortCircuit(self.cb_phases.currentText())
-
-    def get_selection(self):
-        """Return the selected configuration as enums."""
-        return (
-            FaultType(self.cb_fault.currentText()),
-            MethodShortCircuit(self.cb_method.currentText()),
-            PhasesShortCircuit(self.cb_phases.currentText()),
-        )
+        self.file_type: FileType | None = None
 
     def accept_clicked(self):
         """Check if values are valid and close dialog."""
-        self.fault = FaultType(self.cb_fault.currentText())
-        self.method = MethodShortCircuit(self.cb_method.currentText())
-        self.phases = PhasesShortCircuit(self.cb_phases.currentText())
+        self.file_type = self.tpe_dict[self.cb_method.currentText()]
         self.was_accepted = True
         self.close()
 
 
-if __name__ == "__main__":
-    import sys
+class CgmesOptionsSelector(CenteredDialog):
+    """
+    FileTypeSelector
+    """
 
-    app = QApplication(sys.argv)
-    w = ShortCircuitSelector()
-    w.show()
-    sys.exit(app.exec())
+    def __init__(self) -> None:
+        super().__init__()
+        self.setWindowTitle("Select the CGMES options")
+        self.setModal(False)
+        layout = QVBoxLayout(self)
+
+        tpes = [CGMESVersions.v2_4_15, CGMESVersions.v3_0_0]
+
+        # Method
+        self.tpe_dict = {e.value: e for e in tpes}
+        self.cb_method = QComboBox()
+        self.cb_method.addItems([e.value for e in tpes])
+        layout.addWidget(QLabel("CGMES Version:"))
+        layout.addWidget(self.cb_method)
+
+        # --- VERTICAL SPACER ---
+        layout.addSpacerItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
+
+        # Accept button
+        self.btn_accept = QPushButton("Accept")
+        layout.addWidget(self.btn_accept)
+
+        # Logic connections
+        self.btn_accept.clicked.connect(self.accept_clicked)
+
+        self.was_accepted = False
+        self.version: CGMESVersions | None = None
+
+    def accept_clicked(self):
+        """Check if values are valid and close dialog."""
+        self.version = self.tpe_dict[self.cb_method.currentText()]
+        self.was_accepted = True
+        self.close()
+
+
+# if __name__ == "__main__":
+#     import sys
+#
+#     app = QApplication(sys.argv)
+#     w = ShortCircuitSelector()
+#     w.show()
+#     sys.exit(app.exec())
 
     # from PySide6.QtWidgets import QApplication
     #
@@ -1356,8 +1451,8 @@ if __name__ == "__main__":
     # window.show()
     # sys.exit(app.exec())
 
-    app = QApplication(sys.argv)
-    window = ArrayEditor()
-    window.resize(400, 300)
-    window.show()
-    sys.exit(app.exec())
+    # app = QApplication(sys.argv)
+    # window = ArrayEditor()
+    # window.resize(400, 300)
+    # window.show()
+    # sys.exit(app.exec())

@@ -104,6 +104,14 @@ class TechnoEconomicScores:
     """
     InvestmentScores
     """
+    __slots__ = (
+        "capex_score",
+        "opex_score",
+        "losses_score",
+        "overload_score",
+        "voltage_module_score",
+        "voltage_angle_score",
+    )
 
     def __init__(self) -> None:
         """

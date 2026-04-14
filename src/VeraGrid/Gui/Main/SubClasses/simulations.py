@@ -4,8 +4,6 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-import os
-import datetime
 import numpy as np
 from collections import OrderedDict
 from typing import List, Tuple, Dict, Union
@@ -15,14 +13,14 @@ from PySide6 import QtGui
 from matplotlib.colors import LinearSegmentedColormap
 
 import VeraGrid.Gui.gui_functions as gf
-import VeraGrid.Gui.Visualization.visualization as viz
-from VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics import BusGraphicItem
 from VeraGrid.Gui.general_dialogues import LogsDialogue
 from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
 from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import MapWidget
 from VeraGrid.Gui.messages import yes_no_question, error_msg, warning_msg, info_msg
 from VeraGrid.Gui.Main.SubClasses.Model.time_events import TimeEventsMain
 from VeraGrid.Gui.SigmaAnalysis.sigma_analysis_dialogue import SigmaAnalysisGUI
+from VeraGrid.Gui.ProceduralGrid.procedural_grid import ProceduralGridWindow
+from VeraGrid.Gui.ProceduralGrid.map_warning import MapWarningDialog
 from VeraGrid.Session.server_driver import RemoteJobDriver
 
 # Engine imports
@@ -31,16 +29,16 @@ import VeraGridEngine.Simulations as sim
 import VeraGridEngine.Simulations.PowerFlow.grid_analysis as grid_analysis
 from VeraGridEngine.Compilers.circuit_to_newton_pa import get_newton_mip_solvers_list
 from VeraGridEngine.Utils.MIP.selected_interface import get_available_mip_solvers, get_available_mip_frameworks
-from VeraGridEngine.IO.file_system import opf_file_path
 from VeraGridEngine.IO.veragrid.remote import RemoteInstruction
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGridEngine.Simulations.types import DRIVER_OBJECTS
-from VeraGridEngine.basic_structures import CxVec
+from VeraGridEngine.basic_structures import CxVec, IntVec, Vec
 from VeraGridEngine.enumerations import (DeviceType, AvailableTransferMode, SolverType, MIPSolvers, TimeGrouping,
                                          ZonalGrouping, ContingencyMethod, InvestmentEvaluationMethod, EngineType,
                                          BranchImpedanceMode, ResultTypes, SimulationTypes, NodalCapacityMethod,
                                          ContingencyFilteringMethods, InvestmentsEvaluationObjectives,
-                                         ReliabilityMode, OpfDispatchMode)
+                                         ReliabilityMode, OpfDispatchMode, DynamicIntegrationMethod,
+                                         RmsInitializationMethod, EmtInitializationMethod, EmtSolverTypes)
 
 
 class SimulationsMain(TimeEventsMain):
@@ -233,14 +231,58 @@ class SimulationsMain(TimeEventsMain):
         )
         self.ui.investment_evaluation_objfunc_ComboBox.setModel(investment_evaluation_objfunc_mdl)
 
+        # rms simulation
+        self.rms_integration_method_dict, rms_integration_method_mdl = gf.enums_to_model(
+            [DynamicIntegrationMethod.DaeBackEuler,
+             DynamicIntegrationMethod.DaeTrapezoidal,
+             DynamicIntegrationMethod.DaeBDF2,
+             DynamicIntegrationMethod.DaeBackEuler,
+             DynamicIntegrationMethod.OdeEuler]
+        )
+        self.ui.rms_integration_method_comboBox.setModel(rms_integration_method_mdl)
+
+        self.rms_initialization_method_dict, rms_initialization_method_mdl = gf.enums_to_model(
+            [RmsInitializationMethod.Explicit,
+             RmsInitializationMethod.PseudoTransient]
+        )
+        self.ui.rms_initialization_method_comboBox.setModel(rms_initialization_method_mdl)
+
+        # emt simulation
+        self.emt_integration_method_dict, emt_integration_method_mdl = gf.enums_to_model(
+            [DynamicIntegrationMethod.DaeBackEuler,
+             DynamicIntegrationMethod.DaeTrapezoidal,
+             DynamicIntegrationMethod.DaeBDF2
+             ]
+        )
+        self.ui.emt_integration_method_comboBox.setModel(emt_integration_method_mdl)
+
+        self.emt_initialization_method_dict, emt_initialization_method_mdl = gf.enums_to_model(
+            [EmtInitializationMethod.Explicit,
+             EmtInitializationMethod.ConsistentNewton,
+             EmtInitializationMethod.PseudoTransient,
+             EmtInitializationMethod.Auto
+             ]
+        )
+        self.ui.emt_initialization_method_comboBox.setModel(emt_initialization_method_mdl)
+
+        self.emt_solver_type_dict, emt_solver_type_mdl = gf.enums_to_model(
+            [EmtSolverTypes.Symbolic,
+             EmtSolverTypes.StructuralAD,
+             EmtSolverTypes.StructuralCompiled,
+             EmtSolverTypes.Automatic
+             ]
+        )
+        self.ui.emt_solver_type_comboBox.setModel(emt_solver_type_mdl)
+
         # dictionaries for available results
         self.available_results_dict: Union[Dict[str, Dict[str, ResultTypes]], None] = dict()
 
-        self.buses_for_storage: Union[List[dev.Bus], None] = None
+        self.buses_for_storage: List[dev.Bus] = list()
 
         # --------------------------------------------------------------------------------------------------------------
 
         self.ui.actionPower_flow.triggered.connect(self.power_flow_dispatcher)
+        self.ui.actionPower_flow_3ph.triggered.connect(self.power_flow_3ph_dispatcher)
         self.ui.actionShort_Circuit.triggered.connect(self.run_short_circuit)
         self.ui.actionVoltage_stability.triggered.connect(self.run_continuation_power_flow)
         self.ui.actionPower_Flow_Time_series.triggered.connect(self.run_power_flow_time_series)
@@ -265,7 +307,10 @@ class SimulationsMain(TimeEventsMain):
         self.ui.actionInvestments_evaluation.triggered.connect(self.run_investments_evaluation)
         self.ui.actionReliability.triggered.connect(self.reliability_dispatcher)
         self.ui.actionRun_Dynamic_RMS_Simulation.triggered.connect(self.rms_dispatcher)
-        self.ui.actionRun_Small_Signal_RMS_Simulation.triggered.connect(self.small_signal_dispatcher)
+        self.ui.actionRun_Small_Signal_RMS_Simulation.triggered.connect(self.rms_small_signal_dispatcher)
+        self.ui.actionRun_Dynamic_EMT_Simulation.triggered.connect(self.emt_dispatcher)
+        self.ui.actionRun_Small_Signal_EMT_Simulation.triggered.connect(self.emt_small_signal_dispatcher)
+        self.ui.actionProcedural_grid_expansion.triggered.connect(self.procedural_grid_expansion)
 
         self.ui.actionUse_clustering.triggered.connect(self.activate_clustering)
         self.ui.actionNodal_capacity.triggered.connect(self.run_nodal_capacity)
@@ -498,8 +543,8 @@ class SimulationsMain(TimeEventsMain):
                 self.ui.contingency_filter_by_comboBox.setCurrentIndex(0)
             else:
                 threshold = self.ui.lodf_threshold_doubleSpinBox.value()
-                sensitive_idx = self.circuit.get_contingency_groups_sensitive_to_moitoring(LODF=res.LODF,
-                                                                                           threshold=threshold)
+                sensitive_idx = self.circuit.get_contingency_groups_sensitive_to_monitoring(LODF=res.LODF,
+                                                                                            threshold=threshold)
                 mdl = gf.get_elm_chck_list_model(self.circuit.contingency_groups, sensitive_idx)
         else:
             raise Exception('Unsupported ContingencyFilteringMethod ' + str(filter_mode.value))
@@ -620,7 +665,7 @@ class SimulationsMain(TimeEventsMain):
         """
         self.session.clear()
 
-        self.buses_for_storage = None
+        self.buses_for_storage = list()
 
         self.calculation_inputs_to_display = None
         self.ui.simulation_data_island_comboBox.clear()
@@ -646,8 +691,6 @@ class SimulationsMain(TimeEventsMain):
         if self.open_file_thread_object is not None:
             if isinstance(self.open_file_thread_object.file_name, str):
                 self.ui.file_information_label.setText(self.open_file_thread_object.file_name)
-
-        self.reset_console()
 
         self.ui.units_label.setText("")
 
@@ -753,7 +796,7 @@ class SimulationsMain(TimeEventsMain):
         d = dict()
         lst = [SimulationTypes.DesignView.value]
         for driver in available_results:
-            name = driver.tpe.value
+            name: str = str(driver.tpe.value)
             lst.append(name)
             d[name] = driver.results.get_name_tree()
             self.available_results_dict[name] = driver.results.get_name_to_results_type_dict()
@@ -764,6 +807,7 @@ class SimulationsMain(TimeEventsMain):
 
         icons = {
             SimulationTypes.PowerFlow_run.value: ':/Icons/icons/pf',
+            SimulationTypes.PowerFlow3ph_run.value: ':/Icons/icons/pf3',
             SimulationTypes.PowerFlowTimeSeries_run.value: ':/Icons/icons/pf_ts.png',
             SimulationTypes.OPF_run.value: ':/Icons/icons/dcopf.png',
             SimulationTypes.OPFTimeSeries_run.value: ':/Icons/icons/dcopf_ts.png',
@@ -786,7 +830,7 @@ class SimulationsMain(TimeEventsMain):
             SimulationTypes.OPF_NTC_run.value: ':/Icons/icons/ntc_opf.png',
             SimulationTypes.OPF_NTC_TS_run.value: ':/Icons/icons/ntc_opf_ts.png',
             SimulationTypes.Reliability_run.value: ':/Icons/icons/reliability.png',
-            SimulationTypes.SmallSignal_run.value: ':/Icons/icons/ss_icon.png',
+            SimulationTypes.RmsSmallSignal_run.value: ':/Icons/icons/ss_icon.png',
             SimulationTypes.RmsDynamic_run.value: ':/Icons/icons/dyn.png',
             SimulationTypes.StateEstimation_run.value: ':/Icons/icons/SE.png',
         }
@@ -875,25 +919,53 @@ class SimulationsMain(TimeEventsMain):
         :return: sim.RmsOptions
         """
         ops = sim.RmsOptions(
-            time_step=self.ui.h_spinBox.value(),
-            simulation_time=self.ui.sim_time_spinBox.value(),
+            time_step=self.ui.rms_h_spinBox.value(),
+            simulation_time=self.ui.rms_sim_time_spinBox.value(),
             tolerance=self.ui.tolerance_rms_spinBox.value(),
-            integration_method=self.ui.rms_int_method_comboBox.currentText(),
-            use_init_values=self.ui.rms_use_init_values_checkBox.isChecked()
+            integration_method=self.rms_integration_method_dict[self.ui.rms_integration_method_comboBox.currentText()],
+            initialization_method=self.rms_initialization_method_dict[
+                self.ui.rms_initialization_method_comboBox.currentText()],
         )
 
         return ops
 
-    def get_selected_small_signal_stability_options(self) -> sim.SmallSignalStabilityOptions:
+    def get_selected_rms_small_signal_stability_options(self) -> sim.RmsSmallSignalStabilityOptions:
         """
-        Gather SmallSignal simulation run options
+        Gather RMS SmallSignal simulation run options
+        :return: RmsSmallSignalStabilityOptions
+        """
+        ops = sim.RmsSmallSignalStabilityOptions(
+            k=self.ui.rms_small_signal_modes_number_spinBox.value(),
+            ss_assessment_time=self.ui.rms_ss_assessment_time_spinBox.value(),
+        )
+
+        return ops
+
+    def get_selected_emt_simulation_options(self) -> sim.EmtOptions:
+        """
+        Gather EMT simulation run options
+        :return: sim.EmtOptions
+        """
+        ops = sim.EmtOptions(
+            time_step=self.ui.emt_h_spinBox.value(),
+            simulation_time=self.ui.emt_sim_time_spinBox.value(),
+            tolerance=self.ui.tolerance_emt_spinBox.value(),
+            integration_method=self.emt_integration_method_dict[self.ui.emt_integration_method_comboBox.currentText()],
+            initialization_method=self.emt_initialization_method_dict[
+                self.ui.emt_initialization_method_comboBox.currentText()],
+            solver_type=self.emt_solver_type_dict[self.ui.emt_solver_type_comboBox.currentText()],
+        )
+
+        return ops
+
+    def get_selected_emt_small_signal_stability_options(self) -> sim.EmtSmallSignalStabilityOptions:
+        """
+        Gather EMT SmallSignal simulation run options
         :return: sim.SmallSignalOptions
         """
-        ops = sim.SmallSignalStabilityOptions(
-            time_step=self.ui.h_spinBox.value(),
-            ss_assessment_time=self.ui.ss_assessment_time_spinBox_2.value(),
-            tolerance=self.ui.tolerance_rms_spinBox.value(),
-            integration_method=self.ui.rms_int_method_comboBox.currentText()
+        ops = sim.EmtSmallSignalStabilityOptions(
+            k=self.ui.emt_small_signal_modes_number_spinBox.value(),
+            ss_assessment_time=self.ui.emt_ss_assessment_time_spinBox.value(),
         )
 
         return ops
@@ -981,16 +1053,29 @@ class SimulationsMain(TimeEventsMain):
             self.run_remote(instruction=instruction)
 
         else:
-            if self.ui.pf_three_phase_checkBox.isChecked():
-                if self.ts_flag():
-                    self.show_warning_toast("Time series not available yer for 3-phase formulation :/")
-                else:
-                    self.run_power_flow3ph()
+            if self.ts_flag():
+                self.run_power_flow_time_series()
             else:
-                if self.ts_flag():
-                    self.run_power_flow_time_series()
-                else:
-                    self.run_power_flow()
+                self.run_power_flow()
+
+    def power_flow_3ph_dispatcher(self):
+        """
+        Dispatch the power flow action
+        :return:
+        """
+        if self.server_driver.is_running():
+            if self.ts_flag():
+                instruction = RemoteInstruction(operation=SimulationTypes.PowerFlowTimeSeries_run)
+            else:
+                instruction = RemoteInstruction(operation=SimulationTypes.PowerFlow_run)
+
+            self.run_remote(instruction=instruction)
+
+        else:
+            if self.ts_flag():
+                self.show_warning_toast("Time series not available yer for 3-phase formulation :/")
+            else:
+                self.run_power_flow3ph()
 
     def optimal_power_flow_dispatcher(self):
         """
@@ -1107,17 +1192,41 @@ class SimulationsMain(TimeEventsMain):
         else:
             self.run_rms()
 
-    def small_signal_dispatcher(self):
+    def emt_dispatcher(self):
         """
         Dispatch the reliability action
         :return:
         """
         if self.server_driver.is_running():
-            instruction = RemoteInstruction(operation=SimulationTypes.SmallSignal_run)
+            instruction = RemoteInstruction(operation=SimulationTypes.EmtDynamic_run)
             self.run_remote(instruction=instruction)
 
         else:
-            self.run_small_signal_stability()
+            self.run_emt()
+
+    def rms_small_signal_dispatcher(self):
+        """
+        Dispatch the reliability action
+        :return:
+        """
+        if self.server_driver.is_running():
+            instruction = RemoteInstruction(operation=SimulationTypes.RmsSmallSignal_run)
+            self.run_remote(instruction=instruction)
+
+        else:
+            self.run_rms_small_signal_stability()
+
+    def emt_small_signal_dispatcher(self):
+        """
+        Dispatch the reliability action
+        :return:
+        """
+        if self.server_driver.is_running():
+            instruction = RemoteInstruction(operation=SimulationTypes.RmsSmallSignal_run)
+            self.run_remote(instruction=instruction)
+
+        else:
+            self.run_emt_small_signal_stability()
 
     def run_power_flow(self):
         """
@@ -1145,16 +1254,51 @@ class SimulationsMain(TimeEventsMain):
 
                 # set power flow object instance
                 engine = self.get_preferred_engine()
-                if self.ui.pf_three_phase_checkBox.isChecked():
-                    drv = sim.PowerFlowDriver3Ph(grid=self.circuit,
-                                                 options=options,
-                                                 opf_results=opf_results,
-                                                 engine=engine)
-                else:
-                    drv = sim.PowerFlowDriver(grid=self.circuit,
-                                              options=options,
-                                              opf_results=opf_results,
-                                              engine=engine)
+                drv = sim.PowerFlowDriver(grid=self.circuit,
+                                          options=options,
+                                          opf_results=opf_results,
+                                          engine=engine)
+
+                self.session.run(drv,
+                                 post_func=self.post_power_flow,
+                                 prog_func=self.ui.progressBar.setValue,
+                                 text_func=self.ui.progress_label.setText)
+
+            else:
+                self.show_warning_toast('Another simulation of the same type is running...')
+        else:
+            pass
+
+    def run_power_flow_3ph(self):
+        """
+        Run a power flow simulation
+        :return:
+        """
+        if self.circuit.valid_for_simulation():
+
+            if not self.session.is_this_running(SimulationTypes.PowerFlow_run):
+
+                self.LOCK()
+
+                self.add_simulation(SimulationTypes.PowerFlow_run)
+
+                self.ui.progress_label.setText('Compiling the grid...')
+                QtGui.QGuiApplication.processEvents()
+
+                # get the power flow options from the GUI
+                options = self.get_selected_power_flow_options()
+
+                opf_results = self.get_opf_results(use_opf=self.ui.actionOpf_to_Power_flow.isChecked())
+
+                self.ui.progress_label.setText('Running power flow...')
+                QtGui.QGuiApplication.processEvents()
+
+                # set power flow object instance
+                engine = self.get_preferred_engine()
+                drv = sim.PowerFlowDriver3Ph(grid=self.circuit,
+                                             options=options,
+                                             opf_results=opf_results,
+                                             engine=engine)
 
                 self.session.run(drv,
                                  post_func=self.post_power_flow,
@@ -1359,7 +1503,7 @@ class SimulationsMain(TimeEventsMain):
 
                 if pf_results is not None:
 
-                    if self.circuit.get_short_circuit_definition_number() == 0:
+                    if self.circuit.get_short_circuit_event_number() == 0:
                         warning_msg('You need to define short circuits in the Database.'
                                     + '\nAdd them by right click on a bus and selecting on the context menu.')
                     else:
@@ -1552,8 +1696,6 @@ class SimulationsMain(TimeEventsMain):
         pf_options = self.get_selected_power_flow_options()
 
         options = sim.ContingencyAnalysisOptions(
-            use_provided_flows=False,
-            Pf=None,
             pf_options=pf_options,
             lin_options=self.get_linear_options(),
             use_srap=self.ui.use_srap_checkBox.isChecked(),
@@ -1713,14 +1855,14 @@ class SimulationsMain(TimeEventsMain):
                 if not info.valid:
                     return
 
-                idx_from = info.idx_bus_from
-                idx_to = info.idx_bus_to
-                idx_br = info.idx_branches
-                sense_br = info.sense_branches
+                idx_from: IntVec = info.idx_bus_from
+                idx_to: IntVec = info.idx_bus_to
+                idx_br: IntVec = info.idx_branches
+                sense_br: Vec = info.sense_branches
 
                 # HVDC
-                idx_hvdc_br = info.idx_hvdc
-                sense_hvdc_br = info.sense_hvdc
+                idx_hvdc_br: IntVec = info.idx_hvdc
+                sense_hvdc_br: Vec = info.sense_hvdc
 
                 if self.ui.usePfValuesForAtcCheckBox.isChecked():
                     _, pf_results = self.session.power_flow
@@ -2191,7 +2333,7 @@ class SimulationsMain(TimeEventsMain):
 
             if not self.session.is_this_running(SimulationTypes.MonteCarlo_run):
 
-                if self.circuit.time_profile is not None:
+                if self.valid_time_series():
 
                     self.LOCK()
 
@@ -2218,7 +2360,7 @@ class SimulationsMain(TimeEventsMain):
                                      prog_func=self.ui.progressBar.setValue,
                                      text_func=self.ui.progress_label.setText)
                 else:
-                    self.show_warning_toast('There are no time series.')
+                    self.show_warning_toast('Stochastic power flow needs at least one time-series sample.')
 
             else:
                 self.show_warning_toast('Another Monte Carlo simulation is running...')
@@ -2311,7 +2453,7 @@ class SimulationsMain(TimeEventsMain):
         if dispatch_mode == OpfDispatchMode.InterAreaRedispatch:
 
             # available transfer capacity inter areas
-            inter_aggregation_info: dev.InterAggregationInfo = self.get_compatible_from_to_buses_and_inter_branches()
+            inter_aggregation_info: dev.InterAggregationInfo | None = self.get_compatible_from_to_buses_and_inter_branches()
 
             if len(inter_aggregation_info.lst_from) == 0:
                 self.show_error_toast('The area "from" has no buses!', 5000)
@@ -2722,28 +2864,15 @@ class SimulationsMain(TimeEventsMain):
         self.UNLOCK()
         print('\nGroups:')
 
-        drv, _ = self.session.node_groups_driver
+        _, results = self.session.node_groups_driver
 
-        if drv is not None:
+        if results is not None:
+            self.remove_simulation(SimulationTypes.InputsAnalysis_run)
+            self.update_available_results()
+            self.colour_diagrams()
 
-            for group in drv.groups_by_name:
-                print(group)
-
-            colours = viz.get_n_colours(n=len(drv.groups_by_index))
-
-            bus_colours = np.empty(len(self.circuit.buses), dtype=object)
-            tool_tips = [""] * len(self.circuit.buses)
-            for c, group in enumerate(drv.groups_by_index):
-                for i in group:
-                    bus = self.circuit.buses[i]
-                    if bus.active:
-                        r, g, b, a = colours[c]
-                        bus_colours[i] = QtGui.QColor(r * 255, g * 255, b * 255, a * 255)
-                        tool_tips[i] = 'Group ' + str(c)
-
-            self.set_big_bus_marker_colours(buses=self.circuit.buses,
-                                            colors=bus_colours,
-                                            tool_tips=tool_tips)
+        if not self.session.is_anything_running():
+            self.UNLOCK()
 
     def run_inputs_analysis(self):
         """
@@ -2824,7 +2953,7 @@ class SimulationsMain(TimeEventsMain):
 
                         for i, freq in zip(idx, frequencies):
 
-                            bus = self.circuit.buses[i]
+                            bus: dev.Bus = self.circuit.buses[i]
                             batts = batt_by_bus.get(bus, None)
 
                             # add a marker to the bus if there are no batteries in it
@@ -3264,34 +3393,42 @@ class SimulationsMain(TimeEventsMain):
 
             if not self.session.is_this_running(SimulationTypes.RmsDynamic_run):
 
-                _, pf_results = self.session.power_flow
-
-                if pf_results is not None:
-
-                    self.add_simulation(SimulationTypes.RmsDynamic_run)
-
-                    self.LOCK()
-
-                    # Compile the grid
-                    self.ui.progress_label.setText('Compiling the grid...')
-                    QtGui.QGuiApplication.processEvents()
-
-                    # get the rms simulation options from the GUI
-                    options = self.get_selected_rms_simulation_options()
-
-                    self.ui.progress_label.setText('Running rms simulation...')
-
-                    drv = sim.RmsSimulationDriver(grid=self.circuit, options=options, pf_results=pf_results)
-
-                    self.session.run(drv,
-                                     post_func=self.post_rms,
-                                     prog_func=self.ui.progressBar.setValue,
-                                     text_func=self.ui.progress_label.setText)
-
-
+                logger = self.circuit.check_rms_models()
+                if logger.has_errors():
+                    # Show dialogue
+                    dlg = LogsDialogue(name="RMS pre simulation check",
+                                       logger=logger)
+                    dlg.setModal(True)
+                    dlg.exec()
+                    return
                 else:
-                    info_msg('Run a power flow simulation first.\n'
-                             'The results are needed to initialize this simulation.')
+
+                    self.remove_simulation(SimulationTypes.RmsDynamic_run)
+
+                    _, pf_results = self.session.power_flow
+
+                    if pf_results is not None:
+
+                        # self.add_simulation(SimulationTypes.RmsDynamic_run)
+                        self.ui.progress_label.setText('Running rms simulation...')
+                        QtGui.QGuiApplication.processEvents()
+                        self.LOCK()
+
+                        drv = sim.RmsSimulationDriver(grid=self.circuit,
+                                                      options=self.get_selected_rms_simulation_options(),
+                                                      pf_results=pf_results)
+
+                        self.session.run(drv,
+                                         post_func=self.post_rms,
+                                         prog_func=self.ui.progressBar.setValue,
+                                         text_func=self.ui.progress_label.setText)
+
+
+
+
+                    else:
+                        info_msg('Run a power flow simulation first.\n'
+                                 'The results are needed to initialize this simulation.')
             else:
                 self.show_warning_toast('Another rms simulation is running already...')
 
@@ -3311,10 +3448,90 @@ class SimulationsMain(TimeEventsMain):
             self.remove_simulation(SimulationTypes.RmsDynamic_run)
             self.update_available_results()
 
-            # if results.converged:
-            #     self.show_info_toast("Power flow converged :)")
-            # else:
-            #     self.show_warning_toast("Power flow not converged :/")
+        else:
+            warning_msg('There are no rms simulation results.', 'Rms simulation')
+
+        if not self.session.is_anything_running():
+            self.UNLOCK()
+
+    def run_emt(self):
+        """
+        Run emt simulation
+        :return:
+        """
+        if self.circuit.valid_for_simulation():
+
+            if not self.session.is_this_running(SimulationTypes.EmtDynamic_run):
+
+                logger = self.circuit.check_emt_models()
+                if logger.has_errors():
+                    # Show dialogue
+                    dlg = LogsDialogue(name="EMT pre simulation check",
+                                       logger=logger)
+                    dlg.setModal(True)
+                    dlg.exec()
+                    return
+                else:
+
+                    self.remove_simulation(SimulationTypes.EmtDynamic_run)
+
+                    _, pf_results_3ph = self.session.power_flow_3ph
+
+                    _, pf_results = self.session.power_flow
+
+                    if pf_results_3ph is not None:
+
+                        # self.add_simulation(SimulationTypes.RmsDynamic_run)
+                        self.ui.progress_label.setText('Running emt simulation...')
+                        QtGui.QGuiApplication.processEvents()
+                        self.LOCK()
+
+                        drv = sim.EmtSimulationDriver(grid=self.circuit,
+                                                      options=self.get_selected_emt_simulation_options(),
+                                                      pf_results_3ph=pf_results_3ph)
+
+                        self.session.run(drv,
+                                         post_func=self.post_rms,
+                                         prog_func=self.ui.progressBar.setValue,
+                                         text_func=self.ui.progress_label.setText)
+
+                    elif pf_results is not None:
+
+                        # self.add_simulation(SimulationTypes.RmsDynamic_run)
+                        self.ui.progress_label.setText('Running rms simulation from balanced power flow results ...')
+                        QtGui.QGuiApplication.processEvents()
+                        self.LOCK()
+
+                        drv = sim.EmtSimulationDriver(grid=self.circuit,
+                                                      options=self.get_selected_emt_simulation_options(),
+                                                      pf_results=pf_results)
+
+                        self.session.run(drv,
+                                         post_func=self.post_rms,
+                                         prog_func=self.ui.progressBar.setValue,
+                                         text_func=self.ui.progress_label.setText)
+
+                    else:
+                        info_msg('Run a power flow simulation first.\n'
+                                 'The results are needed to initialize this simulation.')
+            else:
+                self.show_warning_toast('Another EMT simulation is running already...')
+
+        else:
+            pass
+
+    def post_emt(self):
+        """
+
+        :return:
+        """
+        _, results = self.session.rms_dynamic_simulation
+
+        if results is not None:
+
+            # delete from the current simulations
+            self.remove_simulation(SimulationTypes.EmtDynamic_run)
+            self.update_available_results()
 
         else:
             warning_msg('There are no rms simulation results.', 'Rms simulation')
@@ -3376,20 +3593,20 @@ class SimulationsMain(TimeEventsMain):
 
             self.show_info_toast(f"Remote results received!")
 
-    def run_small_signal_stability(self):
+    def run_rms_small_signal_stability(self):
         """
         Run small signal simulation
         :return:
         """
         if self.circuit.valid_for_simulation():
 
-            if not self.session.is_this_running(SimulationTypes.SmallSignal_run):
+            if not self.session.is_this_running(SimulationTypes.RmsSmallSignal_run):
 
                 _, pf_results = self.session.power_flow
 
                 if pf_results is not None:
 
-                    self.add_simulation(SimulationTypes.SmallSignal_run)
+                    self.add_simulation(SimulationTypes.RmsSmallSignal_run)
 
                     self.LOCK()
 
@@ -3398,14 +3615,18 @@ class SimulationsMain(TimeEventsMain):
                     QtGui.QGuiApplication.processEvents()
 
                     # get the small signal stability analysis simulation options from the GUI
-                    options = self.get_selected_small_signal_stability_options()
+                    options = self.get_selected_rms_small_signal_stability_options()
+                    rms_options = self.get_selected_rms_simulation_options()
 
                     self.ui.progress_label.setText('Performing Small Signal Stability analysis...')
 
-                    drv = sim.SmallSignalStabilityDriver(grid=self.circuit, options=options, pf_results=pf_results)
+                    drv = sim.SmallSignalStabilityRmsDriver(grid=self.circuit,
+                                                            rms_options=rms_options,
+                                                            sss_options=options,
+                                                            pf_results=pf_results)
 
                     self.session.run(drv,
-                                     post_func=self.post_small_signal_stability,
+                                     post_func=self.post_rms_small_signal_stability,
                                      prog_func=self.ui.progressBar.setValue,
                                      text_func=self.ui.progress_label.setText)
 
@@ -3418,7 +3639,7 @@ class SimulationsMain(TimeEventsMain):
         else:
             pass
 
-    def post_small_signal_stability(self):
+    def post_rms_small_signal_stability(self):
         """
 
         :return:
@@ -3428,7 +3649,7 @@ class SimulationsMain(TimeEventsMain):
         if results is not None:
 
             # delete from the current simulations
-            self.remove_simulation(SimulationTypes.SmallSignal_run)
+            self.remove_simulation(SimulationTypes.RmsSmallSignal_run)
             self.update_available_results()
 
             self.show_info_toast("Small-signal stability analysis has finished correctly!")
@@ -3439,6 +3660,75 @@ class SimulationsMain(TimeEventsMain):
         if not self.session.is_anything_running():
             self.UNLOCK()
 
+
+    def run_emt_small_signal_stability(self):
+        """
+        Run small signal simulation
+        :return:
+        """
+        if self.circuit.valid_for_simulation():
+
+            if not self.session.is_this_running(SimulationTypes.EmtSmallSignal_run):
+
+                _, pf_results = self.session.power_flow_3ph
+
+                if pf_results is not None:
+
+                    self.add_simulation(SimulationTypes.EmtSmallSignal_run)
+
+                    self.LOCK()
+
+                    # Compile the grid
+                    self.ui.progress_label.setText('Compiling the grid...')
+                    QtGui.QGuiApplication.processEvents()
+
+                    # get the small signal stability analysis simulation options from the GUI
+                    options = self.get_selected_emt_small_signal_stability_options()
+                    rms_options = self.get_selected_emt_simulation_options()
+
+                    self.ui.progress_label.setText('Performing Small Signal Stability analysis...')
+
+                    drv = sim.SmallSignalStabilityEmtDriver(grid=self.circuit,
+                                                            rms_options=rms_options,
+                                                            sss_options=options,
+                                                            pf_results=pf_results)
+
+                    self.session.run(drv,
+                                     post_func=self.post_emt_small_signal_stability,
+                                     prog_func=self.ui.progressBar.setValue,
+                                     text_func=self.ui.progress_label.setText)
+
+                else:
+                    info_msg('Run a power flow simulation first.\n'
+                             'The results are needed to initialize this simulation.')
+            else:
+                self.show_warning_toast('Another Small Signal stability analysis simulation is running already...')
+
+        else:
+            pass
+
+    def post_emt_small_signal_stability(self):
+        """
+
+        :return:
+        """
+        _, results = self.session.small_signal_stability_simulation
+
+        if results is not None:
+
+            # delete from the current simulations
+            self.remove_simulation(SimulationTypes.EmtSmallSignal_run)
+            self.update_available_results()
+
+            self.show_info_toast("Small-signal stability analysis has finished correctly!")
+
+        else:
+            warning_msg('There are no Small Signal Stability analysis results.', 'Small Signal Stability analysis')
+
+        if not self.session.is_anything_running():
+            self.UNLOCK()
+
+
     def update_available_mip_solvers(self):
         """
 
@@ -3447,3 +3737,20 @@ class SimulationsMain(TimeEventsMain):
         current_mip_framework = self.opf_mip_framework_dict[self.ui.mip_framework_comboBox.currentText()]
         mip_solvers = get_available_mip_solvers(tpe=current_mip_framework)
         self.ui.mip_solver_comboBox.setModel(gf.get_list_model(mip_solvers))
+
+    def procedural_grid_expansion(self):
+        """
+
+        :return:
+        """
+        # Fetch the active diagram using the inherited method
+        current_diagram = self.get_selected_diagram_widget()
+
+        # Check if the active diagram is NOT a MapWidget
+        if current_diagram is None: # Before it was "if not isinstance(current_diagram, MapWidget):" but it did not work
+            self.map_warning = MapWarningDialog(parent=self)
+            self.map_warning.exec()
+            return
+
+        self.procedural_grid_window = ProceduralGridWindow(app=self)
+        self.procedural_grid_window.exec()

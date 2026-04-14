@@ -9,6 +9,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor
 from typing import List, Dict, Any
 
+from VeraGridEngine.Devices.Parents.editable_device import GCProp, GCPROP_TYPES
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.enumerations import DeviceType, VoltageLevelTypes, ActionType
@@ -16,13 +17,14 @@ from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 
 
 def populate_tree(tree_widget, base: MultiCircuit, diff: MultiCircuit,
-                  all_elms_base_dict: Dict[str, ALL_DEV_TYPES]):
+                  all_elms_base_dict: Dict[str, ALL_DEV_TYPES], diff_creation: bool = False):
     """
     Build the display tree
     :param tree_widget:
     :param base:
     :param diff:
     :param all_elms_base_dict:
+    :param diff_creation:
     :return:
     """
     tree_widget.clear()
@@ -82,16 +84,24 @@ def populate_tree(tree_widget, base: MultiCircuit, diff: MultiCircuit,
 
             if elm_from_base is not None:
 
-                action, changed_props = elm.compare(
-                    other=elm_from_base,
-                    logger=logger,
-                    detailed_profile_comparison=detailed_profile_comparison,
-                    nt=nt
-                )
+                if diff_creation:
+                    action, changed_props = elm.compare(
+                        other=elm_from_base,
+                        logger=logger,
+                        detailed_profile_comparison=detailed_profile_comparison,
+                        nt=nt
+                    )
+
+                else:
+                    action = ActionType.Modify
+                    changed_props_keys = elm.get_all_diff_changes_dict()
+                    changed_props = [elm.registered_properties[prop] for prop in changed_props_keys]
 
                 for prop in changed_props:
                     base_val = elm_from_base.get_property_value(prop=prop, t_idx=None)
                     new_val = elm.get_property_value(prop=prop, t_idx=None)
+
+                    elm.set_diff_change(property_name=prop.name, selected=True)
 
                     child_item = QtWidgets.QTreeWidgetItem(
                         parent_item,

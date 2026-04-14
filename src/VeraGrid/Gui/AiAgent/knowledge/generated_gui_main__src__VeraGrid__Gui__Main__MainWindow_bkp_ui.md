@@ -1,0 +1,364 @@
+# VeraGrid GUI Main UI: src/VeraGrid/Gui/Main/MainWindow_bkp.ui
+
+- Original source path: `src/VeraGrid/Gui/Main/MainWindow_bkp.ui`
+- Knowledge kind: generated Qt Designer UI summary
+
+## UI Summary
+
+- Form class: mainWindow
+- Root widget: QMainWindow:mainWindow
+- Declared widget count: 578
+- Declared action count: 107
+
+## Representative Widgets
+
+- QMainWindow:mainWindow
+- QWidget:centralwidget
+- QFrame:progress_frame
+- QLabel:progress_label
+- QProgressBar:progressBar
+- QPushButton:cancelButton
+- QTabWidget:mainTabWidget
+- QWidget:GridTab
+- QTabWidget:modelTabWidget
+- QWidget:GridSectionTab
+- QFrame:frame_6
+- QSplitter:diagram_selection_splitter
+- QFrame:schematic_frame
+- QFrame:diagram_selection_frame
+- QTabWidget:tabWidget_6
+- QWidget:tab_3
+- QFrame:frame_36
+- QLineEdit:diagramSearchLineEdit
+- QPushButton:diagramSearchButton
+- QListView:diagramsListView
+- QWidget:tab
+- QTreeView:combinationsTreeView
+- QWidget:tab_4
+- QFrame:frame_58
+- QLabel:label_60
+- QFrame:frame_22
+- QLabel:label_32
+- QSpinBox:fps_spinBox
+- QFrame:frame_24
+- QLabel:label_154
+- QLabel:label_113
+- QDoubleSpinBox:min_node_size_spinBox
+- QLabel:label_14
+- QComboBox:palette_comboBox
+- QPushButton:preset4_pushButton
+- QPushButton:redraw_pushButton
+- QDoubleSpinBox:max_branch_size_spinBox
+- QPushButton:preset1_pushButton
+- QLabel:label
+- QCheckBox:branch_width_based_on_flow_checkBox
+- QLabel:label_43
+- QPushButton:preset3_pushButton
+- QDoubleSpinBox:max_node_size_spinBox
+- QPushButton:preset2_pushButton
+- QDoubleSpinBox:arrow_size_size_spinBox
+- QDoubleSpinBox:min_branch_size_spinBox
+- QLabel:label_118
+- QComboBox:tile_provider_comboBox
+- QSpinBox:resolution_factor_spinBox
+- QCheckBox:ask_before_appliying_layout_checkBox
+- QLabel:label_35
+- QFrame:frame_30
+- QLabel:label_66
+- QLabel:label_45
+- QFrame:frame_3
+- QLabel:label_110
+- QLabel:label_111
+- QDoubleSpinBox:defaultBusVoltageSpinBox
+- QLabel:label_150
+- QFrame:frame_39
+- QLabel:label_114
+- QLabel:label_149
+- QComboBox:automatic_layout_comboBox
+- QDoubleSpinBox:explosion_factor_doubleSpinBox
+- QCheckBox:use_schematic_objects_color_checkBox
+- QFrame:grid_colouring_frame
+- QPushButton:colour_results_pushButton
+- QLabel:schematic_step_label
+- QSlider:diagram_step_slider
+- QComboBox:available_results_to_color_comboBox
+- QWidget:DataTab
+- QSplitter:dataStructuresSplitter
+- QFrame:frame_26
+- QTreeView:dataStructuresTreeView
+- QFrame:frame_38
+- QTabWidget:tabWidget_5
+- QWidget:tab_15
+- QFrame:frame_54
+- QLineEdit:smart_search_lineEdit
+- QPushButton:filter_pushButton
+- QPushButton:structure_analysis_pushButton
+- QTableView:dataStructureTableView
+- QFrame:frame_9
+- QComboBox:goToTsPointComboBox
+- QPushButton:goToTsPointButton
+- QPushButton:set_profile_state_button
+- QSlider:db_step_slider
+- QLabel:db_step_label
+- QPushButton:add_object_pushButton
+- QPushButton:delete_selected_objects_pushButton
+- QWidget:tab_2
+- QFrame:frame_17
+- QComboBox:associationsComboBox
+- QLabel:association_units_label
+- QFrame:frame_20
+- QTableView:associationsTableView
+- QWidget:tab_16
+- QFrame:frame
+- QComboBox:device_type_magnitude_comboBox
+- QPushButton:new_profiles_structure_pushButton
+- QPushButton:delete_profiles_structure_pushButton
+- QPushButton:edit_profiles_pushButton
+- QPushButton:edit_profiles_from_models_pushButton
+- QPushButton:crop_profiles_pushButton
+- QPushButton:crop_cluster_profiles_pushButton
+- QPushButton:plot_time_series_pushButton
+- QTableView:profiles_tableView
+- QFrame:frame_12
+- QPushButton:copy_profile_pushButton
+- QPushButton:paste_profiles_pushButton
+- QPushButton:set_linear_combination_profile_pushButton
+- QComboBox:device_type_magnitude_comboBox_2
+- QPushButton:profile_add_pushButton
+- QPushButton:profile_subtract_pushButton
+- QPushButton:profile_multiply_pushButton
+- QPushButton:profile_divide_pushButton
+- QPushButton:set_profile_value_pushButton
+- QDoubleSpinBox:profile_factor_doubleSpinBox
+- QWidget:compiledArraysTab
+- QSplitter:simulationDataSplitter
+
+## Actions And Menus
+
+- action: actionOpen_file
+- action: actionSave
+- action: actionTakePicture
+- action: actionNew_project
+- action: actionPower_flow
+- action: actionPower_Flow_Time_series
+- action: actionBigger_nodes
+- action: actionSmaller_nodes
+- action: actionPower_flow_Stochastic
+- action: actionVoltage_stability
+- action: actionAbout
+- action: actionCenter_view
+- action: actionShort_Circuit
+- action: actionAutoatic_layout
+- action: actionBlackout_cascade
+- action: actionOPF
+- action: actionOPF_time_series
+- action: actionDetect_transformers
+- action: actionAuto_rate_branches
+- action: actionExport_all_the_device_s_profiles
+- action: actionStorage_location_suggestion
+- action: actionLaunch_data_analysis_tool
+- action: actionOnline_documentation
+- action: actionExport_all_results
+- action: actionSave_as
+- action: actionDelete_selected
+- action: actionLinearAnalysis
+- action: actionReset_console
+- action: actionOpf_to_Power_flow
+- action: actionTry_to_fix_buses_location
+- action: actionSet_OPF_generation_to_profiles
+- action: actionPTDF_time_series
+- action: actionAdd_circuit
+- action: actionSync
+- action: actionDrawSchematic
+- action: actionSigma_analysis
+- action: actionClear_stuff_running_right_now
+- action: actionAdd_default_catalogue
+- action: actionFind_node_groups
+- action: actiongrid_Generator
+- action: actionImportPlexosNodeLoad
+- action: actionImportPlexosGeneratorGeneration
+- action: actionOTDF_time_series
+- action: actionImportPlexosBranchRates
+- action: actionSetSelectedBusArea
+- action: actionSetSelectedBusZone
+- action: actionSetSelectedBusCountry
+- action: actionImport_bus_coordinates
+- action: actionATC
+- action: actionATC_Time_Series
+- action: actionContingency_analysis
+- action: actionOptimal_Net_Transfer_Capacity
+- action: actionSet_schematic_positions_from_GPS_coordinates
+- action: actionInputs_analysis
+- action: actionFuse_devices
+- action: actionDelete_inconsistencies
+- action: actionOptimal_Net_Transfer_Capacity_Time_Series
+- action: actionre_index_time
+- action: actionFix_generators_active_based_on_the_power
+- action: actionFix_loads_active_based_on_the_power
+- action: actionImport_contingencies
+- action: actionInitialize_contingencies
+- action: actionExport_contingencies
+- action: actionAdd_selected_to_contingency
+- action: actionAdd_selected_as_new_investment
+- action: actionZoom_in
+- action: actionZoom_out
+- action: actionClustering
+- action: actionUse_clustering
+- action: actionInvestments_evaluation
+- action: actionNew_bus_branch_diagram_from_selection
+- action: actionAdd_general_bus_branch_diagram
+- action: actionAdd_map
+- action: actionRemove_selected_diagram
+- action: actionReport_a_bug
+- action: actionSearchDiagram
+- action: actionProcess_topology
+- action: actionEdit_simulation_time_limits
+- action: actionactivate_time_series
+- action: actionClean_database
+- action: actionScale
+- action: actionDisable_all_results_tags
+- action: actionEnable_all_results_tags
+- action: actionDetect_substations
+- action: actionNodal_capacity
+- action: actionEnable_server_mode
+- action: actionRecord_video
+- action: actionExport_circuit_differential
+- action: actionAdd_custom_catalogue
+- action: actionExportCatalogue
+- action: actionConsolidate_diagram_coordinates
+- action: actionAdd_selected_as_remedial_action
+- action: actionDetect_facilities
+- action: actionRotate
+- action: actionReset_coordinates
+- action: actionReliability
+- action: actionColor_buses_by
+- action: actionColor_substations_by
+- action: actionSelect_buses_by
+- action: actionGrid_reduction
+- action: actionSubstation_wizard
+- action: actionRun_Dynamic_RMS_Simulation
+- action: actionRun_Small_Signal_RMS_Simulation
+- action: actionAdd_rms_event_to_selected
+- action: actionClear_highlights
+- action: actionState_estimation
+- action: actionAdd_short_circuit_events
+- menu/action reference: actionNew_project
+- menu/action reference: actiongrid_Generator
+- menu/action reference: actionOpen_file
+- menu/action reference: actionAdd_circuit
+- menu/action reference: actionImport_bus_coordinates
+- menu/action reference: separator
+- menu/action reference: actionSave
+- menu/action reference: actionSave_as
+- menu/action reference: actionExport_circuit_differential
+- menu/action reference: separator
+- menu/action reference: actionExport_all_the_device_s_profiles
+- menu/action reference: actionExport_all_results
+- menu/action reference: separator
+- menu/action reference: actionExport_contingencies
+- menu/action reference: actionImport_contingencies
+- menu/action reference: separator
+- menu/action reference: actionExportCatalogue
+- menu/action reference: actionAdd_custom_catalogue
+- menu/action reference: actionOnline_documentation
+- menu/action reference: actionReport_a_bug
+- menu/action reference: actionAbout
+- menu/action reference: actionAdd_default_catalogue
+- menu/action reference: actionClear_stuff_running_right_now
+- menu/action reference: actionReset_console
+- menu/action reference: actionactivate_time_series
+- menu/action reference: actionEdit_simulation_time_limits
+- menu/action reference: separator
+- menu/action reference: actionPower_flow
+- menu/action reference: actionLinearAnalysis
+- menu/action reference: actionSigma_analysis
+- menu/action reference: separator
+- menu/action reference: actionShort_Circuit
+- menu/action reference: actionVoltage_stability
+- menu/action reference: actionState_estimation
+- menu/action reference: actionContingency_analysis
+- menu/action reference: actionRun_Dynamic_RMS_Simulation
+- menu/action reference: actionRun_Small_Signal_RMS_Simulation
+- menu/action reference: separator
+- menu/action reference: actionOPF
+- menu/action reference: actionOpf_to_Power_flow
+- menu/action reference: actionSet_OPF_generation_to_profiles
+- menu/action reference: separator
+- menu/action reference: actionATC
+- menu/action reference: actionOptimal_Net_Transfer_Capacity
+- menu/action reference: separator
+- menu/action reference: actionClustering
+- menu/action reference: actionUse_clustering
+- menu/action reference: actionFind_node_groups
+- menu/action reference: actionPower_flow_Stochastic
+- menu/action reference: actionInvestments_evaluation
+- menu/action reference: actionReliability
+- menu/action reference: actionBlackout_cascade
+- menu/action reference: separator
+- menu/action reference: actionInputs_analysis
+- menu/action reference: actionStorage_location_suggestion
+- menu/action reference: separator
+- menu/action reference: actionAuto_rate_branches
+- menu/action reference: actionDetect_transformers
+- menu/action reference: actionDetect_substations
+- menu/action reference: actionDetect_facilities
+- menu/action reference: actionFuse_devices
+- menu/action reference: actionGrid_reduction
+- menu/action reference: actionre_index_time
+- menu/action reference: actionScale
+- menu/action reference: separator
+- menu/action reference: actionLaunch_data_analysis_tool
+- menu/action reference: actionSubstation_wizard
+- menu/action reference: actionFix_generators_active_based_on_the_power
+- menu/action reference: actionFix_loads_active_based_on_the_power
+- menu/action reference: actionDelete_inconsistencies
+- menu/action reference: actionClean_database
+- menu/action reference: separator
+- menu/action reference: actionSetSelectedBusCountry
+- menu/action reference: actionSetSelectedBusArea
+- menu/action reference: actionSetSelectedBusZone
+- menu/action reference: separator
+- menu/action reference: actionAdd_general_bus_branch_diagram
+- menu/action reference: actionNew_bus_branch_diagram_from_selection
+- menu/action reference: actionBigger_nodes
+- menu/action reference: actionSmaller_nodes
+- menu/action reference: actionAutoatic_layout
+- menu/action reference: actionTry_to_fix_buses_location
+- menu/action reference: actionRotate
+- menu/action reference: actionDisable_all_results_tags
+- menu/action reference: actionEnable_all_results_tags
+- menu/action reference: actionSet_schematic_positions_from_GPS_coordinates
+- menu/action reference: actionColor_buses_by
+- menu/action reference: actionSelect_buses_by
+- menu/action reference: actionClear_highlights
+- menu/action reference: separator
+- menu/action reference: actionAdd_map
+- menu/action reference: actionReset_coordinates
+- menu/action reference: actionColor_substations_by
+- menu/action reference: separator
+- menu/action reference: actionZoom_in
+- menu/action reference: actionZoom_out
+- menu/action reference: actionCenter_view
+- menu/action reference: actionConsolidate_diagram_coordinates
+- menu/action reference: actionDelete_selected
+- menu/action reference: separator
+- menu/action reference: actionTakePicture
+- menu/action reference: actionRecord_video
+- menu/action reference: actionInitialize_contingencies
+- menu/action reference: actionAdd_selected_to_contingency
+- menu/action reference: actionAdd_selected_as_new_investment
+- menu/action reference: actionAdd_selected_as_remedial_action
+- menu/action reference: actionAdd_rms_event_to_selected
+- menu/action reference: actionAdd_short_circuit_events
+- menu/action reference: menuProject
+- menu/action reference: menuActions
+- menu/action reference: menuDiagrams
+- menu/action reference: menuModel
+- menu/action reference: menuEvents
+- menu/action reference: menuSimulations
+- menu/action reference: menuplugins
+- menu/action reference: menuAbout
+- menu/action reference: actionNew_project
+- menu/action reference: actionOpen_file
+- menu/action reference: actionSave
+- menu/action reference: actionEnable_server_mode

@@ -14,7 +14,7 @@ from PySide6.QtCore import Qt
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.enumerations import SyncIssueType
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-from VeraGridEngine.IO.file_handler import FileOpen
+from VeraGridEngine.IO.file_open import FileOpen
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType
 
 

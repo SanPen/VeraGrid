@@ -21,6 +21,7 @@ class DummySignal:
     """
     Qt signal placeholder to not to import QT in the engine
     """
+    __slots__ = ("tpe",)
 
     def __init__(self, tpe: type = str) -> None:
         self.tpe = tpe
@@ -40,6 +41,12 @@ class DriverToSave:
     """
     Wrapper to save a driver
     """
+    __slots__ = (
+        "name",
+        "tpe",
+        "results",
+        "logger",
+    )
 
     def __init__(self,
                  name: str,
@@ -63,6 +70,20 @@ class DriverTemplate:
     """
     Base driver template
     """
+    __slots__ = (
+        "progress_signal",
+        "progress_text",
+        "done_signal",
+        "grid",
+        "results",
+        "engine",
+        "elapsed",
+        "logger",
+        "__cancel__",
+        "_is_running",
+        "_DriverTemplate__start",
+    )
+
     tpe = SimulationTypes.TemplateDriver
     name = 'Template'
 
@@ -206,6 +227,13 @@ class TimeSeriesDriverTemplate(DriverTemplate):
     """
     Time series driver template
     """
+    __slots__ = (
+        "clustering_results",
+        "using_clusters",
+        "time_indices",
+        "sampled_probabilities",
+        "original_sample_idx",
+    )
 
     def __init__(
             self,

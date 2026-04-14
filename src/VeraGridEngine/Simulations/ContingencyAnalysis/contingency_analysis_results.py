@@ -17,6 +17,18 @@ class ContingencyAnalysisResults(ResultsTemplate):
     """
     Contingency analysis results
     """
+    __slots__ = (
+        "branch_names",
+        "bus_names",
+        "bus_types",
+        "con_names",
+        "voltage",
+        "Sbus",
+        "Sf",
+        "loading",
+        "srap_used_power",
+        "report",
+    )
 
     def __init__(self,
                  ncon: int,

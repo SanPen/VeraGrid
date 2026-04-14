@@ -3,227 +3,169 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-import re
+from typing import List, Dict
 
-from typing import List, Dict, Union
+from PySide6 import QtWidgets, QtCore
 
-from PySide6 import QtWidgets, QtCore, QtGui
+from VeraGridEngine.Devices.multi_circuit import MultiCircuit
+from VeraGridEngine.Utils.Symbolic.symbolic import Var
+from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 
-from VeraGridEngine.Devices.Aggregation.rms_event import RmsEvent
-from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 
+class EventRow:
+    """Encapsulates a row in the RMS event table."""
 
-class RmsEventEditor(QtWidgets.QDialog):
-    def __init__(self, devices: List[ALL_DEV_TYPES], event, parent=None):
-        super().__init__(parent)
-        self.setWindowTitle("RMS Event Editor")
-        self.setMinimumWidth(400)
+    def __init__(self, table, row, parameters_list, events_groups_list):
+        self.table = table
+        self.row = row
 
-        self.devices = devices
-
-        # Extract parameters for initial device
-        if event.device is not None:
-            device = event.device
-            self.current_device = device
-            self.parameters: List = [p for p in device.rms_model.model.event_dict]
-            self.parameters_str: List[str] = [p.name for p in self.parameters]
-        else:
-            self.parameters: List = []
-            self.parameters_str: List[str] = []
-            self.current_device = None
-
-        # Initial event values
-        param = event.parameter if event.parameter is not None else None
-        time = event.time if event.time is not None else 0.0
-        value = event.value if event.value is not None else 0.0
-
-        # Store current selections
-        self.current_parameter = param
-        self.current_time = time
-        self.current_value = value
-
-        # Devices names
-        self.dev_str = [d.name for d in self.devices]
-
-        # ---- Main Layout ----
-        layout = QtWidgets.QVBoxLayout(self)
-
-        # --- Device selector ---
-        layout.addWidget(QtWidgets.QLabel("Available devices:"))
-        self.dev_selector = QtWidgets.QComboBox()
-        self.dev_selector.addItems(self.dev_str)
-        layout.addWidget(self.dev_selector)
-
-        # Button to update parameters
-        self.select_device_btn = QtWidgets.QPushButton("Select Device")
-        layout.addWidget(self.select_device_btn)
+        # --- Checkbox ---
+        checkbox = QtWidgets.QTableWidgetItem()
+        checkbox.setFlags(
+            QtCore.Qt.ItemFlag.ItemIsUserCheckable |
+            QtCore.Qt.ItemFlag.ItemIsEnabled
+        )
+        checkbox.setCheckState(QtCore.Qt.CheckState.Unchecked)
+        table.setItem(row, 0, checkbox)
 
         # --- Parameter selector ---
-        layout.addWidget(QtWidgets.QLabel("Available parameters:"))
-        self.param_selector = QtWidgets.QComboBox()
-        self.param_selector.addItems(self.parameters_str)
-        layout.addWidget(self.param_selector)
+        self.param_combo = QtWidgets.QComboBox()
+        for var in parameters_list:
+            self.param_combo.addItem(var.name, var)
+        table.setCellWidget(row, 1, self.param_combo)
 
-        # --- Target time ---
-        layout.addWidget(QtWidgets.QLabel("Target time:"))
-        self.time_input = QtWidgets.QDoubleSpinBox()
-        self.time_input.setRange(-1e6, 1e6)
-        self.time_input.setDecimals(6)
-        self.time_input.setValue(time)
-        layout.addWidget(self.time_input)
+        # --- Time spinbox ---
+        self.time_spin = QtWidgets.QDoubleSpinBox()
+        self.time_spin.setDecimals(4)
+        self.time_spin.setRange(0.0, 1e9)
+        self.time_spin.setSingleStep(0.1)
+        self.time_spin.setSuffix(" s")
+        table.setCellWidget(row, 2, self.time_spin)
 
-        # --- New value ---
-        layout.addWidget(QtWidgets.QLabel("New value:"))
-        self.value_input = QtWidgets.QDoubleSpinBox()
-        self.value_input.setRange(-1e6, 1e6)
-        self.value_input.setDecimals(6)
-        self.value_input.setValue(value)
-        layout.addWidget(self.value_input)
+        # --- Value spinbox ---
+        self.value_spin = QtWidgets.QDoubleSpinBox()
+        self.value_spin.setDecimals(6)
+        self.value_spin.setRange(-1e9, 1e9)
+        self.value_spin.setSingleStep(0.01)
+        table.setCellWidget(row, 3, self.value_spin)
 
-        # --- 🔹 Buttons layout (OK / Cancel) ---
-        button_layout = QtWidgets.QHBoxLayout()
-        self.ok_button = QtWidgets.QPushButton("OK")
-        self.cancel_button = QtWidgets.QPushButton("Cancel")
-        button_layout.addStretch(1)
-        button_layout.addWidget(self.ok_button)
-        button_layout.addWidget(self.cancel_button)
-        layout.addLayout(button_layout)
+        # --- Event group selector ---
+        self.group_combo = QtWidgets.QComboBox()
+        for group in events_groups_list:
+            self.group_combo.addItem(group.name, group)
+        table.setCellWidget(row, 4, self.group_combo)
 
-        # --- Connections ---
-        self.select_device_btn.clicked.connect(self.on_select_device)
-        self.dev_selector.currentIndexChanged.connect(self.on_device_changed)
-        self.param_selector.currentIndexChanged.connect(self.on_param_changed)
-        self.time_input.valueChanged.connect(self.on_time_changed)
-        self.value_input.valueChanged.connect(self.on_value_changed)
-        self.ok_button.clicked.connect(self.accept)       # 🔹 Accepts dialog
-        self.cancel_button.clicked.connect(self.reject)   # 🔹 Cancels dialog
+    def is_checked(self):
+        item = self.table.item(self.row, 0)
+        return item and item.checkState() == QtCore.Qt.CheckState.Checked
 
-        # Set initial selections
-        if self.current_device is not None:
-            self.dev_selector.setCurrentText(self.current_device.name)
-        if param is not None:
-            self.param_selector.setCurrentText(param.name)
+    def get_data(self):
+        """Return validated row data."""
+        param = self.param_combo.currentData()
+        group = self.group_combo.currentData()
 
-    def on_select_device(self):
-        """Update parameters list when device is selected."""
-        index = self.dev_selector.currentIndex()
-        self.current_device = self.devices[index]
-        self.get_dev_parameters(self.current_device)
-        # Update parameter combo
-        self.param_selector.clear()
-        self.param_selector.addItems([p.name for p in self.parameters])
-        # Reset current parameter
-        if self.parameters:
-            self.current_parameter = self.parameters[0]
+        if param is None or group is None:
+            raise ValueError("Missing fields")
 
-    def on_device_changed(self, index):
-        self.current_device = self.devices[index]
+        t = self.time_spin.value()
+        v = self.value_spin.value()
 
-    def on_param_changed(self, index):
-        if 0 <= index < len(self.parameters):
-            self.current_parameter = self.parameters[index]
+        return param, t, v, group
 
-    def on_time_changed(self, value):
-        self.current_time = value
-
-    def on_value_changed(self, value):
-        self.current_value = value
-
-    def get_dev_parameters(self, current_device):
-        self.parameters = [p for p in current_device.rms_model.model.event_dict]
-
-    def get_updated_event(self):
-        """Return an updated RmsEvent with the edited fields."""
-        return RmsEvent(
-            device=self.current_device,
-            parameter=self.current_parameter,
-            time=self.current_time,
-            value=self.current_value
-        )
-
-def parse_float(s: str) -> float:
-    """
-    Parse a float from a string accepting both comma and dot as decimal separators.
-    Handles cases like:
-      - "1.5" -> 1.5
-      - "1,5" -> 1.5
-      - "1.234,56" -> 1234.56  (common European)
-      - "1,234.56" -> 1234.56  (common US)
-    Raises ValueError if it cannot be parsed.
-    """
-    if s is None:
-        raise ValueError("Empty string")
-
-    s = s.strip()
-    if s == "":
-        raise ValueError("Empty string")
-
-    # Remove spaces
-    s = s.replace(" ", "")
-
-    # If there are both '.' and ',' assume the last one is the decimal separator:
-    # common convention: "1.234,56" (dot thousands, comma decimal) -> remove dots, comma->dot
-    # or "1,234.56" (comma thousands, dot decimal) -> remove commas, keep dot.
-    if '.' in s and ',' in s:
-        # decide which occurs last
-        if s.rfind(',') > s.rfind('.'):
-            # comma is decimal separator
-            s = s.replace('.', '')
-            s = s.replace(',', '.')
-        else:
-            # dot is decimal separator
-            s = s.replace(',', '')
-    else:
-        # only comma or only dot or none: normalize comma -> dot
-        s = s.replace(',', '.')
-
-    # Now s should look like a normal Python float literal, maybe with +/-
-    if not re.fullmatch(r'[+-]?\d+(\.\d+)?', s):
-        raise ValueError(f"Not a valid float: {s}")
-
-    return float(s)
+    def add_group(self, group):
+        """Add a new group option to the combo."""
+        self.group_combo.addItem(group.name, group)
 
 
 class RmsEventDialogue(QtWidgets.QDialog):
-    def __init__(self, parameters_list: List[str], target_device_name: str, parent=None):
+
+    def __init__(
+        self,
+        circuit: MultiCircuit,
+        parameters_list: List[Var],
+        target_device_name: str,
+        parent=None,
+    ):
         super().__init__(parent)
+
         self.setWindowTitle("RMS Event Editor")
         self.setMinimumWidth(600)
 
+        self.circuit = circuit
         self.parameters_list = parameters_list
         self.target_device_name = target_device_name
+
+        self.rows: List[EventRow] = []
+
+        self.data = {
+            "parameters": [],
+            "target_times": [],
+            "values": [],
+            "groups": [],
+        }
 
         # ---- Main Layout ----
         layout = QtWidgets.QVBoxLayout(self)
 
         # --- Device label ---
-        label_device = QtWidgets.QLabel(f"<b>Target device:</b> {target_device_name}")
+        label_device = QtWidgets.QLabel(
+            f"<b>Target device:</b> {target_device_name}"
+        )
         layout.addWidget(label_device)
 
         # --- Events Table ---
-        self.table = QtWidgets.QTableWidget(0, 4)  # 4 columns: checkbox + 3 data columns
-        self.table.setHorizontalHeaderLabels(["", "Parameter", "Time", "New Value"])
-        self.table.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
+        self.table = QtWidgets.QTableWidget(0, 5)
+
+        self.table.setHorizontalHeaderLabels(
+            ["", "Parameter", "Time", "New Value", "Group"]
+        )
+
+        self.table.horizontalHeader().setSectionResizeMode(
+            0, QtWidgets.QHeaderView.ResizeMode.ResizeToContents
+        )
+
         self.table.horizontalHeader().setStretchLastSection(True)
+
         self.table.verticalHeader().setVisible(False)
-        self.table.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.NoSelection)
+
+        self.table.setSelectionMode(
+            QtWidgets.QAbstractItemView.SelectionMode.NoSelection
+        )
+
         layout.addWidget(self.table)
+
+        # --- Groups controls ---
+        groups_layout = QtWidgets.QHBoxLayout()
+
+        self.new_group_btn = QtWidgets.QPushButton("➕ New Event Group")
+
+        groups_layout.addStretch()
+        groups_layout.addWidget(self.new_group_btn)
+
+        layout.addLayout(groups_layout)
+
 
         # --- Table control buttons ---
         table_button_layout = QtWidgets.QHBoxLayout()
+
         self.add_row_btn = QtWidgets.QPushButton("➕ Add New Event")
         self.remove_row_btn = QtWidgets.QPushButton("❌ Remove Selected Rows")
+
         table_button_layout.addWidget(self.add_row_btn)
         table_button_layout.addWidget(self.remove_row_btn)
+
         layout.addLayout(table_button_layout)
 
         # --- Bottom buttons ---
         button_layout = QtWidgets.QHBoxLayout()
+
         self.ok_button = QtWidgets.QPushButton("✅ Add Events")
         self.cancel_button = QtWidgets.QPushButton("Cancel")
+
         button_layout.addStretch()
         button_layout.addWidget(self.ok_button)
         button_layout.addWidget(self.cancel_button)
+
         layout.addLayout(button_layout)
 
         # --- Connections ---
@@ -231,40 +173,26 @@ class RmsEventDialogue(QtWidgets.QDialog):
         self.remove_row_btn.clicked.connect(self.remove_checked_rows)
         self.ok_button.clicked.connect(self.accept_dialog)
         self.cancel_button.clicked.connect(self.reject)
+        self.new_group_btn.clicked.connect(self.create_event_group)
 
     def add_row(self):
-        """Add a new empty editable event row."""
-        row = self.table.rowCount()
-        self.table.insertRow(row)
+        """Add a new row to the table."""
+        row_index = self.table.rowCount()
+        self.table.insertRow(row_index)
 
-        # --- Checkbox column ---
-        checkbox = QtWidgets.QTableWidgetItem()
-        checkbox.setFlags(QtCore.Qt.ItemFlag.ItemIsUserCheckable | QtCore.Qt.ItemFlag.ItemIsEnabled)
-        checkbox.setCheckState(QtCore.Qt.CheckState.Unchecked)
-        self.table.setItem(row, 0, checkbox)
+        row = EventRow(
+            self.table,
+            row_index,
+            self.parameters_list,
+            self.circuit.rms_events_groups,
+        )
 
-        # --- Parameter selector ---
-        combo = QtWidgets.QComboBox()
-        combo.addItems(self.parameters_list)
-        self.table.setCellWidget(row, 1, combo)
-
-        # --- Time and Value as plain QLineEdit (no strict validator) ---
-        # We'll validate/parse robustly on accept to allow both ',' and '.'
-        time_edit = QtWidgets.QLineEdit()
-        time_edit.setPlaceholderText("e.g. 1.5 or 1,5")
-        value_edit = QtWidgets.QLineEdit()
-        value_edit.setPlaceholderText("e.g. 0.95 or 0,95")
-
-        self.table.setCellWidget(row, 2, time_edit)
-        self.table.setCellWidget(row, 3, value_edit)
+        self.rows.append(row)
 
     def remove_checked_rows(self):
-        """Remove all rows with checkbox checked."""
-        rows_to_remove = []
-        for row in range(self.table.rowCount()):
-            item = self.table.item(row, 0)
-            if item and item.checkState() == QtCore.Qt.CheckState.Checked:
-                rows_to_remove.append(row)
+        """Remove rows where checkbox is checked."""
+
+        rows_to_remove = [r for r in self.rows if r.is_checked()]
 
         if not rows_to_remove:
             QtWidgets.QMessageBox.information(
@@ -274,13 +202,40 @@ class RmsEventDialogue(QtWidgets.QDialog):
             )
             return
 
-        # Remove from bottom to top to avoid index shifting
         for row in reversed(rows_to_remove):
-            self.table.removeRow(row)
+            self.table.removeRow(row.row)
+            self.rows.remove(row)
+
+        # Reindex rows
+        for i, row in enumerate(self.rows):
+            row.row = i
+
+    def create_event_group(self):
+        """Open dialog to create a new RMS events group."""
+
+        dialog = RmsEventsGroupsDialog(self)
+
+        if dialog.exec():
+            name = dialog.get_name()
+
+            # create and add new Rms Events Group
+            new_group = RmsEventsGroup(idtag=None, name=name)
+            self.circuit.add_rms_events_group(new_group)
+
+            # update event rows
+            for row in self.rows:
+                row.add_group(new_group)
+
+            QtWidgets.QMessageBox.information(
+                self,
+                "Group Created",
+                f"New group name: {name}"
+            )
 
     def accept_dialog(self):
-        """Validate and collect all event data."""
-        if self.table.rowCount() == 0:
+        """Validate and collect event data."""
+
+        if not self.rows:
             QtWidgets.QMessageBox.warning(
                 self,
                 "No Events",
@@ -288,52 +243,96 @@ class RmsEventDialogue(QtWidgets.QDialog):
             )
             return
 
-        parameters, target_times, values = [], [], []
+        parameters = []
+        target_times = []
+        values = []
+        groups = []
 
-        for row in range(self.table.rowCount()):
-            combo_widget = self.table.cellWidget(row, 1)
-            time_widget = self.table.cellWidget(row, 2)
-            value_widget = self.table.cellWidget(row, 3)
-
-            param = combo_widget.currentText().strip() if isinstance(combo_widget, QtWidgets.QComboBox) else ""
-            time_text = time_widget.text().strip() if isinstance(time_widget, QtWidgets.QLineEdit) else ""
-            value_text = value_widget.text().strip() if isinstance(value_widget, QtWidgets.QLineEdit) else ""
-
-            if not param or not time_text or not value_text:
-                QtWidgets.QMessageBox.warning(
-                    self,
-                    "Incomplete Data",
-                    f"Row {row + 1} has missing fields.",
-                )
-                return
+        for i, row in enumerate(self.rows):
 
             try:
-                t = parse_float(time_text)
-                v = parse_float(value_text)
-            except ValueError as exc:
+                param, t, v, group = row.get_data()
+
+            except Exception as exc:
+
                 QtWidgets.QMessageBox.warning(
                     self,
                     "Invalid Input",
-                    f"Row {row + 1} contains invalid numerical values: {exc}",
+                    f"Row {i + 1}: {exc}",
                 )
                 return
 
             parameters.append(param)
             target_times.append(t)
             values.append(v)
-
-        self.data = {
-            "parameters": parameters,
-            "target_times": target_times,
-            "values": values,
-        }
-
+            groups.append(group)
+        self.data["parameters"] = parameters
+        self.data["target_times"] = target_times
+        self.data["values"] = values
+        self.data["groups"] = groups
         self.accept()
 
-    def get_data(self) -> Dict[str, Union[List[str], List[float]]]:
+    def get_data(self) -> Dict[str, List]:
         """Return collected data."""
-        return getattr(self, "data", {"parameters": [], "target_times": [], "values": []})
+        return self.data
 
+class RmsEventsGroupsDialog(QtWidgets.QDialog):
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        self.setWindowTitle("Create RMS Events Group")
+        self.setModal(True)
+        self.setMinimumWidth(300)
+
+        self._name: str = None
+
+        # Widgets
+        self.name_label = QtWidgets.QLabel("Name:")
+        self.name_edit = QtWidgets.QLineEdit()
+        self.name_edit.setPlaceholderText("Enter group name")
+
+        # Buttons
+        self.buttons = QtWidgets.QDialogButtonBox(
+            QtWidgets.QDialogButtonBox.StandardButton.Ok |
+            QtWidgets.QDialogButtonBox.StandardButton.Cancel
+        )
+
+        # Layout
+        form_layout = QtWidgets.QFormLayout()
+        form_layout.addRow(self.name_label, self.name_edit)
+
+        main_layout = QtWidgets.QVBoxLayout(self)
+        main_layout.addLayout(form_layout)
+        main_layout.addWidget(self.buttons)
+
+        # Connections
+        self.buttons.accepted.connect(self.accept_dialog)
+        self.buttons.rejected.connect(self.reject)
+        self.name_edit.returnPressed.connect(self.accept_dialog)
+
+    def accept_dialog(self):
+        """
+        Validate the input and store the name
+        """
+        name = self.name_edit.text().strip()
+
+        if not name:
+            QtWidgets.QMessageBox.warning(
+                self,
+                "Invalid name",
+                "The name cannot be empty."
+            )
+            return
+
+        self._name = name
+        self.accept()
+
+    def get_name(self) -> str:
+        """
+        Returns the entered name
+        """
+        return self._name
 
 
 

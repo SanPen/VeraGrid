@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:cim="http://iec.ch/TC57/CIM100#" xmlns:eu="http://iec.ch/TC57/CIM100-European#" xmlns:md="http://iec.ch/TC57/61970-552/ModelDescription/1#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <md:FullModel rdf:about="urn:uuid:97d6195b-e674-4950-9ece-956ba3da1e26">
+    <md:Model.DependentOn rdf:resource="urn:uuid:1effa012-f546-411a-b142-9762ece662c6" />
+    <md:Model.created>2021-10-14T21:05:06Z</md:Model.created>
+    <md:Model.modelingAuthoritySet>http://entsoe.eu/PowerFlowTestConfiguration/CGMES/3.0</md:Model.modelingAuthoritySet>
+    <md:Model.profile>http://iec.ch/TC57/ns/CIM/Topology-EU/3.0</md:Model.profile>
+    <md:Model.scenarioTime>2021-03-25T15:30:00Z</md:Model.scenarioTime>
+    <md:Model.description>CGMES Conformity Assessment Test Configuration. The Test Configuration is owned by ENTSO-E and is provided by ENTSO-E “as it is”. To the fullest extent permitted by law, ENTSO-E shall not be liable for any damages of any kind arising out of the use of the model (including any of its subsequent modifications). ENTSO-E neither warrants, nor represents that the use of the model will not infringe the rights of third parties. Any use of the model shall include a reference to ENTSO-E. ENTSO-E web site is the only official source of information related to the model.</md:Model.description>
+    <md:Model.version>1</md:Model.version>
+  </md:FullModel>
+  <cim:Terminal rdf:about="#_5a378ab7-643d-41c0-a524-abec0e37ea77">
+    <cim:Terminal.TopologicalNode rdf:resource="#_bae1904e-6bc3-4fb7-ae05-478c2892233f" />
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_91b8e040-cd3e-4f71-aca8-97dca6e6520c">
+    <cim:Terminal.TopologicalNode rdf:resource="#_24dccd7d-7273-4659-bbef-5dc75b3ea402" />
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_655dbb59-13be-4cba-8a9d-f3e17f973346">
+    <cim:Terminal.TopologicalNode rdf:resource="#_bae1904e-6bc3-4fb7-ae05-478c2892233f" />
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_1b9d0a4c-afd7-4660-a39a-8229a8f05093">
+    <cim:Terminal.TopologicalNode rdf:resource="#_24dccd7d-7273-4659-bbef-5dc75b3ea402" />
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_5cec5df5-8051-4229-837c-e92722165151">
+    <cim:Terminal.TopologicalNode rdf:resource="#_bae1904e-6bc3-4fb7-ae05-478c2892233f" />
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_aa7b5c8c-c490-4fa0-b0db-c0398e105963">
+    <cim:Terminal.TopologicalNode rdf:resource="#_24dccd7d-7273-4659-bbef-5dc75b3ea402" />
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_55f33804-5a25-4694-a6f0-4a361f7fb4ef">
+    <cim:Terminal.TopologicalNode rdf:resource="#_bae1904e-6bc3-4fb7-ae05-478c2892233f" />
+  </cim:Terminal>
+  <cim:ConnectivityNode rdf:about="#_bf851342-832e-4ea2-b2ad-b09729b3af23">
+    <cim:ConnectivityNode.TopologicalNode rdf:resource="#_24dccd7d-7273-4659-bbef-5dc75b3ea402" />
+  </cim:ConnectivityNode>
+  <cim:ConnectivityNode rdf:about="#_4836f99b-c6e9-4ee8-a956-b1e3da882d46">
+    <cim:ConnectivityNode.TopologicalNode rdf:resource="#_bae1904e-6bc3-4fb7-ae05-478c2892233f" />
+  </cim:ConnectivityNode>
+  <cim:TopologicalNode rdf:ID="_24dccd7d-7273-4659-bbef-5dc75b3ea402">
+    <cim:IdentifiedObject.description>FNOD0411</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>24dccd7d-7273-4659-bbef-5dc75b3ea402</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>Busbar_2</cim:IdentifiedObject.name>
+    <cim:TopologicalNode.BaseVoltage rdf:resource="#_74945c22-508b-4361-9d03-5ce7474f56e7" />
+    <cim:TopologicalNode.ConnectivityNodeContainer rdf:resource="#_751347e9-9b4a-4cda-a40d-7b2e8dca5da2" />
+  </cim:TopologicalNode>
+  <cim:TopologicalNode rdf:ID="_bae1904e-6bc3-4fb7-ae05-478c2892233f">
+    <cim:IdentifiedObject.description>FNOD0211</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>bae1904e-6bc3-4fb7-ae05-478c2892233f</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>Busbar_1</cim:IdentifiedObject.name>
+    <cim:TopologicalNode.BaseVoltage rdf:resource="#_74945c22-508b-4361-9d03-5ce7474f56e7" />
+    <cim:TopologicalNode.ConnectivityNodeContainer rdf:resource="#_1c27017b-76b0-42a5-9525-8cd5b932529c" />
+  </cim:TopologicalNode>
+</rdf:RDF>

@@ -1,0 +1,764 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with PowerFactory 2024 SP4 (x64) (digcimdb.dll ServicePack 0) -->
+<rdf:RDF xmlns:cim="http://iec.ch/TC57/CIM100#" xmlns:eu="http://iec.ch/TC57/CIM100-European#" xmlns:md="http://iec.ch/TC57/61970-552/ModelDescription/1#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <md:FullModel rdf:about="urn:uuid:dd907125-7088-43fd-830d-5b0df36f4c71">
+    <md:Model.DependentOn rdf:resource="urn:uuid:0cd6ada4-b6dc-4a36-a98c-877a39168cd3" />
+    <md:Model.created>2020-12-10T00:21:43Z</md:Model.created>
+    <md:Model.description>CGMES Conformity Assessment Test Configuration. The Test Configuration is owned by ENTSO-E and is provided by ENTSO-E “as it is”. To the fullest extent permitted by law, ENTSO-E shall not be liable for any damages of any kind arising out of the use of the model (including any of its subsequent modifications). ENTSO-E neither warrants, nor represents that the use of the model will not infringe the rights of third parties. Any use of the model shall include a reference to ENTSO-E. ENTSO-E web site is the only official source of information related to the model.</md:Model.description>
+    <md:Model.modelingAuthoritySet>http://fullgrid.eu/CGMES/3.0</md:Model.modelingAuthoritySet>
+    <md:Model.profile>http://iec.ch/TC57/ns/CIM/ShortCircuit-EU/3.0</md:Model.profile>
+    <md:Model.scenarioTime>2021-02-09T19:30:00Z</md:Model.scenarioTime>
+    <md:Model.version>1</md:Model.version>
+  </md:FullModel>
+  <cim:PowerTransformerEnd rdf:about="#_aad85408-765f-439d-9024-31c6c848c3a7">
+    <cim:IdentifiedObject.mRID>aad85408-765f-439d-9024-31c6c848c3a7</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformerEnd.b0>0.0</cim:PowerTransformerEnd.b0>
+    <cim:PowerTransformerEnd.g0>0.0</cim:PowerTransformerEnd.g0>
+    <cim:PowerTransformerEnd.phaseAngleClock>0</cim:PowerTransformerEnd.phaseAngleClock>
+    <cim:PowerTransformerEnd.r0>0e+000</cim:PowerTransformerEnd.r0>
+    <cim:PowerTransformerEnd.x0>0e+000</cim:PowerTransformerEnd.x0>
+    <cim:TransformerEnd.grounded>true</cim:TransformerEnd.grounded>
+    <cim:TransformerEnd.rground>0e+000</cim:TransformerEnd.rground>
+    <cim:TransformerEnd.xground>0.0</cim:TransformerEnd.xground>
+  </cim:PowerTransformerEnd>
+  <cim:PowerTransformerEnd rdf:about="#_57a95e99-ff34-4c32-99fc-b67c237211b3">
+    <cim:IdentifiedObject.mRID>57a95e99-ff34-4c32-99fc-b67c237211b3</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformerEnd.b0>0.0</cim:PowerTransformerEnd.b0>
+    <cim:PowerTransformerEnd.g0>0.0</cim:PowerTransformerEnd.g0>
+    <cim:PowerTransformerEnd.phaseAngleClock>0</cim:PowerTransformerEnd.phaseAngleClock>
+    <cim:PowerTransformerEnd.r0>1.0</cim:PowerTransformerEnd.r0>
+    <cim:PowerTransformerEnd.x0>56</cim:PowerTransformerEnd.x0>
+    <cim:TransformerEnd.grounded>true</cim:TransformerEnd.grounded>
+    <cim:TransformerEnd.rground>0e+000</cim:TransformerEnd.rground>
+    <cim:TransformerEnd.xground>0.0</cim:TransformerEnd.xground>
+  </cim:PowerTransformerEnd>
+  <cim:PowerTransformerEnd rdf:about="#_26eadd3e-63e8-4050-859d-3d77428a2d81">
+    <cim:IdentifiedObject.mRID>26eadd3e-63e8-4050-859d-3d77428a2d81</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformerEnd.b0>0.0</cim:PowerTransformerEnd.b0>
+    <cim:PowerTransformerEnd.g0>0.0</cim:PowerTransformerEnd.g0>
+    <cim:PowerTransformerEnd.phaseAngleClock>0</cim:PowerTransformerEnd.phaseAngleClock>
+    <cim:PowerTransformerEnd.r0>1.0</cim:PowerTransformerEnd.r0>
+    <cim:PowerTransformerEnd.x0>65</cim:PowerTransformerEnd.x0>
+    <cim:TransformerEnd.grounded>true</cim:TransformerEnd.grounded>
+    <cim:TransformerEnd.rground>0e+000</cim:TransformerEnd.rground>
+    <cim:TransformerEnd.xground>0.0</cim:TransformerEnd.xground>
+  </cim:PowerTransformerEnd>
+  <cim:PowerTransformerEnd rdf:about="#_7eb20441-3b73-43aa-a594-0faa310e98e8">
+    <cim:IdentifiedObject.mRID>7eb20441-3b73-43aa-a594-0faa310e98e8</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformerEnd.b0>0.0</cim:PowerTransformerEnd.b0>
+    <cim:PowerTransformerEnd.g0>0.0</cim:PowerTransformerEnd.g0>
+    <cim:PowerTransformerEnd.phaseAngleClock>0</cim:PowerTransformerEnd.phaseAngleClock>
+    <cim:PowerTransformerEnd.r0>0e+000</cim:PowerTransformerEnd.r0>
+    <cim:PowerTransformerEnd.x0>0e+000</cim:PowerTransformerEnd.x0>
+    <cim:TransformerEnd.grounded>true</cim:TransformerEnd.grounded>
+    <cim:TransformerEnd.rground>0e+000</cim:TransformerEnd.rground>
+    <cim:TransformerEnd.xground>0.0</cim:TransformerEnd.xground>
+  </cim:PowerTransformerEnd>
+  <cim:PowerTransformerEnd rdf:about="#_0ebbda11-4e83-4ac4-bd31-28688cc994a8">
+    <cim:IdentifiedObject.mRID>0ebbda11-4e83-4ac4-bd31-28688cc994a8</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformerEnd.b0>0.0</cim:PowerTransformerEnd.b0>
+    <cim:PowerTransformerEnd.g0>0.0</cim:PowerTransformerEnd.g0>
+    <cim:PowerTransformerEnd.phaseAngleClock>0</cim:PowerTransformerEnd.phaseAngleClock>
+    <cim:PowerTransformerEnd.r0>0e+000</cim:PowerTransformerEnd.r0>
+    <cim:PowerTransformerEnd.x0>0e+000</cim:PowerTransformerEnd.x0>
+    <cim:TransformerEnd.grounded>false</cim:TransformerEnd.grounded>
+    <cim:TransformerEnd.rground>0e+000</cim:TransformerEnd.rground>
+    <cim:TransformerEnd.xground>0.0</cim:TransformerEnd.xground>
+  </cim:PowerTransformerEnd>
+  <cim:PowerTransformerEnd rdf:about="#_c0e4f4ed-7b61-46e5-af11-31049e6da84d">
+    <cim:IdentifiedObject.mRID>c0e4f4ed-7b61-46e5-af11-31049e6da84d</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformerEnd.b0>0.0</cim:PowerTransformerEnd.b0>
+    <cim:PowerTransformerEnd.g0>0.0</cim:PowerTransformerEnd.g0>
+    <cim:PowerTransformerEnd.phaseAngleClock>0</cim:PowerTransformerEnd.phaseAngleClock>
+    <cim:PowerTransformerEnd.r0>0.104711</cim:PowerTransformerEnd.r0>
+    <cim:PowerTransformerEnd.x0>5.843419</cim:PowerTransformerEnd.x0>
+    <cim:TransformerEnd.grounded>false</cim:TransformerEnd.grounded>
+    <cim:TransformerEnd.rground>0e+000</cim:TransformerEnd.rground>
+    <cim:TransformerEnd.xground>0.0</cim:TransformerEnd.xground>
+  </cim:PowerTransformerEnd>
+  <cim:PowerTransformerEnd rdf:about="#_26c3df58-a255-416e-99e2-7fc82f0310ce">
+    <cim:IdentifiedObject.mRID>26c3df58-a255-416e-99e2-7fc82f0310ce</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformerEnd.b0>0.0</cim:PowerTransformerEnd.b0>
+    <cim:PowerTransformerEnd.g0>0.0</cim:PowerTransformerEnd.g0>
+    <cim:PowerTransformerEnd.phaseAngleClock>0</cim:PowerTransformerEnd.phaseAngleClock>
+    <cim:PowerTransformerEnd.r0>2.720000</cim:PowerTransformerEnd.r0>
+    <cim:PowerTransformerEnd.x0>14.516604</cim:PowerTransformerEnd.x0>
+    <cim:TransformerEnd.grounded>false</cim:TransformerEnd.grounded>
+    <cim:TransformerEnd.rground>0e+000</cim:TransformerEnd.rground>
+    <cim:TransformerEnd.xground>0.0</cim:TransformerEnd.xground>
+  </cim:PowerTransformerEnd>
+  <cim:PowerTransformerEnd rdf:about="#_f36c63a2-23ce-4f37-a6d9-d32019c4598c">
+    <cim:IdentifiedObject.mRID>f36c63a2-23ce-4f37-a6d9-d32019c4598c</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformerEnd.b0>0.0</cim:PowerTransformerEnd.b0>
+    <cim:PowerTransformerEnd.g0>0.0</cim:PowerTransformerEnd.g0>
+    <cim:PowerTransformerEnd.phaseAngleClock>0</cim:PowerTransformerEnd.phaseAngleClock>
+    <cim:PowerTransformerEnd.r0>0e+000</cim:PowerTransformerEnd.r0>
+    <cim:PowerTransformerEnd.x0>5.956923</cim:PowerTransformerEnd.x0>
+    <cim:TransformerEnd.grounded>false</cim:TransformerEnd.grounded>
+    <cim:TransformerEnd.rground>0e+000</cim:TransformerEnd.rground>
+    <cim:TransformerEnd.xground>0.0</cim:TransformerEnd.xground>
+  </cim:PowerTransformerEnd>
+  <cim:PowerTransformerEnd rdf:about="#_73a2b02a-26cd-44c2-81d2-8139ae364fd6">
+    <cim:IdentifiedObject.mRID>73a2b02a-26cd-44c2-81d2-8139ae364fd6</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformerEnd.b0>0.0</cim:PowerTransformerEnd.b0>
+    <cim:PowerTransformerEnd.g0>0.0</cim:PowerTransformerEnd.g0>
+    <cim:PowerTransformerEnd.phaseAngleClock>0</cim:PowerTransformerEnd.phaseAngleClock>
+    <cim:PowerTransformerEnd.r0>1</cim:PowerTransformerEnd.r0>
+    <cim:PowerTransformerEnd.x0>36</cim:PowerTransformerEnd.x0>
+    <cim:TransformerEnd.grounded>true</cim:TransformerEnd.grounded>
+    <cim:TransformerEnd.rground>0e+000</cim:TransformerEnd.rground>
+    <cim:TransformerEnd.xground>0.0</cim:TransformerEnd.xground>
+  </cim:PowerTransformerEnd>
+  <cim:PowerTransformerEnd rdf:about="#_988c74e6-e9dd-433f-9ebd-cef3e5f5af75">
+    <cim:IdentifiedObject.mRID>988c74e6-e9dd-433f-9ebd-cef3e5f5af75</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformerEnd.b0>0.0</cim:PowerTransformerEnd.b0>
+    <cim:PowerTransformerEnd.g0>0.0</cim:PowerTransformerEnd.g0>
+    <cim:PowerTransformerEnd.phaseAngleClock>0</cim:PowerTransformerEnd.phaseAngleClock>
+    <cim:PowerTransformerEnd.r0>0e+000</cim:PowerTransformerEnd.r0>
+    <cim:PowerTransformerEnd.x0>0.061062</cim:PowerTransformerEnd.x0>
+    <cim:TransformerEnd.grounded>false</cim:TransformerEnd.grounded>
+    <cim:TransformerEnd.rground>0e+000</cim:TransformerEnd.rground>
+    <cim:TransformerEnd.xground>0.0</cim:TransformerEnd.xground>
+  </cim:PowerTransformerEnd>
+  <cim:PowerTransformerEnd rdf:about="#_39854fb3-913a-46fd-92ad-843d68f6a7d8">
+    <cim:IdentifiedObject.mRID>39854fb3-913a-46fd-92ad-843d68f6a7d8</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformerEnd.b0>0.0</cim:PowerTransformerEnd.b0>
+    <cim:PowerTransformerEnd.g0>0.0</cim:PowerTransformerEnd.g0>
+    <cim:PowerTransformerEnd.phaseAngleClock>0</cim:PowerTransformerEnd.phaseAngleClock>
+    <cim:PowerTransformerEnd.r0>0.822800</cim:PowerTransformerEnd.r0>
+    <cim:PowerTransformerEnd.x0>11.138883</cim:PowerTransformerEnd.x0>
+    <cim:TransformerEnd.grounded>false</cim:TransformerEnd.grounded>
+    <cim:TransformerEnd.rground>0e+000</cim:TransformerEnd.rground>
+    <cim:TransformerEnd.xground>0.0</cim:TransformerEnd.xground>
+  </cim:PowerTransformerEnd>
+  <cim:PowerTransformerEnd rdf:about="#_8dd85cc7-446a-4957-bd17-0904e008dcdc">
+    <cim:IdentifiedObject.mRID>8dd85cc7-446a-4957-bd17-0904e008dcdc</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformerEnd.b0>0.0</cim:PowerTransformerEnd.b0>
+    <cim:PowerTransformerEnd.g0>0.0</cim:PowerTransformerEnd.g0>
+    <cim:PowerTransformerEnd.phaseAngleClock>0</cim:PowerTransformerEnd.phaseAngleClock>
+    <cim:PowerTransformerEnd.r0>0e+000</cim:PowerTransformerEnd.r0>
+    <cim:PowerTransformerEnd.x0>0e+000</cim:PowerTransformerEnd.x0>
+    <cim:TransformerEnd.grounded>false</cim:TransformerEnd.grounded>
+    <cim:TransformerEnd.rground>0e+000</cim:TransformerEnd.rground>
+    <cim:TransformerEnd.xground>0.0</cim:TransformerEnd.xground>
+  </cim:PowerTransformerEnd>
+  <cim:PowerTransformerEnd rdf:about="#_84fcfd1c-ea96-41f9-85bc-f518f8dfdebd">
+    <cim:IdentifiedObject.mRID>84fcfd1c-ea96-41f9-85bc-f518f8dfdebd</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformerEnd.b0>0.0</cim:PowerTransformerEnd.b0>
+    <cim:PowerTransformerEnd.g0>0.0</cim:PowerTransformerEnd.g0>
+    <cim:PowerTransformerEnd.phaseAngleClock>0</cim:PowerTransformerEnd.phaseAngleClock>
+    <cim:PowerTransformerEnd.r0>2.720000</cim:PowerTransformerEnd.r0>
+    <cim:PowerTransformerEnd.x0>14.516604</cim:PowerTransformerEnd.x0>
+    <cim:TransformerEnd.grounded>false</cim:TransformerEnd.grounded>
+    <cim:TransformerEnd.rground>0e+000</cim:TransformerEnd.rground>
+    <cim:TransformerEnd.xground>0.0</cim:TransformerEnd.xground>
+  </cim:PowerTransformerEnd>
+  <cim:PowerTransformerEnd rdf:about="#_a7f2e4ea-df87-4e6d-a300-0233fb49c6db">
+    <cim:IdentifiedObject.mRID>a7f2e4ea-df87-4e6d-a300-0233fb49c6db</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformerEnd.b0>0.0</cim:PowerTransformerEnd.b0>
+    <cim:PowerTransformerEnd.g0>0.0</cim:PowerTransformerEnd.g0>
+    <cim:PowerTransformerEnd.phaseAngleClock>0</cim:PowerTransformerEnd.phaseAngleClock>
+    <cim:PowerTransformerEnd.r0>0e+000</cim:PowerTransformerEnd.r0>
+    <cim:PowerTransformerEnd.x0>17.230769</cim:PowerTransformerEnd.x0>
+    <cim:TransformerEnd.grounded>false</cim:TransformerEnd.grounded>
+    <cim:TransformerEnd.rground>0e+000</cim:TransformerEnd.rground>
+    <cim:TransformerEnd.xground>0.0</cim:TransformerEnd.xground>
+  </cim:PowerTransformerEnd>
+  <cim:PowerTransformerEnd rdf:about="#_19daeaf5-1b23-462e-8869-e205c314ecec">
+    <cim:IdentifiedObject.mRID>19daeaf5-1b23-462e-8869-e205c314ecec</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformerEnd.b0>0.0</cim:PowerTransformerEnd.b0>
+    <cim:PowerTransformerEnd.g0>0.0</cim:PowerTransformerEnd.g0>
+    <cim:PowerTransformerEnd.phaseAngleClock>0</cim:PowerTransformerEnd.phaseAngleClock>
+    <cim:PowerTransformerEnd.r0>0e+000</cim:PowerTransformerEnd.r0>
+    <cim:PowerTransformerEnd.x0>0e+000</cim:PowerTransformerEnd.x0>
+    <cim:TransformerEnd.grounded>false</cim:TransformerEnd.grounded>
+    <cim:TransformerEnd.rground>0e+000</cim:TransformerEnd.rground>
+    <cim:TransformerEnd.xground>0.0</cim:TransformerEnd.xground>
+  </cim:PowerTransformerEnd>
+  <cim:PowerTransformerEnd rdf:about="#_967588fe-7aac-483d-9e84-4a44c904ead0">
+    <cim:IdentifiedObject.mRID>967588fe-7aac-483d-9e84-4a44c904ead0</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformerEnd.b0>0.0</cim:PowerTransformerEnd.b0>
+    <cim:PowerTransformerEnd.g0>0.0</cim:PowerTransformerEnd.g0>
+    <cim:PowerTransformerEnd.phaseAngleClock>0</cim:PowerTransformerEnd.phaseAngleClock>
+    <cim:PowerTransformerEnd.r0>2.720000</cim:PowerTransformerEnd.r0>
+    <cim:PowerTransformerEnd.x0>14.516604</cim:PowerTransformerEnd.x0>
+    <cim:TransformerEnd.grounded>false</cim:TransformerEnd.grounded>
+    <cim:TransformerEnd.rground>0e+000</cim:TransformerEnd.rground>
+    <cim:TransformerEnd.xground>0.0</cim:TransformerEnd.xground>
+  </cim:PowerTransformerEnd>
+  <cim:PowerTransformerEnd rdf:about="#_586d356e-2796-4844-9f43-4ec237bc9c1a">
+    <cim:IdentifiedObject.mRID>586d356e-2796-4844-9f43-4ec237bc9c1a</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformerEnd.b0>0.0</cim:PowerTransformerEnd.b0>
+    <cim:PowerTransformerEnd.g0>0.0</cim:PowerTransformerEnd.g0>
+    <cim:PowerTransformerEnd.phaseAngleClock>0</cim:PowerTransformerEnd.phaseAngleClock>
+    <cim:PowerTransformerEnd.r0>0e+000</cim:PowerTransformerEnd.r0>
+    <cim:PowerTransformerEnd.x0>0e+000</cim:PowerTransformerEnd.x0>
+    <cim:TransformerEnd.grounded>false</cim:TransformerEnd.grounded>
+    <cim:TransformerEnd.rground>0e+000</cim:TransformerEnd.rground>
+    <cim:TransformerEnd.xground>0.0</cim:TransformerEnd.xground>
+  </cim:PowerTransformerEnd>
+  <cim:PowerTransformerEnd rdf:about="#_b0df3db2-0611-4c7b-a59f-54e149d1823c">
+    <cim:IdentifiedObject.mRID>b0df3db2-0611-4c7b-a59f-54e149d1823c</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformerEnd.b0>0.0</cim:PowerTransformerEnd.b0>
+    <cim:PowerTransformerEnd.g0>0.0</cim:PowerTransformerEnd.g0>
+    <cim:PowerTransformerEnd.phaseAngleClock>0</cim:PowerTransformerEnd.phaseAngleClock>
+    <cim:PowerTransformerEnd.r0>1</cim:PowerTransformerEnd.r0>
+    <cim:PowerTransformerEnd.x0>34</cim:PowerTransformerEnd.x0>
+    <cim:TransformerEnd.grounded>true</cim:TransformerEnd.grounded>
+    <cim:TransformerEnd.rground>0e+000</cim:TransformerEnd.rground>
+    <cim:TransformerEnd.xground>0.0</cim:TransformerEnd.xground>
+  </cim:PowerTransformerEnd>
+  <cim:PowerTransformerEnd rdf:about="#_5ddb5ac5-a1ca-4a15-8811-68b56f8cc350">
+    <cim:IdentifiedObject.mRID>5ddb5ac5-a1ca-4a15-8811-68b56f8cc350</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformerEnd.b0>0.0</cim:PowerTransformerEnd.b0>
+    <cim:PowerTransformerEnd.g0>0.0</cim:PowerTransformerEnd.g0>
+    <cim:PowerTransformerEnd.phaseAngleClock>0</cim:PowerTransformerEnd.phaseAngleClock>
+    <cim:PowerTransformerEnd.r0>0e+000</cim:PowerTransformerEnd.r0>
+    <cim:PowerTransformerEnd.x0>0e+000</cim:PowerTransformerEnd.x0>
+    <cim:TransformerEnd.grounded>false</cim:TransformerEnd.grounded>
+    <cim:TransformerEnd.rground>0e+000</cim:TransformerEnd.rground>
+    <cim:TransformerEnd.xground>0.0</cim:TransformerEnd.xground>
+  </cim:PowerTransformerEnd>
+  <cim:PowerTransformerEnd rdf:about="#_a72eb44e-fa63-4c2c-b560-f2a8ca3312c8">
+    <cim:IdentifiedObject.mRID>a72eb44e-fa63-4c2c-b560-f2a8ca3312c8</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformerEnd.b0>0.0</cim:PowerTransformerEnd.b0>
+    <cim:PowerTransformerEnd.g0>0.0</cim:PowerTransformerEnd.g0>
+    <cim:PowerTransformerEnd.phaseAngleClock>0</cim:PowerTransformerEnd.phaseAngleClock>
+    <cim:PowerTransformerEnd.r0>2.720000</cim:PowerTransformerEnd.r0>
+    <cim:PowerTransformerEnd.x0>14.516604</cim:PowerTransformerEnd.x0>
+    <cim:TransformerEnd.grounded>false</cim:TransformerEnd.grounded>
+    <cim:TransformerEnd.rground>0e+000</cim:TransformerEnd.rground>
+    <cim:TransformerEnd.xground>0.0</cim:TransformerEnd.xground>
+  </cim:PowerTransformerEnd>
+  <cim:PowerTransformerEnd rdf:about="#_86c90434-314f-41b1-8548-a32dac0bb74e">
+    <cim:IdentifiedObject.mRID>86c90434-314f-41b1-8548-a32dac0bb74e</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformerEnd.b0>0.0</cim:PowerTransformerEnd.b0>
+    <cim:PowerTransformerEnd.g0>0.0</cim:PowerTransformerEnd.g0>
+    <cim:PowerTransformerEnd.phaseAngleClock>0</cim:PowerTransformerEnd.phaseAngleClock>
+    <cim:PowerTransformerEnd.r0>0e+000</cim:PowerTransformerEnd.r0>
+    <cim:PowerTransformerEnd.x0>0e+000</cim:PowerTransformerEnd.x0>
+    <cim:TransformerEnd.grounded>true</cim:TransformerEnd.grounded>
+    <cim:TransformerEnd.rground>0e+000</cim:TransformerEnd.rground>
+    <cim:TransformerEnd.xground>0.0</cim:TransformerEnd.xground>
+  </cim:PowerTransformerEnd>
+  <cim:PowerTransformerEnd rdf:about="#_6f5a0eed-c57c-487b-ab33-920440d6a8fd">
+    <cim:IdentifiedObject.mRID>6f5a0eed-c57c-487b-ab33-920440d6a8fd</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformerEnd.b0>0.0</cim:PowerTransformerEnd.b0>
+    <cim:PowerTransformerEnd.g0>0.0</cim:PowerTransformerEnd.g0>
+    <cim:PowerTransformerEnd.phaseAngleClock>0</cim:PowerTransformerEnd.phaseAngleClock>
+    <cim:PowerTransformerEnd.r0>0e+000</cim:PowerTransformerEnd.r0>
+    <cim:PowerTransformerEnd.x0>0e+000</cim:PowerTransformerEnd.x0>
+    <cim:TransformerEnd.grounded>false</cim:TransformerEnd.grounded>
+    <cim:TransformerEnd.rground>0e+000</cim:TransformerEnd.rground>
+    <cim:TransformerEnd.xground>0.0</cim:TransformerEnd.xground>
+  </cim:PowerTransformerEnd>
+  <cim:PowerTransformerEnd rdf:about="#_884d0ad4-69a1-4196-8f47-772c3eab13bb">
+    <cim:IdentifiedObject.mRID>884d0ad4-69a1-4196-8f47-772c3eab13bb</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformerEnd.b0>0.0</cim:PowerTransformerEnd.b0>
+    <cim:PowerTransformerEnd.g0>0.0</cim:PowerTransformerEnd.g0>
+    <cim:PowerTransformerEnd.phaseAngleClock>0</cim:PowerTransformerEnd.phaseAngleClock>
+    <cim:PowerTransformerEnd.r0>0e+000</cim:PowerTransformerEnd.r0>
+    <cim:PowerTransformerEnd.x0>0e+000</cim:PowerTransformerEnd.x0>
+    <cim:TransformerEnd.grounded>true</cim:TransformerEnd.grounded>
+    <cim:TransformerEnd.rground>0e+000</cim:TransformerEnd.rground>
+    <cim:TransformerEnd.xground>0.0</cim:TransformerEnd.xground>
+  </cim:PowerTransformerEnd>
+  <cim:PowerTransformer rdf:about="#_02b779e0-0262-47ca-aeee-434bc91f79d9">
+    <cim:IdentifiedObject.mRID>02b779e0-0262-47ca-aeee-434bc91f79d9</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformer.beforeShCircuitHighestOperatingCurrent>100</cim:PowerTransformer.beforeShCircuitHighestOperatingCurrent>
+    <cim:PowerTransformer.beforeShCircuitHighestOperatingVoltage>10</cim:PowerTransformer.beforeShCircuitHighestOperatingVoltage>
+    <cim:PowerTransformer.beforeShortCircuitAnglePf>10</cim:PowerTransformer.beforeShortCircuitAnglePf>
+    <cim:PowerTransformer.highSideMinOperatingU>100</cim:PowerTransformer.highSideMinOperatingU>
+    <cim:PowerTransformer.isPartOfGeneratorUnit>false</cim:PowerTransformer.isPartOfGeneratorUnit>
+    <cim:PowerTransformer.operationalValuesConsidered>false</cim:PowerTransformer.operationalValuesConsidered>
+  </cim:PowerTransformer>
+  <cim:PowerTransformer rdf:about="#_11265a88-de02-470f-bc4b-da2196ce9302">
+    <cim:IdentifiedObject.mRID>11265a88-de02-470f-bc4b-da2196ce9302</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformer.beforeShCircuitHighestOperatingCurrent>100</cim:PowerTransformer.beforeShCircuitHighestOperatingCurrent>
+    <cim:PowerTransformer.beforeShCircuitHighestOperatingVoltage>10</cim:PowerTransformer.beforeShCircuitHighestOperatingVoltage>
+    <cim:PowerTransformer.beforeShortCircuitAnglePf>10</cim:PowerTransformer.beforeShortCircuitAnglePf>
+    <cim:PowerTransformer.highSideMinOperatingU>100</cim:PowerTransformer.highSideMinOperatingU>
+    <cim:PowerTransformer.isPartOfGeneratorUnit>false</cim:PowerTransformer.isPartOfGeneratorUnit>
+    <cim:PowerTransformer.operationalValuesConsidered>false</cim:PowerTransformer.operationalValuesConsidered>
+  </cim:PowerTransformer>
+  <cim:PowerTransformer rdf:about="#_13ba1c07-0087-443e-87a7-6f5327d62216">
+    <cim:IdentifiedObject.mRID>13ba1c07-0087-443e-87a7-6f5327d62216</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformer.beforeShCircuitHighestOperatingCurrent>100</cim:PowerTransformer.beforeShCircuitHighestOperatingCurrent>
+    <cim:PowerTransformer.beforeShCircuitHighestOperatingVoltage>10</cim:PowerTransformer.beforeShCircuitHighestOperatingVoltage>
+    <cim:PowerTransformer.beforeShortCircuitAnglePf>10</cim:PowerTransformer.beforeShortCircuitAnglePf>
+    <cim:PowerTransformer.highSideMinOperatingU>100</cim:PowerTransformer.highSideMinOperatingU>
+    <cim:PowerTransformer.isPartOfGeneratorUnit>false</cim:PowerTransformer.isPartOfGeneratorUnit>
+    <cim:PowerTransformer.operationalValuesConsidered>false</cim:PowerTransformer.operationalValuesConsidered>
+  </cim:PowerTransformer>
+  <cim:PowerTransformer rdf:about="#_3d2f09f5-f2d2-4810-92ed-1b26e066a1d6">
+    <cim:IdentifiedObject.mRID>3d2f09f5-f2d2-4810-92ed-1b26e066a1d6</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformer.beforeShCircuitHighestOperatingCurrent>100</cim:PowerTransformer.beforeShCircuitHighestOperatingCurrent>
+    <cim:PowerTransformer.beforeShCircuitHighestOperatingVoltage>10</cim:PowerTransformer.beforeShCircuitHighestOperatingVoltage>
+    <cim:PowerTransformer.beforeShortCircuitAnglePf>10</cim:PowerTransformer.beforeShortCircuitAnglePf>
+    <cim:PowerTransformer.highSideMinOperatingU>100</cim:PowerTransformer.highSideMinOperatingU>
+    <cim:PowerTransformer.isPartOfGeneratorUnit>false</cim:PowerTransformer.isPartOfGeneratorUnit>
+    <cim:PowerTransformer.operationalValuesConsidered>false</cim:PowerTransformer.operationalValuesConsidered>
+  </cim:PowerTransformer>
+  <cim:PowerTransformer rdf:about="#_43f1888c-c495-4efc-acee-2123ba99fbb8">
+    <cim:IdentifiedObject.mRID>43f1888c-c495-4efc-acee-2123ba99fbb8</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformer.beforeShCircuitHighestOperatingCurrent>100</cim:PowerTransformer.beforeShCircuitHighestOperatingCurrent>
+    <cim:PowerTransformer.beforeShCircuitHighestOperatingVoltage>10</cim:PowerTransformer.beforeShCircuitHighestOperatingVoltage>
+    <cim:PowerTransformer.beforeShortCircuitAnglePf>10</cim:PowerTransformer.beforeShortCircuitAnglePf>
+    <cim:PowerTransformer.highSideMinOperatingU>100</cim:PowerTransformer.highSideMinOperatingU>
+    <cim:PowerTransformer.isPartOfGeneratorUnit>false</cim:PowerTransformer.isPartOfGeneratorUnit>
+    <cim:PowerTransformer.operationalValuesConsidered>false</cim:PowerTransformer.operationalValuesConsidered>
+  </cim:PowerTransformer>
+  <cim:PowerTransformer rdf:about="#_5614f030-c1c8-435c-8d5b-580721dce0a0">
+    <cim:IdentifiedObject.mRID>5614f030-c1c8-435c-8d5b-580721dce0a0</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformer.beforeShCircuitHighestOperatingCurrent>100</cim:PowerTransformer.beforeShCircuitHighestOperatingCurrent>
+    <cim:PowerTransformer.beforeShCircuitHighestOperatingVoltage>10</cim:PowerTransformer.beforeShCircuitHighestOperatingVoltage>
+    <cim:PowerTransformer.beforeShortCircuitAnglePf>10</cim:PowerTransformer.beforeShortCircuitAnglePf>
+    <cim:PowerTransformer.highSideMinOperatingU>100</cim:PowerTransformer.highSideMinOperatingU>
+    <cim:PowerTransformer.isPartOfGeneratorUnit>false</cim:PowerTransformer.isPartOfGeneratorUnit>
+    <cim:PowerTransformer.operationalValuesConsidered>false</cim:PowerTransformer.operationalValuesConsidered>
+  </cim:PowerTransformer>
+  <cim:PowerTransformer rdf:about="#_592f3d0c-bd64-4bb5-b779-d873d8895d6d">
+    <cim:IdentifiedObject.mRID>592f3d0c-bd64-4bb5-b779-d873d8895d6d</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformer.beforeShCircuitHighestOperatingCurrent>100</cim:PowerTransformer.beforeShCircuitHighestOperatingCurrent>
+    <cim:PowerTransformer.beforeShCircuitHighestOperatingVoltage>10</cim:PowerTransformer.beforeShCircuitHighestOperatingVoltage>
+    <cim:PowerTransformer.beforeShortCircuitAnglePf>10</cim:PowerTransformer.beforeShortCircuitAnglePf>
+    <cim:PowerTransformer.highSideMinOperatingU>100</cim:PowerTransformer.highSideMinOperatingU>
+    <cim:PowerTransformer.isPartOfGeneratorUnit>false</cim:PowerTransformer.isPartOfGeneratorUnit>
+    <cim:PowerTransformer.operationalValuesConsidered>false</cim:PowerTransformer.operationalValuesConsidered>
+  </cim:PowerTransformer>
+  <cim:PowerTransformer rdf:about="#_79419546-a3bd-4964-a49a-6d39b1c9cdc5">
+    <cim:IdentifiedObject.mRID>79419546-a3bd-4964-a49a-6d39b1c9cdc5</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformer.beforeShCircuitHighestOperatingCurrent>100</cim:PowerTransformer.beforeShCircuitHighestOperatingCurrent>
+    <cim:PowerTransformer.beforeShCircuitHighestOperatingVoltage>10</cim:PowerTransformer.beforeShCircuitHighestOperatingVoltage>
+    <cim:PowerTransformer.beforeShortCircuitAnglePf>10</cim:PowerTransformer.beforeShortCircuitAnglePf>
+    <cim:PowerTransformer.highSideMinOperatingU>100</cim:PowerTransformer.highSideMinOperatingU>
+    <cim:PowerTransformer.isPartOfGeneratorUnit>false</cim:PowerTransformer.isPartOfGeneratorUnit>
+    <cim:PowerTransformer.operationalValuesConsidered>false</cim:PowerTransformer.operationalValuesConsidered>
+  </cim:PowerTransformer>
+  <cim:PowerTransformer rdf:about="#_aac86575-36d8-455d-abe8-34edb60b6e04">
+    <cim:IdentifiedObject.mRID>aac86575-36d8-455d-abe8-34edb60b6e04</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformer.beforeShCircuitHighestOperatingCurrent>100</cim:PowerTransformer.beforeShCircuitHighestOperatingCurrent>
+    <cim:PowerTransformer.beforeShCircuitHighestOperatingVoltage>10</cim:PowerTransformer.beforeShCircuitHighestOperatingVoltage>
+    <cim:PowerTransformer.beforeShortCircuitAnglePf>10</cim:PowerTransformer.beforeShortCircuitAnglePf>
+    <cim:PowerTransformer.highSideMinOperatingU>100</cim:PowerTransformer.highSideMinOperatingU>
+    <cim:PowerTransformer.isPartOfGeneratorUnit>false</cim:PowerTransformer.isPartOfGeneratorUnit>
+    <cim:PowerTransformer.operationalValuesConsidered>false</cim:PowerTransformer.operationalValuesConsidered>
+  </cim:PowerTransformer>
+  <cim:PowerTransformer rdf:about="#_ba8cca63-a7fb-4067-93f1-f475d960c559">
+    <cim:IdentifiedObject.mRID>ba8cca63-a7fb-4067-93f1-f475d960c559</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformer.beforeShCircuitHighestOperatingCurrent>100</cim:PowerTransformer.beforeShCircuitHighestOperatingCurrent>
+    <cim:PowerTransformer.beforeShCircuitHighestOperatingVoltage>10</cim:PowerTransformer.beforeShCircuitHighestOperatingVoltage>
+    <cim:PowerTransformer.beforeShortCircuitAnglePf>10</cim:PowerTransformer.beforeShortCircuitAnglePf>
+    <cim:PowerTransformer.highSideMinOperatingU>100</cim:PowerTransformer.highSideMinOperatingU>
+    <cim:PowerTransformer.isPartOfGeneratorUnit>false</cim:PowerTransformer.isPartOfGeneratorUnit>
+    <cim:PowerTransformer.operationalValuesConsidered>false</cim:PowerTransformer.operationalValuesConsidered>
+  </cim:PowerTransformer>
+  <cim:PowerTransformer rdf:about="#_e40166e1-f954-4c0c-b343-bd8049d0f799">
+    <cim:IdentifiedObject.mRID>e40166e1-f954-4c0c-b343-bd8049d0f799</cim:IdentifiedObject.mRID>
+    <cim:PowerTransformer.beforeShCircuitHighestOperatingCurrent>100</cim:PowerTransformer.beforeShCircuitHighestOperatingCurrent>
+    <cim:PowerTransformer.beforeShCircuitHighestOperatingVoltage>10</cim:PowerTransformer.beforeShCircuitHighestOperatingVoltage>
+    <cim:PowerTransformer.beforeShortCircuitAnglePf>10</cim:PowerTransformer.beforeShortCircuitAnglePf>
+    <cim:PowerTransformer.highSideMinOperatingU>100</cim:PowerTransformer.highSideMinOperatingU>
+    <cim:PowerTransformer.isPartOfGeneratorUnit>false</cim:PowerTransformer.isPartOfGeneratorUnit>
+    <cim:PowerTransformer.operationalValuesConsidered>false</cim:PowerTransformer.operationalValuesConsidered>
+  </cim:PowerTransformer>
+  <cim:SynchronousMachine rdf:about="#_62a4d7b2-acca-4726-8d47-a85afbcf0642">
+    <cim:IdentifiedObject.mRID>62a4d7b2-acca-4726-8d47-a85afbcf0642</cim:IdentifiedObject.mRID>
+    <cim:SynchronousMachine.earthing>true</cim:SynchronousMachine.earthing>
+    <cim:SynchronousMachine.earthingStarPointR>0e+000</cim:SynchronousMachine.earthingStarPointR>
+    <cim:SynchronousMachine.earthingStarPointX>0e+000</cim:SynchronousMachine.earthingStarPointX>
+    <cim:SynchronousMachine.ikk>0e+000</cim:SynchronousMachine.ikk>
+    <cim:SynchronousMachine.mu>0e+000</cim:SynchronousMachine.mu>
+    <cim:SynchronousMachine.r>0e+000</cim:SynchronousMachine.r>
+    <cim:SynchronousMachine.r0>0e+000</cim:SynchronousMachine.r0>
+    <cim:SynchronousMachine.r2>0e+000</cim:SynchronousMachine.r2>
+    <cim:SynchronousMachine.satDirectSubtransX>0.200000</cim:SynchronousMachine.satDirectSubtransX>
+    <cim:SynchronousMachine.satDirectSyncX>2.000000</cim:SynchronousMachine.satDirectSyncX>
+    <cim:SynchronousMachine.satDirectTransX>0e+000</cim:SynchronousMachine.satDirectTransX>
+    <cim:SynchronousMachine.shortCircuitRotorType rdf:resource="http://iec.ch/TC57/CIM100#ShortCircuitRotorKind.turboSeries1" />
+    <cim:SynchronousMachine.voltageRegulationRange>0e+000</cim:SynchronousMachine.voltageRegulationRange>
+    <cim:SynchronousMachine.x0>0.130000</cim:SynchronousMachine.x0>
+    <cim:SynchronousMachine.x2>0.171000</cim:SynchronousMachine.x2>
+  </cim:SynchronousMachine>
+  <cim:SynchronousMachine rdf:about="#_8f549574-513c-412d-969d-ab882ce25e4c">
+    <cim:IdentifiedObject.mRID>8f549574-513c-412d-969d-ab882ce25e4c</cim:IdentifiedObject.mRID>
+    <cim:SynchronousMachine.earthing>true</cim:SynchronousMachine.earthing>
+    <cim:SynchronousMachine.earthingStarPointR>0e+000</cim:SynchronousMachine.earthingStarPointR>
+    <cim:SynchronousMachine.earthingStarPointX>0e+000</cim:SynchronousMachine.earthingStarPointX>
+    <cim:SynchronousMachine.ikk>0e+000</cim:SynchronousMachine.ikk>
+    <cim:SynchronousMachine.mu>0e+000</cim:SynchronousMachine.mu>
+    <cim:SynchronousMachine.r>0e+000</cim:SynchronousMachine.r>
+    <cim:SynchronousMachine.r0>0e+000</cim:SynchronousMachine.r0>
+    <cim:SynchronousMachine.r2>0e+000</cim:SynchronousMachine.r2>
+    <cim:SynchronousMachine.satDirectSubtransX>0.200000</cim:SynchronousMachine.satDirectSubtransX>
+    <cim:SynchronousMachine.satDirectSyncX>2.000000</cim:SynchronousMachine.satDirectSyncX>
+    <cim:SynchronousMachine.satDirectTransX>0e+000</cim:SynchronousMachine.satDirectTransX>
+    <cim:SynchronousMachine.shortCircuitRotorType rdf:resource="http://iec.ch/TC57/CIM100#ShortCircuitRotorKind.turboSeries1" />
+    <cim:SynchronousMachine.voltageRegulationRange>0e+000</cim:SynchronousMachine.voltageRegulationRange>
+    <cim:SynchronousMachine.x0>0.130000</cim:SynchronousMachine.x0>
+    <cim:SynchronousMachine.x2>0.170000</cim:SynchronousMachine.x2>
+  </cim:SynchronousMachine>
+  <cim:SynchronousMachine rdf:about="#_99ff08b9-87c1-4017-b15f-a5b68e49d750">
+    <cim:IdentifiedObject.mRID>99ff08b9-87c1-4017-b15f-a5b68e49d750</cim:IdentifiedObject.mRID>
+    <cim:SynchronousMachine.earthing>true</cim:SynchronousMachine.earthing>
+    <cim:SynchronousMachine.earthingStarPointR>0e+000</cim:SynchronousMachine.earthingStarPointR>
+    <cim:SynchronousMachine.earthingStarPointX>0e+000</cim:SynchronousMachine.earthingStarPointX>
+    <cim:SynchronousMachine.ikk>0e+000</cim:SynchronousMachine.ikk>
+    <cim:SynchronousMachine.mu>0e+000</cim:SynchronousMachine.mu>
+    <cim:SynchronousMachine.r>0e+000</cim:SynchronousMachine.r>
+    <cim:SynchronousMachine.r0>0e+000</cim:SynchronousMachine.r0>
+    <cim:SynchronousMachine.r2>0e+000</cim:SynchronousMachine.r2>
+    <cim:SynchronousMachine.satDirectSubtransX>0.200000</cim:SynchronousMachine.satDirectSubtransX>
+    <cim:SynchronousMachine.satDirectSyncX>2.000000</cim:SynchronousMachine.satDirectSyncX>
+    <cim:SynchronousMachine.satDirectTransX>0e+000</cim:SynchronousMachine.satDirectTransX>
+    <cim:SynchronousMachine.shortCircuitRotorType rdf:resource="http://iec.ch/TC57/CIM100#ShortCircuitRotorKind.turboSeries1" />
+    <cim:SynchronousMachine.voltageRegulationRange>0e+000</cim:SynchronousMachine.voltageRegulationRange>
+    <cim:SynchronousMachine.x0>0.130000</cim:SynchronousMachine.x0>
+    <cim:SynchronousMachine.x2>0.170000</cim:SynchronousMachine.x2>
+  </cim:SynchronousMachine>
+  <cim:SynchronousMachine rdf:about="#_fbd2fea4-2d71-4e31-8399-25ebd6c9c205">
+    <cim:IdentifiedObject.mRID>fbd2fea4-2d71-4e31-8399-25ebd6c9c205</cim:IdentifiedObject.mRID>
+    <cim:SynchronousMachine.earthing>true</cim:SynchronousMachine.earthing>
+    <cim:SynchronousMachine.earthingStarPointR>0e+000</cim:SynchronousMachine.earthingStarPointR>
+    <cim:SynchronousMachine.earthingStarPointX>0e+000</cim:SynchronousMachine.earthingStarPointX>
+    <cim:SynchronousMachine.ikk>0e+000</cim:SynchronousMachine.ikk>
+    <cim:SynchronousMachine.mu>0e+000</cim:SynchronousMachine.mu>
+    <cim:SynchronousMachine.r>0e+000</cim:SynchronousMachine.r>
+    <cim:SynchronousMachine.r0>0e+000</cim:SynchronousMachine.r0>
+    <cim:SynchronousMachine.r2>0e+000</cim:SynchronousMachine.r2>
+    <cim:SynchronousMachine.satDirectSubtransX>0.200000</cim:SynchronousMachine.satDirectSubtransX>
+    <cim:SynchronousMachine.satDirectSyncX>2.000000</cim:SynchronousMachine.satDirectSyncX>
+    <cim:SynchronousMachine.satDirectTransX>0e+000</cim:SynchronousMachine.satDirectTransX>
+    <cim:SynchronousMachine.shortCircuitRotorType rdf:resource="http://iec.ch/TC57/CIM100#ShortCircuitRotorKind.turboSeries1" />
+    <cim:SynchronousMachine.voltageRegulationRange>0e+000</cim:SynchronousMachine.voltageRegulationRange>
+    <cim:SynchronousMachine.x0>0.130000</cim:SynchronousMachine.x0>
+    <cim:SynchronousMachine.x2>0.170000</cim:SynchronousMachine.x2>
+  </cim:SynchronousMachine>
+  <cim:SynchronousMachine rdf:about="#_7056bbcf-1ad4-4bc9-beec-ac9f247b01d9">
+    <cim:IdentifiedObject.mRID>7056bbcf-1ad4-4bc9-beec-ac9f247b01d9</cim:IdentifiedObject.mRID>
+    <cim:SynchronousMachine.earthing>true</cim:SynchronousMachine.earthing>
+    <cim:SynchronousMachine.earthingStarPointR>0e+000</cim:SynchronousMachine.earthingStarPointR>
+    <cim:SynchronousMachine.earthingStarPointX>0e+000</cim:SynchronousMachine.earthingStarPointX>
+    <cim:SynchronousMachine.ikk>0e+000</cim:SynchronousMachine.ikk>
+    <cim:SynchronousMachine.mu>0e+000</cim:SynchronousMachine.mu>
+    <cim:SynchronousMachine.r>0e+000</cim:SynchronousMachine.r>
+    <cim:SynchronousMachine.r0>0e+000</cim:SynchronousMachine.r0>
+    <cim:SynchronousMachine.r2>0e+000</cim:SynchronousMachine.r2>
+    <cim:SynchronousMachine.satDirectSubtransX>0.200000</cim:SynchronousMachine.satDirectSubtransX>
+    <cim:SynchronousMachine.satDirectSyncX>2.000000</cim:SynchronousMachine.satDirectSyncX>
+    <cim:SynchronousMachine.satDirectTransX>0e+000</cim:SynchronousMachine.satDirectTransX>
+    <cim:SynchronousMachine.shortCircuitRotorType rdf:resource="http://iec.ch/TC57/CIM100#ShortCircuitRotorKind.turboSeries1" />
+    <cim:SynchronousMachine.voltageRegulationRange>0e+000</cim:SynchronousMachine.voltageRegulationRange>
+    <cim:SynchronousMachine.x0>0.130000</cim:SynchronousMachine.x0>
+    <cim:SynchronousMachine.x2>0.170000</cim:SynchronousMachine.x2>
+  </cim:SynchronousMachine>
+  <cim:SynchronousMachine rdf:about="#_9444340e-9295-4e3b-a4c1-f55dce24ca8e">
+    <cim:IdentifiedObject.mRID>9444340e-9295-4e3b-a4c1-f55dce24ca8e</cim:IdentifiedObject.mRID>
+    <cim:SynchronousMachine.earthing>true</cim:SynchronousMachine.earthing>
+    <cim:SynchronousMachine.earthingStarPointR>0e+000</cim:SynchronousMachine.earthingStarPointR>
+    <cim:SynchronousMachine.earthingStarPointX>0e+000</cim:SynchronousMachine.earthingStarPointX>
+    <cim:SynchronousMachine.ikk>0e+000</cim:SynchronousMachine.ikk>
+    <cim:SynchronousMachine.mu>0e+000</cim:SynchronousMachine.mu>
+    <cim:SynchronousMachine.r>0e+000</cim:SynchronousMachine.r>
+    <cim:SynchronousMachine.r0>0e+000</cim:SynchronousMachine.r0>
+    <cim:SynchronousMachine.r2>0e+000</cim:SynchronousMachine.r2>
+    <cim:SynchronousMachine.satDirectSubtransX>0.200000</cim:SynchronousMachine.satDirectSubtransX>
+    <cim:SynchronousMachine.satDirectSyncX>2.000000</cim:SynchronousMachine.satDirectSyncX>
+    <cim:SynchronousMachine.satDirectTransX>0e+000</cim:SynchronousMachine.satDirectTransX>
+    <cim:SynchronousMachine.shortCircuitRotorType rdf:resource="http://iec.ch/TC57/CIM100#ShortCircuitRotorKind.turboSeries1" />
+    <cim:SynchronousMachine.voltageRegulationRange>0e+000</cim:SynchronousMachine.voltageRegulationRange>
+    <cim:SynchronousMachine.x0>0.130000</cim:SynchronousMachine.x0>
+    <cim:SynchronousMachine.x2>0.170000</cim:SynchronousMachine.x2>
+  </cim:SynchronousMachine>
+  <cim:SynchronousMachine rdf:about="#_05b42ccb-5843-40d7-9b68-5cd6b0a8be2e">
+    <cim:IdentifiedObject.mRID>05b42ccb-5843-40d7-9b68-5cd6b0a8be2e</cim:IdentifiedObject.mRID>
+    <cim:SynchronousMachine.earthing>true</cim:SynchronousMachine.earthing>
+    <cim:SynchronousMachine.earthingStarPointR>0e+000</cim:SynchronousMachine.earthingStarPointR>
+    <cim:SynchronousMachine.earthingStarPointX>0e+000</cim:SynchronousMachine.earthingStarPointX>
+    <cim:SynchronousMachine.ikk>0e+000</cim:SynchronousMachine.ikk>
+    <cim:SynchronousMachine.mu>0e+000</cim:SynchronousMachine.mu>
+    <cim:SynchronousMachine.r>0e+000</cim:SynchronousMachine.r>
+    <cim:SynchronousMachine.r0>0e+000</cim:SynchronousMachine.r0>
+    <cim:SynchronousMachine.r2>0e+000</cim:SynchronousMachine.r2>
+    <cim:SynchronousMachine.satDirectSubtransX>0.200000</cim:SynchronousMachine.satDirectSubtransX>
+    <cim:SynchronousMachine.satDirectSyncX>2.000000</cim:SynchronousMachine.satDirectSyncX>
+    <cim:SynchronousMachine.satDirectTransX>0e+000</cim:SynchronousMachine.satDirectTransX>
+    <cim:SynchronousMachine.shortCircuitRotorType rdf:resource="http://iec.ch/TC57/CIM100#ShortCircuitRotorKind.turboSeries1" />
+    <cim:SynchronousMachine.voltageRegulationRange>0e+000</cim:SynchronousMachine.voltageRegulationRange>
+    <cim:SynchronousMachine.x0>0.130000</cim:SynchronousMachine.x0>
+    <cim:SynchronousMachine.x2>0.170000</cim:SynchronousMachine.x2>
+  </cim:SynchronousMachine>
+  <cim:BusbarSection rdf:about="#_7251f462-c9a8-4f25-9a5d-f1941000e482">
+    <cim:BusbarSection.ipMax>0e+000</cim:BusbarSection.ipMax>
+    <cim:IdentifiedObject.mRID>7251f462-c9a8-4f25-9a5d-f1941000e482</cim:IdentifiedObject.mRID>
+  </cim:BusbarSection>
+  <cim:BusbarSection rdf:about="#_d044b1fa-5ec4-43b6-96f9-99afba975573">
+    <cim:BusbarSection.ipMax>0e+000</cim:BusbarSection.ipMax>
+    <cim:IdentifiedObject.mRID>d044b1fa-5ec4-43b6-96f9-99afba975573</cim:IdentifiedObject.mRID>
+  </cim:BusbarSection>
+  <cim:BusbarSection rdf:about="#_2e52dcc1-2b32-4313-bf50-d6d18fdedad8">
+    <cim:BusbarSection.ipMax>5000.000000</cim:BusbarSection.ipMax>
+    <cim:IdentifiedObject.mRID>2e52dcc1-2b32-4313-bf50-d6d18fdedad8</cim:IdentifiedObject.mRID>
+  </cim:BusbarSection>
+  <cim:BusbarSection rdf:about="#_bfa60a69-855c-4179-889e-a7f56988af6e">
+    <cim:BusbarSection.ipMax>0e+000</cim:BusbarSection.ipMax>
+    <cim:IdentifiedObject.mRID>bfa60a69-855c-4179-889e-a7f56988af6e</cim:IdentifiedObject.mRID>
+  </cim:BusbarSection>
+  <cim:BusbarSection rdf:about="#_543f5566-a809-4e74-bdeb-c6a0ccb8afcb">
+    <cim:BusbarSection.ipMax>0e+000</cim:BusbarSection.ipMax>
+    <cim:IdentifiedObject.mRID>543f5566-a809-4e74-bdeb-c6a0ccb8afcb</cim:IdentifiedObject.mRID>
+  </cim:BusbarSection>
+  <cim:BusbarSection rdf:about="#_36c16739-2e6d-4634-a3ce-23862d705a6d">
+    <cim:BusbarSection.ipMax>0e+000</cim:BusbarSection.ipMax>
+    <cim:IdentifiedObject.mRID>36c16739-2e6d-4634-a3ce-23862d705a6d</cim:IdentifiedObject.mRID>
+  </cim:BusbarSection>
+  <cim:BusbarSection rdf:about="#_9b225755-08c3-472e-b1fa-9a9be48fec3d">
+    <cim:BusbarSection.ipMax>0e+000</cim:BusbarSection.ipMax>
+    <cim:IdentifiedObject.mRID>9b225755-08c3-472e-b1fa-9a9be48fec3d</cim:IdentifiedObject.mRID>
+  </cim:BusbarSection>
+  <cim:BusbarSection rdf:about="#_97fe7f71-1a56-4d3b-97fe-1085d6d972f5">
+    <cim:BusbarSection.ipMax>0e+000</cim:BusbarSection.ipMax>
+    <cim:IdentifiedObject.mRID>97fe7f71-1a56-4d3b-97fe-1085d6d972f5</cim:IdentifiedObject.mRID>
+  </cim:BusbarSection>
+  <cim:NonlinearShuntCompensatorPoint rdf:about="#_7df4778f-995a-46c6-8949-c2d817126841">
+    <cim:NonlinearShuntCompensatorPoint.b0>0.99</cim:NonlinearShuntCompensatorPoint.b0>
+    <cim:NonlinearShuntCompensatorPoint.g0>0.99</cim:NonlinearShuntCompensatorPoint.g0>
+  </cim:NonlinearShuntCompensatorPoint>
+  <cim:ACLineSegment rdf:about="#_2939d1e5-abf0-4494-bc07-6d6b88de49a4">
+    <cim:ACLineSegment.b0ch>0.0</cim:ACLineSegment.b0ch>
+    <cim:ACLineSegment.g0ch>0.0</cim:ACLineSegment.g0ch>
+    <cim:ACLineSegment.r0>0.300000</cim:ACLineSegment.r0>
+    <cim:ACLineSegment.shortCircuitEndTemperature>160.0000000000</cim:ACLineSegment.shortCircuitEndTemperature>
+    <cim:ACLineSegment.x0>0.900000</cim:ACLineSegment.x0>
+    <cim:IdentifiedObject.mRID>2939d1e5-abf0-4494-bc07-6d6b88de49a4</cim:IdentifiedObject.mRID>
+  </cim:ACLineSegment>
+  <cim:ACLineSegment rdf:about="#_abb15d78-cccb-4d2a-8e8d-a4b45a5a35a8">
+    <cim:ACLineSegment.b0ch>0.0000289027</cim:ACLineSegment.b0ch>
+    <cim:ACLineSegment.g0ch>0.0000575000</cim:ACLineSegment.g0ch>
+    <cim:ACLineSegment.r0>13.800000</cim:ACLineSegment.r0>
+    <cim:ACLineSegment.shortCircuitEndTemperature>160.0000000000</cim:ACLineSegment.shortCircuitEndTemperature>
+    <cim:ACLineSegment.x0>207.000000</cim:ACLineSegment.x0>
+    <cim:IdentifiedObject.mRID>abb15d78-cccb-4d2a-8e8d-a4b45a5a35a8</cim:IdentifiedObject.mRID>
+  </cim:ACLineSegment>
+  <cim:ACLineSegment rdf:about="#_d64195f6-4d3d-4052-b91d-6b197995efd4">
+    <cim:ACLineSegment.b0ch>0.0000664447</cim:ACLineSegment.b0ch>
+    <cim:ACLineSegment.g0ch>0.0000675000</cim:ACLineSegment.g0ch>
+    <cim:ACLineSegment.r0>3.195000</cim:ACLineSegment.r0>
+    <cim:ACLineSegment.shortCircuitEndTemperature>160.0000000000</cim:ACLineSegment.shortCircuitEndTemperature>
+    <cim:ACLineSegment.x0>102.600000</cim:ACLineSegment.x0>
+    <cim:IdentifiedObject.mRID>d64195f6-4d3d-4052-b91d-6b197995efd4</cim:IdentifiedObject.mRID>
+  </cim:ACLineSegment>
+  <cim:ACLineSegment rdf:about="#_ad96b7fb-3130-4782-a33b-09979e30c025">
+    <cim:ACLineSegment.b0ch>0.0000340863</cim:ACLineSegment.b0ch>
+    <cim:ACLineSegment.g0ch>0.0000420000</cim:ACLineSegment.g0ch>
+    <cim:ACLineSegment.r0>1.260000</cim:ACLineSegment.r0>
+    <cim:ACLineSegment.shortCircuitEndTemperature>160.0000000000</cim:ACLineSegment.shortCircuitEndTemperature>
+    <cim:ACLineSegment.x0>18.900000</cim:ACLineSegment.x0>
+    <cim:IdentifiedObject.mRID>ad96b7fb-3130-4782-a33b-09979e30c025</cim:IdentifiedObject.mRID>
+  </cim:ACLineSegment>
+  <cim:ACLineSegment rdf:about="#_4520f8f3-0b52-4a34-b916-d199dc1dae95">
+    <cim:ACLineSegment.b0ch>0.0000292168</cim:ACLineSegment.b0ch>
+    <cim:ACLineSegment.g0ch>0.0000600000</cim:ACLineSegment.g0ch>
+    <cim:ACLineSegment.r0>3.150000</cim:ACLineSegment.r0>
+    <cim:ACLineSegment.shortCircuitEndTemperature>160.0000000000</cim:ACLineSegment.shortCircuitEndTemperature>
+    <cim:ACLineSegment.x0>36.000000</cim:ACLineSegment.x0>
+    <cim:IdentifiedObject.mRID>4520f8f3-0b52-4a34-b916-d199dc1dae95</cim:IdentifiedObject.mRID>
+  </cim:ACLineSegment>
+  <cim:ACLineSegment rdf:about="#_07c65f92-fd67-4967-be59-735ff275e40e">
+    <cim:ACLineSegment.b0ch>0.0000262637</cim:ACLineSegment.b0ch>
+    <cim:ACLineSegment.g0ch>0.0000308000</cim:ACLineSegment.g0ch>
+    <cim:ACLineSegment.r0>6.600000</cim:ACLineSegment.r0>
+    <cim:ACLineSegment.shortCircuitEndTemperature>160.0000000000</cim:ACLineSegment.shortCircuitEndTemperature>
+    <cim:ACLineSegment.x0>204.600000</cim:ACLineSegment.x0>
+    <cim:IdentifiedObject.mRID>07c65f92-fd67-4967-be59-735ff275e40e</cim:IdentifiedObject.mRID>
+  </cim:ACLineSegment>
+  <cim:ACLineSegment rdf:about="#_09ad7fd9-f141-4939-8faa-c6c71e920200">
+    <cim:ACLineSegment.b0ch>0.0</cim:ACLineSegment.b0ch>
+    <cim:ACLineSegment.g0ch>0.0</cim:ACLineSegment.g0ch>
+    <cim:ACLineSegment.r0>0.300000</cim:ACLineSegment.r0>
+    <cim:ACLineSegment.shortCircuitEndTemperature>160.0000000000</cim:ACLineSegment.shortCircuitEndTemperature>
+    <cim:ACLineSegment.x0>0.900000</cim:ACLineSegment.x0>
+    <cim:IdentifiedObject.mRID>09ad7fd9-f141-4939-8faa-c6c71e920200</cim:IdentifiedObject.mRID>
+  </cim:ACLineSegment>
+  <cim:ACLineSegment rdf:about="#_61146890-aa23-41df-8048-d4441c24fda7">
+    <cim:ACLineSegment.b0ch>0.0001476549</cim:ACLineSegment.b0ch>
+    <cim:ACLineSegment.g0ch>0.0001200000</cim:ACLineSegment.g0ch>
+    <cim:ACLineSegment.r0>15.000000</cim:ACLineSegment.r0>
+    <cim:ACLineSegment.shortCircuitEndTemperature>160.0000000000</cim:ACLineSegment.shortCircuitEndTemperature>
+    <cim:ACLineSegment.x0>213.000000</cim:ACLineSegment.x0>
+    <cim:IdentifiedObject.mRID>61146890-aa23-41df-8048-d4441c24fda7</cim:IdentifiedObject.mRID>
+  </cim:ACLineSegment>
+  <cim:ACLineSegment rdf:about="#_76f4cbaf-b956-48b8-9e07-c17641982167">
+    <cim:ACLineSegment.b0ch>0.0</cim:ACLineSegment.b0ch>
+    <cim:ACLineSegment.g0ch>0.0000010000</cim:ACLineSegment.g0ch>
+    <cim:ACLineSegment.r0>0.300000</cim:ACLineSegment.r0>
+    <cim:ACLineSegment.shortCircuitEndTemperature>160.0000000000</cim:ACLineSegment.shortCircuitEndTemperature>
+    <cim:ACLineSegment.x0>0.600000</cim:ACLineSegment.x0>
+    <cim:IdentifiedObject.mRID>76f4cbaf-b956-48b8-9e07-c17641982167</cim:IdentifiedObject.mRID>
+  </cim:ACLineSegment>
+  <cim:ACLineSegment rdf:about="#_cf2205b6-12e4-4d1c-9e8e-6bfdfca787bb">
+    <cim:ACLineSegment.b0ch>0.0000628319</cim:ACLineSegment.b0ch>
+    <cim:ACLineSegment.g0ch>0.0000400000</cim:ACLineSegment.g0ch>
+    <cim:ACLineSegment.r0>0.720000</cim:ACLineSegment.r0>
+    <cim:ACLineSegment.shortCircuitEndTemperature>160.0000000000</cim:ACLineSegment.shortCircuitEndTemperature>
+    <cim:ACLineSegment.x0>6.000000</cim:ACLineSegment.x0>
+    <cim:IdentifiedObject.mRID>cf2205b6-12e4-4d1c-9e8e-6bfdfca787bb</cim:IdentifiedObject.mRID>
+  </cim:ACLineSegment>
+  <cim:ACLineSegment rdf:about="#_620f7d77-6a26-47d4-933e-1e2a5881befb">
+    <cim:ACLineSegment.b0ch>0.0</cim:ACLineSegment.b0ch>
+    <cim:ACLineSegment.g0ch>0.0000010000</cim:ACLineSegment.g0ch>
+    <cim:ACLineSegment.r0>0.300000</cim:ACLineSegment.r0>
+    <cim:ACLineSegment.shortCircuitEndTemperature>160.0000000000</cim:ACLineSegment.shortCircuitEndTemperature>
+    <cim:ACLineSegment.x0>0.600000</cim:ACLineSegment.x0>
+    <cim:IdentifiedObject.mRID>620f7d77-6a26-47d4-933e-1e2a5881befb</cim:IdentifiedObject.mRID>
+  </cim:ACLineSegment>
+  <cim:EquivalentInjection rdf:about="#_1ebb3954-be11-4825-9dd6-4357f9715a08">
+    <cim:EquivalentInjection.r>0e+000</cim:EquivalentInjection.r>
+    <cim:EquivalentInjection.r0>0e+000</cim:EquivalentInjection.r0>
+    <cim:EquivalentInjection.r2>0e+000</cim:EquivalentInjection.r2>
+    <cim:EquivalentInjection.x>0e+000</cim:EquivalentInjection.x>
+    <cim:EquivalentInjection.x0>0e+000</cim:EquivalentInjection.x0>
+    <cim:EquivalentInjection.x2>0e+000</cim:EquivalentInjection.x2>
+    <cim:IdentifiedObject.mRID>1ebb3954-be11-4825-9dd6-4357f9715a08</cim:IdentifiedObject.mRID>
+  </cim:EquivalentInjection>
+  <cim:EquivalentInjection rdf:about="#_3a1494c9-4752-4264-a5fc-4997b4aa2009">
+    <cim:EquivalentInjection.r>0e+000</cim:EquivalentInjection.r>
+    <cim:EquivalentInjection.r0>0e+000</cim:EquivalentInjection.r0>
+    <cim:EquivalentInjection.r2>0e+000</cim:EquivalentInjection.r2>
+    <cim:EquivalentInjection.x>0e+000</cim:EquivalentInjection.x>
+    <cim:EquivalentInjection.x0>0e+000</cim:EquivalentInjection.x0>
+    <cim:EquivalentInjection.x2>0e+000</cim:EquivalentInjection.x2>
+    <cim:IdentifiedObject.mRID>3a1494c9-4752-4264-a5fc-4997b4aa2009</cim:IdentifiedObject.mRID>
+  </cim:EquivalentInjection>
+  <cim:EquivalentInjection rdf:about="#_27651fac-2c7f-4a96-b669-eb914be45c5b">
+    <cim:EquivalentInjection.r>0e+000</cim:EquivalentInjection.r>
+    <cim:EquivalentInjection.r0>0e+000</cim:EquivalentInjection.r0>
+    <cim:EquivalentInjection.r2>0e+000</cim:EquivalentInjection.r2>
+    <cim:EquivalentInjection.x>0e+000</cim:EquivalentInjection.x>
+    <cim:EquivalentInjection.x0>0e+000</cim:EquivalentInjection.x0>
+    <cim:EquivalentInjection.x2>0e+000</cim:EquivalentInjection.x2>
+    <cim:IdentifiedObject.mRID>27651fac-2c7f-4a96-b669-eb914be45c5b</cim:IdentifiedObject.mRID>
+  </cim:EquivalentInjection>
+  <cim:EquivalentInjection rdf:about="#_61503fe7-c9e4-410f-a16e-f354a5bace22">
+    <cim:EquivalentInjection.r>0e+000</cim:EquivalentInjection.r>
+    <cim:EquivalentInjection.r0>0e+000</cim:EquivalentInjection.r0>
+    <cim:EquivalentInjection.r2>0e+000</cim:EquivalentInjection.r2>
+    <cim:EquivalentInjection.x>0e+000</cim:EquivalentInjection.x>
+    <cim:EquivalentInjection.x0>0e+000</cim:EquivalentInjection.x0>
+    <cim:EquivalentInjection.x2>0e+000</cim:EquivalentInjection.x2>
+    <cim:IdentifiedObject.mRID>61503fe7-c9e4-410f-a16e-f354a5bace22</cim:IdentifiedObject.mRID>
+  </cim:EquivalentInjection>
+  <cim:EquivalentInjection rdf:about="#_92a44d18-5efc-449b-b2a5-beb906791d10">
+    <cim:EquivalentInjection.r>0e+000</cim:EquivalentInjection.r>
+    <cim:EquivalentInjection.r0>0e+000</cim:EquivalentInjection.r0>
+    <cim:EquivalentInjection.r2>0e+000</cim:EquivalentInjection.r2>
+    <cim:EquivalentInjection.x>0e+000</cim:EquivalentInjection.x>
+    <cim:EquivalentInjection.x0>0e+000</cim:EquivalentInjection.x0>
+    <cim:EquivalentInjection.x2>0e+000</cim:EquivalentInjection.x2>
+    <cim:IdentifiedObject.mRID>92a44d18-5efc-449b-b2a5-beb906791d10</cim:IdentifiedObject.mRID>
+  </cim:EquivalentInjection>
+  <cim:SeriesCompensator rdf:about="#_968715b5-f03c-4202-8d66-0304be724ddf">
+    <cim:IdentifiedObject.mRID>968715b5-f03c-4202-8d66-0304be724ddf</cim:IdentifiedObject.mRID>
+    <cim:SeriesCompensator.r0>1.99</cim:SeriesCompensator.r0>
+    <cim:SeriesCompensator.varistorPresent>true</cim:SeriesCompensator.varistorPresent>
+    <cim:SeriesCompensator.varistorRatedCurrent>99.99</cim:SeriesCompensator.varistorRatedCurrent>
+    <cim:SeriesCompensator.varistorVoltageThreshold>9.99</cim:SeriesCompensator.varistorVoltageThreshold>
+    <cim:SeriesCompensator.x0>1.99</cim:SeriesCompensator.x0>
+  </cim:SeriesCompensator>
+  <cim:LinearShuntCompensator rdf:about="#_a7565e09-33eb-4dfc-8837-6a19f877ec29">
+    <cim:IdentifiedObject.mRID>a7565e09-33eb-4dfc-8837-6a19f877ec29</cim:IdentifiedObject.mRID>
+    <cim:LinearShuntCompensator.b0PerSection>-0e+000</cim:LinearShuntCompensator.b0PerSection>
+    <cim:LinearShuntCompensator.g0PerSection>0e+000</cim:LinearShuntCompensator.g0PerSection>
+  </cim:LinearShuntCompensator>
+  <cim:LinearShuntCompensator rdf:about="#_469cab52-b961-4910-bf44-4109580732b6">
+    <cim:IdentifiedObject.mRID>469cab52-b961-4910-bf44-4109580732b6</cim:IdentifiedObject.mRID>
+    <cim:LinearShuntCompensator.b0PerSection>-0e+000</cim:LinearShuntCompensator.b0PerSection>
+    <cim:LinearShuntCompensator.g0PerSection>0e+000</cim:LinearShuntCompensator.g0PerSection>
+  </cim:LinearShuntCompensator>
+  <cim:LinearShuntCompensator rdf:about="#_0062fda9-1883-48b8-975b-47828a371ccd">
+    <cim:IdentifiedObject.mRID>0062fda9-1883-48b8-975b-47828a371ccd</cim:IdentifiedObject.mRID>
+    <cim:LinearShuntCompensator.b0PerSection>-0e+000</cim:LinearShuntCompensator.b0PerSection>
+    <cim:LinearShuntCompensator.g0PerSection>0e+000</cim:LinearShuntCompensator.g0PerSection>
+  </cim:LinearShuntCompensator>
+  <cim:LinearShuntCompensator rdf:about="#_68972669-2a90-462c-9f58-dd44fdd5c841">
+    <cim:IdentifiedObject.mRID>68972669-2a90-462c-9f58-dd44fdd5c841</cim:IdentifiedObject.mRID>
+    <cim:LinearShuntCompensator.b0PerSection>-0e+000</cim:LinearShuntCompensator.b0PerSection>
+    <cim:LinearShuntCompensator.g0PerSection>0e+000</cim:LinearShuntCompensator.g0PerSection>
+  </cim:LinearShuntCompensator>
+  <cim:AsynchronousMachine rdf:about="#_12e5b86c-e552-4607-bb42-402a0eb4fffd">
+    <cim:AsynchronousMachine.converterFedDrive>true</cim:AsynchronousMachine.converterFedDrive>
+    <cim:AsynchronousMachine.efficiency>99.99</cim:AsynchronousMachine.efficiency>
+    <cim:AsynchronousMachine.iaIrRatio>0.99</cim:AsynchronousMachine.iaIrRatio>
+    <cim:AsynchronousMachine.polePairNumber>9</cim:AsynchronousMachine.polePairNumber>
+    <cim:AsynchronousMachine.ratedMechanicalPower>0.99</cim:AsynchronousMachine.ratedMechanicalPower>
+    <cim:AsynchronousMachine.reversible>true</cim:AsynchronousMachine.reversible>
+    <cim:AsynchronousMachine.rxLockedRotorRatio>9.99</cim:AsynchronousMachine.rxLockedRotorRatio>
+    <cim:IdentifiedObject.mRID>12e5b86c-e552-4607-bb42-402a0eb4fffd</cim:IdentifiedObject.mRID>
+  </cim:AsynchronousMachine>
+  <cim:EnergySource rdf:about="#_fb139144-102f-486d-9d47-c78f7ad784fa">
+    <cim:EnergySource.r>0.99</cim:EnergySource.r>
+    <cim:EnergySource.r0>0.99</cim:EnergySource.r0>
+    <cim:EnergySource.rn>0.99</cim:EnergySource.rn>
+    <cim:EnergySource.x>0.99</cim:EnergySource.x>
+    <cim:EnergySource.x0>0.99</cim:EnergySource.x0>
+    <cim:EnergySource.xn>0.99</cim:EnergySource.xn>
+    <cim:IdentifiedObject.mRID>fb139144-102f-486d-9d47-c78f7ad784fa</cim:IdentifiedObject.mRID>
+  </cim:EnergySource>
+  <cim:EquivalentBranch rdf:about="#_bc4a546e-839a-45e1-9008-509fdedec38a">
+    <cim:EquivalentBranch.negativeR12>0.99</cim:EquivalentBranch.negativeR12>
+    <cim:EquivalentBranch.negativeR21>0.99</cim:EquivalentBranch.negativeR21>
+    <cim:EquivalentBranch.negativeX12>0.99</cim:EquivalentBranch.negativeX12>
+    <cim:EquivalentBranch.negativeX21>0.99</cim:EquivalentBranch.negativeX21>
+    <cim:EquivalentBranch.positiveR12>0.99</cim:EquivalentBranch.positiveR12>
+    <cim:EquivalentBranch.positiveR21>0.99</cim:EquivalentBranch.positiveR21>
+    <cim:EquivalentBranch.positiveX12>0.99</cim:EquivalentBranch.positiveX12>
+    <cim:EquivalentBranch.positiveX21>0.99</cim:EquivalentBranch.positiveX21>
+    <cim:EquivalentBranch.zeroR12>0.99</cim:EquivalentBranch.zeroR12>
+    <cim:EquivalentBranch.zeroR21>0.99</cim:EquivalentBranch.zeroR21>
+    <cim:EquivalentBranch.zeroX12>0.99</cim:EquivalentBranch.zeroX12>
+    <cim:EquivalentBranch.zeroX21>0.99</cim:EquivalentBranch.zeroX21>
+    <cim:IdentifiedObject.mRID>bc4a546e-839a-45e1-9008-509fdedec38a</cim:IdentifiedObject.mRID>
+  </cim:EquivalentBranch>
+  <cim:ExternalNetworkInjection rdf:about="#_ed9f5001-2b84-49a5-9b00-2c9b0591eb06">
+    <cim:ExternalNetworkInjection.ikSecond>true</cim:ExternalNetworkInjection.ikSecond>
+    <cim:ExternalNetworkInjection.maxInitialSymShCCurrent>99.99</cim:ExternalNetworkInjection.maxInitialSymShCCurrent>
+    <cim:ExternalNetworkInjection.maxR0ToX0Ratio>9.99</cim:ExternalNetworkInjection.maxR0ToX0Ratio>
+    <cim:ExternalNetworkInjection.maxR1ToX1Ratio>9.99</cim:ExternalNetworkInjection.maxR1ToX1Ratio>
+    <cim:ExternalNetworkInjection.maxZ0ToZ1Ratio>9.99</cim:ExternalNetworkInjection.maxZ0ToZ1Ratio>
+    <cim:ExternalNetworkInjection.minInitialSymShCCurrent>0.99</cim:ExternalNetworkInjection.minInitialSymShCCurrent>
+    <cim:ExternalNetworkInjection.minR0ToX0Ratio>0.99</cim:ExternalNetworkInjection.minR0ToX0Ratio>
+    <cim:ExternalNetworkInjection.minR1ToX1Ratio>0.99</cim:ExternalNetworkInjection.minR1ToX1Ratio>
+    <cim:ExternalNetworkInjection.minZ0ToZ1Ratio>0.99</cim:ExternalNetworkInjection.minZ0ToZ1Ratio>
+    <cim:ExternalNetworkInjection.voltageFactor>1.0</cim:ExternalNetworkInjection.voltageFactor>
+    <cim:IdentifiedObject.mRID>ed9f5001-2b84-49a5-9b00-2c9b0591eb06</cim:IdentifiedObject.mRID>
+  </cim:ExternalNetworkInjection>
+  <cim:MutualCoupling rdf:ID="_dc2e245c-fb04-459b-88c6-15cd8e33242f">
+    <cim:IdentifiedObject.mRID>dc2e245c-fb04-459b-88c6-15cd8e33242f</cim:IdentifiedObject.mRID>
+    <cim:MutualCoupling.First_Terminal rdf:resource="#_5f967934-b637-4643-901c-8f9a47e324f7" />
+    <cim:MutualCoupling.Second_Terminal rdf:resource="#_cde8db64-6196-4941-81e6-df90b5c87180" />
+    <cim:MutualCoupling.b0ch>0.0099</cim:MutualCoupling.b0ch>
+    <cim:MutualCoupling.distance11>123.0</cim:MutualCoupling.distance11>
+    <cim:MutualCoupling.distance12>234.0</cim:MutualCoupling.distance12>
+    <cim:MutualCoupling.distance21>134.0</cim:MutualCoupling.distance21>
+    <cim:MutualCoupling.distance22>223.0</cim:MutualCoupling.distance22>
+    <cim:MutualCoupling.g0ch>0.0099</cim:MutualCoupling.g0ch>
+    <cim:MutualCoupling.r0>0.99</cim:MutualCoupling.r0>
+    <cim:MutualCoupling.x0>0.99</cim:MutualCoupling.x0>
+  </cim:MutualCoupling>
+  <cim:PetersenCoil rdf:about="#_09cc4e0a-336f-43ee-b29a-43049904cea9">
+    <cim:EarthFaultCompensator.r>9.99</cim:EarthFaultCompensator.r>
+    <cim:IdentifiedObject.mRID>09cc4e0a-336f-43ee-b29a-43049904cea9</cim:IdentifiedObject.mRID>
+    <cim:PetersenCoil.mode rdf:resource="http://iec.ch/TC57/CIM100#PetersenCoilModeKind.automaticPositioning" />
+    <cim:PetersenCoil.nominalU>225.00</cim:PetersenCoil.nominalU>
+    <cim:PetersenCoil.offsetCurrent>0.1</cim:PetersenCoil.offsetCurrent>
+    <cim:PetersenCoil.positionCurrent>0.1</cim:PetersenCoil.positionCurrent>
+    <cim:PetersenCoil.xGroundMax>9.99</cim:PetersenCoil.xGroundMax>
+    <cim:PetersenCoil.xGroundMin>0.99</cim:PetersenCoil.xGroundMin>
+    <cim:PetersenCoil.xGroundNominal>4.99</cim:PetersenCoil.xGroundNominal>
+  </cim:PetersenCoil>
+  <cim:GroundingImpedance rdf:about="#_2be66ddb-e536-47c9-8881-830e46a97a4f">
+    <cim:EarthFaultCompensator.r>0.99</cim:EarthFaultCompensator.r>
+    <cim:GroundingImpedance.x>0.99</cim:GroundingImpedance.x>
+    <cim:IdentifiedObject.mRID>2be66ddb-e536-47c9-8881-830e46a97a4f</cim:IdentifiedObject.mRID>
+  </cim:GroundingImpedance>
+</rdf:RDF>

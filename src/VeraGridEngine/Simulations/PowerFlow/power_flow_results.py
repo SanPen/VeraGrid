@@ -20,6 +20,34 @@ class NumericPowerFlowResults:
     """
     NumericPowerFlowResults, used to return values from the numerical methods
     """
+    __slots__ = (
+        "V",
+        "Scalc",
+        "Sf",
+        "St",
+        "If",
+        "It",
+        "loading",
+        "losses",
+        "tap_module",
+        "tap_angle",
+        "Pfp_vsc",
+        "Pfn_vsc",
+        "St_vsc",
+        "If_vsc",
+        "It_vsc",
+        "losses_vsc",
+        "loading_vsc",
+        "Sf_hvdc",
+        "St_hvdc",
+        "losses_hvdc",
+        "loading_hvdc",
+        "converged",
+        "norm_f",
+        "iterations",
+        "elapsed",
+        "method",
+    )
 
     def __init__(self,
                  V: CxVec,
@@ -112,6 +140,44 @@ class NumericPowerFlowResults:
 
 
 class PowerFlowResults(ResultsTemplate):
+    __slots__ = (
+        "bus_names",
+        "branch_names",
+        "hvdc_names",
+        "vsc_names",
+        "gen_names",
+        "batt_names",
+        "sh_names",
+        "bus_types",
+        "Sbus",
+        "voltage",
+        "Sf",
+        "St",
+        "If",
+        "It",
+        "tap_module",
+        "tap_angle",
+        "Vbranch",
+        "loading",
+        "losses",
+        "losses_hvdc",
+        "Pf_hvdc",
+        "Pt_hvdc",
+        "loading_hvdc",
+        "Pfp_vsc",
+        "Pfn_vsc",
+        "St_vsc",
+        "If_vsc",
+        "It_vsc",
+        "losses_vsc",
+        "loading_vsc",
+        "gen_q",
+        "battery_q",
+        "shunt_q",
+        "plot_bars_limit",
+        "convergence_reports",
+        "three_phase",
+    )
 
     def __init__(
             self,
@@ -472,7 +538,7 @@ class PowerFlowResults(ResultsTemplate):
 
     def get_voltage_df(self):
 
-        return pd.DataFrame(data={'Um 1 [p.u.]': np.abs(self.voltage),
+        return pd.DataFrame(data={'Um 1 [p.u.]': np.abs(self.voltage).round(5),
                                   'Ua 1 [º]': np.angle(self.voltage, deg=True)},
                             index=self.bus_names)
 

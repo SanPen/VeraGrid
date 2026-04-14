@@ -2,14 +2,17 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
-from typing import Dict, Union, Tuple
+from __future__ import annotations
+from typing import Dict, Union, Tuple, TYPE_CHECKING
 from VeraGridEngine.Devices.Diagrams.base_diagram import BaseDiagram
 from VeraGridEngine.Devices.Diagrams.graphic_location import GraphicLocation
 from VeraGridEngine.Devices.Diagrams.map_location import MapLocation
-from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.enumerations import DiagramType
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.enumerations import Colormaps
+
+if TYPE_CHECKING:
+    from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 
 
 class MapDiagram(BaseDiagram):

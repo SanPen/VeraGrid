@@ -119,7 +119,7 @@ def run_nonlinear_opf(grid: MultiCircuit,
                       gen_idx=island.generator_data.original_idx,
                       hvdc_idx=island.hvdc_data.original_idx,
                       ncap_idx=capacity_nodes_idx_org,
-                      contshunt_idx=np.where(island.shunt_data.controllable == True)[0],
+                      contshunt_idx=np.where(island.shunt_data.is_pv_control == True)[0],
                       acopf_mode=opf_options.acopf_mode)
         if i > 0:
             results.error = max(results.error, island_res.error)

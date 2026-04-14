@@ -34,7 +34,7 @@ class GeneratorData:
 
         self.p3_star = np.zeros(self.nelm * 3, dtype=float)
 
-        self.pf: Vec = np.zeros(nelm, dtype=float)
+        self.q: Vec = np.zeros(nelm, dtype=float)
 
         self.v: Vec = np.zeros(nelm, dtype=float)
 
@@ -106,7 +106,9 @@ class GeneratorData:
 
         data.active = self.active[elm_idx]
         data.p = self.p[elm_idx]
-        data.pf = self.pf[elm_idx]
+        elm_idx_3 = ((elm_idx * 3)[:, np.newaxis] + np.arange(3)).flatten()
+        data.p3_star = self.p3_star[elm_idx_3]
+        data.q = self.q[elm_idx]
         data.v = self.v[elm_idx]
 
         data.qmin = self.qmin[elm_idx]
@@ -161,6 +163,8 @@ class GeneratorData:
         data.scalable = self.scalable[elm_idx]
 
         data.original_idx = elm_idx
+        data.name_to_idx = {str(name): i for i, name in enumerate(data.names)}
+        data.is_at_dc_bus = self.is_at_dc_bus[elm_idx]
 
         return data
 
@@ -198,7 +202,8 @@ class GeneratorData:
 
         data.active = self.active.copy()
         data.p = self.p.copy()
-        data.pf = self.pf.copy()
+        data.p3_star = self.p3_star.copy()
+        data.q = self.q.copy()
         data.v = self.v.copy()
 
         data.qmin = self.qmin.copy()
@@ -242,7 +247,9 @@ class GeneratorData:
         data.shift_key = self.shift_key.copy()
         data.scalable = self.scalable.copy()
 
-        data.original_idx = self.original_idx
+        data.original_idx = self.original_idx.copy()
+        data.name_to_idx = self.name_to_idx.copy()
+        data.is_at_dc_bus = self.is_at_dc_bus.copy()
 
         return data
 
@@ -251,10 +258,10 @@ class GeneratorData:
         Compute the active and reactive power of non-controlled generators (assuming all)
         :return:
         """
-        pf2 = np.power(self.pf, 2.0)
-        pf_sign = (self.pf + 1e-20) / np.abs(self.pf + 1e-20)
-        Q = pf_sign * self.p * np.sqrt((1.0 - pf2) / (pf2 + 1e-20))
-        return self.p + 1.0j * Q
+        c = np.empty(self.nelm, dtype=complex)
+        c.real = self.p
+        c.imag = self.q
+        return c
 
     def get_q_at(self, i) -> float:
         """
@@ -262,10 +269,7 @@ class GeneratorData:
         :param i:
         :return:
         """
-        pf2 = np.power(self.pf[i], 2.0)
-        pf_sign = (self.pf[i] + 1e-20) / np.abs(self.pf[i] + 1e-20)
-        Q = pf_sign * self.p[i] * np.sqrt((1.0 - pf2) / (pf2 + 1e-20))
-        return Q
+        return float(self.q[i])
 
     def get_Yshunt(self, seq: int = 1) -> CxVec:
         """
@@ -432,3 +436,14 @@ class GeneratorData:
         j = np.arange(self.nelm, dtype=int)
         data = np.ones(self.nelm, dtype=int)
         return coo_matrix((data, (self.bus_idx, j)), shape=(self.nbus, self.nelm), dtype=int).tocsc()
+
+    def get_pf(self) -> Vec:
+        """
+        Get the array of power factors
+        :return:
+        """
+        s = np.sqrt(self.p * self.p + self.q * self.q)
+        idx = np.where(s != 0)
+        pf = np.ones(self.nelm)
+        pf[idx] = self.p[idx] / s[idx]
+        return pf

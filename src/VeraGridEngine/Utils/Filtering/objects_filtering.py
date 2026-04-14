@@ -101,6 +101,10 @@ class FilterObjects:
     """
     FilterResultsTable class
     """
+    __slots__ = (
+        "_objects",
+        "_filtered_indices",
+    )
 
     def __init__(self, objects: List[ALL_DEV_TYPES]):
         """

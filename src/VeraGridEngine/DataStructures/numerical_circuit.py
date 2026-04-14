@@ -34,7 +34,7 @@ from VeraGridEngine.DataStructures.fluid_pump_data import FluidPumpData
 from VeraGridEngine.DataStructures.fluid_p2x_data import FluidP2XData
 from VeraGridEngine.DataStructures.fluid_path_data import FluidPathData
 from VeraGridEngine.Devices.Aggregation.investment import Investment
-from VeraGridEngine.Devices.Aggregation.contingency import Contingency
+from VeraGridEngine.Devices.Events.contingency import Contingency
 
 ALL_STRUCTS = Union[
     BusData,
@@ -66,14 +66,17 @@ def build_q_limits(nbus: int, Sbase: float,
     :param q_min_gen:
     :param q_max_gen:
     :param active_gen:
+    :param controllable_gen:
     :param batt_idx:
     :param q_min_batt:
     :param q_max_batt:
     :param active_batt:
+    :param controllable_batt:
     :param sh_idx:
     :param q_min_sh:
     :param q_max_sh:
     :param active_sh:
+    :param controllable_sh:
     :param hvdc_f:
     :param hvdc_t:
     :param q_min_hvdc_f:
@@ -422,7 +425,9 @@ class NumericalCircuit:
 
         nc.bus_data = self.bus_data.copy()
         nc.passive_branch_data = self.passive_branch_data.copy()
+        nc.active_branch_data = self.active_branch_data.copy()
         nc.hvdc_data = self.hvdc_data.copy()
+        nc.vsc_data = self.vsc_data.copy()
         nc.load_data = self.load_data.copy()
         nc.shunt_data = self.shunt_data.copy()
         nc.generator_data = self.generator_data.copy()
@@ -432,6 +437,8 @@ class NumericalCircuit:
         nc.fluid_pump_data = self.fluid_pump_data.copy()
         nc.fluid_p2x_data = self.fluid_p2x_data.copy()
         nc.fluid_path_data = self.fluid_path_data.copy()
+        nc.__bus_map_arr = self.__bus_map_arr.copy()
+        nc.__topology_performed = self.__topology_performed
         nc.structs_idtag_dict = self.structs_idtag_dict.copy()
         nc.consolidate_information()
 
@@ -843,7 +850,7 @@ class NumericalCircuit:
             q_min_sh=self.shunt_data.qmin,
             q_max_sh=self.shunt_data.qmax,
             active_sh=self.shunt_data.active,
-            controllable_sh=self.shunt_data.controllable,
+            controllable_sh=self.shunt_data.is_pv_control,
 
             hvdc_f=self.hvdc_data.F,
             hvdc_t=self.hvdc_data.T,
@@ -913,12 +920,14 @@ class NumericalCircuit:
             for island in islands:
                 if len(island):
                     i0 = island[0]
-                    for ii in range(1, len(island)):
-                        i = island[ii]
-                        self.__bus_map_arr[i] = i0
+
+                    if len(island) > 1:
+
+                        # set the mapping to the first index of the island to the reduced buses
+                        self.__bus_map_arr[island[1:]] = i0
 
                         # deactivate the reduced buses
-                        self.bus_data.active[i] = False
+                        self.bus_data.active[island[1:]] = False
 
             # remap
             self.passive_branch_data.remap(self.__bus_map_arr)

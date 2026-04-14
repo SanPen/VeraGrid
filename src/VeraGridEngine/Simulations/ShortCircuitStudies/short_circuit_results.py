@@ -14,6 +14,95 @@ from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_basic_formulation_3ph 
 
 
 class ShortCircuitResults(ResultsTemplate):
+    __slots__ = (
+        "bus_types",
+        "bus_names",
+        "branch_names",
+        "hvdc_names",
+        "sc_names",
+        "Sbus1",
+        "voltage1",
+        "Sf1",
+        "St1",
+        "If1",
+        "It1",
+        "Vbranch1",
+        "loading1",
+        "losses1",
+        "Sbus0",
+        "voltage0",
+        "Sf0",
+        "St0",
+        "If0",
+        "It0",
+        "Vbranch0",
+        "loading0",
+        "losses0",
+        "Sbus2",
+        "voltage2",
+        "Sf2",
+        "St2",
+        "If2",
+        "It2",
+        "Vbranch2",
+        "loading2",
+        "losses2",
+        "SbusN",
+        "voltageN",
+        "SfN",
+        "StN",
+        "IfN",
+        "ItN",
+        "VbranchN",
+        "loadingN",
+        "lossesN",
+        "SbusA",
+        "voltageA",
+        "SfA",
+        "StA",
+        "IfA",
+        "ItA",
+        "VbranchA",
+        "loadingA",
+        "lossesA",
+        "SbusB",
+        "voltageB",
+        "SfB",
+        "StB",
+        "IfB",
+        "ItB",
+        "VbranchB",
+        "loadingB",
+        "lossesB",
+        "SbusC",
+        "voltageC",
+        "SfC",
+        "StC",
+        "IfC",
+        "ItC",
+        "VbranchC",
+        "loadingC",
+        "lossesC",
+        "hvdc_losses",
+        "hvdc_Pf",
+        "hvdc_Pt",
+        "hvdc_loading",
+        "vsc_If",
+        "vsc_It",
+        "vsc_Pfp",
+        "vsc_Pfn",
+        "vsc_St",
+        "vsc_losses",
+        "vsc_loading",
+        "SCpower",
+        "SCpowerA",
+        "SCpowerB",
+        "SCpowerC",
+        "ICurrent",
+        "ICurrentA",
+        "ICurrentB",
+        "ICurrentC",
+    )
 
     def __init__(self,
                  nsc: int,
@@ -137,7 +226,7 @@ class ShortCircuitResults(ResultsTemplate):
                                                                  ResultTypes.BranchReactiveLossesB,
                                                                  ResultTypes.BranchReactiveLossesC],
 
-                                     ResultTypes.InfoResults: [ResultTypes.ShortCircuitInfo],
+                                     # ResultTypes.InfoResults: [ResultTypes.ShortCircuitInfo],
                                  },
                                  time_array=None,
                                  clustering_results=None,
@@ -158,75 +247,75 @@ class ShortCircuitResults(ResultsTemplate):
         self.bus_area_indices = np.zeros(n, dtype=int)
         self.area_names = area_names
 
-        self.Sbus1 = np.zeros((n, nsc), dtype=complex)
-        self.voltage1 = np.zeros((n, nsc), dtype=complex)
-        self.Sf1 = np.zeros((m, nsc), dtype=complex)
-        self.St1 = np.zeros((m, nsc), dtype=complex)
-        self.If1 = np.zeros((m, nsc), dtype=complex)
-        self.It1 = np.zeros((m, nsc), dtype=complex)
-        self.Vbranch1 = np.zeros((m, nsc), dtype=complex)
-        self.loading1 = np.zeros((m, nsc), dtype=complex)
-        self.losses1 = np.zeros((m, nsc), dtype=complex)
+        self.Sbus1 = np.zeros((n, nsc), dtype=np.complex64)
+        self.voltage1 = np.zeros((n, nsc), dtype=np.complex64)
+        self.Sf1 = np.zeros((m, nsc), dtype=np.complex64)
+        self.St1 = np.zeros((m, nsc), dtype=np.complex64)
+        self.If1 = np.zeros((m, nsc), dtype=np.complex64)
+        self.It1 = np.zeros((m, nsc), dtype=np.complex64)
+        self.Vbranch1 = np.zeros((m, nsc), dtype=np.complex64)
+        self.loading1 = np.zeros((m, nsc), dtype=np.complex64)
+        self.losses1 = np.zeros((m, nsc), dtype=np.complex64)
 
-        self.Sbus0 = np.zeros((n, nsc), dtype=complex)
-        self.voltage0 = np.zeros((n, nsc), dtype=complex)
-        self.Sf0 = np.zeros((m, nsc), dtype=complex)
-        self.St0 = np.zeros((m, nsc), dtype=complex)
-        self.If0 = np.zeros((m, nsc), dtype=complex)
-        self.It0 = np.zeros((m, nsc), dtype=complex)
-        self.Vbranch0 = np.zeros((m, nsc), dtype=complex)
-        self.loading0 = np.zeros((m, nsc), dtype=complex)
-        self.losses0 = np.zeros((m, nsc), dtype=complex)
+        self.Sbus0 = np.zeros((n, nsc), dtype=np.complex64)
+        self.voltage0 = np.zeros((n, nsc), dtype=np.complex64)
+        self.Sf0 = np.zeros((m, nsc), dtype=np.complex64)
+        self.St0 = np.zeros((m, nsc), dtype=np.complex64)
+        self.If0 = np.zeros((m, nsc), dtype=np.complex64)
+        self.It0 = np.zeros((m, nsc), dtype=np.complex64)
+        self.Vbranch0 = np.zeros((m, nsc), dtype=np.complex64)
+        self.loading0 = np.zeros((m, nsc), dtype=np.complex64)
+        self.losses0 = np.zeros((m, nsc), dtype=np.complex64)
 
-        self.Sbus2 = np.zeros((n, nsc), dtype=complex)
-        self.voltage2 = np.zeros((n, nsc), dtype=complex)
-        self.Sf2 = np.zeros((m, nsc), dtype=complex)
-        self.St2 = np.zeros((m, nsc), dtype=complex)
-        self.If2 = np.zeros((m, nsc), dtype=complex)
-        self.It2 = np.zeros((m, nsc), dtype=complex)
-        self.Vbranch2 = np.zeros((m, nsc), dtype=complex)
-        self.loading2 = np.zeros((m, nsc), dtype=complex)
-        self.losses2 = np.zeros((m, nsc), dtype=complex)
+        self.Sbus2 = np.zeros((n, nsc), dtype=np.complex64)
+        self.voltage2 = np.zeros((n, nsc), dtype=np.complex64)
+        self.Sf2 = np.zeros((m, nsc), dtype=np.complex64)
+        self.St2 = np.zeros((m, nsc), dtype=np.complex64)
+        self.If2 = np.zeros((m, nsc), dtype=np.complex64)
+        self.It2 = np.zeros((m, nsc), dtype=np.complex64)
+        self.Vbranch2 = np.zeros((m, nsc), dtype=np.complex64)
+        self.loading2 = np.zeros((m, nsc), dtype=np.complex64)
+        self.losses2 = np.zeros((m, nsc), dtype=np.complex64)
 
-        self.SbusN = np.zeros((n, nsc), dtype=complex)
-        self.voltageN = np.zeros((n, nsc), dtype=complex)
-        self.SfN = np.zeros((m, nsc), dtype=complex)
-        self.StN = np.zeros((m, nsc), dtype=complex)
-        self.IfN = np.zeros((m, nsc), dtype=complex)
-        self.ItN = np.zeros((m, nsc), dtype=complex)
-        self.VbranchN = np.zeros((m, nsc), dtype=complex)
-        self.loadingN = np.zeros((m, nsc), dtype=complex)
-        self.lossesN = np.zeros((m, nsc), dtype=complex)
+        self.SbusN = np.zeros((n, nsc), dtype=np.complex64)
+        self.voltageN = np.zeros((n, nsc), dtype=np.complex64)
+        self.SfN = np.zeros((m, nsc), dtype=np.complex64)
+        self.StN = np.zeros((m, nsc), dtype=np.complex64)
+        self.IfN = np.zeros((m, nsc), dtype=np.complex64)
+        self.ItN = np.zeros((m, nsc), dtype=np.complex64)
+        self.VbranchN = np.zeros((m, nsc), dtype=np.complex64)
+        self.loadingN = np.zeros((m, nsc), dtype=np.complex64)
+        self.lossesN = np.zeros((m, nsc), dtype=np.complex64)
 
-        self.SbusA = np.zeros((n, nsc), dtype=complex)
-        self.voltageA = np.zeros((n, nsc), dtype=complex)
-        self.SfA = np.zeros((m, nsc), dtype=complex)
-        self.StA = np.zeros((m, nsc), dtype=complex)
-        self.IfA = np.zeros((m, nsc), dtype=complex)
-        self.ItA = np.zeros((m, nsc), dtype=complex)
-        self.VbranchA = np.zeros((m, nsc), dtype=complex)
-        self.loadingA = np.zeros((m, nsc), dtype=complex)
-        self.lossesA = np.zeros((m, nsc), dtype=complex)
+        self.SbusA = np.zeros((n, nsc), dtype=np.complex64)
+        self.voltageA = np.zeros((n, nsc), dtype=np.complex64)
+        self.SfA = np.zeros((m, nsc), dtype=np.complex64)
+        self.StA = np.zeros((m, nsc), dtype=np.complex64)
+        self.IfA = np.zeros((m, nsc), dtype=np.complex64)
+        self.ItA = np.zeros((m, nsc), dtype=np.complex64)
+        self.VbranchA = np.zeros((m, nsc), dtype=np.complex64)
+        self.loadingA = np.zeros((m, nsc), dtype=np.complex64)
+        self.lossesA = np.zeros((m, nsc), dtype=np.complex64)
 
-        self.SbusB = np.zeros((n, nsc), dtype=complex)
-        self.voltageB = np.zeros((n, nsc), dtype=complex)
-        self.SfB = np.zeros((m, nsc), dtype=complex)
-        self.StB = np.zeros((m, nsc), dtype=complex)
-        self.IfB = np.zeros((m, nsc), dtype=complex)
-        self.ItB = np.zeros((m, nsc), dtype=complex)
-        self.VbranchB = np.zeros((m, nsc), dtype=complex)
-        self.loadingB = np.zeros((m, nsc), dtype=complex)
-        self.lossesB = np.zeros((m, nsc), dtype=complex)
+        self.SbusB = np.zeros((n, nsc), dtype=np.complex64)
+        self.voltageB = np.zeros((n, nsc), dtype=np.complex64)
+        self.SfB = np.zeros((m, nsc), dtype=np.complex64)
+        self.StB = np.zeros((m, nsc), dtype=np.complex64)
+        self.IfB = np.zeros((m, nsc), dtype=np.complex64)
+        self.ItB = np.zeros((m, nsc), dtype=np.complex64)
+        self.VbranchB = np.zeros((m, nsc), dtype=np.complex64)
+        self.loadingB = np.zeros((m, nsc), dtype=np.complex64)
+        self.lossesB = np.zeros((m, nsc), dtype=np.complex64)
 
-        self.SbusC = np.zeros((n, nsc), dtype=complex)
-        self.voltageC = np.zeros((n, nsc), dtype=complex)
-        self.SfC = np.zeros((m, nsc), dtype=complex)
-        self.StC = np.zeros((m, nsc), dtype=complex)
-        self.IfC = np.zeros((m, nsc), dtype=complex)
-        self.ItC = np.zeros((m, nsc), dtype=complex)
-        self.VbranchC = np.zeros((m, nsc), dtype=complex)
-        self.loadingC = np.zeros((m, nsc), dtype=complex)
-        self.lossesC = np.zeros((m, nsc), dtype=complex)
+        self.SbusC = np.zeros((n, nsc), dtype=np.complex64)
+        self.voltageC = np.zeros((n, nsc), dtype=np.complex64)
+        self.SfC = np.zeros((m, nsc), dtype=np.complex64)
+        self.StC = np.zeros((m, nsc), dtype=np.complex64)
+        self.IfC = np.zeros((m, nsc), dtype=np.complex64)
+        self.ItC = np.zeros((m, nsc), dtype=np.complex64)
+        self.VbranchC = np.zeros((m, nsc), dtype=np.complex64)
+        self.loadingC = np.zeros((m, nsc), dtype=np.complex64)
+        self.lossesC = np.zeros((m, nsc), dtype=np.complex64)
 
         self.hvdc_losses = np.zeros((n_hvdc, nsc))
         self.hvdc_Pf = np.zeros((n_hvdc, nsc))
@@ -234,22 +323,22 @@ class ShortCircuitResults(ResultsTemplate):
         self.hvdc_loading = np.zeros((n_hvdc, nsc))
 
         self.vsc_If = np.zeros((n_vsc, nsc))
-        self.vsc_It = np.zeros((n_vsc, nsc), dtype=complex)
+        self.vsc_It = np.zeros((n_vsc, nsc), dtype=np.complex64)
         self.vsc_Pfp = np.zeros((n_vsc, nsc))
         self.vsc_Pfn = np.zeros((n_vsc, nsc))
-        self.vsc_St = np.zeros((n_vsc, nsc), dtype=complex)
+        self.vsc_St = np.zeros((n_vsc, nsc), dtype=np.complex64)
         self.vsc_losses = np.zeros((n_vsc, nsc), dtype=float)
         self.vsc_loading = np.zeros((n_vsc, nsc), dtype=float)
 
-        self.SCpower = np.zeros((n, nsc), dtype=complex)
-        self.SCpowerA = np.zeros((n, nsc), dtype=complex)
-        self.SCpowerB = np.zeros((n, nsc), dtype=complex)
-        self.SCpowerC = np.zeros((n, nsc), dtype=complex)
+        self.SCpower = np.zeros((n, nsc), dtype=np.complex64)
+        self.SCpowerA = np.zeros((n, nsc), dtype=np.complex64)
+        self.SCpowerB = np.zeros((n, nsc), dtype=np.complex64)
+        self.SCpowerC = np.zeros((n, nsc), dtype=np.complex64)
 
-        self.ICurrent = np.zeros((n, nsc), dtype=complex)
-        self.ICurrentA = np.zeros((n, nsc), dtype=complex)
-        self.ICurrentB = np.zeros((n, nsc), dtype=complex)
-        self.ICurrentC = np.zeros((n, nsc), dtype=complex)
+        self.ICurrent = np.zeros((n, nsc), dtype=np.complex64)
+        self.ICurrentA = np.zeros((n, nsc), dtype=np.complex64)
+        self.ICurrentB = np.zeros((n, nsc), dtype=np.complex64)
+        self.ICurrentC = np.zeros((n, nsc), dtype=np.complex64)
 
         # Register results
         self.register(name='bus_names', tpe=StrVec)
@@ -1457,19 +1546,19 @@ class ShortCircuitResults(ResultsTemplate):
                                 ylabel=y_label,
                                 units=y_label)
 
-        elif result_type == ResultTypes.ShortCircuitInfo:
-            labels = np.array(['Type', 'Bus name'])
-            y = np.array([self.sc_type.value, self.bus_names[self.sc_bus_index]])
-            y_label = ''
-
-            return ResultsTable(data=y,
-                                index=labels,
-                                idx_device_type=DeviceType.BusDevice,
-                                columns=self.sc_names,
-                                cols_device_type=DeviceType.NoDevice,
-                                title=title,
-                                ylabel=y_label,
-                                units=y_label)
+        # elif result_type == ResultTypes.ShortCircuitInfo:
+        #     labels = np.array(['Type', 'Bus name'])
+        #     y = np.array([self.sc_type.value, self.bus_names[self.sc_bus_index]])
+        #     y_label = ''
+        #
+        #     return ResultsTable(data=y,
+        #                         index=labels,
+        #                         idx_device_type=DeviceType.BusDevice,
+        #                         columns=self.sc_names,
+        #                         cols_device_type=DeviceType.NoDevice,
+        #                         title=title,
+        #                         ylabel=y_label,
+        #                         units=y_label)
 
         else:
             raise Exception('Unsupported result type: ' + str(result_type))

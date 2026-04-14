@@ -3,19 +3,21 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 import numpy as np
-from PySide6 import QtWidgets, QtGui
+from PySide6 import QtCore, QtWidgets, QtGui
 from matplotlib import pyplot as plt
 from typing import Union
+
+from VeraGrid.Gui.Main.dynamics_results_handler import DynamicsResultsHandler
 from VeraGrid.Gui.table_view_header_wrap import HeaderViewWithWordWrap
 import VeraGrid.Gui.gui_functions as gf
 from VeraGrid.Gui.messages import error_msg, warning_msg, yes_no_question
 from VeraGrid.Gui.Main.SubClasses.simulations import SimulationsMain
 from VeraGrid.Gui.results_model import ResultsModel
 from VeraGrid.Gui.general_dialogues import fill_tree_from_logs
-from VeraGrid.Gui.rms_plot_variables_dialog import RmsPlotDialog
 import VeraGridEngine.Utils.Filtering as flt
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.enumerations import ResultTypes
+from VeraGridEngine.enumerations import ResultTypes, SimulationTypes
+from VeraGridEngine.Utils.Symbolic.symbolic import Var
 
 
 class ResultsMain(SimulationsMain):
@@ -36,6 +38,8 @@ class ResultsMain(SimulationsMain):
 
         self.current_results_logger: Union[None, Logger] = None
 
+        self.dynamic_results_handler: DynamicsResultsHandler | None = None
+
         # --------------------------------------------------------------------------------------------------------------
         self.ui.actionSet_OPF_generation_to_profiles.triggered.connect(self.copy_opf_to_profiles)
 
@@ -44,19 +48,40 @@ class ResultsMain(SimulationsMain):
         self.ui.copy_results_pushButton.clicked.connect(self.copy_results_data)
         self.ui.copy_numpy_button.clicked.connect(self.copy_results_data_as_numpy)
         self.ui.plot_data_pushButton.clicked.connect(self.plot_results)
-        self.ui.plot_dyn_data_pushButton.clicked.connect(self.plot_dyn_results)
         self.ui.search_results_Button.clicked.connect(self.search_in_results)
+        self.ui.search_dynamic_objects_Button.clicked.connect(self.search_dynamic_objects)
+        self.ui.addDynamicPlotButton.clicked.connect(self.add_dynamic_plot_group)
+        self.ui.deleteDynamicPlotButton.clicked.connect(self.delete_dynamic_plot_entry)
+        self.ui.dynamicsTablePlotButton.clicked.connect(self.plot_dynamic_plot_entry)
         self.ui.deleteDriverButton.clicked.connect(self.delete_results_driver)
         self.ui.saveResultsLogsButton.clicked.connect(self.save_results_logs)
 
         # tree-click
         self.ui.results_treeView.clicked.connect(self.results_tree_view_click)
+        self.ui.dynamicsDeviceTreeView.clicked.connect(self.dynamic_results_tree_view_click)
+        self.ui.dynamicsPlotsTreeView.clicked.connect(self.dynamic_plots_tree_view_click)
+
+        # tree double click
+        self.ui.dynamicsDeviceTreeView.doubleClicked.connect(self.dynamic_results_tree_view_dbl_click)
+        self.ui.dynamicsPlotsTreeView.doubleClicked.connect(self.dynamic_plots_tree_view_dbl_click)
 
         # line edit enter
         self.ui.search_results_lineEdit.returnPressed.connect(self.search_in_results)
+        self.ui.search_dynamic_objects_lineEdit.returnPressed.connect(self.search_dynamic_objects)
 
         # wrap headers
         self.ui.resultsTableView.setHorizontalHeader(HeaderViewWithWordWrap(self.ui.resultsTableView))
+
+        # The device tree exports variables through drag-and-drop.
+        self.ui.dynamicsDeviceTreeView.setDragEnabled(True)
+        self.ui.dynamicsDeviceTreeView.setDragDropMode(QtWidgets.QAbstractItemView.DragDropMode.DragOnly)
+        self.ui.dynamicsDeviceTreeView.setDefaultDropAction(QtCore.Qt.DropAction.CopyAction)
+
+        # The plots tree accepts dropped variables into top-level plot groups.
+        self.ui.dynamicsPlotsTreeView.setAcceptDrops(True)
+        self.ui.dynamicsPlotsTreeView.setDropIndicatorShown(True)
+        self.ui.dynamicsPlotsTreeView.setDragDropMode(QtWidgets.QAbstractItemView.DragDropMode.DropOnly)
+        self.ui.dynamicsPlotsTreeView.setDefaultDropAction(QtCore.Qt.DropAction.CopyAction)
 
     def results_tree_view_click(self, index: QtGui.QStandardItem):
         """
@@ -85,6 +110,29 @@ class ResultsMain(SimulationsMain):
 
             # set the report
             self.ui.resultsReportTextEdit.setText(driver.results.report_text)
+
+            # set the dynamics model handler
+            if driver.tpe == SimulationTypes.RmsDynamic_run:
+                self.dynamic_results_handler = DynamicsResultsHandler(results=driver.results)
+
+                # set the groups combobox
+                self.ui.eventsGroupComboBox.setModel(gf.get_list_model(
+                    self.dynamic_results_handler.results.rms_events_group_names
+                ))
+
+                # Both tree views are owned by the handler because the handler owns the underlying state.
+                self.ui.dynamicsDeviceTreeView.setModel(self.dynamic_results_handler.get_view_model())
+                self.ui.dynamicsPlotsTreeView.setModel(self.dynamic_results_handler.get_plots_model())
+                self.dynamic_results_handler.get_plots_model().rowsInserted.connect(self.expand_dynamic_plots_tree)
+                # self.ui.dynamicsDeviceTreeView.expandAll()
+                self.ui.dynamicsPlotsTreeView.expandAll()
+
+                # Go to the Dynamics tab
+                self.ui.resultsTabWidget.setCurrentIndex(1)
+
+            else:
+                # Go to the Table tab
+                self.ui.resultsTabWidget.setCurrentIndex(0)
 
             if len(path) > 1:
 
@@ -149,6 +197,169 @@ class ResultsMain(SimulationsMain):
             self.current_results_logger = None
             self.ui.resultsLogsTreeView.setModel(None)
 
+    def dynamic_results_tree_view_click(self, index: QtCore.QModelIndex) -> Var | None:
+        """
+        Resolve the clicked dynamics tree node into an RMS variable.
+
+        :param index: Clicked tree index.
+        """
+        # The handler owns the mapping between tree nodes and simulation variable objects.
+        if self.dynamic_results_handler is not None:
+            source_index: QtCore.QModelIndex = self.dynamic_results_handler.map_to_source(index=index)
+            selected_var = self.dynamic_results_handler.get_var_from_index(index=source_index)
+            if selected_var is not None:
+                print(selected_var)
+                return selected_var
+            else:
+                return None
+        else:
+            return None
+
+    def dynamic_results_tree_view_dbl_click(self, index: QtCore.QModelIndex) -> None:
+        """
+
+        :param index:
+        :return:
+        """
+        # The handler owns the mapping between tree nodes and simulation variable objects.
+        if self.dynamic_results_handler is not None:
+            source_index: QtCore.QModelIndex = self.dynamic_results_handler.map_to_source(index=index)
+            selected_var = self.dynamic_results_handler.get_var_from_index(index=source_index)
+            if selected_var is not None:
+                group_name = self.ui.eventsGroupComboBox.currentText()
+                self.dynamic_results_handler.plot_var(var=selected_var, group_name=group_name)
+                return None
+            else:
+                return None
+        else:
+            return None
+
+    def dynamic_plots_tree_view_dbl_click(self, index: QtCore.QModelIndex) -> None:
+        """
+        Plot the selected plots-tree entry on double click.
+
+        :param index:
+        :return: Nothing.
+        """
+        del index
+        self.plot_dynamic_plot_entry()
+
+    def dynamic_plots_tree_view_click(self, index: QtCore.QModelIndex):
+        """
+        On dynamics plot tree click...
+        :param index:
+        :return:
+        """
+        if self.dynamic_results_handler is not None:
+            selected_indexes = self.ui.dynamicsPlotsTreeView.selectedIndexes()
+            if len(selected_indexes) > 0:
+                group_name: str = self.ui.eventsGroupComboBox.currentText()
+                mdl = self.dynamic_results_handler.get_data_from_plot_index(index=selected_indexes[0],
+                                                                            rms_group_name=group_name)
+
+                self.ui.dynamicsTableView.setModel(mdl)
+
+    def expand_dynamic_plots_tree(self,
+                                  parent: QtCore.QModelIndex,
+                                  first: int,
+                                  last: int) -> None:
+        """
+        Expand the dynamics plots tree after inserting rows.
+
+        :param parent: Parent index where rows were inserted.
+        :param first: First inserted row.
+        :param last: Last inserted row.
+        :return: Nothing.
+        """
+        del parent
+        del first
+        del last
+
+        # Expanding after insert keeps dropped variables immediately visible inside their target plot group.
+        self.ui.dynamicsPlotsTreeView.expandAll()
+
+    def add_dynamic_plot_group(self) -> None:
+        """
+        Create a new dynamics plot group.
+
+        :return: Nothing.
+        """
+        if self.dynamic_results_handler is not None:
+            suggested_name: str = self.dynamic_results_handler.get_next_group_name()
+            group_name, accepted = QtWidgets.QInputDialog.getText(self,
+                                                                  "New dynamic plot",
+                                                                  "Plot name",
+                                                                  text=suggested_name)
+            if accepted:
+                created: bool = self.dynamic_results_handler.create_plot_group(name=group_name)
+                if created:
+                    self.ui.dynamicsPlotsTreeView.expandAll()
+                else:
+                    self.show_warning_toast("The plot group name is empty or already exists.")
+            else:
+                pass
+        else:
+            self.show_warning_toast("There are no RMS dynamics results loaded.")
+
+    def delete_dynamic_plot_entry(self) -> None:
+        """
+        Delete the selected dynamics plot group or variable.
+
+        :return: Nothing.
+        """
+        if self.dynamic_results_handler is not None:
+            selected_indexes = self.ui.dynamicsPlotsTreeView.selectedIndexes()
+            if len(selected_indexes) > 0:
+                deleted: bool = self.dynamic_results_handler.delete_plot_entry_from_index(index=selected_indexes[0])
+                if deleted:
+                    self.ui.dynamicsPlotsTreeView.expandAll()
+                else:
+                    self.show_warning_toast("The selected dynamic plot entry could not be deleted.")
+            else:
+                self.show_warning_toast("Select a plot group or variable first.")
+        else:
+            self.show_warning_toast("There are no RMS dynamics results loaded.")
+
+    def plot_dynamic_plot_entry(self) -> None:
+        """
+        Plot the selected dynamics plot group or variable.
+
+        :return: Nothing.
+        """
+        if self.dynamic_results_handler is not None:
+            selected_indexes = self.ui.dynamicsPlotsTreeView.selectedIndexes()
+            if len(selected_indexes) > 0:
+                group_name: str = self.ui.eventsGroupComboBox.currentText()
+                plotted: bool = self.dynamic_results_handler.plot_entry_from_index(index=selected_indexes[0],
+                                                                                   rms_group_name=group_name)
+                if plotted:
+                    return None
+                else:
+                    self.show_warning_toast("The selected dynamic plot entry could not be plotted.")
+                    return None
+            else:
+                self.show_warning_toast("Select a plot group or variable first.")
+                return None
+        else:
+            self.show_warning_toast("There are no RMS dynamics results loaded.")
+            return None
+
+    def search_dynamic_objects(self) -> None:
+        """
+        Filter the dynamics tree view using the text entered by the user.
+
+        :return: Nothing.
+        """
+        # Without an active handler, there is no loaded dynamics tree to search.
+        if self.dynamic_results_handler is not None:
+            search_text: str = self.ui.search_dynamic_objects_lineEdit.text().strip()
+            self.dynamic_results_handler.set_search_text(search_text=search_text)
+
+            # Expanding after filtering keeps matching branches visible, and resetting the filter remains trivial.
+            self.ui.dynamicsDeviceTreeView.expandAll()
+        else:
+            pass
+
     def plot_results(self):
         """
         Plot the results
@@ -203,21 +414,6 @@ class ResultsMain(SimulationsMain):
                 plt.show()
             else:
                 pass
-
-    def plot_dyn_results(self):
-        """
-        Show the dynamic results plot wizard
-        """
-
-        drv, results = self.session.rms_dynamic_simulation
-
-        if results:
-
-            dlg = RmsPlotDialog(grid=self.circuit, results=results)
-            dlg.exec()
-
-        else:
-            self.show_warning_toast("No RMS simulation")
 
     def save_results_df(self):
         """

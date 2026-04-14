@@ -27,6 +27,11 @@ from VeraGridEngine.enumerations import NodalCapacityMethod, CpfStopAt, CpfParam
 
 
 class NodalCapacityTimeSeriesDriver(TimeSeriesDriverTemplate):
+    __slots__ = (
+        "options",
+        "all_solved",
+    )
+
     name = 'Nodal capacity time series'
     tpe = SimulationTypes.NodalCapacityTimeSeries_run
 
@@ -261,7 +266,7 @@ class NodalCapacityTimeSeriesDriver(TimeSeriesDriverTemplate):
             self.results.hvdc_loading[it, :] = res.hvdc_loading
             self.results.converged[it] = res.converged
 
-            if self.__cancel__:
+            if self.is_cancel():
                 return self.results
 
         # Compute the emissions, fuel costs and energy used
@@ -361,7 +366,7 @@ class NodalCapacityTimeSeriesDriver(TimeSeriesDriverTemplate):
             # self.results.hvdc_loading[it, :] = res.hvdc_loading
             self.results.converged[it] = res.converged[-1]
 
-            if self.__cancel__:
+            if self.is_cancel():
                 return self.results
 
         if not remote:

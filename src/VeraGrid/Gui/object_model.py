@@ -5,14 +5,16 @@
 from __future__ import annotations
 
 import datetime
+import math
 
 import numpy as np
-from typing import Dict, List, Union
+from typing import Any, Dict, List, Union
 from PySide6 import QtCore, QtWidgets, QtGui
 from enum import EnumMeta
 from VeraGrid.Gui.gui_functions import (IntDelegate, ComboDelegate, TextDelegate, FloatDelegate, ColorPickerDelegate,
                                         ComplexDelegate, LineLocationsDelegate, DateTimeDelegate)
 from VeraGrid.Gui.wrappable_table_model import WrappableTableModel
+from VeraGridEngine import RmsModelTemplate
 from VeraGridEngine.Devices import Bus, ContingencyGroup
 from VeraGridEngine.Devices.Parents.editable_device import GCProp, GCPROP_TYPES
 from VeraGridEngine.enumerations import DeviceType
@@ -33,7 +35,7 @@ class ObjectsModel(WrappableTableModel):
                  editable=False,
                  transposed=False,
                  check_unique: Union[None, List[str]] = None,
-                 dictionary_of_lists: Union[None, Dict[DeviceType, List[ALL_DEV_TYPES]]] = None):
+                 dictionary_of_lists: Union[None, Dict[Any, List[ALL_DEV_TYPES]]] = None):
         """
 
         :param objects: list of objects associated to the editor
@@ -153,9 +155,9 @@ class ObjectsModel(WrappableTableModel):
                     delegate = ComboDelegate(self.parent, objects, values)
                     F(i, delegate)
 
-                elif tpe in self.dictionary_of_lists:
+                elif self._get_delegate_objects(i) is not None:
                     # foreign key objects drop-down
-                    objs = self.dictionary_of_lists[tpe]
+                    objs = self._get_delegate_objects(i)
                     delegate = ComboDelegate(parent=self.parent,
                                              objects=[None] + objs,
                                              object_names=['None'] + [x.name for x in objs])
@@ -163,6 +165,32 @@ class ObjectsModel(WrappableTableModel):
 
                 else:
                     F(i, None)
+
+    def _get_delegate_objects(self, attr_idx: int) -> List[ALL_DEV_TYPES] | None:
+        """
+        Return the object list used by one foreign-key delegate.
+
+        The GUI first looks for a property-specific list and then falls back to the
+        generic list keyed by the registered property type.
+
+        :param attr_idx: Property index inside the visible table model.
+        :return: Delegate object list when available.
+        """
+
+        prop_name = self.attributes[attr_idx]
+        tpe = self.attribute_types[attr_idx]
+        specific_key = (prop_name, tpe)
+
+        if specific_key in self.dictionary_of_lists:
+            return self.dictionary_of_lists[specific_key]
+        else:
+            if prop_name in self.dictionary_of_lists:
+                return self.dictionary_of_lists[prop_name]
+            else:
+                if tpe in self.dictionary_of_lists:
+                    return self.dictionary_of_lists[tpe]
+                else:
+                    return None
 
     def update(self):
         """
@@ -260,6 +288,37 @@ class ObjectsModel(WrappableTableModel):
             # there is a mismatch because the element was deleted without refreshing this table model
             return ""
 
+    @staticmethod
+    def _format_date_display(value) -> str:
+        """
+        Format epoch seconds for display without crashing on malformed values.
+        """
+        if value in ("", None):
+            return ""
+
+        if isinstance(value, datetime.datetime):
+            return value.strftime("%Y/%m/%d")
+
+        if isinstance(value, (np.integer, int)):
+            epoch_seconds = int(value)
+        elif isinstance(value, (np.floating, float)):
+            numeric_value = float(value)
+            if not math.isfinite(numeric_value) or not numeric_value.is_integer():
+                return str(value)
+            epoch_seconds = int(numeric_value)
+        else:
+            try:
+                epoch_seconds = int(value)
+            except (TypeError, ValueError, OverflowError):
+                return str(value)
+
+        dt = QtCore.QDateTime.fromSecsSinceEpoch(epoch_seconds)
+
+        if not dt.isValid():
+            return str(value)
+
+        return dt.toString("yyyy/MM/dd")
+
     def data(self, index: QtCore.QModelIndex, role=None):
         """
         Get the data to display
@@ -279,9 +338,7 @@ class ObjectsModel(WrappableTableModel):
             if role == QtCore.Qt.ItemDataRole.DisplayRole:
 
                 if self.property_list[attr_idx].is_date:
-                    dt = QtCore.QDateTime.fromSecsSinceEpoch(self.data_with_type(index))
-                    formatted_date = dt.toString("yyyy/MM/dd")
-                    return formatted_date
+                    return self._format_date_display(self.data_with_type(index))
                 else:
                     return str(self.data_with_type(index))
 
@@ -323,6 +380,7 @@ class ObjectsModel(WrappableTableModel):
                 if self.attributes[attr_idx] not in self.non_editable_attributes:
 
                     if prop.tpe is ContingencyGroup and value != "":
+                        # if isinstance(value, RmsModelTemplate):
                         value2 = ContingencyGroup(value)
                     else:
                         value2 = value

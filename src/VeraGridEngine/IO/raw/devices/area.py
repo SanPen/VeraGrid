@@ -2,13 +2,25 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
-from typing import List
+from typing import List, Tuple
 from VeraGridEngine.IO.base.units import Unit
 from VeraGridEngine.IO.raw.devices.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
+from VeraGridEngine.IO.raw.devices.psse_property import PsseProperty
 
 
 class RawArea(RawObject):
+    LOCAL_PROPERTIES: Tuple[PsseProperty, ...] = (
+        PsseProperty(property_name='I', rawx_key='iarea', class_type=int, description='Area number', min_value=1,
+                     max_value=9999),
+        PsseProperty(property_name='ISW', rawx_key='isw', class_type=int,
+                     description='Bus number of the area slack bus for area interchange control. '),
+        PsseProperty(property_name='PDES', rawx_key='pdes', class_type=float,
+                     description='Desired net interchange leaving the area (export)', unit=Unit.get_mw()),
+        PsseProperty(property_name='PTOL', rawx_key='ptol', class_type=float,
+                     description='Interchange tolerance bandwidth.', unit=Unit.get_mw()),
+        PsseProperty(property_name='ARNAME', rawx_key='arname', class_type=str, description='Area name', max_chars=12),
+    )
 
     def __init__(self):
         RawObject.__init__(self, "Area")
@@ -18,36 +30,6 @@ class RawArea(RawObject):
         self.PDES: float = 0.0
         self.PTOL: float = 0.0
         self.ARNAME: str = ''
-
-        self.register_property(property_name="I",
-                               rawx_key='iarea',
-                               class_type=int,
-                               description="Area number",
-                               min_value=1,
-                               max_value=9999)
-
-        self.register_property(property_name="ISW",
-                               rawx_key='isw',
-                               class_type=int,
-                               description="Bus number of the area slack bus for area interchange control. ")
-
-        self.register_property(property_name="PDES",
-                               rawx_key='pdes',
-                               class_type=float,
-                               description="Desired net interchange leaving the area (export)",
-                               unit=Unit.get_mw())
-
-        self.register_property(property_name="PTOL",
-                               rawx_key='ptol',
-                               class_type=float,
-                               description="Interchange tolerance bandwidth.",
-                               unit=Unit.get_mw())
-
-        self.register_property(property_name="ARNAME",
-                               rawx_key='arname',
-                               class_type=str,
-                               description="Area name",
-                               max_chars=12)
 
     def parse(self, data: List[List[str | int | float]], version: int, logger: Logger):
         """

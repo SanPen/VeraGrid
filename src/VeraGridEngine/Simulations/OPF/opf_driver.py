@@ -17,6 +17,11 @@ from VeraGridEngine.Compilers.circuit_to_newton_pa import newton_pa_linear_opf, 
 
 
 class OptimalPowerFlowDriver(TimeSeriesDriverTemplate):
+    __slots__ = (
+        "options",
+        "all_solved",
+    )
+
     name = 'Optimal power flow'
     tpe = SimulationTypes.OPF_run
 

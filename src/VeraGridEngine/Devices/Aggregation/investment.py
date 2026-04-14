@@ -3,9 +3,9 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Union
+from typing import Union, Tuple
 
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp
 from VeraGridEngine.Devices.Parents.pointer_device_parent import PointerDeviceParent
 from VeraGridEngine.Devices.Aggregation.investments_group import InvestmentsGroup
 from VeraGridEngine.enumerations import DeviceType
@@ -16,9 +16,18 @@ class Investment(PointerDeviceParent):
     Investment
     """
     __slots__ = (
-        'CAPEX',
+        '_CAPEX',
         '_group',
-        'status',
+        '_status',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='CAPEX', units='M€', tpe=float,
+                      definition='Capital expenditures. This is the investment value, '
+                                 'it overrides the CAPEX value of the device if it exits.'),
+        GCProp(key='status', units='', tpe=bool,
+                      definition='If true the investment activates when applied, otherwise is deactivated.'),
+        GCProp(key='group', units='', tpe=DeviceType.InvestmentsGroupDevice, definition='Investment group'),
     )
 
     def __init__(self,
@@ -54,12 +63,6 @@ class Investment(PointerDeviceParent):
         self._group: InvestmentsGroup = group
         self.status: bool = status
 
-        self.register(key='CAPEX', units='M€', tpe=float,
-                      definition='Capital expenditures. This is the investment value, '
-                                 'it overrides the CAPEX value of the device if it exits.')
-        self.register(key='status', units='', tpe=bool,
-                      definition='If true the investment activates when applied, otherwise is deactivated.')
-        self.register(key='group', units='', tpe=DeviceType.InvestmentsGroupDevice, definition='Investment group')
 
     @property
     def group(self) -> InvestmentsGroup:
@@ -85,3 +88,43 @@ class Investment(PointerDeviceParent):
     def category(self, val):
         # The category is set through the group, so no implementation here
         pass
+
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def CAPEX(self) -> float:
+        """
+        Get ``CAPEX``.
+
+        :return: float
+        """
+        return self._CAPEX
+
+    @CAPEX.setter
+    def CAPEX(self, val: float) -> None:
+        """
+        Set ``CAPEX``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._CAPEX = float(val)
+
+    @property
+    def status(self) -> bool:
+        """
+        Get ``status``.
+
+        :return: bool
+        """
+        return self._status
+
+    @status.setter
+    def status(self, val: bool) -> None:
+        """
+        Set ``status``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._status = bool(val)

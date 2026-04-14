@@ -1,0 +1,106 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
+from VeraGridEngine.enumerations import DeviceType
+
+device_type_icons = {
+    "Regions": ":/Icons/icons/map.png",
+    DeviceType.CountryDevice.value: ":/Icons/icons/country.png",
+    DeviceType.CommunityDevice.value: ":/Icons/icons/community.png",
+    DeviceType.RegionDevice.value: ":/Icons/icons/region.png",
+    DeviceType.MunicipalityDevice.value: ":/Icons/icons/municipality.png",
+    DeviceType.AreaDevice.value: ":/Icons/icons/area.png",
+    DeviceType.ZoneDevice.value: ":/Icons/icons/zone.png",
+
+    "Substation": ":/Icons/icons/bus_icon.png",
+    DeviceType.SubstationDevice.value: ":/Icons/icons/substation.png",
+    DeviceType.VoltageLevelDevice.value: ":/Icons/icons/voltage_level.png",
+    DeviceType.BusBarDevice.value: ":/Icons/icons/bus_bar_icon.png",
+    DeviceType.BusDevice.value: ":/Icons/icons/bus_icon.png",
+    DeviceType.SwitchDevice.value: ":/Icons/icons/switch.png",
+
+    "Injections": ":/Icons/icons/add_load.png",
+    DeviceType.GeneratorDevice.value: ":/Icons/icons/gen.png",
+    DeviceType.BatteryDevice.value: ":/Icons/icons/batt.png",
+    DeviceType.LoadDevice.value: ":/Icons/icons/load_dev.png",
+    DeviceType.StaticGeneratorDevice.value: ":/Icons/icons/sta_gen.png",
+    DeviceType.ExternalGridDevice.value: ":/Icons/icons/external_grid.png",
+    DeviceType.ShuntDevice.value: ":/Icons/icons/shunt.png",
+    DeviceType.ControllableShuntDevice.value: ":/Icons/icons/controllable_shunt.png",
+    DeviceType.CurrentInjectionDevice.value: ":/Icons/icons/load_dev.png",
+
+    "Branches": ":/Icons/icons/reactance.png",
+    DeviceType.LineDevice.value: ":/Icons/icons/ac_line.png",
+    DeviceType.DCLineDevice.value: ":/Icons/icons/dc.png",
+    DeviceType.Transformer2WDevice.value: ":/Icons/icons/to_transformer.png",
+    DeviceType.WindingDevice.value: ":/Icons/icons/winding.png",
+    DeviceType.Transformer3WDevice.value: ":/Icons/icons/transformer3w.png",
+    DeviceType.TransformerNwDevice.value: ":/Icons/icons/transformerNw.png",
+    DeviceType.SeriesReactanceDevice.value: ":/Icons/icons/reactance.png",
+    DeviceType.HVDCLineDevice.value: ":/Icons/icons/to_hvdc.png",
+    DeviceType.VscDevice.value: ":/Icons/icons/vsc.png",
+    DeviceType.UpfcDevice.value: ":/Icons/icons/upfc.png",
+
+    "Fluid": ":/Icons/icons/dam_gray.png",
+    DeviceType.FluidNodeDevice.value: ":/Icons/icons/fluid_node.png",
+    DeviceType.FluidPathDevice.value: ":/Icons/icons/fluid_path.png",
+    DeviceType.FluidTurbineDevice.value: ":/Icons/icons/fluid_turbine.png",
+    DeviceType.FluidPumpDevice.value: ":/Icons/icons/fluid_pump.png",
+    DeviceType.FluidP2XDevice.value: ":/Icons/icons/fluid_p2x.png",
+
+    "Groups": ":/Icons/icons/groups.png",
+    DeviceType.BranchGroupDevice.value: ":/Icons/icons/branch_group.png",
+    DeviceType.ModellingAuthority.value: ":/Icons/icons/modelling_authority.png",
+    DeviceType.FacilityDevice.value: ":/Icons/icons/powerplant.png",
+
+    "Contingencies": ":/Icons/icons/contingency_group.png",
+    DeviceType.ContingencyGroupDevice.value: ":/Icons/icons/contingency_group.png",
+    DeviceType.ContingencyDevice.value: ":/Icons/icons/contingency.png",
+    DeviceType.RemedialActionGroupDevice.value: ":/Icons/icons/remedial_action_group.png",
+    DeviceType.RemedialActionDevice.value: ":/Icons/icons/remedial_action.png",
+    DeviceType.ShortCircuitEvent.value: ":/Icons/icons/contingency.png",
+
+    "Investments": ":/Icons/icons/investment_group.png",
+    DeviceType.InvestmentsGroupDevice.value: ":/Icons/icons/investment_group.png",
+    DeviceType.InvestmentDevice.value: ":/Icons/icons/investment_dev.png",
+
+    "Dynamic": ":/Icons/icons/dyn_gray.png",
+    DeviceType.RmsEventsGroupDevice.value: ":/Icons/icons/dyn_gray.png",
+    DeviceType.RmsEventDevice.value: ":/Icons/icons/dyn_gray.png",
+    DeviceType.EmtEventsGroupDevice.value: ":/Icons/icons/dyn_gray.png",
+    DeviceType.EmtEventDevice.value: ":/Icons/icons/dyn_gray.png",
+
+    "Templates": ":/Icons/icons/dyn_gray.png",
+
+    "Associations": ":/Icons/icons/associations.png",
+    DeviceType.Technology.value: ":/Icons/icons/technology.png",
+    DeviceType.FuelDevice.value: ":/Icons/icons/fuel.png",
+    DeviceType.EmissionGasDevice.value: ":/Icons/icons/emission.png",
+    DeviceType.Owner.value: ":/Icons/icons/owner.png",
+
+    "Measurements": ":/Icons/icons/measurement.png",
+    DeviceType.PiMeasurementDevice.value: ":/Icons/icons/measurement.png",
+    DeviceType.QiMeasurementDevice.value: ":/Icons/icons/measurement.png",
+    DeviceType.PfMeasurementDevice.value: ":/Icons/icons/measurement.png",
+    DeviceType.QfMeasurementDevice.value: ":/Icons/icons/measurement.png",
+    DeviceType.PtMeasurementDevice.value: ":/Icons/icons/measurement.png",
+    DeviceType.QtMeasurementDevice.value: ":/Icons/icons/measurement.png",
+    DeviceType.PgMeasurementDevice.value: ":/Icons/icons/measurement.png",
+    DeviceType.QgMeasurementDevice.value: ":/Icons/icons/measurement.png",
+    DeviceType.IfMeasurementDevice.value: ":/Icons/icons/measurement.png",
+    DeviceType.ItMeasurementDevice.value: ":/Icons/icons/measurement.png",
+    DeviceType.VmMeasurementDevice.value: ":/Icons/icons/measurement.png",
+    DeviceType.VaMeasurementDevice.value: ":/Icons/icons/measurement.png",
+
+    "Catalogue": ":/Icons/icons/Catalogue.png",
+    DeviceType.WireDevice.value: ":/Icons/icons/ac_line.png",
+    DeviceType.OverheadLineTypeDevice.value: ":/Icons/icons/tower.png",
+    DeviceType.UnderGroundLineDevice.value: ":/Icons/icons/ac_line.png",
+    DeviceType.SequenceLineDevice.value: ":/Icons/icons/ac_line.png",
+    DeviceType.TransformerTypeDevice.value: ":/Icons/icons/to_transformer.png",
+    DeviceType.RmsModelTemplateDevice.value: ":/Icons/icons/dyn_gray.png",
+    DeviceType.EmtModelTemplateDevice.value: ":/Icons/icons/dyn_gray.png",
+    DeviceType.FmuTemplateDevice.value: ":/Icons/icons/dyn_gray.png",
+    DeviceType.DynamicModelHostDevice.value: ":/Icons/icons/dyn_gray.png",
+}

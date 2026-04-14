@@ -112,6 +112,10 @@ def helm_contingency_analysis(grid: MultiCircuit,
         results.Sf[ic, :] = Sf
         results.Sbus[ic, :] = Sbus
         results.loading[ic, :] = loading
+
+        # NOTE: this is accounted for to be in the normal rate base in the analyze method
+        contingency_loadings = np.abs(Sf / (nc.passive_branch_data.rates + 1e-9))
+
         results.report.analyze(t=t,
                                t_prob=t_prob,
                                mon_idx=mon_idx,
@@ -119,8 +123,8 @@ def helm_contingency_analysis(grid: MultiCircuit,
                                base_flow=np.abs(pf_res_0.Sf),
                                base_loading=np.abs(pf_res_0.loading),
                                contingency_flows=np.abs(Sf),
-                               contingency_loadings=np.abs(loading),
-                               contingency_idx=ic,
+                               contingency_loadings=contingency_loadings,
+                               contingency_group_idx=ic,
                                contingency_group=contingency_group,
                                srap_ratings=nc.passive_branch_data.protection_rates, )
 

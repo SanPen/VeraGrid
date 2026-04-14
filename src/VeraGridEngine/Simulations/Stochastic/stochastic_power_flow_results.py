@@ -11,6 +11,30 @@ from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceTyp
 
 
 class StochasticPowerFlowResults(ResultsTemplate):
+    __slots__ = (
+        "points_number",
+        "bus_names",
+        "branch_names",
+        "bus_types",
+        "S_points",
+        "V_points",
+        "Sbr_points",
+        "loading_points",
+        "losses_points",
+        "error_series",
+        "voltage",
+        "loading",
+        "sbranch",
+        "losses",
+        "v_std_conv",
+        "s_std_conv",
+        "l_std_conv",
+        "loss_std_conv",
+        "v_avg_conv",
+        "s_avg_conv",
+        "l_avg_conv",
+        "loss_avg_conv",
+    )
 
     def __init__(self, n, m, p, bus_names, branch_names, bus_types):
         """

@@ -2,6 +2,8 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
+from __future__ import annotations
+
 import numpy as np
 import networkx as nx
 from sklearn.cluster import DBSCAN
@@ -11,23 +13,37 @@ from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Simulations.LinearFactors.linear_analysis_driver import LinearAnalysisResults
 from VeraGridEngine.enumerations import SimulationTypes
 from VeraGridEngine.Simulations.driver_template import DriverTemplate
+from VeraGridEngine.Simulations.Topology.node_groups_results import NodeGroupsResults
 
 
 class NodeGroupsDriver(DriverTemplate):
     """
     NodeGroupsDriver
     """
+    __slots__ = (
+        "sigmas",
+        "min_group_size",
+        "use_ptdf",
+        "ptdf_results",
+    )
 
     name = 'Node groups'
     tpe = SimulationTypes.NodeGrouping_run
 
-    def __init__(self, grid: MultiCircuit, sigmas, min_group_size, ptdf_results: LinearAnalysisResults):
+    def __init__(
+            self,
+            grid: MultiCircuit,
+            sigmas: float,
+            min_group_size: int,
+            ptdf_results: LinearAnalysisResults) -> None:
         """
-        Electric distance clustering
-        :param grid: MultiCircuit instance
-        :param sigmas: number of standard deviations to consider
-        :param min_group_size: minimum number of elemnts in a group
-        :param ptdf_results: LinearAnalysisResults (if None, they are resimulated)
+        Build the node grouping driver.
+
+        :param grid: MultiCircuit instance to analyse.
+        :param sigmas: Clustering distance threshold.
+        :param min_group_size: Minimum number of elements required in a group.
+        :param ptdf_results: Linear analysis results used to build the feature
+            matrix when PTDF-based grouping is enabled.
         """
         DriverTemplate.__init__(self, grid=grid)
 
@@ -37,104 +53,112 @@ class NodeGroupsDriver(DriverTemplate):
 
         self.min_group_size = min_group_size
 
-        n = len(grid.buses)
+        n: int = len(grid.buses)
 
         self.use_ptdf = True
 
         self.ptdf_results = ptdf_results
 
-        # results
-        self.X_train = np.zeros((n, n))
-        self.sigma = 1.0
-        self.groups_by_name = list()
-        self.groups_by_index = list()
+        # The result object is allocated during construction so the driver uses
+        # the same persistence and session interfaces as the other studies.
+        self.results: NodeGroupsResults = NodeGroupsResults(n=n)
 
-        self.__cancel__ = False
 
-    def build_weighted_graph(self):
+    def build_weighted_graph(self) -> nx.Graph:
         """
+        Build the topology graph used by the Dijkstra-based distance mode.
 
-        :return:
+        :return: Weighted graph whose nodes are bus indices.
         """
-        graph = nx.Graph()
+        graph: nx.Graph = nx.Graph()
 
-        bus_dictionary = {bus: i for i, bus in enumerate(self.grid.get_buses())}
+        # The bus to index map is created explicitly because the branch
+        # traversal works with bus objects while the graph works with indices.
+        bus_dictionary: dict = dict()
+        for bus_index, bus in enumerate(self.grid.get_buses()):
+            bus_dictionary[bus] = bus_index
 
         for branch_list in self.grid.get_branch_lists(add_vsc=True, add_hvdc=True, add_switch=True):
-            for i, branch in enumerate(branch_list):
+            for branch in branch_list:
                 # if branch.active:
-                f = bus_dictionary[branch.bus_from]
-                t = bus_dictionary[branch.bus_to]
-                w = branch.get_weight()
-                graph.add_edge(f, t, weight=w)
+                from_bus_index: int = bus_dictionary[branch.bus_from]
+                to_bus_index: int = bus_dictionary[branch.bus_to]
+                weight: float = branch.get_weight()
+                graph.add_edge(from_bus_index, to_bus_index, weight=weight)
 
         return graph
 
-    def run(self):
+    def run(self) -> None:
         """
-        Run the monte carlo simulation
-        @return:
+        Execute the node grouping study.
+
+        :return: ``None``.
         """
         self.tic()
         self.report_progress(0.0)
 
-        n = self.grid.get_bus_number()
+        n: int = self.grid.get_bus_number()
+        results: NodeGroupsResults = self.results
 
         if self.use_ptdf:
             self.report_text('Analyzing PTDF...')
 
-            # the PTDF matrix will be scaled to 0, 1 to be able to train
-            self.X_train = Normalizer().fit_transform(self.ptdf_results.PTDF.T)
+            # The PTDF matrix is normalized before clustering so the DBSCAN
+            # distance threshold is applied on a comparable feature scale.
+            normalized_training_matrix: np.ndarray = Normalizer().fit_transform(self.ptdf_results.PTDF.T)
+            results.set_training_matrix(normalized_training_matrix)
 
-            metric = 'euclidean'
+            metric: str = 'euclidean'
         else:
             self.report_text('Exploring Dijkstra distances...')
-            # explore
-            g = self.build_weighted_graph()
-            k = 0
-            for i, distances_dict in nx.all_pairs_dijkstra_path_length(g):
-                for j, d in distances_dict.items():
-                    self.X_train[i, j] = d
+            # The weighted grid graph is explored to obtain the pairwise bus
+            # distances that will act as a precomputed clustering metric.
+            graph: nx.Graph = self.build_weighted_graph()
+            iteration_index: int = 0
+            for source_bus_index, distances_dict in nx.all_pairs_dijkstra_path_length(graph):
+                for target_bus_index, distance in distances_dict.items():
+                    results.X_train[source_bus_index, target_bus_index] = distance
 
-                self.report_progress2(k, n)
-                k += 1
+                self.report_progress2(iteration_index, n)
+                iteration_index += 1
             metric = 'precomputed'
 
-        # compute the sample sigma
-        self.sigma = np.std(self.X_train)
-        # max_distance = self.sigma * self.sigmas
-        max_distance = self.sigmas
+        # The global distance spread is preserved because callers may use it to
+        # understand how aggressive the grouping threshold was.
+        results.set_sigma(float(np.std(results.get_training_matrix())))
+        max_distance: float = self.sigmas
 
-        # construct groups
+        # The clustering stage transforms the distance representation into
+        # explicit group assignments for each bus.
         self.report_text('Building groups with DBSCAN...')
 
-        # Compute DBSCAN
-        model = DBSCAN(eps=max_distance,
-                       min_samples=self.min_group_size,
-                       metric=metric)
+        model: DBSCAN = DBSCAN(eps=max_distance,
+                               min_samples=self.min_group_size,
+                               metric=metric)
 
-        db = model.fit(self.X_train)
+        db: DBSCAN = model.fit(results.get_training_matrix())
 
-        # get the labels that are greater than -1
-        labels = list({i for i in db.labels_ if i > -1})
-        self.groups_by_name = [list() for k in labels]
-        self.groups_by_index = [list() for k in labels]
+        # Noise labels are discarded because the GUI only colours buses that
+        # belong to actual clusters.
+        labels: list[int] = list({label for label in db.labels_ if label > -1})
+        groups_by_name: list[list[str]] = list()
+        groups_by_index: list[list[int]] = list()
+        for _ in labels:
+            groups_by_name.append(list())
+            groups_by_index.append(list())
 
-        # fill in the groups
+        # Each bus is placed in the cluster bucket that matches the DBSCAN
+        # label so the names and indices stay aligned for downstream consumers.
         for i, (bus, group_idx) in enumerate(zip(self.grid.buses, db.labels_)):
             if group_idx > -1:
-                self.groups_by_name[group_idx].append(bus.name)
-                self.groups_by_index[group_idx].append(i)
+                groups_by_name[group_idx].append(bus.name)
+                groups_by_index[group_idx].append(i)
+            else:
+                pass
 
-        # display progress
+        results.set_groups(groups_by_name=groups_by_name, groups_by_index=groups_by_index)
+
+        # The driver finishes only after the results object contains the final
+        # group assignments used by the session and GUI layers.
         self.report_done()
         self.toc()
-
-    def cancel(self):
-        """
-        Cancel the simulation
-        :return:
-        """
-        self.__cancel__ = True
-        self.report_done("Cancelled!")
-

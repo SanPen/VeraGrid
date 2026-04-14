@@ -2,6 +2,8 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
+from __future__ import annotations
+
 from typing import TypeVar
 from VeraGridEngine.IO.base.units import Unit
 from VeraGridEngine.IO.base.base_property import BaseProperty
@@ -16,14 +18,13 @@ class PsseProperty(BaseProperty):
                  property_name: str,
                  rawx_key: str,
                  class_type: TypeVar,
-                 unit: Unit,
+                 unit: Unit = None,
                  denominator_unit: Unit = None,
                  description: str = '',
                  max_chars=None,
                  min_value=-1e20,
                  max_value=1e20,
                  format_rule=None):
-
         BaseProperty.__init__(self,
                               property_name=property_name,
                               class_type=class_type,
@@ -38,5 +39,4 @@ class PsseProperty(BaseProperty):
         self.format_rule = format_rule
 
     def __str__(self):
-
         return f'PSSeProp:{self.property_name}'

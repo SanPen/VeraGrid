@@ -20,7 +20,7 @@ from VeraGridEngine.IO.raw.devices.transformer import RawTransformer
 from VeraGridEngine.IO.raw.devices.two_terminal_dc_line import RawTwoTerminalDCLine
 from VeraGridEngine.IO.raw.devices.vsc_dc_line import RawVscDCLine
 from VeraGridEngine.IO.raw.devices.psse_circuit import PsseCircuit
-from VeraGridEngine.enumerations import TapChangerTypes, TapPhaseControl, TapModuleControl
+from VeraGridEngine.enumerations import TapChangerTypes, TapPhaseControl, TapModuleControl, ShuntControlMode
 
 
 def get_veragrid_bus(psse_bus: RawBus,
@@ -76,7 +76,7 @@ def get_veragrid_bus(psse_bus: RawBus,
                       Vm0=psse_bus.VM,
                       Va0=np.deg2rad(psse_bus.VA))
 
-        if psse_bus.GL > 0 or psse_bus.BL > 0:
+        if psse_bus.GL != 0 or psse_bus.BL != 0:
             sh = dev.Shunt(name='Shunt_' + str(psse_bus.I),
                            G=psse_bus.GL, B=psse_bus.BL,
                            active=True)
@@ -209,18 +209,23 @@ def get_veragrid_shunt_switched(
     vset = 1.0
 
     if psse_elm.MODSW == 0:  # locked
-        is_controlled = False
+        control_mode = ShuntControlMode.Locked
         b_init = psse_elm.BINIT
 
-    elif psse_elm.MODSW in [1, 2]:
+    elif psse_elm.MODSW == 1:
         # 1 - discrete adjustment, controlling voltage locally or at bus SWREG
+        control_mode = ShuntControlMode.Discrete
+        b_init = psse_elm.BINIT * psse_elm.RMPCT / 100.0
+        vset = (psse_elm.VSWHI + psse_elm.VSWLO) / 2.0
+
+    elif psse_elm.MODSW == 2:
         # 2 - continuous adjustment, controlling voltage locally or at bus SWREG
-        is_controlled = True
+        control_mode = ShuntControlMode.Continuous
         b_init = psse_elm.BINIT * psse_elm.RMPCT / 100.0
         vset = (psse_elm.VSWHI + psse_elm.VSWLO) / 2.0
 
     elif psse_elm.MODSW in [3, 4, 5, 6]:
-        is_controlled = True
+        control_mode = ShuntControlMode.Continuous
         b_init = psse_elm.BINIT
         logger.add_warning(
             msg="Not supported control mode for Switched Shunt",
@@ -228,7 +233,7 @@ def get_veragrid_shunt_switched(
         )
 
     else:
-        is_controlled = False
+        control_mode = ShuntControlMode.Locked
         b_init = psse_elm.BINIT
         logger.add_warning(
             msg="Invalid control mode for Switched Shunt.",
@@ -237,21 +242,24 @@ def get_veragrid_shunt_switched(
             value=psse_elm.MODSW,
         )
 
-    elm = dev.ControllableShunt(name='Switched shunt ' + busnum_id,
-                                active=bool(psse_elm.STAT),
-                                B=b_init,
-                                step=0,
-                                vset=vset,
-                                code=busnum_id,
-                                is_nonlinear=True,
-                                is_controlled=is_controlled, )
+    elm = dev.ControllableShunt(
+        name='Switched shunt ' + busnum_id,
+        code=busnum_id,
+        active=bool(psse_elm.STAT),
+        B=b_init,
+        step=0,
+        vset=vset,
+        vmin=float(psse_elm.VSWLO),
+        vmax=float(psse_elm.VSWHI),
+        control_mode=control_mode,
+    )
 
     if psse_elm.SWREG > 0:
         if psse_elm.SWREG != psse_elm.I:
             elm.control_bus = psse_bus_dict[psse_elm.SWREG]
 
-    n_list = []
-    b_list = []
+    n_list: list[int] = list()
+    b_list: list[float] = list()
 
     for i in range(1, 9):
         s = getattr(psse_elm, f"S{i}")
@@ -260,9 +268,6 @@ def get_veragrid_shunt_switched(
         if s == 1:
             n_list.append(n)
             b_list.append(getattr(psse_elm, f"B{i}"))
-
-    if len(n_list) == 1:
-        elm.is_nonlinear = False
 
     elm.set_blocks(n_list, b_list)
 
@@ -279,31 +284,48 @@ def get_veragrid_generator(psse_elm: RawGenerator, psse_bus_dict: Dict[int, dev.
     """
     name = str(psse_elm.I) + '_' + str(psse_elm.ID).replace("'", "")
 
-    is_controlled = True
-    if psse_elm.WMOD == 0:
+    if psse_elm.WMOD == 0:  # Not a wind machine ...wtf
         is_controlled = True
-    elif psse_elm.WMOD == 1:
+        pf = 0.8
+        Qmin = psse_elm.QB
+        Qmax = psse_elm.QT
+    elif psse_elm.WMOD == 1:  # Standard Qmin, Qmax limits
         is_controlled = True
-    elif psse_elm.WMOD == 2:
+        pf = 0.8
+        Qmin = psse_elm.QB
+        Qmax = psse_elm.QT
+    elif psse_elm.WMOD == 2:  # Qmin, Qmax based o PF
+        is_controlled = True
+        pf = psse_elm.WPF
+        # NOTE: the QB and QT limits come correct already, no need to compute this here
+        # Q = psse_elm.PG * np.sqrt((1.0 / (pf ** 2)) - 1.0)
+        Qmin = psse_elm.QB
+        Qmax = psse_elm.QT
+    elif psse_elm.WMOD == 3:  # Fixed Q
         is_controlled = False
-    elif psse_elm.WMOD == 3:
-        is_controlled = False
+        pf = psse_elm.WPF if psse_elm.WPF is not None else 0.8
+        Qmin = psse_elm.QB
+        Qmax = psse_elm.QT
     else:
-        pass
+        is_controlled = True
+        pf = 0.8
+        Qmin = psse_elm.QB
+        Qmax = psse_elm.QT
 
     elm = dev.Generator(name=name,
                         idtag=None,
                         code=name,
                         P=psse_elm.PG,
+                        Q=psse_elm.QG,
                         vset=psse_elm.VS,
-                        Qmin=psse_elm.QB,
-                        Qmax=psse_elm.QT,
+                        Qmin=Qmin,
+                        Qmax=Qmax,
                         Snom=psse_elm.MBASE,
                         Pmax=psse_elm.PT,
                         Pmin=psse_elm.PB,
                         active=bool(psse_elm.STAT),
                         is_controlled=is_controlled,
-                        power_factor=psse_elm.WPF if psse_elm.WPF is not None else 0.8)
+                        power_factor=pf)
 
     if psse_elm.IREG > 0:
         if psse_elm.IREG != psse_elm.I:
@@ -317,7 +339,9 @@ def get_veragrid_transformer(
         psse_bus_dict: Dict[int, dev.Bus],
         Sbase: float,
         logger: Logger,
-        adjust_taps_to_discrete_positions: bool = False) -> Tuple[Union[dev.Transformer2W, dev.Transformer3W], int]:
+        adjust_taps_to_discrete_positions: bool,
+        simple_naming: bool,
+        flatten_virtual_taps: bool) -> Tuple[Union[dev.Transformer2W, dev.Transformer3W], int]:
     """
 
     :param psse_elm:
@@ -325,6 +349,8 @@ def get_veragrid_transformer(
     :param Sbase:
     :param logger:
     :param adjust_taps_to_discrete_positions: Modify the tap angle and module to the discrete positions
+    :param simple_naming:
+    :param flatten_virtual_taps:
     :return:
     """
 
@@ -349,6 +375,7 @@ def get_veragrid_transformer(
     psse_elm.CKT = str(psse_elm.CKT).replace("'", "")
 
     psse_elm.NAME = psse_elm.NAME.replace("'", "").strip()
+    ckt = str(psse_elm.CKT).replace("@", "").replace("*", "")
 
     if psse_elm.windings == 0:
         # guess the number of windings
@@ -358,12 +385,15 @@ def get_veragrid_transformer(
         bus_from = psse_bus_dict[psse_elm.I]
         bus_to = psse_bus_dict[psse_elm.J]
 
-        name = "{0}_{1}_{2}_{3}_{4}_{5}_{6}".format(psse_elm.I, bus_from.name, bus_from.Vnom,
-                                                    psse_elm.J, bus_to.name, bus_to.Vnom, psse_elm.CKT)
+        if simple_naming:
+            name = "{0}_{1}_{2}".format(psse_elm.I, psse_elm.J, ckt)
+        else:
+            name = "{0}_{1}_{2}_{3}_{4}_{5}_{6}".format(psse_elm.I, bus_from.name, bus_from.Vnom,
+                                                        psse_elm.J, bus_to.name, bus_to.Vnom, ckt)
 
         name = name.replace("'", "").replace(" ", "").strip()
 
-        code = str(psse_elm.I) + '_' + str(psse_elm.J) + '_' + str(psse_elm.CKT)
+        code = str(psse_elm.I) + '_' + str(psse_elm.J) + '_' + str(ckt)
         code = code.strip().replace("'", "")
 
         """            
@@ -537,6 +567,21 @@ def get_veragrid_transformer(
             logger.add_error(msg="COD1 (transformer control mode) not recognized.",
                              value=psse_elm.COD1)
 
+        if flatten_virtual_taps:
+            V1 = bus_from.Vnom
+            V2 = bus_to.Vnom
+            HV2 = max(V1, V2)
+            LV2 = min(V1, V2)
+
+            if HV != HV2 or LV != LV2:
+                logger.add_info(msg="Flattening virtual taps like PSS/e",
+                                value=f"HV:{HV2}, LV:{LV2}",
+                                expected_value=f"HV:{HV}, LV:{LV}",
+                                device_class="Transformer2W",
+                                device=code)
+                HV = HV2
+                LV = LV2
+
         elm = dev.Transformer2W(
             bus_from=bus_from,
             bus_to=bus_to,
@@ -614,7 +659,7 @@ def get_veragrid_transformer(
         bus_1 = psse_bus_dict[abs(psse_elm.I)]
         bus_2 = psse_bus_dict[abs(psse_elm.J)]
         bus_3 = psse_bus_dict[abs(psse_elm.K)]
-        code = str(psse_elm.I) + '_' + str(psse_elm.J) + '_' + str(psse_elm.K) + '_' + str(psse_elm.CKT)
+        code = str(psse_elm.I) + '_' + str(psse_elm.J) + '_' + str(psse_elm.K) + '_' + str(ckt)
 
         V1 = bus_1.Vnom if psse_elm.NOMV1 == 0 else psse_elm.NOMV1
         V2 = bus_2.Vnom if psse_elm.NOMV2 == 0 else psse_elm.NOMV2
@@ -676,6 +721,32 @@ def get_veragrid_transformer(
         else:
             raise Exception('Unknown impedance combination CZ=' + str(psse_elm.CZ))
 
+        if flatten_virtual_taps:
+
+            if V1 != bus_1.Vnom:
+                logger.add_info(msg="Flattening virtual taps like PSS/e",
+                                value=f"V1:{V1}",
+                                expected_value=f"V1:{bus_1.Vnom}",
+                                device_class="Transformer3W",
+                                device=code)
+                V1 = bus_1.Vnom
+
+            if V2 != bus_2.Vnom:
+                logger.add_info(msg="Flattening virtual taps like PSS/e",
+                                value=f"V2:{V2}",
+                                expected_value=f"V2:{bus_2.Vnom}",
+                                device_class="Transformer3W",
+                                device=code)
+                V2 = bus_2.Vnom
+
+            if V3 != bus_3.Vnom:
+                logger.add_info(msg="Flattening virtual taps like PSS/e",
+                                value=f"V3:{V3}",
+                                expected_value=f"V3:{bus_3.Vnom}",
+                                device_class="Transformer3W",
+                                device=code)
+                V3 = bus_3.Vnom
+
         tr3w = dev.Transformer3W(bus1=bus_1,
                                  bus2=bus_2,
                                  bus3=bus_3,
@@ -690,10 +761,39 @@ def get_veragrid_transformer(
                                  rate23=psse_elm.RATE2_1,
                                  rate31=psse_elm.RATE3_1)
 
-        tr3w.winding1.tap_phase = psse_elm.ANG1
-        tr3w.winding2.tap_phase = psse_elm.ANG2
-        tr3w.winding3.tap_phase = psse_elm.ANG3
+        # NOTE: These seem to be related to the vector group and not to the power flow tap
+        tr3w.winding1.tap_phase = np.deg2rad(psse_elm.ANG1)
+        tr3w.winding2.tap_phase = np.deg2rad(psse_elm.ANG2)
+        tr3w.winding3.tap_phase = np.deg2rad(psse_elm.ANG3)
+
+        NOMV1 = psse_elm.NOMV1 if psse_elm.NOMV1 > 0 else bus_1.Vnom
+        NOMV2 = psse_elm.NOMV2 if psse_elm.NOMV2 > 0 else bus_2.Vnom
+        NOMV3 = psse_elm.NOMV3 if psse_elm.NOMV3 > 0 else bus_3.Vnom
+
+        if psse_elm.CW == 1:
+
+            tr3w.winding1.tap_module = psse_elm.WINDV1
+            tr3w.winding2.tap_module = psse_elm.WINDV2
+            tr3w.winding3.tap_module = psse_elm.WINDV3
+
+        elif psse_elm.CW == 2:
+
+            tr3w.winding1.tap_module = psse_elm.WINDV1 / bus_1.Vnom
+            tr3w.winding2.tap_module = psse_elm.WINDV2 / bus_2.Vnom
+            tr3w.winding3.tap_module = psse_elm.WINDV3 / bus_3.Vnom
+
+        elif psse_elm.CW == 3:
+
+            tr3w.winding1.tap_module = psse_elm.WINDV1 / NOMV1
+            tr3w.winding2.tap_module = psse_elm.WINDV2 / NOMV2
+            tr3w.winding3.tap_module = psse_elm.WINDV3 / NOMV3
+        else:
+            raise Exception('Unknown impedance combination CW=' + str(psse_elm.CZ))
+
         tr3w.compute_delta_to_star()
+
+        tr3w.bus0.Vm0 = psse_elm.VMSTAR
+        tr3w.bus0.Va0 = np.deg2rad(psse_elm.ANSTAR)
 
         return tr3w, 3
 
@@ -704,13 +804,15 @@ def get_veragrid_transformer(
 def get_veragrid_line(psse_elm: RawBranch,
                       psse_bus_dict: Dict[int, dev.Bus],
                       Sbase: float,
-                      logger: Logger) -> dev.Line:
+                      logger: Logger,
+                      simple_naming: bool) -> dev.Line:
     """
 
     :param psse_elm:
     :param psse_bus_dict:
     :param Sbase:
     :param logger:
+    :param simple_naming
     :return:
     """
 
@@ -718,11 +820,15 @@ def get_veragrid_line(psse_elm: RawBranch,
     j = abs(psse_elm.J)
     bus_from = psse_bus_dict[i]
     bus_to = psse_bus_dict[j]
-    code = str(i) + '_' + str(j) + '_' + str(psse_elm.CKT).replace("'", "").strip()
+    ckt = str(psse_elm.CKT).replace("@", "").replace("*", "")
+    code = str(i) + '_' + str(j) + '_' + str(ckt).replace("'", "").strip()
 
     if psse_elm.NAME.strip() == '':
-        name = "{0}_{1}_{2}_{3}_{4}_{5}_{6}".format(i, bus_from.name, bus_from.Vnom, j, bus_to.name, bus_to.Vnom,
-                                                    psse_elm.CKT)
+        if simple_naming:
+            name = "{0}_{1}_{2}".format(i, j, ckt)
+        else:
+            name = "{0}_{1}_{2}_{3}_{4}_{5}_{6}".format(i, bus_from.name, bus_from.Vnom, j, bus_to.name, bus_to.Vnom,
+                                                        ckt)
         name = name.replace("'", "").replace(" ", "").strip()
     else:
         name = psse_elm.NAME.strip()
@@ -989,17 +1095,22 @@ def get_upfc_from_facts(psse_elm: RawFACTS,
 def psse_to_veragrid(psse_circuit: PsseCircuit,
                      logger: Logger,
                      branch_connection_voltage_tolerance: float = 0.1,
-                     adjust_taps_to_discrete_positions: bool = False) -> MultiCircuit:
+                     adjust_taps_to_discrete_positions: bool = False,
+                     use_short_names: bool = True,
+                     flatten_virtual_taps: bool = False) -> MultiCircuit:
     """
 
     :param psse_circuit: PsseCircuit instance
     :param logger: Logger
     :param branch_connection_voltage_tolerance: tolerance in p.u. of a branch voltage to be considered a transformer
     :param adjust_taps_to_discrete_positions: Modify the tap angle and module to the discrete positions
+    :param use_short_names: use from_to_ckt, instead of
+    :param use_short_names: use a short name (bus_from_bus_to_ckt)
+    :param flatten_virtual_taps: flatten virtual taps (like psse, instead of properly using the voltage differences)
     :return: MultiCircuit instance
     """
 
-    circuit = MultiCircuit(Sbase=psse_circuit.SBASE)
+    circuit = MultiCircuit(Sbase=psse_circuit.SBASE, fbase=psse_circuit.BASFRQ)
     circuit.comments = 'Converted from a PSS/e .raw file'
 
     circuit.areas = [dev.Area(name=x.ARNAME) for x in psse_circuit.areas]
@@ -1098,7 +1209,9 @@ def psse_to_veragrid(psse_circuit: PsseCircuit,
             psse_bus_dict=psse_bus_dict,
             Sbase=psse_circuit.SBASE,
             logger=logger,
-            adjust_taps_to_discrete_positions=adjust_taps_to_discrete_positions
+            adjust_taps_to_discrete_positions=adjust_taps_to_discrete_positions,
+            simple_naming=use_short_names,
+            flatten_virtual_taps=flatten_virtual_taps
         )
 
         if transformer.idtag not in branches_already_there:
@@ -1118,7 +1231,7 @@ def psse_to_veragrid(psse_circuit: PsseCircuit,
     # Go through the Branches
     for psse_branch in psse_circuit.branches:
         # get the object
-        branch = get_veragrid_line(psse_branch, psse_bus_dict, psse_circuit.SBASE, logger)
+        branch = get_veragrid_line(psse_branch, psse_bus_dict, psse_circuit.SBASE, logger, use_short_names)
 
         # detect if this branch is actually a transformer
         if branch.should_this_be_a_transformer(branch_connection_voltage_tolerance, logger=logger):

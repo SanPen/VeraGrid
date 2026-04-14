@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import Union
+from typing import Union, Tuple
 import datetime
 import numpy as np
 from VeraGridEngine.Devices.Parents.physical_device import PhysicalDevice
@@ -14,8 +14,8 @@ from VeraGridEngine.Devices.Aggregation.country import Country
 from VeraGridEngine.Devices.Aggregation.community import Community
 from VeraGridEngine.Devices.Aggregation.region import Region
 from VeraGridEngine.Devices.Aggregation.municipality import Municipality
-from VeraGridEngine.Devices.profile import Profile
-from VeraGridEngine.Devices.Parents.editable_device import get_at
+from VeraGridEngine.Devices.Profiles import ProfileFloat
+from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 from VeraGridEngine.enumerations import BuildStatus, DeviceType
 
 
@@ -28,17 +28,54 @@ class Substation(PhysicalDevice):
         '_region',
         '_municipality',
         'address',
-        'irradiation',
+        '_irradiation',
         '_irradiation_prof',
-        'temperature',
+        '_temperature',
         '_temperature_prof',
-        'wind_speed',
+        '_wind_speed',
         '_wind_speed_prof',
-        'terrain_roughness',
+        '_terrain_roughness',
         'modelling_authority',
-        'latitude',
-        'longitude',
+        '_latitude',
+        '_longitude',
         'color',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='longitude', units='deg', tpe=float, definition='longitude.', profile_name=''),
+        GCProp(key='latitude', units='deg', tpe=float, definition='latitude.', profile_name=''),
+        GCProp(key='color', units='', tpe=str, definition='Color to paint the element in the map diagram',
+                      is_color=True),
+        GCProp(key="area", units="", tpe=DeviceType.AreaDevice,
+                      definition="Substation area, altenativelly this can be obtained from the zone"),
+        GCProp(key="zone", units="", tpe=DeviceType.ZoneDevice,
+                      definition="Substation area"),
+        GCProp(key="country", units="", tpe=DeviceType.CountryDevice,
+                      definition="Substation country, altenativelly this can be obtained from the community"),
+        GCProp(key="community", units="", tpe=DeviceType.CommunityDevice,
+                      definition="Substation community, altenativelly this can be obtained from the region"),
+        GCProp(key="region", units="", tpe=DeviceType.RegionDevice,
+                      definition="Substation region, altenativelly this can be obtained from the municipality"),
+        GCProp(key="municipality", units="", tpe=DeviceType.MunicipalityDevice,
+                      definition="Substation municipality"),
+        GCProp(key="address", units="", tpe=str,
+                      definition="Substation address"),
+        GCProp(key="irradiation", units="W/m^2", tpe=float,
+                      definition="Substation solar irradiation",
+                      profile_name="irradiation_prof"),
+        GCProp(key="temperature", units="ºC", tpe=float,
+                      definition="Substation temperature",
+                      profile_name="temperature_prof"),
+        GCProp(key="wind_speed", units="m/s", tpe=float,
+                      definition="Substation wind speed at 80m above the ground",
+                      profile_name="wind_speed_prof"),
+        GCProp(key="terrain_roughness", units="", tpe=float,
+                      definition="This value is ised for wind speed extrapolation.\n"
+                                 "Typical values:\n"
+                                 "Not rough (sand, snow, sea): 0~0.02\n"
+                                 "Slightly rough (grass, cereal field): 0.02~0.2\n"
+                                 "Rough (forest, small houses): 1.0~1.5\n"
+                                 "Very rough (Large buildings):1.0~4.0"),
     )
 
     def __init__(self,
@@ -96,13 +133,13 @@ class Substation(PhysicalDevice):
         self.address: str = address
 
         self.irradiation: float = float(irradiation)
-        self._irradiation_prof = Profile(default_value=self.irradiation, data_type=float)
+        self._irradiation_prof = ProfileFloat(default_value=self.irradiation)
 
         self.temperature: float = float(temperature)
-        self._temperature_prof = Profile(default_value=self.temperature, data_type=float)
+        self._temperature_prof = ProfileFloat(default_value=self.temperature)
 
         self.wind_speed: float = float(wind_speed)
-        self._wind_speed_prof = Profile(default_value=self.wind_speed, data_type=float)
+        self._wind_speed_prof = ProfileFloat(default_value=self.wind_speed)
 
         self.terrain_roughness: float = float(terrain_roughness)
 
@@ -110,53 +147,6 @@ class Substation(PhysicalDevice):
         self.longitude = float(longitude)
 
         self.color = color if color is not None else self.rnd_color()
-
-        self.register(key='longitude', units='deg', tpe=float, definition='longitude.', profile_name='')
-        self.register(key='latitude', units='deg', tpe=float, definition='latitude.', profile_name='')
-        self.register(key='color', units='', tpe=str, definition='Color to paint the element in the map diagram',
-                      is_color=True)
-
-        self.register(key="area", units="", tpe=DeviceType.AreaDevice,
-                      definition="Substation area, altenativelly this can be obtained from the zone")
-
-        self.register(key="zone", units="", tpe=DeviceType.ZoneDevice,
-                      definition="Substation area")
-
-        self.register(key="country", units="", tpe=DeviceType.CountryDevice,
-                      definition="Substation country, altenativelly this can be obtained from the community")
-
-        self.register(key="community", units="", tpe=DeviceType.CommunityDevice,
-                      definition="Substation community, altenativelly this can be obtained from the region")
-
-        self.register(key="region", units="", tpe=DeviceType.RegionDevice,
-                      definition="Substation region, altenativelly this can be obtained from the municipality")
-
-        self.register(key="municipality", units="", tpe=DeviceType.MunicipalityDevice,
-                      definition="Substation municipality")
-
-        self.register(key="address", units="", tpe=str,
-                      definition="Substation address")
-
-        self.register(key="irradiation", units="W/m^2", tpe=float,
-                      definition="Substation solar irradiation",
-                      profile_name="irradiation_prof")
-
-        self.register(key="temperature", units="ºC", tpe=float,
-                      definition="Substation temperature",
-                      profile_name="temperature_prof")
-
-        self.register(key="wind_speed", units="m/s", tpe=float,
-                      definition="Substation wind speed at 80m above the ground",
-                      profile_name="wind_speed_prof")
-
-        self.register(key="terrain_roughness", units="", tpe=float,
-                      definition="This value is ised for wind speed extrapolation.\n"
-                                 "Typical values:\n"
-                                 "Not rough (sand, snow, sea): 0~0.02\n"
-                                 "Slightly rough (grass, cereal field): 0.02~0.2\n"
-                                 "Rough (forest, small houses): 1.0~1.5\n"
-                                 "Very rough (Large buildings):1.0~4.0")
-
 
     @property
     def area(self) -> Union[Area, None]:
@@ -293,7 +283,7 @@ class Substation(PhysicalDevice):
                 str(type(val)) + 'not supported to be set into a municipality of type Union[Municipality, None]')
 
     @property
-    def irradiation_prof(self) -> Profile:
+    def irradiation_prof(self) -> ProfileFloat:
         """
         Irradiation profile
         :return: Profile
@@ -301,8 +291,8 @@ class Substation(PhysicalDevice):
         return self._irradiation_prof
 
     @irradiation_prof.setter
-    def irradiation_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def irradiation_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._irradiation_prof = val
         elif isinstance(val, np.ndarray):
             self._irradiation_prof.set(arr=val)
@@ -317,7 +307,7 @@ class Substation(PhysicalDevice):
         return get_at(self.irradiation, self.irradiation_prof, t)
 
     @property
-    def temperature_prof(self) -> Profile:
+    def temperature_prof(self) -> ProfileFloat:
         """
         Temperature profile
         :return: Profile
@@ -325,8 +315,8 @@ class Substation(PhysicalDevice):
         return self._temperature_prof
 
     @temperature_prof.setter
-    def temperature_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def temperature_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._temperature_prof = val
         elif isinstance(val, np.ndarray):
             self._temperature_prof.set(arr=val)
@@ -341,7 +331,7 @@ class Substation(PhysicalDevice):
         return get_at(self.temperature, self.temperature_prof, t)
 
     @property
-    def wind_speed_prof(self) -> Profile:
+    def wind_speed_prof(self) -> ProfileFloat:
         """
         wind_speed_prof profile
         :return: Profile
@@ -349,8 +339,8 @@ class Substation(PhysicalDevice):
         return self._wind_speed_prof
 
     @wind_speed_prof.setter
-    def wind_speed_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def wind_speed_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._wind_speed_prof = val
         elif isinstance(val, np.ndarray):
             self._wind_speed_prof.set(arr=val)
@@ -425,3 +415,119 @@ class Substation(PhysicalDevice):
         :return:
         """
         return datetime.datetime.fromtimestamp(self._decommissioned_date)
+
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def longitude(self) -> float:
+        """
+        Get ``longitude``.
+
+        :return: float
+        """
+        return self._longitude
+
+    @longitude.setter
+    def longitude(self, val: float) -> None:
+        """
+        Set ``longitude``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._longitude = float(val)
+
+    @property
+    def latitude(self) -> float:
+        """
+        Get ``latitude``.
+
+        :return: float
+        """
+        return self._latitude
+
+    @latitude.setter
+    def latitude(self, val: float) -> None:
+        """
+        Set ``latitude``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._latitude = float(val)
+
+    @property
+    def irradiation(self) -> float:
+        """
+        Get ``irradiation``.
+
+        :return: float
+        """
+        return self._irradiation
+
+    @irradiation.setter
+    def irradiation(self, val: float) -> None:
+        """
+        Set ``irradiation``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._irradiation = float(val)
+
+    @property
+    def temperature(self) -> float:
+        """
+        Get ``temperature``.
+
+        :return: float
+        """
+        return self._temperature
+
+    @temperature.setter
+    def temperature(self, val: float) -> None:
+        """
+        Set ``temperature``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._temperature = float(val)
+
+    @property
+    def wind_speed(self) -> float:
+        """
+        Get ``wind_speed``.
+
+        :return: float
+        """
+        return self._wind_speed
+
+    @wind_speed.setter
+    def wind_speed(self, val: float) -> None:
+        """
+        Set ``wind_speed``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._wind_speed = float(val)
+
+    @property
+    def terrain_roughness(self) -> float:
+        """
+        Get ``terrain_roughness``.
+
+        :return: float
+        """
+        return self._terrain_roughness
+
+    @terrain_roughness.setter
+    def terrain_roughness(self, val: float) -> None:
+        """
+        Set ``terrain_roughness``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._terrain_roughness = float(val)

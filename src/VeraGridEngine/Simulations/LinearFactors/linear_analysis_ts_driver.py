@@ -20,6 +20,13 @@ if TYPE_CHECKING:
 
 
 class LinearAnalysisTimeSeriesDriver(TimeSeriesDriverTemplate):
+    __slots__ = (
+        "options",
+        "opf_time_series_results",
+        "simplified_compilation",
+        "drivers",
+    )
+
     name = 'Linear Analysis Time Series'
     tpe = SimulationTypes.LinearAnalysis_TS_run
 

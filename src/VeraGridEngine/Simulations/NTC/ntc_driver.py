@@ -15,6 +15,11 @@ from VeraGridEngine.enumerations import SimulationTypes
 
 
 class OptimalNetTransferCapacityDriver(DriverTemplate):
+    __slots__ = (
+        "options",
+        "all_solved",
+    )
+
     name = 'Optimal net transfer capacity'
     tpe = SimulationTypes.OPF_NTC_run
 

@@ -4,14 +4,14 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import Union
+from typing import Union, Tuple
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from VeraGridEngine.enumerations import DeviceType, BuildStatus
 from VeraGridEngine.Devices.Parents.load_parent import InjectionParent
-from VeraGridEngine.Devices.Parents.editable_device import get_at
-from VeraGridEngine.Devices.profile import Profile
+from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
+from VeraGridEngine.Devices.Profiles import ProfileFloat
 
 
 class CurrentInjection(InjectionParent):
@@ -19,26 +19,49 @@ class CurrentInjection(InjectionParent):
     CurrentInjection
     """
     __slots__ = (
-        'Ir',
-        'Ii',
+        '_Ir',
+        '_Ii',
         '_Ir_prof',
         '_Ii_prof',
-
-        'Ir1',
-        'Ii1',
+        '_Ir1',
+        '_Ii1',
         '_Ir1_prof',
         '_Ii1_prof',
-
-        'Ir2',
-        'Ii2',
+        '_Ir2',
+        '_Ii2',
         '_Ir2_prof',
         '_Ii2_prof',
-
-        'Ir3',
-        'Ii3',
+        '_Ir3',
+        '_Ii3',
         '_Ir3_prof',
         '_Ii3_prof',
+    )
 
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='Ir', units='MW', tpe=float,
+                      definition='Active power of the current component at V=1.0 p.u.',
+                      profile_name='Ir_prof'),
+        GCProp(key='Ir1', units='MW', tpe=float,
+                      definition='Active power of the current component at V=1.0 p.u.',
+                      profile_name='Ir1_prof'),
+        GCProp(key='Ir2', units='MW', tpe=float,
+                      definition='Active power of the current component at V=1.0 p.u.',
+                      profile_name='Ir2_prof'),
+        GCProp(key='Ir3', units='MW', tpe=float,
+                      definition='Active power of the current component at V=1.0 p.u.',
+                      profile_name='Ir3_prof'),
+        GCProp(key='Ii', units='MVAr', tpe=float,
+                      definition='Reactive power of the current component at V=1.0 p.u.',
+                      profile_name='Ii_prof'),
+        GCProp(key='Ii1', units='MVAr', tpe=float,
+                      definition='Reactive power of the current component at V=1.0 p.u.',
+                      profile_name='Ii1_prof'),
+        GCProp(key='Ii2', units='MVAr', tpe=float,
+                      definition='Reactive power of the current component at V=1.0 p.u.',
+                      profile_name='Ii2_prof'),
+        GCProp(key='Ii3', units='MVAr', tpe=float,
+                      definition='Reactive power of the current component at V=1.0 p.u.',
+                      profile_name='Ii3_prof'),
     )
 
     def __init__(self, name='CurrentInjection', idtag=None, code='', Ir=0.0, Ii=0.0, Cost=1200.0,
@@ -88,42 +111,18 @@ class CurrentInjection(InjectionParent):
         self.Ii2 = float(Ii2)
         self.Ii3 = float(Ii3)
 
-        self._Ir_prof = Profile(default_value=self.Ir, data_type=float)
-        self._Ir1_prof = Profile(default_value=self.Ir1, data_type=float)
-        self._Ir2_prof = Profile(default_value=self.Ir2, data_type=float)
-        self._Ir3_prof = Profile(default_value=self.Ir3, data_type=float)
-        self._Ii_prof = Profile(default_value=self.Ii, data_type=float)
-        self._Ii1_prof = Profile(default_value=self.Ii1, data_type=float)
-        self._Ii2_prof = Profile(default_value=self.Ii2, data_type=float)
-        self._Ii3_prof = Profile(default_value=self.Ii3, data_type=float)
+        self._Ir_prof = ProfileFloat(default_value=self.Ir)
+        self._Ir1_prof = ProfileFloat(default_value=self.Ir1)
+        self._Ir2_prof = ProfileFloat(default_value=self.Ir2)
+        self._Ir3_prof = ProfileFloat(default_value=self.Ir3)
+        self._Ii_prof = ProfileFloat(default_value=self.Ii)
+        self._Ii1_prof = ProfileFloat(default_value=self.Ii1)
+        self._Ii2_prof = ProfileFloat(default_value=self.Ii2)
+        self._Ii3_prof = ProfileFloat(default_value=self.Ii3)
 
-        self.register(key='Ir', units='MW', tpe=float,
-                      definition='Active power of the current component at V=1.0 p.u.',
-                      profile_name='Ir_prof')
-        self.register(key='Ir1', units='MW', tpe=float,
-                      definition='Active power of the current component at V=1.0 p.u.',
-                      profile_name='Ir1_prof')
-        self.register(key='Ir2', units='MW', tpe=float,
-                      definition='Active power of the current component at V=1.0 p.u.',
-                      profile_name='Ir2_prof')
-        self.register(key='Ir3', units='MW', tpe=float,
-                      definition='Active power of the current component at V=1.0 p.u.',
-                      profile_name='Ir3_prof')
-        self.register(key='Ii', units='MVAr', tpe=float,
-                      definition='Reactive power of the current component at V=1.0 p.u.',
-                      profile_name='Ii_prof')
-        self.register(key='Ii1', units='MVAr', tpe=float,
-                      definition='Reactive power of the current component at V=1.0 p.u.',
-                      profile_name='Ii1_prof')
-        self.register(key='Ii2', units='MVAr', tpe=float,
-                      definition='Reactive power of the current component at V=1.0 p.u.',
-                      profile_name='Ii2_prof')
-        self.register(key='Ii3', units='MVAr', tpe=float,
-                      definition='Reactive power of the current component at V=1.0 p.u.',
-                      profile_name='Ii3_prof')
 
     @property
-    def Ir_prof(self) -> Profile:
+    def Ir_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -131,8 +130,8 @@ class CurrentInjection(InjectionParent):
         return self._Ir_prof
 
     @Ir_prof.setter
-    def Ir_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Ir_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Ir_prof = val
         elif isinstance(val, np.ndarray):
             self._Ir_prof.set(arr=val)
@@ -147,7 +146,7 @@ class CurrentInjection(InjectionParent):
         return get_at(self.Ir, self.Ir_prof, t)
 
     @property
-    def Ir1_prof(self) -> Profile:
+    def Ir1_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -155,8 +154,8 @@ class CurrentInjection(InjectionParent):
         return self._Ir1_prof
 
     @Ir1_prof.setter
-    def Ir1_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Ir1_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Ir1_prof = val
         elif isinstance(val, np.ndarray):
             self._Ir1_prof.set(arr=val)
@@ -171,7 +170,7 @@ class CurrentInjection(InjectionParent):
         return get_at(self.Ir1, self.Ir1_prof, t)
 
     @property
-    def Ir2_prof(self) -> Profile:
+    def Ir2_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -179,8 +178,8 @@ class CurrentInjection(InjectionParent):
         return self._Ir2_prof
 
     @Ir2_prof.setter
-    def Ir2_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Ir2_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Ir2_prof = val
         elif isinstance(val, np.ndarray):
             self._Ir2_prof.set(arr=val)
@@ -195,7 +194,7 @@ class CurrentInjection(InjectionParent):
         return get_at(self.Ir2, self.Ir2_prof, t)
 
     @property
-    def Ir3_prof(self) -> Profile:
+    def Ir3_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -203,8 +202,8 @@ class CurrentInjection(InjectionParent):
         return self._Ir3_prof
 
     @Ir3_prof.setter
-    def Ir3_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Ir3_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Ir3_prof = val
         elif isinstance(val, np.ndarray):
             self._Ir3_prof.set(arr=val)
@@ -219,7 +218,7 @@ class CurrentInjection(InjectionParent):
         return get_at(self.Ir3, self.Ir3_prof, t)
 
     @property
-    def Ii_prof(self) -> Profile:
+    def Ii_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -227,8 +226,8 @@ class CurrentInjection(InjectionParent):
         return self._Ii_prof
 
     @Ii_prof.setter
-    def Ii_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Ii_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Ii_prof = val
         elif isinstance(val, np.ndarray):
             self._Ii_prof.set(arr=val)
@@ -243,7 +242,7 @@ class CurrentInjection(InjectionParent):
         return get_at(self.Ii, self.Ii_prof, t)
 
     @property
-    def Ii1_prof(self) -> Profile:
+    def Ii1_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -251,8 +250,8 @@ class CurrentInjection(InjectionParent):
         return self._Ii1_prof
 
     @Ii1_prof.setter
-    def Ii1_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Ii1_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Ii1_prof = val
         elif isinstance(val, np.ndarray):
             self._Ii1_prof.set(arr=val)
@@ -267,7 +266,7 @@ class CurrentInjection(InjectionParent):
         return get_at(self.Ii1, self.Ii1_prof, t)
 
     @property
-    def Ii2_prof(self) -> Profile:
+    def Ii2_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -275,8 +274,8 @@ class CurrentInjection(InjectionParent):
         return self._Ii2_prof
 
     @Ii2_prof.setter
-    def Ii2_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Ii2_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Ii2_prof = val
         elif isinstance(val, np.ndarray):
             self._Ii2_prof.set(arr=val)
@@ -291,7 +290,7 @@ class CurrentInjection(InjectionParent):
         return get_at(self.Ii2, self.Ii2_prof, t)
 
     @property
-    def Ii3_prof(self) -> Profile:
+    def Ii3_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -299,8 +298,8 @@ class CurrentInjection(InjectionParent):
         return self._Ii3_prof
 
     @Ii3_prof.setter
-    def Ii3_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Ii3_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Ii3_prof = val
         elif isinstance(val, np.ndarray):
             self._Ii3_prof.set(arr=val)
@@ -374,3 +373,157 @@ class CurrentInjection(InjectionParent):
 
             if show_fig:
                 plt.show()
+
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def Ir(self) -> float:
+        """
+        Get ``Ir``.
+
+        :return: float
+        """
+        return self._Ir
+
+    @Ir.setter
+    def Ir(self, val: float) -> None:
+        """
+        Set ``Ir``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Ir = float(val)
+
+    @property
+    def Ir1(self) -> float:
+        """
+        Get ``Ir1``.
+
+        :return: float
+        """
+        return self._Ir1
+
+    @Ir1.setter
+    def Ir1(self, val: float) -> None:
+        """
+        Set ``Ir1``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Ir1 = float(val)
+
+    @property
+    def Ir2(self) -> float:
+        """
+        Get ``Ir2``.
+
+        :return: float
+        """
+        return self._Ir2
+
+    @Ir2.setter
+    def Ir2(self, val: float) -> None:
+        """
+        Set ``Ir2``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Ir2 = float(val)
+
+    @property
+    def Ir3(self) -> float:
+        """
+        Get ``Ir3``.
+
+        :return: float
+        """
+        return self._Ir3
+
+    @Ir3.setter
+    def Ir3(self, val: float) -> None:
+        """
+        Set ``Ir3``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Ir3 = float(val)
+
+    @property
+    def Ii(self) -> float:
+        """
+        Get ``Ii``.
+
+        :return: float
+        """
+        return self._Ii
+
+    @Ii.setter
+    def Ii(self, val: float) -> None:
+        """
+        Set ``Ii``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Ii = float(val)
+
+    @property
+    def Ii1(self) -> float:
+        """
+        Get ``Ii1``.
+
+        :return: float
+        """
+        return self._Ii1
+
+    @Ii1.setter
+    def Ii1(self, val: float) -> None:
+        """
+        Set ``Ii1``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Ii1 = float(val)
+
+    @property
+    def Ii2(self) -> float:
+        """
+        Get ``Ii2``.
+
+        :return: float
+        """
+        return self._Ii2
+
+    @Ii2.setter
+    def Ii2(self, val: float) -> None:
+        """
+        Set ``Ii2``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Ii2 = float(val)
+
+    @property
+    def Ii3(self) -> float:
+        """
+        Get ``Ii3``.
+
+        :return: float
+        """
+        return self._Ii3
+
+    @Ii3.setter
+    def Ii3(self, val: float) -> None:
+        """
+        Set ``Ii3``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Ii3 = float(val)

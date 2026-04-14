@@ -16,11 +16,12 @@ BaseMainGui
 ServerMain
 CompiledArraysMain
 DiagramsMain
-ObjectsTableMain
+DataBaseTableMain
 TimeEventsMain
 SimulationsMain
 ResultsMain
 ConfigurationMain
+ScenariosMain
 IoMain
 ScriptingMain
-MainGUI
+VeraGridMainGUI

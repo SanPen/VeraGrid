@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:eu="http://iec.ch/TC57/CIM100-European#"
+    xmlns:md="http://iec.ch/TC57/61970-552/ModelDescription/1#"
+    xmlns:cim="http://iec.ch/TC57/CIM100#">
+	<md:FullModel rdf:about="urn:uuid:23ff8276-f176-1149-a565-178b797d7e19">
+		<md:Model.created>2021-05-03T08:45:49Z</md:Model.created>
+		<md:Model.description>CGMES Conformity Assessment Test Configuration. The Test Configuration is owned by ENTSO-E and is provided by ENTSO-E “as it is”. To the fullest extent permitted by law, ENTSO-E shall not be liable for any damages of any kind arising out of the use of the model (including any of its subsequent modifications). ENTSO-E neither warrants, nor represents that the use of the model will not infringe the rights of third parties. Any use of the model shall include a reference to ENTSO-E. ENTSO-E web site is the only official source of information related to the model.</md:Model.description>
+		<md:Model.profile>http://iec.ch/TC57/ns/CIM/Topology-EU/3.0</md:Model.profile>
+		<md:Model.modelingAuthoritySet>http://www.pse.pl/OperationalPlanning</md:Model.modelingAuthoritySet>
+    <md:Model.scenarioTime>2021-05-03T05:00:00Z</md:Model.scenarioTime>
+    <md:Model.version>1</md:Model.version>		
+		<md:Model.DependentOn rdf:resource="urn:uuid:59b7c1dd-9220-4d44-9b97-d5430e672123"/>
+	</md:FullModel>
+	<cim:ConnectivityNode rdf:about="#_2647fe8e-8491-44dd-9fe9-92570dbc4490">
+		<cim:ConnectivityNode.TopologicalNode rdf:resource="#_dcff66fd-6bda-4d52-886a-7bdf05bbd9c6"/>
+	</cim:ConnectivityNode>
+	<cim:ConnectivityNode rdf:about="#_7c7fc16b-4fd4-4bfa-e053-b2204b0aaeb0">
+		<cim:ConnectivityNode.TopologicalNode rdf:resource="#_240ef58b-1406-4a52-b7ce-d54079b4c079"/>
+	</cim:ConnectivityNode>
+	<cim:Terminal rdf:about="#_fe911b0f-5655-4585-9864-db00c4ec34b9">
+		<cim:Terminal.TopologicalNode rdf:resource="#_dcff66fd-6bda-4d52-886a-7bdf05bbd9c6"/>
+	</cim:Terminal>
+	<cim:Terminal rdf:about="#_7c7fc16b-4fd6-4bfa-e053-b2204b0aaeb0">
+		<cim:Terminal.TopologicalNode rdf:resource="#_240ef58b-1406-4a52-b7ce-d54079b4c079"/>
+	</cim:Terminal>
+	<cim:Terminal rdf:about="#_b13e7060-67e4-4e74-afa5-95c5148ed7ad">
+		<cim:Terminal.TopologicalNode rdf:resource="#_dcff66fd-6bda-4d52-886a-7bdf05bbd9c6"/>
+	</cim:Terminal>
+	<cim:Terminal rdf:about="#_a4000e5a-9ea0-48a7-86a1-7284daeca14f">
+		<cim:Terminal.TopologicalNode rdf:resource="#_240ef58b-1406-4a52-b7ce-d54079b4c079"/>
+	</cim:Terminal>
+	<cim:Terminal rdf:about="#_72f2e79c-db43-4a44-a1c9-14af03824d2f">
+		<cim:Terminal.TopologicalNode rdf:resource="#_dcff66fd-6bda-4d52-886a-7bdf05bbd9c6"/>
+	</cim:Terminal>
+	<cim:Terminal rdf:about="#_8f3dba52-0a67-41f3-9348-bc9acc64c763">
+		<cim:Terminal.TopologicalNode rdf:resource="#_240ef58b-1406-4a52-b7ce-d54079b4c079"/>
+	</cim:Terminal>
+	<cim:Terminal rdf:about="#_2539395c-1f50-4273-937a-22dc986e64a5">
+		<cim:Terminal.TopologicalNode rdf:resource="#_240ef58b-1406-4a52-b7ce-d54079b4c079"/>
+	</cim:Terminal>
+	<cim:Terminal rdf:about="#_47ef06be-63f1-4640-a741-7a79aa50ba20">
+		<cim:Terminal.TopologicalNode rdf:resource="#_dcff66fd-6bda-4d52-886a-7bdf05bbd9c6"/>
+	</cim:Terminal>
+	<cim:TopologicalNode rdf:ID="_dcff66fd-6bda-4d52-886a-7bdf05bbd9c6">
+		<cim:TopologicalNode.BaseVoltage rdf:resource="#_2587628c-3294-41a0-81a5-ed637abf6953"/>
+		<cim:TopologicalNode.ConnectivityNodeContainer rdf:resource="#_0a1cb8ee-38ff-4faa-aead-b744a5b76649"/>
+		<cim:IdentifiedObject.description>ABR212;10</cim:IdentifiedObject.description>
+		<cim:IdentifiedObject.name>ABR212</cim:IdentifiedObject.name>
+		<cim:IdentifiedObject.mRID>dcff66fd-6bda-4d52-886a-7bdf05bbd9c6</cim:IdentifiedObject.mRID>
+	</cim:TopologicalNode>
+	<cim:TopologicalNode rdf:ID="_240ef58b-1406-4a52-b7ce-d54079b4c079">
+		<cim:TopologicalNode.BaseVoltage rdf:resource="#_2587628c-3294-41a0-81a5-ed637abf6953"/>
+		<cim:TopologicalNode.ConnectivityNodeContainer rdf:resource="#_0a1cb8ee-38ff-4faa-aead-b744a5b76649"/>
+		<cim:IdentifiedObject.description>ABR222;20</cim:IdentifiedObject.description>
+		<cim:IdentifiedObject.name>ABR222</cim:IdentifiedObject.name>
+		<cim:IdentifiedObject.mRID>240ef58b-1406-4a52-b7ce-d54079b4c079</cim:IdentifiedObject.mRID>
+	</cim:TopologicalNode>
+</rdf:RDF>

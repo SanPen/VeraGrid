@@ -65,7 +65,7 @@ def compute_L(h, f, J) -> float:
     return 0.5 * (v @ v)
 
 
-@dataclass
+@dataclass(slots=True)
 class ConvexFunctionResult:
     """
     Result of the convex function evaluated iterativelly for a given method
@@ -82,7 +82,7 @@ class ConvexFunctionResult:
         # return np.max(np.abs(self.f))
 
 
-@dataclass
+@dataclass(slots=True)
 class ConvexMethodResult:
     """
     Iterative convex method result

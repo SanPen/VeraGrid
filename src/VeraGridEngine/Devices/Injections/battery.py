@@ -4,7 +4,9 @@
 # SPDX-License-Identifier: MPL-2.0
 
 
-from VeraGridEngine.Devices.Parents.editable_device import DeviceType
+from typing import Tuple
+
+from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
 from VeraGridEngine.Devices.Injections.generator import Generator, BuildStatus
 
 
@@ -14,27 +16,57 @@ class Battery(Generator):
     """
     __slots__ = (
         'device_type',
-        'charge_efficiency',
-        'discharge_efficiency',
-        'max_soc',
-        'min_soc',
+        '_charge_efficiency',
+        '_discharge_efficiency',
+        '_max_soc',
+        '_min_soc',
         'min_soc_charge',
         'charge_per_cycle',
-        'discharge_per_cycle',
-        'Enom',
-        'soc_0',
+        '_discharge_per_cycle',
+        '_Enom',
+        '_soc_0',
         'soc',
         'min_energy',
         'energy',
     )
 
-    def __init__(self, name='batt', idtag=None, code="", P=0.0, power_factor=0.8, vset=1.0,
-                 is_controlled=True, Qmin=-9999, Qmax=9999, Snom=9999, Enom=9999,
-                 Pmin=-9999, Pmax=9999,
-                 Cost=1.0, active=True, Sbase=100,
-                 enabled_dispatch=True, mttf=0.0, mttr=0.0, charge_efficiency=0.9, discharge_efficiency=0.9,
-                 max_soc=0.99, min_soc=0.3, soc=0.8, charge_per_cycle=0.1, discharge_per_cycle=0.1,
-                 r1=1e-20, x1=1e-20, r0=1e-20, x0=1e-20, r2=1e-20, x2=1e-20,
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='Enom', units='MWh', tpe=float, definition='Nominal energy capacity.'),
+        GCProp(key='max_soc', units='p.u.', tpe=float, definition='Minimum state of charge.'),
+        GCProp(key='min_soc', units='p.u.', tpe=float, definition='Maximum state of charge.'),
+        GCProp(key='soc_0', units='p.u.', tpe=float, definition='Initial state of charge.'),
+        GCProp(key='charge_efficiency', units='p.u.', tpe=float, definition='Charging efficiency.'),
+        GCProp(key='discharge_efficiency', units='p.u.', tpe=float, definition='Discharge efficiency.'),
+        GCProp(key='discharge_per_cycle', units='p.u.', tpe=float, definition=''),
+    )
+
+    def __init__(self,
+                 name='batt',
+                 idtag=None,
+                 code="",
+                 P=0.0,
+                 Pmin=-9999,
+                 Pmax=9999,
+                 Q=0.0,
+                 Qmin=-9999,
+                 Qmax=9999,
+                 power_factor=0.8,
+                 vset=1.0,
+                 is_controlled=True,
+                 Snom=9999,
+                 Enom=9999,
+                 Cost=1.0,
+                 active=True,
+                 Sbase=100,
+                 enabled_dispatch=True,
+                 mttf=0.0, mttr=0.0,
+                 charge_efficiency=0.9,
+                 discharge_efficiency=0.9,
+                 max_soc=0.99, min_soc=0.3, soc=0.8,
+                 charge_per_cycle=0.1, discharge_per_cycle=0.1,
+                 r1=1e-20, x1=1e-20,
+                 r0=1e-20, x0=1e-20,
+                 r2=1e-20, x2=1e-20,
                  capex=0, opex=0,
                  srap_enabled: bool = True,
                  build_status: BuildStatus = BuildStatus.Commissioned):
@@ -79,12 +111,13 @@ class Battery(Generator):
                            idtag=idtag,
                            code=code,
                            P=P,
+                           Pmin=Pmin, Pmax=Pmax,
+                           Q=Q,
+                           Qmin=Qmin, Qmax=Qmax, Snom=Snom,
                            power_factor=power_factor,
                            vset=vset,
                            is_controlled=is_controlled,
-                           Qmin=Qmin, Qmax=Qmax, Snom=Snom,
                            active=active,
-                           Pmin=Pmin, Pmax=Pmax,
                            Cost=Cost,
                            Sbase=Sbase,
                            enabled_dispatch=enabled_dispatch,
@@ -125,13 +158,6 @@ class Battery(Generator):
 
         self.energy = self.Enom * self.soc
 
-        self.register(key='Enom', units='MWh', tpe=float, definition='Nominal energy capacity.')
-        self.register(key='max_soc', units='p.u.', tpe=float, definition='Minimum state of charge.')
-        self.register(key='min_soc', units='p.u.', tpe=float, definition='Maximum state of charge.')
-        self.register(key='soc_0', units='p.u.', tpe=float, definition='Initial state of charge.')
-        self.register(key='charge_efficiency', units='p.u.', tpe=float, definition='Charging efficiency.')
-        self.register(key='discharge_efficiency', units='p.u.', tpe=float, definition='Discharge efficiency.')
-        self.register(key='discharge_per_cycle', units='p.u.', tpe=float, definition='')
 
     def __iadd__(self, other: "Battery"):
         """
@@ -140,3 +166,138 @@ class Battery(Generator):
         """
         super().__iadd__(other)
         self.Enom += other.Enom
+
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def Enom(self) -> float:
+        """
+        Get ``Enom``.
+
+        :return: float
+        """
+        return self._Enom
+
+    @Enom.setter
+    def Enom(self, val: float) -> None:
+        """
+        Set ``Enom``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Enom = float(val)
+
+    @property
+    def max_soc(self) -> float:
+        """
+        Get ``max_soc``.
+
+        :return: float
+        """
+        return self._max_soc
+
+    @max_soc.setter
+    def max_soc(self, val: float) -> None:
+        """
+        Set ``max_soc``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._max_soc = float(val)
+
+    @property
+    def min_soc(self) -> float:
+        """
+        Get ``min_soc``.
+
+        :return: float
+        """
+        return self._min_soc
+
+    @min_soc.setter
+    def min_soc(self, val: float) -> None:
+        """
+        Set ``min_soc``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._min_soc = float(val)
+
+    @property
+    def soc_0(self) -> float:
+        """
+        Get ``soc_0``.
+
+        :return: float
+        """
+        return self._soc_0
+
+    @soc_0.setter
+    def soc_0(self, val: float) -> None:
+        """
+        Set ``soc_0``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._soc_0 = float(val)
+
+    @property
+    def charge_efficiency(self) -> float:
+        """
+        Get ``charge_efficiency``.
+
+        :return: float
+        """
+        return self._charge_efficiency
+
+    @charge_efficiency.setter
+    def charge_efficiency(self, val: float) -> None:
+        """
+        Set ``charge_efficiency``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._charge_efficiency = float(val)
+
+    @property
+    def discharge_efficiency(self) -> float:
+        """
+        Get ``discharge_efficiency``.
+
+        :return: float
+        """
+        return self._discharge_efficiency
+
+    @discharge_efficiency.setter
+    def discharge_efficiency(self, val: float) -> None:
+        """
+        Set ``discharge_efficiency``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._discharge_efficiency = float(val)
+
+    @property
+    def discharge_per_cycle(self) -> float:
+        """
+        Get ``discharge_per_cycle``.
+
+        :return: float
+        """
+        return self._discharge_per_cycle
+
+    @discharge_per_cycle.setter
+    def discharge_per_cycle(self, val: float) -> None:
+        """
+        Set ``discharge_per_cycle``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._discharge_per_cycle = float(val)

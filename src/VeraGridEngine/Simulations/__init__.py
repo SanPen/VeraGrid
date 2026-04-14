@@ -1,10 +1,10 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
+# This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
 from VeraGridEngine.Simulations.ContinuationPowerFlow import *
-from VeraGridEngine.Simulations.Dynamics import *
 from VeraGridEngine.Simulations.Stochastic import *
 from VeraGridEngine.Simulations.PowerFlow import *
 from VeraGridEngine.Simulations.ShortCircuitStudies import *
@@ -24,7 +24,9 @@ from VeraGridEngine.Simulations.NodalCapacity import *
 from VeraGridEngine.Simulations.Reliability import *
 from VeraGridEngine.Simulations.AI import *
 from VeraGridEngine.Simulations.Rms import *
-from VeraGridEngine.Simulations.SmallSignalStability import *
+from VeraGridEngine.Simulations.EMT import *
+from VeraGridEngine.Simulations.SmallSignalStabilityRms import *
+from VeraGridEngine.Simulations.SmallSignalStabilityEmt import *
 from VeraGridEngine.Simulations.driver_template import DriverToSave
 from VeraGridEngine.Simulations.results_template import ResultsTemplate
 

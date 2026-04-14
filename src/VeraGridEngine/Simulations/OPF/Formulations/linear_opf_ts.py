@@ -17,7 +17,7 @@ from scipy.sparse import csc_matrix
 from VeraGridEngine.IO.file_system import opf_file_path
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Devices.Aggregation.inter_aggregation_info import InterAggregationInfo
-from VeraGridEngine.Devices.Aggregation.contingency_group import ContingencyGroup
+from VeraGridEngine.Devices.Events.contingency_group import ContingencyGroup
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 from VeraGridEngine.DataStructures.generator_data import GeneratorData
@@ -758,14 +758,10 @@ def add_linear_simple_generation_formulation(local_t: Union[int, None],
     :param gen_data_t: GeneratorData structure
     :param gen_vars: GenerationVars structure
     :param prob: LpModel
-    :param unit_commitment: formulate unit commitment?
     :param ramp_constraints: formulate ramp constraints?
     :param consider_time_up_down: consider time up/down?
     :param area_spinning_reserve: area spinning reserve?
     :param skip_generation_limits: skip the generation limits?
-    :param vd: slack indices
-    :param nodal_capacity_active: nodal capacity active?
-    :param generation_expansion_planning: generation expansion plan?
     :param use_glsk_as_cost: if true, the GLSK values are used instead of the traditional costs
     :param logger: Logger object
     :return objective function
@@ -1274,14 +1270,10 @@ def add_linear_generation_unit_commitment_formulation(
     :param gen_data_t: GeneratorData structure
     :param gen_vars: GenerationVars structure
     :param prob: LpModel
-    :param unit_commitment: formulate unit commitment?
     :param ramp_constraints: formulate ramp constraints?
     :param consider_time_up_down: consider time up/down?
     :param area_spinning_reserve: area spinning reserve?
     :param skip_generation_limits: skip the generation limits?
-    :param vd: slack indices
-    :param nodal_capacity_active: nodal capacity active?
-    :param generation_expansion_planning: generation expansion plan?
     :param use_glsk_as_cost: if true, the GLSK values are used instead of the traditional costs
     :param logger: Logger object
     :return objective function
@@ -2154,8 +2146,14 @@ def add_linear_branches_contingencies_formulation(t_idx: int,
 
 def pmode3_formulation_impr(prob: LpModel,
                             elm_idx: int,
-                            t_idx: int, m: float, rate: float, P0: float,
-                            droop: float, theta_f: float, theta_t: float, base_name: str,
+                            t_idx: int,
+                            m: float,
+                            rate: float,
+                            P0: float,
+                            droop: float,
+                            theta_f: LpVar,
+                            theta_t: LpVar,
+                            base_name: str,
                             logger: Logger):
     """
     Formulation for HVDC link with three operating regions using big-M and binary variables.

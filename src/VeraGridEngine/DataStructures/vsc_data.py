@@ -42,6 +42,8 @@ class VscData(BranchParentData):
         self.control1_branch_idx: IntVec = np.full(nelm, -1, dtype=int)
         self.control2_branch_idx: IntVec = np.full(nelm, -1, dtype=int)
 
+        self.min_ac_voltage: Vec = np.full(self.nelm, 0.1, dtype=float)
+
     def slice(self, elm_idx: IntVec, bus_idx: IntVec, bus_map: IntVec, logger: Logger | None) -> "VscData":
         """
         Slice branch data by given indices
@@ -77,6 +79,8 @@ class VscData(BranchParentData):
         # TODO: think about how to re-map this stuff
         data.control1_branch_idx = self.control1_branch_idx[elm_idx]
         data.control2_branch_idx = self.control2_branch_idx[elm_idx]
+
+        data.min_ac_voltage = self.min_ac_voltage[elm_idx]
 
         for k in range(data.nelm):
             if data.control1_bus_idx[k] > -1:
@@ -123,6 +127,8 @@ class VscData(BranchParentData):
         data.control2_bus_idx = self.control2_bus_idx.copy()
         data.control1_branch_idx = self.control1_branch_idx.copy()
         data.control2_branch_idx = self.control2_branch_idx.copy()
+
+        data.min_ac_voltage = self.min_ac_voltage.copy()
 
         return data
 

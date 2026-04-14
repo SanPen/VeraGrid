@@ -13,6 +13,8 @@ from VeraGridEngine.Simulations.Clustering.clustering import kmeans_sampling
 
 
 class ClusteringDriver(DriverTemplate):
+    __slots__ = ("options",)
+
     name = 'Clustering analysis'
     tpe = SimulationTypes.ClusteringAnalysis_run
 

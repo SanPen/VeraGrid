@@ -8,8 +8,8 @@ from typing import TYPE_CHECKING
 import os
 import json
 from typing import List
-from VeraGridEngine.Devices.Aggregation.contingency import Contingency, ContingencyOperationTypes
-from VeraGridEngine.Devices.Aggregation.contingency_group import ContingencyGroup
+from VeraGridEngine.Devices.Events.contingency import Contingency, ContingencyOperationTypes
+from VeraGridEngine.Devices.Events.contingency_group import ContingencyGroup
 
 if TYPE_CHECKING:
     from VeraGridEngine.Devices.multi_circuit import MultiCircuit

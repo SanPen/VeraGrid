@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 import pandas as pd
+from pathlib import Path
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.IO.veragrid.pack_unpack import gather_model_as_data_frames, parse_veragrid_data
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
@@ -67,7 +68,7 @@ def open_h5(file_path, text_func=None, prog_func=None, logger: Logger = Logger()
 
     store.close()
 
-    circuit = parse_veragrid_data(dfs, logger=logger)
+    circuit = parse_veragrid_data(dfs, project_directory=Path(file_path).resolve().parent, logger=logger)
 
     return circuit
 

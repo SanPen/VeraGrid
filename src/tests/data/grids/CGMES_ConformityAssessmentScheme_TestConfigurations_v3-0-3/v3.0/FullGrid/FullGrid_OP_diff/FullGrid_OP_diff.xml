@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF  xmlns:cim="http://iec.ch/TC57/CIM100#" xmlns:dm="http://iec.ch/TC57/61970-552/DifferenceModel/1#" xmlns:eu="http://iec.ch/TC57/CIM100-European#" xmlns:md="http://iec.ch/TC57/61970-552/ModelDescription/1#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <dm:DifferenceModel rdf:about="urn:uuid:05edbf91-231f-4386-97c0-d4cb498d0afc">
+   <md:Model.created>2021-11-19T23:16:27Z</md:Model.created>
+    <md:Model.scenarioTime>2021-02-09T19:30:00Z</md:Model.scenarioTime>
+    <md:Model.description>CGMES Conformity Assessment Test Configuration. The Test Configuration is owned by ENTSO-E and is provided by ENTSO-E “as it is”. To the fullest extent permitted by law, ENTSO-E shall not be liable for any damages of any kind arising out of the use of the model (including any of its subsequent modifications). ENTSO-E neither warrants, nor represents that the use of the model will not infringe the rights of third parties. Any use of the model shall include a reference to ENTSO-E. ENTSO-E web site is the only official source of information related to the model.</md:Model.description>
+    <md:Model.modelingAuthoritySet>http://fullgrid.eu/CGMES/3.0</md:Model.modelingAuthoritySet>
+    <md:Model.profile>http://iec.ch/TC57/ns/CIM/Operation-EU/3.0</md:Model.profile>
+    <md:Model.version>001</md:Model.version>
+    <md:Model.DependentOn rdf:resource="urn:uuid:0cd6ada4-b6dc-4a36-a98c-877a39168cd3" />
+    <md:Model.Supersedes rdf:resource="urn:uuid:52a409c9-72d8-4b5f-bf72-9a22ec9353f7" />
+      <dm:reverseDifferences rdf:parseType="Statements">
+         <rdf:Description rdf:about="#_87478acb-cd1f-40a6-b4a7-59ec99f8b063">
+            <cim:IdentifiedObject.description>SET_PNT_1</cim:IdentifiedObject.description>
+         </rdf:Description>
+         <rdf:Description rdf:about="#_fc908c16-468f-4a64-ba74-6f57175e0005">
+            <cim:AnalogLimit.value>99</cim:AnalogLimit.value>
+         </rdf:Description>
+      </dm:reverseDifferences>
+      <dm:forwardDifferences rdf:parseType="Statements">
+         <rdf:Description rdf:about="#_87478acb-cd1f-40a6-b4a7-59ec99f8b063">
+            <cim:IdentifiedObject.description>SET_PNT_1 test</cim:IdentifiedObject.description>
+         </rdf:Description>
+         <rdf:Description rdf:about="#_fc908c16-468f-4a64-ba74-6f57175e0005">
+            <cim:AnalogLimit.value>100</cim:AnalogLimit.value>
+         </rdf:Description>
+      </dm:forwardDifferences>
+   </dm:DifferenceModel>
+</rdf:RDF>

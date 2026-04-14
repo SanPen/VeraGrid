@@ -36,10 +36,10 @@ class CgmesDataValidator:
                         "description"]
         # populate graph with header
         for model in full_model_list:
-            obj_dict = model.__dict__
             obj_id = rdflib.URIRef("urn:uuid:" + model.rdfid)
-            if obj_dict.get("profile") in profile:
-                for attr_name, attr_value in obj_dict.items():
+            if getattr(model, "profile", None) in profile:
+                for attr_name in filter_props:
+                    attr_value = getattr(model, attr_name, None)
                     if attr_name not in filter_props:
                         continue
                     if attr_value is None:
@@ -121,10 +121,10 @@ class CgmesDataValidator:
             objects = self.cgmes_circuit.get_objects_list(elm_type=class_name)
 
             for obj in objects:
-                obj_dict = obj.__dict__
                 obj_id = rdflib.URIRef("_" + obj.rdfid)
 
-                for attr_name, attr_value in obj_dict.items():
+                for attr_name in obj.get_declared_property_names():
+                    attr_value = obj.get_declared_property_value(prop_name=attr_name)
                     if attr_value is None:
                         continue
 

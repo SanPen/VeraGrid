@@ -29,6 +29,17 @@ class AvailableTransferCapacityTimeSeriesResults(ResultsTemplate):
     """
     AvailableTransferCapacityTimeSeriesResults
     """
+    __slots__ = (
+        "branch_names",
+        "bus_names",
+        "rates",
+        "contingency_rates",
+        "base_exchange",
+        "raw_report",
+        "report",
+        "report_headers",
+        "report_indices",
+    )
 
     def __init__(self, br_names: StrVec, bus_names: StrVec, rates: Mat, contingency_rates: Mat, time_array: DateVec,
                  clustering_results: Union[ClusteringResults, None] = None):
@@ -194,6 +205,8 @@ class AvailableTransferCapacityTimeSeriesResults(ResultsTemplate):
 
 
 class AvailableTransferCapacityTimeSeriesDriver(TimeSeriesDriverTemplate):
+    __slots__ = ("options",)
+
     tpe = SimulationTypes.NetTransferCapacityTS_run
     name = tpe.value
 

@@ -81,6 +81,14 @@ class MatpowerCircuit:
                         elm.parse_row(data[i])
                         self.buses.append(elm)
 
+            elif key == "bus_name":
+                data = find_between(chunk, '{', '}').split(";")
+                # at this point all buses should be read
+                n = len(self.buses)
+                for i, name in enumerate(data):
+                    if i < n:
+                        self.buses[i].name = name.replace("\n", "").replace("\t", "").replace("'", "").strip()
+
             elif key == "areas":
                 data = txt2mat(find_between(chunk, '[', ']'), line_splitter=';')
 

@@ -1,0 +1,7 @@
+{
+  "name": "klu_cvxoptklu",
+  "solver_type": "KLU",
+  "module": "backend",
+  "class_name": "KluCvxoptProvider",
+  "version": "1.0"
+}

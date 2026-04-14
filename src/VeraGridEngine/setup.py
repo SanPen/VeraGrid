@@ -73,7 +73,7 @@ dependencies = ['setuptools>=41.0.1',
                 "h5py>=3.12.0",
                 "numba>=0.61",  # to compile routines natively
                 'pyproj',
-                'pulp',
+                'pulp>=3.3.0',
                 'pyarrow>=15',
                 "windpowerlib>=0.2.2",
                 "pvlib>=0.11",
@@ -82,6 +82,7 @@ dependencies = ['setuptools>=41.0.1',
                 "websockets",
                 "brotli",
                 "opencv-python>=4.10.0.84",
+                "fmpy>=0.3.22"
                 ]
 
 extras_require = {

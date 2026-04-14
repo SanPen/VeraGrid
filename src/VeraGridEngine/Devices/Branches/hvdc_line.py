@@ -12,8 +12,8 @@ from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import DeviceType, BuildStatus, SubObjectType
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 from VeraGridEngine.enumerations import HvdcControlType
-from VeraGridEngine.Devices.profile import Profile
-from VeraGridEngine.Devices.Parents.editable_device import get_at
+from VeraGridEngine.Devices.Profiles import ProfileBool, ProfileFloat
+from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 from VeraGridEngine.Devices.Branches.line_locations import LineLocations
 
 
@@ -126,20 +126,20 @@ class HvdcLine(BranchParent):
     """
     __slots__ = (
         '_length',
-        'dispatchable',
-        'Pset',
-        'r',
-        'dc_link_voltage',
-        'angle_droop',
+        '_dispatchable',
+        '_Pset',
+        '_r',
+        '_dc_link_voltage',
+        '_angle_droop',
         'loss_factor',
         'mttf',
         'mttr',
-        'Vset_f',
-        'Vset_t',
-        'min_firing_angle_f',
-        'max_firing_angle_f',
-        'min_firing_angle_t',
-        'max_firing_angle_t',
+        '_Vset_f',
+        '_Vset_t',
+        '_min_firing_angle_f',
+        '_max_firing_angle_f',
+        '_min_firing_angle_t',
+        '_max_firing_angle_t',
         'capex',
         'opex',
         'build_status',
@@ -150,6 +150,31 @@ class HvdcLine(BranchParent):
         '_Vset_t_prof',
         '_angle_droop_prof',
         '_locations',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='dispatchable', units='', tpe=bool, definition='Is the line power optimizable?'),
+        GCProp(key='control_mode', units='-', tpe=HvdcControlType, definition='Control type.'),
+        GCProp(key='Pset', units='MW', tpe=float, definition='Set power flow.', profile_name='Pset_prof'),
+        GCProp(key='r', units='Ohm', tpe=float, definition='line resistance.'),
+        GCProp(key='dc_link_voltage', units='kV', tpe=float,
+                      definition='line voltage (only for compatibility, not used in calcs.)'),
+        GCProp(key='angle_droop', units='MW/deg', tpe=float, definition='Power/angle rate control',
+                      profile_name='angle_droop_prof'),
+        GCProp(key='Vset_f', units='p.u.', tpe=float, definition='Set voltage at the from side',
+                      profile_name='Vset_f_prof'),
+        GCProp(key='Vset_t', units='p.u.', tpe=float, definition='Set voltage at the to side',
+                      profile_name='Vset_t_prof'),
+        GCProp(key='min_firing_angle_f', units='rad', tpe=float,
+                      definition='minimum firing angle at the "from" side.'),
+        GCProp(key='max_firing_angle_f', units='rad', tpe=float,
+                      definition='maximum firing angle at the "from" side.'),
+        GCProp(key='min_firing_angle_t', units='rad', tpe=float,
+                      definition='minimum firing angle at the "to" side.'),
+        GCProp(key='max_firing_angle_t', units='rad', tpe=float,
+                      definition='maximum firing angle at the "to" side.'),
+        GCProp(key='length', units='km', tpe=float, definition='Length of the branch (not used for calculation)'),
+        GCProp(key='locations', units='', tpe=SubObjectType.LineLocations, definition='', editable=False),
     )
 
     def __init__(self,
@@ -270,48 +295,17 @@ class HvdcLine(BranchParent):
 
         self.control_mode: HvdcControlType = control_mode
 
-        self._Pset_prof: Profile = Profile(default_value=Pset, data_type=float)
-        self._active_prof: Profile = Profile(default_value=active, data_type=bool)
-        self._Vset_f_prof: Profile = Profile(default_value=Vset_f, data_type=float)
-        self._Vset_t_prof: Profile = Profile(default_value=Vset_t, data_type=float)
-        self._angle_droop_prof: Profile = Profile(default_value=angle_droop, data_type=float)
+        self._Pset_prof: ProfileFloat = ProfileFloat(default_value=Pset)
+        self._active_prof: ProfileBool = ProfileBool(default_value=active)
+        self._Vset_f_prof: ProfileFloat = ProfileFloat(default_value=Vset_f)
+        self._Vset_t_prof: ProfileFloat = ProfileFloat(default_value=Vset_t)
+        self._angle_droop_prof: ProfileFloat = ProfileFloat(default_value=angle_droop)
 
         # Line locations
         self._locations: LineLocations = LineLocations()
 
-        self.register(key='dispatchable', units='', tpe=bool, definition='Is the line power optimizable?')
-
-        self.register(key='control_mode', units='-', tpe=HvdcControlType, definition='Control type.')
-        self.register(key='Pset', units='MW', tpe=float, definition='Set power flow.', profile_name='Pset_prof')
-        self.register(key='r', units='Ohm', tpe=float, definition='line resistance.')
-        self.register(key='dc_link_voltage', units='kV', tpe=float,
-                      definition='line voltage (only for compatibility, not used in calcs.)')
-
-        self.register(key='angle_droop', units='MW/deg', tpe=float, definition='Power/angle rate control',
-                      profile_name='angle_droop_prof')
-
-        self.register(key='Vset_f', units='p.u.', tpe=float, definition='Set voltage at the from side',
-                      profile_name='Vset_f_prof')
-        self.register(key='Vset_t', units='p.u.', tpe=float, definition='Set voltage at the to side',
-                      profile_name='Vset_t_prof')
-
-        self.register(key='min_firing_angle_f', units='rad', tpe=float,
-                      definition='minimum firing angle at the "from" side.')
-        self.register(key='max_firing_angle_f', units='rad', tpe=float,
-                      definition='maximum firing angle at the "from" side.')
-        self.register(key='min_firing_angle_t', units='rad', tpe=float,
-                      definition='minimum firing angle at the "to" side.')
-        self.register(key='max_firing_angle_t', units='rad', tpe=float,
-                      definition='maximum firing angle at the "to" side.')
-
-        self.register(key='length', units='km', tpe=float, definition='Length of the branch (not used for calculation)')
-
-        self.register(key='locations', units='', tpe=SubObjectType.LineLocations, definition='', editable=False)
-
-        self.registered_properties['Cost'].old_names.append('overload_cost')
-
     @property
-    def active_prof(self) -> Profile:
+    def active_prof(self) -> ProfileBool:
         """
         Cost profile
         :return: Profile
@@ -319,8 +313,8 @@ class HvdcLine(BranchParent):
         return self._active_prof
 
     @active_prof.setter
-    def active_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def active_prof(self, val: Union[ProfileBool, np.ndarray]):
+        if isinstance(val, ProfileBool):
             self._active_prof = val
         elif isinstance(val, np.ndarray):
             self._active_prof.set(arr=val)
@@ -335,7 +329,7 @@ class HvdcLine(BranchParent):
         return get_at(self.active, self.active_prof, t)
 
     @property
-    def rate_prof(self) -> Profile:
+    def rate_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -343,8 +337,8 @@ class HvdcLine(BranchParent):
         return self._rate_prof
 
     @rate_prof.setter
-    def rate_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def rate_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._rate_prof = val
         elif isinstance(val, np.ndarray):
             self._rate_prof.set(arr=val)
@@ -359,7 +353,7 @@ class HvdcLine(BranchParent):
         return get_at(self.rate, self.rate_prof, t)
 
     @property
-    def contingency_factor_prof(self) -> Profile:
+    def contingency_factor_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -367,8 +361,8 @@ class HvdcLine(BranchParent):
         return self._contingency_factor_prof
 
     @contingency_factor_prof.setter
-    def contingency_factor_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def contingency_factor_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._contingency_factor_prof = val
         elif isinstance(val, np.ndarray):
             self._contingency_factor_prof.set(arr=val)
@@ -383,7 +377,7 @@ class HvdcLine(BranchParent):
         return get_at(self.contingency_factor, self.contingency_factor_prof, t)
 
     @property
-    def Cost_prof(self) -> Profile:
+    def Cost_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -391,8 +385,8 @@ class HvdcLine(BranchParent):
         return self._Cost_prof
 
     @Cost_prof.setter
-    def Cost_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Cost_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Cost_prof = val
         elif isinstance(val, np.ndarray):
             self._Cost_prof.set(arr=val)
@@ -407,7 +401,7 @@ class HvdcLine(BranchParent):
         return get_at(self.Cost, self.Cost_prof, t)
 
     @property
-    def Pset_prof(self) -> Profile:
+    def Pset_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -415,8 +409,8 @@ class HvdcLine(BranchParent):
         return self._Pset_prof
 
     @Pset_prof.setter
-    def Pset_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Pset_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Pset_prof = val
         elif isinstance(val, np.ndarray):
             self._Pset_prof.set(arr=val)
@@ -431,7 +425,7 @@ class HvdcLine(BranchParent):
         return get_at(self.Pset, self.Pset_prof, t)
 
     @property
-    def angle_droop_prof(self) -> Profile:
+    def angle_droop_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -439,8 +433,8 @@ class HvdcLine(BranchParent):
         return self._angle_droop_prof
 
     @angle_droop_prof.setter
-    def angle_droop_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def angle_droop_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._angle_droop_prof = val
         elif isinstance(val, np.ndarray):
             self._angle_droop_prof.set(arr=val)
@@ -455,7 +449,7 @@ class HvdcLine(BranchParent):
         return get_at(self.angle_droop, self.angle_droop_prof, t)
 
     @property
-    def Vset_f_prof(self) -> Profile:
+    def Vset_f_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -463,8 +457,8 @@ class HvdcLine(BranchParent):
         return self._Vset_f_prof
 
     @Vset_f_prof.setter
-    def Vset_f_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Vset_f_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Vset_f_prof = val
         elif isinstance(val, np.ndarray):
             self._Vset_f_prof.set(arr=val)
@@ -479,7 +473,7 @@ class HvdcLine(BranchParent):
         return get_at(self.Vset_f, self.Vset_f_prof, t)
 
     @property
-    def Vset_t_prof(self) -> Profile:
+    def Vset_t_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -487,8 +481,8 @@ class HvdcLine(BranchParent):
         return self._Vset_t_prof
 
     @Vset_t_prof.setter
-    def Vset_t_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Vset_t_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Vset_t_prof = val
         elif isinstance(val, np.ndarray):
             self._Vset_t_prof.set(arr=val)
@@ -529,6 +523,7 @@ class HvdcLine(BranchParent):
 
     @length.setter
     def length(self, val: float):
+        val = float(val)
         if isinstance(val, float):
             if val > 0.0:
 
@@ -669,3 +664,214 @@ class HvdcLine(BranchParent):
         Qmin_t, Qmax_t = firing_angles_to_reactive_limits(P, self.min_firing_angle_t, self.max_firing_angle_t)
 
         return Qmin_f, Qmax_f, Qmin_t, Qmax_t
+
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def dispatchable(self) -> bool:
+        """
+        Get ``dispatchable``.
+
+        :return: bool
+        """
+        return self._dispatchable
+
+    @dispatchable.setter
+    def dispatchable(self, val: bool) -> None:
+        """
+        Set ``dispatchable``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._dispatchable = bool(val)
+
+    @property
+    def Pset(self) -> float:
+        """
+        Get ``Pset``.
+
+        :return: float
+        """
+        return self._Pset
+
+    @Pset.setter
+    def Pset(self, val: float) -> None:
+        """
+        Set ``Pset``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Pset = float(val)
+
+    @property
+    def r(self) -> float:
+        """
+        Get ``r``.
+
+        :return: float
+        """
+        return self._r
+
+    @r.setter
+    def r(self, val: float) -> None:
+        """
+        Set ``r``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._r = float(val)
+
+    @property
+    def dc_link_voltage(self) -> float:
+        """
+        Get ``dc_link_voltage``.
+
+        :return: float
+        """
+        return self._dc_link_voltage
+
+    @dc_link_voltage.setter
+    def dc_link_voltage(self, val: float) -> None:
+        """
+        Set ``dc_link_voltage``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._dc_link_voltage = float(val)
+
+    @property
+    def angle_droop(self) -> float:
+        """
+        Get ``angle_droop``.
+
+        :return: float
+        """
+        return self._angle_droop
+
+    @angle_droop.setter
+    def angle_droop(self, val: float) -> None:
+        """
+        Set ``angle_droop``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._angle_droop = float(val)
+
+    @property
+    def Vset_f(self) -> float:
+        """
+        Get ``Vset_f``.
+
+        :return: float
+        """
+        return self._Vset_f
+
+    @Vset_f.setter
+    def Vset_f(self, val: float) -> None:
+        """
+        Set ``Vset_f``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Vset_f = float(val)
+
+    @property
+    def Vset_t(self) -> float:
+        """
+        Get ``Vset_t``.
+
+        :return: float
+        """
+        return self._Vset_t
+
+    @Vset_t.setter
+    def Vset_t(self, val: float) -> None:
+        """
+        Set ``Vset_t``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Vset_t = float(val)
+
+    @property
+    def min_firing_angle_f(self) -> float:
+        """
+        Get ``min_firing_angle_f``.
+
+        :return: float
+        """
+        return self._min_firing_angle_f
+
+    @min_firing_angle_f.setter
+    def min_firing_angle_f(self, val: float) -> None:
+        """
+        Set ``min_firing_angle_f``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._min_firing_angle_f = float(val)
+
+    @property
+    def max_firing_angle_f(self) -> float:
+        """
+        Get ``max_firing_angle_f``.
+
+        :return: float
+        """
+        return self._max_firing_angle_f
+
+    @max_firing_angle_f.setter
+    def max_firing_angle_f(self, val: float) -> None:
+        """
+        Set ``max_firing_angle_f``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._max_firing_angle_f = float(val)
+
+    @property
+    def min_firing_angle_t(self) -> float:
+        """
+        Get ``min_firing_angle_t``.
+
+        :return: float
+        """
+        return self._min_firing_angle_t
+
+    @min_firing_angle_t.setter
+    def min_firing_angle_t(self, val: float) -> None:
+        """
+        Set ``min_firing_angle_t``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._min_firing_angle_t = float(val)
+
+    @property
+    def max_firing_angle_t(self) -> float:
+        """
+        Get ``max_firing_angle_t``.
+
+        :return: float
+        """
+        return self._max_firing_angle_t
+
+    @max_firing_angle_t.setter
+    def max_firing_angle_t(self, val: float) -> None:
+        """
+        Set ``max_firing_angle_t``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._max_firing_angle_t = float(val)

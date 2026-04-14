@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns:cim="http://iec.ch/TC57/CIM100#" xmlns:md="http://iec.ch/TC57/61970-552/ModelDescription/1#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:eu="http://iec.ch/TC57/CIM100-European#">
+  <md:FullModel rdf:about="urn:uuid:2399cbd0-9a39-11e0-aa80-0800200c9a66">
+    <md:Model.scenarioTime>2020-12-04T20:00:00Z</md:Model.scenarioTime>
+    <md:Model.created>2020-12-04T20:00:29Z</md:Model.created>
+    <md:Model.description>CGMES Conformity Assessment Test Configuration. The Test Configuration is owned by ENTSO-E and is provided by ENTSO-E “as it is”. To the fullest extent permitted by law, ENTSO-E shall not be liable for any damages of any kind arising out of the use of the model (including any of its subsequent modifications). ENTSO-E neither warrants, nor represents that the use of the model will not infringe the rights of third parties. Any use of the model shall include a reference to ENTSO-E. ENTSO-E web site is the only official source of information related to the model.</md:Model.description>
+    <md:Model.version>4</md:Model.version>
+    <md:Model.profile>http://iec.ch/TC57/ns/CIM/EquipmentBoundary-EU/3.0</md:Model.profile>
+    <md:Model.modelingAuthoritySet>http://EU/Planning/ENTSOE/2</md:Model.modelingAuthoritySet>
+  </md:FullModel>
+  <cim:BaseVoltage rdf:ID="_af264e1c-ab1f-4f3b-88c4-ab019b9abf07">
+    <cim:IdentifiedObject.description>BV 132 kV</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.name>BV_132</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>BV132</eu:IdentifiedObject.shortName>
+    <cim:BaseVoltage.nominalVoltage>132</cim:BaseVoltage.nominalVoltage>
+    <cim:IdentifiedObject.mRID>af264e1c-ab1f-4f3b-88c4-ab019b9abf07</cim:IdentifiedObject.mRID>
+  </cim:BaseVoltage>
+  <cim:BaseVoltage rdf:ID="_e557cd71-6e24-4daf-9abe-cb188e8f98be">
+    <cim:IdentifiedObject.description>BV 220 kV</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.name>BV_220</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>BV220</eu:IdentifiedObject.shortName>
+    <cim:BaseVoltage.nominalVoltage>220</cim:BaseVoltage.nominalVoltage>
+    <cim:IdentifiedObject.mRID>e557cd71-6e24-4daf-9abe-cb188e8f98be</cim:IdentifiedObject.mRID>
+  </cim:BaseVoltage>
+  <cim:ConnectivityNode rdf:ID="_49831d24-33e9-4233-8424-3f88186a924e">
+    <cim:ConnectivityNode.ConnectivityNodeContainer rdf:resource="#_c3f46fe5-0cd1-4a1c-b722-e967b9ab21e2" />
+    <cim:IdentifiedObject.description>OHL_and_CAB 132 kV</cim:IdentifiedObject.description>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-DK-SE-00001D</eu:IdentifiedObject.energyIdentCodeEic>
+    <cim:IdentifiedObject.name>XMO_TE31</cim:IdentifiedObject.name>
+    <cim:IdentifiedObject.mRID>49831d24-33e9-4233-8424-3f88186a924e</cim:IdentifiedObject.mRID>
+  </cim:ConnectivityNode>
+  <eu:BoundaryPoint rdf:ID="_1fe8c999-a939-5d43-b857-02dd312f2dea">
+    <cim:IdentifiedObject.name>XMO_TE31</cim:IdentifiedObject.name>
+    <cim:IdentifiedObject.description>OHL_and_CAB 132 kV</cim:IdentifiedObject.description>
+    <eu:IdentifiedObject.shortName>XMO_TE31</eu:IdentifiedObject.shortName>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-DK-SE-00001D</eu:IdentifiedObject.energyIdentCodeEic>
+    <eu:BoundaryPoint.fromEndIsoCode>DK</eu:BoundaryPoint.fromEndIsoCode>
+    <eu:BoundaryPoint.fromEndName>Teglstrupgård</eu:BoundaryPoint.fromEndName>
+    <eu:BoundaryPoint.fromEndNameTso>Energinet.dk</eu:BoundaryPoint.fromEndNameTso>
+    <eu:BoundaryPoint.toEndIsoCode>SE</eu:BoundaryPoint.toEndIsoCode>
+    <eu:BoundaryPoint.toEndName>Mörarp</eu:BoundaryPoint.toEndName>
+    <eu:BoundaryPoint.toEndNameTso>Svenska Kraftnät</eu:BoundaryPoint.toEndNameTso>
+    <eu:BoundaryPoint.ConnectivityNode rdf:resource="#_49831d24-33e9-4233-8424-3f88186a924e" />
+    <cim:IdentifiedObject.mRID>1fe8c999-a939-5d43-b857-02dd312f2dea</cim:IdentifiedObject.mRID>
+  </eu:BoundaryPoint>
+  <cim:ConnectivityNode rdf:ID="_8a5a6e86-55e4-476b-a3bd-7832e6168569">
+    <cim:ConnectivityNode.ConnectivityNodeContainer rdf:resource="#_0b5bf2ef-a008-4b9a-9fe9-3c528c8bec50" />
+    <cim:IdentifiedObject.description>OHL_and_CAB 132 kV</cim:IdentifiedObject.description>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-DK-SE-00001D</eu:IdentifiedObject.energyIdentCodeEic>
+    <cim:IdentifiedObject.name>XMO_TE32</cim:IdentifiedObject.name>
+    <cim:IdentifiedObject.mRID>8a5a6e86-55e4-476b-a3bd-7832e6168569</cim:IdentifiedObject.mRID>
+  </cim:ConnectivityNode>
+  <eu:BoundaryPoint rdf:ID="_2fe8c999-a939-5d43-b857-02dd312f2dea">
+    <cim:IdentifiedObject.name>XMO_TE32</cim:IdentifiedObject.name>
+    <cim:IdentifiedObject.description>OHL_and_CAB 132 kV</cim:IdentifiedObject.description>
+    <eu:IdentifiedObject.shortName>XMO_TE32</eu:IdentifiedObject.shortName>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-DK-SE-00001D</eu:IdentifiedObject.energyIdentCodeEic>
+    <eu:BoundaryPoint.fromEndIsoCode>DK</eu:BoundaryPoint.fromEndIsoCode>
+    <eu:BoundaryPoint.fromEndName>Teglstrupgård</eu:BoundaryPoint.fromEndName>
+    <eu:BoundaryPoint.fromEndNameTso>Energinet.dk</eu:BoundaryPoint.fromEndNameTso>
+    <eu:BoundaryPoint.toEndIsoCode>SE</eu:BoundaryPoint.toEndIsoCode>
+    <eu:BoundaryPoint.toEndName>Mörarp</eu:BoundaryPoint.toEndName>
+    <eu:BoundaryPoint.toEndNameTso>Svenska Kraftnät</eu:BoundaryPoint.toEndNameTso>
+    <eu:BoundaryPoint.ConnectivityNode rdf:resource="#_8a5a6e86-55e4-476b-a3bd-7832e6168569" />
+    <cim:IdentifiedObject.mRID>2fe8c999-a939-5d43-b857-02dd312f2dea</cim:IdentifiedObject.mRID>
+  </eu:BoundaryPoint>
+  <cim:ConnectivityNode rdf:ID="_183d126d-2522-4ff2-a8cd-c5016cf09c1b">
+    <cim:ConnectivityNode.ConnectivityNodeContainer rdf:resource="#_41d4fafe-e4ce-4ca3-86d9-f181ae3f8ea3" />
+    <cim:IdentifiedObject.description>OHL 220 kV</cim:IdentifiedObject.description>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-AT-DE-00001A</eu:IdentifiedObject.energyIdentCodeEic>
+    <cim:IdentifiedObject.name>XWE_BR21</cim:IdentifiedObject.name>
+    <cim:IdentifiedObject.mRID>183d126d-2522-4ff2-a8cd-c5016cf09c1b</cim:IdentifiedObject.mRID>
+  </cim:ConnectivityNode>
+  <eu:BoundaryPoint rdf:ID="_3fe8c999-a939-5d43-b857-02dd312f2dea">
+    <cim:IdentifiedObject.name>XWE_BR21</cim:IdentifiedObject.name>
+    <cim:IdentifiedObject.description>OHL 220 kV</cim:IdentifiedObject.description>
+    <eu:IdentifiedObject.shortName>XWE_BR21</eu:IdentifiedObject.shortName>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-AT-DE-00001A</eu:IdentifiedObject.energyIdentCodeEic>
+    <eu:BoundaryPoint.fromEndIsoCode>AT</eu:BoundaryPoint.fromEndIsoCode>
+    <eu:BoundaryPoint.fromEndName>Westtirol</eu:BoundaryPoint.fromEndName>
+    <eu:BoundaryPoint.fromEndNameTso>TIWAG</eu:BoundaryPoint.fromEndNameTso>
+    <eu:BoundaryPoint.toEndIsoCode>DE</eu:BoundaryPoint.toEndIsoCode>
+    <eu:BoundaryPoint.toEndName>Bürs</eu:BoundaryPoint.toEndName>
+    <eu:BoundaryPoint.toEndNameTso>DE</eu:BoundaryPoint.toEndNameTso>
+    <eu:BoundaryPoint.ConnectivityNode rdf:resource="#_183d126d-2522-4ff2-a8cd-c5016cf09c1b" />
+    <cim:IdentifiedObject.mRID>3fe8c999-a939-5d43-b857-02dd312f2dea</cim:IdentifiedObject.mRID>
+  </eu:BoundaryPoint>
+  <cim:GeographicalRegion rdf:ID="_4cb71c9a-6201-42ac-90ab-97baf95c107b">
+    <cim:IdentifiedObject.description>Geographical Region of EU</cim:IdentifiedObject.description>
+    <eu:IdentifiedObject.energyIdentCodeEic>10Y-CB-EU-00001E</eu:IdentifiedObject.energyIdentCodeEic>
+    <cim:IdentifiedObject.name>EU</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>EU</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.mRID>4cb71c9a-6201-42ac-90ab-97baf95c107b</cim:IdentifiedObject.mRID>
+  </cim:GeographicalRegion>
+  <cim:Line rdf:ID="_c3f46fe5-0cd1-4a1c-b722-e967b9ab21e2">
+    <cim:IdentifiedObject.name>TieLine_XMO_TE31</cim:IdentifiedObject.name>
+    <cim:Line.Region rdf:resource="#_fc57c438-f814-4bf0-9030-790d68ed1694" />
+    <cim:IdentifiedObject.description>1</cim:IdentifiedObject.description>
+    <eu:IdentifiedObject.shortName>l1</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.mRID>c3f46fe5-0cd1-4a1c-b722-e967b9ab21e2</cim:IdentifiedObject.mRID>
+  </cim:Line>
+  <cim:Line rdf:ID="_0b5bf2ef-a008-4b9a-9fe9-3c528c8bec50">
+    <cim:IdentifiedObject.name>TieLine_XMO_TE32</cim:IdentifiedObject.name>
+    <cim:Line.Region rdf:resource="#_fc57c438-f814-4bf0-9030-790d68ed1694" />
+    <cim:IdentifiedObject.description>2</cim:IdentifiedObject.description>
+    <eu:IdentifiedObject.shortName>l2</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.mRID>0b5bf2ef-a008-4b9a-9fe9-3c528c8bec50</cim:IdentifiedObject.mRID>
+  </cim:Line>
+  <cim:Line rdf:ID="_41d4fafe-e4ce-4ca3-86d9-f181ae3f8ea3">
+    <cim:IdentifiedObject.name>TieLine_XWE_BR21</cim:IdentifiedObject.name>
+    <cim:Line.Region rdf:resource="#_fc57c438-f814-4bf0-9030-790d68ed1694" />
+    <cim:IdentifiedObject.description>3</cim:IdentifiedObject.description>
+    <eu:IdentifiedObject.shortName>l3</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.mRID>41d4fafe-e4ce-4ca3-86d9-f181ae3f8ea3</cim:IdentifiedObject.mRID>
+  </cim:Line>
+  <cim:SubGeographicalRegion rdf:ID="_fc57c438-f814-4bf0-9030-790d68ed1694">
+    <cim:IdentifiedObject.description>SubGeographical Region of ENTSO-E</cim:IdentifiedObject.description>
+    <eu:IdentifiedObject.energyIdentCodeEic>10Y-CB-ENTSO-001</eu:IdentifiedObject.energyIdentCodeEic>
+    <cim:IdentifiedObject.name>ENTSO-E</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>ENTSO-E</eu:IdentifiedObject.shortName>
+    <cim:SubGeographicalRegion.Region rdf:resource="#_4cb71c9a-6201-42ac-90ab-97baf95c107b" />
+    <cim:IdentifiedObject.mRID>fc57c438-f814-4bf0-9030-790d68ed1694</cim:IdentifiedObject.mRID>
+  </cim:SubGeographicalRegion>
+  <cim:EnergySchedulingType rdf:ID="_57a34c10-edc9-db4c-c4fb-fc06367285f8">
+    <cim:IdentifiedObject.description>Biomass Energy Scheduling Type</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.name>Biomass</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>Bio</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.mRID>57a34c10-edc9-db4c-c4fb-fc06367285f8</cim:IdentifiedObject.mRID>
+  </cim:EnergySchedulingType>
+  <cim:EnergySchedulingType rdf:ID="_eb480ce2-3925-ce20-3bf6-b26e95c47b3f">
+    <cim:IdentifiedObject.description>Co-generation Energy Scheduling Type</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.name>Co-generation</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>Cog</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.mRID>eb480ce2-3925-ce20-3bf6-b26e95c47b3f</cim:IdentifiedObject.mRID>
+  </cim:EnergySchedulingType>
+  <cim:EnergySchedulingType rdf:ID="_3f3f7dda-a26a-792f-9707-f4de5f077cf3">
+    <cim:IdentifiedObject.description>Geothermal Energy Scheduling Type</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.name>Geothermal</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>Geo</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.mRID>3f3f7dda-a26a-792f-9707-f4de5f077cf3</cim:IdentifiedObject.mRID>
+  </cim:EnergySchedulingType>
+  <cim:EnergySchedulingType rdf:ID="_801a6158-3a73-f5c3-e28d-34771df22617">
+    <cim:IdentifiedObject.description>Marine Energy Scheduling Type</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.name>Marine</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>Mar</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.mRID>801a6158-3a73-f5c3-e28d-34771df22617</cim:IdentifiedObject.mRID>
+  </cim:EnergySchedulingType>
+  <cim:EnergySchedulingType rdf:ID="_3ebfc355-3ecf-cb3d-76a4-0da84083c240">
+    <cim:IdentifiedObject.description>Other Renewable Energy Scheduling Type</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.name>OtherRenewable</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>Other</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.mRID>3ebfc355-3ecf-cb3d-76a4-0da84083c240</cim:IdentifiedObject.mRID>
+  </cim:EnergySchedulingType>
+  <cim:EnergySchedulingType rdf:ID="_977fe39d-1cc1-3e3e-5e6a-bec301be214d">
+    <cim:IdentifiedObject.description>Waste Energy Scheduling Type</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.name>Waste</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>Was</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.mRID>977fe39d-1cc1-3e3e-5e6a-bec301be214d</cim:IdentifiedObject.mRID>
+  </cim:EnergySchedulingType>
+</rdf:RDF>

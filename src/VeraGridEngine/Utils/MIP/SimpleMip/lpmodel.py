@@ -43,9 +43,26 @@ class LpModel:
     """
     SimpleMIP
     """
+    __slots__ = (
+        "solver_type",
+        "objective",
+        "constraints",
+        "variables",
+        "relaxed_slacks",
+        "originally_infeasible",
+        "_is_minimize",
+        "_is_mip",
+        "_col_value",
+        "_col_dual",
+        "_row_value",
+        "_row_dual",
+        "_objective_value",
+        "_is_optimal",
+        "logger",
+    )
+
     OPTIMAL = 100
     INFINITY = 1e20
-    originally_infeasible = False
 
     def __init__(self, solver_type: MIPSolvers = MIPSolvers.HIGHS):
 
@@ -59,6 +76,7 @@ class LpModel:
         self.constraints: List[LpCst] = list()
         self.variables: List[LpVar] = list()
         self.relaxed_slacks: List[Tuple[int, LpVar, float]] = list()
+        self.originally_infeasible = False
         self._is_minimize = True
         self._is_mip = False
 

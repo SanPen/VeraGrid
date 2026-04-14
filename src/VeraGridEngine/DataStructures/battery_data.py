@@ -41,7 +41,8 @@ class BatteryData(GeneratorData):
         :return: new BatteryData instance
         """
 
-        data = super().slice(elm_idx, bus_idx, bus_map)
+        data: BatteryData = super().slice(elm_idx, bus_idx, bus_map)
+        data.__class__ = BatteryData
 
         data.enom = self.enom[elm_idx]
         data.e_min = self.e_min[elm_idx]
@@ -61,7 +62,8 @@ class BatteryData(GeneratorData):
         :return: new BatteryData instance
         """
 
-        data = super().copy()
+        data: BatteryData = super().copy()
+        data.__class__ = BatteryData
 
         data.enom = self.enom.copy()
         data.e_min = self.e_min.copy()

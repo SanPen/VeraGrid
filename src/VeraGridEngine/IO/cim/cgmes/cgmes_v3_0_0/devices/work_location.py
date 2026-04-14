@@ -9,6 +9,7 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 
 
 class WorkLocation(Location):
+	__slots__ = ()
 	def __init__(self, rdfid='', tpe='WorkLocation'):
 		Location.__init__(self, rdfid, tpe)
 

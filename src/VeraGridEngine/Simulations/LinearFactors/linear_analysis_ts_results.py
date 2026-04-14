@@ -12,6 +12,16 @@ from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceTyp
 
 
 class LinearAnalysisTimeSeriesResults(ResultsTemplate):
+    __slots__ = (
+        "bus_names",
+        "bus_types",
+        "branch_names",
+        "voltage",
+        "S",
+        "Sf",
+        "loading",
+        "losses",
+    )
 
     def __init__(
             self,

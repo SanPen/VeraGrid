@@ -19,6 +19,11 @@ class ProceduralGrid:
     """
     Class to chracterize and create grids procedurally
     """
+    __slots__ = (
+        "states",
+        "state_index",
+        "transition_probabilities",
+    )
 
     def __init__(self):
         # list of states, ony buses and branches for now

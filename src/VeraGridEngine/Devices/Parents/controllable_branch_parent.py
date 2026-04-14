@@ -5,44 +5,104 @@
 from __future__ import annotations
 
 import numpy as np
-from typing import Union
+from typing import Union, Tuple
 
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import (BuildStatus, TapModuleControl, TapPhaseControl, SubObjectType, TapChangerTypes)
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 from VeraGridEngine.Devices.Branches.tap_changer import TapChanger
-from VeraGridEngine.Devices.Parents.editable_device import DeviceType, get_at
-from VeraGridEngine.Devices.profile import Profile
+from VeraGridEngine.Devices.Parents.editable_device import DeviceType, get_at, GCProp
+from VeraGridEngine.Devices.Profiles import ProfileEnum, ProfileFloat
 
 
 class ControllableBranchParent(BranchParent):
     __slots__ = (
-        'tolerance',
-        'R', 'X', 'G', 'B',
-        'R0', 'X0', 'G0', 'B0',
-        'R2', 'X2', 'G2', 'B2',
+        '_tolerance',
+        '_R',
+        '_X',
+        '_G',
+        '_B',
+        '_R0',
+        '_X0',
+        '_G0',
+        '_B0',
+        '_R2',
+        '_X2',
+        '_G2',
+        '_B2',
         '_tap_changer',
-        'tap_module',
+        '_tap_module',
         '_tap_module_prof',
         '_tap_module_max',
         '_tap_module_min',
         '_tap_phase_control_mode',
         '_tap_phase_control_mode_prof',
-        'Pset',
+        '_Pset',
         '_Pset_prof',
-        'Qset',
+        '_Qset',
         '_Qset_prof',
-        'tap_phase',
+        '_tap_phase',
         '_tap_phase_prof',
         '_tap_phase_max',
         '_tap_phase_min',
         '_tap_module_control_mode',
         '_tap_module_control_mode_prof',
-        'vset',
+        '_vset',
         '_vset_prof',
         'regulation_branch',
         'regulation_bus',
         'regulation_cn',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='R', units='p.u.', tpe=float, definition='Total positive sequence resistance.',
+               old_names=['R1', 'Rl']),
+        GCProp(key='X', units='p.u.', tpe=float, definition='Total positive sequence reactance.',
+               old_names=['X1', 'Xl']),
+        GCProp(key='G', units='p.u.', tpe=float, definition='Total positive sequence shunt conductance.'),
+        GCProp(key='B', units='p.u.', tpe=float, definition='Total positive sequence shunt susceptance.'),
+        GCProp(key='R0', units='p.u.', tpe=float, definition='Total zero sequence resistance.'),
+        GCProp(key='X0', units='p.u.', tpe=float, definition='Total zero sequence reactance.'),
+        GCProp(key='G0', units='p.u.', tpe=float, definition='Total zero sequence shunt conductance.'),
+        GCProp(key='B0', units='p.u.', tpe=float, definition='Total zero sequence shunt susceptance.'),
+        GCProp(key='R2', units='p.u.', tpe=float, definition='Total negative sequence resistance.'),
+        GCProp(key='X2', units='p.u.', tpe=float, definition='Total negative sequence reactance.'),
+        GCProp(key='G2', units='p.u.', tpe=float, definition='Total negative sequence shunt conductance.'),
+        GCProp(key='B2', units='p.u.', tpe=float, definition='Total negative sequence shunt susceptance.'),
+        GCProp(key='tolerance', units='%', tpe=float,
+               definition='Tolerance expected for the impedance values% '
+                          'is expected for transformers0% for lines.'),
+        GCProp(key='tap_changer', units='', tpe=SubObjectType.TapChanger, definition='Tap changer object',
+               editable=False, display=False),
+        GCProp(key='tap_module', units='', tpe=float, definition='Tap changer module, it a value close to 1.0',
+               profile_name='tap_module_prof', old_names=['tap', 'm']),
+        GCProp(key='tap_module_max', units='', tpe=float, definition='Tap changer module max value',
+               old_names=['m_max']),
+        GCProp(key='tap_module_min', units='', tpe=float, definition='Tap changer module min value',
+               old_names=['m_min']),
+        GCProp(key='tap_module_control_mode', units='', tpe=TapModuleControl,
+               definition='Control available with the tap module',
+               profile_name='tap_module_control_mode_prof'),
+        GCProp(key='vset', units='p.u.', tpe=float,
+               definition='Objective voltage at the "to" side of the bus when regulating the tap.',
+               profile_name='vset_prof', old_names=['Vdc_set']),
+        GCProp(key='Qset', units='MVAr', tpe=float,
+               definition='Objective power at the selected side.',
+               profile_name='Qset_prof'),
+        GCProp(key='regulation_bus', units='', tpe=DeviceType.BusDevice,
+               definition='Bus where the regulation is applied.', editable=True),
+        GCProp(key='tap_phase', units='rad', tpe=float, definition='Angle shift of the tap changer.',
+               profile_name='tap_phase_prof', old_names=['angle', 'theta']),
+        GCProp(key='tap_phase_max', units='rad', tpe=float, definition='Max angle.',
+               old_names=['angle_max', 'theta_max']),
+        GCProp(key='tap_phase_min', units='rad', tpe=float, definition='Min angle.',
+               old_names=['angle_min', 'theta_min']),
+        GCProp(key='tap_phase_control_mode', units='', tpe=TapPhaseControl,
+               definition='Control available with the tap angle', old_names=['tap_angle_control_mode'],
+               profile_name='tap_phase_control_mode_prof'),
+        GCProp(key='Pset', units='MW', tpe=float,
+               definition='Objective power at the selected side.',
+               profile_name='Pset_prof', old_names=['Pdc_set']),
     )
 
     def __init__(self,
@@ -206,98 +266,39 @@ class ControllableBranchParent(BranchParent):
         else:
             self.tap_module = self._tap_changer.get_tap_module()
 
-        self._tap_module_prof = Profile(default_value=self.tap_module, data_type=float)
+        self._tap_module_prof = ProfileFloat(default_value=self.tap_module)
 
         self._tap_module_max = float(tap_module_max)
         self._tap_module_min = float(tap_module_min)
 
         self._tap_phase_control_mode: TapPhaseControl = tap_phase_control_mode
-        self._tap_phase_control_mode_prof = Profile(default_value=tap_phase_control_mode, data_type=TapPhaseControl)
+        self._tap_phase_control_mode_prof = ProfileEnum(default_value=tap_phase_control_mode, enum_type=TapPhaseControl)
 
         self.Pset = float(Pset)
-        self._Pset_prof = Profile(default_value=self.Pset, data_type=float)
+        self._Pset_prof = ProfileFloat(default_value=self.Pset)
 
         self.Qset = float(Qset)
-        self._Qset_prof = Profile(default_value=self.Qset, data_type=float)
+        self._Qset_prof = ProfileFloat(default_value=self.Qset)
 
         # Tap angle
         self.tap_phase = float(tap_phase)
-        self._tap_phase_prof = Profile(default_value=self.tap_phase, data_type=float)
+        self._tap_phase_prof = ProfileFloat(default_value=self.tap_phase)
 
         self._tap_phase_max = float(tap_phase_max)
         self._tap_phase_min = float(tap_phase_min)
 
         self._tap_module_control_mode: TapModuleControl = tap_module_control_mode
-        self._tap_module_control_mode_prof = Profile(default_value=tap_module_control_mode, data_type=TapModuleControl)
+        self._tap_module_control_mode_prof = ProfileEnum(default_value=tap_module_control_mode, enum_type=TapModuleControl)
 
         self.vset = float(vset)
-        self._vset_prof = Profile(default_value=self.vset, data_type=float)
+        self._vset_prof = ProfileFloat(default_value=self.vset)
 
-        self.regulation_branch: BranchParent = regulation_branch
+        self.regulation_branch: BranchParent | None = regulation_branch
 
-        self.regulation_bus: Bus = regulation_bus
-
-        self.register(key='R', units='p.u.', tpe=float, definition='Total positive sequence resistance.',
-                      old_names=['R1', 'Rl'])
-        self.register(key='X', units='p.u.', tpe=float, definition='Total positive sequence reactance.',
-                      old_names=['X1', 'Xl'])
-        self.register(key='G', units='p.u.', tpe=float, definition='Total positive sequence shunt conductance.')
-        self.register(key='B', units='p.u.', tpe=float, definition='Total positive sequence shunt susceptance.')
-        self.register(key='R0', units='p.u.', tpe=float, definition='Total zero sequence resistance.')
-        self.register(key='X0', units='p.u.', tpe=float, definition='Total zero sequence reactance.')
-        self.register(key='G0', units='p.u.', tpe=float, definition='Total zero sequence shunt conductance.')
-        self.register(key='B0', units='p.u.', tpe=float, definition='Total zero sequence shunt susceptance.')
-        self.register(key='R2', units='p.u.', tpe=float, definition='Total negative sequence resistance.')
-        self.register(key='X2', units='p.u.', tpe=float, definition='Total negative sequence reactance.')
-        self.register(key='G2', units='p.u.', tpe=float, definition='Total negative sequence shunt conductance.')
-        self.register(key='B2', units='p.u.', tpe=float, definition='Total negative sequence shunt susceptance.')
-
-        self.register(key='tolerance', units='%', tpe=float,
-                      definition='Tolerance expected for the impedance values% '
-                                 'is expected for transformers0% for lines.')
-
-        self.register(key='tap_changer', units='', tpe=SubObjectType.TapChanger, definition='Tap changer object',
-                      editable=False, display=False)
-
-        self.register(key='tap_module', units='', tpe=float, definition='Tap changer module, it a value close to 1.0',
-                      profile_name='tap_module_prof', old_names=['tap', 'm'])
-        self.register(key='tap_module_max', units='', tpe=float, definition='Tap changer module max value',
-                      old_names=['m_max'])
-        self.register(key='tap_module_min', units='', tpe=float, definition='Tap changer module min value',
-                      old_names=['m_min'])
-
-        self.register(key='tap_module_control_mode', units='', tpe=TapModuleControl,
-                      definition='Control available with the tap module',
-                      profile_name='tap_module_control_mode_prof')
-
-        self.register(key='vset', units='p.u.', tpe=float,
-                      definition='Objective voltage at the "to" side of the bus when regulating the tap.',
-                      profile_name='vset_prof', old_names=['Vdc_set'])
-
-        self.register(key='Qset', units='MVAr', tpe=float,
-                      definition='Objective power at the selected side.',
-                      profile_name='Qset_prof')
-
-        self.register(key='regulation_bus', units='', tpe=DeviceType.BusDevice,
-                      definition='Bus where the regulation is applied.', editable=True)
-
-        self.register(key='tap_phase', units='rad', tpe=float, definition='Angle shift of the tap changer.',
-                      profile_name='tap_phase_prof', old_names=['angle', 'theta'])
-        self.register(key='tap_phase_max', units='rad', tpe=float, definition='Max angle.',
-                      old_names=['angle_max', 'theta_max'])
-        self.register(key='tap_phase_min', units='rad', tpe=float, definition='Min angle.',
-                      old_names=['angle_min', 'theta_min'])
-
-        self.register(key='tap_phase_control_mode', units='', tpe=TapPhaseControl,
-                      definition='Control available with the tap angle', old_names=['tap_angle_control_mode'],
-                      profile_name='tap_phase_control_mode_prof')
-
-        self.register(key='Pset', units='MW', tpe=float,
-                      definition='Objective power at the selected side.',
-                      profile_name='Pset_prof', old_names=['Pdc_set'])
+        self.regulation_bus: Bus | None = regulation_bus
 
     @property
-    def tap_module_prof(self) -> Profile:
+    def tap_module_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -305,8 +306,8 @@ class ControllableBranchParent(BranchParent):
         return self._tap_module_prof
 
     @tap_module_prof.setter
-    def tap_module_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def tap_module_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._tap_module_prof = val
         elif isinstance(val, np.ndarray):
             self._tap_module_prof.set(arr=val)
@@ -321,7 +322,7 @@ class ControllableBranchParent(BranchParent):
         return get_at(self.tap_module, self.tap_module_prof, t)
 
     @property
-    def tap_phase_prof(self) -> Profile:
+    def tap_phase_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -329,8 +330,8 @@ class ControllableBranchParent(BranchParent):
         return self._tap_phase_prof
 
     @tap_phase_prof.setter
-    def tap_phase_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def tap_phase_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._tap_phase_prof = val
         elif isinstance(val, np.ndarray):
             self._tap_phase_prof.set(arr=val)
@@ -345,7 +346,7 @@ class ControllableBranchParent(BranchParent):
         return get_at(self.tap_phase, self.tap_phase_prof, t)
 
     @property
-    def vset_prof(self) -> Profile:
+    def vset_prof(self) -> ProfileFloat:
         """
         vset profile
         :return: Profile
@@ -353,8 +354,8 @@ class ControllableBranchParent(BranchParent):
         return self._vset_prof
 
     @vset_prof.setter
-    def vset_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def vset_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._vset_prof = val
         elif isinstance(val, np.ndarray):
             self._vset_prof.set(arr=val)
@@ -369,7 +370,7 @@ class ControllableBranchParent(BranchParent):
         return get_at(self.vset, self.vset_prof, t)
 
     @property
-    def Pset_prof(self) -> Profile:
+    def Pset_prof(self) -> ProfileFloat:
         """
         vset profile
         :return: Profile
@@ -377,8 +378,8 @@ class ControllableBranchParent(BranchParent):
         return self._Pset_prof
 
     @Pset_prof.setter
-    def Pset_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Pset_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Pset_prof = val
         elif isinstance(val, np.ndarray):
             self._Pset_prof.set(arr=val)
@@ -393,7 +394,7 @@ class ControllableBranchParent(BranchParent):
         return get_at(self.Pset, self.Pset_prof, t)
 
     @property
-    def Qset_prof(self) -> Profile:
+    def Qset_prof(self) -> ProfileFloat:
         """
         vset profile
         :return: Profile
@@ -401,8 +402,8 @@ class ControllableBranchParent(BranchParent):
         return self._Qset_prof
 
     @Qset_prof.setter
-    def Qset_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Qset_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Qset_prof = val
         elif isinstance(val, np.ndarray):
             self._Qset_prof.set(arr=val)
@@ -417,7 +418,7 @@ class ControllableBranchParent(BranchParent):
         return get_at(self.Qset, self.Qset_prof, t)
 
     @property
-    def tap_module_control_mode_prof(self) -> Profile:
+    def tap_module_control_mode_prof(self) -> ProfileEnum:
         """
         _tap_module_control_mode_prof profile
         :return: Profile
@@ -425,8 +426,8 @@ class ControllableBranchParent(BranchParent):
         return self._tap_module_control_mode_prof
 
     @tap_module_control_mode_prof.setter
-    def tap_module_control_mode_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def tap_module_control_mode_prof(self, val: Union[ProfileEnum, np.ndarray]):
+        if isinstance(val, ProfileEnum):
             self._tap_module_control_mode_prof = val
         elif isinstance(val, np.ndarray):
             self._tap_module_control_mode_prof.set(arr=val)
@@ -441,7 +442,7 @@ class ControllableBranchParent(BranchParent):
         return get_at(self.tap_module_control_mode, self.tap_module_control_mode_prof, t)
 
     @property
-    def tap_phase_control_mode_prof(self) -> Profile:
+    def tap_phase_control_mode_prof(self) -> ProfileEnum:
         """
         tap_phase_control_mode_prof profile
         :return: Profile
@@ -449,8 +450,8 @@ class ControllableBranchParent(BranchParent):
         return self._tap_phase_control_mode_prof
 
     @tap_phase_control_mode_prof.setter
-    def tap_phase_control_mode_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def tap_phase_control_mode_prof(self, val: Union[ProfileEnum, np.ndarray]):
+        if isinstance(val, ProfileEnum):
             self._tap_phase_control_mode_prof = val
         elif isinstance(val, np.ndarray):
             self._tap_phase_control_mode_prof.set(arr=val)
@@ -474,6 +475,7 @@ class ControllableBranchParent(BranchParent):
 
     @tap_module_min.setter
     def tap_module_min(self, val: float):
+        val = float(val)
         if isinstance(val, float):
             self._tap_module_min = val
         else:
@@ -489,6 +491,7 @@ class ControllableBranchParent(BranchParent):
 
     @tap_module_max.setter
     def tap_module_max(self, val: float):
+        val = float(val)
         if isinstance(val, float):
             self._tap_module_max = val
         else:
@@ -504,6 +507,7 @@ class ControllableBranchParent(BranchParent):
 
     @tap_phase_min.setter
     def tap_phase_min(self, val: float):
+        val = float(val)
         if isinstance(val, float):
             self._tap_phase_min = val
         else:
@@ -519,6 +523,7 @@ class ControllableBranchParent(BranchParent):
 
     @tap_phase_max.setter
     def tap_phase_max(self, val: float):
+        val = float(val)
         if isinstance(val, float):
             self._tap_phase_max = val
         else:
@@ -647,3 +652,347 @@ class ControllableBranchParent(BranchParent):
         else:
             self.tap_module = self.tap_changer.get_tap_module()
             self.tap_phase = self.tap_changer.get_tap_phase()
+
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def R(self) -> float:
+        """
+        Get ``R``.
+
+        :return: float
+        """
+        return self._R
+
+    @R.setter
+    def R(self, val: float) -> None:
+        """
+        Set ``R``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._R = float(val)
+
+    @property
+    def X(self) -> float:
+        """
+        Get ``X``.
+
+        :return: float
+        """
+        return self._X
+
+    @X.setter
+    def X(self, val: float) -> None:
+        """
+        Set ``X``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._X = float(val)
+
+    @property
+    def G(self) -> float:
+        """
+        Get ``G``.
+
+        :return: float
+        """
+        return self._G
+
+    @G.setter
+    def G(self, val: float) -> None:
+        """
+        Set ``G``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._G = float(val)
+
+    @property
+    def B(self) -> float:
+        """
+        Get ``B``.
+
+        :return: float
+        """
+        return self._B
+
+    @B.setter
+    def B(self, val: float) -> None:
+        """
+        Set ``B``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._B = float(val)
+
+    @property
+    def R0(self) -> float:
+        """
+        Get ``R0``.
+
+        :return: float
+        """
+        return self._R0
+
+    @R0.setter
+    def R0(self, val: float) -> None:
+        """
+        Set ``R0``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._R0 = float(val)
+
+    @property
+    def X0(self) -> float:
+        """
+        Get ``X0``.
+
+        :return: float
+        """
+        return self._X0
+
+    @X0.setter
+    def X0(self, val: float) -> None:
+        """
+        Set ``X0``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._X0 = float(val)
+
+    @property
+    def G0(self) -> float:
+        """
+        Get ``G0``.
+
+        :return: float
+        """
+        return self._G0
+
+    @G0.setter
+    def G0(self, val: float) -> None:
+        """
+        Set ``G0``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._G0 = float(val)
+
+    @property
+    def B0(self) -> float:
+        """
+        Get ``B0``.
+
+        :return: float
+        """
+        return self._B0
+
+    @B0.setter
+    def B0(self, val: float) -> None:
+        """
+        Set ``B0``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._B0 = float(val)
+
+    @property
+    def R2(self) -> float:
+        """
+        Get ``R2``.
+
+        :return: float
+        """
+        return self._R2
+
+    @R2.setter
+    def R2(self, val: float) -> None:
+        """
+        Set ``R2``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._R2 = float(val)
+
+    @property
+    def X2(self) -> float:
+        """
+        Get ``X2``.
+
+        :return: float
+        """
+        return self._X2
+
+    @X2.setter
+    def X2(self, val: float) -> None:
+        """
+        Set ``X2``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._X2 = float(val)
+
+    @property
+    def G2(self) -> float:
+        """
+        Get ``G2``.
+
+        :return: float
+        """
+        return self._G2
+
+    @G2.setter
+    def G2(self, val: float) -> None:
+        """
+        Set ``G2``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._G2 = float(val)
+
+    @property
+    def B2(self) -> float:
+        """
+        Get ``B2``.
+
+        :return: float
+        """
+        return self._B2
+
+    @B2.setter
+    def B2(self, val: float) -> None:
+        """
+        Set ``B2``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._B2 = float(val)
+
+    @property
+    def tolerance(self) -> float:
+        """
+        Get ``tolerance``.
+
+        :return: float
+        """
+        return self._tolerance
+
+    @tolerance.setter
+    def tolerance(self, val: float) -> None:
+        """
+        Set ``tolerance``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._tolerance = float(val)
+
+    @property
+    def tap_module(self) -> float:
+        """
+        Get ``tap_module``.
+
+        :return: float
+        """
+        return self._tap_module
+
+    @tap_module.setter
+    def tap_module(self, val: float) -> None:
+        """
+        Set ``tap_module``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._tap_module = float(val)
+
+    @property
+    def vset(self) -> float:
+        """
+        Get ``vset``.
+
+        :return: float
+        """
+        return self._vset
+
+    @vset.setter
+    def vset(self, val: float) -> None:
+        """
+        Set ``vset``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._vset = float(val)
+
+    @property
+    def Qset(self) -> float:
+        """
+        Get ``Qset``.
+
+        :return: float
+        """
+        return self._Qset
+
+    @Qset.setter
+    def Qset(self, val: float) -> None:
+        """
+        Set ``Qset``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Qset = float(val)
+
+    @property
+    def tap_phase(self) -> float:
+        """
+        Get ``tap_phase``.
+
+        :return: float
+        """
+        return self._tap_phase
+
+    @tap_phase.setter
+    def tap_phase(self, val: float) -> None:
+        """
+        Set ``tap_phase``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._tap_phase = float(val)
+
+    @property
+    def Pset(self) -> float:
+        """
+        Get ``Pset``.
+
+        :return: float
+        """
+        return self._Pset
+
+    @Pset.setter
+    def Pset(self, val: float) -> None:
+        """
+        Set ``Pset``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Pset = float(val)

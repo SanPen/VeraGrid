@@ -11,6 +11,7 @@ https://github.com/pypa/sampleproject
 
 # Always prefer setuptools over distutils
 import os
+from pathlib import Path
 import shutil
 import platform
 import subprocess
@@ -41,7 +42,8 @@ from the project's [documentation](https://veragrid.readthedocs.io)
 
 description = 'VeraGrid is a Power Systems simulation program intended for professional use and research'
 
-base_path = os.path.join('VeraGrid')
+SRC_ROOT = Path(__file__).resolve().parent
+base_path = SRC_ROOT / 'VeraGrid'
 
 pkgs_to_exclude = ['docs', 'research', 'tests', 'tutorials', 'VeraGridEngine']
 
@@ -63,6 +65,7 @@ package_data = {'VeraGrid': ['*.md',
                             '*.rst',
                             'LICENSE.txt',
                             'setup.py',
+                            'Gui/AiAgent/knowledge/*.md',
                             'data/cables.csv',
                             'data/transformers.csv',
                             'data/wires.csv',

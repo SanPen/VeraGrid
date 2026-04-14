@@ -252,8 +252,8 @@ def parse_generators(circuit: MultiCircuit,
 
         for i in gen_dict.keys():
             curve_model = opf_table[i, 0]
-            gen_dict[i].StartupCost = opf_table[i, 1]
-            gen_dict[i].ShutdownCost = opf_table[i, 2]
+            gen_dict[i].startup_cost = opf_table[i, 1]
+            gen_dict[i].shutdown_cost = opf_table[i, 2]
             n_cost = opf_table[i, 3]
             points = opf_table[i, 4:]
             if curve_model == 2:
@@ -372,7 +372,6 @@ def parse_branches_data(circuit: MultiCircuit,
             else:
                 tap_module_control_mode = TapModuleControl.fixed
 
-
             if matpower_converter_mode > 0:  # it is a converter
 
                 """
@@ -486,8 +485,8 @@ def parse_branches_data(circuit: MultiCircuit,
                                  monitor_loading=monitor_loading,
                                  control1=control1,
                                  control2=control2,
-                                    control1_val=control1val,
-                                    control2_val=control2val)
+                                 control1_val=control1val,
+                                 control2_val=control2val)
 
                 branch.regulation_bus = control_bus
 
@@ -633,16 +632,15 @@ def parse_branches_data(circuit: MultiCircuit,
             logger.add_info('Converted to DC line', line.name)
 
 
-def interpret_data_v1(circuit: MultiCircuit, data, logger: Logger) -> MultiCircuit:
+def interpret_data_v1(data, logger: Logger) -> MultiCircuit:
     """
     Pass the loaded table-like data to the  structures
-    :param circuit:
     :param data: Data dictionary
     :param logger: Logger
     :return:
     """
 
-    circuit.clear()
+    circuit = MultiCircuit()
 
     # time profile
     if 'master_time' in data.keys():
@@ -930,8 +928,8 @@ def get_generation(
 
             cost_data.append({
                 'costtype': 2,
-                'startup': elm.StartupCost,
-                'shutdown': elm.ShutdownCost,
+                'startup': elm.startup_cost,
+                'shutdown': elm.shutdown_cost,
                 'n': 3,
                 'costvector': [elm.Cost2, elm.Cost, elm.Cost0]
             })

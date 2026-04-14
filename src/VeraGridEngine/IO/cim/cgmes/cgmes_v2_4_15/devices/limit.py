@@ -9,6 +9,7 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 
 
 class Limit(IdentifiedObject):
+	__slots__ = ()
 	def __init__(self, rdfid='', tpe='Limit'):
 		IdentifiedObject.__init__(self, rdfid, tpe)
 

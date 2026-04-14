@@ -31,6 +31,8 @@ class CompOps(Enum):
     """
     Enumeration of filter oprations
     """
+    __slots__ = ()
+
     GT = ">"
     LT = "<"
     GEQ = ">="
@@ -73,6 +75,8 @@ class FilterOps(Enum):
     """
     Enumeration of filter operations
     """
+    __slots__ = ()
+
     AND = "and"
     OR = "or"
 
@@ -107,6 +111,8 @@ class FilterSubject(Enum):
     """
     Enumeration of filter operations
     """
+    __slots__ = ()
+
     COL = "col"
     IDX = "idx"
     VAL = "val"
@@ -147,6 +153,12 @@ class Filter:
     """
     Filter
     """
+    __slots__ = (
+        "element",
+        "element_args",
+        "op",
+        "value",
+    )
 
     def __init__(self,
                  element: FilterSubject,
@@ -321,6 +333,7 @@ class MasterFilter:
     """
     MasterFilter
     """
+    __slots__ = ("stack",)
 
     def __init__(self) -> None:
         """

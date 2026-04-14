@@ -6,4 +6,4 @@
 # This file store the font sizes used in bespoke menus, text etc
 
 MENU_FONT_SIZE = 10
-CONSOLE_TEXT_SIZE = 13
+CONSOLE_TEXT_SIZE = 10

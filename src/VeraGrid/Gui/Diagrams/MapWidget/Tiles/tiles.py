@@ -192,9 +192,11 @@ class Tiles(BaseTiles):
                 request.install_opener(opener)
                 try:
                     request.urlopen(test_url)
-                except:
+                except (HTTPError, urllib.error.URLError, http.client.IncompleteRead) as proxy_error:
                     msg = "Using HTTP proxy but still can't get through a firewall!"
                     print(msg)
+                    warn('%s exception doing simple connection through proxy to: %s' % (type(proxy_error).__name__, test_url))
+                    warn(''.join(traceback.format_exc()))
                     # raise Exception(msg) from None
             else:
                 msg = "There is a firewall but you didn't give me an HTTP proxy to get through it?"
@@ -223,6 +225,32 @@ class Tiles(BaseTiles):
                                     refresh_tiles_after_days=60)
                 self.workers.append(worker)
                 worker.start()
+
+    def copy(self) -> "Tiles":
+        """
+        Create a fresh tile source with the same configuration.
+        """
+        cpy = Tiles(tile_set_name=self.tile_set_name,
+                    tile_set_short_name=self.tile_set_short_name,
+                    tile_set_version=self.tile_set_version,
+                    levels=self.levels.copy(),
+                    tile_width=self.tile_width,
+                    tile_height=self.tile_height,
+                    tiles_dir=self.tiles_dir,
+                    max_lru=self.max_lru,
+                    servers=self.servers.copy(),
+                    url_path=self.url_path,
+                    max_server_requests=self.max_requests,
+                    http_proxy=self.http_proxy,
+                    re_fetch_days=self.refresh_tiles_after_days,
+                    attribution=self.attribution_string)
+
+        cpy.wrap_x = self.wrap_x
+        cpy.wrap_y = self.wrap_y
+        cpy.extent = self.extent
+        cpy.set_level(self.level)
+
+        return cpy
 
     def set_level(self, level: int):
         """

@@ -5,25 +5,56 @@
 from typing import Tuple, Union
 from numpy import sqrt
 from VeraGridEngine.enumerations import TapChangerTypes, WindingType
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType
+from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
+from VeraGridEngine.Devices.Parents.dynamic_parent import DynamicDevice
 from VeraGridEngine.Devices.Branches.tap_changer import TapChanger
 
 
-class TransformerType(EditableDevice):
+class TransformerType(DynamicDevice):
     __slots__ = (
-        'HV',
-        'LV',
-        'Sn',
-        'Pcu',
-        'Pfe',
-        'I0',
-        'Vsc',
+        '_HV',
+        '_LV',
+        '_Sn',
+        '_Pcu',
+        '_Pfe',
+        '_I0',
+        '_Vsc',
         'GR_hv1',
         'GX_hv1',
         '_tap_changer',
         'conn_hv',
         'conn_lv',
-        'vector_group_number'
+        '_vector_group_number',
+        '_capex',
+        '_opex',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='HV', units='kV', tpe=float, definition='Nominal voltage al the high voltage side'),
+        GCProp(key='LV', units='kV', tpe=float, definition='Nominal voltage al the low voltage side'),
+        GCProp(key='Sn', units='MVA', tpe=float, definition='Nominal power', old_names=['rating']),
+        GCProp(key='Pcu', units='kW', tpe=float, definition='Copper losses'),
+        GCProp(key='Pfe', units='kW', tpe=float, definition='Iron losses'),
+        GCProp(key='I0', units='%', tpe=float, definition='No-load current'),
+        GCProp(key='Vsc', units='%', tpe=float, definition='Short-circuit voltage'),
+        GCProp(key='capex', units='currency', tpe=float, definition='Capital expenditure'),
+        GCProp(key='opex', units='currency/MWh', tpe=float, definition='Operational expenditure'),
+        GCProp(key='tc_type', units='', tpe=TapChangerTypes, definition='Regulation type'),
+        GCProp(key='total_positions', units='', tpe=int, definition='Number of tap positions'),
+        GCProp(key='dV', units='p.u.', tpe=float, definition='Voltage increment per step'),
+        GCProp(key='neutral_position', units='', tpe=int, definition='neutral position counting from zero'),
+        GCProp(key='asymmetry_angle', units='deg', tpe=float, definition='Asymmetry_angle'),
+        GCProp(key='conn_hv', units='', tpe=WindingType,
+               definition='Winding 3 phase connection at the from side'),
+        GCProp(key='conn_lv', units='', tpe=WindingType,
+               definition='Winding 3 phase connection at the to side'),
+        GCProp(key='vector_group_number', units='', tpe=int,
+               definition='Vector group number. It indicates the structural phase:'
+                          'phase = vector_group_number · 30º'),
+        GCProp(key='tap_module_min', units='p.u.', tpe=float, definition='Min tap module', editable=False),
+        GCProp(key='tap_module_max', units='p.u.', tpe=float, definition='Max tap module', editable=False),
+        GCProp(key='tap_phase_min', units='rad', tpe=float, definition='Min tap phase', editable=False),
+        GCProp(key='tap_phase_max', units='rad', tpe=float, definition='Max tap phase', editable=False),
     )
 
     def __init__(self,
@@ -42,7 +73,10 @@ class TransformerType(EditableDevice):
                  asymmetry_angle: float = 90.0,
                  tc_type: TapChangerTypes = TapChangerTypes.NoRegulation,
                  name: str = 'TransformerType',
-                 idtag: Union[None, str] = None) -> None:
+                 idtag: Union[None, str] = None,
+                 capex: float = 0.0,
+                 opex: float = 0.0,
+                 vector_group_number: int = 0) -> None:
         """
         Transformer template from the short circuit study
         :param hv_nominal_voltage: Nominal voltage of the high voltage side in kV
@@ -61,12 +95,15 @@ class TransformerType(EditableDevice):
         :param tc_type: Tap changer type
         :param name: Name of the device template
         :param idtag: device UUID
+        :param capex: Capital expenditures
+        :param opex: Operating expenditures
+        :param vector_group_number: Vector Group Number
         """
-        EditableDevice.__init__(self,
-                                name=name,
-                                idtag=idtag,
-                                code='',
-                                device_type=DeviceType.TransformerTypeDevice)
+        DynamicDevice.__init__(self,
+                               name=name,
+                               idtag=idtag,
+                               code='',
+                               device_type=DeviceType.TransformerTypeDevice)
 
         self.HV = float(hv_nominal_voltage)
 
@@ -86,9 +123,12 @@ class TransformerType(EditableDevice):
 
         self.GX_hv1 = float(gx_hv1)
 
+        self.capex = float(capex)
+        self.opex = float(opex)
+
         self.conn_hv: WindingType = WindingType.GroundedStar
         self.conn_lv: WindingType = WindingType.Delta
-        self.vector_group_number: int = 0
+        self.vector_group_number: int = vector_group_number
 
         # The tap changer parameters are stored and used with the help of the TapChanger object
         self._tap_changer = TapChanger(total_positions=total_positions,
@@ -96,35 +136,6 @@ class TransformerType(EditableDevice):
                                        dV=dV,
                                        asymmetry_angle=asymmetry_angle,
                                        tc_type=tc_type)
-
-        self.register(key='HV', units='kV', tpe=float, definition='Nominal voltage al the high voltage side')
-        self.register(key='LV', units='kV', tpe=float, definition='Nominal voltage al the low voltage side')
-        self.register(key='Sn', units='MVA', tpe=float, definition='Nominal power', old_names=['rating'])
-        self.register(key='Pcu', units='kW', tpe=float, definition='Copper losses')
-        self.register(key='Pfe', units='kW', tpe=float, definition='Iron losses')
-        self.register(key='I0', units='%', tpe=float, definition='No-load current')
-        self.register(key='Vsc', units='%', tpe=float, definition='Short-circuit voltage')
-
-        self.register(key='tc_type', units='', tpe=TapChangerTypes, definition='Regulation type')
-        self.register(key='total_positions', units='', tpe=int, definition='Number of tap positions')
-        self.register(key='dV', units='p.u.', tpe=float, definition='Voltage increment per step')
-        self.register(key='neutral_position', units='', tpe=int, definition='neutral position counting from zero')
-        self.register(key='asymmetry_angle', units='deg', tpe=float, definition='Asymmetry_angle')
-
-        self.register(key='conn_hv', units='', tpe=WindingType,
-                      definition='Winding 3 phase connection at the from side')
-
-        self.register(key='conn_lv', units='', tpe=WindingType,
-                      definition='Winding 3 phase connection at the to side')
-
-        self.register(key='vector_group_number', units='', tpe=int,
-                      definition='Vector group number. It indicates the structural phase:'
-                                 'phase = vector_group_number · 30º')
-
-        self.register(key='tap_module_min', units='p.u.', tpe=float, definition='Min tap module', editable=False)
-        self.register(key='tap_module_max', units='p.u.', tpe=float, definition='Max tap module', editable=False)
-        self.register(key='tap_phase_min', units='rad', tpe=float, definition='Min tap phase', editable=False)
-        self.register(key='tap_phase_max', units='rad', tpe=float, definition='Max tap phase', editable=False)
 
     @property
     def tap_module_min(self) -> float:
@@ -136,6 +147,7 @@ class TransformerType(EditableDevice):
 
     @tap_module_min.setter
     def tap_module_min(self, val: float):
+        val = float(val)
         # this is a read only property
         pass
 
@@ -149,6 +161,7 @@ class TransformerType(EditableDevice):
 
     @tap_module_max.setter
     def tap_module_max(self, val: float):
+        val = float(val)
         # this is a read only property
         pass
 
@@ -162,6 +175,7 @@ class TransformerType(EditableDevice):
 
     @tap_phase_min.setter
     def tap_phase_min(self, val: float):
+        val = float(val)
         # this is a read only property
         pass
 
@@ -175,6 +189,7 @@ class TransformerType(EditableDevice):
 
     @tap_phase_max.setter
     def tap_phase_max(self, val: float):
+        val = float(val)
         # this is a read only property
         pass
 
@@ -188,6 +203,7 @@ class TransformerType(EditableDevice):
 
     @total_positions.setter
     def total_positions(self, value: int):
+        value = int(value)
         if isinstance(value, int):
             self._tap_changer.total_positions = value
         else:
@@ -203,6 +219,7 @@ class TransformerType(EditableDevice):
 
     @neutral_position.setter
     def neutral_position(self, value: int):
+        value = int(value)
         if isinstance(value, int):
             if 0 <= value < self._tap_changer.total_positions:
                 self._tap_changer.neutral_position = value
@@ -221,6 +238,7 @@ class TransformerType(EditableDevice):
 
     @dV.setter
     def dV(self, value: float):
+        value = float(value)
         if isinstance(value, float):
             self._tap_changer.dV = value
         else:
@@ -236,6 +254,7 @@ class TransformerType(EditableDevice):
 
     @asymmetry_angle.setter
     def asymmetry_angle(self, value: float):
+        value = float(value)
         if isinstance(value, float):
             self._tap_changer.asymmetry_angle = value
         else:
@@ -291,6 +310,198 @@ class TransformerType(EditableDevice):
                           asymmetry_angle=self.asymmetry_angle,
                           tc_type=self.tc_type)
 
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def HV(self) -> float:
+        """
+        Get ``HV``.
+
+        :return: float
+        """
+        return self._HV
+
+    @HV.setter
+    def HV(self, val: float) -> None:
+        """
+        Set ``HV``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._HV = float(val)
+
+    @property
+    def LV(self) -> float:
+        """
+        Get ``LV``.
+
+        :return: float
+        """
+        return self._LV
+
+    @LV.setter
+    def LV(self, val: float) -> None:
+        """
+        Set ``LV``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._LV = float(val)
+
+    @property
+    def Sn(self) -> float:
+        """
+        Get ``Sn``.
+
+        :return: float
+        """
+        return self._Sn
+
+    @Sn.setter
+    def Sn(self, val: float) -> None:
+        """
+        Set ``Sn``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Sn = float(val)
+
+    @property
+    def Pcu(self) -> float:
+        """
+        Get ``Pcu``.
+
+        :return: float
+        """
+        return self._Pcu
+
+    @Pcu.setter
+    def Pcu(self, val: float) -> None:
+        """
+        Set ``Pcu``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Pcu = float(val)
+
+    @property
+    def Pfe(self) -> float:
+        """
+        Get ``Pfe``.
+
+        :return: float
+        """
+        return self._Pfe
+
+    @Pfe.setter
+    def Pfe(self, val: float) -> None:
+        """
+        Set ``Pfe``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Pfe = float(val)
+
+    @property
+    def I0(self) -> float:
+        """
+        Get ``I0``.
+
+        :return: float
+        """
+        return self._I0
+
+    @I0.setter
+    def I0(self, val: float) -> None:
+        """
+        Set ``I0``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._I0 = float(val)
+
+    @property
+    def Vsc(self) -> float:
+        """
+        Get ``Vsc``.
+
+        :return: float
+        """
+        return self._Vsc
+
+    @Vsc.setter
+    def Vsc(self, val: float) -> None:
+        """
+        Set ``Vsc``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Vsc = float(val)
+
+    @property
+    def capex(self) -> float:
+        """
+        Get ``capex``.
+
+        :return: float
+        """
+        return self._capex
+
+    @capex.setter
+    def capex(self, val: float) -> None:
+        """
+        Set ``capex``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._capex = float(val)
+
+    @property
+    def opex(self) -> float:
+        """
+        Get ``opex``.
+
+        :return: float
+        """
+        return self._opex
+
+    @opex.setter
+    def opex(self, val: float) -> None:
+        """
+        Set ``opex``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._opex = float(val)
+
+    @property
+    def vector_group_number(self) -> int:
+        """
+        Get ``vector_group_number``.
+
+        :return: int
+        """
+        return self._vector_group_number
+
+    @vector_group_number.setter
+    def vector_group_number(self, val: int) -> None:
+        """
+        Set ``vector_group_number``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._vector_group_number = int(val)
+
 
 def get_impedances(VH_bus: float, VL_bus: float, Sn: float, HV: float, LV: float,
                    Pcu: float, Pfe: float, I0: float, Vsc: float, Sbase: float,
@@ -337,7 +548,7 @@ def get_impedances(VH_bus: float, VL_bus: float, Sn: float, HV: float, LV: float
 
         z_series = (z_series_hv / z_base_hv_sys) + (z_series_lv / z_base_lv_sys)
 
-        # Shunt impedance (leakage) ----------------------------------------------------------------------------------------
+        # Shunt impedance (leakage) ------------------------------------------------------------------------------------
         if Pfe > 0.0 and I0 > 0.0:
 
             rm = Sbase / (Pfe / 1000.0)

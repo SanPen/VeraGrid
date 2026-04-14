@@ -19,6 +19,21 @@ if TYPE_CHECKING:  # Only imports the below statements during type checking
 
 
 class InputsAnalysisResults(ResultsTemplate):
+    __slots__ = (
+        "grid",
+        "opf_results",
+        "opf_time_series_results",
+        "zone_names",
+        "country_names",
+        "gen_data",
+        "battery_data",
+        "load_data",
+        "static_gen_data",
+        "bus_dict",
+        "bus_zone_indices",
+        "bus_country_indices",
+    )
+
     tpe = 'Inputs Analysis'
 
     def __init__(self,
@@ -482,6 +497,8 @@ class InputsAnalysisResults(ResultsTemplate):
 
 
 class InputsAnalysisDriver(DriverTemplate):
+    __slots__ = ()
+
     name = 'Inputs Analysis'
     tpe = SimulationTypes.InputsAnalysis_run
 

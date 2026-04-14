@@ -59,9 +59,18 @@ class SparseArray:
         :param size:
         """
         self._dtype = data_type
-        self._default_value: Any | None = self._dtype(default_value) if default_value is not None else None
+        self._default_value: Any | None = self._coerce_value(default_value)
         self._size: int = size
         self._map: Dict[int, Any] = dict()
+
+    def _coerce_value(self, value: Any) -> Any:
+        if value is None:
+            return None
+        if isinstance(self._dtype, DeviceType):
+            return value
+        if isinstance(self._dtype, type) and issubclass(self._dtype, Enum):
+            return self._dtype(value)
+        return self._dtype(value)
 
     def copy(self) -> "SparseArray":
         """
@@ -177,7 +186,7 @@ class SparseArray:
         :param default_value: default value
         :param data: data map
         """
-        self.default_value = self._dtype(default_value) if default_value is not None else None
+        self.default_value = self._coerce_value(default_value)
         self._size = size
         self._map = data if data is not None else dict()
         return self
@@ -189,7 +198,7 @@ class SparseArray:
         :param array: NumericVec
         :param default_value: default value of the array
         """
-        self.default_value = self._dtype(default_value) if default_value is not None else None
+        self.default_value = self._coerce_value(default_value)
         self._size = len(array)
         self._map: Dict[int, Numeric] = dict()
 
@@ -208,7 +217,7 @@ class SparseArray:
         :param map_data:
         :return:
         """
-        self.default_value = self._dtype(default_value) if default_value is not None else None
+        self.default_value = self._coerce_value(default_value)
         self._size = size
         self._map = map_data
         return self
@@ -218,7 +227,7 @@ class SparseArray:
         Fill the sparse array with the same value
         :param value: any value
         """
-        self.default_value = self._dtype(value) if value is not None else None
+        self.default_value = self._coerce_value(value)
         self._map = dict()
 
     def toarray(self) -> NumericVec:
@@ -392,6 +401,10 @@ class SparseObjectArray:
     """
     SparseArray
     """
+    __slots__ = (
+        "_size",
+        "_map",
+    )
 
     def __init__(self, n: int) -> None:
         """

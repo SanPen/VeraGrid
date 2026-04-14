@@ -123,6 +123,13 @@ class LineLocations(EditableDevice):
         else:
             self.data = list()
 
+
+    def copy(self):
+        ll = LineLocations(name=self.name, idtag=self.idtag, code=self.code)
+        ll.data = list(self.data)
+        return ll
+
+
     def set(self, data: np.ndarray):
         """
         Parse Json data

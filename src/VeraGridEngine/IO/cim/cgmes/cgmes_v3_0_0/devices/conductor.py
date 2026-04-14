@@ -6,19 +6,14 @@
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.conducting_equipment import ConductingEquipment
 from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType, UnitSymbol
-
+from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
 class Conductor(ConductingEquipment):
+	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
+		CgmesProperty(property_name='length', class_type=float, multiplier=UnitMultiplier.k, unit=UnitSymbol.m, description='''Unit of length. It shall be a positive value or zero.''', profiles=[]),
+	)
+	__slots__ = ('length',)
 	def __init__(self, rdfid='', tpe='Conductor'):
 		ConductingEquipment.__init__(self, rdfid, tpe)
 
 		self.length: float = None
-
-		self.register_property(
-			name='length',
-			class_type=float,
-			multiplier=UnitMultiplier.k,
-			unit=UnitSymbol.m,
-			description='''Unit of length. It shall be a positive value or zero.''',
-			profiles=[]
-		)

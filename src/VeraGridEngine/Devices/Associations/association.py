@@ -3,7 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
-from typing import TYPE_CHECKING, Dict, Union, List, Iterator
+from typing import TYPE_CHECKING, Dict, Union, List, Iterator, Optional
 from VeraGridEngine.enumerations import DeviceType
 from VeraGridEngine.basic_structures import Logger
 
@@ -17,7 +17,7 @@ class Association:
     """
     __slots__ = ('api_object', 'value')
 
-    def __init__(self, api_object: Union[None, ASSOCIATION_TYPES] = None, value: float = 1.0):
+    def __init__(self, api_object: Optional[ASSOCIATION_TYPES] = None, value: float = 1.0):
         """
 
         :param api_object:
@@ -27,19 +27,19 @@ class Association:
 
         self.value = value
 
-    def to_dict(self) -> Dict[str, Union[str, float]]:
+    def to_dict(self) -> Dict[str, str | float | None]:
         """
 
         :return:
         """
         return {
-            "elm": self.api_object.idtag,
+            "elm": None if self.api_object is None else self.api_object.idtag,
             "value": self.value
         }
 
     def parse(self,
               data: Dict[str, Union[str, float]],
-              elements_dict: Dict[str, ALL_DEV_TYPES]) -> str:
+              elements_dict: Dict[str, ALL_DEV_TYPES | None]) -> str:
         """
 
         :param data:
@@ -58,13 +58,20 @@ class Association:
         :return:
         """
         if self.api_object.idtag != self.api_object.idtag:
-            # Different refference objects
+            # Different reference objects
             return False
         if self.value != self.value:
             # different values
             return False
 
         return True
+
+    def copy(self) -> "Association":
+        """
+        copy
+        :return:
+        """
+        return Association(api_object=self.api_object, value=self.value)
 
 
 class Associations:
@@ -222,6 +229,16 @@ class Associations:
         Clear data
         """
         self._data.clear()
+
+    def copy(self):
+        """
+        Copy data
+        :return:
+        """
+        elm = Associations(device_type=self.device_type)
+        for key, val in self._data.items():
+            elm._data[key] = val.copy()
+        return elm
 
     def __eq__(self, other: "Associations") -> bool:
         """

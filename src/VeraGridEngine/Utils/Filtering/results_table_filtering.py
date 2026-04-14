@@ -186,6 +186,10 @@ class FilterResultsTable:
     """
     FilterResultsTable class
     """
+    __slots__ = (
+        "table",
+        "master_filter",
+    )
 
     def __init__(self, table: ResultsTable):
         self.table = table

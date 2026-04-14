@@ -3,15 +3,22 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
-from typing import Union
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType
+from typing import Union, Tuple
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType, GCProp
 
 
 class GenericAreaGroup(EditableDevice):
     __slots__ = (
-        'latitude',
-        'longitude',
+        '_latitude',
+        '_longitude',
         'color',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='longitude', units='deg', tpe=float, definition='longitude.', profile_name=''),
+        GCProp(key='latitude', units='deg', tpe=float, definition='latitude.', profile_name=''),
+        GCProp(key='color', units='', tpe=str, definition='Color to paint the element in the map diagram',
+                      is_color=True),
     )
 
     def __init__(self, name='', code='', idtag: Union[str, None] = None,
@@ -35,10 +42,46 @@ class GenericAreaGroup(EditableDevice):
 
         self.color = color if color is not None else self.rnd_color()
 
-        self.register(key='longitude', units='deg', tpe=float, definition='longitude.', profile_name='')
-        self.register(key='latitude', units='deg', tpe=float, definition='latitude.', profile_name='')
-        self.register(key='color', units='', tpe=str, definition='Color to paint the element in the map diagram',
-                      is_color=True)
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def longitude(self) -> float:
+        """
+        Get ``longitude``.
+
+        :return: float
+        """
+        return self._longitude
+
+    @longitude.setter
+    def longitude(self, val: float) -> None:
+        """
+        Set ``longitude``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._longitude = float(val)
+
+    @property
+    def latitude(self) -> float:
+        """
+        Get ``latitude``.
+
+        :return: float
+        """
+        return self._latitude
+
+    @latitude.setter
+    def latitude(self, val: float) -> None:
+        """
+        Set ``latitude``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._latitude = float(val)
+
 
 
 class Area(GenericAreaGroup):

@@ -7,7 +7,8 @@ import numpy as np
 from scipy.sparse import csc_matrix, coo_matrix
 import VeraGridEngine.Topology.topology as tp
 from VeraGridEngine.Utils.Sparse.sparse_array import SparseObjectArray
-from VeraGridEngine.basic_structures import Vec, CxVec, IntVec, StrVec, BoolVec
+from VeraGridEngine.basic_structures import Vec, CxVec, IntVec, StrVec, BoolVec, ObjVec
+from VeraGridEngine.enumerations import ShuntControlMode
 
 
 class ShuntData:
@@ -29,7 +30,8 @@ class ShuntData:
 
         self.active: BoolVec = np.zeros(nelm, dtype=bool)
 
-        self.controllable: BoolVec = np.zeros(nelm, dtype=bool)
+        self.control_mode: ObjVec = np.full(self.nelm, fill_value=ShuntControlMode.Locked, dtype=object)
+        self.is_pv_control: BoolVec = np.zeros(nelm, dtype=bool)  # quick proxy to not making searches
 
         self.Y: CxVec = np.zeros(nelm, dtype=complex)
 
@@ -58,6 +60,12 @@ class ShuntData:
 
         self.original_idx: IntVec = np.zeros(nelm, dtype=int)
         self.vset: Vec = np.zeros(nelm, dtype=float)
+        self.vmin: Vec = np.zeros(nelm, dtype=float)
+        self.vmax: Vec = np.zeros(nelm, dtype=float)
+
+        self.step = np.zeros(nelm, dtype=int)
+        self.g_steps = SparseObjectArray(n=self.nelm)
+        self.b_steps = SparseObjectArray(n=self.nelm)
 
     def size(self) -> int:
         """
@@ -83,13 +91,18 @@ class ShuntData:
 
         data.active = self.active[elm_idx]
 
-        data.controllable = self.controllable[elm_idx]
+        data.control_mode = self.control_mode[elm_idx]
+        data.is_pv_control = self.is_pv_control[elm_idx]
 
         data.Y = self.Y[elm_idx]
 
         elm_idx_4 = ((elm_idx * 4)[:, np.newaxis] + np.arange(4)).flatten()
         data.Y3_delta = self.Y3_delta[elm_idx_4]
         data.Y3_star = self.Y3_star[elm_idx_4]
+
+        data.A_floatingstar = self.A_floatingstar[elm_idx]
+        data.B_floatingstar = self.B_floatingstar[elm_idx]
+        data.C_floatingstar = self.C_floatingstar[elm_idx]
 
         data.qmax = self.qmax[elm_idx]
         data.qmin = self.qmin[elm_idx]
@@ -117,6 +130,12 @@ class ShuntData:
 
         data.original_idx = elm_idx
         data.vset = self.vset[elm_idx]
+        data.vmin = self.vmin[elm_idx]
+        data.vmax = self.vmax[elm_idx]
+
+        data.step = self.step[elm_idx]
+        data.g_steps = self.g_steps.slice(elm_idx)
+        data.b_steps = self.b_steps.slice(elm_idx)
 
         return data
 
@@ -140,11 +159,16 @@ class ShuntData:
         data.names = self.names.copy()
         data.idtag = self.idtag.copy()
         data.active = self.active.copy()
-        data.controllable = self.controllable.copy()
+        data.control_mode = self.control_mode.copy()
+        data.is_pv_control = self.is_pv_control.copy()
 
         data.Y = self.Y.copy()
         data.Y3_star = self.Y3_star.copy()
         data.Y3_delta = self.Y3_delta.copy()
+
+        data.A_floatingstar = self.A_floatingstar.copy()
+        data.B_floatingstar = self.B_floatingstar.copy()
+        data.C_floatingstar = self.C_floatingstar.copy()
 
         data.qmax = self.qmax.copy()
         data.qmin = self.qmin.copy()
@@ -162,6 +186,12 @@ class ShuntData:
 
         data.original_idx = self.original_idx.copy()
         data.vset = self.vset.copy()
+        data.vmin = self.vmin.copy()
+        data.vmax = self.vmax.copy()
+
+        data.step = self.step.copy()
+        data.g_steps = self.g_steps.copy()
+        data.b_steps = self.b_steps.copy()
 
         return data
 
@@ -187,7 +217,7 @@ class ShuntData:
         :return:
         """
         return tp.sum_per_bus_cx(nbus=self.nbus, bus_indices=self.bus_idx,
-                                 magnitude=self.Y * self.active * (1 - self.controllable))
+                                 magnitude=self.Y * self.active * (1 - self.is_pv_control))
 
     def get_qmax_per_bus(self) -> Vec:
         """
@@ -218,7 +248,8 @@ class ShuntData:
         Get the indices of controllable generators
         :return: idx_controllable, idx_non_controllable
         """
-        return np.where(self.controllable == 1)[0], np.where(self.controllable == 0)[0]
+        return (np.where(self.is_pv_control == True)[0],
+                np.where(self.is_pv_control == False)[0])
 
     def get_C_bus_elm(self) -> csc_matrix:
         """

@@ -2,24 +2,21 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
-
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.identified_object import IdentifiedObject
-from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
+from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
+if TYPE_CHECKING:
+	from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.sub_geographical_region import SubGeographicalRegion
 
 class GeographicalRegion(IdentifiedObject):
-	def __init__(self, rdfid='', tpe='GeographicalRegion'):
-		IdentifiedObject.__init__(self, rdfid, tpe)
+    LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
+        CgmesProperty(property_name='Regions', class_type='SubGeographicalRegion', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''All sub-geographical regions within this geographical region.''', profiles=[]),
+    )
+    __slots__ = ('Regions',)
+    def __init__(self, rdfid='', tpe='GeographicalRegion'):
+        IdentifiedObject.__init__(self, rdfid, tpe)
 
-		from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.sub_geographical_region import SubGeographicalRegion
-		self.Regions: SubGeographicalRegion | None = None
-
-		self.register_property(
-			name='Regions',
-			class_type=SubGeographicalRegion,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''All sub-geographical regions within this geographical region.''',
-			profiles=[]
-		)
+        self.Regions: SubGeographicalRegion | None = None

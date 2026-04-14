@@ -20,11 +20,22 @@ class PythonCodeEditor(QPlainTextEdit):
     def __init__(
             self,
             parent=None,
-            namespace: Dict[str, Any] | None = None, ):
+            vars_dict: Dict[str, Any] | None = None, ):
+        """
+
+        :param parent:
+        :param vars_dict:
+        """
         super().__init__(parent)
 
         font = QFont("Consolas", CONSOLE_TEXT_SIZE)
         self.setFont(font)
+        self._tab_text: str = "    "
+
+        # Keep the visual width of tab characters aligned with four spaces so
+        # existing text containing tabs is shown with the same indentation width
+        # that the editor inserts for new indentation.
+        self.setTabStopDistance(float(self.fontMetrics().horizontalAdvance(self._tab_text)))
 
         self.setLineWrapMode(QPlainTextEdit.LineWrapMode.NoWrap)
 
@@ -34,7 +45,11 @@ class PythonCodeEditor(QPlainTextEdit):
         PythonHighlighter(self.document())
 
         # Normalize namespace exactly like the console
-        self._namespace = self._normalize_namespace(namespace or {})
+        self._vars_dict = dict() if vars_dict is None else vars_dict
+
+        self._vars_dict["__builtins__"] = __builtins__  # dict or module, both fine]
+
+        self._namespace = self._normalize_namespace(self._vars_dict)
 
         # rlcompleter backend (same as console)
         self._completer_backend = rlcompleter.Completer(self._namespace)
@@ -52,9 +67,15 @@ class PythonCodeEditor(QPlainTextEdit):
         # Remember what we replace
         self._last_prefix = ""
 
-    # ------------------------------------------------------------------
-    # Namespace handling (same logic you already fixed)
-    # ------------------------------------------------------------------
+    def add_var(self, name: str, val: Any) -> None:
+        """
+        Add variable to the interpreter
+        :param name: name of the variable
+        :param val: value or pointer
+        """
+        self._vars_dict[name] = val
+        self._namespace = self._normalize_namespace(self._vars_dict)
+        self._completer_backend = rlcompleter.Completer(self._namespace)
 
     @staticmethod
     def _normalize_namespace(ns: Dict[str, Any]) -> Dict[str, Any]:
@@ -72,7 +93,7 @@ class PythonCodeEditor(QPlainTextEdit):
     # THIS is the key part: intercept Tab at event() level
     # ------------------------------------------------------------------
 
-    def event(self, e: QEvent):
+    def keyPressEvent(self, e: QEvent):
         if e.type() == QEvent.Type.KeyPress:
 
             popup = self._qt_completer.popup()
@@ -82,10 +103,7 @@ class PythonCodeEditor(QPlainTextEdit):
             # --------------------------------------------------
             if popup.isVisible():
                 if e.key() in (Qt.Key.Key_Tab, Qt.Key.Key_Return, Qt.Key.Key_Enter):
-                    # current = self._qt_completer.currentCompletion()
-                    # if current:
-                    #     self._insert_completion(current)
-                    popup = self._qt_completer.popup()
+                    # If popup is visible, accept the completion
                     index = popup.currentIndex()
                     if index.isValid():
                         completion = index.data()
@@ -93,26 +111,45 @@ class PythonCodeEditor(QPlainTextEdit):
                     popup.hide()
                     return True
 
-                if e.key() == Qt.Key.Key_Escape:
+                elif e.key() == Qt.Key.Key_Escape:
+                    # If Escape is pressed, hide the popup
                     popup.hide()
                     return True
 
-                # Let popup handle navigation keys
-                if e.key() in (Qt.Key.Key_Up, Qt.Key.Key_Down, Qt.Key.Key_PageUp, Qt.Key.Key_PageDown,):
+                # Let popup handle navigation keys like Up/Down/PageUp/PageDown
+                if e.key() in (Qt.Key.Key_Up, Qt.Key.Key_Down, Qt.Key.Key_PageUp, Qt.Key.Key_PageDown):
                     return super().event(e)
 
+                # Prevent left/right arrow from inserting characters
+                if e.key() in (Qt.Key.Key_Left, Qt.Key.Key_Right):
+                    return  # Prevent left/right arrow key from inserting text while popup is visible
+
+                # Update the completion model as text changes
+                self._trigger_completion()
+
             # --------------------------------------------------
-            # No popup → trigger completion
+            # No popup → insert tab space or trigger completion
             # --------------------------------------------------
-            if e.key() == Qt.Key.Key_Tab and e.modifiers() == Qt.KeyboardModifier.NoModifier:
+            elif e.key() == Qt.Key.Key_Tab:
+                if not popup.isVisible():
+                    # Insert four spaces instead of a literal tab character so
+                    # new indentation always follows the configured width.
+                    cursor = self.textCursor()
+                    cursor.insertText(self._tab_text)
+                    self.setTextCursor(cursor)
+                    return True
+
+                # Trigger completion if popup is not visible
                 self._trigger_completion()
                 return True
 
-            if (e.key() == Qt.Key.Key_Space and e.modifiers() & Qt.KeyboardModifier.ControlModifier):
+            elif e.key() == Qt.Key.Key_Space and e.modifiers() & Qt.KeyboardModifier.ControlModifier:
+                # Trigger the completion popup when Ctrl + Space is pressed
                 self._trigger_completion()
                 return True
 
-        return super().event(e)
+        # Let the base class handle other key press events
+        super().keyPressEvent(e)
 
     # ------------------------------------------------------------------
     # Completion logic (console-style)
@@ -207,7 +244,7 @@ if __name__ == "__main__":
             super().__init__()
             self.setWindowTitle("PySide6 Python Console")
             console = PythonCodeEditor(
-                namespace={
+                vars_dict={
                     "__builtins__": __builtins__,  # dict or module, both fine
                     "app": self,
                     "np": np,

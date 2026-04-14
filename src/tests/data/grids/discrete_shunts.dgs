@@ -1,0 +1,102 @@
+********************************************************************************
+*
+* DIgSILENT (R) DGS Export V1.8.4
+* Copyright 1997-2026 DIgSILENT GmbH. All rights reserved.
+*
+* DIgSILENT (C) PowerFactory V25.0.6.0
+*
+* Date:     03/12/2026 11:27
+* Project:  discrete_shunts (Study Case: Study Case)
+*
+********************************************************************************
+
+
+$$General;FID(a:40);Descr(a:40);Val(a:255)
+  1;Version;7.0
+
+
+$$ElmLne;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);dline(r);fline(r);GPScoords:MATRIX(a);nlnum(i);inAir(i)
+  2;C;Line Shunt-Load;6;50;1;1;;1;0
+  3;C;Line Slack-Load;6;51;1;1;;1;0
+  4;C;Line Slack-Shunt;6;52;1;1;;1;0
+
+
+$$ElmLod;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);mode_inp(a:6);slini(r);plini(r);qlini(r);coslini(r);pf_recap(i);scale0(r);i_scale(i);outserv(i);classif(a:40)
+  5;C;General Load;6;;DEF;20,12461;18;9;0,894427;0;1;1;0;
+
+
+$$ElmNet;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);frnom(r);pDiagram(p)
+  6;C;Grid;;50;31
+
+
+$$ElmShnt;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);systp(i);ctech(i);shtype(i);ushnm(r);mode_inp(a:6);qcapn(r);ncapx(i);ncapa(i);outserv(i);qrean(r);qtotn(r);tandc(r);fres(r);greaf0(r);grea(r);bcap(r);xrea(r);rrea(r);gparac(r);iswitch(i);imldc(a:2);usetp_mx(r);usetp_mn(r);qsetp_mx(r);qsetp_mn(r);iQorient(i);ilcph(i);rpara(r);i_cont(i)
+  7;C;Shunt/Filter;6;0;1;2;10;DEF;2;3;0;0;0;2;0;0;0;0;20000;1,5;0;0;1;V;1,05;0,95;0;0;0;0;0;0
+
+
+$$ElmTerm;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);systype(i);iUsage(i);uknom(r);unknom(r);iminus(i);outserv(i);GPSlat(r);GPSlon(r);vtarget(r)
+  8;C;Load Bus;6;;0;0;10;5,773503;0;0;0;0;1
+  9;C;Shunt Bus;6;;0;0;10;5,773503;0;0;0;0;1
+  10;C;Slack Bus;6;;0;0;10;5,773503;0;0;0;0;1
+
+
+$$IntFolder;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p)
+  11;C;Layers;31
+  12;C;Settings;31
+
+
+$$IntGrf;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);iCol(i);iVis(i);iLevel(i);rCenterX(r);rCenterY(r);sSymNam(a:80);pDataObj(p);iRot(i);rSizeX(r);rSizeY(r)
+  13;C;Graphical Net Object1;31;-16777216;1;1;131,25;153,125;TermStrip;10;0;1,666667;1
+  14;C;Graphical Net Object2;31;-16777216;1;1;83,125;87,5;TermStrip;9;0;1,333333;1
+  15;C;Graphical Net Object3;31;-16777216;1;1;170,625;87,5;TermStrip;8;0;1,333333;1
+  16;C;Graphical Net Object4;31;-16777216;1;1;131,25;175;d_vac;;180;1;1
+  17;C;Graphical Net Object5;31;-16777216;1;1;105;122,5;d_lin;4;270;1;1
+  18;C;Graphical Net Object6;31;-16777216;1;1;157,5;122,5;d_lin;3;90;1;1
+  19;C;Graphical Net Object7;31;-16777216;1;1;131,25;70;d_lin;2;90;1;1
+  20;C;Graphical Net Object8;31;-16777216;1;1;183,75;70;d_load;5;0;1;1
+  21;C;Graphical Net Object9;31;-16777216;1;1;78,75;70;d_shunt;7;0;1;1
+
+
+$$IntGrfcon;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);rX:SIZEROW(i);rX:0(r);rX:1(r);rX:2(r);rY:SIZEROW(i);rY:0(r);rY:1(r);rY:2(r);iDatConNr(i)
+  22;C;GCO_1;16;2;131,25;131,25;;2;170,625;153,125;;0
+  23;C;GCO_1;17;3;105;122,5;122,5;3;122,5;122,5;153,125;0
+  24;C;GCO_2;17;3;105;87,5;87,5;3;122,5;122,5;87,5;1
+  25;C;GCO_1;18;3;157,5;140;140;3;122,5;122,5;153,125;0
+  26;C;GCO_2;18;3;157,5;175;175;3;122,5;122,5;87,5;1
+  27;C;GCO_1;19;3;131,25;96,25;96,25;3;70;70;87,5;0
+  28;C;GCO_2;19;3;131,25;166,25;166,25;3;70;70;87,5;1
+  29;C;GCO_1;20;2;183,75;183,75;;2;74,375;87,5;;0
+  30;C;GCO_1;21;2;78,75;78,75;;2;74,375;87,5;;0
+
+
+$$IntGrfnet;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);snap_on(i);ortho_on(i);pDataFolder(p)
+  31;C;Grid;;1;1;6
+
+
+$$StaCubic;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);obj_bus(i);obj_id(p);it2p1(i);it2p2(i);it2p3(i)
+  32;C;Cub_1;8;1;3;0;1;2
+  33;C;Cub_2;8;1;2;0;1;2
+  34;C;Cub_3;8;0;5;0;1;2
+  35;C;Cub_1;9;1;4;0;1;2
+  36;C;Cub_2;9;0;2;0;1;2
+  37;C;Cub_3;9;0;7;0;1;2
+  38;C;Cub_1;10;0;;0;1;2
+  39;C;Cub_2;10;0;4;0;1;2
+  40;C;Cub_3;10;0;3;0;1;2
+
+
+$$StaSwitch;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);on_off(i);typ_id(p);aUsage(a)
+  41;C;Switch;32;1;;cbk
+  42;C;Switch;33;1;;cbk
+  43;C;Switch;34;1;;cbk
+  44;C;Switch;35;1;;cbk
+  45;C;Switch;36;1;;cbk
+  46;C;Switch;37;1;;cbk
+  47;C;Switch;38;1;;cbk
+  48;C;Switch;39;1;;cbk
+  49;C;Switch;40;1;;cbk
+
+
+$$TypLne;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);uline(r);sline(r);InomAir(r);cohl_(i);rline(r);xline(r);rline0(r);xline0(r);Ithr(r);tmax(r);rtemp(r);systp(i);nlnph(i);nneutral(i);frnom(r);mlei(a:4);bline(r);bline0(r)
+  50;C;Line Type;;10;1;1;1;0,1;1;0;0;0;80;80;0;3;0;50;Cu;0;0
+  51;C;Slack Load Line Type;;10;1;1;1;0,2;2;0;0;0;80;80;0;3;0;50;Cu;0;0
+  52;C;Slack Shunt Line Type;;10;1;1;1;0,1;1;0;0;0;80;80;0;3;0;50;Cu;0;0

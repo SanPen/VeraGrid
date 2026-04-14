@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rdf:RDF xmlns:cim="http://iec.ch/TC57/CIM100#" xmlns:md="http://iec.ch/TC57/61970-552/ModelDescription/1#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:eu="http://iec.ch/TC57/CIM100-European#">
+  <md:FullModel rdf:about="urn:uuid:7627a4cc-8890-48ae-b2d9-237cc46aaf09">
+    <md:Model.scenarioTime>2030-01-25T19:00:00Z</md:Model.scenarioTime>
+    <md:Model.created>2021-01-25T19:00:00Z</md:Model.created>
+    <md:Model.description>CGMES Conformity Assessment Test Configuration. The Test Configuration is owned by ENTSO-E and is provided by ENTSO-E “as it is”. To the fullest extent permitted by law, ENTSO-E shall not be liable for any damages of any kind arising out of the use of the model (including any of its subsequent modifications). ENTSO-E neither warrants, nor represents that the use of the model will not infringe the rights of third parties. Any use of the model shall include a reference to ENTSO-E. ENTSO-E web site is the only official source of information related to the model.</md:Model.description>
+    <md:Model.version>4</md:Model.version>
+    <md:Model.profile>http://iec.ch/TC57/ns/CIM/EquipmentBoundary-EU/3.0</md:Model.profile>
+    <md:Model.modelingAuthoritySet>http://entsoe.eu/Boundary/CGMES</md:Model.modelingAuthoritySet>
+  </md:FullModel>
+    <cim:BaseVoltage rdf:ID="_b683970c-0d45-4b36-8026-7558de43a0b9">
+    <cim:IdentifiedObject.name>17</cim:IdentifiedObject.name>
+    <cim:BaseVoltage.nominalVoltage>17</cim:BaseVoltage.nominalVoltage>
+    <cim:IdentifiedObject.mRID>b683970c-0d45-4b36-8026-7558de43a0b9</cim:IdentifiedObject.mRID>
+  </cim:BaseVoltage>
+  <cim:BaseVoltage rdf:ID="_1e967212-2a14-42e9-ba84-a42e0f8c819d">
+    <cim:IdentifiedObject.name>220</cim:IdentifiedObject.name>
+    <cim:BaseVoltage.nominalVoltage>220</cim:BaseVoltage.nominalVoltage>
+    <cim:IdentifiedObject.mRID>1e967212-2a14-42e9-ba84-a42e0f8c819d</cim:IdentifiedObject.mRID>
+  </cim:BaseVoltage>
+  <cim:BaseVoltage rdf:ID="_a6cce540-2530-4ea0-96c4-aace6e03c5fc">
+    <cim:IdentifiedObject.name>400</cim:IdentifiedObject.name>
+    <cim:BaseVoltage.nominalVoltage>400</cim:BaseVoltage.nominalVoltage>
+    <cim:IdentifiedObject.mRID>a6cce540-2530-4ea0-96c4-aace6e03c5fc</cim:IdentifiedObject.mRID>
+  </cim:BaseVoltage>
+  <cim:BaseVoltage rdf:ID="_a9b63ca4-efdc-40ec-9d8f-ec09036a22a9">
+    <cim:IdentifiedObject.name>20</cim:IdentifiedObject.name>
+    <cim:BaseVoltage.nominalVoltage>20</cim:BaseVoltage.nominalVoltage>
+    <cim:IdentifiedObject.mRID>a9b63ca4-efdc-40ec-9d8f-ec09036a22a9</cim:IdentifiedObject.mRID>
+  </cim:BaseVoltage>
+  <cim:BaseVoltage rdf:ID="_fa648026-264b-4f1a-ba9d-0192ebca4f42">
+    <cim:IdentifiedObject.name>135</cim:IdentifiedObject.name>
+    <cim:BaseVoltage.nominalVoltage>135</cim:BaseVoltage.nominalVoltage>
+    <cim:IdentifiedObject.mRID>fa648026-264b-4f1a-ba9d-0192ebca4f42</cim:IdentifiedObject.mRID>
+  </cim:BaseVoltage>
+  <cim:BaseVoltage rdf:ID="_37d60bcc-0ee6-4add-a985-c5cb3d188d15">
+    <cim:IdentifiedObject.name>11</cim:IdentifiedObject.name>
+    <cim:BaseVoltage.nominalVoltage>11</cim:BaseVoltage.nominalVoltage>
+    <cim:IdentifiedObject.mRID>37d60bcc-0ee6-4add-a985-c5cb3d188d15</cim:IdentifiedObject.mRID>
+  </cim:BaseVoltage>
+  <cim:BaseVoltage rdf:ID="_a3f76225-3f99-40e5-87b5-94d67ebc43fd">
+    <cim:IdentifiedObject.name>50</cim:IdentifiedObject.name>
+    <cim:BaseVoltage.nominalVoltage>50</cim:BaseVoltage.nominalVoltage>
+    <cim:IdentifiedObject.mRID>a3f76225-3f99-40e5-87b5-94d67ebc43fd</cim:IdentifiedObject.mRID>
+  </cim:BaseVoltage>
+  <cim:BaseVoltage rdf:ID="_69316d81-beb3-4136-bef2-7f9bd9ddda52">
+    <cim:IdentifiedObject.name>10</cim:IdentifiedObject.name>
+    <cim:BaseVoltage.nominalVoltage>10</cim:BaseVoltage.nominalVoltage>
+    <cim:IdentifiedObject.mRID>69316d81-beb3-4136-bef2-7f9bd9ddda52</cim:IdentifiedObject.mRID>
+  </cim:BaseVoltage>
+  <cim:GeographicalRegion rdf:ID="_b4530622-ddd6-4d0e-9127-939adc037ec4">
+    <cim:IdentifiedObject.name>EU</cim:IdentifiedObject.name>
+    <cim:IdentifiedObject.description>Geographical Region of EU</cim:IdentifiedObject.description>
+    <eu:IdentifiedObject.energyIdentCodeEic>10Y-CB-EU-00001E</eu:IdentifiedObject.energyIdentCodeEic>
+    <eu:IdentifiedObject.shortName>EU</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.mRID>b4530622-ddd6-4d0e-9127-939adc037ec4</cim:IdentifiedObject.mRID>
+  </cim:GeographicalRegion>
+  <cim:SubGeographicalRegion rdf:ID="_f00d3f9e-f076-45f6-b0ef-00f756352976">
+    <cim:IdentifiedObject.name>ENTSO-E</cim:IdentifiedObject.name>
+    <cim:SubGeographicalRegion.Region rdf:resource="#_b4530622-ddd6-4d0e-9127-939adc037ec4" />
+    <cim:IdentifiedObject.description>SubGeographical Region of ENTSO-E</cim:IdentifiedObject.description>
+    <eu:IdentifiedObject.energyIdentCodeEic>10Y-CB-ENTSO-001</eu:IdentifiedObject.energyIdentCodeEic>
+    <eu:IdentifiedObject.shortName>ENTSO-E</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.mRID>f00d3f9e-f076-45f6-b0ef-00f756352976</cim:IdentifiedObject.mRID>
+  </cim:SubGeographicalRegion>
+</rdf:RDF>

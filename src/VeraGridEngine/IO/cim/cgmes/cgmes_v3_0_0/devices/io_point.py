@@ -9,6 +9,7 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 
 
 class IOPoint(IdentifiedObject):
+	__slots__ = ()
 	def __init__(self, rdfid='', tpe='IOPoint'):
 		IdentifiedObject.__init__(self, rdfid, tpe)
 

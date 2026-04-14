@@ -4,16 +4,16 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import Union
+from typing import Union, Tuple
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import BuildStatus, DeviceType
 from VeraGridEngine.basic_structures import CxVec
-from VeraGridEngine.Devices.profile import Profile
+from VeraGridEngine.Devices.Profiles import ProfileFloat
 from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
-from VeraGridEngine.Devices.Parents.editable_device import get_at
+from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 
 
 class LoadParent(InjectionParent):
@@ -22,25 +22,33 @@ class LoadParent(InjectionParent):
     """
 
     __slots__ = (
-        'P',
+        '_P',
         '_P_prof',
-        'Q',
+        '_Q',
         '_Q_prof',
-
-        'Pa',
+        '_Pa',
         '_Pa_prof',
-        'Qa',
+        '_Qa',
         '_Qa_prof',
-
-        'Pb',
+        '_Pb',
         '_Pb_prof',
-        'Qb',
+        '_Qb',
         '_Qb_prof',
-
-        'Pc',
+        '_Pc',
         '_Pc_prof',
-        'Qc',
+        '_Qc',
         '_Qc_prof',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='P', units='MW', tpe=float, definition='Active power', profile_name='P_prof'),
+        GCProp(key='Pa', units='MW', tpe=float, definition='Phase A active power', profile_name='Pa_prof'),
+        GCProp(key='Pb', units='MW', tpe=float, definition='Phase B active power', profile_name='Pb_prof'),
+        GCProp(key='Pc', units='MW', tpe=float, definition='Phase C active power', profile_name='Pc_prof'),
+        GCProp(key='Q', units='MVAr', tpe=float, definition='Reactive power', profile_name='Q_prof'),
+        GCProp(key='Qa', units='MVAr', tpe=float, definition='Phase A reactive power', profile_name='Qa_prof'),
+        GCProp(key='Qb', units='MVAr', tpe=float, definition='Phase B reactive power', profile_name='Qb_prof'),
+        GCProp(key='Qc', units='MVAr', tpe=float, definition='Phase C reactive power', profile_name='Qc_prof'),
     )
 
     def __init__(self,
@@ -103,40 +111,32 @@ class LoadParent(InjectionParent):
                                  device_type=device_type)
 
         self.P = float(P)
-        self._P_prof = Profile(default_value=self.P, data_type=float)
+        self._P_prof = ProfileFloat(default_value=self.P)
 
         self.Pa = float(P1)
-        self._Pa_prof = Profile(default_value=self.Pa, data_type=float)
+        self._Pa_prof = ProfileFloat(default_value=self.Pa)
 
         self.Pb = float(P2)
-        self._Pb_prof = Profile(default_value=self.Pb, data_type=float)
+        self._Pb_prof = ProfileFloat(default_value=self.Pb)
 
         self.Pc = float(P3)
-        self._Pc_prof = Profile(default_value=self.Pc, data_type=float)
+        self._Pc_prof = ProfileFloat(default_value=self.Pc)
 
         self.Q = float(Q)
-        self._Q_prof = Profile(default_value=self.Q, data_type=float)
+        self._Q_prof = ProfileFloat(default_value=self.Q)
 
         self.Qa = float(Q1)
-        self._Qa_prof = Profile(default_value=self.Qa, data_type=float)
+        self._Qa_prof = ProfileFloat(default_value=self.Qa)
 
         self.Qb = float(Q2)
-        self._Qb_prof = Profile(default_value=self.Qb, data_type=float)
+        self._Qb_prof = ProfileFloat(default_value=self.Qb)
 
         self.Qc = float(Q3)
-        self._Qc_prof = Profile(default_value=self.Qc, data_type=float)
+        self._Qc_prof = ProfileFloat(default_value=self.Qc)
 
-        self.register(key='P', units='MW', tpe=float, definition='Active power', profile_name='P_prof')
-        self.register(key='Pa', units='MW', tpe=float, definition='Phase A active power', profile_name='Pa_prof')
-        self.register(key='Pb', units='MW', tpe=float, definition='Phase B active power', profile_name='Pb_prof')
-        self.register(key='Pc', units='MW', tpe=float, definition='Phase C active power', profile_name='Pc_prof')
-        self.register(key='Q', units='MVAr', tpe=float, definition='Reactive power', profile_name='Q_prof')
-        self.register(key='Qa', units='MVAr', tpe=float, definition='Phase A reactive power', profile_name='Qa_prof')
-        self.register(key='Qb', units='MVAr', tpe=float, definition='Phase B reactive power', profile_name='Qb_prof')
-        self.register(key='Qc', units='MVAr', tpe=float, definition='Phase C reactive power', profile_name='Qc_prof')
 
     @property
-    def P_prof(self) -> Profile:
+    def P_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -144,8 +144,8 @@ class LoadParent(InjectionParent):
         return self._P_prof
 
     @P_prof.setter
-    def P_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def P_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._P_prof = val
         elif isinstance(val, np.ndarray):
             self._P_prof.set(arr=val)
@@ -161,7 +161,7 @@ class LoadParent(InjectionParent):
         return get_at(self.P, self.P_prof, t)
 
     @property
-    def Pa_prof(self) -> Profile:
+    def Pa_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -169,8 +169,8 @@ class LoadParent(InjectionParent):
         return self._Pa_prof
 
     @Pa_prof.setter
-    def Pa_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Pa_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Pa_prof = val
         elif isinstance(val, np.ndarray):
             self._Pa_prof.set(arr=val)
@@ -185,7 +185,7 @@ class LoadParent(InjectionParent):
         return get_at(self.Pa, self.Pa_prof, t)
 
     @property
-    def Pb_prof(self) -> Profile:
+    def Pb_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -193,8 +193,8 @@ class LoadParent(InjectionParent):
         return self._Pb_prof
 
     @Pb_prof.setter
-    def Pb_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Pb_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Pb_prof = val
         elif isinstance(val, np.ndarray):
             self._Pb_prof.set(arr=val)
@@ -209,7 +209,7 @@ class LoadParent(InjectionParent):
         return get_at(self.Pb, self.Pb_prof, t)
 
     @property
-    def Pc_prof(self) -> Profile:
+    def Pc_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -217,8 +217,8 @@ class LoadParent(InjectionParent):
         return self._Pc_prof
 
     @Pc_prof.setter
-    def Pc_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Pc_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Pc_prof = val
         elif isinstance(val, np.ndarray):
             self._Pc_prof.set(arr=val)
@@ -233,7 +233,7 @@ class LoadParent(InjectionParent):
         return get_at(self.Pc, self.Pc_prof, t)
 
     @property
-    def Q_prof(self) -> Profile:
+    def Q_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -241,8 +241,8 @@ class LoadParent(InjectionParent):
         return self._Q_prof
 
     @Q_prof.setter
-    def Q_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Q_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Q_prof = val
         elif isinstance(val, np.ndarray):
             self._Q_prof.set(arr=val)
@@ -257,7 +257,7 @@ class LoadParent(InjectionParent):
         return get_at(self.Q, self.Q_prof, t)
 
     @property
-    def Qa_prof(self) -> Profile:
+    def Qa_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -265,8 +265,8 @@ class LoadParent(InjectionParent):
         return self._Qa_prof
 
     @Qa_prof.setter
-    def Qa_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Qa_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Qa_prof = val
         elif isinstance(val, np.ndarray):
             self._Qa_prof.set(arr=val)
@@ -281,7 +281,7 @@ class LoadParent(InjectionParent):
         return get_at(self.Qa, self.Qa_prof, t)
 
     @property
-    def Qb_prof(self) -> Profile:
+    def Qb_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -289,8 +289,8 @@ class LoadParent(InjectionParent):
         return self._Qb_prof
 
     @Qb_prof.setter
-    def Qb_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Qb_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Qb_prof = val
         elif isinstance(val, np.ndarray):
             self._Qb_prof.set(arr=val)
@@ -305,7 +305,7 @@ class LoadParent(InjectionParent):
         return get_at(self.Qb, self.Qb_prof, t)
 
     @property
-    def Qc_prof(self) -> Profile:
+    def Qc_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -313,8 +313,8 @@ class LoadParent(InjectionParent):
         return self._Qc_prof
 
     @Qc_prof.setter
-    def Qc_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Qc_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Qc_prof = val
         elif isinstance(val, np.ndarray):
             self._Qc_prof.set(arr=val)
@@ -437,3 +437,157 @@ class LoadParent(InjectionParent):
 
         self.Q += other.Q
         self.Q_prof = self.Q_prof.toarray() + other.Q_prof.toarray()
+
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def P(self) -> float:
+        """
+        Get ``P``.
+
+        :return: float
+        """
+        return self._P
+
+    @P.setter
+    def P(self, val: float) -> None:
+        """
+        Set ``P``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._P = float(val)
+
+    @property
+    def Pa(self) -> float:
+        """
+        Get ``Pa``.
+
+        :return: float
+        """
+        return self._Pa
+
+    @Pa.setter
+    def Pa(self, val: float) -> None:
+        """
+        Set ``Pa``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Pa = float(val)
+
+    @property
+    def Pb(self) -> float:
+        """
+        Get ``Pb``.
+
+        :return: float
+        """
+        return self._Pb
+
+    @Pb.setter
+    def Pb(self, val: float) -> None:
+        """
+        Set ``Pb``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Pb = float(val)
+
+    @property
+    def Pc(self) -> float:
+        """
+        Get ``Pc``.
+
+        :return: float
+        """
+        return self._Pc
+
+    @Pc.setter
+    def Pc(self, val: float) -> None:
+        """
+        Set ``Pc``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Pc = float(val)
+
+    @property
+    def Q(self) -> float:
+        """
+        Get ``Q``.
+
+        :return: float
+        """
+        return self._Q
+
+    @Q.setter
+    def Q(self, val: float) -> None:
+        """
+        Set ``Q``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Q = float(val)
+
+    @property
+    def Qa(self) -> float:
+        """
+        Get ``Qa``.
+
+        :return: float
+        """
+        return self._Qa
+
+    @Qa.setter
+    def Qa(self, val: float) -> None:
+        """
+        Set ``Qa``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Qa = float(val)
+
+    @property
+    def Qb(self) -> float:
+        """
+        Get ``Qb``.
+
+        :return: float
+        """
+        return self._Qb
+
+    @Qb.setter
+    def Qb(self, val: float) -> None:
+        """
+        Set ``Qb``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Qb = float(val)
+
+    @property
+    def Qc(self) -> float:
+        """
+        Get ``Qc``.
+
+        :return: float
+        """
+        return self._Qc
+
+    @Qc.setter
+    def Qc(self, val: float) -> None:
+        """
+        Set ``Qc``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Qc = float(val)

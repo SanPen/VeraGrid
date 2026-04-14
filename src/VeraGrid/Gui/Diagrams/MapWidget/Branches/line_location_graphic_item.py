@@ -131,7 +131,6 @@ class LineLocationGraphicItem(QtWidgets.QGraphicsEllipseItem, NodeTemplate):
 
         if self.enabled:
             self.update_real_pos()
-            self.line_container.update_connectors()
 
     def update_position_at_the_diagram(self) -> None:
         """
@@ -351,5 +350,4 @@ class LineLocationGraphicItem(QtWidgets.QGraphicsEllipseItem, NodeTemplate):
         pen = self.pen()
         pen.setWidth(width)
         self.setPen(pen)
-
 

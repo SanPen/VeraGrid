@@ -95,6 +95,8 @@ class UpfcGraphicItem(LineGraphicTemplateItem):
                            icon_path=":/Icons/icons/edit.png")
 
             menu.addSeparator()
+            self.add_auto_route_style_menu(menu=menu)
+            menu.addSeparator()
 
             ra6 = menu.addAction('Plot profiles')
             plot_icon = QIcon()

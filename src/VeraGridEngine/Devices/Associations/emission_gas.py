@@ -4,14 +4,24 @@
 # SPDX-License-Identifier: MPL-2.0
 
 
-from typing import Union
+from typing import Union, Tuple
 import numpy as np
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType
-from VeraGridEngine.Devices.profile import Profile
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType, GCProp
+from VeraGridEngine.Devices.Profiles import ProfileFloat
 
 
 class EmissionGas(EditableDevice):
-    __slots__ = ('cost', '_cost_prof', 'color')
+    __slots__ = (
+        '_cost',
+        '_cost_prof',
+        'color',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='cost', units='e/t', tpe=float, definition='Cost of emissions (e / ton)',
+                      profile_name='cost_prof'),
+        GCProp(key='color', units='', tpe=str, definition='Color to paint', is_color=True),
+    )
 
     def __init__(self,
                  name: str = '',
@@ -35,16 +45,13 @@ class EmissionGas(EditableDevice):
 
         self.cost = cost
 
-        self._cost_prof = Profile(default_value=cost, data_type=float)
+        self._cost_prof = ProfileFloat(default_value=cost)
 
         self.color = color if color is not None else self.rnd_color()
 
-        self.register(key='cost', units='e/t', tpe=float, definition='Cost of emissions (e / ton)',
-                      profile_name='cost_prof')
-        self.register(key='color', units='', tpe=str, definition='Color to paint', is_color=True)
 
     @property
-    def cost_prof(self) -> Profile:
+    def cost_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -52,10 +59,31 @@ class EmissionGas(EditableDevice):
         return self._cost_prof
 
     @cost_prof.setter
-    def cost_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def cost_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._cost_prof = val
         elif isinstance(val, np.ndarray):
             self._cost_prof.set(arr=val)
         else:
             raise Exception(str(type(val)) + 'not supported to be set into a cost_prof')
+
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def cost(self) -> float:
+        """
+        Get ``cost``.
+
+        :return: float
+        """
+        return self._cost
+
+    @cost.setter
+    def cost(self, val: float) -> None:
+        """
+        Set ``cost``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._cost = float(val)

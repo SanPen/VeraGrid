@@ -12,6 +12,11 @@ from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceTyp
 
 
 class ClusteringResults(ResultsTemplate):
+    __slots__ = (
+        "time_indices",
+        "sampled_probabilities",
+        "original_sample_idx"
+    )
 
     def __init__(self,
                  time_indices: IntVec,

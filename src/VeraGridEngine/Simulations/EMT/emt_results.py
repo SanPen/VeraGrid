@@ -1,0 +1,168 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
+
+import numpy as np
+from matplotlib import pyplot as plt
+from typing import List, Dict
+
+from VeraGridEngine.Simulations.results_template import ResultsTemplate
+from VeraGridEngine.basic_structures import Vec, StrVec,  DateVec, Mat
+from VeraGridEngine.enumerations import StudyResultsType,  DeviceType
+from VeraGridEngine.Utils.Symbolic.symbolic import Var
+from VeraGridEngine.Devices.types import ALL_DEV_TYPES
+
+
+class EmtResults(ResultsTemplate):
+    __slots__ = (
+        "nt",
+        "nv",
+        "ndv",
+        "ng",
+        "emt_events_group_names",
+        "variables",
+        "diff_variables",
+        "uid2vars_glob_name",
+        "devices_vars_info",
+        "uid2idx_vars",
+        "uid2idx_diff",
+        "vars_glob_name2uid",
+        "variable_array",
+        "values",
+        "diff_values",
+    )
+
+    def __init__(self,
+                 time_array: DateVec,
+                 emt_events_group_names: StrVec,
+                 variables: List[Var],
+                 diff_variables: List[Var],
+                 uid2idx_vars: Dict[int, int],
+                 uid2idx_diff: Dict[int, int],
+                 vars_glob_name2uid: Dict[str, int],
+                 devices_vars_info: Dict[ALL_DEV_TYPES, List[Var]]):
+        """
+
+        :param emt_events_group_names: names of the EMT groups simulated
+        :param time_array: Array of time steps
+        :param variables: List of all variables (Redundant?)
+        :param diff_variables: List of all derivatives of variables (Redundant?)
+        :param uid2idx_vars: Var uid to var index in values variables
+        :param uid2idx_diff: Var uid to var index in values diff vars
+        :param vars_glob_name2uid: dictionary relating var names to uid (WTF?)
+        :param devices_vars_info: dictionary relating the devices with a list of their simulation vars
+        """
+        ResultsTemplate.__init__(
+            self,
+            name='EMT simulation',
+            available_results=[],
+            time_array=time_array,
+            clustering_results=None,
+            study_results_type=StudyResultsType.EmtSimulation
+        )
+
+        self.nt = len(time_array)
+        self.nv = len(variables)
+        self.ndv = len(diff_variables)
+        self.ng = len(emt_events_group_names)
+
+        self.emt_events_group_names = emt_events_group_names
+
+        #TODO: add them?
+        # self.well_initialized = np.zeros(self.ng, dtype=bool)
+        # self.converged = np.zeros(self.ng, dtype=bool)
+
+        self.variables = variables
+        self.diff_variables = diff_variables
+        self.uid2vars_glob_name = {uid: name for name, uid in vars_glob_name2uid.items()}
+        self.devices_vars_info: Dict[ALL_DEV_TYPES, List[Var]] = devices_vars_info
+        self.uid2idx_vars: Dict[int, int] = uid2idx_vars
+        self.uid2idx_diff: Dict[int, int] = uid2idx_diff
+        self.vars_glob_name2uid = vars_glob_name2uid
+        self.variable_array = np.array([self.uid2vars_glob_name[var.uid] for var in variables], dtype=str)
+        self.values = np.zeros((self.nt, self.nv, self.ng), dtype=float)
+        self.diff_values = np.zeros((self.nt, self.ndv, self.ng), dtype=float)
+
+        self.register(name='values', tpe=Vec)
+
+    def get_var(self, uid: int) -> Var:
+        """
+
+        :param uid:
+        :return:
+        """
+        idx = self.uid2idx_vars[uid]
+        return self.variables[idx]
+
+    def get_diff_var(self, uid: int) -> Var:
+        """
+
+        :param uid:
+        :return:
+        """
+        idx = self.uid2idx_diff[uid]
+        return self.diff_variables[idx]
+
+    def get_devices_dict_tree(self) -> Dict[DeviceType, Dict[ALL_DEV_TYPES, List[Var]]]:
+        """
+
+        :return:
+        """
+        tree: Dict[DeviceType, Dict[ALL_DEV_TYPES, List[Var]]] = dict()
+
+        for elm, var_list in self.devices_vars_info.items():
+
+            elm_by_type_dict = tree.get(elm.device_type, None)
+
+            if elm_by_type_dict is None:
+                tree[elm.device_type] = {elm: var_list}
+            else:
+                elm_by_type_dict[elm] = var_list
+
+        return tree
+
+    def plot_var(self, var: Var, group_idx: int = 0):
+        """
+
+        :param var:
+        :param group_idx:
+        :return:
+        """
+        idx = self.uid2idx_vars[var.uid]
+
+        y = self.values[:, idx, group_idx]
+
+        plt.plot(self.time_array, y, label=var.name)
+        plt.legend()
+        plt.show()
+
+    def plot_diff_var(self, d_var: Var, group_idx: int = 0):
+        """
+
+        :param d_var:
+        :param group_idx:
+        :return:
+        """
+        idx = self.uid2idx_diff[d_var.uid]
+
+        y = self.diff_values[:, idx, group_idx]
+
+        plt.plot(self.time_array, y, label=d_var.name)
+        plt.legend()
+        plt.show()
+
+    def get_vars_data(self, var_list: List[Var], group_idx: int = 0) -> Mat:
+        """
+        Get time, vars data matrix for the vars selection
+        :param var_list: List of vars
+        :param group_idx: group index
+        :return: data (time, vars)
+        """
+        data = np.empty((self.nt, len(var_list)), dtype=float)
+
+        for i, var in enumerate(var_list):
+            idx = self.uid2idx_vars[var.uid]
+            data[:, i] = self.values[:, idx, group_idx]
+
+        return data

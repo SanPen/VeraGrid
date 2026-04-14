@@ -53,6 +53,15 @@ class SurrogateModel:
     """
     SurrogateModel
     """
+    __slots__ = (
+        "m",
+        "c",
+        "W",
+        "b",
+        "P",
+        "bounds",
+        "scratch",
+    )
 
     def __init__(self, m, c, W, b, reg, bounds):
         """

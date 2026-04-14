@@ -156,9 +156,14 @@ class OrToolsLpModel(AbstractLpModel):
     """
     LPModel implementation for ORTOOLS
     """
+    __slots__ = (
+        "solver",
+        "model",
+        "_var_names",
+    )
+
     OPTIMAL = SolveStatus.OPTIMAL
     INFINITY = 1e20
-    originally_infeasible = False
 
     def __init__(self, solver_type: MIPSolvers):
         super().__init__(solver_type, name="OrTools")

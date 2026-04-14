@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
-from VeraGridEngine.IO.ucte.devices.ucte_base import sub_int, sub_str, sub_float, try_int, try_float
+from VeraGridEngine.IO.ucte.devices.ucte_base import sub_int, sub_str, sub_float, try_int, try_float, ucte_split
 from VeraGridEngine.basic_structures import Logger
 
 
@@ -51,7 +51,7 @@ class UcteTransformerTapTable:
                                value=len(line),
                                expected_value=52)
 
-            chunks = line.split()
+            chunks = ucte_split(line, prefix_lengths=(8, 8, 1), total_fields=8, skip_all_separators=True)
 
             if len(chunks) >= 1:
                 self.node1 = chunks[0]

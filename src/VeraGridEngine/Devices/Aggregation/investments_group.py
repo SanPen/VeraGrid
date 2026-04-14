@@ -3,8 +3,8 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Union
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType
+from typing import Union, Tuple
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType, GCProp
 
 
 class InvestmentsGroup(EditableDevice):
@@ -13,8 +13,15 @@ class InvestmentsGroup(EditableDevice):
     """
     __slots__ = (
         'category',
-        'discount_rate',
-        'CAPEX',
+        '_discount_rate',
+        '_CAPEX',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='category', units='', tpe=str, definition='Some tag to category the investment group'),
+        GCProp(key='discount_rate', units='%', tpe=float, definition='Investment group discount rate'),
+        GCProp(key='CAPEX', units='€', tpe=float,
+                      definition="Capital Expenditure of the group (added to the individual investments' capex)"),
     )
 
     def __init__(self,
@@ -48,7 +55,43 @@ class InvestmentsGroup(EditableDevice):
 
         self.CAPEX = CAPEX
 
-        self.register(key='category', units='', tpe=str, definition='Some tag to category the investment group')
-        self.register(key='discount_rate', units='%', tpe=float, definition='Investment group discount rate')
-        self.register(key='CAPEX', units='€', tpe=float,
-                      definition="Capital Expenditure of the group (added to the individual investments' capex)")
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def discount_rate(self) -> float:
+        """
+        Get ``discount_rate``.
+
+        :return: float
+        """
+        return self._discount_rate
+
+    @discount_rate.setter
+    def discount_rate(self, val: float) -> None:
+        """
+        Set ``discount_rate``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._discount_rate = float(val)
+
+    @property
+    def CAPEX(self) -> float:
+        """
+        Get ``CAPEX``.
+
+        :return: float
+        """
+        return self._CAPEX
+
+    @CAPEX.setter
+    def CAPEX(self, val: float) -> None:
+        """
+        Set ``CAPEX``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._CAPEX = float(val)
+

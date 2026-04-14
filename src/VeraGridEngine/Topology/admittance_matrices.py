@@ -174,6 +174,18 @@ class AdmittanceMatrices:
     """
     Class to store admittance matrices
     """
+    __slots__ = (
+        "Ybus",
+        "Yf",
+        "Yt",
+        "Cf",
+        "Ct",
+        "yff",
+        "yft",
+        "ytf",
+        "ytt",
+        "Yshunt_bus",
+    )
 
     def __init__(self,
                  Ybus: sp.csc_matrix,
@@ -585,6 +597,30 @@ class AdmittanceMatricesFast:
     """
     Class to store admittance matrices
     """
+    __slots__ = (
+        "Ybus",
+        "Yf",
+        "Yt",
+        "F",
+        "T",
+        "ys",
+        "ysh2",
+        "vtap_f",
+        "vtap_t",
+        "yff",
+        "yft",
+        "ytf",
+        "ytt",
+        "Yshunt_bus",
+        "pos_yff",
+        "pos_yft",
+        "pos_ytf",
+        "pos_ytt",
+        "pos_b_ii",
+        "pos_b_ij",
+        "pos_b_ji",
+        "pos_b_jj",
+    )
 
     def __init__(self,
                  Ybus: sp.csc_matrix,
@@ -815,6 +851,10 @@ class SeriesAdmittanceMatrices:
     """
     Admittance matrices for HELM and the AC linear methods
     """
+    __slots__ = (
+        "Yseries",
+        "Yshunt",
+    )
 
     def __init__(self, Yseries: sp.csc_matrix, Yshunt: CxVec):
         self.Yseries = Yseries
@@ -884,6 +924,10 @@ class FastDecoupledAdmittanceMatrices:
     """
     Admittance matrices for Fast decoupled method
     """
+    __slots__ = (
+        "B1",
+        "B2",
+    )
 
     def __init__(self, B1: sp.csc_matrix, B2: sp.csc_matrix):
         self.B1 = B1
@@ -934,6 +978,12 @@ class LinearAdmittanceMatrices:
     """
     Admittance matrices for linear methods (DC power flow, PTDF, ...)
     """
+    __slots__ = (
+        "Bbus",
+        "Bf",
+        "Gbus",
+        "Gf",
+    )
 
     def __init__(self, Bbus: sp.csc_matrix, Bf: sp.csc_matrix, Gbus: sp.csc_matrix, Gf: sp.csc_matrix):
         self.Bbus = Bbus

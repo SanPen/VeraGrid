@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF  xmlns:cim="http://iec.ch/TC57/CIM100#" xmlns:dm="http://iec.ch/TC57/61970-552/DifferenceModel/1#" xmlns:eu="http://iec.ch/TC57/CIM100-European#" xmlns:md="http://iec.ch/TC57/61970-552/ModelDescription/1#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <dm:DifferenceModel rdf:about="urn:uuid:87da6373-3b6c-47a2-9493-1918a8d9df61">
+    <md:Model.created>2021-11-19T23:16:27Z</md:Model.created>
+    <md:Model.scenarioTime>2021-04-21T15:30:00Z</md:Model.scenarioTime>
+    <md:Model.description>CGMES Conformity Assessment Test Configuration. The Test Configuration is owned by ENTSO-E and is provided by ENTSO-E “as it is”. To the fullest extent permitted by law, ENTSO-E shall not be liable for any damages of any kind arising out of the use of the model (including any of its subsequent modifications). ENTSO-E neither warrants, nor represents that the use of the model will not infringe the rights of third parties. Any use of the model shall include a reference to ENTSO-E. ENTSO-E web site is the only official source of information related to the model.</md:Model.description>
+    <md:Model.modelingAuthoritySet>http://elia.be/CGMES</md:Model.modelingAuthoritySet>
+    <md:Model.profile>http://iec.ch/TC57/ns/CIM/Dynamics-EU/1.0</md:Model.profile>
+    <md:Model.version>002</md:Model.version>
+    <md:Model.DependentOn rdf:resource="urn:uuid:095c6b30-255d-40d5-85fe-2c9fe6c9846d" />
+    <md:Model.Supersedes rdf:resource="urn:uuid:8e91166f-12ce-4a20-b0bf-7be301171d0b" />
+      <dm:reverseDifferences rdf:parseType="Statements">
+         <rdf:Description rdf:about="#_f7d4412c-6567-4759-aa48-4c881dd79902">
+            <cim:ExcIEEEAC4A.ka>200</cim:ExcIEEEAC4A.ka>
+         </rdf:Description>
+      </dm:reverseDifferences>
+      <dm:forwardDifferences rdf:parseType="Statements">
+         <rdf:Description rdf:about="#_f7d4412c-6567-4759-aa48-4c881dd79902">
+            <cim:ExcIEEEAC4A.ka>300</cim:ExcIEEEAC4A.ka>
+            <cim:IdentifiedObject.description>Modified parameter Ka</cim:IdentifiedObject.description>
+         </rdf:Description>
+      </dm:forwardDifferences>
+   </dm:DifferenceModel>
+</rdf:RDF>

@@ -4,14 +4,14 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import Union
+from typing import Union, Tuple
 import numpy as np
 
-from VeraGridEngine.enumerations import DeviceType, BuildStatus, SubObjectType
+from VeraGridEngine.enumerations import DeviceType, BuildStatus, SubObjectType, ShuntControlMode
 from VeraGridEngine.Devices.Parents.shunt_parent import ShuntParent
-from VeraGridEngine.Devices.profile import Profile
+from VeraGridEngine.Devices.Profiles import ProfileFloat, ProfileInt
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.Devices.Parents.editable_device import get_at
+from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 from VeraGridEngine.basic_structures import Vec
 
 
@@ -20,12 +20,10 @@ class ControllableShunt(ShuntParent):
     Controllable Shunt
     """
     __slots__ = (
-        'is_controlled',
-        'is_nonlinear',
-        'Bmin',
-        'Bmax',
-        'Gmin',
-        'Gmax',
+        '_Bmin',
+        '_Bmax',
+        '_Gmin',
+        '_Gmax',
         'g_per_step',
         'b_per_step',
         '_active_steps',
@@ -35,15 +33,46 @@ class ControllableShunt(ShuntParent):
         '_step_prof',
         'control_bus',
         '_control_bus_prof',
-        'Vset',
+        '_Vset',
+        '_Vmin',
+        '_Vmax',
         '_Vset_prof',
+        'control_mode',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='control_mode', units='', tpe=ShuntControlMode, definition='Shunt control mode'),
+        GCProp(key='control_bus', units='', tpe=DeviceType.BusDevice, definition='Alternative control bus'),
+        GCProp(key='g_steps', units='MW@v=1p.u.', tpe=SubObjectType.Array,
+               definition='Conductance steps', editable=False),
+        GCProp(key='b_steps', units='MVAr@v=1p.u.', tpe=SubObjectType.Array,
+               definition='Susceptance steps', editable=False),
+        GCProp(key='Gmax', units='MW', tpe=float,
+               definition='Maximum conductance', editable=True),
+        GCProp(key='Gmin', units='MW', tpe=float,
+               definition='Minimum conductance', editable=True),
+        GCProp(key='Bmax', units='MVAr', tpe=float,
+               definition='Maximum susceptance', editable=True),
+        GCProp(key='Bmin', units='MVAr', tpe=float,
+               definition='Minimum susceptance', editable=True),
+        GCProp(key='active_steps', units='', tpe=SubObjectType.Array,
+               definition='steps active?', editable=False),
+        GCProp(key='step', units='', tpe=int,
+               definition='Device step position (0~N-1)',
+               profile_name='step_prof'),
+        GCProp(key='Vmin', units='p.u.', tpe=float,
+               definition='Lower range voltage value when regulating with Discrete mode'),
+        GCProp(key='Vset', units='p.u.', tpe=float,
+               definition='Set voltage. This is used for controlled shunts.',
+               profile_name='Vset_prof'),
+        GCProp(key='Vmax', units='p.u.', tpe=float,
+               definition='Upper range voltage value when regulating with Discrete mode.'),
     )
 
     def __init__(self,
                  name='Controllable Shunt',
                  idtag: Union[None, str] = None,
                  code: str = '',
-                 is_nonlinear: bool = False,
                  number_of_steps: int = 1,
                  step: int = 1,
                  g_per_step: float = 0.0,
@@ -65,12 +94,14 @@ class ControllableShunt(ShuntParent):
                  G0: float = 1e-20,
                  B0: float = 1e-20,
                  vset: float = 1.0,
+                 vmin: float = 0.9,
+                 vmax: float = 1.1,
                  mttf: float = 0.0,
                  mttr: float = 0.0,
                  capex: float = 0.0,
                  opex: float = 0.0,
-                 is_controlled: bool = True,
                  control_bus: Bus = None,
+                 control_mode: ShuntControlMode = ShuntControlMode.Continuous,
                  build_status: BuildStatus = BuildStatus.Commissioned):
         """
         The controllable shunt object implements the so-called ZIP model, in which the load can be
@@ -108,9 +139,6 @@ class ControllableShunt(ShuntParent):
                              build_status=build_status,
                              device_type=DeviceType.ControllableShuntDevice)
 
-        self.is_controlled = bool(is_controlled)
-        self.is_nonlinear = bool(is_nonlinear)
-
         self.Bmin = Bmin
         self.Bmax = Bmax
 
@@ -131,7 +159,7 @@ class ControllableShunt(ShuntParent):
         self._b_steps = np.full(number_of_steps, b_per_step)
 
         self._step = int(step)
-        self._step_prof = Profile(default_value=self._step, data_type=int)
+        self._step_prof = ProfileInt(default_value=self._step)
 
         self.control_bus = control_bus
 
@@ -139,40 +167,12 @@ class ControllableShunt(ShuntParent):
         self.Vset = float(vset)
 
         # voltage set profile for this load in p.u.
-        self._Vset_prof = Profile(default_value=self.Vset, data_type=float)
+        self._Vset_prof = ProfileFloat(default_value=self.Vset)
 
-        self.register(key='is_nonlinear', units='', tpe=bool, definition='Is non-linear?')
+        self.Vmin = float(vmin)
+        self.Vmax = float(vmax)
 
-        self.register(key='control_bus', units='', tpe=DeviceType.BusDevice, definition='Alternative control bus')
-
-        self.register(key='g_steps', units='MW@v=1p.u.', tpe=SubObjectType.Array,
-                      definition='Conductance steps', editable=False)
-
-        self.register(key='b_steps', units='MVAr@v=1p.u.', tpe=SubObjectType.Array,
-                      definition='Susceptance steps', editable=False)
-
-        self.register(key='Gmax', units='MW', tpe=float,
-                      definition='Maximum conductance', editable=True)
-
-        self.register(key='Gmin', units='MW', tpe=float,
-                      definition='Minimum conductance', editable=True)
-
-        self.register(key='Bmax', units='MVAr', tpe=float,
-                      definition='Maximum susceptance', editable=True)
-
-        self.register(key='Bmin', units='MVAr', tpe=float,
-                      definition='Minimum susceptance', editable=True)
-
-        self.register(key='active_steps', units='', tpe=SubObjectType.Array,
-                      definition='steps active?', editable=False)
-
-        self.register(key='step', units='', tpe=int,
-                      definition='Device step position (0~N-1)',
-                      profile_name='step_prof')
-
-        self.register(key='Vset', units='p.u.', tpe=float,
-                      definition='Set voltage. This is used for controlled shunts.',
-                      profile_name='Vset_prof')
+        self.control_mode: ShuntControlMode = control_mode
 
     @property
     def step(self):
@@ -184,6 +184,7 @@ class ControllableShunt(ShuntParent):
 
     @step.setter
     def step(self, value: int):
+        value = int(value)
 
         if self.auto_update_enabled:
 
@@ -197,28 +198,6 @@ class ControllableShunt(ShuntParent):
 
             self._step = int(value)
 
-    # @property
-    # def Bmin(self):
-    #     """
-    #
-    #     :return:
-    #     """
-    #     if len(self._b_steps):
-    #         return self._b_steps[0] * self._active_steps[0]
-    #     else:
-    #         return -9999.0
-    #
-    # @property
-    # def Bmax(self):
-    #     """
-    #
-    #     :return:
-    #     """
-    #     if len(self._b_steps):
-    #         return np.sum(self._b_steps * self._active_steps)
-    #     else:
-    #         return 9999.0
-
     @property
     def g_steps(self):
         """
@@ -231,8 +210,6 @@ class ControllableShunt(ShuntParent):
     def g_steps(self, value: np.ndarray):
         assert isinstance(value, np.ndarray)
         self._g_steps = value
-        # self.Gmax = value.max()
-        # self.Gmin = value.min()
 
     @property
     def active_steps(self):
@@ -300,7 +277,7 @@ class ControllableShunt(ShuntParent):
         # self.Bmin = value.min()
 
     @property
-    def Vset_prof(self) -> Profile:
+    def Vset_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -308,8 +285,8 @@ class ControllableShunt(ShuntParent):
         return self._Vset_prof
 
     @Vset_prof.setter
-    def Vset_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def Vset_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._Vset_prof = val
         elif isinstance(val, np.ndarray):
             self._Vset_prof.set(arr=val)
@@ -324,7 +301,7 @@ class ControllableShunt(ShuntParent):
         return get_at(self.Vset, self.Vset_prof, t)
 
     @property
-    def step_prof(self) -> Profile:
+    def step_prof(self) -> ProfileInt:
         """
         Cost profile
         :return: Profile
@@ -332,8 +309,8 @@ class ControllableShunt(ShuntParent):
         return self._step_prof
 
     @step_prof.setter
-    def step_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def step_prof(self, val: Union[ProfileInt, np.ndarray]):
+        if isinstance(val, ProfileInt):
             self._step_prof = val
         elif isinstance(val, np.ndarray):
             self._step_prof.set(arr=val)
@@ -366,3 +343,138 @@ class ControllableShunt(ShuntParent):
             return self._b_steps
         else:
             return np.diff(self._b_steps)
+
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def Gmax(self) -> float:
+        """
+        Get ``Gmax``.
+
+        :return: float
+        """
+        return self._Gmax
+
+    @Gmax.setter
+    def Gmax(self, val: float) -> None:
+        """
+        Set ``Gmax``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Gmax = float(val)
+
+    @property
+    def Gmin(self) -> float:
+        """
+        Get ``Gmin``.
+
+        :return: float
+        """
+        return self._Gmin
+
+    @Gmin.setter
+    def Gmin(self, val: float) -> None:
+        """
+        Set ``Gmin``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Gmin = float(val)
+
+    @property
+    def Bmax(self) -> float:
+        """
+        Get ``Bmax``.
+
+        :return: float
+        """
+        return self._Bmax
+
+    @Bmax.setter
+    def Bmax(self, val: float) -> None:
+        """
+        Set ``Bmax``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Bmax = float(val)
+
+    @property
+    def Bmin(self) -> float:
+        """
+        Get ``Bmin``.
+
+        :return: float
+        """
+        return self._Bmin
+
+    @Bmin.setter
+    def Bmin(self, val: float) -> None:
+        """
+        Set ``Bmin``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Bmin = float(val)
+
+    @property
+    def Vmin(self) -> float:
+        """
+        Get ``Vmin``.
+
+        :return: float
+        """
+        return self._Vmin
+
+    @Vmin.setter
+    def Vmin(self, val: float) -> None:
+        """
+        Set ``Vmin``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Vmin = float(val)
+
+    @property
+    def Vset(self) -> float:
+        """
+        Get ``Vset``.
+
+        :return: float
+        """
+        return self._Vset
+
+    @Vset.setter
+    def Vset(self, val: float) -> None:
+        """
+        Set ``Vset``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Vset = float(val)
+
+    @property
+    def Vmax(self) -> float:
+        """
+        Get ``Vmax``.
+
+        :return: float
+        """
+        return self._Vmax
+
+    @Vmax.setter
+    def Vmax(self, val: float) -> None:
+        """
+        Set ``Vmax``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Vmax = float(val)

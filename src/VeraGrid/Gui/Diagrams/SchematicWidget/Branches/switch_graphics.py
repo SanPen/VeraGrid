@@ -91,7 +91,9 @@ class SwitchGraphicItem(LineGraphicTemplateItem):
             ra5.setIcon(ra5_icon)
             ra5.triggered.connect(self.assign_status_to_profile)
 
-            # menu.addSeparator()
+            menu.addSeparator()
+            self.add_auto_route_style_menu(menu=menu)
+            menu.addSeparator()
 
             ra2 = menu.addAction('Delete')
             del_icon = QIcon()

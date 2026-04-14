@@ -38,10 +38,14 @@ def PackDf(data: np.ndarray,
 class CompiledArraysModule:
     available_structures = {
         "Bus arrays": [
+            'bus-active',
             'V', 'Va', 'Vm',
-            'S', 'P', 'Q',
-            'I',
-            'Y',
+            'S',
+            'P',
+            'Q',
+            'I-load',
+            'Y-load',
+            'Y-shunt',
             'Qmin',
             'Qmax',
         ],
@@ -56,10 +60,13 @@ class CompiledArraysModule:
             # 'pqpv',
         ],
         "Branch arrays": [
+            'branch-active',
             'r',
             'x',
             'g',
             'b',
+            'tap-module',
+            'tap-angle',
             'tap_f',
             'tap_t',
             'Pf_set',
@@ -176,13 +183,18 @@ class CompiledArraysModule:
                                             options=PowerFlowOptions(),
                                             logger=Logger())
 
-        if structure_type == 'V':
+        if structure_type == 'bus-active':
+            df = PackDf(
+                data=island.bus_data.active,
+                columns=['Active'],
+                index=island.bus_data.names,
+            )
+        elif structure_type == 'V':
             df = PackDf(
                 data=island.bus_data.Vbus,
                 columns=['Voltage (p.u.)'],
                 index=island.bus_data.names,
             )
-
         elif structure_type == 'Va':
             df = PackDf(
                 data=np.angle(island.bus_data.Vbus),
@@ -216,16 +228,23 @@ class CompiledArraysModule:
                 index=island.bus_data.names,
             )
 
-        elif structure_type == 'I':
+        elif structure_type == 'I-load':
             df = PackDf(
                 data=island.get_current_injections_pu(),
                 columns=['Current (p.u.)'],
                 index=island.bus_data.names,
             )
 
-        elif structure_type == 'Y':
+        elif structure_type == 'Y-load':
             df = PackDf(
                 data=island.get_admittance_injections_pu(),
+                columns=['Admittance (p.u.)'],
+                index=island.bus_data.names,
+            )
+
+        elif structure_type == 'Y-shunt':
+            df = PackDf(
+                data=island.get_Yshunt_bus_pu(),
                 columns=['Admittance (p.u.)'],
                 index=island.bus_data.names,
             )
@@ -447,6 +466,13 @@ class CompiledArraysModule:
                 index=island.bus_data.names[idx.vd],
             )
 
+        elif structure_type == 'branch-active':
+            df = PackDf(
+                data=island.passive_branch_data.active,
+                columns=['Active'],
+                index=island.passive_branch_data.names,
+            )
+
         elif structure_type == 'r':
             df = PackDf(
                 data=island.passive_branch_data.R,
@@ -474,6 +500,21 @@ class CompiledArraysModule:
                 columns=['Susceptance (p.u.)'],
                 index=island.passive_branch_data.names,
             )
+
+        elif structure_type == 'tap-module':
+            df = PackDf(
+                data=island.active_branch_data.tap_module,
+                columns=['Tap module (p.u.)'],
+                index=island.passive_branch_data.names,
+            )
+
+        elif structure_type == 'tap-angle':
+            df = PackDf(
+                data=island.active_branch_data.tap_angle,
+                columns=['Tap angle (rad)'],
+                index=island.passive_branch_data.names,
+            )
+
         elif structure_type == 'tap_f':
             df = PackDf(
                 data=island.passive_branch_data.virtual_tap_f,

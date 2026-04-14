@@ -19,6 +19,10 @@ class CscMat(csc_matrix):
     """
     Matrix in compressed-column or triplet form.
     """
+    __slots__ = (
+        "m",
+        "n",
+    )
 
     def __init__(self, arg1, shape=None, dtype=None, copy=False):
         """

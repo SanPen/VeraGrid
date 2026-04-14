@@ -1,0 +1,7 @@
+{
+  "name": "klu_vcpkg_native",
+  "solver_type": "KLU",
+  "module": "backend",
+  "class_name": "KluVcpkgNativeProvider",
+  "version": "1.0"
+}

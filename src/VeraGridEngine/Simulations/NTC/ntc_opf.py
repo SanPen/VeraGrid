@@ -14,7 +14,7 @@ from typing import List, Union, Tuple, Callable
 
 from VeraGridEngine.enumerations import MIPSolvers, MIPFramework, ZonalGrouping
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-from VeraGridEngine.Devices.Aggregation.contingency_group import ContingencyGroup
+from VeraGridEngine.Devices.Events.contingency_group import ContingencyGroup
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 from VeraGridEngine.DataStructures.generator_data import GeneratorData
@@ -2285,12 +2285,12 @@ def add_linear_vsc_formulation(t_idx: int,
             elif (vsc_data_t.control1[m] == ConverterControlType.Pdc and
                   vsc_data_t.control2[m] == ConverterControlType.Vm_ac):
 
-                # declare the flow var
-                vsc_vars.flows[t_idx, m] = prob.add_var(
-                    lb=-vsc_data_t.rates[m] / Sbase,
-                    ub=vsc_data_t.rates[m] / Sbase,
-                    name=join("vsc_flow_", [t_idx, m], "_")
-                )
+                # Pmode1: fix the flow at the Pdc setpoint (clamped to rate)
+                P0 = vsc_data_t.control1_val[m] / Sbase
+                rate_pu = vsc_data_t.rates[m] / Sbase
+                P0 = max(-rate_pu, min(rate_pu, P0))
+
+                vsc_vars.flows[t_idx, m] = P0
 
             elif (vsc_data_t.control1[m] == ConverterControlType.Pac and
                   vsc_data_t.control2[m] == ConverterControlType.Vm_dc):

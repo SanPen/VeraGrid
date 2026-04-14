@@ -14,7 +14,8 @@ try:
     from VeraGridEngine.DataStructures import *
     from VeraGridEngine.Topology import *
     from VeraGridEngine.Compilers import *
-    from VeraGridEngine.IO.file_handler import FileOpen, FileSave, FileSavingOptions
+    from VeraGridEngine.IO.file_open import FileOpen
+    from VeraGridEngine.IO.file_save import FileSavingOptions, FileSave
     from VeraGridEngine.IO.veragrid.remote import (gather_model_as_jsons_for_communication, RemoteInstruction,
                                                    SimulationTypes, send_json_data, get_certificate_path,
                                                    get_certificate)

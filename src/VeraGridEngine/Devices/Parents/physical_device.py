@@ -3,12 +3,17 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
-
+from typing import TYPE_CHECKING, List, Tuple
 import datetime
 from typing import Union
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp
 from VeraGridEngine.Devices.Aggregation.modelling_authority import ModellingAuthority
-from VeraGridEngine.enumerations import DeviceType, BuildStatus
+from VeraGridEngine.Devices.Associations.association import Associations
+from VeraGridEngine.enumerations import DeviceType, BuildStatus, SubObjectType
+
+if TYPE_CHECKING:
+    from VeraGridEngine.Devices.Associations.owner import Owner
+    from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 
 
 class PhysicalDevice(EditableDevice):
@@ -19,7 +24,21 @@ class PhysicalDevice(EditableDevice):
         "modelling_authority",
         "_commissioned_date",
         "_decommissioned_date",
-        'build_status'
+        'build_status',
+        'owners',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='modelling_authority', units='', tpe=DeviceType.ModellingAuthority,
+                      definition='Modelling authority of this asset'),
+        GCProp(key='commissioned_date', units='', tpe=int, definition='Commissioned date of the asset',
+                      is_date=True),
+        GCProp(key='decommissioned_date', units='', tpe=int, definition='Decommissioned date of the asset',
+                      is_date=True),
+        GCProp('build_status', units="", tpe=BuildStatus,
+                      definition="Device build status. Used in expansion planning."),
+        GCProp(key='owners', units='p.u.', tpe=SubObjectType.Associations,
+                      definition='Owners associations to injections', display=False),
     )
 
     def __init__(self,
@@ -27,7 +46,9 @@ class PhysicalDevice(EditableDevice):
                  idtag: Union[str, None],
                  code: str,
                  device_type: DeviceType,
-                 build_status: BuildStatus):
+                 build_status: BuildStatus,
+                 commissioned_date: float = 0,
+                 decommissioned_date: float = 0):
         """
         PhysicalDevice
         :param name: Name of the device
@@ -44,24 +65,16 @@ class PhysicalDevice(EditableDevice):
 
         self.modelling_authority: Union[ModellingAuthority, None] = None
 
-        self._commissioned_date: int = 0
+        self._commissioned_date: float = commissioned_date
 
-        self._decommissioned_date: int = 0
+        self._decommissioned_date: float = decommissioned_date
 
         self.build_status = build_status
 
-        self.register(key='modelling_authority', units='', tpe=DeviceType.ModellingAuthority,
-                      definition='Modelling authority of this asset')
-        self.register(key='commissioned_date', units='', tpe=int, definition='Commissioned date of the asset',
-                      is_date=True)
-        self.register(key='decommissioned_date', units='', tpe=int, definition='Decommissioned date of the asset',
-                      is_date=True)
-
-        self.register('build_status', units="", tpe=BuildStatus,
-                      definition="Device build status. Used in expansion planning.")
+        self.owners: Associations = Associations(device_type=DeviceType.Owner)
 
     @property
-    def commissioned_date(self) -> int:
+    def commissioned_date(self) -> float:
         """
 
         :return:
@@ -69,9 +82,9 @@ class PhysicalDevice(EditableDevice):
         return self._commissioned_date
 
     @commissioned_date.setter
-    def commissioned_date(self, val: int | datetime.datetime):
-        if isinstance(val, int):
-            self._commissioned_date = val
+    def commissioned_date(self, val: float | datetime.datetime):
+        if isinstance(val, (float, int)):
+            self._commissioned_date = float(val)
         elif isinstance(val, datetime.datetime):
             self._commissioned_date = val.timestamp()
 
@@ -92,7 +105,7 @@ class PhysicalDevice(EditableDevice):
         return datetime.datetime.fromtimestamp(self._commissioned_date)
 
     @property
-    def decommissioned_date(self) -> int:
+    def decommissioned_date(self) -> float:
         """
 
         :return:
@@ -100,9 +113,9 @@ class PhysicalDevice(EditableDevice):
         return self._decommissioned_date
 
     @decommissioned_date.setter
-    def decommissioned_date(self, val: int | datetime.datetime):
-        if isinstance(val, int):
-            self._decommissioned_date = val
+    def decommissioned_date(self, val: float | datetime.datetime):
+        if isinstance(val, (float, int)):
+            self._decommissioned_date = float(val)
         elif isinstance(val, datetime.datetime):
             self._decommissioned_date = val.timestamp()
 
@@ -122,5 +135,20 @@ class PhysicalDevice(EditableDevice):
         """
         return datetime.datetime.fromtimestamp(self._decommissioned_date)
 
-    def initialize_rms(self):
-        pass
+    def associate_owner(self, owner: Owner, val=1.0):
+        """
+        Associate a technology with this injection device
+        :param owner:
+        :param val:
+        :return:
+        """
+        self.owners.add_object(owner, val=val)
+
+    @property
+    def owners_list(self) -> List[ALL_DEV_TYPES]:
+        """
+        Bus
+        :return: Bus
+        """
+        return self.owners.to_list()
+

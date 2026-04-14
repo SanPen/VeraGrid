@@ -4,33 +4,23 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from __future__ import annotations
+from typing import TYPE_CHECKING
 
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.conducting_equipment import ConductingEquipment
-from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType, UnitSymbol
-
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import UnitSymbol
+from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
+if TYPE_CHECKING:
+	from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.ac_line_segment import ACLineSegment
 
 class Clamp(ConductingEquipment):
+	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
+		CgmesProperty(property_name='ACLineSegment', class_type='ACLineSegment', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The line segment to which the clamp is connected.''', profiles=[]),
+		CgmesProperty(property_name='lengthFromTerminal1', class_type=float, multiplier=UnitMultiplier.k, unit=UnitSymbol.m, description='''Unit of length. It shall be a positive value or zero.''', profiles=[]),
+	)
+	__slots__ = ('ACLineSegment', 'lengthFromTerminal1')
 	def __init__(self, rdfid='', tpe='Clamp'):
 		ConductingEquipment.__init__(self, rdfid, tpe)
 
-		from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.ac_line_segment import ACLineSegment
 		self.ACLineSegment: ACLineSegment | None = None
 		self.lengthFromTerminal1: float = None
-
-		self.register_property(
-			name='ACLineSegment',
-			class_type=ACLineSegment,
-			multiplier=UnitMultiplier.none,
-			unit=UnitSymbol.none,
-			description='''The line segment to which the clamp is connected.''',
-			profiles=[]
-		)
-		self.register_property(
-			name='lengthFromTerminal1',
-			class_type=float,
-			multiplier=UnitMultiplier.k,
-			unit=UnitSymbol.m,
-			description='''Unit of length. It shall be a positive value or zero.''',
-			profiles=[]
-		)

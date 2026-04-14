@@ -1,32 +1,56 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at https://mozilla.org/MPL/2.0/.  
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
+from typing import Tuple
 import numpy as np
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType
+from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
+from VeraGridEngine.Devices.Parents.dynamic_parent import DynamicDevice
 
 
-class UndergroundLineType(EditableDevice):
+class UndergroundLineType(DynamicDevice):
     __slots__ = (
-        'Imax',
-        'Vnom',
+        '_Imax',
+        '_Vnom',
         '_freq',
-        'R',
-        'X',
-        'B',
+        '_R',
+        '_X',
+        '_B',
         '_C',
-        'R0',
-        'X0',
-        'B0',
+        '_R0',
+        '_X0',
+        '_B0',
         '_C0',
-        'n_circuits'
+        '_n_circuits',
+        '_capex',
+        '_opex',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='Imax', units='kA', tpe=float, definition='Current rating of the line', old_names=['rating']),
+        GCProp(key='Vnom', units='kV', tpe=float, definition='Voltage rating of the line'),
+        GCProp(key='freq', units='Hz', tpe=float, definition='Cable frequency'),
+        GCProp(key='R', units='Ohm/km', tpe=float, definition='Positive-sequence resistance per km'),
+        GCProp(key='X', units='Ohm/km', tpe=float, definition='Positive-sequence reactance per km'),
+        GCProp(key='B', units='uS/km', tpe=float, definition='Positive-sequence shunt susceptance per km'),
+        GCProp(key='C', units='uF/km', tpe=float,
+                   definition='Positive-sequence shunt capacitance per km (alternative to B'),
+        GCProp(key='R0', units='Ohm/km', tpe=float, definition='Zero-sequence resistance per km'),
+        GCProp(key='X0', units='Ohm/km', tpe=float, definition='Zero-sequence reactance per km'),
+        GCProp(key='B0', units='uS/km', tpe=float, definition='Zero-sequence shunt susceptance per km'),
+        GCProp(key='C0', units='uF/km', tpe=float,
+                   definition='Zero-sequence shunt capacitance per km (alternative to B0'),
+        GCProp(key='n_circuits', units='', tpe=int, definition='number of circuits'),
+        GCProp(key='capex', units='currency/km', tpe=float, definition='Capital expenditure per km'),
+        GCProp(key='opex', units='currency/MWh', tpe=float, definition='Operational expenditure'),
     )
 
     def __init__(self, name: str = 'UndergroundLine', idtag: None | str = None, Imax: float = 1.0,
                  Vnom: float = 1.0, R: float = 0.0, X: float = 0.0, B: float = 0.0, C: float = 0.0,
                  R0: float = 0.0, X0: float = 0.0, B0: float = 0.0, C0: float = 0.0,
-                 freq: float = 50.0) -> None:
+                 freq: float = 50.0,
+                 capex: float = 0.0, opex: float = 0.0) -> None:
         """
         Constructor
         :param name: name of the device
@@ -40,8 +64,10 @@ class UndergroundLineType(EditableDevice):
         :param B0: Susceptance of zero sequence in uS/km
         :param C0: Capacitance of zero sequence in uF/km (alternative to B0)
         :param freq: Frequency of underground line (Hz)
+        :param capex: Capital expenditures
+        :param opex: Operating expenditures
         """
-        EditableDevice.__init__(self,
+        DynamicDevice.__init__(self,
                                 name=name,
                                 idtag=idtag,
                                 code='',
@@ -64,20 +90,8 @@ class UndergroundLineType(EditableDevice):
 
         self.n_circuits = 1
 
-        self.register(key='Imax', units='kA', tpe=float, definition='Current rating of the line', old_names=['rating'])
-        self.register(key='Vnom', units='kV', tpe=float, definition='Voltage rating of the line')
-        self.register(key='freq', units='Hz', tpe=float, definition='Cable frequency')
-        self.register(key='R', units='Ohm/km', tpe=float, definition='Positive-sequence resistance per km')
-        self.register(key='X', units='Ohm/km', tpe=float, definition='Positive-sequence reactance per km')
-        self.register(key='B', units='uS/km', tpe=float, definition='Positive-sequence shunt susceptance per km')
-        self.register(key='C', units='uF/km', tpe=float,
-                      definition='Positive-sequence shunt capacitance per km (alternative to B')
-        self.register(key='R0', units='Ohm/km', tpe=float, definition='Zero-sequence resistance per km')
-        self.register(key='X0', units='Ohm/km', tpe=float, definition='Zero-sequence reactance per km')
-        self.register(key='B0', units='uS/km', tpe=float, definition='Zero-sequence shunt susceptance per km')
-        self.register(key='C0', units='uF/km', tpe=float,
-                      definition='Zero-sequence shunt capacitance per km (alternative to B0')
-        self.register(key='n_circuits', units='', tpe=int, definition='number of circuits')
+        self.capex = float(capex)
+        self.opex = float(opex)
 
     def get_values(self, Sbase: float, length: float):
         """
@@ -148,3 +162,214 @@ class UndergroundLineType(EditableDevice):
         if self.auto_update_enabled:
             self.B = 2 * np.pi * self._freq * self._C
             self.B0 = 2 * np.pi * self._freq * self._C0
+
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def Imax(self) -> float:
+        """
+        Get ``Imax``.
+
+        :return: float
+        """
+        return self._Imax
+
+    @Imax.setter
+    def Imax(self, val: float) -> None:
+        """
+        Set ``Imax``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Imax = float(val)
+
+    @property
+    def Vnom(self) -> float:
+        """
+        Get ``Vnom``.
+
+        :return: float
+        """
+        return self._Vnom
+
+    @Vnom.setter
+    def Vnom(self, val: float) -> None:
+        """
+        Set ``Vnom``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Vnom = float(val)
+
+    @property
+    def R(self) -> float:
+        """
+        Get ``R``.
+
+        :return: float
+        """
+        return self._R
+
+    @R.setter
+    def R(self, val: float) -> None:
+        """
+        Set ``R``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._R = float(val)
+
+    @property
+    def X(self) -> float:
+        """
+        Get ``X``.
+
+        :return: float
+        """
+        return self._X
+
+    @X.setter
+    def X(self, val: float) -> None:
+        """
+        Set ``X``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._X = float(val)
+
+    @property
+    def B(self) -> float:
+        """
+        Get ``B``.
+
+        :return: float
+        """
+        return self._B
+
+    @B.setter
+    def B(self, val: float) -> None:
+        """
+        Set ``B``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._B = float(val)
+
+    @property
+    def R0(self) -> float:
+        """
+        Get ``R0``.
+
+        :return: float
+        """
+        return self._R0
+
+    @R0.setter
+    def R0(self, val: float) -> None:
+        """
+        Set ``R0``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._R0 = float(val)
+
+    @property
+    def X0(self) -> float:
+        """
+        Get ``X0``.
+
+        :return: float
+        """
+        return self._X0
+
+    @X0.setter
+    def X0(self, val: float) -> None:
+        """
+        Set ``X0``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._X0 = float(val)
+
+    @property
+    def B0(self) -> float:
+        """
+        Get ``B0``.
+
+        :return: float
+        """
+        return self._B0
+
+    @B0.setter
+    def B0(self, val: float) -> None:
+        """
+        Set ``B0``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._B0 = float(val)
+
+    @property
+    def n_circuits(self) -> int:
+        """
+        Get ``n_circuits``.
+
+        :return: int
+        """
+        return self._n_circuits
+
+    @n_circuits.setter
+    def n_circuits(self, val: int) -> None:
+        """
+        Set ``n_circuits``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._n_circuits = int(val)
+
+    @property
+    def capex(self) -> float:
+        """
+        Get ``capex``.
+
+        :return: float
+        """
+        return self._capex
+
+    @capex.setter
+    def capex(self, val: float) -> None:
+        """
+        Set ``capex``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._capex = float(val)
+
+    @property
+    def opex(self) -> float:
+        """
+        Get ``opex``.
+
+        :return: float
+        """
+        return self._opex
+
+    @opex.setter
+    def opex(self, val: float) -> None:
+        """
+        Set ``opex``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._opex = float(val)

@@ -7,6 +7,7 @@ import numba as nb
 import numpy as np
 from scipy.sparse import csc_matrix
 from VeraGridEngine.basic_structures import Vec, CxVec, IntVec, CscMat, CxMat
+from typing import Tuple
 
 
 @nb.njit(cache=True, fastmath=True)
@@ -230,102 +231,229 @@ def expand_magnitudes(magnitude: CxVec, lookup: IntVec):
     return magnitude_expanded
 
 
-def floating_star_currents(Va, Vb, Vc, Istar_a, Istar_b, Istar_c, Vn0):
+@nb.njit(cache=True)
+def floating_star_currents(Va, Vb, Vc, Istar_a, Istar_b, Istar_c, Vn0) -> Tuple[complex, complex, complex, complex]:
     """
-
-    :param Va:
-    :param Vb:
-    :param Vc:
-    :param Istar_a:
-    :param Istar_b:
-    :param Istar_c:
-    :param Vn0:
-    :return:
+    Given the phase voltages and currents of a floating star connected current load,
+    this function calculates the phase currents (Ia, Ib, Ic) and the neutral voltage (Vn),
+    such that they meet the condition that the current flowing through the neutral point is equal to zero,
+    since the neutral point of the star is floating -> In = Ia + Ib + Ic = 0
+    :param Va: Phase A load voltage
+    :param Vb: Phase B load voltage
+    :param Vc: Phase C load voltage
+    :param Istar_a: Phase A load current
+    :param Istar_b: Phase B load current
+    :param Istar_c: Phase C load current
+    :param Vn0: Last-iteration neutral point voltage or
+                just the center of the phase voltages (Va,Vb,Vc) at the first iteration
+    :return: Ia, Ib, Ic, Vn
     """
+    zero_voltage = 1e-5
+    zero_current = complex(0.0, 0.0)
     # unknown: Vn (complex). Start from last-iter Vn0 or center of Va,Vb,Vc
     Vn = Vn0
+    error = 1.0
+    iteration = 0
+    max_iterations = 25
 
+    # Remove @nb.njit decorator - nested functions can't be decorated
     def Iphase(U, Istar):
         Umag = abs(U)
         if Umag < 1e-12:  # guard
-            return 0j
+            return nb.complex128(0.0)  # Changed from complex64 to complex128
         return np.conj(Istar) * (U / Umag)
 
-    for _ in range(10):  # few Newton steps are usually enough
+    while error > 1e-6 and iteration <= max_iterations:  # few Newton steps are usually enough
+
+        if abs(Va) > zero_voltage and abs(Vb) > zero_voltage and abs(Vc) > zero_voltage:
+
+            Ua, Ub, Uc = Va - Vn, Vb - Vn, Vc - Vn
+
+            Ia = Iphase(Ua, Istar_a)
+            Ib = Iphase(Ub, Istar_b)
+            Ic = Iphase(Uc, Istar_c)
+            F = Ia + Ib + Ic  # complex residual
+            if abs(F) < 1e-9:
+                return Ia, Ib, Ic, Vn
+
+            # Jacobian dF/dVn (complex), derived from d/dVn [U/|U|] = -(1/|U|)(I - U U*/|U|^2)
+            # A simple, very stable approximation is to use a secant-like step:
+            eps = 1e-6
+            dV = eps * (1.0 + 1.0j)
+            Uad, Ubd, Ucd = Va - (Vn + dV), Vb - (Vn + dV), Vc - (Vn + dV)
+            Iad = Iphase(Uad, Istar_a)
+            Ibd = Iphase(Ubd, Istar_b)
+            Icd = Iphase(Ucd, Istar_c)
+            Fd = Iad + Ibd + Icd
+            Jsec = (Fd - F) / dV if dV != 0 else 1.0
+            if Jsec == 0:
+                return zero_voltage, zero_voltage, zero_voltage, zero_voltage
+            # damped update
+            Vn = Vn - 0.7 * F / Jsec
+
+        elif abs(Va) > zero_voltage and abs(Vb) > zero_voltage:
+
+            Ua, Ub = Va - Vn, Vb - Vn
+
+            Ia = Iphase(Ua, Istar_a)
+            Ib = Iphase(Ub, Istar_b)
+            F = Ia + Ib  # complex residual
+            if abs(F) < 1e-9:
+                return Ia, Ib, zero_current, Vn
+
+            # Jacobian dF/dVn (complex), derived from d/dVn [U/|U|] = -(1/|U|)(I - U U*/|U|^2)
+            # A simple, very stable approximation is to use a secant-like step:
+            eps = 1e-6
+            dV = eps * (1.0 + 1.0j)
+            Uad, Ubd = Va - (Vn + dV), Vb - (Vn + dV)
+            Iad = Iphase(Uad, Istar_a)
+            Ibd = Iphase(Ubd, Istar_b)
+            Fd = Iad + Ibd
+            Jsec = (Fd - F) / dV if dV != 0 else 1.0
+            if Jsec == 0:
+                return zero_voltage, zero_voltage, zero_voltage, zero_voltage
+            # damped update
+            Vn = Vn - 0.7 * F / Jsec
+
+        elif abs(Vb) > zero_voltage and abs(Vc) > zero_voltage:
+
+            Ub, Uc = Vb - Vn, Vc - Vn
+
+            Ib = Iphase(Ub, Istar_b)
+            Ic = Iphase(Uc, Istar_c)
+            F = Ib + Ic  # complex residual
+            if abs(F) < 1e-9:
+                return zero_current, Ib, Ic, Vn
+
+            # Jacobian dF/dVn (complex), derived from d/dVn [U/|U|] = -(1/|U|)(I - U U*/|U|^2)
+            # A simple, very stable approximation is to use a secant-like step:
+            eps = 1e-6
+            dV = eps * (1.0 + 1.0j)
+            Ubd, Ucd = Vb - (Vn + dV), Vc - (Vn + dV)
+            Ibd = Iphase(Ubd, Istar_b)
+            Icd = Iphase(Ucd, Istar_c)
+            Fd = Ibd + Icd
+            Jsec = (Fd - F) / dV if dV != 0 else 1.0
+            if Jsec == 0:
+                return zero_voltage, zero_voltage, zero_voltage, zero_voltage
+            # damped update
+            Vn = Vn - 0.7 * F / Jsec
+
+        elif abs(Vc) > zero_voltage and abs(Va) > zero_voltage:
+
+            Ua, Uc = Va - Vn, Vc - Vn
+
+            Ia = Iphase(Ua, Istar_a)
+            Ic = Iphase(Uc, Istar_c)
+            F = Ia + Ic  # complex residual
+            if abs(F) < 1e-9:
+                return Ia, zero_current, Ic, Vn
+
+            # Jacobian dF/dVn (complex), derived from d/dVn [U/|U|] = -(1/|U|)(I - U U*/|U|^2)
+            # A simple, very stable approximation is to use a secant-like step:
+            eps = 1e-6
+            dV = eps * (1.0 + 1.0j)
+            Uad, Ucd = Va - (Vn + dV), Vc - (Vn + dV)
+            Iad = Iphase(Uad, Istar_a)
+            Icd = Iphase(Ucd, Istar_c)
+            Fd = Iad + Icd
+            Jsec = (Fd - F) / dV if dV != 0 else 1.0
+            if Jsec == 0:
+                return zero_voltage, zero_voltage, zero_voltage, zero_voltage
+            # damped update
+            Vn = Vn - 0.7 * F / Jsec
+
+        else:
+            return zero_voltage, zero_voltage, zero_voltage, zero_voltage
+
+        error = np.abs(Vn - Vn0)
+        iteration += 1
+
+    # final phase currents to inject (load consumes → subtract at phases)
+    if abs(Va) > zero_voltage and abs(Vb) > zero_voltage and abs(Vc) > zero_voltage:
         Ua, Ub, Uc = Va - Vn, Vb - Vn, Vc - Vn
         Ia = Iphase(Ua, Istar_a)
         Ib = Iphase(Ub, Istar_b)
         Ic = Iphase(Uc, Istar_c)
-        F = Ia + Ib + Ic  # complex residual
-        if abs(F) < 1e-9:
-            break
-
-        # Jacobian dF/dVn (complex), derived from d/dVn [U/|U|] = -(1/|U|)(I - U U*/|U|^2)
-        # A simple, very stable approximation is to use a secant-like step:
-        eps = 1e-6
-        dV = eps * (1.0 + 1.0j)
-        Uad, Ubd, Ucd = Va - (Vn + dV), Vb - (Vn + dV), Vc - (Vn + dV)
-        Iad = Iphase(Uad, Istar_a)
-        Ibd = Iphase(Ubd, Istar_b)
-        Icd = Iphase(Ucd, Istar_c)
-        Fd = Iad + Ibd + Icd
-        Jsec = (Fd - F) / dV if dV != 0 else 1.0
-        if Jsec == 0:
-            break
-        # damped update
-        Vn = Vn - 0.7 * F / Jsec
-
-    # final phase currents to inject (load consumes → subtract at phases)
-    Ua, Ub, Uc = Va - Vn, Vb - Vn, Vc - Vn
-    Ia = Iphase(Ua, Istar_a)
-    Ib = Iphase(Ub, Istar_b)
-    Ic = Iphase(Uc, Istar_c)
-
-    # print('In =', Ia + Ib + Ic)
+    elif abs(Va) > zero_voltage and abs(Vb) > zero_voltage:
+        Ua, Ub = Va - Vn, Vb - Vn
+        Ia = Iphase(Ua, Istar_a)
+        Ib = Iphase(Ub, Istar_b)
+        Ic = complex(0.0, 0.0)
+    elif abs(Vb) > zero_voltage and abs(Vc) > zero_voltage:
+        Ub, Uc = Vb - Vn, Vc - Vn
+        Ia = complex(0.0, 0.0)
+        Ib = Iphase(Ub, Istar_b)
+        Ic = Iphase(Uc, Istar_c)
+    elif abs(Va) > zero_voltage and abs(Vc) > zero_voltage:
+        Ua, Uc = Va - Vn, Vc - Vn
+        Ia = Iphase(Ua, Istar_a)
+        Ib = complex(0.0, 0.0)
+        Ic = Iphase(Uc, Istar_c)
+    else:
+        Ia = complex(0.0, 0.0)
+        Ib = complex(0.0, 0.0)
+        Ic = complex(0.0, 0.0)
 
     return Ia, Ib, Ic, Vn
 
 
+# @nb.njit(cache=True)
 def floating_star_powers(Ua,
                          Ub,
                          Uc,
                          Sa,
                          Sb,
-                         Sc):
+                         Sc) -> Tuple[complex, complex, complex, complex]:
     """
+    Given the phase voltages and complex powers of a floating star connected power load,
+    this function calculates the phase currents (Ia, Ib, Ic) and the neutral voltage (Un),
+    such that they meet the condition that the current flowing through the neutral point is equal to zero,
+    since the neutral point of the star is floating -> In = Ia + Ib + Ic = 0
+    :param Ua: Phase A load voltage
+    :param Ub: Phase B load voltage
+    :param Uc: Phase C load voltage
+    :param Sa: Phase A load complex power
+    :param Sb: Phase B load complex power
+    :param Sc: Phase C load complex power
+    :return: Ia, Ib, Ic, Un
+    """
+    zero_current = complex(1e-10, 1e-10)
 
-    :param Ua:
-    :param Ub:
-    :param Uc:
-    :param Sa:
-    :param Sb:
-    :param Sc:
-    :return:
-    """
     # A·x2 + B·x + c = 0
     # x = (-B +- sqrt(B2 - 4·A·C)) / 2·A
 
-    A = Sa + Sb + Sc
+    if np.abs(Sa + Sb + Sc) > np.abs(zero_current):
+        A = Sa + Sb + Sc
+    else:
+        A = zero_current
     B = -(Sa * (Ub + Uc) + Sb * (Ua + Uc) + Sc * (Ua + Ub))
     C = Sa * Ub * Uc + Sb * Ua * Uc + Sc * Ua * Ub
 
     Un_p = (-B + np.sqrt(B ** 2 - 4 * A * C)) / (2 * A)
     Un_n = (-B - np.sqrt(B ** 2 - 4 * A * C)) / (2 * A)
 
-    if abs(Un_p) < abs(Un_n):
+    if np.abs(Un_p) < np.abs(Un_n) and np.abs(Un_p) != 0.0 and np.abs(Un_p) <= 1.0:
         Un = Un_p
-    else:
+    elif np.abs(Un_n) != 0.0 and np.abs(Un_n) <= 1.0:
         Un = Un_n
+    else:
+        Un = complex(0.0, 0.0)
 
-    Ia = np.conj(Sa / (Ua - Un))
-    Ib = np.conj(Sb / (Ub - Un))
-    Ic = np.conj(Sc / (Uc - Un))
+    if np.abs(Ua) > np.abs(zero_current) and np.abs(Ua - Un) > np.abs(zero_current):
+        Ia = np.conj(Sa / (Ua - Un))
+    else:
+        Ia = zero_current
 
-    # print('\nUn_p = ', abs(Un_p), '<', np.angle(Un_p, deg=True), 'º')
-    # print('\nUn_n = ', abs(Un_n), '<', np.angle(Un_n, deg=True), 'º')
-    # print('\nIn = ', Ia + Ib + Ic)
+    if np.abs(Ub) > np.abs(zero_current) and np.abs(Ub - Un) > np.abs(zero_current):
+        Ib = np.conj(Sb / (Ub - Un))
+    else:
+        Ib = zero_current
 
-    Un_abs = abs(Un)
+    if np.abs(Uc) > np.abs(zero_current) and np.abs(Uc - Un) > np.abs(zero_current):
+        Ic = np.conj(Sc / (Uc - Un))
+    else:
+        Ic = zero_current
 
     return Ia, Ib, Ic, Un
 
@@ -368,9 +496,12 @@ def power_flow_post_process_nonlinear_3ph(Sbus: CxVec,
     V_expanded = expand_magnitudes(V, bus_lookup)
     Vn_floating_expanded = expand_magnitudes(Vn_floating, bus_lookup)
 
+    # Compute the basic Sbus
+    Sbus = V * np.conj(Ybus @ V)
+
     # Add the shunt power V^2 x Y^*
     Vm = np.abs(V)
-    Sbus = np.conj(Yshunt_bus) @ (Vm * Vm)
+    Sbus += np.conj(Yshunt_bus) @ (Vm * Vm)
 
     # power at the slack nodes
     if len(vd) > 0:

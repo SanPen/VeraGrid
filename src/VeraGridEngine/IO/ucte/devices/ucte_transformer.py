@@ -2,7 +2,18 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
-from VeraGridEngine.IO.ucte.devices.ucte_base import sub_int, sub_str, sub_float, try_int, try_float
+import math
+
+from VeraGridEngine.IO.ucte.devices.ucte_base import (
+    sub_float,
+    sub_int,
+    sub_optional_float,
+    sub_str,
+    try_float,
+    try_int,
+    try_optional_float,
+    ucte_split,
+)
 from VeraGridEngine.basic_structures import Logger
 
 
@@ -21,8 +32,8 @@ class UcteTransformer:
         self.resistance = 0.0  # 40-45: Resistance (Ω)
         self.reactance = 0.0  # 47-52: Reactance (Ω)
         self.susceptance = 0.0  # 54-61: Susceptance (µS)
-        self.conductance = 0.0  # 63-68: Conductance (µS)
-        self.current_limit = 0  # 70-75: Current limit (A)
+        self.conductance = math.nan  # 63-68: Conductance (µS)
+        self.current_limit = math.nan  # 70-75: Current limit (A)
         self.name = ""
 
     def get_primary_key(self):
@@ -32,7 +43,7 @@ class UcteTransformer:
         """
         return f"{self.node1}_{self.node2}_{self.order_code}"
 
-    def is_active_and_reducible(self) -> tuple[bool, bool]:
+    def is_active_and_reducible(self, logger: Logger) -> tuple[bool, bool]:
         """
         Returns if this line is active and/or reducible
         :return: active, reducible
@@ -59,6 +70,12 @@ class UcteTransformer:
             return True, True
         elif self.status == 7:
             return False, True
+        else:
+            logger.add_error(msg="Unrecognized status",
+                             value=str(self.status),
+                             expected_value="0, 1, 2, 7, 8, 9",
+                             device_class="Transformer")
+            return True, False
 
     def parse(self, line, logger: Logger):
         """
@@ -81,8 +98,8 @@ class UcteTransformer:
             self.resistance = sub_float(line, 40, 46, device, "resistance", logger)
             self.reactance = sub_float(line, 47, 53, device, "reactance", logger)
             self.susceptance = sub_float(line, 54, 62, device, "susceptance", logger)
-            self.conductance = sub_float(line, 63, 69, device, "conductance", logger)
-            self.current_limit = sub_int(line, 70, 76, device, "current_limit", logger)
+            self.conductance = sub_optional_float(line, 63, 69, device, "conductance", logger)
+            self.current_limit = sub_optional_float(line, 70, 76, device, "current_limit", logger)
             self.name = sub_str(line, 77, 88, device, "name", logger)
         else:
             logger.add_warning(f"Non canonical line length ",
@@ -90,7 +107,8 @@ class UcteTransformer:
                                value=len(line),
                                expected_value=89)
 
-            chunks = line.split()
+            chunks = ucte_split(line, prefix_lengths=(8, 8, 1), total_fields=13, greedy_tail=True,
+                                skip_all_separators=True)
 
             if len(chunks) >= 1:
                 self.node1 = chunks[0].strip()
@@ -123,13 +141,13 @@ class UcteTransformer:
                 self.susceptance = try_float(chunks[9].strip(), device, "susceptance", logger)
 
             if len(chunks) >= 11:
-                self.conductance = try_float(chunks[10].strip(), device, "conductance", logger)
+                self.conductance = try_optional_float(chunks[10].strip(), device, "conductance", logger)
 
             if len(chunks) >= 12:
-                self.current_limit = try_int(chunks[11].strip(), device, "current_limit", logger)
+                self.current_limit = try_optional_float(chunks[11].strip(), device, "current_limit", logger)
 
             if len(chunks) >= 13:
                 self.name = chunks[12].strip()
 
-        if self.current_limit < 0:
-            self.current_limit = 9999.0
+        if math.isfinite(self.current_limit) and self.current_limit < 0:
+            self.current_limit = math.nan

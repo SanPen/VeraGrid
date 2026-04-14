@@ -9,9 +9,9 @@ from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.Parents.physical_device import PhysicalDevice
 from VeraGridEngine.Devices.Branches.winding import Winding
 from VeraGridEngine.Devices.Branches.transformer_type import get_impedances
-from VeraGridEngine.Devices.profile import Profile
+from VeraGridEngine.Devices.Profiles import ProfileBool
 from VeraGridEngine.enumerations import DeviceType, BuildStatus
-from VeraGridEngine.Devices.Parents.editable_device import get_at
+from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 
 
 def delta_to_star(z12: float, z23: float, z31: float) -> Tuple[float, float, float]:
@@ -23,14 +23,67 @@ def delta_to_star(z12: float, z23: float, z31: float) -> Tuple[float, float, flo
     :param z31: 3 to 1 delta value
     :return: 0->1, 0->2, 0->3 star values
     """
-    zt = z12 + z23 + z31
-    if zt > 0:
-        z1 = (z12 * z31) / zt
-        z2 = (z12 * z23) / zt
-        z3 = (z23 * z31) / zt
-        return z1, z2, z3
-    else:
-        return 1e-20, 1e-20, 1e-20
+
+    """
+    NOTE: Why this formulation is not?
+    because the triangle of the short-circuit measurements for the
+    3W transformer are not forming an actual connected triangle.
+        
+    There are two different problems:
+    1. converting a physical delta network into a star network
+    2. reconstructing a 3-winding transformer star equivalent from pairwise short-circuit test impedances
+    
+    Those are not the same inverse problem.
+    
+    1. What PSSE gives you
+    For a 3-winding transformer, PSSE gives three measured pairwise impedances:
+    •Z12
+    •Z23
+    •Z31
+    
+    These are the driving-point impedances seen between pairs of terminals when the third winding is open in 
+    the standard leakage-equivalent model.
+    If the transformer is modeled by a star equivalent with internal node 0, then the branch 
+    impedances are Z1, Z2, Z3 and the terminal pair impedances are:
+    • between 1 and 2: Z12 = Z1 + Z2
+    • between 2 and 3: Z23 = Z2 + Z3
+    • between 3 and 1: Z31 = Z3 + Z1
+    
+    This is the defining model.
+    
+    2. Solve that system
+    We have the linear system:
+    Z1 + Z2 = Z12
+    Z2 + Z3 = Z23
+    Z3 + Z1 = Z31
+    Add the first and third equations:
+    2Z1 + Z2 + Z3 = Z12 + Z31
+    But from the second equation:
+    Z2 + Z3 = Z23
+    So:
+    2Z1 + Z23 = Z12 + Z31
+    2Z1 = Z12 + Z31 - Z23
+    
+    Z1 = (Z12 + Z31 - Z23)/2
+    Z2 = (Z12 + Z23 - Z31)/2
+    Z3 = (Z23 + Z31 - Z12)/2
+    
+    Validated against PowerFactory.
+    """
+
+    # zt = z12 + z23 + z31
+    # if zt > 0:
+    #     z1 = (z12 * z31) / zt
+    #     z2 = (z12 * z23) / zt
+    #     z3 = (z23 * z31) / zt
+    #     return z1, z2, z3
+    # else:
+    #     return 1e-20, 1e-20, 1e-20
+
+    z1 = (z12 + z31 - z23) / 2.0
+    z2 = (z12 + z23 - z31) / 2.0
+    z3 = (z31 + z23 - z12) / 2.0
+    return z1, z2, z3
 
 
 def star_to_delta(z1: float, z2: float, z3: float) -> Tuple[float, float, float]:
@@ -60,7 +113,7 @@ class Transformer3W(PhysicalDevice):
         '_cn1',
         '_cn2',
         '_cn3',
-        'active',
+        '_active',
         '_active_prof',
         '_V1',
         '_V2',
@@ -85,14 +138,48 @@ class Transformer3W(PhysicalDevice):
         '_winding1',
         '_winding2',
         '_winding3',
-        'x',
-        'y',
+        '_x',
+        '_y',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='bus0', units='', tpe=DeviceType.BusDevice, definition='Middle point connection bus.',
+               editable=False),
+        GCProp(key='bus1', units='', tpe=DeviceType.BusDevice, definition='Bus 1.', editable=False),
+        GCProp(key='bus2', units='', tpe=DeviceType.BusDevice, definition='Bus 2.', editable=False),
+        GCProp(key='bus3', units='', tpe=DeviceType.BusDevice, definition='Bus 3.', editable=False),
+        GCProp('active', units="", tpe=bool, definition='Is active?', profile_name="active_prof"),
+        GCProp(key='winding1', units='', tpe=DeviceType.WindingDevice, definition='Winding 1.', editable=False),
+        GCProp(key='winding2', units='', tpe=DeviceType.WindingDevice, definition='Winding 2.', editable=False),
+        GCProp(key='winding3', units='', tpe=DeviceType.WindingDevice, definition='Winding 3.', editable=False),
+        GCProp(key='V1', units='kV', tpe=float, definition='Side 1 rating'),
+        GCProp(key='V2', units='kV', tpe=float, definition='Side 2 rating'),
+        GCProp(key='V3', units='kV', tpe=float, definition='Side 3 rating'),
+        GCProp(key='r12', units='p.u.', tpe=float, definition='Resistance measured from 1->2'),
+        GCProp(key='r23', units='p.u.', tpe=float, definition='Resistance measured from 2->3'),
+        GCProp(key='r31', units='p.u.', tpe=float, definition='Resistance measured from 3->1'),
+        GCProp(key='x12', units='p.u.', tpe=float, definition='Reactance measured from 1->2'),
+        GCProp(key='x23', units='p.u.', tpe=float, definition='Reactance measured from 2->3'),
+        GCProp(key='x31', units='p.u.', tpe=float, definition='Reactance measured from 3->1'),
+        GCProp(key='rate1', units='MVA', tpe=float, definition='Rating 1', old_names=['rate12']),
+        GCProp(key='rate2', units='MVA', tpe=float, definition='Rating 2', old_names=['rate23']),
+        GCProp(key='rate3', units='MVA', tpe=float, definition='Rating 3', old_names=['rate31']),
+        GCProp(key='Pcu12', units='KW', tpe=float, definition='Copper loss between 1->2'),
+        GCProp(key='Pcu23', units='KW', tpe=float, definition='Copper loss between 2->3'),
+        GCProp(key='Pcu31', units='KW', tpe=float, definition='Copper loss between 3->1'),
+        GCProp(key='Vsc12', units='%', tpe=float, definition='Short-circuit voltage between 1->2'),
+        GCProp(key='Vsc23', units='%', tpe=float, definition='Short-circuit voltage between 2->3'),
+        GCProp(key='Vsc31', units='%', tpe=float, definition='Short-circuit voltage between 3->1'),
+        GCProp(key='Pfe', units='KW', tpe=float, definition='Iron loss'),
+        GCProp(key='I0', units='%', tpe=float, definition='No-load current'),
+        GCProp(key='x', units='px', tpe=float, definition='x position'),
+        GCProp(key='y', units='px', tpe=float, definition='y position'),
     )
 
     def __init__(self, idtag: Union[str, None] = None,
                  code: str = '',
                  name: str = 'Branch',
-                 bus0: Union[None, Bus] = None,
+                 bus0: Bus | None = None,
                  bus1: Bus = None,
                  bus2: Bus = None,
                  bus3: Bus = None,
@@ -137,7 +224,8 @@ class Transformer3W(PhysicalDevice):
                                 build_status=build_status)
 
         if bus0 is None:
-            self.bus0 = Bus(name=name + '_bus', Vnom=1.0, xpos=x, ypos=y, is_internal=True)
+            self.bus0 = Bus(name=name + '_bus', Vnom=1.0,
+                            xpos=x, ypos=y, is_internal=True)
         else:
             bus0.internal = True
             bus0.Vnom = 1.0
@@ -148,7 +236,7 @@ class Transformer3W(PhysicalDevice):
         self._bus3 = bus3
 
         self.active = bool(active)
-        self._active_prof = Profile(default_value=self.active, data_type=bool)
+        self._active_prof = ProfileBool(default_value=self.active)
 
         self._V1 = float(V1)
         self._V2 = float(V2)
@@ -191,46 +279,6 @@ class Transformer3W(PhysicalDevice):
         self.x = float(x)
         self.y = float(y)
 
-        self.register(key='bus0', units='', tpe=DeviceType.BusDevice, definition='Middle point connection bus.',
-                      editable=False)
-        self.register(key='bus1', units='', tpe=DeviceType.BusDevice, definition='Bus 1.', editable=False)
-        self.register(key='bus2', units='', tpe=DeviceType.BusDevice, definition='Bus 2.', editable=False)
-        self.register(key='bus3', units='', tpe=DeviceType.BusDevice, definition='Bus 3.', editable=False)
-
-        self.register('active', units="", tpe=bool, definition='Is active?', profile_name="active_prof")
-
-        self.register(key='winding1', units='', tpe=DeviceType.WindingDevice, definition='Winding 1.', editable=False)
-        self.register(key='winding2', units='', tpe=DeviceType.WindingDevice, definition='Winding 2.', editable=False)
-        self.register(key='winding3', units='', tpe=DeviceType.WindingDevice, definition='Winding 3.', editable=False)
-
-        self.register(key='V1', units='kV', tpe=float, definition='Side 1 rating')
-        self.register(key='V2', units='kV', tpe=float, definition='Side 2 rating')
-        self.register(key='V3', units='kV', tpe=float, definition='Side 3 rating')
-        self.register(key='r12', units='p.u.', tpe=float, definition='Resistance measured from 1->2')
-        self.register(key='r23', units='p.u.', tpe=float, definition='Resistance measured from 2->3')
-        self.register(key='r31', units='p.u.', tpe=float, definition='Resistance measured from 3->1')
-        self.register(key='x12', units='p.u.', tpe=float, definition='Reactance measured from 1->2')
-        self.register(key='x23', units='p.u.', tpe=float, definition='Reactance measured from 2->3')
-        self.register(key='x31', units='p.u.', tpe=float, definition='Reactance measured from 3->1')
-
-        self.register(key='rate1', units='MVA', tpe=float, definition='Rating 1', old_names=['rate12'])
-        self.register(key='rate2', units='MVA', tpe=float, definition='Rating 2', old_names=['rate23'])
-        self.register(key='rate3', units='MVA', tpe=float, definition='Rating 3', old_names=['rate31'])
-
-        self.register(key='Pcu12', units='KW', tpe=float, definition='Copper loss between 1->2')
-        self.register(key='Pcu23', units='KW', tpe=float, definition='Copper loss between 2->3')
-        self.register(key='Pcu31', units='KW', tpe=float, definition='Copper loss between 3->1')
-
-        self.register(key='Vsc12', units='%', tpe=float, definition='Short-circuit voltage between 1->2')
-        self.register(key='Vsc23', units='%', tpe=float, definition='Short-circuit voltage between 2->3')
-        self.register(key='Vsc31', units='%', tpe=float, definition='Short-circuit voltage between 3->1')
-
-        self.register(key='Pfe', units='KW', tpe=float, definition='Iron loss')
-        self.register(key='I0', units='%', tpe=float, definition='No-load current')
-
-        self.register(key='x', units='px', tpe=float, definition='x position')
-        self.register(key='y', units='px', tpe=float, definition='y position')
-
     @property
     def winding1(self) -> Winding:
         """
@@ -268,7 +316,7 @@ class Transformer3W(PhysicalDevice):
         self._winding3 = val
 
     @property
-    def active_prof(self) -> Profile:
+    def active_prof(self) -> ProfileBool:
         """
         Cost profile
         :return: Profile
@@ -276,8 +324,8 @@ class Transformer3W(PhysicalDevice):
         return self._active_prof
 
     @active_prof.setter
-    def active_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def active_prof(self, val: Union[ProfileBool, np.ndarray]):
+        if isinstance(val, ProfileBool):
             self._active_prof = val
         elif isinstance(val, np.ndarray):
             self._active_prof.set(arr=val)
@@ -351,6 +399,7 @@ class Transformer3W(PhysicalDevice):
 
     @V1.setter
     def V1(self, val: float):
+        val = float(val)
         self._V1 = val
         self.winding1.HV = val
 
@@ -363,6 +412,7 @@ class Transformer3W(PhysicalDevice):
 
     @V2.setter
     def V2(self, val: float):
+        val = float(val)
         self._V2 = val
         self.winding2.HV = val
 
@@ -375,6 +425,7 @@ class Transformer3W(PhysicalDevice):
 
     @V3.setter
     def V3(self, val: float):
+        val = float(val)
         self._V3 = val
         self.winding3.HV = val
 
@@ -389,25 +440,34 @@ class Transformer3W(PhysicalDevice):
 
         self.winding1.R = r1
         self.winding1.X = x1
+        self.winding1.G = 0.0
+        self.winding1.B = 0.0
         self.winding1.rate = self.rate1
+        self.winding1.Sn = self.rate1
 
         self.winding2.R = r2
         self.winding2.X = x2
+        self.winding2.G = 0.0
+        self.winding2.B = 0.0
         self.winding2.rate = self.rate2
+        self.winding2.Sn = self.rate2
 
         self.winding3.R = r3
         self.winding3.X = x3
+        self.winding3.G = 0.0
+        self.winding3.B = 0.0
         self.winding3.rate = self.rate3
+        self.winding3.Sn = self.rate3
 
     def fill_from_star(self, r1: float, r2: float, r3: float, x1: float, x2: float, x3: float) -> None:
         """
         Fill from Star values
-        :param r1: resistance of the branch 1 (p.u.)
-        :param r2: resistance of the branch 2 (p.u.)
-        :param r3: resistance of the branch 3 (p.u.)
-        :param x1: reactance of the branch 1 (p.u.)
-        :param x2: reactance of the branch 2 (p.u.)
-        :param x3: reactance of the branch 3 (p.u.)
+        :param r1: resistance of branch 1 (p.u.)
+        :param r2: resistance of branch 2 (p.u.)
+        :param r3: resistance of branch 3 (p.u.)
+        :param x1: reactance of branch 1 (p.u.)
+        :param x2: reactance of branch 2 (p.u.)
+        :param x3: reactance of branch 3 (p.u.)
         """
         self._r12, self._r23, self._r31 = star_to_delta(z1=r1, z2=r2, z3=r3)
         self._x12, self._x23, self._x31 = star_to_delta(z1=x1, z2=x2, z3=x3)
@@ -430,6 +490,7 @@ class Transformer3W(PhysicalDevice):
 
     @r12.setter
     def r12(self, val: float):
+        val = float(val)
         self._r12 = val
         self.compute_delta_to_star()
 
@@ -442,6 +503,7 @@ class Transformer3W(PhysicalDevice):
 
     @r23.setter
     def r23(self, val: float):
+        val = float(val)
         self._r23 = val
         self.compute_delta_to_star()
 
@@ -454,6 +516,7 @@ class Transformer3W(PhysicalDevice):
 
     @r31.setter
     def r31(self, val: float):
+        val = float(val)
         self._r31 = val
         self.compute_delta_to_star()
 
@@ -466,6 +529,7 @@ class Transformer3W(PhysicalDevice):
 
     @x12.setter
     def x12(self, val: float):
+        val = float(val)
         self._x12 = val
         self.compute_delta_to_star()
 
@@ -478,6 +542,7 @@ class Transformer3W(PhysicalDevice):
 
     @x23.setter
     def x23(self, val: float):
+        val = float(val)
         self._x23 = val
         self.compute_delta_to_star()
 
@@ -490,6 +555,7 @@ class Transformer3W(PhysicalDevice):
 
     @x31.setter
     def x31(self, val: float):
+        val = float(val)
         self._x31 = val
         self.compute_delta_to_star()
 
@@ -502,6 +568,7 @@ class Transformer3W(PhysicalDevice):
 
     @rate1.setter
     def rate1(self, val: float):
+        val = float(val)
         self._rate1 = val
         self.compute_delta_to_star()
 
@@ -514,6 +581,7 @@ class Transformer3W(PhysicalDevice):
 
     @rate2.setter
     def rate2(self, val: float):
+        val = float(val)
         self._rate2 = val
         self.compute_delta_to_star()
 
@@ -526,6 +594,7 @@ class Transformer3W(PhysicalDevice):
 
     @rate3.setter
     def rate3(self, val: float):
+        val = float(val)
         self._rate3 = val
         self.compute_delta_to_star()
 
@@ -539,6 +608,7 @@ class Transformer3W(PhysicalDevice):
 
     @Pcu12.setter
     def Pcu12(self, value: float) -> None:
+        value = float(value)
         self._Pcu12 = value
         self._recalc_from_definition(Sbase=100)
 
@@ -553,6 +623,7 @@ class Transformer3W(PhysicalDevice):
 
     @Pcu23.setter
     def Pcu23(self, value: float) -> None:
+        value = float(value)
         self._Pcu23 = value
         self._recalc_from_definition(Sbase=100)
 
@@ -567,6 +638,7 @@ class Transformer3W(PhysicalDevice):
 
     @Pcu31.setter
     def Pcu31(self, value: float) -> None:
+        value = float(value)
         self._Pcu31 = value
         self._recalc_from_definition(Sbase=100)
 
@@ -581,6 +653,7 @@ class Transformer3W(PhysicalDevice):
 
     @Vsc12.setter
     def Vsc12(self, value: float) -> None:
+        value = float(value)
         self._Vsc12 = value
         self._recalc_from_definition(Sbase=100)
 
@@ -595,6 +668,7 @@ class Transformer3W(PhysicalDevice):
 
     @Vsc23.setter
     def Vsc23(self, value: float) -> None:
+        value = float(value)
         self._Vsc23 = value
         self._recalc_from_definition(Sbase=100)
 
@@ -609,6 +683,7 @@ class Transformer3W(PhysicalDevice):
 
     @Vsc31.setter
     def Vsc31(self, value: float) -> None:
+        value = float(value)
         self._Vsc31 = value
         self._recalc_from_definition(Sbase=100)
 
@@ -623,6 +698,7 @@ class Transformer3W(PhysicalDevice):
 
     @Pfe.setter
     def Pfe(self, value: float) -> None:
+        value = float(value)
         self._Pfe = value
         self._recalc_from_definition(Sbase=100)
 
@@ -637,6 +713,7 @@ class Transformer3W(PhysicalDevice):
 
     @I0.setter
     def I0(self, value: float) -> None:
+        value = float(value)
         self._I0 = value
         self._recalc_from_definition(Sbase=100)
 
@@ -661,41 +738,53 @@ class Transformer3W(PhysicalDevice):
         :param Sbase:
         :return:
         """
-        z_series12, y_shunt12 = get_impedances(VH_bus=max(self.bus1.Vnom, self.bus2.Vnom),
-                                               VL_bus=max(self.bus1.Vnom, self.bus2.Vnom),
-                                               Sn=self.rate1,
-                                               HV=max(self.V1, self.V2),
-                                               LV=min(self.V1, self.V2),
-                                               Pcu=self.Pcu12,
-                                               Pfe=self.Pfe,
-                                               I0=self.I0,
-                                               Vsc=self.Vsc12,
-                                               Sbase=Sbase,
-                                               GR_hv1=0.5)
+        z_series12, y_shunt12 = get_impedances(
+            # VH_bus=max(self.bus1.Vnom, self.bus2.Vnom),
+            # VL_bus=min(self.bus1.Vnom, self.bus2.Vnom),
+            VH_bus=max(self.V1, self.V2),
+            VL_bus=min(self.V1, self.V2),
+            Sn=self.rate1,
+            HV=max(self.V1, self.V2),
+            LV=min(self.V1, self.V2),
+            Pcu=self.Pcu12,
+            Pfe=self.Pfe,
+            I0=self.I0,
+            Vsc=self.Vsc12,
+            Sbase=Sbase,
+            GR_hv1=0.5
+        )
 
-        z_series23, y_shunt23 = get_impedances(VH_bus=max(self.bus2.Vnom, self.bus3.Vnom),
-                                               VL_bus=max(self.bus2.Vnom, self.bus3.Vnom),
-                                               Sn=self.rate2,
-                                               HV=max(self.V2, self.V3),
-                                               LV=min(self.V2, self.V3),
-                                               Pcu=self.Pcu23,
-                                               Pfe=self.Pfe,
-                                               I0=self.I0,
-                                               Vsc=self.Vsc23,
-                                               Sbase=Sbase,
-                                               GR_hv1=0.5)
+        z_series23, y_shunt23 = get_impedances(
+            # VH_bus=max(self.bus2.Vnom, self.bus3.Vnom),
+            # VL_bus=min(self.bus2.Vnom, self.bus3.Vnom),
+            VH_bus=max(self.V2, self.V3),
+            VL_bus=min(self.V2, self.V3),
+            Sn=self.rate2,
+            HV=max(self.V2, self.V3),
+            LV=min(self.V2, self.V3),
+            Pcu=self.Pcu23,
+            Pfe=self.Pfe,
+            I0=self.I0,
+            Vsc=self.Vsc23,
+            Sbase=Sbase,
+            GR_hv1=0.5
+        )
 
-        z_series31, y_shunt31 = get_impedances(VH_bus=max(self.bus3.Vnom, self.bus1.Vnom),
-                                               VL_bus=max(self.bus3.Vnom, self.bus1.Vnom),
-                                               Sn=self.rate3,
-                                               HV=max(self.V3, self.V1),
-                                               LV=min(self.V3, self.V1),
-                                               Pcu=self.Pcu31,
-                                               Pfe=self.Pfe,
-                                               I0=self.I0,
-                                               Vsc=self.Vsc31,
-                                               Sbase=Sbase,
-                                               GR_hv1=0.5)
+        z_series31, y_shunt31 = get_impedances(
+            # VH_bus=max(self.bus3.Vnom, self.bus1.Vnom),
+            # VL_bus=min(self.bus3.Vnom, self.bus1.Vnom),
+            VH_bus=max(self.V3, self.V1),
+            VL_bus=min(self.V3, self.V1),
+            Sn=self.rate3,
+            HV=max(self.V3, self.V1),
+            LV=min(self.V3, self.V1),
+            Pcu=self.Pcu31,
+            Pfe=self.Pfe,
+            I0=self.I0,
+            Vsc=self.Vsc31,
+            Sbase=Sbase,
+            GR_hv1=0.5
+        )
 
         self._r12 = np.round(z_series12.real, 6)
         self._r23 = np.round(z_series23.real, 6)
@@ -736,6 +825,13 @@ class Transformer3W(PhysicalDevice):
         self._V2 = float(V2)
         self._V3 = float(V3)
 
+        # Keep the inner winding nominal voltages synchronized with the design
+        # values. Otherwise the windings keep the constructor default 10/1 kV
+        # and create artificial virtual taps against the connected buses.
+        self.winding1.set_hv_and_lv(HV=self._V1, LV=1.0)
+        self.winding2.set_hv_and_lv(HV=self._V2, LV=1.0)
+        self.winding3.set_hv_and_lv(HV=self._V3, LV=1.0)
+
         self._Pcu12: float = Pcu12
         self._Pcu23: float = Pcu23
         self._Pcu31: float = Pcu31
@@ -752,3 +848,62 @@ class Transformer3W(PhysicalDevice):
         self._rate3 = Sn3
 
         self._recalc_from_definition(Sbase)
+
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def active(self) -> bool:
+        """
+        Get ``active``.
+
+        :return: bool
+        """
+        return self._active
+
+    @active.setter
+    def active(self, val: bool) -> None:
+        """
+        Set ``active``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._active = bool(val)
+
+    @property
+    def x(self) -> float:
+        """
+        Get ``x``.
+
+        :return: float
+        """
+        return self._x
+
+    @x.setter
+    def x(self, val: float) -> None:
+        """
+        Set ``x``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._x = float(val)
+
+    @property
+    def y(self) -> float:
+        """
+        Get ``y``.
+
+        :return: float
+        """
+        return self._y
+
+    @y.setter
+    def y(self, val: float) -> None:
+        """
+        Set ``y``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._y = float(val)

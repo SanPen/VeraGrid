@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:eu="http://iec.ch/TC57/CIM100-European#"
+    xmlns:md="http://iec.ch/TC57/61970-552/ModelDescription/1#"
+    xmlns:cim="http://iec.ch/TC57/CIM100#" > 
+  <md:FullModel rdf:about="urn:uuid:2b6b90c0-686d-4c6d-8e53-5c11dc9730e0">
+    <md:Model.profile>http://iec.ch/TC57/ns/CIM/EquipmentBoundary-EU/3.0</md:Model.profile>
+    <md:Model.description>CGMES Conformity Assessment Test Configuration. The Test Configuration is owned by ENTSO-E and is provided by ENTSO-E “as it is”. To the fullest extent permitted by law, ENTSO-E shall not be liable for any damages of any kind arising out of the use of the model (including any of its subsequent modifications). ENTSO-E neither warrants, nor represents that the use of the model will not infringe the rights of third parties. Any use of the model shall include a reference to ENTSO-E. ENTSO-E web site is the only official source of information related to the model.</md:Model.description>
+    <md:Model.modelingAuthoritySet>http://entsoe.eu/Boundary/CGMES/3.0</md:Model.modelingAuthoritySet>
+    <md:Model.version>1</md:Model.version>
+    <md:Model.scenarioTime>2021-02-09T19:30:00Z</md:Model.scenarioTime>
+    <md:Model.created>2020-01-13T22:16:04Z</md:Model.created>
+  </md:FullModel>
+  <eu:BoundaryPoint rdf:ID="_bd8b27aa-25d6-4ac4-b33f-a492383fcc7a">
+    <eu:IdentifiedObject.shortName>XZE_ST24</eu:IdentifiedObject.shortName>
+    <eu:BoundaryPoint.isDirectCurrent>false</eu:BoundaryPoint.isDirectCurrent>
+    <eu:BoundaryPoint.toEndNameTso>TIWAG-Netz</eu:BoundaryPoint.toEndNameTso>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-AT-DE-00017X</eu:IdentifiedObject.energyIdentCodeEic>
+    <eu:BoundaryPoint.toEndIsoCode>DE</eu:BoundaryPoint.toEndIsoCode>
+    <eu:BoundaryPoint.fromEndIsoCode>AT</eu:BoundaryPoint.fromEndIsoCode>
+    <eu:BoundaryPoint.toEndName>Strass</eu:BoundaryPoint.toEndName>
+    <cim:IdentifiedObject.description>RG CE; 220 kV; OHL</cim:IdentifiedObject.description>
+    <eu:BoundaryPoint.fromEndName>Zell/Ziller</eu:BoundaryPoint.fromEndName>
+    <cim:IdentifiedObject.name>Border_ST24</cim:IdentifiedObject.name>
+    <eu:BoundaryPoint.isExcludedFromAreaInterchange>true</eu:BoundaryPoint.isExcludedFromAreaInterchange>
+    <cim:IdentifiedObject.mRID>bd8b27aa-25d6-4ac4-b33f-a492383fcc7a</cim:IdentifiedObject.mRID>
+    <eu:BoundaryPoint.fromEndNameTso>APG</eu:BoundaryPoint.fromEndNameTso>
+    <eu:BoundaryPoint.ConnectivityNode rdf:resource="#_97226393-e1b3-46e0-a7c3-9e97f3b6cc5b"/>
+  </eu:BoundaryPoint>
+  <cim:ConnectivityNode rdf:ID="_97226393-e1b3-46e0-a7c3-9e97f3b6cc5b">
+    <cim:IdentifiedObject.mRID>97226393-e1b3-46e0-a7c3-9e97f3b6cc5b</cim:IdentifiedObject.mRID>
+    <cim:ConnectivityNode.ConnectivityNodeContainer rdf:resource="#_644d62b8-56f9-4e31-a09d-e2fef25f4a92"/>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-AT-DE-00017X</eu:IdentifiedObject.energyIdentCodeEic>
+    <eu:IdentifiedObject.shortName>XZE_ST24</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.name>Border_ST24</cim:IdentifiedObject.name>
+    <cim:IdentifiedObject.description>RG CE; 220 kV; OHL</cim:IdentifiedObject.description>
+  </cim:ConnectivityNode>
+  <cim:EnergySchedulingType rdf:ID="_f56ba65b-b69f-404f-828b-726f982e14fd">
+    <cim:IdentifiedObject.mRID>f56ba65b-b69f-404f-828b-726f982e14fd</cim:IdentifiedObject.mRID>
+    <eu:IdentifiedObject.shortName>EST-Biomass</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.description>Generation type Biomass</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.name>Biomass</cim:IdentifiedObject.name>
+  </cim:EnergySchedulingType>
+  <cim:BaseVoltage rdf:ID="_86a47af4-94b8-4887-aabb-a5a791e7efb8">
+    <cim:IdentifiedObject.mRID>86a47af4-94b8-4887-aabb-a5a791e7efb8</cim:IdentifiedObject.mRID>
+    <cim:BaseVoltage.nominalVoltage>400</cim:BaseVoltage.nominalVoltage>
+    <eu:IdentifiedObject.shortName>400</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.name>400 kV</cim:IdentifiedObject.name>
+    <cim:IdentifiedObject.description>Base Voltage 400 kV</cim:IdentifiedObject.description>
+  </cim:BaseVoltage>
+  <cim:BaseVoltage rdf:ID="_302f26f0-0fa6-4140-a489-717dbb2ffb07">
+    <cim:IdentifiedObject.mRID>302f26f0-0fa6-4140-a489-717dbb2ffb07</cim:IdentifiedObject.mRID>
+    <cim:BaseVoltage.nominalVoltage>380</cim:BaseVoltage.nominalVoltage>
+    <eu:IdentifiedObject.shortName>380</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.name>380 kV</cim:IdentifiedObject.name>
+    <cim:IdentifiedObject.description>Base Voltage 380 kV</cim:IdentifiedObject.description>
+  </cim:BaseVoltage>
+  <cim:Line rdf:ID="_7474dd87-438b-40e5-82ae-7f873bd69438">
+    <cim:IdentifiedObject.mRID>7474dd87-438b-40e5-82ae-7f873bd69438</cim:IdentifiedObject.mRID>
+    <cim:Line.Region rdf:resource="#_dc1fa22e-d4d3-4c14-be4b-bbff1163aab3"/>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-BE-NL-10114U</eu:IdentifiedObject.energyIdentCodeEic>
+    <eu:IdentifiedObject.shortName>XKA_MA11</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.description>TieLine at XKA_MA11</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.name>TieLine_XKA_MA11</cim:IdentifiedObject.name>
+  </cim:Line>
+  <eu:BoundaryPoint rdf:ID="_2ba6d21a-3931-4564-8c33-88f466f1dff8">
+    <eu:BoundaryPoint.toEndIsoCode>HU</eu:BoundaryPoint.toEndIsoCode>
+    <eu:BoundaryPoint.fromEndIsoCode>AT</eu:BoundaryPoint.fromEndIsoCode>
+    <eu:BoundaryPoint.toEndName>Győr</eu:BoundaryPoint.toEndName>
+    <eu:BoundaryPoint.toEndNameTso>MAVIR</eu:BoundaryPoint.toEndNameTso>
+    <eu:BoundaryPoint.fromEndNameTso>APG</eu:BoundaryPoint.fromEndNameTso>
+    <eu:IdentifiedObject.shortName>XWI_GY11</eu:IdentifiedObject.shortName>
+    <eu:BoundaryPoint.isDirectCurrent>false</eu:BoundaryPoint.isDirectCurrent>
+    <eu:BoundaryPoint.ConnectivityNode rdf:resource="#_876b0e1a-3cfa-4931-88b4-3e1439d04af9"/>
+    <cim:IdentifiedObject.description>RG CE; 400 kV; OHL</cim:IdentifiedObject.description>
+    <eu:BoundaryPoint.isExcludedFromAreaInterchange>true</eu:BoundaryPoint.isExcludedFromAreaInterchange>
+    <eu:BoundaryPoint.fromEndName>Wien</eu:BoundaryPoint.fromEndName>
+    <cim:IdentifiedObject.name>Border_GY11</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-AT-HU-00002U</eu:IdentifiedObject.energyIdentCodeEic>
+    <cim:IdentifiedObject.mRID>2ba6d21a-3931-4564-8c33-88f466f1dff8</cim:IdentifiedObject.mRID>
+  </eu:BoundaryPoint>
+  <cim:EnergySchedulingType rdf:ID="_f8490f29-bcf9-4f6e-a169-6b8d9a8a6211">
+    <cim:IdentifiedObject.mRID>f8490f29-bcf9-4f6e-a169-6b8d9a8a6211</cim:IdentifiedObject.mRID>
+    <eu:IdentifiedObject.shortName>OtherRenew</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.description>Generation type Other renewable</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.name>Other renewable</cim:IdentifiedObject.name>
+  </cim:EnergySchedulingType>
+  <cim:ConnectivityNode rdf:ID="_876b0e1a-3cfa-4931-88b4-3e1439d04af9">
+    <cim:IdentifiedObject.mRID>876b0e1a-3cfa-4931-88b4-3e1439d04af9</cim:IdentifiedObject.mRID>
+    <cim:ConnectivityNode.ConnectivityNodeContainer rdf:resource="#_bf4eae86-b657-4459-957b-4ae7586b9a63"/>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-AT-HU-00002U</eu:IdentifiedObject.energyIdentCodeEic>
+    <eu:IdentifiedObject.shortName>XWI_GY11</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.name>Border_GY11</cim:IdentifiedObject.name>
+    <cim:IdentifiedObject.description>RG CE; 400 kV; OHL</cim:IdentifiedObject.description>
+  </cim:ConnectivityNode>
+  <cim:BaseVoltage rdf:ID="_48e843d1-1794-4349-9383-bc7113b41cce">
+    <cim:IdentifiedObject.mRID>48e843d1-1794-4349-9383-bc7113b41cce</cim:IdentifiedObject.mRID>
+    <cim:BaseVoltage.nominalVoltage>225</cim:BaseVoltage.nominalVoltage>
+    <eu:IdentifiedObject.shortName>225</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.name>225 kV</cim:IdentifiedObject.name>
+    <cim:IdentifiedObject.description>Base Voltage 225 kV</cim:IdentifiedObject.description>
+  </cim:BaseVoltage>
+  <cim:ConnectivityNode rdf:ID="_f7553918-5286-47f3-a1dc-b4384ce8f2c0">
+    <cim:IdentifiedObject.mRID>f7553918-5286-47f3-a1dc-b4384ce8f2c0</cim:IdentifiedObject.mRID>
+    <cim:ConnectivityNode.ConnectivityNodeContainer rdf:resource="#_7474dd87-438b-40e5-82ae-7f873bd69438"/>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-AT-SI-00001T</eu:IdentifiedObject.energyIdentCodeEic>
+    <eu:IdentifiedObject.shortName>XKA_MA11</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.name>Border_MA11</cim:IdentifiedObject.name>
+    <cim:IdentifiedObject.description>RG CE; 400 kV; OHL (2)</cim:IdentifiedObject.description>
+  </cim:ConnectivityNode>
+  <cim:EnergySchedulingType rdf:ID="_040e886c-2f8b-4333-8793-414157ee3279">
+    <cim:IdentifiedObject.mRID>040e886c-2f8b-4333-8793-414157ee3279</cim:IdentifiedObject.mRID>
+    <eu:IdentifiedObject.shortName>CoGen</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.description>Generation type Co-generation</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.name>Co-generation</cim:IdentifiedObject.name>
+  </cim:EnergySchedulingType>
+  <eu:BoundaryPoint rdf:ID="_9dbe403e-fee5-457c-ab28-b92d981d4255">
+    <eu:BoundaryPoint.isDirectCurrent>false</eu:BoundaryPoint.isDirectCurrent>
+    <cim:IdentifiedObject.name>Border_ST23</cim:IdentifiedObject.name>
+    <eu:BoundaryPoint.fromEndIsoCode>AT</eu:BoundaryPoint.fromEndIsoCode>
+    <cim:IdentifiedObject.description>RG CE; 220 kV; OHL</cim:IdentifiedObject.description>
+    <eu:BoundaryPoint.fromEndNameTso>APG</eu:BoundaryPoint.fromEndNameTso>
+    <eu:BoundaryPoint.toEndNameTso>TIWAG-Netz</eu:BoundaryPoint.toEndNameTso>
+    <eu:BoundaryPoint.toEndIsoCode>DE</eu:BoundaryPoint.toEndIsoCode>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-AT-DE-00016Z</eu:IdentifiedObject.energyIdentCodeEic>
+    <eu:IdentifiedObject.shortName>XZE_ST23</eu:IdentifiedObject.shortName>
+    <eu:BoundaryPoint.ConnectivityNode rdf:resource="#_3a30332a-986d-4998-ace3-9644bf8dcbfe"/>
+    <eu:BoundaryPoint.toEndName>Strass</eu:BoundaryPoint.toEndName>
+    <eu:BoundaryPoint.isExcludedFromAreaInterchange>true</eu:BoundaryPoint.isExcludedFromAreaInterchange>
+    <eu:BoundaryPoint.fromEndName>Zell/Ziller</eu:BoundaryPoint.fromEndName>
+    <cim:IdentifiedObject.mRID>9dbe403e-fee5-457c-ab28-b92d981d4255</cim:IdentifiedObject.mRID>
+  </eu:BoundaryPoint>
+  <cim:EnergySchedulingType rdf:ID="_2ed51553-2f61-4be8-90cd-841945e284b4">
+    <cim:IdentifiedObject.mRID>2ed51553-2f61-4be8-90cd-841945e284b4</cim:IdentifiedObject.mRID>
+    <eu:IdentifiedObject.shortName>EST-Waste</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.description>Generation type Waste</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.name>Waste</cim:IdentifiedObject.name>
+  </cim:EnergySchedulingType>
+  <cim:ConnectivityNode rdf:ID="_56c26ce6-779a-47c9-a2d0-ddc7c2551ae5">
+    <cim:IdentifiedObject.mRID>56c26ce6-779a-47c9-a2d0-ddc7c2551ae5</cim:IdentifiedObject.mRID>
+    <cim:ConnectivityNode.ConnectivityNodeContainer rdf:resource="#_39581b86-8427-46bc-95de-f67009da09be"/>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-ES-PT-10004U</eu:IdentifiedObject.energyIdentCodeEic>
+    <eu:IdentifiedObject.shortName>XCA_AL11</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.name>Border_AL11</cim:IdentifiedObject.name>
+    <cim:IdentifiedObject.description>RG CE; 400 kV; OHL (2)</cim:IdentifiedObject.description>
+  </cim:ConnectivityNode>
+  <cim:SubGeographicalRegion rdf:ID="_dc1fa22e-d4d3-4c14-be4b-bbff1163aab3">
+    <cim:IdentifiedObject.mRID>dc1fa22e-d4d3-4c14-be4b-bbff1163aab3</cim:IdentifiedObject.mRID>
+    <eu:IdentifiedObject.shortName>ENTSO-E</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.description>ENTSO-E region</cim:IdentifiedObject.description>
+    <cim:SubGeographicalRegion.Region rdf:resource="#_bdb5b77d-a7f2-4917-8997-64e48edd95e7"/>
+    <cim:IdentifiedObject.name>ENTSO-E</cim:IdentifiedObject.name>
+  </cim:SubGeographicalRegion>
+  <eu:BoundaryPoint rdf:ID="_0c26dd2f-f9a5-4874-9315-49c758d4d1f1">
+    <eu:BoundaryPoint.ConnectivityNode rdf:resource="#_f7553918-5286-47f3-a1dc-b4384ce8f2c0"/>
+    <eu:BoundaryPoint.fromEndName>Kainachtal</eu:BoundaryPoint.fromEndName>
+    <eu:BoundaryPoint.isExcludedFromAreaInterchange>true</eu:BoundaryPoint.isExcludedFromAreaInterchange>
+    <eu:BoundaryPoint.isDirectCurrent>false</eu:BoundaryPoint.isDirectCurrent>
+    <eu:BoundaryPoint.toEndIsoCode>SI</eu:BoundaryPoint.toEndIsoCode>
+    <eu:BoundaryPoint.fromEndIsoCode>AT</eu:BoundaryPoint.fromEndIsoCode>
+    <eu:BoundaryPoint.toEndName>Maribor</eu:BoundaryPoint.toEndName>
+    <eu:BoundaryPoint.toEndNameTso>ELES</eu:BoundaryPoint.toEndNameTso>
+    <cim:IdentifiedObject.name>Border_MA11</cim:IdentifiedObject.name>
+    <cim:IdentifiedObject.description>RG CE; 400 kV; OHL (2)</cim:IdentifiedObject.description>
+    <eu:BoundaryPoint.fromEndNameTso>APG</eu:BoundaryPoint.fromEndNameTso>
+    <cim:IdentifiedObject.mRID>0c26dd2f-f9a5-4874-9315-49c758d4d1f1</cim:IdentifiedObject.mRID>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-AT-SI-00001T</eu:IdentifiedObject.energyIdentCodeEic>
+    <eu:IdentifiedObject.shortName>XKA_MA11</eu:IdentifiedObject.shortName>
+  </eu:BoundaryPoint>
+  <cim:BaseVoltage rdf:ID="_2e8ab1fb-6be9-4c85-8540-776c82514e93">
+    <cim:IdentifiedObject.mRID>2e8ab1fb-6be9-4c85-8540-776c82514e93</cim:IdentifiedObject.mRID>
+    <cim:BaseVoltage.nominalVoltage>220</cim:BaseVoltage.nominalVoltage>
+    <eu:IdentifiedObject.shortName>220</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.name>220 kV</cim:IdentifiedObject.name>
+    <cim:IdentifiedObject.description>Base Voltage 220 kV</cim:IdentifiedObject.description>
+  </cim:BaseVoltage>
+  <cim:EnergySchedulingType rdf:ID="_14e9e38e-70f7-4e07-ab22-fe83a77c675a">
+    <cim:IdentifiedObject.mRID>14e9e38e-70f7-4e07-ab22-fe83a77c675a</cim:IdentifiedObject.mRID>
+    <eu:IdentifiedObject.shortName>ES-Marine</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.description>Generation type Marine</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.name>Marine</cim:IdentifiedObject.name>
+  </cim:EnergySchedulingType>
+  <eu:BoundaryPoint rdf:ID="_56118960-6a98-4f25-8207-82a03333164f">
+    <eu:BoundaryPoint.fromEndNameTso>REE</eu:BoundaryPoint.fromEndNameTso>
+    <eu:BoundaryPoint.ConnectivityNode rdf:resource="#_56c26ce6-779a-47c9-a2d0-ddc7c2551ae5"/>
+    <cim:IdentifiedObject.name>Border_AL11</cim:IdentifiedObject.name>
+    <eu:BoundaryPoint.toEndName>Alto Lindoso</eu:BoundaryPoint.toEndName>
+    <eu:BoundaryPoint.fromEndName>Cartelle</eu:BoundaryPoint.fromEndName>
+    <cim:IdentifiedObject.description>RG CE; 400 kV; OHL (2)</cim:IdentifiedObject.description>
+    <eu:BoundaryPoint.toEndIsoCode>PT</eu:BoundaryPoint.toEndIsoCode>
+    <cim:IdentifiedObject.mRID>56118960-6a98-4f25-8207-82a03333164f</cim:IdentifiedObject.mRID>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-ES-PT-10004U</eu:IdentifiedObject.energyIdentCodeEic>
+    <eu:BoundaryPoint.fromEndIsoCode>ES</eu:BoundaryPoint.fromEndIsoCode>
+    <eu:IdentifiedObject.shortName>XCA_AL11</eu:IdentifiedObject.shortName>
+    <eu:BoundaryPoint.toEndNameTso>REN</eu:BoundaryPoint.toEndNameTso>
+  </eu:BoundaryPoint>
+  <cim:Line rdf:ID="_bf4eae86-b657-4459-957b-4ae7586b9a63">
+    <cim:IdentifiedObject.mRID>bf4eae86-b657-4459-957b-4ae7586b9a63</cim:IdentifiedObject.mRID>
+    <cim:Line.Region rdf:resource="#_dc1fa22e-d4d3-4c14-be4b-bbff1163aab3"/>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-BE-NL-10014U</eu:IdentifiedObject.energyIdentCodeEic>
+    <eu:IdentifiedObject.shortName>XWI_GY11</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.description>TieLine at XWI_GY11</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.name>TieLine_XWI_GY11</cim:IdentifiedObject.name>
+  </cim:Line>
+  <cim:ConnectivityNode rdf:ID="_3a30332a-986d-4998-ace3-9644bf8dcbfe">
+    <cim:IdentifiedObject.mRID>3a30332a-986d-4998-ace3-9644bf8dcbfe</cim:IdentifiedObject.mRID>
+    <cim:ConnectivityNode.ConnectivityNodeContainer rdf:resource="#_f7d17f33-1673-437e-ba69-6c4a6110fd0f"/>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-AT-DE-00016Z</eu:IdentifiedObject.energyIdentCodeEic>
+    <eu:IdentifiedObject.shortName>XZE_ST23</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.name>Border_ST23</cim:IdentifiedObject.name>
+    <cim:IdentifiedObject.description>RG CE; 220 kV; OHL</cim:IdentifiedObject.description>
+  </cim:ConnectivityNode>
+  <cim:Line rdf:ID="_39581b86-8427-46bc-95de-f67009da09be">
+    <cim:IdentifiedObject.mRID>39581b86-8427-46bc-95de-f67009da09be</cim:IdentifiedObject.mRID>
+    <cim:Line.Region rdf:resource="#_dc1fa22e-d4d3-4c14-be4b-bbff1163aab3"/>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-BE-NL-10314U</eu:IdentifiedObject.energyIdentCodeEic>
+    <eu:IdentifiedObject.shortName>XCA_AL11</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.description>TieLine at XCA_AL11</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.name>TieLine_XCA_AL11</cim:IdentifiedObject.name>
+  </cim:Line>
+  <cim:Line rdf:ID="_f7d17f33-1673-437e-ba69-6c4a6110fd0f">
+    <cim:IdentifiedObject.mRID>f7d17f33-1673-437e-ba69-6c4a6110fd0f</cim:IdentifiedObject.mRID>
+    <cim:Line.Region rdf:resource="#_dc1fa22e-d4d3-4c14-be4b-bbff1163aab3"/>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-BE-NL-10234U</eu:IdentifiedObject.energyIdentCodeEic>
+    <eu:IdentifiedObject.shortName>XZE_ST23</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.description>TieLine at XZE_ST23</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.name>TieLine_XZE_ST23</cim:IdentifiedObject.name>
+  </cim:Line>
+  <cim:GeographicalRegion rdf:ID="_bdb5b77d-a7f2-4917-8997-64e48edd95e7">
+    <cim:IdentifiedObject.mRID>bdb5b77d-a7f2-4917-8997-64e48edd95e7</cim:IdentifiedObject.mRID>
+    <eu:IdentifiedObject.shortName>EU</eu:IdentifiedObject.shortName>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-EU-EU-000001</eu:IdentifiedObject.energyIdentCodeEic>
+    <cim:IdentifiedObject.name>EU</cim:IdentifiedObject.name>
+    <cim:IdentifiedObject.description>Economic and political union of member states located primarily in Europe</cim:IdentifiedObject.description>
+  </cim:GeographicalRegion>
+  <cim:Line rdf:ID="_644d62b8-56f9-4e31-a09d-e2fef25f4a92">
+    <cim:IdentifiedObject.mRID>644d62b8-56f9-4e31-a09d-e2fef25f4a92</cim:IdentifiedObject.mRID>
+    <cim:Line.Region rdf:resource="#_dc1fa22e-d4d3-4c14-be4b-bbff1163aab3"/>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-BE-NL-10274U</eu:IdentifiedObject.energyIdentCodeEic>
+    <eu:IdentifiedObject.shortName>XZE_ST24</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.description>TieLine at XZE_ST24</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.name>TieLine_XZE_ST24</cim:IdentifiedObject.name>
+  </cim:Line>
+  <cim:EnergySchedulingType rdf:ID="_18345544-b85f-4e0b-b85c-c9f8a48d2933">
+    <cim:IdentifiedObject.mRID>18345544-b85f-4e0b-b85c-c9f8a48d2933</cim:IdentifiedObject.mRID>
+    <eu:IdentifiedObject.shortName>Geotherm</eu:IdentifiedObject.shortName>
+    <cim:IdentifiedObject.description>Generation type Geothermal</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.name>Geothermal</cim:IdentifiedObject.name>
+  </cim:EnergySchedulingType>
+</rdf:RDF>

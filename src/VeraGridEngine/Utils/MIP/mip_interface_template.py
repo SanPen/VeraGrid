@@ -19,6 +19,13 @@ class AbstractLpModel(ABC):
     """
     Abstract base class for LP/MIP models.
     """
+    __slots__ = (
+        "name",
+        "solver_type",
+        "logger",
+        "relaxed_slacks",
+        "originally_infeasible",
+    )
 
     OPTIMAL: Any
     INFINITY: float = 1e20

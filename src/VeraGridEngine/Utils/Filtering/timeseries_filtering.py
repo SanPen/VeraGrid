@@ -114,6 +114,10 @@ class FilterTimeSeries:
     """
     FilterResultsTable class
     """
+    __slots__ = (
+        "objects",
+        "master_filter",
+    )
 
     def __init__(self, objects: List[ALL_DEV_TYPES]):
         """

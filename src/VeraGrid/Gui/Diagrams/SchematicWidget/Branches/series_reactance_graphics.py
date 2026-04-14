@@ -96,6 +96,9 @@ class SeriesReactanceGraphicItem(LineGraphicTemplateItem):
             ra5.setIcon(ra5_icon)
             ra5.triggered.connect(self.assign_status_to_profile)
 
+            menu.addSeparator()
+            self.add_auto_route_style_menu(menu=menu)
+
 
             menu.exec_(event.screenPos())
         else:

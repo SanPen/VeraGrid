@@ -229,3 +229,9 @@ class GeneratorQCurve:
                 markersize=4)
         ax.set_xlabel("Q (MVAr)")
         ax.set_ylabel("P (MW)")
+
+    def copy(self) -> "GeneratorQCurve":
+
+        elm = GeneratorQCurve()
+        elm._q_points = self._q_points.copy()
+        return elm

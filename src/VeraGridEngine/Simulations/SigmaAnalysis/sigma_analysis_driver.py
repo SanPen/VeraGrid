@@ -10,25 +10,51 @@ from typing import Union
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
 from VeraGridEngine.Simulations.results_table import ResultsTable
-from VeraGridEngine.enumerations import ResultTypes, DeviceType, SimulationTypes
+from VeraGridEngine.Simulations.results_template import ResultsTemplate
+from VeraGridEngine.enumerations import ResultTypes, DeviceType, SimulationTypes, StudyResultsType
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.helm_power_flow import (helm_coefficients_josep,
                                                                                    sigma_function)
 from VeraGridEngine.Simulations.driver_template import DriverTemplate
-from VeraGridEngine.basic_structures import Vec
+from VeraGridEngine.basic_structures import Vec, StrVec, CxVec
 
 
-class SigmaAnalysisResults:  # TODO: inherit from ResultsTemplate
+class SigmaAnalysisResults(ResultsTemplate):
     """
     SigmaAnalysisResults
     """
+    __slots__ = (
+        "n",
+        "lambda_value",
+        "bus_names",
+        "Sbus",
+        "distances",
+        "sigma_re",
+        "sigma_im",
+        "elapsed",
+        "converged",
+        "convergence_reports",
+    )
 
     def __init__(self, n):
+        available_results = [
+            ResultTypes.SigmaReal,
+            ResultTypes.SigmaImag,
+            ResultTypes.SigmaDistances,
+            ResultTypes.SigmaPlusDistances,
+        ]
+
+        ResultsTemplate.__init__(
+            self,
+            name='Sigma analysis',
+            available_results=available_results,
+            time_array=None,
+            clustering_results=None,
+            study_results_type=StudyResultsType.SigmaAnalysis,
+        )
 
         self.n = n
-
-        self.name = 'Sigma analysis'
 
         self.lambda_value = 1.0
 
@@ -42,16 +68,18 @@ class SigmaAnalysisResults:  # TODO: inherit from ResultsTemplate
 
         self.sigma_im = np.zeros(n, dtype=float)
 
-        self.available_results = [ResultTypes.SigmaReal,
-                                  ResultTypes.SigmaImag,
-                                  ResultTypes.SigmaDistances,
-                                  ResultTypes.SigmaPlusDistances]
-
         self.elapsed = 0
 
         self.converged = True
 
         self.convergence_reports = list()
+
+        self.register(name='lambda_value', tpe=float)
+        self.register(name='bus_names', tpe=StrVec)
+        self.register(name='Sbus', tpe=CxVec)
+        self.register(name='distances', tpe=Vec)
+        self.register(name='sigma_re', tpe=Vec)
+        self.register(name='sigma_im', tpe=Vec)
 
     def apply_from_island(self, results: "SigmaAnalysisResults", b_idx):
         """
@@ -426,6 +454,11 @@ def sigma_distance(sigma_real, sigma_imag) -> Vec:
 
 
 class SigmaAnalysisDriver(DriverTemplate):
+    __slots__ = (
+        "options",
+        "convergence_reports",
+    )
+
     name = 'Sigma Analysis'
     tpe = SimulationTypes.SigmaAnalysis_run
 

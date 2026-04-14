@@ -4,25 +4,25 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import Union
+from typing import Union, Tuple
 import numpy as np
 
 from VeraGridEngine.Devices.Parents.physical_device import PhysicalDevice
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import BuildStatus, DeviceType
-from VeraGridEngine.Devices.profile import Profile
-from VeraGridEngine.Devices.Parents.editable_device import get_at
+from VeraGridEngine.Devices.Profiles import ProfileFloat
+from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 
 
 class FluidNode(PhysicalDevice):
     __slots__ = (
-        'min_level',
-        'max_level',
-        'max_soc',
-        'min_soc',
-        'initial_level',
-        'spillage_cost',
-        'inflow',
+        '_min_level',
+        '_max_level',
+        '_max_soc',
+        '_min_soc',
+        '_initial_level',
+        '_spillage_cost',
+        '_inflow',
         '_bus',
         'build_status',
         'color',
@@ -30,6 +30,31 @@ class FluidNode(PhysicalDevice):
         '_spillage_cost_prof',
         '_max_soc_prof',
         '_min_soc_prof',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='min_level', units='hm3', tpe=float,
+                      definition="Minimum amount of fluid at the node/reservoir"),
+        GCProp(key='max_level', units='hm3', tpe=float,
+                      definition="Maximum amount of fluid at the node/reservoir"),
+        GCProp(key='min_soc', units='p.u.', tpe=float,
+                      definition="Minimum SOC of fluid at the node/reservoir",
+                      profile_name='min_soc_prof'),
+        GCProp(key='max_soc', units='p.u.', tpe=float,
+                      definition="Maximum SOC of fluid at the node/reservoir",
+                      profile_name='max_soc_prof'),
+        GCProp(key='initial_level', units='hm3', tpe=float,
+                      definition="Initial level of the node/reservoir"),
+        GCProp(key='bus', units='', tpe=DeviceType.BusDevice,
+                      definition='Electrical bus.', editable=False),
+        GCProp(key='spillage_cost', units='e/(m3/s)', tpe=float,
+                      definition='Cost of nodal spillage',
+                      profile_name='spillage_cost_prof'),
+        GCProp(key='inflow', units='m3/s', tpe=float,
+                      definition='Flow of fluid coming from the rain',
+                      profile_name='inflow_prof'),
+        GCProp(key='color', units='', tpe=str, definition='Color to paint the device in the map diagram',
+                      is_color=True),
     )
 
     def __init__(self,
@@ -77,45 +102,23 @@ class FluidNode(PhysicalDevice):
 
         self.color = color if color is not None else "#00aad4"  # nice blue color
 
-        self._inflow_prof = Profile(default_value=self.inflow, data_type=float)  # m3/s
-        self._spillage_cost_prof = Profile(default_value=self.spillage_cost, data_type=float)  # e/(m3/s)
+        self._inflow_prof = ProfileFloat(default_value=self.inflow)  # m3/s
+        self._spillage_cost_prof = ProfileFloat(default_value=self.spillage_cost)  # e/(m3/s)
 
-        self._max_soc_prof = Profile(default_value=self.max_soc, data_type=float)  # p.u.
-        self._min_soc_prof = Profile(default_value=self.min_soc, data_type=float)  # p.u.
+        self._max_soc_prof = ProfileFloat(default_value=self.max_soc)  # p.u.
+        self._min_soc_prof = ProfileFloat(default_value=self.min_soc)  # p.u.
 
-        self.register(key='min_level', units='hm3', tpe=float,
-                      definition="Minimum amount of fluid at the node/reservoir")
 
-        self.register(key='max_level', units='hm3', tpe=float,
-                      definition="Maximum amount of fluid at the node/reservoir")
 
-        self.register(key='min_soc', units='p.u.', tpe=float,
-                      definition="Minimum SOC of fluid at the node/reservoir",
-                      profile_name='min_soc_prof')
 
-        self.register(key='max_soc', units='p.u.', tpe=float,
-                      definition="Maximum SOC of fluid at the node/reservoir",
-                      profile_name='max_soc_prof')
 
-        self.register(key='initial_level', units='hm3', tpe=float,
-                      definition="Initial level of the node/reservoir")
 
-        self.register(key='bus', units='', tpe=DeviceType.BusDevice,
-                      definition='Electrical bus.', editable=False)
 
-        self.register(key='spillage_cost', units='e/(m3/s)', tpe=float,
-                      definition='Cost of nodal spillage',
-                      profile_name='spillage_cost_prof')
 
-        self.register(key='inflow', units='m3/s', tpe=float,
-                      definition='Flow of fluid coming from the rain',
-                      profile_name='inflow_prof')
 
-        self.register(key='color', units='', tpe=str, definition='Color to paint the device in the map diagram',
-                      is_color=True)
 
     @property
-    def spillage_cost_prof(self) -> Profile:
+    def spillage_cost_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -123,8 +126,8 @@ class FluidNode(PhysicalDevice):
         return self._spillage_cost_prof
 
     @spillage_cost_prof.setter
-    def spillage_cost_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def spillage_cost_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._spillage_cost_prof = val
         elif isinstance(val, np.ndarray):
             self._spillage_cost_prof.set(arr=val)
@@ -139,7 +142,7 @@ class FluidNode(PhysicalDevice):
         return get_at(self.spillage_cost, self.spillage_cost_prof, t)
 
     @property
-    def inflow_prof(self) -> Profile:
+    def inflow_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -147,8 +150,8 @@ class FluidNode(PhysicalDevice):
         return self._inflow_prof
 
     @inflow_prof.setter
-    def inflow_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def inflow_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._inflow_prof = val
         elif isinstance(val, np.ndarray):
             self._inflow_prof.set(arr=val)
@@ -163,7 +166,7 @@ class FluidNode(PhysicalDevice):
         return get_at(self.inflow, self.inflow_prof, t)
 
     @property
-    def max_soc_prof(self) -> Profile:
+    def max_soc_prof(self) -> ProfileFloat:
         """
         Max soc profile
         :return: Profile
@@ -171,8 +174,8 @@ class FluidNode(PhysicalDevice):
         return self._max_soc_prof
 
     @max_soc_prof.setter
-    def max_soc_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def max_soc_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._max_soc_prof = val
         elif isinstance(val, np.ndarray):
             self._max_soc_prof.set(arr=val)
@@ -187,7 +190,7 @@ class FluidNode(PhysicalDevice):
         return get_at(self.max_soc, self.max_soc_prof, t)
 
     @property
-    def min_soc_prof(self) -> Profile:
+    def min_soc_prof(self) -> ProfileFloat:
         """
         Min soc profile
         :return: Profile
@@ -195,8 +198,8 @@ class FluidNode(PhysicalDevice):
         return self._min_soc_prof
 
     @min_soc_prof.setter
-    def min_soc_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def min_soc_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._min_soc_prof = val
         elif isinstance(val, np.ndarray):
             self._min_soc_prof.set(arr=val)
@@ -253,3 +256,138 @@ class FluidNode(PhysicalDevice):
         if isinstance(val, Bus):
             self._bus = val
             self._bus.internal = True
+
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def min_level(self) -> float:
+        """
+        Get ``min_level``.
+
+        :return: float
+        """
+        return self._min_level
+
+    @min_level.setter
+    def min_level(self, val: float) -> None:
+        """
+        Set ``min_level``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._min_level = float(val)
+
+    @property
+    def max_level(self) -> float:
+        """
+        Get ``max_level``.
+
+        :return: float
+        """
+        return self._max_level
+
+    @max_level.setter
+    def max_level(self, val: float) -> None:
+        """
+        Set ``max_level``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._max_level = float(val)
+
+    @property
+    def min_soc(self) -> float:
+        """
+        Get ``min_soc``.
+
+        :return: float
+        """
+        return self._min_soc
+
+    @min_soc.setter
+    def min_soc(self, val: float) -> None:
+        """
+        Set ``min_soc``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._min_soc = float(val)
+
+    @property
+    def max_soc(self) -> float:
+        """
+        Get ``max_soc``.
+
+        :return: float
+        """
+        return self._max_soc
+
+    @max_soc.setter
+    def max_soc(self, val: float) -> None:
+        """
+        Set ``max_soc``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._max_soc = float(val)
+
+    @property
+    def initial_level(self) -> float:
+        """
+        Get ``initial_level``.
+
+        :return: float
+        """
+        return self._initial_level
+
+    @initial_level.setter
+    def initial_level(self, val: float) -> None:
+        """
+        Set ``initial_level``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._initial_level = float(val)
+
+    @property
+    def spillage_cost(self) -> float:
+        """
+        Get ``spillage_cost``.
+
+        :return: float
+        """
+        return self._spillage_cost
+
+    @spillage_cost.setter
+    def spillage_cost(self, val: float) -> None:
+        """
+        Set ``spillage_cost``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._spillage_cost = float(val)
+
+    @property
+    def inflow(self) -> float:
+        """
+        Get ``inflow``.
+
+        :return: float
+        """
+        return self._inflow
+
+    @inflow.setter
+    def inflow(self, val: float) -> None:
+        """
+        Set ``inflow``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._inflow = float(val)

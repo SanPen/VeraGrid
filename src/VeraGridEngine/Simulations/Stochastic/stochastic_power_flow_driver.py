@@ -1,13 +1,13 @@
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
-# file, You can obtain one at https://mozilla.org/MPL/2.0/.  
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
+from __future__ import annotations
 
 import numpy as np
 from enum import Enum
 
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
 from VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_results import StochasticPowerFlowResults
 from VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_input import StochasticPowerFlowInput
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at, BranchImpedanceMode
@@ -23,11 +23,24 @@ from VeraGridEngine.Simulations.driver_template import DriverTemplate
 
 
 class StochasticPowerFlowType(Enum):
+    __slots__ = ()
+
     MonteCarlo = 'Monte Carlo'
     LatinHypercube = 'Latin Hypercube'
 
 
 class StochasticPowerFlowDriver(DriverTemplate):
+    __slots__ = (
+        "options",
+        "opf_time_series_results",
+        "mc_tol",
+        "batch_size",
+        "max_sampling_points",
+        "simulation_type",
+        "pool",
+        "returned_results",
+    )
+
     name = 'Stochastic Power Flow'
     tpe = SimulationTypes.StochasticPowerFlow
 
@@ -89,11 +102,13 @@ class StochasticPowerFlowDriver(DriverTemplate):
         self.report_progress2(t, self.max_sampling_points)
         self.returned_results.append(res)
 
-    def run_single_thread_mc(self, use_lhs=False):
+    def run_single_thread_mc(self, use_lhs: bool = False) -> StochasticPowerFlowResults | None:
         """
+        Run the stochastic sampling loop in the current thread.
 
-        :param use_lhs:
-        :return:
+        :param use_lhs: Whether Latin Hypercube sampling must be used.
+        :return: StochasticPowerFlowResults when the study can be executed,
+            otherwise ``None``.
         """
         self.__cancel__ = False
 
@@ -120,27 +135,21 @@ class StochasticPowerFlowDriver(DriverTemplate):
                                                 branch_names=nc.passive_branch_data.names,
                                                 bus_types=nc.bus_data.bus_types)
 
-        avg_res = PowerFlowResults(n=nc.nbus,
-                                   m=nc.nbr,
-                                   n_hvdc=nc.nhvdc,
-                                   n_vsc=nc.nvsc,
-                                   n_gen=nc.ngen,
-                                   n_batt=nc.nbatt,
-                                   n_sh=nc.nshunt,
-                                   bus_names=nc.bus_data.names,
-                                   branch_names=nc.passive_branch_data.names,
-                                   hvdc_names=nc.hvdc_data.names,
-                                   vsc_names=nc.vsc_data.names,
-                                   gen_names=nc.generator_data.names,
-                                   batt_names=nc.battery_data.names,
-                                   sh_names=nc.shunt_data.names,
-                                   bus_types=nc.bus_data.bus_types)
-
         variance_sum = 0.0
         v_sum = np.zeros(nc.nbus, dtype=complex)
 
-        # build inputs
-        monte_carlo_input = StochasticPowerFlowInput(self.grid)
+        # The stochastic input object validates whether the grid has enough
+        # profile data to generate Monte Carlo samples before the expensive
+        # power-flow loop starts.
+        monte_carlo_input: StochasticPowerFlowInput = StochasticPowerFlowInput(self.grid)
+
+        if monte_carlo_input.has_profile_samples():
+            pass
+        else:
+            self.logger.add_error('Stochastic power flow requires at least one time-series sample.')
+            self.report_text('Stochastic power flow requires at least one time-series sample.')
+            self.report_done(txt='Stochastic power flow could not start.', val=0.0)
+            return None
 
         # get the power injections in p.u.
         S_combinations = monte_carlo_input.get(self.max_sampling_points, use_latin_hypercube=use_lhs) / self.grid.Sbase
@@ -189,10 +198,11 @@ class StochasticPowerFlowDriver(DriverTemplate):
 
         return mc_results
 
-    def run(self):
+    def run(self) -> None:
         """
-        Run the monte carlo simulation
-        @return:
+        Run the monte carlo simulation.
+
+        :return: ``None``.
         """
         self.tic()
         self.__cancel__ = False
@@ -201,6 +211,9 @@ class StochasticPowerFlowDriver(DriverTemplate):
             self.results = self.run_single_thread_mc(use_lhs=False)
         elif self.simulation_type == StochasticPowerFlowType.LatinHypercube:
             self.results = self.run_single_thread_mc(use_lhs=True)
+        else:
+            self.logger.add_error('Unsupported stochastic power flow simulation type.')
+            self.results = None
 
         self.toc()
 

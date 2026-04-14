@@ -4,8 +4,8 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import Union
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
+from typing import Union, Tuple
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp
 from VeraGridEngine.enumerations import DeviceType
 
 
@@ -19,6 +19,12 @@ class PointerDeviceParent(EditableDevice):
         '_device_name',
         '_tpe',
         '_device'
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='device_idtag', units='', tpe=str, definition='Unique ID', editable=False),
+        GCProp(key='tpe', units='', tpe=DeviceType, definition='Device type', editable=False),
+        GCProp(key='device_name', units='', tpe=str, definition='Device name', editable=False),
     )
 
     def __init__(self,
@@ -48,10 +54,6 @@ class PointerDeviceParent(EditableDevice):
         self._tpe: DeviceType = device.device_type if device is not None else DeviceType.NoDevice
         self._device_name: str = device.name if device is not None else "No device"
         self._device = device
-
-        self.register(key='device_idtag', units='', tpe=str, definition='Unique ID', editable=False)
-        self.register(key='tpe', units='', tpe=DeviceType, definition='Device type', editable=False)
-        self.register(key='device_name', units='', tpe=str, definition='Device name', editable=False)
 
     @property
     def device_idtag(self) -> str:

@@ -67,37 +67,3 @@ class Shunt(ShuntParent):
                              opex=opex,
                              build_status=build_status,
                              device_type=DeviceType.ShuntDevice)
-
-        Sbase: float = 100  # NOTE: to remove
-        self.g = self.G / Sbase
-        self.b = self.B / Sbase
-
-    # def initialize_rms(self):
-    #     """
-    #     Initialize RMS
-    #     :return:
-    #     """
-    #     if self.rms_model.empty():
-    #         Pshunt = Var("Pshunt")
-    #         Qshunt = Var("Qshunt")
-    #
-    #         Vm = self.bus.rms_model.model.E(VarPowerFlowRefferenceType.Vm)
-    #
-    #         # Assign Block
-    #         self.rms_model.model = Block(
-    #             algebraic_eqs=[
-    #                 Pshunt - self.g * Vm ** 2,
-    #                 Qshunt - self.b * Vm ** 2
-    #             ],
-    #             algebraic_vars=[Pshunt, Qshunt],
-    #             init_eqs={
-    #                 Pshunt: self.g * Vm ** 2,
-    #                 Qshunt: self.b * Vm ** 2
-    #             },
-    #             init_vars=[Pshunt, Qshunt],
-    #             parameters=[],
-    #             external_mapping={
-    #                 VarPowerFlowRefferenceType.P: Pshunt,
-    #                 VarPowerFlowRefferenceType.Q: Qshunt
-    #             }
-    #         )

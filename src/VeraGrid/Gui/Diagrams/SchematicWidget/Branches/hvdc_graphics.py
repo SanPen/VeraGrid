@@ -97,6 +97,10 @@ class HvdcGraphicItem(LineGraphicTemplateItem):
                            icon_path=":/Icons/icons/assign_to_profile.png",
                            function_ptr=self.assign_status_to_profile)
 
+            menu.addSeparator()
+            self.add_auto_route_style_menu(menu=menu)
+            menu.addSeparator()
+
             add_menu_entry(menu=menu,
                            text="Delete",
                            icon_path=":/Icons/icons/delete3.png",

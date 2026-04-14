@@ -17,7 +17,7 @@ from scipy.sparse import csc_matrix
 from VeraGridEngine.IO.file_system import opf_file_path
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Devices.Aggregation.inter_aggregation_info import InterAggregationInfo
-from VeraGridEngine.Devices.Aggregation.contingency_group import ContingencyGroup
+from VeraGridEngine.Devices.Events.contingency_group import ContingencyGroup
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.Branches.dc_line import DcLine
 from VeraGridEngine.Devices.Fluid.fluid_node import FluidNode
@@ -845,7 +845,7 @@ def add_linear_generation_formulation(local_t: int,
 
                         # start-up cost
                         gen_vars.cost[local_t, k] += (
-                                elm.StartupCost * gen_vars.starting_up[local_t, k]
+                                elm.startup_cost * gen_vars.starting_up[local_t, k]
                         )
 
                         # power boundaries of the generator
@@ -899,18 +899,18 @@ def add_linear_generation_formulation(local_t: int,
                             pmax = elm.get_Pmax_at(global_t)
 
                             # TODO: review units here
-                            if elm.RampUp < pmax and elm.RampDown < pmax:
+                            if elm.ramp_up < pmax and elm.ramp_down < pmax:
                                 # if the ramp is actually sufficiently restrictive...
                                 dt = (time_array[local_t] -
                                       time_array[local_t - 1]).seconds / 3600.0  # time increment in hours
 
                                 # - ramp_down · dt <= P(t) - P(t-1) <= ramp_up · dt
                                 prob.add_cst(
-                                    cst=(-elm.RampDown / Sbase * dt <=
+                                    cst=(-elm.ramp_down / Sbase * dt <=
                                          gen_vars.p[local_t, k] - gen_vars.p[local_t - 1, k])
                                 )
                                 prob.add_cst(
-                                    cst=gen_vars.p[local_t, k] - gen_vars.p[local_t - 1, k] <= elm.RampUp / Sbase * dt
+                                    cst=gen_vars.p[local_t, k] - gen_vars.p[local_t - 1, k] <= elm.ramp_up / Sbase * dt
                                 )
 
                 else:

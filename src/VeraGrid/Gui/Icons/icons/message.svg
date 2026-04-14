@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="48"
+   height="48"
+   viewBox="0 0 48.000001 48.000001"
+   id="svg2"
+   version="1.1"
+   inkscape:version="1.4.3 (fcd0343856, 2026-01-01)"
+   sodipodi:docname="message.svg"
+   inkscape:export-filename="message.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs4">
+    <inkscape:path-effect
+       effect="fillet_chamfer"
+       id="path-effect1"
+       is_visible="true"
+       lpeversion="1"
+       nodesatellites_param="F,0,0,1,0,3.9298788,0,1 @ F,0,0,1,0,4.25,0,1 @ F,0,0,1,0,4.2857143,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,3.4779236,0,1"
+       radius="0"
+       unit="px"
+       method="auto"
+       mode="F"
+       chamfer_steps="1"
+       flexible="false"
+       use_knot_distance="true"
+       apply_no_radius="true"
+       apply_with_radius="true"
+       only_selected="false"
+       hide_knots="false" />
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath825">
+      <rect
+         style="fill:none;fill-opacity:0.84951453;stroke:#999999;stroke-width:3.85741425;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
+         id="rect827"
+         width="44.142586"
+         height="44.142586"
+         x="1.9287071"
+         y="1006.2909"
+         ry="10.186751" />
+    </clipPath>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="5.6"
+     inkscape:cx="6.6071429"
+     inkscape:cy="7.5892857"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1-3"
+     showgrid="false"
+     units="px"
+     inkscape:window-width="2509"
+     inkscape:window-height="1014"
+     inkscape:window-x="51"
+     inkscape:window-y="29"
+     inkscape:window-maximized="1"
+     inkscape:pagecheckerboard="0"
+     inkscape:showpageshadow="2"
+     inkscape:deskcolor="#d1d1d1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Capa 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-1004.3622)">
+    <g
+       id="layer1-3"
+       inkscape:label="Capa 1"
+       transform="translate(-58.464286,-14.928558)">
+      <rect
+         ry="10.186751"
+         y="1021.2194"
+         x="60.392994"
+         height="44.142586"
+         width="44.142586"
+         id="rect4136"
+         style="fill:none;fill-opacity:0.84951453;stroke:none;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none" />
+      <path
+         style="opacity:1;fill:#2c89a0;fill-opacity:1;stroke:#2c89a0;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke markers fill"
+         d="m 72.394126,1034.9874 21.998775,-0.099 a 4.2309045,4.2309045 44.870994 0 1 4.249957,4.2309 l 0,9.4573 a 4.2857143,4.2857143 135 0 1 -4.285714,4.2857 h -5.892857 l -12.142858,9.1071 2.5,-8.9285 H 71.585068 A 3.4097356,3.4097356 45.567211 0 1 68.176,1049.5636 l 0.210483,-10.6294 a 4.0265646,4.0265646 135.43821 0 1 4.007643,-3.9468 z"
+         id="path1"
+         sodipodi:nodetypes="cccccccc"
+         inkscape:path-effect="#path-effect1"
+         inkscape:original-d="m 68.464287,1035.0051 30.178571,-0.1359 v 17.993 H 88.464287 l -12.142858,9.1071 2.5,-8.9285 H 68.107144 Z"
+         transform="matrix(1.0866356,0,0,1.0866356,-7.6478295,-92.177631)" />
+    </g>
+  </g>
+</svg>

@@ -2,35 +2,106 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
+from __future__ import annotations
 
-import numpy as np
-from typing import List
+from typing import Tuple, Optional
 
+from typing import TYPE_CHECKING
 from VeraGridEngine.enumerations import DeviceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
-from VeraGridEngine.Utils.Symbolic.block import Block, Var, Const, Expr,VarPowerFlowRefferenceType
-from VeraGridEngine.Utils.Symbolic.symbolic import cos, sin, real, imag, conj, angle, exp, log, abs, UndefinedConst
+from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
+
+from VeraGridEngine.Utils.Symbolic.block import Block, VarPowerFlowRefferenceType
+from VeraGridEngine.Utils.Symbolic.symbolic import Var
+
+if TYPE_CHECKING:
+    from VeraGridEngine.Devices.Substation.bus import Bus
 
 
 class BusRmsTemplate(RmsModelTemplate):
+    __slots__ = (
+        "tpe",
+        "_block",
+        "Vm",
+        "Va",
+    )
 
-    def __init__(self, name: str = "rms_bus_template"):
+    def __init__(self, vf: VarFactory, is_dc:bool=False, name: str = "rms_bus_template"):
+        """
+        Created the RMS Template of a Bus
+        :param vf: VarFactory
+        :param name: Name of the RMS Model
+        """
         super().__init__(name=name)
 
         self.tpe: DeviceType = DeviceType.BusDevice
+        if is_dc:
+            Vdc = vf.add_var("Vdc")
+            P = vf.add_var("P")
+            Q = vf.add_var("Q")
+
+            self._block = Block(
+                algebraic_vars=[Vdc],
+                out_vars = [Vdc])
+
+            self._block.external_mapping = {
+                VarPowerFlowRefferenceType.Vdc: Vdc,
+                VarPowerFlowRefferenceType.P: P,
+                VarPowerFlowRefferenceType.Q: Q
+            }
+
+        else:
+            self.Vm = vf.add_var("Vm", VarPowerFlowRefferenceType.Vm)
+            self.Va = vf.add_var("Va", VarPowerFlowRefferenceType.Va)
 
 
-        self.Vm = Var("Vm")
-        self.Va = Var("Va")
-        self.P = Var("P")
-        self.Q = Var("Q")
-
-        self.block = Block(
-            algebraic_vars=[self.Vm, self.Va, self.P, self.Q])
-
-        self._block.external_mapping={
+            self._block = Block(
+                algebraic_vars=[self.Vm, self.Va],
+                out_vars=[self.Vm, self.Va]
+            )
+    
+            self._block.external_mapping = {
                 VarPowerFlowRefferenceType.Vm: self.Vm,
                 VarPowerFlowRefferenceType.Va: self.Va,
-                VarPowerFlowRefferenceType.P: self.P,
-                VarPowerFlowRefferenceType.Q: self.Q
             }
+
+
+def initialize_bus_rms(bus: Bus, vf: VarFactory):
+    """
+
+    :param bus:
+    :param vf:
+    :return:
+    """
+    bus.rms_model = BusRmsTemplate(vf=vf, is_dc=bus.is_dc).block
+
+
+
+def get_bus_rms_algebraic_vars(bus_rms_model: Block) -> Tuple[Var, Optional[Var]]:
+    """
+    Return the RMS bus algebraic voltage variables.
+
+    For AC buses:
+        returns (Vm, Va)
+
+    For DC buses:
+        returns (Vdc, None)
+
+    :param bus_rms_model: RMS bus block
+    :return: Tuple with two positions to preserve the project API
+    """
+    mapping = bus_rms_model.external_mapping
+
+    vdc = mapping.get(VarPowerFlowRefferenceType.Vdc, None)
+    if vdc is not None:
+        return vdc, None
+
+    Vm = mapping.get(VarPowerFlowRefferenceType.Vm, None)
+    Va = mapping.get(VarPowerFlowRefferenceType.Va, None)
+
+    if Vm is None or Va is None:
+        raise ValueError("Invalid RMS bus model: expected either (Vdc) or (Vm, Va)")
+
+    return Vm, Va
+
+

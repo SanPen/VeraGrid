@@ -1,0 +1,7 @@
+{
+  "name": "pardiso_pypardiso",
+  "solver_type": "Pardiso",
+  "module": "backend",
+  "class_name": "PardisoPyProvider",
+  "version": "1.0"
+}

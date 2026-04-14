@@ -28,6 +28,7 @@ class Ui_Dialog(object):
         self.gridLayout = QGridLayout(Dialog)
         self.gridLayout.setObjectName(u"gridLayout")
         self.londoubleSpinBox = QDoubleSpinBox(Dialog)
+        self.londoubleSpinBox.setRange(-180, 180)
         self.londoubleSpinBox.setObjectName(u"londoubleSpinBox")
         font = QFont()
         font.setPointSize(10)
@@ -65,6 +66,7 @@ class Ui_Dialog(object):
         self.gridLayout.addWidget(self.frame, 4, 0, 1, 2)
 
         self.latdoubleSpinBox = QDoubleSpinBox(Dialog)
+        self.latdoubleSpinBox.setRange(-90, 90)
         self.latdoubleSpinBox.setObjectName(u"latdoubleSpinBox")
         self.latdoubleSpinBox.setFont(font)
         self.latdoubleSpinBox.setDecimals(4)

@@ -4,9 +4,9 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import Union
+from typing import Union, Tuple
 import numpy as np
-from VeraGridEngine.Devices.Parents.editable_device import get_at
+from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 from VeraGridEngine.Devices.Parents.pointer_device_parent import PointerDeviceParent
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.Branches.line import Line
@@ -17,11 +17,11 @@ from VeraGridEngine.Devices.Branches.switch import Switch
 from VeraGridEngine.Devices.Branches.series_reactance import SeriesReactance
 from VeraGridEngine.Devices.Branches.upfc import UPFC
 from VeraGridEngine.Devices.Injections.generator import Generator
-from VeraGridEngine.Devices.profile import Profile
+from VeraGridEngine.Devices.Profiles import ProfileFloat
 from VeraGridEngine.enumerations import DeviceType
 from VeraGridEngine.basic_structures import Vec
 
-# NOTE: These area here because this object loads first than the types file with the types aggregations
+# NOTE: These areas here because this object loads first than the types file with the types aggregations
 
 SE_BRANCH_TYPES = Union[
     Line,
@@ -42,10 +42,17 @@ class MeasurementTemplate(PointerDeviceParent):
     """
 
     __slots__ = (
-        'value',
+        '_value',
         '_value_prof',
-        'sigma',
+        '_sigma',
         '_sigma_prof',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp("value", tpe=float, profile_name="value_prof",
+                      definition="Value of the measurement"),
+        GCProp("sigma", tpe=float, profile_name="sigma_prof",
+                      definition="Uncertainty of the measurement"),
     )
 
     def __init__(self, value: float,
@@ -74,16 +81,12 @@ class MeasurementTemplate(PointerDeviceParent):
         self.value = float(value)
         self.sigma = float(uncertainty)
 
-        self._value_prof = Profile(default_value=self.value, data_type=float)
-        self._sigma_prof = Profile(default_value=self.sigma, data_type=float)
+        self._value_prof = ProfileFloat(default_value=self.value)
+        self._sigma_prof = ProfileFloat(default_value=self.sigma)
 
-        self.register("value", tpe=float, profile_name="value_prof",
-                      definition="Value of the measurement")
-        self.register("sigma", tpe=float, profile_name="sigma_prof",
-                      definition="Uncertainty of the measurement")
 
     @property
-    def value_prof(self) -> Profile:
+    def value_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -91,8 +94,8 @@ class MeasurementTemplate(PointerDeviceParent):
         return self._value_prof
 
     @value_prof.setter
-    def value_prof(self, val: Union[Profile, Vec]):
-        if isinstance(val, Profile):
+    def value_prof(self, val: Union[ProfileFloat, Vec]):
+        if isinstance(val, ProfileFloat):
             self._value_prof = val
         elif isinstance(val, np.ndarray):
             self._value_prof.set(arr=val)
@@ -107,7 +110,7 @@ class MeasurementTemplate(PointerDeviceParent):
         return get_at(self.value, self.value_prof, t)
 
     @property
-    def sigma_prof(self) -> Profile:
+    def sigma_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
@@ -115,8 +118,8 @@ class MeasurementTemplate(PointerDeviceParent):
         return self._sigma_prof
 
     @sigma_prof.setter
-    def sigma_prof(self, val: Union[Profile, np.ndarray]):
-        if isinstance(val, Profile):
+    def sigma_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
             self._sigma_prof = val
         elif isinstance(val, np.ndarray):
             self._sigma_prof.set(arr=val)
@@ -148,6 +151,46 @@ class MeasurementTemplate(PointerDeviceParent):
         """
         return self.get_sigma_at(t) / Sbase
 
+    # Scalar property accessors coerce assignments to the declared schema types.
+
+    @property
+    def value(self) -> float:
+        """
+        Get ``value``.
+
+        :return: float
+        """
+        return self._value
+
+    @value.setter
+    def value(self, val: float) -> None:
+        """
+        Set ``value``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._value = float(val)
+
+    @property
+    def sigma(self) -> float:
+        """
+        Get ``sigma``.
+
+        :return: float
+        """
+        return self._sigma
+
+    @sigma.setter
+    def sigma(self, val: float) -> None:
+        """
+        Set ``sigma``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._sigma = float(val)
+
 
 class PiMeasurement(MeasurementTemplate):
     """
@@ -174,7 +217,7 @@ class PiMeasurement(MeasurementTemplate):
                                      api_obj=api_obj,
                                      name=name,
                                      idtag=idtag,
-                                     device_type=DeviceType.PMeasurementDevice)
+                                     device_type=DeviceType.PiMeasurementDevice)
 
 
 class QiMeasurement(MeasurementTemplate):
@@ -202,7 +245,7 @@ class QiMeasurement(MeasurementTemplate):
                                      api_obj=api_obj,
                                      name=name,
                                      idtag=idtag,
-                                     device_type=DeviceType.QMeasurementDevice)
+                                     device_type=DeviceType.QiMeasurementDevice)
 
 
 class PgMeasurement(MeasurementTemplate):

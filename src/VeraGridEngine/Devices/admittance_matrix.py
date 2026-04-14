@@ -52,6 +52,19 @@ class AdmittanceMatrix:
         self._phB: int = 0
         self._phC: int = 0
 
+    def copy(self) -> AdmittanceMatrix:
+        """
+        Make a copy of the admittance matrix
+        :return:
+        """
+        elm = AdmittanceMatrix(size=self.size)
+        elm.__values = self.__values.copy()
+        elm._phN = self._phN
+        elm._phA = self._phA
+        elm._phB = self._phB
+        elm._phC = self._phC
+        return elm
+
     def __str__(self):
         return f"size {self.__size}: {self._phN}, {self._phA}, {self._phB}, {self._phC}"
 

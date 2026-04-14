@@ -40,10 +40,15 @@ from VeraGridEngine.Simulations.NTC.ntc_ts_driver import (OptimalNetTransferCapa
 from VeraGridEngine.Simulations.NodalCapacity.nodal_capacity_ts_driver import (NodalCapacityTimeSeriesDriver,
                                                                                NodalCapacityTimeSeriesResults)
 from VeraGridEngine.Simulations.Topology.node_groups_driver import NodeGroupsDriver
+from VeraGridEngine.Simulations.Topology.node_groups_results import NodeGroupsResults
 from VeraGridEngine.Simulations.Reliability.reliability_driver import ReliabilityStudyDriver, ReliabilityResults
 
-from VeraGridEngine.Simulations.Rms.rms_driver import RmsSimulationDriver
-from VeraGridEngine.Simulations.SmallSignalStability.small_signal_driver import SmallSignalStabilityDriver
+from VeraGridEngine.Simulations.Rms.rms_driver import RmsSimulationDriver, RmsResults
+from VeraGridEngine.Simulations.EMT.emt_driver import EmtSimulationDriver, EmtResults
+from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_driver import (
+    SmallSignalStabilityRmsDriver, SmallSignalStabilityRmsResults)
+from VeraGridEngine.Simulations.SmallSignalStabilityEmt.small_signal_stability_emt_driver import (
+    SmallSignalStabilityEmtDriver, SmallSignalStabilityEmtResults)
 from VeraGridEngine.Simulations.StateEstimation.state_stimation_driver import (StateEstimationDriver,
                                                                                StateEstimationResults)
 
@@ -74,7 +79,9 @@ DRIVER_OBJECTS = Union[
     NodalCapacityTimeSeriesDriver,
     ReliabilityStudyDriver,
     RmsSimulationDriver,
-    SmallSignalStabilityDriver
+    SmallSignalStabilityRmsDriver,
+    SmallSignalStabilityEmtDriver,
+    EmtSimulationDriver,
 ]
 
 RESULTS_OBJECTS = Union[
@@ -97,9 +104,14 @@ RESULTS_OBJECTS = Union[
     SigmaAnalysisResults,
     OptimalNetTransferCapacityResults,
     OptimalNetTransferCapacityTimeSeriesResults,
+    NodeGroupsResults,
     InputsAnalysisResults,
     InvestmentsEvaluationResults,
     NodalCapacityTimeSeriesResults,
     ReliabilityResults,
-    StateEstimationResults
+    StateEstimationResults,
+    RmsResults,
+    SmallSignalStabilityRmsResults,
+    SmallSignalStabilityEmtResults,
+    EmtResults,
 ]

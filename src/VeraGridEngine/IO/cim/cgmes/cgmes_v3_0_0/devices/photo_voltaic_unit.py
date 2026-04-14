@@ -9,6 +9,7 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 
 
 class PhotoVoltaicUnit(PowerElectronicsUnit):
+	__slots__ = ()
 	def __init__(self, rdfid='', tpe='PhotoVoltaicUnit'):
 		PowerElectronicsUnit.__init__(self, rdfid, tpe)
 

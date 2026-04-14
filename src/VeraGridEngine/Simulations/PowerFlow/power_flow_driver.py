@@ -24,6 +24,13 @@ if TYPE_CHECKING:  # Only imports the below statements during type checking
 
 
 class PowerFlowDriver(DriverTemplate):
+    __slots__ = (
+        "options",
+        "opf_results",
+        "t_idx",
+        "convergence_reports",
+    )
+
     name = 'Power Flow'
     tpe = SimulationTypes.PowerFlow_run
 
@@ -34,6 +41,7 @@ class PowerFlowDriver(DriverTemplate):
     def __init__(self, grid: MultiCircuit,
                  options: Union[PowerFlowOptions, None] = None,
                  opf_results: Union[OptimalPowerFlowResults, None] = None,
+                 t_idx: int | None = None,
                  engine: EngineType = EngineType.VeraGrid):
         """
         PowerFlowDriver class constructor
@@ -49,6 +57,8 @@ class PowerFlowDriver(DriverTemplate):
         self.options: PowerFlowOptions = PowerFlowOptions() if options is None else options
 
         self.opf_results: Union[OptimalPowerFlowResults, None] = opf_results
+
+        self.t_idx: int | None = t_idx
 
         self.results: PowerFlowResults = PowerFlowResults(
             n=self.grid.get_bus_number(),
@@ -144,7 +154,7 @@ class PowerFlowDriver(DriverTemplate):
         if self.engine == EngineType.VeraGrid:
 
             self.results = multi_island_pf(multi_circuit=self.grid,
-                                           t=None,
+                                           t=self.t_idx,
                                            options=self.options,
                                            opf_results=self.opf_results,
                                            logger=self.logger)
@@ -152,7 +162,9 @@ class PowerFlowDriver(DriverTemplate):
 
         elif self.engine == EngineType.NewtonPA:
 
-            res = newton_pa_pf(circuit=self.grid, pf_opt=self.options, time_series=False)
+            res = newton_pa_pf(circuit=self.grid,
+                               pf_opt=self.options,
+                               time_series=False)
 
             self.results = PowerFlowResults(n=self.grid.get_bus_number(),
                                             m=self.grid.get_branch_number(add_hvdc=False, add_vsc=False,

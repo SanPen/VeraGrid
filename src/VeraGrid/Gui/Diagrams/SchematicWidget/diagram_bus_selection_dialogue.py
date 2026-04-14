@@ -48,7 +48,6 @@ class DiagramBusSelectorDialogue(QtWidgets.QDialog):
 
         self.diagram_widget = SchematicWidget(
             gui=gui,
-            circuit=grid,
             diagram=diagram,
             default_bus_voltage=gui.ui.defaultBusVoltageSpinBox.value(),
             time_index=gui.get_diagram_slider_index()

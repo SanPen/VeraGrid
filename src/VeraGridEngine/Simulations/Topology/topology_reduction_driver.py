@@ -240,6 +240,11 @@ class TopologyReductionOptions:
     """
     TopologyReductionOptions
     """
+    __slots__ = (
+        "rx_criteria",
+        "rx_threshold",
+        "selected_type",
+    )
 
     def __init__(self, rx_criteria=False, rx_threshold=1e-5, selected_types=BranchType.Branch):
         """
@@ -255,6 +260,8 @@ class TopologyReductionOptions:
 
 
 class TopologyReduction(DriverTemplate):
+    __slots__ = ("br_to_remove",)
+
     tpe = SimulationTypes.TopologyReduction_run
 
     def __init__(self, grid: MultiCircuit, branch_indices):
@@ -305,6 +312,11 @@ class TopologyReduction(DriverTemplate):
 
 
 class DeleteAndReduce(DriverTemplate):
+    __slots__ = (
+        "objects",
+        "sel_idx",
+        "buses_merged",
+    )
 
     def __init__(self, grid: MultiCircuit, objects, sel_idx):
         """

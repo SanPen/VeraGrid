@@ -14,7 +14,7 @@ from typing import List, Union, Tuple, Callable
 
 from VeraGridEngine.enumerations import MIPSolvers, ZonalGrouping
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-from VeraGridEngine.Devices.Aggregation.contingency_group import ContingencyGroup
+from VeraGridEngine.Devices.Events.contingency_group import ContingencyGroup
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 from VeraGridEngine.DataStructures.generator_data import GeneratorData
@@ -25,7 +25,7 @@ from VeraGridEngine.DataStructures.active_branch_data import ActiveBranchData
 from VeraGridEngine.DataStructures.hvdc_data import HvdcData
 from VeraGridEngine.DataStructures.vsc_data import VscData
 from VeraGridEngine.DataStructures.bus_data import BusData
-from VeraGridEngine.basic_structures import Logger, Vec, IntVec, BoolVec, StrVec, CxMat, Mat, ObjVec
+from VeraGridEngine.basic_structures import Logger, Vec, IntVec, BoolVec, CxMat, Mat, ObjVec
 from VeraGridEngine.Utils.MIP.selected_interface import LpExp, LpVar, OrToolsLpModel, join, LpModel
 from VeraGridEngine.enumerations import TapPhaseControl, HvdcControlType, AvailableTransferMode, ConverterControlType
 from VeraGridEngine.Simulations.LinearFactors.linear_analysis import LinearAnalysis, LinearMultiContingencies

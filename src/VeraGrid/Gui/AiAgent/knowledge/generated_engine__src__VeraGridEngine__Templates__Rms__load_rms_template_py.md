@@ -1,0 +1,18 @@
+# VeraGridEngine Module: src/VeraGridEngine/Templates/Rms/load_rms_template.py
+
+- Original source path: `src/VeraGridEngine/Templates/Rms/load_rms_template.py`
+- Knowledge kind: generated VeraGridEngine code summary
+
+## Module Summary
+
+No docstring provided.
+
+## Module Surface
+
+- Class count: 0
+- Top-level function count: 1
+- Representative imports: VeraGridEngine.Devices.Dynamic.var_factory, VeraGridEngine.enumerations, VeraGridEngine.Devices.Dynamic.rms_template
+
+## Function: get_load_rms_template(vfactory, name)
+
+Get the RMS template model of the Load

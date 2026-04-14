@@ -6,34 +6,52 @@ from __future__ import annotations
 
 import numpy as np
 from typing import Tuple
-
 from VeraGridEngine.basic_structures import Logger, Mat, IntVec
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import (WindingsConnection, BuildStatus, TapPhaseControl,
                                          TapModuleControl, TapChangerTypes, WindingType)
 from VeraGridEngine.Devices.Parents.controllable_branch_parent import ControllableBranchParent
 from VeraGridEngine.Devices.Branches.transformer_type import TransformerType, reverse_transformer_short_circuit_study
-from VeraGridEngine.Devices.Parents.editable_device import DeviceType
-from VeraGridEngine.Utils.Symbolic.block import Block, Var, Const, VarPowerFlowRefferenceType
-from VeraGridEngine.Utils.Symbolic.symbolic import cos, sin
+from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
 
 
 class Transformer2W(ControllableBranchParent):
     __slots__ = (
-        'HV',
-        'LV',
-        'Sn',
-        'Pcu',
-        'Pfe',
-        'I0',
-        'Vsc',
+        '_HV',
+        '_LV',
+        '_Sn',
+        '_Pcu',
+        '_Pfe',
+        '_I0',
+        '_Vsc',
         'conn',
         'template',
         'possible_transformer_types',
         '_conn_f',
         '_conn_t',
         '_vector_group_number',
-        '_phases'
+        '_phases',
+    )
+
+    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
+        GCProp(key='HV', units='kV', tpe=float, definition='High voltage rating'),
+        GCProp(key='LV', units='kV', tpe=float, definition='Low voltage rating'),
+        GCProp(key='Sn', units='MVA', tpe=float, definition='Nominal power'),
+        GCProp(key='Pcu', units='kW', tpe=float, definition='Copper losses (optional)'),
+        GCProp(key='Pfe', units='kW', tpe=float, definition='Iron losses (optional)'),
+        GCProp(key='I0', units='%', tpe=float, definition='No-load current (optional)'),
+        GCProp(key='Vsc', units='%', tpe=float, definition='Short-circuit voltage (optional)'),
+        GCProp(key='conn', units='', tpe=WindingsConnection,
+               definition='Windings connection (from, to):G: grounded starS: ungrounded starD: delta'),
+        GCProp(key='conn_f', units='', tpe=WindingType,
+               definition='Winding 3 phase connection at the from side'),
+        GCProp(key='conn_t', units='', tpe=WindingType,
+               definition='Winding 3 phase connection at the to side'),
+        GCProp(key='vector_group_number', units='', tpe=int,
+               definition='Vector group number. It indicates the structural phase:'
+                          'phase = vector_group_number · 30º'),
+        # GCProp(key='phases', units='', tpe=IntVec, definition='Which phases are present at the transformer'),
+        GCProp(key='template', units='', tpe=DeviceType.TransformerTypeDevice, definition='', editable=False),
     )
 
     def __init__(self,
@@ -208,8 +226,8 @@ class Transformer2W(ControllableBranchParent):
                                           tc_type=tc_type)
 
         # set the high and low voltage values
-        self.HV: None | float = None if HV is None else float(HV)
-        self.LV: None | float = None if LV is None else float(LV)
+        self._HV: float | None = None if HV is None else float(HV)
+        self._LV: float | None = None if LV is None else float(LV)
 
         if self.bus_from and self.bus_to:
             self.set_hv_and_lv(HV, LV)
@@ -228,42 +246,17 @@ class Transformer2W(ControllableBranchParent):
         self.conn: WindingsConnection = conn
 
         # type template
-        self.template: TransformerType = template
+        self.template: TransformerType | None = template
 
         # association with transformer templates
         # self.possible_transformer_types: Associations = Associations(device_type=DeviceType.TransformerTypeDevice)
 
-        self._conn_f: WindingType = WindingType.Delta
+        self._conn_f: WindingType = WindingType.GroundedStar
         self._conn_t: WindingType = WindingType.GroundedStar
         self._vector_group_number: int = 0
         self._phases: IntVec = np.array([1, 2, 3])
 
-        # register
-        self.register(key='HV', units='kV', tpe=float, definition='High voltage rating')
-        self.register(key='LV', units='kV', tpe=float, definition='Low voltage rating')
-        self.register(key='Sn', units='MVA', tpe=float, definition='Nominal power')
-        self.register(key='Pcu', units='kW', tpe=float, definition='Copper losses (optional)')
-        self.register(key='Pfe', units='kW', tpe=float, definition='Iron losses (optional)')
-        self.register(key='I0', units='%', tpe=float, definition='No-load current (optional)')
-        self.register(key='Vsc', units='%', tpe=float, definition='Short-circuit voltage (optional)')
-
-        self.register(key='conn', units='', tpe=WindingsConnection,
-                      definition='Windings connection (from, to):G: grounded starS: ungrounded starD: delta')
-
-        self.register(key='conn_f', units='', tpe=WindingType,
-                      definition='Winding 3 phase connection at the from side')
-
-        self.register(key='conn_t', units='', tpe=WindingType,
-                      definition='Winding 3 phase connection at the to side')
-
-        self.register(key='vector_group_number', units='', tpe=int,
-                      definition='Vector group number. It indicates the structural phase:'
-                                 'phase = vector_group_number · 30º')
-
         # TODO: do we need to edit the phases vector?
-        # self.register(key='phases', units='', tpe=IntVec, definition='Which phases are present at the transformer')
-
-        self.register(key='template', units='', tpe=DeviceType.TransformerTypeDevice, definition='', editable=False)
 
     @property
     def conn_f(self) -> WindingType:
@@ -311,7 +304,7 @@ class Transformer2W(ControllableBranchParent):
         else:
             raise Exception("phases must be a numpy array (IntVec)")
 
-    def set_hv_and_lv(self, HV: float, LV: float):
+    def set_hv_and_lv(self, HV: float | None, LV: float | None):
         """
         set the high and low voltage values
         :param HV: higher voltage value (kV)
@@ -395,10 +388,11 @@ class Transformer2W(ControllableBranchParent):
 
         if isinstance(obj, TransformerType):
 
-            VH, VL = self.get_sorted_buses_voltages()
+            self.HV = obj.HV
+            self.LV = obj.LV
 
             # get the transformer impedance in the base of the transformer
-            z_series, y_shunt = obj.get_impedances(VH=VH, VL=VL, Sbase=Sbase)
+            z_series, y_shunt = obj.get_impedances(VH=obj.HV, VL=obj.LV, Sbase=Sbase)
 
             self.R = z_series.real
             self.X = z_series.imag
@@ -413,9 +407,6 @@ class Transformer2W(ControllableBranchParent):
             self.Pfe = obj.Pfe
             self.I0 = obj.I0
             self.Vsc = obj.Vsc
-
-            self.HV = obj.HV
-            self.LV = obj.LV
 
             self.tap_changer = obj.get_tap_changer()
 
@@ -436,6 +427,9 @@ class Transformer2W(ControllableBranchParent):
                     logger.add_error('Template not recognised', self.name)
             else:
                 self.template = obj
+
+            self.rms_template = obj.rms_template
+            self.emt_template = obj.emt_template
 
     def delete_virtual_taps(self):
         """
@@ -599,7 +593,6 @@ class Transformer2W(ControllableBranchParent):
 
         return phaseN, phaseA, phaseB, phaseC
 
-
     def transformer_admittance(self,
                                vtap_f: float,
                                vtap_t: float,
@@ -616,10 +609,10 @@ class Transformer2W(ControllableBranchParent):
         conn_y_to = self.conn_t == WindingType.NeutralStar or self.conn_t == WindingType.GroundedStar
 
         # phase_displacement = np.deg2rad(self.vector_group_number * 30.0)
-        if self.conn_f == WindingType.Delta and conn_y_to: # Dy
+        if self.conn_f == WindingType.Delta and conn_y_to:  # Dy
             phase_displacement = np.deg2rad(60.0)
 
-        elif conn_y_from and self.conn_t == WindingType.Delta: # Yd
+        elif conn_y_from and self.conn_t == WindingType.Delta:  # Yd
             phase_displacement = np.deg2rad(0.0)
 
         else:
@@ -766,14 +759,14 @@ class Transformer2W(ControllableBranchParent):
                 [-yff / 3, -yff / 3, 2 * yff / 3]
             ])
             Yft = np.array([
-                [yft / (2*np.sqrt(3)), yft / (2*np.sqrt(3)), -yft / np.sqrt(3)],
-                [-yft / np.sqrt(3), yft / (2*np.sqrt(3)), yft / (2*np.sqrt(3))],
-                [yft / (2*np.sqrt(3)), -yft / np.sqrt(3), yft / (2*np.sqrt(3))]
+                [yft / (2 * np.sqrt(3)), yft / (2 * np.sqrt(3)), -yft / np.sqrt(3)],
+                [-yft / np.sqrt(3), yft / (2 * np.sqrt(3)), yft / (2 * np.sqrt(3))],
+                [yft / (2 * np.sqrt(3)), -yft / np.sqrt(3), yft / (2 * np.sqrt(3))]
             ])
             Ytf = np.array([
-                [yft / (2*np.sqrt(3)), -yft / np.sqrt(3), yft / (2*np.sqrt(3))],
-                [yft / (2*np.sqrt(3)), yft / (2*np.sqrt(3)), -yft / np.sqrt(3)],
-                [-yft / np.sqrt(3), yft / (2*np.sqrt(3)), yft / (2*np.sqrt(3))]
+                [yft / (2 * np.sqrt(3)), -yft / np.sqrt(3), yft / (2 * np.sqrt(3))],
+                [yft / (2 * np.sqrt(3)), yft / (2 * np.sqrt(3)), -yft / np.sqrt(3)],
+                [-yft / np.sqrt(3), yft / (2 * np.sqrt(3)), yft / (2 * np.sqrt(3))]
             ])
             Ytt = np.array([
                 [ytt, 0, 0],
@@ -810,14 +803,14 @@ class Transformer2W(ControllableBranchParent):
                 [0, 0, yff]
             ])
             Yft = np.array([
-                [yft / (2*np.sqrt(3)), -yft / np.sqrt(3), yft / (2*np.sqrt(3))],
-                [yft / (2*np.sqrt(3)), yft / (2*np.sqrt(3)), -yft / np.sqrt(3)],
-                [-yft / np.sqrt(3), yft / (2*np.sqrt(3)), yft / (2*np.sqrt(3))]
+                [yft / (2 * np.sqrt(3)), -yft / np.sqrt(3), yft / (2 * np.sqrt(3))],
+                [yft / (2 * np.sqrt(3)), yft / (2 * np.sqrt(3)), -yft / np.sqrt(3)],
+                [-yft / np.sqrt(3), yft / (2 * np.sqrt(3)), yft / (2 * np.sqrt(3))]
             ])
             Ytf = np.array([
-                [yft / (2*np.sqrt(3)), yft / (2*np.sqrt(3)), -yft / np.sqrt(3)],
-                [-yft / np.sqrt(3), yft / (2*np.sqrt(3)), yft / (2*np.sqrt(3))],
-                [yft / (2*np.sqrt(3)), -yft / np.sqrt(3), yft / (2*np.sqrt(3))]
+                [yft / (2 * np.sqrt(3)), yft / (2 * np.sqrt(3)), -yft / np.sqrt(3)],
+                [-yft / np.sqrt(3), yft / (2 * np.sqrt(3)), yft / (2 * np.sqrt(3))],
+                [yft / (2 * np.sqrt(3)), -yft / np.sqrt(3), yft / (2 * np.sqrt(3))]
             ])
             Ytt = np.array([
                 [2 * ytt / 3, -ytt / 3, -ytt / 3],
@@ -854,47 +847,137 @@ class Transformer2W(ControllableBranchParent):
 
         return Yff, Yft, Ytf, Ytt
 
-    def initialize_rms(self):
-        if self.rms_model.empty():
-            Qf = Var("Qf")
-            Qt = Var("Qt")
-            Pf = Var("Pf")
-            Pt = Var("Pt")
+    # Scalar property accessors coerce assignments to the declared schema types.
 
-            ys = 1.0 / complex(self.R, self.X)
-            g = Var("g")
-            b = Var("b")
-            bsh = Var("bsh")
+    @property
+    def HV(self) -> float:
+        """
+        Get ``HV``.
 
-            Vmf = self.bus_from.rms_model.model.E(VarPowerFlowRefferenceType.Vm)
-            Vaf = self.bus_from.rms_model.model.E(VarPowerFlowRefferenceType.Va)
-            Vmt = self.bus_to.rms_model.model.E(VarPowerFlowRefferenceType.Vm)
-            Vat = self.bus_to.rms_model.model.E(VarPowerFlowRefferenceType.Va)
+        :return: float
+        """
+        return self._HV
 
-            block = Block(
-                algebraic_vars=[Pf, Pt, Qf, Qt],
-                algebraic_eqs=[
-                    Pf - ((Vmf ** 2 * g) - g * Vmf * Vmt * cos(
-                        Vaf - Vat) + b * Vmf * Vmt * cos(Vaf - Vat + np.pi / 2)),
-                    Qf - (Vmf ** 2 * (-bsh / 2 - b) - g * Vmf * Vmt * sin(
-                        Vaf - Vat) + b * Vmf * Vmt * sin(
-                        Vaf - Vat + np.pi / 2)),
-                    Pt - ((Vmt ** 2 * g) - g * Vmt * Vmf * cos(
-                        Vat - Vaf) + b * Vmt * Vmf * cos(Vat - Vaf + np.pi / 2)),
-                    Qt - (Vmt ** 2 * (-bsh / 2 - b) - g * Vmt * Vmf * sin(
-                        Vat - Vaf) + b * Vmt * Vmf * sin(
-                        Vat - Vaf + np.pi / 2)),
-                ])
+    @HV.setter
+    def HV(self, val: float) -> None:
+        """
+        Set ``HV``.
 
-            block.external_mapping = {
-                VarPowerFlowRefferenceType.Pf: Pf,
-                VarPowerFlowRefferenceType.Pt: Pt,
-                VarPowerFlowRefferenceType.Qf: Qf,
-                VarPowerFlowRefferenceType.Qt: Qt,
-            }
+        :param val: Value to assign.
+        :return: None
+        """
+        self._HV = float(val)
 
-            block.event_dict = {g: Const(ys.real),
-                                b: Const(ys.imag),
-                                bsh: Const(self.B)}
+    @property
+    def LV(self) -> float:
+        """
+        Get ``LV``.
 
-            self.rms_model.model = block
+        :return: float
+        """
+        return self._LV
+
+    @LV.setter
+    def LV(self, val: float) -> None:
+        """
+        Set ``LV``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._LV = float(val)
+
+    @property
+    def Sn(self) -> float:
+        """
+        Get ``Sn``.
+
+        :return: float
+        """
+        return self._Sn
+
+    @Sn.setter
+    def Sn(self, val: float) -> None:
+        """
+        Set ``Sn``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Sn = float(val)
+
+    @property
+    def Pcu(self) -> float:
+        """
+        Get ``Pcu``.
+
+        :return: float
+        """
+        return self._Pcu
+
+    @Pcu.setter
+    def Pcu(self, val: float) -> None:
+        """
+        Set ``Pcu``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Pcu = float(val)
+
+    @property
+    def Pfe(self) -> float:
+        """
+        Get ``Pfe``.
+
+        :return: float
+        """
+        return self._Pfe
+
+    @Pfe.setter
+    def Pfe(self, val: float) -> None:
+        """
+        Set ``Pfe``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Pfe = float(val)
+
+    @property
+    def I0(self) -> float:
+        """
+        Get ``I0``.
+
+        :return: float
+        """
+        return self._I0
+
+    @I0.setter
+    def I0(self, val: float) -> None:
+        """
+        Set ``I0``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._I0 = float(val)
+
+    @property
+    def Vsc(self) -> float:
+        """
+        Get ``Vsc``.
+
+        :return: float
+        """
+        return self._Vsc
+
+    @Vsc.setter
+    def Vsc(self, val: float) -> None:
+        """
+        Set ``Vsc``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Vsc = float(val)

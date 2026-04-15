@@ -8,10 +8,7 @@ from VeraGridEngine.enumerations import ParamPowerFlowRefferenceType, VarPowerFl
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 
 
-def get_load_phasor_current_rms_template(vfactory: VarFactory, 
-                                         name="Load_phasor_current_rms_template",
-                                         Ir0=-0.099-0.00118943, 
-                                         Ii0=-0.009999999862208533+0.020754670015533737) -> RmsModelTemplate:
+def get_load_phasor_current_rms_template(vfactory: VarFactory, name:str = '') -> RmsModelTemplate:
     """
     Get the RMS template model of the Load using constant current injection in phasor coordinates.
     
@@ -41,9 +38,9 @@ def get_load_phasor_current_rms_template(vfactory: VarFactory,
     Ir = vfactory.add_var("Ir")
     Ii = vfactory.add_var("Ii")
 
-    # Default values (will be overwritten by power flow results)
-    templ.block.event_dict[Ir0] = vfactory.add_const(Ir0)  
-    templ.block.event_dict[Ii0] = vfactory.add_const(Ii0)
+    # Default values (will be overwritten by initialization)
+    templ.block.event_dict[Ir0] = vfactory.add_const(None)
+    templ.block.event_dict[Ii0] = vfactory.add_const(None)
 
     templ.block.algebraic_vars = [Ir, Ii]
 
@@ -62,6 +59,10 @@ def get_load_phasor_current_rms_template(vfactory: VarFactory,
         ParamPowerFlowRefferenceType.Ii0: Ii0,
     }
 
+    templ.block.init_eqs = {
+        Ir0: Ir,
+        Ii0: Ii,
+    }
     templ.block.out_vars = [Ir, Ii]
     templ.block.in_vars = inputs
 

@@ -386,7 +386,7 @@ def ml_f_exc(vf: VarFactory, In:Expr):
     sqrt1 = vf.add_var('sqrt1')
     sqrt2 = vf.add_var('sqrt2')
     exp1 = (Const(1) - Const(0.577) * In)
-    exp2 = ( Const(0.75) - In*In_aux)
+    exp2 = (Const(0.75)  - In*In_aux)
     exp3 = (Const(1.732) - In * Const(1.732))
     b = (exp1 - sqrt1) * hv1
     c = (sqrt1 - exp3) * hv2
@@ -395,12 +395,12 @@ def ml_f_exc(vf: VarFactory, In:Expr):
         algebraic_eqs=[
             In_aux -In,
             sqrt1 -sqrt2,
-            sqrt1*sqrt2 - exp2
+            hv2*(sqrt1*sqrt2 - exp2),
         ],
         algebraic_vars=[In_aux, sqrt1, sqrt2],
         init_eqs={
             In_aux:In,
-            sqrt1: sym.sqrt(exp2),
+            sqrt1: sym.sqrt(sym.max(exp2, Const(1e-6))),
             sqrt2: sqrt1,
         },
         children = [ml_block1, ml_block2, ml_block3]

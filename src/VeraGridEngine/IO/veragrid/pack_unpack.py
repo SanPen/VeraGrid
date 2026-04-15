@@ -1882,6 +1882,7 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
         DeviceType.InvestmentDevice,
         DeviceType.RemedialActionDevice,
         DeviceType.RmsEventDevice,
+        DeviceType.EmtEventDevice,
         DeviceType.ShortCircuitEvent
     ]:
         elms = circuit.get_elements_by_type(device_type=dtype)

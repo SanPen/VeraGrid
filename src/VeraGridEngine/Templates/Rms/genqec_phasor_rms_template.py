@@ -397,13 +397,19 @@ def get_complete_generator_template_phasor(vfactory: VarFactory, name="complete 
     # Create a block to compute Vm = sqrt(Vr^2 + Vi^2)
     Vm_calc = vfactory.add_var(f"Vm_calc_{name}")
     Vm_calc_aux = vfactory.add_var(f"Vm_calc_{name}")
+    Vr_aux = vfactory.add_var(f"Vr_aux_{name}")
+    Vi_aux = vfactory.add_var(f"Vi_aux_{name}")
     vm_calc_block = Block(
         algebraic_eqs=[
+            Vr_aux - Vr_input,
+            Vi_aux - Vi_input,
             Vm_calc*Vm_calc_aux - (Vr_input * Vr_input + Vi_input * Vi_input),
             Vm_calc -Vm_calc_aux],
-        algebraic_vars=[Vm_calc, Vm_calc_aux],
+        algebraic_vars=[Vm_calc, Vm_calc_aux, Vr_aux, Vi_aux],
         out_vars=[Vm_calc],
         init_eqs={
+                Vr_aux: Vr_input,
+                Vi_aux: Vi_input,
                 Vm_calc: sym.sqrt(Vr_input * Vr_input + Vi_input * Vi_input),  
                 Vm_calc_aux: Vm_calc,
         },
@@ -425,11 +431,33 @@ def get_complete_generator_template_phasor(vfactory: VarFactory, name="complete 
     governor_mdl.connect([governor_mdl.in_vars[0]], [genqec_mdl.out_vars[2]])  # omega to governor
     governor_mdl.connect([governor_mdl.in_vars[1]], [genqec_mdl.out_vars[4]])  # Te to governor
 
+    # Convert generator P/Q outputs to injected Ir/Ii for current-balance formulations
+    Pg_out = genqec_mdl.out_vars[0]
+    Qg_out = genqec_mdl.out_vars[1]
+    Irg_out = vfactory.add_var(f"Irg_{name}")
+    Iig_out = vfactory.add_var(f"Iig_{name}")
+    v_sq = Vr_input * Vr_input + Vi_input * Vi_input
+
+    iq_map_block = Block(
+        algebraic_eqs=[
+            Vm_calc* Vm_calc_aux* Irg_out - ((Pg_out * Vr_input + Qg_out * Vi_input) ),
+            Vm_calc* Vm_calc_aux* Iig_out - ((Pg_out * Vi_input - Qg_out * Vr_input) ),
+        ],
+        algebraic_vars=[Irg_out, Iig_out],
+        out_vars=[Irg_out, Iig_out],
+        init_eqs={
+            Irg_out: (Pg_out * Vr_input + Qg_out * Vi_input) / v_sq,
+            Iig_out: (Pg_out * Vi_input - Qg_out * Vr_input) / v_sq,
+        },
+        name=f"iq_map_{name}",
+    )
+
     templ.block.children.append(genqec_mdl)
     templ.block.children.append(governor_mdl)
     templ.block.children.append(stabilizer_mdl)
     templ.block.children.append(exciter_mdl)
     templ.block.children.append(vm_calc_block)
+    templ.block.children.append(iq_map_block)
 
     # Flatten all blocks before converting to implicit form
     templ.block.unify_blocks()
@@ -439,11 +467,13 @@ def get_complete_generator_template_phasor(vfactory: VarFactory, name="complete 
     templ.block.external_mapping = {
         VarPowerFlowRefferenceType.Vr: genqec_mdl.in_vars[0],
         VarPowerFlowRefferenceType.Vi: genqec_mdl.in_vars[1],
-        VarPowerFlowRefferenceType.Ir: genqec_mdl.out_vars[0],
-        VarPowerFlowRefferenceType.Ii: genqec_mdl.out_vars[1],
+        VarPowerFlowRefferenceType.P: Pg_out,
+        VarPowerFlowRefferenceType.Q: Qg_out,
+        VarPowerFlowRefferenceType.Ir: Irg_out,
+        VarPowerFlowRefferenceType.Ii: Iig_out,
     }
 
     templ.block.in_vars = [genqec_mdl.in_vars[0], genqec_mdl.in_vars[1]]
-    templ.block.out_vars = [genqec_mdl.out_vars[0], genqec_mdl.out_vars[1]]
+    templ.block.out_vars = [Irg_out, Iig_out]
 
     return templ

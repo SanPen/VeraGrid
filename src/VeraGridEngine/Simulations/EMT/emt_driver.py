@@ -5,7 +5,6 @@
 
 import numpy as np
 import pandas as pd
-from typing import Any, cast
 
 from VeraGridEngine import EmtSolverTypes
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
@@ -17,20 +16,17 @@ from VeraGridEngine.Simulations.EMT.emt_solver_factory import build_emt_solver
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import EmtProblemDae
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results_3ph import PowerFlowResults3Ph
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
-from VeraGridEngine.Simulations.EMT.solvers.jit_symbolic_solver import JitSymbolicSolver
-from VeraGridEngine.Simulations.EMT.solvers.solver_AD import JitAdSolver
-from VeraGridEngine.Simulations.EMT.solvers.StructuralVectorizedSolver import StructuralVectorizedSolver
-from VeraGridEngine.Simulations.EMT.solvers.structural_compiled_solver import StructuralCompiledSolver
 from VeraGridEngine.Utils.Symbolic.diagnostic import NewtonDiagnosticsConfig
 from VeraGridEngine.IO.fmu.importer import build_emt_boundary_updater
+from VeraGridEngine.Devices.Events.emt_events_group import EmtEventsGroup
 from VeraGridEngine.basic_structures import Vec, StrVec
+from VeraGridEngine.Templates.Emt.bus_emt_template import get_bus_emt_template
 
 from VeraGridEngine.enumerations import EngineType, SimulationTypes
 
 
 class EmtSimulationDriver(DriverTemplate):
     __slots__ = (
-        "solvers_dict",
         "pf_results_3Ph",
         "pf_results",
         "options",
@@ -61,12 +57,6 @@ class EmtSimulationDriver(DriverTemplate):
         """
 
         DriverTemplate.__init__(self, grid=grid, engine=engine)
-
-        self.solvers_dict = {EmtSolverTypes.Symbolic: JitSymbolicSolver,
-                             EmtSolverTypes.Automatic: JitAdSolver,
-                             EmtSolverTypes.StructuralAD: StructuralVectorizedSolver,
-                             EmtSolverTypes.StructuralCompiled: StructuralCompiledSolver
-                             }
 
         self.grid = grid
 
@@ -102,15 +92,27 @@ class EmtSimulationDriver(DriverTemplate):
 
         self.progress_signal.emit(0)
 
+        # set emt events groups
         emt_events_groups = (self.grid.emt_events_groups
                              if self.grid.emt_events_groups is None
                              else self.grid.emt_events_groups)
+
+        # if self.grid.emt_events_groups is None:
+        #     emt_events_groups = EmtEventsGroup(name="simulation1")
+        #     self.grid.add_emt_events_group(emt_events_groups)
+        # else:
+        #     emt_events_groups = self.grid.emt_events_groups
 
         emt_events_group_names: StrVec = np.array([elm.name for elm in emt_events_groups])
 
         steps = int(np.ceil((self.options.simulation_time - 0) / self.options.time_step))
         t: Vec = np.arange(steps + 1) * self.options.time_step
 
+        # initialize buses
+        for bus in self.grid.buses:
+            get_bus_emt_template(self.grid, bus)
+
+        # create the problem
         problem = build_emt_problem(
             grid=self.grid,
             options=self.options,
@@ -120,15 +122,17 @@ class EmtSimulationDriver(DriverTemplate):
         )
         self.problem = problem
 
+
+        # create the results
         self.results = EmtResults(
             time_array=pd.DatetimeIndex(pd.to_datetime(t * 1e9)),
             emt_events_group_names=emt_events_group_names,
-            variables=problem.state_and_algebraic_vars,
-            diff_variables=problem.diff_vars,
-            uid2idx_vars=problem.uid2idx_vars,
-            uid2idx_diff=problem.uid2idx_diff,
-            vars_glob_name2uid=problem.vars_glob_name2uid,
-            devices_vars_info=problem.get_device_vars_dict()
+            variables=self.problem.state_and_algebraic_vars(),
+            diff_variables=self.problem.get_diff_vars(),
+            uid2idx_vars=self.problem.uid2idx_vars,
+            uid2idx_diff=self.problem.uid2idx_diff,
+            vars_glob_name2uid=self.problem.vars_glob_name2uid,
+            devices_vars_info=self.problem.get_device_vars_dict()
         )
 
         newton_diag_config = NewtonDiagnosticsConfig(
@@ -174,18 +178,14 @@ class EmtSimulationDriver(DriverTemplate):
             boundary_updater = build_emt_boundary_updater(problem)
             t, y, dy = solver.simulate(boundary_updater=boundary_updater)
 
-            #TODO: add converged and well initialized to results?
+            print(f"Event group {emt_events_group} successfully simulated.")
+            self.report_text(
+                f"Event group {emt_events_group} successfully simulated.")
 
-            # self.results.converged[group_idx] = converged
-            # self.results.well_initialized[group_idx] = well_initialized
+            print(f"results = {y}")
+
             self.results.values[:, :, group_idx] = y
             self.results.diff_values[:, :, group_idx] = dy
-
-            # if not well_initialized:
-            #     self.logger.add_warning("Not well initialized", device=rms_events_group.name)
-            #
-            # if not converged:
-            #     self.logger.add_warning("Not converged", device=rms_events_group.name)
 
             self.progress_signal.emit(90)
 

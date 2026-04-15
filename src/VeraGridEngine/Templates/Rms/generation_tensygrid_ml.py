@@ -678,10 +678,10 @@ def ExciterBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
         TolLi: vfactory.add_const(0.05),  # limiter crossing tolerance (fraction)
 
         # Limits
-        VaMaxPu: vfactory.add_const(2.0),  # AVR output max (pu)
-        VaMinPu: vfactory.add_const(-2.0),  # AVR output min (pu)
-        VeMinPu: vfactory.add_const(-2.0),  # min exciter output voltage (pu)
-        VfeMaxPu: vfactory.add_const(5.0),  # max exciter field current signal (pu)
+        VaMaxPu: vfactory.add_const(10.0),  # AVR output max (pu)
+        VaMinPu: vfactory.add_const(-20.0),  # AVR output min (pu)
+        VeMinPu: vfactory.add_const(-20.0),  # min exciter output voltage (pu)
+        VfeMaxPu: vfactory.add_const(50.0),  # max exciter field current signal (pu)
 
         # Exciter submodel parameters
         AEx: vfactory.add_const(0.02),  # saturation gain
@@ -784,7 +784,7 @@ def ExciterBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
     u_exciter3 = find_name_in_block('u_exciter3', tf3)
     u_subexciter1 = find_name_in_block('u_subexciter1', tf1_sub)
     y_subexciter1 = find_name_in_block('y_subexciter1', tf1_sub)
-
+    dt_y_subexciter1 = find_name_in_block('dt_1_y_subexciter1', tf1_sub)
     Ve_sat = sym.hard_sat(y_subexciter1, VeMinPu, VeMaxPu)
     Ve_expr = sym.hard_sat(y_subexciter1, VeMinPu, vfactory.add_const(1000))
     aux_expr = parameters['Ke'].value * Ve_expr + AEx * Ve_expr * Sx
@@ -795,7 +795,7 @@ def ExciterBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
         event_dict=events_dict,
         init_eqs={
             Vf: inputs[0],
-            y_subexciter1: inputs[0] * (1 / sym.f_exc(inputs[0] * parameters["Kc"].value / y_subexciter1)),
+            y_subexciter1: inputs[0] / f_output,
             # Ve: sym.hard_sat(y_subexciter1, VeMinPu, Const(1000)),
             # Sx: (sym.exp(BEx * (Ve - Se_threshold)) - Const(1)) * sym.heaviside(Ve - Se_threshold),
             VeMaxPu: (VfeMaxPu - inputs[0] * parameters["Kd"].value) / (
@@ -803,16 +803,17 @@ def ExciterBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
                     sym.exp(BEx * (Ve - Se_threshold)) - vfactory.add_const(1)) * sym.heaviside(
                 Ve - Se_threshold)),
             u_aux: aux_expr,
-            Efe: inputs[0] * parameters["Kd"].value + u_aux,
+            Efe: sym.hard_sat(inputs[0] * parameters["Kd"].value + u_aux, vfactory.add_const(-10.0), vfactory.add_const(10.0)),
             UsRefPu: Efe / parameters['Ka'].value + inputs[1],
             y1: inputs[1],
             y2: vfactory.add_const(0.0),
             y3: -y1 + UsRefPu,
             u_exciter3: y3,
             y4: y3 * parameters["Ka"].value,
-            u_subexciter1: vfactory.add_const(0.0),
+            u_subexciter1: Efe - (inputs[0] * parameters["Kd"].value + u_aux),
+            dt_y_subexciter1: u_subexciter1 / parameters["tE"].value,
             f_input: parameters['Kc'].value * inputs[0] / y_subexciter1,
-            f_output: sym.f_exc(f_input),
+            f_output: sym.f_exc(parameters["Kc"].value * f_output),
         },
     )
 

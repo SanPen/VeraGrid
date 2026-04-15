@@ -58,11 +58,11 @@ DEFAULT_BLOCK_FILL: QColor = QColor("#d9e7f5")
 PORT_LABEL_COLOR: QColor = QColor("#173042")
 WIRE_ELBOW_OFFSET: float = 36.0
 PORT_LABEL_MAX_CHARS: int = 12
-BLOCK_HEADER_HEIGHT: float = 24.0
-BLOCK_PORT_ROW_HEIGHT: float = 16.0
+BLOCK_HEADER_HEIGHT: float = 30.0
+BLOCK_PORT_ROW_HEIGHT: float = 20.0
 BLOCK_PORT_SECTION_PADDING: float = 10.0
-BLOCK_MIN_WIDTH: float = 100.0
-BLOCK_MIN_HEIGHT: float = 50.0
+BLOCK_MIN_WIDTH: float = 160.0
+BLOCK_MIN_HEIGHT: float = 70.0
 TEMPLATE_NODE_TYPE: str = "TEMPLATE"
 PARAMETER_VALUE_TYPE_ROLE: int = int(QtCore.Qt.ItemDataRole.UserRole) + 500
 PARAMETER_EDITABLE_ROLE: int = int(QtCore.Qt.ItemDataRole.UserRole) + 501
@@ -125,6 +125,7 @@ def truncate_port_label(text: str, max_chars: int = PORT_LABEL_MAX_CHARS) -> str
 def build_orthogonal_connection_path(start: QPointF, end: QPointF) -> QPainterPath:
     """
     Build an orthogonal wire path with elbow segments.
+    Only adds elbows when the path changes direction.
 
     :param start:
     :param end:
@@ -132,6 +133,16 @@ def build_orthogonal_connection_path(start: QPointF, end: QPointF) -> QPainterPa
     """
     path: QPainterPath = QPainterPath(start)
     delta_x: float = end.x() - start.x()
+    delta_y: float = end.y() - start.y()
+
+    if abs(delta_y) < 1:
+        path.lineTo(end)
+        return path
+
+    if abs(delta_x) < 1:
+        path.lineTo(end)
+        return path
+
     offset: float = min(WIRE_ELBOW_OFFSET, abs(delta_x) / 2.0) if delta_x != 0 else WIRE_ELBOW_OFFSET
     start_elbow_x: float = start.x() + offset
     end_elbow_x: float = end.x() - offset
@@ -625,64 +636,40 @@ class PortItem(QGraphicsEllipseItem):
 
 class BranchingItem(QGraphicsEllipseItem):
     """
-    Graphical branching point attached to a connection item.
+    Graphical branching point that can have one input and multiple outputs.
+    Created when splitting a connection via double-click.
     """
 
     def __init__(self,
-                 connection: ConnectionItem,
+                 subsystem: BlockItem,
+                 index: int,
                  radius: int = 6):
         """
         Build a connection branching point.
 
-        :param connection:
+        :param source_connection: The connection to branch from.
         :param radius:
         """
-        super().__init__(-radius, -radius, 2 * radius, 2 * radius, connection)
-        fill_color: QColor =  OUTPUT_PORT_FILL
+        super().__init__(-radius, -radius, 2 * radius, 2 * radius)
+        fill_color: QColor = OUTPUT_PORT_FILL
         self.setBrush(QBrush(fill_color))
         self.setPen(QPen(PORT_BORDER, 1.5))
         self.setZValue(3)
+        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable)
+        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable)
         self.setAcceptHoverEvents(True)
-        self.connection: ConnectionItem = connection
-        self.subsystem: BlockItem = connection.source_port.subsystem
+        self.subsystem: BlockItem = subsystem
+        self.index: int = index
         self.connections: List["ConnectionItem"] | None = None
-        self.index: int =  len(connection.branching_points)
+
         self.base_var: Var | None = None
 
-        total_branching_points: int = len(connection.branching_points) + 1
-        self.path_ratio: float = (self.index + 1) / (total_branching_points + 1)
+        # self.input_port: PortItem = PortItem(self, True, 0, 1, radius=5)
+        # self.output_port: PortItem = PortItem(self, False, 0, 1, radius=5)
+        # self.input_port.connections = None
+        # self.output_port.connections = None
 
-        self.update_position()
 
-    def update_position(self) -> None:
-        """
-        Recalculate position along the connection path based on stored ratio.
-        """
-        path_points: List[QPointF] = self.connection._get_path_points()
-        total_length: float = 0.0
-        segment_lengths: List[float] = []
-        for i in range(len(path_points) - 1):
-            segment_length: float = QLineF(path_points[i], path_points[i + 1]).length()
-            segment_lengths.append(segment_length)
-            total_length += segment_length
-
-        target_distance: float = total_length * self.path_ratio
-
-        accumulated: float = 0.0
-        x_pos: float = 0.0
-        y_pos: float = 0.0
-        for seg_idx, segment_length in enumerate(segment_lengths):
-            if accumulated + segment_length >= target_distance:
-                ratio: float = (target_distance - accumulated) / segment_length if segment_length > 0 else 0.0
-                p1: QPointF = path_points[seg_idx]
-                p2: QPointF = path_points[seg_idx + 1]
-                x_pos = p1.x() + (p2.x() - p1.x()) * ratio
-                y_pos = p1.y() + (p2.y() - p1.y()) * ratio
-                break
-            accumulated += segment_length
-
-        connection_pos: QPointF = self.connection.scenePos()
-        self.setPos(x_pos - connection_pos.x(), y_pos - connection_pos.y())
 
     def hoverEnterEvent(self, event: QtWidgets.QGraphicsSceneHoverEvent) -> None:
         """
@@ -719,7 +706,7 @@ class ConnectionItem(QGraphicsPathItem):
     Orthogonal graphical connection between two ports.
     """
 
-    def __init__(self, source_port: PortItem, target_port: PortItem,
+    def __init__(self, source_port: PortItem | BranchingItem, target_port: PortItem | BranchingItem,
                  diagram=None, con_uid=None, elbow_points=None, uid=None):
         """
         Build the connection item.
@@ -728,22 +715,21 @@ class ConnectionItem(QGraphicsPathItem):
         :param target_port:
         :param diagram: BlockDiagram reference to update on elbow change
         :param con_uid: Connection uid in the diagram
-        :param elbow_points: Custom elbow points (list of QPointF)
+        :param elbow_points: Custom elbow points (list of QPointF or list of (is_horizontal, fixed_coord))
         :param uid: Optional specific uid to use
         """
         super().__init__()
         self.uid: int = uid if uid is not None else _new_uid()
         self.setZValue(-1)
         self.source_port: PortItem | BranchingItem = source_port
-        self.target_port: PortItem = target_port
+        self.target_port: PortItem | BranchingItem = target_port
         self.diagram = diagram
         self.con_uid = con_uid if con_uid is not None else self.uid
         self.custom_elbow_points: List[QPointF] = []
-        self.branching_points: List[BranchingItem] = list()
         self._dragging: bool = False
-        self._drag_type: str = None  # 'horizontal' or 'vertical'
+        self._drag_type: str = None
         self._drag_segment_idx: int = -1
-        self._original_elbows: List[QPointF] = []
+        self._original_elbows_abs: List[QPointF] = []
 
         if elbow_points:
             self.custom_elbow_points = [
@@ -782,21 +768,64 @@ class ConnectionItem(QGraphicsPathItem):
             path = build_orthogonal_connection_path(start, end)
         self.setPath(path)
 
-        for branching_point in self.branching_points:
-            branching_point.update_position()
-
     def _build_path_with_elbows(self, start: QPointF, end: QPointF, elbows: List[QPointF]) -> QPainterPath:
         """
-        Build a path through the given elbow points.
+        Build an orthogonal path through the given elbow points.
+        Adjusts elbows to ensure all segments are horizontal or vertical.
 
         :param start:
         :param end:
-        :param elbows:
+        :param elbows: List of elbow positions
         :return:
         """
+        if not elbows:
+            return build_orthogonal_connection_path(start, end)
+
         path: QPainterPath = QPainterPath(start)
+        current = start
+
         for elbow in elbows:
-            path.lineTo(elbow)
+            if abs(elbow.y() - current.y()) < 1 and abs(elbow.x() - current.x()) < 1:
+                current = elbow
+                continue
+            if abs(elbow.y() - current.y()) < 1:
+                path.lineTo(elbow)
+                current = elbow
+            elif abs(elbow.x() - current.x()) < 1:
+                path.lineTo(elbow)
+                current = elbow
+            else:
+                aligned = QPointF(elbow.x(), current.y())
+                path.lineTo(aligned)
+                current = aligned
+
+        if abs(current.y() - end.y()) < 1:
+            path.lineTo(end)
+            return path
+
+        if abs(current.x() - end.x()) < 1:
+            path.lineTo(end)
+            return path
+
+        last_elbow = elbows[-1] if elbows else None
+        if last_elbow:
+            if abs(last_elbow.y() - end.y()) < 1:
+                path.lineTo(end)
+                return path
+            if abs(last_elbow.x() - end.x()) < 1:
+                path.lineTo(end)
+                return path
+
+        x_diff = abs(current.x() - end.x())
+        y_diff = abs(current.y() - end.y())
+
+        if x_diff < 1 and y_diff > 1:
+            path.lineTo(end.x(), current.y())
+        elif y_diff < 1 and x_diff > 1:
+            path.lineTo(current.x(), end.y())
+        else:
+            path.lineTo(end.x(), current.y())
+
         path.lineTo(end)
         return path
 
@@ -824,9 +853,16 @@ class ConnectionItem(QGraphicsPathItem):
         :return:
         """
         delta_x: float = end.x() - start.x()
+        delta_y: float = end.y() - start.y()
+
+        if abs(delta_y) < 1:
+            return [start, end]
+
+        if abs(delta_x) < 1:
+            return [start, end]
+
         offset: float = min(WIRE_ELBOW_OFFSET, abs(delta_x) / 2.0) if delta_x != 0 else WIRE_ELBOW_OFFSET
         start_elbow_x: float = start.x() + offset
-        end_elbow_x: float = end.x() - offset
 
         if end.x() >= start.x():
             mid1 = QPointF(start_elbow_x, start.y())
@@ -877,17 +913,22 @@ class ConnectionItem(QGraphicsPathItem):
             self._drag_segment_idx, self._drag_type, p1, p2 = segment_info
 
             if not self.custom_elbow_points:
-                self.custom_elbow_points = [QPointF(p) for p in self._get_default_elbows(
-                    self.source_port.scenePos(), self.target_port.scenePos()
-                )][1:-1]
+                start = self.source_port.scenePos()
+                end = self.target_port.scenePos()
+                default_elbows = self._get_default_elbows(start, end)[1:-1]
+                if not default_elbows:
+                    mid_x = (start.x() + end.x()) / 2.0
+                    mid_y = (start.y() + end.y()) / 2.0
+                    if self._drag_type == 'horizontal':
+                        self.custom_elbow_points = [QPointF(mid_x, start.y())]
+                    else:
+                        self.custom_elbow_points = [QPointF(start.x(), mid_y)]
+                else:
+                    self.custom_elbow_points = [QPointF(p) for p in default_elbows]
 
-            elbow_idx = self._drag_segment_idx - 1
-            if elbow_idx < 0 or elbow_idx >= len(self.custom_elbow_points):
-                super().mousePressEvent(event)
-                return
+            self._original_elbows_abs = [QPointF(p) for p in self.custom_elbow_points]
 
             self._dragging = True
-            self._original_elbows = [QPointF(p) for p in self.custom_elbow_points]
             event.accept()
         else:
             super().mousePressEvent(event)
@@ -901,26 +942,26 @@ class ConnectionItem(QGraphicsPathItem):
         """
         if self._dragging:
             pos = event.scenePos()
+
             elbow_idx = self._drag_segment_idx - 1
 
-            if self._drag_type == 'horizontal':
-                new_y = pos.y()
-                self.custom_elbow_points[elbow_idx] = QPointF(
-                    self.custom_elbow_points[elbow_idx].x(), new_y
-                )
-                if elbow_idx + 1 < len(self.custom_elbow_points):
-                    self.custom_elbow_points[elbow_idx + 1] = QPointF(
-                        self.custom_elbow_points[elbow_idx + 1].x(), new_y
-                    )
-            else:
-                new_x = pos.x()
-                self.custom_elbow_points[elbow_idx] = QPointF(
-                    new_x, self.custom_elbow_points[elbow_idx].y()
-                )
-                if elbow_idx + 1 < len(self.custom_elbow_points):
-                    self.custom_elbow_points[elbow_idx + 1] = QPointF(
-                        new_x, self.custom_elbow_points[elbow_idx + 1].y()
-                    )
+            if elbow_idx >= 0 and elbow_idx < len(self.custom_elbow_points):
+                if self._drag_type == 'horizontal':
+                    delta_y = pos.y() - self._original_elbows_abs[elbow_idx].y()
+                    for i in range(elbow_idx, len(self.custom_elbow_points)):
+                        new_y = self._original_elbows_abs[i].y() + delta_y
+                        self.custom_elbow_points[i] = QPointF(
+                            self._original_elbows_abs[i].x(),
+                            new_y
+                        )
+                else:
+                    delta_x = pos.x() - self._original_elbows_abs[elbow_idx].x()
+                    for i in range(elbow_idx, len(self.custom_elbow_points)):
+                        new_x = self._original_elbows_abs[i].x() + delta_x
+                        self.custom_elbow_points[i] = QPointF(
+                            new_x,
+                            self._original_elbows_abs[i].y()
+                        )
 
             self.update_path()
             self._update_diagram()
@@ -938,19 +979,9 @@ class ConnectionItem(QGraphicsPathItem):
         self._dragging = False
         self._drag_segment_idx = -1
         self._drag_type = None
-        self._original_elbows = []
+        self._original_elbows_abs = []
         super().mouseReleaseEvent(event)
 
-    def mouseDoubleClickEvent(self, event: QtWidgets.QGraphicsSceneMouseEvent) -> None:
-        """
-        Doubleclick in a connection to create a branching point.
-
-        :param event:
-        :return:
-        """
-        self.branching_points.append(BranchingItem(self))
-
-        super().mouseDoubleClickEvent(event)
 
     def _update_diagram(self) -> None:
         """
@@ -968,13 +999,10 @@ class ConnectionItem(QGraphicsPathItem):
         """
         Set custom elbow points and update the path.
 
-        :param elbows:
+        :param elbows: List of QPointF elbow positions
         :return:
         """
-        self.custom_elbow_points = [
-            QPointF(p.x(), p.y()) if isinstance(p, QPointF) else QPointF(p[0], p[1])
-            for p in elbows
-        ]
+        self.custom_elbow_points = [QPointF(p.x(), p.y()) if isinstance(p, QPointF) else QPointF(p[0], p[1]) for p in elbows]
         self.update_path()
 
     def hoverEnterEvent(self, event: QtWidgets.QGraphicsSceneHoverEvent) -> None:
@@ -2408,7 +2436,7 @@ class BlockItem(QGraphicsRectItem):
         if self.subsys is not None:
             self.name_item = QGraphicsTextItem(self.name, self)
             self.name_item.setDefaultTextColor(BLOCK_TITLE)
-            name_font: QtGui.QFont = QtGui.QFont("DejaVu Sans", 6)
+            name_font: QtGui.QFont = QtGui.QFont("DejaVu Sans", 9)
             name_font.setBold(True)
             self.name_item.setFont(name_font)
             self.name_item.setPos(6, 4)
@@ -2434,7 +2462,7 @@ class BlockItem(QGraphicsRectItem):
         :return:
         """
         label_item: QGraphicsTextItem = QGraphicsTextItem("", self)
-        label_font: QtGui.QFont = QtGui.QFont("DejaVu Sans", 7)
+        label_font: QtGui.QFont = QtGui.QFont("DejaVu Sans", 9)
         label_item.setFont(label_font)
         label_item.setDefaultTextColor(PORT_LABEL_COLOR)
         label_item.setZValue(4)
@@ -2452,7 +2480,7 @@ class BlockItem(QGraphicsRectItem):
             BLOCK_HEADER_HEIGHT + BLOCK_PORT_SECTION_PADDING + port_rows * BLOCK_PORT_ROW_HEIGHT
         )
 
-        name_width = len(self.name) * 5
+        name_width = len(self.name) * 7
         max_label_length = 0
         if self.subsys:
             for var in self.subsys.in_vars:
@@ -2460,7 +2488,7 @@ class BlockItem(QGraphicsRectItem):
             for var in self.subsys.out_vars:
                 max_label_length = max(max_label_length, len(var.name))
 
-        port_width = max_label_length * 5
+        port_width = max_label_length * 7
         min_width = max(BLOCK_MIN_WIDTH, name_width + 14, port_width + 28)
 
         return min_width, min_height
@@ -3015,7 +3043,76 @@ class DiagramScene(QGraphicsScene):
         else:
             super().mouseReleaseEvent(event)
 
-    def connect_ports(self, source_port: PortItem, target_port: PortItem) -> None:
+    def mouseDoubleClickEvent(self, event: QtWidgets.QGraphicsSceneMouseEvent) -> None:
+        """
+        Handle double-click on the scene.
+        If the click is on a ConnectionItem, create a BranchingItem and two new connections.
+
+        :param event:
+        :return:
+        """
+        item: QGraphicsItem
+
+        # scene_position: QtCore.QPointF = self.editor.ui.graphicsView.mapToScene(
+        #     int(event.position().x()),
+        #     int(event.position().y())
+        # )
+
+        for item in self.items(event.scenePos()):
+            if isinstance(item, ConnectionItem):
+                connection: ConnectionItem = item
+                source_port: PortItem = connection.source_port
+                target_port: PortItem = connection.target_port
+
+                branching_item: BranchingItem = BranchingItem(connection.source_port.subsystem, connection.source_port.index)
+                branching_item.setPos(event.scenePos())
+                self.addItem(branching_item)
+
+                conn1: ConnectionItem = ConnectionItem(
+                    source_port, branching_item,
+                    diagram=self.editor.diagram
+                )
+                self.addItem(conn1)
+
+                conn2: ConnectionItem = ConnectionItem(
+                    branching_item, target_port,
+                    diagram=self.editor.diagram
+                )
+                self.addItem(conn2)
+
+                self.editor.diagram.add_branch(
+                    connectionitem_uid=conn1.uid,
+                    device_uid_from=source_port.subsystem.subsys.uid,
+                    device_uid_to=branching_item.subsystem.subsys.uid,
+                    port_number_from=source_port.index,
+                    port_number_to=0,
+                    color=conn1.pen().color().name()
+                )
+
+                self.editor.diagram.add_branch(
+                    connectionitem_uid=conn2.uid,
+                    device_uid_from=branching_item.subsystem.subsys.uid,
+                    device_uid_to=target_port.subsystem.subsys.uid,
+                    port_number_from=0,
+                    port_number_to=target_port.index,
+                    color=conn2.pen().color().name()
+                )
+
+                if source_port.connections is not None and connection in source_port.connections:
+                    source_port.connections.remove(connection)
+
+                if target_port.connections is not None and connection in target_port.connections:
+                    target_port.connections.remove(connection)
+
+                if connection.uid in self.editor.diagram.con_data:
+                    del self.editor.diagram.con_data[connection.uid]
+
+                self.removeItem(connection)
+                return
+
+        super().mouseDoubleClickEvent(event)
+
+    def connect_ports(self, source_port: PortItem | BranchingItem, target_port: PortItem) -> None:
         """
         Connect two ports and update the symbolic model.
 
@@ -3238,10 +3335,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
             self.setWindowModality(QtCore.Qt.WindowModality.WindowModal)
 
         # set object label
-        if api_object is not None:
-            self.ui.deviceLabel.setText(api_object.name)
-        else:
-            self.ui.deviceLabel.setText("")
+        self.ui.deviceLabel.setText(api_object.name)
 
         self.block_role: int = int(QtCore.Qt.ItemDataRole.UserRole) + 300
         self.mime_type: str = "application/x-veragrid-dynamics-block"
@@ -3257,11 +3351,19 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
 
         self.var_factory = var_factory
         self.api_object = api_object
+
         # Todo: is this correct?
         self.original_block: Block = block  # api_object.rms_model
-        if self.api_object.rms_template is not None:
-            self.main_block: Block = Block()
-        else:
+
+        try:
+            if mode == DynamicEditorMode.RMS and self.api_object.rms_template is not None:
+                self.main_block: Block = Block()
+            elif mode == DynamicEditorMode.EMT and self.api_object.emt_template is not None:
+                self.main_block: Block = Block()
+            else:
+                self.main_block: Block = clone_block_for_editing(block)
+
+        except AttributeError: # happens when editing templates from database (they are not connected to any physical device)
             self.main_block: Block = clone_block_for_editing(block)
 
         self.diagram: BlockDiagram = self.main_block.diagram
@@ -3415,12 +3517,16 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
 
         self.ui.doItButton.clicked.connect(self.apply_changes)
         self.scene.selectionChanged.connect(self.on_scene_selection_changed)
-        if not self.main_block.diagram.node_data and self.main_editor:
-            # here we should look for the in and out vars and construct blocks and blockitems accordingly
-            self.add_connection_vars()
-            self.add_external_mapping_block()
-            self.add_api_obj_mapping()
+        if not self.main_block.diagram.node_data:
+            # here we add the connection variables to the main block
+            if self.main_editor:
+                self.add_connection_vars()
+                self.add_api_obj_mapping()
+            self.add_connection_items()
         self.rebuild_scene_from_diagram()
+
+        # for every in variable and our variable in the main block of the editor we build a block item to connect these variables
+
 
     def build_library_tree_model(self,
                                  block_role: int,
@@ -3637,6 +3743,53 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
         else:
             return None
 
+    def create_connection_block_item(self, var: Var, block_type: BlockType, x_pos: float, y_pos: float) -> BlockItem | None:
+        """
+        Create and place a block item in the canvas scene.
+
+        :param var:
+        :type var:
+        :param block_type:
+        :param x_pos:
+        :param y_pos:
+        :return:
+        """
+        count: int = self.block_counters.get(block_type, 0) + 1
+        item_name: str = f"{var.name}"
+        block_item: BlockItem = BlockItem(var_factory=self.var_factory, name=item_name)
+        block_model: Block = Block()
+
+        if block_type == BlockType.INPUT_CONN:
+            block_model.out_vars.append(var)
+
+        elif block_type == BlockType.OUTPUT_CONN:
+            block_model.in_vars.append(var)
+
+        if block_model is not None:
+            # The symbolic block has to be attached first so the graphics item can build its ports from it.
+
+            block_item.set_subsystem(block_model)
+            block_item.position_changed_callback = self._build_position_changed_callback(block_model.uid)
+            block_item.build_item()
+
+            # The editor block is the authoritative model container for later save/rebuild steps.
+            self.main_block.add(block_model)
+            self.scene.addItem(block_item)
+            block_item.setPos(QtCore.QPointF(x_pos, y_pos))
+
+            # Keep the diagram synchronized so later features can rebuild from the same data source.
+            self.diagram.add_node(
+                name=item_name,
+                x=x_pos,
+                y=y_pos,
+                tpe=block_type.name,
+                device_uid=block_model.uid
+            )
+
+            return block_item
+        else:
+            return None
+
     def create_template_block_item(self,
                                    template: RmsModelTemplate | EmtModelTemplate | FmuTemplate,
                                    x_pos: float,
@@ -3821,133 +3974,106 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
         """
         if self.mode == DynamicEditorMode.EMT:
             self.add_emt_connection_vars()
+            self.add_emt_external_mapping_vars()
             return
+
+        elif self.mode == DynamicEditorMode.RMS:
+
+            if isinstance(self.api_object, BranchParent):
+
+                # connect bus variables
+                if self.api_object.bus_from.rms_model.empty():
+                    initialize_bus_rms(self.api_object.bus_from, self.var_factory)
+
+                Vmf, Vaf = get_bus_rms_algebraic_vars(self.api_object.bus_from.rms_model)
+
+                if self.api_object.bus_to.rms_model.empty():
+                    initialize_bus_rms(self.api_object.bus_to, self.var_factory)
+
+                Vmt, Vat = get_bus_rms_algebraic_vars(self.api_object.bus_to.rms_model)
+
+                self.main_block.in_vars.append(Vmf)
+                self.main_block.in_vars.append(Vaf)
+                self.main_block.in_vars.append(Vmt)
+                self.main_block.in_vars.append(Vat)
+
+                self.main_block.external_mapping.update(
+                    {VarPowerFlowRefferenceType.Vmf: Vmf})
+                self.main_block.external_mapping.update(
+                    {VarPowerFlowRefferenceType.Vaf: Vaf})
+
+                self.main_block.external_mapping.update(
+                    {VarPowerFlowRefferenceType.Vmt: Vmt})
+                self.main_block.external_mapping.update(
+                    {VarPowerFlowRefferenceType.Vat: Vat})
+
+            elif isinstance(self.api_object, InjectionParent):
+
+                # connect bus variables
+                if self.api_object.bus.rms_model.empty():
+                    initialize_bus_rms(self.api_object.bus, self.var_factory)
+
+                Vm, Va = get_bus_rms_algebraic_vars(self.api_object.bus.rms_model)
+                self.main_block.in_vars.append(Vm)
+                self.main_block.in_vars.append(Va)
+
+                self.main_block.external_mapping.update(
+                    {VarPowerFlowRefferenceType.Vm: Vm})
+                self.main_block.external_mapping.update(
+                    {VarPowerFlowRefferenceType.Va: Va})
+
+                # add connection variables
+                P = self.var_factory.add_var('net_conn_P', VarPowerFlowRefferenceType.P, True)
+                Q = self.var_factory.add_var('net_conn_Q', VarPowerFlowRefferenceType.Q, True)
+
+                self.main_block.out_vars.append(P)
+                self.main_block.out_vars.append(Q)
+
+                self.main_block.external_mapping.update({VarPowerFlowRefferenceType.P: P})
+                self.main_block.external_mapping.update({VarPowerFlowRefferenceType.Q: Q})
+
+    def add_connection_items(self):
+        """
+        for every input and output var in the main block of the editor we build a block item to connect connection variables
+
+        :return:
+        :rtype:
+        """
+        SCENE_WIDTH: float = 1200.0
+        SCENE_HEIGHT: float = 800.0
+        MARGIN_X: float = 100.0
+        MARGIN_Y: float = 80.0
+        BLOCK_HEIGHT: float = 80.0
+        MIN_SPACING: float = 60.0
+        MAX_SPACING: float = 180.0
+
+        num_inputs: int = len(self.main_block.in_vars)
+        num_outputs: int = len(self.main_block.out_vars)
+
+        if num_inputs > 0:
+            available_height: float = SCENE_HEIGHT - 2 * MARGIN_Y
+            input_spacing: float = min(MAX_SPACING, max(MIN_SPACING, available_height / (num_inputs + 1)))
         else:
-            pass
+            input_spacing: float = MAX_SPACING
 
-        bus_con_item = None
-        tpe = BlockType.BUS_CONNECTION
-
-        if isinstance(self.api_object, BranchParent):
-
-            # add con bus from
-            x0, y0 = 0, 0
-            name = "Conn From"
-            bus_from_con_item = BlockItem(var_factory=self.var_factory, name=name)
-
-            if self.api_object.bus_from.rms_model.empty():
-                initialize_bus_rms(self.api_object.bus_from, self.var_factory)
-
-            Vmf, Vaf = get_bus_rms_algebraic_vars(self.api_object.bus_from.rms_model)
-
-            bus_from_con_blk = Block(
-                algebraic_vars=[Vmf, Vaf],
-                out_vars=[Vmf, Vaf],
-                name=name
-            )
-
-            self.main_block.add(bus_from_con_blk)
-
-            bus_from_con_item.set_subsystem(bus_from_con_blk)
-            bus_from_con_item.build_item()
-
-            if bus_from_con_item.subsys is not None:
-                bus_from_con_item.setPos(x0, y0)
-                self.scene.addItem(bus_from_con_item)
-
-                # save nodes in diagram
-                self.diagram.add_node(
-                    name=name,
-                    x=x0,
-                    y=y0,
-                    tpe=tpe.name,
-                    device_uid=bus_from_con_item.subsys.uid,
-                )
-            self.main_block.external_mapping.update(
-                {VarPowerFlowRefferenceType.Vmf: Vmf})
-            self.main_block.external_mapping.update(
-                {VarPowerFlowRefferenceType.Vaf: Vaf})
-
-            # add con bus to
-            name = "Conn To"
-            x0, y0 = 0, 100
-
-            bus_to_con_item = BlockItem(var_factory=self.var_factory, name=name)
-
-            if self.api_object.bus_to.rms_model.empty():
-                initialize_bus_rms(self.api_object.bus_to, self.var_factory)
-
-            Vmt, Vat = get_bus_rms_algebraic_vars(self.api_object.bus_to.rms_model)
-
-            bus_to_con_blk = Block(
-                algebraic_vars=[Vmt, Vat],
-                out_vars=[Vmt, Vat],
-                name=name
-            )
-
-            self.main_block.add(bus_to_con_blk)
-
-            bus_to_con_item.set_subsystem(bus_to_con_blk)
-            bus_to_con_item.build_item()
-
-            # Add to scene
-            if bus_to_con_item.subsys is not None:
-                bus_to_con_item.setPos(QPointF(x0, y0))
-                self.scene.addItem(bus_to_con_item)
-
-                # save nodes in diagram
-                self.diagram.add_node(
-                    name=name,
-                    x=x0,
-                    y=y0,
-                    tpe=tpe.name,
-                    device_uid=bus_to_con_item.subsys.uid,
-                )
-
-            self.main_block.external_mapping.update(
-                {VarPowerFlowRefferenceType.Vmt: Vmt})
-            self.main_block.external_mapping.update(
-                {VarPowerFlowRefferenceType.Vat: Vat})
-
-        elif isinstance(self.api_object, InjectionParent):
-            x0, y0 = 0, 0
-            name = "Conn Bus"
-            bus_con_item = BlockItem(var_factory=self.var_factory, name=name)
-            if self.api_object.bus.rms_model.empty():
-                initialize_bus_rms(self.api_object.bus, self.var_factory)
-
-            Vm, Va = get_bus_rms_algebraic_vars(self.api_object.bus.rms_model)
-
-            bus_con_blk = Block(
-                out_vars=[Vm, Va],
-                name=name
-            )
-
-            self.main_block.add(bus_con_blk)
-
-            bus_con_item.set_subsystem(bus_con_blk)
-            bus_con_item.build_item()
-
-            if bus_con_item.subsys is not None:
-                bus_con_item.setPos(x0, y0)
-                self.scene.addItem(bus_con_item)
-
-                # save nodes in diagram
-                self.diagram.add_node(
-                    name=name,
-                    x=x0,
-                    y=y0,
-                    tpe=tpe.name,
-                    device_uid=bus_con_item.subsys.uid,
-                )
-
-            self.main_block.external_mapping.update(
-                {VarPowerFlowRefferenceType.Vm: Vm})
-            self.main_block.external_mapping.update(
-                {VarPowerFlowRefferenceType.Va: Va})
-
+        if num_outputs > 0:
+            available_height = SCENE_HEIGHT - 2 * MARGIN_Y
+            output_spacing: float = min(MAX_SPACING, max(MIN_SPACING, available_height / (num_outputs + 1)))
         else:
-            pass
+            output_spacing = MAX_SPACING
+
+        for i, invar in enumerate(self.main_block.in_vars):
+            y_pos: float = MARGIN_Y + input_spacing * (i + 1) - BLOCK_HEIGHT / 2
+            self.create_connection_block_item(invar, BlockType.INPUT_CONN, MARGIN_X, y_pos)
+
+        for i, outvar in enumerate(self.main_block.out_vars):
+            y_pos = MARGIN_Y + output_spacing * (i + 1) - BLOCK_HEIGHT / 2
+            x_pos: float = SCENE_WIDTH - MARGIN_X - BLOCK_HEIGHT
+            self.create_connection_block_item(outvar, BlockType.OUTPUT_CONN, x_pos, y_pos)
+
+        self.scene.setSceneRect(0, 0, SCENE_WIDTH, SCENE_HEIGHT)
+        self.view.fitInView(self.scene.sceneRect(), QtCore.Qt.AspectRatioMode.KeepAspectRatio)
+
 
     def _ensure_emt_bus_model(self, bus: Any) -> None:
         """
@@ -4026,7 +4152,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                     )
                     self._emt_bus_fallback_warning_shown = True
 
-    def _get_injection_emt_voltage_pairs(self, bus: Any) -> List[tuple[VarPowerFlowRefferenceType, Any]]:
+    def get_injection_emt_voltage_pairs(self, bus: Any) -> List[tuple[VarPowerFlowRefferenceType, Any]]:
         """
         Get the ordered EMT bus-voltage references used by injection models.
 
@@ -4059,9 +4185,9 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                 pass
             return pairs
 
-    def _get_branch_emt_voltage_pairs(self,
-                                      bus: Any,
-                                      side: str) -> List[tuple[VarPowerFlowRefferenceType, Any]]:
+    def get_branch_emt_voltage_pairs(self,
+                                     bus: Any,
+                                     side: str) -> List[tuple[VarPowerFlowRefferenceType, Any]]:
         """
         Get the ordered EMT bus-voltage references used by branch models.
 
@@ -4102,97 +4228,26 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
             return pairs
 
     def add_emt_connection_vars(self) -> None:
-        """
-        Add the EMT connection blocks that expose network voltages to the edited device model.
-
-        :return: None.
-        """
-
-        tpe = BlockType.BUS_CONNECTION
+        # connect bus variables
+        voltage_pairs = None
         if isinstance(self.api_object, BranchParent):
             block_specs: tuple[tuple[str, QPointF, Any, str], ...] = (
                 ("Conn From", QPointF(0, 0), self.api_object.bus_from, "from"),
                 ("Conn To", QPointF(0, 100), self.api_object.bus_to, "to"),
             )
-            name: str
-            position: QPointF
-            bus: Any
-            side: str
             for name, position, bus, side in block_specs:
-                voltage_pairs = self._get_branch_emt_voltage_pairs(bus, side)
-                if len(voltage_pairs) == 0:
-                    pass
-                else:
-                    connection_item = BlockItem(var_factory=self.var_factory, name=name)
-                    out_vars: List[Any] = list()
-                    reference = None
-                    variable = None
-                    for reference, variable in voltage_pairs:
-                        out_vars.append(variable)
-                    connection_block = Block(
-                        out_vars=out_vars,
-                        name=name,
-                    )
-                    self.main_block.add(connection_block)
-                    connection_item.set_subsystem(connection_block)
-                    connection_item.build_item()
-                    if connection_item.subsys is not None:
-                        connection_item.setPos(position)
-                        self.scene.addItem(connection_item)
-                        self.diagram.add_node(
-                            name=name,
-                            x=position.x(),
-                            y=position.y(),
-                            tpe=tpe.name,
-                            device_uid=connection_item.subsys.uid,
-                        )
-                    else:
-                        pass
+                voltage_pairs = self.get_branch_emt_voltage_pairs(bus, side)
+            if voltage_pairs is not None:
+                for reference, variable in voltage_pairs:
+                    self.main_block.in_vars.append(variable)
+                    self.main_block.external_mapping[reference] = variable
 
-                    reference: VarPowerFlowRefferenceType
-                    variable: Any
-                    for reference, variable in voltage_pairs:
-                        self.main_block.external_mapping[reference] = variable
-        else:
-            if isinstance(self.api_object, InjectionParent):
-                voltage_pairs = self._get_injection_emt_voltage_pairs(self.api_object.bus)
-                if len(voltage_pairs) == 0:
-                    pass
-                else:
-                    name = "Conn Bus"
-                    position = QPointF(0, 0)
-                    connection_item = BlockItem(var_factory=self.var_factory, name=name)
-                    out_vars: List[Any] = list()
-                    reference = None
-                    variable = None
-                    for reference, variable in voltage_pairs:
-                        out_vars.append(variable)
-                    connection_block = Block(
-                        out_vars=out_vars,
-                        name=name,
-                    )
-                    self.main_block.add(connection_block)
-                    connection_item.set_subsystem(connection_block)
-                    connection_item.build_item()
-                    if connection_item.subsys is not None:
-                        connection_item.setPos(position)
-                        self.scene.addItem(connection_item)
-                        self.diagram.add_node(
-                            name=name,
-                            x=position.x(),
-                            y=position.y(),
-                            tpe=tpe.name,
-                            device_uid=connection_item.subsys.uid,
-                        )
-                    else:
-                        pass
-
-                    reference = None
-                    variable = None
-                    for reference, variable in voltage_pairs:
-                        self.main_block.external_mapping[reference] = variable
-            else:
-                pass
+        elif isinstance(self.api_object, InjectionParent):
+            voltage_pairs = self.get_injection_emt_voltage_pairs(self.api_object.bus)
+            if voltage_pairs is not None:
+                for reference, variable in voltage_pairs:
+                    self.main_block.in_vars.append(variable)
+                    self.main_block.external_mapping[reference] = variable
 
     def add_external_mapping_block(self):
         """
@@ -4200,7 +4255,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
         :return:
         """
         if self.mode == DynamicEditorMode.EMT:
-            self.add_emt_external_mapping_block()
+            self.add_emt_external_mapping_vars()
             return
         else:
             pass
@@ -4277,12 +4332,28 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
             self.main_block.external_mapping.update({VarPowerFlowRefferenceType.Qt: bus_to_mapping_blk.in_vars[1]})
 
         elif isinstance(self.api_object, InjectionParent):
+
+            P = self.var_factory.add_var('net_conn_P', VarPowerFlowRefferenceType.P, True)
+            Q = self.var_factory.add_var('net_conn_Q', VarPowerFlowRefferenceType.Q, True)
+
+            self.main_block.in_vars.append(P)
+            self.main_block.in_vars.append(Q)
+
+            self.main_block.external_mapping.update({VarPowerFlowRefferenceType.P: P})
+            self.main_block.external_mapping.update({VarPowerFlowRefferenceType.Q: Q})
+
+
+        # we will use this to build the blocks
+        elif isinstance(self.api_object, InjectionParent):
             x0, y0 = 0, 0
             name = "mapping Bus"
 
             bus_mapping_item = BlockItem(var_factory=self.var_factory, name=name)
-            P = self.var_factory.add_var('network_conn_P', VarPowerFlowRefferenceType.P, True)
-            Q = self.var_factory.add_var('network_conn_Q', VarPowerFlowRefferenceType.Q, True)
+            P = self.var_factory.add_var('net_conn_P', VarPowerFlowRefferenceType.P, True)
+            Q = self.var_factory.add_var('net_conn_Q', VarPowerFlowRefferenceType.Q, True)
+
+            self.main_block.external_mapping.update({VarPowerFlowRefferenceType.P: P})
+            self.main_block.external_mapping.update({VarPowerFlowRefferenceType.Q: Q})
 
             bus_mapping_blk = Block(
                 in_vars=[P, Q],
@@ -4312,7 +4383,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
         else:
             pass
 
-    def _build_emt_injection_current_refs(self, bus: Any) -> List[VarPowerFlowRefferenceType]:
+    def build_emt_injection_current_refs(self, bus: Any) -> List[VarPowerFlowRefferenceType]:
         """
         Return the ordered EMT current references that should be exposed for one injection device.
 
@@ -4325,7 +4396,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
             current_refs.append(VarPowerFlowRefferenceType.Idc)
             return current_refs
         else:
-            voltage_pairs = self._get_injection_emt_voltage_pairs(bus)
+            voltage_pairs = self.get_injection_emt_voltage_pairs(bus)
             current_refs: List[VarPowerFlowRefferenceType] = list()
             voltage_to_current_map: Dict[VarPowerFlowRefferenceType, VarPowerFlowRefferenceType] = dict()
             voltage_to_current_map[VarPowerFlowRefferenceType.v_N] = VarPowerFlowRefferenceType.i_N
@@ -4350,7 +4421,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
         :return: EMT branch current references.
         """
 
-        voltage_pairs = self._get_branch_emt_voltage_pairs(bus, side)
+        voltage_pairs = self.get_branch_emt_voltage_pairs(bus, side)
         if side == "from":
             voltage_to_current_map: Dict[VarPowerFlowRefferenceType, VarPowerFlowRefferenceType] = dict()
             voltage_to_current_map[VarPowerFlowRefferenceType.vf_N] = VarPowerFlowRefferenceType.if_N
@@ -4377,86 +4448,28 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                 pass
         return current_refs
 
-    def add_emt_external_mapping_block(self) -> None:
-        """
-        Add the EMT network-current mapping blocks needed to connect one device model to the grid.
-
-        :return: None.
-        """
-
-        tpe = BlockType.EXTERNAL_MAPPING
+    def add_emt_external_mapping_vars(self) -> None:
+        current_refs = None
         if isinstance(self.api_object, BranchParent):
             block_specs: tuple[tuple[str, QPointF, Any, str], ...] = (
                 ("mapping From", QPointF(200, 200), self.api_object.bus_from, "from"),
                 ("mapping To", QPointF(0, 200), self.api_object.bus_to, "to"),
             )
-            name: str
-            position: QPointF
-            bus: Any
-            side: str
             for name, position, bus, side in block_specs:
                 current_refs = self._build_emt_branch_current_refs(bus, side)
-                if len(current_refs) == 0:
-                    pass
-                else:
-                    mapping_item = BlockItem(var_factory=self.var_factory, name=name)
-                    mapping_vars: List[Any] = list()
-                    reference = None
-                    for reference in current_refs:
-                        mapping_vars.append(self.var_factory.add_var(f"network_conn_{reference.value}", reference, True))
-                    mapping_block = Block(in_vars=mapping_vars, name=name)
-                    self.main_block.add(mapping_block)
-                    mapping_item.set_subsystem(mapping_block)
-                    mapping_item.build_item()
-                    if mapping_item.subsys is not None:
-                        self.scene.addItem(mapping_item)
-                        mapping_item.setPos(position)
-                        self.diagram.add_node(
-                            name=name,
-                            x=position.x(),
-                            y=position.y(),
-                            tpe=tpe.name,
-                            device_uid=mapping_item.subsys.uid,
-                        )
-                    else:
-                        pass
+            if current_refs is not None:
+                for reference in current_refs:
+                    var = self.var_factory.add_var(f"network_conn_{reference.value}", reference, True)
+                    self.main_block.out_vars.append(var)
+                    self.main_block.external_mapping.update({reference: var})
 
-                    for reference, variable in zip(current_refs, mapping_vars):
-                        self.main_block.external_mapping[reference] = variable
-        else:
-            if isinstance(self.api_object, InjectionParent):
-                current_refs = self._build_emt_injection_current_refs(self.api_object.bus)
-                if len(current_refs) == 0:
-                    pass
-                else:
-                    name = "mapping Bus"
-                    position = QPointF(0, 0)
-                    mapping_item = BlockItem(var_factory=self.var_factory, name=name)
-                    mapping_vars: List[Any] = list()
-                    reference = None
-                    for reference in current_refs:
-                        mapping_vars.append(self.var_factory.add_var(f"network_conn_{reference.value}", reference, True))
-                    mapping_block = Block(in_vars=mapping_vars, name=name)
-                    self.main_block.add(mapping_block)
-                    mapping_item.set_subsystem(mapping_block)
-                    mapping_item.build_item()
-                    if mapping_item.subsys is not None:
-                        self.scene.addItem(mapping_item)
-                        mapping_item.setPos(position)
-                        self.diagram.add_node(
-                            name=name,
-                            x=position.x(),
-                            y=position.y(),
-                            tpe=tpe.name,
-                            device_uid=mapping_item.subsys.uid,
-                        )
-                    else:
-                        pass
+        if isinstance(self.api_object, InjectionParent):
+            current_refs = self.build_emt_injection_current_refs(self.api_object.bus)
 
-                    for reference, variable in zip(current_refs, mapping_vars):
-                        self.main_block.external_mapping[reference] = variable
-            else:
-                pass
+            for reference in current_refs:
+                var = self.var_factory.add_var(f"network_conn_{reference.value}", reference, True)
+                self.main_block.out_vars.append(var)
+                self.main_block.external_mapping.update({reference: var})
 
     def add_api_obj_mapping(self):
         """

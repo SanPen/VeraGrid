@@ -17,21 +17,21 @@ from VeraGridEngine.IO.fmu.importer import (
     FmuMeIntegrationMethod,
     FmuReferenceValue,
     FmuRefBinding,
-    attach_fmu_to_device,
 )
+from VeraGridEngine.IO.fmu.importer.user_api import attach_fmu_to_device
 from VeraGridEngine.IO.fmu.exporter_me.api import export_fmu_me
 from VeraGridEngine.IO.fmu.exporter_me.config import ExportConfig as MeExportConfig, detect_target_platform as detect_me_target_platform
 from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
+from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 
 
 class FakeGrid:
-    __slots__ = ("rms_var_factory", "emt_var_factory")
+    __slots__ = ("var_factory")
 
     def __init__(self) -> None:
-        from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 
-        self.rms_var_factory = VarFactory(name="UserApiRmsVarFactory")
-        self.emt_var_factory = VarFactory(name="UserApiEmtVarFactory")
+
+        self.var_factory = VarFactory(name="UserApiVarFactory")
 
 
 def _tmp_root() -> Path:

@@ -69,8 +69,13 @@ class MapGeneratorGraphicItem(MapInjectionTemplateGraphicItem):
                        checked_value=self.api_object.is_controlled)
 
         add_menu_entry(menu=menu,
-                       text="Dynamic Editor",
-                       function_ptr=self.edit_dynamic,
+                       text="Rms Editor",
+                       function_ptr=self.edit_rms,
+                       icon_path=":/Icons/icons/edit.png")
+
+        add_menu_entry(menu=menu,
+                       text="Emt Editor",
+                       function_ptr=self.edit_emt,
                        icon_path=":/Icons/icons/edit.png")
 
         add_menu_entry(menu=menu,

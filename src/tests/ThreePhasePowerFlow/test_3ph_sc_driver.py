@@ -36,7 +36,7 @@ def test_three_phase_to_ground_fault():
     bus_633 = gce.Bus(name='633', Vnom=4.16, xpos=100 * 5, ypos=0)
     grid.add_bus(obj=bus_633)
 
-    bus_634 = gce.Bus(name='634', Vnom=0.48, xpos=200 * 5, ypos=0, r_fault=0.1)
+    bus_634 = gce.Bus(name='634', Vnom=0.48, xpos=200 * 5, ypos=0)
     grid.add_bus(obj=bus_634)
 
     bus_671 = gce.Bus(name='671', Vnom=4.16, xpos=0, ypos=100 * 5)
@@ -396,7 +396,8 @@ def test_three_phase_to_ground_fault():
             device=grid.buses[4],
             fault_type=FaultType.LLLG,
             method=MethodShortCircuit.phases,
-            phases=PhasesShortCircuit.abc
+            phases=PhasesShortCircuit.abc,
+            r_fault=0.1
         )
     )
 
@@ -446,7 +447,7 @@ def test_single_line_to_ground_fault():
     bus_633 = gce.Bus(name='633', Vnom=4.16, xpos=100 * 5, ypos=0)
     grid.add_bus(obj=bus_633)
 
-    bus_634 = gce.Bus(name='634', Vnom=0.48, xpos=200 * 5, ypos=0, r_fault=0.1)
+    bus_634 = gce.Bus(name='634', Vnom=0.48, xpos=200 * 5, ypos=0)
     grid.add_bus(obj=bus_634)
 
     bus_671 = gce.Bus(name='671', Vnom=4.16, xpos=0, ypos=100 * 5)
@@ -806,7 +807,8 @@ def test_single_line_to_ground_fault():
             device=grid.buses[4],
             fault_type=FaultType.LG,
             method=MethodShortCircuit.phases,
-            phases=PhasesShortCircuit.a
+            phases=PhasesShortCircuit.a,
+            r_fault=0.1
         )
     )
 
@@ -856,7 +858,7 @@ def test_double_line_to_ground_fault():
     bus_633 = gce.Bus(name='633', Vnom=4.16, xpos=100 * 5, ypos=0)
     grid.add_bus(obj=bus_633)
 
-    bus_634 = gce.Bus(name='634', Vnom=0.48, xpos=200 * 5, ypos=0, r_fault=0.1)
+    bus_634 = gce.Bus(name='634', Vnom=0.48, xpos=200 * 5, ypos=0)
     grid.add_bus(obj=bus_634)
 
     bus_671 = gce.Bus(name='671', Vnom=4.16, xpos=0, ypos=100 * 5)
@@ -1216,7 +1218,8 @@ def test_double_line_to_ground_fault():
             device=grid.buses[4],
             fault_type=FaultType.LLG,
             method=MethodShortCircuit.phases,
-            phases=PhasesShortCircuit.ca
+            phases=PhasesShortCircuit.ca,
+            r_fault=0.1
         )
     )
 
@@ -1266,7 +1269,7 @@ def test_line_to_line_fault():
     bus_633 = gce.Bus(name='633', Vnom=4.16, xpos=100 * 5, ypos=0)
     grid.add_bus(obj=bus_633)
 
-    bus_634 = gce.Bus(name='634', Vnom=0.48, xpos=200 * 5, ypos=0, r_fault=0.1)
+    bus_634 = gce.Bus(name='634', Vnom=0.48, xpos=200 * 5, ypos=0)
     grid.add_bus(obj=bus_634)
 
     bus_671 = gce.Bus(name='671', Vnom=4.16, xpos=0, ypos=100 * 5)
@@ -1626,7 +1629,8 @@ def test_line_to_line_fault():
             device=grid.buses[4],
             fault_type=FaultType.LL,
             method=MethodShortCircuit.phases,
-            phases=PhasesShortCircuit.ab
+            phases=PhasesShortCircuit.ab,
+            r_fault=0.1
         )
     )
 
@@ -1676,7 +1680,7 @@ def test_three_phase_fault():
     bus_633 = gce.Bus(name='633', Vnom=4.16, xpos=100 * 5, ypos=0)
     grid.add_bus(obj=bus_633)
 
-    bus_634 = gce.Bus(name='634', Vnom=0.48, xpos=200 * 5, ypos=0, r_fault=0.1)
+    bus_634 = gce.Bus(name='634', Vnom=0.48, xpos=200 * 5, ypos=0)
     grid.add_bus(obj=bus_634)
 
     bus_671 = gce.Bus(name='671', Vnom=4.16, xpos=0, ypos=100 * 5)
@@ -2038,7 +2042,8 @@ def test_three_phase_fault():
             device=grid.buses[4],
             fault_type=FaultType.LLL,
             method=MethodShortCircuit.phases,
-            phases=PhasesShortCircuit.abc
+            phases=PhasesShortCircuit.abc,
+            r_fault=0.1
         )
     )
 

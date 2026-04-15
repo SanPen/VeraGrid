@@ -15,12 +15,15 @@ from VeraGridEngine.IO.raw.devices.facts import RawFACTS
 from VeraGridEngine.IO.raw.devices.generator import RawGenerator
 from VeraGridEngine.IO.raw.devices.load import RawLoad
 from VeraGridEngine.IO.raw.devices.fixed_shunt import RawFixedShunt
+from VeraGridEngine.IO.raw.devices.system_switching_device import RawSystemSwitchingDevice
 from VeraGridEngine.IO.raw.devices.switched_shunt import RawSwitchedShunt
 from VeraGridEngine.IO.raw.devices.transformer import RawTransformer
 from VeraGridEngine.IO.raw.devices.two_terminal_dc_line import RawTwoTerminalDCLine
 from VeraGridEngine.IO.raw.devices.vsc_dc_line import RawVscDCLine
 from VeraGridEngine.IO.raw.devices.psse_circuit import PsseCircuit
-from VeraGridEngine.enumerations import TapChangerTypes, TapPhaseControl, TapModuleControl, ShuntControlMode
+from VeraGridEngine.enumerations import (
+    TapChangerTypes, TapPhaseControl, TapModuleControl, ShuntControlMode, SwitchGraphicType
+)
 
 
 def get_veragrid_bus(psse_bus: RawBus,
@@ -270,6 +273,42 @@ def get_veragrid_shunt_switched(
             b_list.append(getattr(psse_elm, f"B{i}"))
 
     elm.set_blocks(n_list, b_list)
+
+    return elm
+
+
+def get_veragrid_switch(psse_elm: RawSystemSwitchingDevice,
+                        psse_bus_dict: Dict[int, dev.Bus],
+                        logger: Logger) -> dev.Switch | None:
+    """
+    Return VeraGrid Switch object
+    """
+    bus_from = psse_bus_dict.get(psse_elm.I, None)
+    bus_to = psse_bus_dict.get(psse_elm.J, None)
+
+    if bus_from is None or bus_to is None:
+        logger.add_error("Switch bus missing", device=psse_elm.get_id(), value=f"{psse_elm.I}->{psse_elm.J}")
+        return None
+
+    if psse_elm.STYPE == 3:
+        graphic_type = SwitchGraphicType.Disconnector
+    else:
+        graphic_type = SwitchGraphicType.CircuitBreaker
+
+    code = str(psse_elm.CKT).replace("'", "").strip()
+    name = str(psse_elm.NAME).replace("'", "").strip() or f"{psse_elm.I}_{psse_elm.J}_{code}"
+
+    elm = dev.Switch(
+        bus_from=bus_from,
+        bus_to=bus_to,
+        name=name,
+        code=code,
+        x=float(psse_elm.X),
+        rate=float(psse_elm.RATE1),
+        active=bool(psse_elm.STATUS),
+        normal_open=bool(psse_elm.NSTATUS),
+        graphic_type=graphic_type,
+    )
 
     return elm
 
@@ -1253,6 +1292,19 @@ def psse_to_veragrid(psse_circuit: PsseCircuit,
             else:
                 logger.add_warning('The RAW file has a repeated line device and it is omitted from the model',
                                    str(branch.idtag))
+
+    # Go through switches
+    for psse_switch in psse_circuit.switches:
+        switch = get_veragrid_switch(psse_switch, psse_bus_dict, logger)
+
+        if switch is not None:
+            switch_key = psse_switch.get_id()
+            if switch_key not in branches_already_there:
+                circuit.add_switch(switch)
+                branches_already_there.add(switch_key)
+            else:
+                logger.add_warning('The RAW file has a repeated switch device and it is omitted from the model',
+                                   switch_key)
 
     # Go through hvdc lines
     for psse_branch in psse_circuit.vsc_dc_lines:

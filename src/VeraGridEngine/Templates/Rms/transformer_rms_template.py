@@ -3,7 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 import numpy as np
-from VeraGridEngine.enumerations import DeviceType, TapPhaseControl, TapModuleControl, WindingType
+from VeraGridEngine.enumerations import DeviceType, TapPhaseControl, TapModuleControl, WindingType, ParamPowerFlowRefferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Branches.transformer import Transformer2W
@@ -232,7 +232,110 @@ class TrafoRmsTemplate(RmsModelTemplate):
 
             self._block = block
 
-def initialize_trafo_rms(trafo: Transformer2W, vf: VarFactory, Sbase: float = 100):
+
+class TrafoPhasorRmsTemplate(RmsModelTemplate):
+
+    def __init__(self, trafo: Transformer2W, vf: VarFactory, name: str = "rms_trafo_phasor_template"):
+        """
+        Current-based phasor RMS template for a 2-winding transformer.
+
+        Inputs use rectangular bus voltages (Vrf, Vif, Vrt, Vit) and outputs
+        branch currents directly (Irf, Iif, Irt, Iit), matching the line phasor
+        template interface used by current-balance RMS formulations.
+        """
+        super().__init__(name=name)
+
+        self.tpe: DeviceType = DeviceType.TransformerTypeDevice
+        if trafo.rms_model.empty():
+            Vrf = vf.add_var("Vrf_" + name, VarPowerFlowRefferenceType.Vrf)
+            Vif = vf.add_var("Vif_" + name, VarPowerFlowRefferenceType.Vif)
+            Vrt = vf.add_var("Vrt_" + name, VarPowerFlowRefferenceType.Vrt)
+            Vit = vf.add_var("Vit_" + name, VarPowerFlowRefferenceType.Vit)
+
+            Irf = vf.add_var("Irf")
+            Iif = vf.add_var("Iif")
+            Irt = vf.add_var("Irt")
+            Iit = vf.add_var("Iit")
+
+            ys = 1.0 / complex(trafo.R, trafo.X)
+            ysh = trafo.G + 1j * trafo.B
+
+            gt = vf.add_var("g")
+            bt = vf.add_var("b")
+            gFe = vf.add_var("gFe")
+            bmu = vf.add_var("bmu")
+
+            vtap_f, vtap_t = trafo.get_virtual_taps()
+
+            conn_f, conn_t = parse_windings_connection(trafo.conn)
+            conn_y_from = conn_f == WindingType.NeutralStar or conn_f == WindingType.GroundedStar
+            conn_y_to = conn_t == WindingType.NeutralStar or conn_t == WindingType.GroundedStar
+
+            if conn_f == WindingType.Delta and conn_y_to:  # Dy
+                phase_displacement = np.deg2rad(60.0)
+            elif conn_y_from and conn_t == WindingType.Delta:  # Yd
+                phase_displacement = np.deg2rad(0.0)
+            else:
+                phase_displacement = 0.0
+
+            theta0 = trafo.tap_phase + phase_displacement
+            cos_theta0 = np.cos(theta0)
+            sin_theta0 = np.sin(theta0)
+
+            k_from = trafo.tap_module * vtap_f
+            k_cross = trafo.tap_module * vtap_f * vtap_t
+            k_to = vtap_t
+
+            # Admittance coefficients in rectangular form
+            gff = (gFe + gt) / (k_from ** 2)
+            bff = (bmu / 2 + bt) / (k_from ** 2)
+            gtt = (gFe + gt) / (k_to ** 2)
+            btt = (bmu / 2 + bt) / (k_to ** 2)
+
+            # Yft = -(gt + j*bt) / (m*vtap_f*vtap_t*exp(-j*theta))
+            gft = -(gt * cos_theta0 - bt * sin_theta0) / k_cross
+            bft = -(gt * sin_theta0 + bt * cos_theta0) / k_cross
+
+            # Ytf = -(gt + j*bt) / (m*vtap_f*vtap_t*exp(j*theta))
+            gtf = -(gt * cos_theta0 + bt * sin_theta0) / k_cross
+            btf = (gt * sin_theta0 - bt * cos_theta0) / k_cross
+
+            block = Block(
+                algebraic_vars=[Irf, Iif, Irt, Iit],
+                algebraic_eqs=[
+                    Irf - (gff * Vrf - bff * Vif + gft * Vrt - bft * Vit),
+                    Iif - (bff * Vrf + gff * Vif + bft * Vrt + gft * Vit),
+                    Irt - (gtf * Vrf - btf * Vif + gtt * Vrt - btt * Vit),
+                    Iit - (btf * Vrf + gtf * Vif + btt * Vrt + gtt * Vit),
+                ],
+                in_vars=[Vrf, Vif, Vrt, Vit],
+            )
+
+            block.external_mapping = {
+                VarPowerFlowRefferenceType.Vrf: Vrf,
+                VarPowerFlowRefferenceType.Vif: Vif,
+                VarPowerFlowRefferenceType.Vrt: Vrt,
+                VarPowerFlowRefferenceType.Vit: Vit,
+                VarPowerFlowRefferenceType.Irf: Irf,
+                VarPowerFlowRefferenceType.Iif: Iif,
+                VarPowerFlowRefferenceType.Irt: Irt,
+                VarPowerFlowRefferenceType.Iit: Iit,
+            }
+
+            block.api_obj_mapping = {
+                ParamPowerFlowRefferenceType.g: gt,
+                ParamPowerFlowRefferenceType.b: bt,
+                ParamPowerFlowRefferenceType.bsh: bmu,
+            }
+
+            block.parameters[gt] = vf.add_const(ys.real)
+            block.parameters[bt] = vf.add_const(ys.imag)
+            block.parameters[gFe] = vf.add_const(ysh.real)
+            block.parameters[bmu] = vf.add_const(ysh.imag)
+
+            self._block = block
+
+def initialize_trafo_rms(trafo: Transformer2W, vf: VarFactory, Sbase: float = 100, use_phasor_template: bool = False):
     """
 
     :param trafo:
@@ -240,4 +343,15 @@ def initialize_trafo_rms(trafo: Transformer2W, vf: VarFactory, Sbase: float = 10
     :param Sbase:
     :return:
     """
-    trafo.rms_model = TrafoRmsTemplate(vf=vf, trafo=trafo, Sbase=Sbase).block
+    
+    if not trafo.bus_from.rms_model.empty():
+        use_phasor_template = any(v.ref == VarPowerFlowRefferenceType.Vr for v in trafo.bus_from.rms_model.out_vars)
+
+    if use_phasor_template:
+        templ = TrafoPhasorRmsTemplate(vf=vf, trafo=trafo)
+        trafo.rms_model = templ.block
+        return templ
+    else:
+        templ = TrafoRmsTemplate(vf=vf, trafo=trafo, Sbase=Sbase)
+        trafo.rms_model = templ.block
+        return templ

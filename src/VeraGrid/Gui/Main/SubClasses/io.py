@@ -1007,8 +1007,15 @@ class IoMain(ScenariosMain):
 
         if not self.circuit.rms_models:
             self.circuit.add_rms_model_catalogue()
+        else:
+            self.circuit.rms_models = list()
+            self.circuit.add_rms_model_catalogue()
+
 
         if not self.circuit.emt_models:
+            self.circuit.add_emt_model_catalogue()
+        else:
+            self.circuit.emt_models = list()
             self.circuit.add_emt_model_catalogue()
 
         self.show_info_toast("Catalogue added!")

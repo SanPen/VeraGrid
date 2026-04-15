@@ -10,6 +10,7 @@ from PySide6 import QtCore, QtGui
 from VeraGrid.Gui.Icons.icon_associations import device_type_icons
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.Simulations.Rms.rms_results import RmsResults
+from VeraGridEngine.Simulations.EMT.emt_results import EmtResults
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
 from VeraGridEngine.enumerations import DeviceType
 from VeraGridEngine.Simulations.results_table import ResultsTable
@@ -506,14 +507,14 @@ class DynamicsResultsHandler:
     __slots__ = ("results", "tree_data", "tree_model", "proxy_model", "plots_model", "group_idx",
                  "var_role", "group_name_role", "drag_mime_type", "plot_groups")
 
-    def __init__(self, results: RmsResults):
+    def __init__(self, results: RmsResults|EmtResults):
         """
         Build the handler from RMS results data.
 
         :param results: RMS results container coming from the simulation engine.
         """
         # The original results object is preserved because later GUI actions need arrays and metadata.
-        self.results: RmsResults = results
+        self.results: RmsResults|EmtResults = results
 
         # These roles are instance-owned so the handler carries all Qt metadata instead of relying on globals.
         self.var_role: int = int(QtCore.Qt.ItemDataRole.UserRole) + 300
@@ -521,7 +522,10 @@ class DynamicsResultsHandler:
         self.drag_mime_type: str = "application/x-veragrid-dynamics-var"
 
         # Group-name to RMS-group-index mapping is precomputed because plotting needs constant-time access.
-        self.group_idx: Dict[str, int] = {str(gr): i for i, gr in enumerate(self.results.rms_events_group_names)}
+        if type(self.results) == RmsResults:
+            self.group_idx: Dict[str, int] = {str(gr): i for i, gr in enumerate(self.results.rms_events_group_names)}
+        elif type(self.results) == EmtResults:
+            self.group_idx: Dict[str, int] = {str(gr): i for i, gr in enumerate(self.results.emt_events_group_names)}
 
         # The hierarchical dictionary is the canonical source used to build the device tree.
         self.tree_data: Dict[DeviceType, Dict[ALL_DEV_TYPES, List[Var]]] = self.results.get_devices_dict_tree()

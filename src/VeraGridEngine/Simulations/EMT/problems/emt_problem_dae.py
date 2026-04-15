@@ -3343,7 +3343,10 @@ class EmtProblemDae(EmtProblemTemplate):
         if var_list is None:
             self._vars_info[dev] = [var]
         else:
-            var_list.append(var)
+            if var not in var_list:
+                self._vars_info[dev].append(var)
+
+
 
     def set_init_guess(self, mdl: Block, reference_powerflow: Any, val: float) -> None:
         """

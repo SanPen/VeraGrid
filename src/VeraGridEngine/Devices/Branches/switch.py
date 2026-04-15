@@ -199,5 +199,16 @@ class Switch(BranchParent):
         """
         self._rated_current = float(val)
 
+    def change_base(self, Sbase_old: float, Sbase_new: float):
+        """
+        Change the impedance base
+        :param Sbase_old: old base (MVA)
+        :param Sbase_new: new base (MVA)
+        """
+        b = Sbase_new / Sbase_old
+
+        self.R *= b
+        self.X *= b
+
 
 

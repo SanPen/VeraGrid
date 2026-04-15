@@ -77,7 +77,7 @@ class EventRow:
         self.group_combo.addItem(group.name, group)
 
 
-class RmsEventDialogue(QtWidgets.QDialog):
+class DynamicEventDialogue(QtWidgets.QDialog):
 
     def __init__(
         self,
@@ -213,7 +213,7 @@ class RmsEventDialogue(QtWidgets.QDialog):
     def create_event_group(self):
         """Open dialog to create a new RMS events group."""
 
-        dialog = RmsEventsGroupsDialog(self)
+        dialog = DynamicEventsGroupsDialog(self)
 
         if dialog.exec():
             name = dialog.get_name()
@@ -276,7 +276,7 @@ class RmsEventDialogue(QtWidgets.QDialog):
         """Return collected data."""
         return self.data
 
-class RmsEventsGroupsDialog(QtWidgets.QDialog):
+class DynamicEventsGroupsDialog(QtWidgets.QDialog):
 
     def __init__(self, parent=None):
         super().__init__(parent)

@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from VeraGridEngine.enumerations import BusMode, DeviceType, BusGraphicType, BuildStatus
-from VeraGridEngine.Devices.Parents.dynamic_parent import DynamicDevice
+from VeraGridEngine.Devices.Parents.dynamic_parent import DynamicBusDevice
 from VeraGridEngine.Devices.Aggregation import Area, Zone, Country
 from VeraGridEngine.Devices.Substation.substation import Substation
 from VeraGridEngine.Devices.Substation.busbar import BusBar
@@ -18,7 +18,7 @@ from VeraGridEngine.Devices.Profiles import ProfileBool, ProfileFloat
 from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 
 
-class Bus(DynamicDevice):
+class Bus(DynamicBusDevice):
     __slots__ = (
         '_active',
         '_active_prof',
@@ -168,7 +168,7 @@ class Bus(DynamicDevice):
         :param color: Bus color mark
         """
 
-        DynamicDevice.__init__(self,
+        DynamicBusDevice.__init__(self,
                                name=name,
                                idtag=idtag,
                                code=code,

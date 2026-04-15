@@ -350,6 +350,7 @@ class Block:
         :return: Procedural logic objects.
         """
         from VeraGridEngine.Utils.procedural_logic import procedural_logic_from_dict
+        # TODO: import inside a function!
         return procedural_logic_from_dict(data)
 
     def __deepcopy__(self, memo: Dict) -> "Block":

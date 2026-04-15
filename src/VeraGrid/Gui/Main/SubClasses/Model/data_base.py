@@ -977,18 +977,6 @@ class DataBaseTableMain(DiagramsMain):
                         self.tower_builder_window.resize(int(1.81 * 700.0), 700)
                         self.tower_builder_window.exec()
 
-                    elif elm_type == DeviceType.DynamicModelHostDevice.value:
-
-                        self.rms_model_Editor_window = DynamicBlockEditorGUI(
-                            var_factory=self.circuit.var_factory,
-                            block=elm.rms_model,
-                            api_object=elm,
-                            mode=DynamicEditorMode.RMS,
-                            circuit=self.circuit,
-                            main_editor=True,
-                        )
-                        self.rms_model_Editor_window.show()
-
                     elif elm_type == DeviceType.LineDevice.value:
                         dlg = LineEditor(line=elm, grid=self.circuit)
                         dlg.exec()
@@ -1019,6 +1007,15 @@ class DataBaseTableMain(DiagramsMain):
                             circuit=self.circuit,
                             main_editor=True,
                         )
+                        # self.rms_model_Editor_window = DynamicBlockEditorGUI(
+                        #     var_factory=self.circuit.var_factory,
+                        #     block=elm.block,
+                        #     api_object=None,
+                        #     mode=DynamicEditorMode.RMS,
+                        #     templates_list=self.circuit.get_dynamic_templates_by_domain(FmuTemplateDomain.RMS),
+                        #     circuit=self.circuit,
+                        #     main_editor=True,
+                        # )
                         if self.rms_model_Editor_window.show():
                             elm.block = self.rms_model_Editor_window.main_block
 
@@ -1032,6 +1029,15 @@ class DataBaseTableMain(DiagramsMain):
                             circuit=self.circuit,
                             main_editor=True,
                         )
+                        # self.rms_model_Editor_window = DynamicBlockEditorGUI(
+                        #     var_factory=self.circuit.var_factory,
+                        #     block=elm.block,
+                        #     api_object=None,
+                        #     mode=DynamicEditorMode.EMT,
+                        #     templates_list=self.circuit.get_dynamic_templates_by_domain(FmuTemplateDomain.EMT),
+                        #     circuit=self.circuit,
+                        #     main_editor=True,
+                        # )
 
                         if self.rms_model_Editor_window.show():
                             elm.block = self.rms_model_Editor_window.main_block

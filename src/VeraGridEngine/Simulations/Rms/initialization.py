@@ -77,16 +77,24 @@ def build_init_vars_vector(uid2idx_vars, mapping: dict[Var, float]) -> np.ndarra
 
 def solve_secant(eq_fn, x, idx, event_params_array, params_array,
                  tol=1e-8, max_iter=50):
-    x0 = 1.0
-    x1 = 1.1
+    x0 = float(x[idx]) if np.isfinite(x[idx]) else 1.0
+    x1 = x0 + 0.1 if abs(x0) < 1e-6 else x0 * 1.1
+    last_finite = x0
 
     for _ in range(max_iter):
 
         x[idx] = x0
         f0 = float(eq_fn(x, np.ones(1), event_params_array, params_array)[0]) - x0
+        if not np.isfinite(f0):
+            x0 = last_finite
+            x1 = x0 + 0.1 if abs(x0) < 1e-6 else x0 * 1.1
+            continue
 
         x[idx] = x1
         f1 = float(eq_fn(x, np.ones(1), event_params_array, params_array)[0]) - x1
+        if not np.isfinite(f1):
+            x1 = x0 + 0.1 if abs(x0) < 1e-6 else x0 * 1.1
+            continue
 
         if abs(f1) < tol:
             return x1
@@ -96,9 +104,14 @@ def solve_secant(eq_fn, x, idx, event_params_array, params_array,
             break
 
         x2 = x1 - f1 * (x1 - x0) / denom
-        x0, x1 = x1, x2
+        if not np.isfinite(x2):
+            return last_finite
 
-    return x1
+        x0, x1 = x1, x2
+        if np.isfinite(x1):
+            last_finite = x1
+
+    return last_finite if np.isfinite(last_finite) else x0
 
 def solve_newton(eq_fn, x, idx, event_params_array, params_array,
                  dummy_diff,
@@ -233,7 +246,11 @@ def init_explicit(mdl: Block,
     init_event = dict()
     build_init_dict(mdl, init_vars, init_event)
 
-    init_vars.update(init_event)
+    for key, val in init_event.items():
+        if not(isinstance(val, Const) and val.value is None):
+            init_vars[key] = val
+        else:
+            pass
 
     # init_dict = mdl.event_dict.copy()
     # init_dict.update(mdl.init_eqs)
@@ -279,6 +296,20 @@ def init_explicit(mdl: Block,
     if len(topo_order) != len(init_vars):
         raise RuntimeError("Cycle detected between different variables")
 
+    def _resolve_numeric(value):
+        if isinstance(value, Var):
+            if value.uid in uid2idx_event_params:
+                return float(event_params_array[uid2idx_event_params[value.uid]])
+            if value.uid in uid2idx_vars:
+                return float(x[uid2idx_vars[value.uid]])
+            if value.uid in uid2idx_params:
+                return float(params_array[uid2idx_params[value.uid]])
+            if value.uid in init_guess:
+                return float(init_guess[value.uid])
+            raise ValueError(f"Could not resolve numeric value for '{value.name}' (uid={value.uid})")
+
+        return float(value)
+
     # evaluate
     for var in topo_order:
         eq = init_vars[var]
@@ -294,14 +325,27 @@ def init_explicit(mdl: Block,
                 elif vr.uid in uid2idx_params:
                     uid_bindings.update({vr.uid: params_array[uid2idx_params[vr.uid]]})
 
+            missing = [f"{vr.name}:{vr.uid}" for vr in vars_list if vr.uid not in uid_bindings]
+            if len(missing) > 0:
+                raise ValueError(
+                    f"Explicit init could not evaluate event equation for '{var.name}' (uid={var.uid}). "
+                    f"Missing bindings: {', '.join(missing)}"
+                )
+
             result = eq.eval_uid(uid_bindings)
             # eq_fn = SymbolicParamsVectorInit([eq], compiler_names_dict, alias_names_dict, VARS_NAME,
             #                                  VARIABLE_PARAMS_NAME, TIME_NAME)
             #
             # result = float(eq_fn(x, event_params_array, 0.0)[0])
-            event_params_array[uid2idx_event_params[var.uid]] = result
+            resolved_result = _resolve_numeric(result)
+            if not np.isfinite(resolved_result):
+                raise ValueError(
+                    f"Explicit init produced non-finite event value for '{var.name}' (uid={var.uid}): "
+                    f"{resolved_result}. Equation: {eq}"
+                )
+            event_params_array[uid2idx_event_params[var.uid]] = resolved_result
             index = variable_parameters.index(var)
-            event_parameters_eqs[index] = Const(result)
+            event_parameters_eqs[index] = Const(resolved_result)
         elif var.base_var is None:
             # check if implicit equation
             is_self_implicit = var in dependencies[var]
@@ -317,11 +361,24 @@ def init_explicit(mdl: Block,
                     elif vr.uid in uid2idx_params:
                         uid_bindings.update({vr.uid: params_array[uid2idx_params[vr.uid]]})
 
+                missing = [f"{vr.name}:{vr.uid}" for vr in vars_list if vr.uid not in uid_bindings]
+                if len(missing) > 0:
+                    raise ValueError(
+                        f"Explicit init could not evaluate equation for '{var.name}' (uid={var.uid}). "
+                        f"Missing bindings: {', '.join(missing)}"
+                    )
+
                 result = eq.eval_uid(uid_bindings)
                 # eq_fn = rms_compiler.compile_rhs([eq], "equation")
                 # result = float(eq_fn(x, np.ones(1), event_params_array, params_array)[0])
-                init_guess[var.uid] = result
-                x[uid2idx_vars[var.uid]] = result
+                resolved_result = _resolve_numeric(result)
+                if not np.isfinite(resolved_result):
+                    raise ValueError(
+                        f"Explicit init produced non-finite state/algebraic value for '{var.name}' (uid={var.uid}): "
+                        f"{resolved_result}. Equation: {eq}"
+                    )
+                init_guess[var.uid] = resolved_result
+                x[uid2idx_vars[var.uid]] = resolved_result
 
             else:
                 # compile equations
@@ -339,6 +396,12 @@ def init_explicit(mdl: Block,
                     tol=1e-8,
                     max_iter=50
                 )
+
+                if not np.isfinite(init_val):
+                    raise ValueError(
+                        f"Explicit init produced non-finite implicit solve value for '{var.name}' "
+                        f"(uid={var.uid}): {init_val}. Equation: {eq}"
+                    )
 
                 init_guess[var.uid] = init_val
                 x[uid2idx_vars[var.uid]] = init_val

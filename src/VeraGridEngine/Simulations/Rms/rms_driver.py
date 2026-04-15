@@ -23,6 +23,7 @@ class RmsSimulationDriver(DriverTemplate):
     __slots__ = (
         "pf_results",
         "options",
+        "problem",
     )
 
     name = 'Rms Simulation'

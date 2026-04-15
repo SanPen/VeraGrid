@@ -190,7 +190,7 @@ class EmtProblemTemplate(ABC):
 
         self.init_guess: Dict[int, float] = dict()
         self.diff_init_guess: Dict[int, float] = dict()
-        self._vars_info: Dict[Any, List[Var]] = dict()
+        # self._vars_info: Dict[Any, List[Var]] = dict()
 
         self._finalize_order_and_maps()
         self._event_params_values: Vec = np.zeros(0, dtype=np.float64)
@@ -770,13 +770,13 @@ class EmtProblemTemplate(ABC):
         """
         self._newton_trace_collector = collector
 
-    def get_device_vars_dict(self) -> Dict[Any, List[Var]]:
-        """
-        Return the device-to-variable mapping dictionary.
-
-        :return: Device-to-variable mapping dictionary.
-        """
-        return self._vars_info
+    # def get_device_vars_dict(self) -> Dict[Any, List[Var]]:
+    #     """
+    #     Return the device-to-variable mapping dictionary.
+    #
+    #     :return: Device-to-variable mapping dictionary.
+    #     """
+    #     return self._vars_info
 
     def get_var_idx(self, v: Var) -> int:
         """

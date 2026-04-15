@@ -2041,9 +2041,11 @@ class RMSCompiler(EquationCompiler):
         Returns:
             Callable: An executable function computing the RHS residuals.
         """
-        # Use the exact array names expected by the legacy solver interface: vrs, diff, vprms, cprms
+        # Keep legacy signature (`vrs`) while also exposing `vars` alias,
+        # so equations compiled with either naming convention work.
         lines: List[str] = list()
         lines.append(f"def {func_name}(vrs, diff, vprms, cprms):")
+        lines.append("    vars = vrs")
         lines.append(f"    out = np.zeros({len(equations)}, dtype=np.float64)")
 
         for i, eq in enumerate(equations):
@@ -2068,21 +2070,37 @@ class RMSCompiler(EquationCompiler):
         Returns:
             Callable: A function that populates and returns a scipy.sparse.csc_matrix.
         """
+        wrt_map = {v.uid: (i, v) for i, v in enumerate(wrt_vars)}
         triplets: List[Tuple[int, int, Expr]] = list()
 
-        # O(N) Algorithmic Extraction:
-        # We check ALL variable-equation pairs to correctly handle chain rules
-        # through differential variables. This is less efficient than checking only
-        # variables that appear in each equation, but it ensures correctness.
-        for row, eq in enumerate(eqs):
-            for col, var in enumerate(wrt_vars):
-                # Differentiate with respect to the physical time variable (dt_var)
-                d_expr = eq.diff(var, dt=self.dt_var)
+        def _collect_related_uids(var: Var, out: Set[int], seen: Set[int]) -> None:
+            if var.uid in seen:
+                return
+            seen.add(var.uid)
 
+            if var.uid in wrt_map:
+                out.add(var.uid)
+
+            if var.base_var is not None:
+                _collect_related_uids(var.base_var, out, seen)
+
+            if var.diff_var is not None:
+                _collect_related_uids(var.diff_var, out, seen)
+
+        def _candidate_uids(eq: Expr) -> Set[int]:
+            candidates: Set[int] = set()
+            seen: Set[int] = set()
+            for v_in_eq in get_expression_vars(eq):
+                _collect_related_uids(v_in_eq, candidates, seen)
+            return candidates
+
+        # Only differentiate variables that appear in the equation AST.
+        for row, eq in enumerate(eqs):
+            for uid in _candidate_uids(eq):
+                col, var = wrt_map[uid]
+                d_expr = eq.diff(var, dt=self.dt_var)
                 if not (isinstance(d_expr, Const) and d_expr.value == 0):
                     triplets.append((col, row, d_expr))
-                else:
-                    pass
 
         triplets.sort(key=lambda t: (t[0], t[1]))
 
@@ -2091,9 +2109,6 @@ class RMSCompiler(EquationCompiler):
             J_empty = sp.csc_matrix((len(eqs), len(wrt_vars)))
             # noinspection PyShadowingBuiltins
             return lambda vrs, diff, vprms, cprms, h: J_empty
-        else:
-            pass
-
         # Extract sorted coordinates and corresponding symbolic derivatives
         cols_sorted = [t[0] for t in triplets]
         rows_sorted = [t[1] for t in triplets]
@@ -2113,6 +2128,7 @@ class RMSCompiler(EquationCompiler):
         # The Jacobian receives 'h' in its signature for solver compatibility,
         # even though 'expression2numba' internally resolves 'dt' via vprms[...]
         lines = [f"def {func_name}_filler(vrs, diff, vprms, cprms, h, data_out):"]
+        lines.append("    vars = vrs")
         for i, expr in enumerate(d_exprs):
             expr_str = expression2numba(expr, self.compiler_names_dict)
             lines.append(f"    data_out[{i}] = {expr_str}")

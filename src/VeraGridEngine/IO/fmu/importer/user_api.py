@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from enum import Enum
 from pathlib import Path
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.enumerations import VarPowerFlowRefferenceType
@@ -22,6 +22,9 @@ from VeraGridEngine.IO.fmu.importer.device_api import (
 from VeraGridEngine.IO.fmu.importer.experimental_cs import FmuRefBinding
 from VeraGridEngine.IO.fmu.importer.experimental_me import FmuMeIntegrationMethod
 from VeraGridEngine.IO.fmu.importer.model_description import FmuInterfaceMode
+
+if TYPE_CHECKING:
+    from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 
 
 class FmuDeviceDomain(str, Enum):
@@ -169,7 +172,7 @@ def _build_template_name(device: Any, request: FmuDeviceAttachmentRequest) -> st
         return request.name
 
 
-def attach_fmu_to_device(device: Any, grid: Any, request: FmuDeviceAttachmentRequest) -> Block:
+def attach_fmu_to_device(device: Any, grid: MultiCircuit, request: FmuDeviceAttachmentRequest) -> Block:
     """Attach one imported FMU device to a VeraGrid device from a script-friendly request.
 
     :param device: VeraGrid device receiving the FMU.

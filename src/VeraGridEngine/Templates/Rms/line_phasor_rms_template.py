@@ -46,11 +46,15 @@ def get_line_phasor_rms_template(vfactory: VarFactory, name="Line_phasor_rms_tem
     g = vfactory.add_var("g")
     b = vfactory.add_var("b")
     bsh = vfactory.add_var("bsh")
+    vtap_f = vfactory.add_var("vtap_f")
+    vtap_t = vfactory.add_var("vtap_t")
 
     # Set default parameter values
     templ.block.parameters[g] = vfactory.add_const(5)
     templ.block.parameters[b] = vfactory.add_const(-12)
     templ.block.parameters[bsh] = vfactory.add_const(0.03)
+    templ.block.parameters[vtap_f] = vfactory.add_const(None)
+    templ.block.parameters[vtap_t] = vfactory.add_const(None)
 
     templ.block.algebraic_vars = [Irf, Iif, Irt, Iit]
 
@@ -60,21 +64,19 @@ def get_line_phasor_rms_template(vfactory: VarFactory, name="Line_phasor_rms_tem
     Vrt = inputs[2]
     Vit = inputs[3]
     
-    # Current equations (linear in phasor representation)
-    # If = (g+j*b)*(Vf-Vt) + j*(bsh/2)*Vf
-    # Ir_f = g*(Vrf-Vrt) - b*(Vif-Vit) - (bsh/2)*Vif
-    # Ii_f = g*(Vif-Vit) + b*(Vrf-Vrt) + (bsh/2)*Vrf
-    
-    # It = (g+j*b)*(Vt-Vf) + j*(bsh/2)*Vt
-    # Ir_t = g*(Vrt-Vrf) - b*(Vit-Vif) - (bsh/2)*Vit
-    # Ii_t = g*(Vit-Vif) + b*(Vrt-Vrf) + (bsh/2)*Vrt
-    
-    # Direct current output equations
+    gff = g / (vtap_f * vtap_f)
+    bff = (b + bsh / 2) / (vtap_f * vtap_f)
+    gtt = g / (vtap_t * vtap_t)
+    btt = (b + bsh / 2) / (vtap_t * vtap_t)
+    gft = -g / (vtap_f * vtap_t)
+    bft = -b / (vtap_f * vtap_t)
+
+    # Direct current output equations with virtual taps
     templ.block.algebraic_eqs = [
-        Irf - (g * (Vrf - Vrt) - b * (Vif - Vit) - (bsh / 2) * Vif),
-        Iif - (g * (Vif - Vit) + b * (Vrf - Vrt) + (bsh / 2) * Vrf),
-        Irt - (g * (Vrt - Vrf) - b * (Vit - Vif) - (bsh / 2) * Vit),
-        Iit - (g * (Vit - Vif) + b * (Vrt - Vrf) + (bsh / 2) * Vrt),
+        Irf - (gff * Vrf - bff * Vif + gft * Vrt - bft * Vit),
+        Iif - (bff * Vrf + gff * Vif + bft * Vrt + gft * Vit),
+        Irt - (gft * Vrf - bft * Vif + gtt * Vrt - btt * Vit),
+        Iit - (bft * Vrf + gft * Vif + btt * Vrt + gtt * Vit),
     ]
 
     templ.block.external_mapping = {
@@ -92,6 +94,8 @@ def get_line_phasor_rms_template(vfactory: VarFactory, name="Line_phasor_rms_tem
         ParamPowerFlowRefferenceType.g: g,
         ParamPowerFlowRefferenceType.b: b,
         ParamPowerFlowRefferenceType.bsh: bsh,
+        ParamPowerFlowRefferenceType.vtap_f: vtap_f,
+        ParamPowerFlowRefferenceType.vtap_t: vtap_t,
     }
 
     templ.block.in_vars = inputs

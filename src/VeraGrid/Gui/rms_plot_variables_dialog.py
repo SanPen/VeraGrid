@@ -15,7 +15,8 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QPoint
 
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-from VeraGridEngine.Simulations.Rms.rms_results import RmsResults, ResultsTable
+from VeraGridEngine.Simulations.Rms.rms_results import RmsResults #, ResultsTable
+from VeraGridEngine.Simulations.results_table import ResultsTable
 from VeraGridEngine.enumerations import DeviceType
 import numpy as np
 import pandas as pd

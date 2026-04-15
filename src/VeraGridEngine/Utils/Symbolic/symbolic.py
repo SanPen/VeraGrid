@@ -1735,7 +1735,7 @@ def expression2numba(expr: Expr,
         elif expr.name in {"time", "glob_time"}:
             s = "glob_time"
         else:
-            raise KeyError(expr.uid)
+            raise KeyError(f"Missing compiler name for var '{expr.name}' (uid={expr.uid})")
 
     elif isinstance(expr, UnOp):
         operand = expression2numba(expr.operand,

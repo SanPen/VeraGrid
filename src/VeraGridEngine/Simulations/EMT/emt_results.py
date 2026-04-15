@@ -27,6 +27,7 @@ class EmtResults(ResultsTemplate):
         "devices_vars_info",
         "uid2idx_vars",
         "uid2idx_diff",
+        "uid2idx",
         "vars_glob_name2uid",
         "variable_array",
         "values",
@@ -51,7 +52,7 @@ class EmtResults(ResultsTemplate):
         :param uid2idx_vars: Var uid to var index in values variables
         :param uid2idx_diff: Var uid to var index in values diff vars
         :param vars_glob_name2uid: dictionary relating var names to uid (WTF?)
-        :param devices_vars_info: dictionary relating the devices with a list of their simulation vars
+        :param devices_vars_info: dictionary relating the devices with a list of their simulation vars and diffvars
         """
         ResultsTemplate.__init__(
             self,
@@ -79,7 +80,19 @@ class EmtResults(ResultsTemplate):
         self.devices_vars_info: Dict[ALL_DEV_TYPES, List[Var]] = devices_vars_info
         self.uid2idx_vars: Dict[int, int] = uid2idx_vars
         self.uid2idx_diff: Dict[int, int] = uid2idx_diff
+        self.uid2idx: Dict[int, int] = dict()
+        self.uid2idx.update(self.uid2idx_vars)
+        self.uid2idx.update(self.uid2idx_diff)
         self.vars_glob_name2uid = vars_glob_name2uid
+        not_found_vars = list()
+        not_found_diff_vars = list()
+        for var in variables:
+            if var.uid not in self.uid2vars_glob_name:
+                not_found_vars.append(var)
+        for diff in diff_variables:
+            if diff.uid not in self.uid2vars_glob_name:
+                not_found_diff_vars.append(diff)
+
         self.variable_array = np.array([self.uid2vars_glob_name[var.uid] for var in variables], dtype=str)
         self.values = np.zeros((self.nt, self.nv, self.ng), dtype=float)
         self.diff_values = np.zeros((self.nt, self.ndv, self.ng), dtype=float)
@@ -88,21 +101,22 @@ class EmtResults(ResultsTemplate):
 
     def get_var(self, uid: int) -> Var:
         """
-
+        Get a var or a diff var from its uid
         :param uid:
         :return:
         """
-        idx = self.uid2idx_vars[uid]
-        return self.variables[idx]
 
-    def get_diff_var(self, uid: int) -> Var:
-        """
+        if uid in self.uid2idx_vars:
+            idx = self.uid2idx_vars[uid]
+            return self.variables[idx]
 
-        :param uid:
-        :return:
-        """
-        idx = self.uid2idx_diff[uid]
-        return self.diff_variables[idx]
+        elif uid in self.uid2idx_diff:
+            idx = self.uid2idx_diff[uid]
+            return self.diff_variables[idx]
+
+        else:
+            raise ValueError(f"Variable with uid {uid} not found in vars either diff_vars list.")
+
 
     def get_devices_dict_tree(self) -> Dict[DeviceType, Dict[ALL_DEV_TYPES, List[Var]]]:
         """
@@ -124,33 +138,27 @@ class EmtResults(ResultsTemplate):
 
     def plot_var(self, var: Var, group_idx: int = 0):
         """
-
+        Plot a variable or a derivative
         :param var:
         :param group_idx:
         :return:
         """
-        idx = self.uid2idx_vars[var.uid]
+        if var.uid in self.uid2idx_vars:
+            idx = self.uid2idx_vars[var.uid]
+            y = self.values[:, idx, group_idx]
+            plt.plot(self.time_array, y, label=var.name)
+            plt.legend()
+            plt.show()
 
-        y = self.values[:, idx, group_idx]
+        elif var.uid in self.uid2idx_diff:
+            idx = self.uid2idx_diff[var.uid]
+            y = self.diff_values[:, idx, group_idx]
+            plt.plot(self.time_array, y, label=var.name)
+            plt.legend()
+            plt.show()
+        else:
+            raise ValueError(f"Variable {var} not found in vars either diff_vars.")
 
-        plt.plot(self.time_array, y, label=var.name)
-        plt.legend()
-        plt.show()
-
-    def plot_diff_var(self, d_var: Var, group_idx: int = 0):
-        """
-
-        :param d_var:
-        :param group_idx:
-        :return:
-        """
-        idx = self.uid2idx_diff[d_var.uid]
-
-        y = self.diff_values[:, idx, group_idx]
-
-        plt.plot(self.time_array, y, label=d_var.name)
-        plt.legend()
-        plt.show()
 
     def get_vars_data(self, var_list: List[Var], group_idx: int = 0) -> Mat:
         """
@@ -162,7 +170,14 @@ class EmtResults(ResultsTemplate):
         data = np.empty((self.nt, len(var_list)), dtype=float)
 
         for i, var in enumerate(var_list):
-            idx = self.uid2idx_vars[var.uid]
-            data[:, i] = self.values[:, idx, group_idx]
+            # idx = self.uid2idx_vars[var.uid]
+            if var.uid in self.uid2idx_vars:
+                idx = self.uid2idx_vars[var.uid]
+                data[:, i] = self.values[:, idx, group_idx]
+            elif var.uid in self.uid2idx_diff:
+                idx = self.uid2idx_diff[var.uid]
+                data[:, i] = self.diff_values[:, idx, group_idx]
 
         return data
+
+

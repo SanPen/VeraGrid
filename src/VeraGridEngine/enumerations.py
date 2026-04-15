@@ -3106,6 +3106,8 @@ class ParamPowerFlowRefferenceType(Enum):
     g = "g"  # Branch resistance in per unit
     b = "b"  # Branch reactance in per unit
     bsh = "bsh"  # Branch shunt susceptance in per unit
+    vtap_f = "vtap_f"  # Virtual tap at from-side
+    vtap_t = "vtap_t"  # Virtual tap at to-side
     Pl0 = "Pl0"  # Load active power
     Ql0 = "Ql0"  # Load reactive power
     
@@ -3459,7 +3461,15 @@ class BlockType(Enum):
     """
     this class contains the existing types of blocks
     """
-    # common
+
+    # inputs and outputs
+    INPUT_CONN = "Bus Connection"
+    OUTPUT_CONN = "EXTERNAL_MAPPING"
+
+    # generic
+    GENERIC = "Generic"
+
+    # common basic maths
     CONST = "CONST"
     GAIN = "GAIN"
     SUM = "SUM"
@@ -3467,8 +3477,6 @@ class BlockType(Enum):
     PRODUCT = "PRODUCT"
     DIVIDE = "Divide"
     ABS = "Abs"
-
-    GENERIC = "Generic"
 
     # RMS
     GENRAW = "GENRAW"
@@ -3494,11 +3502,8 @@ class BlockType(Enum):
     ZIP_LOAD_EMT = "ZIP_LOAD_EMT"
     DC_LOAD_EMT = "DC_LOAD_EMT"
     EMT_THEVENIN = "EMT_THEVENIN_EMT"
-
-    BUS_CONNECTION = "Bus Connection"
-    EXTERNAL_MAPPING = "EXTERNAL_MAPPING"
-
     EMTLOAD = "EMT_LOAD"
+
 
     def __str__(self):
         return self.value

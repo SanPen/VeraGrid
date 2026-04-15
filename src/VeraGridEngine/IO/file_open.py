@@ -376,6 +376,7 @@ class FileOpen:
                                                                 text_func=text_func,
                                                                 progress_func=progress_func,
                                                                 logger=self.logger)
+                        self.circuit = self.multiverse.current_model
                     else:
 
                         self.circuit = parse_veragrid_data(data=data_dictionary,
@@ -408,6 +409,7 @@ class FileOpen:
                                                                 text_func=text_func,
                                                                 progress_func=progress_func,
                                                                 logger=self.logger)
+                        self.circuit = self.multiverse.current_model
                     else:
 
                         self.circuit = parse_veragrid_data(data=data_dictionary,

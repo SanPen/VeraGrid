@@ -12,14 +12,15 @@ from scipy.sparse import lil_matrix
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.IO.raw.devices import (RawArea, RawZone, RawBus, RawLoad, RawFixedShunt, RawGenerator,
                                            RawSwitchedShunt, RawTransformer, RawBranch, RawVscDCLine,
-                                           RawTwoTerminalDCLine, RawFACTS)
+                                           RawTwoTerminalDCLine, RawFACTS, RawSystemSwitchingDevice)
 from VeraGridEngine.IO.raw.devices.psse_circuit import PsseCircuit
 import VeraGridEngine.Devices as dev
 from VeraGridEngine.Devices.types import BRANCH_TYPES
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.enumerations import (TapChangerTypes,
                                          TapPhaseControl,
-                                         TapModuleControl)
+                                         TapModuleControl,
+                                         SwitchGraphicType)
 
 
 def get_area(area: dev.Area, i: int) -> RawArea:
@@ -476,6 +477,28 @@ def get_psse_facts(upfc: dev.UPFC, bus_dict: Dict[dev.Bus, int]) -> RawFACTS:
     return psse_facts
 
 
+def get_psse_switch(switch: dev.Switch,
+                    bus_dict: Dict[dev.Bus, int],
+                    ckt: int) -> RawSystemSwitchingDevice:
+    """
+    Convert VeraGrid Switch to PSSE system switching device.
+    """
+    psse_switch = RawSystemSwitchingDevice()
+
+    psse_switch.I = bus_dict[switch.bus_from]
+    psse_switch.J = bus_dict[switch.bus_to]
+    psse_switch.CKT = str(ckt)
+    psse_switch.X = switch.X
+    psse_switch.RATE1 = switch.rate
+    psse_switch.STATUS = 1 if switch.active else 0
+    psse_switch.NSTATUS = 1 if switch.normal_open else 0
+    psse_switch.METERED = 1
+    psse_switch.STYPE = 3 if switch.graphic_type == SwitchGraphicType.Disconnector else 2
+    psse_switch.NAME = str(switch.name)
+
+    return psse_switch
+
+
 class RawCounter:
     """
     Items to count stuff for the raw files
@@ -640,6 +663,11 @@ def veragrid_to_raw(grid: MultiCircuit, logger: Logger) -> PsseCircuit:
         psse_circuit.branches.append(get_psse_branch(branch=line,
                                                      bus_dict=counter.psse_numbers_dict,
                                                      ckt=counter.get_ckt(branch=line)))
+
+    for switch in grid.get_switches():
+        psse_circuit.switches.append(get_psse_switch(switch=switch,
+                                                     bus_dict=counter.psse_numbers_dict,
+                                                     ckt=counter.get_ckt(branch=switch)))
 
     for transformer in grid.transformers2w:
         psse_circuit.transformers.append(get_psse_transformer2w(transformer=transformer,

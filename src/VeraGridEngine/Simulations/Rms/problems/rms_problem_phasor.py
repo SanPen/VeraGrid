@@ -26,6 +26,16 @@ from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Utils.Symbolic.jit_compiler import RMSCompiler
 from VeraGridEngine.Devices.Branches.transformer import Transformer2W
 from VeraGridEngine.Simulations.driver_template import DummySignal
+from VeraGridEngine.IO.fmu.importer import (
+    advance_rms_fmu_cs_devices,
+    advance_rms_fmu_me_devices,
+    close_rms_fmu_cs_devices,
+    close_rms_fmu_me_devices,
+    initialize_rms_fmu_cs_devices,
+    initialize_rms_fmu_me_devices,
+    register_rms_fmu_cs_device,
+    register_rms_fmu_me_device,
+)
 
 
 def _tic():
@@ -135,6 +145,10 @@ class RmsProblemPhasor(RmsProblemTemplate):
         self._event_parameters_eqs: List[Expr | Const] = list()
         self._constant_parameters: List[Var] = list()
         self._parameters_values: List[Const] = list()
+        self._fmu_cs_adapters: List[object] = list()
+        self._fmu_cs_initialized: bool = False
+        self._fmu_me_adapters: List[object] = list()
+        self._fmu_me_initialized: bool = False
 
         # --------------------------------------------------------------------------------------------------------------
         # Initialize the RMS problem
@@ -179,6 +193,8 @@ class RmsProblemPhasor(RmsProblemTemplate):
         Ii: ObjVec = np.zeros(n, dtype=object)
         Ir_used: BoolVec = np.zeros(n, dtype=bool)
         Ii_used: BoolVec = np.zeros(n, dtype=bool)
+        branch_bus_r = np.zeros(n, dtype=float)
+        branch_bus_i = np.zeros(n, dtype=float)
 
         # general indexes for variables and parameters
         self._n_vars = 0
@@ -226,16 +242,29 @@ class RmsProblemPhasor(RmsProblemTemplate):
                 elm.rms_model.unify_blocks()
 
                 # if not isinstance(elm, Transformer2W):
+                active_factor = 1.0 if elm.active else 0.0
+                z2 = elm.R ** 2 + elm.X ** 2
+                g_val = active_factor * float(elm.R / z2)
+                b_val = active_factor * float(-elm.X / z2)
+                bsh_val = active_factor * float(elm.B)
+
                 elm.rms_model.parameters[
-                elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.g]] = Const(
-                float(elm.R / (elm.R ** 2 + elm.X ** 2)))
+                elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.g]] = Const(g_val)
                 elm.rms_model.parameters[
-                elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.b]] = Const(
-                float(-elm.X / (elm.R ** 2 + elm.X ** 2)))
+                elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.b]] = Const(b_val)
                 elm.rms_model.parameters[
-                elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.bsh]] = Const(elm.B)
+                elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.bsh]] = Const(bsh_val)
+
+                if ParamPowerFlowRefferenceType.vtap_f in elm.rms_model.api_obj_mapping:
+                    elm.rms_model.parameters[elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.vtap_f]] = Const(1.0)
+                if ParamPowerFlowRefferenceType.vtap_t in elm.rms_model.api_obj_mapping:
+                    elm.rms_model.parameters[elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.vtap_t]] = Const(
+                        float(elm.bus_from.Vnom / elm.bus_to.Vnom)
+                    )
 
                 self.add_variables_to_compilation_dicts(elm, elm.rms_model)
+                register_rms_fmu_cs_device(self, elm, elm.rms_model)
+                register_rms_fmu_me_device(self, elm, elm.rms_model)
 
                 # Convert power flow results (S = P + jQ) to currents (I = S* / V*)
                 # I = (P - jQ) / (Vr - jVi) = (P*Vr + Q*Vi) / |V|^2 + j*(P*Vi - Q*Vr) / |V|^2
@@ -263,6 +292,11 @@ class RmsProblemPhasor(RmsProblemTemplate):
                 self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Iif, Iif)
                 self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Irt, Irt)
                 self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Iit, Iit)
+
+                branch_bus_r[f_idx] += Irf
+                branch_bus_i[f_idx] += Iif
+                branch_bus_r[t_idx] += Irt
+                branch_bus_i[t_idx] += Iit
 
                 # Run explicit initialization for branches to solve algebraic equations
                 if isinstance(elm, Transformer2W):
@@ -343,8 +377,8 @@ class RmsProblemPhasor(RmsProblemTemplate):
 
                 # Set initialization values for HVDC
                 # Real number only (no Q values)
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pf, Pf_hvdc)
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pt, Pt_hvdc)
+                # self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pf, Pf_hvdc)
+                # self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pt, Pt_hvdc)
 
                 f = bus_dict[elm.bus_from]
                 t = bus_dict[elm.bus_to]
@@ -391,6 +425,73 @@ class RmsProblemPhasor(RmsProblemTemplate):
                 # add model to system block
                 self.sys_block.add(elm.rms_model)
 
+        gen_idx_map = {elm: i for i, elm in enumerate(grid.generators)}
+        batt_idx_map = {elm: i for i, elm in enumerate(grid.batteries)}
+        shunt_idx_map = {elm: i for i, elm in enumerate(grid.shunts)}
+
+        def _s_to_i(S: complex, V: complex) -> tuple[float, float]:
+            v2 = np.abs(V) ** 2
+            if v2 > 0:
+                ir_val = (S.real * V.real + S.imag * V.imag) / v2
+                ii_val = (S.real * V.imag - S.imag * V.real) / v2
+            else:
+                ir_val = 0.0
+                ii_val = 0.0
+            return ir_val, ii_val
+
+        # Build per-bus residual current budget for load-current devices (Ir0/Ii0 templates)
+        n_bus = len(self.grid.buses)
+        fixed_inj_r = np.zeros(n_bus, dtype=float)
+        fixed_inj_i = np.zeros(n_bus, dtype=float)
+        adjustable_count = np.zeros(n_bus, dtype=int)
+        slack_gen_count = np.zeros(n_bus, dtype=int)
+
+        for dev in grid.get_injection_devices_iter():
+            if dev.rms_model.empty():
+                continue
+            bidx = bus_dict[dev.bus]
+            if dev.bus.is_dc:
+                continue
+
+            has_ir = VarPowerFlowRefferenceType.Ir in dev.rms_model.external_mapping
+            has_ii = VarPowerFlowRefferenceType.Ii in dev.rms_model.external_mapping
+            is_adjustable_load_current = (
+                has_ir and has_ii and
+                ParamPowerFlowRefferenceType.Ir0 in dev.rms_model.api_obj_mapping and
+                ParamPowerFlowRefferenceType.Ii0 in dev.rms_model.api_obj_mapping
+            )
+
+            if is_adjustable_load_current:
+                adjustable_count[bidx] += 1
+                continue
+
+            if dev in gen_idx_map and dev.bus.is_slack:
+                slack_gen_count[bidx] += 1
+                continue
+
+            Vbus_pf = self.power_flow_results.voltage[bidx]
+            if dev in gen_idx_map:
+                gidx = gen_idx_map[dev]
+                Sdev_pf = complex(float(dev.P), float(self.power_flow_results.gen_q[gidx])) / grid.Sbase
+            elif dev in batt_idx_map:
+                bdid = batt_idx_map[dev]
+                P_b = float(dev.P)
+                Sdev_pf = complex(P_b, float(self.power_flow_results.battery_q[bdid])) / grid.Sbase
+            elif dev in shunt_idx_map:
+                sidx = shunt_idx_map[dev]
+                Sdev_pf = complex(0.0, float(self.power_flow_results.shunt_q[sidx])) / grid.Sbase
+            else:
+                Sdev_pf = dev.get_S_with_sign() / grid.Sbase
+
+            ir_pf, ii_pf = _s_to_i(Sdev_pf, Vbus_pf)
+            fixed_inj_r[bidx] += ir_pf
+            fixed_inj_i[bidx] += ii_pf
+
+        residual_r = branch_bus_r - fixed_inj_r
+        residual_i = branch_bus_i - fixed_inj_i
+        remaining_adjustable = adjustable_count.copy()
+        remaining_slack_gen = slack_gen_count.copy()
+
         for elm in grid.get_injection_devices_iter():
 
             if elm.rms_model.empty():
@@ -402,6 +503,8 @@ class RmsProblemPhasor(RmsProblemTemplate):
 
                 elm.rms_model.unify_blocks()
                 self.add_variables_to_compilation_dicts(elm, elm.rms_model)
+                register_rms_fmu_cs_device(self, elm, elm.rms_model)
+                register_rms_fmu_me_device(self, elm, elm.rms_model)
 
                 if elm.bus.is_dc:
                     # DC buses: use power directly if supported, otherwise skip
@@ -412,30 +515,62 @@ class RmsProblemPhasor(RmsProblemTemplate):
                         # Approximate: I = P/V (assuming V ≈ 1)
                         self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Ir, np.real(Sbus_dc))
                 else:
-                    # Phasor formulation: convert power injection to current
-                    # I = S* / V* where S is the injection power
+                    # Phasor formulation: convert per-device power injection to current
                     Vbus = self.power_flow_results.voltage[bus_index]
-                    Sbus = self.power_flow_results.Sbus[bus_index] / grid.Sbase
-                    
-                    Vbus_mag_sq = np.abs(Vbus)**2
-                    if Vbus_mag_sq > 0:
-                        Ir_val = (Sbus.real * Vbus.real + Sbus.imag * Vbus.imag) / Vbus_mag_sq
-                        Ii_val = (Sbus.real * Vbus.imag - Sbus.imag * Vbus.real) / Vbus_mag_sq
+
+                    has_ir = VarPowerFlowRefferenceType.Ir in elm.rms_model.external_mapping
+                    has_ii = VarPowerFlowRefferenceType.Ii in elm.rms_model.external_mapping
+                    is_adjustable_load_current = (
+                        has_ir and has_ii and
+                        ParamPowerFlowRefferenceType.Ir0 in elm.rms_model.api_obj_mapping and
+                        ParamPowerFlowRefferenceType.Ii0 in elm.rms_model.api_obj_mapping
+                    )
+
+                    if is_adjustable_load_current and remaining_adjustable[bus_index] > 0:
+                        Ir_val = residual_r[bus_index] / remaining_adjustable[bus_index]
+                        Ii_val = residual_i[bus_index] / remaining_adjustable[bus_index]
+                        remaining_adjustable[bus_index] -= 1
+                        residual_r[bus_index] -= Ir_val
+                        residual_i[bus_index] -= Ii_val
+                        Sdev = complex(
+                            Vbus.real * Ir_val + Vbus.imag * Ii_val,
+                            Vbus.imag * Ir_val - Vbus.real * Ii_val
+                        )
+                    elif elm in gen_idx_map and elm.bus.is_slack and remaining_slack_gen[bus_index] > 0:
+                        Ir_val = residual_r[bus_index] / remaining_slack_gen[bus_index]
+                        Ii_val = residual_i[bus_index] / remaining_slack_gen[bus_index]
+                        remaining_slack_gen[bus_index] -= 1
+                        residual_r[bus_index] -= Ir_val
+                        residual_i[bus_index] -= Ii_val
+                        Sdev = complex(
+                            Vbus.real * Ir_val + Vbus.imag * Ii_val,
+                            Vbus.imag * Ir_val - Vbus.real * Ii_val
+                        )
+                    elif elm in gen_idx_map:
+                        gidx = gen_idx_map[elm]
+                        Sdev = complex(float(elm.P), float(self.power_flow_results.gen_q[gidx])) / grid.Sbase
+                    elif elm in batt_idx_map:
+                        bidx = batt_idx_map[elm]
+                        P_b = float(elm.P)
+                        Sdev = complex(P_b, float(self.power_flow_results.battery_q[bidx])) / grid.Sbase
+                    elif elm in shunt_idx_map:
+                        sidx = shunt_idx_map[elm]
+                        Sdev = complex(0.0, float(self.power_flow_results.shunt_q[sidx])) / grid.Sbase
                     else:
-                        Ir_val = 0.0
-                        Ii_val = 0.0
-                    
-                    # Only set current init guess if the model expects it
+                        Sdev = elm.get_S_with_sign() / grid.Sbase
+
+                    if not is_adjustable_load_current:
+                        Ir_val, Ii_val = _s_to_i(Sdev, Vbus)
+
                     if VarPowerFlowRefferenceType.Ir in elm.rms_model.external_mapping:
                         self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Ir, Ir_val)
                     if VarPowerFlowRefferenceType.Ii in elm.rms_model.external_mapping:
                         self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Ii, Ii_val)
-                    
-                    # Also set P/Q init guess for backward compatibility
+
                     if VarPowerFlowRefferenceType.P in elm.rms_model.external_mapping:
-                        self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.P, Sbus.real)
+                        self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.P, Sdev.real)
                     if VarPowerFlowRefferenceType.Q in elm.rms_model.external_mapping:
-                        self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Q, Sbus.imag)
+                        self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Q, Sdev.imag)
 
                 k = bus_dict[elm.bus]
                 # Phasor formulation: use current balance
@@ -805,8 +940,14 @@ class RmsProblemPhasor(RmsProblemTemplate):
         """
         Add values from powerflow to initial guess.
         """
-        var = mdl.external_mapping[reference_powerflow]
-        self.init_guess[var.uid] = val
+        if reference_powerflow in mdl.external_mapping:
+            var = mdl.external_mapping[reference_powerflow]
+            self.init_guess[var.uid] = val
+            #print(f"DEBUG: set_init_guess {reference_powerflow.value} = {val} for var {var.name} (uid={var.uid})")
+        else:
+            print(
+                f"DEBUG: set_init_guess {reference_powerflow.value} NOT FOUND in external_mapping. Available: {[k.value for k in mdl.external_mapping.keys()]}")
+
 
     def get_init_guess_info(self) -> pd.DataFrame:
         """
@@ -954,6 +1095,74 @@ class RmsProblemPhasor(RmsProblemTemplate):
     def update_variable_params(self, t: float):
         """Update the variable parameters."""
         self._variable_parameters_values = self._event_params_fn(self._variable_parameters_values, t)
+
+    def initialize_fmu_cs_devices(self, x_snapshot: Vec, t: float = 0.0) -> None:
+        """
+        Initialize imported FMU Co-Simulation devices before the RMS time loop starts.
+
+        :param x_snapshot: Initial accepted state vector.
+        :param t: Initial simulation time.
+        :return: None.
+        """
+        if len(self._fmu_cs_adapters) > 0:
+            initialize_rms_fmu_cs_devices(problem=self, x_snapshot=x_snapshot, time_value=t)
+        else:
+            self._fmu_cs_initialized = True
+
+    def advance_fmu_cs_devices(self, t: float, x_snapshot: Vec, h: float) -> None:
+        """
+        Advance imported FMU Co-Simulation devices for one RMS communication step.
+
+        :param t: Current simulation time.
+        :param x_snapshot: Current accepted state vector.
+        :param h: RMS communication step.
+        :return: None.
+        """
+        if len(self._fmu_cs_adapters) > 0:
+            advance_rms_fmu_cs_devices(problem=self, time_value=t, x_snapshot=x_snapshot, step_size=h)
+
+    def close_fmu_cs_devices(self) -> None:
+        """
+        Release imported FMU Co-Simulation devices after the RMS simulation ends.
+
+        :return: None.
+        """
+        if len(self._fmu_cs_adapters) > 0:
+            close_rms_fmu_cs_devices(self)
+
+    def initialize_fmu_me_devices(self, x_snapshot: Vec, t: float = 0.0) -> None:
+        """
+        Initialize imported FMU Model Exchange devices before the RMS time loop starts.
+
+        :param x_snapshot: Initial accepted state vector.
+        :param t: Initial simulation time.
+        :return: None.
+        """
+        if len(self._fmu_me_adapters) > 0:
+            initialize_rms_fmu_me_devices(problem=self, x_snapshot=x_snapshot, time_value=t)
+        else:
+            self._fmu_me_initialized = True
+
+    def advance_fmu_me_devices(self, t: float, x_snapshot: Vec, h: float) -> None:
+        """
+        Advance imported FMU Model Exchange devices for one RMS communication step.
+
+        :param t: Current simulation time.
+        :param x_snapshot: Current accepted state vector.
+        :param h: RMS communication step.
+        :return: None.
+        """
+        if len(self._fmu_me_adapters) > 0:
+            advance_rms_fmu_me_devices(problem=self, time_value=t, x_snapshot=x_snapshot, step_size=h)
+
+    def close_fmu_me_devices(self) -> None:
+        """
+        Release imported FMU Model Exchange devices after the RMS simulation ends.
+
+        :return: None.
+        """
+        if len(self._fmu_me_adapters) > 0:
+            close_rms_fmu_me_devices(self)
 
     def get_dx(self, x: Vec, xn: Vec, dx: Vec, h: float) -> Vec:
         return self._derivative_fn(x, xn, dx, h)

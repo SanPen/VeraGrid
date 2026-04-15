@@ -46,7 +46,7 @@ from VeraGrid.Gui.Main.SubClasses.Model.compiled_arrays import CompiledArraysMai
 from VeraGrid.Gui.Main.object_select_window import ObjectSelectWindow, ListSelectWindow
 from VeraGrid.Gui.Diagrams.MapWidget.Tiles.TileProviders.cartodb import CartoDbTiles
 from VeraGrid.Gui.object_proxy_model import ObjectModelFilterProxy
-from VeraGrid.Gui.rms_events_editor_dialog import RmsEventDialogue, RmsEventsGroupsDialog
+from VeraGrid.Gui.rms_events_editor_dialog import DynamicEventDialogue, DynamicEventsGroupsDialog
 from VeraGrid.Gui.Diagrams.MapWidget.Substation.substation_graphic_item import SubstationGraphicItem
 from VeraGrid.Gui.ShortCircuitEditor.short_circuit_selector import ShortCircuitSelector
 from VeraGrid.Gui.general_dialogues import (CheckListDialogue, StartEndSelectionDialogue,
@@ -2798,10 +2798,10 @@ class DiagramsMain(CompiledArraysMain):
                     QtWidgets.QMessageBox.information(
                         self,
                         "No RMS Events Group",
-                        "No Rms Events Group found, please create one before adding an event."
+                        "No RMS Events Group found, please create one before adding an event."
                     )
 
-                    dialog = RmsEventsGroupsDialog(self)
+                    dialog = DynamicEventsGroupsDialog(self)
                     if dialog.exec():
                         name = dialog.get_name()
                         # build group
@@ -2811,10 +2811,10 @@ class DiagramsMain(CompiledArraysMain):
 
 
                 else:
-                    rms_events_dialog = RmsEventDialogue(circuit=self.circuit,
-                                                         parameters_list=[var for var in
+                    rms_events_dialog = DynamicEventDialogue(circuit=self.circuit,
+                                                             parameters_list=[var for var in
                                                                           target_device.rms_model.event_dict.keys()],
-                                                         target_device_name=target_device.type_name + ": " + target_device.name)
+                                                             target_device_name=target_device.type_name + ": " + target_device.name)
 
                     if rms_events_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
 
@@ -2822,6 +2822,61 @@ class DiagramsMain(CompiledArraysMain):
                         events_list = []
                         for i, event in enumerate(events_data["parameters"]):
                             events_list.append(dev.RmsEvent(device=target_device,
+                                                            parameter=events_data["parameters"][i],
+                                                            time=float(events_data["target_times"][i]),
+                                                            value=float(events_data["values"][i]),
+                                                            group=events_data["groups"][i]))
+
+                        for event in events_list:
+                            self.circuit.add_rms_event(event)
+
+            else:
+                raise ValueError(f"Select one and only one device to add event to")
+
+    def add_emt_event_to_selected(self) -> None:
+        """
+        Add EMT event to a selected device
+        """
+        if self.circuit.valid_for_simulation():
+
+            # get the selected device to apply event to
+            target_devices = self.get_selected_devices()
+
+            if len(target_devices) == 1:
+
+                target_device = target_devices[0]
+                # launch emt event editor dialogue
+
+                events_groups = self.circuit.emt_events_groups
+                if len(events_groups) == 0:
+
+                    QtWidgets.QMessageBox.information(
+                        self,
+                        "No EMT Events Group",
+                        "No EMT Events Group found, please create one before adding an event."
+                    )
+
+                    dialog = DynamicEventsGroupsDialog(self)
+                    if dialog.exec():
+                        name = dialog.get_name()
+                        # build group
+                        if name:
+                            self.circuit.add_emt_events_group(dev.EmtEventsGroup(idtag=None,
+                                                                                 name=name))
+
+
+                else:
+                    emt_events_dialog = DynamicEventDialogue(circuit=self.circuit,
+                                                         parameters_list=[var for var in
+                                                                          target_device.emt_model.event_dict.keys()],
+                                                         target_device_name=target_device.type_name + ": " + target_device.name)
+
+                    if emt_events_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
+
+                        events_data = emt_events_dialog.get_data()
+                        events_list = []
+                        for i, event in enumerate(events_data["parameters"]):
+                            events_list.append(dev.EmtEvent(device=target_device,
                                                             parameter=events_data["parameters"][i],
                                                             time=float(events_data["target_times"][i]),
                                                             value=float(events_data["values"][i]),

@@ -130,6 +130,24 @@ class ResultsMain(SimulationsMain):
                 # Go to the Dynamics tab
                 self.ui.resultsTabWidget.setCurrentIndex(1)
 
+            elif driver.tpe == SimulationTypes.EmtDynamic_run:
+                self.dynamic_results_handler = DynamicsResultsHandler(results=driver.results)
+
+                # set the groups combobox
+                self.ui.eventsGroupComboBox.setModel(gf.get_list_model(
+                    self.dynamic_results_handler.results.emt_events_group_names
+                ))
+
+                # Both tree views are owned by the handler because the handler owns the underlying state.
+                self.ui.dynamicsDeviceTreeView.setModel(self.dynamic_results_handler.get_view_model())
+                self.ui.dynamicsPlotsTreeView.setModel(self.dynamic_results_handler.get_plots_model())
+                self.dynamic_results_handler.get_plots_model().rowsInserted.connect(self.expand_dynamic_plots_tree)
+                # self.ui.dynamicsDeviceTreeView.expandAll()
+                self.ui.dynamicsPlotsTreeView.expandAll()
+
+                # Go to the Dynamics tab
+                self.ui.resultsTabWidget.setCurrentIndex(1)
+
             else:
                 # Go to the Table tab
                 self.ui.resultsTabWidget.setCurrentIndex(0)

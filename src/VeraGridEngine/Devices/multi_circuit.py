@@ -3297,6 +3297,9 @@ class MultiCircuit(Assets):
         """
         logger = Logger()
 
+        # TODO: when a device is added and then deleted in the gui it still appears in this lists
+        # and doesn't allow to continue
+
         for elm in self.get_branches_iter():
             if elm.emt_model.empty():
                 logger.add_error("Missing EMT model",

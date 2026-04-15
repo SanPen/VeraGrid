@@ -17,11 +17,7 @@ from VeraGridEngine.basic_structures import Vec
 from VeraGridEngine.enumerations import ProceduralLogicType
 
 
-ProceduralLogicData = Dict[str, Any]
-VarRemap = Dict[Expr | str, Expr]
-
-
-def _expr_like_to_dict(expr: Expr | Comparison) -> ProceduralLogicData:
+def _expr_like_to_dict(expr: Expr | Comparison) -> Dict[str, Any]:
     """
     Serialize a symbolic expression or comparison used by procedural logic.
 
@@ -29,7 +25,7 @@ def _expr_like_to_dict(expr: Expr | Comparison) -> ProceduralLogicData:
     :return: Dictionary with enough information to rebuild the expression later.
     """
     if isinstance(expr, Comparison):
-        rhs: Expr | float | int = expr.rhs
+        rhs: Expr | float | int | complex = expr.rhs
         if isinstance(rhs, Expr):
             rhs_expr: Expr = rhs
             rhs_data: Any = rhs_expr.to_dict()
@@ -48,7 +44,7 @@ def _expr_like_to_dict(expr: Expr | Comparison) -> ProceduralLogicData:
     }
 
 
-def _expr_like_from_dict(data: ProceduralLogicData) -> Expr | Comparison:
+def _expr_like_from_dict(data: Dict[str, Any]) -> Expr | Comparison:
     """
     Deserialize a symbolic expression or comparison used by procedural logic.
 
@@ -73,7 +69,7 @@ def _expr_like_from_dict(data: ProceduralLogicData) -> Expr | Comparison:
     raise ValueError(f"Unsupported procedural expression kind '{kind}'")
 
 
-def _subs_expr_like(expr: Expr | Comparison, mapping: VarRemap) -> Expr | Comparison:
+def _subs_expr_like(expr: Expr | Comparison, mapping: Dict[Expr | str, Expr]) -> Expr | Comparison:
     """
     Apply a variable substitution to a procedural expression.
 
@@ -87,7 +83,7 @@ def _subs_expr_like(expr: Expr | Comparison, mapping: VarRemap) -> Expr | Compar
     return expr.subs(mapping)
 
 
-def _build_name_mapping(var_mapping: VarRemap) -> Dict[str, str]:
+def _build_name_mapping(var_mapping: Dict[Expr | str, Expr]) -> Dict[str, str]:
     """
     Build a name-to-name remapping from a generic variable substitution map.
 
@@ -106,7 +102,7 @@ def _build_name_mapping(var_mapping: VarRemap) -> Dict[str, str]:
     return mapping
 
 
-def _get_expr_like_field(data: ProceduralLogicData, key: str) -> ProceduralLogicData:
+def _get_expr_like_field(data: Dict[str, Any], key: str) -> Dict[str, Any]:
     """
     Return one serialized procedural-expression field as a dictionary.
 
@@ -114,7 +110,7 @@ def _get_expr_like_field(data: ProceduralLogicData, key: str) -> ProceduralLogic
     :param key: Field name containing one serialized expression.
     :return: Serialized expression dictionary.
     """
-    field_data: ProceduralLogicData = data[key]
+    field_data: Dict[str, Any] = data[key]
     return field_data
 
 
@@ -294,7 +290,7 @@ class ProceduralLogicBase:
     """
 
     __slots__ = ["name", "_problem", "_sample_time"]
-    logic_tpe = ProceduralLogicType.Base
+    logic_tpe = ProceduralLogicType.Base  # TODO: WTF is this? remove
 
     def __init__(self, name: str = "") -> None:
         self.name = name
@@ -334,7 +330,7 @@ class ProceduralLogicBase:
         _unused = t_target
         return None
 
-    def remap(self, var_mapping: VarRemap) -> "ProceduralLogicBase":
+    def remap(self, var_mapping: Dict[Expr | str, Expr]) -> "ProceduralLogicBase":
         """
         Clone one logic entry under a variable remapping.
 
@@ -450,7 +446,7 @@ class FixedSampleLogic(ProceduralLogicBase):
     """
 
     __slots__ = ["output_var_name", "condition_expr", "output_idx", "initialized"]
-    logic_tpe = ProceduralLogicType.FixedSample
+    logic_tpe = ProceduralLogicType.FixedSample # TODO: Remove
 
     def __init__(self, output_var_name: str, condition_expr: Expr | Comparison, name: str = "") -> None:
         super().__init__(name=name)
@@ -486,7 +482,7 @@ class FixedSampleLogic(ProceduralLogicBase):
         params[self.output_idx] = 1.0 if self._eval_bool(self.condition_expr, t, x, params) else 0.0
         self.initialized = True
 
-    def remap(self, var_mapping: VarRemap) -> "FixedSampleLogic":
+    def remap(self, var_mapping: Dict[Expr | str, Expr]) -> "FixedSampleLogic":
         """
         Clone the logic under a variable remapping.
 
@@ -507,7 +503,7 @@ class SampledValueLogic(ProceduralLogicBase):
     """
 
     __slots__ = ["output_var_name", "source_expr", "output_idx"]
-    logic_tpe = ProceduralLogicType.SampledValue
+    logic_tpe = ProceduralLogicType.SampledValue  # TODO: remove
 
     def __init__(self, output_var_name: str, source_expr: Expr | Comparison, name: str = "") -> None:
         super().__init__(name=name)
@@ -537,7 +533,7 @@ class SampledValueLogic(ProceduralLogicBase):
         """
         params[self.output_idx] = self._eval_numeric(self.source_expr, t, x, params)
 
-    def remap(self, var_mapping: VarRemap) -> "SampledValueLogic":
+    def remap(self, var_mapping: Dict[Expr | str, Expr]) -> "SampledValueLogic":
         """
         Clone the logic under a variable remapping.
 
@@ -558,7 +554,7 @@ class FlipFlopLogic(ProceduralLogicBase):
     """
 
     __slots__ = ["output_var_name", "set_expr", "reset_expr", "output_idx", "state", "initialized"]
-    logic_tpe = ProceduralLogicType.FlipFlop
+    logic_tpe = ProceduralLogicType.FlipFlop  # TODO: remove
 
     def __init__(
         self,
@@ -617,7 +613,7 @@ class FlipFlopLogic(ProceduralLogicBase):
         # The runtime parameter vector always exposes the latest latch state.
         params[self.output_idx] = self.state
 
-    def remap(self, var_mapping: VarRemap) -> "FlipFlopLogic":
+    def remap(self, var_mapping: Dict[Expr | str, Expr]) -> "FlipFlopLogic":
         """
         Clone the logic under a variable remapping.
 
@@ -648,7 +644,7 @@ class AnalogFlipFlopLogic(ProceduralLogicBase):
         "initialized",
         "held_value",
     ]
-    logic_tpe = ProceduralLogicType.AnalogFlipFlop
+    logic_tpe = ProceduralLogicType.AnalogFlipFlop  # TODO: remove
 
     def __init__(
         self,
@@ -714,7 +710,7 @@ class AnalogFlipFlopLogic(ProceduralLogicBase):
         # Expose the held value when latched high, otherwise expose the live input.
         params[self.output_idx] = self.held_value if self.state > 0.5 else input_value
 
-    def remap(self, var_mapping: VarRemap) -> "AnalogFlipFlopLogic":
+    def remap(self, var_mapping: Dict[Expr | str, Expr]) -> "AnalogFlipFlopLogic":
         """
         Clone the logic under a variable remapping.
 
@@ -749,7 +745,7 @@ class PickupDropoffLogic(ProceduralLogicBase):
         "pending_pickup_time",
         "pending_drop_time",
     ]
-    logic_tpe = ProceduralLogicType.PickupDropoff
+    logic_tpe = ProceduralLogicType.PickupDropoff  # TODO: remove
 
     def __init__(
         self,
@@ -881,7 +877,7 @@ class PickupDropoffLogic(ProceduralLogicBase):
 
         params[self.output_idx] = self.state
 
-    def remap(self, var_mapping: VarRemap) -> "PickupDropoffLogic":
+    def remap(self, var_mapping: Dict[Expr | str, Expr]) -> "PickupDropoffLogic":
         """
         Clone the logic under a variable remapping.
 
@@ -912,7 +908,7 @@ class ResetOnRisingEdgeLogic(ProceduralLogicBase):
         "initialized",
         "last_reset_high",
     ]
-    logic_tpe = ProceduralLogicType.ResetOnRisingEdge
+    logic_tpe = ProceduralLogicType.ResetOnRisingEdge  # TODO: remove
 
     def __init__(
         self,
@@ -973,7 +969,7 @@ class ResetOnRisingEdgeLogic(ProceduralLogicBase):
 
         self.last_reset_high = reset_high
 
-    def remap(self, var_mapping: VarRemap) -> "ResetOnRisingEdgeLogic":
+    def remap(self, var_mapping: Dict[Expr | str, Expr]) -> "ResetOnRisingEdgeLogic":
         """
         Clone the logic under a variable remapping.
 
@@ -1439,7 +1435,7 @@ class DelayedThresholdLatchLogic(ProceduralLogicBase):
             np.asarray(self.trace_mode, dtype=float),
         )
 
-    def remap(self, var_mapping: VarRemap) -> "DelayedThresholdLatchLogic":
+    def remap(self, var_mapping: Dict[Expr | str, Expr]) -> "DelayedThresholdLatchLogic":
         """
         Clone the logic under a variable remapping.
 
@@ -1507,7 +1503,7 @@ class BlockProceduralLogicUpdater(BoundaryUpdateWrapper):
         return min(candidates)
 
 
-def _base_logic_data(entry: ProceduralLogicBase) -> ProceduralLogicData:
+def _base_logic_data(entry: ProceduralLogicBase) -> Dict[str, Any]:
     """
     Serialize the common metadata shared by all procedural logic entries.
 
@@ -1520,14 +1516,14 @@ def _base_logic_data(entry: ProceduralLogicBase) -> ProceduralLogicData:
     }
 
 
-def procedural_logic_entry_to_dict(entry: ProceduralLogicBase) -> ProceduralLogicData:
+def procedural_logic_entry_to_dict(entry: ProceduralLogicBase) -> Dict[str, Any]:
     """
     Serialize one procedural logic entry.
 
     :param entry: Procedural logic entry.
     :return: Serialized logic dictionary.
     """
-    data: ProceduralLogicData = _base_logic_data(entry)
+    data: Dict[str, Any] = _base_logic_data(entry)
 
     if isinstance(entry, FixedSampleLogic):
         data.update({
@@ -1584,7 +1580,7 @@ def procedural_logic_entry_to_dict(entry: ProceduralLogicBase) -> ProceduralLogi
         raise ValueError(f"Unsupported procedural logic entry '{type(entry).__name__}'")
 
 
-def _fixed_sample_logic_from_dict(data: ProceduralLogicData) -> FixedSampleLogic:
+def _fixed_sample_logic_from_dict(data: Dict[str, Any]) -> FixedSampleLogic:
     """
     Deserialize one fixed-sample procedural logic entry.
 
@@ -1598,7 +1594,7 @@ def _fixed_sample_logic_from_dict(data: ProceduralLogicData) -> FixedSampleLogic
     )
 
 
-def _sampled_value_logic_from_dict(data: ProceduralLogicData) -> SampledValueLogic:
+def _sampled_value_logic_from_dict(data: Dict[str, Any]) -> SampledValueLogic:
     """
     Deserialize one sampled-value procedural logic entry.
 
@@ -1612,7 +1608,7 @@ def _sampled_value_logic_from_dict(data: ProceduralLogicData) -> SampledValueLog
     )
 
 
-def _flipflop_logic_from_dict(data: ProceduralLogicData) -> FlipFlopLogic:
+def _flipflop_logic_from_dict(data: Dict[str, Any]) -> FlipFlopLogic:
     """
     Deserialize one flip-flop procedural logic entry.
 
@@ -1627,7 +1623,7 @@ def _flipflop_logic_from_dict(data: ProceduralLogicData) -> FlipFlopLogic:
     )
 
 
-def _analog_flipflop_logic_from_dict(data: ProceduralLogicData) -> AnalogFlipFlopLogic:
+def _analog_flipflop_logic_from_dict(data: Dict[str, Any]) -> AnalogFlipFlopLogic:
     """
     Deserialize one analog flip-flop procedural logic entry.
 
@@ -1643,7 +1639,7 @@ def _analog_flipflop_logic_from_dict(data: ProceduralLogicData) -> AnalogFlipFlo
     )
 
 
-def _pickup_dropoff_logic_from_dict(data: ProceduralLogicData) -> PickupDropoffLogic:
+def _pickup_dropoff_logic_from_dict(data: Dict[str, Any]) -> PickupDropoffLogic:
     """
     Deserialize one pickup/dropoff procedural logic entry.
 
@@ -1659,7 +1655,7 @@ def _pickup_dropoff_logic_from_dict(data: ProceduralLogicData) -> PickupDropoffL
     )
 
 
-def _reset_on_rising_edge_logic_from_dict(data: ProceduralLogicData) -> ResetOnRisingEdgeLogic:
+def _reset_on_rising_edge_logic_from_dict(data: Dict[str, Any]) -> ResetOnRisingEdgeLogic:
     """
     Deserialize one reset-on-rising-edge procedural logic entry.
 
@@ -1674,7 +1670,7 @@ def _reset_on_rising_edge_logic_from_dict(data: ProceduralLogicData) -> ResetOnR
     )
 
 
-def _delayed_threshold_latch_logic_from_dict(data: ProceduralLogicData) -> DelayedThresholdLatchLogic:
+def _delayed_threshold_latch_logic_from_dict(data: Dict[str, Any]) -> DelayedThresholdLatchLogic:
     """
     Deserialize one delayed-threshold-latch procedural logic entry.
 
@@ -1695,7 +1691,7 @@ def _delayed_threshold_latch_logic_from_dict(data: ProceduralLogicData) -> Delay
     )
 
 
-def build_procedural_logic_entry(data: ProceduralLogicData) -> ProceduralLogicBase:
+def build_procedural_logic_entry(data: Dict[str, Any]) -> ProceduralLogicBase:
     """
     Deserialize one procedural logic entry.
 
@@ -1723,7 +1719,7 @@ def build_procedural_logic_entry(data: ProceduralLogicData) -> ProceduralLogicBa
         raise ValueError(f"Unsupported procedural logic type '{logic_tpe_text}'")
 
 
-def procedural_logic_to_dict(entries: List[ProceduralLogicBase]) -> List[ProceduralLogicData]:
+def procedural_logic_to_dict(entries: List[ProceduralLogicBase]) -> List[Dict[str, Any]]:
     """
     Serialize a list of procedural logic entries.
 
@@ -1733,7 +1729,7 @@ def procedural_logic_to_dict(entries: List[ProceduralLogicBase]) -> List[Procedu
     return [procedural_logic_entry_to_dict(entry) for entry in entries]
 
 
-def procedural_logic_from_dict(entries: List[ProceduralLogicData]) -> List[ProceduralLogicBase]:
+def procedural_logic_from_dict(entries: List[Dict[str, Any]]) -> List[ProceduralLogicBase]:
     """
     Deserialize a list of procedural logic entries.
 
@@ -1743,7 +1739,8 @@ def procedural_logic_from_dict(entries: List[ProceduralLogicData]) -> List[Proce
     return [build_procedural_logic_entry(item) for item in entries]
 
 
-def clone_procedural_logic_entries(entries: List[ProceduralLogicBase], var_mapping: VarRemap) -> List[ProceduralLogicBase]:
+def clone_procedural_logic_entries(entries: List[ProceduralLogicBase],
+                                   var_mapping: Dict[Expr | str, Expr]) -> List[ProceduralLogicBase]:
     """
     Clone procedural logic entries under a variable remapping.
 
@@ -1764,4 +1761,5 @@ def build_boundary_updater_from_block(problem: EmtProblemTemplate) -> Optional[B
     entries: List[ProceduralLogicBase] = problem.sys_block.procedural_logic
     if len(entries) == 0:
         return None
-    return BlockProceduralLogicUpdater(problem, entries)
+    return BlockProceduralLogicUpdater(problem=problem,
+                                       logic_entries=entries)

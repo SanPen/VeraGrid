@@ -1,5 +1,5 @@
-from .api import export_fmu
-from .config import ExportConfig, IntegrationMethod, InterfaceType, TargetPlatform
+from VeraGridEngine.IO.fmu.exporter.api import export_fmu
+from VeraGridEngine.IO.fmu.exporter.config import ExportConfig, IntegrationMethod, InterfaceType, TargetPlatform
 
 __all__ = [
     "ExportConfig",

@@ -4,14 +4,22 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-import copy
 from typing import List, Dict, Any, Tuple, TYPE_CHECKING
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
+from VeraGridEngine.Devices.Diagrams.base_diagram import copy_diagrams
 from VeraGridEngine.enumerations import SimulationTypes
 
 if TYPE_CHECKING:
     from VeraGridEngine.Simulations.types import DRIVER_OBJECTS
     from VeraGridEngine.Simulations.driver_template import DriverToSave
+
+
+def _copy_diagrams_for_circuit(diagrams: list[Any], circuit: MultiCircuit) -> list[Any]:
+    """
+    Copy diagrams and rebind their API object pointers to a target circuit.
+    """
+    obj_dict = circuit.get_all_elements_dict_by_type(add_locations=True)
+    return copy_diagrams(diagrams=diagrams, obj_dict=obj_dict)
 
 
 class ScenarioNode:
@@ -51,7 +59,7 @@ class ScenarioNode:
         """
         self.node_id: int = node_id
         self.circuit: MultiCircuit = data
-        self.diagrams: list[Any] = copy.deepcopy(diagrams if diagrams is not None else data.diagrams)
+        self.diagrams: list[Any] = copy_diagrams(diagrams if diagrams is not None else data.diagrams)
         self.parent: ScenarioNode | None = parent
         self.children: list[ScenarioNode] = children if children is not None else list()
 
@@ -219,7 +227,7 @@ class MultiVerse:
         """
         if node.parent is None:
             composed = node.circuit.copy()
-            composed.diagrams = copy.deepcopy(node.diagrams)
+            composed.diagrams = _copy_diagrams_for_circuit(diagrams=node.diagrams, circuit=composed)
             return composed
 
         # Collect the path from this node up to (but not including) the root
@@ -240,7 +248,7 @@ class MultiVerse:
 
         # Preserve the target scenario's name (composed inherits root's name otherwise)
         composed.name = node.circuit.name
-        composed.diagrams = copy.deepcopy(node.diagrams)
+        composed.diagrams = _copy_diagrams_for_circuit(diagrams=node.diagrams, circuit=composed)
 
         return composed
 
@@ -253,7 +261,7 @@ class MultiVerse:
         - non-roots are reconstructed from their delta chain
         """
         if node.parent is None:
-            node.circuit.diagrams = copy.deepcopy(node.diagrams)
+            node.circuit.diagrams = _copy_diagrams_for_circuit(diagrams=node.diagrams, circuit=node.circuit)
             return node.circuit
         return self.checkout(node)
 
@@ -268,7 +276,7 @@ class MultiVerse:
         composed.name = scenario_name
 
         if node.parent is None:
-            composed.diagrams = copy.deepcopy(composed.diagrams)
+            composed.diagrams = _copy_diagrams_for_circuit(diagrams=composed.diagrams, circuit=composed)
             return composed
 
         parent_circuit: MultiCircuit = self.checkout(node.parent)
@@ -277,7 +285,7 @@ class MultiVerse:
             force_second_pass=True,
         )
         delta.name = scenario_name
-        delta.diagrams = copy.deepcopy(composed.diagrams)
+        delta.diagrams = _copy_diagrams_for_circuit(diagrams=composed.diagrams, circuit=composed)
         return delta
 
     def _store_node_circuit_and_diagrams(self, node: ScenarioNode, stored_circuit: MultiCircuit) -> None:
@@ -285,7 +293,7 @@ class MultiVerse:
         Persist a node's storage payload and keep node-owned diagrams in sync with it.
         """
         node.circuit = stored_circuit
-        node.diagrams = copy.deepcopy(stored_circuit.diagrams)
+        node.diagrams = copy_diagrams(stored_circuit.diagrams)
 
     def _store_composed_node_data(self, node: ScenarioNode, composed: MultiCircuit) -> None:
         """
@@ -310,7 +318,7 @@ class MultiVerse:
         - how scenario-owned diagrams are copied into the active circuit
         """
         composed = self._compose_node(node)
-        composed.diagrams = copy.deepcopy(node.diagrams)
+        composed.diagrams = _copy_diagrams_for_circuit(diagrams=node.diagrams, circuit=composed)
         self._current_node = node
         self._current_model = composed
         return composed
@@ -370,7 +378,10 @@ class MultiVerse:
 
         for child in direct_children:
             merged_parent_model.merge_circuit(new_grid=child.circuit)
-            merged_parent_model.diagrams = copy.deepcopy(child.diagrams)
+            merged_parent_model.diagrams = _copy_diagrams_for_circuit(
+                diagrams=child.diagrams,
+                circuit=merged_parent_model,
+            )
 
         rebased_grandchildren: list[tuple[ScenarioNode, MultiCircuit]] = list()
         for child in direct_children:
@@ -440,7 +451,7 @@ class MultiVerse:
         node_diagrams: list[Any] | None = None
         if parent_id is not None:
             parent = self.get_node(parent_id)
-            node_diagrams = copy.deepcopy(parent.diagrams)
+            node_diagrams = copy_diagrams(parent.diagrams)
 
         node: ScenarioNode = ScenarioNode(
             node_id=self._generate_id(),
@@ -681,9 +692,6 @@ class MultiVerse:
         multiverse_drivers_data: Dict[str, List[DriverToSave]] = dict()
 
         for node in self.iter_nodes_depth_first():
-            # save_grid = node.circuit.copy()
-            # save_grid.diagrams = copy.deepcopy(node.diagrams)
-
             multiverse_node_data[node.node_id] = {
                 "node_id": node.node_id,
                 "circuit_idtag": node.circuit.idtag,

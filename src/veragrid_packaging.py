@@ -117,11 +117,11 @@ def get_wheel_info():
     return val
 
 
-def check_ext(filename, ext_filter) -> bool:
+def check_ext(filename: str, ext_filter: List[str]) -> bool:
     """
     Check of the file complies with the list of extensions
     :param filename: filename
-    :param ext_filter: list of extnsions
+    :param ext_filter: list of extensions
     :return: true/false
     """
     for ext in ext_filter:
@@ -130,13 +130,16 @@ def check_ext(filename, ext_filter) -> bool:
     return False
 
 
-def find_pkg_files(path: str, ext_filter=['.py']) -> List[Tuple[str, str]]:
+def find_pkg_files(path: str, ext_filter: List[str]) -> List[Tuple[str, str]]:
     """
     Get list
     :param path: path to traverse
     :param ext_filter: extensions of files to include
     :return: list of [filename, complete path
     """
+    if ext_filter is None:
+        ext_filter = ['py']
+
     files_list = list()
     for (dirpath, dirnames, filenames) in os.walk(path):
         for fname in filenames:
@@ -162,7 +165,7 @@ def build_tar_gz_pkg(pkg_name: str,
                      provides_extra: str,
                      long_description: str,
                      folder_to_save='dist',
-                     ext_filter=['py'],
+                     ext_filter: List[str] | None= None,
                      extra_files=()):
     """
 
@@ -187,6 +190,9 @@ def build_tar_gz_pkg(pkg_name: str,
     """
     pkg_name2 = pkg_name.lower() + '-' + version
     filename = pkg_name2 + '.tar.gz'
+
+    if ext_filter is None:
+        ext_filter = ['py']
 
     if not os.path.exists(folder_to_save):
         os.makedirs(folder_to_save)
@@ -254,7 +260,7 @@ def build_wheel(pkg_name: str,
                 provides_extra: str,
                 long_description: str,
                 folder_to_save='dist',
-                ext_filter=['py'],
+                ext_filter: List[str] | None= None,
                 extra_files=()):
     """
 
@@ -280,6 +286,9 @@ def build_wheel(pkg_name: str,
 
     if not os.path.exists(folder_to_save):
         os.makedirs(folder_to_save)
+
+    if ext_filter is None:
+        ext_filter = ['py']
 
     pkg_name2 = pkg_name + '-' + version
     filename = pkg_name2 + '-py3-none-any.whl'

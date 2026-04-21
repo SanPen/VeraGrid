@@ -20,7 +20,7 @@ from VeraGridEngine.Templates.templates_common_functions import (tf_to_block, tf
 
 
 
-def get_genqec_rms(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
+def get_genqec_rms(vfactory: VarFactory, name: str = "Genqec rms template") -> RmsModelTemplate:
     """
      generator with quadratic saturation
     """

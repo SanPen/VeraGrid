@@ -19,7 +19,8 @@ class BackEulerImplicitIntegration:
                  t0: float,
                  t_end: float,
                  h: float,
-                 max_iter: int):
+                 max_iter: int,
+                 tolerance: float = 1e-7):
         """
         Initializes an object to solve a given DAE (Differential-Algebraic Equation) problem using numerical
         methods. This constructor sets up the time grid and prepares storage for results.
@@ -47,6 +48,7 @@ class BackEulerImplicitIntegration:
         self.steps = int(np.ceil((t_end - t0) / h))
         self.t: Vec = np.empty(self.steps + 1)
         self.y: Mat = np.empty((self.steps + 1, self.problem.get_all_vars_number()))
+        self.tol = tolerance
 
     def _rhs_implicit(self,
                       x: Vec,
@@ -116,7 +118,7 @@ class BackEulerImplicitIntegration:
         :return:
         """
         converged: bool = False
-        well_initialized: bool  = True
+        well_initialized: bool = True
 
         x0: Vec = self.problem.get_x0()
 
@@ -149,12 +151,12 @@ class BackEulerImplicitIntegration:
                 n_iter = 0
                 current_time = self.t[step_idx]
                 dx_last = dx
-                self.problem.update_variable_params(t=current_time)
+                self.problem.update_variable_params(t=current_time, x_snapshot=self.y[step_idx, :])
 
                 xn = self.y[step_idx, :]
                 self.problem.advance_fmu_cs_devices(t=current_time, x_snapshot=xn, h=self.h)
                 self.problem.advance_fmu_me_devices(t=current_time, x_snapshot=xn, h=self.h)
-                tol = 1e-7
+                tol = self.tol
 
                 # Report progress
                 self.problem.report_progress2(step_idx, self.steps)
@@ -177,16 +179,14 @@ class BackEulerImplicitIntegration:
                     converged = residual < tol
                     Jf = self._jacobian_implicit(x_new, dx, self.h)
 
-                    ### print info ###
+                    # Step-0 diagnostic logging
                     if step_idx == 0:
-                        Jf = self._jacobian_implicit(x_new, dx, self.h)
-                        delta = sp.linalg.spsolve(Jf, -rhs)
                         if converged:
                             print("System well initialized.")
                             print(f"x is {x_new}")
                         else:
                             well_initialized = False
-                            if residual > 1e-4:
+                            if residual > tol:
                                 print(f"System requires iterative initialization. Initial DAE residual is {residual}.")
                                 print(f'rhs is {rhs}')
                                 non_zero_indexes = np.where(np.abs(rhs) > 1e-7)[0]
@@ -195,14 +195,10 @@ class BackEulerImplicitIntegration:
                                 for i in non_zero_indexes:
                                     eq = all_eq[i]
                                     print(f"eq {eq} with error {rhs[i]}")
-                                exit()
                             else:
                                 pass
 
-
                     if not converged:
-
-                        solved = False
                         linear_start = time.time()
                         delta = sp.linalg.spsolve(Jf, -rhs)
                         linear_end = time.time()
@@ -221,8 +217,7 @@ class BackEulerImplicitIntegration:
                                 print(f"\nSingular direction {i}, σ={s[i]:.3e}")
                                 for j in dominant_idx:
                                     if j < self.problem.get_algebraic_var_number():
-                                        algeb_vars = self.problem.get_algebraic_vars
-                                        var_name = algeb_vars[j].name
+                                        var_name = self.problem.algebraic_vars[j].name
                                         print(f"  {var_name:20s} {v[j]:+.3e}")
                             print("Using LSQR")
                             print(f"residual is {residual} for timestep {step_idx}")
@@ -239,11 +234,6 @@ class BackEulerImplicitIntegration:
                                 f"Jacobian shape = {Jf.shape}\n"
                                 f"NaNs found at indices {nan_indices.tolist()} in equations:\n{nan_eqs}",
                             )
-
-                        if not solved:
-                            print("Failed to solve linear system even with regularization.")
-                            break
-
 
                         x_new += delta
                         n_iter += 1

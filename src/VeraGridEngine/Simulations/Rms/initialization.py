@@ -76,17 +76,22 @@ def build_init_vars_vector(uid2idx_vars, mapping: dict[Var, float]) -> np.ndarra
     return x
 
 def solve_secant(eq_fn, x, idx, event_params_array, params_array,
-                 tol=1e-8, max_iter=50):
-    x0 = float(x[idx]) if np.isfinite(x[idx]) else 1.0
+                 tol=1e-8, max_iter=50, seed: float | None = None, fallback_seed: float = 10.0):
+    if seed is not None and np.isfinite(seed):
+        x0 = float(seed)
+    elif np.isfinite(x[idx]):
+        x0 = float(x[idx])
+    else:
+        x0 = float(fallback_seed)
+
     x1 = x0 + 0.1 if abs(x0) < 1e-6 else x0 * 1.1
-    last_finite = x0
 
     for _ in range(max_iter):
 
         x[idx] = x0
         f0 = float(eq_fn(x, np.ones(1), event_params_array, params_array)[0]) - x0
         if not np.isfinite(f0):
-            x0 = last_finite
+            x0 = float(fallback_seed)
             x1 = x0 + 0.1 if abs(x0) < 1e-6 else x0 * 1.1
             continue
 
@@ -105,13 +110,16 @@ def solve_secant(eq_fn, x, idx, event_params_array, params_array,
 
         x2 = x1 - f1 * (x1 - x0) / denom
         if not np.isfinite(x2):
-            return last_finite
+            raise ValueError(
+                f"Secant init produced non-finite iterate at idx={idx}: x0={x0}, x1={x1}, x2={x2}"
+            )
 
         x0, x1 = x1, x2
-        if np.isfinite(x1):
-            last_finite = x1
 
-    return last_finite if np.isfinite(last_finite) else x0
+    if not np.isfinite(x1):
+        raise ValueError(f"Secant init failed to converge to a finite value at idx={idx}")
+
+    return x1
 
 def solve_newton(eq_fn, x, idx, event_params_array, params_array,
                  dummy_diff,
@@ -394,7 +402,8 @@ def init_explicit(mdl: Block,
                     event_params_array=event_params_array,
                     params_array=params_array,
                     tol=1e-8,
-                    max_iter=50
+                    max_iter=50,
+                    seed=init_guess.get(var.uid, None),
                 )
 
                 if not np.isfinite(init_val):

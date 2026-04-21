@@ -10,7 +10,7 @@ import matplotlib.colors as plt_colors
 from typing import List, Tuple
 
 from VeraGridEngine.Simulations.results_table import ResultsTable
-from VeraGridEngine.Simulations.results_template import ResultsTemplate
+from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 from VeraGridEngine.basic_structures import IntVec, Vec, StrVec, CxVec, ConvergenceReport, Logger
 from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
@@ -140,6 +140,49 @@ class NumericPowerFlowResults:
 
 
 class PowerFlowResults(ResultsTemplate):
+
+    LOCAL_RESULTS_DECLARATIONS = (
+        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='hvdc_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='gen_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='batt_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='sh_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list()),
+        ResultsProperty(name='F', tpe=IntVec, old_names=list()),
+        ResultsProperty(name='T', tpe=IntVec, old_names=list()),
+        ResultsProperty(name='hvdc_F', tpe=IntVec, old_names=list()),
+        ResultsProperty(name='hvdc_T', tpe=IntVec, old_names=list()),
+        ResultsProperty(name='bus_area_indices', tpe=IntVec, old_names=list()),
+        ResultsProperty(name='area_names', tpe=IntVec, old_names=list()),
+        ResultsProperty(name='Sbus', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='voltage', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='Sf', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='St', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='If', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='It', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='tap_module', tpe=Vec, old_names=list()),
+        ResultsProperty(name='tap_angle', tpe=Vec, old_names=list()),
+        ResultsProperty(name='Vbranch', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='loading', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='losses', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='losses_hvdc', tpe=Vec, old_names=list()),
+        ResultsProperty(name='Pf_hvdc', tpe=Vec, old_names=list()),
+        ResultsProperty(name='Pt_hvdc', tpe=Vec, old_names=list()),
+        ResultsProperty(name='loading_hvdc', tpe=Vec, old_names=list()),
+        ResultsProperty(name='losses_vsc', tpe=Vec, old_names=list()),
+        ResultsProperty(name='Pfp_vsc', tpe=Vec, old_names=list()),
+        ResultsProperty(name='Pfn_vsc', tpe=Vec, old_names=list()),
+        ResultsProperty(name='St_vsc', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='If_vsc', tpe=Vec, old_names=list()),
+        ResultsProperty(name='It_vsc', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='loading_vsc', tpe=Vec, old_names=list()),
+        ResultsProperty(name='gen_q', tpe=Vec, old_names=list()),
+        ResultsProperty(name='battery_q', tpe=Vec, old_names=list()),
+        ResultsProperty(name='shunt_q', tpe=Vec, old_names=list()),
+        ResultsProperty(name='three_phase', tpe=bool, old_names=list()),
+    )
+
     __slots__ = (
         "bus_names",
         "branch_names",
@@ -328,54 +371,6 @@ class PowerFlowResults(ResultsTemplate):
 
         self.three_phase: bool = False
 
-        self.register(name='bus_names', tpe=StrVec)
-        self.register(name='branch_names', tpe=StrVec)
-        self.register(name='hvdc_names', tpe=StrVec)
-
-        self.register(name='gen_names', tpe=StrVec)
-        self.register(name='batt_names', tpe=StrVec)
-        self.register(name='sh_names', tpe=StrVec)
-
-        self.register(name='bus_types', tpe=IntVec)
-
-        self.register(name='F', tpe=IntVec)
-        self.register(name='T', tpe=IntVec)
-        self.register(name='hvdc_F', tpe=IntVec)
-        self.register(name='hvdc_T', tpe=IntVec)
-        self.register(name='bus_area_indices', tpe=IntVec)
-        self.register(name='area_names', tpe=IntVec)
-
-        self.register(name='Sbus', tpe=CxVec)
-        self.register(name='voltage', tpe=CxVec)
-
-        self.register(name='Sf', tpe=CxVec)
-        self.register(name='St', tpe=CxVec)
-        self.register(name='If', tpe=CxVec)
-        self.register(name='It', tpe=CxVec)
-        self.register(name='tap_module', tpe=Vec)
-        self.register(name='tap_angle', tpe=Vec)
-        self.register(name='Vbranch', tpe=CxVec)
-        self.register(name='loading', tpe=CxVec)
-        self.register(name='losses', tpe=CxVec)
-
-        self.register(name='losses_hvdc', tpe=Vec)
-        self.register(name='Pf_hvdc', tpe=Vec)
-        self.register(name='Pt_hvdc', tpe=Vec)
-        self.register(name='loading_hvdc', tpe=Vec)
-
-        self.register(name='losses_vsc', tpe=Vec)
-        self.register(name='Pfp_vsc', tpe=Vec)
-        self.register(name='Pfn_vsc', tpe=Vec)
-        self.register(name='St_vsc', tpe=CxVec)
-        self.register(name='If_vsc', tpe=Vec)
-        self.register(name='It_vsc', tpe=CxVec)
-        self.register(name='loading_vsc', tpe=Vec)
-
-        self.register(name='gen_q', tpe=Vec)
-        self.register(name='battery_q', tpe=Vec)
-        self.register(name='shunt_q', tpe=Vec)
-
-        self.register(name='three_phase', tpe=bool)
 
     def apply_new_rates(self, nc: NumericalCircuit):
         """

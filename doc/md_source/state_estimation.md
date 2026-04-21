@@ -175,6 +175,56 @@ The result object also stores `convergence_reports`, one per island, which conta
 - If the network splits into islands, each island is solved separately and has its own convergence report.
 - The quality of the estimate depends strongly on both the placement and the uncertainty values of the measurements.
 
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+
+## Registered Result Properties
+
+### `StateEstimationResults` registered properties
+
+The state-estimation result stores estimated network quantities and bad-data status.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `bus_names` | `StrVec` | Names aligned with bus-indexed result arrays. |
+| `branch_names` | `StrVec` | Names aligned with branch-indexed result arrays. |
+| `hvdc_names` | `StrVec` | Names aligned with HVDC line-indexed result arrays. |
+| `gen_names` | `StrVec` | Names aligned with generator-indexed result arrays. |
+| `batt_names` | `StrVec` | Names aligned with battery-indexed result arrays. |
+| `sh_names` | `StrVec` | Names aligned with shunt-indexed result arrays. |
+| `bus_types` | `IntVec` | Bus type code used by the solved numerical model. |
+| `F` | `IntVec` | Branch from-bus index for each branch. |
+| `T` | `IntVec` | Branch to-bus index for each branch. |
+| `hvdc_F` | `IntVec` | HVDC from-bus index for each HVDC line. |
+| `hvdc_T` | `IntVec` | HVDC to-bus index for each HVDC line. |
+| `bus_area_indices` | `IntVec` | Area index assigned to each bus. |
+| `area_names` | `IntVec` | Area names or area identifiers used for inter-area aggregation. |
+| `Sbus` | `CxVec` | Complex bus power injection. |
+| `voltage` | `CxVec` | Complex bus voltage solution. |
+| `Sf` | `CxVec` | Complex branch power flow at the from side. |
+| `St` | `CxVec` | Complex branch power flow at the to side. |
+| `If` | `CxVec` | Complex branch current at the from side. |
+| `It` | `CxVec` | Complex branch current at the to side. |
+| `tap_module` | `Vec` | Transformer tap module used in the solved state. |
+| `tap_angle` | `Vec` | Transformer tap angle used in the solved state. |
+| `Vbranch` | `CxVec` | Complex branch voltage result used by branch reports. |
+| `loading` | `CxVec` | Branch loading result. |
+| `losses` | `CxVec` | Complex branch losses. |
+| `losses_hvdc` | `Vec` | Losses result. |
+| `Pf_hvdc` | `Vec` | Registered result field `Pf_hvdc`. |
+| `Pt_hvdc` | `Vec` | Registered result field `Pt_hvdc`. |
+| `loading_hvdc` | `Vec` | Loading result. |
+| `losses_vsc` | `Vec` | Losses result. |
+| `Pf_vsc` | `Vec` | VSC result field `Pf_vsc`. |
+| `St_vsc` | `CxVec` | Complex branch power flow at the to side. |
+| `If_vsc` | `Vec` | Complex branch current at the from side. |
+| `It_vsc` | `CxVec` | Complex branch current at the to side. |
+| `loading_vsc` | `Vec` | Loading result. |
+| `gen_q` | `Vec` | Generator reactive power output. |
+| `battery_q` | `Vec` | Battery reactive power output. |
+| `shunt_q` | `Vec` | Shunt reactive power output. |
+| `bad_data_detected` | `bool` | Flag indicating whether bad data was detected by the estimator. |
+<!-- END RESULTS REGISTERED PROPERTIES -->
+
 ## API
 
 The following example is based on the classic three-bus reference from A. Monticelli’s book.

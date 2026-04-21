@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:nc="https://cim4.eu/ns/nc#"
+    xmlns:cim="https://cim.ucaiug.io/ns#"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:eumd="https://cim4.eu/ns/Metadata-European#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#" > 
+  <dcat:Dataset rdf:about="urn:uuid:2ea55b46-ad48-4408-be72-734b475ba18f">
+    <dcterms:accessRights>https://energy.referencedata.eu/Confidentiality/Public</dcterms:accessRights>
+    <dcterms:conformsTo>https://ap.cim4.eu/RemedialAction/2.4</dcterms:conformsTo>
+    <dcterms:conformsTo>https://cim4.eu/ns/nc/2.4#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/CIM100#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/2013/CIM-schema-cim16#</dcterms:conformsTo>
+    <dcterms:description xml:lang="en">This is the remedial action dataset for Galia part of ReliCapGrid.</dcterms:description>
+    <dcat:endDate>2023-06-15T22:30:00Z</dcat:endDate>
+    <prov:generatedAtTime>2022-06-10T07:06:25Z</prov:generatedAtTime>
+    <dcterms:identifier>2ea55b46-ad48-4408-be72-734b475ba18f</dcterms:identifier>
+    <dcat:isVersionOf rdf:resource="https://energy.referencedata.eu/Test/Model/Galia-RA"/>
+    <dcat:keyword>RA</dcat:keyword>
+    <dcterms:license>https://creativecommons.org/licenses/by/4.0/</dcterms:license>
+    <dcterms:publisher>https://energy.referencedata.eu/test/party/Galia</dcterms:publisher>
+    <dcterms:rights>Copyright</dcterms:rights>
+    <dcterms:rightsHolder>ENTSO-E</dcterms:rightsHolder>	
+    <dcterms:requires rdf:resource="urn:uuid:a2c02149-a114-4b5e-9de5-74dcccd9793a"/>
+    <dcat:startDate>2022-06-15T22:30:00Z</dcat:startDate>
+    <dcterms:title>20220615_Galia_RA_1.0.0</dcterms:title>
+    <dcat:version>1.0.0</dcat:version>
+    <prov:wasGeneratedBy>https://energy.referencedata.eu/Activity/CGM-RA</prov:wasGeneratedBy>
+    <dcterms:spatial>https://energy.referencedata.eu/Test/Frame/Galia-Power-Transmission-System</dcterms:spatial>
+    <dcterms:issued>2022-06-15T22:30:00Z</dcterms:issued>
+  </dcat:Dataset>
+  <nc:ContingencyWithRemedialAction rdf:ID="_e3512f27-7c5e-4121-adf8-e943872d8fa5">
+    <nc:ContingencyWithRemedialAction.Contingency rdf:resource="#_bd7bb012-f7b9-45e0-9e15-4e2aa3592829"/>
+    <nc:ContingencyWithRemedialAction.RemedialAction rdf:resource="#_f4d57bc2-1cef-46ab-ae13-3ad864813d9c"/>
+    <nc:ContingencyWithRemedialAction.combinationConstraintKind rdf:resource="https://cim4.eu/ns/nc#ElementCombinationConstraintKind.included"/>
+    <nc:ContingencyWithRemedialAction.mRID>e3512f27-7c5e-4121-adf8-e943872d8fa5</nc:ContingencyWithRemedialAction.mRID>
+    <nc:GridStateAlterationRemedialAction.isActivationRestricted>false</nc:GridStateAlterationRemedialAction.isActivationRestricted>
+  </nc:ContingencyWithRemedialAction>
+  <nc:GridStateAlterationRemedialAction rdf:ID="_f4d57bc2-1cef-46ab-ae13-3ad864813d9c">
+    <cim:IdentifiedObject.description>Curative RA: LoadAction (15 percent load shed - Scaling factor to 0.7)</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>f4d57bc2-1cef-46ab-ae13-3ad864813d9c</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>RA15</cim:IdentifiedObject.name>
+    <nc:RemedialAction.AppointedToRegion rdf:resource="#_56d81c91-4fb8-47a2-9d7c-baa13dedd605"/>
+    <nc:RemedialAction.isCrossBorderRelevant>true</nc:RemedialAction.isCrossBorderRelevant>
+    <nc:RemedialAction.kind rdf:resource="https://cim4.eu/ns/nc#RemedialActionKind.curative"/>
+    <nc:RemedialAction.normalAvailable>true</nc:RemedialAction.normalAvailable>
+    <nc:GridStateAlterationRemedialAction.isActivationRestricted>false</nc:GridStateAlterationRemedialAction.isActivationRestricted>
+  </nc:GridStateAlterationRemedialAction>
+  <nc:LoadAction rdf:ID="_7bbb3343-e48b-42dd-9ca5-6ff8945ca5b0">
+    <nc:GridStateAlteration.GridStateAlterationRemedialAction rdf:resource="#_f4d57bc2-1cef-46ab-ae13-3ad864813d9c"/>
+    <nc:GridStateAlteration.PropertyReference rdf:resource="https://energy.referencedata.eu/PropertyReference/EnergyConsumer.p"/>
+    <nc:GridStateAlteration.normalEnabled>true</nc:GridStateAlteration.normalEnabled>
+    <nc:GridStateAlteration.timePerStage>PT1S</nc:GridStateAlteration.timePerStage>
+    <cim:IdentifiedObject.description>Curative RA: LoadAction (15 percent load shed - Scaling factor to 0.7), a new ID is generated for the bidding zone, don't know if we already have an ID for this Bidding zone)</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>7bbb3343-e48b-42dd-9ca5-6ff8945ca5b0</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>RA15</cim:IdentifiedObject.name>
+    <nc:LoadAction.EnergyConsumer rdf:resource="#_b1e03a8f-6a11-4454-af58-4a4a680e857f"/>
+  </nc:LoadAction>
+</rdf:RDF>

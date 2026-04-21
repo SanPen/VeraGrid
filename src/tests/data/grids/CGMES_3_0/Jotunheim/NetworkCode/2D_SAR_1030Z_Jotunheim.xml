@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:time="http://www.w3.org/2006/time#"
+    xmlns:eumd="http://entsoe.eu/ns/Metadata-European#"
+    xmlns:eu="http://iec.ch/TC57/CIM100-European#"
+    xmlns:nc="http://entsoe.eu/ns/nc#"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:md="http://iec.ch/TC57/61970-552/ModelDescription/1#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+    xmlns:cim="http://iec.ch/TC57/CIM100#"
+    xmlns:dcterms="http://purl.org/dc/terms/#" > 
+  <dcat:Dataset rdf:about="urn:uuid:b59f6b96-1333-44fd-b9cc-23419db61281">
+    <dcterms:accessRights>https://energy.referencedata.eu/Confidentiality/Public</dcterms:accessRights>
+    <dcterms:conformsTo>https://ap.cim4.eu/SecurityAnalysisResult/2.5</dcterms:conformsTo>
+    <dcterms:description xml:lang="en">This is the impact assessment matrix dataset for Jotunheim part of ReliCapGrid.</dcterms:description>
+    <dcat:endDate>2023-06-15T22:30:00Z</dcat:endDate>
+    <prov:generatedAtTime>2022-06-10T07:07:25Z</prov:generatedAtTime>
+    <dcterms:identifier>b59f6b96-1333-44fd-b9cc-23419db61281</dcterms:identifier>
+    <dcat:isVersionOf rdf:resource="https://energy.referencedata.eu/Test/Model/Jotunheim-SAR"/>
+    <dcat:keyword>SAR</dcat:keyword>
+    <dcterms:license>https://creativecommons.org/licenses/by/4.0/</dcterms:license>
+    <dcterms:publisher>https://energy.referencedata.eu/test/party/Jotunheim</dcterms:publisher>
+    <dcterms:rights>Copyright</dcterms:rights>
+    <dcterms:rightsHolder>ENTSO-E</dcterms:rightsHolder>	
+    <dcterms:requires rdf:resource="urn:uuid:b2d1215a-a124-4b6e-9df5-85ecdce9793b"/>
+    <dcat:startDate>2022-06-15T10:30:00Z</dcat:startDate>
+    <dcterms:title>20220615_Jotunheim_SAR_1.0.0</dcterms:title>
+    <dcat:version>1.0.0</dcat:version>
+    <prov:wasGeneratedBy>https://energy.referencedata.eu/Activity/CGM-SAR</prov:wasGeneratedBy>
+  </dcat:Dataset>
+ 
+  <nc:ContingencyPowerFlowResult rdf:ID="_ea1eebe0-7e5e-46c1-8cf6-af110484adf3">
+    <cim:IdentifiedObject.mRID>ea1eebe0-7e5e-46c1-8cf6-af110484adf3</cim:IdentifiedObject.mRID>
+    <nc:ContingencyPowerFlowResult.Contingency rdf:resource="#_7e31c67d-67ba-4592-8ac1-9e806d697c8e"/>
+    <nc:PowerFlowResult.isViolation>true</nc:PowerFlowResult.isViolation>
+    <nc:PowerFlowResult.valueA>1673.4026</nc:PowerFlowResult.valueA>
+    <nc:PowerFlowResult.ACDCTerminal rdf:resource="#_3b3075b8-e0e5-66e9-447e-d7e11f76788f"/>
+    <nc:PowerFlowResult.atTime>2023-03-28T07:30:00Z</nc:PowerFlowResult.atTime>
+    <nc:PowerFlowResult.OperationalLimit rdf:resource="#_b8fa5795-2fb2-3a9f-af51-44051d9face7"/>
+  </nc:ContingencyPowerFlowResult>
+  <nc:BaseCasePowerFlowResult rdf:ID="_b1d6ec9a-76d3-4162-b19a-99b09fcd80fa">
+    <cim:IdentifiedObject.mRID>b1d6ec9a-76d3-4162-b19a-99b09fcd80fa</cim:IdentifiedObject.mRID>
+    <nc:PowerFlowResult.isViolation>false</nc:PowerFlowResult.isViolation>
+    <nc:PowerFlowResult.ACDCTerminal rdf:resource="#_3b3075b8-e0e5-66e9-447e-d7e11f76788f"/>
+    <nc:PowerFlowResult.atTime>2023-03-28T06:30:00Z</nc:PowerFlowResult.atTime>
+    <nc:PowerFlowResult.valueW>-1.53093</nc:PowerFlowResult.valueW>
+    <nc:PowerFlowResult.valueVAR>0.961664</nc:PowerFlowResult.valueVAR>
+  </nc:BaseCasePowerFlowResult>
+
+</rdf:RDF>

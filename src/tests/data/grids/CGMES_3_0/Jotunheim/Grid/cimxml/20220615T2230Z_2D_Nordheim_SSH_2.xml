@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:cim="http://iec.ch/TC57/CIM100#" xmlns:eu="http://iec.ch/TC57/CIM100-European#" xmlns:md="http://iec.ch/TC57/61970-552/ModelDescription/1#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <md:FullModel rdf:about="urn:uuid:957210cd-d30b-4d7a-a0c3-ab6ad918646e">
+    <md:Model.DependentOn rdf:resource="urn:uuid:b2d38b16-0d3a-4d6d-8bf2-e894632a2912" />
+    <md:Model.Supersedes rdf:resource="urn:uuid:994972cb-891c-4ad3-a06d-abaa9a5c4a03" />	
+    <md:Model.created>2025-02-08T21:20:31Z</md:Model.created>
+    <md:Model.description>The steady-state hypothesis dataset for Nordheim, updated by Jotunheim.</md:Model.description>
+    <md:Model.modelingAuthoritySet>http://nordheim.nh/CGMES</md:Model.modelingAuthoritySet>
+    <md:Model.profile>http://iec.ch/TC57/ns/CIM/SteadyStateHypothesis-EU/3.0</md:Model.profile>
+    <md:Model.scenarioTime>2022-06-16T23:30:00Z</md:Model.scenarioTime>
+    <md:Model.version>2</md:Model.version>
+  </md:FullModel>
+  <cim:ControlArea rdf:about="#_aaccbbc9-1adc-433f-bc74-672c5a2383a9">
+    <cim:ControlArea.netInterchange>-140</cim:ControlArea.netInterchange>
+  </cim:ControlArea>
+  <cim:GeneratingUnit rdf:about="#_8c633952-d902-21af-1b3c-873296e155af">
+    <cim:Equipment.inService>true</cim:Equipment.inService>
+    <cim:GeneratingUnit.normalPF>100</cim:GeneratingUnit.normalPF>
+  </cim:GeneratingUnit>
+  <cim:Terminal rdf:about="#_70a8601c-3cbc-76fb-bea8-96a644f3915c">
+    <cim:ACDCTerminal.connected>true</cim:ACDCTerminal.connected>
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_905685de-4a1a-51d2-1037-aa222a289fe7">
+    <cim:ACDCTerminal.connected>true</cim:ACDCTerminal.connected>
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_d478d71c-ebb1-1e9d-e66d-6f247cea34be">
+    <cim:ACDCTerminal.connected>true</cim:ACDCTerminal.connected>
+  </cim:Terminal>
+  <cim:RegulatingControl rdf:about="#_fb5e8f5e-52b0-e2e8-92cb-e556cbffea03">
+    <cim:RegulatingControl.discrete>false</cim:RegulatingControl.discrete>
+    <cim:RegulatingControl.enabled>true</cim:RegulatingControl.enabled>
+    <cim:RegulatingControl.targetValue>220</cim:RegulatingControl.targetValue>
+    <cim:RegulatingControl.targetValueUnitMultiplier rdf:resource="http://iec.ch/TC57/CIM100#UnitMultiplier.k" />
+  </cim:RegulatingControl>
+  <cim:VoltageLimit rdf:about="#_93b9b0c4-7a45-0457-72e0-a57e58af0f90">
+    <cim:VoltageLimit.value>231</cim:VoltageLimit.value>
+  </cim:VoltageLimit>
+  <cim:EquivalentInjection rdf:about="#_164b8e97-5936-443a-bfda-6a9e75243aea">
+    <cim:Equipment.inService>true</cim:Equipment.inService>
+    <cim:EquivalentInjection.p>-140</cim:EquivalentInjection.p>
+    <cim:EquivalentInjection.q>20</cim:EquivalentInjection.q>
+  </cim:EquivalentInjection>
+  <cim:NonConformLoad rdf:about="#_457baf0b-122c-475d-a36e-76f1b79a3f15">
+    <cim:EnergyConsumer.p>200</cim:EnergyConsumer.p>
+    <cim:EnergyConsumer.q>0</cim:EnergyConsumer.q>
+    <cim:Equipment.inService>true</cim:Equipment.inService>
+  </cim:NonConformLoad>
+  <cim:SynchronousMachine rdf:about="#_4fbcc3b5-af30-4940-a0f4-686ad1439467">
+    <cim:Equipment.inService>true</cim:Equipment.inService>
+    <cim:RegulatingCondEq.controlEnabled>true</cim:RegulatingCondEq.controlEnabled>
+    <cim:RotatingMachine.p>-60</cim:RotatingMachine.p>
+    <cim:RotatingMachine.q>-20</cim:RotatingMachine.q>
+    <cim:SynchronousMachine.operatingMode rdf:resource="http://iec.ch/TC57/CIM100#SynchronousMachineOperatingMode.generator" />
+    <cim:SynchronousMachine.referencePriority>1</cim:SynchronousMachine.referencePriority>
+  </cim:SynchronousMachine>
+</rdf:RDF>

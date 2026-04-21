@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:qudt="http://qudt.org/schema/qudt/"
+    xmlns:unit="http://qudt.org/vocab/unit/"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:adms="http://www.w3.org/ns/adms#"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+    xmlns:geo="http://www.opengis.net/ont/geosparql#"
+    xmlns:provcim="https://cim4.eu/ns/provcim#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+  xml:base="https://energy.referencedata.eu" > 
+  <dcat:Dataset rdf:about="https://energy.referencedata.eu/FrameScheme/NCP/1.0">
+    <dcterms:accessRights rdf:resource="https://energy.referencedata.eu/Confidentiality/Public"/>
+    <skos:definition xml:lang="en">Reference dataset and concept scheme listing recognized frame ...dcterms:spatial.</skos:definition>
+    <dcterms:description xml:lang="en">Reference dataset containing recognized frame identities for use area of responsebility.</dcterms:description>
+    <prov:generatedAtTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-03-22T00:00:00Z</prov:generatedAtTime>
+    <dcterms:hasPart rdf:resource="https://energy.referencedata.eu/test/FrameScheme/NCP/1.0#collection_ncp_frame"/>
+    <dcterms:identifier>50cc303c-df37-4b86-80a6-f6d312268661</dcterms:identifier>
+    <dcat:isVersionOf rdf:resource="https://energy.referencedata.eu/FrameScheme"/>
+    <dcterms:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2026-03-22</dcterms:issued>
+    <dcterms:license rdf:resource="https://creativecommons.org/licenses/by/4.0/"/>
+    <skos:prefLabel xml:lang="en">Energy Reference Data Frame Scheme</skos:prefLabel>
+    <dcterms:publisher rdf:resource="https://www.entsoe.eu/"/>
+    <dcterms:rights>Copyright</dcterms:rights>
+    <dcterms:rightsHolder>ENTSO-E</dcterms:rightsHolder>
+    <dcterms:title>Test-FrameScheme-NCP_RD_v1.0</dcterms:title>
+    <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#ConceptScheme"/>
+    <dcat:version>1.0.0</dcat:version>
+    <adms:versionNotes xml:lang="en">Initial version of the Energy Reference Data Frame Scheme for ReliCapGrid.</adms:versionNotes>
+  </dcat:Dataset>
+  <provcim:BoundaryFrame rdf:about="https://energy.referencedata.eu/test/frame/Espheim-Portheim-Transmission">
+    <provcim:connectsFrame rdf:resource="https://energy.referencedata.eu/test/frame/Espheim-Transmission"/>
+    <provcim:connectsFrame rdf:resource="https://energy.referencedata.eu/test/frame/Portheim-Transmission"/>
+    <dcterms:description xml:lang="en">Recognized boundary frame as dcterms:spatial between Espeheim and Portheim Transmission grid that a provcim:Model can fit into.</dcterms:description>
+    <dcterms:identifier>d1fdeb95-df48-47d9-ae1b-1a733b6d44b1</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Espheim-Portheim-Transmission</skos:prefLabel>
+  </provcim:BoundaryFrame>
+  <provcim:Frame rdf:about="https://energy.referencedata.eu/test/frame/Galia-Transmission">
+    <dcterms:description xml:lang="en">Recognized frame as dcterms:spatial of the Svedala Transmission grid that a provcim:Model can fit into.</dcterms:description>
+    <geo:hasGeometry rdf:nodeID="A1"/>
+    <provcim:hasMaxVoltage rdf:nodeID="A2"/>
+    <provcim:hasMinVoltage rdf:nodeID="A0"/>
+    <dcterms:identifier>188b7f96-efeb-4033-bdfc-e5f1e915cef1</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Galia-Transmission</skos:prefLabel>
+  </provcim:Frame>
+  <provcim:Frame rdf:about="https://energy.referencedata.eu/test/frame/Svedala-Transmission">
+    <dcterms:description xml:lang="en">Recognized transmission frame representing the spatial applicability of resources related to the Svedala transmission grid. Models version describing different elements of the grid fits into.</dcterms:description>
+    <dcterms:identifier>4e42ef1c-7a5f-4cbb-bc24-582975965828</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Svedala-Transmission</skos:prefLabel>
+  </provcim:Frame>
+  <qudt:QuantityValue rdf:nodeID="A0">
+    <qudt:numericValue>130</qudt:numericValue>
+    <qudt:unit rdf:resource="http://qudt.org/vocab/unit/KiloV"/>
+  </qudt:QuantityValue>
+  <geo:Geometry rdf:nodeID="A1">
+    <geo:asGeoJSON>{&#xD;
+			"type": "Polygon",&#xD;
+			"coordinates": [[&#xD;
+			[-5.1, 48.6],&#xD;
+			[-4.7, 47.7],&#xD;
+			[-2.0, 46.2],&#xD;
+			[-1.4, 44.7],&#xD;
+			[-1.7, 43.4],&#xD;
+			[0.8, 42.7],&#xD;
+			[3.2, 42.5],&#xD;
+			[5.4, 43.3],&#xD;
+			[7.5, 43.7],&#xD;
+			[7.4, 44.8],&#xD;
+			[6.5, 46.2],&#xD;
+			[7.2, 48.6],&#xD;
+			[6.0, 49.5],&#xD;
+			[2.5, 51.1],&#xD;
+			[0.0, 50.9],&#xD;
+			[-1.6, 49.9],&#xD;
+			[-4.0, 48.8],&#xD;
+			[-5.1, 48.6]&#xD;
+		  ]]&#xD;
+		}</geo:asGeoJSON>
+  </geo:Geometry>
+  <qudt:QuantityValue rdf:nodeID="A2">
+    <qudt:numericValue>420</qudt:numericValue>
+    <qudt:unit rdf:resource="http://qudt.org/vocab/unit/KiloV"/>
+  </qudt:QuantityValue>
+  <prov:Collection rdf:about="https://energy.referencedata.eu/test/FrameScheme/NCP/1.0#collection_ncp_frame">
+    <prov:hadMember rdf:resource="https://energy.referencedata.eu/test/frame/Svedala-Transmission"/>
+    <prov:hadMember rdf:resource="https://energy.referencedata.eu/test/frame/Galia-Transmission"/>
+    <prov:hadMember rdf:resource="https://energy.referencedata.eu/test/frame/Espheim-Portheim-Transmission"/>
+    <dcterms:identifier>b0c0950a-2dcf-44f6-8a82-d47305b9987e</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Collection of recognized frames identities for NCP.</skos:prefLabel>
+  </prov:Collection>
+</rdf:RDF>

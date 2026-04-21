@@ -3,105 +3,11 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
-
+from typing import Any
 from pathlib import Path
 from types import SimpleNamespace
-import importlib.util
-import sys
-import types
 import uuid
-
 import numpy as np
-
-
-repo_root = Path(__file__).resolve().parents[6]
-src_root = repo_root / "src"
-engine_root = src_root / "VeraGridEngine"
-
-if str(src_root) in sys.path:
-    pass
-else:
-    sys.path.insert(0, str(src_root))
-
-
-networkx_module = sys.modules.get("networkx", None)
-if networkx_module is None:
-    sys.modules["networkx"] = types.ModuleType("networkx")
-else:
-    pass
-
-matplotlib_module = sys.modules.get("matplotlib", None)
-if matplotlib_module is None:
-    matplotlib_module = types.ModuleType("matplotlib")
-    sys.modules["matplotlib"] = matplotlib_module
-else:
-    pass
-
-for submodule_name in ("pyplot", "colors", "cm"):
-    full_name = f"matplotlib.{submodule_name}"
-    submodule = sys.modules.get(full_name, None)
-    if submodule is None:
-        submodule = types.ModuleType(full_name)
-        sys.modules[full_name] = submodule
-    else:
-        pass
-    setattr(matplotlib_module, submodule_name, submodule)
-
-pyplot_module = sys.modules["matplotlib.pyplot"]
-if hasattr(pyplot_module, "axis"):
-    pass
-else:
-    setattr(pyplot_module, "axis", object)
-
-chardet_module = sys.modules.get("chardet", None)
-if chardet_module is None:
-    sys.modules["chardet"] = types.ModuleType("chardet")
-else:
-    pass
-
-sklearn_module = sys.modules.get("sklearn", None)
-if sklearn_module is None:
-    sklearn_module = types.ModuleType("sklearn")
-    sys.modules["sklearn"] = sklearn_module
-else:
-    pass
-
-sklearn_ensemble_module = sys.modules.get("sklearn.ensemble", None)
-if sklearn_ensemble_module is None:
-    sklearn_ensemble_module = types.ModuleType("sklearn.ensemble")
-    sys.modules["sklearn.ensemble"] = sklearn_ensemble_module
-else:
-    pass
-setattr(sklearn_module, "ensemble", sklearn_ensemble_module)
-if hasattr(sklearn_ensemble_module, "RandomForestRegressor"):
-    pass
-else:
-    setattr(sklearn_ensemble_module, "RandomForestRegressor", object)
-
-
-def _ensure_package(name: str, path: Path) -> None:
-    module = sys.modules.get(name, None)
-    if module is None:
-        module = types.ModuleType(name)
-        module.__path__ = [str(path)]
-        sys.modules[name] = module
-    else:
-        pass
-
-
-# _ensure_package("VeraGridEngine.Simulations", engine_root / "Simulations")
-# _ensure_package("VeraGridEngine.Simulations.Rms", engine_root / "Simulations" / "Rms")
-# _ensure_package("VeraGridEngine.Simulations.Rms.numerical", engine_root / "Simulations" / "Rms" / "numerical")
-# _ensure_package("VeraGridEngine.Simulations.Rms.problems", engine_root / "Simulations" / "Rms" / "problems")
-# _ensure_package("VeraGridEngine.Simulations.PowerFlow", engine_root / "Simulations" / "PowerFlow")
-# _ensure_package("VeraGridEngine.Simulations.PowerFlow.NumericalMethods", engine_root / "Simulations" / "PowerFlow" / "NumericalMethods")
-# _ensure_package("VeraGridEngine.Simulations.EMT", engine_root / "Simulations" / "EMT")
-# _ensure_package("VeraGridEngine.Simulations.EMT.problems", engine_root / "Simulations" / "EMT" / "problems")
-# _ensure_package("VeraGridEngine.Simulations.EMT.solvers", engine_root / "Simulations" / "EMT" / "solvers")
-# _ensure_package("VeraGridEngine.Simulations.Clustering", engine_root / "Simulations" / "Clustering")
-# _ensure_package("VeraGridEngine.Simulations.Stochastic", engine_root / "Simulations" / "Stochastic")
-# _ensure_package("VeraGridEngine.IO", engine_root / "IO")
-# _ensure_package("VeraGridEngine.IO.others", engine_root / "IO" / "others")
 
 from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Devices.Injections.generator import Generator
@@ -129,17 +35,15 @@ from VeraGridEngine.enumerations import (
 from VeraGridEngine.IO.fmu.exporter.api import export_fmu
 from VeraGridEngine.IO.fmu.exporter.config import ExportConfig as CsExportConfig, detect_target_platform as detect_cs_target_platform
 from VeraGridEngine.IO.fmu.exporter.compat import Block, Const, Var
-from VeraGridEngine.IO.fmu.importer import (
+from VeraGridEngine.IO.fmu.importer.emt_boundary import build_emt_boundary_updater
+from VeraGridEngine.IO.fmu.importer.experimental_cs import FmuRefBinding, register_emt_fmu_cs_device
+from VeraGridEngine.IO.fmu.importer.experimental_me import FmuMeIntegrationMethod, register_emt_fmu_me_device
+from VeraGridEngine.IO.fmu.importer.model_description import FmuInterfaceMode
+from VeraGridEngine.IO.fmu.importer.user_api import (
     FmuDeviceAttachmentRequest,
     FmuDeviceDomain,
-    FmuInterfaceMode,
-    FmuMeIntegrationMethod,
     FmuReferenceValue,
-    FmuRefBinding,
     attach_fmu_to_device,
-    build_emt_boundary_updater,
-    register_emt_fmu_cs_device,
-    register_emt_fmu_me_device,
 )
 from VeraGridEngine.IO.fmu.exporter_me.api import export_fmu_me
 from VeraGridEngine.IO.fmu.exporter_me.config import ExportConfig as MeExportConfig, detect_target_platform as detect_me_target_platform
@@ -162,7 +66,12 @@ def _has_fmpy() -> bool:
     :return: `True` when `fmpy` can be imported.
     """
 
-    return importlib.util.find_spec("fmpy") is not None
+    try:
+        import fmpy
+
+        return fmpy is not None
+    except ModuleNotFoundError:
+        return False
 
 
 def write_example_report(report_path: Path, lines: tuple[str, ...]) -> Path:
@@ -419,7 +328,15 @@ def _build_rms_demo_grid() -> tuple[MultiCircuit, Load]:
     initialize_bus_rms(bus_load, vf=grid.var_factory)
 
     line: Line = Line(name="line_0_1", bus_from=bus_slack, bus_to=bus_load, r=0.03, x=0.07, b=0.03, rate=900.0)
-    generator: Generator = Generator(name="Gen0", P=10.0, vset=1.0, Snom=900.0, x1=0.86138701, r1=0.3, freq=50.0)
+    generator: Generator = Generator(
+        name="Gen0",
+        P=10.0,
+        vset=1.0,
+        Snom=900.0,
+        x1=0.86138701,
+        r1=0.3,
+        freq=50.0,
+    )
     load: Load = Load(name="ImportedLoad", P=10.0, Q=1.0)
 
     line.rms_model = get_line_rms_template(grid.var_factory).block

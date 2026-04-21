@@ -239,7 +239,7 @@ def test_force_step_alignment_is_used_by_all_three_solvers(
             "_build_jit_symbolic_hybrid",
             lambda self, method, use_sparse: None,
         ):
-            t, y, dy = solver.simulate(
+            t, y, dy, _, _ = solver.simulate(
                 boundary_updater=cast(SymbolicBoundaryUpdateWrapper, cast(object, updater))
             )
 
@@ -257,7 +257,7 @@ def test_force_step_alignment_is_used_by_all_three_solvers(
         solver.jit_kernels_ad[integration_method] = [_dummy_kernel]
         solver.jit_jacobian_ad[integration_method] = cast(Any, DummyJacobian())
 
-        t, y, dy = solver.simulate(boundary_updater=updater)
+        t, y, dy, _, _ = solver.simulate(boundary_updater=updater)
 
     elif solver_kind == EmtSolverTypes.StructuralAD:
         solver = StructuralVectorizedSolver(
@@ -276,7 +276,7 @@ def test_force_step_alignment_is_used_by_all_three_solvers(
         solver.fused_residual = cast(Any, _dummy_fused_residual)
         solver.vec_jacobian = cast(Any, DummyJacobian())
 
-        t, y, dy = solver.simulate(
+        t, y, dy, _, _ = solver.simulate(
             boundary_updater=cast(StructuralBoundaryUpdateWrapper, cast(object, updater))
         )
 

@@ -194,7 +194,7 @@ class BackEulerImplicitTensygrid:
                             print(f"\nSingular direction {i}, σ={s[i]:.3e}")
                             for j in dominant_idx:
                                 if j < self.problem.get_algebraic_var_number():
-                                    algeb_vars = self.problem.get_algebraic_vars
+                                    algeb_vars = self.problem.algebraic_vars
                                     var_name = algeb_vars[j].name
                                     print(f"  {var_name:20s} {v[j]:+.3e}")
                         print("Using LSQR")

@@ -14,7 +14,7 @@ from matplotlib.colors import LinearSegmentedColormap
 
 import VeraGrid.Gui.gui_functions as gf
 from VeraGrid.Gui.general_dialogues import LogsDialogue
-from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
+from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget, make_diagram_from_buses
 from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import MapWidget
 from VeraGrid.Gui.messages import yes_no_question, error_msg, warning_msg, info_msg
 from VeraGrid.Gui.Main.SubClasses.Model.time_events import TimeEventsMain
@@ -832,6 +832,8 @@ class SimulationsMain(TimeEventsMain):
             SimulationTypes.Reliability_run.value: ':/Icons/icons/reliability.png',
             SimulationTypes.RmsSmallSignal_run.value: ':/Icons/icons/ss_icon.png',
             SimulationTypes.RmsDynamic_run.value: ':/Icons/icons/dyn.png',
+            SimulationTypes.EmtSmallSignal_run.value: ':/Icons/icons/ss_emt_icon.png',
+            SimulationTypes.EmtDynamic_run.value: ':/Icons/icons/dyn_emt.png',
             SimulationTypes.StateEstimation_run.value: ':/Icons/icons/SE.png',
         }
 
@@ -3112,7 +3114,7 @@ class SimulationsMain(TimeEventsMain):
         """
         Post investments evaluation
         """
-        _, results = self.session.investments_evaluation
+        driver, results = self.session.investments_evaluation
 
         # update the results in the circuit structures
         if results is not None:
@@ -3123,6 +3125,32 @@ class SimulationsMain(TimeEventsMain):
 
             self.update_available_results()
             self.colour_diagrams()
+
+            # create a schematic diagram for the best Pareto-optimal investment combination
+            if driver is not None and len(results.sorting_indices) > 0:
+                best_x = results.x[results.sorting_indices[0], :]
+                inv_list = driver.problem.get_investments_for_combination(x=best_x)
+
+                # work on a copy so the base circuit is not modified
+                invested_grid = self.circuit.copy()
+                invested_grid.set_investments_status(investments_list=inv_list, status=True)
+
+                diagram = make_diagram_from_buses(
+                    circuit=invested_grid,
+                    buses=invested_grid.buses,
+                    name='Investments evaluation (best Pareto)'
+                )
+
+                diagram_widget = SchematicWidget(
+                    gui=self,
+                    diagram=diagram,
+                    default_bus_voltage=self.ui.defaultBusVoltageSpinBox.value(),
+                    time_index=self.get_diagram_slider_index()
+                )
+
+                self.add_diagram_widget_and_diagram(diagram_widget=diagram_widget,
+                                                    diagram=diagram)
+                self.set_diagrams_list_view()
         else:
             self.show_error_toast('Something went wrong, There are no investments evaluation results.')
 
@@ -3452,6 +3480,22 @@ class SimulationsMain(TimeEventsMain):
             self.remove_simulation(SimulationTypes.RmsDynamic_run)
             self.update_available_results()
 
+            # report convergence and initialization
+            indices = [i for i, v in enumerate(results.well_initialized) if not v]
+            if indices:
+                for index in indices:
+                    self.show_warning_toast(f"Simulation bad initialized for {results.rms_events_group_names[index]}:/")
+            else:
+                self.show_info_toast("Simulation well initialized for all simulation groups :)")
+
+            indices = [i for i, v in enumerate(results.converged) if not v]
+            if indices:
+                for index in indices:
+                    self.show_warning_toast(
+                        f"Simulation not converged for {results.rms_events_group_names[index]}:/")
+            else:
+                self.show_info_toast("Simulation converged for all simulation groups :)")
+
         else:
             warning_msg('There are no rms simulation results.', 'Rms simulation')
 
@@ -3543,8 +3587,25 @@ class SimulationsMain(TimeEventsMain):
             self.remove_simulation(SimulationTypes.EmtDynamic_run)
             self.update_available_results()
 
+            # uncomment when convergence and well initialized is reported
+            # # report convergence and initialization
+            # indices = [i for i, v in enumerate(results.well_initialized) if not v]
+            # if indices:
+            #     for index in indices:
+            #         self.show_warning_toast(f"Simulation bad initialized for {results.emt_events_group_names[index]}:/")
+            # else:
+            #     self.show_info_toast("Simulation well initialized for all simulation groups :)")
+            #
+            # indices = [i for i, v in enumerate(results.converged) if not v]
+            # if indices:
+            #     for index in indices:
+            #         self.show_warning_toast(
+            #             f"Simulation not converged for {results.emt_events_group_names[index]}:/")
+            # else:
+            #     self.show_info_toast("Simulation converged for all simulation groups :)")
+
         else:
-            warning_msg('There are no emt simulation results.', 'Rms simulation')
+            warning_msg('There are no emt simulation results.', 'Emt simulation')
 
         if not self.session.is_anything_running():
             self.UNLOCK()

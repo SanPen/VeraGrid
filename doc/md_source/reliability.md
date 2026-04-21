@@ -75,6 +75,26 @@ connected to each bus through its loads.
 The indices should always be interpreted together. For example, two systems can have similar ENS but very different
 customer impact if one concentrates the interruption on a few buses and the other spreads it across many customers.
 
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+
+## Registered Result Properties
+
+### `ReliabilityResults` registered properties
+
+The reliability result stores the evolution of reliability indices during the reliability study.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `LOLE_evolution` | `Vec` | Loss of load expectation evolution. |
+| `ENS_evolution` | `Vec` | Energy not supplied evolution. |
+| `LOLF_evolution` | `Vec` | Loss of load frequency evolution. |
+| `LOLET_evolution` | `Vec` | Loss of load expectation duration evolution. |
+| `LOLFT_evolution` | `Vec` | Loss of load frequency duration evolution. |
+| `SAIDI_evolution` | `Vec` | System average interruption duration index evolution. |
+| `SAIFI_evolution` | `Vec` | System average interruption frequency index evolution. |
+| `CAIDI_evolution` | `Vec` | Customer average interruption duration index evolution. |
+<!-- END RESULTS REGISTERED PROPERTIES -->
+
 ## API
 
 Using the driver directly:

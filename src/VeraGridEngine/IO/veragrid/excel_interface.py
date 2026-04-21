@@ -6,6 +6,8 @@ from __future__ import annotations
 
 from typing import List, Dict, Any, Sequence
 from warnings import warn
+import time
+import zipfile
 import numpy as np
 import pandas as pd
 from VeraGridEngine.basic_structures import Logger
@@ -110,6 +112,7 @@ def load_from_xls(filename: str, logger: Logger) -> Dict[str, pd.DataFrame]:
     Loads the excel file content to a dictionary for parsing the data
     """
     data = dict()
+    deadline: float = time.perf_counter() + 2.0
     xl = pd.ExcelFile(filename)
     names = xl.sheet_names
 
@@ -1166,5 +1169,16 @@ def save_excel_v4(circuit: MultiCircuit, file_path):
             if len(key2) > 30:
                 key2 = key2[:30]  # excel sheet names have a max of 30 chars
             dfs[key].to_excel(excel_writer=writer, sheet_name=key2)
+
+    deadline: float = time.perf_counter() + 2.0
+    while True:
+        try:
+            with zipfile.ZipFile(file_path, 'r') as archive:
+                archive.namelist()
+            break
+        except (PermissionError, zipfile.BadZipFile):
+            if time.perf_counter() >= deadline:
+                break
+            time.sleep(0.05)
 
     return logger

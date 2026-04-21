@@ -19,8 +19,6 @@ import scipy.sparse.linalg as spla
 from collections import defaultdict, deque
 
 from VeraGridEngine.enumerations import EmtInitializationMethod, EmtInitializationStatus
-from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
-from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import EmtProblemTemplate
 from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicJacobian, SymbolicVector
 from VeraGridEngine.Utils.Symbolic.jit_compiler import RMSCompiler
 from VeraGridEngine.Utils.Symbolic.symbolic import expression2numba, get_expression_vars

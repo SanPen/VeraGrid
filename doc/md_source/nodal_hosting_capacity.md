@@ -6,6 +6,20 @@ linear and non-linear optimal power flow routines.
 ![](figures/settings-opf.png)
 ![](figures/settings-nhc.png)
 
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+
+## Registered Result Properties
+
+### `NodalCapacityTimeSeriesResults` registered properties
+
+The nodal hosting capacity result stores the optimized capacity at the selected capacity buses.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `capacity_nodes_idx` | `IntVec` | Bus indices where nodal hosting capacity was optimized. |
+| `nodal_capacity` | `Mat` | Optimized nodal hosting capacity at the selected buses. |
+<!-- END RESULTS REGISTERED PROPERTIES -->
+
 ## API
 
 ### Linear hosting capacity

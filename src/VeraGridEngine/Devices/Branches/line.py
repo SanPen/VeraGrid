@@ -266,14 +266,6 @@ class Line(BranchParent):
     @R.setter
     def R(self, value):
         self._R = float(value)
-        if self.auto_update_enabled:
-            if not self.rms_model.empty():
-                g_param = self.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.g]
-                self.rms_model.parameters[g_param] = Const(float(self._R / (self._R ** 2 + self._X ** 2)))
-                b_param = self.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.b]
-                self.rms_model.parameters[b_param] = Const(float(-self._X / (self._R ** 2 + self._X ** 2)))
-                bsh_param = self.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.bsh]
-                self.rms_model.parameters[bsh_param] = Const(float(self._B))
 
     @property
     def X(self):
@@ -282,14 +274,6 @@ class Line(BranchParent):
     @X.setter
     def X(self, value):
         self._X = float(value)
-        if self.auto_update_enabled:
-            if not self.rms_model.empty():
-                g_param = self.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.g]
-                self.rms_model.parameters[g_param] = Const(float(self._R / (self._R ** 2 + self._X ** 2)))
-                b_param = self.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.b]
-                self.rms_model.parameters[b_param] = Const(float(-self._X / (self._R ** 2 + self._X ** 2)))
-                bsh_param = self.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.bsh]
-                self.rms_model.parameters[bsh_param] = Const(float(self._B))
 
     @property
     def B(self):
@@ -298,14 +282,6 @@ class Line(BranchParent):
     @B.setter
     def B(self, value):
         self._B = float(value)
-        if self.auto_update_enabled:
-            if not self.rms_model.empty():
-                g_param = self.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.g]
-                self.rms_model.parameters[g_param] = Const(float(self._R / (self._R ** 2 + self._X ** 2)))
-                b_param = self.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.b]
-                self.rms_model.parameters[b_param] = Const(float(-self._X / (self._R ** 2 + self._X ** 2)))
-                bsh_param = self.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.bsh]
-                self.rms_model.parameters[bsh_param] = Const(float(self._B))
 
     @property
     def R0(self):

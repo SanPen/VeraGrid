@@ -9,7 +9,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from VeraGridEngine.Simulations.results_table import ResultsTable
-from VeraGridEngine.Simulations.results_template import ResultsTemplate
+from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
 from VeraGridEngine.basic_structures import BoolVec, CxMat, CxVec, IntVec, Mat, Vec
 from VeraGridEngine.enumerations import DeviceType, ResultTypes, StudyResultsType
 
@@ -165,6 +165,20 @@ class EraMatrixPencilResults(ResultsTemplate):
     matrix, modal energy and the provenance of each accepted band estimate.
     """
 
+    LOCAL_RESULTS_DECLARATIONS = (
+        ResultsProperty(name='eigenvalues_s', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='frequencies_hz', tpe=Vec, old_names=list()),
+        ResultsProperty(name='damping_ratios', tpe=Vec, old_names=list()),
+        ResultsProperty(name='is_stable', tpe=BoolVec, old_names=list()),
+        ResultsProperty(name='residues', tpe=CxMat, old_names=list()),
+        ResultsProperty(name='modal_energy', tpe=Vec, old_names=list()),
+        ResultsProperty(name='reconstruction_errors', tpe=Vec, old_names=list()),
+        ResultsProperty(name='band_low_hz', tpe=Vec, old_names=list()),
+        ResultsProperty(name='band_high_hz', tpe=Vec, old_names=list()),
+        ResultsProperty(name='selected_orders', tpe=IntVec, old_names=list()),
+        ResultsProperty(name='observable_count_per_mode', tpe=IntVec, old_names=list()),
+    )
+
     __slots__ = (
         '_eigenvalues_s',
         '_frequencies_hz',
@@ -269,17 +283,6 @@ class EraMatrixPencilResults(ResultsTemplate):
 
         # Only array-like fields are registered because ResultsTemplate already
         # serializes those safely across the VeraGrid persistence layer.
-        self.register(name='eigenvalues_s', tpe=CxVec)
-        self.register(name='frequencies_hz', tpe=Vec)
-        self.register(name='damping_ratios', tpe=Vec)
-        self.register(name='is_stable', tpe=BoolVec)
-        self.register(name='residues', tpe=CxMat)
-        self.register(name='modal_energy', tpe=Vec)
-        self.register(name='reconstruction_errors', tpe=Vec)
-        self.register(name='band_low_hz', tpe=Vec)
-        self.register(name='band_high_hz', tpe=Vec)
-        self.register(name='selected_orders', tpe=IntVec)
-        self.register(name='observable_count_per_mode', tpe=IntVec)
 
     @property
     def eigenvalues_s(self) -> CxVec:

@@ -9,12 +9,17 @@ import numpy as np
 from PySide6 import QtWidgets
 
 from VeraGrid.Gui.Diagrams.MapWidget.Substation.substation_graphic_item import SubstationGraphicItem
-from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import haversine_distance
+from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import haversine_distance, GridMapWidget
+from VeraGridEngine.Devices.Diagrams.map_location import MapLocation
+import VeraGridEngine.Devices as dev
 from VeraGrid.Gui.ProceduralGrid.procedural_grid_ui import Ui_Dialog
 from VeraGrid.Gui.gui_functions import get_list_model, enums_to_model
 from VeraGridEngine.enumerations import ProceduralGridMethods
 from VeraGridEngine.Topology.Procedural.procedural_grid_engine import ProceduralGridComputationEngine
+from VeraGridEngine.basic_structures import Logger
 from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import make_diagram_from_buses, SchematicWidget
+from VeraGrid.Gui.ProceduralGrid.voltage_warning import VoltageWarningDialog
+from VeraGrid.Gui.general_dialogues import LogsDialogue
 
 if TYPE_CHECKING:
     from VeraGrid.Gui.Main.SubClasses.simulations import SimulationsMain
@@ -91,7 +96,9 @@ class ProceduralGridWindow(QtWidgets.QDialog):
             sorted_indices = np.argsort(distances2, axis=0)
 
             self.candidate_list.clear()
-            for i in sorted_indices[:top_n]:
+            for i in sorted_indices:
+                if len(self.candidate_list) >= top_n:
+                    break
                 candidate = self.all_substations_graphics_in_diagram_list[i]
                 if candidate not in self.connection_substations_graphics_list:
                     self.candidate_list.append(candidate)
@@ -100,6 +107,25 @@ class ProceduralGridWindow(QtWidgets.QDialog):
             self.ui.candidateSubstationListView.setModel(get_list_model(
                 [se_graphic.api_object for se_graphic in self.candidate_list]
             ))
+
+    def _check_substation_voltages(self, substations):
+        """
+        Returns offenders and valid voltages.
+        Offenders are (substation_name, voltage) pairs for any bus
+        whose Vnom does not appear on any branch in the existing grid.
+        """
+        known_voltages = set()
+        for branch in self.app.circuit.get_branches(add_vsc=True, add_hvdc=True, add_switch=True):
+            known_voltages.add(branch.bus_from.Vnom)
+            known_voltages.add(branch.bus_to.Vnom)
+
+        offenders = []
+        for sg in substations:
+            for bus in self.app.circuit.get_substation_buses(sg):
+                if bus.Vnom not in known_voltages:
+                    offenders.append((sg.name, bus.Vnom))
+
+        return offenders, sorted(known_voltages)
 
     def compute(self):
         """
@@ -113,12 +139,21 @@ class ProceduralGridWindow(QtWidgets.QDialog):
         target_objects = [se.api_object for se in self.connection_substations_graphics_list]
         candidate_objects = [se.api_object for se in self.candidate_list]
 
-        # 3. Instantiate your engine with the required inputs
+        # 3. Validate that all substation voltages exist in the grid
+        offenders, valid_voltages = self._check_substation_voltages(target_objects + candidate_objects)
+        if offenders:
+            dlg = VoltageWarningDialog(offenders=offenders, valid_voltages=valid_voltages, parent=self)
+            dlg.exec()
+            return
+
+        # 4. Instantiate your engine with the required inputs
+        logger = Logger()
         engine = ProceduralGridComputationEngine(
             grid=self.app.circuit,
             method=method,
             targets=target_objects,
-            candidates=candidate_objects
+            candidates=candidate_objects,
+            logger=logger
         )
 
         if method == ProceduralGridMethods.SteinerAlone:
@@ -129,6 +164,36 @@ class ProceduralGridWindow(QtWidgets.QDialog):
 
         else:
             raise NotImplementedError(f"Method {method} not implemented")
+
+        # Create substations for new buses so map lines can reference them
+        for bus in engine.get_new_buses():
+            if bus.substation is None:
+                substation = dev.Substation(
+                    name=bus.name,
+                    latitude=bus.latitude,
+                    longitude=bus.longitude,
+                )
+                bus.substation = substation
+                self.app.circuit.add_substation(substation)
+
+        # Draw new elements on all open map widgets
+        for map_widget in self.app.diagram_widgets_list:
+            if isinstance(map_widget, GridMapWidget):
+                for bus in engine.get_new_buses():
+                    if map_widget.graphics_manager.query(elm=bus.substation) is None:
+                        map_widget.add_api_substation(api_object=bus.substation,
+                                                      lat=bus.latitude,
+                                                      lon=bus.longitude)
+                for line in engine.get_new_lines():
+                    if map_widget.graphics_manager.query(elm=line) is None:
+                        map_widget.diagram.set_point(device=line, location=MapLocation())
+                        map_widget.add_api_line(api_object=line)
+
+        # Map geographic coordinates to schematic canvas coordinates
+        _SCALE = 1000.0
+        for bus in expanded_grid.buses:
+            bus.x = bus.longitude * _SCALE
+            bus.y = -bus.latitude * _SCALE
 
         # create the diagram
         expanded_grid_schematic = make_diagram_from_buses(circuit=expanded_grid,
@@ -147,6 +212,11 @@ class ProceduralGridWindow(QtWidgets.QDialog):
         self.app.add_diagram_widget_and_diagram(diagram_widget=diagram_widget,
                                                 diagram=expanded_grid_schematic)
         self.app.set_diagrams_list_view()
+
+        # Show logger if there are any entries
+        if logger.has_logs():
+            dlg = LogsDialogue('Procedural grid expansion log', logger)
+            dlg.exec()
 
         # Exit
         self.close()

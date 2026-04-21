@@ -1,0 +1,223 @@
+PREFIX adms:    <http://www.w3.org/ns/adms#>
+PREFIX cim:     <https://cim.ucaiug.io/ns#>
+PREFIX dcat:    <http://www.w3.org/ns/dcat#>
+PREFIX dcatcim: <https://cim4.eu/ns/dcatcim#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX eu:      <https://cim.ucaiug.io/ns/eu#>
+PREFIX nc:      <https://cim4.eu/ns/nc#>
+PREFIX prov:    <http://www.w3.org/ns/prov#>
+PREFIX rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+<urn:uuid:c4f2422b-03a4-4298-aa16-40921c4ca16f>
+        rdf:type               dcat:Distribution;
+        dcterms:conformsTo     <urn:iso:std:iec:61970-552:2016>;
+        dcterms:description    "CIMXML serialization of the Nordic44 OP"@en;
+        dcat:accessURL         <file://cimxml/Nordic44-HV_OP.xml>;
+        dcat:isDistributionOf  <urn:uuid:67e97bb0-ec38-481d-9e56-3e9d45e95a33>;
+        dcat:mediaType         <http://www.iana.org/assignments/media-types/application/rdf+xml>;
+        prov:generatedAtTime   "2025-02-14T11:00:00Z";
+        prov:wasGeneratedBy    <https://energy.referencedata.eu/Test/Action/OP> .
+
+<urn:uuid:67e97bb0-ec38-481d-9e56-3e9d45e95a33>
+        rdf:type              dcat:Dataset;
+        dcterms:accessRights  <https://energy.referencedata.eu/Confidentiality/Public>;
+        dcterms:conformsTo    <http://iec.ch/TC57/ns/CIM/Operation-EU/3.0>;
+        dcterms:description   "Equipment Operation (OP) part of the Nordic 44-bus synthetic test model developed by Statnett SF of the Nordic region."@en;
+        dcterms:identifier    "67e97bb0-ec38-481d-9e56-3e9d45e95a33";
+        dcterms:issued        "2025-02-14T11:00:00Z";
+        dcterms:publisher     <https://www.statnett.no/en/about-statnett/contact-us/>;
+        dcterms:requires      <urn:uuid:e710212f-f6b2-8d4c-9dc0-365398d8b59c> , <urn:uuid:d9a01a85-0ad8-4958-be03-d89ad78ca497>;
+        dcterms:rights        "Copyright";
+        dcterms:rightsHolder  "Statnett SF";
+        dcterms:spatial       <https://energy.referencedata.eu/Test/Frame/NORDIC-Power-Transmission-System>;
+        dcterms:title         "20160101_Nordic44-HV_OP_v3-0-0-beta-1";
+        dcterms:type          <https://energy.referencedata.eu/type/CIM-PowerSystemModel>;
+        adms:versionNotes     "Initial version"@en;
+        dcat:distribution     <urn:uuid:c4f2422b-03a4-4298-aa16-40921c4ca16f>;
+        dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Nordic44-HV_SV>;
+        dcat:keyword          "OP" , "Operation";
+        dcat:startDate        "2025-02-14T12:00:00Z";
+        dcat:version          "3.0.0-beta-1" .
+
+<urn:uuid:4841109b-52ca-4457-9beb-8db6890082d6>
+        rdf:type               dcat:Distribution;
+        dcterms:conformsTo     <urn:iso:std:iec:61970-552:2016>;
+        dcterms:description    "CIMXML serialization of the Nordic44 SV"@en;
+        dcat:accessURL         <file://cimxml/Nordic44-HV_SV.xml>;
+        dcat:isDistributionOf  <urn:uuid:5b6a8b13-4c20-4147-8ed6-7249e303e647>;
+        dcat:mediaType         <http://www.iana.org/assignments/media-types/application/rdf+xml>;
+        prov:generatedAtTime   "2025-02-14T11:00:00Z";
+        prov:wasGeneratedBy    <https://energy.referencedata.eu/Test/Action/SV> .
+
+<urn:uuid:5b6a8b13-4c20-4147-8ed6-7249e303e647>
+        rdf:type              dcat:Dataset;
+        dcterms:accessRights  <https://energy.referencedata.eu/Confidentiality/Public>;
+        dcterms:conformsTo    <http://iec.ch/TC57/ns/CIM/StateVariables-EU/3.0>;
+        dcterms:description   "State Variable (SV) part of the Nordic 44-bus synthetic test model developed by Statnett SF of the Nordic region."@en;
+        dcterms:identifier    "5b6a8b13-4c20-4147-8ed6-7249e303e647";
+        dcterms:issued        "2025-02-14T11:00:00Z";
+        dcterms:publisher     <https://www.statnett.no/en/about-statnett/contact-us/>;
+        dcterms:requires      <urn:uuid:7b3f94c0-bd9b-e74e-866b-f473153c3e70>;
+        dcterms:rights        "Copyright";
+        dcterms:rightsHolder  "Statnett SF";
+        dcterms:spatial       <https://energy.referencedata.eu/Test/Frame/NORDIC-Power-Transmission-System>;
+        dcterms:title         "20160101_Nordic44-HV_SV_v3-0-0-beta-1";
+        dcterms:type          <https://energy.referencedata.eu/type/CIM-PowerSystemModel>;
+        adms:versionNotes     "Initial version"@en;
+        dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Nordic44-HV_SV>;
+        dcat:keyword          "SV" , "StateVariablet";
+        dcat:startDate        "2025-02-14T12:00:00Z";
+        dcat:version          "3.0.0-beta-1" .
+
+<urn:uuid:e6539353-17f9-4d94-be60-eabed8b6e99f>
+        rdf:type               dcat:Distribution;
+        dcterms:conformsTo     <urn:iso:std:iec:61970-552:2016>;
+        dcterms:description    "CIMXML serialization of the Nordic44 TP"@en;
+        dcat:accessURL         <file://cimxml/Nordic44-HV_TP.xml>;
+        dcat:isDistributionOf  <urn:uuid:7b3f94c0-bd9b-e74e-866b-f473153c3e70>;
+        dcat:mediaType         <http://www.iana.org/assignments/media-types/application/rdf+xml>;
+        prov:generatedAtTime   "2025-02-14T11:00:00Z";
+        prov:wasGeneratedBy    <https://energy.referencedata.eu/Test/Action/TP> .
+
+<urn:uuid:7b3f94c0-bd9b-e74e-866b-f473153c3e70>
+        rdf:type              dcat:Dataset;
+        dcterms:accessRights  <https://energy.referencedata.eu/Confidentiality/Public>;
+        dcterms:conformsTo    <http://iec.ch/TC57/ns/CIM/Topology-EU/3.0>;
+        dcterms:description   "Topological (TP) part of the Nordic 44-bus synthetic test model developed by Statnett SF of the Nordic region."@en;
+        dcterms:identifier    "7b3f94c0-bd9b-e74e-866b-f473153c3e70";
+        dcterms:issued        "2025-02-14T11:00:00Z";
+        dcterms:publisher     <https://www.statnett.no/en/about-statnett/contact-us/>;
+        dcterms:requires      <urn:uuid:1d08772d-c1d0-4c47-810d-b14908cd94f5>;
+        dcterms:rights        "Copyright";
+        dcterms:rightsHolder  "Statnett SF";
+        dcterms:spatial       <https://energy.referencedata.eu/Test/Frame/NORDIC-Power-Transmission-System>;
+        dcterms:title         "20160101_Nordic44-HV_TP_v3-0-0-beta-1";
+        dcterms:type          <https://energy.referencedata.eu/type/CIM-PowerSystemModel>;
+        adms:versionNotes     "Initial version"@en;
+        dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Nordic44-HV_DL>;
+        dcat:keyword          "DL" , "DiagramLayout";
+        dcat:startDate        "2025-02-14T12:00:00Z";
+        dcat:version          "3.0.0-beta-1" .
+
+<urn:uuid:2e11908e-5e1f-8542-854c-54da76d379d1>
+        rdf:type              dcat:Dataset;
+        dcterms:accessRights  <https://energy.referencedata.eu/Confidentiality/Public>;
+        dcterms:conformsTo    <http://iec.ch/TC57/ns/CIM/DiagramLayout-EU/3.0>;
+        dcterms:description   "Diagram Layout (DL) part of the Nordic 44-bus synthetic test model developed by Statnett SF of the Nordic region."@en;
+        dcterms:identifier    "2e11908e-5e1f-8542-854c-54da76d379d1";
+        dcterms:issued        "2025-02-14T11:00:00Z";
+        dcterms:publisher     <https://www.statnett.no/en/about-statnett/contact-us/>;
+        dcterms:requires      <urn:uuid:e710212f-f6b2-8d4c-9dc0-365398d8b59c> , <urn:uuid:7b3f94c0-bd9b-e74e-866b-f473153c3e70>;
+        dcterms:rights        "Copyright";
+        dcterms:rightsHolder  "Statnett SF";
+        dcterms:spatial       <https://energy.referencedata.eu/Test/Frame/NORDIC-Power-Transmission-System>;
+        dcterms:title         "20160101_Nordic44-HV_DL_v3-0-0-beta-1";
+        dcterms:type          <https://energy.referencedata.eu/type/CIM-PowerSystemModel>;
+        adms:versionNotes     "Initial version"@en;
+        dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Nordic44-HV_DL>;
+        dcat:keyword          "DL" , "DiagramLayout";
+        dcat:startDate        "2025-02-14T12:00:00Z";
+        dcat:version          "3.0.0-beta-1" .
+
+<urn:uuid:8b095732-1506-40bd-aeb8-a42d311edd5a>
+        rdf:type               dcat:Distribution;
+        dcterms:conformsTo     <urn:iso:std:iec:61970-552:2016>;
+        dcterms:description    "CIMXML serialization of the Nordic44 DL"@en , "CIMXML serialization of the Nordic44 GL"@en;
+        dcat:accessURL         <file://cimxml/Nordic44-HV_DL.xml> , <file://cimxml/Nordic44-HV_GL.xml>;
+        dcat:isDistributionOf  <urn:uuid:2e11908e-5e1f-8542-854c-54da76d379d1> , <urn:uuid:167b4832-27c5-ff4f-bd26-6ce3bff1bdb7>;
+        dcat:mediaType         <http://www.iana.org/assignments/media-types/application/rdf+xml>;
+        prov:generatedAtTime   "2025-02-14T11:00:00Z";
+        prov:wasGeneratedBy    <https://energy.referencedata.eu/Test/Action/DL> , <https://energy.referencedata.eu/Test/Action/GL> .
+
+<urn:uuid:167b4832-27c5-ff4f-bd26-6ce3bff1bdb7>
+        rdf:type              dcat:Dataset;
+        dcterms:accessRights  <https://energy.referencedata.eu/Confidentiality/Public>;
+        dcterms:conformsTo    <http://iec.ch/TC57/ns/CIM/GeographicalLocation-EU/3.0>;
+        dcterms:description   "Geographical Location (GL) part of the Nordic 44-bus synthetic test model developed by Statnett SF of the Nordic region."@en;
+        dcterms:identifier    "167b4832-27c5-ff4f-bd26-6ce3bff1bdb7";
+        dcterms:issued        "2025-02-14T11:00:00Z";
+        dcterms:publisher     <https://www.statnett.no/en/about-statnett/contact-us/>;
+        dcterms:requires      <urn:uuid:e710212f-f6b2-8d4c-9dc0-365398d8b59c>;
+        dcterms:rights        "Copyright";
+        dcterms:rightsHolder  "Statnett SF";
+        dcterms:spatial       <https://energy.referencedata.eu/Test/Frame/NORDIC-Power-Transmission-System>;
+        dcterms:title         "20160101_Nordic44-HV_GL_v3-0-0-beta-1";
+        dcterms:type          <https://energy.referencedata.eu/type/CIM-PowerSystemModel>;
+        adms:versionNotes     "Initial version"@en;
+        dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Nordic44-HV_GL>;
+        dcat:keyword          "GL" , "GeographicalLocation";
+        dcat:startDate        "2025-02-14T12:00:00Z";
+        dcat:version          "3.0.0-beta-1" .
+
+<urn:uuid:38884d50-30ff-41d3-99bb-c794cbdf57cb>
+        rdf:type               dcat:Distribution;
+        dcterms:conformsTo     <urn:iso:std:iec:61970-552:2016>;
+        dcterms:description    "CIMXML serialization of the Nordic44 SSH"@en;
+        dcat:accessURL         <file://cimxml/Nordic44-HV_SSH.xml>;
+        dcat:isDistributionOf  <urn:uuid:1d08772d-c1d0-4c47-810d-b14908cd94f5>;
+        dcat:mediaType         <http://www.iana.org/assignments/media-types/application/rdf+xml>;
+        prov:generatedAtTime   "2025-02-14T11:00:00Z";
+        prov:wasGeneratedBy    <https://energy.referencedata.eu/Test/Action/SSH> .
+
+<urn:uuid:1d08772d-c1d0-4c47-810d-b14908cd94f5>
+        rdf:type              dcat:Dataset;
+        dcterms:accessRights  <https://energy.referencedata.eu/Confidentiality/Public>;
+        dcterms:conformsTo    <http://iec.ch/TC57/ns/CIM/SteadyStateHypothesis-EU/3.0>;
+        dcterms:description   "Steady-State Hypothesis (SSH) part of the Nordic 44-bus synthetic test model developed by Statnett SF of the Nordic region."@en;
+        dcterms:identifier    "1d08772d-c1d0-4c47-810d-b14908cd94f5";
+        dcterms:issued        "2025-02-14T12:00:00Z";
+        dcterms:publisher     <https://www.statnett.no/en/about-statnett/contact-us/>;
+        dcterms:requires      <urn:uuid:e710212f-f6b2-8d4c-9dc0-365398d8b59c>;
+        dcterms:rights        "Copyright";
+        dcterms:rightsHolder  "Statnett SF";
+        dcterms:spatial       <https://energy.referencedata.eu/Test/Frame/NORDIC-Power-Transmission-System>;
+        dcterms:title         "20160101_Nordic44-HV_SSH_v3-0-0-beta-1";
+        dcterms:type          <https://energy.referencedata.eu/type/CIM-PowerSystemModel>;
+        adms:versionNotes     "Initial version"@en;
+        dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Nordic44-HV_SSH>;
+        dcat:keyword          "SSH" , "SteadyStateHypothesis";
+        dcat:startDate        "2014-12-31T23:00:00Z";
+        dcat:version          "3.0.0-beta-1" .
+
+<urn:uuid:5e109739-0140-449f-a7ae-f531f882f7d0>
+        rdf:type               dcat:Distribution;
+        dcterms:conformsTo     <urn:iso:std:iec:61970-552:2016>;
+        dcterms:description    "CIMXML serialization of the Nordic44 EQ"@en;
+        dcat:accessURL         <file://cimxml/Nordic44-HV_EQ.xml>;
+        dcat:isDistributionOf  <urn:uuid:e710212f-f6b2-8d4c-9dc0-365398d8b59c>;
+        dcat:mediaType         <http://www.iana.org/assignments/media-types/application/rdf+xml>;
+        prov:generatedAtTime   "2025-02-14T11:00:00Z";
+        prov:wasGeneratedBy    <https://energy.referencedata.eu/Test/Action/EQ> .
+
+<urn:uuid:e710212f-f6b2-8d4c-9dc0-365398d8b59c>
+        rdf:type              dcat:Dataset;
+        dcterms:accessRights  <https://energy.referencedata.eu/Confidentiality/Public>;
+        dcterms:conformsTo    <http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/3.0>;
+        dcterms:description   "Equipment part of the Nordic 44-bus synthetic test model developed by Statnett SF of the Nordic region."@en;
+        dcterms:identifier    "6ffcaafd-b3b7-4a7f-8d86-7d5870e17629";
+        dcterms:issued        "2025-02-14T12:00:00Z";
+        dcterms:publisher     <https://www.statnett.no/en/about-statnett/contact-us/>;
+        dcterms:rights        "Copyright";
+        dcterms:rightsHolder  "Statnett SF";
+        dcterms:spatial       <https://energy.referencedata.eu/Test/Frame/NORDIC-Power-Transmission-System>;
+        dcterms:title         "20160101_Nordic44-HV_EQ_v3-0-0-beta-1";
+        dcterms:type          <https://energy.referencedata.eu/type/CIM-PowerSystemModel>;
+        adms:versionNotes     "Initial version"@en;
+        dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Nordic44-HV_EQ>;
+        dcat:keyword          "EQ" , "Equipment";
+        dcat:startDate        "2014-12-31T23:00:00Z";
+        dcat:version          "3.0.0-beta-1" .
+
+<urn:uuid:dd979b66-7e29-4124-ba65-52d18b86330b>
+        rdf:type              dcat:Catalog;
+        dcterms:description   "Grid part of Nordic 44-bus synthetic test model developed by Statnett SF of the Nordic region."@en;
+        dcterms:identifier    "3d40111f-fc40-439e-a9f3-1670715392ca";
+        dcterms:issued        "2025-02-14T12:00:00Z";
+        dcterms:license       <https://creativecommons.org/licenses/by/4.0/>;
+        dcterms:publisher     <https://www.statnett.no/en/about-statnett/contact-us/>;
+        dcterms:rights        "Copyright";
+        dcterms:rightsHolder  "Statnett SF";
+        dcterms:title         "Manifest";
+        adms:versionNotes     "Initial version"@en;
+        dcat:dataset          <urn:uuid:1d08772d-c1d0-4c47-810d-b14908cd94f5> , <urn:uuid:e710212f-f6b2-8d4c-9dc0-365398d8b59c> , <urn:uuid:167b4832-27c5-ff4f-bd26-6ce3bff1bdb7> , <urn:uuid:2e11908e-5e1f-8542-854c-54da76d379d1> , <urn:uuid:7b3f94c0-bd9b-e74e-866b-f473153c3e70> , <urn:uuid:5b6a8b13-4c20-4147-8ed6-7249e303e647>;
+        dcat:version          "3.0.0-beta.1" .

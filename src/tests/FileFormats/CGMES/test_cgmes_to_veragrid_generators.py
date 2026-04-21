@@ -52,7 +52,7 @@ def build_generator_case(p: float) -> Tuple[CgmesCircuit, Dict[str, gcdev.Bus], 
 
     regulating_control = RegulatingControl("regulating_rdfid", "RegulatingControl")
     regulating_control.mode = cgmes_enums.RegulatingControlModeKind.voltage
-    regulating_control.targetValue = 5000.0
+    regulating_control.targetValue = 3.0
     regulating_control.enabled = True
     regulating_control.Terminal = terminal
     generator.RegulatingControl = regulating_control
@@ -170,3 +170,23 @@ def test_get_gcdev_generators_regulating_control_mode_kind_not_voltage_log_warni
 
     assert len(logger.entries) == 1
     assert logger.entries[0].msg == 'RegulatingCondEq has control, but not voltage'
+
+
+def test_get_gcdev_generators_unrealistic_target_value_fallback_to_one_pu() -> None:
+    """
+    Fallback to 1.0 p.u. when CGMES target voltage produces an unrealistic setpoint.
+    """
+    cgmes_model, calc_node_dict, device_to_terminal_dict, _ = build_generator_case(p=2.0)
+
+    synchronous_machine = cgmes_model.cgmes_assets.SynchronousMachine_list[0]
+    synchronous_machine.RegulatingControl.targetValue = 0.001
+    synchronous_machine.RegulatingControl.targetValueUnitMultiplier = cgmes_enums.UnitMultiplier.k
+
+    logger = DataLogger()
+    multi_circuit = MultiCircuit()
+    get_gcdev_generators(cgmes_model, multi_circuit, calc_node_dict, device_to_terminal_dict, logger)
+
+    assert len(multi_circuit.generators) == 1
+    assert multi_circuit.generators[0].Vset == pytest.approx(1.0)
+    assert any(entry.msg == 'RegulatingControl targetValue yields unrealistic voltage setpoint; fallback to 1.0 p.u.'
+               for entry in logger.entries)

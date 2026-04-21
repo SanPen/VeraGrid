@@ -24,6 +24,7 @@
     <file>icons/fix.png</file>
     <file>icons/accept2.png</file>
     <file>icons/dyn_add.png</file>
+    <file>icons/dyn_emt_add.png</file>
     <file>icons/short_circuit_plus.png</file>
     <file>icons/time_series_crop_cluster.png</file>
     <file>icons/time_series_crop.png</file>
@@ -67,6 +68,7 @@
     <file>icons/add_remedial_action.png</file>
     <file>icons/plugin.png</file>
     <file>icons/picture.png</file>
+    <file>icons/Catalogue.png</file>
     <file>icons/CataloguePrivate.png</file>
     <file>icons/record.png</file>
     <file>icons/delete_schematic.png</file>
@@ -127,9 +129,11 @@
     <file>icons/cdf.png</file>
     <file>icons/array.png</file>
     <file>icons/upfc.png</file>
+    <file>icons/upfc_gray.png</file>
     <file>icons/to_upfc.png</file>
     <file>icons/color_grid2.png</file>
     <file>icons/vsc.png</file>
+    <file>icons/vsc_gray.png</file>
     <file>icons/dc.png</file>
     <file>icons/CatalogueAdd.png</file>
     <file>icons/clear_runs.png</file>
@@ -179,7 +183,6 @@
     <file>icons/import.png</file>
     <file>icons/piece.png</file>
     <file>icons/schematic.png</file>
-    <file>icons/Catalogue.png</file>
     <file>icons/plot.png</file>
     <file>icons/import_profiles.png</file>
     <file>icons/copy2left.png</file>

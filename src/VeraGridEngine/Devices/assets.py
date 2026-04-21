@@ -36,6 +36,35 @@ def add_devices_list(original_list: List[ALL_DEV_TYPES], new_list: List[ALL_DEV_
         original_list.append(elm)
 
 
+def _matches_dynamic_template_device_type(requested_tpe: DeviceType, template_tpe: DeviceType) -> bool:
+    """
+    Return whether one reusable dynamic template is compatible with a host device type.
+
+    Generic templates are intentionally exposed to every dynamic editor so they can
+    be reused as sub-blocks inside arbitrary device models.
+
+    :param requested_tpe: Device type being edited.
+    :param template_tpe: Device type declared by the reusable template.
+    :return: ``True`` when the template must appear in the editor catalogue.
+    """
+    if template_tpe == requested_tpe:
+        return True
+    else:
+        pass
+
+    if template_tpe == DeviceType.NoDevice:
+        return True
+    else:
+        pass
+
+    if template_tpe == DeviceType.DynamicModelHostDevice:
+        return True
+    else:
+        pass
+
+    return False
+
+
 class Assets:
     """
     Class to store the assets
@@ -6228,7 +6257,7 @@ class Assets:
         :param tpe:
         :return:
         """
-        return [elm for elm in self.emt_models if elm.tpe == tpe]
+        return [elm for elm in self.emt_models if _matches_dynamic_template_device_type(tpe, elm.tpe)]
 
     @property
     def fmu_templates(self) -> List[dev.FmuTemplate]:
@@ -6330,7 +6359,7 @@ class Assets:
         :return: Matching FMU templates.
         """
 
-        return [elm for elm in self.fmu_templates if elm.tpe == tpe]
+        return [elm for elm in self.fmu_templates if _matches_dynamic_template_device_type(tpe, elm.tpe)]
 
     def get_fmu_templates_by_device_type_and_domain(self,
                                                     tpe: DeviceType,
@@ -8730,7 +8759,13 @@ class Assets:
             tem.get_generator_thevenin_rl_emt_template(vf=self._var_factory),
             tem.get_emt_ideal_converter(vf=self._var_factory),
             tem.get_full_pseudo_emt_converter(vf=self._var_factory),
+            tem.get_switched_emt_converter(vf=self._var_factory),
+            tem.get_bridge_2level_3ph_emt_template(vf=self._var_factory),
+            tem.get_bridge_filter_2level_3ph_emt_template(vf=self._var_factory),
+            tem.get_bridge_filter_control_2level_3ph_emt_template(vf=self._var_factory),
             tem.get_dc_load_emt_template(vf=self._var_factory),
+            tem.get_dc_line_emt_template(vf=self._var_factory),
+            tem.get_valve_emt_template(vf=self._var_factory),
 
 
             # the following are functions that generate templates depending on phases or things

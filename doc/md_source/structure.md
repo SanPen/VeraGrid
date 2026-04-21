@@ -358,3 +358,14 @@ professional-grade tool trusted by experts worldwide for critical real-world
 applications—all while remaining open source.
 
 And now you understand why it's not so simple.
+
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+
+## Registered Result Properties
+
+### `InputsAnalysisResults` registered properties
+
+The inputs-analysis result currently has no registered persisted properties.
+
+This result object currently does not register persisted result properties.
+<!-- END RESULTS REGISTERED PROPERTIES -->

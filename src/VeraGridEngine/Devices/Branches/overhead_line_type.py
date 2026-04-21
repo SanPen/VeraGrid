@@ -9,8 +9,6 @@ import numpy as np
 from numpy import pi, log, sqrt
 from matplotlib import pyplot as plt
 import math
-
-from VeraGridEngine import BuildStatus
 from VeraGridEngine.Devices.admittance_matrix import AdmittanceMatrix
 from VeraGridEngine.basic_structures import Logger, Mat, IntVec, Vec, CxMat
 from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp

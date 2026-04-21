@@ -359,3 +359,43 @@ The time in seconds taken using each solver is:
 
 From these tests, the solvers are roughly equivalent for this type of simulation, except Pardiso, which performs
 worse than the others in these specific benchmarks.
+
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+
+## Registered Result Properties
+
+### `LinearAnalysisResults` registered properties
+
+The snapshot linear analysis result stores sensitivity matrices and the base linearized operating point.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `branch_names` | `StrVec` | Names aligned with branch-indexed result arrays. |
+| `bus_names` | `StrVec` | Names aligned with bus-indexed result arrays. |
+| `bus_types` | `IntVec` | Bus type code used by the solved numerical model. |
+| `PTDF` | `Mat` | Power transfer distribution factor matrix. |
+| `LODF` | `Mat` | Line outage distribution factor matrix. |
+| `HvdcDF` | `Mat` | HVDC power-transfer sensitivity matrix. |
+| `HvdcODF` | `Mat` | HVDC outage distribution factor matrix. |
+| `VscDF` | `Mat` | VSC power-transfer sensitivity matrix. |
+| `VscODF` | `Mat` | VSC outage distribution factor matrix. |
+| `Sf` | `Vec` | Complex branch power flow at the from side. |
+| `Sbus` | `Vec` | Complex bus power injection. |
+| `voltage` | `CxVec` | Complex bus voltage solution. |
+| `loading` | `Vec` | Branch loading result. |
+
+### `LinearAnalysisTimeSeriesResults` registered properties
+
+The time-series linear analysis result stores linearized voltages, injections, flows, losses, and loading over time.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `branch_names` | `StrVec` | Names aligned with branch-indexed result arrays. |
+| `bus_names` | `StrVec` | Names aligned with bus-indexed result arrays. |
+| `bus_types` | `IntVec` | Bus type code used by the solved numerical model. |
+| `voltage` | `CxMat` | Complex bus voltage solution. |
+| `Sf` | `CxMat` | Complex branch power flow at the from side. |
+| `S` | `CxMat` | Complex bus power result matrix. |
+| `losses` | `CxMat` | Complex branch losses. |
+| `loading` | `CxMat` | Branch loading result. |
+<!-- END RESULTS REGISTERED PROPERTIES -->

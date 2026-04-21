@@ -195,7 +195,7 @@ def NSGA_3(obj_func,
     """
     problem = GridNsga(obj_func, n_var, n_obj, lb=lb, ub=ub)
 
-    ref_dirs = get_reference_directions("reduction", n_obj, n_partitions, seed=1)
+    ref_dirs = get_reference_directions("das-dennis", n_obj, n_partitions=n_partitions) # ref_dirs = get_reference_directions("reduction", n_obj, n_partitions, seed=1)
 
     algorithm = NSGA3(pop_size=pop_size,
                       sampling=SkewedIntegerSamplingRange(),

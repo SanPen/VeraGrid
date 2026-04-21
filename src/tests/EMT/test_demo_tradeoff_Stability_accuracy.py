@@ -127,7 +127,7 @@ def test_method_benchmark() -> None:
 
         # 4. Simulate
         t0: float = time.perf_counter()
-        t_arr, y_arr, dy_arr = solver.simulate(boundary_updater=pwm_updater)
+        t_arr, y_arr, dy_arr, _, _ = solver.simulate(boundary_updater=pwm_updater)
         elapsed: float = time.perf_counter() - t0
 
         # Extract Data

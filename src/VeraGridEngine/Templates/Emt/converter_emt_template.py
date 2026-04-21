@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 import numpy as np
-from typing import Dict, Tuple
+from typing import List, Dict, Tuple
 from VeraGridEngine.enumerations import DeviceType, ConverterControlType, ParamPowerFlowRefferenceType
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Utils.Symbolic.block import Block, VarPowerFlowRefferenceType
@@ -127,6 +127,8 @@ def get_emt_ideal_converter(
 
    :param vf: Variable factory for creating symbolic variables
    :param name: Name for the converter model
+   :param sbase: System base power used to convert external power references to pu
+   :param fbase: System base frequency for the synchronized current references
 
     :return: EmtModelTemplate with the converter block
     """
@@ -290,13 +292,13 @@ def get_emt_ideal_converter(
     )
     converter_block.api_obj_mapping = {
         ParamPowerFlowRefferenceType.Sbase: sbase,
-        ParamPowerFlowRefferenceType.P_loss0: P_loss,
+        ParamPowerFlowRefferenceType.converter_loss_power_0: P_loss,
         ParamPowerFlowRefferenceType.P0: P0,
         ParamPowerFlowRefferenceType.omega_base: omega_base,
-        ParamPowerFlowRefferenceType.control1: control1,
-        ParamPowerFlowRefferenceType.control2: control2,
-        ParamPowerFlowRefferenceType.control1_val: control1_val,
-        ParamPowerFlowRefferenceType.control2_val: control2_val,
+        ParamPowerFlowRefferenceType.converter_control_mode_1: control1,
+        ParamPowerFlowRefferenceType.converter_control_mode_2: control2,
+        ParamPowerFlowRefferenceType.converter_control_target_1: control1_val,
+        ParamPowerFlowRefferenceType.converter_control_target_2: control2_val,
     }
 
     # =================================================================
@@ -385,12 +387,11 @@ def _build_pseudo_emt_converter_vsc_block(
     P_loss = vf.add_var(name=f"P_loss_{name}")
     i_dc_conv = vf.add_var(name=f"i_dc_conv_{name}")
 
-    P0 = vf.add_var(name=f"P0_{name}")
-
     sbase = vf.add_var(name=f"sbase_{name}")
     P_ref = vf.add_var(name=f"P_ref_{name}")
     Q_ref = vf.add_var(name=f"Q_ref_{name}")
     Vdc_ref = vf.add_var(name=f"Vdc_ref_{name}")
+    P0_sched = vf.add_var(name=f"P0_{name}")
     control1 = vf.add_var(name=f"control1_{name}")
     control2 = vf.add_var(name=f"control2_{name}")
     control1_val = vf.add_var(name=f"control1_val_{name}")
@@ -425,7 +426,7 @@ def _build_pseudo_emt_converter_vsc_block(
         control2=control2,
         control1_val=control1_val,
         control2_val=control2_val,
-        p0=P0,
+        p0=P0_sched,
     )
 
     eps = vf.add_const(1e-10)
@@ -443,10 +444,10 @@ def _build_pseudo_emt_converter_vsc_block(
     i_d0 = (vf.add_const(2.0 / 3.0) * ((P_ref / sbase) + (P_loss0 / sbase))) / (Vpk + eps)
     i_q0 = (vf.add_const(2.0 / 3.0) * (Q_ref / sbase)) / (Vpk + eps)
     i_mag0 = sym.sqrt(i_d0 * i_d0 + i_q0 * i_q0 + eps)
-    P_init = c32 * Vpk * i_d0
-    Q_init = c32 * Vpk * i_q0
+    P0 = c32 * Vpk * i_d0
+    Q0 = c32 * Vpk * i_q0
     P_loss0_expr = P_loss0_pu + P_loss_i1_pu * i_mag0 + P_loss_i2_pu * i_mag0 * i_mag0
-    i_dc_conv0 = -(P_init - P_loss0_expr) / (Vdc_ref + eps)
+    i_dc_conv0 = -(P0 - P_loss0_expr) / (Vdc_ref + eps)
     i_dc0 = (i_dc_conv0 + v_dc_bus / R_dc) / (c1 + R_dc_term / R_dc)
     v_dc0 = v_dc_bus - R_dc_term * i_dc0
 
@@ -478,7 +479,7 @@ def _build_pseudo_emt_converter_vsc_block(
         algebraic_vars=[P_ref, Q_ref, Vdc_ref, i_dc, P, Q, i_mag, P_loss, i_dc_conv],
         event_dict={
             sbase: vf.add_const(1.0),
-            P0: vf.add_const(0.0),
+            P0_sched: vf.add_const(0.0),
             control1: vf.add_const(float(_converter_control_type_code(ConverterControlType.Vm_dc))),
             control2: vf.add_const(float(_converter_control_type_code(ConverterControlType.Qac))),
             control1_val: vf.add_const(1.0),
@@ -514,8 +515,8 @@ def _build_pseudo_emt_converter_vsc_block(
             Q_ref: q_ref_expr,
             Vdc_ref: vdc_ref_expr,
             i_dc: i_dc0,
-            P: P_init,
-            Q: Q_init,
+            P: P0,
+            Q: Q0,
             i_mag: i_mag0,
             P_loss: P_loss0_expr,
             i_dc_conv: i_dc_conv0,
@@ -534,13 +535,13 @@ def _build_pseudo_emt_converter_vsc_block(
     )
     block.api_obj_mapping = {
         ParamPowerFlowRefferenceType.Sbase: sbase,
-        ParamPowerFlowRefferenceType.P_loss0: P_loss0,
+        ParamPowerFlowRefferenceType.P0: P0_sched,
+        ParamPowerFlowRefferenceType.converter_loss_power_0: P_loss0,
         ParamPowerFlowRefferenceType.omega_base: omega_base,
-        ParamPowerFlowRefferenceType.control1: control1,
-        ParamPowerFlowRefferenceType.control2: control2,
-        ParamPowerFlowRefferenceType.control1_val: control1_val,
-        ParamPowerFlowRefferenceType.control2_val: control2_val,
-        ParamPowerFlowRefferenceType.P0: P0,
+        ParamPowerFlowRefferenceType.converter_control_mode_1: control1,
+        ParamPowerFlowRefferenceType.converter_control_mode_2: control2,
+        ParamPowerFlowRefferenceType.converter_control_target_1: control1_val,
+        ParamPowerFlowRefferenceType.converter_control_target_2: control2_val,
     }
     return block
 def _build_pseudo_emt_converter_pll_block(vf: VarFactory, name: str) -> Block:
@@ -564,13 +565,13 @@ def _build_pseudo_emt_converter_pll_block(vf: VarFactory, name: str) -> Block:
             # PLL angle dynamics.
             omega_pll,
             # PLL integrator dynamics driven by q-axis voltage.
-            pll_ki * v_q,
+            -pll_ki * v_q,
         ],
         state_vars=[theta_pll, xi_pll],
         diff_vars=[d_theta_pll, d_xi_pll],
         algebraic_eqs=[
             # PLL frequency output from proportional and integral action.
-            omega_pll - (omega_base + pll_kp * v_q + xi_pll),
+            omega_pll - (omega_base - pll_kp * v_q + xi_pll),
         ],
         algebraic_vars=[omega_pll],
         init_eqs={theta_pll: phi_v, xi_pll: c0, omega_pll: omega_base},
@@ -823,7 +824,7 @@ def _build_pseudo_emt_converter_inner_loop_block(vf: VarFactory, name: str) -> B
             i_0_ref, i_d_ref, i_q_ref, i_kp, i_ki, aw_gain, m_max, Vdc_ref, v_dc, vdc_floor,
             sbase, P_ref, Q_ref, P_loss0, Vpk,
         ],
-        out_vars=[v_cmd_d, v_cmd_q, v_cmd_0],
+        out_vars=[v_cmd_d, v_cmd_q, v_cmd_0, k_v_conv],
         name=f"{name}_inner_loop",
     )
 
@@ -1029,5 +1030,3 @@ def get_full_pseudo_emt_converter(
     templ.block.api_obj_mapping = dict(vsc_block.api_obj_mapping)
 
     return templ
-
-

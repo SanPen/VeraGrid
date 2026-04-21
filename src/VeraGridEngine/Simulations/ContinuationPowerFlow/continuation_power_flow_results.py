@@ -3,7 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 import numpy as np
-from VeraGridEngine.Simulations.results_template import ResultsTemplate
+from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
 from VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow import CpfNumericResults
 from VeraGridEngine.Simulations.results_table import ResultsTable
 from VeraGridEngine.basic_structures import IntVec, Vec, StrVec, CxMat, Mat, BoolVec
@@ -14,6 +14,22 @@ class ContinuationPowerFlowResults(ResultsTemplate):
     """
     ContinuationPowerFlowResults
     """
+
+    LOCAL_RESULTS_DECLARATIONS = (
+        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list()),
+        ResultsProperty(name='voltages', tpe=CxMat, old_names=list()),
+        ResultsProperty(name='lambdas', tpe=Vec, old_names=list()),
+        ResultsProperty(name='error', tpe=Vec, old_names=list()),
+        ResultsProperty(name='converged', tpe=BoolVec, old_names=list()),
+        ResultsProperty(name='Sf', tpe=CxMat, old_names=list()),
+        ResultsProperty(name='St', tpe=CxMat, old_names=list()),
+        ResultsProperty(name='loading', tpe=CxMat, old_names=list()),
+        ResultsProperty(name='losses', tpe=CxMat, old_names=list()),
+        ResultsProperty(name='Sbus', tpe=CxMat, old_names=list()),
+    )
+
     __slots__ = (
         "bus_names",
         "branch_names",
@@ -86,18 +102,6 @@ class ContinuationPowerFlowResults(ResultsTemplate):
         self.losses: CxMat = np.zeros((nval, nbr), dtype=complex)
         self.Sbus: CxMat = np.zeros((nval, nbus), dtype=complex)
 
-        self.register(name='bus_names', tpe=StrVec)
-        self.register(name='branch_names', tpe=StrVec)
-        self.register(name='bus_types', tpe=IntVec)
-        self.register(name='voltages', tpe=CxMat)
-        self.register(name='lambdas', tpe=Vec)
-        self.register(name='error', tpe=Vec)
-        self.register(name='converged', tpe=BoolVec)
-        self.register(name='Sf', tpe=CxMat)
-        self.register(name='St', tpe=CxMat)
-        self.register(name='loading', tpe=CxMat)
-        self.register(name='losses', tpe=CxMat)
-        self.register(name='Sbus', tpe=CxMat)
 
     # def get_dict(self):
     #     """

@@ -39,8 +39,8 @@ device_type_icons = {
     DeviceType.TransformerNwDevice.value: ":/Icons/icons/transformerNw.png",
     DeviceType.SeriesReactanceDevice.value: ":/Icons/icons/reactance.png",
     DeviceType.HVDCLineDevice.value: ":/Icons/icons/to_hvdc.png",
-    DeviceType.VscDevice.value: ":/Icons/icons/vsc.png",
-    DeviceType.UpfcDevice.value: ":/Icons/icons/upfc.png",
+    DeviceType.VscDevice.value: ":/Icons/icons/vsc_gray.png",
+    DeviceType.UpfcDevice.value: ":/Icons/icons/upfc_gray.png",
 
     "Fluid": ":/Icons/icons/dam_gray.png",
     DeviceType.FluidNodeDevice.value: ":/Icons/icons/fluid_node.png",

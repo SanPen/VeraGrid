@@ -9,7 +9,7 @@ import numpy as np
 from typing import Tuple, Optional, List, Any
 from typing import Tuple, Optional, List, Callable, Dict
 
-from VeraGridEngine import VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import VarPowerFlowRefferenceType
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.basic_structures import Vec
 from VeraGridEngine.Utils.Symbolic.symbolic import (Var, Const, Expr, CmpOp, Comparison, heaviside, hard_sat, expression2numba, get_expression_vars)
@@ -907,7 +907,8 @@ def connect_line_emt_from(mdl1: Block, mdl2: Block):
         VarPowerFlowRefferenceType.v_N: VarPowerFlowRefferenceType.vf_N,
         VarPowerFlowRefferenceType.v_A: VarPowerFlowRefferenceType.vf_A,
         VarPowerFlowRefferenceType.v_B: VarPowerFlowRefferenceType.vf_B,
-        VarPowerFlowRefferenceType.v_C: VarPowerFlowRefferenceType.vf_C
+        VarPowerFlowRefferenceType.v_C: VarPowerFlowRefferenceType.vf_C,
+        VarPowerFlowRefferenceType.Vdc: VarPowerFlowRefferenceType.Vf_dc,
     }
 
     # Find the variable pairs that match our mapping
@@ -938,7 +939,8 @@ def connect_line_emt_to(mdl1: Block, mdl2: Block):
         VarPowerFlowRefferenceType.v_N: VarPowerFlowRefferenceType.vt_N,
         VarPowerFlowRefferenceType.v_A: VarPowerFlowRefferenceType.vt_A,
         VarPowerFlowRefferenceType.v_B: VarPowerFlowRefferenceType.vt_B,
-        VarPowerFlowRefferenceType.v_C: VarPowerFlowRefferenceType.vt_C
+        VarPowerFlowRefferenceType.v_C: VarPowerFlowRefferenceType.vt_C,
+        VarPowerFlowRefferenceType.Vdc: VarPowerFlowRefferenceType.Vt_dc,
     }
 
     # Find the variable pairs that match our mapping
@@ -1043,7 +1045,14 @@ def set_emt_model(device: Any, model: Block, var_factory: VarFactory):
     :return: None
     """
     # 1. Connect bus variables depending on the device type
-    if device.device_type in [DeviceType.BranchDevice, DeviceType.LineDevice, DeviceType.Transformer2WDevice,
+    if device.device_type in [DeviceType.BranchDevice,
+                              DeviceType.LineDevice,
+                              DeviceType.DCLineDevice,
+                              DeviceType.HVDCLineDevice,
+                              DeviceType.SwitchDevice,
+                              DeviceType.SeriesReactanceDevice,
+                              DeviceType.UpfcDevice,
+                              DeviceType.Transformer2WDevice,
                               DeviceType.Transformer3WDevice]:
 
         # Bus FROM connection

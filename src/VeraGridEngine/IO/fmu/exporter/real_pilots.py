@@ -98,7 +98,7 @@ def build_frequency_load_rms_pilot() -> PilotModel:
 
 
 def build_thevenin_generator_emt_pilot() -> PilotModel:
-    grid = SimpleNamespace(emt_var_factory=VarFactory(name="FMU EMT Pilot VarFactory"), fBase=50.0)
+    grid = SimpleNamespace(var_factory=VarFactory(name="FMU EMT Pilot VarFactory"), fBase=50.0)
     generator = SimpleNamespace(R1=0.01, X1=0.2)
     pilot_name = "emt_thevenin_eq_generator_template"
     template = get_generator_thevenin_rl_emt_template(grid, generator, name=pilot_name)

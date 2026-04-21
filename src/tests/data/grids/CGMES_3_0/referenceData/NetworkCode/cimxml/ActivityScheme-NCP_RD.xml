@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:adms="http://www.w3.org/ns/adms#"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+    xmlns:provcim="https://cim4.eu/ns/provcim#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+  xml:base="https://energy.referencedata.eu" > 
+  <skos:ConceptScheme rdf:about="https://energy.referencedata.eu/ActivityScheme/NCP/1.0">
+    <dcterms:accessRights rdf:resource="https://energy.referencedata.eu/Confidentiality/Public"/>
+    <skos:definition xml:lang="en">Reference dataset and concept scheme listing recognized activity identities that may be used as the object of prov:wasGeneratedBy.</skos:definition>
+    <dcterms:description xml:lang="en">Reference dataset containing recognized activity identities for use in provenance references.</dcterms:description>
+    <prov:generatedAtTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-03-22T00:00:00Z</prov:generatedAtTime>
+    <dcterms:hasPart rdf:resource="https://energy.referencedata.eu/ActivityScheme/NCP/1.0#collection_ncp_activity"/>
+    <dcterms:identifier>afab3d78-d706-466e-931a-db0bf847b904</dcterms:identifier>
+    <dcat:isVersionOf rdf:resource="https://energy.referencedata.eu/ActivityScheme"/>
+    <dcterms:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2026-03-22</dcterms:issued>
+    <dcterms:license rdf:resource="https://creativecommons.org/licenses/by/4.0/"/>
+    <skos:prefLabel xml:lang="en">Energy Reference Data Activity Scheme</skos:prefLabel>
+    <dcterms:publisher rdf:resource="https://www.entsoe.eu/"/>
+    <dcterms:rights>Copyright</dcterms:rights>
+    <dcterms:rightsHolder>ENTSO-E</dcterms:rightsHolder>
+    <dcterms:title>ActivityScheme-NCP-1.0</dcterms:title>
+    <rdf:type rdf:resource="http://www.w3.org/ns/dcat#Dataset"/>
+    <dcat:version>1.0.0</dcat:version>
+    <adms:versionNotes xml:lang="en">Initial version of the Energy Reference Data Activity Scheme for ReliCapGrid.</adms:versionNotes>
+  </skos:ConceptScheme>
+  <provcim:Modeling rdf:about="https://energy.referencedata.eu/activity/IGM-EQ">
+    <dcterms:description xml:lang="en">Recognized modeling activity identity for creating the structural data describing the Individual Grid Model (IGM) Equipment (EQ) model.</dcterms:description>
+    <dcterms:identifier>fc47623a-ddc3-4dec-80cc-bef95f5044a4</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">IGM-EQ</skos:prefLabel>
+  </provcim:Modeling>
+  <provcim:Verification rdf:about="https://energy.referencedata.eu/activity/IGM-EQ-VF">
+    <dcterms:description xml:lang="en">Recognized verification activity identity for verifying the structural data describing the Individual Grid Model (IGM) Equipment (EQ) model.</dcterms:description>
+    <dcterms:identifier>441835fe-8a39-4d0e-b6c0-935266138da9</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">IGM-EQ-VF</skos:prefLabel>
+  </provcim:Verification>
+  <provcim:Modeling rdf:about="https://energy.referencedata.eu/activity/IGM-ER">
+    <dcterms:description xml:lang="en">Recognized modeling activity identity for creating the structural data describing the Individual Grid Model (IGM) Equipment Reliability (ER) model.</dcterms:description>
+    <dcterms:identifier>fdae0538-35d9-4ff7-9f4d-da46fc035d7a</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">IGM-ER</skos:prefLabel>
+  </provcim:Modeling>
+  <provcim:Assessment rdf:about="https://energy.referencedata.eu/activity/IGM-RASR">
+    <dcterms:description xml:lang="en">Recognized assessment activity identity for assessing the Remedial Action Schedule (RAS) on the structural Remedial Action (RA) model for an Individual Grid Model (IGM).</dcterms:description>
+    <dcterms:identifier>cd6012ae-9ca8-41e0-8d07-1cda33326871</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">IGM-RASR</skos:prefLabel>
+  </provcim:Assessment>
+  <prov:Collection rdf:about="https://energy.referencedata.eu/ActivityScheme/NCP/1.0#collection_ncp_activity">
+    <prov:hadMember rdf:resource="https://energy.referencedata.eu/activity/IGM-EQ"/>
+    <prov:hadMember rdf:resource="https://energy.referencedata.eu/activity/IGM-ER"/>
+    <prov:hadMember rdf:resource="https://energy.referencedata.eu/activity/IGM-EQ-VF"/>
+    <prov:hadMember rdf:resource="https://energy.referencedata.eu/activity/IGM-RASR"/>
+    <dcterms:identifier>209d3b30-a355-4e1e-a831-c11c3eb514d7</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Collection of recognized activities identities for NCP.</skos:prefLabel>
+  </prov:Collection>
+</rdf:RDF>

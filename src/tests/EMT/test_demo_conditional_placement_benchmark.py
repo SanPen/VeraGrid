@@ -252,7 +252,7 @@ def _run_case_once(
         updater = mode_trace
 
     t_start = time.perf_counter()
-    t, y_hist, _ = solver.simulate(
+    t, y_hist, _, _, _ = solver.simulate(
         params0=problem.event_params_values.copy(),
         boundary_updater=updater,
     )

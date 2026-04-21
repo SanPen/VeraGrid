@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:nc="https://cim4.eu/ns/nc#"
+    xmlns:cim="https://cim.ucaiug.io/ns#"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:eumd="https://cim4.eu/ns/Metadata-European#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#" > 
+  <dcat:Dataset rdf:about="urn:uuid:f585ecdc-e9bd-43bb-8cdb-3b55eb2eb03d">
+    <dcterms:accessRights>https://energy.referencedata.eu/Confidentiality/Public</dcterms:accessRights>
+    <dcterms:conformsTo>https://ap.cim4.eu/ImpactAssessmentMatrix/2.4</dcterms:conformsTo>
+    <dcterms:description xml:lang="en">This is the impact assessment matrix dataset for Jotunheim part of ReliCapGrid.</dcterms:description>
+    <dcat:endDate>2023-06-16T19:30:00Z</dcat:endDate>
+    <prov:generatedAtTime>2022-06-10T07:06:25Z</prov:generatedAtTime>
+    <dcterms:identifier>f585ecdc-e9bd-43bb-8cdb-3b55eb2eb03d</dcterms:identifier>
+    <dcat:isVersionOf rdf:resource="https://energy.referencedata.eu/Test/Model/Jotunheim-IAM"/>
+    <dcat:keyword>IAM</dcat:keyword>
+    <dcterms:license>https://creativecommons.org/licenses/by/4.0/</dcterms:license>
+    <dcterms:publisher>https://energy.referencedata.eu/test/party/Jotunheim</dcterms:publisher>
+    <dcterms:rights>Copyright</dcterms:rights>
+    <dcterms:rightsHolder>ENTSO-E</dcterms:rightsHolder>	
+    <dcterms:requires rdf:resource="urn:uuid:6d20b56c-57ba-4591-89bf-8e8f5c586c7d"/>
+    <dcat:startDate>2022-06-16T19:30:00Z</dcat:startDate>
+    <dcterms:title>20220615_IAM_1.0.0</dcterms:title> 
+    <dcat:version>1.0.0</dcat:version>
+    <prov:wasGeneratedBy>https://energy.referencedata.eu/Activity/CGM-IAM</prov:wasGeneratedBy>
+  </dcat:Dataset>
+  <nc:CalculationBasedImpactAssessmentMatrix rdf:ID="_41acccd5-7937-46bc-bb37-50ab2ab0e9d6">
+    <cim:IdentifiedObject.description>Impact Assessment Matrix sample</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>41acccd5-7937-46bc-bb37-50ab2ab0e9d6</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>IAM_2130</cim:IdentifiedObject.name>
+  </nc:CalculationBasedImpactAssessmentMatrix>
+  <nc:RemedialActionOutcomeValue rdf:ID="_f574dccc-d9bd-43aa-bcda-3b54eb2eb03d">
+    <nc:OutcomeValue.ImpactAssessmentMatrix rdf:resource="#_41acccd5-7937-46bc-bb37-50ab2ab0e9d6"/>
+    <nc:OutcomeValue.ImpactedSystemOperator rdf:resource="#_151d6acf-d4fd-4604-9603-f02348603277"/>
+    <nc:OutcomeValue.mRID>f574dccc-d9bd-43aa-bcda-3b54eb2eb03d</nc:OutcomeValue.mRID>
+    <nc:OutcomeValue.outcome rdf:resource="https://cim4.eu/ns/nc#OutcomeImpactAssessmentKind.true"/>
+    <nc:RemedialActionOutcomeValue.RemedialAction rdf:resource="#_fb487cc2-0f7b-4958-8f66-1d3fabf7840d"/>
+  </nc:RemedialActionOutcomeValue>
+  <nc:RemedialActionScheduleOutcomeValue rdf:ID="_955d04c3-c49c-4986-ab2d-1215aa124b6e">
+    <nc:OutcomeValue.ImpactAssessmentMatrix rdf:resource="#_41acccd5-7937-46bc-bb37-50ab2ab0e9d6"/>
+    <nc:OutcomeValue.ImpactedSystemOperator rdf:resource="#_151d6acf-d4fd-4604-9603-f02348603277"/>
+    <nc:OutcomeValue.mRID>955d04c3-c49c-4986-ab2d-1215aa124b6e</nc:OutcomeValue.mRID>
+    <nc:OutcomeValue.outcome rdf:resource="https://cim4.eu/ns/nc#OutcomeImpactAssessmentKind.undecided"/>
+    <nc:RemedialActionScheduleOutcomeValue.RemedialActionSchedule rdf:resource="#_d9696d07-a53a-4763-90b2-6ef42926a218"/>
+  </nc:RemedialActionScheduleOutcomeValue>
+</rdf:RDF>

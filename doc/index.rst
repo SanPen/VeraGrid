@@ -74,6 +74,7 @@ Contents
     md_source/short_circuit.md
     md_source/stochastic_power_flow.md
     md_source/continuation_power_flow.md
+    md_source/solar_wizard.md
 
     md_source/contingency_analysis.md
     md_source/investment_optimization.md
@@ -112,5 +113,4 @@ to their respective owners.
    :target: https://pepy.tech/project/veragrid
 .. |Discord| image:: https://img.shields.io/badge/Discord-%235865F2.svg
    :target: https://discord.gg/ypgmWvT5
-
 

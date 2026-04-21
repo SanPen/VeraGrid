@@ -876,3 +876,108 @@ $$
 - $\textbf{z}_{f, B}$: Impedance of the failures of selected buses $B$.
 - $\textbf{Z}$: system impedance matrix. Obtained as the inverse of the complete system admittance matrix.
 - $\textbf{Z}_B$: submatrix of $\textbf{Z}$ such that all rows and columns for non-selected buses are removed.
+
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+
+## Registered Result Properties
+
+### `ShortCircuitResults` registered properties
+
+The short-circuit result stores sequence, phase, branch, HVDC, VSC, and fault-current quantities.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `bus_names` | `StrVec` | Names aligned with bus-indexed result arrays. |
+| `branch_names` | `StrVec` | Names aligned with branch-indexed result arrays. |
+| `hvdc_names` | `StrVec` | Names aligned with HVDC line-indexed result arrays. |
+| `sc_names` | `StrVec` | Names aligned with short-circuit element-indexed result arrays. |
+| `bus_types` | `IntVec` | Bus type code used by the solved numerical model. |
+| `F` | `IntVec` | Branch from-bus index for each branch. |
+| `T` | `IntVec` | Branch to-bus index for each branch. |
+| `hvdc_F` | `IntVec` | HVDC from-bus index for each HVDC line. |
+| `hvdc_T` | `IntVec` | HVDC to-bus index for each HVDC line. |
+| `bus_area_indices` | `IntVec` | Area index assigned to each bus. |
+| `area_names` | `IntVec` | Area names or area identifiers used for inter-area aggregation. |
+| `Sbus1` | `CxVec` | Complex bus power injection for positive sequence. |
+| `voltage1` | `CxVec` | Complex bus voltage solution for positive sequence. |
+| `Sf1` | `CxVec` | Complex branch power flow at the from side for positive sequence. |
+| `St1` | `CxVec` | Complex branch power flow at the to side for positive sequence. |
+| `If1` | `CxVec` | Complex branch current at the from side for positive sequence. |
+| `It1` | `CxVec` | Complex branch current at the to side for positive sequence. |
+| `Vbranch1` | `CxVec` | Complex branch voltage result for positive sequence. |
+| `loading1` | `CxVec` | Loading result for positive sequence. |
+| `losses1` | `CxVec` | Losses result for positive sequence. |
+| `Sbus0` | `CxVec` | Complex bus power injection for zero sequence. |
+| `voltage0` | `CxVec` | Complex bus voltage solution for zero sequence. |
+| `Sf0` | `CxVec` | Complex branch power flow at the from side for zero sequence. |
+| `St0` | `CxVec` | Complex branch power flow at the to side for zero sequence. |
+| `If0` | `CxVec` | Complex branch current at the from side for zero sequence. |
+| `It0` | `CxVec` | Complex branch current at the to side for zero sequence. |
+| `Vbranch0` | `CxVec` | Complex branch voltage result for zero sequence. |
+| `loading0` | `CxVec` | Loading result for zero sequence. |
+| `losses0` | `CxVec` | Losses result for zero sequence. |
+| `Sbus2` | `CxVec` | Complex bus power injection for negative sequence. |
+| `voltage2` | `CxVec` | Complex bus voltage solution for negative sequence. |
+| `Sf2` | `CxVec` | Complex branch power flow at the from side for negative sequence. |
+| `St2` | `CxVec` | Complex branch power flow at the to side for negative sequence. |
+| `If2` | `CxVec` | Complex branch current at the from side for negative sequence. |
+| `It2` | `CxVec` | Complex branch current at the to side for negative sequence. |
+| `Vbranch2` | `CxVec` | Complex branch voltage result for negative sequence. |
+| `loading2` | `CxVec` | Loading result for negative sequence. |
+| `losses2` | `CxVec` | Losses result for negative sequence. |
+| `SbusN` | `CxVec` | Complex bus power injection for neutral. |
+| `voltageN` | `CxVec` | Complex bus voltage solution for neutral. |
+| `SfN` | `CxVec` | Complex branch power flow at the from side for neutral. |
+| `StN` | `CxVec` | Complex branch power flow at the to side for neutral. |
+| `IfN` | `CxVec` | Complex branch current at the from side for neutral. |
+| `ItN` | `CxVec` | Complex branch current at the to side for neutral. |
+| `VbranchN` | `CxVec` | Complex branch voltage result for neutral. |
+| `loadingN` | `CxVec` | Loading result for neutral. |
+| `lossesN` | `CxVec` | Losses result for neutral. |
+| `SbusA` | `CxVec` | Complex bus power injection for phase A. |
+| `voltageA` | `CxVec` | Complex bus voltage solution for phase A. |
+| `SfA` | `CxVec` | Complex branch power flow at the from side for phase A. |
+| `StA` | `CxVec` | Complex branch power flow at the to side for phase A. |
+| `IfA` | `CxVec` | Complex branch current at the from side for phase A. |
+| `ItA` | `CxVec` | Complex branch current at the to side for phase A. |
+| `VbranchA` | `CxVec` | Complex branch voltage result for phase A. |
+| `loadingA` | `CxVec` | Loading result for phase A. |
+| `lossesA` | `CxVec` | Losses result for phase A. |
+| `SbusB` | `CxVec` | Complex bus power injection for phase B. |
+| `voltageB` | `CxVec` | Complex bus voltage solution for phase B. |
+| `SfB` | `CxVec` | Complex branch power flow at the from side for phase B. |
+| `StB` | `CxVec` | Complex branch power flow at the to side for phase B. |
+| `IfB` | `CxVec` | Complex branch current at the from side for phase B. |
+| `ItB` | `CxVec` | Complex branch current at the to side for phase B. |
+| `VbranchB` | `CxVec` | Complex branch voltage result for phase B. |
+| `loadingB` | `CxVec` | Loading result for phase B. |
+| `lossesB` | `CxVec` | Losses result for phase B. |
+| `SbusC` | `CxVec` | Complex bus power injection for phase C. |
+| `voltageC` | `CxVec` | Complex bus voltage solution for phase C. |
+| `SfC` | `CxVec` | Complex branch power flow at the from side for phase C. |
+| `StC` | `CxVec` | Complex branch power flow at the to side for phase C. |
+| `IfC` | `CxVec` | Complex branch current at the from side for phase C. |
+| `ItC` | `CxVec` | Complex branch current at the to side for phase C. |
+| `VbranchC` | `CxVec` | Complex branch voltage result for phase C. |
+| `loadingC` | `CxVec` | Loading result for phase C. |
+| `lossesC` | `CxVec` | Losses result for phase C. |
+| `hvdc_losses` | `Vec` | HVDC result field `hvdc_losses`. |
+| `hvdc_Pf` | `Vec` | HVDC result field `hvdc_Pf`. |
+| `hvdc_Pt` | `Vec` | HVDC result field `hvdc_Pt`. |
+| `hvdc_loading` | `Vec` | HVDC result field `hvdc_loading`. |
+| `vsc_If` | `Vec` | VSC result field `vsc_If`. |
+| `vsc_It` | `CxVec` | VSC result field `vsc_It`. |
+| `vsc_Pfp` | `Vec` | VSC result field `vsc_Pfp`. |
+| `vsc_Pfn` | `Vec` | VSC result field `vsc_Pfn`. |
+| `vsc_St` | `CxVec` | VSC result field `vsc_St`. |
+| `vsc_losses` | `Vec` | VSC result field `vsc_losses`. |
+| `vsc_loading` | `Vec` | VSC result field `vsc_loading`. |
+| `SCpower` | `CxVec` | Short-circuit power result. |
+| `SCpowerA` | `CxVec` | Short-circuit power result for phase A. |
+| `SCpowerB` | `CxVec` | Short-circuit power result for phase B. |
+| `SCpowerC` | `CxVec` | Short-circuit power result for phase C. |
+| `ICurrent` | `CxVec` | Short-circuit current result. |
+| `ICurrentA` | `CxVec` | Short-circuit current result for phase A. |
+| `ICurrentB` | `CxVec` | Short-circuit current result for phase B. |
+| `ICurrentC` | `CxVec` | Short-circuit current result for phase C. |
+<!-- END RESULTS REGISTERED PROPERTIES -->

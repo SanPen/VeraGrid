@@ -10,6 +10,7 @@ import os
 from typing import Dict
 import numpy as np
 import VeraGridEngine.Devices as dev
+from VeraGridEngine import ShuntControlMode
 from VeraGridEngine.basic_structures import Logger
 
 try:
@@ -695,7 +696,7 @@ class IidmParser:
                         Bmin=float(row["b_min"]),
                         Bmax=float(row["b_max"]),
                         vset=float(row["target_v"]),
-                        is_controlled=bool(row["regulating"]),
+                        control_mode=ShuntControlMode.Continuous if bool(row["regulating"]) else ShuntControlMode.Locked
                     )
                     elm.control_bus = bus_dict.get(row["regulated_bus_id"], None)
                     grid.add_controllable_shunt(bus=bus1, api_obj=elm)

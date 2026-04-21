@@ -641,7 +641,7 @@ def run_case(
     assert protection is not None
 
     params0 = problem.event_params_values.copy()
-    t, y_hist, dy_hist = solver.simulate(params0=params0, boundary_updater=protection)
+    t, y_hist, dy_hist, _, _ = solver.simulate(params0=params0, boundary_updater=protection)
 
     return t, y_hist, dy_hist, problem, vars_map, logic
 
@@ -677,7 +677,7 @@ def run_boolean_operator_case(
     )
 
     params0 = problem.event_params_values.copy()
-    t, y_hist, dy_hist = solver.simulate(params0=params0, boundary_updater=tracing_updater)
+    t, y_hist, dy_hist, _, _ = solver.simulate(params0=params0, boundary_updater=tracing_updater)
     return t, y_hist, dy_hist, problem, vars_map, tracing_updater
 
 
@@ -710,7 +710,7 @@ def run_analog_flipflop_case(
     )
 
     params0 = problem.event_params_values.copy()
-    t, y_hist, dy_hist = solver.simulate(params0=params0, boundary_updater=tracing_updater)
+    t, y_hist, dy_hist, _, _ = solver.simulate(params0=params0, boundary_updater=tracing_updater)
     return t, y_hist, dy_hist, problem, vars_map, tracing_updater
 
 

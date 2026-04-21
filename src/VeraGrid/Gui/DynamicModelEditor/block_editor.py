@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'block_editor.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.10.2
+## Created by: Qt User Interface Compiler version 6.11.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -17,17 +17,17 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
 from PySide6.QtWidgets import (QApplication, QFrame, QGraphicsView, QHBoxLayout,
-    QHeaderView, QLabel, QMainWindow, QMenuBar,
-    QPushButton, QSizePolicy, QSpacerItem, QSplitter,
-    QTabWidget, QTableView, QToolBar, QTreeView,
-    QVBoxLayout, QWidget)
+    QHeaderView, QLabel, QLineEdit, QMainWindow,
+    QMenuBar, QPushButton, QSizePolicy, QSpacerItem,
+    QSplitter, QTableView, QToolBar, QToolBox,
+    QToolButton, QTreeView, QVBoxLayout, QWidget)
 from VeraGrid.Gui.Icons.icons_rc import *
 
 class Ui_BlockEditorWindow(object):
     def setupUi(self, BlockEditorWindow):
         if not BlockEditorWindow.objectName():
             BlockEditorWindow.setObjectName(u"BlockEditorWindow")
-        BlockEditorWindow.resize(1122, 610)
+        BlockEditorWindow.resize(957, 572)
         self.block_editor_actionCheckModel = QAction(BlockEditorWindow)
         self.block_editor_actionCheckModel.setObjectName(u"block_editor_actionCheckModel")
         icon = QIcon()
@@ -56,87 +56,101 @@ class Ui_BlockEditorWindow(object):
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setContentsMargins(6, 0, 6, 0)
+        self.verticalLayout.setContentsMargins(6, 0, 6, 6)
         self.frame_3 = QFrame(self.centralwidget)
         self.frame_3.setObjectName(u"frame_3")
         self.frame_3.setFrameShape(QFrame.Shape.NoFrame)
         self.frame_3.setFrameShadow(QFrame.Shadow.Raised)
-        self.verticalLayout_6 = QVBoxLayout(self.frame_3)
-        self.verticalLayout_6.setObjectName(u"verticalLayout_6")
-        self.verticalLayout_6.setContentsMargins(0, 6, 0, 0)
+        self.verticalLayout_2 = QVBoxLayout(self.frame_3)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.verticalLayout_2.setContentsMargins(6, 6, 6, 6)
         self.splitter = QSplitter(self.frame_3)
         self.splitter.setObjectName(u"splitter")
         self.splitter.setOrientation(Qt.Orientation.Horizontal)
-        self.frame_6 = QFrame(self.splitter)
-        self.frame_6.setObjectName(u"frame_6")
-        self.frame_6.setFrameShape(QFrame.Shape.NoFrame)
-        self.frame_6.setFrameShadow(QFrame.Shadow.Raised)
-        self.verticalLayout_4 = QVBoxLayout(self.frame_6)
-        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-        self.verticalLayout_4.setContentsMargins(0, 0, 6, 0)
-        self.tabWidget = QTabWidget(self.frame_6)
-        self.tabWidget.setObjectName(u"tabWidget")
-        self.tabWidget.setTabPosition(QTabWidget.TabPosition.North)
-        self.tabWidget.setDocumentMode(True)
-        self.tab = QWidget()
-        self.tab.setObjectName(u"tab")
-        self.verticalLayout_5 = QVBoxLayout(self.tab)
-        self.verticalLayout_5.setObjectName(u"verticalLayout_5")
-        self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
-        self.libraryTreeView = QTreeView(self.tab)
+        self.frame = QFrame(self.splitter)
+        self.frame.setObjectName(u"frame")
+        self.frame.setFrameShape(QFrame.Shape.NoFrame)
+        self.frame.setFrameShadow(QFrame.Shadow.Raised)
+        self.verticalLayout_6 = QVBoxLayout(self.frame)
+        self.verticalLayout_6.setObjectName(u"verticalLayout_6")
+        self.verticalLayout_6.setContentsMargins(0, 0, 6, 0)
+        self.toolBox = QToolBox(self.frame)
+        self.toolBox.setObjectName(u"toolBox")
+        self.page_7 = QWidget()
+        self.page_7.setObjectName(u"page_7")
+        self.verticalLayout_13 = QVBoxLayout(self.page_7)
+        self.verticalLayout_13.setObjectName(u"verticalLayout_13")
+        self.verticalLayout_13.setContentsMargins(0, 0, 0, 0)
+        self.libraryHeaderFrame = QFrame(self.page_7)
+        self.libraryHeaderFrame.setObjectName(u"libraryHeaderFrame")
+        self.libraryHeaderFrame.setFrameShape(QFrame.Shape.NoFrame)
+        self.libraryHeaderFrame.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout_5 = QHBoxLayout(self.libraryHeaderFrame)
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.horizontalLayout_5.setContentsMargins(0, 0, 0, 0)
+        self.librarySearchButton = QToolButton(self.libraryHeaderFrame)
+        self.librarySearchButton.setObjectName(u"librarySearchButton")
+
+        self.horizontalLayout_5.addWidget(self.librarySearchButton)
+
+        self.librarySearchLineEdit = QLineEdit(self.libraryHeaderFrame)
+        self.librarySearchLineEdit.setObjectName(u"librarySearchLineEdit")
+
+        self.horizontalLayout_5.addWidget(self.librarySearchLineEdit)
+
+
+        self.verticalLayout_13.addWidget(self.libraryHeaderFrame)
+
+        self.libraryTreeView = QTreeView(self.page_7)
         self.libraryTreeView.setObjectName(u"libraryTreeView")
         self.libraryTreeView.setFrameShape(QFrame.Shape.NoFrame)
 
-        self.verticalLayout_5.addWidget(self.libraryTreeView)
+        self.verticalLayout_13.addWidget(self.libraryTreeView)
 
-        icon4 = QIcon()
-        icon4.addFile(u":/Icons/icons/link-to-all.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.tabWidget.addTab(self.tab, icon4, "")
-        self.tab_2 = QWidget()
-        self.tab_2.setObjectName(u"tab_2")
-        self.verticalLayout_2 = QVBoxLayout(self.tab_2)
-        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.variablesLabel = QLabel(self.tab_2)
-        self.variablesLabel.setObjectName(u"variablesLabel")
-
-        self.verticalLayout_2.addWidget(self.variablesLabel)
-
-        self.variablesTableView = QTableView(self.tab_2)
+        self.toolBox.addItem(self.page_7, u"Library")
+        self.page = QWidget()
+        self.page.setObjectName(u"page")
+        self.page.setGeometry(QRect(0, 0, 554, 285))
+        self.verticalLayout_7 = QVBoxLayout(self.page)
+        self.verticalLayout_7.setObjectName(u"verticalLayout_7")
+        self.verticalLayout_7.setContentsMargins(0, 0, 0, 0)
+        self.variablesTableView = QTableView(self.page)
         self.variablesTableView.setObjectName(u"variablesTableView")
         self.variablesTableView.setFrameShape(QFrame.Shape.NoFrame)
 
-        self.verticalLayout_2.addWidget(self.variablesTableView)
+        self.verticalLayout_7.addWidget(self.variablesTableView)
 
-        self.parametersLabel = QLabel(self.tab_2)
-        self.parametersLabel.setObjectName(u"parametersLabel")
-
-        self.verticalLayout_2.addWidget(self.parametersLabel)
-
-        self.parametersTableView = QTableView(self.tab_2)
+        self.toolBox.addItem(self.page, u"Variables")
+        self.page_2 = QWidget()
+        self.page_2.setObjectName(u"page_2")
+        self.page_2.setGeometry(QRect(0, 0, 554, 285))
+        self.verticalLayout_8 = QVBoxLayout(self.page_2)
+        self.verticalLayout_8.setObjectName(u"verticalLayout_8")
+        self.verticalLayout_8.setContentsMargins(0, 0, 0, 0)
+        self.parametersTableView = QTableView(self.page_2)
         self.parametersTableView.setObjectName(u"parametersTableView")
         self.parametersTableView.setFrameShape(QFrame.Shape.NoFrame)
 
-        self.verticalLayout_2.addWidget(self.parametersTableView)
+        self.verticalLayout_8.addWidget(self.parametersTableView)
 
-        self.equationsLabel = QLabel(self.tab_2)
-        self.equationsLabel.setObjectName(u"equationsLabel")
-
-        self.verticalLayout_2.addWidget(self.equationsLabel)
-
-        self.equationsTableView = QTableView(self.tab_2)
+        self.toolBox.addItem(self.page_2, u"Parameters")
+        self.page_3 = QWidget()
+        self.page_3.setObjectName(u"page_3")
+        self.page_3.setGeometry(QRect(0, 0, 554, 285))
+        self.verticalLayout_9 = QVBoxLayout(self.page_3)
+        self.verticalLayout_9.setObjectName(u"verticalLayout_9")
+        self.verticalLayout_9.setContentsMargins(0, 0, 0, 0)
+        self.equationsTableView = QTableView(self.page_3)
         self.equationsTableView.setObjectName(u"equationsTableView")
         self.equationsTableView.setFrameShape(QFrame.Shape.NoFrame)
 
-        self.verticalLayout_2.addWidget(self.equationsTableView)
+        self.verticalLayout_9.addWidget(self.equationsTableView)
 
-        icon5 = QIcon()
-        icon5.addFile(u":/Icons/icons/edit.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.tabWidget.addTab(self.tab_2, icon5, "")
+        self.toolBox.addItem(self.page_3, u"Equations")
 
-        self.verticalLayout_4.addWidget(self.tabWidget)
+        self.verticalLayout_6.addWidget(self.toolBox)
 
-        self.splitter.addWidget(self.frame_6)
+        self.splitter.addWidget(self.frame)
         self.frame_7 = QFrame(self.splitter)
         self.frame_7.setObjectName(u"frame_7")
         self.frame_7.setFrameShape(QFrame.Shape.NoFrame)
@@ -151,7 +165,7 @@ class Ui_BlockEditorWindow(object):
 
         self.splitter.addWidget(self.frame_7)
 
-        self.verticalLayout_6.addWidget(self.splitter)
+        self.verticalLayout_2.addWidget(self.splitter)
 
 
         self.verticalLayout.addWidget(self.frame_3)
@@ -189,7 +203,7 @@ class Ui_BlockEditorWindow(object):
         BlockEditorWindow.setCentralWidget(self.centralwidget)
         self.menuBar = QMenuBar(BlockEditorWindow)
         self.menuBar.setObjectName(u"menuBar")
-        self.menuBar.setGeometry(QRect(0, 0, 1122, 23))
+        self.menuBar.setGeometry(QRect(0, 0, 957, 33))
         BlockEditorWindow.setMenuBar(self.menuBar)
         self.toolBar = QToolBar(BlockEditorWindow)
         self.toolBar.setObjectName(u"toolBar")
@@ -205,7 +219,7 @@ class Ui_BlockEditorWindow(object):
 
         self.retranslateUi(BlockEditorWindow)
 
-        self.tabWidget.setCurrentIndex(0)
+        self.toolBox.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(BlockEditorWindow)
@@ -217,20 +231,12 @@ class Ui_BlockEditorWindow(object):
         self.actionCenter.setText(QCoreApplication.translate("BlockEditorWindow", u"Center", None))
         self.actionZoom_in.setText(QCoreApplication.translate("BlockEditorWindow", u"Zoom in", None))
         self.actionZoom_out.setText(QCoreApplication.translate("BlockEditorWindow", u"Zoom out", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("BlockEditorWindow", u"Library", None))
-#if QT_CONFIG(tooltip)
-        self.tabWidget.setTabToolTip(self.tabWidget.indexOf(self.tab), QCoreApplication.translate("BlockEditorWindow", u"Drag and drop models into the scene", None))
-#endif // QT_CONFIG(tooltip)
-        self.variablesLabel.setStyleSheet(QCoreApplication.translate("BlockEditorWindow", u"font-weight: bold; padding: 4px;", None))
-        self.variablesLabel.setText(QCoreApplication.translate("BlockEditorWindow", u"Variables", None))
-        self.parametersLabel.setStyleSheet(QCoreApplication.translate("BlockEditorWindow", u"font-weight: bold; padding: 4px;", None))
-        self.parametersLabel.setText(QCoreApplication.translate("BlockEditorWindow", u"Parameters", None))
-        self.equationsLabel.setStyleSheet(QCoreApplication.translate("BlockEditorWindow", u"font-weight: bold; padding: 4px;", None))
-        self.equationsLabel.setText(QCoreApplication.translate("BlockEditorWindow", u"Equations", None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("BlockEditorWindow", u"Edit Selected", None))
-#if QT_CONFIG(tooltip)
-        self.tabWidget.setTabToolTip(self.tabWidget.indexOf(self.tab_2), QCoreApplication.translate("BlockEditorWindow", u"Select one block to edit its variables and equations", None))
-#endif // QT_CONFIG(tooltip)
+        self.librarySearchButton.setText(QCoreApplication.translate("BlockEditorWindow", u"...", None))
+        self.librarySearchLineEdit.setPlaceholderText(QCoreApplication.translate("BlockEditorWindow", u"Search basic blocks", None))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.page_7), QCoreApplication.translate("BlockEditorWindow", u"Library", None))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.page), QCoreApplication.translate("BlockEditorWindow", u"Variables", None))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.page_2), QCoreApplication.translate("BlockEditorWindow", u"Parameters", None))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.page_3), QCoreApplication.translate("BlockEditorWindow", u"Equations", None))
         self.currently_editing_object_label.setText(QCoreApplication.translate("BlockEditorWindow", u"Device:", None))
         self.deviceLabel.setText(QCoreApplication.translate("BlockEditorWindow", u"dev", None))
         self.doItButton.setText(QCoreApplication.translate("BlockEditorWindow", u"Do it!", None))

@@ -1374,7 +1374,7 @@ class StructuralVectorizedSolver:
                  x0: Union[Vec| None] = None,
                  dx0: Union[Vec| None] = None,
                  params0: Union[Vec| None] = None,
-                 boundary_updater: EmtBoundaryUpdateProtocol | None = None) -> Tuple[Vec, Mat, Mat]:
+                 boundary_updater: EmtBoundaryUpdateProtocol | None = None) -> Tuple[Vec, Mat, Mat, bool, bool]:
 
         """
         Run the vectorized DAE time-domain simulation.
@@ -1414,7 +1414,7 @@ class StructuralVectorizedSolver:
                              method: DynamicIntegrationMethod,
                              boundary_updater: EmtBoundaryUpdateProtocol | None,
                              verbose: bool,
-                             dense_threshold: int)-> Tuple[Vec, Mat, Mat]:
+                             dense_threshold: int)-> Tuple[Vec, Mat, Mat, bool, bool]:
         if not self.vectorized_ready:
             self.auto_detect_vectorization(method)
 
@@ -1424,6 +1424,9 @@ class StructuralVectorizedSolver:
         dy: Mat = np.zeros((steps + 1, self._n_diff), dtype=np.float64)
         y[0] = x0.copy()
         dy[0] = dx0.copy()
+
+        converged: bool = True
+        well_initialized: bool = True
 
         x_prev: Vec = x0.copy()
         dx_prev: Vec = dx0.copy()
@@ -1599,6 +1602,7 @@ class StructuralVectorizedSolver:
                 else:
                     pass
 
+                substep_converged: bool = False
                 for k in range(15):
                     total_newton_iterations += 1
                     ctx: NewtonSolveContext | None = None
@@ -1614,6 +1618,7 @@ class StructuralVectorizedSolver:
                     )
 
                     if res_norm < 1e-6:
+                        substep_converged = True
                         break
                     else:
                         pass
@@ -1708,6 +1713,11 @@ class StructuralVectorizedSolver:
 
                     last_res_norm = res_norm
 
+                if not substep_converged:
+                    converged = False
+                    if i == 0 and is_first_local_step:
+                        well_initialized = False
+
                 if method == DynamicIntegrationMethod.DaeTrapezoidal:
                     dx_prev[:self._n_state] = (
                             (2.0 / h_eff) * (x_iter[:self._n_state] - x_prev[:self._n_state])
@@ -1734,6 +1744,8 @@ class StructuralVectorizedSolver:
                 t_local_prev = t_curr
                 is_first_local_step = False
 
+
+
             y[i + 1] = x_prev
             dy[i + 1] = dx_prev
 
@@ -1751,7 +1763,7 @@ class StructuralVectorizedSolver:
         else:
             pass
 
-        return t, y, dy
+        return t, y, dy, well_initialized, converged
 
     def get_backend_build_stats(self) -> Dict[str, float]:
         """

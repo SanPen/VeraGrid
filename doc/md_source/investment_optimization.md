@@ -23,6 +23,27 @@ the curse of dimensionality. The methodology we have adopted here consists of:
 
 ![](figures/settings-ml.png)
 
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+
+## Registered Result Properties
+
+### `InvestmentsEvaluationResults` registered properties
+
+The investments evaluation result stores the evaluated decision vectors and objective values used to inspect the search.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `max_eval` | `int` | Maximum number of investment evaluations configured for the run. |
+| `f_names` | `StrVec` | Objective function names. |
+| `x_names` | `StrVec` | Decision variable names. |
+| `plot_x_idx` | `int` | Decision-variable index used on the x-axis of the result plot. |
+| `plot_y_idx` | `int` | Objective index used on the y-axis of the result plot. |
+| `x` | `Mat` | Evaluated decision-variable matrix. |
+| `f` | `Mat` | Objective-value matrix for the evaluated decision vectors. |
+| `f_best` | `Vec` | Best objective values found by the evaluation process. |
+| `sorting_indices` | `IntVec` | Indices that sort the evaluated solutions for reporting. |
+<!-- END RESULTS REGISTERED PROPERTIES -->
+
 ## API
 
 ```python

@@ -21,7 +21,7 @@ import VeraGrid.Gui.gui_functions as gf
 from VeraGrid.Gui.object_model import ObjectsModel
 from VeraGrid.Gui.object_proxy_model import ObjectModelFilterProxy
 from VeraGrid.Gui.profiles_model import ProfilesModel
-from VeraGridEngine.enumerations import DeviceType, FmuTemplateDomain, TimeSeriesSearchPoint
+from VeraGridEngine.enumerations import DeviceType, DynamicSimulationMode, TimeSeriesSearchPoint
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.Topology.detect_substations import detect_substations, detect_facilities
 from VeraGrid.Gui.Analysis.object_plot_analysis import object_histogram_analysis
@@ -29,7 +29,7 @@ from VeraGrid.Gui.messages import yes_no_question, warning_msg, info_msg
 from VeraGrid.Gui.Main.SubClasses.Model.diagrams import DiagramsMain
 from VeraGrid.Gui.Diagrams.Editors.line_editor import LineEditor
 from VeraGrid.Gui.TowerBuilder.LineBuilderDialogue import TowerBuilderGUI
-from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI, DynamicEditorMode
+from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
 from VeraGrid.Gui.FmuTemplateEditor.fmu_template_editor import FmuTemplateEditorDialog
 from VeraGrid.Gui.SystemScaler.system_scaler import SystemScaler
 from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import GridMapWidget, generate_map_diagram
@@ -998,49 +998,12 @@ class DataBaseTableMain(DiagramsMain):
                             pass
 
                     elif elm_type == DeviceType.RmsModelTemplateDevice.value:
-                        self.rms_model_Editor_window = DynamicBlockEditorGUI(
-                            var_factory=self.circuit.var_factory,
-                            block=elm.block,
-                            api_object=elm,
-                            mode=DynamicEditorMode.RMS,
-                            templates_list=self.circuit.get_dynamic_templates_by_domain(FmuTemplateDomain.RMS),
-                            circuit=self.circuit,
-                            main_editor=True,
-                        )
-                        # self.rms_model_Editor_window = DynamicBlockEditorGUI(
-                        #     var_factory=self.circuit.var_factory,
-                        #     block=elm.block,
-                        #     api_object=None,
-                        #     mode=DynamicEditorMode.RMS,
-                        #     templates_list=self.circuit.get_dynamic_templates_by_domain(FmuTemplateDomain.RMS),
-                        #     circuit=self.circuit,
-                        #     main_editor=True,
-                        # )
-                        if self.rms_model_Editor_window.show():
-                            elm.block = self.rms_model_Editor_window.main_block
+                        open_dynamic_editor(api_object=elm, circuit=self.circuit,
+                                            preferred_mode=DynamicSimulationMode.RMS)
 
                     elif elm_type == DeviceType.EmtModelTemplateDevice.value:
-                        self.rms_model_Editor_window = DynamicBlockEditorGUI(
-                            var_factory=self.circuit.var_factory,
-                            block=elm.block,
-                            api_object=elm,
-                            mode=DynamicEditorMode.EMT,
-                            templates_list=self.circuit.get_dynamic_templates_by_domain(FmuTemplateDomain.EMT),
-                            circuit=self.circuit,
-                            main_editor=True,
-                        )
-                        # self.rms_model_Editor_window = DynamicBlockEditorGUI(
-                        #     var_factory=self.circuit.var_factory,
-                        #     block=elm.block,
-                        #     api_object=None,
-                        #     mode=DynamicEditorMode.EMT,
-                        #     templates_list=self.circuit.get_dynamic_templates_by_domain(FmuTemplateDomain.EMT),
-                        #     circuit=self.circuit,
-                        #     main_editor=True,
-                        # )
-
-                        if self.rms_model_Editor_window.show():
-                            elm.block = self.rms_model_Editor_window.main_block
+                        open_dynamic_editor(api_object=elm, circuit=self.circuit,
+                                            preferred_mode=DynamicSimulationMode.EMT)
 
                     elif elm_type == DeviceType.FmuTemplateDevice.value:
                         dlg = FmuTemplateEditorDialog(

@@ -37,6 +37,67 @@ The available results are the following:
 
 ![](figures/SDomain_plot_VeraGrid.png)
 
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+
+## Registered Result Properties
+
+### `SmallSignalStabilityRmsResults` registered properties
+
+The RMS small-signal stability result stores eigenvalue, damping, frequency, participation, and state-matrix data.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `eigenvalues` | `Vec` | Eigenvalues of the linearized system. |
+| `participation_factors` | `Mat` | Participation-factor matrix relating states or variables to modes. |
+| `damping_ratios` | `Vec` | Damping ratio for each identified mode. |
+| `conjugate_frequencies` | `Vec` | Frequency of each complex-conjugate mode. |
+| `state_matrix` | `Mat` | State matrix of the linearized system. |
+
+### `SmallSignalStabilityEmtResults` registered properties
+
+The EMT small-signal stability result stores multiplier, eigenvalue, and participation-factor data.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `multipliers` | `CxVec` | Discrete-time multipliers from the EMT small-signal analysis. |
+| `eigenvalues` | `CxVec` | Eigenvalues of the linearized system. |
+| `participation_factors` | `Mat` | Participation-factor matrix relating states or variables to modes. |
+
+### `EraMatrixPencilResults` registered properties
+
+The ERA matrix pencil result stores modal estimates and reconstruction diagnostics.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `eigenvalues_s` | `CxVec` | Estimated continuous-time eigenvalues in the s-domain. |
+| `frequencies_hz` | `Vec` | Mode frequencies in hertz. |
+| `damping_ratios` | `Vec` | Damping ratio for each identified mode. |
+| `is_stable` | `BoolVec` | Stability flag for each identified mode. |
+| `residues` | `CxMat` | Modal residues estimated by the ERA matrix pencil method. |
+| `modal_energy` | `Vec` | Estimated energy contribution of each mode. |
+| `reconstruction_errors` | `Vec` | Signal reconstruction error for each selected model order. |
+| `band_low_hz` | `Vec` | Lower frequency bound used for modal selection. |
+| `band_high_hz` | `Vec` | Upper frequency bound used for modal selection. |
+| `selected_orders` | `IntVec` | Model orders selected by the ERA matrix pencil analysis. |
+| `observable_count_per_mode` | `IntVec` | Number of observed signals contributing to each mode. |
+
+### `RmsResults` registered properties
+
+The RMS result stores the simulated variable values.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `values` | `Vec` | Simulated values matrix for the registered dynamic variables. |
+
+### `EmtResults` registered properties
+
+The EMT result stores the simulated variable values.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `values` | `Vec` | Simulated values matrix for the registered dynamic variables. |
+<!-- END RESULTS REGISTERED PROPERTIES -->
+
 ## API
 
 Using the simplified API:

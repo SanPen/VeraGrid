@@ -11,12 +11,13 @@ _validate_connections) correctly detect topology issues in 5 different scenarios
 
 import pytest
 import os
+import numpy as np
 
 from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import EmtProblemDae, EmtTopologyError
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowDriver, PowerFlowOptions
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver_3ph import PowerFlowDriver3Ph
-from VeraGridEngine.enumerations import DynamicIntegrationMethod, EmtSolverTypes, ShuntConnectionType, EmtInitializationMethod, EmtLineTypes, ConverterControlType, SolverType
+from VeraGridEngine.enumerations import DynamicIntegrationMethod, EmtSolverTypes, ShuntConnectionType, EmtInitializationMethod, EmtLineTypes, ConverterControlType, SolverType, VarPowerFlowRefferenceType
 from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template
 from VeraGridEngine.Templates.Emt.bergeron_line_emt_template import get_bergeron_line_emt_template
 from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_shunt_r_emt_template
@@ -24,8 +25,13 @@ from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template imp
 from VeraGridEngine.Templates.Emt.bus_emt_template import get_bus_emt_template
 from VeraGridEngine.Templates.Emt.transformer_emt_template import get_transformer_emt_template
 from VeraGridEngine.Templates.Emt.converter_emt_template import get_emt_ideal_converter
+from VeraGridEngine.Templates.Emt.converter_switched_emt_template import get_switched_emt_converter
 from VeraGridEngine.Templates.Emt.dc_load_emt_template import get_dc_load_emt_template
+from VeraGridEngine.Templates.Emt.dc_line_emt_template import get_dc_line_emt_template
 from VeraGridEngine.Templates.templates_common_functions import set_emt_model
+from VeraGridEngine.Simulations.EMT.solvers.jit_symbolic_solver import JitSymbolicSolver
+from VeraGridEngine.Utils.Symbolic.block import Block
+from VeraGridEngine.Utils.Symbolic.symbolic import Var
 import VeraGridEngine.api as gce
 
 
@@ -39,6 +45,19 @@ def get_default_emt_options() -> EmtOptions:
         initialization_method=EmtInitializationMethod.Auto,
         integration_method=DynamicIntegrationMethod.DaeTrapezoidal,
         verbose=0
+    )
+
+
+def get_switched_converter_emt_options() -> EmtOptions:
+    """Return lightweight EMT options for the switched-converter validation test."""
+    return EmtOptions(
+        time_step=1e-5,
+        simulation_time=1.2e-3,
+        tolerance=1e-6,
+        solver_type=EmtSolverTypes.Symbolic,
+        initialization_method=EmtInitializationMethod.Explicit,
+        integration_method=DynamicIntegrationMethod.DaeBackEuler,
+        verbose=0,
     )
 
 
@@ -249,6 +268,223 @@ def test_vsc_emt_passes_validation():
     # Should NOT raise EmtTopologyError - this is a valid topology
     problem = EmtProblemDae(grid=grid, options=get_default_emt_options(), pf_results=pf_results, pf_results_3ph=pf_res_3ph)
     assert problem is not None
+
+
+def _find_name_in_block(name: str, block: Block) -> Var | None:
+    """
+    Return one symbolic variable from a block hierarchy by name.
+
+    :param name: Requested symbolic-variable name.
+    :param block: Root symbolic block.
+    :return: Matching variable or ``None``.
+    """
+    variable: Var
+    child_block: Block
+    nested_result: Var | None
+
+    for variable_list in [block.in_vars, block.out_vars, block.algebraic_vars, block.state_vars, block.diff_vars]:
+        for variable in variable_list:
+            if variable.name == name:
+                return variable
+            else:
+                pass
+
+    for variable in list(block.event_dict.keys()):
+        if variable.name == name:
+            return variable
+        else:
+            pass
+
+    for child_block in block.children:
+        nested_result = _find_name_in_block(name, child_block)
+        if nested_result is not None:
+            return nested_result
+        else:
+            pass
+
+    return None
+
+
+def test_switched_vsc_emt_passes_validation_and_switches_gates() -> None:
+    """
+    Verify that the switched EMT converter integrates in a normal VSC case and produces gate commutations.
+
+    :return: None.
+    """
+    grid = gce.MultiCircuit(Sbase=100.0, fbase=50.0)
+
+    bus1_ac = gce.Bus(name="Bus1_AC", Vnom=230.0, is_slack=True)
+    bus2_ac = gce.Bus(name="Bus2_AC", Vnom=230.0)
+    bus3_dc = gce.Bus(name="Bus3_DC", Vnom=320.0, is_dc=True)
+    grid.add_bus(bus1_ac)
+    grid.add_bus(bus2_ac)
+    grid.add_bus(bus3_dc)
+
+    gen1 = gce.Generator(name="Generator", vset=1.0, Snom=100.0, freq=50.0, r1=0.001, x1=0.4)
+    transformer = gce.Transformer2W(name="Transformer", bus_from=bus1_ac, bus_to=bus2_ac, rate=100.0, r=0.01, x=0.1, tap_module=1.0, tap_phase=0.0)
+    vsc = gce.VSC(name="VSC", bus_from=bus3_dc, bus_to=bus2_ac, rate=100.0, control1=ConverterControlType.Qac, control2=ConverterControlType.Vm_dc, control1_val=0.0, control2_val=1.0)
+    dc_load = gce.Load(name="DC_Load", P=30.0, Q=0.0)
+
+    grid.add_generator(bus1_ac, gen1)
+    grid.add_transformer2w(transformer)
+    grid.add_vsc(vsc)
+    grid.add_load(bus3_dc, dc_load)
+
+    for bus in grid.buses:
+        get_bus_emt_template(grid, bus)
+
+    pf_options = PowerFlowOptions(
+        solver_type=SolverType.NR,
+        verbose=False,
+        retry_with_other_methods=False,
+        max_iter=25,
+        tolerance=1e-5,
+        control_q=False,
+        control_taps_modules=False,
+        control_taps_phase=False,
+        orthogonalize_controls=False,
+    )
+    pf_results = gce.power_flow(grid=grid, options=pf_options)
+    pf_res_3ph = None
+
+    gen_mdl = get_generator_thevenin_rl_emt_template(vf=grid.var_factory).block
+    trafo_mdl = get_transformer_emt_template(vf=grid.var_factory, name=transformer.name).block
+    vsc_mdl = get_switched_emt_converter(vf=grid.var_factory, name=vsc.name).block
+    dc_load_mdl = get_dc_load_emt_template(vf=grid.var_factory, name="dc_load_emt_switched").block
+
+    set_emt_model(device=gen1, model=gen_mdl, var_factory=grid.var_factory)
+    set_emt_model(device=transformer, model=trafo_mdl, var_factory=grid.var_factory)
+    set_emt_model(device=vsc, model=vsc_mdl, var_factory=grid.var_factory)
+    set_emt_model(device=dc_load, model=dc_load_mdl, var_factory=grid.var_factory)
+
+    switched_options = get_switched_converter_emt_options()
+    problem = EmtProblemDae(grid=grid, options=switched_options, pf_results=pf_results, pf_results_3Ph=pf_res_3ph)
+    assert problem is not None
+
+    gate_a_var = _find_name_in_block("gate_a_VSC", vsc.emt_model)
+    gate_b_var = _find_name_in_block("gate_b_VSC", vsc.emt_model)
+    gate_c_var = _find_name_in_block("gate_c_VSC", vsc.emt_model)
+    i_A_var = _find_name_in_block("i_A_VSC", vsc.emt_model)
+    i_B_var = _find_name_in_block("i_B_VSC", vsc.emt_model)
+    i_C_var = _find_name_in_block("i_C_VSC", vsc.emt_model)
+    v_dc_var = _find_name_in_block("v_dc_VSC", vsc.emt_model)
+
+    assert gate_a_var is not None
+    assert gate_b_var is not None
+    assert gate_c_var is not None
+    assert i_A_var is not None
+    assert i_B_var is not None
+    assert i_C_var is not None
+    assert v_dc_var is not None
+    assert problem.initialization_report is not None
+    assert float(problem.initialization_report.initial_residual_inf) <= 1.0e-8
+    assert float(problem.initialization_report.final_residual_inf) <= 1.0e-8
+
+    problem.reset_boundary_update_state(0.0)
+    x0 = problem.get_x0()
+    runtime_values = problem.event_params_values.copy()
+    constant_values = np.asarray([const.value for const in problem.get_parameters_values()], dtype=float)
+    full_params = np.concatenate((runtime_values, constant_values))
+    runtime_mode_map = {var.name: var for var in problem.get_runtime_mode_parameters()}
+    gate_a_mode_idx = problem.uid2idx_event_params[runtime_mode_map["gate_a_mode_VSC_plant_bridge"].uid]
+    gate_b_mode_idx = problem.uid2idx_event_params[runtime_mode_map["gate_b_mode_VSC_plant_bridge"].uid]
+    gate_c_mode_idx = problem.uid2idx_event_params[runtime_mode_map["gate_c_mode_VSC_plant_bridge"].uid]
+    switching_enabled_idx = problem.uid2idx_event_params[runtime_mode_map["switching_enabled_mode_VSC"].uid]
+    gate_a_trace = list()
+    gate_b_trace = list()
+    gate_c_trace = list()
+
+    for time_s in np.linspace(0.0, switched_options.simulation_time, 121):
+        problem.update(float(time_s), x0.copy(), full_params)
+        gate_a_trace.append(float(full_params[gate_a_mode_idx]))
+        gate_b_trace.append(float(full_params[gate_b_mode_idx]))
+        gate_c_trace.append(float(full_params[gate_c_mode_idx]))
+
+    assert float(full_params[switching_enabled_idx]) > 0.5
+    assert float(np.max(np.asarray(gate_a_trace)) - np.min(np.asarray(gate_a_trace))) > 0.5
+    assert float(np.max(np.asarray(gate_b_trace)) - np.min(np.asarray(gate_b_trace))) > 0.5
+    assert float(np.max(np.asarray(gate_c_trace)) - np.min(np.asarray(gate_c_trace))) > 0.5
+    assert np.isfinite(float(x0[problem.get_var_idx(v_dc_var)]))
+    assert np.isfinite(float(x0[problem.get_var_idx(i_A_var)]))
+    assert np.isfinite(float(x0[problem.get_var_idx(i_B_var)]))
+    assert np.isfinite(float(x0[problem.get_var_idx(i_C_var)]))
+
+
+def test_set_emt_model_connects_dc_line_terminal_voltages():
+    grid = gce.MultiCircuit(Sbase=100.0, fbase=50.0)
+
+    bus_from_dc = gce.Bus(name="BusFromDC", Vnom=320.0, is_dc=True)
+    bus_to_dc = gce.Bus(name="BusToDC", Vnom=320.0, is_dc=True)
+    grid.add_bus(bus_from_dc)
+    grid.add_bus(bus_to_dc)
+
+    get_bus_emt_template(grid, bus_from_dc)
+    get_bus_emt_template(grid, bus_to_dc)
+
+    dc_line = gce.DcLine(name="DC_Line", bus_from=bus_from_dc, bus_to=bus_to_dc, r=0.02, rate=100.0)
+    line_mdl = get_dc_line_emt_template(vf=grid.var_factory, name=dc_line.name).block
+
+    set_emt_model(device=dc_line, model=line_mdl, var_factory=grid.var_factory)
+
+    assert dc_line.emt_model.E(VarPowerFlowRefferenceType.Vf_dc).uid == bus_from_dc.emt_model.E(VarPowerFlowRefferenceType.Vdc).uid
+    assert dc_line.emt_model.E(VarPowerFlowRefferenceType.Vt_dc).uid == bus_to_dc.emt_model.E(VarPowerFlowRefferenceType.Vdc).uid
+
+
+def test_dc_line_emt_passes_validation_and_initializes_branch_currents():
+    grid = gce.MultiCircuit(Sbase=100.0, fbase=50.0)
+
+    bus_ac = gce.Bus(name="Bus_AC", Vnom=230.0, is_slack=True)
+    bus_dc_from = gce.Bus(name="Bus_DC_From", Vnom=320.0, is_dc=True)
+    bus_dc_to = gce.Bus(name="Bus_DC_To", Vnom=320.0, is_dc=True)
+    grid.add_bus(bus_ac)
+    grid.add_bus(bus_dc_from)
+    grid.add_bus(bus_dc_to)
+
+    gen = gce.Generator(name="Generator", vset=1.0, Snom=100.0, freq=50.0, r1=0.001, x1=0.4)
+    vsc = gce.VSC(
+        name="VSC",
+        bus_from=bus_dc_from,
+        bus_to=bus_ac,
+        rate=100.0,
+        control1=ConverterControlType.Qac,
+        control2=ConverterControlType.Vm_dc,
+        control1_val=0.0,
+        control2_val=1.0,
+    )
+    dc_line = gce.DcLine(name="DC_Line", bus_from=bus_dc_from, bus_to=bus_dc_to, r=0.02, rate=100.0)
+    dc_load = gce.Load(name="DC_Load", P=30.0, Q=0.0)
+
+    grid.add_generator(bus_ac, gen)
+    grid.add_vsc(vsc)
+    grid.add_dc_line(dc_line)
+    grid.add_load(bus_dc_to, dc_load)
+
+    for bus in grid.buses:
+        get_bus_emt_template(grid, bus)
+
+    pf_results, pf_res_3ph = run_power_flow(grid)
+
+    gen_mdl = get_generator_thevenin_rl_emt_template(vf=grid.var_factory).block
+    vsc_mdl = get_emt_ideal_converter(vf=grid.var_factory, name=vsc.name).block
+    dc_line_mdl = get_dc_line_emt_template(vf=grid.var_factory, name=dc_line.name).block
+    dc_load_mdl = get_dc_load_emt_template(vf=grid.var_factory, name="dc_load_emt").block
+
+    set_emt_model(device=gen, model=gen_mdl, var_factory=grid.var_factory)
+    set_emt_model(device=vsc, model=vsc_mdl, var_factory=grid.var_factory)
+    set_emt_model(device=dc_line, model=dc_line_mdl, var_factory=grid.var_factory)
+    set_emt_model(device=dc_load, model=dc_load_mdl, var_factory=grid.var_factory)
+
+    problem = EmtProblemDae(grid=grid, options=get_default_emt_options(), pf_results=pf_results, pf_results_3Ph=pf_res_3ph)
+    assert problem is not None
+
+    if_dc_var = dc_line.emt_model.E(VarPowerFlowRefferenceType.If_dc)
+    it_dc_var = dc_line.emt_model.E(VarPowerFlowRefferenceType.It_dc)
+
+    assert if_dc_var is not None
+    assert it_dc_var is not None
+    assert if_dc_var.uid in problem.init_guess
+    assert it_dc_var.uid in problem.init_guess
+    assert abs(problem.init_guess[if_dc_var.uid] + problem.init_guess[it_dc_var.uid]) < 1e-9
 
 
 # =============================================================================

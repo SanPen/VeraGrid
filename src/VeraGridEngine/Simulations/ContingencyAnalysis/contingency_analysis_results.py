@@ -7,7 +7,7 @@
 import numpy as np
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 from VeraGridEngine.Simulations.results_table import ResultsTable
-from VeraGridEngine.Simulations.results_template import ResultsTemplate
+from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
 from VeraGridEngine.Simulations.ContingencyAnalysis.contingencies_report import ContingencyResultsReport
 from VeraGridEngine.basic_structures import IntVec, StrVec, CxMat, Mat
 from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
@@ -17,6 +17,20 @@ class ContingencyAnalysisResults(ResultsTemplate):
     """
     Contingency analysis results
     """
+
+    LOCAL_RESULTS_DECLARATIONS = (
+        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='con_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list()),
+        ResultsProperty(name='voltage', tpe=CxMat, old_names=list()),
+        ResultsProperty(name='Sbus', tpe=CxMat, old_names=list()),
+        ResultsProperty(name='Sf', tpe=CxMat, old_names=list()),
+        ResultsProperty(name='loading', tpe=CxMat, old_names=list()),
+        ResultsProperty(name='srap_used_power', tpe=Mat, old_names=list()),
+        ResultsProperty(name='report', tpe=ContingencyResultsReport, old_names=list()),
+    )
+
     __slots__ = (
         "branch_names",
         "bus_names",
@@ -77,18 +91,6 @@ class ContingencyAnalysisResults(ResultsTemplate):
 
         self.report: ContingencyResultsReport = ContingencyResultsReport()
 
-        self.register(name='branch_names', tpe=StrVec)
-        self.register(name='bus_names', tpe=StrVec)
-        self.register(name='con_names', tpe=StrVec)
-        self.register(name='bus_types', tpe=IntVec)
-
-        self.register(name='voltage', tpe=CxMat)
-        self.register(name='Sbus', tpe=CxMat)
-        self.register(name='Sf', tpe=CxMat)
-        self.register(name='loading', tpe=CxMat)
-        self.register(name='srap_used_power', tpe=Mat)
-
-        self.register(name='report', tpe=ContingencyResultsReport)
 
     def apply_new_rates(self, nc: NumericalCircuit):
         """

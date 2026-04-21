@@ -6,6 +6,108 @@ This optimization is done using linear programming.
 
 ![](figures/settings-ntc.png)
 
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+
+## Registered Result Properties
+
+### `OptimalNetTransferCapacityResults` registered properties
+
+The snapshot NTC result stores the optimized transfer state, monitored elements, and contingency report data.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `bus_names` | `StrVec` | Names aligned with bus-indexed result arrays. |
+| `branch_names` | `StrVec` | Names aligned with branch-indexed result arrays. |
+| `hvdc_names` | `StrVec` | Names aligned with HVDC line-indexed result arrays. |
+| `vsc_names` | `StrVec` | Names aligned with VSC converter-indexed result arrays. |
+| `contingency_group_names` | `StrVec` | Names aligned with contingency group-indexed result arrays. |
+| `bus_types` | `IntVec` | Bus type code used by the solved numerical model. |
+| `voltage` | `CxVec` | Complex bus voltage solution. |
+| `Sbus` | `CxVec` | Complex bus power injection. |
+| `dSbus` | `CxVec` | Complex bus power-injection increment used by the transfer study. |
+| `bus_shadow_prices` | `Vec` | Bus shadow price or nodal marginal value. |
+| `load_shedding` | `Vec` | Load shedding result. |
+| `Sf` | `CxVec` | Complex branch power flow at the from side. |
+| `St` | `CxVec` | Complex branch power flow at the to side. |
+| `overloads` | `Vec` | Overload slack or overload result. |
+| `loading` | `Vec` | Branch loading result. |
+| `losses` | `Vec` | Complex branch losses. |
+| `phase_shift` | `Vec` | Branch phase-shift angle result. |
+| `rates` | `Vec` | Normal monitored element rates. |
+| `contingency_rates` | `Vec` | Contingency monitored element rates. |
+| `alpha` | `Vec` | Sensitivity of monitored flow to the studied transfer. |
+| `monitor_logic` | `ObjVec` | Monitor-selection logic associated with each monitored element. |
+| `hvdc_Pf` | `Vec` | HVDC result field `hvdc_Pf`. |
+| `hvdc_loading` | `Vec` | HVDC result field `hvdc_loading`. |
+| `hvdc_losses` | `Vec` | HVDC result field `hvdc_losses`. |
+| `vsc_Pf` | `Vec` | VSC result field `vsc_Pf`. |
+| `vsc_loading` | `Vec` | VSC result field `vsc_loading`. |
+| `vsc_losses` | `Vec` | VSC result field `vsc_losses`. |
+| `converged` | `bool` | Convergence flag for the solved case or time step. |
+| `inter_area_flows` | `float` | Computed inter-area flow for the studied transfer. |
+| `structural_inter_area_flows` | `float` | Structural inter-area transfer limit before optimization constraints. |
+| `contingency_flows_list` | `list` | List of contingency flow records. |
+| `sending_bus_idx` | `list` | Bus indices belonging to the sending side of the transfer. |
+| `receiving_bus_idx` | `list` | Bus indices belonging to the receiving side of the transfer. |
+| `inter_space_branches` | `list` | Branches connecting the sending and receiving areas. |
+| `inter_space_hvdc` | `list` | HVDC lines connecting the sending and receiving areas. |
+| `inter_space_vsc` | `list` | VSC converters connecting the sending and receiving areas. |
+
+### `OptimalNetTransferCapacityTimeSeriesResults` registered properties
+
+The time-series NTC result stores the optimized transfer state and monitored quantities for each simulated time index.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `time_indices` | `DateVec` | Time indices represented by the result object. |
+| `bus_names` | `StrVec` | Names aligned with bus-indexed result arrays. |
+| `branch_names` | `StrVec` | Names aligned with branch-indexed result arrays. |
+| `hvdc_names` | `StrVec` | Names aligned with HVDC line-indexed result arrays. |
+| `contingency_group_names` | `StrVec` | Names aligned with contingency group-indexed result arrays. |
+| `bus_types` | `IntVec` | Bus type code used by the solved numerical model. |
+| `voltage` | `CxMat` | Complex bus voltage solution. |
+| `Sbus` | `CxMat` | Complex bus power injection. |
+| `dSbus` | `CxMat` | Complex bus power-injection increment used by the transfer study. |
+| `bus_shadow_prices` | `CxMat` | Bus shadow price or nodal marginal value. |
+| `load_shedding` | `CxMat` | Load shedding result. |
+| `Sf` | `CxMat` | Complex branch power flow at the from side. |
+| `St` | `CxMat` | Complex branch power flow at the to side. |
+| `overloads` | `CxMat` | Overload slack or overload result. |
+| `loading` | `CxMat` | Branch loading result. |
+| `losses` | `CxMat` | Complex branch losses. |
+| `phase_shift` | `CxMat` | Branch phase-shift angle result. |
+| `rates` | `Vec` | Normal monitored element rates. |
+| `contingency_rates` | `Vec` | Contingency monitored element rates. |
+| `alpha` | `CxMat` | Sensitivity of monitored flow to the studied transfer. |
+| `monitor_logic` | `ObjMat` | Monitor-selection logic associated with each monitored element. |
+| `hvdc_Pf` | `Mat` | HVDC result field `hvdc_Pf`. |
+| `hvdc_loading` | `Mat` | HVDC result field `hvdc_loading`. |
+| `hvdc_losses` | `Mat` | HVDC result field `hvdc_losses`. |
+| `vsc_Pf` | `Mat` | VSC result field `vsc_Pf`. |
+| `vsc_loading` | `Mat` | VSC result field `vsc_loading`. |
+| `vsc_losses` | `Mat` | VSC result field `vsc_losses`. |
+| `sending_bus_idx` | `list` | Bus indices belonging to the sending side of the transfer. |
+| `receiving_bus_idx` | `list` | Bus indices belonging to the receiving side of the transfer. |
+| `inter_space_branches` | `list` | Branches connecting the sending and receiving areas. |
+| `inter_space_hvdc` | `list` | HVDC lines connecting the sending and receiving areas. |
+| `inter_space_vsc` | `list` | VSC converters connecting the sending and receiving areas. |
+| `converged` | `BoolVec` | Convergence flag for the solved case or time step. |
+| `inter_area_flows` | `Vec` | Computed inter-area flow for the studied transfer. |
+| `contingency_flows_list` | `list` | List of contingency flow records. |
+
+### `AvailableTransferCapacityResults` registered properties
+
+The snapshot available-transfer-capacity result currently has no registered persisted properties.
+
+This result object currently does not register persisted result properties.
+
+### `AvailableTransferCapacityTimeSeriesResults` registered properties
+
+The time-series available-transfer-capacity result currently has no registered persisted properties.
+
+This result object currently does not register persisted result properties.
+<!-- END RESULTS REGISTERED PROPERTIES -->
+
 ## API
 
 ```python

@@ -136,6 +136,19 @@ def normalize_reference_token(value: str) -> str:
         token = token[1:]
     if token.startswith("_"):
         token = token[1:]
+
+    # Some profiles encode references as "<ClassName>:<uuid>".
+    # Keep only the UUID part when it is actually UUID-like.
+    if ":" in token:
+        tail = token.rsplit(":", 1)[1].strip()
+        tail_no_sep = tail.replace("-", "").replace("_", "")
+        if len(tail_no_sep) == 32:
+            try:
+                int(tail_no_sep, 16)
+                token = tail.lstrip("_")
+            except ValueError:
+                pass
+
     return token
 
 
@@ -657,6 +670,7 @@ def convert_class_data_to_objects(class_name: str,
     :return: Instantiated objects for the class
     """
     objects_list: List[CGMES_ASSETS] = list()
+    added_rdfids: Set[str] = set()
     is_boundary_conversion: bool = all_objects_dict_boundary is None
 
     for rdfid, object_data in objects_dict.items():
@@ -669,14 +683,61 @@ def convert_class_data_to_objects(class_name: str,
 
         found: Union[CGMES_ASSETS, None] = all_objects_dict.get(parsed_object.rdfid, None)
         if found is None:
-            all_objects_dict[parsed_object.rdfid] = parsed_object
+            canonical_object = parsed_object
+            all_objects_dict[parsed_object.rdfid] = canonical_object
         else:
-            if "Sv" not in class_name:
-                logger.add_error("Duplicated RDFID", device=class_name, value=parsed_object.rdfid)
+            # Same type in multiple profiles (EQ/SSH/TP/SV): merge profile data.
+            if type(found) is type(parsed_object):
+                merge_object_parsed_properties(target=found, source=parsed_object)
+                canonical_object = found
+            # If one object is a subclass of the other, keep the most specific class.
+            elif isinstance(parsed_object, type(found)) and not isinstance(found, type(parsed_object)):
+                merge_object_parsed_properties(target=parsed_object, source=found)
+                canonical_object = parsed_object
+                all_objects_dict[parsed_object.rdfid] = canonical_object
+            elif isinstance(found, type(parsed_object)) and not isinstance(parsed_object, type(found)):
+                merge_object_parsed_properties(target=found, source=parsed_object)
+                canonical_object = found
+            else:
+                canonical_object = found
+                if "Sv" not in class_name:
+                    logger.add_error("Duplicated RDFID", device=class_name, value=parsed_object.rdfid)
 
-        objects_list.append(parsed_object)
+        if canonical_object.rdfid not in added_rdfids:
+            objects_list.append(canonical_object)
+            added_rdfids.add(canonical_object.rdfid)
 
     return objects_list
+
+
+def merge_object_parsed_properties(target: CGMES_ASSETS, source: CGMES_ASSETS) -> None:
+    """
+    Merge parsed properties from one CGMES object into another object.
+
+    The function preserves existing values in ``target`` and only copies values
+    from ``source`` when the property is missing or still ``None`` in target.
+
+    :param target: Object that remains canonical after merge.
+    :param source: Object that contributes additional parsed properties.
+    :return: Nothing.
+    """
+    for prop_name, prop_value in source.parsed_properties.items():
+        is_declared_in_target: bool = prop_name in target.declared_properties
+        if is_declared_in_target:
+            is_missing_in_target: bool = prop_name not in target.parsed_properties
+            if is_missing_in_target:
+                target.parsed_properties[prop_name] = prop_value
+                target.store_parsed_property_value(prop_name=prop_name, prop_value=prop_value)
+            else:
+                target_value: object = target.get_declared_property_value(prop_name)
+                should_fill_none: bool = target_value is None and prop_value is not None
+                if should_fill_none:
+                    target.parsed_properties[prop_name] = prop_value
+                    target.store_parsed_property_value(prop_name=prop_name, prop_value=prop_value)
+                else:
+                    pass
+        else:
+            pass
 
 
 def is_valid_cgmes(cgmes_version) -> bool:

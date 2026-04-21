@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import os
+import time
 from typing import List, Callable, Union, TYPE_CHECKING
 from io import StringIO
 import zipfile
@@ -12,6 +13,26 @@ from VeraGridEngine.basic_structures import Logger
 
 if TYPE_CHECKING:
     from VeraGridEngine.Simulations.types import DRIVER_OBJECTS, RESULTS_OBJECTS
+
+
+def _wait_until_file_is_releasable(file_name: str, timeout_s: float = 2.0) -> None:
+    """
+    Wait until a freshly written archive can be reopened.
+
+    :param file_name: Output archive path.
+    :param timeout_s: Maximum wait time in seconds.
+    :return: None.
+    """
+    deadline: float = time.perf_counter() + timeout_s
+
+    while True:
+        try:
+            with open(file_name, "rb"):
+                return
+        except PermissionError:
+            if time.perf_counter() >= deadline:
+                return
+            time.sleep(0.05)
 
 
 def export_results(results_list: List[RESULTS_OBJECTS],
@@ -80,6 +101,11 @@ def export_results(results_list: List[RESULTS_OBJECTS],
 
     except PermissionError:
         logger.add('Permission error.\nDo you have the file open?')
+
+    if os.path.exists(file_name):
+        _wait_until_file_is_releasable(file_name=file_name)
+    else:
+        pass
 
     # post events
     if text_func is not None:

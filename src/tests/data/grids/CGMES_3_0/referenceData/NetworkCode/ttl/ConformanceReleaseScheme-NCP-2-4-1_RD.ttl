@@ -1,0 +1,78 @@
+@prefix adms: <http://www.w3.org/ns/adms#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix prof: <http://www.w3.org/ns/dx/prof/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix provcim: <https://cim4.eu/ns/provcim#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# Release description for Network Code Profile version 2.4
+#################################################################
+
+<https://energy.referencedata.eu/ConformanceReleaseScheme/NCP/2.4>
+    a skos:ConceptScheme, dcat:Dataset ;
+    dcterms:identifier "4d19c86f-884e-4e94-b8b5-386655d2fcb2" ;
+    prov:generatedAtTime "2026-03-18T10:00:00Z"^^xsd:dateTime ;
+	dcterms:accessRights <https://energy.referencedata.eu/Confidentiality/Public> ;
+	dcat:isVersionOf <https://energy.referencedata.eu/ConformanceReleaseScheme/NCP> ;
+	dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+	dcterms:issued "2026-03-18T10:00:00Z"^^xsd:dateTime ;
+	dcterms:publisher <https://www.entsoe.eu/> ;
+	dcterms:rights "Copyright" ;
+	dcterms:rightsHolder "ENTSO-E" ;
+    skos:prefLabel "Network Code Profile 2.4.1 Conformance Release Scheme"@en ;
+	dcterms:description "Conformance Release Scheme that identifies the vocabulary version and profiles that are part of the release, in addition to identifying profile conformance to a previous vocabulary version."@en ;
+	dcterms:title "ConformanceReleaseScheme-NCP-2-4-1_RD" ;
+	adms:versionNotes "Minor bug fix to support Common Dataset."@en ;
+	dcterms:hasPart <https://energy.referencedata.eu/NCP/2.4#collection_ncp_2_4_1_release> ;
+    dcat:version "2.4.1" .
+
+#################################################################
+# Release Collection
+#################################################################
+
+<https://energy.referencedata.eu/NCP/2.4#collection_ncp_2_4_1_release>
+    a prov:Collection ;
+    dcterms:identifier "a1e44177-9382-481f-b33f-324482a73fe8" ;
+    skos:prefLabel "Namespace and profile supported by NCP 2.4.1"@en ;
+    prov:hadMember <https://cim4.eu/ns/nc/2.4> ;
+	prov:hadMember <https://ap.cim4.eu/EquipmentReliability/2.3> .
+
+
+#################################################################
+# Vocabulary version - Only new vocabulary are added, since it is in principle replacing the previous.
+#################################################################
+
+<https://cim4.eu/ns/nc/2.4>
+    a adms:SemanticAsset, dcterms:Standard ;
+    dcterms:identifier "a5a86407-14ff-462c-a98a-f0f0d4b9eaa9" ;
+    dcat:isVersionOf <https://cim4.eu/ns/nc> ;
+    dcat:version "2.4.1" ;
+    skos:prefLabel "CIM4EU Network Code vocabulary 2.4.1"@en ;
+	dcterms:description "Network Code vocabulary developed by ENTSO-E to extend the IEC Common Information Model (CIM) and Common Grid Model Exchange Standard (CGMES) to address EU Network Code regulation."@en .
+
+#################################################################
+# Profiles - All profiles that is part of the release shall be listed.
+#################################################################
+
+<https://ap.cim4.eu/EquipmentReliability/2.3>
+    a prof:Profile ;
+    prof:isProfileOf <https://cim4.eu/ns/nc/2.4> ;
+    dcterms:identifier "12bc3ba4-2b79-49e1-99d3-c65cf11b54bc" ;
+    skos:prefLabel "Equipment Reliability (ER) Application Profile 2.3"@en ;
+	dcterms:description "Equipment Reliability (ER) application profile that is part of the Network Code Profile (NCP) to address EU Network Code regulation."@en .
+
+	
+#################################################################
+# Vocabulary support for released profiles
+#################################################################
+
+<https://energy.referencedata.eu/NCP/2.4#support_NC_2_4_of_NCP_2_4_1>
+    a provcim:SupportedProfileCollection ;
+    skos:prefLabel "Profiles in the NCP 2.4.1 release that are supported by vocabulary nc 2.4"@en ;
+    provcim:forVocabulary <https://cim4.eu/ns/nc/2.4> ;
+    prov:hadMember <https://ap.cim4.eu/EquipmentReliability/2.3> ;
+    prov:hadMember <https://ap.cim4.eu/AssessedElement/2.4> .

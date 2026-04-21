@@ -523,12 +523,12 @@ def test_structural_vectorized_backtracking_improves_inexact_newton_residual() -
     solver_bt.fused_residual = inexact_vectorized_residual
     solver_bt.vec_jacobian = InexactVectorizedJacobian()
 
-    _, y_plain, _ = solver_plain.simulate(
+    _, y_plain, _, _, _ = solver_plain.simulate(
         x0=np.array([0.1], dtype=np.float64),
         dx0=np.array([0.0], dtype=np.float64),
         params0=np.zeros(0, dtype=np.float64),
     )
-    _, y_bt, _ = solver_bt.simulate(
+    _, y_bt, _, _, _ = solver_bt.simulate(
         x0=np.array([0.1], dtype=np.float64),
         dx0=np.array([0.0], dtype=np.float64),
         params0=np.zeros(0, dtype=np.float64),
@@ -583,12 +583,12 @@ def test_structural_compiled_backtracking_improves_inexact_newton_residual() -> 
     solver_bt._residual_assembler = cast(Any, InexactCompiledResidualAssembler())
     solver_bt._jacobian_evaluator = cast(Any, InexactCompiledJacobian())
 
-    _, y_plain, _ = solver_plain.simulate(
+    _, y_plain, _, _, _ = solver_plain.simulate(
         x0=np.array([0.1], dtype=np.float64),
         dx0=np.array([0.0], dtype=np.float64),
         params0=np.zeros(0, dtype=np.float64),
     )
-    _, y_bt, _ = solver_bt.simulate(
+    _, y_bt, _, _, _ = solver_bt.simulate(
         x0=np.array([0.1], dtype=np.float64),
         dx0=np.array([0.0], dtype=np.float64),
         params0=np.zeros(0, dtype=np.float64),

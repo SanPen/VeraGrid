@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 import math
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType, ParamPowerFlowRefferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import Block
@@ -53,3 +53,58 @@ def ShuntLoadBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
 
     templ.block = res_block
     return templ
+
+def ShuntPhasorBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
+    templ = RmsModelTemplate()
+    templ.tpe = DeviceType.ShuntDevice
+    res_block = Block()
+    # Inputs:
+    inputs = [vfactory.add_var('Vr_'), vfactory.add_var('Vi_')]
+    Vr = inputs[0]
+    Vi = inputs[1]
+
+    # Variables:
+    Ir = vfactory.add_var('Ir_shunt')
+    Ii = vfactory.add_var('Ii_shunt')
+
+    #Parameters:
+    g = vfactory.add_var('g')
+    b = vfactory.add_var('b')
+    parameters = {
+        g: vfactory.add_const(0.2),
+        b: vfactory.add_const(0.2),
+    }
+
+    res_block = Block(
+        algebraic_eqs=[
+            Ir - (-g*Vr + b*Vi),
+            Ii - (-g*Vi - b*Vr),
+        ],
+        algebraic_vars=[Ir, Ii],
+        external_mapping={
+            VarPowerFlowRefferenceType.Vr: inputs[0],
+            VarPowerFlowRefferenceType.Vi: inputs[1],
+            VarPowerFlowRefferenceType.Ir: Ir,
+            VarPowerFlowRefferenceType.Ii: Ii,
+            },
+        init_eqs={
+            Ir: -(g*Vr - b*Vi),
+            Ii: -(g*Vi + b*Vr),
+        },
+        api_obj_mapping={
+            ParamPowerFlowRefferenceType.g: g,
+            ParamPowerFlowRefferenceType.b: b,
+        }
+    )
+
+    res_block.parameters = parameters
+    res_block.in_vars = inputs
+
+    templ.block = res_block
+    return templ
+
+def get_shunt_template(vfactory: VarFactory, name: str = "", phasor:bool = True) -> RmsModelTemplate:
+    if phasor:
+        return ShuntPhasorBuild(vfactory, name)
+    else:
+        return ShuntLoadBuild(vfactory, name)

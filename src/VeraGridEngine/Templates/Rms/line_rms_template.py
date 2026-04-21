@@ -40,6 +40,7 @@ def get_line_rms_template(vfactory: VarFactory, name="Line_rms_template") -> Rms
     templ.block.parameters[bsh] = vfactory.add_const(0.03)
 
     templ.block.algebraic_vars = [Pf, Pt, Qf, Qt]
+    templ.block.out_vars = [Pf, Pt, Qf, Qt]
 
     pi2 = np.pi / 2
     templ.block.algebraic_eqs = [

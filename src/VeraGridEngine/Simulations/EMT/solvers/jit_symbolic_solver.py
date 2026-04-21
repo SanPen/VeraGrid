@@ -811,7 +811,7 @@ class JitSymbolicSolver:
                  x0: Union[Vec | None] = None,
                  dx0: Union[Vec | None] = None,
                  params0: Union[Vec | None] = None,
-                 boundary_updater: EmtBoundaryUpdateProtocol | None = None) -> Tuple[Vec, Mat, Mat]:
+                 boundary_updater: EmtBoundaryUpdateProtocol | None = None) -> Tuple[Vec, Mat, Mat, bool, bool]:
         """
         Main JIT simulation loop using the Symbolic Differentiation (SD) backend.
         :param x0: Initial state vector.
@@ -822,6 +822,9 @@ class JitSymbolicSolver:
         """
         t_start = time.time()
         method = self.method
+
+        converged: bool = True
+        well_initialized: bool = True
 
         n_eqs = self.problem.get_all_vars_number()
         n_states = self.problem.get_states_number()
@@ -1006,6 +1009,7 @@ class JitSymbolicSolver:
                 else:
                     pass
 
+                substep_converged: bool = False
                 for k in range(15):
                     total_newton_iterations += 1
                     ctx = NewtonSolveContext(
@@ -1043,6 +1047,7 @@ class JitSymbolicSolver:
                         )
 
                     if res_norm_inf < 1e-6:
+                        substep_converged = True
                         break
                     else:
                         pass
@@ -1121,6 +1126,11 @@ class JitSymbolicSolver:
 
                     last_res_norm = res_norm_inf
 
+                if not substep_converged:
+                    converged = False
+                    if i == 0 and is_first_local_step:
+                        well_initialized = False
+
                 if method == DynamicIntegrationMethod.DaeTrapezoidal:
                     dx_prev[:n_states] = (
                             (2.0 / h_eff) * (x_iter[:n_states] - x_prev[:n_states])
@@ -1151,6 +1161,8 @@ class JitSymbolicSolver:
                 t_local_prev = t_curr
                 is_first_local_step = False
 
+
+
             self.y[i + 1, :] = x_prev
             self.dy[i + 1, :] = dx_prev
 
@@ -1168,7 +1180,7 @@ class JitSymbolicSolver:
             macro_steps=float(self.steps),
         )
 
-        return self.t, self.y, self.dy
+        return self.t, self.y, self.dy, well_initialized, converged
 
     def get_backend_build_stats(self) -> Dict[str, float]:
         """

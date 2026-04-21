@@ -5,12 +5,25 @@
 from __future__ import annotations
 
 from contextlib import contextmanager
-import importlib
 from pathlib import Path
 import shutil
 import tempfile
 
 from .export_ir import ExportModel, VariableCategory
+
+try:
+    import fmpy
+    import fmpy.fmi2
+    import fmpy.validation
+except ModuleNotFoundError:
+    fmpy = None
+
+
+def _require_fmpy() -> object:
+    if fmpy is None:
+        raise ModuleNotFoundError("fmpy is required for FMU validation and simulation")
+    else:
+        return fmpy
 
 
 def validate_export_model(export_model: ExportModel) -> list[str]:
@@ -63,7 +76,7 @@ def prepare_fmu_for_fmpy(
     *,
     extraction_root: str | Path | None = None,
 ):
-    fmpy_module = importlib.import_module("fmpy")
+    fmpy_module = _require_fmpy()
     extract = fmpy_module.extract
 
     path = Path(fmu_path)
@@ -86,7 +99,8 @@ def validate_fmu_with_fmpy(
     *,
     extraction_root: str | Path | None = None,
 ) -> list[str]:
-    validate_fmu = importlib.import_module("fmpy.validation").validate_fmu
+    fmpy_module = _require_fmpy()
+    validate_fmu = fmpy_module.validation.validate_fmu
 
     with prepare_fmu_for_fmpy(fmu_path, extraction_root=extraction_root) as prepared_path:
         issues = validate_fmu(str(prepared_path))
@@ -102,7 +116,8 @@ def simulate_fmu_with_fmpy(
     input_signal=None,
     extraction_root: str | Path | None = None,
 ):
-    simulate_fmu = importlib.import_module("fmpy").simulate_fmu
+    fmpy_module = _require_fmpy()
+    simulate_fmu = fmpy_module.simulate_fmu
 
     with prepare_fmu_for_fmpy(fmu_path, extraction_root=extraction_root) as prepared_path:
         return simulate_fmu(
@@ -122,8 +137,8 @@ def smoke_test_cs_fmu_with_fmpy(
     output_name: str,
     extraction_root: str | Path | None = None,
 ) -> dict[str, float]:
-    fmpy_module = importlib.import_module("fmpy")
-    fmi2_module = importlib.import_module("fmpy.fmi2")
+    fmpy_module = _require_fmpy()
+    fmi2_module = fmpy_module.fmi2
     read_model_description = fmpy_module.read_model_description
     FMU2Slave = fmi2_module.FMU2Slave
 

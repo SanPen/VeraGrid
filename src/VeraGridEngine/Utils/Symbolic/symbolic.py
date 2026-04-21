@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from __future__ import annotations
+import copy
 import json
 import math
 import ast
@@ -100,12 +101,16 @@ class Comparison:
         :return: Equivalent symbolic expression.
         """
         rhs_expr: Expr = _to_expr(self.rhs)
-        if self.op == CmpOp.LE or self.op == CmpOp.LT:
-            return heaviside(rhs_expr - self.lhs)
-        elif self.op == CmpOp.GE or self.op == CmpOp.GT:
-            return heaviside(self.lhs - rhs_expr)
+        eps: Const = Const(1e-6)
+        if self.op == CmpOp.LT:
+            return heaviside(rhs_expr - self.lhs - eps)
+        elif self.op == CmpOp.LE:
+            return heaviside(rhs_expr - self.lhs + eps)
+        elif self.op == CmpOp.GT:
+            return heaviside(self.lhs - rhs_expr - eps)
+        elif self.op == CmpOp.GE:
+            return heaviside(self.lhs - rhs_expr + eps)
         elif self.op == CmpOp.EQ:
-            eps: Const = Const(1e-6)
             return heaviside(self.lhs - rhs_expr + eps) * heaviside(rhs_expr - self.lhs + eps)
         else:
             raise ValueError(f"operator not supported {self.op}")
@@ -293,8 +298,19 @@ class Const(Expr):
         self.value: NUMBER | None = value
         self.name: str = name
 
-    def __deepcopy__(self, memo) -> "Const":
-        return Const(self.value, self.uid, self.name)
+    def __deepcopy__(self, memo: Dict[int, Any]) -> "Const":
+        """
+        Copy the constant while preserving its symbolic UID.
+
+        :param memo: Standard deepcopy memo table.
+        :return: Copied constant.
+        """
+        if id(self) in memo:
+            return memo[id(self)]
+        else:
+            result: Const = Const(self.value, self.uid, self.name)
+            memo[id(self)] = result
+            return result
 
     def eval(self, **bindings: NUMBER) -> NUMBER | None:
         return self.value
@@ -394,15 +410,27 @@ class Var(Expr):
         if base_var is not None:
             self.base_var.diff_var = self  # assign reference to me in the base var
 
-    def __deepcopy__(self, memo) -> "Var":
-        return Var(
-            name=self.name,
-            reference=self._ref,
-            network_conn=self._network_conn,
-            uid=self.uid,
-            diff_var=self.diff_var,
-            base_var=self.base_var,
-        )
+    def __deepcopy__(self, memo: Dict[int, Any]) -> "Var":
+        """
+        Copy a symbolic variable without reusing derivative-chain pointers.
+
+        :param memo: Standard deepcopy memo table.
+        :return: Copied variable.
+        """
+        if id(self) in memo:
+            return memo[id(self)]
+        else:
+            result: Var = Var.__new__(Var)
+            memo[id(self)] = result
+
+            result.uid = self.uid
+            result.name = self.name
+            result._ref = self._ref
+            result._network_conn = self._network_conn
+            result.diff_var = copy.deepcopy(self.diff_var, memo)
+            result.base_var = copy.deepcopy(self.base_var, memo)
+            result._origin_var = None
+            return result
 
     def eval(self, **bindings: float) -> float:
         """
@@ -687,6 +715,25 @@ class BinOp(Expr):
         else:
             raise ValueError(f"operation {self.op} not implemented")
 
+    def __deepcopy__(self, memo: Dict[int, Any]) -> "BinOp":
+        """
+        Copy the binary operation while preserving shared child identity.
+
+        :param memo: Standard deepcopy memo table.
+        :return: Copied binary operation.
+        """
+        if id(self) in memo:
+            return memo[id(self)]
+        else:
+            result: BinOp = BinOp(
+                left=copy.deepcopy(self.left, memo),
+                op=self.op,
+                right=copy.deepcopy(self.right, memo),
+                uid=self.uid,
+            )
+            memo[id(self)] = result
+            return result
+
     def eval_uid(self, uid_bindings: Dict[int, float]) -> NUMBER:
         """
         Evaluate using uuid's
@@ -879,6 +926,24 @@ class UnOp(Expr):
         val = self.operand.eval(**bindings)
         return -val if self.op == "-" else math.nan
 
+    def __deepcopy__(self, memo: Dict[int, Any]) -> "UnOp":
+        """
+        Copy the unary operation while preserving shared child identity.
+
+        :param memo: Standard deepcopy memo table.
+        :return: Copied unary operation.
+        """
+        if id(self) in memo:
+            return memo[id(self)]
+        else:
+            result: UnOp = UnOp(
+                op=self.op,
+                operand=copy.deepcopy(self.operand, memo),
+                uid=self.uid,
+            )
+            memo[id(self)] = result
+            return result
+
     def eval_uid(self, uid_bindings: Dict[int, NUMBER]) -> NUMBER:
         """
 
@@ -989,6 +1054,11 @@ def _evaluate_unary_function(op: str, value: NUMBER) -> NUMBER:
             return np.log(value)
         else:
             return math.log(value)
+    elif op == "log10":
+        if np.iscomplexobj(value):
+            return np.log10(value)
+        else:
+            return math.log10(value)
     elif op == "sqrt":
         return math.sqrt(value)
     elif op == "asin":
@@ -1001,6 +1071,14 @@ def _evaluate_unary_function(op: str, value: NUMBER) -> NUMBER:
         return math.sinh(value)
     elif op == "cosh":
         return math.cosh(value)
+    elif op == "tanh":
+        return math.tanh(value)
+    elif op == "floor":
+        return math.floor(value)
+    elif op == "ceil":
+        return math.ceil(value)
+    elif op == "round":
+        return builtins.round(value)
     elif op == "real":
         return np.real(value)
     elif op == "imag":
@@ -1036,6 +1114,8 @@ def _differentiate_unary_function(op: str, u: Expr, du: Expr) -> Expr:
         return exp_diff(u, du)
     elif op == "log":
         return log_diff(u, du)
+    elif op == "log10":
+        return log10_diff(u, du)
     elif op == "sqrt":
         return sqrt_diff(u, du)
     elif op == "asin":
@@ -1048,6 +1128,10 @@ def _differentiate_unary_function(op: str, u: Expr, du: Expr) -> Expr:
         return sinh_diff(u, du)
     elif op == "cosh":
         return cosh_diff(u, du)
+    elif op == "tanh":
+        return tanh_diff(u, du)
+    elif op in {"floor", "ceil", "round"}:
+        return Const(0.0)
     elif op == "abs":
         return abs_diff(u, du)
     elif op == "heaviside":
@@ -1066,7 +1150,7 @@ def _evaluate_binary_function(name: str, arg1: NUMBER, arg2: NUMBER) -> NUMBER:
     :return: Numeric function result.
     """
     if name == "atan2":
-        return np.arctan2(arg2, arg1)
+        return np.arctan2(arg1, arg2)
     elif name == "min":
         return np.minimum(arg1, arg2)
     elif name == "max":
@@ -1091,6 +1175,24 @@ class Func(Expr):
     # --- evaluation ----------------------------------------------------------
     def eval(self, **bindings: NUMBER) -> NUMBER:
         return _evaluate_unary_function(self.op, self.arg.eval(**bindings))
+
+    def __deepcopy__(self, memo: Dict[int, Any]) -> "Func":
+        """
+        Copy the unary function node while preserving shared child identity.
+
+        :param memo: Standard deepcopy memo table.
+        :return: Copied unary function node.
+        """
+        if id(self) in memo:
+            return memo[id(self)]
+        else:
+            result: Func = Func(
+                arg=copy.deepcopy(self.arg, memo),
+                op=self.op,
+                uid=self.uid,
+            )
+            memo[id(self)] = result
+            return result
 
     def eval_uid(self, uid_bindings: Dict[int, NUMBER]) -> NUMBER:
         return _evaluate_unary_function(self.op, self.arg.eval_uid(uid_bindings))
@@ -1210,6 +1312,14 @@ def log_diff(u: Expr, du: Expr) -> Expr:
     return du / u
 
 
+def log10(x: Expr) -> Expr:
+    return Func(_to_expr(x), "log10")
+
+
+def log10_diff(u: Expr, du: Expr) -> Expr:
+    return du / (u * Const(math.log(10.0)))
+
+
 def sqrt(x: Expr) -> Expr:
     return Func(_to_expr(x), "sqrt")
 
@@ -1256,6 +1366,35 @@ def sinh_diff(u: Expr, du: Expr) -> Expr:
 
 def cosh_diff(u: Expr, du: Expr) -> Expr:
     return sinh(u) * du
+
+
+def tanh(x: Expr) -> Expr:
+    return Func(_to_expr(x), "tanh")
+
+
+def tanh_diff(u: Expr, du: Expr) -> Expr:
+    return (Const(1) - tanh(u) ** Const(2)) * du
+
+
+def floor(x: Expr) -> Expr:
+    return Func(_to_expr(x), "floor")
+
+
+def ceil(x: Expr) -> Expr:
+    return Func(_to_expr(x), "ceil")
+
+
+def round_expr(x: Expr) -> Expr:
+    return Func(_to_expr(x), "round")
+
+
+def round(x: Expr) -> Expr:
+    return round_expr(x)
+
+
+def frac(x: Expr) -> Expr:
+    expr = _to_expr(x)
+    return expr - floor(expr)
 
 
 def heaviside(x: Expr) -> Expr:
@@ -1404,6 +1543,25 @@ class Func2(Expr):
     def eval(self, **bindings: NUMBER) -> NUMBER:
         return _evaluate_binary_function(self.name, self.arg1.eval(**bindings), self.arg2.eval(**bindings))
 
+    def __deepcopy__(self, memo: Dict[int, Any]) -> "Func2":
+        """
+        Copy the binary function node while preserving shared child identity.
+
+        :param memo: Standard deepcopy memo table.
+        :return: Copied binary function node.
+        """
+        if id(self) in memo:
+            return memo[id(self)]
+        else:
+            result: Func2 = Func2(
+                name=self.name,
+                arg1=copy.deepcopy(self.arg1, memo),
+                arg2=copy.deepcopy(self.arg2, memo),
+                uid=self.uid,
+            )
+            memo[id(self)] = result
+            return result
+
     def eval_uid(self, uid_bindings: Dict[int, NUMBER]) -> NUMBER:
         return _evaluate_binary_function(self.name, self.arg1.eval_uid(uid_bindings), self.arg2.eval_uid(uid_bindings))
 
@@ -1433,7 +1591,7 @@ class Func2(Expr):
             return Const(0)
 
         if self.name == "atan2":
-            return (x * dy - y * dx) / (x ** Const(2) + y ** Const(2))
+            return (y * dx - x * dy) / (x ** Const(2) + y ** Const(2))
         if self.name == "min":
             return heaviside(y - x) * dx + heaviside(x - y) * dy
         if self.name == "max":

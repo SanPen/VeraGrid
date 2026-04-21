@@ -7,9 +7,9 @@ from PySide6 import QtWidgets
 from VeraGridEngine.Devices.Dynamic.fmu_template import FmuTemplate
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.enumerations import DeviceType, FmuTemplateDomain, FmuTemplateMode
-from VeraGridEngine.IO.fmu.importer import configure_fmu_template, read_fmu_model_description
 from VeraGridEngine.IO.fmu.importer.model_description import FmuModelDescription
-from VeraGridEngine.IO.fmu.importer.template_api import summarize_fmu_template_metadata
+from VeraGridEngine.IO.fmu.importer.model_description import read_fmu_model_description
+from VeraGridEngine.IO.fmu.importer.template_api import configure_fmu_template, summarize_fmu_template_metadata
 
 
 class FmuTemplateEditorDialog(QtWidgets.QDialog):
@@ -289,8 +289,7 @@ class FmuTemplateEditorDialog(QtWidgets.QDialog):
         try:
             configure_fmu_template(
                 template=self._template,
-                rms_var_factory=self._circuit.var_factory,
-                emt_var_factory=self._circuit.var_factory,
+                var_factory=self._circuit.var_factory,
                 fmu_path=fmu_path,
                 device_tpe=device_tpe,
                 domain=domain,

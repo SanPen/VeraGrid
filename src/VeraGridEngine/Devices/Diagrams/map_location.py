@@ -2,7 +2,9 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
-from typing import Dict
+from __future__ import annotations
+
+from typing import Any, Dict
 
 
 class MapLocation:
@@ -91,3 +93,24 @@ class MapLocation:
                 'longitude': self.longitude,
                 'altitude': self.altitude,
                 'draw_labels': self.draw_labels}
+
+    def copy(self, api_object=None) -> "MapLocation":
+        """
+        Return a detached copy while preserving the API object as a pointer.
+        """
+        return MapLocation(latitude=self.latitude,
+                           longitude=self.longitude,
+                           altitude=self.altitude,
+                           api_object=self.api_object if api_object is None else api_object,
+                           draw_labels=self.draw_labels)
+
+    def __deepcopy__(self, memo: Dict[int, Any]) -> "MapLocation":
+        """
+        Deep-copy the map location without deep-copying the pointed API object.
+        """
+        if id(self) in memo:
+            return memo[id(self)]
+
+        cpy = self.copy()
+        memo[id(self)] = cpy
+        return cpy

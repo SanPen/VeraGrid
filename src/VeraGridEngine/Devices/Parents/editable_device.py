@@ -9,10 +9,9 @@ import uuid
 import numpy as np
 import pandas as pd
 
-from VeraGridEngine import RmsInitializationMethod, EmtSolverTypes
 from typing import List, Dict, AnyStr, Any, Union, Type, Tuple
 from VeraGridEngine.basic_structures import Logger, IntVec
-from VeraGridEngine.Devices.Profiles import ProfileBool, ProfileDevice, ProfileEnum, ProfileFloat, ProfileInt
+from VeraGridEngine.Devices.Profiles import ProfileBool, ProfileDevice, ProfileEnum, ProfileFloat, ProfileInt, AnyProfile, PROFILE_INSTANCE_TYPES
 from VeraGridEngine.enumerations import (DeviceType, TimeFrame, BuildStatus, WindingsConnection,
                                          TapModuleControl, TapPhaseControl, SubObjectType, ConverterControlType,
                                          HvdcControlType, ActionType, AvailableTransferMode, ContingencyMethod,
@@ -24,13 +23,8 @@ from VeraGridEngine.enumerations import (DeviceType, TimeFrame, BuildStatus, Win
                                          BusGraphicType, SwitchGraphicType, DynamicIntegrationMethod, OpfDispatchMode,
                                          EmtLineTypes, EmtProblemTypes, EmtInitializationMethod,
                                          SmallSignalEmtBuildTypes, FmuTemplateDomain,
-                                         EraSvdSolverType, ShuntControlMode, RmsProblemTypes, FmuTemplateMode, )
-
-
-
-AnyProfile = Union[ProfileFloat, ProfileInt, ProfileBool, ProfileDevice, ProfileEnum]
-PROFILE_INSTANCE_TYPES = (ProfileFloat, ProfileInt, ProfileBool, ProfileDevice, ProfileEnum)
-
+                                         EraSvdSolverType, ShuntControlMode, RmsProblemTypes, FmuTemplateDomain,
+                                         FmuTemplateMode, RmsInitializationMethod, EmtSolverTypes)
 # types that can be assigned to a VeraGrid property
 GCPROP_TYPES = Union[
     Type[int],
@@ -1265,10 +1259,27 @@ class EditableDevice(metaclass=EditableDeviceMeta):
         for prop in selected_props:
             if isinstance(prop.tpe, DeviceType):
                 val = self.get_property_value(prop=prop, t_idx=None)
-                if val is not None and hasattr(val, "idtag"):
-                    pointed = objects_by_idtag.get(val.idtag, None)
+                if val is not None:
+                    if hasattr(val, "idtag"):
+                        pointed = objects_by_idtag.get(val.idtag, None)
+                    elif isinstance(val, str):
+                        pointed = objects_by_idtag.get(val, None)
+                    else:
+                        pointed = None
+
                     if pointed is not None:
                         self.set_property_value(prop=prop, value=pointed, t_idx=None)
+            else:
+                val = self.get_property_value(prop=prop, t_idx=None)
+                rebind = getattr(val, "rebind_device_references", None)
+                if callable(rebind):
+                    rebind(objects_by_idtag=objects_by_idtag)
+
+            if prop.has_profile():
+                profile = self.get_profile_by_prop(prop=prop)
+                rebind = getattr(profile, "rebind_device_references", None)
+                if callable(rebind):
+                    rebind(objects_by_idtag=objects_by_idtag)
 
     def compare(self, other: Any,
                 logger: Logger,

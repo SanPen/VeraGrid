@@ -82,6 +82,125 @@ For Holomorphic embedding this is not necessary.
 
 
 
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+
+## Registered Result Properties
+
+### `PowerFlowTimeSeriesResults` registered properties
+
+The power flow time-series result stores the solved network quantities for every time step.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `bus_names` | `StrVec` | Names aligned with bus-indexed result arrays. |
+| `branch_names` | `StrVec` | Names aligned with branch-indexed result arrays. |
+| `hvdc_names` | `StrVec` | Names aligned with HVDC line-indexed result arrays. |
+| `bus_types` | `IntVec` | Bus type code used by the solved numerical model. |
+| `time_array` | `DateVec` | Time stamps represented by the result object. |
+| `F` | `IntVec` | Branch from-bus index for each branch. |
+| `T` | `IntVec` | Branch to-bus index for each branch. |
+| `hvdc_F` | `IntVec` | HVDC from-bus index for each HVDC line. |
+| `hvdc_T` | `IntVec` | HVDC to-bus index for each HVDC line. |
+| `bus_area_indices` | `IntVec` | Area index assigned to each bus. |
+| `area_names` | `IntVec` | Area names or area identifiers used for inter-area aggregation. |
+| `S` | `CxMat` | Complex bus power result matrix. |
+| `voltage` | `CxMat` | Complex bus voltage solution. |
+| `Sf` | `CxMat` | Complex branch power flow at the from side. |
+| `St` | `CxMat` | Complex branch power flow at the to side. |
+| `If` | `CxMat` | Complex branch current at the from side. |
+| `It` | `CxMat` | Complex branch current at the to side. |
+| `tap_module` | `Mat` | Transformer tap module used in the solved state. |
+| `tap_angle` | `Mat` | Transformer tap angle used in the solved state. |
+| `Vbranch` | `CxMat` | Complex branch voltage result used by branch reports. |
+| `loading` | `CxMat` | Branch loading result. |
+| `losses` | `CxMat` | Complex branch losses. |
+| `hvdc_losses` | `Mat` | HVDC result field `hvdc_losses`. |
+| `hvdc_Pf` | `Mat` | HVDC result field `hvdc_Pf`. |
+| `hvdc_Pt` | `Mat` | HVDC result field `hvdc_Pt`. |
+| `hvdc_loading` | `Mat` | HVDC result field `hvdc_loading`. |
+
+### `PowerFlowResults3Ph` registered properties
+
+The three-phase power flow result stores phase-resolved bus, branch, HVDC, VSC, generator, battery, and shunt quantities.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `bus_names` | `StrVec` | Names aligned with bus-indexed result arrays. |
+| `branch_names` | `StrVec` | Names aligned with branch-indexed result arrays. |
+| `hvdc_names` | `StrVec` | Names aligned with HVDC line-indexed result arrays. |
+| `gen_names` | `StrVec` | Names aligned with generator-indexed result arrays. |
+| `batt_names` | `StrVec` | Names aligned with battery-indexed result arrays. |
+| `sh_names` | `StrVec` | Names aligned with shunt-indexed result arrays. |
+| `load_names` | `StrVec` | Names aligned with load-indexed result arrays. |
+| `bus_types` | `IntVec` | Bus type code used by the solved numerical model. |
+| `F` | `IntVec` | Branch from-bus index for each branch. |
+| `T` | `IntVec` | Branch to-bus index for each branch. |
+| `hvdc_F` | `IntVec` | HVDC from-bus index for each HVDC line. |
+| `hvdc_T` | `IntVec` | HVDC to-bus index for each HVDC line. |
+| `bus_area_indices` | `IntVec` | Area index assigned to each bus. |
+| `area_names` | `IntVec` | Area names or area identifiers used for inter-area aggregation. |
+| `Sbus_N` | `CxVec` | Complex bus power injection for neutral. |
+| `Sbus_A` | `CxVec` | Complex bus power injection for phase A. |
+| `Sbus_B` | `CxVec` | Complex bus power injection for phase B. |
+| `Sbus_C` | `CxVec` | Complex bus power injection for phase C. |
+| `voltage_N` | `CxVec` | Complex bus voltage solution for neutral. |
+| `voltage_A` | `CxVec` | Complex bus voltage solution for phase A. |
+| `voltage_B` | `CxVec` | Complex bus voltage solution for phase B. |
+| `voltage_C` | `CxVec` | Complex bus voltage solution for phase C. |
+| `Sf_A` | `CxVec` | Complex branch power flow at the from side for phase A. |
+| `Sf_B` | `CxVec` | Complex branch power flow at the from side for phase B. |
+| `Sf_C` | `CxVec` | Complex branch power flow at the from side for phase C. |
+| `St_A` | `CxVec` | Complex branch power flow at the to side for phase A. |
+| `St_B` | `CxVec` | Complex branch power flow at the to side for phase B. |
+| `St_C` | `CxVec` | Complex branch power flow at the to side for phase C. |
+| `If_N` | `CxVec` | Complex branch current at the from side for neutral. |
+| `If_A` | `CxVec` | Complex branch current at the from side for phase A. |
+| `If_B` | `CxVec` | Complex branch current at the from side for phase B. |
+| `If_C` | `CxVec` | Complex branch current at the from side for phase C. |
+| `It_N` | `CxVec` | Complex branch current at the to side for neutral. |
+| `It_A` | `CxVec` | Complex branch current at the to side for phase A. |
+| `It_B` | `CxVec` | Complex branch current at the to side for phase B. |
+| `It_C` | `CxVec` | Complex branch current at the to side for phase C. |
+| `tap_module` | `Vec` | Transformer tap module used in the solved state. |
+| `tap_angle` | `Vec` | Transformer tap angle used in the solved state. |
+| `Vbranch_A` | `CxVec` | Complex branch voltage result for phase A. |
+| `Vbranch_B` | `CxVec` | Complex branch voltage result for phase B. |
+| `Vbranch_C` | `CxVec` | Complex branch voltage result for phase C. |
+| `loading_A` | `CxVec` | Loading result for phase A. |
+| `loading_B` | `CxVec` | Loading result for phase B. |
+| `loading_C` | `CxVec` | Loading result for phase C. |
+| `losses_A` | `CxVec` | Losses result for phase A. |
+| `losses_B` | `CxVec` | Losses result for phase B. |
+| `losses_C` | `CxVec` | Losses result for phase C. |
+| `losses_hvdc` | `Vec` | Losses result. |
+| `Pf_hvdc_A` | `Vec` | Registered result field `Pf_hvdc_A`. |
+| `Pf_hvdc_B` | `Vec` | Registered result field `Pf_hvdc_B`. |
+| `Pf_hvdc_C` | `Vec` | Registered result field `Pf_hvdc_C`. |
+| `Pt_hvdc_A` | `Vec` | Registered result field `Pt_hvdc_A`. |
+| `Pt_hvdc_B` | `Vec` | Registered result field `Pt_hvdc_B`. |
+| `Pt_hvdc_C` | `Vec` | Registered result field `Pt_hvdc_C`. |
+| `loading_hvdc` | `Vec` | Loading result. |
+| `losses_vsc` | `Vec` | Losses result. |
+| `Pfp_vsc` | `Vec` | VSC result field `Pfp_vsc`. |
+| `St_vsc_A` | `CxVec` | Complex branch power flow at the to side for phase A. |
+| `St_vsc_B` | `CxVec` | Complex branch power flow at the to side for phase B. |
+| `St_vsc_C` | `CxVec` | Complex branch power flow at the to side for phase C. |
+| `If_vsc` | `Vec` | Complex branch current at the from side. |
+| `It_vsc_A` | `CxVec` | Complex branch current at the to side for phase A. |
+| `It_vsc_B` | `CxVec` | Complex branch current at the to side for phase B. |
+| `It_vsc_C` | `CxVec` | Complex branch current at the to side for phase C. |
+| `loading_vsc` | `Vec` | Loading result. |
+| `gen_q_A` | `Vec` | Generator reactive power output for phase A. |
+| `gen_q_B` | `Vec` | Generator reactive power output for phase B. |
+| `gen_q_C` | `Vec` | Generator reactive power output for phase C. |
+| `battery_q_A` | `Vec` | Battery reactive power output for phase A. |
+| `battery_q_B` | `Vec` | Battery reactive power output for phase B. |
+| `battery_q_C` | `Vec` | Battery reactive power output for phase C. |
+| `shunt_q_A` | `Vec` | Shunt reactive power output for phase A. |
+| `shunt_q_B` | `Vec` | Shunt reactive power output for phase B. |
+| `shunt_q_C` | `Vec` | Shunt reactive power output for phase C. |
+<!-- END RESULTS REGISTERED PROPERTIES -->
+
 ## API
 
 Using the simplified API:
@@ -121,6 +240,55 @@ print('Converged:', power_flow.results.converged, 'error:', power_flow.results.e
 print(power_flow.results.get_bus_df())
 print(power_flow.results.get_branch_df())
 ```
+
+### `PowerFlowResults` registered properties
+
+The `PowerFlowResults` object stores the following registered properties for persistence and programmatic access.
+The arrays use the grid ordering used by the numerical circuit: buses follow `bus_names`, branches follow
+`branch_names`, HVDC links follow `hvdc_names`, generators follow `gen_names`, batteries follow `batt_names`,
+and shunts follow `sh_names`.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `bus_names` | `StrVec` | Bus names aligned with bus-indexed result arrays. |
+| `branch_names` | `StrVec` | Branch names aligned with branch-indexed result arrays. |
+| `hvdc_names` | `StrVec` | HVDC line names aligned with HVDC-indexed result arrays. |
+| `gen_names` | `StrVec` | Generator names aligned with generator-indexed result arrays. |
+| `batt_names` | `StrVec` | Battery names aligned with battery-indexed result arrays. |
+| `sh_names` | `StrVec` | Shunt names aligned with shunt-indexed result arrays. |
+| `bus_types` | `IntVec` | Bus type code used by the solved numerical model. |
+| `F` | `IntVec` | Branch "from" bus index for each branch. |
+| `T` | `IntVec` | Branch "to" bus index for each branch. |
+| `hvdc_F` | `IntVec` | HVDC "from" bus index for each HVDC line. |
+| `hvdc_T` | `IntVec` | HVDC "to" bus index for each HVDC line. |
+| `bus_area_indices` | `IntVec` | Area index assigned to each bus. |
+| `area_names` | `IntVec` | Area names or area identifiers used for inter-area aggregation. |
+| `Sbus` | `CxVec` | Complex bus power injection. |
+| `voltage` | `CxVec` | Complex bus voltage solution. |
+| `Sf` | `CxVec` | Complex branch power flow at the "from" side. |
+| `St` | `CxVec` | Complex branch power flow at the "to" side. |
+| `If` | `CxVec` | Complex branch current at the "from" side. |
+| `It` | `CxVec` | Complex branch current at the "to" side. |
+| `tap_module` | `Vec` | Transformer tap module used in the solved state. |
+| `tap_angle` | `Vec` | Transformer tap angle used in the solved state. |
+| `Vbranch` | `CxVec` | Complex branch voltage magnitude reference used by branch reports. |
+| `loading` | `CxVec` | Branch loading result. |
+| `losses` | `CxVec` | Complex branch losses. |
+| `losses_hvdc` | `Vec` | HVDC active power losses. |
+| `Pf_hvdc` | `Vec` | HVDC active power flow at the "from" side. |
+| `Pt_hvdc` | `Vec` | HVDC active power flow at the "to" side. |
+| `loading_hvdc` | `Vec` | HVDC loading result. |
+| `losses_vsc` | `Vec` | VSC active power losses. |
+| `Pfp_vsc` | `Vec` | VSC positive-pole active power flow at the "from" side. |
+| `Pfn_vsc` | `Vec` | VSC negative-pole active power flow at the "from" side. |
+| `St_vsc` | `CxVec` | Complex VSC power flow at the AC terminal. |
+| `If_vsc` | `Vec` | VSC current at the "from" side. |
+| `It_vsc` | `CxVec` | Complex VSC current at the AC terminal. |
+| `loading_vsc` | `Vec` | VSC loading result. |
+| `gen_q` | `Vec` | Generator reactive power output. |
+| `battery_q` | `Vec` | Battery reactive power output. |
+| `shunt_q` | `Vec` | Shunt reactive power output. |
+| `three_phase` | `bool` | Flag indicating whether these results belong to a three-phase power flow. |
 
 Output:
 

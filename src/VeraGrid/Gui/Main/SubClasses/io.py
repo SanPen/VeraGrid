@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 import os
+import pathlib
 from typing import Union, List, Callable
 from PySide6 import QtWidgets
 
@@ -12,7 +13,6 @@ import VeraGrid.Session.export_results_driver as exprtdrv
 import VeraGrid.Session.file_handler as filedrv
 from VeraGrid.Gui.GridMerge.grid_diff import GridDiffDialogue
 from VeraGrid.Gui.GridMerge.grid_merge import GridMergeDialogue
-from VeraGrid.Gui.scenario_tree_model import ScenarioTreeModel
 from VeraGrid.plugins import install_plugin, get_plugin_info
 from VeraGrid.Gui.CoordinatesInput.coordinates_dialogue import CoordinatesInputGUI
 from VeraGrid.Gui.general_dialogues import LogsDialogue, CustomQuestionDialogue, FileTypeSelector, CgmesOptionsSelector
@@ -57,7 +57,7 @@ class IoMain(ScenariosMain):
                                     '.gridcal', '.dgridcal',
                                     '.xlsx', '.xls', '.sqlite', '.gch5',
                                     '.dgs', '.m', '.matpower', '.raw', '.RAW', '.json', '.uct',
-                                    '.iidm', '.xiidm',
+                                    '.iidm', '.xiidm', '.xiidm.bz2',
                                     '.ejson2', '.ejson3', '.p', '.nc', '.hdf5',
                                     '.xml', '.rawx', '.zip', '.dpx', '.pwf', '.epc', '.EPC',
                                     '.vgplugin', '.gslv']
@@ -135,7 +135,8 @@ class IoMain(ScenariosMain):
 
                 for event in events:
                     file_name = event.toLocalFile()
-                    name, file_extension = os.path.splitext(file_name)
+                    # name, file_extension = os.path.splitext(file_name)
+                    file_extension = ''.join(pathlib.Path(file_name).suffixes)
                     if file_extension.lower() in self.accepted_extensions:
                         file_names.append(file_name)
 
@@ -151,6 +152,9 @@ class IoMain(ScenariosMain):
                             else:
                                 self.show_error_toast(msg)
                             return
+                        elif file_name.endswith(".xiidm.bz2"):
+                            any_grid_delta = False
+                            any_normal_grid = True
                         else:
                             any_normal_grid = True
 

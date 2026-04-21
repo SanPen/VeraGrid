@@ -97,7 +97,7 @@ def test_implicit_armonic() -> None:
         method=DynamicIntegrationMethod.DaeTrapezoidal,
         verbose=True
     )
-    t_trap, y_trap_full, _ = solver_trap.simulate()
+    t_trap, y_trap_full, _, _, _ = solver_trap.simulate()
 
     # --- CASE 2: BDF2 Method (L-Stable) ---
     print("\n[2] Running Implicit Solver (Method: BDF2)...")
@@ -106,7 +106,7 @@ def test_implicit_armonic() -> None:
         method=DynamicIntegrationMethod.DaeBDF2,
         verbose=True
     )
-    t_bdf, y_bdf_full, _ = solver_bdf.simulate()
+    t_bdf, y_bdf_full,_, _, _= solver_bdf.simulate()
 
     # --- Analysis ---
     x_trap: np.ndarray = y_trap_full[:, idx_x]

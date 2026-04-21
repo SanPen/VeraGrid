@@ -183,6 +183,7 @@ class DynamicDevice(PhysicalDevice):
     def rms_model(self, val: Block) -> None:
         if isinstance(val, Block):
             self._rms_model = val
+            #print("")
         else:
             raise ValueError(f"RMS model cannot accept {val}")
 
@@ -221,6 +222,8 @@ class DynamicDevice(PhysicalDevice):
 
         elif val is None:
             self._rms_template = None
+            self.rms_model = Block()
+            print("")
         else:
             raise ValueError(f"RMS template cannot accept {val}")
 

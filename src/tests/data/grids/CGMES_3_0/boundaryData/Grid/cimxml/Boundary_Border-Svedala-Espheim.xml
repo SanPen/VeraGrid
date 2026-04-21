@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:eu="http://iec.ch/TC57/CIM100-European#"
+    xmlns:md="http://iec.ch/TC57/61970-552/ModelDescription/1#"
+    xmlns:cim="http://iec.ch/TC57/CIM100#" > 
+  <md:FullModel rdf:about="urn:uuid:af6450db-fe15-4caf-94a1-e22f3fced32e">
+    <md:Model.DependentOn rdf:resource="urn:uuid:1b65ada7-39ca-42b8-a278-39c457ed82c3"/>
+    <md:Model.created>2025-02-06T14:18:22Z</md:Model.created>
+    <md:Model.description>The equipment dataset of the boundary that is used in the ReliCapGrid.</md:Model.description>
+    <md:Model.modelingAuthoritySet>http://ninerealms.nr/boundary</md:Model.modelingAuthoritySet>
+    <md:Model.profile>http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/3.0</md:Model.profile>
+    <md:Model.scenarioTime>2022-06-16T23:30:00Z</md:Model.scenarioTime>
+    <md:Model.version>1</md:Model.version>
+  </md:FullModel>
+  <eu:BoundaryPoint rdf:ID="_f3954bf0-0bf9-54ff-eb28-b1559373568d">
+    <eu:BoundaryPoint.ConnectivityNode rdf:resource="#_183d126d-2522-4ff2-a8cd-c5016cf09c1b"/>
+    <eu:BoundaryPoint.fromEndIsoCode>SD</eu:BoundaryPoint.fromEndIsoCode>
+    <eu:BoundaryPoint.fromEndName>Parila2</eu:BoundaryPoint.fromEndName>
+    <eu:BoundaryPoint.fromEndNameTso>TSO-Svedala</eu:BoundaryPoint.fromEndNameTso>
+    <eu:BoundaryPoint.isExcludedFromAreaInterchange>false</eu:BoundaryPoint.isExcludedFromAreaInterchange>
+    <eu:BoundaryPoint.toEndIsoCode>EH</eu:BoundaryPoint.toEndIsoCode>
+    <eu:BoundaryPoint.toEndName>Barigar2</eu:BoundaryPoint.toEndName>
+    <eu:BoundaryPoint.toEndNameTso>TSO-Espheim</eu:BoundaryPoint.toEndNameTso>
+    <cim:IdentifiedObject.description>Boundary point 2 between Svedala (substation name) and Espheim (substation name) (400kV).</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>f3954bf0-0bf9-54ff-eb28-b1559373568d</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>BP_SD-EH2</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>BP_SD-EH2</eu:IdentifiedObject.shortName>
+  </eu:BoundaryPoint>
+  <cim:ConnectivityNode rdf:ID="_183d126d-2522-4ff2-a8cd-c5016cf09c1b">
+    <cim:ConnectivityNode.ConnectivityNodeContainer rdf:resource="#_41d4fafe-e4ce-4ca3-86d9-f181ae3f8ea3"/>
+    <cim:IdentifiedObject.description>Boundary point 2 between Svedala (substation name) and Espheim (substation name) (400kV).</cim:IdentifiedObject.description>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-AT-DE-00001A</eu:IdentifiedObject.energyIdentCodeEic>
+    <cim:IdentifiedObject.mRID>183d126d-2522-4ff2-a8cd-c5016cf09c1b</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>BP_SD-EH2</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>BP_SD-EH2</eu:IdentifiedObject.shortName>
+  </cim:ConnectivityNode>
+  <cim:Line rdf:ID="_41d4fafe-e4ce-4ca3-86d9-f181ae3f8ea3">
+    <cim:IdentifiedObject.description>Line BP_SD-EH2</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>41d4fafe-e4ce-4ca3-86d9-f181ae3f8ea3</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>BP_SD-EH2</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>BP_SD-EH2</eu:IdentifiedObject.shortName>
+    <cim:Line.Region rdf:resource="#_fbcc6679-6da5-4cfd-b50c-8ce23f450c78"/>
+  </cim:Line>  
+  <eu:BoundaryPoint rdf:ID="_d4ac0227-f443-a68f-fadd-09dfc0bcd7a1">
+    <eu:BoundaryPoint.ConnectivityNode rdf:resource="#_89caa531-9769-4e1c-9d37-0af93bfada13"/>
+    <eu:BoundaryPoint.fromEndIsoCode>SD</eu:BoundaryPoint.fromEndIsoCode>
+    <eu:BoundaryPoint.fromEndName>Parila4</eu:BoundaryPoint.fromEndName>
+    <eu:BoundaryPoint.fromEndNameTso>TSO-Svedala</eu:BoundaryPoint.fromEndNameTso>
+    <eu:BoundaryPoint.isExcludedFromAreaInterchange>false</eu:BoundaryPoint.isExcludedFromAreaInterchange>
+    <eu:BoundaryPoint.toEndIsoCode>EH</eu:BoundaryPoint.toEndIsoCode>
+    <eu:BoundaryPoint.toEndName>Barigar1</eu:BoundaryPoint.toEndName>
+    <eu:BoundaryPoint.toEndNameTso>TSO-Espheim</eu:BoundaryPoint.toEndNameTso>
+    <cim:IdentifiedObject.description>BP_SD-EH_DC1</cim:IdentifiedObject.description>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-AT-DE-00017X</eu:IdentifiedObject.energyIdentCodeEic>
+    <cim:IdentifiedObject.mRID>d4ac0227-f443-a68f-fadd-09dfc0bcd7a1</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>BP_SD-EH_DC1</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>BP_SD-EH_DC1</eu:IdentifiedObject.shortName>
+  </eu:BoundaryPoint>
+  <cim:ConnectivityNode rdf:ID="_89caa531-9769-4e1c-9d37-0af93bfada13">
+    <cim:ConnectivityNode.ConnectivityNodeContainer rdf:resource="#_ba130a7b-fb46-4c73-a6cf-ec41812a14c0"/>
+    <cim:IdentifiedObject.description>BP_SD-EH_DC1</cim:IdentifiedObject.description>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-AT-DE-00017X</eu:IdentifiedObject.energyIdentCodeEic>
+    <cim:IdentifiedObject.mRID>89caa531-9769-4e1c-9d37-0af93bfada13</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>BP_SD-EH_DC1</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>BP_SD-EH_DC1</eu:IdentifiedObject.shortName>
+  </cim:ConnectivityNode>  
+  <cim:Line rdf:ID="_ba130a7b-fb46-4c73-a6cf-ec41812a14c0">
+    <cim:IdentifiedObject.description>Line BP_SD-EH_DC1</cim:IdentifiedObject.description>
+    <eu:IdentifiedObject.energyIdentCodeEic>10T-BO-GA-10274U</eu:IdentifiedObject.energyIdentCodeEic>
+    <cim:IdentifiedObject.mRID>ba130a7b-fb46-4c73-a6cf-ec41812a14c0</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>BP_SD-EH_DC1</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>BP_SD-EH_DC1</eu:IdentifiedObject.shortName>
+    <cim:Line.Region rdf:resource="#_fbcc6679-6da5-4cfd-b50c-8ce23f450c78"/>
+  </cim:Line>  
+  <eu:BoundaryPoint rdf:ID="_32ce7243-65f1-7183-1eab-9a0db513868a">
+    <eu:BoundaryPoint.ConnectivityNode rdf:resource="#_0a31ada8-2dfc-41c5-a07f-6c2151cea34d"/>
+    <eu:BoundaryPoint.fromEndIsoCode>EH</eu:BoundaryPoint.fromEndIsoCode>
+    <eu:BoundaryPoint.fromEndName>Madgar4</eu:BoundaryPoint.fromEndName>
+    <eu:BoundaryPoint.fromEndNameTso>TSO-Espheim</eu:BoundaryPoint.fromEndNameTso>
+    <eu:BoundaryPoint.isExcludedFromAreaInterchange>false</eu:BoundaryPoint.isExcludedFromAreaInterchange>
+    <eu:BoundaryPoint.toEndIsoCode>EH</eu:BoundaryPoint.toEndIsoCode>
+    <eu:BoundaryPoint.toEndName>Leyva1</eu:BoundaryPoint.toEndName>
+    <eu:BoundaryPoint.toEndNameTso>TSO-Svedala</eu:BoundaryPoint.toEndNameTso>
+    <cim:IdentifiedObject.description>BP_EH-SD_DC1</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>32ce7243-65f1-7183-1eab-9a0db513868a</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>BP_EH-SD_DC1</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>BP_EH-SD_DC1</eu:IdentifiedObject.shortName>
+  </eu:BoundaryPoint>
+  <cim:ConnectivityNode rdf:ID="_0a31ada8-2dfc-41c5-a07f-6c2151cea34d">
+    <cim:ConnectivityNode.ConnectivityNodeContainer rdf:resource="#_c06d67a0-4984-4661-846c-f42a9b29c049"/>
+    <cim:IdentifiedObject.description>BP_EH-SD_DC1</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>0a31ada8-2dfc-41c5-a07f-6c2151cea34d</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>BP_EH-SD_DC1</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>BP_EH-SD_DC1</eu:IdentifiedObject.shortName>
+  </cim:ConnectivityNode>  
+  <cim:Line rdf:ID="_c06d67a0-4984-4661-846c-f42a9b29c049">
+    <cim:IdentifiedObject.description>Line BP_EH-SD_DC1</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>c06d67a0-4984-4661-846c-f42a9b29c049</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>BP_EH-SD_DC1</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>BP_EH-SD_DC1</eu:IdentifiedObject.shortName>
+    <cim:Line.Region rdf:resource="#_fbcc6679-6da5-4cfd-b50c-8ce23f450c78"/>
+  </cim:Line>  
+  <eu:BoundaryPoint rdf:ID="_983cb0bc-264d-a9a1-c642-960cd4a767de">
+    <eu:BoundaryPoint.ConnectivityNode rdf:resource="#_8dd436f0-f8a2-405b-a991-1a2479077ef5"/>
+    <eu:BoundaryPoint.fromEndIsoCode>SD</eu:BoundaryPoint.fromEndIsoCode>
+    <eu:BoundaryPoint.fromEndName>Parila3</eu:BoundaryPoint.fromEndName>
+    <eu:BoundaryPoint.fromEndNameTso>TSO-Svedala</eu:BoundaryPoint.fromEndNameTso>
+    <eu:BoundaryPoint.isExcludedFromAreaInterchange>false</eu:BoundaryPoint.isExcludedFromAreaInterchange>
+    <eu:BoundaryPoint.toEndIsoCode>EH</eu:BoundaryPoint.toEndIsoCode>
+    <eu:BoundaryPoint.toEndName>Barigar3</eu:BoundaryPoint.toEndName>
+    <eu:BoundaryPoint.toEndNameTso>TSO-Espheim</eu:BoundaryPoint.toEndNameTso>
+    <cim:IdentifiedObject.description>Boundary point 3 between Svedala (substation name) and Espheim (substation name) (400kV).</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>e364f3e7-a2a8-3561-5540-6e74801a20ff</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>BP_SD-EH3</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>BP_SD-EH3</eu:IdentifiedObject.shortName>
+  </eu:BoundaryPoint>
+  <cim:ConnectivityNode rdf:ID="_8dd436f0-f8a2-405b-a991-1a2479077ef5">
+    <cim:ConnectivityNode.ConnectivityNodeContainer rdf:resource="#_78525c97-a5b6-4cbb-8028-1236ca2f4a37"/>
+    <cim:IdentifiedObject.description>Boundary point 3 between Svedala (substation name) and Espheim (substation name) (400kV).</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>8dd436f0-f8a2-405b-a991-1a2479077ef5</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>BP_SD-EH3</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>BP_SD-EH3</eu:IdentifiedObject.shortName>
+  </cim:ConnectivityNode>
+  <cim:Line rdf:ID="_78525c97-a5b6-4cbb-8028-1236ca2f4a37">
+    <cim:IdentifiedObject.description>Line BP_SD-EH3</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>78525c97-a5b6-4cbb-8028-1236ca2f4a37</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>BP_SD-EH3</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>BP_SD-EH3</eu:IdentifiedObject.shortName>
+    <cim:Line.Region rdf:resource="#_fbcc6679-6da5-4cfd-b50c-8ce23f450c78"/>
+  </cim:Line>  
+  <eu:BoundaryPoint rdf:ID="_afa96836-2de5-e633-1c07-491489b89b52">
+    <eu:BoundaryPoint.ConnectivityNode rdf:resource="#_49831d24-33e9-4233-8424-3f88186a924e"/>
+    <eu:BoundaryPoint.fromEndIsoCode>SD</eu:BoundaryPoint.fromEndIsoCode>
+    <eu:BoundaryPoint.fromEndName>Parila1</eu:BoundaryPoint.fromEndName>
+    <eu:BoundaryPoint.fromEndNameTso>TSO-Svedala</eu:BoundaryPoint.fromEndNameTso>
+    <eu:BoundaryPoint.isExcludedFromAreaInterchange>false</eu:BoundaryPoint.isExcludedFromAreaInterchange>
+    <eu:BoundaryPoint.toEndIsoCode>EH</eu:BoundaryPoint.toEndIsoCode>
+    <eu:BoundaryPoint.toEndName>Barigar1</eu:BoundaryPoint.toEndName>
+    <eu:BoundaryPoint.toEndNameTso>TSO-Espheim</eu:BoundaryPoint.toEndNameTso>
+    <cim:IdentifiedObject.description>Boundary point 1 between Svedala (substation name) and Espheim (substation name) (220kV).</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>afa96836-2de5-e633-1c07-491489b89b52</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>BP_SD-EH1</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>BP_SD-EH1</eu:IdentifiedObject.shortName>
+  </eu:BoundaryPoint>
+  <cim:ConnectivityNode rdf:ID="_49831d24-33e9-4233-8424-3f88186a924e">
+    <cim:ConnectivityNode.ConnectivityNodeContainer rdf:resource="#_c3f46fe5-0cd1-4a1c-b722-e967b9ab21e2"/>
+    <cim:IdentifiedObject.description>Boundary point 1 between Svedala (substation name) and Espheim (substation name) (220kV).</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>49831d24-33e9-4233-8424-3f88186a924e</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>BP_SD-EH1</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>BP_SD-EH1</eu:IdentifiedObject.shortName>
+  </cim:ConnectivityNode>  
+  <cim:Line rdf:ID="_c3f46fe5-0cd1-4a1c-b722-e967b9ab21e2">
+    <cim:IdentifiedObject.description>Line BP_SD-EH1</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>c3f46fe5-0cd1-4a1c-b722-e967b9ab21e2</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>BP_SD-EH1</cim:IdentifiedObject.name>
+    <eu:IdentifiedObject.shortName>BP_SD-EH1</eu:IdentifiedObject.shortName>
+    <cim:Line.Region rdf:resource="#_fbcc6679-6da5-4cfd-b50c-8ce23f450c78"/>
+  </cim:Line>  
+</rdf:RDF>

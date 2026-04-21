@@ -73,10 +73,10 @@
           <number>6</number>
          </property>
          <property name="minimum">
-          <double>-9999999.000000000000000</double>
+          <double>-90.000000000000000</double>
          </property>
          <property name="maximum">
-          <double>99999.000000000000000</double>
+          <double>90.000000000000000</double>
          </property>
         </widget>
        </item>
@@ -102,10 +102,10 @@
           <number>6</number>
          </property>
          <property name="minimum">
-          <double>-9999999.000000000000000</double>
+          <double>-180.000000000000000</double>
          </property>
          <property name="maximum">
-          <double>99999.000000000000000</double>
+          <double>180.000000000000000</double>
          </property>
         </widget>
        </item>
@@ -113,6 +113,9 @@
         <widget class="QDoubleSpinBox" name="powerSpinBox">
          <property name="suffix">
           <string> MW</string>
+         </property>
+         <property name="minimum">
+          <double>0.000001000000000</double>
          </property>
          <property name="maximum">
           <double>99999.000000000000000</double>
@@ -122,7 +125,7 @@
        <item row="6" column="0">
         <widget class="QLabel" name="label_4">
          <property name="text">
-          <string>Latutide</string>
+          <string>Latitude</string>
          </property>
         </widget>
        </item>

@@ -7,7 +7,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from typing import List, Dict
 
-from VeraGridEngine.Simulations.results_template import ResultsTemplate
+from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
 from VeraGridEngine.basic_structures import Vec, StrVec,  DateVec, Mat
 from VeraGridEngine.enumerations import StudyResultsType,  DeviceType
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
@@ -15,12 +15,19 @@ from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 
 
 class EmtResults(ResultsTemplate):
+
+    LOCAL_RESULTS_DECLARATIONS = (
+        ResultsProperty(name='values', tpe=Vec, old_names=list()),
+    )
+
     __slots__ = (
         "nt",
         "nv",
         "ndv",
         "ng",
         "emt_events_group_names",
+        "well_initialized",
+        "converged",
         "variables",
         "diff_variables",
         "uid2vars_glob_name",
@@ -70,9 +77,8 @@ class EmtResults(ResultsTemplate):
 
         self.emt_events_group_names = emt_events_group_names
 
-        #TODO: add them?
-        # self.well_initialized = np.zeros(self.ng, dtype=bool)
-        # self.converged = np.zeros(self.ng, dtype=bool)
+        self.well_initialized = np.zeros(self.ng, dtype=bool)
+        self.converged = np.zeros(self.ng, dtype=bool)
 
         self.variables = variables
         self.diff_variables = diff_variables
@@ -97,7 +103,6 @@ class EmtResults(ResultsTemplate):
         self.values = np.zeros((self.nt, self.nv, self.ng), dtype=float)
         self.diff_values = np.zeros((self.nt, self.ndv, self.ng), dtype=float)
 
-        self.register(name='values', tpe=Vec)
 
     def get_var(self, uid: int) -> Var:
         """

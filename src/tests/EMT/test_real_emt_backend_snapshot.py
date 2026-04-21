@@ -345,10 +345,10 @@ def test_short_trajectory_matches_between_all_backends(
     dx0 = problem.get_dx0().copy()
     params0 = problem.event_params_values.copy()
 
-    sym_t, sym_y, sym_dy = solvers_shunt[EmtSolverTypes.Symbolic].simulate(
+    sym_t, sym_y, sym_dy, _, _ = solvers_shunt[EmtSolverTypes.Symbolic].simulate(
         x0=x0.copy(), dx0=dx0.copy(), params0=params0.copy(), boundary_updater=problem
     )
-    ref_t, ref_y, ref_dy = solvers_shunt[EmtSolverTypes.Automatic].simulate(
+    ref_t, ref_y, ref_dy, _, _ = solvers_shunt[EmtSolverTypes.Automatic].simulate(
         x0=x0.copy(), dx0=dx0.copy(), params0=params0.copy(), boundary_updater=problem
     )
 
@@ -357,7 +357,7 @@ def test_short_trajectory_matches_between_all_backends(
     assert np.all(np.isfinite(sym_dy))
 
     for key in (EmtSolverTypes.StructuralAD, EmtSolverTypes.StructuralCompiled):
-        t_arr, y_arr, dy_arr = solvers_shunt[key].simulate(
+        t_arr, y_arr, dy_arr, _, _ = solvers_shunt[key].simulate(
             x0=x0.copy(), dx0=dx0.copy(), params0=params0.copy(), boundary_updater=problem
         )
         np.testing.assert_allclose(t_arr, ref_t, rtol=0.0, atol=0.0)
@@ -409,11 +409,11 @@ def test_zip_short_trajectory_matches_between_all_backends(
     dx0 = problem.get_dx0().copy()
     params0 = problem.event_params_values.copy()
 
-    ref_t, ref_y, ref_dy = solvers_zip[EmtSolverTypes.Automatic].simulate(
+    ref_t, ref_y, ref_dy, _, _ = solvers_zip[EmtSolverTypes.Automatic].simulate(
         x0=x0.copy(), dx0=dx0.copy(), params0=params0.copy(), boundary_updater=problem
     )
 
-    sym_t, sym_y, sym_dy = solvers_zip[EmtSolverTypes.Symbolic].simulate(
+    sym_t, sym_y, sym_dy, _, _ = solvers_zip[EmtSolverTypes.Symbolic].simulate(
         x0=x0.copy(),
         dx0=dx0.copy(),
         params0=params0.copy(),
@@ -425,7 +425,7 @@ def test_zip_short_trajectory_matches_between_all_backends(
     assert np.all(np.isfinite(sym_dy))
 
     for key in (EmtSolverTypes.StructuralAD, EmtSolverTypes.StructuralCompiled):
-        t_arr, y_arr, dy_arr = solvers_zip[key].simulate(
+        t_arr, y_arr, dy_arr, _, _ = solvers_zip[key].simulate(
             x0=x0.copy(), dx0=dx0.copy(), params0=params0.copy(), boundary_updater=problem
         )
         np.testing.assert_allclose(t_arr, ref_t, rtol=0.0, atol=0.0)

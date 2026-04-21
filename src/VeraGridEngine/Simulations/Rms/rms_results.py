@@ -8,7 +8,7 @@ from typing import List, Dict
 
 from matplotlib import pyplot as plt
 
-from VeraGridEngine.Simulations.results_template import ResultsTemplate
+from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
 from VeraGridEngine.basic_structures import Vec, DateVec, StrVec, Mat
 from VeraGridEngine.enumerations import StudyResultsType, DeviceType
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
@@ -16,6 +16,11 @@ from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 
 
 class RmsResults(ResultsTemplate):
+
+    LOCAL_RESULTS_DECLARATIONS = (
+        ResultsProperty(name='values', tpe=Vec, old_names=list()),
+    )
+
     __slots__ = (
         "nt",
         "nv",
@@ -79,7 +84,6 @@ class RmsResults(ResultsTemplate):
         self.variable_array = np.array([self.uid2vars_glob_name[var.uid] for var in variables], dtype=str)
         self.values = np.zeros((self.nt, self.nv, self.ng), dtype=float)
 
-        self.register(name='values', tpe=Vec)
         
     def get_var(self, uid: int) -> Var:
         """

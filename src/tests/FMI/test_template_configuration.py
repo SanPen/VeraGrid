@@ -11,7 +11,7 @@ from VeraGridEngine.enumerations import (
     ParamPowerFlowRefferenceType,
     VarPowerFlowRefferenceType,
 )
-from VeraGridEngine.IO.fmu.importer import load_fmu_cs_device_config
+from VeraGridEngine.IO.fmu.importer.device_config import load_fmu_cs_device_config
 from VeraGridEngine.IO.fmu.importer.template_api import configure_fmu_template
 
 
@@ -33,13 +33,11 @@ def test_configure_fmu_template_builds_visual_ports_and_auto_bindings() -> None:
     """
 
     template = FmuTemplate(name="")
-    rms_var_factory = VarFactory(name="RmsFmuTemplateFactory")
-    emt_var_factory = VarFactory(name="EmtFmuTemplateFactory")
+    var_factory = VarFactory(name="RmsFmuTemplateFactory")
 
     configured_template = configure_fmu_template(
         template=template,
-        rms_var_factory=rms_var_factory,
-        emt_var_factory=emt_var_factory,
+        var_factory=var_factory,
         fmu_path=_artifact_path(),
         device_tpe=DeviceType.LoadDevice,
         domain=FmuTemplateDomain.RMS,

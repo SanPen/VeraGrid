@@ -8,13 +8,13 @@ import time
 import numpy as np
 import pandas as pd
 
-from VeraGridEngine import ParamPowerFlowRefferenceType
+from VeraGridEngine.enumerations import ParamPowerFlowRefferenceType
 from VeraGridEngine.Devices import MultiCircuit
 from VeraGridEngine.Utils.Symbolic.symbolic import (Var, Const, Expr, piecewise)
-from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicParamsVector, SymbolicDerivative, SymbolicJacobian
+from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicJacobian
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic_io import block_deep_copy
-from VeraGridEngine.enumerations import VarPowerFlowRefferenceType, RmsInitializationMethod
+from VeraGridEngine.enumerations import VarPowerFlowRefferenceType, RmsInitializationMethod, DeviceType
 from VeraGridEngine.basic_structures import Vec, ObjVec, BoolVec, Logger
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowResults
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
@@ -26,14 +26,16 @@ from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Utils.Symbolic.jit_compiler import RMSCompiler
 from VeraGridEngine.Devices.Branches.transformer import Transformer2W
 from VeraGridEngine.Simulations.driver_template import DummySignal
-from VeraGridEngine.IO.fmu.importer import (
+from VeraGridEngine.IO.fmu.importer.experimental_cs import (
     advance_rms_fmu_cs_devices,
-    advance_rms_fmu_me_devices,
     close_rms_fmu_cs_devices,
-    close_rms_fmu_me_devices,
     initialize_rms_fmu_cs_devices,
-    initialize_rms_fmu_me_devices,
     register_rms_fmu_cs_device,
+)
+from VeraGridEngine.IO.fmu.importer.experimental_me import (
+    advance_rms_fmu_me_devices,
+    close_rms_fmu_me_devices,
+    initialize_rms_fmu_me_devices,
     register_rms_fmu_me_device,
 )
 
@@ -425,9 +427,10 @@ class RmsProblemPhasor(RmsProblemTemplate):
                 # add model to system block
                 self.sys_block.add(elm.rms_model)
 
-        gen_idx_map = {elm: i for i, elm in enumerate(grid.generators)}
-        batt_idx_map = {elm: i for i, elm in enumerate(grid.batteries)}
-        shunt_idx_map = {elm: i for i, elm in enumerate(grid.shunts)}
+        gen_idx_map = {elm.idtag: i for i, elm in enumerate(grid.generators)}
+        batt_idx_map = {elm.idtag: i for i, elm in enumerate(grid.batteries)}
+        shunt_idx_map = {elm.idtag: i for i, elm in enumerate(grid.shunts)}
+        loads_idx_map = {elm.idtag: i for i, elm in enumerate(grid.loads)}
 
         def _s_to_i(S: complex, V: complex) -> tuple[float, float]:
             v2 = np.abs(V) ** 2
@@ -465,23 +468,26 @@ class RmsProblemPhasor(RmsProblemTemplate):
                 adjustable_count[bidx] += 1
                 continue
 
-            if dev in gen_idx_map and dev.bus.is_slack:
+            if dev.idtag in gen_idx_map and dev.bus.is_slack:
                 slack_gen_count[bidx] += 1
                 continue
 
             Vbus_pf = self.power_flow_results.voltage[bidx]
-            if dev in gen_idx_map:
-                gidx = gen_idx_map[dev]
+            if dev.idtag in gen_idx_map:
+                gidx = gen_idx_map[dev.idtag]
                 Sdev_pf = complex(float(dev.P), float(self.power_flow_results.gen_q[gidx])) / grid.Sbase
-            elif dev in batt_idx_map:
-                bdid = batt_idx_map[dev]
+            elif dev.idtag in batt_idx_map:
+                bdid = batt_idx_map[dev.idtag]
                 P_b = float(dev.P)
                 Sdev_pf = complex(P_b, float(self.power_flow_results.battery_q[bdid])) / grid.Sbase
-            elif dev in shunt_idx_map:
-                sidx = shunt_idx_map[dev]
-                Sdev_pf = complex(0.0, float(self.power_flow_results.shunt_q[sidx])) / grid.Sbase
-            else:
-                Sdev_pf = dev.get_S_with_sign() / grid.Sbase
+            elif dev.idtag in shunt_idx_map:
+                g_sh = float(dev.G) / grid.Sbase
+                b_sh = float(dev.B) / grid.Sbase
+                Sdev_pf = complex(g_sh * (abs(Vbus_pf) ** 2), -b_sh * (abs(Vbus_pf) ** 2))
+            elif dev.idtag in loads_idx_map:
+                P_load = dev.P
+                Q_load = dev.Q
+                Sdev_pf = complex(-P_load, -Q_load) / grid.Sbase
 
             ir_pf, ii_pf = _s_to_i(Sdev_pf, Vbus_pf)
             fixed_inj_r[bidx] += ir_pf
@@ -501,6 +507,9 @@ class RmsProblemPhasor(RmsProblemTemplate):
             else:
                 bus_index = bus_dict[elm.bus]
 
+                if elm.device_type == DeviceType.ShuntDevice:
+                    elm.rms_model.parameters[elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.g]] = Const(float(elm.G)/grid.Sbase)
+                    elm.rms_model.parameters[elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.b]] = Const(float(elm.B)/grid.Sbase)
                 elm.rms_model.unify_blocks()
                 self.add_variables_to_compilation_dicts(elm, elm.rms_model)
                 register_rms_fmu_cs_device(self, elm, elm.rms_model)
@@ -526,47 +535,40 @@ class RmsProblemPhasor(RmsProblemTemplate):
                         ParamPowerFlowRefferenceType.Ii0 in elm.rms_model.api_obj_mapping
                     )
 
-                    if is_adjustable_load_current and remaining_adjustable[bus_index] > 0:
-                        Ir_val = residual_r[bus_index] / remaining_adjustable[bus_index]
-                        Ii_val = residual_i[bus_index] / remaining_adjustable[bus_index]
-                        remaining_adjustable[bus_index] -= 1
-                        residual_r[bus_index] -= Ir_val
-                        residual_i[bus_index] -= Ii_val
-                        Sdev = complex(
-                            Vbus.real * Ir_val + Vbus.imag * Ii_val,
-                            Vbus.imag * Ir_val - Vbus.real * Ii_val
-                        )
-                    elif elm in gen_idx_map and elm.bus.is_slack and remaining_slack_gen[bus_index] > 0:
-                        Ir_val = residual_r[bus_index] / remaining_slack_gen[bus_index]
-                        Ii_val = residual_i[bus_index] / remaining_slack_gen[bus_index]
-                        remaining_slack_gen[bus_index] -= 1
-                        residual_r[bus_index] -= Ir_val
-                        residual_i[bus_index] -= Ii_val
-                        Sdev = complex(
-                            Vbus.real * Ir_val + Vbus.imag * Ii_val,
-                            Vbus.imag * Ir_val - Vbus.real * Ii_val
-                        )
-                    elif elm in gen_idx_map:
-                        gidx = gen_idx_map[elm]
-                        Sdev = complex(float(elm.P), float(self.power_flow_results.gen_q[gidx])) / grid.Sbase
-                    elif elm in batt_idx_map:
-                        bidx = batt_idx_map[elm]
+                    if elm.idtag in gen_idx_map:
+                        if elm.bus.is_slack and remaining_slack_gen[bus_index] > 0:
+                            Ir_val = residual_r[bus_index] / remaining_slack_gen[bus_index]
+                            Ii_val = residual_i[bus_index] / remaining_slack_gen[bus_index]
+                            remaining_slack_gen[bus_index] -= 1
+                            residual_r[bus_index] -= Ir_val
+                            residual_i[bus_index] -= Ii_val
+                            Sdev = complex(
+                                Vbus.real * Ir_val + Vbus.imag * Ii_val,
+                                Vbus.imag * Ir_val - Vbus.real * Ii_val
+                            )
+                        else:
+                            gidx = gen_idx_map[elm.idtag]
+                            Sdev = complex(float(elm.P), float(self.power_flow_results.gen_q[gidx])) / grid.Sbase
+                    elif elm.idtag in batt_idx_map:
+                        bidx = batt_idx_map[elm.idtag]
                         P_b = float(elm.P)
                         Sdev = complex(P_b, float(self.power_flow_results.battery_q[bidx])) / grid.Sbase
-                    elif elm in shunt_idx_map:
-                        sidx = shunt_idx_map[elm]
-                        Sdev = complex(0.0, float(self.power_flow_results.shunt_q[sidx])) / grid.Sbase
-                    else:
-                        Sdev = elm.get_S_with_sign() / grid.Sbase
+                    elif elm.idtag in shunt_idx_map:
+                        g_sh = float(elm.G) / grid.Sbase
+                        b_sh = float(elm.B) / grid.Sbase
+                        Sdev = complex(g_sh * (abs(Vbus) ** 2), -b_sh * (abs(Vbus) ** 2))
 
-                    if not is_adjustable_load_current:
-                        Ir_val, Ii_val = _s_to_i(Sdev, Vbus)
+                    elif elm.idtag in loads_idx_map:
+                        P_load = elm.P
+                        Q_load = elm.Q
+                        Sdev = complex(-P_load, -Q_load) / grid.Sbase
 
+                    Ir_val, Ii_val = _s_to_i(Sdev, Vbus)
+                    print(f"Device {elm.name} at bus {elm.bus.name}: S={Sdev:.4f}, V={Vbus:.4f}, Ir={Ir_val:.4f}, Ii={Ii_val:.4f}")
                     if VarPowerFlowRefferenceType.Ir in elm.rms_model.external_mapping:
                         self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Ir, Ir_val)
                     if VarPowerFlowRefferenceType.Ii in elm.rms_model.external_mapping:
                         self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Ii, Ii_val)
-
                     if VarPowerFlowRefferenceType.P in elm.rms_model.external_mapping:
                         self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.P, Sdev.real)
                     if VarPowerFlowRefferenceType.Q in elm.rms_model.external_mapping:
@@ -737,15 +739,6 @@ class RmsProblemPhasor(RmsProblemTemplate):
             if isinstance(eq, Const) and eq.value is None:
                 raise Exception(f' Event parameter {self._variable_parameters[it]} has None Value')
 
-        # Substitute in algebraic eqs
-        self._stability_eqs = list()
-
-        # fill stability equations by putting algebraic equations equal zero
-        for it, eq in enumerate(self._algebraic_eqs):
-            for diff_var in self._diff_vars:
-                eq = eq.subs({diff_var: Const(0)})
-                eq = eq.simplify()
-            self._stability_eqs.append(eq)
 
         # Store a copy of the original event parameters equations for later use with set_events_group
         self._event_parameters_eqs0 = self._event_parameters_eqs.copy()
@@ -777,25 +770,6 @@ class RmsProblemPhasor(RmsProblemTemplate):
         print("Compiling RMS using JIT Native Compiler...")
 
         t0 = _tic()
-        self._derivative_fn = SymbolicDerivative(
-            vars=self._state_algeb_vars,
-            uid2idx_vars=self._uid2idx_vars,
-            diff_vars=self._diff_vars,
-            compiler_names_dict=self._compiler_names_dict
-        )
-        timings["SymbolicDerivative"] = _toc(t0)
-
-        t0 = _tic()
-        self._event_params_fn = SymbolicParamsVector(
-            eqs=self._event_parameters_eqs,
-            compiler_names_dict=self._compiler_names_dict,
-            alias_names_dict=self._alias_names_dict,
-            EVENT_PARAMS_NAME=self.VARIABLE_PARAMS_NAME,
-            TIME_NAME=self.TIME_NAME,
-        )
-        timings["Event parameters"] = _toc(t0)
-
-        t0 = _tic()
         rms_compiler = RMSCompiler(
             variables=self._state_algeb_vars,
             diff_vars=self._diff_vars,
@@ -805,6 +779,19 @@ class RmsProblemPhasor(RmsProblemTemplate):
             compiler_names_dict=self._compiler_names_dict
         )
         timings["Compiler Setup"] = _toc(t0)
+
+        t0 = _tic()
+        self._derivative_fn = rms_compiler.compile_derivative_fn(self._uid2idx_vars)
+        timings["SymbolicDerivative"] = _toc(t0)
+
+        t0 = _tic()
+        self._event_params_fn = rms_compiler.compile_event_params_fn(
+            eqs=self._event_parameters_eqs,
+            alias_names_dict=self._alias_names_dict,
+            EVENT_PARAMS_NAME=self.VARIABLE_PARAMS_NAME,
+            TIME_NAME=self.TIME_NAME,
+        )
+        timings["Event parameters"] = _toc(t0)
 
         t0 = _tic()
         self._rhs_algeb_fn = rms_compiler.compile_rhs(self._algebraic_eqs, "rhs_algeb")
@@ -1041,7 +1028,7 @@ class RmsProblemPhasor(RmsProblemTemplate):
         return self._uid2idx_vars
 
     @property
-    def get_algebraic_vars(self):
+    def algebraic_vars(self):
         return self._algebraic_vars
 
     @property
@@ -1054,7 +1041,7 @@ class RmsProblemPhasor(RmsProblemTemplate):
         return variables
 
     @property
-    def get_state_vars(self):
+    def state_vars(self):
         return self._state_vars
 
     @property
@@ -1092,7 +1079,7 @@ class RmsProblemPhasor(RmsProblemTemplate):
                 x[i] = val
         return x
 
-    def update_variable_params(self, t: float):
+    def update_variable_params(self, t: float, x_snapshot: Vec | None = None):
         """Update the variable parameters."""
         self._variable_parameters_values = self._event_params_fn(self._variable_parameters_values, t)
 
@@ -1242,9 +1229,16 @@ class RmsProblemPhasor(RmsProblemTemplate):
                 )
 
         # Recompile the event parameters function
-        self._event_params_fn = SymbolicParamsVector(
+        rms_compiler = RMSCompiler(
+            variables=self._state_algeb_vars,
+            diff_vars=self._diff_vars,
+            v_params=self._variable_parameters,
+            c_params=self._constant_parameters,
+            dt_var=self._dt,
+            compiler_names_dict=self._compiler_names_dict
+        )
+        self._event_params_fn = rms_compiler.compile_event_params_fn(
             eqs=self._event_parameters_eqs,
-            compiler_names_dict=self._compiler_names_dict,
             alias_names_dict=self._alias_names_dict,
             EVENT_PARAMS_NAME=self.VARIABLE_PARAMS_NAME,
             TIME_NAME=self.TIME_NAME,

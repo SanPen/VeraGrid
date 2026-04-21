@@ -350,7 +350,7 @@ def run_test_bergeron(case_name: str, R_load: float) -> Tuple[np.ndarray, np.nda
         verbose=False
     )
 
-    t_arr, y_arr, dy_arr = solver.simulate(boundary_updater=line_updater)
+    t_arr, y_arr, dy_arr, _, _ = solver.simulate(boundary_updater=line_updater)
 
     idx_vf: int = problem.get_var_idx(v_f_var)
     idx_vt: int = problem.get_var_idx(v_t_var)
@@ -471,7 +471,7 @@ def run_case_mechanical_system(backend_str: EmtSolverTypes,
 
     t_start: float = time.time()
 
-    t_arr, y_arr, dy_arr = solver.simulate()
+    t_arr, y_arr, dy_arr, _, _ = solver.simulate()
 
     elapsed: float = time.time() - t_start
 
@@ -609,7 +609,7 @@ def run_case_buck_converter(backend_str: EmtSolverTypes) -> Tuple[np.ndarray, np
 
     t_start: float = time.time()
 
-    t_arr, y_arr, dy_arr = solver.simulate(boundary_updater=pwm_updater)
+    t_arr, y_arr, dy_arr, _, _ = solver.simulate(boundary_updater=pwm_updater)
 
 
     elapsed: float = time.time() - t_start

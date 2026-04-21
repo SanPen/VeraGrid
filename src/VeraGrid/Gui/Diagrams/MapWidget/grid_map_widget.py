@@ -17,7 +17,7 @@ from matplotlib import pyplot as plt
 from PySide6.QtWidgets import QGraphicsItem, QMessageBox, QDialog, QVBoxLayout, QLabel, QPushButton
 from collections.abc import Callable
 from PySide6.QtCore import (Qt, QMimeData, QIODevice, QByteArray, QDataStream, QModelIndex, QRunnable, QThreadPool)
-from PySide6.QtGui import (QIcon, QPixmap, QImage, QStandardItemModel, QStandardItem, QColor, QDropEvent)
+from PySide6.QtGui import (QIcon, QPixmap, QImage, QStandardItemModel, QStandardItem, QColor, QDropEvent, QWheelEvent)
 
 from VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container import MapLineContainer
 from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics import MapInjectionTemplateGraphicItem
@@ -235,7 +235,7 @@ class GridMapWidget(BaseDiagramWidget):
                  longitude: float,
                  latitude: float,
                  name: str,
-                 diagram: Union[None, MapDiagram] = None):
+                 diagram: MapDiagram):
         """
         GridMapWidget
         :param tile_src: Tiles instance
@@ -243,11 +243,10 @@ class GridMapWidget(BaseDiagramWidget):
         :param longitude: Center point Longitude (deg)
         :param latitude: Center point Latitude (deg)
         :param name: Name of the diagram
-        :param circuit: MultiCircuit instance
         :param diagram: Diagram instance (optional)
         """
-        is_new_diagram = diagram is None
-        render_level = 6 if tile_src.level_in_range(6) else max(tile_src.min_level, min(start_level, tile_src.max_level))
+        render_level = 6 if tile_src.level_in_range(6) else max(tile_src.min_level,
+                                                                min(start_level, tile_src.max_level))
 
         super().__init__(
             gui=gui,
@@ -277,18 +276,21 @@ class GridMapWidget(BaseDiagramWidget):
         # pool of runnable tasks that work best done asynch with a runnable
         self.thread_pool = QThreadPool()
         self.wheel_move_task: QRunnable | None = None
+        self.zoom_angle_step: float = 120.0
+        self.zoom_pixel_step: float = 240.0
+        self.zoom_max_event_steps: float = 1.0
 
-        # Draw the diagram. New diagrams are auto-centered from their graphics;
+        # Draw the diagram. New diagrams are auto-centered from their graphics after the map viewport is initialized;
         # loaded diagrams must preserve their persisted viewport.
         self.draw()
-        if is_new_diagram:
-            self.center()
 
         if self.diagram.start_level != self.map.level:
             self.map.apply_zoom_level(level=self.diagram.start_level)
 
         self.map.go_to_position(longitude=self.diagram.longitude,
                                 latitude=self.diagram.latitude)
+
+        self.center()
 
     def set_diagram(self, diagram: MapDiagram):
         """
@@ -298,7 +300,9 @@ class GridMapWidget(BaseDiagramWidget):
         """
         self.diagram = diagram
 
-    def delete_element_utility_function(self, device: ALL_DEV_TYPES, propagate: bool = True,
+    def delete_element_utility_function(self,
+                                        device: ALL_DEV_TYPES,
+                                        propagate: bool = True,
                                         graphic_object: QGraphicsItem | None = None):
         """
 
@@ -356,10 +360,10 @@ class GridMapWidget(BaseDiagramWidget):
         """
         return [e.api_object for e in self._get_selected()]
 
-    def get_selected_line_segments_tup(self) -> List[Tuple[Line, (MapAcLine,
-                                                                  MapDcLine,
-                                                                  MapHvdcLine,
-                                                                  MapFluidPathLine)]]:
+    def get_selected_line_segments_tuple(self) -> List[Tuple[Line, (MapAcLine |
+                                                                    MapDcLine |
+                                                                    MapHvdcLine |
+                                                                    MapFluidPathLine)]]:
         """
         Get only selected line segments from the scene
 
@@ -376,41 +380,41 @@ class GridMapWidget(BaseDiagramWidget):
                 selected_line_segments.append((item.api_object, item.container))
         return selected_line_segments
 
-    def get_selected_substations_tup(self) -> List[Tuple[Substation, SubstationGraphicItem]]:
+    def get_selected_substations_tuple(self) -> List[Tuple[Substation, SubstationGraphicItem]]:
         """
         Get only selected substations from the scene
 
         :return: List of (Substation, SubstationGraphicItem) tuples
         """
-        selected_substations = []
+        selected_substations = list()
         for item in self.diagram_scene.selectedItems():
             if hasattr(item, 'api_object') and isinstance(item, SubstationGraphicItem):
                 selected_substations.append((item.api_object, item))
         return selected_substations
 
-    def get_selected_generators_tup(self) -> List[Tuple[Generator, MapGeneratorGraphicItem]]:
+    def get_selected_generators_tuple(self) -> List[Tuple[Generator, MapGeneratorGraphicItem]]:
         """
         Get only selected generators from the scene
 
         :return: List of (Generator, GeneratorGraphicItem) tuples
         """
-        selected_generators = []
+        selected_generators = list()
         for item in self.diagram_scene.selectedItems():
             if hasattr(item, 'api_object') and isinstance(item, MapGeneratorGraphicItem):
                 selected_generators.append((item.api_object, item))
         return selected_generators
 
-    def get_selected_linelocations_tup(self) -> List[Tuple[LineLocation, LineLocationGraphicItem]]:
+    def get_selected_line_locations_tuple(self) -> List[Tuple[LineLocation, LineLocationGraphicItem]]:
         """
         Get only selected Line Locations from the scene
 
         :return: List of (LineLocation, LineLocationGraphicItem) tuples
         """
-        selected_linelocations = []
+        selected_line_locations = list()
         for item in self.diagram_scene.selectedItems():
             if hasattr(item, 'api_object') and isinstance(item, LineLocationGraphicItem):
-                selected_linelocations.append((item.api_object, item))
-        return selected_linelocations
+                selected_line_locations.append((item.api_object, item))
+        return selected_line_locations
 
     def add_to_scene(self, graphic_object: ALL_MAP_GRAPHICS = None) -> None:
         """
@@ -476,19 +480,48 @@ class GridMapWidget(BaseDiagramWidget):
         self.diagram.latitude = latitude
         self.diagram.longitude = longitude
 
-    def zoom_in(self):
+    def zoom_in(self) -> None:
         """
         Zoom in
         """
         if self.map.level + 1 <= self.map.max_level:
             self.map.apply_zoom_level(level=self.map.level + 1)
 
-    def zoom_out(self):
+    def zoom_out(self) -> None:
         """
         Zoom out
         """
         if self.map.level - 1 >= self.map.min_level:
             self.map.apply_zoom_level(level=self.map.level - 1)
+
+    def get_wheel_zoom_steps(self, event: QWheelEvent) -> float:
+        """
+        Convert a wheel event into a normalized zoom step count.
+
+        A mouse wheel commonly emits an angle delta of 120 units per notch, while laptop touchpads emit many smaller
+        high-resolution events and may provide pixel deltas. Normalizing by the event magnitude keeps mouse-wheel zoom
+        unchanged and lets touchpad gestures accumulate progressively instead of changing one map level per event.
+
+        :param event: Wheel event coming from the map view.
+        :return: Signed zoom step count.
+        """
+        pixel_delta_y: int = event.pixelDelta().y()
+        angle_delta_y: int = event.angleDelta().y()
+
+        if pixel_delta_y != 0:
+            zoom_steps: float = float(pixel_delta_y) / self.zoom_pixel_step
+        else:
+            zoom_steps = float(angle_delta_y) / self.zoom_angle_step
+
+        if zoom_steps > self.zoom_max_event_steps:
+            normalized_zoom_steps: float = self.zoom_max_event_steps
+        else:
+            if zoom_steps < -self.zoom_max_event_steps:
+                normalized_zoom_steps = -self.zoom_max_event_steps
+            else:
+                normalized_zoom_steps = zoom_steps
+
+        return normalized_zoom_steps
 
     def to_lat_lon(self, x: float, y: float) -> Tuple[float, float]:
         """
@@ -586,14 +619,15 @@ class GridMapWidget(BaseDiagramWidget):
 
         return buses
 
-    def get_substations(self) -> List[Tuple[int, Substation, SubstationGraphicItem]]:
+    def get_substations(self) -> List[Tuple[int, Substation, SubstationGraphicItem | None]]:
         """
         Get all the substations
         :return: tuple(substation index, substation_api_object, substation_graphic_object)
         """
-        lst: List[Tuple[int, Substation, Union[SubstationGraphicItem, None]]] = list()
+        lst: List[Tuple[int, Substation, SubstationGraphicItem | None]] = list()
         substation_graphics_dict = self.graphics_manager.get_device_type_dict(DeviceType.SubstationDevice)
-        substations_dict: Dict[str: Tuple[int, Bus]] = {b.idtag: (i, b) for i, b in enumerate(self.circuit.substations)}
+        substations_dict: Dict[str, Tuple[int, Substation]] = {b.idtag: (i, b)
+                                                               for i, b in enumerate(self.circuit.substations)}
 
         for bus_idtag, graphic_object in substation_graphics_dict.items():
             idx, substation = substations_dict[bus_idtag]
@@ -798,6 +832,11 @@ class GridMapWidget(BaseDiagramWidget):
                                          graphic=graphic_object)
 
         self.add_to_scene(graphic_object=graphic_object)
+
+        self.diagram.set_point(device=api_object,
+                               location=MapLocation(latitude=lat,
+                                                    longitude=lon,
+                                                    api_object=api_object))
 
         return graphic_object
 
@@ -1624,11 +1663,10 @@ class GridMapWidget(BaseDiagramWidget):
         Deep copy of this widget
         :return: GridMapWidget
         """
-        d_copy = MapDiagram(name=self.diagram.name + '_copy')
-        j_data = json.dumps(self.diagram.get_data_dict(), indent=4)
-        d_copy.parse_data(data=json.loads(j_data),
-                          obj_dict=self.circuit.get_all_elements_dict_by_type(add_locations=True),
-                          logger=self.logger)
+        d_copy: MapDiagram = self.diagram.copy(
+            obj_dict=self.circuit.get_all_elements_dict_by_type(add_locations=True)
+        )
+        d_copy.name = self.diagram.name + '_copy'
 
         return GridMapWidget(
             gui=self.gui,
@@ -1794,7 +1832,7 @@ class GridMapWidget(BaseDiagramWidget):
 
     def transform_waypoint_to_substation(self):
 
-        selected_lineloc = self.get_selected_linelocations_tup()
+        selected_lineloc = self.get_selected_line_locations_tuple()
 
         if len(selected_lineloc) != 1:
             self.gui.show_error_toast('More than one waypoint selected. Could not determine where '
@@ -1972,8 +2010,8 @@ class GridMapWidget(BaseDiagramWidget):
 
     def change_generator_bus_connection(self):
 
-        selected_generators = self.get_selected_generators_tup()
-        selected_substations = self.get_selected_substations_tup()
+        selected_generators = self.get_selected_generators_tuple()
+        selected_substations = self.get_selected_substations_tuple()
 
         if len(selected_substations) > 1:
             self.gui.show_error_toast('More than one substation has been selected to reconnect generators. '
@@ -2000,7 +2038,7 @@ class GridMapWidget(BaseDiagramWidget):
 
     def merge_selected_lines(self):
 
-        selected_lines = self.get_selected_line_segments_tup()
+        selected_lines = self.get_selected_line_segments_tuple()
 
         if len(selected_lines) != 2:
             self.gui.show_error_toast('Line merging not done. Number of lines selected should be exactly equal to 2.')
@@ -2153,9 +2191,9 @@ class GridMapWidget(BaseDiagramWidget):
 
         :return:
         """
-        selected_lines = self.get_selected_line_segments_tup()
-        selected_substations = self.get_selected_substations_tup()
-        selected_generators = self.get_selected_generators_tup()
+        selected_lines = self.get_selected_line_segments_tuple()
+        selected_substations = self.get_selected_substations_tuple()
+        selected_generators = self.get_selected_generators_tuple()
         line_graphics_list = []
         for subst, subst_graphic in selected_substations:
             subst.latitude = subst_graphic.lat
@@ -2198,8 +2236,8 @@ class GridMapWidget(BaseDiagramWidget):
         """
 
         # Find the line and substation in the selection
-        selected_lines = self.get_selected_line_segments_tup()
-        selected_substations = self.get_selected_substations_tup()
+        selected_lines = self.get_selected_line_segments_tuple()
+        selected_substations = self.get_selected_substations_tuple()
 
         if len(selected_lines) != 1 or len(selected_substations) != 1:
             msg = QMessageBox()
@@ -2536,8 +2574,8 @@ class GridMapWidget(BaseDiagramWidget):
         selected_items = self._get_selected()
 
         # Find the substation and waypoint in the selection
-        list_sel_substations = self.get_selected_substations_tup()
-        list_sel_waypoint = self.get_selected_linelocations_tup()
+        list_sel_substations = self.get_selected_substations_tuple()
+        list_sel_waypoint = self.get_selected_line_locations_tuple()
 
         # Check if we have a substation and a waypoint selected
         if len(list_sel_substations) != 1 or len(list_sel_waypoint) != 1:
@@ -2851,7 +2889,7 @@ class GridMapWidget(BaseDiagramWidget):
                                contingency_factor=line_api.contingency_factor,
                                protection_rating_factor=line_api.protection_rating_factor,
                                circuit_idx=line_api.circuit_idx,
-                               active = line_api.active)
+                               active=line_api.active)
 
         if line_api.template is not None:
             connection_line.apply_template(line_api.template, Sbase=self.circuit.Sbase, freq=self.circuit.fBase)
@@ -2913,8 +2951,8 @@ class GridMapWidget(BaseDiagramWidget):
 
     def change_line_connection(self):
 
-        selected_lines = self.get_selected_line_segments_tup()
-        selected_substations = self.get_selected_substations_tup()
+        selected_lines = self.get_selected_line_segments_tuple()
+        selected_substations = self.get_selected_substations_tuple()
 
         if len(selected_lines) != 1 or len(selected_substations) != 2:
             self.gui.show_error_toast(message="Please select exactly one line and two substations.")
@@ -3208,7 +3246,7 @@ def generate_map_diagram2(circuit: MultiCircuit):
         external_grids=circuit.external_grids,
         static_generators=circuit.static_generators,
         loads=circuit.loads,
-        batteries=circuit.batteries ,
+        batteries=circuit.batteries,
         generators=circuit.generators,
         prog_func=None,
         text_func=None,

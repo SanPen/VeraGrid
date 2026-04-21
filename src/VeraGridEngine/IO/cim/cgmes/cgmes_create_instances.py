@@ -9,7 +9,7 @@ Collection of functions to create new CGMES instances for CGMES export.
 import numpy as np
 from datetime import datetime
 from typing import List, Union, Tuple
-from VeraGridEngine import StrVec
+from VeraGridEngine.basic_structures import StrVec
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.IO.cim.cgmes.base import get_new_rdfid, form_rdfid
 import VeraGridEngine.IO.cim.cgmes.cgmes_assets.cgmes_2_4_15_assets as cgmes24

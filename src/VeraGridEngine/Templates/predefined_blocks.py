@@ -233,32 +233,21 @@ def pi_controller(var_factory: VarFactory, err: sym.Var, kp: float, ki: float, n
 
 
 def generic(var_factory: VarFactory, 
-            state_inputs: int,
-            state_outputs: Sequence[str],
-            algebraic_inputs: int,
-            algebraic_outputs: Sequence[str]) -> Block:
+            inputs: int,
+            outputs: int,
+            ) -> Block:
     """
 
     :param var_factory:
-    :param state_inputs:
-    :param state_outputs:
-    :param algebraic_inputs:
-    :param algebraic_outputs:
+    :param inputs:
+    :param outputs:
     :return:
     """
     blk = Block(
         name="generic",
-        in_vars=[var_factory.add_var(f"Vport{i}") for i in range(state_inputs + algebraic_inputs)]
-    )
+        in_vars=[var_factory.add_var(f"input{i}") for i in range(inputs)],
+        out_vars = [var_factory.add_var(f"output{i}") for i in range(outputs)]
+        )
 
-    for i, v in enumerate(state_outputs):
-        var = var_factory.add_var(v)
-        blk.state_vars.append(var)
-        blk.out_vars.append(var)
-
-    for i, v in enumerate(algebraic_outputs):
-        var = var_factory.add_var(v)
-        blk.algebraic_vars.append(var)
-        blk.out_vars.append(var)
 
     return blk

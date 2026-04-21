@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:nc="https://cim4.eu/ns/nc#"
+    xmlns:cim="https://cim.ucaiug.io/ns#"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:eumd="https://cim4.eu/ns/Metadata-European#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#" > 
+  <dcat:Dataset rdf:about="urn:uuid:d226786d-20b5-46c5-9be5-95190f83845c">
+    <dcterms:accessRights>https://energy.referencedata.eu/Confidentiality/Public</dcterms:accessRights>
+    <dcterms:conformsTo>https://ap.cim4.eu/ImpactAssessmentMatrix/2.4</dcterms:conformsTo>
+    <dcterms:description xml:lang="en">This is the impact assessment matrix dataset for Jotunheim part of ReliCapGrid.</dcterms:description>
+    <dcat:endDate>2023-06-16T07:30:00Z</dcat:endDate>
+    <prov:generatedAtTime>2022-06-10T07:06:25Z</prov:generatedAtTime>
+    <dcterms:identifier>d226786d-20b5-46c5-9be5-95190f83845c</dcterms:identifier>
+    <dcat:isVersionOf rdf:resource="https://energy.referencedata.eu/Test/Model/Jotunheim-IAM"/>
+    <dcat:keyword>IAM</dcat:keyword>
+    <dcterms:license>https://creativecommons.org/licenses/by/4.0/</dcterms:license>
+    <dcterms:publisher>https://energy.referencedata.eu/test/party/Jotunheim</dcterms:publisher>
+    <dcterms:rights>Copyright</dcterms:rights>
+    <dcterms:rightsHolder>ENTSO-E</dcterms:rightsHolder>	
+    <dcterms:requires rdf:resource="urn:uuid:67b33697-15a1-4752-aeee-fb9b488defc4"/>
+    <dcat:startDate>2022-06-16T07:30:00Z</dcat:startDate>
+    <dcat:version>1.0.0</dcat:version>
+    <prov:wasGeneratedBy>https://energy.referencedata.eu/Activity/CGM-IAM</prov:wasGeneratedBy>
+  </dcat:Dataset>
+  <nc:CalculationBasedImpactAssessmentMatrix rdf:ID="_d3b375a5-c7ac-4be4-abbe-64dd89f2e877">
+    <cim:IdentifiedObject.description>Impact Assessment Matrix sample</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>d3b375a5-c7ac-4be4-abbe-64dd89f2e877</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>IAM_0930</cim:IdentifiedObject.name>
+  </nc:CalculationBasedImpactAssessmentMatrix>
+  <nc:RemedialActionOutcomeValue rdf:ID="_829f3fec-2183-4687-a017-7a2b5945bda4">
+    <nc:OutcomeValue.ImpactAssessmentMatrix rdf:resource="#_d3b375a5-c7ac-4be4-abbe-64dd89f2e877"/>
+    <nc:OutcomeValue.ImpactedSystemOperator rdf:resource="#_b9fbb881-573b-4e98-9b7b-31f00a45ebe0"/>
+    <nc:OutcomeValue.mRID>829f3fec-2183-4687-a017-7a2b5945bda4</nc:OutcomeValue.mRID>
+    <nc:OutcomeValue.outcome rdf:resource="https://cim4.eu/ns/nc#OutcomeImpactAssessmentKind.true"/>
+    <nc:RemedialActionOutcomeValue.RemedialAction rdf:resource="#_b5f07ec3-3a3c-49ec-8e85-02a77d4f79c1"/>
+  </nc:RemedialActionOutcomeValue>
+  <nc:RemedialActionScheduleOutcomeValue rdf:ID="_bcbd8682-a6ab-4ca2-a4fd-a1dbf3dc95d4">
+    <nc:OutcomeValue.ImpactAssessmentMatrix rdf:resource="#_d3b375a5-c7ac-4be4-abbe-64dd89f2e877"/>
+    <nc:OutcomeValue.ImpactedSystemOperator rdf:resource="#_b9fbb881-573b-4e98-9b7b-31f00a45ebe0"/>
+    <nc:OutcomeValue.mRID>bcbd8682-a6ab-4ca2-a4fd-a1dbf3dc95d4</nc:OutcomeValue.mRID>
+    <nc:OutcomeValue.outcome rdf:resource="https://cim4.eu/ns/nc#OutcomeImpactAssessmentKind.undecided"/>
+    <nc:RemedialActionScheduleOutcomeValue.RemedialActionSchedule rdf:resource="#_cefc01ca-f500-4215-9c86-dbef2b2cbdd2"/>
+  </nc:RemedialActionScheduleOutcomeValue>
+    
+    <!-- 7.4.4	RAS rejection -->
+
+  <nc:RemedialActionScheduleOutcomeValue rdf:ID="_9f16db8d-3c1f-4fe8-b22f-51e223c89694">
+    <cim:IdentifiedObject.mRID>9f16db8d-3c1f-4fe8-b22f-51e223c89694</cim:IdentifiedObject.mRID>
+    <nc:OutcomeValue.ImpactAssessmentMatrix rdf:resource="#_d3b375a5-c7ac-4be4-abbe-64dd89f2e877"/>
+    <nc:OutcomeValue.ImpactedSystemOperator rdf:resource="#_1682bb5a-0eca-4923-a898-f7b6c4aa822b"/>
+    <nc:OutcomeValue.outcome rdf:resource="http://entsoe.eu/ns/nc#OutcomeImpactAssessmentKind.false"/>
+    <nc:RemedialActionOutcomeValue.RemedialActionSchedule rdf:resource="#_e79dc7a3-3bd2-4a1a-87e7-a8d90ae0e37c"/>
+  </nc:RemedialActionScheduleOutcomeValue>
+
+</rdf:RDF>

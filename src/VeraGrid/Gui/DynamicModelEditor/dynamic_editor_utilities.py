@@ -265,21 +265,18 @@ def create_emt_wizard_block(phase_n: bool, phase_a: bool, phase_b: bool, phase_c
         return None
 
 def create_generic_block(var_factory: VarFactory,
-                         state_inputs: int,
-                         state_outputs: Sequence[str],
-                         algebraic_inputs: int,
-                         algebraic_outputs: Sequence[str]):
+                         inputs: int,
+                         outputs: int,
+                         name: str = "generic"
+                         ):
     """
 
     :param var_factory:
-    :param state_inputs:
-    :param state_outputs:
-    :param algebraic_inputs:
-    :param algebraic_outputs:
+    :param inputs:
+    :param outputs:
+    :param name:
     :return:
     """
-    blk = generic(var_factory, state_inputs,
-                  state_outputs, algebraic_inputs,
-                  algebraic_outputs)
-    blk.name = "generic"
+    blk = generic(var_factory, inputs, outputs)
+    blk.name = name
     return blk

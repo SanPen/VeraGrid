@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:nc="https://cim4.eu/ns/nc#"
+    xmlns:cim="https://cim.ucaiug.io/ns#"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:eumd="https://cim4.eu/ns/Metadata-European#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#" > 
+  <dcat:Dataset rdf:about="urn:uuid:79e8ace6-d345-4855-a279-95220d646012">
+    <dcterms:accessRights>https://energy.referencedata.eu/Confidentiality/Public</dcterms:accessRights>
+    <dcterms:conformsTo>https://ap.cim4.eu/SteadyStateHypothesisSchedule/1.1</dcterms:conformsTo>
+    <dcterms:conformsTo>https://cim4.eu/ns/nc/2.4#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/CIM100#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/2013/CIM-schema-cim16#</dcterms:conformsTo>
+    <dcterms:description xml:lang="en">This is the steady state hypothesis schedule dataset for Belgovia part of ReliCapGrid.</dcterms:description>
+    <dcat:endDate>2023-06-15T22:30:00Z</dcat:endDate>
+    <prov:generatedAtTime>2022-06-10T07:06:25Z</prov:generatedAtTime>
+    <dcterms:identifier>79e8ace6-d345-4855-a279-95220d646012</dcterms:identifier>
+    <dcat:isVersionOf rdf:resource="https://energy.referencedata.eu/Test/Model/Belgovia-SHS"/>
+    <dcat:keyword>SHS</dcat:keyword>
+    <dcterms:license>https://creativecommons.org/licenses/by/4.0/</dcterms:license>
+    <dcterms:publisher>https://energy.referencedata.eu/test/party/Belgovia</dcterms:publisher>
+    <dcterms:rights>Copyright</dcterms:rights>
+    <dcterms:rightsHolder>ENTSO-E</dcterms:rightsHolder>	
+    <dcterms:requires rdf:resource="urn:uuid:15c8a8ad-08d5-4b59-8417-db80e273bd1a"/>
+    <dcat:startDate>2022-06-15T22:30:00Z</dcat:startDate>
+    <dcterms:title>20220615_Belgovia_SHS_1.0.0</dcterms:title>
+    <dcat:version>1.0.0</dcat:version>
+    <prov:wasGeneratedBy>https://energy.referencedata.eu/Activity/CGM-SHS</prov:wasGeneratedBy>
+    <dcterms:spatial>https://energy.referencedata.eu/Test/Frame/Belgovia-Power-Transmission-System</dcterms:spatial>
+    <dcterms:issued>2022-06-15T22:30:00Z</dcterms:issued>
+  </dcat:Dataset>
+   <nc:CurrentLimitSchedule rdf:ID="_a246aa9a-1e25-4693-a681-f4f771949d2f">
+    <cim:IdentifiedObject.name>CLS1</cim:IdentifiedObject.name>
+    <cim:IdentifiedObject.mRID>a246aa9a-1e25-4693-a681-f4f771949d2f</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.description>CLS1</cim:IdentifiedObject.description>
+    <nc:CurrentLimitSchedule.CurrentLimit rdf:resource="#_1ee85ce6-8298-c191-b8a0-9ccac2282a66"/>
+     <nc:BaseTimeSeries.interpolationKind rdf:resource="https://cim4.eu/ns/nc#TimeSeriesInterpolationKind.none"/>
+  </nc:CurrentLimitSchedule>
+  <nc:CurrentLimitTimePoint rdf:ID="_9eccd27b-3511-48a8-8fa7-a56a57f8d0c9">
+    <cim:IdentifiedObject.name>CLTP1</cim:IdentifiedObject.name>
+    <cim:IdentifiedObject.mRID>9eccd27b-3511-48a8-8fa7-a56a57f8d0c9</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.description>CLTP1</cim:IdentifiedObject.description>
+    <nc:CurrentLimitTimePoint.CurrentLimitSchedule rdf:resource="#_a246aa9a-1e25-4693-a681-f4f771949d2f"/>
+    <nc:CurrentLimitTimePoint.atTime>2023-07-22T16:00:00Z</nc:CurrentLimitTimePoint.atTime>
+    <nc:CurrentLimitTimePoint.value>350</nc:CurrentLimitTimePoint.value>
+  </nc:CurrentLimitTimePoint>
+ </rdf:RDF>

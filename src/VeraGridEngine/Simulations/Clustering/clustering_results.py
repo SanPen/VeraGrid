@@ -6,12 +6,19 @@
 import numpy as np
 import pandas as pd
 from VeraGridEngine.Simulations.results_table import ResultsTable
-from VeraGridEngine.Simulations.results_template import ResultsTemplate
+from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
 from VeraGridEngine.basic_structures import DateVec, IntVec, Vec
 from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
 
 
 class ClusteringResults(ResultsTemplate):
+
+    LOCAL_RESULTS_DECLARATIONS = (
+        ResultsProperty(name='time_indices', tpe=IntVec, old_names=list()),
+        ResultsProperty(name='sampled_probabilities', tpe=Vec, old_names=list()),
+        ResultsProperty(name='original_sample_idx', tpe=IntVec, old_names=list()),
+    )
+
     __slots__ = (
         "time_indices",
         "sampled_probabilities",
@@ -45,9 +52,6 @@ class ClusteringResults(ResultsTemplate):
         self.sampled_probabilities: Vec = sampled_probabilities
         self.original_sample_idx: IntVec = original_sample_idx
 
-        self.register(name='time_indices', tpe=IntVec)
-        self.register(name='sampled_probabilities', tpe=Vec)
-        self.register(name='original_sample_idx', tpe=IntVec)
 
     def mdl(self, result_type: ResultTypes) -> ResultsTable:
         """

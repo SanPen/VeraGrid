@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import copy
 import uuid
 from typing import List, Dict, Any
 
@@ -25,33 +26,6 @@ class Block:
     """
     Class representing a Block
     """
-    __slots__ = (
-        "name",
-        "uid",
-        "vars_glob_name2uid",
-        "state_vars",
-        "state_eqs",
-        "algebraic_vars",
-        "algebraic_eqs",
-        "diff_vars",
-        "reformulated_vars",
-        "differential_eqs",
-        "init_eqs",
-        "diff_init_eqs",
-        "children",
-        "in_vars",
-        "out_vars",
-        "parameters",
-        "discrete_eqs",
-        "external_mapping",
-        "api_obj_mapping",
-        "init_values",
-        "var_mapping",
-        "event_dict",
-        "mode_dict",
-        "procedural_logic",
-        "_diagram",
-    )
 
     def __init__(self,
                  state_vars: List[Var] | None = None,
@@ -325,11 +299,11 @@ class Block:
 
     def copy(self) -> "Block":
         """
-        Deep copy preserving UIDs.
-        Completely structural clone using to_dict + parse.
+        Deep-copy this block while preserving symbolic UIDs.
+
+        :return: Copied block.
         """
-        d = self.to_dict()
-        return Block.parse(d)
+        return copy.deepcopy(self)
 
 
     def _procedural_logic_to_dict(self) -> List[Dict[str, Any]]:
@@ -350,11 +324,56 @@ class Block:
         :return: Procedural logic objects.
         """
         from VeraGridEngine.Utils.procedural_logic import procedural_logic_from_dict
-        # TODO: import inside a function!
-        return procedural_logic_from_dict(data)
 
-    def __deepcopy__(self, memo: Dict) -> "Block":
-        return self.copy()
+        if len(data) == 0:
+            return list()
+        else:
+            pass
+
+        if isinstance(data[0], dict):
+            return procedural_logic_from_dict(data)
+        else:
+            return list(data)
+
+    def __deepcopy__(self, memo: Dict[int, Any]) -> "Block":
+        """
+        Copy the block preserving shared symbolic references inside the block graph.
+
+        :param memo: Standard deepcopy memo table.
+        :return: Copied block.
+        """
+        if id(self) in memo:
+            return memo[id(self)]
+        else:
+            result: Block = Block.__new__(Block)
+            memo[id(self)] = result
+
+            result.name = copy.deepcopy(self.name, memo)
+            result.uid = copy.deepcopy(self.uid, memo)
+            result.vars_glob_name2uid = copy.deepcopy(self.vars_glob_name2uid, memo)
+            result.state_vars = copy.deepcopy(self.state_vars, memo)
+            result.state_eqs = copy.deepcopy(self.state_eqs, memo)
+            result.algebraic_vars = copy.deepcopy(self.algebraic_vars, memo)
+            result.algebraic_eqs = copy.deepcopy(self.algebraic_eqs, memo)
+            result.diff_vars = copy.deepcopy(self.diff_vars, memo)
+            result.reformulated_vars = copy.deepcopy(self.reformulated_vars, memo)
+            result.differential_eqs = copy.deepcopy(self.differential_eqs, memo)
+            result.init_eqs = copy.deepcopy(self.init_eqs, memo)
+            result.diff_init_eqs = copy.deepcopy(self.diff_init_eqs, memo)
+            result.children = copy.deepcopy(self.children, memo)
+            result.in_vars = copy.deepcopy(self.in_vars, memo)
+            result.out_vars = copy.deepcopy(self.out_vars, memo)
+            result.parameters = copy.deepcopy(self.parameters, memo)
+            result.discrete_eqs = copy.deepcopy(self.discrete_eqs, memo)
+            result.external_mapping = copy.deepcopy(self.external_mapping, memo)
+            result.api_obj_mapping = copy.deepcopy(self.api_obj_mapping, memo)
+            result.init_values = copy.deepcopy(self.init_values, memo)
+            result.var_mapping = copy.deepcopy(self.var_mapping, memo)
+            result.event_dict = copy.deepcopy(self.event_dict, memo)
+            result.mode_dict = copy.deepcopy(self.mode_dict, memo)
+            result.procedural_logic = copy.deepcopy(self.procedural_logic, memo)
+            result._diagram = copy.deepcopy(self._diagram, memo)
+            return result
 
     def compare(self, block2: Block) -> bool:
         """

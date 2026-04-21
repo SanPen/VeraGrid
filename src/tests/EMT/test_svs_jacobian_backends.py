@@ -125,7 +125,7 @@ class TestSVSJacobianBackends(unittest.TestCase):
             problem, t0=0.0, t_end=50e-6, h=1e-6, method=DynamicIntegrationMethod.DaeTrapezoidal
         )
 
-        t_arr, y_arr, _ = solver.simulate(x0=x0, params0=p0)
+        t_arr, y_arr, _, _, _ = solver.simulate(x0=x0, params0=p0)
 
         self.assertEqual(len(t_arr), y_arr.shape[0])
         self.assertTrue(bool(np.all(np.isfinite(y_arr))))

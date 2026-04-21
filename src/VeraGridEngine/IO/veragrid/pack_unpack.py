@@ -4,7 +4,6 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-import copy
 import json
 import math
 import os
@@ -20,6 +19,7 @@ from VeraGridEngine.Devices.Parents.editable_device import GCProp
 from VeraGridEngine.Devices.Profiles import AnyProfile
 from VeraGridEngine.Utils.Symbolic.symbolic_io import BlockSaver, BlockParser, Block
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES, VERAGRID_FILE_TYPE
+from VeraGridEngine.Devices.Diagrams.base_diagram import copy_diagrams
 from VeraGridEngine.enumerations import (DiagramType, DeviceType, SubObjectType, TapPhaseControl, TapModuleControl,
                                          ContingencyOperationTypes)
 
@@ -1846,8 +1846,8 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
                                                       devices=devices,
                                                       logger=logger)
                 else:
-                    # branch is a legacy structure, so we can avoid reporting its absence
-                    if object_type_key != 'branch':
+                    # Legacy and optional sections should not generate warnings when absent.
+                    if object_type_key not in {'branch', 'fmu_template'}:
                         logger.add_warning(msg=f'No data for {object_type_key}')
 
                 if progress_func is not None:
@@ -2083,7 +2083,8 @@ def parse_multiverse_data(data: dict[str, VERAGRID_FILE_TYPE],
 
     active_node_id_raw = metadata.get("active_node_id", None) if isinstance(metadata, dict) else None
     if mv.current_node is not None and mv.current_model is not None:
-        mv.current_model.diagrams = copy.deepcopy(mv.current_node.diagrams)
+        obj_dict = mv.current_model.get_all_elements_dict_by_type(add_locations=True)
+        mv.current_model.diagrams = copy_diagrams(diagrams=mv.current_node.diagrams, obj_dict=obj_dict)
 
     if active_node_id_raw is not None and (
             mv.current_node is None or mv.current_node.node_id != int(active_node_id_raw)):

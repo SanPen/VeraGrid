@@ -2561,6 +2561,8 @@ def get_cgmes_sv_tap_step(multi_circuit: MultiCircuit,
                           ver: CGMESVersions,
                           logger: DataLogger) -> None:
     """
+    Update SvTapStep.position for every tap changer using the solved power-flow
+    tap module / tap angle instead of the nominal EQ step.
 
     :param multi_circuit:
     :param nc:
@@ -2572,15 +2574,48 @@ def get_cgmes_sv_tap_step(multi_circuit: MultiCircuit,
     """
     branch_objects = multi_circuit.get_branches(add_vsc=False, add_hvdc=False, add_switch=True)
 
-    tap_modules = pf_results.tap_module
-
-    for (branch, t_m) in zip(branch_objects, tap_modules):
-
+    # Build a lookup: VeraGrid branch idtag → (branch_index, branch)
+    trafo_idx: dict[str, tuple[int, gcdev.Transformer2W]] = {}
+    for idx, branch in enumerate(branch_objects):
         if isinstance(branch, gcdev.Transformer2W):
-            pass
-            # branch.tap_changer.h
+            trafo_idx[branch.idtag] = (idx, branch)
 
-    pass
+    tap_modules = pf_results.tap_module
+    tap_angles = pf_results.tap_angle
+
+    for sv in cgmes_model.cgmes_assets.SvTapStep_list:
+        cgmes_tc = sv.TapChanger
+        if cgmes_tc is None:
+            continue
+
+        pte = cgmes_tc.TransformerEnd
+        if pte is None:
+            continue
+
+        power_transformer = pte.PowerTransformer
+        if power_transformer is None:
+            continue
+
+        entry = trafo_idx.get(power_transformer.uuid)
+        if entry is None:
+            continue
+
+        branch_idx, branch = entry
+        tc = branch.tap_changer
+
+        original_pos = tc.tap_position
+
+        is_phase = isinstance(cgmes_tc, (cgmes24.PhaseTapChanger, cgmes30.PhaseTapChanger))
+
+        if is_phase:
+            tc.set_tap_phase(float(tap_angles[branch_idx]))
+        else:
+            tc.set_tap_module(float(tap_modules[branch_idx]))
+
+        _, _, _, _, _, step = tc.get_cgmes_values()
+        sv.position = float(step)
+
+        tc.tap_position = original_pos
 
 
 def get_cgmes_sv_shunt_compensator_sections(cgmes_model: CgmesCircuit,

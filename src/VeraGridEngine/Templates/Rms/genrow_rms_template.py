@@ -58,8 +58,8 @@ def get_genrow_rms_template(vfactory: VarFactory, name="Genrow rms template") ->
     templ.block.event_dict[omega_ref] = vfactory.add_const(1.0)
     templ.block.event_dict[Kp] = vfactory.add_const(0.0)
     templ.block.event_dict[Ki] = vfactory.add_const(0.0)
-    templ.block.event_dict[vf] = vfactory.add_const(None)
-    templ.block.event_dict[tm0] = vfactory.add_const(None)
+    templ.block.event_dict[vf] = psid + X1 * i_d
+    templ.block.event_dict[tm0] = tm
 
     templ.block.algebraic_vars = [P_g, Q_g, v_d, v_q, i_d, i_q, psid, psiq, te, tm, et]
 

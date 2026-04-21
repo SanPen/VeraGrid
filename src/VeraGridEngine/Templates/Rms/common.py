@@ -8,6 +8,8 @@ from typing import Any, Sequence
 from VeraGridEngine.enumerations import BlockType
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import Block
+from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template
+from VeraGridEngine.Templates.Emt.bergeron_line_emt_template import get_bergeron_line_emt_template
 from VeraGridEngine.Templates.predefined_blocks import (
     constant,
     gain,

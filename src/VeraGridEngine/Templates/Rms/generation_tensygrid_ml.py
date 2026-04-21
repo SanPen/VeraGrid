@@ -610,9 +610,9 @@ def ExciterBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
         "tR": vfactory.add_const(0.08),  # stator voltage filter time constant (s)
 
         # Exciter submodel parameters
-        "Kc": vfactory.add_const(0.2),  # rectifier loading factor
+        "Kc": vfactory.add_const(0.1),  # rectifier loading factor
         "Kd": vfactory.add_const(0.1),  # demagnetizing factor
-        "Ke": vfactory.add_const(1.0),  # field resistance constant
+        "Ke": vfactory.add_const(0.5),  # field resistance constant
         "Kfd": vfactory.add_const(0.5),  # converting factor
 
     }
@@ -662,33 +662,29 @@ def ExciterBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
     BEx = vfactory.add_var("BEx")  # Exponential coefficient of saturation function
     Se_threshold = vfactory.add_var("Se_threshold")  # Exponential coefficient of saturation function
     ToLLi = vfactory.add_var("ToLLi")  # Tolerance on limit crossing
-    VeMinPu_submodel = vfactory.add_var("VeMinPu_submodel")  # Minimum exciter output voltage (pu)
-    VfeMaxPu_submodel = vfactory.add_var("VfeMaxPu_submodel")  # Maximum exciter field current signal (pu)
 
     events_dict = {
         # Exciter (AVR) parameters
-        UsRefPu: vfactory.add_const(None),  # reference voltage (pu)
+        UsRefPu: Efe / parameters['Ka'].value + inputs[1],  # reference voltage (pu)
         AEz: vfactory.add_const(0.02),  # saturation gain
         BEz: vfactory.add_const(1.5),  # saturation exponential coefficient
         Se_threshold: vfactory.add_const(1.0),  # saturation threshold
-        EfeMaxPu: vfactory.add_const(15.0),  # max exciter field voltage (pu)
-        EfeMinPu: vfactory.add_const(-5.0),  # min exciter field voltage (pu)
+        EfeMaxPu: vfactory.add_const(25.0),  # max exciter field voltage (pu)
+        EfeMinPu: vfactory.add_const(-25.0),  # min exciter field voltage (pu)
 
         # Time constants
         TolLi: vfactory.add_const(0.05),  # limiter crossing tolerance (fraction)
 
         # Limits
         VaMaxPu: vfactory.add_const(10.0),  # AVR output max (pu)
-        VaMinPu: vfactory.add_const(-20.0),  # AVR output min (pu)
-        VeMinPu: vfactory.add_const(-20.0),  # min exciter output voltage (pu)
-        VfeMaxPu: vfactory.add_const(50.0),  # max exciter field current signal (pu)
+        VaMinPu: vfactory.add_const(-35.0),  # AVR output min (pu)
+        VeMinPu: vfactory.add_const(-35.0),  # min exciter output voltage (pu)
+        VfeMaxPu: vfactory.add_const(10.0),  # max exciter field current signal (pu)
 
         # Exciter submodel parameters
-        AEx: vfactory.add_const(0.02),  # saturation gain
-        BEx: vfactory.add_const(0.01),  # exponential coeff of saturation function
+        AEx: vfactory.add_const(0.05),  # saturation gain
+        BEx: vfactory.add_const(0.05),  # exponential coeff of saturation function
         ToLLi: vfactory.add_const(0.05),  # tolerance on limit crossing
-        VeMinPu_submodel: vfactory.add_const(-5.1),  # minimum exciter output voltage
-        VfeMaxPu_submodel: vfactory.add_const(5.0),  # max exciter field current signal
     }
     # ---Internal Blocks---
     tf1, y1 = tf_to_block(
@@ -719,7 +715,6 @@ def ExciterBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
     )
     min_const = max(events_dict[VaMinPu].value, events_dict[EfeMinPu].value)
     max_const = min(events_dict[VaMaxPu].value, events_dict[EfeMaxPu].value)
-
     # TODO: Try with AnitWindup
     tf4, y4 = tf_to_block(
         vfactory,
@@ -730,7 +725,7 @@ def ExciterBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
         # sat_max = max_const,
         name='exciter4',
     )
-    ml_block2, y6 = sym_ml.ml_hard_sat(vfactory, y4, min_const, max_const)
+    ml_block2, y6 = sym_ml.ml_hard_sat(vfactory, y4, min_const, max_const, name='exciter_sat')
 
     # exciter submodel
 
@@ -740,7 +735,7 @@ def ExciterBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
     x1 = VfeMaxPu - inputs[0] * parameters["Kd"].value
     error1 = Efe - (inputs[0] * parameters["Kd"].value + u_aux)
 
-    tf1_sub, Ve = tf_to_block(
+    tf1_sub, Ve_pre = tf_to_block(
         vfactory,
         num=np.array([1]),
         den=np.array([0, parameters["tE"].value]),
@@ -752,6 +747,7 @@ def ExciterBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
 
     Se_threshold = parameters['Ke'].value
 
+    ml_block1, Ve = sym_ml.ml_hard_sat(vfactory, Ve_pre, VeMinPu, VeMaxPu, name='Ve_sat')
     ml_block_exp, V_exp = sym_ml.exponential_ml(vfactory, BEx * (Ve - Se_threshold))
     ml_block_hv, V_hv = sym_ml.ml_heaviside(vfactory, Ve - Se_threshold)
     Sx = (V_exp - vfactory.add_const(1)) * V_hv
@@ -786,34 +782,33 @@ def ExciterBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
     y_subexciter1 = find_name_in_block('y_subexciter1', tf1_sub)
     dt_y_subexciter1 = find_name_in_block('dt_1_y_subexciter1', tf1_sub)
     Ve_sat = sym.hard_sat(y_subexciter1, VeMinPu, VeMaxPu)
-    Ve_expr = sym.hard_sat(y_subexciter1, VeMinPu, vfactory.add_const(1000))
+    Ve_expr = sym.hard_sat(y_subexciter1, VeMinPu, VeMaxPu)
     aux_expr = parameters['Ke'].value * Ve_expr + AEx * Ve_expr * Sx
     templ.block = Block(
-        children=[tf1, tf2, tf3, tf4, exciter_submodel, linking_block, ml_block_exp, ml_block_hv, ml_block2, ml_block3],
+        children=[tf1, tf2, tf3, tf4, exciter_submodel, linking_block, ml_block_exp, ml_block_hv, ml_block1, ml_block2, ml_block3],
         out_vars=[Vf],
         in_vars=inputs,
         event_dict=events_dict,
         init_eqs={
             Vf: inputs[0],
-            y_subexciter1: inputs[0] / f_output,
+            y_subexciter1: inputs[0] * (1 / sym.f_exc(inputs[0] * parameters["Kc"].value / y_subexciter1)),
+            # y_subexciter1: inputs[0] * (1 / sym.f_exc(inputs[0] * parameters["Kc"].value / y_subexciter1)),
             # Ve: sym.hard_sat(y_subexciter1, VeMinPu, Const(1000)),
             # Sx: (sym.exp(BEx * (Ve - Se_threshold)) - Const(1)) * sym.heaviside(Ve - Se_threshold),
             VeMaxPu: (VfeMaxPu - inputs[0] * parameters["Kd"].value) / (
                     parameters["Ke"].value + AEx * (
-                    sym.exp(BEx * (Ve - Se_threshold)) - vfactory.add_const(1)) * sym.heaviside(
-                Ve - Se_threshold)),
+                    sym.exp(BEx * (Ve_pre - Se_threshold)) - vfactory.add_const(1)) * sym.heaviside(
+                Ve_pre - Se_threshold)),
             u_aux: aux_expr,
-            Efe: sym.hard_sat(inputs[0] * parameters["Kd"].value + u_aux, vfactory.add_const(-10.0), vfactory.add_const(10.0)),
-            UsRefPu: Efe / parameters['Ka'].value + inputs[1],
+            Efe: (inputs[0] * parameters["Kd"].value + u_aux),
             y1: inputs[1],
             y2: vfactory.add_const(0.0),
             y3: -y1 + UsRefPu,
             u_exciter3: y3,
             y4: y3 * parameters["Ka"].value,
             u_subexciter1: Efe - (inputs[0] * parameters["Kd"].value + u_aux),
-            dt_y_subexciter1: u_subexciter1 / parameters["tE"].value,
             f_input: parameters['Kc'].value * inputs[0] / y_subexciter1,
-            f_output: sym.f_exc(parameters["Kc"].value * f_output),
+            f_output: sym.f_exc(f_input),
         },
     )
 
@@ -1066,7 +1061,7 @@ def get_complete_generator_template(vfactory: VarFactory, name: str = "complete 
 
     # generate models
     genqec_mdl = GenqecBuild(vfactory).block
-    exciter_mdl = ExciterBuild(vfactory).block
+    exciter_mdl = ExciterBuild(vfactory, name).block
     governor_mdl = GovernorBuild(vfactory).block
     stabilizer_mdl = StabilizerBuild(vfactory).block
 

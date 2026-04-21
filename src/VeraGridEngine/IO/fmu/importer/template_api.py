@@ -614,8 +614,7 @@ def _to_interface_mode(mode: FmuTemplateMode) -> FmuInterfaceMode:
 
 
 def configure_fmu_template(template: FmuTemplate,
-                           rms_var_factory: VarFactory,
-                           emt_var_factory: VarFactory,
+                           var_factory: VarFactory,
                            fmu_path: str | Path,
                            device_tpe: DeviceType,
                            domain: FmuTemplateDomain,
@@ -629,8 +628,7 @@ def configure_fmu_template(template: FmuTemplate,
     the RMS or EMT import adapters.
 
     :param template: Template instance to mutate.
-    :param rms_var_factory: RMS variable factory owned by the current grid.
-    :param emt_var_factory: EMT variable factory owned by the current grid.
+    :param var_factory: RMS variable factory owned by the current grid.
     :param fmu_path: FMU archive selected by the user.
     :param device_tpe: Target VeraGrid device type.
     :param domain: Simulation domain where the template will be used.
@@ -661,7 +659,7 @@ def configure_fmu_template(template: FmuTemplate,
     if domain == FmuTemplateDomain.RMS:
         if mode == FmuTemplateMode.CO_SIMULATION:
             shell_template = build_rms_fmu_cs_injection_template(
-                vfactory=rms_var_factory,
+                vfactory=var_factory,
                 config=template_config,
                 input_bindings=input_bindings,
                 output_bindings=output_bindings,
@@ -669,7 +667,7 @@ def configure_fmu_template(template: FmuTemplate,
                 device_tpe=device_tpe,
                 output_defaults=output_defaults,
             )
-            _decorate_template_block(shell_template.block, rms_var_factory, metadata, input_bindings, output_bindings)
+            _decorate_template_block(shell_template.block, var_factory, metadata, input_bindings, output_bindings)
             serialized_config = dump_fmu_cs_device_config(
                 build_record_from_device_arguments(
                     domain=FmuCsDomain.RMS,
@@ -683,7 +681,7 @@ def configure_fmu_template(template: FmuTemplate,
         else:
             if mode == FmuTemplateMode.MODEL_EXCHANGE:
                 shell_template = build_rms_fmu_me_injection_template(
-                    vfactory=rms_var_factory,
+                    vfactory=var_factory,
                     config=template_config,
                     input_bindings=input_bindings,
                     output_bindings=output_bindings,
@@ -692,7 +690,7 @@ def configure_fmu_template(template: FmuTemplate,
                     output_defaults=output_defaults,
                     integration_method=FmuMeIntegrationMethod.EXPLICIT_EULER,
                 )
-                _decorate_template_block(shell_template.block, rms_var_factory, metadata, input_bindings, output_bindings)
+                _decorate_template_block(shell_template.block, var_factory, metadata, input_bindings, output_bindings)
                 serialized_config = dump_fmu_me_device_config(
                     build_me_record_from_device_arguments(
                         domain=FmuMeDomain.RMS,
@@ -710,7 +708,7 @@ def configure_fmu_template(template: FmuTemplate,
         if domain == FmuTemplateDomain.EMT:
             if mode == FmuTemplateMode.CO_SIMULATION:
                 shell_template = build_emt_fmu_cs_injection_template(
-                    vfactory=emt_var_factory,
+                    vfactory=var_factory,
                     config=template_config,
                     input_bindings=input_bindings,
                     output_bindings=output_bindings,
@@ -718,7 +716,7 @@ def configure_fmu_template(template: FmuTemplate,
                     device_tpe=device_tpe,
                     output_defaults=output_defaults,
                 )
-                _decorate_template_block(shell_template.block, emt_var_factory, metadata, input_bindings, output_bindings)
+                _decorate_template_block(shell_template.block, var_factory, metadata, input_bindings, output_bindings)
                 serialized_config = dump_fmu_cs_device_config(
                     build_record_from_device_arguments(
                         domain=FmuCsDomain.EMT,
@@ -732,7 +730,7 @@ def configure_fmu_template(template: FmuTemplate,
             else:
                 if mode == FmuTemplateMode.MODEL_EXCHANGE:
                     shell_template = build_emt_fmu_me_injection_template(
-                        vfactory=emt_var_factory,
+                        vfactory=var_factory,
                         config=template_config,
                         input_bindings=input_bindings,
                         output_bindings=output_bindings,
@@ -741,7 +739,7 @@ def configure_fmu_template(template: FmuTemplate,
                         output_defaults=output_defaults,
                         integration_method=FmuMeIntegrationMethod.EXPLICIT_EULER,
                     )
-                    _decorate_template_block(shell_template.block, emt_var_factory, metadata, input_bindings, output_bindings)
+                    _decorate_template_block(shell_template.block, var_factory, metadata, input_bindings, output_bindings)
                     serialized_config = dump_fmu_me_device_config(
                         build_me_record_from_device_arguments(
                             domain=FmuMeDomain.EMT,

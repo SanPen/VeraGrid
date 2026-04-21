@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:nc="https://cim4.eu/ns/nc#"
+    xmlns:cim="https://cim.ucaiug.io/ns#"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:eumd="https://cim4.eu/ns/Metadata-European#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#" > 
+  <dcat:Dataset rdf:about="urn:uuid:dc15a1c0-75ee-49f1-90ac-ccd579376bcd">
+    <dcterms:accessRights rdf:resource="https://energy.referencedata.eu/Confidentiality/Public"/>
+    <dcterms:conformsTo>https://ap.cim4.eu/RemedialActionSchedule/2.4</dcterms:conformsTo>
+    <dcterms:conformsTo>https://cim4.eu/ns/nc/2.4#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/CIM100#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/2013/CIM-schema-cim16#</dcterms:conformsTo>
+    <dcterms:description xml:lang="en">This is the remedial action schedule dataset for Galia part of ReliCapGrid.</dcterms:description>
+    <dcat:endDate>2023-06-15T22:30:00Z</dcat:endDate>
+    <prov:generatedAtTime>2022-06-10T07:06:25Z</prov:generatedAtTime>
+    <dcterms:identifier>dc15a1c0-75ee-49f1-90ac-ccd579376bcd</dcterms:identifier>
+    <dcat:isVersionOf rdf:resource="https://energy.referencedata.eu/Test/Model/Galia-RAS"/>
+    <dcat:keyword>RAS</dcat:keyword>
+    <dcterms:license>https://creativecommons.org/licenses/by/4.0/</dcterms:license>
+    <dcterms:publisher>https://energy.referencedata.eu/test/party/JOTUNHEIM</dcterms:publisher>
+    <dcterms:rights>Copyright</dcterms:rights>
+    <dcterms:rightsHolder>ENTSO-E</dcterms:rightsHolder>	
+    <dcterms:requires rdf:resource="urn:uuid:2ea55b46-ad48-4408-be72-734b475ba18f"/>
+    <dcat:startDate>2022-06-15T22:30:00Z</dcat:startDate>
+    <dcterms:title>20220615_Galia_RAS_1.0.0</dcterms:title>
+    <dcat:version>1.0.0</dcat:version>
+    <prov:wasGeneratedBy>https://energy.referencedata.eu/Activity/CGM-RAS</prov:wasGeneratedBy>
+    <dcterms:spatial>https://energy.referencedata.eu/Test/Frame/Galia-Power-Transmission-System</dcterms:spatial>
+    <dcterms:issued>2022-06-15T22:30:00Z</dcterms:issued>
+  </dcat:Dataset>
+  <nc:GenericValueTimePoint rdf:ID="_3bf7b894-12e6-401b-83db-4bb3d35da4b1">
+    <nc:GenericValueTimePoint.GenericValueSchedule rdf:resource="#_2391985f-1e21-4184-a2ca-99ec573e5aaf"/>
+    <nc:GenericValueTimePoint.atTime>2022-06-15T15:30:00Z</nc:GenericValueTimePoint.atTime>
+    <nc:GenericValueTimePoint.value>0.7</nc:GenericValueTimePoint.value>
+  </nc:GenericValueTimePoint>
+  <nc:GridStateIntensitySchedule rdf:ID="_2391985f-1e21-4184-a2ca-99ec573e5aaf">
+    <nc:BaseTimeSeries.interpolationKind rdf:resource="https://cim4.eu/ns/nc#TimeSeriesInterpolationKind.next"/>
+    <nc:GenericValueSchedule.RemedialActionSchedule rdf:resource="#_5890c244-cb1a-4b4a-8919-8bab81e4fd4c"/>
+    <nc:GridStateIntensitySchedule.GridStateAlteration rdf:resource="#_7bbb3343-e48b-42dd-9ca5-6ff8945ca5b0"/>
+    <nc:GridStateIntensitySchedule.valueKind rdf:resource="https://cim4.eu/ns/nc#ValueOffsetKind.absolute"/>
+    <cim:IdentifiedObject.mRID>2391985f-1e21-4184-a2ca-99ec573e5aaf</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>intensity schedule</cim:IdentifiedObject.name>
+  </nc:GridStateIntensitySchedule>
+  <nc:RemedialActionSchedule rdf:ID="_5890c244-cb1a-4b4a-8919-8bab81e4fd4c">
+    <cim:IdentifiedObject.mRID>5890c244-cb1a-4b4a-8919-8bab81e4fd4c</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>RAS</cim:IdentifiedObject.name>
+    <nc:RemedialActionSchedule.Contingency rdf:resource="#_bd7bb012-f7b9-45e0-9e15-4e2aa3592829"/>
+    <nc:RemedialActionSchedule.ProposingEntity rdf:resource="#_5f5820d9-3e05-473e-94c8-3c767be03e1a"/>
+    <nc:RemedialActionSchedule.RemedialAction rdf:resource="#_f4d57bc2-1cef-46ab-ae13-3ad864813d9c"/>
+    <nc:RemedialActionSchedule.statusKind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleStatusKind.ordered"/>
+  </nc:RemedialActionSchedule>
+</rdf:RDF>

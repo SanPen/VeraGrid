@@ -21,6 +21,47 @@ The simulation then tries all the contingency groups and apply the events regist
   and may not adhere to the sophisticated contingency definition. 
   No SRAP or particular condition is performed.
 
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+
+## Registered Result Properties
+
+### `ContingencyAnalysisResults` registered properties
+
+The snapshot contingency analysis result stores the post-contingency network quantities and report object.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `branch_names` | `StrVec` | Names aligned with branch-indexed result arrays. |
+| `bus_names` | `StrVec` | Names aligned with bus-indexed result arrays. |
+| `con_names` | `StrVec` | Names aligned with contingency-indexed result arrays. |
+| `bus_types` | `IntVec` | Bus type code used by the solved numerical model. |
+| `voltage` | `CxMat` | Complex bus voltage solution. |
+| `Sbus` | `CxMat` | Complex bus power injection. |
+| `Sf` | `CxMat` | Complex branch power flow at the from side. |
+| `loading` | `CxMat` | Branch loading result. |
+| `srap_used_power` | `Mat` | SRAP remedial action power used in the contingency study. |
+| `report` | `ContingencyResultsReport` | Detailed report object produced by the study. |
+
+### `ContingencyAnalysisTimeSeriesResults` registered properties
+
+The time-series contingency analysis result stores aggregate contingency limits and overload statistics per time step.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `branch_names` | `StrVec` | Names aligned with branch-indexed result arrays. |
+| `bus_names` | `StrVec` | Names aligned with bus-indexed result arrays. |
+| `bus_types` | `IntVec` | Bus type code used by the solved numerical model. |
+| `con_names` | `StrVec` | Names aligned with contingency-indexed result arrays. |
+| `S` | `Mat` | Complex bus power result matrix. |
+| `max_flows` | `Mat` | Maximum branch flow observed across contingencies. |
+| `max_loading` | `Mat` | Maximum branch loading observed across contingencies. |
+| `sum_overload` | `Mat` | Sum of overload values across contingencies. |
+| `mean_overload` | `Mat` | Mean overload value across contingencies. |
+| `std_dev_overload` | `Mat` | Standard deviation of overload values across contingencies. |
+| `srap_used_power` | `Mat` | SRAP remedial action power used in the contingency study. |
+| `report` | `ContingencyResultsReport` | Detailed report object produced by the study. |
+<!-- END RESULTS REGISTERED PROPERTIES -->
+
 ## API
 
 ### Snapshot contingency analysis

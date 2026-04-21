@@ -10,7 +10,7 @@ import matplotlib.colors as plt_colors
 from typing import List, Tuple
 
 from VeraGridEngine.Simulations.results_table import ResultsTable
-from VeraGridEngine.Simulations.results_template import ResultsTemplate
+from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import NumericPowerFlowResults
 from VeraGridEngine.basic_structures import IntVec, Vec, StrVec, CxVec, ConvergenceReport, Logger
 from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
@@ -32,6 +32,83 @@ def get_3p_indices(length_3p: int) -> Tuple[IntVec, IntVec, IntVec, IntVec]:
 
 
 class PowerFlowResults3Ph(ResultsTemplate):
+
+    LOCAL_RESULTS_DECLARATIONS = (
+        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='hvdc_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='gen_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='batt_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='sh_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='load_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list()),
+        ResultsProperty(name='F', tpe=IntVec, old_names=list()),
+        ResultsProperty(name='T', tpe=IntVec, old_names=list()),
+        ResultsProperty(name='hvdc_F', tpe=IntVec, old_names=list()),
+        ResultsProperty(name='hvdc_T', tpe=IntVec, old_names=list()),
+        ResultsProperty(name='bus_area_indices', tpe=IntVec, old_names=list()),
+        ResultsProperty(name='area_names', tpe=IntVec, old_names=list()),
+        ResultsProperty(name='Sbus_N', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='Sbus_A', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='Sbus_B', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='Sbus_C', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='voltage_N', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='voltage_A', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='voltage_B', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='voltage_C', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='Sf_A', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='Sf_B', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='Sf_C', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='St_A', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='St_B', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='St_C', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='If_N', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='If_A', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='If_B', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='If_C', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='It_N', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='It_A', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='It_B', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='It_C', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='tap_module', tpe=Vec, old_names=list()),
+        ResultsProperty(name='tap_angle', tpe=Vec, old_names=list()),
+        ResultsProperty(name='Vbranch_A', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='Vbranch_B', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='Vbranch_C', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='loading_A', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='loading_B', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='loading_C', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='losses_A', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='losses_B', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='losses_C', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='losses_hvdc', tpe=Vec, old_names=list()),
+        ResultsProperty(name='Pf_hvdc_A', tpe=Vec, old_names=list()),
+        ResultsProperty(name='Pf_hvdc_B', tpe=Vec, old_names=list()),
+        ResultsProperty(name='Pf_hvdc_C', tpe=Vec, old_names=list()),
+        ResultsProperty(name='Pt_hvdc_A', tpe=Vec, old_names=list()),
+        ResultsProperty(name='Pt_hvdc_B', tpe=Vec, old_names=list()),
+        ResultsProperty(name='Pt_hvdc_C', tpe=Vec, old_names=list()),
+        ResultsProperty(name='loading_hvdc', tpe=Vec, old_names=list()),
+        ResultsProperty(name='losses_vsc', tpe=Vec, old_names=list()),
+        ResultsProperty(name='Pfp_vsc', tpe=Vec, old_names=list()),
+        ResultsProperty(name='St_vsc_A', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='St_vsc_B', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='St_vsc_C', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='If_vsc', tpe=Vec, old_names=list()),
+        ResultsProperty(name='It_vsc_A', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='It_vsc_B', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='It_vsc_C', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='loading_vsc', tpe=Vec, old_names=list()),
+        ResultsProperty(name='gen_q_A', tpe=Vec, old_names=list()),
+        ResultsProperty(name='gen_q_B', tpe=Vec, old_names=list()),
+        ResultsProperty(name='gen_q_C', tpe=Vec, old_names=list()),
+        ResultsProperty(name='battery_q_A', tpe=Vec, old_names=list()),
+        ResultsProperty(name='battery_q_B', tpe=Vec, old_names=list()),
+        ResultsProperty(name='battery_q_C', tpe=Vec, old_names=list()),
+        ResultsProperty(name='shunt_q_A', tpe=Vec, old_names=list()),
+        ResultsProperty(name='shunt_q_B', tpe=Vec, old_names=list()),
+        ResultsProperty(name='shunt_q_C', tpe=Vec, old_names=list()),
+    )
 
     def __init__(
             self,
@@ -314,106 +391,6 @@ class PowerFlowResults3Ph(ResultsTemplate):
 
         # TODO: To register n_load, n_sh, etc
 
-        self.register(name='bus_names', tpe=StrVec)
-        self.register(name='branch_names', tpe=StrVec)
-        self.register(name='hvdc_names', tpe=StrVec)
-
-        self.register(name='gen_names', tpe=StrVec)
-        self.register(name='batt_names', tpe=StrVec)
-        self.register(name='sh_names', tpe=StrVec)
-        self.register(name='load_names', tpe=StrVec)
-
-        self.register(name='bus_types', tpe=IntVec)
-
-        self.register(name='F', tpe=IntVec)
-        self.register(name='T', tpe=IntVec)
-        self.register(name='hvdc_F', tpe=IntVec)
-        self.register(name='hvdc_T', tpe=IntVec)
-        self.register(name='bus_area_indices', tpe=IntVec)
-        self.register(name='area_names', tpe=IntVec)
-
-        self.register(name='Sbus_N', tpe=CxVec)
-        self.register(name='Sbus_A', tpe=CxVec)
-        self.register(name='Sbus_B', tpe=CxVec)
-        self.register(name='Sbus_C', tpe=CxVec)
-
-        self.register(name='voltage_N', tpe=CxVec)
-        self.register(name='voltage_A', tpe=CxVec)
-        self.register(name='voltage_B', tpe=CxVec)
-        self.register(name='voltage_C', tpe=CxVec)
-
-        self.register(name='Sf_A', tpe=CxVec)
-        self.register(name='Sf_B', tpe=CxVec)
-        self.register(name='Sf_C', tpe=CxVec)
-
-        self.register(name='St_A', tpe=CxVec)
-        self.register(name='St_B', tpe=CxVec)
-        self.register(name='St_C', tpe=CxVec)
-
-        self.register(name='If_N', tpe=CxVec)
-        self.register(name='If_A', tpe=CxVec)
-        self.register(name='If_B', tpe=CxVec)
-        self.register(name='If_C', tpe=CxVec)
-
-        self.register(name='It_N', tpe=CxVec)
-        self.register(name='It_A', tpe=CxVec)
-        self.register(name='It_B', tpe=CxVec)
-        self.register(name='It_C', tpe=CxVec)
-
-        self.register(name='tap_module', tpe=Vec)
-        self.register(name='tap_angle', tpe=Vec)
-
-        self.register(name='Vbranch_A', tpe=CxVec)
-        self.register(name='Vbranch_B', tpe=CxVec)
-        self.register(name='Vbranch_C', tpe=CxVec)
-
-        self.register(name='loading_A', tpe=CxVec)
-        self.register(name='loading_B', tpe=CxVec)
-        self.register(name='loading_C', tpe=CxVec)
-
-        self.register(name='losses_A', tpe=CxVec)
-        self.register(name='losses_B', tpe=CxVec)
-        self.register(name='losses_C', tpe=CxVec)
-
-        self.register(name='losses_hvdc', tpe=Vec)
-
-        self.register(name='Pf_hvdc_A', tpe=Vec)
-        self.register(name='Pf_hvdc_B', tpe=Vec)
-        self.register(name='Pf_hvdc_C', tpe=Vec)
-
-        self.register(name='Pt_hvdc_A', tpe=Vec)
-        self.register(name='Pt_hvdc_B', tpe=Vec)
-        self.register(name='Pt_hvdc_C', tpe=Vec)
-
-        self.register(name='loading_hvdc', tpe=Vec)
-
-        self.register(name='losses_vsc', tpe=Vec)
-
-        self.register(name='Pfp_vsc', tpe=Vec)
-
-        self.register(name='St_vsc_A', tpe=CxVec)
-        self.register(name='St_vsc_B', tpe=CxVec)
-        self.register(name='St_vsc_C', tpe=CxVec)
-
-        self.register(name='If_vsc', tpe=Vec)
-
-        self.register(name='It_vsc_A', tpe=CxVec)
-        self.register(name='It_vsc_B', tpe=CxVec)
-        self.register(name='It_vsc_C', tpe=CxVec)
-
-        self.register(name='loading_vsc', tpe=Vec)
-
-        self.register(name='gen_q_A', tpe=Vec)
-        self.register(name='gen_q_B', tpe=Vec)
-        self.register(name='gen_q_C', tpe=Vec)
-
-        self.register(name='battery_q_A', tpe=Vec)
-        self.register(name='battery_q_B', tpe=Vec)
-        self.register(name='battery_q_C', tpe=Vec)
-
-        self.register(name='shunt_q_A', tpe=Vec)
-        self.register(name='shunt_q_B', tpe=Vec)
-        self.register(name='shunt_q_C', tpe=Vec)
 
     @property
     def converged(self):

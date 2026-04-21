@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:eu="http://iec.ch/TC57/CIM100-European#"
+    xmlns:md="http://iec.ch/TC57/61970-552/ModelDescription/1#"
+    xmlns:cim="http://iec.ch/TC57/CIM100#" > 
+  <md:FullModel rdf:about="urn:uuid:74def37a-c099-4e6a-85b4-edd7c43a5a7a">
+    <md:Model.DependentOn rdf:resource="urn:uuid:994972cb-891c-4ad3-a06d-abaa9a5c4a03"/>
+    <md:Model.created>2025-02-08T10:43:06Z</md:Model.created>
+    <md:Model.description>The topology dataset for Nordheim, which is part of the ReliCapGrid.</md:Model.description>
+    <md:Model.modelingAuthoritySet>http://nordheim.nh/CGMES</md:Model.modelingAuthoritySet>
+    <md:Model.profile>http://iec.ch/TC57/ns/CIM/Topology-EU/3.0</md:Model.profile>
+    <md:Model.scenarioTime>2022-06-16T23:30:00Z</md:Model.scenarioTime>
+    <md:Model.version>1</md:Model.version>
+  </md:FullModel>
+  <cim:ConnectivityNode rdf:about="#_892ef502-162b-469f-b93f-266aae828227">
+    <cim:ConnectivityNode.TopologicalNode rdf:resource="#_34334895-232c-75cb-9a58-36c799a1a485"/>
+  </cim:ConnectivityNode>
+  <cim:Terminal rdf:about="#_905685de-4a1a-51d2-1037-aa222a289fe7">
+    <cim:Terminal.TopologicalNode rdf:resource="#_34334895-232c-75cb-9a58-36c799a1a485"/>
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_70a8601c-3cbc-76fb-bea8-96a644f3915c">
+    <cim:Terminal.TopologicalNode rdf:resource="#_34334895-232c-75cb-9a58-36c799a1a485"/>
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_d478d71c-ebb1-1e9d-e66d-6f247cea34be">
+    <cim:Terminal.TopologicalNode rdf:resource="#_34334895-232c-75cb-9a58-36c799a1a485"/>
+  </cim:Terminal>
+  <cim:TopologicalNode rdf:ID="_34334895-232c-75cb-9a58-36c799a1a485">
+    <cim:IdentifiedObject.mRID>34334895-232c-75cb-9a58-36c799a1a485</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>BP HVDC GA-NH NH side</cim:IdentifiedObject.name>
+    <cim:TopologicalNode.BaseVoltage rdf:resource="#_a7f1d8de-d658-428a-821b-3a5ae5965fd1"/>
+    <cim:TopologicalNode.ConnectivityNodeContainer rdf:resource="#_e61f8ecf-8129-4702-a3a2-826bdf5ad13d"/>
+  </cim:TopologicalNode>
+</rdf:RDF>

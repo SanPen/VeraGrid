@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 from typing import Tuple
 
 from VeraGridEngine.Devices.Parents.pointer_device_parent import PointerDeviceParent
@@ -109,13 +110,29 @@ class FmuTemplate(PointerDeviceParent):
         cls = self.__class__
         result = cls.__new__(cls)
         memo[id(self)] = result
+
+        result._idtag = self._idtag
+        result._name = self._name
+        result._code = self._code
+        result._rdfid = self._rdfid
+        result.device_type = self.device_type
+        result.comment = self.comment
+        result.action = self.action
+        result.selected_to_merge = self.selected_to_merge
+        result.diff_changes = copy.deepcopy(self.diff_changes, memo)
+        result._EditableDevice__auto_update_enabled = self._EditableDevice__auto_update_enabled
+
+        result._device_idtag = self._device_idtag
+        result._device_name = self._device_name
+        result._device = self._device
         result._tpe = self._tpe
+
         result._domain = self._domain
         result._mode = self._mode
         result._fmu_relative_path = self._fmu_relative_path
         result._serialized_config = self._serialized_config
-        result._block = self._block.copy()
-        result._name = self._name
+        result._block = copy.deepcopy(self._block, memo)
+
         return result
 
     @property

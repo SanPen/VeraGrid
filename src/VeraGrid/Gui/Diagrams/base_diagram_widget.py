@@ -8,10 +8,9 @@ import numpy as np
 import cv2
 from matplotlib import pyplot as plt
 
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QImage
+from PySide6.QtGui import QIcon, QImage
 from PySide6.QtWidgets import (QListView, QTableView, QVBoxLayout, QHBoxLayout, QFrame, QSplitter, QAbstractItemView,
-                               QGraphicsItem)
+                               QGraphicsItem, QToolBox)
 
 from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
@@ -148,8 +147,9 @@ class BaseDiagramWidget(QSplitter):
                  time_index: Union[None, int] = None):
         """
         Constructor
-        :param circuit:
+        :param gui:
         :param diagram:
+        :param library_model:
         :param time_index:
         """
         QSplitter.__init__(self)
@@ -186,17 +186,12 @@ class BaseDiagramWidget(QSplitter):
         self.frame1_layout.addWidget(self.library_view)
         self.frame1.setLayout(self.frame1_layout)
 
-        # Add the two objects into a layout
-        splitter2 = QSplitter(self)
-        splitter2.addWidget(self.frame1)
-        splitter2.addWidget(self.object_editor_table)
-        splitter2.setOrientation(Qt.Orientation.Vertical)
-        self.addWidget(splitter2)
+        # Add the library and properties views as toolbox pages.
+        self.left_panel_toolbox: QToolBox = QToolBox(self)
+        self.left_panel_toolbox.addItem(self.frame1, QIcon(":/Icons/icons/Catalogue.png"), "Library")
+        self.left_panel_toolbox.addItem(self.object_editor_table, QIcon(":/Icons/icons/data.png"), "Properties")
+        self.addWidget(self.left_panel_toolbox)
         # self.addWidget(self.editor_graphics_view)
-
-        # factor 1:10
-        splitter2.setStretchFactor(0, 2)
-        splitter2.setStretchFactor(1, 5)
 
         # self.setStretchFactor(0, 0)
         # self.setStretchFactor(1, 2000)

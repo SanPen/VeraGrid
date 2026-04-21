@@ -11,6 +11,8 @@ from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceTyp
 
 
 class StochasticPowerFlowResults(ResultsTemplate):
+    LOCAL_RESULTS_DECLARATIONS = tuple()
+
     __slots__ = (
         "points_number",
         "bus_names",

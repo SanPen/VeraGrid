@@ -6,7 +6,7 @@
 import numpy as np
 import pandas as pd
 from VeraGridEngine.Simulations.results_table import ResultsTable
-from VeraGridEngine.Simulations.results_template import ResultsTemplate
+from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
 from VeraGridEngine.basic_structures import IntVec, Vec, StrVec, Mat, CxVec
 from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
 
@@ -15,6 +15,23 @@ class LinearAnalysisResults(ResultsTemplate):
     """
     LinearAnalysisResults
     """
+
+    LOCAL_RESULTS_DECLARATIONS = (
+        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list()),
+        ResultsProperty(name='PTDF', tpe=Mat, old_names=list()),
+        ResultsProperty(name='LODF', tpe=Mat, old_names=list()),
+        ResultsProperty(name='HvdcDF', tpe=Mat, old_names=list()),
+        ResultsProperty(name='HvdcODF', tpe=Mat, old_names=list()),
+        ResultsProperty(name='VscDF', tpe=Mat, old_names=list()),
+        ResultsProperty(name='VscODF', tpe=Mat, old_names=list()),
+        ResultsProperty(name='Sf', tpe=Vec, old_names=list()),
+        ResultsProperty(name='Sbus', tpe=Vec, old_names=list()),
+        ResultsProperty(name='voltage', tpe=CxVec, old_names=list()),
+        ResultsProperty(name='loading', tpe=Vec, old_names=list()),
+    )
+
     __slots__ = (
         "branch_names",
         "bus_names",
@@ -84,22 +101,6 @@ class LinearAnalysisResults(ResultsTemplate):
         self.voltage: CxVec = np.ones(self.n_bus, dtype=complex)
         self.loading: Vec = np.zeros(self.n_br)
 
-        self.register(name='branch_names', tpe=StrVec)
-        self.register(name='bus_names', tpe=StrVec)
-        self.register(name='bus_types', tpe=IntVec)
-        self.register(name='PTDF', tpe=Mat)
-        self.register(name='LODF', tpe=Mat)
-
-        self.register(name='HvdcDF', tpe=Mat)
-        self.register(name='HvdcODF', tpe=Mat)
-
-        self.register(name='VscDF', tpe=Mat)
-        self.register(name='VscODF', tpe=Mat)
-
-        self.register(name='Sf', tpe=Vec)
-        self.register(name='Sbus', tpe=Vec)
-        self.register(name='voltage', tpe=CxVec)
-        self.register(name='loading', tpe=Vec)
 
     @property
     def n_br(self):

@@ -1,13 +1,15 @@
 from __future__ import annotations
+import copy
 import json
 import pytest
 import math
 import numpy as np
-from scipy.sparse import csc_matrix
-from types import MappingProxyType
-from typing import Any, Callable, Dict
+from typing import Callable, Dict
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
 from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicJacobian
+from VeraGridEngine.Utils.Symbolic.block import Block
+from VeraGridEngine.Utils.Symbolic.symbolic_io import duplicate_block
+from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 
 # -----------------------------------------------------------------------------
 # Atomic & basic operations
@@ -289,6 +291,126 @@ def test_symbolic_jacobian_nonlinear_5x5():
     assert np.allclose(J_compiled, J_expected, atol=1e-8)
 
 
+def test_diff_var_deepcopy_does_not_mutate_original_links() -> None:
+    """
+    Check that copying a differential variable never rewires the source chain.
+
+    :return: Nothing.
+    """
+    vf: VarFactory = VarFactory()
+    x: sym.Var = vf.add_var("x")
+    dx: sym.Var = vf.add_diff_var("dx", base_var=x)
+
+    copied_dx: sym.Var = copy.deepcopy(dx)
+
+    assert x.diff_var is dx
+    assert dx.base_var is x
+    assert copied_dx is not dx
+    assert copied_dx.uid == dx.uid
+    assert copied_dx.base_var is not x
+    assert copied_dx.base_var.uid == x.uid
+    assert copied_dx.base_var.diff_var is copied_dx
+
+
+def test_var_factory_deepcopy_keeps_copied_diff_links_internal() -> None:
+    """
+    Check that copied factories contain derivative links only to copied variables.
+
+    :return: Nothing.
+    """
+    vf: VarFactory = VarFactory()
+    x: sym.Var = vf.add_var("x")
+    dx: sym.Var = vf.add_diff_var("dx", base_var=x)
+
+    copied_vf: VarFactory = copy.deepcopy(vf)
+    copied_x_or_none: sym.Var | None = copied_vf.get_var(x.uid)
+    assert copied_x_or_none is not None
+    copied_x: sym.Var = copied_x_or_none
+    copied_dx: sym.Var = copied_vf.get_diff_var(dx.uid)
+
+    assert x.diff_var is dx
+    assert dx.base_var is x
+    assert copied_x is not x
+    assert copied_dx is not dx
+    assert copied_x.diff_var is copied_dx
+    assert copied_dx.base_var is copied_x
+
+
+def test_block_deepcopy_reuses_copied_vars_inside_equations() -> None:
+    """
+    Check that copied blocks reuse the same cloned variables in lists and equations.
+
+    :return: Nothing.
+    """
+    vf: VarFactory = VarFactory()
+    x: sym.Var = vf.add_var("x")
+    dx: sym.Var = vf.add_diff_var("dx", base_var=x)
+    p: sym.Var = vf.add_var("p")
+    c: sym.Const = vf.add_const(3.0, name="p_value")
+    block: Block = Block(
+        state_vars=[x],
+        diff_vars=[dx],
+        state_eqs=[dx + x],
+        init_eqs={x: x + sym.Const(1.0)},
+        diff_init_eqs={dx: dx + sym.Const(2.0)},
+        parameters={p: c},
+    )
+
+    copied: Block = copy.deepcopy(block)
+    copied_x: sym.Var = copied.state_vars[0]
+    copied_dx: sym.Var = copied.diff_vars[0]
+
+    assert x.diff_var is dx
+    assert dx.base_var is x
+    assert copied_x is not x
+    assert copied_dx is not dx
+    assert copied_x.diff_var is copied_dx
+    assert copied_dx.base_var is copied_x
+    assert copied.state_eqs[0].left is copied_dx
+    assert copied.state_eqs[0].right is copied_x
+
+    copied_const: sym.Const = next(iter(copied.parameters.values()))
+    copied_const.value = 9.0
+    assert c.value == 3.0
+
+
+def test_duplicate_block_preserves_parent_child_variable_links_with_new_uids() -> None:
+    """
+    Check that block duplication keeps parent and child references coherent.
+
+    :return: Nothing.
+    """
+    x: sym.Var = sym.Var("x")
+    dx: sym.Var = sym.Var("dx", base_var=x)
+    child: Block = Block(
+        state_vars=[x],
+        diff_vars=[dx],
+        state_eqs=[dx + x],
+    )
+    parent: Block = Block(
+        children=[child],
+        in_vars=[x],
+        out_vars=[dx],
+    )
+
+    target_vf: VarFactory = VarFactory()
+    copied: Block = duplicate_block(parent, target_vf)
+    copied_child: Block = copied.children[0]
+    copied_x: sym.Var = copied_child.state_vars[0]
+    copied_dx: sym.Var = copied_child.diff_vars[0]
+
+    assert copied.in_vars[0] is copied_x
+    assert copied.out_vars[0] is copied_dx
+    assert copied_x.uid != x.uid
+    assert copied_dx.uid != dx.uid
+    assert copied_x.diff_var is copied_dx
+    assert copied_dx.base_var is copied_x
+    assert copied_child.state_eqs[0].left is copied_dx
+    assert copied_child.state_eqs[0].right is copied_x
+    assert target_vf.get_var(copied_x.uid) is copied_x
+    assert target_vf.get_diff_var(copied_dx.uid) is copied_dx
+
+
 # -----------------------------------------------------------------------------
 # 9. Immutability checks
 # -----------------------------------------------------------------------------
@@ -303,4 +425,3 @@ def test_symbolic_jacobian_nonlinear_5x5():
 #     c = sym.Const(1)
 #     with pytest.raises(AttributeError):
 #         c.value = 2  # type: ignore[attr-defined]
-

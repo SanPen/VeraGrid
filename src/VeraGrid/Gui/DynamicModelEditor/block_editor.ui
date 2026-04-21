@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1122</width>
-    <height>610</height>
+    <width>957</width>
+    <height>572</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,7 +25,7 @@
      <number>6</number>
     </property>
     <property name="bottomMargin">
-     <number>0</number>
+     <number>6</number>
     </property>
     <item>
      <widget class="QFrame" name="frame_3">
@@ -35,32 +35,32 @@
       <property name="frameShadow">
        <enum>QFrame::Shadow::Raised</enum>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_6">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <property name="leftMargin">
-        <number>0</number>
+        <number>6</number>
        </property>
        <property name="topMargin">
         <number>6</number>
        </property>
        <property name="rightMargin">
-        <number>0</number>
+        <number>6</number>
        </property>
        <property name="bottomMargin">
-        <number>0</number>
+        <number>6</number>
        </property>
        <item>
         <widget class="QSplitter" name="splitter">
          <property name="orientation">
           <enum>Qt::Orientation::Horizontal</enum>
          </property>
-         <widget class="QFrame" name="frame_6">
+         <widget class="QFrame" name="frame">
           <property name="frameShape">
            <enum>QFrame::Shape::NoFrame</enum>
           </property>
           <property name="frameShadow">
            <enum>QFrame::Shadow::Raised</enum>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
+          <layout class="QVBoxLayout" name="verticalLayout_6">
            <property name="leftMargin">
             <number>0</number>
            </property>
@@ -74,61 +74,87 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QTabWidget" name="tabWidget">
-             <property name="tabPosition">
-              <enum>QTabWidget::TabPosition::North</enum>
-             </property>
+            <widget class="QToolBox" name="toolBox">
              <property name="currentIndex">
               <number>0</number>
              </property>
-             <property name="documentMode">
-              <bool>true</bool>
-             </property>
-             <widget class="QWidget" name="tab">
-              <attribute name="icon">
-               <iconset resource="../Icons/icons.qrc">
-                <normaloff>:/Icons/icons/link-to-all.png</normaloff>:/Icons/icons/link-to-all.png</iconset>
-              </attribute>
-              <attribute name="title">
+             <widget class="QWidget" name="page_7">
+              <attribute name="label">
                <string>Library</string>
               </attribute>
-              <attribute name="toolTip">
-               <string>Drag and drop models into the scene</string>
-              </attribute>
-              <layout class="QVBoxLayout" name="verticalLayout_5">
-               <property name="leftMargin">
-                <number>0</number>
-               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_13">
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
                <property name="topMargin">
                 <number>0</number>
                </property>
                <property name="rightMargin">
                 <number>0</number>
                </property>
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QTreeView" name="libraryTreeView">
-                 <property name="frameShape">
-                  <enum>QFrame::Shape::NoFrame</enum>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QFrame" name="libraryHeaderFrame">
+                  <property name="frameShape">
+                   <enum>QFrame::Shape::NoFrame</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Shadow::Raised</enum>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_5">
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QToolButton" name="librarySearchButton">
+                     <property name="text">
+                      <string>...</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLineEdit" name="librarySearchLineEdit">
+                     <property name="placeholderText">
+                      <string>Search basic blocks</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QTreeView" name="libraryTreeView">
+                  <property name="frameShape">
+                   <enum>QFrame::Shape::NoFrame</enum>
                  </property>
                 </widget>
                </item>
               </layout>
              </widget>
-             <widget class="QWidget" name="tab_2">
-              <attribute name="icon">
-               <iconset resource="../Icons/icons.qrc">
-                <normaloff>:/Icons/icons/edit.png</normaloff>:/Icons/icons/edit.png</iconset>
+             <widget class="QWidget" name="page">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>554</width>
+                <height>285</height>
+               </rect>
+              </property>
+              <attribute name="label">
+               <string>Variables</string>
               </attribute>
-              <attribute name="title">
-               <string>Edit Selected</string>
-              </attribute>
-              <attribute name="toolTip">
-               <string>Select one block to edit its variables and equations</string>
-              </attribute>
-              <layout class="QVBoxLayout" name="verticalLayout_2">
+              <layout class="QVBoxLayout" name="verticalLayout_7">
                <property name="leftMargin">
                 <number>0</number>
                </property>
@@ -141,16 +167,6 @@
                <property name="bottomMargin">
                 <number>0</number>
                </property>
-               <item>
-                <widget class="QLabel" name="variablesLabel">
-                 <property name="styleSheet">
-                  <string>font-weight: bold; padding: 4px;</string>
-                 </property>
-                 <property name="text">
-                  <string>Variables</string>
-                 </property>
-                </widget>
-               </item>
                <item>
                 <widget class="QTableView" name="variablesTableView">
                  <property name="frameShape">
@@ -158,16 +174,33 @@
                  </property>
                 </widget>
                </item>
-               <item>
-                <widget class="QLabel" name="parametersLabel">
-                 <property name="styleSheet">
-                  <string>font-weight: bold; padding: 4px;</string>
-                 </property>
-                 <property name="text">
-                  <string>Parameters</string>
-                 </property>
-                </widget>
-               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="page_2">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>554</width>
+                <height>285</height>
+               </rect>
+              </property>
+              <attribute name="label">
+               <string>Parameters</string>
+              </attribute>
+              <layout class="QVBoxLayout" name="verticalLayout_8">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
                <item>
                 <widget class="QTableView" name="parametersTableView">
                  <property name="frameShape">
@@ -175,16 +208,33 @@
                  </property>
                 </widget>
                </item>
-               <item>
-                <widget class="QLabel" name="equationsLabel">
-                 <property name="styleSheet">
-                  <string>font-weight: bold; padding: 4px;</string>
-                 </property>
-                 <property name="text">
-                  <string>Equations</string>
-                 </property>
-                </widget>
-               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="page_3">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>554</width>
+                <height>285</height>
+               </rect>
+              </property>
+              <attribute name="label">
+               <string>Equations</string>
+              </attribute>
+              <layout class="QVBoxLayout" name="verticalLayout_9">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
                <item>
                 <widget class="QTableView" name="equationsTableView">
                  <property name="frameShape">
@@ -299,8 +349,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1122</width>
-     <height>23</height>
+     <width>957</width>
+     <height>33</height>
     </rect>
    </property>
   </widget>

@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 from typing import List, Any
 
 from VeraGridEngine.Simulations.results_table import ResultsTable
-from VeraGridEngine.Simulations.results_template import ResultsTemplate
+from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
 from VeraGridEngine.basic_structures import Vec, Mat
 from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
@@ -62,6 +62,14 @@ class SmallSignalStabilityRmsResults(ResultsTemplate):
     """
     Small-signal Analysis results storage and visualization.
     """
+
+    LOCAL_RESULTS_DECLARATIONS = (
+        ResultsProperty(name='eigenvalues', tpe=Vec, old_names=list()),
+        ResultsProperty(name='participation_factors', tpe=Mat, old_names=list()),
+        ResultsProperty(name='damping_ratios', tpe=Vec, old_names=list()),
+        ResultsProperty(name='conjugate_frequencies', tpe=Vec, old_names=list()),
+        ResultsProperty(name='state_matrix', tpe=Mat, old_names=list()),
+    )
     __slots__ = [
         'stat_vars_array', 'eigenvalues', 'participation_factors',
         'damping_ratios', 'conjugate_frequencies', 'state_matrix'
@@ -113,11 +121,6 @@ class SmallSignalStabilityRmsResults(ResultsTemplate):
 
         self.state_matrix: Mat = state_matrix
 
-        self.register(name='eigenvalues', tpe=Vec)
-        self.register(name='participation_factors', tpe=Mat)
-        self.register(name='damping_ratios', tpe=Vec)
-        self.register(name='conjugate_frequencies', tpe=Vec)
-        self.register(name='state_matrix', tpe=Mat)
 
     def mdl(self, result_type: ResultTypes) -> ResultsTable:
         """

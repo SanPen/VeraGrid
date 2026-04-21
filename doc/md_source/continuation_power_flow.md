@@ -24,6 +24,43 @@ Use departure and target points from time series
     This allows that the base and the final situations to have non even relationships while evolving
     from the base situation to the target situation.
 
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+
+## Registered Result Properties
+
+### `ContinuationPowerFlowResults` registered properties
+
+The continuation power flow result stores the solved continuation path and branch quantities at each continuation step.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `bus_names` | `StrVec` | Names aligned with bus-indexed result arrays. |
+| `branch_names` | `StrVec` | Names aligned with branch-indexed result arrays. |
+| `bus_types` | `IntVec` | Bus type code used by the solved numerical model. |
+| `voltages` | `CxMat` | Complex bus voltage solutions along the continuation path. |
+| `lambdas` | `Vec` | Continuation loading parameter values. |
+| `error` | `Vec` | Solver error or residual value. |
+| `converged` | `BoolVec` | Convergence flag for the solved case or time step. |
+| `Sf` | `CxMat` | Complex branch power flow at the from side. |
+| `St` | `CxMat` | Complex branch power flow at the to side. |
+| `loading` | `CxMat` | Branch loading result. |
+| `losses` | `CxMat` | Complex branch losses. |
+| `Sbus` | `CxMat` | Complex bus power injection. |
+
+### `SigmaAnalysisResults` registered properties
+
+The sigma analysis result stores the sigma-plane values and distances used by the voltage-stability assessment.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `lambda_value` | `float` | Loading parameter used by the sigma analysis. |
+| `bus_names` | `StrVec` | Names aligned with bus-indexed result arrays. |
+| `Sbus` | `CxVec` | Complex bus power injection. |
+| `distances` | `Vec` | Distance of each bus point to the sigma stability boundary. |
+| `sigma_re` | `Vec` | Real component of the sigma-plane value. |
+| `sigma_im` | `Vec` | Imaginary component of the sigma-plane value. |
+<!-- END RESULTS REGISTERED PROPERTIES -->
+
 ## API
 
 ### Snapshot continuation power flow

@@ -2181,10 +2181,17 @@ class RMSCompiler(EquationCompiler):
             expr_str = expression2numba(eq, self.compiler_names_dict)
             lines.append(f"    out[{i}] = {expr_str}")
 
-        return _compile_to_file("\n".join(lines), func_name)
+        raw_fn = _compile_to_file("\n".join(lines), func_name)
+
+        def wrapped(event_params: Vec, glob_time: float):
+            out = np.zeros(len(eqs), dtype=np.float64)
+            raw_fn(event_params, glob_time, out)
+            return out
+
+        return wrapped
 
     def compile_derivative_fn(self, uid2idx_vars: Dict[int, int],
-                             func_name: str = "derivative_fn") -> Callable[[Vec, Vec, Vec, float, Vec], Vec]:
+                              func_name: str = "derivative_fn") -> Callable[[Vec, Vec, Vec, float, Vec], Vec]:
         """
         Compiles the derivative evaluation function for differential variables.
 
@@ -2215,4 +2222,11 @@ class RMSCompiler(EquationCompiler):
 
         lines.append("    return out")
 
-        return _compile_to_file("\n".join(lines), func_name)
+        raw_fn = _compile_to_file("\n".join(lines), func_name)
+
+        def wrapped(vrs: Vec, lagvars: Vec, lagdx: Vec, h: float):
+            out = np.zeros(len(self.diff_vars), dtype=np.float64)
+            raw_fn(vrs, lagvars, lagdx, h, out)
+            return out
+
+        return wrapped

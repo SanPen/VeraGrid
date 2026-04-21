@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:nc="https://cim4.eu/ns/nc#"
+    xmlns:cim="https://cim.ucaiug.io/ns#"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:eumd="https://cim4.eu/ns/Metadata-European#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#" > 
+  <dcat:Dataset rdf:about="urn:uuid:0b7c5ecb-edbb-43d2-8ca8-849c8bc11eda">
+    <dcterms:accessRights>https://energy.referencedata.eu/Confidentiality/Public</dcterms:accessRights>
+    <dcterms:conformsTo>https://ap.cim4.eu/SteadyStateInstruction/2.4</dcterms:conformsTo>
+    <dcterms:conformsTo>https://cim4.eu/ns/nc/2.4#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/CIM100#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/2013/CIM-schema-cim16#</dcterms:conformsTo>
+    <dcterms:description xml:lang="en">This is the Steady State Instruction dataset for Espheim part of ReliCapGrid.</dcterms:description>
+    <dcat:endDate>2022-06-16T00:30:00Z</dcat:endDate>
+    <prov:generatedAtTime>2022-06-10T07:06:25Z</prov:generatedAtTime>
+    <dcterms:identifier>0b7c5ecb-edbb-43d2-8ca8-849c8bc11eda</dcterms:identifier>
+    <dcat:isVersionOf rdf:resource="https://energy.referencedata.eu/Test/Model/Espheim-SSI"/>
+    <dcat:keyword>SSI</dcat:keyword>
+    <dcterms:license>https://creativecommons.org/licenses/by/4.0/</dcterms:license>
+    <dcterms:publisher>https://energy.referencedata.eu/test/party/Espheim</dcterms:publisher>
+    <dcterms:rights>Copyright</dcterms:rights>
+    <dcterms:rightsHolder>ENTSO-E</dcterms:rightsHolder>	
+    <dcterms:requires rdf:resource="urn:uuid:e3453a3c-8639-4648-a662-d6c15f512965"/>
+    <dcat:startDate>2022-06-15T23:30:00Z</dcat:startDate>
+    <dcterms:title>20220615_Espheim_SSI_1.0.0</dcterms:title>
+    <dcat:version>1.0.0</dcat:version>
+    <prov:wasGeneratedBy>https://energy.referencedata.eu/Activity/CGM-SSI</prov:wasGeneratedBy>
+    <dcterms:spatial>https://energy.referencedata.eu/Test/Frame/Espheim-Power-Transmission-System</dcterms:spatial>
+    <dcterms:issued>2022-06-15T23:30:00Z</dcterms:issued>
+  </dcat:Dataset>
+  
+
+  <nc:TopologyAction rdf:about="_4d3757fd-b40a-4d7b-be47-6553935234ff">
+    <nc:GridStateAlteration.enabled>true</nc:GridStateAlteration.enabled>
+  </nc:TopologyAction>
+</rdf:RDF>

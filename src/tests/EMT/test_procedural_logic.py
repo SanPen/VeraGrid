@@ -555,7 +555,7 @@ def _run_benchmark_simulation(
     problem.set_newton_trace_collector(collector)
 
     t_start = time.perf_counter()
-    t, y_hist, _ = solver.simulate(
+    t, y_hist, _, _, _ = solver.simulate(
         params0=problem.event_params_values.copy(),
         boundary_updater=updater,
     )
@@ -704,7 +704,7 @@ def test_procedural_logic_demo_path_trips_mode_during_simulation() -> None:
     logic = updater.logic_entries[0]
 
     params0 = problem.event_params_values.copy()
-    _, y_hist, _ = solver.simulate(params0=params0, boundary_updater=updater)
+    _, y_hist, _, _, _ = solver.simulate(params0=params0, boundary_updater=updater)
 
     assert logic.trip_applied_time is not None
     assert logic.trip_applied_time > 0.0
@@ -871,7 +871,7 @@ def test_protection_chain_freezes_integrator_with_exact_substep_alignment() -> N
 
     params0 = problem.event_params_values.copy()
 
-    t, y_hist, dy_hist = solver.simulate(params0=params0, boundary_updater=protection)
+    t, y_hist, dy_hist, _, _ = solver.simulate(params0=params0, boundary_updater=protection)
 
     assert protection.tripped
     assert protection.trip_applied_time is not None
@@ -944,7 +944,7 @@ def test_protection_chain_disables_antiwindup_branch_with_exact_substep_alignmen
 
     params0 = problem.event_params_values.copy()
 
-    t, y_hist, dy_hist = solver.simulate(params0=params0, boundary_updater=protection)
+    t, y_hist, dy_hist, _, _ = solver.simulate(params0=params0, boundary_updater=protection)
 
     assert protection.tripped
     assert protection.trip_applied_time is not None

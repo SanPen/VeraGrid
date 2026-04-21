@@ -150,6 +150,17 @@ The first helper is particularly relevant for risk screening and is also reused 
 
 As with any probabilistic study, the outputs are only as meaningful as the input distributions.
 
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+
+## Registered Result Properties
+
+### `StochasticPowerFlowResults` registered properties
+
+The stochastic power-flow result currently has no registered persisted properties.
+
+This result object currently does not register persisted result properties.
+<!-- END RESULTS REGISTERED PROPERTIES -->
+
 ## API
 
 Using the driver directly:

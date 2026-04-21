@@ -14,9 +14,9 @@ from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import BarTerminalItem,
 from VeraGrid.Gui.Diagrams.Editors.line_editor import LineEditor
 from VeraGrid.Gui.messages import yes_no_question, warning_msg
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template import LineGraphicTemplateItem
-from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI, DynamicEditorMode
+from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
 from VeraGridEngine.Devices.Branches.line import Line, SequenceLineType
-from VeraGridEngine.enumerations import DeviceType, FmuTemplateDomain
+from VeraGridEngine.enumerations import DeviceType
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
@@ -122,13 +122,8 @@ class LineGraphicItem(LineGraphicTemplateItem):
                            icon_path=":/Icons/icons/edit.png")
 
             add_menu_entry(menu=menu,
-                           text="RMS Editor",
-                           function_ptr=self.edit_rms,
-                           icon_path=":/Icons/icons/dyn_gray.png")
-
-            add_menu_entry(menu=menu,
-                           text="EMT Editor",
-                           function_ptr=self.edit_emt,
+                           text="Dynamic Editor",
+                           function_ptr=self.edit_dynamic,
                            icon_path=":/Icons/icons/dyn_gray.png")
 
             add_menu_entry(menu=menu,
@@ -231,63 +226,12 @@ class LineGraphicItem(LineGraphicTemplateItem):
         if dlg.exec():
             pass
 
-    def edit_rms(self):
+    def edit_dynamic(self):
+        """
+        Open the unified dynamic editor workspace for this line.
+        """
 
-        # load templates
-        templates = self.editor.circuit.rms_models
-
-        # select line templates
-        templ_catalogue = dict()
-        templ_list = []
-        for templ in templates:
-            if templ.tpe == DeviceType.LineDevice:
-                templ_list.append(templ.name)
-                templ_catalogue[templ.name] = templ
-
-        # prompt RmsModelEditorGUI
-        rms_model_editor = DynamicBlockEditorGUI(
-            var_factory=self.editor.circuit.var_factory,
-            block=self.api_object.rms_model,
-            api_object=self.api_object,
-            mode=DynamicEditorMode.RMS,
-            templates_list=self.editor.circuit.get_rms_models_by_device_type(self.api_object.device_type),
-            # templates_list=self.editor.circuit.get_dynamic_templates_by_device_type_and_domain(
-            #     self.api_object.device_type,
-            #     FmuTemplateDomain.RMS,
-            # ),
-            circuit=self.editor.circuit,
-            main_editor=True,
-        )
-        rms_model_editor.show()
-
-    def edit_emt(self):
-
-        # load templates
-        templates = self.editor.circuit.emt_models
-
-        # select line templates
-        templ_catalogue = dict()
-        templ_list = []
-        for templ in templates:
-            if templ.tpe == DeviceType.LineDevice:
-                templ_list.append(templ.name)
-                templ_catalogue[templ.name] = templ
-
-        # prompt RmsModelEditorGUI
-        rms_model_editor = DynamicBlockEditorGUI(
-            var_factory=self.editor.circuit.var_factory,
-            block=self.api_object.emt_model,
-            api_object=self.api_object,
-            mode=DynamicEditorMode.EMT,
-            templates_list=self.editor.circuit.get_emt_models_by_device_type(self.api_object.device_type),
-            # templates_list=self.editor.circuit.get_dynamic_templates_by_device_type_and_domain(
-            #     self.api_object.device_type,
-            #     FmuTemplateDomain.EMT,
-            # ),
-            circuit=self.editor.circuit,
-            main_editor=True,
-        )
-        rms_model_editor.show()
+        open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit)
 
     def add_to_catalogue(self):
         """

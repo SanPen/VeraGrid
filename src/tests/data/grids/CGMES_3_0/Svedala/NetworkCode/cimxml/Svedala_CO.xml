@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:nc="https://cim4.eu/ns/nc#"
+    xmlns:cim="https://cim.ucaiug.io/ns#"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:eumd="https://cim4.eu/ns/Metadata-European#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#" > 
+  <dcat:Dataset rdf:about="urn:uuid:e6b94ef6-e043-4d29-a258-1718d6d2f507">
+    <dcterms:accessRights>https://energy.referencedata.eu/Confidentiality/Public</dcterms:accessRights>
+    <dcterms:conformsTo>https://ap.cim4.eu/Contingency/2.3</dcterms:conformsTo>
+    <dcterms:conformsTo>https://cim4.eu/ns/nc/2.4#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/CIM100#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/2013/CIM-schema-cim16#</dcterms:conformsTo>
+    <dcterms:description xml:lang="en">This is the contingency dataset for Svedala part of ReliCapGrid.</dcterms:description>
+    <dcat:endDate>2023-06-15T22:30:00Z</dcat:endDate>
+    <prov:generatedAtTime>2022-06-10T07:06:25Z</prov:generatedAtTime>
+    <dcterms:identifier>e6b94ef6-e043-4d29-a258-1718d6d2f507</dcterms:identifier>
+    <dcat:isVersionOf rdf:resource="https://energy.referencedata.eu/Test/Model/Svedala-CO"/>
+    <dcat:keyword>CO</dcat:keyword>
+    <dcterms:license>https://creativecommons.org/licenses/by/4.0/</dcterms:license>
+    <dcterms:publisher>https://energy.referencedata.eu/test/party/Svedala</dcterms:publisher>
+    <dcterms:rights>Copyright</dcterms:rights>
+    <dcterms:rightsHolder>ENTSO-E</dcterms:rightsHolder>	
+    <dcterms:requires rdf:resource="urn:uuid:e54a29a9-de39-4ac0-b7c2-8dc935657202"/>
+    <dcat:startDate>2022-06-15T22:30:00Z</dcat:startDate>
+    <dcterms:title>20220615_Svedala_CO_1.0.0</dcterms:title> 
+    <dcat:version>1.0.0</dcat:version>
+    <prov:wasGeneratedBy>https://energy.referencedata.eu/Activity/CGM-CO</prov:wasGeneratedBy>
+    <dcterms:spatial>https://energy.referencedata.eu/Test/Frame/Svedala-Power-Transmission-System</dcterms:spatial>
+    <dcterms:issued>2022-06-15T22:30:00Z</dcterms:issued>
+  </dcat:Dataset>
+  <cim:ContingencyEquipment rdf:ID="_78c34698-16b2-4863-affe-1b9c599de0d5">
+    <cim:ContingencyElement.Contingency rdf:resource="#_e05bbe20-9d4a-40da-9777-8424d216785d"/>
+    <cim:ContingencyEquipment.Equipment rdf:resource="#_f1c13f90-6d89-4a37-a51c-94742ad2dd72"/>
+    <cim:ContingencyEquipment.contingentStatus rdf:resource="https://cim.ucaiug.io/ns#ContingencyEquipmentStatusKind.inService"/>
+    <cim:IdentifiedObject.description>The equipment for this contingency is the power transformer "DALBO_G1_TRAFO" in Svedala; Loss of a single transformer</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>78c34698-16b2-4863-affe-1b9c599de0d5</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>T1</cim:IdentifiedObject.name>
+  </cim:ContingencyEquipment>
+  <cim:ContingencyEquipment rdf:ID="_1bd15dd2-f0d5-4e77-8d41-e3611cc57b4a">
+    <cim:ContingencyElement.Contingency rdf:resource="#_d9ef0d5e-732d-441e-9611-c817b0afbc41"/>
+    <cim:ContingencyEquipment.Equipment rdf:resource="#_f0dee14e-aa43-411e-a2ea-b9879c20f3be"/>
+    <cim:ContingencyEquipment.contingentStatus rdf:resource="https://cim.ucaiug.io/ns#ContingencyEquipmentStatusKind.inService"/>
+    <cim:IdentifiedObject.description>The equipment for this contingency; Transformer tripping</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>1bd15dd2-f0d5-4e77-8d41-e3611cc57b4a</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>T3</cim:IdentifiedObject.name>
+  </cim:ContingencyEquipment>
+  <cim:ContingencyEquipment rdf:ID="_9b488dee-c497-42cc-9cd2-1bf77036e5e6">
+    <cim:ContingencyElement.Contingency rdf:resource="#_5d587c7e-9ced-416a-ad17-6ef9b241a998"/>
+    <cim:ContingencyEquipment.Equipment rdf:resource="#_2ab1b800-0c93-4517-86b5-8fd6a3a24ee7"/>
+    <cim:ContingencyEquipment.contingentStatus rdf:resource="https://cim.ucaiug.io/ns#ContingencyEquipmentStatusKind.inService"/>
+    <cim:IdentifiedObject.description>The equipment for this contingency; Transformer tripping</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>9b488dee-c497-42cc-9cd2-1bf77036e5e6</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>T2</cim:IdentifiedObject.name>
+  </cim:ContingencyEquipment>
+  <cim:ContingencyEquipment rdf:ID="_aee3453a-ec82-4392-98a2-52d6cc5f5029">
+    <cim:ContingencyElement.Contingency rdf:resource="#_475ba18f-cbf5-490b-b65d-e8e03f9bcbc4"/>
+    <cim:ContingencyEquipment.Equipment rdf:resource="#_e02e1166-1c43-4a4d-8c5a-82298ee0c8f5"/>
+    <cim:ContingencyEquipment.contingentStatus rdf:resource="https://cim.ucaiug.io/ns#ContingencyEquipmentStatusKind.inService"/>
+    <cim:IdentifiedObject.description>The equipment for this contingency; Tripping of a backup line CL1</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>aee3453a-ec82-4392-98a2-52d6cc5f5029</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>L1</cim:IdentifiedObject.name>
+  </cim:ContingencyEquipment>
+  <cim:ContingencyEquipment rdf:ID="_b012f709-5306-4315-a32e-a39d2c2ce632">
+    <cim:ContingencyElement.Contingency rdf:resource="#_264e9a19-ae28-4c85-a43c-6b7818ca0e6c"/>
+    <cim:ContingencyEquipment.Equipment rdf:resource="#_536f4b84-db4c-4545-96e9-bb5a87f65d13"/>
+    <cim:ContingencyEquipment.contingentStatus rdf:resource="https://cim.ucaiug.io/ns#ContingencyEquipmentStatusKind.inService"/>
+    <cim:IdentifiedObject.description>The equipment for this contingency; Tie line loss</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>b012f709-5306-4315-a32e-a39d2c2ce632</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>L2</cim:IdentifiedObject.name>
+  </cim:ContingencyEquipment>
+  <cim:ContingencyEquipment rdf:ID="_bdbe7044-c15f-4373-91e7-ce10acc17495">
+    <cim:ContingencyElement.Contingency rdf:resource="#_ab92defa-ef8e-4d13-a242-5b1a9fe956f6"/>
+    <cim:ContingencyEquipment.Equipment rdf:resource="#_8464a151-ec39-4e7a-8321-06c41e63958c"/>
+    <cim:ContingencyEquipment.contingentStatus rdf:resource="https://cim.ucaiug.io/ns#ContingencyEquipmentStatusKind.inService"/>
+    <cim:IdentifiedObject.description>The equipment for this contingency is the "FT62_X3" NonlinearShuntCompensator; Loss of a single voltage compensation device</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>bdbe7044-c15f-4373-91e7-ce10acc17495</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>VComp_1</cim:IdentifiedObject.name>
+  </cim:ContingencyEquipment>
+  <nc:OrdinaryContingency rdf:ID="_5d587c7e-9ced-416a-ad17-6ef9b241a998">
+    <nc:Contingency.EquipmentOperator rdf:resource="#_b9fbb881-573b-4e98-9b7b-31f00a45ebe0"/>
+    <nc:Contingency.normalMustStudy>true</nc:Contingency.normalMustStudy>
+    <cim:IdentifiedObject.description>This is an example of an ordinary contingency;Transformer tripping</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>5d587c7e-9ced-416a-ad17-6ef9b241a998</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>CO3</cim:IdentifiedObject.name>
+  </nc:OrdinaryContingency>
+  <nc:OrdinaryContingency rdf:ID="_475ba18f-cbf5-490b-b65d-e8e03f9bcbc4">
+    <nc:Contingency.EquipmentOperator rdf:resource="#_b9fbb881-573b-4e98-9b7b-31f00a45ebe0"/>
+    <nc:Contingency.normalMustStudy>true</nc:Contingency.normalMustStudy>
+    <cim:IdentifiedObject.description>This is an example of an ordinary contingency;Tripping of a backup line CL1</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>475ba18f-cbf5-490b-b65d-e8e03f9bcbc4</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>CO2</cim:IdentifiedObject.name>
+  </nc:OrdinaryContingency>
+  <nc:OrdinaryContingency rdf:ID="_264e9a19-ae28-4c85-a43c-6b7818ca0e6c">
+    <nc:Contingency.EquipmentOperator rdf:resource="#_b9fbb881-573b-4e98-9b7b-31f00a45ebe0"/>
+    <nc:Contingency.normalMustStudy>true</nc:Contingency.normalMustStudy>
+    <cim:IdentifiedObject.description>This is an example of an ordinary contingency;Tie line loss</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>264e9a19-ae28-4c85-a43c-6b7818ca0e6c</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>CO4</cim:IdentifiedObject.name>
+  </nc:OrdinaryContingency>
+  <nc:OrdinaryContingency rdf:ID="_d9ef0d5e-732d-441e-9611-c817b0afbc41">
+    <nc:Contingency.EquipmentOperator rdf:resource="#_b9fbb881-573b-4e98-9b7b-31f00a45ebe0"/>
+    <nc:Contingency.normalMustStudy>true</nc:Contingency.normalMustStudy>
+    <cim:IdentifiedObject.description>This is an example of an ordinary contingency;Transformer tripping</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>d9ef0d5e-732d-441e-9611-c817b0afbc41</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>CO5</cim:IdentifiedObject.name>
+  </nc:OrdinaryContingency>
+  <nc:OrdinaryContingency rdf:ID="_e05bbe20-9d4a-40da-9777-8424d216785d">
+    <nc:Contingency.EquipmentOperator rdf:resource="#_b9fbb881-573b-4e98-9b7b-31f00a45ebe0"/>
+    <nc:Contingency.normalMustStudy>true</nc:Contingency.normalMustStudy>
+    <cim:IdentifiedObject.description>This is an example of an ordinary contingency;Loss of a single transformer</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>e05bbe20-9d4a-40da-9777-8424d216785d</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>CO1</cim:IdentifiedObject.name>
+  </nc:OrdinaryContingency>
+  <nc:OrdinaryContingency rdf:ID="_ab92defa-ef8e-4d13-a242-5b1a9fe956f6">
+    <nc:Contingency.EquipmentOperator rdf:resource="#_b9fbb881-573b-4e98-9b7b-31f00a45ebe0"/>
+    <nc:Contingency.normalMustStudy>true</nc:Contingency.normalMustStudy>
+    <cim:IdentifiedObject.description>This is an example of an ordinary contingency;Loss of a single voltage compensation device</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>ab92defa-ef8e-4d13-a242-5b1a9fe956f6</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>CO_VComp_1</cim:IdentifiedObject.name>
+  </nc:OrdinaryContingency>
+  
+  <cim:ContingencyEquipment rdf:ID="_6b11c563-1cd1-455f-beb7-c9821159848c">
+    <cim:ContingencyElement.Contingency rdf:resource="#_92d4f3c9-32e1-47fd-8762-d0e9a042c5a3"/>
+    <cim:ContingencyEquipment.Equipment rdf:resource="#_b676e63f-e89a-4bd7-b786-95fe458298eb"/>
+    <cim:ContingencyEquipment.contingentStatus rdf:resource="https://cim.ucaiug.io/ns#ContingencyEquipmentStatusKind.outOfService"/>
+    <cim:IdentifiedObject.description>loss of line CL7</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>6b11c563-1cd1-455f-beb7-c9821159848c</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>Svedala_CL7</cim:IdentifiedObject.name>
+  </cim:ContingencyEquipment>
+  <cim:ContingencyEquipment rdf:ID="_d2388514-b207-4741-9ba5-bc8d043feed2">
+    <cim:ContingencyElement.Contingency rdf:resource="#_92d4f3c9-32e1-47fd-8762-d0e9a042c5a3"/>
+    <cim:ContingencyEquipment.Equipment rdf:resource="#_ebf0cd8b-a357-4e97-aa67-de5b263733d6"/>
+    <cim:ContingencyEquipment.contingentStatus rdf:resource="https://cim.ucaiug.io/ns#ContingencyEquipmentStatusKind.outOfService"/>
+    <cim:IdentifiedObject.description>loss of load CT72_T1_LAST</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>d2388514-b207-4741-9ba5-bc8d043feed2</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>Svedala_CT72_T1_LAST</cim:IdentifiedObject.name>
+  </cim:ContingencyEquipment>
+  <nc:ExceptionalContingency rdf:ID="_92d4f3c9-32e1-47fd-8762-d0e9a042c5a3">
+    <nc:Contingency.normalMustStudy>true</nc:Contingency.normalMustStudy>
+    <cim:IdentifiedObject.description>Loss of two elements: a line CL7 and a load CT72_T1_LAST</cim:IdentifiedObject.description>
+    <nc:ExceptionalContingency.kind rdf:resource="https://cim4.eu/ns/nc#ContingencyConditionKind.design"/>
+    <cim:IdentifiedObject.mRID>92d4f3c9-32e1-47fd-8762-d0e9a042c5a3</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>CO1_CL7_and_CT72_T1_LAST</cim:IdentifiedObject.name>
+  </nc:ExceptionalContingency>
+
+<!-- ExceptionalContingency example -->
+<cim:ContingencyEquipment rdf:ID="_7c41cbda-7686-4473-8c4c-19802e714976">
+  <cim:IdentifiedObject.name>CE1</cim:IdentifiedObject.name>
+  <cim:IdentifiedObject.description>The equipment for this contingency - Generator 1</cim:IdentifiedObject.description>
+  <cim:IdentifiedObject.mRID>7c41cbda-7686-4473-8c4c-19802e714976</cim:IdentifiedObject.mRID>
+  <cim:ContingencyElement.Contingency rdf:resource="#_2c1fe55c-0d6f-4b2c-85ce-eb1fcbc6175b"/>
+  <cim:ContingencyEquipment.contingentStatus rdf:resource="https://cim.ucaiug.io/ns#ContingencyEquipmentStatusKind.inService"/>
+  <cim:ContingencyEquipment.Equipment rdf:resource="#_d4e4911b-d87a-4fd5-a7a7-0346c0538db3"/>
+</cim:ContingencyEquipment>
+<cim:ContingencyEquipment rdf:ID="_5030a960-be37-4ad7-aa11-1082f41102dc">
+  <cim:IdentifiedObject.name>CE2</cim:IdentifiedObject.name>
+  <cim:IdentifiedObject.description>The equipment for this contingency - Generator 2</cim:IdentifiedObject.description>
+  <cim:IdentifiedObject.mRID>5030a960-be37-4ad7-aa11-1082f41102dc</cim:IdentifiedObject.mRID>
+  <cim:ContingencyElement.Contingency rdf:resource="#_2c1fe55c-0d6f-4b2c-85ce-eb1fcbc6175b"/>
+  <cim:ContingencyEquipment.contingentStatus rdf:resource="https://cim.ucaiug.io/ns#ContingencyEquipmentStatusKind.outOfService"/>
+  <cim:ContingencyEquipment.Equipment rdf:resource="#_1092d095-f5a4-4e36-a31b-8bd15851165f"/>
+</cim:ContingencyEquipment>
+<nc:ExceptionalContingency rdf:ID="_2c1fe55c-0d6f-4b2c-85ce-eb1fcbc6175b">
+  <cim:IdentifiedObject.name>CO3</cim:IdentifiedObject.name>
+  <cim:IdentifiedObject.description>This is an example of an Exceptional contingency - Loss of two generation units</cim:IdentifiedObject.description>
+  <cim:IdentifiedObject.mRID>2c1fe55c-0d6f-4b2c-85ce-eb1fcbc6175b</cim:IdentifiedObject.mRID>
+  <nc:Contingency.EquipmentOperator rdf:resource="#_e6c0b670-29f7-4a6b-abe9-af099e90f7b0"/>
+  <nc:Contingency.normalMustStudy>true</nc:Contingency.normalMustStudy>
+  <nc:ExceptionalContingency.kind rdf:resource="https://cim4.eu/ns/nc#ContingencyConditionKind.operational"/>
+</nc:ExceptionalContingency>
+
+<!-- OutOfRangeContingency example-->
+<cim:ContingencyEquipment rdf:ID="_4198a663-b8e6-4ed1-9212-db1448cc6018">
+  <cim:IdentifiedObject.name>CE1</cim:IdentifiedObject.name>
+  <cim:IdentifiedObject.description>The equipment for this contingency - Busbar 1</cim:IdentifiedObject.description>
+  <cim:IdentifiedObject.mRID>4198a663-b8e6-4ed1-9212-db1448cc6018</cim:IdentifiedObject.mRID>
+  <cim:ContingencyElement.Contingency rdf:resource="#_e8e8300b-e3b1-41ba-81af-406f6e5b4a55"/>
+  <cim:ContingencyEquipment.contingentStatus rdf:resource="https://cim.ucaiug.io/ns#ContingencyEquipmentStatusKind.inService"/>
+  <cim:ContingencyEquipment.Equipment rdf:resource="#_e456243c-a5a7-a90a-da42-fa2c0444419e"/>
+</cim:ContingencyEquipment>
+<cim:ContingencyEquipment rdf:ID="_f2b616ff-07cc-464e-b750-4c80a07390ce">
+  <cim:IdentifiedObject.name>CE2</cim:IdentifiedObject.name>
+  <cim:IdentifiedObject.description>The equipment for this contingency - Busbar 2</cim:IdentifiedObject.description>
+  <cim:IdentifiedObject.mRID>f2b616ff-07cc-464e-b750-4c80a07390ce</cim:IdentifiedObject.mRID>
+  <cim:ContingencyElement.Contingency rdf:resource="#_e8e8300b-e3b1-41ba-81af-406f6e5b4a55"/>
+  <cim:ContingencyEquipment.contingentStatus rdf:resource="https://cim.ucaiug.io/ns#ContingencyEquipmentStatusKind.inService"/>
+  <cim:ContingencyEquipment.Equipment rdf:resource="#_d0bd1e6a-3b97-bacd-03b5-b94365e9b947"/>
+</cim:ContingencyEquipment>
+<nc:OutOfRangeContingency rdf:ID="_e8e8300b-e3b1-41ba-81af-406f6e5b4a55">
+  <cim:IdentifiedObject.name>CO1</cim:IdentifiedObject.name>
+  <cim:IdentifiedObject.description>This is an example of an OutOfRange contingency - Loss of two independent busbars</cim:IdentifiedObject.description>
+  <cim:IdentifiedObject.mRID>e8e8300b-e3b1-41ba-81af-406f6e5b4a55</cim:IdentifiedObject.mRID>
+  <nc:Contingency.EquipmentOperator rdf:resource="#_e6c0b670-29f7-4a6b-abe9-af099e90f7b0"/>
+  <nc:Contingency.normalMustStudy>true</nc:Contingency.normalMustStudy>
+</nc:OutOfRangeContingency>
+
+</rdf:RDF>

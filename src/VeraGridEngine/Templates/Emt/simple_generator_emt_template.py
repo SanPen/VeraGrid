@@ -5,7 +5,6 @@
 
 
 import numpy as np
-from VeraGridEngine import MultiCircuit
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic import symbolic as sym
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate

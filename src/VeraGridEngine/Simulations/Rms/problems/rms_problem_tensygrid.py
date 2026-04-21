@@ -657,7 +657,7 @@ class RmsProblemTensygrid(RmsProblemTemplate):
         return self._uid2idx_vars
 
     @property
-    def get_algebraic_vars(self):
+    def algebraic_vars(self):
         """
         :return:
         """
@@ -676,7 +676,7 @@ class RmsProblemTensygrid(RmsProblemTemplate):
         return variables
 
     @property
-    def get_state_vars(self):
+    def state_vars(self):
         """
         :return:
         """
@@ -713,7 +713,7 @@ class RmsProblemTensygrid(RmsProblemTemplate):
             x[i] = val
         return x
 
-    def update_variable_params(self, t: float):
+    def update_variable_params(self, t: float, x_snapshot: Vec | None = None):
         """
         Update the variable parameters
         :param t:

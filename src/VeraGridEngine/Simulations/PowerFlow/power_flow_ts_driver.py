@@ -62,11 +62,13 @@ class PowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
             n=n,
             m=grid.get_branch_number(add_hvdc=False, add_vsc=False, add_switch=True),
             n_hvdc=grid.get_hvdc_number(),
+            n_vsc=grid.get_vsc_number(),
             bus_names=grid.get_bus_names(),
             branch_names=grid.get_branch_names(add_hvdc=False, add_vsc=False, add_switch=True),
             hvdc_names=grid.get_hvdc_names(),
+            vsc_names=grid.get_vsc_names(),
             time_array=self.grid.get_time_array()[self.time_indices],
-            bus_types=np.ones(n),
+            bus_types=np.ones(n, dtype=int),
             area_names=grid.get_area_names(),
             clustering_results=None
         )
@@ -85,17 +87,19 @@ class PowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
                                         add_switch=True)
 
         # initialize the grid time series results we will append the island results with another function
-        time_series_results = PowerFlowTimeSeriesResults(n=n,
-                                                         m=m,
-                                                         n_hvdc=self.grid.get_hvdc_number(),
-                                                         bus_names=self.grid.get_bus_names(),
-                                                         branch_names=self.grid.get_branch_names(add_vsc=False,
-                                                                                                 add_hvdc=False,
-                                                                                                 add_switch=True),
-                                                         hvdc_names=self.grid.get_hvdc_names(),
-                                                         bus_types=np.zeros(n),
-                                                         time_array=self.grid.time_profile[time_indices],
-                                                         clustering_results=self.clustering_results)
+        time_series_results = PowerFlowTimeSeriesResults(
+            n=n,
+            m=m,
+            n_hvdc=self.grid.get_hvdc_number(),
+            n_vsc=self.grid.get_vsc_number(),
+            bus_names=self.grid.get_bus_names(),
+            branch_names=self.grid.get_branch_names(add_vsc=False, add_hvdc=False, add_switch=True),
+            hvdc_names=self.grid.get_hvdc_names(),
+            vsc_names=self.grid.get_vsc_names(),
+            bus_types=np.ones(n, dtype=int),
+            time_array=self.grid.time_profile[time_indices],
+            clustering_results=self.clustering_results
+        )
 
         # compile dictionaries once for speed
         bus_dict = {bus: i for i, bus in enumerate(self.grid.buses)}
@@ -138,15 +142,19 @@ class PowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
 
         res = bentayga_pf(self.grid, self.options, time_series=True)
 
-        results = PowerFlowTimeSeriesResults(n=self.grid.get_bus_number(),
-                                             m=self.grid.get_branch_number(add_hvdc=False, add_vsc=False, add_switch=True),
-                                             n_hvdc=self.grid.get_hvdc_number(),
-                                             bus_names=res.names,
-                                             branch_names=res.names,
-                                             hvdc_names=res.hvdc_names,
-                                             bus_types=res.bus_types,
-                                             time_array=self.grid.get_time_array(),
-                                             clustering_results=self.clustering_results)
+        results = PowerFlowTimeSeriesResults(
+            n=self.grid.get_bus_number(),
+            m=self.grid.get_branch_number(add_hvdc=False, add_vsc=False, add_switch=True),
+            n_hvdc=self.grid.get_hvdc_number(),
+            n_vsc=self.grid.get_vsc_number(),
+            bus_names=res.names,
+            branch_names=res.names,
+            hvdc_names=res.hvdc_names,
+            vsc_names=res.vsc_data.names,
+            bus_types=res.bus_types,
+            time_array=self.grid.get_time_array(),
+            clustering_results=self.clustering_results
+        )
 
         results.voltage = res.V
         results.S = res.S
@@ -174,15 +182,19 @@ class PowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
                            time_indices=time_indices,
                            opf_results=self.opf_time_series_results)
 
-        results = PowerFlowTimeSeriesResults(n=self.grid.get_bus_number(),
-                                             m=self.grid.get_branch_number(add_hvdc=False, add_vsc=False, add_switch=True),
-                                             n_hvdc=self.grid.get_hvdc_number(),
-                                             bus_names=res.bus_names,
-                                             branch_names=res.branch_names,
-                                             hvdc_names=res.hvdc_names,
-                                             bus_types=res.bus_types,
-                                             time_array=self.grid.time_profile[time_indices],
-                                             clustering_results=self.clustering_results)
+        results = PowerFlowTimeSeriesResults(
+            n=self.grid.get_bus_number(),
+            m=self.grid.get_branch_number(add_hvdc=False, add_vsc=False, add_switch=True),
+            n_hvdc=self.grid.get_hvdc_number(),
+            n_vsc=self.grid.get_vsc_number(),
+            bus_names=res.bus_names,
+            branch_names=res.branch_names,
+            hvdc_names=res.hvdc_names,
+            vsc_names=res.vsc_data.names,
+            bus_types=res.bus_types,
+            time_array=self.grid.time_profile[time_indices],
+            clustering_results=self.clustering_results
+        )
 
         results.voltage = res.voltage
         results.S = res.Scalc
@@ -221,26 +233,27 @@ class PowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
                       logger=self.logger)
 
         n = self.grid.get_bus_number()
-        results = PowerFlowTimeSeriesResults(n=self.grid.get_bus_number(),
-                                             m=self.grid.get_branch_number(add_switch=True, add_vsc=False,
-                                                                           add_hvdc=False),
-                                             n_hvdc=self.grid.get_hvdc_number(),
-                                             # n_vsc=self.grid.get_vsc_number(),
-                                             # n_gen=self.grid.get_generators_number(),
-                                             # n_batt=self.grid.get_batteries_number(),
-                                             # n_sh=self.grid.get_shunt_like_device_number(),
-                                             bus_names=self.grid.get_bus_names(),
-                                             branch_names=self.grid.get_branch_names(add_switch=True, add_vsc=False,
-                                                                                     add_hvdc=False),
-                                             hvdc_names=self.grid.get_hvdc_names(),
-                                             # vsc_names=self.grid.get_vsc_names(),
-                                             # gen_names=self.grid.get_generator_names(),
-                                             # batt_names=self.grid.get_battery_names(),
-                                             # sh_names=self.grid.get_shunt_like_devices_names(),
-                                             bus_types=np.ones(n, dtype=int),
-                                             time_array=self.grid.time_profile[time_indices],
-                                             clustering_results=self.clustering_results
-                                             )
+        results = PowerFlowTimeSeriesResults(
+            n=self.grid.get_bus_number(),
+            m=self.grid.get_branch_number(add_switch=True, add_vsc=False,
+                                          add_hvdc=False),
+            n_hvdc=self.grid.get_hvdc_number(),
+            n_vsc=self.grid.get_vsc_number(),
+            # n_gen=self.grid.get_generators_number(),
+            # n_batt=self.grid.get_batteries_number(),
+            # n_sh=self.grid.get_shunt_like_device_number(),
+            bus_names=self.grid.get_bus_names(),
+            branch_names=self.grid.get_branch_names(add_switch=True, add_vsc=False,
+                                                    add_hvdc=False),
+            hvdc_names=self.grid.get_hvdc_names(),
+            vsc_names=self.grid.get_vsc_names(),
+            # gen_names=self.grid.get_generator_names(),
+            # batt_names=self.grid.get_battery_names(),
+            # sh_names=self.grid.get_shunt_like_devices_names(),
+            bus_types=np.ones(n, dtype=int),
+            time_array=self.grid.time_profile[time_indices],
+            clustering_results=self.clustering_results
+        )
 
         # self.results = translate_gslv_pf_results(self.grid, res)
         # self.results.area_names = [a.name for a in self.grid.areas]

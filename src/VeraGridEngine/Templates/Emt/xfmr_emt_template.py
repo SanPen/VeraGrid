@@ -116,54 +116,54 @@ def get_xfmr_emt_template(
     xfmr_use_linear_core: Var = vf.add_var(name=f"xfmr_use_linear_core_{name}")
 
     templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.omega_base] = omega_base
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.xfmr_s_rated_mva] = xfmr_s_rated_mva
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.xfmr_v_hv_ll_kv] = xfmr_v_hv_ll_kv
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.xfmr_v_lv_ll_kv] = xfmr_v_lv_ll_kv
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.xfmr_vector_group_clock] = xfmr_vector_group_clock
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.xfmr_oc_current_pct] = xfmr_oc_current_pct
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.xfmr_oc_loss_kw] = xfmr_oc_loss_kw
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.xfmr_sc_voltage_pct] = xfmr_sc_voltage_pct
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.xfmr_sc_resistance_pct] = xfmr_sc_resistance_pct
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.xfmr_sc_loss_kw] = xfmr_sc_loss_kw
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.xfmr_tap_module] = xfmr_tap_module
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.xfmr_c_term] = xfmr_c_term
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.xfmr_core_linear_l_pu] = xfmr_core_linear_l_pu
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.xfmr_core_a_prime] = xfmr_core_a_prime
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.xfmr_core_b_prime] = xfmr_core_b_prime
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.xfmr_use_linear_core] = xfmr_use_linear_core
+    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_rated_power_mva] = xfmr_s_rated_mva
+    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_winding1_rated_voltage_ll_kv] = xfmr_v_hv_ll_kv
+    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_winding2_rated_voltage_ll_kv] = xfmr_v_lv_ll_kv
+    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_connection_clock] = xfmr_vector_group_clock
+    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_open_circuit_current_pct] = xfmr_oc_current_pct
+    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_open_circuit_loss_kw] = xfmr_oc_loss_kw
+    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_short_circuit_voltage_pct] = xfmr_sc_voltage_pct
+    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_short_circuit_resistance_pct] = xfmr_sc_resistance_pct
+    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_short_circuit_loss_kw] = xfmr_sc_loss_kw
+    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_tap_ratio] = xfmr_tap_module
+    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_terminal_capacitance_pu_s] = xfmr_c_term
+    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_linear_core_inductance_pu_s] = xfmr_core_linear_l_pu
+    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_core_curve_a_prime] = xfmr_core_a_prime
+    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_core_curve_b_prime] = xfmr_core_b_prime
+    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_use_linear_core] = xfmr_use_linear_core
 
     cf_enums: list[list[ParamPowerFlowRefferenceType]] = list([
         list([
-            ParamPowerFlowRefferenceType.xfmr_cf_aa,
-            ParamPowerFlowRefferenceType.xfmr_cf_ab,
-            ParamPowerFlowRefferenceType.xfmr_cf_ac,
+            ParamPowerFlowRefferenceType.transformer_from_connection_aa,
+            ParamPowerFlowRefferenceType.transformer_from_connection_ab,
+            ParamPowerFlowRefferenceType.transformer_from_connection_ac,
         ]),
         list([
-            ParamPowerFlowRefferenceType.xfmr_cf_ba,
-            ParamPowerFlowRefferenceType.xfmr_cf_bb,
-            ParamPowerFlowRefferenceType.xfmr_cf_bc,
+            ParamPowerFlowRefferenceType.transformer_from_connection_ba,
+            ParamPowerFlowRefferenceType.transformer_from_connection_bb,
+            ParamPowerFlowRefferenceType.transformer_from_connection_bc,
         ]),
         list([
-            ParamPowerFlowRefferenceType.xfmr_cf_ca,
-            ParamPowerFlowRefferenceType.xfmr_cf_cb,
-            ParamPowerFlowRefferenceType.xfmr_cf_cc,
+            ParamPowerFlowRefferenceType.transformer_from_connection_ca,
+            ParamPowerFlowRefferenceType.transformer_from_connection_cb,
+            ParamPowerFlowRefferenceType.transformer_from_connection_cc,
         ]),
     ])
     ct_enums: list[list[ParamPowerFlowRefferenceType]] = list([
         list([
-            ParamPowerFlowRefferenceType.xfmr_ct_aa,
-            ParamPowerFlowRefferenceType.xfmr_ct_ab,
-            ParamPowerFlowRefferenceType.xfmr_ct_ac,
+            ParamPowerFlowRefferenceType.transformer_to_connection_aa,
+            ParamPowerFlowRefferenceType.transformer_to_connection_ab,
+            ParamPowerFlowRefferenceType.transformer_to_connection_ac,
         ]),
         list([
-            ParamPowerFlowRefferenceType.xfmr_ct_ba,
-            ParamPowerFlowRefferenceType.xfmr_ct_bb,
-            ParamPowerFlowRefferenceType.xfmr_ct_bc,
+            ParamPowerFlowRefferenceType.transformer_to_connection_ba,
+            ParamPowerFlowRefferenceType.transformer_to_connection_bb,
+            ParamPowerFlowRefferenceType.transformer_to_connection_bc,
         ]),
         list([
-            ParamPowerFlowRefferenceType.xfmr_ct_ca,
-            ParamPowerFlowRefferenceType.xfmr_ct_cb,
-            ParamPowerFlowRefferenceType.xfmr_ct_cc,
+            ParamPowerFlowRefferenceType.transformer_to_connection_ca,
+            ParamPowerFlowRefferenceType.transformer_to_connection_cb,
+            ParamPowerFlowRefferenceType.transformer_to_connection_cc,
         ]),
     ])
 

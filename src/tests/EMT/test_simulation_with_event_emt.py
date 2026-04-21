@@ -202,7 +202,7 @@ def test_simulation_with_event_emt():
                                  verbose = True)
 
     boundary_updater = cast(Any, problem)
-    t, y, dy = solver.simulate(boundary_updater=boundary_updater)
+    t, y, dy, _, _ = solver.simulate(boundary_updater=boundary_updater)
 
     res = np.concatenate((y, dy), axis=1)
 

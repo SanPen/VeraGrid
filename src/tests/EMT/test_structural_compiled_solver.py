@@ -640,8 +640,8 @@ def test_structural_compiled_simulation_matches_structural_vectorized_solver() -
         auto_vectorization=True,
     )
 
-    t_compiled, y_compiled, dy_compiled = compiled_solver.simulate(x0=x0, dx0=dx0, params0=p0_fast)
-    t_base, y_base, dy_base = base_solver.simulate(x0=x0.copy(), dx0=dx0.copy(), params0=p0_base)
+    t_compiled, y_compiled, dy_compiled, _, _ = compiled_solver.simulate(x0=x0, dx0=dx0, params0=p0_fast)
+    t_base, y_base, dy_base, _, _ = base_solver.simulate(x0=x0.copy(), dx0=dx0.copy(), params0=p0_base)
 
     np.testing.assert_allclose(t_compiled, t_base, rtol=0.0, atol=0.0)
     np.testing.assert_allclose(y_compiled, y_base, rtol=1e-9, atol=1e-10)
@@ -678,7 +678,7 @@ def test_structural_compiled_solver_uses_forced_alignment_and_boundary_updates()
     dx0: np.ndarray = np.array([0.0], dtype=np.float64)
     p0: np.ndarray = np.zeros(problem.get_variable_parameter_number(), dtype=np.float64)
 
-    t, y, dy = solver.simulate(
+    t, y, dy, _, _ = solver.simulate(
         x0=x0,
         dx0=dx0,
         params0=p0,
@@ -887,12 +887,12 @@ def test_backtracking_improves_convergence_in_difficult_solve() -> None:
             solver_bt._residual_assembler = cast(Any, InexactCompiledResidualAssembler())
             solver_bt._jacobian_evaluator = cast(Any, InexactCompiledJacobian())
 
-        _, y_plain, _ = solver_plain.simulate(
+        _, y_plain, _, _, _ = solver_plain.simulate(
             x0=np.array([0.1], dtype=np.float64),
             dx0=np.array([0.0], dtype=np.float64),
             params0=np.zeros(0, dtype=np.float64),
         )
-        _, y_bt, _ = solver_bt.simulate(
+        _, y_bt, _, _, _ = solver_bt.simulate(
             x0=np.array([0.1], dtype=np.float64),
             dx0=np.array([0.0], dtype=np.float64),
             params0=np.zeros(0, dtype=np.float64),

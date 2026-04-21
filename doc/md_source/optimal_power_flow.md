@@ -25,6 +25,135 @@ Control batteries
 
 🎥 [Watch the OPF video on YouTube](https://www.youtube.com/watch?v=o6oXBJ1Efqc)
 
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+
+## Registered Result Properties
+
+### `OptimalPowerFlowResults` registered properties
+
+The snapshot OPF result stores the optimized dispatch, network state, limits, slacks, and economic quantities.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `bus_names` | `StrVec` | Names aligned with bus-indexed result arrays. |
+| `branch_names` | `StrVec` | Names aligned with branch-indexed result arrays. |
+| `load_names` | `StrVec` | Names aligned with load-indexed result arrays. |
+| `generator_names` | `StrVec` | Names aligned with generator-indexed result arrays. |
+| `shunt_like_names` | `StrVec` | Names aligned with shunt-indexed result arrays. |
+| `battery_names` | `StrVec` | Names aligned with battery-indexed result arrays. |
+| `hvdc_names` | `StrVec` | Names aligned with HVDC line-indexed result arrays. |
+| `fluid_node_names` | `StrVec` | Names aligned with fluid node-indexed result arrays. |
+| `fluid_path_names` | `StrVec` | Names aligned with fluid path-indexed result arrays. |
+| `fluid_inj_names` | `StrVec` | Names aligned with fluid injection-indexed result arrays. |
+| `bus_types` | `IntVec` | Bus type code used by the solved numerical model. |
+| `voltage` | `CxVec` | Complex bus voltage solution. |
+| `Sbus` | `CxVec` | Complex bus power injection. |
+| `bus_shadow_prices` | `Vec` | Bus shadow price or nodal marginal value. |
+| `load_power` | `Vec` | Load active power served by the optimization. |
+| `load_shedding` | `Vec` | Load shedding result. |
+| `load_shedding_cost` | `Vec` | Load shedding cost result. |
+| `Sf` | `CxVec` | Complex branch power flow at the from side. |
+| `St` | `CxVec` | Complex branch power flow at the to side. |
+| `overloads` | `Vec` | Overload slack or overload result. |
+| `overloads_cost` | `Vec` | Overload cost result. |
+| `loading` | `Vec` | Branch loading result. |
+| `losses` | `Vec` | Complex branch losses. |
+| `tap_angle` | `Vec` | Transformer tap angle used in the solved state. |
+| `tap_module` | `Vec` | Transformer tap module used in the solved state. |
+| `rates` | `Vec` | Normal monitored element rates. |
+| `contingency_rates` | `Vec` | Contingency monitored element rates. |
+| `hvdc_Pf` | `Vec` | HVDC result field `hvdc_Pf`. |
+| `hvdc_loading` | `Vec` | HVDC result field `hvdc_loading`. |
+| `hvdc_losses` | `Vec` | HVDC result field `hvdc_losses`. |
+| `vsc_Pf` | `Vec` | VSC result field `vsc_Pf`. |
+| `vsc_loading` | `Vec` | VSC result field `vsc_loading`. |
+| `vsc_losses` | `Vec` | VSC result field `vsc_losses`. |
+| `generator_power` | `Vec` | Generator active power dispatch. |
+| `generator_reactive_power` | `Vec` | Generator reactive power dispatch. |
+| `generator_shedding` | `Vec` | Generator shedding result. |
+| `battery_power` | `Vec` | Battery active power dispatch. |
+| `shunt_like_reactive_power` | `Vec` | Reactive power output of shunt-like devices. |
+| `fluid_node_p2x_flow` | `Vec` | Power-to-X flow at each fluid node. |
+| `fluid_node_current_level` | `Vec` | Fluid node storage level. |
+| `fluid_node_spillage` | `Vec` | Fluid node spillage result. |
+| `fluid_node_flow_in` | `Vec` | Fluid inflow at each fluid node. |
+| `fluid_node_flow_out` | `Vec` | Fluid outflow at each fluid node. |
+| `fluid_path_flow` | `Vec` | Flow through each fluid path. |
+| `fluid_injection_flow` | `Vec` | Flow from each fluid injection device. |
+| `non_linear` | `bool` | Flag indicating whether the result came from a non-linear OPF solve. |
+| `converged` | `bool` | Convergence flag for the solved case or time step. |
+| `error` | `float` | Solver error or residual value. |
+| `contingency_flows_list` | `list` | List of contingency flow records. |
+| `contingency_indices_list` | `list` | List of contingency indices associated with contingency flow records. |
+| `contingency_flows_slacks_list` | `list` | List of contingency flow slack values. |
+| `F` | `IntVec` | Branch from-bus index for each branch. |
+| `T` | `IntVec` | Branch to-bus index for each branch. |
+| `hvdc_F` | `IntVec` | HVDC from-bus index for each HVDC line. |
+| `hvdc_T` | `IntVec` | HVDC to-bus index for each HVDC line. |
+| `bus_area_indices` | `IntVec` | Area index assigned to each bus. |
+| `area_names` | `IntVec` | Area names or area identifiers used for inter-area aggregation. |
+
+### `OptimalPowerFlowTimeSeriesResults` registered properties
+
+The time-series OPF result stores the optimized dispatch, network state, limits, slacks, and system totals over time.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `bus_names` | `StrVec` | Names aligned with bus-indexed result arrays. |
+| `branch_names` | `StrVec` | Names aligned with branch-indexed result arrays. |
+| `load_names` | `StrVec` | Names aligned with load-indexed result arrays. |
+| `generator_names` | `StrVec` | Names aligned with generator-indexed result arrays. |
+| `battery_names` | `StrVec` | Names aligned with battery-indexed result arrays. |
+| `shunt_like_names` | `StrVec` | Names aligned with shunt-indexed result arrays. |
+| `hvdc_names` | `StrVec` | Names aligned with HVDC line-indexed result arrays. |
+| `bus_types` | `IntVec` | Bus type code used by the solved numerical model. |
+| `voltage` | `CxMat` | Complex bus voltage solution. |
+| `Sbus` | `CxMat` | Complex bus power injection. |
+| `bus_shadow_prices` | `Mat` | Bus shadow price or nodal marginal value. |
+| `load_power` | `Mat` | Load active power served by the optimization. |
+| `load_shedding` | `Mat` | Load shedding result. |
+| `load_shedding_cost` | `Mat` | Load shedding cost result. |
+| `Sf` | `CxMat` | Complex branch power flow at the from side. |
+| `St` | `CxMat` | Complex branch power flow at the to side. |
+| `loading` | `Mat` | Branch loading result. |
+| `losses` | `Mat` | Complex branch losses. |
+| `tap_angle` | `Mat` | Transformer tap angle used in the solved state. |
+| `tap_module` | `Mat` | Transformer tap module used in the solved state. |
+| `overloads` | `Mat` | Overload slack or overload result. |
+| `overloads_cost` | `Mat` | Overload cost result. |
+| `rates` | `Vec` | Normal monitored element rates. |
+| `contingency_rates` | `Vec` | Contingency monitored element rates. |
+| `contingency_flows_list` | `list` | List of contingency flow records. |
+| `contingency_indices_list` | `list` | List of contingency indices associated with contingency flow records. |
+| `contingency_flows_slacks_list` | `list` | List of contingency flow slack values. |
+| `hvdc_Pf` | `Mat` | HVDC result field `hvdc_Pf`. |
+| `hvdc_loading` | `Mat` | HVDC result field `hvdc_loading`. |
+| `fluid_node_current_level` | `Mat` | Fluid node storage level. |
+| `fluid_node_flow_in` | `Mat` | Fluid inflow at each fluid node. |
+| `fluid_node_flow_out` | `Mat` | Fluid outflow at each fluid node. |
+| `fluid_node_p2x_flow` | `Mat` | Power-to-X flow at each fluid node. |
+| `fluid_node_spillage` | `Mat` | Fluid node spillage result. |
+| `fluid_path_flow` | `Mat` | Flow through each fluid path. |
+| `fluid_injection_flow` | `Mat` | Flow from each fluid injection device. |
+| `generator_power` | `Mat` | Generator active power dispatch. |
+| `generator_reactive_power` | `Mat` | Generator reactive power dispatch. |
+| `generator_shedding` | `Mat` | Generator shedding result. |
+| `generator_cost` | `Mat` | Generator production cost. |
+| `generator_producing` | `Mat` | Generator commitment producing status. |
+| `generator_starting_up` | `Mat` | Generator start-up status. |
+| `generator_shutting_down` | `Mat` | Generator shut-down status. |
+| `generator_invested` | `Mat` | Generator investment decision result. |
+| `shunt_like_reactive_power` | `Mat` | Reactive power output of shunt-like devices. |
+| `battery_power` | `Mat` | Battery active power dispatch. |
+| `battery_energy` | `Mat` | Battery stored energy over time. |
+| `system_fuel` | `Mat` | System fuel usage by fuel type. |
+| `system_emissions` | `Mat` | System emissions by emission type. |
+| `system_energy_cost` | `Mat` | System energy cost per time step. |
+| `system_total_energy_cost` | `Mat` | Accumulated system energy cost. |
+| `power_by_technology` | `Mat` | Generated power grouped by technology. |
+| `converged` | `BoolVec` | Convergence flag for the solved case or time step. |
+<!-- END RESULTS REGISTERED PROPERTIES -->
+
 ## API
 
 ### Linear optimization

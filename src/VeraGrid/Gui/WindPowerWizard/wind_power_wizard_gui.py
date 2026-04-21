@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'wind_power_wizard_gui.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.2
+## Created by: Qt User Interface Compiler version 6.9.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -17,9 +17,9 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
 from PySide6.QtWidgets import (QApplication, QComboBox, QDialog, QDoubleSpinBox,
-    QFrame, QGridLayout, QHBoxLayout, QHeaderView,
-    QLabel, QPushButton, QSizePolicy, QSpacerItem,
-    QSplitter, QTableView, QVBoxLayout, QWidget)
+    QFrame, QGridLayout, QHeaderView, QLabel,
+    QPushButton, QSizePolicy, QSpacerItem, QSplitter,
+    QTableView, QToolBox, QVBoxLayout, QWidget)
 from VeraGrid.Gui.Icons.icons_rc import *
 
 class Ui_MainWindow(object):
@@ -50,79 +50,123 @@ class Ui_MainWindow(object):
         self.frame.setObjectName(u"frame")
         self.frame.setFrameShape(QFrame.NoFrame)
         self.frame.setFrameShadow(QFrame.Raised)
-        self.gridLayout_2 = QGridLayout(self.frame)
+        self.verticalLayout_2 = QVBoxLayout(self.frame)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.toolBox = QToolBox(self.frame)
+        self.toolBox.setObjectName(u"toolBox")
+        self.libraryPage = QWidget()
+        self.libraryPage.setObjectName(u"libraryPage")
+        self.libraryPage.setGeometry(QRect(0, 0, 386, 509))
+        self.gridLayout_2 = QGridLayout(self.libraryPage)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.windTurbineTableView = QTableView(self.frame)
-        self.windTurbineTableView.setObjectName(u"windTurbineTableView")
-
-        self.gridLayout_2.addWidget(self.windTurbineTableView, 4, 0, 1, 3)
-
-        self.label_3 = QLabel(self.frame)
-        self.label_3.setObjectName(u"label_3")
-
-        self.gridLayout_2.addWidget(self.label_3, 3, 0, 1, 2)
-
-        self.label = QLabel(self.frame)
-        self.label.setObjectName(u"label")
-
-        self.gridLayout_2.addWidget(self.label, 7, 0, 1, 1)
-
-        self.powerSpinBox = QDoubleSpinBox(self.frame)
-        self.powerSpinBox.setObjectName(u"powerSpinBox")
-        self.powerSpinBox.setMaximum(99999.000000000000000)
-
-        self.gridLayout_2.addWidget(self.powerSpinBox, 7, 1, 1, 2)
-
-        self.frame_3 = QFrame(self.frame)
-        self.frame_3.setObjectName(u"frame_3")
-        self.frame_3.setFrameShape(QFrame.NoFrame)
-        self.frame_3.setFrameShadow(QFrame.Raised)
-        self.horizontalLayout_2 = QHBoxLayout(self.frame_3)
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.label_2 = QLabel(self.frame_3)
+        self.label_2 = QLabel(self.libraryPage)
         self.label_2.setObjectName(u"label_2")
-        self.label_2.setMaximumSize(QSize(90, 16777215))
 
-        self.horizontalLayout_2.addWidget(self.label_2)
+        self.gridLayout_2.addWidget(self.label_2, 0, 0, 1, 1)
 
-        self.templeteComboBox = QComboBox(self.frame_3)
+        self.templeteComboBox = QComboBox(self.libraryPage)
         self.templeteComboBox.setObjectName(u"templeteComboBox")
 
-        self.horizontalLayout_2.addWidget(self.templeteComboBox)
+        self.gridLayout_2.addWidget(self.templeteComboBox, 0, 1, 1, 1)
 
-        self.loadButton = QPushButton(self.frame_3)
+        self.loadButton = QPushButton(self.libraryPage)
         self.loadButton.setObjectName(u"loadButton")
-        self.loadButton.setMaximumSize(QSize(60, 16777215))
 
-        self.horizontalLayout_2.addWidget(self.loadButton)
+        self.gridLayout_2.addWidget(self.loadButton, 0, 2, 1, 1)
 
+        self.plotDesignCurvesButton = QPushButton(self.libraryPage)
+        self.plotDesignCurvesButton.setObjectName(u"plotDesignCurvesButton")
 
-        self.gridLayout_2.addWidget(self.frame_3, 2, 0, 1, 3)
+        self.gridLayout_2.addWidget(self.plotDesignCurvesButton, 1, 0, 1, 3)
 
-        self.longitudeSpinBox = QDoubleSpinBox(self.frame)
-        self.longitudeSpinBox.setObjectName(u"longitudeSpinBox")
-        self.longitudeSpinBox.setDecimals(6)
-        self.longitudeSpinBox.setMaximum(99999.000000000000000)
+        self.windTurbineTableView = QTableView(self.libraryPage)
+        self.windTurbineTableView.setObjectName(u"windTurbineTableView")
 
-        self.gridLayout_2.addWidget(self.longitudeSpinBox, 6, 1, 1, 2)
+        self.gridLayout_2.addWidget(self.windTurbineTableView, 2, 0, 1, 3)
 
-        self.latitudeSpinBox = QDoubleSpinBox(self.frame)
-        self.latitudeSpinBox.setObjectName(u"latitudeSpinBox")
-        self.latitudeSpinBox.setDecimals(6)
-        self.latitudeSpinBox.setMaximum(99999.000000000000000)
+        self.toolBox.addItem(self.libraryPage, u"Turbine library")
+        self.sitePage = QWidget()
+        self.sitePage.setObjectName(u"sitePage")
+        self.sitePage.setGeometry(QRect(0, 0, 386, 509))
+        self.gridLayout_3 = QGridLayout(self.sitePage)
+        self.gridLayout_3.setObjectName(u"gridLayout_3")
+        self.label_3 = QLabel(self.sitePage)
+        self.label_3.setObjectName(u"label_3")
 
-        self.gridLayout_2.addWidget(self.latitudeSpinBox, 5, 1, 1, 2)
+        self.gridLayout_3.addWidget(self.label_3, 0, 0, 1, 2)
 
-        self.label_4 = QLabel(self.frame)
+        self.label_4 = QLabel(self.sitePage)
         self.label_4.setObjectName(u"label_4")
 
-        self.gridLayout_2.addWidget(self.label_4, 5, 0, 1, 1)
+        self.gridLayout_3.addWidget(self.label_4, 1, 0, 1, 1)
 
-        self.label_5 = QLabel(self.frame)
+        self.latitudeSpinBox = QDoubleSpinBox(self.sitePage)
+        self.latitudeSpinBox.setObjectName(u"latitudeSpinBox")
+        self.latitudeSpinBox.setDecimals(6)
+        self.latitudeSpinBox.setMinimum(-90.000000000000000)
+        self.latitudeSpinBox.setMaximum(90.000000000000000)
+
+        self.gridLayout_3.addWidget(self.latitudeSpinBox, 1, 1, 1, 1)
+
+        self.label_5 = QLabel(self.sitePage)
         self.label_5.setObjectName(u"label_5")
 
-        self.gridLayout_2.addWidget(self.label_5, 6, 0, 1, 1)
+        self.gridLayout_3.addWidget(self.label_5, 2, 0, 1, 1)
+
+        self.longitudeSpinBox = QDoubleSpinBox(self.sitePage)
+        self.longitudeSpinBox.setObjectName(u"longitudeSpinBox")
+        self.longitudeSpinBox.setDecimals(6)
+        self.longitudeSpinBox.setMinimum(-180.000000000000000)
+        self.longitudeSpinBox.setMaximum(180.000000000000000)
+
+        self.gridLayout_3.addWidget(self.longitudeSpinBox, 2, 1, 1, 1)
+
+        self.label = QLabel(self.sitePage)
+        self.label.setObjectName(u"label")
+
+        self.gridLayout_3.addWidget(self.label, 3, 0, 1, 1)
+
+        self.powerSpinBox = QDoubleSpinBox(self.sitePage)
+        self.powerSpinBox.setObjectName(u"powerSpinBox")
+        self.powerSpinBox.setMinimum(0.000001000000000)
+        self.powerSpinBox.setMaximum(99999.000000000000000)
+
+        self.gridLayout_3.addWidget(self.powerSpinBox, 3, 1, 1, 1)
+
+        self.label_6 = QLabel(self.sitePage)
+        self.label_6.setObjectName(u"label_6")
+
+        self.gridLayout_3.addWidget(self.label_6, 4, 0, 1, 1)
+
+        self.hubHeightSpinBox = QDoubleSpinBox(self.sitePage)
+        self.hubHeightSpinBox.setObjectName(u"hubHeightSpinBox")
+        self.hubHeightSpinBox.setMinimum(1.000000000000000)
+        self.hubHeightSpinBox.setMaximum(300.000000000000000)
+        self.hubHeightSpinBox.setValue(100.000000000000000)
+
+        self.gridLayout_3.addWidget(self.hubHeightSpinBox, 4, 1, 1, 1)
+
+        self.label_7 = QLabel(self.sitePage)
+        self.label_7.setObjectName(u"label_7")
+
+        self.gridLayout_3.addWidget(self.label_7, 5, 0, 1, 1)
+
+        self.roughnessLengthSpinBox = QDoubleSpinBox(self.sitePage)
+        self.roughnessLengthSpinBox.setObjectName(u"roughnessLengthSpinBox")
+        self.roughnessLengthSpinBox.setDecimals(3)
+        self.roughnessLengthSpinBox.setMinimum(0.000000000000000)
+        self.roughnessLengthSpinBox.setMaximum(5.000000000000000)
+        self.roughnessLengthSpinBox.setValue(0.100000000000000)
+
+        self.gridLayout_3.addWidget(self.roughnessLengthSpinBox, 5, 1, 1, 1)
+
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.gridLayout_3.addItem(self.verticalSpacer, 6, 0, 1, 1)
+
+        self.toolBox.addItem(self.sitePage, u"Site and model")
+
+        self.verticalLayout_2.addWidget(self.toolBox)
 
         self.splitter.addWidget(self.frame)
         self.frame_4 = QFrame(self.splitter)
@@ -157,6 +201,9 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
+        self.toolBox.setCurrentIndex(0)
+
+
         QMetaObject.connectSlotsByName(MainWindow)
     # setupUi
 
@@ -164,16 +211,22 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"Wind power wizard", None))
         self.actionCopy_to_clipboard.setText(QCoreApplication.translate("MainWindow", u"Copy to clipboard", None))
         self.actionSave.setText(QCoreApplication.translate("MainWindow", u"Save", None))
+        self.label_2.setText(QCoreApplication.translate("MainWindow", u"Template", None))
+        self.loadButton.setText(QCoreApplication.translate("MainWindow", u"Generate", None))
+        self.plotDesignCurvesButton.setText(QCoreApplication.translate("MainWindow", u"Plot design curves", None))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.libraryPage), QCoreApplication.translate("MainWindow", u"Turbine library", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"Wind turbine data", None))
+        self.label_4.setText(QCoreApplication.translate("MainWindow", u"Latitude", None))
+        self.latitudeSpinBox.setSuffix(QCoreApplication.translate("MainWindow", u" deg", None))
+        self.label_5.setText(QCoreApplication.translate("MainWindow", u"Longitude", None))
+        self.longitudeSpinBox.setSuffix(QCoreApplication.translate("MainWindow", u" deg", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Power", None))
         self.powerSpinBox.setSuffix(QCoreApplication.translate("MainWindow", u" MW", None))
-        self.label_2.setText(QCoreApplication.translate("MainWindow", u"Template", None))
-        self.loadButton.setText(QCoreApplication.translate("MainWindow", u"Load", None))
-        self.longitudeSpinBox.setSuffix(QCoreApplication.translate("MainWindow", u" deg", None))
-        self.latitudeSpinBox.setSuffix(QCoreApplication.translate("MainWindow", u" deg", None))
-        self.label_4.setText(QCoreApplication.translate("MainWindow", u"Latutide", None))
-        self.label_5.setText(QCoreApplication.translate("MainWindow", u"Longitude", None))
+        self.label_6.setText(QCoreApplication.translate("MainWindow", u"Hub height", None))
+        self.hubHeightSpinBox.setSuffix(QCoreApplication.translate("MainWindow", u" m", None))
+        self.label_7.setText(QCoreApplication.translate("MainWindow", u"Roughness", None))
+        self.roughnessLengthSpinBox.setSuffix(QCoreApplication.translate("MainWindow", u" m", None))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.sitePage), QCoreApplication.translate("MainWindow", u"Site and model", None))
         self.plotButton.setText(QCoreApplication.translate("MainWindow", u"Plot", None))
         self.acceptButton.setText(QCoreApplication.translate("MainWindow", u"Accept", None))
     # retranslateUi
-

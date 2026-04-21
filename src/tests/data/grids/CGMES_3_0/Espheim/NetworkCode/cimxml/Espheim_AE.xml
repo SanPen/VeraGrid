@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:nc="https://cim4.eu/ns/nc#"
+    xmlns:cim="https://cim.ucaiug.io/ns#"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:eumd="https://cim4.eu/ns/Metadata-European#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#" > 
+  <dcat:Dataset rdf:about="urn:uuid:972cd4cd-25b0-4b70-96f9-eab4bfd32907">
+    <dcterms:accessRights>https://energy.referencedata.eu/Confidentiality/Public</dcterms:accessRights>
+    <dcterms:conformsTo>http://iec.ch/TC57/CIM100#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/2013/CIM-schema-cim16#</dcterms:conformsTo>
+    <dcterms:conformsTo>https://cim4.eu/ns/nc/2.4#</dcterms:conformsTo>
+    <dcterms:conformsTo>https://ap.cim4.eu/AssessedElement/2.4</dcterms:conformsTo>
+    <dcterms:description xml:lang="en">This is the assessed element dataset for Espheim part of ReliCapGrid.</dcterms:description>
+    <dcat:endDate>2023-06-15T22:30:00Z</dcat:endDate>
+    <prov:generatedAtTime>2022-06-10T07:06:25Z</prov:generatedAtTime>
+    <dcterms:identifier>972cd4cd-25b0-4b70-96f9-eab4bfd32907</dcterms:identifier>
+    <dcat:isVersionOf rdf:resource="https://energy.referencedata.eu/Test/Model/Espheim-AE"/>
+    <dcat:keyword>AE</dcat:keyword>
+    <dcterms:license>https://creativecommons.org/licenses/by/4.0/</dcterms:license>
+    <dcterms:publisher>https://energy.referencedata.eu/test/party/Espheim</dcterms:publisher>
+    <dcterms:rights>Copyright</dcterms:rights>
+    <dcterms:rightsHolder>ENTSO-E</dcterms:rightsHolder>	
+    <dcterms:requires rdf:resource="urn:uuid:e3453a3c-8639-4648-a662-d6c15f512965"/>
+    <dcat:startDate>2022-06-15T22:30:00Z</dcat:startDate>
+    <dcterms:title>20220615_Espheim_AE_1.0.0</dcterms:title>
+    <dcat:version>1.0.0</dcat:version>
+    <prov:wasGeneratedBy>https://energy.referencedata.eu/Activity/CGM-AE</prov:wasGeneratedBy>
+    <dcterms:spatial>https://energy.referencedata.eu/Test/Frame/Espheim-Power-Transmission-System</dcterms:spatial>
+    <dcterms:issued>2022-06-15T22:30:00Z</dcterms:issued>
+  </dcat:Dataset>
+  <nc:AssessedElement rdf:ID="_2cc84c47-b6b7-481c-aa0e-6c46589d458a">
+    <nc:AssessedElement.AssessedSystemOperator rdf:resource="#_151d6acf-d4fd-4604-9603-f02348603277"/>
+    <nc:AssessedElement.ConductingEquipment rdf:resource="#_a04e4e41-c0b4-496e-9ef3-390ea089411f"/>
+    <nc:AssessedElement.OperationalLimit rdf:resource="#_33924a8e-08f3-33d9-b550-b248d3ea2320"/>
+    <nc:AssessedElement.ScannedForRegion rdf:resource="#_56d81c91-4fb8-47a2-9d7c-baa13dedd605"/>
+    <nc:AssessedElement.inBaseCase>true</nc:AssessedElement.inBaseCase>
+    <cim:IdentifiedObject.description>This is an example of assessed element.</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>2cc84c47-b6b7-481c-aa0e-6c46589d458a</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>AE1</cim:IdentifiedObject.name>
+  </nc:AssessedElement>
+  <nc:AssessedElement rdf:ID="_3a364a5b-7aca-4e48-abd5-4cd79e2e8676">
+    <nc:AssessedElement.AssessedSystemOperator rdf:resource="#_151d6acf-d4fd-4604-9603-f02348603277"/>
+    <nc:AssessedElement.ConductingEquipment rdf:resource="#_044cd003-c766-11e1-8775-005056c00008"/>
+    <nc:AssessedElement.OperationalLimit rdf:resource="#_8cf632e1-8656-4894-86f1-e5da640fa17b"/>
+    <nc:AssessedElement.ScannedForRegion rdf:resource="#_56d81c91-4fb8-47a2-9d7c-baa13dedd605"/>
+    <nc:AssessedElement.inBaseCase>true</nc:AssessedElement.inBaseCase>
+    <cim:IdentifiedObject.description>This is an example of assessed element.</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>3a364a5b-7aca-4e48-abd5-4cd79e2e8676</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>AE2</cim:IdentifiedObject.name>
+  </nc:AssessedElement>
+  <nc:AssessedElement rdf:ID="_2bd363ca-bab7-4571-a59a-b9193dc9fc9d">
+    <nc:AssessedElement.AssessedSystemOperator rdf:resource="#_151d6acf-d4fd-4604-9603-f02348603277"/>
+    <nc:AssessedElement.ConductingEquipment rdf:resource="#_048badc5-c766-11e1-8775-005056c00008"/>
+    <nc:AssessedElement.OperationalLimit rdf:resource="#_9afb2cbd-46f0-5c83-bf54-7ce8b4ff27e9"/>
+    <nc:AssessedElement.ScannedForRegion rdf:resource="#_56d81c91-4fb8-47a2-9d7c-baa13dedd605"/>
+    <nc:AssessedElement.inBaseCase>true</nc:AssessedElement.inBaseCase>
+    <cim:IdentifiedObject.description>This is an example of assessed element.</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>2bd363ca-bab7-4571-a59a-b9193dc9fc9d</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>AE5</cim:IdentifiedObject.name>
+  </nc:AssessedElement>
+  <nc:AssessedElement rdf:ID="_989535e7-3789-47e7-8ba7-da7be9962a15">
+    <nc:AssessedElement.AssessedSystemOperator rdf:resource="#_151d6acf-d4fd-4604-9603-f02348603277"/>
+    <nc:AssessedElement.ConductingEquipment rdf:resource="#_048badc5-c766-11e1-8775-005056c00008"/>
+    <nc:AssessedElement.OperationalLimit rdf:resource="#_4c03ba97-08f3-4a55-f19c-c5f2a90e98ed"/>
+    <nc:AssessedElement.ScannedForRegion rdf:resource="#_56d81c91-4fb8-47a2-9d7c-baa13dedd605"/>
+    <nc:AssessedElement.inBaseCase>true</nc:AssessedElement.inBaseCase>
+    <cim:IdentifiedObject.description>This is an example of assessed element.</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>989535e7-3789-47e7-8ba7-da7be9962a15</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>AE3</cim:IdentifiedObject.name>
+  </nc:AssessedElement>
+  <nc:AssessedElement rdf:ID="_3bc10ae6-6e25-4e4d-9a3a-ec2c4e2436b0">
+    <nc:AssessedElement.AssessedSystemOperator rdf:resource="#_151d6acf-d4fd-4604-9603-f02348603277"/>
+    <nc:AssessedElement.ConductingEquipment rdf:resource="#_044a5f09-c766-11e1-8775-005056c00008"/>
+    <nc:AssessedElement.OperationalLimit rdf:resource="#_40b2a685-8490-c4a0-3d30-8a18d5aadc39"/>
+    <nc:AssessedElement.ScannedForRegion rdf:resource="#_56d81c91-4fb8-47a2-9d7c-baa13dedd605"/>
+    <nc:AssessedElement.inBaseCase>true</nc:AssessedElement.inBaseCase>
+    <cim:IdentifiedObject.description>This is an example of assessed element.</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>3bc10ae6-6e25-4e4d-9a3a-ec2c4e2436b0</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>AE6</cim:IdentifiedObject.name>
+  </nc:AssessedElement>
+  <nc:AssessedElement rdf:ID="_97cb3913-256b-4225-a6f4-a0641adddea8">
+    <nc:AssessedElement.AssessedSystemOperator rdf:resource="#_b9fbb881-573b-4e98-9b7b-31f00a45ebe0"/>
+    <nc:AssessedElement.ConductingEquipment rdf:resource="#_c65e934b-8184-4df2-95f2-25f134b1b9e9"/>
+    <nc:AssessedElement.ScannedForRegion rdf:resource="#_56d81c91-4fb8-47a2-9d7c-baa13dedd605"/>
+    <nc:AssessedElement.inBaseCase>true</nc:AssessedElement.inBaseCase>
+    <cim:IdentifiedObject.description>This is an example of assessed element.</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>97cb3913-256b-4225-a6f4-a0641adddea8</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>AE9</cim:IdentifiedObject.name>
+  </nc:AssessedElement>
+  <nc:AssessedElement rdf:ID="_ea577780-24d2-4167-a5d2-fa56c56a9481">
+    <nc:AssessedElement.AssessedSystemOperator rdf:resource="#_151d6acf-d4fd-4604-9603-f02348603277"/>
+    <nc:AssessedElement.ConductingEquipment rdf:resource="#_0478c207-c766-11e1-8775-005056c00008"/>
+    <nc:AssessedElement.OperationalLimit rdf:resource="#_dd4d5c22-a3c2-6720-c7fc-9610d1ef02c3"/>
+    <nc:AssessedElement.ScannedForRegion rdf:resource="#_56d81c91-4fb8-47a2-9d7c-baa13dedd605"/>
+    <nc:AssessedElement.inBaseCase>true</nc:AssessedElement.inBaseCase>
+    <cim:IdentifiedObject.description>This is an example of assessed element.</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>ea577780-24d2-4167-a5d2-fa56c56a9481</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>AE4</cim:IdentifiedObject.name>
+  </nc:AssessedElement>
+  <nc:AssessedElementWithContingency rdf:ID="_7f3166c3-a87a-405b-9a20-994abda57778">
+    <nc:AssessedElementWithContingency.AssessedElement rdf:resource="#_97cb3913-256b-4225-a6f4-a0641adddea8"/>
+    <nc:AssessedElementWithContingency.Contingency rdf:resource="#_ce19dd34-429e-4b72-8813-7615cc57b4a4"/>
+    <nc:AssessedElementWithContingency.combinationConstraintKind rdf:resource="https://cim4.eu/ns/nc#ElementCombinationConstraintKind.included"/>
+    <nc:AssessedElementWithContingency.mRID>7f3166c3-a87a-405b-9a20-994abda57778</nc:AssessedElementWithContingency.mRID>
+    <nc:AssessedElementWithContingency.normalEnabled>true</nc:AssessedElementWithContingency.normalEnabled>
+  </nc:AssessedElementWithContingency>
+  <nc:AssessedElementWithContingency rdf:ID="_e8a03f97-8794-424d-9267-86d60b96c96a">
+    <nc:AssessedElementWithContingency.AssessedElement rdf:resource="#_2cc84c47-b6b7-481c-aa0e-6c46589d458a"/>
+    <nc:AssessedElementWithContingency.Contingency rdf:resource="#_8cdec4c6-10c3-40c1-9eeb-7f6ae8d9b3fe"/>
+    <nc:AssessedElementWithContingency.combinationConstraintKind rdf:resource="https://cim4.eu/ns/nc#ElementCombinationConstraintKind.included"/>
+    <nc:AssessedElementWithContingency.mRID>e8a03f97-8794-424d-9267-86d60b96c96a</nc:AssessedElementWithContingency.mRID>
+    <nc:AssessedElementWithContingency.normalEnabled>true</nc:AssessedElementWithContingency.normalEnabled>
+  </nc:AssessedElementWithContingency>
+  <nc:AssessedElementWithContingency rdf:ID="_8f585428-7d9c-4dc1-96cd-072af9b141a8">
+    <nc:AssessedElementWithContingency.AssessedElement rdf:resource="#_3a364a5b-7aca-4e48-abd5-4cd79e2e8676"/>
+    <nc:AssessedElementWithContingency.Contingency rdf:resource="#_b6b780cb-9fe5-4c45-989d-447a927c3874"/>
+    <nc:AssessedElementWithContingency.combinationConstraintKind rdf:resource="https://cim4.eu/ns/nc#ElementCombinationConstraintKind.included"/>
+    <nc:AssessedElementWithContingency.mRID>8f585428-7d9c-4dc1-96cd-072af9b141a8</nc:AssessedElementWithContingency.mRID>
+    <nc:AssessedElementWithContingency.normalEnabled>true</nc:AssessedElementWithContingency.normalEnabled>
+  </nc:AssessedElementWithContingency>
+  <nc:AssessedElementWithContingency rdf:ID="_225ca44e-0685-4edd-beac-e4bb1deb3c65">
+    <nc:AssessedElementWithContingency.AssessedElement rdf:resource="#_3bc10ae6-6e25-4e4d-9a3a-ec2c4e2436b0"/>
+    <nc:AssessedElementWithContingency.Contingency rdf:resource="#_96c96ad8-844c-4f3b-8b38-c886ba2c0214"/>
+    <nc:AssessedElementWithContingency.combinationConstraintKind rdf:resource="https://cim4.eu/ns/nc#ElementCombinationConstraintKind.included"/>
+    <nc:AssessedElementWithContingency.mRID>225ca44e-0685-4edd-beac-e4bb1deb3c65</nc:AssessedElementWithContingency.mRID>
+    <nc:AssessedElementWithContingency.normalEnabled>true</nc:AssessedElementWithContingency.normalEnabled>
+  </nc:AssessedElementWithContingency>
+  <nc:AssessedElementWithContingency rdf:ID="_9cccd979-366b-4cda-8750-ab1ab039d95d">
+    <nc:AssessedElementWithContingency.AssessedElement rdf:resource="#_989535e7-3789-47e7-8ba7-da7be9962a15"/>
+    <nc:AssessedElementWithContingency.Contingency rdf:resource="#_13334fdf-9cc2-4341-adb6-1281269040b4"/>
+    <nc:AssessedElementWithContingency.combinationConstraintKind rdf:resource="https://cim4.eu/ns/nc#ElementCombinationConstraintKind.included"/>
+    <nc:AssessedElementWithContingency.mRID>9cccd979-366b-4cda-8750-ab1ab039d95d</nc:AssessedElementWithContingency.mRID>
+    <nc:AssessedElementWithContingency.normalEnabled>true</nc:AssessedElementWithContingency.normalEnabled>
+  </nc:AssessedElementWithContingency>
+  <nc:AssessedElementWithContingency rdf:ID="_e8c39ec9-4666-4731-9c00-5674c1e945b4">
+    <nc:AssessedElementWithContingency.AssessedElement rdf:resource="#_2bd363ca-bab7-4571-a59a-b9193dc9fc9d"/>
+    <nc:AssessedElementWithContingency.Contingency rdf:resource="#_9d17b84c-33b5-4a68-b8b9-ed5b31038d40"/>
+    <nc:AssessedElementWithContingency.combinationConstraintKind rdf:resource="https://cim4.eu/ns/nc#ElementCombinationConstraintKind.included"/>
+    <nc:AssessedElementWithContingency.mRID>e8c39ec9-4666-4731-9c00-5674c1e945b4</nc:AssessedElementWithContingency.mRID>
+    <nc:AssessedElementWithContingency.normalEnabled>true</nc:AssessedElementWithContingency.normalEnabled>
+  </nc:AssessedElementWithContingency>
+</rdf:RDF>

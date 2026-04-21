@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 import timeit
+from math import comb
 
 import numpy as np
 
@@ -209,13 +210,19 @@ class InvestmentsEvaluationDriver(DriverTemplate):
         self.report_text("Evaluating investments with NSGA3...")
         dim = self.problem.n_vars()
         pop_size = int(round(dim))  # for the ieee 118 bus grid make this * 3
-        n_partitions = int(round(pop_size))
 
-        # compile the snapshot
-        self.initialize(max_iter=self.options.max_eval)
+        # compile the snapshot (+1 for the baseline evaluation)
+        self.initialize(max_iter=self.options.max_eval + 1)
 
         # add baseline
         ret = self.objective_function(x=np.zeros(self.problem.n_vars(), dtype=int))
+
+        # find the largest n_partitions such that ref_dirs <= pop_size
+        # ref_dirs = C(n_partitions + n_obj - 1, n_obj - 1) with das-dennis
+        n_obj = len(ret)
+        n_partitions = 1
+        while comb(n_partitions + 1 + n_obj - 1, n_obj - 1) <= pop_size:
+            n_partitions += 1
 
         # optimize
         X, obj_values = NSGA_3(

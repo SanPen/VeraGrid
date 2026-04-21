@@ -1,0 +1,76 @@
+@prefix adms:   <http://www.w3.org/ns/adms#> .
+@prefix dcat:     <http://www.w3.org/ns/dcat#> .
+@prefix dcterms:  <http://purl.org/dc/terms/> .
+@prefix prov:     <http://www.w3.org/ns/prov#> .
+@prefix provcim:  <https://cim4.eu/ns/provcim#> .
+@prefix skos:     <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .
+
+
+#################################################################
+# Activity Scheme / Reference Dataset
+#################################################################
+
+<https://energy.referencedata.eu/ActivityScheme/NCP/1.0>
+    a skos:ConceptScheme , dcat:Dataset ;
+    skos:prefLabel "Energy Reference Data Activity Scheme"@en ;
+	skos:definition "Reference dataset and concept scheme listing recognized activity identities that may be used as the object of prov:wasGeneratedBy."@en ;
+	dcterms:description "Reference dataset containing recognized activity identities for use in provenance references."@en ;
+    dcterms:title "ActivityScheme-NCP-1.0" ;
+	dcterms:identifier "afab3d78-d706-466e-931a-db0bf847b904" ;
+    dcterms:publisher <https://www.entsoe.eu/> ;
+    dcterms:rights "Copyright" ;
+    dcterms:rightsHolder "ENTSO-E" ;
+    dcterms:issued "2026-03-22"^^xsd:date ;
+    prov:generatedAtTime "2026-03-22T00:00:00Z"^^xsd:dateTime ;
+    dcat:version "1.0.0" ;
+    adms:versionNotes "Initial version of the Energy Reference Data Activity Scheme for ReliCapGrid."@en ;
+    dcat:isVersionOf <https://energy.referencedata.eu/ActivityScheme> ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    dcterms:accessRights <https://energy.referencedata.eu/Confidentiality/Public> ;
+	dcterms:hasPart <https://energy.referencedata.eu/ActivityScheme/NCP/1.0#collection_ncp_activity> .
+
+
+#################################################################
+# Collection of Activities
+#################################################################
+
+<https://energy.referencedata.eu/ActivityScheme/NCP/1.0#collection_ncp_activity>
+    a prov:Collection ;
+    dcterms:identifier "209d3b30-a355-4e1e-a831-c11c3eb514d7" ;
+    skos:prefLabel "Collection of recognized activities identities for NCP."@en ;
+    prov:hadMember         
+		<https://energy.referencedata.eu/activity/IGM-EQ> ,
+        <https://energy.referencedata.eu/activity/IGM-ER> ,
+		<https://energy.referencedata.eu/activity/IGM-EQ-VF> ,
+		<https://energy.referencedata.eu/activity/IGM-RASR> .
+
+#################################################################
+# List of Activity
+#################################################################
+
+<https://energy.referencedata.eu/activity/IGM-EQ>
+    a provcim:Modeling ;
+    skos:prefLabel "IGM-EQ"@en ;
+	dcterms:identifier "fc47623a-ddc3-4dec-80cc-bef95f5044a4" ;
+	dcterms:description "Recognized modeling activity identity for creating the structural data describing the Individual Grid Model (IGM) Equipment (EQ) model."@en .
+
+
+<https://energy.referencedata.eu/activity/IGM-ER>
+    a provcim:Modeling ;
+    skos:prefLabel "IGM-ER"@en ;
+	dcterms:identifier "fdae0538-35d9-4ff7-9f4d-da46fc035d7a" ;
+	dcterms:description "Recognized modeling activity identity for creating the structural data describing the Individual Grid Model (IGM) Equipment Reliability (ER) model."@en .
+
+<https://energy.referencedata.eu/activity/IGM-EQ-VF>
+    a provcim:Verification ;
+    skos:prefLabel "IGM-EQ-VF"@en ;
+	dcterms:identifier "441835fe-8a39-4d0e-b6c0-935266138da9" ;
+	dcterms:description "Recognized verification activity identity for verifying the structural data describing the Individual Grid Model (IGM) Equipment (EQ) model."@en .
+	
+<https://energy.referencedata.eu/activity/IGM-RASR>
+    a provcim:Assessment ;
+    skos:prefLabel "IGM-RASR"@en ;
+	dcterms:identifier "cd6012ae-9ca8-41e0-8d07-1cda33326871" ;
+	dcterms:description "Recognized assessment activity identity for assessing the Remedial Action Schedule (RAS) on the structural Remedial Action (RA) model for an Individual Grid Model (IGM)."@en .
+	

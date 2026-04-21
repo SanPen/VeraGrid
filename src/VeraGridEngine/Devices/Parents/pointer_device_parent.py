@@ -127,3 +127,25 @@ class PointerDeviceParent(EditableDevice):
         :param elm: Device to be pointed
         """
         self.device = elm
+
+    def rebind_device_references(self, objects_by_idtag, props=None) -> None:
+        """
+        Rebind the pointed device to an equivalent object from a target lookup.
+
+        :param objects_by_idtag: idtag -> target object lookup.
+        :param props: Optional subset of registered properties to process.
+        """
+        super().rebind_device_references(objects_by_idtag=objects_by_idtag, props=props)
+
+        pointed = None
+        if self._device is not None and hasattr(self._device, "idtag"):
+            pointed = objects_by_idtag.get(self._device.idtag, None)
+
+        if pointed is None and self._device_idtag:
+            pointed = objects_by_idtag.get(self._device_idtag, None)
+
+        if pointed is not None:
+            self._device = pointed
+            self._device_idtag = pointed.idtag
+            self._device_name = pointed.name
+            self._tpe = pointed.device_type

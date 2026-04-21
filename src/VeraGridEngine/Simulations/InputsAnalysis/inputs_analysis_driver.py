@@ -19,6 +19,8 @@ if TYPE_CHECKING:  # Only imports the below statements during type checking
 
 
 class InputsAnalysisResults(ResultsTemplate):
+    LOCAL_RESULTS_DECLARATIONS = tuple()
+
     __slots__ = (
         "grid",
         "opf_results",
@@ -29,6 +31,9 @@ class InputsAnalysisResults(ResultsTemplate):
         "battery_data",
         "load_data",
         "static_gen_data",
+        "external_grid_data",
+        "current_injection_data",
+        "shunt_data",
         "bus_dict",
         "bus_zone_indices",
         "bus_country_indices",
@@ -86,6 +91,9 @@ class InputsAnalysisResults(ResultsTemplate):
         self.battery_data = self.get_batteries_df()
         self.load_data = self.get_loads_df()
         self.static_gen_data = self.get_static_generators_df()
+        self.external_grid_data = self.get_external_grids_df()
+        self.current_injection_data = self.get_current_injections_df()
+        self.shunt_data = self.get_shunts_df()
 
         self.bus_dict = self.grid.get_bus_index_dict()
         self.bus_area_indices = self.get_bus_area_indices()
@@ -221,6 +229,90 @@ class InputsAnalysisResults(ResultsTemplate):
                 'Zone', 'Area', 'Substation', 'Country']
         return pd.DataFrame(data=dta, columns=cols)
 
+    def get_external_grids_df(self) -> pd.DataFrame:
+        """
+
+        :return:
+        """
+        dta = list()
+        for elm in self.grid.get_external_grids():
+            if elm is not None:
+                if elm.bus is None:
+                    zone = ""
+                    area = ""
+                    substation = ""
+                    country = ""
+                else:
+                    zone = elm.bus.zone.name if elm.bus.zone is not None else ""
+                    area = elm.bus.area.name if elm.bus.area is not None else ""
+                    substation = elm.bus.substation.name if elm.bus.substation is not None else ""
+                    country = elm.bus.country.name if elm.bus.country is not None else ""
+
+                dta.append([elm.name,
+                            elm.P * elm.active,
+                            elm.Q * elm.active,
+                            zone, area, substation, country])
+
+        cols = ['Name', 'P', 'Q',
+                'Zone', 'Area', 'Substation', 'Country']
+        return pd.DataFrame(data=dta, columns=cols)
+
+    def get_current_injections_df(self) -> pd.DataFrame:
+        """
+
+        :return:
+        """
+        dta = list()
+        for elm in self.grid.get_current_injections():
+            if elm is not None:
+                if elm.bus is None:
+                    zone = ""
+                    area = ""
+                    substation = ""
+                    country = ""
+                else:
+                    zone = elm.bus.zone.name if elm.bus.zone is not None else ""
+                    area = elm.bus.area.name if elm.bus.area is not None else ""
+                    substation = elm.bus.substation.name if elm.bus.substation is not None else ""
+                    country = elm.bus.country.name if elm.bus.country is not None else ""
+
+                dta.append([elm.name,
+                            elm.Ir * elm.active,
+                            elm.Ii * elm.active,
+                            zone, area, substation, country])
+
+        cols = ['Name', 'P', 'Q',
+                'Zone', 'Area', 'Substation', 'Country']
+        return pd.DataFrame(data=dta, columns=cols)
+
+    def get_shunts_df(self) -> pd.DataFrame:
+        """
+
+        :return:
+        """
+        dta = list()
+        for elm in self.grid.get_shunts() + self.grid.get_controllable_shunts():
+            if elm is not None:
+                if elm.bus is None:
+                    zone = ""
+                    area = ""
+                    substation = ""
+                    country = ""
+                else:
+                    zone = elm.bus.zone.name if elm.bus.zone is not None else ""
+                    area = elm.bus.area.name if elm.bus.area is not None else ""
+                    substation = elm.bus.substation.name if elm.bus.substation is not None else ""
+                    country = elm.bus.country.name if elm.bus.country is not None else ""
+
+                dta.append([elm.name,
+                            elm.G * elm.active,
+                            elm.B * elm.active,
+                            zone, area, substation, country])
+
+        cols = ['Name', 'P', 'Q',
+                'Zone', 'Area', 'Substation', 'Country']
+        return pd.DataFrame(data=dta, columns=cols)
+
     def group_by(self, group: str):
         """
         Return a DataFrame grouped by Area, Zone or Country
@@ -239,28 +331,61 @@ class InputsAnalysisResults(ResultsTemplate):
         n = len(labels)
         cols_gen = ['P', 'Pmin', 'Pmax', 'Qmin', 'Qmax']
         cols_load = ['P', 'Q']
-        cols = ['P', 'Pgen', 'Pload', 'Pbatt', 'Pstagen', 'Pmin', 'Pmax', 'Q', 'Qmin', 'Qmax']
+        cols = ['P', 'Pgen', 'Pload', 'Pbatt', 'Pstagen', 'Pext', 'Pcur', 'Pshunt', 'Pmin', 'Pmax', 'Q', 'Qmin', 'Qmax']
         df = pd.DataFrame(data=np.zeros((n, len(cols))), columns=cols, index=labels)
 
         if len(self.gen_data):
             df2 = self.gen_data.groupby(group).sum()
-            df[cols_gen] += df2[cols_gen]
-            df['Pgen'] = df2['P']
+            idx = df.index.union(df2.index)
+            df = df.reindex(idx, fill_value=0.0)
+            df[cols_gen] = df[cols_gen].add(df2[cols_gen].reindex(idx, fill_value=0.0), fill_value=0.0)
+            df['Pgen'] = df2['P'].reindex(idx, fill_value=0.0)
 
         if len(self.battery_data):
             df2 = self.battery_data.groupby(group).sum()
-            df[cols_gen] += df2[cols_gen]
-            df['Pbatt'] = df2['P']
+            idx = df.index.union(df2.index)
+            df = df.reindex(idx, fill_value=0.0)
+            df[cols_gen] = df[cols_gen].add(df2[cols_gen].reindex(idx, fill_value=0.0), fill_value=0.0)
+            df['Pbatt'] = df2['P'].reindex(idx, fill_value=0.0)
 
         if len(self.load_data):
             df2 = self.load_data.groupby(group).sum()
-            df[cols_load] -= df2[cols_load]
-            df['Pload'] = df2['P']
+            idx = df.index.union(df2.index)
+            df = df.reindex(idx, fill_value=0.0)
+            df[cols_load] = df[cols_load].sub(df2[cols_load].reindex(idx, fill_value=0.0), fill_value=0.0)
+            df['Pload'] = df2['P'].reindex(idx, fill_value=0.0)
 
         if len(self.static_gen_data):
             df2 = self.static_gen_data.groupby(group).sum()
-            df[cols_load] += df2[cols_load]
-            df['Pstagen'] = df2['P']
+            idx = df.index.union(df2.index)
+            df = df.reindex(idx, fill_value=0.0)
+            df[cols_load] = df[cols_load].add(df2[cols_load].reindex(idx, fill_value=0.0), fill_value=0.0)
+            df['Pstagen'] = df2['P'].reindex(idx, fill_value=0.0)
+
+        if len(self.external_grid_data):
+            # External grid follows the injection sign convention of LoadParent:
+            # positive P behaves as demand and negative P behaves as generation.
+            df2 = self.external_grid_data.groupby(group).sum()
+            idx = df.index.union(df2.index)
+            df = df.reindex(idx, fill_value=0.0)
+            df[cols_load] = df[cols_load].sub(df2[cols_load].reindex(idx, fill_value=0.0), fill_value=0.0)
+            df['Pext'] = df2['P'].reindex(idx, fill_value=0.0)
+
+        if len(self.current_injection_data):
+            # CurrentInjection has load-like sign convention in Ir/Ii.
+            df2 = self.current_injection_data.groupby(group).sum()
+            idx = df.index.union(df2.index)
+            df = df.reindex(idx, fill_value=0.0)
+            df[cols_load] = df[cols_load].sub(df2[cols_load].reindex(idx, fill_value=0.0), fill_value=0.0)
+            df['Pcur'] = df2['P'].reindex(idx, fill_value=0.0)
+
+        if len(self.shunt_data):
+            # Shunt G/B are load-like power terms at V=1.0 p.u.
+            df2 = self.shunt_data.groupby(group).sum()
+            idx = df.index.union(df2.index)
+            df = df.reindex(idx, fill_value=0.0)
+            df[cols_load] = df[cols_load].sub(df2[cols_load].reindex(idx, fill_value=0.0), fill_value=0.0)
+            df['Pshunt'] = df2['P'].reindex(idx, fill_value=0.0)
 
         df.fillna(0, inplace=True)
 
@@ -449,8 +574,13 @@ class InputsAnalysisResults(ResultsTemplate):
             yg, columns = self.get_collection_attr_series(generators, 'P', 'Area')
 
             yl, columns = self.get_collection_attr_series(self.grid.get_loads(), 'P', 'Area')
+            ye, columns = self.get_collection_attr_series(self.grid.get_external_grids(), 'P', 'Area')
+            yci, columns = self.get_collection_attr_series(self.grid.get_current_injections(), 'Ir', 'Area')
+            ysh, columns = self.get_collection_attr_series(self.grid.get_shunts() + self.grid.get_controllable_shunts(),
+                                                           'G', 'Area')
 
-            y = yg - yl
+            # External grids are load-like devices with signed P.
+            y = yg - yl - ye - yci - ysh
 
             return ResultsTable(data=y,
                                 index=pd.to_datetime(self.grid.time_profile),
@@ -465,8 +595,12 @@ class InputsAnalysisResults(ResultsTemplate):
             yg, columns = self.get_collection_attr_series(generators, 'P', 'Zone')
 
             yl, columns = self.get_collection_attr_series(self.grid.get_loads(), 'P', 'Zone')
+            ye, columns = self.get_collection_attr_series(self.grid.get_external_grids(), 'P', 'Zone')
+            yci, columns = self.get_collection_attr_series(self.grid.get_current_injections(), 'Ir', 'Zone')
+            ysh, columns = self.get_collection_attr_series(self.grid.get_shunts() + self.grid.get_controllable_shunts(),
+                                                           'G', 'Zone')
 
-            y = yg - yl
+            y = yg - yl - ye - yci - ysh
 
             return ResultsTable(data=y,
                                 index=pd.to_datetime(self.grid.time_profile),
@@ -481,8 +615,12 @@ class InputsAnalysisResults(ResultsTemplate):
             yg, columns = self.get_collection_attr_series(generators, 'P', 'Country')
 
             yl, columns = self.get_collection_attr_series(self.grid.get_loads(), 'P', 'Country')
+            ye, columns = self.get_collection_attr_series(self.grid.get_external_grids(), 'P', 'Country')
+            yci, columns = self.get_collection_attr_series(self.grid.get_current_injections(), 'Ir', 'Country')
+            ysh, columns = self.get_collection_attr_series(self.grid.get_shunts() + self.grid.get_controllable_shunts(),
+                                                           'G', 'Country')
 
-            y = yg - yl
+            y = yg - yl - ye - yci - ysh
 
             return ResultsTable(data=y,
                                 index=pd.to_datetime(self.grid.time_profile),

@@ -578,3 +578,19 @@ for node=0 to node_number:
     end-if
 end-for
 ```
+
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+
+## Registered Result Properties
+
+### `NodeGroupsResults` registered properties
+
+The node-groups result stores the clustering inputs and resulting node groups.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `X_train` | `Mat` | Training matrix used to compute the node groups. |
+| `sigma` | `float` | Sigma value used by the node grouping algorithm. |
+| `groups_by_name` | `list` | Node groups expressed with bus names. |
+| `groups_by_index` | `list` | Node groups expressed with bus indices. |
+<!-- END RESULTS REGISTERED PROPERTIES -->

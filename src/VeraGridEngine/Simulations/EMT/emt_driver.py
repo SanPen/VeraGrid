@@ -6,7 +6,7 @@
 import numpy as np
 import pandas as pd
 
-from VeraGridEngine import EmtSolverTypes
+from VeraGridEngine.enumerations import EmtSolverTypes
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Simulations.driver_template import DriverTemplate
 from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
@@ -17,7 +17,7 @@ from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import EmtProblemDa
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results_3ph import PowerFlowResults3Ph
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
 from VeraGridEngine.Utils.Symbolic.diagnostic import NewtonDiagnosticsConfig
-from VeraGridEngine.IO.fmu.importer import build_emt_boundary_updater
+from VeraGridEngine.IO.fmu.importer.emt_boundary import build_emt_boundary_updater
 from VeraGridEngine.Devices.Events.emt_events_group import EmtEventsGroup
 from VeraGridEngine.basic_structures import Vec, StrVec
 from VeraGridEngine.Templates.Emt.bus_emt_template import get_bus_emt_template
@@ -176,7 +176,9 @@ class EmtSimulationDriver(DriverTemplate):
             )
 
             boundary_updater = build_emt_boundary_updater(problem)
-            t, y, dy = solver.simulate(boundary_updater=boundary_updater)
+            # t, y, dy = solver.simulate(boundary_updater=boundary_updater)
+            #uncomment when convergence and well initialized is reported
+            t, y, dy, well_initialized, converged = solver.simulate(boundary_updater=boundary_updater)
 
             print(f"Event group {emt_events_group} successfully simulated.")
             self.report_text(
@@ -190,5 +192,4 @@ class EmtSimulationDriver(DriverTemplate):
             self.progress_signal.emit(90)
 
         self.progress_signal.emit(100)
-
 

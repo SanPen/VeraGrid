@@ -275,6 +275,8 @@ def compute_atc_list(br_idx: IntVec, contingency_br_idx: IntVec, lodf: Mat, alph
 
 
 class AvailableTransferCapacityResults(ResultsTemplate):
+    LOCAL_RESULTS_DECLARATIONS = tuple()
+
     __slots__ = (
         "branch_names",
         "bus_names",

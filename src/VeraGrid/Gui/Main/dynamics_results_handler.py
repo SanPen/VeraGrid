@@ -522,18 +522,15 @@ class DynamicsResultsHandler:
         self.drag_mime_type: str = "application/x-veragrid-dynamics-var"
 
         # Group-name to RMS-group-index mapping is precomputed because plotting needs constant-time access.
-        if type(self.results) == RmsResults:
-            self.group_idx: Dict[str, int] = {str(gr): i for i, gr in enumerate(self.results.rms_events_group_names)}
-        elif type(self.results) == EmtResults:
-            self.group_idx: Dict[str, int] = {str(gr): i for i, gr in enumerate(self.results.emt_events_group_names)}
+        self.group_idx: Dict[str, int] = self._build_group_idx(results=self.results)
 
         # The hierarchical dictionary is the canonical source used to build the device tree.
         self.tree_data: Dict[DeviceType, Dict[ALL_DEV_TYPES, List[Var]]] = self.results.get_devices_dict_tree()
 
         # The device tree model is the source tree for the left-hand dynamics browser.
-        self.tree_model: DynamicsDeviceTreeModel = build_dynamics_tree_model(tree_data=self.tree_data,
-                                                                             var_role=self.var_role,
-                                                                             mime_type=self.drag_mime_type)
+        self.tree_model: DynamicsDeviceTreeModel|None = build_dynamics_tree_model(tree_data=self.tree_data,
+                                                                                  var_role=self.var_role,
+                                                                                  mime_type=self.drag_mime_type)
 
         # The proxy model owns the reversible filtering state used by the device tree view.
         self.proxy_model: QtCore.QSortFilterProxyModel = QtCore.QSortFilterProxyModel()
@@ -630,7 +627,6 @@ class DynamicsResultsHandler:
     def get_plot_group_name_from_index(self, index: QtCore.QModelIndex) -> str | None:
         """
         Get the plot-group name represented by a plots-tree index.
-
         :param index: Index from the plots tree.
         :return: Group name, or ``None`` when the index does not belong to any group.
         """
@@ -883,6 +879,8 @@ class DynamicsResultsHandler:
             else:
                 return False
 
+
+
     def get_data_from_plot_index(self, index: QtCore.QModelIndex, rms_group_name: str) -> ResultsModel | None:
         """
 
@@ -919,3 +917,123 @@ class DynamicsResultsHandler:
                 return None
         else:
             return None
+
+    def _build_group_idx(self, results: RmsResults | EmtResults) -> Dict[str, int]:
+        """
+        Build the event-group-name to index mapping for the given results object.
+        """
+        if type(results) == RmsResults:
+            return {str(gr): i for i, gr in enumerate(results.rms_events_group_names)}
+        elif type(results) == EmtResults:
+            return {str(gr): i for i, gr in enumerate(results.emt_events_group_names)}
+        else:
+            raise Exception("Unsupported dynamics results type")
+
+    def _snapshot_plot_groups(self) -> List[tuple[str, List[int]]]:
+        """
+        Snapshot current plot groups using variable uid references.
+
+        :return: List of tuples (group_name, [var_uid_1, var_uid_2, ...]).
+        """
+        snapshot: List[tuple[str, List[int]]] = list()
+
+        group: DynamicsPlotGroup
+        for group in self.plot_groups.get_groups():
+            var_uids: List[int] = [var.uid for var in group.get_vars()]
+            snapshot.append((group.get_name(), var_uids))
+
+        return snapshot
+
+    def _restore_plot_groups_from_snapshot(self, snapshot: List[tuple[str, List[int]]]) -> None:
+        """
+        Restore plot groups from a uid snapshot using the current results object.
+
+        :param snapshot: Plot-group snapshot created with _snapshot_plot_groups().
+        :return: Nothing.
+        """
+        restored_plot_groups = DynamicsPlotGroups()
+
+        group_name: str
+        var_uids: List[int]
+        for group_name, var_uids in snapshot:
+            created: bool = restored_plot_groups.create_group(name=group_name)
+            if created:
+                group: DynamicsPlotGroup | None = restored_plot_groups.get_group(name=group_name)
+                if group is not None:
+                    var_uid: int
+                    for var_uid in var_uids:
+                        variable: Var | None = self.results.get_var(uid=var_uid)
+                        if variable is not None:
+                            group.add_var(variable=variable)
+
+        self.plot_groups = restored_plot_groups
+
+    def update_results(self, results: RmsResults | EmtResults) -> None:
+        """
+        Replace the underlying results object while preserving dynamic-plot definitions.
+
+        This method assumes that vars, diff_vars and params are compatible with the
+        current handler. Compatibility must be checked before calling it.
+
+        :param results: New RMS/EMT results for the same study type.
+        :return: Nothing.
+        """
+        plot_groups_snapshot: List[tuple[str, List[int]]] = self._snapshot_plot_groups()
+
+        self.results = results
+        self.group_idx = self._build_group_idx(results=self.results)
+
+        self.tree_data = self.results.get_devices_dict_tree()
+        self.tree_model = build_dynamics_tree_model(
+            tree_data=self.tree_data,
+            var_role=self.var_role,
+            mime_type=self.drag_mime_type
+        )
+        self.proxy_model.setSourceModel(self.tree_model)
+
+        self._restore_plot_groups_from_snapshot(snapshot=plot_groups_snapshot)
+        self.rebuild_plots_model()
+
+    def _var_signature(self, var: Var) -> str:
+        """
+        Build a stable comparison signature for one variable.
+
+        :param var: Variable object.
+        :return: Tuple used to compare variables across result objects.
+        """
+        return str(var.name)
+
+    def _vars_signature(self, variables: List[Var]) -> List[str]:
+        """
+        Build comparison signatures for a list of variables.
+
+        :param variables: Variable list.
+        :return: List of signatures preserving order.
+        """
+        return [self._var_signature(var=v) for v in variables]
+
+    def can_reuse_with_results(self, results: RmsResults | EmtResults) -> bool:
+        """
+        Check whether the current plot definitions can be reused with the new results.
+
+        Reuse is allowed only when vars, diff_vars and params match exactly.
+
+        :param results: New results object.
+        :return: True if plots can be safely reused, False otherwise.
+        """
+        if type(self.results) != type(results):
+            return False
+
+        current_vars_signature = self._vars_signature(self.results.variables)
+        new_vars_signature = self._vars_signature(results.variables)
+
+        if current_vars_signature != new_vars_signature:
+            return False
+
+        if type(results) == EmtResults: # verify also the derivatives
+            current_diff_vars_signature = self._vars_signature(self.results.diff_variables)
+            new_diff_vars_signature = self._vars_signature(results.diff_variables)
+            if current_diff_vars_signature != new_diff_vars_signature:
+                return False
+
+        return True

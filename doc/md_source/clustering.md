@@ -15,6 +15,21 @@ to 8760 time stamps afterward using the clustering information.
 The clustering activation button is next to the clustering 
 run button in the simulations buttons ribbon or the simulations menu.
 
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+
+## Registered Result Properties
+
+### `ClusteringResults` registered properties
+
+The clustering result stores the representative time-step selection used by time-series reductions.
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `time_indices` | `IntVec` | Time indices represented by the result object. |
+| `sampled_probabilities` | `Vec` | Probability assigned to each sampled or clustered time step. |
+| `original_sample_idx` | `IntVec` | Map from expanded time steps to the selected clustered samples. |
+<!-- END RESULTS REGISTERED PROPERTIES -->
+
 ## API
 
 The following is an example of how to use the clustering in

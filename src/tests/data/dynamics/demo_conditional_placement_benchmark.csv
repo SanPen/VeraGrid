@@ -1,15 +1,15 @@
 case_label,plot_title,time_s,state_x,active_branch,newton_iterations,worst_step_time_s,newton_iteration,worst_step_metric_value
 ifelse inside state_eq,State trajectory near the discontinuity,0.0,0.0,,,,,
 ifelse inside state_eq,State trajectory near the discontinuity,0.001,0.5,,,,,
-ifelse inside state_eq,State trajectory near the discontinuity,0.002,0.5000000696917194,,,,,
-ifelse inside state_eq,State trajectory near the discontinuity,0.003,0.5000000696917194,,,,,
-ifelse inside state_eq,State trajectory near the discontinuity,0.004,0.5000000696917145,,,,,
-ifelse inside state_eq,State trajectory near the discontinuity,0.005,0.5000000696917145,,,,,
-ifelse inside state_eq,State trajectory near the discontinuity,0.006,0.5000000696917145,,,,,
-ifelse inside state_eq,State trajectory near the discontinuity,0.007,0.5000000696917145,,,,,
-ifelse inside state_eq,State trajectory near the discontinuity,0.008,0.5000000696917145,,,,,
-ifelse inside state_eq,State trajectory near the discontinuity,0.009000000000000001,0.5000000696917145,,,,,
-ifelse inside state_eq,State trajectory near the discontinuity,0.01,0.5000000696917145,,,,,
+ifelse inside state_eq,State trajectory near the discontinuity,0.002,0.6666666666666667,,,,,
+ifelse inside state_eq,State trajectory near the discontinuity,0.003,0.6666666666666667,,,,,
+ifelse inside state_eq,State trajectory near the discontinuity,0.004,0.6666666666666667,,,,,
+ifelse inside state_eq,State trajectory near the discontinuity,0.005,0.6666666666666667,,,,,
+ifelse inside state_eq,State trajectory near the discontinuity,0.006,0.6666666666666667,,,,,
+ifelse inside state_eq,State trajectory near the discontinuity,0.007,0.6666666666666667,,,,,
+ifelse inside state_eq,State trajectory near the discontinuity,0.008,0.6666666666666667,,,,,
+ifelse inside state_eq,State trajectory near the discontinuity,0.009000000000000001,0.6666666666666667,,,,,
+ifelse inside state_eq,State trajectory near the discontinuity,0.01,0.6666666666666665,,,,,
 ifelse inside state_eq,Active branch / procedural mode,0.0,,0.0,,,,
 ifelse inside state_eq,Active branch / procedural mode,0.001,,0.0,,,,
 ifelse inside state_eq,Active branch / procedural mode,0.002,,1.0,,,,
@@ -44,19 +44,19 @@ ifelse inside state_eq,||dx||_inf on the worst local step,,,,,0.002,10.0,3.38701
 ifelse inside state_eq,||dx||_inf on the worst local step,,,,,0.002,11.0,1.1290058538942975e-05
 ifelse inside state_eq,||dx||_inf on the worst local step,,,,,0.002,12.0,3.7633528463206406e-06
 ifelse inside state_eq,||dx||_inf on the worst local step,,,,,0.002,13.0,1.2544509487485793e-06
-ifelse inside state_eq,||dx||_inf on the worst local step,,,,,0.002,14.0,4.181503162182428e-07
-ifelse inside state_eq,||dx||_inf on the worst local step,,,,,0.002,15.0,1.393834387144466e-07
+ifelse inside state_eq,||dx||_inf on the worst local step,,,,,0.002,14.0,0.49999937277452566
+ifelse inside state_eq,||dx||_inf on the worst local step,,,,,0.002,15.0,0.3333333333333333
 select inside state_eq,State trajectory near the discontinuity,0.0,0.0,,,,,
 select inside state_eq,State trajectory near the discontinuity,0.001,0.5,,,,,
-select inside state_eq,State trajectory near the discontinuity,0.002,0.5000000696917194,,,,,
-select inside state_eq,State trajectory near the discontinuity,0.003,0.5000000696917194,,,,,
-select inside state_eq,State trajectory near the discontinuity,0.004,0.5000000696917145,,,,,
-select inside state_eq,State trajectory near the discontinuity,0.005,0.5000000696917145,,,,,
-select inside state_eq,State trajectory near the discontinuity,0.006,0.5000000696917145,,,,,
-select inside state_eq,State trajectory near the discontinuity,0.007,0.5000000696917145,,,,,
-select inside state_eq,State trajectory near the discontinuity,0.008,0.5000000696917145,,,,,
-select inside state_eq,State trajectory near the discontinuity,0.009000000000000001,0.5000000696917145,,,,,
-select inside state_eq,State trajectory near the discontinuity,0.01,0.5000000696917145,,,,,
+select inside state_eq,State trajectory near the discontinuity,0.002,0.6666666666666667,,,,,
+select inside state_eq,State trajectory near the discontinuity,0.003,0.6666666666666667,,,,,
+select inside state_eq,State trajectory near the discontinuity,0.004,0.6666666666666667,,,,,
+select inside state_eq,State trajectory near the discontinuity,0.005,0.6666666666666667,,,,,
+select inside state_eq,State trajectory near the discontinuity,0.006,0.6666666666666667,,,,,
+select inside state_eq,State trajectory near the discontinuity,0.007,0.6666666666666667,,,,,
+select inside state_eq,State trajectory near the discontinuity,0.008,0.6666666666666667,,,,,
+select inside state_eq,State trajectory near the discontinuity,0.009000000000000001,0.6666666666666667,,,,,
+select inside state_eq,State trajectory near the discontinuity,0.01,0.6666666666666665,,,,,
 select inside state_eq,Active branch / procedural mode,0.0,,0.0,,,,
 select inside state_eq,Active branch / procedural mode,0.001,,0.0,,,,
 select inside state_eq,Active branch / procedural mode,0.002,,1.0,,,,
@@ -91,8 +91,8 @@ select inside state_eq,||dx||_inf on the worst local step,,,,,0.002,10.0,3.38701
 select inside state_eq,||dx||_inf on the worst local step,,,,,0.002,11.0,1.1290058538942975e-05
 select inside state_eq,||dx||_inf on the worst local step,,,,,0.002,12.0,3.7633528463206406e-06
 select inside state_eq,||dx||_inf on the worst local step,,,,,0.002,13.0,1.2544509487485793e-06
-select inside state_eq,||dx||_inf on the worst local step,,,,,0.002,14.0,4.181503162182428e-07
-select inside state_eq,||dx||_inf on the worst local step,,,,,0.002,15.0,1.393834387144466e-07
+select inside state_eq,||dx||_inf on the worst local step,,,,,0.002,14.0,0.49999937277452566
+select inside state_eq,||dx||_inf on the worst local step,,,,,0.002,15.0,0.3333333333333333
 procedural mode in state_eq,State trajectory near the discontinuity,0.0,0.0,,,,,
 procedural mode in state_eq,State trajectory near the discontinuity,0.001,0.5,,,,,
 procedural mode in state_eq,State trajectory near the discontinuity,0.002,1.0,,,,,

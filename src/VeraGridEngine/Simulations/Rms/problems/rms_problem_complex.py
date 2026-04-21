@@ -8,7 +8,7 @@ import time
 import numpy as np
 import pandas as pd
 
-from VeraGridEngine import ParamPowerFlowRefferenceType
+from VeraGridEngine.enumerations import ParamPowerFlowRefferenceType
 from VeraGridEngine.Devices import MultiCircuit
 from VeraGridEngine.Utils.Symbolic.symbolic import (Var, Const, Expr, piecewise)
 from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicParamsVector, SymbolicDerivative
@@ -668,7 +668,7 @@ class RmsProblemComplex(RmsProblemTemplate):
         return self._uid2idx_vars
 
     @property
-    def get_algebraic_vars(self):
+    def algebraic_vars(self):
         return self._algebraic_vars
 
     @property
@@ -681,7 +681,7 @@ class RmsProblemComplex(RmsProblemTemplate):
         return variables
 
     @property
-    def get_state_vars(self):
+    def state_vars(self):
         return self._state_vars
 
     def get_all_vars_number(self) -> int:
@@ -709,7 +709,7 @@ class RmsProblemComplex(RmsProblemTemplate):
                 x[i] = val
         return x
 
-    def update_variable_params(self, t: float):
+    def update_variable_params(self, t: float, x_snapshot: Vec | None = None):
         """Update the variable parameters."""
         self._variable_parameters_values = self._event_params_fn(self._variable_parameters_values, t)
 

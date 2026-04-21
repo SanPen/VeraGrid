@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'solar_power_wizard_gui.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.2
+## Created by: Qt User Interface Compiler version 6.11.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -70,8 +70,8 @@ class Ui_MainWindow(object):
         self.latitudeSpinBox = QDoubleSpinBox(self.frame)
         self.latitudeSpinBox.setObjectName(u"latitudeSpinBox")
         self.latitudeSpinBox.setDecimals(6)
-        self.latitudeSpinBox.setMinimum(-9999999.000000000000000)
-        self.latitudeSpinBox.setMaximum(99999.000000000000000)
+        self.latitudeSpinBox.setMinimum(-90.000000000000000)
+        self.latitudeSpinBox.setMaximum(90.000000000000000)
 
         self.gridLayout_2.addWidget(self.latitudeSpinBox, 6, 1, 1, 2)
 
@@ -82,13 +82,14 @@ class Ui_MainWindow(object):
         self.longitudeSpinBox = QDoubleSpinBox(self.frame)
         self.longitudeSpinBox.setObjectName(u"longitudeSpinBox")
         self.longitudeSpinBox.setDecimals(6)
-        self.longitudeSpinBox.setMinimum(-9999999.000000000000000)
-        self.longitudeSpinBox.setMaximum(99999.000000000000000)
+        self.longitudeSpinBox.setMinimum(-180.000000000000000)
+        self.longitudeSpinBox.setMaximum(180.000000000000000)
 
         self.gridLayout_2.addWidget(self.longitudeSpinBox, 7, 1, 1, 2)
 
         self.powerSpinBox = QDoubleSpinBox(self.frame)
         self.powerSpinBox.setObjectName(u"powerSpinBox")
+        self.powerSpinBox.setMinimum(0.000001000000000)
         self.powerSpinBox.setMaximum(99999.000000000000000)
 
         self.gridLayout_2.addWidget(self.powerSpinBox, 8, 1, 1, 2)
@@ -167,7 +168,7 @@ class Ui_MainWindow(object):
         self.latitudeSpinBox.setSuffix(QCoreApplication.translate("MainWindow", u" deg", None))
         self.longitudeSpinBox.setSuffix(QCoreApplication.translate("MainWindow", u" deg", None))
         self.powerSpinBox.setSuffix(QCoreApplication.translate("MainWindow", u" MW", None))
-        self.label_4.setText(QCoreApplication.translate("MainWindow", u"Latutide", None))
+        self.label_4.setText(QCoreApplication.translate("MainWindow", u"Latitude", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"Power", None))
         self.label_bus.setText(QCoreApplication.translate("MainWindow", u"Bus", None))
         self.label_gen.setText(QCoreApplication.translate("MainWindow", u"Generator", None))

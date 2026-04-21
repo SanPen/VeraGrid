@@ -7,7 +7,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import matplotlib.colors as plt_colors
 
-from VeraGridEngine.Simulations.results_template import ResultsTemplate
+from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
 from VeraGridEngine.Simulations.results_table import ResultsTable
 from VeraGridEngine.basic_structures import IntVec, Vec, StrVec, Mat
 from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
@@ -15,6 +15,19 @@ from VeraGridEngine.Utils.NumericalMethods.MVRSM_mo_pareto import non_dominated_
 
 
 class InvestmentsEvaluationResults(ResultsTemplate):
+
+    LOCAL_RESULTS_DECLARATIONS = (
+        ResultsProperty(name='max_eval', tpe=int, old_names=list()),
+        ResultsProperty(name='f_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='x_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='plot_x_idx', tpe=int, old_names=list()),
+        ResultsProperty(name='plot_y_idx', tpe=int, old_names=list()),
+        ResultsProperty(name='x', tpe=Mat, old_names=list()),
+        ResultsProperty(name='f', tpe=Mat, old_names=list()),
+        ResultsProperty(name='f_best', tpe=Vec, old_names=list()),
+        ResultsProperty(name='sorting_indices', tpe=IntVec, old_names=list()),
+    )
+
     __slots__ = (
         "_max_eval",
         "f_names",
@@ -78,15 +91,6 @@ class InvestmentsEvaluationResults(ResultsTemplate):
 
         self.__eval_index: int = 0
 
-        self.register(name='max_eval', tpe=int)
-        self.register(name='f_names', tpe=StrVec)
-        self.register(name='x_names', tpe=StrVec)
-        self.register(name='plot_x_idx', tpe=int)
-        self.register(name='plot_y_idx', tpe=int)
-        self.register(name='x', tpe=Mat)
-        self.register(name='f', tpe=Mat)
-        self.register(name='f_best', tpe=Vec)
-        self.register(name='sorting_indices', tpe=IntVec)
 
     @property
     def max_eval(self) -> int:

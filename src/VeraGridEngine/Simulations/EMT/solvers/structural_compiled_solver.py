@@ -6,7 +6,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Callable, Dict, List, Set, Tuple
+from typing import Any, Callable, Dict, List, Set, Tuple, Optional
 import hashlib
 import time
 
@@ -1809,7 +1809,7 @@ class StructuralCompiledSparseADJacobian:
         if eager_machine_code:
             return _safe_njit(py_func, signature_tpe=signature_tpe, fastmath=True, cache=True)
         else:
-            return _safe_njit(py_func, signature_tpe=None, fastmath=True, cache=True)
+            return py_func
 
     def evaluate(
             self,
@@ -2284,7 +2284,7 @@ class StructuralCompiledSolver:
         grouping_s: float = time.perf_counter() - t_grouping_start
 
         if self._verbose:
-            print(f"--- [STRUCT-COMPILED] Detected {len(groups)} structural groups ---")
+            print(f"--- [STRUCT-COMPILED] Detected {len(groups)} structural groups ---", flush=True)
         else:
             pass
 
@@ -2311,9 +2311,21 @@ class StructuralCompiledSolver:
         )
         residual_use_cse: bool = True
         jacobian_use_cse: bool = True
-        eager_machine_code: bool = True
+        # Short runs should avoid paying the full Numba compilation cost up front. In those cases the
+        # generated Python kernels are fast enough and keep the structural backend usable.
+        eager_machine_code: bool = full_warmup_enabled
         kernel_specs: List[StructuralCompiledVectorKernel] = list()
         group_key_index: int = 0
+
+        if self._verbose:
+            print(
+                f"--- [STRUCT-COMPILED] Grouping ready in {grouping_s:.4f}s | "
+                f"n_vars={self._n_vars} | n_eqs={len(full_eqs)} | "
+                f"direct_residual={use_direct_residual} | warmup={self._warmup_policy.value} ---",
+                flush=True,
+            )
+        else:
+            pass
 
         t_vec_kernel_compile_start: float = time.perf_counter()
 
@@ -2329,7 +2341,7 @@ class StructuralCompiledSolver:
             if eager_machine_code:
                 compiled_residual = _safe_njit(py_func, signature_tpe=signature_tpe, fastmath=True, cache=True)
             else:
-                compiled_residual = _safe_njit(py_func, signature_tpe=None, fastmath=True, cache=True)
+                compiled_residual = py_func
         else:
             while group_key_index < len(group_keys):
                 group_key: str = group_keys[group_key_index]
@@ -2357,12 +2369,17 @@ class StructuralCompiledSolver:
                 if eager_machine_code:
                     compiled_kernel = _safe_njit(py_func, signature_tpe=signature_tpe, fastmath=True, cache=True)
                 else:
-                    compiled_kernel = _safe_njit(py_func, signature_tpe=None, fastmath=True, cache=True)
+                    compiled_kernel = py_func
                 kernel_specs.append(StructuralCompiledVectorKernel(compiled_kernel, indices, target_rows))
 
                 group_key_index += 1
 
         vec_kernel_compile_s: float = time.perf_counter() - t_vec_kernel_compile_start
+
+        if self._verbose:
+            print(f"--- [STRUCT-COMPILED] Residual kernels ready in {vec_kernel_compile_s:.4f}s ---", flush=True)
+        else:
+            pass
 
         # The residual assembler owns the reusable grouped work buffers.
         t_residual_assembler_start: float = time.perf_counter()
@@ -2371,6 +2388,11 @@ class StructuralCompiledSolver:
         else:
             self._residual_assembler = StructuralCompiledResidualAssembler(kernel_specs, backend_cache_token)
         residual_assembler_s: float = time.perf_counter() - t_residual_assembler_start
+
+        if self._verbose:
+            print(f"--- [STRUCT-COMPILED] Residual assembler ready in {residual_assembler_s:.4f}s ---", flush=True)
+        else:
+            pass
 
         # The sparse Jacobian evaluator owns the reusable CSC numeric storage.
         t_jacobian_evaluator_start: float = time.perf_counter()
@@ -2391,6 +2413,11 @@ class StructuralCompiledSolver:
             self._jacobian_data_buffer,
             self._sparse_solver_backend_provider,
         )
+
+        if self._verbose:
+            print(f"--- [STRUCT-COMPILED] Jacobian evaluator ready in {jacobian_evaluator_s:.4f}s ---", flush=True)
+        else:
+            pass
 
         # The helper kernels are always warmed because they are tiny and their
         # first-use compilation would otherwise show up as jitter inside the loop.
@@ -2425,6 +2452,16 @@ class StructuralCompiledSolver:
 
         warmup_s: float = helper_warmup_s + residual_warmup_s + jacobian_warmup_s
 
+        if self._verbose:
+            print(
+                f"--- [STRUCT-COMPILED] Warmup ready in {warmup_s:.4f}s | "
+                f"helpers={helper_warmup_s:.4f}s | residual={residual_warmup_s:.4f}s | "
+                f"jacobian={jacobian_warmup_s:.4f}s ---",
+                flush=True,
+            )
+        else:
+            pass
+
         self._vectorized_ready = True
         self._backend_warmup_done = full_warmup_enabled
 
@@ -2457,7 +2494,7 @@ class StructuralCompiledSolver:
 
         if self._verbose:
             elapsed: float = self._backend_build_stats["total_s"]
-            print(f"--- [STRUCT-COMPILED] Backend ready in {elapsed:.4f}s ---")
+            print(f"--- [STRUCT-COMPILED] Backend ready in {elapsed:.4f}s ---", flush=True)
         else:
             pass
 
@@ -2517,11 +2554,11 @@ class StructuralCompiledSolver:
 
     def simulate(
             self,
-            x0: Vec | None = None,
-            dx0: Vec | None = None,
-            params0: Vec | None = None,
+            x0: Optional[Vec] = None,
+            dx0: Optional[Vec] = None,
+            params0: Optional[Vec] = None,
             boundary_updater: EmtBoundaryUpdateProtocol | None = None,
-    ) -> Tuple[Vec, Mat, Mat]:
+    ) -> Tuple[Vec, Mat, Mat, bool, bool]:
         """
         Run the implicit EMT simulation with eager structural kernels.
 
@@ -2536,6 +2573,9 @@ class StructuralCompiledSolver:
         :return: Time vector, state trajectory and differential trajectory.
         :rtype: Tuple[Vec, Mat, Mat]
         """
+        converged: bool = True
+        well_initialized: bool = True
+
         if self._vectorized_ready:
             pass
         else:
@@ -2748,6 +2788,7 @@ class StructuralCompiledSolver:
                 else:
                     pass
 
+                substep_converged: bool = False
                 newton_index: int = 0
                 while newton_index < 15:
                     ctx: NewtonSolveContext | None = None
@@ -2764,6 +2805,7 @@ class StructuralCompiledSolver:
                     res_norm: float = _max_abs_value(self._residual_buffer)
 
                     if res_norm < 1e-6:
+                        substep_converged = True
                         break
                     else:
                         pass
@@ -2882,6 +2924,11 @@ class StructuralCompiledSolver:
                     last_res_norm = res_norm
                     newton_index += 1
 
+                if not substep_converged:
+                    converged = False
+                    if step_index == 0 and is_first_local_step:
+                        well_initialized = False
+
                 # Differential history is updated according to the selected integration rule.
                 self._last_macro_newton_iterations = int(newton_index)
 
@@ -2910,6 +2957,7 @@ class StructuralCompiledSolver:
                 x_prev[:] = x_iter
                 t_local_prev = t_curr
                 is_first_local_step = False
+
 
             y[step_index + 1, :] = x_prev
             dy[step_index + 1, :] = dx_prev
@@ -2952,4 +3000,4 @@ class StructuralCompiledSolver:
             ),
         }
 
-        return t, y, dy
+        return t, y, dy,well_initialized, converged

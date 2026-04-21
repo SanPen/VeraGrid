@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from typing import Union
 from VeraGridEngine.Simulations.results_table import ResultsTable
-from VeraGridEngine.Simulations.results_template import ResultsTemplate
+from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 from VeraGridEngine.Simulations.ContingencyAnalysis.contingencies_report import ContingencyResultsReport
 from VeraGridEngine.basic_structures import DateVec, IntVec, StrVec, Mat
@@ -19,6 +19,22 @@ class ContingencyAnalysisTimeSeriesResults(ResultsTemplate):
     """
     Contingency analysis time series results
     """
+
+    LOCAL_RESULTS_DECLARATIONS = (
+        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list()),
+        ResultsProperty(name='con_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='S', tpe=Mat, old_names=list()),
+        ResultsProperty(name='max_flows', tpe=Mat, old_names=list()),
+        ResultsProperty(name='max_loading', tpe=Mat, old_names=list()),
+        ResultsProperty(name='sum_overload', tpe=Mat, old_names=list()),
+        ResultsProperty(name='mean_overload', tpe=Mat, old_names=list()),
+        ResultsProperty(name='std_dev_overload', tpe=Mat, old_names=list()),
+        ResultsProperty(name='srap_used_power', tpe=Mat, old_names=list()),
+        ResultsProperty(name='report', tpe=ContingencyResultsReport, old_names=list()),
+    )
+
     __slots__ = (
         "nt",
         "original_time_array",
@@ -118,19 +134,6 @@ class ContingencyAnalysisTimeSeriesResults(ResultsTemplate):
 
         self.report: ContingencyResultsReport = ContingencyResultsReport()
 
-        self.register(name='branch_names', tpe=StrVec)
-        self.register(name='bus_names', tpe=StrVec)
-        self.register(name='bus_types', tpe=IntVec)
-        self.register(name='con_names', tpe=StrVec)
-
-        self.register(name='S', tpe=Mat)
-        self.register(name='max_flows', tpe=Mat)
-        self.register(name='max_loading', tpe=Mat)
-        self.register(name='sum_overload', tpe=Mat)
-        self.register(name='mean_overload', tpe=Mat)
-        self.register(name='std_dev_overload', tpe=Mat)
-        self.register(name='srap_used_power', tpe=Mat)
-        self.register(name='report', tpe=ContingencyResultsReport)
 
     @property
     def nbus(self) -> int:

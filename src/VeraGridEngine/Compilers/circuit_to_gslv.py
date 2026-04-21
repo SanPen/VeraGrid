@@ -7,7 +7,7 @@ import time
 import numpy as np
 from typing import List, Dict, Union, Tuple, TYPE_CHECKING
 
-from VeraGridEngine import ShuntControlMode
+
 from VeraGridEngine.Utils.ThirdParty.gslv.gslv_activation import (pg, build_status_dict, tap_module_control_mode_dict,
                                                                   tap_phase_control_mode_dict, hvdc_control_mode_dict,
                                                                   group_type_dict, contingency_ops_type_dict,
@@ -21,6 +21,7 @@ from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 import VeraGridEngine.Devices as dev
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
+from VeraGridEngine.enumerations import ShuntControlMode
 from VeraGridEngine.enumerations import TapModuleControl, TapPhaseControl
 from VeraGridEngine.enumerations import SolverType, OpfDispatchMode, MIPSolvers, ZonalGrouping, TimeGrouping
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
@@ -680,8 +681,8 @@ def convert_bus(elm: dev.Bus, n_time: int,
                  vmax=elm.Vmax,
                  angle_min=elm.angle_min,
                  angle_max=elm.angle_max,
-                 r_fault=elm.r_fault,
-                 x_fault=elm.x_fault,
+                 # r_fault=elm.r_fault,
+                 # x_fault=elm.x_fault,
                  active_default=elm.active,
 
                  is_slack=elm.is_slack,

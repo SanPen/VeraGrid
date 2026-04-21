@@ -5,13 +5,25 @@
 
 import numpy as np
 from VeraGridEngine.Simulations.results_table import ResultsTable
-from VeraGridEngine.Simulations.results_template import ResultsTemplate
+from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 from VeraGridEngine.basic_structures import DateVec, IntVec, StrVec, CxMat, Mat
 from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
 
 
 class LinearAnalysisTimeSeriesResults(ResultsTemplate):
+
+    LOCAL_RESULTS_DECLARATIONS = (
+        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list()),
+        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list()),
+        ResultsProperty(name='voltage', tpe=CxMat, old_names=list()),
+        ResultsProperty(name='Sf', tpe=CxMat, old_names=list()),
+        ResultsProperty(name='S', tpe=CxMat, old_names=list()),
+        ResultsProperty(name='losses', tpe=CxMat, old_names=list()),
+        ResultsProperty(name='loading', tpe=CxMat, old_names=list()),
+    )
+
     __slots__ = (
         "bus_names",
         "bus_types",
@@ -66,15 +78,6 @@ class LinearAnalysisTimeSeriesResults(ResultsTemplate):
         self.loading: Mat = np.zeros((nt, m), dtype=float)
         self.losses: CxMat = np.zeros((nt, m), dtype=float)
 
-        self.register(name='branch_names', tpe=StrVec)
-        self.register(name='bus_names', tpe=StrVec)
-        self.register(name='bus_types', tpe=IntVec)
-
-        self.register(name='voltage', tpe=CxMat)
-        self.register(name='Sf', tpe=CxMat)
-        self.register(name='S', tpe=CxMat)
-        self.register(name='losses', tpe=CxMat)
-        self.register(name='loading', tpe=CxMat)
 
     def apply_new_time_series_rates(self, nc: NumericalCircuit) -> None:
         rates = nc.Rates.T

@@ -136,7 +136,7 @@ class  PseudoTransient:
         dtau_max = self.dtau_max
         dtau_min = self.dtau_min
 
-        for i, var in enumerate(self.problem.get_algebraic_vars()):
+        for i, var in enumerate(self.problem.algebraic_vars()):
             x0[i] = 1.0 + 0.5 * np.random.rand()
 
         x0 = np.random.rand(self.problem.get_algebraic_var_number())
@@ -260,7 +260,7 @@ class  PseudoTransient:
                 print(f'failed with dtau = {dtau}')
                 raise RuntimeError(f"Max tries reached at dtau={dtau:.2e}, residual={residual:.2e}")
 
-        init_guess = {var: x_new[self.problem.uid2idx_vars[var.uid]] for var in self.problem.get_algebraic_vars()}
+        init_guess = {var: x_new[self.problem.uid2idx_vars[var.uid]] for var in self.problem.algebraic_vars()}
 
         if not plot:
             return x_new, init_guess
@@ -284,7 +284,7 @@ class  PseudoTransient:
         x_hist = np.array(x_hist)  # shape: (n_steps, n_vars)
         dx_hist = np.array(dx_hist)  # shape: (n_steps, n_vars)
 
-        nvars = len(self.problem.get_algebraic_vars())
+        nvars = len(self.problem.algebraic_vars())
         vars_per_plot = 5
         nplots = (nvars + vars_per_plot - 1) // vars_per_plot
 
@@ -300,7 +300,7 @@ class  PseudoTransient:
         for i in range(nplots):
             start = i * vars_per_plot
             end = min((i + 1) * vars_per_plot, nvars)
-            for var in self.problem.get_algebraic_vars()[start:end]:
+            for var in self.problem.algebraic_vars()[start:end]:
                 axs[i].plot(x_hist[:, self.problem.uid2idx_vars[var.uid]], label=var.name)
             axs[i].set_ylabel("Value")
             axs[i].legend(loc="best", fontsize="x-small", ncol=2, frameon=False)

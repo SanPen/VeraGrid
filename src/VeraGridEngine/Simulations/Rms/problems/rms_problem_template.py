@@ -46,10 +46,10 @@ class RmsProblemTemplate(ABC):
     def get_variable_parameter_number(self) -> int:
         return 0
 
-    def get_algebraic_vars(self) -> List:
+    def algebraic_vars(self) -> List:
         return list()
 
-    def get_state_vars(self):
+    def state_vars(self):
         return list()
 
     # def get_constant_parameters(self) -> Vec:
@@ -61,7 +61,7 @@ class RmsProblemTemplate(ABC):
     # def compute_event_params(self, parameters: Vec, time_value: float) -> Vec:
     #     raise NotImplementedError("compute_event_params")
 
-    def update_variable_params(self, t: float):
+    def update_variable_params(self, t: float, x_snapshot: Vec | None = None):
         raise NotImplementedError("update_variable_params")
 
     def get_dx(self, x: Vec, xn: Vec, dx: Vec, h: float) -> Vec:

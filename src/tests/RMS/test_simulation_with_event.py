@@ -42,7 +42,7 @@ def test_simulation_with_event():
     #########
     # retrieve reference results df
 
-    folder = os.path.join('data', 'dynamics')
+    folder = os.path.join(os.path.dirname(__file__), '..', 'data', 'dynamics')
     name = "simulation_with_event.csv"
 
     fname = os.path.join(folder, name)

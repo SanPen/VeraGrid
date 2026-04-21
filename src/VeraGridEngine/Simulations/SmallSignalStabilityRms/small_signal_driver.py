@@ -620,7 +620,7 @@ class SmallSignalStabilityRmsDriver(DriverTemplate):
                                                                        k=self.k,
                                                                        verbose=self.sss_options.verbose)
 
-        state_vars = self.problem.get_state_vars
+        state_vars = self.problem.state_vars
         self.results: SmallSignalStabilityRmsResults = SmallSignalStabilityRmsResults(
             eigenvalues=eigenvalues,
             participation_factors=participation_factors,

@@ -11,18 +11,18 @@ from VeraGridEngine.IO.fmu.exporter.config import ExportConfig as CsExportConfig
 from VeraGridEngine.IO.fmu.exporter.compat import Block, Const, Var
 from VeraGridEngine.IO.fmu.exporter_me.api import export_fmu_me
 from VeraGridEngine.IO.fmu.exporter_me.config import ExportConfig as MeExportConfig, detect_target_platform as detect_me_target_platform
-from VeraGridEngine.IO.fmu.importer import (
-    FmuImportConfig,
-    FmuMeIntegrationMethod,
-    FmuRefBinding,
-    attach_rms_fmu_cs_device,
+from VeraGridEngine.IO.fmu.importer.bindings import FmuImportConfig
+from VeraGridEngine.IO.fmu.importer.device_api import (
     attach_emt_fmu_cs_device,
-    attach_rms_fmu_me_device,
     attach_emt_fmu_me_device,
-    register_rms_fmu_cs_device,
-    register_emt_fmu_cs_device,
-    register_rms_fmu_me_device,
+    attach_rms_fmu_cs_device,
+    attach_rms_fmu_me_device,
+)
+from VeraGridEngine.IO.fmu.importer.experimental_cs import FmuRefBinding, register_emt_fmu_cs_device, register_rms_fmu_cs_device
+from VeraGridEngine.IO.fmu.importer.experimental_me import (
+    FmuMeIntegrationMethod,
     register_emt_fmu_me_device,
+    register_rms_fmu_me_device,
 )
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory

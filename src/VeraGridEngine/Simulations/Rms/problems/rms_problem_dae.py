@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
-from typing import Dict, List, Callable, Any
+from typing import Dict, List, Callable, Any, Tuple, Set, Optional
 import time
 import numpy as np
 import pandas as pd
@@ -11,16 +11,16 @@ import scipy.sparse as sp
 from VeraGridEngine.enumerations import ParamPowerFlowRefferenceType
 from VeraGridEngine.Devices import MultiCircuit
 from VeraGridEngine.Simulations.driver_template import DummySignal
-from VeraGridEngine.Utils.Symbolic.symbolic import (Var, Const, Expr, piecewise)
+from VeraGridEngine.Utils.Symbolic.symbolic import (Var, Const, Expr, piecewise, get_expression_vars)
 from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicParamsVector, SymbolicDerivative
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic_io import block_deep_copy
-from VeraGridEngine.enumerations import VarPowerFlowRefferenceType, RmsInitializationMethod, DeviceType
+from VeraGridEngine.enumerations import VarPowerFlowRefferenceType, RmsInitializationMethod
 from VeraGridEngine.basic_structures import Vec, ObjVec, BoolVec, Logger
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowResults
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
-from VeraGridEngine.Utils.Symbolic.explicit_initialization_symbolic import init_explicit_common, \
-    build_rms_single_equation_compiler
+from VeraGridEngine.Utils.Symbolic.explicit_initialization_symbolic import (init_explicit_common,
+    build_rms_single_equation_compiler)
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_template import RmsProblemTemplate
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.Devices.Substation.bus import Bus
@@ -40,6 +40,7 @@ from VeraGridEngine.IO.fmu.importer.experimental_me import (
     initialize_rms_fmu_me_devices,
     register_rms_fmu_me_device,
 )
+from VeraGridEngine.Utils.procedural_logic import BlockProceduralLogicUpdater
 
 
 def _tic():
@@ -48,6 +49,38 @@ def _tic():
 
 def _toc(t0):
     return time.perf_counter() - t0
+
+
+def _is_time_aligned(t_curr: float, event_time: float) -> bool:
+    """
+    Return whether ``t_curr`` is aligned with ``event_time`` within numeric tolerance.
+    """
+    time_tol = 10.0 * np.finfo(np.float64).eps * max(1.0, abs(event_time))
+    return bool(abs(t_curr - event_time) <= time_tol)
+
+
+def _get_next_forced_mode_event_time(
+    scheduled_mode_events: Dict[int, List[Tuple[float, float, bool]]],
+    t_prev: float,
+    t_target: float,
+) -> Optional[float]:
+    """
+    Return the earliest forced-alignment mode event time in ``(t_prev, t_target]``.
+
+    :param scheduled_mode_events: Mapping uid -> sorted list of (time, value, force_step_alignment).
+    :param t_prev: Previous local solver time.
+    :param t_target: Nominal macro target time.
+    :return: Earliest forced event time or ``None``.
+    """
+    next_time: Optional[float] = None
+
+    for _, event_list in scheduled_mode_events.items():
+        for event_time, _, force_step_alignment in event_list:
+            if force_step_alignment and (t_prev < event_time <= t_target):
+                if next_time is None or event_time < next_time:
+                    next_time = event_time
+
+    return next_time
 
 
 def setP(P: ObjVec, P_used: BoolVec, k: int, val: object):
@@ -134,6 +167,25 @@ class RmsProblemDae(RmsProblemTemplate):
         self._event_parameters_eqs: List[Expr | Const] = list()
         self._constant_parameters: List[Var] = list()
         self._parameters_values: List[Const] = list()
+
+        self._runtime_all_parameters_source: List[Var] = list()
+        self._runtime_all_eqs_source: List[Expr | Const] = list()
+        self._runtime_continuous_parameters: List[Var] = list()
+        self._runtime_mode_parameters: List[Var] = list()
+        self._runtime_continuous_eqs: List[Expr | Const] = list()
+        self._runtime_mode_eqs: List[Expr | Const] = list()
+        self._event_parameter_device_idtags: Dict[int, str] = dict()
+        self._runtime_all_eqs_source0: List[Expr | Const] = list()
+        self._runtime_continuous_slice: slice = slice(0, 0)
+        self._runtime_mode_slice: slice = slice(0, 0)
+        self._continuous_event_parameter_uids: Set[int] = set()
+        self._discrete_event_parameter_uids: Set[int] = set()
+        self._scheduled_mode_events: Dict[int, List[Tuple[float, float, bool]]] = dict()
+        self._mode_event_cursor: Dict[int, int] = dict()
+        self._active_events_group: RmsEventsGroup | None = None
+        self._mode_runtime_expression_by_uid: Dict[int, Expr | Const] = dict()
+        self._mode_runtime_initialized_uids: Set[int] = set()
+        self._procedural_logic_updater: BlockProceduralLogicUpdater | None = None
 
         # function pointers
         self._derivative_fn: SymbolicDerivative | None = None
@@ -242,16 +294,23 @@ class RmsProblemDae(RmsProblemTemplate):
                                       device=elm.name)
             else:
                 elm.rms_model.unify_blocks()
-                # Todo: change unify_blocks for recursivity across blocks
-
                 # get parameters from api object
-                elm.rms_model.parameters[elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.g]] = Const(
-                    float(elm.R / (elm.R ** 2 + elm.X ** 2))
-                )
-                elm.rms_model.parameters[elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.b]] = Const(
-                    float(-elm.X / (elm.R ** 2 + elm.X ** 2))
-                )
-                elm.rms_model.parameters[elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.bsh]] = Const(elm.B)
+                if ParamPowerFlowRefferenceType.g in elm.rms_model.api_obj_mapping:
+                    elm.rms_model.parameters[
+                        elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.g]] = Const(
+                        float(elm.R / (elm.R ** 2 + elm.X ** 2)))
+                if ParamPowerFlowRefferenceType.b in elm.rms_model.api_obj_mapping:
+                    elm.rms_model.parameters[
+                        elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.b]] = Const(
+                        float(-elm.X / (elm.R ** 2 + elm.X ** 2)))
+                if ParamPowerFlowRefferenceType.bsh in elm.rms_model.api_obj_mapping:
+                    elm.rms_model.parameters[
+                        elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.bsh]] = Const(elm.B)
+                if ParamPowerFlowRefferenceType.r in elm.rms_model.api_obj_mapping:
+                    elm.rms_model.parameters[
+                        elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.r]] = Const(elm.R)
+                if ParamPowerFlowRefferenceType.l in elm.rms_model.api_obj_mapping:
+                    elm.rms_model.parameters[ elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.l]] = Const(elm.X)
 
                 # get variables from bus
                 # if elm.bus_from.rms_model.empty():
@@ -262,10 +321,18 @@ class RmsProblemDae(RmsProblemTemplate):
                 Vmf, Vaf = get_bus_rms_algebraic_vars(elm.bus_from.rms_model)
                 Vmt, Vat = get_bus_rms_algebraic_vars(elm.bus_to.rms_model)
 
-                elm.rms_model.update_model(elm.rms_model.external_mapping[VarPowerFlowRefferenceType.Vmf], Vmf)
-                elm.rms_model.update_model(elm.rms_model.external_mapping[VarPowerFlowRefferenceType.Vaf], Vaf)
-                elm.rms_model.update_model(elm.rms_model.external_mapping[VarPowerFlowRefferenceType.Vmt], Vmt)
-                elm.rms_model.update_model(elm.rms_model.external_mapping[VarPowerFlowRefferenceType.Vat], Vat)
+                if Vmf is not None and VarPowerFlowRefferenceType.Vmf in elm.rms_model.external_mapping:
+                    elm.rms_model.update_model(
+                        elm.rms_model.external_mapping[VarPowerFlowRefferenceType.Vmf], Vmf)
+                if Vaf is not None and VarPowerFlowRefferenceType.Vaf in elm.rms_model.external_mapping:
+                    elm.rms_model.update_model(
+                        elm.rms_model.external_mapping[VarPowerFlowRefferenceType.Vaf], Vaf)
+                if Vmt is not None and VarPowerFlowRefferenceType.Vmt in elm.rms_model.external_mapping:
+                    elm.rms_model.update_model(
+                        elm.rms_model.external_mapping[VarPowerFlowRefferenceType.Vmt], Vmt)
+                if Vat is not None and VarPowerFlowRefferenceType.Vat in elm.rms_model.external_mapping:
+                    elm.rms_model.update_model(
+                        elm.rms_model.external_mapping[VarPowerFlowRefferenceType.Vat], Vat)
 
                 self.add_variables_to_compilation_dicts(elm, elm.rms_model)
                 register_rms_fmu_cs_device(self, elm, elm.rms_model)
@@ -283,6 +350,24 @@ class RmsProblemDae(RmsProblemTemplate):
                 branch_bus_q[f_idx] += self.Sf[branch_num].imag
                 branch_bus_p[t_idx] += self.St[branch_num].real
                 branch_bus_q[t_idx] += self.St[branch_num].imag
+
+                if VarPowerFlowRefferenceType.If_dc in elm.rms_model.external_mapping and Vmf is not None:
+                    if Vmf.uid in self.uid2idx_vars:
+                        vmf_idx = self.uid2idx_vars[Vmf.uid]
+                        if vmf_idx in self.init_guess:
+                            vmf0 = self.init_guess[vmf_idx]
+                        else:
+                            vmf0 = 1.0
+                    else:
+                        vmf_idx = None
+                        vmf0 = 1.0
+
+                    if abs(vmf0) > 1e-9:
+                        self.set_init_guess(
+                            elm.rms_model,
+                            VarPowerFlowRefferenceType.If_dc,
+                            self.Sf[branch_num].real / vmf0,
+                        )
 
                 # Run explicit initialization for branches to solve algebraic equations
                 if isinstance(elm, Transformer2W):
@@ -351,9 +436,14 @@ class RmsProblemDae(RmsProblemTemplate):
 
                 setP(P, P_used, f, -elm.rms_model.E(VarPowerFlowRefferenceType.Pf))
                 setP(P, P_used, t, -elm.rms_model.E(VarPowerFlowRefferenceType.Pt))
-                setQ(Q, Q_used, f, -elm.rms_model.E(VarPowerFlowRefferenceType.Qf))
-                setQ(Q, Q_used, t, -elm.rms_model.E(VarPowerFlowRefferenceType.Qt))
-
+                if not elm.bus_from.is_dc and VarPowerFlowRefferenceType.Qf in elm.rms_model.external_mapping:
+                    setQ(Q, Q_used, f, -elm.rms_model.E(VarPowerFlowRefferenceType.Qf))
+                else:
+                    pass
+                if not elm.bus_to.is_dc and VarPowerFlowRefferenceType.Qt in elm.rms_model.external_mapping:
+                    setQ(Q, Q_used, t, -elm.rms_model.E(VarPowerFlowRefferenceType.Qt))
+                else:
+                    pass
         # Populating VSCs init guess
         for i, elm in enumerate(self.grid.get_vsc()):
             if elm.rms_model.empty():
@@ -367,37 +457,45 @@ class RmsProblemDae(RmsProblemTemplate):
                 # mdl.unify_blocks()
 
                 # get parameters from api object
-                elm.rms_model.parameters[elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.alpha1]] = Const(
-                    elm.alpha1)
-                elm.rms_model.parameters[elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.alpha2]] = Const(
-                    elm.alpha2)
-                elm.rms_model.parameters[elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.alpha3]] = Const(
-                    elm.alpha3)
-
-                # We connect the vsc to its transformer
-                if elm.bus_from.is_dc:
-                    for branch_num, other_elm in enumerate(
-                            self.grid.get_branches_iter(add_vsc=False, add_hvdc=False, add_switch=True)):
-                        if other_elm.bus_to.idtag == elm.bus_to.idtag:
-                            mdl.connect([mdl.in_vars[0]], [other_elm.rms_model.out_vars[0]])
-                        else:
-                            _ = 0
-                            # Do nothing
+                if ParamPowerFlowRefferenceType.alpha1 in elm.rms_model.api_obj_mapping:
+                    elm.rms_model.parameters[elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.alpha1]] = Const(elm.alpha1)
+                if ParamPowerFlowRefferenceType.alpha2 in elm.rms_model.api_obj_mapping:
+                    elm.rms_model.parameters[elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.alpha2]] = Const(elm.alpha2)
+                if ParamPowerFlowRefferenceType.alpha3 in elm.rms_model.api_obj_mapping:
+                    elm.rms_model.parameters[elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.alpha3]] = Const(elm.alpha3)
 
                 St_vsc = self.power_flow_results.St_vsc / self.grid.Sbase
                 Sf_vsc = (self.power_flow_results.Pfn_vsc[i] + self.power_flow_results.Pfp_vsc[i]) / self.grid.Sbase
                 # fill init_guess
 
                 self.add_variables_to_compilation_dicts(elm, mdl)
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pf, Sf_vsc)
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pt, St_vsc[i].real)
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Qt, St_vsc[i].imag)
-
                 f = bus_dict[elm.bus_from]
                 t = bus_dict[elm.bus_to]
+                pt_init = St_vsc[i].real
+                qt_init = St_vsc[i].imag
+                vm_t = np.abs(self.power_flow_results.voltage[t])
+                im_init = np.sqrt(pt_init * pt_init + qt_init * qt_init) / (vm_t + 1e-12)
+
+                if  i < len(self.power_flow_results.It_vsc):
+                    it_mag = np.abs(self.power_flow_results.It_vsc[i]) / self.grid.Sbase
+                    if np.isfinite(it_mag) and it_mag > 0.0:
+                        im_init = it_mag
+
+                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pf, Sf_vsc)
+                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pt, pt_init)
+                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Qt, qt_init)
+                if VarPowerFlowRefferenceType.Im in mdl.external_mapping:
+                    im_init = float(np.abs(self.power_flow_results.It_vsc[i]) / self.grid.Sbase)
+                    self.set_init_guess(mdl, VarPowerFlowRefferenceType.Im, im_init)
+                else:
+                    pass
+
                 setP(P, P_used, f, -mdl.E(VarPowerFlowRefferenceType.Pf))
                 setP(P, P_used, t, -mdl.E(VarPowerFlowRefferenceType.Pt))
-                # setQ(Q, Q_used, t, -mdl.E(VarPowerFlowRefferenceType.Qt))
+                if VarPowerFlowRefferenceType.Qt in mdl.external_mapping and not elm.bus_to.is_dc:
+                    setQ(Q, Q_used, t, -mdl.E(VarPowerFlowRefferenceType.Qt))
+                else:
+                    pass
                 self.sys_block.add(mdl)
 
         # Populating HVDC init guess (similar to VSCs)
@@ -522,7 +620,7 @@ class RmsProblemDae(RmsProblemTemplate):
 
             if dev.idtag in gen_idx_map and dev.bus.is_slack:
                 slack_gen_count[bidx] += 1
-                snom = float(getattr(dev, "Snom", 0.0))
+                snom = dev.Snom
                 if snom <= 0.0:
                     snom = 1.0
                 slack_gen_snom[bidx] += snom
@@ -593,7 +691,7 @@ class RmsProblemDae(RmsProblemTemplate):
                     Vbus = self.power_flow_results.voltage[bus_index]
                     if elm.idtag in gen_idx_map:
                         if elm.bus.is_slack and remaining_slack_gen[bus_index] > 0:
-                            elm_snom = float(getattr(elm, "Snom", 0.0))
+                            elm_snom = float(elm.Snom)
                             if elm_snom <= 0.0:
                                 elm_snom = 1.0
 
@@ -742,6 +840,20 @@ class RmsProblemDae(RmsProblemTemplate):
         if self.progress_signal is not None:
             self.progress_signal.emit(10)
 
+        event_eq_by_uid: Dict[int, Expr | Const] = {
+            ep.uid: eq for ep, eq in zip(self._variable_parameters, self._event_parameters_eqs0)
+        }
+        for i, ep in enumerate(self._runtime_all_parameters_source):
+            if ep.uid in self._discrete_event_parameter_uids:
+                continue
+            runtime_eq = self._runtime_all_eqs_source[i]
+            if isinstance(runtime_eq, Const) and runtime_eq.value is None and ep.uid in event_eq_by_uid:
+                self._runtime_all_eqs_source[i] = event_eq_by_uid[ep.uid]
+
+        for i, eq in enumerate(self._runtime_all_eqs_source):
+            if eq is None or (isinstance(eq, Const) and eq.value is None):
+                raise Exception(f"Runtime event parameter {self._runtime_all_parameters_source[i]} has None Value")
+
         # add the nodal balance equations
         ac_virtual_buses = [elm.bus_to.idtag for elm in grid.get_vsc()]
         for i, elm in enumerate(self.grid.buses):
@@ -766,6 +878,11 @@ class RmsProblemDae(RmsProblemTemplate):
         self._event_parameters_eqs0.append(Const(1e-3))
         self._event_parameters_eqs0.append(Const(1))
 
+        self._runtime_all_parameters_source.append(self._dt)
+        self._runtime_all_parameters_source.append(self._delta)
+        self._runtime_all_eqs_source.append(Const(1e-3))
+        self._runtime_all_eqs_source.append(Const(1))
+
         # add these parameters, m is for variable parameters
         self._compiler_names_dict[self._dt.uid] = f"{self.VARIABLE_PARAMS_NAME}[{self._n_event_params}]"
         self._alias_names_dict[self._dt.uid] = f"{self.VARIABLE_PARAMS_NAME}_{self._n_event_params}"
@@ -776,6 +893,8 @@ class RmsProblemDae(RmsProblemTemplate):
         self._alias_names_dict[self._delta.uid] = f"{self.VARIABLE_PARAMS_NAME}_{self._n_event_params}"
         self._uid2idx_event_params[self._delta.uid] = self._n_event_params
         self._n_event_params += 1
+
+        self._runtime_all_eqs_source0 = list(self._runtime_all_eqs_source)
 
         ##################### To be removed when order is preserved in the first part #############################
 
@@ -822,28 +941,91 @@ class RmsProblemDae(RmsProblemTemplate):
         :param rms_events_group:
         :return:
         """
-        # create a copy for modification
-        self._event_parameters_eqs = self._event_parameters_eqs0.copy()
+        same_group_requested: bool
 
-        collect_events = {
-            param: {"times": [], "values": []}
-            for param in self._variable_parameters
-        }
+        if self._active_events_group is None:
+            same_group_requested = rms_events_group is None and len(self._scheduled_mode_events) > 0
+        elif rms_events_group is None:
+            same_group_requested = False
+        else:
+            same_group_requested = self._active_events_group.idtag == rms_events_group.idtag
 
-        rms_evts = [evt for evt in self.grid.rms_events if evt.group.idtag == rms_events_group.idtag]
-        for rms_evt in rms_evts:
-            collect_events[rms_evt.parameter]["times"].append(rms_evt.time)
-            collect_events[rms_evt.parameter]["values"].append(rms_evt.value)
-            # TODO: implement the function in block: apply_event
+        if same_group_requested:
+            return
 
-        for param, events_info in collect_events.items():
-            default_value = self._event_parameters_eqs[self._variable_parameters.index(param)]
-            self._event_parameters_eqs[self._variable_parameters.index(param)] = piecewise(
+        active_runtime_eqs: List[Expr | Const] = list(self._runtime_all_eqs_source0)
+
+        if self._continuous_event_parameter_uids:
+            collect_continuous_events: Dict[int, Dict[str, List[float]]] = {
+                uid: {"times": list(), "values": list()}
+                for uid in self._continuous_event_parameter_uids
+            }
+        else:
+            collect_continuous_events = dict()
+
+        scheduled_mode_events: Dict[int, List[Tuple[float, float, bool]]] = dict()
+
+        selected_events = self._get_rms_events_for_group(rms_events_group)
+
+        for rms_evt in selected_events:
+            if not isinstance(rms_evt.parameter, Var):
+                continue
+
+            if not self._event_targets_registered_parameter(rms_evt, int(rms_evt.parameter.uid)):
+                continue
+
+            parameter_uid = int(rms_evt.parameter.uid)
+
+            if parameter_uid in self._discrete_event_parameter_uids:
+                event_list = scheduled_mode_events.setdefault(parameter_uid, list())
+                try:
+                    force_step_alignment = bool(rms_evt.force_step_alignment)
+                except AttributeError:
+                    force_step_alignment = False
+
+                event_list.append(
+                    (
+                        float(rms_evt.time),
+                        float(rms_evt.value),
+                        force_step_alignment,
+                    )
+                )
+            else:
+                if parameter_uid in collect_continuous_events:
+                    collect_continuous_events[parameter_uid]["times"].append(float(rms_evt.time))
+                    collect_continuous_events[parameter_uid]["values"].append(float(rms_evt.value))
+                else:
+                    pass
+
+        for parameter_uid, info in collect_continuous_events.items():
+            if len(info["times"]) == 0:
+                continue
+
+            sort_idx = np.argsort(np.asarray(info["times"], dtype=np.float64), kind="stable")
+            t_events = np.asarray(info["times"], dtype=np.float64)[sort_idx]
+            new_values = np.asarray(info["values"], dtype=np.float64)[sort_idx]
+
+            runtime_idx = self._uid2idx_event_params[parameter_uid]
+            active_runtime_eqs[runtime_idx] = piecewise(
                 time_var=self._glob_time,
-                t_events=np.array(events_info["times"]),
-                new_values=np.array(events_info["values"]),
-                default_value=default_value
+                t_events=t_events,
+                new_values=new_values,
+                default_value=active_runtime_eqs[runtime_idx],
             )
+
+        self._runtime_all_eqs_source = active_runtime_eqs
+        self._scheduled_mode_events = scheduled_mode_events
+        self._active_events_group = rms_events_group
+
+        self._rebuild_runtime_parameter_partition()
+        self._initialize_mode_event_state()
+        self._initialize_procedural_logic_updater()
+
+        if self.get_variable_parameter_number() > 0:
+            self._variable_parameters_values = np.ones(self.get_variable_parameter_number(), dtype=np.float64)
+        else:
+            self._variable_parameters_values = np.zeros(0, dtype=np.float64)
+
 
         # --------------------------------------------------------------------------------------------------------------
         # Compile RHS and Jacobian using JIT Compiler adaptation
@@ -916,6 +1098,9 @@ class RmsProblemDae(RmsProblemTemplate):
         # TODO: think about this thing of calling twice here
         self._variable_parameters_values = self._event_params_fn(variable_parameters_init, 0.0)
         self._variable_parameters_values = self._event_params_fn(self._variable_parameters_values, 0.0)
+        self._mode_runtime_initialized_uids = set()
+        if self.get_all_vars_number() > 0 and self.get_variable_parameter_number() > 0:
+            self._initialize_latched_mode_defaults(t=0.0, x=self.get_x0())
 
         self._constant_params = np.array([const.value for const in self._parameters_values])
 
@@ -928,6 +1113,394 @@ class RmsProblemDae(RmsProblemTemplate):
 
         # we mark the problem as ready for simulation
         self.set_initialize_flag()
+
+    def get_next_forced_event_time(self, t_prev: float, t_target: float) -> Optional[float]:
+        t_mode = _get_next_forced_mode_event_time(self._scheduled_mode_events, t_prev, t_target)
+
+        t_proc: Optional[float] = None
+        if self._procedural_logic_updater is not None:
+            t_proc = self._procedural_logic_updater.get_next_forced_event_time(t_prev, t_target)
+
+        if t_mode is None:
+            return t_proc
+        if t_proc is None:
+            return t_mode
+        return min(t_mode, t_proc)
+
+    def _initialize_procedural_logic_updater(self) -> None:
+        entries: List = list()
+        for blk in self.sys_block.get_all_blocks():
+            if blk.procedural_logic:
+                entries.extend(blk.procedural_logic)
+        if len(entries) == 0:
+            self._procedural_logic_updater = None
+            return
+
+        self._procedural_logic_updater = BlockProceduralLogicUpdater(self, entries)
+
+    def _register_runtime_event_parameters(self, dev: ALL_DEV_TYPES, mdl: Block) -> None:
+        """
+        Register runtime-updatable parameters declared by the device block.
+        """
+        if not mdl.event_dict and not mdl.mode_dict:
+            return
+
+        for parameter, expression in mdl.event_dict.items():
+            init_eq_for_parameter: Expr | Const | None = None
+            for init_var, init_eq in mdl.init_eqs.items():
+                if init_var.uid == parameter.uid:
+                    init_eq_for_parameter = init_eq
+                    break
+
+            expression_for_classification: Expr | Const = expression
+            if isinstance(expression, Const) and expression.value is None and init_eq_for_parameter is not None:
+                expression_for_classification = init_eq_for_parameter
+
+            self._event_parameter_device_idtags[parameter.uid] = dev.idtag
+
+            if self._expression_references_system_vars(expression_for_classification):
+                self._discrete_event_parameter_uids.add(parameter.uid)
+            else:
+                self._continuous_event_parameter_uids.add(parameter.uid)
+
+        for parameter in mdl.mode_dict.keys():
+            self._event_parameter_device_idtags[parameter.uid] = dev.idtag
+            self._discrete_event_parameter_uids.add(parameter.uid)
+
+    def _expression_references_system_vars(self, expression: Expr | Const) -> bool:
+        if isinstance(expression, Const):
+            return False
+
+        try:
+            vars_in_expr: List[Var] = get_expression_vars(expression)
+        except Exception:
+            return False
+
+        for var in vars_in_expr:
+            if var.uid in self._uid2idx_vars:
+                return True
+
+        return False
+
+    def _event_targets_registered_parameter(self, evt: object, parameter_uid: int) -> bool:
+        """
+        Return whether the event targets a runtime parameter registered for this device.
+        """
+        if parameter_uid in self._event_parameter_device_idtags:
+            registered_device_idtag: str | None = self._event_parameter_device_idtags[parameter_uid]
+        else:
+            registered_device_idtag = None
+
+        try:
+            event_device_idtag: str = str(evt.device_idtag)
+        except Exception:
+            event_device_idtag = ""
+
+        if registered_device_idtag is None:
+            return False
+
+        if event_device_idtag == "":
+            return True
+
+        return registered_device_idtag == event_device_idtag
+
+    @property
+    def boundary_update(self):
+        return self
+
+    def _get_rms_events_for_group(self, rms_events_group: RmsEventsGroup | None) -> List[object]:
+        if rms_events_group is None:
+            return list(self.grid.rms_events)
+
+        selected_events = list()
+
+        for evt in self.grid.rms_events:
+            try:
+                if evt.group.idtag == rms_events_group.idtag:
+                    selected_events.append(evt)
+                else:
+                    pass
+            except Exception:
+                pass
+
+        return selected_events
+
+    def _rebuild_runtime_parameter_partition(self) -> None:
+        self._runtime_continuous_parameters = list()
+        self._runtime_mode_parameters = list()
+        self._runtime_continuous_eqs = list()
+        self._runtime_mode_eqs = list()
+
+        self._uid2idx_event_params = dict()
+
+        n_source: int = len(self._runtime_all_parameters_source)
+        i: int = 0
+
+        while i < n_source:
+            parameter: Var = self._runtime_all_parameters_source[i]
+            equation: Expr | Const = self._runtime_all_eqs_source[i]
+
+            if parameter.uid in self._discrete_event_parameter_uids:
+                self._runtime_mode_parameters.append(parameter)
+                self._runtime_mode_eqs.append(equation)
+            else:
+                self._runtime_continuous_parameters.append(parameter)
+                self._runtime_continuous_eqs.append(equation)
+
+            i += 1
+
+        self._runtime_continuous_slice = slice(0, len(self._runtime_continuous_parameters))
+        self._runtime_mode_slice = slice(
+            len(self._runtime_continuous_parameters),
+            len(self._runtime_continuous_parameters) + len(self._runtime_mode_parameters)
+        )
+
+        self._variable_parameters = list()
+        self._event_parameters_eqs = list()
+
+        for parameter in self._runtime_continuous_parameters:
+            self._variable_parameters.append(parameter)
+
+        for parameter in self._runtime_mode_parameters:
+            self._variable_parameters.append(parameter)
+
+        for equation in self._runtime_continuous_eqs:
+            self._event_parameters_eqs.append(equation)
+
+        for equation in self._runtime_mode_eqs:
+            self._event_parameters_eqs.append(equation)
+
+        self._n_event_params = len(self._variable_parameters)
+
+        for k, parameter in enumerate(self._variable_parameters):
+            self._uid2idx_event_params[parameter.uid] = k
+            self._compiler_names_dict[parameter.uid] = f"{self.VARIABLE_PARAMS_NAME}[{k}]"
+            self._alias_names_dict[parameter.uid] = f"{self.VARIABLE_PARAMS_NAME}_{k}"
+
+    def _initialize_mode_event_state(self) -> None:
+        self._mode_event_cursor = dict()
+
+        for uid, event_list in self._scheduled_mode_events.items():
+            event_list.sort(key=lambda evt: evt[0])
+            self._mode_event_cursor[uid] = 0
+
+    def _apply_scheduled_mode_events(self, t_curr: float, full_params: Vec) -> None:
+        for uid, event_list in self._scheduled_mode_events.items():
+            if uid in self._mode_event_cursor:
+                event_idx: int = self._mode_event_cursor[uid]
+            else:
+                event_idx = 0
+            n_events: int = len(event_list)
+
+            while event_idx < n_events:
+                event_time: float
+                event_value: float
+                force_step_alignment: bool
+                event_time, event_value, force_step_alignment = event_list[event_idx]
+
+                if t_curr < event_time:
+                    break
+
+                if uid in self._uid2idx_event_params:
+                    runtime_idx: Optional[int] = self._uid2idx_event_params[uid]
+                else:
+                    runtime_idx = None
+
+                if force_step_alignment:
+                    if _is_time_aligned(t_curr, event_time):
+                        if runtime_idx is not None:
+                            full_params[runtime_idx] = event_value
+                        else:
+                            pass
+                    else:
+                        raise RuntimeError(
+                            f"Scheduled RMS mode event at t={event_time} requires exact step alignment, "
+                            f"but current solver time is t={t_curr}."
+                        )
+                else:
+                    if runtime_idx is not None:
+                        full_params[runtime_idx] = event_value
+                    else:
+                        pass
+
+                event_idx += 1
+
+            self._mode_event_cursor[uid] = event_idx
+
+    def _evaluate_runtime_expression_with_state(self, expression: Expr | Const, params: Vec, x: Vec, t: float) -> float:
+        if isinstance(expression, Const):
+            if expression.value is None:
+                return 0.0
+            else:
+                return float(expression.value)
+
+        if isinstance(expression, Var):
+            if expression.uid == self._glob_time.uid or expression.name == self.TIME_NAME:
+                return float(t)
+
+            if expression.uid in self._uid2idx_event_params:
+                runtime_idx = self._uid2idx_event_params[expression.uid]
+            else:
+                runtime_idx = None
+            if runtime_idx is not None:
+                return float(params[runtime_idx])
+
+            if expression.uid in self._uid2idx_params:
+                const_idx = self._uid2idx_params[expression.uid]
+            else:
+                const_idx = None
+            if const_idx is not None:
+                return float(self._parameters_values[const_idx].value)
+
+            if expression.uid in self._uid2idx_vars:
+                var_idx = self._uid2idx_vars[expression.uid]
+            else:
+                var_idx = None
+            if var_idx is not None:
+                return float(x[var_idx])
+
+            return 0.0
+
+        uid_bindings: Dict[int, float] = dict()
+
+        for uid, idx in self._uid2idx_event_params.items():
+            uid_bindings[uid] = float(params[idx])
+
+        for uid, idx in self._uid2idx_params.items():
+            uid_bindings[uid] = float(self._parameters_values[idx].value)
+
+        for uid, idx in self._uid2idx_vars.items():
+            uid_bindings[uid] = float(x[idx])
+
+        uid_bindings[self._glob_time.uid] = float(t)
+
+        try:
+            return float(expression.eval_uid(uid_bindings))
+        except Exception:
+            return 0.0
+
+    def _update_dynamic_mode_defaults(self, t: float, x: Vec, params: Vec) -> None:
+        for uid, expression in self._mode_runtime_expression_by_uid.items():
+            if uid in self._scheduled_mode_events and len(self._scheduled_mode_events[uid]) > 0:
+                continue
+
+            if uid in self._mode_runtime_initialized_uids:
+                continue
+
+            if uid in self._uid2idx_event_params:
+                runtime_idx = self._uid2idx_event_params[uid]
+            else:
+                runtime_idx = None
+            if runtime_idx is None:
+                continue
+
+            params[runtime_idx] = self._evaluate_runtime_expression_with_state(expression, params, x, t)
+            self._mode_runtime_initialized_uids.add(uid)
+
+    def _initialize_latched_mode_defaults(self, t: float, x: Vec) -> None:
+        if self._variable_parameters_values is None:
+            return
+
+        self._update_dynamic_mode_defaults(
+            t=float(t),
+            x=x,
+            params=self._variable_parameters_values,
+        )
+
+    def reset_boundary_update_state(self, t0: float = 0.0) -> None:
+        if self.get_variable_parameter_number() > 0 and self._event_params_fn is not None:
+            self._variable_parameters_values = self._event_params_fn(np.ones(self.get_variable_parameter_number()), float(t0))
+            self._variable_parameters_values = self.def_event_params_fn(self._variable_parameters_values, float(t0))
+        else:
+            self._variable_parameters_values = np.zeros(0, dtype=np.float64)
+
+        self._mode_event_cursor = dict()
+        self._initialize_mode_event_state()
+        self._mode_runtime_initialized_uids = set()
+
+        if self._procedural_logic_updater is not None:
+            for logic in self._procedural_logic_updater.logic_entries:
+                logic.bind(self)
+
+        if self.get_all_vars_number() > 0 and self.get_variable_parameter_number() > 0:
+            self._initialize_latched_mode_defaults(t=float(t0), x=self.get_x0())
+
+    def def_event_params_fn(self, ev_param: Vec, t: float) -> Vec:
+        """
+        Evaluate runtime event parameter expressions while preserving mode latches.
+
+        :param ev_param: Current runtime parameter vector.
+        :param t: Simulation time.
+        :return: Updated runtime parameter vector.
+        """
+        try:
+            runtime_continuous_eqs = self._runtime_continuous_eqs
+        except AttributeError:
+            if self._event_params_fn is None:
+                return ev_param
+
+            updated = self._event_params_fn(ev_param, t)
+            updated = self._event_params_fn(updated, t)
+
+            return updated
+
+        n_continuous = len(runtime_continuous_eqs)
+
+
+        if n_continuous == 0 or self._event_params_fn is None:
+            return ev_param
+
+        try:
+            runtime_mode_slice = self._runtime_mode_slice
+        except AttributeError:
+            runtime_mode_slice = slice(0, 0)
+
+        mode_snapshot: Vec | None = None
+        if runtime_mode_slice.start != runtime_mode_slice.stop:
+            mode_snapshot = ev_param[runtime_mode_slice].copy()
+
+        updated = self._event_params_fn(ev_param, t)
+        updated = self._event_params_fn(updated, t)
+
+        if runtime_mode_slice.start == runtime_mode_slice.stop:
+            return updated
+        else:
+            assert mode_snapshot is not None
+            updated[runtime_mode_slice] = mode_snapshot
+
+            return updated
+
+    def update_variable_params(self, t: float, x_snapshot: Vec | None = None):
+        """
+        Update the variable parameters. Continuous runtime parameters are re-evaluated,
+        while retained mode parameters are left untouched unless updated by boundary
+        logic.
+
+        :param t:
+        :param x_snapshot:
+        :return:
+        """
+        if self._event_params_fn is None:
+            raise ValueError("_event_params_fn is None")
+
+        self._variable_parameters_values = self.def_event_params_fn(self._variable_parameters_values, t)
+
+        if self._block_boundary_updater is not None and x_snapshot is not None:
+            if self._constant_params is None:
+                constant_params = np.zeros(0, dtype=float)
+            else:
+                constant_params = self._constant_params
+
+            full_params = np.concatenate((self._variable_parameters_values.copy(), constant_params))
+            self._block_boundary_updater.update(float(t), x_snapshot, full_params)
+            self._variable_parameters_values[:] = full_params[:self.get_variable_parameter_number()]
+
+    def update(self, t: float, x: Vec, params: Vec) -> None:
+        self._update_dynamic_mode_defaults(t=t, x=x, params=params)
+        if self._procedural_logic_updater is not None:
+            self._procedural_logic_updater.update(t=t, x=x, params=params)
+        self._apply_scheduled_mode_events(t, params)
+        self._variable_parameters_values[:] = params[: len(self._variable_parameters)]
 
     def add_variables_to_compilation_dicts(self, elm: ALL_DEV_TYPES, mdl: Block):
 
@@ -988,27 +1561,49 @@ class RmsProblemDae(RmsProblemTemplate):
             self._n_params += 1
 
         # m is for variable parameters
-        for ep, eq in mdl.event_dict.items():
+        self._register_runtime_event_parameters(dev=elm, mdl=mdl)
+
+        def _register_event_parameter(ep: Var, eq: Expr | Const, runtime_eq: Expr | Const | None = None) -> None:
             if ep.uid in self._uid2idx_event_params:
                 raise ValueError(f"Event parameter '{ep.name}' (uid={ep.uid}) is already registered in the system. "
                                  f"Previous device may have created a duplicate event parameter.")
+
             self._compiler_names_dict[ep.uid] = f"{self.VARIABLE_PARAMS_NAME}[{self._n_event_params}]"
             self._alias_names_dict[ep.uid] = f"{self.VARIABLE_PARAMS_NAME}_{self._n_event_params}"
             self._uid2idx_event_params[ep.uid] = self._n_event_params
+
+            effective_eq: Expr | Const = eq
+            if isinstance(eq, Const) and eq.value is None:
+                init_eq_for_ep: Expr | Const | None = None
+                for init_var, init_eq in mdl.init_eqs.items():
+                    if init_var.uid == ep.uid:
+                        init_eq_for_ep = init_eq
+                        break
+                if init_eq_for_ep is not None:
+                    effective_eq = init_eq_for_ep
+
             self._variable_parameters.append(ep)
-            self._event_parameters_eqs0.append(eq)
+            self._event_parameters_eqs0.append(effective_eq)
+            self._runtime_all_parameters_source.append(ep)
+            runtime_expression: Expr | Const = effective_eq if runtime_eq is None else runtime_eq
+
+            if runtime_eq is None and ep.uid in self._discrete_event_parameter_uids:
+                if isinstance(eq, Const) and eq.value is not None:
+                    runtime_expression = Const(float(eq.value))
+                else:
+                    runtime_expression = Const(0.0)
+                    self._mode_runtime_expression_by_uid[ep.uid] = effective_eq
+
+            self._runtime_all_eqs_source.append(runtime_expression)
+            self._runtime_all_eqs_source0.append(runtime_expression)
+
             self._n_event_params += 1
 
-        for mode_var, eq in mdl.mode_dict.items():
-            if mode_var.uid in self._uid2idx_event_params:
-                raise ValueError(f"Mode parameter '{mode_var.name}' (uid={mode_var.uid}) is already registered in the system. "
-                                 f"Previous device may have created a duplicate runtime parameter.")
-            self._compiler_names_dict[mode_var.uid] = f"{self.VARIABLE_PARAMS_NAME}[{self._n_event_params}]"
-            self._alias_names_dict[mode_var.uid] = f"{self.VARIABLE_PARAMS_NAME}_{self._n_event_params}"
-            self._uid2idx_event_params[mode_var.uid] = self._n_event_params
-            self._variable_parameters.append(mode_var)
-            self._event_parameters_eqs0.append(eq)
-            self._n_event_params += 1
+        for ep, eq in mdl.event_dict.items():
+            _register_event_parameter(ep, eq)
+
+        for ep, eq in mdl.mode_dict.items():
+            _register_event_parameter(ep, eq)
 
         # l is for differential vars
         for v in mdl.diff_vars:
@@ -1090,7 +1685,10 @@ class RmsProblemDae(RmsProblemTemplate):
         :param dev: Device
         :param var: Variable
         """
-        var_list = self._vars_info.get(dev, None)
+        if dev in self._vars_info:
+            var_list = self._vars_info[dev]
+        else:
+            var_list = None
 
         if var_list is None:
             self._vars_info[dev] = [var]
@@ -1122,25 +1720,28 @@ class RmsProblemDae(RmsProblemTemplate):
 
     @property
     def uid2idx_event_params(self):
-        """
-        Return the runtime parameter position map.
-        """
-
         return self._uid2idx_event_params
 
     @property
-    def glob_time(self) -> Var:
-        """
-        Return the global time symbolic variable.
-        """
-
-        return self._glob_time
+    def uid2idx_params(self):
+        return self._uid2idx_params
 
     @property
-    def algebraic_vars(self):
+    def glob_time(self):
+        return self._glob_time
+
+    def get_parameters_values(self) -> List[Const]:
+        return self._parameters_values
+
+    @property
+    def get_algebraic_vars(self):
         """
         :return:
         """
+        return self._algebraic_vars
+
+    @property
+    def algebraic_vars(self):
         return self._algebraic_vars
 
     @property
@@ -1192,37 +1793,6 @@ class RmsProblemDae(RmsProblemTemplate):
             i = self._uid2idx_vars[uid]
             x[i] = val
         return x
-
-    def get_parameters_values(self) -> List[Const]:
-        """
-        Return the constant parameter values used by procedural logic bindings.
-        """
-
-        return self._parameters_values
-
-    def update_variable_params(self, t: float, x_snapshot: Vec | None = None):
-        """
-        Update the variable parameters
-        :param t:
-        :return:
-        """
-        if self._event_params_fn is None:
-            raise ValueError("_event_params_fn is None")
-
-        self._variable_parameters_values = self._event_params_fn(self._variable_parameters_values, t)
-
-        if self._block_boundary_updater is not None and x_snapshot is not None:
-            constant_params: Vec
-            if self._constant_params is None:
-                constant_params = np.zeros(0, dtype=float)
-            else:
-                constant_params = self._constant_params
-
-            full_params = np.concatenate((self._variable_parameters_values.copy(), constant_params))
-            self._block_boundary_updater.update(float(t), x_snapshot, full_params)
-            self._variable_parameters_values[:] = full_params[:self.get_variable_parameter_number()]
-        else:
-            pass
 
     def initialize_fmu_cs_devices(self, x_snapshot: Vec, t: float = 0.0) -> None:
         """
@@ -1305,7 +1875,6 @@ class RmsProblemDae(RmsProblemTemplate):
             close_rms_fmu_me_devices(self)
         else:
             pass
-
     def get_dx(self, x: Vec, xn: Vec, dx: Vec, h: float) -> Vec:
 
         if self._derivative_fn is None:

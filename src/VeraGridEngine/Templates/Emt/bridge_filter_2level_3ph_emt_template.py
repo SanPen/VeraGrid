@@ -101,6 +101,7 @@ def get_bridge_filter_2level_3ph_emt_template(vf: VarFactory, name: str = "bridg
         bridge_block.in_vars,
         list([
             theta_pll,
+            omega_base,
             v_cmd_d,
             v_cmd_q,
             v_cmd_0,
@@ -160,10 +161,12 @@ def get_bridge_filter_2level_3ph_emt_template(vf: VarFactory, name: str = "bridg
         name=name,
         children=list([bridge_block]),
         state_eqs=list([
-            # Each phase filter is one independent RL branch between the bridge pole and the AC system.
-            omega_base * (v_conv_a - v_A - R_f * i_A) / L_f,
-            omega_base * (v_conv_b - v_B - R_f * i_B) / L_f,
-            omega_base * (v_conv_c - v_C - R_f * i_C) / L_f,
+            # Each phase filter current is defined with the same sign convention used by the pseudo-EMT
+            # converter interface: positive current enters the AC bus from the converter branch. With
+            # that convention the RL branch dynamics are driven by ``v_bus - v_conv``.
+            omega_base * (v_A - v_conv_a - R_f * i_A) / L_f,
+            omega_base * (v_B - v_conv_b - R_f * i_B) / L_f,
+            omega_base * (v_C - v_conv_c - R_f * i_C) / L_f,
         ]),
         state_vars=list([i_A, i_B, i_C]),
         diff_vars=list([d_i_A, d_i_B, d_i_C]),

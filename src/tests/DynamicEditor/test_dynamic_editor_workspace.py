@@ -4,8 +4,8 @@ import sys
 
 from PySide6 import QtWidgets
 
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_picker import DynamicEditorPickerDialog
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_support import build_dynamic_editor_entry
+from VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine import DynamicEditorPickerDialog
+from VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine import build_dynamic_editor_entry
 from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import DynamicEditorWorkspaceManager
 from VeraGridEngine.enumerations import DynamicSimulationMode
 
@@ -62,8 +62,8 @@ def test_picker_quick_open_uses_alternate_mode_for_current_object() -> None:
     _circuit, _load, entry = _build_load_entry()
     dialog = DynamicEditorPickerDialog(entries=[entry], current_entry=entry, current_mode=DynamicSimulationMode.RMS)
 
-    assert not dialog.ui.quickOpenGroupBox.isHidden()
-    assert "EMT" in dialog.ui.quickOpenButton.text()
+    assert not dialog.quickOpenGroupBox.isHidden()
+    assert "EMT" in dialog.quickOpenButton.text()
 
     dialog._accept_quick_open()
     selection = dialog.get_selection()

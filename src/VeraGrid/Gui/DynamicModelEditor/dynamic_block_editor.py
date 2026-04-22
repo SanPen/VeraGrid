@@ -3395,8 +3395,6 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
 
     dirtyStateChanged = Signal(bool)
 
-    # block_added = Signal(object)
-
     def __init__(self,
                  var_factory: VarFactory,
                  block: Block,
@@ -4751,7 +4749,7 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
 
         current_refs = self.build_emt_injection_current_refs(self.api_object.bus)
         for reference in current_refs:
-            specs.append(ConnectionVarSpec("output", reference, f"network_conn_{reference.value}"))
+            specs.append(ConnectionVarSpec("output", reference, f"net_conn_{reference.value}_{self.api_object.name}"))
 
         return specs
 
@@ -4782,17 +4780,17 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
         safe_bus_to = self._get_safe_bus_name(self.api_object.bus_to)
 
         current_name_map_from: Dict[VarPowerFlowRefferenceType, str] = {
-            VarPowerFlowRefferenceType.if_N: f"network_conn_i_N_{safe_bus_from}",
-            VarPowerFlowRefferenceType.if_A: f"network_conn_i_A_{safe_bus_from}",
-            VarPowerFlowRefferenceType.if_B: f"network_conn_i_B_{safe_bus_from}",
-            VarPowerFlowRefferenceType.if_C: f"network_conn_i_C_{safe_bus_from}",
+            VarPowerFlowRefferenceType.if_N: f"net_conn_i_N_{safe_bus_from}_{self.api_object.name}",
+            VarPowerFlowRefferenceType.if_A: f"net_conn_i_A_{safe_bus_from}_{self.api_object.name}",
+            VarPowerFlowRefferenceType.if_B: f"net_conn_i_B_{safe_bus_from}_{self.api_object.name}",
+            VarPowerFlowRefferenceType.if_C: f"net_conn_i_C_{safe_bus_from}_{self.api_object.name}",
         }
 
         current_name_map_to: Dict[VarPowerFlowRefferenceType, str] = {
-            VarPowerFlowRefferenceType.it_N: f"network_conn_i_N_{safe_bus_to}",
-            VarPowerFlowRefferenceType.it_A: f"network_conn_i_A_{safe_bus_to}",
-            VarPowerFlowRefferenceType.it_B: f"network_conn_i_B_{safe_bus_to}",
-            VarPowerFlowRefferenceType.it_C: f"network_conn_i_C_{safe_bus_to}",
+            VarPowerFlowRefferenceType.it_N: f"net_conn_i_N_{safe_bus_to}_{self.api_object.name}",
+            VarPowerFlowRefferenceType.it_A: f"net_conn_i_A_{safe_bus_to}_{self.api_object.name}",
+            VarPowerFlowRefferenceType.it_B: f"net_conn_i_B_{safe_bus_to}_{self.api_object.name}",
+            VarPowerFlowRefferenceType.it_C: f"net_conn_i_C_{safe_bus_to}_{self.api_object.name}",
         }
 
         current_refs_from = self._build_emt_branch_current_refs(self.api_object.bus_from, "from")

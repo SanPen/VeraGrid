@@ -177,7 +177,7 @@ def GenqecBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
     ml_trig_block, u_cos, u_sin = sym_ml.trig_transform(vfactory, inputs[1] - delta)
 
     # We call ml_postive_part to ge (Psi_ag-B)^+ := max(Psi_ag-B, 0)
-    ml_positive_part, Psi_plus, Psi_minus = sym_ml.ml_positive_part(vfactory, Psi_ag - B)
+    ml_positive_part, Psi_plus, Psi_minus = sym_ml.ml_positive_part(vfactory, Psi_ag - B, name='Psi_plus')
 
     templ.block = Block(
         state_eqs=[

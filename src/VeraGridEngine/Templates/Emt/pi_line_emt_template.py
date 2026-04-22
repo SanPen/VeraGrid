@@ -3,7 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Any, Dict
+from typing import Dict
 import numpy as np
 
 from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType, ParamPowerFlowRefferenceType, EmtLineTypes
@@ -187,8 +187,8 @@ def get_pi_line_emt_template(vf: VarFactory,
     vf_vars = [vf.add_var(name=f"vf_{ph_label}_{name}", reference=vf_keys[ph_label]) for ph_label in active_ph]
     vt_vars = [vf.add_var(name=f"vt_{ph_label}_{name}", reference=vt_keys[ph_label]) for ph_label in active_ph]
 
-    d_vf_vars = [vf.add_diff_var(name=f"d_vf_{ph_label}_{name}", base_var=v_base) for ph_label, v_base in zip(active_ph, vf_vars)]
-    d_vt_vars = [vf.add_diff_var(name=f"d_vt_{ph_label}_{name}", base_var=v_base) for ph_label, v_base in zip(active_ph, vt_vars)]
+    # d_vf_vars = [vf.add_diff_var(name=f"d_vf_{ph_label}_{name}", base_var=v_base) for ph_label, v_base in zip(active_ph, vf_vars)]
+    # d_vt_vars = [vf.add_diff_var(name=f"d_vt_{ph_label}_{name}", base_var=v_base) for ph_label, v_base in zip(active_ph, vt_vars)]
 
 
     # -----------------------------
@@ -291,8 +291,8 @@ def get_pi_line_emt_template(vf: VarFactory,
         mapping[vt_keys[phase_label]] = vt_vars[k]
         mapping[if_keys[phase_label]] = if_act[k]
         mapping[it_keys[phase_label]] = it_act[k]
-        mapping[d_vf_keys[phase_label]] = d_vf_vars[k]
-        mapping[d_vt_keys[phase_label]] = d_vt_vars[k]
+        # mapping[d_vf_keys[phase_label]] = d_vf_vars[k]
+        # mapping[d_vt_keys[phase_label]] = d_vt_vars[k]
 
     templ.block.external_mapping = mapping
 

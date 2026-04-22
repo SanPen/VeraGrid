@@ -12,6 +12,7 @@ from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var
+from VeraGridEngine.Utils.procedural_logic import ThreePhaseCarrierPwmLogic
 from VeraGridEngine.enumerations import DeviceType
 
 
@@ -57,8 +58,6 @@ def get_bridge_2level_3ph_emt_template(vf: VarFactory, name: str = "bridge_2leve
     :param name: Symbolic model name.
     :return: Standalone EMT bridge template.
     """
-    from VeraGridEngine.Utils.procedural_logic import ThreePhaseCarrierPwmLogic
-
     templ: EmtModelTemplate = EmtModelTemplate()
     templ.tpe = DeviceType.DynamicModelHostDevice
     templ.name = name
@@ -68,6 +67,7 @@ def get_bridge_2level_3ph_emt_template(vf: VarFactory, name: str = "bridge_2leve
     # External inputs.
     # ------------------------------------------------------------------
     theta_pll: Var = vf.add_var(name=f"theta_pll_in_{name}")
+    omega_base: Var = vf.add_var(name=f"omega_base_in_{name}")
     v_cmd_d: Var = vf.add_var(name=f"v_cmd_d_in_{name}")
     v_cmd_q: Var = vf.add_var(name=f"v_cmd_q_in_{name}")
     v_cmd_0: Var = vf.add_var(name=f"v_cmd_0_in_{name}")
@@ -81,9 +81,17 @@ def get_bridge_2level_3ph_emt_template(vf: VarFactory, name: str = "bridge_2leve
     # ------------------------------------------------------------------
     # Internal modulation and gate variables.
     # ------------------------------------------------------------------
+    v_ref_a_raw: Var = vf.add_var(name=f"v_ref_a_raw_{name}")
+    v_ref_b_raw: Var = vf.add_var(name=f"v_ref_b_raw_{name}")
+    v_ref_c_raw: Var = vf.add_var(name=f"v_ref_c_raw_{name}")
+    v_ref_common_inj: Var = vf.add_var(name=f"v_ref_common_inj_{name}")
     v_ref_a: Var = vf.add_var(name=f"v_ref_a_{name}")
     v_ref_b: Var = vf.add_var(name=f"v_ref_b_{name}")
     v_ref_c: Var = vf.add_var(name=f"v_ref_c_{name}")
+    theta_pwm_sample: Var = vf.add_var(name=f"theta_pwm_sample_{name}")
+    v_ref_a_pwm: Var = vf.add_var(name=f"v_ref_a_pwm_{name}")
+    v_ref_b_pwm: Var = vf.add_var(name=f"v_ref_b_pwm_{name}")
+    v_ref_c_pwm: Var = vf.add_var(name=f"v_ref_c_pwm_{name}")
     m_a_u: Var = vf.add_var(name=f"m_a_u_{name}")
     m_b_u: Var = vf.add_var(name=f"m_b_u_{name}")
     m_c_u: Var = vf.add_var(name=f"m_c_u_{name}")
@@ -122,6 +130,7 @@ def get_bridge_2level_3ph_emt_template(vf: VarFactory, name: str = "bridge_2leve
     c_one: Const = Const(1.0)
     c_two: Const = Const(2.0)
     c_three: Const = Const(3.0)
+    c_pi: Const = Const(np.pi)
     c13: Const = Const(1.0 / 3.0)
     c23: Const = Const(2.0 / 3.0)
 
@@ -129,22 +138,69 @@ def get_bridge_2level_3ph_emt_template(vf: VarFactory, name: str = "bridge_2leve
     # Bridge equations.
     # ------------------------------------------------------------------
     v_dc_eff: Expr = sym.max(v_dc, vdc_floor)
-    v_mod_scale: Expr = sym.max(k_v_conv * v_dc_eff, eps)
-    v_leg_scale: Expr = Const(0.5) * v_dc_eff
 
+    # The pseudo-EMT inner loop interprets ``k_v_conv`` as the full bus-side voltage gain available
+    # from modulation and the effective converter-side transformation ratio. The switched bridge must
+    # therefore use the same full gain in both the modulation normalization and the reconstructed
+    # pole-voltage scale; otherwise the bridge fundamental becomes systematically weaker than the
+    # averaged reference that the controller was tuned against.
+    v_mod_scale: Expr = sym.max(k_v_conv * v_dc_eff, eps)
+    v_leg_scale: Expr = k_v_conv * v_dc_eff
+    pwm_sample_enable: Expr = omega_sw / sym.max(omega_sw, eps)
+    pwm_sample_phase_lead: Expr = pwm_sample_enable * omega_base * c_pi / (c_two * sym.max(omega_sw, eps))
+    theta_pwm_sample_expr: Expr = theta_pll + pwm_sample_phase_lead
+
+    v_ref_a_raw_expr: Expr
+    v_ref_b_raw_expr: Expr
+    v_ref_c_raw_expr: Expr
+    v_ref_common_inj_expr: Expr
     v_ref_a_expr: Expr
     v_ref_b_expr: Expr
     v_ref_c_expr: Expr
-    v_ref_a_expr, v_ref_b_expr, v_ref_c_expr = _inverse_dq0_to_abc_expressions(
+    v_ref_a_pwm_raw_expr: Expr
+    v_ref_b_pwm_raw_expr: Expr
+    v_ref_c_pwm_raw_expr: Expr
+    v_ref_common_inj_pwm_expr: Expr
+    v_ref_a_pwm_expr: Expr
+    v_ref_b_pwm_expr: Expr
+    v_ref_c_pwm_expr: Expr
+    v_ref_a_raw_expr, v_ref_b_raw_expr, v_ref_c_raw_expr = _inverse_dq0_to_abc_expressions(
         d_value=v_cmd_d,
         q_value=v_cmd_q,
         zero_value=v_cmd_0,
         theta_value=theta_pll,
     )
+    v_ref_a_pwm_raw_expr, v_ref_b_pwm_raw_expr, v_ref_c_pwm_raw_expr = _inverse_dq0_to_abc_expressions(
+        d_value=v_cmd_d,
+        q_value=v_cmd_q,
+        zero_value=v_cmd_0,
+        # The PWM schedule holds one sampled modulation command over the full carrier half-period.
+        # Advancing only the sampled phase reference by half that interval compensates the hold delay
+        # without perturbing the continuous averaged bridge reference used by the hybrid handover path.
+        theta_value=theta_pwm_sample_expr,
+    )
 
-    m_a_u_expr: Expr = v_ref_a_expr / v_mod_scale
-    m_b_u_expr: Expr = v_ref_b_expr / v_mod_scale
-    m_c_u_expr: Expr = v_ref_c_expr / v_mod_scale
+    # Standard zero-sequence injection improves the linear modulation range of the switched bridge.
+    # Without it the bridge saturates too early and the hybrid switched converter diverges from the
+    # physically meaningful pseudo-EMT reference under the same operating point.
+    v_ref_common_inj_expr = Const(0.5) * (
+        sym.max(sym.max(v_ref_a_raw_expr, v_ref_b_raw_expr), v_ref_c_raw_expr)
+        + sym.min(sym.min(v_ref_a_raw_expr, v_ref_b_raw_expr), v_ref_c_raw_expr)
+    )
+    v_ref_common_inj_pwm_expr = Const(0.5) * (
+        sym.max(sym.max(v_ref_a_pwm_raw_expr, v_ref_b_pwm_raw_expr), v_ref_c_pwm_raw_expr)
+        + sym.min(sym.min(v_ref_a_pwm_raw_expr, v_ref_b_pwm_raw_expr), v_ref_c_pwm_raw_expr)
+    )
+    v_ref_a_expr = v_ref_a_raw_expr - v_ref_common_inj_expr
+    v_ref_b_expr = v_ref_b_raw_expr - v_ref_common_inj_expr
+    v_ref_c_expr = v_ref_c_raw_expr - v_ref_common_inj_expr
+    v_ref_a_pwm_expr = v_ref_a_pwm_raw_expr - v_ref_common_inj_pwm_expr
+    v_ref_b_pwm_expr = v_ref_b_pwm_raw_expr - v_ref_common_inj_pwm_expr
+    v_ref_c_pwm_expr = v_ref_c_pwm_raw_expr - v_ref_common_inj_pwm_expr
+
+    m_a_u_expr: Expr = v_ref_a_pwm_expr / v_mod_scale
+    m_b_u_expr: Expr = v_ref_b_pwm_expr / v_mod_scale
+    m_c_u_expr: Expr = v_ref_c_pwm_expr / v_mod_scale
     m_a_expr: Expr = sym.hard_sat(m_a_u_expr, -m_max, m_max)
     m_b_expr: Expr = sym.hard_sat(m_b_u_expr, -m_max, m_max)
     m_c_expr: Expr = sym.hard_sat(m_c_u_expr, -m_max, m_max)
@@ -171,9 +227,17 @@ def get_bridge_2level_3ph_emt_template(vf: VarFactory, name: str = "bridge_2leve
     templ.block = Block(
         name=name,
         algebraic_eqs=list([
+            v_ref_a_raw - v_ref_a_raw_expr,
+            v_ref_b_raw - v_ref_b_raw_expr,
+            v_ref_c_raw - v_ref_c_raw_expr,
+            v_ref_common_inj - v_ref_common_inj_expr,
             v_ref_a - v_ref_a_expr,
             v_ref_b - v_ref_b_expr,
             v_ref_c - v_ref_c_expr,
+            theta_pwm_sample - theta_pwm_sample_expr,
+            v_ref_a_pwm - v_ref_a_pwm_expr,
+            v_ref_b_pwm - v_ref_b_pwm_expr,
+            v_ref_c_pwm - v_ref_c_pwm_expr,
             m_a_u - m_a_u_expr,
             m_b_u - m_b_u_expr,
             m_c_u - m_c_u_expr,
@@ -197,9 +261,17 @@ def get_bridge_2level_3ph_emt_template(vf: VarFactory, name: str = "bridge_2leve
             v_conv_0 - v_conv_0_expr,
         ]),
         algebraic_vars=list([
+            v_ref_a_raw,
+            v_ref_b_raw,
+            v_ref_c_raw,
+            v_ref_common_inj,
             v_ref_a,
             v_ref_b,
             v_ref_c,
+            theta_pwm_sample,
+            v_ref_a_pwm,
+            v_ref_b_pwm,
+            v_ref_c_pwm,
             m_a_u,
             m_b_u,
             m_c_u,
@@ -222,16 +294,31 @@ def get_bridge_2level_3ph_emt_template(vf: VarFactory, name: str = "bridge_2leve
             v_conv_q,
             v_conv_0,
         ]),
-        event_dict=dict(),
+        event_dict=dict([
+            # The procedural PWM logic needs the switching frequency retained as a runtime parameter even
+            # when connected symbolic inputs are pruned from the final problem tree.
+            (omega_sw, Const(2.0 * np.pi * 1000.0)),
+            # The procedural PWM logic needs the carrier phase stored as a runtime parameter even when
+            # the symbolic problem prunes unused input variables from the retained block tree.
+            (carrier_phase, Const(0.0)),
+        ]),
         mode_dict=dict([
             (gate_a_mode, Const(0.0)),
             (gate_b_mode, Const(0.0)),
             (gate_c_mode, Const(0.0)),
         ]),
         init_eqs=dict([
+            (v_ref_a_raw, v_ref_a_raw_expr),
+            (v_ref_b_raw, v_ref_b_raw_expr),
+            (v_ref_c_raw, v_ref_c_raw_expr),
+            (v_ref_common_inj, v_ref_common_inj_expr),
             (v_ref_a, v_ref_a_expr),
             (v_ref_b, v_ref_b_expr),
             (v_ref_c, v_ref_c_expr),
+            (theta_pwm_sample, theta_pwm_sample_expr),
+            (v_ref_a_pwm, v_ref_a_pwm_expr),
+            (v_ref_b_pwm, v_ref_b_pwm_expr),
+            (v_ref_c_pwm, v_ref_c_pwm_expr),
             (m_a_u, m_a_u_expr),
             (m_b_u, m_b_u_expr),
             (m_c_u, m_c_u_expr),
@@ -256,6 +343,7 @@ def get_bridge_2level_3ph_emt_template(vf: VarFactory, name: str = "bridge_2leve
         ]),
         in_vars=list([
             theta_pll,
+            omega_base,
             v_cmd_d,
             v_cmd_q,
             v_cmd_0,
@@ -279,6 +367,16 @@ def get_bridge_2level_3ph_emt_template(vf: VarFactory, name: str = "bridge_2leve
             v_conv_d,
             v_conv_q,
             v_conv_0,
+            v_ref_a_raw,
+            v_ref_b_raw,
+            v_ref_c_raw,
+            v_ref_common_inj,
+            v_ref_a,
+            v_ref_b,
+            v_ref_c,
+            m_a_u,
+            m_b_u,
+            m_c_u,
         ]),
         procedural_logic=list([
             ThreePhaseCarrierPwmLogic(

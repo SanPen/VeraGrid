@@ -403,7 +403,18 @@ def build_explicit_init_graph(
     init_event = dict()
     build_init_dict(mdl, init_vars, init_event)
 
-    init_vars.update(init_event)
+    # Merge event equations without clobbering explicit init equations with
+    # unresolved placeholders (Const(None)).
+    #
+    # For runtime parameters declared as event_dict[var] = Const(None), the
+    # corresponding initialization expression usually lives in init_eqs[var].
+    # Overwriting it here with Const(None) prevents explicit initialization from
+    # resolving the parameter value and later triggers "Event parameter ... has
+    # None Value" during RMS problem build.
+    for ev_var, ev_eq in init_event.items():
+        if isinstance(ev_eq, Const) and ev_eq.value is None and ev_var in init_vars:
+            continue
+        init_vars[ev_var] = ev_eq
 
     graph: Dict[Var, List[Var]] = defaultdict(list)
     in_degree: Dict[Var, int] = defaultdict(int)
@@ -744,4 +755,3 @@ def init_explicit_common(
 
 
     return init_guess, diff_init_guess
-

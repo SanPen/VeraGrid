@@ -1,3 +1,8 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
+
 from __future__ import annotations
 
 from typing import Any, Optional
@@ -5,14 +10,13 @@ from typing import Any, Optional
 from PySide6 import QtCore, QtWidgets
 
 from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_picker import DynamicEditorPickerDialog
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_support import DynamicEditorEntry
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_support import build_dynamic_editor_entry
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_support import build_dynamic_editor_title
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_support import get_available_dynamic_modes
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_support import get_block_for_entry
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_support import get_templates_for_entry
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_support import iter_dynamic_editor_entries
+from VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine import DynamicEditorPickerDialog
+from VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine import DynamicEditorEntry
+from VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine import build_dynamic_editor_entry
+from VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine import build_dynamic_editor_title
+from VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine import get_block_for_entry
+from VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine import get_templates_for_entry
+from VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine import iter_dynamic_editor_entries
 from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_window import DynamicEditorWorkspaceWindow
 from VeraGridEngine.enumerations import DynamicSimulationMode
 
@@ -79,11 +83,13 @@ class DynamicEditorWorkspaceManager(QtCore.QObject):
         entry = self._page_to_entry[page]
         mode = self._page_to_mode[page]
         title = build_dynamic_editor_title(entry.api_object, mode)
+        # Todo:remove getattr
         if getattr(page, "has_unapplied_changes", False):
             return f"* {title}"
         return title
 
     def _connect_page_signals(self, page: QtWidgets.QWidget) -> None:
+        # Todo:remove hasattr
         if hasattr(page, "dirtyStateChanged"):
             page.dirtyStateChanged.connect(lambda _dirty, page=page: self.refresh_page_title(page))
 

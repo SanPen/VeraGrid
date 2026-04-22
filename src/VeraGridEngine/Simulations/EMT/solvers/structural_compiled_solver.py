@@ -2080,6 +2080,7 @@ class StructuralCompiledSolver:
         "_last_runtime_stats",
         "_predictor",
         "_backend_build_stats",
+        "_newton_max_iter",
         "_newton_diag_config",
         "_sparse_factorization_manager",
         "_sparse_solver_backend_provider",
@@ -2095,6 +2096,7 @@ class StructuralCompiledSolver:
             pred_method: DynamicIntegrationMethod | None = None,
             dense_threshold: int = 100,
             verbose: bool = False,
+            newton_max_iter: int = 15,
             auto_build: bool = True,
             warmup_policy: StructuralCompiledWarmupPolicy = StructuralCompiledWarmupPolicy.Adaptive,
             sparse_solver_backend_provider: SparseLinearSolverBackendProvider | None = None,
@@ -2119,6 +2121,8 @@ class StructuralCompiledSolver:
         :type dense_threshold: int
         :param verbose: Whether to print build and simulation timings.
         :type verbose: bool
+        :param newton_max_iter: Maximum Newton iterations per local EMT substep.
+        :type newton_max_iter: int
         :param auto_build: Whether to build the vectorized backend during construction.
         :type auto_build: bool
         :param warmup_policy: Warmup policy used during backend build.
@@ -2136,6 +2140,7 @@ class StructuralCompiledSolver:
         self._pred_method = pred_method
         self._dense_threshold = dense_threshold
         self._verbose = verbose
+        self._newton_max_iter: int = int(newton_max_iter)
         self._warmup_policy = warmup_policy
         self._sparse_solver_backend_provider = sparse_solver_backend_provider
         self._newton_diag_config = newton_diag_config or NewtonDiagnosticsConfig(
@@ -2790,7 +2795,7 @@ class StructuralCompiledSolver:
 
                 substep_converged: bool = False
                 newton_index: int = 0
-                while newton_index < 15:
+                while newton_index < self._newton_max_iter:
                     ctx: NewtonSolveContext | None = None
                     # Residual assembly is fully in-place and reuses the grouped work buffers.
                     self._residual_assembler.evaluate(

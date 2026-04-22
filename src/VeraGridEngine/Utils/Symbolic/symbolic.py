@@ -1407,7 +1407,7 @@ def heaviside(x: Expr) -> Expr:
 
 
 def heaviside_diff(u: Expr, du: Expr) -> Expr:
-    return du * heaviside(u)
+    return Const(0)
 
 
 def _symbolic_max(x: Expr | NUMBER, y: Expr | NUMBER) -> Expr:

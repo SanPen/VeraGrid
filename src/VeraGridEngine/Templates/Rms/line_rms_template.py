@@ -10,6 +10,7 @@ from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowRefferenceType, VarPowerFlowRefferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, cos, sin
+import VeraGridEngine.Utils.Symbolic.symbolic as sym
 
 
 def get_line_rms_template(vfactory: VarFactory, name="Line_rms_template") -> RmsModelTemplate:
@@ -66,6 +67,64 @@ def get_line_rms_template(vfactory: VarFactory, name="Line_rms_template") -> Rms
         ParamPowerFlowRefferenceType.b: b,
         ParamPowerFlowRefferenceType.bsh: bsh,
            }
+
+    templ.block.in_vars = inputs
+
+    return templ
+
+
+def get_dc_line_rms_template(vfactory: VarFactory, name="DC_Line_rms_template") -> RmsModelTemplate:
+    """
+    Get the RMS template model of a DC line with series R-L dynamics.
+    """
+    templ = RmsModelTemplate()
+    templ.tpe = DeviceType.DCLineDevice
+    templ.name = name
+
+    Vdcf = vfactory.add_var("Vdcf_" + name, VarPowerFlowRefferenceType.Vmf)
+    Vdct = vfactory.add_var("Vdct_" + name, VarPowerFlowRefferenceType.Vmt)
+    inputs: List[Var] = [Vdcf, Vdct]
+
+    If_dc = vfactory.add_var("If_dc")
+    Pf = vfactory.add_var("Pf")
+    Pt = vfactory.add_var("Pt")
+    dIf_dcdt = vfactory.add_diff_var("dIf_dcdt", base_var=If_dc)
+
+    r = vfactory.add_var("r")
+    l = vfactory.add_var("l")
+
+    templ.block.parameters[r] = vfactory.add_const(0.01)
+    templ.block.parameters[l] = vfactory.add_const(0.05)
+
+    templ.block.algebraic_vars = [If_dc, Pf, Pt]
+    templ.block.diff_vars = [dIf_dcdt]
+
+    templ.block.algebraic_eqs = [
+        l * dIf_dcdt + r * If_dc - (Vdcf - Vdct),
+        Pf - Vdcf * If_dc,
+        Pt + Vdct * If_dc,
+    ]
+    templ.block.init_eqs = {
+        If_dc: (Vdcf - Vdct) / r,
+        Pf: Vdcf * If_dc,
+        Pt: -Vdct * If_dc,
+    }
+    templ.block.diff_init_eqs = {
+        dIf_dcdt: sym.Const(0.0),
+    }
+
+    templ.block.external_mapping = {
+        VarPowerFlowRefferenceType.Vmf: Vdcf,
+        VarPowerFlowRefferenceType.Vmt: Vdct,
+        VarPowerFlowRefferenceType.If_dc: If_dc,
+        VarPowerFlowRefferenceType.Pf: Pf,
+        VarPowerFlowRefferenceType.Pt: Pt,
+    }
+
+    templ.block.api_obj_mapping = {
+        ParamPowerFlowRefferenceType.r: r,
+        #ParamPowerFlowRefferenceType.l: l,
+    }
 
     templ.block.in_vars = inputs
 

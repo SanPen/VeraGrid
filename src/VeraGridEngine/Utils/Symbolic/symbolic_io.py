@@ -711,8 +711,8 @@ def duplicate_var(var_factory: VarFactory, old_to_new_var: Dict[int, Var], var: 
                     name=var.name,
                     reference=var.ref,
                     network_conn=var.network_conn,
-                    diff_var=None,
-                    base_var=base_var_new
+                    # diff_var=None,
+                    # base_var=base_var_new
                 )
 
             old_to_new_var[var.uid] = new_var

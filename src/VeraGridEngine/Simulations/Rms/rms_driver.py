@@ -109,6 +109,7 @@ class RmsSimulationDriver(DriverTemplate):
 
             self.report_text("Simulating RMS event group " + rms_events_group.name)
             problem.set_events_group(rms_events_group=rms_events_group)
+            problem.reset_boundary_update_state(0.0)
 
             # DaeTrapezoidal = "DAE_Trapezoidal"
             # DaeBackEuler = "DAE_BackEuler"

@@ -7,16 +7,20 @@ from __future__ import annotations
 
 import math
 
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, TYPE_CHECKING
 
 import numpy as np
 
-from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import EmtProblemTemplate
-from VeraGridEngine.Simulations.EMT.solvers.jit_symbolic_solver import BoundaryUpdateWrapper
+from VeraGridEngine.Utils.emt_boundary_update_wrapper import BoundaryUpdateWrapper
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import CmpOp, Comparison, Const, Expr, Var
 from VeraGridEngine.basic_structures import Vec
 from VeraGridEngine.enumerations import ProceduralLogicType
+
+if TYPE_CHECKING:
+    from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import EmtProblemTemplate
+else:
+    pass
 
 
 ProceduralLogicData = Dict[str, Any]
@@ -1575,6 +1579,25 @@ def _find_var_by_name(block: Block, var_name: str) -> Var:
     raise KeyError(f"Variable '{var_name}' not found in block tree")
 
 
+def _find_var_by_name_optional(block: Block, var_name: str) -> Var | None:
+    """
+    Return one symbolic variable by name when it exists in the block tree.
+
+    :param block: Root block to inspect.
+    :param var_name: Variable name to search.
+    :return: Matching symbolic variable or ``None``.
+    """
+    var: Var
+
+    for var in _iter_block_vars(block):
+        if var.name == var_name:
+            return var
+        else:
+            pass
+
+    return None
+
+
 class DelayedThresholdLatchLogic(ProceduralLogicBase):
     """
     Comparator + timer + latch procedural logic for runtime modes.
@@ -2412,7 +2435,7 @@ class ThreePhaseCarrierPwmLogic(ProceduralLogicBase):
         gate_b_var: Var
         gate_c_var: Var
         omega_sw_var: Var
-        carrier_phase_var: Var
+        carrier_phase_var: Var | None
         x0: Vec
         params0: Vec
 
@@ -2424,7 +2447,7 @@ class ThreePhaseCarrierPwmLogic(ProceduralLogicBase):
         gate_b_var = _find_var_by_name(problem.sys_block, self.gate_b_mode_var_name)
         gate_c_var = _find_var_by_name(problem.sys_block, self.gate_c_mode_var_name)
         omega_sw_var = _find_var_by_name(problem.sys_block, self.omega_sw_var_name)
-        carrier_phase_var = _find_var_by_name(problem.sys_block, self.carrier_phase_var_name)
+        carrier_phase_var = _find_var_by_name_optional(problem.sys_block, self.carrier_phase_var_name)
 
         self.mod_a_idx = int(problem.get_var_idx(mod_a_var))
         self.mod_b_idx = int(problem.get_var_idx(mod_b_var))
@@ -2433,7 +2456,11 @@ class ThreePhaseCarrierPwmLogic(ProceduralLogicBase):
         self.gate_b_idx = int(problem.uid2idx_event_params[gate_b_var.uid])
         self.gate_c_idx = int(problem.uid2idx_event_params[gate_c_var.uid])
         self.omega_sw_idx = int(problem.uid2idx_event_params[omega_sw_var.uid])
-        self.carrier_phase_idx = int(problem.uid2idx_event_params[carrier_phase_var.uid])
+
+        if carrier_phase_var is None:
+            self.carrier_phase_idx = -1
+        else:
+            self.carrier_phase_idx = int(problem.uid2idx_event_params[carrier_phase_var.uid])
 
         x0 = problem.get_x0().copy()
         params0 = problem.event_params_values
@@ -2466,7 +2493,7 @@ class ThreePhaseCarrierPwmLogic(ProceduralLogicBase):
         :return: Tuple ``(interval_end_time, carrier_rising)``.
         """
         omega_sw: float = float(params[self.omega_sw_idx])
-        carrier_phase: float = float(params[self.carrier_phase_idx])
+        carrier_phase: float
         shifted_phase: float
         interval_index: int
         interval_start_time: float
@@ -2478,6 +2505,11 @@ class ThreePhaseCarrierPwmLogic(ProceduralLogicBase):
             interval_end_time = sample_time + 1.0e12
             carrier_rising = True
         else:
+            if self.carrier_phase_idx >= 0:
+                carrier_phase = float(params[self.carrier_phase_idx])
+            else:
+                carrier_phase = 0.0
+
             half_period = self._get_half_period(params)
             shifted_phase = omega_sw * sample_time + carrier_phase + 0.5 * np.pi
             interval_index = int(math.floor(shifted_phase / np.pi))

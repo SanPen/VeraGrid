@@ -16,7 +16,6 @@ from VeraGridEngine.enumerations import DynamicIntegrationMethod
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import EmtProblemTemplate
 from VeraGridEngine.Simulations.EMT.solvers.jit_symbolic_solver import (
     JitSymbolicSolver,
-    BoundaryUpdateWrapper as SymbolicBoundaryUpdateWrapper,
 )
 from VeraGridEngine.Simulations.EMT.solvers.solver_AD import (
     JitAdSolver,
@@ -24,8 +23,8 @@ from VeraGridEngine.Simulations.EMT.solvers.solver_AD import (
 )
 from VeraGridEngine.Simulations.EMT.solvers.StructuralVectorizedSolver import (
     StructuralVectorizedSolver,
-    BoundaryUpdateWrapper as StructuralBoundaryUpdateWrapper,
 )
+from VeraGridEngine.Utils.emt_boundary_update_wrapper import BoundaryUpdateWrapper
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, Const
 from VeraGridEngine.enumerations import EmtSolverTypes
@@ -80,8 +79,7 @@ class DummyProblem(EmtProblemTemplate):
 
 class ForcedEventTracker(
     BoundaryUpdaterInterface,
-    SymbolicBoundaryUpdateWrapper,
-    StructuralBoundaryUpdateWrapper,
+    BoundaryUpdateWrapper,
 ):
     """
     Boundary updater used to verify aligned substeps.
@@ -240,7 +238,7 @@ def test_force_step_alignment_is_used_by_all_three_solvers(
             lambda self, method, use_sparse: None,
         ):
             t, y, dy, _, _ = solver.simulate(
-                boundary_updater=cast(SymbolicBoundaryUpdateWrapper, cast(object, updater))
+                boundary_updater=cast(BoundaryUpdateWrapper, cast(object, updater))
             )
 
     elif solver_kind == EmtSolverTypes.Automatic:
@@ -277,7 +275,7 @@ def test_force_step_alignment_is_used_by_all_three_solvers(
         solver.vec_jacobian = cast(Any, DummyJacobian())
 
         t, y, dy, _, _ = solver.simulate(
-            boundary_updater=cast(StructuralBoundaryUpdateWrapper, cast(object, updater))
+            boundary_updater=cast(BoundaryUpdateWrapper, cast(object, updater))
         )
 
     else:

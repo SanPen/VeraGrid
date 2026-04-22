@@ -56,8 +56,8 @@ def PVLoadBuild(vfactory: VarFactory, name: str = "", Pg0_val=1.0, Vg0_val=1.0) 
     event_dict = {
         Pg0: vfactory.add_const(Pg0_val),
         Vg0: vfactory.add_const(None),
-        Qmax_G: vfactory.add_const(0.5),
-        Qmin_G: vfactory.add_const(-0.5),
+        Qmax_G: vfactory.add_const(1.0),
+        Qmin_G: vfactory.add_const(-1.0),
     }
     
     # Initialize Q to Qg0

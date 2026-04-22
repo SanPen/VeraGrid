@@ -6,6 +6,7 @@
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Utils.Symbolic.block import (Block, VarPowerFlowRefferenceType)
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
+from VeraGridEngine.Utils.Symbolic import symbolic as sym
 
 
 def DCVoltageSource(vfactory: VarFactory, Vdc, name: str = "") -> RmsModelTemplate:
@@ -116,8 +117,8 @@ def DCCurrentSource(vfactory: VarFactory, Vdc, name: str = "") -> RmsModelTempla
     Vpv0 = vfactory.add_var('Vpv0')
 
     event_dict = {
-        C: vfactory.add_const(0.01),
-        Rpv: vfactory.add_const(0.001),
+        C: vfactory.add_const(0.05),
+        Rpv: vfactory.add_const(0.005),
         Vpv0: vfactory.add_const(None),
         Idc_src0: vfactory.add_const(None),
     }
@@ -145,6 +146,69 @@ def DCCurrentSource(vfactory: VarFactory, Vdc, name: str = "") -> RmsModelTempla
     )
     templ.block = dc_block
 
+    return templ
+
+
+def DCPowerLimitedSource(vfactory: VarFactory, Vdc, name: str = "") -> RmsModelTemplate:
+    """
+    RMS DC source driven by a power reference with saturation.
+
+    This model injects a commanded DC power into the DC-link while limiting
+    the requested power with hard saturation:
+
+        P_cmd = hard_sat(Pdc_ref0, -Pmax, Pmax)
+        Idc_src = P_cmd / (Vdc + eps_v)
+
+    DC-link dynamics are then:
+
+        C * dVdc/dt + Idc - Idc_src = 0
+
+    where Pdc = Idc * Vdc is the converter-side DC power variable.
+    """
+    templ = RmsModelTemplate()
+
+    Idc = vfactory.add_var('Idc')
+    Idc_src = vfactory.add_var('Idc_src')
+    Pdc = vfactory.add_var('Pdc')
+    dVdcdt = vfactory.add_diff_var('dVdcdt', base_var=Vdc)
+
+    C = vfactory.add_var('C')
+    Pdc_ref0 = vfactory.add_var('Pdc_ref0')
+    Pmax = vfactory.add_var('Pmax')
+    eps_v = vfactory.add_var('eps_v')
+
+    p_cmd = sym.hard_sat(Pdc_ref0, -Pmax, Pmax)
+
+    event_dict = {
+        C: vfactory.add_const(0.05),
+        Pdc_ref0: vfactory.add_const(None),
+        Pmax: vfactory.add_const(1.0),
+        eps_v: vfactory.add_const(1e-6),
+    }
+
+    dc_block = Block(
+        algebraic_eqs=[
+            Pdc - Idc * Vdc,
+            Idc_src - p_cmd / (Vdc + eps_v),
+            dVdcdt * C + Idc - Idc_src,
+        ],
+        algebraic_vars=[Idc, Pdc, Idc_src],
+        diff_vars=[dVdcdt],
+        event_dict=event_dict,
+        out_vars=[Pdc, Idc],
+        init_eqs={
+            Idc: Pdc / (Vdc + eps_v),
+            Idc_src: Pdc / (Vdc + eps_v),
+            Pdc_ref0: Pdc,
+        },
+        external_mapping={
+            VarPowerFlowRefferenceType.P: Pdc,
+            VarPowerFlowRefferenceType.Idc: Idc,
+            VarPowerFlowRefferenceType.Vdc: Vdc,
+        },
+    )
+
+    templ.block = dc_block
     return templ
 
 

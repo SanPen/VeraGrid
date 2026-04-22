@@ -64,12 +64,12 @@ def build_vsc_rms(vfactory: VarFactory, name:str = ''):
     templ.tpe = DeviceType.VscDevice
     templ.name = name
 
-    inputs: List[Var] = [vfactory.add_var("Im_placeholder" + name), vfactory.add_var('Pt_placeholder')]
+    vm_t = vfactory.add_var("Vm_t_" + name)
+    inputs: List[Var] = [vm_t]
 
-    Im = inputs[0]
-    vdc = vfactory.add_var("vdc", VarPowerFlowRefferenceType.Vdc)
     Pf  = vfactory.add_var("Pf_vsc")
     Pt  = vfactory.add_var("Pt")
+    Qt_ref = vfactory.add_var("Qt_ref")
 
     alpha1 = vfactory.add_var("alpha1")
     alpha2 = vfactory.add_var("alpha2")
@@ -80,14 +80,16 @@ def build_vsc_rms(vfactory: VarFactory, name:str = ''):
     block.parameters[alpha2] = vfactory.add_const(0.0)
     block.parameters[alpha3] = vfactory.add_const(0.0)
 
+    im = sym.sqrt(Pt * Pt + Qt_ref * Qt_ref) / (vm_t + vfactory.add_const(1e-9))
     block.algebraic_vars = [Pf, Pt]
+    block.event_dict[Qt_ref] = vfactory.add_const(0.0)
 
     #Active power is conserved Reactive isnt
     block.algebraic_eqs  = [
-        Pf - Pt - 0.0*(alpha1 + alpha2*Im + alpha3*Im**2),
+        Pf + Pt - 1.0 * (alpha1 + alpha2 * im + alpha3 * im ** 2),
     ]
-
     block.external_mapping = {
+        VarPowerFlowRefferenceType.Vm: vm_t,
         VarPowerFlowRefferenceType.Pf: Pf,
         VarPowerFlowRefferenceType.Pt: Pt,
     }
@@ -234,12 +236,12 @@ def build_trafo_vsc(vf:VarFactory, trafo:Transformer2W, name:str = ''):
                 theta_hk - phi) + bt / (m * vtap_f * vtap_t) * vmt * vmf * sym.cos(
                 theta_hk - phi - phase_displacement)),
             
-            Im - sym.sqrt(Pt**2 + Qt**2)/vmt,
+            Im - sym.sqrt(Pt**2 + Qt**2)/vmf,
             (vat) - (vaf + phi0 + phi),
         ],
         init_eqs={
             am: vmt/k*vdc,
-            Im: sym.sqrt(Pt**2 + Qt**2)/vmt,
+            Im: sym.sqrt(Pt**2 + Qt**2)/vmf,
             phi0: vat - vaf,
             P_ref: Pf,
         },

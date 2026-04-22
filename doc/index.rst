@@ -13,7 +13,7 @@ product of cutting-edge research.
 .. figure:: md_source/figures/VeraGrid_yt.png
     :alt: VeraGrid main figure
 
-|Codacy Badge| |Documentation Status| |Build Status| |DOI| |Downloads| |Discord|
+|Codacy Badge| |Documentation Status| |Build Status| |DOI| |Downloads| |Chat|
 
 VeraGrid started in 2015 with a clear objective: create a solid
 programming library and a user-friendly interface. This straightforward
@@ -34,17 +34,15 @@ the future generations.
 
 - `3 - Optimal power flow <https://www.youtube.com/watch?v=o6oXBJ1Efqc>`_
 
-
+- `4 - Time series modelling <https://www.youtube.com/watch?v=wVdAtnvQ7s8>`_
 
 
 Contact
 =======
 
--  Join the `Discord VeraGrid
-   channel <https://discord.gg/ypgmWvT5>`__ for a friendly
+-  Join the `VeraGrid chat
+   channel <https://matrix.to/#/#veragrid:matrix.org>`__ for a friendly
    chat, or quick question.
--  Submit questions or comments to our
-   `form <https://forms.gle/MpjJAntAwZiLwE6B6>`__.
 -  Submit bugs or requests in the
    `Issues <https://github.com/SanPen/VeraGrid/issues>`__ section.
 
@@ -111,6 +109,6 @@ to their respective owners.
    :target: https://www.zenodo.org/badge/latestdoi/49583206
 .. |Downloads| image:: https://static.pepy.tech/personalized-badge/veragrid?period=total&units=abbreviation&left_color=grey&right_color=green&left_text=Downloads
    :target: https://pepy.tech/project/veragrid
-.. |Discord| image:: https://img.shields.io/badge/Discord-%235865F2.svg
-   :target: https://discord.gg/ypgmWvT5
+.. |Chat| image:: https://img.shields.io/badge/join-chat_room-green
+   :target: https://matrix.to/#/#veragrid:matrix.org
 

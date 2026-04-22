@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'about_gui.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.2
+## Created by: Qt User Interface Compiler version 6.11.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -132,6 +132,8 @@ class Ui_AboutDialog(object):
 
         self.updateLabel = QLabel(self.tab_5)
         self.updateLabel.setObjectName(u"updateLabel")
+        self.updateLabel.setOpenExternalLinks(True)
+        self.updateLabel.setTextInteractionFlags(Qt.TextInteractionFlag.LinksAccessibleByKeyboard|Qt.TextInteractionFlag.LinksAccessibleByMouse|Qt.TextInteractionFlag.TextBrowserInteraction|Qt.TextInteractionFlag.TextSelectableByKeyboard|Qt.TextInteractionFlag.TextSelectableByMouse)
 
         self.gridLayout_3.addWidget(self.updateLabel, 1, 0, 1, 6)
 

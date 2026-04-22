@@ -1,11 +1,16 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
+
 from __future__ import annotations
 
 from typing import Any
 
 from PySide6 import QtCore, QtGui, QtWidgets
 
-from VeraGrid.Gui.DynamicModelEditor.detachable_tab_widget import DynamicEditorAddButton
-from VeraGrid.Gui.DynamicModelEditor.detachable_tab_widget import DetachableEditorTabWidget
+from VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine import DynamicEditorAddButton
+from VeraGrid.Gui.DynamicModelEditor.dyn_editor_multiwindow_engine import DetachableEditorTabWidget
 from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace import Ui_DynamicEditorWorkspaceWindow
 
 
@@ -101,6 +106,7 @@ class DynamicEditorWorkspaceWindow(QtWidgets.QMainWindow):
             return
 
         can_close = True
+        # Todo:remove hasattr
         if hasattr(page, "can_close_editor"):
             can_close = bool(page.can_close_editor(self))
         if not can_close:
@@ -120,6 +126,7 @@ class DynamicEditorWorkspaceWindow(QtWidgets.QMainWindow):
             page = self.page_at(index)
             if page is None:
                 continue
+            # Todo:remove hasattr
             if hasattr(page, "can_close_editor") and not bool(page.can_close_editor(self)):
                 event.ignore()
                 return

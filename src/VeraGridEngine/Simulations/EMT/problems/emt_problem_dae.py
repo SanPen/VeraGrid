@@ -1337,7 +1337,10 @@ class EmtProblemDae(EmtProblemTemplate):
             target: Any | None = api_obj_mapping.get(key, None)
 
             if target is not None:
-                mdl.parameters[target] = self._to_const(value)
+                if target in mdl.event_dict:
+                    pass
+                else:
+                    mdl.parameters[target] = self._to_const(value)
             else:
                 pass
         else:
@@ -4798,15 +4801,19 @@ class EmtProblemDae(EmtProblemTemplate):
         # -----------------------------
         # 1. Handle the XFMR EMT transformer mapping before the classical
         # transformer path and before the line path.
+        #
+        # Only quantities that are directly available on Transformer2W or can be
+        # robustly derived from its electrical test data belong to api_obj_mapping.
+        # Template-owned modelling options and defaults remain in event_dict.
         # -----------------------------
         xfmr_keys: list[ParamPowerFlowRefferenceType] = list([
             ParamPowerFlowRefferenceType.transformer_rated_power_mva,
-            ParamPowerFlowRefferenceType.transformer_short_circuit_voltage_pct,
-            ParamPowerFlowRefferenceType.transformer_short_circuit_resistance_pct,
             ParamPowerFlowRefferenceType.transformer_open_circuit_current_pct,
             ParamPowerFlowRefferenceType.transformer_open_circuit_loss_kw,
+            ParamPowerFlowRefferenceType.transformer_short_circuit_voltage_pct,
+            ParamPowerFlowRefferenceType.transformer_short_circuit_resistance_pct,
             ParamPowerFlowRefferenceType.transformer_tap_ratio,
-            ParamPowerFlowRefferenceType.transformer_terminal_capacitance_pu_s,
+            ParamPowerFlowRefferenceType.transformer_linear_core_inductance_pu_s,
             ParamPowerFlowRefferenceType.transformer_from_connection_aa,
             ParamPowerFlowRefferenceType.transformer_to_connection_aa,
         ])
@@ -4818,35 +4825,27 @@ class EmtProblemDae(EmtProblemTemplate):
                 eps_value: float = 1e-12
 
                 sn_value: float = max(float(br.Sn), 1e-9)
-                hv_value: float = float(br.HV) if br.HV is not None else 1.0
-                lv_value: float = float(br.LV) if br.LV is not None else 1.0
-                vsc_pct_value: float
                 pcu_kw_value: float = max(float(br.Pcu), 0.0)
                 pfe_kw_value: float = max(float(br.Pfe), 0.0)
                 i0_pct_value: float = max(float(br.I0), 0.0)
                 tap_module_value: float = float(br.tap_module) if abs(float(br.tap_module)) > eps_value else 1.0
 
                 if float(br.Vsc) > 0.0:
-                    vsc_pct_value = float(br.Vsc)
+                    vsc_pct_value: float = float(br.Vsc)
                 else:
                     vsc_pct_value = 100.0 * np.sqrt(max(float(br.R) * float(br.R) + float(br.X) * float(br.X), 0.0))
 
-                sc_resistance_pct_value: float
                 if pcu_kw_value > 0.0:
-                    sc_resistance_pct_value = pcu_kw_value / (10.0 * sn_value)
+                    sc_resistance_pct_value: float = pcu_kw_value / (10.0 * sn_value)
                 else:
                     sc_resistance_pct_value = 100.0 * max(float(br.R), 0.0)
-
-                c_term_value: float
-                if sn_value > eps_value and abs(float(br.B)) > eps_value:
-                    c_term_value = 0.5 * max(abs(float(br.B)) / (w0 + eps_value), 0.0)
-                else:
-                    c_term_value = 0.0
 
                 oc_loss_pu_value: float = pfe_kw_value / (1000.0 * sn_value)
                 oc_current_pu_value: float = i0_pct_value / 100.0
                 i_mag_pu_value: float = np.sqrt(
-                    max(oc_current_pu_value * oc_current_pu_value - oc_loss_pu_value * oc_loss_pu_value, 0.0))
+                    max(oc_current_pu_value * oc_current_pu_value - oc_loss_pu_value * oc_loss_pu_value, 0.0)
+                )
+
                 if i_mag_pu_value > eps_value:
                     linear_lm_value: float = 1.0 / i_mag_pu_value
                 else:
@@ -4857,105 +4856,138 @@ class EmtProblemDae(EmtProblemTemplate):
                 p_t_matrix: np.ndarray = _xfmr_phase_permutation_matrix(int(br.vector_group_number))
                 c_t_eff_matrix: np.ndarray = p_t_matrix @ c_t_matrix
 
-                self._assign_api_obj_param_if_present(br.emt_model, ParamPowerFlowRefferenceType.omega_base, w0)
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_rated_power_mva,
-                                                      sn_value)
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_winding1_rated_voltage_ll_kv,
-                                                      hv_value)
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_winding2_rated_voltage_ll_kv,
-                                                      lv_value)
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_connection_clock,
-                                                      float(br.vector_group_number))
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_open_circuit_current_pct,
-                                                      i0_pct_value)
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_open_circuit_loss_kw,
-                                                      pfe_kw_value)
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_short_circuit_voltage_pct,
-                                                      vsc_pct_value)
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_short_circuit_resistance_pct,
-                                                      sc_resistance_pct_value)
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_short_circuit_loss_kw,
-                                                      pcu_kw_value)
-                self._assign_api_obj_param_if_present(br.emt_model, ParamPowerFlowRefferenceType.transformer_tap_ratio,
-                                                      tap_module_value)
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_terminal_capacitance_pu_s,
-                                                      c_term_value)
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_linear_core_inductance_pu_s,
-                                                      linear_lm_value)
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_core_curve_a_prime,
-                                                      linear_lm_value)
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_core_curve_b_prime, 0.0)
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_use_linear_core, 1.0)
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.omega_base,
+                    w0,
+                )
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.transformer_rated_power_mva,
+                    sn_value,
+                )
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.transformer_open_circuit_current_pct,
+                    i0_pct_value,
+                )
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.transformer_open_circuit_loss_kw,
+                    pfe_kw_value,
+                )
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.transformer_short_circuit_voltage_pct,
+                    vsc_pct_value,
+                )
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.transformer_short_circuit_resistance_pct,
+                    sc_resistance_pct_value,
+                )
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.transformer_tap_ratio,
+                    tap_module_value,
+                )
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.transformer_linear_core_inductance_pu_s,
+                    linear_lm_value,
+                )
 
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_from_connection_aa,
-                                                      float(c_f_matrix[0, 0]))
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_from_connection_ab,
-                                                      float(c_f_matrix[0, 1]))
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_from_connection_ac,
-                                                      float(c_f_matrix[0, 2]))
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_from_connection_ba,
-                                                      float(c_f_matrix[1, 0]))
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_from_connection_bb,
-                                                      float(c_f_matrix[1, 1]))
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_from_connection_bc,
-                                                      float(c_f_matrix[1, 2]))
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_from_connection_ca,
-                                                      float(c_f_matrix[2, 0]))
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_from_connection_cb,
-                                                      float(c_f_matrix[2, 1]))
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_from_connection_cc,
-                                                      float(c_f_matrix[2, 2]))
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.transformer_from_connection_aa,
+                    float(c_f_matrix[0, 0]),
+                )
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.transformer_from_connection_ab,
+                    float(c_f_matrix[0, 1]),
+                )
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.transformer_from_connection_ac,
+                    float(c_f_matrix[0, 2]),
+                )
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.transformer_from_connection_ba,
+                    float(c_f_matrix[1, 0]),
+                )
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.transformer_from_connection_bb,
+                    float(c_f_matrix[1, 1]),
+                )
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.transformer_from_connection_bc,
+                    float(c_f_matrix[1, 2]),
+                )
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.transformer_from_connection_ca,
+                    float(c_f_matrix[2, 0]),
+                )
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.transformer_from_connection_cb,
+                    float(c_f_matrix[2, 1]),
+                )
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.transformer_from_connection_cc,
+                    float(c_f_matrix[2, 2]),
+                )
 
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_to_connection_aa,
-                                                      float(c_t_eff_matrix[0, 0]))
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_to_connection_ab,
-                                                      float(c_t_eff_matrix[0, 1]))
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_to_connection_ac,
-                                                      float(c_t_eff_matrix[0, 2]))
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_to_connection_ba,
-                                                      float(c_t_eff_matrix[1, 0]))
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_to_connection_bb,
-                                                      float(c_t_eff_matrix[1, 1]))
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_to_connection_bc,
-                                                      float(c_t_eff_matrix[1, 2]))
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_to_connection_ca,
-                                                      float(c_t_eff_matrix[2, 0]))
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_to_connection_cb,
-                                                      float(c_t_eff_matrix[2, 1]))
-                self._assign_api_obj_param_if_present(br.emt_model,
-                                                      ParamPowerFlowRefferenceType.transformer_to_connection_cc,
-                                                      float(c_t_eff_matrix[2, 2]))
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.transformer_to_connection_aa,
+                    float(c_t_eff_matrix[0, 0]),
+                )
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.transformer_to_connection_ab,
+                    float(c_t_eff_matrix[0, 1]),
+                )
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.transformer_to_connection_ac,
+                    float(c_t_eff_matrix[0, 2]),
+                )
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.transformer_to_connection_ba,
+                    float(c_t_eff_matrix[1, 0]),
+                )
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.transformer_to_connection_bb,
+                    float(c_t_eff_matrix[1, 1]),
+                )
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.transformer_to_connection_bc,
+                    float(c_t_eff_matrix[1, 2]),
+                )
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.transformer_to_connection_ca,
+                    float(c_t_eff_matrix[2, 0]),
+                )
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.transformer_to_connection_cb,
+                    float(c_t_eff_matrix[2, 1]),
+                )
+                self._assign_api_obj_param_if_present(
+                    br.emt_model,
+                    ParamPowerFlowRefferenceType.transformer_to_connection_cc,
+                    float(c_t_eff_matrix[2, 2]),
+                )
                 return
             else:
                 return
@@ -5117,17 +5149,43 @@ class EmtProblemDae(EmtProblemTemplate):
         z_base: float = (v_base * v_base) / s_base_va
         y_base: float = 1.0 / z_base
 
-        z_phys: np.ndarray = br.template.z_nabc * br.length
-        y_phys: np.ndarray = br.template.y_nabc * br.length
+        # z_phys: np.ndarray = br.template.z_nabc * br.length
+        # y_phys: np.ndarray = br.template.y_nabc * br.length
+        #
+        # z_pu: np.ndarray = z_phys / z_base
+        # y_pu: np.ndarray = y_phys / y_base
+        #
+        # r_full: np.ndarray = np.real(z_pu)
+        # x_full: np.ndarray = np.imag(z_pu)
+        # l_full: np.ndarray = x_full / (w0 + 1e-20)
+        # bsh_full: np.ndarray = np.imag(y_pu)
+        # c_full: np.ndarray = (bsh_full / (w0 + 1e-20)) / 2.0
 
-        z_pu: np.ndarray = z_phys / z_base
-        y_pu: np.ndarray = y_phys / y_base
+        try:
+            # if a tower is set to the branch it has the full matrix
+            z_phys: np.ndarray = br.template.z_nabc * br.length
+            y_phys: np.ndarray = br.template.y_nabc * br.length
 
-        r_full: np.ndarray = np.real(z_pu)
-        x_full: np.ndarray = np.imag(z_pu)
-        l_full: np.ndarray = x_full / (w0 + 1e-20)
-        bsh_full: np.ndarray = np.imag(y_pu)
-        c_full: np.ndarray = (bsh_full / (w0 + 1e-20)) / 2.0
+            z_pu: np.ndarray = z_phys / z_base
+            y_pu: np.ndarray = y_phys / y_base
+
+            r_full: np.ndarray = np.real(z_pu)
+            x_full: np.ndarray = np.imag(z_pu)
+            l_full: np.ndarray = x_full / (w0 + 1e-20)
+            bsh_full: np.ndarray = np.imag(y_pu)
+            c_full: np.ndarray = (bsh_full / (w0 + 1e-20)) / 2.0
+        except:
+            # if the result is running from balanced powerflow the user can not set a tower template to the line, then the line becomes uncoupled
+            R: int = br.R
+            X: int = br.B
+            B: int = br.X
+
+            r_full: np.ndarray = np.array([[R, 0.0, 0.0],[0.0, R, 0.0],[0.0, 0.0, R]])
+            x_full: np.ndarray = np.array([[X, 0.0, 0.0],[0.0, X, 0.0],[0.0, 0.0, X]])
+            l_full: np.ndarray = x_full / (w0 + 1e-20)
+            bsh_full: np.ndarray = np.array([[B, 0.0, 0.0],[0.0, B, 0.0],[0.0, 0.0, B]])
+            c_full: np.ndarray = (bsh_full / (w0 + 1e-20)) / 2.0
+
 
         # -----------------------------
         # 5. Validate the reduced matrices before mapping them.

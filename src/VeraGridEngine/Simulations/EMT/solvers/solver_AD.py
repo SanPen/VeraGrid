@@ -645,7 +645,7 @@ class SparseADJacobian:
 
 class JitAdSolver:
     __slots__ = [
-        'problem', 't0', 't_end', 'h', 'method', 'pred_method', 'dense_threshold', 'verbose',
+        'problem', 't0', 't_end', 'h', 'method', 'pred_method', 'dense_threshold', 'verbose', 'newton_max_iter',
         'steps', 't', 'y', 'dy',  'jit_kernels_ad', 'jit_jacobian_ad',
         'state_vars', 'algebraic_vars', 'state_eqs', 'algebraic_eqs', '_newton_diag_config',
         '_predictor', '_runtime_param_count', '_static_parameter_buffer', '_full_parameter_buffer',
@@ -661,6 +661,7 @@ class JitAdSolver:
                  pred_method: DynamicIntegrationMethod = None,
                  dense_threshold: int = 100,
                  verbose: bool = False,
+                 newton_max_iter: int = 15,
                  newton_diag_config: NewtonDiagnosticsConfig | None = None)-> None:
         """
         Initializes the JIT AD Solver.
@@ -681,6 +682,8 @@ class JitAdSolver:
         :type dense_threshold: int
         :param verbose: Print compilation and simulation timings.
         :type verbose: bool
+        :param newton_max_iter: Maximum Newton iterations per local EMT substep.
+        :type newton_max_iter: int
         """
         self.problem = problem
         self.t0 = t0
@@ -689,6 +692,7 @@ class JitAdSolver:
         self.pred_method = pred_method
         self.dense_threshold = dense_threshold
         self.verbose = verbose
+        self.newton_max_iter: int = int(newton_max_iter)
         self.t_end = t_end
         self._newton_diag_config = newton_diag_config or NewtonDiagnosticsConfig(
             compute_dense_cond=False,
@@ -1003,7 +1007,7 @@ class JitAdSolver:
                     pass
 
                 substep_converged: bool = False
-                for k in range(15):
+                for k in range(self.newton_max_iter):
                     total_newton_iterations += 1
                     ctx = NewtonSolveContext(
                         t=float(t_curr),

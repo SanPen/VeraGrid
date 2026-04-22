@@ -40,6 +40,9 @@ class RmsProblemTemplate(ABC):
     def get_algebraic_var_number(self) -> int:
         return 0
 
+    def get_algebraic_vars(self) -> List:
+        return list()
+
     def get_states_number(self) -> int:
         return 0
 

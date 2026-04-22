@@ -144,12 +144,12 @@ def get_genqec_rms(vfactory: VarFactory, name: str = "Genqec rms template") -> R
 
         Xd_prime_minus_Xl: Xd_prime - Xl,
         Xq_prime_minus_Xl: Xq_prime - Xl,
-        Xdaux: ((Xd_prime - Xd_2prime) / (Xd_prime_minus_Xl) ** 2),
-        Xdaux2: ((Xd_prime - Xd_2prime) / (Xd_prime_minus_Xl)),
-        Xdaux3: ((Xd_2prime - Xl) / (Xd_prime_minus_Xl)),
-        Xqaux: ((Xq_prime - Xq_2prime) / (Xq_prime_minus_Xl) ** 2),
-        Xqaux2: (Xq_prime - Xq_2prime) / (Xq_prime_minus_Xl),
-        Xqaux3: ((Xq_2prime - Xl) / (Xq_prime_minus_Xl)),
+        Xdaux: ((Xd_prime - Xd_2prime) / (((Xd_prime - Xl) ** 2) + sym.Const(1e-12))),
+        Xdaux2: ((Xd_prime - Xd_2prime) / ((Xd_prime - Xl) + sym.Const(1e-12))),
+        Xdaux3: ((Xd_2prime - Xl) / ((Xd_prime - Xl) + sym.Const(1e-12))),
+        Xqaux: ((Xq_prime - Xq_2prime) / (((Xq_prime - Xl) ** 2) + sym.Const(1e-12))),
+        Xqaux2: (Xq_prime - Xq_2prime) / ((Xq_prime - Xl) + sym.Const(1e-12)),
+        Xqaux3: ((Xq_2prime - Xl) / ((Xq_prime - Xl) + sym.Const(1e-12))),
         A: vfactory.add_const(5.0),
         B: vfactory.add_const(1.0)
     }
@@ -675,7 +675,7 @@ def get_exciter_rms(vfactory: VarFactory, name: str = "exciter") -> RmsModelTemp
         TolLi: vfactory.add_const(0.05),  # limiter crossing tolerance (fraction)
 
         # Limits
-        VaMaxPu: vfactory.add_const(2.0),  # AVR output max (pu)
+        VaMaxPu: vfactory.add_const(2.5),  # AVR output max (pu)
         VaMinPu: vfactory.add_const(-2.0),  # AVR output min (pu)
         VeMinPu: vfactory.add_const(-2.0),  # min exciter output voltage (pu)
         VfeMaxPu: vfactory.add_const(5.0),  # max exciter field current signal (pu)

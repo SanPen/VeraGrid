@@ -266,6 +266,7 @@ class VarFactory(EditableDevice):
             self._vars_info[dev] = [var]
         else:
             var_list.append(var)
+
     def find_var_or_diff_var(self, var_uid: int | None):
         if var_uid in self.get_vars_dict():
             return self.get_var(var_uid)

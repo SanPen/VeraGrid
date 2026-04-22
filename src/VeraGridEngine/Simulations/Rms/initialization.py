@@ -415,6 +415,17 @@ def init_explicit(mdl: Block,
                 init_guess[var.uid] = init_val
                 x[uid2idx_vars[var.uid]] = init_val
 
+    # Debug print: show initialized values for all variables/params in this model
+    seen = set()
+    debug_vars = list(mdl.algebraic_vars) + list(mdl.state_vars) + list(mdl.diff_vars)
+    for var in debug_vars:
+        if var.uid in seen:
+            continue
+        seen.add(var.uid)
+
+        if var.uid in uid2idx_vars:
+            print(f"DEBUG_INIT_ALL: {var.name} = {x[uid2idx_vars[var.uid]]}")
+
 
 def init_custom(mdl, init_guess):
     for lst in [mdl.state_vars, mdl.algebraic_vars]:

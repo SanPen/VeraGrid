@@ -10,42 +10,57 @@ from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 
 def get_load_phasor_current_rms_template(vfactory: VarFactory, name:str = '') -> RmsModelTemplate:
     """
-    Get the RMS template model of the Load using constant current injection in phasor coordinates.
-    
-    This model injects constant current at the bus:
-    - Ir = constant
-    - Ii = constant
+    Get the RMS template model of the load in current-balance phasor coordinates.
+
+    This model behaves as a constant-power load (not a current source):
+    - P = Pl0
+    - Q = Ql0
+    - I = conj(S / V), with S = P + jQ and V = Vr + jVi
+
+    Sign convention follows the rest of the RMS templates:
+    load consumption is represented with negative injections (Pl0 < 0, Ql0 < 0).
     
     :param vfactory: Variable factory for creating variables
     :param name: Name of the template
-    :return: RmsModelTemplate with constant current load model
+    :return: RmsModelTemplate with voltage-dependent load current model
     """
     templ = RmsModelTemplate()
     templ.tpe = DeviceType.LoadDevice
     templ.name = name
 
-    # Phasor inputs: Vr, Vi (for reference, not used in constant current model)
+    # Phasor inputs: Vr, Vi
     inputs = [
         vfactory.add_var("Vr_" + name),
         vfactory.add_var("Vi_" + name)
     ]
 
-    # Constant current injection parameters
-    Ir0 = vfactory.add_var("Ir0")
-    Ii0 = vfactory.add_var("Ii0")
+    # Constant power set-points (injection convention)
+    Pl0 = vfactory.add_var("Pl0")
+    Ql0 = vfactory.add_var("Ql0")
 
-    # Current injection variables
+    # Current injection variables solved from terminal voltage and P/Q
     Ir = vfactory.add_var("Ir")
     Ii = vfactory.add_var("Ii")
+    vr_aux = vfactory.add_var("vr_aux")
+    vi_aux = vfactory.add_var("vi_aux")
 
-    # Default values (will be overwritten by initialization)
-    templ.block.event_dict[Ir0] = vfactory.add_const(None)
-    templ.block.event_dict[Ii0] = vfactory.add_const(None)
+    # Initialized from power-flow current/voltage during startup
+    templ.block.event_dict[Pl0] = vfactory.add_const(None)
+    templ.block.event_dict[Ql0] = vfactory.add_const(None)
 
-    templ.block.algebraic_vars = [Ir, Ii]
+    templ.block.algebraic_vars = [Ir, Ii, vr_aux, vi_aux]
+    
 
-    # Constant current equations
-    templ.block.algebraic_eqs = [Ir - Ir0, Ii - Ii0]
+    vr = inputs[0]
+    vi = inputs[1]
+    v2 = vr*vr_aux + vi*vi_aux
+    # I = conj(S / V), written without division
+    templ.block.algebraic_eqs = [
+        vr_aux - vr,
+        vi_aux - vi,
+        Ir * v2 - (Pl0 * vr + Ql0 * vi),
+        Ii * v2 - (Pl0 * vi - Ql0 * vr),
+    ]
 
     templ.block.external_mapping = {
         VarPowerFlowRefferenceType.Vr: inputs[0],
@@ -55,14 +70,15 @@ def get_load_phasor_current_rms_template(vfactory: VarFactory, name:str = '') ->
     }
 
     templ.block.api_obj_mapping = {
-        ParamPowerFlowRefferenceType.Ir0: Ir0,
-        ParamPowerFlowRefferenceType.Ii0: Ii0,
+        ParamPowerFlowRefferenceType.Pl0: Pl0,
+        ParamPowerFlowRefferenceType.Ql0: Ql0,
     }
 
     templ.block.init_eqs = {
-        Ir0: Ir,
-        Ii0: Ii,
+        Pl0: vr * Ir + vi * Ii,
+        Ql0: vi * Ir - vr * Ii,
     }
+
     templ.block.out_vars = [Ir, Ii]
     templ.block.in_vars = inputs
 

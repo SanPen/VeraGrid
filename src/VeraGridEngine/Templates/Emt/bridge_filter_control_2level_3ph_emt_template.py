@@ -5,11 +5,12 @@
 
 from typing import Tuple
 
+import numpy as np
+
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Templates.Emt.bridge_filter_2level_3ph_emt_template import get_bridge_filter_2level_3ph_emt_template
-from VeraGridEngine.Templates.Emt.converter_emt_template import _build_pseudo_emt_converter_pll_block
 from VeraGridEngine.Utils.Symbolic.block import Block, find_name_in_block
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var
 from VeraGridEngine.enumerations import DeviceType
@@ -17,38 +18,48 @@ from VeraGridEngine.enumerations import DeviceType
 
 def _build_bridge_filter_current_control_block(vf: VarFactory, name: str) -> Block:
     """
-    Build one standalone dq0 current controller for the bridge + filter stage.
+    Build one dq0 current controller matched to the switched bridge + filter plant.
 
-    The controller is intentionally simpler than the full converter inner loop:
-    it only regulates the dq0 currents against direct current references and uses
-    a fixed voltage scaling factor for the modulation limit. This keeps the
-    incremental bridge validation compact and well isolated from the outer VSC
-    hierarchy.
+    The switched plant is built from phase-domain RL equations and then measured in
+    dq0. Under the retained ``sin / -cos`` convention used across the bridge/filter
+    templates, the phase-domain dynamics induce the opposite dq cross-coupling signs
+    to the validated pseudo-EMT branch model. Reusing the pseudo inner loop here
+    therefore overdrives the d-axis command and collapses the residual q-axis
+    headroom after handover.
+
+    This block keeps the same saturation and nominal-voltage logic as the pseudo
+    controller, but flips only the dq decoupling signs so the inner loop matches the
+    actual switched abc plant.
 
     :param vf: Shared EMT variable factory.
     :param name: Symbolic model name suffix.
     :return: dq0 current-controller block.
     """
-    v_d: Var = vf.add_var(name=f"v_d_ctrl_in_{name}")
-    v_q: Var = vf.add_var(name=f"v_q_ctrl_in_{name}")
-    v_0: Var = vf.add_var(name=f"v_0_ctrl_in_{name}")
-    i_d: Var = vf.add_var(name=f"i_d_ctrl_in_{name}")
-    i_q: Var = vf.add_var(name=f"i_q_ctrl_in_{name}")
-    i_0: Var = vf.add_var(name=f"i_0_ctrl_in_{name}")
-    omega_pll: Var = vf.add_var(name=f"omega_pll_ctrl_in_{name}")
-    omega_base: Var = vf.add_var(name=f"omega_base_ctrl_in_{name}")
-    R_f: Var = vf.add_var(name=f"R_f_ctrl_in_{name}")
-    L_f: Var = vf.add_var(name=f"L_f_ctrl_in_{name}")
-    i_d_ref: Var = vf.add_var(name=f"i_d_ref_ctrl_in_{name}")
-    i_q_ref: Var = vf.add_var(name=f"i_q_ref_ctrl_in_{name}")
-    i_0_ref: Var = vf.add_var(name=f"i_0_ref_ctrl_in_{name}")
-    i_kp: Var = vf.add_var(name=f"i_kp_ctrl_in_{name}")
-    i_ki: Var = vf.add_var(name=f"i_ki_ctrl_in_{name}")
-    aw_gain: Var = vf.add_var(name=f"aw_gain_ctrl_in_{name}")
-    m_max: Var = vf.add_var(name=f"m_max_ctrl_in_{name}")
-    v_dc: Var = vf.add_var(name=f"v_dc_ctrl_in_{name}")
-    vdc_floor: Var = vf.add_var(name=f"vdc_floor_ctrl_in_{name}")
-    k_v_conv: Var = vf.add_var(name=f"k_v_conv_ctrl_in_{name}")
+    v_d: Var = vf.add_var(name=f"v_d_inner_in_{name}")
+    v_q: Var = vf.add_var(name=f"v_q_inner_in_{name}")
+    v_0: Var = vf.add_var(name=f"v_0_inner_in_{name}")
+    i_d: Var = vf.add_var(name=f"i_d_inner_in_{name}")
+    i_q: Var = vf.add_var(name=f"i_q_inner_in_{name}")
+    i_0: Var = vf.add_var(name=f"i_0_inner_in_{name}")
+    omega_pll: Var = vf.add_var(name=f"omega_pll_inner_in_{name}")
+    omega_base: Var = vf.add_var(name=f"omega_base_inner_in_{name}")
+    R_f: Var = vf.add_var(name=f"R_eq_inner_in_{name}")
+    L_f: Var = vf.add_var(name=f"L_eq_inner_in_{name}")
+    i_0_ref: Var = vf.add_var(name=f"i_0_ref_inner_in_{name}")
+    i_d_ref: Var = vf.add_var(name=f"i_d_ref_inner_in_{name}")
+    i_q_ref: Var = vf.add_var(name=f"i_q_ref_inner_in_{name}")
+    i_kp: Var = vf.add_var(name=f"i_kp_inner_in_{name}")
+    i_ki: Var = vf.add_var(name=f"i_ki_inner_in_{name}")
+    aw_gain: Var = vf.add_var(name=f"aw_gain_inner_in_{name}")
+    m_max: Var = vf.add_var(name=f"m_max_inner_in_{name}")
+    Vdc_ref: Var = vf.add_var(name=f"Vdc_ref_inner_in_{name}")
+    v_dc: Var = vf.add_var(name=f"v_dc_inner_in_{name}")
+    vdc_floor: Var = vf.add_var(name=f"vdc_floor_inner_in_{name}")
+    sbase: Var = vf.add_var(name=f"sbase_inner_in_{name}")
+    P_ref: Var = vf.add_var(name=f"P_ref_inner_in_{name}")
+    Q_ref: Var = vf.add_var(name=f"Q_ref_inner_in_{name}")
+    P_loss0: Var = vf.add_var(name=f"P_loss0_inner_in_{name}")
+    Vpk: Var = vf.add_var(name=f"Vpk_inner_in_{name}")
 
     xi_id: Var = vf.add_var(name=f"xi_id_{name}")
     xi_iq: Var = vf.add_var(name=f"xi_iq_{name}")
@@ -63,6 +74,7 @@ def _build_bridge_filter_current_control_block(vf: VarFactory, name: str) -> Blo
     v_cmd_d_u: Var = vf.add_var(name=f"v_cmd_d_u_{name}")
     v_cmd_q_u: Var = vf.add_var(name=f"v_cmd_q_u_{name}")
     v_cmd_0_u: Var = vf.add_var(name=f"v_cmd_0_u_{name}")
+    k_v_conv: Var = vf.add_var(name=f"k_v_conv_{name}")
     v_lim: Var = vf.add_var(name=f"v_lim_{name}")
     v_cmd_d: Var = vf.add_var(name=f"v_cmd_d_{name}")
     v_cmd_q: Var = vf.add_var(name=f"v_cmd_q_{name}")
@@ -70,8 +82,13 @@ def _build_bridge_filter_current_control_block(vf: VarFactory, name: str) -> Blo
 
     eps: Const = Const(1.0e-10)
     c0: Const = Const(0.0)
+    c23: Const = Const(2.0 / 3.0)
     v_dc_eff: Expr = sym.max(v_dc, vdc_floor)
     omega_ratio: Expr = omega_pll / (omega_base + eps)
+    i_d0: Expr = c23 * ((P_ref / sbase) + (P_loss0 / sbase)) / (Vpk + eps)
+    i_q0: Expr = c23 * (Q_ref / sbase) / (Vpk + eps)
+    v_cmd_d0: Expr = Vpk - R_f * i_d0 - L_f * i_q0
+    v_cmd_q0: Expr = -R_f * i_q0 + L_f * i_d0
     v_d_cap: Expr = sym.hard_sat(v_cmd_d_u, -v_lim, v_lim)
     v_q_cap: Expr = sym.sqrt(sym.max(v_lim * v_lim - v_cmd_d * v_cmd_d, eps))
     v_0_cap: Expr = sym.sqrt(sym.max((v_lim * v_lim - v_cmd_d * v_cmd_d - v_cmd_q * v_cmd_q) / Const(3.0), eps / Const(3.0)))
@@ -91,16 +108,19 @@ def _build_bridge_filter_current_control_block(vf: VarFactory, name: str) -> Blo
             v_pi_d_u - (i_kp * (i_d_ref - i_d) + xi_id),
             v_pi_q_u - (i_kp * (i_q_ref - i_q) + xi_iq),
             v_pi_0_u - (i_kp * (i_0_ref - i_0) + xi_i0),
-            # The decoupling terms follow the same dq branch equations as the proven EMT current loop.
-            v_cmd_d_u - (v_d - R_f * i_d + omega_ratio * L_f * i_q - v_pi_d_u),
-            v_cmd_q_u - (v_q - R_f * i_q - omega_ratio * L_f * i_d - v_pi_q_u),
+            # The switched abc RL plant induces the opposite dq cross-coupling signs to the pseudo
+            # dq branch, so the decoupling terms must be flipped here to recover the same low-
+            # frequency closed-loop behaviour after handover.
+            v_cmd_d_u - (v_d - R_f * i_d - omega_ratio * L_f * i_q - v_pi_d_u),
+            v_cmd_q_u - (v_q - R_f * i_q + omega_ratio * L_f * i_d - v_pi_q_u),
             v_cmd_0_u - (v_0 - R_f * i_0 - v_pi_0_u),
+            k_v_conv - (sym.sqrt(v_cmd_d0 * v_cmd_d0 + v_cmd_q0 * v_cmd_q0 + eps) / (m_max * (Vdc_ref + eps))),
             v_lim - (k_v_conv * m_max * v_dc_eff),
             v_cmd_d - v_d_cap,
             v_cmd_q - sym.hard_sat(v_cmd_q_u, -v_q_cap, v_q_cap),
             v_cmd_0 - sym.hard_sat(v_cmd_0_u, -v_0_cap, v_0_cap),
         ]),
-        algebraic_vars=list([v_pi_d_u, v_pi_q_u, v_pi_0_u, v_cmd_d_u, v_cmd_q_u, v_cmd_0_u, v_lim, v_cmd_d, v_cmd_q, v_cmd_0]),
+        algebraic_vars=list([v_pi_d_u, v_pi_q_u, v_pi_0_u, v_cmd_d_u, v_cmd_q_u, v_cmd_0_u, k_v_conv, v_lim, v_cmd_d, v_cmd_q, v_cmd_0]),
         init_eqs=dict([
             (xi_id, c0),
             (xi_iq, c0),
@@ -108,12 +128,13 @@ def _build_bridge_filter_current_control_block(vf: VarFactory, name: str) -> Blo
             (v_pi_d_u, c0),
             (v_pi_q_u, c0),
             (v_pi_0_u, c0),
-            (v_cmd_d_u, c0),
-            (v_cmd_q_u, c0),
+            (v_cmd_d_u, v_cmd_d0),
+            (v_cmd_q_u, v_cmd_q0),
             (v_cmd_0_u, c0),
+            (k_v_conv, sym.sqrt(v_cmd_d0 * v_cmd_d0 + v_cmd_q0 * v_cmd_q0 + eps) / (m_max * (Vdc_ref + eps))),
             (v_lim, k_v_conv * m_max * v_dc_eff),
-            (v_cmd_d, c0),
-            (v_cmd_q, c0),
+            (v_cmd_d, v_cmd_d0),
+            (v_cmd_q, v_cmd_q0),
             (v_cmd_0, c0),
         ]),
         diff_init_eqs=dict([
@@ -121,9 +142,189 @@ def _build_bridge_filter_current_control_block(vf: VarFactory, name: str) -> Blo
             (d_xi_iq, c0),
             (d_xi_i0, c0),
         ]),
-        in_vars=list([v_d, v_q, v_0, i_d, i_q, i_0, omega_pll, omega_base, R_f, L_f, i_d_ref, i_q_ref, i_0_ref, i_kp, i_ki, aw_gain, m_max, v_dc, vdc_floor, k_v_conv]),
-        out_vars=list([v_cmd_d, v_cmd_q, v_cmd_0]),
+        in_vars=list([v_d, v_q, v_0, i_d, i_q, i_0, omega_pll, omega_base, R_f, L_f, i_0_ref, i_d_ref, i_q_ref, i_kp, i_ki, aw_gain, m_max, Vdc_ref, v_dc, vdc_floor, sbase, P_ref, Q_ref, P_loss0, Vpk]),
+        out_vars=list([v_cmd_d, v_cmd_q, v_cmd_0, k_v_conv]),
         name=f"{name}_current_ctrl",
+    )
+
+
+def _build_bridge_filter_pll_block(vf: VarFactory, name: str) -> Block:
+    """
+    Build the SRF-PLL used by the switched bridge/filter/control template.
+
+    The switched bridge/filter/control stack keeps its own local copy of the PLL
+    helper so this template does not depend on another converter template module.
+
+    :param vf: Shared EMT variable factory.
+    :param name: Symbolic model name suffix.
+    :return: PLL block.
+    """
+    v_q: Var = vf.add_var(name=f"v_q_pll_in_{name}")
+    omega_base: Var = vf.add_var(name=f"omega_base_pll_in_{name}")
+    pll_kp: Var = vf.add_var(name=f"pll_kp_in_{name}")
+    pll_ki: Var = vf.add_var(name=f"pll_ki_in_{name}")
+    phi_v: Var = vf.add_var(name=f"phi_v_pll_in_{name}")
+
+    theta_pll: Var = vf.add_var(name=f"theta_pll_{name}")
+    xi_pll: Var = vf.add_var(name=f"xi_pll_{name}")
+    omega_pll: Var = vf.add_var(name=f"omega_pll_{name}")
+
+    d_theta_pll: Var = vf.add_diff_var(name=f"d_theta_pll_{name}", base_var=theta_pll)
+    d_xi_pll: Var = vf.add_diff_var(name=f"d_xi_pll_{name}", base_var=xi_pll)
+    c0: Const = vf.add_const(0.0)
+
+    return Block(
+        state_eqs=list([
+            omega_pll,
+            -pll_ki * v_q,
+        ]),
+        state_vars=list([theta_pll, xi_pll]),
+        diff_vars=list([d_theta_pll, d_xi_pll]),
+        algebraic_eqs=list([
+            omega_pll - (omega_base - pll_kp * v_q + xi_pll),
+        ]),
+        algebraic_vars=list([omega_pll]),
+        init_eqs=dict([
+            (theta_pll, phi_v),
+            (xi_pll, c0),
+            (omega_pll, omega_base),
+        ]),
+        diff_init_eqs=dict([
+            (d_theta_pll, omega_base),
+            (d_xi_pll, c0),
+        ]),
+        in_vars=list([v_q, omega_base, pll_kp, pll_ki, phi_v]),
+        out_vars=list([theta_pll, omega_pll]),
+        name=f"{name}_pll",
+    )
+
+
+def _build_bridge_filter_pll_input_filter_block(vf: VarFactory, name: str) -> Block:
+    """
+    Build one first-order filter for the q-axis PLL input of the switched plant.
+
+    The pseudo-EMT converter sees a smooth fundamental q-axis voltage, while the
+    switched bridge/filter plant exposes switching ripple at the same measurement
+    point. Filtering the q-axis voltage before feeding the PLL makes both models
+    comparable without altering the converter control hierarchy itself.
+
+    The time constant is tied to the PWM carrier half-period:
+
+    ``tau_pll_vq = pi / omega_sw``
+
+    This keeps the filter physically interpretable and avoids introducing one ad hoc
+    fixed delay parameter into the public switched-converter model.
+
+    :param vf: Shared EMT variable factory.
+    :param name: Symbolic model name suffix.
+    :return: q-axis PLL-input filter block.
+    """
+    v_q_raw: Var = vf.add_var(name=f"v_q_pll_filter_in_{name}")
+    omega_sw: Var = vf.add_var(name=f"omega_sw_pll_filter_in_{name}")
+
+    v_q_pll_f: Var = vf.add_var(name=f"v_q_pll_f_{name}")
+    d_v_q_pll_f: Var = vf.add_diff_var(name=f"d_v_q_pll_f_{name}", base_var=v_q_pll_f)
+
+    eps: Const = Const(1.0e-10)
+    c_pi: Const = Const(np.pi)
+    c0: Const = Const(0.0)
+    tau_pll_vq_expr: Expr = c_pi / sym.max(omega_sw, eps)
+
+    return Block(
+        state_eqs=list([
+            # The switched plant should feed the PLL with the low-frequency q-axis content rather than
+            # with the raw switching ripple of the network-side voltage measurement.
+            (v_q_raw - v_q_pll_f) / tau_pll_vq_expr,
+        ]),
+        state_vars=list([v_q_pll_f]),
+        diff_vars=list([d_v_q_pll_f]),
+        init_eqs=dict([
+            (v_q_pll_f, v_q_raw),
+        ]),
+        diff_init_eqs=dict([
+            (d_v_q_pll_f, c0),
+        ]),
+        in_vars=list([v_q_raw, omega_sw]),
+        out_vars=list([v_q_pll_f]),
+        name=f"{name}_pll_input_filter",
+    )
+
+
+def _build_bridge_filter_measurement_filter_block(vf: VarFactory, name: str) -> Block:
+    """
+    Build one first-order dq0 measurement filter for the switched bridge + filter plant.
+
+    The averaged pseudo-EMT converter controllers act on smooth dq0 quantities. The
+    switched bridge plant, in contrast, exposes carrier-frequency ripple directly in
+    its reconstructed dq0 measurements. Filtering those measurements before they feed
+    the PLL and inner current loop isolates the low-frequency controller dynamics from
+    switching artifacts without altering the electrical plant itself.
+
+    The time constant is tied to the PWM carrier half-period:
+
+    ``tau_meas = pi / omega_sw``
+
+    :param vf: Shared EMT variable factory.
+    :param name: Symbolic model name suffix.
+    :return: dq0 measurement-filter block.
+    """
+    v_d_raw: Var = vf.add_var(name=f"v_d_meas_filter_in_{name}")
+    v_q_raw: Var = vf.add_var(name=f"v_q_meas_filter_in_{name}")
+    v_0_raw: Var = vf.add_var(name=f"v_0_meas_filter_in_{name}")
+    i_d_raw: Var = vf.add_var(name=f"i_d_meas_filter_in_{name}")
+    i_q_raw: Var = vf.add_var(name=f"i_q_meas_filter_in_{name}")
+    i_0_raw: Var = vf.add_var(name=f"i_0_meas_filter_in_{name}")
+    omega_sw: Var = vf.add_var(name=f"omega_sw_meas_filter_in_{name}")
+
+    v_d_meas_f: Var = vf.add_var(name=f"v_d_meas_f_{name}")
+    v_q_meas_f: Var = vf.add_var(name=f"v_q_meas_f_{name}")
+    v_0_meas_f: Var = vf.add_var(name=f"v_0_meas_f_{name}")
+    i_d_meas_f: Var = vf.add_var(name=f"i_d_meas_f_{name}")
+    i_q_meas_f: Var = vf.add_var(name=f"i_q_meas_f_{name}")
+    i_0_meas_f: Var = vf.add_var(name=f"i_0_meas_f_{name}")
+
+    d_v_d_meas_f: Var = vf.add_diff_var(name=f"d_v_d_meas_f_{name}", base_var=v_d_meas_f)
+    d_v_q_meas_f: Var = vf.add_diff_var(name=f"d_v_q_meas_f_{name}", base_var=v_q_meas_f)
+    d_v_0_meas_f: Var = vf.add_diff_var(name=f"d_v_0_meas_f_{name}", base_var=v_0_meas_f)
+    d_i_d_meas_f: Var = vf.add_diff_var(name=f"d_i_d_meas_f_{name}", base_var=i_d_meas_f)
+    d_i_q_meas_f: Var = vf.add_diff_var(name=f"d_i_q_meas_f_{name}", base_var=i_q_meas_f)
+    d_i_0_meas_f: Var = vf.add_diff_var(name=f"d_i_0_meas_f_{name}", base_var=i_0_meas_f)
+
+    eps: Const = Const(1.0e-10)
+    c_pi: Const = Const(np.pi)
+    c0: Const = Const(0.0)
+    tau_meas_expr: Expr = c_pi / sym.max(omega_sw, eps)
+
+    return Block(
+        state_eqs=list([
+            (v_d_raw - v_d_meas_f) / tau_meas_expr,
+            (v_q_raw - v_q_meas_f) / tau_meas_expr,
+            (v_0_raw - v_0_meas_f) / tau_meas_expr,
+            (i_d_raw - i_d_meas_f) / tau_meas_expr,
+            (i_q_raw - i_q_meas_f) / tau_meas_expr,
+            (i_0_raw - i_0_meas_f) / tau_meas_expr,
+        ]),
+        state_vars=list([v_d_meas_f, v_q_meas_f, v_0_meas_f, i_d_meas_f, i_q_meas_f, i_0_meas_f]),
+        diff_vars=list([d_v_d_meas_f, d_v_q_meas_f, d_v_0_meas_f, d_i_d_meas_f, d_i_q_meas_f, d_i_0_meas_f]),
+        init_eqs=dict([
+            (v_d_meas_f, v_d_raw),
+            (v_q_meas_f, v_q_raw),
+            (v_0_meas_f, v_0_raw),
+            (i_d_meas_f, i_d_raw),
+            (i_q_meas_f, i_q_raw),
+            (i_0_meas_f, i_0_raw),
+        ]),
+        diff_init_eqs=dict([
+            (d_v_d_meas_f, c0),
+            (d_v_q_meas_f, c0),
+            (d_v_0_meas_f, c0),
+            (d_i_d_meas_f, c0),
+            (d_i_q_meas_f, c0),
+            (d_i_0_meas_f, c0),
+        ]),
+        in_vars=list([v_d_raw, v_q_raw, v_0_raw, i_d_raw, i_q_raw, i_0_raw, omega_sw]),
+        out_vars=list([v_d_meas_f, v_q_meas_f, v_0_meas_f, i_d_meas_f, i_q_meas_f, i_0_meas_f]),
+        name=f"{name}_measurement_filter",
     )
 
 
@@ -144,7 +345,6 @@ def get_bridge_filter_control_2level_3ph_emt_template(vf: VarFactory, name: str 
     templ.name = name
     templ.block.name = name
 
-    theta_pll_in: Var = vf.add_var(name=f"theta_pll_in_{name}")
     omega_base_in: Var = vf.add_var(name=f"omega_base_in_{name}")
     v_A_in: Var = vf.add_var(name=f"v_A_in_{name}")
     v_B_in: Var = vf.add_var(name=f"v_B_in_{name}")
@@ -153,10 +353,10 @@ def get_bridge_filter_control_2level_3ph_emt_template(vf: VarFactory, name: str 
     i_d_ref_in: Var = vf.add_var(name=f"i_d_ref_in_{name}")
     i_q_ref_in: Var = vf.add_var(name=f"i_q_ref_in_{name}")
     i_0_ref_in: Var = vf.add_var(name=f"i_0_ref_in_{name}")
-    k_v_conv_in: Var = vf.add_var(name=f"k_v_conv_in_{name}")
     m_max_in: Var = vf.add_var(name=f"m_max_in_{name}")
     vdc_floor_in: Var = vf.add_var(name=f"vdc_floor_in_{name}")
     omega_sw_in: Var = vf.add_var(name=f"omega_sw_in_{name}")
+    omega_meas_in: Var = vf.add_var(name=f"omega_meas_in_{name}")
     carrier_phase_in: Var = vf.add_var(name=f"carrier_phase_in_{name}")
     R_f_in: Var = vf.add_var(name=f"R_f_in_{name}")
     L_f_in: Var = vf.add_var(name=f"L_f_in_{name}")
@@ -166,9 +366,17 @@ def get_bridge_filter_control_2level_3ph_emt_template(vf: VarFactory, name: str 
     i_ki_in: Var = vf.add_var(name=f"i_ki_in_{name}")
     aw_gain_in: Var = vf.add_var(name=f"aw_gain_in_{name}")
     phi_v_in: Var = vf.add_var(name=f"phi_v_in_{name}")
+    Vdc_ref_in: Var = vf.add_var(name=f"Vdc_ref_in_{name}")
+    sbase_in: Var = vf.add_var(name=f"sbase_in_{name}")
+    P_ref_in: Var = vf.add_var(name=f"P_ref_in_{name}")
+    Q_ref_in: Var = vf.add_var(name=f"Q_ref_in_{name}")
+    P_loss0_in: Var = vf.add_var(name=f"P_loss0_in_{name}")
+    Vpk_in: Var = vf.add_var(name=f"Vpk_in_{name}")
 
     plant_block: Block = get_bridge_filter_2level_3ph_emt_template(vf=vf, name=f"{name}_plant").block
-    pll_block: Block = _build_pseudo_emt_converter_pll_block(vf=vf, name=name)
+    measurement_filter_block: Block = _build_bridge_filter_measurement_filter_block(vf=vf, name=name)
+    pll_input_filter_block: Block = _build_bridge_filter_pll_input_filter_block(vf=vf, name=name)
+    pll_block: Block = _build_bridge_filter_pll_block(vf=vf, name=name)
     current_ctrl_block: Block = _build_bridge_filter_current_control_block(vf=vf, name=name)
 
     plant_i_A: Var = find_name_in_block(f"i_A_{name}_plant", plant_block)
@@ -186,18 +394,28 @@ def get_bridge_filter_control_2level_3ph_emt_template(vf: VarFactory, name: str 
     plant_v_conv_a: Var = find_name_in_block(f"v_conv_a_{name}_plant_bridge", plant_block)
     plant_v_conv_b: Var = find_name_in_block(f"v_conv_b_{name}_plant_bridge", plant_block)
     plant_v_conv_c: Var = find_name_in_block(f"v_conv_c_{name}_plant_bridge", plant_block)
+    meas_v_d_f: Var = find_name_in_block(f"v_d_meas_f_{name}", measurement_filter_block)
+    meas_v_q_f: Var = find_name_in_block(f"v_q_meas_f_{name}", measurement_filter_block)
+    meas_v_0_f: Var = find_name_in_block(f"v_0_meas_f_{name}", measurement_filter_block)
+    meas_i_d_f: Var = find_name_in_block(f"i_d_meas_f_{name}", measurement_filter_block)
+    meas_i_q_f: Var = find_name_in_block(f"i_q_meas_f_{name}", measurement_filter_block)
+    meas_i_0_f: Var = find_name_in_block(f"i_0_meas_f_{name}", measurement_filter_block)
+    pll_input_v_q_f: Var = find_name_in_block(f"v_q_pll_f_{name}", pll_input_filter_block)
     pll_theta: Var = find_name_in_block(f"theta_pll_{name}", pll_block)
     pll_omega: Var = find_name_in_block(f"omega_pll_{name}", pll_block)
     ctrl_v_cmd_d: Var = find_name_in_block(f"v_cmd_d_{name}", current_ctrl_block)
     ctrl_v_cmd_q: Var = find_name_in_block(f"v_cmd_q_{name}", current_ctrl_block)
     ctrl_v_cmd_0: Var = find_name_in_block(f"v_cmd_0_{name}", current_ctrl_block)
+    ctrl_k_v_conv: Var = find_name_in_block(f"k_v_conv_{name}", current_ctrl_block)
 
-    if plant_i_A is None or plant_i_B is None or plant_i_C is None or plant_i_d is None or plant_i_q is None or plant_i_0 is None or plant_v_d is None or plant_v_q is None or plant_v_0 is None or plant_gate_a is None or plant_gate_b is None or plant_gate_c is None or plant_v_conv_a is None or plant_v_conv_b is None or plant_v_conv_c is None or pll_theta is None or pll_omega is None or ctrl_v_cmd_d is None or ctrl_v_cmd_q is None or ctrl_v_cmd_0 is None:
+    if plant_i_A is None or plant_i_B is None or plant_i_C is None or plant_i_d is None or plant_i_q is None or plant_i_0 is None or plant_v_d is None or plant_v_q is None or plant_v_0 is None or plant_gate_a is None or plant_gate_b is None or plant_gate_c is None or plant_v_conv_a is None or plant_v_conv_b is None or plant_v_conv_c is None or meas_v_d_f is None or meas_v_q_f is None or meas_v_0_f is None or meas_i_d_f is None or meas_i_q_f is None or meas_i_0_f is None or pll_input_v_q_f is None or pll_theta is None or pll_omega is None or ctrl_v_cmd_d is None or ctrl_v_cmd_q is None or ctrl_v_cmd_0 is None or ctrl_k_v_conv is None:
         raise KeyError(f"The bridge + filter + control template '{name}' could not resolve one or more internal variables")
     else:
         pass
 
     # The plant receives electrical inputs and the voltage commands produced by the current controller.
+    # The PLL angle is generated internally by ``pll_block`` so the parent block does not expose
+    # a dead external angle input.
     plant_block.connect(plant_block.in_vars[0:16], list([
         pll_theta,
         omega_base_in,
@@ -208,7 +426,7 @@ def get_bridge_filter_control_2level_3ph_emt_template(vf: VarFactory, name: str 
         ctrl_v_cmd_q,
         ctrl_v_cmd_0,
         v_dc_in,
-        k_v_conv_in,
+        ctrl_k_v_conv,
         m_max_in,
         vdc_floor_in,
         omega_sw_in,
@@ -217,43 +435,68 @@ def get_bridge_filter_control_2level_3ph_emt_template(vf: VarFactory, name: str 
         L_f_in,
     ]))
 
-    # The PLL uses the q-axis plant voltage exactly as in the converter EMT hierarchy.
-    pll_block.connect(pll_block.in_vars[0:5], list([
-        plant_v_q,
-        omega_base_in,
-        pll_kp_in,
-        pll_ki_in,
-        phi_v_in,
-    ]))
-
-    # The current controller regulates the plant dq currents against explicit references.
-    current_ctrl_block.connect(current_ctrl_block.in_vars[0:20], list([
+    # The switched plant dq0 measurements are filtered before they feed the controls so the PLL and
+    # current loop react to the low-frequency plant behaviour rather than to carrier ripple.
+    measurement_filter_block.connect(measurement_filter_block.in_vars[0:7], list([
         plant_v_d,
         plant_v_q,
         plant_v_0,
         plant_i_d,
         plant_i_q,
         plant_i_0,
+        omega_meas_in,
+    ]))
+
+    # The PLL still uses one dedicated q-axis input filter on top of the generic measurement filter.
+    # This keeps the already-validated PLL smoothing path while removing the strongest carrier ripple
+    # before it reaches that dedicated stage.
+    pll_input_filter_block.connect(pll_input_filter_block.in_vars[0:2], list([
+        meas_v_q_f,
+        omega_meas_in,
+    ]))
+
+    # The PLL uses the filtered q-axis plant voltage.
+    pll_block.connect(pll_block.in_vars[0:5], list([
+        pll_input_v_q_f,
+        omega_base_in,
+        pll_kp_in,
+        pll_ki_in,
+        phi_v_in,
+    ]))
+
+    # The switched plant reuses the full pseudo-EMT inner loop so its dq controller shares the
+    # same modulation-limit logic as the averaged reference converter.
+    current_ctrl_block.connect(current_ctrl_block.in_vars[0:25], list([
+        meas_v_d_f,
+        meas_v_q_f,
+        meas_v_0_f,
+        meas_i_d_f,
+        meas_i_q_f,
+        meas_i_0_f,
         pll_omega,
         omega_base_in,
         R_f_in,
         L_f_in,
+        i_0_ref_in,
         i_d_ref_in,
         i_q_ref_in,
-        i_0_ref_in,
         i_kp_in,
         i_ki_in,
         aw_gain_in,
         m_max_in,
+        Vdc_ref_in,
         v_dc_in,
         vdc_floor_in,
-        k_v_conv_in,
+        sbase_in,
+        P_ref_in,
+        Q_ref_in,
+        P_loss0_in,
+        Vpk_in,
     ]))
 
-    templ.block.children.extend(list([plant_block, pll_block, current_ctrl_block]))
+    templ.block.children.extend(list([plant_block, measurement_filter_block, pll_input_filter_block, pll_block, current_ctrl_block]))
     templ.block.unify_blocks()
     templ.block.in_vars = list([
-        theta_pll_in,
         omega_base_in,
         v_A_in,
         v_B_in,
@@ -262,10 +505,10 @@ def get_bridge_filter_control_2level_3ph_emt_template(vf: VarFactory, name: str 
         i_d_ref_in,
         i_q_ref_in,
         i_0_ref_in,
-        k_v_conv_in,
         m_max_in,
         vdc_floor_in,
         omega_sw_in,
+        omega_meas_in,
         carrier_phase_in,
         R_f_in,
         L_f_in,
@@ -275,6 +518,12 @@ def get_bridge_filter_control_2level_3ph_emt_template(vf: VarFactory, name: str 
         i_ki_in,
         aw_gain_in,
         phi_v_in,
+        Vdc_ref_in,
+        sbase_in,
+        P_ref_in,
+        Q_ref_in,
+        P_loss0_in,
+        Vpk_in,
     ])
     templ.block.out_vars = list([
         plant_i_A,
@@ -292,6 +541,11 @@ def get_bridge_filter_control_2level_3ph_emt_template(vf: VarFactory, name: str 
         ctrl_v_cmd_d,
         ctrl_v_cmd_q,
         ctrl_v_cmd_0,
+        meas_v_d_f,
+        meas_v_q_f,
+        meas_i_d_f,
+        meas_i_q_f,
+        pll_input_v_q_f,
         pll_theta,
         pll_omega,
     ])

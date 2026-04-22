@@ -516,8 +516,8 @@ class ShortCircuitDriver(DriverTemplate):
                         #
                         # island_bus_index = reverse_bus_index.get(self.options.bus_index, None)
 
-                        bus_dict = island.bus_data.get_idtag_dict()
-                        island_bus_index = bus_dict.get(sc_definition.device_idtag, None)
+                        bus_dict2 = island.bus_data.get_idtag_dict()
+                        island_bus_index = bus_dict2.get(sc_definition.device_idtag, None)
 
                         if island_bus_index is not None:
 

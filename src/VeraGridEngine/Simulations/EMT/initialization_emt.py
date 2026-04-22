@@ -23,7 +23,7 @@ from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import EmtProblemTemplate
 from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicJacobian, SymbolicVector
 from VeraGridEngine.Utils.Symbolic.jit_compiler import RMSCompiler
-from VeraGridEngine.Utils.Symbolic.symbolic import expression2numba, get_expression_vars
+from VeraGridEngine.Utils.Symbolic.symbolic import expression2numba, get_expression_vars, heaviside_num
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, Const, Expr, find_vars_order
 
@@ -284,7 +284,7 @@ class InitializationStateRhsVector:
         :return: None.
         :rtype: None
         """
-        namespace: Dict[str, object] = dict(math=__import__("math"), np=np)
+        namespace: Dict[str, object] = dict(math=__import__("math"), np=np, _heaviside=heaviside_num)
         exec(source_code, namespace)
 
         if use_jit:

@@ -32,6 +32,9 @@ from VeraGridEngine.Simulations.Reliability.blackout_driver import CascadingDriv
 from VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver import InputsAnalysisDriver, InputsAnalysisResults
 from VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver import (
     InvestmentsEvaluationDriver, InvestmentsEvaluationResults)
+from VeraGridEngine.Simulations.CatalogueOptimization.catalogue_optimization_driver import (
+    CatalogueOptimizationDriver,
+)
 from VeraGridEngine.Simulations.SigmaAnalysis.sigma_analysis_driver import SigmaAnalysisDriver, SigmaAnalysisResults
 from VeraGridEngine.Simulations.NTC.ntc_driver import (
     OptimalNetTransferCapacityDriver, OptimalNetTransferCapacityResults)
@@ -76,6 +79,7 @@ DRIVER_OBJECTS = Union[
     NodeGroupsDriver,
     InputsAnalysisDriver,
     InvestmentsEvaluationDriver,
+    CatalogueOptimizationDriver,
     NodalCapacityTimeSeriesDriver,
     ReliabilityStudyDriver,
     RmsSimulationDriver,

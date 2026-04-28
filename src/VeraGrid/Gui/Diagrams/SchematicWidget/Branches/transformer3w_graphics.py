@@ -9,7 +9,7 @@ from PySide6.QtCore import Qt, QPoint, QPointF
 from PySide6.QtGui import QPen, QCursor, QColor
 from PySide6.QtWidgets import QGraphicsItem, QGraphicsEllipseItem, QGraphicsRectItem, QMenu, QGraphicsSceneMouseEvent
 
-from VeraGrid.Gui.Diagrams.Editors.transformer3w_editor import Transformer3WEditor
+from VeraGrid.Gui.DeviceEditors.Transformer3wEditor.transformer3w_editor import Transformer3WEditor
 from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE, DEACTIVATED, GenericDiagramWidget
 from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import RoundTerminalItem
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.winding_graphics import WindingGraphicItem
@@ -265,12 +265,12 @@ class Transformer3WGraphicItem(GenericDiagramWidget, QGraphicsRectItem):
                            checkeable=True,
                            checked_value=self.api_object.active)
 
-            menu.addSeparator()
-
             add_menu_entry(menu=menu,
-                           text="Edit",
+                           text="Transformer 3W editor",
                            function_ptr=self.edit,
                            icon_path=":/Icons/icons/edit.png")
+
+            menu.addSeparator()
 
             add_menu_entry(menu=menu,
                            text="Delete",

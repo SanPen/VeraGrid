@@ -19,6 +19,7 @@ from VeraGridEngine.enumerations import VarPowerFlowRefferenceType, RmsInitializ
 from VeraGridEngine.basic_structures import Vec, ObjVec, BoolVec, Logger
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowResults
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
+from VeraGridEngine.Simulations.Rms.initialization_rms import run_rms_native_initialization
 from VeraGridEngine.Utils.Symbolic.explicit_initialization_symbolic import (init_explicit_common,
     build_rms_single_equation_compiler)
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_template import RmsProblemTemplate
@@ -155,6 +156,7 @@ class RmsProblemDae(RmsProblemTemplate):
 
         # this is the general init guess that will contain all the variables init value
         self.init_guess: Dict[int, float | int | complex | None] = dict()
+        self.event_params_init_dict: Dict[int, float | int | complex | None] = dict()
         self.sys_block: Block = Block(children=[], in_vars=[])
 
         self._algebraic_vars: List[Var] = list()
@@ -416,6 +418,7 @@ class RmsProblemDae(RmsProblemTemplate):
                             variable_parameters=self._variable_parameters,
                             event_parameters_eqs=self._event_parameters_eqs0,
                             constant_parameters=self._constant_parameters,
+                            event_param_init_dict=self.event_params_init_dict,
                             init_guess=self.init_guess,
                             diff_init_guess=diff_init_guess_common,
                             uid2idx_vars=self.uid2idx_vars,
@@ -585,6 +588,7 @@ class RmsProblemDae(RmsProblemTemplate):
                         variable_parameters=self._variable_parameters,
                         event_parameters_eqs=self._event_parameters_eqs0,
                         constant_parameters=self._constant_parameters,
+                        event_param_init_dict=self.event_params_init_dict,
                         init_guess=self.init_guess,
                         diff_init_guess=diff_init_guess_common,
                         uid2idx_vars=self.uid2idx_vars,
@@ -788,6 +792,7 @@ class RmsProblemDae(RmsProblemTemplate):
                         variable_parameters=self._variable_parameters,
                         event_parameters_eqs=self._event_parameters_eqs0,
                         constant_parameters=self._constant_parameters,
+                        event_param_init_dict=self.event_params_init_dict,
                         init_guess=self.init_guess,
                         diff_init_guess=diff_init_guess_common,
                         uid2idx_vars=self.uid2idx_vars,
@@ -798,6 +803,8 @@ class RmsProblemDae(RmsProblemTemplate):
                         compile_single_equation=compile_single_equation,
                         verbose=bool(self.options.verbose > 0),
                     )
+                    # initialize variables with no init equation assigned
+                    # run_rms_native_initialization(self, self.options)
 
                 elif self.options.initialization_method == RmsInitializationMethod.PseudoTransient:
                     raise ValueError("Not implemented initialization method")
@@ -1745,6 +1752,34 @@ class RmsProblemDae(RmsProblemTemplate):
         return self._algebraic_vars
 
     @property
+    def algebraic_eqs(self):
+        """
+        :return:
+        """
+        return self._algebraic_eqs
+
+    @property
+    def variable_parameters(self):
+        """
+        :return:
+        """
+        return self._variable_parameters
+
+    @property
+    def event_parameters_eqs(self):
+        """
+        :return:
+        """
+        return self._event_parameters_eqs
+
+    @property
+    def event_parameters_eqs0(self):
+        """
+        :return:
+        """
+        return self._event_parameters_eqs0
+
+    @property
     def state_and_algebraic_vars(self) -> List[Var]:
         """
         :return:
@@ -1762,6 +1797,13 @@ class RmsProblemDae(RmsProblemTemplate):
         :return:
         """
         return self._state_vars
+
+    @property
+    def state_eqs(self):
+        """
+        :return:
+        """
+        return self._state_eqs
 
     def get_all_vars_number(self) -> int:
         return self._n_vars
@@ -1793,6 +1835,30 @@ class RmsProblemDae(RmsProblemTemplate):
             i = self._uid2idx_vars[uid]
             x[i] = val
         return x
+    def get_eventparams0(self) -> Vec:
+        """
+        Helper function to build the initial vector
+        :return: array matching with the mapping, matching the solver ordering
+        """
+        x = np.zeros(len(self._variable_parameters))
+
+        for uid, val in self.event_params_init_dict.items():
+            i = self._uid2idx_event_params[uid]
+            x[i] = val
+        return x
+
+    def get_dx0(self) -> Vec:
+        """
+        Helper function to build the initial vector
+        :return: array matching with the mapping, matching the solver ordering
+        """
+        x = np.zeros(len(self._diff_vars))
+
+        # for uid, val in self.init_guess.items():
+        #     i = self._uid2idx_vars[uid]
+        #     x[i] = val
+        return x
+
 
     def initialize_fmu_cs_devices(self, x_snapshot: Vec, t: float = 0.0) -> None:
         """
@@ -1945,3 +2011,14 @@ class RmsProblemDae(RmsProblemTemplate):
     def get_dt_value(self):
         dt_value = self._variable_parameters_values[-2]
         return dt_value
+
+    def get_compiler_names_dict(self):
+        return self._compiler_names_dict
+
+    def get_alias_names_dict(self):
+        return self._alias_names_dict
+
+    def get_diff_vars(self):
+        return self._diff_vars
+
+

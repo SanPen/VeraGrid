@@ -8,6 +8,7 @@ from VeraGrid.Gui.Diagrams.generic_graphics import Square
 from VeraGridEngine.Devices.Injections.battery import Battery
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionTemplateGraphicItem
 
+
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
 

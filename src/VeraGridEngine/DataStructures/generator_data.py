@@ -7,7 +7,8 @@ from typing import Tuple
 import numpy as np
 from scipy.sparse import csc_matrix, coo_matrix
 import VeraGridEngine.Topology.topology as tp
-from VeraGridEngine.basic_structures import CxVec, Vec, IntVec, BoolVec, StrVec
+from VeraGridEngine.basic_structures import CxVec, Vec, IntVec, BoolVec, StrVec, ObjVec
+from VeraGridEngine.enumerations import GeneratorType
 
 
 class GeneratorData:
@@ -58,6 +59,15 @@ class GeneratorData:
         self.x0: Vec = np.zeros(nelm, dtype=float)
         self.x1: Vec = np.zeros(nelm, dtype=float)
         self.x2: Vec = np.zeros(nelm, dtype=float)
+
+        # asynchronous generator impedance
+        self.Rs: Vec = np.zeros(nelm, dtype=float)
+        self.Xs: Vec = np.zeros(nelm, dtype=float)
+        self.Xm: Vec = np.zeros(nelm, dtype=float)
+        self.Rr: Vec = np.zeros(nelm, dtype=float)
+        self.Xr: Vec = np.zeros(nelm, dtype=float)
+
+        self.type: ObjVec = np.full(self.nelm, fill_value=GeneratorType.Synchronous, dtype=object)
 
         self.dispatchable: BoolVec = np.zeros(nelm, dtype=bool)
         self.must_run: BoolVec = np.zeros(nelm, dtype=bool)
@@ -139,6 +149,14 @@ class GeneratorData:
         data.x0 = self.x0[elm_idx]
         data.x1 = self.x1[elm_idx]
         data.x2 = self.x2[elm_idx]
+
+        data.Rs = self.Rs[elm_idx]
+        data.Xs = self.Xs[elm_idx]
+        data.Xm = self.Xm[elm_idx]
+        data.Rr = self.Rr[elm_idx]
+        data.Xr = self.Xr[elm_idx]
+
+        data.type = self.type[elm_idx]
 
         data.dispatchable = self.dispatchable[elm_idx]
         data.must_run = self.must_run[elm_idx]
@@ -224,6 +242,14 @@ class GeneratorData:
         data.x0 = self.x0.copy()
         data.x1 = self.x1.copy()
         data.x2 = self.x2.copy()
+
+        data.Rs = self.Rs.copy()
+        data.Xs = self.Xs.copy()
+        data.Xm = self.Xm.copy()
+        data.Rr = self.Rr.copy()
+        data.Xr = self.Xr.copy()
+
+        data.type = self.type.copy()
 
         data.dispatchable = self.dispatchable.copy()
         data.must_run = self.must_run.copy()

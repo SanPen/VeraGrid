@@ -14,14 +14,14 @@ from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceTyp
 class LinearAnalysisTimeSeriesResults(ResultsTemplate):
 
     LOCAL_RESULTS_DECLARATIONS = (
-        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list()),
-        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list()),
-        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list()),
-        ResultsProperty(name='voltage', tpe=CxMat, old_names=list()),
-        ResultsProperty(name='Sf', tpe=CxMat, old_names=list()),
-        ResultsProperty(name='S', tpe=CxMat, old_names=list()),
-        ResultsProperty(name='losses', tpe=CxMat, old_names=list()),
-        ResultsProperty(name='loading', tpe=CxMat, old_names=list()),
+        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='voltage', tpe=CxMat, old_names=list(), expandable=True),
+        ResultsProperty(name='Sf', tpe=CxMat, old_names=list(), expandable=True),
+        ResultsProperty(name='S', tpe=CxMat, old_names=list(), expandable=True),
+        ResultsProperty(name='losses', tpe=CxMat, old_names=list(), expandable=True),
+        ResultsProperty(name='loading', tpe=CxMat, old_names=list(), expandable=True),
     )
 
     __slots__ = (

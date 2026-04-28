@@ -1656,6 +1656,8 @@ def _run_reduced_newton_initialization(
         residual: np.ndarray = _evaluate_initialization_residual(reduced_system, problem, x, dx, runtime_params, constant_params)
         res_norm: float = _max_abs_value(residual)
 
+        # report
+
         if iter_idx == 0:
             report.initial_residual_inf = res_norm
         else:

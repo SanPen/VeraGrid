@@ -17,15 +17,15 @@ from VeraGridEngine.Utils.NumericalMethods.MVRSM_mo_pareto import non_dominated_
 class InvestmentsEvaluationResults(ResultsTemplate):
 
     LOCAL_RESULTS_DECLARATIONS = (
-        ResultsProperty(name='max_eval', tpe=int, old_names=list()),
-        ResultsProperty(name='f_names', tpe=StrVec, old_names=list()),
-        ResultsProperty(name='x_names', tpe=StrVec, old_names=list()),
-        ResultsProperty(name='plot_x_idx', tpe=int, old_names=list()),
-        ResultsProperty(name='plot_y_idx', tpe=int, old_names=list()),
-        ResultsProperty(name='x', tpe=Mat, old_names=list()),
-        ResultsProperty(name='f', tpe=Mat, old_names=list()),
-        ResultsProperty(name='f_best', tpe=Vec, old_names=list()),
-        ResultsProperty(name='sorting_indices', tpe=IntVec, old_names=list()),
+        ResultsProperty(name='max_eval', tpe=int, old_names=list(), expandable=False),
+        ResultsProperty(name='f_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='x_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='plot_x_idx', tpe=int, old_names=list(), expandable=False),
+        ResultsProperty(name='plot_y_idx', tpe=int, old_names=list(), expandable=False),
+        ResultsProperty(name='x', tpe=Mat, old_names=list(), expandable=False),
+        ResultsProperty(name='f', tpe=Mat, old_names=list(), expandable=False),
+        ResultsProperty(name='f_best', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='sorting_indices', tpe=IntVec, old_names=list(), expandable=False),
     )
 
     __slots__ = (

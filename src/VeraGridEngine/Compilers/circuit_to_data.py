@@ -293,7 +293,8 @@ def get_bus_data(bus_data: BusData,
                  circuit: MultiCircuit,
                  areas_dict: Dict[Area, int],
                  t_idx: int | None,
-                 use_stored_guess=False, ) -> None:
+                 use_stored_guess=False,
+                 consider_grounded_buses: bool = False) -> None:
     """
 
     :param bus_data: BusData
@@ -301,6 +302,7 @@ def get_bus_data(bus_data: BusData,
     :param areas_dict:
     :param t_idx:
     :param use_stored_guess:
+    :param consider_grounded_buses:
     :return:
     """
 
@@ -317,6 +319,10 @@ def get_bus_data(bus_data: BusData,
         bus_data.Vbus[i] = bus.get_voltage_guess(use_stored_guess=use_stored_guess)
         bus_data.is_dc[i] = bus.is_dc
         bus_data.is_grounded[i] = bus.is_grounded
+
+        # Grounded buses go to zero
+        if bus.is_grounded and consider_grounded_buses and bus.is_dc:
+            bus_data.Vbus[i] = 1e-20 * np.exp(1j * 1e-20)  # effectively zero
 
         bus_data.angle_min[i] = bus.angle_min
         bus_data.angle_max[i] = bus.angle_max
@@ -1022,6 +1028,15 @@ def fill_generator_parent(
     data.x1[k] = elm.X1
     data.x2[k] = elm.X2
 
+    # asynchronous generator impedance
+    data.Rs[k] = elm.Rs
+    data.Xs[k] = elm.Xs
+    data.Xm[k] = elm.Xm
+    data.Rr[k] = elm.Rr
+    data.Xr[k] = elm.Xr
+
+    data.type[k] = elm.tpe
+
     data.startup_cost[k] = elm.startup_cost
     data.shut_down_cost[k] = elm.shutdown_cost
 
@@ -1284,10 +1299,12 @@ def fill_parent_branch(i: int,
     # that do have a significant virtual tap difference.
     # i.e. transformers for distribution systems
 
-    if not bus_voltage_used[f] and not use_stored_guess:
+    # Grounded buses carry a pinned ground-reference Vbus from get_bus_data
+    # and must not be overwritten by the virtual-tap default.
+    if not bus_voltage_used[f] and not use_stored_guess and not bus_data.is_grounded[f]:
         bus_data.Vbus[f] = data.virtual_tap_f[i]
 
-    if not bus_voltage_used[t] and not use_stored_guess:
+    if not bus_voltage_used[t] and not use_stored_guess and not bus_data.is_grounded[t]:
         bus_data.Vbus[t] = data.virtual_tap_t[i]
 
     return f, t
@@ -1946,8 +1963,21 @@ def get_vsc_data(
 
         data.control1[ii] = elm.get_control1_at(t_idx)
         data.control2[ii] = elm.get_control2_at(t_idx)
+        data.fault_control[ii] = elm.get_fault_control_at(t_idx)
         data.control1_val[ii] = elm.get_control1_val_at(t_idx)
         data.control2_val[ii] = elm.get_control2_val_at(t_idx)
+        data.control1_val_min[ii] = elm.control1_val_min
+        data.control1_val_max[ii] = elm.control1_val_max
+        data.control1_droop[ii] = elm.get_control1_droop_at(t_idx)
+        data.control1_droop_val[ii] = elm.get_control1_droop_val_at(t_idx)
+        data.control1_droop_val_min[ii] = elm.control1_droop_val_min
+        data.control1_droop_val_max[ii] = elm.control1_droop_val_max
+        data.control2_val_min[ii] = elm.control2_val_min
+        data.control2_val_max[ii] = elm.control2_val_max
+        data.control2_val_droop[ii] = elm.get_control2_val_droop_at(t_idx)
+        data.control2_droop_val[ii] = elm.get_control2_droop_val_at(t_idx)
+        data.control2_droop_val_min[ii] = elm.control2_droop_val_min
+        data.control2_droop_val_max[ii] = elm.control2_droop_val_max
 
         # Using DC_positive to set the controls, may need to also pass DC_negative
         set_control_dev(k=ii, f=f, t=t,
@@ -1979,11 +2009,13 @@ def get_vsc_data(
         data.contingency_enabled[i] = int(elm.contingency_enabled)
         data.monitor_loading[i] = int(elm.monitor_loading)
 
-        data.Kdp[ii] = elm.kdp
+        # data.Kdp[ii] = elm.kdp
         data.alpha1[ii] = elm.alpha1
         data.alpha2[ii] = elm.alpha2
         data.alpha3[ii] = elm.alpha3
         data.min_ac_voltage[ii] = elm.min_ac_voltage
+
+        data.ysvs[ii] = elm.ysvs
 
         ii += 1
 
@@ -2218,6 +2250,7 @@ def compile_numerical_circuit_at(circuit: MultiCircuit,
                                  control_remote_voltage: bool = True,
                                  fill_gep: bool = False,
                                  fill_three_phase: bool = False,
+                                 consider_grounded_buses: bool = False,
                                  logger=Logger()) -> NumericalCircuit:
     """
     Compile a NumericalCircuit from a MultiCircuit
@@ -2234,6 +2267,7 @@ def compile_numerical_circuit_at(circuit: MultiCircuit,
     :param control_remote_voltage: control remote voltage?
     :param fill_gep: fill generation expansion planning parameters?
     :param fill_three_phase:
+    :param consider_grounded_buses: Consider the is_grounded bus state
     :param logger: Logger instance
     :return: NumericalCircuit instance
     """
@@ -2277,6 +2311,7 @@ def compile_numerical_circuit_at(circuit: MultiCircuit,
         t_idx=t_idx,
         areas_dict=areas_dict,
         use_stored_guess=use_stored_guess,
+        consider_grounded_buses=consider_grounded_buses
     )
 
     gen_dict = get_generator_data(

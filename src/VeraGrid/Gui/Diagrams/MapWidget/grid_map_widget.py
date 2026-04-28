@@ -266,6 +266,7 @@ class GridMapWidget(BaseDiagramWidget):
                              editor=self,
                              zoom_callback=self.zoom_callback,
                              position_callback=self.position_callback)
+        self.diagram_scene.selectionChanged.connect(self._sync_line_handle_visibility)
 
         # Draw the overlay at a stable base zoom, then move to the persisted
         # viewport using the synchronized zoom path.
@@ -283,6 +284,7 @@ class GridMapWidget(BaseDiagramWidget):
         # Draw the diagram. New diagrams are auto-centered from their graphics after the map viewport is initialized;
         # loaded diagrams must preserve their persisted viewport.
         self.draw()
+        self._sync_line_handle_visibility()
 
         if self.diagram.start_level != self.map.level:
             self.map.apply_zoom_level(level=self.diagram.start_level)
@@ -291,6 +293,9 @@ class GridMapWidget(BaseDiagramWidget):
                                 latitude=self.diagram.latitude)
 
         self.center()
+        self._last_branch_width: float | None = None
+        self._last_arrow_width: float | None = None
+        self._last_substation_width: float | None = None
 
     def set_diagram(self, diagram: MapDiagram):
         """
@@ -360,6 +365,42 @@ class GridMapWidget(BaseDiagramWidget):
         """
         return [e.api_object for e in self._get_selected()]
 
+    def _get_selected_line_containers(self) -> List[MAP_BRANCH_GRAPHIC_TYPES]:
+        """
+        Get selected line containers from selected lines, segments or waypoints.
+        """
+        selected_lines: List[MAP_BRANCH_GRAPHIC_TYPES] = list()
+        selected_line_ids: set[int] = set()
+        for item in self.diagram_scene.selectedItems():
+            line_container = None
+            if isinstance(item, (MapAcLine, MapDcLine, MapHvdcLine, MapFluidPathLine)):
+                line_container = item
+            elif hasattr(item, "container") and isinstance(item.container, (MapAcLine, MapDcLine, MapHvdcLine, MapFluidPathLine)):
+                line_container = item.container
+            elif hasattr(item, "line_container") and isinstance(item.line_container, (MapAcLine, MapDcLine, MapHvdcLine, MapFluidPathLine)):
+                line_container = item.line_container
+
+            if line_container is not None:
+                line_id = id(line_container)
+                if line_id not in selected_line_ids:
+                    selected_line_ids.add(line_id)
+                    selected_lines.append(line_container)
+        return selected_lines
+
+    def _sync_line_handle_visibility(self) -> None:
+        """
+        Keep waypoint handles visible only for selected lines.
+        """
+        selected_lines = self._get_selected_line_containers()
+        selected_line_ids: set[int] = set(id(line_container) for line_container in selected_lines)
+
+        for dev_tpe in [DeviceType.LineDevice,
+                        DeviceType.DCLineDevice,
+                        DeviceType.HVDCLineDevice,
+                        DeviceType.FluidPathDevice]:
+            for line_container in self.graphics_manager.get_device_type_list(dev_tpe):
+                line_container.set_handles_visible(id(line_container) in selected_line_ids)
+
     def get_selected_line_segments_tuple(self) -> List[Tuple[Line, (MapAcLine |
                                                                     MapDcLine |
                                                                     MapHvdcLine |
@@ -369,15 +410,9 @@ class GridMapWidget(BaseDiagramWidget):
 
         :return: List of (Line, (MapAcLine, MapDcLine, MapHvdcLine, MapFluidPathLine)) tuples
         """
-        selected_line_segments = []
-        for item in self.diagram_scene.selectedItems():
-            if (hasattr(item, 'api_object') and hasattr(item, 'container')
-                    and isinstance(item.container,
-                                   (MapAcLine,
-                                    MapDcLine,
-                                    MapHvdcLine,
-                                    MapFluidPathLine))):
-                selected_line_segments.append((item.api_object, item.container))
+        selected_line_segments = list()
+        for line_container in self._get_selected_line_containers():
+            selected_line_segments.append((line_container.api_object, line_container))
         return selected_line_segments
 
     def get_selected_substations_tuple(self) -> List[Tuple[Substation, SubstationGraphicItem]]:
@@ -430,7 +465,7 @@ class GridMapWidget(BaseDiagramWidget):
         :param graphic_object: Graphic object associated
         """
         api_object = getattr(graphic_object, 'api_object', None)
-        if api_object is not None:
+        if api_object is not None and isinstance(graphic_object, GenericDiagramWidget):
             self.graphics_manager.delete_device(api_object)
         self.diagram_scene.removeItem(graphic_object)
 
@@ -706,6 +741,10 @@ class GridMapWidget(BaseDiagramWidget):
 
                     self.graphics_manager.delete_device(elm.api_object)
 
+                    if elm.polyline is not None:
+                        self.diagram_scene.removeItem(elm.polyline)
+                        elm.polyline = None
+
                     for segment in elm.segments_list:
                         self._remove_from_scene(segment)
 
@@ -737,6 +776,10 @@ class GridMapWidget(BaseDiagramWidget):
 
             if delete_from_db:
                 self.circuit.delete_branch(obj=line.api_object)
+
+            if lin.polyline is not None:
+                self.diagram_scene.removeItem(lin.polyline)
+                lin.polyline = None
 
             for seg in lin.segments_list:
                 self._remove_from_scene(seg)
@@ -1127,18 +1170,15 @@ class GridMapWidget(BaseDiagramWidget):
 
             elif isinstance(elm, DcLine):
                 line_container = self.add_api_dc_line(elm)
-                for segment in line_container.segments_list:
-                    self.add_to_scene(graphic_object=segment)
+                self.add_to_scene(graphic_object=line_container)
 
             elif isinstance(elm, HvdcLine):
                 line_container = self.add_api_hvdc_line(elm)
-                for segment in line_container.segments_list:
-                    self.add_to_scene(graphic_object=segment)
+                self.add_to_scene(graphic_object=line_container)
 
             elif isinstance(elm, FluidPath):
                 line_container = self.add_api_fluid_path(elm)
-                for segment in line_container.segments_list:
-                    self.add_to_scene(graphic_object=segment)
+                self.add_to_scene(graphic_object=line_container)
 
             else:
                 logger.add_warning("Unsupported device class",
@@ -1262,45 +1302,56 @@ class GridMapWidget(BaseDiagramWidget):
         Update the devices' sizes
         :return:
         """
-        print('Updating device sizes!')
-        self.diagram_scene.blockSignals(True)
-        self.diagram_scene.invalidate(self.diagram_scene.sceneRect())
-
         branch_width = self.diagram.min_branch_width  # self.get_branch_width()
         arrow_width = self.diagram.arrow_size  # self.get_arrow_scale()
         se_width = self.diagram.min_bus_width  # self.get_substation_scale()
 
-        # rescale lines
-        for dev_tpe in [DeviceType.LineDevice,
-                        DeviceType.DCLineDevice,
-                        DeviceType.HVDCLineDevice,
-                        DeviceType.FluidPathDevice]:
-            graphics_dict = self.graphics_manager.get_device_type_dict(device_type=dev_tpe)
+        if self._last_branch_width == branch_width and self._last_arrow_width == arrow_width and self._last_substation_width == se_width:
+            return
+        else:
+            pass
 
-            #  TODO: this is super-slow
+        self.diagram_scene.blockSignals(True)
+        self.map.view.setUpdatesEnabled(False)
+
+        try:
+            # rescale lines
+            for dev_tpe in [DeviceType.LineDevice,
+                            DeviceType.DCLineDevice,
+                            DeviceType.HVDCLineDevice,
+                            DeviceType.FluidPathDevice]:
+                graphics_dict = self.graphics_manager.get_device_type_dict(device_type=dev_tpe)
+
+                #  TODO: this is super-slow
+                for key, elm_graphics in graphics_dict.items():
+                    elm_graphics.set_width_scale(width=branch_width, arrow_width=arrow_width)
+
+            # Rescale LineLocations:
+            graphics_dict = self.graphics_manager.get_device_type_dict(device_type=DeviceType.LineLocation)
+
             for key, elm_graphics in graphics_dict.items():
-                elm_graphics.set_width_scale(width=branch_width, arrow_width=arrow_width)
+                elm_graphics.resize(new_radius=branch_width)
 
-        # Rescale LineLocations:
-        graphics_dict = self.graphics_manager.get_device_type_dict(device_type=DeviceType.LineLocation)
+            # rescale substations (this is super-fast)
+            for dev_tpe in [DeviceType.SubstationDevice,
+                            DeviceType.GeneratorDevice,
+                            DeviceType.BatteryDevice,
+                            DeviceType.LoadDevice,
+                            DeviceType.ExternalGridDevice,
+                            DeviceType.StaticGeneratorDevice]:
+                data: Dict[str, SubstationGraphicItem] = self.graphics_manager.get_device_type_dict(dev_tpe)
+                for se_key, elm_graphics in data.items():
+                    elm_graphics.set_api_object_color()
+                    elm_graphics.set_size(r=se_width)
 
-        for key, elm_graphics in graphics_dict.items():
-            elm_graphics.resize(new_radius=branch_width)
+            self._last_branch_width = branch_width
+            self._last_arrow_width = arrow_width
+            self._last_substation_width = se_width
+        finally:
+            self.map.view.setUpdatesEnabled(True)
+            self.diagram_scene.blockSignals(False)
 
-        # rescale substations (this is super-fast)
-        for dev_tpe in [DeviceType.SubstationDevice,
-                        DeviceType.GeneratorDevice,
-                        DeviceType.BatteryDevice,
-                        DeviceType.LoadDevice,
-                        DeviceType.ExternalGridDevice,
-                        DeviceType.StaticGeneratorDevice]:
-            data: Dict[str, SubstationGraphicItem] = self.graphics_manager.get_device_type_dict(dev_tpe)
-            for se_key, elm_graphics in data.items():
-                elm_graphics.set_api_object_color()
-                elm_graphics.set_size(r=se_width)
-
-        self.diagram_scene.blockSignals(False)
-        self.diagram_scene.update(self.diagram_scene.sceneRect())
+        self.diagram_scene.update()
 
     def center(self) -> None:
         """

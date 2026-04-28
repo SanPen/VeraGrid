@@ -41,18 +41,41 @@ def symbolic_objects_to_dict(obj_dict: Dict[int, Var | Const | Var]) -> List[Dic
         elif isinstance(expr, Var):
 
             if expr.base_var is not None:
-                lst.append({
-                    "type": "DiffVar",
-                    "name": expr.name,
-                    "uid": expr.uid,
-                    "base_var": expr.base_var.uid,
-                })
+                if type(expr.ref) == str:
+                    lst.append({
+                        "type": "DiffVar",
+                        "name": expr.name,
+                        "uid": expr.uid,
+                        "base_var": expr.base_var.uid,
+                        "ref": expr.ref if expr.ref is not None else None,
+                    })
+                else:
+                    lst.append({
+                        "type": "DiffVar",
+                        "name": expr.name,
+                        "uid": expr.uid,
+                        "base_var": expr.base_var.uid,
+                        "ref": expr.ref.value if expr.ref is not None else None,
+                    })
+
+
 
             else:
                 # it is a normal var
-                lst.append({"type": "Var",
-                            "name": expr.name,
-                            "uid": expr.uid})
+                if type(expr.ref) == str:
+                    lst.append({"type": "Var",
+                                "name": expr.name,
+                                "uid": expr.uid,
+                                "base_var": None,
+                                "ref": expr.ref if expr.ref is not None else None})
+                else:
+                    lst.append({"type": "Var",
+                                "name": expr.name,
+                                "uid": expr.uid,
+                                "base_var": None,
+                                "ref": expr.ref.value if expr.ref is not None else None})
+
+
 
     return lst
 
@@ -604,12 +627,14 @@ class BlockParser:
             var = self.var_factory.get_var(entry["var"])
             init_values[var] = Const(entry["value"])
 
-        external_mapping: Dict[VarPowerFlowRefferenceType, Var] = dict()
+        external_mapping: Dict[VarPowerFlowRefferenceType, Var|None] = dict()
         for key_str, var_uid in data["external_mapping"].items():
             key = VarPowerFlowRefferenceType(key_str)
             var_in_varfactory = self.var_factory.find_var_or_diff_var(var_uid)
             if var_in_varfactory is not None:
                 external_mapping[key] = var_in_varfactory
+            else:
+                external_mapping[key] = None
 
         api_obj_mapping: Dict[ParamPowerFlowRefferenceType, Var] = dict()
         for key_str, var_uid in data["api_obj_mapping"].items():

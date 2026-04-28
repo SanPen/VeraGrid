@@ -25,6 +25,7 @@ from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Devices.multiverse import MultiVerse
 import VeraGridEngine.Simulations as sim
 from VeraGridEngine.enumerations import EngineType, DeviceType, SimulationTypes
+from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 
@@ -40,20 +41,20 @@ from VeraGrid.Gui.AboutDialogue.about_dialogue import AboutDialogueGuiGUI
 
 from VeraGrid.Gui.Analysis.AnalysisDialogue import GridAnalysisGUI
 from VeraGrid.Gui.ContingencyPlanner.contingency_planner_dialogue import ContingencyPlannerGUI
-from VeraGrid.Gui.CoordinatesInput.coordinates_dialogue import CoordinatesInputGUI
+from VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue import CoordinatesInputGUI
 from VeraGrid.Gui.general_dialogues import CheckListDialogue, StartEndSelectionDialogue, FileTypeSelector, \
     CgmesOptionsSelector
 from VeraGrid.Gui.messages import yes_no_question, warning_msg, info_msg, error_msg
 from VeraGrid.Gui.GridGenerator.grid_generator_dialogue import GridGeneratorGUI
-from VeraGrid.Gui.LoadCatalogue.catalogue_dialogue import CatalogueGUI
+from VeraGrid.Gui.FileDialogues.LoadCatalogue.catalogue_dialogue import CatalogueGUI
 from VeraGrid.Gui.Main.MainWindow import Ui_mainWindow, QMainWindow
 from VeraGrid.Gui.Main.object_select_window import ObjectSelectWindow
-from VeraGrid.Gui.ProfilesInput.models_dialogue import ModelsInputGUI
-from VeraGrid.Gui.ProfilesInput.profile_dialogue import ProfileInputGUI
+from VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue import ModelsInputGUI
+from VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue import ProfileInputGUI
 from VeraGrid.Session.session import SimulationSession, GcThread
 from VeraGrid.Gui.SigmaAnalysis.sigma_analysis_dialogue import SigmaAnalysisGUI
 from VeraGrid.Gui.SyncDialogue.sync_dialogue import SyncDialogueWindow
-from VeraGrid.Gui.TowerBuilder.LineBuilderDialogue import TowerBuilderGUI
+from VeraGrid.Gui.DeviceEditors.TowerBuilder.LineBuilderDialogue import TowerBuilderGUI
 from VeraGrid.Gui.GridReduce.grid_reduce import GridReduceDialogue
 from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI
 from VeraGrid.Gui.Diagrams.SchematicWidget.diagram_bus_selection_dialogue import DiagramBusSelectorDialogue
@@ -61,11 +62,12 @@ from VeraGrid.Gui.Diagrams.generic_graphics import IS_DARK
 from VeraGrid.Gui.python_console import PythonConsole
 from VeraGrid.Gui.python_script_editor import PythonCodeEditor
 from VeraGrid.Gui.toast_widget import ToastManager
-from VeraGrid.Gui.PsseDialogue.psse_import import PsseImportDialogue
+from VeraGrid.Gui.FileDialogues.PsseDialogue.psse_import import PsseImportDialogue
 from VeraGrid.Gui.ProceduralGrid.procedural_grid import ProceduralGridWindow
 from VeraGrid.Gui.AiAgent.ai_chat_dialogue import AiChatDialogue, AiBackendState
 from VeraGrid.Gui.AiAgent.ai_backend import ProviderType
 from VeraGridEngine.IO.file_system import get_create_veragrid_folder
+from VeraGrid.Gui.general_dialogues import LogsDialogue
 
 
 def terminate_thread(thread):
@@ -1217,3 +1219,15 @@ class BaseMainGui(QMainWindow):
         else:
             # not marked ...
             return None
+
+    def show_logs(self, logger: Logger, name="Logs", expand_all=True):
+        """
+        Show logger
+        :param logger:
+        :param name
+        :param expand_all
+        :return:
+        """
+        dlg = LogsDialogue(name=name, logger=logger, expand_all=expand_all)
+        dlg.setModal(True)
+        dlg.exec()

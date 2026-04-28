@@ -166,17 +166,17 @@ class EraMatrixPencilResults(ResultsTemplate):
     """
 
     LOCAL_RESULTS_DECLARATIONS = (
-        ResultsProperty(name='eigenvalues_s', tpe=CxVec, old_names=list()),
-        ResultsProperty(name='frequencies_hz', tpe=Vec, old_names=list()),
-        ResultsProperty(name='damping_ratios', tpe=Vec, old_names=list()),
-        ResultsProperty(name='is_stable', tpe=BoolVec, old_names=list()),
-        ResultsProperty(name='residues', tpe=CxMat, old_names=list()),
-        ResultsProperty(name='modal_energy', tpe=Vec, old_names=list()),
-        ResultsProperty(name='reconstruction_errors', tpe=Vec, old_names=list()),
-        ResultsProperty(name='band_low_hz', tpe=Vec, old_names=list()),
-        ResultsProperty(name='band_high_hz', tpe=Vec, old_names=list()),
-        ResultsProperty(name='selected_orders', tpe=IntVec, old_names=list()),
-        ResultsProperty(name='observable_count_per_mode', tpe=IntVec, old_names=list()),
+        ResultsProperty(name='eigenvalues_s', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='frequencies_hz', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='damping_ratios', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='is_stable', tpe=BoolVec, old_names=list(), expandable=False),
+        ResultsProperty(name='residues', tpe=CxMat, old_names=list(), expandable=False),
+        ResultsProperty(name='modal_energy', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='reconstruction_errors', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='band_low_hz', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='band_high_hz', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='selected_orders', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='observable_count_per_mode', tpe=IntVec, old_names=list(), expandable=False),
     )
 
     __slots__ = (

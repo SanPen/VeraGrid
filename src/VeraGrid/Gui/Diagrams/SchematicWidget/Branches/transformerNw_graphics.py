@@ -179,7 +179,7 @@ class TransformerNWGraphicItem(GenericDiagramWidget, QGraphicsRectItem):
     def contextMenuEvent(self, event):
         if self.api_object is not None:
             menu = QMenu()
-            menu.addSection("nw-Transformer")
+            menu.addSection("Transformer NW")
 
             add_menu_entry(menu=menu,
                            text="Active",

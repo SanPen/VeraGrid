@@ -1068,8 +1068,13 @@ class MultiCircuit(Assets):
         lon: Vec = np.zeros(n)
         lat: Vec = np.zeros(n)
         for i, bus in enumerate(self.buses):
-            lon[i] = bus.longitude
-            lat[i] = bus.latitude
+            lon[i], lat[i] = bus.try_to_find_coordinates()
+
+            if bus.longitude == 0:
+                bus.longitude = lon[i]
+
+            if bus.latitude == 0:
+                bus.latitude = lat[i]
 
         # perform the coordinate transformation
         logger = Logger()
@@ -1081,7 +1086,7 @@ class MultiCircuit(Assets):
 
         transformer = pyproj.Transformer.from_crs(4326, 25830, always_xy=True)
 
-        # the longitude is more reated to x, the latitude is more related to y
+        # the longitude is more related to x, the latitude is more related to y
         x, y = transformer.transform(xx=lon, yy=lat)
         x *= factor
         y *= factor

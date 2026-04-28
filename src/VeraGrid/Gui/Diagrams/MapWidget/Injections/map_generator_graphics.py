@@ -10,15 +10,15 @@ import numpy as np
 
 from PySide6.QtWidgets import QGraphicsSceneContextMenuEvent
 from VeraGridEngine.Devices.Injections.generator import Generator
-from VeraGrid.Gui.Diagrams.Editors.generator_editor import GeneratorQCurveEditor
-from VeraGrid.Gui.messages import yes_no_question, info_msg
+from VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor import GeneratorQCurveEditor
+from VeraGrid.Gui.messages import yes_no_question
 from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics import MapInjectionTemplateGraphicItem
-from VeraGrid.Gui.SolarPowerWizard.solar_power_wizzard import SolarPvWizard
-from VeraGrid.Gui.WindPowerWizard.wind_power_wizzard import WindFarmWizard
+from VeraGrid.Gui.DeviceEditors.SolarPowerWizard.solar_power_wizzard import SolarPvWizard
+from VeraGrid.Gui.DeviceEditors.WindPowerWizard.wind_power_wizzard import WindFarmWizard
 from VeraGrid.Gui.profile_wizard_utils import fill_substation_weather_profiles
 from VeraGrid.Gui.gui_functions import add_menu_entry
 from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
-from VeraGridEngine.enumerations import DeviceType, DynamicSimulationMode
+from VeraGridEngine.enumerations import DynamicSimulationMode
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import GridMapWidget
@@ -70,9 +70,14 @@ class MapGeneratorGraphicItem(MapInjectionTemplateGraphicItem):
                        checked_value=self.api_object.is_controlled)
 
         add_menu_entry(menu=menu,
-                       text="Dynamic Editor",
-                       function_ptr=self.edit_dynamic,
-                       icon_path=":/Icons/icons/edit.png")
+                       text="RMS Editor",
+                       function_ptr=self.edit_rms,
+                       icon_path=":/Icons/icons/dyn_edit.png")
+
+        add_menu_entry(menu=menu,
+                       text="EMT Editor",
+                       function_ptr=self.edit_emt,
+                       icon_path=":/Icons/icons/dyn_emt_edit.png")
 
         add_menu_entry(menu=menu,
                        text="Qcurve edit",
@@ -208,9 +213,9 @@ class MapGeneratorGraphicItem(MapInjectionTemplateGraphicItem):
 
                         self.plot()
                     else:
-                        raise Exception("Wrong length from the solar photovoltaic wizard")
+                        self.editor.gui.show_error_toast("Wrong length from the solar photovoltaic wizard")
         else:
-            info_msg("You need to have time profiles for this function")
+            self.editor.gui.show_error_toast("You need to have time profiles for this function")
 
     def wind_farm_wizard(self):
         """
@@ -237,6 +242,6 @@ class MapGeneratorGraphicItem(MapInjectionTemplateGraphicItem):
                                                          expected_size=self.api_object.P_prof.size())
                         self.plot()
                     else:
-                        raise Exception("Wrong length from the wind farm wizard")
+                        self.editor.gui.show_error_toast("Wrong length from the wind farm wizard")
         else:
-            info_msg("You need to have time profiles for this function")
+            self.editor.gui.show_error_toast("You need to have time profiles for this function")

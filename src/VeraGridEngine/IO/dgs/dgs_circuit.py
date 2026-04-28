@@ -71,15 +71,17 @@ class DgsCircuit:
         ElmGenstat,
         ElmLne,
         ElmTow,
+        ElmZpu,
+        ElmScap,
         ElmSind,
         ElmLnesec,
+        ElmVac,
         ElmLod,
         ElmLodlv,
         ElmLodlvp,
         ElmNet,
         ElmShnt,
         ElmSvs,
-        ElmSind,
         ElmSite,
         ElmSubstat,
         ElmSym,
@@ -146,13 +148,15 @@ class DgsCircuit:
         self.elmtows: List[ElmTow] = list()
         self.elmsinds: List[ElmSind] = list()
         self.elmlnesecs: List[ElmLnesec] = list()
+        self.elmvacs: List[ElmVac] = list()
         self.elmlods: List[ElmLod] = list()
         self.elmlodlvs: List[ElmLodlv] = list()
         self.elmlodlvps: List[ElmLodlvp] = list()
         self.elmnets: List[ElmNet] = list()
         self.elmshnts: List[ElmShnt] = list()
         self.elmsvss: List[ElmSvs] = list()
-        self.elmsinds: List[ElmSind] = list()
+        self.elmzpus: List[ElmZpu] = list()
+        self.elmscaps: List[ElmScap] = list()
         self.elmsites: List[ElmSite] = list()
         self.elmsubstats: List[ElmSubstat] = list()
         self.elmsyms: List[ElmSym] = list()
@@ -208,8 +212,11 @@ class DgsCircuit:
             ElmGenstat: self.elmgenstats,
             ElmLne: self.elmlnes,
             ElmTow: self.elmtows,
+            ElmZpu: self.elmzpus,
+            ElmScap: self.elmscaps,
             ElmSind: self.elmsinds,
             ElmLnesec: self.elmlnesecs,
+            ElmVac: self.elmvacs,
             ElmLod: self.elmlods,
             ElmLodlv: self.elmlodlvs,
             ElmLodlvp: self.elmlodlvps,

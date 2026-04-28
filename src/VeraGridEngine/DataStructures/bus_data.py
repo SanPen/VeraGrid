@@ -261,58 +261,107 @@ class BusData:
 
         self.bus_types[idx] = val.value
         is_dc = self.is_dc[idx]
+        is_grounded = self.is_grounded[idx]
+
+        # For each bus the logic and priority is:
+        #   1) grounded (AC or DC): Vm/Va fixed (to 0), P/Q free
+        #   2) DC non-grounded
+        #   3) AC non-grounded
         if val == BusMode.PQ_tpe:
-            if is_dc:
+            if is_grounded:
+                # grounded bus (AC or DC): acts as ground reference
+                self.is_p_controlled[idx] = False
+                self.is_q_controlled[idx] = False
+                self.is_vm_controlled[idx] = True
+                self.is_va_controlled[idx] = True
+            elif is_dc:
+                # DC, not grounded
                 self.is_p_controlled[idx] = True
                 self.is_q_controlled[idx] = False
                 self.is_vm_controlled[idx] = False
                 self.is_va_controlled[idx] = True
             else:
+                # AC, not grounded
                 self.is_p_controlled[idx] = True
                 self.is_q_controlled[idx] = True
                 self.is_vm_controlled[idx] = False
                 self.is_va_controlled[idx] = False
+
         elif val == BusMode.PV_tpe:
-            if is_dc:
+            if is_grounded:
+                # grounded bus (AC or DC): acts as ground reference
+                self.is_p_controlled[idx] = False
+                self.is_q_controlled[idx] = False
+                self.is_vm_controlled[idx] = True
+                self.is_va_controlled[idx] = True
+            elif is_dc:
+                # DC, not grounded
                 self.is_p_controlled[idx] = True
                 self.is_q_controlled[idx] = False
                 self.is_vm_controlled[idx] = True
                 self.is_va_controlled[idx] = True
             else:
+                # AC, not grounded
                 self.is_p_controlled[idx] = True
                 self.is_q_controlled[idx] = False
                 self.is_vm_controlled[idx] = True
                 self.is_va_controlled[idx] = False
 
         elif val == BusMode.Slack_tpe:
-            if is_dc:
+            if is_grounded:
+                # grounded bus (AC or DC): acts as ground reference
+                self.is_p_controlled[idx] = False
+                self.is_q_controlled[idx] = False
+                self.is_vm_controlled[idx] = True
+                self.is_va_controlled[idx] = True
+            elif is_dc:
+                # DC, not grounded
                 self.is_p_controlled[idx] = False
                 self.is_q_controlled[idx] = False
                 self.is_vm_controlled[idx] = True
                 self.is_va_controlled[idx] = True
             else:
+                # AC, not grounded
                 self.is_p_controlled[idx] = False
                 self.is_q_controlled[idx] = False
                 self.is_vm_controlled[idx] = True
                 self.is_va_controlled[idx] = True
+
         elif val == BusMode.PQV_tpe:
-            if is_dc:
+            if is_grounded:
+                # grounded bus (AC or DC): acts as ground reference
+                self.is_p_controlled[idx] = False
+                self.is_q_controlled[idx] = False
+                self.is_vm_controlled[idx] = True
+                self.is_va_controlled[idx] = True
+            elif is_dc:
+                # DC, not grounded
                 self.is_p_controlled[idx] = True
                 self.is_q_controlled[idx] = False
                 self.is_vm_controlled[idx] = True
                 self.is_va_controlled[idx] = True
             else:
+                # AC, not grounded
                 self.is_p_controlled[idx] = True
                 self.is_q_controlled[idx] = True
                 self.is_vm_controlled[idx] = True
                 self.is_va_controlled[idx] = False
+
         elif val == BusMode.P_tpe:
-            if is_dc:
+            if is_grounded:
+                # grounded bus (AC or DC): acts as ground reference
+                self.is_p_controlled[idx] = False
+                self.is_q_controlled[idx] = False
+                self.is_vm_controlled[idx] = True
+                self.is_va_controlled[idx] = True
+            elif is_dc:
+                # DC, not grounded
                 self.is_p_controlled[idx] = True
                 self.is_q_controlled[idx] = False
                 self.is_vm_controlled[idx] = False
                 self.is_va_controlled[idx] = True
             else:
+                # AC, not grounded
                 self.is_p_controlled[idx] = True
                 self.is_q_controlled[idx] = False
                 self.is_vm_controlled[idx] = False

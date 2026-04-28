@@ -75,7 +75,7 @@ def get_psse_bus(bus: dev.Bus,
     psse_bus.VM = bus.Vm0
     psse_bus.VA = np.rad2deg(bus.Va0)
 
-    psse_bus.IDE = bus.type.value
+    psse_bus.IDE = bus._bus_type.value
 
     return psse_bus
 

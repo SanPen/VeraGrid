@@ -17,10 +17,10 @@ class NodeGroupsResults(ResultsTemplate):
     """
 
     LOCAL_RESULTS_DECLARATIONS = (
-        ResultsProperty(name="X_train", tpe=Mat, old_names=list()),
-        ResultsProperty(name="sigma", tpe=float, old_names=list()),
-        ResultsProperty(name="groups_by_name", tpe=list, old_names=list()),
-        ResultsProperty(name="groups_by_index", tpe=list, old_names=list()),
+        ResultsProperty(name="X_train", tpe=Mat, old_names=list(), expandable=False),
+        ResultsProperty(name="sigma", tpe=float, old_names=list(), expandable=False),
+        ResultsProperty(name="groups_by_name", tpe=list, old_names=list(), expandable=False),
+        ResultsProperty(name="groups_by_index", tpe=list, old_names=list(), expandable=False),
     )
 
     __slots__ = (

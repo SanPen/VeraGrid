@@ -69,6 +69,12 @@ class PowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
             vsc_names=grid.get_vsc_names(),
             time_array=self.grid.get_time_array()[self.time_indices],
             bus_types=np.ones(n, dtype=int),
+            n_gen=grid.get_generators_number(),
+            n_batt=grid.get_batteries_number(),
+            n_sh=grid.get_shunt_like_device_number(),
+            gen_names=grid.get_generator_names(),
+            batt_names=grid.get_battery_names(),
+            sh_names=grid.get_shunt_like_devices_names(),
             area_names=grid.get_area_names(),
             clustering_results=None
         )
@@ -98,6 +104,13 @@ class PowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
             vsc_names=self.grid.get_vsc_names(),
             bus_types=np.ones(n, dtype=int),
             time_array=self.grid.time_profile[time_indices],
+            n_gen=self.grid.get_generators_number(),
+            n_batt=self.grid.get_batteries_number(),
+            n_sh=self.grid.get_shunt_like_device_number(),
+            gen_names=self.grid.get_generator_names(),
+            batt_names=self.grid.get_battery_names(),
+            sh_names=self.grid.get_shunt_like_devices_names(),
+            area_names=self.grid.get_area_names(),
             clustering_results=self.clustering_results
         )
 
@@ -118,20 +131,8 @@ class PowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
                                                bus_dict=bus_dict,
                                                areas_dict=areas_dict)
 
-            # gather results
-            time_series_results.voltage[it, :] = pf_res.voltage
-            time_series_results.S[it, :] = pf_res.Sbus
-            time_series_results.Sf[it, :] = pf_res.Sf
-            time_series_results.St[it, :] = pf_res.St
-            time_series_results.Vbranch[it, :] = pf_res.Vbranch
-            time_series_results.loading[it, :] = pf_res.loading
-            time_series_results.losses[it, :] = pf_res.losses
-            time_series_results.hvdc_losses[it, :] = pf_res.losses_hvdc
-            time_series_results.hvdc_Pf[it, :] = pf_res.Pf_hvdc
-            time_series_results.hvdc_Pt[it, :] = pf_res.Pt_hvdc
-            time_series_results.hvdc_loading[it, :] = pf_res.loading_hvdc
-            time_series_results.error_values[it] = pf_res.error
-            time_series_results.converged_values[it] = pf_res.converged
+            # Copy the complete snapshot payload so every time-series result table stays in sync.
+            time_series_results.set_at(it, pf_res)
 
             if self.is_cancel():
                 return time_series_results
@@ -153,6 +154,13 @@ class PowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
             vsc_names=res.vsc_data.names,
             bus_types=res.bus_types,
             time_array=self.grid.get_time_array(),
+            n_gen=self.grid.get_generators_number(),
+            n_batt=self.grid.get_batteries_number(),
+            n_sh=self.grid.get_shunt_like_device_number(),
+            gen_names=self.grid.get_generator_names(),
+            batt_names=self.grid.get_battery_names(),
+            sh_names=self.grid.get_shunt_like_devices_names(),
+            area_names=self.grid.get_area_names(),
             clustering_results=self.clustering_results
         )
 
@@ -165,7 +173,7 @@ class PowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
         results.Vbranch = res.Vbranch
         results.If = res.If
         results.It = res.It
-        results.m = res.tap_modules
+        results.tap_module = res.tap_modules
         results.tap_angle = res.tap_angles
 
         return results
@@ -193,6 +201,13 @@ class PowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
             vsc_names=res.vsc_data.names,
             bus_types=res.bus_types,
             time_array=self.grid.time_profile[time_indices],
+            n_gen=self.grid.get_generators_number(),
+            n_batt=self.grid.get_batteries_number(),
+            n_sh=self.grid.get_shunt_like_device_number(),
+            gen_names=self.grid.get_generator_names(),
+            batt_names=self.grid.get_battery_names(),
+            sh_names=self.grid.get_shunt_like_devices_names(),
+            area_names=self.grid.get_area_names(),
             clustering_results=self.clustering_results
         )
 
@@ -239,19 +254,20 @@ class PowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
                                           add_hvdc=False),
             n_hvdc=self.grid.get_hvdc_number(),
             n_vsc=self.grid.get_vsc_number(),
-            # n_gen=self.grid.get_generators_number(),
-            # n_batt=self.grid.get_batteries_number(),
-            # n_sh=self.grid.get_shunt_like_device_number(),
+            n_gen=self.grid.get_generators_number(),
+            n_batt=self.grid.get_batteries_number(),
+            n_sh=self.grid.get_shunt_like_device_number(),
             bus_names=self.grid.get_bus_names(),
             branch_names=self.grid.get_branch_names(add_switch=True, add_vsc=False,
                                                     add_hvdc=False),
             hvdc_names=self.grid.get_hvdc_names(),
             vsc_names=self.grid.get_vsc_names(),
-            # gen_names=self.grid.get_generator_names(),
-            # batt_names=self.grid.get_battery_names(),
-            # sh_names=self.grid.get_shunt_like_devices_names(),
+            gen_names=self.grid.get_generator_names(),
+            batt_names=self.grid.get_battery_names(),
+            sh_names=self.grid.get_shunt_like_devices_names(),
             bus_types=np.ones(n, dtype=int),
             time_array=self.grid.time_profile[time_indices],
+            area_names=self.grid.get_area_names(),
             clustering_results=self.clustering_results
         )
 
@@ -284,6 +300,9 @@ class PowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
             results.St_vsc = res.St_vsc
             results.loading_vsc = res.loading_vsc
             results.losses_vsc = res.losses_vsc
+            results.gen_q = res.gen_q
+            results.battery_q = res.battery_q
+            results.shunt_q = res.shunt_q
 
             results.error_values = res.error_values
         else:
@@ -311,8 +330,11 @@ class PowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
             results.St_vsc = res.St_vsc[time_indices, :]
             results.loading_vsc = res.loading_vsc[time_indices, :]
             results.losses_vsc = res.losses_vsc[time_indices, :]
+            results.gen_q = res.gen_q[time_indices, :]
+            results.battery_q = res.battery_q[time_indices, :]
+            results.shunt_q = res.shunt_q[time_indices, :]
 
-            results.error_values = res.error_values
+            results.error_values = res.error_values[time_indices]
 
         return results
 

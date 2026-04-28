@@ -5,5 +5,5 @@
 
 # from VeraGridEngine.Simulations.ShortCircuitStudies.short_circuit import short_circuit_unbalance, short_circuit_3p
 from VeraGridEngine.Simulations.ShortCircuitStudies.short_circuit_options import ShortCircuitOptions
-from VeraGridEngine.Simulations.ShortCircuitStudies.short_circuit_driver import ShortCircuitDriver, FaultType
+from VeraGridEngine.Simulations.ShortCircuitStudies.short_circuit_driver import ShortCircuitDriver
 from VeraGridEngine.Simulations.ShortCircuitStudies.short_circuit_results import ShortCircuitResults

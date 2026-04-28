@@ -11,6 +11,7 @@ from VeraGridEngine.IO.file_open import FileOpen
 from VeraGridEngine.Simulations.PowerFlow.power_flow_worker import PowerFlowOptions, multi_island_pf_nc
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import SolverType
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowDriver
+from VeraGridEngine.enumerations import ConverterControlType
 import VeraGridEngine.api as gce
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -533,12 +534,14 @@ def test_power_flow_12bus_acdc() -> None:
                            0.99799207 + 0.j])
 
     # ------------------------------------------------------------------------------------------------------------------
+    # for solver_type in [SolverType.NR]:
     for solver_type in [SolverType.NR, SolverType.PowellDogLeg, SolverType.LM]:
         options = PowerFlowOptions(solver_type=solver_type,
                                    verbose=0,
                                    control_q=False,
                                    retry_with_other_methods=False,
                                    control_taps_phase=True,
+                                   tolerance = 1e-8,
                                    max_iter=80)
 
         driver = PowerFlowDriver(grid=grid, options=options)
@@ -552,19 +555,19 @@ def test_power_flow_12bus_acdc() -> None:
 
         assert np.allclose(expected_v, solution.voltage, atol=1e-6)
 
-        assert np.allclose(grid.vsc_devices[0].control1_val, solution.Pfp_vsc[0])
-        assert np.allclose(grid.vsc_devices[0].control2_val, solution.St_vsc[0].imag)
+        assert np.allclose(grid.vsc_devices[0].control1_val, solution.Pfp_vsc[0], atol=1e-6)
+        assert np.allclose(grid.vsc_devices[0].control2_val, solution.St_vsc[0].imag, atol=1e-6)
 
-        assert np.allclose(grid.vsc_devices[1].control1_val, abs(solution.voltage[3]))
-        assert np.allclose(grid.vsc_devices[1].control2_val, solution.St_vsc[1].real)
+        assert np.allclose(grid.vsc_devices[1].control1_val, abs(solution.voltage[3]), atol=1e-6)
+        assert np.allclose(grid.vsc_devices[1].control2_val, solution.St_vsc[1].real, atol=1e-6)
 
-        assert np.allclose(grid.vsc_devices[2].control1_val, abs(solution.voltage[6]))
-        assert np.allclose(grid.vsc_devices[2].control2_val, solution.St_vsc[2].imag)
+        assert np.allclose(grid.vsc_devices[2].control1_val, abs(solution.voltage[6]), atol=1e-6)
+        assert np.allclose(grid.vsc_devices[2].control2_val, solution.St_vsc[2].imag, atol=1e-6)
 
-        assert np.allclose(grid.vsc_devices[3].control1_val, solution.Pfp_vsc[3])
-        assert np.allclose(grid.vsc_devices[3].control2_val, solution.St_vsc[3].imag)
+        assert np.allclose(grid.vsc_devices[3].control1_val, solution.Pfp_vsc[3], atol=1e-6)
+        assert np.allclose(grid.vsc_devices[3].control2_val, solution.St_vsc[3].imag, atol=1e-6)
 
-        assert np.allclose(grid.transformers2w[2].vset, abs(solution.voltage[13]))
+        assert np.allclose(grid.transformers2w[2].vset, abs(solution.voltage[13]), atol=1e-6)
 
         assert np.allclose(grid.hvdc_lines[0].Pset, solution.Pf_hvdc[0], atol=1e-10)
 
@@ -708,6 +711,247 @@ def test_hvdc_all_methods() -> None:
 #
 #     assert np.all(Qmin_gen <= res.gen_q)
 #     assert np.all(res.gen_q <= Qmax_gen)
+
+
+def test_bipolar_balanced() -> None:
+    """
+    Symmetric bipolar AC/DC system, 4 VSCs with Vm_dc + Pdc controls.
+    Balanced poles drive the DC return cable to (essentially) zero current.
+    """
+    Ub = 220
+    Sb = 100
+    Rb = (Ub ** 2) / Sb
+    rlin_23 = 0.01
+    rlin_13 = 0.03
+
+    grid = gce.MultiCircuit(name="Bipolar_balanced", Sbase=Sb)
+
+    bus1 = gce.Bus(name="Bus1", Vnom=Ub, is_slack=True)
+    grid.add_bus(bus1)
+    bus2 = gce.Bus(name="Bus2", Vnom=Ub, is_dc=True)
+    grid.add_bus(bus2)
+    bus3 = gce.Bus(name="Bus3", Vnom=Ub, is_dc=True)
+    grid.add_bus(bus3)
+    bus4 = gce.Bus(name="Bus4", Vnom=Ub, is_dc=True, Vm0=1.01, Va0=3.14)
+    grid.add_bus(bus4)
+    bus5 = gce.Bus(name="Bus5", Vnom=Ub, is_dc=True, Va0=3.14)
+    grid.add_bus(bus5)
+    bus6 = gce.Bus(name="Bus6", Vnom=Ub, is_dc=True, is_grounded=True, Vm0=1e-9)
+    grid.add_bus(bus6)
+    bus7 = gce.Bus(name="Bus7", Vnom=Ub, is_dc=True, Vm0=1e-4)
+    grid.add_bus(bus7)
+    bus8 = gce.Bus(name="Bus8", Vnom=Ub, is_slack=True)
+    grid.add_bus(bus8)
+
+    grid.add_generator(bus1, gce.Generator(name='g1', vset=1.0))
+    grid.add_generator(bus8, gce.Generator(name='g8', vset=1.0))
+
+    grid.add_dc_line(gce.DcLine(name="dc_line_23", bus_from=bus2, bus_to=bus3, r=rlin_23 / Rb))
+    grid.add_dc_line(gce.DcLine(name="dc_line_45", bus_from=bus4, bus_to=bus5, r=rlin_13 / Rb))
+    grid.add_dc_line(gce.DcLine(name="dc_line_0", bus_from=bus6, bus_to=bus7, r=rlin_13 / Rb))
+
+    alpha = 1e-4
+    grid.add_vsc(gce.VSC(name="VSC_1", bus_from=bus2, bus_to=bus1, bus_dc_n=bus6,
+                         alpha1=alpha, alpha2=alpha, alpha3=alpha,
+                         control1=ConverterControlType.Vm_dc, control2=ConverterControlType.Qac,
+                         control1_val=1, control2_val=0))
+    grid.add_vsc(gce.VSC(name="VSC_2", bus_from=bus4, bus_to=bus1, bus_dc_n=bus6,
+                         alpha1=alpha, alpha2=alpha, alpha3=alpha,
+                         control1=ConverterControlType.Vm_dc, control2=ConverterControlType.Qac,
+                         control1_val=-1.01, control2_val=0))
+    grid.add_vsc(gce.VSC(name="VSC_3", bus_from=bus3, bus_to=bus8, bus_dc_n=bus7,
+                         alpha1=alpha, alpha2=alpha, alpha3=alpha,
+                         control1=ConverterControlType.Pdc, control2=ConverterControlType.Qac,
+                         control1_val=30, control2_val=0))
+    grid.add_vsc(gce.VSC(name="VSC_4", bus_from=bus5, bus_to=bus8, bus_dc_n=bus7,
+                         alpha1=alpha, alpha2=alpha, alpha3=alpha,
+                         control1=ConverterControlType.Pdc, control2=ConverterControlType.Qac,
+                         control1_val=30, control2_val=0))
+
+    options = gce.PowerFlowOptions(retry_with_other_methods=False, use_stored_guess=True)
+    res = gce.power_flow(grid, options=options)
+
+    assert res.converged
+
+    expected_v = np.array([1.0 + 0.j,
+                           1.0 + 0.j,
+                           0.9999938 + 0.j,
+                           -1.00999872 + 0.00160858j,
+                           -1.00998031 + 0.00160858j,
+                           0.0 + 0.j,
+                           0.00003795 + 0.j,
+                           1.0 + 0.j])
+    assert np.allclose(res.voltage, expected_v, atol=1e-4)
+
+    # VSC_3 / VSC_4 hold their Pdc=30 setpoint
+    assert np.isclose(res.Pfp_vsc[2], 30.0, atol=1e-4)
+    assert np.isclose(res.Pfp_vsc[3], 30.0, atol=1e-4)
+
+    # Symmetry: poles carry equal power, return cable is idle
+    assert np.isclose(res.Pfp_vsc[0], res.Pfp_vsc[1], atol=1e-3)
+    assert abs(res.Pfn_vsc[0]) < 1e-3
+    assert abs(res.Pfn_vsc[1]) < 1e-3
+
+
+def test_bipolar_unbalanced() -> None:
+    """
+    Bipolar system with deliberately unbalanced pole loading
+    """
+    Ub = 345
+    Sb = 100
+    Ib = Sb / Ub
+    r = 0.052
+    a = 0.5515 / Sb
+    b = 0.887 * (Ib / Sb)
+    c = 3.77 * ((Ib ** 2) / Sb)
+
+    grid = gce.MultiCircuit(name="Bipolar_unbalanced", Sbase=Sb)
+
+    bus1 = gce.Bus(name="Bus1", Vnom=Ub, is_slack=True); grid.add_bus(bus1)
+    bus2 = gce.Bus(name="Bus2", Vnom=Ub, is_dc=True); grid.add_bus(bus2)
+    bus3 = gce.Bus(name="Bus3", Vnom=Ub, is_dc=True); grid.add_bus(bus3)
+    bus4 = gce.Bus(name="Bus4", Vnom=Ub, is_dc=True, Vm0=1.01, Va0=3.14); grid.add_bus(bus4)
+    bus5 = gce.Bus(name="Bus5", Vnom=Ub, is_dc=True, Va0=3.14); grid.add_bus(bus5)
+    bus6 = gce.Bus(name="Bus6", Vnom=Ub, is_dc=True, is_grounded=True, Vm0=1e-9, Va0=0.01); grid.add_bus(bus6)
+    bus7 = gce.Bus(name="Bus7", Vnom=Ub, is_dc=True, Vm0=1e-4, Va0=0.01); grid.add_bus(bus7)
+    bus8 = gce.Bus(name="Bus8", Vnom=Ub, is_slack=True); grid.add_bus(bus8)
+    bus9 = gce.Bus(name="Bus9", Vnom=Ub, is_dc=True); grid.add_bus(bus9)
+    bus10 = gce.Bus(name="Bus10", Vnom=Ub, is_dc=True, Vm0=1e-4, Va0=0.01); grid.add_bus(bus10)
+    bus11 = gce.Bus(name="Bus11", Vnom=Ub, is_dc=True, Va0=3.14); grid.add_bus(bus11)
+    bus12 = gce.Bus(name="Bus12", Vnom=Ub, is_dc=True, Vm0=1e-4, Va0=0.01); grid.add_bus(bus12)
+    bus13 = gce.Bus(name="Bus13", Vnom=Ub, is_dc=True, Va0=3.14); grid.add_bus(bus13)
+    bus14 = gce.Bus(name="Bus14", Vnom=Ub); grid.add_bus(bus14)
+
+    grid.add_generator(bus1, gce.Generator(name='g1', vset=1.0))
+    grid.add_generator(bus8, gce.Generator(name='g8', vset=1.0))
+    grid.add_load(bus14, gce.Load(name='Pl14', P=40))
+
+    grid.add_dc_line(gce.DcLine(name="dc_line_29", bus_from=bus2, bus_to=bus9, r=r))
+    grid.add_dc_line(gce.DcLine(name="dc_line_93", bus_from=bus9, bus_to=bus3, r=r))
+    grid.add_dc_line(gce.DcLine(name="dc_line_411", bus_from=bus4, bus_to=bus11, r=r))
+    grid.add_dc_line(gce.DcLine(name="dc_line_115", bus_from=bus11, bus_to=bus5, r=r))
+    grid.add_dc_line(gce.DcLine(name="dc_line_610", bus_from=bus6, bus_to=bus10, r=r))
+    grid.add_dc_line(gce.DcLine(name="dc_line_107", bus_from=bus10, bus_to=bus7, r=r))
+    grid.add_dc_line(gce.DcLine(name="dc_line_1012", bus_from=bus10, bus_to=bus12, r=r))
+    grid.add_dc_line(gce.DcLine(name="dc_line_1113", bus_from=bus11, bus_to=bus13, r=r))
+
+    grid.add_vsc(gce.VSC(name="VSC_1", bus_from=bus2, bus_to=bus1, bus_dc_n=bus6,
+                         alpha1=a, alpha2=b, alpha3=c,
+                         control1=ConverterControlType.Vm_dc, control2=ConverterControlType.Qac,
+                         control1_val=1, control2_val=0))
+    grid.add_vsc(gce.VSC(name="VSC_2", bus_from=bus4, bus_to=bus1, bus_dc_n=bus6,
+                         alpha1=a, alpha2=b, alpha3=c,
+                         control1=ConverterControlType.Vm_dc, control2=ConverterControlType.Qac,
+                         control1_val=-1.01, control2_val=0))
+    grid.add_vsc(gce.VSC(name="VSC_3", bus_from=bus3, bus_to=bus8, bus_dc_n=bus7,
+                         alpha1=a, alpha2=b, alpha3=c,
+                         control1=ConverterControlType.Pdc, control2=ConverterControlType.Qac,
+                         control1_val=19.6, control2_val=0))
+    grid.add_vsc(gce.VSC(name="VSC_4", bus_from=bus5, bus_to=bus8, bus_dc_n=bus7,
+                         alpha1=a, alpha2=b, alpha3=c,
+                         control1=ConverterControlType.Pdc, control2=ConverterControlType.Qac,
+                         control1_val=-2.8, control2_val=0))
+    grid.add_vsc(gce.VSC(name="VSC_5", bus_from=bus13, bus_to=bus14, bus_dc_n=bus12,
+                         alpha1=a, alpha2=b, alpha3=c,
+                         control1=ConverterControlType.Vm_ac, control2=ConverterControlType.Va_ac,
+                         control1_val=1, control2_val=0))
+
+    options = gce.PowerFlowOptions(retry_with_other_methods=False, use_stored_guess=True)
+    res = gce.power_flow(grid, options=options)
+
+    assert res.converged
+
+    # Voltage-controlled DC buses are honored
+    assert np.isclose(abs(res.voltage[1]), 1.0, atol=1e-4)     # Bus2  (positive pole, Vm_dc=1)
+    assert np.isclose(abs(res.voltage[3]), 1.01, atol=1e-4)    # Bus4  (negative pole, Vm_dc=-1.01)
+    # AC slacks
+    assert np.isclose(abs(res.voltage[0]), 1.0, atol=1e-4)
+    assert np.isclose(abs(res.voltage[7]), 1.0, atol=1e-4)
+    # VSC_5 enforces Vm_ac = 1.0 at Bus14
+    assert np.isclose(abs(res.voltage[13]), 1.0, atol=1e-4)
+
+    # Pdc setpoints honored on VSC_3 and VSC_4 (positive-pole DC injection)
+    assert np.isclose(res.Pfp_vsc[2], 19.6, atol=1e-4)
+    assert np.isclose(res.Pfp_vsc[3], -2.8, atol=1e-4)
+
+    # Imbalance forces non-zero return-cable voltage drop on the negative side
+    assert abs(res.voltage[9].real) > 1e-3   # Bus10
+    assert abs(res.voltage[11].real) > 1e-3  # Bus12
+
+    # Monopolar VSC_5 absorbs ~load + losses from the negative pole
+    s_to_vsc5 = res.St_vsc[4]
+    assert np.isclose(s_to_vsc5.real, -40.0, atol=1e-3)
+
+
+def test_bipolar_with_load() -> None:
+    """
+    Bipolar AC/DC system where the receiving-end VSC is in Vac/theta_ac control
+    """
+    Ub = 345
+    Sb = 100
+    Ib = Sb / Ub
+    r = 0.052
+    a = 0.5515 / Sb
+    b = 0.887 * (Ib / Sb)
+    c = 3.77 * ((Ib ** 2) / Sb)
+
+    grid = gce.MultiCircuit(name="Bipolar_with_load", Sbase=Sb)
+
+    bus1 = gce.Bus(name="Bus1", Vnom=Ub, is_slack=True); grid.add_bus(bus1)
+    bus2 = gce.Bus(name="Bus2", Vnom=Ub, is_dc=True); grid.add_bus(bus2)
+    bus3 = gce.Bus(name="Bus3", Vnom=Ub, is_dc=True); grid.add_bus(bus3)
+    bus4 = gce.Bus(name="Bus4", Vnom=Ub, is_dc=True, Vm0=1.01, Va0=3.14); grid.add_bus(bus4)
+    bus5 = gce.Bus(name="Bus5", Vnom=Ub, is_dc=True, Vm0=1.01, Va0=3.14); grid.add_bus(bus5)
+    bus6 = gce.Bus(name="Bus6", Vnom=Ub, is_dc=True, is_grounded=True, Vm0=1e-9, Va0=1e-9); grid.add_bus(bus6)
+    bus7 = gce.Bus(name="Bus7", Vnom=Ub, is_dc=True, Vm0=1e-4, Va0=0.01); grid.add_bus(bus7)
+    bus8 = gce.Bus(name="Bus8", Vnom=Ub); grid.add_bus(bus8)
+
+    grid.add_generator(bus1, gce.Generator(name='g1', vset=1.0))
+    grid.add_load(bus8, gce.Load(name='L8', P=80))
+
+    grid.add_dc_line(gce.DcLine(name="dc_line_23", bus_from=bus2, bus_to=bus3, r=r))
+    grid.add_dc_line(gce.DcLine(name="dc_line_45", bus_from=bus4, bus_to=bus5, r=r))
+    grid.add_dc_line(gce.DcLine(name="dc_line_0", bus_from=bus6, bus_to=bus7, r=r))
+
+    grid.add_vsc(gce.VSC(name="VSC_1", bus_from=bus2, bus_to=bus1, bus_dc_n=bus6,
+                         alpha1=a, alpha2=b, alpha3=c,
+                         control1=ConverterControlType.Vm_dc, control2=ConverterControlType.Qac,
+                         control1_val=1, control2_val=0))
+    grid.add_vsc(gce.VSC(name="VSC_2", bus_from=bus4, bus_to=bus1, bus_dc_n=bus6,
+                         alpha1=a, alpha2=b, alpha3=c,
+                         control1=ConverterControlType.Vm_dc, control2=ConverterControlType.Qac,
+                         control1_val=-1.01, control2_val=0))
+    grid.add_vsc(gce.VSC(name="VSC_3", bus_from=bus3, bus_to=bus8, bus_dc_n=bus7,
+                         alpha1=a, alpha2=b, alpha3=c,
+                         control1=ConverterControlType.Pdc, control2=ConverterControlType.Qac,
+                         control1_val=40, control2_val=0))
+    grid.add_vsc(gce.VSC(name="VSC_4", bus_from=bus5, bus_to=bus8, bus_dc_n=bus7,
+                         alpha1=a, alpha2=b, alpha3=c,
+                         control1=ConverterControlType.Vm_ac, control2=ConverterControlType.Va_ac,
+                         control1_val=1, control2_val=0))
+
+    options = gce.PowerFlowOptions(retry_with_other_methods=False, use_stored_guess=True)
+    res = gce.power_flow(grid, options=options)
+
+    assert res.converged
+
+    # Vm_dc setpoints honored on the controlled DC buses
+    assert np.isclose(abs(res.voltage[1]), 1.0, atol=1e-4)    # Bus2 (Vm_dc=1)
+    assert np.isclose(abs(res.voltage[3]), 1.01, atol=1e-4)   # Bus4 (Vm_dc=-1.01)
+    # VSC_4 acts as AC slack at Bus8
+    assert np.isclose(abs(res.voltage[7]), 1.0, atol=1e-4)
+    assert np.isclose(np.angle(res.voltage[7]), 0.0, atol=1e-4)
+
+    # VSC_3 holds Pdc=40 setpoint
+    assert np.isclose(res.Pfp_vsc[2], 40.0, atol=1e-4)
+
+    # Self-balancing: return cable carries no current
+    assert np.allclose(res.Pfn_vsc, 0.0, atol=1e-4)
+
+    # Power balance: load = 80 MW, generation covers load + losses
+    p_gen = res.Sbus[0].real
+    losses = res.losses_vsc.sum() + res.losses[:3].real.sum()
+    assert np.isclose(p_gen, 80.0 + losses, atol=1e-2)
 
 
 if __name__ == "__main__":

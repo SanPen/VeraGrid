@@ -1,5 +1,5 @@
 import VeraGridEngine.api as vge
-from VeraGridEngine import SolverType, ShuntControlMode
+from VeraGridEngine import SolverType, ShuntControlMode, ConverterControlType
 import numpy as np
 
 def test_discrete_shunt():
@@ -89,6 +89,9 @@ def test_discrete_shunt_parse_powerfactory():
 
     grid = vge.open_file('data/grids/discrete_shunts.dgs')
 
+    # ------------------------------------------------------------------------------------------------------------------
+    #   Selecting the slack bus and adding there the generator
+    # ------------------------------------------------------------------------------------------------------------------
     grid.buses[2].is_slack = True
     grid.add_generator(bus=grid.buses[2], api_obj=vge.Generator())
 
@@ -98,6 +101,51 @@ def test_discrete_shunt_parse_powerfactory():
     res = vge.power_flow(grid=grid, options=vge.PowerFlowOptions(solver_type=SolverType.NR,
                                                                  retry_with_other_methods=False))
 
-    power_factory = np.array([0.88907, 0.96921, 1.0])
+    power_factory = np.array([0.889074, 0.969204, 1.0])
 
-    assert np.allclose(np.abs(res.voltage), power_factory, atol=1e-5)
+    assert np.allclose(np.abs(res.voltage), power_factory, atol=1e-6)
+
+
+def test_discrete_shunt_acdc():
+
+    grid = vge.open_file('data/grids/discrete_shunts.dgs')
+
+    # ------------------------------------------------------------------------------------------------------------------
+    #   Selecting the slack bus and adding there the generator
+    # ------------------------------------------------------------------------------------------------------------------
+    grid.buses[2].is_slack = True
+    grid.add_generator(bus=grid.buses[2], api_obj=vge.Generator())
+
+    # ------------------------------------------------------------------------------------------------------------------
+    #   Replacing the load by a VSC in order to verify the correct implementation
+    #   of discrete shunts into the AC/DC power flow
+    # ------------------------------------------------------------------------------------------------------------------
+    grid.delete_load(grid.loads[0])
+
+    dc_bus = vge.Bus(name='Load DC Bus',
+                     is_slack=True,
+                     is_dc=True)
+    grid.add_bus(obj=dc_bus)
+
+    vsc = vge.VSC(name='Load VSC',
+                  bus_from=dc_bus,
+                  bus_to=grid.buses[0],
+                  rate=25.0,
+                  alpha1=0.0,
+                  alpha2=0.0,
+                  alpha3=0.0,
+                  control1=ConverterControlType.Pac,
+                  control2=ConverterControlType.Qac,
+                  control1_val=18.0,
+                  control2_val=9.0)
+    grid.add_vsc(obj=vsc)
+
+    # ------------------------------------------------------------------------------------------------------------------
+    #   Run AC/DC Power Flow
+    # ------------------------------------------------------------------------------------------------------------------
+    res = vge.power_flow(grid=grid, options=vge.PowerFlowOptions(solver_type=SolverType.NR,
+                                                                 retry_with_other_methods=False))
+
+    power_factory = np.array([0.889074, 0.969204, 1.0, 1.0])
+
+    assert np.allclose(np.abs(res.voltage), power_factory, atol=1e-6)

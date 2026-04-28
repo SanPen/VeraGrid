@@ -16,18 +16,18 @@ class ContinuationPowerFlowResults(ResultsTemplate):
     """
 
     LOCAL_RESULTS_DECLARATIONS = (
-        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list()),
-        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list()),
-        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list()),
-        ResultsProperty(name='voltages', tpe=CxMat, old_names=list()),
-        ResultsProperty(name='lambdas', tpe=Vec, old_names=list()),
-        ResultsProperty(name='error', tpe=Vec, old_names=list()),
-        ResultsProperty(name='converged', tpe=BoolVec, old_names=list()),
-        ResultsProperty(name='Sf', tpe=CxMat, old_names=list()),
-        ResultsProperty(name='St', tpe=CxMat, old_names=list()),
-        ResultsProperty(name='loading', tpe=CxMat, old_names=list()),
-        ResultsProperty(name='losses', tpe=CxMat, old_names=list()),
-        ResultsProperty(name='Sbus', tpe=CxMat, old_names=list()),
+        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='voltages', tpe=CxMat, old_names=list(), expandable=False),
+        ResultsProperty(name='lambdas', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='error', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='converged', tpe=BoolVec, old_names=list(), expandable=False),
+        ResultsProperty(name='Sf', tpe=CxMat, old_names=list(), expandable=False),
+        ResultsProperty(name='St', tpe=CxMat, old_names=list(), expandable=False),
+        ResultsProperty(name='loading', tpe=CxMat, old_names=list(), expandable=False),
+        ResultsProperty(name='losses', tpe=CxMat, old_names=list(), expandable=False),
+        ResultsProperty(name='Sbus', tpe=CxMat, old_names=list(), expandable=False),
     )
 
     __slots__ = (

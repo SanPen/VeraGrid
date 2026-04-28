@@ -14,14 +14,14 @@ from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceTyp
 class ReliabilityResults(ResultsTemplate):
 
     LOCAL_RESULTS_DECLARATIONS = (
-        ResultsProperty(name='LOLE_evolution', tpe=Vec, old_names=list()),
-        ResultsProperty(name='ENS_evolution', tpe=Vec, old_names=list()),
-        ResultsProperty(name='LOLF_evolution', tpe=Vec, old_names=list()),
-        ResultsProperty(name='LOLET_evolution', tpe=Vec, old_names=list()),
-        ResultsProperty(name='LOLFT_evolution', tpe=Vec, old_names=list()),
-        ResultsProperty(name='SAIDI_evolution', tpe=Vec, old_names=list()),
-        ResultsProperty(name='SAIFI_evolution', tpe=Vec, old_names=list()),
-        ResultsProperty(name='CAIDI_evolution', tpe=Vec, old_names=list()),
+        ResultsProperty(name='LOLE_evolution', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='ENS_evolution', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='LOLF_evolution', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='LOLET_evolution', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='LOLFT_evolution', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='SAIDI_evolution', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='SAIFI_evolution', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='CAIDI_evolution', tpe=Vec, old_names=list(), expandable=False),
     )
 
     __slots__ = (

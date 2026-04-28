@@ -38,3 +38,4 @@ class CurrentInjectionGraphicItem(InjectionTemplateGraphicItem):
     def api_object(self) -> CurrentInjection:
         return self._api_object
 
+

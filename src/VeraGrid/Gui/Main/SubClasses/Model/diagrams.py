@@ -54,6 +54,7 @@ from VeraGrid.Gui.general_dialogues import (CheckListDialogue, StartEndSelection
 
 ALL_EDITORS = Union[SchematicWidget, GridMapWidget, BaseDiagramWidget]
 ALL_EDITORS_NONE = Union[None, SchematicWidget, GridMapWidget]
+DIAGRAM_WIDGETS = Union[SchematicWidget, GridMapWidget]
 
 
 class VideoExportWorker(QtCore.QThread):
@@ -87,7 +88,7 @@ class VideoExportWorker(QtCore.QThread):
         self.current_study = current_study
         self.grid_colour_function: Callable[[ALL_EDITORS, str, int, bool], None] = grid_colour_function
 
-        self.logger = Logger()
+        self.logger: Logger = Logger()
 
     def run(self):
         """
@@ -136,7 +137,7 @@ class DiagramsMain(CompiledArraysMain):
         CompiledArraysMain.__init__(self, parent)
 
         # list of diagrams
-        self.diagram_widgets_list: List[ALL_EDITORS] = list()
+        self.diagram_widgets_list: List[DIAGRAM_WIDGETS] = list()
 
         # flag to avoid circular updating of the display settings when changing diagrams
         self._enable_setting_auto_upgrade = True
@@ -310,6 +311,7 @@ class DiagramsMain(CompiledArraysMain):
 
         # Set context menu policy to CustomContextMenu
         self.ui.diagramsListView.setContextMenuPolicy(QtGui.Qt.ContextMenuPolicy.CustomContextMenu)
+        self.ui.diagramsListView.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection)
 
     def get_current_objects_model_view(self) -> ObjectModelFilterProxy | None:
         """
@@ -1826,6 +1828,69 @@ class DiagramsMain(CompiledArraysMain):
         mdl = DiagramsModel(self.diagram_widgets_list)
         self.ui.diagramsListView.setModel(mdl)
 
+    def _create_widget_from_diagram(self, diagram: dev.SchematicDiagram | dev.MapDiagram) -> ALL_EDITORS:
+        """
+        Create a diagram widget from a stored diagram object.
+
+        :param diagram: stored diagram
+        :return: materialized diagram widget
+        """
+        if isinstance(diagram, dev.SchematicDiagram):
+            diagram_widget = SchematicWidget(
+                gui=self,
+                diagram=diagram,
+                default_bus_voltage=self.ui.defaultBusVoltageSpinBox.value(),
+                time_index=self.get_diagram_slider_index()
+            )
+            diagram_widget.setStretchFactor(1, 10)
+            diagram_widget.center_nodes()
+            return diagram_widget
+        elif isinstance(diagram, dev.MapDiagram):
+            default_tile_source = self.tile_name_dict[self.ui.tile_provider_comboBox.currentText()]
+            tile_source = self.tile_name_dict.get(diagram.tile_source, default_tile_source)
+            return GridMapWidget(
+                gui=self,
+                tile_src=tile_source,
+                start_level=diagram.start_level,
+                longitude=diagram.longitude,
+                latitude=diagram.latitude,
+                name=diagram.name,
+                diagram=diagram
+            )
+        else:
+            raise Exception("Unknown diagram type")
+
+    def _ensure_diagram_widget_at_index(self, index: int) -> ALL_EDITORS_NONE:
+        """
+        Materialize and cache a diagram widget if the entry is still deferred.
+
+        :param index: diagram row index
+        :return: diagram widget or None
+        """
+        if index < 0 or index >= len(self.diagram_widgets_list):
+            return None
+        else:
+            pass
+
+        entry = self.diagram_widgets_list[index]
+        if isinstance(entry, (SchematicWidget, GridMapWidget)):
+            return entry
+        elif isinstance(entry, (dev.SchematicDiagram, dev.MapDiagram)):
+            widget = self._create_widget_from_diagram(diagram=entry)
+            self.diagram_widgets_list[index] = widget
+
+            mdl = self.ui.diagramsListView.model()
+            if mdl is not None:
+                idx = mdl.index(index, 0)
+                mdl.dataChanged.emit(idx, idx, [QtCore.Qt.ItemDataRole.DisplayRole,
+                                                QtCore.Qt.ItemDataRole.DecorationRole])
+            else:
+                pass
+
+            return widget
+        else:
+            return None
+
     def get_selected_diagram_widget(self) -> ALL_EDITORS_NONE:
         """
         Get the currently selected diagram
@@ -1835,7 +1900,7 @@ class DiagramsMain(CompiledArraysMain):
 
         if len(indices):
             idx = indices[0].row()
-            return self.diagram_widgets_list[idx]
+            return self._ensure_diagram_widget_at_index(index=idx)
         else:
             return None
 
@@ -2151,47 +2216,19 @@ class DiagramsMain(CompiledArraysMain):
         self.diagram_widgets_list.clear()
         self.remove_all_diagram_widgets()
 
-        for diagram in self.circuit.diagrams:
-
-            if isinstance(diagram, dev.SchematicDiagram):
-                diagram_widget = SchematicWidget(
-                    gui=self,
-                    diagram=diagram,
-                    default_bus_voltage=self.ui.defaultBusVoltageSpinBox.value(),
-                    time_index=self.get_diagram_slider_index()
-                )
-
-                diagram_widget.setStretchFactor(1, 10)
-                diagram_widget.center_nodes()
-                self.diagram_widgets_list.append(diagram_widget)
-
-            elif isinstance(diagram, dev.MapDiagram):
-                # select the tile source from the diagram, if not fund pick the one from the GUI
-                default_tile_source = self.tile_name_dict[self.ui.tile_provider_comboBox.currentText()]
-                tile_source = self.tile_name_dict.get(diagram.tile_source, default_tile_source)
-
-                # create the map widget
-                map_widget = GridMapWidget(
-                    gui=self,
-                    tile_src=tile_source,
-                    start_level=diagram.start_level,
-                    longitude=diagram.longitude,
-                    latitude=diagram.latitude,
-                    name=diagram.name,
-                    diagram=diagram
-                )
-
-                # map_widget.go_to_level_and_position(5, -15.41, 40.11)
-                self.diagram_widgets_list.append(map_widget)
-
+        for i, diagram in enumerate(self.circuit.diagrams):
+            if i == 0:
+                self.diagram_widgets_list.append(self._create_widget_from_diagram(diagram=diagram))
             else:
-                raise Exception("Unknown diagram type")
+                # Defer heavy widget instantiation until the user selects the diagram.
+                self.diagram_widgets_list.append(diagram)
 
         self.set_diagrams_list_view()
 
         if len(self.diagram_widgets_list) > 0:
-            diagram = self.diagram_widgets_list[0]
-            self.set_diagram_widget(diagram)
+            first_diagram = self._ensure_diagram_widget_at_index(index=0)
+            if first_diagram is not None:
+                self.set_diagram_widget(first_diagram)
 
     def add_map_diagram(self) -> None:
         """
@@ -2297,25 +2334,43 @@ class DiagramsMain(CompiledArraysMain):
 
     def remove_diagram(self):
         """
-        Remove diagram
+        Remove one or more selected diagrams
         """
-        diagram_widget = self.get_selected_diagram_widget()
-        if diagram_widget is not None:
-            ok = yes_no_question("Are you sure that you want to delete " + diagram_widget.name + "?",
-                                 "Remove diagram")
+        selected_rows = sorted({idx.row() for idx in self.ui.diagramsListView.selectedIndexes()})
+        if len(selected_rows) == 0:
+            return
 
-            if ok:
-                # delete the widget
-                self.diagram_widgets_list.remove(diagram_widget)
+        if len(selected_rows) == 1:
+            entry: SchematicWidget | GridMapWidget = self.diagram_widgets_list[selected_rows[0]]
 
-                # delete the diagram
-                self.circuit.remove_diagram(diagram_widget.diagram)
+            question = "Are you sure that you want to delete " + str(entry.name) + "?"
+        else:
+            question = f"Are you sure that you want to delete {len(selected_rows)} selected diagrams?"
 
-                # delete it from the layout list
-                self.remove_all_diagram_widgets()
+        ok = yes_no_question(question, "Remove diagram")
+        if not ok:
+            return
 
-                # update view
-                self.set_diagrams_list_view()
+        # Remember a candidate row to select after deletion.
+        next_row = selected_rows[0]
+
+        # Delete from highest row to lowest to avoid index shifts.
+        for row in sorted(selected_rows, reverse=True):
+            widget = self.diagram_widgets_list.pop(row)
+            if isinstance(widget, (SchematicWidget, GridMapWidget)):
+                self.circuit.remove_diagram(widget.diagram)
+
+        # Remove currently shown widget and rebuild list view selection.
+        self.remove_all_diagram_widgets()
+        self.set_diagrams_list_view()
+
+        if len(self.diagram_widgets_list) > 0:
+            target_row = min(next_row, len(self.diagram_widgets_list) - 1)
+            widget = self._ensure_diagram_widget_at_index(index=target_row)
+            if widget is not None:
+                self.set_diagram_widget(widget)
+        else:
+            pass
 
     def duplicate_diagram(self):
         """
@@ -2545,8 +2600,7 @@ class DiagramsMain(CompiledArraysMain):
         :return:
         """
         if self.video_thread.logger.has_logs():
-            dlg = LogsDialogue("Video export", self.video_thread.logger, True)
-            dlg.exec()
+            self.show_logs(self.video_thread.logger, "Video export")
 
     def set_xy_from_lat_lon(self):
         """
@@ -2563,6 +2617,10 @@ class DiagramsMain(CompiledArraysMain):
                                        "Are you sure of this?"):
                         diagram.fill_xy_from_lat_lon(destructive=True)
                         diagram.center_nodes()
+                else:
+                    self.show_warning_toast("No schematic diagram selected!")
+            else:
+                self.show_warning_toast("No diagram selected!")
 
     def set_big_bus_marker(self, buses: List[dev.Bus], color: QtGui.QColor):
         """
@@ -3234,7 +3292,12 @@ class DiagramsMain(CompiledArraysMain):
         """
         for diagram in self.diagram_widgets_list:
             if diagram != caller:
-                diagram.delete_element_utility_function(device=api_obj, propagate=False)
+                if isinstance(diagram, (SchematicWidget, GridMapWidget)):
+                    diagram.delete_element_utility_function(device=api_obj, propagate=False)
+                elif isinstance(diagram, (dev.SchematicDiagram, dev.MapDiagram)):
+                    diagram.delete_device(device=api_obj)
+                else:
+                    pass
 
         try:
             self.circuit.delete_element(obj=api_obj)

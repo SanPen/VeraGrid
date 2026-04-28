@@ -7,9 +7,10 @@ import scipy.linalg as spla
 from typing import List, Tuple, Any
 
 from VeraGridEngine.Utils.Symbolic.block import Block, Var
-from VeraGridEngine.enumerations import DeviceType, EmtLineTypes
+from VeraGridEngine.enumerations import DeviceType, EmtLineTypes, VarPowerFlowRefferenceType
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
+
 def get_bergeron_line_emt_template(
     vf: VarFactory,
     phN: bool = False,
@@ -47,10 +48,29 @@ def get_bergeron_line_emt_template(
 
     active_ph = [lab for lab, on in zip(ph_labels, ph_mask) if on]
 
+    vf_keys = dict({
+        "N": VarPowerFlowRefferenceType.vf_N,
+        "A": VarPowerFlowRefferenceType.vf_A,
+        "B": VarPowerFlowRefferenceType.vf_B,
+        "C": VarPowerFlowRefferenceType.vf_C,
+    })
+    vt_keys = dict({
+        "N": VarPowerFlowRefferenceType.vt_N,
+        "A": VarPowerFlowRefferenceType.vt_A,
+        "B": VarPowerFlowRefferenceType.vt_B,
+        "C": VarPowerFlowRefferenceType.vt_C,
+    })
+
+    vf_vars = [vf.add_var(name=f"vf_{ph_label}_{name}", reference=vf_keys[ph_label]) for ph_label in active_ph]
+    vt_vars = [vf.add_var(name=f"vt_{ph_label}_{name}", reference=vt_keys[ph_label]) for ph_label in active_ph]
+
+    templ.block.in_vars = vf_vars + vt_vars
+
 
     ih_f = [vf.add_var(f"Ih_f_{name}_{ph}") for ph in active_ph]
     ih_t = [vf.add_var(f"Ih_t_{name}_{ph}") for ph in active_ph]
 
+    # I history
     templ.block.event_dict = {p: vf.add_const(0.0) for p in (ih_f + ih_t)}
 
 

@@ -11,7 +11,7 @@ from matplotlib import pyplot as plt
 
 from VeraGridEngine.basic_structures import Logger, CxVec
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.enumerations import DeviceType, BuildStatus, SubObjectType
+from VeraGridEngine.enumerations import DeviceType, BuildStatus, SubObjectType, GeneratorType
 from VeraGridEngine.Devices.Associations.association import Associations
 from VeraGridEngine.Devices.Injections.generator_q_curve import GeneratorQCurve
 from VeraGridEngine.Devices.Profiles import ProfileBool, ProfileFloat
@@ -74,6 +74,11 @@ class Generator(InjectionParent):
         '_X0',
         '_R2',
         '_X2',
+        '_Rs',
+        '_Xs',
+        '_Xm',
+        '_Rr',
+        '_Xr',
         '_Pf',
         '_Pf_prof',
         '_is_controlled',
@@ -99,6 +104,7 @@ class Generator(InjectionParent):
         'freq',
         '_must_run',
         '_must_run_prof',
+        'tpe'
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
@@ -134,6 +140,11 @@ class Generator(InjectionParent):
         GCProp(key='X0', units='p.u.', tpe=float, definition='Total zero sequence reactance.'),
         GCProp(key='R2', units='p.u.', tpe=float, definition='Total negative sequence resistance.'),
         GCProp(key='X2', units='p.u.', tpe=float, definition='Total negative sequence reactance.'),
+        GCProp(key='Rs', units='p.u.', tpe=float, definition='Stator winding resistance (AG).'),
+        GCProp(key='Xs', units='p.u.', tpe=float, definition='Stator leakage reactance (AG).'),
+        GCProp(key='Xm', units='p.u.', tpe=float, definition='Magnetizing reactance (AG).'),
+        GCProp(key='Rr', units='p.u.', tpe=float, definition='Rotor resistance (AG).'),
+        GCProp(key='Xr', units='p.u.', tpe=float, definition='Rotor reactance (AG).'),
         GCProp(key='Cost2', units='e/MW²/h', tpe=float, definition='Generation quadratic cost. Used in OPF.',
                profile_name='Cost2_prof'),
         GCProp(key='Cost0', units='e/h', tpe=float, definition='Generation constant cost. Used in OPF.',
@@ -165,6 +176,7 @@ class Generator(InjectionParent):
         GCProp(key='srap_enabled', units='', tpe=bool,
                definition='Is the unit available for SRAP participation?',
                editable=True, profile_name="srap_enabled_prof"),
+        GCProp(key='tpe', units='', tpe=GeneratorType, definition='Machine type of the generator.'),
     )
 
     def __init__(self,
@@ -197,6 +209,11 @@ class Generator(InjectionParent):
                  x0: float = 1e-20,
                  r2: float = 1e-20,
                  x2: float = 1e-20,
+                 Rs: float = 1e-20,
+                 Xs: float = 1e-20,
+                 Xm: float = 1e-20,
+                 Rr: float = 1e-20,
+                 Xr: float = 1e-20,
                  freq=60.0,
                  capex: float = 0,
                  opex: float = 0,
@@ -208,7 +225,8 @@ class Generator(InjectionParent):
                  min_time_up=0.0,
                  min_time_down=0.0,
                  ramp_up=1e20,
-                 ramp_down=1e20):
+                 ramp_down=1e20,
+                 tpe: GeneratorType = GeneratorType.Synchronous):
         """
 
         :param name: Name of the generator
@@ -239,12 +257,18 @@ class Generator(InjectionParent):
         :param x0:
         :param r2:
         :param x2:
+        :param Rs: Stator winding resistance [pu]
+        :param Xs: Stator leakage reactance [pu]
+        :param Xm: Magnetising reactance [pu]
+        :param Rr: Rotor resistance [pu]
+        :param Xr: Rotor reactance [pu]
         :param freq:
         :param capex:
         :param opex:
         :param srap_enabled:
         :param build_status:
         :param must_run:
+        :param tpe: Machine type of the generator, as it can be synchronous or asynchronous
         """
         InjectionParent.__init__(self,
                                  name=name,
@@ -309,6 +333,21 @@ class Generator(InjectionParent):
         # negative sequence reactance
         self.X2 = float(x2)
 
+        # stator winding resistance
+        self.Rs = float(Rs)
+
+        # stator leakage reactance
+        self.Xs = float(Xs)
+
+        # magnetizing reactance
+        self.Xm = float(Xm)
+
+        # rotor resistance
+        self.Rr = float(Rr)
+
+        # rotor reactance
+        self.Xr = float(Xr)
+
         # Power factor
         self._Pf = float(power_factor)
 
@@ -359,6 +398,9 @@ class Generator(InjectionParent):
         self.Sbase = float(Sbase)
 
         self.freq = freq
+
+        self.tpe: GeneratorType = tpe
+
 
     @property
     def P(self) -> float:
@@ -1093,6 +1135,101 @@ class Generator(InjectionParent):
         self._X2 = float(val)
 
     @property
+    def Rs(self) -> float:
+        """
+        Get ``Rs``.
+
+        :return: float
+        """
+        return self._Rs
+
+    @Rs.setter
+    def Rs(self, val: float) -> None:
+        """
+        Set ``Rs``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Rs = float(val)
+
+    @property
+    def Xs(self) -> float:
+        """
+        Get ``Xs``.
+
+        :return: float
+        """
+        return self._Xs
+
+    @Xs.setter
+    def Xs(self, val: float) -> None:
+        """
+        Set ``Xs``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Xs = float(val)
+
+    @property
+    def Xm(self) -> float:
+        """
+        Get ``Xm``.
+
+        :return: float
+        """
+        return self._Xm
+
+    @Xm.setter
+    def Xm(self, val: float) -> None:
+        """
+        Set ``Xm``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Xm = float(val)
+
+    @property
+    def Rr(self) -> float:
+        """
+        Get ``Rr``.
+
+        :return: float
+        """
+        return self._Rr
+
+    @Rr.setter
+    def Rr(self, val: float) -> None:
+        """
+        Set ``Rr``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Rr = float(val)
+
+    @property
+    def Xr(self) -> float:
+        """
+        Get ``Xr``.
+
+        :return: float
+        """
+        return self._Xr
+
+    @Xr.setter
+    def Xr(self, val: float) -> None:
+        """
+        Set ``Xr``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._Xr = float(val)
+
+    @property
     def Cost2(self) -> float:
         """
         Get ``Cost2``.
@@ -1282,11 +1419,3 @@ class Generator(InjectionParent):
         """
         self._must_run = bool(val)
 
-    # def initialize_rms(self, var_factory: VarFactory):
-    #     """
-    #     Initialize the RMS model
-    #     """
-    #
-    #     if self._rms_model.empty():
-    #         generator_template = get_complete_generator_template(var_factory)
-    #         self.rms_model = generator_template.block

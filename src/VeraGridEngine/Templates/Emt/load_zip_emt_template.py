@@ -202,12 +202,33 @@ def get_load_ZIP_emt_template(
         algebraic_vars.append(q_load_var)
         algebraic_vars.append(current_var)
 
+        # algebraic_eqs.append(v2_var - (u_var ** 2 + q_var ** 2))
+        # algebraic_eqs.append(vm_var - ((v2_var + eps) ** c05))
+        # algebraic_eqs.append(ratio_var - (vm_var / v0))
+        # algebraic_eqs.append(p_var + (p0_var * (a1 * ratio_var ** 2 + a2 * ratio_var + a3)))
+        # algebraic_eqs.append(q_load_var + (q0_var * (a4 * ratio_var ** 2 + a5 * ratio_var + a6)))
+        # algebraic_eqs.append(current_var + (c2 * (u_var * (-p_var) + q_var * (-q_load_var)) / (v2_var + eps)))
+        # The squared voltage magnitude remains available as an algebraic output, but the
+        # voltage magnitude itself is computed directly from the SOGI orthogonal states.
+        # This avoids taking the square root of an independent algebraic iterate that may
+        # become temporarily negative during Newton iterations.
         algebraic_eqs.append(v2_var - (u_var ** 2 + q_var ** 2))
-        algebraic_eqs.append(vm_var - ((v2_var + eps) ** c05))
+
+        # The magnitude is evaluated from the physically non-negative quantity u^2 + q^2.
+        algebraic_eqs.append(vm_var - ((u_var ** 2 + q_var ** 2 + eps) ** c05))
+
+        # The ZIP ratio uses the positive magnitude variable.
         algebraic_eqs.append(ratio_var - (vm_var / v0))
+
+        # The active and reactive ZIP powers keep the original polynomial structure.
         algebraic_eqs.append(p_var + (p0_var * (a1 * ratio_var ** 2 + a2 * ratio_var + a3)))
         algebraic_eqs.append(q_load_var + (q0_var * (a4 * ratio_var ** 2 + a5 * ratio_var + a6)))
-        algebraic_eqs.append(current_var + (c2 * (u_var * (-p_var) + q_var * (-q_load_var)) / (v2_var + eps)))
+
+        # The injected current is also evaluated with the guaranteed non-negative squared
+        # magnitude to prevent sign-inconsistent or undefined denominators during Newton.
+        algebraic_eqs.append(
+            current_var + (c2 * (u_var * (-p_var) + q_var * (-q_load_var)) / (u_var ** 2 + q_var ** 2 + eps))
+        )
 
         # The initializer keeps the same seeds as the legacy ZIP template so the
         # change stays limited to phase-selective sizing and naming.

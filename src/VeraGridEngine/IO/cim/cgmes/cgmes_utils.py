@@ -670,6 +670,26 @@ def get_voltage_shunt(shunt: CGMES_NON_LINEAR_SHUNT_COMPENSATOR | CGMES_EQUIVALE
     :param logger:
     :return:
     """
+
+    #if shunt.BaseVoltage is not None:
+    #    return shunt.BaseVoltage.nominalVoltage
+    # else:  # TODO look at EquipmentContainer/VoltageLevel/BaseVoltage
+    #     if hasattr(shunt, "nomU"):
+    #         if shunt.nomU is not None:
+    #             return shunt.nomU
+    #
+    #     if 'Terminal' in shunt.references_to_me.keys():
+    #         tps = list(shunt.references_to_me['Terminal'])
+    #
+    #         if len(tps) > 0:
+    #             tp = tps[0]
+    #
+    #             return get_voltage_terminal(tp, logger=logger)
+    #         else:
+    #             return None
+    #     else:
+    #         return None
+
     if shunt.BaseVoltage is not None:
         return shunt.BaseVoltage.nominalVoltage
 

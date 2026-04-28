@@ -189,6 +189,7 @@ class EmtProblemTemplate(ABC):
         self._rebuild_runtime_parameter_partition()
 
         self.init_guess: Dict[int, float] = dict()
+        self.event_params_init_dict: Dict[int, float | int | complex | None] = dict()
         self.diff_init_guess: Dict[int, float] = dict()
         # self._vars_info: Dict[Any, List[Var]] = dict()
 

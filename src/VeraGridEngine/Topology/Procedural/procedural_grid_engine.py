@@ -22,18 +22,36 @@ if TYPE_CHECKING:
     from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 
 
-def coord_calc(current_bus_lon: float, current_bus_lat: float, length: float, coord_out: Vec):
+def coord_calc(current_bus_lon: float, current_bus_lat: float, length: float, coord_out: Vec) -> Vec:
     """
     Calculate the coordinates of the next bus based on the current bus,
     the length to be covered (in km), and the output coordinates (in degrees).
+
+    The bearing must be computed in physical km space (not raw degree space) so
+    that intermediate buses lie on the geographic straight line between the two
+    endpoints. Using raw degree differences would distort the direction because
+    1° of longitude is shorter in km than 1° of latitude at non-equatorial latitudes.
+
+    :param current_bus_lon: Longitude of the current bus in degrees.
+    :param current_bus_lat: Latitude of the current bus in degrees.
+    :param length: Distance to advance toward ``coord_out`` in km.
+    :param coord_out: Target coordinates as ``[longitude, latitude]`` in degrees.
+    :return: New coordinates as ``[longitude, latitude]`` in degrees.
     """
-    line_angle = np.arctan2(coord_out[1] - current_bus_lat, coord_out[0] - current_bus_lon)
-    # Convert length from km to degrees (1 degree lat ≈ 111 km; lon depends on latitude)
-    km_per_deg_lat = 111.0
-    km_per_deg_lon = 111.0 * np.cos(np.radians(current_bus_lat))
-    delta_lon = np.cos(line_angle) * length / km_per_deg_lon
-    delta_lat = np.sin(line_angle) * length / km_per_deg_lat
-    new_coord = np.array([current_bus_lon + delta_lon, current_bus_lat + delta_lat])
+    km_per_deg_lat: float = 111.0
+    km_per_deg_lon: float = 111.0 * np.cos(np.radians(current_bus_lat))
+
+    # Convert the degree-space displacement to physical km so the bearing is
+    # computed in a (locally) isotropic coordinate frame
+    physical_dx: float = (coord_out[0] - current_bus_lon) * km_per_deg_lon
+    physical_dy: float = (coord_out[1] - current_bus_lat) * km_per_deg_lat
+
+    line_angle: float = np.arctan2(physical_dy, physical_dx)
+
+    delta_lon: float = np.cos(line_angle) * length / km_per_deg_lon
+    delta_lat: float = np.sin(line_angle) * length / km_per_deg_lat
+
+    new_coord: Vec = np.array([current_bus_lon + delta_lon, current_bus_lat + delta_lat])
 
     return new_coord
 
@@ -125,49 +143,50 @@ class TransitionMatrix:
         return self.transition_matrix[i1, i2]
 
     @staticmethod
-    def template_dictionary(grid: MultiCircuit) -> Dict[tuple[float, float], List[tuple[object, float]]]:
+    def template_dictionary(grid: MultiCircuit) -> Dict[float, Dict[float, List[tuple[object, float]]]]:
         """
-        Build a dictionary of branch templates grouped by voltage transition.
+        Build a nested dictionary of branch templates grouped by voltage transition.
 
-        The dictionary keys are voltage transition tuples (V1, V2), always sorted so
-        that (132.0, 220.0) and (220.0, 132.0) are treated as the same transition.
+        The outer key is the lower voltage (kV) and the inner key is the higher voltage
+        (kV), so (132 kV → 220 kV) is stored as template_dict[132.0][220.0].
+        Both voltages are sorted so that (132, 220) and (220, 132) map to the same entry.
 
-        The dictionary values are lists of tuples:
-            (branch_name, probability)
-
-        The probability is assigned uniformly among all branch elements that belong
-        to the same voltage transition.
+        The values are lists of (branch_object, probability) tuples where probability
+        is assigned uniformly among all branches that share the same voltage transition.
 
         :param grid: MultiCircuit instance
-        :return: Dictionary with keys (V1, V2) and values [(element_name, probability), ...]
+        :return: Nested dict {v_lo: {v_hi: [(branch_object, probability), ...]}}
         """
-        grouped_elements: Dict[tuple[float, float], List[object]] = dict()
+        grouped_elements: Dict[float, Dict[float, List[object]]] = dict()
 
         for branch in grid.get_branches(add_vsc=True, add_hvdc=True, add_switch=True):
 
-            v_from = branch.bus_from.Vnom
-            v_to = branch.bus_to.Vnom
+            v1 = float(branch.bus_from.Vnom)
+            v2 = float(branch.bus_to.Vnom)
+            v_lo = min(v1, v2)
+            v_hi = max(v1, v2)
 
-            v1 = float(v_from)
-            v2 = float(v_to)
-            transition_key = (min(v1, v2), max(v1, v2))
+            if v_lo not in grouped_elements:
+                grouped_elements[v_lo] = dict()
 
-            if transition_key not in grouped_elements:
-                grouped_elements[transition_key] = list()
+            if v_hi not in grouped_elements[v_lo]:
+                grouped_elements[v_lo][v_hi] = list()
 
-            grouped_elements[transition_key].append(branch)
+            grouped_elements[v_lo][v_hi].append(branch)
 
-        template_dict: Dict[tuple[float, float], List[tuple[object, float]]] = dict()
+        template_dict: Dict[float, Dict[float, List[tuple[object, float]]]] = dict()
 
-        for transition_key, branch_objects in grouped_elements.items():
-            n_el = len(branch_objects)
+        for v_lo, inner in grouped_elements.items():
+            template_dict[v_lo] = dict()
+            for v_hi, branch_objects in inner.items():
+                n_el = len(branch_objects)
 
-            if n_el == 0:
-                template_dict[transition_key] = list()
-                continue
+                if n_el == 0:
+                    template_dict[v_lo][v_hi] = list()
+                    continue
 
-            probability = 1.0 / n_el
-            template_dict[transition_key] = [(branch_object, probability) for branch_object in branch_objects]
+                probability = 1.0 / n_el
+                template_dict[v_lo][v_hi] = [(branch_object, probability) for branch_object in branch_objects]
 
         return template_dict
 
@@ -405,6 +424,7 @@ class Topology:
 
         self.intermediate_buses: List[dev.Bus] = list()  # buses generated in the markov process
         self.new_lines: List[dev.Line] = list()  # lines created during topology generation
+        self.new_transformers: List[dev.Transformer2W] = list()  # transformers created during topology generation
 
     def generate_markov(self):
         """
@@ -495,7 +515,7 @@ class Topology:
                     )
 
                     next_bus = dev.Bus(
-                        name=f"Intermediate_{edge[0]}_{edge[1]}_{intermediate_bus_counter}",
+                        name=f"Intermediate_{input_bus.name}_{output_bus.name}_{intermediate_bus_counter}",
                         Vnom=float(next_bus_vnom),
                         is_dc=current_bus.is_dc,
                         longitude=float(next_coord[0]),
@@ -509,13 +529,14 @@ class Topology:
 
                 v1 = float(current_bus.Vnom)
                 v2 = float(next_bus.Vnom)
-                transition_key = (min(v1, v2), max(v1, v2))
+                v_lo = min(v1, v2)
+                v_hi = max(v1, v2)
 
-                template_options = self.transition_matrix.template_dict.get(transition_key, list())
+                template_options = self.transition_matrix.template_dict.get(v_lo, dict()).get(v_hi, list())
 
                 if not template_options:
                     self.logger.add_warning(
-                        msg=f"No template branches for transition {transition_key}. Skipping edge {edge}.",
+                        msg=f"No template branches for transition {v_lo}kV-{v_hi}kV. Skipping edge {edge}.",
                         device=f"edge {edge}"
                     )
                     break
@@ -540,7 +561,7 @@ class Topology:
 
                 if new_branch is None:
                     self.logger.add_warning(
-                        msg=f"Could not instantiate branch for transition {transition_key}. Skipping edge {edge}.",
+                        msg=f"Could not instantiate branch for transition {v_lo}kV-{v_hi}kV. Skipping edge {edge}.",
                         device=f"edge {edge}"
                     )
                     break
@@ -567,6 +588,7 @@ class Topology:
 
         if isinstance(branch, dev.Transformer2W):
             self.grid.add_transformer2w(obj=branch)
+            self.new_transformers.append(branch)
             return
 
         # TODO: Extend later for VSC, HVDC, switches, etc.
@@ -588,17 +610,18 @@ class Topology:
 
         adjacency: dict[float, set[float]] = dict()
 
-        for (v1, v2), template_options in self.transition_matrix.template_dict.items():
-            if len(template_options) == 0:
-                continue
+        for v_lo, inner in self.transition_matrix.template_dict.items():
+            for v_hi, template_options in inner.items():
+                if len(template_options) == 0:
+                    continue
 
-            if v1 not in adjacency:
-                adjacency[v1] = set()
-            if v2 not in adjacency:
-                adjacency[v2] = set()
+                if v_lo not in adjacency:
+                    adjacency[v_lo] = set()
+                if v_hi not in adjacency:
+                    adjacency[v_hi] = set()
 
-            adjacency[v1].add(v2)
-            adjacency[v2].add(v1)
+                adjacency[v_lo].add(v_hi)
+                adjacency[v_hi].add(v_lo)
 
         if start_v not in adjacency or end_v not in adjacency:
             return None
@@ -671,7 +694,7 @@ class Topology:
 
         # First bridge bus: same voltage as current_bus, but placed at output coordinates.
         first_bridge_bus = dev.Bus(
-            name=f"Intermediate_{edge[0]}_{edge[1]}_{intermediate_bus_counter}",
+            name=f"Intermediate_{current_bus.name}_{output_bus.name}_{intermediate_bus_counter}",
             Vnom=float(current_bus.Vnom),
             is_dc=current_bus.is_dc,
             longitude=float(output_bus.longitude),
@@ -695,7 +718,7 @@ class Topology:
                 next_bus = output_bus
             else:
                 next_bus = dev.Bus(
-                    name=f"Intermediate_{edge[0]}_{edge[1]}_{intermediate_bus_counter}",
+                    name=f"Intermediate_{current_bus.name}_{output_bus.name}_{intermediate_bus_counter}",
                     Vnom=float(next_voltage),
                     is_dc=current_bus.is_dc,
                     longitude=float(output_bus.longitude),
@@ -709,12 +732,13 @@ class Topology:
 
             v1 = float(previous_bus.Vnom)
             v2 = float(next_bus.Vnom)
-            transition_key = (min(v1, v2), max(v1, v2))
+            v_lo = min(v1, v2)
+            v_hi = max(v1, v2)
 
-            template_options = self.transition_matrix.template_dict.get(transition_key, list())
+            template_options = self.transition_matrix.template_dict.get(v_lo, dict()).get(v_hi, list())
             if len(template_options) == 0:
                 raise RuntimeError(
-                    f"No template branches available for transition {transition_key} "
+                    f"No template branches available for transition {v_lo}kV-{v_hi}kV "
                     f"while fixing edge {edge}."
                 )
 
@@ -731,7 +755,7 @@ class Topology:
 
             if new_branch is None:
                 raise RuntimeError(
-                    f"Could not instantiate branch for transition {transition_key} "
+                    f"Could not instantiate branch for transition {v_lo}kV-{v_hi}kV "
                     f"while fixing edge {edge}."
                 )
 
@@ -770,6 +794,7 @@ class ProceduralGridComputationEngine:
         self.steiner_buses: List[dev.Bus] = list()  # this is a result
         self.intermediate_buses: List[dev.Bus] = list()  # buses generated in the markov process
         self.new_lines: List[dev.Line] = list()  # lines created during topology generation
+        self.new_transformers: List[dev.Transformer2W] = list()  # transformers created during topology generation
 
         self.debugger = ProceduralGridDebugger(enabled=True)
 
@@ -832,6 +857,13 @@ class ProceduralGridComputationEngine:
         :return:
         """
         return self.new_lines
+
+    def get_new_transformers(self) -> List[dev.Transformer2W]:
+        """
+        Get only the newly created Transformer2W objects added during topology generation.
+        :return:
+        """
+        return self.new_transformers
 
     def run_steiner_alone(self):
         """
@@ -924,6 +956,7 @@ class ProceduralGridComputationEngine:
 
         self.intermediate_buses = topology.generate_markov()
         self.new_lines = topology.new_lines
+        self.new_transformers = topology.new_transformers
 
         added_names = self.debugger.get_added_element_names(
             grid=self.grid,

@@ -176,8 +176,9 @@ class MapView(QGraphicsView):
         self.scale(initial_zoom_factor, initial_zoom_factor)
 
         self.setRubberBandSelectionMode(Qt.ItemSelectionMode.IntersectsItemShape)
-        self.setViewportUpdateMode(QGraphicsView.ViewportUpdateMode.BoundingRectViewportUpdate)
+        self.setViewportUpdateMode(QGraphicsView.ViewportUpdateMode.MinimalViewportUpdate)
         self.setOptimizationFlag(QGraphicsView.OptimizationFlag.DontSavePainterState, True)
+        self.setOptimizationFlag(QGraphicsView.OptimizationFlag.DontAdjustForAntialiasing, True)
 
         self.setRenderHints(QPainter.RenderHint.Antialiasing | QPainter.RenderHint.SmoothPixmapTransform)
 
@@ -560,8 +561,13 @@ class MapWidget(QWidget):
             self._tile_src.setCallback(self.on_tile_available)
             self.view.set_notice(val=self._tile_src.attribution_string)
 
-            if self.GotoLevel(level):
-                self.go_to_level_and_position(level=level, longitude=longitude, latitude=latitude)
+            # Clamp level to the new tile source limits.
+            level = max(self._tile_src.min_level, min(level, self._tile_src.max_level))
+
+            # Use the synchronized zoom path so map and graphics overlay keep
+            # the same transform basis after a tile-source switch.
+            if self.apply_zoom_level(level=level):
+                self.go_to_position(longitude=longitude, latitude=latitude)
                 self.view.center_schema()
             else:
                 while abs(self.view.schema_zoom - 0.015625) > 0.00001:
@@ -1015,7 +1021,10 @@ class MapWidget(QWidget):
         xtile: float = self.key_tile_left + x_from_key / self.effective_tile_width
         ytile: float = self.key_tile_top + y_from_key / self.effective_tile_height
 
-        longitude, latitude = self.tile_src.Tile2Geo(xtile, ytile)
+        try:
+            longitude, latitude = self.tile_src.Tile2Geo(xtile, ytile)
+        except OverflowError:
+            return None, None
 
         if not (min_lon <= longitude <= max_lon):
             return None, None

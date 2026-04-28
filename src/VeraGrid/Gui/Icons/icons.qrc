@@ -4,6 +4,7 @@
     <file>icons/message.png</file>
     <file>icons/ss_emt_icon.png</file>
     <file>icons/dyn_emt.png</file>
+    <file>icons/dyn_emt_edit.png</file>
     <file>icons/tree.png</file>
     <file>icons/json.png</file>
     <file>icons/h5.png</file>
@@ -93,6 +94,7 @@
     <file>icons/map (add).png</file>
     <file>icons/wind_power.png</file>
     <file>icons/solar_power.png</file>
+    <file>icons/load_wizard.png</file>
     <file>icons/expansion_planning.png</file>
     <file>icons/add_external_grid.png</file>
     <file>icons/clustering_use.png</file>
@@ -193,6 +195,7 @@
     <file>icons/storage_loc.png</file>
     <file>icons/grid_reduction.png</file>
     <file>icons/dyn.png</file>
+    <file>icons/dyn_edit.png</file>
     <file>icons/map.png</file>
     <file>icons/dcopf2ts.png</file>
     <file>icons/rate_br.png</file>

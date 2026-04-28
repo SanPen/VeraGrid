@@ -180,6 +180,32 @@ class ShuntControlMode(Enum):
             return s
 
 
+class GeneratorType(Enum):
+    """
+    Machine type of the generator element.
+    """
+    Synchronous = "Synchronous"
+    Asynchronous = "Asynchronous"
+
+    def __str__(self):
+        return self.value
+
+    def __repr__(self):
+        return str(self)
+
+    @staticmethod
+    def argparse(s):
+        """
+
+        :param s:
+        :return:
+        """
+        try:
+            return GeneratorType[s]
+        except KeyError:
+            return s
+
+
 class InvestmentEvaluationMethod(Enum):
     """
     Investment evaluation methods
@@ -797,7 +823,11 @@ class ConverterControlType(Enum):
     Pdc = 'P_dc'
     Pac = 'P_ac'
     Pdc_angle_droop = 'P_dc_angle_droop'  # PMODE3
+    Q_droop = "Q_droop"
+    P_droop = "P_droop"
     Imax = 'Imax'
+    Fault1 = 'Fault1'
+    Fault2 = 'Fault2'
 
     def __str__(self) -> str:
         return str(self.value)
@@ -954,6 +984,40 @@ class TimeFrame(Enum):
     Time frame
     """
     Continuous = 'Continuous'
+
+
+class ConverterFaultControlType(Enum):
+    """
+    Converter fault control types
+    """
+    Standard = 'Standard'
+    WECC_WT_Type_4B = 'WECC_WT_Type_4B'
+
+    def __str__(self):
+        return str(self.value)
+
+    def __repr__(self):
+        return str(self)
+
+    @staticmethod
+    def argparse(s):
+        """
+
+        :param s:
+        :return:
+        """
+        try:
+            return ConverterFaultControlType[s]
+        except KeyError:
+            return s
+
+    @classmethod
+    def list(cls):
+        """
+
+        :return:
+        """
+        return list(map(lambda c: c.value, cls))
 
 
 class FaultType(Enum):
@@ -2437,6 +2501,7 @@ class SimulationTypes(Enum):
     InputsAnalysis_run = 'Inputs Analysis'
     OptimalNetTransferCapacityTimeSeries_run = 'Optimal net transfer capacity time series'
     InvestmentsEvaluation_run = 'Investments evaluation'
+    CatalogueOptimization_run = 'Catalogue optimization'
     TopologyProcessor_run = 'Topology Processor'
     NodalCapacityTimeSeries_run = 'Nodal capacity time series'
     Reliability_run = "Reliability"
@@ -2908,6 +2973,7 @@ class EraSvdSolverType(Enum):
 
 class RmsInitializationMethod(Enum):
     Explicit = "Explicit"
+    ReducedExplicit = "ReducedExplicit"
     PseudoTransient = "PseudoTransient"
     CustomValues = "CustomValues"
 
@@ -3388,6 +3454,10 @@ class ParamPowerFlowRefferenceType(Enum):
     omega_base = "omega_base" # in rad/s
     Sbase = "Sbase" # in MVA
 
+    generator_share_enable = "generator_share_enable"
+    generator_share_p_ref = "generator_share_p_ref"
+    generator_share_q_ref = "generator_share_q_ref"
+
 
     def __str__(self):
         return self.value
@@ -3618,6 +3688,8 @@ class BlockType(Enum):
     DC_LOAD_EMT = "DC_LOAD_EMT"
     EMT_THEVENIN = "EMT_THEVENIN_EMT"
     EMTLOAD = "EMT_LOAD"
+    TRAFO_EMT = "TRAFO_EMT"
+    XFMR_TRANSFORMER = "XFMR_TRANSFORMER"
 
 
     def __str__(self):

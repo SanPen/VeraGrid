@@ -22,7 +22,9 @@ from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry import (Schema
                                                                           project_point_to_rectangle_perimeter)
 from VeraGridEngine.Devices.Diagrams.schematic_layout import (build_default_branch_route,
                                                               parse_schematic_route_kind)
-from VeraGridEngine.enumerations import SchematicRouteKind
+from VeraGridEngine.enumerations import SchematicRouteKind, DynamicSimulationMode
+from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
+
 
 from VeraGridEngine.Devices.types import INJECTION_DEVICE_TYPES
 
@@ -1247,6 +1249,16 @@ class InjectionTemplateGraphicItem(GenericDiagramWidget, QGraphicsItemGroup):
                        function_ptr=self.plot,
                        icon_path=":/Icons/icons/plot.png")
 
+        add_menu_entry(menu=menu,
+                       text="RMS Editor",
+                       function_ptr=self.edit_dynamic_rms,
+                       icon_path=":/Icons/icons/dyn_edit.png")
+
+        add_menu_entry(menu=menu,
+                       text="EMT Editor",
+                       function_ptr=self.edit_dynamic_emt,
+                       icon_path=":/Icons/icons/dyn_emt_edit.png")
+
         menu.addSeparator()
 
         add_menu_entry(menu=menu,
@@ -1272,3 +1284,21 @@ class InjectionTemplateGraphicItem(GenericDiagramWidget, QGraphicsItemGroup):
         menu = self.get_base_context_menu()
 
         menu.exec(event.screenPos())
+
+    def edit_dynamic_rms(self):
+        """
+        Open the unified dynamic editor workspace for this generator.
+        """
+
+        open_dynamic_editor(api_object=self.api_object,
+                            circuit=self.editor.circuit,
+                            preferred_mode=DynamicSimulationMode.RMS)
+
+    def edit_dynamic_emt(self):
+        """
+        Open the unified dynamic editor workspace for this generator.
+        """
+
+        open_dynamic_editor(api_object=self.api_object,
+                            circuit=self.editor.circuit,
+                            preferred_mode=DynamicSimulationMode.EMT)

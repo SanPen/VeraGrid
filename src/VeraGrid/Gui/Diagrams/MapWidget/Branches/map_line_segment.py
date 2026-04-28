@@ -15,7 +15,7 @@ from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template impor
 from VeraGrid.Gui.gui_functions import add_menu_entry
 from VeraGrid.Gui.messages import yes_no_question
 from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE, DEACTIVATED, OTHER
-from VeraGrid.Gui.Diagrams.Editors.line_editor import LineEditor
+from VeraGrid.Gui.DeviceEditors.LineEditor.line_editor import LineEditor
 
 from VeraGridEngine.Devices.types import BRANCH_TYPES, ALL_DEV_TYPES
 from VeraGridEngine.enumerations import DeviceType
@@ -67,6 +67,7 @@ class MapLineSegment(QGraphicsLineItem):
         self.hoover_color.setAlpha(180)
 
         self.width = width
+        self._stroke_visible: bool = True
 
         self.pos1: QPointF = self.first.get_center_pos()
         self.pos2: QPointF = self.second.get_center_pos()
@@ -96,9 +97,12 @@ class MapLineSegment(QGraphicsLineItem):
         self.update_endings()
         self.needsUpdate = True
         self.setZValue(0)
+        self._context_lat: float | None = None
+        self._context_lon: float | None = None
 
-        self.setFlag(self.GraphicsItemFlag.ItemIsSelectable, True)
-        self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.setFlag(self.GraphicsItemFlag.ItemIsSelectable, False)
+        self.setAcceptedMouseButtons(Qt.MouseButton.NoButton)
+        self.setCursor(QCursor(Qt.CursorShape.ArrowCursor))
 
     def get_width(self) -> float:
         return self.width
@@ -163,10 +167,21 @@ class MapLineSegment(QGraphicsLineItem):
         :param width:
         :return:
         """
-        self.arrow_p_from.set_size(width)
-        self.arrow_q_from.set_size(width)
-        self.arrow_p_to.set_size(width)
-        self.arrow_q_to.set_size(width)
+        if width != self._arrow_size:
+            self.arrow_p_from.set_size(width)
+            self.arrow_q_from.set_size(width)
+            self.arrow_p_to.set_size(width)
+            self.arrow_q_to.set_size(width)
+            self._arrow_size = width
+        else:
+            pass
+
+    def set_stroke_visible(self, is_visible: bool) -> None:
+        """
+        Set whether the segment stroke itself is visible.
+        """
+        self._stroke_visible = is_visible
+        self._pen = self.set_colour(self.color, self.style)
 
     def set_colour(self, color: QColor, style: Qt.PenStyle):
         """
@@ -176,7 +191,11 @@ class MapLineSegment(QGraphicsLineItem):
         :return:
         """
 
-        pen = QPen(color, self.width, style, Qt.PenCapStyle.RoundCap, Qt.PenJoinStyle.RoundJoin)
+        visible_color = QColor(color)
+        if not self._stroke_visible:
+            visible_color.setAlpha(0)
+
+        pen = QPen(visible_color, self.width, style, Qt.PenCapStyle.RoundCap, Qt.PenJoinStyle.RoundJoin)
 
         self.setPen(pen)
         self.arrow_p_from.set_colour(color)
@@ -206,7 +225,7 @@ class MapLineSegment(QGraphicsLineItem):
         self.pos2 = QPointF(x, y)
         self.update_endings()
 
-    def update_endings(self, force=False) -> None:
+    def update_endings(self, force: bool = False) -> None:
         """
         Update the endings of this segment
         """
@@ -224,6 +243,9 @@ class MapLineSegment(QGraphicsLineItem):
                     self.arrow_p_to.redraw()
                 if self.arrow_q_to.isVisible():
                     self.arrow_q_to.redraw()
+        # During bulk redraws, the container updates the polyline path once.
+        if not force:
+            self.container.update_polyline_path()
 
     def end_update(self) -> None:
         """
@@ -330,10 +352,10 @@ class MapLineSegment(QGraphicsLineItem):
 
         scene_pos = event.scenePos()  # Position in scene coordinates
         x, y = scene_pos.x(), scene_pos.y()
-        lat, lon = self.editor.to_lat_lon(x=x, y=y)
+        self._context_lat, self._context_lon = self.editor.to_lat_lon(x=x, y=y)
         add_menu_entry(menu=menu,
                        text="Open in Street view",
-                       function_ptr=lambda: open_street_view(lat, lon),
+                       function_ptr=self.open_street_view_context,
                        icon_path=":/Icons/icons/map.png")
 
         add_menu_entry(menu=menu,
@@ -470,9 +492,15 @@ class MapLineSegment(QGraphicsLineItem):
             else:
                 if self.first.index > self.second.index:
                     self.container.insert_new_node_at_position(self.second.index)
-
                 elif self.first.index < self.second.index:
                     self.container.insert_new_node_at_position(self.second.index)
+
+    def open_street_view_context(self) -> None:
+        """
+        Open Google Maps at the latest context-menu position.
+        """
+        if self._context_lat is not None and self._context_lon is not None:
+            open_street_view(self._context_lat, self._context_lon)
 
     def set_arrows_with_power(self, Sf: complex | None, St: complex | None) -> None:
         """

@@ -531,21 +531,25 @@ def create_cgmes_tap_changer_control(
     # SSH
     tcc.discrete = True
     tcc.targetDeadband = 0.5
-    tcc.targetValueUnitMultiplier = UnitMultiplier.k
     tcc.enabled = tcc_enabled
-    voltage: float | None = get_voltage_terminal(tcc.Terminal, logger)
 
-    if voltage is not None:
+    if tcc_mode == RegulatingControlModeKind.voltage:
+        voltage: float | None = get_voltage_terminal(tcc.Terminal, logger)
+        if voltage is None:
+            return tcc
+        tcc.targetValueUnitMultiplier = UnitMultiplier.k
         tcc.targetValue = mc_trafo.vset * voltage
+    elif tcc_mode == RegulatingControlModeKind.activePower:
+        tcc.targetValueUnitMultiplier = UnitMultiplier.M
+        tcc.targetValue = mc_trafo.Pset
+    else:
+        # Remaining RegulatingControlModeKind values are not supported by VeraGrid
+        # tap changers; fall back to voltage mode with a neutral target.
+        voltage = get_voltage_terminal(tcc.Terminal, logger)
+        tcc.targetValueUnitMultiplier = UnitMultiplier.k
+        tcc.targetValue = voltage if voltage is not None else 1.0
 
-        # TODO consider other control types
-        # if mc_trafo.tap_module_control_mode ...:
-        #     tcc.targetValue = mc_trafo.Pset
-        # tcc.RegulatingCondEq not required .?
-        # control_cn.Vnom ?
-
-        cgmes_model.add(tcc)
-
+    cgmes_model.add(tcc)
     return tcc
 
 
@@ -1022,7 +1026,6 @@ def create_cgmes_dc_converter_unit(cgmes_model: CgmesCircuit,
     else:
         raise NotImplemented()
 
-    dc_cu.Substation = None  # TODO
     dc_cu.operationMode = DCConverterOperatingModeKind.monopolarGroundReturn
 
     cgmes_model.add(dc_cu)

@@ -8,16 +8,17 @@ from typing import TYPE_CHECKING, List, Union, cast, Any
 from PySide6.QtCore import Qt, QPoint, QRectF, QPointF
 from PySide6.QtGui import QIcon, QPixmap, QPainter, QPen, QBrush, QColor, QCursor, QTransform, QFont
 from PySide6.QtWidgets import QMenu, QGraphicsItem, QGraphicsRectItem, QGraphicsSceneMouseEvent
+from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
 
 from VeraGrid.Gui.gui_functions import add_menu_entry
-from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import RoundTerminalItem
+from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import BarTerminalItem, RoundTerminalItem
 from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget, ACTIVE, DEACTIVATED
 from VeraGridEngine.Devices.Branches.vsc import VSC
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.enumerations import (DeviceType,
-                                         ConverterControlType,
+from VeraGridEngine.enumerations import (ConverterControlType,
                                          SchematicAutoRouteStyle,
                                          SchematicRouteKind,
+                                         DynamicSimulationMode,
                                          TerminalType)  # Assuming VSC controls might be relevant later
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
@@ -703,6 +704,15 @@ class VscGraphicItem3Term(GenericDiagramWidget, QGraphicsRectItem):
             #                function_ptr=self.enable_disable_label_drawing, # Needs implementation if label drawing is kept
             #                checkeable=True,
             #                checked_value=self.draw_labels)
+            add_menu_entry(menu=menu,
+                           text="RMS Editor",
+                           function_ptr=self.edit_dynamic_rms,
+                           icon_path=":/Icons/icons/dyn_edit.png")
+
+            add_menu_entry(menu=menu,
+                           text="EMT Editor",
+                           function_ptr=self.edit_dynamic_emt,
+                           icon_path=":/Icons/icons/dyn_emt_edit.png")
 
             # Delete
             menu.addSeparator()
@@ -833,3 +843,21 @@ class VscGraphicItem3Term(GenericDiagramWidget, QGraphicsRectItem):
         else:
             print('Error in the VSC connection!')
             return False
+
+    def edit_dynamic_rms(self):
+        """
+        Open the unified dynamic editor workspace for this generator.
+        """
+
+        open_dynamic_editor(api_object=self.api_object,
+                            circuit=self.editor.circuit,
+                            preferred_mode=DynamicSimulationMode.RMS)
+
+    def edit_dynamic_emt(self):
+        """
+        Open the unified dynamic editor workspace for this generator.
+        """
+
+        open_dynamic_editor(api_object=self.api_object,
+                            circuit=self.editor.circuit,
+                            preferred_mode=DynamicSimulationMode.EMT)

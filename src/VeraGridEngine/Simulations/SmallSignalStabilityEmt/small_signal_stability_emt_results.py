@@ -9,7 +9,7 @@ from typing import List, Tuple
 
 from VeraGridEngine.Simulations.results_table import ResultsTable
 from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
-from VeraGridEngine.basic_structures import Vec, Mat, CxVec, CxMat, BoolVec
+from VeraGridEngine.basic_structures import Vec, Mat, CxVec, CxMat, BoolVec, StrVec
 from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
 
@@ -31,9 +31,15 @@ class SmallSignalStabilityEmtResults(ResultsTemplate):
     """
 
     LOCAL_RESULTS_DECLARATIONS = (
-        ResultsProperty(name='multipliers', tpe=CxVec, old_names=list()),
-        ResultsProperty(name='eigenvalues', tpe=CxVec, old_names=list()),
-        ResultsProperty(name='participation_factors', tpe=Mat, old_names=list()),
+        ResultsProperty(name='multipliers', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='right_vecs', tpe=CxMat, old_names=list(), expandable=False),
+        ResultsProperty(name='left_vecs', tpe=CxMat, old_names=list(), expandable=False),
+        ResultsProperty(name='period', tpe=float, old_names=list(), expandable=False),
+        ResultsProperty(name='eigenvalues', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='damping_ratios', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='conjugate_frequencies', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='participation_factors', tpe=Mat, old_names=list(), expandable=False),
+        ResultsProperty(name='stat_vars_array', tpe=StrVec, old_names=list(), expandable=False),
     )
 
     __slots__ = (

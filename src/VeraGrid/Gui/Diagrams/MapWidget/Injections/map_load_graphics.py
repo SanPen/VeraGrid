@@ -7,17 +7,13 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from PySide6 import QtWidgets
-from PySide6.QtCore import QPointF
-from PySide6.QtGui import QPolygonF
 from VeraGrid.Gui.gui_functions import add_menu_entry
-from VeraGrid.Gui.messages import info_msg
 from VeraGrid.Gui.profile_wizard_utils import fill_substation_weather_profiles
-from VeraGrid.Gui.Diagrams.generic_graphics import Polygon
 from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics import MapInjectionTemplateGraphicItem
 from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
-from VeraGrid.Gui.LoadDesigner.load_designer import LoadDesigner
+from VeraGrid.Gui.DeviceEditors.LoadDesigner.load_designer import LoadDesigner
 from VeraGridEngine.Devices.Injections.load import Load
-from VeraGridEngine.enumerations import DeviceType, FmuTemplateDomain, DynamicSimulationMode
+from VeraGridEngine.enumerations import  DynamicSimulationMode
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import GridMapWidget
@@ -61,12 +57,17 @@ class MapLoadGraphicItem(MapInjectionTemplateGraphicItem):
             add_menu_entry(menu=menu,
                            text="Load profile wizard",
                            function_ptr=self.load_profile_wizard,
-                           icon_path=":/Icons/icons/gear.png")
+                           icon_path=":/Icons/icons/load_wizard.png")
 
             add_menu_entry(menu=menu,
-                           text="Dynamic Editor",
-                           function_ptr=self.edit_dynamic,
-                           icon_path=":/Icons/icons/edit.png")
+                           text="RMS Editor",
+                           function_ptr=self.edit_rms,
+                           icon_path=":/Icons/icons/dyn_edit.png")
+
+            add_menu_entry(menu=menu,
+                           text="EMT Editor",
+                           function_ptr=self.edit_emt,
+                           icon_path=":/Icons/icons/dyn_emt_edit.png")
 
             menu.exec(event.screenPos())
         else:
@@ -85,13 +86,6 @@ class MapLoadGraphicItem(MapInjectionTemplateGraphicItem):
 
         open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit,
                             preferred_mode=DynamicSimulationMode.EMT)
-
-    def edit_dynamic(self):
-        """
-        Open the unified dynamic editor workspace for this map load.
-        """
-
-        open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit)
 
     def load_profile_wizard(self) -> None:
         """
@@ -132,10 +126,10 @@ class MapLoadGraphicItem(MapInjectionTemplateGraphicItem):
                             pass
                         self.plot()
                     else:
-                        raise Exception("Wrong length from the load profile wizard")
+                        self.editor.gui.show_error_toast("Wrong length from the load profile wizard")
                 else:
                     pass
             else:
                 pass
         else:
-            info_msg("You need to have time profiles for this function")
+            self.editor.gui.show_error_toast("You need to have time profiles for this function")

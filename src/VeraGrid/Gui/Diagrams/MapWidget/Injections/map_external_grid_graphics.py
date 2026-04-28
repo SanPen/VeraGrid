@@ -5,9 +5,12 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from VeraGrid.Gui.Diagrams.generic_graphics import Square
+from PySide6 import QtWidgets
+from VeraGrid.Gui.gui_functions import add_menu_entry
 from VeraGridEngine.Devices.Injections.external_grid import ExternalGrid
 from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics import MapInjectionTemplateGraphicItem
+from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
+from VeraGridEngine.enumerations import  DynamicSimulationMode
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import GridMapWidget
@@ -40,3 +43,41 @@ class MapExternalGridGraphicItem(MapInjectionTemplateGraphicItem):
     @property
     def api_object(self) -> ExternalGrid:
         return self._api_object
+
+    def contextMenuEvent(self, event: QtWidgets.QGraphicsSceneContextMenuEvent):
+        """
+        Display context menu
+        @param event:
+        @return:
+        """
+        if self.api_object is not None:
+            menu = self.get_base_context_menu()
+            menu.addSection("External grid")
+
+            add_menu_entry(menu=menu,
+                           text="RMS Editor",
+                           function_ptr=self.edit_rms,
+                           icon_path=":/Icons/icons/dyn_edit.png")
+
+            add_menu_entry(menu=menu,
+                           text="EMT Editor",
+                           function_ptr=self.edit_emt,
+                           icon_path=":/Icons/icons/dyn_emt_edit.png")
+
+            menu.exec(event.screenPos())
+        else:
+            self.editor.gui.show_error_toast("The graphic has no API object!")
+
+    def edit_rms(self):
+        open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit,
+                            preferred_mode=DynamicSimulationMode.RMS)
+
+    def edit_emt(self):
+        """
+        Open the EMT dynamic model editor for this load.
+
+        :return: None.
+        """
+
+        open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit,
+                            preferred_mode=DynamicSimulationMode.EMT)

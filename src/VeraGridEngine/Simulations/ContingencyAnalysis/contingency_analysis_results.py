@@ -19,16 +19,16 @@ class ContingencyAnalysisResults(ResultsTemplate):
     """
 
     LOCAL_RESULTS_DECLARATIONS = (
-        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list()),
-        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list()),
-        ResultsProperty(name='con_names', tpe=StrVec, old_names=list()),
-        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list()),
-        ResultsProperty(name='voltage', tpe=CxMat, old_names=list()),
-        ResultsProperty(name='Sbus', tpe=CxMat, old_names=list()),
-        ResultsProperty(name='Sf', tpe=CxMat, old_names=list()),
-        ResultsProperty(name='loading', tpe=CxMat, old_names=list()),
-        ResultsProperty(name='srap_used_power', tpe=Mat, old_names=list()),
-        ResultsProperty(name='report', tpe=ContingencyResultsReport, old_names=list()),
+        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='con_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='voltage', tpe=CxMat, old_names=list(), expandable=False),
+        ResultsProperty(name='Sbus', tpe=CxMat, old_names=list(), expandable=False),
+        ResultsProperty(name='Sf', tpe=CxMat, old_names=list(), expandable=False),
+        ResultsProperty(name='loading', tpe=CxMat, old_names=list(), expandable=False),
+        ResultsProperty(name='srap_used_power', tpe=Mat, old_names=list(), expandable=False),
+        ResultsProperty(name='report', tpe=ContingencyResultsReport, old_names=list(), expandable=False),
     )
 
     __slots__ = (

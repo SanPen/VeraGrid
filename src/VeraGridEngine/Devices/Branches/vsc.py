@@ -10,7 +10,7 @@ from matplotlib import pyplot as plt
 from typing import List, Tuple, TYPE_CHECKING
 from VeraGridEngine.Devices.Profiles import ProfileDevice, ProfileEnum, ProfileFloat
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.enumerations import BuildStatus, ConverterControlType
+from VeraGridEngine.enumerations import BuildStatus, ConverterControlType, ConverterFaultControlType
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
 from VeraGridEngine.Devices.Parents.editable_device import get_at
@@ -21,24 +21,50 @@ if TYPE_CHECKING:
 
 class VSC(BranchParent):
     __slots__ = (
-        '_kdp',
+        '_u_setpoint_min',
+        '_u_setpoint_max',
+        '_u_setpoint',
+        '_du_setpoint',
+        '_Q_min',
+        '_Q_max',
         '_alpha1',
         '_alpha2',
         '_alpha3',
         '_control1',
         '_control1_prof',
-        '_control2',
-        '_control2_prof',
         '_control1_dev',
         '_control1_dev_prof',
-        '_control2_dev',
-        '_control2_dev_prof',
         '_control1_val',
         '_control1_val_prof',
+        '_control1_val_min',
+        '_control1_val_max',
+        '_control1_droop',
+        '_control1_droop_prof',
+        '_control1_droop_val',
+        '_control1_droop_val_prof',
+        '_control1_droop_val_min',
+        '_control1_droop_val_max',
+
+        '_control2',
+        '_control2_prof',
+        '_control2_dev',
+        '_control2_dev_prof',
         '_control2_val',
         '_control2_val_prof',
+        '_control2_val_min',
+        '_control2_val_max',
+        '_control2_val_droop',
+        '_control2_val_droop_prof',
+        '_control2_droop_val',
+        '_control2_droop_val_prof',
+        '_control2_droop_val_min',
+        '_control2_droop_val_max',
+
+        '_fault_control',
+        '_fault_control_prof',
         '_bus_dc_n',
         '_min_ac_voltage',
+        '_ysvs',
         '_x',
         '_y',
     )
@@ -47,35 +73,54 @@ class VSC(BranchParent):
         GCProp(key='bus_dc_n', units="", tpe=DeviceType.BusDevice,
                       definition='DC negative bus', editable=False),
         GCProp(key='alpha1', units='', tpe=float,
-                      definition='Losses constant parameter (IEC 62751-2 loss Correction).'),
+                      definition='Losses constant parameter (IEC 62751-2 loss Correction, idle loss).'),
         GCProp(key='alpha2', units='', tpe=float,
-                      definition='Losses linear parameter (IEC 62751-2 loss Correction).'),
+                      definition='Losses linear parameter (IEC 62751-2 loss Correction, Switching loss).'),
         GCProp(key='alpha3', units='', tpe=float,
-                      definition='Losses quadratic parameter (IEC 62751-2 loss Correction).'),
-        GCProp(key='kdp', units='p.u./p.u.', tpe=float, definition='Droop Power/Voltage slope.'),
+                      definition='Losses quadratic parameter (IEC 62751-2 loss Correction, resistive loss).'),
+
+
         GCProp(key='control1', units='', tpe=ConverterControlType, profile_name="control1_prof",
                       definition='Control mode 1.'),
+        GCProp(key='control1_dev', units="", tpe=DeviceType.BusOrBranch, profile_name="control1_dev_prof",
+               definition='Controlled device, None to apply to this converter', editable=False),
+        GCProp(key='control1_val', units='', tpe=float, profile_name="control1_val_prof",
+               definition='Control value 1.'
+                          'p.u. for voltage\n'
+                          'rad for angles\n'
+                          'MW for P\n'
+                          'MVAr for Q'),
+        GCProp(key='control1_val_min', units='', tpe=float, ),
+        GCProp(key='control1_val_max', units='', tpe=float, ),
+        GCProp(key='control1_droop', units='', tpe=float, profile_name="control1_droop_prof"),
+        GCProp(key='control1_droop_val', units='', tpe=float, profile_name="control1_droop_val_prof"),
+        GCProp(key='control1_droop_val_min', units='', tpe=float, ),
+        GCProp(key='control1_droop_val_max', units='', tpe=float, ),
+
         GCProp(key='control2', units='', tpe=ConverterControlType, profile_name="control2_prof",
                       definition='Control mode 2.'),
-        GCProp(key='control1_val', units='', tpe=float, profile_name="control1_val_prof",
-                      definition='Control value 1.'
-                                 'p.u. for voltage\n'
-                                 'rad for angles\n'
-                                 'MW for P\n'
-                                 'MVAr for Q'),
+        GCProp(key='control2_dev', units="", tpe=DeviceType.BusOrBranch, profile_name="control2_dev_prof",
+               definition='Controlled device, None to apply to this converter', editable=False),
         GCProp(key='control2_val', units='', tpe=float, profile_name="control2_val_prof",
                       definition='Control value 2.'
                                  'p.u. for voltage\n'
                                  'rad for angles\n'
                                  'MW for P\n'
                                  'MVAr for Q'),
-        GCProp(key='control1_dev', units="", tpe=DeviceType.BusOrBranch, profile_name="control1_dev_prof",
-                      definition='Controlled device, None to apply to this converter', editable=False),
-        GCProp(key='control2_dev', units="", tpe=DeviceType.BusOrBranch, profile_name="control2_dev_prof",
-                      definition='Controlled device, None to apply to this converter', editable=False),
+        GCProp(key='control2_val_min', units='', tpe=float, ),
+        GCProp(key='control2_val_max', units='', tpe=float, ),
+        GCProp(key='control2_val_droop', units='', tpe=float, profile_name="control2_val_droop_prof"),
+        GCProp(key='control2_droop_val', units='', tpe=float, profile_name="control2_droop_val_prof"),
+        GCProp(key='control2_droop_val_min', units='', tpe=float, ),
+        GCProp(key='control2_droop_val_max', units='', tpe=float, ),
+
+        GCProp(key='fault_control', units='', tpe=ConverterFaultControlType, profile_name="fault_control_prof",
+               definition='VSC control system during a short-circuit event.'),
         GCProp(key='min_ac_voltage', units='p.u.', tpe=float,
                       definition='Minimum AC voltage threshold. '
                                  'If the AC bus voltage drops below this value, the VSC is disconnected.'),
+        GCProp(key='ysvs', units='p.u.', tpe=float,
+               definition='Admittance of non-controlled Static Var Systems.'),
         GCProp(key='x', units='px', tpe=float, definition='x position'),
         GCProp(key='y', units='px', tpe=float, definition='y position'),
     )
@@ -89,7 +134,6 @@ class VSC(BranchParent):
                  code='',
                  active=True,
                  rate: float = 100.0,
-                 kdp=-0.05,
                  alpha1=0.0001,
                  alpha2=0.015,
                  alpha3=0.2,
@@ -103,13 +147,31 @@ class VSC(BranchParent):
                  capex=0.0,
                  opex=0.0,
                  build_status: BuildStatus = BuildStatus.Commissioned,
-                 control1: ConverterControlType = ConverterControlType.Vm_dc,
-                 control2: ConverterControlType = ConverterControlType.Pac,
-                 control1_val: float = 1.0,
-                 control2_val: float = 0.0,
+
+                 control1: ConverterControlType = ConverterControlType.Q_droop,
                  control1_dev: Bus | BRANCH_TYPES | None = None,
+                 control1_val: float = 1.0,
+                 control1_val_min: float = -9999.0,
+                 control1_val_max: float = 9999.0,
+                 control1_droop: float = 0.1,
+                 control1_droop_val: float = 1.0,
+                 control1_droop_val_min: float = 0.9,
+                 control1_droop_val_max: float = 1.1,
+
+                 control2: ConverterControlType = ConverterControlType.Vm_dc,
                  control2_dev: Bus | BRANCH_TYPES | None = None,
+                 control2_val: float = 0.0,
+                 control2_val_min: float = -9999.0,
+                 control2_val_max: float = 9999.0,
+                 control2_droop: float = 0.1,
+                 control2_droop_val: float = 1.0,
+                 control2_droop_val_min: float = 0.9,
+                 control2_droop_val_max: float = 1.1,
+
+                 fault_control: ConverterFaultControlType = ConverterFaultControlType.Standard,
+
                  min_ac_voltage: float = 0.1,
+                 ysvs: float = 0.0,
                  x: float = 0.0,
                  y: float = 0.0):
         """
@@ -124,7 +186,6 @@ class VSC(BranchParent):
         :param code:
         :param active:
         :param rate:
-        :param kdp:
         :param alpha1:
         :param alpha2:
         :param alpha3:
@@ -140,6 +201,9 @@ class VSC(BranchParent):
         :param build_status:
         :param control1:
         :param control2:
+        :param fault_control:
+        :param min_ac_voltage: Voltage threshold below which the converter is disconnected
+        :param ysvs: Admittance of Static Var Systems
         :param x: graphical x position (px)
         :param y: graphical y position (px)
         """
@@ -225,30 +289,55 @@ class VSC(BranchParent):
         self._bus_dc_n = bus_dc_n
         # self._bus_to = bus_to
 
-        self.kdp = float(kdp)
         self.alpha1 = float(alpha1)
         self.alpha2 = float(alpha2)
         self.alpha3 = float(alpha3)
 
+        # u_setpoint_min: float = 0.9, -> min_val
+        # u_setpoint_max: float = 1.1, -> max_val
+        # u_setpoint: float = 1.0,  -> val
+        # Q_min: float = -999.0,
+        # Q_max: float = 999.0,
+
         self._control1: ConverterControlType = control1
         self._control1_prof: ProfileEnum = ProfileEnum(default_value=control1, enum_type=ConverterControlType)
+        self._control1_dev: Bus | BRANCH_TYPES | None = control1_dev
+        self._control1_dev_prof: ProfileDevice = ProfileDevice(default_value=control1_dev,
+                                                               device_type=DeviceType.BusOrBranch)
+        self._control1_val = float(control1_val)
+        self._control1_val_prof: ProfileFloat = ProfileFloat(default_value=self._control1_val)
+        self._control1_val_min = float(control1_val_min)
+        self._control1_val_max = float(control1_val_max)
+        self._control1_droop = float(control1_droop)
+        self._control1_droop_prof: ProfileFloat = ProfileFloat(default_value=self._control1_droop)
+        self._control1_droop_val = float(control1_droop_val)
+        self._control1_droop_val_prof: ProfileFloat = ProfileFloat(default_value=self._control1_droop_val)
+        self._control1_droop_val_min = float(control1_droop_val_min)
+        self._control1_droop_val_max = float(control1_droop_val_max)
 
         self._control2: ConverterControlType = control2
         self._control2_prof: ProfileEnum = ProfileEnum(default_value=control2, enum_type=ConverterControlType)
-
-        self._control1_dev: Bus | BRANCH_TYPES | None = control1_dev
-        self._control1_dev_prof: ProfileDevice = ProfileDevice(default_value=control1_dev, device_type=DeviceType.BusOrBranch)
-
         self._control2_dev: Bus | BRANCH_TYPES | None = control2_dev
-        self._control2_dev_prof: ProfileDevice = ProfileDevice(default_value=control2_dev, device_type=DeviceType.BusOrBranch)
-
-        self._control1_val = float(control1_val)
-        self._control1_val_prof: ProfileFloat = ProfileFloat(default_value=self._control1_val)
-
+        self._control2_dev_prof: ProfileDevice = ProfileDevice(default_value=control2_dev,
+                                                               device_type=DeviceType.BusOrBranch)
         self._control2_val = float(control2_val)
         self._control2_val_prof: ProfileFloat = ProfileFloat(default_value=self._control2_val)
+        self._control2_val_min = float(control2_val_min)
+        self._control2_val_max = float(control2_val_max)
+        self._control2_val_droop = float(control2_droop)
+        self._control2_val_droop_prof: ProfileFloat = ProfileFloat(default_value=self._control2_val_droop)
+        self._control2_droop_val = float(control2_droop_val)
+        self._control2_droop_val_prof: ProfileFloat = ProfileFloat(default_value=self._control2_droop_val)
+        self._control2_droop_val_min = float(control2_droop_val_min)
+        self._control2_droop_val_max = float(control2_droop_val_max)
+
+        self._fault_control: ConverterFaultControlType = fault_control
+        self._fault_control_prof: ProfileEnum = ProfileEnum(default_value=fault_control,
+                                                            enum_type=ConverterFaultControlType)
 
         self.min_ac_voltage = float(min_ac_voltage)
+
+        self._ysvs = float(ysvs)
 
         self.x = float(x)
         self.y = float(y)
@@ -424,6 +513,43 @@ class VSC(BranchParent):
         return get_at(self.control2, self.control2_prof, t)
 
     @property
+    def fault_control(self):
+        """
+
+        :return:
+        """
+        return self._fault_control
+
+    @fault_control.setter
+    def fault_control(self, value: ConverterFaultControlType):
+
+        self._fault_control = value
+
+    @property
+    def fault_control_prof(self) -> ProfileEnum:
+        """
+        Cost profile
+        :return: Profile
+        """
+        return self._fault_control_prof
+
+    @fault_control_prof.setter
+    def fault_control_prof(self, val: ProfileEnum | np.ndarray):
+        if isinstance(val, ProfileEnum):
+            self._fault_control_prof = val
+        elif isinstance(val, np.ndarray):
+            self._fault_control_prof.set(arr=val)
+        else:
+            raise Exception(str(type(val)) + 'not supported to be set into a profile')
+
+    def get_fault_control_at(self, t: int | None) -> ConverterControlType:
+        """
+        :param t:
+        :return:
+        """
+        return get_at(self.fault_control, self.fault_control_prof, t)
+
+    @property
     def control1_val(self):
         """
 
@@ -496,6 +622,330 @@ class VSC(BranchParent):
         :return:
         """
         return get_at(self.control2_val, self.control2_val_prof, t)
+
+    @property
+    def control1_val_min(self) -> float:
+        """
+        Get ``control1_val_min``.
+
+        :return: float
+        """
+        return self._control1_val_min
+
+    @control1_val_min.setter
+    def control1_val_min(self, val: float) -> None:
+        """
+        Set ``control1_val_min``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._control1_val_min = float(val)
+
+    @property
+    def control1_val_max(self) -> float:
+        """
+        Get ``control1_val_max``.
+
+        :return: float
+        """
+        return self._control1_val_max
+
+    @control1_val_max.setter
+    def control1_val_max(self, val: float) -> None:
+        """
+        Set ``control1_val_max``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._control1_val_max = float(val)
+
+    @property
+    def control1_droop(self) -> float:
+        """
+        Get ``control1_droop``.
+
+        :return: float
+        """
+        return self._control1_droop
+
+    @control1_droop.setter
+    def control1_droop(self, val: float) -> None:
+        """
+        Set ``control1_droop``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._control1_droop = float(val)
+
+    @property
+    def control1_droop_prof(self) -> ProfileFloat:
+        """
+        Cost profile
+        :return: Profile
+        """
+        return self._control1_droop_prof
+
+    @control1_droop_prof.setter
+    def control1_droop_prof(self, val: ProfileFloat | np.ndarray):
+        if isinstance(val, ProfileFloat):
+            self._control1_droop_prof = val
+        elif isinstance(val, np.ndarray):
+            self._control1_droop_prof.set(arr=val)
+        else:
+            raise Exception(str(type(val)) + 'not supported to be set into a profile')
+
+    def get_control1_droop_at(self, t: int | None) -> float:
+        """
+        :param t:
+        :return:
+        """
+        return get_at(self.control1_droop, self.control1_droop_prof, t)
+
+    @property
+    def control1_droop_val(self) -> float:
+        """
+        Get ``control1_droop_val``.
+
+        :return: float
+        """
+        return self._control1_droop_val
+
+    @control1_droop_val.setter
+    def control1_droop_val(self, val: float) -> None:
+        """
+        Set ``control1_droop_val``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._control1_droop_val = float(val)
+
+    @property
+    def control1_droop_val_prof(self) -> ProfileFloat:
+        """
+        Cost profile
+        :return: Profile
+        """
+        return self._control1_droop_val_prof
+
+    @control1_droop_val_prof.setter
+    def control1_droop_val_prof(self, val: ProfileFloat | np.ndarray):
+        if isinstance(val, ProfileFloat):
+            self._control1_droop_val_prof = val
+        elif isinstance(val, np.ndarray):
+            self._control1_droop_val_prof.set(arr=val)
+        else:
+            raise Exception(str(type(val)) + 'not supported to be set into a profile')
+
+    def get_control1_droop_val_at(self, t: int | None) -> float:
+        """
+        :param t:
+        :return:
+        """
+        return get_at(self.control1_droop_val, self.control1_droop_val_prof, t)
+
+    @property
+    def control1_droop_val_min(self) -> float:
+        """
+        Get ``control1_droop_val_min``.
+
+        :return: float
+        """
+        return self._control1_droop_val_min
+
+    @control1_droop_val_min.setter
+    def control1_droop_val_min(self, val: float) -> None:
+        """
+        Set ``control1_droop_val_min``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._control1_droop_val_min = float(val)
+
+    @property
+    def control1_droop_val_max(self) -> float:
+        """
+        Get ``control1_droop_val_max``.
+
+        :return: float
+        """
+        return self._control1_droop_val_max
+
+    @control1_droop_val_max.setter
+    def control1_droop_val_max(self, val: float) -> None:
+        """
+        Set ``control1_droop_val_max``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._control1_droop_val_max = float(val)
+
+    @property
+    def control2_val_min(self) -> float:
+        """
+        Get ``control2_val_min``.
+
+        :return: float
+        """
+        return self._control2_val_min
+
+    @control2_val_min.setter
+    def control2_val_min(self, val: float) -> None:
+        """
+        Set ``control2_val_min``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._control2_val_min = float(val)
+
+    @property
+    def control2_val_max(self) -> float:
+        """
+        Get ``control2_val_max``.
+
+        :return: float
+        """
+        return self._control2_val_max
+
+    @control2_val_max.setter
+    def control2_val_max(self, val: float) -> None:
+        """
+        Set ``control2_val_max``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._control2_val_max = float(val)
+
+    @property
+    def control2_val_droop(self) -> float:
+        """
+        Get ``control2_val_droop``.
+
+        :return: float
+        """
+        return self._control2_val_droop
+
+    @control2_val_droop.setter
+    def control2_val_droop(self, val: float) -> None:
+        """
+        Set ``control2_val_droop``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._control2_val_droop = float(val)
+
+    @property
+    def control2_val_droop_prof(self) -> ProfileFloat:
+        """
+        Cost profile
+        :return: Profile
+        """
+        return self._control2_val_droop_prof
+
+    @control2_val_droop_prof.setter
+    def control2_val_droop_prof(self, val: ProfileFloat | np.ndarray):
+        if isinstance(val, ProfileFloat):
+            self._control2_val_droop_prof = val
+        elif isinstance(val, np.ndarray):
+            self._control2_val_droop_prof.set(arr=val)
+        else:
+            raise Exception(str(type(val)) + 'not supported to be set into a profile')
+
+    def get_control2_val_droop_at(self, t: int | None) -> float:
+        """
+        :param t:
+        :return:
+        """
+        return get_at(self.control2_val_droop, self.control2_val_droop_prof, t)
+
+    @property
+    def control2_droop_val(self) -> float:
+        """
+        Get ``control2_droop_val``.
+
+        :return: float
+        """
+        return self._control2_droop_val
+
+    @control2_droop_val.setter
+    def control2_droop_val(self, val: float) -> None:
+        """
+        Set ``control2_droop_val``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._control2_droop_val = float(val)
+
+    @property
+    def control2_droop_val_prof(self) -> ProfileFloat:
+        """
+        Cost profile
+        :return: Profile
+        """
+        return self._control2_droop_val_prof
+
+    @control2_droop_val_prof.setter
+    def control2_droop_val_prof(self, val: ProfileFloat | np.ndarray):
+        if isinstance(val, ProfileFloat):
+            self._control2_droop_val_prof = val
+        elif isinstance(val, np.ndarray):
+            self._control2_droop_val_prof.set(arr=val)
+        else:
+            raise Exception(str(type(val)) + 'not supported to be set into a profile')
+
+    def get_control2_droop_val_at(self, t: int | None) -> float:
+        """
+        :param t:
+        :return:
+        """
+        return get_at(self.control2_droop_val, self.control2_droop_val_prof, t)
+
+    @property
+    def control2_droop_val_min(self) -> float:
+        """
+        Get ``control2_droop_val_min``.
+
+        :return: float
+        """
+        return self._control2_droop_val_min
+
+    @control2_droop_val_min.setter
+    def control2_droop_val_min(self, val: float) -> None:
+        """
+        Set ``control2_droop_val_min``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._control2_droop_val_min = float(val)
+
+    @property
+    def control2_droop_val_max(self) -> float:
+        """
+        Get ``control2_droop_val_max``.
+
+        :return: float
+        """
+        return self._control2_droop_val_max
+
+    @control2_droop_val_max.setter
+    def control2_droop_val_max(self, val: float) -> None:
+        """
+        Set ``control2_droop_val_max``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._control2_droop_val_max = float(val)
 
     @property
     def control1_dev(self):
@@ -678,25 +1128,6 @@ class VSC(BranchParent):
         self._alpha3 = float(val)
 
     @property
-    def kdp(self) -> float:
-        """
-        Get ``kdp``.
-
-        :return: float
-        """
-        return self._kdp
-
-    @kdp.setter
-    def kdp(self, val: float) -> None:
-        """
-        Set ``kdp``.
-
-        :param val: Value to assign.
-        :return: None
-        """
-        self._kdp = float(val)
-
-    @property
     def min_ac_voltage(self) -> float:
         """
         Get ``min_ac_voltage``.
@@ -714,6 +1145,25 @@ class VSC(BranchParent):
         :return: None
         """
         self._min_ac_voltage = float(val)
+
+    @property
+    def ysvs(self) -> float:
+        """
+        Get ``ysvs``.
+
+        :return: float
+        """
+        return self._ysvs
+
+    @ysvs.setter
+    def ysvs(self, val: float) -> None:
+        """
+        Set ``ysvs``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._ysvs = float(val)
 
     @property
     def x(self) -> float:

@@ -5,12 +5,10 @@
 
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from PySide6.QtGui import QPen, QIcon, QPixmap
-from PySide6.QtWidgets import QMenu, QGraphicsTextItem
 from VeraGridEngine.Devices.Injections.static_generator import StaticGenerator
-from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE, DEACTIVATED, OTHER, Square, Condenser
+from VeraGrid.Gui.Diagrams.generic_graphics import Square
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionTemplateGraphicItem
-from VeraGrid.Gui.messages import yes_no_question
+
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget

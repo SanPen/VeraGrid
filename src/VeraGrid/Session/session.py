@@ -41,6 +41,9 @@ from VeraGridEngine.Simulations.Reliability.blackout_driver import CascadingResu
 from VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver import InputsAnalysisResults, InputsAnalysisDriver
 from VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver import (InvestmentsEvaluationDriver,
                                                                                             InvestmentsEvaluationResults)
+from VeraGridEngine.Simulations.CatalogueOptimization.catalogue_optimization_driver import (
+    CatalogueOptimizationDriver,
+)
 from VeraGridEngine.Simulations.SigmaAnalysis.sigma_analysis_driver import SigmaAnalysisResults
 from VeraGridEngine.Simulations.NTC.ntc_driver import (OptimalNetTransferCapacityResults,
                                                        OptimalNetTransferCapacityDriver)
@@ -646,6 +649,17 @@ class SimulationSession:
         :return:
         """
         drv, results = self.get_driver_results(SimulationTypes.InvestmentsEvaluation_run)
+        return drv, results
+
+    @property
+    def catalogue_optimization(self) -> Tuple[CatalogueOptimizationDriver, InvestmentsEvaluationResults]:
+        """
+        Catalogue optimization driver / results pair (results reuse the InvestmentsEvaluationResults
+        container because both produce the same Pareto-front shape).
+
+        :return: tuple (driver, results) or (None, None) if the simulation has not run.
+        """
+        drv, results = self.get_driver_results(SimulationTypes.CatalogueOptimization_run)
         return drv, results
 
     @property

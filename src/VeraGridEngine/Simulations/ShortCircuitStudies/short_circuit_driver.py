@@ -23,7 +23,8 @@ from VeraGridEngine.Devices import Line, Bus
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGridEngine.Simulations.driver_template import DriverTemplate
 from VeraGridEngine.Simulations.ShortCircuitStudies.short_circuit_options import ShortCircuitOptions
-from VeraGridEngine.enumerations import FaultType, SimulationTypes, MethodShortCircuit, PhasesShortCircuit
+from VeraGridEngine.enumerations import FaultType, SimulationTypes, MethodShortCircuit, PhasesShortCircuit, \
+    ConverterFaultControlType
 from VeraGridEngine.Devices.types import BRANCH_TYPES
 
 
@@ -382,12 +383,11 @@ class ShortCircuitDriver(DriverTemplate):
     def single_short_circuit_vsc(nc: NumericalCircuit,
                                  V_pf: CxVec,
                                  S_pf: CxVec,
+                                 St_vsc_pf: CxVec,
                                  Z_fault: CxVec,
                                  fault_bus: int,
                                  options: PowerFlowOptions,
                                  logger: Logger):
-
-        options.limit_i_vsc = True
 
         adm = nc.get_admittance_matrices()
         # compute Zbus
@@ -396,6 +396,7 @@ class ShortCircuitDriver(DriverTemplate):
             return short_circuit_vsc(nc=nc,
                                      V_pf=V_pf,
                                      S_pf=S_pf,
+                                     St_vsc_pf=St_vsc_pf,
                                      Z_fault=Z_fault,
                                      fault_bus=fault_bus,
                                      options=options,
@@ -549,6 +550,7 @@ class ShortCircuitDriver(DriverTemplate):
                                         nc=island,
                                         V_pf=self.pf_results.voltage[island.bus_data.original_idx],
                                         S_pf=self.pf_results.Sbus[island.bus_data.original_idx],
+                                        St_vsc_pf=self.pf_results.St_vsc[island.vsc_data.original_idx],
                                         Z_fault=Zf[island.bus_data.original_idx],
                                         fault_bus=island_bus_index,
                                         options=self.pf_options,

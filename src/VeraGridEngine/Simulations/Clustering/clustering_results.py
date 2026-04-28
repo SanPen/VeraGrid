@@ -14,9 +14,9 @@ from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceTyp
 class ClusteringResults(ResultsTemplate):
 
     LOCAL_RESULTS_DECLARATIONS = (
-        ResultsProperty(name='time_indices', tpe=IntVec, old_names=list()),
-        ResultsProperty(name='sampled_probabilities', tpe=Vec, old_names=list()),
-        ResultsProperty(name='original_sample_idx', tpe=IntVec, old_names=list()),
+        ResultsProperty(name='time_indices', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='sampled_probabilities', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='original_sample_idx', tpe=IntVec, old_names=list(), expandable=False),
     )
 
     __slots__ = (

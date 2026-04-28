@@ -154,7 +154,7 @@ def parse_json_data(data) -> MultiCircuit:
                               active=True)
 
                 if element["is_slack"]:
-                    elm.type = dev.BusMode.Slack_tpe
+                    elm._bus_type = dev.BusMode.Slack_tpe
                 if element["vmax"] > 0:
                     elm.Vmax = element["vmax"]
                 if element["vmin"] > 0:
@@ -2018,7 +2018,7 @@ def save_json_file_v3(file_path: str, circuit: MultiCircuit, simulation_drivers:
                         'alpha3': elm.alpha3,
 
                         'k': elm.k,
-                        'kdp': elm.kdp,
+                        'kdp': elm.control1_droop,
                         'Pfset': elm.Pset,
                         'Qfset': elm.Qset,
                         'vac_set': elm.vset,

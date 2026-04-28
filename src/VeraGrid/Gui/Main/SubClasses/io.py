@@ -14,16 +14,16 @@ import VeraGrid.Session.file_handler as filedrv
 from VeraGrid.Gui.GridMerge.grid_diff import GridDiffDialogue
 from VeraGrid.Gui.GridMerge.grid_merge import GridMergeDialogue
 from VeraGrid.plugins import install_plugin, get_plugin_info
-from VeraGrid.Gui.CoordinatesInput.coordinates_dialogue import CoordinatesInputGUI
+from VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue import CoordinatesInputGUI
 from VeraGrid.Gui.general_dialogues import LogsDialogue, CustomQuestionDialogue, FileTypeSelector, CgmesOptionsSelector
 from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
 from VeraGrid.Gui.messages import yes_no_question, error_msg, warning_msg, info_msg
 from VeraGrid.Gui.GridGenerator.grid_generator_dialogue import GridGeneratorGUI
-from VeraGrid.Gui.RosetaExplorer.RosetaExplorer import RosetaExplorerGUI
+from VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer import RosetaExplorerGUI
 from VeraGrid.Gui.Main.SubClasses.Model.scenarios import ScenariosMain
-from VeraGrid.Gui.CGMESDialogue.cgmes_export import CgmesExportDialogue
-from VeraGrid.Gui.PsseDialogue.psse_export import PsseExportDialogue
-from VeraGrid.Gui.PsseDialogue.psse_import import PsseImportDialogue
+from VeraGrid.Gui.FileDialogues.CGMESDialogue.cgmes_export import CgmesExportDialogue
+from VeraGrid.Gui.FileDialogues.PsseDialogue.psse_export import PsseExportDialogue
+from VeraGrid.Gui.FileDialogues.PsseDialogue.psse_import import PsseImportDialogue
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Compilers.circuit_to_pgm import PGM_AVAILABLE
 from VeraGridEngine.IO.file_save import FileSavingOptions
@@ -372,7 +372,6 @@ class IoMain(ScenariosMain):
 
                 # assign the loaded circuit
                 self.new_project_now(create_default_diagrams=False)
-
 
                 if self.open_file_thread_object.multiverse is not None:
                     # A multiverse file already contains the complete scenario tree and active
@@ -796,7 +795,7 @@ class IoMain(ScenariosMain):
             diagram = self.get_selected_diagram_widget()
             if diagram is not None:
                 if isinstance(diagram, SchematicWidget):
-                    diagram.name.setText(f"Random grid {self.circuit.get_bus_number()} buses")
+                    diagram.name = f"Random grid {self.circuit.get_bus_number()} buses"
 
             # set base magnitudes
             self.ui.sbase_doubleSpinBox.setValue(self.circuit.Sbase)
@@ -885,8 +884,8 @@ class IoMain(ScenariosMain):
 
         if self.export_all_thread_object is not None:
             if self.export_all_thread_object.logger.has_logs():
-                dlg = LogsDialogue('Export all', self.export_all_thread_object.logger)
-                dlg.exec()
+                self.show_logs(name='Export all',
+                               logger=self.export_all_thread_object.logger)
 
         if len(self.stuff_running_now) == 0:
             self.UNLOCK()
@@ -940,8 +939,7 @@ class IoMain(ScenariosMain):
                                                                          data_dict=data_dict)
 
                     if logger.has_logs():
-                        dlg = LogsDialogue(name="Results parsing", logger=logger, expand_all=True)
-                        dlg.exec()
+                        self.show_logs(name="Results parsing", logger=logger, expand_all=True)
 
                     self.update_available_results()
                 else:
@@ -996,7 +994,6 @@ class IoMain(ScenariosMain):
         Add default catalogue to circuit
         """
 
-
         for tpe in get_transformer_catalogue():
             self.circuit.add_transformer_type(tpe)
 
@@ -1014,7 +1011,6 @@ class IoMain(ScenariosMain):
         else:
             self.circuit.rms_models = list()
             self.circuit.add_rms_model_catalogue()
-
 
         if not self.circuit.emt_models:
             self.circuit.add_emt_model_catalogue()
@@ -1046,8 +1042,7 @@ class IoMain(ScenariosMain):
                 data, logger = load_catalogue(fname=filename)
 
                 if logger.has_logs():
-                    dlg = LogsDialogue('Open catalogue logger', logger)
-                    dlg.exec()
+                    self.show_logs(name='Open catalogue logger', logger=logger)
 
                 self.circuit.add_catalogue(data)
                 self.show_info_toast("Catalogue loaded!")

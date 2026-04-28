@@ -26,12 +26,12 @@ class SigmaAnalysisResults(ResultsTemplate):
     """
 
     LOCAL_RESULTS_DECLARATIONS = (
-        ResultsProperty(name='lambda_value', tpe=float, old_names=list()),
-        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list()),
-        ResultsProperty(name='Sbus', tpe=CxVec, old_names=list()),
-        ResultsProperty(name='distances', tpe=Vec, old_names=list()),
-        ResultsProperty(name='sigma_re', tpe=Vec, old_names=list()),
-        ResultsProperty(name='sigma_im', tpe=Vec, old_names=list()),
+        ResultsProperty(name='lambda_value', tpe=float, old_names=list(), expandable=False),
+        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='Sbus', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='distances', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='sigma_re', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='sigma_im', tpe=Vec, old_names=list(), expandable=False),
     )
 
     __slots__ = (

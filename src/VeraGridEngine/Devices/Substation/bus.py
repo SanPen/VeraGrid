@@ -42,7 +42,7 @@ class Bus(DynamicBusDevice):
         'zone',
         'substation',
         '_voltage_level',
-        'type',
+        '_bus_type',
         '_is_slack',
         '_is_dc',
         '_x',
@@ -62,6 +62,7 @@ class Bus(DynamicBusDevice):
         GCProp(key='is_slack', units='', tpe=bool, definition='Force the bus to be of slack type.',
                profile_name=''),
         GCProp(key='is_dc', units='', tpe=bool, definition='Is this bus of DC type?.', profile_name=''),
+        GCProp(key='is_grounded', units='', tpe=bool, definition='Is this bus connected to ground?.', profile_name=''),
         GCProp(key='graphic_type', units='', tpe=BusGraphicType, definition='Graphic to use in the schematic.'),
         GCProp(key='Vnom', units='kV', tpe=float, definition='Nominal line voltage of the bus.', profile_name=''),
         GCProp(key='Vm0', units='p.u.', tpe=float, definition='Voltage module guess.', profile_name=''),
@@ -169,13 +170,13 @@ class Bus(DynamicBusDevice):
         """
 
         DynamicBusDevice.__init__(self,
-                               name=name,
-                               idtag=idtag,
-                               code=code,
-                               device_type=DeviceType.BusDevice,
-                               build_status=build_status)
+                                  name=name,
+                                  idtag=idtag,
+                                  code=code,
+                                  device_type=DeviceType.BusDevice,
+                                  build_status=build_status)
 
-        self.active = bool(active)
+        self._active = bool(active)
         self._active_prof = ProfileBool(default_value=self.active)
 
         # Nominal voltage (kV)
@@ -183,17 +184,17 @@ class Bus(DynamicBusDevice):
 
         # minimum voltage limit
         self.Vmin = float(vmin)
+        self._Vmin_prof = ProfileFloat(default_value=vmin)
+
         self.Vm_cost = 1.0
 
         # maximum voltage limit
         self.Vmax = float(vmax)
+        self._Vmax_prof = ProfileFloat(default_value=vmax)
 
         self.Vm0 = float(Vm0)
 
         self.Va0 = float(Va0)
-
-        self._Vmin_prof = ProfileFloat(default_value=vmin)
-        self._Vmax_prof = ProfileFloat(default_value=vmax)
 
         self.angle_min = float(angle_min)
 
@@ -206,8 +207,6 @@ class Bus(DynamicBusDevice):
 
         # summation of upper reactive power limits connected
         self.Qmax_sum = 0
-
-
 
         self.country: Country | None = country
 
@@ -242,16 +241,16 @@ class Bus(DynamicBusDevice):
                               f"The substation from the voltage level is different from bus substation!")
 
         # Bus type
-        self.type = BusMode.PQ_tpe
+        self._bus_type = BusMode.PQ_tpe
 
         # Flag to determine if the bus is a slack bus or not
-        self.is_slack = bool(is_slack)
+        self._is_slack = bool(is_slack)
 
         # determined if this bus is an AC or DC bus
-        self.is_dc = bool(is_dc)
+        self._is_dc = bool(is_dc)
 
         # determine if the bus is solidly grounded
-        self.is_grounded = bool(is_grounded)
+        self._is_grounded = bool(is_grounded)
 
         # position and dimensions
         self.x = float(xpos)
@@ -260,8 +259,6 @@ class Bus(DynamicBusDevice):
         self.w = float(width)
         self.longitude = float(longitude)
         self.latitude = float(latitude)
-
-        self.is_grounded: bool = True
 
         self.color = color if color is not None else "#000000"
 
@@ -371,7 +368,7 @@ class Bus(DynamicBusDevice):
 
         if self.is_slack:
             # if it is set as slack, set the bus as slack and exit
-            self.type = BusMode.Slack_tpe
+            self._bus_type = BusMode.Slack_tpe
             return BusMode.Slack_tpe
 
         return BusMode.PQ_tpe
@@ -715,8 +712,6 @@ class Bus(DynamicBusDevice):
         :return: None
         """
         self._angle_cost = float(val)
-
-
 
     @property
     def x(self) -> float:

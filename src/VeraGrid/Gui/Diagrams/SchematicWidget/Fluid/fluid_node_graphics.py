@@ -757,65 +757,78 @@ class FluidNodeGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
 
         for branch_graphic in self.get_associated_branch_graphics():
             endpoint: SchematicBranchEndpoint | None = self.get_branch_endpoint_for_graphic(branch_graphic)
+            branch_api_object = branch_graphic.api_object
+            should_process_branch: bool = True
 
             if endpoint is None:
-                continue
+                should_process_branch = False
+            elif branch_api_object is None:
+                should_process_branch = False
             else:
                 pass
 
-            attachment = self.editor.get_persisted_attachment(api_object=branch_graphic.api_object,
-                                                              endpoint=endpoint.value)
-            has_saved_endpoint_state = any(key in attachment for key in ("side",
-                                                                         "slot",
-                                                                         "terminal_key",
-                                                                         "alignment",
-                                                                         "order",
-                                                                         "anchor_x",
-                                                                         "anchor_y"))
+            if should_process_branch:
+                attachment = self.editor.get_persisted_attachment(api_object=branch_api_object,
+                                                                  endpoint=endpoint.value)
+                has_saved_endpoint_state = any(key in attachment for key in ("side",
+                                                                             "slot",
+                                                                             "terminal_key",
+                                                                             "alignment",
+                                                                             "order",
+                                                                             "anchor_x",
+                                                                             "anchor_y"))
 
-            if self.editor.is_loading_diagram():
-                if has_saved_endpoint_state:
-                    continue
+                if self.editor.is_loading_diagram():
+                    if has_saved_endpoint_state:
+                        should_process_branch = False
+                    else:
+                        pass
+                else:
+                    pass
+
+                if should_process_branch:
+                    existing_slot = str(attachment.get("slot", ""))
+                    auto_slot = bool(attachment.get("auto_slot", existing_slot in ("", "default", "left", "right", "top", "bottom")))
+                    anchor_auto = bool(attachment.get("anchor_auto", True))
+
+                    if not auto_slot or not anchor_auto:
+                        should_process_branch = False
+                    else:
+                        pass
+                else:
+                    pass
+
+                if should_process_branch:
+                    if endpoint == SchematicBranchEndpoint.FROM:
+                        other_point = branch_graphic.pos2
+                    else:
+                        other_point = branch_graphic.pos1
+
+                    local_other_point: QPointF = self.mapFromScene(other_point)
+                    side_key: SchematicAttachmentSlot = infer_attachment_side_from_points(
+                        origin=(local_center_x, local_center_y),
+                        other=(local_other_point.x(), local_other_point.y()),
+                        vertical_bias=1.0,
+                    )
+                    local_anchor: QPointF = self.get_connection_local_point_from_scene_point(other_point)
+                    attachment["anchor_x"] = float(local_anchor.x())
+                    attachment["anchor_y"] = float(local_anchor.y())
+                    attachment["anchor_auto"] = True
+
+                    if side_key in (SchematicAttachmentSlot.TOP, SchematicAttachmentSlot.BOTTOM):
+                        sort_value = float(local_other_point.x())
+                    else:
+                        sort_value = float(local_other_point.y())
+
+                    grouped_entries[side_key].append((sort_value,
+                                                      str(id(branch_api_object)),
+                                                      branch_graphic,
+                                                      endpoint,
+                                                      attachment))
                 else:
                     pass
             else:
                 pass
-
-            existing_slot = str(attachment.get("slot", ""))
-            auto_slot = bool(attachment.get("auto_slot", existing_slot in ("", "default", "left", "right", "top", "bottom")))
-            anchor_auto = bool(attachment.get("anchor_auto", True))
-
-            if not auto_slot or not anchor_auto:
-                continue
-            else:
-                pass
-
-            if endpoint == SchematicBranchEndpoint.FROM:
-                other_point = branch_graphic.pos2
-            else:
-                other_point = branch_graphic.pos1
-
-            local_other_point: QPointF = self.mapFromScene(other_point)
-            side_key: SchematicAttachmentSlot = infer_attachment_side_from_points(
-                origin=(local_center_x, local_center_y),
-                other=(local_other_point.x(), local_other_point.y()),
-                vertical_bias=1.0,
-            )
-            local_anchor: QPointF = self.get_connection_local_point_from_scene_point(other_point)
-            attachment["anchor_x"] = float(local_anchor.x())
-            attachment["anchor_y"] = float(local_anchor.y())
-            attachment["anchor_auto"] = True
-
-            if side_key in (SchematicAttachmentSlot.TOP, SchematicAttachmentSlot.BOTTOM):
-                sort_value = float(local_other_point.x())
-            else:
-                sort_value = float(local_other_point.y())
-
-            grouped_entries[side_key].append((sort_value,
-                                              str(id(branch_graphic.api_object)),
-                                              branch_graphic,
-                                              endpoint,
-                                              attachment))
 
         side_key: SchematicAttachmentSlot
 
@@ -823,15 +836,20 @@ class FluidNodeGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
             entries.sort(key=lambda entry: (entry[0], entry[1]))
 
             for order_index, (_, _, branch_graphic, endpoint, attachment) in enumerate(entries, start=1):
-                slot_key = build_explicit_slot_key(owner_kind="fluid", side=side_key, order=order_index)
-                attachment["side"] = side_key.value
-                attachment["order"] = order_index
-                attachment["slot"] = slot_key
-                attachment["terminal_key"] = slot_key
-                attachment["auto_slot"] = True
-                self.editor.diagram.set_attachment(api_object=branch_graphic.api_object,
-                                                   endpoint=endpoint.value,
-                                                   attachment=attachment)
+                branch_api_object = branch_graphic.api_object
+
+                if branch_api_object is None:
+                    pass
+                else:
+                    slot_key = build_explicit_slot_key(owner_kind="fluid", side=side_key, order=order_index)
+                    attachment["side"] = side_key.value
+                    attachment["order"] = order_index
+                    attachment["slot"] = slot_key
+                    attachment["terminal_key"] = slot_key
+                    attachment["auto_slot"] = True
+                    self.editor.diagram.set_attachment(api_object=branch_api_object,
+                                                       endpoint=endpoint.value,
+                                                       attachment=attachment)
 
     def add_object(self, api_obj: Union[None, EditableDevice] = None):
         """

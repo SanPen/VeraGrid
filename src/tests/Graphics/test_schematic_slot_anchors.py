@@ -1532,6 +1532,34 @@ def test_bus_graphic_auto_assign_branch_slots_uses_geometry_order() -> None:
     assert editor.diagram.get_attachment(branch_api_object_2, "from")["anchor_y"] == 45.0
 
 
+def test_bus_graphic_auto_assign_branch_slots_ignores_connector_without_api_object() -> None:
+    """
+    Auto slot assignment should skip connector graphics that do not have one diagram API object.
+    """
+    _get_app()
+    editor: _EditorStub = _EditorStub()
+    bus: Bus = Bus(name="B1")
+    other_bus: Bus = Bus(name="B2")
+    graphic: BusGraphicItem = BusGraphicItem(editor=editor, bus=bus, w=180.0, h=40.0, x=0.0, y=0.0)
+    branch_api_object: object = object()
+    branch_graphic: _BranchGraphicStub = _BranchGraphicStub(api_object=branch_api_object,
+                                                            from_parent=graphic,
+                                                            to_parent=other_bus,
+                                                            pos1=QPointF(90.0, 25.0),
+                                                            pos2=QPointF(40.0, 220.0))
+    connector_graphic: _BranchGraphicStub = _BranchGraphicStub(api_object=None,
+                                                               from_parent=graphic,
+                                                               to_parent=other_bus,
+                                                               pos1=QPointF(90.0, 25.0),
+                                                               pos2=QPointF(140.0, 220.0))
+    graphic.terminal.add_hosting_connection(branch_graphic, _noop_callback)
+    graphic.terminal.add_hosting_connection(connector_graphic, _noop_callback)
+
+    graphic.auto_assign_branch_slots()
+
+    assert editor.diagram.get_attachment(branch_api_object, "from")["slot"] == "bus-bottom-1"
+
+
 def test_bus_graphic_applies_persisted_rotation_to_bar_and_nexus_anchors() -> None:
     """
     Bus graphics should apply the stored diagram rotation angle to branch and nexus anchors.

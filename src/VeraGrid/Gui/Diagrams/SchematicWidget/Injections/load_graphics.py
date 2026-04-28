@@ -10,14 +10,11 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import QPointF
 from PySide6.QtGui import QPolygonF
 from VeraGrid.Gui.gui_functions import add_menu_entry
-from VeraGrid.Gui.messages import info_msg
 from VeraGrid.Gui.profile_wizard_utils import fill_substation_weather_profiles
 from VeraGrid.Gui.Diagrams.generic_graphics import Polygon
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionTemplateGraphicItem
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
 from VeraGridEngine.Devices.Injections.load import Load
-from VeraGrid.Gui.LoadDesigner.load_designer import LoadDesigner
-from VeraGridEngine.enumerations import DeviceType
+from VeraGrid.Gui.DeviceEditors.LoadDesigner.load_designer import LoadDesigner
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
@@ -66,23 +63,11 @@ class LoadGraphicItem(InjectionTemplateGraphicItem):
             add_menu_entry(menu=menu,
                            text="Load profile wizard",
                            function_ptr=self.load_profile_wizard,
-                           icon_path=":/Icons/icons/gear.png")
-
-            add_menu_entry(menu=menu,
-                           text="Dynamic Editor",
-                           function_ptr=self.edit_dynamic,
-                           icon_path=":/Icons/icons/dyn_gray.png")
+                           icon_path=":/Icons/icons/load_wizard.png")
 
             menu.exec(event.screenPos())
         else:
             self.editor.gui.show_error_toast("The graphic has no API object!")
-
-    def edit_dynamic(self):
-        """
-        Open the unified dynamic editor workspace for this load.
-        """
-
-        open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit)
 
     def load_profile_wizard(self) -> None:
         """
@@ -123,10 +108,10 @@ class LoadGraphicItem(InjectionTemplateGraphicItem):
                             pass
                         self.plot()
                     else:
-                        raise Exception("Wrong length from the load profile wizard")
+                        self.editor.gui.show_error_toast("Wrong length from the load profile wizard")
                 else:
                     pass
             else:
                 pass
         else:
-            info_msg("You need to have time profiles for this function")
+            self.editor.gui.show_error_toast("You need to have time profiles for this function")

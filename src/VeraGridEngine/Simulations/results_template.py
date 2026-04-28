@@ -27,11 +27,13 @@ class ResultsProperty:
         "name",
         "tpe",
         "old_names",
+        "expandable"
     )
 
     def __init__(self, name: str,
                  tpe: Any,
-                 old_names: Union[List[str], Tuple[str, ...]]) -> None:
+                 old_names: Union[List[str], Tuple[str, ...]],
+                 expandable: bool) -> None:
         """
         ResultsProperty
         :param name: name of the property
@@ -44,6 +46,8 @@ class ResultsProperty:
         self.tpe: Any = tpe
 
         self.old_names: Tuple[str, ...] = tuple(old_names)
+
+        self.expandable = expandable
 
 
 class ResultsTemplateMeta(type):
@@ -510,23 +514,25 @@ class ResultsTemplate(metaclass=ResultsTemplateMeta):
 
         if self.using_clusters:
 
-            self.time_array = self.clustering_results.time_array
+            if self.clustering_results is not None:
 
-            # NOTE: You might be tempted to change this loop to use the registered properties.
-            #       Don't do it, there may be unregistered properties that will fail if this doesn't
-            #       traverse all te actual properties of the class... this may be a future topic
-            for prop, value in self._iter_instance_items():
+                # Replace the reduced time array by the expanded time array
+                self.time_array = self.clustering_results.time_array
 
-                if isinstance(value, np.ndarray):
+                # NOTE: You might be tempted to change this loop to use the registered properties.
+                #       Don't do it, there may be unregistered properties that will fail if this doesn't
+                #       traverse all the actual properties of the class... this may be a future topic
+                for prop in self.CLASS_RESULTS_DECLARATIONS:
+                    if prop.expandable:
 
-                    if value.dtype in [float, complex, bool]:  # only expand float, complex and bool
+                        value: np.ndarray = getattr(self, prop.name)
 
                         if value.ndim == 1:
 
                             if len(value) > 0:
                                 try:
                                     arr = value[self.original_sample_idx]  # expand
-                                    setattr(self, prop, arr)  # overwrite the array
+                                    setattr(self, prop.name, arr)  # overwrite the array
                                 except IndexError as e:
                                     print(f"Index error in expand_clustered_results (1D) for {prop}")
 
@@ -535,15 +541,13 @@ class ResultsTemplate(metaclass=ResultsTemplateMeta):
                             if value.shape[0] > 0:
                                 try:
                                     arr = value[self.original_sample_idx, :]  # expand
-                                    setattr(self, prop, arr)  # overwrite the array
+                                    setattr(self, prop.name, arr)  # overwrite the array
                                 except IndexError as e:
                                     print(f"Index error in expand_clustered_results (2D) for {prop}")
                         else:
                             pass
-                            # print(prop, value.ndim, value.dtype)
-                    else:
-                        pass
-                        # print(prop, value.ndim, value.dtype)
+            else:
+                print("No clusters!")
 
     def parse_saved_data(self, grid: MultiCircuit,
                          data_dict: Dict[str, pd.DataFrame],

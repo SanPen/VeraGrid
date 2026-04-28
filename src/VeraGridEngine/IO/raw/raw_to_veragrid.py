@@ -102,14 +102,14 @@ def get_veragrid_bus(psse_bus: RawBus,
 
     # set type
     if psse_bus.IDE in bustype.keys():
-        bus.type = bustype[psse_bus.IDE]
+        bus._bus_type = bustype[psse_bus.IDE]
     else:
-        bus.type = dev.BusMode.PQ_tpe
+        bus._bus_type = dev.BusMode.PQ_tpe
 
     if int(psse_bus.IDE) == 4:
         bus.active = False
 
-    if bus.type == dev.BusMode.Slack_tpe:
+    if bus._bus_type == dev.BusMode.Slack_tpe:
         bus.is_slack = True
 
     # Ensures unique name
@@ -1181,7 +1181,7 @@ def psse_to_veragrid(psse_circuit: PsseCircuit,
 
         # bus.ensure_area_objects(circuit)
 
-        if bus.type.value == 3:
+        if bus._bus_type.value == 3:
             slack_buses.append(psse_bus.I)
 
         circuit.add_bus(bus)

@@ -11,6 +11,8 @@ from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import BarTerminalItem,
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template import LineGraphicTemplateItem
 from VeraGridEngine.Devices.Branches.hvdc_line import HvdcLine
 from VeraGrid.Gui.messages import yes_no_question
+from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
+from VeraGridEngine.enumerations import DynamicSimulationMode
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
@@ -71,6 +73,16 @@ class HvdcGraphicItem(LineGraphicTemplateItem):
             # pe2.triggered.connect(self.convert_to_multi_terminal)
 
             add_menu_entry(menu=menu,
+                           text="RMS Editor",
+                           function_ptr=self.edit_dynamic_rms,
+                           icon_path=":/Icons/icons/dyn_edit.png")
+
+            add_menu_entry(menu=menu,
+                           text="EMT Editor",
+                           function_ptr=self.edit_dynamic_emt,
+                           icon_path=":/Icons/icons/dyn_emt_edit.png")
+
+            add_menu_entry(menu=menu,
                            text="Change bus",
                            icon_path=":/Icons/icons/move_bus.png",
                            function_ptr=self.change_bus)
@@ -128,3 +140,21 @@ class HvdcGraphicItem(LineGraphicTemplateItem):
         # get the index of this object
         i = self.editor.circuit.get_hvdc().index(self.api_object)
         self.editor.plot_hvdc_branch(i, self.api_object)
+
+    def edit_dynamic_rms(self):
+        """
+        Open the unified dynamic editor workspace for this generator.
+        """
+
+        open_dynamic_editor(api_object=self.api_object,
+                            circuit=self.editor.circuit,
+                            preferred_mode=DynamicSimulationMode.RMS)
+
+    def edit_dynamic_emt(self):
+        """
+        Open the unified dynamic editor workspace for this generator.
+        """
+
+        open_dynamic_editor(api_object=self.api_object,
+                            circuit=self.editor.circuit,
+                            preferred_mode=DynamicSimulationMode.EMT)

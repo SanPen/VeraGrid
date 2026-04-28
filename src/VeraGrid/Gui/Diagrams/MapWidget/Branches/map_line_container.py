@@ -4,17 +4,24 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
+import math
+import webbrowser
 from typing import TYPE_CHECKING, List, Union
 
-from PySide6.QtWidgets import QGraphicsItemGroup
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QColor
+from PySide6.QtCore import QPoint, QPointF, Qt
+from PySide6.QtGui import QColor, QPen
+from PySide6.QtWidgets import QGraphicsItemGroup, QMenu
+from VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_polyline import MapLinePolyline
 from VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_segment import MapLineSegment
 from VeraGridEngine.Devices.Branches.line_locations import LineLocation
 from VeraGridEngine.Devices.types import BRANCH_TYPES, FluidPath
 from VeraGridEngine.enumerations import DeviceType
+from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE, DEACTIVATED
 from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget
+from VeraGrid.Gui.gui_functions import add_menu_entry
+from VeraGrid.Gui.DeviceEditors.LineEditor.line_editor import LineEditor
 from VeraGrid.Gui.messages import error_msg
+from VeraGrid.Gui.messages import yes_no_question
 
 if TYPE_CHECKING:
     from VeraGrid.Gui.Diagrams.MapWidget.Branches.line_location_graphic_item import LineLocationGraphicItem
@@ -46,7 +53,18 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
 
         self.nodes_list: List[LineLocationGraphicItem] = list()
         self.segments_list: List[MapLineSegment] = list()
+        self.polyline: MapLinePolyline | None = None
         self.enabled = True
+        self.draw_labels: bool = draw_labels
+        self.style: Qt.PenStyle = Qt.PenStyle.SolidLine
+        self.color: QColor = QColor(self.api_object.color)
+        self.color.setAlpha(128)
+        self.width: float = self.editor.diagram.min_branch_width
+        self.arrow_width: float = self.editor.diagram.arrow_size
+        self.segments_drawn: bool = False
+        self._context_lat: float | None = None
+        self._context_lon: float | None = None
+        self._context_scene_pos: QPointF | None = None
 
     @property
     def api_object(self) -> Union[BRANCH_TYPES, FluidPath]:
@@ -56,17 +74,87 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
     def editor(self) -> GridMapWidget:
         return self._editor
 
+    def _ensure_polyline(self) -> None:
+        """
+        Create the polyline item if needed and add it to the scene.
+        """
+        if self.polyline is None:
+            self.polyline = MapLinePolyline(container=self, width=self.width)
+            self.editor.add_to_scene(graphic_object=self.polyline)
+
+    def clean_polyline(self) -> None:
+        """
+        Remove the polyline item from the scene.
+        """
+        if self.polyline is not None:
+            self.editor.diagram_scene.removeItem(self.polyline)
+            self.polyline = None
+
+    def update_polyline_path(self) -> None:
+        """
+        Rebuild the polyline geometry from segment endpoints.
+        """
+        if len(self.segments_list) == 0:
+            if self.polyline is not None:
+                self.polyline.set_path_points(list())
+                self.polyline.setVisible(False)
+            return
+
+        self._ensure_polyline()
+
+        points: List[QPointF] = list()
+        points.append(self.segments_list[0].pos1)
+        for segment in self.segments_list:
+            points.append(segment.pos2)
+
+        if self.polyline is not None:
+            self.polyline.set_path_points(points)
+            self.polyline.setVisible(True)
+
+    def set_handles_visible(self, is_visible: bool) -> None:
+        """
+        Show or hide waypoint handles for this line.
+
+        :param is_visible: visibility flag
+        """
+        if is_visible:
+            self._attach_segments_to_scene()
+        else:
+            self._detach_segments_from_scene()
+
+        for node in self.nodes_list:
+            if not is_visible and node.isSelected():
+                node.setSelected(False)
+            node.setVisible(is_visible)
+            node.setEnabled(is_visible)
+
+    def on_polyline_mouse_press(self, event) -> None:
+        """
+        Handle clicks on the line polyline.
+        """
+        if self.api_object is not None:
+            self.editor.set_editor_model(api_object=self.api_object)
+
     def set_width_scale(self, width: float, arrow_width: float):
         """
         Set the width scale of the line
         :param width:
         :param arrow_width:
         """
+        if self.width == width and self.arrow_width == arrow_width:
+            return
+        else:
+            pass
+
+        self.width = width
+        self.arrow_width = arrow_width
         for segment in self.segments_list:
             # pen = segment.pen()  # get the current pen
             # pen.setWidthF(val * segment.width)  # Set the fractional thickness of the line
             segment.set_width(width)  # Assign the pen to the line item
             segment.set_arrow_sizes(arrow_width)
+        if self.polyline is not None:
+            self.polyline.set_width(width)
         # self.setScale(branch_scale)
 
     def clean_segments(self) -> None:
@@ -74,9 +162,49 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
         Remove all segments from the scene
         """
         for segment in self.segments_list:
-            self.editor._remove_from_scene(segment)
+            if segment.scene() is not None:
+                self.editor.diagram_scene.removeItem(segment)
+            else:
+                pass
 
         self.segments_list = list()
+        self.segments_drawn = False
+
+    def _attach_segments_to_scene(self) -> None:
+        """
+        Add all segment graphics to the scene for edit mode rendering.
+        """
+        if self.segments_drawn:
+            return
+        else:
+            pass
+
+        for segment in self.segments_list:
+            if segment.scene() is None:
+                self.editor.add_to_scene(graphic_object=segment)
+            else:
+                pass
+            segment.set_stroke_visible(True)
+
+        self.segments_drawn = True
+
+    def _detach_segments_from_scene(self) -> None:
+        """
+        Remove segment graphics from the scene when not editing.
+        """
+        if not self.segments_drawn:
+            return
+        else:
+            pass
+
+        for segment in self.segments_list:
+            segment.set_stroke_visible(False)
+            if segment.scene() is not None:
+                self.editor.diagram_scene.removeItem(segment)
+            else:
+                pass
+
+        self.segments_drawn = False
 
     def clean_nodes(self) -> None:
         """
@@ -92,6 +220,7 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
         Clean all graphic elements from the scene
         """
         self.clean_segments()
+        self.clean_polyline()
         self.clean_nodes()
 
     def number_of_nodes(self) -> int:
@@ -124,9 +253,21 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
         :param tool_tip: tool tip text
         :return:
         """
+        self.color = QColor(color)
+        self.style = style
+
         for segment in self.segments_list:
             segment.setToolTip(tool_tip)
             segment.set_colour(color=color, style=style)
+
+        if self.polyline is not None:
+            self.polyline.setToolTip(tool_tip)
+            polyline_pen = QPen(self.color,
+                                self.width,
+                                self.style,
+                                Qt.PenCapStyle.RoundCap,
+                                Qt.PenJoinStyle.RoundJoin)
+            self.polyline.set_pen(polyline_pen)
 
     def update_connectors(self) -> None:
         """
@@ -134,7 +275,9 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
         :return:
         """
         for connector in self.segments_list:
-            connector.update_endings()
+            # Avoid rebuilding the same polyline path for every connector.
+            connector.update_endings(force=True)
+        self.update_polyline_path()
 
     def end_update(self) -> None:
         """
@@ -173,6 +316,7 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
 
         # second pass: create the segments
         self.redraw_segments()
+        self.set_handles_visible(False)
 
     def remove_node(self, node: LineLocationGraphicItem):
         """
@@ -199,7 +343,9 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
         Draw all segments in the line
         If there were previous segments, those are deleted
         """
+        segments_were_drawn = self.segments_drawn
         self.clean_segments()
+        self._ensure_polyline()
 
         connection_elements: List[
             Union[LineLocationGraphicItem, SubstationGraphicItem, VoltageLevelGraphicItem]] = list()
@@ -233,6 +379,7 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
                                                     second=elm2,
                                                     container=self,
                                                     width=self.editor.diagram.min_branch_width)
+            segment_graphic_object.set_stroke_visible(False)
 
             elm2.needsUpdate = True
             segment_graphic_object.needsUpdate = True
@@ -240,13 +387,257 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
             # register the segment in the line
             self.add_segment(segment=segment_graphic_object)
 
-            # draw the segment in the scene
-            self.editor.add_to_scene(graphic_object=segment_graphic_object)
-
-            # add it to the graphics manager dict
-            self.editor.graphics_manager.add_device(self.api_object, segment_graphic_object.container)
-
         self.update_connectors()
+        self.set_colour(color=self.color, style=self.style)
+
+        if segments_were_drawn:
+            self._attach_segments_to_scene()
+        else:
+            pass
+
+    def _distance_to_segment(self, point: QPointF, first: QPointF, second: QPointF) -> float:
+        """
+        Compute the euclidean distance from a point to one segment.
+        """
+        dx = second.x() - first.x()
+        dy = second.y() - first.y()
+        if abs(dx) < 1e-12 and abs(dy) < 1e-12:
+            return math.hypot(point.x() - first.x(), point.y() - first.y())
+
+        numerator = ((point.x() - first.x()) * dx) + ((point.y() - first.y()) * dy)
+        denominator = (dx * dx) + (dy * dy)
+        factor = max(0.0, min(1.0, numerator / denominator))
+
+        projection_x = first.x() + factor * dx
+        projection_y = first.y() + factor * dy
+        return math.hypot(point.x() - projection_x, point.y() - projection_y)
+
+    def add_node_at_scene_position(self, scene_pos: QPointF) -> None:
+        """
+        Insert a new waypoint in the nearest line segment to a clicked point.
+
+        :param scene_pos: click position in scene coordinates
+        """
+        if len(self.segments_list) == 0:
+            self.insert_new_node_at_position(0)
+            return
+
+        closest_segment_index = 0
+        closest_distance = float("inf")
+
+        for i, segment in enumerate(self.segments_list):
+            dist = self._distance_to_segment(scene_pos, segment.pos1, segment.pos2)
+            if dist < closest_distance:
+                closest_distance = dist
+                closest_segment_index = i
+
+        self.insert_new_node_at_position(closest_segment_index)
+
+    def _open_street_view_context(self) -> None:
+        """
+        Open Google Maps for the latest context-menu click location.
+        """
+        if self._context_lat is not None and self._context_lon is not None:
+            url = f"https://www.google.com/maps/?q={self._context_lat},{self._context_lon}"
+            webbrowser.open(url)
+
+    def _add_point_from_context(self) -> None:
+        """
+        Insert one waypoint at the latest context-menu click location.
+        """
+        if self._context_scene_pos is not None:
+            self.add_node_at_scene_position(self._context_scene_pos)
+
+    def _ensure_line_selected_for_actions(self) -> None:
+        """
+        Ensure this line is present in the current selection for editor actions.
+        """
+        if self.polyline is not None and not self.polyline.isSelected():
+            self.polyline.setSelected(True)
+
+    def _run_merge_selected_lines(self) -> None:
+        """
+        Run merge operation preserving the clicked line in selection.
+        """
+        self._ensure_line_selected_for_actions()
+        self.editor.merge_selected_lines()
+
+    def _run_split_line_to_substation(self) -> None:
+        """
+        Run split-to-substation operation preserving the clicked line in selection.
+        """
+        self._ensure_line_selected_for_actions()
+        self.editor.split_line_to_substation()
+
+    def _run_change_line_connection(self) -> None:
+        """
+        Run line connection change operation preserving the clicked line in selection.
+        """
+        self._ensure_line_selected_for_actions()
+        self.editor.change_line_connection()
+
+    def show_context_menu(self, scene_pos: QPointF, screen_pos: QPoint) -> None:
+        """
+        Show the line context menu for the given click position.
+        """
+        menu = QMenu()
+        menu.addSection("Line")
+
+        add_menu_entry(menu=menu,
+                       text="Active",
+                       function_ptr=self.enable_disable_toggle,
+                       checkeable=True,
+                       checked_value=self.api_object.active)
+
+        add_menu_entry(menu=menu,
+                       text="Draw labels",
+                       function_ptr=self.enable_disable_label_drawing,
+                       checkeable=True,
+                       checked_value=self.draw_labels)
+
+        add_menu_entry(menu=menu,
+                       text="Editor",
+                       function_ptr=self.call_editor,
+                       icon_path=":/Icons/icons/edit.png")
+
+        add_menu_entry(menu=menu,
+                       text="Calculate total length",
+                       function_ptr=self.calculate_total_length_toast,
+                       icon_path=":/Icons/icons/ruler.png")
+
+        add_menu_entry(menu=menu,
+                       text="Consolidate selected objects coordinates",
+                       function_ptr=self.editor.consolidate_object_coordinates,
+                       icon_path=":/Icons/icons/assign_to_profile.png")
+
+        menu.addSeparator()
+
+        add_menu_entry(menu=menu,
+                       text="Merge selected lines",
+                       function_ptr=self._run_merge_selected_lines,
+                       icon_path=":/Icons/icons/fusion.png")
+
+        menu.addSeparator()
+
+        add_menu_entry(menu=menu,
+                       text="Split line to selected substation (In-Out)",
+                       function_ptr=self._run_split_line_to_substation,
+                       icon_path=":/Icons/icons/divide.png")
+
+        add_menu_entry(menu=menu,
+                       text="Change substation connection of the line",
+                       function_ptr=self._run_change_line_connection,
+                       icon_path=":/Icons/icons/move_bus.png")
+
+        add_menu_entry(menu=menu,
+                       text="Plot profiles",
+                       function_ptr=self.plot_profiles,
+                       icon_path=":/Icons/icons/plot.png")
+
+        self._context_scene_pos = scene_pos
+        self._context_lat, self._context_lon = self.editor.to_lat_lon(x=scene_pos.x(), y=scene_pos.y())
+        add_menu_entry(menu=menu,
+                       text="Open in Street view",
+                       function_ptr=self._open_street_view_context,
+                       icon_path=":/Icons/icons/map.png")
+
+        add_menu_entry(menu=menu,
+                       text="Assign rate to profile",
+                       function_ptr=self.assign_rate_to_profile,
+                       icon_path=":/Icons/icons/assign_to_profile.png")
+
+        add_menu_entry(menu=menu,
+                       text="Assign active state to profile",
+                       function_ptr=self.assign_status_to_profile,
+                       icon_path=":/Icons/icons/assign_to_profile.png")
+
+        add_menu_entry(menu=menu,
+                       text="Add point",
+                       function_ptr=self._add_point_from_context,
+                       icon_path=":/Icons/icons/cn_icon.png")
+
+        menu.addSeparator()
+
+        add_menu_entry(menu=menu,
+                       text="Delete",
+                       function_ptr=self.delete,
+                       icon_path=":/Icons/icons/delete_schematic.png")
+
+        menu.exec_(screen_pos)
+
+    def enable_disable_toggle(self) -> None:
+        """
+        Toggle line active state and optionally propagate to profiles.
+        """
+        if self.api_object.active:
+            self.set_enable(False)
+        else:
+            self.set_enable(True)
+
+        if self.editor.circuit.get_time_number() > 0:
+            ok = yes_no_question('Do you want to update the time series active status accordingly?',
+                                 'Update time series active status')
+            if ok:
+                self.editor.set_active_status_to_profile(self.api_object, override_question=True)
+
+    def set_enable(self, val: bool = True) -> None:
+        """
+        Set the enabled state both graphically and in the API object.
+
+        :param val: target state
+        """
+        self.api_object.active = val
+        if self.api_object.active:
+            self.style = ACTIVE['style']
+            self.color = ACTIVE['color']
+        else:
+            self.style = DEACTIVATED['style']
+            self.color = DEACTIVATED['color']
+        self.set_colour(self.color, self.style)
+
+    def enable_disable_label_drawing(self) -> None:
+        """
+        Toggle arrow label rendering state.
+        """
+        self.draw_labels = not self.draw_labels
+        for segment in self.segments_list:
+            segment.draw_labels = self.draw_labels
+
+    def call_editor(self) -> None:
+        """
+        Open the branch editor dialogue.
+        """
+        _ = self.api_object.get_max_bus_nominal_voltage()
+        dlg = LineEditor(line=self.api_object, grid=self.editor.circuit)
+        dlg.exec()
+
+    def plot_profiles(self) -> None:
+        """
+        Plot branch time series profiles.
+        """
+        i = self.editor.circuit.get_branches().index(self.api_object)
+        self.editor.plot_branch(i, self.api_object)
+
+    def assign_rate_to_profile(self) -> None:
+        """
+        Assign snapshot rating to the profile.
+        """
+        self.editor.set_rate_to_profile(self.api_object)
+
+    def assign_status_to_profile(self) -> None:
+        """
+        Assign snapshot active state to the profile.
+        """
+        self.editor.set_active_status_to_profile(self.api_object)
+
+    def calculate_total_length_toast(self) -> None:
+        """
+        Recalculate length and show user feedback.
+        """
+        total_length = self.calculate_total_length()
+        self.editor.gui.show_info_toast(
+            message=f"Line length calculated: {total_length:.2f} km. The length property of line "
+                    f"{self.api_object.name} has been updated.")
 
     def substation_to(self):
         """
@@ -544,9 +935,12 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
     def get_extra_graphics(self):
         """
         This function gets the graphic objects associated to a MapLineContainer
-        return: The list of the associated graphic objects, which are the nodes and segments of the line.
+        return: The list of the associated graphic objects, which are the nodes, segments and polyline of the line.
         """
-        return self.segments_list + self.nodes_list
+        extra_graphics = self.segments_list + self.nodes_list
+        if self.polyline is not None:
+            extra_graphics.append(self.polyline)
+        return extra_graphics
 
     def delete(self):
         """
@@ -556,4 +950,3 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
             segment.delete_from_associations()
 
         self.editor.delete_with_dialogue(selected=[self], delete_from_db=False)
-

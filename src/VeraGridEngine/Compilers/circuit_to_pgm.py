@@ -729,12 +729,19 @@ def translate_pgm_pf_results2d(grid: MultiCircuit, pf_res) -> PowerFlowTimeSerie
                                          m=nc.nbr,
                                          n_hvdc=nc.nhvdc,
                                          n_vsc=nc.nvsc,
+                                         n_gen=nc.ngen,
+                                         n_batt=nc.nbatt,
+                                         n_sh=nc.nshunt,
                                          bus_names=nc.bus_data.names,
                                          branch_names=nc.passive_branch_data.names,
                                          hvdc_names=nc.hvdc_data.names,
                                          vsc_names=nc.vsc_data.names,
+                                         gen_names=nc.generator_data.names,
+                                         batt_names=nc.battery_data.names,
+                                         sh_names=nc.shunt_data.names,
                                          time_array=grid.time_profile,
-                                         bus_types=nc.bus_data.bus_types)
+                                         bus_types=nc.bus_data.bus_types,
+                                         area_names=grid.get_area_names())
 
     if pf_res is None:
         return results

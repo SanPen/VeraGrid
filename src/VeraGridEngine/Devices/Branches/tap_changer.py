@@ -204,6 +204,15 @@ class TapChanger:
         """
         return self._tau_array
 
+    @property
+    def impedance_correction_imag_array(self) -> np.ndarray:
+        """
+        Get the imaginary impedance correction factors per tap position.
+        A value of 1.0 at every position means no correction (default).
+        :return: array of length total_positions
+        """
+        return self._k_im_array
+
     def resize(self) -> None:
         """
         Resize and recalc the tap positions array

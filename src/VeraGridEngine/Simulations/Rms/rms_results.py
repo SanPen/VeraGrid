@@ -18,7 +18,7 @@ from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 class RmsResults(ResultsTemplate):
 
     LOCAL_RESULTS_DECLARATIONS = (
-        ResultsProperty(name='values', tpe=Vec, old_names=list()),
+        ResultsProperty(name='values', tpe=Vec, old_names=list(), expandable=False),
     )
 
     __slots__ = (

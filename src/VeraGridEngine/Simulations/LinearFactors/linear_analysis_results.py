@@ -17,19 +17,21 @@ class LinearAnalysisResults(ResultsTemplate):
     """
 
     LOCAL_RESULTS_DECLARATIONS = (
-        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list()),
-        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list()),
-        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list()),
-        ResultsProperty(name='PTDF', tpe=Mat, old_names=list()),
-        ResultsProperty(name='LODF', tpe=Mat, old_names=list()),
-        ResultsProperty(name='HvdcDF', tpe=Mat, old_names=list()),
-        ResultsProperty(name='HvdcODF', tpe=Mat, old_names=list()),
-        ResultsProperty(name='VscDF', tpe=Mat, old_names=list()),
-        ResultsProperty(name='VscODF', tpe=Mat, old_names=list()),
-        ResultsProperty(name='Sf', tpe=Vec, old_names=list()),
-        ResultsProperty(name='Sbus', tpe=Vec, old_names=list()),
-        ResultsProperty(name='voltage', tpe=CxVec, old_names=list()),
-        ResultsProperty(name='loading', tpe=Vec, old_names=list()),
+        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='hvdc_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='vsc_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='PTDF', tpe=Mat, old_names=list(), expandable=False),
+        ResultsProperty(name='LODF', tpe=Mat, old_names=list(), expandable=False),
+        ResultsProperty(name='HvdcDF', tpe=Mat, old_names=list(), expandable=False),
+        ResultsProperty(name='HvdcODF', tpe=Mat, old_names=list(), expandable=False),
+        ResultsProperty(name='VscDF', tpe=Mat, old_names=list(), expandable=False),
+        ResultsProperty(name='VscODF', tpe=Mat, old_names=list(), expandable=False),
+        ResultsProperty(name='Sf', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='Sbus', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='voltage', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='loading', tpe=Vec, old_names=list(), expandable=False),
     )
 
     __slots__ = (
@@ -242,4 +244,3 @@ class LinearAnalysisResults(ResultsTemplate):
 
         else:
             raise Exception('Result type not understood:' + str(result_type))
-

@@ -21,18 +21,18 @@ class ContingencyAnalysisTimeSeriesResults(ResultsTemplate):
     """
 
     LOCAL_RESULTS_DECLARATIONS = (
-        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list()),
-        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list()),
-        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list()),
-        ResultsProperty(name='con_names', tpe=StrVec, old_names=list()),
-        ResultsProperty(name='S', tpe=Mat, old_names=list()),
-        ResultsProperty(name='max_flows', tpe=Mat, old_names=list()),
-        ResultsProperty(name='max_loading', tpe=Mat, old_names=list()),
-        ResultsProperty(name='sum_overload', tpe=Mat, old_names=list()),
-        ResultsProperty(name='mean_overload', tpe=Mat, old_names=list()),
-        ResultsProperty(name='std_dev_overload', tpe=Mat, old_names=list()),
-        ResultsProperty(name='srap_used_power', tpe=Mat, old_names=list()),
-        ResultsProperty(name='report', tpe=ContingencyResultsReport, old_names=list()),
+        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='con_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='S', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='max_flows', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='max_loading', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='sum_overload', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='mean_overload', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='std_dev_overload', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='srap_used_power', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='report', tpe=ContingencyResultsReport, old_names=list(), expandable=False),
     )
 
     __slots__ = (

@@ -802,6 +802,9 @@ class LineGraphicTemplateItem(GenericDiagramWidget, QGraphicsLineItem):
         self._route_item = QGraphicsPathItem(parent=self)
         self._route_item.setAcceptedMouseButtons(Qt.MouseButton.NoButton)
         self._route_item.setFlag(self.GraphicsItemFlag.ItemIsSelectable, False)
+        # Render the branch stroke below symbols/arrows so converter/transformer
+        # glyphs are not visually traversed by the line.
+        self._route_item.setZValue(-5)
         self._rendered_path = QPainterPath()
         self._route_points: list[tuple[float, float]] = list()
         self._route_handles: list[RouteSegmentHandleItem] = list()

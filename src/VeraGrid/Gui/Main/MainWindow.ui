@@ -349,8 +349,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>382</width>
-                            <height>360</height>
+                            <width>252</width>
+                            <height>362</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -744,8 +744,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>396</width>
-                            <height>298</height>
+                            <width>171</width>
+                            <height>240</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -895,8 +895,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>396</width>
-                            <height>298</height>
+                            <width>122</width>
+                            <height>244</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -11035,8 +11035,10 @@ QProgressBar::chunk{
     <addaction name="actionDetect_substations"/>
     <addaction name="actionDetect_facilities"/>
     <addaction name="actionFuse_devices"/>
+    <addaction name="actionSet_model_x_y_based_on_lat_lon"/>
     <addaction name="actionGrid_reduction"/>
     <addaction name="actionProcedural_grid_expansion"/>
+    <addaction name="actionCatalogue_element_optimization"/>
     <addaction name="actionre_index_time"/>
     <addaction name="actionScale"/>
     <addaction name="separator"/>
@@ -12827,6 +12829,15 @@ QProgressBar::chunk{
     <string>Procedural grid expansion</string>
    </property>
   </action>
+  <action name="actionCatalogue_element_optimization">
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/schematic.png</normaloff>:/Icons/icons/schematic.png</iconset>
+   </property>
+   <property name="text">
+    <string>Catalogue element optimization</string>
+   </property>
+  </action>
   <action name="actionRun_Dynamic_EMT_Simulation">
    <property name="icon">
     <iconset resource="../Icons/icons.qrc">
@@ -12913,6 +12924,15 @@ QProgressBar::chunk{
    </property>
    <property name="toolTip">
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add EMT event&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create a new EMT event to the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="actionSet_model_x_y_based_on_lat_lon">
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/map.png</normaloff>:/Icons/icons/map.png</iconset>
+   </property>
+   <property name="text">
+    <string>Set model (x,y) based on (lat, lon)</string>
    </property>
   </action>
  </widget>

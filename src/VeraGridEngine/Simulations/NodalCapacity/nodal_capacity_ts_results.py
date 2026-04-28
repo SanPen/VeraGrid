@@ -23,8 +23,8 @@ class NodalCapacityTimeSeriesResults(OptimalPowerFlowTimeSeriesResults):
     """
 
     LOCAL_RESULTS_DECLARATIONS = (
-        ResultsProperty(name='capacity_nodes_idx', tpe=IntVec, old_names=list()),
-        ResultsProperty(name='nodal_capacity', tpe=Mat, old_names=list()),
+        ResultsProperty(name='capacity_nodes_idx', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='nodal_capacity', tpe=Mat, old_names=list(), expandable=True),
     )
 
     __slots__ = (

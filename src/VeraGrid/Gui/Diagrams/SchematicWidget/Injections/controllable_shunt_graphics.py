@@ -9,7 +9,7 @@ from PySide6 import QtWidgets
 from VeraGrid.Gui.Diagrams.generic_graphics import Square
 from VeraGridEngine.Devices.Injections.controllable_shunt import ControllableShunt
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionTemplateGraphicItem
-from VeraGrid.Gui.Diagrams.Editors.controllable_shunt_editor import ControllableShuntEditor
+from VeraGrid.Gui.DeviceEditors.ControllableShuntEditor.controllable_shunt_editor import ControllableShuntEditor
 from VeraGrid.Gui.gui_functions import add_menu_entry
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
@@ -47,15 +47,20 @@ class ControllableShuntGraphicItem(InjectionTemplateGraphicItem):
         @param event:
         @return:
         """
-        menu = self.get_base_context_menu()
-        menu.addSection("Controllable shunt")
+        if self.api_object is not None:
+            menu = self.get_base_context_menu()
+            menu.addSection("Controllable shunt")
 
-        add_menu_entry(menu=menu,
-                       text="Editor",
-                       function_ptr=self.edit,
-                       icon_path=":/Icons/icons/edit.png")
+            add_menu_entry(menu=menu,
+                           text="Editor",
+                           function_ptr=self.edit,
+                           icon_path=":/Icons/icons/edit.png")
 
-        menu.exec_(event.screenPos())
+            menu.exec(event.screenPos())
+
+        else:
+            self.editor.gui.show_error_toast("The graphic has no API object!")
+
 
     def edit(self):
         """

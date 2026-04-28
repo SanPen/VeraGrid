@@ -46,7 +46,7 @@ from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions impo
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
 from VeraGridEngine.data_logger import DataLogger
 from VeraGridEngine.enumerations import (TapChangerTypes, TapPhaseControl, TapModuleControl, CGMESVersions,
-                                         ExternalGridMode, ShuntControlMode)
+                                         ExternalGridMode, ShuntControlMode, ConverterControlType)
 
 
 def set_declared_cgmes_property(cgmes_object: CGMES_ASSETS,
@@ -528,6 +528,15 @@ def convert_vsc_devices_to_cgmes(multicircuit_model: MultiCircuit,
             ver=ver,
             logger=logger
         )
+
+        if gc_vsc.bus_to.substation is not None:
+            substation = find_object_by_uuid(
+                cgmes_model=cgmes_model,
+                object_list=cgmes_model.cgmes_assets.Substation_list,
+                target_uuid=gc_vsc.bus_to.substation.idtag
+            )
+            if isinstance(substation, cgmes_model.assets.Substation):
+                dc_conv_unit.Substation = substation
 
         dc_tp = get_or_create_dc_topological_node(cgmes_model, gc_vsc.bus_from, ver, logger)
         dc_node = get_or_create_dc_node(cgmes_model, gc_vsc.bus_from, dc_tp, dc_conv_unit, ver, logger)
@@ -1403,7 +1412,7 @@ def get_cgmes_generators(multicircuit_model: MultiCircuit,
         else:
             cgmes_syn.controlEnabled = False
 
-        # Todo cgmes_syn.ratedPowerFactor = 1.0
+        cgmes_syn.ratedPowerFactor = max(0.0, min(1.0, mc_elm.Pf))
         cgmes_syn.ratedS = mc_elm.Snom
         cgmes_syn.GeneratingUnit = cgmes_gen  # linking them together
         cgmes_gen.RotatingMachine = cgmes_syn  # linking them together
@@ -1412,7 +1421,8 @@ def get_cgmes_generators(multicircuit_model: MultiCircuit,
         cgmes_syn.r = mc_elm.R1 if mc_elm.R1 != 1e-20 else None  # default value not exported
         cgmes_syn.p = -mc_elm.P  # negative sign!
         cgmes_syn.q = -mc_elm.Q
-        # TODO cgmes_syn.qPercent =
+        if mc_elm.Snom > 0.0:
+            cgmes_syn.qPercent = (mc_elm.Qmax / mc_elm.Snom) * 100.0
         if mc_elm.q_curve is not None:
             pMin = mc_elm.q_curve.get_Pmin()
         else:
@@ -1427,8 +1437,9 @@ def get_cgmes_generators(multicircuit_model: MultiCircuit,
                 cgmes_syn.type = SynchronousMachineKind.generator
         elif cgmes_syn.p == 0:
             cgmes_syn.operatingMode = SynchronousMachineOperatingMode.condenser
-            if pMin < 0:  # TODO We don't have all the types
-                cgmes_syn.type = SynchronousMachineKind.motorOrCondenser
+            if pMin < 0:
+                # pMin < 0 means the machine can also motor; currently condensing → all three modes possible
+                cgmes_syn.type = SynchronousMachineKind.generatorOrCondenserOrMotor
             elif pMin == 0:
                 cgmes_syn.type = SynchronousMachineKind.generatorOrCondenser
             else:
@@ -1694,8 +1705,12 @@ def get_cgmes_power_transformers(grid: MultiCircuit,
                 # PhaseTapChangerSymmetrical or PhaseTapChangerAsymmetrical
                 tap_changer.voltageStepIncrement = voltageIncr
                 tap_changer.xMin = mc_elm.X
-                # TODO tap_changer.xMax from Impedance corr table
-                tap_changer.xMax = mc_elm.X  # just to have it in the export
+                k_im: np.ndarray = mc_elm.tap_changer.impedance_correction_imag_array
+                max_correction: float = float(np.max(k_im))
+                # xMax is the reactance at the extreme tap; scale xMin by the peak
+                # impedance correction factor. When no table is set, k_im is all-ones
+                # and xMax == xMin (no correction).
+                tap_changer.xMax = mc_elm.X * max_correction
 
             else:
                 logger.add_error(
@@ -1795,11 +1810,22 @@ def get_cgmes_power_transformers(grid: MultiCircuit,
             if isinstance(substation, cgmes_model.assets.Substation):
                 cm_transformer.EquipmentContainer = substation
 
-        # TODO tr3w rates?
-        # current_rate = mc_elm.rate * 1e3 / (mc_elm.get_max_bus_nominal_voltage() * 1.73205080756888)
-        # current_rate = np.round(current_rate, 4)
-        # create_cgmes_current_limit(cm_transformer.Terminals[0], current_rate, cgmes_model, logger)
-        # create_cgmes_current_limit(cm_transformer.Terminals[1], current_rate, cgmes_model, logger)
+        # Current limits per winding — each winding has its own rated current
+        patl, tatl_900, tatl_60 = op_lim_types
+        winding_terminals: list[tuple] = [
+            (cm_transformer.Terminals[0], mc_elm.winding1),
+            (cm_transformer.Terminals[1], mc_elm.winding2),
+            (cm_transformer.Terminals[2], mc_elm.winding3),
+        ]
+        for terminal, winding in winding_terminals:
+            if winding.rate != 0.0:
+                create_cgmes_current_limit(terminal, winding.rate, patl, cgmes_model, ver, logger)
+            contingency_rate: float = winding.contingency_factor * winding.rate
+            if contingency_rate != 0.0:
+                create_cgmes_current_limit(terminal, contingency_rate, tatl_900, cgmes_model, ver, logger)
+            protection_rate: float = winding.protection_rating_factor * winding.rate
+            if protection_rate != 0.0:
+                create_cgmes_current_limit(terminal, protection_rate, tatl_60, cgmes_model, ver, logger)
 
         cm_transformer.PowerTransformerEnd = []
         if ver == CGMESVersions.v2_4_15:
@@ -2854,6 +2880,53 @@ def convert_hvdc_line_to_cgmes(multicircuit_model: MultiCircuit,
     return
 
 
+def get_cgmes_busbar_sections(gc_model: MultiCircuit,
+                               cgmes_model: CgmesCircuit,
+                               ver: CGMESVersions,
+                               logger: DataLogger) -> None:
+    """
+    Create one BusbarSection per VeraGrid Bus.
+    Each BusbarSection is contained in the bus VoltageLevel and connected to
+    its TopologicalNode via a Terminal, completing the node-breaker topology.
+
+    :param gc_model: VeraGrid MultiCircuit
+    :param cgmes_model: CgmesCircuit
+    :param ver: CGMES version
+    :param logger: DataLogger
+    :return: None
+    """
+    for mc_bus in gc_model.buses:
+        if ver == CGMESVersions.v2_4_15:
+            bbs = cgmes24.BusbarSection(rdfid=get_new_rdfid())
+        elif ver == CGMESVersions.v3_0_0:
+            bbs = cgmes30.BusbarSection(rdfid=get_new_rdfid())
+        else:
+            raise NotImplemented()
+
+        bbs.name = mc_bus.name
+        bbs.description = mc_bus.code
+
+        if mc_bus.voltage_level is not None:
+            vl = find_object_by_uuid(
+                cgmes_model=cgmes_model,
+                object_list=cgmes_model.cgmes_assets.VoltageLevel_list,
+                target_uuid=mc_bus.voltage_level.idtag
+            )
+            if isinstance(vl, cgmes_model.assets.VoltageLevel):
+                bbs.EquipmentContainer = vl
+
+        bbs.Terminals = create_cgmes_terminal(
+            mc_bus=mc_bus,
+            seq_num=1,
+            cond_eq=bbs,
+            cgmes_model=cgmes_model,
+            ver=ver,
+            logger=logger
+        )
+
+        cgmes_model.add(bbs)
+
+
 # endregion
 
 
@@ -2886,9 +2959,7 @@ def veragrid_to_cgmes(gc_model: MultiCircuit,
 
     get_cgmes_tp_nodes(gc_model, cgmes_model, ver, logger)
     get_cgmes_cn_nodes_from_tp_nodes(gc_model, cgmes_model, ver, logger)
-
-    # TODO BusbarSection
-    # get_cgmes_cn_nodes_from_cns(gc_model, cgmes_model, logger)
+    get_cgmes_busbar_sections(gc_model, cgmes_model, ver, logger)
 
     get_cgmes_loads(gc_model, cgmes_model, ver, logger)
     get_or_create_external_network_injection(gc_model, cgmes_model, ver, logger)

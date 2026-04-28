@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 from typing import Sequence
 
+from VeraGridEngine import get_transformer_emt_template, get_xfmr_emt_template
 from VeraGridEngine.enumerations import BlockType
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import Block
@@ -164,12 +165,21 @@ def create_block_of_type(var_factory: VarFactory,
         blk.name = item_name
         return blk
 
-
-
     elif block_type == BlockType.DC_LOAD_EMT:
         blk = get_dc_load_emt_template(var_factory).block
         blk.name = item_name
         return blk
+
+    elif block_type == BlockType.TRAFO_EMT:
+        blk = get_transformer_emt_template(var_factory).block
+        blk.name = item_name
+        return blk
+
+    elif block_type == BlockType.XFMR_TRANSFORMER:
+        blk = get_xfmr_emt_template(var_factory).block
+        blk.name = item_name
+        return blk
+
     else:
         return None
 

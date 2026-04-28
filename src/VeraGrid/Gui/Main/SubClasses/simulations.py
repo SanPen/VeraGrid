@@ -311,6 +311,7 @@ class SimulationsMain(TimeEventsMain):
         self.ui.actionRun_Dynamic_EMT_Simulation.triggered.connect(self.emt_dispatcher)
         self.ui.actionRun_Small_Signal_EMT_Simulation.triggered.connect(self.emt_small_signal_dispatcher)
         self.ui.actionProcedural_grid_expansion.triggered.connect(self.procedural_grid_expansion)
+        self.ui.actionCatalogue_element_optimization.triggered.connect(self.catalogue_element_optimization)
 
         self.ui.actionUse_clustering.triggered.connect(self.activate_clustering)
         self.ui.actionNodal_capacity.triggered.connect(self.run_nodal_capacity)
@@ -873,9 +874,7 @@ class SimulationsMain(TimeEventsMain):
 
         if info.logger.has_logs():
             # Show dialogue
-            dlg = LogsDialogue(name="Add selected DB objects to current diagram", logger=info.logger)
-            dlg.setModal(True)
-            dlg.exec()
+            self.show_logs(name="Add selected DB objects to current diagram", logger=info.logger)
 
         return info
 
@@ -3653,9 +3652,7 @@ class SimulationsMain(TimeEventsMain):
         if remote_job_driver is not None:
             if remote_job_driver.logger.has_logs():
                 # Show dialogue
-                dlg = LogsDialogue(name="Remote connection logs", logger=remote_job_driver.logger)
-                dlg.setModal(True)
-                dlg.exec()
+                self.show_logs(remote_job_driver.logger, name="Remote connection logs")
 
             self.update_available_results()
             self.colour_diagrams()
@@ -3825,3 +3822,119 @@ class SimulationsMain(TimeEventsMain):
 
         self.procedural_grid_window = ProceduralGridWindow(app=self)
         self.procedural_grid_window.exec()
+
+    def catalogue_element_optimization(self) -> None:
+        """
+        Handler for the "Catalogue element optimization" menu action.
+
+        Optimises the choice of catalogue templates for the user-selected branches using NSGA-3.
+        Only AC `Line` and `Transformer2W` branches are considered at this stage.
+
+        :return:
+        """
+        # Bail out early if the circuit cannot be simulated (no buses, etc.).
+        if not self.circuit.valid_for_simulation():
+            return
+        else:
+            pass
+
+        # The catalogue optimization works off a schematic selection: only schematic widgets expose
+        # the per-element selection API needed below.
+        current_diagram = self.get_selected_diagram_widget()
+        if not isinstance(current_diagram, SchematicWidget):
+            warning_msg("Catalogue optimization requires an active schematic diagram with a selection.",
+                        "Catalogue optimization")
+            return
+        else:
+            pass
+
+        # Pull the API objects underlying the selected schematic items and keep only the ones we
+        # know how to optimise. The GUI restricts the user to AC lines and 2-winding transformers.
+        api_selection = current_diagram._get_selection_api_objects()
+        selected_branches: List[Union[dev.Line, dev.Transformer2W]] = list()
+        for elm in api_selection:
+            if isinstance(elm, dev.Line):
+                selected_branches.append(elm)
+            elif isinstance(elm, dev.Transformer2W):
+                selected_branches.append(elm)
+            else:
+                pass  # ignore non-branch selections silently; they are not optimisable here
+
+        # Empty selection: warn the user and stop. Running the optimization would have nothing to do.
+        if len(selected_branches) == 0:
+            warning_msg("Select at least one AC line or two-winding transformer in the schematic "
+                        "before running the catalogue optimization.",
+                        "Catalogue optimization")
+            return
+        else:
+            pass
+
+        # Block re-entry: only one catalogue optimization at a time.
+        if self.session.is_this_running(SimulationTypes.CatalogueOptimization_run):
+            self.show_warning_toast('Another catalogue optimization is already running...')
+            return
+        else:
+            pass
+
+        # Build the problem first; it raises ValueError if every selected branch ended up with
+        # one option or fewer (in which case there is nothing to optimise over).
+        try:
+            problem = sim.CatalogueOptimizationProblem(
+                grid=self.circuit,
+                pf_options=self.get_selected_power_flow_options(),
+                selected_branches=selected_branches,
+                voltage_tolerance=0.1,
+            )
+        except ValueError as ex:
+            warning_msg(str(ex), "Catalogue optimization")
+            return
+
+        # Maximum number of evaluations: scale the per-decision spinbox by the number of slots.
+        # Reuse the investments-evaluation spinbox to avoid adding a new GUI widget.
+        max_eval: int = (self.ui.max_investments_evluation_number_spinBox.value()
+                         * problem.n_vars())
+
+        # Compose the options object.
+        options = sim.CatalogueOptimizationOptions(
+            max_eval=max_eval,
+            pf_options=self.get_selected_power_flow_options(),
+        )
+
+        # Build and launch the driver via the standard session pipeline.
+        drv = sim.CatalogueOptimizationDriver(
+            grid=self.circuit,
+            options=options,
+            problem=problem,
+        )
+
+        self.session.run(
+            drv,
+            post_func=self.post_catalogue_element_optimization,
+            prog_func=self.ui.progressBar.setValue,
+            text_func=self.ui.progress_label.setText,
+        )
+        self.add_simulation(SimulationTypes.CatalogueOptimization_run)
+        self.LOCK()
+
+    def post_catalogue_element_optimization(self) -> None:
+        """
+        Post-execution callback for the catalogue optimization driver.
+
+        Mirrors `post_investments_evaluation`: it removes the running-simulation flag, refreshes
+        the available results combo and recolours the diagrams to expose the new results.
+
+        :return:
+        """
+        driver, results = self.session.catalogue_optimization
+
+        if results is not None:
+            # Clear the "running" flag so the GUI re-enables future runs.
+            self.remove_simulation(SimulationTypes.CatalogueOptimization_run)
+
+            self.ui.progress_label.setText('Colouring catalogue optimization results in the grid...')
+            QtGui.QGuiApplication.processEvents()
+
+            self.update_available_results()
+            self.colour_diagrams()
+        else:
+            pass

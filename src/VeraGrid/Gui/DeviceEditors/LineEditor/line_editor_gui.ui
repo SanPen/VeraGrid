@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>LineEditorDialog</class>
+ <widget class="QDialog" name="LineEditorDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>420</width>
+    <height>520</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Line editor</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="templatesLabel">
+     <property name="text">
+      <string>Available templates</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QComboBox" name="catalogueComboBox"/>
+   </item>
+   <item>
+    <widget class="QLabel" name="circuitIndexLabel">
+     <property name="text">
+      <string>Circuit index:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QSpinBox" name="circuitIndexSpinBox">
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>1</number>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="loadTemplateButton">
+     <property name="text">
+      <string>Load template values</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="separator">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="lengthLabel">
+     <property name="text">
+      <string>L: Line length</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDoubleSpinBox" name="lengthSpinBox">
+     <property name="decimals">
+      <number>6</number>
+     </property>
+     <property name="maximum">
+      <double>9999999.000000000000000</double>
+     </property>
+     <property name="suffix">
+      <string> km</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="currentLabel">
+     <property name="text">
+      <string>Imax: Max. current</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDoubleSpinBox" name="currentSpinBox">
+     <property name="decimals">
+      <number>6</number>
+     </property>
+     <property name="maximum">
+      <double>9999999.000000000000000</double>
+     </property>
+     <property name="suffix">
+      <string> kA</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="resistanceLabel">
+     <property name="text">
+      <string>R: Resistance</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDoubleSpinBox" name="resistanceSpinBox">
+     <property name="decimals">
+      <number>6</number>
+     </property>
+     <property name="maximum">
+      <double>9999999.000000000000000</double>
+     </property>
+     <property name="suffix">
+      <string> Ω/km</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="reactanceLabel">
+     <property name="text">
+      <string>X: Inductance</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDoubleSpinBox" name="reactanceSpinBox">
+     <property name="decimals">
+      <number>6</number>
+     </property>
+     <property name="maximum">
+      <double>9999999.000000000000000</double>
+     </property>
+     <property name="suffix">
+      <string> Ω/km</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="susceptanceLabel">
+     <property name="text">
+      <string>S: Susceptance</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDoubleSpinBox" name="susceptanceSpinBox">
+     <property name="decimals">
+      <number>6</number>
+     </property>
+     <property name="maximum">
+      <double>9999999.000000000000000</double>
+     </property>
+     <property name="suffix">
+      <string> uS/Km</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="applyToProfilesCheckBox">
+     <property name="text">
+      <string>Apply to profiles</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="acceptButton">
+     <property name="text">
+      <string>Accept</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

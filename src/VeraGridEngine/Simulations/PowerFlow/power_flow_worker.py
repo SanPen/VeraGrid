@@ -14,8 +14,8 @@ from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOpt
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import NumericPowerFlowResults
 from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_basic_formulation import PfBasicFormulation
 from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_full_acdc_with_negative_poles import PfAcDcWithNegativePoles
-from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_generalized_formulation import PfGeneralizedFormulation
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.newton_raphson_fx import newton_raphson_fx
+from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions import split_bus_quantity
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.powell_fx import powell_fx
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.levenberg_marquadt_fx import levenberg_marquardt_fx
 from VeraGridEngine.Topology.simulation_indices import SimulationIndices
@@ -29,49 +29,6 @@ from VeraGridEngine.basic_structures import CxVec, Vec
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGridEngine.Compilers.circuit_to_data import VALID_OPF_RESULTS
-
-
-def __split_reactive_power_into_devices(nc: NumericalCircuit, Qbus: Vec, results: PowerFlowResults) -> None:
-    """
-    This function splits the reactive power of the power flow solution (nbus) into reactive power per device that
-    is able to control reactive power as an injection (generators, batteries, shunts)
-    :param nc: NumericalCircuit
-    :param Qbus: Array of nodal reactive power (nbus)
-    :param results: PowerFlowResults (values are written to it)
-    :return: Nothing, the results are set in the results object
-    """
-
-    # generation
-    bus_idx_gen = nc.generator_data.get_bus_indices()
-    gen_q_share = nc.generator_data.q_share / (nc.bus_data.q_shared_total[bus_idx_gen] + 1e-20)
-
-    # batteries
-    bus_idx_bat = nc.battery_data.get_bus_indices()
-    batt_q_share = nc.battery_data.q_share / (nc.bus_data.q_shared_total[bus_idx_bat] + 1e-20)
-
-    # shunts
-    bus_idx_sh = nc.shunt_data.get_bus_indices()
-    sh_q_share = nc.shunt_data.q_share / (nc.bus_data.q_shared_total[bus_idx_sh] + 1e-20)
-
-    # Fixed injection of reactive power
-    # Zip formula: S0 + np.conj(I0 + Y0 * Vm) * Vm
-    Vm = np.abs(results.voltage)
-    Qfix = nc.bus_data.q_fixed - (nc.bus_data.ii_fixed + nc.bus_data.b_fixed * Vm) * Vm
-
-    # the remaining Q to share is the total Q computed (Qbus) minus the part that we know is fixed
-    Qvar = Qbus - Qfix
-
-    # set the results
-    results.gen_q = Qvar[bus_idx_gen] * gen_q_share
-    results.battery_q = Qvar[bus_idx_bat] * batt_q_share
-    results.shunt_q = Qvar[bus_idx_sh] * sh_q_share
-
-    # For non-controlled generators, their Q is fixed based on power factor
-    # The sharing mechanism gives them 0 since their q_share = 0, so we must set their Q explicitly
-    _, idx_non_ctrl = nc.generator_data.get_controllable_and_not_controllable_indices()
-    if len(idx_non_ctrl) > 0:
-        # Only set for active generators
-        results.gen_q[idx_non_ctrl] = nc.generator_data.q[idx_non_ctrl] * nc.generator_data.active[idx_non_ctrl]
 
 
 def __solve_island_complete_support(nc: NumericalCircuit,
@@ -129,6 +86,7 @@ def __solve_island_complete_support(nc: NumericalCircuit,
                                            loading=np.zeros(nc.nbr, dtype=complex),
                                            losses=np.zeros(nc.nbr, dtype=complex),
                                            Pfp_vsc=np.zeros(nc.nvsc, dtype=float),
+                                           Pfn_vsc=np.zeros(nc.nvsc, dtype=float),
                                            St_vsc=np.zeros(nc.nvsc, dtype=complex),
                                            If_vsc=np.zeros(nc.nvsc, dtype=float),
                                            It_vsc=np.zeros(nc.nvsc, dtype=complex),
@@ -183,14 +141,14 @@ def __solve_island_complete_support(nc: NumericalCircuit,
             if solver_type == SolverType.LM:
 
                 problem = PfAcDcWithNegativePoles(V0=final_solution.V,
-                                                   S0=S0,
-                                                   I0=I0,
-                                                   Y0=Y0,
-                                                   Qmin=Qmin,
-                                                   Qmax=Qmax,
-                                                   nc=nc,
-                                                   options=options,
-                                                   logger=logger)
+                                                  S0=S0,
+                                                  I0=I0,
+                                                  Y0=-Y0,
+                                                  Qmin=Qmin,
+                                                  Qmax=Qmax,
+                                                  nc=nc,
+                                                  options=options,
+                                                  logger=logger)
 
                 solution = levenberg_marquardt_fx(problem=problem,
                                                   tol=options.tolerance,
@@ -201,14 +159,14 @@ def __solve_island_complete_support(nc: NumericalCircuit,
             elif solver_type == SolverType.NR:
 
                 problem = PfAcDcWithNegativePoles(V0=final_solution.V,
-                                                   S0=S0,
-                                                   I0=I0,
-                                                   Y0=Y0,
-                                                   Qmin=Qmin,
-                                                   Qmax=Qmax,
-                                                   nc=nc,
-                                                   options=options,
-                                                   logger=logger)
+                                                  S0=S0,
+                                                  I0=I0,
+                                                  Y0=-Y0,
+                                                  Qmin=Qmin,
+                                                  Qmax=Qmax,
+                                                  nc=nc,
+                                                  options=options,
+                                                  logger=logger)
 
                 solution = newton_raphson_fx(problem=problem,
                                              tol=options.tolerance,
@@ -220,14 +178,14 @@ def __solve_island_complete_support(nc: NumericalCircuit,
             elif solver_type == SolverType.PowellDogLeg:
 
                 problem = PfAcDcWithNegativePoles(V0=final_solution.V,
-                                                   S0=S0,
-                                                   I0=I0,
-                                                   Y0=Y0,
-                                                   Qmin=Qmin,
-                                                   Qmax=Qmax,
-                                                   nc=nc,
-                                                   options=options,
-                                                   logger=logger)
+                                                  S0=S0,
+                                                  I0=I0,
+                                                  Y0=-Y0,
+                                                  Qmin=Qmin,
+                                                  Qmax=Qmax,
+                                                  nc=nc,
+                                                  options=options,
+                                                  logger=logger)
 
                 solution = powell_fx(problem=problem,
                                      tol=options.tolerance,
@@ -371,6 +329,7 @@ def __solve_island_limited_support(island: NumericalCircuit,
                                            loading=np.zeros(island.nbr, dtype=complex),
                                            losses=np.zeros(island.nbr, dtype=complex),
                                            Pfp_vsc=np.zeros(island.nvsc, dtype=float),
+                                           Pfn_vsc=np.zeros(island.nvsc, dtype=float),
                                            St_vsc=np.zeros(island.nvsc, dtype=complex),
                                            If_vsc=np.zeros(island.nvsc, dtype=float),
                                            It_vsc=np.zeros(island.nvsc, dtype=complex),
@@ -972,7 +931,22 @@ def multi_island_pf_nc(nc: NumericalCircuit,
             results.voltage = nc.propagate_bus_result(results.voltage)
 
         # do the reactive power partition and store the values
-        __split_reactive_power_into_devices(nc=nc, Qbus=results.Sbus.imag, results=results)
+        results.gen_q, results.battery_q = split_bus_quantity(
+            Qbus=results.Sbus.imag,
+            gen_bus_idx=nc.generator_data.bus_idx,
+            Qmin_gen=nc.generator_data.qmin,
+            Qmax_gen=nc.generator_data.qmax,
+            gen_status=nc.generator_data.active,
+            is_controlling=nc.generator_data.controllable,
+            Q0_gen=nc.generator_data.q,
+            batt_bus_idx=nc.battery_data.bus_idx,
+            Qmin_batt=nc.battery_data.qmin,
+            Qmax_batt=nc.battery_data.qmax,
+            batt_status=nc.battery_data.active,
+            batt_is_controlling=nc.battery_data.controllable,
+            Q0_batt=nc.battery_data.q,
+            atol=1e-12,
+        )
 
         return results
 
@@ -991,7 +965,43 @@ def multi_island_pf_nc(nc: NumericalCircuit,
             results.voltage = nc.propagate_bus_result(results.voltage)
 
         # do the reactive power partition and store the values
-        __split_reactive_power_into_devices(nc=nc, Qbus=results.Sbus.imag, results=results)
+        results.gen_q, results.battery_q = split_bus_quantity(
+            Qbus=results.Sbus.imag,
+            gen_bus_idx=nc.generator_data.bus_idx,
+            Qmin_gen=nc.generator_data.qmin,
+            Qmax_gen=nc.generator_data.qmax,
+            gen_status=nc.generator_data.active,
+            is_controlling=nc.generator_data.controllable,
+            Q0_gen=nc.generator_data.q,
+            batt_bus_idx=nc.battery_data.bus_idx,
+            Qmin_batt=nc.battery_data.qmin,
+            Qmax_batt=nc.battery_data.qmax,
+            batt_status=nc.battery_data.active,
+            batt_is_controlling=nc.battery_data.controllable,
+            Q0_batt=nc.battery_data.q,
+            atol=1e-12,
+        )
+
+        if options.distributed_slack:
+            results.gen_p, results.battery_p = split_bus_quantity(
+                Qbus=results.Sbus.real,
+                gen_bus_idx=nc.generator_data.bus_idx,
+                Qmin_gen=nc.generator_data.pmin,
+                Qmax_gen=nc.generator_data.pmax,
+                gen_status=nc.generator_data.active,
+                is_controlling=nc.generator_data.active,
+                Q0_gen=nc.generator_data.p,
+                batt_bus_idx=nc.battery_data.bus_idx,
+                Qmin_batt=nc.battery_data.pmin,
+                Qmax_batt=nc.battery_data.pmax,
+                batt_status=nc.battery_data.active,
+                batt_is_controlling=nc.battery_data.active,
+                Q0_batt=nc.battery_data.p,
+                atol=1e-12,
+            )
+        else:
+            results.gen_p = nc.generator_data.p
+            results.battery_p = nc.battery_data.p
 
         return results
 
@@ -1028,7 +1038,8 @@ def multi_island_pf(multi_circuit: MultiCircuit,
         control_taps_phase=options.control_taps_phase,
         control_remote_voltage=options.control_remote_voltage,
         logger=logger,
-        fill_three_phase=False  # This worker is only for positive sequence
+        fill_three_phase=False,  # This worker is only for positive sequence
+        consider_grounded_buses=len(multi_circuit.vsc_devices) > 0
     )
 
     res = multi_island_pf_nc(nc=nc, options=options, logger=logger)

@@ -5,16 +5,12 @@
 
 from __future__ import annotations
 from typing import TYPE_CHECKING, Union
-import numpy as np
-from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon, QPixmap
-from PySide6.QtWidgets import QMenu, QLabel, QDoubleSpinBox, QPushButton, QVBoxLayout, QComboBox, QDialog
-from VeraGrid.Gui.gui_functions import get_list_model, add_menu_entry
-from VeraGrid.Gui.messages import warning_msg
+from PySide6.QtWidgets import QMenu
+from VeraGrid.Gui.gui_functions import add_menu_entry
 from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import BarTerminalItem, RoundTerminalItem
-from VeraGrid.Gui.DeviceEditors.DcLineEditor.dc_line_editor import DcLineEditor
+from VeraGrid.Gui.DeviceEditors.DcLineEditor.dc_line_device_editor import DcLineDeviceEditorDialog
 from VeraGridEngine.Devices.Branches.dc_line import DcLine
-from VeraGridEngine.enumerations import DeviceType
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template import LineGraphicTemplateItem
 from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
 from VeraGridEngine.enumerations import DynamicSimulationMode
@@ -53,6 +49,18 @@ class DcLineGraphicItem(LineGraphicTemplateItem):
     @property
     def api_object(self) -> DcLine:
         return self._api_object
+
+    def open_device_editor(self) -> bool:
+        """
+        Open the DC-line editor.
+
+        :return: ``True`` when the editor was opened.
+        """
+        dlg = DcLineDeviceEditorDialog(api_object=self.api_object, circuit=self.editor.circuit)
+        if dlg.exec():
+            return True
+        else:
+            return True
 
     def contextMenuEvent(self, event):
         """
@@ -139,35 +147,23 @@ class DcLineGraphicItem(LineGraphicTemplateItem):
         :return:
         """
         if self.api_object is not None:
-            if self.api_object.device_type in [DeviceType.Transformer2WDevice, DeviceType.LineDevice]:
-                # trigger the editor
-                self.edit()
-            elif self.api_object.device_type is DeviceType.SwitchDevice:
-                # change state
-                self.enable_disable_toggle()
+            self.open_device_editor()
+        else:
+            pass
 
     def edit(self):
         """
         Open the appropriate editor dialogue
         :return:
         """
-        Sbase = self.editor.circuit.Sbase
-        templates = self.editor.circuit.underground_cable_types + self.editor.circuit.overhead_line_types
-        current_template = self.api_object.template
-        dlg = DcLineEditor(self.api_object, Sbase, templates, current_template)
-        if dlg.exec():
-            pass
+        self.open_device_editor()
 
     def add_to_templates(self):
         """
         Open the appropriate editor dialogue
         :return:
         """
-        Sbase = self.editor.circuit.Sbase
-
-        dlg = DcLineEditor(branch=self.api_object, Sbase=Sbase)
-        if dlg.exec():
-            pass
+        self.open_device_editor()
 
     def edit_dynamic_rms(self):
         """

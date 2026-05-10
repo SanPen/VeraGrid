@@ -341,12 +341,20 @@ class MultiVerse:
         """
         Persist edits made to the currently active scenario.
 
-        - **Root**: no-op — ``root.data`` is the authoritative circuit and is edited in-place.
+        - **Root**: no structural delta is computed because ``root.data`` is authoritative
+          and edited in-place. We only synchronize scenario-owned diagrams.
         - **Non-root**: computes ``differentiate_circuits(current_model, parent_composed)``
           and stores the result back into ``node.data``, replacing the previous delta.
           The scenario name is preserved on the new delta.
         """
         if self._current_node is None:
+            return
+
+        if self._current_node.parent is None:
+            # Keep root node diagram snapshots aligned with in-place edits without running
+            # the expensive root storage/diff path.
+            self._current_node.diagrams = copy_diagrams(self._current_model.diagrams)
+            self._base_model = self._current_node.circuit
             return
 
         self._store_composed_node_data(node=self._current_node, composed=self._current_model)
@@ -451,7 +459,8 @@ class MultiVerse:
         node_diagrams: list[Any] | None = None
         if parent_id is not None:
             parent = self.get_node(parent_id)
-            node_diagrams = copy_diagrams(parent.diagrams)
+            # ScenarioNode performs the deep copy; avoid copying twice here.
+            node_diagrams = parent.diagrams
 
         node: ScenarioNode = ScenarioNode(
             node_id=self._generate_id(),

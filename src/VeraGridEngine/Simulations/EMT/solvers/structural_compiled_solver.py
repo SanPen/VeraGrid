@@ -267,6 +267,70 @@ def _build_fill_full_parameter_signature() -> Any:
     return types.void(float64_vector_tpe, float64_vector_tpe, float64_vector_tpe)
 
 
+def _dense_lu_bundle_solve(bundle: DenseSolveBundle, rhs: Vec) -> Vec:
+    """
+    Solve one dense LU linear system.
+
+    :param bundle: Dense LU bundle ``(factorization, matrix)``.
+    :param rhs: Right-hand side vector.
+    :return: Solution vector.
+    """
+    return lu_solve(bundle[0], rhs)
+
+
+def _dense_lu_bundle_fallback(bundle: DenseSolveBundle, rhs: Vec) -> Vec:
+    """
+    Solve one dense fallback least-squares system.
+
+    :param bundle: Dense LU bundle ``(factorization, matrix)``.
+    :param rhs: Right-hand side vector.
+    :return: Fallback solution vector.
+    """
+    return dense_lstsq_fallback(bundle[1], rhs)
+
+
+def _dense_lu_bundle_matrix(bundle: DenseSolveBundle) -> np.ndarray:
+    """
+    Return the dense matrix stored in one LU bundle.
+
+    :param bundle: Dense LU bundle ``(factorization, matrix)``.
+    :return: Dense Jacobian matrix.
+    """
+    return bundle[1]
+
+
+def _sparse_factor_manager_solve(factor_manager: "StructuralCompiledSparseFactorizationManager", rhs: Vec) -> Vec:
+    """
+    Solve one sparse linear system through the compiled sparse factor manager.
+
+    :param factor_manager: Sparse factorization manager.
+    :param rhs: Right-hand side vector.
+    :return: Solution vector.
+    """
+    return factor_manager.solve(rhs)
+
+
+def _sparse_factor_manager_fallback(factor_manager: "StructuralCompiledSparseFactorizationManager", rhs: Vec) -> Vec:
+    """
+    Solve one sparse fallback least-squares system.
+
+    :param factor_manager: Sparse factorization manager.
+    :param rhs: Right-hand side vector.
+    :return: Fallback solution vector.
+    """
+    return factor_manager.solve_fallback(rhs)
+
+
+def _sparse_factor_manager_matrix(factor_manager: "StructuralCompiledSparseFactorizationManager") -> csc_matrix:
+    """
+    Return the active sparse Jacobian matrix held by the factor manager.
+
+    :param factor_manager: Sparse factorization manager.
+    :return: Active sparse Jacobian matrix.
+    """
+    return factor_manager.get_active_matrix()
+
+
 def _build_permute_csc_signature() -> Any:
     """
     Return the eager signature of the CSC permutation helper.
@@ -358,7 +422,7 @@ def _canonicalize_symbolic_node(
             if runtime_uid in parameter_slots:
                 pass
             else:
-                parameter_name: str = getattr(node, 'name', f'uid_{runtime_uid}')
+                parameter_name: str = node.name
                 parameter_slots[runtime_uid] = f"__PARAM_{parameter_name}_{runtime_uid}__"
 
             return parameter_slots[runtime_uid]
@@ -1358,30 +1422,66 @@ def _compile_master_jacobian_kernel(
     """
     _unused = cache_token
 
-    def master_jacobian(
-            states: Vec,
-            seed_matrix: Float64Matrix,
-            params: Vec,
-            history: Vec,
-            d_history: Vec,
-            h: float,
-            history2: Vec,
-            data: Vec,
-            color_ptr: Int32Vector,
-            col_ptr: Int32Vector,
-            row_idx: Int32Vector,
-            data_idx: Int32Vector,
-            work_jvp: Float64Matrix,
-    ) -> None:
+    return StructuralCompiledMasterJacobianDispatcher(ad_kernel=ad_kernel, n_colors=n_colors)
+
+
+class StructuralCompiledMasterJacobianDispatcher:
+    """
+    Callable dispatcher that evaluates structural AD colors into CSC storage.
+    """
+
+    __slots__ = ("_ad_kernel", "_n_colors")
+
+    def __init__(self, ad_kernel: Callable[..., Any], n_colors: int) -> None:
+        """
+        Store the generic AD kernel and the number of graph colors.
+
+        :param ad_kernel: Generic AD kernel reused across colors.
+        :param n_colors: Number of graph colors.
+        :return: None.
+        """
+        self._ad_kernel: Callable[..., Any] = ad_kernel
+        self._n_colors: int = n_colors
+
+    def __call__(self,
+                 states: Vec,
+                 seed_matrix: Float64Matrix,
+                 params: Vec,
+                 history: Vec,
+                 d_history: Vec,
+                 h: float,
+                 history2: Vec,
+                 data: Vec,
+                 color_ptr: Int32Vector,
+                 col_ptr: Int32Vector,
+                 row_idx: Int32Vector,
+                 data_idx: Int32Vector,
+                 work_jvp: Float64Matrix) -> None:
+        """
+        Evaluate one full structural AD sweep and scatter it into CSC storage.
+
+        :param states: Current Newton iterate.
+        :param seed_matrix: Coloring seed matrix.
+        :param params: Full parameter vector.
+        :param history: Previous accepted state.
+        :param d_history: Previous derivative vector.
+        :param h: Effective time step.
+        :param history2: Secondary history vector.
+        :param data: CSC numeric data buffer.
+        :param color_ptr: Color-to-column pointer array.
+        :param col_ptr: Column-to-scatter pointer array.
+        :param row_idx: Row indices used by the scatter map.
+        :param data_idx: CSC data positions used by the scatter map.
+        :param work_jvp: Reusable JVP work buffer.
+        :return: None.
+        """
         color_index: int = 0
 
-        while color_index < n_colors:
+        while color_index < self._n_colors:
             local_jvp: Float64Vector = work_jvp[color_index]
-            ad_kernel(states, seed_matrix[color_index], params, history, d_history, h, local_jvp, history2)
+            self._ad_kernel(states, seed_matrix[color_index], params, history, d_history, h, local_jvp, history2)
             _scatter_color_jvp_to_csc_data(local_jvp, data, color_ptr, col_ptr, row_idx, data_idx, color_index)
             color_index += 1
-
-    return master_jacobian
 
 
 class StructuralCompiledResidualAssembler:
@@ -2672,20 +2772,20 @@ class StructuralCompiledSolver:
 
         if diagnostics_enabled:
             dense_solve = with_newton_diagnostics(
-                lambda bundle, rhs: lu_solve(bundle[0], rhs),
-                fallback_solve=lambda bundle, rhs: dense_lstsq_fallback(bundle[1], rhs),
+                _dense_lu_bundle_solve,
+                fallback_solve=_dense_lu_bundle_fallback,
                 collector=trace_collector,
                 config=diag_cfg,
                 solver_name="dense_lu",
-                matrix_getter=lambda bundle: bundle[1],
+                matrix_getter=_dense_lu_bundle_matrix,
             )
             sparse_solve = with_newton_diagnostics(
-                lambda factor_manager, rhs: factor_manager.solve(rhs),
-                fallback_solve=lambda factor_manager, rhs: factor_manager.solve_fallback(rhs),
+                _sparse_factor_manager_solve,
+                fallback_solve=_sparse_factor_manager_fallback,
                 collector=trace_collector,
                 config=diag_cfg,
                 solver_name="superlu",
-                matrix_getter=lambda factor_manager: factor_manager.get_active_matrix(),
+                matrix_getter=_sparse_factor_manager_matrix,
             )
         else:
             pass

@@ -14,13 +14,13 @@ from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import EmtProb
 from VeraGridEngine.Simulations.EMT.solvers.jit_symbolic_solver import BoundaryUpdateWrapper, JitSymbolicSolver
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowOptions
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver_3ph import PowerFlowDriver3Ph
-from VeraGridEngine.Templates.Emt.bus_emt_template import get_bus_emt_template
+from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_emt_template
 from VeraGridEngine.Templates.Emt.dc_line_emt_template import get_dc_line_emt_template
 from VeraGridEngine.Templates.Emt.dc_load_emt_template import get_dc_load_emt_template
 from VeraGridEngine.Templates.Emt.converter_emt_template import get_emt_ideal_converter
 from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template
 from VeraGridEngine.Templates.Emt.valve_emt_template import get_valve_emt_template
-from VeraGridEngine.Templates.templates_common_functions import set_emt_model
+from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_emt_model
 from VeraGridEngine.Utils.procedural_logic import build_boundary_updater_from_block
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var
@@ -853,7 +853,12 @@ def _build_standalone_valve_case(valve_tpe: ValveEmtType) -> Tuple[GenericEmtPro
     )
     root_block.unify_blocks()
 
-    problem = GenericEmtProblem(sys_block=root_block, glob_time=vf.add_var(f"t_{block_name}"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict(root_block.parameters)
+    problem = GenericEmtProblem(
+        sys_block=root_block,
+        glob_time=vf.add_var(f"t_{block_name}"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
     gate_idx = -1
     mode_idx = -1
 
@@ -984,7 +989,12 @@ def test_igbt_valve_uses_antiparallel_path_when_reverse_biased() -> None:
     block = templ.block
     block.unify_blocks()
 
-    problem: GenericEmtProblem = GenericEmtProblem(sys_block=block, glob_time=vf.add_var("t_glob_valve_logic"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+    problem: GenericEmtProblem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=vf.add_var("t_glob_valve_logic"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
     updater = build_boundary_updater_from_block(problem)
 
     assert updater is not None
@@ -1021,7 +1031,12 @@ def test_thyristor_valve_latches_after_gate_release_until_current_extinction() -
     block = templ.block
     block.unify_blocks()
 
-    problem: GenericEmtProblem = GenericEmtProblem(sys_block=block, glob_time=vf.add_var("t_glob_thyristor_logic"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+    problem: GenericEmtProblem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=vf.add_var("t_glob_thyristor_logic"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
     updater = build_boundary_updater_from_block(problem)
 
     assert updater is not None

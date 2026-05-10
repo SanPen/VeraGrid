@@ -6,11 +6,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Union
 from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtWidgets import QMenu
+from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
 from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import BarTerminalItem, RoundTerminalItem
 from VeraGrid.Gui.gui_functions import add_menu_entry
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template import LineGraphicTemplateItem
 from VeraGridEngine.Devices.Branches.switch import Switch
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
 from VeraGridEngine.enumerations import DynamicSimulationMode
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
@@ -117,20 +117,20 @@ class SwitchGraphicItem(LineGraphicTemplateItem):
         else:
             pass
 
-    def edit_dynamic_rms(self):
+    def edit_dynamic_rms(self) -> None:
         """
-        Open the unified dynamic editor workspace for this generator.
-        """
+        Open the unified dynamic editor workspace for this switch in RMS mode.
 
-        open_dynamic_editor(api_object=self.api_object,
-                            circuit=self.editor.circuit,
+        :return: None.
+        """
+        open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit,
                             preferred_mode=DynamicSimulationMode.RMS)
 
-    def edit_dynamic_emt(self):
+    def edit_dynamic_emt(self) -> None:
         """
-        Open the unified dynamic editor workspace for this generator.
-        """
+        Open the unified dynamic editor workspace for this switch in EMT mode.
 
-        open_dynamic_editor(api_object=self.api_object,
-                            circuit=self.editor.circuit,
+        :return: None.
+        """
+        open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit,
                             preferred_mode=DynamicSimulationMode.EMT)

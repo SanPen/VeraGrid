@@ -525,6 +525,9 @@ def convert_vsc_devices_to_cgmes(multicircuit_model: MultiCircuit,
             gc_vsc=gc_vsc,
             p_set=p_set,
             v_set=v_set,
+            target_upcc_base_voltage=(gc_vsc.bus_to.Vnom
+                                      if gc_vsc.bus_to is not None and gc_vsc.bus_to.Vnom > 0.0
+                                      else None),
             ver=ver,
             logger=logger
         )
@@ -2785,6 +2788,9 @@ def convert_hvdc_line_to_cgmes(multicircuit_model: MultiCircuit,
             gc_vsc=None,
             p_set=hvdc_line.Pset,
             v_set=hvdc_line.Vset_f,
+            target_upcc_base_voltage=(hvdc_line.bus_from.Vnom
+                                      if hvdc_line.bus_from is not None and hvdc_line.bus_from.Vnom > 0.0
+                                      else None),
             ver=ver,
             logger=logger
         )
@@ -2828,6 +2834,9 @@ def convert_hvdc_line_to_cgmes(multicircuit_model: MultiCircuit,
             gc_vsc=None,
             p_set=-hvdc_line.Pset,
             v_set=hvdc_line.Vset_t,
+            target_upcc_base_voltage=(hvdc_line.bus_to.Vnom
+                                      if hvdc_line.bus_to is not None and hvdc_line.bus_to.Vnom > 0.0
+                                      else None),
             ver=ver,
             logger=logger
         )

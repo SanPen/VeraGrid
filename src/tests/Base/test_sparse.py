@@ -70,9 +70,6 @@ def test_stack_4():
     # print('Stacking pass:', stack_test)
     assert stack_test
 
-    return True
-
-
 def test_dense_to_sparse() -> None:
     
     for file_name in ['IEEE14_types_test.gridcal', '1354 Pegase.xlsx']:

@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (QGraphicsEllipseItem, QMenu,
                                QGraphicsSceneContextMenuEvent,
                                QGraphicsSceneMouseEvent)
 from VeraGrid.Gui.gui_functions import add_menu_entry
+from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
 from VeraGrid.Gui.Diagrams.MapWidget.Substation.node_template import NodeTemplate
 from VeraGridEngine.enumerations import DeviceType
 from VeraGridEngine.Devices.types import INJECTION_DEVICE_TYPES
@@ -208,6 +209,17 @@ class MapInjectionTemplateGraphicItem(NodeTemplate, QGraphicsEllipseItem):
         # plot the profiles
         self.api_object.plot_profiles(time=ts)
 
+    def open_device_editor(self) -> bool:
+        """
+        Open the default map-injection editor.
+
+        :return: ``True`` when the editor was opened.
+        """
+        circuit = self._editor.circuit
+        dialog = TemplateDeviceEditor(api_object=self.api_object, circuit=circuit)
+        dialog.exec()
+        return True
+
 
     def mouseDoubleClickEvent(self, event, /):
         """
@@ -217,6 +229,7 @@ class MapInjectionTemplateGraphicItem(NodeTemplate, QGraphicsEllipseItem):
         """
         super().mouseDoubleClickEvent(event)
         self.set_api_object_color()
+        self.open_device_editor()
 
     def get_base_context_menu(self) -> QMenu:
         """
@@ -229,6 +242,11 @@ class MapInjectionTemplateGraphicItem(NodeTemplate, QGraphicsEllipseItem):
                        text="Plot profiles",
                        function_ptr=self.plot,
                        icon_path=":/Icons/icons/plot.png")
+
+        add_menu_entry(menu=menu,
+                       text="Editor",
+                       function_ptr=self.open_device_editor,
+                       icon_path=":/Icons/icons/edit.png")
 
         add_menu_entry(menu=menu,
                        text="Consolidate coordinates",
@@ -288,4 +306,3 @@ class MapInjectionTemplateGraphicItem(NodeTemplate, QGraphicsEllipseItem):
         self.api_object.latitude = lat
         self.api_object.longitude = long
         self.editor.gui.show_info_toast("Coordinates consolidated!")
-

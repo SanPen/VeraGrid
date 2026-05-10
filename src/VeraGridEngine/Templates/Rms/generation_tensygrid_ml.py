@@ -10,8 +10,8 @@ import math
 from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Utils.Symbolic.block import (Block, find_name_in_block)
-from VeraGridEngine.Templates.templates_common_functions import (tf_to_block, tf_to_diffblock_with_output,
-                                                                 tf_to_block_with_states, to_implicit)
+from VeraGridEngine.Utils.Symbolic.block_helpers import tf_to_block, tf_to_diffblock_with_output, \
+    tf_to_block_with_states, to_implicit
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
 import VeraGridEngine.Utils.Symbolic.symbolic_ml as sym_ml

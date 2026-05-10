@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from __future__ import annotations
+import copy
 from typing import Dict, Any, List
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
@@ -39,7 +40,7 @@ def symbolic_objects_to_dict(obj_dict: Dict[int, Var | Const | Var]) -> List[Dic
                             "uid": expr.uid})
 
         elif isinstance(expr, Var):
-
+            shared = expr.shared_ref
             if expr.base_var is not None:
                 if type(expr.ref) == str:
                     lst.append({
@@ -47,7 +48,9 @@ def symbolic_objects_to_dict(obj_dict: Dict[int, Var | Const | Var]) -> List[Dic
                         "name": expr.name,
                         "uid": expr.uid,
                         "base_var": expr.base_var.uid,
-                        "ref": expr.ref if expr.ref is not None else None,
+                        "shared_ref": {"name": shared.name if shared is not None else None,
+                                "uid": shared.uid if shared is not None else None},
+                        "ref": expr.ref.value if expr.ref is not None else None,
                     })
                 else:
                     lst.append({
@@ -55,6 +58,8 @@ def symbolic_objects_to_dict(obj_dict: Dict[int, Var | Const | Var]) -> List[Dic
                         "name": expr.name,
                         "uid": expr.uid,
                         "base_var": expr.base_var.uid,
+                        "shared_ref": {"name": shared.name if shared is not None else None,
+                                "uid": shared.uid if shared is not None else None},
                         "ref": expr.ref.value if expr.ref is not None else None,
                     })
 
@@ -67,13 +72,19 @@ def symbolic_objects_to_dict(obj_dict: Dict[int, Var | Const | Var]) -> List[Dic
                                 "name": expr.name,
                                 "uid": expr.uid,
                                 "base_var": None,
-                                "ref": expr.ref if expr.ref is not None else None})
+                                "shared_ref": {"name": shared.name if shared is not None else None,
+                                                "uid": shared.uid if shared is not None else None},
+                                "ref": expr.ref.value if expr.ref is not None else None,
+                                })
                 else:
                     lst.append({"type": "Var",
                                 "name": expr.name,
                                 "uid": expr.uid,
                                 "base_var": None,
-                                "ref": expr.ref.value if expr.ref is not None else None})
+                                "shared_ref": {"name": shared.name if shared is not None else None,
+                                                "uid": shared.uid if shared is not None else None},
+                                "ref": expr.ref.value if expr.ref is not None else None,
+                                })
 
 
 
@@ -725,6 +736,7 @@ def duplicate_var(var_factory: VarFactory, old_to_new_var: Dict[int, Var], var: 
                     name=var.name,
                     reference=var.ref,
                     network_conn=var.network_conn,
+                    shared_reference=var.shared_ref,
                     diff_var=None,
                     base_var=base_var_new
                 )
@@ -736,8 +748,7 @@ def duplicate_var(var_factory: VarFactory, old_to_new_var: Dict[int, Var], var: 
                     name=var.name,
                     reference=var.ref,
                     network_conn=var.network_conn,
-                    # diff_var=None,
-                    # base_var=base_var_new
+                    shared_reference=var.shared_ref,
                 )
 
             old_to_new_var[var.uid] = new_var
@@ -946,7 +957,7 @@ def _duplicate_block(block: Block,
     :return: Duplicated block.
     """
     old_vars_by_uid: Dict[int, Var] = _collect_block_vars_by_uid(block)
-    old_var: Var
+
     for old_var in old_vars_by_uid.values():
         duplicate_var(var_factory, old_to_new_var, old_var)
 
@@ -1070,7 +1081,7 @@ def _duplicate_block(block: Block,
     else:
         new_procedural_logic = list()
 
-    return Block(
+    new_block = Block(
         state_vars=new_state_vars,
         state_eqs=new_state_eqs,
         algebraic_vars=new_algebraic_vars,
@@ -1093,6 +1104,16 @@ def _duplicate_block(block: Block,
         api_obj_mapping=new_api_obj_mapping,
         name=block.name,
     )
+
+    extra_key: str
+    extra_value: Any
+    for extra_key, extra_value in block.__dict__.items():
+        if extra_key in new_block.__dict__:
+            pass
+        else:
+            setattr(new_block, extra_key, copy.deepcopy(extra_value))
+
+    return new_block
 
 
 def duplicate_block(block: Block, var_factory: VarFactory | None) -> Block:

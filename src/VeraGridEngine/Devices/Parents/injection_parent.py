@@ -9,7 +9,7 @@ import numpy as np
 from VeraGridEngine.Devices.Parents.dynamic_parent import DynamicDevice
 from VeraGridEngine.Devices.Associations.association import Associations
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.enumerations import BuildStatus, DeviceType, SubObjectType, ShuntConnectionType
+from VeraGridEngine.enumerations import BuildStatus, DeviceType, SubObjectType, ShuntConnectionType, PrpCat
 from VeraGridEngine.basic_structures import CxVec
 from VeraGridEngine.Devices.Profiles import ProfileBool, ProfileFloat
 from VeraGridEngine.Devices.Aggregation.facility import Facility
@@ -50,34 +50,133 @@ class InjectionParent(DynamicDevice):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='bus', units='', tpe=DeviceType.BusDevice, definition='Connection bus', editable=False),
-        GCProp(key='active', units='', tpe=bool, definition='Is the load active?', profile_name='active_prof'),
-        GCProp(key='color', units='', tpe=str, definition='Color to paint the element in the map diagram',
-               is_color=True),
-        GCProp(key='mttf', units='h', tpe=float, definition='Mean time to failure'),
-        GCProp(key='mttr', units='h', tpe=float, definition='Mean time to recovery'),
-        GCProp(key='capex', units='e/MW', tpe=float,
-               definition='Cost of investment. Used in expansion planning.'),
-        GCProp(key='opex', units='e/MWh', tpe=float, definition='Cost of operation. Used in expansion planning.'),
-        GCProp(key='Cost', units='e/MWh', tpe=float, definition='Cost of not served energy. Used in OPF.',
-               profile_name='Cost_prof'),
-        GCProp(key='facility', units='', tpe=DeviceType.FacilityDevice,
-               definition='Facility where this is located', editable=True),
-        GCProp(key='technologies', units='p.u.', tpe=SubObjectType.Associations,
-               definition='Technologies associations to injections', display=False),
-        GCProp(key='scalable', units='', tpe=bool, definition='Is the injection scalable?'),
-        GCProp(key='shift_key', units='', tpe=float, definition='Shift key for net transfer capacity',
-               profile_name="shift_key_prof"),
-        GCProp(key='longitude', units='deg', tpe=float,
-               definition='longitude of the injection.', profile_name=''),
-        GCProp(key='latitude', units='deg', tpe=float,
-               definition='latitude of the injection.', profile_name=''),
-        GCProp(key='use_kw', units='', tpe=bool, definition='Consider the injections in kW and kVAr?'),
-        GCProp(key='conn', units='', tpe=ShuntConnectionType,
-               definition='Connection type for 3-phase studies'),
+        GCProp(
+            prop_name='bus',
+            units='',
+            tpe=DeviceType.BusDevice,
+            definition='Connection bus',
+            editable=False,
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='active',
+            units='',
+            tpe=bool,
+            definition='Is the load active?',
+            profile_name='active_prof',
+            cat=[PrpCat.PF, PrpCat.OPF, PrpCat.CON],
+        ),
+        GCProp(
+            prop_name='color',
+            units='',
+            tpe=str,
+            definition='Color to paint the element in the map diagram',
+            is_color=True,
+        ),
+        GCProp(
+            prop_name='mttf',
+            units='h',
+            tpe=float,
+            definition='Mean time to failure',
+            cat=[PrpCat.REL],
+        ),
+        GCProp(
+            prop_name='mttr',
+            units='h',
+            tpe=float,
+            definition='Mean time to recovery',
+            cat=[PrpCat.REL],
+        ),
+        GCProp(
+            prop_name='capex',
+            units='e/MW',
+            tpe=float,
+            definition='Cost of investment. Used in expansion planning.',
+            cat=[PrpCat.INV],
+        ),
+        GCProp(
+            prop_name='opex',
+            units='e/MWh',
+            tpe=float,
+            definition='Cost of operation. Used in expansion planning.',
+            cat=[PrpCat.INV],
+        ),
+        GCProp(
+            prop_name='Cost',
+            units='e/MWh',
+            tpe=float,
+            definition='Cost of not served energy. Used in OPF.',
+            profile_name='Cost_prof',
+            cat=[PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='facility',
+            units='',
+            tpe=DeviceType.FacilityDevice,
+            definition='Facility where this is located',
+            editable=True,
+        ),
+        GCProp(
+            prop_name='technologies',
+            units='p.u.',
+            tpe=SubObjectType.Associations,
+            definition='Technologies associations to injections',
+            display=False,
+            cat=[PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='scalable',
+            units='',
+            tpe=bool,
+            definition='Is the injection scalable?',
+            cat=[PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='shift_key',
+            units='',
+            tpe=float,
+            definition='Shift key for net transfer capacity',
+            profile_name="shift_key_prof",
+            cat=[PrpCat.NTC],
+        ),
+        GCProp(
+            prop_name='longitude',
+            units='deg',
+            tpe=float,
+            definition='longitude of the injection.',
+            profile_name='',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='latitude',
+            units='deg',
+            tpe=float,
+            definition='latitude of the injection.',
+            profile_name='',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='use_kw',
+            units='',
+            tpe=bool,
+            definition='Consider the injections in kW and kVAr?',
+            cat=[PrpCat.PF, PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='conn',
+            units='',
+            tpe=ShuntConnectionType,
+            definition='Connection type for 3-phase studies',
+            cat=[PrpCat.SC, PrpCat.PF3],
+        ),
 
-        GCProp(key='bus_pos', units='', tpe=int, definition='Aid to locate devices on a busbar',
-               display=False),
+        GCProp(
+            prop_name='bus_pos',
+            units='',
+            tpe=int,
+            definition='Aid to locate devices on a busbar',
+            display=False,
+        ),
     )
 
     def __init__(self,
@@ -316,6 +415,15 @@ class InjectionParent(DynamicDevice):
         :return: Bus
         """
         return self.technologies.to_list()
+
+    def get_first_technology(self) -> Technology | None:
+        """
+        Get the first technology available
+        :return: Technology
+        """
+        for key, association in self.technologies.data.items():
+            return association.api_object
+        return None
 
     def get_bus_pos(self, bus: Bus | None = None) -> int:
         """

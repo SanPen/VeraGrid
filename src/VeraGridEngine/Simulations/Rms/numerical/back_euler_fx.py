@@ -214,7 +214,6 @@ class BackEulerImplicitIntegration:
 
                         residual = np.linalg.norm(rhs, np.inf)
                         substep_converged = residual < tol
-                        Jf = self._jacobian_implicit(x_new, dx, h_eff)
 
                         if step_idx == 0 and is_first_local_step:
                             if substep_converged:
@@ -230,11 +229,14 @@ class BackEulerImplicitIntegration:
                                 for i in non_zero_indexes:
                                     eq = all_eq[i]
                                     print(f"eq {eq} with error {rhs[i]}")
+                                exit()
+                                # Continue with Newton iterations after reporting initialization residual.
 
 
                         if not substep_converged:
                             solved = False
                             linear_start = time.time()
+                            Jf = self._jacobian_implicit(x_new, dx, h_eff)
                             delta = sp.linalg.spsolve(Jf, -rhs)
                             linear_end = time.time()
                             timings["linear_solver_time"] += linear_end - linear_start

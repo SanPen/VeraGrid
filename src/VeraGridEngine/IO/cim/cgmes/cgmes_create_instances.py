@@ -731,6 +731,7 @@ def create_cgmes_vsc_converter(cgmes_model: CgmesCircuit,
                                gc_vsc: Union[gcdev.VSC, None],
                                p_set: float,
                                v_set: float,
+                               target_upcc_base_voltage: float | None,
                                ver: CGMESVersions,
                                logger: DataLogger) -> Tuple[CGMES_VS_CONVERTER, CGMES_DC_CONVERTER_UNIT]:
     """
@@ -742,6 +743,8 @@ def create_cgmes_vsc_converter(cgmes_model: CgmesCircuit,
     :param p_set: power set point
     :param v_set: voltage set point, only used if gc_vsc is None,
                   otherwise the set point is from gc_vsc.vset
+    :param target_upcc_base_voltage: AC-side base voltage in kV used to export
+                                     targetUpcc in CGMES engineering units.
     :param ver:
     :param logger: DataLogger
     :return: VsConverter and DCConverterUnit objects
@@ -772,6 +775,11 @@ def create_cgmes_vsc_converter(cgmes_model: CgmesCircuit,
         vs_converter.name = f'VSC_{i + 1}'
         vs_converter.description = f'VSC_{i + 1}'
         targetUpcc = v_set
+
+    if target_upcc_base_voltage is not None and target_upcc_base_voltage > 0.0:
+        targetUpcc = float(targetUpcc) * float(target_upcc_base_voltage)
+    else:
+        targetUpcc = float(targetUpcc)
 
     # EQ
     vs_converter.baseS = 9999

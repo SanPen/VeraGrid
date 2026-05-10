@@ -14,12 +14,11 @@ from enum import EnumMeta
 from VeraGrid.Gui.gui_functions import (IntDelegate, ComboDelegate, TextDelegate, FloatDelegate, ColorPickerDelegate,
                                         ComplexDelegate, LineLocationsDelegate, DateTimeDelegate)
 from VeraGrid.Gui.wrappable_table_model import WrappableTableModel
-from VeraGridEngine import RmsModelTemplate
 from VeraGridEngine.Devices import Bus, ContingencyGroup
 from VeraGridEngine.Devices.Parents.editable_device import GCProp, GCPROP_TYPES
-from VeraGridEngine.enumerations import DeviceType
 from VeraGridEngine.Devices.Branches.line_locations import LineLocations
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
+from VeraGridEngine.enumerations import PrpCat
 
 
 class ObjectsModel(WrappableTableModel):
@@ -35,7 +34,8 @@ class ObjectsModel(WrappableTableModel):
                  editable=False,
                  transposed=False,
                  check_unique: Union[None, List[str]] = None,
-                 dictionary_of_lists: Union[None, Dict[Any, List[ALL_DEV_TYPES]]] = None):
+                 dictionary_of_lists: Union[None, Dict[Any, List[ALL_DEV_TYPES]]] = None,
+                 properties_filter: PrpCat = PrpCat.All):
         """
 
         :param objects: list of objects associated to the editor
@@ -64,14 +64,25 @@ class ObjectsModel(WrappableTableModel):
 
         for p in property_list:
             if p.display:
-                self.property_list.append(p)
-                self.attributes.append(p.name)
-                self.attribute_types.append(p.tpe)
-                self.units.append(p.units)
-                self.tips.append(p.definition)
+                if properties_filter == PrpCat.All:
+                    self.property_list.append(p)
+                    self.attributes.append(p.name)
+                    self.attribute_types.append(p.tpe)
+                    self.units.append(p.units)
+                    self.tips.append(p.definition)
 
-                if not p.editable:
-                    self.non_editable_attributes.append(p.name)
+                    if not p.editable:
+                        self.non_editable_attributes.append(p.name)
+                else:
+                    if properties_filter in p.category:
+                        self.property_list.append(p)
+                        self.attributes.append(p.name)
+                        self.attribute_types.append(p.tpe)
+                        self.units.append(p.units)
+                        self.tips.append(p.definition)
+
+                        if not p.editable:
+                            self.non_editable_attributes.append(p.name)
 
         self.check_unique = check_unique if check_unique is not None else list()
 
@@ -93,9 +104,20 @@ class ObjectsModel(WrappableTableModel):
         :param time_index: None or integer value
         """
         self.time_index_ = time_index
-        role = 0
-        index = QtCore.QModelIndex()
-        self.dataChanged.emit(index, index, [role])
+
+        row_count: int = self.rowCount()
+        col_count: int = self.columnCount()
+
+        if row_count > 0 and col_count > 0:
+            top_left: QtCore.QModelIndex = self.index(0, 0)
+            bottom_right: QtCore.QModelIndex = self.index(row_count - 1, col_count - 1)
+            self.dataChanged.emit(
+                top_left,
+                bottom_right,
+                [QtCore.Qt.ItemDataRole.DisplayRole, QtCore.Qt.ItemDataRole.EditRole],
+            )
+        else:
+            pass
 
     def set_delegates(self) -> None:
         """
@@ -219,7 +241,7 @@ class ObjectsModel(WrappableTableModel):
         if self.editable and self.attributes[attr_idx] not in self.non_editable_attributes:
             return QtCore.Qt.ItemFlag.ItemIsEditable | QtCore.Qt.ItemFlag.ItemIsEnabled | QtCore.Qt.ItemFlag.ItemIsSelectable
         else:
-            return QtCore.Qt.ItemFlag.ItemIsEnabled
+            return QtCore.Qt.ItemFlag.ItemIsEnabled | QtCore.Qt.ItemFlag.ItemIsSelectable
 
     def rowCount(self, parent: QtCore.QModelIndex = None) -> int:
         """

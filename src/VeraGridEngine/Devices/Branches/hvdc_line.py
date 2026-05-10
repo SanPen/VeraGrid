@@ -11,7 +11,7 @@ from matplotlib import pyplot as plt
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import DeviceType, BuildStatus, SubObjectType
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
-from VeraGridEngine.enumerations import HvdcControlType
+from VeraGridEngine.enumerations import HvdcControlType, PrpCat
 from VeraGridEngine.Devices.Profiles import ProfileBool, ProfileFloat
 from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 from VeraGridEngine.Devices.Branches.line_locations import LineLocations
@@ -153,28 +153,109 @@ class HvdcLine(BranchParent):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='dispatchable', units='', tpe=bool, definition='Is the line power optimizable?'),
-        GCProp(key='control_mode', units='-', tpe=HvdcControlType, definition='Control type.'),
-        GCProp(key='Pset', units='MW', tpe=float, definition='Set power flow.', profile_name='Pset_prof'),
-        GCProp(key='r', units='Ohm', tpe=float, definition='line resistance.'),
-        GCProp(key='dc_link_voltage', units='kV', tpe=float,
-                      definition='line voltage (only for compatibility, not used in calcs.)'),
-        GCProp(key='angle_droop', units='MW/deg', tpe=float, definition='Power/angle rate control',
-                      profile_name='angle_droop_prof'),
-        GCProp(key='Vset_f', units='p.u.', tpe=float, definition='Set voltage at the from side',
-                      profile_name='Vset_f_prof'),
-        GCProp(key='Vset_t', units='p.u.', tpe=float, definition='Set voltage at the to side',
-                      profile_name='Vset_t_prof'),
-        GCProp(key='min_firing_angle_f', units='rad', tpe=float,
-                      definition='minimum firing angle at the "from" side.'),
-        GCProp(key='max_firing_angle_f', units='rad', tpe=float,
-                      definition='maximum firing angle at the "from" side.'),
-        GCProp(key='min_firing_angle_t', units='rad', tpe=float,
-                      definition='minimum firing angle at the "to" side.'),
-        GCProp(key='max_firing_angle_t', units='rad', tpe=float,
-                      definition='maximum firing angle at the "to" side.'),
-        GCProp(key='length', units='km', tpe=float, definition='Length of the branch (not used for calculation)'),
-        GCProp(key='locations', units='', tpe=SubObjectType.LineLocations, definition='', editable=False),
+        GCProp(
+            prop_name='dispatchable',
+            units='',
+            tpe=bool,
+            definition='Is the line power optimizable?',
+            cat=[PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='control_mode',
+            units='-',
+            tpe=HvdcControlType,
+            definition='Control type.',
+            cat=[PrpCat.PF, PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='Pset',
+            units='MW',
+            tpe=float,
+            definition='Set power flow.',
+            profile_name='Pset_prof',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='r',
+            units='Ohm',
+            tpe=float,
+            definition='line resistance.',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='dc_link_voltage',
+            units='kV',
+            tpe=float,
+            definition='line voltage (only for compatibility, not used in calcs.)',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='angle_droop',
+            units='MW/deg',
+            tpe=float,
+            definition='Power/angle rate control',
+            profile_name='angle_droop_prof',
+            cat=[PrpCat.PF, PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='Vset_f',
+            units='p.u.',
+            tpe=float,
+            definition='Set voltage at the from side',
+            profile_name='Vset_f_prof',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='Vset_t',
+            units='p.u.',
+            tpe=float,
+            definition='Set voltage at the to side',
+            profile_name='Vset_t_prof',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='min_firing_angle_f',
+            units='rad',
+            tpe=float,
+            definition='minimum firing angle at the "from" side.',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='max_firing_angle_f',
+            units='rad',
+            tpe=float,
+            definition='maximum firing angle at the "from" side.',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='min_firing_angle_t',
+            units='rad',
+            tpe=float,
+            definition='minimum firing angle at the "to" side.',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='max_firing_angle_t',
+            units='rad',
+            tpe=float,
+            definition='maximum firing angle at the "to" side.',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='length',
+            units='km',
+            tpe=float,
+            definition='Length of the branch (not used for calculation)',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='locations',
+            units='',
+            tpe=SubObjectType.LineLocations,
+            definition='',
+            editable=False,
+            cat=[PrpCat.TP],
+        ),
     )
 
     def __init__(self,

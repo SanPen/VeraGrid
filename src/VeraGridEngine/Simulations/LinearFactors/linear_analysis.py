@@ -93,6 +93,7 @@ def make_jacobian_ptdf(Ybus: sp.csc_matrix,
                        V: CxVec,
                        pq: IntVec,
                        pv: IntVec,
+                       bus_types: IntVec,
                        distribute_slack: bool = False) -> Mat:
     """
     Compute the AC-PTDF
@@ -103,6 +104,7 @@ def make_jacobian_ptdf(Ybus: sp.csc_matrix,
     :param V: voltages array
     :param pq: array of pq node indices
     :param pv: array of pv node indices
+    :param bus_types: Array of bus types
     :param distribute_slack: distribute slack?
     :return: AC-PTDF matrix (Branches, buses)
     """
@@ -114,12 +116,13 @@ def make_jacobian_ptdf(Ybus: sp.csc_matrix,
     # compute the Jacobian
     J = AC_jacobian(Ybus, V, pvpq, pq)
 
-    if distribute_slack:
-        dP: Mat = np.ones((n, n)) * (-1 / (n - 1))
-        for i in range(n):
-            dP[i, i] = 1.0
-    else:
-        dP = np.eye(n, n)
+    # if distribute_slack:
+    #     dP: Mat = np.ones((n, n)) * (-1 / (n - 1))
+    #     for i in range(n):
+    #         dP[i, i] = 1.0
+    # else:
+    #     dP = np.eye(n, n)
+    dP = make_dP_from_bus_types(bus_types=bus_types, distribute_slack=distribute_slack)
 
     # compose the compatible array (the Q increments are considered zero
     dQ = np.zeros((npq, n))
@@ -139,27 +142,191 @@ def make_jacobian_ptdf(Ybus: sp.csc_matrix,
     return PTDF
 
 
+@nb.njit(cache=True)
+def make_dP_from_bus_types(bus_types: IntVec, distribute_slack: bool) -> Mat:
+    """
+    Build the dP / Dij matrix used to modify the PTDF.
+
+    bus_types:
+        1 -> PQ
+        2 -> PV
+        3 -> Slack
+
+    If distribute_slack=True:
+        The balancing injection is distributed equally among PV + Slack buses.
+
+        P_eff = dP @ P
+        P_eff = P - w * sum(P)
+
+    If distribute_slack=False:
+        Return identity, preserving the current single-slack PTDF behavior.
+    """
+
+    PQ = 1
+    PV = 2
+    SLACK = 3
+
+    n = bus_types.shape[0]
+
+    # Start with identity
+    dP = np.zeros((n, n), dtype=np.float64)
+
+    for i in range(n):
+        dP[i, i] = 1.0
+
+    if not distribute_slack:
+        return dP
+
+    # Count participating buses: PV + Slack
+    n_participating = 0
+
+    for i in range(n):
+        if bus_types[i] == PV or bus_types[i] == SLACK:
+            n_participating += 1
+
+    if n_participating == 0:
+        raise ValueError("No PV or Slack buses found for distributed slack")
+
+    share = 1.0 / n_participating
+
+    # dP = I - w * 1^T
+    #
+    # Since w_i = share for PV/Slack buses and zero for PQ buses,
+    # only the rows of PV/Slack buses are modified.
+    for i in range(n):
+        if bus_types[i] == PV or bus_types[i] == SLACK:
+            for j in range(n):
+                dP[i, j] -= share
+
+    return dP
+
+
+@nb.njit(cache=True)
+def make_corrected_injections(P: Vec, bus_types: IntVec, distribute_slack: bool) -> Vec:
+    """
+    Compute the effective active-power injection vector used for KCL checks.
+
+    If distribute_slack=True:
+        mismatch is shared equally among PV + Slack buses.
+
+    If distribute_slack=False:
+        mismatch is assigned only to the Slack bus or buses.
+    """
+
+    PQ = 1
+    PV = 2
+    SLACK = 3
+
+    n = P.shape[0]
+
+    P_eff = P.copy()
+
+    mismatch = 0.0
+
+    for i in range(n):
+        mismatch += P[i]
+
+    n_participating = 0
+
+    for i in range(n):
+        if distribute_slack:
+            if bus_types[i] == PV or bus_types[i] == SLACK:
+                n_participating += 1
+        else:
+            if bus_types[i] == SLACK:
+                n_participating += 1
+
+    if n_participating == 0:
+        raise ValueError("No slack-participating buses found")
+
+    share = mismatch / n_participating
+
+    for i in range(n):
+        if distribute_slack:
+            if bus_types[i] == PV or bus_types[i] == SLACK:
+                P_eff[i] -= share
+        else:
+            if bus_types[i] == SLACK:
+                P_eff[i] -= share
+
+    return P_eff
+
+
+@nb.njit(cache=True)
+def make_corrected_injections_2d(P: Mat, bus_types: IntVec, distribute_slack: bool) -> Mat:
+    """
+    Compute the effective active-power injection vector used for KCL checks.
+
+    If distribute_slack=True:
+        mismatch is shared equally among PV + Slack buses.
+
+    If distribute_slack=False:
+        mismatch is assigned only to the Slack bus or buses.
+    """
+
+    PQ = 1
+    PV = 2
+    SLACK = 3
+
+    nt, n = P.shape
+
+    P_eff = P.copy()
+
+    n_participating = 0
+    for i in range(n):
+        if distribute_slack:
+            if bus_types[i] == PV or bus_types[i] == SLACK:
+                n_participating += 1
+        else:
+            if bus_types[i] == SLACK:
+                n_participating += 1
+
+    if n_participating == 0:
+        raise ValueError("No slack-participating buses found")
+
+    mismatch = np.zeros(nt)
+
+    for t in range(nt):
+        for i in range(n):
+            mismatch[t] += P[t, i]
+
+        share = mismatch[t] / n_participating
+
+        for i in range(n):
+            if distribute_slack:
+                if bus_types[i] == PV or bus_types[i] == SLACK:
+                    P_eff[t, i] -= share
+            else:
+                if bus_types[i] == SLACK:
+                    P_eff[t, i] -= share
+
+    return P_eff
+
+
 def make_ptdf(Bpqpv: sp.csc_matrix,
               Bf: sp.csc_matrix,
               no_slack: IntVec,
+              bus_types: IntVec,
               distribute_slack: bool = True) -> Mat:
     """
     Build the PTDF matrix
     :param Bpqpv: DC-linear susceptance matrix already sliced
     :param Bf: Bus-branch "from" susceptance matrix
     :param no_slack: array of sorted pq and pv node indices
+    :param bus_types: array of bus types
     :param distribute_slack: distribute the slack?
     :return: PTDF matrix. It is a full matrix of dimensions Branches x buses
     """
 
     n = Bf.shape[1]  # number of buses
 
-    if distribute_slack:
-        dP: Mat = np.ones((n, n)) * (-1 / (n - 1))
-        for i in range(n):
-            dP[i, i] = 1.0
-    else:
-        dP: Mat = np.eye(n, n)
+    # if distribute_slack:
+    #     dP: Mat = np.ones((n, n)) * (-1 / (n - 1))
+    #     for i in range(n):
+    #         dP[i, i] = 1.0
+    # else:
+    #     dP: Mat = np.eye(n, n)
+    dP = make_dP_from_bus_types(bus_types=bus_types, distribute_slack=distribute_slack)
 
     # solve for change in voltage angles
     dTheta = np.zeros((n, n))
@@ -180,12 +347,15 @@ def make_ptdf(Bpqpv: sp.csc_matrix,
     return H
 
 
-def make_acdc_ptdf(nc: NumericalCircuit, logger: Logger,
+def make_acdc_ptdf(nc: NumericalCircuit,
+                   logger: Logger,
+                   bus_types: IntVec,
                    distribute_slack: bool = False) -> Mat:
     """
     Build the ACDC PTDF matrix
     :param nc: NumericalCircuit
     :param logger: Logger
+    :param bus_types: Array of bus types for the distributed slack
     :param distribute_slack: distribute the slack?
     :return: PTDF matrix. It is a full matrix of dimensions Branches x buses
     """
@@ -272,12 +442,11 @@ def make_acdc_ptdf(nc: NumericalCircuit, logger: Logger,
             else:
                 no_slack.append(i)
 
-    if distribute_slack:
-        dP: Mat = np.ones((n, n)) * (-1 / (n - 1))
-        for i in range(n):
-            dP[i, i] = 1.0
-    else:
-        dP = np.eye(n, n)
+    # if distribute_slack:
+    #     dP: Mat = np.eye(n) - 1.0 / n
+    # else:
+    #     dP = np.eye(n, n)
+    dP = make_dP_from_bus_types(bus_types=bus_types, distribute_slack=distribute_slack)
 
     Ared = A[no_slack, :][:, no_slack]
     Pred = dP[no_slack, :]
@@ -393,7 +562,7 @@ class LinearAnalysis:
 
     def __init__(self,
                  nc: NumericalCircuit,
-                 distributed_slack: bool = True,
+                 distributed_slack: bool = False,
                  correct_values: bool = False,
                  logger: Logger = Logger()):
         """
@@ -422,6 +591,9 @@ class LinearAnalysis:
         self.VscDF: Mat = np.zeros((n_br, n_vsc))
         self.VscODF: Mat = np.zeros((n_br, n_vsc))
 
+        self.bus_types = nc.bus_data.bus_types.copy()
+        self.distributed_slack = distributed_slack
+
         # compute the PTDF per islands
         if len(self.islands) > 0:
             for n_island, island in enumerate(self.islands):
@@ -433,9 +605,12 @@ class LinearAnalysis:
                     if len(indices.no_slack) > 0:
 
                         if island.bus_data.is_dc.any():
-                            ptdf_island = make_acdc_ptdf(nc=island,
-                                                         logger=self.logger,
-                                                         distribute_slack=distributed_slack)
+                            ptdf_island = make_acdc_ptdf(
+                                nc=island,
+                                logger=self.logger,
+                                bus_types=island.bus_data.bus_types,
+                                distribute_slack=distributed_slack
+                            )
 
                         else:
                             adml = island.get_linear_admittance_matrices(indices=indices)
@@ -443,10 +618,13 @@ class LinearAnalysis:
                             Bpqpv = adml.get_Bred(pqpv=indices.no_slack)
 
                             # compute the PTDF of the island
-                            ptdf_island = make_ptdf(Bpqpv=Bpqpv,
-                                                    Bf=adml.Bf,
-                                                    no_slack=indices.no_slack,
-                                                    distribute_slack=distributed_slack)
+                            ptdf_island = make_ptdf(
+                                Bpqpv=Bpqpv,
+                                Bf=adml.Bf,
+                                no_slack=indices.no_slack,
+                                bus_types=island.bus_data.bus_types,
+                                distribute_slack=distributed_slack
+                            )
 
                         # store maybe for later
                         self.PTDF_by_island.append(ptdf_island)
@@ -456,10 +634,12 @@ class LinearAnalysis:
                                          island.bus_data.original_idx)] = ptdf_island
 
                         # compute the island LODF
-                        lodf_island = make_lodf(Cf=island.passive_branch_data.Cf.tocsc(),
-                                                Ct=island.passive_branch_data.Ct.tocsc(),
-                                                PTDF=ptdf_island,
-                                                correct_values=correct_values)
+                        lodf_island = make_lodf(
+                            Cf=island.passive_branch_data.Cf.tocsc(),
+                            Ct=island.passive_branch_data.Ct.tocsc(),
+                            PTDF=ptdf_island,
+                            correct_values=correct_values
+                        )
 
                         # assign the LODF to the main LODF matrix
                         self.LODF[np.ix_(island.passive_branch_data.original_idx,
@@ -569,7 +749,7 @@ class LinearAnalysis:
         else:
             raise Exception(f'flows has unsupported dimensions: {flows.shape}')
 
-    def get_injections_2d(self, flows: Mat) -> Mat:
+    def get_reverse_injections_2d(self, flows: Mat) -> Mat:
         """
         Get injections that satisfy the flows
         :param flows: Matrix of flows (time, nbranch)
@@ -582,6 +762,68 @@ class LinearAnalysis:
             return Pbus_t.T
         else:
             raise Exception(f'flows has unsupported dimensions: {flows.shape}')
+
+    def get_corrected_injections(self, P: Vec) -> Vec:
+        """
+        This function corrects the original injections to match the PTDF flows
+        :param P: Nodal injections
+        :return: Corrected nodal injections
+        """
+        # # Now we need to recompose the corrected injections
+        # P_eff = np.zeros_like(P, dtype=float)
+        #
+        # # Correction of the injections vector --------------------------------------------------------------------------
+        # for island in self.islands:
+        #
+        #     island_nbus = len(island.bus_data.original_idx)
+        #
+        #     if island_nbus != 0:
+        #         indices = island.get_simulation_indices()
+        #         if self.distributed_slack:
+        #             # We need to apply the distributed slack factors to the injections
+        #
+        #             if island_nbus <= 1:
+        #                 P_eff[island.bus_data.original_idx] = 0.0
+        #             else:
+        #                 # VeraGrid current dP convention:
+        #                 # P_eff_i = P_i - sum(P_j for j != i) / (m - 1)
+        #                 Pi = P[island.bus_data.original_idx]
+        #                 P_eff[island.bus_data.original_idx] = Pi - (Pi.sum() - Pi) / (island_nbus - 1)
+        #         else:
+        #             # We need to compute the slack power injection
+        #             if len(indices.vd) == 1:
+        #
+        #                 slack_local = indices.vd[0]
+        #                 slack_global = island.bus_data.original_idx[slack_local]
+        #                 Pi = P[island.bus_data.original_idx]
+        #
+        #                 # Non-slack buses keep their specified injections.
+        #                 P_eff[island.bus_data.original_idx] = Pi
+        #
+        #                 # The slack bus absorbs the island mismatch.
+        #                 # Equivalent to: P_eff[slack] = -sum(P_non_slack)
+        #                 P_eff[slack_global] -= Pi.sum()
+        #             else:
+        #                 print(f"Expected exactly one slack bus per island, got {len(indices.vd)}")
+        #
+        # return P_eff
+        return make_corrected_injections(
+            P=P,
+            bus_types=self.bus_types,
+            distribute_slack=self.distributed_slack
+        )
+
+    def get_corrected_injections2d(self, P: Mat) -> Vec:
+        """
+        This function corrects the original injections to match the PTDF flows
+        :param P: Nodal injections
+        :return: Corrected nodal injections
+        """
+        return make_corrected_injections_2d(
+            P=P,
+            bus_types=self.bus_types,
+            distribute_slack=self.distributed_slack
+        )
 
 
 class LinearMultiContingency:
@@ -1154,7 +1396,7 @@ class LinearAnalysisTs:
 
         return flow_ts
 
-    def get_injections_ts(self, flows_ts: CxMat | Mat) -> CxMat | Mat:
+    def get_reverse_injections_ts(self, flows_ts: CxMat | Mat) -> CxMat | Mat:
         """
         Get the flow time series of all branches given the injection time series all buses
         :param flows_ts: Branches flow time series
@@ -1170,8 +1412,30 @@ class LinearAnalysisTs:
             # get the linear analysis
             lin: LinearAnalysis = self._linear_analysis[t_idx]
 
-            Pbus[list_of_represented_time_steps, :] = lin.get_injections_2d(
+            Pbus[list_of_represented_time_steps, :] = lin.get_reverse_injections_2d(
                 flows=flows_ts[list_of_represented_time_steps, :]
+            )
+
+        return Pbus
+
+    def get_corrected_injections_ts(self, P_ts: CxMat | Mat) -> CxMat | Mat:
+        """
+        Get the corrected injections time series
+        :param P_ts: Time series injections
+        :return: Bus injection time series
+        """
+        # must have the same size
+        assert P_ts.shape[0] == self.nt
+        assert P_ts.shape[1] == self.nbus
+
+        Pbus = np.zeros((self.nt, self.nbus))
+
+        for t_idx, list_of_represented_time_steps in self.groups.items():
+            # get the linear analysis
+            lin: LinearAnalysis = self._linear_analysis[t_idx]
+
+            Pbus[list_of_represented_time_steps, :] = lin.get_corrected_injections2d(
+                P=P_ts[list_of_represented_time_steps, :]
             )
 
         return Pbus

@@ -109,7 +109,12 @@ def test_method_benchmark() -> None:
     glob_time = vf.add_var("t_glob")
 
     # 1. Create BaseProblem (Network Topology & Equations)
-    problem: GenericEmtProblem = GenericEmtProblem(sys_block, glob_time)
+    static_parameter_values_mapping: Dict[Var, Const] = dict(sys_block.parameters)
+    problem: GenericEmtProblem = GenericEmtProblem(
+        sys_block=sys_block,
+        glob_time=glob_time,
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
 
     # 2. Configure Controller
     offset: int = problem.get_variable_parameter_number()

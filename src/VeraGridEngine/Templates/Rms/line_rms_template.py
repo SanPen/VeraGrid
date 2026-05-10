@@ -22,10 +22,10 @@ def get_line_rms_template(vfactory: VarFactory, name="Line_rms_template") -> Rms
     templ.tpe = DeviceType.LineDevice
     templ.name = name
 
-    inputs: List[Var] = [vfactory.add_var("Vmf_" + name, VarPowerFlowRefferenceType.Vmf),
-                         vfactory.add_var("Vaf_" + name, VarPowerFlowRefferenceType.Vaf),
-                         vfactory.add_var("Vmt_" + name, VarPowerFlowRefferenceType.Vmt),
-                         vfactory.add_var("Vat_" + name, VarPowerFlowRefferenceType.Vat),]
+    inputs: List[Var] = [vfactory.add_var("Vmf_" + name, reference=VarPowerFlowRefferenceType.Vmf),
+                         vfactory.add_var("Vaf_" + name, reference=VarPowerFlowRefferenceType.Vaf),
+                         vfactory.add_var("Vmt_" + name, reference=VarPowerFlowRefferenceType.Vmt),
+                         vfactory.add_var("Vat_" + name, reference=VarPowerFlowRefferenceType.Vat),]
 
     Qf = vfactory.add_var("Qf")
     Qt = vfactory.add_var("Qt")
@@ -36,19 +36,23 @@ def get_line_rms_template(vfactory: VarFactory, name="Line_rms_template") -> Rms
     b = vfactory.add_var("b")
     bsh = vfactory.add_var("bsh")
 
+    u = vfactory.add_var("u")
+
     templ.block.parameters[g] = vfactory.add_const(5)
     templ.block.parameters[b] = vfactory.add_const(-12)
     templ.block.parameters[bsh] = vfactory.add_const(0.03)
+
+    templ.block.event_dict[u] = vfactory.add_const(1)
 
     templ.block.algebraic_vars = [Pf, Pt, Qf, Qt]
     templ.block.out_vars = [Pf, Pt, Qf, Qt]
 
     pi2 = np.pi / 2
     templ.block.algebraic_eqs = [
-        Pf - ((inputs[0] ** 2 * g) - g * inputs[0] * inputs[2] * cos(inputs[1] - inputs[3]) + b * inputs[0] * inputs[2] * cos(inputs[1] - inputs[3] + pi2)),
-        Qf - (inputs[0] ** 2 * (-bsh / 2 - b) - g * inputs[0] * inputs[2] * sin(inputs[1] - inputs[3]) + b * inputs[0] * inputs[2] * sin(inputs[1] - inputs[3] + pi2)),
-        Pt - ((inputs[2] ** 2 * g) - g * inputs[2] * inputs[0] * cos(inputs[3] - inputs[1]) + b * inputs[2] * inputs[0] * cos(inputs[3] - inputs[1] + pi2)),
-        Qt - (inputs[2] ** 2 * (-bsh / 2 - b) - g * inputs[2] * inputs[0] * sin(inputs[3] - inputs[1]) + b * inputs[2] * inputs[0] * sin(inputs[3] - inputs[1] + pi2)),
+        u * (Pf - ((inputs[0] ** 2 * g) - g * inputs[0] * inputs[2] * cos(inputs[1] - inputs[3]) + b * inputs[0] * inputs[2] * cos(inputs[1] - inputs[3] + pi2))),
+        u * (Qf - (inputs[0] ** 2 * (-bsh / 2 - b) - g * inputs[0] * inputs[2] * sin(inputs[1] - inputs[3]) + b * inputs[0] * inputs[2] * sin(inputs[1] - inputs[3] + pi2))),
+        u * (Pt - ((inputs[2] ** 2 * g) - g * inputs[2] * inputs[0] * cos(inputs[3] - inputs[1]) + b * inputs[2] * inputs[0] * cos(inputs[3] - inputs[1] + pi2))),
+        u * (Qt - (inputs[2] ** 2 * (-bsh / 2 - b) - g * inputs[2] * inputs[0] * sin(inputs[3] - inputs[1]) + b * inputs[2] * inputs[0] * sin(inputs[3] - inputs[1] + pi2))),
     ]
 
     templ.block.external_mapping = {
@@ -81,8 +85,8 @@ def get_dc_line_rms_template(vfactory: VarFactory, name="DC_Line_rms_template") 
     templ.tpe = DeviceType.DCLineDevice
     templ.name = name
 
-    Vdcf = vfactory.add_var("Vdcf_" + name, VarPowerFlowRefferenceType.Vmf)
-    Vdct = vfactory.add_var("Vdct_" + name, VarPowerFlowRefferenceType.Vmt)
+    Vdcf = vfactory.add_var("Vdcf_" + name, reference=VarPowerFlowRefferenceType.Vmf)
+    Vdct = vfactory.add_var("Vdct_" + name, reference=VarPowerFlowRefferenceType.Vmt)
     inputs: List[Var] = [Vdcf, Vdct]
 
     If_dc = vfactory.add_var("If_dc")

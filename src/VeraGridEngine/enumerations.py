@@ -1317,6 +1317,50 @@ class ActionType(Enum):
         return list(enum_item.value for enum_item in cls)
 
 
+
+class PrpCat(Enum):
+    """
+    ActionType
+    """
+    All = 'All'
+    PF = 'Power flow'
+    PF3 = 'Power flow (unbalanced)'
+    SC = "Short Circuit"
+    OPF = 'Optimal Power flow'
+    CON = "Contingencies"
+    TP = 'Topology'
+    REL = 'Reliability'
+    NTC = 'Net Transfer Capacity'
+    INV = "Investments"
+    RMS = 'RMS'
+    EMT = 'EMT'
+
+    def __str__(self) -> str:
+        return str(self.value)
+
+    def __repr__(self):
+        return str(self)
+
+    @staticmethod
+    def argparse(s):
+        """
+
+        :param s:
+        :return:
+        """
+        try:
+            return ActionType[s]
+        except KeyError:
+            return s
+
+    @classmethod
+    def list(cls):
+        """
+
+        :return:
+        """
+        return list(enum_item.value for enum_item in cls)
+
 # class GpfControlType(Enum):
 #     """
 #     GENERALISED PF Control types
@@ -2805,6 +2849,32 @@ class DynamicIntegrationMethod(Enum):
         return list(enum_item.value for enum_item in cls)
 
 
+class DynamicEventTransitionType(Enum):
+    """
+    Transition profile used by one dynamic runtime event.
+    """
+
+    Step = "step"
+    Ramp = "ramp"
+
+    def __str__(self) -> str:
+        return str(self.value)
+
+    def __repr__(self):
+        return str(self)
+
+    @staticmethod
+    def argparse(s):
+        try:
+            return DynamicEventTransitionType[s]
+        except KeyError:
+            return s
+
+    @classmethod
+    def list(cls):
+        return list(enum_item.value for enum_item in cls)
+
+
 class EmtSolverTypes(Enum):
     """
     Jacobian construction backends for implicit solvers.
@@ -3257,14 +3327,17 @@ class ParamPowerFlowRefferenceType(Enum):
     g = "g"  # Branch resistance in per unit
     b = "b"  # Branch reactance in per unit
     bsh = "bsh"  # Branch shunt susceptance in per unit
+    gFe = "gFe"  # Branch magnetizing conductance in per unit
     vtap_f = "vtap_f"  # Virtual tap at from-side
     vtap_t = "vtap_t"  # Virtual tap at to-side
+    tap_module = 'tap_module' #Transformer tap module
+    tap_phase = 'tap_phase'  #Transformer tap phase
     r = "r"  # Branch resistance in per unit
     x = "x"  # Branch reactance in per unit
     l = "l"  # Branch inductance in per unit
     Pl0 = "Pl0"  # Load active power
     Ql0 = "Ql0"  # Load reactive power
-    
+
     # Phasor current parameters for current balance formulation
     Ir0 = "Ir0"  # Load real current injection
     Ii0 = "Ii0"  # Load imaginary current injection
@@ -3347,6 +3420,10 @@ class ParamPowerFlowRefferenceType(Enum):
     transformer_short_circuit_resistance_pct = "transformer_short_circuit_resistance_pct"
     transformer_short_circuit_loss_kw = "transformer_short_circuit_loss_kw"
     transformer_tap_ratio = "transformer_tap_ratio"
+    transformer_tap_module = "transformer_tap_module"
+    transformer_tap_phase = "transformer_tap_phase"
+    transformer_nominal_voltage_ratio = "transformer_nominal_voltage_ratio"
+    transformer_total_voltage_ratio = "transformer_total_voltage_ratio"
     transformer_terminal_capacitance_pu_s = "transformer_terminal_capacitance_pu_s"
     transformer_linear_core_inductance_pu_s = "transformer_linear_core_inductance_pu_s"
     transformer_core_curve_a_prime = "transformer_core_curve_a_prime"
@@ -3457,6 +3534,124 @@ class ParamPowerFlowRefferenceType(Enum):
     generator_share_enable = "generator_share_enable"
     generator_share_p_ref = "generator_share_p_ref"
     generator_share_q_ref = "generator_share_q_ref"
+
+    # Static EMT-readable common device flags
+    device_active = "device_active"
+
+    # Injection-parent static parameters
+    injection_connection_type = "injection_connection_type"
+
+    # Branch-parent static parameters
+    branch_rate_mva = "branch_rate_mva"
+    branch_temp_base_deg_c = "branch_temp_base_deg_c"
+    branch_temp_oper_deg_c = "branch_temp_oper_deg_c"
+    branch_alpha_per_deg_c = "branch_alpha_per_deg_c"
+
+    # Load static parameters in p.u. on grid Sbase unless noted otherwise
+    load_p_pu = "load_p_pu"
+    load_q_pu = "load_q_pu"
+    load_pa_pu = "load_pa_pu"
+    load_pb_pu = "load_pb_pu"
+    load_pc_pu = "load_pc_pu"
+    load_qa_pu = "load_qa_pu"
+    load_qb_pu = "load_qb_pu"
+    load_qc_pu = "load_qc_pu"
+    load_g_pu = "load_g_pu"
+    load_b_pu = "load_b_pu"
+    load_ga_pu = "load_ga_pu"
+    load_gb_pu = "load_gb_pu"
+    load_gc_pu = "load_gc_pu"
+    load_ba_pu = "load_ba_pu"
+    load_bb_pu = "load_bb_pu"
+    load_bc_pu = "load_bc_pu"
+    load_ir_pu = "load_ir_pu"
+    load_ii_pu = "load_ii_pu"
+    load_ira_pu = "load_ira_pu"
+    load_irb_pu = "load_irb_pu"
+    load_irc_pu = "load_irc_pu"
+    load_iia_pu = "load_iia_pu"
+    load_iib_pu = "load_iib_pu"
+    load_iic_pu = "load_iic_pu"
+    load_contract_power_pu = "load_contract_power_pu"
+
+    # Generator static parameters
+    generator_p_pu = "generator_p_pu"
+    generator_q_pu = "generator_q_pu"
+    generator_pmin_pu = "generator_pmin_pu"
+    generator_pmax_pu = "generator_pmax_pu"
+    generator_qmin_pu = "generator_qmin_pu"
+    generator_qmax_pu = "generator_qmax_pu"
+    generator_power_factor = "generator_power_factor"
+    generator_vset_pu = "generator_vset_pu"
+    generator_snom_mva = "generator_snom_mva"
+    generator_r0_pu = "generator_r0_pu"
+    generator_r2_pu = "generator_r2_pu"
+    generator_x2_pu = "generator_x2_pu"
+    generator_is_controlled = "generator_is_controlled"
+    generator_enabled_dispatch = "generator_enabled_dispatch"
+    generator_must_run = "generator_must_run"
+    generator_use_reactive_power_curve = "generator_use_reactive_power_curve"
+    generator_device_sbase_mva = "generator_device_sbase_mva"
+
+    # Battery static parameters
+    battery_enom_mwh = "battery_enom_mwh"
+    battery_soc_0_pu = "battery_soc_0_pu"
+    battery_max_soc_pu = "battery_max_soc_pu"
+    battery_min_soc_pu = "battery_min_soc_pu"
+    battery_charge_efficiency_pu = "battery_charge_efficiency_pu"
+    battery_discharge_efficiency_pu = "battery_discharge_efficiency_pu"
+    battery_charge_per_cycle_pu = "battery_charge_per_cycle_pu"
+    battery_discharge_per_cycle_pu = "battery_discharge_per_cycle_pu"
+
+    # Static generator static parameters
+    static_generator_snom_mva = "static_generator_snom_mva"
+
+    # External grid static parameters
+    external_grid_vm_pu = "external_grid_vm_pu"
+    external_grid_va_rad = "external_grid_va_rad"
+    external_grid_mode_code = "external_grid_mode_code"
+
+    # Shunt static parameters in p.u. on grid Sbase unless noted otherwise
+    shunt_g_pu = "shunt_g_pu"
+    shunt_b_pu = "shunt_b_pu"
+    shunt_g0_pu = "shunt_g0_pu"
+    shunt_b0_pu = "shunt_b0_pu"
+    shunt_ga_pu = "shunt_ga_pu"
+    shunt_gb_pu = "shunt_gb_pu"
+    shunt_gc_pu = "shunt_gc_pu"
+    shunt_ba_pu = "shunt_ba_pu"
+    shunt_bb_pu = "shunt_bb_pu"
+    shunt_bc_pu = "shunt_bc_pu"
+
+    # Controllable shunt static parameters
+    controllable_shunt_step = "controllable_shunt_step"
+    controllable_shunt_vset_pu = "controllable_shunt_vset_pu"
+    controllable_shunt_vmin_pu = "controllable_shunt_vmin_pu"
+    controllable_shunt_vmax_pu = "controllable_shunt_vmax_pu"
+    controllable_shunt_gmin_pu = "controllable_shunt_gmin_pu"
+    controllable_shunt_gmax_pu = "controllable_shunt_gmax_pu"
+    controllable_shunt_bmin_pu = "controllable_shunt_bmin_pu"
+    controllable_shunt_bmax_pu = "controllable_shunt_bmax_pu"
+    controllable_shunt_control_mode_code = "controllable_shunt_control_mode_code"
+
+    # Current injection static parameters in p.u. on grid Sbase
+    current_injection_ir_pu = "current_injection_ir_pu"
+    current_injection_ii_pu = "current_injection_ii_pu"
+    current_injection_ira_pu = "current_injection_ira_pu"
+    current_injection_irb_pu = "current_injection_irb_pu"
+    current_injection_irc_pu = "current_injection_irc_pu"
+    current_injection_iia_pu = "current_injection_iia_pu"
+    current_injection_iib_pu = "current_injection_iib_pu"
+    current_injection_iic_pu = "current_injection_iic_pu"
+
+    # AC and DC line static parameters
+    line_length_km = "line_length_km"
+    dc_line_length_km = "dc_line_length_km"
+    dc_line_r_pu = "dc_line_r_pu"
+
+    # VSC static parameters
+    vsc_kdp_pu = "vsc_kdp_pu"
+    vsc_min_ac_voltage_pu = "vsc_min_ac_voltage_pu"
 
 
     def __str__(self):
@@ -3680,6 +3875,33 @@ class BlockType(Enum):
     EXCITER_EMT = "EXCITER_EMT"
     EMT_PI_LINE = "EMT_PI_LINE"
     EMT_BERGERON_LINE = "EMT_BERGERON_LINE"
+    EMT_JMARTI_LINE = "EMT_JMARTI_LINE"
+    VOLTAGE_SOURCE_EMT = "VOLTAGE_SOURCE_EMT"
+    CURRENT_SOURCE_EMT = "CURRENT_SOURCE_EMT"
+    CONTROLLED_VOLTAGE_SOURCE_EMT = "CONTROLLED_VOLTAGE_SOURCE_EMT"
+    CONTROLLED_CURRENT_SOURCE_EMT = "CONTROLLED_CURRENT_SOURCE_EMT"
+    DC_VOLTAGE_SOURCE_EMT = "DC_VOLTAGE_SOURCE_EMT"
+    DC_CURRENT_SOURCE_EMT = "DC_CURRENT_SOURCE_EMT"
+    CONTROLLED_DC_VOLTAGE_SOURCE_EMT = "CONTROLLED_DC_VOLTAGE_SOURCE_EMT"
+    CONTROLLED_DC_CURRENT_SOURCE_EMT = "CONTROLLED_DC_CURRENT_SOURCE_EMT"
+    BALANCED_3PH_VOLTAGE_SOURCE_EMT = "BALANCED_3PH_VOLTAGE_SOURCE_EMT"
+    BALANCED_3PH_CURRENT_SOURCE_EMT = "BALANCED_3PH_CURRENT_SOURCE_EMT"
+    CONTROLLED_BALANCED_3PH_VOLTAGE_SOURCE_EMT = "CONTROLLED_BALANCED_3PH_VOLTAGE_SOURCE_EMT"
+    CONTROLLED_BALANCED_3PH_CURRENT_SOURCE_EMT = "CONTROLLED_BALANCED_3PH_CURRENT_SOURCE_EMT"
+    ARBITRARY_WAVEFORM_VOLTAGE_SOURCE_EMT = "ARBITRARY_WAVEFORM_VOLTAGE_SOURCE_EMT"
+    ARBITRARY_WAVEFORM_CURRENT_SOURCE_EMT = "ARBITRARY_WAVEFORM_CURRENT_SOURCE_EMT"
+    STEP_VOLTAGE_SOURCE_EMT = "STEP_VOLTAGE_SOURCE_EMT"
+    STEP_CURRENT_SOURCE_EMT = "STEP_CURRENT_SOURCE_EMT"
+    RAMP_VOLTAGE_SOURCE_EMT = "RAMP_VOLTAGE_SOURCE_EMT"
+    RAMP_CURRENT_SOURCE_EMT = "RAMP_CURRENT_SOURCE_EMT"
+    DOUBLE_EXPONENTIAL_CURRENT_SOURCE_EMT = "DOUBLE_EXPONENTIAL_CURRENT_SOURCE_EMT"
+    HEIDLER_CURRENT_SOURCE_EMT = "HEIDLER_CURRENT_SOURCE_EMT"
+    CIGRE_SURGE_CURRENT_SOURCE_EMT = "CIGRE_SURGE_CURRENT_SOURCE_EMT"
+    SWITCH_EMT = "SWITCH_EMT"
+    GROUND_EMT = "GROUND_EMT"
+    GROUNDING_LINK_EMT = "GROUNDING_LINK_EMT"
+    NONLINEAR_RESISTOR_EMT = "NONLINEAR_RESISTOR_EMT"
+    RLC_COMBO_EMT = "RLC_COMBO_EMT"
     R_LOAD_EMT = "R_LOAD_EMT"
     L_LOAD_EMT = "L_LOAD_EMT"
     C_LOAD_EMT = "C_LOAD_EMT"
@@ -3690,6 +3912,11 @@ class BlockType(Enum):
     EMTLOAD = "EMT_LOAD"
     TRAFO_EMT = "TRAFO_EMT"
     XFMR_TRANSFORMER = "XFMR_TRANSFORMER"
+    INDUCTION_MOTOR_EMT = "INDUCTION_MOTOR_EMT"
+    PV_POWER_PLANT_EMT = "PV_POWER_PLANT_EMT"
+    PV_EMT = "PV_EMT"
+    BESS_EMT = "BESS_EMT"
+    BATTERY_EMT = "BATTERY_EMT"
 
 
     def __str__(self):
@@ -3744,6 +3971,7 @@ class ProceduralLogicType(Enum):
     Base = "base"
     FixedSample = "fixed_sample"
     SampledValue = "sampled_value"
+    HardSaturation = "hard_saturation"
     FlipFlop = "flipflop"
     AnalogFlipFlop = "analog_flipflop"
     PickupDropoff = "pickup_dropoff"
@@ -3796,4 +4024,3 @@ class EmtInitializationStatus(Enum):
             return EmtInitializationStatus[s]
         except KeyError:
             return s
-

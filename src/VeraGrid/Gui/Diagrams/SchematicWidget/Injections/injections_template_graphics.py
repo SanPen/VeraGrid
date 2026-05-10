@@ -10,7 +10,8 @@ from PySide6.QtGui import QPen, QCursor, QPainterPath, QColor, QBrush, QPainterP
 from PySide6.QtWidgets import (QGraphicsItem, QGraphicsItemGroup, QMenu,
                                QGraphicsSceneContextMenuEvent, QGraphicsPathItem,
                                QGraphicsEllipseItem, QGraphicsRectItem, QGraphicsSceneMouseEvent)
-from VeraGrid.Gui.messages import yes_no_question, error_msg, warning_msg
+from VeraGrid.Gui.messages import yes_no_question, error_msg
+from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
 from VeraGrid.Gui.gui_functions import add_menu_entry
 from VeraGrid.Gui.Diagrams.generic_graphics import (GenericDiagramWidget, ACTIVE, DEACTIVATED, OTHER, Square, Circle,
                                                     Polygon, Condenser)
@@ -1091,6 +1092,17 @@ class InjectionTemplateGraphicItem(GenericDiagramWidget, QGraphicsItemGroup):
         # plot the profiles
         self.api_object.plot_profiles(time=ts)
 
+    def open_device_editor(self) -> bool:
+        """
+        Open the default injection editor.
+
+        :return: ``True`` when the editor was opened.
+        """
+        circuit = self._editor.circuit
+        dialog = TemplateDeviceEditor(api_object=self.api_object, circuit=circuit)
+        dialog.exec()
+        return True
+
     def mousePressEvent(self, QGraphicsSceneMouseEvent):
         """
         mouse press: display the editor
@@ -1101,6 +1113,16 @@ class InjectionTemplateGraphicItem(GenericDiagramWidget, QGraphicsItemGroup):
         self._editor.set_editor_model(api_object=self.api_object)
 
         QGraphicsItemGroup.mousePressEvent(self, QGraphicsSceneMouseEvent)
+
+    def mouseDoubleClickEvent(self, event: QGraphicsSceneMouseEvent) -> None:
+        """
+        Open the device editor on double click.
+
+        :param event: Mouse event.
+        :return: ``None``.
+        """
+        QGraphicsItemGroup.mouseDoubleClickEvent(self, event)
+        self.open_device_editor()
 
     def change_bus(self):
         """
@@ -1238,6 +1260,11 @@ class InjectionTemplateGraphicItem(GenericDiagramWidget, QGraphicsItemGroup):
                        text="Change bus",
                        function_ptr=self.change_bus,
                        icon_path=":/Icons/icons/move_bus.png")
+
+        add_menu_entry(menu=menu,
+                       text="Editor",
+                       function_ptr=self.open_device_editor,
+                       icon_path=":/Icons/icons/edit.png")
 
         add_menu_entry(menu=menu,
                        text="Move behind converter",

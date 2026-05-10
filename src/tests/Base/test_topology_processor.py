@@ -916,7 +916,8 @@ def test_lynn_Ybus3() -> None:
     m = nc.passive_branch_data.nelm
     for _ in range(m):
         print("-" * 200)
-        cidx = np.unique(np.random.random_integers(0, m - 1, np.random.random_integers(1, m - 1, 1)))
+        sample_size: int = int(np.random.randint(1, m))
+        cidx = np.unique(np.random.randint(0, m, size=sample_size))
 
         nc.passive_branch_data.active[cidx] = 0
 
@@ -1023,3 +1024,18 @@ def test_segmenting_by_hvdc():
     islands_1 = nc.split_into_islands(consider_hvdc_as_island_links=False)
 
     assert len(islands_1) == 2
+
+
+def test_switch_reduction():
+    fname = os.path.join('data', 'grids', 'DGS', 'Reduced_SPEN_v9_south_west_v3.dgs')
+
+    grid = open_file(fname)
+
+    nc = compile_numerical_circuit_at(grid)
+
+    islands = nc.split_into_islands(consider_hvdc_as_island_links=True)
+
+    assert nc.nbr == 7
+
+    # after the reduction the switch is eliminate from the island data
+    assert islands[0].nbr == 5

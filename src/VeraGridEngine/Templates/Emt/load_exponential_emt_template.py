@@ -11,9 +11,16 @@ import numpy as np
 
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Emt.load_RLC_emt_template import _get_active_phases, _get_phase_count_name
+from VeraGridEngine.Templates.Emt.load_RLC_emt_template import (
+    _get_active_phases,
+    _get_delta_branch_specs,
+    _get_phase_count_name,
+    wrap_delta_referenced_load_emt_template,
+    wrap_ground_referenced_load_emt_template,
+)
 from VeraGridEngine.Utils.Symbolic.block import Expr, Var
-from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowRefferenceType, VarPowerFlowRefferenceType
+from VeraGridEngine.Utils.Symbolic.symbolic import abs as symbolic_abs
+from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowRefferenceType, ShuntConnectionType, VarPowerFlowRefferenceType
 
 
 def _get_voltage_reference(phase_label: str) -> VarPowerFlowRefferenceType:
@@ -64,6 +71,7 @@ def get_exponential_load_emt(
     phA: bool = True,
     phB: bool = True,
     phC: bool = True,
+    connection_type: ShuntConnectionType | None = None,
     name: str = "EXP_Load_EMT_3ph",
 ) -> EmtModelTemplate:
     """Build the phase-selective EMT exponential-load template.
@@ -76,11 +84,30 @@ def get_exponential_load_emt(
     :param phA: True when phase A is active.
     :param phB: True when phase B is active.
     :param phC: True when phase C is active.
+    :param connection_type: Optional explicit star connection topology.
     :param name: Symbolic block name.
     :return: Configured EMT template.
     """
-    active_phases: List[str] = _get_active_phases(phA=phA, phB=phB, phC=phC)
-    phase_count: int = len(active_phases)
+    bus_active_phases: List[str] = _get_active_phases(phA=phA, phB=phB, phC=phC)
+    core_ph_a: bool = phA
+    core_ph_b: bool = phB
+    core_ph_c: bool = phC
+
+    if connection_type == ShuntConnectionType.Delta:
+        branch_specs = _get_delta_branch_specs(bus_active_phases)
+        if len(branch_specs) == 0:
+            raise ValueError("Delta EMT exponential loads require at least one active delta branch")
+        else:
+            pass
+
+        core_ph_a = any(branch_label == "AB" for branch_label, _, _ in branch_specs)
+        core_ph_b = any(branch_label == "BC" for branch_label, _, _ in branch_specs)
+        core_ph_c = any(branch_label == "CA" for branch_label, _, _ in branch_specs)
+    else:
+        pass
+
+    active_phases: List[str] = _get_active_phases(phA=core_ph_a, phB=core_ph_b, phC=core_ph_c)
+    phase_count: int = len(bus_active_phases)
     resolved_name: str = _get_phase_count_name(base_name="EXP_Load_EMT", phase_count=phase_count, requested_name=name)
 
     templ: EmtModelTemplate = EmtModelTemplate()
@@ -197,26 +224,39 @@ def get_exponential_load_emt(
         algebraic_vars.append(q_load_var)
         algebraic_vars.append(current_var)
 
+        # Newton iterations can briefly visit non-physical negative ``V^2`` values
+        # before returning to the feasible region. Keep the magnitude-related
+        # algebraics real-valued during those trial steps so the EMT solve degrades
+        # gracefully instead of producing NaNs that poison the whole substep.
+        safe_v2_expr: Expr = symbolic_abs(v2_var) + eps
+
         algebraic_eqs.append(v2_var - (u_var * u_var + q_var * q_var))
-        algebraic_eqs.append(vm_var - ((v2_var + eps) ** c05))
+        algebraic_eqs.append(vm_var - (safe_v2_expr ** c05))
         algebraic_eqs.append(ratio_var - (vm_var / v0))
         algebraic_eqs.append(p_var + (p0_var * (ratio_var ** alpha_p)))
         algebraic_eqs.append(q_load_var + (q0_var * (ratio_var ** alpha_q)))
-        algebraic_eqs.append(current_var - (c2 * (u_var * p_var + q_var * q_load_var) / (v2_var + eps)))
+        algebraic_eqs.append(current_var - (c2 * (u_var * p_var + q_var * q_load_var) / safe_v2_expr))
 
         # The explicit initializer consumes these seeds phase by phase using the
         # same formulas as before, now limited to the active subset.
         init_eqs[u_var] = voltage_var
         init_eqs[q_var] = -voltage_derivative_var / omega
         init_eqs[v2_var] = u_var * u_var + q_var * q_var
-        init_eqs[vm_var] = (v2_var + eps) ** c05
+        init_eqs[vm_var] = safe_v2_expr ** c05
         init_eqs[ratio_var] = vm_var / v0
         init_eqs[p_var] = -(p0_var * (ratio_var ** alpha_p))
         init_eqs[q_load_var] = -(q0_var * (ratio_var ** alpha_q))
-        init_eqs[current_var] = c2 * (u_var * p_var + q_var * q_load_var) / (v2_var + eps)
+        init_eqs[current_var] = c2 * (u_var * p_var + q_var * q_load_var) / safe_v2_expr
 
         diff_init_eqs[d_u_var] = voltage_derivative_var
         diff_init_eqs[d_q_var] = omega * u_var
+
+    if connection_type == ShuntConnectionType.Delta:
+        # Delta branches are driven by line-to-line voltages whose nominal peak
+        # magnitude is sqrt(3) times the phase-to-neutral peak base.
+        templ.block.set_parameter_in_model(var_name=f"V0_{resolved_name}", new_value=float(np.sqrt(6.0)))
+    else:
+        pass
 
     templ.block.in_vars = in_vars
     templ.block.out_vars = list(current_vars[phase_label] for phase_label in active_phases)
@@ -231,29 +271,19 @@ def get_exponential_load_emt(
     # The external mapping keeps the fixed EMT enum contract, but only active
     # phases publish concrete variables. Inactive phases are explicit ``None``.
     external_mapping: Dict[VarPowerFlowRefferenceType, Var | None] = dict({
-        VarPowerFlowRefferenceType.v_N: None,
         VarPowerFlowRefferenceType.v_A: voltage_vars.get("A", None),
         VarPowerFlowRefferenceType.v_B: voltage_vars.get("B", None),
         VarPowerFlowRefferenceType.v_C: voltage_vars.get("C", None),
-        VarPowerFlowRefferenceType.P: None,
-        VarPowerFlowRefferenceType.Q: None,
-        VarPowerFlowRefferenceType.P_N: None,
-        VarPowerFlowRefferenceType.Q_N: None,
         VarPowerFlowRefferenceType.P_A: p_vars.get("A", None),
         VarPowerFlowRefferenceType.Q_A: q_load_vars.get("A", None),
         VarPowerFlowRefferenceType.P_B: p_vars.get("B", None),
         VarPowerFlowRefferenceType.Q_B: q_load_vars.get("B", None),
         VarPowerFlowRefferenceType.P_C: p_vars.get("C", None),
         VarPowerFlowRefferenceType.Q_C: q_load_vars.get("C", None),
-        VarPowerFlowRefferenceType.i_N: None,
+        # VarPowerFlowRefferenceType.i_N: None,
         VarPowerFlowRefferenceType.i_A: current_vars.get("A", None),
         VarPowerFlowRefferenceType.i_B: current_vars.get("B", None),
         VarPowerFlowRefferenceType.i_C: current_vars.get("C", None),
-        VarPowerFlowRefferenceType.phi_v: None,
-        VarPowerFlowRefferenceType.phi: None,
-        VarPowerFlowRefferenceType.Vpk: None,
-        VarPowerFlowRefferenceType.Ipk: None,
-        VarPowerFlowRefferenceType.d_v_N: None,
         VarPowerFlowRefferenceType.d_v_A: voltage_derivative_vars.get("A", None),
         VarPowerFlowRefferenceType.d_v_B: voltage_derivative_vars.get("B", None),
         VarPowerFlowRefferenceType.d_v_C: voltage_derivative_vars.get("C", None),
@@ -275,4 +305,21 @@ def get_exponential_load_emt(
 
     templ.block.api_obj_mapping = api_obj_mapping
 
-    return templ
+    if connection_type is None:
+        return templ
+    else:
+        if connection_type == ShuntConnectionType.Delta:
+            return wrap_delta_referenced_load_emt_template(
+                vf=vf,
+                core_template=templ,
+                active_phases=bus_active_phases,
+                name=resolved_name,
+            )
+        else:
+            return wrap_ground_referenced_load_emt_template(
+                vf=vf,
+                core_template=templ,
+                active_phases=bus_active_phases,
+                connection_type=connection_type,
+                name=resolved_name,
+            )

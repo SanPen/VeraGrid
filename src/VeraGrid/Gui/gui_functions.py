@@ -713,6 +713,22 @@ def enums_to_model(enums_lst: List[Any]) -> Tuple[Dict[str, Any], QtGui.QStandar
 
     return d, mdl
 
+def enums_to_icons_model(enums_lst: List[Tuple[Any, str]]) -> Tuple[Dict[str, Any], QtGui.QStandardItemModel]:
+    """
+    Get the model and dict from a list of Enum value
+    :param enums_lst: Tuple of (enum, icon string)
+    :return: dictionary, model
+    """
+    d = OrderedDict()
+    val_list = list()
+    for e, icon_str in enums_lst:
+        d[e.value] = e
+        val_list.append((e.value, icon_str))
+
+    mdl = get_icon_list_model(val_list)
+
+    return d, mdl
+
 
 class CustomFileSystemModel(QtWidgets.QFileSystemModel):
     """

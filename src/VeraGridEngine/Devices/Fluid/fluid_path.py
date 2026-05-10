@@ -6,7 +6,7 @@ from __future__ import annotations
 import numpy as np
 from typing import Union, TYPE_CHECKING, Tuple
 from VeraGridEngine.Devices.Parents.physical_device import PhysicalDevice
-from VeraGridEngine.enumerations import DeviceType, SubObjectType, BuildStatus
+from VeraGridEngine.enumerations import DeviceType, SubObjectType, BuildStatus, PrpCat
 from VeraGridEngine.Devices.Fluid.fluid_node import FluidNode
 from VeraGridEngine.Devices.Branches.line_locations import LineLocations
 from VeraGridEngine.Devices.Parents.editable_device import GCProp
@@ -26,13 +26,50 @@ class FluidPath(PhysicalDevice):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='source', units="", tpe=DeviceType.FluidNodeDevice, definition="Source node"),
-        GCProp(key='target', units="", tpe=DeviceType.FluidNodeDevice, definition="Target node"),
-        GCProp(key='min_flow', units="m3/s", tpe=float, definition="Minimum flow"),
-        GCProp(key='max_flow', units="m3/s", tpe=float, definition="Maximum flow"),
-        GCProp(key='locations', units='', tpe=SubObjectType.LineLocations, definition='Locations', editable=False),
-        GCProp(key='color', units='', tpe=str, definition='Color to paint the device in the map diagram',
-                      is_color=True),
+        GCProp(
+            prop_name='source',
+            units="",
+            tpe=DeviceType.FluidNodeDevice,
+            definition="Source node",
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='target',
+            units="",
+            tpe=DeviceType.FluidNodeDevice,
+            definition="Target node",
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='min_flow',
+            units="m3/s",
+            tpe=float,
+            definition="Minimum flow",
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='max_flow',
+            units="m3/s",
+            tpe=float,
+            definition="Maximum flow",
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='locations',
+            units='',
+            tpe=SubObjectType.LineLocations,
+            definition='Locations',
+            editable=False,
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='color',
+            units='',
+            tpe=str,
+            definition='Color to paint the device in the map diagram',
+            is_color=True,
+            cat=[PrpCat.TP],
+        ),
     )
 
     def __init__(self,

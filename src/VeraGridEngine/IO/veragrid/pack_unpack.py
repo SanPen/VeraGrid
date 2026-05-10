@@ -738,7 +738,9 @@ def veragrid_object_to_json(elm: ALL_DEV_TYPES,
 
 
 def gather_model_as_jsons(circuit: MultiCircuit,
-                          project_directory: Path | None = None) -> Dict[str, Dict[str, str | float | List[int]]]:
+                          project_directory: Path | None = None) -> dict[
+    str, dict[str, dict[str, str] | list[dict[str, str]]] | dict[
+        str, list[dict[str, Any]] | dict[int, dict[str, Any]] | list[int]]]:
     """
     Transform a MultiCircuit into a collection of Json files
     :param circuit:
@@ -783,6 +785,17 @@ def gather_model_as_jsons(circuit: MultiCircuit,
     data['circuit'] = circuit.to_dict()
 
     # At this point I already have the symbolic data stored in block_saver
+
+    dictionary_save = {
+        "model_data": data,
+        "symbolic_data": {
+            "vars": block_saver.get_vars_to_save(),
+            "consts": block_saver.get_const_to_save(),
+            "diff_vars": block_saver.get_diff_vars_to_save(),
+            "blocks": block_saver.get_blocks(),
+            "main_block_uids": block_saver.main_block_uids,
+        }
+    }
 
     return {
         "model_data": data,

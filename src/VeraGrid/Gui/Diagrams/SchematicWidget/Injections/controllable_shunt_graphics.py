@@ -4,13 +4,13 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from PySide6 import QtWidgets
 
 from VeraGrid.Gui.Diagrams.generic_graphics import Square
 from VeraGridEngine.Devices.Injections.controllable_shunt import ControllableShunt
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionTemplateGraphicItem
-from VeraGrid.Gui.DeviceEditors.ControllableShuntEditor.controllable_shunt_editor import ControllableShuntEditor
-from VeraGrid.Gui.gui_functions import add_menu_entry
+from VeraGrid.Gui.DeviceEditors.ControllableShuntEditor.controllable_shunt_device_editor import (
+    ControllableShuntDeviceEditorDialog,
+)
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
@@ -41,6 +41,18 @@ class ControllableShuntGraphicItem(InjectionTemplateGraphicItem):
     def api_object(self) -> ControllableShunt:
         return self._api_object
 
+    def open_device_editor(self) -> bool:
+        """
+        Open the controllable shunt editor.
+
+        :return: ``True`` when the editor was opened.
+        """
+        dlg = ControllableShuntDeviceEditorDialog(api_object=self.api_object, circuit=self.editor.circuit)
+        if dlg.exec():
+            return True
+        else:
+            return True
+
     def contextMenuEvent(self, event):
         """
         Display context menu
@@ -49,24 +61,7 @@ class ControllableShuntGraphicItem(InjectionTemplateGraphicItem):
         """
         if self.api_object is not None:
             menu = self.get_base_context_menu()
-            menu.addSection("Controllable shunt")
-
-            add_menu_entry(menu=menu,
-                           text="Editor",
-                           function_ptr=self.edit,
-                           icon_path=":/Icons/icons/edit.png")
-
             menu.exec(event.screenPos())
 
         else:
             self.editor.gui.show_error_toast("The graphic has no API object!")
-
-
-    def edit(self):
-        """
-        Call the edit dialogue
-        :return:
-        """
-        dlg = ControllableShuntEditor(api_object=self.api_object)
-        if dlg.exec():
-            pass

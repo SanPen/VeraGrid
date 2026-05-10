@@ -9,8 +9,8 @@ from PySide6.QtCore import Qt, QPoint, QPointF
 from PySide6.QtGui import QPen, QCursor, QColor
 from PySide6.QtWidgets import QGraphicsItem, QGraphicsEllipseItem, QGraphicsRectItem, QMenu, QGraphicsSceneMouseEvent
 
-from VeraGrid.Gui.DeviceEditors.Transformer3wEditor.transformer3w_editor import Transformer3WEditor
 from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE, DEACTIVATED, GenericDiagramWidget
+from VeraGrid.Gui.DeviceEditors.Transformer3wEditor.transformer3w_device_editor import Transformer3WDeviceEditorDialog
 from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import RoundTerminalItem
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.winding_graphics import WindingGraphicItem
 from VeraGridEngine.Devices.Branches.transformer3w import Transformer3W
@@ -141,6 +141,18 @@ class Transformer3WGraphicItem(GenericDiagramWidget, QGraphicsRectItem):
     def editor(self) -> SchematicWidget:
         return self._editor
 
+    def open_device_editor(self) -> bool:
+        """
+        Open the transformer 3W editor.
+
+        :return: ``True`` when the editor was opened.
+        """
+        dlg = Transformer3WDeviceEditorDialog(api_object=self.api_object, circuit=self.editor.circuit)
+        if dlg.exec():
+            return True
+        else:
+            return True
+
     def get_associated_widgets(self) -> List[WindingGraphicItem]:
         """
 
@@ -246,8 +258,7 @@ class Transformer3WGraphicItem(GenericDiagramWidget, QGraphicsRectItem):
 
         if self.api_object is not None:
             if self.api_object.device_type in [DeviceType.Transformer3WDevice]:
-                # trigger the editor
-                self.edit()
+                self.open_device_editor()
 
     def contextMenuEvent(self, event):
         """
@@ -266,7 +277,7 @@ class Transformer3WGraphicItem(GenericDiagramWidget, QGraphicsRectItem):
                            checked_value=self.api_object.active)
 
             add_menu_entry(menu=menu,
-                           text="Transformer 3W editor",
+                           text="Editor",
                            function_ptr=self.edit,
                            icon_path=":/Icons/icons/edit.png")
 
@@ -470,7 +481,4 @@ class Transformer3WGraphicItem(GenericDiagramWidget, QGraphicsRectItem):
         Open the appropriate editor dialogue
         :return:
         """
-        Sbase = self.editor.circuit.Sbase
-        dlg = Transformer3WEditor(self.api_object, Sbase, modify_on_accept=True)
-        if dlg.exec():
-            pass
+        self.open_device_editor()

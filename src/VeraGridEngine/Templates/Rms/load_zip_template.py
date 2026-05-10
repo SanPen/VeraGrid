@@ -10,7 +10,7 @@ from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import Block
 
 
-def ZIPLoadBuild(vfactory: VarFactory, name: str = "", Pl0=1.0, Ql0=0.1) -> RmsModelTemplate:
+def ZIPLoadBuild(vfactory: VarFactory, name: str = "ZIP model", Pl0=1.0, Ql0=0.1) -> RmsModelTemplate:
     """
     Builds an RMS model template for a ZIP load.
     
@@ -41,8 +41,8 @@ def ZIPLoadBuild(vfactory: VarFactory, name: str = "", Pl0=1.0, Ql0=0.1) -> RmsM
     inputs = [vfactory.add_var("Vm_")]
 
     # Vars:
-    P = vfactory.add_var('P')
-    Q = vfactory.add_var('Q')
+    P = vfactory.add_var('P', reference=VarPowerFlowRefferenceType.P)
+    Q = vfactory.add_var('Q', reference=VarPowerFlowRefferenceType.Q)
 
     # Parameters:
     P0 = vfactory.add_var('P0')

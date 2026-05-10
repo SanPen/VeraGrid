@@ -17,11 +17,6 @@ def compile_types(Pbus: Vec,
     :param Pbus: array of real power Injections per node used to choose the slack as
                  the node with greater generation if no slack is provided
     :param types: array of tentative node types (it may be modified internally)
-    :param pq_val: value of PQ type
-    :param pv_val: value of PV values to use
-    :param vd_val: value of VD values to use
-    :param pqv_val: value of PQ values to use
-    :param p_val: value of PQ values to use
     :return: ref, pq, pv, pqpv
     """
 

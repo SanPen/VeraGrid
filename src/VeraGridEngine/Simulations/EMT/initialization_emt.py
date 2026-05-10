@@ -673,7 +673,7 @@ def _build_persistent_initialization_cache_key(
     reduced_key: str = _build_reduced_initialization_cache_key(problem, unknown_vars, residual_eqs, state_unknown_mask)
 
     payload: str = "|".join([
-        "persistent-reduced-emt-init-v4",
+        "persistent-reduced-emt-init-v5",
         reduced_key,
         options.initialization_method.name,
         f"{float(options.init_newton_tol):.12g}",
@@ -870,12 +870,14 @@ def _build_state_rhs_cache_key(problem: EmtProblemTemplate, state_eqs: List[Expr
     return hashlib.md5(payload.encode("utf-8")).hexdigest()
 
 
-def _collect_missing_dx_problem(problem: EmtProblemTemplate) -> Tuple[List[Var], List[Expr]]:
+def _collect_missing_dx_problem(problem: EmtProblemTemplate,
+                                include_existing: bool = False) -> Tuple[List[Var], List[Expr]]:
     """
     Return the differential variables that still need ``dx0`` and their state equations.
 
     :param problem: EMT problem being initialized.
     :type problem: EmtProblemTemplate
+    :param include_existing: When ``True``, collect all differential variables.
     :return: Pair ``(missing_diff_vars, missing_state_eqs)``.
     :rtype: Tuple[List[Var], List[Expr]]
     """
@@ -888,11 +890,15 @@ def _collect_missing_dx_problem(problem: EmtProblemTemplate) -> Tuple[List[Var],
     while idx < len(diff_vars):
         diff_var: Var = diff_vars[idx]
 
-        if diff_var.uid in problem.diff_init_guess:
-            diff_var = diff_var
-        else:
+        if include_existing:
             missing_diff_vars.append(diff_var)
             missing_state_eqs.append(state_eqs[idx])
+        else:
+            if diff_var.uid in problem.diff_init_guess:
+                diff_var = diff_var
+            else:
+                missing_diff_vars.append(diff_var)
+                missing_state_eqs.append(state_eqs[idx])
 
         idx += 1
 
@@ -1025,6 +1031,7 @@ def init_explicit_emt(
         variable_parameters: List[Var],
         event_parameters_eqs: List[Union[Expr, Const]],
         constant_parameters: List[Var],
+        constant_parameter_values: List[Const],
         init_guess: Dict[int, float],
         diff_init_guess: Dict[int, float],
         uid2idx_vars: Dict[int, int],
@@ -1051,6 +1058,7 @@ def init_explicit_emt(
     :param variable_parameters: List of parameters that change on events.
     :param event_parameters_eqs: Initial equations for event parameters.
     :param constant_parameters: List of constant parameters.
+    :param constant_parameter_values: Values associated with ``constant_parameters``.
     :param init_guess: Initial guesses for variables.
     :param diff_init_guess: Initial guesses for derivatives.
     :param uid2idx_vars: Index map for variables.
@@ -1083,10 +1091,14 @@ def init_explicit_emt(
             print(f"Diff var {sys_diff_vars[uid].name} with uid= {uid} initialized with val: {val} ")
         dx[uid2idx_diff[uid]] = val
 
-    # Setup constant parameter array
-    params_array: np.ndarray = np.zeros(len(constant_parameters))
-    for param, const in mdl.parameters.items():
-        params_array[uid2idx_params[param.uid]] = const.value
+    # Static EMT constants now live in the problem-owned mapping. Build the
+    # dense array from that canonical source instead of the block-local cache.
+    _ = mdl
+    _ = constant_parameters
+    params_array: np.ndarray = np.asarray(
+        [float(const.value) for const in constant_parameter_values],
+        dtype=np.float64,
+    )
 
     # Primary pass: resolve basic event parameters that are constant or immediate
     event_params_array: np.ndarray = np.ones(len(variable_parameters))
@@ -1284,6 +1296,7 @@ def run_emt_explicit_initialization(problem: EmtProblemTemplate, verbose: bool =
         variable_parameters=problem.get_variable_parameters(),
         event_parameters_eqs=problem.get_event_parameter_equations(),
         constant_parameters=problem.get_constant_parameters(),
+        constant_parameter_values=problem.get_parameters_values(),
         init_guess=problem.init_guess,
         diff_init_guess=problem.diff_init_guess,
         uid2idx_vars=problem.uid2idx_vars,
@@ -1504,12 +1517,9 @@ def _collect_reduced_initialization_problem(
 
     while alg_idx < len(algebraic_vars):
         algebraic_var: Var = algebraic_vars[alg_idx]
-        if algebraic_var.uid in problem.init_guess:
-            algebraic_var = algebraic_var
-        else:
-            unknown_vars.append(algebraic_var)
-            residual_eqs.append(algebraic_eqs[alg_idx])
-            state_unknown_flags.append(0.0)
+        unknown_vars.append(algebraic_var)
+        residual_eqs.append(algebraic_eqs[alg_idx])
+        state_unknown_flags.append(0.0)
         alg_idx += 1
 
     for state_var in problem.get_state_vars():
@@ -1798,7 +1808,8 @@ def _compute_missing_dx0(problem: EmtProblemTemplate,
                          x_full: np.ndarray | None = None,
                          dx_full: np.ndarray | None = None,
                          runtime_params: np.ndarray | None = None,
-                         constant_params: np.ndarray | None = None) -> None:
+                         constant_params: np.ndarray | None = None,
+                         include_existing: bool = False) -> None:
     """
     Compute missing differential initial values from the state equations.
 
@@ -1815,7 +1826,7 @@ def _compute_missing_dx0(problem: EmtProblemTemplate,
     phase_t0: float = time.perf_counter()
     missing_diff_vars: List[Var]
     missing_state_eqs: List[Expr]
-    missing_diff_vars, missing_state_eqs = _collect_missing_dx_problem(problem)
+    missing_diff_vars, missing_state_eqs = _collect_missing_dx_problem(problem, include_existing=include_existing)
     report.missing_dx_problem_collect_s = float(time.perf_counter() - phase_t0)
 
     if len(missing_diff_vars) == 0:
@@ -1974,7 +1985,14 @@ def run_emt_native_initialization(problem: EmtProblemTemplate, options: EmtOptio
                 else:
                     if "init_guess_by_name" in cached_payload and "diff_init_guess_by_name" in cached_payload and _persistent_initialization_params_match(cached_payload, runtime_params, constant_params):
                         problem.init_guess = _restore_problem_guess_map(problem, dict(cached_payload["init_guess_by_name"]), False)
-                        problem.diff_init_guess = _restore_problem_guess_map(problem, dict(cached_payload["diff_init_guess_by_name"]), True)
+                        problem.diff_init_guess = dict()
+                        _compute_missing_dx0(
+                            problem,
+                            report,
+                            runtime_params=runtime_params,
+                            constant_params=constant_params,
+                            include_existing=True,
+                        )
                         _restore_initialization_report_from_payload(report, dict(cached_payload["report"]))
                         report.persistent_cache_hit = True
                         report.persistent_cache_load_s = float(report.persistent_cache_load_s)
@@ -2098,6 +2116,7 @@ def run_emt_native_initialization(problem: EmtProblemTemplate, options: EmtOptio
         dx_full=dx,
         runtime_params=runtime_params,
         constant_params=constant_params,
+        include_existing=True,
     )
     report.dx0_completion_s = float(time.perf_counter() - phase_t0)
     report.elapsed_s = float(time.perf_counter() - start_time)

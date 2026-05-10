@@ -6,14 +6,15 @@
 from __future__ import annotations
 
 import math
+import os
 
-from typing import Any, Dict, List, Optional, Tuple, TYPE_CHECKING
+from typing import Any, Callable, Dict, List, Optional, Tuple, TYPE_CHECKING
 
 import numpy as np
 
 from VeraGridEngine.Utils.emt_boundary_update_wrapper import BoundaryUpdateWrapper
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.Utils.Symbolic.symbolic import CmpOp, Comparison, Const, Expr, Var
+from VeraGridEngine.Utils.Symbolic.symbolic import CmpOp, Comparison, Const, Expr, Var, expression2numba
 from VeraGridEngine.basic_structures import Vec
 from VeraGridEngine.enumerations import ProceduralLogicType
 
@@ -366,13 +367,23 @@ class ProceduralLogicBase:
     to drive runtime modes, retained flags, timers, or event scheduling in a structured way.
     """
 
-    __slots__ = ["name", "_problem", "_sample_time"]
+    __slots__ = [
+        "name",
+        "_problem",
+        "_sample_time",
+        "_expr_plan_cache",
+        "_comparison_expr_cache",
+        "_expr_compiled_cache",
+    ]
     logic_tpe = ProceduralLogicType.Base
 
     def __init__(self, name: str = "") -> None:
         self.name = name
         self._problem: Optional[EmtProblemTemplate] = None
         self._sample_time: Optional[float] = None
+        self._expr_plan_cache: Dict[int, List[Tuple[int, int, int]]] = dict()
+        self._comparison_expr_cache: Dict[int, Expr] = dict()
+        self._expr_compiled_cache: Dict[int, Any] = dict()
 
     def bind(self, problem: EmtProblemTemplate) -> None:
         """
@@ -383,6 +394,100 @@ class ProceduralLogicBase:
         """
         self._problem = problem
         self._sample_time = None
+        self._expr_plan_cache = dict()
+        self._comparison_expr_cache = dict()
+        self._expr_compiled_cache = dict()
+
+    def _get_normalized_expr(self, expr: Expr | Comparison) -> Expr:
+        if isinstance(expr, Comparison):
+            key = id(expr)
+            if key in self._comparison_expr_cache:
+                return self._comparison_expr_cache[key]
+
+            expr_eval = expr.to_expression()
+            self._comparison_expr_cache[key] = expr_eval
+            return expr_eval
+
+        return expr
+
+    def _build_expr_plan(self, expr_eval: Expr, problem: EmtProblemTemplate) -> List[Tuple[int, int, int]]:
+        # Plan tuple layout: (uid, source_kind, source_idx)
+        # source_kind: 0 -> x/state-algebraic vars, 1 -> runtime params, 2 -> const params, 3 -> time
+        refs_by_uid: Dict[int, Tuple[int, int, int]] = dict()
+
+        for var in expr_eval.get_vars():
+            if var.name in {"time", "glob_time"} or var.uid == problem.glob_time.uid:
+                refs_by_uid[var.uid] = (var.uid, 3, -1)
+                continue
+
+            idx_var = problem.uid2idx_vars.get(var.uid, None)
+            if idx_var is not None:
+                refs_by_uid[var.uid] = (var.uid, 0, int(idx_var))
+                continue
+
+            idx_runtime = problem.uid2idx_event_params.get(var.uid, None)
+            if idx_runtime is not None:
+                refs_by_uid[var.uid] = (var.uid, 1, int(idx_runtime))
+                continue
+
+            idx_const = problem.uid2idx_params.get(var.uid, None)
+            if idx_const is not None:
+                refs_by_uid[var.uid] = (var.uid, 2, int(idx_const))
+                continue
+
+            raise KeyError(f"Unknown procedural variable '{var.name}'")
+
+        return list(refs_by_uid.values())
+
+    def _get_expr_plan(self, expr_eval: Expr, problem: EmtProblemTemplate) -> List[Tuple[int, int, int]]:
+        key = id(expr_eval)
+        if key in self._expr_plan_cache:
+            return self._expr_plan_cache[key]
+
+        plan = self._build_expr_plan(expr_eval, problem)
+        self._expr_plan_cache[key] = plan
+        return plan
+
+    @staticmethod
+    def _heaviside_numeric(x: float) -> float:
+        return 1.0 if x > 0.0 else 0.0
+
+    def _report_expr_compile_failure(self, expr_eval: Expr, exc: Exception) -> None:
+        if os.getenv("VERAGRID_PROCLOGIC_DEBUG_COMPILE", "0") != "1":
+            return
+
+        logic_name = self.name if self.name else self.__class__.__name__
+        print(
+            "[proc-logic] Expression compile fallback "
+            f"(logic='{logic_name}', expr_type='{type(expr_eval).__name__}'): {exc}"
+        )
+
+    def _get_compiled_expr_fn(self, expr_eval: Expr, problem: EmtProblemTemplate):
+        key = id(expr_eval)
+        cached = self._expr_compiled_cache.get(key, None)
+        if cached is not None:
+            return cached
+
+        plan = self._get_expr_plan(expr_eval=expr_eval, problem=problem)
+        compiler_names_dict: Dict[int, str] = dict()
+        for pos, (uid, _source_kind, _source_idx) in enumerate(plan):
+            compiler_names_dict[uid] = f"_a[{pos}]"
+
+        try:
+            expr_code = expression2numba(expr_eval, compiler_names_dict)
+            fn_globals = {
+                "np": np,
+                "_heaviside": self._heaviside_numeric,
+            }
+            fn_locals: Dict[str, Any] = dict()
+            exec(f"def _compiled_proc_expr(_a):\n    return {expr_code}", fn_globals, fn_locals)
+            fn = fn_locals["_compiled_proc_expr"]
+            self._expr_compiled_cache[key] = (plan, fn)
+        except Exception as exc:
+            self._report_expr_compile_failure(expr_eval=expr_eval, exc=exc)
+            self._expr_compiled_cache[key] = (plan, None)
+
+        return self._expr_compiled_cache[key]
 
     def update(self, t: float, x: Vec, params: Vec) -> None:
         """
@@ -453,7 +558,7 @@ class ProceduralLogicBase:
         if isinstance(expr, (float, int)):
             return float(expr)
 
-        expr_eval: Expr = expr.to_expression() if isinstance(expr, Comparison) else expr
+        expr_eval: Expr = self._get_normalized_expr(expr)
 
         if isinstance(expr_eval, Const):
             return 0.0 if expr_eval.value is None else float(expr_eval.value)
@@ -480,27 +585,34 @@ class ProceduralLogicBase:
 
             raise KeyError(f"Unknown procedural variable '{expr_eval.name}'")
 
-        uid_bindings: Dict[int, float] = dict()
-        # Build a full UID lookup only for composite expressions.
-        for uid, idx in problem.uid2idx_vars.items():
-            uid_bindings[uid] = float(x[idx])
-
-        for uid, idx in problem.uid2idx_event_params.items():
-            uid_bindings[uid] = float(params[idx])
-
+        plan, compiled_fn = self._get_compiled_expr_fn(expr_eval=expr_eval, problem=problem)
         n_runtime = problem.get_variable_parameter_number()
         const_values = problem.get_parameters_values()
         params_has_consts = len(params) >= n_runtime + len(const_values)
-        for uid, idx in problem.uid2idx_params.items():
-            if params_has_consts:
-                uid_bindings[uid] = float(params[n_runtime + idx])
+
+        compiled_input = np.empty(len(plan), dtype=np.float64)
+
+        for pos, (_uid, source_kind, source_idx) in enumerate(plan):
+            if source_kind == 0:
+                compiled_input[pos] = float(x[source_idx])
+            elif source_kind == 1:
+                compiled_input[pos] = float(params[source_idx])
+            elif source_kind == 2:
+                if params_has_consts:
+                    compiled_input[pos] = float(params[n_runtime + source_idx])
+                else:
+                    compiled_input[pos] = float(const_values[source_idx].value)
             else:
-                uid_bindings[uid] = float(const_values[idx].value)
+                compiled_input[pos] = sample_time
+
+        if compiled_fn is not None:
+            return float(compiled_fn(compiled_input))
+
+        uid_bindings: Dict[int, float] = dict()
+        for pos, (uid, _source_kind, _source_idx) in enumerate(plan):
+            uid_bindings[uid] = float(compiled_input[pos])
 
         uid_bindings[problem.glob_time.uid] = sample_time
-        for var in expr_eval.get_vars():
-            if var.name in {"time", "glob_time"}:
-                uid_bindings[var.uid] = sample_time
 
         return float(expr_eval.eval_uid(uid_bindings))
 
@@ -515,6 +627,78 @@ class ProceduralLogicBase:
         :return: True when the expression evaluates above 0.5.
         """
         return self._eval_numeric(expr, t, x, params) > 0.5
+
+    def _build_numeric_evaluator(self, expr: Expr | Comparison | float | int | bool) -> Callable[[float, Vec, Vec], float]:
+        problem = self._get_problem()
+
+        if isinstance(expr, (float, int, bool)):
+            const_value = float(expr)
+            return lambda _t, _x, _p: const_value
+
+        expr_eval: Expr = self._get_normalized_expr(expr)
+
+        if isinstance(expr_eval, Const):
+            const_value = 0.0 if expr_eval.value is None else float(expr_eval.value)
+            return lambda _t, _x, _p: const_value
+
+        if isinstance(expr_eval, Var):
+            if expr_eval.name in {"time", "glob_time"}:
+                return lambda t, _x, _p: self._get_sample_time(t)
+
+            idx_var = problem.uid2idx_vars.get(expr_eval.uid, None)
+            if idx_var is not None:
+                i = int(idx_var)
+                return lambda _t, x, _p: float(x[i])
+
+            idx_runtime = problem.uid2idx_event_params.get(expr_eval.uid, None)
+            if idx_runtime is not None:
+                i = int(idx_runtime)
+                return lambda _t, _x, p: float(p[i])
+
+            idx_const = problem.uid2idx_params.get(expr_eval.uid, None)
+            if idx_const is not None:
+                i = int(idx_const)
+                n_runtime = problem.get_variable_parameter_number()
+                const_values = problem.get_parameters_values()
+
+                def eval_const(_t, _x, p):
+                    if len(p) >= n_runtime + len(const_values):
+                        return float(p[n_runtime + i])
+                    return float(const_values[i].value)
+
+                return eval_const
+
+            raise KeyError(f"Unknown procedural variable '{expr_eval.name}'")
+
+        plan, compiled_fn = self._get_compiled_expr_fn(expr_eval=expr_eval, problem=problem)
+        n_runtime = problem.get_variable_parameter_number()
+        const_values = problem.get_parameters_values()
+
+        if compiled_fn is None:
+            return lambda t, x, p: self._eval_numeric(expr_eval, t, x, p)
+
+        compiled_input = np.empty(len(plan), dtype=np.float64)
+
+        def eval_compiled(t, x, p):
+            sample_time = self._get_sample_time(t)
+            params_has_consts = len(p) >= n_runtime + len(const_values)
+
+            for pos, (_uid, source_kind, source_idx) in enumerate(plan):
+                if source_kind == 0:
+                    compiled_input[pos] = float(x[source_idx])
+                elif source_kind == 1:
+                    compiled_input[pos] = float(p[source_idx])
+                elif source_kind == 2:
+                    if params_has_consts:
+                        compiled_input[pos] = float(p[n_runtime + source_idx])
+                    else:
+                        compiled_input[pos] = float(const_values[source_idx].value)
+                else:
+                    compiled_input[pos] = sample_time
+
+            return float(compiled_fn(compiled_input))
+
+        return eval_compiled
 
 
 class FixedSampleLogic(ProceduralLogicBase):
@@ -579,7 +763,7 @@ class SampledValueLogic(ProceduralLogicBase):
     Sample one expression at each accepted step and store it in a runtime mode variable.
     """
 
-    __slots__ = ["output_var_name", "source_expr", "output_idx"]
+    __slots__ = ["output_var_name", "source_expr", "output_idx", "_source_eval"]
     logic_tpe = ProceduralLogicType.SampledValue
 
     def __init__(self, output_var_name: str, source_expr: Expr | Comparison, name: str = "") -> None:
@@ -587,6 +771,7 @@ class SampledValueLogic(ProceduralLogicBase):
         self.output_var_name = output_var_name
         self.source_expr = source_expr
         self.output_idx = -1
+        self._source_eval: Callable[[float, Vec, Vec], float] | None = None
 
     def bind(self, problem: EmtProblemTemplate) -> None:
         """
@@ -598,6 +783,7 @@ class SampledValueLogic(ProceduralLogicBase):
         super().bind(problem)
         output_var = _find_var_by_name(problem.sys_block, self.output_var_name)
         self.output_idx = int(problem.uid2idx_event_params[output_var.uid])
+        self._source_eval = self._build_numeric_evaluator(self.source_expr)
 
     def update(self, t: float, x: Vec, params: Vec) -> None:
         """
@@ -608,7 +794,10 @@ class SampledValueLogic(ProceduralLogicBase):
         :param params: Runtime parameter vector.
         :return: None
         """
-        params[self.output_idx] = self._eval_numeric(self.source_expr, t, x, params)
+        if self._source_eval is None:
+            self._source_eval = self._build_numeric_evaluator(self.source_expr)
+
+        params[self.output_idx] = self._source_eval(t, x, params)
 
     def remap(self, var_mapping: VarRemap) -> "SampledValueLogic":
         """
@@ -621,6 +810,71 @@ class SampledValueLogic(ProceduralLogicBase):
         return SampledValueLogic(
             output_var_name=name_mapping.get(self.output_var_name, self.output_var_name),
             source_expr=_subs_expr_like(self.source_expr, var_mapping),
+            name=self.name,
+        )
+
+
+class HardSaturationLogic(ProceduralLogicBase):
+    """
+    Sample one input and apply hard saturation to a runtime mode variable.
+    """
+
+    __slots__ = ["output_var_name", "u_expr", "u_min_expr", "u_max_expr", "output_idx", "_u_eval", "_u_min_eval", "_u_max_eval"]
+    logic_tpe = ProceduralLogicType.HardSaturation
+
+    def __init__(
+        self,
+        output_var_name: str,
+        u_expr: Expr | Comparison,
+        u_min_expr: Expr | Comparison,
+        u_max_expr: Expr | Comparison,
+        name: str = "",
+    ) -> None:
+        super().__init__(name=name)
+        self.output_var_name = output_var_name
+        self.u_expr = u_expr
+        self.u_min_expr = u_min_expr
+        self.u_max_expr = u_max_expr
+        self.output_idx = -1
+        self._u_eval: Callable[[float, Vec, Vec], float] | None = None
+        self._u_min_eval: Callable[[float, Vec, Vec], float] | None = None
+        self._u_max_eval: Callable[[float, Vec, Vec], float] | None = None
+
+    def bind(self, problem: EmtProblemTemplate) -> None:
+        super().bind(problem)
+        output_var = _find_var_by_name(problem.sys_block, self.output_var_name)
+        self.output_idx = int(problem.uid2idx_event_params[output_var.uid])
+        self._u_eval = self._build_numeric_evaluator(self.u_expr)
+        self._u_min_eval = self._build_numeric_evaluator(self.u_min_expr)
+        self._u_max_eval = self._build_numeric_evaluator(self.u_max_expr)
+
+    def update(self, t: float, x: Vec, params: Vec) -> None:
+        if self._u_eval is None:
+            self._u_eval = self._build_numeric_evaluator(self.u_expr)
+        if self._u_min_eval is None:
+            self._u_min_eval = self._build_numeric_evaluator(self.u_min_expr)
+        if self._u_max_eval is None:
+            self._u_max_eval = self._build_numeric_evaluator(self.u_max_expr)
+
+        assert self._u_eval is not None
+        assert self._u_min_eval is not None
+        assert self._u_max_eval is not None
+
+        u_val: float = float(self._u_eval(t, x, params))
+        u_min_val: float = float(self._u_min_eval(t, x, params))
+        u_max_val: float = float(self._u_max_eval(t, x, params))
+        if u_min_val <= u_max_val:
+            params[self.output_idx] = min(max(u_val, u_min_val), u_max_val)
+        else:
+            params[self.output_idx] = min(max(u_val, u_max_val), u_min_val)
+
+    def remap(self, var_mapping: VarRemap) -> "HardSaturationLogic":
+        name_mapping = _build_name_mapping(var_mapping)
+        return HardSaturationLogic(
+            output_var_name=name_mapping.get(self.output_var_name, self.output_var_name),
+            u_expr=_subs_expr_like(self.u_expr, var_mapping),
+            u_min_expr=_subs_expr_like(self.u_min_expr, var_mapping),
+            u_max_expr=_subs_expr_like(self.u_max_expr, var_mapping),
             name=self.name,
         )
 
@@ -1300,6 +1554,33 @@ def sampled_value(output: Var | str, source: Expr | Comparison, name: str = "") 
     return SampledValueLogic(
         output_var_name=output_name,
         source_expr=source,
+        name=output_name if name == "" else name,
+    )
+
+
+def hard_saturation(
+    output: Var | str,
+    u: Expr | Comparison,
+    u_min: Expr | Comparison,
+    u_max: Expr | Comparison,
+    name: str = "",
+) -> HardSaturationLogic:
+    """
+    Build one procedural hard-saturation entry updated outside Newton residuals.
+
+    :param output: Runtime mode variable receiving saturated value.
+    :param u: Unsaturated input expression.
+    :param u_min: Lower saturation bound.
+    :param u_max: Upper saturation bound.
+    :param name: Optional logic name.
+    :return: Hard-saturation procedural logic entry.
+    """
+    output_name = _coerce_var_name(output)
+    return HardSaturationLogic(
+        output_var_name=output_name,
+        u_expr=u,
+        u_min_expr=u_min,
+        u_max_expr=u_max,
         name=output_name if name == "" else name,
     )
 
@@ -2155,14 +2436,17 @@ class ValveStateLogic(ProceduralLogicBase):
             pass
 
         if antiparallel_enabled:
-            return self._compute_diode_mode(
-                old_mode=old_mode,
-                valve_voltage=valve_voltage,
-                valve_current=valve_current,
-                antiparallel_enabled=True,
-                voltage_eps=voltage_eps,
-                current_eps=current_eps,
-            ) if valve_voltage < -voltage_eps or old_mode < -0.5 else 0.0
+            if valve_voltage < -voltage_eps:
+                return -1.0
+            else:
+                pass
+
+            if old_mode < -0.5 and valve_current < current_eps:
+                return -1.0
+            else:
+                pass
+
+            return 0.0
         else:
             return 0.0
 
@@ -2202,14 +2486,17 @@ class ValveStateLogic(ProceduralLogicBase):
             pass
 
         if antiparallel_enabled:
-            return self._compute_diode_mode(
-                old_mode=old_mode,
-                valve_voltage=valve_voltage,
-                valve_current=valve_current,
-                antiparallel_enabled=True,
-                voltage_eps=voltage_eps,
-                current_eps=current_eps,
-            ) if valve_voltage < -voltage_eps or old_mode < -0.5 else 0.0
+            if valve_voltage < -voltage_eps:
+                return -1.0
+            else:
+                pass
+
+            if old_mode < -0.5 and valve_current < current_eps:
+                return -1.0
+            else:
+                pass
+
+            return 0.0
         else:
             return 0.0
 
@@ -2829,6 +3116,14 @@ def procedural_logic_entry_to_dict(entry: ProceduralLogicBase) -> ProceduralLogi
             "source_expr": _expr_like_to_dict(entry.source_expr),
         })
         return data
+    elif isinstance(entry, HardSaturationLogic):
+        data.update({
+            "output_var_name": entry.output_var_name,
+            "u_expr": _expr_like_to_dict(entry.u_expr),
+            "u_min_expr": _expr_like_to_dict(entry.u_min_expr),
+            "u_max_expr": _expr_like_to_dict(entry.u_max_expr),
+        })
+        return data
     elif isinstance(entry, TimeDelayLogic):
         data.update({
             "output_var_name": entry.output_var_name,
@@ -2949,6 +3244,16 @@ def _sampled_value_logic_from_dict(data: ProceduralLogicData) -> SampledValueLog
     return SampledValueLogic(
         output_var_name=str(data["output_var_name"]),
         source_expr=_expr_like_from_dict(_get_expr_like_field(data, "source_expr")),
+        name=str(data.get("name", "")),
+    )
+
+
+def _hard_saturation_logic_from_dict(data: ProceduralLogicData) -> HardSaturationLogic:
+    return HardSaturationLogic(
+        output_var_name=str(data["output_var_name"]),
+        u_expr=_expr_like_from_dict(_get_expr_like_field(data, "u_expr")),
+        u_min_expr=_expr_like_from_dict(_get_expr_like_field(data, "u_min_expr")),
+        u_max_expr=_expr_like_from_dict(_get_expr_like_field(data, "u_max_expr")),
         name=str(data.get("name", "")),
     )
 
@@ -3133,6 +3438,8 @@ def build_procedural_logic_entry(data: ProceduralLogicData) -> ProceduralLogicBa
         return _fixed_sample_logic_from_dict(data)
     elif logic_tpe == ProceduralLogicType.SampledValue:
         return _sampled_value_logic_from_dict(data)
+    elif logic_tpe == ProceduralLogicType.HardSaturation:
+        return _hard_saturation_logic_from_dict(data)
     elif logic_tpe == ProceduralLogicType.TimeDelay:
         return _time_delay_logic_from_dict(data)
     elif logic_tpe == ProceduralLogicType.MovingAverage:

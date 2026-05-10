@@ -1343,6 +1343,11 @@ class Ui_mainWindow(object):
 
         self.horizontalLayout_28.addItem(self.horizontalSpacer_2)
 
+        self.dbFilterComboBox = QComboBox(self.frame_54)
+        self.dbFilterComboBox.setObjectName(u"dbFilterComboBox")
+
+        self.horizontalLayout_28.addWidget(self.dbFilterComboBox)
+
         self.structure_analysis_pushButton = QPushButton(self.frame_54)
         self.structure_analysis_pushButton.setObjectName(u"structure_analysis_pushButton")
         icon107 = QIcon()

@@ -3,9 +3,11 @@ import pytest
 from PySide6 import QtWidgets
 import VeraGridEngine.api as vge
 from VeraGrid.Gui.Main.VeraGridMain import VeraGridMainGUI
+from VeraGrid.templates import (get_transformer_catalogue, get_cables_catalogue, get_wires_catalogue,
+                                get_sequence_lines_catalogue)
 
 
-# @pytest.mark.skip(reason="...")
+# @pytest.mark.skip(reason="requires accept_button")
 def test_tower_saving_issue():
     """
     This test is because when saving from the GUI it
@@ -22,7 +24,19 @@ def test_tower_saving_issue():
     else:
         app = QtWidgets.QApplication.instance()
     gui = VeraGridMainGUI()
-    gui.add_default_catalogue()
+    # gui.add_default_catalogue()
+
+    for tpe in get_transformer_catalogue():
+        gui.circuit.add_transformer_type(tpe)
+
+    for tpe in get_cables_catalogue():
+        gui.circuit.add_underground_line(tpe)
+
+    for tpe in get_wires_catalogue():
+        gui.circuit.add_wire(tpe)
+
+    for tpe in get_sequence_lines_catalogue():
+        gui.circuit.add_sequence_line(tpe)
 
     logger = vge.Logger()
     grid = gui.circuit

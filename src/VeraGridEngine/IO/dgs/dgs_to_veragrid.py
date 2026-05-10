@@ -27,6 +27,60 @@ from VeraGridEngine.IO.dgs.dgs_objects import *
 TDgsObject = TypeVar("TDgsObject")
 
 
+def _is_element_closed_by_cubicle_switches(
+    element_id: str,
+    cubics_by_objid: Dict[str, List[StaCubic]],
+    switch_by_cubic_id: Dict[str, StaSwitch],
+) -> bool:
+    cbs = cubics_by_objid.get(_ref_id(element_id), [])
+    if not cbs:
+        return True  # no cubicles found -> keep legacy behavior
+    found_switch = False
+    for cb in cbs:
+        cb_id = _ref_id(cb.ID)
+        if not cb_id:
+            continue
+        sw = switch_by_cubic_id.get(cb_id)
+        if sw is None:
+            continue
+        found_switch = True
+        if int(sw.on_off) == 0:
+            return False
+    # if no StaSwitch rows for those cubicles, keep backward-compatible behavior
+    return True if not found_switch else True
+
+
+def _get_tr3_winding_closed_states(
+    tr3_id: str,
+    cubics_by_objid: Dict[str, List[StaCubic]],
+    switch_by_cubic_id: Dict[str, StaSwitch],
+    bus_by_term_id: Dict[str, dev.Bus],
+    bus_hv: dev.Bus,
+    bus_mv: dev.Bus,
+    bus_lv: dev.Bus,
+) -> tuple[bool, bool, bool]:
+    hv_closed = True
+    mv_closed = True
+    lv_closed = True
+    for cb in cubics_by_objid.get(_ref_id(tr3_id), []):
+        cb_id = _ref_id(cb.ID)
+        term_id = _ref_id(cb.fold_id)
+        if not cb_id or not term_id:
+            continue
+        sw = switch_by_cubic_id.get(cb_id)
+        if sw is None:
+            continue  # no StaSwitch => keep default True
+        is_closed = int(sw.on_off) != 0
+        bus = bus_by_term_id.get(term_id)
+        if bus is bus_hv:
+            hv_closed = hv_closed and is_closed
+        elif bus is bus_mv:
+            mv_closed = mv_closed and is_closed
+        elif bus is bus_lv:
+            lv_closed = lv_closed and is_closed
+    return hv_closed, mv_closed, lv_closed
+
+
 def _ref_id(x: str | None) -> str | None:
     """
     Extract the referenced object ID from PowerFactory/DGS pointer strings.
@@ -931,6 +985,7 @@ def convert_dgs_to_transformer(tr2: ElmTr2,
                                logger: Logger,
                                cubics_by_objid: Dict[str, List[StaCubic]],
                                bus_by_term_id: Dict[str, dev.Bus],
+                               switch_by_cubic_id: Dict[str, StaSwitch],
                                parallel_index: int = 0,
                                parallel_count: int = 1) -> dev.Transformer2W:
     """
@@ -994,7 +1049,9 @@ def convert_dgs_to_transformer(tr2: ElmTr2,
                               bus_to=bus_vg_to,
                               name=transformer_name,
                               idtag=transformer_idtag,
-                              active=not tr2.outserv)
+                              active=not tr2.outserv and _is_element_closed_by_cubicle_switches(element_id=tr2.ID,
+                                                                                                  cubics_by_objid=cubics_by_objid,
+                                                                                                  switch_by_cubic_id=switch_by_cubic_id),)
 
     trafo.apply_template(obj=template, Sbase=baseMVA, logger=logger)
     trafo.vector_group_number = int(round(float(typtr2_raw.nt2ag))) % 12
@@ -1143,6 +1200,7 @@ def convert_dgs_to_transformer3w(tr3: ElmTr3,
                                  logger: Logger,
                                  cubics_by_objid: Dict[str, List[StaCubic]],
                                  bus_by_term_id: Dict[str, dev.Bus],
+                                 switch_by_cubic_id: Dict[str, StaSwitch],
                                  parallel_index: int = 0,
                                  parallel_count: int = 1) -> dev.Transformer3W:
     """
@@ -1250,6 +1308,19 @@ def convert_dgs_to_transformer3w(tr3: ElmTr3,
         pf_connection_code=str(template.tr3cn_l),
         pf_vector_group_angle=float(template.nt3ag_l)
     )
+
+    hv_closed, mv_closed, lv_closed = _get_tr3_winding_closed_states(
+        tr3_id=tr3.ID,
+        cubics_by_objid=cubics_by_objid,
+        switch_by_cubic_id=switch_by_cubic_id,
+        bus_by_term_id=bus_by_term_id,
+        bus_hv=bus_hv,
+        bus_mv=bus_mv,
+        bus_lv=bus_lv,
+    )
+    trafo3w.winding1.active = hv_closed
+    trafo3w.winding2.active = mv_closed
+    trafo3w.winding3.active = lv_closed
 
     return trafo3w
 
@@ -2435,6 +2506,10 @@ def _extract_shunt_gb(elmshnt: ElmShnt, f: float, logger: Logger) -> Tuple[float
             value=shtype
         )
 
+    if elmshnt.ncapa == 0 and elmshnt.ncapx <= 1:
+        g_mw = 0.0
+        b_mvar = 0.0
+
     return g_mw, b_mvar
 
 
@@ -2679,9 +2754,7 @@ def convert_dgs_svs_to_vsc(elmsvs: ElmSvs,
             control1_val = 0.0  # Active power injection of the SVS [MW]
 
             control2 = ConverterControlType.Q_droop
-            Qdroop = rate / kpd * 100
-            Q = Qdroop * (np.abs(1.0) - u_setpoint)  # Reactive power injection of the SVS [MVAr]
-            control2_val = Q  # Reactive power injection of the SVS [MVAr]
+            control2_val = 0.0  # Reactive power injection of the SVS [MVAr]
 
             ysvs = 0.0  # Fixed admittance based on 1 MVA / Ub^2
 
@@ -2931,6 +3004,7 @@ def convert_dgs_to_generator(elmsym: ElmSym,
     gen = dev.Generator(name=name,
                         idtag=generator_idtag,
                         P=p_mw,
+                        Q=q_mvar,
                         power_factor=pf,
                         vset=vset,
                         is_controlled=is_controlled,
@@ -3257,6 +3331,22 @@ def dgs_to_circuit(path: str, logger: Logger | None = None) -> dev.MultiCircuit:
         tid = _ref_id(typ_switch.ID)
         if tid is not None:
             typ_switch_dict[tid] = typ_switch
+
+    # switches (PowerFactory/DGS: ElmCoup is the real device; StaCubic resolves connectivity)
+    switch_by_cubic_id: Dict[str, StaSwitch] = build_switch_by_cubic_id(staswitchs=dgs_grid.staswitchs)
+
+    vg_switches: List[dev.Switch] = convert_dgs_to_switches_from_elmcoup(
+        elmcoups=dgs_grid.elmcoups,
+        cubics_by_objid=cubics_by_objid,
+        bus_by_term_id=bus_by_term_id,
+        switch_by_cubic_id=switch_by_cubic_id,
+        typ_switch_by_id=typ_switch_dict,
+        sbase_mva=baseMVA,
+        logger=logger
+    )
+
+    for sw in vg_switches:
+        grid.add_switch(obj=sw)
 
     # Generators
     for elmsym in dgs_grid.elmsyms:
@@ -3857,21 +3947,6 @@ def dgs_to_circuit(path: str, logger: Logger | None = None) -> dev.MultiCircuit:
 
         grid.add_series_reactance(obj=sr)
 
-    # switches (PowerFactory/DGS: ElmCoup is the real device; StaCubic resolves connectivity)
-    switch_by_cubic_id: Dict[str, StaSwitch] = build_switch_by_cubic_id(staswitchs=dgs_grid.staswitchs)
-
-    vg_switches: List[dev.Switch] = convert_dgs_to_switches_from_elmcoup(
-        elmcoups=dgs_grid.elmcoups,
-        cubics_by_objid=cubics_by_objid,
-        bus_by_term_id=bus_by_term_id,
-        switch_by_cubic_id=switch_by_cubic_id,
-        typ_switch_by_id=typ_switch_dict,
-        sbase_mva=baseMVA,
-        logger=logger
-    )
-
-    for sw in vg_switches:
-        grid.add_switch(obj=sw)
 
     # Transformers 2W
     for elmtr2 in dgs_grid.elmtr2s:
@@ -3888,6 +3963,7 @@ def dgs_to_circuit(path: str, logger: Logger | None = None) -> dev.MultiCircuit:
                 logger=logger,
                 cubics_by_objid=cubics_by_objid,
                 bus_by_term_id=bus_by_term_id,
+                switch_by_cubic_id=switch_by_cubic_id,
                 parallel_index=parallel_index,
                 parallel_count=parallel_count
             )
@@ -3950,6 +4026,7 @@ def dgs_to_circuit(path: str, logger: Logger | None = None) -> dev.MultiCircuit:
                 logger=logger,
                 cubics_by_objid=cubics_by_objid,
                 bus_by_term_id=bus_by_term_id,
+                switch_by_cubic_id=switch_by_cubic_id,
                 parallel_index=parallel_index,
                 parallel_count=parallel_count
             )

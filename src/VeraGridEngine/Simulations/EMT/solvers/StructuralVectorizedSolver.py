@@ -129,53 +129,148 @@ def evaluate_vectorized_residual(
     return float(np.max(np.abs(residual_out)))
 
 
+def _dense_lu_bundle_solve(bundle: DenseSolveBundle, rhs: Vec) -> Vec:
+    """
+    Solve one dense LU system.
+
+    :param bundle: Dense LU bundle ``(factorization, matrix)``.
+    :param rhs: Right-hand side vector.
+    :return: Solution vector.
+    """
+    return lu_solve(bundle[0], rhs)
+
+
+def _dense_lu_bundle_fallback(bundle: DenseSolveBundle, rhs: Vec) -> Vec:
+    """
+    Solve one dense fallback least-squares system.
+
+    :param bundle: Dense LU bundle ``(factorization, matrix)``.
+    :param rhs: Right-hand side vector.
+    :return: Fallback solution vector.
+    """
+    return dense_lstsq_fallback(bundle[1], rhs)
+
+
+def _dense_lu_bundle_matrix(bundle: DenseSolveBundle) -> np.ndarray:
+    """
+    Return the dense Jacobian matrix stored in one LU bundle.
+
+    :param bundle: Dense LU bundle ``(factorization, matrix)``.
+    :return: Dense Jacobian matrix.
+    """
+    return bundle[1]
+
+
+def _sparse_factor_manager_solve(manager: StructuralCompiledSparseFactorizationManager, rhs: Vec) -> Vec:
+    """
+    Solve one sparse linear system through the factor manager.
+
+    :param manager: Sparse factorization manager.
+    :param rhs: Right-hand side vector.
+    :return: Solution vector.
+    """
+    return manager.solve(rhs)
+
+
+def _sparse_factor_manager_fallback(manager: StructuralCompiledSparseFactorizationManager, rhs: Vec) -> Vec:
+    """
+    Solve one sparse fallback least-squares system.
+
+    :param manager: Sparse factorization manager.
+    :param rhs: Right-hand side vector.
+    :return: Fallback solution vector.
+    """
+    return sparse_lsqr_fallback(manager.get_active_matrix(), rhs)
+
+
+def _sparse_factor_manager_matrix(manager: StructuralCompiledSparseFactorizationManager) -> csc_matrix:
+    """
+    Return the active sparse Jacobian matrix held by one factor manager.
+
+    :param manager: Sparse factorization manager.
+    :return: Active sparse Jacobian matrix.
+    """
+    return manager.get_active_matrix()
+
+
+class LegacyResidualEvaluatorAdapter:
+    """
+    Adapt one legacy 8-argument residual callable to the fixed 7-argument solver interface.
+    """
+
+    __slots__ = ["_residual_callable", "_vec_flat_args"]
+
+    def __init__(self, residual_callable: Callable[..., Any], vec_flat_args: Vec) -> None:
+        """
+        Build one legacy residual adapter.
+
+        :param residual_callable: Legacy residual callable.
+        :param vec_flat_args: Legacy flat vectorized arguments.
+        :return: None.
+        """
+        self._residual_callable = residual_callable
+        self._vec_flat_args = vec_flat_args
+
+    def __call__(
+            self,
+            states: Vec,
+            params: Vec,
+            history: Vec,
+            d_history: Vec,
+            h: float,
+            history2: Vec,
+            out: Vec,
+    ) -> None:
+        """
+        Evaluate the wrapped legacy residual callable.
+
+        :param states: Current Newton iterate.
+        :param params: Full parameter vector.
+        :param history: Previous accepted state.
+        :param d_history: Previous derivative vector.
+        :param h: Effective local time step.
+        :param history2: Secondary state history.
+        :param out: Residual output buffer.
+        :return: None.
+        """
+        self._residual_callable(states, params, history, d_history, h, self._vec_flat_args, out, history2)
+
+
 def build_residual_evaluator(
-        residual_dispatcher: Callable[..., Any],
-        vec_flat_args: Any | None,
+        residual_dispatcher: FusedResidualDispatcher | DirectResidualDispatcher,
+        vec_flat_args: Optional[Vec] = None,
 ) -> Callable[[Vec, Vec, Vec, Vec, float, Vec, Vec], None]:
     """
     Build one fixed-signature residual evaluator for the current dispatcher.
 
-    This resolves the dispatcher signature once per simulation so the Newton hot
-    path does not pay per-call tuple unpacking or compatibility branching.
+    The fused and direct dispatchers expose the same ``evaluate()`` API, so the
+    Newton hot path can call one fixed-signature method without any dynamic
+    attribute probing or signature branching.
 
-    :param residual_dispatcher: Residual dispatcher or test double.
-    :type residual_dispatcher: Callable[..., Any]
-    :param vec_flat_args: Flat runtime args used by some test doubles.
-    :type vec_flat_args: Any | None
+    :param residual_dispatcher: Residual dispatcher.
+    :type residual_dispatcher: FusedResidualDispatcher | DirectResidualDispatcher
+    :param vec_flat_args: Optional flat vectorized argument buffer used by legacy residual callables.
+    :type vec_flat_args: Optional[Vec]
     :return: Residual evaluator with signature ``(states, params, history,
         d_history, h, history2, out)``.
     :rtype: Callable[[Vec, Vec, Vec, Vec, float, Vec, Vec], None]
     """
-    direct_evaluator = getattr(residual_dispatcher, "evaluate", None)
-
-    if callable(direct_evaluator):
-        return direct_evaluator
-
-    if vec_flat_args is None:
-        def residual_evaluator(
-                states: Vec,
-                params: Vec,
-                history: Vec,
-                d_history: Vec,
-                h: float,
-                history2: Vec,
-                out: Vec,
-        ) -> None:
-            residual_dispatcher(states, params, history, d_history, h, history2, out)
+    if isinstance(residual_dispatcher, (FusedResidualDispatcher, DirectResidualDispatcher)):
+        return residual_dispatcher.evaluate
     else:
-        def residual_evaluator(
-                states: Vec,
-                params: Vec,
-                history: Vec,
-                d_history: Vec,
-                h: float,
-                history2: Vec,
-                out: Vec,
-        ) -> None:
-            residual_dispatcher(states, params, history, d_history, h, vec_flat_args, out, history2)
+        pass
 
-    return residual_evaluator
+    if callable(residual_dispatcher):
+        legacy_vec_flat_args: Vec
+
+        if vec_flat_args is None:
+            legacy_vec_flat_args = np.zeros(0, dtype=np.float64)
+        else:
+            legacy_vec_flat_args = vec_flat_args
+
+        return LegacyResidualEvaluatorAdapter(residual_dispatcher, legacy_vec_flat_args)
+    else:
+        raise TypeError("Unsupported residual dispatcher type")
 
 
 # ==============================================================================
@@ -236,7 +331,7 @@ def _canonicalize_node(
 
         elif target_uid in param_uids:
             if target_uid not in param_slots:
-                param_name: str = getattr(node, 'name', f'uid_{target_uid}')
+                param_name: str = node.name
                 param_slots[target_uid] = f"__PARAM_{param_name}_{target_uid}__"
 
             return param_slots[target_uid]
@@ -244,7 +339,7 @@ def _canonicalize_node(
         else:
             raise RuntimeError(
                 f"Canonicalization found Var not classified as runtime or parameter: "
-                f"name={getattr(node, 'name', '<?>')}, target_uid={target_uid}"
+                f"name={node.name}, target_uid={target_uid}"
             )
 
     elif isinstance(node, Const):
@@ -685,30 +780,66 @@ def _compile_master_jacobian_kernel(ad_kernel: Callable[..., Any], n_colors: int
     :return: Jacobian dispatcher.
     :rtype: Callable[..., Any]
     """
-    def master_jacobian(
-            states: Vec,
-            seed_matrix: Mat,
-            params: Vec,
-            history: Vec,
-            d_history: Vec,
-            h: float,
-            history2: Vec,
-            data: Vec,
-            color_ptr: np.ndarray,
-            col_ptr: np.ndarray,
-            row_idx: np.ndarray,
-            data_idx: np.ndarray,
-            work_jvp: Mat,
-    ) -> None:
+    return StructuralVectorizedMasterJacobianDispatcher(ad_kernel=ad_kernel, n_colors=n_colors)
+
+
+class StructuralVectorizedMasterJacobianDispatcher:
+    """
+    Callable dispatcher that evaluates one generic AD kernel across all colors.
+    """
+
+    __slots__ = ("_ad_kernel", "_n_colors")
+
+    def __init__(self, ad_kernel: Callable[..., Any], n_colors: int) -> None:
+        """
+        Store the generic AD kernel and the number of graph colors.
+
+        :param ad_kernel: Generic AD kernel reused across graph colors.
+        :param n_colors: Number of graph colors.
+        :return: None.
+        """
+        self._ad_kernel: Callable[..., Any] = ad_kernel
+        self._n_colors: int = n_colors
+
+    def __call__(self,
+                 states: Vec,
+                 seed_matrix: Mat,
+                 params: Vec,
+                 history: Vec,
+                 d_history: Vec,
+                 h: float,
+                 history2: Vec,
+                 data: Vec,
+                 color_ptr: np.ndarray,
+                 col_ptr: np.ndarray,
+                 row_idx: np.ndarray,
+                 data_idx: np.ndarray,
+                 work_jvp: Mat) -> None:
+        """
+        Evaluate all color JVPs and scatter them into CSC storage.
+
+        :param states: Current Newton iterate.
+        :param seed_matrix: Coloring seed matrix.
+        :param params: Full parameter vector.
+        :param history: Previous accepted state.
+        :param d_history: Previous derivative vector.
+        :param h: Effective time step.
+        :param history2: Secondary history vector.
+        :param data: CSC numeric data buffer.
+        :param color_ptr: Color-to-column pointer array.
+        :param col_ptr: Column-to-scatter pointer array.
+        :param row_idx: Row indices used by the scatter map.
+        :param data_idx: CSC data positions used by the scatter map.
+        :param work_jvp: Reusable JVP work buffer.
+        :return: None.
+        """
         color_index: int = 0
 
-        while color_index < n_colors:
+        while color_index < self._n_colors:
             local_jvp: Vec = work_jvp[color_index]
-            ad_kernel(states, seed_matrix[color_index], params, history, d_history, h, local_jvp, history2)
+            self._ad_kernel(states, seed_matrix[color_index], params, history, d_history, h, local_jvp, history2)
             _scatter_color_jvp_to_csc_data(local_jvp, data, color_ptr, col_ptr, row_idx, data_idx, color_index)
             color_index += 1
-
-    return master_jacobian
 
 
 class Predictor:
@@ -818,9 +949,15 @@ class SparseADJacobian:
         '_compiler', '_ad_kernel', '_master_dispatcher', '_seed_matrix', '_jvp_work_buffer', '_data_buffer'
     ]
     def __init__(
-            self, equations: List[Any], variables: List[Any], parameters: List[Any],
-            method: DynamicIntegrationMethod, use_cse: bool = True, dtype=np.float64, verbose: bool = False,
-    ):
+            self,
+            equations: List[Expr],
+            variables: List[Var],
+            parameters: List[Var],
+            method: DynamicIntegrationMethod,
+            use_cse: bool = True,
+            dtype: Any = np.float64,
+            verbose: bool = False,
+    ) -> None:
         self.verbose = verbose
         self.equations = equations
         self.variables = variables
@@ -831,7 +968,7 @@ class SparseADJacobian:
         self.n_rows = len(equations)
         self.n_cols = len(variables)
 
-        self.var_map: Dict[int, int] = dict({id(v): i for i, v in enumerate(variables)})
+        self.var_map: Dict[int, int] = dict({v.uid: i for i, v in enumerate(variables)})
 
         # Sparsity detection
         col_rows: List[List[int]] = list([list() for _ in range(self.n_cols)])
@@ -849,9 +986,9 @@ class SparseADJacobian:
 
                     match node:
                         case Var():
-                            uids.add(id(node))
+                            uids.add(node.uid)
                             if node.base_var is not None:
-                                uids.add(id(node.base_var))
+                                uids.add(node.base_var.uid)
                             else:
                                 pass
 
@@ -992,7 +1129,13 @@ class SparseADJacobian:
                 pass
         return colors, int(max_color + 1)
 
-    def __call__(self, states, params, history, d_history, h, history2=None) -> csc_matrix:
+    def __call__(self,
+                 states: Vec,
+                 params: Vec,
+                 history: Vec,
+                 d_history: Vec,
+                 h: float,
+                 history2: Vec | None = None) -> csc_matrix:
         if history2 is None:
             history2 = history
 
@@ -1140,7 +1283,7 @@ class StructuralVectorizedSolver:
         if auto_vectorization:
             self.auto_detect_vectorization(method)
 
-    def auto_detect_vectorization(self, method: DynamicIntegrationMethod = None):
+    def auto_detect_vectorization(self, method: DynamicIntegrationMethod | None = None) -> None:
         """
         Infers the algebraic structure of the DAE system (clustering) and compiles
         the vectorized matrix kernels.
@@ -1210,7 +1353,7 @@ class StructuralVectorizedSolver:
                 if idx is None:
                     raise RuntimeError(
                         f"Runtime variable missing in uid2idx_vars. "
-                        f"eq={i}, var={getattr(v, 'name', '<?>')}, target_uid={target_uid}"
+                        f"eq={i}, var={v.name}, target_uid={target_uid}"
                     )
 
                 var_indices.append(idx)
@@ -1438,20 +1581,20 @@ class StructuralVectorizedSolver:
 
         if diagnostics_enabled:
             dense_solve = with_newton_diagnostics(
-                lambda bundle, rhs: lu_solve(bundle[0], rhs),
-                fallback_solve=lambda bundle, rhs: dense_lstsq_fallback(bundle[1], rhs),
+                _dense_lu_bundle_solve,
+                fallback_solve=_dense_lu_bundle_fallback,
                 collector=trace_collector,
                 config=diag_cfg,
                 solver_name="dense_lu",
-                matrix_getter=lambda bundle: bundle[1],
+                matrix_getter=_dense_lu_bundle_matrix,
             )
             sparse_solve = with_newton_diagnostics(
-                lambda manager, rhs: manager.solve(rhs),
-                fallback_solve=lambda manager, rhs: sparse_lsqr_fallback(manager.get_active_matrix(), rhs),
+                _sparse_factor_manager_solve,
+                fallback_solve=_sparse_factor_manager_fallback,
                 collector=trace_collector,
                 config=diag_cfg,
                 solver_name="emt_sparse_backend",
-                matrix_getter=lambda manager: manager.get_active_matrix(),
+                matrix_getter=_sparse_factor_manager_matrix,
             )
         else:
             pass

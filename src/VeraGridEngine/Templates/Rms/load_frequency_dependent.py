@@ -7,7 +7,7 @@ from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.Templates.templates_common_functions import tf_to_block
+from VeraGridEngine.Utils.Symbolic.block_helpers import tf_to_block
 
 
 def FrequencyLoadBuild(vfactory: VarFactory, name: str = "", Pl0=1.0, Ql0=0.1) -> RmsModelTemplate:

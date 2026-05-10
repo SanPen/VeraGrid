@@ -5,15 +5,18 @@
 
 from __future__ import annotations
 
-from typing import Dict
+from typing import Dict, List, Tuple
 from VeraGridEngine.enumerations import (
     DeviceType,
+    WindingType,
     VarPowerFlowRefferenceType,
     ParamPowerFlowRefferenceType,
 )
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
-from VeraGridEngine.Utils.Symbolic.block import Var, Expr
+from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_grounding_link_emt_template
+from VeraGridEngine.Templates.Emt.transformer_emt_template import _attach_transformer_editor_diagram
+from VeraGridEngine.Utils.Symbolic.block import Block, Var, Expr
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
 
 
@@ -51,6 +54,8 @@ def _project_currents(
 
 def get_xfmr_emt_template(
     vf: VarFactory,
+    conn_f: WindingType | None = None,
+    conn_t: WindingType | None = None,
     name: str = "xfmr_emt_template",
 ) -> EmtModelTemplate:
     """
@@ -103,7 +108,7 @@ def get_xfmr_emt_template(
     * transformer_open_circuit_loss_kw
     * transformer_short_circuit_voltage_pct
     * transformer_short_circuit_loss_kw
-    * transformer_tap_ratio
+    * transformer_tap_module
     * transformer_from_connection_**
     * transformer_to_connection_**
 
@@ -152,13 +157,25 @@ def get_xfmr_emt_template(
     current is positive when it leaves the bus.
 
     :param vf: EMT variable factory.
+    :param conn_f: Optional from-side winding connection.
+    :param conn_t: Optional to-side winding connection.
     :param name: Symbolic model name.
     :return: EMT transformer template.
     """
     templ = EmtModelTemplate()
-    templ.tpe = DeviceType.TransformerTypeDevice
+    templ.tpe = DeviceType.Transformer2WDevice
     templ.name = name
     templ.block.name = name
+
+    if conn_f in {WindingType.GroundedStar, WindingType.NeutralStar}:
+        from_has_neutral_port: bool = True
+    else:
+        from_has_neutral_port = False
+
+    if conn_t in {WindingType.GroundedStar, WindingType.NeutralStar}:
+        to_has_neutral_port: bool = True
+    else:
+        to_has_neutral_port = False
 
     c0: Expr = vf.add_const(0.0)
     c1: Expr = vf.add_const(1.0)
@@ -185,7 +202,7 @@ def get_xfmr_emt_template(
     templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_open_circuit_loss_kw] = xfmr_oc_loss_kw
     templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_short_circuit_voltage_pct] = xfmr_sc_voltage_pct
     templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_short_circuit_loss_kw] = xfmr_sc_loss_kw
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_tap_ratio] = xfmr_tap_module
+    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_tap_module] = xfmr_tap_module
 
     # ------------------------------------------------------------------
     # Mapped winding-connection matrices.
@@ -326,6 +343,19 @@ def get_xfmr_emt_template(
         "C": VarPowerFlowRefferenceType.vt_C,
     }
 
+    v_f_n: Var | None = None
+    v_t_n: Var | None = None
+
+    if from_has_neutral_port:
+        v_f_n = vf.add_var(name=f"vf_N_{name}", reference=vf_keys["N"])
+    else:
+        pass
+
+    if to_has_neutral_port:
+        v_t_n = vf.add_var(name=f"vt_N_{name}", reference=vt_keys["N"])
+    else:
+        pass
+
     v_f: list[Var] = [
         vf.add_var(name=f"vf_A_{name}", reference=vf_keys["A"]),
         vf.add_var(name=f"vf_B_{name}", reference=vf_keys["B"]),
@@ -360,13 +390,65 @@ def get_xfmr_emt_template(
     i_cap_t: list[Var] = [vf.add_var(name=f"i_cap_t_{ph}_{name}") for ph in ("A", "B", "C")]
     if_act: list[Var] = [vf.add_var(name=f"if_{ph}_{name}") for ph in ("A", "B", "C")]
     it_act: list[Var] = [vf.add_var(name=f"it_{ph}_{name}") for ph in ("A", "B", "C")]
+    if_n_act: Var | None = vf.add_var(name=f"if_N_{name}") if from_has_neutral_port else None
+    it_n_act: Var | None = vf.add_var(name=f"it_N_{name}") if to_has_neutral_port else None
+    from_ground_current: Var | None = None
+    to_ground_current: Var | None = None
+    from_grounding_link_block: Block | None = None
+    to_grounding_link_block: Block | None = None
     i_return_path: Var = vf.add_var(name=f"i_return_path_{name}")
     i_return_total: Var = vf.add_var(name=f"i_return_total_{name}")
 
-    templ.block.in_vars = v_f + v_t
-    templ.block.state_vars = i_leak + lam_leg + q_f + q_t
-    templ.block.diff_vars = di_leak + dlam_leg + dq_f + dq_t
-    templ.block.algebraic_vars = (
+    input_vars: list[Var] = list()
+    if v_f_n is not None:
+        input_vars.append(v_f_n)
+    else:
+        pass
+
+    input_vars.extend(v_f)
+
+    if v_t_n is not None:
+        input_vars.append(v_t_n)
+    else:
+        pass
+
+    input_vars.extend(v_t)
+
+    if conn_f == WindingType.GroundedStar and v_f_n is not None:
+        from_grounding_link_template: EmtModelTemplate = get_grounding_link_emt_template(
+            vf=vf,
+            include_r=False,
+            include_l=False,
+            include_c=False,
+            solid_connection=True,
+            nested=True,
+            name=name + "_from_grounding_link",
+        )
+        from_grounding_link_template.block.connect(from_grounding_link_template.block.in_vars, [v_f_n])
+        from_ground_current = from_grounding_link_template.block.out_vars[0]
+        from_grounding_link_block = from_grounding_link_template.block
+        templ.block.add(from_grounding_link_block)
+    else:
+        pass
+
+    if conn_t == WindingType.GroundedStar and v_t_n is not None:
+        to_grounding_link_template: EmtModelTemplate = get_grounding_link_emt_template(
+            vf=vf,
+            include_r=False,
+            include_l=False,
+            include_c=False,
+            solid_connection=True,
+            nested=True,
+            name=name + "_to_grounding_link",
+        )
+        to_grounding_link_template.block.connect(to_grounding_link_template.block.in_vars, [v_t_n])
+        to_ground_current = to_grounding_link_template.block.out_vars[0]
+        to_grounding_link_block = to_grounding_link_template.block
+        templ.block.add(to_grounding_link_block)
+    else:
+        pass
+
+    algebraic_vars: list[Var] = (
         i_leg_core
         + [i_return_path, i_return_total]
         + i_mag
@@ -376,6 +458,35 @@ def get_xfmr_emt_template(
         + if_act
         + it_act
     )
+
+    if if_n_act is not None:
+        algebraic_vars.append(if_n_act)
+    else:
+        pass
+
+    if it_n_act is not None:
+        algebraic_vars.append(it_n_act)
+    else:
+        pass
+
+    templ.block.in_vars = input_vars
+    templ.block.state_vars = i_leak + lam_leg + q_f + q_t
+    templ.block.diff_vars = di_leak + dlam_leg + dq_f + dq_t
+    templ.block.algebraic_vars = algebraic_vars
+
+    v_f_term: list[Expr] = list()
+    v_t_term: list[Expr] = list()
+    k: int
+    for k in range(3):
+        if v_f_n is not None:
+            v_f_term.append(v_f[k] - v_f_n)
+        else:
+            v_f_term.append(v_f[k])
+
+        if v_t_n is not None:
+            v_t_term.append(v_t[k] - v_t_n)
+        else:
+            v_t_term.append(v_t[k])
 
     # ------------------------------------------------------------------
     # Voltage transformation from terminal abc frame to winding frame.
@@ -391,8 +502,8 @@ def get_xfmr_emt_template(
         expr_vtw: Expr = c0
 
         for j in range(3):
-            expr_vfw = expr_vfw + c_f_expr_t[i][j] * v_f[j]
-            expr_vtw = expr_vtw + c_t_expr_t[i][j] * v_t[j]
+            expr_vfw = expr_vfw + c_f_expr_t[i][j] * v_f_term[j]
+            expr_vtw = expr_vtw + c_t_expr_t[i][j] * v_t_term[j]
 
         v_f_w.append(expr_vfw)
         v_t_w.append(expr_vtw)
@@ -532,8 +643,8 @@ def get_xfmr_emt_template(
 
     # Charge-voltage relations of terminal capacitances.
     for k in range(3):
-        alg_eqs.append(q_f[k] - xfmr_c_term * v_f[k])
-        alg_eqs.append(q_t[k] - xfmr_c_term * v_t[k])
+        alg_eqs.append(q_f[k] - xfmr_c_term * v_f_term[k])
+        alg_eqs.append(q_t[k] - xfmr_c_term * v_t_term[k])
 
     # Terminal current assembly.
     for k in range(3):
@@ -551,8 +662,47 @@ def get_xfmr_emt_template(
             )
         )
 
+    if if_n_act is not None:
+        neutral_from_kcl: Expr = if_n_act + if_act[0] + if_act[1] + if_act[2]
+
+        if from_ground_current is not None:
+            neutral_from_kcl = neutral_from_kcl + from_ground_current
+        else:
+            pass
+
+        alg_eqs.append(neutral_from_kcl)
+    else:
+        pass
+
+    if it_n_act is not None:
+        neutral_to_kcl: Expr = it_n_act + it_act[0] + it_act[1] + it_act[2]
+
+        if to_ground_current is not None:
+            neutral_to_kcl = neutral_to_kcl + to_ground_current
+        else:
+            pass
+
+        alg_eqs.append(neutral_to_kcl)
+    else:
+        pass
+
     templ.block.algebraic_eqs = alg_eqs
-    templ.block.out_vars = if_act + it_act + i_mag
+    output_vars: list[Var] = list()
+    if if_n_act is not None:
+        output_vars.append(if_n_act)
+    else:
+        pass
+
+    output_vars.extend(if_act)
+
+    if it_n_act is not None:
+        output_vars.append(it_n_act)
+    else:
+        pass
+
+    output_vars.extend(it_act)
+    output_vars.extend(i_mag)
+    templ.block.out_vars = output_vars
 
     # ------------------------------------------------------------------
     # External mapping.
@@ -609,34 +759,24 @@ def get_xfmr_emt_template(
         vt_keys["A"]: None,
         vt_keys["B"]: None,
         vt_keys["C"]: None,
-        Sf_keys["A"]: None,
-        Sf_keys["B"]: None,
-        Sf_keys["C"]: None,
-        St_keys["A"]: None,
-        St_keys["B"]: None,
-        St_keys["C"]: None,
-        d_vf_keys["N"]: None,
-        d_vf_keys["A"]: None,
-        d_vf_keys["B"]: None,
-        d_vf_keys["C"]: None,
-        d_vt_keys["N"]: None,
-        d_vt_keys["A"]: None,
-        d_vt_keys["B"]: None,
-        d_vt_keys["C"]: None,
     }
 
+    mapping[vf_keys["N"]] = v_f_n
     mapping[vf_keys["A"]] = v_f[0]
     mapping[vf_keys["B"]] = v_f[1]
     mapping[vf_keys["C"]] = v_f[2]
 
+    mapping[vt_keys["N"]] = v_t_n
     mapping[vt_keys["A"]] = v_t[0]
     mapping[vt_keys["B"]] = v_t[1]
     mapping[vt_keys["C"]] = v_t[2]
 
+    mapping[if_keys["N"]] = if_n_act
     mapping[if_keys["A"]] = if_act[0]
     mapping[if_keys["B"]] = if_act[1]
     mapping[if_keys["C"]] = if_act[2]
 
+    mapping[it_keys["N"]] = it_n_act
     mapping[it_keys["A"]] = it_act[0]
     mapping[it_keys["B"]] = it_act[1]
     mapping[it_keys["C"]] = it_act[2]
@@ -662,8 +802,8 @@ def get_xfmr_emt_template(
 
     # Charge states.
     for k in range(3):
-        init_eqs[q_f[k]] = xfmr_c_term * v_f[k]
-        init_eqs[q_t[k]] = xfmr_c_term * v_t[k]
+        init_eqs[q_f[k]] = xfmr_c_term * v_f_term[k]
+        init_eqs[q_t[k]] = xfmr_c_term * v_t_term[k]
 
     # Core flux-linkage states from the from-side winding voltage set.
     for k in range(3):
@@ -728,5 +868,23 @@ def get_xfmr_emt_template(
         diff_init_eqs[dq_t[k]] = i_cap_t[k]
 
     templ.block.diff_init_eqs = diff_init_eqs
+
+    grounding_pairs: List[Tuple[Var, Block]] = list()
+    if v_f_n is not None and from_grounding_link_block is not None:
+        grounding_pairs.append((v_f_n, from_grounding_link_block))
+    else:
+        pass
+
+    if v_t_n is not None and to_grounding_link_block is not None:
+        grounding_pairs.append((v_t_n, to_grounding_link_block))
+    else:
+        pass
+
+    _attach_transformer_editor_diagram(
+        root_block=templ.block,
+        input_vars=input_vars,
+        output_vars=output_vars,
+        grounding_pairs=grounding_pairs,
+    )
 
     return templ

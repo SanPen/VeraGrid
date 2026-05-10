@@ -3,7 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Tuple
+from typing import Dict, Tuple
 
 import numpy as np
 
@@ -11,7 +11,7 @@ import VeraGridEngine.Utils.Symbolic.symbolic as sym
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Templates.Emt.bridge_filter_2level_3ph_emt_template import get_bridge_filter_2level_3ph_emt_template
-from VeraGridEngine.Utils.Symbolic.block import Block, find_name_in_block
+from VeraGridEngine.Utils.Symbolic.block import Block, build_name_to_var_lookup
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var
 from VeraGridEngine.enumerations import DeviceType
 
@@ -228,13 +228,13 @@ def _build_bridge_filter_pll_input_filter_block(vf: VarFactory, name: str) -> Bl
     eps: Const = Const(1.0e-10)
     c_pi: Const = Const(np.pi)
     c0: Const = Const(0.0)
-    tau_pll_vq_expr: Expr = c_pi / sym.max(omega_sw, eps)
+    inv_tau_pll_vq_expr: Expr =  sym.max(omega_sw, eps)/c_pi
 
     return Block(
         state_eqs=list([
             # The switched plant should feed the PLL with the low-frequency q-axis content rather than
             # with the raw switching ripple of the network-side voltage measurement.
-            (v_q_raw - v_q_pll_f) / tau_pll_vq_expr,
+            (v_q_raw - v_q_pll_f) * inv_tau_pll_vq_expr,
         ]),
         state_vars=list([v_q_pll_f]),
         diff_vars=list([d_v_q_pll_f]),
@@ -378,35 +378,40 @@ def get_bridge_filter_control_2level_3ph_emt_template(vf: VarFactory, name: str 
     pll_input_filter_block: Block = _build_bridge_filter_pll_input_filter_block(vf=vf, name=name)
     pll_block: Block = _build_bridge_filter_pll_block(vf=vf, name=name)
     current_ctrl_block: Block = _build_bridge_filter_current_control_block(vf=vf, name=name)
+    plant_lookup: Dict[str, Var] = build_name_to_var_lookup(plant_block)
+    measurement_filter_lookup: Dict[str, Var] = build_name_to_var_lookup(measurement_filter_block)
+    pll_input_filter_lookup: Dict[str, Var] = build_name_to_var_lookup(pll_input_filter_block)
+    pll_lookup: Dict[str, Var] = build_name_to_var_lookup(pll_block)
+    current_ctrl_lookup: Dict[str, Var] = build_name_to_var_lookup(current_ctrl_block)
 
-    plant_i_A: Var = find_name_in_block(f"i_A_{name}_plant", plant_block)
-    plant_i_B: Var = find_name_in_block(f"i_B_{name}_plant", plant_block)
-    plant_i_C: Var = find_name_in_block(f"i_C_{name}_plant", plant_block)
-    plant_i_d: Var = find_name_in_block(f"i_d_{name}_plant", plant_block)
-    plant_i_q: Var = find_name_in_block(f"i_q_{name}_plant", plant_block)
-    plant_i_0: Var = find_name_in_block(f"i_0_{name}_plant", plant_block)
-    plant_v_d: Var = find_name_in_block(f"v_d_{name}_plant", plant_block)
-    plant_v_q: Var = find_name_in_block(f"v_q_{name}_plant", plant_block)
-    plant_v_0: Var = find_name_in_block(f"v_0_{name}_plant", plant_block)
-    plant_gate_a: Var = find_name_in_block(f"gate_a_{name}_plant_bridge", plant_block)
-    plant_gate_b: Var = find_name_in_block(f"gate_b_{name}_plant_bridge", plant_block)
-    plant_gate_c: Var = find_name_in_block(f"gate_c_{name}_plant_bridge", plant_block)
-    plant_v_conv_a: Var = find_name_in_block(f"v_conv_a_{name}_plant_bridge", plant_block)
-    plant_v_conv_b: Var = find_name_in_block(f"v_conv_b_{name}_plant_bridge", plant_block)
-    plant_v_conv_c: Var = find_name_in_block(f"v_conv_c_{name}_plant_bridge", plant_block)
-    meas_v_d_f: Var = find_name_in_block(f"v_d_meas_f_{name}", measurement_filter_block)
-    meas_v_q_f: Var = find_name_in_block(f"v_q_meas_f_{name}", measurement_filter_block)
-    meas_v_0_f: Var = find_name_in_block(f"v_0_meas_f_{name}", measurement_filter_block)
-    meas_i_d_f: Var = find_name_in_block(f"i_d_meas_f_{name}", measurement_filter_block)
-    meas_i_q_f: Var = find_name_in_block(f"i_q_meas_f_{name}", measurement_filter_block)
-    meas_i_0_f: Var = find_name_in_block(f"i_0_meas_f_{name}", measurement_filter_block)
-    pll_input_v_q_f: Var = find_name_in_block(f"v_q_pll_f_{name}", pll_input_filter_block)
-    pll_theta: Var = find_name_in_block(f"theta_pll_{name}", pll_block)
-    pll_omega: Var = find_name_in_block(f"omega_pll_{name}", pll_block)
-    ctrl_v_cmd_d: Var = find_name_in_block(f"v_cmd_d_{name}", current_ctrl_block)
-    ctrl_v_cmd_q: Var = find_name_in_block(f"v_cmd_q_{name}", current_ctrl_block)
-    ctrl_v_cmd_0: Var = find_name_in_block(f"v_cmd_0_{name}", current_ctrl_block)
-    ctrl_k_v_conv: Var = find_name_in_block(f"k_v_conv_{name}", current_ctrl_block)
+    plant_i_A: Var | None = plant_lookup.get(f"i_A_{name}_plant", None)
+    plant_i_B: Var | None = plant_lookup.get(f"i_B_{name}_plant", None)
+    plant_i_C: Var | None = plant_lookup.get(f"i_C_{name}_plant", None)
+    plant_i_d: Var | None = plant_lookup.get(f"i_d_{name}_plant", None)
+    plant_i_q: Var | None = plant_lookup.get(f"i_q_{name}_plant", None)
+    plant_i_0: Var | None = plant_lookup.get(f"i_0_{name}_plant", None)
+    plant_v_d: Var | None = plant_lookup.get(f"v_d_{name}_plant", None)
+    plant_v_q: Var | None = plant_lookup.get(f"v_q_{name}_plant", None)
+    plant_v_0: Var | None = plant_lookup.get(f"v_0_{name}_plant", None)
+    plant_gate_a: Var | None = plant_lookup.get(f"gate_a_{name}_plant_bridge", None)
+    plant_gate_b: Var | None = plant_lookup.get(f"gate_b_{name}_plant_bridge", None)
+    plant_gate_c: Var | None = plant_lookup.get(f"gate_c_{name}_plant_bridge", None)
+    plant_v_conv_a: Var | None = plant_lookup.get(f"v_conv_a_{name}_plant_bridge", None)
+    plant_v_conv_b: Var | None = plant_lookup.get(f"v_conv_b_{name}_plant_bridge", None)
+    plant_v_conv_c: Var | None = plant_lookup.get(f"v_conv_c_{name}_plant_bridge", None)
+    meas_v_d_f: Var | None = measurement_filter_lookup.get(f"v_d_meas_f_{name}", None)
+    meas_v_q_f: Var | None = measurement_filter_lookup.get(f"v_q_meas_f_{name}", None)
+    meas_v_0_f: Var | None = measurement_filter_lookup.get(f"v_0_meas_f_{name}", None)
+    meas_i_d_f: Var | None = measurement_filter_lookup.get(f"i_d_meas_f_{name}", None)
+    meas_i_q_f: Var | None = measurement_filter_lookup.get(f"i_q_meas_f_{name}", None)
+    meas_i_0_f: Var | None = measurement_filter_lookup.get(f"i_0_meas_f_{name}", None)
+    pll_input_v_q_f: Var | None = pll_input_filter_lookup.get(f"v_q_pll_f_{name}", None)
+    pll_theta: Var | None = pll_lookup.get(f"theta_pll_{name}", None)
+    pll_omega: Var | None = pll_lookup.get(f"omega_pll_{name}", None)
+    ctrl_v_cmd_d: Var | None = current_ctrl_lookup.get(f"v_cmd_d_{name}", None)
+    ctrl_v_cmd_q: Var | None = current_ctrl_lookup.get(f"v_cmd_q_{name}", None)
+    ctrl_v_cmd_0: Var | None = current_ctrl_lookup.get(f"v_cmd_0_{name}", None)
+    ctrl_k_v_conv: Var | None = current_ctrl_lookup.get(f"k_v_conv_{name}", None)
 
     if plant_i_A is None or plant_i_B is None or plant_i_C is None or plant_i_d is None or plant_i_q is None or plant_i_0 is None or plant_v_d is None or plant_v_q is None or plant_v_0 is None or plant_gate_a is None or plant_gate_b is None or plant_gate_c is None or plant_v_conv_a is None or plant_v_conv_b is None or plant_v_conv_c is None or meas_v_d_f is None or meas_v_q_f is None or meas_v_0_f is None or meas_i_d_f is None or meas_i_q_f is None or meas_i_0_f is None or pll_input_v_q_f is None or pll_theta is None or pll_omega is None or ctrl_v_cmd_d is None or ctrl_v_cmd_q is None or ctrl_v_cmd_0 is None or ctrl_k_v_conv is None:
         raise KeyError(f"The bridge + filter + control template '{name}' could not resolve one or more internal variables")

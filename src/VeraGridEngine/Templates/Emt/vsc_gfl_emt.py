@@ -10,7 +10,7 @@ import math
 from VeraGridEngine.enumerations import DeviceType
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Utils.Symbolic.block import (Block, Var, VarPowerFlowRefferenceType)
-from VeraGridEngine.Templates.templates_common_functions import tf_to_block
+from VeraGridEngine.Utils.Symbolic.block_helpers import tf_to_block
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
 from VeraGridEngine.enumerations import ConverterControlType

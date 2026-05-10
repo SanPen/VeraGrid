@@ -218,7 +218,23 @@ def __solve_island_complete_support(nc: NumericalCircuit,
 
             else:
                 # for any other method, raise exception
-                raise Exception(solver_type.value + ' Not supported in power flow mode')
+                logger.add_error('Solver not supported in power flow mode', value=solver_type.value)
+                problem = PfAcDcWithNegativePoles(V0=final_solution.V,
+                                                  S0=S0,
+                                                  I0=I0,
+                                                  Y0=-Y0,
+                                                  Qmin=Qmin,
+                                                  Qmax=Qmax,
+                                                  nc=nc,
+                                                  options=options,
+                                                  logger=logger)
+
+                solution = newton_raphson_fx(problem=problem,
+                                             tol=options.tolerance,
+                                             max_iter=options.max_iter,
+                                             trust=options.trust_radius,
+                                             verbose=options.verbose,
+                                             logger=logger)
 
             # record the solution type
             solution.method = solver_type

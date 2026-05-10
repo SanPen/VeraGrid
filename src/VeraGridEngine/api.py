@@ -23,6 +23,7 @@ from VeraGridEngine.IO.file_save import FileSave, FileSavingOptions, save_veragr
 from VeraGridEngine.IO.veragrid.remote import (gather_model_as_jsons_for_communication, RemoteInstruction,
                                                SimulationTypes, send_json_data, get_certificate_path, get_certificate)
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at, NumericalCircuit
+from VeraGridEngine.Utils.Symbolic.block_helpers import *
 
 
 def open_file(filename: Union[str, List[str]],

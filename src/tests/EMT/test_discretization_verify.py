@@ -6,7 +6,7 @@
 # Mathematical Verification Suite for VeraGrid Unified Solvers
 # ==============================================================================
 
-from typing import List, Tuple, Any
+from typing import Any, Dict, List, Tuple
 
 import numpy as np
 import pytest
@@ -76,7 +76,12 @@ def make_solver(
 ) -> Tuple[Any, GenericEmtProblem]:
     """Helper to construct a BaseProblem and initialize the chosen solver."""
     block.unify_blocks()
-    problem: GenericEmtProblem = GenericEmtProblem(block, Var("t"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+    problem: GenericEmtProblem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=Var("t"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
     solver: Any = solver_class(problem, t0=0.0, t_end=t_end, h=h, method=method)
     return solver, problem
 

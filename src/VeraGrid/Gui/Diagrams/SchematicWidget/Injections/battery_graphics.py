@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from VeraGrid.Gui.Diagrams.generic_graphics import Square
 from VeraGridEngine.Devices.Injections.battery import Battery
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionTemplateGraphicItem
+from VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor import GeneratorEditorDialog
 
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
@@ -39,3 +40,15 @@ class BatteryGraphicItem(InjectionTemplateGraphicItem):
         :return:
         """
         return self._api_object
+
+    def open_device_editor(self) -> bool:
+        """
+        Open the battery editor using the generator editor implementation.
+
+        :return: ``True`` when the editor was opened.
+        """
+        dlg = GeneratorEditorDialog(api_object=self.api_object, circuit=self.editor.circuit)
+        if dlg.exec():
+            return True
+        else:
+            return True

@@ -34,10 +34,11 @@ def get_pi_line_emt_template(vf: VarFactory,
     :return: EMT pi-line model template.
     :raises ValueError: If the line has no active phases.
     """
+
     templ = EmtModelTemplate()
     templ.tpe = DeviceType.LineDevice
-    templ.name = name
 
+    templ.name = name
     templ.block.name = EmtLineTypes.PI.value
 
     c0 = vf.add_const(0.0)
@@ -270,20 +271,12 @@ def get_pi_line_emt_template(vf: VarFactory,
     # -----------------------------
     if_keys = dict({"N": VarPowerFlowRefferenceType.if_N, "A": VarPowerFlowRefferenceType.if_A, "B": VarPowerFlowRefferenceType.if_B, "C": VarPowerFlowRefferenceType.if_C})
     it_keys = dict({"N": VarPowerFlowRefferenceType.it_N, "A": VarPowerFlowRefferenceType.it_A, "B": VarPowerFlowRefferenceType.it_B, "C": VarPowerFlowRefferenceType.it_C})
-    Sf_keys = dict({"A": VarPowerFlowRefferenceType.Sf_A, "B": VarPowerFlowRefferenceType.Sf_B, "C": VarPowerFlowRefferenceType.Sf_C})
-    St_keys = dict({"A": VarPowerFlowRefferenceType.St_A, "B": VarPowerFlowRefferenceType.St_B, "C": VarPowerFlowRefferenceType.St_C})
-    d_vf_keys = dict({"N": VarPowerFlowRefferenceType.d_v_N_f, "A": VarPowerFlowRefferenceType.d_v_A_f, "B": VarPowerFlowRefferenceType.d_v_B_f, "C": VarPowerFlowRefferenceType.d_v_C_f})
-    d_vt_keys = dict({"N": VarPowerFlowRefferenceType.d_v_N_t, "A": VarPowerFlowRefferenceType.d_v_A_t, "B": VarPowerFlowRefferenceType.d_v_B_t, "C": VarPowerFlowRefferenceType.d_v_C_t})
 
     mapping: Dict[VarPowerFlowRefferenceType, Var | None] = dict({
         if_keys["N"]: None, if_keys["A"]: None, if_keys["B"]: None, if_keys["C"]: None,
         it_keys["N"]: None, it_keys["A"]: None, it_keys["B"]: None, it_keys["C"]: None,
         vf_keys["N"]: None, vf_keys["A"]: None, vf_keys["B"]: None, vf_keys["C"]: None,
         vt_keys["N"]: None, vt_keys["A"]: None, vt_keys["B"]: None, vt_keys["C"]: None,
-        Sf_keys["A"]: None, Sf_keys["B"]: None, Sf_keys["C"]: None,
-        St_keys["A"]: None, St_keys["B"]: None, St_keys["C"]: None,
-        d_vf_keys["N"]: None, d_vf_keys["A"]: None, d_vf_keys["B"]: None, d_vf_keys["C"]: None,
-        d_vt_keys["N"]: None, d_vt_keys["A"]: None, d_vt_keys["B"]: None, d_vt_keys["C"]: None,
     })
 
     for k, phase_label in enumerate(active_ph):
@@ -291,8 +284,6 @@ def get_pi_line_emt_template(vf: VarFactory,
         mapping[vt_keys[phase_label]] = vt_vars[k]
         mapping[if_keys[phase_label]] = if_act[k]
         mapping[it_keys[phase_label]] = it_act[k]
-        # mapping[d_vf_keys[phase_label]] = d_vf_vars[k]
-        # mapping[d_vt_keys[phase_label]] = d_vt_vars[k]
 
     templ.block.external_mapping = mapping
 

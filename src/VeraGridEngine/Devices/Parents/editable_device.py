@@ -12,7 +12,7 @@ import pandas as pd
 from typing import List, Dict, AnyStr, Any, Union, Type, Tuple
 from VeraGridEngine.basic_structures import Logger, IntVec
 from VeraGridEngine.Devices.Profiles import ProfileBool, ProfileDevice, ProfileEnum, ProfileFloat, ProfileInt, AnyProfile, PROFILE_INSTANCE_TYPES
-from VeraGridEngine.enumerations import (DeviceType, TimeFrame, BuildStatus, WindingsConnection,
+from VeraGridEngine.enumerations import (DeviceType, PrpCat, TimeFrame, BuildStatus, WindingsConnection,
                                          TapModuleControl, TapPhaseControl, SubObjectType, ConverterControlType,
                                          HvdcControlType, ActionType, AvailableTransferMode, ContingencyMethod,
                                          CpfParametrization, CpfStopAt, InvestmentEvaluationMethod, SolverType,
@@ -144,6 +144,7 @@ class GCProp:
         "_old_names",
         "_is_color",
         "_is_date",
+        "_category"
     )
 
     def __init__(self,
@@ -157,7 +158,8 @@ class GCProp:
                  old_names: Union[List[str], Tuple[str, ...], None] = None,
                  is_color: bool = False,
                  is_date: bool = False,
-                 key: Union[str, None] = None):
+                 key: Union[str, None] = None,
+                 cat: List[PrpCat] | None = None):
         """
         VeraGrid property
         :param prop_name:
@@ -194,6 +196,7 @@ class GCProp:
             self._old_names: Tuple[str, ...] = tuple()
         else:
             self._old_names = tuple(old_names)
+        self._category: List[PrpCat] = [PrpCat.All] if cat is None else cat
 
     @property
     def name(self) -> str:
@@ -274,6 +277,14 @@ class GCProp:
         :return: bool
         """
         return self._is_date
+
+    @property
+    def category(self) -> List[PrpCat] :
+        """
+        List of categories
+        :return: List[PropertyCategory]
+        """
+        return self._category
 
     def has_profile(self) -> bool:
         """
@@ -469,15 +480,51 @@ class EditableDevice(metaclass=EditableDeviceMeta):
         '__auto_update_enabled',
     )
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='idtag', units='', tpe=str, definition='Unique ID', editable=False),
-        GCProp(key='name', units='', tpe=str, definition='Name of the device.'),
-        GCProp(key='code', units='', tpe=str, definition='Secondary ID'),
-        GCProp(key='rdfid', units='', tpe=str, definition='RDF ID for further compatibility'),
-        GCProp(key='action', units='', tpe=ActionType,
-               definition='Object action to perform.\nOnly used for model merging.',
-               display=False),
-        GCProp(key='comment', units='', tpe=str, definition='User comment'),
-        GCProp(key='diff_changes', units='', tpe=SubObjectType.MergeInformation, display=False, editable=False)
+        GCProp(
+            prop_name='idtag',
+            units='',
+            tpe=str,
+            definition='Unique ID',
+            editable=False,
+        ),
+        GCProp(
+            prop_name='name',
+            units='',
+            tpe=str,
+            definition='Name of the device.',
+        ),
+        GCProp(
+            prop_name='code',
+            units='',
+            tpe=str,
+            definition='Secondary ID',
+        ),
+        GCProp(
+            prop_name='rdfid',
+            units='',
+            tpe=str,
+            definition='RDF ID for further compatibility',
+        ),
+        GCProp(
+            prop_name='action',
+            units='',
+            tpe=ActionType,
+            definition='Object action to perform.\nOnly used for model merging.',
+            display=False,
+        ),
+        GCProp(
+            prop_name='comment',
+            units='',
+            tpe=str,
+            definition='User comment',
+        ),
+        GCProp(
+            prop_name='diff_changes',
+            units='',
+            tpe=SubObjectType.MergeInformation,
+            display=False,
+            editable=False,
+        )
     )
     CLASS_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = tuple()
     CLASS_PROPERTY_LIST: Tuple[GCProp, ...] = tuple()

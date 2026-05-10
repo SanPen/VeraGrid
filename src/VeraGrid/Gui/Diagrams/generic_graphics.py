@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (QGraphicsLineItem, QGraphicsItem, QGraphicsPolygo
                                QGraphicsRectItem, QGraphicsEllipseItem, QGraphicsTextItem)
 from PySide6.QtGui import QColor, QPen, QPolygon, QPolygonF
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
+from VeraGrid.Gui.messages import warning_msg
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
@@ -212,6 +213,21 @@ class GenericDiagramWidget:
         """
 
         return list()
+
+    def open_device_editor(self) -> bool:
+        """
+        Open the device editor for this graphic element.
+
+        Subclasses must implement this method to launch the editor that
+        corresponds to their own device type.
+
+        :return: ``True`` when an editor was opened.
+        """
+        warning_msg(
+            f"Editor launch is not implemented for {self.__class__.__name__}",
+            "Device editor",
+        )
+        return False
 
 
 class Polygon(QGraphicsPolygonItem):

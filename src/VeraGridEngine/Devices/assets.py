@@ -6196,6 +6196,15 @@ class Assets:
         """
         return [elm for elm in self.rms_models if elm.tpe == tpe]
 
+    def get_loaded_rms_models_by_device_type(self, tpe: DeviceType) -> List[dev.RmsModelTemplate]:
+        """
+        Return already materialized RMS templates without triggering lazy loading.
+
+        :param tpe: Supported device type.
+        :return: Matching loaded RMS templates.
+        """
+        return [elm for elm in self._rms_models if elm.tpe == tpe]
+
     # ------------------------------------------------------------------------------------------------------------------
     # EmtModel
     # ------------------------------------------------------------------------------------------------------------------
@@ -6258,6 +6267,15 @@ class Assets:
         :return:
         """
         return [elm for elm in self.emt_models if _matches_dynamic_template_device_type(tpe, elm.tpe)]
+
+    def get_loaded_emt_models_by_device_type(self, tpe: DeviceType) -> List[dev.EmtModelTemplate]:
+        """
+        Return already materialized EMT templates without triggering lazy loading.
+
+        :param tpe: Supported device type.
+        :return: Matching loaded EMT templates.
+        """
+        return [elm for elm in self._emt_models if _matches_dynamic_template_device_type(tpe, elm.tpe)]
 
     @property
     def fmu_templates(self) -> List[dev.FmuTemplate]:
@@ -6374,9 +6392,10 @@ class Assets:
 
         return [elm for elm in self.fmu_templates if elm.tpe == tpe and elm.domain == domain]
 
-    def get_dynamic_templates_by_device_type_and_domain(self,
-                                                        tpe: DeviceType,
-                                                        domain: FmuTemplateDomain) -> List[dev.RmsModelTemplate | dev.EmtModelTemplate | dev.FmuTemplate]:
+    def get_dynamic_templates_by_device_type_and_domain(
+            self,
+            tpe: DeviceType,
+            domain: FmuTemplateDomain) -> List[dev.RmsModelTemplate | dev.EmtModelTemplate | dev.FmuTemplate]:
         """
         Get all reusable templates for one device type and one simulation domain.
 
@@ -6401,8 +6420,10 @@ class Assets:
         native_templates.extend(self.get_fmu_templates_by_device_type_and_domain(tpe, domain))
         return native_templates
 
-    def get_dynamic_templates_by_domain(self,
-                                        domain: FmuTemplateDomain) -> List[dev.RmsModelTemplate | dev.EmtModelTemplate | dev.FmuTemplate]:
+    def get_dynamic_templates_by_domain(
+            self,
+            domain: FmuTemplateDomain
+    ) -> List[dev.RmsModelTemplate | dev.EmtModelTemplate | dev.FmuTemplate]:
         """
         Get all reusable templates registered for one simulation domain.
 
@@ -7311,12 +7332,18 @@ class Assets:
             self._shunts = devices
 
         elif device_type == DeviceType.ExternalGridDevice:
+            for d in devices:
+                d.set_var_factory(self._var_factory)
             self._external_grids = devices
 
         elif device_type == DeviceType.CurrentInjectionDevice:
+            for d in devices:
+                d.set_var_factory(self._var_factory)
             self._current_injections = devices
 
         elif device_type == DeviceType.ControllableShuntDevice:
+            for d in devices:
+                d.set_var_factory(self._var_factory)
             self._controllable_shunts = devices
 
         elif device_type == DeviceType.LineDevice:
@@ -7325,35 +7352,56 @@ class Assets:
                 self.add_line(d, logger=logger)
 
         elif device_type == DeviceType.Transformer2WDevice:
+            for d in devices:
+                d.set_var_factory(self._var_factory)
             self._transformers2w = devices
 
+
         elif device_type == DeviceType.Transformer3WDevice:
+            for d in devices:
+                d.set_var_factory(self._var_factory)
             self._transformers3w = devices
 
+
         elif device_type == DeviceType.TransformerNwDevice:
+            for d in devices:
+                d.set_var_factory(self._var_factory)
             self._transformers_nw = devices
 
+
         elif device_type == DeviceType.WindingDevice:
+            for d in devices:
+                d.set_var_factory(self._var_factory)
             self._windings = devices
 
         elif device_type == DeviceType.SeriesReactanceDevice:
+            for d in devices:
+                d.set_var_factory(self._var_factory)
             self._series_reactances = devices
 
         elif device_type == DeviceType.HVDCLineDevice:
+            for d in devices:
+                d.set_var_factory(self._var_factory)
             self._hvdc_lines = devices
 
         elif device_type == DeviceType.UpfcDevice:
+            for d in devices:
+                d.set_var_factory(self._var_factory)
             self._upfc_devices = devices
 
         elif device_type == DeviceType.VscDevice:
             # for elm in devices:  # TODO SANPEN: Why not?
             #     elm.correct_buses_connection()
+            for d in devices:
+                d.set_var_factory(self._var_factory)
             self._vsc_devices = devices
 
         elif device_type == DeviceType.BranchGroupDevice:
             self._branch_groups = devices
 
         elif device_type == DeviceType.BusDevice:
+            for d in devices:
+                d.set_var_factory(self._var_factory)
             self._buses = ListSet(devices)
 
         elif device_type == DeviceType.OverheadLineTypeDevice:
@@ -7367,18 +7415,26 @@ class Assets:
             self._transformer_types = devices
 
         elif device_type == DeviceType.UnderGroundLineDevice:
+            for d in devices:
+                d.set_var_factory(self._var_factory)
             self._underground_cable_types = devices
 
         elif device_type == DeviceType.SequenceLineDevice:
+            for d in devices:
+                d.set_var_factory(self._var_factory)
             self._sequence_line_types = devices
 
         elif device_type == DeviceType.WireDevice:
             self._wire_types = devices
 
         elif device_type == DeviceType.DCLineDevice:
+            for d in devices:
+                d.set_var_factory(self._var_factory)
             self._dc_lines = devices
 
         elif device_type == DeviceType.SwitchDevice:
+            for d in devices:
+                d.set_var_factory(self._var_factory)
             self._switch_devices = devices
 
         elif device_type == DeviceType.SubstationDevice:
@@ -8526,8 +8582,10 @@ class Assets:
         elif elm_type == DeviceType.TransformerTypeDevice:
             elm = dev.TransformerType()
             dictionary_of_lists = {
-                DeviceType.RmsModelTemplateDevice: self.get_rms_models_by_device_type(DeviceType.Transformer2WDevice),
-                DeviceType.EmtModelTemplateDevice: self.get_emt_models_by_device_type(DeviceType.Transformer2WDevice),
+                DeviceType.RmsModelTemplateDevice: self.get_loaded_rms_models_by_device_type(
+                    DeviceType.Transformer2WDevice),
+                DeviceType.EmtModelTemplateDevice: self.get_loaded_emt_models_by_device_type(
+                    DeviceType.Transformer2WDevice),
             }
 
         elif elm_type == DeviceType.FluidNodeDevice:
@@ -8670,13 +8728,16 @@ class Assets:
         else:
             raise Exception(f'elm_type not understood: {elm_type.value}')
 
-        if (DeviceType.RmsModelTemplateDevice in dictionary_of_lists) or (DeviceType.EmtModelTemplateDevice in dictionary_of_lists):
+        if (DeviceType.RmsModelTemplateDevice in dictionary_of_lists) or (
+                DeviceType.EmtModelTemplateDevice in dictionary_of_lists):
             dictionary_of_lists[DeviceType.FmuTemplateDevice] = self.get_fmu_templates_by_device_type(elm_type)
-            dictionary_of_lists[("rms_fmu_template", DeviceType.FmuTemplateDevice)] = self.get_fmu_templates_by_device_type_and_domain(
+            dictionary_of_lists[
+                ("rms_fmu_template", DeviceType.FmuTemplateDevice)] = self.get_fmu_templates_by_device_type_and_domain(
                 elm_type,
                 FmuTemplateDomain.RMS,
             )
-            dictionary_of_lists[("emt_fmu_template", DeviceType.FmuTemplateDevice)] = self.get_fmu_templates_by_device_type_and_domain(
+            dictionary_of_lists[
+                ("emt_fmu_template", DeviceType.FmuTemplateDevice)] = self.get_fmu_templates_by_device_type_and_domain(
                 elm_type,
                 FmuTemplateDomain.EMT,
             )
@@ -8731,6 +8792,7 @@ class Assets:
         Here the list of all rms templates must be returned in a list
         :return:
         """
+        # TODO: eliminate
         self.rms_models += [
             tem.get_genqec_rms(vfactory=self._var_factory),
             tem.get_governor_rms(vfactory=self._var_factory),
@@ -8739,7 +8801,8 @@ class Assets:
             tem.get_complete_generator_template_rms(vfactory=self._var_factory),
             tem.get_genrow_rms_template(vfactory=self._var_factory),
             tem.get_line_rms_template(vfactory=self._var_factory),
-            tem.get_load_rms_template(vfactory=self._var_factory)
+            tem.get_load_rms_template(vfactory=self._var_factory),
+            tem.get_pvd1_rms_template(vfactory=self._var_factory),
         ]
 
     def add_emt_model_catalogue(self):
@@ -8768,7 +8831,11 @@ class Assets:
             tem.get_valve_emt_template(vf=self._var_factory),
             tem.get_transformer_emt_template(vf=self._var_factory),
             tem.get_xfmr_emt_template(vf=self._var_factory),
-
+            tem.get_induction_motor_single_cage_emt_template(vf=self._var_factory),
+            tem.get_induction_motor_double_cage_emt_template(vf=self._var_factory),
+            tem.get_bess_avm_grid_following_emt_template(vf=self._var_factory),
+            tem.get_pv_avm_grid_following_emt_template(vf=self._var_factory),
+            tem.get_pv_avm_boost_grid_following_emt_template(vf=self._var_factory),
 
             # the following are functions that generate templates depending on phases or things
             tem.get_shunt_c_emt_template(vf=self._var_factory, phA=True, phB=True, phC=True),
@@ -8778,6 +8845,5 @@ class Assets:
             tem.get_load_ZIP_emt_template(vf=self._var_factory, phA=True, phB=True, phC=True),
             tem.get_pi_line_emt_template(vf=self._var_factory, phN=False, phA=True, phB=True, phC=True),
             tem.get_bergeron_line_emt_template(vf=self._var_factory, phN=False, phA=True, phB=True, phC=True),
-
 
         ]

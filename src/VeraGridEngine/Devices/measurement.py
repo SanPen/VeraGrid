@@ -49,10 +49,18 @@ class MeasurementTemplate(PointerDeviceParent):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp("value", tpe=float, profile_name="value_prof",
-                      definition="Value of the measurement"),
-        GCProp("sigma", tpe=float, profile_name="sigma_prof",
-                      definition="Uncertainty of the measurement"),
+        GCProp(
+            prop_name="value",
+            tpe=float,
+            profile_name="value_prof",
+            definition="Value of the measurement",
+        ),
+        GCProp(
+            prop_name="sigma",
+            tpe=float,
+            profile_name="sigma_prof",
+            definition="Uncertainty of the measurement",
+        ),
     )
 
     def __init__(self, value: float,

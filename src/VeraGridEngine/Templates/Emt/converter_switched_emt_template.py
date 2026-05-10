@@ -11,7 +11,7 @@ import VeraGridEngine.Utils.Symbolic.symbolic as sym
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Templates.Emt.bridge_filter_control_2level_3ph_emt_template import get_bridge_filter_control_2level_3ph_emt_template
-from VeraGridEngine.Utils.Symbolic.block import Block, VarPowerFlowRefferenceType, find_name_in_block
+from VeraGridEngine.Utils.Symbolic.block import Block, VarPowerFlowRefferenceType, build_name_to_var_lookup
 from VeraGridEngine.Utils.Symbolic.symbolic import BinOp, Const, Expr, Var
 from VeraGridEngine.Utils.procedural_logic import startup_handover
 from VeraGridEngine.enumerations import ConverterControlType, DeviceType, ParamPowerFlowRefferenceType
@@ -362,7 +362,7 @@ def _build_pseudo_emt_converter_outer_loop_block(vf: VarFactory, name: str) -> B
 
     return Block(
         state_eqs=list([
-            vdc_ki * ((v_dc - Vdc_ref) + aw_gain * (i_d_ref - i_d_ref_u)),
+            vdc_ki * ((Vdc_ref - v_dc) + aw_gain * (i_d_ref - i_d_ref_u)),
             q_ki * ((Q_ref_pu - Q_f) + aw_gain * (i_q_ref - i_q_ref_u)),
             (P - P_f) / tau_meas,
             (Q - Q_f) / tau_meas,
@@ -374,7 +374,7 @@ def _build_pseudo_emt_converter_outer_loop_block(vf: VarFactory, name: str) -> B
             i_d_ff - c23 * P_ac_ff_pu / (v_mag + eps),
             i_q_ff - c23 * Q_ref_pu / (v_mag + eps),
             i_0_ref_u,
-            i_d_ref_u - (i_d_ff - vdc_kp * (Vdc_ref - v_dc) + xi_vdc),
+            i_d_ref_u - (i_d_ff + vdc_kp * (Vdc_ref - v_dc) + xi_vdc),
             i_d_ref - i_d_cap,
             i_q_ref_u - (i_q_ff + q_kp * (Q_ref_pu - Q_f) + xi_q),
             i_q_ref - sym.hard_sat(i_q_ref_u, -i_q_cap, i_q_cap),
@@ -382,7 +382,7 @@ def _build_pseudo_emt_converter_outer_loop_block(vf: VarFactory, name: str) -> B
         ]),
         algebraic_vars=list([v_mag, i_d_ff, i_q_ff, i_0_ref_u, i_d_ref_u, i_q_ref_u, i_0_ref, i_d_ref, i_q_ref]),
         init_eqs=dict([
-            (xi_vdc, i_d0 - (c23 * P_ac_ff_pu / (Vpk + eps)) + vdc_kp * (Vdc_ref - v_dc)),
+            (xi_vdc, i_d0 - (c23 * P_ac_ff_pu / (Vpk + eps)) - vdc_kp * (Vdc_ref - v_dc)),
             (xi_q, i_q0 - (c23 * Q_ref_pu / (Vpk + eps)) - q_kp * (Q_ref_pu - Q0)),
             (P_f, P),
             (Q_f, Q0),
@@ -759,70 +759,73 @@ def get_switched_emt_converter(vf: VarFactory, name: str = "switched_converter_e
     outer_loop_block: Block = _build_pseudo_emt_converter_outer_loop_block(vf=vf, name=name)
     plant_block: Block = get_bridge_filter_control_2level_3ph_emt_template(vf=vf, name=name).block
     filter_stage_block: Block = plant_block
+    data_lookup: Dict[str, Var] = build_name_to_var_lookup(data_block)
+    outer_loop_lookup: Dict[str, Var] = build_name_to_var_lookup(outer_loop_block)
+    plant_lookup: Dict[str, Var] = build_name_to_var_lookup(plant_block)
 
-    data_vdc: Var = find_name_in_block(f"v_dc_{name}", data_block)
-    data_idc: Var = find_name_in_block(f"i_dc_{name}", data_block)
-    data_p: Var = find_name_in_block(f"P_{name}", data_block)
-    data_q: Var = find_name_in_block(f"Q_{name}", data_block)
-    data_sbase: Var = find_name_in_block(f"sbase_{name}", data_block)
-    data_p_ref: Var = find_name_in_block(f"P_ref_{name}", data_block)
-    data_q_ref: Var = find_name_in_block(f"Q_ref_{name}", data_block)
-    data_vdc_ref: Var = find_name_in_block(f"Vdc_ref_{name}", data_block)
-    data_omega_base: Var = find_name_in_block(f"omega_base_{name}", data_block)
-    data_phi_v: Var = find_name_in_block(f"phi_v_{name}", data_block)
-    data_vpk: Var = find_name_in_block(f"Vpk_{name}", data_block)
-    data_r_eq: Var = find_name_in_block(f"R_eq_{name}", data_block)
-    data_l_eq: Var = find_name_in_block(f"L_eq_{name}", data_block)
-    data_pll_kp: Var = find_name_in_block(f"pll_kp_{name}", data_block)
-    data_pll_ki: Var = find_name_in_block(f"pll_ki_{name}", data_block)
-    data_i_kp: Var = find_name_in_block(f"i_kp_{name}", data_block)
-    data_i_ki: Var = find_name_in_block(f"i_ki_{name}", data_block)
-    data_vdc_kp: Var = find_name_in_block(f"vdc_kp_{name}", data_block)
-    data_vdc_ki: Var = find_name_in_block(f"vdc_ki_{name}", data_block)
-    data_q_kp: Var = find_name_in_block(f"q_kp_{name}", data_block)
-    data_q_ki: Var = find_name_in_block(f"q_ki_{name}", data_block)
-    data_i_max: Var = find_name_in_block(f"i_max_{name}", data_block)
-    data_m_max: Var = find_name_in_block(f"m_max_{name}", data_block)
-    data_p_loss0: Var = find_name_in_block(f"P_loss0_{name}", data_block)
-    data_tau_meas: Var = find_name_in_block(f"tau_meas_{name}", data_block)
-    data_aw_gain: Var = find_name_in_block(f"aw_gain_{name}", data_block)
-    data_vdc_floor: Var = find_name_in_block(f"vdc_floor_{name}", data_block)
-    data_omega_sw: Var = find_name_in_block(f"omega_sw_{name}", data_block)
-    data_carrier_phase: Var = find_name_in_block(f"carrier_phase_{name}", data_block)
+    data_vdc: Var | None = data_lookup.get(f"v_dc_{name}", None)
+    data_idc: Var | None = data_lookup.get(f"i_dc_{name}", None)
+    data_p: Var | None = data_lookup.get(f"P_{name}", None)
+    data_q: Var | None = data_lookup.get(f"Q_{name}", None)
+    data_sbase: Var | None = data_lookup.get(f"sbase_{name}", None)
+    data_p_ref: Var | None = data_lookup.get(f"P_ref_{name}", None)
+    data_q_ref: Var | None = data_lookup.get(f"Q_ref_{name}", None)
+    data_vdc_ref: Var | None = data_lookup.get(f"Vdc_ref_{name}", None)
+    data_omega_base: Var | None = data_lookup.get(f"omega_base_{name}", None)
+    data_phi_v: Var | None = data_lookup.get(f"phi_v_{name}", None)
+    data_vpk: Var | None = data_lookup.get(f"Vpk_{name}", None)
+    data_r_eq: Var | None = data_lookup.get(f"R_eq_{name}", None)
+    data_l_eq: Var | None = data_lookup.get(f"L_eq_{name}", None)
+    data_pll_kp: Var | None = data_lookup.get(f"pll_kp_{name}", None)
+    data_pll_ki: Var | None = data_lookup.get(f"pll_ki_{name}", None)
+    data_i_kp: Var | None = data_lookup.get(f"i_kp_{name}", None)
+    data_i_ki: Var | None = data_lookup.get(f"i_ki_{name}", None)
+    data_vdc_kp: Var | None = data_lookup.get(f"vdc_kp_{name}", None)
+    data_vdc_ki: Var | None = data_lookup.get(f"vdc_ki_{name}", None)
+    data_q_kp: Var | None = data_lookup.get(f"q_kp_{name}", None)
+    data_q_ki: Var | None = data_lookup.get(f"q_ki_{name}", None)
+    data_i_max: Var | None = data_lookup.get(f"i_max_{name}", None)
+    data_m_max: Var | None = data_lookup.get(f"m_max_{name}", None)
+    data_p_loss0: Var | None = data_lookup.get(f"P_loss0_{name}", None)
+    data_tau_meas: Var | None = data_lookup.get(f"tau_meas_{name}", None)
+    data_aw_gain: Var | None = data_lookup.get(f"aw_gain_{name}", None)
+    data_vdc_floor: Var | None = data_lookup.get(f"vdc_floor_{name}", None)
+    data_omega_sw: Var | None = data_lookup.get(f"omega_sw_{name}", None)
+    data_carrier_phase: Var | None = data_lookup.get(f"carrier_phase_{name}", None)
 
-    plant_i_A: Var = find_name_in_block(f"i_A_{name}_plant", plant_block)
-    plant_i_B: Var = find_name_in_block(f"i_B_{name}_plant", plant_block)
-    plant_i_C: Var = find_name_in_block(f"i_C_{name}_plant", plant_block)
-    plant_i_d: Var = find_name_in_block(f"i_d_{name}_plant", plant_block)
-    plant_i_q: Var = find_name_in_block(f"i_q_{name}_plant", plant_block)
-    plant_i_0: Var = find_name_in_block(f"i_0_{name}_plant", plant_block)
-    plant_v_d: Var = find_name_in_block(f"v_d_{name}_plant", plant_block)
-    plant_v_q: Var = find_name_in_block(f"v_q_{name}_plant", plant_block)
-    plant_v_0: Var = find_name_in_block(f"v_0_{name}_plant", plant_block)
-    plant_gate_a: Var = find_name_in_block(f"gate_a_{name}_plant_bridge", plant_block)
-    plant_gate_b: Var = find_name_in_block(f"gate_b_{name}_plant_bridge", plant_block)
-    plant_gate_c: Var = find_name_in_block(f"gate_c_{name}_plant_bridge", plant_block)
-    plant_v_ref_a: Var = find_name_in_block(f"v_ref_a_{name}_plant_bridge", plant_block)
-    plant_v_ref_b: Var = find_name_in_block(f"v_ref_b_{name}_plant_bridge", plant_block)
-    plant_v_ref_c: Var = find_name_in_block(f"v_ref_c_{name}_plant_bridge", plant_block)
-    plant_v_conv_a: Var = find_name_in_block(f"v_conv_a_{name}_plant_bridge", plant_block)
-    plant_v_conv_b: Var = find_name_in_block(f"v_conv_b_{name}_plant_bridge", plant_block)
-    plant_v_conv_c: Var = find_name_in_block(f"v_conv_c_{name}_plant_bridge", plant_block)
-    plant_v_conv_d: Var = find_name_in_block(f"v_conv_d_{name}_plant_bridge", plant_block)
-    plant_v_conv_q: Var = find_name_in_block(f"v_conv_q_{name}_plant_bridge", plant_block)
-    plant_v_conv_0: Var = find_name_in_block(f"v_conv_0_{name}_plant_bridge", plant_block)
-    plant_v_d_meas_f: Var = find_name_in_block(f"v_d_meas_f_{name}", plant_block)
-    plant_v_q_meas_f: Var = find_name_in_block(f"v_q_meas_f_{name}", plant_block)
-    plant_i_d_meas_f: Var = find_name_in_block(f"i_d_meas_f_{name}", plant_block)
-    plant_i_q_meas_f: Var = find_name_in_block(f"i_q_meas_f_{name}", plant_block)
-    plant_i_0_meas_f: Var = find_name_in_block(f"i_0_meas_f_{name}", plant_block)
-    plant_v_0_meas_f: Var = find_name_in_block(f"v_0_meas_f_{name}", plant_block)
-    plant_v_cmd_d: Var = find_name_in_block(f"v_cmd_d_{name}", plant_block)
-    plant_v_cmd_q: Var = find_name_in_block(f"v_cmd_q_{name}", plant_block)
-    plant_v_cmd_0: Var = find_name_in_block(f"v_cmd_0_{name}", plant_block)
-    outer_i_0_ref: Var = find_name_in_block(f"i_0_ref_{name}", outer_loop_block)
-    outer_i_d_ref: Var = find_name_in_block(f"i_d_ref_{name}", outer_loop_block)
-    outer_i_q_ref: Var = find_name_in_block(f"i_q_ref_{name}", outer_loop_block)
+    plant_i_A: Var | None = plant_lookup.get(f"i_A_{name}_plant", None)
+    plant_i_B: Var | None = plant_lookup.get(f"i_B_{name}_plant", None)
+    plant_i_C: Var | None = plant_lookup.get(f"i_C_{name}_plant", None)
+    plant_i_d: Var | None = plant_lookup.get(f"i_d_{name}_plant", None)
+    plant_i_q: Var | None = plant_lookup.get(f"i_q_{name}_plant", None)
+    plant_i_0: Var | None = plant_lookup.get(f"i_0_{name}_plant", None)
+    plant_v_d: Var | None = plant_lookup.get(f"v_d_{name}_plant", None)
+    plant_v_q: Var | None = plant_lookup.get(f"v_q_{name}_plant", None)
+    plant_v_0: Var | None = plant_lookup.get(f"v_0_{name}_plant", None)
+    plant_gate_a: Var | None = plant_lookup.get(f"gate_a_{name}_plant_bridge", None)
+    plant_gate_b: Var | None = plant_lookup.get(f"gate_b_{name}_plant_bridge", None)
+    plant_gate_c: Var | None = plant_lookup.get(f"gate_c_{name}_plant_bridge", None)
+    plant_v_ref_a: Var | None = plant_lookup.get(f"v_ref_a_{name}_plant_bridge", None)
+    plant_v_ref_b: Var | None = plant_lookup.get(f"v_ref_b_{name}_plant_bridge", None)
+    plant_v_ref_c: Var | None = plant_lookup.get(f"v_ref_c_{name}_plant_bridge", None)
+    plant_v_conv_a: Var | None = plant_lookup.get(f"v_conv_a_{name}_plant_bridge", None)
+    plant_v_conv_b: Var | None = plant_lookup.get(f"v_conv_b_{name}_plant_bridge", None)
+    plant_v_conv_c: Var | None = plant_lookup.get(f"v_conv_c_{name}_plant_bridge", None)
+    plant_v_conv_d: Var | None = plant_lookup.get(f"v_conv_d_{name}_plant_bridge", None)
+    plant_v_conv_q: Var | None = plant_lookup.get(f"v_conv_q_{name}_plant_bridge", None)
+    plant_v_conv_0: Var | None = plant_lookup.get(f"v_conv_0_{name}_plant_bridge", None)
+    plant_v_d_meas_f: Var | None = plant_lookup.get(f"v_d_meas_f_{name}", None)
+    plant_v_q_meas_f: Var | None = plant_lookup.get(f"v_q_meas_f_{name}", None)
+    plant_i_d_meas_f: Var | None = plant_lookup.get(f"i_d_meas_f_{name}", None)
+    plant_i_q_meas_f: Var | None = plant_lookup.get(f"i_q_meas_f_{name}", None)
+    plant_i_0_meas_f: Var | None = plant_lookup.get(f"i_0_meas_f_{name}", None)
+    plant_v_0_meas_f: Var | None = plant_lookup.get(f"v_0_meas_f_{name}", None)
+    plant_v_cmd_d: Var | None = plant_lookup.get(f"v_cmd_d_{name}", None)
+    plant_v_cmd_q: Var | None = plant_lookup.get(f"v_cmd_q_{name}", None)
+    plant_v_cmd_0: Var | None = plant_lookup.get(f"v_cmd_0_{name}", None)
+    outer_i_0_ref: Var | None = outer_loop_lookup.get(f"i_0_ref_{name}", None)
+    outer_i_d_ref: Var | None = outer_loop_lookup.get(f"i_d_ref_{name}", None)
+    outer_i_q_ref: Var | None = outer_loop_lookup.get(f"i_q_ref_{name}", None)
     if data_vdc is None or data_idc is None or data_p is None or data_q is None or data_sbase is None or data_p_ref is None or data_q_ref is None or data_vdc_ref is None or data_omega_base is None or data_phi_v is None or data_vpk is None or data_r_eq is None or data_l_eq is None or data_pll_kp is None or data_pll_ki is None or data_i_kp is None or data_i_ki is None or data_vdc_kp is None or data_vdc_ki is None or data_q_kp is None or data_q_ki is None or data_i_max is None or data_m_max is None or data_p_loss0 is None or data_tau_meas is None or data_aw_gain is None or data_vdc_floor is None or data_omega_sw is None or data_carrier_phase is None or plant_i_A is None or plant_i_B is None or plant_i_C is None or plant_i_d is None or plant_i_q is None or plant_i_0 is None or plant_v_d is None or plant_v_q is None or plant_v_0 is None or plant_gate_a is None or plant_gate_b is None or plant_gate_c is None or plant_v_ref_a is None or plant_v_ref_b is None or plant_v_ref_c is None or plant_v_conv_a is None or plant_v_conv_b is None or plant_v_conv_c is None or plant_v_conv_d is None or plant_v_conv_q is None or plant_v_conv_0 is None or plant_v_d_meas_f is None or plant_v_q_meas_f is None or plant_v_0_meas_f is None or plant_i_d_meas_f is None or plant_i_q_meas_f is None or plant_i_0_meas_f is None or plant_v_cmd_d is None or plant_v_cmd_q is None or plant_v_cmd_0 is None or outer_i_0_ref is None or outer_i_d_ref is None or outer_i_q_ref is None:
         raise KeyError(f"The switched EMT converter '{name}' could not resolve one or more internal variables")
     else:
@@ -901,15 +904,16 @@ def get_switched_emt_converter(vf: VarFactory, name: str = "switched_converter_e
         )
     )
 
-    # The data block should use the same low-frequency dq0 view as the control hierarchy while still
-    # reconstructing the switched DC current from raw phase currents and retained gate states.
+    # The data block should compute instantaneous power from the raw plant dq0 quantities. Filtering
+    # ``v_dq0`` and ``i_dq0`` before forming ``P`` and ``Q`` introduces an avoidable phase bias, while
+    # the outer-loop ``P_f`` / ``Q_f`` states already provide the intended low-frequency power filtering.
     data_block.connect(data_block.in_vars[0:14], list([
-        plant_v_d_meas_f,
-        plant_v_q_meas_f,
-        plant_v_0_meas_f,
-        plant_i_d_meas_f,
-        plant_i_q_meas_f,
-        plant_i_0_meas_f,
+        plant_v_d,
+        plant_v_q,
+        plant_v_0,
+        plant_i_d,
+        plant_i_q,
+        plant_i_0,
         plant_i_A,
         plant_i_B,
         plant_i_C,
@@ -1000,37 +1004,13 @@ def get_switched_emt_converter(vf: VarFactory, name: str = "switched_converter_e
     ])
 
     templ.block.external_mapping = dict([
-        (VarPowerFlowRefferenceType.v_N, None),
         (VarPowerFlowRefferenceType.v_A, v_A),
         (VarPowerFlowRefferenceType.v_B, v_B),
         (VarPowerFlowRefferenceType.v_C, v_C),
         (VarPowerFlowRefferenceType.Vdc, v_dc_bus),
-        (VarPowerFlowRefferenceType.i_N, None),
         (VarPowerFlowRefferenceType.i_A, i_A),
         (VarPowerFlowRefferenceType.i_B, i_B),
         (VarPowerFlowRefferenceType.i_C, i_C),
-        (VarPowerFlowRefferenceType.if_N, None),
-        (VarPowerFlowRefferenceType.if_A, None),
-        (VarPowerFlowRefferenceType.if_B, None),
-        (VarPowerFlowRefferenceType.if_C, None),
-        (VarPowerFlowRefferenceType.it_N, None),
-        (VarPowerFlowRefferenceType.it_A, None),
-        (VarPowerFlowRefferenceType.it_B, None),
-        (VarPowerFlowRefferenceType.it_C, None),
-        (VarPowerFlowRefferenceType.Sf_A, None),
-        (VarPowerFlowRefferenceType.Sf_B, None),
-        (VarPowerFlowRefferenceType.Sf_C, None),
-        (VarPowerFlowRefferenceType.St_A, None),
-        (VarPowerFlowRefferenceType.St_B, None),
-        (VarPowerFlowRefferenceType.St_C, None),
-        (VarPowerFlowRefferenceType.d_v_N_f, None),
-        (VarPowerFlowRefferenceType.d_v_A_f, None),
-        (VarPowerFlowRefferenceType.d_v_B_f, None),
-        (VarPowerFlowRefferenceType.d_v_C_f, None),
-        (VarPowerFlowRefferenceType.d_v_N_t, None),
-        (VarPowerFlowRefferenceType.d_v_A_t, None),
-        (VarPowerFlowRefferenceType.d_v_B_t, None),
-        (VarPowerFlowRefferenceType.d_v_C_t, None),
         (VarPowerFlowRefferenceType.Idc, data_idc),
         (VarPowerFlowRefferenceType.P, data_p),
         (VarPowerFlowRefferenceType.Q, data_q),

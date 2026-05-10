@@ -489,7 +489,7 @@ def ptdf_reduction(grid: MultiCircuit,
 
     if grid.has_time_series:
         lin_ts2 = LinearAnalysisTs(grid=grid)
-        Pbus3_ts = lin_ts2.get_injections_ts(flows_ts=Flows0_ts[:, i_branches])
+        Pbus3_ts = lin_ts2.get_reverse_injections_ts(flows_ts=Flows0_ts[:, i_branches])
         Pbus2_ts = grid.get_Pbus_prof(apply_active=True)
         dPbus_ts = Pbus2_ts - Pbus3_ts
     else:
@@ -905,9 +905,9 @@ def ptdf_reduction_projected(grid: MultiCircuit,
         Flows0_gen_srap_ts_i = Flows0_gen_srap_ts[:, i_branches]
 
         # Get the equivalent injections that would produce these flows in the reduced grid
-        Pbus3_load_ts = lin_ts2.get_injections_ts(flows_ts=Flows0_load_ts_i)
-        Pbus3_gen_ts = lin_ts2.get_injections_ts(flows_ts=Flows0_gen_ts_i)
-        Pbus3_gen_srap_ts = lin_ts2.get_injections_ts(flows_ts=Flows0_gen_srap_ts_i)
+        Pbus3_load_ts = lin_ts2.get_reverse_injections_ts(flows_ts=Flows0_load_ts_i)
+        Pbus3_gen_ts = lin_ts2.get_reverse_injections_ts(flows_ts=Flows0_gen_ts_i)
+        Pbus3_gen_srap_ts = lin_ts2.get_reverse_injections_ts(flows_ts=Flows0_gen_srap_ts_i)
 
         dPbus_load_ts = Pload2_ts - Pbus3_load_ts
         dPbus_gen_ts = Pgen2_ts - Pbus3_gen_ts

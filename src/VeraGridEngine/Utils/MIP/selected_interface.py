@@ -24,7 +24,6 @@ try:
                                                             get_ortools_available_mip_solvers)
 
     ORTOOLS_AVAILABLE = True
-    print("ortools available")
 except ImportError:
     ORTOOLS_AVAILABLE = False
     OrToolsLpModel = None

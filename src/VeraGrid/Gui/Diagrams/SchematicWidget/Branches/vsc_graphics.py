@@ -8,6 +8,7 @@ from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtWidgets import QMenu
 from VeraGrid.Gui.gui_functions import add_menu_entry
 from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import BarTerminalItem, RoundTerminalItem
+from VeraGrid.Gui.DeviceEditors.VscEditor.vsc_device_editor import VscDeviceEditorDialog
 from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
 from VeraGridEngine.Devices.Branches.vsc import VSC
 from VeraGridEngine.enumerations import TapModuleControl, DynamicSimulationMode
@@ -67,6 +68,18 @@ class VscGraphicItem(LineGraphicTemplateItem):
     def api_object(self) -> VSC:
         return self._api_object
 
+    def open_device_editor(self) -> bool:
+        """
+        Open the VSC editor.
+
+        :return: ``True`` when the editor was opened.
+        """
+        dlg = VscDeviceEditorDialog(api_object=self.api_object, circuit=self.editor.circuit)
+        if dlg.exec():
+            return True
+        else:
+            return True
+
     def contextMenuEvent(self, event):
         """
         Show context menu
@@ -111,6 +124,11 @@ class VscGraphicItem(LineGraphicTemplateItem):
                            text="Set Control dev 2",
                            function_ptr=self.set_control_dev_2,
                            icon_path=":/Icons/icons/move_bus.png")
+
+            add_menu_entry(menu=menu,
+                           text="Editor",
+                           function_ptr=self.edit,
+                           icon_path=":/Icons/icons/edit.png")
 
             add_menu_entry(menu=menu,
                            text="RMS Editor",
@@ -196,8 +214,13 @@ class VscGraphicItem(LineGraphicTemplateItem):
         :param event:
         :return:
         """
+        self.open_device_editor()
 
-        pass
+    def edit(self) -> None:
+        """
+        Open the VSC device editor.
+        """
+        self.open_device_editor()
 
     def control_v_from(self):
         """

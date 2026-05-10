@@ -3,7 +3,7 @@
 # file, You can see it at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Tuple
+from typing import Dict, Tuple
 
 import numpy as np
 
@@ -13,7 +13,7 @@ from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import EmtProblemDa
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import EmtProblemTemplate
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowOptions
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver_3ph import PowerFlowDriver3Ph
-from VeraGridEngine.Templates.Emt.bus_emt_template import get_bus_emt_template
+from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_emt_template
 from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_shunt_r_emt_template
 from VeraGridEngine.Templates.Emt.load_zip_emt_template import get_load_ZIP_emt_template
 from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template
@@ -21,11 +21,12 @@ from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template imp
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicVector
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var
-from VeraGridEngine.Templates.templates_common_functions import set_emt_model
+from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_emt_model
 from VeraGridEngine.enumerations import DynamicIntegrationMethod, EmtSolverTypes, ShuntConnectionType, EmtInitializationMethod, EmtInitializationStatus
 
 from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
 from VeraGridEngine.Simulations.EMT.initialization_emt import (
+    _collect_reduced_initialization_problem,
     run_emt_explicit_initialization,
     run_emt_native_initialization,
 )
@@ -219,7 +220,12 @@ def build_single_state_single_algebraic_problem() -> Tuple[GenericEmtProblem, Si
         algebraic_eqs=[y_var - Const(2.0)],
         init_eqs={x_var: Const(2.0)},
     )
-    problem = GenericEmtProblem(sys_block=block, glob_time=var_factory.add_var("t_glob_init_0"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict()
+    problem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=var_factory.add_var("t_glob_init_0"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
     context = SimpleInitializationContext(x_var=x_var, y_var=y_var, dx_var=dx_var)
     return problem, context
 
@@ -248,7 +254,12 @@ def build_unresolved_state_problem() -> Tuple[GenericEmtProblem, SimpleInitializ
         algebraic_vars=[y_var],
         algebraic_eqs=[y_var - Const(3.0)],
     )
-    problem = GenericEmtProblem(sys_block=block, glob_time=var_factory.add_var("t_glob_init_1"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict()
+    problem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=var_factory.add_var("t_glob_init_1"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
     context = SimpleInitializationContext(x_var=x_var, y_var=y_var, dx_var=dx_var)
     return problem, context
 
@@ -427,6 +438,49 @@ def test_consistent_newton_initializes_missing_algebraic_and_dx0() -> None:
     assert abs(x0[idx_x] - 2.0) < 1e-9
     assert abs(x0[idx_y] - 2.0) < 1e-9
     assert abs(dx0[idx_dx] - 0.0) < 1e-9
+
+
+def test_reduced_initialization_problem_keeps_seeded_algebraic_equations() -> None:
+    """
+    The reduced EMT initialization system must always include algebraic equations.
+
+    Seeded PF guesses are only starting points; they must not suppress the
+    algebraic correction stage when consistency equations are still present.
+    """
+
+    class _ProblemStub:
+        __slots__ = ("init_guess", "sys_block", "_state_vars", "_state_eqs", "_algebraic_vars", "_algebraic_eqs")
+
+        def __init__(self) -> None:
+            state_var = Var("state_seeded")
+            algebraic_var = Var("alg_seeded")
+            self.init_guess = dict({state_var.uid: 3.0, algebraic_var.uid: 2.0})
+            self.sys_block = Block()
+            self.sys_block.init_eqs = dict()
+            self._state_vars = list([state_var])
+            self._state_eqs = list([Const(0.0)])
+            self._algebraic_vars = list([algebraic_var])
+            self._algebraic_eqs = list([algebraic_var - Const(1.0)])
+
+        def get_state_vars(self) -> list[Var]:
+            return self._state_vars
+
+        def get_state_eqs(self) -> list[Const]:
+            return self._state_eqs
+
+        def get_algebraic_vars(self) -> list[Var]:
+            return self._algebraic_vars
+
+        def get_algebraic_eqs(self) -> list[Expr]:
+            return self._algebraic_eqs
+
+    payload = _collect_reduced_initialization_problem(_ProblemStub(), allow_state_equilibrium=True)
+
+    assert payload is not None
+    unknown_vars, residual_eqs, state_unknown_mask = payload
+    assert [var.name for var in unknown_vars] == ["alg_seeded"]
+    assert len(residual_eqs) == 1
+    assert state_unknown_mask.tolist() == [0.0]
 
 
 def test_consistent_newton_uses_state_equilibrium_for_unresolved_states() -> None:

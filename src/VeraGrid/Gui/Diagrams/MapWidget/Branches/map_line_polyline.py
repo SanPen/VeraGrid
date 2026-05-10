@@ -129,6 +129,15 @@ class MapLinePolyline(QGraphicsPathItem):
             return
         QGraphicsPathItem.mousePressEvent(self, event)
 
+    def mouseDoubleClickEvent(self, event: QGraphicsSceneMouseEvent) -> None:
+        """
+        Open the branch editor on double click.
+
+        :param event: Mouse event.
+        """
+        self.container.call_editor()
+        event.accept()
+
     def contextMenuEvent(self, event: QGraphicsSceneContextMenuEvent) -> None:
         """
         Delegate context menu construction to the line container.

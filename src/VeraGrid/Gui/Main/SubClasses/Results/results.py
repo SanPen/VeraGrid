@@ -7,7 +7,7 @@ from PySide6 import QtCore, QtWidgets, QtGui
 from matplotlib import pyplot as plt
 from typing import Union, Dict
 
-from VeraGrid.Gui.Main.dynamics_results_handler import DynamicsResultsHandler
+from VeraGrid.Gui.Main.SubClasses.Results.dynamics_results_handler import DynamicsResultsHandler
 from VeraGrid.Gui.table_view_header_wrap import HeaderViewWithWordWrap
 import VeraGrid.Gui.gui_functions as gf
 from VeraGrid.Gui.messages import error_msg, warning_msg, yes_no_question
@@ -270,7 +270,7 @@ class ResultsMain(SimulationsMain):
             if len(selected_indexes) > 0:
                 group_name: str = self.ui.eventsGroupComboBox.currentText()
                 mdl = self.dynamic_results_handler.get_data_from_plot_index(index=selected_indexes[0],
-                                                                            rms_group_name=group_name)
+                                                                            dyn_group_name=group_name)
 
                 self.ui.dynamicsTableView.setModel(mdl)
 
@@ -346,7 +346,7 @@ class ResultsMain(SimulationsMain):
             if len(selected_indexes) > 0:
                 group_name: str = self.ui.eventsGroupComboBox.currentText()
                 plotted: bool = self.dynamic_results_handler.plot_entry_from_index(index=selected_indexes[0],
-                                                                                   rms_group_name=group_name)
+                                                                                   dyn_group_name=group_name)
                 if plotted:
                     return None
                 else:
@@ -385,7 +385,7 @@ class ResultsMain(SimulationsMain):
         :param results: Dynamic results object associated with the study.
         :return: Cached or newly created dynamics-results handler.
         """
-        handler = self.dynamic_results_handlers.get(study_name, None)
+        handler: DynamicsResultsHandler | None = self.dynamic_results_handlers.get(study_name, None)
 
         if handler is None:
             handler = DynamicsResultsHandler(results=results)
@@ -393,15 +393,15 @@ class ResultsMain(SimulationsMain):
             handler.get_plots_model().rowsInserted.connect(self.expand_dynamic_plots_tree)
             return handler
 
-        elif handler.results is results:
+        elif type(handler.results) == type(results):
+            # Reusing the handler preserves the user's dynamic plot groups across
+            # repeated runs of the same study while replacing only the result-backed Vars.
+            handler.update_results(results=results)
             return handler
 
-        # elif handler.can_reuse_with_results(results=results): # NOT WORKING!
-        # # Re-use already created dynamic plots for the same simulation but with some changes (events,etc) -> not working because uid changes
-        #     handler.update_results(results=results)
-        #     return handler
         else:
-
+            # RMS and EMT handlers cannot be mixed because their result containers use
+            # different event-group fields and value-array layouts.
             handler = DynamicsResultsHandler(results=results)
             self.dynamic_results_handlers[study_name] = handler
             handler.get_plots_model().rowsInserted.connect(self.expand_dynamic_plots_tree)

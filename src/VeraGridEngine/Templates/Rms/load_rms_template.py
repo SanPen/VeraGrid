@@ -8,7 +8,12 @@ from VeraGridEngine.enumerations import ParamPowerFlowRefferenceType, VarPowerFl
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 
 
-def get_load_rms_template(vfactory: VarFactory, name="Load rms template") -> RmsModelTemplate:
+def get_load_rms_template(
+        vfactory: VarFactory,
+        name="Load rms template",
+        pl0_init: float | None = None,
+        ql0_init: float | None = None,
+) -> RmsModelTemplate:
     """
     Get the RMS template model of the Load
     :return: RmsModelTemplate
@@ -24,12 +29,11 @@ def get_load_rms_template(vfactory: VarFactory, name="Load rms template") -> Rms
 
     Pl0 = vfactory.add_var("Pl0")
     Ql0 = vfactory.add_var("Ql0")
+    Pl = vfactory.add_var("Pl", reference=VarPowerFlowRefferenceType.P)
+    Ql = vfactory.add_var("Ql", reference=VarPowerFlowRefferenceType.Q)
 
-    Ql = vfactory.add_var("Ql")
-    Pl = vfactory.add_var("Pl")
-
-    templ.block.event_dict[Pl0] = vfactory.add_const(-0.0999999)
-    templ.block.event_dict[Ql0] = vfactory.add_const(-0.009999999862208533)
+    templ.block.event_dict[Pl0] = Pl
+    templ.block.event_dict[Ql0] = Ql
 
     templ.block.algebraic_vars = [Pl, Ql]
     templ.block.out_vars = [Pl, Ql]
@@ -48,6 +52,10 @@ def get_load_rms_template(vfactory: VarFactory, name="Load rms template") -> Rms
         ParamPowerFlowRefferenceType.Ql0: Ql0,
     }
 
+    #templ.block.init_eqs = {
+    #    Pl0: Pl,
+    #    Ql0: Ql,
+    #}
     templ.block.in_vars = inputs
 
     return templ

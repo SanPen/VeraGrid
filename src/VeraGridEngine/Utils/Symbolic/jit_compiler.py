@@ -44,6 +44,7 @@ from pathlib import Path
 import importlib.util
 import hashlib
 import scipy.sparse as sp
+from collections import defaultdict
 
 #RMS
 from VeraGridEngine.Utils.Symbolic.symbolic import expression2numba, get_expression_vars
@@ -60,14 +61,14 @@ class GeneratedKernelCacheEntry:
 
     __slots__ = ["_python_function", "_signature_tpe"]
 
-    def __init__(self, python_function: Callable, signature_tpe: Any) -> None:
+    def __init__(self, python_function: Callable, signature_tpe: object) -> None:
         """
         Build one generated-kernel cache entry.
 
         :param python_function: Generated Python function.
         :type python_function: Callable
         :param signature_tpe: Eager Numba signature.
-        :type signature_tpe: Any
+        :type signature_tpe: object
         :return: None.
         :rtype: None
         """
@@ -83,14 +84,216 @@ class GeneratedKernelCacheEntry:
         """
         return self._python_function
 
-    def get_signature_tpe(self) -> Any:
+    def get_signature_tpe(self) -> object:
         """
         Return the eager Numba signature.
 
         :return: Eager Numba signature.
-        :rtype: Any
+        :rtype: object
         """
         return self._signature_tpe
+
+
+def _get_cse_sort_key(entry: Tuple[str, str]) -> int:
+    """
+    Return the numeric ordering key of one generated CSE temporary.
+
+    :param entry: Pair ``(expression_hash, temporary_name)``.
+    :return: Integer suffix used by the generated temporary name.
+    """
+    return int(entry[1][2:])
+
+
+def _get_triplet_sort_key(triplet: Tuple[int, int, Expr]) -> Tuple[int, int]:
+    """
+    Return the deterministic column-row ordering of one sparse Jacobian triplet.
+
+    :param triplet: Sparse Jacobian triplet ``(col, row, expr)``.
+    :return: Sorting key ``(col, row)``.
+    """
+    return triplet[0], triplet[1]
+
+
+def _collect_related_wrt_uids(var: Var,
+                              wrt_map: Dict[int, Tuple[int, Var]],
+                              output_uids: Set[int],
+                              seen_uids: Set[int]) -> None:
+    """
+    Collect all differentiated UIDs related to one symbolic variable chain.
+
+    :param var: Symbolic variable from one expression.
+    :param wrt_map: Differentiation variables keyed by UID.
+    :param output_uids: Output UID set updated in place.
+    :param seen_uids: Visited UID set used to avoid recursion loops.
+    :return: None.
+    """
+    if var.uid in seen_uids:
+        return
+    else:
+        pass
+
+    seen_uids.add(var.uid)
+
+    if var.uid in wrt_map:
+        output_uids.add(var.uid)
+    else:
+        pass
+
+    if var.base_var is not None:
+        _collect_related_wrt_uids(var.base_var, wrt_map, output_uids, seen_uids)
+    else:
+        pass
+
+    if var.diff_var is not None:
+        _collect_related_wrt_uids(var.diff_var, wrt_map, output_uids, seen_uids)
+    else:
+        pass
+
+
+def _collect_candidate_wrt_uids(eq: Expr, wrt_map: Dict[int, Tuple[int, Var]]) -> Set[int]:
+    """
+    Return the differentiated variable UIDs that appear in one equation.
+
+    :param eq: Symbolic equation.
+    :param wrt_map: Differentiation variables keyed by UID.
+    :return: Candidate UIDs present in the equation dependency graph.
+    """
+    candidates: Set[int] = set()
+    seen_uids: Set[int] = set()
+    variable_in_equation: Var
+
+    for variable_in_equation in get_expression_vars(eq):
+        _collect_related_wrt_uids(variable_in_equation, wrt_map, candidates, seen_uids)
+
+    return candidates
+
+
+class EmptySparseJacobianEvaluator:
+    """
+    Reusable callable returning one prebuilt empty CSC Jacobian matrix.
+    """
+
+    __slots__ = ("_matrix",)
+
+    def __init__(self, matrix: sp.csc_matrix) -> None:
+        """
+        Store the empty sparse Jacobian matrix.
+
+        :param matrix: Prebuilt empty CSC matrix.
+        :return: None.
+        """
+        self._matrix: sp.csc_matrix = matrix
+
+    def __call__(self, vrs: Vec, diff: Vec, vprms: Vec, cprms: Vec, h: float) -> sp.csc_matrix:
+        """
+        Return the prebuilt empty sparse Jacobian matrix.
+
+        :param vrs: Runtime variables.
+        :param diff: Differential variables.
+        :param vprms: Variable parameters.
+        :param cprms: Constant parameters.
+        :param h: Integration step.
+        :return: Empty CSC Jacobian matrix.
+        """
+        _unused_args: Tuple[Vec, Vec, Vec, Vec, float] = (vrs, diff, vprms, cprms, h)
+        return self._matrix
+
+
+class SparseJacobianEvaluatorWrapper:
+    """
+    Callable sparse Jacobian wrapper around one generated CSC filler function.
+    """
+
+    __slots__ = ("_filler_fn", "_matrix")
+
+    def __init__(self, filler_fn: Callable, matrix: sp.csc_matrix) -> None:
+        """
+        Store the generated filler function and the reusable CSC matrix shell.
+
+        :param filler_fn: Generated sparse Jacobian filler function.
+        :param matrix: Reusable CSC matrix shell.
+        :return: None.
+        """
+        self._filler_fn: Callable = filler_fn
+        self._matrix: sp.csc_matrix = matrix
+
+    def __call__(self, vrs: Vec, diff: Vec, vprms: Vec, cprms: Vec, h: float) -> sp.csc_matrix:
+        """
+        Fill and return the reusable CSC Jacobian matrix.
+
+        :param vrs: Runtime variables.
+        :param diff: Differential variables.
+        :param vprms: Variable parameters.
+        :param cprms: Constant parameters.
+        :param h: Integration step.
+        :return: Filled CSC Jacobian matrix.
+        """
+        self._filler_fn(vrs, diff, vprms, cprms, h, self._matrix.data)
+        return self._matrix
+
+
+class EventParameterFunctionWrapper:
+    """
+    Callable runtime-parameter wrapper around one generated event-parameter kernel.
+    """
+
+    __slots__ = ("_raw_fn", "_equation_count")
+
+    def __init__(self, raw_fn: Callable, equation_count: int) -> None:
+        """
+        Store the generated event-parameter kernel.
+
+        :param raw_fn: Generated event-parameter kernel.
+        :param equation_count: Number of output equations.
+        :return: None.
+        """
+        self._raw_fn: Callable = raw_fn
+        self._equation_count: int = equation_count
+
+    def __call__(self, event_params: Vec, glob_time: float) -> Vec:
+        """
+        Evaluate the event-parameter kernel into a fresh output vector.
+
+        :param event_params: Runtime parameter vector.
+        :param glob_time: Current simulation time.
+        :return: Evaluated runtime-parameter vector.
+        """
+        output_vector: Vec = np.zeros(self._equation_count, dtype=np.float64)
+        self._raw_fn(event_params, glob_time, output_vector)
+        return output_vector
+
+
+class DerivativeFunctionWrapper:
+    """
+    Callable derivative wrapper around one generated lag-derivative kernel.
+    """
+
+    __slots__ = ("_raw_fn", "_diff_var_count")
+
+    def __init__(self, raw_fn: Callable, diff_var_count: int) -> None:
+        """
+        Store the generated derivative kernel.
+
+        :param raw_fn: Generated derivative kernel.
+        :param diff_var_count: Number of derivative outputs.
+        :return: None.
+        """
+        self._raw_fn: Callable = raw_fn
+        self._diff_var_count: int = diff_var_count
+
+    def __call__(self, vrs: Vec, lagvars: Vec, lagdx: Vec, h: float) -> Vec:
+        """
+        Evaluate the derivative kernel into a fresh output vector.
+
+        :param vrs: Runtime variable vector.
+        :param lagvars: Lagged state vector.
+        :param lagdx: Lagged derivative vector.
+        :param h: Integration step.
+        :return: Evaluated derivative vector.
+        """
+        output_vector: Vec = np.zeros(self._diff_var_count, dtype=np.float64)
+        self._raw_fn(vrs, lagvars, lagdx, h, output_vector)
+        return output_vector
 
 
 def _build_equation_compiler_residual_cache_key(equations: List[Expr],
@@ -769,9 +972,9 @@ class SubexpressionAnalyzer:
             res = f"C{node.value}"
         elif isinstance(node, Var):
             if node.base_var is not None:
-                res = f"D{node.base_var.name}"
+                res = f"D{node.base_var.uid}"
             else:
-                res = f"V{node.name}"
+                res = f"V{node.uid}"
         elif isinstance(node, BinOp):
             left = self._expr_to_canonical_string(node.left)
             right = self._expr_to_canonical_string(node.right)
@@ -804,7 +1007,7 @@ class SymbolicToPythonVisitor:
 
     OP_PRECEDENCE = {'+': 10, '-': 10, '*': 20, '/': 20, '**': 30}
 
-    def __init__(self, var_map: Dict[int, int], param_map: Dict[int, int], method: DiscretizationMethod):
+    def __init__(self, var_map: Dict[int, int], param_map: Dict[int, int], method: DiscretizationMethod) -> None:
         self.var_map = var_map
         self.param_map = param_map or dict()
         self.method = method
@@ -813,14 +1016,19 @@ class SymbolicToPythonVisitor:
         self.in_cse_def = False
         self._str_cache: Dict[Tuple[int, int], str] = dict()
 
-    def _prec(self, node) -> int:
+    def _prec(self, node: Expr) -> int:
         """Return precedence of a node. Non-operators get 'infinite' precedence."""
         # BinOp nodes define precedence; everything else we treat as atomic.
         if isinstance(node, BinOp):
             return self.OP_PRECEDENCE.get(node.op, 0)
         return 10 ** 9
 
-    def _maybe_parenthesize(self, code: str, child_node, parent_op: str, parent_prec: int, side: str) -> str:
+    def _maybe_parenthesize(self,
+                            code: str,
+                            child_node: Expr,
+                            parent_op: str,
+                            parent_prec: int,
+                            side: str) -> str:
         """
         Decide whether to wrap child expression in parentheses.
 
@@ -935,10 +1143,10 @@ class SymbolicToPythonVisitor:
         # If parent context has higher precedence, wrap the whole expression
         return f"({code})" if curr_prec < prec else code
 
-    def visit_unop(self, node: UnOp, _) -> str:
+    def visit_unop(self, node: UnOp, _precedence: int) -> str:
         return f"{node.op}{self.visit(node.operand, 100)}"
 
-    def visit_const(self, node: Const, _) -> str:
+    def visit_const(self, node: Const, _precedence: int) -> str:
         return str(node.value)
 
     def visit_var(self, node: Var, prec: int) -> str:
@@ -981,7 +1189,7 @@ class SymbolicToPythonVisitor:
             term = self.method.discretize(self.var_map[base_uid])
         return f"({term})" if prec > 10 else term
 
-    def visit_func(self, node: Func, _) -> str:
+    def visit_func(self, node: Func, _precedence: int) -> str:
         arg = self.visit(node.arg, 0)
 
         op = node.op
@@ -999,9 +1207,12 @@ class SymbolicToPythonVisitor:
 class ADVisitor(SymbolicToPythonVisitor):
     __slots__ = ['seeds_var', 'active_indices', 'cse_has_dot']
 
-    def __init__(self, var_map: Dict[int, int], param_map: Dict[int, int],
-                 method: DiscretizationMethod, seeds_var: str = 'seeds',
-                 active_indices: set | None = None):
+    def __init__(self,
+                 var_map: Dict[int, int],
+                 param_map: Dict[int, int],
+                 method: DiscretizationMethod,
+                 seeds_var: str = 'seeds',
+                 active_indices: set | None = None) -> None:
         super().__init__(var_map, param_map, method)
         self.seeds_var = seeds_var
         self.active_indices = active_indices
@@ -1061,7 +1272,7 @@ class ADVisitor(SymbolicToPythonVisitor):
     def visit_const(self, node: Const, _: int) -> Tuple[str, str]:
         return str(node.value), "0.0"
 
-    def visit_var(self, node: Var, _) -> Tuple[str, str]:
+    def visit_var(self, node: Var, _precedence: int) -> Tuple[str, str]:
         # 1. Standard mapping for states
         if node.uid in self.var_map:
             i: int = self.var_map[node.uid]
@@ -1268,8 +1479,8 @@ class EquationCompiler:
 
     def __init__(self,
                  variables: List[Var],
-                 parameters: List[Var] = None,
-                 method: DynamicIntegrationMethod = DynamicIntegrationMethod.DaeTrapezoidal):
+                 parameters: List[Var] | None = None,
+                 method: DynamicIntegrationMethod = DynamicIntegrationMethod.DaeTrapezoidal) -> None:
         self.variables_objs = variables
         self.parameters_objs = parameters if parameters is not None else list()
 
@@ -1320,7 +1531,7 @@ class EquationCompiler:
             self.visitor._str_cache = dict()
 
             if cse_map:
-                sorted_cse = sorted(cse_map.items(), key=lambda x: int(x[1][2:]))
+                sorted_cse = sorted(cse_map.items(), key=_get_cse_sort_key)
                 for expr_hash, var_name in sorted_cse:
                     expr_obj = analyzer.expr_objects[expr_hash]
                     self.visitor.in_cse_def = True
@@ -1391,7 +1602,7 @@ class EquationCompiler:
             adv._str_cache = dict()
 
             if cse_map:
-                sorted_cse = sorted(cse_map.items(), key=lambda x: int(x[1][2:]))
+                sorted_cse = sorted(cse_map.items(), key=_get_cse_sort_key)
                 for expr_hash, var_name in sorted_cse:
                     expr_obj = analyzer.expr_objects[expr_hash]
                     adv.in_cse_def = True
@@ -1444,11 +1655,15 @@ class MatrixVectorizedVisitor(SymbolicToPythonVisitor):
     """
     __slots__ = ['col_map']
 
-    def __init__(self, var_map, param_map, method, col_map):
+    def __init__(self,
+                 var_map: Dict[int, int],
+                 param_map: Dict[int, int],
+                 method: DiscretizationMethod,
+                 col_map: Dict[str, int]) -> None:
         super().__init__(var_map, param_map, method)
         self.col_map = col_map  # Maps variable_name -> column_index (int)
 
-    def visit_var(self, node: Var, _) -> str:
+    def visit_var(self, node: Var, _precedence: int) -> str:
         if node.uid in self.param_map:
             return f"params[{self.param_map[node.uid]}]"
         else:
@@ -1581,12 +1796,12 @@ def _get_cse_sort_index(cse_item: Tuple[str, str]) -> int:
     return int(numeric_part)
 
 
-def _reset_symbolic_codegen_state(visitor: Any) -> None:
+def _reset_symbolic_codegen_state(visitor: "SymbolicToPythonVisitor | ADVisitor") -> None:
     """
     Reset visitor caches before and after eager code generation.
 
     :param visitor: Symbolic or AD visitor instance.
-    :type visitor: Any
+    :type visitor: SymbolicToPythonVisitor | ADVisitor
     :return: None
     :rtype: None
     """
@@ -1620,7 +1835,7 @@ class EagerEquationCompiler(EquationCompiler):
             n_parameters: int,
             nnz: int,
             with_history2: bool = True,
-    ) -> Any:
+    ) -> object:
         """
         Build the eager Numba signature for a generated kernel.
 
@@ -1635,10 +1850,10 @@ class EagerEquationCompiler(EquationCompiler):
         :param with_history2: Whether the generated ABI includes ``history2``.
         :type with_history2: bool
         :return: Numba eager signature object.
-        :rtype: Any
+        :rtype: object
         """
-        float64_vector_tpe: Any = types.Array(types.float64, 1, "C")
-        int32_matrix_tpe: Any = types.Array(types.int32, 2, "C", readonly=True)
+        float64_vector_tpe: object = types.Array(types.float64, 1, "C")
+        int32_matrix_tpe: object = types.Array(types.int32, 2, "C", readonly=True)
 
         if n_variables <= 0:
             raise ValueError("n_variables must be greater than zero")
@@ -1662,7 +1877,7 @@ class EagerEquationCompiler(EquationCompiler):
                 "EagerEquationCompiler requires an explicit history2 array to keep a strict ABI."
             )
 
-        signature_tpe: Any
+        signature_tpe: object
         if kernel_tpe == EagerKernelKind.Residual:
             signature_tpe = types.void(
                 float64_vector_tpe,
@@ -1707,7 +1922,7 @@ class EagerEquationCompiler(EquationCompiler):
             use_cse: bool = True,
             offset: int = 0,
             inplace: bool = True,
-    ) -> Tuple[Callable, Any]:
+    ) -> Tuple[Callable, object]:
         """
         Compile residual equations into an in-place eager kernel.
 
@@ -1722,11 +1937,11 @@ class EagerEquationCompiler(EquationCompiler):
         :param inplace: Compatibility argument that must stay ``True``.
         :type inplace: bool
         :return: Pair ``(python_function, eager_signature)``.
-        :rtype: Tuple[Callable, Any]
+        :rtype: Tuple[Callable, object]
         """
         lines: List[str] = list()
         py_func: Callable
-        signature_tpe: Any
+        signature_tpe: object
         full_source: str
         cache_key: str
         cache_entry: GeneratedKernelCacheEntry | None
@@ -1809,7 +2024,7 @@ class EagerEquationCompiler(EquationCompiler):
             func_name: str = "ad_step",
             use_cse: bool = True,
             active_indices: set | None = None,
-    ) -> Tuple[Callable, Any]:
+    ) -> Tuple[Callable, object]:
         """
         Compile a sparse forward-mode AD kernel into an in-place eager function.
 
@@ -1822,7 +2037,7 @@ class EagerEquationCompiler(EquationCompiler):
         :param active_indices: Colored column subset activated in the current JVP sweep.
         :type active_indices: set | None
         :return: Pair ``(python_function, eager_signature)``.
-        :rtype: Tuple[Callable, Any]
+        :rtype: Tuple[Callable, object]
         """
         adv: ADVisitor = ADVisitor(
             self.var_map,
@@ -1833,7 +2048,7 @@ class EagerEquationCompiler(EquationCompiler):
         )
         lines: List[str] = list()
         py_func: Callable
-        signature_tpe: Any
+        signature_tpe: object
         full_source: str
         cache_key: str
         cache_entry: GeneratedKernelCacheEntry | None
@@ -1921,7 +2136,7 @@ class EagerEquationCompiler(EquationCompiler):
             template_eq: Expr,
             func_name: str,
             template_vars: List[Var],
-    ) -> Tuple[Callable, Any]:
+    ) -> Tuple[Callable, object]:
         """
         Compile a vectorized matrix kernel into an in-place eager function.
 
@@ -1932,14 +2147,14 @@ class EagerEquationCompiler(EquationCompiler):
         :param template_vars: Ordered runtime variables of the structural group.
         :type template_vars: List[Var]
         :return: Pair ``(python_function, eager_signature)``.
-        :rtype: Tuple[Callable, Any]
+        :rtype: Tuple[Callable, object]
         """
         col_map: Dict[str, int] = dict()
         visitor: MatrixVectorizedVisitor
         rhs_code: str
         lines: List[str] = list()
         py_func: Callable
-        signature_tpe: Any
+        signature_tpe: object
         full_source: str
 
         # The template variables define the deterministic position of each grouped runtime value.
@@ -2010,7 +2225,7 @@ class RMSCompiler(EquationCompiler):
                  v_params: List[Var],
                  c_params: List[Var],
                  dt_var: Var,
-                 compiler_names_dict: Dict[int, str]):
+                 compiler_names_dict: Dict[int, str]) -> None:
         """
         Initializes the RMS Compiler with the system's mathematical components.
 
@@ -2073,42 +2288,20 @@ class RMSCompiler(EquationCompiler):
         wrt_map = {v.uid: (i, v) for i, v in enumerate(wrt_vars)}
         triplets: List[Tuple[int, int, Expr]] = list()
 
-        def _collect_related_uids(var: Var, out: Set[int], seen: Set[int]) -> None:
-            if var.uid in seen:
-                return
-            seen.add(var.uid)
-
-            if var.uid in wrt_map:
-                out.add(var.uid)
-
-            if var.base_var is not None:
-                _collect_related_uids(var.base_var, out, seen)
-
-            if var.diff_var is not None:
-                _collect_related_uids(var.diff_var, out, seen)
-
-        def _candidate_uids(eq: Expr) -> Set[int]:
-            candidates: Set[int] = set()
-            seen: Set[int] = set()
-            for v_in_eq in get_expression_vars(eq):
-                _collect_related_uids(v_in_eq, candidates, seen)
-            return candidates
-
         # Only differentiate variables that appear in the equation AST.
         for row, eq in enumerate(eqs):
-            for uid in _candidate_uids(eq):
+            for uid in _collect_candidate_wrt_uids(eq, wrt_map):
                 col, var = wrt_map[uid]
                 d_expr = eq.diff(var, dt=self.dt_var)
                 if not (isinstance(d_expr, Const) and d_expr.value == 0):
                     triplets.append((col, row, d_expr))
 
-        triplets.sort(key=lambda t: (t[0], t[1]))
+        triplets.sort(key=_get_triplet_sort_key)
 
         # Handle edge case: Empty Jacobian matrix (no dependencies found)
         if not triplets:
             J_empty = sp.csc_matrix((len(eqs), len(wrt_vars)))
-            # noinspection PyShadowingBuiltins
-            return lambda vrs, diff, vprms, cprms, h: J_empty
+            return EmptySparseJacobianEvaluator(J_empty)
         # Extract sorted coordinates and corresponding symbolic derivatives
         cols_sorted = [t[0] for t in triplets]
         rows_sorted = [t[1] for t in triplets]
@@ -2135,13 +2328,7 @@ class RMSCompiler(EquationCompiler):
 
         filler_fn = _compile_to_file("\n".join(lines), f"{func_name}_filler")
 
-        # Wrapper function to evaluate and return the actual CSC matrix natively
-        # noinspection PyShadowingBuiltins
-        def jac_evaluator(vrs, diff, vprms, cprms, h):
-            filler_fn(vrs, diff, vprms, cprms, h, J_template.data)
-            return J_template
-
-        return jac_evaluator
+        return SparseJacobianEvaluatorWrapper(filler_fn=filler_fn, matrix=J_template)
 
     def compile_event_params_fn(self, eqs: List[Expr], alias_names_dict: Dict[int, str],
                                 EVENT_PARAMS_NAME: str, TIME_NAME: str,
@@ -2161,8 +2348,6 @@ class RMSCompiler(EquationCompiler):
         Returns:
             Callable: An executable function with signature (event_params, time, out) -> out.
         """
-        from collections import defaultdict
-
         used_vars_count = defaultdict(int)
         for eq in eqs:
             for var in get_expression_vars(eq):
@@ -2182,13 +2367,7 @@ class RMSCompiler(EquationCompiler):
             lines.append(f"    out[{i}] = {expr_str}")
 
         raw_fn = _compile_to_file("\n".join(lines), func_name)
-
-        def wrapped(event_params: Vec, glob_time: float):
-            out = np.zeros(len(eqs), dtype=np.float64)
-            raw_fn(event_params, glob_time, out)
-            return out
-
-        return wrapped
+        return EventParameterFunctionWrapper(raw_fn=raw_fn, equation_count=len(eqs))
 
     def compile_derivative_fn(self, uid2idx_vars: Dict[int, int],
                               func_name: str = "derivative_fn") -> Callable[[Vec, Vec, Vec, float, Vec], Vec]:
@@ -2223,10 +2402,4 @@ class RMSCompiler(EquationCompiler):
         lines.append("    return out")
 
         raw_fn = _compile_to_file("\n".join(lines), func_name)
-
-        def wrapped(vrs: Vec, lagvars: Vec, lagdx: Vec, h: float):
-            out = np.zeros(len(self.diff_vars), dtype=np.float64)
-            raw_fn(vrs, lagvars, lagdx, h, out)
-            return out
-
-        return wrapped
+        return DerivativeFunctionWrapper(raw_fn=raw_fn, diff_var_count=len(self.diff_vars))

@@ -6,7 +6,7 @@
 from __future__ import annotations
 
 import math
-from typing import Any, List, Sequence, Tuple, cast
+from typing import Any, List, Sequence, Tuple, cast, Dict
 from unittest.mock import patch
 
 import numpy as np
@@ -57,8 +57,9 @@ class DummyProblem(EmtProblemTemplate):
         sys_block.parameters = {}
         sys_block.event_dict = {}
         sys_block.mode_dict = {}
+        static_parameter_values_mapping: Dict[Var, Const] = dict()
 
-        super().__init__(sys_block=sys_block, glob_time=glob_time)
+        super().__init__(sys_block=sys_block, static_parameter_values_mapping=static_parameter_values_mapping, glob_time=glob_time)
 
         self._x0: np.ndarray = np.array([1.234], dtype=np.float64)
         self._dx0: np.ndarray = np.array([0.0], dtype=np.float64)

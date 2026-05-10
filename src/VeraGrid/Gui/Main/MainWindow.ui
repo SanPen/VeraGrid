@@ -1426,6 +1426,9 @@
                         </spacer>
                        </item>
                        <item>
+                        <widget class="QComboBox" name="dbFilterComboBox"/>
+                       </item>
+                       <item>
                         <widget class="QPushButton" name="structure_analysis_pushButton">
                          <property name="toolTip">
                           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Histogram&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run the histogram analysis of the selected data structure&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>

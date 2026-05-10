@@ -5,9 +5,16 @@
 from __future__ import annotations
 
 from typing import Union, List, Dict, Any
+import uuid
+
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
 from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
-from VeraGridEngine.Utils.Symbolic.symbolic import Var, Const
+from VeraGridEngine.Utils.Symbolic.symbolic import Var, Const, SharedVarReferenceType
+
+
+def _new_uid() -> int:
+    """Generate a fresh UUID‑v4 string."""
+    return uuid.uuid4().int
 
 
 class VarFactory(EditableDevice):
@@ -19,7 +26,9 @@ class VarFactory(EditableDevice):
         '_var_dict',
         '_const_dict',
         '_diff_var_dict',
-        '_vars_info'
+        '_vars_info',
+        '_references_dict',
+        '_vars_references_dict',
 
     )
 
@@ -47,6 +56,8 @@ class VarFactory(EditableDevice):
         self._const_dict: Dict[int, Const] = dict()
         self._diff_var_dict: Dict[int, Var] = dict()
         self._vars_info: Dict[Any, List[Var]] = dict()
+        self._references_dict: Dict[str, SharedVarReferenceType] = dict()
+        self._vars_references_dict: Dict[int, List[Var]] = dict()
 
     @property
     def vars_info(self) -> Dict[Any, List[Var]]:
@@ -70,12 +81,14 @@ class VarFactory(EditableDevice):
                 name: str,
                 reference: VarPowerFlowRefferenceType | None = None,
                 network_conn: bool = False,
+                shared_reference: str | None | SharedVarReferenceType = None,
                 uid: int | None = None,
                 diff_var: Var | None = None,
                 base_var: Var | None = None) -> Var:
         """
         Adds a ver to the class
         :param name:
+        :param shared_reference:
         :param reference:
         :param network_conn:
         :param uid:
@@ -83,9 +96,30 @@ class VarFactory(EditableDevice):
         :param base_var:
         :return:
         """
-        v = Var(name=name, reference=reference, network_conn=network_conn, uid=uid, diff_var=None, base_var=None)
-        self._var_dict[v.uid] = v
-        return v
+
+        if isinstance(shared_reference, str):
+            if shared_reference not in self._references_dict:
+                self.create_reference(shared_reference)
+                self._vars_references_dict[self._references_dict[shared_reference].uid] = list()
+
+            v = Var(name=name, shared_reference=self._references_dict[shared_reference], reference=reference, network_conn=network_conn, uid=uid,
+                    diff_var=None, base_var=None)
+            self.save_var_in_vars_references_dict(v, shared_reference)
+            self._var_dict[v.uid] = v
+            return v
+        else:
+            v = Var(name=name, reference=reference, network_conn=network_conn, shared_reference=shared_reference, uid=uid,
+                    diff_var=None, base_var=None)
+            self._var_dict[v.uid] = v
+            return v
+
+
+    def save_var_in_vars_references_dict(self, var:Var, reference:str):
+        self._vars_references_dict[self._references_dict[reference].uid].append(var)
+
+    def create_reference(self, reference_name: str):
+        self._references_dict[reference_name] = SharedVarReferenceType(name=reference_name)
+
 
     def get_var(self, uid: int) -> Var | None:
         """
@@ -102,12 +136,14 @@ class VarFactory(EditableDevice):
                      name: str,
                      reference: VarPowerFlowRefferenceType | None = None,
                      network_conn: bool = False,
+                     shared_reference: str | None | SharedVarReferenceType = None,
                      uid: int | None = None,
                      diff_var: Var | None = None,
                      base_var: Var | None = None) -> Var:
         """
         Adds a Diff ver to the class
         :param name:
+        :param shared_reference:
         :param reference:
         :param network_conn:
         :param uid:
@@ -115,9 +151,20 @@ class VarFactory(EditableDevice):
         :param base_var:
         :return:
         """
-        v = Var(name=name, reference=reference, network_conn=network_conn, uid=uid, diff_var=diff_var, base_var=base_var)
-        self._diff_var_dict[v.uid] = v
-        return v
+        if isinstance(shared_reference, str):
+            if shared_reference not in self._references_dict:
+                self.create_reference(shared_reference)
+                self._vars_references_dict[self._references_dict[shared_reference].uid] = list()
+
+            v = Var(name=name, shared_reference=self._references_dict[shared_reference], reference=reference, network_conn=network_conn, uid=uid, diff_var=diff_var, base_var=base_var)
+            self.save_var_in_vars_references_dict(v, shared_reference)
+            self._var_dict[v.uid] = v
+            self._diff_var_dict[v.uid] = v
+            return v
+        else:
+            v = Var(name=name, reference=reference, network_conn=network_conn, shared_reference=shared_reference, uid=uid, diff_var=diff_var, base_var=base_var)
+            self._diff_var_dict[v.uid] = v
+            return v
 
     def get_diff_var(self, uid: int) -> Var:
         """
@@ -171,6 +218,31 @@ class VarFactory(EditableDevice):
         """
         return self._diff_var_dict
 
+    def get_unique_template_name(self, name: str) -> str:
+        """Return one template name that does not collide with existing symbols.
+
+        Some EMT builders reserve their symbolic namespace at the template level
+        before any variables are created. When the requested name is still free,
+        this helper returns it unchanged. Otherwise it appends an integer suffix.
+
+        :param name: Requested template name.
+        :return: Collision-free template name.
+        """
+        existing_names = set(v.name for v in self._var_dict.values())
+        existing_names.update(v.name for v in self._diff_var_dict.values())
+
+        if name not in existing_names:
+            return name
+        else:
+            index: int = 1
+            candidate: str = f"{name}_{index}"
+
+            while candidate in existing_names:
+                index += 1
+                candidate = f"{name}_{index}"
+
+            return candidate
+
     def parse_const_dict(self, data_list: List[Dict[str, Any]]):
         """
 
@@ -208,17 +280,47 @@ class VarFactory(EditableDevice):
         for data in data_list:
             assert data["type"] == "Var"
 
-            if data["ref"] is not None:
-                key_ref = VarPowerFlowRefferenceType(data["ref"])
-            else:
-                ke_ref = None
+            # Older persisted symbolic models may not store the power-flow
+            # reference field, so keep loading those files by defaulting to None.
+            key_ref = None
+            ref_data_dict: Any = data["shared_ref"]
+            if ref_data_dict is not None:
+                ref_data_name = ref_data_dict["name"]
+                ref_data_uid = ref_data_dict["uid"]
+                key_ref: SharedVarReferenceType | None
 
-            obj = Var(name=data["name"], uid=data["uid"], reference=key_ref)
+                if ref_data_name is not None and ref_data_uid is not None:
+                    if ref_data_name not in self._references_dict:
+                        key_ref = SharedVarReferenceType(ref_data_name, ref_data_uid)
+                        if key_ref is not None:
+                            self._references_dict[ref_data_name] = key_ref
+                    else:
+                        key_ref = self._references_dict[ref_data_name]
+                else:
+                    key_ref = None
+
+            ref_power_flow_data: Any = data.get("ref", None)
+            key_power_flow_ref: VarPowerFlowRefferenceType | None
+
+            if ref_power_flow_data is not None:
+                key_power_flow_ref = VarPowerFlowRefferenceType(ref_power_flow_data)
+            else:
+                key_power_flow_ref = None
+
+            obj = Var(name=data["name"], uid=data["uid"], shared_reference=key_ref, reference=key_power_flow_ref)
+            if ref_data_dict is not None:
+                ref_data_uid = ref_data_dict["uid"]
+                if ref_data_uid is not None:
+                    if ref_data_uid in self._vars_references_dict:
+                        self._vars_references_dict[ref_data_uid].append(obj)
+                    else:
+                        self._vars_references_dict[ref_data_uid] = list()
+                        self._vars_references_dict[ref_data_uid].append(obj)
 
             # at this point we can store the object
             obj_dict[obj.uid] = obj
 
-        self._var_dict =  obj_dict
+        self._var_dict = obj_dict
 
     def parse_diff_var_dict(self,
             data_list: List[Dict[str, Any]]):
@@ -248,10 +350,40 @@ class VarFactory(EditableDevice):
             else:
                 base_var = obj_dict[data["base_var"]]
 
+            # Older persisted symbolic models may not store the power-flow
+            # reference field on differential variables either.
+            key_ref = None
+            ref_data_dict: Any = data["shared_ref"]
+            if ref_data_dict is not None:
+                ref_data_name = ref_data_dict["name"]
+                ref_data_uid = ref_data_dict["uid"]
+                key_ref: SharedVarReferenceType | None
+
+                if ref_data_name is not None and ref_data_uid is not None:
+                    if ref_data_name not in self._references_dict:
+                        key_ref = SharedVarReferenceType(ref_data_name, ref_data_uid)
+                        if key_ref is not None:
+                            self._references_dict[ref_data_name] = key_ref
+                    else:
+                        key_ref = self._references_dict[ref_data_name]
+                else:
+                    key_ref = None
+
+            reference_power_flow: VarPowerFlowRefferenceType | None = data.get("ref", None)
             obj = Var(name=data["name"],
                       uid=data["uid"],
                       base_var=base_var,
-                      reference=data["ref"])
+                      shared_reference = key_ref,
+                      reference=reference_power_flow)
+
+            if ref_data_dict is not None:
+                ref_data_uid = ref_data_dict["uid"]
+                if ref_data_uid is not None:
+                    if ref_data_uid in self._vars_references_dict:
+                        self._vars_references_dict[ref_data_uid].append(obj)
+                    else:
+                        self._vars_references_dict[ref_data_uid] = list()
+                        self._vars_references_dict[ref_data_uid].append(obj)
 
             # at this point we can store the object
             obj_dict[obj.uid] = obj

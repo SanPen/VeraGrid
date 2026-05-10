@@ -15,6 +15,7 @@ from VeraGrid.Gui.Diagrams.generic_graphics import Polygon
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionTemplateGraphicItem
 from VeraGridEngine.Devices.Injections.load import Load
 from VeraGrid.Gui.DeviceEditors.LoadDesigner.load_designer import LoadDesigner
+from VeraGrid.Gui.DeviceEditors.LoadDesigner.load_device_editor import LoadDeviceEditorDialog
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
@@ -49,6 +50,18 @@ class LoadGraphicItem(InjectionTemplateGraphicItem):
     @property
     def api_object(self) -> Load:
         return self._api_object
+
+    def open_device_editor(self) -> bool:
+        """
+        Open the load editor.
+
+        :return: ``True`` when the editor was opened.
+        """
+        dlg = LoadDeviceEditorDialog(api_object=self.api_object, circuit=self.editor.circuit)
+        if dlg.exec():
+            return True
+        else:
+            return True
 
     def contextMenuEvent(self, event: QtWidgets.QGraphicsSceneContextMenuEvent):
         """

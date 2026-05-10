@@ -10,11 +10,11 @@ import numpy as np
 
 from PySide6.QtWidgets import QGraphicsSceneContextMenuEvent
 from VeraGridEngine.Devices.Injections.generator import Generator
-from VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor import GeneratorQCurveEditor
+from VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor import GeneratorEditorDialog, GeneratorQCurveEditor
 from VeraGrid.Gui.messages import yes_no_question
 from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics import MapInjectionTemplateGraphicItem
-from VeraGrid.Gui.DeviceEditors.SolarPowerWizard.solar_power_wizzard import SolarPvWizard
-from VeraGrid.Gui.DeviceEditors.WindPowerWizard.wind_power_wizzard import WindFarmWizard
+from VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizzard import SolarPvWizard
+from VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard import WindFarmWizard
 from VeraGrid.Gui.profile_wizard_utils import fill_substation_weather_profiles
 from VeraGrid.Gui.gui_functions import add_menu_entry
 from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
@@ -51,6 +51,18 @@ class MapGeneratorGraphicItem(MapInjectionTemplateGraphicItem):
     @property
     def api_object(self) -> Generator:
         return self._api_object
+
+    def open_device_editor(self) -> bool:
+        """
+        Open the generator editor.
+
+        :return: ``True`` when the editor was opened.
+        """
+        dlg = GeneratorEditorDialog(api_object=self.api_object, circuit=self.editor.circuit)
+        if dlg.exec():
+            return True
+        else:
+            return True
 
     def contextMenuEvent(self, event: QGraphicsSceneContextMenuEvent):
         """
@@ -104,6 +116,15 @@ class MapGeneratorGraphicItem(MapInjectionTemplateGraphicItem):
                        function_ptr=self.to_battery)
 
         menu.exec(event.screenPos())
+
+    def mouseDoubleClickEvent(self, event):
+        """
+        Open the generator editor on double click.
+
+        :param event: Mouse event.
+        :return: None.
+        """
+        super().mouseDoubleClickEvent(event)
 
     def edit_rms(self):
         """
@@ -186,6 +207,14 @@ class MapGeneratorGraphicItem(MapInjectionTemplateGraphicItem):
         self.api_object.Qmax = dlg.Qmax
         self.api_object.Pmin = dlg.Pmin
         self.api_object.Pmax = dlg.Pmax
+
+    def edit_generator(self):
+        """
+        Open the full generator editor dialogue.
+
+        :return: None.
+        """
+        self.open_device_editor()
 
     def solar_pv_wizard(self):
         """

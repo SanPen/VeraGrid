@@ -22,9 +22,27 @@ class PointerDeviceParent(EditableDevice):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='device_idtag', units='', tpe=str, definition='Unique ID', editable=False),
-        GCProp(key='tpe', units='', tpe=DeviceType, definition='Device type', editable=False),
-        GCProp(key='device_name', units='', tpe=str, definition='Device name', editable=False),
+        GCProp(
+            prop_name='device_idtag',
+            units='',
+            tpe=str,
+            definition='Unique ID',
+            editable=False,
+        ),
+        GCProp(
+            prop_name='tpe',
+            units='',
+            tpe=DeviceType,
+            definition='Device type',
+            editable=False,
+        ),
+        GCProp(
+            prop_name='device_name',
+            units='',
+            tpe=str,
+            definition='Device name',
+            editable=False,
+        ),
     )
 
     def __init__(self,

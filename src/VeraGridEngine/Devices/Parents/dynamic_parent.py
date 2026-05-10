@@ -11,8 +11,15 @@ from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.fmu_template import FmuTemplate
-from VeraGridEngine.enumerations import DeviceType, BuildStatus, SubObjectType, FmuTemplateDomain, FmuTemplateMode
+from VeraGridEngine.enumerations import (DeviceType, BuildStatus, SubObjectType, FmuTemplateDomain, FmuTemplateMode,
+                                         PrpCat)
 from VeraGridEngine.Utils.Symbolic.symbolic_io import duplicate_block
+
+
+from VeraGridEngine.Utils.Symbolic.templates_common_functions import connect_bus_variables_rms, connect_bus_variables_emt
+
+
+
 
 
 class DynamicDevice(PhysicalDevice):
@@ -34,26 +41,86 @@ class DynamicDevice(PhysicalDevice):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='rms_model', units='', tpe=SubObjectType.DaeBlockType,
-               definition='RMS dynamic model', display=False),
-        GCProp(key='emt_model', units='', tpe=SubObjectType.DaeBlockType,
-               definition='EMT dynamic model', display=False),
-        GCProp(key='rms_template', units='', tpe=DeviceType.RmsModelTemplateDevice,
-               definition='Native RMS template used. Assigning it clears rms_fmu_template.', display=True),
-        GCProp(key='emt_template', units='', tpe=DeviceType.EmtModelTemplateDevice,
-               definition='Native EMT template used. Assigning it clears emt_fmu_template.', display=True),
-        GCProp(key='rms_fmu_template', units='', tpe=DeviceType.FmuTemplateDevice,
-               definition='RMS FMU template used only by RMS simulations. Assigning it clears rms_template.', display=True),
-        GCProp(key='emt_fmu_template', units='', tpe=DeviceType.FmuTemplateDevice,
-               definition='EMT FMU template used only by EMT simulations. Assigning it clears emt_template.', display=True),
-        GCProp(key='rms_fmu_import_config', units='', tpe=str,
-               definition='Serialized FMU Co-Simulation RMS configuration', display=False),
-        GCProp(key='emt_fmu_import_config', units='', tpe=str,
-               definition='Serialized FMU Co-Simulation EMT configuration', display=False),
-        GCProp(key='rms_fmu_me_import_config', units='', tpe=str,
-               definition='Serialized FMU Model Exchange RMS configuration', display=False),
-        GCProp(key='emt_fmu_me_import_config', units='', tpe=str,
-               definition='Serialized FMU Model Exchange EMT configuration', display=False),
+        GCProp(
+            prop_name='rms_model',
+            units='',
+            tpe=SubObjectType.DaeBlockType,
+            definition='RMS dynamic model',
+            display=False,
+            cat=[PrpCat.RMS],
+        ),
+        GCProp(
+            prop_name='emt_model',
+            units='',
+            tpe=SubObjectType.DaeBlockType,
+            definition='EMT dynamic model',
+            display=False,
+            cat=[PrpCat.EMT],
+        ),
+        GCProp(
+            prop_name='rms_template',
+            units='',
+            tpe=DeviceType.RmsModelTemplateDevice,
+            definition='Native RMS template used. Assigning it clears rms_fmu_template.',
+            display=True,
+            cat=[PrpCat.RMS],
+        ),
+        GCProp(
+            prop_name='emt_template',
+            units='',
+            tpe=DeviceType.EmtModelTemplateDevice,
+            definition='Native EMT template used. Assigning it clears emt_fmu_template.',
+            display=True,
+            cat=[PrpCat.EMT],
+        ),
+        GCProp(
+            prop_name='rms_fmu_template',
+            units='',
+            tpe=DeviceType.FmuTemplateDevice,
+            definition='RMS FMU template used only by RMS simulations. Assigning it clears rms_template.',
+            display=True,
+            cat=[PrpCat.RMS],
+        ),
+        GCProp(
+            prop_name='emt_fmu_template',
+            units='',
+            tpe=DeviceType.FmuTemplateDevice,
+            definition='EMT FMU template used only by EMT simulations. Assigning it clears emt_template.',
+            display=True,
+            cat=[PrpCat.EMT],
+        ),
+        GCProp(
+            prop_name='rms_fmu_import_config',
+            units='',
+            tpe=str,
+            definition='Serialized FMU Co-Simulation RMS configuration',
+            display=False,
+            cat=[PrpCat.RMS],
+        ),
+        GCProp(
+            prop_name='emt_fmu_import_config',
+            units='',
+            tpe=str,
+            definition='Serialized FMU Co-Simulation EMT configuration',
+            display=False,
+            cat=[PrpCat.EMT],
+        ),
+        GCProp(
+            prop_name='rms_fmu_me_import_config',
+            units='',
+            tpe=str,
+            definition='Serialized FMU Model Exchange RMS configuration',
+            display=False,
+            cat=[PrpCat.RMS],
+        ),
+        GCProp(
+            prop_name='emt_fmu_me_import_config',
+            units='',
+            tpe=str,
+            definition='Serialized FMU Model Exchange EMT configuration',
+            display=False,
+            cat=[PrpCat.EMT],
+        ),
     )
 
     def __init__(self,
@@ -216,9 +283,9 @@ class DynamicDevice(PhysicalDevice):
             self._clear_rms_fmu_config()
 
             if self.auto_update_enabled:
-                val.block.unify_blocks()
-                # Todo: add promp to edit parameters from template after copy
-                self.rms_model = duplicate_block(val.block, self._var_factory)
+                rms_mdl = duplicate_block(val.block, self._var_factory)
+                connect_bus_variables_rms(self, rms_mdl, self._var_factory)
+                self.rms_model = rms_mdl
 
         elif val is None:
             self._rms_template = None
@@ -243,8 +310,10 @@ class DynamicDevice(PhysicalDevice):
 
             if self.auto_update_enabled:
                 val.block.unify_blocks()
+                emt_mdl = duplicate_block(val.block, self._var_factory)
+                connect_bus_variables_emt(self, emt_mdl, self._var_factory, allow_deferred_connection=True)
 
-                self.emt_model = duplicate_block(val.block, self._var_factory)
+                self.emt_model = emt_mdl
         elif val is None:
             self._emt_template = None
         else:
@@ -397,87 +466,4 @@ class DynamicDevice(PhysicalDevice):
         """
 
         self._emt_fmu_me_import_config = str(val)
-
-class DynamicBusDevice(PhysicalDevice):
-    """
-    Parent class for devices with dynamic models
-    """
-    __slots__ = (
-        '_var_factory',
-        '_rms_model',
-        '_emt_model',
-    )
-
-    LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='rms_model', units='', tpe=SubObjectType.DaeBlockType,
-               definition='RMS dynamic model', display=False),
-        GCProp(key='emt_model', units='', tpe=SubObjectType.DaeBlockType,
-               definition='EMT dynamic model', display=False),
-    )
-
-    def __init__(self,
-                 name: str,
-                 idtag: str | None,
-                 code: str,
-                 device_type: DeviceType,
-                 build_status: BuildStatus = BuildStatus.Commissioned):
-        """
-
-        :param name:
-        :param idtag:
-        :param code:
-        :param device_type:
-        :param build_status:
-        """
-        PhysicalDevice.__init__(self,
-                                name=name,
-                                idtag=idtag,
-                                code=code,
-                                device_type=device_type,
-                                build_status=build_status)
-
-        self._var_factory: VarFactory | None = None
-        self._rms_model: Block = Block()
-        self._emt_model: Block = Block()
-
-    def set_var_factory(self, val: VarFactory) -> None:
-        """
-        Store the shared variable factory used by RMS and EMT symbolic blocks.
-
-        :param val: Shared variable factory.
-        :return: None.
-        """
-
-        if isinstance(val, VarFactory):
-            self._var_factory = val
-        else:
-            raise ValueError(f"VarFactory cannot accept {val}")
-
-    @property
-    def rms_model(self) -> Block:
-        """
-        Get the RMS model
-        """
-        return self._rms_model
-
-    @rms_model.setter
-    def rms_model(self, val: Block) -> None:
-        if isinstance(val, Block):
-            self._rms_model = val
-        else:
-            raise ValueError(f"RMS model cannot accept {val}")
-
-    @property
-    def emt_model(self) -> Block:
-        """
-        Get the EMT model
-        """
-        return self._emt_model
-
-    @emt_model.setter
-    def emt_model(self, val: Block) -> None:
-        if isinstance(val, Block):
-            self._emt_model = val
-        else:
-            raise ValueError(f"EMT model cannot accept {val}")
 

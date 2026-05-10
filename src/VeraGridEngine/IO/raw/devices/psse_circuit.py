@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
+import datetime
 from typing import List, Dict, Tuple
 
 from VeraGridEngine.IO.raw.devices.multi_section_line import RawMultiLineSection
@@ -66,6 +67,8 @@ class PsseCircuit(RawObject, BaseCircuit):
         self.XFRRAT = 0
         self.NXFRAT = 0
         self.BASFRQ = 50
+
+        self.date_time: datetime.datetime | None = None
 
         self.areas: List[RawArea] = list()
 

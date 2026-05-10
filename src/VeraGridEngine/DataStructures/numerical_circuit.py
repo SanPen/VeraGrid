@@ -214,6 +214,25 @@ def check_arr(arr: Vec | IntVec | BoolVec | CxVec,
         return 1
 
 
+@nb.njit(cache=True)
+def correct_bus_types(gen_idx: IntVec,
+                      gen_controllable: BoolVec,
+                      gen_controllable_bus_idx: IntVec,
+                      bus_types: IntVec, ):
+    """
+    Function to Correct bus types because of generators moving around due to the topology processing
+    :param gen_idx:
+    :param gen_controllable:
+    :param gen_controllable_bus_idx:
+    :param bus_types:
+    :return:
+    """
+    for i, k in enumerate(gen_idx):
+        if gen_controllable[i]:
+            if bus_types[gen_controllable_bus_idx[i]] != 2:
+                bus_types[gen_controllable_bus_idx[i]] = 2
+
+
 class DataStructType(Enum):
     BUSDATA = 1
     BRANCHDATA = 2
@@ -922,7 +941,6 @@ class NumericalCircuit:
                     i0 = island[0]
 
                     if len(island) > 1:
-
                         # set the mapping to the first index of the island to the reduced buses
                         self.__bus_map_arr[island[1:]] = i0
 
@@ -1025,6 +1043,17 @@ class NumericalCircuit:
         nc.vsc_data = self.vsc_data.slice(elm_idx=vsc_idx, bus_idx=bus_idx, bus_map=bus_map, logger=logger)
         nc.hvdc_data = self.hvdc_data.slice(elm_idx=hvdc_idx, bus_idx=bus_idx, bus_map=bus_map, logger=logger)
 
+        # Correct bus types because of generators moving around due to the topology processing
+        if self.topology_performed:
+            correct_bus_types(gen_idx=gen_idx,
+                              gen_controllable=nc.generator_data.controllable,
+                              gen_controllable_bus_idx=nc.generator_data.controllable_bus_idx,
+                              bus_types=nc.bus_data.bus_types)
+            correct_bus_types(gen_idx=batt_idx,
+                              gen_controllable=nc.battery_data.controllable,
+                              gen_controllable_bus_idx=nc.battery_data.controllable_bus_idx,
+                              bus_types=nc.bus_data.bus_types)
+
         return nc
 
     def split_into_islands(self,
@@ -1042,7 +1071,7 @@ class NumericalCircuit:
             logger = Logger()
 
         # detect the topology reductions
-        self.process_reducible_branches()
+        n_red = self.process_reducible_branches()
 
         # find the matching islands
         adj = self.compute_adjacency_matrix(consider_hvdc_as_island_links=consider_hvdc_as_island_links)

@@ -129,8 +129,8 @@ def _build_bridge_filter_problem() -> Tuple[GenericEmtProblem, Dict[str, Var]]:
         ]),
     )
     root_block.unify_blocks()
-
-    problem = GenericEmtProblem(sys_block=root_block, glob_time=vf.add_var("t_bridge_filter_problem"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict()
+    problem = GenericEmtProblem(sys_block=root_block, glob_time=vf.add_var("t_bridge_filter_problem"),static_parameter_values_mapping=static_parameter_values_mapping)
     tracked_vars["m_a"] = find_name_in_block("m_a_bridge_filter_case_bridge", problem.sys_block)
     tracked_vars["m_b"] = find_name_in_block("m_b_bridge_filter_case_bridge", problem.sys_block)
     tracked_vars["m_c"] = find_name_in_block("m_c_bridge_filter_case_bridge", problem.sys_block)

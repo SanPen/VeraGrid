@@ -15,45 +15,34 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QDialog, QDoubleSpinBox, QGroupBox,
-    QHBoxLayout, QLabel, QPushButton, QSizePolicy,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QApplication, QDialog, QDoubleSpinBox, QFormLayout,
+    QFrame, QGroupBox, QHBoxLayout, QLabel,
+    QPushButton, QSizePolicy, QSpacerItem, QVBoxLayout,
+    QWidget)
 
 class Ui_Transformer3wEditorDialog(object):
     def setupUi(self, Transformer3wEditorDialog):
         if not Transformer3wEditorDialog.objectName():
             Transformer3wEditorDialog.setObjectName(u"Transformer3wEditorDialog")
-        Transformer3wEditorDialog.resize(900, 420)
-        self.verticalLayout = QVBoxLayout(Transformer3wEditorDialog)
-        self.verticalLayout.setObjectName(u"verticalLayout")
+        Transformer3wEditorDialog.resize(671, 481)
+        self.formLayout = QFormLayout(Transformer3wEditorDialog)
+        self.formLayout.setObjectName(u"formLayout")
         self.nameLabel = QLabel(Transformer3wEditorDialog)
         self.nameLabel.setObjectName(u"nameLabel")
 
-        self.verticalLayout.addWidget(self.nameLabel)
+        self.formLayout.setWidget(0, QFormLayout.ItemRole.LabelRole, self.nameLabel)
 
         self.pfeLabel = QLabel(Transformer3wEditorDialog)
         self.pfeLabel.setObjectName(u"pfeLabel")
 
-        self.verticalLayout.addWidget(self.pfeLabel)
+        self.formLayout.setWidget(1, QFormLayout.ItemRole.LabelRole, self.pfeLabel)
 
         self.pfeSpinBox = QDoubleSpinBox(Transformer3wEditorDialog)
         self.pfeSpinBox.setObjectName(u"pfeSpinBox")
         self.pfeSpinBox.setDecimals(6)
         self.pfeSpinBox.setMaximum(999999.000000000000000)
 
-        self.verticalLayout.addWidget(self.pfeSpinBox)
-
-        self.i0Label = QLabel(Transformer3wEditorDialog)
-        self.i0Label.setObjectName(u"i0Label")
-
-        self.verticalLayout.addWidget(self.i0Label)
-
-        self.i0SpinBox = QDoubleSpinBox(Transformer3wEditorDialog)
-        self.i0SpinBox.setObjectName(u"i0SpinBox")
-        self.i0SpinBox.setDecimals(6)
-        self.i0SpinBox.setMaximum(999999.000000000000000)
-
-        self.verticalLayout.addWidget(self.i0SpinBox)
+        self.formLayout.setWidget(1, QFormLayout.ItemRole.FieldRole, self.pfeSpinBox)
 
         self.windingsLayout = QHBoxLayout()
         self.windingsLayout.setObjectName(u"windingsLayout")
@@ -238,12 +227,42 @@ class Ui_Transformer3wEditorDialog(object):
         self.windingsLayout.addWidget(self.winding3GroupBox)
 
 
-        self.verticalLayout.addLayout(self.windingsLayout)
+        self.formLayout.setLayout(5, QFormLayout.ItemRole.SpanningRole, self.windingsLayout)
 
-        self.acceptButton = QPushButton(Transformer3wEditorDialog)
+        self.i0SpinBox = QDoubleSpinBox(Transformer3wEditorDialog)
+        self.i0SpinBox.setObjectName(u"i0SpinBox")
+        self.i0SpinBox.setDecimals(6)
+        self.i0SpinBox.setMaximum(999999.000000000000000)
+
+        self.formLayout.setWidget(2, QFormLayout.ItemRole.FieldRole, self.i0SpinBox)
+
+        self.i0Label = QLabel(Transformer3wEditorDialog)
+        self.i0Label.setObjectName(u"i0Label")
+
+        self.formLayout.setWidget(2, QFormLayout.ItemRole.LabelRole, self.i0Label)
+
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.formLayout.setItem(6, QFormLayout.ItemRole.LabelRole, self.verticalSpacer)
+
+        self.frame = QFrame(Transformer3wEditorDialog)
+        self.frame.setObjectName(u"frame")
+        self.frame.setFrameShape(QFrame.Shape.NoFrame)
+        self.frame.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout = QHBoxLayout(self.frame)
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout.addItem(self.horizontalSpacer)
+
+        self.acceptButton = QPushButton(self.frame)
         self.acceptButton.setObjectName(u"acceptButton")
 
-        self.verticalLayout.addWidget(self.acceptButton)
+        self.horizontalLayout.addWidget(self.acceptButton)
+
+
+        self.formLayout.setWidget(7, QFormLayout.ItemRole.SpanningRole, self.frame)
 
 
         self.retranslateUi(Transformer3wEditorDialog)
@@ -255,7 +274,6 @@ class Ui_Transformer3wEditorDialog(object):
         Transformer3wEditorDialog.setWindowTitle(QCoreApplication.translate("Transformer3wEditorDialog", u"Transformer editor", None))
         self.nameLabel.setText(QCoreApplication.translate("Transformer3wEditorDialog", u"Name:", None))
         self.pfeLabel.setText(QCoreApplication.translate("Transformer3wEditorDialog", u"Pfe: Iron losses [kW]", None))
-        self.i0Label.setText(QCoreApplication.translate("Transformer3wEditorDialog", u"I0: No load current [%]", None))
         self.winding1GroupBox.setTitle(QCoreApplication.translate("Transformer3wEditorDialog", u"Winding 1", None))
         self.w1BusVoltageLabel.setText(QCoreApplication.translate("Transformer3wEditorDialog", u"Bus voltage: N/A", None))
         self.w1VLabel.setText(QCoreApplication.translate("Transformer3wEditorDialog", u"V1: Nominal voltage [kV]", None))
@@ -274,6 +292,7 @@ class Ui_Transformer3wEditorDialog(object):
         self.w3SnLabel.setText(QCoreApplication.translate("Transformer3wEditorDialog", u"Sn3: Nominal power [MVA]", None))
         self.w3PcuLabel.setText(QCoreApplication.translate("Transformer3wEditorDialog", u"Pcu 3-1: Copper losses [kW]", None))
         self.w3VscLabel.setText(QCoreApplication.translate("Transformer3wEditorDialog", u"Vsc 3-1: Short circuit voltage [%]", None))
+        self.i0Label.setText(QCoreApplication.translate("Transformer3wEditorDialog", u"I0: No load current [%]", None))
         self.acceptButton.setText(QCoreApplication.translate("Transformer3wEditorDialog", u"Accept", None))
     # retranslateUi
 

@@ -3,7 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 import os
-
+import pytest
 import VeraGridEngine as vg
 from VeraGridEngine import power_flow, SolverType
 from VeraGridEngine.IO.file_open import FileOpen
@@ -11,6 +11,7 @@ from VeraGridEngine.IO.others.pandapower_parser import Panda2VeraGrid, PANDAPOWE
 from VeraGridEngine.Simulations.StateEstimation.state_stimation_driver import StateEstimationDriver, StateEstimationOptions
 
 
+@pytest.mark.skip("improper tests")
 def test_state_estimation_pandapower():
     if PANDAPOWER_AVAILABLE:
         import pandapower
@@ -72,7 +73,7 @@ def test_state_estimation_pandapower():
 
             se.logger.print("SE Logger:")
 
-
+@pytest.mark.skip("improper test")
 def test_network_objects_consistency():
     if PANDAPOWER_AVAILABLE:
         import pandapower

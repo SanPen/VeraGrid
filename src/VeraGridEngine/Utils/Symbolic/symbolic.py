@@ -18,6 +18,7 @@ from typing import Any, Dict, Mapping, Union, List, Sequence, Tuple, Set, Option
 
 from VeraGridEngine.enumerations import VarPowerFlowRefferenceType
 
+
 NUMBER = Union[int, float, complex]
 
 
@@ -57,6 +58,29 @@ def _to_expr(val: Any) -> "Expr":
 # ----------------------------------------------------------------------------
 # Function helpers
 # ----------------------------------------------------------------------------
+
+
+class SharedVarReferenceType:
+    __slots__ = ("name", "uid")
+    # this class is related to var factory, and a dictionary contains all the "shared vars" that have a certain reference.
+    def __init__(self, name: str, uid: int| None = None):
+
+        self.uid: int = _new_uid() if uid is None else uid
+        self.name = name
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return str(self)
+
+    def __eq__(self, other):
+        if not isinstance(other, SharedVarReferenceType):
+            return NotImplemented
+        return self.uid == other.uid
+
+    def __hash__(self):
+        return hash(self.uid)
 
 
 class CmpOp(Enum):
@@ -185,6 +209,14 @@ class Expr:
         :rtype:
         """
         return mapping.get(self, self)
+
+    def contains_var(self, var: Var) -> bool:
+        """
+        Check if this expression contains the given variable.
+        :param var: Variable to search for.
+        :return: True if var is in this expression.
+        """
+        return False
 
     def to_dict(self) -> Dict[str, Any]:
         """
@@ -341,6 +373,9 @@ class Const(Expr):
 
         return self
 
+    def contains_var(self, var: Var) -> bool:
+        return False
+
     def __str__(self) -> str:
         return str(self.value)
 
@@ -382,11 +417,12 @@ class Var(Expr):
     Any variable
     """
 
-    __slots__ = ("name", "_ref", "_network_conn", "uid", "diff_var", "base_var", "_origin_var")
+    __slots__ = ("name", "_ref", "_network_conn", "_shared_ref", "uid", "diff_var", "base_var", "_origin_var")
 
     def __init__(self, name: str,
                  reference: VarPowerFlowRefferenceType | None = None,
                  network_conn: bool = False,
+                 shared_reference: SharedVarReferenceType | None = None,
                  uid: int | None = None,
                  diff_var: Var | None = None,
                  base_var: Var | None = None):
@@ -394,7 +430,8 @@ class Var(Expr):
         """
 
         :param name:
-        :param reference:
+        :param shared_reference:
+        :param reference
         :param network_conn:
         :param uid:
         :param diff_var:
@@ -403,6 +440,7 @@ class Var(Expr):
         self.name: str = name
         self._ref: VarPowerFlowRefferenceType | None = reference
         self._network_conn: bool = network_conn
+        self._shared_ref: SharedVarReferenceType | None = shared_reference
         self.diff_var = diff_var
         self.base_var: Var | None = base_var  # assign reference to base var
         self._origin_var: Var | None = None
@@ -422,14 +460,19 @@ class Var(Expr):
         else:
             result: Var = Var.__new__(Var)
             memo[id(self)] = result
+            if isinstance(self._shared_ref, bool):
+                print("")
 
             result.uid = self.uid
             result.name = self.name
+            result._shared_ref = self._shared_ref
             result._ref = self._ref
             result._network_conn = self._network_conn
             result.diff_var = copy.deepcopy(self.diff_var, memo)
             result.base_var = copy.deepcopy(self.base_var, memo)
             result._origin_var = None
+            if isinstance(result._shared_ref, bool):
+                print("")
             return result
 
     def eval(self, **bindings: float) -> float:
@@ -465,6 +508,9 @@ class Var(Expr):
         if self.name in mapping:
             return mapping[self.name]
         return self
+
+    def contains_var(self, var: Var) -> bool:
+        return self.uid == var.uid
 
     def __str__(self) -> str:
         return self.name
@@ -523,6 +569,10 @@ class Var(Expr):
                 self._origin_var = self._origin_var.base_var
 
         return self._origin_var
+
+    @property
+    def shared_ref(self) -> SharedVarReferenceType | None:
+        return self._shared_ref
 
     @property
     def ref(self) -> VarPowerFlowRefferenceType | None:
@@ -871,6 +921,9 @@ class BinOp(Expr):
             return mapping[self]
         return BinOp(self.left.subs(mapping), self.op, self.right.subs(mapping))
 
+    def contains_var(self, var: Var) -> bool:
+        return self.left.contains_var(var) or self.right.contains_var(var)
+
     def __str__(self) -> str:
         return f"({self.left}) {self.op} ({self.right})"
 
@@ -986,6 +1039,9 @@ class UnOp(Expr):
         if self in mapping:
             return mapping[self]
         return UnOp(self.op, self.operand.subs(mapping))
+
+    def contains_var(self, var: Var) -> bool:
+        return self.operand.contains_var(var)
 
     def __str__(self) -> str:
         return f"{self.op}({self.operand})"
@@ -1230,6 +1286,9 @@ class Func(Expr):
         if self in mapping:
             return mapping[self]
         return Func(self.arg.subs(mapping), self.op)
+
+    def contains_var(self, var: Var) -> bool:
+        return self.arg.contains_var(var)
 
     def __str__(self) -> str:
         return f"{self.op}({self.arg})"
@@ -1643,7 +1702,11 @@ class Func2(Expr):
             self.arg2.subs(mapping),
         )
 
+    def contains_var(self, var: Var) -> bool:
+        return self.arg1.contains_var(var) or self.arg2.contains_var(var)
+
     def __str__(self) -> str:
+        return f"{self.name}({self.arg1}, {self.arg2})"
         return f"{self.name}({self.arg1}, {self.arg2})"
 
     def __repr__(self) -> str:
@@ -2360,5 +2423,6 @@ __all__ = [
     '_expr_to_dict',
     'abs',
     '_to_expr',
-    'get_namespace'
+    'get_namespace',
+    'SharedVarReferenceType'
 ]

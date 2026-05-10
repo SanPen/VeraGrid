@@ -12,6 +12,7 @@ from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import BarTerminalItem,
 from VeraGrid.Gui.messages import yes_no_question
 from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
 from VeraGrid.Gui.DeviceEditors.TransformerEditor.transformer_editor import TransformerEditor
+from VeraGrid.Gui.DeviceEditors.TransformerEditor.transformer_device_editor import TransformerDeviceEditorDialog
 from VeraGridEngine.Devices.Branches.transformer import Transformer2W, TransformerType
 from VeraGridEngine.enumerations import DeviceType, TapModuleControl, DynamicSimulationMode
 
@@ -51,6 +52,18 @@ class TransformerGraphicItem(LineGraphicTemplateItem):
     def api_object(self) -> Transformer2W:
         return self._api_object
 
+    def open_device_editor(self) -> bool:
+        """
+        Open the transformer 2W editor.
+
+        :return: ``True`` when the editor was opened.
+        """
+        dlg = TransformerDeviceEditorDialog(api_object=self.api_object, circuit=self.editor.circuit)
+        if dlg.exec():
+            return True
+        else:
+            return True
+
     def contextMenuEvent(self, event):
         """
         Show context menu
@@ -79,7 +92,7 @@ class TransformerGraphicItem(LineGraphicTemplateItem):
                            icon_path=":/Icons/icons/delete3.png")
 
             add_menu_entry(menu=menu,
-                           text="Transformer editor",
+                           text="Editor",
                            function_ptr=self.edit,
                            icon_path=":/Icons/icons/edit.png")
 
@@ -195,18 +208,14 @@ class TransformerGraphicItem(LineGraphicTemplateItem):
         Open the appropriate editor dialogue
         :return:
         """
-        dlg = TransformerEditor(self.api_object, grid=self.editor.circuit, modify_on_accept=True)
-        if dlg.exec():
-            pass
+        self.open_device_editor()
 
     def edit_tap_changer(self):
         """
 
         :return:
         """
-        dlg = TransformerEditor(self.api_object, grid=self.editor.circuit, modify_on_accept=True)
-        if dlg.exec():
-            pass
+        self.open_device_editor()
 
     def show_transformer_editor(self):
         """

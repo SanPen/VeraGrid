@@ -4,7 +4,7 @@ from trunk.ai.ai_iterable_example import grid_
 
 
 VeraGrid has contingency simulations, and it features a quite flexible way of defining contingencies.
-Firs you define a contingency group, and then define individual events that are assigned to that contingency group.
+First you define a contingency group, and then define individual events that are assigned to that contingency group.
 The simulation then tries all the contingency groups and apply the events registered in each group.
 
 ![](figures/settings-con.png)

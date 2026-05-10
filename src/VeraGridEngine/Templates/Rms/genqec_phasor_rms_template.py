@@ -19,7 +19,8 @@ from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Utils.Symbolic.block import Block
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
 import VeraGridEngine.Utils.Symbolic.symbolic_ml as sym_ml
-from VeraGridEngine.Templates.templates_common_functions import to_implicit
+from VeraGridEngine.Utils.Symbolic.block_helpers import to_implicit
+
 
 def get_genqec_phasor(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
     """

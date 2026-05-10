@@ -8,7 +8,7 @@ from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCPro
 from VeraGridEngine.Devices.Parents.pointer_device_parent import PointerDeviceParent
 from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
-from VeraGridEngine.enumerations import DeviceType, SubObjectType
+from VeraGridEngine.enumerations import DeviceType, SubObjectType, PrpCat
 
 
 class RmsEvent(PointerDeviceParent):
@@ -24,15 +24,41 @@ class RmsEvent(PointerDeviceParent):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='parameter', units='', tpe=SubObjectType.VarType,
-                      definition='parameter that the event changes'),
-        GCProp(key='time', units='', tpe=float,
-                      definition='Time when the event occurs'),
-        GCProp(key='value', units='', tpe=float,
-                      definition='New value for the parameter'),
-        GCProp(key='group', units='', tpe=DeviceType.RmsEventsGroupDevice, definition='RmsEvent group'),
-        GCProp(key='force_step_alignment', units='', tpe=bool,
-               definition='Force step alignment'),
+        GCProp(
+            prop_name='parameter',
+            units='',
+            tpe=SubObjectType.VarType,
+            definition='parameter that the event changes',
+            cat=[PrpCat.RMS],
+        ),
+        GCProp(
+            prop_name='time',
+            units='',
+            tpe=float,
+            definition='Time when the event occurs',
+            cat=[PrpCat.RMS],
+        ),
+        GCProp(
+            prop_name='value',
+            units='',
+            tpe=float,
+            definition='New value for the parameter',
+            cat=[PrpCat.RMS],
+        ),
+        GCProp(
+            prop_name='group',
+            units='',
+            tpe=DeviceType.RmsEventsGroupDevice,
+            definition='RmsEvent group',
+            cat=[PrpCat.RMS],
+        ),
+        GCProp(
+            prop_name='force_step_alignment',
+            units='',
+            tpe=bool,
+            definition='Force step alignment',
+            cat=[PrpCat.RMS],
+        ),
     )
 
     def __init__(self,

@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import Union, Tuple
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp
 from VeraGridEngine.Devices.Parents.pointer_device_parent import PointerDeviceParent
-from VeraGridEngine.enumerations import ContingencyOperationTypes, DeviceType
+from VeraGridEngine.enumerations import ContingencyOperationTypes, DeviceType, PrpCat
 from VeraGridEngine.Devices.Events.contingency_group import ContingencyGroup
 
 
@@ -22,10 +22,27 @@ class Contingency(PointerDeviceParent):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='prop', units='', tpe=ContingencyOperationTypes,
-                      definition=f'Object property to change'),
-        GCProp(key='value', units='', tpe=float, definition='Property value'),
-        GCProp(key='group', units='', tpe=DeviceType.ContingencyGroupDevice, definition='Contingency group'),
+        GCProp(
+            prop_name='prop',
+            units='',
+            tpe=ContingencyOperationTypes,
+            definition=f'Object property to change',
+            cat=[PrpCat.REL],
+        ),
+        GCProp(
+            prop_name='value',
+            units='',
+            tpe=float,
+            definition='Property value',
+            cat=[PrpCat.REL],
+        ),
+        GCProp(
+            prop_name='group',
+            units='',
+            tpe=DeviceType.ContingencyGroupDevice,
+            definition='Contingency group',
+            cat=[PrpCat.REL],
+        ),
     )
 
     def __init__(self,

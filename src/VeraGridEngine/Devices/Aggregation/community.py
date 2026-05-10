@@ -7,6 +7,7 @@ from typing import Union, Tuple
 from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
 from VeraGridEngine.Devices.Aggregation.area import GenericAreaGroup
 from VeraGridEngine.Devices.Aggregation.country import Country
+from VeraGridEngine.enumerations import PrpCat
 
 
 class Community(GenericAreaGroup):
@@ -15,8 +16,13 @@ class Community(GenericAreaGroup):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key="country", units="", tpe=DeviceType.CountryDevice,
-                      definition="Substation country, altenativelly this can be obtained from the community"),
+        GCProp(
+            prop_name="country",
+            units="",
+            tpe=DeviceType.CountryDevice,
+            definition="Substation country, altenativelly this can be obtained from the community",
+            cat=[PrpCat.TP],
+        ),
     )
 
     def __init__(self, name='Country', idtag: Union[str, None] = None, code='', latitude=0.0, longitude=0.0,

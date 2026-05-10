@@ -1,17 +1,33 @@
 from __future__ import annotations
 
+import math
 import sys
+from pathlib import Path
 
+import numpy as np
 import pytest
 from PySide6 import QtCore, QtWidgets
 from PySide6.QtTest import QTest
 
+import VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor as dynamic_block_editor_module
+import VeraGridEngine.api as gce
 from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI
+from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import get_modal_template_metadata
+from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import _transformer_modal_config_allows_modify
+from VeraGrid.Gui.DynamicModelEditor.lookup_table_dialog import LookupArrayLinearDialog
+from VeraGrid.Gui.DynamicModelEditor.lookup_table_dialog import LookupMatrixLinearDialog
+from VeraGrid.Gui.DynamicModelEditor.lookup_table_dialog import _parse_clipboard_grid
+from VeraGrid.Gui.DynamicModelEditor.induction_motor_emt_dialog import InductionMotorEmtLevel
+from VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime import get_jmarti_block_fit_bundle
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Templates.BasicBlockCatalog import BasicBlockTemplateDescriptor
 from VeraGridEngine.Templates.BasicBlockCatalog import get_basic_block_catalog_descriptor_by_key
 from VeraGridEngine.Utils.Symbolic.block import Block
+from VeraGridEngine.enumerations import BlockType
 from VeraGridEngine.enumerations import DynamicSimulationMode
+from VeraGridEngine.enumerations import DeviceType
+from VeraGridEngine.enumerations import ShuntConnectionType
+from VeraGridEngine.enumerations import WindingType
 
 pytestmark = pytest.mark.filterwarnings("error")
 
@@ -21,12 +37,13 @@ class _ApiStub:
     Minimal API object accepted by the dynamic block editor tests.
     """
 
-    __slots__ = ("name", "rms_template", "emt_template")
+    __slots__ = ("name", "rms_template", "emt_template", "device_type")
 
     def __init__(self) -> None:
         self.name = "Stub"
         self.rms_template = None
         self.emt_template = None
+        self.device_type = DeviceType.NoDevice
 
 
 def _get_app() -> QtWidgets.QApplication:
@@ -106,18 +123,22 @@ def _count_descriptor_leaves(editor: DynamicBlockEditorGUI,
     return count
 
 
-def _build_editor(mode: DynamicSimulationMode = DynamicSimulationMode.EMT) -> DynamicBlockEditorGUI:
+def _build_editor(mode: DynamicSimulationMode = DynamicSimulationMode.EMT,
+                  api_object=None,
+                  circuit=None) -> DynamicBlockEditorGUI:
     """
     Build one dynamic block editor instance for GUI tests.
     """
 
     _get_app()
+    resolved_api_object = api_object if api_object is not None else _ApiStub()
     editor = DynamicBlockEditorGUI(
         var_factory=VarFactory(),
         block=Block(),
-        api_object=_ApiStub(),
+        api_object=resolved_api_object,
         mode=mode,
         templates_list=list(),
+        circuit=circuit,
         main_editor=False,
         modal=False,
     )
@@ -170,6 +191,74 @@ def _port_name_prefixes(block_item) -> list[str]:
     return prefixes
 
 
+def _port_full_names(block_item) -> list[str]:
+    """
+    Extract full input port names from one block item.
+    """
+
+    names: list[str] = list()
+    for port in block_item.inputs:
+        assert port.base_var is not None
+        names.append(port.base_var.name)
+    return names
+
+
+def _find_prefixed_event_constant(block: Block, prefix: str) -> float:
+    """
+    Find one constant-valued event entry whose key name starts with ``prefix``.
+    """
+
+    parameter_var, parameter_expr = next(
+        ((var, expr) for var, expr in block.event_dict.items() if var.name.startswith(prefix)),
+        (None, None),
+    )
+    if parameter_var is not None and parameter_expr is not None:
+        assert parameter_expr.value is not None
+        return float(parameter_expr.value)
+    else:
+        pass
+
+    child: Block
+    for child in block.children:
+        parameter_var, parameter_expr = next(
+            ((var, expr) for var, expr in child.event_dict.items() if var.name.startswith(prefix)),
+            (None, None),
+        )
+        if parameter_var is not None and parameter_expr is not None:
+            assert parameter_expr.value is not None
+            return float(parameter_expr.value)
+        else:
+            pass
+
+    raise AssertionError(f"Missing event constant with prefix '{prefix}'")
+
+
+def _state_var_names(block: Block) -> list[str]:
+    """
+    Return the symbolic state-variable names of one block.
+    """
+
+    return list(var.name for var in block.state_vars)
+
+
+def _find_scene_block_item(editor: DynamicBlockEditorGUI, block_uid: int):
+    """
+    Find one visible scene block item by symbolic block uid.
+    """
+
+    scene_item: object
+    for scene_item in editor.scene.items():
+        if isinstance(scene_item, dynamic_block_editor_module.BlockItem):
+            if scene_item.subsys is not None and scene_item.subsys.uid == block_uid:
+                return scene_item
+            else:
+                pass
+        else:
+            pass
+
+    raise AssertionError(f"Missing scene block item for uid '{block_uid}'")
+
+
 def test_emt_editor_exposes_basic_block_catalog_under_basic() -> None:
     editor = _build_editor(DynamicSimulationMode.EMT)
     source_model = editor.library_model
@@ -182,7 +271,7 @@ def test_emt_editor_exposes_basic_block_catalog_under_basic() -> None:
     assert native_item.child(0).text() == "Arithmetic"
     assert _find_index_by_label(editor.library_model, "Scaling and Products").isValid()
     assert not _find_index_by_label(editor.library_model, "Arithmetic and Products").isValid()
-    assert _count_descriptor_leaves(editor, native_item) == 533
+    assert _count_descriptor_leaves(editor, native_item) == 545
 
     editor.close()
 
@@ -196,7 +285,7 @@ def test_rms_editor_exposes_basic_block_catalog_under_basic() -> None:
     assert basic_item.text() == "Basic"
     assert basic_item.rowCount() == 1
     assert native_item.text() == "Native"
-    assert _count_descriptor_leaves(editor, native_item) == 533
+    assert _count_descriptor_leaves(editor, native_item) == 545
 
     editor.close()
 
@@ -281,6 +370,1799 @@ def test_rate_limiter_signal_variant_exposes_gradient_ports_while_parameter_vari
     assert len(parameter_block.inputs) == 1
     assert _port_name_prefixes(parameter_block) == ["yi"]
     assert {const.name for const in parameter_block.subsys.event_dict.values()} == {"grd"}
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_side_panel_loads_only_the_visible_table_for_selected_block() -> None:
+    editor = _build_editor(DynamicSimulationMode.EMT)
+    block_item = _build_catalog_block_item(editor, "pulse")
+
+    editor.ui.toolBox.setCurrentWidget(editor.ui.page_7)
+    editor.scene.clearSelection()
+    block_item.setSelected(True)
+    QtWidgets.QApplication.processEvents()
+
+    assert editor.variables_table_model.rowCount() == 0
+    assert editor.parameters_table_model.rowCount() == 0
+    assert editor.equations_table_model.rowCount() == 0
+
+    editor.ui.toolBox.setCurrentWidget(editor.ui.page_2)
+    QtWidgets.QApplication.processEvents()
+
+    assert editor.parameters_table_model.rowCount() > 0
+    assert editor.variables_table_model.rowCount() == 0
+    assert editor.equations_table_model.rowCount() == 0
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_parameter_edit_does_not_rebuild_scene_for_non_structural_change() -> None:
+    editor = _build_editor(DynamicSimulationMode.EMT)
+    block_item = _build_catalog_block_item(editor, "pulse")
+    rebuild_calls: list[str] = list()
+
+    editor.scene.clearSelection()
+    block_item.setSelected(True)
+    editor.ui.toolBox.setCurrentWidget(editor.ui.page_2)
+    QtWidgets.QApplication.processEvents()
+
+    assert editor.parameters_table_model.rowCount() > 0
+
+    def _record_rebuild() -> None:
+        rebuild_calls.append("rebuild")
+
+    editor.rebuild_scene_from_diagram = _record_rebuild
+    value_index = editor.parameters_table_model.index(0, 2)
+
+    assert editor.parameters_table_model.setData(value_index, 1.0, QtCore.Qt.ItemDataRole.EditRole)
+    QtWidgets.QApplication.processEvents()
+    assert rebuild_calls == list()
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_parameter_panel_includes_mode_parameters_for_pulse_block() -> None:
+    editor = _build_editor(DynamicSimulationMode.EMT)
+    block_item = _build_catalog_block_item(editor, "pulse")
+
+    editor.scene.clearSelection()
+    block_item.setSelected(True)
+    editor.ui.toolBox.setCurrentWidget(editor.ui.page_2)
+    QtWidgets.QApplication.processEvents()
+
+    row_types: list[str] = list()
+    row_index: int
+    for row_index in range(editor.parameters_table_model.rowCount()):
+        index = editor.parameters_table_model.index(row_index, 0)
+        row_types.append(str(editor.parameters_table_model.data(index, QtCore.Qt.ItemDataRole.DisplayRole)))
+
+    assert "Event Parameter" in row_types
+    assert "Mode Parameter" in row_types
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_lookup_array_linear_dialog_parses_clipboard_rows() -> None:
+    _get_app()
+    dialog = LookupArrayLinearDialog(block_label="Lookup array (linear)")
+    clipboard = QtWidgets.QApplication.clipboard()
+    clipboard.setText("0\t0\n1\t10\n2\t20")
+
+    dialog.paste_from_clipboard()
+    dialog.accept_dialog()
+    x_points, y_points = dialog.get_points()
+
+    assert x_points == [0.0, 1.0, 2.0]
+    assert y_points == [0.0, 10.0, 20.0]
+    dialog.close()
+
+
+def test_lookup_array_linear_dialog_supports_copy_paste_and_delete_shortcuts() -> None:
+    _get_app()
+    dialog = LookupArrayLinearDialog(block_label="Lookup array (linear)")
+    dialog.show()
+    dialog.activateWindow()
+    clipboard = QtWidgets.QApplication.clipboard()
+
+    dialog._table_widget.clearSelection()
+    selection = QtWidgets.QTableWidgetSelectionRange(0, 0, 0, 1)
+    dialog._table_widget.setRangeSelected(selection, True)
+    dialog._table_widget.setFocus()
+    QTest.keyClick(dialog._table_widget, QtCore.Qt.Key.Key_C, QtCore.Qt.KeyboardModifier.ControlModifier)
+    QtWidgets.QApplication.processEvents()
+    assert clipboard.text().strip() == "0.0\t0.0"
+
+    clipboard.setText("3\t30\n4\t40")
+    QTest.keyClick(dialog._table_widget, QtCore.Qt.Key.Key_V, QtCore.Qt.KeyboardModifier.ControlModifier)
+    QtWidgets.QApplication.processEvents()
+    x_points, y_points = dialog._read_points_from_table()
+    assert x_points == [3.0, 4.0, 2.0]
+    assert y_points == [30.0, 40.0, 20.0]
+
+    dialog._table_widget.clearSelection()
+    selection = QtWidgets.QTableWidgetSelectionRange(0, 0, 0, 1)
+    dialog._table_widget.setRangeSelected(selection, True)
+    QTest.keyClick(dialog._table_widget, QtCore.Qt.Key.Key_Delete)
+    QtWidgets.QApplication.processEvents()
+    assert dialog._table_widget.rowCount() == 2
+    dialog.close()
+
+
+def test_lookup_array_linear_dialog_header_click_selects_full_column() -> None:
+    _get_app()
+    dialog: LookupArrayLinearDialog = LookupArrayLinearDialog(block_label="Lookup array (linear)")
+
+    dialog.select_column_by_header(0)
+    QtWidgets.QApplication.processEvents()
+    selected_indexes: list[QtCore.QModelIndex] = dialog._table_widget.selectionModel().selectedIndexes()
+
+    assert len(selected_indexes) == dialog._table_widget.rowCount()
+    assert all(index.column() == 0 for index in selected_indexes)
+    dialog.close()
+
+
+def test_lookup_array_linear_dialog_supports_custom_axis_labels_and_preview() -> None:
+    _get_app()
+    dialog: LookupArrayLinearDialog = LookupArrayLinearDialog(
+        block_label="Nonlinear resistor EMT V-I curve",
+        initial_points=list([(0.0, 0.0), (1.0, 0.1), (1.5, 1.0)]),
+        x_label="V",
+        y_label="I",
+        preview_enabled=True,
+        preview_title="Nonlinear resistor EMT V-I curve",
+    )
+
+    assert dialog._table_widget.horizontalHeaderItem(0).text() == "V"
+    assert dialog._table_widget.horizontalHeaderItem(1).text() == "I"
+    button_texts: list[str] = list(button.text() for button in dialog.findChildren(QtWidgets.QPushButton))
+    assert "Sort by V" in button_texts
+    assert "Preview Curve" in button_texts
+
+    dialog.show_plot_preview()
+    QtWidgets.QApplication.processEvents()
+
+    assert dialog._preview_dialog is not None
+    assert dialog._preview_dialog.windowTitle() == "Nonlinear resistor EMT V-I curve"
+    dialog._preview_dialog.close()
+    dialog.close()
+
+
+def test_lookup_array_linear_descriptor_uses_modal_points_to_build_block(monkeypatch) -> None:
+    editor = _build_editor(DynamicSimulationMode.EMT)
+    descriptor = get_basic_block_catalog_descriptor_by_key()["lookup_array_linear"]
+
+    class _DialogStub:
+        def __init__(self, block_label: str, initial_points=None, parent=None) -> None:
+            _unused = (block_label, initial_points, parent)
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_points(self) -> tuple[list[float], list[float]]:
+            return [0.0, 2.0, 4.0], [0.0, 20.0, 40.0]
+
+    monkeypatch.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _DialogStub)
+    block_item = editor.create_library_payload_item(descriptor, 10.0, 20.0)
+
+    assert block_item is not None
+    assert any(var.name.startswith("arr_x3_") for var in block_item.subsys.event_dict.keys())
+    assert any(var.name.startswith("arr_y3_") for var in block_item.subsys.event_dict.keys())
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_lookup_array_linear_modal_created_block_supports_modify_template(monkeypatch) -> None:
+    editor = _build_editor(DynamicSimulationMode.EMT)
+    descriptor = get_basic_block_catalog_descriptor_by_key()["lookup_array_linear"]
+
+    class _CreateDialogStub:
+        def __init__(self, block_label: str, initial_points=None, parent=None) -> None:
+            _unused = (block_label, initial_points, parent)
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_points(self) -> tuple[list[float], list[float]]:
+            return [0.0, 1.0, 2.0], [0.0, 10.0, 20.0]
+
+    class _ModifyDialogStub:
+        def __init__(self, block_label: str, initial_points=None, parent=None) -> None:
+            _unused = (block_label, initial_points, parent)
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_points(self) -> tuple[list[float], list[float]]:
+            return [0.0, 2.0, 4.0], [0.0, 40.0, 80.0]
+
+    monkeypatch.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _CreateDialogStub)
+    block_item = editor.create_library_payload_item(descriptor, 10.0, 20.0)
+    assert block_item is not None
+
+    monkeypatch.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _ModifyDialogStub)
+    editor.modify_scene_item_template(block_item)
+    updated_item = editor.get_scene_item_by_block_uid(block_item.subsys.uid)
+    assert updated_item is not None
+
+    modal_kind, modal_config = get_modal_template_metadata(updated_item.subsys)
+    assert modal_kind == "lookup_array_1d"
+    assert modal_config is not None
+    assert modal_config["x_points"] == [0.0, 2.0, 4.0]
+    assert modal_config["y_points"] == [0.0, 40.0, 80.0]
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_emt_phase_wizard_block_supports_modify_template(monkeypatch) -> None:
+    editor = _build_editor(DynamicSimulationMode.EMT)
+
+    class _CreateDialogStub:
+        def __init__(self, parent=None, initial_values=None) -> None:
+            _unused = (parent, initial_values)
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_values(self) -> tuple[bool, bool, bool, bool]:
+            return False, True, False, False
+
+    class _ModifyDialogStub:
+        def __init__(self, parent=None, initial_values=None) -> None:
+            _unused = (parent, initial_values)
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_values(self) -> tuple[bool, bool, bool, bool]:
+            return False, True, True, True
+
+    monkeypatch.setattr(dynamic_block_editor_module, "EmtTemplateWizardDialog", _CreateDialogStub)
+    block_item = editor.create_library_payload_item(BlockType.EMT_PI_LINE, 10.0, 20.0)
+    assert block_item is not None
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "emt_phase_wizard"
+    assert modal_config is not None
+    assert modal_config["phase_b"] is False
+
+    monkeypatch.setattr(dynamic_block_editor_module, "EmtTemplateWizardDialog", _ModifyDialogStub)
+    editor.modify_scene_item_template(block_item)
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "emt_phase_wizard"
+    assert modal_config is not None
+    assert modal_config["phase_b"] is True
+    assert modal_config["phase_c"] is True
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_jmarti_line_emt_block_supports_modal_configuration_and_modify_template(monkeypatch) -> None:
+    circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
+    bus0 = gce.Bus(name="BusLine0", Vnom=13.8)
+    bus1 = gce.Bus(name="BusLine1", Vnom=13.8)
+    line = gce.Line(name="LineGui", bus_from=bus0, bus_to=bus1)
+    editor = _build_editor(DynamicSimulationMode.EMT, api_object=line, circuit=circuit)
+    leaf_labels = _collect_leaf_labels(editor.library_model)
+
+    assert "Emt JMarti line" in leaf_labels
+
+    def _build_jmarti_config(phase_n: bool, phase_a: bool, phase_b: bool, phase_c: bool) -> dict[str, object]:
+        return dict({
+            "phase_n": phase_n,
+            "phase_a": phase_a,
+            "phase_b": phase_b,
+            "phase_c": phase_c,
+            "data_source_mode": "auto_template",
+            "nominal_frequency_hz": 60.0,
+            "import_file_path": "",
+            "import_line_length_m": 0.0,
+            "sweep_low_hz": 10.0,
+            "sweep_high_hz": 10000.0,
+            "sweep_sample_count": 32,
+            "reference_frequency_hz": 0.0,
+            "use_frequency_exploration_window": False,
+            "exploration_low_hz": 0.0,
+            "exploration_high_hz": 0.0,
+            "use_delay_fit_window": False,
+            "delay_fit_low_hz": 0.0,
+            "delay_fit_high_hz": 0.0,
+            "decoupling_warning_tolerance": 1.0e-2,
+            "loewner_relative_tolerance": 1.0e-8,
+            "maximum_model_order": 40,
+            "forced_model_order": 0,
+            "minimum_frequency_samples": 4,
+            "vf_max_iterations": 8,
+            "vf_pole_shift_tolerance": 1.0e-6,
+            "vf_enforce_stable_poles": True,
+            "vf_stability_real_part_floor": 1.0e-8,
+            "vf_include_constant_term": True,
+            "vf_include_proportional_term": False,
+            "passivity_frequency_sample_count": 1024,
+            "passivity_minimum_real_yc_tolerance": 1.0e-8,
+            "passivity_maximum_hres_gain_tolerance": 1.0e-6,
+        })
+
+    class _CreateDialogStub:
+        def __init__(self, parent=None, initial_config=None) -> None:
+            _unused = (parent, initial_config)
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_configuration(self) -> dict[str, object]:
+            return _build_jmarti_config(False, True, True, False)
+
+    class _ModifyDialogStub:
+        def __init__(self, parent=None, initial_config=None) -> None:
+            _unused = (parent, initial_config)
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_configuration(self) -> dict[str, object]:
+            return _build_jmarti_config(False, True, True, True)
+
+    monkeypatch.setattr(dynamic_block_editor_module, "JMartiLineEmtDialog", _CreateDialogStub)
+    block_item = editor.create_library_payload_item(BlockType.EMT_JMARTI_LINE, 10.0, 20.0)
+    assert block_item is not None
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "jmarti_line_emt"
+    assert modal_config is not None
+    assert modal_config["block_type"] == BlockType.EMT_JMARTI_LINE.name
+    assert modal_config["phase_b"] is True
+    assert modal_config["phase_c"] is False
+    assert modal_config["fit_ready"] is False
+    assert "Fit not computed" in str(modal_config["fit_status"])
+    assert "fit_diagnostics_text" in modal_config
+
+    monkeypatch.setattr(dynamic_block_editor_module, "JMartiLineEmtDialog", _ModifyDialogStub)
+    editor.modify_scene_item_template(block_item)
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "jmarti_line_emt"
+    assert modal_config is not None
+    assert modal_config["block_type"] == BlockType.EMT_JMARTI_LINE.name
+    assert modal_config["phase_c"] is True
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_emt_source_blocks_are_exposed_and_created_from_source_modal(monkeypatch) -> None:
+    editor = _build_editor(DynamicSimulationMode.EMT)
+    leaf_labels = _collect_leaf_labels(editor.library_model)
+
+    assert "Voltage source EMT" in leaf_labels
+    assert "Current source EMT" in leaf_labels
+    assert "Controlled voltage source EMT" in leaf_labels
+    assert "Controlled current source EMT" in leaf_labels
+
+    class _CreateDialogStub:
+        def __init__(self, block_type, parent=None, initial_config=None) -> None:
+            _unused = (block_type, parent, initial_config)
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_configuration(self) -> dict[str, object]:
+            return dict({
+                "phase_n": True,
+                "phase_a": True,
+                "phase_b": False,
+                "phase_c": True,
+                "source_frequency_hz": 60.0,
+                "source_phase_amplitudes": dict({"N": 0.0, "A": 1.1, "B": 0.0, "C": 0.9}),
+                "source_phase_angle_deg": dict({"N": 0.0, "A": 5.0, "B": 0.0, "C": -115.0}),
+                "source_phase_offsets": dict({"N": 0.0, "A": 0.1, "B": 0.0, "C": -0.2}),
+                "source_conductance_value": 50.0,
+            })
+
+    monkeypatch.setattr(dynamic_block_editor_module, "SourceEmtDialog", _CreateDialogStub)
+
+    for block_type in (
+        BlockType.VOLTAGE_SOURCE_EMT,
+        BlockType.CURRENT_SOURCE_EMT,
+        BlockType.CONTROLLED_VOLTAGE_SOURCE_EMT,
+        BlockType.CONTROLLED_CURRENT_SOURCE_EMT,
+    ):
+        block_item = editor.create_library_payload_item(block_type, 10.0, 20.0)
+        assert block_item is not None
+        modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+        assert modal_kind == "source_emt"
+        assert modal_config is not None
+        assert modal_config["block_type"] == block_type.name
+        assert modal_config["phase_n"] is True
+        assert modal_config["phase_b"] is False
+        assert float(modal_config["source_frequency_hz"]) == 60.0
+        assert float(modal_config["source_conductance_value"]) == 50.0
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_emt_dc_source_blocks_are_exposed_and_created_from_dc_source_modal(monkeypatch) -> None:
+    editor = _build_editor(DynamicSimulationMode.EMT)
+    leaf_labels = _collect_leaf_labels(editor.library_model)
+
+    assert "DC voltage source EMT" in leaf_labels
+    assert "DC current source EMT" in leaf_labels
+    assert "Controlled DC voltage source EMT" in leaf_labels
+    assert "Controlled DC current source EMT" in leaf_labels
+
+    class _CreateDialogStub:
+        def __init__(self, block_type, parent=None, initial_config=None) -> None:
+            _unused = (block_type, parent, initial_config)
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_configuration(self) -> dict[str, object]:
+            return dict({
+                "source_value": 1.25,
+                "source_conductance_value": 80.0,
+            })
+
+    monkeypatch.setattr(dynamic_block_editor_module, "DcSourceEmtDialog", _CreateDialogStub)
+
+    for block_type in (
+        BlockType.DC_VOLTAGE_SOURCE_EMT,
+        BlockType.DC_CURRENT_SOURCE_EMT,
+        BlockType.CONTROLLED_DC_VOLTAGE_SOURCE_EMT,
+        BlockType.CONTROLLED_DC_CURRENT_SOURCE_EMT,
+    ):
+        block_item = editor.create_library_payload_item(block_type, 10.0, 20.0)
+        assert block_item is not None
+        modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+        assert modal_kind == "dc_source_emt"
+        assert modal_config is not None
+        assert modal_config["block_type"] == block_type.name
+        assert float(modal_config["source_value"]) == 1.25
+        assert float(modal_config["source_conductance_value"]) == 80.0
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_emt_balanced_source_blocks_are_exposed_and_created_from_balanced_source_modal(monkeypatch) -> None:
+    editor = _build_editor(DynamicSimulationMode.EMT)
+    leaf_labels = _collect_leaf_labels(editor.library_model)
+
+    assert "Balanced 3-phase voltage source EMT" in leaf_labels
+    assert "Balanced 3-phase current source EMT" in leaf_labels
+    assert "Controlled balanced 3-phase voltage source EMT" in leaf_labels
+    assert "Controlled balanced 3-phase current source EMT" in leaf_labels
+
+    class _CreateDialogStub:
+        def __init__(self, block_type, parent=None, initial_config=None) -> None:
+            _unused = (block_type, parent, initial_config)
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_configuration(self) -> dict[str, object]:
+            return dict({
+                "source_amplitude": 1.15,
+                "source_frequency_hz": 60.0,
+                "source_phase_a_deg": 10.0,
+                "source_offset": 0.05,
+                "source_conductance_value": 90.0,
+            })
+
+    monkeypatch.setattr(dynamic_block_editor_module, "BalancedSourceEmtDialog", _CreateDialogStub)
+
+    for block_type in (
+        BlockType.BALANCED_3PH_VOLTAGE_SOURCE_EMT,
+        BlockType.BALANCED_3PH_CURRENT_SOURCE_EMT,
+        BlockType.CONTROLLED_BALANCED_3PH_VOLTAGE_SOURCE_EMT,
+        BlockType.CONTROLLED_BALANCED_3PH_CURRENT_SOURCE_EMT,
+    ):
+        block_item = editor.create_library_payload_item(block_type, 10.0, 20.0)
+        assert block_item is not None
+        modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+        assert modal_kind == "balanced_source_emt"
+        assert modal_config is not None
+        assert modal_config["block_type"] == block_type.name
+        assert float(modal_config["source_amplitude"]) == 1.15
+        assert float(modal_config["source_frequency_hz"]) == 60.0
+        assert float(modal_config["source_phase_a_deg"]) == 10.0
+        assert float(modal_config["source_offset"]) == 0.05
+        assert float(modal_config["source_conductance_value"]) == 90.0
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_emt_arbitrary_source_blocks_are_exposed_and_created_from_arbitrary_source_modal(monkeypatch) -> None:
+    editor = _build_editor(DynamicSimulationMode.EMT)
+    leaf_labels = _collect_leaf_labels(editor.library_model)
+
+    assert "Arbitrary waveform voltage source EMT" in leaf_labels
+    assert "Arbitrary waveform current source EMT" in leaf_labels
+
+    class _CreateDialogStub:
+        def __init__(self, block_type, parent=None, initial_config=None) -> None:
+            _unused = (block_type, parent, initial_config)
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_configuration(self) -> dict[str, object]:
+            return dict({
+                "phase_n": False,
+                "phase_a": True,
+                "phase_b": False,
+                "phase_c": True,
+                "time_points": [0.0, 0.01, 0.03],
+                "value_points": [0.0, 1.0, -0.5],
+                "source_conductance_value": 70.0,
+            })
+
+    monkeypatch.setattr(dynamic_block_editor_module, "ArbitrarySourceEmtDialog", _CreateDialogStub)
+
+    for block_type in (
+        BlockType.ARBITRARY_WAVEFORM_VOLTAGE_SOURCE_EMT,
+        BlockType.ARBITRARY_WAVEFORM_CURRENT_SOURCE_EMT,
+    ):
+        block_item = editor.create_library_payload_item(block_type, 10.0, 20.0)
+        assert block_item is not None
+        modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+        assert modal_kind == "arbitrary_source_emt"
+        assert modal_config is not None
+        assert modal_config["block_type"] == block_type.name
+        assert modal_config["phase_a"] is True
+        assert modal_config["phase_c"] is True
+        assert modal_config["time_points"] == [0.0, 0.01, 0.03]
+        assert modal_config["value_points"] == [0.0, 1.0, -0.5]
+        assert float(modal_config["source_conductance_value"]) == 70.0
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_emt_transient_source_blocks_are_exposed_and_created_from_transient_source_modal(monkeypatch) -> None:
+    editor = _build_editor(DynamicSimulationMode.EMT)
+    leaf_labels = _collect_leaf_labels(editor.library_model)
+
+    assert "Step voltage source EMT" in leaf_labels
+    assert "Step current source EMT" in leaf_labels
+    assert "Ramp voltage source EMT" in leaf_labels
+    assert "Ramp current source EMT" in leaf_labels
+    assert "Double exponential current source EMT" in leaf_labels
+    assert "Heidler current source EMT" in leaf_labels
+    assert "CIGRE surge current source EMT" in leaf_labels
+
+    class _CreateDialogStub:
+        def __init__(self, block_type, parent=None, initial_config=None) -> None:
+            _unused = (block_type, parent, initial_config)
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_configuration(self) -> dict[str, object]:
+            return dict({
+                "phase_n": False,
+                "phase_a": True,
+                "phase_b": False,
+                "phase_c": True,
+                "initial_value": 0.0,
+                "final_value": 1.0,
+                "step_time_s": 0.02,
+                "start_time_s": 0.01,
+                "end_time_s": 0.03,
+                "source_conductance_value": 60.0,
+                "amplitude_value": 2.0,
+                "alpha_value": 120.0,
+                "beta_value": 4200.0,
+                "delay_s": 0.0,
+                "peak_value": 1.5,
+                "front_time_s": 1.0e-4,
+                "tail_time_s": 5.0e-4,
+                "order_value": 5.0,
+                "a_value": 1200.0,
+                "b_value": 15000.0,
+                "n_value": 2.0,
+                "tn_s": 1.0e-4,
+                "i1_value": 1.0,
+                "t1_s": 5.0e-4,
+                "i2_value": 0.5,
+                "t2_s": 2.0e-4,
+            })
+
+    monkeypatch.setattr(dynamic_block_editor_module, "TransientSourceEmtDialog", _CreateDialogStub)
+
+    for block_type in (
+        BlockType.STEP_VOLTAGE_SOURCE_EMT,
+        BlockType.STEP_CURRENT_SOURCE_EMT,
+        BlockType.RAMP_VOLTAGE_SOURCE_EMT,
+        BlockType.RAMP_CURRENT_SOURCE_EMT,
+        BlockType.DOUBLE_EXPONENTIAL_CURRENT_SOURCE_EMT,
+        BlockType.HEIDLER_CURRENT_SOURCE_EMT,
+        BlockType.CIGRE_SURGE_CURRENT_SOURCE_EMT,
+    ):
+        block_item = editor.create_library_payload_item(block_type, 10.0, 20.0)
+        assert block_item is not None
+        modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+        assert modal_kind == "transient_source_emt"
+        assert modal_config is not None
+        assert modal_config["block_type"] == block_type.name
+        assert modal_config["phase_a"] is True
+        assert modal_config["phase_c"] is True
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_jmarti_line_emt_block_builds_sequence_fit_and_persists_diagnostics(monkeypatch) -> None:
+    circuit = gce.MultiCircuit(Sbase=25.0, fbase=50.0)
+    bus0 = gce.Bus(name="BusSeqGui0", Vnom=110.0)
+    bus1 = gce.Bus(name="BusSeqGui1", Vnom=110.0)
+    line = gce.Line(
+        name="LineSeqGui",
+        bus_from=bus0,
+        bus_to=bus1,
+        length=5.0,
+        template=gce.SequenceLineType(R=0.12, X=0.35, B=3.0, R0=0.28, X0=0.78, B0=1.8),
+    )
+    editor = _build_editor(DynamicSimulationMode.EMT, api_object=line, circuit=circuit)
+
+    class _DialogStub:
+        def __init__(self, parent=None, initial_config=None) -> None:
+            _unused = (parent, initial_config)
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_configuration(self) -> dict[str, object]:
+            return dict({
+                "phase_n": False,
+                "phase_a": True,
+                "phase_b": True,
+                "phase_c": True,
+                "data_source_mode": "auto_template",
+                "nominal_frequency_hz": 50.0,
+                "import_file_path": "",
+                "import_line_length_m": 0.0,
+                "sweep_low_hz": 10.0,
+                "sweep_high_hz": 640.0,
+                "sweep_sample_count": 6,
+                "reference_frequency_hz": 0.0,
+                "use_frequency_exploration_window": False,
+                "exploration_low_hz": 0.0,
+                "exploration_high_hz": 0.0,
+                "use_delay_fit_window": False,
+                "delay_fit_low_hz": 0.0,
+                "delay_fit_high_hz": 0.0,
+                "decoupling_warning_tolerance": 1.0e-2,
+                "loewner_relative_tolerance": 1.0e-8,
+                "maximum_model_order": 40,
+                "forced_model_order": 1,
+                "minimum_frequency_samples": 4,
+                "vf_max_iterations": 6,
+                "vf_pole_shift_tolerance": 1.0e-6,
+                "vf_enforce_stable_poles": True,
+                "vf_stability_real_part_floor": 1.0e-8,
+                "vf_include_constant_term": True,
+                "vf_include_proportional_term": False,
+                "passivity_frequency_sample_count": 256,
+                "passivity_minimum_real_yc_tolerance": 1.0e-8,
+                "passivity_maximum_hres_gain_tolerance": 1.0e-6,
+            })
+
+    monkeypatch.setattr(dynamic_block_editor_module, "JMartiLineEmtDialog", _DialogStub)
+    block_item = editor.create_library_payload_item(BlockType.EMT_JMARTI_LINE, 10.0, 20.0)
+    assert block_item is not None
+    assert get_jmarti_block_fit_bundle(block_item.subsys) is not None
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "jmarti_line_emt"
+    assert modal_config is not None
+    assert modal_config["fit_ready"] is True
+    assert "Fit computed" in str(modal_config["fit_status"])
+    assert "Automatic RLGC sweep from SequenceLineType" in str(modal_config["fit_diagnostics_text"])
+    assert "Mode 0:" in str(modal_config["fit_diagnostics_text"])
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_jmarti_line_emt_block_builds_fit_from_imported_npz(monkeypatch, tmp_path: Path) -> None:
+    circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
+    bus0 = gce.Bus(name="BusImportGui0", Vnom=13.8)
+    bus1 = gce.Bus(name="BusImportGui1", Vnom=13.8)
+    line = gce.Line(name="LineImportGui", bus_from=bus0, bus_to=bus1, length=1.8)
+    editor = _build_editor(DynamicSimulationMode.EMT, api_object=line, circuit=circuit)
+    frequency_hz: np.ndarray = np.asarray([10.0, 40.0, 160.0, 640.0], dtype=np.float64)
+    z_per_length: np.ndarray = np.zeros((4, 3, 3), dtype=np.complex128)
+    y_per_length: np.ndarray = np.zeros((4, 3, 3), dtype=np.complex128)
+    sample_index: int = 0
+    npz_path: Path = tmp_path / "jmarti_gui_import.npz"
+
+    while sample_index < 4:
+        z_per_length[sample_index, :, :] = np.diag(np.asarray([
+            0.12 + 1j * (0.20 + 0.02 * sample_index),
+            0.13 + 1j * (0.25 + 0.02 * sample_index),
+            0.15 + 1j * (0.30 + 0.02 * sample_index),
+        ], dtype=np.complex128))
+        y_per_length[sample_index, :, :] = np.diag(np.asarray([
+            1j * (3.0e-6 + 2.0e-7 * sample_index),
+            1j * (3.2e-6 + 2.0e-7 * sample_index),
+            1j * (3.4e-6 + 2.0e-7 * sample_index),
+        ], dtype=np.complex128))
+        sample_index += 1
+
+    np.savez(
+        npz_path,
+        frequency_hz=frequency_hz,
+        z_per_length=z_per_length,
+        y_per_length=y_per_length,
+        phase_labels=np.asarray(["A", "B", "C"]),
+        line_length_m=np.asarray([1800.0], dtype=np.float64),
+    )
+
+    class _DialogStub:
+        def __init__(self, parent=None, initial_config=None) -> None:
+            _unused = (parent, initial_config)
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_configuration(self) -> dict[str, object]:
+            return dict({
+                "phase_n": False,
+                "phase_a": True,
+                "phase_b": False,
+                "phase_c": True,
+                "data_source_mode": "import_frequency_samples",
+                "nominal_frequency_hz": 60.0,
+                "import_file_path": str(npz_path),
+                "import_line_length_m": 0.0,
+                "sweep_low_hz": 10.0,
+                "sweep_high_hz": 640.0,
+                "sweep_sample_count": 6,
+                "reference_frequency_hz": 0.0,
+                "use_frequency_exploration_window": False,
+                "exploration_low_hz": 0.0,
+                "exploration_high_hz": 0.0,
+                "use_delay_fit_window": False,
+                "delay_fit_low_hz": 0.0,
+                "delay_fit_high_hz": 0.0,
+                "decoupling_warning_tolerance": 1.0e-2,
+                "loewner_relative_tolerance": 1.0e-8,
+                "maximum_model_order": 40,
+                "forced_model_order": 1,
+                "minimum_frequency_samples": 4,
+                "vf_max_iterations": 6,
+                "vf_pole_shift_tolerance": 1.0e-6,
+                "vf_enforce_stable_poles": True,
+                "vf_stability_real_part_floor": 1.0e-8,
+                "vf_include_constant_term": True,
+                "vf_include_proportional_term": False,
+                "passivity_frequency_sample_count": 256,
+                "passivity_minimum_real_yc_tolerance": 1.0e-8,
+                "passivity_maximum_hres_gain_tolerance": 1.0e-6,
+            })
+
+    monkeypatch.setattr(dynamic_block_editor_module, "JMartiLineEmtDialog", _DialogStub)
+    block_item = editor.create_library_payload_item(BlockType.EMT_JMARTI_LINE, 10.0, 20.0)
+    assert block_item is not None
+    assert get_jmarti_block_fit_bundle(block_item.subsys) is not None
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "jmarti_line_emt"
+    assert modal_config is not None
+    assert modal_config["fit_ready"] is True
+    assert str(npz_path) in str(modal_config["fit_source_description"])
+    assert "Source: Imported NPZ samples" in str(modal_config["fit_diagnostics_text"])
+    assert "Phases: A, C" in str(modal_config["fit_diagnostics_text"])
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_line_emt_editor_exposes_jmarti_device_block() -> None:
+    circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
+    bus0 = gce.Bus(name="BusLineDevice0", Vnom=13.8)
+    bus1 = gce.Bus(name="BusLineDevice1", Vnom=13.8)
+    line = gce.Line(name="LineDeviceGui", bus_from=bus0, bus_to=bus1)
+    editor = _build_editor(DynamicSimulationMode.EMT, api_object=line, circuit=circuit)
+    leaf_labels = _collect_leaf_labels(editor.library_model)
+
+    assert "Emt pi line" in leaf_labels
+    assert "Emt Bergeron line" in leaf_labels
+    assert "Emt JMarti line" in leaf_labels
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_simple_r_emt_shunt_block_is_created_and_supports_modify_template(monkeypatch) -> None:
+    circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
+    bus = gce.Bus(name="BusSimpleR", Vnom=13.8)
+    load = gce.Load(name="LoadSimpleR")
+    load.bus = bus
+    editor = _build_editor(DynamicSimulationMode.EMT, api_object=load, circuit=circuit)
+    phase_voltage_sq = (bus.Vnom / math.sqrt(3.0)) ** 2
+    dialog_component_kinds: list[str] = list()
+
+    class _CreateDialogStub:
+        def __init__(self,
+                     component_kind: str,
+                     parent=None,
+                     initial_config=None,
+                     nominal_voltage_kv=None,
+                     base_power_mva=None,
+                     base_frequency_hz=None) -> None:
+            _unused = (parent, initial_config, nominal_voltage_kv, base_power_mva, base_frequency_hz)
+            dialog_component_kinds.append(component_kind)
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_configuration(self) -> dict[str, object]:
+            return dict({
+                "include_r": True,
+                "include_l": False,
+                "include_c": False,
+                "phA": True,
+                "phB": False,
+                "phC": False,
+                "connection_type": ShuntConnectionType.GroundedStar,
+                "input_mode": "physical",
+                "resistance_ohm": 25.0,
+                "inductive_value": 0.01,
+                "capacitive_value": 1.0e-6,
+            })
+
+    class _ModifyDialogStub:
+        def __init__(self,
+                     component_kind: str,
+                     parent=None,
+                     initial_config=None,
+                     nominal_voltage_kv=None,
+                     base_power_mva=None,
+                     base_frequency_hz=None) -> None:
+            _unused = (parent, initial_config, nominal_voltage_kv, base_power_mva, base_frequency_hz)
+            dialog_component_kinds.append(component_kind)
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_configuration(self) -> dict[str, object]:
+            return dict({
+                "include_r": True,
+                "include_l": False,
+                "include_c": False,
+                "phA": True,
+                "phB": True,
+                "phC": False,
+                "connection_type": ShuntConnectionType.NeutralStar,
+                "input_mode": "physical",
+                "resistance_ohm": 50.0,
+                "inductive_value": 0.01,
+                "capacitive_value": 1.0e-6,
+            })
+
+    monkeypatch.setattr(dynamic_block_editor_module, "ShuntComponentEmtDialog", _CreateDialogStub)
+    block_item = editor.create_library_payload_item(BlockType.R_LOAD_EMT, 10.0, 20.0)
+    assert block_item is not None
+    assert dialog_component_kinds == ["R"]
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "shunt_component_emt"
+    assert modal_config is not None
+    assert modal_config["block_type"] == BlockType.R_LOAD_EMT.name
+    assert any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
+    assert _find_prefixed_event_constant(block_item.subsys, "R_A_") == pytest.approx(25.0)
+    assert load.Pa == pytest.approx(phase_voltage_sq / 25.0)
+    assert load.conn == ShuntConnectionType.GroundedStar
+
+    monkeypatch.setattr(dynamic_block_editor_module, "ShuntComponentEmtDialog", _ModifyDialogStub)
+    editor.modify_scene_item_template(block_item)
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "shunt_component_emt"
+    assert modal_config is not None
+    assert modal_config["phB"] is True
+    assert not any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
+    assert _find_prefixed_event_constant(block_item.subsys, "R_A_") == pytest.approx(50.0)
+    assert load.Pa == pytest.approx(phase_voltage_sq / 50.0)
+    assert load.Pb == pytest.approx(phase_voltage_sq / 50.0)
+    assert load.conn == ShuntConnectionType.NeutralStar
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_simple_r_emt_shunt_block_supports_delta_configuration(monkeypatch) -> None:
+    circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
+    bus = gce.Bus(name="BusSimpleRDelta", Vnom=13.8)
+    load = gce.Load(name="LoadSimpleRDelta")
+    load.bus = bus
+    editor = _build_editor(DynamicSimulationMode.EMT, api_object=load, circuit=circuit)
+    line_voltage_sq = bus.Vnom * bus.Vnom
+
+    class _CreateDialogStub:
+        def __init__(self,
+                     component_kind: str,
+                     parent=None,
+                     initial_config=None,
+                     nominal_voltage_kv=None,
+                     base_power_mva=None,
+                     base_frequency_hz=None) -> None:
+            _unused = (parent, initial_config, nominal_voltage_kv, base_power_mva, base_frequency_hz)
+            assert component_kind == "R"
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_configuration(self) -> dict[str, object]:
+            return dict({
+                "include_r": True,
+                "include_l": False,
+                "include_c": False,
+                "phA": True,
+                "phB": True,
+                "phC": False,
+                "connection_type": ShuntConnectionType.Delta,
+                "input_mode": "physical",
+                "resistance_ohm": 25.0,
+                "inductive_value": 0.01,
+                "capacitive_value": 1.0e-6,
+            })
+
+    monkeypatch.setattr(dynamic_block_editor_module, "ShuntComponentEmtDialog", _CreateDialogStub)
+    block_item = editor.create_library_payload_item(BlockType.R_LOAD_EMT, 10.0, 20.0)
+    assert block_item is not None
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "shunt_component_emt"
+    assert modal_config is not None
+    assert modal_config["connection_type"] == ShuntConnectionType.Delta
+    assert not any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
+    assert _find_prefixed_event_constant(block_item.subsys, "R_AB_") == pytest.approx(25.0)
+    assert load.Pa == pytest.approx(line_voltage_sq / 25.0)
+    assert load.Pb == pytest.approx(0.0)
+    assert load.Pc == pytest.approx(0.0)
+    assert load.conn == ShuntConnectionType.Delta
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_exponential_load_emt_block_is_created_and_supports_modify_template(monkeypatch) -> None:
+    circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
+    bus = gce.Bus(name="BusExp", Vnom=13.8)
+    load = gce.Load(name="LoadExp")
+    load.bus = bus
+    editor = _build_editor(DynamicSimulationMode.EMT, api_object=load, circuit=circuit)
+
+    class _CreateDialogStub:
+        def __init__(self, title: str, parent=None, initial_config=None) -> None:
+            _unused = (parent, initial_config)
+            assert title == "Configure EMT Exponential Load"
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_configuration(self) -> dict[str, object]:
+            return dict({
+                "phA": True,
+                "phB": False,
+                "phC": False,
+                "connection_type": ShuntConnectionType.GroundedStar,
+            })
+
+    class _ModifyDialogStub:
+        def __init__(self, title: str, parent=None, initial_config=None) -> None:
+            _unused = (parent, initial_config)
+            assert title == "Configure EMT Exponential Load"
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_configuration(self) -> dict[str, object]:
+            return dict({
+                "phA": True,
+                "phB": True,
+                "phC": False,
+                "connection_type": ShuntConnectionType.NeutralStar,
+            })
+
+    monkeypatch.setattr(dynamic_block_editor_module, "LoadTopologyEmtDialog", _CreateDialogStub)
+    block_item = editor.create_library_payload_item(BlockType.EXP_LOAD_EMT, 10.0, 20.0)
+    assert block_item is not None
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "load_topology_emt"
+    assert modal_config is not None
+    assert modal_config["block_type"] == BlockType.EXP_LOAD_EMT.name
+    assert any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
+    assert load.conn == ShuntConnectionType.GroundedStar
+
+    monkeypatch.setattr(dynamic_block_editor_module, "LoadTopologyEmtDialog", _ModifyDialogStub)
+    editor.modify_scene_item_template(block_item)
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "load_topology_emt"
+    assert modal_config is not None
+    assert modal_config["phB"] is True
+    assert not any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
+    assert load.conn == ShuntConnectionType.NeutralStar
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_zip_load_emt_block_supports_delta_configuration(monkeypatch) -> None:
+    circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
+    bus = gce.Bus(name="BusZipDelta", Vnom=13.8)
+    load = gce.Load(name="LoadZipDelta")
+    load.bus = bus
+    editor = _build_editor(DynamicSimulationMode.EMT, api_object=load, circuit=circuit)
+
+    class _CreateDialogStub:
+        def __init__(self, title: str, parent=None, initial_config=None) -> None:
+            _unused = (parent, initial_config)
+            assert title == "Configure EMT ZIP Load"
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_configuration(self) -> dict[str, object]:
+            return dict({
+                "phA": True,
+                "phB": True,
+                "phC": True,
+                "connection_type": ShuntConnectionType.Delta,
+            })
+
+    monkeypatch.setattr(dynamic_block_editor_module, "LoadTopologyEmtDialog", _CreateDialogStub)
+    block_item = editor.create_library_payload_item(BlockType.ZIP_LOAD_EMT, 10.0, 20.0)
+    assert block_item is not None
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "load_topology_emt"
+    assert modal_config is not None
+    assert modal_config["block_type"] == BlockType.ZIP_LOAD_EMT.name
+    assert modal_config["connection_type"] == ShuntConnectionType.Delta
+    assert not any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
+    assert load.conn == ShuntConnectionType.Delta
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_transformer_emt_block_inherits_topology_from_transformer_device_without_modal(monkeypatch) -> None:
+    circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
+    bus0 = gce.Bus(name="BusTf0", Vnom=13.8)
+    bus1 = gce.Bus(name="BusTf1", Vnom=13.8)
+    transformer = gce.Transformer2W(name="TrafoGui", bus_from=bus0, bus_to=bus1)
+    transformer.conn_f = WindingType.Delta
+    transformer.conn_t = WindingType.GroundedStar
+    editor = _build_editor(DynamicSimulationMode.EMT, api_object=transformer, circuit=circuit)
+
+    class _DialogMustNotOpen:
+        def __init__(self, *args, **kwargs) -> None:
+            raise AssertionError("Transformer topology dialog should not open when the device already defines conn_f/conn_t")
+
+    monkeypatch.setattr(dynamic_block_editor_module, "TransformerTopologyEmtDialog", _DialogMustNotOpen)
+    block_item = editor.create_library_payload_item(BlockType.TRAFO_EMT, 10.0, 20.0)
+    assert block_item is not None
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "transformer_topology_emt"
+    assert modal_config is not None
+    assert modal_config["conn_f"] == WindingType.Delta
+    assert modal_config["conn_t"] == WindingType.GroundedStar
+    assert modal_config["allow_modify_template"] is False
+    assert _transformer_modal_config_allows_modify(modal_kind, modal_config) is False
+    assert _port_full_names(block_item)[:3] == ["vf_A_transformer_emt_template", "vf_B_transformer_emt_template", "vf_C_transformer_emt_template"]
+    assert _port_full_names(block_item)[3:] == ["vt_N_transformer_emt_template", "vt_A_transformer_emt_template", "vt_B_transformer_emt_template", "vt_C_transformer_emt_template"]
+    assert transformer.conn_f == WindingType.Delta
+    assert transformer.conn_t == WindingType.GroundedStar
+
+    transformer.conn_f = WindingType.GroundedStar
+    transformer.conn_t = WindingType.GroundedStar
+    editor.modify_scene_item_template(block_item)
+    updated_item = editor.get_scene_item_by_block_uid(block_item.subsys.uid)
+    assert updated_item is not None
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "transformer_topology_emt"
+    assert modal_config is not None
+    assert modal_config["conn_f"] == WindingType.GroundedStar
+    assert modal_config["conn_t"] == WindingType.GroundedStar
+    assert modal_config["allow_modify_template"] is False
+    assert _port_full_names(updated_item)[:4] == ["vf_N_transformer_emt_template", "vf_A_transformer_emt_template", "vf_B_transformer_emt_template", "vf_C_transformer_emt_template"]
+    assert _port_full_names(updated_item)[4:] == ["vt_N_transformer_emt_template", "vt_A_transformer_emt_template", "vt_B_transformer_emt_template", "vt_C_transformer_emt_template"]
+    assert transformer.conn_f == WindingType.GroundedStar
+    assert transformer.conn_t == WindingType.GroundedStar
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_xfmr_emt_block_inherits_topology_from_transformer_device_without_modal(monkeypatch) -> None:
+    circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
+    bus0 = gce.Bus(name="BusXf0", Vnom=13.8)
+    bus1 = gce.Bus(name="BusXf1", Vnom=13.8)
+    transformer = gce.Transformer2W(name="XfmrGui", bus_from=bus0, bus_to=bus1)
+    transformer.conn_f = WindingType.Delta
+    transformer.conn_t = WindingType.GroundedStar
+    editor = _build_editor(DynamicSimulationMode.EMT, api_object=transformer, circuit=circuit)
+
+    class _DialogMustNotOpen:
+        def __init__(self, *args, **kwargs) -> None:
+            raise AssertionError("XFMR topology dialog should not open when the device already defines conn_f/conn_t")
+
+    monkeypatch.setattr(dynamic_block_editor_module, "TransformerTopologyEmtDialog", _DialogMustNotOpen)
+    block_item = editor.create_library_payload_item(BlockType.XFMR_TRANSFORMER, 10.0, 20.0)
+    assert block_item is not None
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "transformer_topology_emt"
+    assert modal_config is not None
+    assert modal_config["conn_f"] == WindingType.Delta
+    assert modal_config["conn_t"] == WindingType.GroundedStar
+    assert modal_config["allow_modify_template"] is False
+    assert _transformer_modal_config_allows_modify(modal_kind, modal_config) is False
+    assert _port_full_names(block_item)[:3] == ["vf_A_xfmr_emt_template", "vf_B_xfmr_emt_template", "vf_C_xfmr_emt_template"]
+    assert _port_full_names(block_item)[3:] == ["vt_N_xfmr_emt_template", "vt_A_xfmr_emt_template", "vt_B_xfmr_emt_template", "vt_C_xfmr_emt_template"]
+
+    transformer.conn_f = WindingType.GroundedStar
+    transformer.conn_t = WindingType.GroundedStar
+    editor.modify_scene_item_template(block_item)
+    updated_item = editor.get_scene_item_by_block_uid(block_item.subsys.uid)
+    assert updated_item is not None
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "transformer_topology_emt"
+    assert modal_config is not None
+    assert modal_config["conn_f"] == WindingType.GroundedStar
+    assert modal_config["conn_t"] == WindingType.GroundedStar
+    assert modal_config["allow_modify_template"] is False
+    assert _port_full_names(updated_item)[:4] == ["vf_N_xfmr_emt_template", "vf_A_xfmr_emt_template", "vf_B_xfmr_emt_template", "vf_C_xfmr_emt_template"]
+    assert _port_full_names(updated_item)[4:] == ["vt_N_xfmr_emt_template", "vt_A_xfmr_emt_template", "vt_B_xfmr_emt_template", "vt_C_xfmr_emt_template"]
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_transformer_type_emt_editor_exposes_transformer_blocks_and_inherits_hv_lv_topology(monkeypatch) -> None:
+    circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
+    transformer_type = gce.TransformerType()
+    transformer_type.conn_hv = WindingType.Delta
+    transformer_type.conn_lv = WindingType.GroundedStar
+    editor = _build_editor(DynamicSimulationMode.EMT, api_object=transformer_type, circuit=circuit)
+
+    class _DialogMustNotOpen:
+        def __init__(self, *args, **kwargs) -> None:
+            raise AssertionError("Transformer topology dialog should not open when the transformer type already defines conn_hv/conn_lv")
+
+    monkeypatch.setattr(dynamic_block_editor_module, "TransformerTopologyEmtDialog", _DialogMustNotOpen)
+    leaf_labels = _collect_leaf_labels(editor.library_model)
+
+    assert "Transformer" in leaf_labels
+    assert "XFMR Transformer" in leaf_labels
+    # assert "ZIP load" in leaf_labels # should not be in the transformer library
+    # assert "Switch EMT" in leaf_labels # should not be in the transformer library
+    # assert "Emt pi line" not in leaf_labels # should not be in the transformer library
+    block_item = editor.create_library_payload_item(BlockType.TRAFO_EMT, 10.0, 20.0)
+    assert block_item is not None
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "transformer_topology_emt"
+    assert modal_config is not None
+    assert modal_config["conn_f"] == WindingType.Delta
+    assert modal_config["conn_t"] == WindingType.GroundedStar
+    assert modal_config["allow_modify_template"] is False
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_transformer_type_emt_editor_inherits_zigzag_without_modal(monkeypatch) -> None:
+    circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
+    transformer_type = gce.TransformerType()
+    transformer_type.conn_hv = WindingType.ZigZag
+    transformer_type.conn_lv = WindingType.GroundedStar
+    editor = _build_editor(DynamicSimulationMode.EMT, api_object=transformer_type, circuit=circuit)
+
+    class _DialogMustNotOpen:
+        def __init__(self, *args, **kwargs) -> None:
+            raise AssertionError("Transformer topology dialog should not open when the transformer type already defines conn_hv/conn_lv")
+
+    monkeypatch.setattr(dynamic_block_editor_module, "TransformerTopologyEmtDialog", _DialogMustNotOpen)
+    block_item = editor.create_library_payload_item(BlockType.TRAFO_EMT, 10.0, 20.0)
+    assert block_item is not None
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "transformer_topology_emt"
+    assert modal_config is not None
+    assert modal_config["conn_f"] == WindingType.ZigZag
+    assert modal_config["conn_t"] == WindingType.GroundedStar
+    assert _port_full_names(block_item)[:3] == ["vf_A_transformer_emt_template", "vf_B_transformer_emt_template", "vf_C_transformer_emt_template"]
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_transformer_emt_block_falls_back_to_manual_dialog_without_device_topology(monkeypatch) -> None:
+    editor = _build_editor(DynamicSimulationMode.EMT)
+
+    class _DialogStub:
+        def __init__(self, title: str, parent=None, initial_config=None) -> None:
+            _unused = (parent, initial_config)
+            assert title == "Configure EMT Transformer Topology"
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_configuration(self) -> dict[str, object]:
+            return dict({
+                "conn_f": WindingType.Delta,
+                "conn_t": WindingType.GroundedStar,
+            })
+
+    monkeypatch.setattr(dynamic_block_editor_module, "TransformerTopologyEmtDialog", _DialogStub)
+    block_item = editor.create_library_payload_item(BlockType.TRAFO_EMT, 10.0, 20.0)
+
+    assert block_item is not None
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "transformer_topology_emt"
+    assert modal_config is not None
+    assert modal_config["conn_f"] == WindingType.Delta
+    assert modal_config["conn_t"] == WindingType.GroundedStar
+    assert modal_config["allow_modify_template"] is True
+    assert _transformer_modal_config_allows_modify(modal_kind, modal_config) is True
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_rlc_combo_emt_block_is_created_and_supports_modify_template(monkeypatch) -> None:
+    circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
+    bus = gce.Bus(name="BusRlc", Vnom=13.8)
+    load = gce.Load(name="LoadRlc")
+    load.bus = bus
+    editor = _build_editor(DynamicSimulationMode.EMT, api_object=load, circuit=circuit)
+    phase_voltage_sq = (bus.Vnom / math.sqrt(3.0)) ** 2
+    create_dialog_base_values: dict[str, float | None] = dict()
+    modify_dialog_base_values: dict[str, float | None] = dict()
+
+    class _CreateDialogStub:
+        def __init__(self,
+                     parent=None,
+                     initial_config=None,
+                     nominal_voltage_kv=None,
+                     base_power_mva=None,
+                     base_frequency_hz=None) -> None:
+            _unused = (parent, initial_config)
+            create_dialog_base_values["nominal_voltage_kv"] = nominal_voltage_kv
+            create_dialog_base_values["base_power_mva"] = base_power_mva
+            create_dialog_base_values["base_frequency_hz"] = base_frequency_hz
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_configuration(self) -> dict[str, object]:
+            return dict({
+                "include_r": True,
+                "include_l": True,
+                "include_c": False,
+                "phA": True,
+                "phB": False,
+                "phC": False,
+                "connection_type": ShuntConnectionType.GroundedStar,
+                "input_mode": "physical",
+                "resistance_ohm": 100.0,
+                "inductive_value": 0.05,
+                "capacitive_value": 1.0e-6,
+            })
+
+    class _ModifyDialogStub:
+        def __init__(self,
+                     parent=None,
+                     initial_config=None,
+                     nominal_voltage_kv=None,
+                     base_power_mva=None,
+                     base_frequency_hz=None) -> None:
+            _unused = (parent, initial_config)
+            modify_dialog_base_values["nominal_voltage_kv"] = nominal_voltage_kv
+            modify_dialog_base_values["base_power_mva"] = base_power_mva
+            modify_dialog_base_values["base_frequency_hz"] = base_frequency_hz
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_configuration(self) -> dict[str, object]:
+            return dict({
+                "include_r": True,
+                "include_l": True,
+                "include_c": True,
+                "phA": True,
+                "phB": True,
+                "phC": False,
+                "connection_type": ShuntConnectionType.NeutralStar,
+                "input_mode": "reactance",
+                "resistance_ohm": 50.0,
+                "inductive_value": 18.0,
+                "capacitive_value": 220.0,
+            })
+
+    monkeypatch.setattr(dynamic_block_editor_module, "RlcComboEmtDialog", _CreateDialogStub)
+    block_item = editor.create_library_payload_item(BlockType.RLC_COMBO_EMT, 10.0, 20.0)
+    assert block_item is not None
+    assert create_dialog_base_values == {
+        "nominal_voltage_kv": 13.8,
+        "base_power_mva": 25.0,
+        "base_frequency_hz": 60.0,
+    }
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "rlc_combo_emt"
+    assert modal_config is not None
+    assert modal_config["include_c"] is False
+    assert modal_config["input_mode"] == "physical"
+    assert any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
+    assert load.conn == ShuntConnectionType.GroundedStar
+    assert _find_prefixed_event_constant(block_item.subsys, "R_A_") == pytest.approx(100.0)
+    assert _find_prefixed_event_constant(block_item.subsys, "L_A_") == pytest.approx(0.05)
+    assert load.Pa == pytest.approx(phase_voltage_sq / 100.0)
+    assert load.Pb == pytest.approx(0.0)
+    assert load.Qa == pytest.approx(phase_voltage_sq / (2.0 * math.pi * circuit.fBase * 0.05))
+
+    monkeypatch.setattr(dynamic_block_editor_module, "RlcComboEmtDialog", _ModifyDialogStub)
+    editor.modify_scene_item_template(block_item)
+    expected_inductance = 18.0 / (2.0 * math.pi * circuit.fBase)
+    expected_capacitance = 1.0 / (2.0 * math.pi * circuit.fBase * 220.0)
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "rlc_combo_emt"
+    assert modal_config is not None
+    assert modal_config["include_c"] is True
+    assert modal_config["phB"] is True
+    assert modal_config["input_mode"] == "reactance"
+    assert modify_dialog_base_values == {
+        "nominal_voltage_kv": 13.8,
+        "base_power_mva": 25.0,
+        "base_frequency_hz": 60.0,
+    }
+    assert not any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
+    assert load.conn == ShuntConnectionType.NeutralStar
+    assert _find_prefixed_event_constant(block_item.subsys, "R_A_") == pytest.approx(50.0)
+    assert _find_prefixed_event_constant(block_item.subsys, "L_A_") == pytest.approx(expected_inductance)
+    assert _find_prefixed_event_constant(block_item.subsys, "C_A_") == pytest.approx(expected_capacitance)
+    expected_phase_p = phase_voltage_sq / 50.0
+    expected_phase_q = phase_voltage_sq / 18.0 + phase_voltage_sq / 220.0
+    assert load.Pa == pytest.approx(expected_phase_p)
+    assert load.Pb == pytest.approx(expected_phase_p)
+    assert load.Pc == pytest.approx(0.0)
+    assert load.Qa == pytest.approx(expected_phase_q)
+    assert load.Qb == pytest.approx(expected_phase_q)
+    assert load.Qc == pytest.approx(0.0)
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_ground_emt_block_is_available_from_library() -> None:
+    editor = _build_editor(DynamicSimulationMode.EMT)
+    block_item = editor.create_library_payload_item(BlockType.GROUND_EMT, 10.0, 20.0)
+
+    assert block_item is not None
+    assert len(block_item.inputs) == 1
+    assert len(block_item.outputs) == 1
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_induction_motor_emt_block_is_created_and_supports_modify_template(monkeypatch) -> None:
+    editor = _build_editor(DynamicSimulationMode.EMT)
+    create_initial_configurations: list[dict[str, object]] = list()
+    modify_initial_configurations: list[dict[str, object]] = list()
+
+    class _CreateDialogStub:
+        def __init__(self, parent=None, initial_config=None) -> None:
+            _unused = parent
+            assert initial_config is not None
+            create_initial_configurations.append(dict(initial_config))
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_configuration(self) -> dict[str, object]:
+            return dict({"level": InductionMotorEmtLevel.SINGLE_CAGE.name})
+
+    class _ModifyDialogStub:
+        def __init__(self, parent=None, initial_config=None) -> None:
+            _unused = parent
+            assert initial_config is not None
+            modify_initial_configurations.append(dict(initial_config))
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_configuration(self) -> dict[str, object]:
+            return dict({"level": InductionMotorEmtLevel.DOUBLE_CAGE.name})
+
+    monkeypatch.setattr(dynamic_block_editor_module, "InductionMotorEmtDialog", _CreateDialogStub)
+    block_item = editor.create_library_payload_item(BlockType.INDUCTION_MOTOR_EMT, 10.0, 20.0)
+    assert block_item is not None
+    assert create_initial_configurations == list([
+        dict({"level": InductionMotorEmtLevel.SINGLE_CAGE.name}),
+    ])
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "induction_motor_emt"
+    assert modal_config is not None
+    assert modal_config["level"] == InductionMotorEmtLevel.SINGLE_CAGE.name
+    assert block_item.toolTip() == "Induction motor EMT\nLevel 2: single cage"
+
+    created_state_var_names: list[str] = _state_var_names(block_item.subsys)
+    assert not any(name.startswith("psi_r2_alpha_") for name in created_state_var_names)
+
+    monkeypatch.setattr(dynamic_block_editor_module, "InductionMotorEmtDialog", _ModifyDialogStub)
+    original_block_name: str = block_item.subsys.name
+    original_block_uid: int = block_item.subsys.uid
+    editor.modify_scene_item_template(block_item)
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "induction_motor_emt"
+    assert modal_config is not None
+    assert modal_config["level"] == InductionMotorEmtLevel.DOUBLE_CAGE.name
+    assert modify_initial_configurations == list([
+        dict({"level": InductionMotorEmtLevel.SINGLE_CAGE.name}),
+    ])
+    assert block_item.subsys.name == original_block_name
+    assert block_item.subsys.uid == original_block_uid
+
+    modified_state_var_names: list[str] = _state_var_names(block_item.subsys)
+    assert any(name.startswith("psi_r2_alpha_") for name in modified_state_var_names)
+
+    editor.rebuild_scene_from_diagram()
+    rebuilt_item = editor.get_scene_item_by_block_uid(original_block_uid)
+    assert rebuilt_item is not None
+    assert rebuilt_item.toolTip() == "Induction motor EMT\nLevel 3: double cage"
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_grounding_link_emt_block_is_created_and_supports_modify_template(monkeypatch) -> None:
+    editor = _build_editor(DynamicSimulationMode.EMT)
+
+    class _CreateDialogStub:
+        def __init__(self,
+                     parent=None,
+                     initial_config=None,
+                     nominal_voltage_kv=None,
+                     base_power_mva=None,
+                     base_frequency_hz=None) -> None:
+            _unused = (parent, initial_config, nominal_voltage_kv, base_power_mva, base_frequency_hz)
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_configuration(self) -> dict[str, object]:
+            return dict({
+                "include_r": True,
+                "include_l": True,
+                "include_c": False,
+                "input_mode": "physical",
+                "resistance_ohm": 20.0,
+                "inductive_value": 0.04,
+                "capacitive_value": 1.0e-6,
+            })
+
+    class _ModifyDialogStub:
+        def __init__(self,
+                     parent=None,
+                     initial_config=None,
+                     nominal_voltage_kv=None,
+                     base_power_mva=None,
+                     base_frequency_hz=None) -> None:
+            _unused = (parent, initial_config, nominal_voltage_kv, base_power_mva, base_frequency_hz)
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_configuration(self) -> dict[str, object]:
+            return dict({
+                "include_r": True,
+                "include_l": False,
+                "include_c": True,
+                "input_mode": "reactance",
+                "resistance_ohm": 40.0,
+                "inductive_value": 10.0,
+                "capacitive_value": 150.0,
+            })
+
+    monkeypatch.setattr(dynamic_block_editor_module, "GroundingLinkEmtDialog", _CreateDialogStub)
+    block_item = editor.create_library_payload_item(BlockType.GROUNDING_LINK_EMT, 10.0, 20.0)
+    assert block_item is not None
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "grounding_link_emt"
+    assert modal_config is not None
+    assert modal_config["include_l"] is True
+    assert _find_prefixed_event_constant(block_item.subsys, "R_") == pytest.approx(20.0)
+    assert _find_prefixed_event_constant(block_item.subsys, "L_") == pytest.approx(0.04)
+
+    monkeypatch.setattr(dynamic_block_editor_module, "GroundingLinkEmtDialog", _ModifyDialogStub)
+    editor.modify_scene_item_template(block_item)
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "grounding_link_emt"
+    assert modal_config is not None
+    assert modal_config["include_c"] is True
+    assert modal_config["include_l"] is False
+    assert _find_prefixed_event_constant(block_item.subsys, "R_") == pytest.approx(40.0)
+    assert _find_prefixed_event_constant(block_item.subsys, "C_") == pytest.approx(1.0 / (2.0 * math.pi * 50.0 * 150.0))
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_nonlinear_resistor_emt_block_is_created_and_supports_modify_template(monkeypatch) -> None:
+    editor = _build_editor(DynamicSimulationMode.EMT)
+
+    class _CreateDialogStub:
+        def __init__(self, block_label: str, initial_points=None, parent=None, x_label: str = "", y_label: str = "", preview_enabled: bool = False, preview_title: str | None = None) -> None:
+            _unused = (initial_points, parent)
+            assert block_label == "Nonlinear resistor EMT V-I curve"
+            assert x_label == "V"
+            assert y_label == "I"
+            assert preview_enabled is True
+            assert preview_title == "Nonlinear resistor EMT V-I curve"
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_points(self) -> tuple[list[float], list[float]]:
+            return [0.0, 1.0, 1.5], [0.0, 0.1, 1.0]
+
+    class _ModifyDialogStub:
+        def __init__(self, block_label: str, initial_points=None, parent=None, x_label: str = "", y_label: str = "", preview_enabled: bool = False, preview_title: str | None = None) -> None:
+            _unused = (initial_points, parent)
+            assert block_label == "Nonlinear resistor EMT V-I curve"
+            assert x_label == "V"
+            assert y_label == "I"
+            assert preview_enabled is True
+            assert preview_title == "Nonlinear resistor EMT V-I curve"
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_points(self) -> tuple[list[float], list[float]]:
+            return [0.0, 1.2, 1.8], [0.0, 0.2, 1.5]
+
+    monkeypatch.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _CreateDialogStub)
+    block_item = editor.create_library_payload_item(BlockType.NONLINEAR_RESISTOR_EMT, 10.0, 20.0)
+    assert block_item is not None
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "nonlinear_resistor_emt"
+    assert modal_config is not None
+    assert modal_config["voltage_points"] == [0.0, 1.0, 1.5]
+    assert modal_config["current_points"] == [0.0, 0.1, 1.0]
+    assert len(block_item.inputs) == 1
+    assert len(block_item.outputs) == 1
+
+    monkeypatch.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _ModifyDialogStub)
+    editor.modify_scene_item_template(block_item)
+
+    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    assert modal_kind == "nonlinear_resistor_emt"
+    assert modal_config is not None
+    assert modal_config["voltage_points"] == [0.0, 1.2, 1.8]
+    assert modal_config["current_points"] == [0.0, 0.2, 1.5]
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_lookup_matrix_linear_dialog_parses_clipboard_matrix() -> None:
+    _get_app()
+    dialog = LookupMatrixLinearDialog(block_label="Lookup matrix (linear)")
+    clipboard = QtWidgets.QApplication.clipboard()
+    clipboard.setText("\t0\t1\n0\t0\t10\n2\t20\t30")
+
+    dialog.paste_from_clipboard()
+    dialog.accept_dialog()
+    x_points, y_points, z_matrix = dialog.get_matrix_data()
+
+    assert x_points == [0.0, 1.0]
+    assert y_points == [0.0, 2.0]
+    assert z_matrix == [[0.0, 10.0], [20.0, 30.0]]
+    dialog.close()
+
+
+def test_lookup_matrix_linear_dialog_supports_copy_paste_and_delete_shortcuts() -> None:
+    _get_app()
+    dialog = LookupMatrixLinearDialog(block_label="Lookup matrix (linear)")
+    dialog.show()
+    dialog.activateWindow()
+    clipboard = QtWidgets.QApplication.clipboard()
+
+    dialog._table_widget.clearSelection()
+    selection = QtWidgets.QTableWidgetSelectionRange(0, 0, 2, 2)
+    dialog._table_widget.setRangeSelected(selection, True)
+    dialog.setFocus()
+    QTest.keyClick(dialog, QtCore.Qt.Key.Key_C, QtCore.Qt.KeyboardModifier.ControlModifier)
+    QtWidgets.QApplication.processEvents()
+    copied_grid = _parse_clipboard_grid(clipboard.text())
+    assert copied_grid == [["", "0.0", "1.0"], ["0.0", "0.0", "10.0"], ["2.0", "20.0", "30.0"]] or copied_grid == [["", "0", "1"], ["0", "0", "10"], ["2", "20", "30"]]
+
+    clipboard.setText("\t5\t6\n7\t8\t9\n10\t11\t12\n13\t14\t15")
+    QTest.keyClick(dialog, QtCore.Qt.Key.Key_V, QtCore.Qt.KeyboardModifier.ControlModifier)
+    QtWidgets.QApplication.processEvents()
+    x_points, y_points, z_matrix = dialog._read_matrix_from_table()
+    assert x_points == [5.0, 6.0]
+    assert y_points == [7.0, 10.0, 13.0]
+    assert z_matrix == [[8.0, 9.0], [11.0, 12.0], [14.0, 15.0]]
+
+    dialog._table_widget.clearSelection()
+    selection = QtWidgets.QTableWidgetSelectionRange(1, 0, 1, 2)
+    dialog._table_widget.setRangeSelected(selection, True)
+    QTest.keyClick(dialog, QtCore.Qt.Key.Key_Delete)
+    QtWidgets.QApplication.processEvents()
+    x_points, y_points, z_matrix = dialog._read_matrix_from_table()
+    assert x_points == [5.0, 6.0]
+    assert y_points == [10.0, 13.0]
+    assert z_matrix == [[11.0, 12.0], [14.0, 15.0]]
+    dialog.close()
+
+
+def test_lookup_matrix_linear_dialog_axis_click_selects_full_column_or_row() -> None:
+    _get_app()
+    dialog = LookupMatrixLinearDialog(block_label="Lookup matrix (linear)")
+
+    dialog.on_matrix_cell_pressed(0, 1)
+    QtWidgets.QApplication.processEvents()
+    selected_indexes = dialog._table_widget.selectionModel().selectedIndexes()
+    assert len(selected_indexes) == dialog._table_widget.rowCount()
+    assert all(index.column() == 1 for index in selected_indexes)
+
+    dialog.on_matrix_cell_pressed(1, 0)
+    QtWidgets.QApplication.processEvents()
+    selected_indexes = dialog._table_widget.selectionModel().selectedIndexes()
+    assert len(selected_indexes) == dialog._table_widget.columnCount()
+    assert all(index.row() == 1 for index in selected_indexes)
+    dialog.close()
+
+
+def test_lookup_matrix_linear_dialog_supports_row_copy_and_row_paste() -> None:
+    _get_app()
+    dialog = LookupMatrixLinearDialog(block_label="Lookup matrix (linear)")
+    dialog.show()
+    dialog.activateWindow()
+    clipboard = QtWidgets.QApplication.clipboard()
+
+    dialog.on_matrix_cell_pressed(1, 0)
+    QtWidgets.QApplication.processEvents()
+    dialog.setFocus()
+    QTest.keyClick(dialog, QtCore.Qt.Key.Key_C, QtCore.Qt.KeyboardModifier.ControlModifier)
+    QtWidgets.QApplication.processEvents()
+    assert clipboard.text().rstrip() == "0.0\t0.0\t10.0"
+
+    dialog.on_matrix_cell_pressed(2, 0)
+    QtWidgets.QApplication.processEvents()
+    QTest.keyClick(dialog, QtCore.Qt.Key.Key_V, QtCore.Qt.KeyboardModifier.ControlModifier)
+    QtWidgets.QApplication.processEvents()
+    x_points, y_points, z_matrix = dialog._read_matrix_from_table()
+    assert x_points == [0.0, 1.0]
+    assert y_points == [0.0, 0.0]
+    assert z_matrix == [[0.0, 10.0], [0.0, 10.0]]
+    dialog.close()
+
+
+def test_lookup_matrix_linear_descriptor_uses_modal_matrix_to_build_block(monkeypatch) -> None:
+    editor = _build_editor(DynamicSimulationMode.EMT)
+    descriptor = get_basic_block_catalog_descriptor_by_key()["lookup_matrix_linear"]
+
+    class _MatrixDialogStub:
+        def __init__(self, block_label: str, initial_x_points=None, initial_y_points=None, initial_z_matrix=None, parent=None) -> None:
+            _unused = (block_label, initial_x_points, initial_y_points, initial_z_matrix, parent)
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_matrix_data(self) -> tuple[list[float], list[float], list[list[float]]]:
+            return [0.0, 1.0], [0.0, 2.0], [[0.0, 10.0], [20.0, 30.0]]
+
+    monkeypatch.setattr(dynamic_block_editor_module, "LookupMatrixLinearDialog", _MatrixDialogStub)
+    block_item = editor.create_library_payload_item(descriptor, 10.0, 20.0)
+
+    assert block_item is not None
+    assert any(var.name.startswith("arr_x2_") for var in block_item.subsys.event_dict.keys())
+    assert any(var.name.startswith("arr_y2_") for var in block_item.subsys.event_dict.keys())
+    assert any(var.name.startswith("arr_z2_2_") for var in block_item.subsys.event_dict.keys())
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_inverse_lookup_array_linear_descriptor_uses_modal_points_to_build_block(monkeypatch) -> None:
+    editor = _build_editor(DynamicSimulationMode.EMT)
+    descriptor = get_basic_block_catalog_descriptor_by_key()["inverse_lookup_array_linear"]
+
+    class _DialogStub:
+        def __init__(self, block_label: str, initial_points=None, parent=None) -> None:
+            _unused = (block_label, initial_points, parent)
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_points(self) -> tuple[list[float], list[float]]:
+            return [0.0, 1.0, 2.0], [0.0, 10.0, 20.0]
+
+    monkeypatch.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _DialogStub)
+    block_item = editor.create_library_payload_item(descriptor, 10.0, 20.0)
+
+    assert block_item is not None
+    assert any(var.name.startswith("arr_x3_") for var in block_item.subsys.event_dict.keys())
+    assert any(var.name.startswith("arr_y3_") for var in block_item.subsys.event_dict.keys())
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_lookup_array_spline_descriptor_uses_modal_points_to_build_block(monkeypatch) -> None:
+    editor = _build_editor(DynamicSimulationMode.EMT)
+    descriptor = get_basic_block_catalog_descriptor_by_key()["lookup_array_spline"]
+
+    class _DialogStub:
+        def __init__(self, block_label: str, initial_points=None, parent=None) -> None:
+            _unused = (block_label, initial_points, parent)
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_points(self) -> tuple[list[float], list[float]]:
+            return [0.0, 1.0, 2.0], [0.0, 10.0, 20.0]
+
+    monkeypatch.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _DialogStub)
+    block_item = editor.create_library_payload_item(descriptor, 10.0, 20.0)
+
+    assert block_item is not None
+    assert any(var.name.startswith("arr_x3_") for var in block_item.subsys.event_dict.keys())
+    assert any(var.name.startswith("arr_y3_") for var in block_item.subsys.event_dict.keys())
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_lookup_matrix_spline_descriptor_uses_modal_matrix_to_build_block(monkeypatch) -> None:
+    editor = _build_editor(DynamicSimulationMode.EMT)
+    descriptor = get_basic_block_catalog_descriptor_by_key()["lookup_matrix_spline"]
+
+    class _MatrixDialogStub:
+        def __init__(self, block_label: str, initial_x_points=None, initial_y_points=None, initial_z_matrix=None, parent=None) -> None:
+            _unused = (block_label, initial_x_points, initial_y_points, initial_z_matrix, parent)
+
+        def exec(self) -> int:
+            return int(QtWidgets.QDialog.DialogCode.Accepted)
+
+        def get_matrix_data(self) -> tuple[list[float], list[float], list[list[float]]]:
+            return [0.0, 1.0], [0.0, 2.0], [[0.0, 10.0], [20.0, 30.0]]
+
+    monkeypatch.setattr(dynamic_block_editor_module, "LookupMatrixLinearDialog", _MatrixDialogStub)
+    block_item = editor.create_library_payload_item(descriptor, 10.0, 20.0)
+
+    assert block_item is not None
+    assert any(var.name.startswith("arr_z2_2_") for var in block_item.subsys.event_dict.keys())
 
     editor.has_unapplied_changes = False
     editor.close()

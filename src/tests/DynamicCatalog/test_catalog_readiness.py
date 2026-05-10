@@ -129,8 +129,8 @@ def test_editor_ready_subset_counts_are_clean() -> None:
     ready_descriptors: Sequence[BasicBlockTemplateDescriptor] = build_ready_descriptor_parameters()
     pending_descriptors: Sequence[BasicBlockTemplateDescriptor] = build_pending_descriptor_parameters()
 
-    assert len(ready_descriptors) == 533
-    assert len(pending_descriptors) == 18
+    assert len(ready_descriptors) == 545
+    assert len(pending_descriptors) == 6
     assert all(descriptor.unsupported_lines == tuple() for descriptor in ready_descriptors)
 
 

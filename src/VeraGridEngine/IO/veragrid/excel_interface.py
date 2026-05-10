@@ -290,8 +290,8 @@ def interprete_excel_v2(data,
                         val = complex(values[a])
                         re = 1 / val.real if val.real != 0.0 else 0
                         im = 1 / val.imag if val.imag != 0.0 else 0
-                        setattr(obj_, 'r_fault', re)
-                        setattr(obj_, 'x_fault', im)
+                        # setattr(obj_, 'r_fault', re)
+                        # setattr(obj_, 'x_fault', im)
 
                     if attr == 'Y':
                         val = complex(values[a])

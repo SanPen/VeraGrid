@@ -335,7 +335,7 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             outputs=('yo',),
             states=(),
             params=('array_K',),
-            unsupported_lines=('template_has_no_executable_content',),
+            unsupported_lines=(),
             module_name='typ_5__inverse_lookup_array_linear',
             module_filename='typ_5__inverse_lookup_array_linear.py',
         )
@@ -353,7 +353,7 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             outputs=('yo',),
             states=(),
             params=('oarray_K',),
-            unsupported_lines=('template_has_no_executable_content',),
+            unsupported_lines=(),
             module_name='typ_6__inverse_lookup_array_object_linear',
             module_filename='typ_6__inverse_lookup_array_object_linear.py',
         )
@@ -371,7 +371,7 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             outputs=('yo',),
             states=(),
             params=('array_K',),
-            unsupported_lines=('template_has_no_executable_content',),
+            unsupported_lines=(),
             module_name='typ_7__lookup_array_linear',
             module_filename='typ_7__lookup_array_linear.py',
         )
@@ -389,7 +389,7 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             outputs=('yo',),
             states=(),
             params=('array_K',),
-            unsupported_lines=('template_has_no_executable_content',),
+            unsupported_lines=(),
             module_name='typ_8__lookup_array_linear_noclipping',
             module_filename='typ_8__lookup_array_linear_noclipping.py',
         )
@@ -407,7 +407,7 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             outputs=('yo',),
             states=(),
             params=('array_K',),
-            unsupported_lines=('template_has_no_executable_content',),
+            unsupported_lines=(),
             module_name='typ_9__lookup_array_spline',
             module_filename='typ_9__lookup_array_spline.py',
         )
@@ -497,7 +497,7 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             outputs=('yo',),
             states=(),
             params=('oarray_K',),
-            unsupported_lines=('template_has_no_executable_content',),
+            unsupported_lines=(),
             module_name='typ_14__lookup_array_object_linear',
             module_filename='typ_14__lookup_array_object_linear.py',
         )
@@ -515,7 +515,7 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             outputs=('yo',),
             states=(),
             params=('oarray_K',),
-            unsupported_lines=('template_has_no_executable_content',),
+            unsupported_lines=(),
             module_name='typ_15__lookup_array_object_linear_noclipping',
             module_filename='typ_15__lookup_array_object_linear_noclipping.py',
         )
@@ -533,7 +533,7 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             outputs=('yo',),
             states=(),
             params=('oarray_K',),
-            unsupported_lines=('template_has_no_executable_content',),
+            unsupported_lines=(),
             module_name='typ_16__lookup_array_object_spline',
             module_filename='typ_16__lookup_array_object_spline.py',
         )
@@ -551,7 +551,7 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             outputs=('yo',),
             states=(),
             params=('matrix_K',),
-            unsupported_lines=('template_has_no_executable_content',),
+            unsupported_lines=(),
             module_name='typ_17__lookup_matrix_linear',
             module_filename='typ_17__lookup_matrix_linear.py',
         )
@@ -569,7 +569,7 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             outputs=('yo',),
             states=(),
             params=('matrix_K',),
-            unsupported_lines=('template_has_no_executable_content',),
+            unsupported_lines=(),
             module_name='typ_18__lookup_matrix_spline',
             module_filename='typ_18__lookup_matrix_spline.py',
         )
@@ -587,7 +587,7 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             outputs=('yo',),
             states=(),
             params=('omatrix_K',),
-            unsupported_lines=('template_has_no_executable_content',),
+            unsupported_lines=(),
             module_name='typ_19__lookup_matrix_object_linear',
             module_filename='typ_19__lookup_matrix_object_linear.py',
         )
@@ -605,7 +605,7 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             outputs=('yo',),
             states=(),
             params=('omatrix_K',),
-            unsupported_lines=('template_has_no_executable_content',),
+            unsupported_lines=(),
             module_name='typ_20__lookup_matrix_object_spline',
             module_filename='typ_20__lookup_matrix_object_spline.py',
         )

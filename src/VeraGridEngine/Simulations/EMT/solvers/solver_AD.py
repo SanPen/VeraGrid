@@ -7,7 +7,6 @@ import numpy as np
 import numba as nb
 import scipy.sparse as sp
 import time
-import hashlib
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, Expr, BinOp, UnOp, Func
 
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import (
@@ -44,34 +43,11 @@ def _safe_njit(py_func: Callable[..., Any], fastmath: bool = True, cache: bool =
     :return: The Numba JIT compiled function.
     :rtype: Callable[..., Any]
     """
-    signature_repr: str
-
-    if signature is None:
-        signature_repr = "none"
-    else:
-        signature_repr = str(signature)
-
-    cache_payload: str = "|".join([py_func.__module__, py_func.__name__, signature_repr, str(fastmath), str(cache)])
-    cache_key: str = hashlib.md5(cache_payload.encode("utf-8")).hexdigest()
-
-    if not hasattr(_safe_njit, "_compiled_cache"):
-        setattr(_safe_njit, "_compiled_cache", dict())
-    else:
-        pass
-
-    compiled_cache: Dict[str, Callable[..., Any]] = getattr(_safe_njit, "_compiled_cache")
-
-    if cache_key in compiled_cache:
-        return compiled_cache[cache_key]
-    else:
-        pass
-
     if signature is not None:
         compiled_kernel: Callable[..., Any] = nb.njit(signature, fastmath=fastmath, cache=cache)(py_func)
     else:
         compiled_kernel = nb.njit(fastmath=fastmath, cache=cache)(py_func)
 
-    compiled_cache[cache_key] = compiled_kernel
     return compiled_kernel
 
 # ==============================================================================
@@ -109,30 +85,66 @@ def _compile_master_jacobian_kernel(ad_kernel: Callable[..., Any], n_colors: int
     :return: Jacobian dispatcher.
     :rtype: Callable[..., Any]
     """
-    def master_jacobian(
-            states: Vec,
-            seed_matrix: Mat,
-            params: Vec,
-            history: Vec,
-            d_history: Vec,
-            h: float,
-            history2: Vec,
-            data: Vec,
-            color_ptr: np.ndarray,
-            col_ptr: np.ndarray,
-            row_idx: np.ndarray,
-            data_idx: np.ndarray,
-            work_jvp: Mat,
-    ) -> None:
+    return SparseAdMasterJacobianDispatcher(ad_kernel=ad_kernel, n_colors=n_colors)
+
+
+class SparseAdMasterJacobianDispatcher:
+    """
+    Callable dispatcher that executes one generic AD kernel across all colors.
+    """
+
+    __slots__ = ("_ad_kernel", "_n_colors")
+
+    def __init__(self, ad_kernel: Callable[..., Any], n_colors: int) -> None:
+        """
+        Store the generic AD kernel and the number of graph colors.
+
+        :param ad_kernel: Generic AD kernel reused across graph colors.
+        :param n_colors: Number of graph colors.
+        :return: None.
+        """
+        self._ad_kernel: Callable[..., Any] = ad_kernel
+        self._n_colors: int = n_colors
+
+    def __call__(self,
+                 states: Vec,
+                 seed_matrix: Mat,
+                 params: Vec,
+                 history: Vec,
+                 d_history: Vec,
+                 h: float,
+                 history2: Vec,
+                 data: Vec,
+                 color_ptr: np.ndarray,
+                 col_ptr: np.ndarray,
+                 row_idx: np.ndarray,
+                 data_idx: np.ndarray,
+                 work_jvp: Mat) -> None:
+        """
+        Evaluate all color JVPs and scatter them into CSC data storage.
+
+        :param states: Current Newton iterate.
+        :param seed_matrix: Coloring seed matrix.
+        :param params: Full parameter vector.
+        :param history: Previous accepted state.
+        :param d_history: Previous derivative vector.
+        :param h: Effective time step.
+        :param history2: Secondary history vector.
+        :param data: CSC numeric data buffer.
+        :param color_ptr: Color-to-column pointer array.
+        :param col_ptr: Column-to-scatter pointer array.
+        :param row_idx: Row indices used by the scatter map.
+        :param data_idx: CSC data positions used by the scatter map.
+        :param work_jvp: Reusable JVP work buffer.
+        :return: None.
+        """
         color_index: int = 0
 
-        while color_index < n_colors:
+        while color_index < self._n_colors:
             local_jvp: Vec = work_jvp[color_index]
-            ad_kernel(states, seed_matrix[color_index], params, history, d_history, h, local_jvp, history2)
+            self._ad_kernel(states, seed_matrix[color_index], params, history, d_history, h, local_jvp, history2)
             _scatter_color_jvp_to_csc_data(local_jvp, data, color_ptr, col_ptr, row_idx, data_idx, color_index)
             color_index += 1
-
-    return master_jacobian
 
 
 def greedy_color_columns(col_rows: List[List[int]], n_rows: int) -> Tuple[np.ndarray, int]:

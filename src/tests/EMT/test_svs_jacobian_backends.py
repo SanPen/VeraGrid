@@ -90,7 +90,12 @@ class TestSVSJacobianBackends(unittest.TestCase):
         vf: VarFactory = VarFactory()
         block: Block = build_buck(vf)
         t_sys: Var = Var("t_sys")
-        problem: GenericEmtProblem = GenericEmtProblem(block, t_sys)
+        static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+        problem: GenericEmtProblem = GenericEmtProblem(
+            sys_block=block,
+            glob_time=t_sys,
+            static_parameter_values_mapping=static_parameter_values_mapping,
+        )
 
         solver: StructuralVectorizedSolver = StructuralVectorizedSolver(
             problem, t0=0.0, t_end=1e-3, h=1e-6, method=DynamicIntegrationMethod.DaeTrapezoidal
@@ -116,7 +121,12 @@ class TestSVSJacobianBackends(unittest.TestCase):
         vf: VarFactory = VarFactory()
         block: Block = build_buck(vf)
         t_sys: Var = Var("t_sys")
-        problem: GenericEmtProblem = GenericEmtProblem(block, t_sys)
+        static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+        problem: GenericEmtProblem = GenericEmtProblem(
+            sys_block=block,
+            glob_time=t_sys,
+            static_parameter_values_mapping=static_parameter_values_mapping,
+        )
 
         x0: np.ndarray = problem.get_x0()
         p0: np.ndarray = np.zeros(problem.get_variable_parameter_number(), dtype=np.float64)

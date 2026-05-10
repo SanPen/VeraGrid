@@ -532,7 +532,7 @@ class RmsProblemTensygrid(RmsProblemTemplate):
             self._compiler_names_dict[v.uid] = f"{self.VARS_NAME}[{self._n_vars}]"
             self._alias_names_dict[v.uid] = f"{self.VARS_NAME}_{self._n_vars}"
             self._uid2idx_vars[v.uid] = self._n_vars
-            self._vars_glob_name2uid[v.name + elm.name] = v.uid
+            self._register_global_var_name(name_key=v.name + elm.name, uid=v.uid, block=mdl)
             self.add_device_var(dev=elm, var=v)
             self.sys_vars[v.uid] = v
             self._state_vars.append(v)
@@ -542,7 +542,7 @@ class RmsProblemTensygrid(RmsProblemTemplate):
             self._compiler_names_dict[v.uid] = f"{self.VARS_NAME}[{self._n_vars}]"
             self._alias_names_dict[v.uid] = f"{self.VARS_NAME}_{self._n_vars}"
             self._uid2idx_vars[v.uid] = self._n_vars
-            self._vars_glob_name2uid[v.name + elm.name] = v.uid
+            self._register_global_var_name(name_key=v.name + elm.name, uid=v.uid, block=mdl)
             self.add_device_var(dev=elm, var=v)
             self.sys_vars[v.uid] = v
             self._algebraic_vars.append(v)
@@ -571,7 +571,7 @@ class RmsProblemTensygrid(RmsProblemTemplate):
             self._compiler_names_dict[v.uid] = f"{self.DIFF_NAME}[{self._n_diff}]"
             self._alias_names_dict[v.uid] = f"{self.DIFF_NAME}_{self._n_diff}"
             self._uid2idx_diff[v.uid] = self._n_diff
-            self._vars_glob_name2uid[v.name + elm.name] = v.uid
+            self._register_global_var_name(name_key=v.name + elm.name, uid=v.uid, block=mdl)
             self.add_device_var(dev=elm, var=v)
             self._diff_vars.append(v)
             self._n_diff += 1
@@ -648,6 +648,27 @@ class RmsProblemTensygrid(RmsProblemTemplate):
         :return:
         """
         return self._vars_glob_name2uid
+
+    def _register_global_var_name(self, name_key: str, uid: int, block: Block | None = None) -> None:
+        prev_uid = self._vars_glob_name2uid.get(name_key)
+        if prev_uid is None or prev_uid == uid:
+            self._vars_glob_name2uid[name_key] = uid
+            return
+
+        block_tag = ""
+        if block is not None:
+            block_tag = f"::{block.name}#{block.uid}"
+
+        disambiguated_key = f"{name_key}{block_tag}"
+        if disambiguated_key == name_key:
+            disambiguated_key = f"{name_key} [{uid}]"
+
+        if disambiguated_key in self._vars_glob_name2uid and self._vars_glob_name2uid[disambiguated_key] != uid:
+            raise ValueError(
+                f"Global variable name collision for '{name_key}' and fallback '{disambiguated_key}': "
+                f"existing uid={self._vars_glob_name2uid[disambiguated_key]}, new uid={uid}."
+            )
+        self._vars_glob_name2uid[disambiguated_key] = uid
 
     @property
     def uid2idx_vars(self):

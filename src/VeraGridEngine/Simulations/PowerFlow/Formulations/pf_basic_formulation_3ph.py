@@ -17,9 +17,10 @@ from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls imp
                                                                                      compute_slack_distribution)
 from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_formulation_template import PfFormulationTemplate
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions import (compute_current,
-                                                                                    compute_fx,
-                                                                                    polar_to_rect,
-                                                                                    fortescue_012_to_abc)
+                                                                                     compute_power,
+                                                                                     compute_fx,
+                                                                                     polar_to_rect,
+                                                                                     fortescue_012_to_abc)
 from VeraGridEngine.Topology.simulation_indices import compile_types
 from VeraGridEngine.basic_structures import Vec, IntVec, CxVec, CxMat, BoolVec, Logger
 from VeraGridEngine.Utils.Sparse.csc2 import (CSC, scipy_to_mat)
@@ -175,23 +176,32 @@ def compute_ybus(nc: NumericalCircuit) -> Tuple[csc_matrix, csc_matrix, csc_matr
         start = ptr[bus_idx]
         end = ptr[bus_idx + 1]
 
-        if start == end:
-            continue
-
         grounded_here = False
-        # iterate only over branches actually connected to this bus
-        for p in range(start, end):
-            k = bus_branches[p]
 
-            if F[k] == bus_idx and nc.passive_branch_data.conn_f[k].value == 'Yg':
-                grounded_here = True
-                break
-            if T[k] == bus_idx and nc.passive_branch_data.conn_t[k].value == 'Yg':
-                grounded_here = True
-                break
+        # Only buses with at least one incident branch need the explicit grounding scan.
+        # Isolated buses keep the default neutral-active state and fall through untouched.
+        if start == end:
+            grounded_here = False
+        else:
+            # Iterate only over branches actually connected to this bus and stop as
+            # soon as one grounded-star terminal is found.
+            for p in range(start, end):
+                k = bus_branches[p]
+
+                if F[k] == bus_idx and nc.passive_branch_data.conn_f[k].value == 'Yg':
+                    grounded_here = True
+                    break
+                else:
+                    if T[k] == bus_idx and nc.passive_branch_data.conn_t[k].value == 'Yg':
+                        grounded_here = True
+                        break
+                    else:
+                        pass
 
         if grounded_here:
             bus_has_neutral[4 * bus_idx + 0] = False  # desactiva el nodo de neutro del bus
+        else:
+            pass
 
     # aplica la prioridad: si algún trafo aterra el neutro del bus, el neutro se elimina del solver
     binary_bus_mask[0::4] = binary_bus_mask[0::4] & bus_has_neutral[0::4]
@@ -229,7 +239,7 @@ def compute_generators(bus_idx: IntVec,
                        V: CxVec,
                        P: CxVec,
                        Q: CxVec,
-                       is_controlled) -> CxVec:
+                       is_controlled: BoolVec) -> CxVec:
 
     n = len(V)
     nelm = len(bus_idx)
@@ -706,7 +716,7 @@ def compute_power_loads(bus_idx: IntVec,
     return I, Y_power_linear, Un_floating
 
 
-def calc_autodiff_jacobian(func: Callable[[Vec], Vec], x: Vec, h=1e-6) -> CSC:
+def calc_autodiff_jacobian(func: Callable[[Vec], Vec], x: Vec, h: float = 1e-6) -> CSC:
     """
     Compute the Jacobian matrix of `func` at `x` using finite differences.
     df/dx = (f(x+h) - f(x)) / h
@@ -737,7 +747,7 @@ def calc_autodiff_jacobian(func: Callable[[Vec], Vec], x: Vec, h=1e-6) -> CSC:
 
 
 @nb.njit(cache=True)
-def expand3ph(x: np.ndarray):
+def expand3ph(x: np.ndarray) -> np.ndarray:
     """
     Expands a numpy array to 3-pase copying the same values
     :param x:
@@ -791,7 +801,7 @@ def expand_indices_3ph(x: np.ndarray) -> np.ndarray:
 
 
 @nb.njit(cache=True)
-def expand_slice_indices_3ph(x: np.ndarray, bus_lookup: IntVec):
+def expand_slice_indices_3ph(x: np.ndarray, bus_lookup: IntVec) -> np.ndarray:
     """
     Expands and slices a numpy array to 3-phase copying the same values
     :param x:
@@ -887,7 +897,7 @@ class PfBasicFormulation3Ph(PfFormulationTemplate):
                  Qmax: Vec,
                  nc: NumericalCircuit,
                  options: PowerFlowOptions,
-                 logger: Logger):
+                 logger: Logger) -> None:
         """
         PfBasicFormulation3Ph
         :param V0: Array of nodal initial solution (3N)
@@ -906,6 +916,7 @@ class PfBasicFormulation3Ph(PfFormulationTemplate):
         PfFormulationTemplate.__init__(self, V0=V0new.astype(complex), options=options)
         self.logger = logger
         self.nc = nc
+        self.S0: CxVec = S0[self.mask].copy()
 
         self.Qmin = expand3ph(Qmin)[self.mask] * 100e6
         self.Qmax = expand3ph(Qmax)[self.mask] * 100e6
@@ -927,7 +938,7 @@ class PfBasicFormulation3Ph(PfFormulationTemplate):
         self.idx_dP = self.idx_dVa
         self.idx_dQ = np.r_[self.pq, self.pqv]
 
-    def x2var(self, x: Vec):
+    def x2var(self, x: Vec) -> None:
         """
         Convert X to decision variables
         :param x: solution vector
@@ -949,7 +960,7 @@ class PfBasicFormulation3Ph(PfFormulationTemplate):
             self.Vm[self.idx_dVm]
         ]
 
-    def update_bus_types(self, pq: IntVec, pv: IntVec, pqv: IntVec, p: IntVec):
+    def update_bus_types(self, pq: IntVec, pv: IntVec, pqv: IntVec, p: IntVec) -> None:
         """
 
         :param pq:
@@ -1138,6 +1149,7 @@ class PfBasicFormulation3Ph(PfFormulationTemplate):
 
         Ibus = (Igen + Ipower + Icurrent) / (self.nc.Sbase / 3) / (self.V / np.abs(self.V))
         Icalc = compute_current(self.Ybus, self.V) / (self.V / np.abs(self.V))
+        self.Scalc = compute_power(self.Ybus, self.V)
 
         dI = (Icalc - Ibus)  # compute the mismatch
         self._f = np.r_[
@@ -1181,7 +1193,7 @@ class PfBasicFormulation3Ph(PfFormulationTemplate):
             if self.options.distributed_slack:
                 ok, delta = compute_slack_distribution(Scalc=self.Scalc,
                                                        vd=self.vd,
-                                                       bus_installed_power=self.nc.bus_data.installed_power)
+                                                       bus_installed_power=expand3ph(self.nc.bus_data.installed_power)[self.mask])
                 if ok:
                     any_change = True
                     # Update the objective power to reflect the slack distribution

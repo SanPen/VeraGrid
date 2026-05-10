@@ -55,7 +55,8 @@ def _build_phase_to_dq0_measurements(
     return i_d_expr, i_q_expr, i_0_expr, v_d_expr, v_q_expr, v_0_expr
 
 
-def get_bridge_filter_2level_3ph_emt_template(vf: VarFactory, name: str = "bridge_filter_2level_3ph_emt") -> EmtModelTemplate:
+def get_bridge_filter_2level_3ph_emt_template(vf: VarFactory,
+                                              name: str = "bridge_filter_2level_3ph_emt") -> EmtModelTemplate:
     """
     Build a standalone 2-level bridge with a three-phase RL AC filter.
 

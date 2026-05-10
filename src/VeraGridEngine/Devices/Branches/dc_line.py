@@ -10,7 +10,7 @@ import numpy as np
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 from VeraGridEngine.Devices.Profiles import ProfileFloat
-from VeraGridEngine.enumerations import DeviceType, BuildStatus, SubObjectType
+from VeraGridEngine.enumerations import DeviceType, BuildStatus, SubObjectType, PrpCat
 from VeraGridEngine.Devices.Branches.line_locations import LineLocations
 from VeraGridEngine.Devices.Parents.editable_device import GCProp
 
@@ -28,15 +28,51 @@ class DcLine(BranchParent):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='R', units='p.u.', tpe=float, definition='Total positive sequence resistance.'),
-        GCProp(key='length', units='km', tpe=float, definition='Length of the line (not used for calculation)'),
-        GCProp(key='r_fault', units='p.u.', tpe=float,
-                      definition='Resistance of the mid-line fault.Used in short circuit studies.'),
-        GCProp(key='fault_pos', units='p.u.', tpe=float,
-                      definition='Per-unit positioning of the fault:0 would be at the "from" side,1 would '
-                                 'be at the "to" side,therefore 0.5 is at the middle.'),
-        GCProp(key='template', units='', tpe=DeviceType.AnyLineTemplateDevice, definition='', editable=False),
-        GCProp(key='locations', units='', tpe=SubObjectType.LineLocations, definition='', editable=False),
+        GCProp(
+            prop_name='R',
+            units='p.u.',
+            tpe=float,
+            definition='Total positive sequence resistance.',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='length',
+            units='km',
+            tpe=float,
+            definition='Length of the line (not used for calculation)',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='r_fault',
+            units='p.u.',
+            tpe=float,
+            definition='Resistance of the mid-line fault.Used in short circuit studies.',
+            cat=[PrpCat.SC],
+        ),
+        GCProp(
+            prop_name='fault_pos',
+            units='p.u.',
+            tpe=float,
+            definition='Per-unit positioning of the fault:0 would be at the "from" side,1 would '
+                                 'be at the "to" side,therefore 0.5 is at the middle.',
+            cat=[PrpCat.SC],
+        ),
+        GCProp(
+            prop_name='template',
+            units='',
+            tpe=DeviceType.AnyLineTemplateDevice,
+            definition='',
+            editable=False,
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='locations',
+            units='',
+            tpe=SubObjectType.LineLocations,
+            definition='',
+            editable=False,
+            cat=[PrpCat.TP],
+        ),
     )
 
     def __init__(self,

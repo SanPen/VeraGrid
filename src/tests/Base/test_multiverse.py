@@ -744,6 +744,28 @@ def test_multiverse_child_starts_with_copies_of_parent_diagrams() -> None:
         assert child_diagram.name == root_diagram.name
 
 
+def test_multiverse_root_commit_syncs_diagrams_for_new_child() -> None:
+    """
+    Verify root commit keeps root-owned diagram snapshots in sync for child inheritance.
+    """
+    mv = vge.MultiVerse(_load_grid("lynn5node.gridcal"))
+    root = mv.root_nodes[0]
+
+    edited_name = "Root Diagram Edited"
+    mv.current_model.diagrams[0].name = edited_name
+    mv.commit_current()
+
+    child = mv.create_node(
+        data=vge.MultiCircuit(name="child"),
+        parent_id=root.node_id,
+        position=root.child_count(),
+    )
+
+    assert root.diagrams[0].name == edited_name
+    assert child.diagrams[0].name == edited_name
+    assert child.diagrams[0] is not root.diagrams[0]
+
+
 def test_multiverse_save_load_rebinds_active_diagram_objects_to_current_model(tmp_path: Path) -> None:
     """
     Verify loaded diagrams edit the same objects used by the active simulation circuit.

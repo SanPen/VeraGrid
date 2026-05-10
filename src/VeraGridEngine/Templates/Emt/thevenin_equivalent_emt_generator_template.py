@@ -539,32 +539,16 @@ def get_generator_thevenin_rl_emt_template_with_ref(
     # keep the original EMT injection interface intact.
     # ------------------------------------------------------------------
     templ.block.external_mapping = dict({
-        VarPowerFlowRefferenceType.v_N: None,
         VarPowerFlowRefferenceType.v_A: v_A,
         VarPowerFlowRefferenceType.v_B: v_B,
         VarPowerFlowRefferenceType.v_C: v_C,
-        VarPowerFlowRefferenceType.P: None,
-        VarPowerFlowRefferenceType.Q: None,
-        VarPowerFlowRefferenceType.P_N: None,
-        VarPowerFlowRefferenceType.Q_N: None,
-        VarPowerFlowRefferenceType.P_A: None,
-        VarPowerFlowRefferenceType.Q_A: None,
-        VarPowerFlowRefferenceType.P_B: None,
-        VarPowerFlowRefferenceType.Q_B: None,
-        VarPowerFlowRefferenceType.P_C: None,
-        VarPowerFlowRefferenceType.Q_C: None,
-        VarPowerFlowRefferenceType.i_N: None,
         VarPowerFlowRefferenceType.i_A: i_A,
         VarPowerFlowRefferenceType.i_B: i_B,
         VarPowerFlowRefferenceType.i_C: i_C,
         VarPowerFlowRefferenceType.phi_v: phi_v,
         VarPowerFlowRefferenceType.phi: phi,
         VarPowerFlowRefferenceType.Vpk: Vpk,
-        VarPowerFlowRefferenceType.Ipk: Ipk,
-        VarPowerFlowRefferenceType.d_v_N: None,
-        VarPowerFlowRefferenceType.d_v_A: None,
-        VarPowerFlowRefferenceType.d_v_B: None,
-        VarPowerFlowRefferenceType.d_v_C: None,
+        VarPowerFlowRefferenceType.Ipk: Ipk
     })
 
     # ------------------------------------------------------------------

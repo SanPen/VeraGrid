@@ -9,7 +9,7 @@ from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCPro
 from VeraGridEngine.Devices.Events.dynamic_plot import DynamicPlot
 from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
-from VeraGridEngine.enumerations import DeviceType, SubObjectType
+from VeraGridEngine.enumerations import DeviceType, SubObjectType, PrpCat
 
 
 class DynamicPlotEntry(EditableDevice):
@@ -24,9 +24,27 @@ class DynamicPlotEntry(EditableDevice):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='variable', units='', tpe=SubObjectType.VarType, definition='parameter that the event changes'),
-        GCProp(key='plot', units='', tpe=DeviceType.DynamicPlotGroupDevice, definition='Plot group'),
-        GCProp(key='group', units='', tpe=DeviceType.RmsEventsGroupDevice, definition='RmsEvent group'),
+        GCProp(
+            prop_name='variable',
+            units='',
+            tpe=SubObjectType.VarType,
+            definition='parameter that the event changes',
+            cat=[PrpCat.RMS],
+        ),
+        GCProp(
+            prop_name='plot',
+            units='',
+            tpe=DeviceType.DynamicPlotGroupDevice,
+            definition='Plot group',
+            cat=[PrpCat.RMS],
+        ),
+        GCProp(
+            prop_name='group',
+            units='',
+            tpe=DeviceType.RmsEventsGroupDevice,
+            definition='RmsEvent group',
+            cat=[PrpCat.RMS],
+        ),
     )
 
     def __init__(self,

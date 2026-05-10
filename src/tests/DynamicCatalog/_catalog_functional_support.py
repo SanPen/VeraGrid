@@ -117,6 +117,8 @@ class FunctionalRuntimeProblem:
         self.glob_time = glob_time_var
 
         ordered_vars: list[Var] = list()
+        runtime_vars: list[Var] = list(block.event_dict.keys()) + list(block.mode_dict.keys())
+        runtime_uids: set[int] = set(var.uid for var in runtime_vars)
         group_vars: list[list[Var]] = [block.state_vars, block.algebraic_vars, block.in_vars, list(block.init_eqs.keys()), list(block.diff_init_eqs.keys())]
         group_var_list: list[Var]
         candidate_var: Var
@@ -130,12 +132,18 @@ class FunctionalRuntimeProblem:
 
         expr_item: Expr | Comparison | float | int | bool
         for expr_item in expr_list:
-            append_expr_vars(ordered_vars, expr_item)
+            expr_vars: list[Var] = list()
+            expr_var: Var
+            append_expr_vars(expr_vars, expr_item)
+            for expr_var in expr_vars:
+                if expr_var.uid not in runtime_uids:
+                    append_unique_var(ordered_vars, expr_var)
+                else:
+                    pass
 
         self.uid2idx_vars = {var.uid: idx for idx, var in enumerate(ordered_vars)}
         self.vars_by_uid = {var.uid: var for var in ordered_vars}
 
-        runtime_vars: list[Var] = list(block.event_dict.keys()) + list(block.mode_dict.keys())
         dedup_runtime: list[Var] = list()
         runtime_var: Var
         for runtime_var in runtime_vars:
@@ -569,6 +577,8 @@ class FunctionalRuntimeProblem:
         self.glob_time = glob_time_var
 
         ordered_vars: list[Var] = list()
+        runtime_vars: list[Var] = list(block.event_dict.keys()) + list(block.mode_dict.keys())
+        runtime_uids: set[int] = set(var.uid for var in runtime_vars)
         group_vars: list[list[Var]] = [block.state_vars, block.algebraic_vars, block.in_vars, list(block.init_eqs.keys()), list(block.diff_init_eqs.keys())]
         group_var_list: list[Var]
         candidate_var: Var
@@ -583,12 +593,18 @@ class FunctionalRuntimeProblem:
 
         expr_item: Expr | Comparison | float | int | bool
         for expr_item in expr_list:
-            append_expr_vars(ordered_vars, expr_item)
+            expr_vars: list[Var] = list()
+            expr_var: Var
+            append_expr_vars(expr_vars, expr_item)
+            for expr_var in expr_vars:
+                if expr_var.uid not in runtime_uids:
+                    append_unique_var(ordered_vars, expr_var)
+                else:
+                    pass
 
         self.uid2idx_vars = {var.uid: idx for idx, var in enumerate(ordered_vars)}
         self.vars_by_uid = {var.uid: var for var in ordered_vars}
 
-        runtime_vars: list[Var] = list(block.event_dict.keys()) + list(block.mode_dict.keys())
         dedup_runtime: list[Var] = list()
         runtime_var: Var
         for runtime_var in runtime_vars:
@@ -2606,6 +2622,18 @@ def build_functional_contracts() -> list[FunctionalContract]:
     FunctionalContract(label="lookup_array_1x3_linear_variable", typ_id="11", inputs={"yi": 0.5, "arr_x1": 0.0, "arr_x2": 1.0, "arr_x3": 2.0, "arr_y1": 0.0, "arr_y2": 10.0, "arr_y3": 20.0}, params={"vClip": 1.0}, outputs={"yo": 5.0}),
     FunctionalContract(label="lookup_array_1x4_linear_fixed", typ_id="12", inputs={"yi": 2.5}, params={"arr_x1": 0.0, "arr_x2": 1.0, "arr_x3": 2.0, "arr_x4": 3.0, "arr_y1": 0.0, "arr_y2": 10.0, "arr_y3": 20.0, "arr_y4": 30.0, "vClip": 1.0}, outputs={"yo": 25.0}),
     FunctionalContract(label="lookup_array_1x4_linear_variable", typ_id="13", inputs={"yi": 2.5, "arr_x1": 0.0, "arr_x2": 1.0, "arr_x3": 2.0, "arr_x4": 3.0, "arr_y1": 0.0, "arr_y2": 10.0, "arr_y3": 20.0, "arr_y4": 30.0}, params={"vClip": 1.0}, outputs={"yo": 25.0}),
+    FunctionalContract(label="lookup_array_linear_default", typ_id="7", inputs={"yi": 0.5}, params={"arr_x1": 0.0, "arr_x2": 1.0, "arr_x3": 2.0, "arr_y1": 0.0, "arr_y2": 10.0, "arr_y3": 20.0}, outputs={"yo": 5.0}),
+    FunctionalContract(label="lookup_array_linear_noclipping_default", typ_id="8", inputs={"yi": 2.5}, params={"arr_x1": 0.0, "arr_x2": 1.0, "arr_x3": 2.0, "arr_y1": 0.0, "arr_y2": 10.0, "arr_y3": 20.0}, outputs={"yo": 25.0}),
+    FunctionalContract(label="inverse_lookup_array_linear_default", typ_id="5", inputs={"yi": 5.0}, params={"arr_x1": 0.0, "arr_x2": 1.0, "arr_x3": 2.0, "arr_y1": 0.0, "arr_y2": 10.0, "arr_y3": 20.0}, outputs={"yo": 0.5}),
+    FunctionalContract(label="inverse_lookup_array_object_linear_default", typ_id="6", inputs={"yi": 5.0}, params={"arr_x1": 0.0, "arr_x2": 1.0, "arr_x3": 2.0, "arr_y1": 0.0, "arr_y2": 10.0, "arr_y3": 20.0}, outputs={"yo": 0.5}),
+    FunctionalContract(label="lookup_array_object_linear_default", typ_id="14", inputs={"yi": 0.5}, params={"arr_x1": 0.0, "arr_x2": 1.0, "arr_x3": 2.0, "arr_y1": 0.0, "arr_y2": 10.0, "arr_y3": 20.0}, outputs={"yo": 5.0}),
+    FunctionalContract(label="lookup_array_object_linear_noclipping_default", typ_id="15", inputs={"yi": 2.5}, params={"arr_x1": 0.0, "arr_x2": 1.0, "arr_x3": 2.0, "arr_y1": 0.0, "arr_y2": 10.0, "arr_y3": 20.0}, outputs={"yo": 25.0}),
+    FunctionalContract(label="lookup_array_spline_default", typ_id="9", inputs={"yi": 0.5}, params={"arr_x1": 0.0, "arr_x2": 1.0, "arr_x3": 2.0, "arr_y1": 0.0, "arr_y2": 10.0, "arr_y3": 20.0}, outputs={"yo": 5.0}),
+    FunctionalContract(label="lookup_array_object_spline_default", typ_id="16", inputs={"yi": 0.5}, params={"arr_x1": 0.0, "arr_x2": 1.0, "arr_x3": 2.0, "arr_y1": 0.0, "arr_y2": 10.0, "arr_y3": 20.0}, outputs={"yo": 5.0}),
+    FunctionalContract(label="lookup_matrix_linear_default", typ_id="17", inputs={"yi1": 0.5, "yi2": 1.0}, params={"arr_x1": 0.0, "arr_x2": 1.0, "arr_y1": 0.0, "arr_y2": 2.0, "arr_z1_1": 0.0, "arr_z1_2": 10.0, "arr_z2_1": 20.0, "arr_z2_2": 30.0}, outputs={"yo": 15.0}),
+    FunctionalContract(label="lookup_matrix_spline_default", typ_id="18", inputs={"yi1": 0.5, "yi2": 1.0}, params={"arr_x1": 0.0, "arr_x2": 1.0, "arr_y1": 0.0, "arr_y2": 2.0, "arr_z1_1": 0.0, "arr_z1_2": 10.0, "arr_z2_1": 20.0, "arr_z2_2": 30.0}, outputs={"yo": 15.0}),
+    FunctionalContract(label="lookup_matrix_object_linear_default", typ_id="19", inputs={"yi1": 0.5, "yi2": 1.0}, params={"arr_x1": 0.0, "arr_x2": 1.0, "arr_y1": 0.0, "arr_y2": 2.0, "arr_z1_1": 0.0, "arr_z1_2": 10.0, "arr_z2_1": 20.0, "arr_z2_2": 30.0}, outputs={"yo": 15.0}),
+    FunctionalContract(label="lookup_matrix_object_spline_default", typ_id="20", inputs={"yi1": 0.5, "yi2": 1.0}, params={"arr_x1": 0.0, "arr_x2": 1.0, "arr_y1": 0.0, "arr_y2": 2.0, "arr_z1_1": 0.0, "arr_z1_2": 10.0, "arr_z2_1": 20.0, "arr_z2_2": 30.0}, outputs={"yo": 15.0}),
     FunctionalContract(label="ip_two_out_of_three_true", typ_id="344", inputs={"yi1": 1.0, "yi2": 1.0, "yi3": 0.0}, params={"Tpick": 0.0, "Tdrop": 0.0}, outputs={"yo": 1.0}),
     FunctionalContract(label="ip_and2_true", typ_id="345", inputs={"yi1": 1.0, "yi2": 1.0}, params={"Tpick": 0.0, "Tdrop": 0.0}, outputs={"yo": 1.0}),
     FunctionalContract(label="ip_and3_true", typ_id="346", inputs={"yi1": 1.0, "yi2": 1.0, "yi3": 1.0}, params={"Tpick": 0.0, "Tdrop": 0.0}, outputs={"yo": 1.0}),

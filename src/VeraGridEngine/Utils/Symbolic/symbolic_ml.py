@@ -12,17 +12,27 @@ import VeraGridEngine.Utils.Symbolic.symbolic as sym
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 
 
-def ml_positive_part(vf: VarFactory, u:Expr, name:str=''):
+def ml_positive_part(
+    vf: VarFactory,
+    u: Expr,
+    name: str = '',
+    scale_balance: Expr | None = None,
+    scale_complementarity: Expr | None = None,
+    scale_equalities: Expr | None = None,
+):
     u_plus1 = vf.add_var('u_plus1_'+name)
     u_plus2 = vf.add_var('u_plus2_'+name)
     u_minus1 = vf.add_var('u_minus1_' +name)
     u_minus2 = vf.add_var('u_minus2_' +name)
+    s_bal = Const(1.0) if scale_balance is None else scale_balance
+    s_comp = Const(1.0) if scale_complementarity is None else scale_complementarity
+    s_eq = Const(1.0) if scale_equalities is None else scale_equalities
     positive_part_block = Block(
         algebraic_eqs=[
-            u - (u_plus1*u_plus2 - u_minus1*u_minus2),
-            u_plus1*u_minus1,
-            u_plus1 - u_plus2,
-            u_minus1 - u_minus2,
+            (u - (u_plus1*u_plus2 - u_minus1*u_minus2)) / s_bal,
+            (u_plus1*u_minus1) / s_comp,
+            (u_plus1 - u_plus2) / s_eq,
+            (u_minus1 - u_minus2) / s_eq,
         ],
         algebraic_vars=[u_plus1, u_plus2, u_minus1, u_minus2],
         init_eqs={
@@ -57,11 +67,44 @@ def ml_max(vf: VarFactory, u:Expr, v:Expr, alternative:bool = True, name:str='')
         max_expr = u + neg_part_uv
     return max_expr, block_hv
 
-def ml_hard_sat(vf: VarFactory, u:Expr, u_min:Expr, u_max:Expr, name:str=""):
-    block1, expr1_plus, expr1_minus = ml_positive_part(vf, u - u_max, name+"_max")
-    block2, expr2_plus, expr2_minus = ml_positive_part(vf, u - u_min, name+"_min")
+def ml_hard_sat(
+    vf: VarFactory,
+    u: Expr,
+    u_min: Expr,
+    u_max: Expr,
+    name: str = "",
+    alternative_positive_part: bool = False,
+    scale_balance: Expr | None = None,
+    scale_complementarity: Expr | None = None,
+    scale_equalities: Expr | None = None,
+):
+    if alternative_positive_part:
+        block1, expr1_plus, expr1_minus = ml_positive_part_alt(vf, u - u_max, name + "_max")
+        block2, expr2_plus, expr2_minus = ml_positive_part_alt(vf, u - u_min, name + "_min")
+    else:
+        block1, expr1_plus, expr1_minus = ml_positive_part(
+            vf,
+            u - u_max,
+            name + "_max",
+            scale_balance=scale_balance,
+            scale_complementarity=scale_complementarity,
+            scale_equalities=scale_equalities,
+        )
+        block2, expr2_plus, expr2_minus = ml_positive_part(
+            vf,
+            u - u_min,
+            name + "_min",
+            scale_balance=scale_balance,
+            scale_complementarity=scale_complementarity,
+            scale_equalities=scale_equalities,
+        )
     final_expr = u_min + expr2_plus - expr1_plus 
-    final_block = Block(children=[block1, block2])
+    final_block = Block(
+        algebraic_eqs=list(block1.algebraic_eqs) + list(block2.algebraic_eqs),
+        algebraic_vars=list(block1.algebraic_vars) + list(block2.algebraic_vars),
+        init_eqs={**dict(block1.init_eqs), **dict(block2.init_eqs)},
+        children=list(block1.children) + list(block2.children),
+    )
     return final_block, final_expr 
 
 def exponential_ml(vf: VarFactory, x:Expr, name:str=""):
@@ -222,7 +265,7 @@ def trig_transform(vf: VarFactory, u:Expr, type = 'usual'):
             diff_vars=[d_u_sin, d_u_cos, dx],
             reformulated_vars=[u_sin, u_cos],
             init_eqs={
-                x:u,
+                #x:u,
                 u_cos: sym.cos(x),
                 u_sin: sym.sin(x),
             }
@@ -288,14 +331,25 @@ def trig_transform(vf: VarFactory, u:Expr, type = 'usual'):
         block = Block(
             algebraic_vars= [u_cos, u_sin, int_xcosx, int_xsinx],
             algebraic_eqs=[
-                int_xsinx - (u_sin - (x)*u_cos), 
-                int_xcosx - ((x)*u_sin + u_cos),
+                #int_xsinx - (u_sin - (x)*u_cos), 
+                #int_xcosx - ((x)*u_sin + u_cos),
+                (int_xsinx + x*int_xcosx)/(1+x**2) - u_sin,
+                (int_xcosx - x*int_xsinx)/(1+x**2) - u_cos,
             ],
             differential_eqs = [
                 dt_int_xsinx - dx*(u_sin*(x)),
                 dt_int_xcosx - dx*(u_cos*(x)),
             ],
             diff_vars=[ dx, dt_int_xcosx, dt_int_xsinx],
+            init_eqs={
+                #x:u,
+                u_cos: sym.cos(x),
+                u_sin: sym.sin(x),
+                int_xsinx: sym.sin(x) - x*sym.cos(x),
+                int_xcosx: x*sym.sin(x) + sym.cos(x),
+                dt_int_xsinx: dx*sym.sin(x)*x,
+                dt_int_xcosx: dx*sym.cos(x)*x,
+            }
         )
     else:
         u_cos = vf.add_var('u_cos')
@@ -315,6 +369,14 @@ def trig_transform(vf: VarFactory, u:Expr, type = 'usual'):
                 dt_int_sin2 - (dx)*u_sin**2,
                 dt_int_sin2cos2 - (dx)*u_sin**2*u_cos**2
             ],
+            init_eqs={
+                u_cos: sym.cos(x),
+                u_sin: sym.sin(x),
+                int_sin2: 0.5*(x - u_sin*u_cos),
+                int_sin2cos2: 1/32*(4*x - 4*u_cos**3*u_sin + 4*u_sin**3*u_cos),
+                dt_int_sin2: dx*u_sin**2,
+                dt_int_sin2cos2: dx*u_sin**2*u_cos**2,
+            },
             diff_vars=[dx, dt_int_sin2, dt_int_sin2cos2],
         )
 

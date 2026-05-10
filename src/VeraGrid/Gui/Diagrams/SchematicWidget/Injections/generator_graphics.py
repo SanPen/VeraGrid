@@ -11,14 +11,14 @@ from VeraGridEngine.Devices.Injections.generator import Generator
 from VeraGrid.Gui.Diagrams.generic_graphics import Circle
 from VeraGrid.Gui.messages import yes_no_question
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionTemplateGraphicItem
-from VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor import GeneratorQCurveEditor
-from VeraGrid.Gui.DeviceEditors.SolarPowerWizard.solar_power_wizzard import SolarPvWizard
-from VeraGrid.Gui.DeviceEditors.WindPowerWizard.wind_power_wizzard import WindFarmWizard
+from VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor import GeneratorEditorDialog, GeneratorQCurveEditor
+from VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizzard import SolarPvWizard
+from VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard import WindFarmWizard
 from VeraGrid.Gui.profile_wizard_utils import fill_substation_weather_profiles
 from VeraGrid.Gui.gui_functions import add_menu_entry
 from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
 from VeraGridEngine.enumerations import DynamicSimulationMode
-from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import open_dyn_params_editor
+
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
@@ -49,6 +49,18 @@ class GeneratorGraphicItem(InjectionTemplateGraphicItem):
     def api_object(self) -> Generator:
         return self._api_object
 
+    def open_device_editor(self) -> bool:
+        """
+        Open the generator editor.
+
+        :return: ``True`` when the editor was opened.
+        """
+        dlg = GeneratorEditorDialog(api_object=self.api_object, circuit=self.editor.circuit)
+        if dlg.exec():
+            return True
+        else:
+            return True
+
     def contextMenuEvent(self, event):
         """
         Display context menu
@@ -69,16 +81,6 @@ class GeneratorGraphicItem(InjectionTemplateGraphicItem):
                        text="Set regulation bus",
                        icon_path="",
                        function_ptr=self.set_regulation_bus)
-
-        add_menu_entry(menu=menu,
-                       text="edit rms dynamic parameters",
-                       function_ptr=self.edit_rms_dynamic_parameters,
-                       icon_path=":/Icons/icons/dyn_gray.png")
-
-        add_menu_entry(menu=menu,
-                       text="edit emt dynamic parameters",
-                       function_ptr=self.edit_emt_dynamic_parameters,
-                       icon_path=":/Icons/icons/dyn_gray.png")
 
         add_menu_entry(menu=menu,
                        text="Qcurve edit",
@@ -106,6 +108,15 @@ class GeneratorGraphicItem(InjectionTemplateGraphicItem):
 
         menu.exec_(event.screenPos())
 
+    def mouseDoubleClickEvent(self, event):
+        """
+        Open the generator editor on double click.
+
+        :param event: Mouse event.
+        :return: None.
+        """
+        super().mouseDoubleClickEvent(event)
+
     def edit_dynamic_rms(self):
         """
         Open the unified dynamic editor workspace for this generator.
@@ -119,20 +130,6 @@ class GeneratorGraphicItem(InjectionTemplateGraphicItem):
         """
 
         open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit, preferred_mode=DynamicSimulationMode.EMT)
-
-    def edit_rms_dynamic_parameters(self):
-        """
-        Open the unified dynamic editor workspace for this generator.
-        """
-
-        open_dyn_params_editor(var_factory=self.editor.circuit.var_factory, api_object=self.api_object, preferred_mode=DynamicSimulationMode.RMS)
-
-    def edit_emt_dynamic_parameters(self):
-        """
-        Open the unified dynamic editor workspace for this generator.
-        """
-
-        open_dyn_params_editor(var_factory=self.editor.circuit.var_factory, api_object=self.api_object, preferred_mode=DynamicSimulationMode.EMT)
 
     def to_battery(self):
         """
@@ -190,6 +187,14 @@ class GeneratorGraphicItem(InjectionTemplateGraphicItem):
         self.api_object.Qmax = dlg.Qmax
         self.api_object.Pmin = dlg.Pmin
         self.api_object.Pmax = dlg.Pmax
+
+    def edit_generator(self):
+        """
+        Open the full generator editor dialogue.
+
+        :return: None.
+        """
+        self.open_device_editor()
 
     def solar_pv_wizard(self):
         """

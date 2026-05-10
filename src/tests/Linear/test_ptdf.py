@@ -71,9 +71,6 @@ def test_ptdf():
     assert (np.max(np.abs(simulation.results.PTDF - test_PTDF)) < 1e-3)
     assert (np.max(np.abs(simulation.results.LODF - test_LODF)) < 1e-3)
 
-    return True
-
-
 def test_ptdf_ieee14_definition():
     """
     Compare the PSSE LODF and the VeraGrid LODF for the IEEE14
@@ -276,6 +273,7 @@ def test_ptdf_psse() -> None:
             ptdf_psse = pd.read_csv(pssename)
 
             ptdf_psse.drop(['vbase_nodefrom', 'vbase_nodeto'], axis=1, inplace=True)
+            ptdf_psse = ptdf_psse.copy()
             ptdf_psse['branches'] = (ptdf_psse['nodefrom'].astype(str) + '_' + ptdf_psse['nodeto'].astype(str) + '_'
                                      + ptdf_psse['ckt'].astype(str))
 
@@ -351,6 +349,7 @@ def test_lodf_psse() -> None:
 
             lodf_psse = pd.read_csv(pssename)
             lodf_psse.drop(['vbase_nodefrom', 'vbase_nodeto'], axis=1, inplace=True)
+            lodf_psse = lodf_psse.copy()
             lodf_psse['branches'] = (lodf_psse['nodefrom'].astype(str) + '_' + lodf_psse['nodeto'].astype(str) + '_'
                                      + lodf_psse['ckt'].astype(str))
 

@@ -144,6 +144,9 @@ def test_emt_template_and_emt_fmu_template_are_mutually_exclusive() -> None:
     """
 
     load = _build_load()
+    # This exclusivity check is about template ownership only. The fixture is
+    # intentionally standalone and has no bus/network context.
+    load.disable_auto_updates()
     native_template = _build_emt_native_template()
     fmu_template = _build_emt_fmu_template()
 

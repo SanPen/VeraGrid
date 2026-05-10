@@ -318,11 +318,14 @@ def get_bus_data(bus_data: BusData,
         bus_data.cost_v[i] = bus.Vm_cost
         bus_data.Vbus[i] = bus.get_voltage_guess(use_stored_guess=use_stored_guess)
         bus_data.is_dc[i] = bus.is_dc
-        bus_data.is_grounded[i] = bus.is_grounded
+
 
         # Grounded buses go to zero
         if bus.is_grounded and consider_grounded_buses and bus.is_dc:
             bus_data.Vbus[i] = 1e-20 * np.exp(1j * 1e-20)  # effectively zero
+            bus_data.is_grounded[i] = bus.is_grounded
+        else:
+            bus_data.is_grounded[i] = False
 
         bus_data.angle_min[i] = bus.angle_min
         bus_data.angle_max[i] = bus.angle_max

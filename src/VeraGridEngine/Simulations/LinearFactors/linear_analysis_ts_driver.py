@@ -89,10 +89,11 @@ class LinearAnalysisTimeSeriesDriver(TimeSeriesDriverTemplate):
 
         if self.simplified_compilation:
             # Theoretically equivalent but cannot be ensured 100%
-            self.results.S = self.grid.get_Pbus_prof(apply_active=True)[self.time_indices]
-            self.results.Sf = lin_ts.get_flows_ts(P=self.results.S,
+            P = self.grid.get_Pbus_prof(apply_active=True)[self.time_indices]
+            self.results.Sf = lin_ts.get_flows_ts(P=P,
                                                   progress_func=self.report_progress,
                                                   progress_text=self.report_text)
+            self.results.S = lin_ts.get_corrected_injections_ts(P_ts=P)
 
         else:
             for it, t in enumerate(self.time_indices):
@@ -110,9 +111,9 @@ class LinearAnalysisTimeSeriesDriver(TimeSeriesDriverTemplate):
                     correct_values=self.options.correct_values,
                 )
 
-                Sbus = nc.get_power_injections_pu()
-                self.results.S[it, :] = Sbus * nc.Sbase
+                Sbus = nc.get_power_injections_pu().real
                 self.results.Sf[it, :] = lin.get_flows(Sbus=Sbus) * nc.Sbase
+                self.results.S[it, :] = lin.get_corrected_injections(P=Sbus * nc.Sbase)
 
         rates = self.grid.get_branch_rates()
         self.results.loading = self.results.Sf.real / (rates + 1e-9)

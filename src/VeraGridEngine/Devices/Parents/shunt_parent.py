@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.enumerations import BuildStatus, DeviceType, SubObjectType
+from VeraGridEngine.enumerations import BuildStatus, DeviceType, SubObjectType, PrpCat
 from VeraGridEngine.Devices.Profiles import ProfileFloat
 from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
 from VeraGridEngine.Devices.admittance_matrix import AdmittanceMatrix
@@ -46,22 +46,95 @@ class ShuntParent(InjectionParent):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='G', units='MW', tpe=float, definition='Active power', profile_name='G_prof'),
-        GCProp(key='G0', units='MW', tpe=float,
-                      definition='Zero sequence active power of the impedance component at V=1.0 p.u.',
-                      profile_name='G0_prof'),
-        GCProp(key='Ga', units='MW', tpe=float, definition='Active power', profile_name='Ga_prof'),
-        GCProp(key='Gb', units='MW', tpe=float, definition='Active power', profile_name='Gb_prof'),
-        GCProp(key='Gc', units='MW', tpe=float, definition='Active power', profile_name='Gc_prof'),
-        GCProp(key='B', units='MVAr', tpe=float, definition='Reactive power', profile_name='B_prof'),
-        GCProp(key='B0', units='MVAr', tpe=float,
-                      definition='Zero sequence reactive power of the impedance component at V=1.0 p.u.',
-                      profile_name='B0_prof'),
-        GCProp(key='Ba', units='MVAr', tpe=float, definition='Reactive power', profile_name='Ba_prof'),
-        GCProp(key='Bb', units='MVAr', tpe=float, definition='Reactive power', profile_name='Bb_prof'),
-        GCProp(key='Bc', units='MVAr', tpe=float, definition='Reactive power', profile_name='Bc_prof'),
-        GCProp('ysh', units="p.u.", tpe=SubObjectType.AdmittanceMatrix,
-                      definition='Shunt admittance matrix of the branch', editable=False, display=False),
+        GCProp(
+            prop_name='G',
+            units='MW',
+            tpe=float,
+            definition='Active power',
+            profile_name='G_prof',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='G0',
+            units='MW',
+            tpe=float,
+            definition='Zero sequence active power of the impedance component at V=1.0 p.u.',
+            profile_name='G0_prof',
+            cat=[PrpCat.PF3, PrpCat.SC],
+        ),
+        GCProp(
+            prop_name='Ga',
+            units='MW',
+            tpe=float,
+            definition='Active power',
+            profile_name='Ga_prof',
+            cat=[PrpCat.PF3],
+        ),
+        GCProp(
+            prop_name='Gb',
+            units='MW',
+            tpe=float,
+            definition='Active power',
+            profile_name='Gb_prof',
+            cat=[PrpCat.PF3],
+        ),
+        GCProp(
+            prop_name='Gc',
+            units='MW',
+            tpe=float,
+            definition='Active power',
+            profile_name='Gc_prof',
+            cat=[PrpCat.PF3],
+        ),
+        GCProp(
+            prop_name='B',
+            units='MVAr',
+            tpe=float,
+            definition='Reactive power',
+            profile_name='B_prof',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='B0',
+            units='MVAr',
+            tpe=float,
+            definition='Zero sequence reactive power of the impedance component at V=1.0 p.u.',
+            profile_name='B0_prof',
+            cat=[PrpCat.PF3, PrpCat.SC],
+        ),
+        GCProp(
+            prop_name='Ba',
+            units='MVAr',
+            tpe=float,
+            definition='Reactive power',
+            profile_name='Ba_prof',
+            cat=[PrpCat.PF3],
+        ),
+        GCProp(
+            prop_name='Bb',
+            units='MVAr',
+            tpe=float,
+            definition='Reactive power',
+            profile_name='Bb_prof',
+            cat=[PrpCat.PF3],
+        ),
+        GCProp(
+            prop_name='Bc',
+            units='MVAr',
+            tpe=float,
+            definition='Reactive power',
+            profile_name='Bc_prof',
+            cat=[PrpCat.PF3],
+        ),
+        GCProp(
+            prop_name='ysh',
+            units="p.u.",
+            tpe=SubObjectType.AdmittanceMatrix,
+            definition='Shunt admittance matrix of the branch',
+            editable=False,
+            display=False,
+            cat=[PrpCat.PF],
+        ),
     )
 
     def __init__(self,

@@ -49,6 +49,14 @@ class DynamicEditorWorkspaceManager(QtCore.QObject):
     def reset_for_tests(self) -> None:
         for workspace in list(self._workspaces):
             workspace.close()
+            workspace.deleteLater()
+
+        app: QtWidgets.QApplication | None = QtWidgets.QApplication.instance()
+        if app is not None:
+            app.processEvents()
+        else:
+            pass
+
         self._workspaces.clear()
         self._page_to_workspace.clear()
         self._page_to_entry.clear()

@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 from typing import Union, Tuple
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType, GCProp
-from VeraGridEngine.enumerations import BranchGroupTypes
+from VeraGridEngine.enumerations import BranchGroupTypes, PrpCat
 
 
 class BranchGroup(EditableDevice):
@@ -14,8 +14,21 @@ class BranchGroup(EditableDevice):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='group_type', units='', tpe=BranchGroupTypes, definition=f'Type of branch group'),
-        GCProp(key='color', units='', tpe=str, definition='Color to paint', is_color=True),
+        GCProp(
+            prop_name='group_type',
+            units='',
+            tpe=BranchGroupTypes,
+            definition=f'Type of branch group',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='color',
+            units='',
+            tpe=str,
+            definition='Color to paint',
+            is_color=True,
+            cat=[PrpCat.TP],
+        ),
     )
 
     def __init__(self,

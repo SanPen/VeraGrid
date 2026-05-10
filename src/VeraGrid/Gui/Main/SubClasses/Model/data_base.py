@@ -21,13 +21,17 @@ import VeraGrid.Gui.gui_functions as gf
 from VeraGrid.Gui.object_model import ObjectsModel
 from VeraGrid.Gui.object_proxy_model import ObjectModelFilterProxy
 from VeraGrid.Gui.profiles_model import ProfilesModel
-from VeraGridEngine.enumerations import DeviceType, DynamicSimulationMode, TimeSeriesSearchPoint
+from VeraGridEngine.enumerations import DeviceType, DynamicSimulationMode, TimeSeriesSearchPoint, PrpCat
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.Topology.detect_substations import detect_substations, detect_facilities
 from VeraGrid.Gui.Analysis.object_plot_analysis import object_histogram_analysis
 from VeraGrid.Gui.messages import yes_no_question, warning_msg, info_msg
 from VeraGrid.Gui.Main.SubClasses.Model.diagrams import DiagramsMain
-from VeraGrid.Gui.DeviceEditors.LineEditor.line_editor import LineEditor
+from VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor import LineDeviceEditorDialog
+from VeraGrid.Gui.DeviceEditors.DcLineEditor.dc_line_device_editor import DcLineDeviceEditorDialog
+from VeraGrid.Gui.DeviceEditors.LoadDesigner.load_device_editor import LoadDeviceEditorDialog
+from VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor import GeneratorEditorDialog
+from VeraGrid.Gui.DeviceEditors.VscEditor.vsc_device_editor import VscDeviceEditorDialog
 from VeraGrid.Gui.DeviceEditors.TowerBuilder.LineBuilderDialogue import TowerBuilderGUI
 from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
 from VeraGrid.Gui.FmuTemplateEditor.fmu_template_editor import FmuTemplateEditorDialog
@@ -37,9 +41,11 @@ from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidg
 from VeraGrid.Gui.GridReduce.grid_reduce import GridReduceDialogue
 from VeraGrid.Gui.SubstationDesigner.substation_designer import SubstationDesigner
 from VeraGrid.Gui.general_dialogues import LogsDialogue, CustomQuestionDialogue, CheckListDialogue
-from VeraGrid.Gui.DeviceEditors.TransformerEditor.transformer_editor import TransformerEditor
-from VeraGrid.Gui.DeviceEditors.Transformer3wEditor.transformer3w_editor import Transformer3WEditor
-from VeraGrid.Gui.DeviceEditors.ControllableShuntEditor.controllable_shunt_editor import ControllableShuntEditor
+from VeraGrid.Gui.DeviceEditors.TransformerEditor.transformer_device_editor import TransformerDeviceEditorDialog
+from VeraGrid.Gui.DeviceEditors.Transformer3wEditor.transformer3w_device_editor import Transformer3WDeviceEditorDialog
+from VeraGrid.Gui.DeviceEditors.ControllableShuntEditor.controllable_shunt_device_editor import (
+    ControllableShuntDeviceEditorDialog,
+)
 from VeraGrid.Gui.Icons.icon_associations import device_type_icons
 
 
@@ -74,6 +80,24 @@ class DataBaseTableMain(DiagramsMain):
         self.ui.goToTsPointComboBox.setModel(ts_search_points_mdl)
 
         self.ui.smart_search_lineEdit.setPlaceholderText("Type the object name or a smart filter expression ...")
+
+        self.prop_filter_dict, prop_filter_mdl = gf.enums_to_icons_model(
+            [
+                (PrpCat.All,":/Icons/icons/edit.png"),
+                (PrpCat.TP,":/Icons/icons/automatic_layout.png"),
+                (PrpCat.PF,":/Icons/icons/pf.png"),
+                (PrpCat.PF3,":/Icons/icons/pf3.png"),
+                (PrpCat.SC,":/Icons/icons/short_circuit.png"),
+                (PrpCat.OPF,":/Icons/icons/dcopf.png"),
+                (PrpCat.CON,":/Icons/icons/otdf.png"),
+                (PrpCat.REL,":/Icons/icons/reliability.png"),
+                (PrpCat.NTC,":/Icons/icons/ntc_opf.png"),
+                (PrpCat.INV,":/Icons/icons/expansion_planning.png"),
+                (PrpCat.RMS,":/Icons/icons/dyn.png"),
+                (PrpCat.EMT,":/Icons/icons/dyn_emt.png"),
+            ]
+        )
+        self.ui.dbFilterComboBox.setModel(prop_filter_mdl)
 
         # Buttons
         self.ui.filter_pushButton.clicked.connect(self.objects_smart_search)
@@ -111,6 +135,7 @@ class DataBaseTableMain(DiagramsMain):
 
         # combobox change
         self.ui.associationsComboBox.currentTextChanged.connect(self.on_associations_combo_box_change)
+        self.ui.dbFilterComboBox.currentTextChanged.connect(self.view_objects_data)
 
     def setup_objects_tree(self):
         """
@@ -144,12 +169,17 @@ class DataBaseTableMain(DiagramsMain):
         """
         template_elm, dictionary_of_lists = self.circuit.get_dictionary_of_lists(elm_type=elm_type)
 
-        mdl = ObjectsModel(objects=elements,
-                           property_list=list(template_elm.property_list),
-                           time_index=self.get_db_slider_index(),
-                           parent=self.ui.dataStructureTableView,
-                           editable=True,
-                           dictionary_of_lists=dictionary_of_lists)
+        filter_prop = self.prop_filter_dict[self.ui.dbFilterComboBox.currentText()]
+
+        mdl = ObjectsModel(
+            objects=elements,
+            property_list=list(template_elm.property_list),
+            time_index=self.get_db_slider_index(),
+            parent=self.ui.dataStructureTableView,
+            editable=True,
+            dictionary_of_lists=dictionary_of_lists,
+            properties_filter=filter_prop
+        )
 
         return mdl
 
@@ -979,22 +1009,46 @@ class DataBaseTableMain(DiagramsMain):
                         self.tower_builder_window.exec()
 
                     elif elm_type == DeviceType.LineDevice.value:
-                        dlg = LineEditor(line=elm, grid=self.circuit)
+                        dlg = LineDeviceEditorDialog(api_object=elm, circuit=self.circuit)
                         dlg.exec()
 
+                    elif elm_type == DeviceType.DCLineDevice.value:
+                        dlg = DcLineDeviceEditorDialog(api_object=elm, circuit=self.circuit)
+                        if dlg.exec():
+                            pass
+
+                    elif elm_type == DeviceType.VscDevice.value:
+                        dlg = VscDeviceEditorDialog(api_object=elm, circuit=self.circuit)
+                        if dlg.exec():
+                            pass
+
                     elif elm_type == DeviceType.Transformer2WDevice.value:
-                        dlg = TransformerEditor(branch=elm, grid=self.circuit, modify_on_accept=True)
+                        dlg = TransformerDeviceEditorDialog(api_object=elm, circuit=self.circuit)
                         if dlg.exec():
                             pass
 
                     elif elm_type == DeviceType.ControllableShuntDevice.value:
-                        dlg = ControllableShuntEditor(api_object=elm)
+                        dlg = ControllableShuntDeviceEditorDialog(api_object=elm, circuit=self.circuit)
+                        if dlg.exec():
+                            pass
+
+                    elif elm_type == DeviceType.LoadDevice.value:
+                        dlg = LoadDeviceEditorDialog(api_object=elm, circuit=self.circuit)
+                        if dlg.exec():
+                            pass
+
+                    elif elm_type == DeviceType.GeneratorDevice.value:
+                        dlg = GeneratorEditorDialog(api_object=elm, circuit=self.circuit)
+                        if dlg.exec():
+                            pass
+
+                    elif elm_type == DeviceType.BatteryDevice.value:
+                        dlg = GeneratorEditorDialog(api_object=elm, circuit=self.circuit)
                         if dlg.exec():
                             pass
 
                     elif elm_type == DeviceType.Transformer3WDevice.value:
-                        Sbase = self.circuit.Sbase
-                        dlg = Transformer3WEditor(elm, Sbase, modify_on_accept=True)
+                        dlg = Transformer3WDeviceEditorDialog(api_object=elm, circuit=self.circuit)
                         if dlg.exec():
                             pass
 
@@ -1553,8 +1607,7 @@ class DataBaseTableMain(DiagramsMain):
 
     def search_ts_point(self):
         """
-
-        :return:
+        Search time step point
         """
 
         txt = self.ui.goToTsPointComboBox.currentText()
@@ -1562,21 +1615,37 @@ class DataBaseTableMain(DiagramsMain):
 
         if mode == TimeSeriesSearchPoint.LowestLoad:
 
-            total = 0
+            total = np.zeros(self.circuit.get_time_number())
             for elm in self.circuit.loads:
                 total += elm.P_prof.toarray()
 
-            idx = np.argmin(total)
-            self.ui.db_step_slider.setValue(idx)
+            if len(total) > 0:
+                try:
+                    idx = np.argmin(total)
+                except ValueError:
+                    self.show_error_toast(f"{mode.value} could not be found")
+                    return
+
+                self.ui.db_step_slider.setValue(idx)
+            else:
+                self.show_warning_toast("No time steps to navigate to")
 
         elif mode == TimeSeriesSearchPoint.HighestLoad:
 
-            total = 0
+            total = np.zeros(self.circuit.get_time_number())
             for elm in self.circuit.loads:
                 total += elm.P_prof.toarray()
 
-            idx = np.argmax(total)
-            self.ui.db_step_slider.setValue(idx)
+            if len(total) > 0:
+                try:
+                    idx = np.argmax(total)
+                except ValueError:
+                    self.show_error_toast(f"{mode.value} could not be found")
+                    return
+
+                self.ui.db_step_slider.setValue(idx)
+            else:
+                self.show_warning_toast("No time steps to navigate to")
 
         else:
             return

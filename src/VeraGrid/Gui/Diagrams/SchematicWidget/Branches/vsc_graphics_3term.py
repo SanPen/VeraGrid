@@ -10,6 +10,7 @@ from PySide6.QtGui import QIcon, QPixmap, QPainter, QPen, QBrush, QColor, QCurso
 from PySide6.QtWidgets import QMenu, QGraphicsItem, QGraphicsRectItem, QGraphicsSceneMouseEvent
 from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
 
+from VeraGrid.Gui.DeviceEditors.VscEditor.vsc_device_editor import VscDeviceEditorDialog
 from VeraGrid.Gui.gui_functions import add_menu_entry
 from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import BarTerminalItem, RoundTerminalItem
 from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget, ACTIVE, DEACTIVATED
@@ -208,6 +209,18 @@ class VscGraphicItem3Term(GenericDiagramWidget, QGraphicsRectItem):
     @property
     def editor(self) -> SchematicWidget:
         return self._editor
+
+    def open_device_editor(self) -> bool:
+        """
+        Open the VSC editor for this three-terminal converter.
+
+        :return: ``True`` when the editor was opened.
+        """
+        dlg = VscDeviceEditorDialog(api_object=self.api_object, circuit=self.editor.circuit)
+        if dlg.exec():
+            return True
+        else:
+            return True
 
     def paint(self, painter: QPainter, option, widget=None) -> None:
         """Paint the VSC symbol."""
@@ -575,10 +588,12 @@ class VscGraphicItem3Term(GenericDiagramWidget, QGraphicsRectItem):
             self.editor.set_editor_model(api_object=self.api_object)
 
     def mouseDoubleClickEvent(self, event):
-        """ On double-click, potentially open an editor (optional)."""
-        # Currently no specific editor for VSC, but could be added.
-        # self.edit()
-        pass
+        """
+        Open the VSC editor on double click.
+
+        :param event: Qt mouse event.
+        """
+        self.open_device_editor()
 
     def delete(self):
         """Delete the VSC and its connections."""
@@ -696,7 +711,7 @@ class VscGraphicItem3Term(GenericDiagramWidget, QGraphicsRectItem):
             else:
                 pe_icon.addPixmap(QPixmap(":/Icons/icons/check_all.png"))
             pe.setIcon(pe_icon)
-            pe.triggered.connect(lambda: self.set_enable(not self.api_object.active))
+            pe.triggered.connect(self.toggle_enable_from_menu)
 
             # Draw Labels (if applicable)
             # add_menu_entry(menu=menu,
@@ -704,6 +719,11 @@ class VscGraphicItem3Term(GenericDiagramWidget, QGraphicsRectItem):
             #                function_ptr=self.enable_disable_label_drawing, # Needs implementation if label drawing is kept
             #                checkeable=True,
             #                checked_value=self.draw_labels)
+            add_menu_entry(menu=menu,
+                           text="Editor",
+                           function_ptr=self.open_device_editor,
+                           icon_path=":/Icons/icons/edit.png")
+
             add_menu_entry(menu=menu,
                            text="RMS Editor",
                            function_ptr=self.edit_dynamic_rms,
@@ -763,6 +783,15 @@ class VscGraphicItem3Term(GenericDiagramWidget, QGraphicsRectItem):
             menu.exec_(event.screenPos())
         else:
             pass
+
+    def toggle_enable_from_menu(self) -> None:
+        """
+        Toggle enable state from context-menu action.
+        """
+        if self.api_object.active:
+            self.set_enable(False)
+        else:
+            self.set_enable(True)
 
     def control_v_from(self):
         """

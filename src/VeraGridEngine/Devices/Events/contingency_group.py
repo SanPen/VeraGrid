@@ -5,6 +5,7 @@
 
 from typing import Union, Tuple
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType, GCProp
+from VeraGridEngine.enumerations import PrpCat
 
 
 class ContingencyGroup(EditableDevice):
@@ -17,8 +18,20 @@ class ContingencyGroup(EditableDevice):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='category', units='', tpe=str, definition='Some tag to category the contingency group'),
-        GCProp(key='active', units='', tpe=bool, definition='Is the contingency group active for consideration?'),
+        GCProp(
+            prop_name='category',
+            units='',
+            tpe=str,
+            definition='Some tag to category the contingency group',
+            cat=[PrpCat.REL],
+        ),
+        GCProp(
+            prop_name='active',
+            units='',
+            tpe=bool,
+            definition='Is the contingency group active for consideration?',
+            cat=[PrpCat.REL],
+        ),
     )
 
     def __init__(self, idtag: Union[str, None] = None, name="ContingencyGroup", category='', active: bool = True):

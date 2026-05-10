@@ -7,6 +7,7 @@ from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
 from VeraGridEngine.Utils.Symbolic.block import Block
+from VeraGridEngine.Utils.procedural_logic import flipflop, bool_and, bool_or
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
 import numpy as np
 
@@ -26,10 +27,8 @@ def get_pvd1_rms_template(vfactory: VarFactory, name: str = "PVD1 RMS template")
     templ = RmsModelTemplate(name=name)
     templ.tpe = DeviceType.GeneratorDevice
 
-    from VeraGridEngine.Utils.procedural_logic import sampled_value
-
-    vm = vfactory.add_var(f"Vm_{name}", VarPowerFlowRefferenceType.Vm)
-    va = vfactory.add_var(f"Va_{name}", VarPowerFlowRefferenceType.Va)
+    vm = vfactory.add_var(f"Vm_{name}", reference=VarPowerFlowRefferenceType.Vm)
+    va = vfactory.add_var(f"Va_{name}", reference=VarPowerFlowRefferenceType.Va)
     inputs = [vm, va]
 
     p = vfactory.add_var("P_pvd1")
@@ -109,38 +108,19 @@ def get_pvd1_rms_template(vfactory: VarFactory, name: str = "PVD1 RMS template")
     ip_cmd_expr = sym.hard_sat(ip_unlimited, -ip_max_expr, ip_max_expr) * trip_gain
     iq_cmd_expr = sym.hard_sat(iq_unlimited, -iq_max_expr, iq_max_expr) * trip_gain
 
-    mode_dict = dict()
-    procedural_logic = list()
-
-    def register_sampled(name_suffix: str, expr):
-        rt_var = vfactory.add_var(f"{name_suffix}_{name}")
-        mode_dict[rt_var] = expr
-        procedural_logic.append(sampled_value(output=rt_var, source=expr, name=f"sample_{name_suffix}"))
-        return rt_var
-
-    q_droop_rt = register_sampled("q_droop_rt", q_droop_expr)
-    p_sum_rt = register_sampled("p_sum_rt", p_sum_expr)
-    q_sum_rt = register_sampled("q_sum_rt", q_sum_expr)
-    ip_max_rt = register_sampled("ip_max_rt", ip_max_expr)
-    iq_max_rt = register_sampled("iq_max_rt", iq_max_expr)
-    f_trip_rt = register_sampled("f_trip_rt", f_trip_expr)
-    v_trip_rt = register_sampled("v_trip_rt", v_trip_expr)
-    ip_cmd_rt = register_sampled("ip_cmd_rt", ip_cmd_expr)
-    iq_cmd_rt = register_sampled("iq_cmd_rt", iq_cmd_expr)
-
     block = Block(
         algebraic_eqs=[
             p - vm * ipout,
             q - vm * iqout,
-            q_droop - q_droop_rt,
-            p_sum - p_sum_rt,
-            q_sum - q_sum_rt,
-            ip_max - ip_max_rt,
-            iq_max - iq_max_rt,
-            f_trip - f_trip_rt,
-            v_trip - v_trip_rt,
-            ip_cmd - ip_cmd_rt,
-            iq_cmd - iq_cmd_rt,
+            q_droop - q_droop_expr,
+            p_sum - p_sum_expr,
+            q_sum - q_sum_expr,
+            ip_max - ip_max_expr,
+            iq_max - iq_max_expr,
+            f_trip - f_trip_expr,
+            v_trip - v_trip_expr,
+            ip_cmd - ip_cmd_expr,
+            iq_cmd - iq_cmd_expr,
         ],
         algebraic_vars=[p, q, q_droop, p_sum, q_sum, ip_max, iq_max, f_trip, v_trip, ip_cmd, iq_cmd],
         state_eqs=[
@@ -191,8 +171,6 @@ def get_pvd1_rms_template(vfactory: VarFactory, name: str = "PVD1 RMS template")
             vt3: vfactory.add_const(1.2),
             f_hz: vfactory.add_const(60.0),
         },
-        mode_dict=mode_dict,
-        procedural_logic=procedural_logic,
     )
 
     block.name = name
@@ -228,10 +206,10 @@ def get_pvd1_complete_rms_template(vfactory: VarFactory, name: str = "PVD1 compl
     templ.tpe = DeviceType.GeneratorDevice
 
     # Local import avoids a package import cycle at module load time.
-    from VeraGridEngine.Utils.procedural_logic import flipflop, bool_and, bool_or, sampled_value
 
-    vm = vfactory.add_var(f"Vm_{name}", VarPowerFlowRefferenceType.Vm)
-    va = vfactory.add_var(f"Va_{name}", VarPowerFlowRefferenceType.Va)
+
+    vm = vfactory.add_var(f"Vm_{name}", reference=VarPowerFlowRefferenceType.Vm)
+    va = vfactory.add_var(f"Va_{name}", reference=VarPowerFlowRefferenceType.Va)
     inputs = [vm, va]
 
     p = vfactory.add_var("P_pvd1")
@@ -383,34 +361,6 @@ def get_pvd1_complete_rms_template(vfactory: VarFactory, name: str = "PVD1 compl
     ip_cmd_expr = ip_clamped * trip_gain
     iq_cmd_expr = iq_clamped * trip_gain
 
-    mode_dict = {
-        f_trip_latched: zero,
-        v_trip_latched: zero,
-    }
-    procedural_logic = [
-        flipflop(boolset=f_trip_set, boolreset=f_trip_reset, output=f_trip_latched, name="f_trip_latch"),
-        flipflop(boolset=v_trip_set, boolreset=v_trip_reset, output=v_trip_latched, name="v_trip_latch"),
-    ]
-
-    def register_sampled(name_suffix: str, expr):
-        rt_var = vfactory.add_var(f"{name_suffix}_{name}")
-        mode_dict[rt_var] = expr
-        procedural_logic.append(sampled_value(output=rt_var, source=expr, name=f"sample_{name_suffix}"))
-        return rt_var
-
-    db_y_rt = register_sampled("db_y_rt", db_y_expr)
-    q_droop_rt = register_sampled("q_droop_rt", q_droop_expr)
-    p_sum_rt = register_sampled("p_sum_rt", p_sum_expr)
-    q_sum_rt = register_sampled("q_sum_rt", q_sum_expr)
-    ip_unlimited_rt = register_sampled("ip_unlimited_rt", ip_unlimited)
-    iq_unlimited_rt = register_sampled("iq_unlimited_rt", iq_unlimited)
-    ip_max_rt = register_sampled("ip_max_rt", ip_max_expr)
-    iq_max_rt = register_sampled("iq_max_rt", iq_max_expr)
-    f_trip_rt = register_sampled("f_trip_rt", f_trip_expr)
-    v_trip_rt = register_sampled("v_trip_rt", v_trip_expr)
-    ip_cmd_rt = register_sampled("ip_cmd_rt", ip_cmd_expr)
-    iq_cmd_rt = register_sampled("iq_cmd_rt", iq_cmd_expr)
-
     block = Block(
         algebraic_eqs=[
             p - vm * ipout,
@@ -423,18 +373,18 @@ def get_pvd1_complete_rms_template(vfactory: VarFactory, name: str = "PVD1 compl
             omega_pu - omega_pu_expr,
             f_hz - f_hz_expr,
             f_dev - f_dev_expr,
-            db_y - db_y_rt,
-            q_droop - q_droop_rt,
-            p_sum - p_sum_rt,
-            q_sum - q_sum_rt,
-            ip_unlimited_var - ip_unlimited_rt,
-            iq_unlimited_var - iq_unlimited_rt,
-            ip_max - ip_max_rt,
-            iq_max - iq_max_rt,
-            f_trip - f_trip_rt,
-            v_trip - v_trip_rt,
-            ip_cmd - ip_cmd_rt,
-            iq_cmd - iq_cmd_rt,
+            db_y - db_y_expr,
+            q_droop - q_droop_expr,
+            p_sum - p_sum_expr,
+            q_sum - q_sum_expr,
+            ip_unlimited_var - ip_unlimited,
+            iq_unlimited_var - iq_unlimited,
+            ip_max - ip_max_expr,
+            iq_max - iq_max_expr,
+            f_trip - f_trip_expr,
+            v_trip - v_trip_expr,
+            ip_cmd - ip_cmd_expr,
+            iq_cmd - iq_cmd_expr,
         ],
         algebraic_vars=[
             p,
@@ -530,8 +480,14 @@ def get_pvd1_complete_rms_template(vfactory: VarFactory, name: str = "PVD1 compl
             vt2: vfactory.add_const(1.1),
             vt3: vfactory.add_const(1.2),
         },
-        mode_dict=mode_dict,
-        procedural_logic=procedural_logic,
+        mode_dict={
+            f_trip_latched: zero,
+            v_trip_latched: zero,
+        },
+        procedural_logic=[
+            flipflop(boolset=f_trip_set, boolreset=f_trip_reset, output=f_trip_latched, name="f_trip_latch"),
+            flipflop(boolset=v_trip_set, boolreset=v_trip_reset, output=v_trip_latched, name="v_trip_latch"),
+        ],
     )
 
     block.name = name
@@ -580,14 +536,12 @@ def get_pvd1_dc_mppt_rms_template(vfactory: VarFactory, name: str = "PVD1 DC-MPP
     templ = RmsModelTemplate(name=name)
     templ.tpe = DeviceType.GeneratorDevice
 
-    from VeraGridEngine.Utils.procedural_logic import sampled_value
-
-    vm = vfactory.add_var(f"Vm_{name}", VarPowerFlowRefferenceType.Vm)
-    va = vfactory.add_var(f"Va_{name}", VarPowerFlowRefferenceType.Va)
+    vm = vfactory.add_var(f"Vm_{name}", reference=VarPowerFlowRefferenceType.Vm)
+    va = vfactory.add_var(f"Va_{name}", reference=VarPowerFlowRefferenceType.Va)
     inputs = [vm, va]
 
-    p = vfactory.add_var("P_pvd1")
-    q = vfactory.add_var("Q_pvd1")
+    p = vfactory.add_var("P_pvd1_" + name, reference=VarPowerFlowRefferenceType.P)
+    q = vfactory.add_var("Q_pvd1_" + name, reference=VarPowerFlowRefferenceType.Q)
     ip_cmd = vfactory.add_var("Ip_cmd")
     iq_cmd = vfactory.add_var("Iq_cmd")
     ip_max = vfactory.add_var("Ip_max")
@@ -678,40 +632,20 @@ def get_pvd1_dc_mppt_rms_template(vfactory: VarFactory, name: str = "PVD1 DC-MPP
     ip_cmd_expr = sym.hard_sat(ip_unlimited, -ip_max_expr, ip_max_expr) * trip_gain
     iq_cmd_expr = sym.hard_sat(iq_unlimited, -iq_max_expr, iq_max_expr) * trip_gain
 
-    mode_dict = dict()
-    procedural_logic = list()
-
-    def register_sampled(name_suffix: str, expr):
-        rt_var = vfactory.add_var(f"{name_suffix}_{name}")
-        mode_dict[rt_var] = expr
-        procedural_logic.append(sampled_value(output=rt_var, source=expr, name=f"sample_{name_suffix}"))
-        return rt_var
-
-    q_droop_rt = register_sampled("q_droop_rt", q_droop_expr)
-    pavail_rt = register_sampled("pavail_rt", pavail_expr)
-    p_sum_rt = register_sampled("p_sum_rt", p_sum_expr)
-    q_sum_rt = register_sampled("q_sum_rt", q_sum_expr)
-    ip_max_rt = register_sampled("ip_max_rt", ip_max_expr)
-    iq_max_rt = register_sampled("iq_max_rt", iq_max_expr)
-    f_trip_rt = register_sampled("f_trip_rt", f_trip_expr)
-    v_trip_rt = register_sampled("v_trip_rt", v_trip_expr)
-    ip_cmd_rt = register_sampled("ip_cmd_rt", ip_cmd_expr)
-    iq_cmd_rt = register_sampled("iq_cmd_rt", iq_cmd_expr)
-
     block = Block(
         algebraic_eqs=[
             p - vm * ipout,
             q - vm * iqout,
-            q_droop - q_droop_rt,
-            pavail - pavail_rt,
-            p_sum - p_sum_rt,
-            q_sum - q_sum_rt,
-            ip_max - ip_max_rt,
-            iq_max - iq_max_rt,
-            f_trip - f_trip_rt,
-            v_trip - v_trip_rt,
-            ip_cmd - ip_cmd_rt,
-            iq_cmd - iq_cmd_rt,
+            q_droop - q_droop_expr,
+            pavail - pavail_expr,
+            p_sum - p_sum_expr,
+            q_sum - q_sum_expr,
+            ip_max - ip_max_expr,
+            iq_max - iq_max_expr,
+            f_trip - f_trip_expr,
+            v_trip - v_trip_expr,
+            ip_cmd - ip_cmd_expr,
+            iq_cmd - iq_cmd_expr,
         ],
         algebraic_vars=[p, q, q_droop, pavail, p_sum, q_sum, ip_max, iq_max, f_trip, v_trip, ip_cmd, iq_cmd],
         state_eqs=[
@@ -771,8 +705,6 @@ def get_pvd1_dc_mppt_rms_template(vfactory: VarFactory, name: str = "PVD1 DC-MPP
             kt: vfactory.add_const(-0.004),
             tmppt: vfactory.add_const(0.2),
         },
-        mode_dict=mode_dict,
-        procedural_logic=procedural_logic,
     )
 
     block.name = name
@@ -800,10 +732,8 @@ def get_pvd1_dc_link_mppt_rms_template(vfactory: VarFactory, name: str = "PVD1 D
     templ = RmsModelTemplate(name=name)
     templ.tpe = DeviceType.GeneratorDevice
 
-    from VeraGridEngine.Utils.procedural_logic import sampled_value
-
-    vm = vfactory.add_var(f"Vm_{name}", VarPowerFlowRefferenceType.Vm)
-    va = vfactory.add_var(f"Va_{name}", VarPowerFlowRefferenceType.Va)
+    vm = vfactory.add_var(f"Vm_{name}", reference=VarPowerFlowRefferenceType.Vm)
+    va = vfactory.add_var(f"Va_{name}", reference=VarPowerFlowRefferenceType.Va)
     inputs = [vm, va]
 
     p = vfactory.add_var("P_pvd1")
@@ -939,50 +869,25 @@ def get_pvd1_dc_link_mppt_rms_template(vfactory: VarFactory, name: str = "PVD1 D
     ip_cmd_expr = sym.hard_sat(ip_unlimited, -ip_max_expr, ip_max_expr) * trip_gain
     iq_cmd_expr = sym.hard_sat(iq_unlimited, -iq_max_expr, iq_max_expr) * trip_gain
 
-    mode_dict = dict()
-    procedural_logic = list()
-
-    def register_sampled(name_suffix: str, expr):
-        rt_var = vfactory.add_var(f"{name_suffix}_{name}")
-        mode_dict[rt_var] = expr
-        procedural_logic.append(sampled_value(output=rt_var, source=expr, name=f"sample_{name_suffix}"))
-        return rt_var
-
-    q_droop_rt = register_sampled("q_droop_rt", q_droop_expr)
-    vmp_rt = register_sampled("vmp_rt", vmp_expr)
-    imp_rt = register_sampled("imp_rt", imp_expr)
-    pavail_rt = register_sampled("pavail_rt", pavail_expr)
-    duty_ref_rt = register_sampled("duty_ref_rt", duty_ref)
-    vpv_rt = register_sampled("vpv_rt", vpv_expr)
-    psrc_rt = register_sampled("psrc_rt", psrc_expr)
-    p_sum_rt = register_sampled("p_sum_rt", p_sum_expr)
-    q_sum_rt = register_sampled("q_sum_rt", q_sum_expr)
-    ip_max_rt = register_sampled("ip_max_rt", ip_max_expr)
-    iq_max_rt = register_sampled("iq_max_rt", iq_max_expr)
-    f_trip_rt = register_sampled("f_trip_rt", f_trip_expr)
-    v_trip_rt = register_sampled("v_trip_rt", v_trip_expr)
-    ip_cmd_rt = register_sampled("ip_cmd_rt", ip_cmd_expr)
-    iq_cmd_rt = register_sampled("iq_cmd_rt", iq_cmd_expr)
-
     block = Block(
         algebraic_eqs=[
             p - vm * ipout,
             q - vm * iqout,
-            q_droop - q_droop_rt,
-            vmp - vmp_rt,
-            imp - imp_rt,
-            pavail - pavail_rt,
-            vpv - vpv_rt,
-            psrc - psrc_rt,
+            q_droop - q_droop_expr,
+            vmp - vmp_expr,
+            imp - imp_expr,
+            pavail - pavail_expr,
+            vpv - vpv_expr,
+            psrc - psrc_expr,
             pinv - pinv_expr,
-            p_sum - p_sum_rt,
-            q_sum - q_sum_rt,
-            ip_max - ip_max_rt,
-            iq_max - iq_max_rt,
-            f_trip - f_trip_rt,
-            v_trip - v_trip_rt,
-            ip_cmd - ip_cmd_rt,
-            iq_cmd - iq_cmd_rt,
+            p_sum - p_sum_expr,
+            q_sum - q_sum_expr,
+            ip_max - ip_max_expr,
+            iq_max - iq_max_expr,
+            f_trip - f_trip_expr,
+            v_trip - v_trip_expr,
+            ip_cmd - ip_cmd_expr,
+            iq_cmd - iq_cmd_expr,
         ],
         algebraic_vars=[
             p,
@@ -1007,7 +912,7 @@ def get_pvd1_dc_link_mppt_rms_template(vfactory: VarFactory, name: str = "PVD1 D
             (ip_cmd - ipout) / tip,
             (iq_cmd - iqout) / tiq,
             mppt_err,
-            (duty_ref_rt - duty) / tduty_eff,
+            (duty_ref - duty) / tduty_eff,
             (psrc - pinv) / (cdc_eff * vdc_eff),
         ],
         state_vars=[ipout, iqout, xi_mppt, duty, vdc],
@@ -1082,8 +987,6 @@ def get_pvd1_dc_link_mppt_rms_template(vfactory: VarFactory, name: str = "PVD1 D
             ksrc: vfactory.add_const(1.0),
             vdc0: vfactory.add_const(1.0),
         },
-        mode_dict=mode_dict,
-        procedural_logic=procedural_logic,
     )
 
     block.name = name
@@ -1117,14 +1020,12 @@ def get_pvd1_dc_link_bess_rms_template(vfactory: VarFactory, name: str = "PVD1 D
     templ = RmsModelTemplate(name=name)
     templ.tpe = DeviceType.BatteryDevice
 
-    from VeraGridEngine.Utils.procedural_logic import sampled_value
-
-    vm = vfactory.add_var(f"Vm_{name}", VarPowerFlowRefferenceType.Vm)
-    va = vfactory.add_var(f"Va_{name}", VarPowerFlowRefferenceType.Va)
+    vm = vfactory.add_var(f"Vm_{name}", reference=VarPowerFlowRefferenceType.Vm)
+    va = vfactory.add_var(f"Va_{name}", reference=VarPowerFlowRefferenceType.Va)
     inputs = [vm, va]
 
-    p = vfactory.add_var("P_pvd1")
-    q = vfactory.add_var("Q_pvd1")
+    p = vfactory.add_var("P_pvd1", reference=VarPowerFlowRefferenceType.P)
+    q = vfactory.add_var("Q_pvd1", reference=VarPowerFlowRefferenceType.Q)
     ip_cmd = vfactory.add_var("Ip_cmd")
     iq_cmd = vfactory.add_var("Iq_cmd")
     ip_max = vfactory.add_var("Ip_max")
@@ -1230,49 +1131,25 @@ def get_pvd1_dc_link_bess_rms_template(vfactory: VarFactory, name: str = "PVD1 D
 
     pinv_expr = p / eta_inv_eff
 
-    mode_dict = dict()
-    procedural_logic = list()
-
-    def register_sampled(name_suffix: str, expr):
-        rt_var = vfactory.add_var(f"{name_suffix}_{name}")
-        mode_dict[rt_var] = expr
-        procedural_logic.append(sampled_value(output=rt_var, source=expr, name=f"sample_{name_suffix}"))
-        return rt_var
-
-    q_droop_rt = register_sampled("q_droop_rt", q_droop_expr)
-    p_dis_cap_rt = register_sampled("p_dis_cap_rt", p_dis_cap_expr)
-    p_ch_cap_rt = register_sampled("p_ch_cap_rt", p_ch_cap_expr)
-    p_sum_rt = register_sampled("p_sum_rt", p_sum_expr)
-    q_sum_rt = register_sampled("q_sum_rt", q_sum_expr)
-    ip_max_rt = register_sampled("ip_max_rt", ip_max_expr)
-    iq_max_rt = register_sampled("iq_max_rt", iq_max_expr)
-    f_trip_rt = register_sampled("f_trip_rt", f_trip_expr)
-    v_trip_rt = register_sampled("v_trip_rt", v_trip_expr)
-    ip_cmd_rt = register_sampled("ip_cmd_rt", ip_cmd_expr)
-    iq_cmd_rt = register_sampled("iq_cmd_rt", iq_cmd_expr)
-    pbat_dis_cap_rt = register_sampled("pbat_dis_cap_rt", pbat_dis_cap_expr)
-    pbat_ch_cap_rt = register_sampled("pbat_ch_cap_rt", pbat_ch_cap_expr)
-    pbat_rt = register_sampled("pbat_rt", pbat_expr)
-
     block = Block(
         algebraic_eqs=[
             p - vm * ipout,
             q - vm * iqout,
-            q_droop - q_droop_rt,
-            p_dis_cap - p_dis_cap_rt,
-            p_ch_cap - p_ch_cap_rt,
-            p_sum - p_sum_rt,
-            q_sum - q_sum_rt,
-            ip_max - ip_max_rt,
-            iq_max - iq_max_rt,
-            f_trip - f_trip_rt,
-            v_trip - v_trip_rt,
-            ip_cmd - ip_cmd_rt,
-            iq_cmd - iq_cmd_rt,
+            q_droop - q_droop_expr,
+            p_dis_cap - p_dis_cap_expr,
+            p_ch_cap - p_ch_cap_expr,
+            p_sum - p_sum_expr,
+            q_sum - q_sum_expr,
+            ip_max - ip_max_expr,
+            iq_max - iq_max_expr,
+            f_trip - f_trip_expr,
+            v_trip - v_trip_expr,
+            ip_cmd - ip_cmd_expr,
+            iq_cmd - iq_cmd_expr,
             pbat_cmd - pbat_cmd_expr,
-            pbat_dis_cap - pbat_dis_cap_rt,
-            pbat_ch_cap - pbat_ch_cap_rt,
-            pbat - pbat_rt,
+            pbat_dis_cap - pbat_dis_cap_expr,
+            pbat_ch_cap - pbat_ch_cap_expr,
+            pbat - pbat_expr,
             pinv - pinv_expr,
         ],
         algebraic_vars=[
@@ -1360,8 +1237,6 @@ def get_pvd1_dc_link_bess_rms_template(vfactory: VarFactory, name: str = "PVD1 D
             eta_inv: vfactory.add_const(0.98),
             vdc0: vfactory.add_const(1.0),
         },
-        mode_dict=mode_dict,
-        procedural_logic=procedural_logic,
     )
 
     block.name = name

@@ -133,8 +133,9 @@ def _build_bridge_standalone_problem() -> Tuple[GenericEmtProblem, Dict[str, Var
         ]),
     )
     root_block.unify_blocks()
+    static_parameter_values_mapping: Dict[Var, Const] = dict()
 
-    problem = GenericEmtProblem(sys_block=root_block, glob_time=vf.add_var("t_bridge_test"))
+    problem = GenericEmtProblem(sys_block=root_block, glob_time=vf.add_var("t_bridge_test"), static_parameter_values_mapping=static_parameter_values_mapping)
     tracked_vars["m_a"] = find_name_in_block(f"m_a_{bridge_name}", problem.sys_block)
     tracked_vars["m_b"] = find_name_in_block(f"m_b_{bridge_name}", problem.sys_block)
     tracked_vars["m_c"] = find_name_in_block(f"m_c_{bridge_name}", problem.sys_block)

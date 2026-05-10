@@ -27,7 +27,7 @@ class FmuTemplate(PointerDeviceParent):
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
         GCProp(
-            key="block",
+            prop_name="block",
             units="",
             tpe=SubObjectType.DaeBlockType,
             definition="Symbolic wrapper block used by the FMU template",
@@ -35,7 +35,7 @@ class FmuTemplate(PointerDeviceParent):
             display=False,
         ),
         GCProp(
-            key="tpe",
+            prop_name="tpe",
             units="",
             tpe=DeviceType,
             definition="Device type supported by this FMU template",
@@ -43,7 +43,7 @@ class FmuTemplate(PointerDeviceParent):
             display=True,
         ),
         GCProp(
-            key="domain",
+            prop_name="domain",
             units="",
             tpe=FmuTemplateDomain,
             definition="Simulation domain where the FMU template can be used",
@@ -51,7 +51,7 @@ class FmuTemplate(PointerDeviceParent):
             display=True,
         ),
         GCProp(
-            key="mode",
+            prop_name="mode",
             units="",
             tpe=FmuTemplateMode,
             definition="FMI 2.0 execution mode stored by the template",
@@ -59,7 +59,7 @@ class FmuTemplate(PointerDeviceParent):
             display=True,
         ),
         GCProp(
-            key="fmu_relative_path",
+            prop_name="fmu_relative_path",
             units="",
             tpe=str,
             definition="Path to the FMU archive relative to the VeraGrid project file",
@@ -67,7 +67,7 @@ class FmuTemplate(PointerDeviceParent):
             display=True,
         ),
         GCProp(
-            key="serialized_config",
+            prop_name="serialized_config",
             units="",
             tpe=str,
             definition="Serialized FMU runtime configuration payload",

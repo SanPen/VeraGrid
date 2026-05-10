@@ -8,6 +8,7 @@ import numpy as np
 from PySide6.QtWidgets import QGraphicsSceneContextMenuEvent
 from VeraGridEngine.Devices.Injections.battery import Battery
 from VeraGrid.Gui.gui_functions import add_menu_entry
+from VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor import GeneratorEditorDialog
 from VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor import GeneratorQCurveEditor
 from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics import MapInjectionTemplateGraphicItem
 from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
@@ -45,6 +46,18 @@ class MapBatteryGraphicItem(MapInjectionTemplateGraphicItem):
         :return:
         """
         return self._api_object
+
+    def open_device_editor(self) -> bool:
+        """
+        Open the battery editor using the generator editor implementation.
+
+        :return: ``True`` when the editor was opened.
+        """
+        dlg = GeneratorEditorDialog(api_object=self.api_object, circuit=self.editor.circuit)
+        if dlg.exec():
+            return True
+        else:
+            return True
 
     def contextMenuEvent(self, event: QGraphicsSceneContextMenuEvent):
         """

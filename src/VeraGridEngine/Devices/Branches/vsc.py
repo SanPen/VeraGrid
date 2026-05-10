@@ -10,7 +10,7 @@ from matplotlib import pyplot as plt
 from typing import List, Tuple, TYPE_CHECKING
 from VeraGridEngine.Devices.Profiles import ProfileDevice, ProfileEnum, ProfileFloat
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.enumerations import BuildStatus, ConverterControlType, ConverterFaultControlType
+from VeraGridEngine.enumerations import BuildStatus, ConverterControlType, ConverterFaultControlType, PrpCat
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
 from VeraGridEngine.Devices.Parents.editable_device import get_at
@@ -70,59 +70,207 @@ class VSC(BranchParent):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='bus_dc_n', units="", tpe=DeviceType.BusDevice,
-                      definition='DC negative bus', editable=False),
-        GCProp(key='alpha1', units='', tpe=float,
-                      definition='Losses constant parameter (IEC 62751-2 loss Correction, idle loss).'),
-        GCProp(key='alpha2', units='', tpe=float,
-                      definition='Losses linear parameter (IEC 62751-2 loss Correction, Switching loss).'),
-        GCProp(key='alpha3', units='', tpe=float,
-                      definition='Losses quadratic parameter (IEC 62751-2 loss Correction, resistive loss).'),
+        GCProp(
+            prop_name='bus_dc_n',
+            units="",
+            tpe=DeviceType.BusDevice,
+            definition='DC negative bus',
+            editable=False,
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='alpha1',
+            units='',
+            tpe=float,
+            definition='Losses constant parameter (IEC 62751-2 loss Correction, idle loss).',
+        ),
+        GCProp(
+            prop_name='alpha2',
+            units='',
+            tpe=float,
+            definition='Losses linear parameter (IEC 62751-2 loss Correction, Switching loss).',
+        ),
+        GCProp(
+            prop_name='alpha3',
+            units='',
+            tpe=float,
+            definition='Losses quadratic parameter (IEC 62751-2 loss Correction, resistive loss).',
+        ),
 
 
-        GCProp(key='control1', units='', tpe=ConverterControlType, profile_name="control1_prof",
-                      definition='Control mode 1.'),
-        GCProp(key='control1_dev', units="", tpe=DeviceType.BusOrBranch, profile_name="control1_dev_prof",
-               definition='Controlled device, None to apply to this converter', editable=False),
-        GCProp(key='control1_val', units='', tpe=float, profile_name="control1_val_prof",
-               definition='Control value 1.'
+        GCProp(
+            prop_name='control1',
+            units='',
+            tpe=ConverterControlType,
+            profile_name="control1_prof",
+            definition='Control mode 1.',
+            cat=[PrpCat.PF, PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='control1_dev',
+            units="",
+            tpe=DeviceType.BusOrBranch,
+            profile_name="control1_dev_prof",
+            definition='Controlled device, None to apply to this converter',
+            editable=False,
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='control1_val',
+            units='',
+            tpe=float,
+            profile_name="control1_val_prof",
+            definition='Control value 1.'
                           'p.u. for voltage\n'
                           'rad for angles\n'
                           'MW for P\n'
-                          'MVAr for Q'),
-        GCProp(key='control1_val_min', units='', tpe=float, ),
-        GCProp(key='control1_val_max', units='', tpe=float, ),
-        GCProp(key='control1_droop', units='', tpe=float, profile_name="control1_droop_prof"),
-        GCProp(key='control1_droop_val', units='', tpe=float, profile_name="control1_droop_val_prof"),
-        GCProp(key='control1_droop_val_min', units='', tpe=float, ),
-        GCProp(key='control1_droop_val_max', units='', tpe=float, ),
+                          'MVAr for Q',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='control1_val_min',
+            units='',
+            tpe=float,
+            cat=[PrpCat.PF, PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='control1_val_max',
+            units='',
+            tpe=float,
+            cat=[PrpCat.PF, PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='control1_droop',
+            units='',
+            tpe=float,
+            profile_name="control1_droop_prof",
+            cat=[PrpCat.PF, PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='control1_droop_val',
+            units='',
+            tpe=float,
+            profile_name="control1_droop_val_prof",
+            cat=[PrpCat.PF, PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='control1_droop_val_min',
+            units='',
+            tpe=float,
+            cat=[PrpCat.PF, PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='control1_droop_val_max',
+            units='',
+            tpe=float,
+            cat=[PrpCat.PF, PrpCat.OPF],
+        ),
 
-        GCProp(key='control2', units='', tpe=ConverterControlType, profile_name="control2_prof",
-                      definition='Control mode 2.'),
-        GCProp(key='control2_dev', units="", tpe=DeviceType.BusOrBranch, profile_name="control2_dev_prof",
-               definition='Controlled device, None to apply to this converter', editable=False),
-        GCProp(key='control2_val', units='', tpe=float, profile_name="control2_val_prof",
-                      definition='Control value 2.'
+        GCProp(
+            prop_name='control2',
+            units='',
+            tpe=ConverterControlType,
+            profile_name="control2_prof",
+            definition='Control mode 2.',
+            cat=[PrpCat.PF, PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='control2_dev',
+            units="",
+            tpe=DeviceType.BusOrBranch,
+            profile_name="control2_dev_prof",
+            definition='Controlled device, None to apply to this converter',
+            editable=False,
+            cat=[PrpCat.PF, PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='control2_val',
+            units='',
+            tpe=float,
+            profile_name="control2_val_prof",
+            definition='Control value 2.'
                                  'p.u. for voltage\n'
                                  'rad for angles\n'
                                  'MW for P\n'
-                                 'MVAr for Q'),
-        GCProp(key='control2_val_min', units='', tpe=float, ),
-        GCProp(key='control2_val_max', units='', tpe=float, ),
-        GCProp(key='control2_val_droop', units='', tpe=float, profile_name="control2_val_droop_prof"),
-        GCProp(key='control2_droop_val', units='', tpe=float, profile_name="control2_droop_val_prof"),
-        GCProp(key='control2_droop_val_min', units='', tpe=float, ),
-        GCProp(key='control2_droop_val_max', units='', tpe=float, ),
+                                 'MVAr for Q',
+            cat=[PrpCat.PF, PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='control2_val_min',
+            units='',
+            tpe=float,
+            cat=[PrpCat.PF, PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='control2_val_max',
+            units='',
+            tpe=float,
+            cat=[PrpCat.PF, PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='control2_val_droop',
+            units='',
+            tpe=float,
+            profile_name="control2_val_droop_prof",
+            cat=[PrpCat.PF, PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='control2_droop_val',
+            units='',
+            tpe=float,
+            profile_name="control2_droop_val_prof",
+            cat=[PrpCat.PF, PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='control2_droop_val_min',
+            units='',
+            tpe=float,
+            cat=[PrpCat.PF, PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='control2_droop_val_max',
+            units='',
+            tpe=float,
+            cat=[PrpCat.PF, PrpCat.OPF],
+        ),
 
-        GCProp(key='fault_control', units='', tpe=ConverterFaultControlType, profile_name="fault_control_prof",
-               definition='VSC control system during a short-circuit event.'),
-        GCProp(key='min_ac_voltage', units='p.u.', tpe=float,
-                      definition='Minimum AC voltage threshold. '
-                                 'If the AC bus voltage drops below this value, the VSC is disconnected.'),
-        GCProp(key='ysvs', units='p.u.', tpe=float,
-               definition='Admittance of non-controlled Static Var Systems.'),
-        GCProp(key='x', units='px', tpe=float, definition='x position'),
-        GCProp(key='y', units='px', tpe=float, definition='y position'),
+        GCProp(
+            prop_name='fault_control',
+            units='',
+            tpe=ConverterFaultControlType,
+            profile_name="fault_control_prof",
+            definition='VSC control system during a short-circuit event.',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='min_ac_voltage',
+            units='p.u.',
+            tpe=float,
+            definition='Minimum AC voltage threshold. '
+                                 'If the AC bus voltage drops below this value, the VSC is disconnected.',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='ysvs',
+            units='p.u.',
+            tpe=float,
+            definition='Admittance of non-controlled Static Var Systems.',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='x',
+            units='px',
+            tpe=float,
+            definition='x position',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='y',
+            units='px',
+            tpe=float,
+            definition='y position',
+            cat=[PrpCat.TP],
+        ),
     )
 
     def __init__(self,

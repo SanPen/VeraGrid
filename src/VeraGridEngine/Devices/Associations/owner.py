@@ -12,8 +12,19 @@ class Owner(EditableDevice):
     __slots__ = ('address', 'color')
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='address', units='', tpe=str, definition='Owner address'),
-        GCProp(key='color', units='', tpe=str, definition='Color to paint', is_color=True),
+        GCProp(
+            prop_name='address',
+            units='',
+            tpe=str,
+            definition='Owner address',
+        ),
+        GCProp(
+            prop_name='color',
+            units='',
+            tpe=str,
+            definition='Color to paint',
+            is_color=True,
+        ),
     )
 
     def __init__(self, name: str = '',

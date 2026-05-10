@@ -10,7 +10,7 @@ from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx import BackEulerImplicitIntegration
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae import RmsProblemDae
-from VeraGridEngine.Templates.Rms.bus_rms_template import initialize_bus_rms
+from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
 from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template import get_complete_generator_template_rms
 from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
 from VeraGridEngine.Templates.BasicBlockCatalog import get_basic_block_catalog_descriptor_by_key
@@ -66,6 +66,7 @@ def _build_procedural_catalog_load_rms_template(vf: VarFactory,
     enable_block.event_dict[enable_param] = vf.add_const(1.0, name="Enable")
     enable_block.mode_dict[enable_mode] = vf.add_const(1.0, name="Enable mode")
     enable_block.connect([enable_block.in_vars[0]], [p_ref])
+    enable_block.init_eqs[enable_block.out_vars[0]] = p_ref
 
     template.block = Block(
         children=[enable_block],
@@ -77,6 +78,12 @@ def _build_procedural_catalog_load_rms_template(vf: VarFactory,
             p_out - enable_block.out_vars[0],
             q_out - q_ref,
         ],
+        init_eqs={
+            p_ref: p_ref_const,
+            q_ref: q_ref_const,
+            p_out: enable_block.out_vars[0],
+            q_out: q_ref,
+        },
         out_vars=[p_out, q_out],
         name=name,
     )

@@ -2,7 +2,8 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
-
+from typing import Dict
+from VeraGridEngine.Utils.Symbolic.symbolic import Var, Const
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import EmtProblemTemplate
 from VeraGridEngine.Templates.Emt.bridge_filter_control_2level_3ph_emt_template import get_bridge_filter_control_2level_3ph_emt_template
@@ -24,8 +25,9 @@ def test_bridge_filter_control_2level_3ph_template_builds_and_exposes_expected_b
     :return: None.
     """
     vf: VarFactory = VarFactory()
+    static_parameter_values_mapping: Dict[Var, Const] = dict()
     templ = get_bridge_filter_control_2level_3ph_emt_template(vf=vf, name="bridge_filter_control_case")
-    problem = GenericEmtProblem(sys_block=templ.block, glob_time=vf.add_var("t_bridge_filter_control_case"))
+    problem = GenericEmtProblem(sys_block=templ.block, glob_time=vf.add_var("t_bridge_filter_control_case"),static_parameter_values_mapping=static_parameter_values_mapping)
 
     assert find_name_in_block("gate_a_bridge_filter_control_case_plant_bridge", templ.block) is not None
     assert find_name_in_block("i_A_bridge_filter_control_case_plant", templ.block) is not None
@@ -41,8 +43,9 @@ def test_bridge_filter_control_2level_3ph_template_exposes_bridge_pwm_variables(
     :return: None.
     """
     vf: VarFactory = VarFactory()
+    static_parameter_values_mapping: Dict[Var, Const] = dict()
     templ = get_bridge_filter_control_2level_3ph_emt_template(vf=vf, name="bridge_filter_control_case")
-    problem = GenericEmtProblem(sys_block=templ.block, glob_time=vf.add_var("t_bridge_filter_control_case_pwm"))
+    problem = GenericEmtProblem(sys_block=templ.block, glob_time=vf.add_var("t_bridge_filter_control_case_pwm"),static_parameter_values_mapping=static_parameter_values_mapping)
     mode_names = [var.name for var in problem.get_runtime_mode_parameters()]
 
     assert find_name_in_block("m_a_bridge_filter_control_case_plant_bridge", problem.sys_block) is not None

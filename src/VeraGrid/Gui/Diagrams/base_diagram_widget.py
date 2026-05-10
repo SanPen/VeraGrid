@@ -10,7 +10,7 @@ from matplotlib import pyplot as plt
 
 from PySide6.QtGui import QIcon, QImage
 from PySide6.QtWidgets import (QListView, QTableView, QVBoxLayout, QHBoxLayout, QFrame, QSplitter, QAbstractItemView,
-                               QGraphicsItem, QToolBox)
+                               QGraphicsItem, QToolBox, QComboBox)
 
 from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
@@ -29,13 +29,14 @@ from VeraGridEngine.Devices.Diagrams.schematic_diagram import SchematicDiagram
 from VeraGridEngine.Devices.Diagrams.map_diagram import MapDiagram
 from VeraGridEngine.Simulations.types import DRIVER_OBJECTS
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.enumerations import SimulationTypes, ResultTypes
+from VeraGridEngine.enumerations import SimulationTypes, ResultTypes, PrpCat
 import VeraGridEngine.Devices.Diagrams.palettes as palettes
 
 from VeraGrid.Gui.Diagrams.graphics_manager import GraphicsManager, ALL_GRAPHICS
 from VeraGrid.Gui.general_dialogues import DeleteDialogue
 from VeraGrid.Gui.messages import yes_no_question, info_msg
 from VeraGrid.Gui.object_model import ObjectsModel
+import VeraGrid.Gui.gui_functions as gf
 
 if TYPE_CHECKING:
     from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import MapLibraryModel
@@ -168,6 +169,25 @@ class BaseDiagramWidget(QSplitter):
         # change_font_size(self.object_editor_table.verticalHeader(), 9)
         # change_font_size(self.object_editor_table.horizontalHeader(), 9)
 
+        self.filter_combo = QComboBox()
+        self.prop_filter_dict, prop_filter_mdl = gf.enums_to_icons_model(
+            [
+                (PrpCat.All,":/Icons/icons/edit.png"),
+                (PrpCat.TP,":/Icons/icons/automatic_layout.png"),
+                (PrpCat.PF,":/Icons/icons/pf.png"),
+                (PrpCat.PF3,":/Icons/icons/pf3.png"),
+                (PrpCat.SC,":/Icons/icons/short_circuit.png"),
+                (PrpCat.OPF,":/Icons/icons/dcopf.png"),
+                (PrpCat.CON,":/Icons/icons/otdf.png"),
+                (PrpCat.REL,":/Icons/icons/reliability.png"),
+                (PrpCat.NTC,":/Icons/icons/ntc_opf.png"),
+                (PrpCat.INV,":/Icons/icons/expansion_planning.png"),
+                (PrpCat.RMS,":/Icons/icons/dyn.png"),
+                (PrpCat.EMT,":/Icons/icons/dyn_emt.png"),
+            ]
+        )
+        self.filter_combo.setModel(prop_filter_mdl)
+
         # Actual libraryView object
         self.library_view = QListView(self)
         self.library_view.setViewMode(self.library_view.ViewMode.ListMode)
@@ -178,7 +198,7 @@ class BaseDiagramWidget(QSplitter):
         self.library_model = library_model
         self.library_view.setModel(self.library_model)
 
-        # create the grid name editor
+        # create library frame
         self.frame1 = QFrame()
         self.frame1_layout = QVBoxLayout()
         self.frame1_layout.setContentsMargins(0, 0, 0, 0)
@@ -186,17 +206,31 @@ class BaseDiagramWidget(QSplitter):
         self.frame1_layout.addWidget(self.library_view)
         self.frame1.setLayout(self.frame1_layout)
 
+        # create properties frame
+        self.frame2 = QFrame()
+        self.frame2_layout = QVBoxLayout()
+        self.frame2_layout.setContentsMargins(0, 0, 0, 0)
+
+        self.frame2.setLayout(self.frame2_layout)
+        self.frame2_layout.addWidget(self.filter_combo)
+        self.frame2_layout.addWidget(self.object_editor_table)
+
         # Add the library and properties views as toolbox pages.
         self.left_panel_toolbox: QToolBox = QToolBox(self)
         self.left_panel_toolbox.addItem(self.frame1, QIcon(":/Icons/icons/Catalogue.png"), "Library")
-        self.left_panel_toolbox.addItem(self.object_editor_table, QIcon(":/Icons/icons/data.png"), "Properties")
+        self.left_panel_toolbox.addItem(self.frame2, QIcon(":/Icons/icons/data.png"), "Properties")
         self.addWidget(self.left_panel_toolbox)
         # self.addWidget(self.editor_graphics_view)
 
         # self.setStretchFactor(0, 0)
         # self.setStretchFactor(1, 2000)
+
+        self.api_object: ALL_DEV_TYPES | None = None
         # --------------------------------------------------------------------------------------------------------------
 
+        self.filter_combo.currentIndexChanged.connect(self.refresh_editor_model)
+
+        # --------------------------------------------------------------------------------------------------------------
         # diagram to store the objects locations
         self.diagram: Union[SchematicDiagram, MapDiagram] = diagram
 
@@ -447,19 +481,33 @@ class BaseDiagramWidget(QSplitter):
         """
         return self._time_index
 
+    def refresh_editor_model(self):
+        """
+        Function to call when the objects' filter changes
+        """
+        if self.api_object is not None:
+            self.set_editor_model(api_object=self.api_object)
+
     def set_editor_model(self, api_object: ALL_DEV_TYPES):
         """
         Set an api object to appear in the editable table view of the editor
         :param api_object: any EditableDevice
         """
         template_elm, dictionary_of_lists = self.circuit.get_dictionary_of_lists(api_object.device_type)
-        mdl = ObjectsModel(objects=[api_object],
-                           property_list=list(api_object.property_list),
-                           time_index=self.get_time_index(),
-                           parent=self.object_editor_table,
-                           editable=True,
-                           transposed=True,
-                           dictionary_of_lists=dictionary_of_lists)
+
+        filter_prop = self.prop_filter_dict[self.filter_combo.currentText()]
+        self.api_object = api_object
+
+        mdl = ObjectsModel(
+            objects=[api_object],
+            property_list=list(api_object.property_list),
+            time_index=self.get_time_index(),
+            parent=self.object_editor_table,
+            editable=True,
+            transposed=True,
+            dictionary_of_lists=dictionary_of_lists,
+            properties_filter=filter_prop
+        )
 
         self.object_editor_table.setModel(mdl)
 

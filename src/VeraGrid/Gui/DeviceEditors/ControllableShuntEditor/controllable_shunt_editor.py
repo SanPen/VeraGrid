@@ -68,21 +68,24 @@ class ControllableShuntArray(ArrayTableModel):
             return False
 
 
-class ControllableShuntEditor(QtWidgets.QDialog):
+class ControllableShuntStepsEditorWidget(QtWidgets.QWidget):
     """
-    Controllable shunt editor backed by a Qt Designer `.ui`.
+    Embedded widget to edit controllable-shunt step arrays.
     """
 
-    def __init__(self, api_object: ControllableShunt) -> None:
-        """
-        Build controllable shunt editor.
+    steps_applied = QtCore.Signal(bool)
 
-        :param api_object: Controllable shunt object to mutate on acceptance.
+    def __init__(self, api_object: ControllableShunt, parent: QtWidgets.QWidget | None = None) -> None:
         """
-        super().__init__()
+        Build controllable shunt steps editor.
+
+        :param api_object: Controllable shunt object to mutate on apply.
+        :param parent: Optional Qt parent widget.
+        """
+        QtWidgets.QWidget.__init__(self, parent)
         self.ui = Ui_ControllableShuntEditorDialog()
         self.ui.setupUi(self)
-        self.setWindowTitle("Controllable shunt editor")
+        self.setWindowTitle("")
 
         self.api_object: ControllableShunt = api_object
         self.model: ControllableShuntArray = ControllableShuntArray(
@@ -92,6 +95,7 @@ class ControllableShuntEditor(QtWidgets.QDialog):
         )
 
         self.ui.tableView.setModel(self.model)
+        self.ui.doneButton.setText("Apply")
         self._connect_signals()
 
     def _connect_signals(self) -> None:
@@ -100,7 +104,7 @@ class ControllableShuntEditor(QtWidgets.QDialog):
         """
         self.ui.addButton.clicked.connect(self.add_row)
         self.ui.deleteButton.clicked.connect(self.delete_row)
-        self.ui.doneButton.clicked.connect(self.accept_click)
+        self.ui.doneButton.clicked.connect(self.apply_changes)
 
     def get_active_steps(self) -> np.ndarray:
         """
@@ -144,18 +148,80 @@ class ControllableShuntEditor(QtWidgets.QDialog):
         for row_index in selected_rows:
             self.model.removeRows(position=row_index, rows=1)
 
-    def accept_click(self) -> None:
+    def apply_changes(self) -> bool:
         """
-        Apply edited arrays into API object and close dialog.
+        Apply edited arrays into API object.
+
+        :return: ``True`` when assignment succeeds.
         """
         self.api_object.active_steps = self.get_active_steps()
         self.api_object.g_steps = self.get_g_steps()
-        self.api_object.Gmax = self.api_object.g_steps.max()
-        self.api_object.Gmin = self.api_object.g_steps.min()
         self.api_object.b_steps = self.get_b_steps()
-        self.api_object.Bmax = self.api_object.b_steps.max()
-        self.api_object.Bmin = self.api_object.b_steps.min()
-        self.accept()
+
+        if len(self.api_object.g_steps) > 0:
+            self.api_object.Gmax = float(self.api_object.g_steps.max())
+            self.api_object.Gmin = float(self.api_object.g_steps.min())
+        else:
+            self.api_object.Gmax = 0.0
+            self.api_object.Gmin = 0.0
+
+        if len(self.api_object.b_steps) > 0:
+            self.api_object.Bmax = float(self.api_object.b_steps.max())
+            self.api_object.Bmin = float(self.api_object.b_steps.min())
+        else:
+            self.api_object.Bmax = 0.0
+            self.api_object.Bmin = 0.0
+
+        self.steps_applied.emit(True)
+        return True
+
+
+class ControllableShuntEditor(QtWidgets.QDialog):
+    """
+    Standalone controllable shunt editor dialog.
+    """
+
+    def __init__(self, api_object: ControllableShunt) -> None:
+        """
+        Build controllable shunt editor.
+
+        :param api_object: Controllable shunt object to mutate on acceptance.
+        """
+        QtWidgets.QDialog.__init__(self)
+        self.setWindowTitle("Controllable shunt editor")
+        self.resize(640, 420)
+
+        self.main_layout: QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout(self)
+        self.steps_widget: ControllableShuntStepsEditorWidget = ControllableShuntStepsEditorWidget(
+            api_object=api_object,
+            parent=self,
+        )
+        self.main_layout.addWidget(self.steps_widget)
+        self.steps_widget.steps_applied.connect(self.accept)
+
+    def get_active_steps(self) -> np.ndarray:
+        """
+        Get active steps array from model.
+
+        :return: Active flags vector.
+        """
+        return self.steps_widget.get_active_steps()
+
+    def get_g_steps(self) -> np.ndarray:
+        """
+        Get G steps array from model.
+
+        :return: Conductance steps.
+        """
+        return self.steps_widget.get_g_steps()
+
+    def get_b_steps(self) -> np.ndarray:
+        """
+        Get B steps array from model.
+
+        :return: Susceptance steps.
+        """
+        return self.steps_widget.get_b_steps()
 
 
 if __name__ == "__main__":

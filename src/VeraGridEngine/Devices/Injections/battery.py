@@ -7,6 +7,7 @@
 from typing import Tuple
 
 from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
+from VeraGridEngine.enumerations import PrpCat
 from VeraGridEngine.Devices.Injections.generator import Generator, BuildStatus
 
 
@@ -31,13 +32,55 @@ class Battery(Generator):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='Enom', units='MWh', tpe=float, definition='Nominal energy capacity.'),
-        GCProp(key='max_soc', units='p.u.', tpe=float, definition='Minimum state of charge.'),
-        GCProp(key='min_soc', units='p.u.', tpe=float, definition='Maximum state of charge.'),
-        GCProp(key='soc_0', units='p.u.', tpe=float, definition='Initial state of charge.'),
-        GCProp(key='charge_efficiency', units='p.u.', tpe=float, definition='Charging efficiency.'),
-        GCProp(key='discharge_efficiency', units='p.u.', tpe=float, definition='Discharge efficiency.'),
-        GCProp(key='discharge_per_cycle', units='p.u.', tpe=float, definition=''),
+        GCProp(
+            prop_name='Enom',
+            units='MWh',
+            tpe=float,
+            definition='Nominal energy capacity.',
+            cat=[PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='max_soc',
+            units='p.u.',
+            tpe=float,
+            definition='Minimum state of charge.',
+            cat=[PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='min_soc',
+            units='p.u.',
+            tpe=float,
+            definition='Maximum state of charge.',
+            cat=[PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='soc_0',
+            units='p.u.',
+            tpe=float,
+            definition='Initial state of charge.',
+            cat=[PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='charge_efficiency',
+            units='p.u.',
+            tpe=float,
+            definition='Charging efficiency.',
+            cat=[PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='discharge_efficiency',
+            units='p.u.',
+            tpe=float,
+            definition='Discharge efficiency.',
+            cat=[PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='discharge_per_cycle',
+            units='p.u.',
+            tpe=float,
+            definition='',
+            cat=[PrpCat.OPF],
+        ),
     )
 
     def __init__(self,

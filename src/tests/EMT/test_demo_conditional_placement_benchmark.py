@@ -173,18 +173,18 @@ def _collector_worst_step_curve(collector: NewtonTraceCollector) -> Tuple[np.nda
     records = sorted(grouped[worst_key], key=lambda item: int(item["newton_iter"]))
 
     residual_curve = np.asarray([
-        float(item["res_norm_inf"]) if item["res_norm_inf"] is not None else np.nan
+        float(item["dx_norm_inf"]) if item.get("dx_norm_inf", None) is not None else np.nan
         for item in records
     ], dtype=float)
 
     if np.all(np.isnan(residual_curve)):
         residual_curve = np.asarray([
-            float(item["dx_norm_inf"]) if item.get("dx_norm_inf", None) is not None else np.nan
+            float(item["res_norm_inf"]) if item["res_norm_inf"] is not None else np.nan
             for item in records
         ], dtype=float)
-        metric_label = "||dx||_inf on the worst local step"
-    else:
         metric_label = "||res||_inf on the worst local step"
+    else:
+        metric_label = "||dx||_inf on the worst local step"
 
     finite_mask = np.isfinite(residual_curve)
     if np.any(finite_mask):
@@ -218,7 +218,12 @@ def _build_case(builder) -> Tuple[GenericEmtProblem, JitSymbolicSolver, Dict[str
     block, vars_map = builder(vf)
     block.unify_blocks()
 
-    problem = GenericEmtProblem(sys_block=block, glob_time=vf.add_var(f"t_{block.name}"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+    problem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=vf.add_var(f"t_{block.name}"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
     solver = JitSymbolicSolver(
         problem=problem,
         t0=0.0,
@@ -355,6 +360,17 @@ def _build_export_dataframe(cases: List[Dict[str, object]]) -> pd.DataFrame:
 
     return pd.concat(export_frames, ignore_index=True, sort=False)
 
+
+def _normalize_plot_titles(dataframe: pd.DataFrame) -> pd.DataFrame:
+    """Normalize benchmark plot titles that may vary with diagnostic availability."""
+    normalized = dataframe.copy()
+    replacement_map: Dict[str, str] = dict({
+        "||dx||_inf on the worst local step": "Worst-step convergence metric",
+        "||res||_inf on the worst local step": "Worst-step convergence metric",
+    })
+    normalized["plot_title"] = normalized["plot_title"].replace(replacement_map)
+    return normalized
+
 def test_conditional_placement_benchmark() -> None:
 
     # retrieve reference results df
@@ -386,8 +402,8 @@ def test_conditional_placement_benchmark() -> None:
     ]
 
     sort_cols = id_cols + numeric_cols
-    results_df = results_df.sort_values(sort_cols, na_position="last").reset_index(drop=True)
-    reference_df = reference_df.sort_values(sort_cols, na_position="last").reset_index(drop=True)
+    results_df = _normalize_plot_titles(results_df).sort_values(sort_cols, na_position="last").reset_index(drop=True)
+    reference_df = _normalize_plot_titles(reference_df).sort_values(sort_cols, na_position="last").reset_index(drop=True)
 
     assert_frame_equal(results_df[id_cols], reference_df[id_cols], check_dtype=False)
 

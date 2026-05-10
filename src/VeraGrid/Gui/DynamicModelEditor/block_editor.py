@@ -222,7 +222,6 @@ class Ui_BlockEditorWindow(object):
         self.toolBox.setCurrentIndex(0)
 
 
-        QMetaObject.connectSlotsByName(BlockEditorWindow)
     # setupUi
 
     def retranslateUi(self, BlockEditorWindow):

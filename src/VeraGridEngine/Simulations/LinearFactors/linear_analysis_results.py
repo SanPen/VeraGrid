@@ -65,14 +65,24 @@ class LinearAnalysisResults(ResultsTemplate):
         """
         ResultsTemplate.__init__(self,
                                  name='Linear Analysis',
-                                 available_results=[ResultTypes.PTDF,
-                                                    ResultTypes.LODF,
-                                                    ResultTypes.HvdcPTDF,
-                                                    ResultTypes.HvdcODF,
-                                                    ResultTypes.VscPTDF,
-                                                    ResultTypes.VscODF,
-                                                    ResultTypes.BranchActivePowerFrom,
-                                                    ResultTypes.BranchLoading],
+                                 available_results={
+                                     ResultTypes.BusResults: [
+                                         ResultTypes.PTDF,
+                                         ResultTypes.BusActivePower
+                                     ],
+                                     ResultTypes.BranchResults: [
+                                         ResultTypes.LODF,
+                                         ResultTypes.BranchActivePowerFrom,
+                                         ResultTypes.BranchLoading],
+                                     ResultTypes.HvdcResults: [
+                                         ResultTypes.HvdcPTDF,
+                                         ResultTypes.HvdcODF,
+                                     ],
+                                     ResultTypes.VscResults: [
+                                         ResultTypes.VscPTDF,
+                                         ResultTypes.VscODF,
+                                     ]
+                                 },
                                  time_array=None,
                                  clustering_results=None,
                                  study_results_type=StudyResultsType.LinearAnalysis)
@@ -102,7 +112,6 @@ class LinearAnalysisResults(ResultsTemplate):
         self.Sbus: Vec = np.zeros(self.n_bus)
         self.voltage: CxVec = np.ones(self.n_bus, dtype=complex)
         self.loading: Vec = np.zeros(self.n_br)
-
 
     @property
     def n_br(self):
@@ -241,6 +250,17 @@ class LinearAnalysisResults(ResultsTemplate):
                                 title=result_type.value,
                                 ylabel='(%)',
                                 units='(%)')
+
+        elif result_type == ResultTypes.BusActivePower:
+
+            return ResultsTable(data=self.Sbus,
+                                index=self.bus_names,
+                                idx_device_type=DeviceType.BusDevice,
+                                columns=[result_type.value],
+                                cols_device_type=DeviceType.NoDevice,
+                                title=result_type.value,
+                                ylabel='(MW)',
+                                units='(MW)')
 
         else:
             raise Exception('Result type not understood:' + str(result_type))

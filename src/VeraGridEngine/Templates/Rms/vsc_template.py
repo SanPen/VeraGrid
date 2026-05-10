@@ -9,7 +9,7 @@ from VeraGridEngine.enumerations import DeviceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import (Block, VarPowerFlowRefferenceType)
-from VeraGridEngine.Templates.templates_common_functions import (tf_to_diffblock_with_antiwindup)
+from VeraGridEngine.Utils.Symbolic.block_helpers import tf_to_diffblock_with_antiwindup
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
 
 

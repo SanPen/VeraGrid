@@ -5,11 +5,19 @@
 
 from abc import ABC
 from typing import List, Dict
-import numpy as np
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
+from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
 from VeraGridEngine.basic_structures import Vec
 from VeraGridEngine.Simulations.driver_template import DummySignal
+from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
+from VeraGridEngine.Templates.Rms.genqec_phasor_rms_template import get_complete_generator_template_phasor
+from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
+from VeraGridEngine.Templates.Rms.load_rms_template import get_load_rms_template
+from VeraGridEngine.Templates.Rms.shunt_template import get_shunt_template
+from VeraGridEngine.Templates.Rms.transformer_rms_template import initialize_trafo_rms
+from VeraGridEngine.Templates.Rms.vsc_gfl_dclinked import build_vsc_rms
+from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_rms_model
 
 
 class RmsProblemTemplate(ABC):
@@ -120,3 +128,59 @@ class RmsProblemTemplate(ABC):
         :param val: text value
         """
         self.progress_text.emit(val)
+
+    def populate_missing_models(self, grid: MultiCircuit):
+
+        # todo: not sure this should be done, it edits the grid (input)
+        ## BUSES:
+        for bus in grid.buses:
+            if bus.rms_model.empty():
+                initialize_bus_rms(bus, vf=grid.var_factory)
+            else:
+                pass
+        ## -GENERATORS
+        for igen, gen in enumerate(grid.get_generators()):
+            if gen.rms_model.empty():
+                genqec = get_complete_generator_template_phasor(grid.var_factory, name=gen.name).block
+                set_rms_model(device=gen, model=genqec, var_factory=grid.var_factory)
+            else:
+                pass
+        ## -LINES:
+        for line in grid.get_lines():
+            if line.rms_model.empty():
+                lineec = get_line_rms_template(grid.var_factory, name=line.name).block
+                set_rms_model(device=line, model=lineec, var_factory=grid.var_factory)
+            else:
+                pass
+        ## -LOADS:
+        for load in grid.get_loads():
+            if load.rms_model.empty():
+                loadec = get_load_rms_template(grid.var_factory, name=load.name).block
+                set_rms_model(device=load, model=loadec, var_factory=grid.var_factory)
+            else:
+                pass
+        ## -TRANSFORMERS 2w:
+        for trafo in grid.get_transformers2w():
+            if trafo.rms_model.empty():
+                trafoec = initialize_trafo_rms(trafo, grid.var_factory, grid.Sbase).block
+                set_rms_model(device=trafo, model=trafoec, var_factory=grid.var_factory)
+            else:
+                pass
+        ## -TRANSFORMERS 3w:
+        for trafo in grid.get_transformers3w():
+            raise NotImplementedError("RMS model for 3w transformers is not implemented yet")
+
+        ## -SHUNTS:
+        for shunt in grid.get_shunts():
+            if shunt.rms_model.empty():
+                shuntec = get_shunt_template(grid.var_factory, name=shunt.name).block
+                set_rms_model(device=shunt, model=shuntec, var_factory=grid.var_factory)
+            else:
+                pass
+        ## -VSC:
+        for vsc in grid.get_vsc():
+            if vsc.rms_model.empty():
+                vsc_model = build_vsc_rms(grid.var_factory, name=vsc.name).block
+                set_rms_model(device=vsc, model=vsc_model, var_factory=grid.var_factory)
+            else:
+                pass

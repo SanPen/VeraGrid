@@ -6,7 +6,7 @@
 import numpy as np
 import math
 
-from VeraGridEngine.Templates.templates_common_functions import tf_to_block
+from VeraGridEngine.Utils.Symbolic.block_helpers import tf_to_block
 from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory

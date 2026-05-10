@@ -127,6 +127,8 @@ class BlockDiagram:
         self.con_data: Dict[int, BlockDiagramConnection] = dict()
 
 
+    def empty(self) -> bool:
+        return not self.node_data and not self.con_data
 
     def copy(self):
         """

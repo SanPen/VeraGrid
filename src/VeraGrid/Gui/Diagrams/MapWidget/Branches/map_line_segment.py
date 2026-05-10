@@ -15,7 +15,6 @@ from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template impor
 from VeraGrid.Gui.gui_functions import add_menu_entry
 from VeraGrid.Gui.messages import yes_no_question
 from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE, DEACTIVATED, OTHER
-from VeraGrid.Gui.DeviceEditors.LineEditor.line_editor import LineEditor
 
 from VeraGridEngine.Devices.types import BRANCH_TYPES, ALL_DEV_TYPES
 from VeraGridEngine.enumerations import DeviceType
@@ -431,22 +430,10 @@ class MapLineSegment(QGraphicsLineItem):
 
     def call_editor(self):
         """
-        Call the line editor
+        Call the specific branch editor.
         :return:
         """
-
-        Vnom = self.api_object.get_max_bus_nominal_voltage()
-        templates = list()
-
-        for lst in [self.editor.circuit.sequence_line_types,
-                    self.editor.circuit.underground_cable_types,
-                    self.editor.circuit.overhead_line_types]:
-            for temp in lst:
-                if Vnom == temp.Vnom:
-                    templates.append(temp)
-
-        dlg = LineEditor(line=self.api_object, grid=self.editor.circuit)
-        dlg.exec()
+        self.container.call_editor()
 
     def plot_profiles(self) -> None:
         """

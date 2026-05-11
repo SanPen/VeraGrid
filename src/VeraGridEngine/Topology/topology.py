@@ -258,19 +258,25 @@ def build_reducible_branches_C_coo(F: IntVec, T: IntVec, reducible: IntVec, acti
     n_red = 0
     for k in range(nelm):
         if reducible[k] and active[k]:
-            # C[k, f] = 1
-            i[ii] = k
-            j[ii] = F[k]
-            data[ii] = 1
-            ii += 1
+            f = F[k]
+            t = T[k]
 
-            # C[k, t] = 1
-            i[ii] = k
-            j[ii] = T[k]
-            data[ii] = 1
-            ii += 1
+            # Ignore already-reduced self-loops (and invalid bus references) so
+            # repeated topology processing is stable.
+            if f != t and f >= 0 and t >= 0:
+                # C[k, f] = 1
+                i[ii] = k
+                j[ii] = f
+                data[ii] = 1
+                ii += 1
 
-            n_red += 1
+                # C[k, t] = 1
+                i[ii] = k
+                j[ii] = t
+                data[ii] = 1
+                ii += 1
+
+                n_red += 1
 
     return i[:ii], j[:ii], data[:ii], n_red
 

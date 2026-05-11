@@ -559,6 +559,33 @@ def test_topology_2_nodes_A1():
     assert np.equal(nc.load_data.bus_idx, [0]).all()
 
 
+def test_topology_process_reducible_branches_is_idempotent() -> None:
+    """
+    Running branch reduction twice on the same numerical circuit must keep the
+    same reduction mapping.
+    """
+    grid = MultiCircuit()
+
+    b0 = grid.add_bus(dev.Bus(name="B0"))
+    b1 = grid.add_bus(dev.Bus(name="B1"))
+
+    grid.add_switch(dev.Switch(name="SW1", bus_from=b0, bus_to=b1, active=True))
+    grid.add_generator(api_obj=dev.Generator(P=10), bus=b0)
+    grid.add_load(api_obj=dev.Load(P=10), bus=b1)
+
+    nc = compile_numerical_circuit_at(grid)
+
+    n_red_first = nc.process_reducible_branches()
+    mapping_first = nc.get_reduction_bus_mapping().copy()
+
+    n_red_second = nc.process_reducible_branches()
+    mapping_second = nc.get_reduction_bus_mapping().copy()
+
+    assert n_red_first == 1
+    assert n_red_second == 0
+    assert np.array_equal(mapping_first, mapping_second)
+
+
 def test_topology_3_nodes_A1() -> None:
     """
     3 bus grid (closed switch)
@@ -611,7 +638,7 @@ def test_nc_active_works() -> None:
     the numerical circuit active status
     has zero flow, for many power flow algorithms
     """
-    fname = os.path.join('data', 'grids', 'RAW', 'IEEE 14 bus.raw')
+    fname = os.path.join('../Base/data', 'grids', 'RAW', 'IEEE 14 bus.raw')
     main_circuit = FileOpen(fname).open()
     nc = compile_numerical_circuit_at(main_circuit, t_idx=None)
 
@@ -637,7 +664,7 @@ def test_adjacency_calc():
     :return: csc_matrix
     """
 
-    fname = os.path.join('data', 'grids', 'RAW', 'IEEE 14 bus.raw')
+    fname = os.path.join('../Base/data', 'grids', 'RAW', 'IEEE 14 bus.raw')
     main_circuit = FileOpen(fname).open()
     nc = compile_numerical_circuit_at(main_circuit, t_idx=None)
     consider_hvdc_as_island_links = True
@@ -827,7 +854,7 @@ def test_lynn_Ybus():
 
     :return:
     """
-    fname = os.path.join('data', 'grids', 'lynn5node.gridcal')
+    fname = os.path.join('../Base/data', 'grids', 'lynn5node.gridcal')
     main_circuit = FileOpen(fname).open()
 
     # main_circuit = get_lynn_5_bus()
@@ -871,7 +898,7 @@ def test_lynn_Ybus2():
 
     :return:
     """
-    fname = os.path.join('data', 'grids', 'lynn5node.gridcal')
+    fname = os.path.join('../Base/data', 'grids', 'lynn5node.gridcal')
     main_circuit = FileOpen(fname).open()
 
     # main_circuit = get_lynn_5_bus()
@@ -907,7 +934,7 @@ def test_lynn_Ybus3() -> None:
     manually and then the assembles Ybus from the possible islands local Ybuses and compares both
     :return:
     """
-    fname = os.path.join('data', 'grids', 'lynn5node.gridcal')
+    fname = os.path.join('../Base/data', 'grids', 'lynn5node.gridcal')
     main_circuit = FileOpen(fname).open()
 
     # main_circuit = get_lynn_5_bus()
@@ -977,7 +1004,7 @@ def test_island_slicing():
     """
     This tests checks that things are properly sliced
     """
-    fname = os.path.join('data', 'grids', '8_nodes_2_islands.gridcal')
+    fname = os.path.join('../Base/data', 'grids', '8_nodes_2_islands.gridcal')
     main_circuit = FileOpen(fname).open()
 
     # main_circuit = get_lynn_5_bus()
@@ -999,7 +1026,7 @@ def test_island_slicing():
 
 
 def test_segmenting_by_hvdc():
-    fname = os.path.join('data', 'grids', '8_nodes_2_islands_hvdc.gridcal')
+    fname = os.path.join('../Base/data', 'grids', '8_nodes_2_islands_hvdc.gridcal')
 
     grid = open_file(fname)
 
@@ -1027,7 +1054,7 @@ def test_segmenting_by_hvdc():
 
 
 def test_switch_reduction():
-    fname = os.path.join('data', 'grids', 'DGS', 'Reduced_SPEN_v9_south_west_v3.dgs')
+    fname = os.path.join('../Base/data', 'grids', 'DGS', 'Reduced_SPEN_v9_south_west_v3.dgs')
 
     grid = open_file(fname)
 

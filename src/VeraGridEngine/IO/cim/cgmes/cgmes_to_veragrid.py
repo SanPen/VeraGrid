@@ -659,6 +659,204 @@ def normalize_terminal_bus_mappings(calc_nodes: List[gcdev.Bus],
     return calc_nodes, unique_calc_nodes, False
 
 
+def get_preferred_terminal_node_uuid(cgmes_terminal: CGMES_TERMINAL,
+                                     prefer_connectivity_node: bool) -> str | None:
+    """
+    Resolve the preferred CGMES node UUID for one terminal.
+
+    :param cgmes_terminal: CGMES terminal.
+    :param prefer_connectivity_node: If ``True`` use ConnectivityNode first.
+    :return: Normalized UUID or ``None``.
+    """
+    preferred_uuid: str | None = None
+
+    if prefer_connectivity_node:
+        preferred_uuid = normalize_cgmes_reference_uuid(cgmes_terminal.ConnectivityNode)
+        if preferred_uuid is None:
+            preferred_uuid = normalize_cgmes_reference_uuid(cgmes_terminal.TopologicalNode)
+        else:
+            pass
+    else:
+        preferred_uuid = normalize_cgmes_reference_uuid(cgmes_terminal.TopologicalNode)
+        if preferred_uuid is None:
+            preferred_uuid = normalize_cgmes_reference_uuid(cgmes_terminal.ConnectivityNode)
+        else:
+            pass
+
+    return preferred_uuid
+
+
+def find_missing_terminal_node_uuid(cgmes_terminals: List[CGMES_TERMINAL],
+                                    bus_dict: Dict[str, gcdev.Bus],
+                                    prefer_connectivity_node: bool) -> str | None:
+    """
+    Find the unresolved terminal node UUID for a branch-like equipment.
+
+    :param cgmes_terminals: Terminal list for one CGMES device.
+    :param bus_dict: Known VeraGrid buses by UUID.
+    :param prefer_connectivity_node: If ``True`` use ConnectivityNode first.
+    :return: Node UUID not present in ``bus_dict`` or ``None``.
+    """
+    missing_node_uuid: str | None = None
+    for cgmes_terminal in cgmes_terminals:
+        node_uuid: str | None = get_preferred_terminal_node_uuid(
+            cgmes_terminal=cgmes_terminal,
+            prefer_connectivity_node=prefer_connectivity_node
+        )
+        if node_uuid is None:
+            pass
+        else:
+            mapped_bus: gcdev.Bus | None = bus_dict.get(node_uuid, None)
+            if mapped_bus is None:
+                missing_node_uuid = node_uuid
+                break
+            else:
+                pass
+
+    return missing_node_uuid
+
+
+def get_dangling_bus_nominal_voltage(internal_bus: gcdev.Bus,
+                                     cgmes_line: CGMES_ASSETS,
+                                     logger: DataLogger) -> float:
+    """
+    Determine a stable nominal voltage for a synthetic dangling boundary bus.
+
+    :param internal_bus: Existing in-model bus connected to the dangling branch.
+    :param cgmes_line: CGMES ACLineSegment.
+    :param logger: Data logger.
+    :return: Nominal voltage in kV.
+    """
+    if internal_bus.Vnom > 0.0:
+        return float(internal_bus.Vnom)
+    else:
+        pass
+
+    if cgmes_line.BaseVoltage is not None:
+        if cgmes_line.BaseVoltage.nominalVoltage is not None:
+            base_nominal_voltage: float = float(cgmes_line.BaseVoltage.nominalVoltage)
+            if base_nominal_voltage > 0.0:
+                return base_nominal_voltage
+            else:
+                pass
+        else:
+            pass
+    else:
+        pass
+
+    logger.add_warning(
+        msg='Dangling boundary bus nominal voltage fallback',
+        device=cgmes_line.rdfid,
+        device_class=cgmes_line.tpe,
+        device_property='nominalVoltage',
+        value=0.0,
+        expected_value=1.0
+    )
+    return 1.0
+
+
+def ensure_dangling_boundary_bus_and_external_grid(cgmes_line: CGMES_ASSETS,
+                                                   gcdev_model: MultiCircuit,
+                                                   bus_dict: Dict[str, gcdev.Bus],
+                                                   mapped_internal_bus: gcdev.Bus,
+                                                   cgmes_terminals: List[CGMES_TERMINAL],
+                                                   prefer_connectivity_node: bool,
+                                                   logger: DataLogger) -> gcdev.Bus:
+    """
+    Create or reuse the synthetic boundary endpoint for a dangling AC line.
+
+    Algorithm:
+        1. Resolve the unresolved terminal node UUID if available.
+        2. Reuse existing synthetic bus when already created.
+        3. Create a boundary bus with a stable nominal voltage.
+        4. Attach a zero-injection external grid so the endpoint is modeled
+           as an explicit boundary condition instead of an unconstrained stub.
+
+    :param cgmes_line: CGMES ACLineSegment.
+    :param gcdev_model: VeraGrid model.
+    :param bus_dict: Bus lookup dictionary.
+    :param mapped_internal_bus: Internal bus already mapped for the line.
+    :param cgmes_terminals: Terminal list of this line.
+    :param prefer_connectivity_node: If ``True`` prefer ConnectivityNode UUIDs.
+    :param logger: Data logger.
+    :return: Synthetic or reused boundary bus.
+    """
+    missing_node_uuid: str | None = find_missing_terminal_node_uuid(
+        cgmes_terminals=cgmes_terminals,
+        bus_dict=bus_dict,
+        prefer_connectivity_node=prefer_connectivity_node
+    )
+
+    if missing_node_uuid is not None:
+        existing_boundary_bus: gcdev.Bus | None = bus_dict.get(missing_node_uuid, None)
+    else:
+        existing_boundary_bus = None
+
+    if existing_boundary_bus is not None:
+        boundary_bus: gcdev.Bus = existing_boundary_bus
+    else:
+        nominal_voltage: float = get_dangling_bus_nominal_voltage(
+            internal_bus=mapped_internal_bus,
+            cgmes_line=cgmes_line,
+            logger=logger
+        )
+
+        if missing_node_uuid is not None:
+            boundary_bus_idtag: str = f"{missing_node_uuid}_boundary"
+        else:
+            boundary_bus_idtag = f"{cgmes_line.uuid}_boundary"
+
+        boundary_bus = gcdev.Bus(
+            idtag=boundary_bus_idtag,
+            name=f"Boundary-{cgmes_line.name}",
+            code=cgmes_line.description,
+            Vnom=nominal_voltage,
+            Vm0=mapped_internal_bus.Vm0,
+            Va0=mapped_internal_bus.Va0,
+            is_slack=False,
+            active=get_cgmes_equipment_active_state(cgmes_line),
+        )
+
+        gcdev_model.add_bus(boundary_bus)
+        bus_dict[boundary_bus.idtag] = boundary_bus
+        if missing_node_uuid is not None:
+            bus_dict[missing_node_uuid] = boundary_bus
+        else:
+            pass
+
+        logger.add_warning(
+            msg='Created synthetic boundary bus for dangling ACLineSegment',
+            device=cgmes_line.rdfid,
+            device_class=cgmes_line.tpe,
+            device_property='number of associated terminals',
+            value=len(cgmes_terminals),
+            expected_value=2
+        )
+
+    has_existing_external_grid: bool = False
+    for external_grid in gcdev_model.external_grids:
+        if external_grid.bus == boundary_bus:
+            has_existing_external_grid = True
+        else:
+            pass
+
+    if has_existing_external_grid:
+        pass
+    else:
+        boundary_external_grid = gcdev.ExternalGrid(
+            idtag=f"{cgmes_line.uuid}_boundary_external",
+            name=f"Boundary-{cgmes_line.name}",
+            code=cgmes_line.description,
+            active=get_cgmes_equipment_active_state(cgmes_line),
+            mode=ExternalGridMode.PQ,
+            P=0.0,
+            Q=0.0,
+        )
+        gcdev_model.add_external_grid(bus=boundary_bus, api_obj=boundary_external_grid)
+
+    return boundary_bus
+
+
 def log_collapsed_terminal_mapping_warning(logger: DataLogger,
                                            cgmes_elm: CGMES_ASSETS,
                                            raw_count: int,
@@ -2189,6 +2387,99 @@ def get_gcdev_ac_lines(cgmes_model: CgmesCircuit,
                     gcdev_elm.set_var_factory(gcdev_model.var_factory)
                 else:
                     gcdev_model.add_line(gcdev_elm, logger=logger)
+            elif len(resolved_calc_nodes) == 1:
+                # One terminal mapped to the internal model and one terminal unresolved:
+                # create a synthetic boundary endpoint to preserve the branch.
+                logger.add_warning(
+                    msg='Dangling ACLineSegment detected: dangling lines with no boundary buses and boundary conditions were found. This is a terrible practice.',
+                    device=cgmes_elm.rdfid,
+                    device_class=cgmes_elm.tpe,
+                    device_property="number of associated terminals",
+                    value=str(len(calc_nodes)),
+                    expected_value="2"
+                )
+                calc_node_f = resolved_calc_nodes[0]
+                device_terminals = device_to_terminal_dict.get(cgmes_elm.uuid, None)
+                if device_terminals is None:
+                    logger.add_error(msg='No terminal for dangling ACLineSegment',
+                                     device=cgmes_elm.rdfid,
+                                     device_class=cgmes_elm.tpe,
+                                     device_property="number of associated terminals",
+                                     value=0,
+                                     expected_value=2)
+                else:
+                    cgmes_terminals: List[CGMES_TERMINAL] = list()
+                    for terminal in device_terminals:
+                        if isinstance(terminal, cgmes_model.assets.Terminal):
+                            cgmes_terminals.append(terminal)
+                        else:
+                            pass
+
+                    if len(cgmes_terminals) > 0:
+                        calc_node_t = ensure_dangling_boundary_bus_and_external_grid(
+                            cgmes_line=cgmes_elm,
+                            gcdev_model=gcdev_model,
+                            bus_dict=bus_dict,
+                            mapped_internal_bus=calc_node_f,
+                            cgmes_terminals=cgmes_terminals,
+                            prefer_connectivity_node=(cgmes_model.cgmes_version == CGMESVersions.v3_0_0),
+                            logger=logger
+                        )
+
+                        r, x, g, b, r0, x0, g0, b0 = get_pu_values_ac_line_segment(
+                            ac_line_segment=cgmes_elm,
+                            logger=logger,
+                            Sbase=Sbase
+                        )
+
+                        normal_rate_mva = patl_dict.get(cgmes_elm.uuid, 9999.0)
+                        cont_rate_mva = tatl_900_dict.get(cgmes_elm.uuid, 9999.0)
+                        if cont_rate_mva != 9999.0:
+                            cont_factor = cont_rate_mva / normal_rate_mva if normal_rate_mva != 0.0 else 1.0
+                        else:
+                            cont_factor = 1.0
+
+                        prot_rate_mva = tatl_60_dict.get(cgmes_elm.uuid, 9999.0)
+                        if prot_rate_mva != 9999.0:
+                            prot_factor = prot_rate_mva / normal_rate_mva if normal_rate_mva != 0.0 else 1.4
+                        else:
+                            prot_factor = 1.4
+
+                        if cgmes_elm.length is None:
+                            length = 1.0
+                            logger.add_error(msg='Length missing.',
+                                             device=cgmes_elm.rdfid,
+                                             device_class=str(cgmes_elm.tpe))
+                        else:
+                            length = float(cgmes_elm.length)
+
+                        gcdev_elm = gcdev.Line(
+                            idtag=cgmes_elm.uuid,
+                            code=cgmes_elm.description,
+                            name=cgmes_elm.name,
+                            active=get_cgmes_equipment_active_state(cgmes_elm),
+                            bus_from=calc_node_f,
+                            bus_to=calc_node_t,
+                            r=r,
+                            x=x,
+                            b=b,
+                            r0=r0,
+                            x0=x0,
+                            b0=b0,
+                            rate=normal_rate_mva,
+                            contingency_factor=cont_factor,
+                            protection_rating_factor=prot_factor,
+                            length=length,
+                        )
+
+                        gcdev_model.add_line(gcdev_elm, logger=logger)
+                    else:
+                        logger.add_error(msg='No CGMES terminals available for dangling ACLineSegment',
+                                         device=cgmes_elm.rdfid,
+                                         device_class=cgmes_elm.tpe,
+                                         device_property="number of associated terminals",
+                                         value=0,
+                                         expected_value=2)
             else:
                 logger.add_error(msg='Not exactly two terminals',
                                  device=cgmes_elm.rdfid,

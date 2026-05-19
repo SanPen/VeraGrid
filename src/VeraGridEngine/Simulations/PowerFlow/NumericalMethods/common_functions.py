@@ -161,6 +161,57 @@ def voltage_q_droop(ut: complex,
     return Q / S_base
 
 
+def voltage_pdc_droop(ut: complex,
+                      u_setpoint_min: float,
+                      u_setpoint_max: float,
+                      u_setpoint: float,
+                      Pdc_setpoint: float,
+                      S_r: float,
+                      droop: float,
+                      P_min: float,
+                      P_max: float,
+                      S_base: float
+                      ):
+    """
+    Find the actual DC power output for converters controlled with a voltage droop.
+
+    Implements Pdc = Pdc* - Pdroop * (Vdc* - Vdc)
+
+    :param ut: Actual voltage value at the terminal [pu]
+    :param u_setpoint_min: Minimum voltage setpoint [pu]
+    :param u_setpoint_max: Maximum voltage setpoint [pu]
+    :param u_setpoint: Specified voltage setpoint [pu]
+    :param Pdc_setpoint: Specified dispatch DC power [MW]
+    :param S_r: Rated apparent power [MVA]
+    :param droop: Voltage droop value [%]
+    :param P_min: Minimum DC power the converter can inject/absorb [MW]
+    :param P_max: Maximum DC power the converter can inject/absorb [MW]
+    :param S_base: Base power of the network [MVA]
+    """
+    u = np.abs(ut)
+    # Voltage limits
+    if u > u_setpoint_max:
+        u = u_setpoint_max
+    elif u < u_setpoint_min:
+        u = u_setpoint_min
+    else:
+        u = u
+
+    P_droop = S_r * 100 / droop  # Scaled slope
+
+    Pdc = Pdc_setpoint * S_base - P_droop * (u_setpoint - u)  # Actual DC power output [MW]
+
+    # DC power limits
+    if Pdc > P_max:
+        Pdc = P_max
+    elif Pdc < P_min:
+        Pdc = P_min
+    else:
+        Pdc = Pdc
+
+    return Pdc / S_base
+
+
 @nb.njit(cache=True, fastmath=True)
 def polar_to_rect(Vm, Va) -> CxVec:
     """

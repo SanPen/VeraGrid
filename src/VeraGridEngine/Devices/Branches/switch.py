@@ -85,7 +85,8 @@ class Switch(BranchParent):
                  retained=False,
                  normal_open=False,
                  rated_current=0.0,
-                 graphic_type: SwitchGraphicType = SwitchGraphicType.CircuitBreaker):
+                 graphic_type: SwitchGraphicType = SwitchGraphicType.CircuitBreaker,
+                 retain: bool | None = None):
         """
         Switch device
         :param bus_from: Bus from
@@ -107,7 +108,7 @@ class Switch(BranchParent):
                               bus_from=bus_from,
                               bus_to=bus_to,
                               active=active,
-                              reducible=not retained,
+                              reducible=True,
                               rate=rate,
                               contingency_factor=contingency_factor,
                               protection_rating_factor=protection_rating_factor,
@@ -241,6 +242,4 @@ class Switch(BranchParent):
 
         self.R *= b
         self.X *= b
-
-
 

@@ -1066,14 +1066,14 @@ def get_complete_generator_template_rms(vfactory: VarFactory, name="complete gen
     stabilizer_mdl = get_stabilizer_rms(vfactory=vfactory).block
 
     # connect models
-    exciter_mdl.connect([exciter_mdl.in_vars[1]], [genqec_mdl.in_vars[0]])
-    connect_models(genqec_mdl, exciter_mdl)
+    vfactory.add_connections([exciter_mdl.in_vars[1]], [genqec_mdl.in_vars[0]])
+    connect_models(genqec_mdl, exciter_mdl, vfactory)
 
-    connect_models(exciter_mdl, stabilizer_mdl)
+    connect_models(exciter_mdl, stabilizer_mdl, vfactory)
 
-    connect_models(stabilizer_mdl, genqec_mdl)
+    connect_models(stabilizer_mdl, genqec_mdl, vfactory)
 
-    connect_models(genqec_mdl, governor_mdl)
+    connect_models(genqec_mdl, governor_mdl, vfactory)
 
     templ.block.children.append(genqec_mdl)
     templ.block.children.append(governor_mdl)

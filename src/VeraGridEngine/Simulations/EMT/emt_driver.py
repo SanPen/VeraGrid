@@ -18,7 +18,6 @@ from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowRes
 from VeraGridEngine.Utils.Symbolic.diagnostic import NewtonDiagnosticsConfig
 from VeraGridEngine.IO.fmu.importer.emt_boundary import build_emt_boundary_updater
 from VeraGridEngine.basic_structures import Vec, StrVec
-from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_emt_template
 
 from VeraGridEngine.enumerations import EngineType, SimulationTypes
 
@@ -102,6 +101,7 @@ class EmtSimulationDriver(DriverTemplate):
         #     emt_events_groups = self.grid.emt_events_groups
 
         emt_events_group_names: StrVec = np.array([elm.name for elm in emt_events_groups])
+        emt_events_group_idtags: StrVec = np.array([str(elm.idtag) for elm in emt_events_groups])
 
         steps = int(np.ceil((self.options.simulation_time - 0) / self.options.time_step))
         t: Vec = np.arange(steps + 1) * self.options.time_step
@@ -125,6 +125,7 @@ class EmtSimulationDriver(DriverTemplate):
         self.results = EmtResults(
             time_array=pd.DatetimeIndex(pd.to_datetime(t * 1e9)),
             emt_events_group_names=emt_events_group_names,
+            emt_events_group_idtags=emt_events_group_idtags,
             variables=self.problem.state_and_algebraic_vars(),
             diff_variables=self.problem.get_diff_vars(),
             uid2idx_vars=self.problem.uid2idx_vars,

@@ -1,0 +1,638 @@
+from __future__ import annotations
+
+from pathlib import Path
+
+import numpy as np
+from PySide6 import QtCore
+
+from VeraGrid.Gui.Main.SubClasses.Results.dynamics_results_handler import DynamicsResultsHandler, DynamicPlotCandidate
+from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import initialize_connected_bus_models_for_editor_assignment
+from VeraGridEngine.Devices.Events.emt_events_group import EmtEventsGroup
+from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
+from VeraGridEngine.Devices.Events.dynamic_plot import DynamicPlot
+from VeraGridEngine.Devices.Events.dynamic_plot_entry import DynamicPlotEntry
+from VeraGridEngine.Devices.Injections.generator import Generator
+from VeraGridEngine.Devices.Substation.bus import Bus
+from VeraGridEngine.Devices.multi_circuit import MultiCircuit
+from VeraGridEngine.Simulations.EMT.emt_results import EmtResults
+from VeraGridEngine.IO.file_open import FileOpen
+from VeraGridEngine.IO.file_save import FileSavingOptions, save_veragrid_circuit
+from VeraGridEngine.Simulations.Rms.rms_results import RmsResults
+from VeraGridEngine.Utils.Symbolic.block import Block
+from VeraGridEngine.Utils.Symbolic.symbolic import Var
+from VeraGridEngine.Utils.Symbolic.templates_common_functions import connect_bus_variables_emt, connect_bus_variables_rms
+from VeraGridEngine.enumerations import DeviceType, FileType, PlotSimulationType, DynamicSimulationMode
+
+
+def ensure_qt_application() -> QtCore.QCoreApplication:
+    """
+    Ensure a Qt core application exists for Qt model creation.
+
+    :return: Existing or newly created Qt core application.
+    """
+    application: QtCore.QCoreApplication | None = QtCore.QCoreApplication.instance()
+    if application is None:
+        application = QtCore.QCoreApplication(list())
+    else:
+        pass
+    return application
+
+
+def build_pre_simulation_rms_circuit() -> MultiCircuit:
+    """
+    Build one minimal circuit with declarative RMS dynamic variables.
+
+    :return: Circuit configured for the pre-simulation dynamic plot editor.
+    """
+    circuit: MultiCircuit = MultiCircuit(name="pre-sim-rms")
+    generator: Generator = Generator(name="Generator A", idtag="gen-a")
+    omega_var: Var = circuit.var_factory.add_var(name="omega", uid=1)
+    efd_var: Var = circuit.var_factory.add_var(name="efd", uid=2)
+    generator.rms_model = Block(
+        state_vars=[omega_var],
+        algebraic_vars=[efd_var],
+    )
+    circuit.set_elements_list_by_type(device_type=DeviceType.GeneratorDevice, devices=[generator])
+    circuit.add_rms_events_group(obj=RmsEventsGroup(idtag="rms-group-a", name="RMS Group A"))
+    return circuit
+
+
+def build_pre_simulation_editor_style_rms_circuit() -> MultiCircuit:
+    """
+    Build one minimal circuit whose RMS model matches the Dynamic Editor wrapper structure.
+
+    :return: Circuit configured with one root block that stores plottable vars in a child block.
+    """
+    circuit: MultiCircuit = MultiCircuit(name="pre-sim-editor-rms")
+    generator: Generator = Generator(name="Generator A", idtag="gen-a")
+    omega_var: Var = circuit.var_factory.add_var(name="omega", uid=11)
+    efd_var: Var = circuit.var_factory.add_var(name="efd", uid=12)
+    editor_child_block: Block = Block(
+        state_vars=[omega_var],
+        algebraic_vars=[efd_var],
+        name="editor-child-rms",
+    )
+    generator.rms_model = Block(children=[editor_child_block], name="editor-root-rms")
+    circuit.set_elements_list_by_type(device_type=DeviceType.GeneratorDevice, devices=[generator])
+    circuit.add_rms_events_group(obj=RmsEventsGroup(idtag="rms-group-a", name="RMS Group A"))
+    return circuit
+
+
+def build_pre_simulation_editor_style_emt_circuit() -> MultiCircuit:
+    """
+    Build one minimal circuit whose EMT model matches the Dynamic Editor wrapper structure.
+
+    :return: Circuit configured with one root block that stores plottable vars in a child block.
+    """
+    circuit: MultiCircuit = MultiCircuit(name="pre-sim-editor-emt")
+    bus: Bus = Bus(name="Bus A", idtag="bus-a")
+    generator: Generator = Generator(name="Generator A", idtag="gen-a")
+    generator.bus = bus
+    omega_var: Var = circuit.var_factory.add_var(name="omega", uid=21)
+    domega_var: Var = circuit.var_factory.add_var(name="domega", uid=22)
+    editor_child_block: Block = Block(
+        state_vars=[omega_var],
+        diff_vars=[domega_var],
+        name="editor-child-emt",
+    )
+    generator.emt_model = Block(children=[editor_child_block], name="editor-root-emt")
+    circuit.add_bus(bus)
+    circuit.set_elements_list_by_type(device_type=DeviceType.GeneratorDevice, devices=[generator])
+    circuit.add_emt_events_group(obj=EmtEventsGroup(idtag="emt-group-a", name="EMT Group A"))
+    return circuit
+
+
+def build_rms_results_from_generator(generator: Generator,
+                                     variable_name: str,
+                                     variable_uid: int) -> RmsResults:
+    """
+    Build one minimal RMS results object for the given generator.
+
+    :param generator: Generator that owns the result variable.
+    :param variable_name: Result variable name.
+    :param variable_uid: Result variable uid.
+    :return: Minimal RMS results object.
+    """
+    variable: Var = Var(name=variable_name, uid=variable_uid)
+    results: RmsResults = RmsResults(
+        time_array=np.array([0.0, 1.0], dtype=float),
+        rms_events_group_names=np.array(["RMS Group A"], dtype=str),
+        rms_events_group_idtags=np.array(["rms-group-a"], dtype=str),
+        variables=[variable],
+        uid2idx={variable_uid: 0},
+        vars_glob_name2uid={generator.idtag + ":" + variable_name + ":" + str(variable_uid): variable_uid},
+        devices_vars_info={generator: [variable]},
+    )
+    results.values[:, :, 0] = np.array([[0.0], [1.0]], dtype=float)
+    return results
+
+
+def build_rms_results_from_bus(bus: Bus,
+                               variable_name: str,
+                               variable_uid: int) -> RmsResults:
+    """
+    Build one minimal RMS results object for one bus voltage variable.
+
+    :param bus: Bus that owns the result variable.
+    :param variable_name: Result variable name.
+    :param variable_uid: Result variable uid.
+    :return: Minimal RMS results object.
+    """
+    variable: Var = Var(name=variable_name, uid=variable_uid)
+    results: RmsResults = RmsResults(
+        time_array=np.array([0.0, 1.0], dtype=float),
+        rms_events_group_names=np.array(["RMS Group A"], dtype=str),
+        rms_events_group_idtags=np.array(["rms-group-a"], dtype=str),
+        variables=[variable],
+        uid2idx={variable_uid: 0},
+        vars_glob_name2uid={bus.idtag + ":" + variable_name + ":" + str(variable_uid): variable_uid},
+        devices_vars_info={bus: [variable]},
+    )
+    results.values[:, :, 0] = np.array([[0.0], [1.0]], dtype=float)
+    return results
+
+
+def build_emt_results_from_generator_diff_var(generator: Generator,
+                                              variable_name: str,
+                                              variable_uid: int) -> EmtResults:
+    """
+    Build one minimal EMT results object for one differential variable.
+
+    :param generator: Generator that owns the result variable.
+    :param variable_name: Result variable name.
+    :param variable_uid: Result variable uid.
+    :return: Minimal EMT results object.
+    """
+    diff_variable: Var = Var(name=variable_name, uid=variable_uid)
+    results: EmtResults = EmtResults(
+        time_array=np.array([0.0, 1.0], dtype=float),
+        emt_events_group_names=np.array(["EMT Group A"], dtype=str),
+        emt_events_group_idtags=np.array(["emt-group-a"], dtype=str),
+        variables=list(),
+        diff_variables=[diff_variable],
+        uid2idx_vars=dict(),
+        uid2idx_diff={variable_uid: 0},
+        vars_glob_name2uid={generator.idtag + ":" + variable_name + ":" + str(variable_uid): variable_uid},
+        devices_vars_info={generator: [diff_variable]},
+    )
+    results.diff_values[:, :, 0] = np.array([[0.0], [1.0]], dtype=float)
+    return results
+
+
+def build_emt_results_from_bus(bus: Bus,
+                               variable_name: str,
+                               variable_uid: int) -> EmtResults:
+    """
+    Build one minimal EMT results object for one bus voltage variable.
+
+    :param bus: Bus that owns the result variable.
+    :param variable_name: Result variable name.
+    :param variable_uid: Result variable uid.
+    :return: Minimal EMT results object.
+    """
+    variable: Var = Var(name=variable_name, uid=variable_uid)
+    results: EmtResults = EmtResults(
+        time_array=np.array([0.0, 1.0], dtype=float),
+        emt_events_group_names=np.array(["EMT Group A"], dtype=str),
+        emt_events_group_idtags=np.array(["emt-group-a"], dtype=str),
+        variables=[variable],
+        diff_variables=list(),
+        uid2idx_vars={variable_uid: 0},
+        uid2idx_diff=dict(),
+        vars_glob_name2uid={bus.idtag + ":" + variable_name + ":" + str(variable_uid): variable_uid},
+        devices_vars_info={bus: [variable]},
+    )
+    results.values[:, :, 0] = np.array([[0.0], [1.0]], dtype=float)
+    return results
+
+
+def test_dynamic_plot_asset_roundtrip_preserves_semantic_fields(tmp_path: Path) -> None:
+    """
+    Verify that persistent dynamic plot assets survive a ``.veragrid`` roundtrip.
+
+    :param tmp_path: Temporary directory provided by pytest.
+    :return: None.
+    """
+    circuit: MultiCircuit = MultiCircuit(name="dynamic-plot-assets")
+    plot_asset: DynamicPlot = DynamicPlot(name="Plot 1", simulation_type=PlotSimulationType.RMS)
+    circuit.add_dynamic_plot(obj=plot_asset)
+
+    curve_asset: DynamicPlotEntry = DynamicPlotEntry(
+        variable=None,
+        plot=plot_asset,
+        group=None,
+        device=None,
+        simulation_type=PlotSimulationType.RMS,
+        event_group_idtag="rms-group-a",
+        event_group_name="RMS Group A",
+        curve_device_type=DeviceType.LoadDevice,
+        device_idtag="load-a",
+        device_name_hint="Load A",
+        variable_name="p_load",
+        result_path_kind="values",
+        curve_label="Load A - p_load - RMS Group A",
+        enabled=True,
+        runtime_series_key_payload="payload",
+        name="Curve 1",
+    )
+    circuit.add_dynamic_plot_entry(obj=curve_asset)
+
+    file_name: Path = tmp_path / "dynamic_plot_assets.veragrid"
+    options: FileSavingOptions = FileSavingOptions(file_type=FileType.VeraGrid)
+    save_veragrid_circuit(circuit=circuit, file_name=str(file_name), options=options)
+
+    loader: FileOpen = FileOpen(file_name=str(file_name))
+    loaded_circuit: MultiCircuit | None = loader.open()
+
+    assert loaded_circuit is not None
+    assert len(loaded_circuit.dynamic_plots) == 1
+    assert len(loaded_circuit.dynamic_plot_entries) == 1
+
+    loaded_plot: DynamicPlot = loaded_circuit.dynamic_plots[0]
+    loaded_entry: DynamicPlotEntry = loaded_circuit.dynamic_plot_entries[0]
+
+    assert loaded_plot.name == "Plot 1"
+    assert loaded_plot.simulation_type == PlotSimulationType.RMS
+    assert loaded_entry.plot is loaded_plot
+    assert loaded_entry.variable is None
+    assert loaded_entry.group is None
+    assert loaded_entry.simulation_type == PlotSimulationType.RMS
+    assert loaded_entry.event_group_idtag == "rms-group-a"
+    assert loaded_entry.event_group_name == "RMS Group A"
+    assert loaded_entry.curve_device_type == DeviceType.LoadDevice
+    assert loaded_entry.device_idtag == "load-a"
+    assert loaded_entry.device_name_hint == "Load A"
+    assert loaded_entry.variable_name == "p_load"
+    assert loaded_entry.result_path_kind == "values"
+    assert loaded_entry.curve_label == "Load A - p_load - RMS Group A"
+    assert loaded_entry.enabled is True
+    assert loaded_entry.runtime_series_key_payload == "payload"
+
+
+def test_pre_simulation_handler_creates_persistent_assets() -> None:
+    """
+    Verify that the pre-simulation handler writes plot definitions into circuit assets.
+
+    :return: None.
+    """
+    ensure_qt_application()
+    circuit: MultiCircuit = build_pre_simulation_rms_circuit()
+    handler: DynamicsResultsHandler = DynamicsResultsHandler(results=None, circuit=circuit, simulation_type="RMS")
+
+    created: bool = handler.create_plot_group(name="Plot 1")
+    assert created is True
+
+    first_candidate_list = handler.series_by_var_uid[1]
+    first_candidate: DynamicPlotCandidate = first_candidate_list[0]
+    inserted: bool = handler.add_candidate_to_group(group_name="Plot 1", candidate=first_candidate)
+
+    assert inserted is True
+    assert len(circuit.dynamic_plots) == 1
+    assert len(circuit.dynamic_plot_entries) == 1
+    assert circuit.dynamic_plots[0].simulation_type == PlotSimulationType.RMS
+    assert circuit.dynamic_plot_entries[0].event_group_idtag == "rms-group-a"
+    assert circuit.dynamic_plot_entries[0].device_idtag == "gen-a"
+    assert circuit.dynamic_plot_entries[0].variable_name == "omega"
+
+
+def test_pre_simulation_dynamic_plot_assets_survive_roundtrip_without_results(tmp_path: Path) -> None:
+    """
+    Verify that handler-created pre-simulation plot assets survive save/open.
+
+    :param tmp_path: Temporary directory provided by pytest.
+    :return: None.
+    """
+    ensure_qt_application()
+    circuit: MultiCircuit = build_pre_simulation_rms_circuit()
+    handler: DynamicsResultsHandler = DynamicsResultsHandler(results=None, circuit=circuit, simulation_type="RMS")
+    assert handler.create_plot_group(name="Plot 1") is True
+
+    first_candidate_list = handler.series_by_var_uid[1]
+    first_candidate: DynamicPlotCandidate = first_candidate_list[0]
+    assert handler.add_candidate_to_group(group_name="Plot 1", candidate=first_candidate) is True
+
+    file_name: Path = tmp_path / "pre_simulation_dynamic_plot_assets.veragrid"
+    options: FileSavingOptions = FileSavingOptions(file_type=FileType.VeraGrid)
+    save_veragrid_circuit(circuit=circuit, file_name=str(file_name), options=options)
+
+    loader: FileOpen = FileOpen(file_name=str(file_name))
+    loaded_circuit: MultiCircuit | None = loader.open()
+
+    assert loaded_circuit is not None
+    assert len(loaded_circuit.dynamic_plots) == 1
+    assert len(loaded_circuit.dynamic_plot_entries) == 1
+    assert loaded_circuit.dynamic_plots[0].name == "Plot 1"
+    assert loaded_circuit.dynamic_plots[0].simulation_type == PlotSimulationType.RMS
+    assert loaded_circuit.dynamic_plot_entries[0].variable_name == "omega"
+    assert loaded_circuit.dynamic_plot_entries[0].event_group_idtag == "rms-group-a"
+
+
+def test_pre_simulation_created_asset_binds_after_results_exist() -> None:
+    """
+    Verify that a pre-simulation plot definition binds automatically after RMS results exist.
+
+    :return: None.
+    """
+    ensure_qt_application()
+    circuit: MultiCircuit = build_pre_simulation_rms_circuit()
+    handler: DynamicsResultsHandler = DynamicsResultsHandler(results=None, circuit=circuit, simulation_type="RMS")
+    assert handler.create_plot_group(name="Plot 1") is True
+
+    first_candidate_list = handler.series_by_var_uid[1]
+    first_candidate: DynamicPlotCandidate = first_candidate_list[0]
+    assert handler.add_candidate_to_group(group_name="Plot 1", candidate=first_candidate) is True
+
+    generator: Generator = circuit.get_elements_by_type(device_type=DeviceType.GeneratorDevice)[0]
+    results: RmsResults = build_rms_results_from_generator(generator=generator, variable_name="omega", variable_uid=101)
+    results_handler: DynamicsResultsHandler = DynamicsResultsHandler(results=results, circuit=circuit)
+
+    group = results_handler.plot_groups.get_group(name="Plot 1")
+    assert group is not None
+    restored_entries = group.get_series()
+    assert len(restored_entries) == 1
+    assert results_handler.get_plots_model() is not None
+    assert restored_entries[0].get_var().uid == 101
+
+
+def test_pre_simulation_handler_discovers_editor_style_rms_variables() -> None:
+    """
+    Verify that pre-simulation RMS discovery traverses Dynamic Editor child blocks.
+
+    :return: None.
+    """
+    ensure_qt_application()
+    circuit: MultiCircuit = build_pre_simulation_editor_style_rms_circuit()
+    handler: DynamicsResultsHandler = DynamicsResultsHandler(results=None, circuit=circuit, simulation_type="RMS")
+
+    assert 11 in handler.series_by_var_uid
+    assert 12 in handler.series_by_var_uid
+    assert handler.series_by_var_uid[11][0]._variable_name == "omega"
+    assert handler.series_by_var_uid[12][0]._variable_name == "efd"
+
+
+def test_template_style_pre_simulation_rms_tree_includes_bus_voltage_variables() -> None:
+    """
+    Verify that the RMS pre-simulation tree includes bus voltage vars when the bus model already exists.
+
+    :return: None.
+    """
+    ensure_qt_application()
+    circuit: MultiCircuit = MultiCircuit(name="template-rms-bus-tree")
+    bus: Bus = Bus(name="Bus A", idtag="bus-a")
+    generator: Generator = Generator(name="Generator A", idtag="gen-a")
+    generator.bus = bus
+    circuit.add_bus(bus)
+    circuit.set_elements_list_by_type(device_type=DeviceType.GeneratorDevice, devices=[generator])
+    circuit.add_rms_events_group(obj=RmsEventsGroup(idtag="rms-group-a", name="RMS Group A"))
+
+    generator_model = Block(state_vars=[circuit.var_factory.add_var(name="omega", uid=13)])
+    connect_bus_variables_rms(device=generator, model=generator_model, var_factory=circuit.var_factory)
+    generator.rms_model = generator_model
+
+    handler: DynamicsResultsHandler = DynamicsResultsHandler(results=None, circuit=circuit, simulation_type="RMS")
+    bus_variables = handler.tree_data[DeviceType.BusDevice][bus]
+    bus_variable_names = [variable.name for variable in bus_variables]
+
+    assert "Vm" in bus_variable_names
+    assert "Va" in bus_variable_names
+
+
+def test_uninitialized_rms_bus_does_not_appear_in_pre_simulation_tree() -> None:
+    """
+    Verify that an uninitialized RMS bus does not appear in the pre-simulation tree.
+
+    :return: None.
+    """
+    ensure_qt_application()
+    circuit: MultiCircuit = MultiCircuit(name="editor-rms-bus-tree")
+    bus: Bus = Bus(name="Bus A", idtag="bus-a")
+    generator: Generator = Generator(name="Generator A", idtag="gen-a")
+    generator.bus = bus
+    generator.rms_model = Block(children=[Block(state_vars=[circuit.var_factory.add_var(name="omega", uid=16)])])
+    circuit.add_bus(bus)
+    circuit.set_elements_list_by_type(device_type=DeviceType.GeneratorDevice, devices=[generator])
+    circuit.add_rms_events_group(obj=RmsEventsGroup(idtag="rms-group-a", name="RMS Group A"))
+
+    assert bus.rms_model.empty() is True
+
+    handler: DynamicsResultsHandler = DynamicsResultsHandler(results=None, circuit=circuit, simulation_type="RMS")
+
+    assert DeviceType.BusDevice not in handler.tree_data
+
+
+def test_editor_assignment_initializes_rms_bus_before_tree_discovery() -> None:
+    """
+    Verify that the Dynamic Editor RMS assignment path initializes the connected bus before tree discovery.
+
+    :return: None.
+    """
+    ensure_qt_application()
+    circuit: MultiCircuit = MultiCircuit(name="editor-rms-bus-tree")
+    bus: Bus = Bus(name="Bus A", idtag="bus-a")
+    generator: Generator = Generator(name="Generator A", idtag="gen-a")
+    generator.bus = bus
+    generator.rms_model = Block(children=[Block(state_vars=[circuit.var_factory.add_var(name="omega", uid=16)])])
+    circuit.add_bus(bus)
+    circuit.set_elements_list_by_type(device_type=DeviceType.GeneratorDevice, devices=[generator])
+    circuit.add_rms_events_group(obj=RmsEventsGroup(idtag="rms-group-a", name="RMS Group A"))
+
+    initialize_connected_bus_models_for_editor_assignment(api_object=generator,
+                                                          circuit=circuit,
+                                                          var_factory=circuit.var_factory,
+                                                          mode=DynamicSimulationMode.RMS)
+
+    handler: DynamicsResultsHandler = DynamicsResultsHandler(results=None, circuit=circuit, simulation_type="RMS")
+    bus_variables = handler.tree_data[DeviceType.BusDevice][bus]
+    bus_variable_names = [variable.name for variable in bus_variables]
+
+    assert "Vm" in bus_variable_names
+    assert "Va" in bus_variable_names
+
+
+def test_post_simulation_rms_results_tree_includes_bus_voltage_variables() -> None:
+    """
+    Verify that the RMS results tree can expose bus voltage variables for binding.
+
+    :return: None.
+    """
+    ensure_qt_application()
+    bus: Bus = Bus(name="Bus A", idtag="bus-a")
+    results: RmsResults = build_rms_results_from_bus(bus=bus, variable_name="Vm", variable_uid=17)
+
+    handler: DynamicsResultsHandler = DynamicsResultsHandler(results=results)
+
+    assert DeviceType.BusDevice in handler.tree_data
+    assert bus in handler.tree_data[DeviceType.BusDevice]
+    assert handler.tree_data[DeviceType.BusDevice][bus][0].name == "Vm"
+
+
+def test_pre_simulation_handler_marks_editor_style_emt_diff_variables() -> None:
+    """
+    Verify that pre-simulation EMT discovery keeps child differential vars on ``diff_values``.
+
+    :return: None.
+    """
+    ensure_qt_application()
+    circuit: MultiCircuit = build_pre_simulation_editor_style_emt_circuit()
+    handler: DynamicsResultsHandler = DynamicsResultsHandler(results=None, circuit=circuit, simulation_type="EMT")
+
+    assert 21 in handler.series_by_var_uid
+    assert 22 in handler.series_by_var_uid
+    assert handler.series_by_var_uid[21][0]._result_path_kind == "values"
+    assert handler.series_by_var_uid[22][0]._result_path_kind == "diff_values"
+
+
+def test_editor_style_pre_simulation_asset_binds_after_rms_results_exist() -> None:
+    """
+    Verify that a Dynamic Editor-style RMS variable binds after runtime results exist.
+
+    :return: None.
+    """
+    ensure_qt_application()
+    circuit: MultiCircuit = build_pre_simulation_editor_style_rms_circuit()
+    handler: DynamicsResultsHandler = DynamicsResultsHandler(results=None, circuit=circuit, simulation_type="RMS")
+    assert handler.create_plot_group(name="Plot 1") is True
+
+    editor_candidate: DynamicPlotCandidate = handler.series_by_var_uid[11][0]
+    assert handler.add_candidate_to_group(group_name="Plot 1", candidate=editor_candidate) is True
+
+    generator: Generator = circuit.get_elements_by_type(device_type=DeviceType.GeneratorDevice)[0]
+    results: RmsResults = build_rms_results_from_generator(generator=generator, variable_name="omega", variable_uid=111)
+    results_handler: DynamicsResultsHandler = DynamicsResultsHandler(results=results, circuit=circuit)
+
+    group = results_handler.plot_groups.get_group(name="Plot 1")
+    assert group is not None
+    restored_entries = group.get_series()
+    assert len(restored_entries) == 1
+    assert restored_entries[0].get_var().uid == 111
+
+
+def test_editor_style_pre_simulation_asset_binds_after_emt_diff_results_exist() -> None:
+    """
+    Verify that a Dynamic Editor-style EMT differential variable binds to ``diff_values``.
+
+    :return: None.
+    """
+    ensure_qt_application()
+    circuit: MultiCircuit = build_pre_simulation_editor_style_emt_circuit()
+    handler: DynamicsResultsHandler = DynamicsResultsHandler(results=None, circuit=circuit, simulation_type="EMT")
+    assert handler.create_plot_group(name="Plot 1") is True
+
+    editor_candidate: DynamicPlotCandidate = handler.series_by_var_uid[22][0]
+    assert handler.add_candidate_to_group(group_name="Plot 1", candidate=editor_candidate) is True
+
+    generator: Generator = circuit.get_elements_by_type(device_type=DeviceType.GeneratorDevice)[0]
+    results: EmtResults = build_emt_results_from_generator_diff_var(generator=generator,
+                                                                    variable_name="domega",
+                                                                    variable_uid=222)
+    results_handler: DynamicsResultsHandler = DynamicsResultsHandler(results=results, circuit=circuit)
+
+    assert 222 in results_handler.series_by_var_uid
+    group = results_handler.plot_groups.get_group(name="Plot 1")
+    assert group is not None
+    restored_entries = group.get_series()
+    assert len(restored_entries) == 1
+    assert restored_entries[0].get_var().uid == 222
+
+
+def test_template_style_pre_simulation_emt_tree_includes_bus_voltage_variables() -> None:
+    """
+    Verify that the EMT pre-simulation tree includes bus voltage vars when the bus shell already exists.
+
+    :return: None.
+    """
+    ensure_qt_application()
+    circuit: MultiCircuit = MultiCircuit(name="template-bus-tree")
+    bus: Bus = Bus(name="Bus A", idtag="bus-a")
+    generator: Generator = Generator(name="Generator A", idtag="gen-a")
+    generator.bus = bus
+    circuit.add_bus(bus)
+    circuit.set_elements_list_by_type(device_type=DeviceType.GeneratorDevice, devices=[generator])
+    circuit.add_emt_events_group(obj=EmtEventsGroup(idtag="emt-group-a", name="EMT Group A"))
+
+    generator_model = Block(state_vars=[circuit.var_factory.add_var(name="omega", uid=31)])
+    connect_bus_variables_emt(device=generator,
+                              model=generator_model,
+                              var_factory=circuit.var_factory,
+                              allow_deferred_connection=True)
+    generator.emt_model = generator_model
+
+    handler: DynamicsResultsHandler = DynamicsResultsHandler(results=None, circuit=circuit, simulation_type="EMT")
+    bus_variables = handler.tree_data[DeviceType.BusDevice][bus]
+    bus_variable_names = [variable.name for variable in bus_variables]
+
+    assert not any(name.startswith("v_N_") for name in bus_variable_names)
+    assert len(bus_variable_names) > 0
+    assert any(name.startswith("v_") for name in bus_variable_names)
+
+
+def test_uninitialized_emt_bus_does_not_appear_in_pre_simulation_tree() -> None:
+    """
+    Verify that an uninitialized EMT bus does not appear in the pre-simulation tree.
+
+    :return: None.
+    """
+    ensure_qt_application()
+    circuit: MultiCircuit = MultiCircuit(name="editor-bus-tree")
+    bus: Bus = Bus(name="Bus A", idtag="bus-a")
+    generator: Generator = Generator(name="Generator A", idtag="gen-a")
+    generator.bus = bus
+    generator.emt_model = Block(children=[Block(state_vars=[circuit.var_factory.add_var(name="omega", uid=41)])])
+    circuit.add_bus(bus)
+    circuit.set_elements_list_by_type(device_type=DeviceType.GeneratorDevice, devices=[generator])
+    circuit.add_emt_events_group(obj=EmtEventsGroup(idtag="emt-group-a", name="EMT Group A"))
+
+    assert bus.emt_model.empty() is True
+
+    handler: DynamicsResultsHandler = DynamicsResultsHandler(results=None, circuit=circuit, simulation_type="EMT")
+
+    assert DeviceType.BusDevice not in handler.tree_data
+
+
+def test_editor_assignment_initializes_emt_bus_before_tree_discovery() -> None:
+    """
+    Verify that the Dynamic Editor EMT assignment path initializes the connected bus before tree discovery.
+
+    :return: None.
+    """
+    ensure_qt_application()
+    circuit: MultiCircuit = MultiCircuit(name="editor-bus-tree")
+    bus: Bus = Bus(name="Bus A", idtag="bus-a")
+    generator: Generator = Generator(name="Generator A", idtag="gen-a")
+    generator.bus = bus
+    generator.emt_model = Block(children=[Block(state_vars=[circuit.var_factory.add_var(name="omega", uid=41)])])
+    circuit.add_bus(bus)
+    circuit.set_elements_list_by_type(device_type=DeviceType.GeneratorDevice, devices=[generator])
+    circuit.add_emt_events_group(obj=EmtEventsGroup(idtag="emt-group-a", name="EMT Group A"))
+
+    initialize_connected_bus_models_for_editor_assignment(api_object=generator,
+                                                          circuit=circuit,
+                                                          var_factory=circuit.var_factory,
+                                                          mode=DynamicSimulationMode.EMT)
+
+    handler: DynamicsResultsHandler = DynamicsResultsHandler(results=None, circuit=circuit, simulation_type="EMT")
+    bus_variables = handler.tree_data[DeviceType.BusDevice][bus]
+    bus_variable_names = [variable.name for variable in bus_variables]
+
+    assert not any(name.startswith("v_N_") for name in bus_variable_names)
+    assert len(bus_variable_names) > 0
+    assert any(name.startswith("v_") for name in bus_variable_names)
+
+
+def test_post_simulation_emt_results_tree_includes_bus_voltage_variables() -> None:
+    """
+    Verify that the EMT results tree can expose bus voltage variables for binding.
+
+    :return: None.
+    """
+    ensure_qt_application()
+    bus: Bus = Bus(name="Bus A", idtag="bus-a")
+    results: EmtResults = build_emt_results_from_bus(bus=bus,
+                                                     variable_name="v_A_Bus_A_emt_template",
+                                                     variable_uid=51)
+
+    handler: DynamicsResultsHandler = DynamicsResultsHandler(results=results)
+
+    assert DeviceType.BusDevice in handler.tree_data
+    assert bus in handler.tree_data[DeviceType.BusDevice]
+    assert handler.tree_data[DeviceType.BusDevice][bus][0].name == "v_A_Bus_A_emt_template"

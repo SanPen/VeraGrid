@@ -16,9 +16,9 @@ from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 
 
 class RmsResults(ResultsTemplate):
-
     LOCAL_RESULTS_DECLARATIONS = (
         ResultsProperty(name='values', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='rms_events_group_idtags', tpe=StrVec, old_names=list(), expandable=False),
     )
 
     __slots__ = (
@@ -26,6 +26,7 @@ class RmsResults(ResultsTemplate):
         "nv",
         "ng",
         "rms_events_group_names",
+        "rms_events_group_idtags",
         "well_initialized",
         "converged",
         "variables",
@@ -40,6 +41,7 @@ class RmsResults(ResultsTemplate):
     def __init__(self,
                  time_array: DateVec,
                  rms_events_group_names: StrVec,
+                 rms_events_group_idtags: StrVec,
                  variables: List[Var],
 
                  uid2idx: Dict[int, int],
@@ -49,6 +51,7 @@ class RmsResults(ResultsTemplate):
 
         :param rms_events_group_names: names of the RMS groups simulated
         :param time_array: Array of time steps
+        :param rms_events_group_idtags: Stable idtags of the RMS groups simulated.
         :param variables: List of all variables (Redundant?)
         :param uid2idx: Var uid to var index in values
         :param vars_glob_name2uid: dictionary relating var names to uid (WTF?)
@@ -68,10 +71,11 @@ class RmsResults(ResultsTemplate):
         self.ng = len(rms_events_group_names)
 
         self.rms_events_group_names = rms_events_group_names
+        self.rms_events_group_idtags = rms_events_group_idtags
 
         self.well_initialized = np.zeros(self.ng, dtype=bool)
         self.converged = np.zeros(self.ng, dtype=bool)
-        
+
         self.variables = variables
         self.uid2vars_glob_name = {uid: name for name, uid in vars_glob_name2uid.items()}
         self.devices_vars_info: Dict[ALL_DEV_TYPES, List[Var]] = devices_vars_info
@@ -80,7 +84,6 @@ class RmsResults(ResultsTemplate):
         self.variable_array = np.array([self.uid2vars_glob_name[var.uid] for var in variables], dtype=str)
         self.values = np.zeros((self.nt, self.nv, self.ng), dtype=float)
 
-        
     def get_var(self, uid: int) -> Var:
         """
         

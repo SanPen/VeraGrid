@@ -405,8 +405,8 @@ class CatalogueElementsSelectionDialogue(QtWidgets.QDialog):
             args=(self._circuit.var_factory,),
             name='Thevenin generator',
             voltage_text='', power_text='',
-            unique_key='emt:get_generator_thevenin_rl_emt_template',
-            function_ptr=tem.get_generator_thevenin_rl_emt_template)
+            unique_key='emt:get_generator_thevenin_rl_emt_template_with_ref',
+            function_ptr=tem.get_generator_thevenin_rl_emt_template_with_ref)
         )
         actions.append(CatalogueAction(
             kind=CatalogueActionKind.AddEmtTemplate,

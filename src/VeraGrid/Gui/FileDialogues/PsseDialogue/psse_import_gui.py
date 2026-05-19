@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'psse_import_gui.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.10.1
+## Created by: Qt User Interface Compiler version 6.11.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -78,7 +78,7 @@ class Ui_PsseImportDialog(object):
 #if QT_CONFIG(tooltip)
         self.adjust_taps_to_discrete_positions_checkBox.setToolTip(QCoreApplication.translate("PsseImportDialog", u"<html><head/><body><p>PSS/e taps might not come adjusted </p><p>to the specified tap positions, </p><p>Do you want to adjust them?</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
-        self.adjust_taps_to_discrete_positions_checkBox.setText(QCoreApplication.translate("PsseImportDialog", u"Adjust taps to integer positios", None))
+        self.adjust_taps_to_discrete_positions_checkBox.setText(QCoreApplication.translate("PsseImportDialog", u"Adjust taps to integer positions", None))
         self.importButton.setText(QCoreApplication.translate("PsseImportDialog", u"Import", None))
 #if QT_CONFIG(tooltip)
         self.flatten_virtual_taps_checkBox.setToolTip(QCoreApplication.translate("PsseImportDialog", u"<html><head/><body><p>PSS/e does not handle the difference of nominal </p><p>voltage between the bus and the transformer (the vitual tap) </p><p>If checked, this will make the transformer nominal voltages </p><p>equal to the buses nominal voltage to behave like PSS/e</p></body></html>", None))

@@ -17,7 +17,7 @@ from .compat import Const, Var
 
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template
+from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
 from VeraGridEngine.Templates.Rms.load_frequency_dependent import FrequencyLoadBuild
 
 from .snapshot import build_model_snapshot, reconstruct_block
@@ -101,7 +101,7 @@ def build_thevenin_generator_emt_pilot() -> PilotModel:
     grid = SimpleNamespace(var_factory=VarFactory(name="FMU EMT Pilot VarFactory"), fBase=50.0)
     generator = SimpleNamespace(R1=0.01, X1=0.2)
     pilot_name = "emt_thevenin_eq_generator_template"
-    template = get_generator_thevenin_rl_emt_template(grid, generator, name=pilot_name)
+    template = get_generator_thevenin_rl_emt_template_with_ref(grid, generator, name=pilot_name)
     block = template.block
 
     _set_event_const_by_name(block, f"phi_v_{pilot_name}", 0.0)

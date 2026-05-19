@@ -1,0 +1,166 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:18883bbd-c850-48eb-8eb9-b6018decdb63> {
+    <urn:uuid:ffec3556-5e03-35a3-80a7-4f22b598a2f5>
+            rdf:type                       eu:BoundaryPoint;
+            cim:IdentifiedObject.description
+                    "Boundary point 2 between Espheim (substation name) and Portheim (substation name) (132kV).";
+            cim:IdentifiedObject.mRID      "ffec3556-5e03-35a3-80a7-4f22b598a2f5";
+            cim:IdentifiedObject.name      "BP_EH-PH2";
+            eu:BoundaryPoint.ConnectivityNode
+                    <urn:uuid:bf0b3138-b656-482b-8874-f0a4fa314579>;
+            eu:BoundaryPoint.fromEndIsoCode
+                    "EH";
+            eu:BoundaryPoint.fromEndName   "Madgar2";
+            eu:BoundaryPoint.fromEndNameTso
+                    "TSO-Espheim";
+            eu:BoundaryPoint.isExcludedFromAreaInterchange
+                    false;
+            eu:BoundaryPoint.toEndIsoCode  "PH";
+            eu:BoundaryPoint.toEndName     "Lysaborg2";
+            eu:BoundaryPoint.toEndNameTso  "TSO-Portheim";
+            eu:IdentifiedObject.energyIdentCodeEic
+                    "10T-AT-DE-00016Z";
+            eu:IdentifiedObject.shortName  "BP_EH-PH2" .
+    
+    <urn:uuid:bf0b3138-b656-482b-8874-f0a4fa314579>
+            rdf:type                       cim:ConnectivityNode;
+            cim:ConnectivityNode.ConnectivityNodeContainer
+                    <urn:uuid:eb3018f0-767e-4829-9a50-1a12f9505849>;
+            cim:IdentifiedObject.description
+                    "Boundary point 2 between Espheim (substation name) and Portheim (substation name) (132kV).";
+            cim:IdentifiedObject.mRID      "bf0b3138-b656-482b-8874-f0a4fa314579";
+            cim:IdentifiedObject.name      "BP_EH-PH2";
+            eu:IdentifiedObject.energyIdentCodeEic
+                    "10T-AT-DE-00016Z";
+            eu:IdentifiedObject.shortName  "BP_EH-PH2" .
+    
+    <urn:uuid:0b5bf2ef-a008-4b9a-9fe9-3c528c8bec50>
+            rdf:type                       cim:Line;
+            cim:IdentifiedObject.description
+                    "line BP_EH-PH1";
+            cim:IdentifiedObject.mRID      "0b5bf2ef-a008-4b9a-9fe9-3c528c8bec50";
+            cim:IdentifiedObject.name      "Line BP_EH-PH1";
+            cim:Line.Region                <urn:uuid:fbcc6679-6da5-4cfd-b50c-8ce23f450c78>;
+            eu:IdentifiedObject.energyIdentCodeEic
+                    "10T-BO-GA-10014U";
+            eu:IdentifiedObject.shortName  "BP_EH-PH1" .
+    
+    <urn:uuid:7ab6767d-9ca1-9972-8c25-13c831c95b93>
+            rdf:type                       eu:BoundaryPoint;
+            cim:IdentifiedObject.description
+                    "Boundary point 3 between Espheim (substation name) and Portheim (substation name) (220kV).";
+            cim:IdentifiedObject.mRID      "7ab6767d-9ca1-9972-8c25-13c831c95b93";
+            cim:IdentifiedObject.name      "BP_EH-PH3";
+            eu:BoundaryPoint.ConnectivityNode
+                    <urn:uuid:9e6fb634-977c-4640-938c-b1178aa2aa21>;
+            eu:BoundaryPoint.fromEndIsoCode
+                    "EH";
+            eu:BoundaryPoint.fromEndName   "Madgar3";
+            eu:BoundaryPoint.fromEndNameTso
+                    "TSO-Espheim";
+            eu:BoundaryPoint.isExcludedFromAreaInterchange
+                    false;
+            eu:BoundaryPoint.toEndIsoCode  "PH";
+            eu:BoundaryPoint.toEndName     "Lysaborg3";
+            eu:BoundaryPoint.toEndNameTso  "TSO-Portheim";
+            eu:IdentifiedObject.shortName  "BP_EH-PH3" .
+    
+    <urn:uuid:18883bbd-c850-48eb-8eb9-b6018decdb63>
+            rdf:type           rdfg:Graph , dcat:Dataset;
+            dct:conformsTo     <http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/3.0>;
+            dct:description    "The equipment dataset of the boundary that is used in the ReliCapGrid.";
+            dct:identifier     "18883bbd-c850-48eb-8eb9-b6018decdb63";
+            dct:issued         "2025-02-06"^^xsd:date;
+            dct:requires       <urn:uuid:1b65ada7-39ca-42b8-a278-39c457ed82c3>;
+            dct:temporal       [ rdf:type        dct:PeriodOfTime;
+                                 dcat:startDate  "2022-06-16T23:30:00Z"^^xsd:dateTime
+                               ];
+            dcat:distribution  [ rdf:type    dcat:Distribution;
+                                 dct:issued  "2025-02-06T14:18:22Z"^^xsd:dateTime
+                               ];
+            dcat:isVersionOf   <http://ninerealms.nr/boundary>;
+            dcat:version       "1";
+            json-ld:base       "http://ninerealms.nr/boundary#" .
+    
+    <urn:uuid:9e6fb634-977c-4640-938c-b1178aa2aa21>
+            rdf:type                       cim:ConnectivityNode;
+            cim:ConnectivityNode.ConnectivityNodeContainer
+                    <urn:uuid:dc31ca8a-6261-4eaa-b8b4-11ec57e9cc28>;
+            cim:IdentifiedObject.description
+                    "Boundary point 3 between Espheim (substation name) and Portheim (substation name) (220kV).";
+            cim:IdentifiedObject.mRID      "9e6fb634-977c-4640-938c-b1178aa2aa21";
+            cim:IdentifiedObject.name      "BP_EH-PH3";
+            eu:IdentifiedObject.shortName  "BP_EH-PH3" .
+    
+    <urn:uuid:eb3018f0-767e-4829-9a50-1a12f9505849>
+            rdf:type                       cim:Line;
+            cim:IdentifiedObject.description
+                    "Line BP_EH-PH2";
+            cim:IdentifiedObject.mRID      "eb3018f0-767e-4829-9a50-1a12f9505849";
+            cim:IdentifiedObject.name      "BP_EH-PH2";
+            cim:Line.Region                <urn:uuid:fbcc6679-6da5-4cfd-b50c-8ce23f450c78>;
+            eu:IdentifiedObject.energyIdentCodeEic
+                    "10T-BO-GA-10234U";
+            eu:IdentifiedObject.shortName  "BP_EH-PH2" .
+    
+    <urn:uuid:a9bb608d-7e93-cd9c-03bb-77c175befc39>
+            rdf:type                       eu:BoundaryPoint;
+            cim:IdentifiedObject.description
+                    "Boundary point 1 between Espheim (substation name) and Portheim (substation name) (132kV).";
+            cim:IdentifiedObject.mRID      "a9bb608d-7e93-cd9c-03bb-77c175befc39";
+            cim:IdentifiedObject.name      "BP_EH-PH1";
+            eu:BoundaryPoint.ConnectivityNode
+                    <urn:uuid:8a5a6e86-55e4-476b-a3bd-7832e6168569>;
+            eu:BoundaryPoint.fromEndIsoCode
+                    "EH";
+            eu:BoundaryPoint.fromEndName   "Madgar1";
+            eu:BoundaryPoint.fromEndNameTso
+                    "TSO-Espheim";
+            eu:BoundaryPoint.isExcludedFromAreaInterchange
+                    false;
+            eu:BoundaryPoint.toEndIsoCode  "PH";
+            eu:BoundaryPoint.toEndName     "Lysaborg1";
+            eu:BoundaryPoint.toEndNameTso  "TSO-Portheim";
+            eu:IdentifiedObject.energyIdentCodeEic
+                    "10T-AT-HU-00002U";
+            eu:IdentifiedObject.shortName  "BP_EH-PH1" .
+    
+    <urn:uuid:dc31ca8a-6261-4eaa-b8b4-11ec57e9cc28>
+            rdf:type                       cim:Line;
+            cim:IdentifiedObject.description
+                    "Line BP_EH-PH3";
+            cim:IdentifiedObject.mRID      "dc31ca8a-6261-4eaa-b8b4-11ec57e9cc28";
+            cim:IdentifiedObject.name      "BP_EH-PH3";
+            cim:Line.Region                <urn:uuid:fbcc6679-6da5-4cfd-b50c-8ce23f450c78>;
+            eu:IdentifiedObject.shortName  "BP_EH-PH3" .
+    
+    <urn:uuid:8a5a6e86-55e4-476b-a3bd-7832e6168569>
+            rdf:type                       cim:ConnectivityNode;
+            cim:ConnectivityNode.ConnectivityNodeContainer
+                    <urn:uuid:0b5bf2ef-a008-4b9a-9fe9-3c528c8bec50>;
+            cim:IdentifiedObject.description
+                    "Boundary point 1 between Espheim (substation name) and Portheim (substation name) (132kV).";
+            cim:IdentifiedObject.mRID      "8a5a6e86-55e4-476b-a3bd-7832e6168569";
+            cim:IdentifiedObject.name      "BP_EH-PH1";
+            eu:IdentifiedObject.energyIdentCodeEic
+                    "10T-AT-HU-00002U";
+            eu:IdentifiedObject.shortName  "BP_EH-PH1" .
+}

@@ -45,7 +45,7 @@
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;PSS/e taps might not come adjusted &lt;/p&gt;&lt;p&gt;to the specified tap positions, &lt;/p&gt;&lt;p&gt;Do you want to adjust them?&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
-         <string>Adjust taps to integer positios</string>
+         <string>Adjust taps to integer positions</string>
         </property>
        </widget>
       </item>

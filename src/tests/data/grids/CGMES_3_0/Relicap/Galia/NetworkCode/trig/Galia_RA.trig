@@ -1,0 +1,87 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:2ea55b46-ad48-4408-be72-734b475ba18f> {
+    <urn:uuid:e3512f27-7c5e-4121-adf8-e943872d8fa5>
+            rdf:type  nc:ContingencyWithRemedialAction;
+            nc:ContingencyWithRemedialAction.Contingency
+                    <urn:uuid:bd7bb012-f7b9-45e0-9e15-4e2aa3592829>;
+            nc:ContingencyWithRemedialAction.RemedialAction
+                    <urn:uuid:f4d57bc2-1cef-46ab-ae13-3ad864813d9c>;
+            nc:ContingencyWithRemedialAction.combinationConstraintKind
+                    nc:ElementCombinationConstraintKind.included;
+            nc:ContingencyWithRemedialAction.mRID
+                    "e3512f27-7c5e-4121-adf8-e943872d8fa5";
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false" .
+    
+    <urn:uuid:2ea55b46-ad48-4408-be72-734b475ba18f>
+            rdf:type              dcat:Dataset;
+            dct:accessRights      "https://energy.referencedata.eu/Confidentiality/Public";
+            dct:conformsTo        "https://cim.ucaiug.io/ns#" , "https://ap.cim4.eu/RemedialAction/2.4" , "https://cim4.eu/ns/nc/2.4#" , "http://iec.ch/TC57/2013/CIM-schema-cim16#";
+            dct:description       "This is the remedial action dataset for Galia part of ReliCapGrid."@en;
+            dct:identifier        "2ea55b46-ad48-4408-be72-734b475ba18f";
+            dct:issued            "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dct:license           "https://creativecommons.org/licenses/by/4.0/";
+            dct:publisher         "https://energy.referencedata.eu/test/party/Galia";
+            dct:requires          <urn:uuid:a2c02149-a114-4b5e-9de5-74dcccd9793a>;
+            dct:rights            "Copyright";
+            dct:rightsHolder      "ENTSO-E";
+            dct:spatial           "https://energy.referencedata.eu/Test/Frame/Galia-Power-Transmission-System";
+            dct:title             "20220615_Galia_RA_1.0.0";
+            dcat:endDate          "2023-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Galia-RA>;
+            dcat:keyword          "RA";
+            dcat:startDate        "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:version          "1.0.0";
+            prov:generatedAtTime  "2022-06-10T07:06:25Z"^^xsd:dateTime;
+            prov:wasGeneratedBy   "https://energy.referencedata.eu/Activity/CGM-RA" .
+    
+    <urn:uuid:f4d57bc2-1cef-46ab-ae13-3ad864813d9c>
+            rdf:type                   nc:GridStateAlterationRemedialAction;
+            cim:IdentifiedObject.description
+                    "Curative RA: LoadAction (15 percent load shed - Scaling factor to 0.7)";
+            cim:IdentifiedObject.mRID  "f4d57bc2-1cef-46ab-ae13-3ad864813d9c";
+            cim:IdentifiedObject.name  "RA15";
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    true;
+            nc:RemedialAction.kind     nc:RemedialActionKind.curative;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:7bbb3343-e48b-42dd-9ca5-6ff8945ca5b0>
+            rdf:type                      nc:LoadAction;
+            cim:IdentifiedObject.description
+                    "Curative RA: LoadAction (15 percent load shed - Scaling factor to 0.7), a new ID is generated for the bidding zone, don't know if we already have an ID for this Bidding zone)";
+            cim:IdentifiedObject.mRID     "7bbb3343-e48b-42dd-9ca5-6ff8945ca5b0";
+            cim:IdentifiedObject.name     "RA15";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:f4d57bc2-1cef-46ab-ae13-3ad864813d9c>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/EnergyConsumer.p>;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:GridStateAlteration.timePerStage
+                    "PT1S"^^xsd:duration;
+            nc:LoadAction.EnergyConsumer  <urn:uuid:b1e03a8f-6a11-4454-af58-4a4a680e857f> .
+}

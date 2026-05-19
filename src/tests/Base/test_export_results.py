@@ -40,10 +40,10 @@ def test_export_results():
                                                          time_indices=grid.get_all_time_indices())
     opf_ts_driver.run()
 
-    if not os.path.exists("output"):
-        os.makedirs("output")
+    if not os.path.exists(os.path.join("data", "output")):
+        os.makedirs(os.path.join("data", "output"))
 
-    export_fame = os.path.join("output", "IEEE39_1W_results.zip")
+    export_fame = os.path.join("data", "output", "IEEE39_1W_results.zip")
     gce.export_drivers(drivers_list=[pf_driver, opf_ts_driver], file_name=export_fame)
 
     os.remove(export_fame)

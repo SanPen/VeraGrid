@@ -148,6 +148,10 @@ class ShuntData:
             i = self.bus_idx[k]
             self.bus_idx[k] = bus_map_arr[i]
 
+            control_bus_idx = self.controllable_bus_idx[k]
+            if control_bus_idx >= 0:
+                self.controllable_bus_idx[k] = bus_map_arr[control_bus_idx]
+
     def copy(self) -> "ShuntData":
         """
         Get deep copy of this structure

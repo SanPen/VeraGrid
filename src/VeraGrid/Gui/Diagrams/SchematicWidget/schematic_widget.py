@@ -13,7 +13,6 @@ from collections.abc import Callable
 from collections import defaultdict
 from warnings import warn
 import networkx as nx
-import pyproj
 from matplotlib import pyplot as plt
 
 from PySide6.QtCore import (Qt, QPoint, QSize, QPointF, QRect, QRectF, QMimeData, QIODevice, QByteArray,
@@ -1982,39 +1981,20 @@ class SchematicWidget(BaseDiagramWidget):
         :return Logger object
         """
 
-        buses_info_list = self.get_buses()
+        # Project the coordinates for *every* bus in the circuit (not only the
+        # ones present in this diagram) so that diagrams created afterwards
+        # already use the projected x, y. The engine method also falls back to
+        # the substation coordinates when a bus has no lat/lon of its own.
+        logger = self.circuit.fill_xy_from_lat_lon(destructive=destructive,
+                                                   factor=factor,
+                                                   remove_offset=remove_offset)
 
-        n = len(buses_info_list)
-        lon = np.zeros(n)
-        lat = np.zeros(n)
-        i = 0
-        for idx, bus, graphic_object in buses_info_list:
-            lon[i] = bus.longitude
-            lat[i] = bus.latitude
-            i += 1
+        # move the graphics of the buses present in this diagram to the new positions
+        for idx, bus, graphic_object in self.get_buses():
+            if graphic_object is not None:
+                graphic_object.set_position(bus.x, bus.y)
 
-        transformer = pyproj.Transformer.from_crs(4326, 25830, always_xy=True)
-
-        # the longitude is more related to x, the latitude is more related to y
-        y, x = transformer.transform(xx=lon, yy=lat)
-        x *= - factor
-        y *= - factor
-
-        # delete the offset
-        if remove_offset:
-            x_min = np.min(x)
-            y_max = np.max(y)
-            x -= x_min + 100  # 100 is a healthy offset
-            y -= y_max - 100  # 100 is a healthy offset
-
-        # assign the values
-        i = 0
-        for idx, bus, graphic_object in buses_info_list:
-            graphic_object.set_position(x[i], y[i])
-            if destructive:
-                bus.x = x[i]
-                bus.y = y[i]
-            i += 1
+        return logger
 
     def rotate(self, angle_degrees):
         """

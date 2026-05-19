@@ -214,7 +214,8 @@ def load_from_xls(filename: str, logger: Logger) -> Dict[str, pd.DataFrame]:
                 data[name] = df
 
     else:
-        raise Exception('This excel file is not in VeraGrid Format')
+        logger.add_error('This excel file is not in VeraGrid Format')
+        return data
 
     return data
 

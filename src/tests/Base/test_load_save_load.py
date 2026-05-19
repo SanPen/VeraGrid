@@ -23,8 +23,8 @@ def test_load_save_load() -> None:
     """
     folder = os.path.join('data', 'grids')
 
-    if not os.path.exists("output"):
-        os.makedirs("output")
+    if not os.path.exists(os.path.join("data", "output")):
+        os.makedirs(os.path.join("data", "output"))
 
     for name in ['IEEE39_1W.gridcal',
                  'hydro_grid_IEEE39.gridcal',
@@ -39,7 +39,7 @@ def test_load_save_load() -> None:
 
         name, ext = os.path.splitext(os.path.basename(fname))
 
-        fname2 = os.path.join("output", name + '_to_save.veragrid')
+        fname2 = os.path.join("data", "output", name + '_to_save.veragrid')
 
         gce.save_file(grid=grid1, filename=fname2)
 
@@ -91,10 +91,10 @@ def test_load_save_load2() -> None:
     l2.rate_prof[1] = 30.0
     l3.rate_prof[1] = 40.0
 
-    if not os.path.exists("output"):
-        os.makedirs("output")
+    if not os.path.exists(os.path.join("data", "output")):
+        os.makedirs(os.path.join("data", "output"))
 
-    o_file = os.path.join("output", "test_load_save_load2.veragrid")
+    o_file = os.path.join("data", "output", "test_load_save_load2.veragrid")
 
     gce.save_file(grid=grid1, filename=o_file)
 
@@ -123,8 +123,8 @@ def test_load_save_load_xlsx() -> None:
     """
     folder = os.path.join('data', 'grids')
 
-    if not os.path.exists("output"):
-        os.makedirs("output")
+    if not os.path.exists(os.path.join("data", "output")):
+        os.makedirs(os.path.join("data", "output"))
 
     for name in ['IEEE39_1W.gridcal',
                  'hydro_grid_IEEE39.gridcal',
@@ -137,7 +137,7 @@ def test_load_save_load_xlsx() -> None:
 
         name, ext = os.path.splitext(os.path.basename(fname))
 
-        fname2 = os.path.join("output", name + '_to_save.xlsx')
+        fname2 = os.path.join("data", "output", name + '_to_save.xlsx')
 
         gce.save_file(grid=grid1, filename=fname2)
 
@@ -160,8 +160,8 @@ def test_load_save_load_rms() -> None:
     logger = Logger()
 
     folder = os.path.join('data', 'grids')
-    if not os.path.exists("output"):
-        os.makedirs("output")
+    if not os.path.exists(os.path.join("data", "output")):
+        os.makedirs(os.path.join("data", "output"))
 
     name = '2bus_genqec_load_test.veragrid'
     fname = os.path.join(folder, name)
@@ -171,7 +171,7 @@ def test_load_save_load_rms() -> None:
 
     name, ext = os.path.splitext(os.path.basename(fname))
 
-    fname2 = os.path.join("output", name + '_to_save.veragrid')
+    fname2 = os.path.join("data", "output", name + '_to_save.veragrid')
 
     gce.save_file(grid=grid1, filename=fname2)
 

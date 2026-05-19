@@ -7,6 +7,7 @@ from typing import Dict, List, Set, Union, Tuple, Callable
 from enum import Enum, EnumMeta
 import VeraGridEngine.IO.cim.cgmes.cgmes_assets.cgmes_2_4_15_assets as cgmes24
 import VeraGridEngine.IO.cim.cgmes.cgmes_assets.cgmes_3_0_0_assets as cgmes30
+from VeraGridEngine.IO.cim.cgmes.ncp.ncp_assets import NcpAssets
 from VeraGridEngine.data_logger import DataLogger
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 from VeraGridEngine.IO.base.base_circuit import BaseCircuit
@@ -120,6 +121,49 @@ def find_attribute(obj: CGMES_ASSETS,
     :return:
     """
     return association_inverse_dict.get((obj.tpe, property_name))
+
+
+def merge_class_dict(target_dict: Dict[str, object],
+                     source_dict: Dict[str, object],
+                     logger: DataLogger) -> None:
+    """
+    Merge a source class dictionary into the target dictionary.
+
+    Existing keys are preserved unless both entries point to the same class.
+
+    :param target_dict: Target class dictionary to modify in place
+    :param source_dict: Source class dictionary to merge
+    :param logger: Logger instance used to report collisions
+    :return: Nothing
+    """
+    for class_name, class_template in source_dict.items():
+        current_template: object | None = target_dict.get(class_name, None)
+        if current_template is None:
+            target_dict[class_name] = class_template
+        else:
+            if current_template is class_template:
+                pass
+            else:
+                logger.add_warning(msg="Class dictionary collision while merging NCP assets",
+                                   device_class=class_name)
+
+
+def merge_association_inverse_dict(target_dict: Dict[Tuple[str, str], str],
+                                   source_dict: Dict[Tuple[str, str], str]) -> None:
+    """
+    Merge source inverse-association entries into target dictionary.
+
+    Existing target keys are preserved.
+
+    :param target_dict: Target inverse-association dictionary
+    :param source_dict: Source inverse-association dictionary
+    :return: Nothing
+    """
+    for association_key, association_value in source_dict.items():
+        if association_key not in target_dict:
+            target_dict[association_key] = association_value
+        else:
+            pass
 
 
 def normalize_reference_token(value: str) -> str:
@@ -791,6 +835,19 @@ class CgmesCircuit(BaseCircuit):
         else:
             logger.add_error(msg=f"Unrecognized CGMES version {cgmes_version}")
             raise NotImplemented(f"Unrecognized CGMES version {cgmes_version}")
+
+        self.ncp_assets = NcpAssets()
+        merge_class_dict(target_dict=self.cgmes_assets.class_dict,
+                         source_dict=self.ncp_assets.class_dict,
+                         logger=logger)
+        merge_association_inverse_dict(target_dict=self.cgmes_assets.association_inverse_dict,
+                                       source_dict=self.ncp_assets.association_inverse_dict)
+        for class_name in self.ncp_assets.class_dict.keys():
+            list_name: str = class_name + "_list"
+            if hasattr(self.cgmes_assets, list_name):
+                pass
+            else:
+                setattr(self.cgmes_assets, list_name, list())
 
             # classes to read, theo others are ignored
         self.classes = [key for key, _ in self.cgmes_assets.class_dict.items()]

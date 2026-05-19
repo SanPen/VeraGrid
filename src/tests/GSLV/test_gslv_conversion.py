@@ -268,7 +268,8 @@ def test_results_compatibility():
 
         if not all_ok or inpt_err_number > 0:
             logger.print(title=path)
-            vg.save_file(grid=grid, filename=os.path.join("output", fname + ".gridcal"))
+            os.makedirs(os.path.join("data", "output"), exist_ok=True)
+            vg.save_file(grid=grid, filename=os.path.join("data", "output", fname + ".gridcal"))
             print()
         assert all_ok
 

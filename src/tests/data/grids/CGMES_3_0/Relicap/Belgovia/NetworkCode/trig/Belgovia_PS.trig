@@ -1,0 +1,63 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:8a82ef13-ae28-4037-8a44-f84b1f639ba4> {
+    <urn:uuid:27940387-6935-47b6-ab25-8742bac2a266>
+            rdf:type                   nc:PowerSchedule;
+            cim:IdentifiedObject.mRID  "27940387-6935-47b6-ab25-8742bac2a266";
+            nc:BaseTimeSeries.interpolationKind
+                    nc:TimeSeriesInterpolationKind.none;
+            nc:BaseTimeSeries.timeSeriesKind
+                    nc:BaseTimeSeriesKind.forecast;
+            nc:PowerSchedule.GeneratingUnit
+                    <urn:uuid:413bbc8a-683c-7e07-4fb9-aa6ec83278e0>;
+            nc:PowerSchedule.PowerRemedialAction
+                    <urn:uuid:30f6377d-5e35-4dd0-a53d-c1992043855e>;
+            nc:PowerSchedule.powerScheduleKind
+                    nc:PowerScheduleKind.power .
+    
+    <urn:uuid:014615b6-134c-40c3-9d1b-b4d3aa6704fc>
+            rdf:type                      nc:PowerTimePoint;
+            nc:PowerTimePoint.PowerSchedule
+                    <urn:uuid:27940387-6935-47b6-ab25-8742bac2a266>;
+            nc:PowerTimePoint.activatedP  "45.2835"^^xsd:float;
+            nc:PowerTimePoint.atTime      "2024-02-22T14:30:00Z"^^xsd:dateTime .
+    
+    <urn:uuid:8a82ef13-ae28-4037-8a44-f84b1f639ba4>
+            rdf:type              dcat:Dataset;
+            dct:accessRights      "https://energy.referencedata.eu/Confidentiality/Public";
+            dct:conformsTo        "https://cim.ucaiug.io/ns#" , "https://ap.cim4.eu/PowerSchedule/2.4" , "https://cim4.eu/ns/nc/2.4#" , "http://iec.ch/TC57/2013/CIM-schema-cim16#";
+            dct:description       "This is the power schedule dataset for Belgovia part of ReliCapGrid."@en;
+            dct:identifier        "8a82ef13-ae28-4037-8a44-f84b1f639ba4";
+            dct:issued            "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dct:license           "https://creativecommons.org/licenses/by/4.0/";
+            dct:publisher         "https://energy.referencedata.eu/test/party/Belgovia";
+            dct:requires          <urn:uuid:7528537a-551c-45bf-9e4f-1854287d5cdc>;
+            dct:rights            "Copyright";
+            dct:rightsHolder      "ENTSO-E";
+            dct:spatial           "https://energy.referencedata.eu/Test/Frame/Belgovia-Power-Transmission-System";
+            dct:title             "20220615_Belgovia_AE_1.0.0";
+            dcat:endDate          "2023-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Belgovia-PS>;
+            dcat:keyword          "PS";
+            dcat:startDate        "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:version          "1.0.0";
+            prov:generatedAtTime  "2022-06-10T07:06:25Z"^^xsd:dateTime;
+            prov:wasGeneratedBy   "https://energy.referencedata.eu/Activity/CGM-PS" .
+}

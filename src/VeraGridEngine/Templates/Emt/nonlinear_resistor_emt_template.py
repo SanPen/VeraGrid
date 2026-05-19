@@ -52,7 +52,7 @@ def get_nonlinear_resistor_emt_template(
     zero_const: Const = Const(0.0)
 
     ground_template: EmtModelTemplate = get_ground_emt_template(vf=vf, name=name + "_ground")
-    ground_template.block.connect(ground_template.block.in_vars, [ground_node_var])
+    vf.add_connections(ground_template.block.in_vars, [ground_node_var])
     ground_current_var: Var = ground_template.block.out_vars[0]
 
     voltage_drop: Expr = node_voltage_var - ground_node_var

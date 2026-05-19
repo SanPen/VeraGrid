@@ -1077,7 +1077,7 @@ def fill_generator_parent(
 
     if data.active[k]:
         if elm.get_srap_enabled_at(t_idx) and data.p[k] > 0.0:
-            bus_data.srap_availbale_power[i] += data.p[k]
+            bus_data.srap_available_power[i] += data.p[k]
 
         if elm.is_controlled:
             if elm.control_bus is not None:
@@ -1971,7 +1971,7 @@ def get_vsc_data(
         data.control2_val[ii] = elm.get_control2_val_at(t_idx)
         data.control1_val_min[ii] = elm.control1_val_min
         data.control1_val_max[ii] = elm.control1_val_max
-        data.control1_droop[ii] = elm.get_control1_droop_at(t_idx)
+        data.control1_val_droop[ii] = elm.get_control1_val_droop_at(t_idx)
         data.control1_droop_val[ii] = elm.get_control1_droop_val_at(t_idx)
         data.control1_droop_val_min[ii] = elm.control1_droop_val_min
         data.control1_droop_val_max[ii] = elm.control1_droop_val_max

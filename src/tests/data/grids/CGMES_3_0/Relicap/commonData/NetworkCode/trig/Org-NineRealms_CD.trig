@@ -1,0 +1,820 @@
+PREFIX adms:     <http://www.w3.org/ns/adms#>
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:2667b32c-d94c-4198-96a2-e9f288cc8e3d> {
+    <urn:uuid:5f5820d9-3e05-473e-94c8-3c767be03e1a>
+            rdf:type                   nc:SecurityCoordinator;
+            cim:IdentifiedObject.description
+                    "Security Coordinator (SC) post and function for the Capacity Calculation Region (CCR) of Jotunheim performed by the organisation Jotunheim.";
+            cim:IdentifiedObject.mRID  "5f5820d9-3e05-473e-94c8-3c767be03e1a";
+            cim:IdentifiedObject.name  "SC-Jotunheim";
+            cim:OrganisationRole.Organisation
+                    <urn:uuid:433aaf4e-3c62-45fc-b2ff-0f343f1b80ba> .
+    
+    <urn:uuid:9377bdae-ac1a-44f5-a619-4e71af22e0a4>
+            rdf:type                   nc:BiddingZoneBorder;
+            cim:IdentifiedObject.description
+                    "Bidding Zone Border for the direction from Belgovia to Galia";
+            cim:IdentifiedObject.mRID  "9377bdae-ac1a-44f5-a619-4e71af22e0a4";
+            cim:IdentifiedObject.name  "BZB-Belgovia-Galia";
+            nc:BiddingZoneBorder.CapacityCalculationRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:BiddingZoneBorder.FromBiddingZone
+                    <urn:uuid:4d4166a4-c0dc-4c77-9b67-a04a7e68ddf2>;
+            nc:BiddingZoneBorder.ToBiddingZone
+                    <urn:uuid:87fb9f56-fd86-446f-b35d-c0abba19925f> .
+    
+    <urn:uuid:e94cd5b5-28f7-4e55-8faa-fd0c0478cadc>
+            rdf:type                   nc:LoadFrequencyControlBlock;
+            cim:IdentifiedObject.description
+                    "Load Frequency Control Block (LFCB) for Galia.";
+            cim:IdentifiedObject.mRID  "e94cd5b5-28f7-4e55-8faa-fd0c0478cadc";
+            cim:IdentifiedObject.name  "LFCB-Galia";
+            nc:LoadFrequencyControlBlock.SynchronousArea
+                    <urn:uuid:9c94e9e9-f499-4a9e-9a49-55cfa6afacd9> .
+    
+    <urn:uuid:1f9ecd81-e069-4040-bd64-f34b0fac3a60>
+            rdf:type                       cim:ControlArea;
+            cim:IdentifiedObject.mRID      "1f9ecd81-e069-4040-bd64-f34b0fac3a60";
+            nc:ControlArea.SystemOperator  <urn:uuid:151d6acf-d4fd-4604-9603-f02348603277> .
+    
+    <urn:uuid:642a2421-d5ef-450a-90c3-868485f2bf37>
+            rdf:type                       cim:ControlArea;
+            cim:IdentifiedObject.mRID      "642a2421-d5ef-450a-90c3-868485f2bf37";
+            nc:ControlArea.SystemOperator  <urn:uuid:37136f0f-5ab2-40ab-a823-d8a5d47a4847> .
+    
+    <urn:uuid:fb695a5b-72b7-434c-b7db-f27167b951af>
+            rdf:type                   nc:TieCorridor;
+            cim:IdentifiedObject.description
+                    "Tie Corridor (TC) between Belgovia Control Area and Galia Control Area.";
+            cim:IdentifiedObject.mRID  "fb695a5b-72b7-434c-b7db-f27167b951af";
+            cim:IdentifiedObject.name  "TC-Belgovia-Galia";
+            nc:TieCorridor.BiddingZoneBorder
+                    <urn:uuid:9377bdae-ac1a-44f5-a619-4e71af22e0a4> .
+    
+    <urn:uuid:a9dba80c-9dfb-4ebf-b383-446ddc2c4adf>
+            rdf:type                   nc:TransmissionSystemOperator;
+            cim:IdentifiedObject.description
+                    "Transmission System Operator (TSO) post and function performed by the organisation Belgovia.";
+            cim:IdentifiedObject.mRID  "a9dba80c-9dfb-4ebf-b383-446ddc2c4adf";
+            cim:IdentifiedObject.name  "TSO-Belgovia";
+            cim:OrganisationRole.Organisation
+                    <urn:uuid:2aee8aff-d725-4d6b-9bd5-1ed0179e7812> .
+    
+    <urn:uuid:72b05ea9-3789-48f2-8dc2-b46efa2e2b68>
+            rdf:type                       nc:SchedulingArea;
+            cim:IdentifiedObject.description
+                    "Scheduling Area (SA) for Espheim.";
+            cim:IdentifiedObject.mRID      "72b05ea9-3789-48f2-8dc2-b46efa2e2b68";
+            cim:IdentifiedObject.name      "SA-Espheim";
+            nc:SchedulingArea.BiddingZone  <urn:uuid:cf8a8cc9-4b94-4983-8a36-e3f84888f461>;
+            nc:SchedulingArea.ControlArea  <urn:uuid:1f9ecd81-e069-4040-bd64-f34b0fac3a60>;
+            nc:SchedulingArea.LoadFrequencyControlArea
+                    <urn:uuid:e6cf46e9-f775-4f6a-9a10-44782b872094>;
+            nc:SchedulingArea.SynchronousArea
+                    <urn:uuid:9c94e9e9-f499-4a9e-9a49-55cfa6afacd9>;
+            nc:SchedulingArea.SystemOperator
+                    <urn:uuid:151d6acf-d4fd-4604-9603-f02348603277> .
+    
+    <urn:uuid:10c8a961-a11e-47e9-b4f2-d518d5a8dd85>
+            rdf:type                   nc:LoadFrequencyControlArea;
+            cim:IdentifiedObject.description
+                    "Load Frequency Control Area (LFCA) for Portheim.";
+            cim:IdentifiedObject.mRID  "10c8a961-a11e-47e9-b4f2-d518d5a8dd85";
+            cim:IdentifiedObject.name  "LFCA-Portheim";
+            nc:LoadFrequencyControlArea.LoadFrequencyControlBlock
+                    <urn:uuid:2d62db2f-715d-46f8-bb22-b0b685a414b5>;
+            nc:LoadFrequencyControlArea.includeFrequencyBias
+                    true .
+    
+    <urn:uuid:b50a7b3d-49aa-4ab8-a75e-4a90f8439b25>
+            rdf:type                   nc:TieCorridor;
+            cim:IdentifiedObject.description
+                    "Tie Corridor (TC) between Nordheim Control Area and Galia Control Area.";
+            cim:IdentifiedObject.mRID  "b50a7b3d-49aa-4ab8-a75e-4a90f8439b25";
+            cim:IdentifiedObject.name  "TC-Nordheim-Galia";
+            nc:TieCorridor.BiddingZoneBorder
+                    <urn:uuid:f31b779f-6058-4719-8aff-80d96c7b5fbb> .
+    
+    <urn:uuid:aa44b0d7-efce-4b1a-ba97-5a0024e2af77>
+            rdf:type                   cim:Organisation;
+            cim:IdentifiedObject.description
+                    "Organisation Britheim.";
+            cim:IdentifiedObject.mRID  "aa44b0d7-efce-4b1a-ba97-5a0024e2af77";
+            cim:IdentifiedObject.name  "Org-Britheim" .
+    
+    <urn:uuid:a3fbc7eb-3f3d-4b15-ba90-b94b3eb4d9e1>
+            rdf:type                   nc:TieCorridor;
+            cim:IdentifiedObject.description
+                    "Tie Corridor (TC) between Galia Control Area and Belgovia Control Area.";
+            cim:IdentifiedObject.mRID  "a3fbc7eb-3f3d-4b15-ba90-b94b3eb4d9e1";
+            cim:IdentifiedObject.name  "TC-Galia-Belgovia";
+            nc:TieCorridor.BiddingZoneBorder
+                    <urn:uuid:c1540280-a038-4d7f-ba5c-52e1f908d20d> .
+    
+    <urn:uuid:19b82142-10d6-4deb-abe7-5462a2314f30>
+            rdf:type                   nc:LoadFrequencyControlArea;
+            cim:IdentifiedObject.description
+                    "Load Frequency Control Area (LFCA) for Britheim.";
+            cim:IdentifiedObject.mRID  "19b82142-10d6-4deb-abe7-5462a2314f30";
+            cim:IdentifiedObject.name  "LFCA-Britheim";
+            nc:LoadFrequencyControlArea.LoadFrequencyControlBlock
+                    <urn:uuid:631d9a63-fb0a-4af0-887c-f79fc5b5aef2>;
+            nc:LoadFrequencyControlArea.includeFrequencyBias
+                    true .
+    
+    <urn:uuid:25b169f0-beb7-4e8e-b443-61f4aa93ff53>
+            rdf:type                   nc:LoadFrequencyControlBlock;
+            cim:IdentifiedObject.description
+                    "Load Frequency Control Block (LFCB) for Svedala.";
+            cim:IdentifiedObject.mRID  "25b169f0-beb7-4e8e-b443-61f4aa93ff53";
+            cim:IdentifiedObject.name  "LFCB-Svedala";
+            nc:LoadFrequencyControlBlock.SynchronousArea
+                    <urn:uuid:9c94e9e9-f499-4a9e-9a49-55cfa6afacd9> .
+    
+    <urn:uuid:16689878-236f-48b2-8af1-f34eb9a55fff>
+            rdf:type                   nc:LoadFrequencyControlBlock;
+            cim:IdentifiedObject.description
+                    "Load Frequency Control Block (LFCB) for Espheim.";
+            cim:IdentifiedObject.mRID  "16689878-236f-48b2-8af1-f34eb9a55fff";
+            cim:IdentifiedObject.name  "LFCB-Espheim";
+            nc:LoadFrequencyControlBlock.SynchronousArea
+                    <urn:uuid:9c94e9e9-f499-4a9e-9a49-55cfa6afacd9> .
+    
+    <urn:uuid:50487bb8-be6d-42a8-9358-cc0bbfe6cfa7>
+            rdf:type                       cim:ControlArea;
+            cim:IdentifiedObject.mRID      "50487bb8-be6d-42a8-9358-cc0bbfe6cfa7";
+            nc:ControlArea.SystemOperator  <urn:uuid:a9dba80c-9dfb-4ebf-b383-446ddc2c4adf> .
+    
+    <urn:uuid:1e93200d-0279-4aa4-9baa-136dcf242458>
+            rdf:type                   nc:BiddingZoneBorder;
+            cim:IdentifiedObject.description
+                    "Bidding Zone Border for the direction from Espheim to Portheim";
+            cim:IdentifiedObject.mRID  "1e93200d-0279-4aa4-9baa-136dcf242458";
+            cim:IdentifiedObject.name  "BZB-Espheim-Portheim";
+            nc:BiddingZoneBorder.CapacityCalculationRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:BiddingZoneBorder.FromBiddingZone
+                    <urn:uuid:23cadd6e-47f2-42f4-b2b5-3b59e7e700a7>;
+            nc:BiddingZoneBorder.ToBiddingZone
+                    <urn:uuid:cf8a8cc9-4b94-4983-8a36-e3f84888f461> .
+    
+    <urn:uuid:ffc5fd1d-282e-4908-b853-738789df9015>
+            rdf:type                       cim:ControlArea;
+            cim:IdentifiedObject.mRID      "ffc5fd1d-282e-4908-b853-738789df9015";
+            nc:ControlArea.SystemOperator  <urn:uuid:0410eff4-6268-4b83-860e-0f9f425f6c6c> .
+    
+    <urn:uuid:b7fee594-75e4-40d0-9008-7e192b75b1cb>
+            rdf:type                   nc:TieCorridor;
+            cim:IdentifiedObject.description
+                    "Tie Corridor (TC) between Galia Control Area and Nordheim Control Area.";
+            cim:IdentifiedObject.mRID  "b7fee594-75e4-40d0-9008-7e192b75b1cb";
+            cim:IdentifiedObject.name  "TC-Galia-Nordheim";
+            nc:TieCorridor.BiddingZoneBorder
+                    <urn:uuid:06c9f0bb-26a4-4e83-af1d-d2166c414b94> .
+    
+    <urn:uuid:9ceee888-cab0-49fa-b855-4eb7e1ef8474>
+            rdf:type                       nc:SchedulingArea;
+            cim:IdentifiedObject.description
+                    "Scheduling Area (SA) for Svedala.";
+            cim:IdentifiedObject.mRID      "9ceee888-cab0-49fa-b855-4eb7e1ef8474";
+            cim:IdentifiedObject.name      "SA-Svedala";
+            nc:SchedulingArea.BiddingZone  <urn:uuid:d220bcdc-0ab8-44ce-bb17-1c154f02adcd>;
+            nc:SchedulingArea.ControlArea  <urn:uuid:ebccc726-b760-46c6-b7f6-8289bafce797>;
+            nc:SchedulingArea.LoadFrequencyControlArea
+                    <urn:uuid:fe39fc92-2f2e-412a-8b9c-321fdc485a48>;
+            nc:SchedulingArea.SynchronousArea
+                    <urn:uuid:9c94e9e9-f499-4a9e-9a49-55cfa6afacd9>;
+            nc:SchedulingArea.SystemOperator
+                    <urn:uuid:b9fbb881-573b-4e98-9b7b-31f00a45ebe0> .
+    
+    <urn:uuid:427e7b56-b81a-4703-a018-c7e53a61c006>
+            rdf:type                   nc:CoordinatedCapacityCalculator;
+            cim:IdentifiedObject.description
+                    "Coordinated Capacity Calculator for NineRealms.";
+            cim:IdentifiedObject.mRID  "427e7b56-b81a-4703-a018-c7e53a61c006";
+            cim:IdentifiedObject.name  "CCC-NineRealms";
+            cim:OrganisationRole.Organisation
+                    <urn:uuid:433aaf4e-3c62-45fc-b2ff-0f343f1b80ba> .
+    
+    <urn:uuid:e0ea984b-a1d8-4dcd-808d-22b46e78aa33>
+            rdf:type                       nc:SchedulingArea;
+            cim:IdentifiedObject.description
+                    "Scheduling Area (SA) for Britheim.";
+            cim:IdentifiedObject.mRID      "e0ea984b-a1d8-4dcd-808d-22b46e78aa33";
+            cim:IdentifiedObject.name      "SA-Britheim";
+            nc:SchedulingArea.BiddingZone  <urn:uuid:87fb9f56-fd86-446f-b35d-c0abba19925f>;
+            nc:SchedulingArea.ControlArea  <urn:uuid:642a2421-d5ef-450a-90c3-868485f2bf37>;
+            nc:SchedulingArea.LoadFrequencyControlArea
+                    <urn:uuid:19b82142-10d6-4deb-abe7-5462a2314f30>;
+            nc:SchedulingArea.SynchronousArea
+                    <urn:uuid:47750014-9880-47c6-9b12-57459643b5b0>;
+            nc:SchedulingArea.SystemOperator
+                    <urn:uuid:37136f0f-5ab2-40ab-a823-d8a5d47a4847> .
+    
+    <urn:uuid:fe39fc92-2f2e-412a-8b9c-321fdc485a48>
+            rdf:type                   nc:LoadFrequencyControlArea;
+            cim:IdentifiedObject.description
+                    "Load Frequency Control Area (LFCA) for Svedala.";
+            cim:IdentifiedObject.mRID  "fe39fc92-2f2e-412a-8b9c-321fdc485a48";
+            cim:IdentifiedObject.name  "LFCA-Svedala";
+            nc:LoadFrequencyControlArea.LoadFrequencyControlBlock
+                    <urn:uuid:25b169f0-beb7-4e8e-b443-61f4aa93ff53>;
+            nc:LoadFrequencyControlArea.includeFrequencyBias
+                    true .
+    
+    <urn:uuid:d6f19e28-4461-4e56-922b-8891767dd4d0>
+            rdf:type                   nc:TieCorridor;
+            cim:IdentifiedObject.description
+                    "Tie Corridor (TC) between Svedala Control Area and Belgovia Control Area.";
+            cim:IdentifiedObject.mRID  "d6f19e28-4461-4e56-922b-8891767dd4d0";
+            cim:IdentifiedObject.name  "TC-Svedala-Belgovia";
+            nc:TieCorridor.BiddingZoneBorder
+                    <urn:uuid:45909aac-a6be-441e-8847-c952ba94b0d0> .
+    
+    <urn:uuid:51c2059d-ac3c-45b6-b6c1-ac59dfa4da12>
+            rdf:type                   nc:TieCorridor;
+            cim:IdentifiedObject.description
+                    "Tie Corridor (TC) between Espheim Control Area and Portheim Control Area.";
+            cim:IdentifiedObject.mRID  "51c2059d-ac3c-45b6-b6c1-ac59dfa4da12";
+            cim:IdentifiedObject.name  "TC-Espheim-Portheim";
+            nc:TieCorridor.BiddingZoneBorder
+                    <urn:uuid:1e93200d-0279-4aa4-9baa-136dcf242458> .
+    
+    <urn:uuid:aaccbbc9-1adc-433f-bc74-672c5a2383a9>
+            rdf:type                       cim:ControlArea;
+            cim:IdentifiedObject.mRID      "aaccbbc9-1adc-433f-bc74-672c5a2383a9";
+            nc:ControlArea.SystemOperator  <urn:uuid:3fcbc75b-4e12-4009-a20f-78938abc04ec> .
+    
+    <urn:uuid:20a47715-dc1f-48ca-9db4-b99dbecc8221>
+            rdf:type                   nc:BiddingZoneBorder;
+            cim:IdentifiedObject.description
+                    "Bidding Zone Border for the direction from Galia to Britheim";
+            cim:IdentifiedObject.mRID  "20a47715-dc1f-48ca-9db4-b99dbecc8221";
+            cim:IdentifiedObject.name  "BZB-Galia-Britheim";
+            nc:BiddingZoneBorder.CapacityCalculationRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:BiddingZoneBorder.FromBiddingZone
+                    <urn:uuid:d220bcdc-0ab8-44ce-bb17-1c154f02adcd>;
+            nc:BiddingZoneBorder.ToBiddingZone
+                    <urn:uuid:4d4166a4-c0dc-4c77-9b67-a04a7e68ddf2> .
+    
+    <urn:uuid:ebcf2e91-11c0-49c1-8c1c-0f58c73f8ab7>
+            rdf:type                   nc:TieCorridor;
+            cim:IdentifiedObject.description
+                    "Tie Corridor (TC) between Espheim Control Area and Svedala Control Area.";
+            cim:IdentifiedObject.mRID  "ebcf2e91-11c0-49c1-8c1c-0f58c73f8ab7";
+            cim:IdentifiedObject.name  "TC-Espheim-Svedala";
+            nc:TieCorridor.BiddingZoneBorder
+                    <urn:uuid:17f1bb3a-d222-4565-95a1-89b5c3204ce5> .
+    
+    <urn:uuid:27bd4e95-602b-4db5-815e-e8ccf77dd1ec>
+            rdf:type                   nc:LoadFrequencyControlArea;
+            cim:IdentifiedObject.description
+                    "Load Frequency Control Area (LFCA) for Belgovia.";
+            cim:IdentifiedObject.mRID  "27bd4e95-602b-4db5-815e-e8ccf77dd1ec";
+            cim:IdentifiedObject.name  "LFCA-Belgovia";
+            nc:LoadFrequencyControlArea.LoadFrequencyControlBlock
+                    <urn:uuid:a7b7823e-fffe-4eb9-beed-7c3821427832>;
+            nc:LoadFrequencyControlArea.includeFrequencyBias
+                    true .
+    
+    <urn:uuid:0410eff4-6268-4b83-860e-0f9f425f6c6c>
+            rdf:type                   nc:TransmissionSystemOperator;
+            cim:IdentifiedObject.description
+                    "Transmission System Operator (TSO) post and function performed by the organisation Portheim.";
+            cim:IdentifiedObject.mRID  "0410eff4-6268-4b83-860e-0f9f425f6c6c";
+            cim:IdentifiedObject.name  "TSO-Portheim";
+            cim:OrganisationRole.Organisation
+                    <urn:uuid:a89684d0-4c4b-4400-896f-411ef22ea306> .
+    
+    <urn:uuid:b9b4048e-becb-4249-b86a-ef16934d4a80>
+            rdf:type                   cim:Organisation;
+            cim:IdentifiedObject.description
+                    "Organisation Svedala.";
+            cim:IdentifiedObject.mRID  "b9b4048e-becb-4249-b86a-ef16934d4a80";
+            cim:IdentifiedObject.name  "Org-Svedala" .
+    
+    <urn:uuid:2ec42376-eee2-4ab9-b79a-165e1df2a185>
+            rdf:type                   nc:TransmissionSystemOperator;
+            cim:IdentifiedObject.description
+                    "Transmission System Operator (TSO) post and function performed by the organisation Galia.";
+            cim:IdentifiedObject.mRID  "2ec42376-eee2-4ab9-b79a-165e1df2a185";
+            cim:IdentifiedObject.name  "TSO-Galia";
+            cim:OrganisationRole.Organisation
+                    <urn:uuid:8868f4af-f331-4431-826e-eeb1f73a6835> .
+    
+    <urn:uuid:f31b779f-6058-4719-8aff-80d96c7b5fbb>
+            rdf:type                   nc:BiddingZoneBorder;
+            cim:IdentifiedObject.description
+                    "Bidding Zone Border for the direction from Nordheim to Galia";
+            cim:IdentifiedObject.mRID  "f31b779f-6058-4719-8aff-80d96c7b5fbb";
+            cim:IdentifiedObject.name  "BZB-Nordheim-Galia";
+            nc:BiddingZoneBorder.CapacityCalculationRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:BiddingZoneBorder.FromBiddingZone
+                    <urn:uuid:4d4166a4-c0dc-4c77-9b67-a04a7e68ddf2>;
+            nc:BiddingZoneBorder.ToBiddingZone
+                    <urn:uuid:28c20a8b-917f-41e0-8562-54b6b1044d48> .
+    
+    <urn:uuid:91f8f5c5-b2df-43e1-b247-c848008ecf06>
+            rdf:type                   cim:Organisation;
+            cim:IdentifiedObject.description
+                    "Organisation NineRealms.";
+            cim:IdentifiedObject.mRID  "91f8f5c5-b2df-43e1-b247-c848008ecf06";
+            cim:IdentifiedObject.name  "Org-NineRealms" .
+    
+    <urn:uuid:433aaf4e-3c62-45fc-b2ff-0f343f1b80ba>
+            rdf:type                   cim:Organisation;
+            cim:IdentifiedObject.description
+                    "Organisation Jotunheim.";
+            cim:IdentifiedObject.mRID  "433aaf4e-3c62-45fc-b2ff-0f343f1b80ba";
+            cim:IdentifiedObject.name  "Org-Jotunheim" .
+    
+    <urn:uuid:a7b0705b-8046-44e4-9f83-01b0aed73e90>
+            rdf:type                   nc:BiddingZoneBorder;
+            cim:IdentifiedObject.description
+                    "Bidding Zone Border for the direction from Britheim to Galia";
+            cim:IdentifiedObject.mRID  "a7b0705b-8046-44e4-9f83-01b0aed73e90";
+            cim:IdentifiedObject.name  "BZB-Britheim-Galia";
+            nc:BiddingZoneBorder.CapacityCalculationRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:BiddingZoneBorder.FromBiddingZone
+                    <urn:uuid:4d4166a4-c0dc-4c77-9b67-a04a7e68ddf2>;
+            nc:BiddingZoneBorder.ToBiddingZone
+                    <urn:uuid:d220bcdc-0ab8-44ce-bb17-1c154f02adcd> .
+    
+    <urn:uuid:3f93bcf6-798f-409e-ae40-063027034d4c>
+            rdf:type                   nc:LoadFrequencyControlBlock;
+            cim:IdentifiedObject.description
+                    "Load Frequency Control Block (LFCB) for Nordheim.";
+            cim:IdentifiedObject.mRID  "3f93bcf6-798f-409e-ae40-063027034d4c";
+            cim:IdentifiedObject.name  "LFCB-Nordheim";
+            nc:LoadFrequencyControlBlock.SynchronousArea
+                    <urn:uuid:60156add-cd6c-44ad-9564-086c93ede80d> .
+    
+    <urn:uuid:3fcc353a-fe97-4413-86c0-6d3e7135be09>
+            rdf:type                   nc:TieCorridor;
+            cim:IdentifiedObject.description
+                    "Tie Corridor (TC) between Svedala Control Area and Espheim Control Area.";
+            cim:IdentifiedObject.mRID  "3fcc353a-fe97-4413-86c0-6d3e7135be09";
+            cim:IdentifiedObject.name  "TC-Svedala-Espheim";
+            nc:TieCorridor.BiddingZoneBorder
+                    <urn:uuid:488ac74b-7c1d-41ac-b2d8-2108ff754752> .
+    
+    <urn:uuid:aa68ef2d-a489-45e9-99b9-b53f58621d6f>
+            rdf:type                   nc:LoadFrequencyControlArea;
+            cim:IdentifiedObject.description
+                    "Load Frequency Control Area (LFCA) for Nordheim.";
+            cim:IdentifiedObject.mRID  "aa68ef2d-a489-45e9-99b9-b53f58621d6f";
+            cim:IdentifiedObject.name  "LFCA-Nordheim";
+            nc:LoadFrequencyControlArea.LoadFrequencyControlBlock
+                    <urn:uuid:3f93bcf6-798f-409e-ae40-063027034d4c>;
+            nc:LoadFrequencyControlArea.includeFrequencyBias
+                    true .
+    
+    <urn:uuid:47750014-9880-47c6-9b12-57459643b5b0>
+            rdf:type                   nc:SynchronousArea;
+            cim:IdentifiedObject.description
+                    "Synchronous Area of Britheim.";
+            cim:IdentifiedObject.mRID  "47750014-9880-47c6-9b12-57459643b5b0";
+            cim:IdentifiedObject.name  "SyncArea-Britheim";
+            nc:SynchronousArea.nominalFrequency
+                    "50.0"^^xsd:float .
+    
+    <urn:uuid:e6cf46e9-f775-4f6a-9a10-44782b872094>
+            rdf:type                   nc:LoadFrequencyControlArea;
+            cim:IdentifiedObject.description
+                    "Load Frequency Control Area (LFCA) for Espheim.";
+            cim:IdentifiedObject.mRID  "e6cf46e9-f775-4f6a-9a10-44782b872094";
+            cim:IdentifiedObject.name  "LFCA-Espheim";
+            nc:LoadFrequencyControlArea.LoadFrequencyControlBlock
+                    <urn:uuid:16689878-236f-48b2-8af1-f34eb9a55fff>;
+            nc:LoadFrequencyControlArea.includeFrequencyBias
+                    true .
+    
+    <urn:uuid:c1540280-a038-4d7f-ba5c-52e1f908d20d>
+            rdf:type                   nc:BiddingZoneBorder;
+            cim:IdentifiedObject.description
+                    "Bidding Zone Border for the direction from Galia to Belgovia";
+            cim:IdentifiedObject.mRID  "c1540280-a038-4d7f-ba5c-52e1f908d20d";
+            cim:IdentifiedObject.name  "BZB-Galia-Belgovia";
+            nc:BiddingZoneBorder.CapacityCalculationRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:BiddingZoneBorder.FromBiddingZone
+                    <urn:uuid:87fb9f56-fd86-446f-b35d-c0abba19925f>;
+            nc:BiddingZoneBorder.ToBiddingZone
+                    <urn:uuid:4d4166a4-c0dc-4c77-9b67-a04a7e68ddf2> .
+    
+    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>
+            rdf:type                   nc:CapacityCalculationRegion;
+            cim:IdentifiedObject.description
+                    "Capacity Calculation Region for NineRealms.";
+            cim:IdentifiedObject.mRID  "56d81c91-4fb8-47a2-9d7c-baa13dedd605";
+            cim:IdentifiedObject.name  "CCR-NineRealms";
+            nc:CapacityCalculationRegion.CoordinatedCapacityCalculator
+                    <urn:uuid:427e7b56-b81a-4703-a018-c7e53a61c006>;
+            nc:CapacityCalculationRegion.SecurityCoordinator
+                    <urn:uuid:5f5820d9-3e05-473e-94c8-3c767be03e1a> .
+    
+    <urn:uuid:aa26bb5c-d226-4642-a791-85ce2b43f0c7>
+            rdf:type                       nc:SchedulingArea;
+            cim:IdentifiedObject.description
+                    "Scheduling Area (SA) for Galia.";
+            cim:IdentifiedObject.mRID      "aa26bb5c-d226-4642-a791-85ce2b43f0c7";
+            cim:IdentifiedObject.name      "SA-Galia";
+            nc:SchedulingArea.BiddingZone  <urn:uuid:28c20a8b-917f-41e0-8562-54b6b1044d48>;
+            nc:SchedulingArea.ControlArea  <urn:uuid:b20c892a-a5d2-4378-8744-c2cfea79d0be>;
+            nc:SchedulingArea.LoadFrequencyControlArea
+                    <urn:uuid:425dc462-e348-4aac-81c1-4c1f921ffe50>;
+            nc:SchedulingArea.SynchronousArea
+                    <urn:uuid:9c94e9e9-f499-4a9e-9a49-55cfa6afacd9>;
+            nc:SchedulingArea.SystemOperator
+                    <urn:uuid:2ec42376-eee2-4ab9-b79a-165e1df2a185> .
+    
+    <urn:uuid:69a4f038-dfa7-4978-8d49-140c7570b9ac>
+            rdf:type                   nc:TieCorridor;
+            cim:IdentifiedObject.description
+                    "Tie Corridor (TC) between Belgovia Control Area and Svedala Control Area.";
+            cim:IdentifiedObject.mRID  "69a4f038-dfa7-4978-8d49-140c7570b9ac";
+            cim:IdentifiedObject.name  "TC-Belgovia-Svedala";
+            nc:TieCorridor.BiddingZoneBorder
+                    <urn:uuid:f8566f29-9f1b-4484-b738-1f7bc8f31f0b> .
+    
+    <urn:uuid:28c20a8b-917f-41e0-8562-54b6b1044d48>
+            rdf:type                       nc:BiddingZone;
+            cim:IdentifiedObject.description
+                    "Bidding Zone for Nordheim";
+            cim:IdentifiedObject.mRID      "28c20a8b-917f-41e0-8562-54b6b1044d48";
+            cim:IdentifiedObject.name      "BZ-Nordheim";
+            nc:BiddingZone.CapacityCalculationRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:BiddingZone.isTradeEnabled  true .
+    
+    <urn:uuid:06c9f0bb-26a4-4e83-af1d-d2166c414b94>
+            rdf:type                   nc:BiddingZoneBorder;
+            cim:IdentifiedObject.description
+                    "Bidding Zone Border for the direction from Galia to Nordheim";
+            cim:IdentifiedObject.mRID  "06c9f0bb-26a4-4e83-af1d-d2166c414b94";
+            cim:IdentifiedObject.name  "BZB-Galia-Nordheim";
+            nc:BiddingZoneBorder.CapacityCalculationRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:BiddingZoneBorder.FromBiddingZone
+                    <urn:uuid:28c20a8b-917f-41e0-8562-54b6b1044d48>;
+            nc:BiddingZoneBorder.ToBiddingZone
+                    <urn:uuid:4d4166a4-c0dc-4c77-9b67-a04a7e68ddf2> .
+    
+    <urn:uuid:297f533e-77a7-42d9-a683-32babcf6c82f>
+            rdf:type                       nc:SchedulingArea;
+            cim:IdentifiedObject.description
+                    "Scheduling Area (SA) for Belgovia.";
+            cim:IdentifiedObject.mRID      "297f533e-77a7-42d9-a683-32babcf6c82f";
+            cim:IdentifiedObject.name      "SA-Belgovia";
+            nc:SchedulingArea.BiddingZone  <urn:uuid:4d4166a4-c0dc-4c77-9b67-a04a7e68ddf2>;
+            nc:SchedulingArea.ControlArea  <urn:uuid:50487bb8-be6d-42a8-9358-cc0bbfe6cfa7>;
+            nc:SchedulingArea.LoadFrequencyControlArea
+                    <urn:uuid:27bd4e95-602b-4db5-815e-e8ccf77dd1ec>;
+            nc:SchedulingArea.SynchronousArea
+                    <urn:uuid:9c94e9e9-f499-4a9e-9a49-55cfa6afacd9>;
+            nc:SchedulingArea.SystemOperator
+                    <urn:uuid:a9dba80c-9dfb-4ebf-b383-446ddc2c4adf> .
+    
+    <urn:uuid:d220bcdc-0ab8-44ce-bb17-1c154f02adcd>
+            rdf:type                       nc:BiddingZone;
+            cim:IdentifiedObject.description
+                    "Bidding Zone for Britheim";
+            cim:IdentifiedObject.mRID      "d220bcdc-0ab8-44ce-bb17-1c154f02adcd";
+            cim:IdentifiedObject.name      "BZ-Britheim";
+            nc:BiddingZone.CapacityCalculationRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:BiddingZone.isTradeEnabled  true .
+    
+    <urn:uuid:b20c892a-a5d2-4378-8744-c2cfea79d0be>
+            rdf:type                       cim:ControlArea;
+            cim:IdentifiedObject.mRID      "b20c892a-a5d2-4378-8744-c2cfea79d0be";
+            nc:ControlArea.SystemOperator  <urn:uuid:2ec42376-eee2-4ab9-b79a-165e1df2a185> .
+    
+    <urn:uuid:b9fbb881-573b-4e98-9b7b-31f00a45ebe0>
+            rdf:type                   nc:TransmissionSystemOperator;
+            cim:IdentifiedObject.description
+                    "Transmission System Operator (TSO) post and function performed by the organisation Svedala.";
+            cim:IdentifiedObject.mRID  "b9fbb881-573b-4e98-9b7b-31f00a45ebe0";
+            cim:IdentifiedObject.name  "TSO-Svedala";
+            cim:OrganisationRole.Organisation
+                    <urn:uuid:b9b4048e-becb-4249-b86a-ef16934d4a80> .
+    
+    <urn:uuid:9c94e9e9-f499-4a9e-9a49-55cfa6afacd9>
+            rdf:type                   nc:SynchronousArea;
+            cim:IdentifiedObject.description
+                    "Synchronous Area of Espheim, Svedala, Belgovia, and Galia.";
+            cim:IdentifiedObject.mRID  "9c94e9e9-f499-4a9e-9a49-55cfa6afacd9";
+            cim:IdentifiedObject.name  "SyncArea-Continental";
+            nc:SynchronousArea.nominalFrequency
+                    "50.0"^^xsd:float .
+    
+    <urn:uuid:fd0d22b2-85b3-46d2-8836-bb821b447ac4>
+            rdf:type                   cim:Organisation;
+            cim:IdentifiedObject.description
+                    "Organisation Espheim.";
+            cim:IdentifiedObject.mRID  "fd0d22b2-85b3-46d2-8836-bb821b447ac4";
+            cim:IdentifiedObject.name  "Org-Espheim" .
+    
+    <urn:uuid:631d9a63-fb0a-4af0-887c-f79fc5b5aef2>
+            rdf:type                   nc:LoadFrequencyControlBlock;
+            cim:IdentifiedObject.description
+                    "Load Frequency Control Block (LFCB) for Britheim.";
+            cim:IdentifiedObject.mRID  "631d9a63-fb0a-4af0-887c-f79fc5b5aef2";
+            cim:IdentifiedObject.name  "LFCB-Britheim";
+            nc:LoadFrequencyControlBlock.SynchronousArea
+                    <urn:uuid:47750014-9880-47c6-9b12-57459643b5b0> .
+    
+    <urn:uuid:45909aac-a6be-441e-8847-c952ba94b0d0>
+            rdf:type                   nc:BiddingZoneBorder;
+            cim:IdentifiedObject.description
+                    "Bidding Zone Border for the direction from Svedala to Belgovia";
+            cim:IdentifiedObject.mRID  "45909aac-a6be-441e-8847-c952ba94b0d0";
+            cim:IdentifiedObject.name  "BZB-Svedala-Belgovia";
+            nc:BiddingZoneBorder.CapacityCalculationRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:BiddingZoneBorder.FromBiddingZone
+                    <urn:uuid:87fb9f56-fd86-446f-b35d-c0abba19925f>;
+            nc:BiddingZoneBorder.ToBiddingZone
+                    <urn:uuid:f8d26efa-aaaf-49d2-97f8-24de7660047b> .
+    
+    <urn:uuid:23cadd6e-47f2-42f4-b2b5-3b59e7e700a7>
+            rdf:type                       nc:BiddingZone;
+            cim:IdentifiedObject.description
+                    "Bidding Zone for Portheim";
+            cim:IdentifiedObject.mRID      "23cadd6e-47f2-42f4-b2b5-3b59e7e700a7";
+            cim:IdentifiedObject.name      "BZ-Portheim";
+            nc:BiddingZone.CapacityCalculationRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:BiddingZone.isTradeEnabled  true .
+    
+    <urn:uuid:8868f4af-f331-4431-826e-eeb1f73a6835>
+            rdf:type                   cim:Organisation;
+            cim:IdentifiedObject.description
+                    "Organisation Galia.";
+            cim:IdentifiedObject.mRID  "8868f4af-f331-4431-826e-eeb1f73a6835";
+            cim:IdentifiedObject.name  "Org-Galia" .
+    
+    <urn:uuid:4b418cee-109e-4789-8de3-3d66b58ea11f>
+            rdf:type                   nc:TieCorridor;
+            cim:IdentifiedObject.description
+                    "Tie Corridor (TC) between Portheim Control Area and Espheim Control Area.";
+            cim:IdentifiedObject.mRID  "4b418cee-109e-4789-8de3-3d66b58ea11f";
+            cim:IdentifiedObject.name  "TC-Portheim-Espheim";
+            nc:TieCorridor.BiddingZoneBorder
+                    <urn:uuid:07565540-a4ad-45b2-a313-3e093bce9f30> .
+    
+    <urn:uuid:865d0a1c-4718-416e-9496-1e24c46067ab>
+            rdf:type                   cim:Organisation;
+            cim:IdentifiedObject.description
+                    "Organisation Nordheim.";
+            cim:IdentifiedObject.mRID  "865d0a1c-4718-416e-9496-1e24c46067ab";
+            cim:IdentifiedObject.name  "Org-Nordheim" .
+    
+    <urn:uuid:2d62db2f-715d-46f8-bb22-b0b685a414b5>
+            rdf:type                   nc:LoadFrequencyControlBlock;
+            cim:IdentifiedObject.description
+                    "Load Frequency Control Block (LFCB) for Portheim.";
+            cim:IdentifiedObject.mRID  "2d62db2f-715d-46f8-bb22-b0b685a414b5";
+            cim:IdentifiedObject.name  "LFCB-Portheim";
+            nc:LoadFrequencyControlBlock.SynchronousArea
+                    <urn:uuid:9c94e9e9-f499-4a9e-9a49-55cfa6afacd9> .
+    
+    <urn:uuid:07565540-a4ad-45b2-a313-3e093bce9f30>
+            rdf:type                   nc:BiddingZoneBorder;
+            cim:IdentifiedObject.description
+                    "Bidding Zone Border for the direction from Portheim to Espheim";
+            cim:IdentifiedObject.mRID  "07565540-a4ad-45b2-a313-3e093bce9f30";
+            cim:IdentifiedObject.name  "BZB-Portheim-Espheim";
+            nc:BiddingZoneBorder.CapacityCalculationRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:BiddingZoneBorder.FromBiddingZone
+                    <urn:uuid:cf8a8cc9-4b94-4983-8a36-e3f84888f461>;
+            nc:BiddingZoneBorder.ToBiddingZone
+                    <urn:uuid:23cadd6e-47f2-42f4-b2b5-3b59e7e700a7> .
+    
+    <urn:uuid:87fb9f56-fd86-446f-b35d-c0abba19925f>
+            rdf:type                       nc:BiddingZone;
+            cim:IdentifiedObject.description
+                    "Bidding Zone for Belgovia";
+            cim:IdentifiedObject.mRID      "87fb9f56-fd86-446f-b35d-c0abba19925f";
+            cim:IdentifiedObject.name      "BZ-Belgovia";
+            nc:BiddingZone.CapacityCalculationRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:BiddingZone.isTradeEnabled  true .
+    
+    <urn:uuid:2aee8aff-d725-4d6b-9bd5-1ed0179e7812>
+            rdf:type                   cim:Organisation;
+            cim:IdentifiedObject.description
+                    "Organisation Belgovia.";
+            cim:IdentifiedObject.mRID  "2aee8aff-d725-4d6b-9bd5-1ed0179e7812";
+            cim:IdentifiedObject.name  "Org-Belgovia" .
+    
+    <urn:uuid:f8d26efa-aaaf-49d2-97f8-24de7660047b>
+            rdf:type                       nc:BiddingZone;
+            cim:IdentifiedObject.description
+                    "Bidding Zone for Svedala";
+            cim:IdentifiedObject.mRID      "f8d26efa-aaaf-49d2-97f8-24de7660047b";
+            cim:IdentifiedObject.name      "BZ-Svedala";
+            nc:BiddingZone.CapacityCalculationRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:BiddingZone.isTradeEnabled  true .
+    
+    <urn:uuid:2667b32c-d94c-4198-96a2-e9f288cc8e3d>
+            rdf:type              dcat:Dataset;
+            dct:accessRights      <https://energy.referencedata.eu/Confidentiality/Public>;
+            dct:conformsTo        "https://cim.ucaiug.io/ns#" , "https://ap.cim4.eu/EquipmentReliability/2.4" , "https://cim4.eu/ns/nc/2.4#" , "http://iec.ch/TC57/2013/CIM-schema-cim16#";
+            dct:description       "Common data the NineRealms responsibility are as part of the ReliCapGrid ENTSO-E test model."@en;
+            dct:identifier        "2667b32c-d94c-4198-96a2-e9f288cc8e3d";
+            dct:issued            "2026-03-18T10:00:00Z"^^xsd:dateTime;
+            dct:license           <https://creativecommons.org/licenses/by/4.0/>;
+            dct:publisher         "https://energy.referencedata.eu/test/party/Org-NineRealms";
+            dct:rights            "Copyright";
+            dct:rightsHolder      "ENTSO-E";
+            dct:spatial           <https://energy.referencedata.eu/test/frame/NineRealms-Transmission>;
+            dct:title             "20260331_Org-NineRealms_CD_v2-1-0";
+            adms:versionNotes     "Include BZB for Britheim and related borders, and fixing SchedulingArea.ControlArea associations"@en;
+            dcat:isVersionOf      <https://energy.referencedata.eu/test/model/Org-NineRealms_CD>;
+            dcat:keyword          "CommonData" , "CD";
+            dcat:startDate        "2026-03-31T10:00:00Z"^^xsd:dateTime;
+            dcat:version          "2.1.0";
+            prov:generatedAtTime  "2026-03-31T10:00:00Z"^^xsd:dateTime;
+            prov:wasGeneratedBy   "https://energy.referencedata.eu/activity/CD" .
+    
+    <urn:uuid:488ac74b-7c1d-41ac-b2d8-2108ff754752>
+            rdf:type                   nc:BiddingZoneBorder;
+            cim:IdentifiedObject.description
+                    "Bidding Zone Border for the direction from Svedala to Espheim";
+            cim:IdentifiedObject.mRID  "488ac74b-7c1d-41ac-b2d8-2108ff754752";
+            cim:IdentifiedObject.name  "BZB-Svedala-Espheim";
+            nc:BiddingZoneBorder.CapacityCalculationRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:BiddingZoneBorder.FromBiddingZone
+                    <urn:uuid:cf8a8cc9-4b94-4983-8a36-e3f84888f461>;
+            nc:BiddingZoneBorder.ToBiddingZone
+                    <urn:uuid:f8d26efa-aaaf-49d2-97f8-24de7660047b> .
+    
+    <urn:uuid:ebccc726-b760-46c6-b7f6-8289bafce797>
+            rdf:type                       cim:ControlArea;
+            cim:IdentifiedObject.mRID      "ebccc726-b760-46c6-b7f6-8289bafce797";
+            nc:ControlArea.SystemOperator  <urn:uuid:b9fbb881-573b-4e98-9b7b-31f00a45ebe0> .
+    
+    <urn:uuid:151d6acf-d4fd-4604-9603-f02348603277>
+            rdf:type                   nc:TransmissionSystemOperator;
+            cim:IdentifiedObject.description
+                    "Transmission System Operator (TSO) post and function performed by the organisation Espheim.";
+            cim:IdentifiedObject.mRID  "151d6acf-d4fd-4604-9603-f02348603277";
+            cim:IdentifiedObject.name  "TSO-Espheim";
+            cim:OrganisationRole.Organisation
+                    <urn:uuid:fd0d22b2-85b3-46d2-8836-bb821b447ac4> .
+    
+    <urn:uuid:17f1bb3a-d222-4565-95a1-89b5c3204ce5>
+            rdf:type                   nc:BiddingZoneBorder;
+            cim:IdentifiedObject.description
+                    "Bidding Zone Border for the direction from Espheim to Svedala";
+            cim:IdentifiedObject.mRID  "17f1bb3a-d222-4565-95a1-89b5c3204ce5";
+            cim:IdentifiedObject.name  "BZB-Espheim-Svedala";
+            nc:BiddingZoneBorder.CapacityCalculationRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:BiddingZoneBorder.FromBiddingZone
+                    <urn:uuid:f8d26efa-aaaf-49d2-97f8-24de7660047b>;
+            nc:BiddingZoneBorder.ToBiddingZone
+                    <urn:uuid:cf8a8cc9-4b94-4983-8a36-e3f84888f461> .
+    
+    <urn:uuid:37136f0f-5ab2-40ab-a823-d8a5d47a4847>
+            rdf:type                   nc:TransmissionSystemOperator;
+            cim:IdentifiedObject.description
+                    "Transmission System Operator (TSO) post and function performed by the organisation Britheim.";
+            cim:IdentifiedObject.mRID  "37136f0f-5ab2-40ab-a823-d8a5d47a4847";
+            cim:IdentifiedObject.name  "TSO-Britheim";
+            cim:OrganisationRole.Organisation
+                    <urn:uuid:aa44b0d7-efce-4b1a-ba97-5a0024e2af77> .
+    
+    <urn:uuid:3fcbc75b-4e12-4009-a20f-78938abc04ec>
+            rdf:type                   nc:TransmissionSystemOperator;
+            cim:IdentifiedObject.description
+                    "Transmission System Operator (TSO) post and function performed by the organisation  Nordheim.";
+            cim:IdentifiedObject.mRID  "3fcbc75b-4e12-4009-a20f-78938abc04ec";
+            cim:IdentifiedObject.name  "TSO-Nordheim";
+            cim:OrganisationRole.Organisation
+                    <urn:uuid:865d0a1c-4718-416e-9496-1e24c46067ab> .
+    
+    <urn:uuid:cf8a8cc9-4b94-4983-8a36-e3f84888f461>
+            rdf:type                       nc:BiddingZone;
+            cim:IdentifiedObject.description
+                    "Bidding Zone for Espheim";
+            cim:IdentifiedObject.mRID      "cf8a8cc9-4b94-4983-8a36-e3f84888f461";
+            cim:IdentifiedObject.name      "BZ-Espheim";
+            nc:BiddingZone.CapacityCalculationRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:BiddingZone.isTradeEnabled  true .
+    
+    <urn:uuid:730d81b0-1c3d-40a0-86b1-767a7cdc3f39>
+            rdf:type                       nc:SchedulingArea;
+            cim:IdentifiedObject.description
+                    "Scheduling Area (SA) for Portheim.";
+            cim:IdentifiedObject.mRID      "730d81b0-1c3d-40a0-86b1-767a7cdc3f39";
+            cim:IdentifiedObject.name      "SA-Portheim";
+            nc:SchedulingArea.BiddingZone  <urn:uuid:23cadd6e-47f2-42f4-b2b5-3b59e7e700a7>;
+            nc:SchedulingArea.ControlArea  <urn:uuid:ffc5fd1d-282e-4908-b853-738789df9015>;
+            nc:SchedulingArea.LoadFrequencyControlArea
+                    <urn:uuid:10c8a961-a11e-47e9-b4f2-d518d5a8dd85>;
+            nc:SchedulingArea.SynchronousArea
+                    <urn:uuid:9c94e9e9-f499-4a9e-9a49-55cfa6afacd9>;
+            nc:SchedulingArea.SystemOperator
+                    <urn:uuid:0410eff4-6268-4b83-860e-0f9f425f6c6c> .
+    
+    <urn:uuid:60156add-cd6c-44ad-9564-086c93ede80d>
+            rdf:type                   nc:SynchronousArea;
+            cim:IdentifiedObject.description
+                    "Synchronous Area of Nordheim.";
+            cim:IdentifiedObject.mRID  "60156add-cd6c-44ad-9564-086c93ede80d";
+            cim:IdentifiedObject.name  "SyncArea-Nordheim";
+            nc:SynchronousArea.nominalFrequency
+                    "50.0"^^xsd:float .
+    
+    <urn:uuid:f8566f29-9f1b-4484-b738-1f7bc8f31f0b>
+            rdf:type                   nc:BiddingZoneBorder;
+            cim:IdentifiedObject.description
+                    "Bidding Zone Border for the direction from Belgovia to Svedala";
+            cim:IdentifiedObject.mRID  "f8566f29-9f1b-4484-b738-1f7bc8f31f0b";
+            cim:IdentifiedObject.name  "BZB-Belgovia-Svedala";
+            nc:BiddingZoneBorder.CapacityCalculationRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:BiddingZoneBorder.FromBiddingZone
+                    <urn:uuid:f8d26efa-aaaf-49d2-97f8-24de7660047b>;
+            nc:BiddingZoneBorder.ToBiddingZone
+                    <urn:uuid:87fb9f56-fd86-446f-b35d-c0abba19925f> .
+    
+    <urn:uuid:425dc462-e348-4aac-81c1-4c1f921ffe50>
+            rdf:type                   nc:LoadFrequencyControlArea;
+            cim:IdentifiedObject.description
+                    "Load Frequency Control Area (LFCA) for Galia.";
+            cim:IdentifiedObject.mRID  "425dc462-e348-4aac-81c1-4c1f921ffe50";
+            cim:IdentifiedObject.name  "LFCA-Galia";
+            nc:LoadFrequencyControlArea.LoadFrequencyControlBlock
+                    <urn:uuid:e94cd5b5-28f7-4e55-8faa-fd0c0478cadc>;
+            nc:LoadFrequencyControlArea.includeFrequencyBias
+                    true .
+    
+    <urn:uuid:b3e16d67-ceb1-480f-aab2-3f909ef436a6>
+            rdf:type                       nc:SchedulingArea;
+            cim:IdentifiedObject.description
+                    "Scheduling Area (SA) for Nordheim.";
+            cim:IdentifiedObject.mRID      "b3e16d67-ceb1-480f-aab2-3f909ef436a6";
+            cim:IdentifiedObject.name      "SA-Nordheim";
+            nc:SchedulingArea.BiddingZone  <urn:uuid:f8d26efa-aaaf-49d2-97f8-24de7660047b>;
+            nc:SchedulingArea.ControlArea  <urn:uuid:aaccbbc9-1adc-433f-bc74-672c5a2383a9>;
+            nc:SchedulingArea.LoadFrequencyControlArea
+                    <urn:uuid:aa68ef2d-a489-45e9-99b9-b53f58621d6f>;
+            nc:SchedulingArea.SynchronousArea
+                    <urn:uuid:60156add-cd6c-44ad-9564-086c93ede80d>;
+            nc:SchedulingArea.SystemOperator
+                    <urn:uuid:3fcbc75b-4e12-4009-a20f-78938abc04ec> .
+    
+    <urn:uuid:4d4166a4-c0dc-4c77-9b67-a04a7e68ddf2>
+            rdf:type                       nc:BiddingZone;
+            cim:IdentifiedObject.description
+                    "Bidding Zone for Galia";
+            cim:IdentifiedObject.mRID      "4d4166a4-c0dc-4c77-9b67-a04a7e68ddf2";
+            cim:IdentifiedObject.name      "BZ-Galia";
+            nc:BiddingZone.CapacityCalculationRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:BiddingZone.isTradeEnabled  true .
+    
+    <urn:uuid:a7b7823e-fffe-4eb9-beed-7c3821427832>
+            rdf:type                   nc:LoadFrequencyControlBlock;
+            cim:IdentifiedObject.description
+                    "Load Frequency Control Block (LFCB) for Belgovia.";
+            cim:IdentifiedObject.mRID  "a7b7823e-fffe-4eb9-beed-7c3821427832";
+            cim:IdentifiedObject.name  "LFCB-Belgovia";
+            nc:LoadFrequencyControlBlock.SynchronousArea
+                    <urn:uuid:9c94e9e9-f499-4a9e-9a49-55cfa6afacd9> .
+    
+    <urn:uuid:a89684d0-4c4b-4400-896f-411ef22ea306>
+            rdf:type                   cim:Organisation;
+            cim:IdentifiedObject.description
+                    "Organisation Portheim.";
+            cim:IdentifiedObject.mRID  "a89684d0-4c4b-4400-896f-411ef22ea306";
+            cim:IdentifiedObject.name  "Org-Portheim" .
+}

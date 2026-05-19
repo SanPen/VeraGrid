@@ -2939,7 +2939,7 @@ def assign_vsc_static_api_mapping(
     assign_api_mapping_value_if_present(
         mdl=mdl,
         key=ParamPowerFlowRefferenceType.vsc_kdp_pu,
-        value=float(vsc.control1_droop),
+        value=float(vsc.control1_val_droop),
         logger=logger,
         device_name=device_name,
     )

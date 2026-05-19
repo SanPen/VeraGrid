@@ -1756,7 +1756,7 @@ def test_branch_scene_index_tracks_redraw_bounds_after_route_change() -> None:
     assert branch_graphic in moved_hit_items_after
 
 
-def test_branch_endpoint_callback_skips_immediate_redraw_during_batched_refresh(monkeypatch) -> None:
+def test_branch_endpoint_callback_skips_immediate_redraw_during_batched_refresh(override_attrs) -> None:
     """
     Batched branch refresh should collect endpoint updates without redrawing on every callback.
     """
@@ -1781,7 +1781,7 @@ def test_branch_endpoint_callback_skips_immediate_redraw_during_batched_refresh(
         """
         redraw_calls.append(1)
 
-    monkeypatch.setattr(branch_graphic, "redraw", _fake_redraw)
+    override_attrs.setattr(branch_graphic, "redraw", _fake_redraw)
 
     editor._is_batch_refreshing_branches = True
     branch_graphic.setBeginPos(QPointF(100.0, 45.0))
@@ -1797,7 +1797,7 @@ def test_branch_endpoint_callback_skips_immediate_redraw_during_batched_refresh(
     assert redraw_calls == [1]
 
 
-def test_line_graphic_constructor_skips_redraw_while_loading(monkeypatch) -> None:
+def test_line_graphic_constructor_skips_redraw_while_loading(override_attrs) -> None:
     """
     Branch construction during diagram loading should defer the first redraw.
     """
@@ -1819,7 +1819,7 @@ def test_line_graphic_constructor_skips_redraw_while_loading(monkeypatch) -> Non
         """
         redraw_calls.append(1)
 
-    monkeypatch.setattr(LineGraphicTemplateItem, "redraw", _fake_redraw)
+    override_attrs.setattr(LineGraphicTemplateItem, "redraw", _fake_redraw)
 
     LineGraphicTemplateItem(from_port=graphic_from.get_terminal(),
                             to_port=graphic_to.get_terminal(),
@@ -1828,7 +1828,7 @@ def test_line_graphic_constructor_skips_redraw_while_loading(monkeypatch) -> Non
     assert redraw_calls == list()
 
 
-def test_bus_arrange_children_skips_intermediate_callback_churn_while_loading(monkeypatch) -> None:
+def test_bus_arrange_children_skips_intermediate_callback_churn_while_loading(override_attrs) -> None:
     """
     Bus child arrangement should avoid nexus and terminal callback refreshes during loading.
     """
@@ -1860,8 +1860,8 @@ def test_bus_arrange_children_skips_intermediate_callback_churn_while_loading(mo
         """
         callback_calls.append(1)
 
-    monkeypatch.setattr(load_graphic, "update_nexus", _fake_update_nexus)
-    monkeypatch.setattr(graphic.get_terminal(), "process_callbacks", _fake_process_callbacks)
+    override_attrs.setattr(load_graphic, "update_nexus", _fake_update_nexus)
+    override_attrs.setattr(graphic.get_terminal(), "process_callbacks", _fake_process_callbacks)
 
     graphic.arrange_children()
 

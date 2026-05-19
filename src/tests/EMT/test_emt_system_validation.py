@@ -24,7 +24,7 @@ from VeraGridEngine.enumerations import DynamicIntegrationMethod, EmtSolverTypes
 from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template
 from VeraGridEngine.Templates.Emt.bergeron_line_emt_template import get_bergeron_line_emt_template
 from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_shunt_r_emt_template
-from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template
+from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
 from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_emt_template
 from VeraGridEngine.Templates.Emt.transformer_emt_template import get_transformer_emt_template
 from VeraGridEngine.Templates.Emt.converter_emt_template import get_emt_ideal_converter
@@ -170,6 +170,24 @@ def _make_external_mapping_block(refs: list[VarPowerFlowRefferenceType], name_su
     return Block(external_mapping=external_mapping, out_vars=out_vars)
 
 
+def test_emt_template_assignment_materializes_missing_bus_shell() -> None:
+    """Ensure EMT template assignment initializes the connected bus shell immediately."""
+    grid = gce.MultiCircuit(Sbase=2.0, fbase=50.0)
+    bus = gce.Bus(name="Bus0", Vnom=10.0, is_slack=True)
+    generator = gce.Generator(name="Gen0", vset=1.0, Snom=grid.Sbase, freq=50.0, r1=0.001, x1=1.7)
+
+    grid.add_bus(bus)
+    grid.add_generator(bus=bus, api_obj=generator)
+
+    assert bus.emt_model.empty() is True
+
+    generator.emt_template = get_generator_thevenin_rl_emt_template_with_ref(vf=grid.var_factory)
+
+    assert bus.emt_model.empty() is False
+    assert bus.emt_model.external_mapping[VarPowerFlowRefferenceType.v_N] is None
+    assert VarPowerFlowRefferenceType.v_A in bus.emt_model.external_mapping
+
+
 # =============================================================================
 # TEST 1: scripting_example_thevequiv_piline_Rload_emt
 # Positive case - should pass validation without raising EmtTopologyError
@@ -212,7 +230,7 @@ def test_pi_line_rload_emt_passes_validation():
 
     pf_results, pf_res_3ph = run_power_flow(grid)
 
-    gen_mdl = get_generator_thevenin_rl_emt_template(vf=grid.var_factory).block
+    gen_mdl = get_generator_thevenin_rl_emt_template_with_ref(vf=grid.var_factory).block
     line_mdl = get_pi_line_emt_template(vf = grid.var_factory, phN = False, phA = True, phB = True, phC = True).block
     load_mdl = get_shunt_r_emt_template(vf=grid.var_factory, phA=True, phB=True, phC=True).block
 
@@ -268,7 +286,7 @@ def test_bergeron_line_rload_emt_passes_validation():
 
     pf_results, pf_res_3ph = run_power_flow(grid)
 
-    gen_mdl = get_generator_thevenin_rl_emt_template(vf=grid.var_factory).block
+    gen_mdl = get_generator_thevenin_rl_emt_template_with_ref(vf=grid.var_factory).block
     line_mdl = get_bergeron_line_emt_template(vf=grid.var_factory).block
     load_mdl = get_shunt_r_emt_template(vf=grid.var_factory, phA=True, phB=True, phC=True).block
 
@@ -317,7 +335,7 @@ def test_vsc_emt_passes_validation():
 
     pf_results, pf_res_3ph = run_power_flow(grid)
 
-    gen_mdl = get_generator_thevenin_rl_emt_template(vf=grid.var_factory).block
+    gen_mdl = get_generator_thevenin_rl_emt_template_with_ref(vf=grid.var_factory).block
     trafo_mdl = get_transformer_emt_template(vf=grid.var_factory, name=transformer.name).block
     vsc_mdl = get_emt_ideal_converter(
         vf=grid.var_factory,
@@ -412,7 +430,7 @@ def test_switched_vsc_emt_passes_validation_and_switches_gates() -> None:
     pf_results = gce.power_flow(grid=grid, options=pf_options)
     pf_res_3ph = None
 
-    gen_mdl = get_generator_thevenin_rl_emt_template(vf=grid.var_factory).block
+    gen_mdl = get_generator_thevenin_rl_emt_template_with_ref(vf=grid.var_factory).block
     trafo_mdl = get_transformer_emt_template(vf=grid.var_factory, name=transformer.name).block
     vsc_mdl = get_switched_emt_converter(vf=grid.var_factory, name=vsc.name).block
     dc_load_mdl = get_dc_load_emt_template(vf=grid.var_factory, name="dc_load_emt_switched").block
@@ -529,7 +547,7 @@ def test_dc_line_emt_passes_validation_and_initializes_branch_currents():
 
     pf_results, pf_res_3ph = run_power_flow(grid)
 
-    gen_mdl = get_generator_thevenin_rl_emt_template(vf=grid.var_factory).block
+    gen_mdl = get_generator_thevenin_rl_emt_template_with_ref(vf=grid.var_factory).block
     vsc_mdl = get_emt_ideal_converter(vf=grid.var_factory, name=vsc.name).block
     dc_line_mdl = get_dc_line_emt_template(vf=grid.var_factory, name=dc_line.name).block
     dc_load_mdl = get_dc_load_emt_template(vf=grid.var_factory, name="dc_load_emt").block
@@ -594,7 +612,7 @@ def test_floating_phases_raises_emt_topology_error():
 
     pf_results, pf_res_3ph = run_power_flow(grid)
 
-    gen_mdl = get_generator_thevenin_rl_emt_template(vf=grid.var_factory).block
+    gen_mdl = get_generator_thevenin_rl_emt_template_with_ref(vf=grid.var_factory).block
     line_mdl = get_pi_line_emt_template(vf = grid.var_factory, phN = False, phA = True, phB = True, phC = True).block
     # Using 1-phase template on 3-phase bus causes floating phases
     load_mdl = get_shunt_r_emt_template(vf=grid.var_factory, phA=True, phB=False, phC=False).block
@@ -828,9 +846,10 @@ def test_emt_template_setter_allows_gui_order_injection_branch_injection() -> No
     grid.add_generator(bus=bus0, api_obj=gen0)
     grid.add_load(bus=bus1, api_obj=load)
 
-    gen0.emt_template = get_generator_thevenin_rl_emt_template(vf=grid.var_factory)
+    gen0.emt_template = get_generator_thevenin_rl_emt_template_with_ref(vf=grid.var_factory)
     assert not gen0.emt_model.empty()
-    assert len(bus0.get_pending_emt_devices()) == 1
+    assert len(bus0.get_pending_emt_devices()) == 0
+    assert not bus0.emt_model.empty()
 
     line0.emt_template = get_pi_line_emt_template(vf=grid.var_factory, phN=False, phA=True, phB=True, phC=True)
     load.emt_template = get_shunt_r_emt_template(vf=grid.var_factory, phA=True, phB=True, phC=True)

@@ -17,7 +17,7 @@ from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_emt_template
 from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_shunt_r_emt_template
 from VeraGridEngine.Templates.Emt.load_zip_emt_template import get_load_ZIP_emt_template
 from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template
-from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template
+from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicVector
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var
@@ -350,7 +350,7 @@ def build_two_bus_real_emt_case(
     for bus in grid.buses:
         get_bus_emt_template(grid, bus)
 
-    gen_mdl = get_generator_thevenin_rl_emt_template(vf = grid.var_factory).block
+    gen_mdl = get_generator_thevenin_rl_emt_template_with_ref(vf = grid.var_factory).block
     line_mdl = get_pi_line_emt_template(vf = grid.var_factory, phN = False, phA = True, phB = True, phC = True).block
     if zip_load:
         load_mdl = get_load_ZIP_emt_template(vf=grid.var_factory, phA=True, phB=True, phC=True).block

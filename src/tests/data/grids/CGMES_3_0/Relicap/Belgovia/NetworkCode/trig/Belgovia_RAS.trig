@@ -1,0 +1,174 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:6d20b56c-57ba-4591-89bf-8e8f5c586c7d> {
+    <urn:uuid:985a859c-773e-47e2-9162-3b765a917e1f>
+            rdf:type                   nc:PowerSchedule;
+            cim:IdentifiedObject.mRID  "985a859c-773e-47e2-9162-3b765a917e1f";
+            cim:IdentifiedObject.name  "PowerSchedule";
+            nc:BaseTimeSeries.interpolationKind
+                    nc:TimeSeriesInterpolationKind.next .
+    
+    <urn:uuid:53063047-32ea-439d-8b2c-e632055b2aba>
+            rdf:type                   nc:CountertradeScheduleAction;
+            cim:IdentifiedObject.description
+                    "Countertrade";
+            cim:IdentifiedObject.mRID  "53063047-32ea-439d-8b2c-e632055b2aba";
+            cim:IdentifiedObject.name  "Countertrade";
+            nc:PowerScheduleAction.PowerSchedule
+                    <urn:uuid:985a859c-773e-47e2-9162-3b765a917e1f>;
+            nc:PowerScheduleAction.RemedialActionSchedule
+                    <urn:uuid:ebea785e-f13d-441b-a96e-bef7264bf41f> .
+    
+    <urn:uuid:ebea785e-f13d-441b-a96e-bef7264bf41f>
+            rdf:type                   nc:RemedialActionSchedule;
+            cim:IdentifiedObject.description
+                    "schedule for the countertrade by Belgovia";
+            cim:IdentifiedObject.mRID  "ebea785e-f13d-441b-a96e-bef7264bf41f";
+            cim:IdentifiedObject.name  "RAS";
+            nc:RemedialActionSchedule.Contingency
+                    <urn:uuid:37997e71-cb7d-4a8c-baa6-2a1594956da9>;
+            nc:RemedialActionSchedule.ProposingEntity
+                    <urn:uuid:5f5820d9-3e05-473e-94c8-3c767be03e1a>;
+            nc:RemedialActionSchedule.RemedialAction
+                    <urn:uuid:30f6377d-5e35-4dd0-a53d-c1992043855e>;
+            nc:RemedialActionSchedule.statusKind
+                    nc:RemedialActionScheduleStatusKind.ordered .
+    
+    <urn:uuid:bff4564b-0d93-44a3-99c3-63e7dd61623a>
+            rdf:type                   nc:GridStateIntensitySchedule;
+            cim:IdentifiedObject.mRID  "bff4564b-0d93-44a3-99c3-63e7dd61623a";
+            cim:IdentifiedObject.name  "intensity schedule";
+            nc:BaseTimeSeries.interpolationKind
+                    nc:TimeSeriesInterpolationKind.next;
+            nc:GenericValueSchedule.RemedialActionSchedule
+                    <urn:uuid:e79dc7a3-3bd2-4a1a-87e7-a8d90ae0e37c>;
+            nc:GridStateIntensitySchedule.GridStateAlteration
+                    <urn:uuid:ddb3c55f-b2ec-414e-baa3-592829e2edb2>;
+            nc:GridStateIntensitySchedule.valueKind
+                    nc:ValueOffsetKind.absolute .
+    
+    <urn:uuid:e79dc7a3-3bd2-4a1a-87e7-a8d90ae0e37c>
+            rdf:type                   nc:RemedialActionSchedule;
+            cim:IdentifiedObject.description
+                    "RAS";
+            cim:IdentifiedObject.mRID  "e79dc7a3-3bd2-4a1a-87e7-a8d90ae0e37c";
+            cim:IdentifiedObject.name  "RAS";
+            nc:RemedialActionSchedule.ProposingEntity
+                    <urn:uuid:5f5820d9-3e05-473e-94c8-3c767be03e1a>;
+            nc:RemedialActionSchedule.RemedialAction
+                    <urn:uuid:7acbe48a-bd54-4cd7-af2e-87768357c559>;
+            nc:RemedialActionSchedule.statusKind
+                    nc:RemedialActionScheduleStatusKind.proposed .
+    
+    <urn:uuid:ca5f17f1-58e3-4ea3-a92c-2de7e3165c3a>
+            rdf:type                  nc:PowerTimePoint;
+            nc:PowerTimePoint.PowerSchedule
+                    <urn:uuid:985a859c-773e-47e2-9162-3b765a917e1f>;
+            nc:PowerTimePoint.atTime  "2022-06-16T04:30:00Z"^^xsd:dateTime;
+            nc:PowerTimePoint.p       "200.0"^^xsd:float;
+            nc:PowerTimePoint.q       "160.0"^^xsd:float .
+    
+    <urn:uuid:742acf52-139c-4c8f-a90c-a2090de6a619>
+            rdf:type                   nc:RemedialActionSchedule;
+            cim:IdentifiedObject.description
+                    "RAS";
+            cim:IdentifiedObject.mRID  "742acf52-139c-4c8f-a90c-a2090de6a619";
+            cim:IdentifiedObject.name  "RAS";
+            nc:RemedialActionSchedule.Contingency
+                    <urn:uuid:7e31c67d-67ba-4592-8ac1-9e806d697c8e>;
+            nc:RemedialActionSchedule.ProposingEntity
+                    <urn:uuid:5f5820d9-3e05-473e-94c8-3c767be03e1a>;
+            nc:RemedialActionSchedule.RemedialAction
+                    <urn:uuid:5e5ff13e-2043-4468-9351-01920d3d9504>;
+            nc:RemedialActionSchedule.statusKind
+                    nc:RemedialActionScheduleStatusKind.ordered .
+    
+    <urn:uuid:ef4abd1f-8d39-4eda-9776-8313c115675c>
+            rdf:type                  nc:PowerTimePoint;
+            nc:PowerTimePoint.PowerSchedule
+                    <urn:uuid:985a859c-773e-47e2-9162-3b765a917e1f>;
+            nc:PowerTimePoint.atTime  "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            nc:PowerTimePoint.p       "100.0"^^xsd:float;
+            nc:PowerTimePoint.q       "80.0"^^xsd:float .
+    
+    <urn:uuid:3f4d2125-f247-4ca1-a5ef-59b7b6bf688e>
+            rdf:type                   nc:GridStateIntensitySchedule;
+            cim:IdentifiedObject.mRID  "3f4d2125-f247-4ca1-a5ef-59b7b6bf688e";
+            cim:IdentifiedObject.name  "intensity schedule";
+            nc:BaseTimeSeries.interpolationKind
+                    nc:TimeSeriesInterpolationKind.next;
+            nc:GenericValueSchedule.RemedialActionSchedule
+                    <urn:uuid:742acf52-139c-4c8f-a90c-a2090de6a619>;
+            nc:GridStateIntensitySchedule.GridStateAlteration
+                    <urn:uuid:bf7f0ef4-dad3-4322-b2be-5ace59837e60>;
+            nc:GridStateIntensitySchedule.valueKind
+                    nc:ValueOffsetKind.absolute .
+    
+    <urn:uuid:7dc3a232-66b2-4258-9f4a-1652bdddea8a>
+            rdf:type                        nc:GenericValueTimePoint;
+            nc:GenericValueTimePoint.GenericValueSchedule
+                    <urn:uuid:bff4564b-0d93-44a3-99c3-63e7dd61623a>;
+            nc:GenericValueTimePoint.atTime
+                    "2022-06-16T04:30:00Z"^^xsd:dateTime;
+            nc:GenericValueTimePoint.value  "0.0"^^xsd:float .
+    
+    <urn:uuid:0c804799-dbc7-4aff-9ebc-cf10854bbcf6>
+            rdf:type                        nc:GenericValueTimePoint;
+            nc:GenericValueTimePoint.GenericValueSchedule
+                    <urn:uuid:3f4d2125-f247-4ca1-a5ef-59b7b6bf688e>;
+            nc:GenericValueTimePoint.atTime
+                    "2022-06-16T10:30:00Z"^^xsd:dateTime;
+            nc:GenericValueTimePoint.value  "1.0"^^xsd:float .
+    
+    <urn:uuid:6d20b56c-57ba-4591-89bf-8e8f5c586c7d>
+            rdf:type              dcat:Dataset;
+            dct:accessRights      "https://energy.referencedata.eu/Confidentiality/Public";
+            dct:conformsTo        "https://cim.ucaiug.io/ns#" , "https://ap.cim4.eu/RemedialActionSchedule/2.4" , "https://cim4.eu/ns/nc/2.4#" , "http://iec.ch/TC57/2013/CIM-schema-cim16#";
+            dct:description       "This is the remedial action schedule dataset for Belgovia part of ReliCapGrid."@en;
+            dct:identifier        "6d20b56c-57ba-4591-89bf-8e8f5c586c7d";
+            dct:issued            "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dct:license           "https://creativecommons.org/licenses/by/4.0/";
+            dct:publisher         "https://energy.referencedata.eu/test/party/JOTUNHEIM";
+            dct:requires          <urn:uuid:7528537a-551c-45bf-9e4f-1854287d5cdc>;
+            dct:rights            "Copyright";
+            dct:rightsHolder      "ENTSO-E";
+            dct:spatial           "https://energy.referencedata.eu/Test/Frame/Belgovia-Power-Transmission-System";
+            dct:title             "20220615_Belgovia_RAS_1.0.0";
+            dcat:endDate          "2023-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Belgovia-RAS>;
+            dcat:keyword          "RAS";
+            dcat:startDate        "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:version          "1.0.0";
+            prov:generatedAtTime  "2022-06-10T07:06:25Z"^^xsd:dateTime;
+            prov:wasGeneratedBy   "https://energy.referencedata.eu/Activity/CGM-RAS" .
+    
+    <urn:uuid:457ed671-38b8-4211-82ce-16ee301e6e88>
+            rdf:type                   nc:RemedialActionSchedule;
+            cim:IdentifiedObject.description
+                    "RAS";
+            cim:IdentifiedObject.mRID  "457ed671-38b8-4211-82ce-16ee301e6e88";
+            cim:IdentifiedObject.name  "RAS";
+            nc:RemedialActionSchedule.ProposingEntity
+                    <urn:uuid:5f5820d9-3e05-473e-94c8-3c767be03e1a>;
+            nc:RemedialActionSchedule.RemedialAction
+                    <urn:uuid:d874f8e3-7272-44b8-95ba-18f10449f036>;
+            nc:RemedialActionSchedule.statusKind
+                    nc:RemedialActionScheduleStatusKind.ordered .
+}

@@ -1,0 +1,135 @@
+PREFIX adms:     <http://www.w3.org/ns/adms#>
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:de29a7aa-989c-4c0c-9cea-807b38fd533a> {
+    <urn:uuid:65582e87-5035-4465-8dd9-cb655224b29f>
+            rdf:type                        nc:OrdinaryContingency;
+            cim:IdentifiedObject.description
+                    "This is an example of an ordinary contingency; Loss of a single demand facility";
+            cim:IdentifiedObject.mRID       "65582e87-5035-4465-8dd9-cb655224b29f";
+            cim:IdentifiedObject.name       "CO1";
+            nc:Contingency.EquipmentOperator
+                    <urn:uuid:a9dba80c-9dfb-4ebf-b383-446ddc2c4adf>;
+            nc:Contingency.normalMustStudy  true .
+    
+    <urn:uuid:667313c5-0567-45c5-b985-b859c774f7e3>
+            rdf:type                   cim:ContingencyEquipment;
+            cim:ContingencyElement.Contingency
+                    <urn:uuid:e9eab3fe-c328-4f78-9bc1-77adb59f6ba7>;
+            cim:ContingencyEquipment.Equipment
+                    <urn:uuid:ed0c5d75-4a54-43c8-b782-b20d7431630b>;
+            cim:ContingencyEquipment.contingentStatus
+                    cim:ContingencyEquipmentStatusKind.outOfService;
+            cim:IdentifiedObject.description
+                    "The equipment for this contingency; Tie Line loss";
+            cim:IdentifiedObject.mRID  "667313c5-0567-45c5-b985-b859c774f7e3";
+            cim:IdentifiedObject.name  "L1" .
+    
+    <urn:uuid:37997e71-cb7d-4a8c-baa6-2a1594956da9>
+            rdf:type                        nc:OrdinaryContingency;
+            cim:IdentifiedObject.description
+                    "This is an example of an ordinary contingency; Loss of generation";
+            cim:IdentifiedObject.mRID       "37997e71-cb7d-4a8c-baa6-2a1594956da9";
+            cim:IdentifiedObject.name       "CO3";
+            nc:Contingency.EquipmentOperator
+                    <urn:uuid:a9dba80c-9dfb-4ebf-b383-446ddc2c4adf>;
+            nc:Contingency.normalMustStudy  true .
+    
+    <urn:uuid:19bfe9d5-5d04-4c3c-9919-ca1b2d1215ae>
+            rdf:type                   cim:ContingencyEquipment;
+            cim:ContingencyElement.Contingency
+                    <urn:uuid:37997e71-cb7d-4a8c-baa6-2a1594956da9>;
+            cim:ContingencyEquipment.Equipment
+                    <urn:uuid:550ebe0d-f2b2-48c1-991f-cebea43a21aa>;
+            cim:ContingencyEquipment.contingentStatus
+                    cim:ContingencyEquipmentStatusKind.outOfService;
+            cim:IdentifiedObject.description
+                    "The equipment for this contingency; Loss of generation";
+            cim:IdentifiedObject.mRID  "19bfe9d5-5d04-4c3c-9919-ca1b2d1215ae";
+            cim:IdentifiedObject.name  "G1" .
+    
+    <urn:uuid:7e31c67d-67ba-4592-8ac1-9e806d697c8e>
+            rdf:type                        nc:OrdinaryContingency;
+            cim:IdentifiedObject.description
+                    "This is an example of an ordinary contingency;Tie Line loss";
+            cim:IdentifiedObject.mRID       "7e31c67d-67ba-4592-8ac1-9e806d697c8e";
+            cim:IdentifiedObject.name       "CO2";
+            nc:Contingency.EquipmentOperator
+                    <urn:uuid:a9dba80c-9dfb-4ebf-b383-446ddc2c4adf>;
+            nc:Contingency.normalMustStudy  true .
+    
+    <urn:uuid:de29a7aa-989c-4c0c-9cea-807b38fd533a>
+            rdf:type              dcat:Dataset;
+            dct:accessRights      "https://energy.referencedata.eu/Confidentiality/Public";
+            dct:conformsTo        "https://cim.ucaiug.io/ns#" , "https://ap.cim4.eu/Contingency/2.3" , "https://cim4.eu/ns/nc/2.4#" , "http://iec.ch/TC57/2013/CIM-schema-cim16#";
+            dct:description       "This is an example of Svedala's exporting contingency dataset (i.e. defining external contingencies) of the neighbour Belgovia."@en;
+            dct:identifier        "de29a7aa-989c-4c0c-9cea-807b38fd533a";
+            dct:issued            "2025-05-20T18:00:00Z"^^xsd:dateTime;
+            dct:license           "https://creativecommons.org/licenses/by/4.0/";
+            dct:publisher         "https://energy.referencedata.eu/Test/Party/Svedala";
+            dct:requires          <urn:uuid:886d71fa-6ca7-4be9-a55d-04c3c49c987c>;
+            dct:rights            "Copyright";
+            dct:rightsHolder      "ENTSO-E";
+            dct:spatial           <https://energy.referencedata.eu/Test/Frame/HV-Belgovia>;
+            dct:title             "202505_TSO-Svedala_HV-Belgovia_IGMx-CO";
+            adms:versionNotes     "Inital version.";
+            dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/TSO-Svedala-HV-Belgovia_CO>;
+            dcat:keyword          "CO";
+            dcat:startDate        "2025-05-20T18:00:00Z"^^xsd:dateTime;
+            dcat:version          "1.0.0";
+            prov:generatedAtTime  "2025-05-15T07:06:25Z"^^xsd:dateTime;
+            prov:wasGeneratedBy   "https://energy.referencedata.eu/Activity/IGMx-CO" .
+    
+    <urn:uuid:7ec56068-a714-4445-ae19-dd34429ec722>
+            rdf:type                   cim:ContingencyEquipment;
+            cim:ContingencyElement.Contingency
+                    <urn:uuid:7e31c67d-67ba-4592-8ac1-9e806d697c8e>;
+            cim:ContingencyEquipment.Equipment
+                    <urn:uuid:d9622e7f-5bf0-4e7e-b766-b8596c6fe4ae>;
+            cim:ContingencyEquipment.contingentStatus
+                    cim:ContingencyEquipmentStatusKind.outOfService;
+            cim:IdentifiedObject.description
+                    "The equipment for this contingency; Tie Line loss";
+            cim:IdentifiedObject.mRID  "7ec56068-a714-4445-ae19-dd34429ec722";
+            cim:IdentifiedObject.name  "L2" .
+    
+    <urn:uuid:96c83c1b-df9e-44d2-adfb-a759975ada49>
+            rdf:type                   cim:ContingencyEquipment;
+            cim:ContingencyElement.Contingency
+                    <urn:uuid:65582e87-5035-4465-8dd9-cb655224b29f>;
+            cim:ContingencyEquipment.Equipment
+                    <urn:uuid:cb459405-cc14-4215-a45c-416789205904>;
+            cim:ContingencyEquipment.contingentStatus
+                    cim:ContingencyEquipmentStatusKind.outOfService;
+            cim:IdentifiedObject.description
+                    "The equipment for this contingency is a NonConformLoad \"BE-Load_1\" in Belgovia; Loss of a single demand facility";
+            cim:IdentifiedObject.mRID  "96c83c1b-df9e-44d2-adfb-a759975ada49";
+            cim:IdentifiedObject.name  "L1" .
+    
+    <urn:uuid:e9eab3fe-c328-4f78-9bc1-77adb59f6ba7>
+            rdf:type                        nc:OrdinaryContingency;
+            cim:IdentifiedObject.description
+                    "This is an example of an ordinary contingency;Tie Line loss";
+            cim:IdentifiedObject.mRID       "e9eab3fe-c328-4f78-9bc1-77adb59f6ba7";
+            cim:IdentifiedObject.name       "CO1";
+            nc:Contingency.EquipmentOperator
+                    <urn:uuid:a9dba80c-9dfb-4ebf-b383-446ddc2c4adf>;
+            nc:Contingency.normalMustStudy  true .
+}

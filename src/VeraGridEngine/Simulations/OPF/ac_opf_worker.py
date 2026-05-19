@@ -77,7 +77,8 @@ def run_nonlinear_opf(grid: MultiCircuit,
     # create and initialize results
     results = NonlinearOPFResults()
     results.initialize(nbus=nc.nbus, nbr=nc.nbr, nsh=nc.nshunt, ng=nc.ngen, nil=len(nc.passive_branch_data.get_monitor_enabled_indices()),
-                       nhvdc=nc.nhvdc, ncap=len(capacity_nodes_idx) if capacity_nodes_idx is not None else 0)
+                       nhvdc=nc.nhvdc, ncap=len(capacity_nodes_idx) if capacity_nodes_idx is not None else 0,
+                       nvsc=nc.vsc_data.nelm)
 
     for i, island in enumerate(islands):
 
@@ -120,7 +121,8 @@ def run_nonlinear_opf(grid: MultiCircuit,
                       hvdc_idx=island.hvdc_data.original_idx,
                       ncap_idx=capacity_nodes_idx_org,
                       contshunt_idx=np.where(island.shunt_data.is_pv_control == True)[0],
-                      acopf_mode=opf_options.acopf_mode)
+                      acopf_mode=opf_options.acopf_mode,
+                      vsc_idx=island.vsc_data.original_idx)
         if i > 0:
             results.error = max(results.error, island_res.error)
             results.iterations = max(results.iterations, island_res.iterations)

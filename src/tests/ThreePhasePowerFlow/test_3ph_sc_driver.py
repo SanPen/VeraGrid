@@ -2,6 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
+import os
 import VeraGridEngine.api as gce
 from VeraGridEngine import WindingType, ShuntConnectionType
 import numpy as np
@@ -2025,7 +2026,7 @@ def test_three_phase_fault():
     line_671_680.apply_template(config_601, grid.Sbase, grid.fBase, logger)
     grid.add_line(obj=line_671_680)
 
-    gce.save_file(grid, '../shortcircuit_IEEE13.veragrid')
+    gce.save_file(grid, os.path.join('data', 'output', 'shortcircuit_IEEE13.veragrid'))
 
     # ----------------------------------------------------------------------------------------------------------------------
     # Run Power Flow

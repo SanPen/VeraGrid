@@ -38,8 +38,8 @@ class VSC(BranchParent):
         '_control1_val_prof',
         '_control1_val_min',
         '_control1_val_max',
-        '_control1_droop',
-        '_control1_droop_prof',
+        '_control1_val_droop',
+        '_control1_val_droop_prof',
         '_control1_droop_val',
         '_control1_droop_val_prof',
         '_control1_droop_val_min',
@@ -140,10 +140,11 @@ class VSC(BranchParent):
             cat=[PrpCat.PF, PrpCat.OPF],
         ),
         GCProp(
-            prop_name='control1_droop',
+            prop_name='control1_val_droop',
             units='',
             tpe=float,
-            profile_name="control1_droop_prof",
+            profile_name="control1_val_droop_prof",
+            old_names=['control1_droop'],
             cat=[PrpCat.PF, PrpCat.OPF],
         ),
         GCProp(
@@ -456,8 +457,8 @@ class VSC(BranchParent):
         self._control1_val_prof: ProfileFloat = ProfileFloat(default_value=self._control1_val)
         self._control1_val_min = float(control1_val_min)
         self._control1_val_max = float(control1_val_max)
-        self._control1_droop = float(control1_droop)
-        self._control1_droop_prof: ProfileFloat = ProfileFloat(default_value=self._control1_droop)
+        self._control1_val_droop = float(control1_droop)
+        self._control1_val_droop_prof: ProfileFloat = ProfileFloat(default_value=self._control1_val_droop)
         self._control1_droop_val = float(control1_droop_val)
         self._control1_droop_val_prof: ProfileFloat = ProfileFloat(default_value=self._control1_droop_val)
         self._control1_droop_val_min = float(control1_droop_val_min)
@@ -810,47 +811,47 @@ class VSC(BranchParent):
         self._control1_val_max = float(val)
 
     @property
-    def control1_droop(self) -> float:
+    def control1_val_droop(self) -> float:
         """
-        Get ``control1_droop``.
+        Get ``control1_val_droop``.
 
         :return: float
         """
-        return self._control1_droop
+        return self._control1_val_droop
 
-    @control1_droop.setter
-    def control1_droop(self, val: float) -> None:
+    @control1_val_droop.setter
+    def control1_val_droop(self, val: float) -> None:
         """
-        Set ``control1_droop``.
+        Set ``control1_val_droop``.
 
         :param val: Value to assign.
         :return: None
         """
-        self._control1_droop = float(val)
+        self._control1_val_droop = float(val)
 
     @property
-    def control1_droop_prof(self) -> ProfileFloat:
+    def control1_val_droop_prof(self) -> ProfileFloat:
         """
         Cost profile
         :return: Profile
         """
-        return self._control1_droop_prof
+        return self._control1_val_droop_prof
 
-    @control1_droop_prof.setter
-    def control1_droop_prof(self, val: ProfileFloat | np.ndarray):
+    @control1_val_droop_prof.setter
+    def control1_val_droop_prof(self, val: ProfileFloat | np.ndarray):
         if isinstance(val, ProfileFloat):
-            self._control1_droop_prof = val
+            self._control1_val_droop_prof = val
         elif isinstance(val, np.ndarray):
-            self._control1_droop_prof.set(arr=val)
+            self._control1_val_droop_prof.set(arr=val)
         else:
             raise Exception(str(type(val)) + 'not supported to be set into a profile')
 
-    def get_control1_droop_at(self, t: int | None) -> float:
+    def get_control1_val_droop_at(self, t: int | None) -> float:
         """
         :param t:
         :return:
         """
-        return get_at(self.control1_droop, self.control1_droop_prof, t)
+        return get_at(self.control1_val_droop, self.control1_val_droop_prof, t)
 
     @property
     def control1_droop_val(self) -> float:

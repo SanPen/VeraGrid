@@ -84,6 +84,7 @@ class RmsSimulationDriver(DriverTemplate):
         t: Vec = np.arange(steps + 1) * self.options.time_step
 
         rms_events_group_names: StrVec = np.array([elm.name for elm in rms_events_groups])
+        rms_events_group_idtags: StrVec = np.array([str(elm.idtag) for elm in rms_events_groups])
 
         problem = build_rms_problem(
             grid=self.grid,
@@ -95,6 +96,7 @@ class RmsSimulationDriver(DriverTemplate):
         self.results = RmsResults(
             time_array=pd.DatetimeIndex(pd.to_datetime(t * 1e9)),
             rms_events_group_names=rms_events_group_names,
+            rms_events_group_idtags=rms_events_group_idtags,
             variables=problem.state_and_algebraic_vars,
             uid2idx=problem.uid2idx_vars,
             vars_glob_name2uid=problem.vars_glob_name2uid,

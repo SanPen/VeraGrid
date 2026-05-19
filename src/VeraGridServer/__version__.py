@@ -6,14 +6,14 @@ import datetime
 _current_year_ = datetime.datetime.now().year
 
 # remember to keep a three-number version!!!
-__VeraGridServer_VERSION__ = "6.0.7"
+__VeraGridServer_VERSION__ = "6.0.17"
 
 url = 'https://github.com/SanPen/VeraGrid'
 
 about_msg = "VeraGridServer v" + str(__VeraGridServer_VERSION__) + '\n\n'
 
 about_msg += """
-VeraGrid has been carefully crafted since 2015 to 
+VeraGrid has been carefully made since 2015 to 
 serve as a platform for research and consultancy.\n"""
 
 about_msg += """

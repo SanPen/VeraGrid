@@ -52,10 +52,10 @@ def test_new_grid_save_load_compare() -> None:
     grid1.add_load(bus=bus1, api_obj=load)
     grid1.add_generator(bus=bus0, api_obj=gen0)
 
-    if not os.path.exists("output"):
-        os.makedirs("output")
+    if not os.path.exists(os.path.join("data", "output")):
+        os.makedirs(os.path.join("data", "output"))
     name = '2bus_genqec_new_grid_test.veragrid'
-    fname = os.path.join("output", name + '_to_save.veragrid')
+    fname = os.path.join("data", "output", name + '_to_save.veragrid')
 
     # save the created grid
     gce.save_file(grid=grid1, filename=fname)
@@ -143,10 +143,10 @@ def test_new_grid_save_load_compare_rms() -> None:
 
     set_rms_model(device=load, model=load_mdl, var_factory=grid1.var_factory)
 
-    if not os.path.exists("output"):
-        os.makedirs("output")
+    if not os.path.exists(os.path.join("data", "output")):
+        os.makedirs(os.path.join("data", "output"))
     name = '2bus_genqec_new_grid_test.veragrid'
-    fname = os.path.join("output", name + '_to_save.veragrid')
+    fname = os.path.join("data", "output", name + '_to_save.veragrid')
 
     # save the created grid
     gce.save_file(grid=grid1, filename=fname)

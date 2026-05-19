@@ -40,6 +40,14 @@ class NonlinearOPFResults:
     tap_phase: Vec = None
     hvdc_Pf: Vec = None
     hvdc_loading: Vec = None
+
+    # AC/DC + VSC extension 
+    vsc_Pt: Vec = None
+    vsc_Qt: Vec = None
+    vsc_Pf: Vec = None
+    vsc_It: Vec = None
+    vsc_loading: Vec = None
+
     lam_p: Vec = None
     lam_q: Vec = None
     sl_sf: Vec = None
@@ -52,15 +60,17 @@ class NonlinearOPFResults:
     iterations: int = None
     voltage: CxVec = None
 
-    def initialize(self, nbus: int, nbr: int, nil: int, nsh: int, ng: int, nhvdc: int, ncap: int):
+    def initialize(self, nbus: int, nbr: int, nil: int, nsh: int, ng: int, nhvdc: int, ncap: int,
+                   nvsc: int = 0):
         """
         Initialize the arrays
         :param nbus: number of buses
         :param nbr: number of branches
         :param nsh: number of controllable shunt elements
         :param ng: number of generators
-        :param nhvdc: number of HVDC
-        :param ncap: Number of nodal capacity nodes
+        :param nhvdc: number of HVDCs
+        :param ncap: number of nodal capacity nodes
+        :param nvsc: number of VSCs
         """
         self.Va: Vec = np.zeros(nbus)
         self.Vm: Vec = np.zeros(nbus)
@@ -76,6 +86,11 @@ class NonlinearOPFResults:
         self.tap_phase: Vec = np.zeros(nbr)
         self.hvdc_Pf: Vec = np.zeros(nhvdc)
         self.hvdc_loading: Vec = np.zeros(nhvdc)
+        self.vsc_Pt: Vec = np.zeros(nvsc)
+        self.vsc_Qt: Vec = np.zeros(nvsc)
+        self.vsc_Pf: Vec = np.zeros(nvsc)
+        self.vsc_It: Vec = np.zeros(nvsc)
+        self.vsc_loading: Vec = np.zeros(nvsc)
         self.lam_p: Vec = np.zeros(nbus)
         self.lam_q: Vec = np.zeros(nbus)
         self.sl_sf: Vec = np.zeros(nil)
@@ -97,7 +112,8 @@ class NonlinearOPFResults:
               hvdc_idx: IntVec,
               ncap_idx: IntVec,
               contshunt_idx: IntVec,
-              acopf_mode):
+              acopf_mode,
+              vsc_idx: IntVec = None):
         """
 
         :param other:
@@ -126,6 +142,12 @@ class NonlinearOPFResults:
         self.tap_phase[br_idx] = other.tap_phase
         self.hvdc_Pf[hvdc_idx] = other.hvdc_Pf
         self.hvdc_loading[hvdc_idx] = other.hvdc_loading
+        if vsc_idx is not None and len(vsc_idx):
+            self.vsc_Pt[vsc_idx] = other.vsc_Pt
+            self.vsc_Qt[vsc_idx] = other.vsc_Qt
+            self.vsc_Pf[vsc_idx] = other.vsc_Pf
+            self.vsc_It[vsc_idx] = other.vsc_It
+            self.vsc_loading[vsc_idx] = other.vsc_loading
         self.lam_p[bus_idx] = other.lam_p
         self.lam_q[bus_idx] = other.lam_q
 
@@ -260,6 +282,28 @@ class NonLinearOptimalPfProblem:
         "tap_m",
         "tap_tau",
         "Pfdc",
+        # AC/DC + VSC extension
+        "dc_bus_idx",
+        "ac_bus_idx",
+        "n_dc_bus",
+        "vsc_idx",
+        "nvsc",
+        "F_vsc",
+        "T_vsc",
+        "vsc_alpha1",
+        "vsc_alpha2",
+        "vsc_alpha3",
+        "vsc_rate_pu",
+        "vsc_lim_idx",
+        "n_vsc_lim",
+        "n_vsc_vars",
+        "Pt_vsc",
+        "Qt_vsc",
+        "Pf_vsc",
+        "It_vsc",
+        "sl_vsc",
+        "c_vsc",
+        "n_sl_vsc",
         "sl_sf",
         "sl_st",
         "sl_vmax",
@@ -310,7 +354,9 @@ class NonLinearOptimalPfProblem:
         self.k_mtau = np.zeros(0, dtype=int)
         self.analyze_branch_controls()
 
-        self.slackgens = np.where(self.nc.generator_data.get_bus_indices() == self.slack)[0]
+        # np.isin (not ==) so this works for >1 slack bus, which AC/DC grids need
+        # For the single-slack case this is identical to the previous behaviour
+        self.slackgens = np.flatnonzero(np.isin(self.nc.generator_data.get_bus_indices(), self.slack))
 
         self.Sd = - nc.load_data.get_injections_per_bus() / self.Sbase
 
@@ -375,6 +421,46 @@ class NonLinearOptimalPfProblem:
 
         self.pv = np.flatnonzero(self.Vm_max == self.Vm_min)
         self.pq = np.flatnonzero(self.Vm_max != self.Vm_min)
+
+        # AC/DC + VSC extension -------------------------------------------------------------
+        # DC buses: identified by the is_dc flag. Their voltage angle is meaningless, so the
+        # imaginary nodal-balance row is replaced by Va[dc] = 0 in update() 
+        is_dc = np.asarray(nc.bus_data.is_dc, dtype=bool)
+        self.dc_bus_idx = np.flatnonzero(is_dc)
+        self.ac_bus_idx = np.flatnonzero(~is_dc)
+        self.n_dc_bus = len(self.dc_bus_idx)
+
+        # Monopolar VSCs: bus_from (F) is the DC+ bus, bus_to (T) is the AC bus. Controls are
+        # ignored; the converter is a free P/Q device bounded by its loss equation and AC
+        # current limit. Per-VSC state: Pt, Qt (AC side), Pf (DC side), It (current magnitude).
+        self.nvsc = int(nc.vsc_data.nelm)
+        self.vsc_idx = np.arange(self.nvsc, dtype=int)
+        self.F_vsc = np.asarray(nc.vsc_data.F, dtype=int)
+        self.T_vsc = np.asarray(nc.vsc_data.T, dtype=int)
+        self.vsc_alpha1 = np.asarray(nc.vsc_data.alpha1, dtype=float)
+        self.vsc_alpha2 = np.asarray(nc.vsc_data.alpha2, dtype=float)
+        self.vsc_alpha3 = np.asarray(nc.vsc_data.alpha3, dtype=float)
+        self.vsc_rate_pu = np.asarray(nc.vsc_data.rates, dtype=float) / self.Sbase
+        self.vsc_lim_idx = np.flatnonzero(self.vsc_rate_pu > 0.0)
+        self.n_vsc_lim = len(self.vsc_lim_idx)
+        # In ACOPFslacks mode the VSC current limit gets a soft slack
+        if options.acopf_mode == AcOpfMode.ACOPFslacks:
+            self.n_sl_vsc = self.n_vsc_lim
+            self.c_vsc = np.full(self.n_vsc_lim, 100.0)
+        else:
+            self.n_sl_vsc = 0
+            self.c_vsc = np.zeros(0)
+        # New variables appended at the end of x: Pt, Qt, Pf, It (4*nvsc) + sl_vsc
+        self.n_vsc_vars = 4 * self.nvsc + self.n_sl_vsc
+
+        # DC has no reactive power: set Q = 0 for dispatchable generators sitting on DC buses
+        if self.n_dc_bus and self.ngen:
+            gen_is_dc = is_dc[nc.generator_data.get_bus_indices()]
+            dc_gen = np.flatnonzero(gen_is_dc)
+            if len(dc_gen):
+                self.Qg_max[dc_gen] = 0.0
+                self.Qg_min[dc_gen] = 0.0
+        # --------------------------------------------------------------------------------------
 
         # Check the active elements and their operational limits.
         self.nbr = nc.passive_branch_data.nelm
@@ -487,15 +573,20 @@ class NonLinearOptimalPfProblem:
             self.nslcap = 0
             self.slcap0 = np.zeros(0)
 
-        self.neq = 2 * self.nbus + self.n_slack + self.npv
+        # +2*nvsc equalities: VSC loss + current-definition 
+        self.neq = 2 * self.nbus + self.n_slack + self.npv + 2 * self.nvsc
 
+        # +1*nvsc (It >= 0) inequality
+        # +1*n_vsc_lim (It <= rate/Sbase) inequality
+        # +1*n_sl_vsc (sl_vsc >= 0) inequality
+        n_vsc_ineq = self.nvsc + self.n_vsc_lim + self.n_sl_vsc
         if options.ips_control_q_limits:
             self.nineq = (2 * self.n_br_mon + 2 * self.npq + self.n_gen_disp + 4 * self.n_gen_disp_sh + 2 * self.ntapm
-                          + 2 * self.ntapt + 2 * self.n_disp_hvdc + self.nsl + self.nslcap)
+                          + 2 * self.ntapt + 2 * self.n_disp_hvdc + self.nsl + self.nslcap + n_vsc_ineq)
         else:
             # No Reactive constraint (power curve)
             self.nineq = (2 * self.n_br_mon + 2 * self.npq + 4 * self.n_gen_disp_sh + 2 * self.ntapm + 2 * self.ntapt
-                          + 2 * self.n_disp_hvdc + self.nsl + self.nslcap)
+                          + 2 * self.n_disp_hvdc + self.nsl + self.nslcap + n_vsc_ineq)
 
         # Variables
 
@@ -557,6 +648,25 @@ class NonLinearOptimalPfProblem:
             self.slcap = np.zeros(self.nslcap)
         else:
             self.slcap = np.zeros(0)
+
+        # AC/DC + VSC extension: initialise the new VSC state and pin DC bus angles
+        # DC bus voltage angle is meaningless and is fixed to 0 by an equality constraint
+        if self.n_dc_bus:
+            self.Va[self.dc_bus_idx] = 0.0
+
+        # A strictly-positive It keeps the subblock Jacobian way from singularity
+        self.Pt_vsc = np.zeros(self.nvsc)
+        self.Qt_vsc = np.zeros(self.nvsc)
+        self.It_vsc = np.full(self.nvsc, 0.1)
+        self.Pf_vsc = (self.vsc_alpha1
+                       + self.vsc_alpha2 * self.It_vsc
+                       + self.vsc_alpha3 * self.It_vsc * self.It_vsc)
+        # sl_vsc only exists in ACOPFslacks mode (mirrors the sl_sf/... block above)
+        if options.acopf_mode == AcOpfMode.ACOPFslacks:
+            self.sl_vsc = np.ones(self.n_sl_vsc)
+        else:
+            self.sl_vsc = np.zeros(0)
+        # ------------------------------------------------------------------------------------
 
         self.x0 = self.var2x()
         self.NV = len(self.x0)
@@ -662,6 +772,11 @@ class NonLinearOptimalPfProblem:
             self.tap_m,
             self.tap_tau,
             self.Pfdc,
+            self.Pt_vsc,
+            self.Qt_vsc,
+            self.Pf_vsc,
+            self.It_vsc,
+            self.sl_vsc,
         ]
 
     def x2var(self, x: Vec):
@@ -723,6 +838,29 @@ class NonLinearOptimalPfProblem:
         b += self.n_disp_hvdc
 
         self.Pfdc = x[a: b]
+        a = b
+        b += self.nvsc
+
+        self.Pt_vsc = x[a: b]
+        a = b
+        b += self.nvsc
+
+        self.Qt_vsc = x[a: b]
+        a = b
+        b += self.nvsc
+
+        self.Pf_vsc = x[a: b]
+        a = b
+        b += self.nvsc
+
+        self.It_vsc = x[a: b]
+        a = b
+
+        if self.options.acopf_mode == AcOpfMode.ACOPFslacks:
+            b += self.n_sl_vsc
+            self.sl_vsc = x[a: b]
+        else:
+            self.sl_vsc = np.zeros(0)
 
     def update(self, x: Vec) -> Tuple[Vec, Vec, Vec]:
 
@@ -769,6 +907,11 @@ class NonLinearOptimalPfProblem:
             dS[self.f_nd_hvdc[nd_link]] += self.Pf_nondisp[nd_link]  # Fixed DC links
             dS[self.t_nd_hvdc[nd_link]] -= self.Pf_nondisp[nd_link]
 
+        # VSC contribution to the nodal balance
+        for k in range(self.nvsc):
+            dS[self.T_vsc[k]] += self.Pt_vsc[k] + 1j * self.Qt_vsc[k]  # AC bus
+            dS[self.F_vsc[k]] += self.Pf_vsc[k]                        # DC+ bus
+
         self.allSf = get_Sf(k=self.br_idx, Vm=self.Vm, V=self.V,
                             yff=self.admittances.yff, yft=self.admittances.yft,
                             F=self.from_idx, T=self.to_idx, )
@@ -785,9 +928,34 @@ class NonLinearOptimalPfProblem:
         fval = 1e-4 * (
                 np.sum((self.c0 + self.c1 * self.Pg * self.Sbase + self.c2 * np.power(self.Pg * self.Sbase, 2)))
                 + np.sum(self.c_s * (self.sl_sf + self.sl_st)) + np.sum(self.c_v * (self.sl_vmax + self.sl_vmin))
+                + np.sum(self.c_vsc * self.sl_vsc)
                 + np.sum(self.nodal_capacity_sign * self.slcap))
 
-        gval = np.r_[dS.real, dS.imag, self.Va[self.slack], self.Vm[self.pv] - self.Vm_max[self.pv]]
+        # DC buses have no meaningful voltage angle and their imaginary 
+        # nodal balance row is structurally 0 == 0, which would make the KKT
+        # singular. Replace that degenerate row with the constraint Va[dc] = 0
+        g_imag = dS.imag.copy()
+        if self.n_dc_bus:
+            g_imag[self.dc_bus_idx] = self.Va[self.dc_bus_idx]
+
+        # VSC equality constraints (It auxiliary-variable formulation):
+        #   loss:   a1 + a2*It + a3*It^2 - Pt - Pf = 0     (== pf_generalized loss_vsc)
+        #   curdef: It^2 * Vm[T]^2 - (Pt^2 + Qt^2) = 0     (It = sqrt(Pt^2+Qt^2)/Vm[T])
+        if self.nvsc:
+            loss_vsc = (self.vsc_alpha1
+                        + self.vsc_alpha2 * self.It_vsc
+                        + self.vsc_alpha3 * self.It_vsc * self.It_vsc
+                        - self.Pt_vsc - self.Pf_vsc)
+            vm_t = self.Vm[self.T_vsc]
+            curdef_vsc = (self.It_vsc * self.It_vsc * vm_t * vm_t
+                          - self.Pt_vsc * self.Pt_vsc - self.Qt_vsc * self.Qt_vsc)
+        else:
+            loss_vsc = np.zeros(0)
+            curdef_vsc = np.zeros(0)
+
+        gval = np.r_[dS.real, g_imag, self.Va[self.slack],
+                     self.Vm[self.pv] - self.Vm_max[self.pv],
+                     loss_vsc, curdef_vsc]
 
         if self.options.acopf_mode == AcOpfMode.ACOPFslacks:
 
@@ -824,6 +992,22 @@ class NonLinearOptimalPfProblem:
         else:
             slcap_ineq = np.zeros(0)
 
+        # VSC inequalities (appended at the very end of hval; Hx rows must follow this order):
+        #   It >= 0   ->  -It <= 0
+        #   It <= rate/Sbase
+        if self.nvsc:
+            vsc_it_pos = - self.It_vsc
+            vsc_cur_lim = self.It_vsc[self.vsc_lim_idx] - self.vsc_rate_pu[self.vsc_lim_idx]
+            if self.n_sl_vsc:
+                vsc_cur_lim = vsc_cur_lim - self.sl_vsc
+                vsc_sl_pos = - self.sl_vsc
+            else:
+                vsc_sl_pos = np.zeros(0)
+        else:
+            vsc_it_pos = np.zeros(0)
+            vsc_cur_lim = np.zeros(0)
+            vsc_sl_pos = np.zeros(0)
+
         hval = np.r_[
             self.Sf2.real - self.rates2 - sl_sf,  # rates "lower limit"
             self.St2.real - self.rates2 - sl_st,  # rates "upper limit"
@@ -845,6 +1029,9 @@ class NonLinearOptimalPfProblem:
             hvdc_ineq1,
             hvdc_ineq2,
             slcap_ineq,  # Nodal capacity sign bound
+            vsc_it_pos,  # VSC: It >= 0
+            vsc_cur_lim,  # VSC: AC current limit
+            vsc_sl_pos,  # VSC: sl_vsc >= 0 (ACOPFslacks only)
         ]
 
         return fval, gval, hval
@@ -863,8 +1050,26 @@ class NonLinearOptimalPfProblem:
         :return: fx, Gx, Hx, fxx, Gxx, Hxx
         """
 
+        # The DC-bus imaginary nodal balance rows were replaced by the linear
+        # constraint Va[dc]=0, which results in a zero Hessian.
+        # Thus, make their multipliers zero
+        if compute_hessians and self.n_dc_bus:
+            lam = np.array(lam, dtype=float, copy=True)
+            lam[self.nbus + self.dc_bus_idx] = 0.0
+
         # Number of variables of the typical power flow (V, th, P, Q). Used to ease readability
         npfvar = 2 * self.nbus + 2 * self.n_gen_disp_sh
+
+        # AC/DC + VSC extension
+        nvc = self.n_vsc_vars
+        _vsc_k = np.arange(self.nvsc, dtype=int)
+        vsc_col0 = (npfvar + self.nsl + self.nslcap
+                    + self.ntapm + self.ntapt + self.n_disp_hvdc)
+        col_Pt = vsc_col0 + _vsc_k
+        col_Qt = vsc_col0 + self.nvsc + _vsc_k
+        col_Pf = vsc_col0 + 2 * self.nvsc + _vsc_k
+        col_It = vsc_col0 + 3 * self.nvsc + _vsc_k
+        col_sl_vsc = vsc_col0 + 4 * self.nvsc + np.arange(self.n_sl_vsc, dtype=int)
 
         if self.options.ips_control_q_limits:  # if reactive power control...
             nqct = self.n_gen_disp
@@ -902,45 +1107,73 @@ class NonLinearOptimalPfProblem:
         else:
             fx[npfvar + self.nsl: npfvar + self.nsl + self.nslcap] = self.nodal_capacity_sign
 
+        # VSC current-limit slack penalty (objective is scaled by 1e-4)
+        if self.n_sl_vsc:
+            fx[col_sl_vsc] = 1e-4 * self.c_vsc
+
         te_fx = timeit.default_timer()
         # EQUALITY CONSTRAINTS GRAD ------------------------------------------------------------------------------------
         """
-        The following comments illustrate the shapes of the equality constraints gradients:
-        Gx = 
+        The following comments illustrate the shapes of the equality constraints gradients.
+
+        Gx =
             NV
-        +---------+
-        | GS.real | N 
-        +---------+
-        | GS.imag | N 
-        +---------+
-        | GTH     | nslack
-        +---------+
-        | Gvm     | npv
-        +---------+
+        +----------+
+        | GS.real  | N
+        +----------+
+        | GS.imag  | N        (DC-bus rows = Va[dc] = 0)
+        +----------+
+        | GTH      | nslack
+        +----------+
+        | Gvm      | npv
+        +----------+
+        | G_loss   | nvsc     a1 + a2*It + a3*It^2 - Pt - Pf = 0
+        +----------+
+        | G_curdef | nvsc     It^2*Vm[T]^2 - Pt^2 - Qt^2 = 0
+        +----------+
 
-        where Gx has shape (N + N + nslack + npv, N + N + Ng + Ng + nsl + ntapm + ntapt + ndc), where nslack is
-        the number of slack buses, and nsl the number of slack variables.
-        Each submatrix is composed as:
+        where Gx has shape
+            (N + N + nslack + npv + nvsc + nvsc,
+             N + N + Ng + Ng + nsl + nslcap + ntapm + ntapt + ndc
+                 + 4*nvsc + n_sl_vsc),
+        nslack is the number of slack buses and nsl the number of AC slack
+        variables. 
+        
+        We also add the set of columns vsc = Pt|Qt|Pf|It|slV
 
-        GS = 
-            N     N      Ng     Ng      nsl     ntapm    ntapt    ndc
-        +------+------+------+------+---------+--------+--------+------+
-        | GSva | GSvm | GSpg | GSqg | GSslack | GStapm | GStapt | GSdc | N
-        +------+------+------+------+---------+--------+--------+------+
+        GS =
+            N     N     Ng    Ng    nsl   slc  tapm  tapt  ndc       vsc
+        +------+-----+-----+-----+-----+-----+-----+-----+-----+---------------+
+        | GSva | GSvm| GSpg| GSqg| Gsl | Gslc| Gtm | Gtt |GSpfdc| GSpt GSqt     | N
+        |      |     |     |     |     |     |     |     |      | GSpf GSit Gslv|
+        +------+-----+-----+-----+-----+-----+-----+-----+-----+---------------+
 
-        GTH = 
-           N      N    Ng    Ng    nsl  ntapm ntapt  ndc
-        +------+-----+-----+-----+-----+-----+-----+-----+
-        | GTHx |  0  |  0  |  0  |  0  |  0  |  0  |  0  |
-        +------+-----+-----+-----+-----+-----+-----+-----+
+        GTH =
+           N    N   Ng   Ng  nsl  slc tapm tapt ndc  vsc
+        +-----+---+----+----+----+----+----+----+----+-----+
+        | GTHx|0  | 0  | 0  | 0  | 0  | 0  | 0  | 0  |  0  |   (1 at Va[slack])
+        +-----+---+----+----+----+----+----+----+----+-----+
 
-        Gvm = 
+        Gvm =
+           N    N    Ng   Ng  nsl  slc tapm tapt ndc  vsc
+        +----+-----+----+----+----+----+----+----+----+-----+
+        |  0 | Gvmx| 0  | 0  | 0  | 0  | 0  | 0  | 0  |  0  |   (1 at Vm[pv])
+        +----+-----+----+----+----+----+----+----+----+-----+
 
-           N     N     Ng    Ng    nsl  ntapm ntapt  ndc
-        +-----+------+-----+-----+-----+-----+-----+-----+
-        |  0  | Gvmx |  0  |  0  |  0  |  0  |  0  |  0  |
-        +-----+------+-----+-----+-----+-----+-----+-----+
+        G_loss =
+           N    N    Ng   Ng  nsl  slc tapm tapt ndc  vsc
+        +----+----+----+----+----+----+----+----+----+-----+
+        |  0 |  0 | 0  | 0  | 0  | 0  | 0  | 0  | 0  | Gl  |   nvsc
+        +----+----+----+----+----+----+----+----+----+-----+
+            Gl: -1 @Pt, -1 @Pf, (a2 + 2*a3*It) @It, 0 @slV
 
+        G_curdef =
+           N    N    Ng   Ng  nsl  slc tapm tapt ndc  vsc
+        +----+----+----+----+----+----+----+----+----+-----+
+        |  0 | Gc | 0  | 0  | 0  | 0  | 0  | 0  | 0  | Gc2 |   nvsc
+        +----+----+----+----+----+----+----+----+----+-----+
+            Gc : 2*It^2*Vm[T]  (at the Vm[T] column of the Vm group)
+            Gc2: -2*Pt @Pt, -2*Qt @Qt, 2*It*Vm[T]^2 @It, 0 @slV
         """
 
         ts_gx = timeit.default_timer()
@@ -996,16 +1229,62 @@ class NonLinearOptimalPfProblem:
             for idslcap, capbus in enumerate(self.capacity_nodes_idx):
                 Gslcap[capbus, idslcap] = -1
 
-        GS = sp.hstack([GSva, GSvm, GSpg, GSqg, Gslack, Gslcap, Gtapm, Gtapt, GSpfdc])
+        # VSC nodal-injection columns (same role as GSpfdc for the HVDC links):
+        # dS[T] += Pt + 1j*Qt   (AC bus)      
+        # dS[F] += Pf   (DC+ bus)
+        GSpt = csc_matrix((np.ones(self.nvsc, dtype=complex), (self.T_vsc, _vsc_k)),
+                          shape=(self.nbus, self.nvsc))
+        GSqt = csc_matrix((1j * np.ones(self.nvsc), (self.T_vsc, _vsc_k)),
+                          shape=(self.nbus, self.nvsc))
+        GSpf = csc_matrix((np.ones(self.nvsc, dtype=complex), (self.F_vsc, _vsc_k)),
+                          shape=(self.nbus, self.nvsc))
+        GSit = csc((self.nbus, self.nvsc), dtype=complex)
+        GSslvsc = csc((self.nbus, self.n_sl_vsc), dtype=complex)
 
-        Gx = sp.vstack([GS.real, GS.imag, GTH, Gvm]).tocsc()
+        GS = sp.hstack([GSva, GSvm, GSpg, GSqg, Gslack, Gslcap, Gtapm, Gtapt, GSpfdc,
+                        GSpt, GSqt, GSpf, GSit, GSslvsc])
+
+        GS_real = GS.real
+        GS_imag = GS.imag
+
+        # DC buses have no meaningful angle: replace their (degenerate) imaginary
+        # nodal-balance row with the linear constraint Va[dc] = 0.
+        if self.n_dc_bus:
+            keep = np.ones(self.nbus)
+            keep[self.dc_bus_idx] = 0.0
+            GS_imag = sp.diags(keep) @ GS_imag
+            GS_imag = GS_imag + csc_matrix(
+                (np.ones(self.n_dc_bus), (self.dc_bus_idx, self.dc_bus_idx)),
+                shape=(self.nbus, self.NV))
+
+        # VSC equality rows: loss and current Ilim definition (curdef)
+        #   loss   = a1 + a2*It + a3*It^2 - Pt - Pf
+        #   curdef = It^2*Vm[T]^2 - Pt^2 - Qt^2
+        vm_t = self.Vm[self.T_vsc]
+        # Form triplets (row, column, value)
+        loss_r = np.concatenate([_vsc_k, _vsc_k, _vsc_k])
+        loss_c = np.concatenate([col_Pt, col_Pf, col_It])
+        loss_v = np.concatenate([-np.ones(self.nvsc), -np.ones(self.nvsc),
+                                 self.vsc_alpha2 + 2.0 * self.vsc_alpha3 * self.It_vsc])
+        G_loss = csc_matrix((loss_v, (loss_r, loss_c)), shape=(self.nvsc, self.NV))
+
+        curd_r = np.concatenate([_vsc_k, _vsc_k, _vsc_k, _vsc_k])
+        curd_c = np.concatenate([self.nbus + self.T_vsc, col_Pt, col_Qt, col_It])
+        curd_v = np.concatenate([2.0 * self.It_vsc ** 2 * vm_t,
+                                 -2.0 * self.Pt_vsc,
+                                 -2.0 * self.Qt_vsc,
+                                 2.0 * self.It_vsc * vm_t ** 2])
+        G_curdef = csc_matrix((curd_v, (curd_r, curd_c)), shape=(self.nvsc, self.NV))
+
+        Gx = sp.vstack([GS_real, GS_imag, GTH, Gvm, G_loss, G_curdef]).tocsc()
 
         te_gx = timeit.default_timer()
 
         # INEQUALITY CONSTRAINTS GRAD ----------------------------------------------------------------------------------
 
         """
-        The following comments illustrate the shapes of the equality constraints gradients:
+        The following comments illustrate the shapes of the inequality
+        constraints gradient
 
         Hx =
             NV
@@ -1050,6 +1329,12 @@ class NonLinearOptimalPfProblem:
         +---------+
         | Hslcap  | nslcap
         +---------+
+        | Hvscit  | nvsc       -It <= 0            
+        +---------+
+        | Hvsccur | n_vsc_lim   It - rate/Sb (- slV) <= 0
+        +---------+
+        | Hvscsl  | n_sl_vsc
+        +---------+
         """
         ts_hx = timeit.default_timer()
 
@@ -1089,30 +1374,30 @@ class NonLinearOptimalPfProblem:
             Hvu = sp.hstack([lil_matrix((self.npq, self.nbus)), diags_bus_ones[self.pq, :],
                              lil_matrix((self.npq, 2 * self.n_gen_disp_sh + 2 * self.n_br_mon)),
                              - diags_pq_ones, lil_matrix(
-                    (self.npq, self.npq + self.nslcap + self.ntapm + self.ntapt + self.n_disp_hvdc))])
+                    (self.npq, self.npq + self.nslcap + self.ntapm + self.ntapt + self.n_disp_hvdc + nvc))])
 
             Hvl = sp.hstack(
                 [lil_matrix((self.npq, self.nbus)), -diags_bus_ones[self.pq, :],
                  lil_matrix((self.npq, 2 * self.n_gen_disp_sh + 2 * self.n_br_mon + self.npq)),
                  - diags_pq_ones,
-                 lil_matrix((self.npq, self.nslcap + self.ntapm + self.ntapt + self.n_disp_hvdc))])
+                 lil_matrix((self.npq, self.nslcap + self.ntapm + self.ntapt + self.n_disp_hvdc + nvc))])
 
             Hslsf = sp.hstack([lil_matrix((self.n_br_mon, npfvar)), - diags_br_mon_ones,
                                lil_matrix((self.n_br_mon,
-                                           self.n_br_mon + 2 * self.npq + self.nslcap + self.ntapm + self.ntapt + self.n_disp_hvdc))])
+                                           self.n_br_mon + 2 * self.npq + self.nslcap + self.ntapm + self.ntapt + self.n_disp_hvdc + nvc))])
 
             Hslst = sp.hstack([lil_matrix((self.n_br_mon, npfvar + self.n_br_mon)), - diags_br_mon_ones,
                                lil_matrix((self.n_br_mon,
-                                           2 * self.npq + self.nslcap + self.ntapm + self.ntapt + self.n_disp_hvdc))])
+                                           2 * self.npq + self.nslcap + self.ntapm + self.ntapt + self.n_disp_hvdc + nvc))])
 
             Hslvmax = sp.hstack([lil_matrix((self.npq, npfvar + 2 * self.n_br_mon)), - diags_pq_ones,
                                  lil_matrix(
                                      (self.npq,
-                                      self.npq + self.nslcap + self.ntapm + self.ntapt + self.n_disp_hvdc))])
+                                      self.npq + self.nslcap + self.ntapm + self.ntapt + self.n_disp_hvdc + nvc))])
 
             Hslvmin = sp.hstack(
                 [lil_matrix((self.npq, npfvar + 2 * self.n_br_mon + self.npq)), - diags_pq_ones,
-                 lil_matrix((self.npq, self.nslcap + self.ntapm + self.ntapt + self.n_disp_hvdc))])
+                 lil_matrix((self.npq, self.nslcap + self.ntapm + self.ntapt + self.n_disp_hvdc + nvc))])
 
         else:
             Hvu = sp.hstack([lil_matrix((self.npq, self.nbus)), diags_pq_ones,
@@ -1163,11 +1448,11 @@ class NonLinearOptimalPfProblem:
             if self.ntapm != 0:
                 Htapmu = sp.hstack(
                     [lil_matrix((self.ntapm, npfvar + self.nsl + self.nslcap)), diags(np.ones(self.ntapm)),
-                     lil_matrix((self.ntapm, self.ntapt + self.n_disp_hvdc))])
+                     lil_matrix((self.ntapm, self.ntapt + self.n_disp_hvdc + nvc))])
 
                 Htapml = sp.hstack(
                     [lil_matrix((self.ntapm, npfvar + self.nsl + self.nslcap)), diags(- np.ones(self.ntapm)),
-                     lil_matrix((self.ntapm, self.ntapt + self.n_disp_hvdc))])
+                     lil_matrix((self.ntapm, self.ntapt + self.n_disp_hvdc + nvc))])
 
             else:
                 Htapmu = lil_matrix((0, self.NV))
@@ -1177,10 +1462,10 @@ class NonLinearOptimalPfProblem:
                 Htaptu = sp.hstack(
                     [lil_matrix((self.ntapt, npfvar + self.nsl + self.nslcap + self.ntapm)),
                      diags(np.ones(self.ntapt)),
-                     lil_matrix((self.ntapt, self.n_disp_hvdc))])
+                     lil_matrix((self.ntapt, self.n_disp_hvdc + nvc))])
                 Htaptl = sp.hstack([lil_matrix((self.ntapt, npfvar + self.nsl + self.nslcap + self.ntapm)),
                                     diags(- np.ones(self.ntapt)),
-                                    lil_matrix((self.ntapt, self.n_disp_hvdc))])
+                                    lil_matrix((self.ntapt, self.n_disp_hvdc + nvc))])
 
             else:
                 Htaptu = lil_matrix((0, self.NV))
@@ -1239,20 +1524,45 @@ class NonLinearOptimalPfProblem:
             Hqmax = sp.hstack(
                 [lil_matrix((nqct, self.nbus)), Hqmaxv, diags(Hqmaxp), lil_matrix((nqct, self.nsh)), diags(Hqmaxq),
                  lil_matrix((nqct, self.nsh)),
-                 lil_matrix((nqct, self.nsl + self.nslcap + self.ntapm + self.ntapt + self.n_disp_hvdc))])
+                 lil_matrix((nqct, self.nsl + self.nslcap + self.ntapm + self.ntapt + self.n_disp_hvdc + nvc))])
         else:
             Hqmax = lil_matrix((nqct, self.NV))
 
-        Hdcu = sp.hstack([lil_matrix((self.n_disp_hvdc, self.NV - self.n_disp_hvdc)), diags_disp_hvdc_ones])
-        Hdcl = sp.hstack([lil_matrix((self.n_disp_hvdc, self.NV - self.n_disp_hvdc)), - diags_disp_hvdc_ones])
+        Hdcu = sp.hstack([lil_matrix((self.n_disp_hvdc, self.NV - self.n_disp_hvdc - nvc)),
+                          diags_disp_hvdc_ones, lil_matrix((self.n_disp_hvdc, nvc))])
+        Hdcl = sp.hstack([lil_matrix((self.n_disp_hvdc, self.NV - self.n_disp_hvdc - nvc)),
+                          - diags_disp_hvdc_ones, lil_matrix((self.n_disp_hvdc, nvc))])
 
         # Nodal capacity sign constraint Jacobian: d/dx(sign * slcap) = sign * I at slcap positions
         if self.nslcap != 0:
             Hslcap = sp.hstack([lil_matrix((self.nslcap, npfvar + self.nsl)),
                                 diags(np.sign(self.nodal_capacity_sign) * np.ones(self.nslcap)),
-                                lil_matrix((self.nslcap, self.ntapm + self.ntapt + self.n_disp_hvdc))])
+                                lil_matrix((self.nslcap, self.ntapm + self.ntapt + self.n_disp_hvdc + nvc))])
         else:
             Hslcap = lil_matrix((0, self.NV))
+
+        # VSC inequality rows (same role as Hdcu/Hdcl for the HVDC links):
+        #   -It <= 0 ; It - rate/Sbase (- sl_vsc) <= 0 ; -sl_vsc <= 0
+        Hvscit = csc_matrix((-np.ones(self.nvsc), (_vsc_k, col_It)),
+                            shape=(self.nvsc, self.NV))
+        if self.n_vsc_lim:
+            _j = np.arange(self.n_vsc_lim)
+            cur_r = list(_j)
+            cur_c = list(col_It[self.vsc_lim_idx])
+            cur_v = [1.0] * self.n_vsc_lim
+            if self.n_sl_vsc:
+                cur_r += list(_j)
+                cur_c += list(col_sl_vsc)
+                cur_v += [-1.0] * self.n_vsc_lim
+            Hvsccur = csc_matrix((cur_v, (cur_r, cur_c)), shape=(self.n_vsc_lim, self.NV))
+        else:
+            Hvsccur = csc((0, self.NV))
+        if self.n_sl_vsc:
+            _j = np.arange(self.n_sl_vsc)
+            Hvscsl = csc_matrix((-np.ones(self.n_sl_vsc), (_j, col_sl_vsc)),
+                                shape=(self.n_sl_vsc, self.NV))
+        else:
+            Hvscsl = csc((0, self.NV))
 
         Hx = sp.vstack([
             HSf,
@@ -1275,6 +1585,9 @@ class NonLinearOptimalPfProblem:
             Hdcu,
             Hdcl,
             Hslcap,
+            Hvscit,
+            Hvsccur,
+            Hvscsl,
         ])
 
         Hx = Hx.tocsc()
@@ -1290,7 +1603,8 @@ class NonLinearOptimalPfProblem:
                 fxx = diags((np.r_[
                     np.zeros(2 * self.nbus),
                     2 * self.c2 * (self.Sbase * self.Sbase),
-                    np.zeros(self.n_gen_disp_sh + self.nsl + self.nslcap + self.ntapm + self.ntapt + self.n_disp_hvdc)
+                    np.zeros(self.n_gen_disp_sh + self.nsl + self.nslcap + self.ntapm + self.ntapt
+                             + self.n_disp_hvdc + nvc)
                 ]) * 1e-4).tocsc()
             else:
                 fxx = csc((self.NV, self.NV))
@@ -1300,26 +1614,36 @@ class NonLinearOptimalPfProblem:
             '''
             The following matrix represents the structure of the hessian matrix for the equality constraints
 
-                         N         N         Ng        Ng       nsl       ntapm       ntapt       ndc
-                    +---------+---------+---------+---------+---------+-----------+-----------+----------+
-               N    |  Gvava  |  Gvavm  |  Gvapg  |  Gvaqg  |  Gvasl  |  Gvatapm  |  Gvatapt  |  Gvapdc  |
-                    +---------+---------+---------+---------+---------+-----------+-----------+----------+
-               N    |  Gvmva  |  Gvmvm  |  Gvmpg  |  Gvmqg  |  Gvmsl  |  Gvmtapm  |  Gvmtapt  |  Gvmpdc  |
-                    +---------+---------+---------+---------+---------+-----------+-----------+----------+
-               Ng   |  Gpgva  |  Gpgvm  |  Gpgpg  |  Gpgqg  |  Gpgsl  |  Gpgtapm  |  Gpgtapt  |  Gpgpdc  |
-                    +---------+---------+---------+---------+---------+-----------+-----------+----------+
-               Ng   |  Gqgva  |  Gqgvm  |  Gqgpg  |  Gqgqg  |  Gqgsl  |  Gqgtapm  |  Gqgtapt  |  Gqgpdc  |
-                    +---------+---------+---------+---------+---------+-----------+-----------+----------+
-               nsl  |  Gslva  |  Gslvm  |  Gslpg  |  Gslqg  |  Gslsl  |  Gsltapm  |  Gsltapt  |  Gslpdc  |
-                    +---------+---------+---------+---------+---------+-----------+-----------+----------+
-              ntapm | Gtapmva | Gtapmvm | Gtapmpg | Gtapmqg | Gtapmsl | Gtapmtapm | Gtapmtapt | Gtapmpdc |
-                    +---------+---------+---------+---------+---------+-----------+-----------+----------+
-              ntapt | Gtaptva | Gtaptvm | Gtaptpg | Gtaptqg | Gtaptsl | Gtapttapm | Gtapttapt | Gtaptpdc |
-                    +---------+---------+---------+---------+---------+-----------+-----------+----------+
-               ndc  | Gpdcva  | Gpdcvm  | Gpdcpg  | Gpdcqg  | Gpdcsl  | Gpdctapm  | Gpdctapt  | Gpdcpdc  |
-                    +---------+---------+---------+---------+---------+-----------+-----------+----------+
+                         N         N         Ng        Ng       nsl       ntapm       ntapt       ndc        vsc
+                    +---------+---------+---------+---------+---------+-----------+-----------+----------+----------+
+               N    |  Gvava  |  Gvavm  |  Gvapg  |  Gvaqg  |  Gvasl  |  Gvatapm  |  Gvatapt  |  Gvapdc  | Gvavsc   |
+                    +---------+---------+---------+---------+---------+-----------+-----------+----------+----------+
+               N    |  Gvmva  |  Gvmvm  |  Gvmpg  |  Gvmqg  |  Gvmsl  |  Gvmtapm  |  Gvmtapt  |  Gvmpdc  | Gvmvsc   |
+                    +---------+---------+---------+---------+---------+-----------+-----------+----------+----------+
+               Ng   |  Gpgva  |  Gpgvm  |  Gpgpg  |  Gpgqg  |  Gpgsl  |  Gpgtapm  |  Gpgtapt  |  Gpgpdc  | Gpgvsc   |
+                    +---------+---------+---------+---------+---------+-----------+-----------+----------+----------+
+               Ng   |  Gqgva  |  Gqgvm  |  Gqgpg  |  Gqgqg  |  Gqgsl  |  Gqgtapm  |  Gqgtapt  |  Gqgpdc  | Gqgvsc   |
+                    +---------+---------+---------+---------+---------+-----------+-----------+----------+----------+
+               nsl  |  Gslva  |  Gslvm  |  Gslpg  |  Gslqg  |  Gslsl  |  Gsltapm  |  Gsltapt  |  Gslpdc  | Gslvsc   |
+                    +---------+---------+---------+---------+---------+-----------+-----------+----------+----------+
+              ntapm | Gtapmva | Gtapmvm | Gtapmpg | Gtapmqg | Gtapmsl | Gtapmtapm | Gtapmtapt | Gtapmpdc | Gtapmvsc |
+                    +---------+---------+---------+---------+---------+-----------+-----------+----------+----------+
+              ntapt | Gtaptva | Gtaptvm | Gtaptpg | Gtaptqg | Gtaptsl | Gtapttapm | Gtapttapt | Gtaptpdc | Gtaptvsc |
+                    +---------+---------+---------+---------+---------+-----------+-----------+----------+----------+
+               ndc  | Gpdcva  | Gpdcvm  | Gpdcpg  | Gpdcqg  | Gpdcsl  | Gpdctapm  | Gpdctapt  | Gpdcpdc  | Gpdcvsc  |
+                    +---------+---------+---------+---------+---------+-----------+-----------+----------+----------+
+               vsc  | Gvscva  | Gvscvm  | Gvscpg  | Gvscqg  | Gvscsl  | Gvsctapm  | Gvsctapt  | Gvscpdc  | Gvscvsc  |
+                    +---------+---------+---------+---------+---------+-----------+-----------+----------+----------+
 
-            
+            The VSC extension adds a trailing variable group
+            vsc = [Pt | Qt | Pf | It | slV] (one extra row/col band), so Gxx is
+            full (NV x NV). The Pfdc/AC blocks above are unchanged. The only
+            non-zero VSC second derivatives come from the two new equality rows
+            (weighted by their multipliers lam_loss, lam_curd):
+
+              loss   : d2/dIt2 = 2*a3
+              curdef : d2/dIt2 = 2*Vm[T]^2 ;  d2/dVm[T]2 = 2*It^2 ;
+                       d2/dIt dVm[T] = 4*It*Vm[T] ;  d2/dPt2 = d2/dQt2 = -2
             '''
             ts_gxx = timeit.default_timer()
             # P
@@ -1376,57 +1700,87 @@ class NonLinearOptimalPfProblem:
                 G1 = sp.hstack(
                     [Gaa, Gav, lil_matrix((self.nbus, 2 * self.n_gen_disp_sh + self.nsl + self.nslcap)), GSdmdva,
                      GSdtdva,
-                     lil_matrix((self.nbus, self.n_disp_hvdc))])
+                     lil_matrix((self.nbus, self.n_disp_hvdc + nvc))])
                 G2 = sp.hstack(
                     [Gva, Gvv, lil_matrix((self.nbus, 2 * self.n_gen_disp_sh + self.nsl + self.nslcap)), GSdmdvm,
                      GSdtdvm,
-                     lil_matrix((self.nbus, self.n_disp_hvdc))])
+                     lil_matrix((self.nbus, self.n_disp_hvdc + nvc))])
                 G3 = sp.hstack(
                     [GSdmdva.T, GSdmdvm.T, lil_matrix((self.ntapm, 2 * self.n_gen_disp_sh + self.nsl + self.nslcap)),
-                     GSdmdm, GSdmdt.T, lil_matrix((self.ntapm, self.n_disp_hvdc))])
+                     GSdmdm, GSdmdt.T, lil_matrix((self.ntapm, self.n_disp_hvdc + nvc))])
                 G4 = sp.hstack(
                     [GSdtdva.T, GSdtdvm.T, lil_matrix((self.ntapt, 2 * self.n_gen_disp_sh + self.nsl + self.nslcap)),
-                     GSdmdt, GSdtdt, lil_matrix((self.ntapt, self.n_disp_hvdc))])
+                     GSdmdt, GSdtdt, lil_matrix((self.ntapt, self.n_disp_hvdc + nvc))])
 
                 Gxx = sp.vstack(
                     [G1, G2, lil_matrix((2 * self.n_gen_disp_sh + self.nsl + self.nslcap, self.NV)), G3, G4,
-                     lil_matrix((self.n_disp_hvdc, self.NV))]).tocsc()
+                     lil_matrix((self.n_disp_hvdc + nvc, self.NV))]).tocsc()
 
             else:
                 G1 = sp.hstack(
                     [Gaa, Gav,
-                     lil_matrix((self.nbus, 2 * self.n_gen_disp_sh + self.nsl + self.nslcap + self.n_disp_hvdc))])
+                     lil_matrix((self.nbus,
+                                 2 * self.n_gen_disp_sh + self.nsl + self.nslcap + self.n_disp_hvdc + nvc))])
                 G2 = sp.hstack(
                     [Gva, Gvv,
-                     lil_matrix((self.nbus, 2 * self.n_gen_disp_sh + self.nsl + self.nslcap + self.n_disp_hvdc))])
+                     lil_matrix((self.nbus,
+                                 2 * self.n_gen_disp_sh + self.nsl + self.nslcap + self.n_disp_hvdc + nvc))])
                 Gxx = sp.vstack(
-                    [G1, G2, lil_matrix((2 * self.n_gen_disp_sh + self.nsl + self.nslcap + self.n_disp_hvdc,
-                                         npfvar + self.nsl + self.nslcap + self.n_disp_hvdc))]).tocsc()
+                    [G1, G2, lil_matrix((2 * self.n_gen_disp_sh + self.nsl + self.nslcap
+                                         + self.n_disp_hvdc + nvc, self.NV))]).tocsc()
+
+            # VSC equality-constraint second derivatives (loss + Ilim rows),
+            # weighted by their multipliers. -It<=0 / It-rate<=0 are linear.
+            if self.nvsc:
+                base = 2 * self.nbus + self.n_slack + self.npv
+                lam_loss = lam[base: base + self.nvsc]
+                lam_curd = lam[base + self.nvsc: base + 2 * self.nvsc]
+                col_Vm_t = self.nbus + self.T_vsc
+                hr = np.concatenate([col_It,
+                                     col_It, col_Vm_t, col_It, col_Vm_t,
+                                     col_Pt, col_Qt])
+                hc = np.concatenate([col_It,
+                                     col_It, col_Vm_t, col_Vm_t, col_It,
+                                     col_Pt, col_Qt])
+                hv = np.concatenate([lam_loss * 2.0 * self.vsc_alpha3,
+                                     lam_curd * 2.0 * vm_t ** 2,
+                                     lam_curd * 2.0 * self.It_vsc ** 2,
+                                     lam_curd * 4.0 * self.It_vsc * vm_t,
+                                     lam_curd * 4.0 * self.It_vsc * vm_t,
+                                     lam_curd * (-2.0) * np.ones(self.nvsc),
+                                     lam_curd * (-2.0) * np.ones(self.nvsc)])
+                Gxx = (Gxx + csc_matrix((hv, (hr, hc)), shape=(self.NV, self.NV))).tocsc()
 
             te_gxx = timeit.default_timer()
             # INEQUALITY CONSTRAINTS HESS ----------------------------------------------------------------------------------
             '''
             The following matrix represents the structure of the hessian matrix for the inequality constraints
 
-                        N         N         Ng        Ng       nsl       ntapm       ntapt       ndc
-                   +---------+---------+---------+---------+---------+-----------+-----------+----------+
-              N    |  Hvava  |  Hvavm  |  Hvapg  |  Hvaqg  |  Hvasl  |  Hvatapm  |  Hvatapt  |  Hvapdc  |
-                   +---------+---------+---------+---------+---------+-----------+-----------+----------+
-              N    |  Hvmva  |  Hvmvm  |  Hvmpg  |  Hvmqg  |  Hvmsl  |  Hvmtapm  |  Hvmtapt  |  Hvmpdc  |
-                   +---------+---------+---------+---------+---------+-----------+-----------+----------+
-              Ng   |  Hpgva  |  Hpgvm  |  Hpgpg  |  Hpgqg  |  Hpgsl  |  Hpgtapm  |  Hpgtapt  |  Hpgpdc  |
-                   +---------+---------+---------+---------+---------+-----------+-----------+----------+
-              Ng   |  Hqgva  |  Hqgvm  |  Hqgpg  |  Hqgqg  |  Hqgsl  |  Hqgtapm  |  Hqgtapt  |  Hqgpdc  |
-                   +---------+---------+---------+---------+---------+-----------+-----------+----------+
-              nsl  |  Hslva  |  Hslvm  |  Hslpg  |  Hslqg  |  Hslsl  |  Hsltapm  |  Hsltapt  |  Hslpdc  |
-                   +---------+---------+---------+---------+---------+-----------+-----------+----------+
-             ntapm | Htapmva | Htapmvm | Htapmpg | Htapmqg | Htapmsl | Htapmtapm | Htapmtapt | Htapmpdc |
-                   +---------+---------+---------+---------+---------+-----------+-----------+----------+
-             ntapt | Htaptva | Htaptvm | Htaptpg | Htaptqg | Htaptsl | Htapttapm | Htapttapt | Htaptpdc |
-                   +---------+---------+---------+---------+---------+-----------+-----------+----------+
-              ndc  | Hpdcva  | Hpdcvm  | Hpdcpg  | Hpdcqg  | Hpdcsl  | Hpdctapm  | Hpdctapt  | Hpdcpdc  |
-                   +---------+---------+---------+---------+---------+-----------+-----------+----------+
+                        N         N         Ng        Ng       nsl       ntapm       ntapt       ndc        vsc
+                   +---------+---------+---------+---------+---------+-----------+-----------+----------+----------+
+              N    |  Hvava  |  Hvavm  |  Hvapg  |  Hvaqg  |  Hvasl  |  Hvatapm  |  Hvatapt  |  Hvapdc  | Hvavsc   |
+                   +---------+---------+---------+---------+---------+-----------+-----------+----------+----------+
+              N    |  Hvmva  |  Hvmvm  |  Hvmpg  |  Hvmqg  |  Hvmsl  |  Hvmtapm  |  Hvmtapt  |  Hvmpdc  | Hvmvsc   |
+                   +---------+---------+---------+---------+---------+-----------+-----------+----------+----------+
+              Ng   |  Hpgva  |  Hpgvm  |  Hpgpg  |  Hpgqg  |  Hpgsl  |  Hpgtapm  |  Hpgtapt  |  Hpgpdc  | Hpgvsc   |
+                   +---------+---------+---------+---------+---------+-----------+-----------+----------+----------+
+              Ng   |  Hqgva  |  Hqgvm  |  Hqgpg  |  Hqgqg  |  Hqgsl  |  Hqgtapm  |  Hqgtapt  |  Hqgpdc  | Hqgvsc   |
+                   +---------+---------+---------+---------+---------+-----------+-----------+----------+----------+
+              nsl  |  Hslva  |  Hslvm  |  Hslpg  |  Hslqg  |  Hslsl  |  Hsltapm  |  Hsltapt  |  Hslpdc  | Hslvsc   |
+                   +---------+---------+---------+---------+---------+-----------+-----------+----------+----------+
+             ntapm | Htapmva | Htapmvm | Htapmpg | Htapmqg | Htapmsl | Htapmtapm | Htapmtapt | Htapmpdc | Htapmvsc |
+                   +---------+---------+---------+---------+---------+-----------+-----------+----------+----------+
+             ntapt | Htaptva | Htaptvm | Htaptpg | Htaptqg | Htaptsl | Htapttapm | Htapttapt | Htaptpdc | Htaptvsc |
+                   +---------+---------+---------+---------+---------+-----------+-----------+----------+----------+
+              ndc  | Hpdcva  | Hpdcvm  | Hpdcpg  | Hpdcqg  | Hpdcsl  | Hpdctapm  | Hpdctapt  | Hpdcpdc  | Hpdcvsc  |
+                   +---------+---------+---------+---------+---------+-----------+-----------+----------+----------+
+              vsc  | Hvscva  | Hvscvm  | Hvscpg  | Hvscqg  | Hvscsl  | Hvsctapm  | Hvsctapt  | Hvscpdc  | Hvscvsc  |
+                   +---------+---------+---------+---------+---------+-----------+-----------+----------+----------+
 
+            Hxx is padded to the full (NV x NV) including the trailing
+            vsc = [Pt | Qt | Pf | It | slV] band. The three VSC inequalities
+            (-It <= 0, It - rate/Sb (- slV) <= 0, -slV <= 0) are all linear, so
+            their second derivative is zero
                '''
 
             ts_hxx = timeit.default_timer()
@@ -1516,65 +1870,65 @@ class NonLinearOptimalPfProblem:
                                 lil_matrix((self.nbus, 2 * self.n_gen_disp_sh + self.nsl + self.nslcap)),
                                 Hftapmva.T + Httapmva.T,
                                 Hftaptva.T + Httaptva.T,
-                                lil_matrix((self.nbus, self.n_disp_hvdc))])
+                                lil_matrix((self.nbus, self.n_disp_hvdc + nvc))])
 
                 H2 = sp.hstack([Hfvmva + Htvmva,
                                 Hfvmvm + Htvmvm + Hqvmvm,
                                 lil_matrix((self.nbus, 2 * self.n_gen_disp_sh + self.nsl + self.nslcap)),
                                 Hftapmvm.T + Httapmvm.T,
                                 Hftaptvm.T + Httaptvm.T,
-                                lil_matrix((self.nbus, self.n_disp_hvdc))])
+                                lil_matrix((self.nbus, self.n_disp_hvdc + nvc))])
 
                 H3 = sp.hstack(
                     [lil_matrix((self.n_gen_disp_sh, 2 * self.nbus)), Hqpgpg, lil_matrix(
                         (self.n_gen_disp_sh,
-                         self.n_gen_disp_sh + self.nsl + self.nslcap + self.ntapm + self.ntapt + self.n_disp_hvdc))])
+                         self.n_gen_disp_sh + self.nsl + self.nslcap + self.ntapm + self.ntapt + self.n_disp_hvdc + nvc))])
 
                 H4 = sp.hstack(
                     [lil_matrix((self.n_gen_disp_sh,
                                  2 * self.nbus + self.n_gen_disp_sh)),
                      Hqqgqg,
                      lil_matrix((self.n_gen_disp_sh,
-                                 self.nsl + self.nslcap + self.ntapm + self.ntapt + self.n_disp_hvdc))])
+                                 self.nsl + self.nslcap + self.ntapm + self.ntapt + self.n_disp_hvdc + nvc))])
 
                 H5 = sp.hstack([Hftapmva + Httapmva,
                                 Hftapmvm + Httapmvm,
                                 lil_matrix((self.ntapm, 2 * self.n_gen_disp_sh + self.nsl + self.nslcap)),
                                 Hftapmtapm + Httapmtapm,
                                 Hftapmtapt + Httapmtapt,
-                                lil_matrix((self.ntapm, self.n_disp_hvdc))])
+                                lil_matrix((self.ntapm, self.n_disp_hvdc + nvc))])
 
                 H6 = sp.hstack([Hftaptva + Httaptva,
                                 Hftaptvm + Httaptvm,
                                 lil_matrix((self.ntapt, 2 * self.n_gen_disp_sh + self.nsl + self.nslcap)),
                                 Hftapmtapt.T + Httapmtapt.T,
                                 Hftapttapt + Httapttapt,
-                                lil_matrix((self.ntapt, self.n_disp_hvdc))])
+                                lil_matrix((self.ntapt, self.n_disp_hvdc + nvc))])
 
                 Hxx = sp.vstack([H1, H2, H3, H4, lil_matrix((self.nsl + self.nslcap, self.NV)), H5, H6,
-                                 lil_matrix((self.n_disp_hvdc, self.NV))]).tocsc()
+                                 lil_matrix((self.n_disp_hvdc + nvc, self.NV))]).tocsc()
 
             else:
                 H1 = sp.hstack([Hfvava + Htvava,
                                 Hfvavm + Htvavm,
                                 lil_matrix((self.nbus,
-                                            2 * self.n_gen_disp_sh + self.nsl + self.nslcap + self.n_disp_hvdc))])
+                                            2 * self.n_gen_disp_sh + self.nsl + self.nslcap + self.n_disp_hvdc + nvc))])
 
                 H2 = sp.hstack([Hfvmva + Htvmva,
                                 Hfvmvm + Htvmvm + Hqvmvm,
                                 lil_matrix((self.nbus,
-                                            2 * self.n_gen_disp_sh + self.nsl + self.nslcap + self.n_disp_hvdc))])
+                                            2 * self.n_gen_disp_sh + self.nsl + self.nslcap + self.n_disp_hvdc + nvc))])
 
                 H3 = sp.hstack([lil_matrix((self.n_gen_disp_sh, 2 * self.nbus)),
                                 Hqpgpg,
                                 lil_matrix((self.n_gen_disp_sh,
-                                            self.n_gen_disp_sh + self.nsl + self.nslcap + self.n_disp_hvdc))])
+                                            self.n_gen_disp_sh + self.nsl + self.nslcap + self.n_disp_hvdc + nvc))])
 
                 H4 = sp.hstack([lil_matrix((self.n_gen_disp_sh, 2 * self.nbus + self.n_gen_disp_sh)), Hqqgqg,
-                                lil_matrix((self.n_gen_disp_sh, self.nsl + self.nslcap + self.n_disp_hvdc))])
+                                lil_matrix((self.n_gen_disp_sh, self.nsl + self.nslcap + self.n_disp_hvdc + nvc))])
 
                 Hxx = sp.vstack([H1, H2, H3, H4,
-                                 lil_matrix((self.nsl + self.nslcap + self.n_disp_hvdc, self.NV))]).tocsc()
+                                 lil_matrix((self.nsl + self.nslcap + self.n_disp_hvdc + nvc, self.NV))]).tocsc()
 
             te_hxx = timeit.default_timer()
         else:
@@ -1869,7 +2223,7 @@ class NonLinearOptimalPfProblem:
         Pg[self.gen_nondisp_idx] = np.real(self.Sg_undis)
         Qg[self.gen_nondisp_idx] = np.imag(self.Sg_undis)
 
-        # convert the lagrange multipliers to significant ones
+        # convert the Lagrange multipliers to significant ones
         lam_p, lam_q = ips_results.lam[:self.nbus], ips_results.lam[self.nbus: 2 * self.nbus]
 
         loading = np.abs(self.allSf) / (self.rates + 1e-9)
@@ -1900,6 +2254,11 @@ class NonLinearOptimalPfProblem:
                                        + self.c2n * np.power(np.real(self.Sg_undis), 2.0))
 
         nodal_capacity = self.slcap * self.Sbase
+
+        vsc_loading = np.zeros(self.nvsc)
+        if self.n_vsc_lim:
+            vsc_loading[self.vsc_lim_idx] = (self.It_vsc[self.vsc_lim_idx]
+                                             / self.vsc_rate_pu[self.vsc_lim_idx])
 
         tend = timeit.default_timer()
 
@@ -1994,12 +2353,14 @@ class NonLinearOptimalPfProblem:
                                             value=str(muz_t),
                                             expected_value='< 1e-3')
 
+            # VSC inequalities (-It<=0, It-rate<=0)
+            _vsc_tail = self.nvsc + self.n_vsc_lim + self.n_sl_vsc
             for link in range(self.n_disp_hvdc):
-                muz_f = abs(ips_results.z[self.nineq - 2 * self.n_disp_hvdc + link] * ips_results.mu[
-                    self.nineq - 2 * self.n_disp_hvdc + link])
+                muz_f = abs(ips_results.z[self.nineq - _vsc_tail - 2 * self.n_disp_hvdc + link]
+                            * ips_results.mu[self.nineq - _vsc_tail - 2 * self.n_disp_hvdc + link])
                 muz_t = abs(
-                    ips_results.z[self.nineq - self.n_disp_hvdc + link] * ips_results.mu[
-                        self.nineq - self.n_disp_hvdc + link])
+                    ips_results.z[self.nineq - _vsc_tail - self.n_disp_hvdc + link] * ips_results.mu[
+                        self.nineq - _vsc_tail - self.n_disp_hvdc + link])
                 if muz_f >= 1e-3:
                     self.logger.add_warning('HVDC rating "from" multipliers did not reach the tolerance',
                                             device_property="mu · z",
@@ -2054,6 +2415,9 @@ class NonLinearOptimalPfProblem:
                                            tap_module=tap_module,
                                            tap_phase=tap_phase,
                                            hvdc_Pf=hvdc_power, hvdc_loading=hvdc_loading,
+                                           vsc_Pt=self.Pt_vsc, vsc_Qt=self.Qt_vsc,
+                                           vsc_Pf=self.Pf_vsc, vsc_It=self.It_vsc,
+                                           vsc_loading=vsc_loading,
                                            lam_p=lam_p, lam_q=lam_q,
                                            sl_sf=self.sl_sf, sl_st=self.sl_st, sl_vmax=self.sl_vmax,
                                            sl_vmin=self.sl_vmin,

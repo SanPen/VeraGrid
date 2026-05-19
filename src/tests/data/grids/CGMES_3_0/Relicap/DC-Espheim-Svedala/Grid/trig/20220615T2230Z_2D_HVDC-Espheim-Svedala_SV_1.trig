@@ -1,0 +1,291 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:2ce17c9e-40d5-4530-bf85-d2ffd31d84a0> {
+    <urn:uuid:e197f0b0-bb62-43a4-b511-289153d85537>
+            rdf:type                cim:SvStatus;
+            cim:SvStatus.ConductingEquipment
+                    <urn:uuid:4711e896-d85e-451b-b834-0cfe14564c01>;
+            cim:SvStatus.inService  true .
+    
+    <urn:uuid:e468e6ca-8776-4c22-8f9b-390df610c2fd>
+            rdf:type                     cim:CsConverter;
+            cim:ACDCConverter.idc        "-176.223"^^xsd:float;
+            cim:ACDCConverter.poleLossP  "0.0405895"^^xsd:float;
+            cim:ACDCConverter.uc         "124.964"^^xsd:float;
+            cim:ACDCConverter.udc        "161.507"^^xsd:float;
+            cim:CsConverter.alpha        "162.455"^^xsd:float;
+            cim:CsConverter.gamma        "17"^^xsd:float .
+    
+    <urn:uuid:53b1e61c-0363-41cf-a968-d52971dc0c61>
+            rdf:type                       cim:SvVoltage;
+            cim:SvVoltage.TopologicalNode  <urn:uuid:30ff280f-5147-a877-e592-5d322c50ec79>;
+            cim:SvVoltage.angle            "-0.0744232"^^xsd:float;
+            cim:SvVoltage.v                "400.538"^^xsd:float .
+    
+    <urn:uuid:74325182-8f3b-40ae-b4a3-ca4d52d38626>
+            rdf:type                  cim:SvPowerFlow;
+            cim:SvPowerFlow.Terminal  <urn:uuid:7c2c512e-9b33-a938-f0c9-fc7e2b1fcb3f>;
+            cim:SvPowerFlow.p         "-26.8005"^^xsd:float;
+            cim:SvPowerFlow.q         "7.25251"^^xsd:float .
+    
+    <urn:uuid:ebe96997-eec6-4e2d-a86d-405c0cb352ef>
+            rdf:type                  cim:SvPowerFlow;
+            cim:SvPowerFlow.Terminal  <urn:uuid:6163d1e1-7904-d404-2a1c-70057f17dc15>;
+            cim:SvPowerFlow.p         "28.4208"^^xsd:float;
+            cim:SvPowerFlow.q         "-8.75768"^^xsd:float .
+    
+    <urn:uuid:9998c2f5-7230-4b85-b6d1-3eab74174f73>
+            rdf:type                       cim:SvVoltage;
+            cim:SvVoltage.TopologicalNode  <urn:uuid:092457d1-1f90-ecef-d473-8aa8911b521c>;
+            cim:SvVoltage.angle            "4.48205"^^xsd:float;
+            cim:SvVoltage.v                "124.964"^^xsd:float .
+    
+    <urn:uuid:b0750b9c-5756-4a95-a1d0-a8a45eb476fa>
+            rdf:type                  cim:SvPowerFlow;
+            cim:SvPowerFlow.Terminal  <urn:uuid:f22ac414-60d5-1b7a-f9b3-b1e456441f22>;
+            cim:SvPowerFlow.p         "-29.2782"^^xsd:float;
+            cim:SvPowerFlow.q         "-5.32097"^^xsd:float .
+    
+    <urn:uuid:4f315bf9-8255-408e-b786-522ae0086f8e>
+            rdf:type                  cim:SvPowerFlow;
+            cim:SvPowerFlow.Terminal  <urn:uuid:fd9c44c1-979a-0b40-0a7d-49008eccf249>;
+            cim:SvPowerFlow.p         "41.0073"^^xsd:float;
+            cim:SvPowerFlow.q         "-128.494"^^xsd:float .
+    
+    <urn:uuid:5ca5af28-ee7a-4e6d-8ab7-ff09953de0d6>
+            rdf:type                cim:SvStatus;
+            cim:SvStatus.ConductingEquipment
+                    <urn:uuid:042e8644-494d-b5a7-1a96-124d42e23131>;
+            cim:SvStatus.inService  true .
+    
+    <urn:uuid:c7de1d0e-531f-4c8c-a37a-5f962a9e3334>
+            rdf:type                   cim:TopologicalIsland;
+            cim:IdentifiedObject.mRID  "c7de1d0e-531f-4c8c-a37a-5f962a9e3334";
+            cim:IdentifiedObject.name  "Island_002";
+            cim:TopologicalIsland.AngleRefTopologicalNode
+                    <urn:uuid:183725e6-2ba8-0463-5e45-0ec83292fbe9>;
+            cim:TopologicalIsland.TopologicalNodes
+                    <urn:uuid:092457d1-1f90-ecef-d473-8aa8911b521c> , <urn:uuid:183725e6-2ba8-0463-5e45-0ec83292fbe9> , <urn:uuid:06212812-ddc0-43e8-cacf-ce01ca9d0d13> .
+    
+    <urn:uuid:d4ef49d7-1b5b-4aa9-8ee1-2fdc9b4ee510>
+            rdf:type                cim:SvStatus;
+            cim:SvStatus.ConductingEquipment
+                    <urn:uuid:81a60401-9391-40e1-9e23-0aa0aff91184>;
+            cim:SvStatus.inService  true .
+    
+    <urn:uuid:31c9eddc-6459-4c96-b116-9f9ff846fb88>
+            rdf:type                cim:SvStatus;
+            cim:SvStatus.ConductingEquipment
+                    <urn:uuid:038ce404-30dc-4289-b9db-7076cb870b8e>;
+            cim:SvStatus.inService  true .
+    
+    <urn:uuid:b10ea1c6-e709-4872-af5f-339d70fc9069>
+            rdf:type                cim:SvStatus;
+            cim:SvStatus.ConductingEquipment
+                    <urn:uuid:e710a2e3-a70f-4261-508f-a4d925d1deb9>;
+            cim:SvStatus.inService  true .
+    
+    <urn:uuid:69c95962-0c28-4eb1-8e90-5ad879fb07ad>
+            rdf:type                       cim:SvVoltage;
+            cim:SvVoltage.TopologicalNode  <urn:uuid:1e6e5fcc-d3a9-e0ee-dbd1-a49a2a76d6ef>;
+            cim:SvVoltage.angle            "0"^^xsd:float;
+            cim:SvVoltage.v                "400"^^xsd:float .
+    
+    <urn:uuid:b6d32c61-96f3-4688-9ed8-e68d94ceb13d>
+            rdf:type                  cim:SvPowerFlow;
+            cim:SvPowerFlow.Terminal  <urn:uuid:310d79b6-67c5-b024-de6e-b5510b7b9fb5>;
+            cim:SvPowerFlow.p         "0"^^xsd:float;
+            cim:SvPowerFlow.q         "0"^^xsd:float .
+    
+    <urn:uuid:c998f030-8fd9-4882-888f-b9350573b01c>
+            rdf:type                  cim:SvPowerFlow;
+            cim:SvPowerFlow.Terminal  <urn:uuid:f3603af7-a098-1e2c-431e-8ca22ae76221>;
+            cim:SvPowerFlow.p         "-39.2932"^^xsd:float;
+            cim:SvPowerFlow.q         "127.116"^^xsd:float .
+    
+    <urn:uuid:85cdcec9-7312-47ae-8799-9a678d8e6045>
+            rdf:type                   cim:DCTopologicalIsland;
+            cim:DCTopologicalIsland.DCTopologicalNodes
+                    <urn:uuid:fc4cf3db-cb6f-5b05-66a3-f1f99a739ceb> , <urn:uuid:d75ab625-b86e-af62-ab7c-f527860f6896>;
+            cim:IdentifiedObject.mRID  "85cdcec9-7312-47ae-8799-9a678d8e6045";
+            cim:IdentifiedObject.name  "Island_003" .
+    
+    <urn:uuid:2ce17c9e-40d5-4530-bf85-d2ffd31d84a0>
+            rdf:type                 rdfg:Graph , dcat:Dataset;
+            dct:conformsTo           <http://iec.ch/TC57/ns/CIM/StateVariables-EU/3.0>;
+            dct:description          "The state variables dataset for Espheim-Svedala, which is part of the ReliCapGrid.";
+            dct:identifier           "2ce17c9e-40d5-4530-bf85-d2ffd31d84a0";
+            dct:issued               "2025-02-08"^^xsd:date;
+            dct:requires             <urn:uuid:af335a8e-b8da-4c6e-9ecb-63164f71f9b6>;
+            dct:temporal             [ rdf:type        dct:PeriodOfTime;
+                                       dcat:endDate    "2022-06-17T00:30:00Z"^^xsd:dateTime;
+                                       dcat:startDate  "2022-06-16T23:30:00Z"^^xsd:dateTime
+                                     ];
+            dcat:distribution        [ rdf:type    dcat:Distribution;
+                                       dct:issued  "2025-02-08T20:17:23Z"^^xsd:dateTime
+                                     ];
+            dcat:isVersionOf         <http://espheim-svedala.es/CGMES>;
+            dcat:temporalResolution  "PT1H"^^xsd:duration;
+            dcat:version             "1";
+            json-ld:base             "http://espheim-svedala.es/CGMES#" .
+    
+    <urn:uuid:d9400c87-f820-45c5-938c-f60b11ec3bf4>
+            rdf:type                cim:SvStatus;
+            cim:SvStatus.ConductingEquipment
+                    <urn:uuid:cba14822-1c7f-27e1-dd40-dcd789f9c782>;
+            cim:SvStatus.inService  true .
+    
+    <urn:uuid:76128a5d-e41b-4b21-a383-c476888339b2>
+            rdf:type                  cim:SvPowerFlow;
+            cim:SvPowerFlow.Terminal  <urn:uuid:61cafb07-5d42-a115-0c43-e5cb8b7ffb90>;
+            cim:SvPowerFlow.p         "-28.4058"^^xsd:float;
+            cim:SvPowerFlow.q         "8.84229"^^xsd:float .
+    
+    <urn:uuid:d04b89f0-0df6-4c79-9bdd-e4a1ee2f4a2f>
+            rdf:type  cim:SvShuntCompensatorSections;
+            cim:SvShuntCompensatorSections.ShuntCompensator
+                    <urn:uuid:51584a9f-914e-4f09-a866-71e2df50150f>;
+            cim:SvShuntCompensatorSections.sections
+                    "1"^^xsd:float .
+    
+    <urn:uuid:b6816ec9-ea27-45b2-bbe6-d24bdce8a614>
+            rdf:type                  cim:SvPowerFlow;
+            cim:SvPowerFlow.Terminal  <urn:uuid:02f431b9-5939-ed2a-7c52-69db4fc78c48>;
+            cim:SvPowerFlow.p         "10"^^xsd:float;
+            cim:SvPowerFlow.q         "0"^^xsd:float .
+    
+    <urn:uuid:a422ee47-948c-4ef0-8d0e-4f8e73d33093>
+            rdf:type                       cim:SvVoltage;
+            cim:SvVoltage.TopologicalNode  <urn:uuid:183725e6-2ba8-0463-5e45-0ec83292fbe9>;
+            cim:SvVoltage.angle            "0"^^xsd:float;
+            cim:SvVoltage.v                "400"^^xsd:float .
+    
+    <urn:uuid:13f34945-c1fa-4709-af41-b23a3ace681f>
+            rdf:type                  cim:SvPowerFlow;
+            cim:SvPowerFlow.Terminal  <urn:uuid:f61ecb33-0267-05fd-994a-cb5c2d2563e2>;
+            cim:SvPowerFlow.p         "-41.0073"^^xsd:float;
+            cim:SvPowerFlow.q         "128.494"^^xsd:float .
+    
+    <urn:uuid:fa52d337-650a-462a-a914-3872bbfbd473>
+            rdf:type                  cim:SvPowerFlow;
+            cim:SvPowerFlow.Terminal  <urn:uuid:9a54a535-c88c-7247-37aa-938a9d1f42d9>;
+            cim:SvPowerFlow.p         "29.2932"^^xsd:float;
+            cim:SvPowerFlow.q         "5.40558"^^xsd:float .
+    
+    <urn:uuid:8dc5223d-8141-4e94-90be-68827b502242>
+            rdf:type                   cim:TopologicalIsland;
+            cim:IdentifiedObject.mRID  "8dc5223d-8141-4e94-90be-68827b502242";
+            cim:IdentifiedObject.name  "Island_001";
+            cim:TopologicalIsland.AngleRefTopologicalNode
+                    <urn:uuid:1e6e5fcc-d3a9-e0ee-dbd1-a49a2a76d6ef>;
+            cim:TopologicalIsland.TopologicalNodes
+                    <urn:uuid:1e6e5fcc-d3a9-e0ee-dbd1-a49a2a76d6ef> , <urn:uuid:a4f1438f-63b8-c5e1-f1b4-efab368e8219> , <urn:uuid:30ff280f-5147-a877-e592-5d322c50ec79> .
+    
+    <urn:uuid:678d2443-564d-41f8-95e3-f3bf1d2e1ea7>
+            rdf:type                  cim:SvPowerFlow;
+            cim:SvPowerFlow.Terminal  <urn:uuid:20f1f947-55cb-5175-0611-8ce82c635a20>;
+            cim:SvPowerFlow.p         "28.4058"^^xsd:float;
+            cim:SvPowerFlow.q         "-8.84229"^^xsd:float .
+    
+    <urn:uuid:2a97100b-b082-4d1e-bb55-d4cf5951556b>
+            rdf:type                  cim:SvPowerFlow;
+            cim:SvPowerFlow.Terminal  <urn:uuid:77a71772-2cd6-2f66-a328-631c800f22c3>;
+            cim:SvPowerFlow.p         "0"^^xsd:float;
+            cim:SvPowerFlow.q         "0"^^xsd:float .
+    
+    <urn:uuid:e84650fd-6371-4a81-bc31-301365705cee>
+            rdf:type                cim:SvStatus;
+            cim:SvStatus.ConductingEquipment
+                    <urn:uuid:0ef4ac67-d665-4d1b-95bf-38a8e696058a>;
+            cim:SvStatus.inService  true .
+    
+    <urn:uuid:44f47991-5d35-4017-8028-7ca09a29e8a8>
+            rdf:type                  cim:SvPowerFlow;
+            cim:SvPowerFlow.Terminal  <urn:uuid:b438186b-5db8-1bb9-1f95-81ee4db865e3>;
+            cim:SvPowerFlow.p         "26.8005"^^xsd:float;
+            cim:SvPowerFlow.q         "-7.25251"^^xsd:float .
+    
+    <urn:uuid:07e5e22a-00f4-4f7f-9555-5162bd2dc301>
+            rdf:type                  cim:SvTapStep;
+            cim:SvTapStep.TapChanger  <urn:uuid:db884d13-b941-ea67-670f-29acad9bf7aa>;
+            cim:SvTapStep.position    "7"^^xsd:float .
+    
+    <urn:uuid:f3b28008-89b9-4894-b826-ce3396877b52>
+            rdf:type                       cim:SvVoltage;
+            cim:SvVoltage.TopologicalNode  <urn:uuid:a4f1438f-63b8-c5e1-f1b4-efab368e8219>;
+            cim:SvVoltage.angle            "4.06579"^^xsd:float;
+            cim:SvVoltage.v                "125.042"^^xsd:float .
+    
+    <urn:uuid:77033772-ce7c-4061-a27b-b1bb80c789cb>
+            rdf:type                cim:SvStatus;
+            cim:SvStatus.ConductingEquipment
+                    <urn:uuid:8343e5c5-b77a-4c4e-b074-1cb3777a2f2d>;
+            cim:SvStatus.inService  true .
+    
+    <urn:uuid:00b8763b-7a85-45d1-9645-fc48e14be9bb>
+            rdf:type                  cim:SvPowerFlow;
+            cim:SvPowerFlow.Terminal  <urn:uuid:a80ec666-1d4b-4f8f-cdc2-efe3486b4a72>;
+            cim:SvPowerFlow.p         "0"^^xsd:float;
+            cim:SvPowerFlow.q         "-132.521"^^xsd:float .
+    
+    <urn:uuid:c208e711-03d8-45a2-b257-7208ae3f62eb>
+            rdf:type                cim:SvStatus;
+            cim:SvStatus.ConductingEquipment
+                    <urn:uuid:b8a39d36-f5e3-9995-ba5a-e77d3392890f>;
+            cim:SvStatus.inService  true .
+    
+    <urn:uuid:b961b52f-9b47-4e9e-ae7c-cbcfcc2f5e65>
+            rdf:type                  cim:SvTapStep;
+            cim:SvTapStep.TapChanger  <urn:uuid:73264696-82bc-cd10-5416-623d2de1e8bc>;
+            cim:SvTapStep.position    "7"^^xsd:float .
+    
+    <urn:uuid:14a54716-d1c7-4d5f-8c64-f4048389aa39>
+            rdf:type                cim:SvStatus;
+            cim:SvStatus.ConductingEquipment
+                    <urn:uuid:3ae3a841-fbb4-469e-8d72-9b69c942f197>;
+            cim:SvStatus.inService  true .
+    
+    <urn:uuid:038ce404-30dc-4289-b9db-7076cb870b8e>
+            rdf:type                     cim:CsConverter;
+            cim:ACDCConverter.idc        "176.223"^^xsd:float;
+            cim:ACDCConverter.poleLossP  "0.0405901"^^xsd:float;
+            cim:ACDCConverter.uc         "125.042"^^xsd:float;
+            cim:ACDCConverter.udc        "165.913"^^xsd:float;
+            cim:CsConverter.alpha        "10"^^xsd:float;
+            cim:CsConverter.gamma        "169.107"^^xsd:float .
+    
+    <urn:uuid:8aa80f11-27cd-4f97-9325-c57a5f84d3ca>
+            rdf:type                cim:SvStatus;
+            cim:SvStatus.ConductingEquipment
+                    <urn:uuid:e468e6ca-8776-4c22-8f9b-390df610c2fd>;
+            cim:SvStatus.inService  true .
+    
+    <urn:uuid:30aa4bdb-28af-4774-baf8-b744e425412d>
+            rdf:type                cim:SvStatus;
+            cim:SvStatus.ConductingEquipment
+                    <urn:uuid:51584a9f-914e-4f09-a866-71e2df50150f>;
+            cim:SvStatus.inService  true .
+    
+    <urn:uuid:5e20a5e1-cc42-4744-aac2-53525fc14460>
+            rdf:type                       cim:SvVoltage;
+            cim:SvVoltage.TopologicalNode  <urn:uuid:06212812-ddc0-43e8-cacf-ce01ca9d0d13>;
+            cim:SvVoltage.angle            "0.0226494"^^xsd:float;
+            cim:SvVoltage.v                "400.029"^^xsd:float .
+}

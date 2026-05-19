@@ -185,8 +185,19 @@ class InvestmentsEvaluationResults(ResultsTemplate):
             self._f = self._f[:self.__eval_index, :]
             self._x = self._x[:self.__eval_index, :]
 
-            # compute the pareto sorting indices
-            _, _, self._sorting_indices = non_dominated_sorting(y_values=self.f, x_values=self.x)
+            # Dedup x rows before Pareto sorting: equal-x rows don't dominate each
+            # other and would all land in the front. Raw _x/_f stay intact so the
+            # iteration, frequency, and reports views still see every evaluation.
+            _, unique_idx = np.unique(self._x, axis=0, return_index=True)
+            unique_idx = np.sort(unique_idx)
+
+            # compute the pareto sorting indices on the deduplicated slice, then map
+            # the resulting positions back to indices into the full _x/_f arrays
+            _, _, pareto_local = non_dominated_sorting(
+                y_values=self._f[unique_idx, :],
+                x_values=self._x[unique_idx, :],
+            )
+            self._sorting_indices = unique_idx[pareto_local]
 
             # we curtail this one too
             self.max_eval = self.__eval_index

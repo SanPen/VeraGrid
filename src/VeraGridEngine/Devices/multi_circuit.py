@@ -17,6 +17,8 @@ from scipy.sparse import csc_matrix, lil_matrix
 
 from VeraGridEngine.Devices.assets import Assets
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
+from VeraGridEngine.Devices.Parents.dynamic_parent import DynamicDevice
+from VeraGridEngine.Devices.Parents.dynamic_bus_parent import DynamicBusDevice
 from VeraGridEngine.basic_structures import IntVec, Vec, Mat, CxVec, IntMat, CxMat, BoolVec
 
 import VeraGridEngine.Devices as dev
@@ -395,11 +397,22 @@ class MultiCircuit(Assets):
         """
         objects_by_idtag, _ = self.get_all_elements_dict()
 
+        # Devices that host dynamic symbolic blocks must be rebound to the copied
+        # circuit VarFactory before any cross-list references are repaired. The
+        # factory owns the canonical symbol objects used by later dynamic editors
+        # and simulations, so every copied dynamic device must point to this
+        # circuit instance rather than the source circuit factory.
         for elm in self.get_all_elements_iter():
-            set_var_factory = getattr(elm, "set_var_factory", None)
-            if callable(set_var_factory):
-                set_var_factory(self.var_factory)
+            if isinstance(elm, DynamicDevice):
+                elm.set_var_factory(self.var_factory)
+            else:
+                if isinstance(elm, DynamicBusDevice):
+                    elm.set_var_factory(self.var_factory)
+                else:
+                    pass
 
+            # After the factory is correct, rebind any object pointers by idtag so
+            # the copied circuit uses only canonical objects from its own lists.
             elm.rebind_device_references(objects_by_idtag=objects_by_idtag)
 
     def build_graph(self) -> nx.MultiDiGraph:
@@ -1089,7 +1102,7 @@ class MultiCircuit(Assets):
         # the longitude is more related to x, the latitude is more related to y
         x, y = transformer.transform(xx=lon, yy=lat)
         x *= factor
-        y *= factor
+        y *= - factor  # the schematic scene y-axis points downward, so negate northing to put north at the top
 
         # delete the offset
         if remove_offset:
@@ -3337,110 +3350,3 @@ class MultiCircuit(Assets):
                                  device_class=elm.device_type.value,
                                  device=elm.name)
         return logger
-
-    # USE AS REFERENCE TO VALIDATE THAT ALL MODELS HAVE THE SAME NUMBER OF PHASES THAN THE STATIC DEVICES!
-    # def _get_expected_pi_line_terminal_refs(ph_mask: List[bool]) -> List[VarPowerFlowRefferenceType]:
-    #     """
-    #     Build the ordered terminal-voltage references for the active pi-line phases.
-    #
-    #     :param ph_mask: Physical line phase mask in NABC order.
-    #     :return: Ordered ``vf_*`` and ``vt_*`` references for the active phases only.
-    #     """
-    #     vf_refs: List[VarPowerFlowRefferenceType] = list([
-    #         VarPowerFlowRefferenceType.vf_N,
-    #         VarPowerFlowRefferenceType.vf_A,
-    #         VarPowerFlowRefferenceType.vf_B,
-    #         VarPowerFlowRefferenceType.vf_C,
-    #     ])
-    #     vt_refs: List[VarPowerFlowRefferenceType] = list([
-    #         VarPowerFlowRefferenceType.vt_N,
-    #         VarPowerFlowRefferenceType.vt_A,
-    #         VarPowerFlowRefferenceType.vt_B,
-    #         VarPowerFlowRefferenceType.vt_C,
-    #     ])
-    #
-    #     ordered_refs: List[VarPowerFlowRefferenceType] = list()
-    #
-    #     for idx, is_active in enumerate(ph_mask):
-    #         if is_active:
-    #             ordered_refs.append(vf_refs[idx])
-    #         else:
-    #             pass
-    #
-    #     for idx, is_active in enumerate(ph_mask):
-    #         if is_active:
-    #             ordered_refs.append(vt_refs[idx])
-    #         else:
-    #             pass
-    #
-    #     return ordered_refs
-    #
-    #
-    # def _normalize_pi_line_phase_layout(branch: Any, grid: MultiCircuit) -> None:
-    #     """
-    #     Rebuild the standard pi-line template when its symbolic phase layout does not
-    #     match the physical branch connection mask.
-    #
-    #     The EMT parameter mapper writes reduced branch matrices into the fixed NABC
-    #     API map using ``branch.ys``. After the recent API change, callers can create
-    #     a pi-line template with a phase mask that does not match ``branch.ys``. When
-    #     that happens, the symbolic block keeps terminal inputs for non-existent bus
-    #     phases and later substitutions introduce ``None`` or unresolved UIDs.
-    #
-    #     This helper keeps the public explicit-mask API in place, but re-aligns the
-    #     standard pi-line block with the physical branch mask right before the EMT
-    #     problem flattens the device into the global system.
-    #
-    #     :param branch: Grid branch device.
-    #     :param grid: Parent circuit, used for the shared variable factory.
-    #     :return: None.
-    #     """
-    #     mdl: Any = branch.emt_model
-    #     api_obj_mapping: Any = mdl.api_obj_mapping
-    #
-    #     if not isinstance(api_obj_mapping, dict):
-    #         return
-    #     else:
-    #         pass
-    #
-    #     if ParamPowerFlowRefferenceType.Rnn not in api_obj_mapping:
-    #         return
-    #     else:
-    #         pass
-    #
-    #     ph_mask: List[bool] = list([
-    #         bool(branch.ys.phN),
-    #         bool(branch.ys.phA),
-    #         bool(branch.ys.phB),
-    #         bool(branch.ys.phC),
-    #     ])
-    #     expected_refs: List[VarPowerFlowRefferenceType] = _get_expected_pi_line_terminal_refs(ph_mask)
-    #     tracked_refs: Set[VarPowerFlowRefferenceType] = set([
-    #         VarPowerFlowRefferenceType.vf_N,
-    #         VarPowerFlowRefferenceType.vf_A,
-    #         VarPowerFlowRefferenceType.vf_B,
-    #         VarPowerFlowRefferenceType.vf_C,
-    #         VarPowerFlowRefferenceType.vt_N,
-    #         VarPowerFlowRefferenceType.vt_A,
-    #         VarPowerFlowRefferenceType.vt_B,
-    #         VarPowerFlowRefferenceType.vt_C,
-    #     ])
-    #     current_refs: List[VarPowerFlowRefferenceType] = list()
-    #
-    #     for in_var in mdl.in_vars:
-    #         if in_var.ref in tracked_refs:
-    #             current_refs.append(in_var.ref)
-    #         else:
-    #             pass
-    #
-    #     if current_refs != expected_refs:
-    #         branch.emt_model = get_pi_line_emt_template(
-    #             vf=grid.var_factory,
-    #             phN=ph_mask[0],
-    #             phA=ph_mask[1],
-    #             phB=ph_mask[2],
-    #             phC=ph_mask[3],
-    #             name=mdl.name,
-    #         ).block
-    #     else:
-    #         pass

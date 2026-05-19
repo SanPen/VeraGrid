@@ -420,17 +420,17 @@ def get_complete_generator_template_phasor(vfactory: VarFactory, name="complete 
     # Connect models
     # genqec inputs: [Vr, Vi, Tm, Vf]
     # genqec outputs: [Pg, Qg, omega, IRPu, Te]
-    genqec_mdl.connect([genqec_mdl.in_vars[3]], [exciter_mdl.out_vars[0]])  # Vf from exciter
-    exciter_mdl.connect([exciter_mdl.in_vars[0]], [genqec_mdl.out_vars[3]])  # IRPu to exciter
-    exciter_mdl.connect([exciter_mdl.in_vars[1]], [vm_calc_block.out_vars[0]])  # Vm from calculation block
-    exciter_mdl.connect([exciter_mdl.in_vars[2]], [stabilizer_mdl.out_vars[0]])  # Vpss to exciter
+    vfactory.add_connections([genqec_mdl.in_vars[3]], [exciter_mdl.out_vars[0]])  # Vf from exciter
+    vfactory.add_connections([exciter_mdl.in_vars[0]], [genqec_mdl.out_vars[3]])  # IRPu to exciter
+    vfactory.add_connections([exciter_mdl.in_vars[1]], [vm_calc_block.out_vars[0]])  # Vm from calculation block
+    vfactory.add_connections([exciter_mdl.in_vars[2]], [stabilizer_mdl.out_vars[0]])  # Vpss to exciter
 
-    stabilizer_mdl.connect([stabilizer_mdl.in_vars[0]], [genqec_mdl.out_vars[2]])  # omega to stabilizer
+    vfactory.add_connections([stabilizer_mdl.in_vars[0]], [genqec_mdl.out_vars[2]])  # omega to stabilizer
 
-    genqec_mdl.connect([genqec_mdl.in_vars[2]], [governor_mdl.out_vars[0]])  # Tm from governor
+    vfactory.add_connections([genqec_mdl.in_vars[2]], [governor_mdl.out_vars[0]])  # Tm from governor
 
-    governor_mdl.connect([governor_mdl.in_vars[0]], [genqec_mdl.out_vars[2]])  # omega to governor
-    governor_mdl.connect([governor_mdl.in_vars[1]], [genqec_mdl.out_vars[4]])  # Te to governor
+    vfactory.add_connections([governor_mdl.in_vars[0]], [genqec_mdl.out_vars[2]])  # omega to governor
+    vfactory.add_connections([governor_mdl.in_vars[1]], [genqec_mdl.out_vars[4]])  # Te to governor
 
     # Convert generator P/Q outputs to injected Ir/Ii for current-balance formulations
     Pg_out = genqec_mdl.out_vars[0]

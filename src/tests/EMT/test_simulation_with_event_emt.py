@@ -18,7 +18,7 @@ from VeraGridEngine.Devices.Events.emt_event import EmtEvent
 
 from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template
 from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_shunt_r_emt_template
-from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template
+from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
 from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_emt_template
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_emt_model
 
@@ -108,7 +108,7 @@ def test_simulation_with_event_emt():
     ######################################################################################################
 
     # generator
-    gen_mdl = get_generator_thevenin_rl_emt_template(vf=grid.var_factory).block
+    gen_mdl = get_generator_thevenin_rl_emt_template_with_ref(vf=grid.var_factory).block
 
     # line
     line_mdl = get_pi_line_emt_template(vf = grid.var_factory, phN = False, phA = True, phB = True, phC = True).block

@@ -17,6 +17,14 @@ from collections import deque
 from typing import Optional
 
 from VeraGridEngine.Topology.Procedural.procedural_grid_debugger import ProceduralGridDebugger
+from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
+from VeraGridEngine.Simulations.CatalogueOptimization.catalogue_optimization_driver import (
+    CatalogueOptimizationDriver,
+    CatalogueOptimizationOptions,
+)
+from VeraGridEngine.Simulations.CatalogueOptimization.Problems.catalogue_problem import (
+    CatalogueOptimizationProblem,
+)
 
 if TYPE_CHECKING:
     from VeraGridEngine.Devices.multi_circuit import MultiCircuit
@@ -804,7 +812,6 @@ class ProceduralGridComputationEngine:
                 lon, lat = bus.try_to_find_coordinates()
                 bus.longitude = lon
                 bus.latitude = lat
-                bus.name = f"Candidate_{candidate_counter}"
                 bus.Vm_cost = bus.Vnom * bus.Vm_cost
                 self.candidate_buses.append(bus)
                 candidate_counter += 1
@@ -815,7 +822,6 @@ class ProceduralGridComputationEngine:
                 lon, lat = bus.try_to_find_coordinates()
                 bus.longitude = lon
                 bus.latitude = lat
-                bus.name = f"Target_{target_counter}"
                 bus.Vm_cost = bus.Vnom * bus.Vm_cost
                 self.target_buses.append(bus)
                 target_counter += 1
@@ -896,14 +902,6 @@ class ProceduralGridComputationEngine:
         # generate edges
         rows, cols = np.where(final_mst > 0)
         edges = list(zip(rows, cols))
-
-        self.debugger.plot_mst_graph(
-            coords_final_network=coords_final_network,
-            edges=edges,
-            n_candidate=len(self.candidate_buses),
-            n_target=len(self.target_buses),
-            final_steiner_pts=final_steiner_pts,
-        )
 
         # 2E. Assign voltages to Steiner Points
         distances = np.zeros(network.base_coords.shape[0])
@@ -996,10 +994,100 @@ class ProceduralGridComputationEngine:
 
         return existing_connections
 
-    def run_optimization(self):
+    def run_steiner_tree_and_optimization(self,
+                                          pf_options: PowerFlowOptions,
+                                          max_eval_per_var: int) -> "MultiCircuit":
         """
-        Executes the Steiner Tree algorithm followed by an optimization pass.
-        """
-        # Add your Steiner Tree plus Optimization logic here
+        Execute the Steiner tree topology generation first, then run an NSGA-3
+        catalogue-template optimization over the newly created branches.
 
-        return None
+        The two-stage flow mirrors what the engine offers piecewise: first the
+        topology is grown via :meth:`run_steiner_alone`, which populates
+        ``self.new_lines`` and ``self.new_transformers``; then a synchronous
+        catalogue optimization tunes the per-branch templates of those new
+        branches only (existing infrastructure is left untouched). On
+        completion the grid is left at the best Pareto member's templates so
+        the caller observes the optimizer's top recommendation.
+
+        :param pf_options: power flow options used by the inner PF evaluations
+            performed by the catalogue problem.
+        :param max_eval_per_var: per-decision-variable evaluation budget. The
+            actual NSGA-3 evaluation cap becomes
+            ``max_eval_per_var * problem.n_vars()``.
+        :return: the (in-place mutated) :class:`MultiCircuit` reference.
+        """
+        # 1. Build the topology. Mutates self.grid and populates
+        #    self.new_lines / self.new_transformers, which are the candidates
+        #    for catalogue optimisation in step 2.
+        self.run_steiner_alone()
+
+        # 2. Build the optimisation scope: only the newly created branches.
+        #    Pre-existing infrastructure is intentionally left untouched.
+        selected_branches: List = list(self.new_lines) + list(self.new_transformers)
+
+        # 2a. If the Steiner step produced no new branches, there is nothing
+        #     to optimise. Surface a warning to the logger and exit early.
+        if len(selected_branches) == 0:
+            self.logger.add_warning(
+                msg="No new branches were created by the Steiner step; "
+                    "catalogue optimization skipped."
+            )
+            return self.grid
+        else:
+            pass
+
+        # 3. Build the catalogue problem. The constructor raises ValueError
+        #    when no slot has more than one compatible template (nothing to
+        #    optimise over). We catch and report, then return the topology
+        #    as-is so the caller still gets a usable grid.
+        try:
+            problem: CatalogueOptimizationProblem = CatalogueOptimizationProblem(
+                grid=self.grid,
+                pf_options=pf_options,
+                selected_branches=selected_branches,
+                voltage_tolerance=0.1,
+            )
+        except ValueError as ex:
+            self.logger.add_warning(
+                msg=f"Catalogue optimization skipped: {ex}"
+            )
+            return self.grid
+
+        # 4. Compose options. max_eval is the per-var budget scaled by the
+        #    number of decision slots, matching the standalone catalogue
+        #    feature in simulations.py.
+        max_eval: int = int(max_eval_per_var) * problem.n_vars()
+        options: CatalogueOptimizationOptions = CatalogueOptimizationOptions(
+            max_eval=max_eval,
+            pf_options=pf_options,
+        )
+
+        # 5. Build and run the driver synchronously. We do NOT route through
+        #    session.run here because this method is engine-side and must be
+        #    callable without a running GUI session.
+        driver: CatalogueOptimizationDriver = CatalogueOptimizationDriver(
+            grid=self.grid,
+            options=options,
+            problem=problem,
+        )
+        driver.run()
+
+        # 6. Merge the driver's logger into the engine logger so its messages
+        #    reach the GUI LogsDialogue together with the topology-phase logs.
+        self.logger += driver.logger
+
+        # 7. Apply the best Pareto member's templates so the returned grid
+        #    reflects the optimizer's top recommendation. The driver leaves
+        #    the grid at baseline after each evaluation (per the problem's
+        #    snapshot/restore convention), so we restore-then-apply to land
+        #    on a deterministic, optimiser-chosen state.
+        if len(driver.results.sorting_indices) > 0:
+            best_x = driver.results.x[driver.results.sorting_indices[0], :]
+            driver.problem._restore_baseline()
+            driver.problem._apply_combination(x=best_x)
+        else:
+            # No Pareto results available (e.g. budget too small) - leave the
+            # grid at baseline templates.
+            pass
+
+        return self.grid

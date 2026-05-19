@@ -1,0 +1,222 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:b2d38b16-0d3a-4d6d-8bf2-e894632a2912> {
+    <urn:uuid:c39c3eb8-9cce-4778-9069-6952a117ba2b>
+            rdf:type                   cim:Substation;
+            cim:IdentifiedObject.mRID  "c39c3eb8-9cce-4778-9069-6952a117ba2b";
+            cim:IdentifiedObject.name  "HVDV Station";
+            cim:Substation.Region      <urn:uuid:77467625-a8fe-8792-7cf2-06c5dfd5fba9> .
+    
+    <urn:uuid:77467625-a8fe-8792-7cf2-06c5dfd5fba9>
+            rdf:type                   cim:SubGeographicalRegion;
+            cim:IdentifiedObject.mRID  "77467625-a8fe-8792-7cf2-06c5dfd5fba9";
+            cim:IdentifiedObject.name  "Nordheim";
+            cim:SubGeographicalRegion.Region
+                    <urn:uuid:9356077b-f716-0d6c-0cac-32c074bd8fa3> .
+    
+    <urn:uuid:fe3c8d26-9a1a-50f0-2dc0-0258ff59bda2>
+            rdf:type                      cim:OperationalLimitType;
+            cim:IdentifiedObject.mRID     "fe3c8d26-9a1a-50f0-2dc0-0258ff59bda2";
+            cim:IdentifiedObject.name     "highVoltage";
+            cim:OperationalLimitType.direction
+                    cim:OperationalLimitDirectionKind.high;
+            cim:OperationalLimitType.isInfiniteDuration
+                    true;
+            eu:OperationalLimitType.kind  eu:LimitKind.highVoltage .
+    
+    <urn:uuid:cdb50fb8-c09a-d243-35b1-aea96863cb10>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "cdb50fb8-c09a-d243-35b1-aea96863cb10";
+            cim:IdentifiedObject.name  "Voltage limits for BP HVDC GA-NH NH side";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:905685de-4a1a-51d2-1037-aa222a289fe7> .
+    
+    <urn:uuid:407ac89d-5ce5-8ca6-f4c7-75ebd4b4b30d>
+            rdf:type                   cim:ControlAreaGeneratingUnit;
+            cim:ControlAreaGeneratingUnit.ControlArea
+                    <urn:uuid:aaccbbc9-1adc-433f-bc74-672c5a2383a9>;
+            cim:ControlAreaGeneratingUnit.GeneratingUnit
+                    <urn:uuid:8c633952-d902-21af-1b3c-873296e155af>;
+            cim:IdentifiedObject.mRID  "407ac89d-5ce5-8ca6-f4c7-75ebd4b4b30d";
+            cim:IdentifiedObject.name  "SM_NO1" .
+    
+    <urn:uuid:1fe61449-3e7e-86b7-75f6-bffdf57ccea3>
+            rdf:type                   cim:SubLoadArea;
+            cim:IdentifiedObject.mRID  "1fe61449-3e7e-86b7-75f6-bffdf57ccea3";
+            cim:IdentifiedObject.name  "General Load_NO1";
+            cim:SubLoadArea.LoadArea   <urn:uuid:0dbeb8b8-1bce-498b-0b76-50ae68610301> .
+    
+    <urn:uuid:4fbcc3b5-af30-4940-a0f4-686ad1439467>
+            rdf:type                     cim:SynchronousMachine;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:e61f8ecf-8129-4702-a3a2-826bdf5ad13d>;
+            cim:IdentifiedObject.mRID    "4fbcc3b5-af30-4940-a0f4-686ad1439467";
+            cim:IdentifiedObject.name    "SM_NO1";
+            cim:RegulatingCondEq.RegulatingControl
+                    <urn:uuid:fb5e8f5e-52b0-e2e8-92cb-e556cbffea03>;
+            cim:RotatingMachine.GeneratingUnit
+                    <urn:uuid:8c633952-d902-21af-1b3c-873296e155af>;
+            cim:RotatingMachine.ratedPowerFactor
+                    "0.9"^^xsd:float;
+            cim:RotatingMachine.ratedS   "1100"^^xsd:float;
+            cim:RotatingMachine.ratedU   "220"^^xsd:float;
+            cim:SynchronousMachine.maxQ  "1100"^^xsd:float;
+            cim:SynchronousMachine.minQ  "-1100"^^xsd:float;
+            cim:SynchronousMachine.qPercent
+                    "100"^^xsd:float;
+            cim:SynchronousMachine.type  cim:SynchronousMachineKind.generatorOrCondenserOrMotor .
+    
+    <urn:uuid:aaccbbc9-1adc-433f-bc74-672c5a2383a9>
+            rdf:type                    cim:ControlArea;
+            cim:ControlArea.EnergyArea  <urn:uuid:0dbeb8b8-1bce-498b-0b76-50ae68610301>;
+            cim:ControlArea.type        cim:ControlAreaTypeKind.Interchange;
+            cim:IdentifiedObject.mRID   "aaccbbc9-1adc-433f-bc74-672c5a2383a9";
+            cim:IdentifiedObject.name   "Nordheim" .
+    
+    <urn:uuid:d478d71c-ebb1-1e9d-e66d-6f247cea34be>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "d478d71c-ebb1-1e9d-e66d-6f247cea34be";
+            cim:IdentifiedObject.name      "Cub_2";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:457baf0b-122c-475d-a36e-76f1b79a3f15>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:892ef502-162b-469f-b93f-266aae828227> .
+    
+    <urn:uuid:93b9b0c4-7a45-0457-72e0-a57e58af0f90>
+            rdf:type                      cim:VoltageLimit;
+            cim:IdentifiedObject.mRID     "93b9b0c4-7a45-0457-72e0-a57e58af0f90";
+            cim:IdentifiedObject.name     "high limit for BP HVDC GA-NH NH side";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:cdb50fb8-c09a-d243-35b1-aea96863cb10>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:fe3c8d26-9a1a-50f0-2dc0-0258ff59bda2>;
+            cim:VoltageLimit.normalValue  "231"^^xsd:float .
+    
+    <urn:uuid:b2d38b16-0d3a-4d6d-8bf2-e894632a2912>
+            rdf:type           rdfg:Graph , dcat:Dataset;
+            dct:conformsTo     <http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/3.0>;
+            dct:description    "The equipment dataset for Nordheim, which is part of the ReliCapGrid.";
+            dct:identifier     "b2d38b16-0d3a-4d6d-8bf2-e894632a2912";
+            dct:issued         "2025-02-06"^^xsd:date;
+            dct:requires       <urn:uuid:5f8c11a8-c61c-42c9-925d-8cdbc0146c1a> , <urn:uuid:1b65ada7-39ca-42b8-a278-39c457ed82c3>;
+            dct:temporal       [ rdf:type        dct:PeriodOfTime;
+                                 dcat:startDate  "2022-06-16T23:30:00Z"^^xsd:dateTime
+                               ];
+            dcat:distribution  [ rdf:type    dcat:Distribution;
+                                 dct:issued  "2025-02-06T14:18:22Z"^^xsd:dateTime
+                               ];
+            dcat:isVersionOf   <http://nordheim.nh/CGMES>;
+            dcat:version       "1";
+            json-ld:base       "http://nordheim.nh/CGMES#" .
+    
+    <urn:uuid:892ef502-162b-469f-b93f-266aae828227>
+            rdf:type                   cim:ConnectivityNode;
+            cim:ConnectivityNode.ConnectivityNodeContainer
+                    <urn:uuid:e61f8ecf-8129-4702-a3a2-826bdf5ad13d>;
+            cim:IdentifiedObject.mRID  "892ef502-162b-469f-b93f-266aae828227";
+            cim:IdentifiedObject.name  "BP HVDC GA-NH NH side" .
+    
+    <urn:uuid:70a8601c-3cbc-76fb-bea8-96a644f3915c>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "70a8601c-3cbc-76fb-bea8-96a644f3915c";
+            cim:IdentifiedObject.name      "Cub_4";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:4fbcc3b5-af30-4940-a0f4-686ad1439467>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:892ef502-162b-469f-b93f-266aae828227> .
+    
+    <urn:uuid:8c633952-d902-21af-1b3c-873296e155af>
+            rdf:type                   cim:GeneratingUnit;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:c39c3eb8-9cce-4778-9069-6952a117ba2b>;
+            cim:GeneratingUnit.maxOperatingP
+                    "990"^^xsd:float;
+            cim:GeneratingUnit.minOperatingP
+                    "-50"^^xsd:float;
+            cim:IdentifiedObject.mRID  "8c633952-d902-21af-1b3c-873296e155af";
+            cim:IdentifiedObject.name  "SM_NO1" .
+    
+    <urn:uuid:0dbeb8b8-1bce-498b-0b76-50ae68610301>
+            rdf:type                   cim:LoadArea;
+            cim:IdentifiedObject.mRID  "0dbeb8b8-1bce-498b-0b76-50ae68610301";
+            cim:IdentifiedObject.name  "General Load_NO1" .
+    
+    <urn:uuid:164b8e97-5936-443a-bfda-6a9e75243aea>
+            rdf:type                   cim:EquivalentInjection;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:e61f8ecf-8129-4702-a3a2-826bdf5ad13d>;
+            cim:EquivalentInjection.regulationCapability
+                    false;
+            cim:IdentifiedObject.mRID  "164b8e97-5936-443a-bfda-6a9e75243aea";
+            cim:IdentifiedObject.name  "EI NH-GA NH side" .
+    
+    <urn:uuid:457baf0b-122c-475d-a36e-76f1b79a3f15>
+            rdf:type                      cim:NonConformLoad;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:e61f8ecf-8129-4702-a3a2-826bdf5ad13d>;
+            cim:IdentifiedObject.mRID     "457baf0b-122c-475d-a36e-76f1b79a3f15";
+            cim:IdentifiedObject.name     "General Load_NO1";
+            cim:NonConformLoad.LoadGroup  <urn:uuid:268f6633-bdfa-a1ea-2540-7eb10502a9d5> .
+    
+    <urn:uuid:905685de-4a1a-51d2-1037-aa222a289fe7>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "905685de-4a1a-51d2-1037-aa222a289fe7";
+            cim:IdentifiedObject.name      "Cub_2(1)";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:164b8e97-5936-443a-bfda-6a9e75243aea>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:892ef502-162b-469f-b93f-266aae828227> .
+    
+    <urn:uuid:847bfb4b-95f5-44b7-bd2a-332496e72c17>
+            rdf:type                    cim:TieFlow;
+            cim:IdentifiedObject.mRID   "847bfb4b-95f5-44b7-bd2a-332496e72c17";
+            cim:IdentifiedObject.name   "TieFlow";
+            cim:TieFlow.ControlArea     <urn:uuid:aaccbbc9-1adc-433f-bc74-672c5a2383a9>;
+            cim:TieFlow.Terminal        <urn:uuid:70a8601c-3cbc-76fb-bea8-96a644f3915c>;
+            cim:TieFlow.positiveFlowIn  true .
+    
+    <urn:uuid:fb5e8f5e-52b0-e2e8-92cb-e556cbffea03>
+            rdf:type                        cim:RegulatingControl;
+            cim:IdentifiedObject.mRID       "fb5e8f5e-52b0-e2e8-92cb-e556cbffea03";
+            cim:IdentifiedObject.name       "SM_NO1";
+            cim:RegulatingControl.Terminal  <urn:uuid:70a8601c-3cbc-76fb-bea8-96a644f3915c>;
+            cim:RegulatingControl.mode      cim:RegulatingControlModeKind.voltage .
+    
+    <urn:uuid:9356077b-f716-0d6c-0cac-32c074bd8fa3>
+            rdf:type                   cim:GeographicalRegion;
+            cim:IdentifiedObject.mRID  "9356077b-f716-0d6c-0cac-32c074bd8fa3";
+            cim:IdentifiedObject.name  "Nordheim" .
+    
+    <urn:uuid:e61f8ecf-8129-4702-a3a2-826bdf5ad13d>
+            rdf:type                      cim:VoltageLevel;
+            cim:IdentifiedObject.mRID     "e61f8ecf-8129-4702-a3a2-826bdf5ad13d";
+            cim:IdentifiedObject.name     "VL 220 kV";
+            cim:VoltageLevel.BaseVoltage  <urn:uuid:a7f1d8de-d658-428a-821b-3a5ae5965fd1>;
+            cim:VoltageLevel.Substation   <urn:uuid:c39c3eb8-9cce-4778-9069-6952a117ba2b> .
+    
+    <urn:uuid:268f6633-bdfa-a1ea-2540-7eb10502a9d5>
+            rdf:type                   cim:NonConformLoadGroup;
+            cim:IdentifiedObject.mRID  "268f6633-bdfa-a1ea-2540-7eb10502a9d5";
+            cim:IdentifiedObject.name  "General Load_NO1";
+            cim:LoadGroup.SubLoadArea  <urn:uuid:1fe61449-3e7e-86b7-75f6-bffdf57ccea3> .
+}

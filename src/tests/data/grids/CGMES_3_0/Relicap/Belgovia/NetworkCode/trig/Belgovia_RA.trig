@@ -1,0 +1,806 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:7528537a-551c-45bf-9e4f-1854287d5cdc> {
+    <urn:uuid:2cc58aa5-6ec0-4a69-b7e4-10cebb1388eb>
+            rdf:type                        nc:PinTerminal;
+            cim:IdentifiedObject.mRID       "2cc58aa5-6ec0-4a69-b7e4-10cebb1388eb";
+            cim:IdentifiedObject.name       "Export on TieLine_GA_BO2 is more 20 MW";
+            nc:GateInputPin.Gate            <urn:uuid:4cd05f81-650a-4ee1-aa14-95d30f6f6b22>;
+            nc:GateInputPin.absoluteValue   true;
+            nc:GateInputPin.duration        "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:GateInputPin.logicKind       nc:LogicalOperatorsKind.greaterThan;
+            nc:GateInputPin.negate          false;
+            nc:GateInputPin.thresholdValue  "20"^^xsd:float;
+            nc:PinTerminal.Terminal         <urn:uuid:73ae8a3c-8217-9467-638f-cf007f229852>;
+            nc:PinTerminal.kind             nc:PinTerminalKind.activePower .
+    
+    <urn:uuid:24e0aad8-46eb-43a5-8846-a59d64edb10e>
+            rdf:type                   nc:GridStateAlterationCollection;
+            cim:IdentifiedObject.mRID  "24e0aad8-46eb-43a5-8846-a59d64edb10e";
+            cim:IdentifiedObject.name  "Disconnect linie BO-Line_6" .
+    
+    <urn:uuid:75ddc93b-4b67-46b7-b8c6-048f5a066042>
+            rdf:type                       nc:PinOperationalLimit;
+            cim:IdentifiedObject.mRID      "75ddc93b-4b67-46b7-b8c6-048f5a066042";
+            cim:IdentifiedObject.name      "Current flow through the line BO-Line_6 is higher than TATL";
+            nc:GateInputPin.Gate           <urn:uuid:276311ed-cb3d-4766-ac7e-35e3cd8a0a04>;
+            nc:GateInputPin.absoluteValue  true;
+            nc:GateInputPin.duration       "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:GateInputPin.logicKind      nc:LogicalOperatorsKind.greaterThan;
+            nc:GateInputPin.negate         false;
+            nc:PinOperationalLimit.OperationalLimit
+                    <urn:uuid:524301ff-c48a-836e-f914-ed06ac42e2e1> .
+    
+    <urn:uuid:5e5ff13e-2043-4468-9351-01920d3d9504>
+            rdf:type                   nc:GridStateAlterationRemedialAction;
+            cim:IdentifiedObject.description
+                    "Curative RA: TapPositionAction on normal trafo (MV Tap to 33) TapChangerID : _fe25f43a-7341-446e-a71a-8ab7119ba806";
+            cim:IdentifiedObject.mRID  "5e5ff13e-2043-4468-9351-01920d3d9504";
+            cim:IdentifiedObject.name  "TapRA2";
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    false;
+            nc:RemedialAction.kind     nc:RemedialActionKind.curative;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:87714f02-507a-4d20-8a6e-186bb23ae0d3>
+            rdf:type  nc:ContingencyWithRemedialAction;
+            nc:ContingencyWithRemedialAction.Contingency
+                    <urn:uuid:37997e71-cb7d-4a8c-baa6-2a1594956da9>;
+            nc:ContingencyWithRemedialAction.RemedialAction
+                    <urn:uuid:30f6377d-5e35-4dd0-a53d-c1992043855e>;
+            nc:ContingencyWithRemedialAction.combinationConstraintKind
+                    nc:ElementCombinationConstraintKind.included;
+            nc:ContingencyWithRemedialAction.mRID
+                    "87714f02-507a-4d20-8a6e-186bb23ae0d3" .
+    
+    <urn:uuid:b673e5fe-2d75-4c11-b2ee-0c49caf48361>
+            rdf:type                   nc:Gate;
+            cim:IdentifiedObject.mRID  "b673e5fe-2d75-4c11-b2ee-0c49caf48361";
+            cim:IdentifiedObject.name  "Power flows through BO-TR2_1 and TieLine_SD_BO3 is less than 1 MW";
+            nc:Gate.kind               nc:GateLogicKind.and .
+    
+    <urn:uuid:9d72d12a-f135-437a-83fa-ef3e5b23f41f>
+            rdf:type                   nc:RedispatchRemedialAction;
+            cim:IdentifiedObject.description
+                    "Redispatch RA sample";
+            cim:IdentifiedObject.mRID  "9d72d12a-f135-437a-83fa-ef3e5b23f41f";
+            cim:IdentifiedObject.name  "RD RA1";
+            nc:PowerRemedialAction.BiddingZone
+                    <urn:uuid:91e89a38-ca68-44c1-8ed4-a7db8e435f4f>;
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    true;
+            nc:RemedialAction.kind     nc:RemedialActionKind.curative;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:276311ed-cb3d-4766-ac7e-35e3cd8a0a04>
+            rdf:type                   nc:Gate;
+            cim:IdentifiedObject.mRID  "276311ed-cb3d-4766-ac7e-35e3cd8a0a04";
+            cim:IdentifiedObject.name  "Current flow through the line BO-Line_6 is higher than TATL";
+            nc:Gate.kind               nc:GateLogicKind.and .
+    
+    <https://energy.referencedata.eu/Test/Model/Belgovia-RA#83b5c01d-2c91-4404-b525-b48c9f6cc3f0>
+            rdf:type                     nc:StageTrigger;
+            cim:IdentifiedObject.mRID    "83b5c01d-2c91-4404-b525-b48c9f6cc3f0";
+            cim:IdentifiedObject.name    "Power flows through BO-TR2_1 and TieLine_SD_BO3 is less than 1 MW";
+            nc:StageTrigger.GateTrigger  <urn:uuid:b673e5fe-2d75-4c11-b2ee-0c49caf48361>;
+            nc:StageTrigger.Stage        <urn:uuid:623d903f-5928-4150-b304-85129901a189>;
+            nc:StageTrigger.normalArmed  true;
+            nc:StageTrigger.priority     0 .
+    
+    <urn:uuid:d660909d-3027-4e60-9a49-b83a14820025>
+            rdf:type                   nc:GridStateAlterationCollection;
+            cim:IdentifiedObject.mRID  "d660909d-3027-4e60-9a49-b83a14820025";
+            cim:IdentifiedObject.name  "Open breaker BO_Breaker_1" .
+    
+    <urn:uuid:0578c33a-f74a-44c4-99fb-74fa6f4d6e58>
+            rdf:type                       nc:PinGate;
+            cim:IdentifiedObject.mRID      "0578c33a-f74a-44c4-99fb-74fa6f4d6e58";
+            cim:IdentifiedObject.name      "One of the lines tripped";
+            nc:GateInputPin.Gate           <urn:uuid:23ef64de-0f0c-490f-b771-e48b5bd247c5>;
+            nc:GateInputPin.absoluteValue  true;
+            nc:GateInputPin.duration       "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:GateInputPin.logicKind      nc:LogicalOperatorsKind.equals;
+            nc:GateInputPin.negate         false;
+            nc:GateInputPin.normalEnabled  "false";
+            nc:PinGate.GateOutput          <urn:uuid:b73c5258-2fb6-4e8a-8b0a-61d84a52ee27> .
+    
+    <urn:uuid:49c6b720-0d02-403f-9954-001725a16235>
+            rdf:type                        nc:StaticPropertyRange;
+            cim:IdentifiedObject.mRID       "49c6b720-0d02-403f-9954-001725a16235";
+            cim:IdentifiedObject.name       "Switch1_BO-Line_6_OPEN";
+            nc:RangeConstraint.GridStateAlteration
+                    <urn:uuid:af64e952-7fc1-4cb7-8881-a0c2b3256982>;
+            nc:RangeConstraint.direction    nc:RelativeDirectionKind.none;
+            nc:RangeConstraint.normalValue  "1"^^xsd:float;
+            nc:RangeConstraint.valueKind    nc:ValueOffsetKind.absolute;
+            nc:StaticPropertyRange.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open> .
+    
+    <urn:uuid:bf7f0ef4-dad3-4322-b2be-5ace59837e60>
+            rdf:type                   nc:TapPositionAction;
+            cim:IdentifiedObject.description
+                    "tap position action on this transformer : Transformer ID: _84ed55f4-61f5-4d9d-8755-bba7b877a246";
+            cim:IdentifiedObject.mRID  "bf7f0ef4-dad3-4322-b2be-5ace59837e60";
+            cim:IdentifiedObject.name  "TapRA2";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:5e5ff13e-2043-4468-9351-01920d3d9504>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/TapChanger.step>;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:TapPositionAction.TapChanger
+                    <urn:uuid:23c255c0-09e8-d446-2526-920905420c17> .
+    
+    <urn:uuid:bcc5cc7d-1c60-4014-9c5f-fb16af94bba8>
+            rdf:type                        nc:StaticPropertyRange;
+            cim:IdentifiedObject.mRID       "bcc5cc7d-1c60-4014-9c5f-fb16af94bba8";
+            cim:IdentifiedObject.name       "Set power on EquivalentInjection to -10 MW";
+            nc:RangeConstraint.GridStateAlteration
+                    <urn:uuid:12b3c4e6-2104-4499-b003-1248ef533e13>;
+            nc:RangeConstraint.direction    nc:RelativeDirectionKind.none;
+            nc:RangeConstraint.normalValue  "-10"^^xsd:float;
+            nc:RangeConstraint.valueKind    nc:ValueOffsetKind.absolute;
+            nc:StaticPropertyRange.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/EquivalentInjection.p> .
+    
+    <urn:uuid:496aa829-9d7e-4f19-9c71-447a8534e0a9>
+            rdf:type                        nc:StaticPropertyRange;
+            cim:IdentifiedObject.mRID       "496aa829-9d7e-4f19-9c71-447a8534e0a9";
+            cim:IdentifiedObject.name       "Switch2_BO-Line_6_OPEN";
+            nc:RangeConstraint.GridStateAlteration
+                    <urn:uuid:bdb13ef7-1338-4f34-b42b-5e8ad34989b1>;
+            nc:RangeConstraint.direction    nc:RelativeDirectionKind.none;
+            nc:RangeConstraint.normalValue  "1"^^xsd:float;
+            nc:RangeConstraint.valueKind    nc:ValueOffsetKind.absolute;
+            nc:StaticPropertyRange.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open> .
+    
+    <urn:uuid:a1673e05-907a-4d90-b01a-ee4d9c752061>
+            rdf:type                     nc:StageTrigger;
+            cim:IdentifiedObject.mRID    "a1673e05-907a-4d90-b01a-ee4d9c752061";
+            cim:IdentifiedObject.name    "voltage on 110 kV BO-Busbar_6 exceeds 125 kV";
+            nc:StageTrigger.GateTrigger  <urn:uuid:9a1a12f6-82ce-4bec-bc2a-7785a4655b3c>;
+            nc:StageTrigger.Stage        <urn:uuid:e1c8a619-2a85-4d8e-8d30-06bdcfef6f77>;
+            nc:StageTrigger.normalArmed  true;
+            nc:StageTrigger.priority     0 .
+    
+    <urn:uuid:86b26849-bc10-462b-97ef-1d339cd6614e>
+            rdf:type                       nc:PinContingency;
+            cim:IdentifiedObject.mRID      "86b26849-bc10-462b-97ef-1d339cd6614e";
+            cim:IdentifiedObject.name      "line BO-Line_2 tripped - contingency applied";
+            nc:GateInputPin.Gate           <urn:uuid:b73c5258-2fb6-4e8a-8b0a-61d84a52ee27>;
+            nc:GateInputPin.absoluteValue  true;
+            nc:GateInputPin.duration       "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:GateInputPin.logicKind      nc:LogicalOperatorsKind.equals;
+            nc:GateInputPin.negate         false;
+            nc:PinContingency.Contingency  <urn:uuid:83ef276e-86ae-4d95-a877-6eb89d6ffd45> .
+    
+    <urn:uuid:ed9c022a-e794-4973-a780-151cedd95674>
+            rdf:type                       nc:Stage;
+            cim:IdentifiedObject.mRID      "ed9c022a-e794-4973-a780-151cedd95674";
+            cim:IdentifiedObject.name      "LastLineDisconnection_Alfavik";
+            nc:Stage.GridStateAlterationCollection
+                    <urn:uuid:44027a5c-bfb3-4a50-823e-e8303c34360f>;
+            nc:Stage.RemedialActionScheme  <urn:uuid:b2c7504e-4ef8-4afc-9264-e072169fb6a6>;
+            nc:Stage.priority              0 .
+    
+    <urn:uuid:d874f8e3-7272-44b8-95ba-18f10449f036>
+            rdf:type                   nc:GridStateAlterationRemedialAction;
+            cim:IdentifiedObject.description
+                    "Preventive RA: Redispatch (power-freq control in BO acccording to rated power). Generator1 ID:_3a3b27be-b18b-4385-b557-6735d733baf0 to  Generator2 ID: _550ebe0d-f2b2-48c1-991f-cebea43a21aa";
+            cim:IdentifiedObject.mRID  "d874f8e3-7272-44b8-95ba-18f10449f036";
+            cim:IdentifiedObject.name  "Redispatch";
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    false;
+            nc:RemedialAction.kind     nc:RemedialActionKind.preventive;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:7528537a-551c-45bf-9e4f-1854287d5cdc>
+            rdf:type              dcat:Dataset;
+            dct:accessRights      "https://energy.referencedata.eu/Confidentiality/Public";
+            dct:conformsTo        "https://cim.ucaiug.io/ns#" , "https://ap.cim4.eu/RemedialAction/2.4" , "https://cim4.eu/ns/nc/2.4#" , "http://iec.ch/TC57/2013/CIM-schema-cim16#";
+            dct:description       "This is the remedial action dataset for Belgovia part of ReliCapGrid."@en;
+            dct:identifier        "7528537a-551c-45bf-9e4f-1854287d5cdc";
+            dct:issued            "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dct:license           "https://creativecommons.org/licenses/by/4.0/";
+            dct:publisher         "https://energy.referencedata.eu/test/party/Belgovia";
+            dct:requires          <urn:uuid:b2d1215a-a124-4b6e-9df5-85ecdce9793b>;
+            dct:rights            "Copyright";
+            dct:rightsHolder      "ENTSO-E";
+            dct:spatial           "https://energy.referencedata.eu/Test/Frame/Belgovia-Power-Transmission-System";
+            dct:title             "20220615_Belgovia_RA_1.0.0";
+            dcat:endDate          "2023-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Belgovia-RA>;
+            dcat:keyword          "RA";
+            dcat:startDate        "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:version          "1.0.0";
+            prov:generatedAtTime  "2022-06-10T07:06:25Z"^^xsd:dateTime;
+            prov:wasGeneratedBy   "https://energy.referencedata.eu/Activity/CGM-RA" .
+    
+    <urn:uuid:3326ee03-5968-45bb-a88c-6a2185d89da7>
+            rdf:type                   nc:RotatingMachineAction;
+            cim:IdentifiedObject.mRID  "3326ee03-5968-45bb-a88c-6a2185d89da7";
+            cim:IdentifiedObject.name  "Set generator BO-G2 to Pmin";
+            nc:GridStateAlteration.GridStateAlterationCollection
+                    <urn:uuid:cf042533-90b8-4a2e-9955-2ef8b71b5886>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/RotatingMachine.p>;
+            nc:RotatingMachineAction.RotatingMachine
+                    <urn:uuid:3a3b27be-b18b-4385-b557-6735d733baf0> .
+    
+    <urn:uuid:b2c7504e-4ef8-4afc-9264-e072169fb6a6>
+            rdf:type                      nc:RemedialActionScheme;
+            cim:IdentifiedObject.description
+                    "SIPS_UC_4 Last Line Disconnection (LLD). LOGIC: IF lines SLK – ZRC and SLK – DUN trip THEN disconnect HVDC SwePol Link";
+            cim:IdentifiedObject.mRID     "b2c7504e-4ef8-4afc-9264-e072169fb6a6";
+            cim:IdentifiedObject.name     "LastLineDisconnection_Alfavik";
+            nc:RemedialActionScheme.kind  nc:RemedialActionSchemeKind.sips;
+            nc:RemedialActionScheme.normalArmed
+                    true .
+    
+    <urn:uuid:3ecde63d-c87f-4947-a1f2-3622dc2092ba>
+            rdf:type                      nc:RemedialActionScheme;
+            cim:IdentifiedObject.description
+                    "SIPS_UC_2 Run-back function on HVDC link. LOGIC: IF line BO-Line_2 or line BO-Line_6 trips AND power flow on HVDC TieLine_GA_BO2 is higher than 20 MW THEN decrease power flow on HVDC to 10 MW";
+            cim:IdentifiedObject.mRID     "3ecde63d-c87f-4947-a1f2-3622dc2092ba";
+            cim:IdentifiedObject.name     "SIPS_UC2_Runback";
+            nc:RemedialActionScheme.kind  nc:RemedialActionSchemeKind.sips;
+            nc:RemedialActionScheme.normalArmed
+                    true .
+    
+    <urn:uuid:89705a24-34bd-493e-a572-c32f25106e3b>
+            rdf:type                       nc:Stage;
+            cim:IdentifiedObject.description
+                    "Runback_SwePol (synthetic TieLine_GA_BO2). in case of export on TieLine_GA_BO2 decrease the power to 10 MW";
+            cim:IdentifiedObject.mRID      "89705a24-34bd-493e-a572-c32f25106e3b";
+            cim:IdentifiedObject.name      "TL decrease 10 MW";
+            nc:Stage.GridStateAlterationCollection
+                    <urn:uuid:84477640-5bd9-4076-bfe8-415ae0ef8d6e>;
+            nc:Stage.RemedialActionScheme  <urn:uuid:3ecde63d-c87f-4947-a1f2-3622dc2092ba>;
+            nc:Stage.priority              0 .
+    
+    <urn:uuid:38ac48fd-027f-45a9-90c9-08d9abd7b0d2>
+            rdf:type                     nc:StageTrigger;
+            cim:IdentifiedObject.mRID    "38ac48fd-027f-45a9-90c9-08d9abd7b0d2";
+            cim:IdentifiedObject.name    "Current flow through the line BO-Line_6 is higher than TATL";
+            nc:StageTrigger.GateTrigger  <urn:uuid:276311ed-cb3d-4766-ac7e-35e3cd8a0a04>;
+            nc:StageTrigger.Stage        <urn:uuid:0d198c1c-b2fb-424f-89f4-3ed6911b6406>;
+            nc:StageTrigger.normalArmed  true;
+            nc:StageTrigger.priority     0 .
+    
+    <urn:uuid:6211b151-9809-40a8-bd66-a0ca88eb546d>
+            rdf:type                       nc:PinGate;
+            cim:IdentifiedObject.mRID      "6211b151-9809-40a8-bd66-a0ca88eb546d";
+            cim:IdentifiedObject.name      "One of the lines tripped";
+            nc:GateInputPin.Gate           <urn:uuid:4cd05f81-650a-4ee1-aa14-95d30f6f6b22>;
+            nc:GateInputPin.absoluteValue  true;
+            nc:GateInputPin.duration       "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:GateInputPin.logicKind      nc:LogicalOperatorsKind.equals;
+            nc:GateInputPin.negate         false;
+            nc:PinGate.GateOutput          <urn:uuid:b73c5258-2fb6-4e8a-8b0a-61d84a52ee27> .
+    
+    <urn:uuid:a38d4a85-e221-43ec-b7bb-122f7c95f06e>
+            rdf:type                   nc:RotatingMachineAction;
+            cim:IdentifiedObject.mRID  "a38d4a85-e221-43ec-b7bb-122f7c95f06e";
+            cim:IdentifiedObject.name  "Rotatig Mach 1";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:d874f8e3-7272-44b8-95ba-18f10449f036>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/RotatingMachine.p>;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:RotatingMachineAction.RotatingMachine
+                    <urn:uuid:3a3b27be-b18b-4385-b557-6735d733baf0> .
+    
+    <urn:uuid:d4d08055-6b90-4278-8c78-bfd9bf8bc93a>
+            rdf:type                        nc:PinTerminal;
+            cim:IdentifiedObject.mRID       "d4d08055-6b90-4278-8c78-bfd9bf8bc93a";
+            cim:IdentifiedObject.name       "power flow in TieLine_SD_BO3 is less than 1 MW";
+            nc:GateInputPin.Gate            <urn:uuid:b673e5fe-2d75-4c11-b2ee-0c49caf48361>;
+            nc:GateInputPin.absoluteValue   true;
+            nc:GateInputPin.duration        "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:GateInputPin.logicKind       nc:LogicalOperatorsKind.lessThan;
+            nc:GateInputPin.negate          false;
+            nc:GateInputPin.thresholdValue  "1"^^xsd:float;
+            nc:PinTerminal.Terminal         <urn:uuid:60e4a112-8b97-e4ee-69b3-ece28a25376d>;
+            nc:PinTerminal.kind             nc:PinTerminalKind.activePower .
+    
+    <urn:uuid:44027a5c-bfb3-4a50-823e-e8303c34360f>
+            rdf:type                   nc:GridStateAlterationCollection;
+            cim:IdentifiedObject.mRID  "44027a5c-bfb3-4a50-823e-e8303c34360f";
+            cim:IdentifiedObject.name  "Open TieLine_GA_BO2 breaker" .
+    
+    <urn:uuid:e1c8a619-2a85-4d8e-8d30-06bdcfef6f77>
+            rdf:type                       nc:Stage;
+            cim:IdentifiedObject.mRID      "e1c8a619-2a85-4d8e-8d30-06bdcfef6f77";
+            cim:IdentifiedObject.name      "Overvoltage_PP_Brussia";
+            nc:Stage.GridStateAlterationCollection
+                    <urn:uuid:d660909d-3027-4e60-9a49-b83a14820025>;
+            nc:Stage.RemedialActionScheme  <urn:uuid:c11f6d67-e802-4b5c-95b4-c213c6ca9624>;
+            nc:Stage.priority              0 .
+    
+    <urn:uuid:30f6377d-5e35-4dd0-a53d-c1992043855e>
+            rdf:type                   nc:CountertradeRemedialAction;
+            cim:IdentifiedObject.description
+                    "Curative RA: Countertrading, BO:-205.5->-251, GA:-438.25->-392.8";
+            cim:IdentifiedObject.mRID  "30f6377d-5e35-4dd0-a53d-c1992043855e";
+            cim:IdentifiedObject.name  "RA18";
+            nc:CountertradeRemedialAction.gLSKStrategy
+                    nc:GLSKStrategyKind.generatorPmax;
+            nc:CountertradeRemedialAction.shiftMethod
+                    nc:ShiftMethodKind.shared;
+            nc:PowerRemedialAction.BiddingZone
+                    <urn:uuid:91e89a38-ca68-44c1-8ed4-a7db8e435f4f>;
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.RemedialActionSystemOperator
+                    <https://energy.referencedata.eu/Test/Model/Belgovia-RA#YBO----------2>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    true;
+            nc:RemedialAction.kind     nc:RemedialActionKind.curative;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:bdb13ef7-1338-4f34-b42b-5e8ad34989b1>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.mRID  "bdb13ef7-1338-4f34-b42b-5e8ad34989b1";
+            cim:IdentifiedObject.name  "Switch2_BO-Line_6_OPEN";
+            nc:GridStateAlteration.GridStateAlterationCollection
+                    <urn:uuid:24e0aad8-46eb-43a5-8846-a59d64edb10e>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:GridStateAlteration.normalEnabled
+                    false;
+            nc:TopologyAction.Switch   <urn:uuid:ddc148fc-3abd-459d-aec1-396283e0def6> .
+    
+    <urn:uuid:cf042533-90b8-4a2e-9955-2ef8b71b5886>
+            rdf:type                   nc:GridStateAlterationCollection;
+            cim:IdentifiedObject.mRID  "cf042533-90b8-4a2e-9955-2ef8b71b5886";
+            cim:IdentifiedObject.name  "Set generator BO-G2 to Pmin" .
+    
+    <urn:uuid:b73c5258-2fb6-4e8a-8b0a-61d84a52ee27>
+            rdf:type                   nc:Gate;
+            cim:IdentifiedObject.description
+                    "Check if one of the lines SLK-DUN (BO-Line_2), or SLK-ZRC (BO-Line_6), or MON-DUN tripped - contingency applied";
+            cim:IdentifiedObject.mRID  "b73c5258-2fb6-4e8a-8b0a-61d84a52ee27";
+            cim:IdentifiedObject.name  "check if one of the lines tripped - contingency applied";
+            nc:Gate.kind               nc:GateLogicKind.or .
+    
+    <urn:uuid:de394860-8c5f-48b4-869c-c09f5247a6ec>
+            rdf:type                        nc:StaticPropertyRange;
+            cim:IdentifiedObject.description
+                    "Set power on EquivalentInjection to 10 MW";
+            cim:IdentifiedObject.mRID       "de394860-8c5f-48b4-869c-c09f5247a6ec";
+            cim:IdentifiedObject.name       "Set EI to 10";
+            nc:RangeConstraint.GridStateAlteration
+                    <urn:uuid:b591f3b9-e7e6-4625-b1d2-f53dec63ced1>;
+            nc:RangeConstraint.direction    nc:RelativeDirectionKind.none;
+            nc:RangeConstraint.normalValue  "10"^^xsd:float;
+            nc:RangeConstraint.valueKind    nc:ValueOffsetKind.absolute;
+            nc:StaticPropertyRange.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/EquivalentInjection.p> .
+    
+    <urn:uuid:20849f96-ed7f-43b4-bbef-2be02b03b262>
+            rdf:type                        nc:StaticPropertyRange;
+            cim:IdentifiedObject.mRID       "20849f96-ed7f-43b4-bbef-2be02b03b262";
+            cim:IdentifiedObject.name       "Open TieLine_GA_BO2 breaker";
+            nc:RangeConstraint.GridStateAlteration
+                    <urn:uuid:ecd76354-2372-4eca-af47-530abc00549c>;
+            nc:RangeConstraint.direction    nc:RelativeDirectionKind.none;
+            nc:RangeConstraint.normalValue  "1"^^xsd:float;
+            nc:RangeConstraint.valueKind    nc:ValueOffsetKind.absolute;
+            nc:StaticPropertyRange.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open> .
+    
+    <urn:uuid:d9977bd6-c363-45db-ad83-17ef21929894>
+            rdf:type                     nc:StageTrigger;
+            cim:IdentifiedObject.description
+                    "One of the lines is disconnected AND power flow on TieLine_GA_BO2 is higher than 20 MW. trigger conditions: if any line tripped (contingency triggered) and import on TieLine_GA_BO2 higher than 20 MW (EquivalentInjection power lower than -20 MW)";
+            cim:IdentifiedObject.mRID    "d9977bd6-c363-45db-ad83-17ef21929894";
+            cim:IdentifiedObject.name    "stage 1";
+            nc:StageTrigger.GateTrigger  <urn:uuid:23ef64de-0f0c-490f-b771-e48b5bd247c5>;
+            nc:StageTrigger.Stage        <urn:uuid:215c0331-cf8e-4499-b9b5-bc3cffd3f3b3>;
+            nc:StageTrigger.normalArmed  true;
+            nc:StageTrigger.priority     0 .
+    
+    <urn:uuid:fa73cfee-ff54-43cd-816b-51394cd76f0f>
+            rdf:type                   nc:RedispatchRemedialAction;
+            cim:IdentifiedObject.description
+                    "Redispatch RA sample";
+            cim:IdentifiedObject.mRID  "fa73cfee-ff54-43cd-816b-51394cd76f0f";
+            cim:IdentifiedObject.name  "RD RA1";
+            nc:PowerRemedialAction.BiddingZone
+                    <urn:uuid:91e89a38-ca68-44c1-8ed4-a7db8e435f4f>;
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    true;
+            nc:RemedialAction.kind     nc:RemedialActionKind.curative;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:5734b320-3ed8-4c95-bfd3-17aedddce8f6>
+            rdf:type                        nc:PinTerminal;
+            cim:IdentifiedObject.mRID       "5734b320-3ed8-4c95-bfd3-17aedddce8f6";
+            cim:IdentifiedObject.name       "voltage on 110 kV BO-Busbar_6 exceeds 125 kV";
+            nc:GateInputPin.Gate            <urn:uuid:9a1a12f6-82ce-4bec-bc2a-7785a4655b3c>;
+            nc:GateInputPin.absoluteValue   true;
+            nc:GateInputPin.duration        "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:GateInputPin.logicKind       nc:LogicalOperatorsKind.greaterThan;
+            nc:GateInputPin.negate          false;
+            nc:GateInputPin.thresholdValue  "125"^^xsd:float;
+            nc:PinTerminal.Terminal         <urn:uuid:a1f42404-a01c-6abb-28c6-4c582f23b62d>;
+            nc:PinTerminal.kind             nc:PinTerminalKind.voltageMagnitude .
+    
+    <urn:uuid:af64e952-7fc1-4cb7-8881-a0c2b3256982>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.mRID  "af64e952-7fc1-4cb7-8881-a0c2b3256982";
+            cim:IdentifiedObject.name  "Switch1_BO-Line_6_OPEN";
+            nc:GridStateAlteration.GridStateAlterationCollection
+                    <urn:uuid:24e0aad8-46eb-43a5-8846-a59d64edb10e>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:TopologyAction.Switch   <urn:uuid:0a84038e-1952-4d9d-9909-3b49c364a1ac> .
+    
+    <urn:uuid:428840f6-d175-47ab-b571-d784b91972a9>
+            rdf:type                   nc:Gate;
+            cim:IdentifiedObject.mRID  "428840f6-d175-47ab-b571-d784b91972a9";
+            cim:IdentifiedObject.name  "Power flows in BO-Line_2 is less than 1 MW";
+            nc:Gate.kind               nc:GateLogicKind.and .
+    
+    <urn:uuid:8b56b2cd-99ac-4fc3-ad3d-eb14153426f3>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.mRID  "8b56b2cd-99ac-4fc3-ad3d-eb14153426f3";
+            cim:IdentifiedObject.name  "Open breaker BO_Breaker_1";
+            nc:GridStateAlteration.GridStateAlterationCollection
+                    <urn:uuid:d660909d-3027-4e60-9a49-b83a14820025>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:TopologyAction.Switch   <urn:uuid:38dfcc80-600f-44e2-8f71-fb595b4f00ac> .
+    
+    <urn:uuid:12b3c4e6-2104-4499-b003-1248ef533e13>
+            rdf:type                   nc:EquivalentInjectionAction;
+            cim:IdentifiedObject.mRID  "12b3c4e6-2104-4499-b003-1248ef533e13";
+            cim:IdentifiedObject.name  "Set power on EquivalentInjection to -10 MW";
+            nc:EquivalentInjectionAction.EquivalentInjection
+                    <urn:uuid:9dc33660-e284-4c74-bb9a-44604390634e>;
+            nc:GridStateAlteration.GridStateAlterationCollection
+                    <urn:uuid:84477640-5bd9-4076-bfe8-415ae0ef8d6e>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/EquivalentInjection.p>;
+            nc:GridStateAlteration.normalEnabled
+                    true .
+    
+    <urn:uuid:d91f1368-bd8c-456a-9088-0dd4b9620b21>
+            rdf:type                   nc:GridStateAlterationCollection;
+            cim:IdentifiedObject.description
+                    "Set power flow on TieLine_GA_BO2 to 10 MW";
+            cim:IdentifiedObject.mRID  "d91f1368-bd8c-456a-9088-0dd4b9620b21";
+            cim:IdentifiedObject.name  "Set TL power flow" .
+    
+    <urn:uuid:215c0331-cf8e-4499-b9b5-bc3cffd3f3b3>
+            rdf:type                       nc:Stage;
+            cim:IdentifiedObject.description
+                    "SIPS_UC2_Runback_import. In case of import on TieLine_GA_BO2 decprease the power to 10 MW";
+            cim:IdentifiedObject.mRID      "215c0331-cf8e-4499-b9b5-bc3cffd3f3b3";
+            cim:IdentifiedObject.name      "SIPS_UC2_Runback_import.";
+            nc:Stage.GridStateAlterationCollection
+                    <urn:uuid:d91f1368-bd8c-456a-9088-0dd4b9620b21>;
+            nc:Stage.RemedialActionScheme  <urn:uuid:3ecde63d-c87f-4947-a1f2-3622dc2092ba>;
+            nc:Stage.priority              0 .
+    
+    <urn:uuid:9a1a12f6-82ce-4bec-bc2a-7785a4655b3c>
+            rdf:type                   nc:Gate;
+            cim:IdentifiedObject.mRID  "9a1a12f6-82ce-4bec-bc2a-7785a4655b3c";
+            cim:IdentifiedObject.name  "voltage on 110 kV BO-Busbar_6 exceeds 125 kV";
+            nc:Gate.kind               nc:GateLogicKind.and .
+    
+    <urn:uuid:5c7acbe4-4bbe-4609-b79f-2e87778424c5>
+            rdf:type  nc:ContingencyWithRemedialAction;
+            nc:ContingencyWithRemedialAction.Contingency
+                    <urn:uuid:e9eab3fe-c328-4f78-9bc1-77adb59f6ba7>;
+            nc:ContingencyWithRemedialAction.RemedialAction
+                    <urn:uuid:7acbe48a-bd54-4cd7-af2e-87768357c559>;
+            nc:ContingencyWithRemedialAction.combinationConstraintKind
+                    nc:ElementCombinationConstraintKind.included;
+            nc:ContingencyWithRemedialAction.mRID
+                    "5c7acbe4-4bbe-4609-b79f-2e87778424c5" .
+    
+    <urn:uuid:b591f3b9-e7e6-4625-b1d2-f53dec63ced1>
+            rdf:type                   nc:EquivalentInjectionAction;
+            cim:IdentifiedObject.description
+                    "Set power on EquivalentInjection to 10 MW";
+            cim:IdentifiedObject.mRID  "b591f3b9-e7e6-4625-b1d2-f53dec63ced1";
+            cim:IdentifiedObject.name  "Set EI to 10";
+            nc:EquivalentInjectionAction.EquivalentInjection
+                    <urn:uuid:9dc33660-e284-4c74-bb9a-44604390634e>;
+            nc:GridStateAlteration.GridStateAlterationCollection
+                    <urn:uuid:d91f1368-bd8c-456a-9088-0dd4b9620b21>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/EquivalentInjection.p> .
+    
+    <urn:uuid:ecd76354-2372-4eca-af47-530abc00549c>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.mRID  "ecd76354-2372-4eca-af47-530abc00549c";
+            cim:IdentifiedObject.name  "Open TieLine_GA_BO2 breaker";
+            nc:GridStateAlteration.GridStateAlterationCollection
+                    <urn:uuid:44027a5c-bfb3-4a50-823e-e8303c34360f>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:TopologyAction.Switch   <urn:uuid:484536e9-762a-49a3-9970-d60b9fae03fe> .
+    
+    <urn:uuid:112c79d2-0739-480f-83c7-6d9ebc9bcb0c>
+            rdf:type  nc:ContingencyWithRemedialAction;
+            nc:ContingencyWithRemedialAction.Contingency
+                    <urn:uuid:7e31c67d-67ba-4592-8ac1-9e806d697c8e>;
+            nc:ContingencyWithRemedialAction.RemedialAction
+                    <urn:uuid:5e5ff13e-2043-4468-9351-01920d3d9504>;
+            nc:ContingencyWithRemedialAction.combinationConstraintKind
+                    nc:ElementCombinationConstraintKind.included;
+            nc:ContingencyWithRemedialAction.mRID
+                    "112c79d2-0739-480f-83c7-6d9ebc9bcb0c" .
+    
+    <urn:uuid:91d9f965-3934-4e27-8da5-7c7ed7372904>
+            rdf:type                      nc:RemedialActionScheme;
+            cim:IdentifiedObject.description
+                    "SIPS_UC_3 Automatic Line Shedding. LOGIC: IF line BO-Line_6 is overloaded above TATL THEN disconnect the line";
+            cim:IdentifiedObject.mRID     "91d9f965-3934-4e27-8da5-7c7ed7372904";
+            cim:IdentifiedObject.name     "AutomaticLineShedding_BO-Line_6";
+            nc:RemedialActionScheme.kind  nc:RemedialActionSchemeKind.sips;
+            nc:RemedialActionScheme.normalArmed
+                    true .
+    
+    <urn:uuid:7966123b-687a-42c6-9638-5beea5565ca0>
+            rdf:type                        nc:PinTerminal;
+            cim:IdentifiedObject.mRID       "7966123b-687a-42c6-9638-5beea5565ca0";
+            cim:IdentifiedObject.name       "Power flow in BO-Line_2 is less than 1 MW";
+            nc:GateInputPin.Gate            <urn:uuid:428840f6-d175-47ab-b571-d784b91972a9>;
+            nc:GateInputPin.absoluteValue   true;
+            nc:GateInputPin.duration        "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:GateInputPin.logicKind       nc:LogicalOperatorsKind.lessThan;
+            nc:GateInputPin.negate          false;
+            nc:GateInputPin.thresholdValue  "1"^^xsd:float;
+            nc:PinTerminal.Terminal         <urn:uuid:77f04391-aa23-49b6-b3e9-6089130bb5d5>;
+            nc:PinTerminal.kind             nc:PinTerminalKind.activePower .
+    
+    <urn:uuid:623d903f-5928-4150-b304-85129901a189>
+            rdf:type                       nc:Stage;
+            cim:IdentifiedObject.mRID      "623d903f-5928-4150-b304-85129901a189";
+            cim:IdentifiedObject.name      "Anti-swing_protection_PP_Brussia";
+            nc:Stage.GridStateAlterationCollection
+                    <urn:uuid:cf042533-90b8-4a2e-9955-2ef8b71b5886>;
+            nc:Stage.RemedialActionScheme  <urn:uuid:52b4ff20-944b-4a6e-9e07-b2760521cfb6>;
+            nc:Stage.priority              0 .
+    
+    <urn:uuid:7be59519-0083-4845-a587-cb391ed16a1d>
+            rdf:type                   nc:RotatingMachineAction;
+            cim:IdentifiedObject.mRID  "7be59519-0083-4845-a587-cb391ed16a1d";
+            cim:IdentifiedObject.name  "Rotatig Mach 2";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:d874f8e3-7272-44b8-95ba-18f10449f036>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/RotatingMachine.p>;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false";
+            nc:RotatingMachineAction.RotatingMachine
+                    <urn:uuid:550ebe0d-f2b2-48c1-991f-cebea43a21aa> .
+    
+    <urn:uuid:7b82a44c-78fb-4ea5-aab1-6670f428193d>
+            rdf:type                        nc:PinTerminal;
+            cim:IdentifiedObject.mRID       "7b82a44c-78fb-4ea5-aab1-6670f428193d";
+            cim:IdentifiedObject.name       "power flow in BO-TR2_1 is less than 1 MW";
+            nc:GateInputPin.Gate            <urn:uuid:b673e5fe-2d75-4c11-b2ee-0c49caf48361>;
+            nc:GateInputPin.absoluteValue   true;
+            nc:GateInputPin.duration        "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:GateInputPin.logicKind       nc:LogicalOperatorsKind.lessThan;
+            nc:GateInputPin.negate          false;
+            nc:GateInputPin.thresholdValue  "1"^^xsd:float;
+            nc:PinTerminal.Terminal         <urn:uuid:9f5dbaf3-e384-4e86-9d49-f43c30b4e354>;
+            nc:PinTerminal.kind             nc:PinTerminalKind.activePower .
+    
+    <urn:uuid:70b696ac-c38f-4528-8d65-ba707c0b72e1>
+            rdf:type                   nc:GridStateAlterationRemedialAction;
+            cim:IdentifiedObject.description
+                    "Curative RA: TapPositionAction on normal trafo (MV Tap to 33) TapChangerID : _fe25f43a-7341-446e-a71a-8ab7119ba806";
+            cim:IdentifiedObject.mRID  "37997e71-cb7d-4a8c-baa6-2a1594956da9";
+            cim:IdentifiedObject.name  "TapRA2";
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    false;
+            nc:RemedialAction.kind     nc:RemedialActionKind.curative;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:84477640-5bd9-4076-bfe8-415ae0ef8d6e>
+            rdf:type                   nc:GridStateAlterationCollection;
+            cim:IdentifiedObject.mRID  "84477640-5bd9-4076-bfe8-415ae0ef8d6e";
+            cim:IdentifiedObject.name  "Set power flow on TieLine_GA_BO2 to 10 MW" .
+    
+    <urn:uuid:c11f6d67-e802-4b5c-95b4-c213c6ca9624>
+            rdf:type                      nc:RemedialActionScheme;
+            cim:IdentifiedObject.description
+                    "SIPS_UC_5 Overvoltage protection. LOGIC: IF voltage in PP_Brussia 110 kV BO-Busbar_6  exceeds 125 kV THEN open breaker BO_Breaker_1";
+            cim:IdentifiedObject.mRID     "c11f6d67-e802-4b5c-95b4-c213c6ca9624";
+            cim:IdentifiedObject.name     "Overvoltage_PP_Brussia";
+            nc:RemedialActionScheme.kind  nc:RemedialActionSchemeKind.sips;
+            nc:RemedialActionScheme.normalArmed
+                    true .
+    
+    <urn:uuid:f9444387-0b28-4f1f-8eec-cb48514b0080>
+            rdf:type                     nc:StageTrigger;
+            cim:IdentifiedObject.description
+                    "One of the lines is disconnected AND power flow on TieLine_GA_BO2 is higher than 150 MW. Trigger conditions if any line tripped (contingency triggered) and export on TieLine_GA_BO2 higher than 20 MW (EquivalentInjection power higher than 20 MW)";
+            cim:IdentifiedObject.mRID    "f9444387-0b28-4f1f-8eec-cb48514b0080";
+            cim:IdentifiedObject.name    "stage trigger";
+            nc:StageTrigger.GateTrigger  <urn:uuid:4cd05f81-650a-4ee1-aa14-95d30f6f6b22>;
+            nc:StageTrigger.Stage        <urn:uuid:89705a24-34bd-493e-a572-c32f25106e3b>;
+            nc:StageTrigger.normalArmed  true;
+            nc:StageTrigger.priority     0 .
+    
+    <urn:uuid:07054360-8a32-49cc-9730-4e7a1f52e85e>
+            rdf:type                        nc:StaticPropertyRange;
+            cim:IdentifiedObject.mRID       "07054360-8a32-49cc-9730-4e7a1f52e85e";
+            cim:IdentifiedObject.name       "Set generator BO-G2 to Pmin = 10 MW";
+            nc:RangeConstraint.GridStateAlteration
+                    <urn:uuid:3326ee03-5968-45bb-a88c-6a2185d89da7>;
+            nc:RangeConstraint.direction    nc:RelativeDirectionKind.down;
+            nc:RangeConstraint.normalValue  "-10"^^xsd:float;
+            nc:RangeConstraint.valueKind    nc:ValueOffsetKind.absolute;
+            nc:StaticPropertyRange.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/RotatingMachine.p> .
+    
+    <urn:uuid:3faa1af4-01de-4872-8447-285458456ed6>
+            rdf:type                        nc:StaticPropertyRange;
+            cim:IdentifiedObject.mRID       "3faa1af4-01de-4872-8447-285458456ed6";
+            cim:IdentifiedObject.name       "Open breaker BO_Breaker_1";
+            nc:RangeConstraint.GridStateAlteration
+                    <urn:uuid:8b56b2cd-99ac-4fc3-ad3d-eb14153426f3>;
+            nc:RangeConstraint.direction    nc:RelativeDirectionKind.none;
+            nc:RangeConstraint.normalValue  "1"^^xsd:float;
+            nc:RangeConstraint.valueKind    nc:ValueOffsetKind.absolute;
+            nc:StaticPropertyRange.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open> .
+    
+    <urn:uuid:4cd05f81-650a-4ee1-aa14-95d30f6f6b22>
+            rdf:type                   nc:Gate;
+            cim:IdentifiedObject.mRID  "4cd05f81-650a-4ee1-aa14-95d30f6f6b22";
+            cim:IdentifiedObject.name  "One of the lines is disconnected AND power flow on TieLine_GA_BO2 is higher than 20 MW";
+            nc:Gate.kind               nc:GateLogicKind.and .
+    
+    <urn:uuid:b9ab4665-9c09-40b0-bfa9-cbcc58e5330b>
+            rdf:type                        nc:PinTerminal;
+            cim:IdentifiedObject.description
+                    "Import on TieLine_GA_BO2 is more 20 MW";
+            cim:IdentifiedObject.mRID       "b9ab4665-9c09-40b0-bfa9-cbcc58e5330b";
+            cim:IdentifiedObject.name       "Import on TL 20 MW";
+            nc:GateInputPin.Gate            <urn:uuid:23ef64de-0f0c-490f-b771-e48b5bd247c5>;
+            nc:GateInputPin.absoluteValue   true;
+            nc:GateInputPin.duration        "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:GateInputPin.logicKind       nc:LogicalOperatorsKind.lessThan;
+            nc:GateInputPin.negate          false;
+            nc:GateInputPin.normalEnabled   "true";
+            nc:GateInputPin.thresholdValue  "-20"^^xsd:float;
+            nc:PinTerminal.Terminal         <urn:uuid:73ae8a3c-8217-9467-638f-cf007f229852>;
+            nc:PinTerminal.kind             nc:PinTerminalKind.activePower .
+    
+    <urn:uuid:7acbe48a-bd54-4cd7-af2e-87768357c559>
+            rdf:type                   nc:GridStateAlterationRemedialAction;
+            cim:IdentifiedObject.description
+                    "Curative RA: ShuntCompensatorModification (step to 0). Shunt compensator ID: _002b0a40-3957-46db-b84a-30420083558f";
+            cim:IdentifiedObject.mRID  "7acbe48a-bd54-4cd7-af2e-87768357c559";
+            cim:IdentifiedObject.name  "shunt RA";
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    false;
+            nc:RemedialAction.kind     nc:RemedialActionKind.curative;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:9287b1c3-3747-47e6-8918-d82c7a0d7718>
+            rdf:type                   nc:PowerShiftKeyStrategy;
+            cim:IdentifiedObject.mRID  "9287b1c3-3747-47e6-8918-d82c7a0d7718";
+            nc:PowerShiftKeyStrategy.PowerRemedialAction
+                    <urn:uuid:9d72d12a-f135-437a-83fa-ef3e5b23f41f> .
+    
+    <urn:uuid:375e7a7b-4710-4efe-b052-134446bef7f8>
+            rdf:type                     nc:StageTrigger;
+            cim:IdentifiedObject.mRID    "375e7a7b-4710-4efe-b052-134446bef7f8";
+            cim:IdentifiedObject.name    "Power flows in BO-Line_2 is less than 1 MW";
+            nc:StageTrigger.GateTrigger  <urn:uuid:428840f6-d175-47ab-b571-d784b91972a9>;
+            nc:StageTrigger.Stage        <urn:uuid:ed9c022a-e794-4973-a780-151cedd95674>;
+            nc:StageTrigger.normalArmed  true;
+            nc:StageTrigger.priority     0 .
+    
+    <urn:uuid:ddb3c55f-b2ec-414e-baa3-592829e2edb2>
+            rdf:type                   nc:ShuntCompensatorModification;
+            cim:IdentifiedObject.mRID  "ddb3c55f-b2ec-414e-baa3-592829e2edb2";
+            cim:IdentifiedObject.name  "Shunt action 1";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:7acbe48a-bd54-4cd7-af2e-87768357c559>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/ShuntCompensator.sections>;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false";
+            nc:ShuntCompensatorModification.ShuntCompensator
+                    <urn:uuid:002b0a40-3957-46db-b84a-30420083558f> .
+    
+    <urn:uuid:52b4ff20-944b-4a6e-9e07-b2760521cfb6>
+            rdf:type                      nc:RemedialActionScheme;
+            cim:IdentifiedObject.description
+                    "SIPS_UC_6 Anti-swing protection. LOGIC: IF BO-TR2_1 and  TieLine_SD_BO3 trip THEN set generator BO-G2 to Pmin";
+            cim:IdentifiedObject.mRID     "52b4ff20-944b-4a6e-9e07-b2760521cfb6";
+            cim:IdentifiedObject.name     "Anti-swing_protection_PP_Brussia";
+            nc:RemedialActionScheme.kind  nc:RemedialActionSchemeKind.sips;
+            nc:RemedialActionScheme.normalArmed
+                    true .
+    
+    <urn:uuid:0d198c1c-b2fb-424f-89f4-3ed6911b6406>
+            rdf:type                       nc:Stage;
+            cim:IdentifiedObject.mRID      "0d198c1c-b2fb-424f-89f4-3ed6911b6406";
+            cim:IdentifiedObject.name      "AutomaticLineShedding_BO-Line_6";
+            nc:Stage.GridStateAlterationCollection
+                    <urn:uuid:24e0aad8-46eb-43a5-8846-a59d64edb10e>;
+            nc:Stage.RemedialActionScheme  <urn:uuid:91d9f965-3934-4e27-8da5-7c7ed7372904>;
+            nc:Stage.priority              0 .
+    
+    <urn:uuid:23ef64de-0f0c-490f-b771-e48b5bd247c5>
+            rdf:type                   nc:Gate;
+            cim:IdentifiedObject.description
+                    "One of the lines is disconnected AND power flow on TieLine_GA_BO2 is higher than 20 MW";
+            cim:IdentifiedObject.mRID  "23ef64de-0f0c-490f-b771-e48b5bd247c5";
+            cim:IdentifiedObject.name  "Gate";
+            nc:Gate.kind               nc:GateLogicKind.and .
+    
+    <urn:uuid:cbd14cdc-d4f5-42f8-a0a6-af0dfba9b34e>
+            rdf:type                       nc:PinContingency;
+            cim:IdentifiedObject.mRID      "cbd14cdc-d4f5-42f8-a0a6-af0dfba9b34e";
+            cim:IdentifiedObject.name      "line BO-Line_6 tripped - contingency applied";
+            nc:GateInputPin.Gate           <urn:uuid:b73c5258-2fb6-4e8a-8b0a-61d84a52ee27>;
+            nc:GateInputPin.absoluteValue  true;
+            nc:GateInputPin.duration       "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:GateInputPin.logicKind      nc:LogicalOperatorsKind.equals;
+            nc:GateInputPin.negate         false;
+            nc:PinContingency.Contingency  <urn:uuid:2084c569-ff2f-4f21-b67e-720384ce23ba> .
+}

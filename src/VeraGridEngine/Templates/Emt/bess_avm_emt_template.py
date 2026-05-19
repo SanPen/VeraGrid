@@ -63,13 +63,16 @@ def get_battery_avm_emt_template(vf: VarFactory, name: str) -> EmtModelTemplate:
     :return: Battery-side EMT template.
     """
     templ = EmtModelTemplate()
-    templ.tpe = DeviceType.BatteryDevice  # TODO: not sure if VSC or PV/BESS if exists
+    templ.tpe = DeviceType.BatteryDevice
     templ.name = name
     templ.block.name = name
     # ------------------------------------------------------------------
     # Inputs from the imported VSC block.
     # ------------------------------------------------------------------
     i_dc = vf.add_var(name=f"i_dc_bat_in_{name}")
+    i_dc_conv_init = vf.add_var(name=f"i_dc_conv_bat_in_{name}")
+    r_dc_init = vf.add_var(name=f"r_dc_bat_in_{name}")
+    r_dc_term_init = vf.add_var(name=f"r_dc_term_bat_in_{name}")
 
     # ------------------------------------------------------------------
     # Battery state and derivative.
@@ -105,13 +108,20 @@ def get_battery_avm_emt_template(vf: VarFactory, name: str) -> EmtModelTemplate:
     eps = vf.add_const(1e-10)
 
     soc_limited: Expr = sym.hard_sat(soc, soc_min, soc_max)
+    discharge_enabled: Expr = sym.heaviside(soc - soc_min)
+    charge_enabled: Expr = sym.heaviside(soc_max - soc)
     p_abs: Expr = sym.sqrt(p_bat * p_bat + eps)
     p_dis_expr: Expr = c_half * (p_bat + p_abs)
     p_ch_expr: Expr = c_half * (-p_bat + p_abs)
     v_oc0: Expr = v_min + (v_max - v_min) * soc0
-    i_bat0: Expr = c0
-    v_dc_bus0: Expr = v_oc0
-    p_bat0: Expr = c0
+    # Initialize the battery variables from a closed-form solution of the
+    # coupled battery/VSC DC-side steady-state equations. This avoids an
+    # artificial current step at t = 0 while keeping the existing battery and
+    # VSC block structure unchanged.
+    i_dc0_init: Expr = (i_dc_conv_init + v_oc0 / (r_dc_init + eps)) / (c1 + (r_dc_term_init - r_bat) / (r_dc_init + eps) + eps)
+    i_bat0: Expr = -i_dc0_init
+    v_dc_bus0: Expr = v_oc0 - r_bat * i_bat0
+    p_bat0: Expr = v_dc_bus0 * i_bat0
     p_abs0: Expr = sym.sqrt(p_bat0 * p_bat0 + eps)
     p_dis0: Expr = c_half * (p_bat0 + p_abs0)
     p_ch0: Expr = c_half * (-p_bat0 + p_abs0)
@@ -120,19 +130,26 @@ def get_battery_avm_emt_template(vf: VarFactory, name: str) -> EmtModelTemplate:
         state_eqs=[
             # Positive battery power discharges the battery; negative power
             # charges it. Efficiencies are applied on the energy side.
-            (-p_dis / (eta_dis + eps) + eta_ch * p_ch) / (e_cap + eps),
+            ((-p_dis / (eta_dis + eps)) * discharge_enabled + (eta_ch * p_ch) * charge_enabled) / (e_cap + eps),
         ],
         state_vars=[soc],
         diff_vars=[d_soc],
         algebraic_eqs=[
             # Smooth SoC-dependent open-circuit voltage.
             v_oc - (v_min + (v_max - v_min) * soc_limited),
-            i_bat - i_dc,
+            # The imported VSC block exposes DC current as positive when the
+            # converter absorbs energy from the DC source and negative when it
+            # delivers DC energy into AC power. The battery model uses the
+            # opposite physical convention: positive current means battery
+            # discharge into the converter. The algebraic coupling therefore
+            # flips the sign so both subsystems share one consistent generator
+            # convention at the BESS level.
+            i_bat + i_dc,
             # Resistive Thevenin terminal relation feeding the VSC DC bus.
             v_dc_bus - (v_oc - r_bat * i_bat),
-            # Battery terminal power. The internal sign follows the imported
-            # converter DC-current convention, so discharge appears with the
-            # opposite sign and is flipped in the example diagnostics/plots.
+            # Battery terminal power. With the current mapping above, positive
+            # battery current means discharge and therefore positive battery
+            # terminal power means export from the battery into the converter.
             p_bat - v_dc_bus * i_bat,
             # Smooth discharge and charge power components.
             p_dis - p_dis_expr,
@@ -160,7 +177,7 @@ def get_battery_avm_emt_template(vf: VarFactory, name: str) -> EmtModelTemplate:
             p_ch: p_ch0,
         },
         diff_init_eqs={d_soc: c0},
-        in_vars=[i_dc],
+        in_vars=[i_dc, i_dc_conv_init, r_dc_init, r_dc_term_init],
         out_vars=[v_dc_bus, soc, v_oc, i_bat, p_bat, p_dis, p_ch],
         name=f"{name}_battery",
     )
@@ -378,30 +395,36 @@ def get_bess_avm_grid_following_emt_template(
     # only one change: the VSC DC terminal input is connected to the battery
     # block output instead of an external DC bus variable.
     # ------------------------------------------------------------------
-    transformer_block.connect(transformer_block.in_vars[0:3], [v_A, v_B, v_C])
-    vsc_block.connect([vsc_block.in_vars[6]], [battery_block.out_vars[0]])
+    vf.add_connections(transformer_block.in_vars[0:3], [v_A, v_B, v_C])
+    vf.add_connections([vsc_block.in_vars[6]], [battery_block.out_vars[0]])
 
     # The VSC DC terminal current is fed back to the battery block so the SoC
     # and Thevenin terminal voltage follow the converter operating point.
-    battery_block.connect([battery_block.in_vars[0]], [vsc_block.out_vars[1]])
+    vf.add_connections([battery_block.in_vars[0]], [vsc_block.out_vars[1]])
+    # These additional VSC variables are only used to build a closed-form,
+    # algebraically consistent battery/DC-link initialization point.
+    vf.add_connections(
+        battery_block.in_vars[1:4],
+        [vsc_block.out_vars[33], vsc_block.out_vars[14], vsc_block.out_vars[15]],
+    )
 
     # Transformer/interface provides dq0 voltages and currents to the VSC and
     # the control hierarchy.
-    vsc_block.connect(vsc_block.in_vars[0:3], transformer_block.out_vars[6:9])
-    vsc_block.connect(vsc_block.in_vars[3:6], transformer_block.out_vars[3:6])
-    pll_block.connect([pll_block.in_vars[0]], [transformer_block.out_vars[7]])
-    outer_loop_block.connect(outer_loop_block.in_vars[0:3], transformer_block.out_vars[6:9])
-    outer_loop_block.connect(outer_loop_block.in_vars[3:6], transformer_block.out_vars[3:6])
-    inner_loop_block.connect(inner_loop_block.in_vars[0:3], transformer_block.out_vars[6:9])
-    inner_loop_block.connect(inner_loop_block.in_vars[3:6], transformer_block.out_vars[3:6])
+    vf.add_connections(vsc_block.in_vars[0:3], transformer_block.out_vars[6:9])
+    vf.add_connections(vsc_block.in_vars[3:6], transformer_block.out_vars[3:6])
+    vf.add_connections([pll_block.in_vars[0]], [transformer_block.out_vars[7]])
+    vf.add_connections(outer_loop_block.in_vars[0:3], transformer_block.out_vars[6:9])
+    vf.add_connections(outer_loop_block.in_vars[3:6], transformer_block.out_vars[3:6])
+    vf.add_connections(inner_loop_block.in_vars[0:3], transformer_block.out_vars[6:9])
+    vf.add_connections(inner_loop_block.in_vars[3:6], transformer_block.out_vars[3:6])
 
     # VSC block exports physical quantities and parameters used by the controls.
-    pll_block.connect(
+    vf.add_connections(
         pll_block.in_vars[1:5],
         [vsc_block.out_vars[8], vsc_block.out_vars[16], vsc_block.out_vars[17], vsc_block.out_vars[9]],
     )
-    outer_loop_block.connect([outer_loop_block.in_vars[6], outer_loop_block.in_vars[7]], [vsc_block.out_vars[2], vsc_block.out_vars[3]])
-    outer_loop_block.connect(
+    vf.add_connections([outer_loop_block.in_vars[6], outer_loop_block.in_vars[7]], [vsc_block.out_vars[2], vsc_block.out_vars[3]])
+    vf.add_connections(
         outer_loop_block.in_vars[8:20],
         [
             vsc_block.out_vars[4],
@@ -418,12 +441,12 @@ def get_bess_avm_grid_following_emt_template(
             vsc_block.out_vars[30],
         ],
     )
-    inner_loop_block.connect(
+    vf.add_connections(
         [inner_loop_block.in_vars[6], inner_loop_block.in_vars[7], inner_loop_block.in_vars[8], inner_loop_block.in_vars[9]],
         [pll_block.out_vars[1], vsc_block.out_vars[8], vsc_block.out_vars[11], vsc_block.out_vars[12]],
     )
-    inner_loop_block.connect(inner_loop_block.in_vars[10:13], outer_loop_block.out_vars[2:5])
-    inner_loop_block.connect(
+    vf.add_connections(inner_loop_block.in_vars[10:13], outer_loop_block.out_vars[2:5])
+    vf.add_connections(
         inner_loop_block.in_vars[13:25],
         [
             vsc_block.out_vars[18],
@@ -442,13 +465,13 @@ def get_bess_avm_grid_following_emt_template(
     )
 
     # Controller outputs drive the AC interface dynamics.
-    transformer_block.connect([transformer_block.in_vars[3], transformer_block.in_vars[4]], pll_block.out_vars)
-    transformer_block.connect(
+    vf.add_connections([transformer_block.in_vars[3], transformer_block.in_vars[4]], pll_block.out_vars)
+    vf.add_connections(
         transformer_block.in_vars[5:8],
         [vsc_block.out_vars[8], vsc_block.out_vars[11], vsc_block.out_vars[12]],
     )
-    transformer_block.connect(transformer_block.in_vars[8:11], inner_loop_block.out_vars)
-    transformer_block.connect(
+    vf.add_connections(transformer_block.in_vars[8:11], inner_loop_block.out_vars)
+    vf.add_connections(
         transformer_block.in_vars[11:16],
         [vsc_block.out_vars[4], vsc_block.out_vars[5], vsc_block.out_vars[6], vsc_block.out_vars[26], vsc_block.out_vars[10]],
     )

@@ -581,7 +581,7 @@ class Generator(InjectionParent):
         self._Pf_prof = ProfileFloat(default_value=self.Pf)
 
         # If this generator is voltage controlled it produces a PV node, otherwise the node remains as PQ
-        self.is_controlled = bool(is_controlled)
+        self._is_controlled = bool(is_controlled)
 
         # Nominal power in MVA (also the machine base)
         self._Snom = float(Snom)

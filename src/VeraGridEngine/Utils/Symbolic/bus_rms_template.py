@@ -72,9 +72,6 @@ def initialize_bus_rms(bus: Bus, vf: VarFactory):
     :return:
     """
     bus.rms_model = BusRmsTemplate(vf=vf, is_dc=bus.is_dc).block
-
-
-
 def get_bus_rms_algebraic_vars(bus_rms_model: Block) -> Tuple[Var, Var] | Var:
     """
     Return the RMS bus algebraic voltage variables.

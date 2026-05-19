@@ -7,7 +7,6 @@ from __future__ import annotations
 
 import math
 from typing import Any, List, Sequence, Tuple, cast, Dict
-from unittest.mock import patch
 
 import numpy as np
 import pytest
@@ -198,7 +197,7 @@ def _dummy_fused_residual(
     ],
 )
 def test_force_step_alignment_is_used_by_all_three_solvers(
-    monkeypatch: pytest.MonkeyPatch,
+    override_attrs,
     solver_kind: EmtSolverTypes,
     expected_updates: Sequence[float],
 ) -> None:
@@ -232,15 +231,15 @@ def test_force_step_alignment_is_used_by_all_three_solvers(
 
         solver.jit_kernels[integration_method] = [_dummy_kernel]
         solver.jit_jacobian_symbolic[f"{integration_method}_{False}"] = cast(Any, DummyJacobian())
-
-        with patch.object(JitSymbolicSolver, "build_jit_kernel", lambda self, method: None), patch.object(
+        override_attrs.setattr(JitSymbolicSolver, "build_jit_kernel", lambda self, method: None)
+        override_attrs.setattr(
             JitSymbolicSolver,
             "_build_jit_symbolic_hybrid",
             lambda self, method, use_sparse: None,
-        ):
-            t, y, dy, _, _ = solver.simulate(
-                boundary_updater=cast(BoundaryUpdateWrapper, cast(object, updater))
-            )
+        )
+        t, y, dy, _, _ = solver.simulate(
+            boundary_updater=cast(BoundaryUpdateWrapper, cast(object, updater))
+        )
 
     elif solver_kind == EmtSolverTypes.Automatic:
         solver = JitAdSolver(

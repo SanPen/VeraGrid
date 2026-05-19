@@ -1563,7 +1563,7 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         return _grph
 
     def set_values(self, i: int, Vm: float, Va: float, P: float | None, Q: float | None,
-                   tpe: str, format_str="{:10.2f}"):
+                   tpe: str, format_str="{:10.2f}", vm_fmt: str = "{:10.4f}"):
         """
 
         :param i:
@@ -1582,7 +1582,7 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
                 msg += f" [{tpe}]"
             msg += "<br>"
 
-            vm = format_str.format(Vm)
+            vm = vm_fmt.format(Vm)
             vm_kv = format_str.format(Vm * self._api_object.Vnom)
             va = format_str.format(Va)
             msg += f"V={vm_kv} kV<br>  {vm}&lt;{va}º p.u.<br>"

@@ -1,0 +1,321 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:2149e514-b933-4d45-94e1-1129bd7baf12> {
+    <urn:uuid:99e03961-06a8-485e-8c6e-fd833835c00a>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.description
+                    "Curative RA: TopologyAction (wind generator trip)";
+            cim:IdentifiedObject.mRID  "99e03961-06a8-485e-8c6e-fd833835c00a";
+            cim:IdentifiedObject.name  "RA13";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:1fd630a9-b9d8-414b-ac84-b47a093af936>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:TopologyAction.Switch   <urn:uuid:52effb0d-091b-4867-a0a2-387109cdad5c> .
+    
+    <urn:uuid:d856a2a2-3de4-4a7b-aea4-d363c13d9014>
+            rdf:type                   nc:GridStateAlterationRemedialAction;
+            cim:IdentifiedObject.description
+                    "This is an example of Curative RA: TopologyAction (generator trip)";
+            cim:IdentifiedObject.mRID  "d856a2a2-3de4-4a7b-aea4-d363c13d9014";
+            cim:IdentifiedObject.name  "RA22";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    true;
+            nc:RemedialAction.kind     nc:RemedialActionKind.curative;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:1fd630a9-b9d8-414b-ac84-b47a093af936>
+            rdf:type                   nc:GridStateAlterationRemedialAction;
+            cim:IdentifiedObject.description
+                    "This is an example Curative RA: TopologyAction (wind generator trip)";
+            cim:IdentifiedObject.mRID  "1fd630a9-b9d8-414b-ac84-b47a093af936";
+            cim:IdentifiedObject.name  "RA13";
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    true;
+            nc:RemedialAction.kind     nc:RemedialActionKind.curative;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:fb487cc2-0f7b-4958-8f66-1d3fabf7840d>
+            rdf:type                   nc:GridStateAlterationRemedialAction;
+            cim:IdentifiedObject.description
+                    "This is an example of Curative RA: TopologyAction (transformer trip)";
+            cim:IdentifiedObject.mRID  "fb487cc2-0f7b-4958-8f66-1d3fabf7840d";
+            cim:IdentifiedObject.name  "RA21";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    true;
+            nc:RemedialAction.kind     nc:RemedialActionKind.curative;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:aafe86ab-9807-42c3-8965-d5a5b66c1d5e>
+            rdf:type  nc:ContingencyWithRemedialAction;
+            nc:ContingencyWithRemedialAction.Contingency
+                    <urn:uuid:ce19dd34-429e-4b72-8813-7615cc57b4a4>;
+            nc:ContingencyWithRemedialAction.RemedialAction
+                    <urn:uuid:2e4f4212-7b30-4316-9fce-ca618f2a8a05>;
+            nc:ContingencyWithRemedialAction.combinationConstraintKind
+                    nc:ElementCombinationConstraintKind.included;
+            nc:ContingencyWithRemedialAction.mRID
+                    "aafe86ab-9807-42c3-8965-d5a5b66c1d5e";
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false" .
+    
+    <urn:uuid:4d3757fd-b40a-4d7b-be47-6553935234ff>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.description
+                    "Curative RA: TopologyAction (generator trip)";
+            cim:IdentifiedObject.mRID  "4d3757fd-b40a-4d7b-be47-6553935234ff";
+            cim:IdentifiedObject.name  "RA22";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:d856a2a2-3de4-4a7b-aea4-d363c13d9014>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:TopologyAction.Switch   <urn:uuid:c871da6f-816f-4398-82a4-698550cbee58> .
+    
+    <urn:uuid:c8bf6b19-1c3b-4ce6-a15c-99995a3c88ce>
+            rdf:type                   nc:GridStateAlterationRemedialAction;
+            cim:IdentifiedObject.description
+                    "This is an example Curative RA: TopologyAction (generator trip)";
+            cim:IdentifiedObject.mRID  "c8bf6b19-1c3b-4ce6-a15c-99995a3c88ce";
+            cim:IdentifiedObject.name  "RA14";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    true;
+            nc:RemedialAction.kind     nc:RemedialActionKind.curative;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:5d648c67-696d-49c1-9f55-6122e63d4f23>
+            rdf:type  nc:ContingencyWithRemedialAction;
+            nc:ContingencyWithRemedialAction.Contingency
+                    <urn:uuid:96c96ad8-844c-4f3b-8b38-c886ba2c0214>;
+            nc:ContingencyWithRemedialAction.RemedialAction
+                    <urn:uuid:d856a2a2-3de4-4a7b-aea4-d363c13d9014>;
+            nc:ContingencyWithRemedialAction.combinationConstraintKind
+                    nc:ElementCombinationConstraintKind.included;
+            nc:ContingencyWithRemedialAction.mRID
+                    "5d648c67-696d-49c1-9f55-6122e63d4f23";
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false" .
+    
+    <urn:uuid:9a7f821b-8eb8-4c0a-a67e-25e4d5aeaa8d>
+            rdf:type                   nc:TapPositionAction;
+            cim:IdentifiedObject.description
+                    "This is an example of tap position action";
+            cim:IdentifiedObject.mRID  "9a7f821b-8eb8-4c0a-a67e-25e4d5aeaa8d";
+            cim:IdentifiedObject.name  "TapRA";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:5898c268-9b32-4ab5-9cfc-64546135a337>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/TapChanger.step>;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:TapPositionAction.TapChanger
+                    <urn:uuid:f6e8823f-d431-6fc7-37cf-b7a0d80035dd> .
+    
+    <urn:uuid:b66ddbf5-1314-444e-91bc-26c09bc9c656>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.description
+                    "Curative RA: TopologyAction (generator trip)";
+            cim:IdentifiedObject.mRID  "b66ddbf5-1314-444e-91bc-26c09bc9c656";
+            cim:IdentifiedObject.name  "RA14";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:c8bf6b19-1c3b-4ce6-a15c-99995a3c88ce>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:TopologyAction.Switch   <urn:uuid:88e2e417-fc08-41a7-a711-4c6d0784ac4f> .
+    
+    <urn:uuid:2e4f4212-7b30-4316-9fce-ca618f2a8a05>
+            rdf:type                   nc:GridStateAlterationRemedialAction;
+            cim:IdentifiedObject.description
+                    "Curative RA: TapPositionAction (Tap position = 1) TapChanger ID created : a1bfbf15-e8af-471e-9dd7-9308425f425f";
+            cim:IdentifiedObject.mRID  "2e4f4212-7b30-4316-9fce-ca618f2a8a05";
+            cim:IdentifiedObject.name  "RA16";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    true;
+            nc:RemedialAction.kind     nc:RemedialActionKind.curative;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:26302c29-d8aa-41d1-b09b-a2eefb5d8dfd>
+            rdf:type  nc:ContingencyWithRemedialAction;
+            nc:ContingencyWithRemedialAction.Contingency
+                    <urn:uuid:b6b780cb-9fe5-4c45-989d-447a927c3874>;
+            nc:ContingencyWithRemedialAction.RemedialAction
+                    <urn:uuid:1fd630a9-b9d8-414b-ac84-b47a093af936>;
+            nc:ContingencyWithRemedialAction.combinationConstraintKind
+                    nc:ElementCombinationConstraintKind.included;
+            nc:ContingencyWithRemedialAction.mRID
+                    "26302c29-d8aa-41d1-b09b-a2eefb5d8dfd" .
+    
+    <urn:uuid:5898c268-9b32-4ab5-9cfc-64546135a337>
+            rdf:type                   nc:GridStateAlterationRemedialAction;
+            cim:IdentifiedObject.description
+                    "This is an example. Curative RA: TapPositionAction on PST (Tap position = 6). TapChangerID: f6e8823f-d431-6fc7-37cf-b7a0d80035dd";
+            cim:IdentifiedObject.mRID  "5898c268-9b32-4ab5-9cfc-64546135a337";
+            cim:IdentifiedObject.name  "RA1";
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    true;
+            nc:RemedialAction.kind     nc:RemedialActionKind.curative;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:2149e514-b933-4d45-94e1-1129bd7baf12>
+            rdf:type              dcat:Dataset;
+            dct:accessRights      "https://energy.referencedata.eu/Confidentiality/Public";
+            dct:conformsTo        "https://cim.ucaiug.io/ns#" , "https://ap.cim4.eu/RemedialAction/2.4" , "https://cim4.eu/ns/nc/2.4#" , "http://iec.ch/TC57/2013/CIM-schema-cim16#";
+            dct:description       "This is the remedial action dataset for Espheim part of ReliCapGrid."@en;
+            dct:identifier        "2149e514-b933-4d45-94e1-1129bd7baf12";
+            dct:issued            "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dct:license           "https://creativecommons.org/licenses/by/4.0/";
+            dct:publisher         "https://energy.referencedata.eu/test/party/Espheim";
+            dct:requires          <urn:uuid:e3453a3c-8639-4648-a662-d6c15f512965>;
+            dct:rights            "Copyright";
+            dct:rightsHolder      "ENTSO-E";
+            dct:spatial           "https://energy.referencedata.eu/Test/Frame/Espheim-Power-Transmission-System";
+            dct:title             "20220615_Espheim_RA_1.0.0";
+            dcat:endDate          "2023-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Espheim-RA>;
+            dcat:keyword          "RA";
+            dcat:startDate        "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:version          "1.0.0";
+            prov:generatedAtTime  "2022-06-10T07:06:25Z"^^xsd:dateTime;
+            prov:wasGeneratedBy   "https://energy.referencedata.eu/Activity/CGM-RA" .
+    
+    <urn:uuid:d49b72bc-7677-4e4c-949a-0b4c40a8c62b>
+            rdf:type  nc:ContingencyWithRemedialAction;
+            nc:ContingencyWithRemedialAction.Contingency
+                    <urn:uuid:13334fdf-9cc2-4341-adb6-1281269040b4>;
+            nc:ContingencyWithRemedialAction.RemedialAction
+                    <urn:uuid:c8bf6b19-1c3b-4ce6-a15c-99995a3c88ce>;
+            nc:ContingencyWithRemedialAction.combinationConstraintKind
+                    nc:ElementCombinationConstraintKind.included;
+            nc:ContingencyWithRemedialAction.mRID
+                    "d49b72bc-7677-4e4c-949a-0b4c40a8c62b";
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false" .
+    
+    <urn:uuid:2cfdfd22-bb98-4c51-9fda-acb969de5550>
+            rdf:type  nc:ContingencyWithRemedialAction;
+            nc:ContingencyWithRemedialAction.Contingency
+                    <urn:uuid:9d17b84c-33b5-4a68-b8b9-ed5b31038d40>;
+            nc:ContingencyWithRemedialAction.RemedialAction
+                    <urn:uuid:fb487cc2-0f7b-4958-8f66-1d3fabf7840d>;
+            nc:ContingencyWithRemedialAction.combinationConstraintKind
+                    nc:ElementCombinationConstraintKind.included;
+            nc:ContingencyWithRemedialAction.mRID
+                    "2cfdfd22-bb98-4c51-9fda-acb969de5550" .
+    
+    <urn:uuid:1eb2ec13-eda6-4e59-b8d8-a2edb117d676>
+            rdf:type  nc:ContingencyWithRemedialAction;
+            nc:ContingencyWithRemedialAction.Contingency
+                    <urn:uuid:8cdec4c6-10c3-40c1-9eeb-7f6ae8d9b3fe>;
+            nc:ContingencyWithRemedialAction.RemedialAction
+                    <urn:uuid:5898c268-9b32-4ab5-9cfc-64546135a337>;
+            nc:ContingencyWithRemedialAction.combinationConstraintKind
+                    nc:ElementCombinationConstraintKind.included;
+            nc:ContingencyWithRemedialAction.mRID
+                    "1eb2ec13-eda6-4e59-b8d8-a2edb117d676" .
+    
+    <urn:uuid:12b9a70c-9e72-4ec5-af01-d32d440c2aa3>
+            rdf:type                   nc:RegulatingControlAction;
+            cim:IdentifiedObject.description
+                    "Preventive RA: RegulatingControlAction on a PST, tap=2";
+            cim:IdentifiedObject.mRID  "12b9a70c-9e72-4ec5-af01-d32d440c2aa3";
+            cim:IdentifiedObject.name  "RA19";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:c9c76af9-c11e-49ad-854c-760292b59a6e>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/RegulatingControl.targetValue>;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:RegulatingControlAction.RegulatingControl
+                    <urn:uuid:1d33cf36-ca7c-d357-b61e-aed6e67aab69> .
+    
+    <urn:uuid:dbad8bad-94a9-428a-a8d6-ef6f48490e6d>
+            rdf:type                   nc:TapPositionAction;
+            cim:IdentifiedObject.description
+                    "Curative RA: TapPositionAction (Tap position = 1)";
+            cim:IdentifiedObject.mRID  "dbad8bad-94a9-428a-a8d6-ef6f48490e6d";
+            cim:IdentifiedObject.name  "RA16";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:2e4f4212-7b30-4316-9fce-ca618f2a8a05>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/TapChanger.step>;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:TapPositionAction.TapChanger
+                    <urn:uuid:ed8613d9-d80c-0e29-0b7f-cb7b1577631e> .
+    
+    <urn:uuid:c9c76af9-c11e-49ad-854c-760292b59a6e>
+            rdf:type                   nc:GridStateAlterationRemedialAction;
+            cim:IdentifiedObject.description
+                    "This is an example of Preventive RA: RegulatingControlAction on a PST, tap=2 regulating control ID : f7ea5506-db27-47b1-82b7-e3a0b5b967f3";
+            cim:IdentifiedObject.mRID  "c9c76af9-c11e-49ad-854c-760292b59a6e";
+            cim:IdentifiedObject.name  "RA19";
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    true;
+            nc:RemedialAction.kind     nc:RemedialActionKind.preventive;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:dc8f7d4a-9b37-4143-ab12-cc4e554460ce>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.description
+                    "Curative RA: TopologyAction (transformer trip)";
+            cim:IdentifiedObject.mRID  "dc8f7d4a-9b37-4143-ab12-cc4e554460ce";
+            cim:IdentifiedObject.name  "RA21";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:fb487cc2-0f7b-4958-8f66-1d3fabf7840d>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false";
+            nc:TopologyAction.Switch   <urn:uuid:65b97d2e-d749-41df-aa8f-0be4629d5e0e> .
+}

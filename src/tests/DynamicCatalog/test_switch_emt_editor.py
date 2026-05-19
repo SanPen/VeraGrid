@@ -44,7 +44,7 @@ def _build_editor() -> DynamicBlockEditorGUI:
     return editor
 
 
-def test_switch_emt_block_item_is_created_from_modal(monkeypatch) -> None:
+def test_switch_emt_block_item_is_created_from_modal(override_attrs) -> None:
     editor = _build_editor()
 
     class _SwitchDialogStub:
@@ -69,7 +69,7 @@ def test_switch_emt_block_item_is_created_from_modal(monkeypatch) -> None:
                 "command_threshold": 0.5,
             })
 
-    monkeypatch.setattr(dynamic_block_editor_module, "SwitchEmtDialog", _SwitchDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "SwitchEmtDialog", _SwitchDialogStub)
     block_item = editor.create_library_payload_item(BlockType.SWITCH_EMT, 10.0, 20.0)
 
     assert block_item is not None
@@ -80,16 +80,16 @@ def test_switch_emt_block_item_is_created_from_modal(monkeypatch) -> None:
     editor.close()
 
 
-def test_modal_created_block_supports_nested_editor_open(monkeypatch) -> None:
+def test_modal_created_block_supports_nested_editor_open(override_attrs) -> None:
     editor = _build_editor()
     block = Block(name="nested_test_block")
     block_item = editor.create_template_block_item(type("_Template", (), {"name": "nested_test_block", "block": block})(), 10.0, 20.0)
 
     assert block_item is not None
 
-    monkeypatch.setattr(dynamic_block_editor_module.DynamicBlockEditorGUI, "show", lambda self: None)
-    monkeypatch.setattr(dynamic_block_editor_module.DynamicBlockEditorGUI, "raise_", lambda self: None)
-    monkeypatch.setattr(dynamic_block_editor_module.DynamicBlockEditorGUI, "activateWindow", lambda self: None)
+    override_attrs.setattr(dynamic_block_editor_module.DynamicBlockEditorGUI, "show", lambda self: None)
+    override_attrs.setattr(dynamic_block_editor_module.DynamicBlockEditorGUI, "raise_", lambda self: None)
+    override_attrs.setattr(dynamic_block_editor_module.DynamicBlockEditorGUI, "activateWindow", lambda self: None)
     editor.open_block_subeditor(block_item)
     assert getattr(block_item, "editor_window", None) is not None
 
@@ -97,16 +97,16 @@ def test_modal_created_block_supports_nested_editor_open(monkeypatch) -> None:
     editor.close()
 
 
-def test_scene_edit_dispatch_opens_editor_for_modal_created_block(monkeypatch) -> None:
+def test_scene_edit_dispatch_opens_editor_for_modal_created_block(override_attrs) -> None:
     editor = _build_editor()
     block = Block(name="dispatch_edit_block")
     block_item = editor.create_template_block_item(type("_Template", (), {"name": "dispatch_edit_block", "block": block})(), 10.0, 20.0)
 
     assert block_item is not None
 
-    monkeypatch.setattr(dynamic_block_editor_module.DynamicBlockEditorGUI, "show", lambda self: None)
-    monkeypatch.setattr(dynamic_block_editor_module.DynamicBlockEditorGUI, "raise_", lambda self: None)
-    monkeypatch.setattr(dynamic_block_editor_module.DynamicBlockEditorGUI, "activateWindow", lambda self: None)
+    override_attrs.setattr(dynamic_block_editor_module.DynamicBlockEditorGUI, "show", lambda self: None)
+    override_attrs.setattr(dynamic_block_editor_module.DynamicBlockEditorGUI, "raise_", lambda self: None)
+    override_attrs.setattr(dynamic_block_editor_module.DynamicBlockEditorGUI, "activateWindow", lambda self: None)
     editor.edit_scene_item(block_item)
     assert getattr(block_item, "editor_window", None) is not None
 
@@ -114,7 +114,7 @@ def test_scene_edit_dispatch_opens_editor_for_modal_created_block(monkeypatch) -
     editor.close()
 
 
-def test_modify_template_updates_switch_block_in_place(monkeypatch) -> None:
+def test_modify_template_updates_switch_block_in_place(override_attrs) -> None:
     editor = _build_editor()
 
     class _CreateDialogStub:
@@ -161,11 +161,11 @@ def test_modify_template_updates_switch_block_in_place(monkeypatch) -> None:
                 "command_threshold": 0.25,
             })
 
-    monkeypatch.setattr(dynamic_block_editor_module, "SwitchEmtDialog", _CreateDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "SwitchEmtDialog", _CreateDialogStub)
     block_item = editor.create_library_payload_item(BlockType.SWITCH_EMT, 10.0, 20.0)
     assert block_item is not None
 
-    monkeypatch.setattr(dynamic_block_editor_module, "SwitchEmtDialog", _ModifyDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "SwitchEmtDialog", _ModifyDialogStub)
     editor.modify_scene_item_template(block_item)
 
     modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)

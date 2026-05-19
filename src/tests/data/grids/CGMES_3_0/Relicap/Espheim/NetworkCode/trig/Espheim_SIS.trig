@@ -1,0 +1,77 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:85dd3d01-ccdd-4a59-a6e8-2f66205f6cbe> {
+    <urn:uuid:478043e2-91fa-4719-aec6-a8f11060f20a>
+            rdf:type  nc:GridStateAlterationTimePoint;
+            nc:GridStateAlterationTimePoint.GridStateAlterationSchedule
+                    <urn:uuid:f5205bd4-637a-4eb7-b0d8-e03638bc570b>;
+            nc:GridStateAlterationTimePoint.atTime
+                    "2022-06-15T23:30:00Z"^^xsd:dateTime;
+            nc:GridStateAlterationTimePoint.enabled
+                    false .
+    
+    <urn:uuid:85dd3d01-ccdd-4a59-a6e8-2f66205f6cbe>
+            rdf:type              dcat:Dataset;
+            dct:accessRights      "https://energy.referencedata.eu/Confidentiality/Public";
+            dct:conformsTo        "https://cim.ucaiug.io/ns#" , "https://cim4.eu/ns/nc/2.4#" , "https://ap.cim4.eu/StateInstructionSchedule/2.4" , "http://iec.ch/TC57/2013/CIM-schema-cim16#";
+            dct:description       "This is the State Instruction Schedule dataset for Espheim part of ReliCapGrid."@en;
+            dct:identifier        "85dd3d01-ccdd-4a59-a6e8-2f66205f6cbe";
+            dct:issued            "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dct:license           "https://creativecommons.org/licenses/by/4.0/";
+            dct:publisher         "https://energy.referencedata.eu/test/party/Espheim";
+            dct:requires          <urn:uuid:e3453a3c-8639-4648-a662-d6c15f512965>;
+            dct:rights            "Copyright";
+            dct:rightsHolder      "ENTSO-E";
+            dct:spatial           "https://energy.referencedata.eu/Test/Frame/Espheim-Power-Transmission-System";
+            dct:title             "20220615_Espheim_SIS_1.0.0";
+            dcat:endDate          "2023-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Espheim-SIS>;
+            dcat:keyword          "SIS";
+            dcat:startDate        "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:version          "1.0.0";
+            prov:generatedAtTime  "2022-06-10T07:06:25Z"^^xsd:dateTime;
+            prov:wasGeneratedBy   "https://energy.referencedata.eu/Activity/CGM-SIS" .
+    
+    <urn:uuid:f5205bd4-637a-4eb7-b0d8-e03638bc570b>
+            rdf:type                   nc:GridStateAlterationSchedule;
+            cim:IdentifiedObject.mRID  "f5205bd4-637a-4eb7-b0d8-e03638bc570b";
+            nc:BaseTimeSeries.interpolationKind
+                    nc:TimeSeriesInterpolationKind.previous;
+            nc:GridStateAlterationSchedule.GridStateAlteration
+                    <urn:uuid:4d3757fd-b40a-4d7b-be47-6553935234ff> .
+    
+    <urn:uuid:1abe3449-d89d-4387-95f1-713f37290b8a>
+            rdf:type  nc:GridStateAlterationTimePoint;
+            nc:GridStateAlterationTimePoint.GridStateAlterationSchedule
+                    <urn:uuid:f5205bd4-637a-4eb7-b0d8-e03638bc570b>;
+            nc:GridStateAlterationTimePoint.atTime
+                    "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            nc:GridStateAlterationTimePoint.enabled
+                    true .
+    
+    <urn:uuid:64d81a72-adbe-410f-8c13-def6af1e299c>
+            rdf:type  nc:GridStateAlterationTimePoint;
+            nc:GridStateAlterationTimePoint.GridStateAlterationSchedule
+                    <urn:uuid:f5205bd4-637a-4eb7-b0d8-e03638bc570b>;
+            nc:GridStateAlterationTimePoint.atTime
+                    "2022-06-16T00:30:00Z"^^xsd:dateTime;
+            nc:GridStateAlterationTimePoint.enabled
+                    true .
+}

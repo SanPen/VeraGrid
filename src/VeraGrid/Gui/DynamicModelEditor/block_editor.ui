@@ -79,64 +79,72 @@
               <number>0</number>
              </property>
              <widget class="QWidget" name="page_7">
+              <property name="geometry">
+               <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>459</width>
+                <height>318</height>
+               </rect>
+              </property>
               <attribute name="label">
                <string>Library</string>
               </attribute>
-               <layout class="QVBoxLayout" name="verticalLayout_13">
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
+              <layout class="QVBoxLayout" name="verticalLayout_13">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
                <property name="topMargin">
                 <number>0</number>
                </property>
                <property name="rightMargin">
                 <number>0</number>
                </property>
-                <property name="bottomMargin">
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QFrame" name="libraryHeaderFrame">
-                  <property name="frameShape">
-                   <enum>QFrame::Shape::NoFrame</enum>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QFrame" name="libraryHeaderFrame">
+                 <property name="frameShape">
+                  <enum>QFrame::Shape::NoFrame</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Shadow::Raised</enum>
+                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_5">
+                  <property name="leftMargin">
+                   <number>0</number>
                   </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Shadow::Raised</enum>
+                  <property name="topMargin">
+                   <number>0</number>
                   </property>
-                  <layout class="QHBoxLayout" name="horizontalLayout_5">
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>0</number>
-                   </property>
-                   <item>
-                    <widget class="QToolButton" name="librarySearchButton">
-                     <property name="text">
-                      <string>...</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QLineEdit" name="librarySearchLineEdit">
-                     <property name="placeholderText">
-                      <string>Search basic blocks</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QTreeView" name="libraryTreeView">
-                  <property name="frameShape">
-                   <enum>QFrame::Shape::NoFrame</enum>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <widget class="QToolButton" name="librarySearchButton">
+                    <property name="text">
+                     <string>...</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLineEdit" name="librarySearchLineEdit">
+                    <property name="placeholderText">
+                     <string>Search basic blocks</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QTreeView" name="libraryTreeView">
+                 <property name="frameShape">
+                  <enum>QFrame::Shape::NoFrame</enum>
                  </property>
                 </widget>
                </item>
@@ -147,8 +155,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>554</width>
-                <height>285</height>
+                <width>459</width>
+                <height>318</height>
                </rect>
               </property>
               <attribute name="label">
@@ -181,8 +189,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>554</width>
-                <height>285</height>
+                <width>459</width>
+                <height>318</height>
                </rect>
               </property>
               <attribute name="label">
@@ -215,8 +223,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>554</width>
-                <height>285</height>
+                <width>459</width>
+                <height>318</height>
                </rect>
               </property>
               <attribute name="label">
@@ -350,7 +358,7 @@
      <x>0</x>
      <y>0</y>
      <width>957</width>
-     <height>33</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>
@@ -375,6 +383,8 @@
    <addaction name="actionCenter"/>
    <addaction name="actionZoom_out"/>
    <addaction name="actionZoom_in"/>
+   <addaction name="actionSave_block_to_my_catalogue"/>
+   <addaction name="actionExport_block"/>
   </widget>
   <action name="block_editor_actionCheckModel">
    <property name="icon">
@@ -419,6 +429,34 @@
    </property>
    <property name="text">
     <string>Zoom out</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionSave_block_to_my_catalogue">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::DocumentSaveAs"/>
+   </property>
+   <property name="text">
+    <string>Save block to my catalogue</string>
+   </property>
+   <property name="toolTip">
+    <string>Save block to my catalogue</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionExport_block">
+   <property name="icon">
+    <iconset theme="QIcon::ThemeIcon::DocumentSave"/>
+   </property>
+   <property name="text">
+    <string>Export block</string>
+   </property>
+   <property name="toolTip">
+    <string>Export block</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>

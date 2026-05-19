@@ -378,10 +378,10 @@ def VscControlledPV(vfactory: VarFactory, name='VscControlledPV') -> RmsModelTem
     pv_block = PVControlBuild2(vfactory).block
     pv_cell_block = PVCellBuild(vfactory).block
 
-    pv_block.connect([pv_block.in_vars[2]], [vsc_block.out_vars[2]])
-    pv_block.connect([pv_block.in_vars[3]], [vsc_block.out_vars[3]])
+    vfactory.add_connections([pv_block.in_vars[2]], [vsc_block.out_vars[2]])
+    vfactory.add_connections([pv_block.in_vars[3]], [vsc_block.out_vars[3]])
 
-    pv_cell_block.connect([pv_cell_block.in_vars[0]], [vsc_block.out_vars[0]])
+    vfactory.add_connections([pv_cell_block.in_vars[0]], [vsc_block.out_vars[0]])
 
     templ.block = Block(children=[pv_block, pv_cell_block])
 

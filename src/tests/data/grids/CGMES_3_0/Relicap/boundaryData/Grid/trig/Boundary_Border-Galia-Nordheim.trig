@@ -1,0 +1,124 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:5f8c11a8-c61c-42c9-925d-8cdbc0146c1a> {
+    <urn:uuid:c39c3eb8-9cce-4778-9069-6952a117ba2b>
+            rdf:type                   cim:Substation;
+            cim:IdentifiedObject.mRID  "c39c3eb8-9cce-4778-9069-6952a117ba2b";
+            cim:IdentifiedObject.name  "HVDV Station";
+            cim:Substation.Region      <urn:uuid:77467625-a8fe-8792-7cf2-06c5dfd5fba9> .
+    
+    <urn:uuid:5f8c11a8-c61c-42c9-925d-8cdbc0146c1a>
+            rdf:type           rdfg:Graph , dcat:Dataset;
+            dct:conformsTo     <http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/3.0>;
+            dct:description    "The equipment dataset of the boundary that is used in the ReliCapGrid.";
+            dct:identifier     "5f8c11a8-c61c-42c9-925d-8cdbc0146c1a";
+            dct:issued         "2025-02-06"^^xsd:date;
+            dct:requires       <urn:uuid:1b65ada7-39ca-42b8-a278-39c457ed82c3>;
+            dct:temporal       [ rdf:type        dct:PeriodOfTime;
+                                 dcat:startDate  "2022-06-16T23:30:00Z"^^xsd:dateTime
+                               ];
+            dcat:distribution  [ rdf:type    dcat:Distribution;
+                                 dct:issued  "2025-02-06T14:18:22Z"^^xsd:dateTime
+                               ];
+            dcat:isVersionOf   <http://ninerealms.nr/boundary>;
+            dcat:version       "1";
+            json-ld:base       "http://ninerealms.nr/boundary#" .
+    
+    <urn:uuid:d9574184-b375-45f6-8fcc-20ec0470bf93>
+            rdf:type                       cim:ConnectivityNode;
+            cim:ConnectivityNode.ConnectivityNodeContainer
+                    <urn:uuid:82abfaf2-36df-44ac-b4e5-e40a535affa4>;
+            cim:IdentifiedObject.description
+                    "Boundary point 1 between Galia (substation name) and Nordheim (substation name) (220kV).";
+            cim:IdentifiedObject.mRID      "d9574184-b375-45f6-8fcc-20ec0470bf93";
+            cim:IdentifiedObject.name      "BP_GA-NH1";
+            eu:IdentifiedObject.energyIdentCodeEic
+                    "10T-AT-SI-00001T";
+            eu:IdentifiedObject.shortName  "BP_GA-NH1" .
+    
+    <urn:uuid:892ef502-162b-469f-b93f-266aae828227>
+            rdf:type                   cim:ConnectivityNode;
+            cim:ConnectivityNode.ConnectivityNodeContainer
+                    <urn:uuid:e61f8ecf-8129-4702-a3a2-826bdf5ad13d>;
+            cim:IdentifiedObject.mRID  "892ef502-162b-469f-b93f-266aae828227";
+            cim:IdentifiedObject.name  "BP HVDC GA-NH NH side" .
+    
+    <urn:uuid:82abfaf2-36df-44ac-b4e5-e40a535affa4>
+            rdf:type                       cim:Line;
+            cim:IdentifiedObject.description
+                    "Line BP_GA-NH1";
+            cim:IdentifiedObject.mRID      "82abfaf2-36df-44ac-b4e5-e40a535affa4";
+            cim:IdentifiedObject.name      "BP_GA-NH1";
+            cim:Line.Region                <urn:uuid:fbcc6679-6da5-4cfd-b50c-8ce23f450c78>;
+            eu:IdentifiedObject.energyIdentCodeEic
+                    "10T-BO-GA-10114U";
+            eu:IdentifiedObject.shortName  "BP_GA-NH1" .
+    
+    <urn:uuid:a7745865-bc9e-4352-98fc-98c7f44669a4>
+            rdf:type                       eu:BoundaryPoint;
+            cim:IdentifiedObject.description
+                    "BP_GA-NH2";
+            cim:IdentifiedObject.mRID      "a7745865-bc9e-4352-98fc-98c7f44669a4";
+            cim:IdentifiedObject.name      "BP_GA-NH2";
+            eu:BoundaryPoint.ConnectivityNode
+                    <urn:uuid:892ef502-162b-469f-b93f-266aae828227>;
+            eu:BoundaryPoint.fromEndIsoCode
+                    "GA";
+            eu:BoundaryPoint.fromEndName   "Alfheim7";
+            eu:BoundaryPoint.fromEndNameTso
+                    "TSO-Galia";
+            eu:BoundaryPoint.isExcludedFromAreaInterchange
+                    false;
+            eu:BoundaryPoint.toEndIsoCode  "NH";
+            eu:BoundaryPoint.toEndName     "Oldissa1";
+            eu:BoundaryPoint.toEndNameTso  "TSO-Nordheim";
+            eu:IdentifiedObject.energyIdentCodeEic
+                    "10T-AT-SI-00001T";
+            eu:IdentifiedObject.shortName  "BP_GA-NH2" .
+    
+    <urn:uuid:f55e441a-6fef-2657-4229-355ca95df87e>
+            rdf:type                       eu:BoundaryPoint;
+            cim:IdentifiedObject.description
+                    "Boundary point 1 between Galia (substation name) and Nordheim (substation name) (220kV).";
+            cim:IdentifiedObject.mRID      "f55e441a-6fef-2657-4229-355ca95df87e";
+            cim:IdentifiedObject.name      "BP_GA-NH1";
+            eu:BoundaryPoint.ConnectivityNode
+                    <urn:uuid:d9574184-b375-45f6-8fcc-20ec0470bf93>;
+            eu:BoundaryPoint.fromEndIsoCode
+                    "GA";
+            eu:BoundaryPoint.fromEndName   "Alfheim7";
+            eu:BoundaryPoint.fromEndNameTso
+                    "TSO-Galia";
+            eu:BoundaryPoint.isExcludedFromAreaInterchange
+                    false;
+            eu:BoundaryPoint.toEndIsoCode  "NH";
+            eu:BoundaryPoint.toEndName     "Oldissa1";
+            eu:BoundaryPoint.toEndNameTso  "TSO-Nordheim";
+            eu:IdentifiedObject.energyIdentCodeEic
+                    "10T-AT-SI-00001T";
+            eu:IdentifiedObject.shortName  "BP_GA-NH1" .
+    
+    <urn:uuid:e61f8ecf-8129-4702-a3a2-826bdf5ad13d>
+            rdf:type                      cim:VoltageLevel;
+            cim:IdentifiedObject.mRID     "e61f8ecf-8129-4702-a3a2-826bdf5ad13d";
+            cim:IdentifiedObject.name     "VL 220 kV";
+            cim:VoltageLevel.BaseVoltage  <urn:uuid:a7f1d8de-d658-428a-821b-3a5ae5965fd1>;
+            cim:VoltageLevel.Substation   <urn:uuid:c39c3eb8-9cce-4778-9069-6952a117ba2b> .
+}

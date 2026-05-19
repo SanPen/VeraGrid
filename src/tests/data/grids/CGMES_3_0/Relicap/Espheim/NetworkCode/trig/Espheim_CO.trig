@@ -1,0 +1,275 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:5898c268-9b32-4ab5-9cfc-64546135a337> {
+    <urn:uuid:66627b36-aecd-4141-ab99-4bd8a74d18a8>
+            rdf:type                        nc:OrdinaryContingency;
+            cim:IdentifiedObject.description
+                    "This is an example of an ordinary contingency;Loss of HVDC converter";
+            cim:IdentifiedObject.mRID       "66627b36-aecd-4141-ab99-4bd8a74d18a8";
+            cim:IdentifiedObject.name       "CO_HVDC1";
+            nc:Contingency.EquipmentOperator
+                    <urn:uuid:b9fbb881-573b-4e98-9b7b-31f00a45ebe0>;
+            nc:Contingency.normalMustStudy  true .
+    
+    <urn:uuid:9d17b84c-33b5-4a68-b8b9-ed5b31038d40>
+            rdf:type                        nc:OutOfRangeContingency;
+            cim:IdentifiedObject.description
+                    "This is an example of an ordinary contingency; N-2 on two lines";
+            cim:IdentifiedObject.mRID       "9d17b84c-33b5-4a68-b8b9-ed5b31038d40";
+            cim:IdentifiedObject.name       "CO4";
+            nc:Contingency.EquipmentOperator
+                    <urn:uuid:151d6acf-d4fd-4604-9603-f02348603277>;
+            nc:Contingency.normalMustStudy  true .
+    
+    <urn:uuid:96c96ad8-844c-4f3b-8b38-c886ba2c0214>
+            rdf:type                        nc:OrdinaryContingency;
+            cim:IdentifiedObject.description
+                    "This is an example of an ordinary contingency; Tie Line loss";
+            cim:IdentifiedObject.mRID       "96c96ad8-844c-4f3b-8b38-c886ba2c0214";
+            cim:IdentifiedObject.name       "CO5";
+            nc:Contingency.EquipmentOperator
+                    <urn:uuid:151d6acf-d4fd-4604-9603-f02348603277>;
+            nc:Contingency.normalMustStudy  true .
+    
+    <urn:uuid:b994b74c-7539-4e1e-9985-7d7a20d55ba9>
+            rdf:type                   cim:ContingencyEquipment;
+            cim:ContingencyElement.Contingency
+                    <urn:uuid:66627b36-aecd-4141-ab99-4bd8a74d18a8>;
+            cim:ContingencyEquipment.Equipment
+                    <urn:uuid:038ce404-30dc-4289-b9db-7076cb870b8e>;
+            cim:ContingencyEquipment.contingentStatus
+                    cim:ContingencyEquipmentStatusKind.outOfService;
+            cim:IdentifiedObject.description
+                    "The equipment for this contingency is the DC-3P-Convert-1 in between Espheim and Svedala (CsConverter); Loss of a single component of a HVDC system (single HVDC converter unit) ";
+            cim:IdentifiedObject.mRID  "b994b74c-7539-4e1e-9985-7d7a20d55ba9";
+            cim:IdentifiedObject.name  "HVDC_1" .
+    
+    <urn:uuid:833ea3ad-2c2d-4e73-9165-c3acbe04bbe1>
+            rdf:type                   cim:ContingencyEquipment;
+            cim:ContingencyElement.Contingency
+                    <urn:uuid:9d17b84c-33b5-4a68-b8b9-ed5b31038d40>;
+            cim:ContingencyEquipment.Equipment
+                    <urn:uuid:04566cf8-c766-11e1-8775-005056c00008>;
+            cim:ContingencyEquipment.contingentStatus
+                    cim:ContingencyEquipmentStatusKind.outOfService;
+            cim:IdentifiedObject.description
+                    "The equipment for this contingency; N-2 on two lines";
+            cim:IdentifiedObject.mRID  "833ea3ad-2c2d-4e73-9165-c3acbe04bbe1";
+            cim:IdentifiedObject.name  "L4-1" .
+    
+    <urn:uuid:4ec61835-cdf9-4fd5-93ee-37aa4caee337>
+            rdf:type                   cim:ContingencyEquipment;
+            cim:ContingencyElement.Contingency
+                    <urn:uuid:504b48fb-de1f-4f7e-928f-8585daaf7b72>;
+            cim:ContingencyEquipment.Equipment
+                    <urn:uuid:be09fc02-de3f-49e4-aa84-94803bcc5d76>;
+            cim:ContingencyEquipment.contingentStatus
+                    cim:ContingencyEquipmentStatusKind.outOfService;
+            cim:IdentifiedObject.description
+                    "The equipment for this contingency is the DCLine in between Espheim and Svedala (DCLineSegment); Loss of a single component of a HVDC system (line or cable) ";
+            cim:IdentifiedObject.mRID  "4ec61835-cdf9-4fd5-93ee-37aa4caee337";
+            cim:IdentifiedObject.name  "HVDC_2" .
+    
+    <urn:uuid:62eac668-82a1-4739-8cfc-de929b78ef7e>
+            rdf:type                        nc:OrdinaryContingency;
+            cim:IdentifiedObject.description
+                    "This is an example of an ordinary contingency; Loss of a single voltage compensation device";
+            cim:IdentifiedObject.mRID       "62eac668-82a1-4739-8cfc-de929b78ef7e";
+            cim:IdentifiedObject.name       "CO_VComp_Linear";
+            nc:Contingency.EquipmentOperator
+                    <urn:uuid:151d6acf-d4fd-4604-9603-f02348603277>;
+            nc:Contingency.normalMustStudy  true .
+    
+    <urn:uuid:afe6c465-89d4-458a-a27c-3974d1102cad>
+            rdf:type                   cim:ContingencyEquipment;
+            cim:ContingencyElement.Contingency
+                    <urn:uuid:8cdec4c6-10c3-40c1-9eeb-7f6ae8d9b3fe>;
+            cim:ContingencyEquipment.Equipment
+                    <urn:uuid:b85e5fb8-7e2b-4264-a059-edab9a838116>;
+            cim:ContingencyEquipment.contingentStatus
+                    cim:ContingencyEquipmentStatusKind.outOfService;
+            cim:IdentifiedObject.description
+                    "The equipment for this contingency; Tie Line loss between Espheim and Svedala";
+            cim:IdentifiedObject.mRID  "afe6c465-89d4-458a-a27c-3974d1102cad";
+            cim:IdentifiedObject.name  "TieLine_Espheim-Svedala1" .
+    
+    <urn:uuid:e574dccc-d9bd-43aa-bcda-2b54eb2eb03d>
+            rdf:type                   cim:ContingencyEquipment;
+            cim:ContingencyElement.Contingency
+                    <urn:uuid:13334fdf-9cc2-4341-adb6-1281269040b4>;
+            cim:ContingencyEquipment.Equipment
+                    <urn:uuid:0475dbd8-c766-11e1-8775-005056c00008>;
+            cim:ContingencyEquipment.contingentStatus
+                    cim:ContingencyEquipmentStatusKind.outOfService;
+            cim:IdentifiedObject.description
+                    "The equipment for this contingency; N-2 on two lines";
+            cim:IdentifiedObject.mRID  "e574dccc-d9bd-43aa-bcda-2b54eb2eb03d";
+            cim:IdentifiedObject.name  "L3-2" .
+    
+    <urn:uuid:d72d8f22-79f2-446e-b26b-0635a268bb5d>
+            rdf:type                   cim:ContingencyEquipment;
+            cim:ContingencyElement.Contingency
+                    <urn:uuid:62eac668-82a1-4739-8cfc-de929b78ef7e>;
+            cim:ContingencyEquipment.Equipment
+                    <urn:uuid:0489d903-c766-11e1-8775-005056c00008>;
+            cim:ContingencyEquipment.contingentStatus
+                    cim:ContingencyEquipmentStatusKind.outOfService;
+            cim:IdentifiedObject.description
+                    "The equipment for this contingency is a LinearShuntCompensator \"Roanoke SC\" in Espheim; Loss of a single voltage compensation device";
+            cim:IdentifiedObject.mRID  "d72d8f22-79f2-446e-b26b-0635a268bb5d";
+            cim:IdentifiedObject.name  "Vcomp_Linear" .
+    
+    <urn:uuid:5461e1a3-e345-43a3-a863-9648b652d6c1>
+            rdf:type                   cim:ContingencyEquipment;
+            cim:ContingencyElement.Contingency
+                    <urn:uuid:b6b780cb-9fe5-4c45-989d-447a927c3874>;
+            cim:ContingencyEquipment.Equipment
+                    <urn:uuid:048481d0-c766-11e1-8775-005056c00008>;
+            cim:ContingencyEquipment.contingentStatus
+                    cim:ContingencyEquipmentStatusKind.outOfService;
+            cim:IdentifiedObject.description
+                    "The equipment for this contingency; Tripping of a backup line 25-27";
+            cim:IdentifiedObject.mRID  "5461e1a3-e345-43a3-a863-9648b652d6c1";
+            cim:IdentifiedObject.name  "L2" .
+    
+    <urn:uuid:5898c268-9b32-4ab5-9cfc-64546135a337>
+            rdf:type              dcat:Dataset;
+            dct:accessRights      "https://energy.referencedata.eu/Confidentiality/Public";
+            dct:conformsTo        "https://cim.ucaiug.io/ns#" , "https://ap.cim4.eu/Contingency/2.3" , "https://cim4.eu/ns/nc/2.4#" , "http://iec.ch/TC57/2013/CIM-schema-cim16#";
+            dct:description       "This is the contingency dataset for Espheim part of ReliCapGrid."@en;
+            dct:identifier        "5898c268-9b32-4ab5-9cfc-64546135a337";
+            dct:issued            "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dct:license           "https://creativecommons.org/licenses/by/4.0/";
+            dct:publisher         "https://energy.referencedata.eu/test/party/Espheim";
+            dct:requires          <urn:uuid:e3453a3c-8639-4648-a662-d6c15f512965>;
+            dct:rights            "Copyright";
+            dct:rightsHolder      "ENTSO-E";
+            dct:spatial           "https://energy.referencedata.eu/Test/Frame/Espheim-Power-Transmission-System";
+            dct:title             "20220615_Espheim_CO_1.0.0";
+            dcat:endDate          "2023-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Espheim-CO>;
+            dcat:keyword          "CO";
+            dcat:startDate        "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:version          "1.0.0";
+            prov:generatedAtTime  "2022-06-10T07:06:25Z"^^xsd:dateTime;
+            prov:wasGeneratedBy   "https://energy.referencedata.eu/Activity/CGM-CO" .
+    
+    <urn:uuid:266acca2-64fa-4a19-af39-d95d44c7c891>
+            rdf:type                   cim:ContingencyEquipment;
+            cim:ContingencyElement.Contingency
+                    <urn:uuid:ce19dd34-429e-4b72-8813-7615cc57b4a4>;
+            cim:ContingencyEquipment.Equipment
+                    <urn:uuid:04839777-c766-11e1-8775-005056c00008>;
+            cim:ContingencyEquipment.contingentStatus
+                    cim:ContingencyEquipmentStatusKind.outOfService;
+            cim:IdentifiedObject.description
+                    "The equipment for this contingency; Loss of generation";
+            cim:IdentifiedObject.mRID  "266acca2-64fa-4a19-af39-d95d44c7c891";
+            cim:IdentifiedObject.name  "G1" .
+    
+    <urn:uuid:b6b780cb-9fe5-4c45-989d-447a927c3874>
+            rdf:type                        nc:OrdinaryContingency;
+            cim:IdentifiedObject.description
+                    "This is an example of an ordinary contingency; Line loss";
+            cim:IdentifiedObject.mRID       "b6b780cb-9fe5-4c45-989d-447a927c3874";
+            cim:IdentifiedObject.name       "CO2";
+            nc:Contingency.EquipmentOperator
+                    <urn:uuid:151d6acf-d4fd-4604-9603-f02348603277>;
+            nc:Contingency.normalMustStudy  true .
+    
+    <urn:uuid:ce19dd34-429e-4b72-8813-7615cc57b4a4>
+            rdf:type                        nc:OrdinaryContingency;
+            cim:IdentifiedObject.description
+                    "This is an example of an ordinary contingency;Loss of generation";
+            cim:IdentifiedObject.mRID       "ce19dd34-429e-4b72-8813-7615cc57b4a4";
+            cim:IdentifiedObject.name       "CO6";
+            nc:Contingency.EquipmentOperator
+                    <urn:uuid:b9fbb881-573b-4e98-9b7b-31f00a45ebe0>;
+            nc:Contingency.normalMustStudy  true .
+    
+    <urn:uuid:13334fdf-9cc2-4341-adb6-1281269040b4>
+            rdf:type                        nc:OutOfRangeContingency;
+            cim:IdentifiedObject.description
+                    "This is an example of an ordinary contingency; N-2 on two lines";
+            cim:IdentifiedObject.mRID       "13334fdf-9cc2-4341-adb6-1281269040b4";
+            cim:IdentifiedObject.name       "CO3";
+            nc:Contingency.EquipmentOperator
+                    <urn:uuid:151d6acf-d4fd-4604-9603-f02348603277>;
+            nc:Contingency.normalMustStudy  true .
+    
+    <urn:uuid:ae28c84c-33b6-4b78-88b9-fe5c41049d40>
+            rdf:type                   cim:ContingencyEquipment;
+            cim:ContingencyElement.Contingency
+                    <urn:uuid:96c96ad8-844c-4f3b-8b38-c886ba2c0214>;
+            cim:ContingencyEquipment.Equipment
+                    <urn:uuid:a04e4e41-c0b4-496e-9ef3-390ea089411f>;
+            cim:ContingencyEquipment.contingentStatus
+                    cim:ContingencyEquipmentStatusKind.outOfService;
+            cim:IdentifiedObject.description
+                    "The equipment for this contingency;Tie Line loss";
+            cim:IdentifiedObject.mRID  "ae28c84c-33b6-4b78-88b9-fe5c41049d40";
+            cim:IdentifiedObject.name  "L5" .
+    
+    <urn:uuid:816b2763-cefe-41b9-a599-de0d5972cd4c>
+            rdf:type                   cim:ContingencyEquipment;
+            cim:ContingencyElement.Contingency
+                    <urn:uuid:9d17b84c-33b5-4a68-b8b9-ed5b31038d40>;
+            cim:ContingencyEquipment.Equipment
+                    <urn:uuid:0475dbd8-c766-11e1-8775-005056c00008>;
+            cim:ContingencyEquipment.contingentStatus
+                    cim:ContingencyEquipmentStatusKind.outOfService;
+            cim:IdentifiedObject.description
+                    "The equipment for this contingency; N-2 on two lines";
+            cim:IdentifiedObject.mRID  "816b2763-cefe-41b9-a599-de0d5972cd4c";
+            cim:IdentifiedObject.name  "L4-2" .
+    
+    <urn:uuid:504b48fb-de1f-4f7e-928f-8585daaf7b72>
+            rdf:type                        nc:OrdinaryContingency;
+            cim:IdentifiedObject.description
+                    "This is an example of an ordinary contingency;Loss of HVDC line";
+            cim:IdentifiedObject.mRID       "504b48fb-de1f-4f7e-928f-8585daaf7b72";
+            cim:IdentifiedObject.name       "CO_HVDC2";
+            nc:Contingency.EquipmentOperator
+                    <urn:uuid:b9fbb881-573b-4e98-9b7b-31f00a45ebe0>;
+            nc:Contingency.normalMustStudy  true .
+    
+    <urn:uuid:8cdec4c6-10c3-40c1-9eeb-7f6ae8d9b3fe>
+            rdf:type                        nc:OrdinaryContingency;
+            cim:IdentifiedObject.description
+                    "This is an example of an ordinary contingency; Tie Line loss";
+            cim:IdentifiedObject.mRID       "8cdec4c6-10c3-40c1-9eeb-7f6ae8d9b3fe";
+            cim:IdentifiedObject.name       "CO1";
+            nc:Contingency.EquipmentOperator
+                    <urn:uuid:151d6acf-d4fd-4604-9603-f02348603277>;
+            nc:Contingency.normalMustStudy  true .
+    
+    <urn:uuid:e7ad6c6d-3b36-45a5-a7ac-be48abe54cd7>
+            rdf:type                   cim:ContingencyEquipment;
+            cim:ContingencyElement.Contingency
+                    <urn:uuid:13334fdf-9cc2-4341-adb6-1281269040b4>;
+            cim:ContingencyEquipment.Equipment
+                    <urn:uuid:04566cf8-c766-11e1-8775-005056c00008>;
+            cim:ContingencyEquipment.contingentStatus
+                    cim:ContingencyEquipmentStatusKind.outOfService;
+            cim:IdentifiedObject.description
+                    "The equipment for this contingency; N-2 on two lines";
+            cim:IdentifiedObject.mRID  "e7ad6c6d-3b36-45a5-a7ac-be48abe54cd7";
+            cim:IdentifiedObject.name  "L3-1" .
+}

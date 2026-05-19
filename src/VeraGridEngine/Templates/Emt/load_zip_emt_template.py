@@ -135,6 +135,7 @@ def get_load_ZIP_emt_template(
     templ.block.event_dict[v0] = vf.add_const(float(np.sqrt(2.0)))
     templ.block.event_dict[k_sogi] = vf.add_const(float(np.sqrt(2.0)))
     templ.block.event_dict[eps] = vf.add_const(1e-12)
+    # a1=a4=1 ct impedance,  a2=a5=1 ct current ,a3=a6=1 ct  power
     templ.block.event_dict[a1] = vf.add_const(1.0)
     templ.block.event_dict[a2] = vf.add_const(0.0)
     templ.block.event_dict[a3] = vf.add_const(0.0)

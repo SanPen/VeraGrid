@@ -97,13 +97,7 @@ pf_options = gce.PowerFlowOptions(solver_type=gce.SolverType.NR)
 
 # declare the contingency options
 options_ = gce.ContingencyAnalysisOptions(
-  
-  # use the provided flows?
-  use_provided_flows=False,
-  
-  # Pass here more exact base flows, otherwise linear ones will be computed
-  Pf=None,
-  
+    
   # Contingency method to use
   contingency_method=gce.ContingencyMethod.PowerFlow,
 

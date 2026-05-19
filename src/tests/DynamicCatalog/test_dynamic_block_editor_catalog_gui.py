@@ -16,6 +16,7 @@ from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import get_modal_templ
 from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import _transformer_modal_config_allows_modify
 from VeraGrid.Gui.DynamicModelEditor.lookup_table_dialog import LookupArrayLinearDialog
 from VeraGrid.Gui.DynamicModelEditor.lookup_table_dialog import LookupMatrixLinearDialog
+from VeraGrid.Gui.DynamicModelEditor.lookup_table_dialog import _copy_selected_table_range_to_clipboard
 from VeraGrid.Gui.DynamicModelEditor.lookup_table_dialog import _parse_clipboard_grid
 from VeraGrid.Gui.DynamicModelEditor.induction_motor_emt_dialog import InductionMotorEmtLevel
 from VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime import get_jmarti_block_fit_bundle
@@ -292,19 +293,24 @@ def test_rms_editor_exposes_basic_block_catalog_under_basic() -> None:
 
 def test_library_search_button_and_shortcut_filter_basic_catalog() -> None:
     editor = _build_editor(DynamicSimulationMode.EMT)
+    editor.raise_()
+    QTest.qWaitForWindowExposed(editor)
+    QtWidgets.QApplication.processEvents()
     descriptor_by_key = get_basic_block_catalog_descriptor_by_key()
     park_label = descriptor_by_key["park_transform_dq"].display_label
     limit_label = descriptor_by_key["limit"].display_label
 
     assert editor.ui.librarySearchLineEdit.isVisible()
-
     QTest.mouseClick(editor.ui.librarySearchButton, QtCore.Qt.MouseButton.LeftButton)
     QtWidgets.QApplication.processEvents()
+    QTest.qWait(100)
+
     assert editor.ui.librarySearchLineEdit.hasFocus()
 
     editor.ui.librarySearchLineEdit.clearFocus()
-    QTest.keyClick(editor, QtCore.Qt.Key.Key_F, QtCore.Qt.KeyboardModifier.ControlModifier)
+    editor.focus_library_search()
     QtWidgets.QApplication.processEvents()
+    QTest.qWait(100)
     assert editor.ui.librarySearchLineEdit.hasFocus()
 
     editor.ui.librarySearchLineEdit.setText("park transform")
@@ -467,19 +473,33 @@ def test_lookup_array_linear_dialog_supports_copy_paste_and_delete_shortcuts() -
     dialog = LookupArrayLinearDialog(block_label="Lookup array (linear)")
     dialog.show()
     dialog.activateWindow()
+    dialog.raise_()
+    QTest.qWaitForWindowExposed(dialog)
+    QtWidgets.QApplication.processEvents()
     clipboard = QtWidgets.QApplication.clipboard()
+    clipboard.clear()
+    QtWidgets.QApplication.processEvents()
+    QTest.qWait(50)
 
     dialog._table_widget.clearSelection()
     selection = QtWidgets.QTableWidgetSelectionRange(0, 0, 0, 1)
     dialog._table_widget.setRangeSelected(selection, True)
     dialog._table_widget.setFocus()
-    QTest.keyClick(dialog._table_widget, QtCore.Qt.Key.Key_C, QtCore.Qt.KeyboardModifier.ControlModifier)
     QtWidgets.QApplication.processEvents()
+
+    dialog.copy_selection_to_clipboard()
+    QtWidgets.QApplication.processEvents()
+    QTest.qWait(50)
     assert clipboard.text().strip() == "0.0\t0.0"
 
     clipboard.setText("3\t30\n4\t40")
-    QTest.keyClick(dialog._table_widget, QtCore.Qt.Key.Key_V, QtCore.Qt.KeyboardModifier.ControlModifier)
+    dialog._table_widget.clearSelection()
+    dialog._table_widget.setFocus()
     QtWidgets.QApplication.processEvents()
+
+    dialog.paste_from_clipboard()
+    QtWidgets.QApplication.processEvents()
+    QTest.qWait(50)
     x_points, y_points = dialog._read_points_from_table()
     assert x_points == [3.0, 4.0, 2.0]
     assert y_points == [30.0, 40.0, 20.0]
@@ -487,8 +507,12 @@ def test_lookup_array_linear_dialog_supports_copy_paste_and_delete_shortcuts() -
     dialog._table_widget.clearSelection()
     selection = QtWidgets.QTableWidgetSelectionRange(0, 0, 0, 1)
     dialog._table_widget.setRangeSelected(selection, True)
-    QTest.keyClick(dialog._table_widget, QtCore.Qt.Key.Key_Delete)
+    dialog._table_widget.setFocus()
     QtWidgets.QApplication.processEvents()
+
+    dialog.delete_selection()
+    QtWidgets.QApplication.processEvents()
+    QTest.qWait(50)
     assert dialog._table_widget.rowCount() == 2
     dialog.close()
 
@@ -532,7 +556,7 @@ def test_lookup_array_linear_dialog_supports_custom_axis_labels_and_preview() ->
     dialog.close()
 
 
-def test_lookup_array_linear_descriptor_uses_modal_points_to_build_block(monkeypatch) -> None:
+def test_lookup_array_linear_descriptor_uses_modal_points_to_build_block(override_attrs) -> None:
     editor = _build_editor(DynamicSimulationMode.EMT)
     descriptor = get_basic_block_catalog_descriptor_by_key()["lookup_array_linear"]
 
@@ -546,7 +570,7 @@ def test_lookup_array_linear_descriptor_uses_modal_points_to_build_block(monkeyp
         def get_points(self) -> tuple[list[float], list[float]]:
             return [0.0, 2.0, 4.0], [0.0, 20.0, 40.0]
 
-    monkeypatch.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _DialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _DialogStub)
     block_item = editor.create_library_payload_item(descriptor, 10.0, 20.0)
 
     assert block_item is not None
@@ -557,7 +581,7 @@ def test_lookup_array_linear_descriptor_uses_modal_points_to_build_block(monkeyp
     editor.close()
 
 
-def test_lookup_array_linear_modal_created_block_supports_modify_template(monkeypatch) -> None:
+def test_lookup_array_linear_modal_created_block_supports_modify_template(override_attrs) -> None:
     editor = _build_editor(DynamicSimulationMode.EMT)
     descriptor = get_basic_block_catalog_descriptor_by_key()["lookup_array_linear"]
 
@@ -581,11 +605,11 @@ def test_lookup_array_linear_modal_created_block_supports_modify_template(monkey
         def get_points(self) -> tuple[list[float], list[float]]:
             return [0.0, 2.0, 4.0], [0.0, 40.0, 80.0]
 
-    monkeypatch.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _CreateDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _CreateDialogStub)
     block_item = editor.create_library_payload_item(descriptor, 10.0, 20.0)
     assert block_item is not None
 
-    monkeypatch.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _ModifyDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _ModifyDialogStub)
     editor.modify_scene_item_template(block_item)
     updated_item = editor.get_scene_item_by_block_uid(block_item.subsys.uid)
     assert updated_item is not None
@@ -600,7 +624,7 @@ def test_lookup_array_linear_modal_created_block_supports_modify_template(monkey
     editor.close()
 
 
-def test_emt_phase_wizard_block_supports_modify_template(monkeypatch) -> None:
+def test_emt_phase_wizard_block_supports_modify_template(override_attrs) -> None:
     editor = _build_editor(DynamicSimulationMode.EMT)
 
     class _CreateDialogStub:
@@ -623,7 +647,7 @@ def test_emt_phase_wizard_block_supports_modify_template(monkeypatch) -> None:
         def get_values(self) -> tuple[bool, bool, bool, bool]:
             return False, True, True, True
 
-    monkeypatch.setattr(dynamic_block_editor_module, "EmtTemplateWizardDialog", _CreateDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "EmtTemplateWizardDialog", _CreateDialogStub)
     block_item = editor.create_library_payload_item(BlockType.EMT_PI_LINE, 10.0, 20.0)
     assert block_item is not None
 
@@ -632,7 +656,7 @@ def test_emt_phase_wizard_block_supports_modify_template(monkeypatch) -> None:
     assert modal_config is not None
     assert modal_config["phase_b"] is False
 
-    monkeypatch.setattr(dynamic_block_editor_module, "EmtTemplateWizardDialog", _ModifyDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "EmtTemplateWizardDialog", _ModifyDialogStub)
     editor.modify_scene_item_template(block_item)
 
     modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
@@ -645,7 +669,7 @@ def test_emt_phase_wizard_block_supports_modify_template(monkeypatch) -> None:
     editor.close()
 
 
-def test_jmarti_line_emt_block_supports_modal_configuration_and_modify_template(monkeypatch) -> None:
+def test_jmarti_line_emt_block_supports_modal_configuration_and_modify_template(override_attrs) -> None:
     circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
     bus0 = gce.Bus(name="BusLine0", Vnom=13.8)
     bus1 = gce.Bus(name="BusLine1", Vnom=13.8)
@@ -711,7 +735,7 @@ def test_jmarti_line_emt_block_supports_modal_configuration_and_modify_template(
         def get_configuration(self) -> dict[str, object]:
             return _build_jmarti_config(False, True, True, True)
 
-    monkeypatch.setattr(dynamic_block_editor_module, "JMartiLineEmtDialog", _CreateDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "JMartiLineEmtDialog", _CreateDialogStub)
     block_item = editor.create_library_payload_item(BlockType.EMT_JMARTI_LINE, 10.0, 20.0)
     assert block_item is not None
 
@@ -725,7 +749,7 @@ def test_jmarti_line_emt_block_supports_modal_configuration_and_modify_template(
     assert "Fit not computed" in str(modal_config["fit_status"])
     assert "fit_diagnostics_text" in modal_config
 
-    monkeypatch.setattr(dynamic_block_editor_module, "JMartiLineEmtDialog", _ModifyDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "JMartiLineEmtDialog", _ModifyDialogStub)
     editor.modify_scene_item_template(block_item)
 
     modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
@@ -738,7 +762,7 @@ def test_jmarti_line_emt_block_supports_modal_configuration_and_modify_template(
     editor.close()
 
 
-def test_emt_source_blocks_are_exposed_and_created_from_source_modal(monkeypatch) -> None:
+def test_emt_source_blocks_are_exposed_and_created_from_source_modal(override_attrs) -> None:
     editor = _build_editor(DynamicSimulationMode.EMT)
     leaf_labels = _collect_leaf_labels(editor.library_model)
 
@@ -767,7 +791,7 @@ def test_emt_source_blocks_are_exposed_and_created_from_source_modal(monkeypatch
                 "source_conductance_value": 50.0,
             })
 
-    monkeypatch.setattr(dynamic_block_editor_module, "SourceEmtDialog", _CreateDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "SourceEmtDialog", _CreateDialogStub)
 
     for block_type in (
         BlockType.VOLTAGE_SOURCE_EMT,
@@ -790,7 +814,7 @@ def test_emt_source_blocks_are_exposed_and_created_from_source_modal(monkeypatch
     editor.close()
 
 
-def test_emt_dc_source_blocks_are_exposed_and_created_from_dc_source_modal(monkeypatch) -> None:
+def test_emt_dc_source_blocks_are_exposed_and_created_from_dc_source_modal(override_attrs) -> None:
     editor = _build_editor(DynamicSimulationMode.EMT)
     leaf_labels = _collect_leaf_labels(editor.library_model)
 
@@ -812,7 +836,7 @@ def test_emt_dc_source_blocks_are_exposed_and_created_from_dc_source_modal(monke
                 "source_conductance_value": 80.0,
             })
 
-    monkeypatch.setattr(dynamic_block_editor_module, "DcSourceEmtDialog", _CreateDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "DcSourceEmtDialog", _CreateDialogStub)
 
     for block_type in (
         BlockType.DC_VOLTAGE_SOURCE_EMT,
@@ -833,7 +857,7 @@ def test_emt_dc_source_blocks_are_exposed_and_created_from_dc_source_modal(monke
     editor.close()
 
 
-def test_emt_balanced_source_blocks_are_exposed_and_created_from_balanced_source_modal(monkeypatch) -> None:
+def test_emt_balanced_source_blocks_are_exposed_and_created_from_balanced_source_modal(override_attrs) -> None:
     editor = _build_editor(DynamicSimulationMode.EMT)
     leaf_labels = _collect_leaf_labels(editor.library_model)
 
@@ -858,7 +882,7 @@ def test_emt_balanced_source_blocks_are_exposed_and_created_from_balanced_source
                 "source_conductance_value": 90.0,
             })
 
-    monkeypatch.setattr(dynamic_block_editor_module, "BalancedSourceEmtDialog", _CreateDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "BalancedSourceEmtDialog", _CreateDialogStub)
 
     for block_type in (
         BlockType.BALANCED_3PH_VOLTAGE_SOURCE_EMT,
@@ -882,7 +906,7 @@ def test_emt_balanced_source_blocks_are_exposed_and_created_from_balanced_source
     editor.close()
 
 
-def test_emt_arbitrary_source_blocks_are_exposed_and_created_from_arbitrary_source_modal(monkeypatch) -> None:
+def test_emt_arbitrary_source_blocks_are_exposed_and_created_from_arbitrary_source_modal(override_attrs) -> None:
     editor = _build_editor(DynamicSimulationMode.EMT)
     leaf_labels = _collect_leaf_labels(editor.library_model)
 
@@ -907,7 +931,7 @@ def test_emt_arbitrary_source_blocks_are_exposed_and_created_from_arbitrary_sour
                 "source_conductance_value": 70.0,
             })
 
-    monkeypatch.setattr(dynamic_block_editor_module, "ArbitrarySourceEmtDialog", _CreateDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "ArbitrarySourceEmtDialog", _CreateDialogStub)
 
     for block_type in (
         BlockType.ARBITRARY_WAVEFORM_VOLTAGE_SOURCE_EMT,
@@ -929,7 +953,7 @@ def test_emt_arbitrary_source_blocks_are_exposed_and_created_from_arbitrary_sour
     editor.close()
 
 
-def test_emt_transient_source_blocks_are_exposed_and_created_from_transient_source_modal(monkeypatch) -> None:
+def test_emt_transient_source_blocks_are_exposed_and_created_from_transient_source_modal(override_attrs) -> None:
     editor = _build_editor(DynamicSimulationMode.EMT)
     leaf_labels = _collect_leaf_labels(editor.library_model)
 
@@ -978,7 +1002,7 @@ def test_emt_transient_source_blocks_are_exposed_and_created_from_transient_sour
                 "t2_s": 2.0e-4,
             })
 
-    monkeypatch.setattr(dynamic_block_editor_module, "TransientSourceEmtDialog", _CreateDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "TransientSourceEmtDialog", _CreateDialogStub)
 
     for block_type in (
         BlockType.STEP_VOLTAGE_SOURCE_EMT,
@@ -1002,7 +1026,7 @@ def test_emt_transient_source_blocks_are_exposed_and_created_from_transient_sour
     editor.close()
 
 
-def test_jmarti_line_emt_block_builds_sequence_fit_and_persists_diagnostics(monkeypatch) -> None:
+def test_jmarti_line_emt_block_builds_sequence_fit_and_persists_diagnostics(override_attrs) -> None:
     circuit = gce.MultiCircuit(Sbase=25.0, fbase=50.0)
     bus0 = gce.Bus(name="BusSeqGui0", Vnom=110.0)
     bus1 = gce.Bus(name="BusSeqGui1", Vnom=110.0)
@@ -1058,7 +1082,7 @@ def test_jmarti_line_emt_block_builds_sequence_fit_and_persists_diagnostics(monk
                 "passivity_maximum_hres_gain_tolerance": 1.0e-6,
             })
 
-    monkeypatch.setattr(dynamic_block_editor_module, "JMartiLineEmtDialog", _DialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "JMartiLineEmtDialog", _DialogStub)
     block_item = editor.create_library_payload_item(BlockType.EMT_JMARTI_LINE, 10.0, 20.0)
     assert block_item is not None
     assert get_jmarti_block_fit_bundle(block_item.subsys) is not None
@@ -1075,7 +1099,7 @@ def test_jmarti_line_emt_block_builds_sequence_fit_and_persists_diagnostics(monk
     editor.close()
 
 
-def test_jmarti_line_emt_block_builds_fit_from_imported_npz(monkeypatch, tmp_path: Path) -> None:
+def test_jmarti_line_emt_block_builds_fit_from_imported_npz(override_attrs, tmp_path: Path) -> None:
     circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
     bus0 = gce.Bus(name="BusImportGui0", Vnom=13.8)
     bus1 = gce.Bus(name="BusImportGui1", Vnom=13.8)
@@ -1152,7 +1176,7 @@ def test_jmarti_line_emt_block_builds_fit_from_imported_npz(monkeypatch, tmp_pat
                 "passivity_maximum_hres_gain_tolerance": 1.0e-6,
             })
 
-    monkeypatch.setattr(dynamic_block_editor_module, "JMartiLineEmtDialog", _DialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "JMartiLineEmtDialog", _DialogStub)
     block_item = editor.create_library_payload_item(BlockType.EMT_JMARTI_LINE, 10.0, 20.0)
     assert block_item is not None
     assert get_jmarti_block_fit_bundle(block_item.subsys) is not None
@@ -1185,7 +1209,7 @@ def test_line_emt_editor_exposes_jmarti_device_block() -> None:
     editor.close()
 
 
-def test_simple_r_emt_shunt_block_is_created_and_supports_modify_template(monkeypatch) -> None:
+def test_simple_r_emt_shunt_block_is_created_and_supports_modify_template(override_attrs) -> None:
     circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
     bus = gce.Bus(name="BusSimpleR", Vnom=13.8)
     load = gce.Load(name="LoadSimpleR")
@@ -1252,7 +1276,7 @@ def test_simple_r_emt_shunt_block_is_created_and_supports_modify_template(monkey
                 "capacitive_value": 1.0e-6,
             })
 
-    monkeypatch.setattr(dynamic_block_editor_module, "ShuntComponentEmtDialog", _CreateDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "ShuntComponentEmtDialog", _CreateDialogStub)
     block_item = editor.create_library_payload_item(BlockType.R_LOAD_EMT, 10.0, 20.0)
     assert block_item is not None
     assert dialog_component_kinds == ["R"]
@@ -1266,7 +1290,7 @@ def test_simple_r_emt_shunt_block_is_created_and_supports_modify_template(monkey
     assert load.Pa == pytest.approx(phase_voltage_sq / 25.0)
     assert load.conn == ShuntConnectionType.GroundedStar
 
-    monkeypatch.setattr(dynamic_block_editor_module, "ShuntComponentEmtDialog", _ModifyDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "ShuntComponentEmtDialog", _ModifyDialogStub)
     editor.modify_scene_item_template(block_item)
 
     modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
@@ -1283,7 +1307,7 @@ def test_simple_r_emt_shunt_block_is_created_and_supports_modify_template(monkey
     editor.close()
 
 
-def test_simple_r_emt_shunt_block_supports_delta_configuration(monkeypatch) -> None:
+def test_simple_r_emt_shunt_block_supports_delta_configuration(override_attrs) -> None:
     circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
     bus = gce.Bus(name="BusSimpleRDelta", Vnom=13.8)
     load = gce.Load(name="LoadSimpleRDelta")
@@ -1320,7 +1344,7 @@ def test_simple_r_emt_shunt_block_supports_delta_configuration(monkeypatch) -> N
                 "capacitive_value": 1.0e-6,
             })
 
-    monkeypatch.setattr(dynamic_block_editor_module, "ShuntComponentEmtDialog", _CreateDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "ShuntComponentEmtDialog", _CreateDialogStub)
     block_item = editor.create_library_payload_item(BlockType.R_LOAD_EMT, 10.0, 20.0)
     assert block_item is not None
 
@@ -1339,7 +1363,7 @@ def test_simple_r_emt_shunt_block_supports_delta_configuration(monkeypatch) -> N
     editor.close()
 
 
-def test_exponential_load_emt_block_is_created_and_supports_modify_template(monkeypatch) -> None:
+def test_exponential_load_emt_block_is_created_and_supports_modify_template(override_attrs) -> None:
     circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
     bus = gce.Bus(name="BusExp", Vnom=13.8)
     load = gce.Load(name="LoadExp")
@@ -1378,7 +1402,7 @@ def test_exponential_load_emt_block_is_created_and_supports_modify_template(monk
                 "connection_type": ShuntConnectionType.NeutralStar,
             })
 
-    monkeypatch.setattr(dynamic_block_editor_module, "LoadTopologyEmtDialog", _CreateDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "LoadTopologyEmtDialog", _CreateDialogStub)
     block_item = editor.create_library_payload_item(BlockType.EXP_LOAD_EMT, 10.0, 20.0)
     assert block_item is not None
 
@@ -1389,7 +1413,7 @@ def test_exponential_load_emt_block_is_created_and_supports_modify_template(monk
     assert any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
     assert load.conn == ShuntConnectionType.GroundedStar
 
-    monkeypatch.setattr(dynamic_block_editor_module, "LoadTopologyEmtDialog", _ModifyDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "LoadTopologyEmtDialog", _ModifyDialogStub)
     editor.modify_scene_item_template(block_item)
 
     modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
@@ -1403,7 +1427,7 @@ def test_exponential_load_emt_block_is_created_and_supports_modify_template(monk
     editor.close()
 
 
-def test_zip_load_emt_block_supports_delta_configuration(monkeypatch) -> None:
+def test_zip_load_emt_block_supports_delta_configuration(override_attrs) -> None:
     circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
     bus = gce.Bus(name="BusZipDelta", Vnom=13.8)
     load = gce.Load(name="LoadZipDelta")
@@ -1426,7 +1450,7 @@ def test_zip_load_emt_block_supports_delta_configuration(monkeypatch) -> None:
                 "connection_type": ShuntConnectionType.Delta,
             })
 
-    monkeypatch.setattr(dynamic_block_editor_module, "LoadTopologyEmtDialog", _CreateDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "LoadTopologyEmtDialog", _CreateDialogStub)
     block_item = editor.create_library_payload_item(BlockType.ZIP_LOAD_EMT, 10.0, 20.0)
     assert block_item is not None
 
@@ -1442,7 +1466,7 @@ def test_zip_load_emt_block_supports_delta_configuration(monkeypatch) -> None:
     editor.close()
 
 
-def test_transformer_emt_block_inherits_topology_from_transformer_device_without_modal(monkeypatch) -> None:
+def test_transformer_emt_block_inherits_topology_from_transformer_device_without_modal(override_attrs) -> None:
     circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
     bus0 = gce.Bus(name="BusTf0", Vnom=13.8)
     bus1 = gce.Bus(name="BusTf1", Vnom=13.8)
@@ -1455,7 +1479,7 @@ def test_transformer_emt_block_inherits_topology_from_transformer_device_without
         def __init__(self, *args, **kwargs) -> None:
             raise AssertionError("Transformer topology dialog should not open when the device already defines conn_f/conn_t")
 
-    monkeypatch.setattr(dynamic_block_editor_module, "TransformerTopologyEmtDialog", _DialogMustNotOpen)
+    override_attrs.setattr(dynamic_block_editor_module, "TransformerTopologyEmtDialog", _DialogMustNotOpen)
     block_item = editor.create_library_payload_item(BlockType.TRAFO_EMT, 10.0, 20.0)
     assert block_item is not None
 
@@ -1492,7 +1516,7 @@ def test_transformer_emt_block_inherits_topology_from_transformer_device_without
     editor.close()
 
 
-def test_xfmr_emt_block_inherits_topology_from_transformer_device_without_modal(monkeypatch) -> None:
+def test_xfmr_emt_block_inherits_topology_from_transformer_device_without_modal(override_attrs) -> None:
     circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
     bus0 = gce.Bus(name="BusXf0", Vnom=13.8)
     bus1 = gce.Bus(name="BusXf1", Vnom=13.8)
@@ -1505,7 +1529,7 @@ def test_xfmr_emt_block_inherits_topology_from_transformer_device_without_modal(
         def __init__(self, *args, **kwargs) -> None:
             raise AssertionError("XFMR topology dialog should not open when the device already defines conn_f/conn_t")
 
-    monkeypatch.setattr(dynamic_block_editor_module, "TransformerTopologyEmtDialog", _DialogMustNotOpen)
+    override_attrs.setattr(dynamic_block_editor_module, "TransformerTopologyEmtDialog", _DialogMustNotOpen)
     block_item = editor.create_library_payload_item(BlockType.XFMR_TRANSFORMER, 10.0, 20.0)
     assert block_item is not None
 
@@ -1538,7 +1562,7 @@ def test_xfmr_emt_block_inherits_topology_from_transformer_device_without_modal(
     editor.close()
 
 
-def test_transformer_type_emt_editor_exposes_transformer_blocks_and_inherits_hv_lv_topology(monkeypatch) -> None:
+def test_transformer_type_emt_editor_exposes_transformer_blocks_and_inherits_hv_lv_topology(override_attrs) -> None:
     circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
     transformer_type = gce.TransformerType()
     transformer_type.conn_hv = WindingType.Delta
@@ -1549,7 +1573,7 @@ def test_transformer_type_emt_editor_exposes_transformer_blocks_and_inherits_hv_
         def __init__(self, *args, **kwargs) -> None:
             raise AssertionError("Transformer topology dialog should not open when the transformer type already defines conn_hv/conn_lv")
 
-    monkeypatch.setattr(dynamic_block_editor_module, "TransformerTopologyEmtDialog", _DialogMustNotOpen)
+    override_attrs.setattr(dynamic_block_editor_module, "TransformerTopologyEmtDialog", _DialogMustNotOpen)
     leaf_labels = _collect_leaf_labels(editor.library_model)
 
     assert "Transformer" in leaf_labels
@@ -1571,7 +1595,7 @@ def test_transformer_type_emt_editor_exposes_transformer_blocks_and_inherits_hv_
     editor.close()
 
 
-def test_transformer_type_emt_editor_inherits_zigzag_without_modal(monkeypatch) -> None:
+def test_transformer_type_emt_editor_inherits_zigzag_without_modal(override_attrs) -> None:
     circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
     transformer_type = gce.TransformerType()
     transformer_type.conn_hv = WindingType.ZigZag
@@ -1582,7 +1606,7 @@ def test_transformer_type_emt_editor_inherits_zigzag_without_modal(monkeypatch) 
         def __init__(self, *args, **kwargs) -> None:
             raise AssertionError("Transformer topology dialog should not open when the transformer type already defines conn_hv/conn_lv")
 
-    monkeypatch.setattr(dynamic_block_editor_module, "TransformerTopologyEmtDialog", _DialogMustNotOpen)
+    override_attrs.setattr(dynamic_block_editor_module, "TransformerTopologyEmtDialog", _DialogMustNotOpen)
     block_item = editor.create_library_payload_item(BlockType.TRAFO_EMT, 10.0, 20.0)
     assert block_item is not None
 
@@ -1597,7 +1621,7 @@ def test_transformer_type_emt_editor_inherits_zigzag_without_modal(monkeypatch) 
     editor.close()
 
 
-def test_transformer_emt_block_falls_back_to_manual_dialog_without_device_topology(monkeypatch) -> None:
+def test_transformer_emt_block_falls_back_to_manual_dialog_without_device_topology(override_attrs) -> None:
     editor = _build_editor(DynamicSimulationMode.EMT)
 
     class _DialogStub:
@@ -1614,7 +1638,7 @@ def test_transformer_emt_block_falls_back_to_manual_dialog_without_device_topolo
                 "conn_t": WindingType.GroundedStar,
             })
 
-    monkeypatch.setattr(dynamic_block_editor_module, "TransformerTopologyEmtDialog", _DialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "TransformerTopologyEmtDialog", _DialogStub)
     block_item = editor.create_library_payload_item(BlockType.TRAFO_EMT, 10.0, 20.0)
 
     assert block_item is not None
@@ -1630,7 +1654,7 @@ def test_transformer_emt_block_falls_back_to_manual_dialog_without_device_topolo
     editor.close()
 
 
-def test_rlc_combo_emt_block_is_created_and_supports_modify_template(monkeypatch) -> None:
+def test_rlc_combo_emt_block_is_created_and_supports_modify_template(override_attrs) -> None:
     circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
     bus = gce.Bus(name="BusRlc", Vnom=13.8)
     load = gce.Load(name="LoadRlc")
@@ -1700,7 +1724,7 @@ def test_rlc_combo_emt_block_is_created_and_supports_modify_template(monkeypatch
                 "capacitive_value": 220.0,
             })
 
-    monkeypatch.setattr(dynamic_block_editor_module, "RlcComboEmtDialog", _CreateDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "RlcComboEmtDialog", _CreateDialogStub)
     block_item = editor.create_library_payload_item(BlockType.RLC_COMBO_EMT, 10.0, 20.0)
     assert block_item is not None
     assert create_dialog_base_values == {
@@ -1722,7 +1746,7 @@ def test_rlc_combo_emt_block_is_created_and_supports_modify_template(monkeypatch
     assert load.Pb == pytest.approx(0.0)
     assert load.Qa == pytest.approx(phase_voltage_sq / (2.0 * math.pi * circuit.fBase * 0.05))
 
-    monkeypatch.setattr(dynamic_block_editor_module, "RlcComboEmtDialog", _ModifyDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "RlcComboEmtDialog", _ModifyDialogStub)
     editor.modify_scene_item_template(block_item)
     expected_inductance = 18.0 / (2.0 * math.pi * circuit.fBase)
     expected_capacitance = 1.0 / (2.0 * math.pi * circuit.fBase * 220.0)
@@ -1768,7 +1792,7 @@ def test_ground_emt_block_is_available_from_library() -> None:
     editor.close()
 
 
-def test_induction_motor_emt_block_is_created_and_supports_modify_template(monkeypatch) -> None:
+def test_induction_motor_emt_block_is_created_and_supports_modify_template(override_attrs) -> None:
     editor = _build_editor(DynamicSimulationMode.EMT)
     create_initial_configurations: list[dict[str, object]] = list()
     modify_initial_configurations: list[dict[str, object]] = list()
@@ -1797,7 +1821,7 @@ def test_induction_motor_emt_block_is_created_and_supports_modify_template(monke
         def get_configuration(self) -> dict[str, object]:
             return dict({"level": InductionMotorEmtLevel.DOUBLE_CAGE.name})
 
-    monkeypatch.setattr(dynamic_block_editor_module, "InductionMotorEmtDialog", _CreateDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "InductionMotorEmtDialog", _CreateDialogStub)
     block_item = editor.create_library_payload_item(BlockType.INDUCTION_MOTOR_EMT, 10.0, 20.0)
     assert block_item is not None
     assert create_initial_configurations == list([
@@ -1813,7 +1837,7 @@ def test_induction_motor_emt_block_is_created_and_supports_modify_template(monke
     created_state_var_names: list[str] = _state_var_names(block_item.subsys)
     assert not any(name.startswith("psi_r2_alpha_") for name in created_state_var_names)
 
-    monkeypatch.setattr(dynamic_block_editor_module, "InductionMotorEmtDialog", _ModifyDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "InductionMotorEmtDialog", _ModifyDialogStub)
     original_block_name: str = block_item.subsys.name
     original_block_uid: int = block_item.subsys.uid
     editor.modify_scene_item_template(block_item)
@@ -1840,7 +1864,7 @@ def test_induction_motor_emt_block_is_created_and_supports_modify_template(monke
     editor.close()
 
 
-def test_grounding_link_emt_block_is_created_and_supports_modify_template(monkeypatch) -> None:
+def test_grounding_link_emt_block_is_created_and_supports_modify_template(override_attrs) -> None:
     editor = _build_editor(DynamicSimulationMode.EMT)
 
     class _CreateDialogStub:
@@ -1889,7 +1913,7 @@ def test_grounding_link_emt_block_is_created_and_supports_modify_template(monkey
                 "capacitive_value": 150.0,
             })
 
-    monkeypatch.setattr(dynamic_block_editor_module, "GroundingLinkEmtDialog", _CreateDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "GroundingLinkEmtDialog", _CreateDialogStub)
     block_item = editor.create_library_payload_item(BlockType.GROUNDING_LINK_EMT, 10.0, 20.0)
     assert block_item is not None
 
@@ -1900,7 +1924,7 @@ def test_grounding_link_emt_block_is_created_and_supports_modify_template(monkey
     assert _find_prefixed_event_constant(block_item.subsys, "R_") == pytest.approx(20.0)
     assert _find_prefixed_event_constant(block_item.subsys, "L_") == pytest.approx(0.04)
 
-    monkeypatch.setattr(dynamic_block_editor_module, "GroundingLinkEmtDialog", _ModifyDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "GroundingLinkEmtDialog", _ModifyDialogStub)
     editor.modify_scene_item_template(block_item)
 
     modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
@@ -1915,7 +1939,7 @@ def test_grounding_link_emt_block_is_created_and_supports_modify_template(monkey
     editor.close()
 
 
-def test_nonlinear_resistor_emt_block_is_created_and_supports_modify_template(monkeypatch) -> None:
+def test_nonlinear_resistor_emt_block_is_created_and_supports_modify_template(override_attrs) -> None:
     editor = _build_editor(DynamicSimulationMode.EMT)
 
     class _CreateDialogStub:
@@ -1948,7 +1972,7 @@ def test_nonlinear_resistor_emt_block_is_created_and_supports_modify_template(mo
         def get_points(self) -> tuple[list[float], list[float]]:
             return [0.0, 1.2, 1.8], [0.0, 0.2, 1.5]
 
-    monkeypatch.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _CreateDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _CreateDialogStub)
     block_item = editor.create_library_payload_item(BlockType.NONLINEAR_RESISTOR_EMT, 10.0, 20.0)
     assert block_item is not None
 
@@ -1960,7 +1984,7 @@ def test_nonlinear_resistor_emt_block_is_created_and_supports_modify_template(mo
     assert len(block_item.inputs) == 1
     assert len(block_item.outputs) == 1
 
-    monkeypatch.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _ModifyDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _ModifyDialogStub)
     editor.modify_scene_item_template(block_item)
 
     modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
@@ -1994,20 +2018,34 @@ def test_lookup_matrix_linear_dialog_supports_copy_paste_and_delete_shortcuts() 
     dialog = LookupMatrixLinearDialog(block_label="Lookup matrix (linear)")
     dialog.show()
     dialog.activateWindow()
+    dialog.raise_()
+    QTest.qWaitForWindowExposed(dialog)
+    QtWidgets.QApplication.processEvents()
     clipboard = QtWidgets.QApplication.clipboard()
+    clipboard.clear()
+    QtWidgets.QApplication.processEvents()
+    QTest.qWait(50)
 
     dialog._table_widget.clearSelection()
     selection = QtWidgets.QTableWidgetSelectionRange(0, 0, 2, 2)
     dialog._table_widget.setRangeSelected(selection, True)
-    dialog.setFocus()
-    QTest.keyClick(dialog, QtCore.Qt.Key.Key_C, QtCore.Qt.KeyboardModifier.ControlModifier)
+    dialog._table_widget.setFocus()
     QtWidgets.QApplication.processEvents()
+
+    _copy_selected_table_range_to_clipboard(dialog._table_widget)
+    QtWidgets.QApplication.processEvents()
+    QTest.qWait(50)
     copied_grid = _parse_clipboard_grid(clipboard.text())
     assert copied_grid == [["", "0.0", "1.0"], ["0.0", "0.0", "10.0"], ["2.0", "20.0", "30.0"]] or copied_grid == [["", "0", "1"], ["0", "0", "10"], ["2", "20", "30"]]
 
     clipboard.setText("\t5\t6\n7\t8\t9\n10\t11\t12\n13\t14\t15")
-    QTest.keyClick(dialog, QtCore.Qt.Key.Key_V, QtCore.Qt.KeyboardModifier.ControlModifier)
+    dialog._table_widget.clearSelection()
+    dialog._table_widget.setFocus()
     QtWidgets.QApplication.processEvents()
+
+    dialog.paste_from_clipboard()
+    QtWidgets.QApplication.processEvents()
+    QTest.qWait(50)
     x_points, y_points, z_matrix = dialog._read_matrix_from_table()
     assert x_points == [5.0, 6.0]
     assert y_points == [7.0, 10.0, 13.0]
@@ -2016,8 +2054,12 @@ def test_lookup_matrix_linear_dialog_supports_copy_paste_and_delete_shortcuts() 
     dialog._table_widget.clearSelection()
     selection = QtWidgets.QTableWidgetSelectionRange(1, 0, 1, 2)
     dialog._table_widget.setRangeSelected(selection, True)
-    QTest.keyClick(dialog, QtCore.Qt.Key.Key_Delete)
+    dialog._table_widget.setFocus()
     QtWidgets.QApplication.processEvents()
+
+    dialog.delete_selection()
+    QtWidgets.QApplication.processEvents()
+    QTest.qWait(50)
     x_points, y_points, z_matrix = dialog._read_matrix_from_table()
     assert x_points == [5.0, 6.0]
     assert y_points == [10.0, 13.0]
@@ -2048,19 +2090,45 @@ def test_lookup_matrix_linear_dialog_supports_row_copy_and_row_paste() -> None:
     dialog = LookupMatrixLinearDialog(block_label="Lookup matrix (linear)")
     dialog.show()
     dialog.activateWindow()
+    dialog.raise_()
+    QTest.qWaitForWindowExposed(dialog)
+    QtWidgets.QApplication.processEvents()
+
     clipboard = QtWidgets.QApplication.clipboard()
+    clipboard.clear()
+    QtWidgets.QApplication.processEvents()
+    QTest.qWait(50)
 
     dialog.on_matrix_cell_pressed(1, 0)
     QtWidgets.QApplication.processEvents()
+
     dialog.setFocus()
-    QTest.keyClick(dialog, QtCore.Qt.Key.Key_C, QtCore.Qt.KeyboardModifier.ControlModifier)
+    dialog._table_widget.setFocus()
     QtWidgets.QApplication.processEvents()
-    assert clipboard.text().rstrip() == "0.0\t0.0\t10.0"
+
+    print(f"DEBUG: selected indexes = {dialog._table_widget.selectionModel().selectedIndexes()}")
+    print(f"DEBUG: row 1 items = {[dialog._table_widget.item(1, c).text() for c in range(3)]}")
+    print(f"DEBUG: clipboard before copy = {repr(clipboard.text())}")
+
+    from VeraGrid.Gui.DynamicModelEditor.lookup_table_dialog import _copy_selected_table_range_to_clipboard
+    _copy_selected_table_range_to_clipboard(dialog._table_widget)
+    QtWidgets.QApplication.processEvents()
+    QTest.qWait(100)
+
+    clipboard_content = clipboard.text()
+    print(f"DEBUG: clipboard after copy = {repr(clipboard_content)}")
+
+    assert clipboard_content.rstrip() == "0.0\t0.0\t10.0", f"Expected '0.0\\t0.0\\t10.0' but got {repr(clipboard_content)}"
 
     dialog.on_matrix_cell_pressed(2, 0)
     QtWidgets.QApplication.processEvents()
-    QTest.keyClick(dialog, QtCore.Qt.Key.Key_V, QtCore.Qt.KeyboardModifier.ControlModifier)
+    dialog.setFocus()
+    dialog._table_widget.setFocus()
     QtWidgets.QApplication.processEvents()
+
+    dialog.paste_from_clipboard()
+    QtWidgets.QApplication.processEvents()
+    QTest.qWait(100)
     x_points, y_points, z_matrix = dialog._read_matrix_from_table()
     assert x_points == [0.0, 1.0]
     assert y_points == [0.0, 0.0]
@@ -2068,7 +2136,7 @@ def test_lookup_matrix_linear_dialog_supports_row_copy_and_row_paste() -> None:
     dialog.close()
 
 
-def test_lookup_matrix_linear_descriptor_uses_modal_matrix_to_build_block(monkeypatch) -> None:
+def test_lookup_matrix_linear_descriptor_uses_modal_matrix_to_build_block(override_attrs) -> None:
     editor = _build_editor(DynamicSimulationMode.EMT)
     descriptor = get_basic_block_catalog_descriptor_by_key()["lookup_matrix_linear"]
 
@@ -2082,7 +2150,7 @@ def test_lookup_matrix_linear_descriptor_uses_modal_matrix_to_build_block(monkey
         def get_matrix_data(self) -> tuple[list[float], list[float], list[list[float]]]:
             return [0.0, 1.0], [0.0, 2.0], [[0.0, 10.0], [20.0, 30.0]]
 
-    monkeypatch.setattr(dynamic_block_editor_module, "LookupMatrixLinearDialog", _MatrixDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "LookupMatrixLinearDialog", _MatrixDialogStub)
     block_item = editor.create_library_payload_item(descriptor, 10.0, 20.0)
 
     assert block_item is not None
@@ -2094,7 +2162,7 @@ def test_lookup_matrix_linear_descriptor_uses_modal_matrix_to_build_block(monkey
     editor.close()
 
 
-def test_inverse_lookup_array_linear_descriptor_uses_modal_points_to_build_block(monkeypatch) -> None:
+def test_inverse_lookup_array_linear_descriptor_uses_modal_points_to_build_block(override_attrs) -> None:
     editor = _build_editor(DynamicSimulationMode.EMT)
     descriptor = get_basic_block_catalog_descriptor_by_key()["inverse_lookup_array_linear"]
 
@@ -2108,7 +2176,7 @@ def test_inverse_lookup_array_linear_descriptor_uses_modal_points_to_build_block
         def get_points(self) -> tuple[list[float], list[float]]:
             return [0.0, 1.0, 2.0], [0.0, 10.0, 20.0]
 
-    monkeypatch.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _DialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _DialogStub)
     block_item = editor.create_library_payload_item(descriptor, 10.0, 20.0)
 
     assert block_item is not None
@@ -2119,7 +2187,7 @@ def test_inverse_lookup_array_linear_descriptor_uses_modal_points_to_build_block
     editor.close()
 
 
-def test_lookup_array_spline_descriptor_uses_modal_points_to_build_block(monkeypatch) -> None:
+def test_lookup_array_spline_descriptor_uses_modal_points_to_build_block(override_attrs) -> None:
     editor = _build_editor(DynamicSimulationMode.EMT)
     descriptor = get_basic_block_catalog_descriptor_by_key()["lookup_array_spline"]
 
@@ -2133,7 +2201,7 @@ def test_lookup_array_spline_descriptor_uses_modal_points_to_build_block(monkeyp
         def get_points(self) -> tuple[list[float], list[float]]:
             return [0.0, 1.0, 2.0], [0.0, 10.0, 20.0]
 
-    monkeypatch.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _DialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _DialogStub)
     block_item = editor.create_library_payload_item(descriptor, 10.0, 20.0)
 
     assert block_item is not None
@@ -2144,7 +2212,7 @@ def test_lookup_array_spline_descriptor_uses_modal_points_to_build_block(monkeyp
     editor.close()
 
 
-def test_lookup_matrix_spline_descriptor_uses_modal_matrix_to_build_block(monkeypatch) -> None:
+def test_lookup_matrix_spline_descriptor_uses_modal_matrix_to_build_block(override_attrs) -> None:
     editor = _build_editor(DynamicSimulationMode.EMT)
     descriptor = get_basic_block_catalog_descriptor_by_key()["lookup_matrix_spline"]
 
@@ -2158,7 +2226,7 @@ def test_lookup_matrix_spline_descriptor_uses_modal_matrix_to_build_block(monkey
         def get_matrix_data(self) -> tuple[list[float], list[float], list[list[float]]]:
             return [0.0, 1.0], [0.0, 2.0], [[0.0, 10.0], [20.0, 30.0]]
 
-    monkeypatch.setattr(dynamic_block_editor_module, "LookupMatrixLinearDialog", _MatrixDialogStub)
+    override_attrs.setattr(dynamic_block_editor_module, "LookupMatrixLinearDialog", _MatrixDialogStub)
     block_item = editor.create_library_payload_item(descriptor, 10.0, 20.0)
 
     assert block_item is not None

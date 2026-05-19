@@ -115,6 +115,7 @@ class DataBaseTableMain(DiagramsMain):
         self.ui.actionGrid_reduction.triggered.connect(self.grid_reduction_from_schematic_selection)
         self.ui.actionSubstation_wizard.triggered.connect(self.add_substation_with_wizard)
         self.ui.actionSet_model_x_y_based_on_lat_lon.triggered.connect(self.set_model_x_y_based_on_lat_lon)
+        self.ui.actionRestore_investments.triggered.connect(self.restore_investments)
 
         # tree click
         self.ui.dataStructuresTreeView.clicked.connect(self.view_objects_data)
@@ -899,7 +900,7 @@ class DataBaseTableMain(DiagramsMain):
 
             elif elm_type == DeviceType.EmtModelTemplateDevice.value:
 
-                name = f'EMT template {len(self.circuit.rms_events)}'
+                name = f'EMT template {len(self.circuit.emt_models)}'
                 obj = dev.EmtModelTemplate(name=name)
                 self.circuit.add_emt_model(obj)
 
@@ -1667,3 +1668,28 @@ class DataBaseTableMain(DiagramsMain):
                 self.show_logs(logger=logger, name="set (x,y) from (lat, lon)")
             else:
                 self.show_info_toast("x, y changed!")
+
+    def restore_investments(self):
+        """
+        Restore investments to the circuit
+        :return:
+        """
+        ok = yes_no_question(text="This action will restore the circuit to the state before the last investment "
+                                  "modification. Do you want to proceed?",
+                             title="Restore investments")
+
+        if ok:
+            self.circuit.restore_investments()
+            for diagram_widget in self.diagram_widgets_list:
+                if isinstance(diagram_widget, SchematicWidget):
+                    diagram_widget.recolour_mode()
+                else:
+                    # map widgets and other diagram types do not encode active state
+                    # via dashed/solid pen styling, so they have nothing to refresh
+                    pass
+
+            # re-apply result-based colouring on top of the active-state styling
+            self.colour_diagrams()
+            self.show_info_toast("Investments restored!")
+
+        return None

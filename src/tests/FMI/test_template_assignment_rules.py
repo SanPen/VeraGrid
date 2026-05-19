@@ -124,6 +124,10 @@ def test_rms_template_and_rms_fmu_template_are_mutually_exclusive() -> None:
     """
 
     load = _build_load()
+    # This exclusivity check validates template ownership only. The fixture is
+    # intentionally standalone and therefore must not trigger bus-dependent RMS
+    # auto-wiring during native template assignment.
+    load.disable_auto_updates()
     native_template = _build_native_template()
     fmu_template = _build_rms_fmu_template()
 

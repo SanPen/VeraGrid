@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 import os
 import pandas as pd
+import numpy as np
 from pandas.testing import assert_frame_equal
 
 from VeraGridEngine.Utils.Symbolic.block import Block
@@ -14,7 +15,9 @@ from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx import BackEulerImpl
 from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
 from VeraGridEngine.Templates.Rms.load_rms_template import get_load_rms_template
 from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template import get_complete_generator_template_rms
+# from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template_v2 import get_complete_generator_template_rms
 from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
+from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_rms_model
 
 from VeraGridEngine.enumerations import VarPowerFlowRefferenceType, DynamicIntegrationMethod, RmsInitializationMethod
 from VeraGridEngine.Devices.Events.rms_event import RmsEvent
@@ -30,6 +33,136 @@ def find_name_in_block(name: str, block: Block):
         res = find_name_in_block(name, mdl)
         if res is not None:
             return res
+
+
+def build_reference_column_mapping() -> list[tuple[str, str]]:
+    """Return the stable variable name to legacy CSV column mapping.
+
+    The historical CSV stores raw solver columns as ``varN``. Those column
+    positions depend on the internal DAE ordering, which changes when the
+    template switches controller dynamics between algebraic and explicit state
+    representations. This mapping preserves the original physical references
+    while making the test independent from the current internal ordering.
+
+    :return: Ordered pairs ``(stable_name, legacy_column)``.
+    """
+    mapping: list[tuple[str, str]] = list()
+    mapping.append(("delta", "var0"))
+    mapping.append(("omega", "var1"))
+    mapping.append(("Eq_prime", "var2"))
+    mapping.append(("Ed_prime", "var3"))
+    mapping.append(("Psiq_prime", "var4"))
+    mapping.append(("Psid_prime", "var5"))
+    mapping.append(("bus0_vm", "var6"))
+    mapping.append(("bus0_va", "var7"))
+    mapping.append(("bus1_vm", "var8"))
+    mapping.append(("bus1_va", "var9"))
+    mapping.append(("line_pf", "var10"))
+    mapping.append(("line_pt", "var11"))
+    mapping.append(("line_qf", "var12"))
+    mapping.append(("line_qt", "var13"))
+    mapping.append(("Pg", "var14"))
+    mapping.append(("Qg", "var15"))
+    mapping.append(("Psid", "var18"))
+    mapping.append(("Psiq", "var19"))
+    mapping.append(("Te", "var20"))
+    mapping.append(("Ed1", "var21"))
+    mapping.append(("Eq1", "var22"))
+    mapping.append(("IRPu", "var34"))
+    mapping.append(("Tm", "var43"))
+    mapping.append(("y2_3_gov", "var44"))
+    mapping.append(("V_pss", "var45"))
+    mapping.append(("y_stabilizer1", "var46"))
+    mapping.append(("y_exciter1", "var53"))
+    mapping.append(("y_exciter2", "var54"))
+    mapping.append(("y_exciter3", "var55"))
+    mapping.append(("y_exciter4", "var57"))
+    mapping.append(("y_subexciter1", "var58"))
+    mapping.append(("u_aux", "var60"))
+    mapping.append(("VeMaxPu", "var61"))
+    mapping.append(("Vf", "var62"))
+    mapping.append(("f_input", "var63"))
+    mapping.append(("f_output", "var64"))
+    mapping.append(("Efe", "var65"))
+    mapping.append(("Pl", "var66"))
+    mapping.append(("Ql", "var67"))
+    return mapping
+
+
+def build_results_dataframe(problem: RmsProblemDae,
+                            values: np.ndarray,
+                            named_vars: list[tuple[str, object]]) -> pd.DataFrame:
+    """Build a results data frame indexed by stable physical variable names.
+
+    :param problem: Prepared RMS problem containing the variable indexing.
+    :param values: Simulated values array.
+    :param named_vars: Ordered pairs ``(stable_name, variable)``.
+    :return: Data frame with stable physical columns.
+    """
+    data: dict[str, np.ndarray] = dict()
+
+    for stable_name, variable in named_vars:
+        idx: int = problem.get_var_idx(variable)
+        data[stable_name] = values[:, idx]
+
+    return pd.DataFrame(data)
+
+
+def build_named_variable_list(genqec_mdl: Block,
+                              line_mdl: Block,
+                              load_mdl: Block,
+                              bus0: object,
+                              bus1: object) -> list[tuple[str, object]]:
+    """Collect the stable physical variables to compare in the RMS test.
+
+    :param genqec_mdl: Complete generator RMS block.
+    :param line_mdl: Line RMS block.
+    :param load_mdl: Load RMS block.
+    :param bus0: Sending-end bus object.
+    :param bus1: Receiving-end bus object.
+    :return: Ordered pairs ``(stable_name, variable)``.
+    """
+    named_vars: list[tuple[str, object]] = list()
+    named_vars.append(("delta", find_name_in_block("deltaGenqec_rms_template", genqec_mdl)))
+    named_vars.append(("omega", find_name_in_block("omegaGenqec_rms_template", genqec_mdl)))
+    named_vars.append(("Eq_prime", find_name_in_block("Eq_primeGenqec_rms_template", genqec_mdl)))
+    named_vars.append(("Ed_prime", find_name_in_block("Ed_primeGenqec_rms_template", genqec_mdl)))
+    named_vars.append(("Psiq_prime", find_name_in_block("Psiq_primeGenqec_rms_template", genqec_mdl)))
+    named_vars.append(("Psid_prime", find_name_in_block("Psid_primeGenqec_rms_template", genqec_mdl)))
+    named_vars.append(("bus0_vm", bus0.rms_model.out_vars[0]))
+    named_vars.append(("bus0_va", bus0.rms_model.out_vars[1]))
+    named_vars.append(("bus1_vm", bus1.rms_model.out_vars[0]))
+    named_vars.append(("bus1_va", bus1.rms_model.out_vars[1]))
+    named_vars.append(("line_pf", line_mdl.out_vars[0]))
+    named_vars.append(("line_pt", line_mdl.out_vars[1]))
+    named_vars.append(("line_qf", line_mdl.out_vars[2]))
+    named_vars.append(("line_qt", line_mdl.out_vars[3]))
+    named_vars.append(("Pg", genqec_mdl.out_vars[0]))
+    named_vars.append(("Qg", genqec_mdl.out_vars[1]))
+    named_vars.append(("Psid", find_name_in_block("PsidGenqec_rms_template", genqec_mdl)))
+    named_vars.append(("Psiq", find_name_in_block("PsiqGenqec_rms_template", genqec_mdl)))
+    named_vars.append(("Te", find_name_in_block("TeGenqec_rms_template", genqec_mdl)))
+    named_vars.append(("Ed1", find_name_in_block("Ed1Genqec_rms_template", genqec_mdl)))
+    named_vars.append(("Eq1", find_name_in_block("Eq1Genqec_rms_template", genqec_mdl)))
+    named_vars.append(("IRPu", find_name_in_block("IRPuGenqec_rms_template", genqec_mdl)))
+    named_vars.append(("Tm", find_name_in_block("Tm", genqec_mdl)))
+    named_vars.append(("y2_3_gov", find_name_in_block("y2_3_gov", genqec_mdl)))
+    named_vars.append(("V_pss", find_name_in_block("V_pss", genqec_mdl)))
+    named_vars.append(("y_stabilizer1", find_name_in_block("y_stabilizer1", genqec_mdl)))
+    named_vars.append(("y_exciter1", find_name_in_block("y_exciter1", genqec_mdl)))
+    named_vars.append(("y_exciter2", find_name_in_block("y_exciter2", genqec_mdl)))
+    named_vars.append(("y_exciter3", find_name_in_block("y_exciter3", genqec_mdl)))
+    named_vars.append(("y_exciter4", find_name_in_block("y_exciter4", genqec_mdl)))
+    named_vars.append(("y_subexciter1", find_name_in_block("y_subexciter1", genqec_mdl)))
+    named_vars.append(("u_aux", find_name_in_block("u_aux", genqec_mdl)))
+    named_vars.append(("VeMaxPu", find_name_in_block("VeMaxPu", genqec_mdl)))
+    named_vars.append(("Vf", find_name_in_block("Vf", genqec_mdl)))
+    named_vars.append(("f_input", find_name_in_block("f_input", genqec_mdl)))
+    named_vars.append(("f_output", find_name_in_block("f_output", genqec_mdl)))
+    named_vars.append(("Efe", find_name_in_block("Efe", genqec_mdl)))
+    named_vars.append(("Pl", find_name_in_block("Pl", load_mdl)))
+    named_vars.append(("Ql", find_name_in_block("Ql", load_mdl)))
+    return named_vars
 
 
 def test_simulation_with_event():
@@ -52,7 +185,15 @@ def test_simulation_with_event():
     ###########################################################################################################################
     # Build VeraGrid object
 
+    #####################################################################################
+    #                    Grid
+    #####################################################################################
+
     grid = gce.MultiCircuit(Sbase=100, fbase=50.0)
+
+    #####################################################################################
+    #                    Devices
+    #####################################################################################
 
     # Buses
     bus0 = gce.Bus(name="Bus0", Vnom=10, is_slack=True)
@@ -67,14 +208,17 @@ def test_simulation_with_event():
     # Lines
     line0 = gce.Line(name="line 0-2", bus_from=bus0, bus_to=bus1, r=0.029585798816568046, x=0.07100591715976332, b=0.03,
                      rate=900.0)
+    grid.add_line(line0)
 
     # load
     load = gce.Load(P=9.999999, Q=0.999999)
+    grid.add_load(bus=bus1, api_obj=load)
 
     # Generators
     gen0 = gce.Generator(name="Gen0", P=10, vset=1.0, Snom=900,
                          x1=0.86138701, r1=0.3, freq=50.0
                          )
+    grid.add_generator(bus=bus0, api_obj=gen0)
 
     ######################################################################################################
     # Build Rms models
@@ -87,49 +231,33 @@ def test_simulation_with_event():
     line_mdl = get_line_rms_template(grid.var_factory).block
 
     # load
-    load_mdl = get_load_rms_template(
-        grid.var_factory,
-        pl0_init=-load.P / grid.Sbase,
-        ql0_init=-load.Q / grid.Sbase,
-    ).block
+    load_mdl = get_load_rms_template(grid.var_factory).block
 
-    # connection with buses
+    # set models parameters
+    load_mdl.set_parameter_in_model(var_name="Pl0", new_value=-0.0999999)
+    load_mdl.set_parameter_in_model(var_name="Ql0", new_value=-0.009999999862208533)
 
-    genqec_mdl.connect([genqec_mdl.in_vars[0]], [bus0.rms_model.out_vars[0]])
-    genqec_mdl.connect([genqec_mdl.in_vars[1]], [bus0.rms_model.out_vars[1]])
+    ######################################################################################################
+    # Add models to devices
+    ######################################################################################################
 
-    line_mdl.connect([line_mdl.in_vars[0]], [bus0.rms_model.out_vars[0]])
-    line_mdl.connect([line_mdl.in_vars[1]], [bus0.rms_model.out_vars[1]])
+    set_rms_model(device=gen0, model=genqec_mdl, var_factory=grid.var_factory)
 
-    line_mdl.connect([line_mdl.in_vars[2]], [bus1.rms_model.out_vars[0]])
-    line_mdl.connect([line_mdl.in_vars[3]], [bus1.rms_model.out_vars[1]])
+    set_rms_model(device=line0, model=line_mdl, var_factory=grid.var_factory)
 
-    # u_gov = find_name_in_block("u_gov1", gov1_mdl)
+    set_rms_model(device=load, model=load_mdl, var_factory=grid.var_factory)
 
-    load_mdl.connect([load_mdl.in_vars[0]], [bus1.rms_model.out_vars[0]])
-    load_mdl.connect([load_mdl.in_vars[1]], [bus1.rms_model.out_vars[1]])
+    ######################################################################################################
+    # Create event
+    ######################################################################################################
 
-    # external mapping
-
-    big_gen1 = Block(children=[genqec_mdl])
-
-    big_gen1.external_mapping.update({VarPowerFlowRefferenceType.P: genqec_mdl.out_vars[0]})
-    big_gen1.external_mapping.update({VarPowerFlowRefferenceType.Q: genqec_mdl.out_vars[1]})
-
-    # add models to dyn_host
-    line0.rms_model = line_mdl
-    load.rms_model = load_mdl
-    gen0.rms_model = big_gen1
-
-    # apply event
     Pl0 = find_name_in_block('Pl0', load_mdl)
-    events_group = RmsEventsGroup("simulation1")
-    event = RmsEvent(device=load, parameter=Pl0, time=0.1, value=-0.09, group=events_group)
+    events_group = RmsEventsGroup(name="simulation1")
+    grid.add_rms_events_group(events_group)
+    event = RmsEvent(device=load, parameter=Pl0, time=0.1, value=-0.098, group=events_group)
     grid.add_rms_event(event)
 
-    grid.add_line(line0)
-    grid.add_load(bus=bus1, api_obj=load)
-    grid.add_generator(bus=bus0, api_obj=gen0)
+    rms_events_group_names = np.array(0)
 
     options = gce.PowerFlowOptions(
         solver_type=gce.SolverType.NR,
@@ -185,10 +313,20 @@ def test_simulation_with_event():
     )
 
     t, y, well_initialized, converged = solver.simulate()
-    cols = [f"var{i}" for i in range(0, y.shape[1])]
-    results_df = pd.DataFrame(y, columns=cols)
+    named_vars = build_named_variable_list(
+        genqec_mdl=genqec_mdl,
+        line_mdl=line_mdl,
+        load_mdl=load_mdl,
+        bus0=bus0,
+        bus1=bus1,
+    )
+    results_df = build_results_dataframe(problem=problem, values=y, named_vars=named_vars)
 
-    results_df = results_df[reference_df.columns]
+    reference_mapping = build_reference_column_mapping()
+    reference_columns = [legacy_name for _, legacy_name in reference_mapping]
+    stable_columns = [stable_name for stable_name, _ in reference_mapping]
+    reference_df = reference_df[reference_columns].copy()
+    reference_df.columns = stable_columns
 
     assert_frame_equal(
         results_df.reset_index(drop=True),

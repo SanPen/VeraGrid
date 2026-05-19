@@ -3,9 +3,103 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
 from typing import Dict
+import numba as nb
 import numpy as np
 from VeraGridEngine.basic_structures import CxVec, Vec, IntVec, BoolVec, StrVec
 from VeraGridEngine.enumerations import BusMode
+
+
+@nb.njit(cache=True, inline="always")
+def _control_priority(is_p: bool,
+                      is_q: bool,
+                      is_vm: bool,
+                      is_va: bool) -> int:
+    """
+    Rank the control strength of a bus.
+    """
+    # Prefer buses that already define the electrical reference first, then
+    # voltage-controlled buses, and leave plain injection-controlled buses last.
+    if is_va and is_vm:
+        return 6
+    elif is_va:
+        return 5
+    elif is_vm and not is_q:
+        return 4
+    elif is_vm:
+        return 3
+    elif is_p and not is_q:
+        return 2
+    else:
+        return 1
+
+
+@nb.njit(cache=True)
+def propagate_controls(chosen_idx: int,
+                       other_idx: IntVec,
+                       bus_types: IntVec,
+                       Vbus: CxVec,
+                       is_p_controlled: BoolVec,
+                       is_q_controlled: BoolVec,
+                       is_vm_controlled: BoolVec,
+                       is_va_controlled: BoolVec) -> None:
+    """
+    Propagate the strongest control status of a reduced bus cluster to the surviving bus.
+
+    The donor bus is chosen from ``chosen_idx`` and ``other_idx`` using the actual control flags,
+    not only the bus type, so VSC/HVDC-added controls are preserved as well.
+    :param chosen_idx: island of the island chosen by the topological reduction process to represent the reduction set
+    :param other_idx: rest of buses in the set that are going to be reduced but may contain important information
+    :param bus_types:
+    :param Vbus:
+    :param is_p_controlled:
+    :param is_q_controlled:
+    :param is_vm_controlled:
+    :param is_va_controlled:
+    :return:
+    """
+    # Start by assuming the surviving bus already is the best donor.
+    donor_idx = chosen_idx
+    donor_priority = _control_priority(
+        is_p=is_p_controlled[chosen_idx],
+        is_q=is_q_controlled[chosen_idx],
+        is_vm=is_vm_controlled[chosen_idx],
+        is_va=is_va_controlled[chosen_idx],
+    )
+    donor_vm = np.abs(Vbus[chosen_idx]) if is_vm_controlled[chosen_idx] else -1.0
+
+    for idx in other_idx:
+        priority = _control_priority(
+            is_p=is_p_controlled[idx],
+            is_q=is_q_controlled[idx],
+            is_vm=is_vm_controlled[idx],
+            is_va=is_va_controlled[idx],
+        )
+
+        # Replace the donor when the reduced bus carries a stronger control role.
+        if priority > donor_priority:
+            donor_idx = idx
+            donor_priority = priority
+            donor_vm = np.abs(Vbus[idx]) if is_vm_controlled[idx] else -1.0
+        # For equally strong voltage-controlled buses, keep the one with the
+        # highest stored setpoint so the surviving bus inherits a deterministic
+        # donor instead of depending on island ordering.
+        elif priority == donor_priority and is_vm_controlled[idx]:
+            vm = np.abs(Vbus[idx])
+            if vm > donor_vm:
+                donor_idx = idx
+                donor_vm = vm
+
+    # Once the donor is chosen, copy its control flags and bus type as one block.
+    if donor_idx != chosen_idx:
+        bus_types[chosen_idx] = bus_types[donor_idx]
+        is_p_controlled[chosen_idx] = is_p_controlled[donor_idx]
+        is_q_controlled[chosen_idx] = is_q_controlled[donor_idx]
+        is_vm_controlled[chosen_idx] = is_vm_controlled[donor_idx]
+        is_va_controlled[chosen_idx] = is_va_controlled[donor_idx]
+
+    # Copy the donor voltage state directly; do not mix magnitude from one bus
+    # with angle from another.
+    Vbus[chosen_idx] = Vbus[donor_idx]
 
 
 class BusData:
@@ -35,7 +129,7 @@ class BusData:
         self.is_vm_controlled = np.zeros(nbus, dtype=bool)
         self.is_va_controlled = np.zeros(nbus, dtype=bool)
         self.installed_power: Vec = np.zeros(nbus, dtype=float)
-        self.srap_availbale_power: Vec = np.zeros(nbus, dtype=float)
+        self.srap_available_power: Vec = np.zeros(nbus, dtype=float)
         self.is_dc: BoolVec = np.empty(nbus, dtype=bool)
         self.is_grounded: BoolVec = np.empty(nbus, dtype=bool)
         self.areas: IntVec = np.empty(nbus, dtype=int)
@@ -79,7 +173,7 @@ class BusData:
         data.is_vm_controlled = self.is_vm_controlled[elm_idx]
         data.is_va_controlled = self.is_va_controlled[elm_idx]
         data.installed_power = self.installed_power[elm_idx]
-        data.srap_availbale_power = self.srap_availbale_power[elm_idx]
+        data.srap_available_power = self.srap_available_power[elm_idx]
         data.is_dc = self.is_dc[elm_idx]
         data.is_grounded = self.is_grounded[elm_idx]
         data.areas = self.areas[elm_idx]
@@ -128,7 +222,7 @@ class BusData:
         data.is_vm_controlled = self.is_vm_controlled.copy()
         data.is_va_controlled = self.is_va_controlled.copy()
         data.installed_power = self.installed_power.copy()
-        data.srap_availbale_power = self.srap_availbale_power.copy()
+        data.srap_available_power = self.srap_available_power.copy()
         data.is_dc = self.is_dc.copy()
         data.is_grounded = self.is_grounded.copy()
         data.areas = self.areas.copy()
@@ -159,106 +253,27 @@ class BusData:
         """
         return {idtag_val: i for i, idtag_val in enumerate(self.idtag)}
 
+    def propagate_controls(self, chosen_idx: int, other_idx: IntVec) -> None:
+        """
+        Propagate the strongest control status of the reduced buses into ``chosen_idx``.
+        """
+        propagate_controls(
+            chosen_idx=chosen_idx,
+            other_idx=other_idx,
+            bus_types=self.bus_types,
+            Vbus=self.Vbus,
+            is_p_controlled=self.is_p_controlled,
+            is_q_controlled=self.is_q_controlled,
+            is_vm_controlled=self.is_vm_controlled,
+            is_va_controlled=self.is_va_controlled,
+        )
+
     def set_bus_mode(self, idx: int, val: BusMode):
         """
         Set bus mode
         :param idx: int
         :param val: BusMode
         """
-        # self.bus_types[idx] = val.value
-        # is_dc = self.is_dc[idx]
-        # is_grounded = self.is_grounded[idx]
-        #
-        # if val == BusMode.PQ_tpe:
-        #     if is_dc and not is_grounded:
-        #         self.is_p_controlled[idx] = True
-        #         self.is_q_controlled[idx] = False
-        #         self.is_vm_controlled[idx] = False
-        #         self.is_va_controlled[idx] = True
-        #     elif is_grounded:
-        #         self.is_p_controlled[idx] = False
-        #         self.is_q_controlled[idx] = False
-        #         self.is_vm_controlled[idx] = True
-        #         self.is_va_controlled[idx] = True
-        #     else:
-        #         self.is_p_controlled[idx] = True
-        #         self.is_q_controlled[idx] = True
-        #         self.is_vm_controlled[idx] = False
-        #         self.is_va_controlled[idx] = False
-        #
-        # elif val == BusMode.PV_tpe:
-        #     if is_dc and not is_grounded:
-        #         self.is_p_controlled[idx] = True
-        #         self.is_q_controlled[idx] = False
-        #         self.is_vm_controlled[idx] = True
-        #         self.is_va_controlled[idx] = True
-        #     elif is_grounded:
-        #         self.is_p_controlled[idx] = False
-        #         self.is_q_controlled[idx] = False
-        #         self.is_vm_controlled[idx] = True
-        #         self.is_va_controlled[idx] = True
-        #     else:
-        #         self.is_p_controlled[idx] = True
-        #         self.is_q_controlled[idx] = False
-        #         self.is_vm_controlled[idx] = True
-        #         self.is_va_controlled[idx] = False
-        #
-        # elif val == BusMode.Slack_tpe:
-        #     if is_dc and not is_grounded:
-        #         self.is_p_controlled[idx] = False
-        #         self.is_q_controlled[idx] = False
-        #         self.is_vm_controlled[idx] = True
-        #         self.is_va_controlled[idx] = True
-        #     elif is_grounded:
-        #         self.is_p_controlled[idx] = False
-        #         self.is_q_controlled[idx] = False
-        #         self.is_vm_controlled[idx] = True
-        #         self.is_va_controlled[idx] = True
-        #     else:
-        #         self.is_p_controlled[idx] = False
-        #         self.is_q_controlled[idx] = False
-        #         self.is_vm_controlled[idx] = True
-        #         self.is_va_controlled[idx] = True
-        #
-        # elif val == BusMode.PQV_tpe:
-        #     if is_dc and not is_grounded:
-        #         self.is_p_controlled[idx] = True
-        #         self.is_q_controlled[idx] = False
-        #         self.is_vm_controlled[idx] = True
-        #         self.is_va_controlled[idx] = True
-        #     elif is_grounded:
-        #         self.is_p_controlled[idx] = False
-        #         self.is_q_controlled[idx] = False
-        #         self.is_vm_controlled[idx] = True
-        #         self.is_va_controlled[idx] = True
-        #     else:
-        #         self.is_p_controlled[idx] = True
-        #         self.is_q_controlled[idx] = True
-        #         self.is_vm_controlled[idx] = True
-        #         self.is_va_controlled[idx] = False
-        #
-        # elif val == BusMode.P_tpe:
-        #     if is_dc and not is_grounded:
-        #         self.is_p_controlled[idx] = True
-        #         self.is_q_controlled[idx] = False
-        #         self.is_vm_controlled[idx] = False
-        #         self.is_va_controlled[idx] = True
-        #     elif is_grounded:
-        #         self.is_p_controlled[idx] = False
-        #         self.is_q_controlled[idx] = False
-        #         self.is_vm_controlled[idx] = True
-        #         self.is_va_controlled[idx] = True
-        #     else:
-        #         self.is_p_controlled[idx] = True
-        #         self.is_q_controlled[idx] = False
-        #         self.is_vm_controlled[idx] = False
-        #         self.is_va_controlled[idx] = False
-        #
-        # else:
-        #     raise ValueError("Unexpected bus mode")
-
-        # TODO: Think how the commented code can be adapted to work as before
-
         self.bus_types[idx] = val.value
         is_dc = self.is_dc[idx]
         is_grounded = self.is_grounded[idx]

@@ -18,6 +18,7 @@ class EmtResults(ResultsTemplate):
 
     LOCAL_RESULTS_DECLARATIONS = (
         ResultsProperty(name='values', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='emt_events_group_idtags', tpe=StrVec, old_names=list(), expandable=False),
     )
 
     __slots__ = (
@@ -26,6 +27,7 @@ class EmtResults(ResultsTemplate):
         "ndv",
         "ng",
         "emt_events_group_names",
+        "emt_events_group_idtags",
         "well_initialized",
         "converged",
         "variables",
@@ -44,6 +46,7 @@ class EmtResults(ResultsTemplate):
     def __init__(self,
                  time_array: DateVec,
                  emt_events_group_names: StrVec,
+                 emt_events_group_idtags: StrVec,
                  variables: List[Var],
                  diff_variables: List[Var],
                  uid2idx_vars: Dict[int, int],
@@ -54,6 +57,7 @@ class EmtResults(ResultsTemplate):
 
         :param emt_events_group_names: names of the EMT groups simulated
         :param time_array: Array of time steps
+        :param emt_events_group_idtags: Stable idtags of the EMT groups simulated.
         :param variables: List of all variables (Redundant?)
         :param diff_variables: List of all derivatives of variables (Redundant?)
         :param uid2idx_vars: Var uid to var index in values variables
@@ -76,6 +80,7 @@ class EmtResults(ResultsTemplate):
         self.ng = len(emt_events_group_names)
 
         self.emt_events_group_names = emt_events_group_names
+        self.emt_events_group_idtags = emt_events_group_idtags
 
         self.well_initialized = np.zeros(self.ng, dtype=bool)
         self.converged = np.zeros(self.ng, dtype=bool)
@@ -125,8 +130,12 @@ class EmtResults(ResultsTemplate):
 
     def get_devices_dict_tree(self) -> Dict[DeviceType, Dict[ALL_DEV_TYPES, List[Var]]]:
         """
+        Build the device-variable tree consumed by the dynamic results handler.
 
-        :return:
+        :return: Nested mapping ``{device_type: {device: [variables]}}``.
+
+        The handler preserves this structure when building the GUI tree of
+        available dynamic variables.
         """
         tree: Dict[DeviceType, Dict[ALL_DEV_TYPES, List[Var]]] = dict()
 

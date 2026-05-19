@@ -100,6 +100,18 @@ class IoMain(ScenariosMain):
         self.ui.exportSimulationDataButton.clicked.connect(self.export_simulation_data)
         self.ui.loadResultFromDiskButton.clicked.connect(self.load_results_driver)
 
+    def check_extension(self, path: str) -> bool:
+        """
+        Check the accepted extensions
+        :param path:
+        :return:
+        """
+        for ext in self.accepted_extensions:
+            if path.endswith(ext):
+                return True
+
+        return False
+
     def refresh_catalogue_dependent_views(self) -> None:
         """
         Rebuild GUI views that depend on the loaded catalogue.
@@ -159,7 +171,7 @@ class IoMain(ScenariosMain):
                     file_name = event.toLocalFile()
                     # name, file_extension = os.path.splitext(file_name)
                     file_extension = ''.join(pathlib.Path(file_name).suffixes)
-                    if file_extension.lower() in self.accepted_extensions:
+                    if self.check_extension(file_name):
                         file_names.append(file_name)
 
                         if file_name.endswith('.dgridcal') or file_name.endswith('.dveragrid'):
@@ -469,6 +481,8 @@ class IoMain(ScenariosMain):
 
                 # clear the results
                 self.clear_results()
+                self.dynamic_results_handlers = dict()
+                self.clear_dynamic_results_view()
 
                 self.ui.grid_name_line_edit.setText(self.circuit.name)
 

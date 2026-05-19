@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:nc="https://cim4.eu/ns/nc#"
+    xmlns:cim="https://cim.ucaiug.io/ns#"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:eumd="https://cim4.eu/ns/Metadata-European#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#" > 
+  <dcat:Dataset rdf:about="urn:uuid:c29d23f7-1955-46dc-8bfd-56e082ce9b18">
+    <dcterms:accessRights>https://energy.referencedata.eu/Confidentiality/Public</dcterms:accessRights>
+    <dcterms:conformsTo>https://ap.cim4.eu/ObjectRegistry/2.2</dcterms:conformsTo>
+    <dcterms:conformsTo>https://cim4.eu/ns/nc/2.4#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/CIM100#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/2013/CIM-schema-cim16#</dcterms:conformsTo>
+    <dcterms:description xml:lang="en">This is the object registry profile dataset for Espheim part of ReliCapGrid.</dcterms:description>
+    <dcat:endDate>2023-06-15T22:30:00Z</dcat:endDate>
+    <prov:generatedAtTime>2022-06-10T07:06:25Z</prov:generatedAtTime>
+    <dcterms:identifier>c29d23f7-1955-46dc-8bfd-56e082ce9b18</dcterms:identifier>
+    <dcat:isVersionOf rdf:resource="https://energy.referencedata.eu/Test/Model/Espheim-OR"/>
+    <dcat:keyword>OR</dcat:keyword>
+    <dcterms:license>https://creativecommons.org/licenses/by/4.0/</dcterms:license>
+    <dcterms:publisher>https://energy.referencedata.eu/test/party/Espheim</dcterms:publisher>
+    <dcterms:rights>Copyright</dcterms:rights>
+    <dcterms:rightsHolder>ENTSO-E</dcterms:rightsHolder>	
+    <dcterms:requires rdf:resource="urn:uuid:e3beb946-afc6-4304-9660-517d5115cbb0"/>
+    <dcat:startDate>2022-06-15T22:30:00Z</dcat:startDate>
+    <dcterms:title>20220615_Espheim_OR_1.0.0</dcterms:title>
+    <dcat:version>1.0.0</dcat:version>
+    <prov:wasGeneratedBy>https://energy.referencedata.eu/Activity/CGM-OR</prov:wasGeneratedBy>
+    <dcterms:spatial>https://energy.referencedata.eu/Test/Frame/Espheim-Power-Transmission-System</dcterms:spatial>
+    <dcterms:issued>2022-06-15T22:30:00Z</dcterms:issued>
+  </dcat:Dataset>
+
+  <cim:IdentifiedObject rdf:about="_0b23d814-7559-4edf-8c55-40af585209e6">
+    <nc:IdentifiedObject.ObjectType rdf:resource="#_3dacaa80-ee35-458c-bccd-7b6530a292c9"/>
+    <cim:IdentifiedObject.mRID>_0b23d814-7559-4edf-8c55-40af585209e6</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>EquivalentGeneratingUnit</cim:IdentifiedObject.name>
+  </cim:IdentifiedObject>
+  <cim:Name rdf:ID="_04fc9afe-07cd-40ba-a670-661d8a7b5c21">
+    <nc:Name.NameType rdf:resource="#_e26959c9-19b3-417a-9263-dd87e970fbd4"/>
+    <nc:Name.UniqueIdentifiedObject rdf:resource="#_0b23d814-7559-4edf-8c55-40af585209e6"/>
+    <nc:Name.mRID>04fc9afe-07cd-40ba-a670-661d8a7b5c21</nc:Name.mRID>
+    <cim:Name.name>27V-EGD-DSO----R</cim:Name.name>
+  </cim:Name>
+  <cim:Name rdf:ID="_ff970cac-0b4d-4f55-b2b0-13bbbda3a669">
+    <nc:Name.NameType rdf:resource="#_7073634a-393e-443c-9d96-f181f861ae4a"/>
+    <nc:Name.UniqueIdentifiedObject rdf:resource="#_0b23d814-7559-4edf-8c55-40af585209e6"/>
+    <nc:Name.mRID>ff970cac-0b4d-4f55-b2b0-13bbbda3a669</nc:Name.mRID>
+    <cim:Name.name>External Network Injection 1</cim:Name.name>
+  </cim:Name>
+</rdf:RDF>

@@ -1,0 +1,67 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
+
+from __future__ import annotations
+
+from typing import Dict
+from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
+from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
+from VeraGridEngine.data_logger import DataLogger
+from VeraGridEngine.IO.cim.cgmes.ncp.devices.reliability.facts_equipment import FACTSEquipment
+
+
+class ThyristorControlledSeriesCompensator(FACTSEquipment):
+    """NCP CGMES extension class.
+
+    :ivar rdfid: CIM RDF identifier inherited from the base class.
+    :ivar tpe: CIM type name inherited from the base class.
+    """
+    LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
+        CgmesProperty(property_name='TCSCCompensationPoint', class_type='TCSCCompensationPoint', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.ER]),
+        CgmesProperty(property_name='compensationZ', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SSI]),
+        CgmesProperty(property_name='currentSection', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SSI]),
+        CgmesProperty(property_name='flexibleCapacitiveZ', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.ER]),
+        CgmesProperty(property_name='flexibleInductiveZ', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.ER]),
+        CgmesProperty(property_name='minI', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.ER]),
+        CgmesProperty(property_name='reconnectionI', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.ER]),
+    )
+    __slots__ = ('TCSCCompensationPoint', 'compensationZ', 'currentSection', 'flexibleCapacitiveZ', 'flexibleInductiveZ', 'minI', 'reconnectionI')
+
+    def __init__(self, rdfid: str = '', tpe: str = '" + class_info.name + "') -> None:
+        """Initialize the NCP object.
+
+        :param rdfid: RDF identifier.
+        :param tpe: CIM type name.
+        :return: Nothing.
+        """
+        FACTSEquipment.__init__(self, rdfid, tpe)
+
+        self.TCSCCompensationPoint: object | None = None
+        self.compensationZ: str | None = None
+        self.currentSection: str | None = None
+        self.flexibleCapacitiveZ: str | None = None
+        self.flexibleInductiveZ: str | None = None
+        self.minI: str | None = None
+        self.reconnectionI: str | None = None
+
+    def parse_dict(self, data: Dict[str, str], logger: DataLogger) -> None:
+        """Parse one NCP object property dictionary.
+
+        :param data: Parsed XML property dictionary.
+        :param logger: Data logger.
+        :return: Nothing.
+        """
+        self.parsed_properties = data
+        declared_properties: Dict[str, CgmesProperty] = self.declared_properties
+        for prop_name, prop_value in data.items():
+            declared_property: CgmesProperty | None = declared_properties.get(prop_name, None)
+            if declared_property is not None:
+                try:
+                    self.store_parsed_property_value(prop_name=prop_name, prop_value=prop_value)
+                except AttributeError:
+                    pass
+            else:
+                pass

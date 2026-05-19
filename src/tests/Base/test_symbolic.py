@@ -9,7 +9,7 @@ import VeraGridEngine.Utils.Symbolic.symbolic as sym
 from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicJacobian
 from VeraGridEngine.Utils.Symbolic.jit_compiler import SubexpressionAnalyzer
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.Utils.Symbolic.symbolic_io import duplicate_block
+from VeraGridEngine.Utils.Symbolic.symbolic_io import duplicate_block, expr_to_dict, parse_expr
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 
 # -----------------------------------------------------------------------------
@@ -81,6 +81,33 @@ def test_serialisation_roundtrip() -> None:
     assert expr.eval(x=0.5, y=2) == clone.eval(x=0.5, y=2)
     # ensure UIDs are preserved
     assert expr.uid == json.loads(blob)["uid"]
+
+
+def test_symbolic_io_func2_roundtrip() -> None:
+    x: sym.Var = sym.Var("x")
+    y: sym.Var = sym.Var("y")
+    expr: sym.Expr = sym.atan2(x + sym.Const(1.0), y * sym.Const(2.0))
+    const_dict: Dict[int, sym.Const] = dict()
+    var_dict: Dict[int, sym.Var] = {x.uid: x, y.uid: y}
+    diff_var_dict: Dict[int, sym.Var] = dict()
+
+    payload: Dict[str, object] = expr_to_dict(expr=expr,
+                                              const_dict=const_dict,
+                                              var_dict=var_dict,
+                                              diff_var_dict=diff_var_dict)
+    restored: sym.Expr = parse_expr(data=payload,
+                                    const_dict=const_dict,
+                                    var_dict=var_dict,
+                                    diff_var_dict=diff_var_dict)
+    payload_roundtrip: Dict[str, object] = expr_to_dict(expr=restored,
+                                                        const_dict=const_dict,
+                                                        var_dict=var_dict,
+                                                        diff_var_dict=diff_var_dict)
+
+    assert isinstance(restored, sym.Func2)
+    assert restored.name == "atan2"
+    assert payload_roundtrip == payload
+    assert math.isclose(restored.eval(x=1.5, y=0.25), expr.eval(x=1.5, y=0.25), rel_tol=1.0e-12)
 
 # -----------------------------------------------------------------------------
 # Immutability guarantees
@@ -334,10 +361,10 @@ def test_var_factory_deepcopy_keeps_copied_diff_links_internal() -> None:
     dx: sym.Var = vf.add_diff_var("dx", base_var=x)
 
     copied_vf: VarFactory = copy.deepcopy(vf)
-    copied_x_or_none: sym.Var | None = copied_vf.get_var(x.uid)
+    copied_x_or_none: sym.Var | None = copied_vf.get_var(x.non_mutable_uid)
     assert copied_x_or_none is not None
     copied_x: sym.Var = copied_x_or_none
-    copied_dx: sym.Var = copied_vf.get_diff_var(dx.uid)
+    copied_dx: sym.Var = copied_vf.get_diff_var(dx.non_mutable_uid)
 
     assert x.diff_var is dx
     assert dx.base_var is x
@@ -418,8 +445,8 @@ def test_duplicate_block_preserves_parent_child_variable_links_with_new_uids() -
     assert copied_dx.base_var is copied_x
     assert copied_child.state_eqs[0].left is copied_dx
     assert copied_child.state_eqs[0].right is copied_x
-    assert target_vf.get_var(copied_x.uid) is copied_x
-    assert target_vf.get_diff_var(copied_dx.uid) is copied_dx
+    assert target_vf.get_var(copied_x.non_mutable_uid) is copied_x
+    assert target_vf.get_diff_var(copied_dx.non_mutable_uid) is copied_dx
 
 
 # -----------------------------------------------------------------------------

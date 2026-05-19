@@ -465,6 +465,14 @@ def create_cgmes_regulating_control(cgmes_elm,
     :param logger:
     :return:
     """
+    if isinstance(mc_gen, gcdev.Generator) or isinstance(mc_gen, gcdev.ControllableShunt):
+        pass
+    else:
+        raise TypeError(
+            "create_cgmes_regulating_control() only supports Generator or ControllableShunt; "
+            f"got {mc_gen.__class__.__name__}"
+        )
+
     new_rdf_id = get_new_rdfid()
 
     if ver == CGMESVersions.v2_4_15:

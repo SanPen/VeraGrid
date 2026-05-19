@@ -110,7 +110,7 @@ def newton_raphson_fx(problem: PfFormulationTemplate,
                 error, x_sol = problem.check_error(x + dx * mu)
                 mu *= 0.25
 
-            update_controls = error < (tol * 100)
+            update_controls = error < 1e-6
             error, converged, x, f = problem.update(x=x_sol, update_controls=update_controls)
 
             if verbose > 1:

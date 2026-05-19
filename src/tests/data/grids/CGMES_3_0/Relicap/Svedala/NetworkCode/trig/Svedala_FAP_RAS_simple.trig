@@ -1,0 +1,93 @@
+PREFIX adms:     <http://www.w3.org/ns/adms#>
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dcatcim:  <https://cim4.eu/ns/dcatcim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:aa129d49-f7af-4b87-942d-aa1e8e4e14a5> {
+    <urn:uuid:fd123c28-963a-49fc-8287-679eb8fc092c>
+            rdf:type                   nc:EventSchedule;
+            cim:IdentifiedObject.mRID  "fd123c28-963a-49fc-8287-679eb8fc092c";
+            cim:IdentifiedObject.name  "TP RA One Switch";
+            nc:BaseTimeSeries.interpolationKind
+                    nc:TimeSeriesInterpolationKind.none;
+            nc:EventSchedule.RemedialActionSchedule
+                    <urn:uuid:24fb6a23-3bb3-4e27-9488-597957c10bdc> .
+    
+    <urn:uuid:51592d48-9943-4e13-9ce3-51b79db43109>
+            rdf:type  nc:RemedialActionScheduleDependency;
+            nc:RemedialActionScheduleDependency.ProposedRemedialActionSchedule
+                    <urn:uuid:24fb6a23-3bb3-4e27-9488-597957c10bdc>;
+            nc:RemedialActionScheduleDependency.ReplacedRemedialActionSchedule
+                    <urn:uuid:17527637-6099-4ee6-8b21-fea8dfec4c75>;
+            nc:RemedialActionScheduleDependency.kind
+                    nc:RemedialActionScheduleDependencyKind.none;
+            nc:RemedialActionScheduleDependency.mRID
+                    "51592d48-9943-4e13-9ce3-51b79db43109" .
+    
+    <urn:uuid:c11ac0dd-2e7d-4320-9abb-b98bfc88f4ee>
+            rdf:type  nc:RemedialActionScheduleResponse;
+            nc:RemedialActionScheduleResponse.RemedialActionSchedule
+                    <urn:uuid:17527637-6099-4ee6-8b21-fea8dfec4c75>;
+            nc:RemedialActionScheduleResponse.RespondingEntity
+                    <https://energy.referencedata.eu/test/party/22XSvedala-----S>;
+            nc:RemedialActionScheduleResponse.kind
+                    nc:RemedialActionScheduleResponseKInd.waiting;
+            nc:RemedialActionScheduleResponse.mRID
+                    "c11ac0dd-2e7d-4320-9abb-b98bfc88f4ee" .
+    
+    <urn:uuid:679f1be4-e50c-464a-be4a-3462b0edc9d6>
+            rdf:type                    nc:EventTimePoint;
+            nc:EventTimePoint.EventSchedule
+                    <urn:uuid:fd123c28-963a-49fc-8287-679eb8fc092c>;
+            nc:EventTimePoint.atTime    "2024-11-20T02:30:00Z"^^xsd:dateTime;
+            nc:EventTimePoint.isActive  false .
+    
+    <urn:uuid:24fb6a23-3bb3-4e27-9488-597957c10bdc>
+            rdf:type                   nc:RemedialActionSchedule;
+            cim:IdentifiedObject.mRID  "24fb6a23-3bb3-4e27-9488-597957c10bdc";
+            cim:IdentifiedObject.name  "FAP proposing costly preventive redispatch";
+            nc:RemedialActionSchedule.RemedialAction
+                    <urn:uuid:fdabc5da-fc4f-488e-8d9b-3f63680566ad>;
+            nc:RemedialActionSchedule.statusKind
+                    nc:RemedialActionScheduleStatusKind.ordered .
+    
+    <urn:uuid:aa129d49-f7af-4b87-942d-aa1e8e4e14a5>
+            rdf:type                dcat:Dataset;
+            dct:accessRights        "https://energy.referencedata.eu/Confidentiality/Public";
+            dct:conformsTo          "https://cim.ucaiug.io/ns#" , "https://ap.cim4.eu/RemedialActionSchedule/2.4" , "https://cim4.eu/ns/nc/2.4#" , "http://iec.ch/TC57/2013/CIM-schema-cim16#";
+            dct:description         "This is an example of remedial action schedule profile that Svedala proposes for the FAP process."@en;
+            dct:identifier          "aa129d49-f7af-4b87-942d-aa1e8e4e14a5";
+            dct:issued              "2025-06-15T22:30:00Z"^^xsd:dateTime;
+            dct:license             "https://creativecommons.org/licenses/by/4.0/";
+            dct:publisher           "https://energy.referencedata.eu/test/party/TSO-Svedala";
+            dct:requires            <urn:uuid:f7b94ef6-e043-4d2a-a359-2718e6e20507>;
+            dct:rights              "Copyright";
+            dct:rightsHolder        "ENTSO-E";
+            dct:spatial             "https://energy.referencedata.eu/Test/Frame/Svedala-Power-Transmission-System";
+            dct:title               "20250615_Svedala_IGM-FAP_RAS_v3-0-0-beta-1";
+            dcat:endDate            "2023-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:isVersionOf        <https://energy.referencedata.eu/Test/Model/TSO-Svedala-RAS-FAP>;
+            dcat:keyword            "FAP";
+            dcat:startDate          "2025-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:version            "3.0.0-beta-1";
+            prov:generatedAtTime    "2022-06-10T07:06:25Z"^^xsd:dateTime;
+            prov:wasAssociatedWith  <https://energy.referencedata.eu/CGM/SoftwareAgent/3f4ed5cb-b627-4922-b9ea-19ba419a1c7a>;
+            prov:wasGeneratedBy     "https://energy.referencedata.eu/Activity/CGM-RAS-FAP";
+            prov:wasInfluencedBy    <urn:uuid:4129d214-f57e-4a2b-b14c-c5ef458b6703> .
+}

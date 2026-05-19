@@ -912,7 +912,7 @@ def convert_static_generator(elm: dev.StaticGenerator,
         bus=None if elm.bus is None else bus_dict[elm.bus.idtag],
         nt=n_time,
         P=elm.P,
-        Q=elm.Q,
+        power_factor=elm.Pf,
         build_status=elm.build_status,
     )
 
@@ -1175,7 +1175,7 @@ def convert_generator(k: int, elm: dev.Generator, bus_dict: Dict[str, "pg.Bus"],
         idtag=elm.idtag,
         active=elm.active,
         P=elm.P,
-        power_factor=elm.Pf,
+        Q=elm.Q,
         vset=elm.Vset,
         Pmin=elm.Pmin,
         Pmax=elm.Pmax,
@@ -1210,12 +1210,12 @@ def convert_generator(k: int, elm: dev.Generator, bus_dict: Dict[str, "pg.Bus"],
                                 n_time=n_time,
                                 default_val=elm.P)
 
-    fill_profile(gslv_profile=gen.Pf,
-                 gc_profile=elm.Pf_prof,
+    fill_profile(gslv_profile=gen.Q,
+                 gc_profile=elm.Q_prof,
                  use_time_series=use_time_series,
                  time_indices=time_indices,
                  n_time=n_time,
-                 default_val=elm.Pf)
+                 default_val=elm.Q)
 
     fill_profile(gslv_profile=gen.Vset,
                  gc_profile=elm.Vset_prof,
@@ -1332,12 +1332,12 @@ def convert_battery(k: int, elm: dev.Battery, bus_dict: Dict[str, "pg.Bus"], n_t
                                 n_time=n_time,
                                 default_val=elm.P)
 
-    fill_profile(gslv_profile=gen.Pf,
-                 gc_profile=elm.Pf_prof,
+    fill_profile(gslv_profile=gen.Q,
+                 gc_profile=elm.Q_prof,
                  use_time_series=use_time_series,
                  time_indices=time_indices,
                  n_time=n_time,
-                 default_val=elm.Pf)
+                 default_val=elm.Q)
 
     fill_profile(gslv_profile=gen.Vset,
                  gc_profile=elm.Vset_prof,
@@ -1771,7 +1771,7 @@ def convert_vsc(elm: dev.VSC, bus_dict: Dict[str, "pg.Bus"], n_time: int,
         code=str(elm.code),
         active=elm.active,
         rate=9999.0,
-        kdp=elm.control1_droop,
+        kdp=elm.control1_val_droop,
         alpha1=elm.alpha1,
         alpha2=elm.alpha2,
         alpha3=elm.alpha3,

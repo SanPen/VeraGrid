@@ -1,4 +1,5 @@
 import sys
+import os
 import pytest
 from PySide6 import QtWidgets
 import VeraGridEngine.api as vge
@@ -93,7 +94,8 @@ def test_tower_saving_issue():
     # Save the grid
     # ----------------------------------------------------------------------------------------------------------------------
     # vge.save_file(grid=grid, )
-    gui.save_file_now(filename='../tower.veragrid')
+    os.makedirs('data/output', exist_ok=True)
+    gui.save_file_now(filename='data/output/tower.veragrid')
     # ----------------------------------------------------------------------------------------------------------------------
     # Run power flow
     # ----------------------------------------------------------------------------------------------------------------------

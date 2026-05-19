@@ -250,23 +250,22 @@ class _CustomCatalogueIoStub(_RefreshingIoStub):
         self.logged_messages.append((name, logger))
 
 
-def test_load_custom_catalogue_refreshes_template_dependent_gui_views(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_load_custom_catalogue_refreshes_template_dependent_gui_views(override_attrs) -> None:
     """
     Ensure the custom-catalogue action rebuilds the visible property views immediately.
 
-    :param monkeypatch: Pytest monkeypatch fixture.
-    :return: None.
+        :return: None.
     """
     stub = _CustomCatalogueIoStub()
     loaded_catalogue = object()
     logger = _CatalogueLoggerStub(has_logs=False)
     load_catalogue_stub = _LoadCatalogueStub(loaded_catalogue=loaded_catalogue, logger=logger)
 
-    monkeypatch.setattr(io_module.QtWidgets.QFileDialog,
+    override_attrs.setattr(io_module.QtWidgets.QFileDialog,
                         "getOpenFileName",
                         _custom_catalogue_dialog_stub)
-    monkeypatch.setattr(io_module.os.path, "exists", _custom_catalogue_exists_stub)
-    monkeypatch.setattr(io_module, "load_catalogue", load_catalogue_stub)
+    override_attrs.setattr(io_module.os.path, "exists", _custom_catalogue_exists_stub)
+    override_attrs.setattr(io_module, "load_catalogue", load_catalogue_stub)
 
     IoMain.load_custom_catalogue(stub)
 

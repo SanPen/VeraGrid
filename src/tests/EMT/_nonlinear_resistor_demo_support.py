@@ -23,7 +23,7 @@ from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_grounding_lin
 from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_shunt_rlc_combo_emt_template
 from VeraGridEngine.Templates.Emt.nonlinear_resistor_emt_template import get_nonlinear_resistor_emt_template
 from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template
-from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template
+from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
 from VeraGridEngine.Templates.templates_common_functions import set_emt_model
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
 from VeraGridEngine.enumerations import DynamicIntegrationMethod
@@ -270,7 +270,7 @@ def _build_grid() -> tuple[gce.MultiCircuit, gce.Line, gce.Bus, gce.Load, gce.Lo
         get_bus_emt_template(grid, bus)
 
     set_emt_model(device=generator,
-                  model=get_generator_thevenin_rl_emt_template(vf=grid.var_factory, name="Gen").block,
+                  model=get_generator_thevenin_rl_emt_template_with_ref(vf=grid.var_factory, name="Gen").block,
                   var_factory=grid.var_factory)
     set_emt_model(device=line,
                   model=get_pi_line_emt_template(vf=grid.var_factory, phN=True, phA=True, phB=True, phC=True, name="Line").block,

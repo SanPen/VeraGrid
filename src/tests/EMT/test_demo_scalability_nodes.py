@@ -5,10 +5,10 @@
 
 from __future__ import annotations
 
+import sys
 import time
 from typing import Any
 from typing import Dict
-from unittest.mock import patch
 
 import numpy as np
 import pytest
@@ -588,12 +588,11 @@ def test_setup_initial_condition_installs_the_exact_sinusoidal_displacement_prof
     np.testing.assert_allclose(problem.get_x0(), expected, rtol=0.0, atol=1.0e-12)
 
 
-def test_run_backend_ad_uses_the_measured_simulation_output_for_metrics(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_run_backend_ad_uses_the_measured_simulation_output_for_metrics(override_attrs) -> None:
     """
     Verify the AD benchmark contract for setup timing and measured-trajectory metrics.
 
-    :param monkeypatch: Pytest monkeypatch fixture.
-    :return: None.
+        :return: None.
     """
     perf_values: Any = iter([10.0, 13.0, 20.0, 24.0])
     result: Dict[str, Any]
@@ -601,11 +600,10 @@ def test_run_backend_ad_uses_the_measured_simulation_output_for_metrics(monkeypa
     measured_y: np.ndarray = np.array([[1.0, -2.0], [3.0, -4.0]], dtype=np.float64)
     expected_steps: int
     expected_activity: float
-    _unused_monkeypatch: pytest.MonkeyPatch = monkeypatch
-
     FakeAdSolver.instances = list()
-    with patch(__name__ + ".JitAdSolver", FakeAdSolver), patch.object(time, "perf_counter", lambda: next(perf_values)):
-        result = run_backend(label="LIN", n_nodes=5, vectorized=False, t_end=1.1e-3, h=2.0e-4, verbose=False)
+    override_attrs.setattr(sys.modules[__name__], "JitAdSolver", FakeAdSolver)
+    override_attrs.setattr(time, "perf_counter", lambda: next(perf_values))
+    result = run_backend(label="LIN", n_nodes=5, vectorized=False, t_end=1.1e-3, h=2.0e-4, verbose=False)
 
     solver = FakeAdSolver.instances[-1]
     expected_steps = compute_steps(0.0, 1.1e-3, 2.0e-4)
@@ -623,12 +621,11 @@ def test_run_backend_ad_uses_the_measured_simulation_output_for_metrics(monkeypa
     }
 
 
-def test_run_backend_vectorized_uses_solver_pure_loop_time_and_configures_vectorization(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_run_backend_vectorized_uses_solver_pure_loop_time_and_configures_vectorization(override_attrs) -> None:
     """
     Verify the vectorized benchmark contract for auto-detection and pure-loop timing.
 
-    :param monkeypatch: Pytest monkeypatch fixture.
-    :return: None.
+        :return: None.
     """
     perf_values: Any = iter([100.0, 106.0, 200.0])
     result: Dict[str, Any]
@@ -636,11 +633,10 @@ def test_run_backend_vectorized_uses_solver_pure_loop_time_and_configures_vector
     measured_y: np.ndarray = np.array([[-2.0, 6.0], [4.0, -8.0]], dtype=np.float64)
     expected_steps: int
     expected_activity: float
-    _unused_monkeypatch: pytest.MonkeyPatch = monkeypatch
-
     FakeVectorizedSolver.instances = list()
-    with patch(__name__ + ".StructuralVectorizedSolver", FakeVectorizedSolver), patch.object(time, "perf_counter", lambda: next(perf_values)):
-        result = run_backend(label="LIN", n_nodes=8, vectorized=True, t_end=9.0e-4, h=2.0e-4, verbose=False)
+    override_attrs.setattr(sys.modules[__name__], "StructuralVectorizedSolver", FakeVectorizedSolver)
+    override_attrs.setattr(time, "perf_counter", lambda: next(perf_values))
+    result = run_backend(label="LIN", n_nodes=8, vectorized=True, t_end=9.0e-4, h=2.0e-4, verbose=False)
 
     solver = FakeVectorizedSolver.instances[-1]
     expected_steps = compute_steps(0.0, 9.0e-4, 2.0e-4)
@@ -658,12 +654,11 @@ def test_run_backend_vectorized_uses_solver_pure_loop_time_and_configures_vector
     }
 
 
-def test_main_executes_the_exact_experiment_matrix(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_main_executes_the_exact_experiment_matrix(override_attrs) -> None:
     """
     Verify the fixed five-case experiment matrix and AD-then-VEC execution order.
 
-    :param monkeypatch: Pytest monkeypatch fixture.
-    :return: None.
+        :return: None.
     """
     recorder: BenchmarkCallRecorder = BenchmarkCallRecorder()
     expected_experiments: list[dict[str, Any]] = [
@@ -677,10 +672,9 @@ def test_main_executes_the_exact_experiment_matrix(monkeypatch: pytest.MonkeyPat
     cfg: dict[str, Any]
     ad_call: dict[str, Any]
     vec_call: dict[str, Any]
-    _unused_monkeypatch: pytest.MonkeyPatch = monkeypatch
-
-    with patch(__name__ + ".run_backend", recorder.run_backend), patch(__name__ + ".print_case_summary", recorder.print_case_summary):
-        main()
+    override_attrs.setattr(sys.modules[__name__], "run_backend", recorder.run_backend)
+    override_attrs.setattr(sys.modules[__name__], "print_case_summary", recorder.print_case_summary)
+    main()
 
     assert len(recorder.run_calls) == 10
     assert len(recorder.summaries) == 5

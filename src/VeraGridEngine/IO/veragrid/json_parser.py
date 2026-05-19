@@ -2018,7 +2018,7 @@ def save_json_file_v3(file_path: str, circuit: MultiCircuit, simulation_drivers:
                         'alpha3': elm.alpha3,
 
                         'k': elm.k,
-                        'kdp': elm.control1_droop,
+                        'kdp': elm.control1_val_droop,
                         'Pfset': elm.Pset,
                         'Qfset': elm.Qset,
                         'vac_set': elm.vset,

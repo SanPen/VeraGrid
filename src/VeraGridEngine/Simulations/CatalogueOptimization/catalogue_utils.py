@@ -8,7 +8,7 @@ from typing import List, Tuple, Union
 
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-from VeraGridEngine.Devices.Branches.line import Line, accept_line_connection
+from VeraGridEngine.Devices.Branches.line import Line
 from VeraGridEngine.Devices.Branches.transformer import Transformer2W
 from VeraGridEngine.Devices.Branches.overhead_line_type import OverheadLineType
 from VeraGridEngine.Devices.Branches.sequence_line_type import SequenceLineType
@@ -223,6 +223,33 @@ def take_snapshot(branch: Branch) -> Union[LineSnapshot, TransformerSnapshot]:
         raise TypeError(f"Branch type {type(branch).__name__} is not supported by the catalogue optimization.")
 
 
+def _voltage_match(template_vn: float,
+                   branch_vn: float,
+                   voltage_tolerance: float) -> bool:
+    """
+    Check whether a template's nominal voltage is within +/-tolerance of a branch's nominal voltage.
+
+    Symmetric replacement for ``accept_line_connection`` (in `Devices/Branches/line.py`), which is
+    intentionally one-sided: that helper accepts any template whose voltage is at least
+    ``(1 - tol)`` of the branch voltage but applies no upper bound, so a 400 kV template is
+    considered "compatible" with a 33 kV line. For catalogue optimization we want a true band so
+    only templates whose rating is genuinely close to the branch are kept in the decision pool.
+
+    :param template_vn: template nominal voltage (kV).
+    :param branch_vn: branch nominal voltage (kV).
+    :param voltage_tolerance: relative tolerance, e.g. 0.1 for +/-10%.
+    :return: True if the voltages match within the symmetric band, False otherwise.
+    """
+    # Branches with non-positive nominal voltage are degenerate; fall back to exact equality
+    # so we never divide by zero or accept arbitrary templates.
+    if branch_vn <= 0.0:
+        return template_vn == branch_vn
+    else:
+        # Symmetric band: ratio must lie inside [1 - tol, 1 + tol].
+        ratio: float = template_vn / branch_vn
+        return (1.0 - voltage_tolerance) <= ratio <= (1.0 + voltage_tolerance)
+
+
 def _line_template_matches(branch: Line,
                            template: LineTemplate,
                            voltage_tolerance: float) -> bool:
@@ -248,8 +275,10 @@ def _line_template_matches(branch: Line,
         # Unsupported template type for an AC line: skip without erroring
         return False
 
-    # Reuse the existing voltage compatibility helper (used inside `apply_template` itself)
-    return accept_line_connection(template_vn, line_vn, voltage_tolerance)
+    # Symmetric voltage check (the catalogue-optimization needs a true band; see `_voltage_match`).
+    return _voltage_match(template_vn=template_vn,
+                          branch_vn=line_vn,
+                          voltage_tolerance=voltage_tolerance)
 
 
 def _transformer_template_matches(branch: Transformer2W,
@@ -265,9 +294,14 @@ def _transformer_template_matches(branch: Transformer2W,
     :param voltage_tolerance: relative tolerance accepted between template and transformer voltages.
     :return: True if both HV and LV ratings match, False otherwise.
     """
-    # Compare both windings: the optimization should never swap a 220/110 trafo for a 220/20 unit
-    hv_match: bool = accept_line_connection(template.HV, branch.HV, voltage_tolerance)
-    lv_match: bool = accept_line_connection(template.LV, branch.LV, voltage_tolerance)
+    # Compare both windings symmetrically: the optimization should never swap a 220/110 trafo
+    # for a 220/20 unit (and the lopsided `accept_line_connection` would let that through).
+    hv_match: bool = _voltage_match(template_vn=template.HV,
+                                    branch_vn=branch.HV,
+                                    voltage_tolerance=voltage_tolerance)
+    lv_match: bool = _voltage_match(template_vn=template.LV,
+                                    branch_vn=branch.LV,
+                                    voltage_tolerance=voltage_tolerance)
     return hv_match and lv_match
 
 
@@ -368,6 +402,13 @@ def build_catalogue_pool(grid: MultiCircuit,
                                    "Transformer2W only at this stage)",
                                device=branch.name,
                                device_class=type(branch).__name__)
+
+    # Diagnostic dump of the per-slot pool sizes. Helps the user see, for every surviving branch,
+    # how many templates the optimizer has to choose from (i.e. the cardinality of each decision slot).
+    print(f"[CatalogueOptimization] Surviving branches: "
+          f"{len(kept_branches)} of {len(selected_branches)} selected")
+    for kept_branch, kept_pool in zip(kept_branches, kept_pools):
+        print(f"  {kept_branch.name:30s} -> {len(kept_pool)} compatible templates")
 
     return kept_branches, kept_pools
 

@@ -1,0 +1,90 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:e6534100-413c-4dff-8c27-b0a757c254a9> {
+    <urn:uuid:fbf3e14c-82b7-40c6-81df-7a9d6b7e8668>
+            rdf:type                cim:SvStatus;
+            cim:SvStatus.ConductingEquipment
+                    <urn:uuid:457baf0b-122c-475d-a36e-76f1b79a3f15>;
+            cim:SvStatus.inService  true .
+    
+    <urn:uuid:d754c102-a3e4-49ac-9297-dcbc5c78ef4b>
+            rdf:type                  cim:SvPowerFlow;
+            cim:SvPowerFlow.Terminal  <urn:uuid:905685de-4a1a-51d2-1037-aa222a289fe7>;
+            cim:SvPowerFlow.p         "-60"^^xsd:float;
+            cim:SvPowerFlow.q         "-20"^^xsd:float .
+    
+    <urn:uuid:e6534100-413c-4dff-8c27-b0a757c254a9>
+            rdf:type                 rdfg:Graph , dcat:Dataset;
+            dct:conformsTo           <http://iec.ch/TC57/ns/CIM/StateVariables-EU/3.0>;
+            dct:description          "The state variables dataset for Nordheim, which is part of the ReliCapGrid.";
+            dct:identifier           "e6534100-413c-4dff-8c27-b0a757c254a9";
+            dct:issued               "2025-02-08"^^xsd:date;
+            dct:requires             <urn:uuid:74def37a-c099-4e6a-85b4-edd7c43a5a7a>;
+            dct:temporal             [ rdf:type        dct:PeriodOfTime;
+                                       dcat:endDate    "2022-06-17T00:30:00Z"^^xsd:dateTime;
+                                       dcat:startDate  "2022-06-16T23:30:00Z"^^xsd:dateTime
+                                     ];
+            dcat:distribution        [ rdf:type    dcat:Distribution;
+                                       dct:issued  "2025-02-08T10:43:06Z"^^xsd:dateTime
+                                     ];
+            dcat:isVersionOf         <http://nordheim.nh/CGMES>;
+            dcat:temporalResolution  "PT1H"^^xsd:duration;
+            dcat:version             "1";
+            json-ld:base             "http://nordheim.nh/CGMES#" .
+    
+    <urn:uuid:4244c176-b380-4690-b461-7be7b20f9afe>
+            rdf:type                cim:SvStatus;
+            cim:SvStatus.ConductingEquipment
+                    <urn:uuid:4fbcc3b5-af30-4940-a0f4-686ad1439467>;
+            cim:SvStatus.inService  true .
+    
+    <urn:uuid:eec15144-3285-4aae-b75d-685721b0d0c2>
+            rdf:type                  cim:SvPowerFlow;
+            cim:SvPowerFlow.Terminal  <urn:uuid:d478d71c-ebb1-1e9d-e66d-6f247cea34be>;
+            cim:SvPowerFlow.p         "200"^^xsd:float;
+            cim:SvPowerFlow.q         "0"^^xsd:float .
+    
+    <urn:uuid:56e2b60f-519e-414a-9a17-6369ef076e81>
+            rdf:type                  cim:SvPowerFlow;
+            cim:SvPowerFlow.Terminal  <urn:uuid:70a8601c-3cbc-76fb-bea8-96a644f3915c>;
+            cim:SvPowerFlow.p         "-140"^^xsd:float;
+            cim:SvPowerFlow.q         "20"^^xsd:float .
+    
+    <urn:uuid:17f64f95-9bed-460d-b60a-9d23b439d804>
+            rdf:type                   cim:TopologicalIsland;
+            cim:IdentifiedObject.mRID  "17f64f95-9bed-460d-b60a-9d23b439d804";
+            cim:IdentifiedObject.name  "Island_001";
+            cim:TopologicalIsland.AngleRefTopologicalNode
+                    <urn:uuid:34334895-232c-75cb-9a58-36c799a1a485>;
+            cim:TopologicalIsland.TopologicalNodes
+                    <urn:uuid:34334895-232c-75cb-9a58-36c799a1a485> .
+    
+    <urn:uuid:36c7c2af-b372-4fff-b570-b68aed728b2e>
+            rdf:type                cim:SvStatus;
+            cim:SvStatus.ConductingEquipment
+                    <urn:uuid:164b8e97-5936-443a-bfda-6a9e75243aea>;
+            cim:SvStatus.inService  true .
+    
+    <urn:uuid:130d26a0-6f38-47ea-9346-8995435c1439>
+            rdf:type                       cim:SvVoltage;
+            cim:SvVoltage.TopologicalNode  <urn:uuid:34334895-232c-75cb-9a58-36c799a1a485>;
+            cim:SvVoltage.angle            "0"^^xsd:float;
+            cim:SvVoltage.v                "220"^^xsd:float .
+}

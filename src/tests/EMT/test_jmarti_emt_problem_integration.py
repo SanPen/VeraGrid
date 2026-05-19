@@ -21,7 +21,7 @@ from VeraGridEngine.Simulations.PowerFlow.power_flow_driver_3ph import PowerFlow
 from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_emt_template
 from VeraGridEngine.Templates.Emt.jmarti_line_emt_template import get_jmarti_line_emt_template
 from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_shunt_rlc_combo_emt_template
-from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template
+from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_emt_model
 from VeraGridEngine.enumerations import DynamicIntegrationMethod, EmtInitializationMethod, EmtSolverTypes, ShuntConnectionType, SolverType
 
@@ -205,7 +205,7 @@ def test_jmarti_emt_problem_builds_one_history_runtime_and_runs_short_simulation
     for bus in grid.buses:
         get_bus_emt_template(grid, bus)
 
-    set_emt_model(device=generator, model=get_generator_thevenin_rl_emt_template(vf=grid.var_factory, name="Gen").block, var_factory=grid.var_factory)
+    set_emt_model(device=generator, model=get_generator_thevenin_rl_emt_template_with_ref(vf=grid.var_factory, name="Gen").block, var_factory=grid.var_factory)
     line_model = get_jmarti_line_emt_template(vf=grid.var_factory, phN=False, phA=True, phB=True, phC=True, name="Line").block
     set_jmarti_block_fit_bundle(line_model, _build_jmarti_fit_bundle_for_three_phase_line())
     set_emt_model(device=line, model=line_model, var_factory=grid.var_factory)

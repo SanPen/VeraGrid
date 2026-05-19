@@ -6,7 +6,7 @@ import datetime
 _current_year_ = datetime.datetime.now().year
 
 # remember to keep a three-number version!!!
-__VeraGridEngine_VERSION__ = "6.0.7"
+__VeraGridEngine_VERSION__ = "6.0.17"
 
 url = 'https://github.com/SanPen/VeraGrid'
 
@@ -44,7 +44,10 @@ contributors_msg += ('Chavdar Ivanov, '
 contributors_msg += ('Rubén Carmona Pardo, '
                      'Julio González Mejías, '
                      'Jesús Riquelme Santos (Contingencies and PTDF testing)\n')
-contributors_msg += 'Alex Blanco Castro (3-phase ABC power flow and short circuit)\n'
-contributors_msg += 'Ankur Arohi (Better State Estimation and pandapower parser)\n'
+contributors_msg += 'Alex Blanco Castro (ACDC and 3-phase ABC power flow and short circuit)\n'
+contributors_msg += 'Marina Rosés Gibert (RMS and EMT)\n'
+contributors_msg += 'María Sans Esqué (RMS and EMT)\n'
+contributors_msg += 'Pablo de Juan Vela (RMS, EMT and Tensors for EMT)\n'
+contributors_msg += 'Andrés Mauricio Díaz Caicedo (RMS, EMT and FMU interfaces)\n'
 
 about_msg += copyright_msg + '\n' + contributors_msg

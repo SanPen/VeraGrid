@@ -251,7 +251,7 @@ def run_dense_small_signal_stability(problem: RmsProblemTemplate,
         eig_results = list(la.eig(A_bal, left=True, right=True))
     else:
         h = problem.get_dt_value()
-        h = 1e9
+        # h = 1e9
         E_matrix = problem.get_E_matrix(x, dx)
 
         nx = problem.get_states_number()
@@ -343,7 +343,7 @@ def run_sparse_small_signal_stability(problem: RmsProblemTemplate,
                                                  J_aug_lu=J_aug_lu)
     else:
         # 3. CREATE THE SHIFT-AND-INVERT OPERATOR (A^-1 * E * v)
-        E = problem.get_E_matrix()
+        E = problem.get_E_matrix(x, dx)
         n_states = problem.get_diff_var_number()
         op_methods = SparseGeneralizedShiftInvertMethods(
             n_states=n_states,
@@ -599,7 +599,7 @@ class SmallSignalStabilityRmsDriver(DriverTemplate):
             pass
 
         n = self.problem.get_states_number()
-        if self.k >= n - 1:
+        if self.k >= n - 1 or self.k == 0:
             (eigenvalues,
              participation_factors,
              damping_ratios,

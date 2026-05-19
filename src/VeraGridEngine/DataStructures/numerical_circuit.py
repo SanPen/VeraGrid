@@ -941,14 +941,19 @@ class NumericalCircuit:
                     i0 = island[0]
 
                     if len(island) > 1:
+                        sub_island = island[1:]
                         # set the mapping to the first index of the island to the reduced buses
-                        self.__bus_map_arr[island[1:]] = i0
+                        self.__bus_map_arr[sub_island] = i0
 
                         # deactivate the reduced buses
-                        self.bus_data.active[island[1:]] = False
+                        self.bus_data.active[sub_island] = False
+
+                        # preserve the control status and controlled set-points on the surviving bus
+                        self.bus_data.propagate_controls(chosen_idx=i0, other_idx=sub_island)
 
             # remap
             self.passive_branch_data.remap(self.__bus_map_arr)
+            self.active_branch_data.remap(self.__bus_map_arr)
             self.vsc_data.remap(self.__bus_map_arr)
             self.hvdc_data.remap(self.__bus_map_arr)
             self.load_data.remap(self.__bus_map_arr)

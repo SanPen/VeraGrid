@@ -823,6 +823,7 @@ class ConverterControlType(Enum):
     Pdc = 'P_dc'
     Pac = 'P_ac'
     Pdc_angle_droop = 'P_dc_angle_droop'  # PMODE3
+    Pdc_droop = 'P_dc_droop'  # DC power / DC voltage droop: Pdc = Pdc* + Pdroop * (Vdc* - Vdc)
     Q_droop = "Q_droop"
     P_droop = "P_droop"
     Imax = 'Imax'
@@ -2019,6 +2020,7 @@ class ResultTypes(Enum):
 
     BusActivePowerIncrement = "ΔP: Active power increment"
 
+    BranchActivePowerFromBase = 'Pf: Active power "from" base case'
     BranchActivePowerFrom = 'Pf: Active power "from"'
     BranchActivePowerFromA = 'PfA: Active power "from" A'
     BranchActivePowerFromB = 'PfB: Active power "from" B'
@@ -3804,6 +3806,23 @@ class DynamicSimulationMode(Enum):
         """
         return list(map(lambda c: c.value, cls))
 
+
+class PlotSimulationType(Enum):
+    """
+    Simulation family used by persistent dynamic plot definitions and handlers.
+    """
+
+    RMS = "RMS"
+    EMT = "EMT"
+
+    def __str__(self) -> str:
+        """
+        Return the persistent label used by dynamic plot assets.
+
+        :return: Persistent simulation-family label.
+        """
+        return self.value
+
 class BlockScopeMode(Enum):
     """
     Block extraction scope modes for DGS block parsing.
@@ -3876,6 +3895,7 @@ class BlockType(Enum):
     EMT_PI_LINE = "EMT_PI_LINE"
     EMT_BERGERON_LINE = "EMT_BERGERON_LINE"
     EMT_JMARTI_LINE = "EMT_JMARTI_LINE"
+    EMT_DC_LINE = "EMT_DC_LINE"
     VOLTAGE_SOURCE_EMT = "VOLTAGE_SOURCE_EMT"
     CURRENT_SOURCE_EMT = "CURRENT_SOURCE_EMT"
     CONTROLLED_VOLTAGE_SOURCE_EMT = "CONTROLLED_VOLTAGE_SOURCE_EMT"
@@ -3944,6 +3964,7 @@ class ProceduralGridMethods(Enum):
     """
     SteinerAlone = "Steiner tree"
     SteinerAndOptimization = "Steiner tree + optimization"
+    CatalogueOptimizationOnly = "Catalogue optimization only"
 
     def __str__(self):
         return self.value

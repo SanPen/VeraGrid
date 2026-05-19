@@ -1,0 +1,184 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:fc3c4b17-cce7-4c2f-9c13-8240e514c87c> {
+    <urn:uuid:7221ae31-f736-4ae2-8ce1-f3dd605cefd6>
+            rdf:type                   nc:AssessedElementSchedule;
+            cim:IdentifiedObject.description
+                    "This is an example of assessed element schedule.";
+            cim:IdentifiedObject.mRID  "7221ae31-f736-4ae2-8ce1-f3dd605cefd6";
+            cim:IdentifiedObject.name  "Schedule-AE1";
+            nc:AssessedElementSchedule.AssessedElement
+                    <urn:uuid:992c2de6-e206-45b3-a76a-f4a691e8839a>;
+            nc:BaseTimeSeries.interpolationKind
+                    nc:TimeSeriesInterpolationKind.none .
+    
+    <urn:uuid:5e08ba42-c0b5-45ed-bc8b-dbb854ed0897>
+            rdf:type                       nc:PowerBidSchedule;
+            cim:IdentifiedObject.mRID      "5e08ba42-c0b5-45ed-bc8b-dbb854ed0897";
+            cim:IdentifiedObject.name      "PBS2";
+            nc:PowerBidSchedule.PowerRemedialAction
+                    <urn:uuid:30f6377d-5e35-4dd0-a53d-c1992043855e>;
+            nc:PowerBidSchedule.activationCost
+                    199.9;
+            nc:PowerBidSchedule.currency   cim:Currency.EUR;
+            nc:PowerBidSchedule.direction  nc:BidDirectionKind.down;
+            nc:PowerBidSchedule.leadTime   "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:PowerBidSchedule.minimumUptime
+                    "P0Y0M0DT0H0M7200S"^^xsd:duration .
+    
+    <urn:uuid:fc3c4b17-cce7-4c2f-9c13-8240e514c87c>
+            rdf:type              dcat:Dataset;
+            dct:accessRights      "https://energy.referencedata.eu/Confidentiality/Public";
+            dct:conformsTo        "https://cim.ucaiug.io/ns#" , "https://cim4.eu/ns/nc/2.4#" , "http://iec.ch/TC57/2013/CIM-schema-cim16#";
+            dct:description       "This is the State Instruction Schedule dataset for Belgovia part of ReliCapGrid."@en;
+            dct:identifier        "fc3c4b17-cce7-4c2f-9c13-8240e514c87c";
+            dct:issued            "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dct:license           "https://creativecommons.org/licenses/by/4.0/";
+            dct:requires          <urn:uuid:e3453a3c-8639-4648-a662-d6c15f512965>;
+            dct:rights            "Copyright";
+            dct:rightsHolder      "ENTSO-E";
+            dct:spatial           "https://energy.referencedata.eu/Test/Frame/Belgovia-Power-Transmission-System";
+            dct:title             "20230722_Belgovia_SIS_1.0.0";
+            dcat:endDate          "2023-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Belgovia-SIS>;
+            dcat:keyword          "SIS";
+            dcat:startDate        "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:version          "1.0.0";
+            prov:generatedAtTime  "2022-06-10T07:06:25Z"^^xsd:dateTime .
+    
+    <urn:uuid:6c0ba4c5-5ac0-43f8-87d9-ec2fb41a3dec>
+            rdf:type                      nc:PowerBidSchedule;
+            cim:IdentifiedObject.description
+                    "Power Bid Schedule 1";
+            cim:IdentifiedObject.mRID     "6c0ba4c5-5ac0-43f8-87d9-ec2fb41a3dec";
+            cim:IdentifiedObject.name     "PBS1";
+            nc:PowerBidSchedule.PowerRemedialAction
+                    <urn:uuid:fa73cfee-ff54-43cd-816b-51394cd76f0f>;
+            nc:PowerBidSchedule.activationCost
+                    "2000"^^xsd:decimal;
+            nc:PowerBidSchedule.currency  cim:Currency.EUR;
+            nc:PowerBidSchedule.priority  1 .
+    
+    <urn:uuid:250e37a5-50e0-44b7-9bd7-7284c04116db>
+            rdf:type                        nc:PowerBidScheduleTimePoint;
+            nc:PowerBidScheduleTimePoint.PowerBidSchedule
+                    <urn:uuid:6c0ba4c5-5ac0-43f8-87d9-ec2fb41a3dec>;
+            nc:PowerBidScheduleTimePoint.atTime
+                    "2024-02-22T17:30:00Z"^^xsd:dateTime;
+            nc:PowerBidScheduleTimePoint.p  "-125.4625"^^xsd:float;
+            nc:PowerBidScheduleTimePoint.price
+                    325.00 .
+    
+    <urn:uuid:06dea5a7-512e-48da-a2fc-5e0ec83a5b8e>
+            rdf:type                   nc:ParticipationFactorTimePoint;
+            cim:IdentifiedObject.description
+                    "Participation Factor Time Point 1 sample";
+            cim:IdentifiedObject.mRID  "06dea5a7-512e-48da-a2fc-5e0ec83a5b8e";
+            cim:IdentifiedObject.name  "PF Timepoint 1";
+            nc:ParticipationFactorTimePoint.atTime
+                    "2024-02-22T17:30:00Z"^^xsd:dateTime;
+            nc:ParticipationFactorTimePoint.participationFactor
+                    "0.5"^^xsd:float;
+            nc:PowerBidScheduleTimePoint.PowerShiftKeySchedule
+                    <urn:uuid:3b5748de-39f2-45d7-9a66-65819c667e91> .
+    
+    <urn:uuid:7ab20445-576c-4162-aad5-d097d894a8e0>
+            rdf:type                   nc:PowerShiftKeyDistribution;
+            cim:IdentifiedObject.description
+                    "Power Shift Key Distribution 1";
+            cim:IdentifiedObject.mRID  "7ab20445-576c-4162-aad5-d097d894a8e0";
+            cim:IdentifiedObject.name  "PSKD1";
+            nc:PowerShiftKeyDistribution.PowerBidSchedule
+                    <urn:uuid:6c0ba4c5-5ac0-43f8-87d9-ec2fb41a3dec>;
+            nc:PowerShiftKeyDistribution.PowerShiftKeySchedule
+                    <urn:uuid:3b5748de-39f2-45d7-9a66-65819c667e91>;
+            nc:PowerShiftKeyDistribution.PowerShiftKeyStrategy
+                    <urn:uuid:9287b1c3-3747-47e6-8918-d82c7a0d7718> .
+    
+    <urn:uuid:42f85661-6877-4d5c-a87b-a97938642835>
+            rdf:type                       nc:PowerBidSchedule;
+            cim:IdentifiedObject.mRID      "42f85661-6877-4d5c-a87b-a97938642835";
+            cim:IdentifiedObject.name      "PBS3";
+            nc:PowerBidSchedule.PowerRemedialAction
+                    <urn:uuid:30f6377d-5e35-4dd0-a53d-c1992043855e>;
+            nc:PowerBidSchedule.activationCost
+                    1999.9;
+            nc:PowerBidSchedule.currency   cim:Currency.EUR;
+            nc:PowerBidSchedule.direction  nc:BidDirectionKind.up;
+            nc:PowerBidSchedule.leadTime   "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:PowerBidSchedule.minimumUptime
+                    "P0Y0M0DT0H0M7200S"^^xsd:duration .
+    
+    <urn:uuid:9439f6fe-3da6-428b-95aa-9fac541e6a7b>
+            rdf:type                     nc:PowerBidDependency;
+            nc:PowerBidDependency.DependentPowerBidSchedule
+                    <urn:uuid:42f85661-6877-4d5c-a87b-a97938642835>;
+            nc:PowerBidDependency.MainPowerBidSchedule
+                    <urn:uuid:ae6a5ddd-fe7e-40b2-bcb6-cbd2882434e7>;
+            nc:PowerBidDependency.delay  "PT1H"^^xsd:duration;
+            nc:PowerBidDependency.kind   nc:PowerBidDependencyKind.restrictive;
+            nc:PowerBidDependency.mRID   "_9439f6fe-3da6-428b-95aa-9fac541e6a7b" .
+    
+    <urn:uuid:ae6a5ddd-fe7e-40b2-bcb6-cbd2882434e7>
+            rdf:type                       nc:PowerBidSchedule;
+            cim:IdentifiedObject.mRID      "ae6a5ddd-fe7e-40b2-bcb6-cbd2882434e7";
+            cim:IdentifiedObject.name      "PBS1";
+            nc:BaseTimeSeries.interpolationKind
+                    nc:TimeSeriesInterpolationKind.next;
+            nc:PowerBidSchedule.PowerRemedialAction
+                    <urn:uuid:30f6377d-5e35-4dd0-a53d-c1992043855e>;
+            nc:PowerBidSchedule.activationCost
+                    999.9;
+            nc:PowerBidSchedule.currency   cim:Currency.EUR;
+            nc:PowerBidSchedule.direction  nc:BidDirectionKind.up;
+            nc:PowerBidSchedule.leadTime   "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:PowerBidSchedule.minimumUptime
+                    "P0Y0M0DT0H0M7200S"^^xsd:duration .
+    
+    <urn:uuid:0ba48b90-9ce6-4a38-8b11-ab66cc23f04e>
+            rdf:type                     nc:PowerBidDependency;
+            nc:PowerBidDependency.DependentPowerBidSchedule
+                    <urn:uuid:5e08ba42-c0b5-45ed-bc8b-dbb854ed0897>;
+            nc:PowerBidDependency.MainPowerBidSchedule
+                    <urn:uuid:ae6a5ddd-fe7e-40b2-bcb6-cbd2882434e7>;
+            nc:PowerBidDependency.delay  "PT1H"^^xsd:duration;
+            nc:PowerBidDependency.kind   nc:PowerBidDependencyKind.inclusive;
+            nc:PowerBidDependency.mRID   "_0ba48b90-9ce6-4a38-8b11-ab66cc23f04e" .
+    
+    <urn:uuid:a26e3ae0-0a7d-4f42-ad64-e9105ec3cd41>
+            rdf:type  nc:AssessedElementTimePoint;
+            nc:AssessedElementTimePoint.AssessedElementSchedule
+                    <urn:uuid:7221ae31-f736-4ae2-8ce1-f3dd605cefd6>;
+            nc:AssessedElementTimePoint.atTime
+                    "2023-07-22T16:00:00Z"^^xsd:dateTime;
+            nc:AssessedElementTimePoint.enabled
+                    false .
+    
+    <urn:uuid:3b5748de-39f2-45d7-9a66-65819c667e91>
+            rdf:type                   nc:PowerShiftKeySchedule;
+            cim:BaseTimeSeries.interpolationKind
+                    nc:TimeSeriesInterpolationKind.none;
+            cim:IdentifiedObject.description
+                    "Power Shift Key Schedule 1";
+            cim:IdentifiedObject.mRID  "3b5748de-39f2-45d7-9a66-65819c667e91";
+            cim:IdentifiedObject.name  "PSKS1";
+            nc:PowerShiftKeySchedule.GeneratingUnit
+                    <urn:uuid:18993b11-2966-4bce-bab9-d86103f83b53> .
+}

@@ -1,0 +1,73 @@
+PREFIX adms:     <http://www.w3.org/ns/adms#>
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dcatcim:  <https://cim4.eu/ns/dcatcim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:2426ac74-18f0-441c-9814-3f06655302e6> {
+    <urn:uuid:c86ff268-d324-42b6-a8f3-3c09c48aa4f2>
+            rdf:type  nc:GridStateAlterationTimePoint;
+            nc:GridStateAlterationTimePoint.GridStateAlterationSchedule
+                    <urn:uuid:a951d00f-5f48-4fb9-9194-7fd88193529e>;
+            nc:GridStateAlterationTimePoint.atTime
+                    "2023-06-15T21:30:00Z"^^xsd:dateTime;
+            nc:GridStateAlterationTimePoint.enabled
+                    false .
+    
+    <urn:uuid:3a21613b-e43a-4df0-a17a-4561fa94f79a>
+            rdf:type  nc:GridStateAlterationTimePoint;
+            nc:GridStateAlterationTimePoint.GridStateAlterationSchedule
+                    <urn:uuid:a951d00f-5f48-4fb9-9194-7fd88193529e>;
+            nc:GridStateAlterationTimePoint.atTime
+                    "2023-06-15T22:30:00Z"^^xsd:dateTime;
+            nc:GridStateAlterationTimePoint.enabled
+                    true .
+    
+    <urn:uuid:a951d00f-5f48-4fb9-9194-7fd88193529e>
+            rdf:type                   nc:GridStateAlterationSchedule;
+            cim:IdentifiedObject.mRID  "a951d00f-5f48-4fb9-9194-7fd88193529e";
+            cim:IdentifiedObject.name  "Modification prior RAO";
+            nc:BaseTimeSeries.interpolationKind
+                    nc:TimeSeriesInterpolationKind.none;
+            nc:BaseTimeSeries.timeSeriesKind
+                    nc:BaseTimeSeriesKind.schedule;
+            nc:GridStateAlterationSchedule.GridStateAlteration
+                    <urn:uuid:eb60d1c0-8bcc-463b-8b91-8dc1833b2a92> .
+    
+    <urn:uuid:2426ac74-18f0-441c-9814-3f06655302e6>
+            rdf:type              dcat:Dataset;
+            dct:accessRights      "https://energy.referencedata.eu/Confidentiality/Public";
+            dct:conformsTo        "https://cim.ucaiug.io/ns#" , "https://cim4.eu/ns/nc/2.4#" , "https://ap.cim4.eu/StateInstructionSchedule/2.4" , "http://iec.ch/TC57/2013/CIM-schema-cim16#";
+            dct:description       "This is the state instruction schedule dataset for Svedala part of ReliCapGrid."@en;
+            dct:identifier        "2426ac74-18f0-441c-9814-3f06655302e6";
+            dct:issued            "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dct:license           "https://creativecommons.org/licenses/by/4.0/";
+            dct:publisher         "https://energy.referencedata.eu/test/party/Svedala";
+            dct:requires          <urn:uuid:f7b94ef6-e043-4d2a-a359-2718e6e20507>;
+            dct:rights            "Copyright";
+            dct:rightsHolder      "ENTSO-E";
+            dct:spatial           "https://energy.referencedata.eu/Test/Frame/Svedala-Power-Transmission-System";
+            dct:title             "20220615_Svedala_SIS_1.0.0";
+            dcat:endDate          "2023-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Svedala-SIS>;
+            dcat:keyword          "SIS";
+            dcat:startDate        "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:version          "1.0.0";
+            prov:generatedAtTime  "2022-06-10T07:06:25Z"^^xsd:dateTime;
+            prov:wasGeneratedBy   "https://energy.referencedata.eu/Activity/CGM-SIS" .
+}

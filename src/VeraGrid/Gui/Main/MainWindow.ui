@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1198</width>
-    <height>742</height>
+    <width>1328</width>
+    <height>796</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -282,8 +282,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>396</width>
-                            <height>298</height>
+                            <width>394</width>
+                            <height>355</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -349,8 +349,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>252</width>
-                            <height>362</height>
+                            <width>302</width>
+                            <height>360</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -744,8 +744,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>171</width>
-                            <height>240</height>
+                            <width>174</width>
+                            <height>232</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -895,8 +895,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>122</width>
-                            <height>244</height>
+                            <width>126</width>
+                            <height>242</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -3004,19 +3004,6 @@
                     <number>0</number>
                    </property>
                    <item>
-                    <widget class="QComboBox" name="eventsGroupComboBox">
-                     <property name="minimumSize">
-                      <size>
-                       <width>140</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="toolTip">
-                      <string>Select the events group to view</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
                     <widget class="QLineEdit" name="search_dynamic_objects_lineEdit">
                      <property name="maximumSize">
                       <size>
@@ -3040,6 +3027,26 @@
                      <property name="icon">
                       <iconset resource="../Icons/icons.qrc">
                        <normaloff>:/Icons/icons/magnifying_glass.png</normaloff>:/Icons/icons/magnifying_glass.png</iconset>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="prepareRmsDynamicPlotsButton">
+                     <property name="toolTip">
+                      <string>Open the RMS pre-simulation dynamic plot editor</string>
+                     </property>
+                     <property name="text">
+                      <string>RMS plots</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="prepareEmtDynamicPlotsButton">
+                     <property name="toolTip">
+                      <string>Open the EMT pre-simulation dynamic plot editor</string>
+                     </property>
+                     <property name="text">
+                      <string>EMT plots</string>
                      </property>
                     </widget>
                    </item>
@@ -10907,8 +10914,8 @@ QProgressBar::chunk{
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1198</width>
-     <height>23</height>
+     <width>1328</width>
+     <height>33</height>
     </rect>
    </property>
    <property name="font">
@@ -11003,6 +11010,8 @@ QProgressBar::chunk{
     <addaction name="actionContingency_analysis"/>
     <addaction name="actionRun_Dynamic_RMS_Simulation"/>
     <addaction name="actionRun_Small_Signal_RMS_Simulation"/>
+    <addaction name="actionRun_Dynamic_EMT_Simulation"/>
+    <addaction name="actionRun_Small_Signal_EMT_Simulation"/>
     <addaction name="separator"/>
     <addaction name="actionOPF"/>
     <addaction name="actionNodal_capacity"/>
@@ -11017,6 +11026,7 @@ QProgressBar::chunk{
     <addaction name="actionFind_node_groups"/>
     <addaction name="actionPower_flow_Stochastic"/>
     <addaction name="actionInvestments_evaluation"/>
+    <addaction name="actionCatalogue_element_optimization"/>
     <addaction name="actionReliability"/>
     <addaction name="actionBlackout_cascade"/>
     <addaction name="separator"/>
@@ -11041,7 +11051,7 @@ QProgressBar::chunk{
     <addaction name="actionSet_model_x_y_based_on_lat_lon"/>
     <addaction name="actionGrid_reduction"/>
     <addaction name="actionProcedural_grid_expansion"/>
-    <addaction name="actionCatalogue_element_optimization"/>
+    <addaction name="actionRestore_investments"/>
     <addaction name="actionre_index_time"/>
     <addaction name="actionScale"/>
     <addaction name="separator"/>
@@ -12598,6 +12608,21 @@ QProgressBar::chunk{
     <enum>QAction::MenuRole::TextHeuristicRole</enum>
    </property>
   </action>
+  <action name="actionPrepare_RMS_Dynamic_Plots">
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/dyn.png</normaloff>:/Icons/icons/dyn.png</iconset>
+   </property>
+   <property name="text">
+    <string>Prepare RMS dynamic plots</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Prepare RMS dynamic plots&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Open the RMS dynamic plot editor before running the simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::TextHeuristicRole</enum>
+   </property>
+  </action>
   <action name="actionRun_Small_Signal_RMS_Simulation">
    <property name="icon">
     <iconset resource="../Icons/icons.qrc">
@@ -12856,6 +12881,21 @@ QProgressBar::chunk{
     <enum>QAction::MenuRole::TextHeuristicRole</enum>
    </property>
   </action>
+  <action name="actionPrepare_EMT_Dynamic_Plots">
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/dyn_emt.png</normaloff>:/Icons/icons/dyn_emt.png</iconset>
+   </property>
+   <property name="text">
+    <string>Prepare EMT dynamic plots</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Prepare EMT dynamic plots&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Open the EMT dynamic plot editor before running the simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::TextHeuristicRole</enum>
+   </property>
+  </action>
   <action name="actionRun_Small_Signal_EMT_Simulation">
    <property name="icon">
     <iconset resource="../Icons/icons.qrc">
@@ -12936,6 +12976,18 @@ QProgressBar::chunk{
    </property>
    <property name="text">
     <string>Set model (x,y) based on (lat, lon)</string>
+   </property>
+  </action>
+  <action name="actionRestore_investments">
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/data.png</normaloff>:/Icons/icons/data.png</iconset>
+   </property>
+   <property name="text">
+    <string>Restore investments</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
  </widget>

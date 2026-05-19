@@ -74,7 +74,7 @@ def __solve_island_complete_support(nc: NumericalCircuit,
     I0 = nc.get_current_injections_pu()
     Y0 = nc.get_admittance_injections_pu()
 
-    if len(indices.vd) == 0:
+    if len(indices.vd) == 0 or len(indices.no_slack) == 0:
         solution = NumericPowerFlowResults(V=np.zeros(len(S0), dtype=complex),
                                            Scalc=S0,
                                            m=nc.active_branch_data.tap_module,
@@ -107,7 +107,6 @@ def __solve_island_complete_support(nc: NumericalCircuit,
         return solution, report
 
     else:
-
         final_solution = NumericPowerFlowResults(V=V0,
                                                  converged=False,
                                                  norm_f=1e200,
@@ -238,6 +237,10 @@ def __solve_island_complete_support(nc: NumericalCircuit,
 
             # record the solution type
             solution.method = solver_type
+            if np.isfinite(solution.norm_f) and solution.norm_f <= options.tolerance:
+                solution.converged = True
+            else:
+                pass
 
             # record the method used, if it improved the solution
             if abs(solution.norm_f) < abs(final_solution.norm_f):
@@ -333,7 +336,7 @@ def __solve_island_limited_support(island: NumericalCircuit,
 
     Sbase_plus_hvdc: CxVec = S_base + Shvdc
 
-    if len(indices.vd) == 0:
+    if len(indices.vd) == 0 or len(indices.no_slack) == 0:
         solution = NumericPowerFlowResults(V=np.zeros(len(S_base), dtype=complex),
                                            Scalc=Sbase_plus_hvdc,
                                            m=island.active_branch_data.tap_module,
@@ -665,6 +668,10 @@ def __solve_island_limited_support(island: NumericalCircuit,
 
             # record the solution type
             solution.method = solver_type
+            if np.isfinite(solution.norm_f) and solution.norm_f <= options.tolerance:
+                solution.converged = True
+            else:
+                pass
 
             # record the method used, if it improved the solution
             if abs(solution.norm_f) < abs(final_solution.norm_f):

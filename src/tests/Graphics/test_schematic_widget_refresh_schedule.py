@@ -3,6 +3,7 @@ from typing import Callable
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QGraphicsView
 
+import VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget as schematic_widget_module
 from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import CustomGraphicsView, SchematicWidget
 from VeraGridEngine.enumerations import DeviceType, SchematicAutoRouteStyle
 
@@ -156,7 +157,7 @@ class _RefreshScheduleStub:
         return None
 
 
-def test_schedule_branch_callbacks_after_draw_coalesces_visible_refresh(monkeypatch) -> None:
+def test_schedule_branch_callbacks_after_draw_coalesces_visible_refresh(override_attrs) -> None:
     """
     Visible widgets should queue at most one branch-refresh callback.
     """
@@ -173,7 +174,7 @@ def test_schedule_branch_callbacks_after_draw_coalesces_visible_refresh(monkeypa
         """
         queued_calls.append((timeout, callback))
 
-    monkeypatch.setattr("VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.QTimer.singleShot", _fake_single_shot)
+    override_attrs.setattr(schematic_widget_module.QTimer, "singleShot", _fake_single_shot)
 
     SchematicWidget.schedule_branch_callbacks_after_draw(stub)
     SchematicWidget.schedule_branch_callbacks_after_draw(stub)
@@ -183,7 +184,7 @@ def test_schedule_branch_callbacks_after_draw_coalesces_visible_refresh(monkeypa
     assert len(queued_calls) == 1
 
 
-def test_schedule_branch_callbacks_after_draw_defers_until_visible(monkeypatch) -> None:
+def test_schedule_branch_callbacks_after_draw_defers_until_visible(override_attrs) -> None:
     """
     Hidden widgets should postpone the heavy refresh until show time.
     """
@@ -200,7 +201,7 @@ def test_schedule_branch_callbacks_after_draw_defers_until_visible(monkeypatch) 
         """
         queued_calls.append((timeout, callback))
 
-    monkeypatch.setattr("VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.QTimer.singleShot", _fake_single_shot)
+    override_attrs.setattr(schematic_widget_module.QTimer, "singleShot", _fake_single_shot)
 
     SchematicWidget.schedule_branch_callbacks_after_draw(stub)
 
@@ -262,7 +263,7 @@ def test_update_diagram_element_syncs_branch_attachments_outside_loading() -> No
     assert stub.diagram.sync_calls == [device]
 
 
-def test_set_all_branch_drawing_styles_updates_all_registered_branch_widgets(monkeypatch) -> None:
+def test_set_all_branch_drawing_styles_updates_all_registered_branch_widgets(override_attrs) -> None:
     """
     Applying one branch drawing style at widget level should fan out to every registered branch graphic.
     """
@@ -271,8 +272,9 @@ def test_set_all_branch_drawing_styles_updates_all_registered_branch_widgets(mon
     fluid_path_graphic = _BranchStyleLineGraphicStub()
     non_branch_graphic = _BranchStyleGraphicStub()
     stub = type("BranchStyleWidgetStub", (), {"graphics_manager": graphics_manager})()
-    monkeypatch.setattr(
-        "VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget.LineGraphicTemplateItem",
+    override_attrs.setattr(
+        schematic_widget_module,
+        "LineGraphicTemplateItem",
         _BranchStyleLineGraphicStub
     )
 

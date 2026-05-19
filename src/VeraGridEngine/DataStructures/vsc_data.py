@@ -38,7 +38,7 @@ class VscData(BranchParentData):
         self.control2_val: Vec = np.ones(self.nelm, dtype=float)
         self.control1_val_min: Vec = np.zeros(self.nelm, dtype=float)
         self.control1_val_max: Vec = np.full(self.nelm, 9999.0, dtype=float)
-        self.control1_droop: Vec = np.full(self.nelm, 0.1, dtype=float)
+        self.control1_val_droop: Vec = np.full(self.nelm, 0.1, dtype=float)
         self.control1_droop_val: Vec = np.ones(self.nelm, dtype=float)
         self.control1_droop_val_min: Vec = np.full(self.nelm, 0.9, dtype=float)
         self.control1_droop_val_max: Vec = np.full(self.nelm, 1.1, dtype=float)
@@ -89,7 +89,7 @@ class VscData(BranchParentData):
         data.control2_val = self.control2_val[elm_idx]
         data.control1_val_min = self.control1_val_min[elm_idx]
         data.control1_val_max = self.control1_val_max[elm_idx]
-        data.control1_droop = self.control1_droop[elm_idx]
+        data.control1_val_droop = self.control1_val_droop[elm_idx]
         data.control1_droop_val = self.control1_droop_val[elm_idx]
         data.control1_droop_val_min = self.control1_droop_val_min[elm_idx]
         data.control1_droop_val_max = self.control1_droop_val_max[elm_idx]
@@ -154,7 +154,7 @@ class VscData(BranchParentData):
         data.control2_val = self.control2_val.copy()
         data.control1_val_min = self.control1_val_min.copy()
         data.control1_val_max = self.control1_val_max.copy()
-        data.control1_droop = self.control1_droop.copy()
+        data.control1_val_droop = self.control1_val_droop.copy()
         data.control1_droop_val = self.control1_droop_val.copy()
         data.control1_droop_val_min = self.control1_droop_val_min.copy()
         data.control1_droop_val_max = self.control1_droop_val_max.copy()

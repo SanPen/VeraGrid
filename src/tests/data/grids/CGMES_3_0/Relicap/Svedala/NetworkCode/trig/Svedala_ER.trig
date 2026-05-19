@@ -1,0 +1,59 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:e54a29a9-de39-4ac0-b7c2-8dc935657202> {
+    <urn:uuid:658d2858-ed67-4179-a825-546df2aee455>
+            rdf:type                       nc:SchedulingArea;
+            cim:IdentifiedObject.description
+                    "Svedala";
+            cim:IdentifiedObject.mRID      "658d2858-ed67-4179-a825-546df2aee455";
+            cim:IdentifiedObject.name      "Svedala";
+            nc:SchedulingArea.BiddingZone  <urn:uuid:4b0d834a-3487-426e-b69d-6b5c2a36494b>;
+            nc:SchedulingArea.ControlArea  <urn:uuid:ebccc726-b760-46c6-b7f6-8289bafce797> .
+    
+    <urn:uuid:e54a29a9-de39-4ac0-b7c2-8dc935657202>
+            rdf:type              dcat:Dataset;
+            dct:accessRights      "https://energy.referencedata.eu/Confidentiality/Public";
+            dct:conformsTo        "https://cim.ucaiug.io/ns#" , "https://ap.cim4.eu/EquipmentReliability/2.4" , "https://cim4.eu/ns/nc/2.4#" , "http://iec.ch/TC57/2013/CIM-schema-cim16#";
+            dct:description       "This is the equipment reliability dataset for Svedala part of ReliCapGrid."@en;
+            dct:identifier        "e54a29a9-de39-4ac0-b7c2-8dc935657202";
+            dct:issued            "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dct:license           "https://creativecommons.org/licenses/by/4.0/";
+            dct:publisher         "https://energy.referencedata.eu/test/party/Svedala";
+            dct:requires          <urn:uuid:bea45848-a05d-496b-9ab2-f42c6714183e>;
+            dct:rights            "Copyright";
+            dct:rightsHolder      "ENTSO-E";
+            dct:spatial           "https://energy.referencedata.eu/Test/Frame/Svedala-Power-Transmission-System";
+            dct:title             "20220615_Svedala_ER_1.0.0";
+            dcat:endDate          "2023-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Svedala-ER>;
+            dcat:keyword          "ER";
+            dcat:startDate        "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:version          "1.0.0";
+            prov:generatedAtTime  "2022-06-10T07:06:25Z"^^xsd:dateTime;
+            prov:wasGeneratedBy   "https://energy.referencedata.eu/Activity/CGM-ER" .
+    
+    <urn:uuid:4b0d834a-3487-426e-b69d-6b5c2a36494b>
+            rdf:type                       nc:BiddingZone;
+            cim:IdentifiedObject.description
+                    "BZ_SD";
+            cim:IdentifiedObject.mRID      "4b0d834a-3487-426e-b69d-6b5c2a36494b";
+            cim:IdentifiedObject.name      "Bidding Zone SD";
+            nc:BiddingZone.isTradeEnabled  true .
+}

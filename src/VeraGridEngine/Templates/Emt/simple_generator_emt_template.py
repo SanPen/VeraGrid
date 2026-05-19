@@ -10,6 +10,7 @@ from VeraGridEngine.Utils.Symbolic import symbolic as sym
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Devices.Injections.generator import Generator
+from VeraGridEngine.Templates.Emt.generator_emt_type_template import get_pf_positive_sequence_init_refs
 from VeraGridEngine.enumerations import VarPowerFlowRefferenceType, DeviceType, ParamPowerFlowRefferenceType
 
 
@@ -329,11 +330,15 @@ def get_simple_generator_emt_template(vf: VarFactory, name: str = "simple_emt_ty
     Tm = vf.add_var(name=f"Tm_{name}")
     v_f = vf.add_var(name=f"v_f_{name}")
 
-    # to connect complete block with gen block
-    Ipk = vf.add_var(name="Ipk", reference= VarPowerFlowRefferenceType.Ipk)
-    Vpk = vf.add_var(name="Vpk", reference= VarPowerFlowRefferenceType.Vpk)
-    phi = vf.add_var(name="phi", reference= VarPowerFlowRefferenceType.phi)
-    phi_v = vf.add_var(name="phi_v", reference= VarPowerFlowRefferenceType.phi_v)
+    d_v_A = vf.add_var(name=f"d_v_A_{name}", reference=VarPowerFlowRefferenceType.d_v_A)
+    d_v_B = vf.add_var(name=f"d_v_B_{name}", reference=VarPowerFlowRefferenceType.d_v_B)
+    d_v_C = vf.add_var(name=f"d_v_C_{name}", reference=VarPowerFlowRefferenceType.d_v_C)
+    p_A = vf.add_var(name=f"P_A_{name}", reference=VarPowerFlowRefferenceType.P_A)
+    q_A = vf.add_var(name=f"Q_A_{name}", reference=VarPowerFlowRefferenceType.Q_A)
+    p_B = vf.add_var(name=f"P_B_{name}", reference=VarPowerFlowRefferenceType.P_B)
+    q_B = vf.add_var(name=f"Q_B_{name}", reference=VarPowerFlowRefferenceType.Q_B)
+    p_C = vf.add_var(name=f"P_C_{name}", reference=VarPowerFlowRefferenceType.P_C)
+    q_C = vf.add_var(name=f"Q_C_{name}", reference=VarPowerFlowRefferenceType.Q_C)
     inputs = [v_A, v_B, v_C]
     # --------------------------------------------------------------------------------------
     # States (pu, except theta [rad])
@@ -402,6 +407,39 @@ def get_simple_generator_emt_template(vf: VarFactory, name: str = "simple_emt_ty
 
     omega_ref = vf.add_var("omega_ref_" + name)  # pu
     delta = vf.add_var("delta_" + name)  # difference between rotor angle and grid angle
+
+    # These symbolic expressions reconstruct the PF-consistent phasor quantities
+    # from the seeded EMT voltage and power references. The expressions are used
+    # later in ``init_eqs`` so runtime-parameter initialization does not depend on
+    # bus algebraic variables that are not available yet.
+    phi_v_init: sym.Expr
+    phi_init: sym.Expr
+    vpk_init: sym.Expr
+    ipk_init: sym.Expr
+    phi_v_init, phi_init, vpk_init, ipk_init = get_pf_positive_sequence_init_refs(
+        v_a=v_A,
+        v_b=v_B,
+        v_c=v_C,
+        d_v_a=d_v_A,
+        d_v_b=d_v_B,
+        d_v_c=d_v_C,
+        p_a=p_A,
+        q_a=q_A,
+        p_b=p_B,
+        q_b=q_B,
+        p_c=p_C,
+        q_c=q_C,
+        omega_base=omega_base,
+    )
+
+    # These placeholders store the PF-consistent phasor quantities as runtime
+    # parameters first. The initialization stage then resolves ``delta`` from the
+    # stored values, which keeps the generator compatible with the EMT builder
+    # ordering where bus voltages are initialized after runtime parameters.
+    phi_v = vf.add_var("phi_v_" + name)
+    phi = vf.add_var("phi_" + name)
+    Vpk = vf.add_var("Vpk_" + name)
+    Ipk = vf.add_var("Ipk_" + name)
 
     Kp = vf.add_var("Kp_" + name)
     Ki = vf.add_var("Ki_" + name)
@@ -491,6 +529,15 @@ def get_simple_generator_emt_template(vf: VarFactory, name: str = "simple_emt_ty
         VarPowerFlowRefferenceType.i_A: i_A,
         VarPowerFlowRefferenceType.i_B: i_B,
         VarPowerFlowRefferenceType.i_C: i_C,
+        VarPowerFlowRefferenceType.d_v_A: d_v_A,
+        VarPowerFlowRefferenceType.d_v_B: d_v_B,
+        VarPowerFlowRefferenceType.d_v_C: d_v_C,
+        VarPowerFlowRefferenceType.P_A: p_A,
+        VarPowerFlowRefferenceType.Q_A: q_A,
+        VarPowerFlowRefferenceType.P_B: p_B,
+        VarPowerFlowRefferenceType.Q_B: q_B,
+        VarPowerFlowRefferenceType.P_C: p_C,
+        VarPowerFlowRefferenceType.Q_C: q_C,
         VarPowerFlowRefferenceType.phi_v: phi_v,
         VarPowerFlowRefferenceType.phi: phi,
         VarPowerFlowRefferenceType.Vpk: Vpk,
@@ -515,20 +562,26 @@ def get_simple_generator_emt_template(vf: VarFactory, name: str = "simple_emt_ty
         Ki:         vf.add_const(2.0),
         # v_f0:       v_f,
         Lmd: Ld - La,
-        # init-only external auxiliary values
+        d_v_A: vf.add_const(None),
+        d_v_B: vf.add_const(None),
+        d_v_C: vf.add_const(None),
+        p_A: vf.add_const(None),
+        q_A: vf.add_const(None),
+        p_B: vf.add_const(None),
+        q_B: vf.add_const(None),
+        p_C: vf.add_const(None),
+        q_C: vf.add_const(None),
+        # The phasor placeholders are resolved during explicit initialization
+        # from the PF-derived EMT references before ``delta`` is consumed.
         phi_v: vf.add_const(None),
         phi: vf.add_const(None),
         Vpk: vf.add_const(None),
         Ipk: vf.add_const(None),
-        # delta: vf.add_const(None),
-        # delta: sym.atan(
-        #     (Ra * Ipk * sym.sin(phi) - omega * (Lmq + La) * Ipk * sym.cos(phi)) /
-        #     (Vpk + Ra * Ipk * sym.cos(phi) + omega * (Lmq + La) * Ipk * sym.sin(phi))
-        # ),
-        delta: sym.atan(
-            (Ra * Ipk * sym.sin(phi) - omega_ref * (Lmq + La) * Ipk * sym.cos(phi)) /
-            (Vpk + Ra * Ipk * sym.cos(phi) + omega_ref * (Lmq + La) * Ipk * sym.sin(phi))
-        ),
+        # ``delta`` depends on PF-derived phasor values that are only available
+        # after explicit initialization resolves the placeholder runtime refs.
+        # Keeping it as a runtime placeholder prevents an invalid early evaluation
+        # with zero-valued defaults during problem construction.
+        delta: vf.add_const(None),
         Kq_share: vf.add_const(0.2),
     }
     templ.block.api_obj_mapping = {
@@ -547,6 +600,18 @@ def get_simple_generator_emt_template(vf: VarFactory, name: str = "simple_emt_ty
     templ.block.init_eqs = {
         et: vf.add_const(0.0),
         omega: omega_ref,
+
+        # The initialization first materializes the PF-consistent phasor values
+        # into runtime parameters. This makes the subsequent ``delta`` evaluation
+        # independent from unresolved bus algebraic variables.
+        phi_v: phi_v_init,
+        phi: phi_init,
+        Vpk: vpk_init,
+        Ipk: ipk_init,
+        delta: sym.atan(
+            (Ra * Ipk * sym.sin(phi) - omega_ref * (Lmq + La) * Ipk * sym.cos(phi)) /
+            (Vpk + Ra * Ipk * sym.cos(phi) + omega_ref * (Lmq + La) * Ipk * sym.sin(phi))
+        ),
 
         theta: phi_v + delta,
 

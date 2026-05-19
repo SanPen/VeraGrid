@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
-from typing import Union, List
+from typing import Union, List, Dict
 
 import numpy as np
 
@@ -46,7 +46,8 @@ from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions impo
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
 from VeraGridEngine.data_logger import DataLogger
 from VeraGridEngine.enumerations import (TapChangerTypes, TapPhaseControl, TapModuleControl, CGMESVersions,
-                                         ExternalGridMode, ShuntControlMode, ConverterControlType)
+                                         ExternalGridMode, ShuntControlMode, ConverterControlType,
+                                         ContingencyOperationTypes)
 
 
 def set_declared_cgmes_property(cgmes_object: CGMES_ASSETS,
@@ -88,6 +89,68 @@ def set_declared_cgmes_property(cgmes_object: CGMES_ASSETS,
                          expected_value='declared CGMES property')
 
 
+def append_cgmes_relation_value(cgmes_object: CGMES_ASSETS,
+                                property_name: str,
+                                relation_value: CGMES_ASSETS,
+                                logger: DataLogger,
+                                context: str) -> None:
+    """
+    Append a relation value while supporting list/scalar relation storage.
+
+    :param cgmes_object: Target CGMES object.
+    :param property_name: Relation property name.
+    :param relation_value: Relation target object.
+    :param logger: Data logger for diagnostics.
+    :param context: Export context string.
+    :return: Nothing.
+    :rtype: None
+    """
+    if property_name in cgmes_object.declared_properties:
+        current_value: object = object.__getattribute__(cgmes_object, property_name)
+        if isinstance(current_value, list):
+            current_value.append(relation_value)
+        else:
+            set_declared_cgmes_property(cgmes_object=cgmes_object,
+                                        property_name=property_name,
+                                        property_value=relation_value,
+                                        logger=logger,
+                                        context=context)
+    else:
+        logger.add_error(msg='Cannot append undeclared CGMES relation',
+                         device=cgmes_object.rdfid,
+                         device_class=cgmes_object.tpe,
+                         device_property=property_name,
+                         value=context,
+                         expected_value='declared CGMES relation')
+
+
+def create_limits_for_terminal(termnl: CGMES_ASSETS,
+                               rate_and_type: List[tuple[float, CGMES_ASSETS]],
+                               cgmes_model: CgmesCircuit,
+                               ver: CGMESVersions,
+                               logger: DataLogger) -> None:
+    """
+    Create current limits for one terminal.
+
+    :param termnl: Terminal object.
+    :param rate_and_type: Sequence of (rate_mw, op_limit_type).
+    :param cgmes_model: CGMES model.
+    :param ver: CGMES version.
+    :param logger: DataLogger
+    :return: None
+    """
+    for rate_mw, op_limit_type in rate_and_type:
+        if rate_mw != 0.0:
+            create_cgmes_current_limit(terminal=termnl,
+                                       rate_mw=rate_mw,
+                                       op_limit_type=op_limit_type,
+                                       cgmes_model=cgmes_model,
+                                       ver=ver,
+                                       logger=logger)
+        else:
+            pass
+
+
 def find_fallback_voltage_level_for_bus(cgmes_model: CgmesCircuit,
                                         bus: gcdev.Bus,
                                         logger: DataLogger) -> CGMES_ASSETS | None:
@@ -122,6 +185,47 @@ def find_fallback_voltage_level_for_bus(cgmes_model: CgmesCircuit,
         comment="find_fallback_voltage_level_for_bus()"
     )
     return fallback_voltage_level
+
+
+def purge_connectivity_nodes_for_cgmes_v3(cgmes_model: CgmesCircuit,
+                                          logger: DataLogger) -> None:
+    """
+    Remove ConnectivityNode objects from CGMES v3 export model.
+
+    This prevents RDFID collisions between TopologicalNode and ConnectivityNode
+    during roundtrip parsing, which can otherwise break deterministic bus IDs.
+
+    :param cgmes_model: Target CGMES model.
+    :param logger: Data logger.
+    :return: Nothing.
+    :rtype: None
+    """
+    connectivity_nodes: list[CGMES_ASSETS] = list(cgmes_model.cgmes_assets.ConnectivityNode_list)
+    if len(connectivity_nodes) == 0:
+        return
+    else:
+        pass
+
+    removed_count: int = 0
+    connectivity_node: CGMES_ASSETS
+    for connectivity_node in connectivity_nodes:
+        if connectivity_node.rdfid in cgmes_model.all_objects_dict:
+            del cgmes_model.all_objects_dict[connectivity_node.rdfid]
+        else:
+            pass
+        removed_count += 1
+
+    cgmes_model.cgmes_assets.ConnectivityNode_list = list()
+    if "ConnectivityNode" in cgmes_model.elements_by_type:
+        cgmes_model.elements_by_type["ConnectivityNode"] = list()
+    else:
+        pass
+
+    logger.add_warning(
+        msg='Purged ConnectivityNode objects for CGMES v3 deterministic TP export',
+        value=removed_count,
+        comment="purge_connectivity_nodes_for_cgmes_v3()"
+    )
 
 
 def get_transformer_tap_values_for_cgmes_export(mc_elm: gcdev.Transformer2W | gcdev.Winding,
@@ -488,14 +592,9 @@ def get_or_create_external_network_injection(multicircuit_model: MultiCircuit,
         eni.Terminals = create_cgmes_terminal(mc_elm.bus, None, eni, cgmes_model, ver, logger)
 
         if mc_elm.mode == ExternalGridMode.VD:
-            eni.controlEnabled = True
-            eni.referencePriority = 1
-            eni.RegulatingControl = create_cgmes_regulating_control(
-                cgmes_elm=eni,
-                mc_gen=mc_elm,
-                cgmes_model=cgmes_model,
-                ver=ver,
-                logger=logger
+            raise RuntimeError(
+                "ExternalGrid VD control export requires a dedicated path; "
+                "Generator-style RegulatingControl expects Vset and is not valid for ExternalGrid."
             )
         else:
             eni.controlEnabled = False
@@ -903,8 +1002,13 @@ def get_cgmes_voltage_levels(multi_circuit_model: MultiCircuit,
                 # link back
                 if substation.VoltageLevels is None:
                     substation.VoltageLevels = list()
-
-                substation.VoltageLevels.append(vl)
+                else:
+                    pass
+                append_cgmes_relation_value(cgmes_object=substation,
+                                            property_name="VoltageLevels",
+                                            relation_value=vl,
+                                            logger=logger,
+                                            context="get_cgmes_voltage_levels()")
 
             else:
                 logger.add_error(
@@ -953,17 +1057,38 @@ def get_cgmes_tp_nodes(multi_circuit_model: MultiCircuit,
                 # object_template = cgmes_model.get_class_type("TopologicalNode")
                 # tn = object_template(rdfid=form_rdfid(bus.idtag))
                 tn_rdfid = form_rdfid(bus.idtag)
-                if tn_rdfid in cgmes_model.all_objects_dict:
-                    # Boundary sets may already contain a ConnectivityNode with the same rdfid.
-                    # In that case, create a unique TopologicalNode rdfid and rely on bus-name fallback lookup.
-                    tn_rdfid = get_new_rdfid()
-                    logger.add_warning(
-                        msg='TopologicalNode rdfid collision detected; generated a new rdfid for export',
-                        device=bus.idtag,
-                        device_class=bus.device_type.value,
-                        value=tn_rdfid,
-                        comment="get_cgmes_tp_nodes()"
-                    )
+                collided_object: CGMES_ASSETS | None = cgmes_model.all_objects_dict.get(tn_rdfid, None)
+                if collided_object is None:
+                    pass
+                else:
+                    if ver == CGMESVersions.v3_0_0:
+                        # Keep deterministic TP identity in CGMES v3 exports.
+                        # Boundary ConnectivityNodes can share the same RDFID; remove only the
+                        # boundary dictionary entry so the canonical TP node uses bus.idtag.
+                        if collided_object.tpe == "ConnectivityNode":
+                            del cgmes_model.all_objects_dict[tn_rdfid]
+                            logger.add_warning(
+                                msg='Removed ConnectivityNode RDFID collision to preserve deterministic TopologicalNode identity',
+                                device=bus.idtag,
+                                device_class=bus.device_type.value,
+                                value=tn_rdfid,
+                                comment="get_cgmes_tp_nodes()"
+                            )
+                        else:
+                            raise RuntimeError(
+                                f"Cannot preserve deterministic TopologicalNode identity for bus {bus.idtag}: "
+                                f"RDFID collision with non-boundary object type {collided_object.tpe}."
+                            )
+                    else:
+                        # Legacy behavior for CGMES v2 remains unchanged.
+                        tn_rdfid = get_new_rdfid()
+                        logger.add_warning(
+                            msg='TopologicalNode rdfid collision detected; generated a new rdfid for export',
+                            device=bus.idtag,
+                            device_class=bus.device_type.value,
+                            value=tn_rdfid,
+                            comment="get_cgmes_tp_nodes()"
+                        )
 
                 if ver == CGMESVersions.v2_4_15:
                     tn = cgmes24.TopologicalNode(rdfid=tn_rdfid)
@@ -1040,6 +1165,14 @@ def get_cgmes_cn_nodes_from_tp_nodes(multi_circuit_model: MultiCircuit,
     :param logger:
     :return:
     """
+    if ver == CGMESVersions.v3_0_0:
+        # For CGMES v3 roundtrip identity stability, avoid synthesizing random
+        # ConnectivityNode RDFIDs from TP nodes. Re-import then keeps TP UUIDs
+        # as VeraGrid bus idtags.
+        return
+    else:
+        pass
+
     for tn in cgmes_model.cgmes_assets.TopologicalNode_list:
         new_rdf_id = get_new_rdfid()
 
@@ -1178,10 +1311,18 @@ def get_cgmes_loads(multicircuit_model: MultiCircuit,
 
         if mc_elm.scalable:
             load.LoadGroup = c_load_group
-            c_load_group.EnergyConsumers.append(load)
+            append_cgmes_relation_value(cgmes_object=c_load_group,
+                                        property_name="EnergyConsumers",
+                                        relation_value=load,
+                                        logger=logger,
+                                        context="get_cgmes_loads()")
         else:
             load.LoadGroup = nc_load_group
-            nc_load_group.EnergyConsumers.append(load)
+            append_cgmes_relation_value(cgmes_object=nc_load_group,
+                                        property_name="EnergyConsumers",
+                                        relation_value=load,
+                                        logger=logger,
+                                        context="get_cgmes_loads()")
 
         cgmes_model.add(load)
 
@@ -1352,11 +1493,11 @@ def get_cgmes_generators(multicircuit_model: MultiCircuit,
             if isinstance(subs, cgmes_model.assets.Substation):
 
                 cgmes_gen.EquipmentContainer = subs
-                # link back
-                if isinstance(subs.Equipments, list):
-                    subs.Equipments.append(cgmes_gen)
-                else:
-                    subs.Equipments = [cgmes_gen]
+                append_cgmes_relation_value(cgmes_object=subs,
+                                            property_name="Equipments",
+                                            relation_value=cgmes_gen,
+                                            logger=logger,
+                                            context="get_cgmes_generators()")
             else:
                 logger.add_error(
                     msg=f'No substation found for generator',
@@ -1371,7 +1512,20 @@ def get_cgmes_generators(multicircuit_model: MultiCircuit,
                 device_property="Substation list",
                 comment=f"get_cgmes_generators()")
 
-        cgmes_gen.initialP = mc_elm.P
+        if ver == CGMESVersions.v2_4_15:
+            set_declared_cgmes_property(cgmes_object=cgmes_gen,
+                                        property_name="initialP",
+                                        property_value=mc_elm.P,
+                                        logger=logger,
+                                        context="get_cgmes_generators()")
+        elif ver == CGMESVersions.v3_0_0:
+            set_declared_cgmes_property(cgmes_object=cgmes_gen,
+                                        property_name="nominalP",
+                                        property_value=mc_elm.P,
+                                        logger=logger,
+                                        context="get_cgmes_generators()")
+        else:
+            raise NotImplemented()
         cgmes_gen.maxOperatingP = mc_elm.Pmax
         cgmes_gen.minOperatingP = mc_elm.Pmin
 
@@ -2008,25 +2162,6 @@ def get_cgmes_current_limits(cgmes_model: CgmesCircuit,
     :return: None
     """
 
-    def create_limits_for_terminal(termnl, rate_and_type):
-        """
-        Helper function to create current limits for a terminal.
-
-        :param termnl: The terminal object
-        :param rate_and_type: List of (rate_mw, op_limit_type) tuples
-        """
-        for rate_mw, op_limit_type in rate_and_type:
-
-            if rate_mw != 0.0:
-                create_cgmes_current_limit(
-                    terminal=termnl,
-                    rate_mw=rate_mw,
-                    op_limit_type=op_limit_type,
-                    cgmes_model=cgmes_model,
-                    ver=ver,
-                    logger=logger
-                )
-
     # Get operational limit types
     patl, tatl_900, tatl_60 = op_lim_types
 
@@ -2043,7 +2178,13 @@ def get_cgmes_current_limits(cgmes_model: CgmesCircuit,
     # Apply current limits to each terminal: 2 for TR2W/Lines, 3 for TR3W
     for terminal in cgmes_elm.Terminals:
         if terminal is not None:  # Skip if the terminal does not exist
-            create_limits_for_terminal(terminal, rates)
+            create_limits_for_terminal(termnl=terminal,
+                                       rate_and_type=rates,
+                                       cgmes_model=cgmes_model,
+                                       ver=ver,
+                                       logger=logger)
+        else:
+            pass
 
 
 def get_cgmes_operational_limit_types(cgmes_model: CgmesCircuit, ver: CGMESVersions):
@@ -2061,7 +2202,12 @@ def get_cgmes_operational_limit_types(cgmes_model: CgmesCircuit, ver: CGMESVersi
     patl.description = "Permanent Admissible Transmission Loading"
     patl.acceptableDuration = None  # unlimited
 
-    patl.limitType = LimitTypeKind.patl
+    if ver == CGMESVersions.v2_4_15:
+        patl.limitType = LimitTypeKind.patl
+    elif ver == CGMESVersions.v3_0_0:
+        patl.kind = LimitTypeKind.patl
+    else:
+        raise NotImplemented()
     patl.direction = OperationalLimitDirectionKind.absoluteValue
 
     # TATL 900  ------
@@ -2071,7 +2217,12 @@ def get_cgmes_operational_limit_types(cgmes_model: CgmesCircuit, ver: CGMESVersi
     tatl_900.description = "Temporarily Admissible Transmission Loading"
     tatl_900.acceptableDuration = 900
 
-    tatl_900.limitType = LimitTypeKind.tatl
+    if ver == CGMESVersions.v2_4_15:
+        tatl_900.limitType = LimitTypeKind.tatl
+    elif ver == CGMESVersions.v3_0_0:
+        tatl_900.kind = LimitTypeKind.tatl
+    else:
+        raise NotImplemented()
     tatl_900.direction = OperationalLimitDirectionKind.absoluteValue
 
     # TATL 60   ------
@@ -2081,7 +2232,12 @@ def get_cgmes_operational_limit_types(cgmes_model: CgmesCircuit, ver: CGMESVersi
     tatl_60.description = "Temporarily Admissible Transmission Loading"
     tatl_60.acceptableDuration = 60
 
-    tatl_60.limitType = LimitTypeKind.tatl
+    if ver == CGMESVersions.v2_4_15:
+        tatl_60.limitType = LimitTypeKind.tatl
+    elif ver == CGMESVersions.v3_0_0:
+        tatl_60.kind = LimitTypeKind.tatl
+    else:
+        raise NotImplemented()
     tatl_60.direction = OperationalLimitDirectionKind.absoluteValue
 
     return [patl, tatl_900, tatl_60]
@@ -2705,7 +2861,11 @@ def get_cgmes_topological_island(multicircuit_model: MultiCircuit,
                                      target_uuid=tn_idtag)
 
             if isinstance(tn, cgmes_model.assets.TopologicalNode):
-                new_island.TopologicalNodes.append(tn)
+                append_cgmes_relation_value(cgmes_object=new_island,
+                                            property_name="TopologicalNodes",
+                                            relation_value=tn,
+                                            logger=logger,
+                                            context="get_cgmes_topological_island()")
                 mc_bus = find_object_by_attribute(multicircuit_model.buses, "idtag", tn_idtag)
                 mc_buses.append(mc_bus)
             else:
@@ -2936,6 +3096,221 @@ def get_cgmes_busbar_sections(gc_model: MultiCircuit,
         cgmes_model.add(bbs)
 
 
+def is_hex_uuid_token(value: str) -> bool:
+    """
+    Check whether a string is a 32-hex UUID token.
+
+    :param value: Candidate token.
+    :return: ``True`` when the token is 32 hexadecimal characters.
+    """
+    if len(value) == 32:
+        try:
+            int(value, 16)
+            return True
+        except ValueError:
+            return False
+    else:
+        return False
+
+
+def build_cgmes_rdfid_from_veragrid_idtag(veragrid_idtag: str) -> str:
+    """
+    Build a CGMES RDF identifier from a VeraGrid idtag.
+
+    :param veragrid_idtag: VeraGrid object idtag.
+    :return: CGMES rdfid string.
+    """
+    stripped_idtag: str = veragrid_idtag.strip()
+    if len(stripped_idtag) == 0:
+        return get_new_rdfid()
+    else:
+        normalized_idtag: str = stripped_idtag.replace('-', '').replace('_', '')
+        if is_hex_uuid_token(normalized_idtag):
+            return form_rdfid(normalized_idtag)
+        else:
+            return stripped_idtag
+
+
+def resolve_cgmes_equipment_by_veragrid_idtag(cgmes_model: CgmesCircuit,
+                                              veragrid_idtag: str) -> CGMES_ASSETS | None:
+    """
+    Resolve one exported CGMES equipment object by VeraGrid idtag.
+
+    :param cgmes_model: Target CGMES model.
+    :param veragrid_idtag: VeraGrid equipment idtag.
+    :return: CGMES equipment object or ``None`` when not found.
+    """
+    stripped_idtag: str = veragrid_idtag.strip()
+    if len(stripped_idtag) == 0:
+        return None
+    else:
+        candidate_rdfid: str = build_cgmes_rdfid_from_veragrid_idtag(veragrid_idtag=stripped_idtag)
+        candidate_equipment: CGMES_ASSETS | None = cgmes_model.all_objects_dict.get(candidate_rdfid, None)
+        if candidate_equipment is not None:
+            return candidate_equipment
+        else:
+            direct_equipment: CGMES_ASSETS | None = cgmes_model.all_objects_dict.get(stripped_idtag, None)
+            if direct_equipment is not None:
+                return direct_equipment
+            else:
+                normalized_idtag: str = stripped_idtag.replace('-', '').replace('_', '')
+                if len(normalized_idtag) > 0:
+                    for cgmes_object in cgmes_model.all_objects_dict.values():
+                        if cgmes_object.uuid == normalized_idtag:
+                            return cgmes_object
+                        else:
+                            pass
+                    return None
+                else:
+                    return None
+
+
+def map_contingency_status_uri(contingency_value: float) -> str:
+    """
+    Map VeraGrid contingency Active value to the NCP status URI.
+
+    :param contingency_value: VeraGrid contingency value.
+    :return: ContingencyEquipmentStatusKind URI.
+    """
+    if np.isclose(contingency_value, 0.0):
+        return "https://cim.ucaiug.io/ns#ContingencyEquipmentStatusKind.outOfService"
+    else:
+        return "https://cim.ucaiug.io/ns#ContingencyEquipmentStatusKind.inService"
+
+
+def get_cgmes_contingencies(multicircuit_model: MultiCircuit,
+                            cgmes_model: CgmesCircuit,
+                            logger: DataLogger) -> None:
+    """
+    Export VeraGrid contingencies to CGMES NCP contingency objects.
+
+    Mapping strategy:
+        - One VeraGrid ``ContingencyGroup`` -> one NCP ``OrdinaryContingency``.
+        - One VeraGrid ``Contingency`` -> one NCP ``ContingencyEquipment``.
+        - VeraGrid ``ContingencyOperationTypes.Active`` value -> NCP contingent status URI.
+
+    :param multicircuit_model: Source VeraGrid model.
+    :param cgmes_model: Target CGMES model.
+    :param logger: Data logger.
+    :return: Nothing.
+    """
+    if len(multicircuit_model.contingencies) == 0:
+        return
+    else:
+        pass
+
+    class_dict: Dict[str, type] = cgmes_model.cgmes_assets.class_dict
+    ordinary_contingency_class: type | None = class_dict.get("OrdinaryContingency", None)
+    contingency_equipment_class: type | None = class_dict.get("ContingencyEquipment", None)
+
+    if ordinary_contingency_class is None:
+        logger.add_warning(
+            msg='CGMES model has no OrdinaryContingency class; skipping contingency export'
+        )
+        return
+    else:
+        if contingency_equipment_class is None:
+            logger.add_warning(
+                msg='CGMES model has no ContingencyEquipment class; skipping contingency export'
+            )
+            return
+        else:
+            pass
+
+    contingencies_by_group: Dict[gcdev.ContingencyGroup, List[gcdev.Contingency]] = (
+        multicircuit_model.get_contingencies_by_group()
+    )
+    if len(contingencies_by_group) == 0:
+        return
+    else:
+        pass
+
+    exported_group_count: int = 0
+    exported_contingency_count: int = 0
+    skipped_contingency_count: int = 0
+
+    for group, contingency_list in contingencies_by_group.items():
+        group_rdfid: str = build_cgmes_rdfid_from_veragrid_idtag(veragrid_idtag=group.idtag)
+        cgmes_group: CGMES_ASSETS = ordinary_contingency_class(rdfid=group_rdfid)
+
+        if len(group.name) > 0:
+            group_name: str = group.name
+        else:
+            group_name = group.idtag
+
+        cgmes_group.name = group_name
+        cgmes_group.description = str(group.category)
+        cgmes_group.normalMustStudy = group.active
+        cgmes_group.mustStudy = group.active
+
+        contingency_elements: List[CGMES_ASSETS] = list()
+
+        for contingency in contingency_list:
+            if contingency.prop == ContingencyOperationTypes.Active:
+                target_equipment: CGMES_ASSETS | None = resolve_cgmes_equipment_by_veragrid_idtag(
+                    cgmes_model=cgmes_model,
+                    veragrid_idtag=contingency.device_idtag
+                )
+                if target_equipment is None:
+                    skipped_contingency_count += 1
+                    logger.add_warning(
+                        msg='Could not resolve CGMES equipment for contingency export',
+                        device=contingency.idtag,
+                        device_class=contingency.device_type.value,
+                        device_property='device_idtag',
+                        value=contingency.device_idtag
+                    )
+                else:
+                    contingency_rdfid: str = build_cgmes_rdfid_from_veragrid_idtag(
+                        veragrid_idtag=contingency.idtag
+                    )
+                    cgmes_equipment_contingency: CGMES_ASSETS = contingency_equipment_class(rdfid=contingency_rdfid)
+
+                    if len(contingency.device_name) > 0:
+                        contingency_target_name: str = contingency.device_name
+                    else:
+                        contingency_target_name = contingency.device_idtag
+
+                    cgmes_equipment_contingency.name = f"{group_name}::{contingency_target_name}"
+                    cgmes_equipment_contingency.description = contingency.comment
+                    cgmes_equipment_contingency.Contingency = cgmes_group
+                    cgmes_equipment_contingency.Equipment = target_equipment
+                    cgmes_equipment_contingency.contingentStatus = map_contingency_status_uri(
+                        contingency_value=contingency.value
+                    )
+
+                    contingency_elements.append(cgmes_equipment_contingency)
+                    cgmes_model.add(cgmes_equipment_contingency)
+                    exported_contingency_count += 1
+            else:
+                skipped_contingency_count += 1
+                logger.add_warning(
+                    msg='Unsupported contingency operation type for CGMES export',
+                    device=contingency.idtag,
+                    device_class=contingency.device_type.value,
+                    device_property='prop',
+                    value=str(contingency.prop),
+                    expected_value=str(ContingencyOperationTypes.Active)
+                )
+
+        if len(contingency_elements) > 0:
+            cgmes_group.ContingencyElement = contingency_elements
+            cgmes_model.add(cgmes_group)
+            exported_group_count += 1
+        else:
+            pass
+
+    if exported_contingency_count > 0:
+        logger.add_info(
+            msg='Exported NCP contingencies',
+            value=exported_contingency_count,
+            expected_value=len(multicircuit_model.contingencies),
+            comment=f"Groups={exported_group_count}, Skipped={skipped_contingency_count}"
+        )
+    else:
+        pass
+
+
 # endregion
 
 
@@ -2966,6 +3341,11 @@ def veragrid_to_cgmes(gc_model: MultiCircuit,
     get_cgmes_substations(gc_model, cgmes_model, ver, logger)
     get_cgmes_voltage_levels(gc_model, cgmes_model, ver, logger)
 
+    if ver == CGMESVersions.v3_0_0:
+        purge_connectivity_nodes_for_cgmes_v3(cgmes_model=cgmes_model, logger=logger)
+    else:
+        pass
+
     get_cgmes_tp_nodes(gc_model, cgmes_model, ver, logger)
     get_cgmes_cn_nodes_from_tp_nodes(gc_model, cgmes_model, ver, logger)
     get_cgmes_busbar_sections(gc_model, cgmes_model, ver, logger)
@@ -2995,6 +3375,11 @@ def veragrid_to_cgmes(gc_model: MultiCircuit,
     convert_hvdc_line_to_cgmes(gc_model, cgmes_model, ver, logger)
     convert_vsc_devices_to_cgmes(gc_model, cgmes_model, ver, logger)
     convert_dc_lines_to_cgmes(gc_model, cgmes_model, ver, logger)
+
+    # NCP contingencies are exported after equipment so references are resolvable.
+    get_cgmes_contingencies(multicircuit_model=gc_model,
+                            cgmes_model=cgmes_model,
+                            logger=logger)
 
     # RESULTS: sv classes
     if pf_results:

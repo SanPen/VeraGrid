@@ -1,0 +1,427 @@
+PREFIX adms:     <http://www.w3.org/ns/adms#>
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dcatcim:  <https://cim4.eu/ns/dcatcim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:67b33697-15a1-4752-aeee-fb9b488defc4> {
+    <urn:uuid:589e558b-937d-4497-9e11-12dbd7aaf12e>
+            rdf:type                   nc:RemedialActionSchedule;
+            cim:IdentifiedObject.mRID  "589e558b-937d-4497-9e11-12dbd7aaf12e";
+            cim:IdentifiedObject.name  "RAS";
+            nc:RemedialActionSchedule.Contingency
+                    <urn:uuid:475ba18f-cbf5-490b-b65d-e8e03f9bcbc4>;
+            nc:RemedialActionSchedule.ProposingEntity
+                    <urn:uuid:5f5820d9-3e05-473e-94c8-3c767be03e1a>;
+            nc:RemedialActionSchedule.RemedialAction
+                    <urn:uuid:5e401955-387e-45ce-b126-dd142b06b20c>;
+            nc:RemedialActionSchedule.statusKind
+                    nc:RemedialActionScheduleStatusKind.ordered .
+    
+    <urn:uuid:279bfb00-1b2a-4592-af3a-dba9403d1abd>
+            rdf:type                   nc:RemedialActionSchedule;
+            cim:IdentifiedObject.mRID  "279bfb00-1b2a-4592-af3a-dba9403d1abd";
+            cim:IdentifiedObject.name  "NCP386";
+            nc:RemedialActionSchedule.RemedialAction
+                    <urn:uuid:fa3e3533-345a-4ef1-a46d-3ab6d251924a>;
+            nc:RemedialActionSchedule.statusKind
+                    nc:RemedialActionScheduleStatusKind.ordered .
+    
+    <urn:uuid:c5084ff2-c71b-49a5-8f3d-0bd77817f641>
+            rdf:type                        nc:GenericValueTimePoint;
+            nc:GenericValueTimePoint.GenericValueSchedule
+                    <urn:uuid:ab913026-a54a-460b-92db-579e1647b8c9>;
+            nc:GenericValueTimePoint.atTime
+                    "2022-06-16T11:30:00Z"^^xsd:dateTime;
+            nc:GenericValueTimePoint.value  "1.0"^^xsd:float .
+    
+    <urn:uuid:3e1370f5-2307-41a9-9064-15833ee7ad6c>
+            rdf:type                   nc:GridStateIntensitySchedule;
+            cim:IdentifiedObject.mRID  "3e1370f5-2307-41a9-9064-15833ee7ad6c";
+            cim:IdentifiedObject.name  "intensity schedule";
+            nc:BaseTimeSeries.interpolationKind
+                    nc:TimeSeriesInterpolationKind.next;
+            nc:GridStateIntensitySchedule.GridStateAlteration
+                    <urn:uuid:bd7aaf12-e6b9-44ef-9e04-3d2992581718>;
+            nc:GridStateIntensitySchedule.valueKind
+                    nc:ValueOffsetKind.absolute .
+    
+    <urn:uuid:fa8958bd-298c-4240-946e-74a3c3129b3b>
+            rdf:type                    nc:EventTimePoint;
+            nc:EventTimePoint.EventSchedule
+                    <urn:uuid:1c1e39cf-15a1-4874-9739-d9e6dc90ee11>;
+            nc:EventTimePoint.atTime    "2024-11-20T02:30:00Z"^^xsd:dateTime;
+            nc:EventTimePoint.isActive  true .
+    
+    <urn:uuid:16f2f4e3-57bd-4567-b06d-2ff3c6d65a0a>
+            rdf:type                        nc:GenericValueTimePoint;
+            nc:GenericValueTimePoint.GenericValueSchedule
+                    <urn:uuid:27de0747-47c3-4f4d-a421-73a75dc4ee8f>;
+            nc:GenericValueTimePoint.atTime
+                    "2022-06-16T09:30:00Z"^^xsd:dateTime;
+            nc:GenericValueTimePoint.value  "1.0"^^xsd:float .
+    
+    <urn:uuid:264f9a19-ae29-4c95-b44c-6b7919ca0f6c>
+            rdf:type                   nc:RemedialActionSchedule;
+            cim:IdentifiedObject.mRID  "264f9a19-ae29-4c95-b44c-6b7919ca0f6c";
+            cim:IdentifiedObject.name  "RAS";
+            nc:RemedialActionSchedule.Contingency
+                    <urn:uuid:5d587c7e-9ced-416a-ad17-6ef9b241a998>;
+            nc:RemedialActionSchedule.ProposingEntity
+                    <urn:uuid:5f5820d9-3e05-473e-94c8-3c767be03e1a>;
+            nc:RemedialActionSchedule.RemedialAction
+                    <urn:uuid:587cb391-ed16-4a1d-876e-f90241addce5>;
+            nc:RemedialActionSchedule.statusKind
+                    nc:RemedialActionScheduleStatusKind.ordered .
+    
+    <urn:uuid:90ae0e37-8ee2-493c-8bd3-62caaab75719>
+            rdf:type                        nc:GenericValueTimePoint;
+            nc:GenericValueTimePoint.GenericValueSchedule
+                    <urn:uuid:9ef0d5e7-32d4-41e3-911c-817b0afbc410>;
+            nc:GenericValueTimePoint.atTime
+                    "2022-06-16T03:30:00Z"^^xsd:dateTime;
+            nc:GenericValueTimePoint.value  "0.0"^^xsd:float .
+    
+    <urn:uuid:1ca7da8c-faa6-42a1-9949-56da97dc3a23>
+            rdf:type                   nc:RemedialActionSchedule;
+            cim:IdentifiedObject.mRID  "1ca7da8c-faa6-42a1-9949-56da97dc3a23";
+            cim:IdentifiedObject.name  "RAS";
+            nc:RemedialActionSchedule.Contingency
+                    <urn:uuid:e05bbe20-9d4a-40da-9777-8424d216785d>;
+            nc:RemedialActionSchedule.ProposingEntity
+                    <urn:uuid:5f5820d9-3e05-473e-94c8-3c767be03e1a>;
+            nc:RemedialActionSchedule.RemedialAction
+                    <urn:uuid:31d41e36-11c8-417b-bafb-c410d4391898>;
+            nc:RemedialActionSchedule.statusKind
+                    nc:RemedialActionScheduleStatusKind.ordered .
+    
+    <urn:uuid:67b33697-15a1-4752-aeee-fb9b488defc4>
+            rdf:type              dcat:Dataset;
+            dct:accessRights      "https://energy.referencedata.eu/Confidentiality/Public";
+            dct:conformsTo        "https://cim.ucaiug.io/ns#" , "https://ap.cim4.eu/RemedialActionSchedule/2.4" , "https://cim4.eu/ns/nc/2.4#" , "http://iec.ch/TC57/2013/CIM-schema-cim16#";
+            dct:description       "This is the remedial action schedule dataset for Svedala part of ReliCapGrid."@en;
+            dct:identifier        "67b33697-15a1-4752-aeee-fb9b488defc4";
+            dct:issued            "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dct:license           "https://creativecommons.org/licenses/by/4.0/";
+            dct:publisher         "https://energy.referencedata.eu/test/party/JOTUNHEIM";
+            dct:requires          <urn:uuid:f7b94ef6-e043-4d2a-a359-2718e6e20507>;
+            dct:rights            "Copyright";
+            dct:rightsHolder      "ENTSO-E";
+            dct:spatial           "https://energy.referencedata.eu/Test/Frame/Svedala-Power-Transmission-System";
+            dct:title             "20220615_Svedala_RAS_1.0.0";
+            dcat:endDate          "2023-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/TSO-Svedala-RAS>;
+            dcat:keyword          "RAS";
+            dcat:startDate        "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:version          "1.0.0";
+            prov:generatedAtTime  "2022-06-10T07:06:25Z"^^xsd:dateTime;
+            prov:wasGeneratedBy   "https://energy.referencedata.eu/Activity/CGM-RAS" .
+    
+    <urn:uuid:023512a8-150d-4300-8159-807275eafd48>
+            rdf:type                   nc:EventSchedule;
+            cim:IdentifiedObject.mRID  "023512a8-150d-4300-8159-807275eafd48";
+            cim:IdentifiedObject.name  "NCP386";
+            nc:BaseTimeSeries.interpolationKind
+                    nc:TimeSeriesInterpolationKind.none;
+            nc:EventSchedule.RemedialActionSchedule
+                    <urn:uuid:87e90c47-43d8-4e5c-b2ad-5c67d3a74842> .
+    
+    <urn:uuid:c02149d0-13a9-423c-b574-dccbd8ad2aae>
+            rdf:type                   nc:GridStateIntensitySchedule;
+            cim:IdentifiedObject.mRID  "c02149d0-13a9-423c-b574-dccbd8ad2aae";
+            cim:IdentifiedObject.name  "intensity schedule";
+            nc:BaseTimeSeries.interpolationKind
+                    nc:TimeSeriesInterpolationKind.next;
+            nc:GridStateIntensitySchedule.GridStateAlteration
+                    <urn:uuid:55a11475-e39f-4541-accc-d979376bcda3>;
+            nc:GridStateIntensitySchedule.valueKind
+                    nc:ValueOffsetKind.absolute .
+    
+    <urn:uuid:919d20c5-9b8d-40e3-8b99-db2fd1dc3e01>
+            rdf:type                   nc:GridStateIntensitySchedule;
+            cim:IdentifiedObject.mRID  "919d20c5-9b8d-40e3-8b99-db2fd1dc3e01";
+            cim:IdentifiedObject.name  "intensity schedule";
+            nc:BaseTimeSeries.interpolationKind
+                    nc:TimeSeriesInterpolationKind.next;
+            nc:GridStateIntensitySchedule.GridStateAlteration
+                    <urn:uuid:457f111e-43ce-4368-923e-11457cb694f9>;
+            nc:GridStateIntensitySchedule.valueKind
+                    nc:ValueOffsetKind.absolute .
+    
+    <urn:uuid:5325ae52-5ba3-44d4-985e-22139be7bb02>
+            rdf:type                        nc:GenericValueTimePoint;
+            nc:GenericValueTimePoint.GenericValueSchedule
+                    <urn:uuid:a58a9c26-89b3-42ab-97df-c65546135a33>;
+            nc:GenericValueTimePoint.atTime
+                    "2022-06-16T00:30:00Z"^^xsd:dateTime;
+            nc:GenericValueTimePoint.value  "1.0"^^xsd:float .
+    
+    <urn:uuid:4af163bb-e6ef-467e-a1ab-1df5b4eb5cd5>
+            rdf:type                        nc:GenericValueTimePoint;
+            nc:GenericValueTimePoint.GenericValueSchedule
+                    <urn:uuid:6e5cb27c-0ca2-4d53-97ad-e8992f0b4a2b>;
+            nc:GenericValueTimePoint.atTime
+                    "2022-06-16T17:30:00Z"^^xsd:dateTime;
+            nc:GenericValueTimePoint.value  "1.0"^^xsd:float .
+    
+    <urn:uuid:e153cb0a-2b31-45f4-b6fd-c39a00eb3409>
+            rdf:type                    nc:EventTimePoint;
+            nc:EventTimePoint.EventSchedule
+                    <urn:uuid:1c1e39cf-15a1-4874-9739-d9e6dc90ee11>;
+            nc:EventTimePoint.atTime    "2024-11-20T01:30:00Z"^^xsd:dateTime;
+            nc:EventTimePoint.isActive  true .
+    
+    <urn:uuid:5ceba553-3b0d-4ff6-9780-3d395e851f48>
+            rdf:type                   nc:RemedialActionSchedule;
+            cim:IdentifiedObject.mRID  "5ceba553-3b0d-4ff6-9780-3d395e851f48";
+            cim:IdentifiedObject.name  "RAS";
+            nc:RemedialActionSchedule.ProposingEntity
+                    <urn:uuid:5f5820d9-3e05-473e-94c8-3c767be03e1a>;
+            nc:RemedialActionSchedule.RemedialAction
+                    <urn:uuid:cfabf356-c5e1-4391-b91b-3330bc24f0c9>;
+            nc:RemedialActionSchedule.statusKind
+                    nc:RemedialActionScheduleStatusKind.ordered .
+    
+    <urn:uuid:e9e00f12-c30d-466b-a602-e1189ee2fe6c>
+            rdf:type                    nc:EventTimePoint;
+            nc:EventTimePoint.EventSchedule
+                    <urn:uuid:023512a8-150d-4300-8159-807275eafd48>;
+            nc:EventTimePoint.atTime    "2024-11-20T02:30:00Z"^^xsd:dateTime;
+            nc:EventTimePoint.isActive  true .
+    
+    <urn:uuid:479eb9fd-2b28-4c06-bad6-e5b329a7578c>
+            rdf:type                    nc:EventTimePoint;
+            nc:EventTimePoint.EventSchedule
+                    <urn:uuid:023512a8-150d-4300-8159-807275eafd48>;
+            nc:EventTimePoint.atTime    "2024-11-20T00:30:00Z"^^xsd:dateTime;
+            nc:EventTimePoint.isActive  true .
+    
+    <urn:uuid:9ef0d5e7-32d4-41e3-911c-817b0afbc410>
+            rdf:type                   nc:GridStateIntensitySchedule;
+            cim:IdentifiedObject.mRID  "9ef0d5e7-32d4-41e3-911c-817b0afbc410";
+            cim:IdentifiedObject.name  "intensity schedule";
+            nc:BaseTimeSeries.interpolationKind
+                    nc:TimeSeriesInterpolationKind.next;
+            nc:GridStateIntensitySchedule.GridStateAlteration
+                    <urn:uuid:beee0b9b-588d-4efc-9972-cd4cd25b0b70>;
+            nc:GridStateIntensitySchedule.valueKind
+                    nc:ValueOffsetKind.absolute .
+    
+    <urn:uuid:1c1e39cf-15a1-4874-9739-d9e6dc90ee11>
+            rdf:type                   nc:EventSchedule;
+            cim:IdentifiedObject.mRID  "1c1e39cf-15a1-4874-9739-d9e6dc90ee11";
+            cim:IdentifiedObject.name  "NCP386";
+            nc:BaseTimeSeries.interpolationKind
+                    nc:TimeSeriesInterpolationKind.none;
+            nc:EventSchedule.RemedialActionSchedule
+                    <urn:uuid:279bfb00-1b2a-4592-af3a-dba9403d1abd> .
+    
+    <urn:uuid:6e5cb27c-0ca2-4d53-97ad-e8992f0b4a2b>
+            rdf:type                   nc:GridStateIntensitySchedule;
+            cim:IdentifiedObject.mRID  "6e5cb27c-0ca2-4d53-97ad-e8992f0b4a2b";
+            cim:IdentifiedObject.name  "intensity schedule";
+            nc:BaseTimeSeries.interpolationKind
+                    nc:TimeSeriesInterpolationKind.next;
+            nc:GridStateIntensitySchedule.GridStateAlteration
+                    <urn:uuid:55a11475-e39f-4541-accc-d979376bcda3>;
+            nc:GridStateIntensitySchedule.valueKind
+                    nc:ValueOffsetKind.absolute .
+    
+    <urn:uuid:8cd0de5b-aa2d-49be-8c0a-3644a99e474e>
+            rdf:type                    nc:EventTimePoint;
+            nc:EventTimePoint.EventSchedule
+                    <urn:uuid:e4908d3f-2d0a-4716-b6f2-c9034b04cb2c>;
+            nc:EventTimePoint.atTime    "2024-11-20T02:30:00Z"^^xsd:dateTime;
+            nc:EventTimePoint.isActive  true .
+    
+    <urn:uuid:aa124b6e-4df6-485e-bdce-9793b7bcdb3b>
+            rdf:type                   nc:RemedialActionSchedule;
+            cim:IdentifiedObject.mRID  "aa124b6e-4df6-485e-bdce-9793b7bcdb3b";
+            cim:IdentifiedObject.name  "RAS";
+            nc:RemedialActionSchedule.ProposingEntity
+                    <urn:uuid:5f5820d9-3e05-473e-94c8-3c767be03e1a>;
+            nc:RemedialActionSchedule.RemedialAction
+                    <urn:uuid:68255abc-9164-4e9a-89ae-d8c44cf3b2b3>;
+            nc:RemedialActionSchedule.statusKind
+                    nc:RemedialActionScheduleStatusKind.ordered .
+    
+    <urn:uuid:34faa19b-f39d-495d-94c7-c8919ca1f6d5>
+            rdf:type                        nc:GenericValueTimePoint;
+            nc:GenericValueTimePoint.GenericValueSchedule
+                    <urn:uuid:659d3958-fd77-4289-a835-556df2bfe456>;
+            nc:GenericValueTimePoint.atTime
+                    "2022-06-16T00:30:00Z"^^xsd:dateTime;
+            nc:GenericValueTimePoint.value  "1.0"^^xsd:float .
+    
+    <urn:uuid:659d3958-fd77-4289-a835-556df2bfe456>
+            rdf:type                   nc:GridStateIntensitySchedule;
+            cim:IdentifiedObject.mRID  "659d3958-fd77-4289-a835-556df2bfe456";
+            cim:IdentifiedObject.name  "intensity schedule";
+            nc:BaseTimeSeries.interpolationKind
+                    nc:TimeSeriesInterpolationKind.next;
+            nc:GridStateIntensitySchedule.GridStateAlteration
+                    <urn:uuid:889535e6-2789-46e7-8ba7-da7be9951914>;
+            nc:GridStateIntensitySchedule.valueKind
+                    nc:ValueOffsetKind.absolute .
+    
+    <urn:uuid:e4908d3f-2d0a-4716-b6f2-c9034b04cb2c>
+            rdf:type                   nc:EventSchedule;
+            cim:IdentifiedObject.mRID  "e4908d3f-2d0a-4716-b6f2-c9034b04cb2c";
+            cim:IdentifiedObject.name  "TP RA One Switch";
+            nc:BaseTimeSeries.interpolationKind
+                    nc:TimeSeriesInterpolationKind.none;
+            nc:EventSchedule.RemedialActionSchedule
+                    <urn:uuid:17527637-6099-4ee6-8b21-fea8dfec4c75> .
+    
+    <urn:uuid:c2212ad2-6d9e-4214-93cf-6255454208b2>
+            rdf:type                    nc:EventTimePoint;
+            nc:EventTimePoint.EventSchedule
+                    <urn:uuid:1c1e39cf-15a1-4874-9739-d9e6dc90ee11>;
+            nc:EventTimePoint.atTime    "2024-11-20T00:30:00Z"^^xsd:dateTime;
+            nc:EventTimePoint.isActive  true .
+    
+    <urn:uuid:120c37be-a75c-4820-bf15-a83b5b983d45>
+            rdf:type                    nc:EventTimePoint;
+            nc:EventTimePoint.EventSchedule
+                    <urn:uuid:023512a8-150d-4300-8159-807275eafd48>;
+            nc:EventTimePoint.atTime    "2024-11-20T01:30:00Z"^^xsd:dateTime;
+            nc:EventTimePoint.isActive  true .
+    
+    <urn:uuid:17527637-6099-4ee6-8b21-fea8dfec4c75>
+            rdf:type                   nc:RemedialActionSchedule;
+            cim:IdentifiedObject.mRID  "17527637-6099-4ee6-8b21-fea8dfec4c75";
+            cim:IdentifiedObject.name  "TP RA One Switch";
+            nc:RemedialActionSchedule.RemedialAction
+                    <urn:uuid:6d2c8901-d068-4d22-8ce9-7379644b4f17>;
+            nc:RemedialActionSchedule.statusKind
+                    nc:RemedialActionScheduleStatusKind.ordered .
+    
+    <urn:uuid:27de0747-47c3-4f4d-a421-73a75dc4ee8f>
+            rdf:type                   nc:GridStateIntensitySchedule;
+            cim:IdentifiedObject.mRID  "27de0747-47c3-4f4d-a421-73a75dc4ee8f";
+            cim:IdentifiedObject.name  "intensity schedule";
+            nc:BaseTimeSeries.interpolationKind
+                    nc:TimeSeriesInterpolationKind.next;
+            nc:GridStateIntensitySchedule.GridStateAlteration
+                    <urn:uuid:4ab66db6-53a4-4ebf-af6e-1ea32b6e77bb>;
+            nc:GridStateIntensitySchedule.valueKind
+                    nc:ValueOffsetKind.absolute .
+    
+    <urn:uuid:955fdd0a-4698-4d84-ac36-3779eb7ab738>
+            rdf:type                        nc:GenericValueTimePoint;
+            nc:GenericValueTimePoint.GenericValueSchedule
+                    <urn:uuid:919d20c5-9b8d-40e3-8b99-db2fd1dc3e01>;
+            nc:GenericValueTimePoint.atTime
+                    "2022-06-16T12:30:00Z"^^xsd:dateTime;
+            nc:GenericValueTimePoint.value  "1.0"^^xsd:float .
+    
+    <urn:uuid:ab913026-a54a-460b-92db-579e1647b8c9>
+            rdf:type                   nc:GridStateIntensitySchedule;
+            cim:IdentifiedObject.mRID  "ab913026-a54a-460b-92db-579e1647b8c9";
+            cim:IdentifiedObject.name  "intensity schedule";
+            nc:BaseTimeSeries.interpolationKind
+                    nc:TimeSeriesInterpolationKind.next;
+            nc:GridStateIntensitySchedule.GridStateAlteration
+                    <urn:uuid:1dd4c309-ed8b-4bb6-a26d-4888b8e1f009>;
+            nc:GridStateIntensitySchedule.valueKind
+                    nc:ValueOffsetKind.absolute .
+    
+    <urn:uuid:7e42c78e-78cb-46a2-8ad1-90916e6a8d8f>
+            rdf:type                        nc:GenericValueTimePoint;
+            nc:GenericValueTimePoint.GenericValueSchedule
+                    <urn:uuid:c02149d0-13a9-423c-b574-dccbd8ad2aae>;
+            nc:GenericValueTimePoint.atTime
+                    "2022-06-16T02:30:00Z"^^xsd:dateTime;
+            nc:GenericValueTimePoint.value  "1.0"^^xsd:float .
+    
+    <urn:uuid:87e90c47-43d8-4e5c-b2ad-5c67d3a74842>
+            rdf:type                   nc:RemedialActionSchedule;
+            cim:IdentifiedObject.mRID  "87e90c47-43d8-4e5c-b2ad-5c67d3a74842";
+            cim:IdentifiedObject.name  "NCP386";
+            nc:RemedialActionSchedule.RemedialAction
+                    <urn:uuid:7e422768-207d-455f-976e-0b1cb2338509>;
+            nc:RemedialActionSchedule.statusKind
+                    nc:RemedialActionScheduleStatusKind.ordered .
+    
+    <urn:uuid:eb4861bc-3bc1-40ae-97e2-5e4d5a3aec2c>
+            rdf:type                   nc:RemedialActionSchedule;
+            cim:IdentifiedObject.mRID  "eb4861bc-3bc1-40ae-97e2-5e4d5a3aec2c";
+            cim:IdentifiedObject.name  "RAS";
+            nc:RemedialActionSchedule.ProposingEntity
+                    <urn:uuid:5f5820d9-3e05-473e-94c8-3c767be03e1a>;
+            nc:RemedialActionSchedule.RemedialAction
+                    <urn:uuid:d9bd3aaf-cda3-4b54-bb2e-b03dd9925817>;
+            nc:RemedialActionSchedule.statusKind
+                    nc:RemedialActionScheduleStatusKind.ordered .
+    
+    <urn:uuid:a58a9c26-89b3-42ab-97df-c65546135a33>
+            rdf:type                   nc:GridStateIntensitySchedule;
+            cim:IdentifiedObject.mRID  "a58a9c26-89b3-42ab-97df-c65546135a33";
+            cim:IdentifiedObject.name  "intensity schedule";
+            nc:BaseTimeSeries.interpolationKind
+                    nc:TimeSeriesInterpolationKind.next;
+            nc:GridStateIntensitySchedule.GridStateAlteration
+                    <urn:uuid:4b1410d4-3958-4a8c-8289-b3d6b57cfc65>;
+            nc:GridStateIntensitySchedule.valueKind
+                    nc:ValueOffsetKind.absolute .
+    
+    <urn:uuid:aaf669ca-48e5-4a95-b222-3ece8cb12308>
+            rdf:type                        nc:GenericValueTimePoint;
+            nc:GenericValueTimePoint.GenericValueSchedule
+                    <urn:uuid:3e1370f5-2307-41a9-9064-15833ee7ad6c>;
+            nc:GenericValueTimePoint.atTime
+                    "2022-06-16T05:30:00Z"^^xsd:dateTime;
+            nc:GenericValueTimePoint.value  "0.0"^^xsd:float .
+    
+    <urn:uuid:cefc01ca-f500-4215-9c86-dbef2b2cbdd2>
+            rdf:type                   nc:RemedialActionSchedule;
+            cim:IdentifiedObject.mRID  "cefc01ca-f500-4215-9c86-dbef2b2cbdd2";
+            cim:IdentifiedObject.name  "RAS";
+            nc:RemedialActionSchedule.Contingency
+                    <urn:uuid:264e9a19-ae28-4c85-a43c-6b7818ca0e6c>;
+            nc:RemedialActionSchedule.ProposingEntity
+                    <urn:uuid:5f5820d9-3e05-473e-94c8-3c767be03e1a>;
+            nc:RemedialActionSchedule.RemedialAction
+                    <urn:uuid:b5f07ec3-3a3c-49ec-8e85-02a77d4f79c1>;
+            nc:RemedialActionSchedule.statusKind
+                    nc:RemedialActionScheduleStatusKind.ordered .
+    
+    <urn:uuid:26035028-03ee-4e29-bda4-0817694a3d30>
+            rdf:type                   nc:RemedialActionSchedule;
+            cim:IdentifiedObject.mRID  "26035028-03ee-4e29-bda4-0817694a3d30";
+            cim:IdentifiedObject.name  "RAS";
+            nc:RemedialActionSchedule.ProposingEntity
+                    <urn:uuid:5f5820d9-3e05-473e-94c8-3c767be03e1a>;
+            nc:RemedialActionSchedule.RemedialAction
+                    <urn:uuid:b2555ccc-6562-4887-8abc-19a6e51cfe36>;
+            nc:RemedialActionSchedule.statusKind
+                    nc:RemedialActionScheduleStatusKind.ordered .
+    
+    <urn:uuid:231c3e6a-b437-47d2-827f-6c7d813936ea>
+            rdf:type                   nc:RemedialActionSchedule;
+            cim:IdentifiedObject.mRID  "231c3e6a-b437-47d2-827f-6c7d813936ea";
+            cim:IdentifiedObject.name  "RAS";
+            nc:RemedialActionSchedule.Contingency
+                    <urn:uuid:d9ef0d5e-732d-441e-9611-c817b0afbc41>;
+            nc:RemedialActionSchedule.ProposingEntity
+                    <urn:uuid:5f5820d9-3e05-473e-94c8-3c767be03e1a>;
+            nc:RemedialActionSchedule.RemedialAction
+                    <urn:uuid:bf8157d8-d787-44f7-a997-751e50e69165>;
+            nc:RemedialActionSchedule.statusKind
+                    nc:RemedialActionScheduleStatusKind.ordered .
+}

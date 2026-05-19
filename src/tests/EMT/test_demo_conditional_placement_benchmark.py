@@ -386,7 +386,7 @@ def test_conditional_placement_benchmark() -> None:
 
     results_df = _build_export_dataframe(cases)
 
-    benchmark_results_dir = Path(__file__).resolve().parents[3] / "trunk" / "dynamics_emt" / "benchmark_results"
+    benchmark_results_dir = Path(__file__).resolve().parents[1] / "data" / "output" / "benchmark_results"
     benchmark_results_dir.mkdir(parents=True, exist_ok=True)
     results_df.to_csv(benchmark_results_dir / "demo_conditional_placement_benchmark_FROM_TEST.csv", index=False)
 

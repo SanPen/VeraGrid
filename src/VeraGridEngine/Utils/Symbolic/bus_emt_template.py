@@ -152,7 +152,7 @@ def get_bus_emt_template(grid: MultiCircuit,
         if not any(mask):
             # The dynamic editor can open EMT templates before the network has any EMT-aware branches.
             # In that case we expose a default ABC shell so the user can still build and attach EMT models.
-            mask[0] = True
+            mask[0] = False
             mask[1] = True
             mask[2] = True
             mask[3] = True
@@ -161,8 +161,6 @@ def get_bus_emt_template(grid: MultiCircuit,
 
     # choose template depending on the number of phases
     bus.emt_model = BusEmtTemplate(vf=vf, mask=mask, is_dc=bus.is_dc, name=f"{bus.name}_emt_template").block
-
-
 def get_bus_emt_algebraic_vars(bus_emt_model: Block) -> Tuple[
     Optional[Var], Optional[Var], Optional[Var], Optional[Var]]:
     """

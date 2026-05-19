@@ -1,0 +1,65 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:79e8ace6-d345-4855-a279-95220d646012> {
+    <urn:uuid:a246aa9a-1e25-4693-a681-f4f771949d2f>
+            rdf:type                   nc:CurrentLimitSchedule;
+            cim:IdentifiedObject.description
+                    "CLS1";
+            cim:IdentifiedObject.mRID  "a246aa9a-1e25-4693-a681-f4f771949d2f";
+            cim:IdentifiedObject.name  "CLS1";
+            nc:BaseTimeSeries.interpolationKind
+                    nc:TimeSeriesInterpolationKind.none;
+            nc:CurrentLimitSchedule.CurrentLimit
+                    <urn:uuid:1ee85ce6-8298-c191-b8a0-9ccac2282a66> .
+    
+    <urn:uuid:9eccd27b-3511-48a8-8fa7-a56a57f8d0c9>
+            rdf:type                        nc:CurrentLimitTimePoint;
+            cim:IdentifiedObject.description
+                    "CLTP1";
+            cim:IdentifiedObject.mRID       "9eccd27b-3511-48a8-8fa7-a56a57f8d0c9";
+            cim:IdentifiedObject.name       "CLTP1";
+            nc:CurrentLimitTimePoint.CurrentLimitSchedule
+                    <urn:uuid:a246aa9a-1e25-4693-a681-f4f771949d2f>;
+            nc:CurrentLimitTimePoint.atTime
+                    "2023-07-22T16:00:00Z"^^xsd:dateTime;
+            nc:CurrentLimitTimePoint.value  "350"^^xsd:float .
+    
+    <urn:uuid:79e8ace6-d345-4855-a279-95220d646012>
+            rdf:type              dcat:Dataset;
+            dct:accessRights      "https://energy.referencedata.eu/Confidentiality/Public";
+            dct:conformsTo        "https://cim.ucaiug.io/ns#" , "https://ap.cim4.eu/SteadyStateHypothesisSchedule/1.1" , "https://cim4.eu/ns/nc/2.4#" , "http://iec.ch/TC57/2013/CIM-schema-cim16#";
+            dct:description       "This is the steady state hypothesis schedule dataset for Belgovia part of ReliCapGrid."@en;
+            dct:identifier        "79e8ace6-d345-4855-a279-95220d646012";
+            dct:issued            "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dct:license           "https://creativecommons.org/licenses/by/4.0/";
+            dct:publisher         "https://energy.referencedata.eu/test/party/Belgovia";
+            dct:requires          <urn:uuid:15c8a8ad-08d5-4b59-8417-db80e273bd1a>;
+            dct:rights            "Copyright";
+            dct:rightsHolder      "ENTSO-E";
+            dct:spatial           "https://energy.referencedata.eu/Test/Frame/Belgovia-Power-Transmission-System";
+            dct:title             "20220615_Belgovia_SHS_1.0.0";
+            dcat:endDate          "2023-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Belgovia-SHS>;
+            dcat:keyword          "SHS";
+            dcat:startDate        "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:version          "1.0.0";
+            prov:generatedAtTime  "2022-06-10T07:06:25Z"^^xsd:dateTime;
+            prov:wasGeneratedBy   "https://energy.referencedata.eu/Activity/CGM-SHS" .
+}

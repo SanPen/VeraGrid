@@ -816,7 +816,7 @@ def add_vsc_data(circuit: MultiCircuit,
         vsc.setAllPdcSet(elm.Pset)
         vsc.setAllVacSet(elm.vset)
         vsc.setAllVdcSet(elm.vset)
-        vsc.k_droop = elm.control1_droop
+        vsc.k_droop = elm.control1_val_droop
 
         vsc.alpha1 = elm.alpha1
         vsc.alpha2 = elm.alpha2

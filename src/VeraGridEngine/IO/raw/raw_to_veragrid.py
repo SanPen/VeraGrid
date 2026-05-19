@@ -323,39 +323,48 @@ def get_veragrid_generator(psse_elm: RawGenerator, psse_bus_dict: Dict[int, dev.
     """
     name = str(psse_elm.I) + '_' + str(psse_elm.ID).replace("'", "")
 
-    if psse_elm.WMOD == 0:  # Not a wind machine ...wtf
+    if psse_elm.WMOD == 0:  # Conventional machine
         is_controlled = True
-        pf = 0.8
+        Q=psse_elm.QG
         Qmin = psse_elm.QB
         Qmax = psse_elm.QT
     elif psse_elm.WMOD == 1:  # Standard Qmin, Qmax limits
         is_controlled = True
-        pf = 0.8
+        Q=psse_elm.QG
         Qmin = psse_elm.QB
         Qmax = psse_elm.QT
-    elif psse_elm.WMOD == 2:  # Qmin, Qmax based o PF
+    elif psse_elm.WMOD == 2:  # Qmin, Qmax based based on WPF
         is_controlled = True
-        pf = psse_elm.WPF
+        # pf = psse_elm.WPF
         # NOTE: the QB and QT limits come correct already, no need to compute this here
-        # Q = psse_elm.PG * np.sqrt((1.0 / (pf ** 2)) - 1.0)
+        Q = psse_elm.QG
+        # Qmin = psse_elm.PB * np.sqrt((1.0 / (pf ** 2)) - 1.0)
+        # Qmax = psse_elm.PT * np.sqrt((1.0 / (pf ** 2)) - 1.0)
         Qmin = psse_elm.QB
         Qmax = psse_elm.QT
     elif psse_elm.WMOD == 3:  # Fixed Q
         is_controlled = False
         pf = psse_elm.WPF if psse_elm.WPF is not None else 0.8
+        Q = psse_elm.PG * np.sqrt((1.0 / (pf ** 2)) - 1.0)
+        Qmin = psse_elm.QB
+        Qmax = psse_elm.QT
+    elif psse_elm.WMOD == 4:  # Infeed machine
+        is_controlled = False
+        pf = psse_elm.WPF if psse_elm.WPF is not None else 0.8
+        Q = psse_elm.PG * np.sqrt((1.0 / (pf ** 2)) - 1.0)
         Qmin = psse_elm.QB
         Qmax = psse_elm.QT
     else:
         is_controlled = True
-        pf = 0.8
         Qmin = psse_elm.QB
         Qmax = psse_elm.QT
+        Q = psse_elm.QG
 
     elm = dev.Generator(name=name,
                         idtag=None,
                         code=name,
                         P=psse_elm.PG,
-                        Q=psse_elm.QG,
+                        Q=Q,
                         vset=psse_elm.VS,
                         Qmin=Qmin,
                         Qmax=Qmax,
@@ -363,8 +372,7 @@ def get_veragrid_generator(psse_elm: RawGenerator, psse_bus_dict: Dict[int, dev.
                         Pmax=psse_elm.PT,
                         Pmin=psse_elm.PB,
                         active=bool(psse_elm.STAT),
-                        is_controlled=is_controlled,
-                        power_factor=pf)
+                        is_controlled=is_controlled)
 
     if psse_elm.IREG > 0:
         if psse_elm.IREG != psse_elm.I:
@@ -1235,7 +1243,7 @@ def psse_to_veragrid(psse_circuit: PsseCircuit,
         api_obj = get_veragrid_generator(psse_gen, psse_bus_dict, logger)
 
         circuit.add_generator(bus, api_obj)
-        api_obj.is_controlled = psse_gen.WMOD == 0 or psse_gen.WMOD == 1
+        # api_obj.is_controlled = psse_gen.WMOD == 0 or psse_gen.WMOD == 1
 
     # Go through Branches
     branches_already_there = set()

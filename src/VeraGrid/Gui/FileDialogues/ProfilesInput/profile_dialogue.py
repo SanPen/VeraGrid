@@ -519,8 +519,14 @@ class ProfileInputGUI(QtWidgets.QDialog):
                                      index_col=0,
                                      # dtype=float,  # do not use if dates are expected
                                      dayfirst=True)
-                    # try to assign
-                    self.assign_origin_df(df=df)
+
+                    if df.shape[0] == 0 or df.shape[1] == 0:
+                        error_msg(text="Make sure this is a proper comma-separated-value file.\n Otherwise use excel.",
+                                  title="Value error loading CSV file")
+                        return
+                    else:
+                        # try to assign
+                        self.assign_origin_df(df=df)
 
                 except ValueError as e:
                     error_msg(text=str(e), title="Value error loading CSV file")

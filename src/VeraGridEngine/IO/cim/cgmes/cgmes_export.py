@@ -19,6 +19,7 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 from VeraGridEngine.enumerations import CGMESVersions
 import xml.etree.ElementTree as Et
 import xml.dom.minidom
+from enum import Enum
 
 
 def get_available_cgmes_profiles(cgmes_version: CGMESVersions):
@@ -40,7 +41,8 @@ def get_available_cgmes_profiles(cgmes_version: CGMESVersions):
             "SSH": ["http://iec.ch/TC57/ns/CIM/SteadyStateHypothesis-EU/3.0"],
             "TP": ["http://iec.ch/TC57/ns/CIM/Topology-EU/3.0"],
             "SV": ["http://iec.ch/TC57/ns/CIM/StateVariables-EU/3.0"],
-            "GL": ["http://iec.ch/TC57/ns/CIM/GeographicalLocation-EU/3.0"]
+            "GL": ["http://iec.ch/TC57/ns/CIM/GeographicalLocation-EU/3.0"],
+            "CO": ["https://ap.cim4.eu/Contingency/2.3"]
         }
     else:
         print(f"CGMES Version not suported {cgmes_version.value}")
@@ -296,12 +298,18 @@ class CimExporter:
                     if filter_props.get(attr_name) == "Association":
                         if isinstance(attr_value, list):
                             for v in attr_value:
-                                child = Et.Element(f"md:Model.{attr_name}")
-                                child.attrib = {"rdf:resource": "urn:uuid:" + v}
-                                element.append(child)
+                                if v is not None:
+                                    child = Et.Element(f"md:Model.{attr_name}")
+                                    child.attrib = {"rdf:resource": "urn:uuid:" + v}
+                                    element.append(child)
+                                else:
+                                    pass
                             continue
                         else:
-                            child.attrib = {"rdf:resource": "urn:uuid:" + attr_value}
+                            if attr_value is not None:
+                                child.attrib = {"rdf:resource": "urn:uuid:" + attr_value}
+                            else:
+                                continue
                     else:
                         if isinstance(attr_value, list):
                             for v in attr_value:
@@ -337,10 +345,17 @@ class CimExporter:
 
     def generate_other_elements(self, profile):
         other_elements = []
+        core_profiles = {"EQ", "OP", "SC", "SSH", "TP", "SV", "GL", "DY", "DL", "EQ_BD", "TP_BD"}
         for class_name, filters in self.class_filters.items():
             objects = self.cgmes_circuit.get_objects_list(elm_type=class_name)
-            if not self.in_profile(filters, profile):
-                continue
+            use_declared_property_fallback = False
+            if self.in_profile(filters, profile):
+                pass
+            else:
+                if len(filters) == 0 and profile not in core_profiles:
+                    use_declared_property_fallback = True
+                else:
+                    continue
             for obj in objects:
                 if self.about_dict.get(profile) is not None and class_name in self.about_dict.get(profile):
                     element = Et.Element("cim:" + class_name, {"rdf:about": "#_" + obj.rdfid})
@@ -351,35 +366,76 @@ class CimExporter:
                     attr_value = obj.get_declared_property_value(prop_name=attr_name)
                     if attr_value is None:
                         continue
-                    if attr_name not in filters or attr_name == "mRID":
-                        continue
-                    attr_filters = filters[attr_name]
-                    if not self.attr_in_profile(attr_filters, profile):
-                        continue
-                    attr_type = attr_filters["Type"]
-                    prop_split = str(attr_filters["Property-AttributeAssociationFull"]).split('#')
-                    if prop_split[0] == "http://entsoe.eu/CIM/SchemaExtension/3/1":
-                        prop_text = "entsoe:" + prop_split[-1]
-                    elif prop_split[0] == "http://iec.ch/TC57/CIM100-European":
-                        prop_text = "eu:" + prop_split[-1]
+                    if use_declared_property_fallback:
+                        declared_property = obj.declared_properties.get(attr_name, None)
+                        if declared_property is None or attr_name == "mRID":
+                            continue
+                        declared_profiles = declared_property.profiles
+                        profile_matches = False
+                        for declared_profile in declared_profiles:
+                            if declared_profile.value == profile:
+                                profile_matches = True
+                            else:
+                                pass
+                        if profile_matches:
+                            pass
+                        else:
+                            continue
+                        prop_text = "cim:" + class_name + "." + attr_name
+                        if isinstance(attr_value, list):
+                            attr_type = "Association"
+                        elif hasattr(attr_value, "rdfid"):
+                            attr_type = "Association"
+                        elif isinstance(attr_value, Enum):
+                            attr_type = "Enumeration"
+                        else:
+                            attr_type = "Attribute"
                     else:
-                        prop_text = "cim:" + prop_split[-1]
+                        if attr_name not in filters or attr_name == "mRID":
+                            continue
+                        attr_filters = filters[attr_name]
+                        if not self.attr_in_profile(attr_filters, profile):
+                            continue
+                        attr_type = attr_filters["Type"]
+                        prop_split = str(attr_filters["Property-AttributeAssociationFull"]).split('#')
+                        if prop_split[0] == "http://entsoe.eu/CIM/SchemaExtension/3/1":
+                            prop_text = "entsoe:" + prop_split[-1]
+                        elif prop_split[0] == "http://iec.ch/TC57/CIM100-European":
+                            prop_text = "eu:" + prop_split[-1]
+                        else:
+                            prop_text = "cim:" + prop_split[-1]
                     child = Et.Element(prop_text)
                     if attr_type == "Association":
                         if isinstance(attr_value, list):
                             for v in attr_value:
-                                child = Et.Element(prop_text)
-                                child.attrib = {"rdf:resource": "#_" + v.rdfid}
-                                element.append(child)
-                                has_child = True
+                                if v is not None and hasattr(v, "rdfid") and v.rdfid is not None:
+                                    child = Et.Element(prop_text)
+                                    child.attrib = {"rdf:resource": "#_" + v.rdfid}
+                                    element.append(child)
+                                    has_child = True
+                                else:
+                                    pass
                             continue
                         else:
-                            child.attrib = {"rdf:resource": "#_" + attr_value.rdfid}
+                            if attr_value is not None and hasattr(attr_value, "rdfid") and attr_value.rdfid is not None:
+                                child.attrib = {"rdf:resource": "#_" + attr_value.rdfid}
+                            else:
+                                continue
                     elif attr_type == "Enumeration":
-                        enum_dict_key = profile
-                        enum_dict_value = self.enum_dict.get(enum_dict_key)
-                        enum_value = enum_dict_value.get(str(attr_value))
-                        child.attrib = {"rdf:resource": enum_value}
+                        if use_declared_property_fallback:
+                            enum_value = str(attr_value)
+                            if enum_value.startswith("http://") or enum_value.startswith("https://"):
+                                child.attrib = {"rdf:resource": enum_value}
+                            else:
+                                child.text = enum_value
+                        else:
+                            enum_dict_key = profile
+                            enum_dict_value = self.enum_dict.get(enum_dict_key)
+                            enum_value = enum_dict_value.get(str(attr_value))
+                            if enum_value is not None:
+                                child.attrib = {"rdf:resource": enum_value}
+                            else:
+                                continue
                     elif attr_type == "Attribute":
                         if isinstance(attr_value, bool):
                             attr_value = str(attr_value).lower()

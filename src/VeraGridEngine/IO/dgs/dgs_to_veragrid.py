@@ -2246,28 +2246,70 @@ def convert_dgs_staticgen_to_vsc(elmgenstat: ElmGenstat,
     vsc_name = _get_parallel_device_name(vsc_name, parallel_index, parallel_count)
     vsc_idtag = _get_parallel_device_idtag(_ref_id(elmgenstat.ID), parallel_index, parallel_count)
 
-    vsc = dev.VSC(
-        name=vsc_name,
-        idtag=vsc_idtag,
-        active=not bool(elmgenstat.outserv),
-        bus_from=dc_bus,
-        bus_to=ac_bus,
-        rate=float(elmgenstat.sgn),
-        alpha1=0.0,
-        alpha2=0.0,
-        alpha3=0.0,
-        control1=ConverterControlType.Pac,
-        control2=ConverterControlType.Q_droop,
-        control1_val=-1.0 * float(elmgenstat.pgini),
-        control2_val=-1.0 * float(elmgenstat.qgini),
-        fault_control=ConverterFaultControlType.WECC_WT_Type_4B,
-        control2_droop=float(elmgenstat.ddroop),
-        control2_droop_val_min=float(elmgenstat.usp_min),
-        control2_droop_val_max=float(elmgenstat.usp_max),
-        control2_droop_val=float(elmgenstat.usetp),
-        control2_val_min=float(elmgenstat.cQ_min),
-        control2_val_max=float(elmgenstat.cQ_max)
-    )
+    if elmgenstat.av_mode == 'vdroop':
+        vsc = dev.VSC(
+            name=vsc_name,
+            idtag=vsc_idtag,
+            active=not bool(elmgenstat.outserv),
+            bus_from=dc_bus,
+            bus_to=ac_bus,
+            rate=float(elmgenstat.sgn),
+            alpha1=0.0,
+            alpha2=0.0,
+            alpha3=0.0,
+            control1=ConverterControlType.Pac,
+            control2=ConverterControlType.Q_droop,
+            control1_val=-1.0 * float(elmgenstat.pgini),
+            control2_val=-1.0 * float(elmgenstat.qgini),
+            fault_control=ConverterFaultControlType.WECC_WT_Type_4B,
+            control2_droop=float(elmgenstat.ddroop),
+            control2_droop_val_min=float(elmgenstat.usp_min),
+            control2_droop_val_max=float(elmgenstat.usp_max),
+            control2_droop_val=float(elmgenstat.usetp),
+            control2_val_min=float(elmgenstat.cQ_min),
+            control2_val_max=float(elmgenstat.cQ_max)
+        )
+
+    elif elmgenstat.av_mode == 'constq':
+        vsc = dev.VSC(
+            name=vsc_name,
+            idtag=vsc_idtag,
+            active=not bool(elmgenstat.outserv),
+            bus_from=dc_bus,
+            bus_to=ac_bus,
+            rate=float(elmgenstat.sgn),
+            alpha1=0.0,
+            alpha2=0.0,
+            alpha3=0.0,
+            control1=ConverterControlType.Pac,
+            control2=ConverterControlType.Qac,
+            control1_val=-1.0 * float(elmgenstat.pgini),
+            control2_val=-1.0 * float(elmgenstat.qgini),
+            fault_control=ConverterFaultControlType.WECC_WT_Type_4B
+        )
+
+    else:
+        vsc = dev.VSC(
+            name=vsc_name,
+            idtag=vsc_idtag,
+            active=not bool(elmgenstat.outserv),
+            bus_from=dc_bus,
+            bus_to=ac_bus,
+            rate=float(elmgenstat.sgn),
+            alpha1=0.0,
+            alpha2=0.0,
+            alpha3=0.0,
+            control1=ConverterControlType.Pac,
+            control2=ConverterControlType.Qac,
+            control1_val=0.0,
+            control2_val=0.0,
+            fault_control=ConverterFaultControlType.WECC_WT_Type_4B
+        )
+        logger.add_warning(
+            f"This wind turbine is not Const. Q or Voltage Q-droop.",
+            device=vsc_name,
+            device_class="ElmGenstat"
+        )
 
     return dc_bus, vsc
 

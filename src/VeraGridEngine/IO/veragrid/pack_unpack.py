@@ -15,7 +15,7 @@ from enum import EnumMeta as EnumType
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 import VeraGridEngine.Devices as dev
-from VeraGridEngine.Devices.Parents.editable_device import GCProp
+from VeraGridEngine.Devices.Parents.editable_device import GCProp, EditableDevice
 from VeraGridEngine.Devices.Profiles import AnyProfile
 from VeraGridEngine.Utils.Symbolic.symbolic_io import BlockSaver, BlockParser, Block
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES, VERAGRID_FILE_TYPE
@@ -708,31 +708,40 @@ def veragrid_object_to_json(elm: ALL_DEV_TYPES,
             if obj is not None:
                 data[name] = obj.uid
             else:
-                raise ValueError("var must not be None")
+                # Persistent dynamic plot entries may keep unresolved legacy Var
+                # hints as ``None`` while semantic fields remain the canonical
+                # binding identity.
+                data[name] = None
 
         elif prop.tpe == SubObjectType.ConstType:
             if obj is not None:
                 data[name] = obj.uid
             else:
-                raise ValueError("const must not be None")
+                data[name] = None
 
         elif prop.tpe == SubObjectType.Array:
             data[name] = list(obj)
 
         else:
             # if the object is not of a primary type, get the idtag instead
-            if hasattr(obj, 'idtag'):
-                data[name] = obj.idtag
-
-                if prop.has_profile():
-                    data[name + '_prof'] = profile_todict_idtag(elm.get_profile_by_prop(prop=prop))
-
+            if obj is None:
+                data[name] = None
             else:
-                # some data types might not have the idtag, ten just use the str method
-                data[name] = str(obj)
+                if isinstance(obj, EditableDevice):
+                    data[name] = obj.idtag
 
-                if prop.has_profile():
-                    data[name + '_prof'] = profile_todict_str(elm.get_profile_by_prop(prop=prop))
+                    if prop.has_profile():
+                        data[name + '_prof'] = profile_todict_idtag(elm.get_profile_by_prop(prop=prop))
+                    else:
+                        pass
+                else:
+                    # some data types might not have the idtag, ten just use the str method
+                    data[name] = str(obj)
+
+                    if prop.has_profile():
+                        data[name + '_prof'] = profile_todict_str(elm.get_profile_by_prop(prop=prop))
+                    else:
+                        pass
 
     return data
 
@@ -740,7 +749,7 @@ def veragrid_object_to_json(elm: ALL_DEV_TYPES,
 def gather_model_as_jsons(circuit: MultiCircuit,
                           project_directory: Path | None = None) -> dict[
     str, dict[str, dict[str, str] | list[dict[str, str]]] | dict[
-        str, list[dict[str, Any]] | dict[int, dict[str, Any]] | list[int]]]:
+        str, list[dict[str, Any]] | dict[int, list[Any]] | dict[int, dict[str, Any]] | list[int]]]:
     """
     Transform a MultiCircuit into a collection of Json files
     :param circuit:
@@ -792,6 +801,7 @@ def gather_model_as_jsons(circuit: MultiCircuit,
             "vars": block_saver.get_vars_to_save(),
             "consts": block_saver.get_const_to_save(),
             "diff_vars": block_saver.get_diff_vars_to_save(),
+            "shared_references": block_saver.get_shared_references_to_save(),
             "blocks": block_saver.get_blocks(),
             "main_block_uids": block_saver.main_block_uids,
         }
@@ -803,6 +813,8 @@ def gather_model_as_jsons(circuit: MultiCircuit,
             "vars": block_saver.get_vars_to_save(),
             "consts": block_saver.get_const_to_save(),
             "diff_vars": block_saver.get_diff_vars_to_save(),
+            "shared_references": block_saver.get_shared_references_to_save(),
+            "connections": block_saver.get_connections_to_save(),
             "blocks": block_saver.get_blocks(),
             "main_block_uids": block_saver.main_block_uids,
         }
@@ -1795,9 +1807,13 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
     symbolic_data = data.get('symbolic_data', None)
     if symbolic_data is not None:
         if len(symbolic_data) > 0:
+            if "shared_references" in symbolic_data:
+                block_parser.parse_references(symbolic_data["shared_references"])
             block_parser.parse_consts(symbolic_data["consts"])
             block_parser.parse_vars(symbolic_data["vars"])
             block_parser.parse_diff_vars(symbolic_data["diff_vars"])
+            if "connections" in symbolic_data:
+                block_parser.parse_connections(symbolic_data["connections"])
             for block_uid in symbolic_data["main_block_uids"]:
                 block_parser.parse_block(symbolic_data["blocks"], block_uid)
         else:

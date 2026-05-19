@@ -1,0 +1,160 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:d11b06e3-b709-4d45-9b49-188b2089be16> {
+    <urn:uuid:b6978550-cb6e-11e1-bcee-406c8f32ef58>
+            rdf:type                       cim:ConnectivityNode;
+            cim:ConnectivityNode.ConnectivityNodeContainer
+                    <urn:uuid:54a2e470-ef70-443f-ae81-bcf2d117caa3>;
+            cim:IdentifiedObject.description
+                    "Boundary point 2 between Svedala (substation name) and Belgovia (substation name) (380kV).";
+            cim:IdentifiedObject.mRID      "b6978550-cb6e-11e1-bcee-406c8f32ef58";
+            cim:IdentifiedObject.name      "BP_SD-BO2";
+            eu:IdentifiedObject.shortName  "BP_SD-BO2" .
+    
+    <urn:uuid:f738d362-c11c-4ca2-82da-a4fa115b3392>
+            rdf:type                       cim:ConnectivityNode;
+            cim:ConnectivityNode.ConnectivityNodeContainer
+                    <urn:uuid:77ca5612-67a1-4a52-a180-86560777ab4a>;
+            cim:IdentifiedObject.description
+                    "Boundary point 1 between Svedala (substation name) and Belgovia (substation name) (380kV).";
+            cim:IdentifiedObject.mRID      "f738d362-c11c-4ca2-82da-a4fa115b3392";
+            cim:IdentifiedObject.name      "BP_SD-BO1";
+            eu:IdentifiedObject.energyIdentCodeEic
+                    "10T-EH-PT-10004U";
+            eu:IdentifiedObject.shortName  "BP_SD-BO1" .
+    
+    <urn:uuid:b66f15c0-cb6e-11e1-bcee-406c8f32ef58>
+            rdf:type                       cim:ConnectivityNode;
+            cim:ConnectivityNode.ConnectivityNodeContainer
+                    <urn:uuid:2e08aa26-2719-4b3e-a0eb-a9bd0ddbcae1>;
+            cim:IdentifiedObject.description
+                    "Boundary point 3 between Svedala (substation name) and Belgovia (substation name) (225kV).";
+            cim:IdentifiedObject.mRID      "b66f15c0-cb6e-11e1-bcee-406c8f32ef58";
+            cim:IdentifiedObject.name      "BP_SD-BO3";
+            eu:IdentifiedObject.shortName  "BP_SD-BO3" .
+    
+    <urn:uuid:d11b06e3-b709-4d45-9b49-188b2089be16>
+            rdf:type           rdfg:Graph , dcat:Dataset;
+            dct:conformsTo     <http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/3.0>;
+            dct:description    "The equipment dataset of the boundary that is used in the ReliCapGrid.";
+            dct:identifier     "d11b06e3-b709-4d45-9b49-188b2089be16";
+            dct:issued         "2025-02-06"^^xsd:date;
+            dct:requires       <urn:uuid:1b65ada7-39ca-42b8-a278-39c457ed82c3>;
+            dct:temporal       [ rdf:type        dct:PeriodOfTime;
+                                 dcat:startDate  "2022-06-16T23:30:00Z"^^xsd:dateTime
+                               ];
+            dcat:distribution  [ rdf:type    dcat:Distribution;
+                                 dct:issued  "2025-02-06T14:18:22Z"^^xsd:dateTime
+                               ];
+            dcat:isVersionOf   <http://ninerealms.nr/boundary>;
+            dcat:version       "1";
+            json-ld:base       "http://ninerealms.nr/boundary#" .
+    
+    <urn:uuid:c65325ed-92a7-384a-834b-99c1ceea32ef>
+            rdf:type                       eu:BoundaryPoint;
+            cim:IdentifiedObject.description
+                    "Boundary point 3 between Svedala (substation name) and Belgovia (substation name) (225kV).";
+            cim:IdentifiedObject.mRID      "c65325ed-92a7-384a-834b-99c1ceea32ef";
+            cim:IdentifiedObject.name      "BP_SD-BO3";
+            eu:BoundaryPoint.ConnectivityNode
+                    <urn:uuid:b66f15c0-cb6e-11e1-bcee-406c8f32ef58>;
+            eu:BoundaryPoint.fromEndIsoCode
+                    "SD";
+            eu:BoundaryPoint.fromEndName   "Bouchala3";
+            eu:BoundaryPoint.fromEndNameTso
+                    "TSO-Svedala";
+            eu:BoundaryPoint.isExcludedFromAreaInterchange
+                    false;
+            eu:BoundaryPoint.toEndIsoCode  "BO";
+            eu:BoundaryPoint.toEndName     "Mastania3";
+            eu:BoundaryPoint.toEndNameTso  "TSO-Belgovia";
+            eu:IdentifiedObject.shortName  "BP_SD-BO3" .
+    
+    <urn:uuid:082e267e-53e4-cb00-c6ed-be67d80701c1>
+            rdf:type                       eu:BoundaryPoint;
+            cim:IdentifiedObject.description
+                    "Boundary point 1 between Svedala (substation name) and Belgovia (substation name) (380kV).";
+            cim:IdentifiedObject.mRID      "082e267e-53e4-cb00-c6ed-be67d80701c1";
+            cim:IdentifiedObject.name      "BP_SD-BO1";
+            eu:BoundaryPoint.ConnectivityNode
+                    <urn:uuid:f738d362-c11c-4ca2-82da-a4fa115b3392>;
+            eu:BoundaryPoint.fromEndIsoCode
+                    "SD";
+            eu:BoundaryPoint.fromEndName   "Bouchala";
+            eu:BoundaryPoint.fromEndNameTso
+                    "TSO-Svedala";
+            eu:BoundaryPoint.isExcludedFromAreaInterchange
+                    false;
+            eu:BoundaryPoint.toEndIsoCode  "BO";
+            eu:BoundaryPoint.toEndName     "Mastania";
+            eu:BoundaryPoint.toEndNameTso  "TSO-Belgovia";
+            eu:IdentifiedObject.energyIdentCodeEic
+                    "10T-EH-PT-10004U";
+            eu:IdentifiedObject.shortName  "BP_SD-BO1" .
+    
+    <urn:uuid:fd0e36b7-817f-4547-9e0f-a07011aecd48>
+            rdf:type                       eu:BoundaryPoint;
+            cim:IdentifiedObject.description
+                    "Boundary point 2 between Svedala (substation name) and Belgovia (substation name) (380kV).";
+            cim:IdentifiedObject.mRID      "fd0e36b7-817f-4547-9e0f-a07011aecd48";
+            cim:IdentifiedObject.name      "BP_SD-BO2";
+            eu:BoundaryPoint.ConnectivityNode
+                    <urn:uuid:b6978550-cb6e-11e1-bcee-406c8f32ef58>;
+            eu:BoundaryPoint.fromEndIsoCode
+                    "SD";
+            eu:BoundaryPoint.fromEndName   "Bouchala2";
+            eu:BoundaryPoint.fromEndNameTso
+                    "TSO-Svedala";
+            eu:BoundaryPoint.isExcludedFromAreaInterchange
+                    false;
+            eu:BoundaryPoint.toEndIsoCode  "BO";
+            eu:BoundaryPoint.toEndName     "Mastania2";
+            eu:BoundaryPoint.toEndNameTso  "TSO-Belgovia";
+            eu:IdentifiedObject.shortName  "BP_SD-BO2" .
+    
+    <urn:uuid:2e08aa26-2719-4b3e-a0eb-a9bd0ddbcae1>
+            rdf:type                       cim:Line;
+            cim:IdentifiedObject.description
+                    "Line BP_SD-BO3";
+            cim:IdentifiedObject.mRID      "2e08aa26-2719-4b3e-a0eb-a9bd0ddbcae1";
+            cim:IdentifiedObject.name      "BP_SD-BO3";
+            cim:Line.Region                <urn:uuid:fbcc6679-6da5-4cfd-b50c-8ce23f450c78>;
+            eu:IdentifiedObject.shortName  "BP_SD-BO3" .
+    
+    <urn:uuid:54a2e470-ef70-443f-ae81-bcf2d117caa3>
+            rdf:type                       cim:Line;
+            cim:IdentifiedObject.description
+                    "Line BP_SD-BO2";
+            cim:IdentifiedObject.mRID      "54a2e470-ef70-443f-ae81-bcf2d117caa3";
+            cim:IdentifiedObject.name      "BP_SD-BO2";
+            cim:Line.Region                <urn:uuid:fbcc6679-6da5-4cfd-b50c-8ce23f450c78>;
+            eu:IdentifiedObject.shortName  "BP_SD-BO2" .
+    
+    <urn:uuid:77ca5612-67a1-4a52-a180-86560777ab4a>
+            rdf:type                       cim:Line;
+            cim:IdentifiedObject.description
+                    "Line BP_SD-BO1";
+            cim:IdentifiedObject.mRID      "77ca5612-67a1-4a52-a180-86560777ab4a";
+            cim:IdentifiedObject.name      "BP_SD-BO1";
+            cim:Line.Region                <urn:uuid:fbcc6679-6da5-4cfd-b50c-8ce23f450c78>;
+            eu:IdentifiedObject.energyIdentCodeEic
+                    "10T-BO-GA-10314U";
+            eu:IdentifiedObject.shortName  "BP_SD-BO1" .
+}

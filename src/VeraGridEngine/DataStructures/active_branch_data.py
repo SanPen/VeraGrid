@@ -134,6 +134,17 @@ class ActiveBranchData:
 
         return data
 
+    def remap(self, bus_map_arr: IntVec) -> None:
+        """
+        Remapping of the branch-controlled bus indices.
+        :param bus_map_arr: array of old-to-new buses
+        """
+        for k in range(self.nelm):
+            if self.is_controlled[k]:
+                bus_idx = self.tap_controlled_buses[k]
+                if bus_idx >= 0:
+                    self.tap_controlled_buses[k] = bus_map_arr[bus_idx]
+
     @property
     def tap(self) -> CxVec:
         """

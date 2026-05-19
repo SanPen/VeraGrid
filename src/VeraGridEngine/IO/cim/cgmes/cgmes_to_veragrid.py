@@ -6,9 +6,11 @@ from __future__ import annotations
 
 from typing import Dict, List, Tuple, Union
 import numpy as np
+import pandas as pd
 import VeraGridEngine.IO.cim.cgmes.cgmes_enums as cgmes_enums
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-from VeraGridEngine.enumerations import CGMESVersions, CgmesTopologyMode, ConverterControlType, ExternalGridMode
+from VeraGridEngine.enumerations import (CGMESVersions, CgmesTopologyMode, ConverterControlType, ExternalGridMode,
+                                         ContingencyOperationTypes)
 import VeraGridEngine.Devices as gcdev
 import VeraGridEngine.IO.cim.cgmes.cgmes_assets.cgmes_2_4_15_assets as cgmes24
 import VeraGridEngine.IO.cim.cgmes.cgmes_assets.cgmes_3_0_0_assets as cgmes30
@@ -38,6 +40,10 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_utils import (get_nominal_voltage,
                                                      extract_base_voltage_value,
                                                      recover_base_voltage_from_container,
                                                      recover_base_voltage_from_topological_node)
+import VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.ncp_contingencies as ncp_contingencies
+import VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.ncp_remedials as ncp_remedials
+import VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.ncp_instructions as ncp_instructions
+import VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid.ncp_availability as ncp_availability
 
 from VeraGridEngine.data_logger import DataLogger
 from VeraGridEngine.enumerations import TapChangerTypes, TapPhaseControl, TapModuleControl, ShuntControlMode
@@ -829,8 +835,8 @@ def ensure_dangling_boundary_bus_and_external_grid(cgmes_line: CGMES_ASSETS,
             device=cgmes_line.rdfid,
             device_class=cgmes_line.tpe,
             device_property='number of associated terminals',
-            value=len(cgmes_terminals),
-            expected_value=2
+            value=str(len(cgmes_terminals)),
+            expected_value="2"
         )
 
     has_existing_external_grid: bool = False
@@ -866,8 +872,8 @@ def log_collapsed_terminal_mapping_warning(logger: DataLogger,
         device=cgmes_elm.rdfid,
         device_class=cgmes_elm.tpe,
         device_property="number of associated terminals",
-        value=raw_count,
-        expected_value=expected_count
+        value=str(raw_count),
+        expected_value=str(expected_count)
     )
 
 
@@ -886,6 +892,564 @@ def get_cgmes_equipment_active_state(cgmes_elm: CGMES_ASSETS,
         active = active and not bool(getattr(cgmes_elm, "open", False))
 
     return active
+
+
+def parse_contingency_equipment_status(contingent_status: str | None,
+                                       logger: DataLogger,
+                                       contingency_equipment: CGMES_ASSETS) -> float | None:
+    """
+    Convert NCP ``contingentStatus`` into VeraGrid contingency ``Active`` value.
+
+    :param contingent_status: NCP contingent status URI/text.
+    :param logger: Data logger.
+    :param contingency_equipment: Source NCP ContingencyEquipment object.
+    :return: Target ``Active`` value:
+             - 0.0 means outage (outOfService)
+             - 1.0 means explicit in-service
+             - None means unsupported status
+    """
+    return ncp_contingencies.parse_contingency_equipment_status(
+        contingent_status=contingent_status,
+        logger=logger,
+        contingency_equipment=contingency_equipment
+    )
+
+
+def build_contingency_device_lookup(gcdev_model: MultiCircuit) -> Dict[str, object]:
+    """
+    Build lookup table for devices that can be targeted by contingencies.
+
+    :param gcdev_model: VeraGrid model.
+    :return: Dictionary keyed by canonical/normalized device idtag.
+    """
+    return ncp_contingencies.build_contingency_device_lookup(gcdev_model=gcdev_model)
+
+
+def get_ncp_contingency_objects(cgmes_model: CgmesCircuit) -> List[CGMES_ASSETS]:
+    """
+    Collect NCP contingency objects from all supported contingency subclasses.
+
+    :param cgmes_model: CGMES model.
+    :return: De-duplicated contingency object list.
+    """
+    return ncp_contingencies.get_ncp_contingency_objects(cgmes_model=cgmes_model)
+
+
+def get_gcdev_contingencies(cgmes_model: CgmesCircuit,
+                            gcdev_model: MultiCircuit,
+                            logger: DataLogger) -> None:
+    """
+    Convert NCP contingencies to VeraGrid ContingencyGroup/Contingency objects.
+
+    Conversion scope:
+        - NCP ``Contingency`` / ``OrdinaryContingency`` / ``ExceptionalContingency`` / ``OutOfRangeContingency``
+        - ``ContingencyEquipment`` references mapped to imported VeraGrid devices
+        - ``contingentStatus`` mapped to Contingency ``Active`` property changes
+
+    :param cgmes_model: CGMES model.
+    :param gcdev_model: VeraGrid model.
+    :param logger: Data logger.
+    :return: Nothing.
+    """
+    ncp_contingencies.get_gcdev_contingencies(
+        cgmes_model=cgmes_model,
+        gcdev_model=gcdev_model,
+        logger=logger
+    )
+
+
+def get_ncp_remedial_action_objects(cgmes_model: CgmesCircuit) -> List[CGMES_ASSETS]:
+    """
+    Collect NCP remedial action objects from supported remedial subclasses.
+
+    :param cgmes_model: CGMES model.
+    :return: De-duplicated remedial action object list.
+    """
+    return ncp_remedials.get_ncp_remedial_action_objects(cgmes_model=cgmes_model)
+
+
+def build_remedial_action_to_contingency_lookup(cgmes_model: CgmesCircuit,
+                                                logger: DataLogger) -> Dict[str, str]:
+    """
+    Build a map from remedial-action UUID to contingency UUID.
+
+    Data sources:
+        - RemedialActionSchedule.Contingency
+        - ContingencyWithRemedialAction relation
+
+    :param cgmes_model: CGMES model.
+    :param logger: Data logger.
+    :return: Dictionary keyed by remedial action UUID with contingency UUID values.
+    """
+    return ncp_remedials.build_remedial_action_to_contingency_lookup(
+        cgmes_model=cgmes_model,
+        logger=logger
+    )
+
+
+def normalize_property_reference_text(property_reference: str | None) -> str:
+    """
+    Normalize an NCP property-reference URI/text.
+
+    :param property_reference: Raw property-reference value.
+    :return: Lower-case normalized string.
+    """
+    return ncp_remedials.normalize_property_reference_text(property_reference=property_reference)
+
+
+def collect_grid_state_range_constraints(grid_state_action: CGMES_ASSETS) -> List[CGMES_ASSETS]:
+    """
+    Collect RangeConstraint references linked to one GridStateAlteration action.
+
+    :param grid_state_action: NCP GridStateAlteration-derived object.
+    :return: List of linked RangeConstraint objects.
+    """
+    return ncp_remedials.collect_grid_state_range_constraints(grid_state_action=grid_state_action)
+
+
+def map_topology_action_to_active_value(topology_action: CGMES_ASSETS,
+                                        logger: DataLogger) -> float | None:
+    """
+    Map an NCP TopologyAction to VeraGrid ``Active`` contingency/remedial value.
+
+    Mapping rules:
+        - Only ``PropertyReference`` ending with ``Switch.open`` is supported.
+        - ``Switch.open`` = 1 means opened switch -> Active = 0.
+        - ``Switch.open`` = 0 means closed switch -> Active = 1.
+        - If no numeric range value is available, default to opened switch.
+
+    :param topology_action: NCP TopologyAction object.
+    :param logger: Data logger.
+    :return: Active value (0.0 or 1.0) or None when unsupported.
+    """
+    return ncp_remedials.map_topology_action_to_active_value(
+        topology_action=topology_action,
+        logger=logger
+    )
+
+
+def get_gcdev_remedial_actions(cgmes_model: CgmesCircuit,
+                               gcdev_model: MultiCircuit,
+                               logger: DataLogger) -> None:
+    """
+    Convert NCP remedial actions to VeraGrid RemedialActionGroup/RemedialAction objects.
+
+    Current conversion scope:
+        - NCP ``GridStateAlterationRemedialAction`` linked through ``TopologyAction``.
+        - ``TopologyAction.Switch`` mapped to VeraGrid target device.
+        - ``PropertyReference`` ``Switch.open`` mapped to VeraGrid ``Active`` property.
+        - Optional linkage to imported contingency groups through RAS / CO-RA relations.
+
+    :param cgmes_model: CGMES model.
+    :param gcdev_model: VeraGrid model.
+    :param logger: Data logger.
+    :return: Nothing.
+    """
+    ncp_remedials.get_gcdev_remedial_actions(
+        cgmes_model=cgmes_model,
+        gcdev_model=gcdev_model,
+        logger=logger
+    )
+
+
+def parse_ncp_time_to_utc_timestamp(raw_time: str | None,
+                                    logger: DataLogger,
+                                    source_object: CGMES_ASSETS | None = None) -> pd.Timestamp | None:
+    """
+    Parse one NCP timestamp string into a UTC pandas timestamp.
+
+    :param raw_time: Serialized datetime text.
+    :param logger: Data logger.
+    :param source_object: Source CGMES object for diagnostics.
+    :return: Parsed UTC timestamp or ``None``.
+    """
+    return ncp_instructions.parse_ncp_time_to_utc_timestamp(
+        raw_time=raw_time,
+        logger=logger,
+        source_object=source_object
+    )
+
+
+def parse_ncp_bool(raw_value: object) -> bool | None:
+    """
+    Parse one NCP boolean candidate value.
+
+    The parser accepts canonical bool values and common string encodings.
+
+    :param raw_value: Raw boolean candidate.
+    :return: Parsed bool or ``None`` when not parseable.
+    """
+    return ncp_availability.parse_ncp_bool(raw_value=raw_value)
+
+
+def collect_ncp_ps_sis_timestamps(cgmes_model: CgmesCircuit,
+                                  logger: DataLogger) -> List[pd.Timestamp]:
+    """
+    Collect every PS/SIS schedule timestamp used for profile initialization.
+
+    :param cgmes_model: CGMES model.
+    :param logger: Data logger.
+    :return: List of parsed UTC timestamps.
+    """
+    return ncp_instructions.collect_ncp_ps_sis_timestamps(
+        cgmes_model=cgmes_model,
+        logger=logger
+    )
+
+
+def collect_ncp_availability_timestamps(cgmes_model: CgmesCircuit,
+                                        logger: DataLogger) -> List[pd.Timestamp]:
+    """
+    Collect availability schedule timestamps from NCP EventTimePoint objects.
+
+    :param cgmes_model: CGMES model.
+    :param logger: Data logger.
+    :return: List of parsed UTC timestamps.
+    """
+    return ncp_instructions.collect_ncp_availability_timestamps(
+        cgmes_model=cgmes_model,
+        logger=logger,
+        parse_time_to_utc_timestamp=parse_ncp_time_to_utc_timestamp
+    )
+
+
+def build_time_index_lookup_from_profile(time_profile: pd.DatetimeIndex) -> Dict[int, int]:
+    """
+    Build nanosecond-timestamp to profile-index lookup for one time profile.
+
+    :param time_profile: Grid time profile.
+    :return: Mapping from nanoseconds since epoch to profile index.
+    """
+    return ncp_instructions.build_time_index_lookup_from_profile(time_profile=time_profile)
+
+
+def get_first_resolved_cgmes_reference(reference: object) -> object | None:
+    """
+    Resolve the first object reference from a CGMES property.
+
+    Many CGMES relationships can be single references or lists of references
+    after profile merge. This helper normalizes both forms into one resolved
+    object for deterministic conversion logic.
+
+    :param reference: Raw CGMES relation value.
+    :return: First resolved object reference or ``None``.
+    """
+    return ncp_instructions.get_first_resolved_cgmes_reference(reference=reference)
+
+
+def get_resolved_cgmes_reference_list(reference: object) -> List[object]:
+    """
+    Resolve every object reference from one CGMES relation field.
+
+    CGMES relation fields can contain one object, a list of objects, unresolved
+    strings, or ``None``. This helper returns only resolved object references and
+    keeps deterministic order for stable conversion behavior.
+
+    :param reference: Raw CGMES relation value.
+    :return: List of resolved object references.
+    """
+    return ncp_availability.get_resolved_cgmes_reference_list(reference=reference)
+
+
+def get_first_resolved_cgmes_reference_uuid(reference: object) -> str | None:
+    """
+    Resolve the first object UUID from a CGMES property.
+
+    :param reference: Raw CGMES relation value.
+    :return: UUID of the first resolved object or ``None``.
+    """
+    return ncp_instructions.get_first_resolved_cgmes_reference_uuid(reference=reference)
+
+
+def ensure_ncp_instruction_time_profile(gcdev_model: MultiCircuit,
+                                        timestamps: List[pd.Timestamp],
+                                        logger: DataLogger) -> Dict[int, int]:
+    """
+    Ensure VeraGrid time profile exists for PS/SIS instructions and return index lookup.
+
+    :param gcdev_model: VeraGrid model.
+    :param timestamps: Collected PS/SIS timestamps.
+    :param logger: Data logger.
+    :return: Nanosecond-timestamp to profile-index mapping.
+    """
+    return ncp_instructions.ensure_ncp_instruction_time_profile(
+        gcdev_model=gcdev_model,
+        timestamps=timestamps,
+        logger=logger
+    )
+
+
+def build_ncp_instruction_device_lookup(cgmes_model: CgmesCircuit,
+                                        gcdev_model: MultiCircuit) -> Dict[str, object]:
+    """
+    Build a device lookup used by PS/SIS/SSI conversions.
+
+    Lookup keys include:
+        - Direct CGMES equipment UUIDs.
+        - GeneratingUnit UUID mapped to imported synchronous-machine generator device.
+        - RegulatingControl UUID mapped to the controlled equipment device.
+        - TapChanger UUID mapped to imported transformer device.
+
+    :param cgmes_model: CGMES model.
+    :param gcdev_model: VeraGrid model.
+    :return: Device lookup dictionary.
+    """
+    return ncp_instructions.build_ncp_instruction_device_lookup(
+        cgmes_model=cgmes_model,
+        gcdev_model=gcdev_model
+    )
+
+
+def resolve_power_schedule_target_devices(power_schedule: CGMES_ASSETS,
+                                          device_lookup: Dict[str, object]) -> List[object]:
+    """
+    Resolve target VeraGrid devices for one PowerSchedule object.
+
+    :param power_schedule: NCP PowerSchedule object.
+    :param device_lookup: CGMES UUID to VeraGrid device lookup.
+    :return: Ordered unique list of target devices.
+    """
+    return ncp_instructions.resolve_power_schedule_target_devices(
+        power_schedule=power_schedule,
+        device_lookup=device_lookup
+    )
+
+
+def extract_grid_state_action_setpoint_value(grid_state_action: CGMES_ASSETS) -> float | None:
+    """
+    Extract the first numeric setpoint candidate from action range constraints.
+
+    Priority:
+        1. ``RangeConstraint.value``
+        2. ``RangeConstraint.normalValue``
+
+    :param grid_state_action: NCP GridStateAlteration-derived action.
+    :return: Numeric setpoint candidate or ``None``.
+    """
+    return ncp_instructions.extract_grid_state_action_setpoint_value(grid_state_action=grid_state_action)
+
+
+def resolve_grid_state_action_target_device(grid_state_action: CGMES_ASSETS,
+                                            device_lookup: Dict[str, object],
+                                            logger: DataLogger) -> object | None:
+    """
+    Resolve one VeraGrid target device for a GridStateAlteration action.
+
+    :param grid_state_action: NCP action object.
+    :param device_lookup: CGMES UUID to VeraGrid device lookup.
+    :param logger: Data logger.
+    :return: Target device or ``None``.
+    """
+    return ncp_instructions.resolve_grid_state_action_target_device(
+        grid_state_action=grid_state_action,
+        device_lookup=device_lookup,
+        logger=logger
+    )
+
+
+def get_action_property_and_value(grid_state_action: CGMES_ASSETS,
+                                  logger: DataLogger) -> Tuple[str | None, float | bool | None]:
+    """
+    Map one GridStateAlteration action to VeraGrid property/value pair.
+
+    :param grid_state_action: NCP action object.
+    :param logger: Data logger.
+    :return: Tuple (property_name, property_value) where each entry may be ``None``.
+    """
+    return ncp_instructions.get_action_property_and_value(
+        grid_state_action=grid_state_action,
+        logger=logger
+    )
+
+
+def set_device_property_at_time(target_device: object,
+                                property_name: str,
+                                property_value: float | bool,
+                                time_index: int | None,
+                                source_action: CGMES_ASSETS,
+                                logger: DataLogger) -> bool:
+    """
+    Set one VeraGrid property value for snapshot or profile time index.
+
+    :param target_device: VeraGrid device.
+    :param property_name: VeraGrid property name.
+    :param property_value: Property value to set.
+    :param time_index: Time index or ``None`` for snapshot.
+    :param source_action: Source CGMES action.
+    :param logger: Data logger.
+    :return: ``True`` when assignment succeeded.
+    """
+    return ncp_instructions.set_device_property_at_time(
+        target_device=target_device,
+        property_name=property_name,
+        property_value=property_value,
+        time_index=time_index,
+        source_action=source_action,
+        logger=logger
+    )
+
+
+def apply_power_schedule_profiles(cgmes_model: CgmesCircuit,
+                                  gcdev_model: MultiCircuit,
+                                  device_lookup: Dict[str, object],
+                                  time_index_lookup: Dict[int, int],
+                                  logger: DataLogger) -> int:
+    """
+    Apply NCP PowerSchedule (PS) setpoints into VeraGrid profiles.
+
+    :param cgmes_model: CGMES model.
+    :param gcdev_model: VeraGrid model.
+    :param device_lookup: CGMES UUID to VeraGrid device lookup.
+    :param time_index_lookup: Timestamp-ns to profile-index lookup.
+    :param logger: Data logger.
+    :return: Number of successful profile assignments.
+    """
+    return ncp_instructions.apply_power_schedule_profiles(
+        cgmes_model=cgmes_model,
+        gcdev_model=gcdev_model,
+        device_lookup=device_lookup,
+        time_index_lookup=time_index_lookup,
+        logger=logger
+    )
+
+
+def apply_sis_profiles(cgmes_model: CgmesCircuit,
+                       device_lookup: Dict[str, object],
+                       time_index_lookup: Dict[int, int],
+                       logger: DataLogger) -> int:
+    """
+    Apply StateInstructionSchedule (SIS) time-point actions into VeraGrid profiles.
+
+    :param cgmes_model: CGMES model.
+    :param device_lookup: CGMES UUID to VeraGrid device lookup.
+    :param time_index_lookup: Timestamp-ns to profile-index lookup.
+    :param logger: Data logger.
+    :return: Number of successful profile assignments.
+    """
+    return ncp_instructions.apply_sis_profiles(
+        cgmes_model=cgmes_model,
+        device_lookup=device_lookup,
+        time_index_lookup=time_index_lookup,
+        logger=logger
+    )
+
+
+def apply_ssi_profiles(cgmes_model: CgmesCircuit,
+                       gcdev_model: MultiCircuit,
+                       device_lookup: Dict[str, object],
+                       logger: DataLogger) -> int:
+    """
+    Apply SteadyStateInstruction (SSI) actions as baseline snapshot/profile values.
+
+    :param cgmes_model: CGMES model.
+    :param gcdev_model: VeraGrid model.
+    :param device_lookup: CGMES UUID to VeraGrid device lookup.
+    :param logger: Data logger.
+    :return: Number of successful assignments.
+    """
+    return ncp_instructions.apply_ssi_profiles(
+        cgmes_model=cgmes_model,
+        gcdev_model=gcdev_model,
+        device_lookup=device_lookup,
+        logger=logger
+    )
+
+
+def get_event_time_point_sort_key(event_point: Tuple[pd.Timestamp, bool]) -> int:
+    """
+    Get sorting key for one event time point tuple.
+
+    :param event_point: Tuple with timestamp and active state.
+    :return: Nanoseconds since epoch used for chronological sorting.
+    """
+    return ncp_availability.get_event_time_point_sort_key(event_point=event_point)
+
+
+def build_event_schedule_timepoints_lookup(cgmes_model: CgmesCircuit) -> Dict[str, List[CGMES_ASSETS]]:
+    """
+    Build EventSchedule UUID to EventTimePoint list mapping.
+
+    :param cgmes_model: CGMES model.
+    :return: Dictionary keyed by EventSchedule UUID.
+    """
+    return ncp_availability.build_event_schedule_timepoints_lookup(
+        cgmes_model=cgmes_model,
+        get_first_resolved_reference=get_first_resolved_cgmes_reference
+    )
+
+
+def build_availability_schedule_status_map(time_profile: pd.DatetimeIndex,
+                                           schedule_time_points: List[Tuple[pd.Timestamp, bool]]) -> np.ndarray:
+    """
+    Build one boolean availability map over the complete VeraGrid time profile.
+
+    The resulting array is piecewise constant and starts as available. Every
+    event point updates the current availability state from its timestamp
+    onwards.
+
+    :param time_profile: VeraGrid global time profile.
+    :param schedule_time_points: Ordered list of (timestamp, is_active) events.
+    :return: Boolean array where ``True`` means available.
+    """
+    return ncp_availability.build_availability_schedule_status_map(
+        time_profile=time_profile,
+        schedule_time_points=schedule_time_points
+    )
+
+
+def apply_ncp_availability_profiles(cgmes_model: CgmesCircuit,
+                                    gcdev_model: MultiCircuit,
+                                    device_lookup: Dict[str, object],
+                                    logger: DataLogger) -> int:
+    """
+    Apply NCP ER/AVS availability schedules as VeraGrid ``active`` profile gates.
+
+    Mapping policy:
+        - ``AvailabilityEquipment`` is converted.
+        - ``ActualSchedule`` is preferred over ``PlannedSchedule``.
+        - Only unavailable states are enforced (``active=0``); available states
+          do not force ``active=1`` to avoid overriding SIS/topology controls.
+
+    :param cgmes_model: CGMES model.
+    :param gcdev_model: VeraGrid model.
+    :param device_lookup: CGMES UUID to VeraGrid device lookup.
+    :param logger: Data logger.
+    :return: Number of successful ``active`` assignments.
+    """
+    return ncp_availability.apply_ncp_availability_profiles(
+        cgmes_model=cgmes_model,
+        gcdev_model=gcdev_model,
+        device_lookup=device_lookup,
+        logger=logger,
+        get_first_resolved_reference=get_first_resolved_cgmes_reference,
+        parse_time_to_utc_timestamp=parse_ncp_time_to_utc_timestamp,
+        set_device_property_at_time=set_device_property_at_time
+    )
+
+
+def get_gcdev_ncp_ps_sis_ssi_instructions(cgmes_model: CgmesCircuit,
+                                          gcdev_model: MultiCircuit,
+                                          logger: DataLogger) -> None:
+    """
+    Convert NCP PS/SIS/SSI instructions into VeraGrid time profiles and setpoints.
+
+    The algorithm has four explicit stages:
+
+        1. Collect PS/SIS + availability timestamps and allocate the global VeraGrid time profile.
+        2. Apply SSI as baseline instruction (snapshot + full profile baseline when profile exists).
+        3. Apply ER/AVS availability gates over active profiles.
+        4. Apply PS and SIS point-in-time instructions onto that profile.
+
+    :param cgmes_model: CGMES model.
+    :param gcdev_model: VeraGrid model.
+    :param logger: Data logger.
+    :return: Nothing.
+    """
+    ncp_instructions.get_gcdev_ncp_ps_sis_ssi_instructions(
+        cgmes_model=cgmes_model,
+        gcdev_model=gcdev_model,
+        logger=logger
+    )
 
 
 def derive_switch_bus_pair(calc_nodes: List[gcdev.Bus],
@@ -1164,8 +1728,8 @@ def get_gcdev_buses(cgmes_model: CgmesCircuit,
                         device=cn_elm.rdfid,
                         device_class=cn_elm.tpe,
                         device_property="nominalVoltage",
-                        value=None,
-                        expected_value=recovered_voltage
+                        value="None",
+                        expected_value=str(recovered_voltage)
                     )
                 else:
                     logger.add_warning(
@@ -1173,8 +1737,8 @@ def get_gcdev_buses(cgmes_model: CgmesCircuit,
                         device=cn_elm.rdfid,
                         device_class=cn_elm.tpe,
                         device_property="nominalVoltage",
-                        value=None,
-                        expected_value=recovered_voltage
+                        value="None",
+                        expected_value=str(recovered_voltage)
                     )
                 nominal_voltage = recovered_voltage
 
@@ -1628,7 +2192,13 @@ def get_gcdev_vsc_converters(cgmes_model: CgmesCircuit,
     TopologicalNode_tpe = cgmes_model.cgmes_assets.class_dict.get("TopologicalNode")
     DCTopologicalNode_tpe = cgmes_model.cgmes_assets.class_dict.get("DCTopologicalNode")
 
-    for cgmes_elm in cgmes_model.cgmes_assets.VsConverter_list:
+    converter_objects: List[CGMES_ASSETS] = list()
+    for vs_converter in cgmes_model.cgmes_assets.VsConverter_list:
+        converter_objects.append(vs_converter)
+    for cs_converter in cgmes_model.cgmes_assets.CsConverter_list:
+        converter_objects.append(cs_converter)
+
+    for cgmes_elm in converter_objects:
 
         bus_dc = find_associated_buses(cgmes_elm=cgmes_elm,
                                        device_to_terminal_dict=dc_device_to_terminal_dict,
@@ -1662,6 +2232,12 @@ def get_gcdev_vsc_converters(cgmes_model: CgmesCircuit,
 
         if len(bus_dc_resolved) == 1 and len(bus_ac_resolved) == 1:
 
+            converter_p_raw: object = getattr(cgmes_elm, "p", 0.0)
+            if isinstance(converter_p_raw, (int, float)):
+                converter_p: float = float(converter_p_raw)
+            else:
+                converter_p = 0.0
+
             gcdev_elm = gcdev.VSC(
                 bus_from=bus_dc_resolved[0],
                 bus_to=bus_ac_resolved[0],
@@ -1673,7 +2249,7 @@ def get_gcdev_vsc_converters(cgmes_model: CgmesCircuit,
                 # alpha2 = 0.015,
                 # alpha3 = 0.2,
                 control1=ConverterControlType.Pdc,
-                control1_val=cgmes_elm.p,
+                control1_val=converter_p,
                 control2=ConverterControlType.Vm_dc,
                 control2_val=1.0,
             )
@@ -1681,14 +2257,14 @@ def get_gcdev_vsc_converters(cgmes_model: CgmesCircuit,
             gcdev_model.add_vsc(gcdev_elm)
 
         else:
-            logger.add_error(msg='VSC has to have one AC and one DC terminal',
+            logger.add_error(msg='Converter has to have one AC and one DC terminal',
                              device=cgmes_elm.rdfid,
                              device_class=cgmes_elm.tpe,
                              device_property="number of associated terminals",
                              value=(f"dc_raw={len(bus_dc)}, dc_unique={len(bus_dc_unique)}, "
                                     f"ac_raw={len(bus_ac)}, ac_unique={len(bus_ac_unique)}"),
                              expected_value=1,
-                             comment="Import VSC from CGMES")
+                             comment="Import VSC-equivalent converter from CGMES")
 
     return
 
@@ -1736,23 +2312,24 @@ def get_gcdev_hvdc_from_dcline_and_vscs(
                        for device, term in dc_device_to_terminal_dict.items()
                        if term[0] in dc_terminals]
 
-        vsc_list = [vsc
-                    for vsc in cgmes_model.cgmes_assets.VsConverter_list
-                    if vsc.uuid in device_list]
+        converter_list = [converter
+                          for converter in (list(cgmes_model.cgmes_assets.VsConverter_list)
+                                            + list(cgmes_model.cgmes_assets.CsConverter_list))
+                          if converter.uuid in device_list]
 
         # ONLY one line + two converters structure can be simplified
-        if len(vsc_list) != 2:
-            logger.add_info(msg='Not exactly two VSCs for DCLine(Segment)! cannot be simplified',
+        if len(converter_list) != 2:
+            logger.add_info(msg='Not exactly two converters for DCLine(Segment)! cannot be simplified',
                             device=dc_line_sgm.rdfid,
                             device_class=dc_line_sgm.tpe,
-                            device_property="number of connected VSConverters",
-                            value=len(vsc_list),
+                            device_property="number of connected converters",
+                            value=len(converter_list),
                             expected_value=2,
                             comment="get_gcdev_hvdc_from_dcline_and_vscs")
 
         else:
             # bus_from: AC side of VSC 1
-            bus_from = find_associated_buses(cgmes_elm=vsc_list[0],
+            bus_from = find_associated_buses(cgmes_elm=converter_list[0],
                                              device_to_terminal_dict=device_to_terminal_dict,
                                              bus_dict=bus_dict,
                                              TopologicalNode_tpe=TopologicalNode_tpe,
@@ -1761,7 +2338,7 @@ def get_gcdev_hvdc_from_dcline_and_vscs(
                                              cgmes_version=cgmes_model.cgmes_version)
 
             # bus_to: AC side of VSC 2
-            bus_to = find_associated_buses(cgmes_elm=vsc_list[1],
+            bus_to = find_associated_buses(cgmes_elm=converter_list[1],
                                            device_to_terminal_dict=device_to_terminal_dict,
                                            bus_dict=bus_dict,
                                            TopologicalNode_tpe=TopologicalNode_tpe,
@@ -1780,12 +2357,12 @@ def get_gcdev_hvdc_from_dcline_and_vscs(
 
             if bus_from_collapsed:
                 log_collapsed_terminal_mapping_warning(logger=logger,
-                                                       cgmes_elm=vsc_list[0],
+                                                       cgmes_elm=converter_list[0],
                                                        raw_count=len(bus_from),
                                                        expected_count=1)
             if bus_to_collapsed:
                 log_collapsed_terminal_mapping_warning(logger=logger,
-                                                       cgmes_elm=vsc_list[1],
+                                                       cgmes_elm=converter_list[1],
                                                        raw_count=len(bus_to),
                                                        expected_count=1)
 
@@ -1802,21 +2379,35 @@ def get_gcdev_hvdc_from_dcline_and_vscs(
                 )
                 continue
 
-            rated_udc = getattr(vsc_list[0], 'ratedUdc', None)
+            rated_udc = getattr(converter_list[0], 'ratedUdc', None)
             if rated_udc is None:
                 rated_udc = 200.0
 
-            Vset_f = vsc_list[0].targetUpcc / bus_from_resolved[0].Vnom  # if not found, 1.0 p.u.
+            target_upcc_f: object = getattr(converter_list[0], 'targetUpcc', bus_from_resolved[0].Vnom)
+            if isinstance(target_upcc_f, (int, float)):
+                Vset_f = float(target_upcc_f) / bus_from_resolved[0].Vnom
+            else:
+                Vset_f = 1.0
             if Vset_f > 1.1:
                 Vset_f = 1.1
             elif Vset_f < 0.9:
                 Vset_f = 0.9
 
-            Vset_t = vsc_list[1].targetUpcc / bus_to_resolved[0].Vnom
+            target_upcc_t: object = getattr(converter_list[1], 'targetUpcc', bus_to_resolved[0].Vnom)
+            if isinstance(target_upcc_t, (int, float)):
+                Vset_t = float(target_upcc_t) / bus_to_resolved[0].Vnom
+            else:
+                Vset_t = 1.0
             if Vset_t > 1.1:
                 Vset_t = 1.1
             elif Vset_t < 0.9:
                 Vset_t = 0.9
+
+            converter_p_raw: object = getattr(converter_list[0], "p", 0.0)
+            if isinstance(converter_p_raw, (int, float)):
+                converter_p: float = abs(float(converter_p_raw))
+            else:
+                converter_p = 0.0
 
             gcdev_elm = gcdev.HvdcLine(
                 bus_from=bus_from_resolved[0],
@@ -1825,7 +2416,7 @@ def get_gcdev_hvdc_from_dcline_and_vscs(
                 idtag=dc_line_sgm.uuid,
                 code=dc_line_sgm.description,
                 active=get_cgmes_equipment_active_state(dc_line_sgm),
-                Pset=abs(vsc_list[0].p),  # power of the VS converter
+                Pset=converter_p,  # power of the converter
                 # rate=rate,
                 # rate of DCLine? or ratedP of Converter?
                 # no Limit for DC terminal in XML
@@ -3790,6 +4381,19 @@ def get_gcdev_switches(cgmes_model: CgmesCircuit,
                     retained=cgmes_elm.retained,
                     normal_open=cgmes_elm.normalOpen
                 )
+                # Keep CGMES "retained" as metadata, but force switches reducible
+                # so VeraGrid always solves topology internally from switch states.
+                gcdev_elm.reducible = True
+
+                if cgmes_elm.retained:
+                    logger.add_warning(
+                        msg='CGMES Switch.retained is preserved as metadata but ignored for topology reduction; switch forced reducible.',
+                        device=cgmes_elm.rdfid,
+                        device_class=cgmes_elm.tpe,
+                        device_property='retained',
+                        value=True,
+                        expected_value='metadata-only'
+                    )
 
                 gcdev_model.add_switch(gcdev_elm)
             else:
@@ -4371,6 +4975,21 @@ def cgmes_to_veragrid(cgmes_model: CgmesCircuit,
             device_to_terminal_dict=device_to_terminal_dict,
             logger=logger,
         )
+
+    # NCP contingencies are converted only after all candidate target devices exist.
+    get_gcdev_contingencies(cgmes_model=cgmes_model,
+                            gcdev_model=gc_model,
+                            logger=logger)
+
+    # NCP remedial actions are converted after contingencies so linkage can point to contingency groups.
+    get_gcdev_remedial_actions(cgmes_model=cgmes_model,
+                               gcdev_model=gc_model,
+                               logger=logger)
+
+    # NCP PS/SIS/SSI instructions are converted after all target devices exist.
+    get_gcdev_ncp_ps_sis_ssi_instructions(cgmes_model=cgmes_model,
+                                          gcdev_model=gc_model,
+                                          logger=logger)
 
     cgmes_model.emit_progress(100)
     cgmes_model.emit_text("Cgmes import done!")

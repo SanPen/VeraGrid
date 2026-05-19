@@ -256,18 +256,18 @@ def get_simple_multilinear_generator_reference_template(
     gen_te = find_name_in_block(f"Te_{gen_mdl.name}", gen_mdl)
     gen_omega = find_name_in_block(f"omega_{gen_mdl.name}", gen_mdl)
 
-    gen_mdl.connect([gen_mdl.in_vars[4]], [exciter_mdl.out_vars[0]])
-    exciter_mdl.connect([exciter_mdl.in_vars[0]], [gen_i_f])
-    exciter_mdl.connect([exciter_mdl.in_vars[1]], [gen_mdl.in_vars[0]])
-    exciter_mdl.connect([exciter_mdl.in_vars[2]], [gen_mdl.in_vars[1]])
-    exciter_mdl.connect([exciter_mdl.in_vars[3]], [gen_mdl.in_vars[2]])
-    exciter_mdl.connect([exciter_mdl.in_vars[4]], [stabilizer_mdl.out_vars[0]])
+    vf.add_connections([gen_mdl.in_vars[4]], [exciter_mdl.out_vars[0]])
+    vf.add_connections([exciter_mdl.in_vars[0]], [gen_i_f])
+    vf.add_connections([exciter_mdl.in_vars[1]], [gen_mdl.in_vars[0]])
+    vf.add_connections([exciter_mdl.in_vars[2]], [gen_mdl.in_vars[1]])
+    vf.add_connections([exciter_mdl.in_vars[3]], [gen_mdl.in_vars[2]])
+    vf.add_connections([exciter_mdl.in_vars[4]], [stabilizer_mdl.out_vars[0]])
 
-    stabilizer_mdl.connect([stabilizer_mdl.in_vars[0]], [gen_omega])
+    vf.add_connections([stabilizer_mdl.in_vars[0]], [gen_omega])
 
-    gen_mdl.connect([gen_mdl.in_vars[3]], [governor_mdl.out_vars[0]])
-    governor_mdl.connect([governor_mdl.in_vars[0]], [gen_omega])
-    governor_mdl.connect([governor_mdl.in_vars[1]], [gen_te])
+    vf.add_connections([gen_mdl.in_vars[3]], [governor_mdl.out_vars[0]])
+    vf.add_connections([governor_mdl.in_vars[0]], [gen_omega])
+    vf.add_connections([governor_mdl.in_vars[1]], [gen_te])
 
     templ.block.children.append(gen_mdl)
     templ.block.children.append(governor_mdl)

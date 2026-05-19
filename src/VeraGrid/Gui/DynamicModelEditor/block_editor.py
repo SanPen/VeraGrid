@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'block_editor.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.11.0
+## Created by: Qt User Interface Compiler version 6.7.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -52,6 +52,16 @@ class Ui_BlockEditorWindow(object):
         icon3.addFile(u":/Icons/icons/zoom_out.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.actionZoom_out.setIcon(icon3)
         self.actionZoom_out.setMenuRole(QAction.MenuRole.NoRole)
+        self.actionSave_block_to_my_catalogue = QAction(BlockEditorWindow)
+        self.actionSave_block_to_my_catalogue.setObjectName(u"actionSave_block_to_my_catalogue")
+        icon4 = QIcon(QIcon.fromTheme(QIcon.ThemeIcon.DocumentSaveAs))
+        self.actionSave_block_to_my_catalogue.setIcon(icon4)
+        self.actionSave_block_to_my_catalogue.setMenuRole(QAction.MenuRole.NoRole)
+        self.actionExport_block = QAction(BlockEditorWindow)
+        self.actionExport_block.setObjectName(u"actionExport_block")
+        icon5 = QIcon(QIcon.fromTheme(QIcon.ThemeIcon.DocumentSave))
+        self.actionExport_block.setIcon(icon5)
+        self.actionExport_block.setMenuRole(QAction.MenuRole.NoRole)
         self.centralwidget = QWidget(BlockEditorWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
@@ -78,6 +88,7 @@ class Ui_BlockEditorWindow(object):
         self.toolBox.setObjectName(u"toolBox")
         self.page_7 = QWidget()
         self.page_7.setObjectName(u"page_7")
+        self.page_7.setGeometry(QRect(0, 0, 459, 318))
         self.verticalLayout_13 = QVBoxLayout(self.page_7)
         self.verticalLayout_13.setObjectName(u"verticalLayout_13")
         self.verticalLayout_13.setContentsMargins(0, 0, 0, 0)
@@ -110,7 +121,7 @@ class Ui_BlockEditorWindow(object):
         self.toolBox.addItem(self.page_7, u"Library")
         self.page = QWidget()
         self.page.setObjectName(u"page")
-        self.page.setGeometry(QRect(0, 0, 554, 285))
+        self.page.setGeometry(QRect(0, 0, 459, 318))
         self.verticalLayout_7 = QVBoxLayout(self.page)
         self.verticalLayout_7.setObjectName(u"verticalLayout_7")
         self.verticalLayout_7.setContentsMargins(0, 0, 0, 0)
@@ -123,7 +134,7 @@ class Ui_BlockEditorWindow(object):
         self.toolBox.addItem(self.page, u"Variables")
         self.page_2 = QWidget()
         self.page_2.setObjectName(u"page_2")
-        self.page_2.setGeometry(QRect(0, 0, 554, 285))
+        self.page_2.setGeometry(QRect(0, 0, 459, 318))
         self.verticalLayout_8 = QVBoxLayout(self.page_2)
         self.verticalLayout_8.setObjectName(u"verticalLayout_8")
         self.verticalLayout_8.setContentsMargins(0, 0, 0, 0)
@@ -136,7 +147,7 @@ class Ui_BlockEditorWindow(object):
         self.toolBox.addItem(self.page_2, u"Parameters")
         self.page_3 = QWidget()
         self.page_3.setObjectName(u"page_3")
-        self.page_3.setGeometry(QRect(0, 0, 554, 285))
+        self.page_3.setGeometry(QRect(0, 0, 459, 318))
         self.verticalLayout_9 = QVBoxLayout(self.page_3)
         self.verticalLayout_9.setObjectName(u"verticalLayout_9")
         self.verticalLayout_9.setContentsMargins(0, 0, 0, 0)
@@ -203,7 +214,7 @@ class Ui_BlockEditorWindow(object):
         BlockEditorWindow.setCentralWidget(self.centralwidget)
         self.menuBar = QMenuBar(BlockEditorWindow)
         self.menuBar.setObjectName(u"menuBar")
-        self.menuBar.setGeometry(QRect(0, 0, 957, 33))
+        self.menuBar.setGeometry(QRect(0, 0, 957, 23))
         BlockEditorWindow.setMenuBar(self.menuBar)
         self.toolBar = QToolBar(BlockEditorWindow)
         self.toolBar.setObjectName(u"toolBar")
@@ -216,12 +227,15 @@ class Ui_BlockEditorWindow(object):
         self.toolBar.addAction(self.actionCenter)
         self.toolBar.addAction(self.actionZoom_out)
         self.toolBar.addAction(self.actionZoom_in)
+        self.toolBar.addAction(self.actionSave_block_to_my_catalogue)
+        self.toolBar.addAction(self.actionExport_block)
 
         self.retranslateUi(BlockEditorWindow)
 
         self.toolBox.setCurrentIndex(0)
 
 
+        QMetaObject.connectSlotsByName(BlockEditorWindow)
     # setupUi
 
     def retranslateUi(self, BlockEditorWindow):
@@ -230,6 +244,14 @@ class Ui_BlockEditorWindow(object):
         self.actionCenter.setText(QCoreApplication.translate("BlockEditorWindow", u"Center", None))
         self.actionZoom_in.setText(QCoreApplication.translate("BlockEditorWindow", u"Zoom in", None))
         self.actionZoom_out.setText(QCoreApplication.translate("BlockEditorWindow", u"Zoom out", None))
+        self.actionSave_block_to_my_catalogue.setText(QCoreApplication.translate("BlockEditorWindow", u"Save block to my catalogue", None))
+#if QT_CONFIG(tooltip)
+        self.actionSave_block_to_my_catalogue.setToolTip(QCoreApplication.translate("BlockEditorWindow", u"Save block to my catalogue", None))
+#endif // QT_CONFIG(tooltip)
+        self.actionExport_block.setText(QCoreApplication.translate("BlockEditorWindow", u"Export block", None))
+#if QT_CONFIG(tooltip)
+        self.actionExport_block.setToolTip(QCoreApplication.translate("BlockEditorWindow", u"Export block", None))
+#endif // QT_CONFIG(tooltip)
         self.librarySearchButton.setText(QCoreApplication.translate("BlockEditorWindow", u"...", None))
         self.librarySearchLineEdit.setPlaceholderText(QCoreApplication.translate("BlockEditorWindow", u"Search basic blocks", None))
         self.toolBox.setItemText(self.toolBox.indexOf(self.page_7), QCoreApplication.translate("BlockEditorWindow", u"Library", None))

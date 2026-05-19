@@ -299,7 +299,7 @@ def get_grounding_link_emt_template(
     current_var: Var = vf.add_var(name=f"i_N_{name}", reference=VarPowerFlowRefferenceType.i_N)
     ground_node_var: Var = vf.add_var(name=f"v_gnd_{name}")
     ground_template: EmtModelTemplate = get_ground_emt_template(vf=vf, name=name + "_ground")
-    ground_template.block.connect(ground_template.block.in_vars, [ground_node_var])
+    vf.add_connections(ground_template.block.in_vars, [ground_node_var])
     ground_current_var: Var = ground_template.block.out_vars[0]
     voltage_drop: Expr = node_voltage_var - ground_node_var
     current_expr: Expr = current_var
@@ -579,7 +579,7 @@ def wrap_ground_referenced_load_emt_template(
             nested=True,
             name=name + "_grounding_link",
         )
-        grounding_link_template.block.connect(grounding_link_template.block.in_vars, [neutral_voltage_var])
+        vf.add_connections(grounding_link_template.block.in_vars, [neutral_voltage_var])
         ground_current_var = grounding_link_template.block.out_vars[0]
         grounding_link_block = grounding_link_template.block
         wrapped_template.block.add(grounding_link_block)
@@ -1431,7 +1431,7 @@ def get_shunt_rlc_combo_emt_template(
             nested=True,
             name=name + "_grounding_link",
         )
-        grounding_link_template.block.connect(grounding_link_template.block.in_vars, [neutral_voltage_var])
+        vf.add_connections(grounding_link_template.block.in_vars, [neutral_voltage_var])
         ground_current_var = grounding_link_template.block.out_vars[0]
         grounding_link_block = grounding_link_template.block
         templ.block.add(grounding_link_block)

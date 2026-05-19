@@ -196,6 +196,10 @@ class GeneratorData:
             new_i = bus_map_arr[i]
             self.bus_idx[k] = new_i
 
+            control_bus_idx = self.controllable_bus_idx[k]
+            if control_bus_idx >= 0:
+                self.controllable_bus_idx[k] = bus_map_arr[control_bus_idx]
+
     def size(self) -> int:
         """
         Get size of the structure

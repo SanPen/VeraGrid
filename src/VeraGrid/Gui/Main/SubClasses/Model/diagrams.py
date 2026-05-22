@@ -2888,13 +2888,23 @@ class DiagramsMain(CompiledArraysMain):
                 if rms_events_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
 
                     events_data = rms_events_dialog.get_data()
-                    events_list = []
+                    events_list = list()
                     for i, event in enumerate(events_data["parameters"]):
+                        transition_type = events_data["transition_types"][i]
+                        end_time = events_data["end_times"][i]
+
+                        if transition_type == DynamicEventTransitionType.Ramp and end_time is None:
+                            end_time = float(events_data["target_times"][i])
+                        else:
+                            pass
+
                         events_list.append(dev.RmsEvent(device=target_device,
-                                                        parameter=events_data["parameters"][i],
-                                                        time=float(events_data["target_times"][i]),
-                                                        value=float(events_data["values"][i]),
-                                                        group=events_data["groups"][i]))
+                                                         parameter=events_data["parameters"][i],
+                                                         time=float(events_data["target_times"][i]),
+                                                         end_time=None if end_time is None else float(end_time),
+                                                         value=float(events_data["values"][i]),
+                                                         group=events_data["groups"][i],
+                                                         transition_type=transition_type))
 
                     for event in events_list:
                         self.circuit.add_rms_event(event)

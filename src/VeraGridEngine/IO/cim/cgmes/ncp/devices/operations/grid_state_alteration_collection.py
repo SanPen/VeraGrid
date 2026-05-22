@@ -20,9 +20,9 @@ if TYPE_CHECKING:
 class GridStateAlterationCollection(IdentifiedObject):
     """NCP CGMES extension class."""
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='AvailabilitySchedule', class_type='AvailabilitySchedule', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.ER, CgmesProfileType.AVS, CgmesProfileType.GD]),
-        CgmesProperty(property_name='GridStateAlteration', class_type='GridStateAlteration', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.ER, CgmesProfileType.AVS, CgmesProfileType.GD]),
-        CgmesProperty(property_name='StageAction', class_type='Stage', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.ER, CgmesProfileType.AVS, CgmesProfileType.GD]),
+        CgmesProperty(property_name='AvailabilitySchedule', class_type='AvailabilitySchedule', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.AVS]),
+        CgmesProperty(property_name='GridStateAlteration', class_type='GridStateAlteration', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.RA]),
+        CgmesProperty(property_name='StageAction', class_type='Stage', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.RA]),
     )
     __slots__ = ('AvailabilitySchedule', 'GridStateAlteration', 'StageAction')
 

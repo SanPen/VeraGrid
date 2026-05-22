@@ -20,8 +20,8 @@ class BaseCaseCurrentLimitSchedule(BaseIrregularTimeSeries):
     :ivar tpe: CIM type name inherited from the base class.
     """
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='BaseCaseCurrentLimit', class_type='BaseCaseCurrentLimit', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SIS]),
-        CgmesProperty(property_name='BaseCaseCurrentLimitTimePoint', class_type='BaseCaseCurrentLimitTimePoint', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SIS]),
+        CgmesProperty(property_name='BaseCaseCurrentLimit', class_type='BaseCaseCurrentLimit', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.SIS]),
+        CgmesProperty(property_name='BaseCaseCurrentLimitTimePoint', class_type='BaseCaseCurrentLimitTimePoint', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.SIS]),
     )
     __slots__ = ('BaseCaseCurrentLimit', 'BaseCaseCurrentLimitTimePoint')
 

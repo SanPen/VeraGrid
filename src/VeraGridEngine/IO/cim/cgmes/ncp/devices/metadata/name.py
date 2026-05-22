@@ -20,13 +20,13 @@ if TYPE_CHECKING:
 class Name(Base):
     """NCP CGMES extension class."""
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='IdentifiedObject', class_type='IdentifiedObject', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.OR]),
-        CgmesProperty(property_name='NameType', class_type='NameType', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.OR]),
-        CgmesProperty(property_name='NamingAuthority', class_type='NamingAuthority', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.OR]),
-        CgmesProperty(property_name='UniqueIdentifiedObject', class_type='IdentifiedObject', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.OR]),
-        CgmesProperty(property_name='language', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.OR]),
-        CgmesProperty(property_name='mRID', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.OR]),
-        CgmesProperty(property_name='name', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.OR]),
+        CgmesProperty(property_name='IdentifiedObject', class_type='IdentifiedObject', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.OR]),
+        CgmesProperty(property_name='NameType', class_type='NameType', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.OR]),
+        CgmesProperty(property_name='NamingAuthority', class_type='NamingAuthority', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.OR]),
+        CgmesProperty(property_name='UniqueIdentifiedObject', class_type='IdentifiedObject', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.OR]),
+        CgmesProperty(property_name='language', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.OR]),
+        CgmesProperty(property_name='mRID', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.OR]),
+        CgmesProperty(property_name='name', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.OR]),
     )
     __slots__ = ('IdentifiedObject', 'NameType', 'NamingAuthority', 'UniqueIdentifiedObject', 'language', 'mRID', 'name')
 

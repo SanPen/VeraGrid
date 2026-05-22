@@ -20,17 +20,17 @@ class VsConverterTimePoint(ACDCTimePoint):
     :ivar tpe: CIM type name inherited from the base class.
     """
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='VsConverterSchedule', class_type='VsConverterSchedule', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS]),
-        CgmesProperty(property_name='droop', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS]),
-        CgmesProperty(property_name='droopCompensation', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS]),
-        CgmesProperty(property_name='pPccControl', class_type='VsPpccControlKind', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS]),
-        CgmesProperty(property_name='qPccControl', class_type='VsQpccControlKind', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS]),
-        CgmesProperty(property_name='qShare', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS]),
-        CgmesProperty(property_name='targetPWMfactor', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS]),
-        CgmesProperty(property_name='targetPhasePcc', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS]),
-        CgmesProperty(property_name='targetPowerFactorPcc', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS]),
-        CgmesProperty(property_name='targetQpcc', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS]),
-        CgmesProperty(property_name='targetUpcc', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS]),
+        CgmesProperty(property_name='VsConverterSchedule', class_type='VsConverterSchedule', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.SHS]),
+        CgmesProperty(property_name='droop', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.SHS]),
+        CgmesProperty(property_name='droopCompensation', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.SHS]),
+        CgmesProperty(property_name='pPccControl', class_type='VsPpccControlKind', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.SHS]),
+        CgmesProperty(property_name='qPccControl', class_type='VsQpccControlKind', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.SHS]),
+        CgmesProperty(property_name='qShare', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.SHS]),
+        CgmesProperty(property_name='targetPWMfactor', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.SHS]),
+        CgmesProperty(property_name='targetPhasePcc', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.SHS]),
+        CgmesProperty(property_name='targetPowerFactorPcc', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.SHS]),
+        CgmesProperty(property_name='targetQpcc', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.SHS]),
+        CgmesProperty(property_name='targetUpcc', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.SHS]),
     )
     __slots__ = ('VsConverterSchedule', 'droop', 'droopCompensation', 'pPccControl', 'qPccControl', 'qShare', 'targetPWMfactor', 'targetPhasePcc', 'targetPowerFactorPcc', 'targetQpcc', 'targetUpcc')
 

@@ -18,8 +18,8 @@ if TYPE_CHECKING:
 class ContingencyEquipment(ContingencyElement):
     """NCP CGMES extension class."""
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='Equipment', class_type='Equipment', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.CO, CgmesProfileType.SAR]),
-        CgmesProperty(property_name='contingentStatus', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.CO, CgmesProfileType.SAR]),
+        CgmesProperty(property_name='Equipment', class_type='Equipment', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.CO]),
+        CgmesProperty(property_name='contingentStatus', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.CO]),
     )
     __slots__ = ('Equipment', 'contingentStatus')
 

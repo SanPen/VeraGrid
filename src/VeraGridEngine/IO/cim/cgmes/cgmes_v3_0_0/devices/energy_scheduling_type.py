@@ -8,12 +8,13 @@ from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.identified_object import IdentifiedObject
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 if TYPE_CHECKING:
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.energy_source import EnergySource
 
 class EnergySchedulingType(IdentifiedObject):
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='EnergySource', class_type='EnergySource', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Energy Source of a particular Energy Scheduling Type.''', profiles=[]),
+        CgmesProperty(property_name='EnergySource', class_type='EnergySource', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Energy Source of a particular Energy Scheduling Type.''', profiles=[CgmesProfileType.EQ]),
     )
     __slots__ = ('EnergySource',)
     def __init__(self, rdfid='', tpe='EnergySchedulingType'):

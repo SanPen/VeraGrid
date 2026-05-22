@@ -20,22 +20,22 @@ class PowerSystemProject(IdentifiedObject):
     :ivar tpe: CIM type name inherited from the base class.
     """
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='AlternativeProject', class_type='PowerSystemProject', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.PSP]),
-        CgmesProperty(property_name='AvailabilitySchedule', class_type='AvailabilitySchedule', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.PSP]),
-        CgmesProperty(property_name='DependentOnProject', class_type='PowerSystemProject', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.PSP]),
-        CgmesProperty(property_name='DifferenceModel', class_type='DifferenceModel', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.PSP]),
-        CgmesProperty(property_name='PriorityProject', class_type='PowerSystemProject', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.PSP]),
-        CgmesProperty(property_name='Project', class_type='PowerSystemProject', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.PSP]),
-        CgmesProperty(property_name='ProjectGroup', class_type='PowerSystemProjectGroup', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.PSP]),
-        CgmesProperty(property_name='ShadowProject', class_type='PowerSystemProject', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.PSP]),
-        CgmesProperty(property_name='SilhouetteProject', class_type='PowerSystemProject', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.PSP]),
-        CgmesProperty(property_name='cancelled', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.PSP]),
-        CgmesProperty(property_name='commissioned', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.PSP]),
-        CgmesProperty(property_name='committed', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.PSP]),
-        CgmesProperty(property_name='inBuild', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.PSP]),
-        CgmesProperty(property_name='inPlan', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.PSP]),
-        CgmesProperty(property_name='officialExpectedCommissioning', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.PSP]),
-        CgmesProperty(property_name='priority', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.PSP]),
+        CgmesProperty(property_name='AlternativeProject', class_type='PowerSystemProject', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.PSP]),
+        CgmesProperty(property_name='AvailabilitySchedule', class_type='AvailabilitySchedule', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.PSP]),
+        CgmesProperty(property_name='DependentOnProject', class_type='PowerSystemProject', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.PSP]),
+        CgmesProperty(property_name='DifferenceModel', class_type='DifferenceModel', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.PSP]),
+        CgmesProperty(property_name='PriorityProject', class_type='PowerSystemProject', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.PSP]),
+        CgmesProperty(property_name='Project', class_type='PowerSystemProject', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.PSP]),
+        CgmesProperty(property_name='ProjectGroup', class_type='PowerSystemProjectGroup', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.PSP]),
+        CgmesProperty(property_name='ShadowProject', class_type='PowerSystemProject', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.PSP]),
+        CgmesProperty(property_name='SilhouetteProject', class_type='PowerSystemProject', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.PSP]),
+        CgmesProperty(property_name='cancelled', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.PSP]),
+        CgmesProperty(property_name='commissioned', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.PSP]),
+        CgmesProperty(property_name='committed', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.PSP]),
+        CgmesProperty(property_name='inBuild', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.PSP]),
+        CgmesProperty(property_name='inPlan', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.PSP]),
+        CgmesProperty(property_name='officialExpectedCommissioning', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.PSP]),
+        CgmesProperty(property_name='priority', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.PSP]),
     )
     __slots__ = ('AlternativeProject', 'AvailabilitySchedule', 'DependentOnProject', 'DifferenceModel', 'PriorityProject', 'Project', 'ProjectGroup', 'ShadowProject', 'SilhouetteProject', 'cancelled', 'commissioned', 'committed', 'inBuild', 'inPlan', 'officialExpectedCommissioning', 'priority')
 

@@ -37,7 +37,7 @@ class DynamicPlot(EditableDevice):
     def __init__(self,
                   idtag: Union[str, None] = None,
                   name: str = "EmtEventsGroup",
-                  simulation_type: PlotSimulationType | str = PlotSimulationType.RMS,
+                  simulation_type: PlotSimulationType = PlotSimulationType.RMS,
                   comment: str = ""):
         """
         Build one persistent dynamic plot asset.
@@ -55,8 +55,8 @@ class DynamicPlot(EditableDevice):
                                 code='',
                                 device_type=DeviceType.DynamicPlotGroupDevice,
                                 comment=comment)
-        self._simulation_type: PlotSimulationType = PlotSimulationType.RMS
-        self.simulation_type = simulation_type
+        self._simulation_type = simulation_type
+
 
     @property
     def simulation_type(self) -> PlotSimulationType:
@@ -68,7 +68,7 @@ class DynamicPlot(EditableDevice):
         return self._simulation_type
 
     @simulation_type.setter
-    def simulation_type(self, val: PlotSimulationType | str) -> None:
+    def simulation_type(self, val: PlotSimulationType) -> None:
         """
         Set the simulation family assigned to this plot.
 
@@ -78,7 +78,4 @@ class DynamicPlot(EditableDevice):
         if isinstance(val, PlotSimulationType):
             self._simulation_type = val
         else:
-            if isinstance(val, str):
-                self._simulation_type = PlotSimulationType(val)
-            else:
-                raise ValueError("Unsupported plot simulation type")
+            raise ValueError("Unsupported plot simulation type")

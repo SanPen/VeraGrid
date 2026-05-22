@@ -243,16 +243,20 @@ class AcceptedDynamicEventDialogue:
         self._data["target_times"] = target_times
         self._data["values"] = values
         self._data["groups"] = groups
-        if mode == DynamicSimulationMode.EMT:
+        if mode == DynamicSimulationMode.EMT or mode == DynamicSimulationMode.RMS:
             transition_types: List[DynamicEventTransitionType] = list()
             transition_types.append(DynamicEventTransitionType.Step)
             end_times: List[object | None] = list()
             end_times.append(None)
-            force_step_alignment: List[bool] = list()
-            force_step_alignment.append(False)
             self._data["transition_types"] = transition_types
             self._data["end_times"] = end_times
-            self._data["force_step_alignment"] = force_step_alignment
+
+            if mode == DynamicSimulationMode.EMT:
+                force_step_alignment: List[bool] = list()
+                force_step_alignment.append(False)
+                self._data["force_step_alignment"] = force_step_alignment
+            else:
+                pass
         else:
             pass
 
@@ -515,6 +519,8 @@ def test_add_rms_event_to_selected_creates_event_from_dialogue(qt_app: object) -
     assert grid.rms_events[0].group is group
     assert grid.rms_events[0].time == 1.25
     assert grid.rms_events[0].value == 3.5
+    assert grid.rms_events[0].transition_type == DynamicEventTransitionType.Step
+    assert grid.rms_events[0].end_time == grid.rms_events[0].time +1e-20
 
 
 def test_add_emt_event_to_selected_creates_event_from_dialogue(qt_app: object) -> None:

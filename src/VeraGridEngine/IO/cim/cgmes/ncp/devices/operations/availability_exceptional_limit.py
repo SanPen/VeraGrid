@@ -20,8 +20,8 @@ class AvailabilityExceptionalLimit(AvailabilityPowerSystemFunction):
     :ivar tpe: CIM type name inherited from the base class.
     """
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='OperationalLimit', class_type='OperationalLimit', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.AVS]),
-        CgmesProperty(property_name='value', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.AVS]),
+        CgmesProperty(property_name='OperationalLimit', class_type='OperationalLimit', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.AVS]),
+        CgmesProperty(property_name='value', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.AVS]),
     )
     __slots__ = ('OperationalLimit', 'value')
 

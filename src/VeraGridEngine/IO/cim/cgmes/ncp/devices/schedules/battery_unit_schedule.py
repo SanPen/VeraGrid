@@ -20,8 +20,8 @@ class BatteryUnitSchedule(BaseIrregularTimeSeries):
     :ivar tpe: CIM type name inherited from the base class.
     """
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='BatteryUnit', class_type='BatteryUnit', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS]),
-        CgmesProperty(property_name='BatteryUnitTimePoint', class_type='BatteryUnitTimePoint', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS]),
+        CgmesProperty(property_name='BatteryUnit', class_type='BatteryUnit', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.SHS]),
+        CgmesProperty(property_name='BatteryUnitTimePoint', class_type='BatteryUnitTimePoint', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.SHS]),
     )
     __slots__ = ('BatteryUnit', 'BatteryUnitTimePoint')
 

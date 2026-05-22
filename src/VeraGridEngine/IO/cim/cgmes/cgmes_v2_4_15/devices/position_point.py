@@ -7,16 +7,17 @@ from typing import TYPE_CHECKING
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.base import Base
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 if TYPE_CHECKING:
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.location import Location
 
 class PositionPoint(Base):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='Location', class_type='Location', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Location described by this position point.''', profiles=[]),
-		CgmesProperty(property_name='sequenceNumber', class_type=int, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Zero-relative sequence number of this point within a series of points.''', profiles=[]),
-		CgmesProperty(property_name='xPosition', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''X axis position.''', profiles=[]),
-		CgmesProperty(property_name='yPosition', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Y axis position.''', profiles=[]),
-		CgmesProperty(property_name='zPosition', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''(if applicable) Z axis position.''', profiles=[]),
+		CgmesProperty(property_name='Location', class_type='Location', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Location described by this position point.''', mandatory=True, profiles=[CgmesProfileType.GL]),
+		CgmesProperty(property_name='sequenceNumber', class_type=int, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Zero-relative sequence number of this point within a series of points.''', profiles=[CgmesProfileType.GL]),
+		CgmesProperty(property_name='xPosition', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''X axis position.''', mandatory=True, profiles=[CgmesProfileType.GL]),
+		CgmesProperty(property_name='yPosition', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Y axis position.''', mandatory=True, profiles=[CgmesProfileType.GL]),
+		CgmesProperty(property_name='zPosition', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''(if applicable) Z axis position.''', profiles=[CgmesProfileType.GL]),
 	)
 	__slots__ = ('Location', 'sequenceNumber', 'xPosition', 'yPosition', 'zPosition')
 	def __init__(self, rdfid, tpe="PositionPoint", resources=list(), class_replacements=dict()):

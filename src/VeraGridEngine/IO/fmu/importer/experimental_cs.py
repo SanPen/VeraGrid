@@ -688,6 +688,40 @@ def initialize_rms_fmu_cs_devices(problem: Any, x_snapshot: np.ndarray, time_val
         problem._fmu_cs_initialized = True
 
 
+def align_rms_fmu_cs_device_output_parameters(problem: Any, x_snapshot: np.ndarray, time_value: float = 0.0) -> None:
+    """
+    Align RMS FMU CS output parameters with the current FMU outputs.
+
+    The imported RMS FMU shell represents each FMU output with one algebraic
+    equation of the form ``output_var - parameter_var = 0``. The parameter is
+    seeded from the power-flow operating point before the FMU has had a chance to
+    report its own initial outputs. A small FMU/default mismatch then appears as
+    a DAE residual during the first RMS initialization check. Re-reading the FMU
+    outputs and writing them back into the runtime parameter buffer removes that
+    artificial mismatch before the solver judges the initial residual.
+
+    :param problem: RMS problem instance.
+    :param x_snapshot: Initial accepted state snapshot.
+    :param time_value: Initial simulation time.
+    :return: None.
+    """
+
+    if len(problem._fmu_cs_adapters) > 0:
+        if problem._fmu_cs_initialized:
+            adapter: FmuCsDeviceAdapter
+            for adapter in problem._fmu_cs_adapters:
+                outputs: dict[VarPowerFlowRefferenceType, float] = adapter.get_outputs(time_value, x_snapshot)
+                adapter.apply_outputs(problem._variable_parameters_values, outputs)
+                if problem._variable_parameters_values is None:
+                    problem._last_variable_parameters_values = None
+                else:
+                    problem._last_variable_parameters_values = np.array(problem._variable_parameters_values, copy=True)
+        else:
+            initialize_rms_fmu_cs_devices(problem=problem, x_snapshot=x_snapshot, time_value=time_value)
+    else:
+        pass
+
+
 def advance_rms_fmu_cs_devices(problem: Any, time_value: float, x_snapshot: np.ndarray, step_size: float) -> None:
     """Advance all imported FMU CS RMS devices for one solver step.
 

@@ -15,8 +15,8 @@ from VeraGridEngine.IO.cim.cgmes.ncp.devices.actions.power_remedial_action impor
 class CountertradeRemedialAction(PowerRemedialAction):
     """NCP CGMES extension class."""
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='maxEconomicPMargin', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.RA, CgmesProfileType.SSI]),
-        CgmesProperty(property_name='minEconomicPMargin', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.RA, CgmesProfileType.SSI]),
+        CgmesProperty(property_name='maxEconomicPMargin', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.RA]),
+        CgmesProperty(property_name='minEconomicPMargin', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.RA]),
     )
     __slots__ = ('maxEconomicPMargin', 'minEconomicPMargin')
 

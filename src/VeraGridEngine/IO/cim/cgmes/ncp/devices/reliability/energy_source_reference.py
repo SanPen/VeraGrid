@@ -20,7 +20,7 @@ class EnergySourceReference(IdentifiedObject):
     :ivar tpe: CIM type name inherited from the base class.
     """
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='EnergyTypeReference', class_type='EnergyType', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.ER]),
+        CgmesProperty(property_name='EnergyTypeReference', class_type='EnergyType', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.ER]),
     )
     __slots__ = ('EnergyTypeReference')
 

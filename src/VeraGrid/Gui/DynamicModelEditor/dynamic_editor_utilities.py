@@ -207,7 +207,17 @@ def create_block_of_type(var_factory: VarFactory,
         blk.name = item_name
         return blk
 
+    # DC LINE
+    elif block_type == BlockType.EMT_DC_LINE:
+        blk = tem.get_dc_line_with_power_input_emt_template(var_factory).block
+        blk.name = item_name
+        return blk
 
+    # COMPLETE PSEUDO EMT VSC
+    elif block_type == BlockType.COMPLETE_PSEUDO_VSC_EMT:
+        blk = tem.get_full_pseudo_emt_converter(var_factory).block
+        blk.name = item_name
+        return blk
 
     else:
         raise ValueError(f"Unknown block type: {block_type}")
@@ -269,6 +279,7 @@ def create_emt_wizard_block(phase_n: bool,
                                            name=item_name).block
         blk.name = item_name
         return blk
+
 
     elif block_type == BlockType.VOLTAGE_SOURCE_EMT:
         blk = tem.get_voltage_source_emt_template(vf=var_factory,

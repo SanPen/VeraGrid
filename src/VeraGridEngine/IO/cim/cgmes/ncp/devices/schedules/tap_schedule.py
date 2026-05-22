@@ -20,8 +20,8 @@ class TapSchedule(BaseIrregularTimeSeries):
     :ivar tpe: CIM type name inherited from the base class.
     """
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='TapChanger', class_type='TapChanger', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS]),
-        CgmesProperty(property_name='TapScheduleTimePoint', class_type='TapScheduleTimePoint', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS]),
+        CgmesProperty(property_name='TapChanger', class_type='TapChanger', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.SHS]),
+        CgmesProperty(property_name='TapScheduleTimePoint', class_type='TapScheduleTimePoint', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.SHS]),
     )
     __slots__ = ('TapChanger', 'TapScheduleTimePoint')
 

@@ -20,10 +20,10 @@ class ControllableQuantity(IdentifiedObject):
     :ivar tpe: CIM type name inherited from the base class.
     """
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='GridStateAlteration', class_type='GridStateAlteration', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SM]),
-        CgmesProperty(property_name='RemedialAction', class_type='RemedialAction', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SM]),
-        CgmesProperty(property_name='SensitivityFactor', class_type='SensitivityFactor', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SM]),
-        CgmesProperty(property_name='value', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SM]),
+        CgmesProperty(property_name='GridStateAlteration', class_type='GridStateAlteration', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.SM]),
+        CgmesProperty(property_name='RemedialAction', class_type='RemedialAction', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.SM]),
+        CgmesProperty(property_name='SensitivityFactor', class_type='SensitivityFactor', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.SM]),
+        CgmesProperty(property_name='value', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.SM]),
     )
     __slots__ = ('GridStateAlteration', 'RemedialAction', 'SensitivityFactor', 'value')
 

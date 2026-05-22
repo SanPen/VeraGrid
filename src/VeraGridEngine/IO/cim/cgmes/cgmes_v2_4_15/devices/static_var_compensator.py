@@ -10,12 +10,12 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
 class StaticVarCompensator(RegulatingCondEq):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='capacitiveRating', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.ohm, description='''Reactance (imaginary part of impedance), at rated frequency.''', profiles=[]),
-		CgmesProperty(property_name='inductiveRating', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.ohm, description='''Reactance (imaginary part of impedance), at rated frequency.''', profiles=[]),
-		CgmesProperty(property_name='slope', class_type=float, multiplier=UnitMultiplier.k, unit=UnitSymbol.V, description='''Voltage variation with reactive power.''', profiles=[]),
-		CgmesProperty(property_name='sVCControlMode', class_type=SVCControlMode, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''SVC control mode.''', profiles=[]),
-		CgmesProperty(property_name='voltageSetPoint', class_type=float, multiplier=UnitMultiplier.k, unit=UnitSymbol.V, description='''Electrical voltage, can be both AC and DC.''', profiles=[]),
-		CgmesProperty(property_name='q', class_type=float, multiplier=UnitMultiplier.M, unit=UnitSymbol.VAr, description='''Product of RMS value of the voltage and the RMS value of the quadrature component of the current.''', profiles=[]),
+		CgmesProperty(property_name='capacitiveRating', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.ohm, description='''Reactance (imaginary part of impedance), at rated frequency.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='inductiveRating', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.ohm, description='''Reactance (imaginary part of impedance), at rated frequency.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='slope', class_type=float, multiplier=UnitMultiplier.k, unit=UnitSymbol.V, description='''Voltage variation with reactive power.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='sVCControlMode', class_type=SVCControlMode, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''SVC control mode.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='voltageSetPoint', class_type=float, multiplier=UnitMultiplier.k, unit=UnitSymbol.V, description='''Electrical voltage, can be both AC and DC.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='q', class_type=float, multiplier=UnitMultiplier.M, unit=UnitSymbol.VAr, description='''Product of RMS value of the voltage and the RMS value of the quadrature component of the current.''', mandatory=True, profiles=[CgmesProfileType.SSH]),
 	)
 	__slots__ = ('capacitiveRating', 'inductiveRating', 'slope', 'sVCControlMode', 'voltageSetPoint', 'q')
 	def __init__(self, rdfid='', tpe='StaticVarCompensator'):

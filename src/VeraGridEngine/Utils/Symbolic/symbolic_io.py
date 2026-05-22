@@ -616,6 +616,53 @@ class BlockParser:
         self.var_factory = var_factory
         self.block_dict: Dict[int, Block] = dict()
 
+    def _get_var_by_non_mutable_uid(self, non_mutable_uid: int) -> Var:
+        """
+        Recover one algebraic variable using its stable non-mutable UID.
+
+        The symbolic connection system intentionally aliases connected
+        variables by rewriting their runtime ``uid`` values. That aliasing is
+        required by the solver, but block interfaces such as ``in_vars`` and
+        ``out_vars`` must still be reconstructed with the original variable
+        objects so metadata like ``ref`` keeps the semantic meaning assigned by
+        the template author. Looking up ports by the mutable ``uid`` after
+        replaying saved connections can therefore return a different connected
+        variable, such as a bus variable replacing a branch terminal variable.
+
+        :param non_mutable_uid: Stable symbolic variable identity.
+        :return: Matching algebraic variable.
+        :raises KeyError: If the variable is not present in the factory.
+        """
+        var_obj: Var | None = self.var_factory.get_vars_dict().get(non_mutable_uid, None)
+        if var_obj is not None:
+            return var_obj
+        else:
+            raise KeyError(f"Var with non_mutable_uid {non_mutable_uid} was not found in VarFactory")
+
+    def _find_var_or_diff_var_by_non_mutable_uid(self, non_mutable_uid: int) -> Var | None:
+        """
+        Recover one symbolic variable or differential variable by stable identity.
+
+        External mappings expose semantic power-flow references to specific
+        symbolic variables. Saved connection replay may alias runtime ``uid``
+        values across connected variables, so rebuilding external mappings by
+        mutable ``uid`` can return a different connected variable and lose the
+        original semantic role. This helper resolves the mapping through the
+        stable dictionary keys used by the variable factory instead.
+
+        :param non_mutable_uid: Stable symbolic identity stored in the file.
+        :return: Matching variable or ``None`` when the mapping is unresolved.
+        """
+        var_obj: Var | None = self.var_factory.get_vars_dict().get(non_mutable_uid, None)
+        if var_obj is not None:
+            return var_obj
+        else:
+            diff_var_obj: Var | None = self.var_factory.get_diff_var_dict().get(non_mutable_uid, None)
+            if diff_var_obj is not None:
+                return diff_var_obj
+            else:
+                return None
+
     def parse_consts(self, data: List[Dict[str, Any]]):
         """
 
@@ -698,9 +745,16 @@ class BlockParser:
                                            var_dict=self.var_factory.get_vars_dict(),
                                            diff_var_dict=self.var_factory.get_diff_var_dict())
 
-        in_vars = [self.var_factory.get_var(v_uid) for v_uid in data["in_vars"]]
+        # Rebuild interface variables using the stable non-mutable UID stored
+        # in the factory keys. This preserves the original port object and its
+        # semantic reference even when runtime connections have aliased the
+        # mutable ``uid`` to another connected variable.
+        in_vars = [self._get_var_by_non_mutable_uid(v_uid) for v_uid in data["in_vars"]]
 
-        out_vars = [self.var_factory.get_var(v_uid) for v_uid in data["out_vars"]]
+        # Apply the same stable lookup to outputs for consistency with inputs
+        # and to avoid replacing exported branch variables with connected bus
+        # variables after deserialization.
+        out_vars = [self._get_var_by_non_mutable_uid(v_uid) for v_uid in data["out_vars"]]
 
         children = [self.parse_block(blocks_data, child_uid) for child_uid in data["children"]]
 
@@ -733,7 +787,10 @@ class BlockParser:
         external_mapping: Dict[VarPowerFlowRefferenceType, Var|None] = dict()
         for key_str, var_uid in data["external_mapping"].items():
             key = VarPowerFlowRefferenceType(key_str)
-            var_in_varfactory = self.var_factory.find_var_or_diff_var(var_uid)
+            # Rebuild PF-exposed mappings using the stable symbolic identity.
+            # This preserves the original variable object selected by the
+            # template even when runtime connections have aliased mutable UIDs.
+            var_in_varfactory = self._find_var_or_diff_var_by_non_mutable_uid(var_uid)
             if var_in_varfactory is not None:
                 external_mapping[key] = var_in_varfactory
             else:

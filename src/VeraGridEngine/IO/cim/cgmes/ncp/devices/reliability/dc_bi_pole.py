@@ -20,8 +20,8 @@ class DCBiPole(PowerSystemResource):
     :ivar tpe: CIM type name inherited from the base class.
     """
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='BipolarDCSystem', class_type='BipolarDCSystem', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.ER]),
-        CgmesProperty(property_name='DCPole', class_type='DCPole', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.ER]),
+        CgmesProperty(property_name='BipolarDCSystem', class_type='BipolarDCSystem', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.ER]),
+        CgmesProperty(property_name='DCPole', class_type='DCPole', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.ER]),
     )
     __slots__ = ('BipolarDCSystem', 'DCPole')
 

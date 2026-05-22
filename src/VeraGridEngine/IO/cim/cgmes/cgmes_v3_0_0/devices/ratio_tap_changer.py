@@ -6,7 +6,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.tap_changer import TapChanger
-from VeraGridEngine.IO.cim.cgmes.cgmes_enums import UnitSymbol
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import UnitSymbol, CgmesProfileType
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 if TYPE_CHECKING:
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.ratio_tap_changer_table import RatioTapChangerTable
@@ -14,9 +14,9 @@ if TYPE_CHECKING:
 
 class RatioTapChanger(TapChanger):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='stepVoltageIncrement', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Percentage on a defined base.   For example, specify as 100 to indicate at the defined base.''', profiles=[]),
-		CgmesProperty(property_name='RatioTapChangerTable', class_type='RatioTapChangerTable', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The tap ratio table for this ratio  tap changer.''', profiles=[]),
-		CgmesProperty(property_name='TransformerEnd', class_type='TransformerEnd', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Transformer end to which this ratio tap changer belongs.''', profiles=[]),
+		CgmesProperty(property_name='stepVoltageIncrement', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Percentage on a defined base.   For example, specify as 100 to indicate at the defined base.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='RatioTapChangerTable', class_type='RatioTapChangerTable', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The tap ratio table for this ratio  tap changer.''', profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='TransformerEnd', class_type='TransformerEnd', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Transformer end to which this ratio tap changer belongs.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
 	)
 	__slots__ = ('stepVoltageIncrement', 'RatioTapChangerTable', 'TransformerEnd')
 	def __init__(self, rdfid='', tpe='RatioTapChanger'):

@@ -2762,9 +2762,8 @@ class TypTow(DGSElement):
 
     element_type = 'TypTow'
 
-    # Keep the schema minimal and parse the dynamic arrays/matrices manually in parse_line.
     properties_list = [
-        DgsProperty(name='ID', dgs_type='a:40', description='Unique identifier for DGS file', py_name='ID'),
+        DgsProperty(name='FID', dgs_type='a:40', description='Unique identifier for DGS file', py_name='ID'),
         DgsProperty(name='OP', dgs_type='a:1', description='Operation', py_name='OP'),
         DgsProperty(name='loc_name', dgs_type='a:80', description='Name', py_name='loc_name'),
         DgsProperty(name='fold_id', dgs_type='p', description='In Folder', py_name='fold_id'),
@@ -2772,6 +2771,87 @@ class TypTow(DGSElement):
         DgsProperty(name='nlear', dgs_type='i', description='Number of Earth Wires', py_name='nlear'),
         DgsProperty(name='nlcir', dgs_type='i', description='Number of Line Circuits', py_name='nlcir'),
         DgsProperty(name='gearth', dgs_type='r', description='Earth conductivity in uS/cm', py_name='gearth'),
+        DgsProperty(name='i_mode', dgs_type='i', description='Tower model mode code', py_name='i_mode'),
+        DgsProperty(name='pcond_e:SIZEROW', dgs_type='i', description='Earth conductor vector size', py_name='pcond_e_SIZEROW'),
+        DgsProperty(name='pcond_e:0', dgs_type='p', description='Earth conductor pointer 0', py_name='pcond_e_0'),
+        DgsProperty(name='pcond_e:1', dgs_type='p', description='Earth conductor pointer 1', py_name='pcond_e_1'),
+        DgsProperty(name='nphas:SIZEROW', dgs_type='i', description='Phase-count vector size', py_name='nphas_SIZEROW'),
+        DgsProperty(name='nphas:0', dgs_type='r', description='Phase count value 0', py_name='nphas_0'),
+        DgsProperty(name='nphas:1', dgs_type='r', description='Phase count value 1', py_name='nphas_1'),
+        DgsProperty(name='ktrto:SIZEROW', dgs_type='i', description='Transposition vector size', py_name='ktrto_SIZEROW'),
+        DgsProperty(name='ktrto:0', dgs_type='r', description='Transposition value 0', py_name='ktrto_0'),
+        DgsProperty(name='ktrto:1', dgs_type='r', description='Transposition value 1', py_name='ktrto_1'),
+        DgsProperty(name='pcond_c:SIZEROW', dgs_type='i', description='Circuit conductor vector size', py_name='pcond_c_SIZEROW'),
+        DgsProperty(name='pcond_c:0', dgs_type='p', description='Circuit conductor pointer 0', py_name='pcond_c_0'),
+        DgsProperty(name='pcond_c:1', dgs_type='p', description='Circuit conductor pointer 1', py_name='pcond_c_1'),
+        DgsProperty(name='xy_e:SIZEROW', dgs_type='i', description='Earth coordinate matrix rows', py_name='xy_e_SIZEROW'),
+        DgsProperty(name='xy_e:SIZECOL', dgs_type='i', description='Earth coordinate matrix columns', py_name='xy_e_SIZECOL'),
+        DgsProperty(name='xy_e:0:0', dgs_type='r', description='Earth coordinate [0,0]', py_name='xy_e_0_0'),
+        DgsProperty(name='xy_e:0:1', dgs_type='r', description='Earth coordinate [0,1]', py_name='xy_e_0_1'),
+        DgsProperty(name='xy_e:1:0', dgs_type='r', description='Earth coordinate [1,0]', py_name='xy_e_1_0'),
+        DgsProperty(name='xy_e:1:1', dgs_type='r', description='Earth coordinate [1,1]', py_name='xy_e_1_1'),
+        DgsProperty(name='xy_c:SIZEROW', dgs_type='i', description='Circuit coordinate matrix rows', py_name='xy_c_SIZEROW'),
+        DgsProperty(name='xy_c:SIZECOL', dgs_type='i', description='Circuit coordinate matrix columns', py_name='xy_c_SIZECOL'),
+        DgsProperty(name='xy_c:0:0', dgs_type='r', description='Circuit coordinate [0,0]', py_name='xy_c_0_0'),
+        DgsProperty(name='xy_c:0:1', dgs_type='r', description='Circuit coordinate [0,1]', py_name='xy_c_0_1'),
+        DgsProperty(name='xy_c:0:2', dgs_type='r', description='Circuit coordinate [0,2]', py_name='xy_c_0_2'),
+        DgsProperty(name='xy_c:0:3', dgs_type='r', description='Circuit coordinate [0,3]', py_name='xy_c_0_3'),
+        DgsProperty(name='xy_c:0:4', dgs_type='r', description='Circuit coordinate [0,4]', py_name='xy_c_0_4'),
+        DgsProperty(name='xy_c:0:5', dgs_type='r', description='Circuit coordinate [0,5]', py_name='xy_c_0_5'),
+        DgsProperty(name='xy_c:1:0', dgs_type='r', description='Circuit coordinate [1,0]', py_name='xy_c_1_0'),
+        DgsProperty(name='xy_c:1:1', dgs_type='r', description='Circuit coordinate [1,1]', py_name='xy_c_1_1'),
+        DgsProperty(name='xy_c:1:2', dgs_type='r', description='Circuit coordinate [1,2]', py_name='xy_c_1_2'),
+        DgsProperty(name='xy_c:1:3', dgs_type='r', description='Circuit coordinate [1,3]', py_name='xy_c_1_3'),
+        DgsProperty(name='xy_c:1:4', dgs_type='r', description='Circuit coordinate [1,4]', py_name='xy_c_1_4'),
+        DgsProperty(name='xy_c:1:5', dgs_type='r', description='Circuit coordinate [1,5]', py_name='xy_c_1_5'),
+        DgsProperty(name='R_c0:SIZEROW', dgs_type='i', description='R_c0 matrix rows', py_name='R_c0_SIZEROW'),
+        DgsProperty(name='R_c0:SIZECOL', dgs_type='i', description='R_c0 matrix cols', py_name='R_c0_SIZECOL'),
+        DgsProperty(name='R_c0:0:0', dgs_type='r', description='R_c0 [0,0]', py_name='R_c0_0_0'),
+        DgsProperty(name='R_c0:0:1', dgs_type='r', description='R_c0 [0,1]', py_name='R_c0_0_1'),
+        DgsProperty(name='R_c0:1:0', dgs_type='r', description='R_c0 [1,0]', py_name='R_c0_1_0'),
+        DgsProperty(name='R_c0:1:1', dgs_type='r', description='R_c0 [1,1]', py_name='R_c0_1_1'),
+        DgsProperty(name='X_c0:SIZEROW', dgs_type='i', description='X_c0 matrix rows', py_name='X_c0_SIZEROW'),
+        DgsProperty(name='X_c0:SIZECOL', dgs_type='i', description='X_c0 matrix cols', py_name='X_c0_SIZECOL'),
+        DgsProperty(name='X_c0:0:0', dgs_type='r', description='X_c0 [0,0]', py_name='X_c0_0_0'),
+        DgsProperty(name='X_c0:0:1', dgs_type='r', description='X_c0 [0,1]', py_name='X_c0_0_1'),
+        DgsProperty(name='X_c0:1:0', dgs_type='r', description='X_c0 [1,0]', py_name='X_c0_1_0'),
+        DgsProperty(name='X_c0:1:1', dgs_type='r', description='X_c0 [1,1]', py_name='X_c0_1_1'),
+        DgsProperty(name='R_c1:SIZEROW', dgs_type='i', description='R_c1 matrix rows', py_name='R_c1_SIZEROW'),
+        DgsProperty(name='R_c1:SIZECOL', dgs_type='i', description='R_c1 matrix cols', py_name='R_c1_SIZECOL'),
+        DgsProperty(name='R_c1:0:0', dgs_type='r', description='R_c1 [0,0]', py_name='R_c1_0_0'),
+        DgsProperty(name='R_c1:0:1', dgs_type='r', description='R_c1 [0,1]', py_name='R_c1_0_1'),
+        DgsProperty(name='R_c1:1:0', dgs_type='r', description='R_c1 [1,0]', py_name='R_c1_1_0'),
+        DgsProperty(name='R_c1:1:1', dgs_type='r', description='R_c1 [1,1]', py_name='R_c1_1_1'),
+        DgsProperty(name='X_c1:SIZEROW', dgs_type='i', description='X_c1 matrix rows', py_name='X_c1_SIZEROW'),
+        DgsProperty(name='X_c1:SIZECOL', dgs_type='i', description='X_c1 matrix cols', py_name='X_c1_SIZECOL'),
+        DgsProperty(name='X_c1:0:0', dgs_type='r', description='X_c1 [0,0]', py_name='X_c1_0_0'),
+        DgsProperty(name='X_c1:0:1', dgs_type='r', description='X_c1 [0,1]', py_name='X_c1_0_1'),
+        DgsProperty(name='X_c1:1:0', dgs_type='r', description='X_c1 [1,0]', py_name='X_c1_1_0'),
+        DgsProperty(name='X_c1:1:1', dgs_type='r', description='X_c1 [1,1]', py_name='X_c1_1_1'),
+        DgsProperty(name='B_c0:SIZEROW', dgs_type='i', description='B_c0 matrix rows', py_name='B_c0_SIZEROW'),
+        DgsProperty(name='B_c0:SIZECOL', dgs_type='i', description='B_c0 matrix cols', py_name='B_c0_SIZECOL'),
+        DgsProperty(name='B_c0:0:0', dgs_type='r', description='B_c0 [0,0]', py_name='B_c0_0_0'),
+        DgsProperty(name='B_c0:0:1', dgs_type='r', description='B_c0 [0,1]', py_name='B_c0_0_1'),
+        DgsProperty(name='B_c0:1:0', dgs_type='r', description='B_c0 [1,0]', py_name='B_c0_1_0'),
+        DgsProperty(name='B_c0:1:1', dgs_type='r', description='B_c0 [1,1]', py_name='B_c0_1_1'),
+        DgsProperty(name='B_c1:SIZEROW', dgs_type='i', description='B_c1 matrix rows', py_name='B_c1_SIZEROW'),
+        DgsProperty(name='B_c1:SIZECOL', dgs_type='i', description='B_c1 matrix cols', py_name='B_c1_SIZECOL'),
+        DgsProperty(name='B_c1:0:0', dgs_type='r', description='B_c1 [0,0]', py_name='B_c1_0_0'),
+        DgsProperty(name='B_c1:0:1', dgs_type='r', description='B_c1 [0,1]', py_name='B_c1_0_1'),
+        DgsProperty(name='B_c1:1:0', dgs_type='r', description='B_c1 [1,0]', py_name='B_c1_1_0'),
+        DgsProperty(name='B_c1:1:1', dgs_type='r', description='B_c1 [1,1]', py_name='B_c1_1_1'),
+        DgsProperty(name='G_c0:SIZEROW', dgs_type='i', description='G_c0 matrix rows', py_name='G_c0_SIZEROW'),
+        DgsProperty(name='G_c0:SIZECOL', dgs_type='i', description='G_c0 matrix cols', py_name='G_c0_SIZECOL'),
+        DgsProperty(name='G_c0:0:0', dgs_type='r', description='G_c0 [0,0]', py_name='G_c0_0_0'),
+        DgsProperty(name='G_c0:0:1', dgs_type='r', description='G_c0 [0,1]', py_name='G_c0_0_1'),
+        DgsProperty(name='G_c0:1:0', dgs_type='r', description='G_c0 [1,0]', py_name='G_c0_1_0'),
+        DgsProperty(name='G_c0:1:1', dgs_type='r', description='G_c0 [1,1]', py_name='G_c0_1_1'),
+        DgsProperty(name='G_c1:SIZEROW', dgs_type='i', description='G_c1 matrix rows', py_name='G_c1_SIZEROW'),
+        DgsProperty(name='G_c1:SIZECOL', dgs_type='i', description='G_c1 matrix cols', py_name='G_c1_SIZECOL'),
+        DgsProperty(name='G_c1:0:0', dgs_type='r', description='G_c1 [0,0]', py_name='G_c1_0_0'),
+        DgsProperty(name='G_c1:0:1', dgs_type='r', description='G_c1 [0,1]', py_name='G_c1_0_1'),
+        DgsProperty(name='G_c1:1:0', dgs_type='r', description='G_c1 [1,0]', py_name='G_c1_1_0'),
+        DgsProperty(name='G_c1:1:1', dgs_type='r', description='G_c1 [1,1]', py_name='G_c1_1_1'),
     ]
 
     def __init__(self):
@@ -2784,14 +2864,47 @@ class TypTow(DGSElement):
         self.nlear: int = 0
         self.nlcir: int = 1
         self.gearth: float = 0.0
+        self.i_mode: int = 0
 
         # Dynamic fields (variable-size vectors/matrices)
+        self.pcond_e_SIZEROW: int = 0
         self.pcond_e: List[str | None] = list()
+        self.nphas_SIZEROW: int = 0
         self.pcond_c: List[str | None] = list()
+        self.pcond_c_SIZEROW: int = 0
         self.nphas: List[float] = list()
+        self.ktrto_SIZEROW: int = 0
         self.ktrto: List[float] = list()
+        self.xy_e_SIZEROW: int = 0
+        self.xy_e_SIZECOL: int = 0
         self.xy_e: List[List[float]] = list()  # Each row: [x, y]
+        self.xy_c_SIZEROW: int = 0
+        self.xy_c_SIZECOL: int = 0
         self.xy_c: List[List[float]] = list()  # Each row: [xA, xB, xC, yA, yB, yC]
+        self.R_c0_SIZEROW: int = 0
+        self.R_c0_SIZECOL: int = 0
+        self.R_c0: List[List[float]] = list()
+        self.X_c0_SIZEROW: int = 0
+        self.X_c0_SIZECOL: int = 0
+        self.X_c0: List[List[float]] = list()
+        self.R_c1_SIZEROW: int = 0
+        self.R_c1_SIZECOL: int = 0
+        self.R_c1: List[List[float]] = list()
+        self.X_c1_SIZEROW: int = 0
+        self.X_c1_SIZECOL: int = 0
+        self.X_c1: List[List[float]] = list()
+        self.B_c0_SIZEROW: int = 0
+        self.B_c0_SIZECOL: int = 0
+        self.B_c0: List[List[float]] = list()
+        self.B_c1_SIZEROW: int = 0
+        self.B_c1_SIZECOL: int = 0
+        self.B_c1: List[List[float]] = list()
+        self.G_c0_SIZEROW: int = 0
+        self.G_c0_SIZECOL: int = 0
+        self.G_c0: List[List[float]] = list()
+        self.G_c1_SIZEROW: int = 0
+        self.G_c1_SIZECOL: int = 0
+        self.G_c1: List[List[float]] = list()
 
     @classmethod
     def parse_line(cls, line: str, header_map: dict[str, int]):
@@ -2802,8 +2915,8 @@ class TypTow(DGSElement):
         # Parse the scalar fields via the base schema
         for prop in cls.properties_list:
             idx = header_map.get(prop.name)
-            if idx is None and prop.name == 'ID':
-                idx = header_map.get('FID')
+            if idx is None and prop.name == 'FID':
+                idx = header_map.get('ID')
 
             if idx is not None and 0 <= idx < len(parts):
                 raw = parts[idx]
@@ -2814,6 +2927,7 @@ class TypTow(DGSElement):
         # Conductor types for earth wires
         raw_n = _dgs_get(parts, header_map, 'pcond_e:SIZEROW')
         n = int(float(raw_n.replace(',', '.'))) if raw_n is not None and raw_n.strip() != '' else 0
+        obj.pcond_e_SIZEROW = n
         obj.pcond_e = list()
         for i in range(n):
             raw_ptr = _dgs_get(parts, header_map, f'pcond_e:{i}')
@@ -2823,6 +2937,7 @@ class TypTow(DGSElement):
         # Num. of phases per circuit (often 3)
         raw_nphas = _dgs_get(parts, header_map, 'nphas:SIZEROW')
         nphas_n = int(float(raw_nphas.replace(',', '.'))) if raw_nphas is not None and raw_nphas.strip() != '' else 0
+        obj.nphas_SIZEROW = nphas_n
         obj.nphas = list()
         for i in range(nphas_n):
             raw_v = _dgs_get(parts, header_map, f'nphas:{i}')
@@ -2832,6 +2947,7 @@ class TypTow(DGSElement):
         # Transposition flags per circuit
         raw_ktrto = _dgs_get(parts, header_map, 'ktrto:SIZEROW')
         ktrto_n = int(float(raw_ktrto.replace(',', '.'))) if raw_ktrto is not None and raw_ktrto.strip() != '' else 0
+        obj.ktrto_SIZEROW = ktrto_n
         obj.ktrto = list()
         for i in range(ktrto_n):
             raw_v = _dgs_get(parts, header_map, f'ktrto:{i}')
@@ -2841,6 +2957,7 @@ class TypTow(DGSElement):
         # Conductor types for line circuits
         raw_pc = _dgs_get(parts, header_map, 'pcond_c:SIZEROW')
         pc_n = int(float(raw_pc.replace(',', '.'))) if raw_pc is not None and raw_pc.strip() != '' else 0
+        obj.pcond_c_SIZEROW = pc_n
         obj.pcond_c = list()
         for i in range(pc_n):
             raw_ptr = _dgs_get(parts, header_map, f'pcond_c:{i}')
@@ -2852,6 +2969,8 @@ class TypTow(DGSElement):
         xy_e_rows = int(float(raw_xy_e_rows.replace(',', '.'))) if raw_xy_e_rows is not None and raw_xy_e_rows.strip() != '' else 0
         raw_xy_e_cols = _dgs_get(parts, header_map, 'xy_e:SIZECOL')
         xy_e_cols = int(float(raw_xy_e_cols.replace(',', '.'))) if raw_xy_e_cols is not None and raw_xy_e_cols.strip() != '' else 0
+        obj.xy_e_SIZEROW = xy_e_rows
+        obj.xy_e_SIZECOL = xy_e_cols
 
         obj.xy_e = list()
         for r in range(xy_e_rows):
@@ -2868,6 +2987,8 @@ class TypTow(DGSElement):
         xy_c_rows = int(float(raw_xy_c_rows.replace(',', '.'))) if raw_xy_c_rows is not None and raw_xy_c_rows.strip() != '' else 0
         raw_xy_c_cols = _dgs_get(parts, header_map, 'xy_c:SIZECOL')
         xy_c_cols = int(float(raw_xy_c_cols.replace(',', '.'))) if raw_xy_c_cols is not None and raw_xy_c_cols.strip() != '' else 0
+        obj.xy_c_SIZEROW = xy_c_rows
+        obj.xy_c_SIZECOL = xy_c_cols
 
         obj.xy_c = list()
         for r in range(xy_c_rows):
@@ -2877,6 +2998,126 @@ class TypTow(DGSElement):
                 raw_v = raw_v.strip() if raw_v is not None else ''
                 row.append(float(raw_v.replace(',', '.')) if raw_v != '' and raw_v != '*' else 0.0)
             obj.xy_c.append(row)
+
+        raw_R_c0_rows = _dgs_get(parts, header_map, 'R_c0:SIZEROW')
+        R_c0_rows = int(float(raw_R_c0_rows.replace(',', '.'))) if raw_R_c0_rows is not None and raw_R_c0_rows.strip() != '' else 0
+        raw_R_c0_cols = _dgs_get(parts, header_map, 'R_c0:SIZECOL')
+        R_c0_cols = int(float(raw_R_c0_cols.replace(',', '.'))) if raw_R_c0_cols is not None and raw_R_c0_cols.strip() != '' else 0
+        obj.R_c0_SIZEROW = R_c0_rows
+        obj.R_c0_SIZECOL = R_c0_cols
+        obj.R_c0 = list()
+        for r in range(R_c0_rows):
+            row = list()
+            for c in range(R_c0_cols):
+                raw_v = _dgs_get(parts, header_map, f'R_c0:{r}:{c}')
+                raw_v = raw_v.strip() if raw_v is not None else ''
+                row.append(float(raw_v.replace(',', '.')) if raw_v != '' and raw_v != '*' else 0.0)
+            obj.R_c0.append(row)
+
+        raw_X_c0_rows = _dgs_get(parts, header_map, 'X_c0:SIZEROW')
+        X_c0_rows = int(float(raw_X_c0_rows.replace(',', '.'))) if raw_X_c0_rows is not None and raw_X_c0_rows.strip() != '' else 0
+        raw_X_c0_cols = _dgs_get(parts, header_map, 'X_c0:SIZECOL')
+        X_c0_cols = int(float(raw_X_c0_cols.replace(',', '.'))) if raw_X_c0_cols is not None and raw_X_c0_cols.strip() != '' else 0
+        obj.X_c0_SIZEROW = X_c0_rows
+        obj.X_c0_SIZECOL = X_c0_cols
+        obj.X_c0 = list()
+        for r in range(X_c0_rows):
+            row = list()
+            for c in range(X_c0_cols):
+                raw_v = _dgs_get(parts, header_map, f'X_c0:{r}:{c}')
+                raw_v = raw_v.strip() if raw_v is not None else ''
+                row.append(float(raw_v.replace(',', '.')) if raw_v != '' and raw_v != '*' else 0.0)
+            obj.X_c0.append(row)
+
+        raw_R_c1_rows = _dgs_get(parts, header_map, 'R_c1:SIZEROW')
+        R_c1_rows = int(float(raw_R_c1_rows.replace(',', '.'))) if raw_R_c1_rows is not None and raw_R_c1_rows.strip() != '' else 0
+        raw_R_c1_cols = _dgs_get(parts, header_map, 'R_c1:SIZECOL')
+        R_c1_cols = int(float(raw_R_c1_cols.replace(',', '.'))) if raw_R_c1_cols is not None and raw_R_c1_cols.strip() != '' else 0
+        obj.R_c1_SIZEROW = R_c1_rows
+        obj.R_c1_SIZECOL = R_c1_cols
+        obj.R_c1 = list()
+        for r in range(R_c1_rows):
+            row = list()
+            for c in range(R_c1_cols):
+                raw_v = _dgs_get(parts, header_map, f'R_c1:{r}:{c}')
+                raw_v = raw_v.strip() if raw_v is not None else ''
+                row.append(float(raw_v.replace(',', '.')) if raw_v != '' and raw_v != '*' else 0.0)
+            obj.R_c1.append(row)
+
+        raw_X_c1_rows = _dgs_get(parts, header_map, 'X_c1:SIZEROW')
+        X_c1_rows = int(float(raw_X_c1_rows.replace(',', '.'))) if raw_X_c1_rows is not None and raw_X_c1_rows.strip() != '' else 0
+        raw_X_c1_cols = _dgs_get(parts, header_map, 'X_c1:SIZECOL')
+        X_c1_cols = int(float(raw_X_c1_cols.replace(',', '.'))) if raw_X_c1_cols is not None and raw_X_c1_cols.strip() != '' else 0
+        obj.X_c1_SIZEROW = X_c1_rows
+        obj.X_c1_SIZECOL = X_c1_cols
+        obj.X_c1 = list()
+        for r in range(X_c1_rows):
+            row = list()
+            for c in range(X_c1_cols):
+                raw_v = _dgs_get(parts, header_map, f'X_c1:{r}:{c}')
+                raw_v = raw_v.strip() if raw_v is not None else ''
+                row.append(float(raw_v.replace(',', '.')) if raw_v != '' and raw_v != '*' else 0.0)
+            obj.X_c1.append(row)
+
+        raw_B_c0_rows = _dgs_get(parts, header_map, 'B_c0:SIZEROW')
+        B_c0_rows = int(float(raw_B_c0_rows.replace(',', '.'))) if raw_B_c0_rows is not None and raw_B_c0_rows.strip() != '' else 0
+        raw_B_c0_cols = _dgs_get(parts, header_map, 'B_c0:SIZECOL')
+        B_c0_cols = int(float(raw_B_c0_cols.replace(',', '.'))) if raw_B_c0_cols is not None and raw_B_c0_cols.strip() != '' else 0
+        obj.B_c0_SIZEROW = B_c0_rows
+        obj.B_c0_SIZECOL = B_c0_cols
+        obj.B_c0 = list()
+        for r in range(B_c0_rows):
+            row = list()
+            for c in range(B_c0_cols):
+                raw_v = _dgs_get(parts, header_map, f'B_c0:{r}:{c}')
+                raw_v = raw_v.strip() if raw_v is not None else ''
+                row.append(float(raw_v.replace(',', '.')) if raw_v != '' and raw_v != '*' else 0.0)
+            obj.B_c0.append(row)
+
+        raw_B_c1_rows = _dgs_get(parts, header_map, 'B_c1:SIZEROW')
+        B_c1_rows = int(float(raw_B_c1_rows.replace(',', '.'))) if raw_B_c1_rows is not None and raw_B_c1_rows.strip() != '' else 0
+        raw_B_c1_cols = _dgs_get(parts, header_map, 'B_c1:SIZECOL')
+        B_c1_cols = int(float(raw_B_c1_cols.replace(',', '.'))) if raw_B_c1_cols is not None and raw_B_c1_cols.strip() != '' else 0
+        obj.B_c1_SIZEROW = B_c1_rows
+        obj.B_c1_SIZECOL = B_c1_cols
+        obj.B_c1 = list()
+        for r in range(B_c1_rows):
+            row = list()
+            for c in range(B_c1_cols):
+                raw_v = _dgs_get(parts, header_map, f'B_c1:{r}:{c}')
+                raw_v = raw_v.strip() if raw_v is not None else ''
+                row.append(float(raw_v.replace(',', '.')) if raw_v != '' and raw_v != '*' else 0.0)
+            obj.B_c1.append(row)
+
+        raw_G_c0_rows = _dgs_get(parts, header_map, 'G_c0:SIZEROW')
+        G_c0_rows = int(float(raw_G_c0_rows.replace(',', '.'))) if raw_G_c0_rows is not None and raw_G_c0_rows.strip() != '' else 0
+        raw_G_c0_cols = _dgs_get(parts, header_map, 'G_c0:SIZECOL')
+        G_c0_cols = int(float(raw_G_c0_cols.replace(',', '.'))) if raw_G_c0_cols is not None and raw_G_c0_cols.strip() != '' else 0
+        obj.G_c0_SIZEROW = G_c0_rows
+        obj.G_c0_SIZECOL = G_c0_cols
+        obj.G_c0 = list()
+        for r in range(G_c0_rows):
+            row = list()
+            for c in range(G_c0_cols):
+                raw_v = _dgs_get(parts, header_map, f'G_c0:{r}:{c}')
+                raw_v = raw_v.strip() if raw_v is not None else ''
+                row.append(float(raw_v.replace(',', '.')) if raw_v != '' and raw_v != '*' else 0.0)
+            obj.G_c0.append(row)
+
+        raw_G_c1_rows = _dgs_get(parts, header_map, 'G_c1:SIZEROW')
+        G_c1_rows = int(float(raw_G_c1_rows.replace(',', '.'))) if raw_G_c1_rows is not None and raw_G_c1_rows.strip() != '' else 0
+        raw_G_c1_cols = _dgs_get(parts, header_map, 'G_c1:SIZECOL')
+        G_c1_cols = int(float(raw_G_c1_cols.replace(',', '.'))) if raw_G_c1_cols is not None and raw_G_c1_cols.strip() != '' else 0
+        obj.G_c1_SIZEROW = G_c1_rows
+        obj.G_c1_SIZECOL = G_c1_cols
+        obj.G_c1 = list()
+        for r in range(G_c1_rows):
+            row = list()
+            for c in range(G_c1_cols):
+                raw_v = _dgs_get(parts, header_map, f'G_c1:{r}:{c}')
+                raw_v = raw_v.strip() if raw_v is not None else ''
+                row.append(float(raw_v.replace(',', '.')) if raw_v != '' and raw_v != '*' else 0.0)
+            obj.G_c1.append(row)
 
         return obj
 

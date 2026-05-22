@@ -20,8 +20,8 @@ class RemedialActionGroupSchedule(BaseIrregularTimeSeries):
     :ivar tpe: CIM type name inherited from the base class.
     """
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='RemedialActionGroup', class_type='RemedialActionGroup', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SIS]),
-        CgmesProperty(property_name='RemedialActionGroupTimePoint', class_type='RemedialActionGroupTimePoint', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SIS]),
+        CgmesProperty(property_name='RemedialActionGroup', class_type='RemedialActionGroup', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.SIS]),
+        CgmesProperty(property_name='RemedialActionGroupTimePoint', class_type='RemedialActionGroupTimePoint', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.SIS]),
     )
     __slots__ = ('RemedialActionGroup', 'RemedialActionGroupTimePoint')
 

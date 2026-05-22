@@ -20,13 +20,13 @@ class SSSCController(EquipmentController):
     :ivar tpe: CIM type name inherited from the base class.
     """
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='CurrentDroopOverride', class_type='CurrentDroopOverride', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.ER]),
-        CgmesProperty(property_name='SSSCSimulationSettings', class_type='SSSCSimulationSettings', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.ER]),
-        CgmesProperty(property_name='maxInjectionU', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.ER]),
-        CgmesProperty(property_name='maxLimitI', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.ER]),
-        CgmesProperty(property_name='minInjectionU', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.ER]),
-        CgmesProperty(property_name='minLimitI', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.ER]),
-        CgmesProperty(property_name='mode', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SSI]),
+        CgmesProperty(property_name='CurrentDroopOverride', class_type='CurrentDroopOverride', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.ER]),
+        CgmesProperty(property_name='SSSCSimulationSettings', class_type='SSSCSimulationSettings', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.ER]),
+        CgmesProperty(property_name='maxInjectionU', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.ER]),
+        CgmesProperty(property_name='maxLimitI', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.ER]),
+        CgmesProperty(property_name='minInjectionU', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.ER]),
+        CgmesProperty(property_name='minLimitI', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.ER]),
+        CgmesProperty(property_name='mode', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.SSI]),
     )
     __slots__ = ('CurrentDroopOverride', 'SSSCSimulationSettings', 'maxInjectionU', 'maxLimitI', 'minInjectionU', 'minLimitI', 'mode')
 

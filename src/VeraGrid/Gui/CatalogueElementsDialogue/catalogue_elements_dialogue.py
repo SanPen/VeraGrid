@@ -470,8 +470,16 @@ class CatalogueElementsSelectionDialogue(QtWidgets.QDialog):
             name='DC line',
             voltage_text='', power_text='',
             unique_key='emt:get_dc_line_emt_template',
-            function_ptr=tem.get_dc_line_emt_template)
+            function_ptr=tem.get_dc_line_with_power_input_emt_template)
         )
+        # actions.append(CatalogueAction(
+        #     kind=CatalogueActionKind.AddEmtTemplate,
+        #     args=(self._circuit.var_factory,),
+        #     name='DC line',
+        #     voltage_text='', power_text='',
+        #     unique_key='emt:get_dc_line_emt_template',
+        #     function_ptr=tem.get_dc_line_emt_template)
+        # )
         # actions.append(CatalogueAction(
         #     kind=CatalogueActionKind.AddEmtTemplate,
         #     args=(self._circuit.var_factory,),

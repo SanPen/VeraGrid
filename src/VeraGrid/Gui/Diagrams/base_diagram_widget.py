@@ -506,7 +506,8 @@ class BaseDiagramWidget(QSplitter):
             editable=True,
             transposed=True,
             dictionary_of_lists=dictionary_of_lists,
-            properties_filter=filter_prop
+            properties_filter=filter_prop,
+            error_msg_ptr=self.gui.show_error_toast
         )
 
         self.object_editor_table.setModel(mdl)

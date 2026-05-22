@@ -100,18 +100,45 @@ def _build_procedural_catalog_load_rms_template(vf: VarFactory,
 
 
 def test_rms_update_variable_params_applies_catalog_procedural_logic() -> None:
-    descriptor = get_basic_block_catalog_descriptor_by_key()["enable_signal_fixed"]
-    template = load_basic_block_catalog_template(descriptor, VarFactory())
-    problem = RmsProblemDae.__new__(RmsProblemDae)
-    runtime_parameters = list(template.block.event_dict.keys()) + list(template.block.mode_dict.keys())
-    ordered_vars = list()
+    """
+    Verify that procedural catalog logic updates runtime parameters on a minimal RMS problem fixture.
 
-    for candidate in template.block.in_vars + template.block.out_vars + template.block.algebraic_vars + template.block.state_vars:
-        if candidate.uid not in {var.uid for var in ordered_vars}:
-            ordered_vars.append(candidate)
-        else:
-            pass
+    The test intentionally builds the problem instance through ``__new__`` so it can isolate
+    ``update_variable_params`` without running the full constructor. Because that bypasses the
+    normal object initialization path, the test must explicitly seed every instance attribute that
+    the method relies on, including the scheduled-mode event containers.
 
+    :return: None.
+    """
+
+    descriptor: object = get_basic_block_catalog_descriptor_by_key()["enable_signal_fixed"]
+    template: object = load_basic_block_catalog_template(descriptor, VarFactory())
+    problem: RmsProblemDae = RmsProblemDae.__new__(RmsProblemDae)
+    runtime_parameters: list[Var] = list(template.block.event_dict.keys())
+    runtime_parameters.extend(list(template.block.mode_dict.keys()))
+    ordered_vars: list[Var] = list()
+    variable_groups: list[list[Var]] = list()
+
+    variable_groups.append(template.block.in_vars)
+    variable_groups.append(template.block.out_vars)
+    variable_groups.append(template.block.algebraic_vars)
+    variable_groups.append(template.block.state_vars)
+
+    # Build a stable flat variable ordering that matches the synthetic runtime state vector used by
+    # the boundary updater. The deduplication is required because a block variable can appear in
+    # multiple structural collections.
+    candidate_group: list[Var]
+    for candidate_group in variable_groups:
+        candidate: Var
+        for candidate in candidate_group:
+            if candidate.uid not in {var.uid for var in ordered_vars}:
+                ordered_vars.append(candidate)
+            else:
+                pass
+
+    # Seed the minimum state required by ``update_variable_params``. The test bypasses ``__init__``,
+    # so every attribute consumed by the method must be initialized explicitly to preserve the class
+    # invariants expected by production code.
     problem.sys_block = template.block
     problem._glob_time = Var("glob_time")
     problem._uid2idx_vars = {var.uid: idx for idx, var in enumerate(ordered_vars)}
@@ -121,6 +148,8 @@ def test_rms_update_variable_params_applies_catalog_procedural_logic() -> None:
     problem._constant_params = np.zeros(0, dtype=float)
     problem._variable_parameters_values = np.array([1.0, 0.0], dtype=float)
     problem._event_params_fn = _passthrough_event_params
+    problem._scheduled_mode_events = dict()
+    problem._mode_event_cursor = dict()
     problem._block_boundary_updater = build_boundary_updater_from_block(problem)
 
     RmsProblemDae.update_variable_params(problem, t=0.0, x_snapshot=np.zeros(len(ordered_vars), dtype=float))

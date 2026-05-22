@@ -20,7 +20,7 @@ class QuantitativeRemedialActionImpact(RemedialActionImpact):
     :ivar tpe: CIM type name inherited from the base class.
     """
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='SensitivityArea', class_type='SensitivityArea', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.IAM]),
+        CgmesProperty(property_name='SensitivityArea', class_type='SensitivityArea', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.IAM]),
     )
     __slots__ = ('SensitivityArea')
 

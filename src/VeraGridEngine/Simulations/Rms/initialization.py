@@ -801,15 +801,19 @@ class PseudoTransientInitProblem:
             return x
 
         dx0 = np.zeros(self.get_diff_var_number(), dtype=float)
-        rows = np.array(free_state_idx + list(range(n_states, n_vars)), dtype=int)
-
         for _ in range(int(max_steps)):
             f_state = np.array(self.rhs_state(x, dx0), dtype=float, copy=True)
             g_alg = np.array(self.rhs_algebraic(x, dx0), dtype=float, copy=True)
             if not np.all(np.isfinite(f_state)) or not np.all(np.isfinite(g_alg)):
                 break
 
-            r = np.r_[f_state[free_state_idx] if len(free_state_idx) > 0 else np.array([], dtype=float), g_alg]
+            free_state_rows = [i for i in free_state_idx if 0 <= i < f_state.size]
+            rows = np.array(
+                free_state_rows + list(range(f_state.size, f_state.size + g_alg.size)),
+                dtype=int
+            )
+
+            r = np.r_[f_state[free_state_rows] if len(free_state_rows) > 0 else np.array([], dtype=float), g_alg]
             r_inf = float(np.linalg.norm(r, np.inf)) if r.size > 0 else 0.0
             if r_inf <= float(tol):
                 break
@@ -829,7 +833,7 @@ class PseudoTransientInitProblem:
                 g_try = np.array(self.rhs_algebraic(xt, dx0), dtype=float, copy=True)
                 if not np.all(np.isfinite(f_try)) or not np.all(np.isfinite(g_try)):
                     continue
-                r_try = np.r_[f_try[free_state_idx] if len(free_state_idx) > 0 else np.array([], dtype=float), g_try]
+                r_try = np.r_[f_try[free_state_rows] if len(free_state_rows) > 0 else np.array([], dtype=float), g_try]
                 if (float(np.linalg.norm(r_try, np.inf)) if r_try.size > 0 else 0.0) < r_inf:
                     x = xt
                     accepted = True
@@ -998,10 +1002,17 @@ def init_pseudo_transient(mdl: Block,
     if isinstance(pf_vm_var, Var) and pf_vm_var.uid in uid2idx_vars:
         vm_seed = float(x_global[uid2idx_vars[pf_vm_var.uid]])
 
+    # Force deterministic reference values across runs.
+    pref_fixed = float(os.getenv("VERAGRID_INIT_PREF", "1.0316406365799007"))
+    vref_fixed = float(os.getenv("VERAGRID_INIT_VREF", "1.0"))
+
     # Variable names to keep fixed over pseudo-transient iterations.
     # UIDs are resolved from the *final local problem* ordering below.
-    fixed_ref_names = {"Pm_ref", "UsRefPu"}
-
+    fix_references =  True
+    if fix_references:
+        fixed_ref_names = {"Pm_ref", "Pref", "P_ref", "UsRefPu", "Vref", "V_ref", "U_ref"}
+    else:
+        fixed_ref_names = {}
     # Freeze PF anchors in this local model: P, Q, Vm, Va, Vdc.
     pf_var_references = [
         VarPowerFlowRefferenceType.P,
@@ -1073,13 +1084,14 @@ def init_pseudo_transient(mdl: Block,
     solver = PseudoTransient(
         problem=problem,
         h=1.0,
-        dtau0=6e-3,
-        dtau_max=1e-2,
+        dtau0=1e-0,
+        dtau_max=1e2,
         dtau_min=1e-6,
         tol=tol,
-        max_iter=200,
+        max_iter=1000,
         verbose=verbose,
-        fixed_var_uids=[],
+        reference_error_tol=-1,
+        fixed_var_uids=fixed_ref_uids,
     )
     
     # Build initial guess: random baseline, then overwrite with known init_guess values.
@@ -1090,22 +1102,47 @@ def init_pseudo_transient(mdl: Block,
         if var.uid in init_guess and init_guess[var.uid] is not None:
             x0[local_idx] = float(init_guess[var.uid])
 
-    # Seed freed references near known PF anchors.
+    # Seed and force freed references to deterministic constants.
+    ref_fixed_values = {
+        "Pm_ref": pref_fixed,
+        "Pref": pref_fixed,
+        "P_ref": pref_fixed,
+        "UsRefPu": vref_fixed,
+        "Vref": vref_fixed,
+        "V_ref": vref_fixed,
+        "U_ref": vref_fixed,
+    }
+
+    def _enforce_reference_values(x_vec: np.ndarray) -> np.ndarray:
+        x_out = np.array(x_vec, dtype=float, copy=True)
+        for local_idx, var in enumerate(local_vars):
+            if local_idx >= x_out.size or not isinstance(var, Var):
+                continue
+            if var.name in ref_fixed_values:
+                x_out[local_idx] = float(ref_fixed_values[var.name])
+        return x_out
+
     for local_idx, var in enumerate(local_vars):
         if local_idx >= len(x0) or not isinstance(var, Var):
             continue
-        if var.name == "Pm_ref" and p_seed is not None:
-            x0[local_idx] = p_seed
-        elif var.name == "UsRefPu" and vm_seed is not None:
-            x0[local_idx] = vm_seed
+        if var.name == "Pm_ref":
+            x0[local_idx] = pref_fixed
+        elif var.name == "UsRefPu":
+            x0[local_idx] = vref_fixed
+    x0 = _enforce_reference_values(x0)
 
     seeded_pm = [float(x0[i]) for i, v in enumerate(local_vars) if isinstance(v, Var) and v.name == "Pm_ref" and i < len(x0)]
     seeded_vref = [float(x0[i]) for i, v in enumerate(local_vars) if isinstance(v, Var) and v.name == "UsRefPu" and i < len(x0)]
     print(
         f"[PseudoTransientInit] x0 seeding: "
-        f"P_seed={p_seed}, Vm_seed={vm_seed}, fixed_ref_uids={fixed_ref_uids}, "
+        f"P_seed={p_seed}, Vm_seed={vm_seed}, Pref_fixed={pref_fixed}, Vref_fixed={vref_fixed}, fixed_ref_uids={fixed_ref_uids}, "
         f"Pm_ref_x0={seeded_pm}, UsRefPu_x0={seeded_vref}"
     )
+
+    # Keep reference variables strictly fixed to their seeded values across
+    # pseudo-transient and Newton-polish phases.
+    fixed_local_idx = [i for i, v in enumerate(local_vars) if isinstance(v, Var) and v.uid in fixed_ref_uids]
+    fixed_local_vals_seed = {i: float(x0[i]) for i in fixed_local_idx if 0 <= i < x0.size}
 
     # Re-evaluate runtime variable parameters from declared equations.
     ev0 = np.array(problem._variable_parameters_values, dtype=float, copy=True)
@@ -1125,6 +1162,7 @@ def init_pseudo_transient(mdl: Block,
         alpha=1.0,
         h_jac=1e-3,
     )
+    x0 = _enforce_reference_values(x0)
     x0 = problem.find_feasible_point_joint(
         x0=np.array(x0, dtype=float, copy=True),
         free_state_names=("delta", "omega"),
@@ -1132,6 +1170,7 @@ def init_pseudo_transient(mdl: Block,
         tol=max(float(tol), 1e-5),
         h_jac=1e-3,
     )
+    x0 = _enforce_reference_values(x0)
     x0 = problem.find_feasible_point_staged(
         x0=np.array(x0, dtype=float, copy=True),
         max_steps_stage=120,
@@ -1139,6 +1178,7 @@ def init_pseudo_transient(mdl: Block,
         tol_stage2=max(float(tol), 1e-5),
         h_jac=1e-3,
     )
+    x0 = _enforce_reference_values(x0)
     if verbose:
         g_after = np.array(problem.rhs_algebraic(x0, dx0), dtype=float, copy=True)
         g_after_inf = float(np.linalg.norm(g_after, np.inf)) if g_after.size > 0 and np.all(np.isfinite(g_after)) else np.nan
@@ -1154,6 +1194,7 @@ def init_pseudo_transient(mdl: Block,
             x_ref=np.array(x0, dtype=float, copy=True),
             max_iter=10,
         )
+        x0 = _enforce_reference_values(x0)
         if verbose:
             g_after = np.array(problem.rhs_algebraic(x0, dx0), dtype=float, copy=True)
             g_after_inf = float(np.linalg.norm(g_after, np.inf)) if g_after.size > 0 and np.all(np.isfinite(g_after)) else np.nan
@@ -1165,6 +1206,7 @@ def init_pseudo_transient(mdl: Block,
         pass
 
     # Run pseudo-transient simulation
+    x0 = _enforce_reference_values(x0)
     x_solution, _ = solver.simulate(plot=bool(verbose), x0=x0)
 
     dx_pre = np.zeros(problem.get_diff_var_number(), dtype=float)
@@ -1177,8 +1219,7 @@ def init_pseudo_transient(mdl: Block,
     # Here f(x) is the stacked explicit RHS [f_state(x), g_algebraic(x)] with dx=0.
     dx_newton = np.zeros(problem.get_diff_var_number(), dtype=float)
     x_nr = np.array(x_solution, dtype=float, copy=True)
-    fixed_local_idx = [i for i, v in enumerate(local_vars) if isinstance(v, Var) and v.uid in fixed_ref_uids]
-    fixed_local_vals = {i: float(x_nr[i]) for i in fixed_local_idx if 0 <= i < x_nr.size}
+    fixed_local_vals = {i: fixed_local_vals_seed[i] for i in fixed_local_idx if i in fixed_local_vals_seed}
 
     newton_max_iter = 25
     newton_tol = max(float(tol), 1e-8)

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import gc
 import math
 import sys
 from pathlib import Path
@@ -57,6 +58,15 @@ def _get_app() -> QtWidgets.QApplication:
         return QtWidgets.QApplication(sys.argv)
     else:
         return app
+
+
+def _collect_pending_resources() -> None:
+    """
+    Flush any leaked resources from earlier tests before this GUI test runs.
+    """
+
+    for generation in (0, 1, 2):
+        gc.collect(generation=generation)
 
 
 def _find_index_by_label(model: QtCore.QAbstractItemModel,
@@ -157,7 +167,6 @@ def _build_catalog_block_item(editor: DynamicBlockEditorGUI, template_key: str):
     block_item = editor.create_library_payload_item(descriptor, 10.0, 20.0)
     assert block_item is not None
     return block_item
-
 
 def _label_texts(label_items) -> list[str]:
     """
@@ -292,6 +301,7 @@ def test_rms_editor_exposes_basic_block_catalog_under_basic() -> None:
 
 
 def test_library_search_button_and_shortcut_filter_basic_catalog() -> None:
+    _collect_pending_resources()
     editor = _build_editor(DynamicSimulationMode.EMT)
     editor.raise_()
     QTest.qWaitForWindowExposed(editor)
@@ -320,7 +330,12 @@ def test_library_search_button_and_shortcut_filter_basic_catalog() -> None:
     assert park_label in visible_leaf_labels
     assert limit_label not in visible_leaf_labels
 
+
     editor.close()
+    editor.deleteLater()
+    QtWidgets.QApplication.processEvents()
+    QTest.qWait(50)
+    QtWidgets.QApplication.processEvents()
 
 
 def test_proxy_drag_payload_materializes_catalog_template() -> None:

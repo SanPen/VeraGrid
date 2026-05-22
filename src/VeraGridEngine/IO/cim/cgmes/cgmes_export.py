@@ -5,6 +5,8 @@
 
 import zipfile
 from io import BytesIO
+from datetime import datetime, timezone
+from uuid import uuid4
 from rdflib import OWL
 from rdflib.graph import Graph
 from rdflib.namespace import RDF, RDFS
@@ -36,10 +38,12 @@ def get_available_cgmes_profiles(cgmes_version: CGMESVersions):
     elif cgmes_version == CGMESVersions.v3_0_0:
         return {
             "EQ": ["http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/3.0"],
+            "EQ_BD": ["http://iec.ch/TC57/ns/CIM/EquipmentBoundary-EU/3.0"],
             "OP": ["http://iec.ch/TC57/ns/CIM/Operation-EU/3.0"],
             "SC": ["http://iec.ch/TC57/ns/CIM/ShortCircuit-EU/3.0"],
             "SSH": ["http://iec.ch/TC57/ns/CIM/SteadyStateHypothesis-EU/3.0"],
             "TP": ["http://iec.ch/TC57/ns/CIM/Topology-EU/3.0"],
+            "TP_BD": ["http://iec.ch/TC57/ns/CIM/TopologyBoundary-EU/3.0"],
             "SV": ["http://iec.ch/TC57/ns/CIM/StateVariables-EU/3.0"],
             "GL": ["http://iec.ch/TC57/ns/CIM/GeographicalLocation-EU/3.0"],
             "CO": ["https://ap.cim4.eu/Contingency/2.3"]
@@ -275,7 +279,7 @@ class CimExporter:
         return False
 
     def generate_full_model_elements(self, profile):
-        full_model_elements = []
+        full_model_elements = list()
         filter_props = {"scenarioTime": "str",
                         "created": "str",
                         "version": "str",
@@ -286,41 +290,122 @@ class CimExporter:
                         "Supersedes": "str",
                         "description": "str"}
 
+        selected_instance = None
         for instance in self.cgmes_circuit.cgmes_assets.FullModel_list:
             instance_profiles = getattr(instance, "profile", None)
             if self.is_in_profile(instance_profiles=instance_profiles, model_profile=profile):
-                element = Et.Element("md:FullModel", {"rdf:about": "urn:uuid:" + instance.rdfid})
-                for attr_name in filter_props.keys():
-                    attr_value = getattr(instance, attr_name, None)
-                    if attr_name not in filter_props or attr_value is None:
-                        continue
+                selected_instance = instance
+                break
+            else:
+                pass
+        if selected_instance is None:
+            if len(self.cgmes_circuit.cgmes_assets.FullModel_list) > 0:
+                selected_instance = self.cgmes_circuit.cgmes_assets.FullModel_list[0]
+            else:
+                selected_instance = None
+        else:
+            pass
+
+        full_model_rdfid = str(uuid4())
+        if selected_instance is not None:
+            full_model_rdfid = selected_instance.rdfid
+        else:
+            pass
+        element = Et.Element("md:FullModel", {"rdf:about": "urn:uuid:" + full_model_rdfid})
+
+        for attr_name in filter_props.keys():
+            child = Et.Element(f"md:Model.{attr_name}")
+            attr_value = None
+            if selected_instance is not None:
+                attr_value = getattr(selected_instance, attr_name, None)
+            else:
+                attr_value = None
+
+            if attr_name == "profile":
+                target_profile_uris = self.profile_uris.get(profile, list())
+                for target_profile_uri in target_profile_uris:
                     child = Et.Element(f"md:Model.{attr_name}")
-                    if filter_props.get(attr_name) == "Association":
-                        if isinstance(attr_value, list):
-                            for v in attr_value:
-                                if v is not None:
-                                    child = Et.Element(f"md:Model.{attr_name}")
-                                    child.attrib = {"rdf:resource": "urn:uuid:" + v}
-                                    element.append(child)
-                                else:
-                                    pass
-                            continue
-                        else:
-                            if attr_value is not None:
-                                child.attrib = {"rdf:resource": "urn:uuid:" + attr_value}
-                            else:
-                                continue
-                    else:
-                        if isinstance(attr_value, list):
-                            for v in attr_value:
-                                child = Et.Element(f"md:Model.{attr_name}")
-                                child.text = str(v)
-                                element.append(child)
-                            continue
-                        else:
-                            child.text = str(attr_value)
+                    child.text = str(target_profile_uri)
                     element.append(child)
-                full_model_elements.append(element)
+                continue
+            else:
+                pass
+
+            if attr_name == "created":
+                if attr_value is None:
+                    attr_value = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+                else:
+                    pass
+            elif attr_name == "scenarioTime":
+                if attr_value is None:
+                    attr_value = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+                else:
+                    pass
+            elif attr_name == "version":
+                if attr_value is None:
+                    attr_value = "1"
+                elif isinstance(attr_value, int):
+                    attr_value = str(attr_value)
+                else:
+                    attr_value_str = str(attr_value)
+                    if attr_value_str.isdigit():
+                        attr_value = attr_value_str
+                    else:
+                        self.cgmes_circuit.logger.add_warning(
+                            msg="Coerced non-numeric FullModel.version during export",
+                            device=full_model_rdfid,
+                            device_class="FullModel",
+                            device_property="version",
+                            value=attr_value_str,
+                            expected_value="numeric string"
+                        )
+                        attr_value = "1"
+            else:
+                pass
+
+            if attr_value is None:
+                if attr_name in ["description", "Supersedes", "longDependentOnPF"]:
+                    child.text = ""
+                    element.append(child)
+                else:
+                    pass
+                continue
+            else:
+                pass
+
+            if filter_props.get(attr_name) == "Association":
+                if isinstance(attr_value, list):
+                    for v in attr_value:
+                        if v is None:
+                            pass
+                        else:
+                            token = str(v)
+                            if token.startswith("urn:uuid:"):
+                                resource_value = token
+                            else:
+                                resource_value = "urn:uuid:" + token
+                            child = Et.Element(f"md:Model.{attr_name}")
+                            child.attrib = {"rdf:resource": resource_value}
+                            element.append(child)
+                    continue
+                else:
+                    token = str(attr_value)
+                    if token.startswith("urn:uuid:"):
+                        child.attrib = {"rdf:resource": token}
+                    else:
+                        child.attrib = {"rdf:resource": "urn:uuid:" + token}
+                    element.append(child)
+            else:
+                if isinstance(attr_value, list):
+                    for v in attr_value:
+                        child = Et.Element(f"md:Model.{attr_name}")
+                        child.text = str(v)
+                        element.append(child)
+                    continue
+                else:
+                    child.text = str(attr_value)
+                    element.append(child)
+        full_model_elements.append(element)
         return full_model_elements
 
     @staticmethod

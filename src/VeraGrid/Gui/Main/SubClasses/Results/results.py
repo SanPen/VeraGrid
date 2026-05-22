@@ -70,6 +70,11 @@ class ResultsMain(SimulationsMain):
         self.ui.dynamicsDeviceTreeView.doubleClicked.connect(self.dynamic_results_tree_view_dbl_click)
         self.ui.dynamicsPlotsTreeView.doubleClicked.connect(self.dynamic_plots_tree_view_dbl_click)
 
+        # The plots tree exposes group actions through a context menu so the
+        # double-click interaction can remain dedicated to plotting.
+        self.ui.dynamicsPlotsTreeView.customContextMenuRequested.connect(self.show_dynamic_plots_context_menu)
+        self.ui.dynamicsPlotsTreeView.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.CustomContextMenu)
+
         # line edit enter
         self.ui.search_results_lineEdit.returnPressed.connect(self.search_in_results)
         self.ui.search_dynamic_objects_lineEdit.returnPressed.connect(self.search_dynamic_objects)
@@ -278,6 +283,76 @@ class ResultsMain(SimulationsMain):
                 pass
         else:
             pass
+
+    def show_dynamic_plots_context_menu(self, pos: QtCore.QPoint) -> None:
+        """
+        Show the context menu for the dynamics plots tree.
+
+        :param pos: Click position in viewport coordinates.
+        :return: Nothing.
+        """
+        # The context menu is only meaningful when a handler exists because the
+        # handler owns the mapping between view indexes and plot-group objects.
+        if self.dynamic_results_handler is not None:
+            index: QtCore.QModelIndex = self.ui.dynamicsPlotsTreeView.indexAt(pos)
+            if index.isValid():
+                plots_model = self.dynamic_results_handler.get_plots_model()
+                item: QtGui.QStandardItem | None = plots_model.itemFromIndex(index)
+                if item is not None:
+                    # Renaming is restricted to top-level group nodes to avoid the
+                    # ambiguous case where a variable child would rename its parent group.
+                    if item.parent() is None:
+                        menu: QtWidgets.QMenu = QtWidgets.QMenu(parent=self.ui.dynamicsPlotsTreeView)
+                        rename_action: QtGui.QAction = menu.addAction("Rename group")
+                        selected_action: QtGui.QAction | None = menu.exec_(
+                            self.ui.dynamicsPlotsTreeView.viewport().mapToGlobal(pos)
+                        )
+                        if selected_action == rename_action:
+                            self.rename_dynamic_plot_group(index=index)
+                        else:
+                            pass
+                    else:
+                        pass
+                else:
+                    pass
+            else:
+                pass
+        else:
+            pass
+
+    def rename_dynamic_plot_group(self, index: QtCore.QModelIndex) -> None:
+        """
+        Rename the selected dynamics plot group.
+
+        :param index: Selected top-level plot-group index.
+        :return: Nothing.
+        """
+        # The selected index is translated through the handler so the GUI keeps
+        # all plot-group state changes centralized in the handler layer.
+        if self.dynamic_results_handler is not None:
+            old_name: str | None = self.dynamic_results_handler.get_plot_group_name_from_index(index=index)
+            if old_name is not None:
+                new_name: str
+                accepted: bool
+                new_name, accepted = QtWidgets.QInputDialog.getText(
+                    self,
+                    "Rename dynamic plot",
+                    "Plot name",
+                    text=old_name
+                )
+                if accepted:
+                    renamed: bool = self.dynamic_results_handler.rename_plot_group(old_name=old_name,
+                                                                                   new_name=new_name)
+                    if renamed:
+                        self.ui.dynamicsPlotsTreeView.expandAll()
+                    else:
+                        self.show_warning_toast("The plot group name is empty or already exists.")
+                else:
+                    pass
+            else:
+                self.show_warning_toast("Select a plot group first.")
+        else:
+            self.show_warning_toast("There are no RMS dynamics results loaded.")
 
     def expand_dynamic_plots_tree(self,
                                   parent: QtCore.QModelIndex,

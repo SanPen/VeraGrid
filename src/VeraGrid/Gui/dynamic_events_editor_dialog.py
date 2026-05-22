@@ -63,7 +63,7 @@ class EventRow:
         self.transition_combo: QtWidgets.QComboBox | None = None
         self.end_time_spin: QtWidgets.QDoubleSpinBox | None = None
 
-        if self.mode == DynamicSimulationMode.EMT:
+        if self.mode == DynamicSimulationMode.EMT or self.mode == DynamicSimulationMode.RMS:
             self.transition_combo = QtWidgets.QComboBox()
             self.transition_combo.addItem("Step", DynamicEventTransitionType.Step)
             self.transition_combo.addItem("Ramp", DynamicEventTransitionType.Ramp)
@@ -84,7 +84,7 @@ class EventRow:
         self.group_combo = QtWidgets.QComboBox()
         for group in events_groups_list:
             self.group_combo.addItem(group.name, group)
-        if self.mode == DynamicSimulationMode.EMT:
+        if self.mode == DynamicSimulationMode.EMT or self.mode == DynamicSimulationMode.RMS:
             table.setCellWidget(row, 6, self.group_combo)
         else:
             table.setCellWidget(row, 4, self.group_combo)
@@ -123,7 +123,7 @@ class EventRow:
             if isinstance(transition_data, DynamicEventTransitionType):
                 transition_type = transition_data
             else:
-                transition_type = DynamicEventTransitionType.Step
+                raise TypeError("transition_type must be DynamicEventTransitionType")
         else:
             pass
 
@@ -475,7 +475,7 @@ class DynamicEventDialogue(QtWidgets.QDialog):
         layout.addWidget(label_device)
 
         # --- Events Table ---
-        if self.mode == DynamicSimulationMode.EMT:
+        if self.mode == DynamicSimulationMode.EMT or self.mode == DynamicSimulationMode.RMS:
             self.table = QtWidgets.QTableWidget(0, 8)
             self.table.setHorizontalHeaderLabels(
                 ["", "Parameter", "Time", "New Value", "Transition", "End Time", "Group", "Align Step"]

@@ -75,6 +75,8 @@ def get_load_phasor_current_rms_template(vfactory: VarFactory, name:str = '') ->
     }
 
     templ.block.init_eqs = {
+        vr_aux: vr,
+        vi_aux: vi,
         Pl0: vr * Ir + vi * Ii,
         Ql0: vi * Ir - vr * Ii,
     }

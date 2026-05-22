@@ -20,9 +20,9 @@ class InfluenceArea(MonitoringArea):
     :ivar tpe: CIM type name inherited from the base class.
     """
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='filteringInfluenceFactor', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.MA]),
-        CgmesProperty(property_name='identificationInfluenceFactor', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.MA]),
-        CgmesProperty(property_name='voltageInfluenceFactor', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.MA]),
+        CgmesProperty(property_name='filteringInfluenceFactor', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.MA]),
+        CgmesProperty(property_name='identificationInfluenceFactor', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.MA]),
+        CgmesProperty(property_name='voltageInfluenceFactor', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.MA]),
     )
     __slots__ = ('filteringInfluenceFactor', 'identificationInfluenceFactor', 'voltageInfluenceFactor')
 

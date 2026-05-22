@@ -510,11 +510,11 @@ def set_rms_model(device: Any, model:Block, var_factory: VarFactory):
             raise ValueError(f"Connection Bus RMS model cannot be empty, initialize {device.bus.name} RMS model")
 
     # fill var factoru dict[Dev, List[Var]] with model variables
-    model.unify_blocks()
-    for vr in model.algebraic_vars:
-        var_factory.register_var(device, vr)
-    for vr in model.state_vars:
-        var_factory.register_var(device, vr)
+    # model.unify_blocks()
+    # for vr in model.algebraic_vars:
+    #     var_factory.register_var(device, vr)
+    # for vr in model.state_vars:
+    #     var_factory.register_var(device, vr)
 
     # set the model to the device
     device.rms_model = model

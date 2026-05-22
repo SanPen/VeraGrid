@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 class ShuntCompensatorModification(SetPointAction):
     """NCP CGMES extension class."""
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='ShuntCompensator', class_type='ShuntCompensator', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.RA]),
+        CgmesProperty(property_name='ShuntCompensator', class_type='ShuntCompensator', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.RA]),
     )
     __slots__ = ('ShuntCompensator')
 

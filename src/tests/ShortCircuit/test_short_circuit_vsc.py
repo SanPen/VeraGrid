@@ -215,7 +215,10 @@ def test_dgs_parse_droop_vsc():
     the same short-circuit current like in PowerFactory.
     Finally, the WindTurbine element in PowerFactory, has to be converted into one VSC and one DC bus.
     """
-    grid = vge.open_file('data/grids/test_droop_vsc.dgs')
+    grid = vge.open_file('data/grids/test_droop_vsc.dgs',
+                         options=vge.FileOpenOptions(
+                             dgs_use_vsc_for_injections=True
+                         ))
 
     # ------------------------------------------------------------------------------------------------------------------
     #   AC/DC Power Flow under healthy conditions
@@ -257,7 +260,10 @@ def test_dgs_parse_external_grid_sc():
     is correctly replicated in VeraGrid from PowerFactory, and that the short-circuit results matches the RMS dynamic
     simulation of PowerFactory.
     """
-    grid = vge.open_file('data/grids/test_ieee14_external_grid.dgs')
+    grid = vge.open_file('data/grids/test_ieee14_external_grid.dgs',
+                         options=vge.FileOpenOptions(
+                             dgs_use_vsc_for_injections=True
+                         ))
 
     # ------------------------------------------------------------------------------------------------------------------
     #   AC/DC Power Flow under healthy conditions
@@ -300,7 +306,10 @@ def test_dgs_parse_static_var_system():
     This test is performed to the modified IEEE 14-bus system with 8 VSCs, in order to check that the static var systems
     (SVS) are correctly replicated in VeraGrid from PowerFactory, and that the power flow results are the same.
     """
-    grid = vge.open_file('data/grids/test_ieee14_svs.dgs')
+    grid = vge.open_file('data/grids/test_ieee14_svs.dgs',
+                         options=vge.FileOpenOptions(
+                             dgs_use_vsc_for_injections=True
+                         ))
 
     # ------------------------------------------------------------------------------------------------------------------
     #   AC/DC Power Flow under healthy conditions
@@ -344,7 +353,10 @@ def test_dgs_parse_ward_and_asynchronous():
     behaving as Ward Equivalents and also that the Asynchronous Generators (AG) are correctly replicated in VeraGrid
     from PowerFactory, and that the power flow results are the same.
     """
-    grid = vge.open_file('data/grids/test_ieee14_ward_asynchronous.dgs')
+    grid = vge.open_file('data/grids/test_ieee14_ward_asynchronous.dgs',
+                         options=vge.FileOpenOptions(
+                             dgs_use_vsc_for_injections=True
+                         ))
 
     # ------------------------------------------------------------------------------------------------------------------
     #   AC/DC Power Flow under healthy conditions

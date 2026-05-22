@@ -743,4 +743,4 @@ if __name__ == '__main__':
      batt_energy_,
      load_shedding_) = run_greedy_dispatch_ts(grid=grid_, time_indices=None, logger=Logger())
 
-    print()
+    # print()

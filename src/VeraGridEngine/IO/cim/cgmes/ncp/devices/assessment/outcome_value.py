@@ -19,10 +19,10 @@ if TYPE_CHECKING:
 class OutcomeValue(Base):
     """NCP CGMES extension class."""
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='ImpactAssessmentMatrix', class_type='ImpactAssessmentMatrix', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.AE, CgmesProfileType.IAM]),
-        CgmesProperty(property_name='ImpactedSystemOperator', class_type='SystemOperator', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.AE, CgmesProfileType.IAM]),
-        CgmesProperty(property_name='mRID', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.AE, CgmesProfileType.IAM]),
-        CgmesProperty(property_name='outcome', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.AE, CgmesProfileType.IAM]),
+        CgmesProperty(property_name='ImpactAssessmentMatrix', class_type='ImpactAssessmentMatrix', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.IAM]),
+        CgmesProperty(property_name='ImpactedSystemOperator', class_type='SystemOperator', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.IAM]),
+        CgmesProperty(property_name='mRID', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.IAM]),
+        CgmesProperty(property_name='outcome', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.IAM]),
     )
     __slots__ = ('ImpactAssessmentMatrix', 'ImpactedSystemOperator', 'mRID', 'outcome')
 

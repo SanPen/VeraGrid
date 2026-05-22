@@ -179,7 +179,8 @@ class DataBaseTableMain(DiagramsMain):
             parent=self.ui.dataStructureTableView,
             editable=True,
             dictionary_of_lists=dictionary_of_lists,
-            properties_filter=filter_prop
+            properties_filter=filter_prop,
+            error_msg_ptr=self.show_error_toast
         )
 
         return mdl

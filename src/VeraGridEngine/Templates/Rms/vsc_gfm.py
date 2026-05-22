@@ -7,6 +7,7 @@ from typing import List
 import math
 
 from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import ParamPowerFlowRefferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import (Block, Var)
@@ -122,16 +123,17 @@ def build_gfm_converter_model(vfactory: VarFactory, inputs: List[Var],
     algebraic_eqs.append(vd_f - vd_g - (Rc*id_g - omega*Lc*iq_g))
     algebraic_eqs.append(vq_f - vq_g - (Rc*iq_g + omega*Lc*id_g))
 
-    algebraic_eqs.append(vd_c - vd_f - (Rf*id_g - omega*Lf*iq_c))
-    algebraic_eqs.append(vq_c - vq_f - (Rf*iq_g + omega*Lf*id_c))
+    algebraic_eqs.append(vd_c - vd_f - (Rf*id_c - omega*Lf*iq_c))
+    algebraic_eqs.append(vq_c - vq_f - (Rf*iq_c + omega*Lf*id_c))
 
     # Grid currents (mapped from converter side)
     algebraic_eqs.append(iq_c - iq_g - (-Cf*omega*vq_f + vd_f/Rcap))
     algebraic_eqs.append(id_c - id_g - ( Cf*omega*vd_f + vq_f/Rcap))
 
     # Power measurement
-    algebraic_eqs.append(P - vfactory.add_const(1.5) * (vq_g * iq_g + vd_g * id_g))
-    algebraic_eqs.append(Q - vfactory.add_const(1.5) * (vq_g * id_g - vd_g * iq_g))
+    k = vfactory.add_const(1.0)  # Power calculation constant for dq frame
+    algebraic_eqs.append(P - k * (vq_g * iq_g + vd_g * id_g))
+    algebraic_eqs.append(Q - k * (vq_g * id_g - vd_g * iq_g))
 
     # Droop control with Low-pass filters
     # Transfer function: 1/(tau*s + 1)
@@ -165,8 +167,42 @@ def build_gfm_converter_model(vfactory: VarFactory, inputs: List[Var],
     res_block.add(block_vq)
 
     # Current reference calculation (with feedforward and decoupling)
-    algebraic_eqs.append(id_c_ref - (iq_hat + iq_g - Cf * omega * vq_f))
-    algebraic_eqs.append(iq_c_ref - (id_hat + id_g + Cf * omega * vd_f))
+    i_d_ref_raw = iq_hat + iq_g - Cf * omega * vq_f
+    i_q_ref_raw = id_hat + id_g + Cf * omega * vd_f
+
+    # Current limitation with anti-windup (UPC-style back-calculation path):
+    # positive feedback through LPF 1/(1+s*tau_aw), tau_aw = Kp_icl/Ki_icl.
+    eps_aw = vfactory.add_const(1e-9)
+    tau_aw = Kp_icl / (Ki_icl + eps_aw)
+    aw_d_in = vfactory.add_var('aw_d_in')
+    aw_q_in = vfactory.add_var('aw_q_in')
+    block_aw_d, aw_d = tf_to_block(vfactory, num=[vfactory.add_const(1.0)], den=[vfactory.add_const(1.0), tau_aw],
+                                   x=aw_d_in, name='aw_d')
+    block_aw_q, aw_q = tf_to_block(vfactory, num=[vfactory.add_const(1.0)], den=[vfactory.add_const(1.0), tau_aw],
+                                   x=aw_q_in, name='aw_q')
+    res_block.add(block_aw_d)
+    res_block.add(block_aw_q)
+
+    i_d_ref_aw = vfactory.add_var('i_d_ref_aw')
+    i_q_ref_aw = vfactory.add_var('i_q_ref_aw')
+    algebraic_eqs.append(i_d_ref_aw - (i_d_ref_raw + aw_d))
+    algebraic_eqs.append(i_q_ref_aw - (i_q_ref_raw + aw_q))
+
+    # Saturation plant: q-axis first, then d-axis headroom.
+    iq_for_id_lim = sym.max(iq_c, i_q_ref_aw)
+    id_max = sym.sqrt(sym.max(I_max**2 - iq_for_id_lim**2, vfactory.add_const(1e-5)))
+    i_d_ref_sat = sym.hard_sat(i_d_ref_aw, -id_max, id_max)
+    i_q_ref_sat = sym.hard_sat(i_q_ref_aw, -I_max, I_max)
+
+    i_d_ref_sat_var = vfactory.add_var('i_d_ref_sat')
+    i_q_ref_sat_var = vfactory.add_var('i_q_ref_sat')
+    algebraic_eqs.append(i_d_ref_sat_var - i_d_ref_sat)
+    algebraic_eqs.append(i_q_ref_sat_var - i_q_ref_sat)
+    algebraic_eqs.append(aw_d_in - (i_d_ref_sat_var - i_d_ref_aw))
+    algebraic_eqs.append(aw_q_in - (i_q_ref_sat_var - i_q_ref_aw))
+
+    algebraic_eqs.append(id_c_ref - i_d_ref_sat_var)
+    algebraic_eqs.append(iq_c_ref - i_q_ref_sat_var)
 
     # Current loop PI controllers
     block_id, vd_hat = tf_to_block(vfactory, num=[Ki_icl, Kp_icl], den=[0, 1], x=id_c_ref - id_c, name='id_ctrl')
@@ -184,7 +220,8 @@ def build_gfm_converter_model(vfactory: VarFactory, inputs: List[Var],
 
     # Collect all variables
     algebraic_vars.extend(
-        [P, Q, omega, theta, V, vd_g, vq_g, id_g, iq_g, id_c, iq_c, vd_f, vq_f, vd_c, vq_c, vd_c_ref, vq_c_ref, id_c_ref, iq_c_ref])
+         [P, Q, omega, theta, V, vd_g, vq_g, id_g, iq_g, id_c, iq_c, vd_f, vq_f, vd_c, vq_c, vd_c_ref, vq_c_ref, id_c_ref, iq_c_ref,
+          i_d_ref_aw, i_q_ref_aw, i_d_ref_sat_var, i_q_ref_sat_var, aw_d_in, aw_q_in])
 
     core_block = Block(
         algebraic_eqs=algebraic_eqs,
@@ -202,8 +239,8 @@ def build_gfm_converter_model(vfactory: VarFactory, inputs: List[Var],
             V_ref: Vm,
             vd_g: vfactory.add_const(0.0),
             vq_g: Vm,
-            id_g: (2 / 3) * Q / vq_g,
-            iq_g: (2 / 3) * P / vq_g,
+            id_g: (1 / k) * Q / vq_g,
+            iq_g: (1 / k) * P / vq_g,
             vd_f: vd_g + (Rc*id_g - omega*Lc*iq_g),
             vq_f: vq_g + (Rc*iq_g + omega*Lc*id_g),
             vd_ref: vd_f,
@@ -216,8 +253,16 @@ def build_gfm_converter_model(vfactory: VarFactory, inputs: List[Var],
             # Current references match currents (PI input = 0)
             id_c_ref: id_c,
             iq_c_ref: iq_c,
-            vd_c_ref: Rf * id_g - Lf * omega * iq_c + vd_f,
-            vq_c_ref: Rf * iq_g + Lf * omega * id_c + vq_f,
+            i_d_ref_aw: id_c,
+            i_q_ref_aw: iq_c,
+            i_d_ref_sat_var: id_c,
+            i_q_ref_sat_var: iq_c,
+            aw_d_in: vfactory.add_const(0.0),
+            aw_q_in: vfactory.add_const(0.0),
+            aw_d: vfactory.add_const(0.0),
+            aw_q: vfactory.add_const(0.0),
+            vd_c_ref: Rf * id_c - Lf * omega * iq_c + vd_f,
+            vq_c_ref: Rf * iq_c + Lf * omega * id_c + vq_f,
             vq_c: vq_c_ref,
             vd_c: vd_c_ref,
 
@@ -226,9 +271,9 @@ def build_gfm_converter_model(vfactory: VarFactory, inputs: List[Var],
             vq_hat: (vq_c_ref) - (vq_f) - (Lf * omega * id_c),
             # Voltage PI controller outputs (feedforward currents)
             # From id_c_ref = y_vq_ctrl + iq_g - Cf*vq_f with id_c_ref = id_c:
-            iq_hat: id_c - iq_g + Cf * vq_f,
+            iq_hat: id_c - iq_g + Cf * omega * vq_f,
             # From iq_c_ref = y_vd_ctrl + id_g + Cf*vd_f with iq_c_ref = iq_c:
-            id_hat: iq_c - id_g - Cf * vd_f,
+            id_hat: iq_c - id_g - Cf * omega * vd_f,
         },
         external_mapping={
             VarPowerFlowRefferenceType.P: P,
@@ -238,7 +283,18 @@ def build_gfm_converter_model(vfactory: VarFactory, inputs: List[Var],
     res_block.add(core_block)
     res_block.unify_blocks()
 
-    return res_block, id_c, iq_c, P, Q
+    return res_block, id_c, iq_c, P, Q, {
+        "Rf": Rf,
+        "Rc": Rc,
+        "Rcap": Rcap,
+        "id_g": id_g,
+        "iq_g": iq_g,
+        "vd_c": vd_c,
+        "vq_c": vq_c,
+        "vd_f": vd_f,
+        "vq_f": vq_f,
+        "L": Lf,
+    }
 
 
 def VscGfmBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
@@ -271,13 +327,15 @@ def VscGfmBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
         Qf: vfactory.add_const(0.0),
     }
 
-    gfm_block, i_d, i_q, P, Q = build_gfm_converter_model(vfactory=vfactory, inputs=[Vm, Va, Pt_vsc, Qt_vsc])
+    gfm_block, i_d, i_q, P, Q, internals = build_gfm_converter_model(vfactory=vfactory, inputs=[Vm, Va, Pt_vsc, Qt_vsc])
 
     Im = sym.sqrt(i_d ** 2 + i_q ** 2 + vfactory.add_const(1e-5))
+    P_conv = vfactory.add_const(1.5) * (internals["vq_c"] * i_q + internals["vd_c"] * i_d)
+    P_poly_loss = a0 + a1 * Im + a2 * Im ** 2
 
     vsc_wrapper = Block(
         algebraic_eqs=[
-            Pf_vsc - (P + (a0 + a1 * Im + a2 * Im ** 2)),
+            Pf_vsc + P_conv,
             Pt_vsc + P,
             Qt_vsc + Q,
         ],
@@ -293,12 +351,26 @@ def VscGfmBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
             VarPowerFlowRefferenceType.Vdc: v_dc,
         },
         in_vars=inputs,
+        init_eqs={
+            Pt_vsc: -P,
+            Qt_vsc: -Q,
+            Pf_vsc: -P_conv,
+        },
         out_vars=[Pt_vsc, Qt_vsc, Pf_vsc]
     )
 
     vsc_wrapper.add(gfm_block)
     vsc_wrapper.name = 'gfm_block'
     vsc_wrapper.unify_blocks()  # Merge init_eqs from child blocks
+    vsc_wrapper.init_eqs[Pf_vsc] = -P_conv
+
+    vsc_wrapper.api_obj_mapping = {
+        ParamPowerFlowRefferenceType.R1: internals["Rf"],
+        ParamPowerFlowRefferenceType.X1: internals["L"],
+        ParamPowerFlowRefferenceType.alpha1: a0,
+        ParamPowerFlowRefferenceType.alpha2: a1,
+        ParamPowerFlowRefferenceType.alpha3: a2,
+    }
 
     templ.block = vsc_wrapper
     return templ

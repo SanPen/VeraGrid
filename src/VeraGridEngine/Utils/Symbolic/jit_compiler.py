@@ -2356,14 +2356,21 @@ class RMSCompiler(EquationCompiler):
         lines: List[str] = list()
         lines.append(f"def {func_name}({EVENT_PARAMS_NAME}, {TIME_NAME}, out):")
 
-        final_names_dict = self.compiler_names_dict.copy()
+        final_names_dict: Dict[int, str] = self.compiler_names_dict.copy()
         for uid, count in used_vars_count.items():
             if count > 1:
                 final_names_dict[uid] = alias_names_dict[uid]
                 lines.append(f"    {alias_names_dict[uid]} = {self.compiler_names_dict[uid]}")
+            else:
+                pass
 
         for i, eq in enumerate(eqs):
-            expr_str = expression2numba(eq, self.compiler_names_dict)
+            # Event-parameter expressions may reuse the same runtime variable many
+            # times, especially for piecewise ramps built from time-dependent
+            # expressions. The compiled expression must therefore use the alias-
+            # aware name map prepared above, otherwise the generated code can
+            # evaluate a simplified step-like path instead of the intended ramp.
+            expr_str = expression2numba(eq, final_names_dict)
             lines.append(f"    out[{i}] = {expr_str}")
 
         raw_fn = _compile_to_file("\n".join(lines), func_name)

@@ -20,7 +20,7 @@ class ExceptionalPowerTransferCorridor(PowerTransferCorridor):
     :ivar tpe: CIM type name inherited from the base class.
     """
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='PTCTriggeredEquipment', class_type='PTCTriggeredEquipment', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.ER]),
+        CgmesProperty(property_name='PTCTriggeredEquipment', class_type='PTCTriggeredEquipment', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.ER]),
     )
     __slots__ = ('PTCTriggeredEquipment')
 

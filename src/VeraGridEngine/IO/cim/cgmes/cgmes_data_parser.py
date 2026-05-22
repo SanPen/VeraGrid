@@ -284,7 +284,7 @@ def process_cgmes_file_data(file_name: str,
                     elif prof in cgmes3_0_0_uri:
                         detected_version = CGMESVersions.v3_0_0
 
-                if len(profile) > 0 and 'Boundary' in profile[0]:
+                if any('Boundary' in str(prof) for prof in profile):
                     merge(boundary_set, file_cgmes_data, logger, log_overwriting_values)
                 else:
                     merge(data, file_cgmes_data, logger, log_overwriting_values)
@@ -312,13 +312,20 @@ def process_cgmes_file_data(file_name: str,
                 parsed_data[file_name] = file_cgmes_data
             profile = model_info.get('priorVersion', '')
 
-            for prof in profile:
+            if isinstance(profile, list):
+                profile_values = profile
+            elif profile:
+                profile_values = [profile]
+            else:
+                profile_values = []
+
+            for prof in profile_values:
                 if prof in cgmes2_4_15_uri:
                     detected_version = CGMESVersions.v2_4_15
                 elif prof in cgmes3_0_0_uri:
                     detected_version = CGMESVersions.v3_0_0
 
-            if 'Boundary' in profile:
+            if any('Boundary' in str(prof) for prof in profile_values):
                 merge(boundary_set, file_cgmes_data, logger, log_overwriting_values)
             else:
                 merge(data, file_cgmes_data, logger, log_overwriting_values)

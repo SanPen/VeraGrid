@@ -10,6 +10,7 @@ from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.identified_object import IdentifiedObject
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 if TYPE_CHECKING:
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.connectivity_node_container import ConnectivityNodeContainer
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.terminal import Terminal
@@ -18,8 +19,8 @@ if TYPE_CHECKING:
 class ConnectivityNode(IdentifiedObject):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
 		CgmesProperty(property_name='Terminals', class_type='Terminal', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The connectivity node to which this terminal connects with zero impedance.''', profiles=[]),
-		CgmesProperty(property_name='ConnectivityNodeContainer', class_type='ConnectivityNodeContainer', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Container of this connectivity node.''', profiles=[]),
-		CgmesProperty(property_name='TopologicalNode', class_type='TopologicalNode', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The connectivity nodes combine together to form this topological node.  May depend on the current state of switches in the network.''', profiles=[]),
+		CgmesProperty(property_name='ConnectivityNodeContainer', class_type='ConnectivityNodeContainer', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Container of this connectivity node.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='TopologicalNode', class_type='TopologicalNode', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The connectivity nodes combine together to form this topological node.  May depend on the current state of switches in the network.''', profiles=[CgmesProfileType.TP]),
 	)
 	__slots__ = ('Terminals', 'ConnectivityNodeContainer', 'TopologicalNode')
 	def __init__(self, rdfid='', tpe: str = 'ConnectivityNode') -> None:

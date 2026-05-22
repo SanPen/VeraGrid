@@ -19,8 +19,8 @@ if TYPE_CHECKING:
 class LoadFrequencyControlBlock(PowerSystemResource):
     """NCP CGMES extension class."""
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='LoadFrequencyControlArea', class_type='LoadFrequencyControlArea', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.MA]),
-        CgmesProperty(property_name='SynchronousArea', class_type='SynchronousArea', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.MA]),
+        CgmesProperty(property_name='LoadFrequencyControlArea', class_type='LoadFrequencyControlArea', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.ER]),
+        CgmesProperty(property_name='SynchronousArea', class_type='SynchronousArea', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.ER]),
     )
     __slots__ = ('LoadFrequencyControlArea', 'SynchronousArea')
 

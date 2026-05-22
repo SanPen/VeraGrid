@@ -20,10 +20,10 @@ class DirectCurrentMasterController(DirectCurrentEquipmentController):
     :ivar tpe: CIM type name inherited from the base class.
     """
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='DCTieCorridor', class_type='DCTieCorridor', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.ER]),
-        CgmesProperty(property_name='DirectCurrentBipoleController', class_type='DirectCurrentBipoleController', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.ER]),
-        CgmesProperty(property_name='DirectCurrentPoleController', class_type='DirectCurrentPoleController', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.ER]),
-        CgmesProperty(property_name='DirectCurrentSubstationController', class_type='DirectCurrentSubstationController', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.ER]),
+        CgmesProperty(property_name='DCTieCorridor', class_type='DCTieCorridor', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.ER]),
+        CgmesProperty(property_name='DirectCurrentBipoleController', class_type='DirectCurrentBipoleController', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.ER]),
+        CgmesProperty(property_name='DirectCurrentPoleController', class_type='DirectCurrentPoleController', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.ER]),
+        CgmesProperty(property_name='DirectCurrentSubstationController', class_type='DirectCurrentSubstationController', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.ER]),
     )
     __slots__ = ('DCTieCorridor', 'DirectCurrentBipoleController', 'DirectCurrentPoleController', 'DirectCurrentSubstationController')
 

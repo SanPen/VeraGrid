@@ -20,11 +20,11 @@ class MonitoringArea(PowerSystemResource):
     :ivar tpe: CIM type name inherited from the base class.
     """
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='AreaBorderTerminal', class_type='AreaBorderTerminal', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.MA]),
-        CgmesProperty(property_name='PowerFrequencyController', class_type='PowerFrequencyController', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.ER]),
-        CgmesProperty(property_name='Region', class_type='Region', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.MA]),
-        CgmesProperty(property_name='SynchronousArea', class_type='SynchronousArea', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.MA]),
-        CgmesProperty(property_name='SystemOperator', class_type='SystemOperator', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.MA]),
+        CgmesProperty(property_name='AreaBorderTerminal', class_type='AreaBorderTerminal', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.MA]),
+        CgmesProperty(property_name='PowerFrequencyController', class_type='PowerFrequencyController', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.ER]),
+        CgmesProperty(property_name='Region', class_type='Region', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.MA]),
+        CgmesProperty(property_name='SynchronousArea', class_type='SynchronousArea', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.MA]),
+        CgmesProperty(property_name='SystemOperator', class_type='SystemOperator', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.MA]),
     )
     __slots__ = ('AreaBorderTerminal', 'PowerFrequencyController', 'Region', 'SynchronousArea', 'SystemOperator')
 

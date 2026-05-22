@@ -2278,7 +2278,8 @@ class GridMapWidget(BaseDiagramWidget):
 
         return
 
-    def split_line_to_substation(self):
+    def split_line_to_substation(
+            self, preferred_line_container: MapAcLine | MapDcLine | MapHvdcLine | MapFluidPathLine | None = None):
         """
         Split a selected line and connect it to a selected substation.
         This creates two new lines: one from the original "from" bus to the selected substation,
@@ -2290,7 +2291,21 @@ class GridMapWidget(BaseDiagramWidget):
         selected_lines = self.get_selected_line_segments_tuple()
         selected_substations = self.get_selected_substations_tuple()
 
-        if len(selected_lines) != 1 or len(selected_substations) != 1:
+        if len(selected_substations) != 1:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Icon.Information)
+            msg.setText("Please select exactly one substation.")
+            msg.setWindowTitle("Selection Error")
+            msg.exec()
+            return
+
+        # Pick the line that was explicitly clicked from the context menu when available.
+        if preferred_line_container is not None:
+            line_api = preferred_line_container.api_object
+            line_graphic = preferred_line_container
+        elif len(selected_lines) == 1:
+            line_api, line_graphic = selected_lines[0]
+        else:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Icon.Information)
             msg.setText("Please select exactly one line and one substation.")
@@ -2299,7 +2314,6 @@ class GridMapWidget(BaseDiagramWidget):
             return
 
         # Get the API objects
-        line_api, line_graphic = selected_lines[0]
         substation_api, substation_graphic = selected_substations[0]
         original_line_container = line_graphic
 
@@ -3000,17 +3014,25 @@ class GridMapWidget(BaseDiagramWidget):
         msg.setWindowTitle("Operation Successful")
         msg.exec()
 
-    def change_line_connection(self):
+    def change_line_connection(self, preferred_line_container: MapAcLine | MapDcLine | MapHvdcLine | MapFluidPathLine | None = None):
 
         selected_lines = self.get_selected_line_segments_tuple()
         selected_substations = self.get_selected_substations_tuple()
 
-        if len(selected_lines) != 1 or len(selected_substations) != 2:
-            self.gui.show_error_toast(message="Please select exactly one line and two substations.")
+        if len(selected_substations) != 2:
+            self.gui.show_error_toast(message="Please select exactly two substations.")
             return
 
         # Get the API objects
-        line_api, line_graphic = selected_lines[0]
+        if preferred_line_container is not None:
+            line_api = preferred_line_container.api_object
+            line_graphic = preferred_line_container
+        elif len(selected_lines) == 1:
+            line_api, line_graphic = selected_lines[0]
+        else:
+            self.gui.show_error_toast(message="Please select exactly one line and two substations.")
+            return
+
         substation_api_1, substation_graphic_1 = selected_substations[0]
         substation_api_2, substation_graphic_2 = selected_substations[1]
 

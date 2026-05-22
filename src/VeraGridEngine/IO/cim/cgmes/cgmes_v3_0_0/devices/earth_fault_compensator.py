@@ -10,7 +10,7 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
 class EarthFaultCompensator(ConductingEquipment):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='r', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.ohm, description='''Resistance (real part of impedance).''', profiles=[]),
+		CgmesProperty(property_name='r', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.ohm, description='''Resistance (real part of impedance).''', profiles=[CgmesProfileType.SC]),
 	)
 	__slots__ = ('r',)
 	def __init__(self, rdfid='', tpe='EarthFaultCompensator'):

@@ -60,11 +60,15 @@ class FileOpenOptions:
                  cgmes_try_to_map_dc_to_hvdc_line: bool = True,
                  cgmes_topology_mode: CgmesTopologyMode = CgmesTopologyMode.Auto,
                  cgmes_create_busbar_section_for_every_connectivity_node: bool = False,
+                 cgmes_recovery_mode: CgmesRecoveryMode = CgmesRecoveryMode.Auto,
                  # PSSe
                  psse_adjust_taps_to_discrete_positions: bool = False,
                  psse_use_short_names: bool = True,
                  psse_flatten_virtual_taps: bool = False,
-                 cgmes_recovery_mode: CgmesRecoveryMode = CgmesRecoveryMode.Auto):
+                 # DGS
+                 dgs_use_vsc_for_injections: bool = False,
+                 dgs_use_dynamic_information: bool = False,
+                 ):
         """
         :param file_type: FileType to load, none is unsure
         :param crash_on_errors: Mainly debug feature to allow finding the exact crash issue when loading files
@@ -104,6 +108,10 @@ class FileOpenOptions:
         self.psse_adjust_taps_to_discrete_positions = psse_adjust_taps_to_discrete_positions
         self.psse_use_short_names = psse_use_short_names
         self.psse_flatten_virtual_taps = psse_flatten_virtual_taps
+
+        # DGS
+        self.dgs_use_vsc_for_injections: bool = dgs_use_vsc_for_injections
+        self.dgs_use_dynamic_information: bool = dgs_use_dynamic_information
 
 
 def open_cgmes(files: List[str] | str,
@@ -603,7 +611,12 @@ class FileOpen:
 
         elif self.file_type == FileType.DGS:
             if isinstance(self.file_name, str):
-                self.circuit = dgs_to_circuit(self.file_name, logger=self.logger)
+                self.circuit = dgs_to_circuit(
+                    self.file_name,
+                    logger_=self.logger,
+                    use_vsc_for_injections=self.options.dgs_use_vsc_for_injections,
+                    use_dynamic_information=self.options.dgs_use_dynamic_information
+                )
             else:
                 self.logger.add("File name is not a string")
                 return None

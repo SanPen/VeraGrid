@@ -107,6 +107,63 @@ def ml_hard_sat(
     )
     return final_block, final_expr 
 
+
+def mti_hard_sat(
+    vf: VarFactory,
+    u: Expr,
+    ul: Expr,
+    uu: Expr,
+    yl: Expr,
+    yu: Expr,
+    name: str = "",
+):
+    """MTI hard saturation following toolbox-style mixed constraints.
+
+    Binary pairs are enforced with equality constraints:
+    - b1*b2 = 0, b1 + b2 - 1 = 0
+    - b3*b4 = 0, b3 + b4 - 1 = 0
+
+    Range coupling is enforced with inequalities in residual form (G <= 0):
+    - -(b1 - b2) * (u - ul) <= 0
+    - -(b3 - b4) * (u - uu) <= 0
+    """
+    b1 = vf.add_var("b1_" + name)
+    b2 = vf.add_var("b2_" + name)
+    b3 = vf.add_var("b3_" + name)
+    b4 = vf.add_var("b4_" + name)
+    y = vf.add_var("y_sat_" + name)
+
+    s = (yu - yl) / (uu - ul)
+    y_mid = (u - ul) * s + yl
+    y_expr = b2 * yl + b1 * b4 * y_mid + b3 * yu
+
+    block = Block(
+        algebraic_vars=[y],
+        algebraic_eqs=[
+            y - y_expr,
+            b1 * b2,
+            b1 + b2 - Const(1.0),
+            b3 * b4,
+            b3 + b4 - Const(1.0),
+        ],
+        inequalities=[
+            -(b1 - b2) * (u - ul),
+            -(b3 - b4) * (u - uu),
+        ],
+        init_eqs={
+            y: sym.hard_sat((u - ul) * s + yl, yl, yu),
+        },
+        # Boolean mode initialization/selection is driven by guards.
+        # Guard convention in MTI is residual <= 0 means True.
+        boolean_guards={
+            b1: -(u - ul),
+            b2: (u - ul),
+            b3: -(u - uu),
+            b4: (u - uu),
+        }
+    )
+    return block, y
+
 def exponential_ml(vf: VarFactory, x:Expr, name:str=""):
     algebraic_eqs = list()
     algebraic_vars = list()
@@ -161,6 +218,40 @@ def ml_heaviside(vf: VarFactory, u:Expr, name:str=''):
         }
     )
     return positive_part_block, hv
+
+
+def ml_heaviside_sigmoid(
+    vf: VarFactory,
+    u: Expr,
+    name: str = '',
+    k: Expr = Const(20.0),
+    exp_clip: Expr = Const(60.0),
+):
+    hv = vf.add_var('hv_' + name)
+    sig_arg = sym.max(sym.min(k * u, exp_clip), -exp_clip)
+    hv_rhs = Const(1.0) / (Const(1.0) + sym.exp(-sig_arg))
+    block = Block(
+        algebraic_eqs=[hv - hv_rhs],
+        algebraic_vars=[hv],
+        init_eqs={hv: hv_rhs},
+    )
+    return block, hv
+
+
+def ml_hard_sat_sigmoid(
+    vf: VarFactory,
+    u: Expr,
+    u_min: Expr,
+    u_max: Expr,
+    name: str = '',
+    k: Expr = Const(20.0),
+    exp_clip: Expr = Const(60.0),
+):
+    block_min, h_min = ml_heaviside_sigmoid(vf, u - u_min, name=f"{name}_min", k=k, exp_clip=exp_clip)
+    block_max, h_max = ml_heaviside_sigmoid(vf, u - u_max, name=f"{name}_max", k=k, exp_clip=exp_clip)
+    sat_expr = u_min + (u - u_min) * h_min - (u - u_max) * h_max
+    block = Block(children=[block_min, block_max])
+    return block, sat_expr
 
 def ml_piecewise_aux(vf: VarFactory, x: Expr, name: str = None):
     x, all_blocks, _ = ml_piecewise(vf, x, name=name, counter=0)

@@ -513,6 +513,22 @@ def update_source_dict(block: Block | None, row: BlockParameterRow, value: Any, 
                 update_source_dict(child, row, value, old_expr)
 
 
+def _parse_symbolic_editor_value(block: Block | None, value: Any) -> Any:
+    """
+    Convert inline editor text into a symbolic expression when editing symbolic fields.
+
+    Table delegates may pass plain strings for inline edits, while block storage expects
+    Expr-compatible objects in init/event/mode dictionaries.
+    """
+    if not isinstance(value, str) or block is None:
+        return value
+
+    parsed = string_to_symbolic(value, build_block_symbol_namespace(block))
+    if isinstance(parsed, Comparison):
+        return parsed.to_expression()
+    return parsed
+
+
 def update_param_value(blk: Block, row: BlockParameterRow, value: Any, old_expr: Any):
     if blk is not None and row is not None:
         if row.key_var is not None:
@@ -3029,9 +3045,13 @@ class ParametersTableModel(QtCore.QAbstractTableModel):
                 row.name = value
                 row.key_var.name = value
             elif index.column() == 2 and row.editable_value:
-                row.value = value
+                try:
+                    parsed_value = _parse_symbolic_editor_value(self.block, value)
+                except Exception:
+                    return False
+                row.value = parsed_value
                 refresh_block_parameter_row_cache(row)
-                update_source_dict(self.block, row, value)
+                update_source_dict(self.block, row, parsed_value)
             else:
                 return False
             self.dataChanged.emit(index, index, [role])
@@ -5095,6 +5115,8 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                 LibraryLeafSpec("Emt pi line", BlockType.EMT_PI_LINE),
                 LibraryLeafSpec("Emt Bergeron line", BlockType.EMT_BERGERON_LINE),
                 LibraryLeafSpec("Emt JMarti line", BlockType.EMT_JMARTI_LINE),
+            ],
+            DeviceType.DCLineDevice: [
                 LibraryLeafSpec("Emt DC line", BlockType.EMT_DC_LINE),
             ],
             DeviceType.LoadDevice: [ # the other types of loads already appear in common emt device blocks
@@ -5114,7 +5136,15 @@ class DynamicBlockEditorGUI(QtWidgets.QMainWindow):
                 LibraryLeafSpec("Transformer", BlockType.TRAFO_EMT),
                 LibraryLeafSpec("XFMR Transformer", BlockType.XFMR_TRANSFORMER),
             ],
-            DeviceType.VscDevice: list(),
+            DeviceType.VscDevice: [
+            LibraryLeafSpec("Complete pseudo-EMT VSC", BlockType.COMPLETE_PSEUDO_VSC_EMT),
+            # LibraryLeafSpec("pseudo-EMT VSC", BlockType.PSEUDO_VSC_EMT),
+            # LibraryLeafSpec("PLL VSC", BlockType.PLL_EMT),
+            # LibraryLeafSpec("Outer loop VSC", BlockType.OUTER_LOOP_EMT),
+            # LibraryLeafSpec("Inner loop VSC", BlockType.INNER_LOOP_EMT),
+            # LibraryLeafSpec("Reduced transformer VSC", BlockType.REDUCED_TRANSFORMER_EMT),
+            ],
+            
         }
 
         try:

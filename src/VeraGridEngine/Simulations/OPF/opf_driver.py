@@ -277,6 +277,8 @@ class OptimalPowerFlowDriver(TimeSeriesDriverTemplate):
 
             self.results.hvdc_Pf = res.hvdc_Pf
             self.results.hvdc_loading = res.hvdc_loading
+            self.results.vsc_Pf = res.vsc_Pf * Sbase
+            self.results.vsc_loading = res.vsc_loading
             self.results.converged = res.converged
             self.results.error = res.error
             self.results.non_linear = True

@@ -20,10 +20,10 @@ class HourPattern(IdentifiedObject):
     :ivar tpe: CIM type name inherited from the base class.
     """
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='BaseRegularIntervalSchedule', class_type='BaseRegularIntervalSchedule', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS, CgmesProfileType.SIS]),
-        CgmesProperty(property_name='HourPeriod', class_type='HourPeriod', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS, CgmesProfileType.SIS]),
-        CgmesProperty(property_name='energyDemandKind', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS, CgmesProfileType.SIS]),
-        CgmesProperty(property_name='peakKind', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS, CgmesProfileType.SIS]),
+        CgmesProperty(property_name='BaseRegularIntervalSchedule', class_type='BaseRegularIntervalSchedule', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.SHS, CgmesProfileType.SIS]),
+        CgmesProperty(property_name='HourPeriod', class_type='HourPeriod', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.SHS, CgmesProfileType.SIS]),
+        CgmesProperty(property_name='energyDemandKind', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.SHS, CgmesProfileType.SIS]),
+        CgmesProperty(property_name='peakKind', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.SHS, CgmesProfileType.SIS]),
     )
     __slots__ = ('BaseRegularIntervalSchedule', 'HourPeriod', 'energyDemandKind', 'peakKind')
 

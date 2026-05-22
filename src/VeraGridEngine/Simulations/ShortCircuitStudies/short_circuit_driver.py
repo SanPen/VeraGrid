@@ -348,7 +348,7 @@ class ShortCircuitDriver(DriverTemplate):
                 raise Exception(f'Short-circuit type not recognised {fault_type.value}')
 
         else:
-            print()
+            pass
 
         # if we get here, no short circuit was done, so declare empty results and exit --------------------------------
         nbus = nc.bus_data.nbus

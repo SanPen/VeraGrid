@@ -506,7 +506,6 @@ class LineLocationsDelegate(QtWidgets.QItemDelegate):
         """
         table = editor.children()[1]
         # model.setData(index, val)
-        print()
 
 
 class ColorPickerDelegate(QtWidgets.QItemDelegate):

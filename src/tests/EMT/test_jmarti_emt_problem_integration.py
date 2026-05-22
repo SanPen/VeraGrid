@@ -234,7 +234,7 @@ def test_jmarti_emt_problem_builds_one_history_runtime_and_runs_short_simulation
     power_flow = PowerFlowDriver3Ph(grid, pf_options)
     power_flow.run()
     problem = EmtProblemDae(grid=grid, options=emt_options, pf_results=None, pf_results_3ph=power_flow.results)
-    working_line_model = problem._working_emt_models[id(line)]
+    working_line_model = problem._working_emt_models[str(line.idtag)]
 
     assert len(problem.history_models) == 1
     assert isinstance(problem.history_models[0], JMartiHistoryRuntime)

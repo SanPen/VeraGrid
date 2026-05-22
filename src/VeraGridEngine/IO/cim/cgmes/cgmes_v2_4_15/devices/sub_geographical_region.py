@@ -8,6 +8,7 @@ from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.identified_object import IdentifiedObject
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 if TYPE_CHECKING:
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.dc_line import DCLine
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.geographical_region import GeographicalRegion
@@ -17,7 +18,7 @@ if TYPE_CHECKING:
 class SubGeographicalRegion(IdentifiedObject):
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
         CgmesProperty(property_name='DCLines', class_type='DCLine', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''None''', profiles=[]),
-        CgmesProperty(property_name='Region', class_type='GeographicalRegion', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The geographical region to which this sub-geographical region is within.''', profiles=[]),
+        CgmesProperty(property_name='Region', class_type='GeographicalRegion', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The geographical region to which this sub-geographical region is within.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
         CgmesProperty(property_name='Lines', class_type='Line', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The lines within the sub-geographical region.''', profiles=[]),
         CgmesProperty(property_name='Substations', class_type='Substation', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The substations in this sub-geographical region.''', profiles=[]),
     )

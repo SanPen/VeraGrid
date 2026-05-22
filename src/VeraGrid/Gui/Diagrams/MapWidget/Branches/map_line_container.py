@@ -469,14 +469,14 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
         Run split-to-substation operation preserving the clicked line in selection.
         """
         self._ensure_line_selected_for_actions()
-        self.editor.split_line_to_substation()
+        self.editor.split_line_to_substation(preferred_line_container=self)
 
     def _run_change_line_connection(self) -> None:
         """
         Run line connection change operation preserving the clicked line in selection.
         """
         self._ensure_line_selected_for_actions()
-        self.editor.change_line_connection()
+        self.editor.change_line_connection(preferred_line_container=self)
 
     def show_context_menu(self, scene_pos: QPointF, screen_pos: QPoint) -> None:
         """

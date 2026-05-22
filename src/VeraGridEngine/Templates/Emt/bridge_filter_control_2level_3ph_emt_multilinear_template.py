@@ -81,6 +81,7 @@ def _build_bridge_filter_current_control_block(vf: VarFactory, name: str) -> Blo
     v_cmd_q: Var = vf.add_var(name=f"v_cmd_q_{name}")
     v_cmd_0: Var = vf.add_var(name=f"v_cmd_0_{name}")
     v_d_cap_out: Var = vf.add_var(name=f"v_d_cap_{name}")
+    v_d_cap_mode: Var = vf.add_var(name=f"v_d_cap_mode_{name}")
     v_q_cap: Var = vf.add_var(name=f"v_q_cap_{name}")
     v_q_cap_aux: Var = vf.add_var(name=f"v_q_cap_aux_{name}")
     v_0_cap: Var = vf.add_var(name=f"v_0_cap_{name}")
@@ -102,8 +103,6 @@ def _build_bridge_filter_current_control_block(vf: VarFactory, name: str) -> Blo
     i_q0: Expr = c23 * (Q_ref / sbase) / (Vpk + eps)
     v_cmd_d0: Expr = Vpk - R_f * i_d0 - L_f * i_q0
     v_cmd_q0: Expr = -R_f * i_q0 + L_f * i_d0
-    v_d_cap_mode: Var = vf.add_var(name=f"v_d_cap_mode_{name}")
-    v_d_cap_expr: Expr = sym.hard_sat(v_cmd_d_u, -v_lim, v_lim)
     v_lim_sq_expr: Expr = v_lim * v_lim_aux
     v_cmd_d_sq_expr: Expr = v_cmd_d * v_cmd_d_aux
     v_cmd_q_sq_expr: Expr = v_cmd_q * v_cmd_q_aux
@@ -186,7 +185,7 @@ def _build_bridge_filter_current_control_block(vf: VarFactory, name: str) -> Blo
             (v_q_cap_aux, sym.sqrt(v_q_cap_rhs)),
             (v_0_cap, sym.sqrt(v_0_cap_rhs)),
             (v_0_cap_aux, sym.sqrt(v_0_cap_rhs)),
-            (v_d_cap_out, v_d_cap_expr),
+            (v_d_cap_out, sym.hard_sat(v_cmd_d_u, -v_lim, v_lim)),
             (v_cmd_d, v_cmd_d0),
             (v_cmd_q, v_cmd_q0),
             (v_cmd_0, c0),

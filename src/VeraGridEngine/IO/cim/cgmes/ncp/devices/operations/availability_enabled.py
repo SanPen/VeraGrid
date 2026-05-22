@@ -20,9 +20,9 @@ class AvailabilityEnabled(AvailabilityPowerSystemFunction):
     :ivar tpe: CIM type name inherited from the base class.
     """
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='AssessedElement', class_type='AssessedElement', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.AVS]),
-        CgmesProperty(property_name='GridStateAlteration', class_type='GridStateAlteration', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.AVS]),
-        CgmesProperty(property_name='enabled', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.AVS]),
+        CgmesProperty(property_name='AssessedElement', class_type='AssessedElement', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.AVS]),
+        CgmesProperty(property_name='GridStateAlteration', class_type='GridStateAlteration', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.AVS]),
+        CgmesProperty(property_name='enabled', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.AVS]),
     )
     __slots__ = ('AssessedElement', 'GridStateAlteration', 'enabled')
 

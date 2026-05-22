@@ -15,7 +15,7 @@ from VeraGridEngine.IO.cim.cgmes.ncp.devices.contingency.contingency import Cont
 class ExceptionalContingency(Contingency):
     """NCP CGMES extension class."""
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='kind', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.CO, CgmesProfileType.SAR]),
+        CgmesProperty(property_name='kind', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.CO]),
     )
     __slots__ = ('kind')
 

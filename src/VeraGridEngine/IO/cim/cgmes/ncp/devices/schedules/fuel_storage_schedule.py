@@ -20,8 +20,8 @@ class FuelStorageSchedule(BaseIrregularTimeSeries):
     :ivar tpe: CIM type name inherited from the base class.
     """
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='FuelStorage', class_type='FuelStorage', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS, CgmesProfileType.SIS]),
-        CgmesProperty(property_name='FuelStorageTimePoint', class_type='FuelStorageTimePoint', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS, CgmesProfileType.SIS]),
+        CgmesProperty(property_name='FuelStorage', class_type='FuelStorage', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.SHS, CgmesProfileType.SIS]),
+        CgmesProperty(property_name='FuelStorageTimePoint', class_type='FuelStorageTimePoint', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.SHS, CgmesProfileType.SIS]),
     )
     __slots__ = ('FuelStorage', 'FuelStorageTimePoint')
 

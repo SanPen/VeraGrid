@@ -34,7 +34,9 @@ the future generations.
 
 - `3 - Optimal power flow <https://www.youtube.com/watch?v=o6oXBJ1Efqc>`_
 
-- `4 - Time series modelling <https://www.youtube.com/watch?v=wVdAtnvQ7s8>`_
+- `4 - Contingency Analysis <https://youtu.be/3VI_mxPlixs?si=rd1eWqLJkXbEDF3N>`_
+
+- `5 - Time series modelling <https://www.youtube.com/watch?v=wVdAtnvQ7s8>`_
 
 
 Contact

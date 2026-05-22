@@ -41,8 +41,8 @@ def ZIPLoadBuild(vfactory: VarFactory, name: str = "ZIP model", Pl0=1.0, Ql0=0.1
     inputs = [vfactory.add_var("Vm_")]
 
     # Vars:
-    P = vfactory.add_var('P', reference=VarPowerFlowRefferenceType.P)
-    Q = vfactory.add_var('Q', reference=VarPowerFlowRefferenceType.Q)
+    P = vfactory.add_var('P_zip', reference=VarPowerFlowRefferenceType.P)
+    Q = vfactory.add_var('Q_zip', reference=VarPowerFlowRefferenceType.Q)
 
     # Parameters:
     P0 = vfactory.add_var('P0')

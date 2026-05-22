@@ -921,7 +921,10 @@ def get_shunt_data(
                 data.Y[ii] += elm.get_Y_at(t_idx)
 
             if elm.control_mode == ShuntControlMode.Discrete:
-                data.Y[ii] += elm.step * complex(elm.g_steps[elm.step], elm.b_steps[elm.step])
+                if elm.step < len(elm.g_steps):
+                    data.Y[ii] += elm.step * complex(elm.g_steps[elm.step], elm.b_steps[elm.step])
+                else:
+                    data.Y[ii] += complex(elm.g_steps[0], elm.b_steps[0])
 
             if fill_three_phase:
                 if elm.conn == ShuntConnectionType.GroundedStar:

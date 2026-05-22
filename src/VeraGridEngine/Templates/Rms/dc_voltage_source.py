@@ -182,8 +182,8 @@ def DCPowerLimitedSource(vfactory: VarFactory, Vdc, name: str = "") -> RmsModelT
     event_dict = {
         C: vfactory.add_const(0.05),
         Pdc_ref0: vfactory.add_const(None),
-        Pmax: vfactory.add_const(1.0),
-        eps_v: vfactory.add_const(1e-6),
+        Pmax: vfactory.add_const(10.0),
+        eps_v: vfactory.add_const(1e-9),
     }
 
     dc_block = Block(
@@ -198,7 +198,7 @@ def DCPowerLimitedSource(vfactory: VarFactory, Vdc, name: str = "") -> RmsModelT
         out_vars=[Pdc, Idc],
         init_eqs={
             Idc: Pdc / (Vdc + eps_v),
-            Idc_src: Pdc / (Vdc + eps_v),
+            Idc_src: Idc,
             Pdc_ref0: Pdc,
         },
         external_mapping={
@@ -282,12 +282,12 @@ def DCPVSourceAveraged(vfactory: VarFactory, Vdc, name: str = "") -> RmsModelTem
         event_dict=event_dict,
         out_vars=[Pdc, Idc],
         init_eqs={
-            Idc: Pdc / Vdc,
-            Idc_src: Pdc / Vdc,
             Ipv_av: Isc_stc * (G / G_stc) * (1.0 + alpha_isc * (T - T_stc)),
             Vmp_est: Vmp_stc * (1.0 + beta_vmp * (T - T_stc)),
             Vpv_ref: Vmp_est,
             duty: 1.0 - Vpv_ref / (Vdc + eps_v),
+            Idc_src: eta_boost * (1.0 - duty) * Ipv_av,
+            Idc: Idc_src,
         },
         external_mapping={
             VarPowerFlowRefferenceType.P: Pdc,
@@ -295,6 +295,109 @@ def DCPVSourceAveraged(vfactory: VarFactory, Vdc, name: str = "") -> RmsModelTem
             VarPowerFlowRefferenceType.Vdc: Vdc,
         },
     )
+    templ.block = dc_block
+
+    return templ
+
+def DCSimpleSourceAveraged(vfactory: VarFactory, Vdc, name: str = "") -> RmsModelTemplate:
+    """
+    Simplified averaged DC source with a DC-link capacitor.
+
+    Model structure:
+    - A controlled or fixed DC current source injects current into the DC link.
+    - The converter extracts active power from the DC link.
+    - A parallel DC resistance models losses/damping.
+    - The DC-link capacitor defines the Vdc dynamic state.
+
+    The core equation is:
+
+        Cdc * dVdc/dt = Idc_src - Idc_conv - Vdc / Rdc
+
+    with:
+
+        Pdc = Vdc * Idc_conv
+
+    Sign convention:
+    - Idc_src > 0 injects current into the DC link.
+    - Idc_conv > 0 means the converter extracts power from the DC link.
+    - Pdc > 0 means active power is delivered from DC side to AC side.
+    """
+    templ = RmsModelTemplate()
+
+    # -------------------------------------------------------------------------
+    # Variables
+    # -------------------------------------------------------------------------
+    Idc_conv = vfactory.add_var("Idc_conv")
+    Idc_src = vfactory.add_var("Idc_src")
+    Idc_loss = vfactory.add_var("Idc_loss")
+    Pdc = vfactory.add_var("Pdc")
+
+    # Vdc is the actual state variable. dVdcdt is the derivative variable linked
+    # to Vdc through the dynamic framework.
+    dVdcdt = vfactory.add_diff_var("dVdcdt", base_var=Vdc)
+
+    # -------------------------------------------------------------------------
+    # Parameters
+    # -------------------------------------------------------------------------
+    Cdc = vfactory.add_var("Cdc")
+    Rdc = vfactory.add_var("Rdc")
+    Idc_src_ref = vfactory.add_var("Idc_src_ref")
+    eps_v = vfactory.add_var("eps_v")
+
+    event_dict = {
+        Cdc: vfactory.add_const(0.01),
+        Rdc: vfactory.add_const(1.0),
+        Idc_src_ref: vfactory.add_const(1.0),
+        eps_v: vfactory.add_const(1e-6),
+    }
+    Vdc_init = (
+        Rdc * Idc_src_ref
+        + ((Rdc * Idc_src_ref) ** 2.0 - 4.0 * Rdc * Pdc) ** 0.5
+    ) / 2.0
+    # -------------------------------------------------------------------------
+    # Algebraic and differential equations
+    # -------------------------------------------------------------------------
+    dc_block = Block(
+        algebraic_eqs=[
+            # The source current is directly imposed. Later this can be replaced
+            # by a controller, PV law, battery law, or DC network equation.
+            Idc_src - Idc_src_ref,
+            Pdc - Vdc * Idc_conv,
+            Idc_loss - Vdc / Rdc,
+
+            # DC-link capacitor dynamic balance.
+            # Cdc * dVdc/dt = Idc_src - Idc_conv - Idc_loss
+            Cdc * dVdcdt - Idc_src + Idc_conv + Idc_loss,
+        ],
+        algebraic_vars=[
+            Idc_src,
+            Idc_conv,
+            Idc_loss,
+            Pdc,
+        ],
+        diff_vars=[
+            dVdcdt,
+        ],
+        event_dict=event_dict,
+        out_vars=[
+            Pdc,
+            Idc_conv,
+            Idc_src,
+            Idc_loss,
+        ],
+        init_eqs={
+            Idc_src: Idc_src_ref,
+            Vdc: Vdc_init,
+            Idc_loss: Vdc / Rdc,
+            Idc_conv: Pdc / (Vdc + eps_v)
+        },
+        external_mapping={
+            VarPowerFlowRefferenceType.P: Pdc,
+            VarPowerFlowRefferenceType.Idc: Idc_conv,
+            VarPowerFlowRefferenceType.Vdc: Vdc,
+        },
+    )
+
     templ.block = dc_block
 
     return templ

@@ -16,6 +16,7 @@ class InvestmentsGroup(EditableDevice):
         'category',
         '_discount_rate',
         '_CAPEX',
+        'color'
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
@@ -39,6 +40,14 @@ class InvestmentsGroup(EditableDevice):
             tpe=float,
             definition="Capital Expenditure of the group (added to the individual investments' capex)",
         ),
+        GCProp(
+            prop_name='color',
+            units='',
+            tpe=str,
+            definition='Color to paint',
+            is_color=True,
+            cat=[PrpCat.TP],
+        ),
     )
 
     def __init__(self,
@@ -47,7 +56,8 @@ class InvestmentsGroup(EditableDevice):
                  category: str = '',
                  comment: str = "",
                  discount_rate: float = 5.0,
-                 CAPEX: float =0):
+                 CAPEX: float = 0,
+                 color: str | None = None):
         """
         Contingency group
         :param idtag: Unique identifier
@@ -66,13 +76,13 @@ class InvestmentsGroup(EditableDevice):
                                 comment=comment)
 
         # Contingency type
-        self.category = category
+        self.category: str = category
 
-        self.discount_rate = discount_rate
+        self.discount_rate: float = discount_rate
 
-        self.CAPEX = CAPEX
+        self.CAPEX: float = CAPEX
 
-    # Scalar property accessors coerce assignments to the declared schema types.
+        self.color = color if color is not None else self.rnd_color()
 
     @property
     def discount_rate(self) -> float:
@@ -111,4 +121,3 @@ class InvestmentsGroup(EditableDevice):
         :return: None
         """
         self._CAPEX = float(val)
-

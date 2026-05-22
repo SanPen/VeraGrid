@@ -18,8 +18,8 @@ if TYPE_CHECKING:
 class EquivalentGeneratingUnit(GeneratingUnit):
     """NCP CGMES extension class."""
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='EquivalentPowerPlant', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.PS]),
-        CgmesProperty(property_name='ExternalNetworkInjection', class_type='ExternalNetworkInjection', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.PS]),
+        CgmesProperty(property_name='EquivalentPowerPlant', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.ER]),
+        CgmesProperty(property_name='ExternalNetworkInjection', class_type='ExternalNetworkInjection', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.ER]),
     )
     __slots__ = ('EquivalentPowerPlant', 'ExternalNetworkInjection')
 

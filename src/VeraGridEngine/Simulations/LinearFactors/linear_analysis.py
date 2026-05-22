@@ -869,8 +869,8 @@ class LinearMultiContingency:
         self.mlodf_factors: sp.csc_matrix = mlodf_factors
 
         # MLODF[k, βδ] x PTDF[βδ, i] + PTDF[k, i]
-        if not isinstance(compensated_ptdf_factors, sp.csc_matrix):
-            print()
+        # if not isinstance(compensated_ptdf_factors, sp.csc_matrix):
+        #     print()
         self.compensated_ptdf_factors: sp.csc_matrix = compensated_ptdf_factors
 
         # percentage to decrease an injection, used to compute ΔP

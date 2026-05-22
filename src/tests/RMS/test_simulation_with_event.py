@@ -19,7 +19,7 @@ from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template import get_complet
 from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_rms_model
 
-from VeraGridEngine.enumerations import VarPowerFlowRefferenceType, DynamicIntegrationMethod, RmsInitializationMethod
+from VeraGridEngine.enumerations import VarPowerFlowRefferenceType, DynamicEventTransitionType, DynamicIntegrationMethod, RmsInitializationMethod
 from VeraGridEngine.Devices.Events.rms_event import RmsEvent
 import VeraGridEngine.api as gce
 
@@ -335,3 +335,41 @@ def test_simulation_with_event():
         check_index_type=False,
         atol=1e-6
     )
+
+
+def test_rms_event_can_store_ramp_transition_metadata() -> None:
+    """
+    Check that RMS events preserve ramp-transition metadata.
+
+    :return: None.
+    """
+    event: RmsEvent = RmsEvent(time=0.1,
+                               end_time=0.2,
+                               value=1.5,
+                               transition_type=DynamicEventTransitionType.Ramp)
+
+    assert event.time == 0.1
+    assert event.end_time == 0.2
+    assert event.value == 1.5
+    assert event.transition_type == DynamicEventTransitionType.Ramp
+
+
+def test_rms_event_accepts_serialized_ramp_transition_metadata() -> None:
+    """
+    Check that RMS events restore ramp metadata from serialized text.
+
+    GUI and persistence layers can reconstruct the transition profile from the
+    enum string value. The RMS event object must normalize that representation so
+    the solver can still recognize the event as a ramp.
+
+    :return: None.
+    """
+    event: RmsEvent = RmsEvent(time=0.1,
+                               end_time=0.2,
+                               value=1.5,
+                               transition_type=DynamicEventTransitionType.Ramp)
+
+    assert event.time == 0.1
+    assert event.end_time == 0.2
+    assert event.value == 1.5
+    assert event.transition_type == DynamicEventTransitionType.Ramp

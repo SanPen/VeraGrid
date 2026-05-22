@@ -295,7 +295,7 @@ def get_emt_ideal_converter(
     converter_block.api_obj_mapping = {
         ParamPowerFlowRefferenceType.Sbase: sbase,
         ParamPowerFlowRefferenceType.converter_loss_power_0: P_loss,
-        ParamPowerFlowRefferenceType.P0: P0,
+        # ParamPowerFlowRefferenceType.P0: P0,
         ParamPowerFlowRefferenceType.omega_base: omega_base,
         ParamPowerFlowRefferenceType.converter_control_mode_1: control1,
         ParamPowerFlowRefferenceType.converter_control_mode_2: control2,
@@ -412,28 +412,32 @@ def _build_pseudo_emt_converter_vsc_block(
     c3 = vf.add_const(3.0)
     c32 = vf.add_const(1.5)
 
-    P_loss0_pu = P_loss0 / sbase
-    P_loss_i1_pu = P_loss_i1 / sbase
-    P_loss_i2_pu = P_loss_i2 / sbase
-    i_leak = v_dc / R_dc
+    sbase_eff = sym.max(sbase, eps)
+    R_dc_eff = sym.max(R_dc, eps)
+    R_dc_term_eff = sym.max(R_dc_term, eps)
+    C_dc_eff = sym.max(C_dc, eps)
+    P_loss0_pu = P_loss0 / sbase_eff
+    P_loss_i1_pu = P_loss_i1 / sbase_eff
+    P_loss_i2_pu = P_loss_i2 / sbase_eff
+    i_leak = v_dc / R_dc_eff
     v_dc_eff = sym.max(v_dc, vdc_floor)
 
-    i_d0 = (vf.add_const(2.0 / 3.0) * ((P_ref / sbase) + (P_loss0 / sbase))) / (Vpk + eps)
-    i_q0 = (vf.add_const(2.0 / 3.0) * (Q_ref / sbase)) / (Vpk + eps)
+    i_d0 = (vf.add_const(2.0 / 3.0) * ((P_ref / sbase_eff) + (P_loss0 / sbase_eff))) / (Vpk + eps)
+    i_q0 = (vf.add_const(2.0 / 3.0) * (Q_ref / sbase_eff)) / (Vpk + eps)
     i_mag0 = sym.sqrt(i_d0 * i_d0 + i_q0 * i_q0 + eps)
     P0 = c32 * Vpk * i_d0
     Q0 = c32 * Vpk * i_q0
     P_loss0_expr = P_loss0_pu + P_loss_i1_pu * i_mag0 + P_loss_i2_pu * i_mag0 * i_mag0
     # DC-side power balance uses the AC transferred power plus converter losses.
     i_dc_conv0 = -(P0 + P_loss0_expr) / (Vdc_ref + eps)
-    i_dc0 = (i_dc_conv0 + v_dc_bus / R_dc) / (c1 + R_dc_term / R_dc)
+    i_dc0 = (i_dc_conv0 + v_dc_bus / R_dc_eff) / (c1 + R_dc_term_eff / R_dc_eff)
     v_dc0 = v_dc_bus - R_dc_term * i_dc0
 
     block = Block(
         # DC-side physical model and converter power/loss balance.
         state_eqs=[
             # DC-link capacitor dynamics.
-            (i_dc - i_dc_conv - i_leak) / C_dc,
+            (i_dc - i_dc_conv - i_leak) / C_dc_eff,
         ],
         state_vars=[v_dc],
         diff_vars=[d_v_dc],
@@ -452,7 +456,7 @@ def _build_pseudo_emt_converter_vsc_block(
             # AC-to-DC bridge current implied by power transfer and losses.
             i_dc_conv + (P + P_loss) / v_dc_eff,
             # Resistive coupling between the DC bus and the internal capacitor node.
-            i_dc - (v_dc_bus - v_dc) / R_dc_term,
+            i_dc - (v_dc_bus - v_dc) / R_dc_term_eff,
             # Expose mode-selection flags so outer loops can gate themselves.
             regulate_vdc_mode - regulate_vdc,
             regulate_q_mode - regulate_q,
@@ -624,9 +628,11 @@ def _build_pseudo_emt_converter_outer_loop_block(vf: VarFactory, name: str) -> B
     c3 = vf.add_const(3.0)
     c32 = vf.add_const(1.5)
 
-    P_ref_pu = P_ref / sbase
-    Q_ref_pu = Q_ref / sbase
-    P_ac_ff_pu = P_ref_pu + P_loss0 / sbase
+    sbase_eff = sym.max(sbase, eps)
+    tau_meas_eff = sym.max(tau_meas, eps)
+    P_ref_pu = P_ref / sbase_eff
+    Q_ref_pu = Q_ref / sbase_eff
+    P_ac_ff_pu = P_ref_pu + P_loss0 / sbase_eff
     active_control_error = regulate_vdc_mode * (Vdc_ref - v_dc) + regulate_active_mode * (P_ref_pu - P_f)
 
     i_d0 = c23 * P_ac_ff_pu / (Vpk + eps)
@@ -647,9 +653,9 @@ def _build_pseudo_emt_converter_outer_loop_block(vf: VarFactory, name: str) -> B
             # Reactive-power outer-loop integrator with anti-windup feedback.
             regulate_q_mode * q_ki * ((q_ref_enabled_pu - Q_f) + aw_gain * (i_q_ref - i_q_ref_u)),
             # Active-power measurement filter.
-            (P - P_f) / tau_meas,
+            (P - P_f) / tau_meas_eff,
             # Reactive-power measurement filter.
-            (Q - Q_f) / tau_meas,
+            (Q - Q_f) / tau_meas_eff,
         ],
         state_vars=[xi_vdc, xi_q, P_f, Q_f],
         diff_vars=[d_xi_vdc, d_xi_q, d_P_f, d_Q_f],
@@ -751,11 +757,13 @@ def _build_pseudo_emt_converter_inner_loop_block(vf: VarFactory, name: str) -> B
     eps = vf.add_const(1e-10)
     c0 = vf.add_const(0.0)
     c23 = vf.add_const(2.0 / 3.0)
-    v_dc_eff = sym.max(v_dc, vdc_floor)
+    sbase_eff = sym.max(sbase, eps)
+    vdc_floor_eff = sym.max(vdc_floor, eps)
+    v_dc_eff = sym.max(v_dc, vdc_floor_eff)
     omega_ratio = omega_pll / (omega_base + eps)
 
-    i_d0 = c23 * ((P_ref / sbase) + (P_loss0 / sbase)) / (Vpk + eps)
-    i_q0 = c23 * (Q_ref / sbase) / (Vpk + eps)
+    i_d0 = c23 * ((P_ref / sbase_eff) + (P_loss0 / sbase_eff)) / (Vpk + eps)
+    i_q0 = c23 * (Q_ref / sbase_eff) / (Vpk + eps)
     # Match the switched-converter branch-drop convention used by the EMT seed
     # helper so the pseudo model starts from the same commanded dq voltage.
     v_cmd_d0 = Vpk - R_eq * i_d0 + L_eq * i_q0

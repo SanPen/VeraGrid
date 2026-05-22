@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
-from typing import List, Dict, TypeVar
+from typing import List, Dict, TypeVar, Any
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol, Unit
 from VeraGridEngine.IO.base.base_property import BaseProperty
 from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
@@ -21,7 +21,8 @@ class CgmesProperty(BaseProperty):
                  mandatory=False,
                  comment='',
                  out_of_the_standard=False,
-                 profiles: List[CgmesProfileType] = ()):
+                 profiles: List[CgmesProfileType] = (),
+                 default_value: Any = None):
         """
         CIM property for soft type checking
         :param property_name: name of the property
@@ -34,6 +35,7 @@ class CgmesProperty(BaseProperty):
         :param comment: Extra comments
         :param out_of_the_standard: Is this property out of the standard?
         :param profiles: List of profiles where this property should appear
+        :param default_value: Design-time default value used by conversion when missing
         """
         BaseProperty.__init__(self,
                               property_name=property_name,
@@ -53,8 +55,9 @@ class CgmesProperty(BaseProperty):
         self.comment = comment
         self.out_of_the_standard = out_of_the_standard
         self.profiles = profiles
+        self.default_value = default_value
 
-    def get_dict(self) -> Dict[str, str]:
+    def get_dict(self) -> Dict[str, Any]:
         """
         Get dictionary of property values
         :return:
@@ -65,5 +68,6 @@ class CgmesProperty(BaseProperty):
                 'mandatory': self.mandatory,
                 'max_chars': self.max_chars,
                 'profiles': ', '.join([a.value for a in self.profiles]),
+                'default_value': self.default_value,
                 "descriptions": self.description,
                 'comment': self.comment}

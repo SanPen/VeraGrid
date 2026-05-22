@@ -402,13 +402,19 @@ class VarFactory(EditableDevice):
         self._var_dict = obj_dict
 
     def parse_diff_var_dict(self,
-            data_list: List[Dict[str, Any]]):
+                            data_list: List[Dict[str, Any]]) -> None:
         """
+        Parse persisted differential symbolic variables into the factory.
 
-        :param data_list:
-        :param var_dict: dictionary of vars
-        :param diff_var_dict: dictionary of diffVars
-        :return:
+        The loader must rebuild each differential variable using the exact
+        symbolic metadata stored in the ``.veragrid`` payload. In particular,
+        the power-flow reference has to be converted back to the
+        ``VarPowerFlowRefferenceType`` enum so downstream EMT connection logic
+        can distinguish branch terminal references such as ``vf_A`` and
+        ``vt_A`` from bus references such as ``v_A``.
+
+        :param data_list: Serialized differential variable records.
+        :return: None.
         """
         obj_dict: Dict[int, Var | Const | Var] = dict()
         for data in data_list:
@@ -422,6 +428,9 @@ class VarFactory(EditableDevice):
                     "base_var": _expr_to_dict(expr=expr.base_var, obj_dict=obj_dict),
                 })
             """
+            # Recover the base variable first because differential variables
+            # are linked to the already reconstructed algebraic/differential
+            # chain. This preserves the original derivative hierarchy.
             if data["base_var"] in self._var_dict.keys():
                 base_var = self._var_dict[data["base_var"]]
             elif data["base_var"] in self._diff_var_dict.keys():
@@ -431,28 +440,40 @@ class VarFactory(EditableDevice):
 
             # Older persisted symbolic models may not store the power-flow
             # reference field on differential variables either.
-            key_ref = None
+            key_ref: SharedVarReferenceType | None = None
             ref_data_dict: Any = data["shared_ref"]
             if ref_data_dict is not None:
                 ref_data_name = ref_data_dict["name"]
                 ref_data_uid = ref_data_dict["uid"]
-                key_ref: SharedVarReferenceType | None
 
                 if ref_data_name is not None and ref_data_uid is not None:
                     if ref_data_name not in self._references_dict:
                         key_ref = SharedVarReferenceType(ref_data_name, ref_data_uid)
                         if key_ref is not None:
                             self._references_dict[ref_data_name] = key_ref
+                        else:
+                            pass
                     else:
                         key_ref = self._references_dict[ref_data_name]
                 else:
                     key_ref = None
+            else:
+                pass
 
-            reference_power_flow: VarPowerFlowRefferenceType | None = data.get("ref", None)
+            # Convert the persisted textual reference back to the enum object.
+            # Keeping the enum identity is required so EMT topology validation
+            # can still recognize branch-side references after reopening files.
+            reference_power_flow_data: Any = data.get("ref", None)
+            reference_power_flow: VarPowerFlowRefferenceType | None
+            if reference_power_flow_data is not None:
+                reference_power_flow = VarPowerFlowRefferenceType(reference_power_flow_data)
+            else:
+                reference_power_flow = None
+
             obj = Var(name=data["name"],
                       uid=data["uid"],
                       base_var=base_var,
-                      shared_reference = key_ref,
+                      shared_reference=key_ref,
                       reference=reference_power_flow)
 
             if ref_data_dict is not None:
@@ -463,6 +484,10 @@ class VarFactory(EditableDevice):
                     else:
                         self._vars_references_dict[ref_data_uid] = list()
                         self._vars_references_dict[ref_data_uid].append(obj)
+                else:
+                    pass
+            else:
+                pass
 
             # at this point we can store the object
             obj_dict[obj.non_mutable_uid] = obj
@@ -484,24 +509,67 @@ class VarFactory(EditableDevice):
                 self._references_dict[data["name"]] = ref
                 self._vars_references_dict[ref.uid] = list()
 
-    def parse_connections_dict(self, datalist: Dict[int, List[Any]]):
+    def parse_connections_dict(self, datalist: Dict[int, List[Any]]) -> None:
         """
-        Parse connections list into _vars_connected_dict.
+        Parse serialized connections and replay their runtime alias state.
+
+        The saved connection table stores the graph that links one incoming
+        variable to one or more substituted variables through their stable
+        non-mutable identities. Rebuilding only the graph is not sufficient for
+        the runtime symbolic system, because fresh GUI-created models also apply
+        UID/name aliasing immediately when the connection is created. The load
+        path must therefore reconstruct the graph first and then replay the same
+        alias propagation so reopened symbolic models behave like newly created
+        ones.
 
         :param datalist: List of dicts with block_uid -> list of connection dicts.
-        :return:
+        :return: None.
         """
+        uid_key: int
+        connections_list: List[Any]
+        conn_data: Any
         for uid, connections_list in datalist.items():
+            uid_key = int(uid)
+
+            if uid_key not in self._vars_connected_dict:
+                self._vars_connected_dict[uid_key] = list()
+            else:
+                pass
+
             for conn_data in connections_list:
                 if conn_data["type"] == "Connection":
-                    conn = Connection(
+                    conn: Connection = Connection(
                         non_mutable_uid=conn_data["non_mutable_uid"],
                         name=conn_data["name"],
                         uid=conn_data["uid"]
                     )
-                    if uid not in self._vars_connected_dict:
-                        self._vars_connected_dict[uid] = list()
-                    self._vars_connected_dict[uid].append(conn)
+                    self._vars_connected_dict[uid_key].append(conn)
+                else:
+                    pass
+
+        # Replay the alias propagation only after the full graph has been
+        # reconstructed. This mirrors the live connection workflow while also
+        # ensuring recursive downstream links can be traversed during replay.
+        incoming_non_mutable_uid: int
+        connection_list: List[Connection]
+        connection: Connection
+        for incoming_non_mutable_uid, connection_list in self._vars_connected_dict.items():
+            if incoming_non_mutable_uid in self._var_dict:
+                incoming_var: Var = self._var_dict[incoming_non_mutable_uid]
+            elif incoming_non_mutable_uid in self._diff_var_dict:
+                incoming_var = self._diff_var_dict[incoming_non_mutable_uid]
+            else:
+                incoming_var = None
+
+            if incoming_var is not None:
+                for connection in connection_list:
+                    self.connect_variables_by_uid(
+                        connection.non_mutable_uid,
+                        incoming_var.uid,
+                        incoming_var.name,
+                    )
+            else:
+                pass
 
     def register_var(self, dev:Any, var:Var):
 

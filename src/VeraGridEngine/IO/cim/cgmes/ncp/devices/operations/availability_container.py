@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 class AvailabilityContainer(AvailabilityPowerSystemFunction):
     """NCP CGMES extension class."""
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='EquipmentContainer', class_type='EquipmentContainer', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.ER, CgmesProfileType.AVS, CgmesProfileType.GD]),
+        CgmesProperty(property_name='EquipmentContainer', class_type='EquipmentContainer', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.AVS]),
     )
     __slots__ = ('EquipmentContainer')
 

@@ -20,11 +20,11 @@ class BaseRegularIntervalSchedule(BaseTimeSeries):
     :ivar tpe: CIM type name inherited from the base class.
     """
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='HourPattern', class_type='HourPattern', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS, CgmesProfileType.SIS]),
-        CgmesProperty(property_name='Season', class_type='Season', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS, CgmesProfileType.SIS]),
-        CgmesProperty(property_name='dayOfWeek', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS, CgmesProfileType.SIS]),
-        CgmesProperty(property_name='intervalEndTime', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS, CgmesProfileType.SIS]),
-        CgmesProperty(property_name='intervalStartTime', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SHS, CgmesProfileType.SIS]),
+        CgmesProperty(property_name='HourPattern', class_type='HourPattern', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.SHS, CgmesProfileType.SIS]),
+        CgmesProperty(property_name='Season', class_type='Season', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.SHS, CgmesProfileType.SIS]),
+        CgmesProperty(property_name='dayOfWeek', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.SHS, CgmesProfileType.SIS]),
+        CgmesProperty(property_name='intervalEndTime', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.SHS, CgmesProfileType.SIS]),
+        CgmesProperty(property_name='intervalStartTime', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.SHS, CgmesProfileType.SIS]),
     )
     __slots__ = ('HourPattern', 'Season', 'dayOfWeek', 'intervalEndTime', 'intervalStartTime')
 

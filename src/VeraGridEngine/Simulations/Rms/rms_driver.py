@@ -105,62 +105,67 @@ class RmsSimulationDriver(DriverTemplate):
 
         for group_idx, rms_events_group in enumerate(rms_events_groups):
 
-            self.report_text("Simulating RMS event group " + rms_events_group.name)
+            if rms_events_group.active:
 
-            self.progress_signal.emit(5)
+                self.report_text("Simulating RMS event group " + rms_events_group.name)
 
-            self.report_text("Simulating RMS event group " + rms_events_group.name)
-            problem.set_events_group(rms_events_group=rms_events_group)
-            problem.reset_boundary_update_state(0.0)
+                self.progress_signal.emit(5)
 
-            # DaeTrapezoidal = "DAE_Trapezoidal"
-            # DaeBackEuler = "DAE_BackEuler"
-            # DaeBDF2 = "DAE_bdf2"
-            # DaeContinuous = "DAE_Continuous"
-            # OdeRungeKutta4 = "ODE_Runge_Kutta 4"
-            # OdeEuler = "ODE_Euler"
+                self.report_text("Simulating RMS event group " + rms_events_group.name)
+                problem.set_events_group(rms_events_group=rms_events_group)
+                problem.reset_boundary_update_state(0.0)
 
-            if self.options.integration_method == DynamicIntegrationMethod.DaeBackEuler:
+                # DaeTrapezoidal = "DAE_Trapezoidal"
+                # DaeBackEuler = "DAE_BackEuler"
+                # DaeBDF2 = "DAE_bdf2"
+                # DaeContinuous = "DAE_Continuous"
+                # OdeRungeKutta4 = "ODE_Runge_Kutta 4"
+                # OdeEuler = "ODE_Euler"
 
-                self.report_text(
-                    f"Simulating RMS event group  {rms_events_group.name} with "
-                    f"{self.options.integration_method.value}"
-                )
-                solver = BackEulerImplicitIntegration(
-                    problem=problem,
-                    t0=0,
-                    t_end=self.options.simulation_time,
-                    h=self.options.time_step,
-                    max_iter=self.options.max_iter
-                )
+                if self.options.integration_method == DynamicIntegrationMethod.DaeBackEuler:
+
+                    self.report_text(
+                        f"Simulating RMS event group  {rms_events_group.name} with "
+                        f"{self.options.integration_method.value}"
+                    )
+                    solver = BackEulerImplicitIntegration(
+                        problem=problem,
+                        t0=0,
+                        t_end=self.options.simulation_time,
+                        h=self.options.time_step,
+                        max_iter=self.options.max_iter
+                    )
+
+                else:
+                    self.logger.add_info("Falling back to DAE-BackEuler method")
+
+                    self.report_text(
+                        f"Simulating RMS event group  {rms_events_group.name} with back euler as fallback"
+                    )
+
+                    solver = BackEulerImplicitIntegration(
+                        problem=problem,
+                        t0=0,
+                        t_end=self.options.simulation_time,
+                        h=self.options.time_step,
+                        max_iter=self.options.max_iter
+                    )
+
+                t, y, well_initialized, converged = solver.simulate()
+
+                self.results.converged[group_idx] = converged
+                self.results.well_initialized[group_idx] = well_initialized
+                self.results.values[:, :, group_idx] = y
+
+                if not well_initialized:
+                    self.logger.add_warning("Not well initialized", device=rms_events_group.name)
+
+                if not converged:
+                    self.logger.add_warning("Not converged", device=rms_events_group.name)
+
+                self.progress_signal.emit(90)
 
             else:
-                self.logger.add_info("Falling back to DAE-BackEuler method")
-
-                self.report_text(
-                    f"Simulating RMS event group  {rms_events_group.name} with back euler as fallback"
-                )
-
-                solver = BackEulerImplicitIntegration(
-                    problem=problem,
-                    t0=0,
-                    t_end=self.options.simulation_time,
-                    h=self.options.time_step,
-                    max_iter=self.options.max_iter
-                )
-
-            t, y, well_initialized, converged = solver.simulate()
-
-            self.results.converged[group_idx] = converged
-            self.results.well_initialized[group_idx] = well_initialized
-            self.results.values[:, :, group_idx] = y
-
-            if not well_initialized:
-                self.logger.add_warning("Not well initialized", device=rms_events_group.name)
-
-            if not converged:
-                self.logger.add_warning("Not converged", device=rms_events_group.name)
-
-            self.progress_signal.emit(90)
+                self.report_text(rms_events_group.name + " skipped")
 
         self.progress_signal.emit(100)

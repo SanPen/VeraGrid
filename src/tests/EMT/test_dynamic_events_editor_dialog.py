@@ -10,6 +10,7 @@ from VeraGrid.Gui.dynamic_events_editor_dialog import SwitchSequenceDialog
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Events.emt_events_group import EmtEventsGroup
+from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.enumerations import DynamicEventTransitionType, DynamicSimulationMode
 
@@ -127,6 +128,49 @@ def test_emt_event_dialog_enables_end_time_for_ramp_transition() -> None:
         parameters_list=[event_var],
         target_device_name="Device",
         mode=DynamicSimulationMode.EMT,
+        mode_parameter_uids=set(),
+    )
+    dialog.add_row()
+    row = dialog.rows[0]
+
+    assert row.transition_combo is not None
+    assert row.end_time_spin is not None
+    assert not row.end_time_spin.isEnabled()
+
+    row.transition_combo.setCurrentIndex(1)
+    QtWidgets.QApplication.processEvents()
+
+    assert row.transition_combo.currentData() == DynamicEventTransitionType.Ramp
+    assert row.end_time_spin.isEnabled()
+
+    row.end_time_spin.setValue(0.25)
+    dialog.accept_dialog()
+    data = dialog.get_data()
+
+    assert data["transition_types"] == [DynamicEventTransitionType.Ramp]
+    assert data["end_times"] == [0.25]
+    dialog.close()
+
+
+def test_rms_event_dialog_enables_end_time_for_ramp_transition() -> None:
+    """
+    Ensure RMS rows expose the end-time control for ramp transitions.
+
+    :return: None.
+    """
+    _get_app()
+    circuit = MultiCircuit()
+    group = RmsEventsGroup(name="group")
+    circuit.add_rms_events_group(group)
+
+    vf = VarFactory()
+    event_var = vf.add_var("event_param")
+
+    dialog = DynamicEventDialogue(
+        circuit=circuit,
+        parameters_list=[event_var],
+        target_device_name="Device",
+        mode=DynamicSimulationMode.RMS,
         mode_parameter_uids=set(),
     )
     dialog.add_row()

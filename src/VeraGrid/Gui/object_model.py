@@ -10,6 +10,7 @@ import math
 import numpy as np
 from typing import Any, Dict, List, Union
 from PySide6 import QtCore, QtWidgets, QtGui
+from typing import Callable
 from enum import EnumMeta
 from VeraGrid.Gui.gui_functions import (IntDelegate, ComboDelegate, TextDelegate, FloatDelegate, ColorPickerDelegate,
                                         ComplexDelegate, LineLocationsDelegate, DateTimeDelegate)
@@ -35,7 +36,8 @@ class ObjectsModel(WrappableTableModel):
                  transposed=False,
                  check_unique: Union[None, List[str]] = None,
                  dictionary_of_lists: Union[None, Dict[Any, List[ALL_DEV_TYPES]]] = None,
-                 properties_filter: PrpCat = PrpCat.All):
+                 properties_filter: PrpCat = PrpCat.All,
+                 error_msg_ptr: Callable[[str], None] = None):
         """
 
         :param objects: list of objects associated to the editor
@@ -44,6 +46,7 @@ class ObjectsModel(WrappableTableModel):
         :param editable: Is the table editable?
         :param transposed: Display the table transposed?
         :param dictionary_of_lists: dictionary of lists for the Delegates
+        :param error_msg_ptr: Error message pointer
         """
         WrappableTableModel.__init__(self, parent)
 
@@ -96,7 +99,20 @@ class ObjectsModel(WrappableTableModel):
 
         self.dictionary_of_lists = dictionary_of_lists if dictionary_of_lists is not None else dict()
 
+        self.error_msg_ptr: Callable[[str], None] | None = error_msg_ptr
+
         self.set_delegates()
+
+    def report_error(self, msg: str):
+        """
+
+        :param msg:
+        :return:
+        """
+        if self.error_msg_ptr is not None:
+            self.error_msg_ptr(msg)
+        else:
+            print(msg)
 
     def set_time_index(self, time_index: Union[int, None]):
         """
@@ -407,7 +423,10 @@ class ObjectsModel(WrappableTableModel):
                     else:
                         value2 = value
 
-                    self.objects[obj_idx].set_value(prop=prop, t_idx=self.time_index_, value=value2)
+                    try:
+                        self.objects[obj_idx].set_value(prop=prop, t_idx=self.time_index_, value=value2)
+                    except ValueError as e:
+                        self.report_error(str(e))
                 else:
                     pass  # the column cannot be edited
             else:

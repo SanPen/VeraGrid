@@ -6,18 +6,18 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.identified_object import IdentifiedObject
-from VeraGridEngine.IO.cim.cgmes.cgmes_enums import UnitSymbol, LimitKind, OperationalLimitDirectionKind
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import UnitSymbol, LimitKind, OperationalLimitDirectionKind, CgmesProfileType
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 if TYPE_CHECKING:
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.operational_limit import OperationalLimit
 
 class OperationalLimitType(IdentifiedObject):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='OperationalLimit', class_type='OperationalLimit', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The operational limits associated with this type of limit.''', profiles=[]),
-		CgmesProperty(property_name='acceptableDuration', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.s, description='''Time, in seconds.''', profiles=[]),
-		CgmesProperty(property_name='direction', class_type=OperationalLimitDirectionKind, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The direction of the limit.''', profiles=[]),
-		CgmesProperty(property_name='isInfiniteDuration', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Defines if the operational limit type has infinite duration. If true, the limit has infinite duration. If false, the limit has definite duration which is defined by the attribute acceptableDuration.''', profiles=[]),
-		CgmesProperty(property_name='kind', class_type=LimitKind, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Types of limits defined in the ENTSO-E Operational Handbook Policy 3.''', profiles=[]),
+		CgmesProperty(property_name='OperationalLimit', class_type='OperationalLimit', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The operational limits associated with this type of limit.''', profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='acceptableDuration', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.s, description='''Time, in seconds.''', profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='direction', class_type=OperationalLimitDirectionKind, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The direction of the limit.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='isInfiniteDuration', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Defines if the operational limit type has infinite duration. If true, the limit has infinite duration. If false, the limit has definite duration which is defined by the attribute acceptableDuration.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='kind', class_type=LimitKind, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Types of limits defined in the ENTSO-E Operational Handbook Policy 3.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
 	)
 	__slots__ = ('OperationalLimit', 'acceptableDuration', 'direction', 'isInfiniteDuration', 'kind')
 	def __init__(self, rdfid='', tpe='OperationalLimitType'):

@@ -3,7 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Union, Any, Tuple
+from typing import Union, Any, Tuple, List
 # from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp
 from VeraGridEngine.Devices.Events.dynamic_plot import DynamicPlot
@@ -150,7 +150,7 @@ class DynamicPlotEntry(EditableDevice):
                   plot: DynamicPlot = None,
                   group: RmsEventsGroup = None,
                   device: Any = None,
-                  simulation_type: PlotSimulationType | str = PlotSimulationType.RMS,
+                  simulation_type: PlotSimulationType = PlotSimulationType.RMS,
                   event_group_idtag: str = "",
                   event_group_name: str = "",
                   curve_device_type: DeviceType = DeviceType.NoDevice,
@@ -226,7 +226,7 @@ class DynamicPlotEntry(EditableDevice):
         return self._simulation_type
 
     @simulation_type.setter
-    def simulation_type(self, val: PlotSimulationType | str) -> None:
+    def simulation_type(self, val: PlotSimulationType) -> None:
         """
         Set the simulation family identifier.
 
@@ -236,10 +236,7 @@ class DynamicPlotEntry(EditableDevice):
         if isinstance(val, PlotSimulationType):
             self._simulation_type = val
         else:
-            if isinstance(val, str):
-                self._simulation_type = PlotSimulationType(val)
-            else:
-                raise ValueError("Unsupported plot simulation type")
+            raise ValueError("Unsupported plot simulation type")
 
     @property
     def event_group_idtag(self) -> str:
@@ -433,3 +430,194 @@ class DynamicPlotEntry(EditableDevice):
         :return: None.
         """
         self._runtime_series_key_payload = str(val)
+
+
+def compare_dynamic_plots(dyn_plots1: List[DynamicPlot],
+                          dyn_plots2: List[DynamicPlot],
+                          dyn_plots1_entries: List[DynamicPlotEntry],
+                          dyn_plots2_entries: List[DynamicPlotEntry]) -> bool:
+    """
+    Compare persistent dynamic plot groups and entries after a save/load cycle.
+
+    The comparison validates both plot groups and their curve entries using the
+    registered persistence schema. Entry-to-plot references are compared through
+    the corresponding plot position so the check does not depend on Python object
+    identity after reloading the file.
+
+    :param dyn_plots1: Dynamic plot collection from the original grid.
+    :param dyn_plots2: Dynamic plot collection from the reloaded grid.
+    :param dyn_plots1_entries: Dynamic plot entry collection from the original grid.
+    :param dyn_plots2_entries: Dynamic plot entry collection from the reloaded grid.
+    :return: ``True`` when both persistent collections are exactly equal.
+    """
+    equal: bool = True
+    plot_count1: int = len(dyn_plots1)
+    plot_count2: int = len(dyn_plots2)
+    entry_count1: int = len(dyn_plots1_entries)
+    entry_count2: int = len(dyn_plots2_entries)
+
+    # The plot collections must preserve their size and ordering because entries
+    # refer back to plots through this stable serialized structure.
+    if plot_count1 == plot_count2:
+        plot_index: int
+        for plot_index in range(plot_count1):
+            plot1: DynamicPlot = dyn_plots1[plot_index]
+            plot2: DynamicPlot = dyn_plots2[plot_index]
+
+            # Comparing registered properties aligns the equality check with the
+            # exact fields that the serializer persists into the project file.
+            if not compare_dynamic_plot(plot1=plot1, plot2=plot2):
+                equal = False
+            else:
+                pass
+    else:
+        equal = False
+
+    # The entry collections must preserve both the per-entry payload and the link
+    # to the owning persistent plot group.
+    if entry_count1 == entry_count2:
+        entry_index: int
+        for entry_index in range(entry_count1):
+            entry1: DynamicPlotEntry = dyn_plots1_entries[entry_index]
+            entry2: DynamicPlotEntry = dyn_plots2_entries[entry_index]
+
+            if not compare_dynamic_plot_entry(entry1=entry1,
+                                              entry2=entry2,
+                                              dyn_plots1=dyn_plots1,
+                                              dyn_plots2=dyn_plots2):
+                equal = False
+            else:
+                pass
+    else:
+        equal = False
+
+    return equal
+
+
+def compare_dynamic_plot(plot1: DynamicPlot, plot2: DynamicPlot) -> bool:
+    """
+    Compare two persistent dynamic plot groups.
+
+    The plot comparison uses the saved headers and saved values because those are
+    the fields that define the project persistence contract for the plot group.
+
+    :param plot1: Original plot group.
+    :param plot2: Reloaded plot group.
+    :return: ``True`` when the two plot groups are equal.
+    """
+    headers1: List[str] = list(plot1.get_headers())
+    headers2: List[str] = list(plot2.get_headers())
+    values1: List[Any] = list(plot1.get_save_data())
+    values2: List[Any] = list(plot2.get_save_data())
+    equal: bool = True
+
+    # The saved schema must match before individual fields can be trusted as a
+    # meaningful equality comparison.
+    if headers1 == headers2:
+        header_index: int
+        for header_index in range(len(headers1)):
+            header_name: str = headers1[header_index]
+            value1: Any = values1[header_index]
+            value2: Any = values2[header_index]
+
+            # The runtime merge-tracking object is not part of the serialized
+            # payload, so it must not participate in the persistence comparison.
+            if header_name != 'diff_changes':
+                # Plot groups otherwise store only simple persistent values, so
+                # direct equality keeps the logic easy to inspect.
+                if value1 != value2:
+                    equal = False
+                else:
+                    pass
+            else:
+                pass
+    else:
+        equal = False
+
+    return equal
+
+
+def compare_dynamic_plot_entry(entry1: DynamicPlotEntry,
+                               entry2: DynamicPlotEntry,
+                               dyn_plots1: List[DynamicPlot],
+                               dyn_plots2: List[DynamicPlot]) -> bool:
+    """
+    Compare two persistent dynamic plot entries.
+
+    The entry comparison checks all saved fields and also verifies that the two
+    entries point to the corresponding plot position in their owning plot lists.
+    This keeps the comparison exact without relying on Python object identity
+    across two separately loaded grids.
+
+    :param entry1: Original entry.
+    :param entry2: Reloaded entry.
+    :param dyn_plots1: Original plot collection.
+    :param dyn_plots2: Reloaded plot collection.
+    :return: ``True`` when the two entries are equal.
+    """
+    headers1: List[str] = list(entry1.get_headers())
+    headers2: List[str] = list(entry2.get_headers())
+    values1: List[Any] = list(entry1.get_save_data())
+    values2: List[Any] = list(entry2.get_save_data())
+    equal: bool = True
+    plot_index1: int | None = None
+    plot_index2: int | None = None
+
+    # The saved field layout must be the same before any per-field comparison is valid.
+    if headers1 == headers2:
+        header_index: int
+        for header_index in range(len(headers1)):
+            header_name: str = headers1[header_index]
+            value1: Any = values1[header_index]
+            value2: Any = values2[header_index]
+
+            # The runtime merge-tracking object is not part of the serialized
+            # payload, so it must not participate in the persistence comparison.
+            if header_name != 'diff_changes':
+                # Entry plot references are checked with the explicit plot-index
+                # logic below because the object itself belongs to a different
+                # in-memory graph after reloading the file.
+                if header_name != 'plot':
+                    if value1 != value2:
+                        equal = False
+                    else:
+                        pass
+                else:
+                    pass
+            else:
+                pass
+    else:
+        equal = False
+
+    # The owning plot relation is part of the saved graph, therefore each entry
+    # must resolve to the corresponding plot position in its own grid instance.
+    if entry1.plot is not None:
+        plot_list_index1: int
+        for plot_list_index1 in range(len(dyn_plots1)):
+            candidate_plot1: DynamicPlot = dyn_plots1[plot_list_index1]
+            if candidate_plot1 is entry1.plot:
+                plot_index1 = plot_list_index1
+                break
+            else:
+                pass
+    else:
+        plot_index1 = None
+
+    if entry2.plot is not None:
+        plot_list_index2: int
+        for plot_list_index2 in range(len(dyn_plots2)):
+            candidate_plot2: DynamicPlot = dyn_plots2[plot_list_index2]
+            if candidate_plot2 is entry2.plot:
+                plot_index2 = plot_list_index2
+                break
+            else:
+                pass
+    else:
+        plot_index2 = None
+
+    if plot_index1 != plot_index2:
+        equal = False
+    else:
+        pass
+
+    return equal

@@ -424,20 +424,15 @@ class EmtProblemTemplate(ABC):
             parameter_uid = parameter.uid if isinstance(parameter, Var) else None
 
             if parameter_uid in collect_events:
-                transition_type = emt_evt.transition_type
+                transition_type: DynamicEventTransitionType = emt_evt.transition_type
                 end_time = emt_evt.end_time
-
-                if isinstance(transition_type, DynamicEventTransitionType):
-                    transition_text = transition_type.value
-                else:
-                    transition_text = str(transition_type)
 
                 collect_events[parameter_uid].append(
                     dict({
                         "time": float(emt_evt.time),
                         "value": float(emt_evt.value),
                         "end_time": None if end_time is None else float(end_time),
-                        "transition_type": transition_text,
+                        "transition_type": transition_type,
                     })
                 )
 
@@ -451,7 +446,7 @@ class EmtProblemTemplate(ABC):
                 sorted_specs = sorted(event_specs, key=_emt_event_spec_time_sort_key)
 
                 for event_spec in sorted_specs:
-                    if str(event_spec["transition_type"]) == DynamicEventTransitionType.Ramp.value:
+                    if event_spec["transition_type"] == DynamicEventTransitionType.Ramp:
                         start_time = float(event_spec["time"])
                         end_time_raw = event_spec["end_time"]
 

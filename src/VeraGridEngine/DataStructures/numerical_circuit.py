@@ -277,12 +277,12 @@ class NumericalCircuit:
         :param nbatt:  Number of calculation battery devices
         :param nshunt:  Number of calculation shunt devices
         :param sbase:  Base power (MVA)
-        :param t_idx:  Time index
+        :param t_idx:  Time index (None for the snapshot or the time series index [0..N-1])
         """
 
         self.nbus: int = nbus
         self.nbr: int = nbr
-        self.t_idx: int = t_idx
+        self.t_idx: int | None = t_idx
 
         self.nload: int = nload
         self.ngen: int = ngen

@@ -20,10 +20,10 @@ class SensitivityFactor(IdentifiedObject):
     :ivar tpe: CIM type name inherited from the base class.
     """
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='ControllableQuantity', class_type='ControllableQuantity', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SM]),
-        CgmesProperty(property_name='ObservableQuantity', class_type='ObservableQuantity', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SM]),
-        CgmesProperty(property_name='SensitivityMatrix', class_type='SensitivityMatrix', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SM]),
-        CgmesProperty(property_name='value', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.SM]),
+        CgmesProperty(property_name='ControllableQuantity', class_type='ControllableQuantity', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.SM]),
+        CgmesProperty(property_name='ObservableQuantity', class_type='ObservableQuantity', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.SM]),
+        CgmesProperty(property_name='SensitivityMatrix', class_type='SensitivityMatrix', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.SM]),
+        CgmesProperty(property_name='value', class_type=str, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', mandatory=True, profiles=[CgmesProfileType.SM]),
     )
     __slots__ = ('ControllableQuantity', 'ObservableQuantity', 'SensitivityMatrix', 'value')
 

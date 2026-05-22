@@ -5,6 +5,7 @@
 import json
 from typing import Dict, List, Sequence, Set
 import numpy as np
+import pandas as pd
 from matplotlib import pyplot as plt
 from PySide6 import QtCore, QtGui
 
@@ -88,6 +89,69 @@ def _append_unique_variables(target: List[Var], seen_uids: Set[int], variables: 
         else:
             target.append(variable)
             seen_uids.add(variable.uid)
+
+
+def _build_relative_time_axis(time_array: np.ndarray | pd.DatetimeIndex) -> np.ndarray:
+    """
+    Build a relative floating-point time axis that starts at zero.
+
+    :param time_array: Absolute simulation time samples.
+    :return: Relative time samples in seconds as evenly spaced floats whenever the input is evenly spaced.
+
+    The dynamic results drivers store simulation time as a datetime-like array.
+    Matplotlib then formats those absolute timestamps as wall-clock values, which
+    hides the simulation progression when the timestamps are anchored close to one
+    day boundary. The plotting code only needs elapsed simulation time, so this
+    helper converts every sample into seconds relative to the first sample.
+    """
+    # The plotting path requires a NumPy array so downstream code can pass the
+    # x-axis directly to Matplotlib without any additional conversions.
+    resolved_time_array: np.ndarray = np.asarray(time_array)
+
+    # The result must preserve the original sample count so the x-axis always
+    # stays aligned with every y-axis simulation sample.
+    sample_count: int = int(len(resolved_time_array))
+    relative_time_axis: np.ndarray = np.empty(sample_count, dtype=float)
+
+    # The empty-array branch is explicit so the function stays total and avoids
+    # indexing errors when a caller provides no samples.
+    if sample_count == 0:
+        return relative_time_axis
+    else:
+        pass
+
+    # Datetime indexes expose their storage as integer nanoseconds through
+    # ``asi8``. Converting to elapsed seconds here prevents Matplotlib from
+    # showing a scientific-notation nanosecond axis such as ``1e9``.
+    if isinstance(resolved_time_array, pd.DatetimeIndex):
+        time_ns: np.ndarray = np.asarray(resolved_time_array.asi8, dtype=np.int64)
+        relative_time_axis[:] = (time_ns - time_ns[0]) * 1e-9
+    else:
+        # NumPy datetime64 arrays can appear after generic array conversions.
+        # They also encode timestamps in nanoseconds, so they must be normalized
+        # through integer nanoseconds before converting to elapsed seconds.
+        if np.issubdtype(resolved_time_array.dtype, np.datetime64):
+            time_ns = resolved_time_array.astype("datetime64[ns]").astype(np.int64)
+            relative_time_axis[:] = (time_ns - time_ns[0]) * 1e-9
+        else:
+            # Some tests and fallback code paths already use numeric arrays.
+            # When those values are very large, they are almost certainly raw
+            # nanoseconds from a converted datetime array, so they are scaled to
+            # seconds after subtracting the first sample. Small values are kept
+            # as seconds directly.
+            numeric_time_array: np.ndarray = np.asarray(resolved_time_array, dtype=float)
+            relative_time_axis[:] = numeric_time_array - float(numeric_time_array[0])
+
+            if sample_count > 1:
+                relative_span_seconds: float = float(relative_time_axis[-1])
+                if relative_span_seconds > 1.0e6:
+                    relative_time_axis[:] = relative_time_axis[:] * 1.0e-9
+                else:
+                    pass
+            else:
+                pass
+
+    return relative_time_axis
 
 
 def collect_dynamic_model_plot_variables(model: Block,
@@ -1218,7 +1282,7 @@ class DynamicsResultsHandler:
             return plot_asset
         else:
             if self.circuit is not None:
-                created_plot: DynamicPlot = DynamicPlot(name=group_name, simulation_type=self.plot_simulation_type.value)
+                created_plot: DynamicPlot = DynamicPlot(name=group_name, simulation_type=self.plot_simulation_type)
                 self.circuit.add_dynamic_plot(obj=created_plot)
                 return created_plot
             else:
@@ -1579,7 +1643,7 @@ class DynamicsResultsHandler:
                     plot=plot_asset,
                     group=legacy_group,
                     device=None,
-                    simulation_type=self.plot_simulation_type.value,
+                    simulation_type=self.plot_simulation_type,
                     event_group_idtag=group_idtags[group_idx],
                     event_group_name=group_names[group_idx],
                     curve_device_type=key._device_type,
@@ -1639,7 +1703,7 @@ class DynamicsResultsHandler:
                     plot=plot_asset,
                     group=legacy_group,
                     device=None,
-                    simulation_type=candidate._simulation_type.value,
+                    simulation_type=candidate._simulation_type,
                     event_group_idtag=candidate._event_group_idtag,
                     event_group_name=candidate._event_group_name,
                     curve_device_type=candidate._device_type,
@@ -2014,6 +2078,45 @@ class DynamicsResultsHandler:
         else:
             return False
 
+    def rename_plot_group(self, old_name: str, new_name: str) -> bool:
+        """
+        Rename one plot group and refresh the plots tree.
+
+        :param old_name: Existing plot-group name.
+        :param new_name: Requested replacement name.
+        :return: ``True`` when the group existed and the rename was applied.
+        """
+        # The new name is normalized first so the runtime state and the persistent
+        # circuit asset follow the exact same validated identifier.
+        clean_name: str = new_name.strip()
+
+        if clean_name != "":
+            # When a circuit exists, the persistent plot asset has to be renamed
+            # together with the runtime group so future reloads preserve the new name.
+            if self.circuit is not None:
+                plot_asset: DynamicPlot | None = self._find_matching_asset_plot(group_name=old_name)
+                clashing_asset: DynamicPlot | None = self._find_matching_asset_plot(group_name=clean_name)
+                if plot_asset is not None:
+                    if clashing_asset is None or clean_name == old_name:
+                        plot_asset.name = clean_name
+                    else:
+                        return False
+                else:
+                    pass
+            else:
+                pass
+
+            # The domain collection remains the source for the Qt tree model, so
+            # the runtime rename must succeed before rebuilding the projection.
+            renamed: bool = self.plot_groups.rename_group(old_name=old_name, new_name=clean_name)
+            if renamed:
+                self.rebuild_plots_model()
+                return True
+            else:
+                return False
+        else:
+            return False
+
     def add_var_to_group(self, group_name: str, var_uid: int) -> bool:
         """
         Add one variable to a plot group and refresh the plots tree.
@@ -2190,6 +2293,8 @@ class DynamicsResultsHandler:
         axis = figure.add_subplot(111)
         x_values, y_values = self._get_series_plot_data(series=series)
         axis.plot(x_values, y_values, label=series.get_plot_label(has_multiple_sources=self.has_multiple_sources()))
+        axis.set_title(series.get_var().name)
+        axis.set_xlabel("Time [s]")
         axis.legend()
         plt.show()
 
@@ -2257,6 +2362,7 @@ class DynamicsResultsHandler:
 
                 if len(axis.lines) > 0:
                     axis.legend()
+                    axis.set_xlabel("Time [s]")
                     axis.set_title(plot_group_name)
                     plt.show()
                     return True
@@ -2332,14 +2438,20 @@ class DynamicsResultsHandler:
                 if len(compatible_series) == 0:
                     return None
 
-                first_time: np.ndarray = np.asarray(self.results.time_array)
+                # The table index must reuse the same elapsed-seconds axis as the
+                # plot so the numeric view and the rendered chart stay aligned.
+                first_time: np.ndarray = _build_relative_time_axis(time_array=self.results.time_array)
                 series: DynamicResultSeries
                 for series in compatible_series:
                     series_time, _ = self._get_series_plot_data(series=series)
-                    if not np.array_equal(np.asarray(series_time), first_time):
+                    # Every plotted series in one table must share the exact same
+                    # normalized time base so columns remain row-aligned.
+                    if not np.array_equal(series_time, first_time):
                         return None
+                    else:
+                        pass
 
-                data = np.empty((len(first_time), len(compatible_series)), dtype=float)
+                data: np.ndarray = np.empty((len(first_time), len(compatible_series)), dtype=float)
                 columns: List[str] = list()
 
                 for idx, series in enumerate(compatible_series):
@@ -2352,6 +2464,7 @@ class DynamicsResultsHandler:
                     index=first_time,
                     columns=np.array(columns, dtype=str),
                     title=plot_group_name,
+                    xlabel="Time [s]",
                     ylabel="",
                     cols_device_type=DeviceType.NoDevice,
                     idx_device_type=DeviceType.NoDevice
@@ -2584,18 +2697,32 @@ class DynamicsResultsHandler:
 
     def _get_series_plot_data(self, series: DynamicResultSeries) -> tuple[np.ndarray, np.ndarray]:
         """
-        Get x/y arrays for one source-specific plotted series.
+        Get the relative-time x-axis and the y-axis for one plotted series.
+
+        :param series: Source-specific dynamic series selected for plotting.
+        :return: Tuple ``(x_values, y_values)`` with a relative float time axis and the matching signal values.
+
+        The plotting layer works best with an elapsed-time axis because absolute
+        datetime stamps are rendered as wall-clock labels by Matplotlib. This
+        method therefore converts the stored simulation timestamps into a float
+        axis that starts at ``0.0`` while preserving the original sample count.
         """
-        x_values = np.asarray(self.results.time_array)
+        # The x-axis is normalized to elapsed seconds so the chart shows the
+        # simulation progression instead of absolute timestamp formatting.
+        x_values: np.ndarray = _build_relative_time_axis(time_array=self.results.time_array)
         key: DynamicResultSeriesKey = series.get_key()
         group_idx: int = series.get_group_idx()
 
         result_path_prefix: str = key._result_path.split(":", 1)[0]
 
         if result_path_prefix == "values":
-            y_values = np.asarray(self.results.values[:, key._component_index, group_idx])
+            # ``values`` stores the main simulated state history for the selected
+            # component and event group, so the slice maps one series to one line.
+            y_values: np.ndarray = np.asarray(self.results.values[:, key._component_index, group_idx])
         elif result_path_prefix == "diff_values":
             if isinstance(self.results, EmtResults):
+                # EMT derivative series are stored in ``diff_values`` and use the
+                # same time axis as the primary values array.
                 y_values = np.asarray(self.results.diff_values[:, key._component_index, group_idx])
             else:
                 raise ValueError("Unsupported dynamic result path: " + key._result_path)

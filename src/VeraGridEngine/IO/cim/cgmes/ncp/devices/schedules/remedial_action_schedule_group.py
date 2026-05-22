@@ -20,7 +20,7 @@ class RemedialActionScheduleGroup(IdentifiedObject):
     :ivar tpe: CIM type name inherited from the base class.
     """
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='GroupDependency', class_type='RemedialActionScheduleDependency', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.NC, CgmesProfileType.RAS]),
+        CgmesProperty(property_name='GroupDependency', class_type='RemedialActionScheduleDependency', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='', profiles=[CgmesProfileType.RAS]),
     )
     __slots__ = ('GroupDependency')
 

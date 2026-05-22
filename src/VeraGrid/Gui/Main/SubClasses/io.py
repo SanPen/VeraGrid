@@ -15,11 +15,13 @@ from VeraGrid.Gui.GridMerge.grid_diff import GridDiffDialogue
 from VeraGrid.Gui.GridMerge.grid_merge import GridMergeDialogue
 from VeraGrid.plugins import install_plugin, get_plugin_info
 from VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_dialogue import CoordinatesInputGUI
-from VeraGrid.Gui.general_dialogues import LogsDialogue, CustomQuestionDialogue, FileTypeSelector, CgmesOptionsSelector
+from VeraGrid.Gui.general_dialogues import LogsDialogue, CustomQuestionDialogue, FileTypeSelector
 from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
 from VeraGrid.Gui.messages import yes_no_question, error_msg, warning_msg, info_msg
 from VeraGrid.Gui.GridGenerator.grid_generator_dialogue import GridGeneratorGUI
 from VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer import RosetaExplorerGUI
+from VeraGrid.Gui.FileDialogues.CGMESDialogue.cgmes_import import CgmesImportDialogue
+from VeraGrid.Gui.FileDialogues.DgsDialogue.dgs_import import DgsImportDialogue
 from VeraGrid.Gui.Main.SubClasses.Model.scenarios import ScenariosMain
 from VeraGrid.Gui.FileDialogues.CGMESDialogue.cgmes_export import CgmesExportDialogue
 from VeraGrid.Gui.FileDialogues.PsseDialogue.psse_export import PsseExportDialogue
@@ -372,14 +374,19 @@ class IoMain(ScenariosMain):
                 options.file_type = self.file_selector.file_type
 
                 if options.file_type == FileType.CGMES:
-                    self.cgmes_selector = CgmesOptionsSelector()
-                    self.cgmes_selector.exec()
-                    options.cgmes_version = self.cgmes_selector.version
+                    self.cgmes_import_dialogue = CgmesImportDialogue(app=self, options=options)
+                    self.cgmes_import_dialogue.exec()
 
             elif options.file_type == FileType.PSSE_raw or options.file_type == FileType.PSSE_rawx:
                 self.psse_import_dialogue = PsseImportDialogue(app=self, options=options)
                 self.psse_import_dialogue.exec()
                 # NOTE: options will be modified inside
+            elif options.file_type == FileType.CGMES:
+                self.cgmes_import_dialogue = CgmesImportDialogue(app=self, options=options)
+                self.cgmes_import_dialogue.exec()
+            elif options.file_type == FileType.DGS:
+                self.dgs_import_dialogue = DgsImportDialogue(app=self, options=options)
+                self.dgs_import_dialogue.exec()
 
             # create thread
             self.open_file_thread_object = filedrv.FileOpenThread(

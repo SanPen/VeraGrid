@@ -8,6 +8,7 @@ import scipy.sparse as sp
 import time
 import warnings
 import sys
+import os
 from scipy.sparse import csc_matrix
 from scipy.sparse import linalg as spla
 import matplotlib.pyplot as plt
@@ -28,6 +29,7 @@ class  PseudoTransient:
                  dtau_max: float = 1e2,
                  dtau_min: float = 1e-5,
                  tol: float = 1e-6,
+                 reference_error_tol: float = 3.0,
                  max_iter: int = 1000,
                  verbose: bool = True,
                  fixed_var_uids: list[int] | None = None,
@@ -45,7 +47,11 @@ class  PseudoTransient:
         self.steps = 1000
         self.max_iter_0 = max_iter
         self.tol = tol
+        self.reference_error_tol = float(reference_error_tol)
         self.verbose = verbose
+        self.use_weighted_residual = os.getenv("VERAGRID_PSEUDO_WEIGHTED_RESIDUAL", "0").lower() in {"1", "true", "yes", "on"}
+        self.weight_network = float(os.getenv("VERAGRID_PSEUDO_WEIGHT_NETWORK", "3.0"))
+        self.weight_power = float(os.getenv("VERAGRID_PSEUDO_WEIGHT_POWER", "2.0"))
         self.fixed_var_uids = set(fixed_var_uids or [])
         uid2idx = getattr(self.problem, "uid2idx_vars", {})
         self._fixed_var_indices = sorted([uid2idx[uid] for uid in self.fixed_var_uids if uid in uid2idx])
@@ -79,6 +85,28 @@ class  PseudoTransient:
     def _dbg(self, msg: str) -> None:
         if self.verbose:
             print(f"[PseudoTransient] {msg}")
+
+    def _build_residual_weights(self, n_rhs: int) -> np.ndarray:
+        w = np.ones(n_rhs, dtype=float)
+        if not self.use_weighted_residual:
+            return w
+        n_states = int(self.problem.get_states_number())
+
+        # Prioritize key network and power-balance equations in algebraic block.
+        # rhs index = n_states + algebraic_index
+        for aidx in (0, 1, 4, 5):
+            ridx = n_states + aidx
+            if 0 <= ridx < n_rhs:
+                w[ridx] = self.weight_network
+        for aidx in (2, 3):
+            ridx = n_states + aidx
+            if 0 <= ridx < n_rhs:
+                w[ridx] = max(w[ridx], self.weight_power)
+        return w
+
+    @staticmethod
+    def _weighted_norm(v: np.ndarray, w: np.ndarray) -> float:
+        return float(np.linalg.norm(w * v))
 
     def _get_problem_state_eqs(self):
         if hasattr(self.problem, "_state_eqs"):
@@ -272,6 +300,29 @@ class  PseudoTransient:
 
         return list()
 
+    def _find_reference_pin_indices(self) -> list[int]:
+        n_vars = int(self.problem.get_all_vars_number())
+        groups = (
+            ("Pm_ref", "Pref", "P_ref"),
+            ("UsRefPu", "Vref", "V_ref", "U_ref"),
+            ("u_exciter3", "y_exciter3"),
+        )
+        found: list[int] = list()
+        used = set(self._fixed_var_indices)
+        for group in groups:
+            idx = None
+            for i in range(n_vars):
+                if i in used:
+                    continue
+                nm = self._var_index_name(i)
+                if any(tok in nm for tok in group):
+                    idx = i
+                    break
+            if idx is not None:
+                found.append(idx)
+                used.add(idx)
+        return found
+
     def _predictor_stable_algebraic_indices(self) -> list[int]:
         """
         Keep algebraic equations that do not explicitly depend on diff vars.
@@ -287,15 +338,192 @@ class  PseudoTransient:
 
         stable = list()
         for i, eq in enumerate(algebraic_eqs):
-            try:
-                vars_in_eq = get_expression_vars(eq)
-            except Exception:
-                continue
-            uses_diff = any((isinstance(v, Var) and v.uid in diff_uids) for v in vars_in_eq)
+            vars_in_eq = get_expression_vars(eq)
+            uses_diff = any(v.base_var is not None for v in vars_in_eq)
             if not uses_diff:
                 stable.append(i)
 
         return stable
+
+    def _diff_free_equation_indices(self) -> list[int]:
+        n_states = int(self.problem.get_states_number())
+        algebraic_eqs = self._get_problem_algebraic_eqs()
+
+        diff_vars = self._problem_diff_vars()
+        diff_uids = {v.uid for v in diff_vars if isinstance(v, Var)}
+
+        selected = list()
+
+        for j, eq in enumerate(algebraic_eqs):
+            vars_in_eq = get_expression_vars(eq)
+            uses_diff = any(v.base_var is not None for v in vars_in_eq)
+            if not uses_diff:
+                selected.append(n_states + j)
+
+        if self.verbose:
+            self._dbg(
+                f"diff-free equations: selected={len(selected)} / algebraic={len(algebraic_eqs)} "
+                f"(n_states_offset={n_states})"
+            )
+            for rhs_idx in selected:
+                self._dbg(f"  diff-free rhs[{rhs_idx}]: {self._rhs_index_equation_repr(int(rhs_idx))}")
+
+        return selected
+
+    def _find_initial_diff_free_feasible_point(self, x0: Vec, max_iter: int = 10) -> Vec:
+        x = np.array(x0, dtype=float, copy=True)
+        x_ref = np.array(x0, dtype=float, copy=True)
+        dx0 = np.zeros(self.problem.get_diff_var_number(), dtype=float)
+
+        eq_idx = self._diff_free_equation_indices()
+        if len(eq_idx) == 0:
+            self._dbg("diff-free init: no equations selected")
+            return self._apply_fixed_mask(x, x_ref)
+
+        n_vars = int(self.problem.get_all_vars_number())
+        fixed_cols = set(self._fixed_var_indices)
+
+        # Temporary initialization pins to break near-nullspace directions.
+        # This is local to this method (unpins automatically when we return).
+        # Prefer reference-like variables (Pref, Vref), then fallback options.
+        pin_priority_groups = (
+            ("Pm_ref", "Pref", "P_ref"),
+            ("UsRefPu", "Vref", "V_ref", "U_ref"),
+            ("u_gov1", "dt_1_y_gov1"),
+        )
+        pinned_indices = list()
+        for group in pin_priority_groups:
+            pin_idx = None
+            for i in range(n_vars):
+                if i in fixed_cols:
+                    continue
+                nm = self._var_index_name(i)
+                if any(tok in nm for tok in group):
+                    pin_idx = i
+                    break
+            if pin_idx is not None:
+                fixed_cols.add(pin_idx)
+                pinned_indices.append(pin_idx)
+
+        if len(pinned_indices) > 0:
+            labels = [f"{i}:{self._var_index_name(i)}" for i in pinned_indices]
+            self._dbg(f"diff-free init: temporary pins enabled: {labels}")
+        else:
+            self._dbg("diff-free init: temporary pins not found (Pref/Vref groups)")
+
+        free_cols = [i for i in range(n_vars) if i not in fixed_cols]
+        if len(free_cols) == 0:
+            self._dbg("diff-free init: no free variables")
+            return self._apply_fixed_mask(x, x_ref)
+
+        tol_proj = max(self.tol * 10.0, 1e-8)
+        converged = False
+
+        rhs0 = self._rhs_steady(x, dx0)
+        if rhs0.size > 0 and np.all(np.isfinite(rhs0)):
+            r0 = rhs0[eq_idx]
+            r0_inf = float(np.linalg.norm(r0, np.inf)) if r0.size > 0 else 0.0
+            self._dbg(
+                f"diff-free init start: n_eq={len(eq_idx)}, n_free={len(free_cols)}, residual_inf={r0_inf:.3e}"
+            )
+
+        for k in range(max_iter):
+            rhs_full = self._rhs_steady(x, dx0)
+            if rhs_full.size == 0 or not np.all(np.isfinite(rhs_full)):
+                self._dbg(f"diff-free init abort: non-finite rhs at iter={k + 1}")
+                break
+
+            r = rhs_full[eq_idx]
+            r_inf = float(np.linalg.norm(r, np.inf)) if r.size > 0 else 0.0
+            if r_inf <= tol_proj:
+                self._dbg(f"diff-free init converged at iter={k + 1}, residual_inf={r_inf:.3e}")
+                converged = True
+                break
+
+            J_full = self._jacobian_steady(x, dx0).tocsc()
+            J_sel = J_full[eq_idx, :][:, free_cols]
+
+            delta_free, *_ = spla.lsqr(
+                J_sel,
+                -r,
+                atol=1e-10,
+                btol=1e-10,
+                iter_lim=max(200, 2 * len(free_cols))
+            )
+            delta_free = np.asarray(delta_free, dtype=float)
+            if delta_free.size != len(free_cols) or not np.all(np.isfinite(delta_free)):
+                self._report_singularity_diagnostics(J_sel.tocsc(), r, x=x, context=f"diff-free init iter={k + 1}")
+                self._dbg(f"diff-free init abort: invalid correction at iter={k + 1}")
+                break
+
+            best_x = None
+            best_r = np.inf
+            accepted_alpha = 1.0
+            tie_tol = max(1e-12, 1e-10 * max(1.0, r_inf))
+            for alpha in (1.0, 0.5, 0.25, 0.1):
+                xt = np.array(x, copy=True)
+                xt[np.array(free_cols, dtype=int)] += alpha * delta_free
+                xt = self._apply_fixed_mask(xt, x_ref)
+
+                rt_full = self._rhs_steady(xt, dx0)
+                if not np.all(np.isfinite(rt_full)):
+                    continue
+                rt = rt_full[eq_idx]
+                rt_inf = float(np.linalg.norm(rt, np.inf)) if rt.size > 0 else 0.0
+
+                if best_x is None:
+                    best_x = xt
+                    best_r = rt_inf
+                    accepted_alpha = alpha
+                    if rt_inf <= r_inf * (1.0 - 1e-4 * alpha):
+                        break
+                    continue
+
+                if rt_inf < best_r:
+                    best_r = rt_inf
+                    best_x = xt
+                    accepted_alpha = alpha
+                elif abs(rt_inf - best_r) <= tie_tol and alpha > accepted_alpha:
+                    # Allow movement along flat/null directions when residual is unchanged.
+                    best_x = xt
+                    accepted_alpha = alpha
+                if rt_inf <= r_inf * (1.0 - 1e-4 * alpha):
+                    break
+
+            if best_x is None:
+                # No finite trial point; fall back to full step update.
+                best_x = np.array(x, copy=True)
+                best_x[np.array(free_cols, dtype=int)] += delta_free
+                best_x = self._apply_fixed_mask(best_x, x_ref)
+                best_r = r_inf
+                accepted_alpha = 1.0
+
+            x = best_x
+            self._dbg(
+                f"diff-free init iter={k + 1}: residual_inf={r_inf:.3e}->{best_r:.3e}, "
+                f"|delta|_2={np.linalg.norm(delta_free):.3e}, alpha={accepted_alpha:.2f}"
+            )
+
+        rhsf = self._rhs_steady(x, dx0)
+        if rhsf.size > 0 and np.all(np.isfinite(rhsf)):
+            rf = rhsf[eq_idx]
+            rf_inf = float(np.linalg.norm(rf, np.inf)) if rf.size > 0 else 0.0
+            self._dbg(f"diff-free init finish: residual_inf={rf_inf:.3e}")
+
+            if not converged and rf_inf > tol_proj:
+                abs_rf = np.abs(rf)
+                ranked_local = np.argsort(-abs_rf)
+                n_show = min(20, ranked_local.size)
+                self._dbg(
+                    f"diff-free init failed: top {n_show} residual equations "
+                    f"(threshold={tol_proj:.3e})"
+                )
+                for kk in ranked_local[:n_show]:
+                    rhs_idx = int(eq_idx[int(kk)])
+                    val = float(rf[int(kk)])
+                    self._dbg(f"  rhs[{rhs_idx}]={val:+.6e} | {self._rhs_index_equation_repr(rhs_idx)}")
+
+        return self._apply_fixed_mask(x, x_ref)
 
     def _predictor_project_initial_guess(self, x0: Vec) -> Vec:
         n_states = int(self.problem.get_states_number())
@@ -475,6 +703,79 @@ class  PseudoTransient:
                 file=sys.stderr,
             )
 
+    def _report_piecewise_activity(self, rhs: Vec) -> None:
+        if rhs.size == 0 or not np.all(np.isfinite(rhs)):
+            return
+
+        n_states = int(self.problem.get_states_number())
+        n_rhs = int(rhs.size)
+        piecewise_rows: list[tuple[int, float, str]] = []
+        for i in range(n_states, n_rhs):
+            eq_txt = self._rhs_index_equation_repr(i)
+            if "heaviside" in eq_txt:
+                piecewise_rows.append((i, float(rhs[i]), eq_txt))
+
+        if len(piecewise_rows) == 0:
+            return
+
+        piecewise_rows.sort(key=lambda t: abs(t[1]), reverse=True)
+        top = piecewise_rows[:12]
+        payload = [f"rhs[{i}]={v:+.3e} | {eq}" for i, v, eq in top]
+        print(
+            f"[PseudoTransient][Singular] piecewise/heaviside residuals (top {len(top)}): {payload}",
+            file=sys.stderr,
+        )
+
+    def _report_key_equation_tracking(self, rhs: Vec, x_new: Vec, x_prev: Vec, tag: str) -> None:
+        if rhs.size == 0 or x_new.size == 0 or x_prev.size == 0:
+            return
+        n_states = int(self.problem.get_states_number())
+        key_alg = (0, 1, 2, 3, 4, 5, 14)
+        entries: list[str] = []
+        for aidx in key_alg:
+            ridx = n_states + aidx
+            if 0 <= ridx < rhs.size:
+                entries.append(f"rhs[{ridx}]={rhs[ridx]:+.3e} (alg[{aidx}])")
+        if entries:
+            print(f"[PseudoTransient][Track] {tag} key equations: {entries}", file=sys.stderr)
+
+        watch_tokens = (
+            "deltaGen",
+            "omegaGen",
+            "VdGen",
+            "VqGen",
+            "IdGen",
+            "IqGen",
+            "Psid_prime",
+            "Psiq_prime",
+            "Eq_prime",
+            "Ed_prime",
+            "SaGen",
+            "Psi_ag",
+        )
+        vars_all = self._problem_state_vars() + self._problem_algebraic_vars()
+        deltas: list[str] = []
+        used = set()
+        for tok in watch_tokens:
+            tok_l = tok.lower()
+            hit = None
+            for i, var in enumerate(vars_all):
+                nm = (getattr(var, "name", "") or "").lower()
+                if i in used:
+                    continue
+                if tok_l in nm:
+                    hit = i
+                    break
+            if hit is None or hit >= x_new.size or hit >= x_prev.size:
+                continue
+            used.add(hit)
+            dv = float(x_new[hit] - x_prev[hit])
+            if abs(dv) > 0.0:
+                name = getattr(vars_all[hit], "name", f"x[{hit}]")
+                deltas.append(f"{name}: dx={dv:+.3e}")
+        if deltas:
+            print(f"[PseudoTransient][Track] {tag} variable deltas: {deltas}", file=sys.stderr)
+
     def _report_singularity_diagnostics(self, J: sp.csc_matrix, rhs: Vec, x: Vec, context: str) -> None:
         # Print diagnostics at every failing step/try during debugging.
         self._singular_report_count += 1
@@ -512,6 +813,7 @@ class  PseudoTransient:
                 idx = np.argsort(np.abs(rhs))[::-1][:8]
                 top_rhs = [f"{self._rhs_index_equation_repr(int(i))}: {rhs[int(i)]:+.3e}" for i in idx]
                 print(f"[PseudoTransient][Singular] largest rhs entries: {top_rhs}", file=sys.stderr)
+                self._report_piecewise_activity(rhs)
 
             self._report_selected_var_values(x, labels=("Vd", "Vq", "Id", "Iq"))
 
@@ -540,6 +842,25 @@ class  PseudoTransient:
                             f"[PseudoTransient][Singular] dominant variables in null-like direction: {dom_vars}",
                             file=sys.stderr,
                         )
+
+                        # Quantify residual component aligned with left null-like direction.
+                        # For SVD J = U S V^T, near-null row-space direction is u_i.
+                        if rhs.size == J.shape[0]:
+                            u_i = dense @ v
+                            n_u = float(np.linalg.norm(u_i))
+                            if n_u > 0 and np.all(np.isfinite(u_i)) and np.all(np.isfinite(rhs)):
+                                u_i = u_i / n_u
+                                rhs_norm = float(np.linalg.norm(rhs))
+                                coeff = float(np.dot(u_i, rhs))
+                                rhs_along = abs(coeff)
+                                rhs_orth = float(np.sqrt(max(rhs_norm * rhs_norm - rhs_along * rhs_along, 0.0)))
+                                frac = rhs_along / max(rhs_norm, 1e-30)
+                                print(
+                                    "[PseudoTransient][Singular] rhs projection: "
+                                    f"|rhs|_2={rhs_norm:.3e}, |along_null_left|={rhs_along:.3e}, "
+                                    f"|orthogonal|={rhs_orth:.3e}, along_frac={frac:.3e}",
+                                    file=sys.stderr,
+                                )
         except Exception as e:
             print(f"[PseudoTransient][Singular] diagnostics failed: {e}", file=sys.stderr)
 
@@ -764,7 +1085,7 @@ class  PseudoTransient:
         :param h: simulation step
         :return [f_state_update, f_algeb]
         """
-        f_algeb = self.problem.rhs_algebraic(x, dx)
+        f_algeb = self.problem.rhs_algebraic(x,  dx)
         h = 1e9
         if self.problem.get_states_number() > 0:
             f_state = self.problem.rhs_state(x, dx)
@@ -895,6 +1216,7 @@ class  PseudoTransient:
             print(f"  - rhs[{int(i)}] = {rhs[int(i)]:+.6e} | {eq_repr}")
 
     def simulate(self, plot=True, x0: Vec | None = None):
+        original_fixed_indices = list(self._fixed_var_indices)
         n_vars = self.problem.get_all_vars_number()
         if x0 is None:
             get_x0 = getattr(self.problem, "get_x0", None)
@@ -908,8 +1230,9 @@ class  PseudoTransient:
         if x0.size != n_vars:
             raise ValueError(f"Invalid x0 size for pseudo-transient: got {x0.size}, expected {n_vars}")
 
-        x0 = self._predictor_project_initial_guess(x0)
-        x0 = self._apply_fixed_mask(x0, x0)
+        x0 = self._find_initial_diff_free_feasible_point(x0, max_iter=20)
+        #x0 = self._predictor_project_initial_guess(x0)
+        #x0 = self._apply_fixed_mask(x0, x0)
 
         if len(self._fixed_var_indices) > 0:
             fixed_preview = [
@@ -933,6 +1256,7 @@ class  PseudoTransient:
         x_new = x0.copy()
         xn = x0.copy()
         x_fixed_ref = x0.copy()
+        released_fixed_refs = False
         tries = 0
         
         # Update variable parameters at t=0
@@ -943,6 +1267,7 @@ class  PseudoTransient:
         old_residual = 10
         good_step_streak = 0
         dtau_stall_streak = 0
+        rhs_weights: np.ndarray | None = None
 
         # history containers
         dtau_hist = list()
@@ -961,28 +1286,24 @@ class  PseudoTransient:
                     xlast = xn
                     xn = x_new.copy()
                     dx = np.zeros(self.problem.get_diff_var_number())
-                elif run_newton_raphson:
-                    dx = self.problem.get_dx(xn, xlast, dx0, dtau)
-                    try:
-                        xlast = y[-2].copy()
-                    except:
-                        xlast = xn 
-                    xn = y[-1].copy()
                 else:
-                    dx = self.problem.get_dx(xn, xlast, dx0, 1e-3) # or 1e-3 and fixed?
+                    dx = self.problem.get_dx(xn, xlast, dx0, dtau) # or 1e-3 and fixed?
                     try:
                         xlast = y[-2].copy()
                     except:
                         xlast = xn 
                     xn = y[-1].copy()
 
-                x_new = self._project_feasible_x(x_new, dx, x_ref=x_fixed_ref, max_iter=3)
-                self._check_fixed_drift(x_new, x_fixed_ref, where=f"step={step_idx + 1} try={tries} feasible")
-
-                self._debug_check_x_new(x_new=x_new, step_idx=step_idx, tries=tries, dtau=dtau)
                 rhs  = self._rhs_pseudo_transient(x_new, xn, 0 * dx, dtau)
                 rhs2 = self._rhs_pseudo_transient(x_new, xn, dx, dtau)
-                residual2 = np.linalg.norm(rhs2)
+                if rhs_weights is None or rhs_weights.size != rhs.size:
+                    rhs_weights = self._build_residual_weights(rhs.size)
+                    if self.use_weighted_residual:
+                        self._dbg(
+                            f"weighted residual enabled: network={self.weight_network:.3g}, "
+                            f"power={self.weight_power:.3g}"
+                        )
+                residual2 = self._weighted_norm(rhs2, rhs_weights)
                 if not np.all(np.isfinite(rhs)):
                     bad_idx = np.where(~np.isfinite(rhs))[0]
                     bad_vals = rhs[bad_idx] if bad_idx.size > 0 else np.array([])
@@ -994,8 +1315,8 @@ class  PseudoTransient:
                         f"bad_idx={bad_idx.tolist()}, bad_vals={bad_vals.tolist()}, "
                         f"bad_eqs={bad_eqs}, bad_eq_vars={bad_eq_vars})"
                     )
-                Jf = self._jacobian_pseudo_transient(x_new, 0*dx, dtau)
-                residual = np.linalg.norm(rhs)
+                Jf = self._jacobian_pseudo_transient(x_new, dx, dtau)
+                residual = self._weighted_norm(rhs, rhs_weights)
                 delta = self._solve_linear_system(Jf, rhs, x=x_new, context=f"pseudo step={step_idx + 1} try={tries}")
                 n_states = int(self.problem.get_states_number())
                 g = rhs[n_states:]
@@ -1032,7 +1353,7 @@ class  PseudoTransient:
                     rhs_trial = self._rhs_pseudo_transient(x_trial, xn, 0 * dx, dtau)
                     if not np.all(np.isfinite(rhs_trial)):
                         continue
-                    residual_trial = np.linalg.norm(rhs_trial)
+                    residual_trial = self._weighted_norm(rhs_trial, rhs_weights)
                     if residual_trial < best_residual:
                         best_residual = residual_trial
                         best_scale = scale
@@ -1060,6 +1381,21 @@ class  PseudoTransient:
                     f"step={step_idx + 1} try={tries}: residual2={residual:.3e}, "
                     f"residual_inf={newton_residual:.3e}, |delta|_2={np.linalg.norm(delta):.3e}, dtau={dtau:.3e}"
                 )
+                if self.verbose:
+                    self._report_key_equation_tracking(rhs, x_new, xn, tag=f"step={step_idx + 1} try={tries}")
+
+                if (
+                    (not released_fixed_refs)
+                    and len(self._fixed_var_indices) > 0
+                    and np.isfinite(newton_residual)
+                    and newton_residual < self.reference_error_tol
+                ):
+                    released_fixed_refs = True
+                    self._dbg(
+                        f"releasing fixed reference mask at step={step_idx + 1} "
+                        f"(residual_inf={newton_residual:.3e} < {self.reference_error_tol:.3e})"
+                    )
+                    self._fixed_var_indices = []
 
                 if step_idx == 0 and tries % 10 == 1:
                     i = np.argmax(rhs)
@@ -1080,7 +1416,7 @@ class  PseudoTransient:
                     dx = self.problem.get_dx(xn, xlast, dx, dtau)
                     dx_error = np.linalg.norm(dx)
                     rhs = self._rhs_pseudo_transient(x_new, xn, dx, dtau)
-                    residual = np.linalg.norm(rhs)
+                    residual = self._weighted_norm(rhs, rhs_weights)
 
                     # save history
                     dtau_hist.append(dtau)
@@ -1176,6 +1512,8 @@ class  PseudoTransient:
             if plot:
                 self._plot_diagnostics(dtau_hist, dx_error_hist, residual_hist, x_hist, state_eq_hist)
             raise
+        finally:
+            self._fixed_var_indices = original_fixed_indices
 
         self._dbg(
             f"finish: steps={step_idx}, final_residual2={residual:.3e}, final_dtau={dtau:.3e}, "

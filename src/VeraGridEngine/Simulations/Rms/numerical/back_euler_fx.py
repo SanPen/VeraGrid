@@ -184,10 +184,18 @@ class BackEulerImplicitIntegration:
                             f"Invalid local step size h_eff={h_eff} while integrating RMS macro step {step_idx}."
                         )
 
-                    try:
-                        self.problem.update_variable_params(t=t_local_prev, x_snapshot=x_new)
-                    except TypeError:
-                        self.problem.update_variable_params(t_local_prev)
+                    # Historical RMS implicit integration evaluates runtime
+                    # parameters from the previously accepted local time
+                    # before solving the next substep. Continuous step events
+                    # in ``event_dict`` therefore remain on the pre-event
+                    # value on the sample aligned with the event instant,
+                    # which is the trajectory stored in the regression CSVs.
+                    # Ramp events still preserve their dedicated continuous
+                    # interpolation because the symbolic ramp expression is
+                    # rebuilt from the event metadata inside the problem.
+                    self.problem.update_variable_params(t=t_local_prev,
+                                                        x_snapshot=x_new,
+                                                        scheduled_t=t_local_prev)
 
                     self.problem.update(t_curr, x_new, self.problem._variable_parameters_values)
 
@@ -221,6 +229,12 @@ class BackEulerImplicitIntegration:
                                 print(f"x is {x_new}")
                             else:
                                 well_initialized = False
+                                self.problem.logger.add_error(
+                                    msg="RMS simulation required iterative initialization",
+                                    device="BackEulerImplicitIntegration",
+                                    value=residual,
+                                    expected_value=tol,
+                                )
                                 print(f"System requires iterative initialization. Initial DAE residual is {residual}.")
                                 print(f"rhs is {rhs}")
                                 non_zero_indexes = np.where(np.abs(rhs) > 1e-7)[0]
@@ -229,8 +243,8 @@ class BackEulerImplicitIntegration:
                                 for i in non_zero_indexes:
                                     eq = all_eq[i]
                                     print(f"eq {eq} with error {rhs[i]}")
-                                exit()
-                                # Continue with Newton iterations after reporting initialization residual.
+                                print("RMS simulation continues iterative initialization after the diagnostic. Check the logger for details.")
+                                # Continue with Newton iterations after reporting the initialization residual.
 
 
                         if not substep_converged:

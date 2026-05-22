@@ -10,15 +10,16 @@ from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.identified_object import IdentifiedObject
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 if TYPE_CHECKING:
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.acdc_terminal import ACDCTerminal
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.reporting_group import ReportingGroup
 
 class BusNameMarker(IdentifiedObject):
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='Terminal', class_type='ACDCTerminal', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The terminals associated with this bus name marker.''', profiles=[]),
-        CgmesProperty(property_name='priority', class_type=int, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Priority of bus name marker for use as topology bus name.  Use 0 for do not care.  Use 1 for highest priority.  Use 2 as priority is less than 1 and so on.''', profiles=[]),
-        CgmesProperty(property_name='ReportingGroup', class_type='ReportingGroup', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The reporting group to which this bus name marker belongs.''', profiles=[]),
+        CgmesProperty(property_name='Terminal', class_type='ACDCTerminal', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The terminals associated with this bus name marker.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
+        CgmesProperty(property_name='priority', class_type=int, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Priority of bus name marker for use as topology bus name.  Use 0 for do not care.  Use 1 for highest priority.  Use 2 as priority is less than 1 and so on.''', profiles=[CgmesProfileType.EQ]),
+        CgmesProperty(property_name='ReportingGroup', class_type='ReportingGroup', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The reporting group to which this bus name marker belongs.''', profiles=[CgmesProfileType.EQ]),
     )
     __slots__ = ('Terminal', 'priority', 'ReportingGroup')
     def __init__(self, rdfid='', tpe='BusNameMarker'):

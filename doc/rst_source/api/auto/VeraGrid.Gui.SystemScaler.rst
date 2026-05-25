@@ -4,14 +4,6 @@ VeraGrid.Gui.SystemScaler package
 Submodules
 ----------
 
-VeraGrid.Gui.SystemScaler.icons\_rc module
-------------------------------------------
-
-.. automodule:: VeraGrid.Gui.SystemScaler.icons_rc
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
 VeraGrid.Gui.SystemScaler.system\_scaler module
 -----------------------------------------------
 

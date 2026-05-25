@@ -148,6 +148,14 @@ VeraGridEngine.IO.cim.cgmes.cgmes\_v3\_0\_0.devices.caes\_plant module
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.IO.cim.cgmes.cgmes\_v3\_0\_0.devices.cgm\_region module
+----------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.cgm_region
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGridEngine.IO.cim.cgmes.cgmes\_v3\_0\_0.devices.clamp module
 ----------------------------------------------------------------
 
@@ -792,6 +800,22 @@ VeraGridEngine.IO.cim.cgmes.cgmes\_v3\_0\_0.devices.measurement\_value module
 -----------------------------------------------------------------------------
 
 .. automodule:: VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.measurement_value
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.IO.cim.cgmes.cgmes\_v3\_0\_0.devices.merging\_agent module
+-------------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.merging_agent
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.IO.cim.cgmes.cgmes\_v3\_0\_0.devices.modelling\_authority module
+-------------------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.modelling_authority
    :members:
    :show-inheritance:
    :undoc-members:

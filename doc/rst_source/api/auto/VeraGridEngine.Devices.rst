@@ -12,9 +12,11 @@ Subpackages
    VeraGridEngine.Devices.Branches
    VeraGridEngine.Devices.Diagrams
    VeraGridEngine.Devices.Dynamic
+   VeraGridEngine.Devices.Events
    VeraGridEngine.Devices.Fluid
    VeraGridEngine.Devices.Injections
    VeraGridEngine.Devices.Parents
+   VeraGridEngine.Devices.Profiles
    VeraGridEngine.Devices.Substation
 
 Submodules
@@ -60,10 +62,10 @@ VeraGridEngine.Devices.multi\_circuit module
    :show-inheritance:
    :undoc-members:
 
-VeraGridEngine.Devices.profile module
--------------------------------------
+VeraGridEngine.Devices.multiverse module
+----------------------------------------
 
-.. automodule:: VeraGridEngine.Devices.profile
+.. automodule:: VeraGridEngine.Devices.multiverse
    :members:
    :show-inheritance:
    :undoc-members:

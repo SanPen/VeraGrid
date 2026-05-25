@@ -36,10 +36,26 @@ VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line\_graphics\_template module
    :show-inheritance:
    :undoc-members:
 
+VeraGrid.Gui.Diagrams.SchematicWidget.Branches.route\_geometry module
+---------------------------------------------------------------------
+
+.. automodule:: VeraGrid.Gui.Diagrams.SchematicWidget.Branches.route_geometry
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGrid.Gui.Diagrams.SchematicWidget.Branches.series\_reactance\_graphics module
 ---------------------------------------------------------------------------------
 
 .. automodule:: VeraGrid.Gui.Diagrams.SchematicWidget.Branches.series_reactance_graphics
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot\_geometry module
+--------------------------------------------------------------------
+
+.. automodule:: VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry
    :members:
    :show-inheritance:
    :undoc-members:
@@ -64,6 +80,14 @@ VeraGrid.Gui.Diagrams.SchematicWidget.Branches.transformer3w\_graphics module
 -----------------------------------------------------------------------------
 
 .. automodule:: VeraGrid.Gui.Diagrams.SchematicWidget.Branches.transformer3w_graphics
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGrid.Gui.Diagrams.SchematicWidget.Branches.transformerNw\_graphics module
+-----------------------------------------------------------------------------
+
+.. automodule:: VeraGrid.Gui.Diagrams.SchematicWidget.Branches.transformerNw_graphics
    :members:
    :show-inheritance:
    :undoc-members:

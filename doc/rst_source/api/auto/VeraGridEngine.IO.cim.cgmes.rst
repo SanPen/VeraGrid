@@ -7,9 +7,12 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   VeraGridEngine.IO.cim.cgmes.CgmestoVeraGrid
+   VeraGridEngine.IO.cim.cgmes.VeraGridtoCgmes
    VeraGridEngine.IO.cim.cgmes.cgmes_assets
    VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15
    VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0
+   VeraGridEngine.IO.cim.cgmes.ncp
 
 Submodules
 ----------

@@ -9,11 +9,14 @@ Subpackages
 
    VeraGridEngine.Simulations.AI
    VeraGridEngine.Simulations.ATC
+   VeraGridEngine.Simulations.CatalogueOptimization
+   VeraGridEngine.Simulations.CleanRoom
    VeraGridEngine.Simulations.Clustering
    VeraGridEngine.Simulations.ContingencyAnalysis
    VeraGridEngine.Simulations.ContinuationPowerFlow
    VeraGridEngine.Simulations.Derivatives
    VeraGridEngine.Simulations.Dynamics
+   VeraGridEngine.Simulations.EMT
    VeraGridEngine.Simulations.InputsAnalysis
    VeraGridEngine.Simulations.InvestmentsEvaluation
    VeraGridEngine.Simulations.LinearFactors
@@ -25,6 +28,8 @@ Subpackages
    VeraGridEngine.Simulations.Rms
    VeraGridEngine.Simulations.ShortCircuitStudies
    VeraGridEngine.Simulations.SigmaAnalysis
+   VeraGridEngine.Simulations.SmallSignalStabilityEmt
+   VeraGridEngine.Simulations.SmallSignalStabilityRms
    VeraGridEngine.Simulations.StateEstimation
    VeraGridEngine.Simulations.Stochastic
    VeraGridEngine.Simulations.Topology

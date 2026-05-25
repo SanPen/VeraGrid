@@ -7,16 +7,16 @@ import bz2
 import xml.etree.ElementTree as ET
 from VeraGridEngine.IO.iidm.devices.rtesubstation import IidmSubstation
 from VeraGridEngine.IO.iidm.devices.voltage_level import IidmVoltageLevel
-from VeraGridEngine.IO.iidm.devices.rte_area import IidmArea
-from VeraGridEngine.IO.iidm.devices.rte_bus import IidmBus
-from VeraGridEngine.IO.iidm.devices.generator import IidmGenerator
-from VeraGridEngine.IO.iidm.devices.load import Load
-from VeraGridEngine.IO.iidm.devices.line import IidmLine
+from VeraGridEngine.IO.iidm.devices.iidm_area import IidmArea
+from VeraGridEngine.IO.iidm.devices.iidm_bus import IidmBus
+from VeraGridEngine.IO.iidm.devices.iidm_generator import IidmGenerator
+from VeraGridEngine.IO.iidm.devices.iidm_load import IidmLoad
+from VeraGridEngine.IO.iidm.devices.iidm_line import IidmLine
 from VeraGridEngine.IO.iidm.devices.two_winding_transformer import TwoWindingsTransformer
-from VeraGridEngine.IO.iidm.devices.rte_dangling_line import IidmDanglingLine
+from VeraGridEngine.IO.iidm.devices.iidm_dangling_line import IidmDanglingLine
 from VeraGridEngine.IO.iidm.devices.shunt import Shunt
 from VeraGridEngine.IO.iidm.devices.switch import Switch
-from VeraGridEngine.IO.iidm.devices.rte_busbar_section import IidmBusbarSection
+from VeraGridEngine.IO.iidm.devices.iidm_busbar_section import IidmBusbarSection
 from VeraGridEngine.IO.iidm.devices.static_var_compensator import StaticVarCompensator
 from VeraGridEngine.IO.iidm.devices.iidm_circuit import IidmCircuit
 
@@ -98,7 +98,7 @@ def parse_xiidm_file(file_path: str) -> IidmCircuit:
             ))
 
         elif tag == "load":
-            circuit.loads.append(Load(
+            circuit.loads.append(IidmLoad(
                 id=elem.attrib.get("id", ""),
                 bus=elem.attrib.get("bus", ""),
                 p0=float(elem.attrib.get("p0", 0)),

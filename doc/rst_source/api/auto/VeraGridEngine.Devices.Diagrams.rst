@@ -12,6 +12,14 @@ VeraGridEngine.Devices.Diagrams.base\_diagram module
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.Devices.Diagrams.block\_diagram module
+-----------------------------------------------------
+
+.. automodule:: VeraGridEngine.Devices.Diagrams.block_diagram
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGridEngine.Devices.Diagrams.graphic\_location module
 --------------------------------------------------------
 
@@ -48,6 +56,14 @@ VeraGridEngine.Devices.Diagrams.schematic\_diagram module
 ---------------------------------------------------------
 
 .. automodule:: VeraGridEngine.Devices.Diagrams.schematic_diagram
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Devices.Diagrams.schematic\_layout module
+--------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Devices.Diagrams.schematic_layout
    :members:
    :show-inheritance:
    :undoc-members:

@@ -12,6 +12,14 @@ VeraGrid.Gui.Main.SubClasses.Model.compiled\_arrays module
    :show-inheritance:
    :undoc-members:
 
+VeraGrid.Gui.Main.SubClasses.Model.compiled\_arrays\_model module
+-----------------------------------------------------------------
+
+.. automodule:: VeraGrid.Gui.Main.SubClasses.Model.compiled_arrays_model
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGrid.Gui.Main.SubClasses.Model.data\_base module
 ----------------------------------------------------
 
@@ -24,6 +32,14 @@ VeraGrid.Gui.Main.SubClasses.Model.diagrams module
 --------------------------------------------------
 
 .. automodule:: VeraGrid.Gui.Main.SubClasses.Model.diagrams
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGrid.Gui.Main.SubClasses.Model.scenarios module
+---------------------------------------------------
+
+.. automodule:: VeraGrid.Gui.Main.SubClasses.Model.scenarios
    :members:
    :show-inheritance:
    :undoc-members:

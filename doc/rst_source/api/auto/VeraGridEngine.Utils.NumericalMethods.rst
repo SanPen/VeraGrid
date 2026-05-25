@@ -44,6 +44,38 @@ VeraGridEngine.Utils.NumericalMethods.common module
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.Utils.NumericalMethods.emt\_sparse\_solver\_loader module
+------------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Utils.NumericalMethods.emt_sparse_solver_loader
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Utils.NumericalMethods.emt\_sparse\_solver\_registry module
+--------------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Utils.NumericalMethods.emt_sparse_solver_registry
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Utils.NumericalMethods.emt\_sparse\_superlu\_backend module
+--------------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Utils.NumericalMethods.emt_sparse_superlu_backend
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Utils.NumericalMethods.external\_sparse\_solver\_interface module
+--------------------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Utils.NumericalMethods.external_sparse_solver_interface
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGridEngine.Utils.NumericalMethods.ips module
 ------------------------------------------------
 

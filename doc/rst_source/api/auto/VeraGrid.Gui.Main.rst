@@ -12,22 +12,6 @@ Subpackages
 Submodules
 ----------
 
-VeraGrid.Gui.Main.ConsoleLog module
------------------------------------
-
-.. automodule:: VeraGrid.Gui.Main.ConsoleLog
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGrid.Gui.Main.ConsoleLogController module
----------------------------------------------
-
-.. automodule:: VeraGrid.Gui.Main.ConsoleLogController
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
 VeraGrid.Gui.Main.MainWindow module
 -----------------------------------
 
@@ -40,14 +24,6 @@ VeraGrid.Gui.Main.VeraGridMain module
 -------------------------------------
 
 .. automodule:: VeraGrid.Gui.Main.VeraGridMain
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGrid.Gui.Main.icons\_rc module
-----------------------------------
-
-.. automodule:: VeraGrid.Gui.Main.icons_rc
    :members:
    :show-inheritance:
    :undoc-members:

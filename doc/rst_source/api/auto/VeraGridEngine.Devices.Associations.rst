@@ -28,6 +28,14 @@ VeraGridEngine.Devices.Associations.fuel module
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.Devices.Associations.owner module
+------------------------------------------------
+
+.. automodule:: VeraGridEngine.Devices.Associations.owner
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGridEngine.Devices.Associations.technology module
 -----------------------------------------------------
 

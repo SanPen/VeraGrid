@@ -12,18 +12,10 @@ VeraGrid.Gui.AboutDialogue.about\_dialogue module
    :show-inheritance:
    :undoc-members:
 
-VeraGrid.Gui.AboutDialogue.gui module
--------------------------------------
+VeraGrid.Gui.AboutDialogue.about\_gui module
+--------------------------------------------
 
-.. automodule:: VeraGrid.Gui.AboutDialogue.gui
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGrid.Gui.AboutDialogue.icons\_rc module
--------------------------------------------
-
-.. automodule:: VeraGrid.Gui.AboutDialogue.icons_rc
+.. automodule:: VeraGrid.Gui.AboutDialogue.about_gui
    :members:
    :show-inheritance:
    :undoc-members:

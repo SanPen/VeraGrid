@@ -28,22 +28,6 @@ VeraGridEngine.Devices.Aggregation.community module
    :show-inheritance:
    :undoc-members:
 
-VeraGridEngine.Devices.Aggregation.contingency module
------------------------------------------------------
-
-.. automodule:: VeraGridEngine.Devices.Aggregation.contingency
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGridEngine.Devices.Aggregation.contingency\_group module
-------------------------------------------------------------
-
-.. automodule:: VeraGridEngine.Devices.Aggregation.contingency_group
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
 VeraGridEngine.Devices.Aggregation.country module
 -------------------------------------------------
 
@@ -104,22 +88,6 @@ VeraGridEngine.Devices.Aggregation.region module
 ------------------------------------------------
 
 .. automodule:: VeraGridEngine.Devices.Aggregation.region
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGridEngine.Devices.Aggregation.remedial\_action module
-----------------------------------------------------------
-
-.. automodule:: VeraGridEngine.Devices.Aggregation.remedial_action
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGridEngine.Devices.Aggregation.remedial\_action\_group module
------------------------------------------------------------------
-
-.. automodule:: VeraGridEngine.Devices.Aggregation.remedial_action_group
    :members:
    :show-inheritance:
    :undoc-members:

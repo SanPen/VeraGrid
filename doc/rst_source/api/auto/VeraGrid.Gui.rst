@@ -8,29 +8,33 @@ Subpackages
    :maxdepth: 4
 
    VeraGrid.Gui.AboutDialogue
+   VeraGrid.Gui.AiAgent
    VeraGrid.Gui.Analysis
+   VeraGrid.Gui.CGMESDialogue
+   VeraGrid.Gui.CatalogueElementsDialogue
    VeraGrid.Gui.ContingencyPlanner
-   VeraGrid.Gui.CoordinatesInput
+   VeraGrid.Gui.DeviceEditors
    VeraGrid.Gui.Diagrams
+   VeraGrid.Gui.DynamicModelEditor
+   VeraGrid.Gui.FileDialogues
+   VeraGrid.Gui.FmuTemplateEditor
    VeraGrid.Gui.GridGenerator
    VeraGrid.Gui.GridMerge
    VeraGrid.Gui.GridReduce
-   VeraGrid.Gui.LoadCatalogue
-   VeraGrid.Gui.LoadDesigner
+   VeraGrid.Gui.Icons
    VeraGrid.Gui.Main
+   VeraGrid.Gui.ProceduralGrid
    VeraGrid.Gui.ProfilesInput
-   VeraGrid.Gui.RmsModelEditor
-   VeraGrid.Gui.RosetaExplorer
+   VeraGrid.Gui.PsseDialogue
+   VeraGrid.Gui.PsseExportDialogue
+   VeraGrid.Gui.ShortCircuitEditor
    VeraGrid.Gui.SigmaAnalysis
    VeraGrid.Gui.SolarPowerWizard
    VeraGrid.Gui.SubstationDesigner
    VeraGrid.Gui.SyncDialogue
    VeraGrid.Gui.SystemScaler
-   VeraGrid.Gui.TowerBuilder
-   VeraGrid.Gui.TreeModelViewer
    VeraGrid.Gui.Visualization
    VeraGrid.Gui.Widgets
-   VeraGrid.Gui.WindPowerWizard
 
 Submodules
 ----------
@@ -39,6 +43,30 @@ VeraGrid.Gui.associations\_model module
 ---------------------------------------
 
 .. automodule:: VeraGrid.Gui.associations_model
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGrid.Gui.correct\_icons module
+----------------------------------
+
+.. automodule:: VeraGrid.Gui.correct_icons
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGrid.Gui.dynamic\_events\_editor\_dialog module
+---------------------------------------------------
+
+.. automodule:: VeraGrid.Gui.dynamic_events_editor_dialog
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGrid.Gui.font\_config module
+--------------------------------
+
+.. automodule:: VeraGrid.Gui.font_config
    :members:
    :show-inheritance:
    :undoc-members:
@@ -99,6 +127,14 @@ VeraGrid.Gui.plot\_config module
    :show-inheritance:
    :undoc-members:
 
+VeraGrid.Gui.profile\_wizard\_utils module
+------------------------------------------
+
+.. automodule:: VeraGrid.Gui.profile_wizard_utils
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGrid.Gui.profiles\_model module
 -----------------------------------
 
@@ -123,10 +159,42 @@ VeraGrid.Gui.python\_highlighter module
    :show-inheritance:
    :undoc-members:
 
+VeraGrid.Gui.python\_script\_editor module
+------------------------------------------
+
+.. automodule:: VeraGrid.Gui.python_script_editor
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGrid.Gui.results\_model module
 ----------------------------------
 
 .. automodule:: VeraGrid.Gui.results_model
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGrid.Gui.rms\_plot\_variables\_dialog module
+------------------------------------------------
+
+.. automodule:: VeraGrid.Gui.rms_plot_variables_dialog
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGrid.Gui.scenario\_tree\_model module
+-----------------------------------------
+
+.. automodule:: VeraGrid.Gui.scenario_tree_model
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGrid.Gui.spread\_sheet\_table module
+----------------------------------------
+
+.. automodule:: VeraGrid.Gui.spread_sheet_table
    :members:
    :show-inheritance:
    :undoc-members:

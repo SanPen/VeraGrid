@@ -15,10 +15,26 @@ Subpackages
 Submodules
 ----------
 
+VeraGrid.Gui.Diagrams.SchematicWidget.diagram\_bus\_selection\_dialogue module
+------------------------------------------------------------------------------
+
+.. automodule:: VeraGrid.Gui.Diagrams.SchematicWidget.diagram_bus_selection_dialogue
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGrid.Gui.Diagrams.SchematicWidget.matplotlibwidget module
 -------------------------------------------------------------
 
 .. automodule:: VeraGrid.Gui.Diagrams.SchematicWidget.matplotlibwidget
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGrid.Gui.Diagrams.SchematicWidget.schematic\_auto\_layout module
+--------------------------------------------------------------------
+
+.. automodule:: VeraGrid.Gui.Diagrams.SchematicWidget.schematic_auto_layout
    :members:
    :show-inheritance:
    :undoc-members:

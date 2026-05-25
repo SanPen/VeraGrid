@@ -12,18 +12,10 @@ VeraGrid.Gui.Analysis.AnalysisDialogue module
    :show-inheritance:
    :undoc-members:
 
-VeraGrid.Gui.Analysis.gui module
---------------------------------
+VeraGrid.Gui.Analysis.analysis\_gui module
+------------------------------------------
 
-.. automodule:: VeraGrid.Gui.Analysis.gui
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGrid.Gui.Analysis.icons\_rc module
---------------------------------------
-
-.. automodule:: VeraGrid.Gui.Analysis.icons_rc
+.. automodule:: VeraGrid.Gui.Analysis.analysis_gui
    :members:
    :show-inheritance:
    :undoc-members:

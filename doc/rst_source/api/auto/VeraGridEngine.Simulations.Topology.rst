@@ -12,6 +12,14 @@ VeraGridEngine.Simulations.Topology.node\_groups\_driver module
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.Simulations.Topology.node\_groups\_results module
+----------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Simulations.Topology.node_groups_results
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGridEngine.Simulations.Topology.topology\_reduction\_driver module
 ----------------------------------------------------------------------
 

@@ -8,6 +8,8 @@ Subpackages
    :maxdepth: 4
 
    VeraGridEngine.Topology.GridReduction
+   VeraGridEngine.Topology.Procedural
+   VeraGridEngine.Topology.VoltageLevels
 
 Submodules
 ----------
@@ -32,14 +34,6 @@ VeraGridEngine.Topology.simulation\_indices module
 --------------------------------------------------
 
 .. automodule:: VeraGridEngine.Topology.simulation_indices
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGridEngine.Topology.substation\_wizards module
---------------------------------------------------
-
-.. automodule:: VeraGridEngine.Topology.substation_wizards
    :members:
    :show-inheritance:
    :undoc-members:

@@ -12,6 +12,22 @@ VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common\_functions module
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.Simulations.PowerFlow.NumericalMethods.converter\_fault\_controls module
+---------------------------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Simulations.PowerFlow.NumericalMethods.converter_fault_controls
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Simulations.PowerFlow.NumericalMethods.converter\_fault\_controls\_no\_ifs module
+------------------------------------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Simulations.PowerFlow.NumericalMethods.converter_fault_controls_no_ifs
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete\_controls module
 -------------------------------------------------------------------------------
 

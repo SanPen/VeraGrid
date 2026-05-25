@@ -4,26 +4,26 @@ VeraGridEngine.IO.iidm.devices package
 Submodules
 ----------
 
-VeraGridEngine.IO.iidm.devices.discrete\_measurement module
------------------------------------------------------------
+VeraGridEngine.IO.iidm.devices.iidm\_area module
+------------------------------------------------
 
-.. automodule:: VeraGridEngine.IO.iidm.devices.discrete_measurement
+.. automodule:: VeraGridEngine.IO.iidm.devices.iidm_area
    :members:
    :show-inheritance:
    :undoc-members:
 
-VeraGridEngine.IO.iidm.devices.generator module
+VeraGridEngine.IO.iidm.devices.iidm\_bus module
 -----------------------------------------------
 
-.. automodule:: VeraGridEngine.IO.iidm.devices.generator
+.. automodule:: VeraGridEngine.IO.iidm.devices.iidm_bus
    :members:
    :show-inheritance:
    :undoc-members:
 
-VeraGridEngine.IO.iidm.devices.identifiable\_short\_circuit module
-------------------------------------------------------------------
+VeraGridEngine.IO.iidm.devices.iidm\_busbar\_section module
+-----------------------------------------------------------
 
-.. automodule:: VeraGridEngine.IO.iidm.devices.identifiable_short_circuit
+.. automodule:: VeraGridEngine.IO.iidm.devices.iidm_busbar_section
    :members:
    :show-inheritance:
    :undoc-members:
@@ -36,26 +36,66 @@ VeraGridEngine.IO.iidm.devices.iidm\_circuit module
    :show-inheritance:
    :undoc-members:
 
-VeraGridEngine.IO.iidm.devices.line module
-------------------------------------------
+VeraGridEngine.IO.iidm.devices.iidm\_dangling\_line module
+----------------------------------------------------------
 
-.. automodule:: VeraGridEngine.IO.iidm.devices.line
+.. automodule:: VeraGridEngine.IO.iidm.devices.iidm_dangling_line
    :members:
    :show-inheritance:
    :undoc-members:
 
-VeraGridEngine.IO.iidm.devices.load module
-------------------------------------------
+VeraGridEngine.IO.iidm.devices.iidm\_discrete\_measurement module
+-----------------------------------------------------------------
 
-.. automodule:: VeraGridEngine.IO.iidm.devices.load
+.. automodule:: VeraGridEngine.IO.iidm.devices.iidm_discrete_measurement
    :members:
    :show-inheritance:
    :undoc-members:
 
-VeraGridEngine.IO.iidm.devices.node\_breaker\_topology module
--------------------------------------------------------------
+VeraGridEngine.IO.iidm.devices.iidm\_generator module
+-----------------------------------------------------
 
-.. automodule:: VeraGridEngine.IO.iidm.devices.node_breaker_topology
+.. automodule:: VeraGridEngine.IO.iidm.devices.iidm_generator
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.IO.iidm.devices.iidm\_identifiable\_short\_circuit module
+------------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.IO.iidm.devices.iidm_identifiable_short_circuit
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.IO.iidm.devices.iidm\_line module
+------------------------------------------------
+
+.. automodule:: VeraGridEngine.IO.iidm.devices.iidm_line
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.IO.iidm.devices.iidm\_load module
+------------------------------------------------
+
+.. automodule:: VeraGridEngine.IO.iidm.devices.iidm_load
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.IO.iidm.devices.iidm\_node\_breaker\_topology module
+-------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.IO.iidm.devices.iidm_node_breaker_topology
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.IO.iidm.devices.iidm\_object module
+--------------------------------------------------
+
+.. automodule:: VeraGridEngine.IO.iidm.devices.iidm_object
    :members:
    :show-inheritance:
    :undoc-members:
@@ -72,46 +112,6 @@ VeraGridEngine.IO.iidm.devices.operating\_status module
 -------------------------------------------------------
 
 .. automodule:: VeraGridEngine.IO.iidm.devices.operating_status
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGridEngine.IO.iidm.devices.rte\_area module
------------------------------------------------
-
-.. automodule:: VeraGridEngine.IO.iidm.devices.rte_area
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGridEngine.IO.iidm.devices.rte\_bus module
-----------------------------------------------
-
-.. automodule:: VeraGridEngine.IO.iidm.devices.rte_bus
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGridEngine.IO.iidm.devices.rte\_busbar\_section module
-----------------------------------------------------------
-
-.. automodule:: VeraGridEngine.IO.iidm.devices.rte_busbar_section
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGridEngine.IO.iidm.devices.rte\_dangling\_line module
----------------------------------------------------------
-
-.. automodule:: VeraGridEngine.IO.iidm.devices.rte_dangling_line
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGridEngine.IO.iidm.devices.rte\_object module
--------------------------------------------------
-
-.. automodule:: VeraGridEngine.IO.iidm.devices.rte_object
    :members:
    :show-inheritance:
    :undoc-members:

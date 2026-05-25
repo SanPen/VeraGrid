@@ -9,7 +9,6 @@ Subpackages
 
    VeraGridEngine.Utils.ThirdParty.SyntheticNetworks
    VeraGridEngine.Utils.ThirdParty.gslv
-   VeraGridEngine.Utils.ThirdParty.pulp
 
 Module contents
 ---------------

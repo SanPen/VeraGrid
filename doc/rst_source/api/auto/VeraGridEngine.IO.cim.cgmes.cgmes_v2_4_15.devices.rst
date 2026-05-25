@@ -116,6 +116,14 @@ VeraGridEngine.IO.cim.cgmes.cgmes\_v2\_4\_15.devices.busbar\_section module
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.IO.cim.cgmes.cgmes\_v2\_4\_15.devices.cgm\_region module
+-----------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.cgm_region
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGridEngine.IO.cim.cgmes.cgmes\_v2\_4\_15.devices.conducting\_equipment module
 ---------------------------------------------------------------------------------
 
@@ -672,6 +680,22 @@ VeraGridEngine.IO.cim.cgmes.cgmes\_v2\_4\_15.devices.measurement\_value module
 ------------------------------------------------------------------------------
 
 .. automodule:: VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.measurement_value
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.IO.cim.cgmes.cgmes\_v2\_4\_15.devices.merging\_agent module
+--------------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.merging_agent
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.IO.cim.cgmes.cgmes\_v2\_4\_15.devices.modelling\_authority module
+--------------------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.modelling_authority
    :members:
    :show-inheritance:
    :undoc-members:

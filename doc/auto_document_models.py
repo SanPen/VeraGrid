@@ -7,7 +7,7 @@ from typing import Dict
 import pandas as pd
 from pytablewriter import RstSimpleTableWriter, MarkdownTableWriter
 from VeraGridEngine.IO.cim.cgmes.cgmes_circuit import CgmesCircuit
-from VeraGridEngine.IO.raw.devices.psse_circuit import PsseCircuit
+from VeraGridEngine.IO.raw.psse_circuit import PsseCircuit
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.IO.veragrid.pack_unpack import get_objects_dictionary
 from VeraGridEngine.enumerations import CGMESVersions

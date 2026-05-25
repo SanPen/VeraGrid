@@ -52,6 +52,14 @@ VeraGrid.Gui.Diagrams.MapWidget.Branches.map\_line\_container module
    :show-inheritance:
    :undoc-members:
 
+VeraGrid.Gui.Diagrams.MapWidget.Branches.map\_line\_polyline module
+-------------------------------------------------------------------
+
+.. automodule:: VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_polyline
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGrid.Gui.Diagrams.MapWidget.Branches.map\_line\_segment module
 ------------------------------------------------------------------
 

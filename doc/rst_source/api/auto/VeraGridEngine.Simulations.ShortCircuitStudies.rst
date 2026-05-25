@@ -4,6 +4,22 @@ VeraGridEngine.Simulations.ShortCircuitStudies package
 Submodules
 ----------
 
+VeraGridEngine.Simulations.ShortCircuitStudies.converter\_fault\_controls module
+--------------------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Simulations.ShortCircuitStudies.converter_fault_controls
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Simulations.ShortCircuitStudies.converter\_fault\_controls\_no\_ifs module
+-----------------------------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Simulations.ShortCircuitStudies.converter_fault_controls_no_ifs
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGridEngine.Simulations.ShortCircuitStudies.short\_circuit module
 --------------------------------------------------------------------
 
@@ -40,14 +56,6 @@ VeraGridEngine.Simulations.ShortCircuitStudies.short\_circuit\_worker module
 ----------------------------------------------------------------------------
 
 .. automodule:: VeraGridEngine.Simulations.ShortCircuitStudies.short_circuit_worker
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGridEngine.Simulations.ShortCircuitStudies.short\_circuit\_worker\_3ph module
----------------------------------------------------------------------------------
-
-.. automodule:: VeraGridEngine.Simulations.ShortCircuitStudies.short_circuit_worker_3ph
    :members:
    :show-inheritance:
    :undoc-members:

@@ -12,18 +12,10 @@ VeraGrid.Gui.ContingencyPlanner.contingency\_planner\_dialogue module
    :show-inheritance:
    :undoc-members:
 
-VeraGrid.Gui.ContingencyPlanner.gui module
-------------------------------------------
+VeraGrid.Gui.ContingencyPlanner.contingency\_planner\_gui module
+----------------------------------------------------------------
 
-.. automodule:: VeraGrid.Gui.ContingencyPlanner.gui
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGrid.Gui.ContingencyPlanner.icons\_rc module
-------------------------------------------------
-
-.. automodule:: VeraGrid.Gui.ContingencyPlanner.icons_rc
+.. automodule:: VeraGrid.Gui.ContingencyPlanner.contingency_planner_gui
    :members:
    :show-inheritance:
    :undoc-members:

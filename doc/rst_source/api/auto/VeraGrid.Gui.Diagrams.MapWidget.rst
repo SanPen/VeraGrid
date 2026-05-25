@@ -8,6 +8,7 @@ Subpackages
    :maxdepth: 4
 
    VeraGrid.Gui.Diagrams.MapWidget.Branches
+   VeraGrid.Gui.Diagrams.MapWidget.Injections
    VeraGrid.Gui.Diagrams.MapWidget.Substation
    VeraGrid.Gui.Diagrams.MapWidget.Tiles
 

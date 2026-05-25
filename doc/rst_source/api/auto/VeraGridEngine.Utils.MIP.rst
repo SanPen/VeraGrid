@@ -20,6 +20,14 @@ VeraGridEngine.Utils.MIP.gslv\_interface module
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.Utils.MIP.mip\_interface\_template module
+--------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Utils.MIP.mip_interface_template
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGridEngine.Utils.MIP.ortools\_interface module
 --------------------------------------------------
 

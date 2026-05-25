@@ -44,6 +44,14 @@ VeraGridEngine.Simulations.PowerFlow.Formulations.pf\_full\_acdc\_with\_negative
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.Simulations.PowerFlow.Formulations.pf\_full\_acdc\_with\_negative\_poles\_sc module
+--------------------------------------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Simulations.PowerFlow.Formulations.pf_full_acdc_with_negative_poles_sc
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGridEngine.Simulations.PowerFlow.Formulations.pf\_generalized\_formulation module
 -------------------------------------------------------------------------------------
 

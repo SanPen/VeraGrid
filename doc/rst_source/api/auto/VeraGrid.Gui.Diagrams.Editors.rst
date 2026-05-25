@@ -4,26 +4,10 @@ VeraGrid.Gui.Diagrams.Editors package
 Submodules
 ----------
 
-VeraGrid.Gui.Diagrams.Editors.controllable\_shunt\_editor module
-----------------------------------------------------------------
+VeraGrid.Gui.Diagrams.Editors.bus\_selector module
+--------------------------------------------------
 
-.. automodule:: VeraGrid.Gui.Diagrams.Editors.controllable_shunt_editor
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGrid.Gui.Diagrams.Editors.generator\_editor module
-------------------------------------------------------
-
-.. automodule:: VeraGrid.Gui.Diagrams.Editors.generator_editor
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGrid.Gui.Diagrams.Editors.line\_editor module
--------------------------------------------------
-
-.. automodule:: VeraGrid.Gui.Diagrams.Editors.line_editor
+.. automodule:: VeraGrid.Gui.Diagrams.Editors.bus_selector
    :members:
    :show-inheritance:
    :undoc-members:
@@ -32,30 +16,6 @@ VeraGrid.Gui.Diagrams.Editors.new\_line\_dialogue module
 --------------------------------------------------------
 
 .. automodule:: VeraGrid.Gui.Diagrams.Editors.new_line_dialogue
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGrid.Gui.Diagrams.Editors.transformer3w\_editor module
-----------------------------------------------------------
-
-.. automodule:: VeraGrid.Gui.Diagrams.Editors.transformer3w_editor
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGrid.Gui.Diagrams.Editors.transformer\_editor module
---------------------------------------------------------
-
-.. automodule:: VeraGrid.Gui.Diagrams.Editors.transformer_editor
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGrid.Gui.Diagrams.Editors.transformer\_taps\_editor module
---------------------------------------------------------------
-
-.. automodule:: VeraGrid.Gui.Diagrams.Editors.transformer_taps_editor
    :members:
    :show-inheritance:
    :undoc-members:

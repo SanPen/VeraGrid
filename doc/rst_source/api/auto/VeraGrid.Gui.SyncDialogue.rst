@@ -4,26 +4,18 @@ VeraGrid.Gui.SyncDialogue package
 Submodules
 ----------
 
-VeraGrid.Gui.SyncDialogue.gui module
-------------------------------------
-
-.. automodule:: VeraGrid.Gui.SyncDialogue.gui
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGrid.Gui.SyncDialogue.icons\_rc module
-------------------------------------------
-
-.. automodule:: VeraGrid.Gui.SyncDialogue.icons_rc
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
 VeraGrid.Gui.SyncDialogue.sync\_dialogue module
 -----------------------------------------------
 
 .. automodule:: VeraGrid.Gui.SyncDialogue.sync_dialogue
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGrid.Gui.SyncDialogue.sync\_gui module
+------------------------------------------
+
+.. automodule:: VeraGrid.Gui.SyncDialogue.sync_gui
    :members:
    :show-inheritance:
    :undoc-members:

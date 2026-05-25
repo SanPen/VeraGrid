@@ -28,6 +28,14 @@ VeraGrid.Gui.SubstationDesigner.update\_gui\_file module
    :show-inheritance:
    :undoc-members:
 
+VeraGrid.Gui.SubstationDesigner.voltage\_level\_conversion module
+-----------------------------------------------------------------
+
+.. automodule:: VeraGrid.Gui.SubstationDesigner.voltage_level_conversion
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 Module contents
 ---------------
 

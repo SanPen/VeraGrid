@@ -100,6 +100,14 @@ VeraGridEngine.Devices.Branches.transformer3w module
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.Devices.Branches.transformerNw module
+----------------------------------------------------
+
+.. automodule:: VeraGridEngine.Devices.Branches.transformerNw
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGridEngine.Devices.Branches.transformer\_type module
 --------------------------------------------------------
 

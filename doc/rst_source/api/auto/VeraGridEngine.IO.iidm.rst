@@ -20,6 +20,14 @@ VeraGridEngine.IO.iidm.iidm\_parser module
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.IO.iidm.iidm\_parser\_pypowsybl module
+-----------------------------------------------------
+
+.. automodule:: VeraGridEngine.IO.iidm.iidm_parser_pypowsybl
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 Module contents
 ---------------
 

@@ -67,7 +67,7 @@ print()
 # -----------------------------------------------------------------------------
 print("# 6. Immutability check (_impl is MappingProxyType)")
 try:
-    sym.BinOp._impl["+"] = None  # type: ignore[misc]
+    sym.BinOp.eval("+")  # type: ignore[misc]
 except TypeError as exc:
     print("Attempt to mutate BinOp._impl →", exc)
 print()

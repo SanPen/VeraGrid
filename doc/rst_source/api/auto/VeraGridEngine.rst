@@ -12,6 +12,7 @@ Subpackages
    VeraGridEngine.Devices
    VeraGridEngine.IO
    VeraGridEngine.Simulations
+   VeraGridEngine.Templates
    VeraGridEngine.Topology
    VeraGridEngine.Utils
 

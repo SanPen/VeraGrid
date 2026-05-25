@@ -20,18 +20,26 @@ VeraGridEngine.Devices.Parents.controllable\_branch\_parent module
    :show-inheritance:
    :undoc-members:
 
-VeraGridEngine.Devices.Parents.editable\_device module
-------------------------------------------------------
+VeraGridEngine.Devices.Parents.dynamic\_bus\_parent module
+----------------------------------------------------------
 
-.. automodule:: VeraGridEngine.Devices.Parents.editable_device
+.. automodule:: VeraGridEngine.Devices.Parents.dynamic_bus_parent
    :members:
    :show-inheritance:
    :undoc-members:
 
-VeraGridEngine.Devices.Parents.generator\_parent module
--------------------------------------------------------
+VeraGridEngine.Devices.Parents.dynamic\_parent module
+-----------------------------------------------------
 
-.. automodule:: VeraGridEngine.Devices.Parents.generator_parent
+.. automodule:: VeraGridEngine.Devices.Parents.dynamic_parent
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Devices.Parents.editable\_device module
+------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Devices.Parents.editable_device
    :members:
    :show-inheritance:
    :undoc-members:

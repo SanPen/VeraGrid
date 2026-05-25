@@ -7,10 +7,42 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   VeraGridEngine.IO.raw.devices
+   VeraGridEngine.IO.raw.versioned
 
 Submodules
 ----------
+
+VeraGridEngine.IO.raw.psse\_circuit module
+------------------------------------------
+
+.. automodule:: VeraGridEngine.IO.raw.psse_circuit
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.IO.raw.psse\_object module
+-----------------------------------------
+
+.. automodule:: VeraGridEngine.IO.raw.psse_object
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.IO.raw.psse\_property module
+-------------------------------------------
+
+.. automodule:: VeraGridEngine.IO.raw.psse_property
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.IO.raw.psse\_to\_veragrid\_utils module
+------------------------------------------------------
+
+.. automodule:: VeraGridEngine.IO.raw.psse_to_veragrid_utils
+   :members:
+   :show-inheritance:
+   :undoc-members:
 
 VeraGridEngine.IO.raw.raw\_functions module
 -------------------------------------------
@@ -32,6 +64,14 @@ VeraGridEngine.IO.raw.raw\_to\_veragrid module
 ----------------------------------------------
 
 .. automodule:: VeraGridEngine.IO.raw.raw_to_veragrid
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.IO.raw.raw\_types module
+---------------------------------------
+
+.. automodule:: VeraGridEngine.IO.raw.raw_types
    :members:
    :show-inheritance:
    :undoc-members:

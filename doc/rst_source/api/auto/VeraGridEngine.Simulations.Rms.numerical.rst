@@ -4,10 +4,50 @@ VeraGridEngine.Simulations.Rms.numerical package
 Submodules
 ----------
 
-VeraGridEngine.Simulations.Rms.numerical.integration\_methods module
---------------------------------------------------------------------
+VeraGridEngine.Simulations.Rms.numerical.back\_euler\_fx module
+---------------------------------------------------------------
 
-.. automodule:: VeraGridEngine.Simulations.Rms.numerical.integration_methods
+.. automodule:: VeraGridEngine.Simulations.Rms.numerical.back_euler_fx
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Simulations.Rms.numerical.back\_euler\_mti module
+----------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Simulations.Rms.numerical.back_euler_mti
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Simulations.Rms.numerical.back\_euler\_ts module
+---------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Simulations.Rms.numerical.back_euler_ts
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Simulations.Rms.numerical.midpoint module
+--------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Simulations.Rms.numerical.midpoint
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Simulations.Rms.numerical.pseudo\_transient module
+-----------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Simulations.Rms.numerical.pseudo_transient
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Simulations.Rms.numerical.trapezoidal module
+-----------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Simulations.Rms.numerical.trapezoidal
    :members:
    :show-inheritance:
    :undoc-members:

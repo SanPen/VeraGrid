@@ -4,10 +4,26 @@ VeraGridEngine.IO.others package
 Submodules
 ----------
 
+VeraGridEngine.IO.others.anarede module
+---------------------------------------
+
+.. automodule:: VeraGridEngine.IO.others.anarede
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGridEngine.IO.others.dpx\_parser module
 -------------------------------------------
 
 .. automodule:: VeraGridEngine.IO.others.dpx_parser
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.IO.others.helper\_pow2pp module
+----------------------------------------------
+
+.. automodule:: VeraGridEngine.IO.others.helper_pow2pp
    :members:
    :show-inheritance:
    :undoc-members:
@@ -32,6 +48,14 @@ VeraGridEngine.IO.others.plx\_parser module
 -------------------------------------------
 
 .. automodule:: VeraGridEngine.IO.others.plx_parser
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.IO.others.pow2pp module
+--------------------------------------
+
+.. automodule:: VeraGridEngine.IO.others.pow2pp
    :members:
    :show-inheritance:
    :undoc-members:

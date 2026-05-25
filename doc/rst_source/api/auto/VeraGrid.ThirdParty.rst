@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   VeraGrid.ThirdParty.adjustText
    VeraGrid.ThirdParty.darkdetect
    VeraGrid.ThirdParty.qdarktheme
 

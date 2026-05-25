@@ -12,18 +12,10 @@ VeraGrid.Gui.GridGenerator.grid\_generator\_dialogue module
    :show-inheritance:
    :undoc-members:
 
-VeraGrid.Gui.GridGenerator.gui module
--------------------------------------
+VeraGrid.Gui.GridGenerator.grid\_generator\_gui module
+------------------------------------------------------
 
-.. automodule:: VeraGrid.Gui.GridGenerator.gui
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGrid.Gui.GridGenerator.icons\_rc module
--------------------------------------------
-
-.. automodule:: VeraGrid.Gui.GridGenerator.icons_rc
+.. automodule:: VeraGrid.Gui.GridGenerator.grid_generator_gui
    :members:
    :show-inheritance:
    :undoc-members:

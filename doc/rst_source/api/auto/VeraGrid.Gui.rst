@@ -10,7 +10,6 @@ Subpackages
    VeraGrid.Gui.AboutDialogue
    VeraGrid.Gui.AiAgent
    VeraGrid.Gui.Analysis
-   VeraGrid.Gui.CGMESDialogue
    VeraGrid.Gui.CatalogueElementsDialogue
    VeraGrid.Gui.ContingencyPlanner
    VeraGrid.Gui.DeviceEditors
@@ -24,12 +23,8 @@ Subpackages
    VeraGrid.Gui.Icons
    VeraGrid.Gui.Main
    VeraGrid.Gui.ProceduralGrid
-   VeraGrid.Gui.ProfilesInput
-   VeraGrid.Gui.PsseDialogue
-   VeraGrid.Gui.PsseExportDialogue
    VeraGrid.Gui.ShortCircuitEditor
    VeraGrid.Gui.SigmaAnalysis
-   VeraGrid.Gui.SolarPowerWizard
    VeraGrid.Gui.SubstationDesigner
    VeraGrid.Gui.SyncDialogue
    VeraGrid.Gui.SystemScaler

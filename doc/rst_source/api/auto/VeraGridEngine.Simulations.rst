@@ -15,7 +15,6 @@ Subpackages
    VeraGridEngine.Simulations.ContingencyAnalysis
    VeraGridEngine.Simulations.ContinuationPowerFlow
    VeraGridEngine.Simulations.Derivatives
-   VeraGridEngine.Simulations.Dynamics
    VeraGridEngine.Simulations.EMT
    VeraGridEngine.Simulations.InputsAnalysis
    VeraGridEngine.Simulations.InvestmentsEvaluation

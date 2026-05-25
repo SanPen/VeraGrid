@@ -12,7 +12,6 @@ Subpackages
    VeraGrid.Gui.DeviceEditors.GeneratorEditor
    VeraGrid.Gui.DeviceEditors.LineEditor
    VeraGrid.Gui.DeviceEditors.LoadDesigner
-   VeraGrid.Gui.DeviceEditors.SolarPowerWizard
    VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor
    VeraGrid.Gui.DeviceEditors.TowerBuilder
    VeraGrid.Gui.DeviceEditors.Transformer3wEditor

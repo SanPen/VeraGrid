@@ -11,7 +11,6 @@ Subpackages
    VeraGridEngine.IO.cim
    VeraGridEngine.IO.dgs
    VeraGridEngine.IO.epc
-   VeraGridEngine.IO.external_sparse_solvers
    VeraGridEngine.IO.fmu
    VeraGridEngine.IO.iidm
    VeraGridEngine.IO.matpower

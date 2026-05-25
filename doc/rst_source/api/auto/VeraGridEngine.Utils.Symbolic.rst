@@ -1,14 +1,6 @@
 VeraGridEngine.Utils.Symbolic package
 =====================================
 
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 4
-
-   VeraGridEngine.Utils.Symbolic.examples
-
 Submodules
 ----------
 
@@ -24,14 +16,6 @@ VeraGridEngine.Utils.Symbolic.block\_helpers module
 ---------------------------------------------------
 
 .. automodule:: VeraGridEngine.Utils.Symbolic.block_helpers
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGridEngine.Utils.Symbolic.block\_libray module
---------------------------------------------------
-
-.. automodule:: VeraGridEngine.Utils.Symbolic.block_libray
    :members:
    :show-inheritance:
    :undoc-members:

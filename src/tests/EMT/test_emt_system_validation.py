@@ -478,7 +478,7 @@ def test_switched_vsc_emt_passes_validation_and_switches_gates() -> None:
     gate_c_trace = list()
 
     for time_s in np.linspace(0.0, switched_options.simulation_time, 121):
-        problem.update(float(time_s), x0.copy(), full_params)
+        problem.emt_boundary_update(float(time_s), x0.copy(), full_params)
         gate_a_trace.append(float(full_params[gate_a_mode_idx]))
         gate_b_trace.append(float(full_params[gate_b_mode_idx]))
         gate_c_trace.append(float(full_params[gate_c_mode_idx]))

@@ -15,7 +15,7 @@ class BaseProperty:
 
     def __init__(self, property_name: str,
                  class_type: TypeVar,
-                 unit: Unit,
+                 unit: Unit | None,
                  denominator_unit: Unit = None,
                  description: str = '',
                  max_chars=None,

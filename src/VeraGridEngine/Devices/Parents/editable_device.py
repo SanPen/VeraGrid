@@ -1204,6 +1204,7 @@ class EditableDevice(metaclass=EditableDeviceMeta):
 
         # Create a new instance of the object
         tpe = self.__class__
+        new_obj: EditableDevice
 
         try:
             new_obj = tpe(name=self.name,
@@ -1213,7 +1214,7 @@ class EditableDevice(metaclass=EditableDeviceMeta):
             new_obj.disable_auto_updates()
 
         except TypeError:
-            new_obj = tpe()
+            new_obj: EditableDevice = tpe()
             new_obj.disable_auto_updates()
 
         # deep-copy each property

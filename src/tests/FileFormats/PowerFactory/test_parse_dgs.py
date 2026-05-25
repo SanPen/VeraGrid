@@ -7,6 +7,7 @@ import os
 import pandas as pd
 import numpy as np
 
+import VeraGridEngine.Devices as dev
 from VeraGridEngine.IO.file_open import FileOpen
 from VeraGridEngine.Simulations.PowerFlow.power_flow_worker import PowerFlowOptions
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import SolverType
@@ -117,3 +118,75 @@ def test_roundtrip_raw_to_dgs_to_dgs_ieee_grids():
             assert flow_ok
 
         print(solver_type, 'ok')
+
+
+def test_circuit_to_dgs_uses_profile_values_when_t_idx_is_provided() -> None:
+    """DGS export must use profile values when ``t_idx`` is provided."""
+
+    grid: dev.MultiCircuit = dev.MultiCircuit(name="profile-export")
+
+    bus_1: dev.Bus = dev.Bus(name="B1", Vnom=110.0, active=True)
+    bus_2: dev.Bus = dev.Bus(name="B2", Vnom=110.0, active=True)
+    bus_1.active_prof = np.array([True, False])
+    grid.add_bus(bus_1)
+    grid.add_bus(bus_2)
+
+    load: dev.Load = dev.Load(name="LD1", P=10.0, Q=2.0, active=True)
+    load.P_prof = np.array([12.0, 22.0])
+    load.Q_prof = np.array([3.0, 5.0])
+    load.active_prof = np.array([True, False])
+    grid.add_load(bus=bus_1, api_obj=load)
+
+    line: dev.Line = dev.Line(
+        bus_from=bus_1,
+        bus_to=bus_2,
+        name="L12",
+        r=0.01,
+        x=0.05,
+        b=0.001,
+        rate=100.0,
+        active=True,
+    )
+    line.rate_prof = np.array([120.0, 220.0])
+    line.active_prof = np.array([True, False])
+    grid.add_line(line)
+
+    switch: dev.Switch = dev.Switch(
+        bus_from=bus_1,
+        bus_to=bus_2,
+        name="SW12",
+        rate=80.0,
+        active=True,
+        rated_current=0.0,
+    )
+    switch.rate_prof = np.array([90.0, 180.0])
+    switch.active_prof = np.array([True, False])
+    grid.add_switch(switch)
+
+    snapshot_export = circuit_to_dgs(grid=grid, t_idx=None)
+    profile_export = circuit_to_dgs(grid=grid, t_idx=1)
+
+    snapshot_line_current: float = 100.0 / (np.sqrt(3.0) * 110.0)
+    profile_line_current: float = 220.0 / (np.sqrt(3.0) * 110.0)
+    snapshot_switch_current: float = 80.0 / (np.sqrt(3.0) * 110.0)
+    profile_switch_current: float = 180.0 / (np.sqrt(3.0) * 110.0)
+
+    assert snapshot_export.elmterms[0].outserv == 0
+    assert profile_export.elmterms[0].outserv == 1
+
+    assert snapshot_export.elmlods[0].plini == 10.0
+    assert profile_export.elmlods[0].plini == 22.0
+    assert snapshot_export.elmlods[0].qlini == 2.0
+    assert profile_export.elmlods[0].qlini == 5.0
+    assert snapshot_export.elmlods[0].outserv == 0
+    assert profile_export.elmlods[0].outserv == 1
+
+    assert np.isclose(snapshot_export.typlnes[0].InomAir, snapshot_line_current)
+    assert np.isclose(profile_export.typlnes[0].InomAir, profile_line_current)
+    assert snapshot_export.elmlnes[0].outserv == 0
+    assert profile_export.elmlnes[0].outserv == 1
+
+    assert np.isclose(snapshot_export.typswitches[0].InomA, snapshot_switch_current)
+    assert np.isclose(profile_export.typswitches[0].InomA, profile_switch_current)
+    assert snapshot_export.elmcoups[0].on_off == 1
+    assert profile_export.elmcoups[0].on_off == 0

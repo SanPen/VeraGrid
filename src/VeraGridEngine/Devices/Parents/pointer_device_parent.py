@@ -171,3 +171,15 @@ class PointerDeviceParent(EditableDevice):
             self._device_idtag = pointed.idtag
             self._device_name = pointed.name
             self._tpe = pointed.device_type
+
+    def copy(self, forced_new_idtag: bool = False) -> "PointerDeviceParent":
+        """
+        Overload to handle the copy of the device pointer
+        :param forced_new_idtag:
+        :return: PointerDeviceParent
+        """
+        cpy = super().copy(forced_new_idtag=True)
+
+        cpy.device = self.device
+
+        return cpy

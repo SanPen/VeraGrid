@@ -299,8 +299,6 @@ class ResultsMain(SimulationsMain):
                 plots_model = self.dynamic_results_handler.get_plots_model()
                 item: QtGui.QStandardItem | None = plots_model.itemFromIndex(index)
                 if item is not None:
-                    # Renaming is restricted to top-level group nodes to avoid the
-                    # ambiguous case where a variable child would rename its parent group.
                     if item.parent() is None:
                         menu: QtWidgets.QMenu = QtWidgets.QMenu(parent=self.ui.dynamicsPlotsTreeView)
                         rename_action: QtGui.QAction = menu.addAction("Rename group")
@@ -312,7 +310,15 @@ class ResultsMain(SimulationsMain):
                         else:
                             pass
                     else:
-                        pass
+                        menu = QtWidgets.QMenu(parent=self.ui.dynamicsPlotsTreeView)
+                        rename_action = menu.addAction("Rename variable")
+                        selected_action = menu.exec_(
+                            self.ui.dynamicsPlotsTreeView.viewport().mapToGlobal(pos)
+                        )
+                        if selected_action == rename_action:
+                            self.rename_dynamic_plot_variable(index=index)
+                        else:
+                            pass
                 else:
                     pass
             else:
@@ -351,6 +357,55 @@ class ResultsMain(SimulationsMain):
                     pass
             else:
                 self.show_warning_toast("Select a plot group first.")
+        else:
+            self.show_warning_toast("There are no RMS dynamics results loaded.")
+
+    def rename_dynamic_plot_variable(self, index: QtCore.QModelIndex) -> None:
+        """
+        Rename the selected dynamics plot variable.
+
+        :param index: Selected child plot-entry index.
+        :return: Nothing.
+        """
+        if self.dynamic_results_handler is not None:
+            plots_model = self.dynamic_results_handler.get_plots_model()
+            item: QtGui.QStandardItem | None = plots_model.itemFromIndex(index)
+            if item is not None:
+                current_name: str = item.text()
+                missing_suffix: str = " [missing]"
+                pending_suffix: str = " [pending]"
+
+                if current_name.endswith(missing_suffix):
+                    current_name = current_name[:-len(missing_suffix)]
+                else:
+                    pass
+
+                if current_name.endswith(pending_suffix):
+                    current_name = current_name[:-len(pending_suffix)]
+                else:
+                    pass
+
+                new_name: str
+                accepted: bool
+                new_name, accepted = QtWidgets.QInputDialog.getText(
+                    self,
+                    "Rename dynamic variable",
+                    "Variable name",
+                    text=current_name
+                )
+                if accepted:
+                    renamed: bool = self.dynamic_results_handler.rename_plot_variable_from_index(
+                        index=index,
+                        new_name=new_name,
+                    )
+                    if renamed:
+                        self.ui.dynamicsPlotsTreeView.expandAll()
+                    else:
+                        self.show_warning_toast("The variable name is empty or could not be changed.")
+                else:
+                    pass
+            else:
+                self.show_warning_toast("Select a variable first.")
         else:
             self.show_warning_toast("There are no RMS dynamics results loaded.")
 
@@ -505,6 +560,7 @@ class ResultsMain(SimulationsMain):
             results=None,
             circuit=self.circuit,
             simulation_type=simulation_type,
+            dialog_parent=self,
         )
         self.dynamic_results_handler = handler
 

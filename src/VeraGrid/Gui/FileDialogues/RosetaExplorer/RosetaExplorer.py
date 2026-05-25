@@ -20,7 +20,7 @@ from VeraGrid.Gui.gui_functions import add_menu_entry, populate_cim_item_childre
 from VeraGrid.Gui.object_model import ObjectsModel
 from VeraGrid.Gui.pandas_model import PandasModel
 from VeraGridEngine.IO.cim.cgmes.cgmes_circuit import CgmesCircuit
-from VeraGridEngine.IO.raw.devices.psse_circuit import PsseCircuit
+from VeraGridEngine.IO.raw.psse_circuit import PsseCircuit
 from VeraGridEngine.IO.cim.db.db_handler import DbHandler
 from VeraGridEngine.data_logger import DataLogger
 from VeraGrid.Gui.python_console import PythonConsole

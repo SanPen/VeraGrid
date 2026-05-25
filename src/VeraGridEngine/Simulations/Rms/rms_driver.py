@@ -93,6 +93,11 @@ class RmsSimulationDriver(DriverTemplate):
             progress_signal=self.progress_signal,
         )
         self.problem = problem
+        # The results container keeps the full declared event-group layout so
+        # downstream code can preserve stable event-group identities. The extra
+        # availability mask records which of those declared groups are actually
+        # simulated in this run, which is the information the plot binder needs.
+        has_event_group_results: np.ndarray = np.array([bool(elm.active) for elm in rms_events_groups], dtype=bool)
         self.results = RmsResults(
             time_array=pd.DatetimeIndex(pd.to_datetime(t * 1e9)),
             rms_events_group_names=rms_events_group_names,
@@ -100,7 +105,8 @@ class RmsSimulationDriver(DriverTemplate):
             variables=problem.state_and_algebraic_vars,
             uid2idx=problem.uid2idx_vars,
             vars_glob_name2uid=problem.vars_glob_name2uid,
-            devices_vars_info=problem.get_device_vars_dict()
+            devices_vars_info=problem.get_device_vars_dict(),
+            has_event_group_results=has_event_group_results,
         )
 
         for group_idx, rms_events_group in enumerate(rms_events_groups):

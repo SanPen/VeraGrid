@@ -73,7 +73,6 @@ def set_bus_control_voltage(i: int,
                             bus_voltage_used: BoolVec,
                             bus_data: BusData,
                             candidate_Vm: float,
-                            use_stored_guess: bool,
                             logger: Logger) -> None:
     """
     Set the bus control voltage
@@ -84,7 +83,6 @@ def set_bus_control_voltage(i: int,
     :param bus_voltage_used: Array of flags indicating if a bus voltage has been modified before
     :param bus_data: BusData
     :param candidate_Vm: Voltage set point that you want to set
-    :param use_stored_guess: Use the stored seed values?
     :param logger: Logger
     """
     if bus_data.bus_types[i] != BusMode.Slack_tpe.value:  # if it is not Slack
@@ -99,24 +97,23 @@ def set_bus_control_voltage(i: int,
             # bus_data.bus_types[i] = BusMode.PV_tpe.value  # set as PV
             bus_data.set_bus_mode(i, BusMode.PV_tpe)
 
-    if not use_stored_guess:
-        if not bus_voltage_used[i]:
-            if remote_control and j > -1 and j != i:
-                # initialize the remote bus voltage to the control value but preserve angle while updating magnitude
-                existing_angle = np.angle(bus_data.Vbus[j])
-                bus_data.Vbus[j] = rect(candidate_Vm, existing_angle)
-                bus_voltage_used[j] = True
-            else:
-                # initialize the local bus voltage to the control value but preserve angle while updating magnitude
-                existing_angle = np.angle(bus_data.Vbus[i])
-                bus_data.Vbus[i] = rect(candidate_Vm, existing_angle)
-                bus_voltage_used[i] = True
+    if not bus_voltage_used[i]:
+        if remote_control and j > -1 and j != i:
+            # initialize the remote bus voltage to the control value but preserve angle while updating magnitude
+            existing_angle = np.angle(bus_data.Vbus[j])
+            bus_data.Vbus[j] = rect(candidate_Vm, existing_angle)
+            bus_voltage_used[j] = True
+        else:
+            # initialize the local bus voltage to the control value but preserve angle while updating magnitude
+            existing_angle = np.angle(bus_data.Vbus[i])
+            bus_data.Vbus[i] = rect(candidate_Vm, existing_angle)
+            bus_voltage_used[i] = True
 
-        elif candidate_Vm != bus_data.Vbus[i]:
-            logger.add_error(msg='Different control voltage set points',
-                             device=bus_name,
-                             value=candidate_Vm,
-                             expected_value=bus_data.Vbus[i])
+    elif candidate_Vm != bus_data.Vbus[i]:
+        logger.add_error(msg='Different control voltage set points',
+                         device=bus_name,
+                         value=candidate_Vm,
+                         expected_value=bus_data.Vbus[i])
 
 
 def set_bus_control_voltage_vsc(i: int,
@@ -319,7 +316,6 @@ def get_bus_data(bus_data: BusData,
         bus_data.Vbus[i] = bus.get_voltage_guess(use_stored_guess=use_stored_guess)
         bus_data.is_dc[i] = bus.is_dc
 
-
         # Grounded buses go to zero
         if bus.is_grounded and consider_grounded_buses and bus.is_dc:
             bus_data.Vbus[i] = 1e-20 * np.exp(1j * 1e-20)  # effectively zero
@@ -358,7 +354,6 @@ def get_load_data(data: LoadData,
                   t_idx: int | None,
                   logger: Logger,
                   opf_results: Union[OptimalPowerFlowResults, None] = None,
-                  use_stored_guess=False,
                   fill_three_phase: bool = False) -> LoadData:
     """
 
@@ -404,7 +399,7 @@ def get_load_data(data: LoadData,
             if fill_three_phase:
                 if elm.conn == ShuntConnectionType.GroundedStar:
 
-                    S_abc = any([ elm.get_Sa_at(t_idx), elm.get_Sb_at(t_idx), elm.get_Sc_at(t_idx)])
+                    S_abc = any([elm.get_Sa_at(t_idx), elm.get_Sb_at(t_idx), elm.get_Sc_at(t_idx)])
 
                     if not S_abc:
                         data.S3_star[4 * ii + 1] = elm.get_S_at(t_idx) / 3
@@ -416,7 +411,8 @@ def get_load_data(data: LoadData,
                         data.S3_star[4 * ii + 2] = elm.get_Sb_at(t_idx)
                         data.S3_star[4 * ii + 3] = elm.get_Sc_at(t_idx)
 
-                    I_abc = any([np.conj(elm.get_I1_at(t_idx)), np.conj(elm.get_I2_at(t_idx)), np.conj(elm.get_I3_at(t_idx))])
+                    I_abc = any(
+                        [np.conj(elm.get_I1_at(t_idx)), np.conj(elm.get_I2_at(t_idx)), np.conj(elm.get_I3_at(t_idx))])
 
                     if not I_abc:
                         data.I3_star[4 * ii + 1] = np.conj(elm.get_I_at(t_idx)) / 3
@@ -453,7 +449,7 @@ def get_load_data(data: LoadData,
                     Yb = elm.get_Y2_at(t_idx)
                     Yc = elm.get_Y3_at(t_idx)
 
-                    if Ya != 0.0+0.0j and Yb != 0.0+0.0j and Yc != 0.0+0.0j:
+                    if Ya != 0.0 + 0.0j and Yb != 0.0 + 0.0j and Yc != 0.0 + 0.0j:
                         data.A_floatingstar[ii] = Ya / (Ya + Yb + Yc)
                         data.B_floatingstar[ii] = Yb / (Ya + Yb + Yc)
                         data.C_floatingstar[ii] = Yc / (Ya + Yb + Yc)
@@ -482,8 +478,7 @@ def get_load_data(data: LoadData,
                     Ib = np.conj(elm.get_I2_at(t_idx))
                     Ic = np.conj(elm.get_I3_at(t_idx))
 
-                    if Ia != 0.0+0.0j and Ib != 0.0+0.0j and Ic != 0.0+0.0j:
-
+                    if Ia != 0.0 + 0.0j and Ib != 0.0 + 0.0j and Ic != 0.0 + 0.0j:
                         data.I3_floatingstar[4 * ii + 1] = Ia
                         data.I3_floatingstar[4 * ii + 2] = Ib
                         data.I3_floatingstar[4 * ii + 3] = Ic
@@ -493,8 +488,7 @@ def get_load_data(data: LoadData,
                     Sb = elm.get_Sb_at(t_idx)
                     Sc = elm.get_Sc_at(t_idx)
 
-                    if Sa != 0.0+0.0j and Sb != 0.0+0.0j and Sc != 0.0+0.0j:
-
+                    if Sa != 0.0 + 0.0j and Sb != 0.0 + 0.0j and Sc != 0.0 + 0.0j:
                         data.S3_floatingstar[4 * ii + 1] = Sa
                         data.S3_floatingstar[4 * ii + 2] = Sb
                         data.S3_floatingstar[4 * ii + 3] = Sc
@@ -521,7 +515,8 @@ def get_load_data(data: LoadData,
                     data.Y3_star[4 * ii + 3, 3] = Yc
 
                     # Current
-                    data.I3_star[4 * ii + 0] = -np.conj(elm.get_I1_at(t_idx)) - np.conj(elm.get_I2_at(t_idx)) - np.conj(elm.get_I3_at(t_idx))
+                    data.I3_star[4 * ii + 0] = -np.conj(elm.get_I1_at(t_idx)) - np.conj(elm.get_I2_at(t_idx)) - np.conj(
+                        elm.get_I3_at(t_idx))
                     data.I3_star[4 * ii + 1] = np.conj(elm.get_I1_at(t_idx))
                     data.I3_star[4 * ii + 2] = np.conj(elm.get_I2_at(t_idx))
                     data.I3_star[4 * ii + 3] = np.conj(elm.get_I3_at(t_idx))
@@ -644,7 +639,6 @@ def get_load_data(data: LoadData,
                                         bus_data=bus_data,
                                         bus_voltage_used=bus_voltage_used,
                                         candidate_Vm=elm.get_Vm_at(t_idx),
-                                        use_stored_guess=use_stored_guess,
                                         logger=logger)
 
             elif elm.mode == ExternalGridMode.PV:
@@ -656,7 +650,6 @@ def get_load_data(data: LoadData,
                                         bus_data=bus_data,
                                         bus_voltage_used=bus_voltage_used,
                                         candidate_Vm=elm.get_Vm_at(t_idx),
-                                        use_stored_guess=use_stored_guess,
                                         logger=logger)
 
             data.S[ii] += elm.get_S_at(t_idx)
@@ -754,7 +747,6 @@ def get_shunt_data(
         bus_data: BusData,
         t_idx: int | None,
         logger: Logger,
-        use_stored_guess=False,
         control_remote_voltage: bool = True,
         fill_three_phase: bool = False
 ) -> None:
@@ -821,7 +813,7 @@ def get_shunt_data(
                     Yb = elm.get_Yb_at(t_idx)
                     Yc = elm.get_Yc_at(t_idx)
 
-                    if Ya != 0.0+0.0j and Yb != 0.0+0.0j and Yc != 0.0+0.0j:
+                    if Ya != 0.0 + 0.0j and Yb != 0.0 + 0.0j and Yc != 0.0 + 0.0j:
                         data.A_floatingstar[ii] = Ya / (Ya + Yb + Yc)
                         data.B_floatingstar[ii] = Yb / (Ya + Yb + Yc)
                         data.C_floatingstar[ii] = Yc / (Ya + Yb + Yc)
@@ -961,7 +953,6 @@ def get_shunt_data(
                                         bus_data=bus_data,
                                         bus_voltage_used=bus_voltage_used,
                                         candidate_Vm=elm.Vset,
-                                        use_stored_guess=use_stored_guess,
                                         logger=logger)
 
             if elm.use_kw:
@@ -984,12 +975,11 @@ def fill_generator_parent(
         k: int,
         data: GeneratorData | BatteryData,
         elm: dev.Generator | dev.Battery,
-        bus_dict,
+        bus_dict: Dict[dev.Bus, int],
         bus_voltage_used: BoolVec,
         logger: Logger,
         bus_data: BusData,
         t_idx: int | None = None,
-        use_stored_guess=False,
         control_remote_voltage: bool = True,
         fill_three_phase: bool = False
 ) -> None:
@@ -1003,7 +993,6 @@ def fill_generator_parent(
     :param logger:
     :param bus_data:
     :param t_idx:
-    :param use_stored_guess:
     :param control_remote_voltage:
     :param fill_three_phase:
     :return:
@@ -1099,7 +1088,6 @@ def fill_generator_parent(
                                     bus_data=bus_data,
                                     bus_voltage_used=bus_voltage_used,
                                     candidate_Vm=elm.Vset,
-                                    use_stored_guess=use_stored_guess,
                                     logger=logger)
 
     if elm.use_kw:
@@ -1135,8 +1123,6 @@ def fill_generator_parent(
             bus_data.q_fixed[i] += data.get_q_at(k)
 
 
-
-
 def get_generator_data(
         data: GeneratorData,
         circuit: MultiCircuit,
@@ -1146,8 +1132,7 @@ def get_generator_data(
         bus_data: BusData,
         t_idx: int | None,
         opf_results: VALID_OPF_RESULTS | None = None,
-        time_series=False,
-        use_stored_guess=False,
+        time_series: bool = False,
         control_remote_voltage: bool = True,
         fill_three_phase: bool = False
 ) -> Dict[str, int]:
@@ -1181,7 +1166,6 @@ def get_generator_data(
                               bus_voltage_used=bus_voltage_used,
                               logger=logger,
                               t_idx=t_idx,
-                              use_stored_guess=use_stored_guess,
                               control_remote_voltage=control_remote_voltage,
                               fill_three_phase=fill_three_phase)
 
@@ -1205,7 +1189,6 @@ def get_battery_data(
         t_idx: int | None,
         opf_results: VALID_OPF_RESULTS | None = None,
         time_series=False,
-        use_stored_guess=False,
         control_remote_voltage: bool = True,
         fill_three_phase: bool = False
 ) -> None:
@@ -1236,7 +1219,6 @@ def get_battery_data(
                               bus_voltage_used=bus_voltage_used,
                               logger=logger,
                               t_idx=t_idx,
-                              use_stored_guess=use_stored_guess,
                               control_remote_voltage=control_remote_voltage,
                               fill_three_phase=fill_three_phase)
 
@@ -1605,9 +1587,9 @@ def get_branch_data(
                                                             vtap_t=data.virtual_tap_t[ii],
                                                             logger=logger)
             (data.phN[ii],
-            data.phA[ii],
-            data.phB[ii],
-            data.phC[ii]) = elm.transformer_phases(logger=logger)
+             data.phA[ii],
+             data.phB[ii],
+             data.phC[ii]) = elm.transformer_phases(logger=logger)
 
         data.conn[ii] = elm.conn
         data.conn_f[ii] = elm.conn_f
@@ -2245,10 +2227,10 @@ def get_fluid_path_data(data: FluidPathData,
 
 def compile_numerical_circuit_at(circuit: MultiCircuit,
                                  t_idx: Union[int, None] = None,
-                                 apply_temperature=False,
+                                 apply_temperature: bool = False,
                                  branch_tolerance_mode=BranchImpedanceMode.Specified,
                                  opf_results: VALID_OPF_RESULTS | None = None,
-                                 use_stored_guess=False,
+                                 use_stored_guess: bool = False,
                                  bus_dict: Union[Dict[Bus, int], None] = None,
                                  areas_dict: Union[Dict[Area, int], None] = None,
                                  control_taps_modules: bool = True,
@@ -2257,7 +2239,7 @@ def compile_numerical_circuit_at(circuit: MultiCircuit,
                                  fill_gep: bool = False,
                                  fill_three_phase: bool = False,
                                  consider_grounded_buses: bool = False,
-                                 logger=Logger()) -> NumericalCircuit:
+                                 logger: Logger = Logger()) -> NumericalCircuit:
     """
     Compile a NumericalCircuit from a MultiCircuit
     :param circuit: MultiCircuit instance
@@ -2330,7 +2312,6 @@ def compile_numerical_circuit_at(circuit: MultiCircuit,
         bus_voltage_used=bus_voltage_used,
         logger=logger,
         opf_results=opf_results,
-        use_stored_guess=use_stored_guess,
         control_remote_voltage=control_remote_voltage,
         fill_three_phase=fill_three_phase
     )
@@ -2345,7 +2326,6 @@ def compile_numerical_circuit_at(circuit: MultiCircuit,
         bus_voltage_used=bus_voltage_used,
         logger=logger,
         opf_results=opf_results,
-        use_stored_guess=use_stored_guess,
         control_remote_voltage=control_remote_voltage,
         fill_three_phase=fill_three_phase
     )
@@ -2358,7 +2338,6 @@ def compile_numerical_circuit_at(circuit: MultiCircuit,
         bus_data=nc.bus_data,
         t_idx=t_idx,
         logger=logger,
-        use_stored_guess=use_stored_guess,
         control_remote_voltage=control_remote_voltage,
         fill_three_phase=fill_three_phase
     )
@@ -2372,7 +2351,6 @@ def compile_numerical_circuit_at(circuit: MultiCircuit,
         t_idx=t_idx,
         logger=logger,
         opf_results=opf_results,
-        use_stored_guess=use_stored_guess,
         fill_three_phase=fill_three_phase
     )
 

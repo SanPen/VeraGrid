@@ -3854,37 +3854,48 @@ class SimulationsMain(TimeEventsMain):
 
             if not self.session.is_this_running(SimulationTypes.RmsSmallSignal_run):
 
-                _, pf_results = self.session.power_flow
-
-                if pf_results is not None:
-
-                    self.add_simulation(SimulationTypes.RmsSmallSignal_run)
-
-                    self.LOCK()
-
-                    # Compile the grid
-                    self.ui.progress_label.setText('Compiling the grid...')
-                    QtGui.QGuiApplication.processEvents()
-
-                    # get the small signal stability analysis simulation options from the GUI
-                    options = self.get_selected_rms_small_signal_stability_options()
-                    rms_options = self.get_selected_rms_simulation_options()
-
-                    self.ui.progress_label.setText('Performing Small Signal Stability analysis...')
-
-                    drv = sim.SmallSignalStabilityRmsDriver(grid=self.circuit,
-                                                            rms_options=rms_options,
-                                                            sss_options=options,
-                                                            pf_results=pf_results)
-
-                    self.session.run(drv,
-                                     post_func=self.post_rms_small_signal_stability,
-                                     prog_func=self.ui.progressBar.setValue,
-                                     text_func=self.ui.progress_label.setText)
-
+                logger = self.circuit.check_rms_models()
+                if logger.has_errors():
+                    # Show dialogue
+                    dlg = LogsDialogue(name="Small-signal stability RMS pre simulation check",
+                                       logger=logger)
+                    dlg.setModal(True)
+                    dlg.exec()
+                    return
                 else:
-                    info_msg('Run a power flow simulation first.\n'
-                             'The results are needed to initialize this simulation.')
+
+                    _, pf_results = self.session.power_flow
+
+                    if pf_results is not None:
+
+                        self.add_simulation(SimulationTypes.RmsSmallSignal_run)
+
+                        self.LOCK()
+
+                        # Compile the grid
+                        self.ui.progress_label.setText('Compiling the grid...')
+                        QtGui.QGuiApplication.processEvents()
+
+                        # get the small signal stability analysis simulation options from the GUI
+                        options = self.get_selected_rms_small_signal_stability_options()
+                        rms_options = self.get_selected_rms_simulation_options()
+
+                        self.ui.progress_label.setText('Performing Small Signal Stability analysis...')
+
+                        drv = sim.SmallSignalStabilityRmsDriver(grid=self.circuit,
+                                                                rms_options=rms_options,
+                                                                sss_options=options,
+                                                                pf_results=pf_results)
+
+                        self.session.run(drv,
+                                         post_func=self.post_rms_small_signal_stability,
+                                         prog_func=self.ui.progressBar.setValue,
+                                         text_func=self.ui.progress_label.setText)
+
+                    else:
+                        info_msg('Run a power flow simulation first.\n'
+                                 'The results are needed to initialize this simulation.')
+
             else:
                 self.show_warning_toast('Another Small Signal stability analysis simulation is running already...')
 
@@ -3922,37 +3933,47 @@ class SimulationsMain(TimeEventsMain):
 
             if not self.session.is_this_running(SimulationTypes.EmtSmallSignal_run):
 
-                _, pf_results = self.session.power_flow_3ph
-
-                if pf_results is not None:
-
-                    self.add_simulation(SimulationTypes.EmtSmallSignal_run)
-
-                    self.LOCK()
-
-                    # Compile the grid
-                    self.ui.progress_label.setText('Compiling the grid...')
-                    QtGui.QGuiApplication.processEvents()
-
-                    # get the small signal stability analysis simulation options from the GUI
-                    options = self.get_selected_emt_small_signal_stability_options()
-                    rms_options = self.get_selected_emt_simulation_options()
-
-                    self.ui.progress_label.setText('Performing Small Signal Stability analysis...')
-
-                    drv = sim.SmallSignalStabilityEmtDriver(grid=self.circuit,
-                                                            rms_options=rms_options,
-                                                            sss_options=options,
-                                                            pf_results=pf_results)
-
-                    self.session.run(drv,
-                                     post_func=self.post_emt_small_signal_stability,
-                                     prog_func=self.ui.progressBar.setValue,
-                                     text_func=self.ui.progress_label.setText)
-
+                logger = self.circuit.check_emt_models()
+                if logger.has_errors():
+                    # Show dialogue
+                    dlg = LogsDialogue(name="Small-signal stability EMT pre simulation check",
+                                       logger=logger)
+                    dlg.setModal(True)
+                    dlg.exec()
+                    return
                 else:
-                    info_msg('Run a power flow simulation first.\n'
-                             'The results are needed to initialize this simulation.')
+
+                    _, pf_results = self.session.power_flow_3ph
+
+                    if pf_results is not None:
+
+                        self.add_simulation(SimulationTypes.EmtSmallSignal_run)
+
+                        self.LOCK()
+
+                        # Compile the grid
+                        self.ui.progress_label.setText('Compiling the grid...')
+                        QtGui.QGuiApplication.processEvents()
+
+                        # get the small signal stability analysis simulation options from the GUI
+                        options = self.get_selected_emt_small_signal_stability_options()
+                        rms_options = self.get_selected_emt_simulation_options()
+
+                        self.ui.progress_label.setText('Performing Small Signal Stability analysis...')
+
+                        drv = sim.SmallSignalStabilityEmtDriver(grid=self.circuit,
+                                                                rms_options=rms_options,
+                                                                sss_options=options,
+                                                                pf_results=pf_results)
+
+                        self.session.run(drv,
+                                         post_func=self.post_emt_small_signal_stability,
+                                         prog_func=self.ui.progressBar.setValue,
+                                         text_func=self.ui.progress_label.setText)
+
+                    else:
+                        info_msg('Run a power flow simulation first.\n'
+                                 'The results are needed to initialize this simulation.')
             else:
                 self.show_warning_toast('Another Small Signal stability analysis simulation is running already...')
 

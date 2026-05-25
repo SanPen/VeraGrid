@@ -10,51 +10,106 @@ from uuid import uuid4
 from rdflib import OWL
 from rdflib.graph import Graph
 from rdflib.namespace import RDF, RDFS
-from typing import List
+from typing import Dict, List
 
+import xml.etree.ElementTree as Et
+import xml.dom.minidom
+from enum import Enum
 import json
 import os
+
 from VeraGridEngine.IO.cim.cgmes.cgmes_circuit import CgmesCircuit
 from VeraGridEngine.IO.cim.cgmes.rdfs_serializations import RDFS_serialization_2_4_15, RDFS_serialization_3_0_0
 from VeraGridEngine.IO.cim.cgmes.rdfs_infos import RDFS_INFO_2_4_15, RDFS_INFO_3_0_0
 from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 from VeraGridEngine.enumerations import CGMESVersions
-import xml.etree.ElementTree as Et
-import xml.dom.minidom
-from enum import Enum
 
 
-def get_available_cgmes_profiles(cgmes_version: CGMESVersions):
+def get_cgmes_v2_4_15_profiles() -> Dict[str, List[str]]:
+    """
+    Build the exportable CGMES 2.4.15 profile registry.
+
+    :return: Mapping from profile keyword to the list of profile URIs that
+        shall be written into ``md:Model.profile``.
+    :rtype: Dict[str, List[str]]
+    """
+    return {
+        "EQ": ["http://entsoe.eu/CIM/EquipmentCore/3/1",
+               "http://entsoe.eu/CIM/EquipmentShortCircuit/3/1",
+               "http://entsoe.eu/CIM/EquipmentOperation/3/1"],
+        "SSH": ["http://entsoe.eu/CIM/SteadyStateHypothesis/1/1"],
+        "TP": ["http://entsoe.eu/CIM/Topology/4/1"],
+        "SV": ["http://entsoe.eu/CIM/StateVariables/4/1"],
+        "GL": ["http://entsoe.eu/CIM/GeographicalLocation/2/1"]
+    }
+
+
+def get_cgmes_v3_0_0_profiles() -> Dict[str, List[str]]:
+    """
+    Build the exportable CGMES 3.0.0 profile registry.
+
+    The recent NCP additions extend the classic CGMES core profiles with the
+    standalone Network Code profile documents that have dedicated
+    ``ap.cim4.eu`` URIs.
+
+    :return: Mapping from profile keyword to the list of profile URIs that
+        shall be written into ``md:Model.profile``.
+    :rtype: Dict[str, List[str]]
+    """
+    return {
+        "EQ": ["http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/3.0"],
+        "EQ_BD": ["http://iec.ch/TC57/ns/CIM/EquipmentBoundary-EU/3.0"],
+        "OP": ["http://iec.ch/TC57/ns/CIM/Operation-EU/3.0"],
+        "SC": ["http://iec.ch/TC57/ns/CIM/ShortCircuit-EU/3.0"],
+        "SSH": ["http://iec.ch/TC57/ns/CIM/SteadyStateHypothesis-EU/3.0"],
+        "TP": ["http://iec.ch/TC57/ns/CIM/Topology-EU/3.0"],
+        "TP_BD": ["http://iec.ch/TC57/ns/CIM/TopologyBoundary-EU/3.0"],
+        "SV": ["http://iec.ch/TC57/ns/CIM/StateVariables-EU/3.0"],
+        "GL": ["http://iec.ch/TC57/ns/CIM/GeographicalLocation-EU/3.0"],
+        "CO": ["https://ap.cim4.eu/Contingency/2.3"],
+        "AE": ["https://ap.cim4.eu/AssessedElement/2.4"],
+        "SSI": ["https://ap.cim4.eu/SteadyStateInstruction/2.4"],
+        "PS": ["https://ap.cim4.eu/PowerSchedule/2.4"],
+        "AVS": ["https://ap.cim4.eu/AvailabilitySchedule/2.3"],
+        "RA": ["https://ap.cim4.eu/RemedialAction/2.4"],
+        "RAS": ["https://ap.cim4.eu/RemedialActionSchedule/2.4"],
+        "ER": ["https://ap.cim4.eu/EquipmentReliability/2.4"],
+        "SHS": ["https://ap.cim4.eu/SteadyStateHypothesisSchedule/1.1"],
+        "SIS": ["https://ap.cim4.eu/StateInstructionSchedule/2.4"],
+        "OR": ["https://ap.cim4.eu/ObjectRegistry/2.2"],
+        "SAR": ["https://ap.cim4.eu/SecurityAnalysisResult/2.5"],
+        "IAM": ["https://ap.cim4.eu/ImpactAssessmentMatrix/2.4"]
+    }
+
+
+def get_available_cgmes_profiles(cgmes_version: CGMESVersions) -> Dict[str, List[str]]:
+    """
+    Get the exportable profile registry for one CGMES version.
+
+    :param cgmes_version: CGMES version requested by the exporter or GUI.
+    :return: Mapping from profile keyword to the list of profile URIs that
+        identify that exported profile.
+    :rtype: Dict[str, List[str]]
+    """
     if cgmes_version == CGMESVersions.v2_4_15:
-        return {
-            "EQ": ["http://entsoe.eu/CIM/EquipmentCore/3/1",
-                   "http://entsoe.eu/CIM/EquipmentShortCircuit/3/1",
-                   "http://entsoe.eu/CIM/EquipmentOperation/3/1"],
-            "SSH": ["http://entsoe.eu/CIM/SteadyStateHypothesis/1/1"],
-            "TP": ["http://entsoe.eu/CIM/Topology/4/1"],
-            "SV": ["http://entsoe.eu/CIM/StateVariables/4/1"],
-            "GL": ["http://entsoe.eu/CIM/GeographicalLocation/2/1"]
-        }
+        return get_cgmes_v2_4_15_profiles()
     elif cgmes_version == CGMESVersions.v3_0_0:
-        return {
-            "EQ": ["http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/3.0"],
-            "EQ_BD": ["http://iec.ch/TC57/ns/CIM/EquipmentBoundary-EU/3.0"],
-            "OP": ["http://iec.ch/TC57/ns/CIM/Operation-EU/3.0"],
-            "SC": ["http://iec.ch/TC57/ns/CIM/ShortCircuit-EU/3.0"],
-            "SSH": ["http://iec.ch/TC57/ns/CIM/SteadyStateHypothesis-EU/3.0"],
-            "TP": ["http://iec.ch/TC57/ns/CIM/Topology-EU/3.0"],
-            "TP_BD": ["http://iec.ch/TC57/ns/CIM/TopologyBoundary-EU/3.0"],
-            "SV": ["http://iec.ch/TC57/ns/CIM/StateVariables-EU/3.0"],
-            "GL": ["http://iec.ch/TC57/ns/CIM/GeographicalLocation-EU/3.0"],
-            "CO": ["https://ap.cim4.eu/Contingency/2.3"]
-        }
+        return get_cgmes_v3_0_0_profiles()
     else:
-        print(f"CGMES Version not suported {cgmes_version.value}")
+        print(f"CGMES Version not supported {cgmes_version.value}")
         return dict()
 
 
 class CimExporter:
-    def __init__(self, cgmes_circuit: CgmesCircuit, profiles_to_export: List[CgmesProfileType], one_file_per_profile: bool):
+    def __init__(self, cgmes_circuit: CgmesCircuit,
+                 profiles_to_export: List[CgmesProfileType],
+                 one_file_per_profile: bool):
+        """
+
+        :param cgmes_circuit:
+        :param profiles_to_export:
+        :param one_file_per_profile:
+        """
         self.cgmes_circuit = cgmes_circuit
 
         self.profiles_to_export = profiles_to_export

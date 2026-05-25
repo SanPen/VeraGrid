@@ -5,6 +5,7 @@
 import math
 
 from VeraGridEngine.IO.ucte.devices.ucte_base import (
+    sub_float,
     sub_int,
     sub_optional_float,
     sub_str,
@@ -33,6 +34,26 @@ class UcteLine:
         self.susceptance = 0.0  # 36-43: Susceptance (µS)
         self.current_limit = math.nan  # 45-50: Current limit (A)
         self.name = ""
+
+    def _looks_fixed_width(self, line: str) -> bool:
+        """
+        Check whether one line record preserves the canonical fixed-width prefix.
+
+        The UCTE name field is free text at the tail of the row, so valid records
+        can be longer than the historical 66-character minimum. What matters for
+        canonical parsing is that the fixed-width separators before the name are
+        still present.
+        """
+        return (
+            len(line) >= 51
+            and line[8:9].isspace()
+            and line[17:18].isspace()
+            and line[19:20].isspace()
+            and line[21:22].isspace()
+            and line[28:29].isspace()
+            and line[35:36].isspace()
+            and line[44:45].isspace()
+        )
 
     def is_active_and_reducible(self, logger: Logger) -> tuple[bool, bool]:
         """
@@ -77,7 +98,7 @@ class UcteLine:
         """
 
         device = "Line"
-        if len(line) == 66:
+        if self._looks_fixed_width(line):
             # canonical parsing
             self.node1 = sub_str(line, 0, 8, device, "node1", logger)
             self.node2 = sub_str(line, 9, 17, device, "node2", logger)

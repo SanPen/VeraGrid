@@ -319,16 +319,19 @@ class RmsProblemDae(RmsProblemTemplate):
         self.init_guess: Dict[int, float | int | complex | None] = dict()
         self.event_params_init_dict: Dict[int, float | int | complex | None] = dict()
         self.sys_block: Block = Block(children=[], in_vars=[])
-
+        # when vectorizing this will be a list of lists
         self._algebraic_vars: List[Var] = list()
         self._algebraic_eqs: List[Expr] = list()
+        # when vectorizing this will be a list of lists
         self._state_vars: List[Var] = list()
         self._state_eqs: List[Expr] = list()
         self._diff_vars: List[Var] = list()
+        # when vectorizing this will be a list of lists
         self._variable_parameters: List[Var] = list()
         self._event_parameters_eqs0: List[Expr | Const] = list()
         self._event_parameters_eqs: List[Expr | Const] = list()
         self._constant_parameters: List[Var] = list()
+        # when vectorizing this will be a list of np.array
         self._parameters_values: List[Const] = list()
         self._static_parameters_values_mapping: Dict[Var, Const] = dict()
 

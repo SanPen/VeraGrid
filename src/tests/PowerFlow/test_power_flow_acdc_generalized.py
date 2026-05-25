@@ -632,6 +632,30 @@ def test_transformer_tau_lims() -> None:
         assert solution.converged
 
 
+def test_matacdc_case5_acdc():
+    """
+    Load the MatACDC case5_acdc.m grid, check that 3 VSC devices are parsed,
+    and that the generalized power flow converges.
+    """
+    fname = os.path.join("data", "grids", "MatACDC", "case5_acdc.m")
+    if not os.path.isabs(fname) and not os.path.exists(fname):
+        here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        fname = os.path.join(here, "data", "grids", "MatACDC", "case5_acdc.m")
+    grid = gce.open_file(fname)
+    assert len(grid.vsc_devices) == 3
+
+    options = PowerFlowOptions(solver_type=gce.SolverType.NR,
+                               verbose=0,
+                               control_q=False,
+                               retry_with_other_methods=False,
+                               control_taps_phase=True,
+                               max_iter=80)
+
+    problem, solution = solve_generalized(grid=grid, options=options)
+
+    assert solution.converged
+
+
 if __name__ == "__main__":
     # test_ieee_grids()
     # test_zip()
@@ -650,4 +674,5 @@ if __name__ == "__main__":
     # test_generator_Q_lims()
     # test_transformer_m_lims()
     # test_transformer_tau_lims()
-    test_power_flow_12bus_acdc()
+    # test_power_flow_12bus_acdc()
+    test_matacdc_case5_acdc()

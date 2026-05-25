@@ -3,28 +3,174 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 import json
-from typing import Dict, List, Sequence, Set
+from typing import Callable, Dict, List, Sequence, Set, Optional
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-from PySide6 import QtCore, QtGui
+from PySide6 import QtCore, QtGui, QtWidgets
 
 from VeraGrid.Gui.Icons.icon_associations import device_type_icons
+from VeraGrid.Gui.dynamic_events_editor_dialog import DynamicEventsGroupsDialog
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Devices.Events.dynamic_plot import DynamicPlot
 from VeraGridEngine.Devices.Events.dynamic_plot_entry import DynamicPlotEntry
 from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Devices.Events.emt_events_group import EmtEventsGroup
+from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 from VeraGridEngine.Devices.Parents.dynamic_parent import DynamicDevice
 from VeraGridEngine.Devices.Parents.dynamic_bus_parent import DynamicBusDevice
+from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.Simulations.Rms.rms_results import RmsResults
 from VeraGridEngine.Simulations.EMT.emt_results import EmtResults
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
-from VeraGridEngine.enumerations import DeviceType, StudyResultsType, PlotSimulationType
+from VeraGridEngine.enumerations import DeviceType, StudyResultsType, PlotSimulationType, DynamicSimulationMode
 from VeraGridEngine.Simulations.results_table import ResultsTable
 from VeraGrid.Gui.results_model import ResultsModel
+
+
+class DynamicEventsGroupsDialogProvider:
+    """
+    Build event-group creation dialogs for the pre-simulation plot workflow.
+    """
+
+    __slots__ = tuple()
+
+    def create_dialog(self,
+                      mode: DynamicSimulationMode,
+                      parent: QtWidgets.QWidget | None) -> DynamicEventsGroupsDialog:
+        """
+        Create one event-group name dialog.
+
+        :param mode: RMS or EMT mode requested by the caller.
+        :param parent: Optional dialog parent widget.
+        :return: Fresh dialog instance.
+        """
+        # The provider object keeps dialog construction explicit and typed,
+        # which avoids storing function pointers on the handler state.
+        return DynamicEventsGroupsDialog(mode=mode, parent=parent)
+
+
+def _get_dynamic_simulation_mode(simulation_type: PlotSimulationType) -> DynamicSimulationMode:
+    """
+    Convert one plot simulation family into the matching dynamic-event mode.
+
+    :param simulation_type: Plot simulation family used by the handler.
+    :return: Matching dynamic-event mode.
+    """
+    if simulation_type == PlotSimulationType.RMS:
+        return DynamicSimulationMode.RMS
+    else:
+        return DynamicSimulationMode.EMT
+
+
+def _build_events_group_absence_title(simulation_type: PlotSimulationType) -> str:
+    """
+    Build the modal title shown before creating the first event group.
+
+    :param simulation_type: Plot simulation family requested by the user.
+    :return: Informational dialog title.
+    """
+    if simulation_type == PlotSimulationType.RMS:
+        return "No RMS Events Group"
+    else:
+        return "No EMT Events Group"
+
+
+def _build_events_group_absence_message(simulation_type: PlotSimulationType) -> str:
+    """
+    Build the explanatory message shown before the creation dialog opens.
+
+    :param simulation_type: Plot simulation family requested by the user.
+    :return: Informational dialog text.
+    """
+    if simulation_type == PlotSimulationType.RMS:
+        return "No RMS Events Group found, please create one before adding a dynamic plot entry."
+    else:
+        return "No EMT Events Group found, please create one before adding a dynamic plot entry."
+
+
+def _add_rms_events_group_to_circuit(circuit: MultiCircuit, name: str) -> RmsEventsGroup:
+    """
+    Create and store one RMS event group in the circuit.
+
+    :param circuit: Circuit that owns persistent dynamic assets.
+    :param name: User-selected event-group name.
+    :return: Created RMS event-group asset.
+    """
+    created_group: RmsEventsGroup = RmsEventsGroup(idtag=None, name=name)
+    circuit.add_rms_events_group(obj=created_group)
+    return created_group
+
+
+def _add_emt_events_group_to_circuit(circuit: MultiCircuit, name: str) -> EmtEventsGroup:
+    """
+    Create and store one EMT event group in the circuit.
+
+    :param circuit: Circuit that owns persistent dynamic assets.
+    :param name: User-selected event-group name.
+    :return: Created EMT event-group asset.
+    """
+    created_group: EmtEventsGroup = EmtEventsGroup(idtag=None, name=name)
+    circuit.add_emt_events_group(obj=created_group)
+    return created_group
+
+
+def ensure_dynamic_plot_event_group(circuit: MultiCircuit,
+                                    simulation_type: PlotSimulationType,
+                                    parent: QtWidgets.QWidget | None = None,
+                                    dialog_provider: DynamicEventsGroupsDialogProvider | None = None) -> RmsEventsGroup | EmtEventsGroup | None:
+    """
+    Ensure that one RMS/EMT event group exists before creating a plot entry.
+
+    :param circuit: Circuit that owns the event-group collections.
+    :param simulation_type: Simulation family required by the dropped variable.
+    :param parent: Optional parent widget for modal dialogs.
+    :param dialog_provider: Optional dialog provider that builds the name-entry dialog.
+    :return: Existing or newly created event-group asset, or ``None`` when cancelled.
+    """
+    existing_groups: Sequence[RmsEventsGroup] | Sequence[EmtEventsGroup]
+    add_group_function: Callable[[MultiCircuit, str], RmsEventsGroup | EmtEventsGroup]
+
+    if simulation_type == PlotSimulationType.RMS:
+        existing_groups = circuit.rms_events_groups
+        add_group_function = _add_rms_events_group_to_circuit
+    else:
+        existing_groups = circuit.emt_events_groups
+        add_group_function = _add_emt_events_group_to_circuit
+
+    if len(existing_groups) > 0:
+        return existing_groups[0]
+    else:
+        pass
+
+    if parent is not None:
+        QtWidgets.QMessageBox.information(
+            parent,
+            _build_events_group_absence_title(simulation_type=simulation_type),
+            _build_events_group_absence_message(simulation_type=simulation_type),
+        )
+    else:
+        pass
+
+    mode: DynamicSimulationMode = _get_dynamic_simulation_mode(simulation_type=simulation_type)
+    if dialog_provider is None:
+        resolved_dialog_provider: DynamicEventsGroupsDialogProvider = DynamicEventsGroupsDialogProvider()
+    else:
+        resolved_dialog_provider = dialog_provider
+
+    creation_dialog: DynamicEventsGroupsDialog = resolved_dialog_provider.create_dialog(mode=mode, parent=parent)
+
+    dialog_result: int = creation_dialog.exec()
+    if dialog_result == QtWidgets.QDialog.DialogCode.Accepted:
+        group_name: str = creation_dialog.get_name()
+        if group_name != "":
+            return add_group_function(circuit=circuit, name=group_name)
+        else:
+            return None
+    else:
+        return None
 
 
 def _build_tree_item(text: str) -> QtGui.QStandardItem:
@@ -62,6 +208,56 @@ def _get_device_label(device: ALL_DEV_TYPES) -> str:
     return str(device)
 
 
+def _get_device_bus_label(device: ALL_DEV_TYPES) -> str:
+    """
+    Get the bus-name suffix associated with one device.
+
+    :param device: Device instance stored in the dynamics trees.
+    :return: User-facing bus label for the device, or an empty string when unavailable.
+    """
+    # Two-terminal devices need an explicit bus suffix because their visible
+    # device label does not already encode both connection endpoints.
+    if isinstance(device, BranchParent):
+        bus_names: List[str] = list()
+
+        # The first terminal is appended first so the suffix preserves the
+        # physical branch orientation shown elsewhere in the GUI.
+        if device.bus_from is not None:
+            bus_from_name: str = str(device.bus_from.name).strip()
+            if bus_from_name != "":
+                bus_names.append(bus_from_name)
+            else:
+                pass
+        else:
+            pass
+
+        # The second terminal is appended only when it contributes a distinct
+        # visible endpoint, which avoids duplicated labels for degenerate cases.
+        if device.bus_to is not None:
+            bus_to_name: str = str(device.bus_to.name).strip()
+            if bus_to_name != "" and bus_to_name not in bus_names:
+                bus_names.append(bus_to_name)
+            else:
+                pass
+        else:
+            pass
+
+        if len(bus_names) > 0:
+            return " / ".join(bus_names)
+        else:
+            return ""
+    else:
+        # Injection devices already include their bus in ``str(device)``, and
+        # bus devices are the bus themselves, so no extra suffix is needed.
+        if isinstance(device, InjectionParent):
+            return ""
+        else:
+            if isinstance(device, DynamicBusDevice):
+                return ""
+            else:
+                return ""
+
+
 def _get_var_label(variable: Var) -> str:
     """
     Get the label that represents a simulation variable.
@@ -71,6 +267,28 @@ def _get_var_label(variable: Var) -> str:
     """
     # The symbolic variable name is the exact identifier used by the simulation arrays.
     return variable.name
+
+
+def _join_plot_label_parts(parts: Sequence[str]) -> str:
+    """
+    Join non-empty label parts using the plot-tree separator.
+
+    :param parts: Ordered label parts.
+    :return: Joined label without empty trailing segments.
+    """
+    # Empty segments are removed first so optional pieces such as the bus suffix
+    # do not leave dangling separators in the final visible label.
+    kept_parts: List[str] = list()
+
+    part: str
+    for part in parts:
+        clean_part: str = str(part).strip()
+        if clean_part != "":
+            kept_parts.append(clean_part)
+        else:
+            pass
+
+    return " - ".join(kept_parts)
 
 
 def _append_unique_variables(target: List[Var], seen_uids: Set[int], variables: Sequence[Var]) -> None:
@@ -455,7 +673,9 @@ class DynamicResultSeries:
         "_group_idx",
         "_source_label",
         "_device_label",
+        "_bus_label",
         "_variable_label",
+        "_variable_custom_name",
     )
 
     def __init__(self,
@@ -464,13 +684,17 @@ class DynamicResultSeries:
                  group_idx: int,
                  source_label: str,
                  device_label: str,
-                 variable_label: str) -> None:
+                 bus_label: str,
+                 variable_label: str,
+                 variable_custom_name: str = "") -> None:
         self._key: DynamicResultSeriesKey = key
         self._var: Var = var
         self._group_idx: int = group_idx
         self._source_label: str = source_label
         self._device_label: str = device_label
+        self._bus_label: str = bus_label
         self._variable_label: str = variable_label
+        self._variable_custom_name: str = variable_custom_name
 
     def get_key(self) -> DynamicResultSeriesKey:
         return self._key
@@ -505,10 +729,43 @@ class DynamicResultSeries:
             return self._variable_label
 
     def get_plot_label(self, has_multiple_sources: bool) -> str:
-        if has_multiple_sources:
-            return self._device_label + " - " + self._variable_label + " - " + self._source_label
+        # A user-defined name must override the generated label so manual renames
+        # remain stable after rebinding the runtime series to new results objects.
+        if self._variable_custom_name != "":
+            return self._variable_custom_name
         else:
-            return self._variable_label
+            pass
+
+        if has_multiple_sources:
+            return _join_plot_label_parts([
+                self._variable_label,
+                self._device_label,
+                self._bus_label,
+                self._source_label,
+            ])
+        else:
+            return _join_plot_label_parts([
+                self._variable_label,
+                self._device_label,
+                self._bus_label,
+            ])
+
+    def get_variable_custom_name(self) -> str:
+        """
+        Get the custom visible name shown for this plotted series.
+
+        :return: Custom visible variable name.
+        """
+        return self._variable_custom_name
+
+    def set_variable_custom_name(self, label: str) -> None:
+        """
+        Set the custom visible name shown for this plotted series.
+
+        :param label: Requested visible label.
+        :return: Nothing.
+        """
+        self._variable_custom_name = str(label).strip()
 
 
 class DynamicPlotCandidate:
@@ -526,9 +783,10 @@ class DynamicPlotCandidate:
         "_device_type",
         "_device_idtag",
         "_device_label",
+        "_bus_label",
         "_variable_name",
         "_result_path_kind",
-        "_curve_label",
+        "_variable_custom_name",
         "_var",
     )
 
@@ -539,9 +797,10 @@ class DynamicPlotCandidate:
                  device_type: DeviceType,
                  device_idtag: str,
                  device_label: str,
+                 bus_label: str,
                  variable_name: str,
                  result_path_kind: str,
-                 curve_label: str,
+                 variable_custom_name: str,
                  var: Var) -> None:
         self._simulation_type: PlotSimulationType = simulation_type
         self._event_group_idtag: str = event_group_idtag
@@ -549,9 +808,10 @@ class DynamicPlotCandidate:
         self._device_type: DeviceType = device_type
         self._device_idtag: str = device_idtag
         self._device_label: str = device_label
+        self._bus_label: str = bus_label
         self._variable_name: str = variable_name
         self._result_path_kind: str = result_path_kind
-        self._curve_label: str = curve_label
+        self._variable_custom_name: str = variable_custom_name
         self._var: Var = var
 
     def get_var(self) -> Var:
@@ -581,10 +841,16 @@ class DynamicPlotCandidate:
         :param has_multiple_sources: Whether multiple event-group sources exist.
         :return: Plot label.
         """
+        # Pre-simulation candidates already store the fully expanded default name
+        # that must later become the persistent custom visible variable name.
         if has_multiple_sources:
-            return self._curve_label
+            return self._variable_custom_name
         else:
-            return self._variable_name
+            return _join_plot_label_parts([
+                self._variable_name,
+                self._device_label,
+                self._bus_label,
+            ])
 
     def to_payload(self) -> str:
         """
@@ -601,7 +867,7 @@ class DynamicPlotCandidate:
         payload["device_name_hint"] = self._device_label
         payload["variable_name"] = self._variable_name
         payload["result_path_kind"] = self._result_path_kind
-        payload["curve_label"] = self._curve_label
+        payload["variable_custom_name"] = self._variable_custom_name
         return json.dumps(payload, separators=(",", ":"))
 
 
@@ -1022,6 +1288,43 @@ class DynamicsPlotsTreeModel(QtGui.QStandardItemModel):
         """
         return QtCore.Qt.DropAction.CopyAction
 
+    def canDropMimeData(self,
+                        data: QtCore.QMimeData,
+                        action: QtCore.Qt.DropAction,
+                        row: int,
+                        column: int,
+                        parent: QtCore.QModelIndex) -> bool:
+        """
+        Check whether one drag payload can be dropped on the requested target.
+
+        :param data: Drag payload.
+        :param action: Requested drop action.
+        :param row: Drop row.
+        :param column: Drop column.
+        :param parent: Drop parent index.
+        :return: ``True`` when the model can resolve a target plot group.
+        """
+        del row
+        del column
+
+        # Qt may offer the drop either on the group row itself or on a child
+        # row underneath that group. Accepting both keeps the GUI behavior
+        # stable across view styles and drop-indicator positions.
+        if action == QtCore.Qt.DropAction.IgnoreAction:
+            return True
+        else:
+            pass
+
+        if data.hasFormat(self._handler.get_drag_mime_type()):
+            resolved_group_name: str | None = self._handler.get_group_name_from_drop_index(index=parent)
+            if resolved_group_name is None:
+                resolved_group_name = self._handler.get_plot_group_name_from_index(index=parent)
+            else:
+                pass
+            return resolved_group_name is not None
+        else:
+            return False
+
     def dropMimeData(self,
                      data: QtCore.QMimeData,
                      action: QtCore.Qt.DropAction,
@@ -1049,6 +1352,10 @@ class DynamicsPlotsTreeModel(QtGui.QStandardItemModel):
                 payload_text: str = payload.decode("utf-8").strip()
                 series_key: DynamicResultSeriesKey | None = DynamicResultSeriesKey.from_payload(payload_text)
                 group_name: str | None = self._handler.get_group_name_from_drop_index(index=parent)
+                if group_name is None:
+                    group_name = self._handler.get_plot_group_name_from_index(index=parent)
+                else:
+                    pass
                 if group_name is not None:
                     if series_key is not None:
                         return self._handler.add_series_to_group(group_name=group_name, series_key=series_key)
@@ -1142,14 +1449,16 @@ class DynamicsResultsHandler:
     then restoring only the entries that still resolve against the new results.
     """
 
-    __slots__ = ("results", "circuit", "plot_simulation_type", "pre_simulation_mode", "tree_data", "tree_model",
-                  "proxy_model", "plots_model", "group_idx", "var_role", "group_name_role", "drag_mime_type",
-                  "plot_groups", "series_by_key", "series_by_var_uid", "source_labels")
+    __slots__ = ("results", "circuit", "dialog_parent", "plot_simulation_type",
+                  "pre_simulation_mode", "tree_data", "tree_model", "proxy_model", "plots_model", "group_idx",
+                  "var_role", "group_name_role", "drag_mime_type", "plot_groups", "series_by_key",
+                  "series_by_var_uid", "source_labels")
 
     def __init__(self,
                  results: RmsResults | EmtResults | None,
                  circuit: MultiCircuit | None = None,
-                 simulation_type: PlotSimulationType | str = PlotSimulationType.RMS):
+                 simulation_type: PlotSimulationType | str = PlotSimulationType.RMS,
+                 dialog_parent: QtWidgets.QWidget | None = None):
         """
         Build the handler from RMS/EMT results data.
 
@@ -1162,6 +1471,7 @@ class DynamicsResultsHandler:
         # pre-simulation workflow where only declarative model metadata exists.
         self.results: RmsResults | EmtResults | None = results
         self.circuit: MultiCircuit | None = circuit
+        self.dialog_parent: QtWidgets.QWidget | None = dialog_parent
         self.pre_simulation_mode: bool = results is None
         if results is not None:
             self.plot_simulation_type: PlotSimulationType = _get_plot_simulation_type_from_results(results=results)
@@ -1391,6 +1701,63 @@ class DynamicsResultsHandler:
         else:
             return list()
 
+    def _build_candidate_with_event_group(self,
+                                          candidate: DynamicPlotCandidate,
+                                          group_asset: RmsEventsGroup | EmtEventsGroup) -> DynamicPlotCandidate:
+        """
+        Rebuild one candidate so it targets the provided event-group asset.
+
+        :param candidate: Candidate produced from the pre-simulation tree metadata.
+        :param group_asset: Existing or newly created event-group asset.
+        :return: Candidate rebound to the selected event group.
+        """
+        # The dragged variable identity stays the same, but the persistent plot
+        # entry must store the canonical group idtag/name from the circuit asset
+        # that will own the future simulation case.
+        updated_candidate: DynamicPlotCandidate = DynamicPlotCandidate(
+            simulation_type=candidate._simulation_type,
+            event_group_idtag=str(group_asset.idtag),
+            event_group_name=str(group_asset.name),
+            device_type=candidate._device_type,
+            device_idtag=candidate._device_idtag,
+            device_label=candidate._device_label,
+            bus_label=candidate._bus_label,
+            variable_name=candidate._variable_name,
+            result_path_kind=candidate._result_path_kind,
+            variable_custom_name=_join_plot_label_parts([
+                candidate._variable_name,
+                candidate._device_label,
+                candidate._bus_label,
+                str(group_asset.name),
+            ]),
+            var=candidate.get_var(),
+        )
+        return updated_candidate
+
+    def _ensure_event_group_for_candidate(self,
+                                          candidate: DynamicPlotCandidate) -> DynamicPlotCandidate | None:
+        """
+        Ensure that one event group exists for a pre-simulation drop candidate.
+
+        :param candidate: Candidate selected from the pre-simulation source tree.
+        :return: Candidate bound to a valid event-group asset, or ``None`` when cancelled.
+        """
+        if self.circuit is not None:
+            group_asset: RmsEventsGroup | EmtEventsGroup | None = ensure_dynamic_plot_event_group(
+                circuit=self.circuit,
+                simulation_type=candidate._simulation_type,
+                parent=self.dialog_parent,
+            )
+            if group_asset is not None:
+                # The pre-simulation source tree must be refreshed after group
+                # creation so every later drag reflects the newly available case.
+                self._refresh_pre_simulation_state()
+                return self._build_candidate_with_event_group(candidate=candidate, group_asset=group_asset)
+            else:
+                return None
+        else:
+            return None
+
     def _get_pre_simulation_result_path_kind(self,
                                              device: DynamicDevice | DynamicBusDevice,
                                              variable: Var) -> str:
@@ -1428,26 +1795,57 @@ class DynamicsResultsHandler:
             for device, variables in devices_data.items():
                 if isinstance(device, (DynamicDevice, DynamicBusDevice)):
                     device_label: str = _get_device_label(device=device)
+                    bus_label: str = _get_device_bus_label(device=device)
                     variable: Var
                     for variable in variables:
                         result_path_kind: str = self._get_pre_simulation_result_path_kind(device=device, variable=variable)
-                        group_asset: RmsEventsGroup | EmtEventsGroup
-                        for group_asset in group_assets:
-                            candidate: DynamicPlotCandidate = DynamicPlotCandidate(
+                        entries: List[DynamicPlotCandidate] = candidates_by_var_uid.get(variable.uid, list())
+                        if len(group_assets) > 0:
+                            group_asset: RmsEventsGroup | EmtEventsGroup
+                            for group_asset in group_assets:
+                                candidate: DynamicPlotCandidate = DynamicPlotCandidate(
+                                    simulation_type=self.plot_simulation_type,
+                                    event_group_idtag=str(group_asset.idtag),
+                                    event_group_name=str(group_asset.name),
+                                    device_type=device_tpe,
+                                    device_idtag=str(device.idtag),
+                                    device_label=device_label,
+                                    bus_label=bus_label,
+                                    variable_name=variable.name,
+                                    result_path_kind=result_path_kind,
+                                    variable_custom_name=_join_plot_label_parts([
+                                        variable.name,
+                                        device_label,
+                                        bus_label,
+                                        str(group_asset.name),
+                                    ]),
+                                    var=variable,
+                                )
+                                entries.append(candidate)
+                        else:
+                            # A placeholder candidate keeps the variable draggable
+                            # before any event group exists. The drop path then
+                            # creates the real RMS/EMT event group and rewrites
+                            # this candidate with the canonical group identity.
+                            candidate = DynamicPlotCandidate(
                                 simulation_type=self.plot_simulation_type,
-                                event_group_idtag=str(group_asset.idtag),
-                                event_group_name=str(group_asset.name),
+                                event_group_idtag="",
+                                event_group_name="",
                                 device_type=device_tpe,
                                 device_idtag=str(device.idtag),
                                 device_label=device_label,
+                                bus_label=bus_label,
                                 variable_name=variable.name,
                                 result_path_kind=result_path_kind,
-                                curve_label=device_label + " - " + variable.name + " - " + str(group_asset.name),
+                                variable_custom_name=_join_plot_label_parts([
+                                    variable.name,
+                                    device_label,
+                                    bus_label,
+                                ]),
                                 var=variable,
                             )
-                            entries: List[DynamicPlotCandidate] = candidates_by_var_uid.get(variable.uid, list())
                             entries.append(candidate)
-                            candidates_by_var_uid[variable.uid] = entries
+                        candidates_by_var_uid[variable.uid] = entries
                 else:
                     pass
 
@@ -1509,6 +1907,40 @@ class DynamicsResultsHandler:
                 series_by_payload[payload] = candidates
 
         return series_by_payload
+
+    def _has_event_group_results(self, results: RmsResults | EmtResults, group_idx: int) -> bool:
+        """
+        Check whether one event-group column contains actual simulation results.
+
+        :param results: Current RMS or EMT results object.
+        :param group_idx: Event-group index inside the results arrays.
+        :return: ``True`` when the selected event group was simulated.
+
+        Dynamic plots must distinguish declared event groups from event groups
+        that produced runtime data. Drivers still allocate zero-filled result
+        columns for every declared group, so this method prevents unresolved
+        plot entries from binding to placeholder arrays.
+        """
+        # The results objects now expose an explicit boolean mask so the binder
+        # can decide availability from actual runtime data presence instead of
+        # inferring it from allocated array shape or declared event-group count.
+        has_results_flags: Optional[np.ndarray] = None
+
+        if type(results) == RmsResults:
+            has_results_flags = results.has_event_group_results
+        else:
+            if type(results) == EmtResults:
+                has_results_flags = results.has_event_group_results
+            else:
+                raise Exception("Unsupported dynamics results type")
+
+        # Out-of-range indexes are treated as unresolved so the broader dynamic
+        # plotting algorithm falls back to the persistent pending entry instead
+        # of guessing a replacement series.
+        if group_idx < 0 or group_idx >= len(has_results_flags):
+            return False
+        else:
+            return bool(has_results_flags[group_idx])
 
     def _bind_asset_entry_to_series(self,
                                     entry: DynamicPlotEntry,
@@ -1576,6 +2008,10 @@ class DynamicsResultsHandler:
                                             signature_index=signature_index,
                                         )
                                         if bound_series is not None and entry.enabled:
+                                            if entry.variable_custom_name != "":
+                                                bound_series.set_variable_custom_name(label=entry.variable_custom_name)
+                                            else:
+                                                pass
                                             group.add_var(variable=bound_series)
                                         else:
                                             # Keep unresolved entries visible in the runtime
@@ -1651,7 +2087,7 @@ class DynamicsResultsHandler:
                     device_name_hint=series.get_device_label(),
                     variable_name=series.get_variable_label(),
                     result_path_kind=str(key._result_path.split(":", 1)[0]),
-                    curve_label=series.get_plot_label(has_multiple_sources=self.has_multiple_sources()),
+                    variable_custom_name=series.get_plot_label(has_multiple_sources=self.has_multiple_sources()),
                     enabled=True,
                     runtime_series_key_payload=payload,
                     name=series.get_variable_label(),
@@ -1711,7 +2147,7 @@ class DynamicsResultsHandler:
                     device_name_hint=candidate._device_label,
                     variable_name=candidate._variable_name,
                     result_path_kind=candidate._result_path_kind,
-                    curve_label=candidate._curve_label,
+                    variable_custom_name=candidate._variable_custom_name,
                     enabled=True,
                     runtime_series_key_payload="",
                     name=candidate._variable_name,
@@ -1939,6 +2375,44 @@ class DynamicsResultsHandler:
         else:
             return None
 
+    def _get_asset_entry_for_series_in_group(self,
+                                             group_name: str,
+                                             series: DynamicResultSeries) -> DynamicPlotEntry | None:
+        """
+        Find the persistent plot entry that backs one runtime series inside one group.
+
+        :param group_name: Owning plot-group name.
+        :param series: Runtime series represented in the plots tree.
+        :return: Matching persistent plot entry, or ``None`` when unavailable.
+        """
+        if self.circuit is not None:
+            plot_asset: DynamicPlot | None = self._find_matching_asset_plot(group_name=group_name)
+            if plot_asset is not None:
+                target_payload: str = series.get_key().to_payload()
+                target_signature: tuple[str, str, str, str, str, str] = self._build_series_binding_signature(series=series)
+
+                entry: DynamicPlotEntry
+                for entry in self.circuit.dynamic_plot_entries:
+                    if entry.plot == plot_asset:
+                        if entry.runtime_series_key_payload == target_payload:
+                            return entry
+                        else:
+                            entry_signature: tuple[str, str, str, str, str, str] = (
+                                self._build_asset_entry_binding_signature(entry=entry)
+                            )
+                            if entry_signature == target_signature:
+                                return entry
+                            else:
+                                pass
+                    else:
+                        pass
+
+                return None
+            else:
+                return None
+        else:
+            return None
+
     def get_plot_var_from_index(self, index: QtCore.QModelIndex) -> Var | None:
         """
         Get the current variable represented by a plots-tree index.
@@ -1979,7 +2453,7 @@ class DynamicsResultsHandler:
                     variable_item.setData(entry, self.var_role)
                     group_item.appendRow(variable_item)
                 elif isinstance(entry, DynamicPlotEntry):
-                    unresolved_label: str = entry.curve_label
+                    unresolved_label: str = entry.variable_custom_name
                     if unresolved_label == "":
                         unresolved_label = entry.variable_name
                     else:
@@ -2117,6 +2591,50 @@ class DynamicsResultsHandler:
         else:
             return False
 
+    def rename_plot_variable_from_index(self, index: QtCore.QModelIndex, new_name: str) -> bool:
+        """
+        Rename the visible label of one plotted variable.
+
+        :param index: Plots-tree index that points to one variable child.
+        :param new_name: Requested visible label.
+        :return: ``True`` when the rename was applied.
+        """
+        # The rename is normalized once so both runtime and persistent state keep
+        # the exact same visible text without whitespace-only aliases.
+        clean_name: str = new_name.strip()
+        if clean_name != "":
+            series: DynamicResultSeries | None = self.get_plot_series_from_index(index=index)
+            if series is not None:
+                # Runtime series must redirect the rename to their backing
+                # persistent entry so the custom visible name survives reloads.
+                group_name: str | None = self.get_plot_group_name_from_index(index=index)
+                if group_name is not None:
+                    asset_entry: DynamicPlotEntry | None = self._get_asset_entry_for_series_in_group(
+                        group_name=group_name,
+                        series=series,
+                    )
+                    if asset_entry is not None:
+                        asset_entry.variable_custom_name = clean_name
+                        series.set_variable_custom_name(label=clean_name)
+                        self.rebuild_plots_model()
+                        return True
+                    else:
+                        return False
+                else:
+                    return False
+            else:
+                # Unresolved persistent entries are renamed in place because no
+                # runtime series exists yet to mirror the custom visible name.
+                asset_entry: DynamicPlotEntry | None = self.get_plot_asset_entry_from_index(index=index)
+                if asset_entry is not None:
+                    asset_entry.variable_custom_name = clean_name
+                    self.rebuild_plots_model()
+                    return True
+                else:
+                    return False
+        else:
+            return False
+
     def add_var_to_group(self, group_name: str, var_uid: int) -> bool:
         """
         Add one variable to a plot group and refresh the plots tree.
@@ -2206,9 +2724,20 @@ class DynamicsResultsHandler:
         """
         group: DynamicsPlotGroup | None = self.plot_groups.get_group(name=group_name)
         if group is not None:
+            prepared_candidate: DynamicPlotCandidate | None = candidate
+            if self.pre_simulation_mode:
+                prepared_candidate = self._ensure_event_group_for_candidate(candidate=candidate)
+            else:
+                pass
+
+            if prepared_candidate is None:
+                return False
+            else:
+                pass
+
             asset_entry: DynamicPlotEntry | None = self._append_asset_entry_for_candidate(
                 group_name=group_name,
-                candidate=candidate,
+                candidate=prepared_candidate,
             )
             if asset_entry is not None:
                 inserted: bool = group.add_var(variable=asset_entry)
@@ -2339,7 +2868,7 @@ class DynamicsResultsHandler:
                     elif isinstance(variable, DynamicPlotEntry):
                         x_values = self.results.time_array if self.results is not None else None
                         y_values = None
-                        label = variable.curve_label
+                        label = variable.variable_custom_name
                     elif isinstance(variable, Var):
                         x_values = self.results.time_array
                         # Legacy raw ``Var`` entries are still tolerated, but
@@ -2636,39 +3165,56 @@ class DynamicsResultsHandler:
             variables: List[Var]
             for device, variables in devices_data.items():
                 device_label: str = _get_device_label(device=device)
+                bus_label: str = _get_device_bus_label(device=device)
                 device_idtag: str = str(device.idtag)
 
                 variable_index: int
                 variable: Var
                 for variable_index, variable in enumerate(variables):
+                    result_path: str
+                    component_index: int
                     result_path, component_index = self._resolve_result_path_and_component_index(variable=variable)
                     scoped_result_path: str = result_path + ":" + variable.name
 
                     group_idx: int
                     source_label: str
                     for group_idx, source_label in enumerate(self.source_labels):
-                        # A distinct series is created per event group so plots
-                        # can mix sources without losing the exact origin of each
-                        # selected variable.
-                        key: DynamicResultSeriesKey = DynamicResultSeriesKey(
-                            simulation_type=self.results.study_results_type,
-                            source_id=self._build_source_id(results=self.results, group_idx=group_idx),
-                            device_type=device_tpe,
-                            device_idtag=device_idtag,
-                            result_path=scoped_result_path,
-                            variable_index=variable_index,
-                            component_index=component_index,
-                        )
-                        series: DynamicResultSeries = DynamicResultSeries(
-                            key=key,
-                            var=variable,
-                            group_idx=group_idx,
-                            source_label=source_label,
-                            device_label=device_label,
-                            variable_label=_get_var_label(variable=variable),
-                        )
-                        self.series_by_key.setdefault(key, list()).append(series)
-                        self.series_by_var_uid.setdefault(variable.uid, list()).append(series)
+                        # A distinct series is created only for event groups that
+                        # produced runtime data. Declared-but-unsimulated groups
+                        # stay available only as persistent unresolved entries.
+                        if self._has_event_group_results(results=self.results, group_idx=group_idx):
+                            # The runtime series is created only when the exact
+                            # event-group column is backed by simulated data.
+                            # This preserves the declared event-group identity
+                            # while preventing placeholder zero columns from
+                            # entering the plottable runtime index.
+                            key: DynamicResultSeriesKey = DynamicResultSeriesKey(
+                                simulation_type=self.results.study_results_type,
+                                source_id=self._build_source_id(results=self.results, group_idx=group_idx),
+                                device_type=device_tpe,
+                                device_idtag=device_idtag,
+                                result_path=scoped_result_path,
+                                variable_index=variable_index,
+                                component_index=component_index,
+                            )
+                            series: DynamicResultSeries = DynamicResultSeries(
+                                key=key,
+                                var=variable,
+                                group_idx=group_idx,
+                                source_label=source_label,
+                                device_label=device_label,
+                                bus_label=bus_label,
+                                variable_label=_get_var_label(variable=variable),
+                                variable_custom_name="",
+                            )
+                            self.series_by_key.setdefault(key, list()).append(series)
+                            self.series_by_var_uid.setdefault(variable.uid, list()).append(series)
+                        else:
+                            # Unsimulated groups remain available only through
+                            # the persistent plot-entry assets so the UI can
+                            # keep them visible as pending instead of plotting
+                            # a fabricated numerical curve.
+                            pass
 
         self.tree_model = build_dynamics_tree_model(
             tree_data=self.tree_data,

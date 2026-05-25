@@ -21,7 +21,10 @@ from VeraGrid.Gui.messages import yes_no_question, error_msg, warning_msg, info_
 from VeraGrid.Gui.GridGenerator.grid_generator_dialogue import GridGeneratorGUI
 from VeraGrid.Gui.FileDialogues.RosetaExplorer.RosetaExplorer import RosetaExplorerGUI
 from VeraGrid.Gui.FileDialogues.CGMESDialogue.cgmes_import import CgmesImportDialogue
+from VeraGrid.Gui.FileDialogues.DgsDialogue.dgs_export import DgsExportDialogue
 from VeraGrid.Gui.FileDialogues.DgsDialogue.dgs_import import DgsImportDialogue
+from VeraGrid.Gui.FileDialogues.MatpowerDialogue.matpower_export import MatpowerExportDialogue
+from VeraGrid.Gui.FileDialogues.UcteDialogue.ucte_export import UcteExportDialogue
 from VeraGrid.Gui.Main.SubClasses.Model.scenarios import ScenariosMain
 from VeraGrid.Gui.FileDialogues.CGMESDialogue.cgmes_export import CgmesExportDialogue
 from VeraGrid.Gui.FileDialogues.PsseDialogue.psse_export import PsseExportDialogue
@@ -61,7 +64,7 @@ class IoMain(ScenariosMain):
         self.accepted_extensions = ['.veragrid', '.dveragrid',
                                     '.gridcal', '.dgridcal',
                                     '.xlsx', '.xls', '.sqlite', '.gch5',
-                                    '.dgs', '.m', '.matpower', '.raw', '.RAW', '.json', '.uct',
+                                    '.dgs', '.m', '.matpower', '.raw', '.RAW', '.json', '.uct', '.ucte',
                                     '.iidm', '.xiidm', '.xiidm.bz2',
                                     '.ejson2', '.ejson3', '.p', '.nc', '.hdf5',
                                     '.xml', '.rawx', '.zip', '.dpx', '.pwf', '.epc', '.EPC',
@@ -70,6 +73,9 @@ class IoMain(ScenariosMain):
         # window pointers
         self.cgmes_dialogue: CgmesExportDialogue | None = None
         self.psse_export_dialogue: PsseExportDialogue | None = None
+        self.dgs_export_dialogue: DgsExportDialogue | None = None
+        self.matpower_export_dialogue: MatpowerExportDialogue | None = None
+        self.ucte_export_dialogue: UcteExportDialogue | None = None
 
         # actions
         self.ui.actionNew_project.triggered.connect(self.new_project)
@@ -90,6 +96,8 @@ class IoMain(ScenariosMain):
 
         self.ui.actionPSS_e_Raw_Rawx.triggered.connect(self.export_psse)
         self.ui.actionPower_Factory_DGS.triggered.connect(self.export_power_factory)
+        self.ui.actionMATPOWER.triggered.connect(self.export_matpower)
+        self.ui.actionUCTE.triggered.connect(self.export_ucte)
         self.ui.actionCIM.triggered.connect(self.export_cim)
         self.ui.actionCGMES.triggered.connect(self.export_cgmes)
         self.ui.actionPower_Grid_Models.triggered.connect(self.export_power_grid_models)
@@ -1186,36 +1194,30 @@ class IoMain(ScenariosMain):
 
     def export_power_factory(self) -> None:
         """
-        Export the current circuit to one PowerFactory DGS file.
+        Open the DGS export dialogue.
 
         :return: None.
         """
-        # if the global file_name is empty, ask where to save
-        fname = os.path.join(self.project_directory, self.ui.grid_name_line_edit.text())
+        self.dgs_export_dialogue = DgsExportDialogue(app=self)
+        self.dgs_export_dialogue.show()
 
-        files_types = "Power Factory (*.dgs)"
-        filename, type_selected = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                                        'Export to Power Factory',
-                                                                        fname,
-                                                                        files_types)
+    def export_matpower(self) -> None:
+        """
+        Open the MATPOWER export dialogue.
 
-        if filename != '':
+        :return: None.
+        """
+        self.matpower_export_dialogue = MatpowerExportDialogue(app=self)
+        self.matpower_export_dialogue.show()
 
-            # if the user did not enter the extension, add it automatically
-            name, file_extension = os.path.splitext(filename)
+    def export_ucte(self) -> None:
+        """
+        Open the UCTE export dialogue.
 
-            if file_extension == '':
-                filename = name + '.dgs'
-
-            # we were able to compose the file correctly, now save it
-            self.file_name = filename
-            self.save_file_now(
-                filename=self.file_name,
-                type_selected=type_selected,
-                options=FileSavingOptions(
-                    file_type=FileType.DGS
-                )
-            )
+        :return: None.
+        """
+        self.ucte_export_dialogue = UcteExportDialogue(app=self)
+        self.ucte_export_dialogue.show()
 
     def export_cim(self) -> None:
         """

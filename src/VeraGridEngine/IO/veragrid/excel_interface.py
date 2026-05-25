@@ -113,109 +113,109 @@ def load_from_xls(filename: str, logger: Logger) -> Dict[str, pd.DataFrame]:
     """
     data = dict()
     deadline: float = time.perf_counter() + 2.0
-    xl = pd.ExcelFile(filename)
-    names = xl.sheet_names
+    with pd.ExcelFile(filename) as xl:
+        names = xl.sheet_names
 
-    # check the validity of this excel file
-    check_names(names=names, logger=logger)
+        # check the validity of this excel file
+        check_names(names=names, logger=logger)
 
-    # parse the file
-    if 'Conf' in names:  # version 1
+        # parse the file
+        if 'Conf' in names:  # version 1
 
-        data["version"] = 1.0
+            data["version"] = 1.0
 
-        for name in names:
+            for name in names:
 
-            if name.lower() == "conf":
-                df = xl.parse(name)
-                data["baseMVA"] = np.double(df.values[0, 1])
+                if name.lower() == "conf":
+                    df = xl.parse(name)
+                    data["baseMVA"] = np.double(df.values[0, 1])
 
-            elif name.lower() == "bus":
-                df = xl.parse(name)
-                data["bus"] = np.nan_to_num(df.values)
-                if len(df) > 0:
-                    if df.index.values.tolist()[0] != 0:
-                        data['bus_names'] = df.index.values.tolist()
+                elif name.lower() == "bus":
+                    df = xl.parse(name)
+                    data["bus"] = np.nan_to_num(df.values)
+                    if len(df) > 0:
+                        if df.index.values.tolist()[0] != 0:
+                            data['bus_names'] = df.index.values.tolist()
 
-            elif name.lower() == "gen":
-                df = xl.parse(name)
-                data["gen"] = np.nan_to_num(df.values)
-                if len(df) > 0:
-                    if df.index.values.tolist()[0] != 0:
-                        data['gen_names'] = df.index.values.tolist()
+                elif name.lower() == "gen":
+                    df = xl.parse(name)
+                    data["gen"] = np.nan_to_num(df.values)
+                    if len(df) > 0:
+                        if df.index.values.tolist()[0] != 0:
+                            data['gen_names'] = df.index.values.tolist()
 
-            elif name.lower() == "branch":
-                df = xl.parse(name)
-                data["branch"] = np.nan_to_num(df.values)
-                if len(df) > 0:
-                    if df.index.values.tolist()[0] != 0:
-                        data['branch_names'] = df.index.values.tolist()
+                elif name.lower() == "branch":
+                    df = xl.parse(name)
+                    data["branch"] = np.nan_to_num(df.values)
+                    if len(df) > 0:
+                        if df.index.values.tolist()[0] != 0:
+                            data['branch_names'] = df.index.values.tolist()
 
-            elif name.lower() == "storage":
-                df = xl.parse(name)
-                data["storage"] = np.nan_to_num(df.values)
-                if len(df) > 0:
-                    if df.index.values.tolist()[0] != 0:
-                        data['storage_names'] = df.index.values.tolist()
+                elif name.lower() == "storage":
+                    df = xl.parse(name)
+                    data["storage"] = np.nan_to_num(df.values)
+                    if len(df) > 0:
+                        if df.index.values.tolist()[0] != 0:
+                            data['storage_names'] = df.index.values.tolist()
 
-            elif name.lower() == "lprof":
-                df = xl.parse(name, index_col=0)
-                data["Lprof"] = np.nan_to_num(df.values)
-                data["master_time"] = df.index
+                elif name.lower() == "lprof":
+                    df = xl.parse(name, index_col=0)
+                    data["Lprof"] = np.nan_to_num(df.values)
+                    data["master_time"] = df.index
 
-            elif name.lower() == "lprofq":
-                df = xl.parse(name, index_col=0)
-                data["LprofQ"] = np.nan_to_num(df.values)
-                # ppc["master_time"] = df.index.values
+                elif name.lower() == "lprofq":
+                    df = xl.parse(name, index_col=0)
+                    data["LprofQ"] = np.nan_to_num(df.values)
+                    # ppc["master_time"] = df.index.values
 
-            elif name.lower() == "gprof":
-                df = xl.parse(name, index_col=0)
-                data["Gprof"] = np.nan_to_num(df.values)
-                data["master_time"] = df.index  # it is the same
+                elif name.lower() == "gprof":
+                    df = xl.parse(name, index_col=0)
+                    data["Gprof"] = np.nan_to_num(df.values)
+                    data["master_time"] = df.index  # it is the same
 
-    elif 'config' in names:  # version 2 / 3
+        elif 'config' in names:  # version 2 / 3
 
-        allowed_data_sheets = shorten_dict_keys(get_allowed_sheets(), max_size=30)
+            allowed_data_sheets = shorten_dict_keys(get_allowed_sheets(), max_size=30)
 
-        for name in names:
+            for name in names:
 
-            if name.lower() == "config":
-                df = xl.parse('config', index_col=0)
+                if name.lower() == "config":
+                    df = xl.parse('config', index_col=0)
 
-                data["baseMVA"] = 100
-                data["name"] = "Grid"
-                data["Comments"] = ""
-                # Note: Do not include a default value for version
+                    data["baseMVA"] = 100
+                    data["name"] = "Grid"
+                    data["Comments"] = ""
+                    # Note: Do not include a default value for version
 
-                for i, row in df.iterrows():
+                    for i, row in df.iterrows():
 
-                    if row['Property'] == 'BaseMVA':
-                        data["baseMVA"] = np.double(row['Value'])
+                        if row['Property'] == 'BaseMVA':
+                            data["baseMVA"] = np.double(row['Value'])
 
-                    elif row['Property'] == 'Version':
-                        data["version"] = np.double(row['Value'])
+                        elif row['Property'] == 'Version':
+                            data["version"] = np.double(row['Value'])
 
-                    elif row['Property'] == 'Name':
-                        data["name"] = str(row['Value'])
+                        elif row['Property'] == 'Name':
+                            data["name"] = str(row['Value'])
 
-                    elif row['Property'] == 'Comments':
-                        data["Comments"] = str(row['Value']).replace("nan", "")
+                        elif row['Property'] == 'Comments':
+                            data["Comments"] = str(row['Value']).replace("nan", "")
 
-            else:
-                # just pick the DataFrame
-                df = xl.parse(name, index_col=0)
+                else:
+                    # just pick the DataFrame
+                    df = xl.parse(name, index_col=0)
 
-                if allowed_data_sheets[name] == complex:
-                    # pandas does not read complex numbers right,
-                    # so when we expect a complex number input, parse directly
-                    for c in df.columns.values:
-                        df[c] = df[c].apply(lambda x: complex(x))
+                    if allowed_data_sheets[name] == complex:
+                        # pandas does not read complex numbers right,
+                        # so when we expect a complex number input, parse directly
+                        for c in df.columns.values:
+                            df[c] = df[c].apply(lambda x: complex(x))
 
-                data[name] = df
+                    data[name] = df
 
-    else:
-        logger.add_error('This excel file is not in VeraGrid Format')
-        return data
+        else:
+            logger.add_error('This excel file is not in VeraGrid Format')
+            return data
 
     return data
 

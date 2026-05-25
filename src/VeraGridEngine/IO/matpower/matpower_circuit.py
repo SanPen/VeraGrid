@@ -120,7 +120,7 @@ class MatpowerCircuit:
                     elm.parse_row(data[i])
                     self.branches.append(elm)
 
-            elif key == "dcbus":
+            elif key in ["dcbus", "busdc"]:
                 data = txt2mat(find_between(chunk, '[', ']'), line_splitter=';')
 
                 for i in range(len(data)):
@@ -128,7 +128,7 @@ class MatpowerCircuit:
                     elm.parse_row(data[i])
                     self.dc_buses.append(elm)
 
-            elif key == "dcconv":
+            elif key in ["dcconv", "convdc"]:
                 data = txt2mat(find_between(chunk, '[', ']'), line_splitter=';')
 
                 for i in range(len(data)):
@@ -136,7 +136,7 @@ class MatpowerCircuit:
                     elm.parse_row(data[i])
                     self.converters.append(elm)
 
-            elif key == "dcbranch":
+            elif key in ["dcbranch", "branchdc"]:
                 data = txt2mat(find_between(chunk, '[', ']'), line_splitter=';')
 
                 for i in range(len(data)):

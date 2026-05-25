@@ -43,7 +43,7 @@ def is_canonical_ucte_node_code(node_code: str) -> bool:
 
 def is_standard_ucte_country_code(country_code: str) -> bool:
     code = (country_code or "").strip()
-    return len(code) == 2 and code.isalpha() and code.upper() == code
+    return len(code) == 2 and code.isalpha() and code.upper() == code and code != "XX"
 
 
 def get_default_power_limit() -> float:

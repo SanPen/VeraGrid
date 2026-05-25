@@ -20,6 +20,7 @@ from PySide6.QtCore import (Qt, QMimeData, QIODevice, QByteArray, QDataStream, Q
 from PySide6.QtGui import (QIcon, QPixmap, QImage, QStandardItemModel, QStandardItem, QColor, QDropEvent, QWheelEvent)
 
 from VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container import MapLineContainer
+from VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_polyline import MapLinePolyline
 from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics import MapInjectionTemplateGraphicItem
 from VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics import BusGraphicItem
 from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget
@@ -371,20 +372,22 @@ class GridMapWidget(BaseDiagramWidget):
         """
         selected_lines: List[MAP_BRANCH_GRAPHIC_TYPES] = list()
         selected_line_ids: set[int] = set()
+        item: QGraphicsItem
         for item in self.diagram_scene.selectedItems():
-            line_container = None
-            if isinstance(item, (MapAcLine, MapDcLine, MapHvdcLine, MapFluidPathLine)):
-                line_container = item
-            elif hasattr(item, "container") and isinstance(item.container, (MapAcLine, MapDcLine, MapHvdcLine, MapFluidPathLine)):
-                line_container = item.container
-            elif hasattr(item, "line_container") and isinstance(item.line_container, (MapAcLine, MapDcLine, MapHvdcLine, MapFluidPathLine)):
-                line_container = item.line_container
-
-            if line_container is not None:
-                line_id = id(line_container)
+            if isinstance(item, (MapAcLine,
+                                 MapDcLine,
+                                 MapHvdcLine,
+                                 MapFluidPathLine)):
+                line_id = id(item)
                 if line_id not in selected_line_ids:
                     selected_line_ids.add(line_id)
-                    selected_lines.append(line_container)
+                    selected_lines.append(item)
+            elif isinstance(item, MapLinePolyline):
+                line_id = id(item.container)
+                if line_id not in selected_line_ids:
+                    selected_line_ids.add(line_id)
+                    selected_lines.append(item.container)
+
         return selected_lines
 
     def _sync_line_handle_visibility(self) -> None:
@@ -2278,8 +2281,7 @@ class GridMapWidget(BaseDiagramWidget):
 
         return
 
-    def split_line_to_substation(
-            self, preferred_line_container: MapAcLine | MapDcLine | MapHvdcLine | MapFluidPathLine | None = None):
+    def split_line_to_substation(self):
         """
         Split a selected line and connect it to a selected substation.
         This creates two new lines: one from the original "from" bus to the selected substation,
@@ -2291,21 +2293,7 @@ class GridMapWidget(BaseDiagramWidget):
         selected_lines = self.get_selected_line_segments_tuple()
         selected_substations = self.get_selected_substations_tuple()
 
-        if len(selected_substations) != 1:
-            msg = QMessageBox()
-            msg.setIcon(QMessageBox.Icon.Information)
-            msg.setText("Please select exactly one substation.")
-            msg.setWindowTitle("Selection Error")
-            msg.exec()
-            return
-
-        # Pick the line that was explicitly clicked from the context menu when available.
-        if preferred_line_container is not None:
-            line_api = preferred_line_container.api_object
-            line_graphic = preferred_line_container
-        elif len(selected_lines) == 1:
-            line_api, line_graphic = selected_lines[0]
-        else:
+        if len(selected_lines) != 1 or len(selected_substations) != 1:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Icon.Information)
             msg.setText("Please select exactly one line and one substation.")
@@ -2314,6 +2302,7 @@ class GridMapWidget(BaseDiagramWidget):
             return
 
         # Get the API objects
+        line_api, line_graphic = selected_lines[0]
         substation_api, substation_graphic = selected_substations[0]
         original_line_container = line_graphic
 
@@ -2457,7 +2446,7 @@ class GridMapWidget(BaseDiagramWidget):
                      protection_rating_factor=line_api.protection_rating_factor,
                      circuit_idx=line_api.circuit_idx)
 
-        # Line 2: from new bus to bus_to 
+        # Line 2: from new bus to bus_to
         line2 = Line(name=f"{line_api.name}_2",
                      active=line_api.active,
                      bus_from=suitable_bus,
@@ -2495,7 +2484,7 @@ class GridMapWidget(BaseDiagramWidget):
         for i in range(1, closest_segment_idx + 1):
             line1.locations.add_location(lat=waypoints[i][0], long=waypoints[i][1], alt=0.0)
 
-        # --- Assign offset waypoints --- 
+        # --- Assign offset waypoints ---
         # Add the 'backwards' point as the last waypoint for line1
         line1.locations.add_location(lat=new_lat1, long=new_lon1, alt=0.0)
         # line1.locations.add_location(lat=substation_lat, long=substation_lon, alt=0.0)
@@ -2533,7 +2522,7 @@ class GridMapWidget(BaseDiagramWidget):
     def _closest_point_on_segment(self, lat1, lon1, lat2, lon2, lat3, lon3):
         """
         Find the closest point on a line segment to a given point using geographic coordinates.
-        
+
         :param lat1, lon1: Coordinates of the first endpoint of the segment
         :param lat2, lon2: Coordinates of the second endpoint of the segment
         :param lat3, lon3: Coordinates of the point to find the closest point to
@@ -2631,7 +2620,7 @@ class GridMapWidget(BaseDiagramWidget):
         Create a T-joint connection between a line and a selected substation using a selected waypoint.
         This replaces the waypoint with a new substation, splits the original line into two segments,
         and creates a new line connecting the selected substation to the new substation at the waypoint.
-        
+
         The user only needs to select a waypoint and a substation. The line is automatically determined
         from the waypoint.
         """
@@ -3014,25 +3003,17 @@ class GridMapWidget(BaseDiagramWidget):
         msg.setWindowTitle("Operation Successful")
         msg.exec()
 
-    def change_line_connection(self, preferred_line_container: MapAcLine | MapDcLine | MapHvdcLine | MapFluidPathLine | None = None):
+    def change_line_connection(self):
 
         selected_lines = self.get_selected_line_segments_tuple()
         selected_substations = self.get_selected_substations_tuple()
 
-        if len(selected_substations) != 2:
-            self.gui.show_error_toast(message="Please select exactly two substations.")
-            return
-
-        # Get the API objects
-        if preferred_line_container is not None:
-            line_api = preferred_line_container.api_object
-            line_graphic = preferred_line_container
-        elif len(selected_lines) == 1:
-            line_api, line_graphic = selected_lines[0]
-        else:
+        if len(selected_lines) != 1 or len(selected_substations) != 2:
             self.gui.show_error_toast(message="Please select exactly one line and two substations.")
             return
 
+        # Get the API objects
+        line_api, line_graphic = selected_lines[0]
         substation_api_1, substation_graphic_1 = selected_substations[0]
         substation_api_2, substation_graphic_2 = selected_substations[1]
 

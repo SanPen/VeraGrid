@@ -41,7 +41,8 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_utils import (find_object_by_uuid,
                                                      find_object_by_vnom,
                                                      find_object_by_cond_eq_uuid,
                                                      get_ohm_values_power_transformer,
-                                                     find_object_by_attribute)
+                                                     find_object_by_attribute,
+                                                     get_voltage_terminal)
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions import compute_zip_power
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
 from VeraGridEngine.data_logger import DataLogger
@@ -228,8 +229,83 @@ def purge_connectivity_nodes_for_cgmes_v3(cgmes_model: CgmesCircuit,
     )
 
 
+def populate_cgmes_load_response_characteristic(load_response: CGMES_ASSETS,
+                                                active_power: float,
+                                                active_current: float,
+                                                active_impedance: float,
+                                                reactive_power: float,
+                                                reactive_current: float,
+                                                reactive_impedance: float) -> None:
+    """
+    Populate one CGMES LoadResponseCharacteristic from selected export values.
+
+    :param load_response: Target load-response object.
+    :param active_power: Constant-power active component.
+    :param active_current: Constant-current active component.
+    :param active_impedance: Constant-impedance active component.
+    :param reactive_power: Constant-power reactive component.
+    :param reactive_current: Constant-current reactive component.
+    :param reactive_impedance: Constant-impedance reactive component.
+    :return: Nothing.
+    :rtype: None
+    """
+    total_active: float = float(active_power + active_current + active_impedance)
+    total_reactive: float = float(reactive_power + reactive_current + reactive_impedance)
+
+    if total_active != 0.0:
+        load_response.pConstantPower = np.round(active_power / total_active, 4)
+        load_response.pConstantCurrent = np.round(active_current / total_active, 4)
+        load_response.pConstantImpedance = np.round(active_impedance / total_active, 4)
+    else:
+        load_response.pConstantPower = 1.0
+        load_response.pConstantCurrent = 0.0
+        load_response.pConstantImpedance = 0.0
+
+    if total_reactive != 0.0:
+        load_response.qConstantPower = np.round(reactive_power / total_reactive, 4)
+        load_response.qConstantCurrent = np.round(reactive_current / total_reactive, 4)
+        load_response.qConstantImpedance = np.round(reactive_impedance / total_reactive, 4)
+    else:
+        load_response.qConstantPower = 1.0
+        load_response.qConstantCurrent = 0.0
+        load_response.qConstantImpedance = 0.0
+
+
+def apply_time_index_to_tap_changer_control(tap_changer: CGMES_ASSETS,
+                                            mc_elm: gcdev.Transformer2W | gcdev.Winding,
+                                            logger: DataLogger,
+                                            t_idx: int | None) -> None:
+    """
+    Overwrite TapChangerControl targets using the selected export time index.
+
+    :param tap_changer: CGMES tap changer.
+    :param mc_elm: Source VeraGrid transformer or winding.
+    :param logger: Data logger.
+    :param t_idx: Optional profile index.
+    :return: Nothing.
+    :rtype: None
+    """
+    tap_changer_control: CGMES_ASSETS | None = tap_changer.TapChangerControl
+    if tap_changer_control is None:
+        return
+    else:
+        pass
+
+    if tap_changer_control.mode == RegulatingControlModeKind.voltage:
+        voltage: float | None = get_voltage_terminal(tap_changer_control.Terminal, logger)
+        if voltage is None:
+            return
+        else:
+            tap_changer_control.targetValue = mc_elm.get_vset_at(t_idx) * voltage
+    elif tap_changer_control.mode == RegulatingControlModeKind.activePower:
+        tap_changer_control.targetValue = mc_elm.get_Pset_at(t_idx)
+    else:
+        pass
+
+
 def get_transformer_tap_values_for_cgmes_export(mc_elm: gcdev.Transformer2W | gcdev.Winding,
-                                                logger: DataLogger) -> tuple[int, int, int, int, float, int]:
+                                                logger: DataLogger,
+                                                t_idx: int | None = None) -> tuple[int, int, int, int, float, int]:
     """
     Return TapChanger values for CGMES export while preserving fixed tap modules.
 
@@ -248,7 +324,7 @@ def get_transformer_tap_values_for_cgmes_export(mc_elm: gcdev.Transformer2W | gc
     low, high, normal, neutral, step_voltage_increment, step = tap_changer.get_cgmes_values()
 
     if original_type == TapChangerTypes.NoRegulation:
-        target_tap_module = float(mc_elm.tap_module)
+        target_tap_module = float(mc_elm.get_tap_module_at(t_idx))
         if np.isclose(target_tap_module, 1.0):
             return low, high, normal, neutral, step_voltage_increment, step
 
@@ -307,7 +383,8 @@ def get_transformer_tap_values_for_cgmes_export(mc_elm: gcdev.Transformer2W | gc
     return low, high, normal, neutral, step_voltage_increment, step
 
 
-def should_export_tap_changer(mc_elm: gcdev.Transformer2W | gcdev.Winding) -> bool:
+def should_export_tap_changer(mc_elm: gcdev.Transformer2W | gcdev.Winding,
+                              t_idx: int | None = None) -> bool:
     """
     Determine if a transformer or winding tap changer should be exported.
 
@@ -321,10 +398,10 @@ def should_export_tap_changer(mc_elm: gcdev.Transformer2W | gcdev.Winding) -> bo
     if mc_elm.tap_changer.tc_type != TapChangerTypes.NoRegulation:
         return True
     else:
-        if not np.isclose(float(mc_elm.tap_module), 1.0):
+        if not np.isclose(float(mc_elm.get_tap_module_at(t_idx)), 1.0):
             return True
         else:
-            if not np.isclose(float(mc_elm.tap_phase), 0.0):
+            if not np.isclose(float(mc_elm.get_tap_phase_at(t_idx)), 0.0):
                 return True
             else:
                 return False
@@ -334,7 +411,8 @@ def create_cgmes_tap_changer_for_transformer_end(mc_elm: gcdev.Transformer2W | g
                                                  pte: CGMES_POWER_TRANSFORMER_END,
                                                  cgmes_model: CgmesCircuit,
                                                  ver: CGMESVersions,
-                                                 logger: DataLogger) -> None:
+                                                 logger: DataLogger,
+                                                 t_idx: int | None = None) -> None:
     """
     Create and add tap changer objects for a transformer end.
 
@@ -349,7 +427,7 @@ def create_cgmes_tap_changer_for_transformer_end(mc_elm: gcdev.Transformer2W | g
     :param logger: logger
     :return: None
     """
-    if not should_export_tap_changer(mc_elm=mc_elm):
+    if not should_export_tap_changer(mc_elm=mc_elm, t_idx=t_idx):
         return
     else:
         tcc_mode = RegulatingControlModeKind.voltage
@@ -371,7 +449,7 @@ def create_cgmes_tap_changer_for_transformer_end(mc_elm: gcdev.Transformer2W | g
         else:
             raise NotImplemented()
 
-        if mc_elm.tap_module_control_mode != TapModuleControl.fixed:
+        if mc_elm.get_tap_module_control_mode_at(t_idx) != TapModuleControl.fixed:
             tcc_enabled = True
         else:
             tcc_enabled = False
@@ -384,7 +462,7 @@ def create_cgmes_tap_changer_for_transformer_end(mc_elm: gcdev.Transformer2W | g
         else:
             raise NotImplemented()
 
-        if mc_elm.tap_phase_control_mode != TapPhaseControl.fixed:
+        if mc_elm.get_tap_phase_control_mode_at(t_idx) != TapPhaseControl.fixed:
             tcc_enabled = True
         else:
             tcc_enabled = False
@@ -398,8 +476,8 @@ def create_cgmes_tap_changer_for_transformer_end(mc_elm: gcdev.Transformer2W | g
         else:
             raise NotImplemented()
 
-        if (mc_elm.tap_module_control_mode != TapModuleControl.fixed
-                or mc_elm.tap_phase_control_mode != TapPhaseControl.fixed):
+        if (mc_elm.get_tap_module_control_mode_at(t_idx) != TapModuleControl.fixed
+                or mc_elm.get_tap_phase_control_mode_at(t_idx) != TapPhaseControl.fixed):
             tcc_enabled = True
         else:
             tcc_enabled = False
@@ -424,7 +502,8 @@ def create_cgmes_tap_changer_for_transformer_end(mc_elm: gcdev.Transformer2W | g
      voltage_incr,
      tap_changer.step) = get_transformer_tap_values_for_cgmes_export(
         mc_elm=mc_elm,
-        logger=logger
+        logger=logger,
+        t_idx=t_idx
     )
 
     if isinstance(tap_changer, (cgmes24.RatioTapChanger, cgmes30.RatioTapChanger)):
@@ -460,6 +539,12 @@ def create_cgmes_tap_changer_for_transformer_end(mc_elm: gcdev.Transformer2W | g
         ver=ver,
         logger=logger
     )
+    apply_time_index_to_tap_changer_control(
+        tap_changer=tap_changer,
+        mc_elm=mc_elm,
+        logger=logger,
+        t_idx=t_idx
+    )
     tap_changer.tculControlMode = TransformerControlMode.volt
     tap_changer.controlEnabled = tcc_enabled
 
@@ -489,27 +574,27 @@ def find_terminals_by_conducting_equipment_uuid(cgmes_model: CgmesCircuit,
     return terminals
 
 
-def get_vsc_voltage_target(gc_vsc: gcdev.VSC) -> float:
+def get_vsc_voltage_target(gc_vsc: gcdev.VSC, t_idx: int | None = None) -> float:
     """
     Derive the VSC AC-side target voltage in per unit from the VeraGrid controls.
     """
-    if gc_vsc.control1 in (ConverterControlType.Vm_ac, ConverterControlType.Vm_dc):
-        return float(gc_vsc.control1_val)
-    if gc_vsc.control2 in (ConverterControlType.Vm_ac, ConverterControlType.Vm_dc):
-        return float(gc_vsc.control2_val)
+    if gc_vsc.get_control1_at(t_idx) in (ConverterControlType.Vm_ac, ConverterControlType.Vm_dc):
+        return float(gc_vsc.get_control1_val_at(t_idx))
+    if gc_vsc.get_control2_at(t_idx) in (ConverterControlType.Vm_ac, ConverterControlType.Vm_dc):
+        return float(gc_vsc.get_control2_val_at(t_idx))
     if gc_vsc.bus_to is not None and gc_vsc.bus_to.Vnom > 0.0:
         return 1.0
     return 1.0
 
 
-def get_vsc_power_target(gc_vsc: gcdev.VSC) -> float:
+def get_vsc_power_target(gc_vsc: gcdev.VSC, t_idx: int | None = None) -> float:
     """
     Derive the VSC active-power target in MW from the VeraGrid controls.
     """
-    if gc_vsc.control1 in (ConverterControlType.Pac, ConverterControlType.Pdc):
-        return float(gc_vsc.control1_val)
-    if gc_vsc.control2 in (ConverterControlType.Pac, ConverterControlType.Pdc):
-        return float(gc_vsc.control2_val)
+    if gc_vsc.get_control1_at(t_idx) in (ConverterControlType.Pac, ConverterControlType.Pdc):
+        return float(gc_vsc.get_control1_val_at(t_idx))
+    if gc_vsc.get_control2_at(t_idx) in (ConverterControlType.Pac, ConverterControlType.Pdc):
+        return float(gc_vsc.get_control2_val_at(t_idx))
     return 0.0
 
 
@@ -560,7 +645,8 @@ def get_or_create_dc_node(cgmes_model: CgmesCircuit,
 def get_or_create_external_network_injection(multicircuit_model: MultiCircuit,
                                              cgmes_model: CgmesCircuit,
                                              ver: CGMESVersions,
-                                             logger: DataLogger):
+                                             logger: DataLogger,
+                                             t_idx: int | None = None):
     """
     Export every VeraGrid external grid as an ExternalNetworkInjection.
     """
@@ -574,12 +660,12 @@ def get_or_create_external_network_injection(multicircuit_model: MultiCircuit,
 
         eni.description = mc_elm.code
         eni.name = mc_elm.name
-        eni.p = mc_elm.P
-        eni.q = mc_elm.Q
-        eni.maxP = mc_elm.P
-        eni.minP = mc_elm.P
-        eni.maxQ = mc_elm.Q
-        eni.minQ = mc_elm.Q
+        eni.p = mc_elm.get_P_at(t_idx)
+        eni.q = mc_elm.get_Q_at(t_idx)
+        eni.maxP = mc_elm.get_P_at(t_idx)
+        eni.minP = mc_elm.get_P_at(t_idx)
+        eni.maxQ = mc_elm.get_Q_at(t_idx)
+        eni.minQ = mc_elm.get_Q_at(t_idx)
         set_declared_cgmes_property(
             cgmes_object=eni,
             property_name="BaseVoltage",
@@ -606,7 +692,8 @@ def get_or_create_external_network_injection(multicircuit_model: MultiCircuit,
 def convert_vsc_devices_to_cgmes(multicircuit_model: MultiCircuit,
                                  cgmes_model: CgmesCircuit,
                                  ver: CGMESVersions,
-                                 logger: DataLogger) -> None:
+                                 logger: DataLogger,
+                                 t_idx: int | None = None) -> None:
     """
     Export native VeraGrid VSC devices to CGMES VsConverter objects.
     """
@@ -617,8 +704,8 @@ def convert_vsc_devices_to_cgmes(multicircuit_model: MultiCircuit,
                              device_class=gc_vsc.device_type.value)
             continue
 
-        p_set = get_vsc_power_target(gc_vsc)
-        v_set = get_vsc_voltage_target(gc_vsc)
+        p_set = get_vsc_power_target(gc_vsc=gc_vsc, t_idx=t_idx)
+        v_set = get_vsc_voltage_target(gc_vsc=gc_vsc, t_idx=t_idx)
         vs_converter, dc_conv_unit = create_cgmes_vsc_converter(
             cgmes_model=cgmes_model,
             gc_vsc=gc_vsc,
@@ -706,7 +793,8 @@ def convert_dc_lines_to_cgmes(multicircuit_model: MultiCircuit,
 
 def export_sv_statuses(gc_model: MultiCircuit,
                        cgmes_model: CgmesCircuit,
-                       ver: CGMESVersions) -> None:
+                       ver: CGMESVersions,
+                       t_idx: int | None = None) -> None:
     """
     Export SvStatus for every source object that maps directly to a CGMES conducting equipment.
     """
@@ -734,7 +822,7 @@ def export_sv_statuses(gc_model: MultiCircuit,
             continue
         create_sv_status(
             cgmes_model=cgmes_model,
-            in_service=int(bool(getattr(device, "active", True))),
+            in_service=int(bool(device.get_active_at(t_idx))),
             cgmes_conducting_equipment=cgmes_obj,
             ver=ver
         )
@@ -1227,7 +1315,8 @@ def get_cgmes_cn_nodes_from_tp_nodes(multi_circuit_model: MultiCircuit,
 def get_cgmes_loads(multicircuit_model: MultiCircuit,
                     cgmes_model: CgmesCircuit,
                     ver: CGMESVersions,
-                    logger: DataLogger):
+                    logger: DataLogger,
+                    t_idx: int | None = None):
     """
     Converts every Multi Circuit load into CGMES ConformLoad.
 
@@ -1290,22 +1379,38 @@ def get_cgmes_loads(multicircuit_model: MultiCircuit,
             context="get_cgmes_loads()"
         )
 
+        active_power: float = float(mc_elm.get_P_at(t_idx))
+        reactive_power: float = float(mc_elm.get_Q_at(t_idx))
+        active_current: float = float(mc_elm.get_Ir_at(t_idx))
+        reactive_current: float = float(mc_elm.get_Ii_at(t_idx))
+        active_impedance: float = float(mc_elm.get_G_at(t_idx))
+        reactive_impedance: float = float(mc_elm.get_B_at(t_idx))
+
         has_zip_components: bool = (
-            mc_elm.Ir != 0.0 or
-            mc_elm.Ii != 0.0 or
-            mc_elm.G != 0.0 or
-            mc_elm.B != 0.0
+            active_current != 0.0 or
+            reactive_current != 0.0 or
+            active_impedance != 0.0 or
+            reactive_impedance != 0.0
         )
 
         if has_zip_components:
             load.LoadResponse = create_cgmes_load_response_char(load=mc_elm,
                                                                 cgmes_model=cgmes_model,
                                                                 ver=ver)
-            load.p = mc_elm.P + mc_elm.Ir + mc_elm.G
-            load.q = mc_elm.Q + mc_elm.Ii + mc_elm.B
+            populate_cgmes_load_response_characteristic(
+                load_response=load.LoadResponse,
+                active_power=active_power,
+                active_current=active_current,
+                active_impedance=active_impedance,
+                reactive_power=reactive_power,
+                reactive_current=reactive_current,
+                reactive_impedance=reactive_impedance
+            )
+            load.p = active_power + active_current + active_impedance
+            load.q = reactive_power + reactive_current + reactive_impedance
         else:
-            load.p = mc_elm.P
-            load.q = mc_elm.Q
+            load.p = active_power
+            load.q = reactive_power
 
         load.description = mc_elm.code
 
@@ -1330,7 +1435,8 @@ def get_cgmes_loads(multicircuit_model: MultiCircuit,
 def get_cgmes_equivalent_injections(multicircuit_model: MultiCircuit,
                                     cgmes_model: CgmesCircuit,
                                     ver: CGMESVersions,
-                                    logger: DataLogger):
+                                    logger: DataLogger,
+                                    t_idx: int | None = None):
     """
     Converts every Multi Circuit external grid
     into CGMES equivalent injection.
@@ -1356,8 +1462,8 @@ def get_cgmes_equivalent_injections(multicircuit_model: MultiCircuit,
 
         ei.description = mc_elm.code
         ei.name = mc_elm.name
-        ei.p = mc_elm.P
-        ei.q = mc_elm.Q
+        ei.p = mc_elm.get_P_at(t_idx)
+        ei.q = mc_elm.get_Q_at(t_idx)
         set_declared_cgmes_property(
             cgmes_object=ei,
             property_name="BaseVoltage",
@@ -1378,7 +1484,8 @@ def get_cgmes_ac_line_segments(multicircuit_model: MultiCircuit,
                                cgmes_model: CgmesCircuit,
                                op_lim_types: List,
                                ver: CGMESVersions,
-                               logger: DataLogger):
+                               logger: DataLogger,
+                               t_idx: int | None = None):
     """
     Converts every Multi Circuit line
     into CGMES AC line segment.
@@ -1440,7 +1547,8 @@ def get_cgmes_ac_line_segments(multicircuit_model: MultiCircuit,
                                  mc_elm=mc_elm,
                                  op_lim_types=op_lim_types,
                                  ver=ver,
-                                 logger=logger)
+                                 logger=logger,
+                                 t_idx=t_idx)
 
         vnom = line.BaseVoltage.nominalVoltage
 
@@ -1464,7 +1572,8 @@ def get_cgmes_ac_line_segments(multicircuit_model: MultiCircuit,
 def get_cgmes_generators(multicircuit_model: MultiCircuit,
                          cgmes_model: CgmesCircuit,
                          ver: CGMESVersions,
-                         logger: DataLogger):
+                         logger: DataLogger,
+                         t_idx: int | None = None):
     """
     Converts Multi Circuit generators
     into appropriate CGMES Generating Unit.
@@ -1515,19 +1624,19 @@ def get_cgmes_generators(multicircuit_model: MultiCircuit,
         if ver == CGMESVersions.v2_4_15:
             set_declared_cgmes_property(cgmes_object=cgmes_gen,
                                         property_name="initialP",
-                                        property_value=mc_elm.P,
+                                        property_value=mc_elm.get_P_at(t_idx),
                                         logger=logger,
                                         context="get_cgmes_generators()")
         elif ver == CGMESVersions.v3_0_0:
             set_declared_cgmes_property(cgmes_object=cgmes_gen,
                                         property_name="nominalP",
-                                        property_value=mc_elm.P,
+                                        property_value=mc_elm.get_P_at(t_idx),
                                         logger=logger,
                                         context="get_cgmes_generators()")
         else:
             raise NotImplemented()
-        cgmes_gen.maxOperatingP = mc_elm.Pmax
-        cgmes_gen.minOperatingP = mc_elm.Pmin
+        cgmes_gen.maxOperatingP = mc_elm.get_Pmax_at(t_idx)
+        cgmes_gen.minOperatingP = mc_elm.get_Pmin_at(t_idx)
 
         # Synchronous Machine ------------------------------------------------
         # object_template = cgmes_model.get_class_type("SynchronousMachine")
@@ -1565,25 +1674,26 @@ def get_cgmes_generators(multicircuit_model: MultiCircuit,
         if mc_elm.is_controlled:
             cgmes_syn.RegulatingControl = (
                 create_cgmes_regulating_control(cgmes_syn, mc_elm, cgmes_model, ver, logger))
+            cgmes_syn.RegulatingControl.targetValue = mc_elm.get_Vset_at(t_idx) * mc_elm.bus.Vnom
             cgmes_syn.controlEnabled = True
         else:
             cgmes_syn.controlEnabled = False
 
-        cgmes_syn.ratedPowerFactor = max(0.0, min(1.0, mc_elm.Pf))
+        cgmes_syn.ratedPowerFactor = max(0.0, min(1.0, mc_elm.get_Pf_at(t_idx)))
         cgmes_syn.ratedS = mc_elm.Snom
         cgmes_syn.GeneratingUnit = cgmes_gen  # linking them together
         cgmes_gen.RotatingMachine = cgmes_syn  # linking them together
-        cgmes_syn.maxQ = mc_elm.Qmax
-        cgmes_syn.minQ = mc_elm.Qmin
+        cgmes_syn.maxQ = mc_elm.get_Qmax_at(t_idx)
+        cgmes_syn.minQ = mc_elm.get_Qmin_at(t_idx)
         cgmes_syn.r = mc_elm.R1 if mc_elm.R1 != 1e-20 else None  # default value not exported
-        cgmes_syn.p = -mc_elm.P  # negative sign!
-        cgmes_syn.q = -mc_elm.Q
+        cgmes_syn.p = -mc_elm.get_P_at(t_idx)  # negative sign!
+        cgmes_syn.q = -mc_elm.get_Q_at(t_idx)
         if mc_elm.Snom > 0.0:
-            cgmes_syn.qPercent = (mc_elm.Qmax / mc_elm.Snom) * 100.0
+            cgmes_syn.qPercent = (mc_elm.get_Qmax_at(t_idx) / mc_elm.Snom) * 100.0
         if mc_elm.q_curve is not None:
             pMin = mc_elm.q_curve.get_Pmin()
         else:
-            pMin = mc_elm.Pmin
+            pMin = mc_elm.get_Pmin_at(t_idx)
         if cgmes_syn.p < 0:
             cgmes_syn.operatingMode = SynchronousMachineOperatingMode.generator
             if pMin < 0:
@@ -1642,7 +1752,8 @@ def get_cgmes_power_transformers(grid: MultiCircuit,
                                  cgmes_model: CgmesCircuit,
                                  op_lim_types: List,
                                  ver: CGMESVersions,
-                                 logger: DataLogger):
+                                 logger: DataLogger,
+                                 t_idx: int | None = None):
     """
     Creates all transformer related CGMES classes from VeraGrid transformer.
 
@@ -1718,7 +1829,8 @@ def get_cgmes_power_transformers(grid: MultiCircuit,
                                  mc_elm=mc_elm,
                                  op_lim_types=op_lim_types,
                                  ver=ver,
-                                 logger=logger)
+                                 logger=logger,
+                                 t_idx=t_idx)
 
         (pte1.r,
          pte1.x,
@@ -1798,7 +1910,7 @@ def get_cgmes_power_transformers(grid: MultiCircuit,
             else:
                 raise NotImplemented()
 
-            if mc_elm.tap_module_control_mode != TapModuleControl.fixed:
+            if mc_elm.get_tap_module_control_mode_at(t_idx) != TapModuleControl.fixed:
                 # if fixed, it should be disabled
                 tcc_enabled = True
 
@@ -1810,7 +1922,7 @@ def get_cgmes_power_transformers(grid: MultiCircuit,
             else:
                 raise NotImplemented()
 
-            if mc_elm.tap_phase_control_mode != TapPhaseControl.fixed:
+            if mc_elm.get_tap_phase_control_mode_at(t_idx) != TapPhaseControl.fixed:
                 # if fixed, it should be disabled
                 tcc_enabled = True
             tcc_mode = RegulatingControlModeKind.activePower
@@ -1823,8 +1935,8 @@ def get_cgmes_power_transformers(grid: MultiCircuit,
             else:
                 raise NotImplemented()
 
-            if (mc_elm.tap_module_control_mode != TapModuleControl.fixed or
-                    mc_elm.tap_phase_control_mode != TapPhaseControl.fixed):
+            if (mc_elm.get_tap_module_control_mode_at(t_idx) != TapModuleControl.fixed or
+                    mc_elm.get_tap_phase_control_mode_at(t_idx) != TapPhaseControl.fixed):
                 # if fixed, it should be disabled
                 tcc_enabled = True
             tcc_mode = RegulatingControlModeKind.activePower
@@ -1850,7 +1962,8 @@ def get_cgmes_power_transformers(grid: MultiCircuit,
              voltageIncr,
              tap_changer.step) = get_transformer_tap_values_for_cgmes_export(
                 mc_elm=mc_elm,
-                logger=logger
+                logger=logger,
+                t_idx=t_idx
             )
 
             if isinstance(tap_changer, (cgmes24.RatioTapChanger, cgmes30.RatioTapChanger)):
@@ -1890,6 +2003,12 @@ def get_cgmes_power_transformers(grid: MultiCircuit,
                 cgmes_model=cgmes_model,
                 ver=ver,
                 logger=logger
+            )
+            apply_time_index_to_tap_changer_control(
+                tap_changer=tap_changer,
+                mc_elm=mc_elm,
+                logger=logger,
+                t_idx=t_idx
             )
             # tculControlMode not used, but has to be set to something: volt/react ..
             set_declared_cgmes_property(
@@ -1975,12 +2094,13 @@ def get_cgmes_power_transformers(grid: MultiCircuit,
             (cm_transformer.Terminals[2], mc_elm.winding3),
         ]
         for terminal, winding in winding_terminals:
-            if winding.rate != 0.0:
-                create_cgmes_current_limit(terminal, winding.rate, patl, cgmes_model, ver, logger)
-            contingency_rate: float = winding.contingency_factor * winding.rate
+            winding_rate: float = winding.get_rate_at(t_idx)
+            contingency_rate: float = winding.get_contingency_factor_at(t_idx) * winding_rate
+            protection_rate: float = winding.get_protection_rating_factor_at(t_idx) * winding_rate
+            if winding_rate != 0.0:
+                create_cgmes_current_limit(terminal, winding_rate, patl, cgmes_model, ver, logger)
             if contingency_rate != 0.0:
                 create_cgmes_current_limit(terminal, contingency_rate, tatl_900, cgmes_model, ver, logger)
-            protection_rate: float = winding.protection_rating_factor * winding.rate
             if protection_rate != 0.0:
                 create_cgmes_current_limit(terminal, protection_rate, tatl_60, cgmes_model, ver, logger)
 
@@ -2116,21 +2236,24 @@ def get_cgmes_power_transformers(grid: MultiCircuit,
             pte=pte1,
             cgmes_model=cgmes_model,
             ver=ver,
-            logger=logger
+            logger=logger,
+            t_idx=t_idx
         )
         create_cgmes_tap_changer_for_transformer_end(
             mc_elm=mc_elm.winding2,
             pte=pte2,
             cgmes_model=cgmes_model,
             ver=ver,
-            logger=logger
+            logger=logger,
+            t_idx=t_idx
         )
         create_cgmes_tap_changer_for_transformer_end(
             mc_elm=mc_elm.winding3,
             pte=pte3,
             cgmes_model=cgmes_model,
             ver=ver,
-            logger=logger
+            logger=logger,
+            t_idx=t_idx
         )
 
         # compose transformer ------------------------------------------------------------------------------------------
@@ -2149,7 +2272,8 @@ def get_cgmes_current_limits(cgmes_model: CgmesCircuit,
                              mc_elm: BranchParent,
                              op_lim_types: List,
                              ver: CGMESVersions,
-                             logger: DataLogger):
+                             logger: DataLogger,
+                             t_idx: int | None = None):
     """
     Export Current Limits to CGMES for Branches.
 
@@ -2167,11 +2291,11 @@ def get_cgmes_current_limits(cgmes_model: CgmesCircuit,
 
     # Rate and Type Mapping
     rates = [
-        (mc_elm.rate, patl),
+        (mc_elm.get_rate_at(t_idx), patl),
         # Normal rate
-        (mc_elm.contingency_factor * mc_elm.rate, tatl_900),
+        (mc_elm.get_contingency_factor_at(t_idx) * mc_elm.get_rate_at(t_idx), tatl_900),
         # Contingency rate - TATL 900
-        (mc_elm.protection_rating_factor * mc_elm.rate, tatl_60)
+        (mc_elm.get_protection_rating_factor_at(t_idx) * mc_elm.get_rate_at(t_idx), tatl_60)
         # Contingency rate - TATL 60
     ]
 
@@ -2246,7 +2370,8 @@ def get_cgmes_operational_limit_types(cgmes_model: CgmesCircuit, ver: CGMESVersi
 def get_cgmes_equivalent_shunts(multicircuit_model: MultiCircuit,
                                 cgmes_model: CgmesCircuit,
                                 ver: CGMESVersions,
-                                logger: DataLogger):
+                                logger: DataLogger,
+                                t_idx: int | None = None):
     """
     Converts Multi Circuit shunts
     into CGMES EquivalentShunt.
@@ -2295,8 +2420,8 @@ def get_cgmes_equivalent_shunts(multicircuit_model: MultiCircuit,
                 context="get_cgmes_equivalent_shunts()"
             )
 
-        eq_shunt.b = mc_elm.B / (mc_elm.bus.Vnom ** 2)
-        eq_shunt.g = mc_elm.G / (mc_elm.bus.Vnom ** 2)
+        eq_shunt.b = mc_elm.get_B_at(t_idx) / (mc_elm.bus.Vnom ** 2)
+        eq_shunt.g = mc_elm.get_G_at(t_idx) / (mc_elm.bus.Vnom ** 2)
 
         create_cgmes_terminal(mc_bus=mc_elm.bus,
                               seq_num=1,
@@ -2311,7 +2436,8 @@ def get_cgmes_equivalent_shunts(multicircuit_model: MultiCircuit,
 def get_cgmes_linear_and_non_linear_shunts(multicircuit_model: MultiCircuit,
                                            cgmes_model: CgmesCircuit,
                                            ver: CGMESVersions,
-                                           logger: DataLogger):
+                                           logger: DataLogger,
+                                           t_idx: int | None = None):
     """
     Convert VeraGrid controllable shunts to CGMES NonlinearShuntCompensator.
 
@@ -2370,6 +2496,7 @@ def get_cgmes_linear_and_non_linear_shunts(multicircuit_model: MultiCircuit,
             non_lin_sc.RegulatingControl = (
                 create_cgmes_regulating_control(non_lin_sc, mc_elm, cgmes_model, ver, logger)
             )
+            non_lin_sc.RegulatingControl.targetValue = mc_elm.get_Vset_at(t_idx) * mc_elm.bus.Vnom
             non_lin_sc.controlEnabled = True
         else:
             non_lin_sc.controlEnabled = False
@@ -2377,15 +2504,17 @@ def get_cgmes_linear_and_non_linear_shunts(multicircuit_model: MultiCircuit,
         non_lin_sc.nomU = mc_elm.bus.Vnom
         cumulative_b_mva = mc_elm.get_cumulative_b().astype(float)
         cumulative_g_mva = mc_elm.get_cumulative_g().astype(float)
+        shunt_b: float = float(mc_elm.get_B_at(t_idx))
+        shunt_g: float = float(mc_elm.get_G_at(t_idx))
 
         active_sections: int = 0
-        if mc_elm.active:
-            if np.isclose(mc_elm.B, 0.0, atol=1e-9, rtol=0.0) and np.isclose(mc_elm.G, 0.0, atol=1e-9, rtol=0.0):
+        if mc_elm.get_active_at(t_idx):
+            if np.isclose(shunt_b, 0.0, atol=1e-9, rtol=0.0) and np.isclose(shunt_g, 0.0, atol=1e-9, rtol=0.0):
                 active_sections = 0
             else:
                 for section_index in range(len(cumulative_b_mva)):
-                    if (np.isclose(cumulative_b_mva[section_index], mc_elm.B, atol=1e-9, rtol=0.0)
-                            and np.isclose(cumulative_g_mva[section_index], mc_elm.G, atol=1e-9, rtol=0.0)):
+                    if (np.isclose(cumulative_b_mva[section_index], shunt_b, atol=1e-9, rtol=0.0)
+                            and np.isclose(cumulative_g_mva[section_index], shunt_g, atol=1e-9, rtol=0.0)):
                         active_sections = section_index + 1
                         break
 
@@ -2395,11 +2524,11 @@ def get_cgmes_linear_and_non_linear_shunts(multicircuit_model: MultiCircuit,
                         device=mc_elm.idtag,
                         device_class=mc_elm.device_type.value,
                         device_property="B/G",
-                        value=f"B={mc_elm.B}, G={mc_elm.G}",
+                        value=f"B={shunt_b}, G={shunt_g}",
                         expected_value="cumulative stepped values"
                     )
-                    cumulative_b_mva = np.array([float(mc_elm.B)], dtype=float)
-                    cumulative_g_mva = np.array([float(mc_elm.G)], dtype=float)
+                    cumulative_b_mva = np.array([shunt_b], dtype=float)
+                    cumulative_g_mva = np.array([shunt_g], dtype=float)
                     active_sections = 1
 
         non_lin_sc.sections = active_sections
@@ -2434,7 +2563,8 @@ def get_cgmes_linear_and_non_linear_shunts(multicircuit_model: MultiCircuit,
 def get_cgmes_breakers(multicircuit_model: MultiCircuit,
                        cgmes_model: CgmesCircuit,
                        ver: CGMESVersions,
-                       logger: DataLogger):
+                       logger: DataLogger,
+                       t_idx: int | None = None):
     """
     Converts every Multi Circuit Switch into CGMES Breaker.
 
@@ -2478,7 +2608,7 @@ def get_cgmes_breakers(multicircuit_model: MultiCircuit,
             )
             br.EquipmentContainer = vl
 
-        br.open = not mc_elm.active
+        br.open = not mc_elm.get_active_at(t_idx)
         br.retained = mc_elm.retained
         br.normalOpen = mc_elm.normal_open
         br.aggregate = False
@@ -2926,7 +3056,8 @@ def make_coordinate_system(cgmes_model: CgmesCircuit,
 def convert_hvdc_line_to_cgmes(multicircuit_model: MultiCircuit,
                                cgmes_model: CgmesCircuit,
                                ver: CGMESVersions,
-                               logger: DataLogger):
+                               logger: DataLogger,
+                               t_idx: int | None = None):
     """
     Converts simplified HVDC line to two VSConverters inside DCConverterUnits,
     connected with a DCLineSegment, contained in a DCLine
@@ -2946,8 +3077,8 @@ def convert_hvdc_line_to_cgmes(multicircuit_model: MultiCircuit,
         vsc_1, dc_conv_unit_1 = create_cgmes_vsc_converter(
             cgmes_model=cgmes_model,
             gc_vsc=None,
-            p_set=hvdc_line.Pset,
-            v_set=hvdc_line.Vset_f,
+            p_set=hvdc_line.get_Pset_at(t_idx),
+            v_set=hvdc_line.get_Vset_f_at(t_idx),
             target_upcc_base_voltage=(hvdc_line.bus_from.Vnom
                                       if hvdc_line.bus_from is not None and hvdc_line.bus_from.Vnom > 0.0
                                       else None),
@@ -2992,8 +3123,8 @@ def convert_hvdc_line_to_cgmes(multicircuit_model: MultiCircuit,
         vsc_2, dc_conv_unit_2 = create_cgmes_vsc_converter(
             cgmes_model=cgmes_model,
             gc_vsc=None,
-            p_set=-hvdc_line.Pset,
-            v_set=hvdc_line.Vset_t,
+            p_set=-hvdc_line.get_Pset_at(t_idx),
+            v_set=hvdc_line.get_Vset_t_at(t_idx),
             target_upcc_base_voltage=(hvdc_line.bus_to.Vnom
                                       if hvdc_line.bus_to is not None and hvdc_line.bus_to.Vnom > 0.0
                                       else None),
@@ -3318,7 +3449,8 @@ def veragrid_to_cgmes(gc_model: MultiCircuit,
                       num_circ: NumericalCircuit,
                       pf_results: Union[None, PowerFlowResults],
                       cgmes_model: CgmesCircuit,
-                      logger: DataLogger) -> CgmesCircuit:
+                      logger: DataLogger,
+                      t_idx: int | None = None) -> CgmesCircuit:
     """
     Converts the input Multi circuit to a new CGMES Circuit.
 
@@ -3350,9 +3482,9 @@ def veragrid_to_cgmes(gc_model: MultiCircuit,
     get_cgmes_cn_nodes_from_tp_nodes(gc_model, cgmes_model, ver, logger)
     get_cgmes_busbar_sections(gc_model, cgmes_model, ver, logger)
 
-    get_cgmes_loads(gc_model, cgmes_model, ver, logger)
-    get_or_create_external_network_injection(gc_model, cgmes_model, ver, logger)
-    get_cgmes_generators(gc_model, cgmes_model, ver, logger)
+    get_cgmes_loads(gc_model, cgmes_model, ver, logger, t_idx=t_idx)
+    get_or_create_external_network_injection(gc_model, cgmes_model, ver, logger, t_idx=t_idx)
+    get_cgmes_generators(gc_model, cgmes_model, ver, logger, t_idx=t_idx)
 
     # Get operational limit types
     operational_limit_type_list = get_cgmes_operational_limit_types(cgmes_model, ver)
@@ -3360,20 +3492,20 @@ def veragrid_to_cgmes(gc_model: MultiCircuit,
 
     # BRANCHES
     # lines
-    get_cgmes_ac_line_segments(gc_model, cgmes_model, operational_limit_type_list, ver, logger)
+    get_cgmes_ac_line_segments(gc_model, cgmes_model, operational_limit_type_list, ver, logger, t_idx=t_idx)
     # transformers, windings
-    get_cgmes_power_transformers(gc_model, cgmes_model, operational_limit_type_list, ver, logger)
+    get_cgmes_power_transformers(gc_model, cgmes_model, operational_limit_type_list, ver, logger, t_idx=t_idx)
 
     # SHUNTS
-    get_cgmes_equivalent_shunts(gc_model, cgmes_model, ver, logger)
-    get_cgmes_linear_and_non_linear_shunts(gc_model, cgmes_model, ver, logger)
+    get_cgmes_equivalent_shunts(gc_model, cgmes_model, ver, logger, t_idx=t_idx)
+    get_cgmes_linear_and_non_linear_shunts(gc_model, cgmes_model, ver, logger, t_idx=t_idx)
 
     # Switches (Breakers)
-    get_cgmes_breakers(gc_model, cgmes_model, ver, logger)
+    get_cgmes_breakers(gc_model, cgmes_model, ver, logger, t_idx=t_idx)
 
     # DC elements
-    convert_hvdc_line_to_cgmes(gc_model, cgmes_model, ver, logger)
-    convert_vsc_devices_to_cgmes(gc_model, cgmes_model, ver, logger)
+    convert_hvdc_line_to_cgmes(gc_model, cgmes_model, ver, logger, t_idx=t_idx)
+    convert_vsc_devices_to_cgmes(gc_model, cgmes_model, ver, logger, t_idx=t_idx)
     convert_dc_lines_to_cgmes(gc_model, cgmes_model, ver, logger)
 
     # NCP contingencies are exported after equipment so references are resolvable.
@@ -3393,7 +3525,7 @@ def veragrid_to_cgmes(gc_model: MultiCircuit,
         get_cgmes_sv_power_flow_2(gc_model, num_circ, cgmes_model, pf_results, ver, logger)
 
         # SV Status: for ConductingEquipment
-        export_sv_statuses(gc_model, cgmes_model, ver)
+        export_sv_statuses(gc_model, cgmes_model, ver, t_idx=t_idx)
 
         # SVTapStep: handled at transformer function
         # TODO get it from results

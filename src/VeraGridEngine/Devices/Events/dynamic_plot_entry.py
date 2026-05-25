@@ -39,7 +39,7 @@ class DynamicPlotEntry(EditableDevice):
         '_device_name_hint',
         '_variable_name',
         '_result_path_kind',
-        '_curve_label',
+        '_variable_custom_name',
         '_enabled',
         '_runtime_series_key_payload',
     )
@@ -123,10 +123,10 @@ class DynamicPlotEntry(EditableDevice):
             cat=[PrpCat.RMS, PrpCat.EMT],
         ),
         GCProp(
-            prop_name='curve_label',
+            prop_name='variable_custom_name',
             units='',
             tpe=str,
-            definition='Optional display label remembered for this curve.',
+            definition='Optional custom visible name remembered for this variable.',
             cat=[PrpCat.RMS, PrpCat.EMT],
         ),
         GCProp(
@@ -158,11 +158,11 @@ class DynamicPlotEntry(EditableDevice):
                   device_name_hint: str = "",
                   variable_name: str = "",
                   result_path_kind: str = "",
-                  curve_label: str = "",
+                  variable_custom_name: str = "",
                   enabled: bool = True,
                   runtime_series_key_payload: str = "",
                   idtag: Union[str, None] = None,
-                  name="RmsEvent",
+                  name: str = "RmsEvent",
                   code='',
                   comment: str = ""):
         """
@@ -180,7 +180,7 @@ class DynamicPlotEntry(EditableDevice):
         :param device_name_hint: Visible device-name hint.
         :param variable_name: Variable name selected by the user.
         :param result_path_kind: Result namespace such as ``values`` or ``diff_values``.
-        :param curve_label: Optional remembered display label.
+        :param variable_custom_name: Optional remembered custom visible variable name.
         :param enabled: ``True`` when the curve is enabled.
         :param runtime_series_key_payload: Optional cached runtime exact-match payload.
         :param idtag: Persistent entry identifier.
@@ -212,7 +212,7 @@ class DynamicPlotEntry(EditableDevice):
         self._device_name_hint: str = str(device_name_hint)
         self._variable_name: str = str(variable_name)
         self._result_path_kind: str = str(result_path_kind)
-        self._curve_label: str = str(curve_label)
+        self._variable_custom_name: str = str(variable_custom_name)
         self._enabled: bool = bool(enabled)
         self._runtime_series_key_payload: str = str(runtime_series_key_payload)
 
@@ -375,23 +375,23 @@ class DynamicPlotEntry(EditableDevice):
         self._result_path_kind = str(val)
 
     @property
-    def curve_label(self) -> str:
+    def variable_custom_name(self) -> str:
         """
-        Get the remembered display label.
+        Get the remembered custom visible variable name.
 
-        :return: Curve display label.
+        :return: Custom visible variable name.
         """
-        return self._curve_label
+        return self._variable_custom_name
 
-    @curve_label.setter
-    def curve_label(self, val: str) -> None:
+    @variable_custom_name.setter
+    def variable_custom_name(self, val: str) -> None:
         """
-        Set the remembered display label.
+        Set the remembered custom visible variable name.
 
-        :param val: Curve display label.
+        :param val: Custom visible variable name.
         :return: None.
         """
-        self._curve_label = str(val)
+        self._variable_custom_name = str(val)
 
     @property
     def enabled(self) -> bool:

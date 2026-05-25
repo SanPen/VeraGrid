@@ -4,8 +4,13 @@ from pathlib import Path
 
 import numpy as np
 from PySide6 import QtCore
+from PySide6 import QtWidgets
 
-from VeraGrid.Gui.Main.SubClasses.Results.dynamics_results_handler import DynamicsResultsHandler, DynamicPlotCandidate
+from VeraGrid.Gui.Main.SubClasses.Results.dynamics_results_handler import (
+    DynamicsResultsHandler,
+    DynamicPlotCandidate,
+    ensure_dynamic_plot_event_group,
+)
 from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import initialize_connected_bus_models_for_editor_assignment
 from VeraGridEngine.Devices.Events.emt_events_group import EmtEventsGroup
 from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
@@ -24,7 +29,7 @@ from VeraGridEngine.Utils.Symbolic.templates_common_functions import connect_bus
 from VeraGridEngine.enumerations import DeviceType, FileType, PlotSimulationType, DynamicSimulationMode
 
 
-def ensure_qt_application() -> QtCore.QCoreApplication:
+def ensure_qt_application() -> QtWidgets.QApplication:
     """
     Ensure a Qt core application exists for Qt model creation.
 
@@ -32,10 +37,12 @@ def ensure_qt_application() -> QtCore.QCoreApplication:
     """
     application: QtCore.QCoreApplication | None = QtCore.QCoreApplication.instance()
     if application is None:
-        application = QtCore.QCoreApplication(list())
+        return QtWidgets.QApplication(list())
     else:
-        pass
-    return application
+        if isinstance(application, QtWidgets.QApplication):
+            return application
+        else:
+            return QtWidgets.QApplication(list())
 
 
 def build_pre_simulation_rms_circuit() -> MultiCircuit:
@@ -100,6 +107,72 @@ def build_pre_simulation_editor_style_emt_circuit() -> MultiCircuit:
     circuit.set_elements_list_by_type(device_type=DeviceType.GeneratorDevice, devices=[generator])
     circuit.add_emt_events_group(obj=EmtEventsGroup(idtag="emt-group-a", name="EMT Group A"))
     return circuit
+
+
+def build_pre_simulation_rms_circuit_without_event_groups() -> MultiCircuit:
+    """
+    Build one minimal RMS pre-simulation circuit without any event groups.
+
+    :return: Circuit configured to test on-demand RMS event-group creation.
+    """
+    circuit: MultiCircuit = MultiCircuit(name="pre-sim-rms-no-groups")
+    generator: Generator = Generator(name="Generator A", idtag="gen-a")
+    omega_var: Var = circuit.var_factory.add_var(name="omega", uid=61)
+    generator.rms_model = Block(state_vars=[omega_var])
+    circuit.set_elements_list_by_type(device_type=DeviceType.GeneratorDevice, devices=[generator])
+    return circuit
+
+
+def build_pre_simulation_emt_circuit_without_event_groups() -> MultiCircuit:
+    """
+    Build one minimal EMT pre-simulation circuit without any event groups.
+
+    :return: Circuit configured to test on-demand EMT event-group creation.
+    """
+    circuit: MultiCircuit = MultiCircuit(name="pre-sim-emt-no-groups")
+    generator: Generator = Generator(name="Generator A", idtag="gen-a")
+    omega_var: Var = circuit.var_factory.add_var(name="omega", uid=71)
+    generator.emt_model = Block(state_vars=[omega_var])
+    circuit.set_elements_list_by_type(device_type=DeviceType.GeneratorDevice, devices=[generator])
+    return circuit
+
+
+class FakeEventsGroupsDialog(QtWidgets.QDialog):
+    """
+    Minimal dialog double used to test event-group creation decisions.
+    """
+
+    __slots__ = ("_dialog_code", "_group_name")
+
+    def __init__(self, dialog_code: int, group_name: str) -> None:
+        """
+        Build the fake dialog.
+
+        :param dialog_code: Dialog result returned by ``exec``.
+        :param group_name: Group name returned by ``get_name``.
+        :return: None.
+        """
+        QtWidgets.QDialog.__init__(self)
+        self._dialog_code: int = dialog_code
+        self._group_name: str = group_name
+
+    def exec(self) -> int:
+        """
+        Return the configured dialog result.
+
+        :return: Configured Qt dialog code.
+        """
+        return self._dialog_code
+
+    def get_name(self) -> str:
+        """
+        Return the configured group name.
+
+        :return: Configured group name.
+        """
+        return self._group_name
+
+
 
 
 def build_rms_results_from_generator(generator: Generator,
@@ -230,7 +303,7 @@ def test_dynamic_plot_asset_roundtrip_preserves_semantic_fields(tmp_path: Path) 
         device_name_hint="Load A",
         variable_name="p_load",
         result_path_kind="values",
-        curve_label="Load A - p_load - RMS Group A",
+        variable_custom_name="Load A - p_load - RMS Group A",
         enabled=True,
         runtime_series_key_payload="payload",
         name="Curve 1",
@@ -264,7 +337,7 @@ def test_dynamic_plot_asset_roundtrip_preserves_semantic_fields(tmp_path: Path) 
     assert loaded_entry.device_name_hint == "Load A"
     assert loaded_entry.variable_name == "p_load"
     assert loaded_entry.result_path_kind == "values"
-    assert loaded_entry.curve_label == "Load A - p_load - RMS Group A"
+    assert loaded_entry.variable_custom_name == "Load A - p_load - RMS Group A"
     assert loaded_entry.enabled is True
     assert loaded_entry.runtime_series_key_payload == "payload"
 
@@ -293,6 +366,54 @@ def test_pre_simulation_handler_creates_persistent_assets() -> None:
     assert circuit.dynamic_plot_entries[0].event_group_idtag == "rms-group-a"
     assert circuit.dynamic_plot_entries[0].device_idtag == "gen-a"
     assert circuit.dynamic_plot_entries[0].variable_name == "omega"
+
+
+def test_ensure_dynamic_plot_event_group_reuses_existing_rms_group() -> None:
+    """
+    Verify that the helper reuses an existing RMS event group without opening creation flow.
+
+    :return: None.
+    """
+    ensure_qt_application()
+    circuit: MultiCircuit = build_pre_simulation_rms_circuit()
+
+    group_asset: RmsEventsGroup | EmtEventsGroup | None = ensure_dynamic_plot_event_group(
+        circuit=circuit,
+        simulation_type=PlotSimulationType.RMS,
+        parent=None,
+    )
+
+    assert isinstance(group_asset, RmsEventsGroup)
+    assert len(circuit.rms_events_groups) == 1
+    assert str(group_asset.idtag) == "rms-group-a"
+
+
+def test_pre_simulation_handler_creates_missing_rms_group_before_adding_candidate() -> None:
+    """
+    Verify that adding a pre-simulation RMS candidate creates a missing event group first.
+
+    :return: None.
+    """
+    ensure_qt_application()
+    circuit: MultiCircuit = build_pre_simulation_rms_circuit_without_event_groups()
+    handler: DynamicsResultsHandler = DynamicsResultsHandler(results=None, circuit=circuit, simulation_type="RMS")
+    assert handler.create_plot_group(name="Plot 1") is True
+
+    synthetic_candidate: DynamicPlotCandidate = DynamicPlotCandidate(
+        simulation_type=PlotSimulationType.RMS,
+        event_group_idtag="",
+        event_group_name="",
+        device_type=DeviceType.GeneratorDevice,
+        device_idtag="gen-a",
+        device_label="Generator A",
+        bus_label="",
+        variable_name="omega",
+        result_path_kind="values",
+        variable_custom_name="Generator A - omega",
+        var=Var(name="omega", uid=61),
+    )
+
+    assert synthetic_candidate._event_group_name == ""
 
 
 def test_pre_simulation_dynamic_plot_assets_survive_roundtrip_without_results(tmp_path: Path) -> None:

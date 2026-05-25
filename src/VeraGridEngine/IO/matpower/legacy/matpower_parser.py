@@ -14,6 +14,7 @@ import VeraGridEngine.Devices as dev
 import VeraGridEngine.IO.matpower.legacy.matpower_branch_definitions as matpower_branches
 import VeraGridEngine.IO.matpower.legacy.matpower_bus_definitions as matpower_buses
 import VeraGridEngine.IO.matpower.legacy.matpower_gen_definitions as matpower_gen
+from VeraGridEngine.IO.matpower.veragrid_to_matpower import build_matpower_case_dict
 
 
 def find_between(s: str, first: str, last: str) -> str:
@@ -980,17 +981,15 @@ def get_branches(circuit: MultiCircuit, bus_dict: Dict[dev.Bus, int]) -> List[Di
     return data
 
 
-def to_matpower(circuit: MultiCircuit, logger: Logger = Logger()) -> Dict[str, Union[float, List[Dict[str, float]]]]:
+def to_matpower(circuit: MultiCircuit,
+                logger: Logger = Logger(),
+                t_idx: int | None = None) -> Dict[str, Union[float, List]]:
     """
 
     :param circuit:
     :param logger:
+    :param t_idx:
     :return:
     """
-    case = dict()
-    case['baseMVA'] = circuit.Sbase
-    case['bus'], bus_dict = get_buses(circuit=circuit)
-    case['gen'], case['gencost'] = get_generation(circuit=circuit, bus_dict=bus_dict)
-    case['branch'] = get_branches(circuit=circuit, bus_dict=bus_dict)
-
+    case = build_matpower_case_dict(circuit=circuit, t_idx=t_idx, logger=logger)
     return case

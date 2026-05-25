@@ -98,7 +98,7 @@ class LoadStepBoundaryUpdater(BoundaryUpdateWrapper):
         else:
             params[self._param_full_idx] = self._final_value_pu
 
-        self._problem.update(float(t), x, params)
+        self._problem.emt_boundary_update(float(t), x, params)
 
     def get_next_forced_event_time(self, t_prev: float, t_target: float) -> float | None:
         """
@@ -208,7 +208,7 @@ class GateScheduleBoundaryUpdater(BoundaryUpdateWrapper):
         """
         gate_value: float = self._get_gate_value(float(t))
         params[self._gate_param_idx] = gate_value
-        self._problem.update(float(t), x, params)
+        self._problem.emt_boundary_update(float(t), x, params)
 
         if self._record_count < len(self._record_time_s):
             self._record_time_s[self._record_count] = float(t)

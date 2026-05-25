@@ -608,42 +608,37 @@ class DynamicEventDialogue(QtWidgets.QDialog):
             row.row = i
 
     def create_event_group(self):
-        """Open dialog to create a new RMS/EMT events group."""
+        """
+        Open the shared RMS/EMT events-group creation workflow.
 
-        dialog = DynamicEventsGroupsDialog(parent=self,
-                                           mode=self.mode)
+        :return: None.
+        """
+        missing_group_message: str
+        created_group_message_title: str
+        created_group_message_body_prefix: str = "New group name"
 
-        if dialog.exec():
-            name = dialog.get_name()
+        if self.mode == DynamicSimulationMode.RMS:
+            missing_group_message = "No RMS Events Group found, please create one before adding an event."
+            created_group_message_title = "RMS group Created"
+        else:
+            missing_group_message = "No EMT Events Group found, please create one before adding an event."
+            created_group_message_title = "EMT group Created"
 
-            # create and add new Rms Events Group
-            if self.mode == DynamicSimulationMode.RMS:
-                new_group = RmsEventsGroup(idtag=None, name=name)
-                self.circuit.add_rms_events_group(new_group)
-                # update event rows
-                for row in self.rows:
-                    row.add_group(new_group)
+        new_group: RmsEventsGroup | EmtEventsGroup | None = create_dynamic_events_group_with_dialog(
+            circuit=self.circuit,
+            mode=self.mode,
+            parent=self,
+            missing_group_message=missing_group_message,
+            created_group_message_title=created_group_message_title,
+            created_group_message_body_prefix=created_group_message_body_prefix,
+        )
 
-                QtWidgets.QMessageBox.information(
-                    self,
-                    "RMS group Created",
-                    f"New group name: {name}"
-                )
-
-            # create and add new Emt Events Group
-            elif self.mode == DynamicSimulationMode.EMT:
-                new_group = EmtEventsGroup(idtag=None, name=name)
-                self.circuit.add_emt_events_group(new_group)
-
-                # update event rows
-                for row in self.rows:
-                    row.add_group(new_group)
-
-                QtWidgets.QMessageBox.information(
-                    self,
-                    "EMT group Created",
-                    f"New group name: {name}"
-                )
+        if new_group is not None:
+            row: EventRow
+            for row in self.rows:
+                row.add_group(new_group)
+        else:
+            pass
 
     def open_switch_sequence_dialog(self) -> None:
         """

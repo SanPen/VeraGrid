@@ -133,9 +133,10 @@ class FakeDropHandler:
                 device_type=DeviceType.GeneratorDevice,
                 device_idtag="device-id",
                 device_label="Generator 1",
+                bus_label="",
                 variable_name="omega",
                 result_path_kind="values",
-                curve_label="Generator 1 - omega",
+                variable_custom_name="Generator 1 - omega",
                 var=Var(name="omega", uid=self._accepted_var_uid),
             )
 
@@ -225,9 +226,10 @@ def test_dynamics_tree_model_exports_only_variable_leaf_mime_data(qt_app: object
             device_type=DeviceType.GeneratorDevice,
             device_idtag="device-id",
             device_label="Generator 1",
+            bus_label="",
             variable_name=variable.name,
             result_path_kind="values",
-            curve_label="Generator 1 - omega",
+            variable_custom_name="Generator 1 - omega",
             var=variable,
         )
     ])
@@ -291,9 +293,10 @@ def test_dynamics_plots_tree_accepts_valid_variable_drop(qt_app: object) -> None
         device_type=DeviceType.GeneratorDevice,
         device_idtag="device-id",
         device_label="Generator 1",
+        bus_label="",
         variable_name="omega",
         result_path_kind="values",
-        curve_label="Generator 1 - omega",
+        variable_custom_name="Generator 1 - omega",
         var=Var(name="omega", uid=variable_uid),
     )
     mime_data: QtCore.QMimeData = QtCore.QMimeData()

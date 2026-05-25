@@ -10933,6 +10933,8 @@ QProgressBar::chunk{
      </property>
      <addaction name="actionPSS_e_Raw_Rawx"/>
      <addaction name="actionPower_Factory_DGS"/>
+     <addaction name="actionMATPOWER"/>
+     <addaction name="actionUCTE"/>
      <addaction name="actionCIM"/>
      <addaction name="actionCGMES"/>
      <addaction name="actionPower_Grid_Models"/>
@@ -12714,6 +12716,20 @@ QProgressBar::chunk{
    </property>
    <property name="text">
     <string>Power Factory DGS</string>
+   </property>
+  </action>
+  <action name="actionMATPOWER">
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/matpower.png</normaloff>:/Icons/icons/matpower.png</iconset>
+   </property>
+   <property name="text">
+    <string>Matpower</string>
+   </property>
+  </action>
+  <action name="actionUCTE">
+   <property name="text">
+    <string>UCTE</string>
    </property>
   </action>
   <action name="actionCGMES">

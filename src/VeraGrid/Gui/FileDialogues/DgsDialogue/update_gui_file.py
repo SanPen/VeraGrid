@@ -8,5 +8,5 @@ Script to update correctly the main GUI (.py) file from the Qt design (.ui) file
 from VeraGrid.Gui.update_gui_common import convert_ui_file
 
 if __name__ == '__main__':
-    for file_name in ['dgs_import_gui.ui']:
+    for file_name in ['dgs_import_gui.ui', 'dgs_export_gui.ui']:
         convert_ui_file(source=file_name)

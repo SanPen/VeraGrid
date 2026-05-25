@@ -4821,6 +4821,8 @@ class Assets:
             if investment.commissioning_date <= model_unix <= investment.decommissioning_date:
                 self.apply_investment(investment=investment, logger=logger)
 
+        # TODO: apply to the time series values
+
         return logger
 
     # ------------------------------------------------------------------------------------------------------------------

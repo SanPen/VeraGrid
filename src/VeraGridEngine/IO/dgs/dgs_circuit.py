@@ -88,8 +88,10 @@ class DgsCircuit:
         ElmTerm,
         ElmTr2,
         ElmTr3,
+        ElmTr4,
         ElmXnet,
         ElmZone,
+        ElmArea,
         General,
         IntFolder,
         IntRef,
@@ -116,6 +118,7 @@ class DgsCircuit:
         TypSym,
         TypTr2,
         TypTr3,
+        TypTr4,
         TypVt,
     ]
 
@@ -163,8 +166,10 @@ class DgsCircuit:
         self.elmterms: List[ElmTerm] = list()
         self.elmtr2s: List[ElmTr2] = list()
         self.elmtr3s: List[ElmTr3] = list()
+        self.elmtr4s: List[ElmTr4] = list()
         self.elmxnets: List[ElmXnet] = list()
         self.elmzones: List[ElmZone] = list()
+        self.elmareas: List[ElmArea] = list()
         self.intfolders: List[IntFolder] = list()
         self.intrefs: List[IntRef] = list()
         self.inttemplates: List[IntTemplate] = list()
@@ -190,6 +195,7 @@ class DgsCircuit:
         self.typsyms: List[TypSym] = list()
         self.typtr2s: List[TypTr2] = list()
         self.typtr3s: List[TypTr3] = list()
+        self.typtr4s: List[TypTr4] = list()
         self.typvts: List[TypVt] = list()
 
         self._CLASS_TO_LIST: Dict[Type[DGSElement], List[DGSElement]] = {
@@ -229,8 +235,10 @@ class DgsCircuit:
             ElmTerm: self.elmterms,
             ElmTr2: self.elmtr2s,
             ElmTr3: self.elmtr3s,
+            ElmTr4: self.elmtr4s,
             ElmXnet: self.elmxnets,
             ElmZone: self.elmzones,
+            ElmArea: self.elmareas,
             IntFolder: self.intfolders,
             IntRef: self.intrefs,
             IntTemplate: self.inttemplates,
@@ -256,6 +264,7 @@ class DgsCircuit:
             TypSym: self.typsyms,
             TypTr2: self.typtr2s,
             TypTr3: self.typtr3s,
+            TypTr4: self.typtr4s,
             TypVt: self.typvts,
         }
 

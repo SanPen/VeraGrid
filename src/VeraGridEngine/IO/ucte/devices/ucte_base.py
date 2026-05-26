@@ -211,6 +211,18 @@ def sub_str(line: str, a: int, b: int, device: str, prop_name: str, logger: Logg
     return fallback_value
 
 
+def sub_optional_str(line: str, a: int, b: int, fallback_value: str = "") -> str:
+    """
+    Try to get an optional string from a substring.
+    """
+    chunk, _ = _sub_chunk(line, a, b)
+
+    if chunk == "":
+        return fallback_value
+
+    return chunk
+
+
 def ucte_split(line: str,
                prefix_lengths: tuple[int, ...] = (),
                total_fields: int | None = None,

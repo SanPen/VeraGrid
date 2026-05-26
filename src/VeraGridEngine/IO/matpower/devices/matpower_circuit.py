@@ -5,13 +5,13 @@
 from typing import List
 import numpy as np
 
-from VeraGridEngine.IO.matpower.branch import MatpowerBranch
-from VeraGridEngine.IO.matpower.bus import MatpowerBus
-from VeraGridEngine.IO.matpower.area import MatpowerArea
-from VeraGridEngine.IO.matpower.generator import MatpowerGenerator
-from VeraGridEngine.IO.matpower.bus_dc import MatAcDcBus
-from VeraGridEngine.IO.matpower.branch_dc import MatAcDcBranch
-from VeraGridEngine.IO.matpower.converter_dc import MatAcDcConverter
+from VeraGridEngine.IO.matpower.devices.branch import MatpowerBranch
+from VeraGridEngine.IO.matpower.devices.bus import MatpowerBus
+from VeraGridEngine.IO.matpower.devices.area import MatpowerArea
+from VeraGridEngine.IO.matpower.devices.generator import MatpowerGenerator
+from VeraGridEngine.IO.matpower.devices.bus_dc import MatAcDcBus
+from VeraGridEngine.IO.matpower.devices.branch_dc import MatAcDcBranch
+from VeraGridEngine.IO.matpower.devices.converter_dc import MatAcDcConverter
 from VeraGridEngine.IO.matpower.matpower_utils import txt2mat, find_between
 from VeraGridEngine.basic_structures import Logger
 

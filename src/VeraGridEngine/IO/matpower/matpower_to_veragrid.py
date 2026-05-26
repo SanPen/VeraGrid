@@ -6,7 +6,7 @@
 from typing import Dict, Tuple
 import numpy as np
 import math
-from VeraGridEngine.IO.matpower.matpower_circuit import MatpowerCircuit
+from VeraGridEngine.IO.matpower.devices.matpower_circuit import MatpowerCircuit
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.enumerations import TapModuleControl, TapPhaseControl, ConverterControlType
 import VeraGridEngine.Devices as dev

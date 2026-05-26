@@ -18,7 +18,7 @@ from VeraGridEngine.data_logger import DataLogger
 from VeraGridEngine.IO.veragrid.excel_interface import (load_from_xls, interpret_excel_v3, interprete_excel_v2)
 from VeraGridEngine.IO.veragrid.pack_unpack import (parse_veragrid_data, parse_multiverse_data)
 from VeraGridEngine.IO.matpower.legacy.matpower_parser import interpret_data_v1
-from VeraGridEngine.IO.matpower.matpower_circuit import MatpowerCircuit
+from VeraGridEngine.IO.matpower.devices.matpower_circuit import MatpowerCircuit
 from VeraGridEngine.IO.matpower.matpower_to_veragrid import matpower_to_veragrid
 from VeraGridEngine.IO.dgs.dgs_to_veragrid import dgs_to_circuit
 from VeraGridEngine.IO.others.dpx_parser import load_dpx

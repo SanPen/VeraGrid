@@ -2,6 +2,7 @@ from typing import Any
 
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae import RmsProblemDae
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_phasor  import RmsProblemPhasor
+from VeraGridEngine.Simulations.Rms.problems.rms_problem_multilinear import RmsProblemMultilinear
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_tensygrid  import RmsProblemTensygrid
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions, RmsProblemTypes
 
@@ -10,6 +11,7 @@ RMS_PROBLEM_CLASS_MAP = {
     RmsProblemTypes.Tensygrid: RmsProblemTensygrid,
     RmsProblemTypes.PowerBalance: RmsProblemDae,
     RmsProblemTypes.CurrentBalance: RmsProblemPhasor,
+    RmsProblemTypes.Multilinear: RmsProblemMultilinear,
 }
 
 

@@ -5,7 +5,7 @@
 
 from typing import Union, Tuple
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType, GCProp
-from VeraGridEngine.enumerations import PrpCat, PlotSimulationType
+from VeraGridEngine.enumerations import PrpCat, PlotSimulationType, DynamicPlotMode
 
 
 class DynamicPlot(EditableDevice):
@@ -22,6 +22,7 @@ class DynamicPlot(EditableDevice):
     """
     __slots__ = (
         '_simulation_type',
+        '_mode',
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
@@ -32,12 +33,20 @@ class DynamicPlot(EditableDevice):
             definition='Simulation family for this persistent dynamic plot definition.',
             cat=[PrpCat.RMS, PrpCat.EMT],
         ),
+        GCProp(
+            prop_name='mode',
+            units='',
+            tpe=DynamicPlotMode,
+            definition='Plotting mode for this persistent dynamic plot definition.',
+            cat=[PrpCat.RMS, PrpCat.EMT],
+        ),
     )
 
     def __init__(self,
                   idtag: Union[str, None] = None,
                   name: str = "EmtEventsGroup",
                   simulation_type: PlotSimulationType = PlotSimulationType.RMS,
+                  mode: DynamicPlotMode = DynamicPlotMode.TIME_SERIES,
                   comment: str = ""):
         """
         Build one persistent dynamic plot asset.
@@ -45,6 +54,7 @@ class DynamicPlot(EditableDevice):
         :param idtag: Unique identifier.
         :param name: Plot-group name shown in the GUI.
         :param simulation_type: Simulation family identifier.
+        :param mode: Plotting mode identifier.
         :param comment: Optional user comment.
         :return: None.
         """
@@ -53,9 +63,11 @@ class DynamicPlot(EditableDevice):
                                 name=name,
                                 idtag=idtag,
                                 code='',
-                                device_type=DeviceType.DynamicPlotGroupDevice,
-                                comment=comment)
+                                 device_type=DeviceType.DynamicPlotGroupDevice,
+                                 comment=comment)
         self._simulation_type = simulation_type
+        self._mode = DynamicPlotMode.TIME_SERIES
+        self.mode = mode
 
 
     @property
@@ -79,3 +91,25 @@ class DynamicPlot(EditableDevice):
             self._simulation_type = val
         else:
             raise ValueError("Unsupported plot simulation type")
+
+    @property
+    def mode(self) -> DynamicPlotMode:
+        """
+        Get the plotting mode assigned to this plot.
+
+        :return: Plotting mode identifier.
+        """
+        return self._mode
+
+    @mode.setter
+    def mode(self, val: DynamicPlotMode) -> None:
+        """
+        Set the plotting mode assigned to this plot.
+
+        :param val: Plotting mode identifier.
+        :return: None.
+        """
+        if isinstance(val, DynamicPlotMode):
+            self._mode = val
+        else:
+            raise ValueError("Unsupported dynamic plot mode")

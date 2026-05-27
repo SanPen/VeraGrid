@@ -285,7 +285,7 @@ def load_function_from_file_path(file_path: str, function_name: str):
     # Generate a unique module name to avoid conflicts
     # Here, we use the file's absolute path hashed to ensure uniqueness
     absolute_path = os.path.abspath(file_path)
-    module_name = f"dynamic_module_{hashlib.md5(absolute_path.encode()).hexdigest()}"
+    module_name = f"dynamic_module_{hashlib.sha256(absolute_path.encode('utf-8')).hexdigest()}"
 
     # Create a module specification from the file location
     spec = importlib.util.spec_from_file_location(module_name, absolute_path)

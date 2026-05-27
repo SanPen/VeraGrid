@@ -687,7 +687,7 @@ def _build_persistent_initialization_cache_key(
         f"{float(options.init_ptc_dtau_max):.12g}",
         str(int(options.init_ptc_max_iter)),
     ])
-    return hashlib.md5(payload.encode("utf-8")).hexdigest()
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
 def _persistent_initialization_params_match(
@@ -837,7 +837,7 @@ def _build_reduced_initialization_cache_key(
         "::".join(mask_tokens),
         "::".join(residual_tokens),
     ])
-    return hashlib.md5(payload.encode("utf-8")).hexdigest()
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
 def _build_state_rhs_cache_key(problem: EmtProblemTemplate, state_eqs: List[Expr]) -> str:
@@ -867,7 +867,7 @@ def _build_state_rhs_cache_key(problem: EmtProblemTemplate, state_eqs: List[Expr
         str(problem.get_states_number()),
         "::".join(expr_tokens),
     ])
-    return hashlib.md5(payload.encode("utf-8")).hexdigest()
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
 def _collect_missing_dx_problem(problem: EmtProblemTemplate,

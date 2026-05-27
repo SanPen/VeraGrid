@@ -2,7 +2,6 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
-import hashlib
 import uuid as uuidlib
 from typing import List, Dict, TypeVar, Any, Sequence, Tuple
 from VeraGridEngine.IO.base.units import Unit
@@ -15,9 +14,7 @@ def uuid_from_seed(seed: str):
     :param seed:
     :return:
     """
-    m = hashlib.md5()
-    m.update(seed.encode('utf-8'))
-    return uuidlib.UUID(m.hexdigest()).hex
+    return uuidlib.uuid5(uuidlib.UUID("f6fbb469-7173-5f64-a3af-d463f1f4e8f9"), seed).hex
 
 
 def format_raw_float(value: float) -> str:

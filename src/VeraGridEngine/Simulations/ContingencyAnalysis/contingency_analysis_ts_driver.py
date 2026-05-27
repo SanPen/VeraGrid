@@ -312,7 +312,7 @@ class ContingencyAnalysisTimeSeriesDriver(TimeSeriesDriverTemplate):
             )
 
             results.S[it, :] = max_abs_per_col(res_t.Sbus.real)
-            results.Sf_base[it, :] = res_t.Sf_base
+            results.Sf_base[it, :] = res_t.Sf_base.real
             results.max_flows[it, :] = max_abs_per_col(res_t.Sf.real)
 
             # Note: Loading is (ncon, nbranch)

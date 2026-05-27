@@ -33,6 +33,7 @@ class RmsResults(ResultsTemplate):
         "variables",
         "uid2vars_glob_name",
         "devices_vars_info",
+        "parameter_value_maps",
         "uid2idx",
         "vars_glob_name2uid",
         "variable_array",
@@ -43,11 +44,12 @@ class RmsResults(ResultsTemplate):
                  time_array: DateVec,
                  rms_events_group_names: StrVec,
                  rms_events_group_idtags: StrVec,
-                 variables: List[Var],
-                 uid2idx: Dict[int, int],
-                 vars_glob_name2uid: Dict[str, int],
-                 devices_vars_info: Dict[ALL_DEV_TYPES, List[Var]],
-                 has_event_group_results: Optional[StrVec] = None):
+                  variables: List[Var],
+                  uid2idx: Dict[int, int],
+                  vars_glob_name2uid: Dict[str, int],
+                  devices_vars_info: Dict[ALL_DEV_TYPES, List[Var]],
+                  parameter_value_maps: Optional[List[Dict[str, float]]] = None,
+                  has_event_group_results: Optional[StrVec] = None):
         """
         Build the RMS dynamic results container.
 
@@ -58,6 +60,7 @@ class RmsResults(ResultsTemplate):
         :param uid2idx: Mapping from variable uid to the ``values`` column index.
         :param vars_glob_name2uid: Mapping from global variable label to variable uid.
         :param devices_vars_info: Device-to-variable mapping used to rebuild the results tree.
+        :param parameter_value_maps: Per-event-group parameter scalar maps exported for GUI plotting.
         :param has_event_group_results: Boolean mask telling which event-group columns contain actual simulation data.
         :return: None.
 
@@ -97,6 +100,13 @@ class RmsResults(ResultsTemplate):
         self.variables = variables
         self.uid2vars_glob_name = {uid: name for name, uid in vars_glob_name2uid.items()}
         self.devices_vars_info: Dict[ALL_DEV_TYPES, List[Var]] = devices_vars_info
+        if parameter_value_maps is None:
+            self.parameter_value_maps: List[Dict[str, float]] = list()
+            group_index: int
+            for group_index in range(self.ng):
+                self.parameter_value_maps.append(dict())
+        else:
+            self.parameter_value_maps = list(parameter_value_maps)
         self.uid2idx: Dict[int, int] = uid2idx
         self.vars_glob_name2uid = vars_glob_name2uid
         self.variable_array = np.array([self.uid2vars_glob_name[var.uid] for var in variables], dtype=str)
@@ -128,6 +138,21 @@ class RmsResults(ResultsTemplate):
                 elm_by_type_dict[elm] = var_list
 
         return tree
+
+    def get_parameter_value(self, group_idx: int, device_idtag: str, parameter_name: str) -> float | None:
+        """
+        Get one exported parameter value for one event group.
+
+        :param group_idx: Event-group index.
+        :param device_idtag: Stable device identifier.
+        :param parameter_name: Canonical symbolic parameter name.
+        :return: Parameter scalar value, or ``None``.
+        """
+        if group_idx >= 0 and group_idx < len(self.parameter_value_maps):
+            parameter_key: str = str(device_idtag) + ":" + str(parameter_name)
+            return self.parameter_value_maps[group_idx].get(parameter_key, None)
+        else:
+            return None
 
     def plot_var(self, var: Var, group_idx: int = 0):
         """

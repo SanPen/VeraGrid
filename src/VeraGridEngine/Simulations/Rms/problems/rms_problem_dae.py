@@ -1756,28 +1756,18 @@ class RmsProblemDae(RmsProblemTemplate):
             self._variable_parameters_values[:] = full_params[:self.get_variable_parameter_number()]
 
     def get_static_state_matrix(self, x:Vec, dx:Vec):
+        nx = self.get_states_number()
+        ny = self.get_algebraic_var_number()
 
-        all_eqs = self._state_eqs + self._algebraic_eqs
-        all_vars = self._state_vars + self._algebraic_vars
-        A_call = SymbolicJacobian(
-            eqs= all_eqs,
-            variables=all_vars,
-            compiler_names_dict=self._compiler_names_dict,
-            alias_names_dict= self._alias_names_dict,
-            VARS_NAME=self.VARS_NAME,
-            DIFF_NAME=self.DIFF_NAME,
-            EVENT_PARAMS_NAME=self.VARIABLE_PARAMS_NAME,
-            PARAMS_NAME=self.CONSTANT_PARAMS_NAME,
-            static=True
-        )
+        if nx == 0:
+            gy = self.get_j22(x, dx, 1e15).toarray()
+            return gy
 
-
-        vp = self._variable_parameters_values
-        cp = self._constant_params
-        n_vars = self._n_vars
-        A_value = np.zeros((n_vars, n_vars))
-        A_value = A_call(x, dx, vp, cp, h=0).toarray()
-        return A_value
+        fx = self.get_j11(x, dx, 1e10).toarray()
+        fy = self.get_j12(x, dx, 1e10).toarray()
+        gx = self.get_j21(x, dx, 1e10).toarray()
+        gy = self.get_j22(x, dx, 1e15).toarray()
+        return np.block([[fx, fy], [gx, gy]])
 
     def update(self, t: float, x: Vec, params: Vec) -> None:
         self._update_dynamic_mode_defaults(t=t, x=x, params=params)

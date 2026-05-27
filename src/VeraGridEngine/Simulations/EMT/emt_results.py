@@ -35,6 +35,7 @@ class EmtResults(ResultsTemplate):
         "diff_variables",
         "uid2vars_glob_name",
         "devices_vars_info",
+        "parameter_value_maps",
         "uid2idx_vars",
         "uid2idx_diff",
         "uid2idx",
@@ -53,8 +54,9 @@ class EmtResults(ResultsTemplate):
                  uid2idx_vars: Dict[int, int],
                  uid2idx_diff: Dict[int, int],
                  vars_glob_name2uid: Dict[str, int],
-                  devices_vars_info: Dict[ALL_DEV_TYPES, List[Var]],
-                  has_event_group_results: Optional[StrVec] = None):
+                 devices_vars_info: Dict[ALL_DEV_TYPES, List[Var]],
+                 parameter_value_maps: Optional[List[Dict[str, float]]] = None,
+                 has_event_group_results: Optional[StrVec] = None):
         """
         Build the EMT dynamic results container.
 
@@ -67,6 +69,7 @@ class EmtResults(ResultsTemplate):
         :param uid2idx_diff: Mapping from variable uid to the ``diff_values`` column index.
         :param vars_glob_name2uid: Mapping from global variable label to variable uid.
         :param devices_vars_info: Device-to-variable mapping used to rebuild the results tree.
+        :param parameter_value_maps: Per-event-group parameter scalar maps exported for GUI plotting.
         :param has_event_group_results: Boolean mask telling which event-group columns contain actual simulation data.
         :return: None.
 
@@ -108,6 +111,13 @@ class EmtResults(ResultsTemplate):
         self.diff_variables = diff_variables
         self.uid2vars_glob_name = {uid: name for name, uid in vars_glob_name2uid.items()}
         self.devices_vars_info: Dict[ALL_DEV_TYPES, List[Var]] = devices_vars_info
+        if parameter_value_maps is None:
+            self.parameter_value_maps: List[Dict[str, float]] = list()
+            group_index: int
+            for group_index in range(self.ng):
+                self.parameter_value_maps.append(dict())
+        else:
+            self.parameter_value_maps = list(parameter_value_maps)
         self.uid2idx_vars: Dict[int, int] = uid2idx_vars
         self.uid2idx_diff: Dict[int, int] = uid2idx_diff
         self.uid2idx: Dict[int, int] = dict()
@@ -149,6 +159,21 @@ class EmtResults(ResultsTemplate):
 
         else:
             raise ValueError(f"Variable with uid {uid} not found in vars either diff_vars list.")
+
+    def get_parameter_value(self, group_idx: int, device_idtag: str, parameter_name: str) -> float | None:
+        """
+        Get one exported parameter value for one event group.
+
+        :param group_idx: Event-group index.
+        :param device_idtag: Stable device identifier.
+        :param parameter_name: Canonical symbolic parameter name.
+        :return: Parameter scalar value, or ``None``.
+        """
+        if group_idx >= 0 and group_idx < len(self.parameter_value_maps):
+            parameter_key: str = str(device_idtag) + ":" + str(parameter_name)
+            return self.parameter_value_maps[group_idx].get(parameter_key, None)
+        else:
+            return None
 
 
     def get_devices_dict_tree(self) -> Dict[DeviceType, Dict[ALL_DEV_TYPES, List[Var]]]:
@@ -216,5 +241,4 @@ class EmtResults(ResultsTemplate):
                 data[:, i] = self.diff_values[:, idx, group_idx]
 
         return data
-
 

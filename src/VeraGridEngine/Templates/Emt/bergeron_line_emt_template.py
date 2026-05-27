@@ -11,6 +11,127 @@ from VeraGridEngine.enumerations import DeviceType, EmtLineTypes, VarPowerFlowRe
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 
+
+def _build_symmetric_abc_matrix_from_sequence_values(positive_sequence_value: complex,
+                                                     zero_sequence_value: complex) -> np.ndarray:
+    """
+    Reconstruct one symmetric ABC matrix from one pair of sequence values.
+
+    :param positive_sequence_value: Positive-sequence scalar value.
+    :param zero_sequence_value: Zero-sequence scalar value.
+    :return: Symmetric 3x3 phase-domain matrix.
+    """
+    diagonal_value: complex = (2.0 * positive_sequence_value + zero_sequence_value) / 3.0
+    off_diagonal_value: complex = (zero_sequence_value - positive_sequence_value) / 3.0
+    matrix_abc: np.ndarray = np.full((3, 3), off_diagonal_value, dtype=np.complex128)
+    np.fill_diagonal(matrix_abc, diagonal_value)
+    return matrix_abc
+
+
+def _get_sequence_zero_value(primary_value: float, zero_value: float) -> float:
+    """
+    Resolve one usable zero-sequence scalar from one line object.
+
+    The balanced branch data model may omit explicit zero-sequence values. In that
+    case the Bergeron fallback must still build one symmetric phase-domain model.
+    The least surprising approximation is to reuse the positive-sequence value.
+
+    :param primary_value: Positive-sequence scalar value.
+    :param zero_value: Candidate zero-sequence scalar value.
+    :return: Zero-sequence scalar selected for reconstruction.
+    """
+    if abs(float(zero_value)) > 1.0e-20:
+        return float(zero_value)
+    else:
+        return float(primary_value)
+
+
+def _build_line_parameter_matrices_from_template_or_balanced_data(line: Any,
+                                                                  sbase: float,
+                                                                  fbase: float) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """
+    Build full phase-domain ``R``, ``L`` and ``C`` matrices for one Bergeron line.
+
+    The preferred path uses the detailed EMT template matrices. When no template is
+    attached, the function reconstructs one symmetric ABC equivalent from the
+    balanced branch parameters already stored on the line object.
+
+    :param line: Line API object.
+    :param sbase: System base power in MVA.
+    :param fbase: Nominal frequency in Hz.
+    :return: Tuple ``(R_full, L_full, C_full)`` in per-unit total-line form.
+    """
+    w: float = 2.0 * np.pi * float(fbase)
+
+    if line.template is not None:
+        vbase_volt: float = float(line.bus_from.Vnom) * 1e3
+        sbase_va: float = float(sbase) * 1e6
+        zbase_ohm: float = (vbase_volt * vbase_volt) / sbase_va
+        ybase_siemens: float = 1.0 / zbase_ohm
+
+        # The template stores Carson matrices per km. Bergeron uses per-meter and
+        # then converts them to per-unit before forming the total line matrices.
+        z_phys_m: np.ndarray = np.asarray(line.template.z_nabc, dtype=np.complex128) / 1e3
+        y_phys_m: np.ndarray = np.asarray(line.template.y_nabc, dtype=np.complex128) / 1e3
+        z_pu_m: np.ndarray = z_phys_m / zbase_ohm
+        y_pu_m: np.ndarray = y_phys_m / ybase_siemens
+
+        r_full: np.ndarray = np.real(z_pu_m) * float(line.length)
+        l_full: np.ndarray = (np.imag(z_pu_m) / w) * float(line.length)
+        c_full: np.ndarray = (np.imag(y_pu_m) / w) * float(line.length)
+        return r_full, l_full, c_full
+    else:
+        pass
+
+    # if line.ys is not None and line.ysh is not None:
+    #     vbase_volt: float = float(line.bus_from.Vnom) * 1e3
+    #     sbase_va: float = float(sbase) * 1e6
+    #     zbase_ohm: float = (vbase_volt * vbase_volt) / sbase_va
+    #     ybase_siemens: float = 1.0 / zbase_ohm
+    #
+    #     # The template stores Carson matrices per km. Bergeron uses per-meter and
+    #     # then converts them to per-unit before forming the total line matrices.
+    #     z_phys_m: np.ndarray = np.asarray(line.ys.values, dtype=np.complex128) / 1e3
+    #     y_phys_m: np.ndarray = np.asarray(line.ysh.values, dtype=np.complex128) / 1e3
+    #     z_pu_m: np.ndarray = z_phys_m / zbase_ohm
+    #     y_pu_m: np.ndarray = y_phys_m / ybase_siemens
+    #
+    #     r_full: np.ndarray = np.real(z_pu_m) * float(line.length)
+    #     l_full: np.ndarray = (np.imag(z_pu_m) / w) * float(line.length)
+    #     c_full: np.ndarray = (np.imag(y_pu_m) / w) * float(line.length)
+    #     return r_full, l_full, c_full
+
+
+
+    # Without a detailed template we rebuild one symmetric 3-phase equivalent from
+    # the sequence branch data. This mirrors the balanced-to-phase reconstruction
+    # already used elsewhere for EMT line fitting.
+    r1_value: float = float(line.R)
+    x1_value: float = float(line.X)
+    b1_value: float = float(line.B)
+    r0_value: float = _get_sequence_zero_value(primary_value=r1_value, zero_value=float(line.R0))
+    x0_value: float = _get_sequence_zero_value(primary_value=x1_value, zero_value=float(line.X0))
+    b0_value: float = _get_sequence_zero_value(primary_value=b1_value, zero_value=float(line.B0))
+
+    z1_value: complex = complex(r1_value, x1_value)
+    z0_value: complex = complex(r0_value, x0_value)
+    y1_value: complex = complex(0.0, b1_value)
+    y0_value: complex = complex(0.0, b0_value)
+
+    z_full: np.ndarray = _build_symmetric_abc_matrix_from_sequence_values(
+        positive_sequence_value=z1_value,
+        zero_sequence_value=z0_value,
+    )
+    y_full: np.ndarray = _build_symmetric_abc_matrix_from_sequence_values(
+        positive_sequence_value=y1_value,
+        zero_sequence_value=y0_value,
+    )
+
+    r_full = np.real(z_full)
+    l_full = np.imag(z_full) / w
+    c_full = np.imag(y_full) / w
+    return r_full, l_full, c_full
+
 def get_bergeron_line_emt_template(
     vf: VarFactory,
     phN: bool = False,
@@ -148,19 +269,11 @@ class BergeronHistoryRuntime:
         self.Ih_t = self._extract_hist_vars(prefix=f"Ih_t_{line.name}_")
 
         w = 2.0 * np.pi * fbase
-        Vbase = line.bus_from.Vnom * 1e3
-        S = sbase * 1e6
-        Zbase = (Vbase * Vbase) / S
-        Ybase = 1.0 / Zbase
-
-        Z_phys_m = line.template.z_nabc / 1e3
-        Y_phys_m = line.template.y_nabc / 1e3
-        Z_pu_m = Z_phys_m / Zbase
-        Y_pu_m = Y_phys_m / Ybase
-
-        R_full = np.real(Z_pu_m) * line.length
-        L_full = np.imag(Z_pu_m) * line.length
-        C_full = np.imag(Y_pu_m) * line.length
+        R_full, L_full, C_full = _build_line_parameter_matrices_from_template_or_balanced_data(
+            line=line,
+            sbase=sbase,
+            fbase=fbase,
+        )
 
         n_mat = R_full.shape[0]
 

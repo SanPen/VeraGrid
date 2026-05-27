@@ -9,6 +9,9 @@ from PySide6 import QtWidgets
 from VeraGrid.Gui.Main.SubClasses.Results.dynamics_results_handler import (
     DynamicsResultsHandler,
     DynamicPlotCandidate,
+    DynamicPlotParameter,
+    DynamicResultSeries,
+    collect_dynamic_model_plot_parameters,
     ensure_dynamic_plot_event_group,
 )
 from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import initialize_connected_bus_models_for_editor_assignment
@@ -24,9 +27,11 @@ from VeraGridEngine.IO.file_open import FileOpen
 from VeraGridEngine.IO.file_save import FileSavingOptions, save_veragrid_circuit
 from VeraGridEngine.Simulations.Rms.rms_results import RmsResults
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.Utils.Symbolic.symbolic import Var
+from VeraGridEngine.Utils.Symbolic.symbolic import Var, Const
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import connect_bus_variables_emt, connect_bus_variables_rms
-from VeraGridEngine.enumerations import DeviceType, FileType, PlotSimulationType, DynamicSimulationMode
+from VeraGridEngine.enumerations import (DeviceType, FileType, PlotSimulationType, DynamicSimulationMode,
+                                         DynamicPlotEntryKind, ParamPowerFlowRefferenceType,
+                                         DynamicPlotMode, DynamicPlotEntryRole)
 
 
 def ensure_qt_application() -> QtWidgets.QApplication:
@@ -53,11 +58,14 @@ def build_pre_simulation_rms_circuit() -> MultiCircuit:
     """
     circuit: MultiCircuit = MultiCircuit(name="pre-sim-rms")
     generator: Generator = Generator(name="Generator A", idtag="gen-a")
-    omega_var: Var = circuit.var_factory.add_var(name="omega", uid=1)
+    omega_var: Var = circuit.var_factory.add_var(name="omega_ref", uid=1)
     efd_var: Var = circuit.var_factory.add_var(name="efd", uid=2)
     generator.rms_model = Block(
         state_vars=[omega_var],
         algebraic_vars=[efd_var],
+        parameters={omega_var: Const(1.05)},
+        api_obj_mapping={ParamPowerFlowRefferenceType.omega_ref: omega_var},
+        event_dict={efd_var: Const(0.9)},
     )
     circuit.set_elements_list_by_type(device_type=DeviceType.GeneratorDevice, devices=[generator])
     circuit.add_rms_events_group(obj=RmsEventsGroup(idtag="rms-group-a", name="RMS Group A"))
@@ -107,6 +115,23 @@ def build_pre_simulation_editor_style_emt_circuit() -> MultiCircuit:
     circuit.set_elements_list_by_type(device_type=DeviceType.GeneratorDevice, devices=[generator])
     circuit.add_emt_events_group(obj=EmtEventsGroup(idtag="emt-group-a", name="EMT Group A"))
     return circuit
+
+
+def build_parameter_collection_block() -> Block:
+    """
+    Build one block with parameters exposed through API mapping and event dict.
+
+    :return: Block configured for parameter collection tests.
+    """
+    api_parameter: Var = Var(name="api_parameter", uid=801)
+    duplicate_parameter: Var = Var(name="duplicate_parameter", uid=802)
+    event_only_parameter: Var = Var(name="event_only_parameter", uid=803)
+    block: Block = Block(
+        parameters={api_parameter: Const(1.0), duplicate_parameter: Const(2.0), event_only_parameter: Const(3.0)},
+        api_obj_mapping={ParamPowerFlowRefferenceType.K: api_parameter, ParamPowerFlowRefferenceType.Kp: duplicate_parameter},
+        event_dict={duplicate_parameter: Const(4.0), event_only_parameter: Const(5.0)},
+    )
+    return block
 
 
 def build_pre_simulation_rms_circuit_without_event_groups() -> MultiCircuit:
@@ -197,6 +222,7 @@ def build_rms_results_from_generator(generator: Generator,
         devices_vars_info={generator: [variable]},
     )
     results.values[:, :, 0] = np.array([[0.0], [1.0]], dtype=float)
+    results.parameter_value_maps[0][str(generator.idtag) + ":omega_ref"] = 1.05
     return results
 
 
@@ -365,7 +391,20 @@ def test_pre_simulation_handler_creates_persistent_assets() -> None:
     assert circuit.dynamic_plots[0].simulation_type == PlotSimulationType.RMS
     assert circuit.dynamic_plot_entries[0].event_group_idtag == "rms-group-a"
     assert circuit.dynamic_plot_entries[0].device_idtag == "gen-a"
-    assert circuit.dynamic_plot_entries[0].variable_name == "omega"
+    assert circuit.dynamic_plot_entries[0].variable_name == "omega_ref"
+
+
+def test_collect_dynamic_model_plot_parameters_keeps_deterministic_order_without_duplicates() -> None:
+    """
+    Verify that parameters merge API mapping and event dict without duplicates.
+
+    :return: None.
+    """
+    block: Block = build_parameter_collection_block()
+    parameters: List[DynamicPlotParameter] = collect_dynamic_model_plot_parameters(model=block)
+    parameter_names: List[str] = [parameter.get_display_name() for parameter in parameters]
+
+    assert parameter_names == ["api_parameter", "duplicate_parameter", "event_only_parameter"]
 
 
 def test_ensure_dynamic_plot_event_group_reuses_existing_rms_group() -> None:
@@ -388,6 +427,81 @@ def test_ensure_dynamic_plot_event_group_reuses_existing_rms_group() -> None:
     assert str(group_asset.idtag) == "rms-group-a"
 
 
+def test_pre_simulation_tree_exposes_variables_and_parameters_sections() -> None:
+    """
+    Verify that one device shows explicit Variables and Parameters sections.
+
+    :return: None.
+    """
+    ensure_qt_application()
+    circuit: MultiCircuit = build_pre_simulation_rms_circuit()
+    handler: DynamicsResultsHandler = DynamicsResultsHandler(results=None, circuit=circuit, simulation_type="RMS")
+    model = handler.tree_model
+
+    assert model is not None
+    device_type_item = model.item(0, 0)
+    device_item = device_type_item.child(0, 0)
+    variables_section_item = device_item.child(0, 0)
+    parameters_section_item = device_item.child(1, 0)
+
+    assert variables_section_item.text() == "Variables"
+    assert parameters_section_item.text() == "Parameters"
+    assert variables_section_item.rowCount() > 0
+    assert parameters_section_item.rowCount() > 0
+
+
+def test_pre_simulation_parameter_candidate_creates_parameter_entry() -> None:
+    """
+    Verify that dragging a parameter candidate persists a parameter plot entry.
+
+    :return: None.
+    """
+    ensure_qt_application()
+    circuit: MultiCircuit = build_pre_simulation_rms_circuit()
+    handler: DynamicsResultsHandler = DynamicsResultsHandler(results=None, circuit=circuit, simulation_type="RMS")
+    assert handler.create_plot_group(name="Plot 1") is True
+
+    parameter_candidate_list: List[DynamicPlotCandidate] = handler.candidates_by_parameter_name.get("omega_ref", list())
+    assert len(parameter_candidate_list) > 0
+    inserted: bool = handler.add_candidate_to_group(group_name="Plot 1", candidate=parameter_candidate_list[0])
+
+    assert inserted is True
+    assert len(circuit.dynamic_plot_entries) == 1
+    assert circuit.dynamic_plot_entries[0].entry_kind == DynamicPlotEntryKind.PARAMETER
+    assert circuit.dynamic_plot_entries[0].variable_name == "omega_ref"
+
+
+def test_parameter_entry_resolves_to_constant_trace_after_results_exist() -> None:
+    """
+    Verify that a parameter entry resolves as a constant trace after simulation.
+
+    :return: None.
+    """
+    ensure_qt_application()
+    circuit: MultiCircuit = build_pre_simulation_rms_circuit()
+    handler: DynamicsResultsHandler = DynamicsResultsHandler(results=None, circuit=circuit, simulation_type="RMS")
+    assert handler.create_plot_group(name="Plot 1") is True
+
+    parameter_candidate_list: List[DynamicPlotCandidate] = handler.candidates_by_parameter_name.get("omega_ref", list())
+    assert len(parameter_candidate_list) > 0
+    assert handler.add_candidate_to_group(group_name="Plot 1", candidate=parameter_candidate_list[0]) is True
+
+    generator: Generator = circuit.get_elements_by_type(device_type=DeviceType.GeneratorDevice)[0]
+    results: RmsResults = build_rms_results_from_generator(generator=generator, variable_name="omega", variable_uid=101)
+    results_handler: DynamicsResultsHandler = DynamicsResultsHandler(results=results, circuit=circuit)
+
+    plot_group = results_handler.plot_groups.get_group(name="Plot 1")
+    assert plot_group is not None
+    stored_entries = plot_group.get_series()
+    assert len(stored_entries) == 1
+    assert isinstance(stored_entries[0], DynamicPlotEntry)
+
+    parameter_plot_data = results_handler._get_parameter_plot_data(entry=stored_entries[0])
+    assert parameter_plot_data is not None
+    _, parameter_values = parameter_plot_data
+    assert np.array_equal(parameter_values, np.array([1.05, 1.05], dtype=float))
+
+
 def test_pre_simulation_handler_creates_missing_rms_group_before_adding_candidate() -> None:
     """
     Verify that adding a pre-simulation RMS candidate creates a missing event group first.
@@ -401,6 +515,7 @@ def test_pre_simulation_handler_creates_missing_rms_group_before_adding_candidat
 
     synthetic_candidate: DynamicPlotCandidate = DynamicPlotCandidate(
         simulation_type=PlotSimulationType.RMS,
+        entry_kind=DynamicPlotEntryKind.VARIABLE,
         event_group_idtag="",
         event_group_name="",
         device_type=DeviceType.GeneratorDevice,
@@ -411,6 +526,7 @@ def test_pre_simulation_handler_creates_missing_rms_group_before_adding_candidat
         result_path_kind="values",
         variable_custom_name="Generator A - omega",
         var=Var(name="omega", uid=61),
+        parameter=None,
     )
 
     assert synthetic_candidate._event_group_name == ""
@@ -444,7 +560,7 @@ def test_pre_simulation_dynamic_plot_assets_survive_roundtrip_without_results(tm
     assert len(loaded_circuit.dynamic_plot_entries) == 1
     assert loaded_circuit.dynamic_plots[0].name == "Plot 1"
     assert loaded_circuit.dynamic_plots[0].simulation_type == PlotSimulationType.RMS
-    assert loaded_circuit.dynamic_plot_entries[0].variable_name == "omega"
+    assert loaded_circuit.dynamic_plot_entries[0].variable_name == "omega_ref"
     assert loaded_circuit.dynamic_plot_entries[0].event_group_idtag == "rms-group-a"
 
 
@@ -472,7 +588,94 @@ def test_pre_simulation_created_asset_binds_after_results_exist() -> None:
     restored_entries = group.get_series()
     assert len(restored_entries) == 1
     assert results_handler.get_plots_model() is not None
-    assert restored_entries[0].get_var().uid == 101
+    assert isinstance(restored_entries[0], DynamicPlotEntry)
+    assert restored_entries[0].variable_name == "omega_ref"
+
+
+def test_pre_simulation_xy_plot_rebinds_roles_after_results_exist() -> None:
+    """
+    Verify that pre-simulation XY plot slots remain populated after RMS results exist.
+
+    :return: None.
+    """
+    ensure_qt_application()
+    circuit: MultiCircuit = build_pre_simulation_rms_circuit()
+    handler: DynamicsResultsHandler = DynamicsResultsHandler(results=None, circuit=circuit, simulation_type="RMS")
+    assert handler.create_plot_group(name="Plot XY", mode=DynamicPlotMode.XY) is True
+
+    omega_candidate: DynamicPlotCandidate = handler.series_by_var_uid[1][0]
+    efd_candidate: DynamicPlotCandidate = handler.series_by_var_uid[2][0]
+    assert handler.add_candidate_to_group_with_role(group_name="Plot XY",
+                                                    candidate=omega_candidate,
+                                                    role=DynamicPlotEntryRole.X_AXIS) is True
+    assert handler.add_candidate_to_group_with_role(group_name="Plot XY",
+                                                    candidate=efd_candidate,
+                                                    role=DynamicPlotEntryRole.Y_AXIS) is True
+
+    generator: Generator = circuit.get_elements_by_type(device_type=DeviceType.GeneratorDevice)[0]
+    results: RmsResults = build_rms_results_from_generator(generator=generator, variable_name="omega_ref", variable_uid=101)
+    extra_variable: Var = Var(name="efd", uid=102)
+    results.variables.append(extra_variable)
+    results.uid2idx[102] = 1
+    results.vars_glob_name2uid[str(generator.idtag) + ":efd:102"] = 102
+    results.devices_vars_info[generator] = [results.variables[0], extra_variable]
+    expanded_values: np.ndarray = np.zeros((results.nt, 2, results.ng), dtype=float)
+    expanded_values[:, 0, :] = results.values[:, 0, :]
+    expanded_values[:, 1, :] = np.array([[2.0], [3.0]], dtype=float)
+    results.values = expanded_values
+    results.nv = 2
+
+    results_handler: DynamicsResultsHandler = DynamicsResultsHandler(results=results, circuit=circuit)
+    assert len(circuit.dynamic_plot_entries) == 2
+    assert circuit.dynamic_plot_entries[0].role == DynamicPlotEntryRole.X_AXIS
+    assert circuit.dynamic_plot_entries[1].role == DynamicPlotEntryRole.Y_AXIS
+    group = results_handler.plot_groups.get_group(name="Plot XY")
+    assert group is not None
+    assert group.get_mode() == DynamicPlotMode.XY
+    x_entry = group.get_entry_for_role(role=DynamicPlotEntryRole.X_AXIS)
+    y_entry = group.get_entry_for_role(role=DynamicPlotEntryRole.Y_AXIS)
+    assert isinstance(x_entry, DynamicResultSeries) or isinstance(x_entry, DynamicPlotEntry)
+    assert isinstance(y_entry, DynamicResultSeries) or isinstance(y_entry, DynamicPlotEntry)
+    assert x_entry is not None
+    assert y_entry is not None
+
+
+def test_post_simulation_xy_plot_accepts_runtime_series_assignment() -> None:
+    """
+    Verify that a post-simulation XY plot accepts runtime series assignment into X and Y slots.
+
+    :return: None.
+    """
+    ensure_qt_application()
+    circuit: MultiCircuit = build_pre_simulation_rms_circuit()
+    generator: Generator = circuit.get_elements_by_type(device_type=DeviceType.GeneratorDevice)[0]
+    results: RmsResults = build_rms_results_from_generator(generator=generator, variable_name="omega_ref", variable_uid=101)
+    extra_variable: Var = Var(name="efd", uid=102)
+    results.variables.append(extra_variable)
+    results.uid2idx[102] = 1
+    results.vars_glob_name2uid[str(generator.idtag) + ":efd:102"] = 102
+    results.devices_vars_info[generator] = [results.variables[0], extra_variable]
+    expanded_values: np.ndarray = np.zeros((results.nt, 2, results.ng), dtype=float)
+    expanded_values[:, 0, :] = results.values[:, 0, :]
+    expanded_values[:, 1, :] = np.array([[2.0], [3.0]], dtype=float)
+    results.values = expanded_values
+    results.nv = 2
+
+    handler: DynamicsResultsHandler = DynamicsResultsHandler(results=results, circuit=circuit)
+    assert handler.create_plot_group(name="Plot XY", mode=DynamicPlotMode.XY) is True
+    omega_series: DynamicResultSeries = handler.series_by_var_uid[101][0]
+    efd_series: DynamicResultSeries = handler.series_by_var_uid[102][0]
+    assert handler.add_series_to_group_with_role(group_name="Plot XY",
+                                                 series_key=omega_series.get_key(),
+                                                 role=DynamicPlotEntryRole.X_AXIS) is True
+    assert handler.add_series_to_group_with_role(group_name="Plot XY",
+                                                 series_key=efd_series.get_key(),
+                                                 role=DynamicPlotEntryRole.Y_AXIS) is True
+
+    group = handler.plot_groups.get_group(name="Plot XY")
+    assert group is not None
+    assert isinstance(group.get_entry_for_role(role=DynamicPlotEntryRole.X_AXIS), DynamicResultSeries)
+    assert isinstance(group.get_entry_for_role(role=DynamicPlotEntryRole.Y_AXIS), DynamicResultSeries)
 
 
 def test_pre_simulation_handler_discovers_editor_style_rms_variables() -> None:
@@ -511,7 +714,7 @@ def test_template_style_pre_simulation_rms_tree_includes_bus_voltage_variables()
     generator.rms_model = generator_model
 
     handler: DynamicsResultsHandler = DynamicsResultsHandler(results=None, circuit=circuit, simulation_type="RMS")
-    bus_variables = handler.tree_data[DeviceType.BusDevice][bus]
+    bus_variables = handler.tree_data[DeviceType.BusDevice][bus].get_variables()
     bus_variable_names = [variable.name for variable in bus_variables]
 
     assert "Vm" in bus_variable_names
@@ -563,7 +766,7 @@ def test_editor_assignment_initializes_rms_bus_before_tree_discovery() -> None:
                                                           mode=DynamicSimulationMode.RMS)
 
     handler: DynamicsResultsHandler = DynamicsResultsHandler(results=None, circuit=circuit, simulation_type="RMS")
-    bus_variables = handler.tree_data[DeviceType.BusDevice][bus]
+    bus_variables = handler.tree_data[DeviceType.BusDevice][bus].get_variables()
     bus_variable_names = [variable.name for variable in bus_variables]
 
     assert "Vm" in bus_variable_names
@@ -584,7 +787,7 @@ def test_post_simulation_rms_results_tree_includes_bus_voltage_variables() -> No
 
     assert DeviceType.BusDevice in handler.tree_data
     assert bus in handler.tree_data[DeviceType.BusDevice]
-    assert handler.tree_data[DeviceType.BusDevice][bus][0].name == "Vm"
+    assert handler.tree_data[DeviceType.BusDevice][bus].get_variables()[0].name == "Vm"
 
 
 def test_pre_simulation_handler_marks_editor_style_emt_diff_variables() -> None:
@@ -679,7 +882,7 @@ def test_template_style_pre_simulation_emt_tree_includes_bus_voltage_variables()
     generator.emt_model = generator_model
 
     handler: DynamicsResultsHandler = DynamicsResultsHandler(results=None, circuit=circuit, simulation_type="EMT")
-    bus_variables = handler.tree_data[DeviceType.BusDevice][bus]
+    bus_variables = handler.tree_data[DeviceType.BusDevice][bus].get_variables()
     bus_variable_names = [variable.name for variable in bus_variables]
 
     assert not any(name.startswith("v_N_") for name in bus_variable_names)
@@ -732,7 +935,7 @@ def test_editor_assignment_initializes_emt_bus_before_tree_discovery() -> None:
                                                           mode=DynamicSimulationMode.EMT)
 
     handler: DynamicsResultsHandler = DynamicsResultsHandler(results=None, circuit=circuit, simulation_type="EMT")
-    bus_variables = handler.tree_data[DeviceType.BusDevice][bus]
+    bus_variables = handler.tree_data[DeviceType.BusDevice][bus].get_variables()
     bus_variable_names = [variable.name for variable in bus_variables]
 
     assert not any(name.startswith("v_N_") for name in bus_variable_names)
@@ -756,4 +959,4 @@ def test_post_simulation_emt_results_tree_includes_bus_voltage_variables() -> No
 
     assert DeviceType.BusDevice in handler.tree_data
     assert bus in handler.tree_data[DeviceType.BusDevice]
-    assert handler.tree_data[DeviceType.BusDevice][bus][0].name == "v_A_Bus_A_emt_template"
+    assert handler.tree_data[DeviceType.BusDevice][bus].get_variables()[0].name == "v_A_Bus_A_emt_template"

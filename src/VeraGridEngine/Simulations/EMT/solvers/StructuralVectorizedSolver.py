@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from typing import Tuple, Callable, List, Any, Dict, Union, Set
+from typing import Tuple, Callable, List, Any, Dict, Union, Set, Optional
 import time
 import hashlib
 
@@ -65,7 +65,7 @@ def _build_backend_cache_token(
     :rtype: str
     """
     payload: str = "|".join([method.name, str(n_rows), str(n_cols), str(len(group_keys))])
-    return hashlib.md5(payload.encode("utf-8")).hexdigest()[:16]
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
 
 
 def fill_full_parameter_buffer(runtime_params: Vec, static_params: Vec, full_params_out: Vec) -> None:
@@ -1337,7 +1337,7 @@ class StructuralVectorizedSolver:
             )
 
             # Cluster by structural signature
-            eq_hash = hashlib.md5(sig_str.encode()).hexdigest()
+            eq_hash = hashlib.sha256(sig_str.encode("utf-8")).hexdigest()
 
             if eq_hash in groups:
                 group = groups[eq_hash]

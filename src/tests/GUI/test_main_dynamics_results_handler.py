@@ -1,18 +1,24 @@
 from typing import Dict, List, Tuple
 
-from PySide6 import QtCore, QtGui
+from PySide6 import QtCore, QtGui, QtWidgets
 
 from VeraGrid.Gui.Main.SubClasses.Results.dynamics_results_handler import (
     DynamicResultSeriesKey,
     DynamicPlotCandidate,
+    DynamicDeviceEntryCollection,
     DynamicsDeviceTreeModel,
     DynamicsPlotGroup,
     DynamicsPlotGroups,
     DynamicsPlotsTreeModel,
+    TreeStateNodeKind,
+    TreeStateSnapshot,
+    _build_tree_state_key,
+    _capture_tree_view_state,
+    _restore_tree_view_state,
     build_dynamics_tree_model,
 )
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
-from VeraGridEngine.enumerations import DeviceType, PlotSimulationType
+from VeraGridEngine.enumerations import DeviceType, PlotSimulationType, DynamicPlotEntryKind
 
 
 class NamedDevice:
@@ -79,6 +85,14 @@ class FakeDropHandler:
         """
         return self._drag_mime_type
 
+    def get_tree_state_role(self) -> int:
+        """
+        Get the semantic tree-state role used by the fake handler.
+
+        :return: Tree-state role.
+        """
+        return self._group_name_role + 1
+
     def get_group_name_from_drop_index(self, index: QtCore.QModelIndex) -> str | None:
         """
         Resolve a group name for a drop index.
@@ -128,6 +142,7 @@ class FakeDropHandler:
         else:
             return DynamicPlotCandidate(
                 simulation_type=PlotSimulationType.RMS,
+                entry_kind=DynamicPlotEntryKind.VARIABLE,
                 event_group_idtag="group-id",
                 event_group_name="Group 1",
                 device_type=DeviceType.GeneratorDevice,
@@ -138,6 +153,7 @@ class FakeDropHandler:
                 result_path_kind="values",
                 variable_custom_name="Generator 1 - omega",
                 var=Var(name="omega", uid=self._accepted_var_uid),
+                parameter=None,
             )
 
     def add_candidate_to_group(self, group_name: str, candidate: DynamicPlotCandidate) -> bool:
@@ -207,20 +223,22 @@ def test_dynamics_tree_model_exports_only_variable_leaf_mime_data(qt_app: object
 
     var_role: int = int(QtCore.Qt.ItemDataRole.UserRole) + 300
     mime_type: str = "application/x-veragrid-test-dynamics-var"
+    state_key_role: int = int(QtCore.Qt.ItemDataRole.UserRole) + 302
     variable: Var = Var(name="omega", uid=500)
     variables: List[Var] = list()
     variables.append(variable)
 
     device: NamedDevice = NamedDevice(name="Generator 1")
-    devices_data: Dict[NamedDevice, List[Var]] = dict()
-    devices_data[device] = variables
+    devices_data: Dict[NamedDevice, DynamicDeviceEntryCollection] = dict()
+    devices_data[device] = DynamicDeviceEntryCollection(variables=variables, parameters=list())
 
-    tree_data: Dict[DeviceType, Dict[NamedDevice, List[Var]]] = dict()
+    tree_data: Dict[DeviceType, Dict[NamedDevice, DynamicDeviceEntryCollection]] = dict()
     tree_data[DeviceType.GeneratorDevice] = devices_data
     series_by_var_uid: Dict[int, List[DynamicPlotCandidate]] = dict()
     series_by_var_uid[variable.uid] = list([
         DynamicPlotCandidate(
             simulation_type=PlotSimulationType.RMS,
+            entry_kind=DynamicPlotEntryKind.VARIABLE,
             event_group_idtag="group-id",
             event_group_name="Group 1",
             device_type=DeviceType.GeneratorDevice,
@@ -231,6 +249,7 @@ def test_dynamics_tree_model_exports_only_variable_leaf_mime_data(qt_app: object
             result_path_kind="values",
             variable_custom_name="Generator 1 - omega",
             var=variable,
+            parameter=None,
         )
     ])
 
@@ -238,12 +257,15 @@ def test_dynamics_tree_model_exports_only_variable_leaf_mime_data(qt_app: object
         tree_data=tree_data,
         var_role=var_role,
         mime_type=mime_type,
+        state_key_role=state_key_role,
         series_by_var_uid=series_by_var_uid,
+        candidates_by_parameter_name=dict(),
         has_multiple_sources=False,
     )
     device_type_item: QtGui.QStandardItem = model.item(0, 0)
     device_item: QtGui.QStandardItem = device_type_item.child(0, 0)
-    variable_item: QtGui.QStandardItem = device_item.child(0, 0)
+    variables_section_item: QtGui.QStandardItem = device_item.child(0, 0)
+    variable_item: QtGui.QStandardItem = variables_section_item.child(0, 0)
 
     device_flags: QtCore.Qt.ItemFlag = model.flags(device_item.index())
     variable_flags: QtCore.Qt.ItemFlag = model.flags(variable_item.index())
@@ -288,6 +310,7 @@ def test_dynamics_plots_tree_accepts_valid_variable_drop(qt_app: object) -> None
 
     candidate: DynamicPlotCandidate = DynamicPlotCandidate(
         simulation_type=PlotSimulationType.RMS,
+        entry_kind=DynamicPlotEntryKind.VARIABLE,
         event_group_idtag="group-id",
         event_group_name="Group 1",
         device_type=DeviceType.GeneratorDevice,
@@ -298,6 +321,7 @@ def test_dynamics_plots_tree_accepts_valid_variable_drop(qt_app: object) -> None
         result_path_kind="values",
         variable_custom_name="Generator 1 - omega",
         var=Var(name="omega", uid=variable_uid),
+        parameter=None,
     )
     mime_data: QtCore.QMimeData = QtCore.QMimeData()
     mime_data.setData(mime_type, QtCore.QByteArray(candidate.to_payload().encode("utf-8")))
@@ -316,3 +340,50 @@ def test_dynamics_plots_tree_accepts_valid_variable_drop(qt_app: object) -> None
     assert bool(child_flags & QtCore.Qt.ItemFlag.ItemIsDropEnabled) is False
     assert accepted is True
     assert handler.get_calls() == [("Plot 1", variable_uid)]
+
+
+def test_tree_state_helpers_restore_expansion_by_semantic_key(qt_app: object) -> None:
+    """
+    Check that semantic tree-state restoration survives a model rebuild.
+
+    :param qt_app: Shared Qt application fixture.
+    :return: Nothing.
+    """
+    del qt_app
+
+    state_key_role: int = int(QtCore.Qt.ItemDataRole.UserRole) + 302
+    model: QtGui.QStandardItemModel = QtGui.QStandardItemModel()
+    view: QtWidgets.QTreeView = QtWidgets.QTreeView()
+    root_item: QtGui.QStandardItem = model.invisibleRootItem()
+
+    group_item: QtGui.QStandardItem = QtGui.QStandardItem("Plot 1")
+    group_key: str = _build_tree_state_key(node_kind=TreeStateNodeKind.PLOT_GROUP, parts=["Plot 1"])
+    group_item.setData(group_key, state_key_role)
+    root_item.appendRow(group_item)
+
+    entry_item: QtGui.QStandardItem = QtGui.QStandardItem("omega")
+    entry_key: str = _build_tree_state_key(node_kind=TreeStateNodeKind.PLOT_ENTRY,
+                                           parts=["Plot 1", "entry-1"])
+    entry_item.setData(entry_key, state_key_role)
+    group_item.appendRow(entry_item)
+
+    view.setModel(model)
+    view.setExpanded(group_item.index(), True)
+    view.setCurrentIndex(entry_item.index())
+
+    snapshot: TreeStateSnapshot = _capture_tree_view_state(view=view, model=model, key_role=state_key_role)
+
+    rebuilt_model: QtGui.QStandardItemModel = QtGui.QStandardItemModel()
+    rebuilt_root_item: QtGui.QStandardItem = rebuilt_model.invisibleRootItem()
+    rebuilt_group_item: QtGui.QStandardItem = QtGui.QStandardItem("Plot 1")
+    rebuilt_group_item.setData(group_key, state_key_role)
+    rebuilt_root_item.appendRow(rebuilt_group_item)
+    rebuilt_entry_item: QtGui.QStandardItem = QtGui.QStandardItem("omega")
+    rebuilt_entry_item.setData(entry_key, state_key_role)
+    rebuilt_group_item.appendRow(rebuilt_entry_item)
+
+    view.setModel(rebuilt_model)
+    _restore_tree_view_state(view=view, model=rebuilt_model, key_role=state_key_role, snapshot=snapshot)
+
+    assert view.isExpanded(rebuilt_group_item.index()) is True
+    assert view.currentIndex() == rebuilt_entry_item.index()

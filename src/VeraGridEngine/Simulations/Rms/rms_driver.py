@@ -19,6 +19,32 @@ from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowResu
 from VeraGridEngine.basic_structures import Vec, StrVec
 
 
+def _collect_rms_group_parameter_values(problem: RmsProblemDae) -> Dict[str, float]:
+    """
+    Export one event-group parameter snapshot from the RMS problem.
+
+    :param problem: Solved RMS problem instance.
+    :return: Parameter scalar map keyed by ``device_idtag:param_name``.
+    """
+    parameter_values: Dict[str, float] = dict()
+    event_parameter_count: int = len(problem._variable_parameters)
+    parameter_index: int
+
+    if problem._variable_parameters_values is not None:
+        for parameter_index in range(event_parameter_count):
+            parameter_var = problem._variable_parameters[parameter_index]
+            device_idtag: str | None = problem._event_parameter_device_idtags.get(parameter_var.uid, None)
+            if device_idtag is not None:
+                parameter_key: str = str(device_idtag) + ":" + str(parameter_var.name)
+                parameter_values[parameter_key] = float(problem._variable_parameters_values[parameter_index])
+            else:
+                pass
+    else:
+        pass
+
+    return parameter_values
+
+
 class RmsSimulationDriver(DriverTemplate):
     __slots__ = (
         "pf_results",
@@ -106,6 +132,7 @@ class RmsSimulationDriver(DriverTemplate):
             uid2idx=problem.uid2idx_vars,
             vars_glob_name2uid=problem.vars_glob_name2uid,
             devices_vars_info=problem.get_device_vars_dict(),
+            parameter_value_maps=[dict() for _ in range(len(rms_events_groups))],
             has_event_group_results=has_event_group_results,
         )
 
@@ -162,6 +189,7 @@ class RmsSimulationDriver(DriverTemplate):
                 self.results.converged[group_idx] = converged
                 self.results.well_initialized[group_idx] = well_initialized
                 self.results.values[:, :, group_idx] = y
+                self.results.parameter_value_maps[group_idx] = _collect_rms_group_parameter_values(problem=problem)
 
                 if not well_initialized:
                     self.logger.add_warning("Not well initialized", device=rms_events_group.name)

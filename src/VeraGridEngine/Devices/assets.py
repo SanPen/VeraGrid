@@ -8866,13 +8866,20 @@ class Assets:
         for elm in self.get_all_elements_iter():
             elm.replace_objects(old_object=old_object, new_obj=new_obj, logger=logger)
 
-    def refine_pointer_objects(self, logger: Logger):
+    def refine_pointer_objects(self,
+                               logger: Logger,
+                               all_elements_dict: Tuple[Dict[str, ALL_DEV_TYPES], bool] | None = None):
         """
         Find the device types of pointer objects
         :param logger:
+        :param all_elements_dict:
         :return:
         """
-        d, ok = self.get_all_elements_dict(logger=logger)
+        if all_elements_dict is None:
+            d, ok = self.get_all_elements_dict(logger=logger)
+        else:
+            d = all_elements_dict
+
         objects_to_remove = list()
 
         for lst in [self.investments, self.remedial_actions, self.contingencies]:

@@ -10,17 +10,10 @@ https://github.com/pypa/sampleproject
 """
 
 # Always prefer setuptools over distutils
-import os
 from pathlib import Path
-import shutil
-import platform
-import subprocess
 from setuptools import setup, find_packages
-from setuptools.command.install import install
 
 from VeraGrid.__version__ import __VeraGrid_VERSION__
-
-here = os.path.abspath(os.path.dirname(__file__))
 
 long_description = '''# VeraGrid
 
@@ -89,113 +82,6 @@ extras_require = {
 }
 
 
-class CustomInstall(install):
-    def run(self):
-        install.run(self)
-
-        try:
-            if platform.system() == "Linux":
-                self.create_linux_menu_entry()
-            elif platform.system() == "Windows":
-                self.create_windows_shortcut()
-            elif platform.system() == "macOS":
-                self.create_macos_menu_entry()
-            else:
-                print("Unsupported OS: Installation might be incomplete.")
-        except Exception as e:
-            print("error creating the menu entry...", e)
-
-    @staticmethod
-    def create_linux_menu_entry():
-        """
-
-        :return:
-        """
-        icon_src = "data/VeraGrid.svg"
-
-        # copy the icon
-        dest_dir = f"~/.local/share/icons/hicolor/scalable/apps"
-        os.makedirs(dest_dir, exist_ok=True)
-        shutil.copy(icon_src, os.path.join(dest_dir, "VeraGrid.svg"))
-
-        # Update the icon cache
-        os.system("gtk-update-icon-cache /usr/share/icons/hicolor")
-
-        desktop_entry = """
-                [Desktop Entry]
-                Name=VeraGrid
-                Comment=Power systems done right
-                Exec=veragrid
-                Icon=~/.local/share/icons/hicolor/scalable/apps/VeraGrid.svg
-                Terminal=false
-                Type=Application
-                Categories=Utility;Development;
-                """
-        path = os.path.expanduser("~/.local/share/applications/veragrid.desktop")
-        with open(path, "w") as f:
-            f.write(desktop_entry)
-        os.chmod(path, 0o755)
-
-    @staticmethod
-    def create_windows_shortcut():
-        """
-
-        :return:
-        """
-        desktop = os.path.join(os.environ["USERPROFILE"], "Desktop")
-        shortcut_path = os.path.join(desktop, "VeraGrid.lnk")
-
-        # Use powershell to create a shortcut
-        powershell_command = f"""
-        $WScriptShell = New-Object -ComObject WScript.Shell;
-        $Shortcut = $WScriptShell.CreateShortcut("{shortcut_path}");
-        $Shortcut.TargetPath = "veragrid";
-        $Shortcut.Arguments = "";
-        $Shortcut.IconLocation = "path/to/your/icon.ico";
-        $Shortcut.Save();
-        """
-        subprocess.run(["powershell", "-Command", powershell_command], check=True)
-        print(f"Windows shortcut created at: {shortcut_path}")
-
-    @staticmethod
-    def create_macos_menu_entry():
-        """
-
-        :return:
-        """
-        svg_icon_src = "data/VeraGrid.svg"
-        dest_dir = "/Applications/VeraGrid/icons/"
-        os.makedirs(dest_dir, exist_ok=True)
-        shutil.copy(svg_icon_src, os.path.join(dest_dir, "VeraGrid.svg"))
-        print("macOS icon installed.")
-
-        app_dir = "/Applications/VeraGrid.app"
-        os.makedirs(app_dir, exist_ok=True)
-        plist_content = """
-        <?xml version="1.0" encoding="UTF-8"?>
-        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-        <plist version="1.0">
-        <dict>
-            <key>CFBundleName</key>
-            <string>VeraGrid</string>
-            <key>CFBundleIconFile</key>
-            <string>VeraGrid</string>
-            <key>CFBundleExecutable</key>
-            <string>run_veragrid</string>
-        </dict>
-        </plist>
-        """
-        plist_path = os.path.join(app_dir, "Info.plist")
-        with open(plist_path, "w") as f:
-            f.write(plist_content)
-
-        script_path = os.path.join(app_dir, "run_veragrid")
-        with open(script_path, "w") as f:
-            f.write("#!/bin/bash\nveragrid\n")
-        os.chmod(script_path, 0o755)
-        print(f"macOS application bundle created at {app_dir}.")
-
-
 # Arguments marked as "Required" below must be included for upload to PyPI.
 # Fields marked as "Optional" may be commented out.
 
@@ -220,10 +106,9 @@ setup(
     extras_require=extras_require,
     package_data=package_data,
     entry_points={
-        'console_scripts': [
+        'gui_scripts': [
             'veragrid = VeraGrid.ExecuteVeraGrid:runVeraGrid',
             'VeraGrid = VeraGrid.ExecuteVeraGrid:runVeraGrid',
         ],
     },
-    cmdclass={'install': CustomInstall},
 )

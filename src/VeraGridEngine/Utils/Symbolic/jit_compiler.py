@@ -516,6 +516,21 @@ def _is_zero(s: str) -> bool:
 def _is_one(s: str) -> bool:
     return s in ["1.0", "1", "1.00"]
 
+
+def _stable_digest(payload: str, length: int | None = None) -> str:
+    """
+    Return a deterministic SHA-256 digest for cache keys and generated-module names.
+
+    :param payload: Deterministic payload string.
+    :type payload: str
+    :param length: Optional prefix length to keep.
+    :type length: int | None
+    :return: Hex digest string.
+    :rtype: str
+    """
+    digest = hashlib.sha256(payload.encode("utf-8")).hexdigest()
+    return digest if length is None else digest[:length]
+
 def _compile_to_file(full_source: str, func_name: str) -> Callable:
     """
     Writes source code to a file in __pycache_jit__ and imports it.
@@ -533,7 +548,7 @@ def _compile_to_file(full_source: str, func_name: str) -> Callable:
     if cache_dir not in sys.path:
         sys.path.append(cache_dir)
 
-    content_hash = hashlib.md5(full_content.encode('utf-8')).hexdigest()[:16]
+    content_hash = _stable_digest(full_content, length=16)
     mod_name = f"{func_name}_{content_hash}"
     filename = f"{mod_name}.py"
     filepath = os.path.join(cache_dir, filename)
@@ -563,7 +578,7 @@ def _build_codegen_cache_key(payload: str) -> str:
     :rtype: str
     """
     cache_version: str = "jit-codegen-v1"
-    return hashlib.md5((cache_version + "|" + payload).encode("utf-8")).hexdigest()
+    return _stable_digest(cache_version + "|" + payload)
 
 
 def _fingerprint_codegen_var(node: Var,
@@ -961,7 +976,7 @@ class SubexpressionAnalyzer:
 
     def hash_expr(self, node: Expr) -> str:
         canonical = self._expr_to_canonical_string(node)
-        return hashlib.md5(canonical.encode()).hexdigest()[:12]
+        return _stable_digest(canonical, length=12)
 
     def _expr_to_canonical_string(self, node: Expr) -> str:
         if id(node) in self.memo_canonical:
@@ -2288,15 +2303,11 @@ class RMSCompiler(EquationCompiler):
         wrt_map = {v.uid: (i, v) for i, v in enumerate(wrt_vars)}
         triplets: List[Tuple[int, int, Expr]] = list()
 
-        # Only differentiate variables that appear in the equation AST.
-        # here when vectorizing, only general variables and general equations
         for row, eq in enumerate(eqs):
             for uid in _collect_candidate_wrt_uids(eq, wrt_map):
                 col, var = wrt_map[uid]
                 d_expr = eq.diff(var, dt=self.dt_var)
                 if not (isinstance(d_expr, Const) and d_expr.value == 0):
-                    # here when vectorizing we need to add a triplet for every specific variable corresponding to general variable
-                    # ºcol and row are arrays of the size the number of specific variables
                     triplets.append((col, row, d_expr))
 
         triplets.sort(key=_get_triplet_sort_key)

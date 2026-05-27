@@ -146,7 +146,7 @@ def _safe_njit(
         str(fastmath),
         str(cache),
     ])
-    cache_key = hashlib.md5(cache_payload.encode("utf-8")).hexdigest()
+    cache_key = hashlib.sha256(cache_payload.encode("utf-8")).hexdigest()
     cached_kernel = COMPILED_NUMBA_KERNEL_CACHE.get(cache_key)
 
     if cached_kernel is None:
@@ -753,7 +753,7 @@ def _build_backend_cache_token(
     :rtype: str
     """
     payload: str = "|".join([method.name, str(n_rows), str(n_cols), str(len(group_keys))])
-    return hashlib.md5(payload.encode("utf-8")).hexdigest()[:16]
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
 
 
 def _greedy_color_columns(col_rows: List[List[int]], n_rows: int) -> Tuple[Int32Vector, int, List[List[int]]]:

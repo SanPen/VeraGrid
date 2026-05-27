@@ -23,7 +23,11 @@ def _build_hard_sat_block(vfactory: VarFactory, x, xmin, xmax, mode: str = "ml",
         return Block(), x
     if sat_mode == "normal":
         y = vfactory.add_var(f"hs_{name}" if name else "hs")
-        blk = Block(algebraic_eqs=[y - sym.hard_sat(x, xmin, xmax)], algebraic_vars=[y])
+        blk = Block(
+            algebraic_eqs=[y - sym.hard_sat(x, xmin, xmax)],
+            algebraic_vars=[y],
+            init_eqs={y: sym.hard_sat(x, xmin, xmax)},
+        )
         return blk, y
     if sat_mode == "mti":
         return sym_ml.mti_hard_sat(vfactory, x, xmin, xmax, xmin, xmax, name=name)
@@ -32,7 +36,72 @@ def _build_hard_sat_block(vfactory: VarFactory, x, xmin, xmax, mode: str = "ml",
     raise ValueError(f"Unsupported hard_sat_type '{mode}'. Use: normal, ml, mti, none")
 
 
-def GenqecBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
+def _build_trig_transform_block(vfactory: VarFactory, x, mode: str = "ml"):
+    if mode.lower() == "ml":
+        return sym_ml.trig_transform(vfactory, x)
+    u_cos = vfactory.add_var("u_cos")
+    u_sin = vfactory.add_var("u_sin")
+    blk = Block(
+        algebraic_eqs=[u_cos - sym.cos(x), u_sin - sym.sin(x)],
+        algebraic_vars=[u_cos, u_sin],
+        init_eqs={u_cos: sym.cos(x), u_sin: sym.sin(x)},
+    )
+    return blk, u_cos, u_sin
+
+
+def _build_positive_part_block(vfactory: VarFactory, x, mode: str = "ml", name: str = ""):
+    if mode.lower() == "ml":
+        return sym_ml.ml_positive_part(vfactory, x, name=name)
+    x_plus = vfactory.add_var(f"x_plus_{name}" if name else "x_plus")
+    x_minus = vfactory.add_var(f"x_minus_{name}" if name else "x_minus")
+    blk = Block(
+        algebraic_eqs=[x_plus - sym.max(x, vfactory.add_const(0.0)), x_minus - sym.max(-x, vfactory.add_const(0.0))],
+        algebraic_vars=[x_plus, x_minus],
+        init_eqs={
+            x_plus: sym.max(x, vfactory.add_const(0.0)),
+            x_minus: sym.max(-x, vfactory.add_const(0.0)),
+        },
+    )
+    return blk, x_plus, x_minus
+
+
+def _build_exponential_block(vfactory: VarFactory, x, mode: str = "ml"):
+    if mode.lower() == "ml":
+        return sym_ml.exponential_ml(vfactory, x)
+    y = vfactory.add_var("exp_y")
+    blk = Block(
+        algebraic_eqs=[y - sym.exp(x)],
+        algebraic_vars=[y],
+        init_eqs={y: sym.exp(x)},
+    )
+    return blk, y
+
+
+def _build_heaviside_block(vfactory: VarFactory, x, mode: str = "ml"):
+    if mode.lower() == "ml":
+        return sym_ml.ml_heaviside(vfactory, x)
+    y = vfactory.add_var("hv_y")
+    blk = Block(
+        algebraic_eqs=[y - sym.heaviside(x)],
+        algebraic_vars=[y],
+        init_eqs={y: sym.heaviside(x)},
+    )
+    return blk, y
+
+
+def _build_f_exc_block(vfactory: VarFactory, x, mode: str = "ml"):
+    if mode.lower() == "ml":
+        return sym_ml.ml_f_exc(vfactory, x)
+    y = vfactory.add_var("f_exc_y")
+    blk = Block(
+        algebraic_eqs=[y - sym.f_exc(x)],
+        algebraic_vars=[y],
+        init_eqs={y: sym.f_exc(x)},
+    )
+    return blk, y
+
+
+def GenqecBuild(vfactory: VarFactory, name: str = "", hard_sat_type: str = "ml") -> RmsModelTemplate:
     """
      generator with quadratic saturation
     """
@@ -189,10 +258,10 @@ def GenqecBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
     Id_sat = vfactory.add_var('Id_sat')
 
     # we call trig_transform to get cos(Vm-delta) and siN(Vm-delta)
-    ml_trig_block, u_cos, u_sin = sym_ml.trig_transform(vfactory, inputs[1] - delta)
+    ml_trig_block, u_cos, u_sin = _build_trig_transform_block(vfactory, inputs[1] - delta, mode=hard_sat_type)
 
     # We call ml_postive_part to ge (Psi_ag-B)^+ := max(Psi_ag-B, 0)
-    ml_positive_part, Psi_plus, Psi_minus = sym_ml.ml_positive_part(vfactory, Psi_ag - B, name='Psi_plus')
+    ml_positive_part, Psi_plus, Psi_minus = _build_positive_part_block(vfactory, Psi_ag - B, mode=hard_sat_type, name='Psi_plus')
 
     templ.block = Block(
         state_eqs=[
@@ -768,8 +837,8 @@ def ExciterBuild(vfactory: VarFactory, name: str = "", hard_sat_type: str = "ml"
     Se_threshold = parameters['Ke'].value
 
     ml_block1, Ve = _build_hard_sat_block(vfactory, Ve_pre, VeMinPu, VeMaxPu, mode=hard_sat_type, name='Ve_sat')
-    ml_block_exp, V_exp = sym_ml.exponential_ml(vfactory, BEx * (Ve - Se_threshold))
-    ml_block_hv, V_hv = sym_ml.ml_heaviside(vfactory, Ve - Se_threshold)
+    ml_block_exp, V_exp = _build_exponential_block(vfactory, BEx * (Ve - Se_threshold), mode=hard_sat_type)
+    ml_block_hv, V_hv = _build_heaviside_block(vfactory, Ve - Se_threshold, mode=hard_sat_type)
     Sx = (V_exp - vfactory.add_const(1)) * V_hv
     aux_expr = parameters['Ke'].value * Ve + AEx * Ve * Sx
     algebraic_eqs_submodel.append(u_aux - aux_expr)
@@ -777,7 +846,7 @@ def ExciterBuild(vfactory: VarFactory, name: str = "", hard_sat_type: str = "ml"
 
     f_input = vfactory.add_var('f_input')
     f_output = vfactory.add_var('f_output')
-    ml_block3, f_output_res = sym_ml.ml_f_exc(vfactory, f_input)
+    ml_block3, f_output_res = _build_f_exc_block(vfactory, f_input, mode=hard_sat_type)
     algebraic_vars_submodel.append(f_input)
     algebraic_vars_submodel.append(f_output)
     algebraic_eqs_submodel.append(f_input * Ve - inputs[0] * parameters["Kc"].value)
@@ -1083,7 +1152,7 @@ def get_complete_generator_template(vfactory: VarFactory,
     templ.name = name
 
     # generate models
-    genqec_mdl = GenqecBuild(vfactory).block
+    genqec_mdl = GenqecBuild(vfactory, hard_sat_type=hard_sat_type).block
     exciter_mdl = ExciterBuild(vfactory, name, hard_sat_type=hard_sat_type).block
     governor_mdl = GovernorBuild(vfactory, hard_sat_type=hard_sat_type).block
     stabilizer_mdl = StabilizerBuild(vfactory, hard_sat_type=hard_sat_type).block

@@ -800,4 +800,4 @@ def test_dynamic_results_handler_skips_unexported_rms_device_vars() -> None:
 
     assert 1 in handler.series_by_var_uid
     assert 2 not in handler.series_by_var_uid
-    assert handler.tree_data[device.device_type][device][0].name == "omega"
+    assert handler.tree_data[device.device_type][device].get_variables()[0].name == "omega"

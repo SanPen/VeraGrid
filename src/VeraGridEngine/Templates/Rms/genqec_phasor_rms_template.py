@@ -361,7 +361,9 @@ def get_genqec_phasor(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
     return templ
 
 
-def get_complete_generator_template_phasor(vfactory: VarFactory, name="complete generator phasor rms template") -> RmsModelTemplate:
+def get_complete_generator_template_phasor(vfactory: VarFactory,
+                                           name="complete generator phasor rms template",
+                                           hard_sat_type: str = "ml") -> RmsModelTemplate:
     """
     Complete generator template with governor, exciter, and stabilizer for phasor-based RMS simulation.
     
@@ -385,10 +387,10 @@ def get_complete_generator_template_phasor(vfactory: VarFactory, name="complete 
     templ.name = name
 
     # Generate models from generation_tensygrid_ml.py
-    genqec_mdl = GenqecBuild(vfactory=vfactory, name=name).block
-    governor_mdl = GovernorBuild(vfactory=vfactory, name=name).block
-    stabilizer_mdl = StabilizerBuild(vfactory=vfactory, name=name).block
-    exciter_mdl = ExciterBuild(vfactory=vfactory, name=name).block
+    genqec_mdl = GenqecBuild(vfactory=vfactory, name=name, hard_sat_type=hard_sat_type).block
+    governor_mdl = GovernorBuild(vfactory=vfactory, name=name, hard_sat_type=hard_sat_type).block
+    stabilizer_mdl = StabilizerBuild(vfactory=vfactory, name=name, hard_sat_type=hard_sat_type).block
+    exciter_mdl = ExciterBuild(vfactory=vfactory, name=name, hard_sat_type=hard_sat_type).block
 
     # Create Vm calculation block: Vm = sqrt(Vr^2 + Vi^2)
     # This computes the voltage magnitude from phasor components for the exciter
@@ -404,7 +406,7 @@ def get_complete_generator_template_phasor(vfactory: VarFactory, name="complete 
         algebraic_eqs=[
             Vr_aux - Vr_input,
             Vi_aux - Vi_input,
-            Vm_calc*Vm_calc_aux - (Vr_input * Vr_input + Vi_input * Vi_input),
+            Vm_calc*Vm_calc_aux - (Vr_input * Vr_aux + Vi_input * Vi_aux),
             Vm_calc -Vm_calc_aux],
         algebraic_vars=[Vm_calc, Vm_calc_aux, Vr_aux, Vi_aux],
         out_vars=[Vm_calc],

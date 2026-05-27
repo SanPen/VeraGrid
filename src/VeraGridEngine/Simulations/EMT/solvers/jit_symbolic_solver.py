@@ -93,7 +93,7 @@ def _safe_njit(py_func: Callable[..., Any], fastmath: bool = True, cache: bool =
     :rtype: Callable[..., Any]
     """
     cache_payload: str = "|".join([py_func.__module__, py_func.__name__, str(fastmath), str(cache)])
-    cache_key: str = hashlib.md5(cache_payload.encode("utf-8")).hexdigest()
+    cache_key: str = hashlib.sha256(cache_payload.encode("utf-8")).hexdigest()
     cached_kernel: Callable[..., Any] | None = SYMBOLIC_NUMBA_KERNEL_CACHE.get(cache_key)
 
     if cached_kernel is None:

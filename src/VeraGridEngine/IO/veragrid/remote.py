@@ -197,6 +197,8 @@ def gather_model_as_jsons_for_communication(circuit: MultiCircuit,
     :return: JSON like data
     """
 
+    packed_circuit_data = gather_model_as_jsons(circuit=circuit)
+
     data = {
         'name': circuit.name,
         'baseMVA': circuit.Sbase,
@@ -205,7 +207,8 @@ def gather_model_as_jsons_for_communication(circuit: MultiCircuit,
         'UserName': circuit.user_name,
         'sender_id': uuid4().hex,
         'instruction': instruction.get_data(),
-        'model_data': gather_model_as_jsons(circuit=circuit),
+        'model_data': packed_circuit_data['model_data'],
+        'symbolic_data': packed_circuit_data['symbolic_data'],
         'diagrams': []
     }
     return data

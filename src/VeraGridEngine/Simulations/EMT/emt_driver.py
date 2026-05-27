@@ -5,6 +5,7 @@
 
 import numpy as np
 import pandas as pd
+from typing import Dict
 
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Simulations.driver_template import DriverTemplate
@@ -20,6 +21,29 @@ from VeraGridEngine.IO.fmu.importer.emt_boundary import build_emt_boundary_updat
 from VeraGridEngine.basic_structures import Vec, StrVec
 
 from VeraGridEngine.enumerations import EngineType, SimulationTypes
+
+
+def _collect_emt_group_parameter_values(problem: EmtProblemDae) -> Dict[str, float]:
+    """
+    Export one event-group parameter snapshot from the EMT problem.
+
+    :param problem: Solved EMT problem instance.
+    :return: Parameter scalar map keyed by ``device_idtag:param_name``.
+    """
+    parameter_values: Dict[str, float] = dict()
+    event_parameter_count: int = len(problem.get_variable_parameters())
+    parameter_index: int
+
+    for parameter_index in range(event_parameter_count):
+        parameter_var = problem.get_variable_parameters()[parameter_index]
+        device_idtag: str | None = problem._event_parameter_device_idtags.get(parameter_var.uid, None)
+        if device_idtag is not None:
+            parameter_key: str = str(device_idtag) + ":" + str(parameter_var.name)
+            parameter_values[parameter_key] = float(problem._event_params_values[parameter_index])
+        else:
+            pass
+
+    return parameter_values
 
 
 class EmtSimulationDriver(DriverTemplate):
@@ -137,6 +161,7 @@ class EmtSimulationDriver(DriverTemplate):
             uid2idx_diff=self.problem.uid2idx_diff,
             vars_glob_name2uid=self.problem.vars_glob_name2uid,
             devices_vars_info=self.problem.get_device_vars_dict(),
+            parameter_value_maps=[dict() for _ in range(len(emt_events_groups))],
             has_event_group_results=has_event_group_results,
         )
 
@@ -213,6 +238,7 @@ class EmtSimulationDriver(DriverTemplate):
                 self.results.well_initialized[group_idx] = well_initialized
                 self.results.values[:, :, group_idx] = y
                 self.results.diff_values[:, :, group_idx] = dy
+                self.results.parameter_value_maps[group_idx] = _collect_emt_group_parameter_values(problem=problem)
 
                 self.progress_signal.emit(90)
 
@@ -220,4 +246,3 @@ class EmtSimulationDriver(DriverTemplate):
                 self.report_text( emt_events_group.name + "skipped")
 
         self.progress_signal.emit(100)
-

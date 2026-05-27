@@ -1526,6 +1526,9 @@ def build_line_static_matrices(
         )
         # Tower/template matrices are physical line matrices. They are first
         # length-scaled and then converted to the system EMT per-unit base.
+
+        # z_phys: np.ndarray = line.ys.values * float(line.length)
+        # y_phys: np.ndarray = line.ysh.values * float(line.length)
         z_phys: np.ndarray = line_template.z_nabc * float(line.length)
         y_phys: np.ndarray = line_template.y_nabc * float(line.length)
 

@@ -7,7 +7,8 @@ from PySide6 import QtCore, QtWidgets, QtGui
 from matplotlib import pyplot as plt
 from typing import Union, Dict
 
-from VeraGrid.Gui.Main.SubClasses.Results.dynamics_results_handler import DynamicsResultsHandler, PlotSimulationType
+from VeraGrid.Gui.Main.SubClasses.Results.dynamics_results_handler import (
+    DynamicsResultsHandler)
 from VeraGrid.Gui.table_view_header_wrap import HeaderViewWithWordWrap
 import VeraGrid.Gui.gui_functions as gf
 from VeraGrid.Gui.messages import error_msg, warning_msg, yes_no_question
@@ -16,10 +17,11 @@ from VeraGrid.Gui.results_model import ResultsModel
 from VeraGrid.Gui.general_dialogues import fill_tree_from_logs
 import VeraGridEngine.Utils.Filtering as flt
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.enumerations import ResultTypes, SimulationTypes, PlotSimulationType
+from VeraGridEngine.enumerations import ResultTypes, SimulationTypes, PlotSimulationType, DynamicPlotEntryKind, DynamicPlotMode
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
 from VeraGridEngine.Simulations.Rms.rms_results import RmsResults
 from VeraGridEngine.Simulations.EMT.emt_results import EmtResults
+from VeraGridEngine.Devices.Events.dynamic_plot_entry import DynamicPlotEntry
 
 
 class ResultsMain(SimulationsMain):
@@ -128,9 +130,10 @@ class ResultsMain(SimulationsMain):
                     results=driver.results
                 )
 
-                self.ui.dynamicsDeviceTreeView.setModel(self.dynamic_results_handler.get_view_model())
-                self.ui.dynamicsPlotsTreeView.setModel(self.dynamic_results_handler.get_plots_model())
-                self.ui.dynamicsPlotsTreeView.expandAll()
+                if self._dynamic_views_already_attached():
+                    self.ui.dynamicsPlotsTreeView.update()
+                else:
+                    self._refresh_dynamic_tree_models(expand_plots_when_empty=True, clear_table=False)
 
                 self.ui.resultsTabWidget.setCurrentIndex(1)
 
@@ -142,9 +145,10 @@ class ResultsMain(SimulationsMain):
                     results=driver.results
                 )
 
-                self.ui.dynamicsDeviceTreeView.setModel(self.dynamic_results_handler.get_view_model())
-                self.ui.dynamicsPlotsTreeView.setModel(self.dynamic_results_handler.get_plots_model())
-                self.ui.dynamicsPlotsTreeView.expandAll()
+                if self._dynamic_views_already_attached():
+                    self.ui.dynamicsPlotsTreeView.update()
+                else:
+                    self._refresh_dynamic_tree_models(expand_plots_when_empty=True, clear_table=False)
                 self.ui.resultsTabWidget.setCurrentIndex(1)
 
             else:
@@ -247,7 +251,24 @@ class ResultsMain(SimulationsMain):
                 self.dynamic_results_handler.plot_series(series=selected_series)
                 return None
             else:
-                return None
+                parameter_entry: DynamicPlotEntry | None = self.dynamic_results_handler.get_parameter_entry_from_index(
+                    index=source_index
+                )
+                if parameter_entry is not None:
+                    self.dynamic_results_handler.plot_parameter_entry(entry=parameter_entry)
+                    return None
+                else:
+                    pass
+
+                selected_candidate = self.dynamic_results_handler.get_candidate_from_index(index=source_index)
+                if selected_candidate is not None:
+                    if selected_candidate.get_entry_kind() == DynamicPlotEntryKind.PARAMETER:
+                        self.dynamic_results_handler.plot_parameter_candidate(candidate=selected_candidate)
+                        return None
+                    else:
+                        return None
+                else:
+                    return None
         else:
             return None
 
@@ -281,6 +302,64 @@ class ResultsMain(SimulationsMain):
                 self.ui.dynamicsTableView.setModel(mdl)
             else:
                 pass
+        else:
+            pass
+
+    def _refresh_dynamic_tree_models(self,
+                                     expand_plots_when_empty: bool,
+                                     clear_table: bool) -> None:
+        """
+        Refresh the dynamic tree widgets while preserving semantic state.
+
+        :param expand_plots_when_empty: Expand all plot groups only when no prior state exists.
+        :param clear_table: Clear the dynamics table model after refresh when requested.
+        :return: Nothing.
+        """
+        if self.dynamic_results_handler is not None:
+            self.ui.dynamicsDeviceTreeView.setModel(self.dynamic_results_handler.get_view_model())
+            self.ui.dynamicsPlotsTreeView.setModel(self.dynamic_results_handler.get_plots_model())
+
+            if expand_plots_when_empty:
+                self.ui.dynamicsPlotsTreeView.expandAll()
+            else:
+                pass
+
+            if clear_table:
+                self.ui.dynamicsTableView.setModel(None)
+            else:
+                pass
+        else:
+            pass
+
+    def _dynamic_views_already_attached(self) -> bool:
+        """
+        Check whether the current handler models are already attached to the two dynamic tree views.
+
+        :return: ``True`` when both views already show the current handler models.
+        """
+        if self.dynamic_results_handler is not None:
+            current_device_model: QtCore.QAbstractItemModel | None = self.ui.dynamicsDeviceTreeView.model()
+            current_plots_model: QtCore.QAbstractItemModel | None = self.ui.dynamicsPlotsTreeView.model()
+
+            if current_device_model is self.dynamic_results_handler.get_view_model():
+                if current_plots_model is self.dynamic_results_handler.get_plots_model():
+                    return True
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False
+
+    def _expand_plot_drop_parent(self, parent: QtCore.QModelIndex) -> None:
+        """
+        Expand the plot-group row targeted by a drop operation.
+
+        :param parent: Parent index reported by the plots model.
+        :return: Nothing.
+        """
+        if parent.isValid():
+            self.ui.dynamicsPlotsTreeView.setExpanded(parent, True)
         else:
             pass
 
@@ -350,7 +429,7 @@ class ResultsMain(SimulationsMain):
                     renamed: bool = self.dynamic_results_handler.rename_plot_group(old_name=old_name,
                                                                                    new_name=new_name)
                     if renamed:
-                        self.ui.dynamicsPlotsTreeView.expandAll()
+                        self.ui.dynamicsPlotsTreeView.update()
                     else:
                         self.show_warning_toast("The plot group name is empty or already exists.")
                 else:
@@ -399,7 +478,7 @@ class ResultsMain(SimulationsMain):
                         new_name=new_name,
                     )
                     if renamed:
-                        self.ui.dynamicsPlotsTreeView.expandAll()
+                        self.ui.dynamicsPlotsTreeView.update()
                     else:
                         self.show_warning_toast("The variable name is empty or could not be changed.")
                 else:
@@ -421,12 +500,17 @@ class ResultsMain(SimulationsMain):
         :param last: Last inserted row.
         :return: Nothing.
         """
+
+
+        # A row insertion already happened inside the existing model. Rebuilding
+        # the views here would destroy the exact expansion state we are trying to
+        # preserve. The only required post-insert action is to keep the target
+        # parent visible so the newly dropped entry remains in view.
+        self._expand_plot_drop_parent(parent=parent)
+
         del parent
         del first
         del last
-
-        # Expanding after insert keeps dropped variables immediately visible inside their target plot group.
-        self.ui.dynamicsPlotsTreeView.expandAll()
 
     def add_dynamic_plot_group(self) -> None:
         """
@@ -436,12 +520,35 @@ class ResultsMain(SimulationsMain):
         """
         if self.dynamic_results_handler is not None:
             suggested_name: str = self.dynamic_results_handler.get_next_group_name()
-            group_name, accepted = QtWidgets.QInputDialog.getText(self,
-                                                                  "New dynamic plot",
-                                                                  "Plot name",
-                                                                  text=suggested_name)
+            dialog: QtWidgets.QDialog = QtWidgets.QDialog(self)
+            dialog.setWindowTitle("New dynamic plot")
+            layout: QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout(dialog)
+            name_label: QtWidgets.QLabel = QtWidgets.QLabel("Plot name", dialog)
+            name_edit: QtWidgets.QLineEdit = QtWidgets.QLineEdit(dialog)
+            mode_label: QtWidgets.QLabel = QtWidgets.QLabel("Plot mode", dialog)
+            mode_combo: QtWidgets.QComboBox = QtWidgets.QComboBox(dialog)
+            buttons: QtWidgets.QDialogButtonBox = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.StandardButton.Ok | QtWidgets.QDialogButtonBox.StandardButton.Cancel,
+                                                                              dialog)
+            name_edit.setText(suggested_name)
+            mode_combo.addItem("Time Series (Y vs Time)", DynamicPlotMode.TIME_SERIES)
+            mode_combo.addItem("X-Y Plot (Y vs X)", DynamicPlotMode.XY)
+            buttons.accepted.connect(dialog.accept)
+            buttons.rejected.connect(dialog.reject)
+            layout.addWidget(name_label)
+            layout.addWidget(name_edit)
+            layout.addWidget(mode_label)
+            layout.addWidget(mode_combo)
+            layout.addWidget(buttons)
+            accepted: bool = dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted
             if accepted:
-                created: bool = self.dynamic_results_handler.create_plot_group(name=group_name)
+                group_name: str = name_edit.text()
+                selected_mode_data: object = mode_combo.currentData()
+                selected_mode: DynamicPlotMode = DynamicPlotMode.TIME_SERIES
+                if isinstance(selected_mode_data, DynamicPlotMode):
+                    selected_mode = selected_mode_data
+                else:
+                    pass
+                created: bool = self.dynamic_results_handler.create_plot_group(name=group_name, mode=selected_mode)
                 if created:
                     self.ui.dynamicsPlotsTreeView.expandAll()
                 else:
@@ -462,7 +569,7 @@ class ResultsMain(SimulationsMain):
             if len(selected_indexes) > 0:
                 deleted: bool = self.dynamic_results_handler.delete_plot_entry_from_index(index=selected_indexes[0])
                 if deleted:
-                    self.ui.dynamicsPlotsTreeView.expandAll()
+                    self.ui.dynamicsPlotsTreeView.update()
                 else:
                     self.show_warning_toast("The selected dynamic plot entry could not be deleted.")
             else:
@@ -530,6 +637,7 @@ class ResultsMain(SimulationsMain):
 
         if handler is None:
             handler = DynamicsResultsHandler(results=results, circuit=self.circuit)
+            handler.dialog_parent = self
             self.dynamic_results_handlers[study_name] = handler
             handler.get_plots_model().rowsInserted.connect(self.expand_dynamic_plots_tree)
             return handler
@@ -538,6 +646,7 @@ class ResultsMain(SimulationsMain):
             # Reusing the handler preserves the user's dynamic plot groups across
             # repeated runs of the same study while replacing only the result-backed Vars.
             handler.circuit = self.circuit
+            handler.dialog_parent = self
             handler.update_results(results=results)
             return handler
 
@@ -545,6 +654,7 @@ class ResultsMain(SimulationsMain):
             # RMS and EMT handlers cannot be mixed because their result containers use
             # different event-group fields and value-array layouts.
             handler = DynamicsResultsHandler(results=results, circuit=self.circuit)
+            handler.dialog_parent = self
             self.dynamic_results_handlers[study_name] = handler
             handler.get_plots_model().rowsInserted.connect(self.expand_dynamic_plots_tree)
             return handler
@@ -566,10 +676,7 @@ class ResultsMain(SimulationsMain):
 
         # The same Dynamics tab is reused in pre-simulation mode so the user can
         # prepare persistent plot definitions before any runtime result arrays exist.
-        self.ui.dynamicsDeviceTreeView.setModel(handler.get_view_model())
-        self.ui.dynamicsPlotsTreeView.setModel(handler.get_plots_model())
-        self.ui.dynamicsPlotsTreeView.expandAll()
-        self.ui.dynamicsTableView.setModel(None)
+        self._refresh_dynamic_tree_models(expand_plots_when_empty=True, clear_table=True)
         self.ui.resultsTabWidget.setCurrentIndex(1)
 
     def prepare_rms_dynamic_plots(self) -> None:

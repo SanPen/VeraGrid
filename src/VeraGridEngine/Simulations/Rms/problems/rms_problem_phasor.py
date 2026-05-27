@@ -1006,29 +1006,18 @@ class RmsProblemPhasor(RmsProblemTemplate):
         return E_value
     
     def get_static_state_matrix(self, x:Vec, dx:Vec):
+        nx = self.get_states_number()
+        ny = self.get_algebraic_var_number()
 
-        all_eqs = self._state_eqs + self._algebraic_eqs
-        all_vars = self._state_vars + self._algebraic_vars
-        A_call = SymbolicJacobian(
-            eqs= all_eqs,
-            variables=all_vars,
-            compiler_names_dict=self._compiler_names_dict,
-            alias_names_dict= self._alias_names_dict,
-            VARS_NAME=self.VARS_NAME,
-            DIFF_NAME=self.DIFF_NAME,
-            EVENT_PARAMS_NAME=self.VARIABLE_PARAMS_NAME,
-            PARAMS_NAME=self.CONSTANT_PARAMS_NAME,
-            static=True
-        )
+        if nx == 0:
+            gy = self.get_j22(x, dx, 1e15).toarray()
+            return gy
 
-
-        vp = self._variable_parameters_values
-        cp = self._constant_params
-        n_vars = self._n_vars
-        A_value = np.zeros((n_vars, n_vars))
-        A_value = A_call(x, dx, vp, cp, h=0).toarray()
-
-        return A_value
+        fx = self.get_j11(x, dx, 1e10).toarray()
+        fy = self.get_j12(x, dx, 1e10).toarray()
+        gx = self.get_j21(x, dx, 1e10).toarray()
+        gy = self.get_j22(x, dx, 1e15).toarray()
+        return np.block([[fx, fy], [gx, gy]])
 
     def get_device_vars_dict(self) -> Dict[ALL_DEV_TYPES, List[Var]]:
         """Get dictionary of device variables."""
@@ -1124,9 +1113,26 @@ class RmsProblemPhasor(RmsProblemTemplate):
                 x[i] = val
         return x
 
-    def update_variable_params(self, t: float, x_snapshot: Vec | None = None):
+    def get_next_forced_event_time(self, t_prev: float, t_target: float):
+        """Phasor RMS currently has no forced sub-step events."""
+        return None
+
+    def update_variable_params(self,
+                               t: float,
+                               x_snapshot: Vec | None = None,
+                               scheduled_t: float | None = None):
         """Update the variable parameters."""
         self._variable_parameters_values[:self._n_event_params] = self._event_params_fn(self._variable_parameters_values, t)
+
+    def reset_boundary_update_state(self, t0: float = 0.0) -> None:
+        """Reset runtime event-parameter state to the initial simulation time."""
+        variable_parameters_init = np.ones(self.get_variable_parameter_number())
+        self._variable_parameters_values = self._event_params_fn(variable_parameters_init, float(t0))
+        self._variable_parameters_values = self._event_params_fn(self._variable_parameters_values, float(t0))
+
+    def update(self, t: float, x: Vec, params: Vec) -> None:
+        """Store runtime event parameters for the current Newton step."""
+        self._variable_parameters_values[:] = params[:len(self._variable_parameters)]
 
 
     def initialize_fmu_cs_devices(self, x_snapshot: Vec, t: float = 0.0) -> None:

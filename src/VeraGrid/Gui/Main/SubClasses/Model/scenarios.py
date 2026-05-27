@@ -426,7 +426,7 @@ class ScenariosMain(ConfigurationMain):
         if self.circuit.has_diagrams():
             self.create_circuit_stored_diagrams()
         else:
-            self.add_complete_bus_branch_diagram()
+            pass
 
     def rename_scenario(self) -> None:
         """

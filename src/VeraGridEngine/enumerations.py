@@ -3167,6 +3167,7 @@ class RmsProblemTypes(Enum):
     Tensygrid       = "Tensygrid"
     PowerBalance    = "RmsProblemDae"
     CurrentBalance  = "RmsProblemPhasor"
+    Multilinear     = "RmsProblemMultilinear"
 
     def __str__(self) -> str:
         return str(self.value)
@@ -4073,6 +4074,44 @@ class PlotSimulationType(Enum):
         """
         return self.value
 
+
+class DynamicPlotMode(Enum):
+    """
+    Plotting mode used by persistent dynamic plot definitions.
+    """
+
+    TIME_SERIES = "TIME_SERIES"
+    XY = "XY"
+
+    def __str__(self) -> str:
+        """
+        Return the persistent label used by dynamic plot assets.
+
+        :return: Persistent plotting-mode label.
+        """
+        return self.value
+
+
+class DynamicPlotEntryRole(Enum):
+    """
+    Semantic role played by one persistent dynamic plot entry.
+    """
+
+    CURVE = "CURVE"
+    X_AXIS = "X_AXIS"
+    Y_AXIS = "Y_AXIS"
+
+    def __str__(self) -> str:
+        """
+        Return the persistent label used by dynamic plot entries.
+
+        :return: Persistent entry-role label.
+        """
+        return self.value
+
+
+
+
 class BlockScopeMode(Enum):
     """
     Block extraction scope modes for DGS block parsing.
@@ -4296,3 +4335,44 @@ class EmtInitializationStatus(Enum):
             return EmtInitializationStatus[s]
         except KeyError:
             return s
+
+class DynamicPlotEntryKind(Enum):
+    """
+    Semantic kind of one persistent dynamic plot entry.
+    """
+
+    VARIABLE = "VARIABLE"
+    PARAMETER = "PARAMETER"
+
+    def __str__(self) -> str:
+        """
+        Return the persistent label used by dynamic plot entries.
+
+        :return: Persistent entry-kind label.
+        """
+        return self.value
+
+class DynamicEntrySection:
+    """
+    Stable source-tree section labels used for dynamic entries.
+    """
+
+    __slots__ = tuple()
+
+    VARIABLES: str = "Variables"
+    PARAMETERS: str = "Parameters"
+
+class TreeStateNodeKind(Enum):
+    """
+    Stable semantic node kinds used to preserve tree-view state.
+    """
+
+    ROOT = "root"
+    DEVICE_TYPE = "device_type"
+    DEVICE = "device"
+    SECTION = "section"
+    VARIABLE = "variable"
+    PARAMETER = "parameter"
+    SOURCE = "source"
+    PLOT_GROUP = "plot_group"
+    PLOT_ENTRY = "plot_entry"

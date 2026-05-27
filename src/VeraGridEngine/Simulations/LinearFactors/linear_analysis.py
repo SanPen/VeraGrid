@@ -1307,6 +1307,8 @@ class LinearAnalysisTs:
 
         self.time_indices = grid.get_all_time_indices() if time_indices is None else time_indices
 
+        self._inverse_time_index = {t: i for i, t in enumerate(self.time_indices)}
+
         # get the states matrix
         mat: IntMat = grid.get_branch_active_time_array()[self.time_indices, :]
 
@@ -1325,6 +1327,7 @@ class LinearAnalysisTs:
             lin = LinearAnalysis(nc=nc,
                                  distributed_slack=distributed_slack,
                                  correct_values=correct_values)
+
             self._linear_analysis[t_idx] = lin
 
             if compute_multi_contingencies:
@@ -1349,11 +1352,14 @@ class LinearAnalysisTs:
     def get_linear_analysis_at(self, t_idx: int) -> LinearAnalysis:
         """
 
-        :param t_idx:
+        :param t_idx: time index in the general schema
         :return:
         """
-        # get the base index
-        t_i = self.mapping[t_idx]
+        # get the base index (i.e. when clustering)
+        it = self._inverse_time_index[t_idx]
+
+        # get the mapped reduced index
+        t_i = self.mapping[it]
 
         # get the linear analysis
         lin: LinearAnalysis = self._linear_analysis[t_i]
@@ -1366,8 +1372,11 @@ class LinearAnalysisTs:
         :param t_idx:
         :return:
         """
-        # get the base index
-        t_i = self.mapping[t_idx]
+        # get the base index (i.e. when clustering)
+        it = self._inverse_time_index[t_idx]
+
+        # get the mapped reduced index
+        t_i = self.mapping[it]
 
         # get the linear analysis
         lin: LinearMultiContingencies = self._linear_multi_contingencies[t_i]

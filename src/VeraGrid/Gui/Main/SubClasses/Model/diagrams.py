@@ -1829,6 +1829,33 @@ class DiagramsMain(CompiledArraysMain):
         mdl = DiagramsModel(self.diagram_widgets_list)
         self.ui.diagramsListView.setModel(mdl)
 
+    @staticmethod
+    def _validate_diagram_widget_entry(diagram_widget: object) -> DIAGRAM_WIDGETS:
+        """
+        Ensure the diagram widgets list only stores GUI widgets.
+
+        :param diagram_widget: candidate list entry
+        :return: validated widget
+        """
+        if isinstance(diagram_widget, (SchematicWidget, GridMapWidget)):
+            return diagram_widget
+        else:
+            raise TypeError(
+                "diagram_widgets_list only accepts SchematicWidget or GridMapWidget entries, "
+                f"got {type(diagram_widget).__name__}"
+            )
+
+    def _append_diagram_widget(self, diagram_widget: object) -> DIAGRAM_WIDGETS:
+        """
+        Append a validated diagram widget to the tracked widgets list.
+
+        :param diagram_widget: candidate list entry
+        :return: validated widget
+        """
+        widget = self._validate_diagram_widget_entry(diagram_widget=diagram_widget)
+        self.diagram_widgets_list.append(widget)
+        return widget
+
     def _create_widget_from_diagram(self, diagram: dev.SchematicDiagram | dev.MapDiagram) -> ALL_EDITORS:
         """
         Create a diagram widget from a stored diagram object.
@@ -1863,7 +1890,7 @@ class DiagramsMain(CompiledArraysMain):
 
     def _ensure_diagram_widget_at_index(self, index: int) -> ALL_EDITORS_NONE:
         """
-        Materialize and cache a diagram widget if the entry is still deferred.
+        Return the diagram widget stored at the requested index.
 
         :param index: diagram row index
         :return: diagram widget or None
@@ -1876,19 +1903,6 @@ class DiagramsMain(CompiledArraysMain):
         entry = self.diagram_widgets_list[index]
         if isinstance(entry, (SchematicWidget, GridMapWidget)):
             return entry
-        elif isinstance(entry, (dev.SchematicDiagram, dev.MapDiagram)):
-            widget = self._create_widget_from_diagram(diagram=entry)
-            self.diagram_widgets_list[index] = widget
-
-            mdl = self.ui.diagramsListView.model()
-            if mdl is not None:
-                idx = mdl.index(index, 0)
-                mdl.dataChanged.emit(idx, idx, [QtCore.Qt.ItemDataRole.DisplayRole,
-                                                QtCore.Qt.ItemDataRole.DecorationRole])
-            else:
-                pass
-
-            return widget
         else:
             return None
 
@@ -2220,12 +2234,8 @@ class DiagramsMain(CompiledArraysMain):
         self.diagram_widgets_list.clear()
         self.remove_all_diagram_widgets()
 
-        for i, diagram in enumerate(self.circuit.diagrams):
-            if i == 0:
-                self.diagram_widgets_list.append(self._create_widget_from_diagram(diagram=diagram))
-            else:
-                # Defer heavy widget instantiation until the user selects the diagram.
-                self.diagram_widgets_list.append(diagram)
+        for diagram in self.circuit.diagrams:
+            self._append_diagram_widget(self._create_widget_from_diagram(diagram=diagram))
 
         self.set_diagrams_list_view()
 
@@ -2322,7 +2332,7 @@ class DiagramsMain(CompiledArraysMain):
         self.show_info_toast(f"{diagram.name} added")
 
     def add_diagram_widget_and_diagram(self,
-                                       diagram_widget: ALL_EDITORS,
+                                       diagram_widget: DIAGRAM_WIDGETS,
                                        diagram: Union[dev.SchematicDiagram, dev.MapDiagram]):
         """
         Add diagram widget, it also adds the diagram to the circuit for later
@@ -2331,7 +2341,7 @@ class DiagramsMain(CompiledArraysMain):
         """
 
         # add the widget pointer
-        self.diagram_widgets_list.append(diagram_widget)
+        self._append_diagram_widget(diagram_widget)
 
         # add the diagram to the circuit
         self.circuit.add_diagram(diagram)
@@ -3327,8 +3337,6 @@ class DiagramsMain(CompiledArraysMain):
             if diagram != caller:
                 if isinstance(diagram, (SchematicWidget, GridMapWidget)):
                     diagram.delete_element_utility_function(device=api_obj, propagate=False)
-                elif isinstance(diagram, (dev.SchematicDiagram, dev.MapDiagram)):
-                    diagram.delete_device(device=api_obj)
                 else:
                     pass
 

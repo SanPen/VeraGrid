@@ -933,13 +933,13 @@ class DataBaseTableMain(DiagramsMain):
 
             elif elm_type == DeviceType.EmtEventDevice.value:
 
-                name = f'EMT event {len(self.circuit.rms_events)}'
+                name = f'EMT event {len(self.circuit.emt_events)}'
                 obj = dev.EmtEvent(name=name)
                 self.circuit.add_emt_event(obj)
 
             elif elm_type == DeviceType.EmtEventsGroupDevice.value:
 
-                name = f'EMT event group {len(self.circuit.rms_events_groups)}'
+                name = f'EMT event group {len(self.circuit.emt_events_groups)}'
                 obj = dev.EmtEventsGroup(name=name)
                 self.circuit.add_emt_events_group(obj)
 

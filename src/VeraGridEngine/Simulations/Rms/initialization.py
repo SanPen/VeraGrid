@@ -430,7 +430,8 @@ def init_explicit(mdl: Block,
         seen.add(var.uid)
 
         if var.uid in uid2idx_vars:
-            print(f"DEBUG_INIT_ALL: {var.name} = {x[uid2idx_vars[var.uid]]}")
+            _=0
+            #print(f"DEBUG_INIT_ALL: {var.name} = {x[uid2idx_vars[var.uid]]}")
 
 
 def init_custom(mdl, init_guess):

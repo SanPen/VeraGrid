@@ -6,8 +6,6 @@ from typing import List, Union
 from PySide6 import QtCore, QtGui
 from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
 from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import GridMapWidget
-from VeraGridEngine.Devices.Diagrams.schematic_diagram import SchematicDiagram
-from VeraGridEngine import MapDiagram
 
 
 class DiagramsModel(QtCore.QAbstractListModel):
@@ -19,10 +17,7 @@ class DiagramsModel(QtCore.QAbstractListModel):
     """
 
     def __init__(self,
-                 list_of_diagrams: List[Union[SchematicWidget,
-                                              GridMapWidget,
-                                              SchematicDiagram,
-                                              MapDiagram]]):
+                 list_of_diagrams: List[Union[SchematicWidget, GridMapWidget]]):
         """
         Enumeration model
         :param list_of_diagrams: list of enumeration values to show
@@ -74,9 +69,9 @@ class DiagramsModel(QtCore.QAbstractListModel):
                     return diagram.name
 
                 elif role == QtCore.Qt.ItemDataRole.DecorationRole:
-                    if isinstance(diagram, (SchematicWidget, SchematicDiagram)):
+                    if isinstance(diagram, SchematicWidget):
                         return self.bus_branch_editor_icon
-                    elif isinstance(diagram, (GridMapWidget, MapDiagram)):
+                    elif isinstance(diagram, GridMapWidget):
                         return self.map_editor_icon
 
         return None

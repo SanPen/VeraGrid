@@ -26,6 +26,8 @@ Please include:
 We will review the report, confirm impact, and coordinate remediation and
 disclosure as appropriate.
 
+We aim to acknowledge new vulnerability reports within 14 days and usually much sooner for clear, reproducible issues.
+
 ## Disclosure
 
 Please allow time for investigation and a fix before public disclosure.

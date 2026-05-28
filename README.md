@@ -144,6 +144,18 @@ We have included extra materials to work with. These are included in the standal
 - [Equipment catalogue](https://veragrid.readthedocs.io/en/latest/data_sheets.html) (Wires, Cables and Transformers)
   ready to use in VeraGrid.
 
+## Project information
+
+- Documentation: https://veragrid.readthedocs.io/
+- Source repository: https://github.com/SanPen/VeraGrid
+- Bug reports and feature requests: https://github.com/SanPen/VeraGrid/issues
+- Support and discussion: [SUPPORT.md](SUPPORT.md)
+- Contributing guide: [CONTRIBUTING.md](CONTRIBUTING.md)
+- Build instructions: [BUILD.md](BUILD.md)
+- Test and quality checks: [TESTING.md](TESTING.md)
+- Security policy: [SECURITY.md](SECURITY.md)
+- Release process: [RELEASE.md](RELEASE.md)
+
 ## Tutorials and examples
 
 - [Grid modelling and getting started](https://veragrid.readthedocs.io/en/latest/md_source/modelling.html)

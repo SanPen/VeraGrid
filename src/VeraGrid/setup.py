@@ -70,7 +70,7 @@ package_data = {'VeraGrid': ['*.md',
 dependencies = ["PySide6>=6.8.0",  # 5.14 breaks the UI generation for development, 6.7.0 breaks all
                 "requests>=2.33.0",
                 "urllib3>=2.7.0",
-                "websockets",
+                "websockets>=9.1",
                 "opencv-python>=4.10.0.84",
                 "packaging",
                 "VeraGridEngine==" + __VeraGrid_VERSION__,  # the VeraGridEngine version must be exactly the same

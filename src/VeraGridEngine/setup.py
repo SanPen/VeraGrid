@@ -56,7 +56,7 @@ package_data = {'VeraGridEngine': ['LICENSE.txt', 'setup.py'], }
 
 dependencies = ["numpy>=2.2.0",
                 "autograd>=1.7.0",
-                "scipy>=1.0.0",
+                "scipy>=1.10.0",
                 "networkx>=2.1",
                 "pandas>=2.2.3",
                 "highspy>=1.8.0",
@@ -76,7 +76,7 @@ dependencies = ["numpy>=2.2.0",
                 "pvlib>=0.11",
                 "rdflib",
                 "pymoo>=0.6",
-                "websockets",
+                "websockets>=9.1",
                 "brotli",
                 "opencv-python>=4.10.0.84",
                 "fmpy>=0.3.22"

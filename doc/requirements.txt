@@ -1,8 +1,8 @@
 sphinx
 Pygments>=2.20.0
-pandas
+pandas>=2.2.3
 pytablewriter
 myst-parser
 sphinx-rtd-theme
 linkify-it-py
-VeraGridEngine >= 5.5.1
+../src/VeraGridEngine

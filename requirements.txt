@@ -1,6 +1,6 @@
 numpy>=2.2.0,<=2.3
 autograd>=1.7.0
-scipy>=1.0.0
+scipy>=1.10.0
 networkx>=2.1
 pandas>=2.2.3
 xlwt>=1.3.0
@@ -26,9 +26,9 @@ pytest>=9.0.3
 pulp >=3.3.0
 rdflib
 pymoo>=0.6
-fastapi
-uvicorn
-websockets
+fastapi>=0.109.1
+uvicorn>=0.11.7
+websockets>=9.1
 cryptography>=46.0.7
 Pillow>=12.2.0
 Pygments>=2.20.0

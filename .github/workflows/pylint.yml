@@ -18,7 +18,10 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        python -m pip install "pylint==4.0.5"
+        python -m pip install --require-hashes \
+          "pylint==4.0.5" \
+          --hash=sha256:00f51c9b14a3b3ae08cff6b2cdd43f28165c78b165b628692e428fb1f8dc2cf2 \
+          --hash=sha256:8cd6a618df75deb013bd7eb98327a95f02a6fb839205a6bbf5456ef96afb317c
     - name: Analysing the code with pylint
       run: |
         pylint $(git ls-files '*.py')

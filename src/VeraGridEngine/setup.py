@@ -77,7 +77,7 @@ dependencies = ["numpy>=2.2.0",
                 "rdflib>=7.5.0",
                 "pymoo>=0.6",
                 "websockets>=9.1",
-                "brotli>=1.1.0",
+                "brotli>=1.2.0",
                 "opencv-python>=4.10.0.84",
                 "fmpy>=0.3.22"
                 ]

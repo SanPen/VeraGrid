@@ -90,7 +90,7 @@ class Line(BranchParent):
             units='p.u.',
             tpe=float,
             definition='Total positive sequence reactance.',
-            cat=[PrpCat.PF],
+            cat=[PrpCat.PF, PrpCat.OPF],
         ),
         GCProp(
             prop_name='B',

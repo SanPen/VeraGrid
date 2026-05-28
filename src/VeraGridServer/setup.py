@@ -62,12 +62,11 @@ package_data = {'VeraGridServer': ['*.md',
                                   'data/VeraGrid_icon.ico'],
                 }
 
-dependencies = ['setuptools>=41.0.1',
-                'wheel>=0.37.2',
-                "fastapi",
+dependencies = ["fastapi",
                 "uvicorn",
+                "requests>=2.33.0",
                 "websockets",
-                "cryptography",
+                "cryptography>=46.0.7",
                 "VeraGridEngine==" + __VeraGridServer_VERSION__,  # the VeraGridEngine version must be exactly the same
                 ]
 

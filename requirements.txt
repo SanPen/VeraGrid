@@ -11,28 +11,27 @@ openpyxl>=2.4.9
 chardet>=3.0.4
 scikit-learn>=1.5.0
 geopy>=1.16
-nose>=1.3
 h5py>=3.12
 numba>=0.61
 PySide6>=6.8.0
 pyproj
-pyarrow>=18.0
+pyarrow>=23.0.1
 fastparquet>=2024
 windpowerlib>=0.2.2
 pvlib>=0.11
-requests
-urllib3
-pytest>=7.2.0
+requests>=2.33.0
+urllib3>=2.7.0
+idna>=3.15
+pytest>=9.0.3
 pulp >=3.3.0
 rdflib
-pymoo
+pymoo>=0.6
 fastapi
-starlette >= 0.46.2
 uvicorn
 websockets
-cryptography
+cryptography>=46.0.7
+Pillow>=12.2.0
+Pygments>=2.20.0
 opencv-python>=4.10.0.84
-setuptools
 packaging
-torch >= 2.10.0
 fmpy>=0.3.22

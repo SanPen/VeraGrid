@@ -1,4 +1,5 @@
 sphinx
+Pygments>=2.20.0
 pandas
 pytablewriter
 myst-parser

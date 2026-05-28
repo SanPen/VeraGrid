@@ -19,3 +19,4 @@ Contributions like a typo fixes must be addressed via issues since we don't allo
 
 All contributions must come with testing.
 
+To run the tests you can use the pytest suite over the `src/tests` folder.

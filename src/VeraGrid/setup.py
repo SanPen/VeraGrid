@@ -67,7 +67,8 @@ package_data = {'VeraGrid': ['*.md',
                             'data/VeraGrid.ico'],
                 }
 
-dependencies = ["PySide6>=6.8.0",  # 5.14 breaks the UI generation for development, 6.7.0 breaks all
+dependencies = ["numpy>=2.2.0,<3",
+                "PySide6>=6.8.0",  # 5.14 breaks the UI generation for development, 6.7.0 breaks all
                 "requests>=2.33.0",
                 "urllib3>=2.7.0",
                 "websockets>=9.1",

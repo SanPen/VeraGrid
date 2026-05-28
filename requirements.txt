@@ -28,6 +28,7 @@ rdflib>=7.5.0
 pymoo>=0.6
 fastapi>=0.109.1
 uvicorn>=0.11.7
+h11>=0.16.0
 websockets>=9.1
 cryptography>=46.0.7
 Pillow>=12.2.0

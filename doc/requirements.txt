@@ -1,3 +1,5 @@
+numpy>=2.2.0,<3
+idna>=3.15
 sphinx
 Pygments>=2.20.0
 pandas>=2.2.3
@@ -5,4 +7,4 @@ pytablewriter
 myst-parser
 sphinx-rtd-theme
 linkify-it-py
-../src/VeraGridEngine
+VeraGridEngine >= 6.0.20

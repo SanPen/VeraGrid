@@ -72,7 +72,7 @@ dependencies = ["PySide6>=6.8.0",  # 5.14 breaks the UI generation for developme
                 "urllib3>=2.7.0",
                 "websockets>=9.1",
                 "opencv-python>=4.10.0.84",
-                "packaging",
+                "packaging>=25.0",
                 "VeraGridEngine==" + __VeraGrid_VERSION__,  # the VeraGridEngine version must be exactly the same
                 ]
 

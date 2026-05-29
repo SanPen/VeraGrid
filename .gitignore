@@ -25,6 +25,7 @@ lynn5node.gridcal
 demo_5_node.json
 
 /venv
+/venv*/
 /.tox/
 .idea/*.iml
 .idea/*.xml

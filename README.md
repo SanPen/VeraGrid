@@ -11,6 +11,7 @@ product of cutting-edge research.
 ![VeraGrid](pics/VeraGrid_yt.png)
 
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13016/badge)](https://www.bestpractices.dev/projects/13016)
+[![Dependency Graph](https://github.com/SanPen/VeraGrid/actions/workflows/dependabot/update-graph/badge.svg)](https://github.com/SanPen/VeraGrid/actions/workflows/dependabot/update-graph)
 [![Scorecard supply-chain security](https://github.com/SanPen/VeraGrid/actions/workflows/scorecard.yml/badge.svg)](https://github.com/SanPen/VeraGrid/actions/workflows/scorecard.yml)
 [![CodeQL](https://github.com/SanPen/VeraGrid/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/SanPen/VeraGrid/actions/workflows/github-code-scanning/codeql)
 [![Documentation Status](https://readthedocs.org/projects/veragrid/badge/?version=latest)](https://veragrid.readthedocs.io/en/latest/?badge=latest) [![Build Status](https://travis-ci.org/SanPen/VeraGrid.svg?branch=master)](https://travis-ci.org/SanPen/VeraGrid)

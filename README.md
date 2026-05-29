@@ -10,7 +10,9 @@ product of cutting-edge research.
 ![VeraGrid_banner.png](pics/VeraGrid_banner.png)[](![Ver(pics/VeraGrid_banner.png))
 ![VeraGrid](pics/VeraGrid_yt.png)
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/75e794c9bcfd49bda1721b9ba8f6c790)](https://app.codacy.com/app/SanPen/VeraGrid?utm_source=github.com&utm_medium=referral&utm_content=SanPen/VeraGrid&utm_campaign=Badge_Grade_Dashboard)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13016/badge)](https://www.bestpractices.dev/projects/13016)
+[![Scorecard supply-chain security](https://github.com/SanPen/VeraGrid/actions/workflows/scorecard.yml/badge.svg)](https://github.com/SanPen/VeraGrid/actions/workflows/scorecard.yml)
+[![CodeQL](https://github.com/SanPen/VeraGrid/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/SanPen/VeraGrid/actions/workflows/github-code-scanning/codeql)
 [![Documentation Status](https://readthedocs.org/projects/veragrid/badge/?version=latest)](https://veragrid.readthedocs.io/en/latest/?badge=latest) [![Build Status](https://travis-ci.org/SanPen/VeraGrid.svg?branch=master)](https://travis-ci.org/SanPen/VeraGrid)
 [![DOI](https://www.zenodo.org/badge/49583206.svg)](https://www.zenodo.org/badge/latestdoi/49583206)
 [![Downloads](https://static.pepy.tech/personalized-badge/veragrid?period=total&units=abbreviation&left_color=grey&right_color=green&left_text=Downloads)](https://pepy.tech/project/veragrid)

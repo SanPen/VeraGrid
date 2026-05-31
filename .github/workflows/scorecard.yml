@@ -61,6 +61,9 @@ jobs:
           # (Optional) Uncomment file_mode if you have a .gitattributes with files marked export-ignore
           # file_mode: git
 
+      - name: "Keep only error-level SARIF results"
+        run: python3 .github/filter_sarif_errors.py results.sarif
+
       # Upload the results as artifacts (optional). Commenting out will disable uploads of run results in SARIF
       # format to the repository Actions tab.
       - name: "Upload artifact"

@@ -1069,8 +1069,8 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
     v_A = vf.add_var("v_A_" + name, reference=VarPowerFlowRefferenceType.v_A)
     v_B = vf.add_var("v_B_" + name, reference=VarPowerFlowRefferenceType.v_B)
     v_C = vf.add_var("v_C_" + name, reference=VarPowerFlowRefferenceType.v_C)
-    Tm = vf.add_var("Tm_" + name)
-    v_f = vf.add_var("v_f_" + name)
+    Tm = vf.add_var("Tm_" + name, shared_reference = "Tm_reference")
+    v_f = vf.add_var("v_f_" + name, shared_reference = "v_f_reference")
 
     d_v_A = vf.add_var("d_v_A_" + name, reference=VarPowerFlowRefferenceType.d_v_A)
     d_v_B = vf.add_var("d_v_B_" + name, reference=VarPowerFlowRefferenceType.d_v_B)
@@ -1088,7 +1088,7 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
     # ------------------------------------------------------------------
     theta_abs = vf.add_var("theta_abs_" + name)
     delta_rel = vf.add_var("delta_rel_" + name)
-    omega = vf.add_var("omega_" + name)
+    omega = vf.add_var("omega_" + name, shared_reference = "omega_reference")
 
     psi_d = vf.add_var("psi_d_" + name)
     psi_q = vf.add_var("psi_q_" + name)
@@ -1128,11 +1128,11 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
     i_B = vf.add_var("i_B_" + name, reference=VarPowerFlowRefferenceType.i_B)
     i_C = vf.add_var("i_C_" + name, reference=VarPowerFlowRefferenceType.i_C)
 
-    Te = vf.add_var("Te_" + name)
+    Te = vf.add_var("Te_" + name, shared_reference = "Te_reference")
     p_e = vf.add_var("p_e_" + name)
     q_e = vf.add_var("q_e_" + name)
 
-    IRPu = vf.add_var("IRPu_" + name)
+    IRPu = vf.add_var("IRPu_" + name, shared_reference = "IRPu_reference")
 
     # ------------------------------------------------------------------
     # Parameters
@@ -1475,8 +1475,8 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
 
 def get_governor_emt(vf: VarFactory, name: str = "Governor") -> EmtModelTemplate:
     templ = EmtModelTemplate(name=name)
-    inputs = [vf.add_var(f"omega_{name}"), vf.add_var(f'Te_{name}')]
-    Tm = vf.add_var(f"Tm_{name}")  # Mechanical power input (pu
+    inputs = [vf.add_var(name=f"omega_{name}", shared_reference = "omega_reference"), vf.add_var(name=f'Te_{name}', shared_reference = "Te_reference")]
+    Tm = vf.add_var(name=f"Tm_{name}", shared_reference = "Tm_reference")  # Mechanical power input (pu
     Pm_ref = vf.add_var(f'Pm_ref_{name}')
     y_gov0 = vf.add_var(f'y_gov0_{name}')
     y2_3 = vf.add_var(f'y2_3_gov_{name}')
@@ -1503,7 +1503,7 @@ def get_governor_emt(vf: VarFactory, name: str = "Governor") -> EmtModelTemplate
         # The complete generator wrapper may replace this placeholder with a
         # model-level shared-power reference. The standalone governor keeps a
         # neutral default until the wrapper or initialization layer provides it.
-        Pm_ref: vf.add_const(None),
+        # Pm_ref: vf.add_const(None),
         Kp: vf.add_const(-0.01),
         Ki: vf.add_const(-0.01),
         p0: vf.add_const(1.0),
@@ -1561,6 +1561,9 @@ def get_governor_emt(vf: VarFactory, name: str = "Governor") -> EmtModelTemplate
             ParamPowerFlowRefferenceType.omega_ref: omega_ref,
             ParamPowerFlowRefferenceType.p0: p0,
             ParamPowerFlowRefferenceType.P0: P0,
+
+            # shared ref
+            ParamPowerFlowRefferenceType.generator_share_p_ref: Pm_ref
         }
 
     )
@@ -1583,7 +1586,7 @@ def get_stabilizer_emt(vf: VarFactory, name: str = "stabilizer") -> EmtModelTemp
     # input variables
     # omega: omega from generator
 
-    inputs = [vf.add_var(f"omega_{name}")]
+    inputs = [vf.add_var(f"omega_{name}", shared_reference = "omega_reference")]
 
     # PSS parameters with typical values
 
@@ -1601,7 +1604,7 @@ def get_stabilizer_emt(vf: VarFactory, name: str = "stabilizer") -> EmtModelTemp
     }
 
     # variables
-    Vpss = vf.add_var(f'V_pss_{name}')
+    Vpss = vf.add_var(f'V_pss_{name}', shared_reference = "V_pss_reference")
     y1 = vf.add_var(f'y_stabilizer1_{name}')
     y2 = vf.add_var(f'y_stabilizer2_{name}')
     y3 = vf.add_var(f'y_stabilizer3_{name}')
@@ -1680,17 +1683,17 @@ def get_exciter_emt(vf: VarFactory, name: str = "exciter") -> EmtModelTemplate:
     # Va: measured stator voltage (from generator) (pu)
     # Vpss: output from power system stabilizer (pu)
 
-    IRPu = vf.add_var(f"IRPu_{name}")
+    IRPu = vf.add_var(f"IRPu_{name}", shared_reference = "IRPu_reference")
     v_A = vf.add_var(f"v_A_{name}")
     v_B = vf.add_var(f"v_B_{name}")
     v_C = vf.add_var(f"v_C_{name}")
-    Vpss = vf.add_var(f"Vpss_{name}")
+    Vpss = vf.add_var(f"V_pss_{name}", shared_reference = "V_pss_reference")
 
     inputs = [IRPu, v_A, v_B, v_C, Vpss]
 
     Vm = vf.add_var(f"Vm_{name}")
 
-    Vf = vf.add_var(f"Vf_{name}")
+    Vf = vf.add_var(f"Vf_{name}", shared_reference = "v_f_reference")
     Efe = vf.add_var(f'Efe_{name}')
     UsRefPu = vf.add_var(name=f"UsRefPu_{name}")  # reference voltage (pu)
     y1 = vf.add_var(f'y_exciter1_{name}')
@@ -1857,33 +1860,41 @@ def get_complete_generator_template_emt(vf: VarFactory, name="complete_generator
 
     vf.add_connections([gen_mdl.in_vars[4]], [exciter_mdl.out_vars[0]]) # v_f
     vf.add_connections([exciter_mdl.in_vars[0]], [gen_mdl.out_vars[4]]) # IRPu / i_f
+
+    # gen_mdl.connect([gen_mdl.in_vars[4]], [exciter_mdl.out_vars[0]])  # v_f
+    # exciter_mdl.connect([exciter_mdl.in_vars[0]], [gen_mdl.out_vars[4]])  # IRPu / i_f
+
     exciter_mdl.update_model(exciter_mdl.in_vars[1], v_a_in)  # v_A
     exciter_mdl.update_model(exciter_mdl.in_vars[2], v_b_in)  # v_B
     exciter_mdl.update_model(exciter_mdl.in_vars[3], v_c_in)  # v_C
+
     vf.add_connections([exciter_mdl.in_vars[4]], [stabilizer_mdl.out_vars[0]]) # Vpps
-
     vf.add_connections([stabilizer_mdl.in_vars[0]], [gen_mdl.out_vars[3]]) # omega
-
     vf.add_connections([gen_mdl.in_vars[3]], [governor_mdl.out_vars[0]]) # Tm
-
     vf.add_connections([governor_mdl.in_vars[0]], [gen_mdl.out_vars[3]]) # omega
-
     vf.add_connections([governor_mdl.in_vars[1]], [gen_mdl.out_vars[5]]) # Te
+
+    # exciter_mdl.connect([exciter_mdl.in_vars[4]], [stabilizer_mdl.out_vars[0]])  # Vpps
+    # stabilizer_mdl.connect([stabilizer_mdl.in_vars[0]], [gen_mdl.out_vars[3]])  # omega
+    # gen_mdl.connect([gen_mdl.in_vars[3]], [governor_mdl.out_vars[0]])  # Tm
+    # governor_mdl.connect([governor_mdl.in_vars[0]], [gen_mdl.out_vars[3]])  # omega
+    # governor_mdl.connect([governor_mdl.in_vars[1]], [gen_mdl.out_vars[5]])  # Te
+
 
     templ.block.children.append(gen_mdl)
     templ.block.children.append(governor_mdl)
     templ.block.children.append(stabilizer_mdl)
     templ.block.children.append(exciter_mdl)
     templ.block.in_vars = [v_a_in, v_b_in, v_c_in]
-    templ.block.unify_blocks()
+    # templ.block.unify_blocks()
 
-    pm_ref_var = None
-    event_parameter_var = None
-    for event_parameter_var in templ.block.event_dict.keys():
-        if event_parameter_var.name.startswith("Pm_ref_"):
-            pm_ref_var = event_parameter_var
-        else:
-            pass
+    # pm_ref_var = None
+    # event_parameter_var = None
+    # for event_parameter_var in templ.block.event_dict.keys():
+    #     if event_parameter_var.name.startswith("Pm_ref_"):
+    #         pm_ref_var = event_parameter_var
+    #     else:
+    #         pass
 
     templ.block.external_mapping = {
         VarPowerFlowRefferenceType.v_A: v_a_in,
@@ -1912,7 +1923,7 @@ def get_complete_generator_template_emt(vf: VarFactory, name="complete_generator
             gen_mdl.api_obj_mapping[ParamPowerFlowRefferenceType.X1],
         ParamPowerFlowRefferenceType.X0:
             gen_mdl.api_obj_mapping[ParamPowerFlowRefferenceType.X0],
-        ParamPowerFlowRefferenceType.generator_share_p_ref: pm_ref_var,
+        ParamPowerFlowRefferenceType.generator_share_p_ref: governor_mdl.api_obj_mapping[ParamPowerFlowRefferenceType.generator_share_p_ref],
     }
 
     templ.block.in_vars = [v_a_in, v_b_in, v_c_in] # v_abc

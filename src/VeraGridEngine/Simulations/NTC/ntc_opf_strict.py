@@ -12,7 +12,7 @@ import os
 import numpy as np
 from typing import List, Union, Tuple, Callable
 
-from VeraGridEngine.enumerations import MIPSolvers, ZonalGrouping
+from VeraGridEngine.enumerations import MIPSolvers, MIPFramework, ZonalGrouping
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Devices.Events.contingency_group import ContingencyGroup
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
@@ -26,7 +26,7 @@ from VeraGridEngine.DataStructures.hvdc_data import HvdcData
 from VeraGridEngine.DataStructures.vsc_data import VscData
 from VeraGridEngine.DataStructures.bus_data import BusData
 from VeraGridEngine.basic_structures import Logger, Vec, IntVec, BoolVec, CxMat, Mat, ObjVec
-from VeraGridEngine.Utils.MIP.selected_interface import LpExp, LpVar, OrToolsLpModel, join, LpModel
+from VeraGridEngine.Utils.MIP.selected_interface import LpExp, LpVar, OrToolsLpModel, join, LpModel, get_model_instance
 from VeraGridEngine.enumerations import TapPhaseControl, HvdcControlType, AvailableTransferMode, ConverterControlType
 from VeraGridEngine.Simulations.LinearFactors.linear_analysis import LinearAnalysis, LinearMultiContingencies
 from VeraGridEngine.Simulations.ATC.available_transfer_capacity_driver import compute_alpha, compute_alpha_n1, \
@@ -1273,15 +1273,18 @@ def add_linear_branches_formulation(t_idx: int,
             else:
                 monitor_by_sensitivity_n = True
 
+            # DC branches are always monitored 
+            # Remember their PTDF sensitivity is 0
             branch_vars.monitor_logic[t_idx, m] = int(branch_data_t.monitor_loading[m]
-                                                      and monitor_by_sensitivity_n
-                                                      and monitor_by_load_rule_n)
+                                                      and (branch_data_t.dc[m]
+                                                           or (monitor_by_sensitivity_n
+                                                               and monitor_by_load_rule_n)))
 
             # add the rate constraint if the branch is monitored
             if branch_vars.monitor_logic[t_idx, m]:
                 # here flows is always a variable
                 # branch_vars.flows[t_idx, m].bounds(low=-rate_pu, up=rate_pu)
-                prob.set_var_bounds(var=branch_vars.flows[t_idx, m], ub=-rate_pu, lb=rate_pu)
+                prob.set_var_bounds(var=branch_vars.flows[t_idx, m], lb=-rate_pu, ub=rate_pu)
 
     # add the inter-area flows to the objective function with the correct sign
     for k, sense in branch_vars.inter_space_branches:
@@ -1373,7 +1376,8 @@ def add_linear_branches_contingencies_formulation(t_idx: int,
                     else:
                         monitor_by_sensitivity_n1 = True
 
-                    if monitor_by_load_rule_n1 and monitor_by_sensitivity_n1:
+                    # DC branches are always monitored (their PTDF sensitivity alpha is 0)
+                    if branch_data_t.dc[m] or (monitor_by_load_rule_n1 and monitor_by_sensitivity_n1):
                         # register the contingency data to evaluate the result at the end
                         branch_vars.add_contingency_flow(t=t_idx, m=m, c=c, flow_var=contingency_flow)
 
@@ -1780,7 +1784,8 @@ def run_linear_ntc_opf_strict(grid: MultiCircuit,
                               progress_text: Union[None, Callable[[str], None]] = None,
                               progress_func: Union[None, Callable[[float], None]] = None,
                               verbose: int = 0,
-                              robust: bool = False) -> Tuple[NtcVars, LpModel]:
+                              robust: bool = False,
+                              mip_framework: MIPFramework = MIPFramework.PuLP) -> Tuple[NtcVars, LpModel]:
     """
 
     :param grid: MultiCircuit instance
@@ -1823,8 +1828,8 @@ def run_linear_ntc_opf_strict(grid: MultiCircuit,
     n_hvdc = grid.get_hvdc_number()
     n_vsc = grid.get_vsc_number()
 
-    # Declare the LP model
-    lp_model: OrToolsLpModel = OrToolsLpModel(solver_type)
+    # Declare the LP model (falls back to PuLP when ORTools is not installed)
+    lp_model: LpModel = get_model_instance(tpe=mip_framework, solver_type=solver_type)
 
     # declare structures of LP vars
     mip_vars = NtcVars(nt=1, nbus=n, ng=ng, nb=nb, nl=nl, nbr=nbr, n_hvdc=n_hvdc, n_vsc=n_vsc,
@@ -2037,7 +2042,7 @@ def run_linear_ntc_opf_strict(grid: MultiCircuit,
     # gather the results
     logger.add_info(msg="Status", value=lp_model.status2string(status))
 
-    if status == OrToolsLpModel.OPTIMAL:
+    if status == lp_model.OPTIMAL:
         logger.add_info("Objective function", value=lp_model.fobj_value())
         mip_vars.acceptable_solution[t_idx] = True
     else:

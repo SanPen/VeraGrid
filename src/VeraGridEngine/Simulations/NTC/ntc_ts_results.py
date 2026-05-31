@@ -55,6 +55,7 @@ class OptimalNetTransferCapacityTimeSeriesResults(ResultsTemplate):
         ResultsProperty(name='converged', tpe=BoolVec, old_names=list(), expandable=False),
         ResultsProperty(name='inter_area_flows', tpe=Vec, old_names=list(), expandable=True),
         ResultsProperty(name='contingency_flows_list', tpe=list, old_names=list(), expandable=False),
+        ResultsProperty(name='strict_formulation', tpe=bool, old_names=list(), expandable=False),
     )
 
     __slots__ = (
@@ -92,6 +93,7 @@ class OptimalNetTransferCapacityTimeSeriesResults(ResultsTemplate):
         "inter_space_hvdc",
         "inter_space_vsc",
         "contingency_flows_list",
+        "strict_formulation",
         "converged",
         "inter_area_flows",
     )
@@ -201,8 +203,12 @@ class OptimalNetTransferCapacityTimeSeriesResults(ResultsTemplate):
         self.inter_space_hvdc: List[tuple[int, float]] = list()  # index, sense
         self.inter_space_vsc: List[tuple[int, float]] = list()
 
-        # t, m, c, contingency, negative_slack, positive_slack
+        # t, m, c, contingency, negative_slack, positive_slack (non-strict)
+        # t, m, c, contingency (strict)
         self.contingency_flows_list = list()
+
+        # whether the results come from the strict formulation (no flow slacks)
+        self.strict_formulation = False
 
         self.converged = np.zeros(nt, dtype=bool)
         self.inter_area_flows = np.zeros(nt, dtype=float)
@@ -420,9 +426,16 @@ class OptimalNetTransferCapacityTimeSeriesResults(ResultsTemplate):
             columns = ['Time index', 'Monitored index', 'Contingency group index',
                        'Time array', 'Contingency branch', 'Contingency group',
                        'Flow (MW)', 'Loading (%)']
-            for t, m, c, contingency, negative_slack, positive_slack in self.contingency_flows_list:
+            for entry in self.contingency_flows_list:
+                # The strict formulation stores (t, m, c, flow) with no slacks,
+                # while the non-strict one stores (t, m, c, flow, neg_slack, pos_slack).
+                if self.strict_formulation:
+                    t, m, c, contingency = entry
+                    flow_c = contingency
+                else:
+                    t, m, c, contingency, negative_slack, positive_slack = entry
+                    flow_c = contingency - negative_slack + positive_slack
                 cols.append("")
-                flow_c = contingency - negative_slack + positive_slack
                 loading_c = abs(flow_c) / self.contingency_rates[m] * 100
                 data.append([
                     t, m, c, str(self.time_array[t]), self.branch_names[m], self.contingency_group_names[c],

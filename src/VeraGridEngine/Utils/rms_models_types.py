@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from typing import Dict, List
+from typing import Dict, List, Tuple
 import uuid
 
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
@@ -28,12 +28,15 @@ def _new_uid() -> int:
     return uuid.uuid4().int
 
 
-def build_equivalence_classes_dict(grid:MultiCircuit)-> Dict[int, List[int]]:
+def build_equivalence_classes_dict(grid:MultiCircuit)-> Tuple[Dict[int, List[int]], Dict[int, List[int]]]:
     """
-    this functions receives the grid and return a dictionary with clases of equivalence of the dynamic models.
+    this functions receives the grid and return a dictionary with clases of equivalence of the dynamic models
+    and a dictionary with clases of equivalence of their variables.
     :param grid:
     :type grid:
-    :return:
+    :return: Tuple of:
+        - Dict with new uid as keys and lists of equivalent block uids as values
+        - Dict with variable uid as keys and lists of equivalent variable uids as values
     :rtype:
     """
 
@@ -135,75 +138,94 @@ def build_equivalence_classes_dict(grid:MultiCircuit)-> Dict[int, List[int]]:
         elif elm.device_type == DeviceType.UpfcDevice:
             upfc_dyn_models.append(elm.rms_model)
 
+    variable_equivalence_dict = {}
+
     if load_dyn_models:
-        load_equivalences_dict = compare_n_blocks_structurally(load_dyn_models)
+        load_equivalences_dict, load_var_dict = compare_n_blocks_structurally(load_dyn_models)
         class_equivalence_dict.update(load_equivalences_dict)
+        variable_equivalence_dict.update(load_var_dict)
 
     if static_gen_dyn_models:
-        static_gen_equivalences_dict = compare_n_blocks_structurally(static_gen_dyn_models)
+        static_gen_equivalences_dict, static_gen_var_dict = compare_n_blocks_structurally(static_gen_dyn_models)
         class_equivalence_dict.update(static_gen_equivalences_dict)
+        variable_equivalence_dict.update(static_gen_var_dict)
 
     if external_grid_dyn_models:
-        external_grid_equivalences_dict = compare_n_blocks_structurally(external_grid_dyn_models)
+        external_grid_equivalences_dict, external_grid_var_dict = compare_n_blocks_structurally(external_grid_dyn_models)
         class_equivalence_dict.update(external_grid_equivalences_dict)
+        variable_equivalence_dict.update(external_grid_var_dict)
 
     if shunt_dyn_models:
-        shunt_equivalences_dict = compare_n_blocks_structurally(shunt_dyn_models)
+        shunt_equivalences_dict, shunt_var_dict = compare_n_blocks_structurally(shunt_dyn_models)
         class_equivalence_dict.update(shunt_equivalences_dict)
+        variable_equivalence_dict.update(shunt_var_dict)
 
     if controllable_shunt_dyn_models:
-        controllable_shunt_equivalences_dict = compare_n_blocks_structurally(controllable_shunt_dyn_models)
+        controllable_shunt_equivalences_dict, controllable_shunt_var_dict = compare_n_blocks_structurally(controllable_shunt_dyn_models)
         class_equivalence_dict.update(controllable_shunt_equivalences_dict)
+        variable_equivalence_dict.update(controllable_shunt_var_dict)
 
     if current_injection_dyn_models:
-        current_injection_equivalences_dict = compare_n_blocks_structurally(current_injection_dyn_models)
+        current_injection_equivalences_dict, current_injection_var_dict = compare_n_blocks_structurally(current_injection_dyn_models)
         class_equivalence_dict.update(current_injection_equivalences_dict)
+        variable_equivalence_dict.update(current_injection_var_dict)
 
     if generator_dyn_models:
-        generator_equivalences_dict = compare_n_blocks_structurally(generator_dyn_models)
+        generator_equivalences_dict, generator_var_dict = compare_n_blocks_structurally(generator_dyn_models)
         class_equivalence_dict.update(generator_equivalences_dict)
+        variable_equivalence_dict.update(generator_var_dict)
 
     if battery_dyn_models:
-        battery_equivalences_dict = compare_n_blocks_structurally(battery_dyn_models)
+        battery_equivalences_dict, battery_var_dict = compare_n_blocks_structurally(battery_dyn_models)
         class_equivalence_dict.update(battery_equivalences_dict)
+        variable_equivalence_dict.update(battery_var_dict)
 
     if vsc_dyn_models:
-        vsc_equivalences_dict = compare_n_blocks_structurally(vsc_dyn_models)
+        vsc_equivalences_dict, vsc_var_dict = compare_n_blocks_structurally(vsc_dyn_models)
         class_equivalence_dict.update(vsc_equivalences_dict)
+        variable_equivalence_dict.update(vsc_var_dict)
 
     if dc_line_dyn_models:
-        dc_line_equivalences_dict = compare_n_blocks_structurally(dc_line_dyn_models)
+        dc_line_equivalences_dict, dc_line_var_dict = compare_n_blocks_structurally(dc_line_dyn_models)
         class_equivalence_dict.update(dc_line_equivalences_dict)
+        variable_equivalence_dict.update(dc_line_var_dict)
 
     if transformer2w_dyn_models:
-        transformer2w_equivalences_dict = compare_n_blocks_structurally(transformer2w_dyn_models)
+        transformer2w_equivalences_dict, transformer2w_var_dict = compare_n_blocks_structurally(transformer2w_dyn_models)
         class_equivalence_dict.update(transformer2w_equivalences_dict)
+        variable_equivalence_dict.update(transformer2w_var_dict)
 
     if winding_dyn_models:
-        winding_equivalences_dict = compare_n_blocks_structurally(winding_dyn_models)
+        winding_equivalences_dict, winding_var_dict = compare_n_blocks_structurally(winding_dyn_models)
         class_equivalence_dict.update(winding_equivalences_dict)
+        variable_equivalence_dict.update(winding_var_dict)
 
     if line_dyn_models:
-        line_equivalences_dict = compare_n_blocks_structurally(line_dyn_models)
+        line_equivalences_dict, line_var_dict = compare_n_blocks_structurally(line_dyn_models)
         class_equivalence_dict.update(line_equivalences_dict)
+        variable_equivalence_dict.update(line_var_dict)
 
     if hvdc_line_dyn_models:
-        hvdc_line_equivalences_dict = compare_n_blocks_structurally(hvdc_line_dyn_models)
+        hvdc_line_equivalences_dict, hvdc_line_var_dict = compare_n_blocks_structurally(hvdc_line_dyn_models)
         class_equivalence_dict.update(hvdc_line_equivalences_dict)
+        variable_equivalence_dict.update(hvdc_line_var_dict)
 
     if series_reactance_dyn_models:
-        series_reactance_equivalences_dict = compare_n_blocks_structurally(series_reactance_dyn_models)
+        series_reactance_equivalences_dict, series_reactance_var_dict = compare_n_blocks_structurally(series_reactance_dyn_models)
         class_equivalence_dict.update(series_reactance_equivalences_dict)
+        variable_equivalence_dict.update(series_reactance_var_dict)
 
     if switch_dyn_models:
-        switch_equivalences_dict = compare_n_blocks_structurally(switch_dyn_models)
+        switch_equivalences_dict, switch_var_dict = compare_n_blocks_structurally(switch_dyn_models)
         class_equivalence_dict.update(switch_equivalences_dict)
+        variable_equivalence_dict.update(switch_var_dict)
 
     if upfc_dyn_models:
-        upfc_equivalences_dict = compare_n_blocks_structurally(upfc_dyn_models)
+        upfc_equivalences_dict, upfc_var_dict = compare_n_blocks_structurally(upfc_dyn_models)
         class_equivalence_dict.update(upfc_equivalences_dict)
+        variable_equivalence_dict.update(upfc_var_dict)
 
-    return class_equivalence_dict
+    return class_equivalence_dict, variable_equivalence_dict
 
 
 

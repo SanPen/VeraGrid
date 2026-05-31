@@ -11,16 +11,19 @@ class LoadTopologyEmtDialog(QtWidgets.QDialog):
     """
 
     __slots__ = (
+        "_static_connection_type",
         "phase_a_check",
         "phase_b_check",
         "phase_c_check",
         "connection_combo",
+        "static_connection_label",
     )
 
     def __init__(self,
                  title: str,
                  parent: QtWidgets.QWidget | None = None,
-                 initial_config: dict[str, object] | None = None) -> None:
+                 initial_config: dict[str, object] | None = None,
+                 static_connection_type: ShuntConnectionType | None = None) -> None:
         """
         Build the EMT load-topology configuration dialog.
 
@@ -30,6 +33,7 @@ class LoadTopologyEmtDialog(QtWidgets.QDialog):
         :return: None.
         """
         super().__init__(parent)
+        self._static_connection_type = static_connection_type
         self.setWindowTitle(title)
         self.resize(360, 180)
 
@@ -59,6 +63,10 @@ class LoadTopologyEmtDialog(QtWidgets.QDialog):
         self.connection_combo.addItem("Delta", ShuntConnectionType.Delta)
         form_layout.addRow("Connection", self.connection_combo)
 
+        self.static_connection_label = QtWidgets.QLabel(self)
+        self.static_connection_label.setWordWrap(True)
+        form_layout.addRow("Static connection", self.static_connection_label)
+
         buttons = QtWidgets.QDialogButtonBox(
             QtWidgets.QDialogButtonBox.StandardButton.Ok | QtWidgets.QDialogButtonBox.StandardButton.Cancel,
             self,
@@ -71,6 +79,47 @@ class LoadTopologyEmtDialog(QtWidgets.QDialog):
             self.apply_initial_configuration(initial_config)
         else:
             pass
+
+        self._apply_static_connection_state()
+
+    @staticmethod
+    def _get_connection_type_label(connection_type: ShuntConnectionType) -> str:
+        """
+        Return the user-facing label for one shunt connection type.
+
+        :param connection_type: Static or modal shunt connection type.
+        :return: Human-readable label.
+        """
+        if connection_type == ShuntConnectionType.GroundedStar:
+            return "Grounded Star (Yg)"
+        elif connection_type == ShuntConnectionType.NeutralStar:
+            return "Neutral Star (Yn)"
+        elif connection_type == ShuntConnectionType.FloatingStar:
+            return "Floating Star (Y)"
+        elif connection_type == ShuntConnectionType.Delta:
+            return "Delta"
+        else:
+            return str(connection_type)
+
+    def _apply_static_connection_state(self) -> None:
+        """
+        Enforce the static connection contract in the dialog widgets.
+
+        :return: None.
+        """
+        if self._static_connection_type is None:
+            self.static_connection_label.setText("No static connection override was resolved for this device.")
+            self.connection_combo.setEnabled(True)
+        else:
+            self.static_connection_label.setText(
+                "Taken from static object: " + self._get_connection_type_label(self._static_connection_type)
+            )
+            index: int = self.connection_combo.findData(self._static_connection_type)
+            if index >= 0:
+                self.connection_combo.setCurrentIndex(index)
+            else:
+                pass
+            self.connection_combo.setEnabled(False)
 
     def accept_dialog(self) -> None:
         """
@@ -113,3 +162,5 @@ class LoadTopologyEmtDialog(QtWidgets.QDialog):
             self.connection_combo.setCurrentIndex(index)
         else:
             pass
+
+        self._apply_static_connection_state()

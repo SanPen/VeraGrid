@@ -1,0 +1,128 @@
+case_label,plot_title,time_s,state_x,active_branch,newton_iterations,worst_step_time_s,newton_iteration,worst_step_metric_value
+ifelse inside state_eq,State trajectory near the discontinuity,0.0,0.0,,,,,
+ifelse inside state_eq,State trajectory near the discontinuity,0.001,0.5,,,,,
+ifelse inside state_eq,State trajectory near the discontinuity,0.002,0.5,,,,,
+ifelse inside state_eq,State trajectory near the discontinuity,0.003,0.5,,,,,
+ifelse inside state_eq,State trajectory near the discontinuity,0.004,0.5,,,,,
+ifelse inside state_eq,State trajectory near the discontinuity,0.005,0.5,,,,,
+ifelse inside state_eq,State trajectory near the discontinuity,0.006,0.5,,,,,
+ifelse inside state_eq,State trajectory near the discontinuity,0.007,0.5,,,,,
+ifelse inside state_eq,State trajectory near the discontinuity,0.008,0.5,,,,,
+ifelse inside state_eq,State trajectory near the discontinuity,0.009000000000000001,0.5,,,,,
+ifelse inside state_eq,State trajectory near the discontinuity,0.01,0.5,,,,,
+ifelse inside state_eq,Active branch / procedural mode,0.0,,0.0,,,,
+ifelse inside state_eq,Active branch / procedural mode,0.001,,0.0,,,,
+ifelse inside state_eq,Active branch / procedural mode,0.002,,0.0,,,,
+ifelse inside state_eq,Active branch / procedural mode,0.003,,0.0,,,,
+ifelse inside state_eq,Active branch / procedural mode,0.004,,0.0,,,,
+ifelse inside state_eq,Active branch / procedural mode,0.005,,0.0,,,,
+ifelse inside state_eq,Active branch / procedural mode,0.006,,0.0,,,,
+ifelse inside state_eq,Active branch / procedural mode,0.007,,0.0,,,,
+ifelse inside state_eq,Active branch / procedural mode,0.008,,0.0,,,,
+ifelse inside state_eq,Active branch / procedural mode,0.009000000000000001,,0.0,,,,
+ifelse inside state_eq,Active branch / procedural mode,0.01,,0.0,,,,
+ifelse inside state_eq,Newton iterations per local step,0.001,,,1.0,,,
+ifelse inside state_eq,Newton iterations per local step,0.002,,,15.0,,,
+ifelse inside state_eq,Newton iterations per local step,0.003,,,1.0,,,
+ifelse inside state_eq,Newton iterations per local step,0.004,,,15.0,,,
+ifelse inside state_eq,Newton iterations per local step,0.005,,,1.0,,,
+ifelse inside state_eq,Newton iterations per local step,0.006,,,15.0,,,
+ifelse inside state_eq,Newton iterations per local step,0.007,,,1.0,,,
+ifelse inside state_eq,Newton iterations per local step,0.008,,,15.0,,,
+ifelse inside state_eq,Newton iterations per local step,0.009000000000000001,,,1.0,,,
+ifelse inside state_eq,Newton iterations per local step,0.01,,,15.0,,,
+ifelse inside state_eq,||dx||_inf on the worst local step,,,,,0.002,1.0,1.0
+ifelse inside state_eq,||dx||_inf on the worst local step,,,,,0.002,2.0,0.5
+ifelse inside state_eq,||dx||_inf on the worst local step,,,,,0.002,3.0,0.5
+ifelse inside state_eq,||dx||_inf on the worst local step,,,,,0.002,4.0,0.5
+ifelse inside state_eq,||dx||_inf on the worst local step,,,,,0.002,5.0,0.5
+ifelse inside state_eq,||dx||_inf on the worst local step,,,,,0.002,6.0,0.5
+ifelse inside state_eq,||dx||_inf on the worst local step,,,,,0.002,7.0,0.5
+ifelse inside state_eq,||dx||_inf on the worst local step,,,,,0.002,8.0,0.5
+ifelse inside state_eq,||dx||_inf on the worst local step,,,,,0.002,9.0,0.5
+ifelse inside state_eq,||dx||_inf on the worst local step,,,,,0.002,10.0,0.5
+ifelse inside state_eq,||dx||_inf on the worst local step,,,,,0.002,11.0,0.5
+ifelse inside state_eq,||dx||_inf on the worst local step,,,,,0.002,12.0,0.5
+ifelse inside state_eq,||dx||_inf on the worst local step,,,,,0.002,13.0,0.5
+ifelse inside state_eq,||dx||_inf on the worst local step,,,,,0.002,14.0,0.5
+ifelse inside state_eq,||dx||_inf on the worst local step,,,,,0.002,15.0,0.5
+select inside state_eq,State trajectory near the discontinuity,0.0,0.0,,,,,
+select inside state_eq,State trajectory near the discontinuity,0.001,0.5,,,,,
+select inside state_eq,State trajectory near the discontinuity,0.002,0.5,,,,,
+select inside state_eq,State trajectory near the discontinuity,0.003,0.5,,,,,
+select inside state_eq,State trajectory near the discontinuity,0.004,0.5,,,,,
+select inside state_eq,State trajectory near the discontinuity,0.005,0.5,,,,,
+select inside state_eq,State trajectory near the discontinuity,0.006,0.5,,,,,
+select inside state_eq,State trajectory near the discontinuity,0.007,0.5,,,,,
+select inside state_eq,State trajectory near the discontinuity,0.008,0.5,,,,,
+select inside state_eq,State trajectory near the discontinuity,0.009000000000000001,0.5,,,,,
+select inside state_eq,State trajectory near the discontinuity,0.01,0.5,,,,,
+select inside state_eq,Active branch / procedural mode,0.0,,0.0,,,,
+select inside state_eq,Active branch / procedural mode,0.001,,0.0,,,,
+select inside state_eq,Active branch / procedural mode,0.002,,0.0,,,,
+select inside state_eq,Active branch / procedural mode,0.003,,0.0,,,,
+select inside state_eq,Active branch / procedural mode,0.004,,0.0,,,,
+select inside state_eq,Active branch / procedural mode,0.005,,0.0,,,,
+select inside state_eq,Active branch / procedural mode,0.006,,0.0,,,,
+select inside state_eq,Active branch / procedural mode,0.007,,0.0,,,,
+select inside state_eq,Active branch / procedural mode,0.008,,0.0,,,,
+select inside state_eq,Active branch / procedural mode,0.009000000000000001,,0.0,,,,
+select inside state_eq,Active branch / procedural mode,0.01,,0.0,,,,
+select inside state_eq,Newton iterations per local step,0.001,,,1.0,,,
+select inside state_eq,Newton iterations per local step,0.002,,,15.0,,,
+select inside state_eq,Newton iterations per local step,0.003,,,1.0,,,
+select inside state_eq,Newton iterations per local step,0.004,,,15.0,,,
+select inside state_eq,Newton iterations per local step,0.005,,,1.0,,,
+select inside state_eq,Newton iterations per local step,0.006,,,15.0,,,
+select inside state_eq,Newton iterations per local step,0.007,,,1.0,,,
+select inside state_eq,Newton iterations per local step,0.008,,,15.0,,,
+select inside state_eq,Newton iterations per local step,0.009000000000000001,,,1.0,,,
+select inside state_eq,Newton iterations per local step,0.01,,,15.0,,,
+select inside state_eq,||dx||_inf on the worst local step,,,,,0.002,1.0,1.0
+select inside state_eq,||dx||_inf on the worst local step,,,,,0.002,2.0,0.5
+select inside state_eq,||dx||_inf on the worst local step,,,,,0.002,3.0,0.5
+select inside state_eq,||dx||_inf on the worst local step,,,,,0.002,4.0,0.5
+select inside state_eq,||dx||_inf on the worst local step,,,,,0.002,5.0,0.5
+select inside state_eq,||dx||_inf on the worst local step,,,,,0.002,6.0,0.5
+select inside state_eq,||dx||_inf on the worst local step,,,,,0.002,7.0,0.5
+select inside state_eq,||dx||_inf on the worst local step,,,,,0.002,8.0,0.5
+select inside state_eq,||dx||_inf on the worst local step,,,,,0.002,9.0,0.5
+select inside state_eq,||dx||_inf on the worst local step,,,,,0.002,10.0,0.5
+select inside state_eq,||dx||_inf on the worst local step,,,,,0.002,11.0,0.5
+select inside state_eq,||dx||_inf on the worst local step,,,,,0.002,12.0,0.5
+select inside state_eq,||dx||_inf on the worst local step,,,,,0.002,13.0,0.5
+select inside state_eq,||dx||_inf on the worst local step,,,,,0.002,14.0,0.5
+select inside state_eq,||dx||_inf on the worst local step,,,,,0.002,15.0,0.5
+procedural mode in state_eq,State trajectory near the discontinuity,0.0,0.0,,,,,
+procedural mode in state_eq,State trajectory near the discontinuity,0.001,0.5,,,,,
+procedural mode in state_eq,State trajectory near the discontinuity,0.002,1.0,,,,,
+procedural mode in state_eq,State trajectory near the discontinuity,0.003,0.5,,,,,
+procedural mode in state_eq,State trajectory near the discontinuity,0.004,0.5,,,,,
+procedural mode in state_eq,State trajectory near the discontinuity,0.005,1.0,,,,,
+procedural mode in state_eq,State trajectory near the discontinuity,0.006,0.5,,,,,
+procedural mode in state_eq,State trajectory near the discontinuity,0.007,0.5,,,,,
+procedural mode in state_eq,State trajectory near the discontinuity,0.008,1.0,,,,,
+procedural mode in state_eq,State trajectory near the discontinuity,0.009000000000000001,0.4999999999999998,,,,,
+procedural mode in state_eq,State trajectory near the discontinuity,0.01,0.5,,,,,
+procedural mode in state_eq,Active branch / procedural mode,0.0,,0.0,,,,
+procedural mode in state_eq,Active branch / procedural mode,0.001,,0.0,,,,
+procedural mode in state_eq,Active branch / procedural mode,0.002,,0.0,,,,
+procedural mode in state_eq,Active branch / procedural mode,0.003,,1.0,,,,
+procedural mode in state_eq,Active branch / procedural mode,0.004,,0.0,,,,
+procedural mode in state_eq,Active branch / procedural mode,0.005,,0.0,,,,
+procedural mode in state_eq,Active branch / procedural mode,0.006,,1.0,,,,
+procedural mode in state_eq,Active branch / procedural mode,0.007,,0.0,,,,
+procedural mode in state_eq,Active branch / procedural mode,0.008,,0.0,,,,
+procedural mode in state_eq,Active branch / procedural mode,0.009000000000000001,,1.0,,,,
+procedural mode in state_eq,Active branch / procedural mode,0.01,,0.0,,,,
+procedural mode in state_eq,Newton iterations per local step,0.001,,,1.0,,,
+procedural mode in state_eq,Newton iterations per local step,0.002,,,1.0,,,
+procedural mode in state_eq,Newton iterations per local step,0.003,,,1.0,,,
+procedural mode in state_eq,Newton iterations per local step,0.004,,,1.0,,,
+procedural mode in state_eq,Newton iterations per local step,0.005,,,1.0,,,
+procedural mode in state_eq,Newton iterations per local step,0.006,,,1.0,,,
+procedural mode in state_eq,Newton iterations per local step,0.007,,,1.0,,,
+procedural mode in state_eq,Newton iterations per local step,0.008,,,1.0,,,
+procedural mode in state_eq,Newton iterations per local step,0.009000000000000001,,,1.0,,,
+procedural mode in state_eq,Newton iterations per local step,0.01,,,1.0,,,
+procedural mode in state_eq,||dx||_inf on the worst local step,,,,,0.001,1.0,0.5

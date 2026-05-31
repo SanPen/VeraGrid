@@ -504,33 +504,36 @@
 |comment        |str                    |    |False    |         |User comment                                                  |False      |       |
 |diff_changes   |MergeInformation       |    |False    |         |                                                              |False      |       |
 |simulation_type|enum PlotSimulationType|    |False    |         |Simulation family for this persistent dynamic plot definition.|False      |       |
+|mode           |enum DynamicPlotMode   |    |False    |         |Plotting mode for this persistent dynamic plot definition.    |False      |       |
 
 
 ### DynamicPlotEntry
 
-|           name           |      class_type       |unit|mandatory|max_chars|                                 descriptions                                 |has_profile|comment|
-|--------------------------|-----------------------|----|---------|---------|------------------------------------------------------------------------------|-----------|-------|
-|idtag                     |str                    |    |False    |         |Unique ID                                                                     |False      |       |
-|name                      |str                    |    |False    |         |Name of the device.                                                           |False      |       |
-|code                      |str                    |    |False    |         |Secondary ID                                                                  |False      |       |
-|rdfid                     |str                    |    |False    |         |RDF ID for further compatibility                                              |False      |       |
-|action                    |enum ActionType        |    |False    |         |Object action to perform. Only used for model merging.                        |False      |       |
-|comment                   |str                    |    |False    |         |User comment                                                                  |False      |       |
-|diff_changes              |MergeInformation       |    |False    |         |                                                                              |False      |       |
-|variable                  |VarType                |    |False    |         |parameter that the event changes                                              |False      |       |
-|plot                      |Plot Group             |    |False    |         |Plot group                                                                    |False      |       |
-|group                     |Rms Events Group       |    |False    |         |RmsEvent group                                                                |False      |       |
-|simulation_type           |enum PlotSimulationType|    |False    |         |Simulation family for this persistent curve reference.                        |False      |       |
-|event_group_idtag         |str                    |    |False    |         |Stable event-group identifier preferred for result binding.                   |False      |       |
-|event_group_name          |str                    |    |False    |         |Event-group visible name used as display text and fallback binding hint.      |False      |       |
-|curve_device_type         |enum DeviceType        |    |False    |         |Device type that owns the referenced dynamic variable.                        |False      |       |
-|device_idtag              |str                    |    |False    |         |Stable device identifier preferred for result binding.                        |False      |       |
-|device_name_hint          |str                    |    |False    |         |Visible device-name hint used only for display and diagnostics.               |False      |       |
-|variable_name             |str                    |    |False    |         |Dynamic variable name requested by the user.                                  |False      |       |
-|result_path_kind          |str                    |    |False    |         |Result namespace such as values or diff_values.                               |False      |       |
-|variable_custom_name      |str                    |    |False    |         |Optional custom visible name remembered for this variable.                    |False      |       |
-|enabled                   |bool                   |    |False    |         |Whether this persistent curve definition is enabled.                          |False      |       |
-|runtime_series_key_payload|str                    |    |False    |         |Optional cached runtime series identity payload used as an exact binding hint.|False      |       |
+|           name           |       class_type        |unit|mandatory|max_chars|                                  descriptions                                   |has_profile|comment|
+|--------------------------|-------------------------|----|---------|---------|---------------------------------------------------------------------------------|-----------|-------|
+|idtag                     |str                      |    |False    |         |Unique ID                                                                        |False      |       |
+|name                      |str                      |    |False    |         |Name of the device.                                                              |False      |       |
+|code                      |str                      |    |False    |         |Secondary ID                                                                     |False      |       |
+|rdfid                     |str                      |    |False    |         |RDF ID for further compatibility                                                 |False      |       |
+|action                    |enum ActionType          |    |False    |         |Object action to perform. Only used for model merging.                           |False      |       |
+|comment                   |str                      |    |False    |         |User comment                                                                     |False      |       |
+|diff_changes              |MergeInformation         |    |False    |         |                                                                                 |False      |       |
+|variable                  |VarType                  |    |False    |         |parameter that the event changes                                                 |False      |       |
+|plot                      |Plot Group               |    |False    |         |Plot group                                                                       |False      |       |
+|group                     |Rms Events Group         |    |False    |         |RmsEvent group                                                                   |False      |       |
+|simulation_type           |enum PlotSimulationType  |    |False    |         |Simulation family for this persistent curve reference.                           |False      |       |
+|entry_kind                |enum DynamicPlotEntryKind|    |False    |         |Whether this persistent entry references a dynamic variable or a model parameter.|False      |       |
+|role                      |enum DynamicPlotEntryRole|    |False    |         |Role played by this persistent entry inside the owning dynamic plot.             |False      |       |
+|event_group_idtag         |str                      |    |False    |         |Stable event-group identifier preferred for result binding.                      |False      |       |
+|event_group_name          |str                      |    |False    |         |Event-group visible name used as display text and fallback binding hint.         |False      |       |
+|curve_device_type         |enum DeviceType          |    |False    |         |Device type that owns the referenced dynamic variable.                           |False      |       |
+|device_idtag              |str                      |    |False    |         |Stable device identifier preferred for result binding.                           |False      |       |
+|device_name_hint          |str                      |    |False    |         |Visible device-name hint used only for display and diagnostics.                  |False      |       |
+|variable_name             |str                      |    |False    |         |Dynamic variable name requested by the user.                                     |False      |       |
+|result_path_kind          |str                      |    |False    |         |Result namespace such as values or diff_values.                                  |False      |       |
+|variable_custom_name      |str                      |    |False    |         |Optional custom visible name remembered for this variable.                       |False      |       |
+|enabled                   |bool                     |    |False    |         |Whether this persistent curve definition is enabled.                             |False      |       |
+|runtime_series_key_payload|str                      |    |False    |         |Optional cached runtime series identity payload used as an exact binding hint.   |False      |       |
 
 
 ### EmissionGas

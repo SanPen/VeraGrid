@@ -1229,8 +1229,8 @@ def test_simple_r_emt_shunt_block_is_created_and_supports_modify_template(overri
     bus = gce.Bus(name="BusSimpleR", Vnom=13.8)
     load = gce.Load(name="LoadSimpleR")
     load.bus = bus
+    load.conn = ShuntConnectionType.GroundedStar
     editor = _build_editor(DynamicSimulationMode.EMT, api_object=load, circuit=circuit)
-    phase_voltage_sq = (bus.Vnom / math.sqrt(3.0)) ** 2
     dialog_component_kinds: list[str] = list()
 
     class _CreateDialogStub:
@@ -1238,11 +1238,14 @@ def test_simple_r_emt_shunt_block_is_created_and_supports_modify_template(overri
                      component_kind: str,
                      parent=None,
                      initial_config=None,
+                     allow_static_load_values: bool = False,
+                     static_connection_type: ShuntConnectionType | None = None,
                      nominal_voltage_kv=None,
                      base_power_mva=None,
                      base_frequency_hz=None) -> None:
-            _unused = (parent, initial_config, nominal_voltage_kv, base_power_mva, base_frequency_hz)
+            _unused = (parent, initial_config, allow_static_load_values, nominal_voltage_kv, base_power_mva, base_frequency_hz)
             dialog_component_kinds.append(component_kind)
+            assert static_connection_type == ShuntConnectionType.GroundedStar
 
         def exec(self) -> int:
             return int(QtWidgets.QDialog.DialogCode.Accepted)
@@ -1267,11 +1270,14 @@ def test_simple_r_emt_shunt_block_is_created_and_supports_modify_template(overri
                      component_kind: str,
                      parent=None,
                      initial_config=None,
+                     allow_static_load_values: bool = False,
+                     static_connection_type: ShuntConnectionType | None = None,
                      nominal_voltage_kv=None,
                      base_power_mva=None,
                      base_frequency_hz=None) -> None:
-            _unused = (parent, initial_config, nominal_voltage_kv, base_power_mva, base_frequency_hz)
+            _unused = (parent, initial_config, allow_static_load_values, nominal_voltage_kv, base_power_mva, base_frequency_hz)
             dialog_component_kinds.append(component_kind)
+            assert static_connection_type == ShuntConnectionType.GroundedStar
 
         def exec(self) -> int:
             return int(QtWidgets.QDialog.DialogCode.Accepted)
@@ -1284,7 +1290,7 @@ def test_simple_r_emt_shunt_block_is_created_and_supports_modify_template(overri
                 "phA": True,
                 "phB": True,
                 "phC": False,
-                "connection_type": ShuntConnectionType.NeutralStar,
+                "connection_type": ShuntConnectionType.GroundedStar,
                 "input_mode": "physical",
                 "resistance_ohm": 50.0,
                 "inductive_value": 0.01,
@@ -1300,9 +1306,9 @@ def test_simple_r_emt_shunt_block_is_created_and_supports_modify_template(overri
     assert modal_kind == "shunt_component_emt"
     assert modal_config is not None
     assert modal_config["block_type"] == BlockType.R_LOAD_EMT.name
+    assert modal_config["connection_type"] == ShuntConnectionType.GroundedStar
     assert any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
     assert _find_prefixed_event_constant(block_item.subsys, "R_A_") == pytest.approx(25.0)
-    assert load.Pa == pytest.approx(phase_voltage_sq / 25.0)
     assert load.conn == ShuntConnectionType.GroundedStar
 
     override_attrs.setattr(dynamic_block_editor_module, "ShuntComponentEmtDialog", _ModifyDialogStub)
@@ -1312,11 +1318,11 @@ def test_simple_r_emt_shunt_block_is_created_and_supports_modify_template(overri
     assert modal_kind == "shunt_component_emt"
     assert modal_config is not None
     assert modal_config["phB"] is True
-    assert not any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
+    assert modal_config["connection_type"] == ShuntConnectionType.GroundedStar
+    assert any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
     assert _find_prefixed_event_constant(block_item.subsys, "R_A_") == pytest.approx(50.0)
-    assert load.Pa == pytest.approx(phase_voltage_sq / 50.0)
-    assert load.Pb == pytest.approx(phase_voltage_sq / 50.0)
-    assert load.conn == ShuntConnectionType.NeutralStar
+    assert _find_prefixed_event_constant(block_item.subsys, "R_B_") == pytest.approx(50.0)
+    assert load.conn == ShuntConnectionType.GroundedStar
 
     editor.has_unapplied_changes = False
     editor.close()
@@ -1327,19 +1333,22 @@ def test_simple_r_emt_shunt_block_supports_delta_configuration(override_attrs) -
     bus = gce.Bus(name="BusSimpleRDelta", Vnom=13.8)
     load = gce.Load(name="LoadSimpleRDelta")
     load.bus = bus
+    load.conn = ShuntConnectionType.Delta
     editor = _build_editor(DynamicSimulationMode.EMT, api_object=load, circuit=circuit)
-    line_voltage_sq = bus.Vnom * bus.Vnom
 
     class _CreateDialogStub:
         def __init__(self,
                      component_kind: str,
                      parent=None,
                      initial_config=None,
+                     allow_static_load_values: bool = False,
+                     static_connection_type: ShuntConnectionType | None = None,
                      nominal_voltage_kv=None,
                      base_power_mva=None,
                      base_frequency_hz=None) -> None:
-            _unused = (parent, initial_config, nominal_voltage_kv, base_power_mva, base_frequency_hz)
+            _unused = (parent, initial_config, allow_static_load_values, nominal_voltage_kv, base_power_mva, base_frequency_hz)
             assert component_kind == "R"
+            assert static_connection_type == ShuntConnectionType.Delta
 
         def exec(self) -> int:
             return int(QtWidgets.QDialog.DialogCode.Accepted)
@@ -1369,9 +1378,6 @@ def test_simple_r_emt_shunt_block_supports_delta_configuration(override_attrs) -
     assert modal_config["connection_type"] == ShuntConnectionType.Delta
     assert not any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
     assert _find_prefixed_event_constant(block_item.subsys, "R_AB_") == pytest.approx(25.0)
-    assert load.Pa == pytest.approx(line_voltage_sq / 25.0)
-    assert load.Pb == pytest.approx(0.0)
-    assert load.Pc == pytest.approx(0.0)
     assert load.conn == ShuntConnectionType.Delta
 
     editor.has_unapplied_changes = False
@@ -1383,12 +1389,14 @@ def test_exponential_load_emt_block_is_created_and_supports_modify_template(over
     bus = gce.Bus(name="BusExp", Vnom=13.8)
     load = gce.Load(name="LoadExp")
     load.bus = bus
+    load.conn = ShuntConnectionType.GroundedStar
     editor = _build_editor(DynamicSimulationMode.EMT, api_object=load, circuit=circuit)
 
     class _CreateDialogStub:
-        def __init__(self, title: str, parent=None, initial_config=None) -> None:
+        def __init__(self, title: str, parent=None, initial_config=None, static_connection_type: ShuntConnectionType | None = None) -> None:
             _unused = (parent, initial_config)
             assert title == "Configure EMT Exponential Load"
+            assert static_connection_type == ShuntConnectionType.GroundedStar
 
         def exec(self) -> int:
             return int(QtWidgets.QDialog.DialogCode.Accepted)
@@ -1402,9 +1410,10 @@ def test_exponential_load_emt_block_is_created_and_supports_modify_template(over
             })
 
     class _ModifyDialogStub:
-        def __init__(self, title: str, parent=None, initial_config=None) -> None:
+        def __init__(self, title: str, parent=None, initial_config=None, static_connection_type: ShuntConnectionType | None = None) -> None:
             _unused = (parent, initial_config)
             assert title == "Configure EMT Exponential Load"
+            assert static_connection_type == ShuntConnectionType.GroundedStar
 
         def exec(self) -> int:
             return int(QtWidgets.QDialog.DialogCode.Accepted)
@@ -1414,7 +1423,7 @@ def test_exponential_load_emt_block_is_created_and_supports_modify_template(over
                 "phA": True,
                 "phB": True,
                 "phC": False,
-                "connection_type": ShuntConnectionType.NeutralStar,
+                "connection_type": ShuntConnectionType.GroundedStar,
             })
 
     override_attrs.setattr(dynamic_block_editor_module, "LoadTopologyEmtDialog", _CreateDialogStub)
@@ -1425,6 +1434,7 @@ def test_exponential_load_emt_block_is_created_and_supports_modify_template(over
     assert modal_kind == "load_topology_emt"
     assert modal_config is not None
     assert modal_config["block_type"] == BlockType.EXP_LOAD_EMT.name
+    assert modal_config["connection_type"] == ShuntConnectionType.GroundedStar
     assert any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
     assert load.conn == ShuntConnectionType.GroundedStar
 
@@ -1435,8 +1445,9 @@ def test_exponential_load_emt_block_is_created_and_supports_modify_template(over
     assert modal_kind == "load_topology_emt"
     assert modal_config is not None
     assert modal_config["phB"] is True
-    assert not any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
-    assert load.conn == ShuntConnectionType.NeutralStar
+    assert modal_config["connection_type"] == ShuntConnectionType.GroundedStar
+    assert any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
+    assert load.conn == ShuntConnectionType.GroundedStar
 
     editor.has_unapplied_changes = False
     editor.close()
@@ -1447,12 +1458,14 @@ def test_zip_load_emt_block_supports_delta_configuration(override_attrs) -> None
     bus = gce.Bus(name="BusZipDelta", Vnom=13.8)
     load = gce.Load(name="LoadZipDelta")
     load.bus = bus
+    load.conn = ShuntConnectionType.Delta
     editor = _build_editor(DynamicSimulationMode.EMT, api_object=load, circuit=circuit)
 
     class _CreateDialogStub:
-        def __init__(self, title: str, parent=None, initial_config=None) -> None:
+        def __init__(self, title: str, parent=None, initial_config=None, static_connection_type: ShuntConnectionType | None = None) -> None:
             _unused = (parent, initial_config)
             assert title == "Configure EMT ZIP Load"
+            assert static_connection_type == ShuntConnectionType.Delta
 
         def exec(self) -> int:
             return int(QtWidgets.QDialog.DialogCode.Accepted)
@@ -1640,9 +1653,11 @@ def test_transformer_emt_block_falls_back_to_manual_dialog_without_device_topolo
     editor = _build_editor(DynamicSimulationMode.EMT)
 
     class _DialogStub:
-        def __init__(self, title: str, parent=None, initial_config=None) -> None:
+        def __init__(self, title: str, parent=None, initial_config=None, static_from_connection=None, static_to_connection=None) -> None:
             _unused = (parent, initial_config)
             assert title == "Configure EMT Transformer Topology"
+            assert static_from_connection is None
+            assert static_to_connection is None
 
         def exec(self) -> int:
             return int(QtWidgets.QDialog.DialogCode.Accepted)
@@ -1674,8 +1689,8 @@ def test_rlc_combo_emt_block_is_created_and_supports_modify_template(override_at
     bus = gce.Bus(name="BusRlc", Vnom=13.8)
     load = gce.Load(name="LoadRlc")
     load.bus = bus
+    load.conn = ShuntConnectionType.GroundedStar
     editor = _build_editor(DynamicSimulationMode.EMT, api_object=load, circuit=circuit)
-    phase_voltage_sq = (bus.Vnom / math.sqrt(3.0)) ** 2
     create_dialog_base_values: dict[str, float | None] = dict()
     modify_dialog_base_values: dict[str, float | None] = dict()
 
@@ -1683,6 +1698,7 @@ def test_rlc_combo_emt_block_is_created_and_supports_modify_template(override_at
         def __init__(self,
                      parent=None,
                      initial_config=None,
+                     static_connection_type: ShuntConnectionType | None = None,
                      nominal_voltage_kv=None,
                      base_power_mva=None,
                      base_frequency_hz=None) -> None:
@@ -1690,6 +1706,7 @@ def test_rlc_combo_emt_block_is_created_and_supports_modify_template(override_at
             create_dialog_base_values["nominal_voltage_kv"] = nominal_voltage_kv
             create_dialog_base_values["base_power_mva"] = base_power_mva
             create_dialog_base_values["base_frequency_hz"] = base_frequency_hz
+            assert static_connection_type == ShuntConnectionType.GroundedStar
 
         def exec(self) -> int:
             return int(QtWidgets.QDialog.DialogCode.Accepted)
@@ -1713,6 +1730,7 @@ def test_rlc_combo_emt_block_is_created_and_supports_modify_template(override_at
         def __init__(self,
                      parent=None,
                      initial_config=None,
+                     static_connection_type: ShuntConnectionType | None = None,
                      nominal_voltage_kv=None,
                      base_power_mva=None,
                      base_frequency_hz=None) -> None:
@@ -1720,6 +1738,7 @@ def test_rlc_combo_emt_block_is_created_and_supports_modify_template(override_at
             modify_dialog_base_values["nominal_voltage_kv"] = nominal_voltage_kv
             modify_dialog_base_values["base_power_mva"] = base_power_mva
             modify_dialog_base_values["base_frequency_hz"] = base_frequency_hz
+            assert static_connection_type == ShuntConnectionType.GroundedStar
 
         def exec(self) -> int:
             return int(QtWidgets.QDialog.DialogCode.Accepted)
@@ -1732,7 +1751,7 @@ def test_rlc_combo_emt_block_is_created_and_supports_modify_template(override_at
                 "phA": True,
                 "phB": True,
                 "phC": False,
-                "connection_type": ShuntConnectionType.NeutralStar,
+                "connection_type": ShuntConnectionType.GroundedStar,
                 "input_mode": "reactance",
                 "resistance_ohm": 50.0,
                 "inductive_value": 18.0,
@@ -1753,13 +1772,11 @@ def test_rlc_combo_emt_block_is_created_and_supports_modify_template(override_at
     assert modal_config is not None
     assert modal_config["include_c"] is False
     assert modal_config["input_mode"] == "physical"
+    assert modal_config["connection_type"] == ShuntConnectionType.GroundedStar
     assert any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
     assert load.conn == ShuntConnectionType.GroundedStar
     assert _find_prefixed_event_constant(block_item.subsys, "R_A_") == pytest.approx(100.0)
     assert _find_prefixed_event_constant(block_item.subsys, "L_A_") == pytest.approx(0.05)
-    assert load.Pa == pytest.approx(phase_voltage_sq / 100.0)
-    assert load.Pb == pytest.approx(0.0)
-    assert load.Qa == pytest.approx(phase_voltage_sq / (2.0 * math.pi * circuit.fBase * 0.05))
 
     override_attrs.setattr(dynamic_block_editor_module, "RlcComboEmtDialog", _ModifyDialogStub)
     editor.modify_scene_item_template(block_item)
@@ -1772,25 +1789,17 @@ def test_rlc_combo_emt_block_is_created_and_supports_modify_template(override_at
     assert modal_config["include_c"] is True
     assert modal_config["phB"] is True
     assert modal_config["input_mode"] == "reactance"
+    assert modal_config["connection_type"] == ShuntConnectionType.GroundedStar
     assert modify_dialog_base_values == {
         "nominal_voltage_kv": 13.8,
         "base_power_mva": 25.0,
         "base_frequency_hz": 60.0,
     }
-    assert not any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
-    assert load.conn == ShuntConnectionType.NeutralStar
+    assert any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
+    assert load.conn == ShuntConnectionType.GroundedStar
     assert _find_prefixed_event_constant(block_item.subsys, "R_A_") == pytest.approx(50.0)
     assert _find_prefixed_event_constant(block_item.subsys, "L_A_") == pytest.approx(expected_inductance)
     assert _find_prefixed_event_constant(block_item.subsys, "C_A_") == pytest.approx(expected_capacitance)
-    expected_phase_p = phase_voltage_sq / 50.0
-    expected_phase_q = phase_voltage_sq / 18.0 + phase_voltage_sq / 220.0
-    assert load.Pa == pytest.approx(expected_phase_p)
-    assert load.Pb == pytest.approx(expected_phase_p)
-    assert load.Pc == pytest.approx(0.0)
-    assert load.Qa == pytest.approx(expected_phase_q)
-    assert load.Qb == pytest.approx(expected_phase_q)
-    assert load.Qc == pytest.approx(0.0)
-
     editor.has_unapplied_changes = False
     editor.close()
 

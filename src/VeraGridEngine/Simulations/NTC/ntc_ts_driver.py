@@ -73,12 +73,13 @@ class OptimalNetTransferCapacityTimeSeriesDriver(TimeSeriesDriverTemplate):
             time_indices=self.time_indices,
             clustering_results=self.clustering_results,
         )
+        self.results.strict_formulation = self.options.strict_formulation
 
         for t_idx, t in enumerate(self.time_indices):
 
             if self.options.strict_formulation:
 
-                opf_vars: NtcVars = run_linear_ntc_opf_strict(
+                opf_vars, model = run_linear_ntc_opf_strict(
                     grid=self.grid,
                     t=t,  # only one time index at a time
                     solver_type=self.options.opf_options.mip_solver,
@@ -93,7 +94,8 @@ class OptimalNetTransferCapacityTimeSeriesDriver(TimeSeriesDriverTemplate):
                     progress_text=None,
                     progress_func=None,
                     verbose=self.options.opf_options.verbose,
-                    robust=self.options.opf_options.robust
+                    robust=self.options.opf_options.robust,
+                    mip_framework=self.options.opf_options.mip_framework
                 )
             else:
                 opf_vars, model = run_linear_ntc_opf(

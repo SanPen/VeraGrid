@@ -13,7 +13,9 @@ product of cutting-edge research.
 .. figure:: md_source/figures/VeraGrid_yt.png
     :alt: VeraGrid main figure
 
-|Codacy Badge| |Documentation Status| |Build Status| |DOI| |Downloads| |Chat|
+|OpenSSF Best Practices| |Dependency Graph| |Scorecard Supply-Chain Security| |CodeQL|
+
+|Documentation Status| |Build Status| |DOI| |Downloads| |Chat|
 
 VeraGrid started in 2015 with a clear objective: create a solid
 programming library and a user-friendly interface. This straightforward
@@ -102,8 +104,14 @@ All trademarks mentioned in the documentation or the source code belong
 to their respective owners.
 
 
-.. |Codacy Badge| image:: https://api.codacy.com/project/badge/Grade/75e794c9bcfd49bda1721b9ba8f6c790
-   :target: https://app.codacy.com/app/SanPen/VeraGrid?utm_source=github.com&utm_medium=referral&utm_content=SanPen/VeraGrid&utm_campaign=Badge_Grade_Dashboard
+.. |OpenSSF Best Practices| image:: https://www.bestpractices.dev/projects/13016/badge
+   :target: https://www.bestpractices.dev/projects/13016
+.. |Dependency Graph| image:: https://github.com/SanPen/VeraGrid/actions/workflows/dependabot/update-graph/badge.svg
+   :target: https://github.com/SanPen/VeraGrid/actions/workflows/dependabot/update-graph
+.. |Scorecard Supply-Chain Security| image:: https://github.com/SanPen/VeraGrid/actions/workflows/scorecard.yml/badge.svg
+   :target: https://github.com/SanPen/VeraGrid/actions/workflows/scorecard.yml
+.. |CodeQL| image:: https://github.com/SanPen/VeraGrid/actions/workflows/github-code-scanning/codeql/badge.svg
+   :target: https://github.com/SanPen/VeraGrid/actions/workflows/github-code-scanning/codeql
 .. |Documentation Status| image:: https://readthedocs.org/projects/veragrid/badge/?version=latest
    :target: https://veragrid.readthedocs.io/en/latest/?badge=latest
 .. |Build Status| image:: https://travis-ci.org/SanPen/VeraGrid.svg?branch=master
@@ -112,6 +120,5 @@ to their respective owners.
    :target: https://www.zenodo.org/badge/latestdoi/49583206
 .. |Downloads| image:: https://static.pepy.tech/personalized-badge/veragrid?period=total&units=abbreviation&left_color=grey&right_color=green&left_text=Downloads
    :target: https://pepy.tech/project/veragrid
-.. |Chat| image:: https://img.shields.io/badge/join-chat_room-green
+.. |Chat| image:: https://img.shields.io/badge/join-chat-green
    :target: https://matrix.to/#/#veragrid:matrix.org
-

@@ -446,7 +446,7 @@ class RmsProblemDae(RmsProblemTemplate):
         self._n_event_params = 0
         self._n_diff = 0
 
-        self.equivalence_dict = build_equivalence_classes_dict(self.grid)
+        self.equivalence_dict, self.variable_equivalence_dict = build_equivalence_classes_dict(self.grid)
 
         ######################################## Initialize devices ########################################
 

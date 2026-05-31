@@ -7,3 +7,5 @@ from VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_proble
 from VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power_flow_ts_problem import (
     TimeSeriesPowerFlowInvestmentProblem)
 from VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.adequacy_problem import AdequacyInvestmentProblem
+from VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear_opf_ts_problem import (
+    TimeSeriesLinearOptimalPowerFlowInvestmentProblem)

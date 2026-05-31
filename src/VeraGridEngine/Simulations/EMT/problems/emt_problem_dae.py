@@ -1097,7 +1097,7 @@ def _get_expected_pi_line_terminal_refs(ph_mask: List[bool]) -> List[VarPowerFlo
     return ordered_refs
 
 
-def _normalize_pi_line_phase_layout(branch: Any, mdl: Block, logger: Logger) -> Block:
+def validate_line_phase_layout(branch: Any, mdl: Block, logger: Logger):
     """
     Validate that a pi-line EMT block matches the physical branch phase layout.
 
@@ -1111,20 +1111,7 @@ def _normalize_pi_line_phase_layout(branch: Any, mdl: Block, logger: Logger) -> 
     :param branch: Grid branch device.
     :param mdl: EMT block associated with the branch.
     :param logger: Shared system logger used to report invalid topology states.
-    :return: Original block after validation.
     """
-    api_obj_mapping: Any = mdl.api_obj_mapping
-
-    # Only standard pi-line templates expose the resistance entry used below.
-    # Non-dict mappings or blocks without that API slot are outside this
-    # validation path, so they are preserved unchanged.
-    if not isinstance(api_obj_mapping, dict):
-        return mdl
-    else:
-        if ParamPowerFlowRefferenceType.Rnn not in api_obj_mapping:
-            return mdl
-        else:
-            pass
 
     # The branch admittance mask is the physical topology source of truth, so it
     # defines which symbolic terminal voltage references must exist on the block.
@@ -1172,7 +1159,7 @@ def _normalize_pi_line_phase_layout(branch: Any, mdl: Block, logger: Logger) -> 
     else:
         pass
 
-    return mdl
+
 
 class EmtInjectionSeedStore:
     """
@@ -1376,9 +1363,7 @@ class EmtProblemDae(EmtProblemTemplate):
 
         # for init_explicit
         self._models_with_init_eqs: List[Block] = []
-        self._models_with_diff_init_eqs: List[Block] = []
         self._models_with_init_eqs_seen: Set[int] = set()
-        self._models_with_diff_init_eqs_seen: Set[int] = set()
 
         sys_block = Block(children=[], in_vars=[])
         glob_time = Var(self.TIME_NAME)
@@ -1395,7 +1380,6 @@ class EmtProblemDae(EmtProblemTemplate):
         t_phase_start: float = t_build
         cache_stats_before: Dict[str, float] = get_compiled_functions_cache_stats()
 
-        self._validate_emt_models_exist()
         validate_models_s: float = _toc(t_phase_start)
         t_phase_start = _tic()
 
@@ -1426,6 +1410,7 @@ class EmtProblemDae(EmtProblemTemplate):
                          glob_time=glob_time,
                          progress_signal=progress_signal,
                          progress_text=progress_text)
+
         self._rebuild_results_var_name_lookup()
         template_init_s: float = _toc(t_phase_start)
         t_phase_start = _tic()
@@ -1481,11 +1466,12 @@ class EmtProblemDae(EmtProblemTemplate):
         self._seed_all_switched_vsc_models()
         self._seed_all_switch_models()
         self.init_guess.update(self._temp_post_init_guess)
-        for diff_uid, diff_value in self._temp_post_diff_init_guess.items():
-            if diff_uid in self.diff_init_guess:
-                pass
-            else:
-                self.diff_init_guess[diff_uid] = float(diff_value)
+        self.diff_init_guess.update(self._temp_post_diff_init_guess)
+        # for diff_uid, diff_value in self._temp_post_diff_init_guess.items():
+        #     if diff_uid in self.diff_init_guess:
+        #         pass
+        #     else:
+        #         self.diff_init_guess[diff_uid] = float(diff_value)
         native_init_s: float = _toc(t_phase_start)
         t_phase_start = _tic()
 
@@ -1610,19 +1596,20 @@ class EmtProblemDae(EmtProblemTemplate):
         # Every nested block is inspected because the GUI may wrap the actual
         # device model inside non-physical container blocks.
         for block in blocks:
-            init_eqs: Any = block.init_eqs
+            init_eqs: Dict[Var, Expr] = block.init_eqs
+            diff_init_eqs: Dict[Var, Expr] = block.diff_init_eqs
 
             if init_eqs is None or len(init_eqs) == 0:
-                pass
+                if diff_init_eqs is None or len(diff_init_eqs) == 0:
+                    pass
             else:
-                mid: int = id(block)
 
                 # The seen-set keeps the explicit-init schedule stable even if
                 # the same working model is visited from multiple build paths.
-                if mid in self._models_with_init_eqs_seen:
+                if block.uid in self._models_with_init_eqs_seen:
                     pass
                 else:
-                    self._models_with_init_eqs_seen.add(mid)
+                    self._models_with_init_eqs_seen.add(block.uid)
                     self._models_with_init_eqs.append(block)
 
     def get_build_report(self) -> Dict[str, float]:
@@ -1634,38 +1621,6 @@ class EmtProblemDae(EmtProblemTemplate):
         """
         return dict(self.build_report)
 
-    def _register_diff_init_model(self, mdl: Block) -> None:
-        """
-        Register every block in one hierarchy that defines diff-init equations.
-
-        Wrapper EMT roots may keep differential explicit-initialization metadata
-        in nested child blocks. This routine traverses the full hierarchy so the
-        later explicit-init stage executes every unique contributing block.
-
-        :param mdl: Root block to inspect.
-        :return: None
-        """
-        blocks: List[Block] = _collect_block_hierarchy(mdl)
-        block: Block
-
-        # The traversal mirrors the normal explicit-init registration path so
-        # both algebraic and differential init metadata follow the same policy.
-        for block in blocks:
-            diff_init_eqs: Any = block.diff_init_eqs
-
-            if diff_init_eqs is None or len(diff_init_eqs) == 0:
-                pass
-            else:
-                mid: int = id(block)
-
-                # Duplicate registrations are ignored so execution order remains
-                # deterministic when wrappers reference the same child block.
-                if mid in self._models_with_diff_init_eqs_seen:
-                    pass
-                else:
-                    self._models_with_diff_init_eqs_seen.add(mid)
-                    self._models_with_diff_init_eqs.append(block)
-
     def _run_explicit_initialization(self)-> None:
         """
         Run explicit initialization for every block that defines initialization equations.
@@ -1676,7 +1631,7 @@ class EmtProblemDae(EmtProblemTemplate):
         :return: None
         """
 
-        if len(self._models_with_init_eqs) == 0 and len(self._models_with_diff_init_eqs) == 0:
+        if len(self._models_with_init_eqs) == 0 :
             return
 
         # sys_vars dict (uid -> Var), size = n_vars
@@ -1693,11 +1648,10 @@ class EmtProblemDae(EmtProblemTemplate):
 
         seen_blocks: set[int] = set()
 
-        for mdl in chain(self._models_with_init_eqs, self._models_with_diff_init_eqs):
-            mdl_id = id(mdl)
+        for mdl in self._models_with_init_eqs:
 
-            if mdl_id not in seen_blocks:
-                seen_blocks.add(mdl_id)
+            if mdl.uid not in seen_blocks:
+                seen_blocks.add(mdl.uid)
 
                 try:
                     params_array: np.ndarray = np.asarray(
@@ -1767,34 +1721,6 @@ class EmtProblemDae(EmtProblemTemplate):
         """
         return
 
-    def _validate_emt_models_exist(self) -> None:
-        """
-        Validate that all devices have their emt_model properly assigned before building.
-
-        This check prevents cryptic KeyError exceptions during _build_structure_and_collect
-        when a device's emt_model is empty (not initialized via set_emt_model).
-
-        :raises EmtTopologyError: If any device is missing its emt_model.
-        """
-        missing_models: List[Tuple[str, str, str]] = []
-
-        for br in self.grid.get_branches_iter(add_vsc=True, add_hvdc=True, add_switch=True):
-            if br.emt_model.empty():
-                missing_models.append((br.name, "branch", f"bus_from={br.bus_from.name}, bus_to={br.bus_to.name}"))
-
-        for inj in self.grid.get_injection_devices_iter():
-            if inj.emt_model.empty():
-                inj_bus_name: str = str(inj.bus.name)
-                inj_type: str = str(inj.device_type.value)
-
-                missing_models.append((inj.name, inj_type, f"bus={inj_bus_name}"))
-
-        if missing_models:
-            errors = []
-            for dev_name, dev_type, details in missing_models:
-                errors.append(f"  - Device '{dev_name}' ({dev_type}) {details} has no emt_model assigned (emt_model is empty)")
-            error_msg = "TopologyError: Some devices are missing their emt_model. Assign EMT models before creating EmtProblemDae:\n" + "\n".join(errors)
-            raise EmtTopologyError(error_msg)
 
     def _validate_dynamic_emt_interfaces(self) -> None:
         """
@@ -2625,6 +2551,11 @@ class EmtProblemDae(EmtProblemTemplate):
         for br in self.grid.get_branches_iter(add_vsc=True, add_hvdc=True, add_switch=True):
             br_emt_model = self._working_emt_models.get(str(br.idtag), br.emt_model)
 
+            if br.device_type == DeviceType.LineDevice:
+                validate_line_phase_layout(branch=br, mdl=br_emt_model, logger=self.logger)
+            else:
+                pass
+
             if br_emt_model is not None:
                 br_bus_from = br.bus_from
                 br_bus_to = br.bus_to
@@ -2769,7 +2700,7 @@ class EmtProblemDae(EmtProblemTemplate):
         else:
             pass
 
-    def _process_device_model(self, dev: Any, sys_block: Block) -> Block:
+    def _process_device_model(self, dev: Any, mdl:Block, sys_block: Block) -> Block:
         """
         Register a device EMT model into the global system block.
 
@@ -2779,10 +2710,10 @@ class EmtProblemDae(EmtProblemTemplate):
         restored on the device root before the block is added to the global system.
 
         :param dev: Device object from the grid.
+        :param mdl: Device block
         :param sys_block: Main DAE system block.
         :return: Unified device block.
         """
-        mdl: Block = self._get_or_create_working_emt_model(dev)
         resolved_external_mapping: Dict[Any, Var]
 
         # Wrapper roots may not own the PF-parameter mapping directly, so the
@@ -2888,7 +2819,7 @@ class EmtProblemDae(EmtProblemTemplate):
             sys_block.add(mdl)
 
             self._register_init_model(mdl)
-            self._register_diff_init_model(mdl)
+            # self._register_diff_init_model(mdl)
 
             self._registered_working_emt_models.add(dev_key)
 
@@ -3094,10 +3025,11 @@ class EmtProblemDae(EmtProblemTemplate):
             f: int = bus_dict[br.bus_from]
             t: int = bus_dict[br.bus_to]
             br_working_mdl: Block = self._get_or_create_working_emt_model(br)
-            br_working_mdl = _normalize_pi_line_phase_layout(branch=br, mdl=br_working_mdl, logger=self.logger)
-            self._working_emt_models[str(br.idtag)] = br_working_mdl
+            # self._working_emt_models[str(br.idtag)] = br_working_mdl
 
-            mdl: Block = self._process_device_model(br, sys_block)
+            mdl: Block = self._process_device_model(dev=br, mdl=br_working_mdl, sys_block=sys_block)
+
+
 
             is_bergeron, is_jmarti = _is_history_runtime_line_block_name(mdl.name)
 
@@ -3363,7 +3295,11 @@ class EmtProblemDae(EmtProblemTemplate):
                 seed_store = None
 
         for injection_index, inj in enumerate(injection_devices):
-            mdl: Block = self._process_device_model(inj, sys_block)
+            inj_working_mdl: Block = self._get_or_create_working_emt_model(inj)
+            mdl: Block = self._process_device_model(dev=inj, mdl=inj_working_mdl, sys_block= sys_block)
+
+
+
             b: int = bus_dict[inj.bus]
 
             assign_static_api_object_mapping_for_device(
@@ -3459,7 +3395,8 @@ class EmtProblemDae(EmtProblemTemplate):
                 pass
 
         for bus_idx, bus in enumerate(grid.buses):
-            mdl: Block = self._process_device_model(bus, sys_block)
+            bus_working_mdl: Block = self._get_or_create_working_emt_model(bus)
+            mdl: Block = self._process_device_model(dev=bus, mdl=bus_working_mdl, sys_block= sys_block)
 
             if self.power_flow_results_3ph is not None:
                 self._try_set_bus_pf_init(
@@ -5046,22 +4983,30 @@ class EmtProblemDae(EmtProblemTemplate):
         }
 
         omega_base: float = 2.0 * np.pi * self.grid.fBase
+        # ``I_ph = conj(S/V)`` already yields the branch-convention current
+        # from bus into branch. The EMT KCL also uses branch
+        # convention for VSC branches (``I_kcl -= i_branch``), so the
+        # seeded value is taken directly without any sign flip, just like
+        # with other branches
         for ph in ["N", "A", "B", "C"]:
             V_ph = phase_voltage_dict[ph]
             I_ph = phase_current_dict[ph]
             S_ph = phase_power_dict[ph]
+
+            # Store it once and reuse
+            i_branch_init: float = float(np.sqrt(2.0) * np.imag(I_ph))
 
             self.set_if_exists(mdl=mdl,
                                key=ac_voltage_keys[ph],
                                value=float(np.sqrt(2.0) * np.imag(V_ph)))
             self.set_if_exists(mdl=mdl,
                                key=ac_current_keys[ph],
-                               value=float(np.sqrt(2.0) * np.imag(I_ph)))
+                               value=i_branch_init)
 
             if ac_is_from:
                 self.set_if_exists(mdl=mdl,
                                    key=if_keys[ph],
-                                   value=float(np.sqrt(2.0) * np.imag(I_ph)))
+                                   value=i_branch_init)
                 self.set_if_exists(mdl=mdl,
                                    key=it_keys[ph],
                                    value=0.0)
@@ -5073,7 +5018,7 @@ class EmtProblemDae(EmtProblemTemplate):
                                    value=0.0)
                 self.set_if_exists(mdl=mdl,
                                    key=it_keys[ph],
-                                   value=float(np.sqrt(2.0) * np.imag(I_ph)))
+                                   value=i_branch_init)
                 self.set_external_param(mdl, d_vf_keys[ph], 0.0)
                 self.set_external_param(mdl, d_vt_keys[ph], omega_base * np.sqrt(2.0) * np.real(V_ph))
 
@@ -5248,22 +5193,27 @@ class EmtProblemDae(EmtProblemTemplate):
         }
 
         omega_base: float = 2.0 * np.pi * self.grid.fBase
+
         for ph in ["N", "A", "B", "C"]:
             V_ph = phase_voltage_dict[ph]
             I_ph = phase_current_dict[ph]
             S_ph = phase_power_dict[ph]
+
+            # ``I_ph = conj(S/V)`` is already in branch convention
+            # Hence no sign change needed
+            i_branch_init: float = float(np.sqrt(2.0) * np.imag(I_ph))
 
             self.set_if_exists(mdl=mdl,
                                key=ac_voltage_keys[ph],
                                value=float(np.sqrt(2.0) * np.imag(V_ph)))
             self.set_if_exists(mdl=mdl,
                                key=ac_current_keys[ph],
-                               value=float(np.sqrt(2.0) * np.imag(I_ph)))
+                               value=i_branch_init)
 
             if ac_is_from:
                 self.set_if_exists(mdl=mdl,
                                    key=if_keys[ph],
-                                   value=float(np.sqrt(2.0) * np.imag(I_ph)))
+                                   value=i_branch_init)
                 self.set_if_exists(mdl=mdl,
                                    key=it_keys[ph],
                                    value=0.0)
@@ -5275,7 +5225,7 @@ class EmtProblemDae(EmtProblemTemplate):
                                    value=0.0)
                 self.set_if_exists(mdl=mdl,
                                    key=it_keys[ph],
-                                   value=float(np.sqrt(2.0) * np.imag(I_ph)))
+                                   value=i_branch_init)
                 self.set_external_param(mdl, d_vf_keys[ph], 0.0)
                 self.set_external_param(mdl, d_vt_keys[ph], omega_base * np.sqrt(2.0) * np.real(V_ph))
 
@@ -7322,6 +7272,7 @@ class EmtProblemDae(EmtProblemTemplate):
         dev_key: str = str(dev.idtag)
         mdl: Block | None = self._working_emt_models.get(dev_key, None)
 
+
         if mdl is None:
             mdl = copy.deepcopy(dev.emt_model)
             if mdl.children:
@@ -7343,6 +7294,7 @@ class EmtProblemDae(EmtProblemTemplate):
             self._working_emt_models[dev_key] = mdl
         else:
             pass
+
 
         return mdl
 

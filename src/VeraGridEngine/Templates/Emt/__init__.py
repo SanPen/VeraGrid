@@ -61,4 +61,5 @@ from VeraGridEngine.Templates.Emt.bess_avm_emt_template import get_bess_avm_grid
 from VeraGridEngine.Templates.Emt.pv_emt_template import (get_pv_grid_following_emt_template,
                                                           get_pv_avm_grid_following_emt_template,
                                                           get_pv_avm_boost_grid_following_emt_template)
+from VeraGridEngine.Templates.Emt.vsc_gfm_emt import get_gfm_emt_template
 

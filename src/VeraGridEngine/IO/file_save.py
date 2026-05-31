@@ -1174,6 +1174,15 @@ class FileSave:
                     progress_func=self.progress_func
                 )
 
+        elif self.options.file_type == FileType.VeraGridScenario:
+            logger = save_veragrid_circuit(
+                circuit=self.circuit,
+                file_name=self.file_name,
+                options=self.options,
+                text_func=self.text_func,
+                progress_func=self.progress_func
+            )
+
         elif self.options.file_type == FileType.VeraGrid_delta:
             logger = save_veragrid_delta(
                 circuit=self.circuit,

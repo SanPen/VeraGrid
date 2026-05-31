@@ -210,7 +210,8 @@ class InvestmentEvaluationMethod(Enum):
     """
     Investment evaluation methods
     """
-    Independent = "Independent"
+    CBA_PINT_TOOT = "CBA PINT-TOOT"
+    PINT_TOOT_NSGA3 = "PINT-TOOT NSGA3"
     Hyperopt = "Hyperopt"
     MVRSM = "MVRSM"
     NSGA3 = "NSGA3"
@@ -1778,8 +1779,7 @@ class InvestmentsEvaluationObjectives(Enum):
     """
     PowerFlow = 'PowerFlow'
     TimeSeriesPowerFlow = 'TimeSeriesPowerFlow'
-    # OptimalPowerFlow = 'OptimalPowerFlow'
-    # TimeSeriesOptimalPowerFlow = 'TimeSeriesOptimalPowerFlow'
+    LinearOptimalPowerFlowTimeSeries = 'Linear OPF time series'
     GenerationAdequacy = "Adequacy"
     SimpleDispatch = "Simple dispatch"
     FromPlugin = 'From Plugin'
@@ -1844,6 +1844,7 @@ class FileType(Enum):
     Enumeration of logs severities
     """
     VeraGrid = "VeraGrid"
+    VeraGridScenario = "VeraGrid Scenario"
     VeraGrid_xlsx1 = "VeraGrid Excel 1"
     VeraGrid_xlsx2 = "VeraGrid Excel 2"
     VeraGrid_xlsx3 = "VeraGrid Excel 3"

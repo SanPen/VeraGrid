@@ -58,6 +58,7 @@ class OptimalNetTransferCapacityResults(ResultsTemplate):
         ResultsProperty(name='inter_area_flows', tpe=float, old_names=list(), expandable=False),
         ResultsProperty(name='structural_inter_area_flows', tpe=float, old_names=list(), expandable=False),
         ResultsProperty(name='contingency_flows_list', tpe=list, old_names=list(), expandable=False),
+        ResultsProperty(name='strict_formulation', tpe=bool, old_names=list(), expandable=False),
         ResultsProperty(name='sending_bus_idx', tpe=list, old_names=list(), expandable=False),
         ResultsProperty(name='receiving_bus_idx', tpe=list, old_names=list(), expandable=False),
         ResultsProperty(name='inter_space_branches', tpe=list, old_names=list(), expandable=False),
@@ -100,6 +101,7 @@ class OptimalNetTransferCapacityResults(ResultsTemplate):
         "inter_space_hvdc",
         "inter_space_vsc",
         "contingency_flows_list",
+        "strict_formulation",
         "converged",
         "inter_area_flows",
         "structural_inter_area_flows",
@@ -197,8 +199,12 @@ class OptimalNetTransferCapacityResults(ResultsTemplate):
         self.inter_space_hvdc: List[tuple[int, float]] = list()  # index, sense
         self.inter_space_vsc: List[tuple[int, float]] = list()  # index, sense
 
-        # t, m, c, contingency, negative_slack, positive_slack
+        # t, m, c, contingency, negative_slack, positive_slack (non-strict)
+        # t, m, c, contingency (strict)
         self.contingency_flows_list = list()
+
+        # whether the results come from the strict formulation (no flow slacks)
+        self.strict_formulation = False
 
         self.converged = False
 
@@ -443,9 +449,16 @@ class OptimalNetTransferCapacityResults(ResultsTemplate):
             columns = ['Contingency group index', 'Contingency group',
                        'Monitored index', 'Monitored branch',
                        'Flow (MW)', 'Loading (%)']
-            for t, m, c, contingency, negative_slack, positive_slack in self.contingency_flows_list:
+            for entry in self.contingency_flows_list:
+                # The strict formulation stores (t, m, c, flow) with no slacks,
+                # while the non-strict one stores (t, m, c, flow, neg_slack, pos_slack).
+                if self.strict_formulation:
+                    t, m, c, contingency = entry
+                    flow_c = contingency
+                else:
+                    t, m, c, contingency, negative_slack, positive_slack = entry
+                    flow_c = contingency - negative_slack + positive_slack
                 index.append("")
-                flow_c = contingency - negative_slack + positive_slack
                 loading_c = abs(flow_c) / self.contingency_rates[m] * 100
                 data.append([
                     # Contingency group info

@@ -74,6 +74,21 @@ This will install the `VeraGridEngine` package that is a dependency of `VeraGrid
 Again, you may need to use `pip3` if you are under Linux or MacOS.
 
 
+## Additional packages for local AI
+
+To install llama-cpp on ubuntu linux:
+
+```bash
+sudo apt-get install nvidia-cuda-toolkit
+python -m pip uninstall -y llama-cpp-python
+set CMAKE_ARGS="-DGGML_CUDA=on -DGGML_CUDA_FORCE_CUBLAS=on -DLLAVA_BUILD=off -DCMAKE_CUDA_ARCHITECTURES=native"
+set FORCE_CMAKE=1
+python -m pip install --require-hashes --no-cache-dir \
+  "llama-cpp-python==0.3.23" \
+  --hash=sha256:85493cd887b543588941e8704640fef6a54c057443292e527559c30728375ffd
+```
+
+
 ## Troubleshooting
 
 This section includes known issues and their solutions.

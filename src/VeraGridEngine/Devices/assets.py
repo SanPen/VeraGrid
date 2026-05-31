@@ -8947,6 +8947,7 @@ class Assets:
             tem.get_bess_avm_grid_following_emt_template(vf=self._var_factory),
             tem.get_pv_avm_grid_following_emt_template(vf=self._var_factory),
             tem.get_pv_avm_boost_grid_following_emt_template(vf=self._var_factory),
+            tem.get_gfm_emt_template(vf=self._var_factory),
 
             # the following are functions that generate templates depending on phases or things
             tem.get_shunt_c_emt_template(vf=self._var_factory, phA=True, phB=True, phC=True),

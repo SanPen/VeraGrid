@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1328</width>
-    <height>796</height>
+    <width>1235</width>
+    <height>766</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -282,8 +282,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>394</width>
-                            <height>355</height>
+                            <width>396</width>
+                            <height>322</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -349,8 +349,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>302</width>
-                            <height>360</height>
+                            <width>262</width>
+                            <height>362</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -745,7 +745,7 @@
                             <x>0</x>
                             <y>0</y>
                             <width>174</width>
-                            <height>232</height>
+                            <height>240</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -895,8 +895,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>126</width>
-                            <height>242</height>
+                            <width>124</width>
+                            <height>244</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -10914,8 +10914,8 @@ QProgressBar::chunk{
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1328</width>
-     <height>33</height>
+     <width>1235</width>
+     <height>23</height>
     </rect>
    </property>
    <property name="font">
@@ -10934,14 +10934,15 @@ QProgressBar::chunk{
      <addaction name="actionPSS_e_Raw_Rawx"/>
      <addaction name="actionPower_Factory_DGS"/>
      <addaction name="actionMATPOWER"/>
-     <addaction name="actionUCTE"/>
      <addaction name="actionCIM"/>
      <addaction name="actionCGMES"/>
+     <addaction name="actionUCTE"/>
      <addaction name="actionPower_Grid_Models"/>
      <addaction name="actionH5"/>
      <addaction name="actionJSON"/>
      <addaction name="actionMicrosoft_Excel"/>
      <addaction name="actionSQLite"/>
+     <addaction name="actionExportVeragridScenario"/>
     </widget>
     <widget class="QMenu" name="menuExport_data">
      <property name="title">
@@ -12728,6 +12729,10 @@ QProgressBar::chunk{
    </property>
   </action>
   <action name="actionUCTE">
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/cgmes.png</normaloff>:/Icons/icons/cgmes.png</iconset>
+   </property>
    <property name="text">
     <string>UCTE</string>
    </property>
@@ -13004,6 +13009,15 @@ QProgressBar::chunk{
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionExportVeragridScenario">
+   <property name="icon">
+    <iconset resource="../Icons/icons.qrc">
+     <normaloff>:/Program icon/icons/VeraGrid_icon.png</normaloff>:/Program icon/icons/VeraGrid_icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Veragrid Scenario</string>
    </property>
   </action>
  </widget>

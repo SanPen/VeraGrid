@@ -105,6 +105,7 @@ class IoMain(ScenariosMain):
         self.ui.actionH5.triggered.connect(self.export_h5)
         self.ui.actionMicrosoft_Excel.triggered.connect(self.export_excel)
         self.ui.actionSQLite.triggered.connect(self.export_sqlite)
+        self.ui.actionExportVeragridScenario.triggered.connect(self.export_veragrid_scenario)
 
         # Buttons
         self.ui.exportSimulationDataButton.clicked.connect(self.export_simulation_data)
@@ -1427,5 +1428,36 @@ class IoMain(ScenariosMain):
                 type_selected=type_selected,
                 options=FileSavingOptions(
                     file_type=FileType.VeraGrid_sqlite
+                )
+            )
+
+    def export_veragrid_scenario(self):
+        """
+        Export the current veragrid Scenario to a non-multiverse file
+        """
+        # if the global file_name is empty, ask where to save
+        fname = os.path.join(self.project_directory, self.ui.grid_name_line_edit.text())
+
+        files_types = "VeraGrid (*.veragrid)"
+        filename, type_selected = QtWidgets.QFileDialog.getSaveFileName(self,
+                                                                        'Export VeraGrid scenario',
+                                                                        fname,
+                                                                        files_types)
+
+        if filename != '':
+
+            # if the user did not enter the extension, add it automatically
+            name, file_extension = os.path.splitext(filename)
+
+            if file_extension == '':
+                filename = name + '.veragrid'
+
+            # we were able to compose the file correctly, now save it
+            self.file_name = filename
+            self.save_file_now(
+                filename=self.file_name,
+                type_selected=type_selected,
+                options=FileSavingOptions(
+                    file_type=FileType.VeraGridScenario
                 )
             )

@@ -1835,9 +1835,13 @@ def add_linear_branches_formulation(t_idx: int,
             else:
                 monitor_by_sensitivity_n = True
 
+            # DC branches are always monitored when the user enabled their monitoring: their
+            # AC-PTDF sensitivity (alpha) is structurally 0, so the sensitivity
+            # filters would drop these elements and let them overload freely
             branch_vars.monitor_logic[t_idx, m] = int(branch_data_t.monitor_loading[m]
-                                                      and monitor_by_sensitivity_n
-                                                      and monitor_by_load_rule_n)
+                                                      and (branch_data_t.dc[m]
+                                                           or (monitor_by_sensitivity_n
+                                                               and monitor_by_load_rule_n)))
 
             # add the rate constraint if the branch is monitored
             if branch_vars.monitor_logic[t_idx, m]:
@@ -1951,7 +1955,9 @@ def add_linear_branches_contingencies_formulation(t_idx: int,
                 else:
                     monitor_by_sensitivity_n1 = True
 
-                if monitor_by_load_rule_n1 and monitor_by_sensitivity_n1:
+                # DC branches are always monitored 
+                # Remember their PTDF sensitivity is 0
+                if branch_data_t.dc[m] or (monitor_by_load_rule_n1 and monitor_by_sensitivity_n1):
 
                     if con_loading[m] < 1.0:
                         # declare slack variables

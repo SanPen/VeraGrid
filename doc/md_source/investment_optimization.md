@@ -23,7 +23,6 @@ the curse of dimensionality. The methodology we have adopted here consists of:
 
 ![](figures/settings-ml.png)
 
-<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
 
 ## Registered Result Properties
 
@@ -42,7 +41,76 @@ The investments evaluation result stores the evaluated decision vectors and obje
 | `f` | `Mat` | Objective-value matrix for the evaluated decision vectors. |
 | `f_best` | `Vec` | Best objective values found by the evaluation process. |
 | `sorting_indices` | `IntVec` | Indices that sort the evaluated solutions for reporting. |
-<!-- END RESULTS REGISTERED PROPERTIES -->
+
+## Example
+
+Loading the file [TYNDP 2030.veragrid](../../examples/TYNDP%202030.veragrid) that represents the ENTSO-e planning
+exercise made in 2024 and replicated by the [open-tyndp](https://github.com/open-energy-transition/open-tyndp) 
+project, which has been roughly converted to VeraGrid.
+Running the NSGA3 and later the CBA  methods using the time series optimal power flow objective,
+yields the following results:
+
+![TYNDP_2030.png](figures/TYNDP_2030.png)
+
+Each dot of the chart represents an objective function run, in this case the yearly optimal power flow.
+Note that this planning case only contains one sampling point per week. The green dots represent the NSGA3 run, 
+while the blue points represent the CBA (TOOT+PINT) method.
+
+TOOT+PINT, yields surprisingly good results for this planning case when compared with 
+the more mathematically correct NSGA3. However, despite we can asure that NSGA3 always moves towards the optimal pareto
+front, the TOOT+PINT methods cannot guarantee any of that. The Pareto fronts in the picture have been computed
+from the sampled populations. But Again, NSGA3 is designed to sample the pareto front, 
+while TOOT+PINT does none of that.
+
+The Candidate investments in this case are the following:
+
+| Investment             | Freq.  |
+|------------------------|--------|
+| AT00-ITN1 Real 1::2035 | 437.0  |
+| AT00-SI00 Real 1::2035 | 680.0  |
+| BA00-HR00 Real 1::2035 | 17.0   |
+| BE00-FR00 Real 1::2030 | 4.0    |
+| BE00-GB00 Real 1::2035 | 647.0  |
+| BE00-NL00 Real 1::2035 | 161.0  |
+| BE00-NL00 Real 2::2035 | 1072.0 |
+| BG00-RS00 Real 1::2035 | 165.0  |
+| CH00-DE00 Real 1::2035 | 7.0    |
+| CH00-DE00 Real 2::2035 | 5.0    |
+| CH00-ITN1 Real 1::2035 | 0.0    |
+| CZ00-SK00 Real 1::2035 | 395.0  |
+| DE00-GB00 Real 1::2030 | 431.0  |
+| DE00-NL00 Real 1::2035 | 712.0  |
+| DE00-SE04 Real 1::2035 | 0.0    |
+| DKW1-GB00 Real 1::2035 | 708.0  |
+| DKW1-SE03 Real 1::2035 | 595.0  |
+| EE00-FI00 Real 1::2035 | 683.0  |
+| EE00-LV00 Real 1::2035 | 0.0    |
+| ES00-FR00 Real 1::2030 | 1049.0 |
+| ES00-FR00 Real 2::2030 | 898.0  |
+| FI00-SE01 Real 2::2030 | 50.0   |
+| FI00-SE01 Real 1::2035 | 526.0  |
+| FR00-GB00 Real 1::2035 | 156.0  |
+| GB00-GBNI Real 1::2030 | 0.0    |
+| IE00-GBNI Real 1::2030 | 0.0    |
+| GR00-ITS1 Real 1::2035 | 0.0    |
+| GR00-MK00 Real 1::2035 | 1057.0 |
+| HU00-RO00 Real 1::2035 | 15.0   |
+| HU00-RS00 Real 1::2030 | 246.0  |
+| ITCS-ME00 Real 1::2035 | 1.0    |
+| LT00-SE04 Real 1::2030 | 700.0  |
+| SE02-SE03 Real 1::2035 | 1041.0 |
+| LV00-SE03 Real 1::2035 | 0.0    |
+
+
+These are the frequency when the investments appear in the Pareto front.
+This indicates how frequently are investments chosen in Pareto-optimal combinations.
+A very frequent appearance indicates that the investment is a low regret investment
+whereas a comparatively lower frequency investment is a higher regret investment option.
+
+This way of choosing investment candidates offers decision maker a far superior 
+way of determining where to spend the resources than the classical MIP-optimal
+result where the optimality is an opaque output where decision makers and modelers
+alike have a hard time understanding.
 
 ## API
 
@@ -74,9 +142,265 @@ df_pareto_points = drv.results.mdl(result_type=gce.ResultTypes.InvestmentsPareto
 df_all = drv.results.mdl(result_type=gce.ResultTypes.InvestmentsReportResults).to_df()
 ```
 
-## Theory Pt.1
 
-### Formulation
+
+## Search Alternatives
+
+The investments framework supports several ways of exploring the candidate space. In practice, the two
+main optimization-oriented alternatives are the NSGA family and MVRSM.
+
+### NSGA-based search
+
+The NSGA-based route is the most direct multi-objective alternative. In the current implementation the
+main helper is `NSGA_3`, which is called with the problem objective callback and the problem bounds:
+
+```python
+X, obj_values = NSGA_3(
+    obj_func=self.objective_function,
+    n_partitions=n_partitions,
+    n_var=dim,
+    lb=self.problem.x_min,
+    ub=self.problem.x_max,
+    n_obj=len(ret),
+    max_evals=self.options.max_eval,
+    pop_size=pop_size,
+    crossover_prob=0.8,
+    mutation_probability=0.1,
+    eta=30,
+)
+```
+
+This family of methods is useful when:
+
+- the user wants a Pareto front directly,
+- several objectives must be kept visible instead of being collapsed into a single score,
+- the decision space is discrete but still broad enough that cumulative one-by-one rankings are too restrictive.
+
+Conceptually, the NSGA workflow evolves a population of candidate combinations. At each generation, the
+population is ranked according to Pareto dominance and diversity criteria, so the search tends to preserve
+solutions that represent different trade-offs among the objectives.
+
+For the investments module this means:
+
+- the problem objective function is treated as a black box,
+- each candidate combination is evaluated exactly through the active problem,
+- the final displayed metrics are simply the objective vectors returned by that problem.
+
+### MVRSM
+
+MVRSM is the surrogate-based alternative already integrated in the investments driver. Strictly speaking,
+it is not an evolutionary algorithm in the same sense as NSGA, because it does not evolve a population by
+selection and crossover. Instead, it builds and updates a surrogate model of the expensive black-box
+objective function and uses that model to guide the search.
+
+This route is useful when:
+
+- each objective evaluation is expensive,
+- the number of possible combinations is too large for exhaustive inspection,
+- a user wants a faster guided search without evaluating a very large population explicitly.
+
+In the investments workflow the role of MVRSM is:
+
+- evaluate some initial combinations,
+- fit a surrogate that approximates the objective response,
+- use that surrogate to propose promising new combinations,
+- keep updating the surrogate with real evaluations from the active problem.
+
+The practical trade-off against NSGA is simple:
+
+- **NSGA** is usually easier to interpret as a Pareto-search mechanism.
+- **MVRSM** is usually more attractive when evaluation cost dominates and a model-guided search is preferred.
+
+
+
+
+### TOOT/PINT CBA Sequence
+
+Besides population-based search methods such as NSGA-3, the investments framework also provides a
+deterministic independent ranking sequence inspired by the ENTSO-e CBA workflow. The implementation
+lives in:
+
+`src/VeraGridEngine/Simulations/InvestmentsEvaluation/Methods/toot_pint_cba.py`
+
+and is exposed as the library-style function:
+
+```python
+TOOT_PINT_CBA(
+    obj_func=...,
+    n_var=...,
+    lb=...,
+    ub=...,
+    n_obj=...,
+    objective_names=...,
+    variable_names=...,
+    report_text=...,
+    logger=...,
+)
+```
+
+The call is intentionally similar to the NSGA-3 helper: the method receives an objective callback plus
+the problem dimensions and bounds, and it returns the best-ranked combination according to the CBA
+sequence. This keeps the method reusable and avoids coupling it to the driver class.
+
+#### Reference, PINT and TOOT
+
+The sequence is built from three types of evaluations:
+
+- **Reference case**: the baseline combination, taken from the lower bound vector of the problem.
+- **PINT case**: a candidate project is added to the reference case and evaluated.
+- **TOOT case**: a target combination containing all projects is built from the upper bound vector, and then one project is removed and evaluated.
+
+For each candidate project, the method computes:
+
+- the marginal improvement of the PINT case with respect to the reference case,
+- the marginal degradation of the TOOT case with respect to the target case,
+- a normalized scalar ranking score based on the project benefits and its CAPEX contribution.
+
+That scalar score is used only to rank the projects. It is **not** used as a displayed objective.
+
+#### Why the displayed objectives remain correct
+
+The independent CBA sequence still relies on the active problem callback for every stored evaluation:
+
+- the reference case is evaluated through the problem objective function,
+- every PINT case is evaluated through the problem objective function,
+- every cumulative ranked portfolio is evaluated through the problem objective function.
+
+As a consequence:
+
+- the objective names shown in the GUI come from `problem.get_objectives_names()`,
+- the objective values shown in the tables and Pareto plots are the exact values returned by the problem,
+- the CBA score is only an internal ranking quantity written to the logger.
+
+This is particularly important for custom problems, such as the time-series linear OPF investment problem,
+where the visible objectives may be, for example, average nodal price, CAPEX, OPEX, load shedding,
+generation shedding and fuel usage.
+
+#### Sequence output
+
+Once the projects are ranked, the method evaluates a cumulative build-out sequence:
+
+1. the reference combination,
+2. one PINT evaluation for each candidate,
+3. the cumulative combinations obtained by adding projects in ranked order.
+
+The best combination reported back to the driver is the first-ranked project added to the reference
+combination. The results object itself still stores the full objective vectors of the evaluations
+performed by the active problem.
+
+
+
+
+
+## Available Problems
+
+The search method is only one half of the setup. The other half is the problem definition, which determines:
+
+- what the decision vector means,
+- what simulation is executed for each candidate combination,
+- what objective vector is returned and shown in the results.
+
+The engine currently exposes the following investment problem types.
+
+### `PowerFlowInvestmentProblem`
+
+This is the snapshot power-flow problem.
+
+- Decision variables are binary.
+- Each investment group is either inactive or active.
+- The evaluation runs a standard power flow.
+- The objectives are technical and economic scores derived from losses, overloads, voltage penalties and CAPEX/OPEX-style terms.
+
+This problem is appropriate for:
+
+- single-state studies,
+- quick technical screening of candidate reinforcements,
+- situations where time-series behavior is not required.
+
+### `TimeSeriesPowerFlowInvestmentProblem`
+
+This is the time-series version of the power-flow problem.
+
+- Decision variables are binary.
+- Each investment group is either inactive or active for the full study horizon.
+- The evaluation runs a time-series power flow.
+- The objective vector contains the time-series technical and economic performance indicators defined by the problem.
+
+This problem is appropriate for:
+
+- operational studies over multiple hours,
+- cases where the benefit of an investment depends on chronology,
+- power-flow-driven Pareto exploration.
+
+### `AdequacyInvestmentProblem`
+
+This is the adequacy-oriented problem.
+
+- Decision variables are integer year-of-entry values.
+- `0` means “not invested”.
+- `1..N` means “project enters service in year `N` of the selected horizon”.
+- The evaluation runs either Monte Carlo adequacy or the simple dispatch path, depending on configuration.
+
+The objective vector depends on configuration, but it is built around adequacy quantities such as:
+
+- LOLE,
+- CAPEX,
+- unitary electricity cost,
+- curtailment,
+- optional firm-capacity penalty.
+
+This problem is appropriate for:
+
+- generation adequacy studies,
+- expansion timing questions,
+- year-of-entry optimization rather than only binary inclusion.
+
+### `TimeSeriesLinearOptimalPowerFlowInvestmentProblem`
+
+This is the time-series linear OPF investment problem introduced for nodal-price and dispatch economics studies.
+
+- Decision variables are integer year-of-entry values, following the adequacy-style encoding.
+- External `OptimalPowerFlowOptions` are provided by the caller, but the problem forces the linear OPF formulation.
+- Candidate assets are forced off in the baseline state and then activated from the chosen entry year onward.
+- Each evaluation runs a time-series linear OPF.
+
+The objective vector currently contains:
+
+- average nodal price,
+- CAPEX,
+- OPEX,
+- load shedding,
+- generation shedding,
+- fuel usage.
+
+This problem is appropriate for:
+
+- market- or dispatch-oriented transmission and generation candidate studies,
+- nodal-price-sensitive investment screening,
+- time-dependent investment timing studies with operational dispatch metrics.
+
+### Relationship between problem and displayed metrics
+
+The displayed metrics in the investments results always come from the active problem. This is true for:
+
+- NSGA-based runs,
+- MVRSM runs,
+- random exploration,
+- TOOT/PINT CBA ranking sequences.
+
+Therefore, choosing a different problem changes both:
+
+- the electrical simulation used during each evaluation,
+- the meaning and names of the objectives shown in the reports and Pareto views.
+
+## Theory
+
+This section develops all the research that has been done in VeraGrid to develop
+the current stage of investments planning.
+
+### Theory Pt.1
+
+#### Formulation
 
 1. **Basic objective function**
 
@@ -141,9 +465,9 @@ works as a black-box model. The objective function is evaluated and sent to the 
 the model outputs the optimal point.
 
 
-### Testing on a Grid
+#### Testing on a Grid
 
-#### Grid
+##### Grid
 
 In order to test the algorithm for different variations of the objective function, a 
 130-bus grid has been prepared with 389 Investment Candidates including lines and buses. 
@@ -152,7 +476,7 @@ The diagram of the grid is shown in Figure 1.
 ![](figures/investments/130bus_grid_diagram.png)
     Figure 1: Test grid diagram. Grey lines and repeated elements are investment candidates.
 
-#### Base case
+##### Base case
 
 Initially, the algorithm did not include the economical criteria in the objective function. 
 Although it is clear that it is needed to somehow include the CAPEX and OPEX in the minimization, 
@@ -167,7 +491,7 @@ that more investments equals minimum objective function values. By adding the CA
 objective function, it is expected to correct this tendency and instead find an optimal point
 regarding both technical and economic criteria.
 
-### Initial tests
+#### Initial tests
 
 Including the CAPEX in the objective function is a delicate problem. 
 As seen in Figure 2, the CAPEX values can be above $10^4$ while the technical criteria are 
@@ -194,7 +518,7 @@ solutions. The situation from the Base case is reverted, but another problem ari
 How should the different criteria values be computed so that all elements in the objective
 function are around the same order of magnitude?
 
-### Normalization
+#### Normalization
 
 When dealing with multi-criteria optimization, it is common to establish some 
 reference values for each criterion in the objective function and normalize the terms 
@@ -292,7 +616,7 @@ case as the one shown in Figure 4.
 It is worth mentioning that because the objective function can now take negative values, the normalization
 used in the colors visualization can no longer be LogNorm() and has been changed to Normalize().
 
-### Random evaluations process
+#### Random evaluations process
 
 Given that all previous figures share a similar shape in terms of point distribution, with two separated regions,
 it is questioned that the algorithm is exploring all the possible solutions, especially during the random evaluation iterations.
@@ -317,7 +641,7 @@ obtained during the random iterations, as shown in red in Figure 13.
 Figure 13: Hypothetical unexplored Pareto front.
 
 
-### Multi-objective optimization
+#### Multi-objective optimization
 
 Another line of research includes modifying the MVRSM model to support multi-objective minimization. This way, the
 scaling process after the random evaluations is not necessary, instead, the model works directly with the values obtained
@@ -339,7 +663,7 @@ the curve and closer to the optimal point (0,0).
 ![](figures/investments/Pareto_multi.png)
     Figure 14: Results obtained for the multi objective optimization.
 
-### Testing on ZDT3
+#### Testing on ZDT3
 
 This section covers the testing of both the multi-objective and single-objective with normalization algorithms on a
 typical test function for multi-objective optimization.
@@ -410,7 +734,7 @@ Furthermore, the observed behavior in the case of ZDT3 draws parallels to the ea
 tests performed on the grid. The algorithm does get close to the Pareto front but 
 does not extensively explore it during the minimization process, which would be the desired situation. 
 
-### Conclusions
+#### Conclusions
 
 Based on the results obtained throughout the different tests, some conclusions can be drawn.
     - The single-objective algorithm's performance is significantly influenced by the order of magnitude of the criteria.
@@ -422,9 +746,9 @@ In light of these observations, future work should include the exploration of es
 multi-objective black-box optimization methods and alternative algorithms 
 for multi-objective minimization, such as the application of NSGA-III.
 
-## Theory Pt.2
+### Theory Pt.2
 
-### Improving the NSGA-3 investments
+#### Improving the NSGA-3 investments
 
 In continuation to prior advancements in solving the power grid optimisation problem, this report presents the NSGA-III
 machine learning algorithm, which has been researched, developed and implemented into VeraGrid with the aim of improving
@@ -457,7 +781,7 @@ algorithm.
     Figure 1: MVRSM results with hypothetical improved Pareto front
 
 
-### NSGA-III Theory
+#### NSGA-III Theory
 
 The Non-Dominated Sorting Genetic Algorithm III is an evolutionary (genetic) algorithm designed to find the Pareto
 curve of optimal solutions for multi-objective or many-objective functions. It was implemented for this optimisation
@@ -478,14 +802,14 @@ dominated solution, eventually achieving a balanced distribution of solutions ac
 the Pareto front.
 
 
-### Hypertuning
+#### Hypertuning
 
 The carefully tuned parameters that direct the algorithm are explained below, with
 comparisons shown where necessary, to validate the settings chosen. The algorithm
 was simulated several times on the investment grid in Figure 6, to test which parameters most effectively
 solved the minimisation problem.
 
-#### Population Size
+##### Population Size
 
 The population size refers to the number of individuals in each generation of the
 algorithm. In this case, it represents the pool of investment configurations sampled
@@ -506,7 +830,7 @@ however, as the algorithm may struggle to adequately explore the solution space.
 
 
 
-#### Reference Directions
+##### Reference Directions
 
 The reference direction used during the optimisation defines its rows as the reference lines and its
 columns the variables. This partitions the points in the objective
@@ -535,7 +859,7 @@ in objective values, improving the coverage of the Pareto front. This type works
 The reduction type reduces overlap between reference directions, without sacrificing exploration,
 which effectively solves our multi-objective problem, whilst also removing any unnecessary computation
 
-#### Sampling Technique
+##### Sampling Technique
 
 The sampling process defines the initial set of solutions; from which NSGA-III starts
 its optimisation. The choice of sampling technique is significant, as it influences the
@@ -565,7 +889,7 @@ of sampling, the first three are unable to explore points past an investment cos
     (d) binary uniform
 
 
-#### Selection
+##### Selection
 
 A genetic algorithm requires a mating selection so that parents are selected for each
 generation to produce new offspring using different recombinations and mutation
@@ -574,14 +898,14 @@ neighborhood, and tournament (to introduce some selection pressure).
 This is set to random since we would like to shuffle and thoroughly explore all
 possible combinations, in the hope of finding all optimal solutions.
 
-#### Crossover
+##### Crossover
 
 The crossover operator combines genetic information from parent individuals to create offspring during evolution.
 The best probability found was a high value, close to 1, which ensured that offspring were frequently generated
 through recombination of parent solutions, promoting genetic diversity. This encourages further exploration
 of the solution space.
 
-#### Mutation
+##### Mutation
 
 Performing mutation after crossover introduces random changes to individual solutions through each generation.
 A higher probability of mutation increases the diversity in the population, potentially leading to the discovery
@@ -589,14 +913,14 @@ of more optimal solutions. However, very high mutation may result in the loss of
 are changed or lost during evolution. It was therefore set to 0.5 to ensure a balance
 between exploration and exploitation.
 
-#### Crowding Distance
+##### Crowding Distance
 
 The eta value, which defines the crowding distance, influences the degree of curvature in the Pareto front.
 It was set to a high value between 10 and 30 which produced the most curvature due to a greater dispersion of
 solutions along the Pareto front.
 
 
-### Results
+#### Results
 
 The two algorithms were tested on the 130-bus grid (Figure 6) prepared with 389
 Investment Candidates including lines and buses in order to visually compare their
@@ -631,7 +955,7 @@ Optimum Parameter Configuration:
    | Eta              | 30                        |
 
 
-### Future Development
+#### Future Development
 
 Improvement at this stage would involve creating a surrogate model in order to
 decrease the time taken to evaluate the investments. Though faster than MVRSM,

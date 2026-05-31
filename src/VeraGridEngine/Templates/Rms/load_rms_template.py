@@ -6,6 +6,7 @@
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.enumerations import ParamPowerFlowRefferenceType, VarPowerFlowRefferenceType, DeviceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
+from VeraGridEngine.Utils.Symbolic.block import Block
 
 
 def get_load_rms_template(
@@ -23,8 +24,8 @@ def get_load_rms_template(
     templ.name = name
 
     inputs = [
-        vfactory.add_var("Vm_" + name),
-        vfactory.add_var("Va_" + name)
+        vfactory.add_var("Vm_" + name, reference=VarPowerFlowRefferenceType.Vm),
+        vfactory.add_var("Va_" + name, reference=VarPowerFlowRefferenceType.Va)
     ]
 
     Pl0 = vfactory.add_var("Pl0")
@@ -32,13 +33,22 @@ def get_load_rms_template(
     Pl = vfactory.add_var("Pl", reference=VarPowerFlowRefferenceType.P)
     Ql = vfactory.add_var("Ql", reference=VarPowerFlowRefferenceType.Q)
 
-    templ.block.event_dict[Pl0] = Pl
-    templ.block.event_dict[Ql0] = Ql
+    block = Block()
 
-    templ.block.algebraic_vars = [Pl, Ql]
-    templ.block.out_vars = [Pl, Ql]
+    block.event_dict[Pl0] = Pl
+    block.event_dict[Ql0] = Ql
 
-    templ.block.algebraic_eqs = [Pl - Pl0, Ql - Ql0]
+    block.algebraic_vars = [Pl, Ql]
+
+
+    block.algebraic_eqs = [Pl - Pl0, Ql - Ql0]
+
+    block.in_vars = inputs
+    block.out_vars = [Pl, Ql]
+
+    block.name = name
+
+    templ.block.children.append(block)
 
     templ.block.external_mapping = {
         VarPowerFlowRefferenceType.Va: inputs[0],
@@ -57,5 +67,6 @@ def get_load_rms_template(
     #    Ql0: Ql,
     #}
     templ.block.in_vars = inputs
+    templ.block.out_vars = [Pl, Ql]
 
     return templ

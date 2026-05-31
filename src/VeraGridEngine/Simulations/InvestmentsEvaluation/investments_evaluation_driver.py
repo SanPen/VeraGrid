@@ -16,9 +16,13 @@ from VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_opt
 from VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.NSGA_3 import NSGA_3
 from VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.mixed_variable_NSGA_2 import NSGA_2
 from VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.random_eval import random_trial
+from VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.toot_pint_cba import (
+    TOOT_PINT_CBA,
+    get_toot_pint_seed_population,
+)
 from VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.black_box_problem_template import BlackBoxProblemTemplate
 from VeraGridEngine.enumerations import InvestmentEvaluationMethod, SimulationTypes
-from VeraGridEngine.basic_structures import IntVec, Vec
+from VeraGridEngine.basic_structures import IntVec, IntMat, Vec, Mat
 
 
 class InvestmentsEvaluationDriver(DriverTemplate):
@@ -99,9 +103,9 @@ class InvestmentsEvaluationDriver(DriverTemplate):
 
         if record_results:
             self.results.add(x_vec=x, f_vec=objectives)
-
-        # Report the progress
-        self.report_progress2(self.results.current_evaluation, self.results.max_eval)
+            self.report_progress2(self.results.current_evaluation, self.results.max_eval)
+        else:
+            pass
 
         return objectives
 
@@ -137,36 +141,29 @@ class InvestmentsEvaluationDriver(DriverTemplate):
 
     def independent_evaluation(self) -> None:
         """
-        Sort investments in order and then evaluate cumulative combinations of increasingly expensive investments
+        Evaluate projects with a CBA-like reference/PINT/TOOT ranking and then build a cumulative portfolio.
         """
+        self.report_text("Evaluating investments with a CBA-like independent sequence...")
+        dim: int = self.problem.n_vars()
+        n_cumulative_evaluations: int = dim - 1 if dim > 0 else 0
 
-        self.initialize(max_iter=(self.problem.n_vars() + 1) * 2)
+        # The displayed metrics must come from the active problem, so the results object is initialized with the
+        # problem objective names and every stored evaluation comes from self.objective_function().
+        self.initialize(max_iter=1 + dim + n_cumulative_evaluations)
 
-        # Add baseline evaluation
-        self.objective_function(x=np.zeros(self.problem.n_vars(), dtype=int))
-        results_with_combinations = self.evaluate_individual_investments()
+        best_combination: IntVec = TOOT_PINT_CBA(
+            obj_func=self.objective_function,
+            n_var=dim,
+            lb=self.problem.x_min,
+            ub=self.problem.x_max,
+            n_obj=len(self.problem.get_objectives_names()),
+            objective_names=self.problem.get_objectives_names(),
+            variable_names=self.problem.get_vars_names(),
+            report_text=self.report_text,
+            logger=self.logger,
+        )
 
-        # Sort the results in ascending financial score
-        sorted_results_with_combinations = sorted(results_with_combinations, key=lambda x: x[0][4])
-
-        dim = len(self.grid.investments_groups)
-        cumulative_combination = np.zeros(dim, dtype=int)
-        cumulative_combinations = []
-
-        # Cumulative combinations
-
-        for results, combination in sorted_results_with_combinations:
-            cumulative_combination += combination
-            # print(f"Combination: {combination}, Results: {results}, Cumulative Combination: {cumulative_combination}")
-            cumulative_combinations.append(cumulative_combination.copy())
-
-        st = timeit.default_timer()
-        # Evaluate each cumulative combination
-        for cumulative_combination in cumulative_combinations:
-            self.report_text(f"Evaluating cumulative combination: {cumulative_combination}")
-            self.objective_function(x=cumulative_combination, record_results=True)
-        et = timeit.default_timer()
-        print(f"Time taken to evaluate cumulative combinations: {et - st}")
+        self.results.set_best_combination(combination=best_combination)
 
     def optimized_evaluation_mvrsm_pareto(self) -> None:
         """
@@ -237,6 +234,57 @@ class InvestmentsEvaluationDriver(DriverTemplate):
             crossover_prob=0.8,
             mutation_probability=0.1,
             eta=30,
+        )
+
+        self.results.set_best_combination(combination=X[:, 0])
+
+    def optimized_evaluation_pint_toot_nsga3(self) -> None:
+        """
+        Run an NSGA3 search warm-started with the direct PINT and TOOT evaluations.
+        """
+        self.report_text("Evaluating investments with PINT/TOOT-seeded NSGA3...")
+        dim: int = self.problem.n_vars()
+        pop_size: int = int(round(dim))
+        n_obj: int = len(self.problem.get_objectives_names())
+
+        # Record the evaluated warm-start points first and then leave the remaining budget to NSGA3 itself.
+        self.initialize(max_iter=self.options.max_eval + 2 * dim + 2)
+
+        seed_population: IntMat
+        seed_objectives: Mat
+        seed_population, seed_objectives = get_toot_pint_seed_population(
+            obj_func=self.objective_function,
+            n_var=dim,
+            lb=self.problem.x_min,
+            ub=self.problem.x_max,
+            n_obj=n_obj,
+            objective_names=self.problem.get_objectives_names(),
+            variable_names=self.problem.get_vars_names(),
+            pop_size=pop_size,
+            report_text=self.report_text,
+            logger=self.logger,
+            record_results=True,
+        )
+
+        # Find the largest number of reference partitions compatible with the selected population size.
+        n_partitions: int = 1
+        while comb(n_partitions + 1 + n_obj - 1, n_obj - 1) <= pop_size:
+            n_partitions += 1
+
+        X, obj_values = NSGA_3(
+            obj_func=self.objective_function,
+            n_partitions=n_partitions,
+            n_var=dim,
+            lb=self.problem.x_min,
+            ub=self.problem.x_max,
+            n_obj=n_obj,
+            max_evals=self.options.max_eval,
+            pop_size=pop_size,
+            crossover_prob=0.8,
+            mutation_probability=0.1,
+            eta=30,
+            initial_population=seed_population,
+            initial_objectives=seed_objectives,
         )
 
         self.results.set_best_combination(combination=X[:, 0])
@@ -312,7 +360,7 @@ class InvestmentsEvaluationDriver(DriverTemplate):
         self.logger.add_info(msg="Solver", value=f"{self.options.solver.value}")
         self.logger.add_info(msg="Max evaluations", value=f"{self.options.max_eval}")
 
-        if self.options.solver == InvestmentEvaluationMethod.Independent:
+        if self.options.solver == InvestmentEvaluationMethod.CBA_PINT_TOOT:
             self.independent_evaluation()
 
         elif self.options.solver == InvestmentEvaluationMethod.MVRSM:
@@ -320,6 +368,9 @@ class InvestmentsEvaluationDriver(DriverTemplate):
 
         elif self.options.solver == InvestmentEvaluationMethod.NSGA3:
             self.optimized_evaluation_nsga3()
+
+        elif self.options.solver == InvestmentEvaluationMethod.PINT_TOOT_NSGA3:
+            self.optimized_evaluation_pint_toot_nsga3()
 
         elif self.options.solver == InvestmentEvaluationMethod.Random:
             self.randomized_evaluation()

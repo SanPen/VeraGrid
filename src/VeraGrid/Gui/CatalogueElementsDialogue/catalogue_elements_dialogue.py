@@ -601,6 +601,14 @@ class CatalogueElementsSelectionDialogue(QtWidgets.QDialog):
             unique_key='emt:get_pv_avm_boost_grid_following_emt_template:abc',
             function_ptr=tem.get_pv_avm_boost_grid_following_emt_template)
         )
+        actions.append(CatalogueAction(
+            kind=CatalogueActionKind.AddEmtTemplate,
+            args=(self._circuit.var_factory,),
+            name='VSC Grid-Forming (GFM)',
+            voltage_text='', power_text='',
+            unique_key='emt:get_gfm_emt_template',
+            function_ptr=tem.get_gfm_emt_template)
+        )
         return actions
 
     def get_existing_keys(self) -> Dict[str, bool]:

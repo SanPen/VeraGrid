@@ -16,6 +16,7 @@ heard of as they are a product of cutting-edge research.
 [![Scorecard supply-chain security](https://github.com/SanPen/VeraGrid/actions/workflows/scorecard.yml/badge.svg)](https://github.com/SanPen/VeraGrid/actions/workflows/scorecard.yml)
 [![CodeQL](https://github.com/SanPen/VeraGrid/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/SanPen/VeraGrid/actions/workflows/github-code-scanning/codeql)
 [![Documentation Status](https://readthedocs.org/projects/veragrid/badge/?version=latest)](https://veragrid.readthedocs.io/en/latest/?badge=latest) [![Build Status](https://travis-ci.org/SanPen/VeraGrid.svg?branch=master)](https://travis-ci.org/SanPen/VeraGrid)
+[![LF Energy Landscape](https://img.shields.io/badge/LF%20Energy%20Landscape-5699C6)](https://landscape.lfenergy.org/?item=energy-systems--modeling-and-optimization--veragrid)
 [![DOI](https://www.zenodo.org/badge/49583206.svg)](https://www.zenodo.org/badge/latestdoi/49583206)
 [![Downloads](https://static.pepy.tech/personalized-badge/veragrid?period=total&units=abbreviation&left_color=grey&right_color=green&left_text=Downloads)](https://pepy.tech/project/veragrid)
 [![Chat](https://img.shields.io/badge/join-chat-green)](https://matrix.to/#/#veragrid:matrix.org)

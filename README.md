@@ -1,10 +1,11 @@
 # VeraGrid
 
 VeraGrid is a top tier power systems planning and simulation software.
-As such, it has all the static analysis studies that you can think of, plus
-linear and non-linear optimization functions. Some of these functions are
-well known, while others you may have never heard of as they are a
-product of cutting-edge research.
+As such, it has all the analysis studies that you can think of, such as
+linear and non-linear optimization functions, RMS, EMT, short circuit, 
+stochastic, blackout cascading, investments evaluations and many more. 
+Some of these functions are well known, while others you may have never 
+heard of as they are a product of cutting-edge research.
 
 
 ![VeraGrid_banner.png](pics/VeraGrid_banner.png)[](![Ver(pics/VeraGrid_banner.png))

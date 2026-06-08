@@ -3,11 +3,11 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 import numpy as np
-from VeraGridEngine.enumerations import DeviceType, TapPhaseControl, TapModuleControl, WindingType, ParamPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, TapPhaseControl, TapModuleControl, WindingType, ParamPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Branches.transformer import Transformer2W
-from VeraGridEngine.Utils.Symbolic.block import Block, VarPowerFlowRefferenceType
+from VeraGridEngine.Utils.Symbolic.block import Block, VarPowerFlowReferenceType
 from VeraGridEngine.Utils.Symbolic.symbolic import sin, cos
 from VeraGridEngine.enumerations import WindingsConnection
 
@@ -79,10 +79,10 @@ class TrafoRmsTemplate(RmsModelTemplate):
         # print(f"vtap  p is {vtap_f}")
         # print(f"vtap  t is {vtap_t}")
         # print(f'ys is {ys} ysh is {ysh}')
-        Vmf = vf.add_var('Vmf', VarPowerFlowRefferenceType.Vmf)
-        Vaf = vf.add_var('Vaf', VarPowerFlowRefferenceType.Vaf)
-        Vmt = vf.add_var('Vmt', VarPowerFlowRefferenceType.Vmt)
-        Vat = vf.add_var('Vat', VarPowerFlowRefferenceType.Vat)
+        Vmf = vf.add_var('Vmf', VarPowerFlowReferenceType.Vmf)
+        Vaf = vf.add_var('Vaf', VarPowerFlowReferenceType.Vaf)
+        Vmt = vf.add_var('Vmt', VarPowerFlowReferenceType.Vmt)
+        Vat = vf.add_var('Vat', VarPowerFlowReferenceType.Vat)
         inputs = [Vmf, Vaf, Vmt, Vat]
         # Calculate phase displacement matching transformer_admittance logic
         # Use conn attribute (preserves user intent) instead of conn_f/conn_t (may be overwritten by template)
@@ -119,24 +119,24 @@ class TrafoRmsTemplate(RmsModelTemplate):
             in_vars=[Vmf, Vaf, Vmt, Vat],
         )
         block.external_mapping = {
-            VarPowerFlowRefferenceType.Pf: Pf,
-            VarPowerFlowRefferenceType.Pt: Pt,
-            VarPowerFlowRefferenceType.Qf: Qf,
-            VarPowerFlowRefferenceType.Qt: Qt,
-            VarPowerFlowRefferenceType.Vaf: Vaf,
-            VarPowerFlowRefferenceType.Vmf: Vmf,
-            VarPowerFlowRefferenceType.Vmt: Vmt,
-            VarPowerFlowRefferenceType.Vat: Vat,
+            VarPowerFlowReferenceType.Pf: Pf,
+            VarPowerFlowReferenceType.Pt: Pt,
+            VarPowerFlowReferenceType.Qf: Qf,
+            VarPowerFlowReferenceType.Qt: Qt,
+            VarPowerFlowReferenceType.Vaf: Vaf,
+            VarPowerFlowReferenceType.Vmf: Vmf,
+            VarPowerFlowReferenceType.Vmt: Vmt,
+            VarPowerFlowReferenceType.Vat: Vat,
         }
         block.api_obj_mapping = {
-            ParamPowerFlowRefferenceType.g: gt,
-            ParamPowerFlowRefferenceType.b: bt,
-            ParamPowerFlowRefferenceType.gFe: gFe,
-            ParamPowerFlowRefferenceType.bsh: bmu,
-            ParamPowerFlowRefferenceType.transformer_tap_module: m,
-            ParamPowerFlowRefferenceType.transformer_tap_phase: phi,
-            ParamPowerFlowRefferenceType.vtap_f: vtap_f,
-            ParamPowerFlowRefferenceType.vtap_t: vtap_t,
+            ParamPowerFlowReferenceType.g: gt,
+            ParamPowerFlowReferenceType.b: bt,
+            ParamPowerFlowReferenceType.gFe: gFe,
+            ParamPowerFlowReferenceType.bsh: bmu,
+            ParamPowerFlowReferenceType.tap_module: m,
+            ParamPowerFlowReferenceType.tap_phase: phi,
+            ParamPowerFlowReferenceType.vtap_f: vtap_f,
+            ParamPowerFlowReferenceType.vtap_t: vtap_t,
         }
 
         block.parameters[gt] = vf.add_const(0.0)
@@ -257,10 +257,10 @@ class TrafoPhasorRmsTemplate(RmsModelTemplate):
         super().__init__(name=name)
 
         self.tpe: DeviceType = DeviceType.Transformer2WDevice
-        Vrf = vf.add_var("Vrf_" + name, VarPowerFlowRefferenceType.Vrf)
-        Vif = vf.add_var("Vif_" + name, VarPowerFlowRefferenceType.Vif)
-        Vrt = vf.add_var("Vrt_" + name, VarPowerFlowRefferenceType.Vrt)
-        Vit = vf.add_var("Vit_" + name, VarPowerFlowRefferenceType.Vit)
+        Vrf = vf.add_var("Vrf_" + name, VarPowerFlowReferenceType.Vrf)
+        Vif = vf.add_var("Vif_" + name, VarPowerFlowReferenceType.Vif)
+        Vrt = vf.add_var("Vrt_" + name, VarPowerFlowReferenceType.Vrt)
+        Vit = vf.add_var("Vit_" + name, VarPowerFlowReferenceType.Vit)
 
         Irf = vf.add_var("Irf")
         Iif = vf.add_var("Iif")
@@ -311,25 +311,25 @@ class TrafoPhasorRmsTemplate(RmsModelTemplate):
         )
 
         block.external_mapping = {
-            VarPowerFlowRefferenceType.Vrf: Vrf,
-            VarPowerFlowRefferenceType.Vif: Vif,
-            VarPowerFlowRefferenceType.Vrt: Vrt,
-            VarPowerFlowRefferenceType.Vit: Vit,
-            VarPowerFlowRefferenceType.Irf: Irf,
-            VarPowerFlowRefferenceType.Iif: Iif,
-            VarPowerFlowRefferenceType.Irt: Irt,
-            VarPowerFlowRefferenceType.Iit: Iit,
+            VarPowerFlowReferenceType.Vrf: Vrf,
+            VarPowerFlowReferenceType.Vif: Vif,
+            VarPowerFlowReferenceType.Vrt: Vrt,
+            VarPowerFlowReferenceType.Vit: Vit,
+            VarPowerFlowReferenceType.Irf: Irf,
+            VarPowerFlowReferenceType.Iif: Iif,
+            VarPowerFlowReferenceType.Irt: Irt,
+            VarPowerFlowReferenceType.Iit: Iit,
         }
 
         block.api_obj_mapping = {
-            ParamPowerFlowRefferenceType.g: gt,
-            ParamPowerFlowRefferenceType.b: bt,
-            ParamPowerFlowRefferenceType.bsh: bmu,
-            ParamPowerFlowRefferenceType.gFe: gFe,
-            ParamPowerFlowRefferenceType.transformer_tap_module: tap_module,
-            ParamPowerFlowRefferenceType.transformer_tap_ratio: tap_phase,
-            ParamPowerFlowRefferenceType.vtap_f: vtap_f,
-            ParamPowerFlowRefferenceType.vtap_t: vtap_t,
+            ParamPowerFlowReferenceType.g: gt,
+            ParamPowerFlowReferenceType.b: bt,
+            ParamPowerFlowReferenceType.bsh: bmu,
+            ParamPowerFlowReferenceType.gFe: gFe,
+            ParamPowerFlowReferenceType.tap_module: tap_module,
+            ParamPowerFlowReferenceType.transformer_tap_ratio: tap_phase,
+            ParamPowerFlowReferenceType.vtap_f: vtap_f,
+            ParamPowerFlowReferenceType.vtap_t: vtap_t,
         }
 
         block.parameters[gt] = vf.add_const(0.0)

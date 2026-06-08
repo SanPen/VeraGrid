@@ -19,46 +19,46 @@ from VeraGridEngine.Templates.Emt.load_RLC_emt_template import (
     wrap_ground_referenced_load_emt_template,
 )
 from VeraGridEngine.Utils.Symbolic.block import Expr, Var
-from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowRefferenceType, ShuntConnectionType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowReferenceType, ShuntConnectionType, VarPowerFlowReferenceType
 
 
-def _get_voltage_reference(phase_label: str) -> VarPowerFlowRefferenceType:
+def _get_voltage_reference(phase_label: str) -> VarPowerFlowReferenceType:
     """Return the EMT voltage enum for one active phase.
 
     :param phase_label: Phase label in ``A``, ``B`` or ``C``.
     :return: Matching voltage reference enum.
     """
     if phase_label == "A":
-        reference: VarPowerFlowRefferenceType = VarPowerFlowRefferenceType.v_A
+        reference: VarPowerFlowReferenceType = VarPowerFlowReferenceType.v_A
     else:
         if phase_label == "B":
-            reference = VarPowerFlowRefferenceType.v_B
+            reference = VarPowerFlowReferenceType.v_B
         else:
             if phase_label == "C":
-                reference = VarPowerFlowRefferenceType.v_C
+                reference = VarPowerFlowReferenceType.v_C
             else:
                 raise ValueError(f"Unsupported phase label '{phase_label}'")
 
     return reference
 
 
-def _get_api_power_references(phase_label: str) -> Tuple[ParamPowerFlowRefferenceType, ParamPowerFlowRefferenceType]:
+def _get_api_power_references(phase_label: str) -> Tuple[ParamPowerFlowReferenceType, ParamPowerFlowReferenceType]:
     """Return the API active/reactive power enums for one active phase.
 
     :param phase_label: Phase label in ``A``, ``B`` or ``C``.
     :return: Tuple with API active-power and reactive-power reference enums.
     """
     if phase_label == "A":
-        p_reference: ParamPowerFlowRefferenceType = ParamPowerFlowRefferenceType.Pl0_A
-        q_reference: ParamPowerFlowRefferenceType = ParamPowerFlowRefferenceType.Ql0_A
+        p_reference: ParamPowerFlowReferenceType = ParamPowerFlowReferenceType.Pl0_A
+        q_reference: ParamPowerFlowReferenceType = ParamPowerFlowReferenceType.Ql0_A
     else:
         if phase_label == "B":
-            p_reference = ParamPowerFlowRefferenceType.Pl0_B
-            q_reference = ParamPowerFlowRefferenceType.Ql0_B
+            p_reference = ParamPowerFlowReferenceType.Pl0_B
+            q_reference = ParamPowerFlowReferenceType.Ql0_B
         else:
             if phase_label == "C":
-                p_reference = ParamPowerFlowRefferenceType.Pl0_C
-                q_reference = ParamPowerFlowRefferenceType.Ql0_C
+                p_reference = ParamPowerFlowReferenceType.Pl0_C
+                q_reference = ParamPowerFlowReferenceType.Ql0_C
             else:
                 raise ValueError(f"Unsupported phase label '{phase_label}'")
 
@@ -287,34 +287,34 @@ def get_load_ZIP_emt_template(
 
     # The external mapping stays compatible with the fixed EMT enum contract, but
     # only active phases carry symbolic variables into the topology assembler.
-    external_mapping: Dict[VarPowerFlowRefferenceType, Var | None] = dict({
-        VarPowerFlowRefferenceType.v_A: voltage_vars.get("A", None),
-        VarPowerFlowRefferenceType.v_B: voltage_vars.get("B", None),
-        VarPowerFlowRefferenceType.v_C: voltage_vars.get("C", None),
-        VarPowerFlowRefferenceType.P_A: p_vars.get("A", None),
-        VarPowerFlowRefferenceType.Q_A: q_load_vars.get("A", None),
-        VarPowerFlowRefferenceType.P_B: p_vars.get("B", None),
-        VarPowerFlowRefferenceType.Q_B: q_load_vars.get("B", None),
-        VarPowerFlowRefferenceType.P_C: p_vars.get("C", None),
-        VarPowerFlowRefferenceType.Q_C: q_load_vars.get("C", None),
-        VarPowerFlowRefferenceType.i_A: current_vars.get("A", None),
-        VarPowerFlowRefferenceType.i_B: current_vars.get("B", None),
-        VarPowerFlowRefferenceType.i_C: current_vars.get("C", None),
-        VarPowerFlowRefferenceType.d_v_A: voltage_derivative_vars.get("A", None),
-        VarPowerFlowRefferenceType.d_v_B: voltage_derivative_vars.get("B", None),
-        VarPowerFlowRefferenceType.d_v_C: voltage_derivative_vars.get("C", None),
+    external_mapping: Dict[VarPowerFlowReferenceType, Var | None] = dict({
+        VarPowerFlowReferenceType.v_A: voltage_vars.get("A", None),
+        VarPowerFlowReferenceType.v_B: voltage_vars.get("B", None),
+        VarPowerFlowReferenceType.v_C: voltage_vars.get("C", None),
+        VarPowerFlowReferenceType.P_A: p_vars.get("A", None),
+        VarPowerFlowReferenceType.Q_A: q_load_vars.get("A", None),
+        VarPowerFlowReferenceType.P_B: p_vars.get("B", None),
+        VarPowerFlowReferenceType.Q_B: q_load_vars.get("B", None),
+        VarPowerFlowReferenceType.P_C: p_vars.get("C", None),
+        VarPowerFlowReferenceType.Q_C: q_load_vars.get("C", None),
+        VarPowerFlowReferenceType.i_A: current_vars.get("A", None),
+        VarPowerFlowReferenceType.i_B: current_vars.get("B", None),
+        VarPowerFlowReferenceType.i_C: current_vars.get("C", None),
+        VarPowerFlowReferenceType.d_v_A: voltage_derivative_vars.get("A", None),
+        VarPowerFlowReferenceType.d_v_B: voltage_derivative_vars.get("B", None),
+        VarPowerFlowReferenceType.d_v_C: voltage_derivative_vars.get("C", None),
     })
     templ.block.external_mapping = external_mapping
 
     # Only active per-phase load powers are published to the EMT initializer, and
     # the shared omega parameter remains mapped exactly as in the 3-phase model.
-    api_obj_mapping: Dict[ParamPowerFlowRefferenceType, Var | None] = dict({
-        ParamPowerFlowRefferenceType.omega_base: omega,
+    api_obj_mapping: Dict[ParamPowerFlowReferenceType, Var | None] = dict({
+        ParamPowerFlowReferenceType.omega_base: omega,
     })
 
     for phase_label in active_phases:
-        p_reference: ParamPowerFlowRefferenceType
-        q_reference: ParamPowerFlowRefferenceType
+        p_reference: ParamPowerFlowReferenceType
+        q_reference: ParamPowerFlowReferenceType
         p_reference, q_reference = _get_api_power_references(phase_label=phase_label)
         api_obj_mapping[p_reference] = p0_vars[phase_label]
         api_obj_mapping[q_reference] = q0_vars[phase_label]

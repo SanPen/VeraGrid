@@ -8,15 +8,15 @@ from typing import Union, TYPE_CHECKING, List, Dict, Tuple, Any
 import webbrowser
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt, QRectF, QRect, QPointF
-from PySide6.QtGui import QPen, QCursor, QBrush, QColor
-from PySide6.QtWidgets import QMenu, QGraphicsSceneMouseEvent, QGraphicsItem
+from PySide6.QtGui import QPen, QCursor, QBrush, QColor, QPainterPath
+from PySide6.QtWidgets import QMenu, QGraphicsSceneMouseEvent, QGraphicsItem, QGraphicsPathItem
 
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionTemplateGraphicItem
 from VeraGrid.Gui.messages import yes_no_question, warning_msg
 from VeraGrid.Gui.gui_functions import add_menu_entry
 from VeraGrid.Gui.ShortCircuitEditor.short_circuit_selector import ShortCircuitSelector
 from VeraGrid.Gui.Diagrams.generic_graphics import (GenericDiagramWidget, ACTIVE, DEACTIVATED,
-                                                    FONT_SCALE, TRANSPARENT)
+                                                    FONT_SCALE, TRANSPARENT, DraggableLabelItem)
 from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import BarTerminalItem, HandleItem, RoundTerminalItem
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.load_graphics import LoadGraphicItem, Load
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics import GeneratorGraphicItem, Generator
@@ -128,9 +128,14 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         QtWidgets.QGraphicsRectItem.__init__(self, parent)
 
         # Label:
-        self.label = QtWidgets.QGraphicsTextItem(self.api_object.name if self.api_object is not None else "", self)
+        self.label = DraggableLabelItem(self, moved_callback=self.refresh_label_badge_geometry)
         self.label.setDefaultTextColor(ACTIVE['text'])
-        self.label.setScale(FONT_SCALE)
+        self.label.document().setDocumentMargin(0.0)
+        self.label.setScale(1.0)
+        self.label_badge = QGraphicsPathItem(self)
+        self.label_badge.setPen(QPen(QColor(ACTIVE['text']), 1.0))
+        self.label_badge.setBrush(QBrush(QColor(ACTIVE['background'])))
+        self.label_badge.setZValue(-1)
 
         # loads, shunts, generators, etc...
         self._child_graphics: List[INJECTION_GRAPHICS] = list()
@@ -211,7 +216,7 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         self._terminal.setPen(QPen(TRANSPARENT, self.pen_width, self.style,
                                    Qt.PenCapStyle.RoundCap, Qt.PenJoinStyle.RoundJoin))
 
-        self.set_tile_color(self.color)
+        self.update_color()
 
         self.setPen(QPen(TRANSPARENT, self.pen_width, self.style))
         self.setBrush(TRANSPARENT)
@@ -220,6 +225,8 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
 
         # Update size:
         self.change_size(w=self.w)
+        title: str = self._api_object.name if self._api_object is not None else ""
+        self.set_label_content(title=title, msg="")
 
         self.set_position(x, y)
         self.apply_rotation_state(refresh_geometry=False)
@@ -314,11 +321,50 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         super().recolour_mode()
 
         self.label.setDefaultTextColor(ACTIVE['text'])
-        self.set_tile_color(self.color)
+        badge_fill: QColor = QColor(ACTIVE['background'])
+        badge_fill.setAlpha(215)
+        badge_stroke: QColor = QColor(ACTIVE['text'])
+        badge_stroke.setAlpha(150)
+        self.label_badge.setPen(QPen(badge_stroke, 1.0))
+        self.label_badge.setBrush(QBrush(badge_fill))
+        self.update_color()
 
         for e in self._child_graphics:
             if e is not None:
                 e.recolour_mode()
+
+    def _get_base_bus_brush(self) -> QBrush:
+        """
+        Resolve the default bus brush outside study-result colouring.
+
+        :return: Brush used for the idle bus appearance.
+        """
+        if self.api_object.active:
+            color_hex: str = str(self.api_object.color)
+            return QBrush(QColor(color_hex))
+        else:
+            return QBrush(DEACTIVATED['color'])
+
+    def enable_label_drawing(self) -> None:
+        """
+        Enable the bus label badge immediately.
+
+        :return: ``None``.
+        """
+        super().enable_label_drawing()
+        self.label.setVisible(True)
+        self.label_badge.setVisible(True)
+        self.refresh_label_badge_geometry()
+
+    def disable_label_drawing(self) -> None:
+        """
+        Disable the bus label badge immediately.
+
+        :return: ``None``.
+        """
+        super().disable_label_drawing()
+        self.label.setVisible(False)
+        self.label_badge.setVisible(False)
 
     def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent):
         """
@@ -425,7 +471,8 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         x0 = 0
 
         # center label:
-        self.label.setPos(self.w + 5, -20)
+        self.label.set_anchor_position(QPointF(self.w + 5.0, -6.0))
+        self.refresh_label_badge_geometry()
 
         # lower
         if not self.connectivity_graph:
@@ -890,10 +937,7 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         """
         Update the colour
         """
-        if self.api_object.active:
-            self.set_tile_color(QBrush(ACTIVE['color']))
-        else:
-            self.set_tile_color(QBrush(DEACTIVATED['color']))
+        self.set_tile_color(self._get_base_bus_brush())
 
     def convert_to_voltage_level(self) -> None:
         """
@@ -1020,8 +1064,7 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         """
         title = self._api_object.name if self._api_object is not None else ""
         msg = ""
-        self.label.setHtml(f'<html><head/><body><p><span style=" font-size:10pt;">{title}<br/></span>'
-                           f'<span style=" font-size:6pt;">{msg}</span></p></body></html>')
+        self.set_label_content(title=title, msg=msg)
 
         self.setToolTip(msg)
 
@@ -1442,9 +1485,18 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         location = self.editor.diagram.query_point(elm)
 
         if location is None:
-            pass
+            if self.draw_labels:
+                graphic.enable_label_drawing()
+            else:
+                graphic.disable_label_drawing()
         else:
             graphic.apply_rotation_state(angle_degrees=float(location.r))
+
+            if location.draw_labels:
+                graphic.enable_label_drawing()
+            else:
+                graphic.disable_label_drawing()
+
             if self.editor.is_loading_diagram():
                 pass
             else:
@@ -1466,7 +1518,7 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         if api_obj is None or type(api_obj) is bool:
             api_obj = self._editor.circuit.add_load(bus=self._api_object)
 
-        _grph = LoadGraphicItem(parent=self, api_obj=api_obj, editor=self._editor)
+        _grph = LoadGraphicItem(parent=self, api_obj=api_obj, editor=self._editor, draw_labels=self.draw_labels)
         self.add_child_graphic(elm=api_obj, graphic=_grph)
         return _grph
 
@@ -1478,7 +1530,7 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         if api_obj is None or type(api_obj) is bool:
             api_obj = self._editor.circuit.add_shunt(bus=self._api_object)
 
-        _grph = ShuntGraphicItem(parent=self, api_obj=api_obj, editor=self._editor)
+        _grph = ShuntGraphicItem(parent=self, api_obj=api_obj, editor=self._editor, draw_labels=self.draw_labels)
         self.add_child_graphic(elm=api_obj, graphic=_grph)
         return _grph
 
@@ -1490,7 +1542,7 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         if api_obj is None or type(api_obj) is bool:
             api_obj = self._editor.circuit.add_generator(bus=self._api_object)
 
-        _grph = GeneratorGraphicItem(parent=self, api_obj=api_obj, editor=self._editor)
+        _grph = GeneratorGraphicItem(parent=self, api_obj=api_obj, editor=self._editor, draw_labels=self.draw_labels)
         self.add_child_graphic(elm=api_obj, graphic=_grph)
         return _grph
 
@@ -1503,7 +1555,10 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         if api_obj is None or type(api_obj) is bool:
             api_obj = self._editor.circuit.add_static_generator(bus=self._api_object)
 
-        _grph = StaticGeneratorGraphicItem(parent=self, api_obj=api_obj, editor=self._editor)
+        _grph = StaticGeneratorGraphicItem(parent=self,
+                                           api_obj=api_obj,
+                                           editor=self._editor,
+                                           draw_labels=self.draw_labels)
         self.add_child_graphic(elm=api_obj, graphic=_grph)
 
         return _grph
@@ -1517,7 +1572,7 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         if api_obj is None or type(api_obj) is bool:
             api_obj = self._editor.circuit.add_battery(bus=self._api_object)
 
-        _grph = BatteryGraphicItem(parent=self, api_obj=api_obj, editor=self._editor)
+        _grph = BatteryGraphicItem(parent=self, api_obj=api_obj, editor=self._editor, draw_labels=self.draw_labels)
         self.add_child_graphic(elm=api_obj, graphic=_grph)
 
         return _grph
@@ -1531,7 +1586,10 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         if api_obj is None or type(api_obj) is bool:
             api_obj = self._editor.circuit.add_external_grid(bus=self._api_object)
 
-        _grph = ExternalGridGraphicItem(parent=self, api_obj=api_obj, editor=self._editor)
+        _grph = ExternalGridGraphicItem(parent=self,
+                                        api_obj=api_obj,
+                                        editor=self._editor,
+                                        draw_labels=self.draw_labels)
         self.add_child_graphic(elm=api_obj, graphic=_grph)
         return _grph
 
@@ -1544,7 +1602,10 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         if api_obj is None or type(api_obj) is bool:
             api_obj = self._editor.circuit.add_current_injection(bus=self._api_object)
 
-        _grph = CurrentInjectionGraphicItem(parent=self, api_obj=api_obj, editor=self._editor)
+        _grph = CurrentInjectionGraphicItem(parent=self,
+                                            api_obj=api_obj,
+                                            editor=self._editor,
+                                            draw_labels=self.draw_labels)
         self.add_child_graphic(elm=api_obj, graphic=_grph)
         return _grph
 
@@ -1557,7 +1618,10 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         if api_obj is None or type(api_obj) is bool:
             api_obj = self._editor.circuit.add_controllable_shunt(bus=self._api_object)
 
-        _grph = ControllableShuntGraphicItem(parent=self, api_obj=api_obj, editor=self._editor)
+        _grph = ControllableShuntGraphicItem(parent=self,
+                                             api_obj=api_obj,
+                                             editor=self._editor,
+                                             draw_labels=self.draw_labels)
         self.add_child_graphic(elm=api_obj, graphic=_grph)
 
         return _grph
@@ -1576,11 +1640,12 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         :return:
         """
         if self.draw_labels:
+            msg: str = str()
 
-            msg = f"Bus {i}"
-            if tpe is not None:
-                msg += f" [{tpe}]"
-            msg += "<br>"
+            if tpe is None:
+                pass
+            else:
+                msg += f"[{tpe}]<br>"
 
             vm = vm_fmt.format(Vm)
             vm_kv = format_str.format(Vm * self._api_object.Vnom)
@@ -1595,9 +1660,11 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         else:
             msg = ""
 
-        title = self._api_object.name if self._api_object is not None else ""
-        self.label.setHtml(f'<html><head/><body><p><span style=" font-size:10pt;">{title}<br/></span>'
-                           f'<span style=" font-size:6pt;">{msg}</span></p></body></html>')
+        if self._api_object is None:
+            title = f"Bus {i}"
+        else:
+            title = f"{i}: {self._api_object.name}"
+        self.set_label_content(title=title, msg=msg)
 
         self.setToolTip(msg)
 
@@ -1618,11 +1685,12 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         :param format_str: number formatting string
         """
         if self.draw_labels:
+            msg: str = str()
 
-            msg = f"Bus {i}"
-            if tpe is not None:
-                msg += f" [{tpe}]"
-            msg += "<br>"
+            if tpe is None:
+                pass
+            else:
+                msg += f"[{tpe}]<br>"
 
             for Vm_i, Va_i, ph in zip([VmA, VmB, VmC], [VaA, VaB, VaC], ["a", "b", "c"]):
                 if not (Vm_i == 0.0 and Va_i == 0.0):
@@ -1634,9 +1702,11 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         else:
             msg = ""
 
-        title = self._api_object.name if self._api_object is not None else ""
-        self.label.setHtml(f'<html><head/><body><p><span style=" font-size:10pt;">{title}<br/></span>'
-                           f'<span style=" font-size:6pt;">{msg}</span></p></body></html>')
+        if self._api_object is None:
+            title = f"Bus {i}"
+        else:
+            title = f"{i}: {self._api_object.name}"
+        self.set_label_content(title=title, msg=msg)
 
         self.setToolTip(msg)
 
@@ -1646,10 +1716,41 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         """
         msg = ""
         title = self._api_object.name if self._api_object is not None else ""
-        self.label.setHtml(f'<html><head/><body><p><span style=" font-size:10pt;">{title}<br/></span>'
-                           f'<span style=" font-size:6pt;">{msg}</span></p></body></html>')
+        self.set_label_content(title=title, msg=msg)
 
         self.setToolTip(msg)
+
+    def set_label_content(self, title: str, msg: str) -> None:
+        """
+        Apply the bus label HTML using the compact result-badge style.
+
+        :param title: Bus name.
+        :param msg: Result text body.
+        :return: ``None``.
+        """
+        body_html: str
+
+        if len(msg) == 0:
+            body_html = f'<div style="font-size:9pt; font-weight:600; text-align:center;">{title}</div>'
+        else:
+            body_html = f'<div style="font-size:9pt; font-weight:600; text-align:center;">{title}<br/>{msg}</div>'
+
+        self.label.setHtml(body_html)
+        self.label.setVisible(self.draw_labels)
+        self.label_badge.setVisible(self.draw_labels)
+        self.refresh_label_badge_geometry()
+
+    def refresh_label_badge_geometry(self) -> None:
+        """
+        Refresh the rounded badge around the current bus label.
+
+        :return: ``None``.
+        """
+        label_rect = self.label.boundingRect()
+        badge_rect = self.label.mapRectToParent(label_rect).adjusted(-4.0, -2.0, 4.0, 2.0)
+        badge_path = QPainterPath()
+        badge_path.addRoundedRect(badge_rect, 4.0, 4.0)
+        self.label_badge.setPath(badge_path)
 
     def open_street_view(self):
         """

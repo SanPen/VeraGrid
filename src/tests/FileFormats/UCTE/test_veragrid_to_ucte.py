@@ -14,6 +14,7 @@ from VeraGridEngine.IO.file_open import open_ucte
 from VeraGridEngine.IO.file_save import save_ucte_batch_zip
 from VeraGridEngine.IO.ucte.veragrid_to_ucte import write_ucte
 from VeraGridEngine.basic_structures import Logger, LogSeverity
+from VeraGridEngine.enumerations import GeneratorControlMode
 
 
 def get_errors(logger: Logger) -> list[str]:
@@ -52,7 +53,7 @@ def build_export_grid() -> MultiCircuit:
                                              Qmin=-20.0,
                                              Qmax=20.0,
                                              vset=1.0,
-                                             is_controlled=True)
+                                             control_mode=GeneratorControlMode.V)
     generator.P_prof = pd.Series([50.0, 60.0]).to_numpy()
     generator.Q_prof = pd.Series([1.0, 2.0]).to_numpy()
     generator.Vset_prof = pd.Series([1.0, 1.02]).to_numpy()

@@ -21,7 +21,7 @@ from VeraGridEngine.Utils.Symbolic.symbolic import Var
 from VeraGridEngine.enumerations import DeviceType
 from VeraGridEngine.enumerations import DynamicIntegrationMethod
 from VeraGridEngine.enumerations import RmsInitializationMethod
-from VeraGridEngine.enumerations import VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import VarPowerFlowReferenceType
 
 import VeraGridEngine.api as gce
 
@@ -90,10 +90,10 @@ def _build_procedural_catalog_load_rms_template(vf: VarFactory,
     template.block.event_dict[p_ref_const] = vf.add_const(-0.10, name="P_ref")
     template.block.event_dict[q_ref_const] = vf.add_const(-0.01, name="Q_ref")
     template.block.external_mapping = {
-        VarPowerFlowRefferenceType.Vm: vm,
-        VarPowerFlowRefferenceType.Va: va,
-        VarPowerFlowRefferenceType.P: p_out,
-        VarPowerFlowRefferenceType.Q: q_out,
+        VarPowerFlowReferenceType.Vm: vm,
+        VarPowerFlowReferenceType.Va: va,
+        VarPowerFlowReferenceType.P: p_out,
+        VarPowerFlowReferenceType.Q: q_out,
     }
 
     return template, enable_param, enable_mode, p_out
@@ -148,6 +148,9 @@ def test_rms_update_variable_params_applies_catalog_procedural_logic() -> None:
     problem._constant_params = np.zeros(0, dtype=float)
     problem._variable_parameters_values = np.array([1.0, 0.0], dtype=float)
     problem._event_params_fn = _passthrough_event_params
+    problem._runtime_continuous_eqs = list()
+    problem._runtime_mode_slice = slice(0, 0)
+    problem._continuous_runtime_events = dict()
     problem._scheduled_mode_events = dict()
     problem._mode_event_cursor = dict()
     problem._block_boundary_updater = build_boundary_updater_from_block(problem)

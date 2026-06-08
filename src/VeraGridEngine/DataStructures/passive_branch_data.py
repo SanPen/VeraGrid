@@ -7,10 +7,8 @@ from __future__ import annotations
 import numpy as np
 
 from VeraGridEngine.DataStructures.branch_parent_data import BranchParentData
-from VeraGridEngine.enumerations import WindingsConnection, ShuntConnectionType
 from VeraGridEngine.Utils.Sparse.sparse_array import SparseObjectArray
-from VeraGridEngine.basic_structures import Vec, IntVec, ObjVec, CxVec, Logger
-from typing import List, Tuple, Set
+from VeraGridEngine.basic_structures import Vec, IntVec, CxVec, Logger
 
 
 class PassiveBranchData(BranchParentData):
@@ -41,9 +39,9 @@ class PassiveBranchData(BranchParentData):
         self.G2: Vec = np.zeros(self.nelm, dtype=float)
         self.B2: Vec = np.zeros(self.nelm, dtype=float)
 
-        self.conn: ObjVec = np.full(self.nelm, fill_value=WindingsConnection.GG, dtype=object)
-        self.conn_f: ObjVec = np.full(self.nelm, fill_value=ShuntConnectionType.NeutralStar, dtype=object)
-        self.conn_t: ObjVec = np.full(self.nelm, fill_value=ShuntConnectionType.NeutralStar, dtype=object)
+        self.conn: IntVec = np.zeros(self.nelm,  dtype=int)
+        self.conn_f: IntVec = np.zeros(self.nelm,  dtype=int)
+        self.conn_t: IntVec = np.zeros(self.nelm,  dtype=int)
 
         self.m_taps = SparseObjectArray(n=self.nelm)
         self.tau_taps = SparseObjectArray(n=self.nelm)

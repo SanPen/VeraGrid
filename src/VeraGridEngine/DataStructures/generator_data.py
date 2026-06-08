@@ -7,8 +7,8 @@ from typing import Tuple
 import numpy as np
 from scipy.sparse import csc_matrix, coo_matrix
 import VeraGridEngine.Topology.topology as tp
-from VeraGridEngine.basic_structures import CxVec, Vec, IntVec, BoolVec, StrVec, ObjVec
-from VeraGridEngine.enumerations import GeneratorType
+from VeraGridEngine.basic_structures import CxVec, Vec, IntVec, BoolVec, StrVec
+from VeraGridEngine.enumerations import GeneratorControlMode
 
 
 class GeneratorData:
@@ -27,7 +27,7 @@ class GeneratorData:
         self.names: StrVec = np.empty(nelm, dtype=object)
         self.idtag: StrVec = np.empty(nelm, dtype=object)
 
-        self.controllable: BoolVec = np.zeros(nelm, dtype=bool)
+        self.control_mode_int: IntVec = np.zeros(nelm, dtype=int)  # int representation of GeneratorControlMode
         self.installed_p: Vec = np.zeros(nelm, dtype=float)
 
         self.active: BoolVec = np.zeros(nelm, dtype=bool)
@@ -38,6 +38,8 @@ class GeneratorData:
         self.q: Vec = np.zeros(nelm, dtype=float)
 
         self.v: Vec = np.zeros(nelm, dtype=float)
+        self.k_droop: Vec = np.zeros(nelm, dtype=float)
+        self.dead_band: Vec = np.zeros(nelm, dtype=float)
 
         self.qmin: Vec = np.zeros(nelm, dtype=float)
         self.qmax: Vec = np.zeros(nelm, dtype=float)
@@ -67,7 +69,7 @@ class GeneratorData:
         self.Rr: Vec = np.zeros(nelm, dtype=float)
         self.Xr: Vec = np.zeros(nelm, dtype=float)
 
-        self.type: ObjVec = np.full(self.nelm, fill_value=GeneratorType.Synchronous, dtype=object)
+        self.tpe_int: IntVec = np.zeros(self.nelm, dtype=int)  # GeneratorType values
 
         self.dispatchable: BoolVec = np.zeros(nelm, dtype=bool)
         self.must_run: BoolVec = np.zeros(nelm, dtype=bool)
@@ -111,7 +113,7 @@ class GeneratorData:
         data.names = self.names[elm_idx]
         data.idtag = self.idtag[elm_idx]
 
-        data.controllable = self.controllable[elm_idx]
+        data.control_mode_int = self.control_mode_int[elm_idx]
         data.installed_p = self.installed_p[elm_idx]
 
         data.active = self.active[elm_idx]
@@ -120,6 +122,8 @@ class GeneratorData:
         data.p3_star = self.p3_star[elm_idx_3]
         data.q = self.q[elm_idx]
         data.v = self.v[elm_idx]
+        data.k_droop = self.k_droop[elm_idx]
+        data.dead_band = self.dead_band[elm_idx]
 
         data.qmin = self.qmin[elm_idx]
         data.qmax = self.qmax[elm_idx]
@@ -156,7 +160,7 @@ class GeneratorData:
         data.Rr = self.Rr[elm_idx]
         data.Xr = self.Xr[elm_idx]
 
-        data.type = self.type[elm_idx]
+        data.tpe_int = self.tpe_int[elm_idx]
 
         data.dispatchable = self.dispatchable[elm_idx]
         data.must_run = self.must_run[elm_idx]
@@ -219,7 +223,7 @@ class GeneratorData:
         data.names = self.names.copy()
         data.idtag = self.idtag.copy()
 
-        data.controllable = self.controllable.copy()
+        data.control_mode_int = self.control_mode_int.copy()
         data.installed_p = self.installed_p.copy()
 
         data.active = self.active.copy()
@@ -227,6 +231,8 @@ class GeneratorData:
         data.p3_star = self.p3_star.copy()
         data.q = self.q.copy()
         data.v = self.v.copy()
+        data.k_droop = self.k_droop.copy()
+        data.dead_band = self.dead_band.copy()
 
         data.qmin = self.qmin.copy()
         data.qmax = self.qmax.copy()
@@ -253,7 +259,7 @@ class GeneratorData:
         data.Rr = self.Rr.copy()
         data.Xr = self.Xr.copy()
 
-        data.type = self.type.copy()
+        data.tpe_int = self.tpe_int.copy()
 
         data.dispatchable = self.dispatchable.copy()
         data.must_run = self.must_run.copy()
@@ -444,7 +450,9 @@ class GeneratorData:
         Get the indices of controllable generators
         :return: idx_controllable, idx_non_controllable
         """
-        return np.where(self.controllable == 1)[0], np.where(self.controllable == 0)[0]
+        v_idx = GeneratorControlMode.V.idx()
+        return (np.where(self.control_mode_int == v_idx)[0],
+                np.where(self.control_mode_int != v_idx)[0])
 
     def get_gen_indices_at_buses(self, bus_indices: IntVec) -> IntVec:
 

@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.enumerations import ParamPowerFlowRefferenceType, VarPowerFlowRefferenceType, DeviceType
+from VeraGridEngine.enumerations import ParamPowerFlowReferenceType, VarPowerFlowReferenceType, DeviceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Utils.Symbolic.block import Block
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
@@ -84,13 +84,13 @@ def PVLoadBuild(vfactory: VarFactory, name: str = "", Pg0_val=1.0, Vg0_val=1.0) 
     
     templ.block.name = 'PV Load'
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.P: P,
-        VarPowerFlowRefferenceType.Q: Q,
-        VarPowerFlowRefferenceType.Vm: inputs[0],
+        VarPowerFlowReferenceType.P: P,
+        VarPowerFlowReferenceType.Q: Q,
+        VarPowerFlowReferenceType.Vm: inputs[0],
     }
     
     templ.block.api_obj_mapping = {
-        ParamPowerFlowRefferenceType.Pl0: Pg0,
+        ParamPowerFlowReferenceType.Pl0: Pg0,
     }
     
     templ.block.in_vars = inputs

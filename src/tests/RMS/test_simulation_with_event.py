@@ -19,7 +19,7 @@ from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template import get_complet
 from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_rms_model
 
-from VeraGridEngine.enumerations import VarPowerFlowRefferenceType, DynamicEventTransitionType, DynamicIntegrationMethod, RmsInitializationMethod
+from VeraGridEngine.enumerations import VarPowerFlowReferenceType, DynamicEventTransitionType, DynamicIntegrationMethod, RmsInitializationMethod
 from VeraGridEngine.Devices.Events.rms_event import RmsEvent
 import VeraGridEngine.api as gce
 

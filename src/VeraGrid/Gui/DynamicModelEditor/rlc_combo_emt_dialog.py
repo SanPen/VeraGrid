@@ -17,6 +17,7 @@ class RlcComboEmtDialog(QtWidgets.QDialog):
 
     __slots__ = (
         "_static_connection_type",
+        "_allow_static_device_values",
         "phase_a_check",
         "phase_b_check",
         "phase_c_check",
@@ -26,6 +27,7 @@ class RlcComboEmtDialog(QtWidgets.QDialog):
         "connection_combo",
         "static_connection_label",
         "connection_help_label",
+        "use_static_device_values_check",
         "input_mode_combo",
         "resistance_spin",
         "inductive_value_label",
@@ -38,6 +40,7 @@ class RlcComboEmtDialog(QtWidgets.QDialog):
     def __init__(self,
                  parent: QtWidgets.QWidget | None = None,
                  initial_config: dict[str, object] | None = None,
+                 allow_static_device_values: bool = False,
                  static_connection_type: ShuntConnectionType | None = None,
                  nominal_voltage_kv: float | None = None,
                  base_power_mva: float | None = None,
@@ -51,6 +54,7 @@ class RlcComboEmtDialog(QtWidgets.QDialog):
         """
         super().__init__(parent)
         self._static_connection_type = static_connection_type
+        self._allow_static_device_values = allow_static_device_values
         self.setWindowTitle("Configure EMT RLC Combo")
         self.resize(420, 300)
 
@@ -96,6 +100,11 @@ class RlcComboEmtDialog(QtWidgets.QDialog):
         self.static_connection_label = QtWidgets.QLabel(self)
         self.static_connection_label.setWordWrap(True)
         form_layout.addRow("Static connection", self.static_connection_label)
+
+        self.use_static_device_values_check = QtWidgets.QCheckBox("Use static device values and connection", self)
+        self.use_static_device_values_check.setEnabled(self._allow_static_device_values)
+        self.use_static_device_values_check.setChecked(False)
+        form_layout.addRow("Value Source", self.use_static_device_values_check)
 
         self.input_mode_combo = QtWidgets.QComboBox(self)
         self.input_mode_combo.addItem("Physical R/L/C", "physical")
@@ -154,6 +163,7 @@ class RlcComboEmtDialog(QtWidgets.QDialog):
         self.include_l_check.toggled.connect(self.update_parameter_widgets)
         self.include_c_check.toggled.connect(self.update_parameter_widgets)
         self.input_mode_combo.currentIndexChanged.connect(self.update_parameter_widgets)
+        self.use_static_device_values_check.toggled.connect(self.update_parameter_widgets)
 
         self.update_parameter_widgets()
 
@@ -194,14 +204,17 @@ class RlcComboEmtDialog(QtWidgets.QDialog):
             self.connection_combo.setEnabled(True)
         else:
             self.static_connection_label.setText(
-                "Taken from static object: " + self._get_connection_type_label(self._static_connection_type)
+                "Static object connection available: " + self._get_connection_type_label(self._static_connection_type)
             )
-            index: int = self.connection_combo.findData(self._static_connection_type)
-            if index >= 0:
-                self.connection_combo.setCurrentIndex(index)
+            if self.use_static_device_values_check.isChecked():
+                index: int = self.connection_combo.findData(self._static_connection_type)
+                if index >= 0:
+                    self.connection_combo.setCurrentIndex(index)
+                else:
+                    pass
             else:
                 pass
-            self.connection_combo.setEnabled(False)
+            self.connection_combo.setEnabled(not self.use_static_device_values_check.isChecked())
 
     def update_parameter_widgets(self) -> None:
         """
@@ -210,13 +223,21 @@ class RlcComboEmtDialog(QtWidgets.QDialog):
         :return: None.
         """
         physical_mode: bool = self.input_mode_combo.currentData() == "physical"
+        use_static_device_values: bool = self.use_static_device_values_check.isChecked()
+
+        # When the EMT block follows the host static device, the dialog must lock
+        # both parameter ownership and connection ownership to one source so the
+        # symbolic block remains consistent with the selected source mode.
+        self.connection_combo.setEnabled(not use_static_device_values)
+        self.input_mode_combo.setEnabled(not use_static_device_values)
         self.inductive_value_label.setText("Inductance (L)" if physical_mode else "Inductive Reactance (Xl)")
         self.capacitive_value_label.setText("Capacitance (C)" if physical_mode else "Capacitive Reactance (Xc)")
         self.inductive_value_spin.setSuffix(" H" if physical_mode else " ohm")
         self.capacitive_value_spin.setSuffix(" F" if physical_mode else " ohm")
-        self.resistance_spin.setEnabled(self.include_r_check.isChecked())
-        self.inductive_value_spin.setEnabled(self.include_l_check.isChecked())
-        self.capacitive_value_spin.setEnabled(self.include_c_check.isChecked())
+        self.resistance_spin.setEnabled(self.include_r_check.isChecked() and not use_static_device_values)
+        self.inductive_value_spin.setEnabled(self.include_l_check.isChecked() and not use_static_device_values)
+        self.capacitive_value_spin.setEnabled(self.include_c_check.isChecked() and not use_static_device_values)
+        self._apply_static_connection_state()
 
     def accept_dialog(self) -> None:
         """
@@ -272,6 +293,7 @@ class RlcComboEmtDialog(QtWidgets.QDialog):
             "phB": self.phase_b_check.isChecked(),
             "phC": self.phase_c_check.isChecked(),
             "connection_type": self.connection_combo.currentData(),
+            "use_static_device_values": self.use_static_device_values_check.isChecked(),
             "input_mode": self.input_mode_combo.currentData(),
             "resistance_ohm": float(self.resistance_spin.value()),
             "inductive_value": float(self.inductive_value_spin.value()),
@@ -291,6 +313,9 @@ class RlcComboEmtDialog(QtWidgets.QDialog):
         self.phase_a_check.setChecked(bool(config.get("phA", True)))
         self.phase_b_check.setChecked(bool(config.get("phB", True)))
         self.phase_c_check.setChecked(bool(config.get("phC", True)))
+        self.use_static_device_values_check.setChecked(
+            bool(config.get("use_static_device_values", config.get("use_static_load_values", False))) and self._allow_static_device_values
+        )
 
         input_mode = config.get("input_mode", "physical")
         index = self.input_mode_combo.findData(input_mode)

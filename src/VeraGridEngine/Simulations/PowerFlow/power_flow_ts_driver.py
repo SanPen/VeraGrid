@@ -14,7 +14,7 @@ import VeraGridEngine.Simulations.PowerFlow.power_flow_worker as pf_worker
 from VeraGridEngine.Compilers.circuit_to_bentayga import bentayga_pf
 from VeraGridEngine.Compilers.circuit_to_newton_pa import newton_pa_pf
 from VeraGridEngine.Compilers.circuit_to_pgm import pgm_pf
-from VeraGridEngine.Compilers.circuit_to_gslv import gslv_pf
+from VeraGridEngine.Compilers.circuit_to_gslv import GSLV_AVAILABLE, gslv_pf, translate_gslv_pf_time_series_results
 from VeraGridEngine.basic_structures import IntVec
 from VeraGridEngine.enumerations import EngineType, SimulationTypes
 
@@ -246,97 +246,13 @@ class PowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
                       time_indices=time_indices,
                       opf_results=self.opf_time_series_results,
                       logger=self.logger)
-
-        n = self.grid.get_bus_number()
-        results = PowerFlowTimeSeriesResults(
-            n=self.grid.get_bus_number(),
-            m=self.grid.get_branch_number(add_switch=True, add_vsc=False,
-                                          add_hvdc=False),
-            n_hvdc=self.grid.get_hvdc_number(),
-            n_vsc=self.grid.get_vsc_number(),
-            n_gen=self.grid.get_generators_number(),
-            n_batt=self.grid.get_batteries_number(),
-            n_sh=self.grid.get_shunt_like_device_number(),
-            bus_names=self.grid.get_bus_names(),
-            branch_names=self.grid.get_branch_names(add_switch=True, add_vsc=False,
-                                                    add_hvdc=False),
-            hvdc_names=self.grid.get_hvdc_names(),
-            vsc_names=self.grid.get_vsc_names(),
-            gen_names=self.grid.get_generator_names(),
-            batt_names=self.grid.get_battery_names(),
-            sh_names=self.grid.get_shunt_like_devices_names(),
-            bus_types=np.ones(n, dtype=int),
-            time_array=self.grid.time_profile[time_indices],
-            area_names=self.grid.get_area_names(),
-            clustering_results=self.clustering_results
+        return translate_gslv_pf_time_series_results(
+            grid=self.grid,
+            res=res,
+            options=self.options,
+            time_indices=time_indices,
+            clustering_results=self.clustering_results,
         )
-
-        # self.results = translate_gslv_pf_results(self.grid, res)
-        # self.results.area_names = [a.name for a in self.grid.areas]
-        # self.convergence_reports = self.results.convergence_reports
-
-        if time_indices is None:
-            results.voltage = res.voltage
-            results.S = res.S
-            results.Sf = res.Sf
-            results.St = res.St
-            results.loading = res.loading
-            results.losses = res.losses
-            # results.Vbranch = res.Vbranch
-            # results.If = res.If
-            # results.It = res.It
-            results.tap_module = res.tap_module
-            results.tap_angle = res.tap_angle
-            # results.F = res.F
-            # results.T = res.T
-            # results.hvdc_F = res.hvdc_F
-            # results.hvdc_T = res.hvdc_T
-            results.hvdc_Pf = res.Pf_hvdc
-            results.hvdc_Pt = res.Pt_hvdc
-            results.hvdc_loading = res.loading_hvdc
-            results.hvdc_losses = res.losses_hvdc
-
-            results.Pf_vsc = res.Pf_vsc
-            results.St_vsc = res.St_vsc
-            results.loading_vsc = res.loading_vsc
-            results.losses_vsc = res.losses_vsc
-            results.gen_q = res.gen_q
-            results.battery_q = res.battery_q
-            results.shunt_q = res.shunt_q
-
-            results.error_values = res.error_values
-        else:
-            results.voltage = res.voltage[time_indices, :]
-            results.S = res.S[time_indices, :]
-            results.Sf = res.Sf[time_indices, :]
-            results.St = res.St[time_indices, :]
-            results.loading = res.loading[time_indices, :]
-            results.losses = res.losses[time_indices, :]
-            # results.Vbranch = res.Vbranch[time_indices, :]
-            # results.If = res.If[time_indices, :]
-            # results.It = res.It[time_indices, :]
-            results.tap_module = res.tap_module[time_indices, :]
-            results.tap_angle = res.tap_angle[time_indices, :]
-            # results.F = res.F
-            # results.T = res.T
-            # results.hvdc_F = res.hvdc_F
-            # results.hvdc_T = res.hvdc_T
-            results.hvdc_Pf = res.Pf_hvdc[time_indices, :]
-            results.hvdc_Pt = res.Pt_hvdc[time_indices, :]
-            results.hvdc_loading = res.loading_hvdc[time_indices, :]
-            results.hvdc_losses = res.losses_hvdc[time_indices, :]
-
-            results.Pf_vsc = res.Pf_vsc[time_indices, :]
-            results.St_vsc = res.St_vsc[time_indices, :]
-            results.loading_vsc = res.loading_vsc[time_indices, :]
-            results.losses_vsc = res.losses_vsc[time_indices, :]
-            results.gen_q = res.gen_q[time_indices, :]
-            results.battery_q = res.battery_q[time_indices, :]
-            results.shunt_q = res.shunt_q[time_indices, :]
-
-            results.error_values = res.error_values[time_indices]
-
-        return results
 
     def run(self):
         """
@@ -345,6 +261,10 @@ class PowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
         """
 
         self.tic()
+
+        if self.engine == EngineType.GSLV and not GSLV_AVAILABLE:
+            self.engine = EngineType.VeraGrid
+            self.logger.add_warning('Failed back to VeraGrid')
 
         if self.engine == EngineType.VeraGrid:
             self.results = self.run_single_thread(time_indices=self.time_indices)

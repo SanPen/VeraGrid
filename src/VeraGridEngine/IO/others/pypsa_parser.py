@@ -14,7 +14,7 @@ from VeraGridEngine.Devices.Aggregation.branch_group import BranchGroup
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Devices.Branches.transformer import TransformerType, Transformer2W
 from VeraGridEngine.Devices.Branches.hvdc_line import HvdcLine
-from VeraGridEngine.enumerations import BuildStatus
+from VeraGridEngine.enumerations import BuildStatus, GeneratorControlMode
 from VeraGridEngine.Devices.Branches.line import SequenceLineType, Line
 from VeraGridEngine.Devices.Injections.load import Load
 from VeraGridEngine.Devices.Injections.generator import Generator
@@ -175,12 +175,7 @@ class PyPSAParser:
 
             bus = self.buses[row['bus']]
 
-            if row['q_set'] > 0 or row['p_set'] > 0:
-                power_factor = row['p_set'] / math.sqrt(row['q_set'] ** 2 + row['p_set'] ** 2)
-            else:
-                power_factor = 0.8
-
-            is_controlled = row['control'] == 'PV'
+            control_mode=GeneratorControlMode.V if row['control'] == 'PV' else GeneratorControlMode.Q
 
             Pmin = row['p_nom_min']
             if Pmin == -np.inf:
@@ -193,8 +188,8 @@ class PyPSAParser:
             elm = Generator(
                 name=name,
                 P=row['p_set'] * row['sign'],
-                power_factor=power_factor,
-                is_controlled=is_controlled,
+                Q=row['q_set'] * row['sign'],
+                control_mode=control_mode,
                 active=row['active'],
                 Snom=row['p_nom'],
                 Pmin=Pmin,
@@ -239,7 +234,7 @@ class PyPSAParser:
             else:
                 power_factor = 0.8
 
-            is_controlled = row['control'] == 'PV'
+            control_mode=GeneratorControlMode.V if row['control'] == 'PV' else GeneratorControlMode.Q
 
             Pmin = row['p_nom_min']
             if Pmin == -np.inf:
@@ -253,7 +248,7 @@ class PyPSAParser:
                 name=name,
                 P=row['p_set'] * row['sign'],
                 power_factor=power_factor,
-                is_controlled=is_controlled,
+                control_mode=control_mode,
                 Snom=row['p_nom'],
                 active=row['active'],
                 Pmin=Pmin,
@@ -266,12 +261,12 @@ class PyPSAParser:
 
             elm.Enom = row.get('e_nom', 9999.0)
             elm.Cost2 = row.get('marginal_cost_quadratic', 0.0)
-            elm.StartupCost = row.get('start_up_cost', 0.0)
-            elm.ShutdownCost = row.get('shut_down_cost', 0.0)
-            elm.MinTimeUp = row.get('min_up_time', 0.0)
-            elm.MinTimeDown = row.get('min_down_time', 0.0)
-            elm.RampUp = row.get('ramp_limit_up', 1e20)
-            elm.RampDown = row.get('ramp_limit_down', 1e20)
+            elm.startup_cost = row.get('start_up_cost', 0.0)
+            elm.shutdown_cost = row.get('shut_down_cost', 0.0)
+            elm.min_time_up = row.get('min_up_time', 0.0)
+            elm.min_time_down = row.get('min_down_time', 0.0)
+            elm.ramp_up = row.get('ramp_limit_up', 1e20)
+            elm.ramp_down = row.get('ramp_limit_down', 1e20)
 
             self.grid.add_battery(bus=bus, api_obj=elm)
 

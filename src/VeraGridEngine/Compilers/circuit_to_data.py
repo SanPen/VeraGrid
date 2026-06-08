@@ -13,7 +13,7 @@ from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.Aggregation.area import Area
 from VeraGridEngine.enumerations import (BusMode, BranchImpedanceMode, ExternalGridMode, DeviceType,
                                          TapModuleControl, TapPhaseControl, HvdcControlType, ConverterControlType,
-                                         ShuntConnectionType, ShuntControlMode)
+                                         ShuntConnectionType, ShuntControlMode, GeneratorControlMode)
 from VeraGridEngine.basic_structures import BoolVec, IntVec
 from VeraGridEngine.Devices.types import BRANCH_TYPES
 from VeraGridEngine.DataStructures.battery_data import BatteryData
@@ -814,9 +814,9 @@ def get_shunt_data(
                     Yc = elm.get_Yc_at(t_idx)
 
                     if Ya != 0.0 + 0.0j and Yb != 0.0 + 0.0j and Yc != 0.0 + 0.0j:
-                        data.A_floatingstar[ii] = Ya / (Ya + Yb + Yc)
-                        data.B_floatingstar[ii] = Yb / (Ya + Yb + Yc)
-                        data.C_floatingstar[ii] = Yc / (Ya + Yb + Yc)
+                        data.A_floating_star[ii] = Ya / (Ya + Yb + Yc)
+                        data.B_floating_star[ii] = Yb / (Ya + Yb + Yc)
+                        data.C_floating_star[ii] = Yc / (Ya + Yb + Yc)
 
                         A = Ya / (Ya + Yb + Yc)
                         B = Yb / (Ya + Yb + Yc)
@@ -894,8 +894,8 @@ def get_shunt_data(
             data.mttf[ii] = elm.mttf
             data.mttr[ii] = elm.mttr
 
-            data.control_mode[ii] = elm.control_mode
-            data.is_pv_control[ii] = elm.control_mode == ShuntControlMode.Continuous
+            data.control_mode_int[ii] = elm.control_mode.idx()
+
             data.vset[ii] = elm.Vset
             data.vmin[ii] = elm.Vmin
             data.vmax[ii] = elm.Vmax
@@ -961,7 +961,7 @@ def get_shunt_data(
 
             # reactive power sharing data
             if data.active[ii]:
-                if data.control_mode[ii] == ShuntControlMode.Locked:
+                if data.control_mode_int[ii] == ShuntControlMode.Locked.idx():
                     bus_data.q_shared_total[i] += data.Y[ii].imag
                     data.q_share[ii] = data.Y[ii].imag
                 else:
@@ -1011,7 +1011,7 @@ def fill_generator_parent(
     data.mttf[k] = elm.mttf
     data.mttr[k] = elm.mttr
 
-    data.controllable[k] = elm.is_controlled
+    data.control_mode_int[k] = elm.control_mode.idx()
     data.installed_p[k] = elm.Snom
     bus_data.installed_power[i] += elm.Snom
 
@@ -1030,7 +1030,7 @@ def fill_generator_parent(
     data.Rr[k] = elm.Rr
     data.Xr[k] = elm.Xr
 
-    data.type[k] = elm.tpe
+    data.tpe_int[k] = elm.tpe.idx()
 
     data.startup_cost[k] = elm.startup_cost
     data.shut_down_cost[k] = elm.shutdown_cost
@@ -1048,10 +1048,11 @@ def fill_generator_parent(
     data.scalable[k] = elm.scalable
 
     data.p[k] = elm.get_P_at(t_idx)
-    data.q[k] = elm.get_Q_at(t_idx)
     data.active[k] = elm.get_active_at(t_idx)
 
     data.v[k] = elm.get_Vset_at(t_idx)
+    data.k_droop[k] = elm.k_droop
+    data.dead_band[k] = elm.dead_band
     data.pmax[k] = elm.get_Pmax_at(t_idx)
     data.pmin[k] = elm.get_Pmin_at(t_idx)
 
@@ -1071,7 +1072,7 @@ def fill_generator_parent(
         if elm.get_srap_enabled_at(t_idx) and data.p[k] > 0.0:
             bus_data.srap_available_power[i] += data.p[k]
 
-        if elm.is_controlled:
+        if elm.control_mode == GeneratorControlMode.V:
             if elm.control_bus is not None:
                 remote_control = True
                 j = bus_dict[elm.control_bus]
@@ -1089,6 +1090,17 @@ def fill_generator_parent(
                                     bus_voltage_used=bus_voltage_used,
                                     candidate_Vm=elm.Vset,
                                     logger=logger)
+            # we pick this value to initialize
+            data.q[k] = elm.get_Q_at(t_idx)
+
+        elif elm.control_mode == GeneratorControlMode.Q:
+            data.q[k] = elm.get_Q_at(t_idx)
+
+        elif elm.control_mode == GeneratorControlMode.QVDroop:
+            # Q will be computed by the droop
+            data.q[k] = 0.0
+        else:
+            pass
 
     if elm.use_kw:
         # pass kW to MW
@@ -1114,7 +1126,7 @@ def fill_generator_parent(
     # would be half the value (1e-20/1e-20). 
     # A value of 1e-14 seems a sweet compromise.
     if data.active[k]:
-        if data.controllable[k]:
+        if data.control_mode_int[k] == GeneratorControlMode.V.idx():
             bus_data.q_shared_total[i] += data.p[k] + 1e-14
             data.q_share[k] = data.p[k] + 1e-14
             # bus_data.q_shared_total[i] += data.p[k]
@@ -1300,7 +1312,7 @@ def fill_parent_branch(i: int,
 
 def fill_controllable_branch(
         ii: int,
-        elm: Union[dev.Transformer2W, dev.Winding, dev.VSC, dev.UPFC],
+        elm: Union[dev.Transformer2W, dev.Winding, dev.UPFC],
         data: PassiveBranchData,
         ctrl_data: ActiveBranchData,
         bus_data: BusData,
@@ -1341,14 +1353,14 @@ def fill_controllable_branch(
                        t_idx=t_idx)
 
     if control_taps_phase:
-        ctrl_data.tap_phase_control_mode[ii] = elm.get_tap_phase_control_mode_at(t_idx)
+        ctrl_data.tap_phase_control_mode[ii] = elm.get_tap_phase_control_mode_at(t_idx).idx()
 
     if control_taps_modules:
-        ctrl_data.tap_module_control_mode[ii] = elm.get_tap_module_control_mode_at(t_idx)
+        ctrl_data.tap_module_control_mode[ii] = elm.get_tap_module_control_mode_at(t_idx).idx()
 
         if elm.regulation_bus is None:
             reg_bus = elm.bus_from
-            if ctrl_data.tap_module_control_mode[ii] == TapModuleControl.Vm:
+            if ctrl_data.tap_module_control_mode[ii] == TapModuleControl.Vm.idx():
                 logger.add_warning("Unspecified regulation bus",
                                    device_class=elm.device_type.value,
                                    device=elm.name)
@@ -1374,17 +1386,15 @@ def fill_controllable_branch(
     ctrl_data.tap_angle_min[ii] = elm.tap_phase_min
     ctrl_data.tap_angle_max[ii] = elm.tap_phase_max
 
-    if ctrl_data.tap_module_control_mode[ii] != 0:
-        if ctrl_data.tap_module_control_mode[ii] != TapModuleControl.fixed:
-            ctrl_data.any_pf_control = True
+    if ctrl_data.tap_module_control_mode[ii] != TapModuleControl.fixed.idx():
+        ctrl_data.any_pf_control = True
 
     if not ctrl_data.any_pf_control:  # if true, we can skip this step
-        if ctrl_data.tap_phase_control_mode[ii] != 0:
-            if ctrl_data.tap_phase_control_mode[ii] != TapPhaseControl.fixed:
-                ctrl_data.any_pf_control = True
+        if ctrl_data.tap_phase_control_mode[ii] != TapPhaseControl.fixed.idx():
+            ctrl_data.any_pf_control = True
 
     if not use_stored_guess:
-        if ctrl_data.tap_module_control_mode[ii] == TapModuleControl.Vm:
+        if ctrl_data.tap_module_control_mode[ii] == TapModuleControl.Vm.idx():
             ctrl_data.any_pf_control = True
             bus_idx = ctrl_data.tap_controlled_buses[ii]
             if not bus_voltage_used[bus_idx]:
@@ -1591,9 +1601,9 @@ def get_branch_data(
              data.phB[ii],
              data.phC[ii]) = elm.transformer_phases(logger=logger)
 
-        data.conn[ii] = elm.conn
-        data.conn_f[ii] = elm.conn_f
-        data.conn_t[ii] = elm.conn_t
+        data.conn[ii] = elm.conn.idx()
+        data.conn_f[ii] = elm.conn_f.idx()
+        data.conn_t[ii] = elm.conn_t.idx()
         data.m_taps[ii] = elm.tap_changer.tap_modules_array
         data.tau_taps[ii] = elm.tap_changer.tap_angles_array
 
@@ -1646,7 +1656,9 @@ def get_branch_data(
             data.G2[ii] = elm.G2
             data.B2[ii] = elm.B2
 
-            data.conn[ii] = elm.conn
+            data.conn[ii] = elm.conn.idx()
+            data.conn_f[ii] = elm.conn_f.idx()
+            data.conn_t[ii] = elm.conn_t.idx()
             data.m_taps[ii] = elm.tap_changer.tap_modules_array
             data.tau_taps[ii] = elm.tap_changer.tap_angles_array
 
@@ -1774,7 +1786,7 @@ def get_branch_data(
 def set_control_dev(k: int,
                     f: int,
                     t: int,
-                    control: ConverterControlType,
+                    control_int: int,
                     control_dev: Bus | BRANCH_TYPES | None,
                     control_val: float,
                     control_bus_idx: IntVec,
@@ -1790,7 +1802,7 @@ def set_control_dev(k: int,
     :param k: device index
     :param f:
     :param t:
-    :param control: ConverterControlType
+    :param control_int: ConverterControlType
     :param control_dev: control device
     :param control_val: control value
     :param control_bus_idx: array to be filled in
@@ -1809,7 +1821,7 @@ def set_control_dev(k: int,
 
             control_bus_idx[k] = bus_idx
 
-            if control == ConverterControlType.Vm_ac:
+            if control_int == ConverterControlType.Vm_ac.idx():
 
                 set_bus_control_voltage_vsc(i=bus_idx,
                                             j=-1,
@@ -1821,7 +1833,7 @@ def set_control_dev(k: int,
                                             use_stored_guess=use_stored_guess,
                                             logger=logger)
 
-            elif control == ConverterControlType.Vm_dc:
+            elif control_int == ConverterControlType.Vm_dc.idx():
 
                 set_bus_control_voltage_vsc(i=bus_idx,
                                             j=-1,
@@ -1833,7 +1845,7 @@ def set_control_dev(k: int,
                                             use_stored_guess=use_stored_guess,
                                             logger=logger)
 
-            elif control == ConverterControlType.Va_ac:
+            elif control_int == ConverterControlType.Va_ac.idx():
                 set_bus_control_angle_vsc(i=bus_idx,
                                           j=-1,
                                           remote_control=False,
@@ -1850,7 +1862,7 @@ def set_control_dev(k: int,
             control_branch_idx[k] = k
 
     else:
-        if control == ConverterControlType.Vm_ac:
+        if control_int == ConverterControlType.Vm_ac.idx():
             control_bus_idx[k] = t
 
             set_bus_control_voltage_vsc(i=t,
@@ -1863,7 +1875,7 @@ def set_control_dev(k: int,
                                         use_stored_guess=use_stored_guess,
                                         logger=logger)
 
-        elif control == ConverterControlType.Vm_dc:
+        elif control_int == ConverterControlType.Vm_dc.idx():
             control_bus_idx[k] = f
 
             set_bus_control_voltage_vsc(i=f,
@@ -1875,7 +1887,8 @@ def set_control_dev(k: int,
                                         candidate_Vm=control_val,
                                         use_stored_guess=use_stored_guess,
                                         logger=logger)
-        elif control == ConverterControlType.Va_ac:
+
+        elif control_int == ConverterControlType.Va_ac.idx():
             control_bus_idx[k] = t
 
             set_bus_control_angle_vsc(i=t,
@@ -1949,9 +1962,9 @@ def get_vsc_data(
 
         data.overload_cost[i] = elm.get_Cost_at(t_idx)
 
-        data.control1[ii] = elm.get_control1_at(t_idx)
-        data.control2[ii] = elm.get_control2_at(t_idx)
-        data.fault_control[ii] = elm.get_fault_control_at(t_idx)
+        data.control1_int[ii] = elm.get_control1_at(t_idx).idx()
+        data.control2_int[ii] = elm.get_control2_at(t_idx).idx()
+        data.fault_control_int[ii] = elm.get_fault_control_at(t_idx).idx()
         data.control1_val[ii] = elm.get_control1_val_at(t_idx)
         data.control2_val[ii] = elm.get_control2_val_at(t_idx)
         data.control1_val_min[ii] = elm.control1_val_min
@@ -1969,7 +1982,7 @@ def get_vsc_data(
 
         # Using DC_positive to set the controls, may need to also pass DC_negative
         set_control_dev(k=ii, f=f, t=t,
-                        control=data.control1[ii],
+                        control_int=data.control1_int[ii],
                         control_dev=elm.get_control1_dev_at(t_idx),
                         control_val=data.control1_val[ii],
                         control_bus_idx=data.control1_bus_idx,
@@ -1982,7 +1995,7 @@ def get_vsc_data(
                         logger=logger)
 
         set_control_dev(k=ii, f=f, t=t,
-                        control=data.control2[ii],
+                        control_int=data.control2_int[ii],
                         control_dev=elm.get_control2_dev_at(t_idx),
                         control_val=data.control2_val[ii],
                         control_bus_idx=data.control2_bus_idx,
@@ -2055,10 +2068,10 @@ def get_hvdc_data(data: HvdcData,
 
         if opf_results is not None:
             # if we are taking the values from the OPF, do not allow the free mode
-            data.control_mode[i] = HvdcControlType.type_1_Pset
+            data.control_mode_int[i] = HvdcControlType.type_1_Pset.idx()
             data.Pset[i] = opf_results.hvdc_Pf[t_idx, i]
         else:
-            data.control_mode[i] = elm.control_mode
+            data.control_mode_int[i] = elm.control_mode.idx()
             data.Pset[i] = elm.get_Pset_at(t_idx)
 
         data.Vset_f[i] = elm.get_Vset_f_at(t_idx)

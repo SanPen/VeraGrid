@@ -4,10 +4,10 @@
 # SPDX-License-Identifier: MPL-2.0
 
 import numpy as np
-from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Utils.Symbolic.block import VarPowerFlowRefferenceType
+from VeraGridEngine.Utils.Symbolic.block import VarPowerFlowReferenceType
 from VeraGridEngine.Utils.Symbolic.symbolic import cos, sin, exp, imag, log, conj, real, abs
 
 
@@ -19,8 +19,8 @@ def get_genrow_rms_template(vfactory: VarFactory, name="Genrow rms template") ->
     templ = RmsModelTemplate(name=name)
     templ.tpe = DeviceType.GeneratorDevice
 
-    inputs = [vfactory.add_var("Vm_" + name, reference=VarPowerFlowRefferenceType.Vm),
-              vfactory.add_var("Va_" + name, reference=VarPowerFlowRefferenceType.Va)]
+    inputs = [vfactory.add_var("Vm_" + name, reference=VarPowerFlowReferenceType.Vm),
+              vfactory.add_var("Va_" + name, reference=VarPowerFlowReferenceType.Va)]
 
     P_g = vfactory.add_var('P_g')
     Q_g = vfactory.add_var('Q_g')
@@ -106,33 +106,33 @@ def get_genrow_rms_template(vfactory: VarFactory, name="Genrow rms template") ->
     }
 
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.Vm: inputs[0],
-        VarPowerFlowRefferenceType.Va: inputs[1],
-        VarPowerFlowRefferenceType.P: P_g,
-        VarPowerFlowRefferenceType.Q: Q_g
+        VarPowerFlowReferenceType.Vm: inputs[0],
+        VarPowerFlowReferenceType.Va: inputs[1],
+        VarPowerFlowReferenceType.P: P_g,
+        VarPowerFlowReferenceType.Q: Q_g
     }
 
     templ.block.api_obj_mapping = {
         # Electrical parameters
-        ParamPowerFlowRefferenceType.R1: R1,
-        ParamPowerFlowRefferenceType.X1: X1,
-        ParamPowerFlowRefferenceType.freq: freq,
+        ParamPowerFlowReferenceType.R1: R1,
+        ParamPowerFlowReferenceType.X1: X1,
+        ParamPowerFlowReferenceType.freq: freq,
 
         # Mechanical parameters
-        ParamPowerFlowRefferenceType.M: M,
-        ParamPowerFlowRefferenceType.D: D,
+        ParamPowerFlowReferenceType.M: M,
+        ParamPowerFlowReferenceType.D: D,
 
         # Control parameters
-        ParamPowerFlowRefferenceType.omega_ref: omega_ref,
-        ParamPowerFlowRefferenceType.Kp: Kp,
-        ParamPowerFlowRefferenceType.Ki: Ki,
+        ParamPowerFlowReferenceType.omega_ref: omega_ref,
+        ParamPowerFlowReferenceType.Kp: Kp,
+        ParamPowerFlowReferenceType.Ki: Ki,
 
         # Inputs / initial conditions
-        ParamPowerFlowRefferenceType.vf: vf,
-        ParamPowerFlowRefferenceType.tm0: tm0,
+        ParamPowerFlowReferenceType.vf: vf,
+        ParamPowerFlowReferenceType.tm0: tm0,
     }
 
     templ.block.in_vars = inputs
-    templ.block.out_vars = [P_g, Q_g]
+    templ.block.out_vars = [P_g, Q_g, tm0, vf, omega_ref]
 
     return templ

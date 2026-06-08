@@ -1769,8 +1769,8 @@ def add_linear_branches_formulation(t_idx: int,
                     bk = 1.0 / branch_data_t.X[m]
 
                 # compute the flow
-                if (active_branch_data_t.tap_phase_control_mode[m] == TapPhaseControl.Pf or
-                        active_branch_data_t.tap_phase_control_mode[m] == TapPhaseControl.Pt):
+                if (active_branch_data_t.tap_phase_control_mode[m] == TapPhaseControl.Pf.idx() or
+                        active_branch_data_t.tap_phase_control_mode[m] == TapPhaseControl.Pt.idx()):
 
                     # add angle
                     branch_vars.tap_angles[t_idx, m] = prob.add_var(
@@ -2030,7 +2030,7 @@ def add_linear_hvdc_formulation(t_idx: int,
 
         if hvdc_data_t.active[m]:
 
-            if hvdc_data_t.control_mode[m] == HvdcControlType.type_0_free:  # P-MODE 3
+            if hvdc_data_t.control_mode_int[m] == HvdcControlType.type_0_free.idx():  # P-MODE 3
 
                 # set the flow based on the angular difference
                 P0 = hvdc_data_t.Pset[m] / Sbase
@@ -2130,7 +2130,7 @@ def add_linear_hvdc_formulation(t_idx: int,
                 vars_bus.Pbalance[t_idx, fr] += - hvdc_vars.flows[t_idx, m]
                 vars_bus.Pbalance[t_idx, to] += hvdc_vars.flows[t_idx, m]
 
-            elif hvdc_data_t.control_mode[m] == HvdcControlType.type_1_Pset:
+            elif hvdc_data_t.control_mode_int[m] == HvdcControlType.type_1_Pset.idx():
 
                 if hvdc_data_t.dispatchable[m]:
 
@@ -2163,7 +2163,7 @@ def add_linear_hvdc_formulation(t_idx: int,
                     vars_bus.Pbalance[t_idx, fr] += -hvdc_vars.flows[t_idx, m]
                     vars_bus.Pbalance[t_idx, to] += hvdc_vars.flows[t_idx, m]
             else:
-                raise Exception('OPF: Unknown HVDC control mode {}'.format(hvdc_data_t.control_mode[m]))
+                raise Exception('OPF: Unknown HVDC control mode {}'.format(hvdc_data_t.control_mode_int[m]))
         else:
             # not active, therefore the flow is exactly zero
             prob.set_var_bounds(var=hvdc_vars.flows[t_idx, m], ub=0.0, lb=0.0)
@@ -2213,8 +2213,8 @@ def add_linear_vsc_formulation(t_idx: int,
 
         if vsc_data_t.active[m]:
 
-            if (vsc_data_t.control1[m] == ConverterControlType.Pdc_angle_droop and
-                    vsc_data_t.control2[m] == ConverterControlType.Pac):  # P-MODE 3
+            if (vsc_data_t.control1_int[m] == ConverterControlType.Pdc_angle_droop.idx() and
+                    vsc_data_t.control2_int[m] == ConverterControlType.Pac.idx()):  # P-MODE 3
 
                 # set the flow based on the angular difference
                 P0 = vsc_data_t.control2_val[m] / Sbase
@@ -2271,8 +2271,8 @@ def add_linear_vsc_formulation(t_idx: int,
                         name=join("vsc_flow_cst_", [t_idx, m], "_")
                     )
 
-            elif (vsc_data_t.control1[m] == ConverterControlType.Vm_dc and
-                  vsc_data_t.control2[m] == ConverterControlType.Pac):
+            elif (vsc_data_t.control1_int[m] == ConverterControlType.Vm_dc.idx() and
+                  vsc_data_t.control2_int[m] == ConverterControlType.Pac.idx()):
 
                 # set the DC slack
                 val = vsc_data_t.control1_val[m]
@@ -2288,8 +2288,8 @@ def add_linear_vsc_formulation(t_idx: int,
                     name=join("vsc_flow_", [t_idx, m], "_")
                 )
 
-            elif (vsc_data_t.control1[m] == ConverterControlType.Pdc and
-                  vsc_data_t.control2[m] == ConverterControlType.Vm_ac):
+            elif (vsc_data_t.control1_int[m] == ConverterControlType.Pdc.idx() and
+                  vsc_data_t.control2_int[m] == ConverterControlType.Vm_ac.idx()):
 
                 # Pmode1: fix the flow at the Pdc setpoint (clamped to rate)
                 P0 = vsc_data_t.control1_val[m] / Sbase
@@ -2298,8 +2298,8 @@ def add_linear_vsc_formulation(t_idx: int,
 
                 vsc_vars.flows[t_idx, m] = P0
 
-            elif (vsc_data_t.control1[m] == ConverterControlType.Pac and
-                  vsc_data_t.control2[m] == ConverterControlType.Vm_dc):
+            elif (vsc_data_t.control1_int[m] == ConverterControlType.Pac.idx() and
+                  vsc_data_t.control2_int[m] == ConverterControlType.Vm_dc.idx()):
 
                 # set the DC slack
                 val = vsc_data_t.control2_val[m]
@@ -2315,8 +2315,8 @@ def add_linear_vsc_formulation(t_idx: int,
                     name=join("vsc_flow_", [t_idx, m], "_")
                 )
 
-            elif (vsc_data_t.control1[m] == ConverterControlType.Vm_dc and
-                  vsc_data_t.control2[m] == ConverterControlType.Vm_ac):
+            elif (vsc_data_t.control1_int[m] == ConverterControlType.Vm_dc.idx() and
+                  vsc_data_t.control2_int[m] == ConverterControlType.Vm_ac.idx()):
 
                 # set the DC slack
                 val = vsc_data_t.control1_val[m]
@@ -2325,8 +2325,8 @@ def add_linear_vsc_formulation(t_idx: int,
                 prob.set_var_bounds(var=bus_vars.Vm[t_idx, fr], lb=val, ub=val)
                 any_dc_slack = True
 
-            elif (vsc_data_t.control1[m] == ConverterControlType.Vm_dc and
-                  vsc_data_t.control2[m] == ConverterControlType.Pdc):
+            elif (vsc_data_t.control1_int[m] == ConverterControlType.Vm_dc.idx() and
+                  vsc_data_t.control2_int[m] == ConverterControlType.Pdc.idx()):
 
                 # set the DC slack
                 val = vsc_data_t.control1_val[m]
@@ -2342,8 +2342,8 @@ def add_linear_vsc_formulation(t_idx: int,
                     name=join("vsc_flow_", [t_idx, m], "_")
                 )
 
-            elif (vsc_data_t.control1[m] == ConverterControlType.Pdc and
-                  vsc_data_t.control2[m] == ConverterControlType.Vm_dc):
+            elif (vsc_data_t.control1_int[m] == ConverterControlType.Pdc.idx() and
+                  vsc_data_t.control2_int[m] == ConverterControlType.Vm_dc.idx()):
 
                 # set the DC slack
                 val = vsc_data_t.control2_val[m]
@@ -2359,8 +2359,8 @@ def add_linear_vsc_formulation(t_idx: int,
                     name=join("vsc_flow_", [t_idx, m], "_")
                 )
 
-            elif (vsc_data_t.control1[m] == ConverterControlType.Pdc and
-                  vsc_data_t.control2[m] == ConverterControlType.Pac):
+            elif (vsc_data_t.control1_int[m] == ConverterControlType.Pdc.idx() and
+                  vsc_data_t.control2_int[m] == ConverterControlType.Pac.idx()):
 
                 # declare the flow var
                 vsc_vars.flows[t_idx, m] = prob.add_var(
@@ -2369,8 +2369,8 @@ def add_linear_vsc_formulation(t_idx: int,
                     name=join("vsc_flow_", [t_idx, m], "_")
                 )
 
-            elif (vsc_data_t.control1[m] == ConverterControlType.Pac and
-                  vsc_data_t.control2[m] == ConverterControlType.Pdc):
+            elif (vsc_data_t.control1_int[m] == ConverterControlType.Pac.idx() and
+                  vsc_data_t.control2_int[m] == ConverterControlType.Pdc.idx()):
 
                 # declare the flow var
                 vsc_vars.flows[t_idx, m] = prob.add_var(
@@ -2381,7 +2381,7 @@ def add_linear_vsc_formulation(t_idx: int,
 
             else:
                 logger.add_error(msg=f"Unsupported controls",
-                                 value=f"{vsc_data_t.control1[m]}, {vsc_data_t.control2[m]}")
+                                 value=f"{vsc_data_t.control1_int[m]}, {vsc_data_t.control2_int[m]}")
 
             # add the injections matching the flow
             bus_vars.Pbalance[t_idx, fr] += -vsc_vars.flows[t_idx, m]

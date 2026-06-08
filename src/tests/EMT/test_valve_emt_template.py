@@ -35,7 +35,7 @@ from VeraGridEngine.enumerations import (
     ValveEmtModelVariant,
     ValveEmtType,
     ValveInitializationState,
-    VarPowerFlowRefferenceType,
+    VarPowerFlowReferenceType,
 )
 
 
@@ -445,7 +445,7 @@ def _build_default_emt_options() -> gce.EmtOptions:
         simulation_time=0.01,
         tolerance=1e-6,
         solver_type=EmtSolverTypes.Symbolic,
-        initialization_method=EmtInitializationMethod.Auto,
+        initialization_method=EmtInitializationMethod.ConsistentNewton,
         integration_method=DynamicIntegrationMethod.DaeTrapezoidal,
         verbose=0,
     )
@@ -759,8 +759,8 @@ def _connect_standalone_valve_terminals(block: Block, v_source: Var, v_load: Var
     :param v_load: Load-side voltage variable.
     :return: None.
     """
-    vf_terminal: Var = block.external_mapping[VarPowerFlowRefferenceType.Vf_dc]
-    vt_terminal: Var = block.external_mapping[VarPowerFlowRefferenceType.Vt_dc]
+    vf_terminal: Var = block.external_mapping[VarPowerFlowReferenceType.Vf_dc]
+    vt_terminal: Var = block.external_mapping[VarPowerFlowReferenceType.Vt_dc]
     block.update_model(vf_terminal, v_source)
     block.update_model(vt_terminal, v_load)
 
@@ -826,7 +826,7 @@ def _build_standalone_valve_case(valve_tpe: ValveEmtType) -> Tuple[GenericEmtPro
     _set_block_runtime_parameter(valve_block, f"snubber_enabled_{block_name}", 0.0)
     _connect_standalone_valve_terminals(valve_block, v_source=v_source, v_load=v_load)
 
-    i_branch = valve_block.external_mapping[VarPowerFlowRefferenceType.If_dc]
+    i_branch = valve_block.external_mapping[VarPowerFlowReferenceType.If_dc]
     v_valve = _find_var_in_block_by_name(f"v_valve_{block_name}", valve_block)
 
     if v_valve is None:
@@ -1178,9 +1178,9 @@ def test_dc_line_runtime_case_responds_to_load_step() -> None:
     simulation_output = solver.simulate(boundary_updater=boundary_updater)
     time_s, state_traj = simulation_output[0], simulation_output[1]
 
-    current_trace = _extract_trace(problem, state_traj, dc_branch.emt_model.E(VarPowerFlowRefferenceType.If_dc))
-    from_voltage_trace = _extract_trace(problem, state_traj, bus_dc_from.emt_model.E(VarPowerFlowRefferenceType.Vdc))
-    to_voltage_trace = _extract_trace(problem, state_traj, bus_dc_to.emt_model.E(VarPowerFlowRefferenceType.Vdc))
+    current_trace = _extract_trace(problem, state_traj, dc_branch.emt_model.E(VarPowerFlowReferenceType.If_dc))
+    from_voltage_trace = _extract_trace(problem, state_traj, bus_dc_from.emt_model.E(VarPowerFlowReferenceType.Vdc))
+    to_voltage_trace = _extract_trace(problem, state_traj, bus_dc_to.emt_model.E(VarPowerFlowReferenceType.Vdc))
 
     # The load step creates a transient response rather than a new flat DC-line
     # equilibrium over the short simulation horizon. Compare windows immediately
@@ -1222,10 +1222,10 @@ def test_dc_line_runtime_case_matches_pf_initialization() -> None:
     )
 
     x0 = problem.get_x0()
-    v_from_var = bus_dc_from.emt_model.E(VarPowerFlowRefferenceType.Vdc)
-    v_to_var = bus_dc_to.emt_model.E(VarPowerFlowRefferenceType.Vdc)
-    i_from_var = dc_branch.emt_model.E(VarPowerFlowRefferenceType.If_dc)
-    i_to_var = dc_branch.emt_model.E(VarPowerFlowRefferenceType.It_dc)
+    v_from_var = bus_dc_from.emt_model.E(VarPowerFlowReferenceType.Vdc)
+    v_to_var = bus_dc_to.emt_model.E(VarPowerFlowReferenceType.Vdc)
+    i_from_var = dc_branch.emt_model.E(VarPowerFlowReferenceType.If_dc)
+    i_to_var = dc_branch.emt_model.E(VarPowerFlowReferenceType.It_dc)
     expected_v_from = float(np.abs(pf_results.voltage[1]))
     expected_v_to = float(np.abs(pf_results.voltage[2]))
     expected_i_from = float((np.real(pf_results.Sf[0]) / grid.Sbase) / max(expected_v_from, 1.0e-12))

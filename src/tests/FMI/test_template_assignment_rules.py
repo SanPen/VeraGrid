@@ -6,7 +6,7 @@ from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Injections.load import Load
 from VeraGridEngine.Utils.Symbolic.block import Block, Const, Var
-from VeraGridEngine.enumerations import DeviceType, FmuTemplateDomain, FmuTemplateMode, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, FmuTemplateDomain, FmuTemplateMode, VarPowerFlowReferenceType
 
 
 def _build_native_template() -> RmsModelTemplate:
@@ -50,7 +50,7 @@ def _build_emt_fmu_template() -> FmuTemplate:
         algebraic_vars=[current_var],
         algebraic_eqs=[current_var - Const(0.0)],
         out_vars=[current_var],
-        external_mapping={VarPowerFlowRefferenceType.i_A: None},
+        external_mapping={VarPowerFlowReferenceType.i_A: None},
     )
 
     template = FmuTemplate(name="emt-fmu")
@@ -112,8 +112,8 @@ def test_assigning_emt_fmu_template_accepts_none_external_mapping() -> None:
 
     assert load.emt_fmu_template == template
     assert load.emt_model is not template.block
-    assert VarPowerFlowRefferenceType.i_A in load.emt_model.external_mapping
-    assert load.emt_model.external_mapping[VarPowerFlowRefferenceType.i_A] is None
+    assert VarPowerFlowReferenceType.i_A in load.emt_model.external_mapping
+    assert load.emt_model.external_mapping[VarPowerFlowReferenceType.i_A] is None
 
 
 def test_rms_template_and_rms_fmu_template_are_mutually_exclusive() -> None:

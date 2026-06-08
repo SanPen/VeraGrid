@@ -23,7 +23,7 @@ if TYPE_CHECKING:  # Only imports the below statements during type checking
 
 class LoadGraphicItem(InjectionTemplateGraphicItem):
 
-    def __init__(self, parent, api_obj: Load, editor: SchematicWidget):
+    def __init__(self, parent, api_obj: Load, editor: SchematicWidget, draw_labels: bool = True):
         """
 
         :param parent:
@@ -36,7 +36,8 @@ class LoadGraphicItem(InjectionTemplateGraphicItem):
                                               editor=editor,
                                               device_type_name='load',
                                               w=20,
-                                              h=20)
+                                              h=20,
+                                              draw_labels=draw_labels)
 
         # triangle
         self.set_glyph(glyph=Polygon(

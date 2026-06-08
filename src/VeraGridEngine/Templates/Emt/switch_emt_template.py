@@ -9,7 +9,7 @@ from typing import Dict, List
 
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowRefferenceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowReferenceType, VarPowerFlowReferenceType
 from VeraGridEngine.Utils.procedural_logic import sampled_value
 from VeraGridEngine.Utils.Symbolic.symbolic import CmpOp, Comparison, Const, Expr, Var
 
@@ -46,54 +46,54 @@ def _get_active_phases(phA: bool, phB: bool, phC: bool) -> List[str]:
         return active_phases
 
 
-def _get_from_voltage_reference(phase_label: str) -> VarPowerFlowRefferenceType:
+def _get_from_voltage_reference(phase_label: str) -> VarPowerFlowReferenceType:
     if phase_label == "A":
-        return VarPowerFlowRefferenceType.vf_A
+        return VarPowerFlowReferenceType.vf_A
     else:
         if phase_label == "B":
-            return VarPowerFlowRefferenceType.vf_B
+            return VarPowerFlowReferenceType.vf_B
         else:
             if phase_label == "C":
-                return VarPowerFlowRefferenceType.vf_C
+                return VarPowerFlowReferenceType.vf_C
             else:
                 raise ValueError(f"Unsupported phase label '{phase_label}'")
 
 
-def _get_to_voltage_reference(phase_label: str) -> VarPowerFlowRefferenceType:
+def _get_to_voltage_reference(phase_label: str) -> VarPowerFlowReferenceType:
     if phase_label == "A":
-        return VarPowerFlowRefferenceType.vt_A
+        return VarPowerFlowReferenceType.vt_A
     else:
         if phase_label == "B":
-            return VarPowerFlowRefferenceType.vt_B
+            return VarPowerFlowReferenceType.vt_B
         else:
             if phase_label == "C":
-                return VarPowerFlowRefferenceType.vt_C
+                return VarPowerFlowReferenceType.vt_C
             else:
                 raise ValueError(f"Unsupported phase label '{phase_label}'")
 
 
-def _get_from_current_reference(phase_label: str) -> VarPowerFlowRefferenceType:
+def _get_from_current_reference(phase_label: str) -> VarPowerFlowReferenceType:
     if phase_label == "A":
-        return VarPowerFlowRefferenceType.if_A
+        return VarPowerFlowReferenceType.if_A
     else:
         if phase_label == "B":
-            return VarPowerFlowRefferenceType.if_B
+            return VarPowerFlowReferenceType.if_B
         else:
             if phase_label == "C":
-                return VarPowerFlowRefferenceType.if_C
+                return VarPowerFlowReferenceType.if_C
             else:
                 raise ValueError(f"Unsupported phase label '{phase_label}'")
 
 
-def _get_to_current_reference(phase_label: str) -> VarPowerFlowRefferenceType:
+def _get_to_current_reference(phase_label: str) -> VarPowerFlowReferenceType:
     if phase_label == "A":
-        return VarPowerFlowRefferenceType.it_A
+        return VarPowerFlowReferenceType.it_A
     else:
         if phase_label == "B":
-            return VarPowerFlowRefferenceType.it_B
+            return VarPowerFlowReferenceType.it_B
         else:
             if phase_label == "C":
-                return VarPowerFlowRefferenceType.it_C
+                return VarPowerFlowReferenceType.it_C
             else:
                 raise ValueError(f"Unsupported phase label '{phase_label}'")
 
@@ -147,7 +147,7 @@ def get_switch_emt_template(
     seed_from_pf_var: Var = vf.add_var(f"switch_seed_from_pf_{name}")
 
     templ.block.parameters[g_device] = Const(0.0, name="switch_closed_g_api")
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.g] = g_device
+    templ.block.api_obj_mapping[ParamPowerFlowReferenceType.g] = g_device
     templ.block.event_dict[g_manual] = Const(float(manual_closed_conductance), name="switch_closed_g_manual")
     templ.block.event_dict[g_open] = Const(float(open_conductance), name="switch_open_g")
     templ.block.event_dict[tau_var] = Const(float(switch_time_constant), name="switch_tau")
@@ -163,37 +163,37 @@ def get_switch_emt_template(
     algebraic_eqs: List[Expr] = list()
     state_eqs: List[Expr] = list()
     out_vars: List[Var] = list()
-    external_mapping: Dict[VarPowerFlowRefferenceType, Var | None] = dict({
-        VarPowerFlowRefferenceType.vf_N: None,
-        VarPowerFlowRefferenceType.vf_A: None,
-        VarPowerFlowRefferenceType.vf_B: None,
-        VarPowerFlowRefferenceType.vf_C: None,
-        VarPowerFlowRefferenceType.vt_N: None,
-        VarPowerFlowRefferenceType.vt_A: None,
-        VarPowerFlowRefferenceType.vt_B: None,
-        VarPowerFlowRefferenceType.vt_C: None,
-        VarPowerFlowRefferenceType.if_N: None,
-        VarPowerFlowRefferenceType.if_A: None,
-        VarPowerFlowRefferenceType.if_B: None,
-        VarPowerFlowRefferenceType.if_C: None,
-        VarPowerFlowRefferenceType.it_N: None,
-        VarPowerFlowRefferenceType.it_A: None,
-        VarPowerFlowRefferenceType.it_B: None,
-        VarPowerFlowRefferenceType.it_C: None,
-        VarPowerFlowRefferenceType.Sf_A: None,
-        VarPowerFlowRefferenceType.Sf_B: None,
-        VarPowerFlowRefferenceType.Sf_C: None,
-        VarPowerFlowRefferenceType.St_A: None,
-        VarPowerFlowRefferenceType.St_B: None,
-        VarPowerFlowRefferenceType.St_C: None,
-        VarPowerFlowRefferenceType.d_v_N_f: None,
-        VarPowerFlowRefferenceType.d_v_A_f: None,
-        VarPowerFlowRefferenceType.d_v_B_f: None,
-        VarPowerFlowRefferenceType.d_v_C_f: None,
-        VarPowerFlowRefferenceType.d_v_N_t: None,
-        VarPowerFlowRefferenceType.d_v_A_t: None,
-        VarPowerFlowRefferenceType.d_v_B_t: None,
-        VarPowerFlowRefferenceType.d_v_C_t: None,
+    external_mapping: Dict[VarPowerFlowReferenceType, Var | None] = dict({
+        VarPowerFlowReferenceType.vf_N: None,
+        VarPowerFlowReferenceType.vf_A: None,
+        VarPowerFlowReferenceType.vf_B: None,
+        VarPowerFlowReferenceType.vf_C: None,
+        VarPowerFlowReferenceType.vt_N: None,
+        VarPowerFlowReferenceType.vt_A: None,
+        VarPowerFlowReferenceType.vt_B: None,
+        VarPowerFlowReferenceType.vt_C: None,
+        VarPowerFlowReferenceType.if_N: None,
+        VarPowerFlowReferenceType.if_A: None,
+        VarPowerFlowReferenceType.if_B: None,
+        VarPowerFlowReferenceType.if_C: None,
+        VarPowerFlowReferenceType.it_N: None,
+        VarPowerFlowReferenceType.it_A: None,
+        VarPowerFlowReferenceType.it_B: None,
+        VarPowerFlowReferenceType.it_C: None,
+        VarPowerFlowReferenceType.Sf_A: None,
+        VarPowerFlowReferenceType.Sf_B: None,
+        VarPowerFlowReferenceType.Sf_C: None,
+        VarPowerFlowReferenceType.St_A: None,
+        VarPowerFlowReferenceType.St_B: None,
+        VarPowerFlowReferenceType.St_C: None,
+        VarPowerFlowReferenceType.d_v_N_f: None,
+        VarPowerFlowReferenceType.d_v_A_f: None,
+        VarPowerFlowReferenceType.d_v_B_f: None,
+        VarPowerFlowReferenceType.d_v_C_f: None,
+        VarPowerFlowReferenceType.d_v_N_t: None,
+        VarPowerFlowReferenceType.d_v_A_t: None,
+        VarPowerFlowReferenceType.d_v_B_t: None,
+        VarPowerFlowReferenceType.d_v_C_t: None,
     })
 
     if signal_controlled:

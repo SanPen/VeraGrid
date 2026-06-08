@@ -270,6 +270,7 @@ class ControllableBranchParent(BranchParent):
                  code: str,
                  active: bool,
                  reducible: bool,
+                 design_rate: float,
                  rate: float,
                  r: float,
                  x: float,
@@ -328,6 +329,7 @@ class ControllableBranchParent(BranchParent):
         :param x: reactance in per unit
         :param g: shunt conductance in per unit
         :param b: shunt susceptance in per unit
+        :param design_rate: Design rate (MVA)
         :param rate: rate in MVA
         :param tap_module: tap module in p.u.
         :param tap_module_max:
@@ -373,6 +375,7 @@ class ControllableBranchParent(BranchParent):
                               bus_to=bus_to,
                               active=active,
                               reducible=reducible,
+                              design_rate=design_rate,
                               rate=rate,
                               contingency_factor=contingency_factor,
                               protection_rating_factor=protection_rating_factor,

@@ -14,7 +14,7 @@ import numpy as np
 import math
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowRefferenceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowReferenceType, VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Utils.Symbolic.block import Block
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
@@ -43,8 +43,8 @@ def get_genqec_phasor(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
     templ.tpe = DeviceType.GeneratorDevice
 
     # Inputs: Vr, Vi (phasor voltage components), Tm, Vf
-    Vr = vfactory.add_var("Vr_" + name, VarPowerFlowRefferenceType.Vr)
-    Vi = vfactory.add_var("Vi_" + name, VarPowerFlowRefferenceType.Vi)
+    Vr = vfactory.add_var("Vr_" + name, VarPowerFlowReferenceType.Vr)
+    Vi = vfactory.add_var("Vi_" + name, VarPowerFlowReferenceType.Vi)
     inputs = [Vr, Vi,
               vfactory.add_var("Tm_" + name),
               vfactory.add_var("Vf_" + name)]
@@ -309,46 +309,46 @@ def get_genqec_phasor(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
             Id_sat: Id / Sat,
         },
         external_mapping={
-            VarPowerFlowRefferenceType.Ir: Irg,
-            VarPowerFlowRefferenceType.Ii: Iig,
-            VarPowerFlowRefferenceType.Vr: inputs[0],
-            VarPowerFlowRefferenceType.Vi: inputs[1],
+            VarPowerFlowReferenceType.Ir: Irg,
+            VarPowerFlowReferenceType.Ii: Iig,
+            VarPowerFlowReferenceType.Vr: inputs[0],
+            VarPowerFlowReferenceType.Vi: inputs[1],
         },
 
         api_obj_mapping={
-            ParamPowerFlowRefferenceType.fn: fn,
-            ParamPowerFlowRefferenceType.ws: ws,
-            ParamPowerFlowRefferenceType.M: M,
-            ParamPowerFlowRefferenceType.D: D,
-            ParamPowerFlowRefferenceType.Rs: Rs,
-            ParamPowerFlowRefferenceType.Ra: Ra,
+            ParamPowerFlowReferenceType.fn: fn,
+            ParamPowerFlowReferenceType.ws: ws,
+            ParamPowerFlowReferenceType.M: M,
+            ParamPowerFlowReferenceType.D: D,
+            ParamPowerFlowReferenceType.Rs: Rs,
+            ParamPowerFlowReferenceType.Ra: Ra,
 
             # Reactances
-            ParamPowerFlowRefferenceType.Xd: Xd,
-            ParamPowerFlowRefferenceType.Xq: Xq,
-            ParamPowerFlowRefferenceType.Xd_prime: Xd_prime,
-            ParamPowerFlowRefferenceType.Xq_prime: Xq_prime,
-            ParamPowerFlowRefferenceType.Xd_2prime: Xd_2prime,
-            ParamPowerFlowRefferenceType.Xq_2prime: Xq_2prime,
-            ParamPowerFlowRefferenceType.Xl: Xl,
+            ParamPowerFlowReferenceType.Xd: Xd,
+            ParamPowerFlowReferenceType.Xq: Xq,
+            ParamPowerFlowReferenceType.Xd_prime: Xd_prime,
+            ParamPowerFlowReferenceType.Xq_prime: Xq_prime,
+            ParamPowerFlowReferenceType.Xd_2prime: Xd_2prime,
+            ParamPowerFlowReferenceType.Xq_2prime: Xq_2prime,
+            ParamPowerFlowReferenceType.Xl: Xl,
 
             # Time constants
-            ParamPowerFlowRefferenceType.Td0_prime: Td0_prime,
-            ParamPowerFlowRefferenceType.Tq0_prime: Tq0_prime,
-            ParamPowerFlowRefferenceType.Td0_2prime: Td0_2prime,
-            ParamPowerFlowRefferenceType.Tq0_2prime: Tq0_2prime,
+            ParamPowerFlowReferenceType.Td0_prime: Td0_prime,
+            ParamPowerFlowReferenceType.Tq0_prime: Tq0_prime,
+            ParamPowerFlowReferenceType.Td0_2prime: Td0_2prime,
+            ParamPowerFlowReferenceType.Tq0_2prime: Tq0_2prime,
 
-            ParamPowerFlowRefferenceType.Xd_prime_minus_Xl: Xd_prime_minus_Xl,
-            ParamPowerFlowRefferenceType.Xq_prime_minus_Xl: Xq_prime_minus_Xl,
-            ParamPowerFlowRefferenceType.Xdaux: Xdaux,
-            ParamPowerFlowRefferenceType.Xdaux2: Xdaux2,
-            ParamPowerFlowRefferenceType.Xdaux3: Xdaux3,
-            ParamPowerFlowRefferenceType.Xqaux: Xqaux,
-            ParamPowerFlowRefferenceType.Xqaux2: Xqaux2,
-            ParamPowerFlowRefferenceType.Xqaux3: Xqaux3,
+            ParamPowerFlowReferenceType.Xd_prime_minus_Xl: Xd_prime_minus_Xl,
+            ParamPowerFlowReferenceType.Xq_prime_minus_Xl: Xq_prime_minus_Xl,
+            ParamPowerFlowReferenceType.Xdaux: Xdaux,
+            ParamPowerFlowReferenceType.Xdaux2: Xdaux2,
+            ParamPowerFlowReferenceType.Xdaux3: Xdaux3,
+            ParamPowerFlowReferenceType.Xqaux: Xqaux,
+            ParamPowerFlowReferenceType.Xqaux2: Xqaux2,
+            ParamPowerFlowReferenceType.Xqaux3: Xqaux3,
 
-            ParamPowerFlowRefferenceType.A: A,
-            ParamPowerFlowRefferenceType.B: B,
+            ParamPowerFlowReferenceType.A: A,
+            ParamPowerFlowReferenceType.B: B,
         },
 
         out_vars=[Irg, Iig, omega, IRPu, Te],
@@ -468,12 +468,12 @@ def get_complete_generator_template_phasor(vfactory: VarFactory,
     templ.block = to_implicit(templ.block, vfactory)
     # External mapping for phasor coordinates (current balance)
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.Vr: genqec_mdl.in_vars[0],
-        VarPowerFlowRefferenceType.Vi: genqec_mdl.in_vars[1],
-        VarPowerFlowRefferenceType.P: Pg_out,
-        VarPowerFlowRefferenceType.Q: Qg_out,
-        VarPowerFlowRefferenceType.Ir: Irg_out,
-        VarPowerFlowRefferenceType.Ii: Iig_out,
+        VarPowerFlowReferenceType.Vr: genqec_mdl.in_vars[0],
+        VarPowerFlowReferenceType.Vi: genqec_mdl.in_vars[1],
+        VarPowerFlowReferenceType.P: Pg_out,
+        VarPowerFlowReferenceType.Q: Qg_out,
+        VarPowerFlowReferenceType.Ir: Irg_out,
+        VarPowerFlowReferenceType.Ii: Iig_out,
     }
 
     templ.block.in_vars = [genqec_mdl.in_vars[0], genqec_mdl.in_vars[1]]

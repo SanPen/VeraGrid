@@ -49,11 +49,23 @@ class RmsProblemMTI(RmsProblemPhasor):
         self._mti_bool_param_indices: list[int] = []
         self._mti_bool_guard_compiled_by_param_idx: dict[int, object] = {}
         self._mti_bool_guard_var_positions_by_param_idx: dict[int, np.ndarray] = {}
+        self._mti_incidence_includes_inequalities = False
         self._compile_mti_inequalities()
         self._compile_mti_boolean_guards()
         self._initialize_mti_booleans_at_t0()
         self._mti_incidence: np.ndarray | None = None
         self._mti_solving_order: list[MTISubProblemRow] = []
+        self._mti_xp_vars: list[object] = []
+        self._mti_y_vars: list[object] = []
+        self._mti_incidence_bool_param_indices: list[int] = []
+        self._mti_diff_uid_to_xp_col: dict[int, int] = {}
+        self._mti_base_uid_to_xp_col: dict[int, int] = {}
+        self._mti_alg_uid_to_y_col: dict[int, int] = {}
+        self._mti_bool_uid_to_local_col: dict[int, int] = {}
+        self._mti_continuous_var_idx_to_col: dict[int, int] = {}
+        self._mti_col_to_continuous_var_idx_map: dict[int, int] = {}
+        self._mti_col_meta: list[tuple[str, int, object | None]] = []
+        self._mti_row_meta: list[tuple[str, int]] = []
         self._ineq_var_positions: list[np.ndarray] = []
         self._build_inequality_variable_positions()
 
@@ -152,14 +164,21 @@ class RmsProblemMTI(RmsProblemPhasor):
                     current = float(self._variable_parameters_values[idx[k]])
                     z0[k] = 1.0 if current >= 0.5 else 0.0
                 else:
-                    # Guard residual convention in MTI is G <= 0 when condition holds.
-                    z0[k] = 1.0 if guard_val <= 0.0 else 0.0
+                    z0[k] = self._boolean_value_from_guard(guard_val)
             if debug:
                 print(f"[MTI-INIT] bool_pos={k} param_idx={idx[k]} guard={guard_val} init_eq={init_val} z0={z0[k]}")
 
         self.set_mti_boolean_state(z0)
         if debug:
             print("[MTI-INIT] initial z0:", z0)
+
+    @staticmethod
+    def _boolean_value_from_guard(guard_val: float) -> float:
+        """Interpret direct 0/1 guards, otherwise fall back to G <= 0 residuals."""
+        val = float(guard_val)
+        if abs(val) <= 1e-12 or abs(val - 1.0) <= 1e-12:
+            return 1.0 if val >= 0.5 else 0.0
+        return 1.0 if val <= 0.0 else 0.0
 
     def _evaluate_boolean_init_from_init_eq(self, bool_position: int, x: Vec) -> float | None:
         idx = self.get_mti_boolean_parameter_indices
@@ -455,6 +474,12 @@ class RmsProblemMTI(RmsProblemPhasor):
         n_eq, n_var = self._mti_incidence.shape
         nnz = int(np.count_nonzero(self._mti_incidence))
         print(f"[MTI-INC] shape=({n_eq},{n_var}) nnz={nnz}")
+        if n_eq != n_var:
+            raise ValueError(
+                "MTI incidence must be square: "
+                f"n_rows(eq+ineq)={n_eq}, n_cols(xp+y+z)={n_var}. "
+                "Check boolean/inequality model balance."
+            )
         order = build_connected_subproblem_order(self._mti_incidence)
         if len(order) == 0:
             n_eq, n_vars = self._mti_incidence.shape
@@ -471,19 +496,36 @@ class RmsProblemMTI(RmsProblemPhasor):
 
         MTI-toolbox-like layout:
             rows = [equalities; inequalities]
-            cols = [diff vars; continuous vars; booleans]
+            cols = [state-derivative unknowns xp; algebraic unknowns y; booleans z]
 
         Entry (i, j) is 1 if unknown j appears structurally in equation i.
         """
-        n_state = self.get_states_number()
+        n_state_eq = len(self._state_eqs)
         n_alg = len(self._algebraic_eqs)
-        n_eq = n_state + n_alg
+        n_eq = n_state_eq + n_alg
         n_ineq = len(self._mti_inequalities_compiled)
-        n_diff = self.get_diff_var_number()
-        n_vars = self.get_all_vars_number()
+        state_diff_vars = self._mti_state_diff_vars()
+        mti_alg_vars = self._mti_algebraic_vars()
+        n_xp = len(state_diff_vars)
+        n_y = len(mti_alg_vars)
 
         bool_param_indices = list(self.get_mti_boolean_parameter_indices)
         n_bool = len(bool_param_indices)
+        n_col = n_xp + n_y + n_bool
+        include_ineq_rows = True
+        self._mti_incidence_includes_inequalities = True
+
+        diff_uid_to_xp_col: dict[int, int] = {}
+        base_uid_to_xp_col: dict[int, int] = {}
+        for k, dvar in enumerate(state_diff_vars):
+            diff_uid_to_xp_col[dvar.uid] = k
+            base_var = dvar.base_var
+            if base_var is not None:
+                base_uid_to_xp_col[base_var.uid] = k
+
+        alg_uid_to_y_col: dict[int, int] = {}
+        for k, var in enumerate(mti_alg_vars):
+            alg_uid_to_y_col[var.uid] = k
 
         # Map boolean UID -> local boolean-column index
         bool_uid_to_local_col: dict[int, int] = {}
@@ -492,68 +534,168 @@ class RmsProblemMTI(RmsProblemPhasor):
                 bvar = self._variable_parameters[int(pidx)]
                 bool_uid_to_local_col[bvar.uid] = k
 
+        self._mti_xp_vars = list(state_diff_vars)
+        self._mti_y_vars = list(mti_alg_vars)
+        self._mti_incidence_bool_param_indices = [int(i) for i in bool_param_indices]
+        self._mti_diff_uid_to_xp_col = dict(diff_uid_to_xp_col)
+        self._mti_base_uid_to_xp_col = dict(base_uid_to_xp_col)
+        self._mti_alg_uid_to_y_col = dict(alg_uid_to_y_col)
+        self._mti_bool_uid_to_local_col = dict(bool_uid_to_local_col)
+
         off_diff = 0
-        off_vars = n_diff
-        off_bool = n_diff + n_vars
-        incidence_matrix = np.zeros((n_eq + n_ineq, n_diff + n_vars + n_bool), dtype=int)
+        off_alg = n_xp
+        off_bool = n_xp + n_y
+        n_rows = n_eq + (n_ineq if include_ineq_rows else 0)
+        incidence_matrix = np.zeros((n_rows, n_col), dtype=int)
+
+        self._mti_col_meta = []
+        self._mti_continuous_var_idx_to_col = {}
+        self._mti_col_to_continuous_var_idx_map = {}
+        for k, dvar in enumerate(state_diff_vars):
+            self._mti_col_meta.append(("xp", k, dvar))
+            base_var = getattr(dvar, "base_var", None)
+            if base_var is not None:
+                var_idx = self.uid2idx_vars.get(base_var.uid, None)
+                if var_idx is not None:
+                    self._mti_continuous_var_idx_to_col[int(var_idx)] = off_diff + k
+                    self._mti_col_to_continuous_var_idx_map[off_diff + k] = int(var_idx)
+        for k, var in enumerate(mti_alg_vars):
+            self._mti_col_meta.append(("y", k, var))
+            var_idx = self.uid2idx_vars.get(var.uid, None)
+            if var_idx is not None:
+                self._mti_continuous_var_idx_to_col[int(var_idx)] = off_alg + k
+                self._mti_col_to_continuous_var_idx_map[off_alg + k] = int(var_idx)
+        for k, pidx in enumerate(bool_param_indices):
+            bvar = self._variable_parameters[int(pidx)] if 0 <= int(pidx) < len(self._variable_parameters) else None
+            self._mti_col_meta.append(("z", int(pidx), bvar))
+
+        self._mti_row_meta = [("eq", i) for i in range(n_eq)]
+        if include_ineq_rows:
+            self._mti_row_meta.extend(("ineq", i) for i in range(n_ineq))
 
         # State equations: toolbox-style structural dependency from the
         # symbolic RHS only (no implicit BE identity injection).
         for i, eq in enumerate(self._state_eqs):
             for v in get_expression_vars(eq):
-                didx = self._uid2idx_diff.get(v.uid, None)
-                if didx is not None:
-                    incidence_matrix[i, off_diff + int(didx)] = 1
-                    continue
-                idx = self.uid2idx_vars.get(v.uid, None)
-                if idx is not None:
-                    incidence_matrix[i, off_vars + int(idx)] = 1
-                    continue
-                bcol = bool_uid_to_local_col.get(v.uid, None)
-                if bcol is not None:
-                    incidence_matrix[i, off_bool + int(bcol)] = 1
+                if v.uid in diff_uid_to_xp_col:
+                    incidence_matrix[i, off_diff + int(diff_uid_to_xp_col[v.uid])] = 1
+                elif v.uid in base_uid_to_xp_col:
+                    incidence_matrix[i, off_diff + int(base_uid_to_xp_col[v.uid])] = 1
+                elif v.uid in alg_uid_to_y_col:
+                    incidence_matrix[i, off_alg + int(alg_uid_to_y_col[v.uid])] = 1
+                elif v.uid in bool_uid_to_local_col:
+                    incidence_matrix[i, off_bool + int(bool_uid_to_local_col[v.uid])] = 1
 
         # Algebraic equations
         for j, eq in enumerate(self._algebraic_eqs):
-            row = n_state + j
+            row = n_state_eq + j
             for v in get_expression_vars(eq):
-                didx = self._uid2idx_diff.get(v.uid, None)
-                if didx is not None:
-                    incidence_matrix[row, off_diff + int(didx)] = 1
-                    continue
-                idx = self.uid2idx_vars.get(v.uid, None)
-                if idx is not None:
-                    incidence_matrix[row, off_vars + int(idx)] = 1
-                    continue
-                bcol = bool_uid_to_local_col.get(v.uid, None)
-                if bcol is not None:
-                    incidence_matrix[row, off_bool + int(bcol)] = 1
+                if v.uid in diff_uid_to_xp_col:
+                    incidence_matrix[row, off_diff + int(diff_uid_to_xp_col[v.uid])] = 1
+                elif v.uid in base_uid_to_xp_col:
+                    incidence_matrix[row, off_diff + int(base_uid_to_xp_col[v.uid])] = 1
+                elif v.uid in alg_uid_to_y_col:
+                    incidence_matrix[row, off_alg + int(alg_uid_to_y_col[v.uid])] = 1
+                elif v.uid in bool_uid_to_local_col:
+                    incidence_matrix[row, off_bool + int(bool_uid_to_local_col[v.uid])] = 1
 
-        # Inequalities
-        for j, ineq in enumerate(self._mti_inequalities_compiled):
-            row = n_eq + j
-            for v in get_expression_vars(ineq):
-                didx = self._uid2idx_diff.get(v.uid, None)
-                if didx is not None:
-                    incidence_matrix[row, off_diff + int(didx)] = 1
-                    continue
-                idx = self.uid2idx_vars.get(v.uid, None)
-                if idx is not None:
-                    incidence_matrix[row, off_vars + int(idx)] = 1
-                    continue
-                bcol = bool_uid_to_local_col.get(v.uid, None)
-                if bcol is not None:
-                    incidence_matrix[row, off_bool + int(bcol)] = 1
+        if include_ineq_rows:
+            # Inequalities
+            for j, ineq in enumerate(self._mti_inequalities_compiled):
+                row = n_eq + j
+                for v in get_expression_vars(ineq):
+                    if v.uid in diff_uid_to_xp_col:
+                        incidence_matrix[row, off_diff + int(diff_uid_to_xp_col[v.uid])] = 1
+                    elif v.uid in base_uid_to_xp_col:
+                        incidence_matrix[row, off_diff + int(base_uid_to_xp_col[v.uid])] = 1
+                    elif v.uid in alg_uid_to_y_col:
+                        incidence_matrix[row, off_alg + int(alg_uid_to_y_col[v.uid])] = 1
+                    elif v.uid in bool_uid_to_local_col:
+                        incidence_matrix[row, off_bool + int(bool_uid_to_local_col[v.uid])] = 1
 
         nnz = int(np.count_nonzero(incidence_matrix))
         print(
             "[MTI-INC] blocks "
-            f"eq={n_eq} ineq={n_ineq} diff={n_diff} vars={n_vars} bool={n_bool} nnz={nnz}"
+            f"eq={n_eq} ineq={n_ineq} ineq_rows={int(include_ineq_rows)} "
+            f"xp={n_xp} y={n_y} bool={n_bool} nnz={nnz}"
         )
         return incidence_matrix
 
     def get_mti_solving_order(self) -> list[MTISubProblemRow]:
         return list(self._mti_solving_order)
+
+    def _mti_state_diff_vars(self) -> list[object]:
+        """State derivative unknowns xp are DiffVars with an explicit base_var."""
+        return [v for v in self._diff_vars if v.base_var is not None]
+
+    def _mti_state_base_uids(self) -> set[int]:
+        return {v.base_var.uid for v in self._mti_state_diff_vars() if v.base_var is not None}
+
+    def _mti_algebraic_vars(self) -> list[object]:
+        """MTI algebraic unknowns y are continuous vars excluding state bases."""
+        state_base_uids = self._mti_state_base_uids()
+        return [v for v in self._state_algeb_vars if v.uid not in state_base_uids]
+
+    def _continuous_var_idx_to_mti_col(self, var_idx: int) -> int | None:
+        """Map full continuous x-vector index to MTI incidence column [xp;y;z]."""
+        if int(var_idx) < 0 or int(var_idx) >= self.get_all_vars_number():
+            return None
+        return self._mti_continuous_var_idx_to_col.get(int(var_idx), None)
+
+    def _mti_col_to_continuous_var_idx(self, col_idx: int) -> int | None:
+        """Map MTI incidence column [xp;y;z] to full continuous x-vector index."""
+        return self._mti_col_to_continuous_var_idx_map.get(int(col_idx), None)
+
+    def get_equality_row_indices(self, row_idx: np.ndarray) -> np.ndarray:
+        """Map MTI incidence row indices to equality residual row indices."""
+        if len(self._mti_row_meta) == 0:
+            n_eq = self.get_states_number() + len(self._algebraic_eqs)
+            rows = np.asarray(row_idx, dtype=int)
+            return np.asarray(sorted(set(int(r) for r in rows if 0 <= int(r) < n_eq)), dtype=int)
+        out: list[int] = []
+        for row in np.asarray(row_idx, dtype=int):
+            r = int(row)
+            if 0 <= r < len(self._mti_row_meta):
+                kind, local_idx = self._mti_row_meta[r]
+                if kind == "eq":
+                    out.append(int(local_idx))
+        return np.asarray(sorted(set(out)), dtype=int)
+
+    def get_continuous_equality_row_indices(self, row_idx: np.ndarray) -> np.ndarray:
+        """Return equality rows that still involve continuous unknowns [xp;y]."""
+        eq_rows = self.get_equality_row_indices(row_idx)
+        if self._mti_incidence is None or eq_rows.size == 0:
+            return eq_rows
+        n_cont_cols = len(self._mti_xp_vars) + len(self._mti_y_vars)
+        if n_cont_cols <= 0:
+            return np.zeros(0, dtype=int)
+
+        out: list[int] = []
+        for eq_local in eq_rows:
+            inc_row = int(eq_local)
+            if 0 <= inc_row < self._mti_incidence.shape[0]:
+                if np.any(self._mti_incidence[inc_row, :n_cont_cols] != 0):
+                    out.append(int(eq_local))
+        return np.asarray(sorted(set(out)), dtype=int)
+
+    def get_fixed_boolean_equality_row_indices(self, row_idx: np.ndarray) -> np.ndarray:
+        """Return equality rows that only constrain fixed boolean columns."""
+        eq_rows = self.get_equality_row_indices(row_idx)
+        cont_rows = set(self.get_continuous_equality_row_indices(row_idx).tolist())
+        return np.asarray([int(r) for r in eq_rows if int(r) not in cont_rows], dtype=int)
+
+    def get_inequality_row_indices(self, row_idx: np.ndarray) -> np.ndarray:
+        """Map MTI incidence row indices to inequality residual row indices."""
+        if len(self._mti_row_meta) == 0:
+            return np.zeros(0, dtype=int)
+        out: list[int] = []
+        for row in np.asarray(row_idx, dtype=int):
+            r = int(row)
+            if 0 <= r < len(self._mti_row_meta):
+                kind, local_idx = self._mti_row_meta[r]
+                if kind == "ineq":
+                    out.append(int(local_idx))
+        return np.asarray(sorted(set(out)), dtype=int)
 
     def get_event_solving_stages(self, ineq_idx: int) -> tuple[list[tuple[np.ndarray, np.ndarray]], list[tuple[np.ndarray, np.ndarray]], list[tuple[np.ndarray, np.ndarray]]]:
         """
@@ -577,26 +719,19 @@ class RmsProblemMTI(RmsProblemPhasor):
                 print(f"[MTI-STAGE] invalid ineq_idx={ineq_idx}, using full fallback stage")
             return ([(all_idx, all_idx)], [(all_idx, all_idx)], [])
 
-        touched_vars = self._ineq_var_positions[ineq_idx]
-        if touched_vars.size == 0:
-            n = self.get_all_vars_number()
-            all_idx = np.arange(n, dtype=int)
-            if debug:
-                print(f"[MTI-STAGE] ineq_idx={ineq_idx} touched_vars empty, using full fallback stage")
-            return ([(all_idx, all_idx)], [(all_idx, all_idx)], [])
-
         rows = self._mti_solving_order
-        n_diff = self.get_diff_var_number()
-        touched_cols = set((n_diff + touched_vars).tolist())
-        subset_ids = sorted({int(r.subset) for r in rows if (int(r.var_idx) - 1) in touched_cols})
-        if len(subset_ids) == 0:
+        n_eq = self.get_states_number() + len(self._algebraic_eqs)
+        ineq_row = n_eq + int(ineq_idx)
+        event_rows = [r for r in rows if (int(r.eq_idx) - 1) == ineq_row]
+        if len(event_rows) == 0:
             n = self.get_all_vars_number()
             all_idx = np.arange(n, dtype=int)
             if debug:
-                print(f"[MTI-STAGE] ineq_idx={ineq_idx} no subset hit, using full fallback stage")
+                print(f"[MTI-STAGE] ineq_idx={ineq_idx} no inequality-row hit, using full fallback stage")
             return ([(all_idx, all_idx)], [(all_idx, all_idx)], [])
 
-        event_subset_ids = set(subset_ids)
+        event_subproblem = int(event_rows[0].subproblem)
+        event_subset = int(event_rows[0].subset)
 
         group_map: dict[int, tuple[set[int], set[int], int]] = {}
         for i, r in enumerate(rows):
@@ -615,24 +750,20 @@ class RmsProblemMTI(RmsProblemPhasor):
         previous: list[tuple[np.ndarray, np.ndarray]] = []
         event: list[tuple[np.ndarray, np.ndarray]] = []
         following: list[tuple[np.ndarray, np.ndarray]] = []
-        stage = 0
-        for _, _, eqs, vars_ in ordered:
-            subsets_here = {int(r.subset) for r in rows if (int(r.eq_idx) - 1) in eqs or (int(r.var_idx) - 1) in vars_}
-            n_eq_cont = self.get_states_number() + len(self._algebraic_eqs)
-            eqs_cont = sorted([e for e in eqs if 0 <= int(e) < n_eq_cont])
+        for spid, _, eqs, vars_ in ordered:
             # Solver state vector only contains continuous vars; drop boolean
-            # incidence columns from stage var-index sets.
-            n_x = self.get_all_vars_number()
-            vars_cont = sorted([int(v) - n_diff for v in vars_ if n_diff <= int(v) < (n_diff + n_x)])
-            item = (np.asarray(eqs_cont, dtype=int), np.asarray(vars_cont, dtype=int))
-            is_event = len(subsets_here & event_subset_ids) > 0
-            if stage == 0 and not is_event:
+            # incidence columns from stage var-index sets and map [xp;y] to x.
+            vars_cont = sorted({
+                mapped
+                for mapped in (self._mti_col_to_continuous_var_idx(int(v)) for v in vars_)
+                if mapped is not None
+            })
+            item = (np.asarray(sorted(eqs), dtype=int), np.asarray(vars_cont, dtype=int))
+            if int(spid) < event_subproblem:
                 previous.append(item)
-            elif is_event:
-                stage = 1
+            elif int(spid) == event_subproblem:
                 event.append(item)
             else:
-                stage = 2
                 following.append(item)
 
         if len(event) == 0:
@@ -644,11 +775,121 @@ class RmsProblemMTI(RmsProblemPhasor):
 
         if debug:
             print(
-                f"[MTI-STAGE] ineq_idx={ineq_idx} touched={touched_vars.size} "
-                f"subsets={len(subset_ids)} prev={len(previous)} event={len(event)} foll={len(following)}"
+                f"[MTI-STAGE] ineq_idx={ineq_idx} row={ineq_row} subset={event_subset} "
+                f"subproblem={event_subproblem} prev={len(previous)} event={len(event)} foll={len(following)}"
             )
 
         return previous, event, following
+
+    def get_event_subset_ids(self, ineq_idx: int) -> set[int]:
+        """Return solving-order subset ids touched by an inequality."""
+        if self._mti_incidence is None or len(self._mti_solving_order) == 0:
+            return set()
+        if ineq_idx < 0 or ineq_idx >= len(self._ineq_var_positions):
+            return set()
+        touched_vars = self._ineq_var_positions[ineq_idx]
+        if touched_vars.size == 0:
+            return set()
+        touched_cols = {
+            col for col in (self._continuous_var_idx_to_mti_col(int(v)) for v in touched_vars) if col is not None
+        }
+        return {int(r.subset) for r in self._mti_solving_order if (int(r.var_idx) - 1) in touched_cols}
+
+    def get_group_subset_ids(self, eq_idx: np.ndarray, var_idx: np.ndarray) -> set[int]:
+        """Return solving-order subset ids touched by a stage group."""
+        if len(self._mti_solving_order) == 0:
+            return set()
+        eq_set = set(np.asarray(eq_idx, dtype=int).tolist())
+        col_set = {
+            col for col in (self._continuous_var_idx_to_mti_col(int(v)) for v in np.asarray(var_idx, dtype=int)) if col is not None
+        }
+        return {
+            int(r.subset)
+            for r in self._mti_solving_order
+            if (int(r.eq_idx) - 1) in eq_set or (int(r.var_idx) - 1) in col_set
+        }
+
+    def get_subproblem_boolean_positions(self, eq_idx: np.ndarray, var_idx: np.ndarray) -> list[int]:
+        """
+        Return local boolean positions structurally coupled to a subproblem.
+
+        The solver works in continuous variable space, while the MTI incidence
+        matrix is [diff vars; continuous vars; booleans]. This method maps a
+        continuous subproblem back to boolean incidence columns so following
+        subproblems can use toolbox-like variable-z propagation.
+        """
+        if self._mti_incidence is None:
+            return []
+
+        n_xp = len(self._mti_state_diff_vars())
+        n_y = len(self._mti_algebraic_vars())
+        bool_idx = list(self.get_mti_boolean_parameter_indices)
+        if len(bool_idx) == 0:
+            return []
+
+        bool_col0 = n_xp + n_y
+        eq_idx_arr = np.asarray(eq_idx, dtype=int)
+        var_idx_arr = np.asarray(var_idx, dtype=int)
+        row_hits = set(eq_idx_arr[(eq_idx_arr >= 0) & (eq_idx_arr < self._mti_incidence.shape[0])].tolist())
+        cont_cols = {
+            col for col in (self._continuous_var_idx_to_mti_col(int(v)) for v in var_idx_arr) if col is not None
+        }
+
+        if len(cont_cols) > 0:
+            for row in self._mti_solving_order:
+                if (int(row.var_idx) - 1) in cont_cols:
+                    row_hits.add(int(row.eq_idx) - 1)
+
+        out: list[int] = []
+        for k in range(len(bool_idx)):
+            col = bool_col0 + k
+            if col >= self._mti_incidence.shape[1]:
+                continue
+            if any(self._mti_incidence[r, col] != 0 for r in row_hits):
+                out.append(k)
+        return out
+
+    def split_explicit_subproblem_pairs(
+        self,
+        eq_idx: np.ndarray,
+        var_idx: np.ndarray,
+    ) -> tuple[list[tuple[int, int]], np.ndarray, np.ndarray]:
+        """
+        Split a subproblem into toolbox-marked explicit pairs and implicit rest.
+
+        Returns explicit (eq0, var0) pairs in continuous variable space, followed
+        by remaining equation and continuous-variable indices.
+        """
+        if len(self._mti_solving_order) == 0:
+            return [], np.asarray(eq_idx, dtype=int), np.asarray(var_idx, dtype=int)
+
+        eq_set = set(np.asarray(eq_idx, dtype=int).tolist())
+        var_set = set(np.asarray(var_idx, dtype=int).tolist())
+        n_xp = len(self._mti_state_diff_vars())
+        n_y = len(self._mti_algebraic_vars())
+
+        pairs: list[tuple[int, int]] = []
+        used_eq: set[int] = set()
+        used_var: set[int] = set()
+        for row in self._mti_solving_order:
+            if int(row.explicit) != 1:
+                continue
+            eq0 = int(row.eq_idx) - 1
+            col0 = int(row.var_idx) - 1
+            if not (0 <= col0 < n_xp + n_y):
+                continue
+            mapped = self._mti_col_to_continuous_var_idx(col0)
+            if mapped is None:
+                continue
+            var0 = int(mapped)
+            if eq0 in eq_set and var0 in var_set:
+                pairs.append((eq0, var0))
+                used_eq.add(eq0)
+                used_var.add(var0)
+
+        rest_eq = np.asarray([i for i in np.asarray(eq_idx, dtype=int) if int(i) not in used_eq], dtype=int)
+        rest_var = np.asarray([i for i in np.asarray(var_idx, dtype=int) if int(i) not in used_var], dtype=int)
+        return pairs, rest_eq, rest_var
 
     def _build_inequality_variable_positions(self) -> None:
         self._ineq_var_positions = []
@@ -664,7 +905,9 @@ class RmsProblemMTI(RmsProblemPhasor):
         """
         Enumerate boolean candidates local to the subset touched by inequality.
 
-        If structural mapping is unavailable, fall back to full enumeration.
+        Prefer direct guard/inequality variable overlap. A coarse solving order
+        can collapse to one subset, and using that subset would enumerate every
+        boolean in the model.
         """
         debug = os.getenv("RMS_MTI_DEBUG", "0").strip() in ("1", "true", "True", "yes", "on")
         n_bool = len(self.get_mti_boolean_parameter_indices)
@@ -675,30 +918,46 @@ class RmsProblemMTI(RmsProblemPhasor):
 
         if self._mti_incidence is None or len(self._mti_solving_order) == 0:
             if debug:
-                print("[MTI-LOC-CAND] no incidence/order -> full enumeration")
-            return self.enumerate_all_boolean_candidates()
+                print("[MTI-LOC-CAND] no incidence/order -> keep previous z")
+            return [np.asarray(z_prev, dtype=float).copy()]
 
         if ineq_idx < 0 or ineq_idx >= len(self._ineq_var_positions):
             if debug:
-                print(f"[MTI-LOC-CAND] invalid ineq_idx={ineq_idx} -> full enumeration")
-            return self.enumerate_all_boolean_candidates()
+                print(f"[MTI-LOC-CAND] invalid ineq_idx={ineq_idx} -> keep previous z")
+            return [np.asarray(z_prev, dtype=float).copy()]
 
         touched_vars = self._ineq_var_positions[ineq_idx]
         if touched_vars.size == 0:
             if debug:
-                print(f"[MTI-LOC-CAND] ineq_idx={ineq_idx} touched_vars empty -> full enumeration")
-            return self.enumerate_all_boolean_candidates()
+                print(f"[MTI-LOC-CAND] ineq_idx={ineq_idx} touched_vars empty -> keep previous z")
+            return [np.asarray(z_prev, dtype=float).copy()]
+
+        idx = self.get_mti_boolean_parameter_indices
+        touched_var_set = set(np.asarray(touched_vars, dtype=int).tolist())
+        direct_positions: list[int] = []
+        for k, param_idx in enumerate(idx):
+            bool_vars = self._mti_bool_guard_var_positions_by_param_idx.get(int(param_idx), np.zeros(0, dtype=int))
+            if bool_vars.size == 0:
+                continue
+            if len(set(np.asarray(bool_vars, dtype=int).tolist()) & touched_var_set) > 0:
+                direct_positions.append(k)
+
+        if len(direct_positions) > 0:
+            local_positions = direct_positions
+        else:
+            local_positions = []
 
         subset_ids = set()
-        n_diff = self.get_diff_var_number()
-        touched_cols = set((n_diff + touched_vars).tolist())
+        touched_cols = {
+            col for col in (self._continuous_var_idx_to_mti_col(int(v)) for v in touched_vars) if col is not None
+        }
         for row in self._mti_solving_order:
             if (row.var_idx - 1) in touched_cols:
                 subset_ids.add(row.subset)
         if len(subset_ids) == 0:
             if debug:
-                print(f"[MTI-LOC-CAND] ineq_idx={ineq_idx} no subset hit -> full enumeration")
-            return self.enumerate_all_boolean_candidates()
+                print(f"[MTI-LOC-CAND] ineq_idx={ineq_idx} no subset hit -> keep previous z")
+            return [np.asarray(z_prev, dtype=float).copy()]
 
         subset_to_vars: dict[int, set[int]] = {}
         for row in self._mti_solving_order:
@@ -708,19 +967,33 @@ class RmsProblemMTI(RmsProblemPhasor):
         for sid in subset_ids:
             event_vars |= subset_to_vars.get(int(sid), set())
 
-        idx = self.get_mti_boolean_parameter_indices
-        local_positions: list[int] = []
-        for k, param_idx in enumerate(idx):
-            bool_vars = self._mti_bool_guard_var_positions_by_param_idx.get(int(param_idx), np.zeros(0, dtype=int))
-            if bool_vars.size == 0:
-                continue
-            if any(int(v) in event_vars for v in np.asarray(bool_vars, dtype=int)):
-                local_positions.append(k)
+        if len(local_positions) == 0:
+            for k, param_idx in enumerate(idx):
+                bool_vars = self._mti_bool_guard_var_positions_by_param_idx.get(int(param_idx), np.zeros(0, dtype=int))
+                if bool_vars.size == 0:
+                    continue
+                bool_cols = {
+                    col for col in (self._continuous_var_idx_to_mti_col(int(v)) for v in np.asarray(bool_vars, dtype=int)) if col is not None
+                }
+                if len(bool_cols & event_vars) > 0:
+                    local_positions.append(k)
 
         if len(local_positions) == 0:
             if debug:
-                print(f"[MTI-LOC-CAND] ineq_idx={ineq_idx} no local bool positions -> full enumeration")
-            return self.enumerate_all_boolean_candidates()
+                print(f"[MTI-LOC-CAND] ineq_idx={ineq_idx} no local bool positions -> keep previous z")
+            return [np.asarray(z_prev, dtype=float).copy()]
+
+        max_local = int(os.getenv("RMS_MTI_MAX_LOCAL_BOOL_ENUM", "16"))
+        if len(local_positions) > max_local:
+            if len(direct_positions) > 0 and len(direct_positions) <= max_local:
+                local_positions = direct_positions
+            else:
+                if debug:
+                    print(
+                        f"[MTI-LOC-CAND] ineq_idx={ineq_idx} local={len(local_positions)} "
+                        f"exceeds max={max_local} -> keep previous z"
+                    )
+                return [np.asarray(z_prev, dtype=float).copy()]
 
         z_prev_arr = np.asarray(z_prev, dtype=float)
         out: list[np.ndarray] = []

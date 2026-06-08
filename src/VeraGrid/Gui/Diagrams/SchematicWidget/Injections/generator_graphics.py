@@ -8,7 +8,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 import numpy as np
 from VeraGridEngine.Devices.Injections.generator import Generator
-from VeraGrid.Gui.Diagrams.generic_graphics import Circle
+from VeraGrid.Gui.Diagrams.generic_graphics import GeneratorSymbol
 from VeraGrid.Gui.messages import yes_no_question
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionTemplateGraphicItem
 from VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor import GeneratorEditorDialog, GeneratorQCurveEditor
@@ -29,7 +29,7 @@ class GeneratorGraphicItem(InjectionTemplateGraphicItem):
     GeneratorGraphicItem
     """
 
-    def __init__(self, parent, api_obj: Generator, editor: SchematicWidget):
+    def __init__(self, parent, api_obj: Generator, editor: SchematicWidget, draw_labels: bool = True):
         """
 
         :param parent:
@@ -42,8 +42,9 @@ class GeneratorGraphicItem(InjectionTemplateGraphicItem):
                                               editor=editor,
                                               device_type_name='generator',
                                               w=40,
-                                              h=40)
-        self.set_glyph(glyph=Circle(self, 40, 40, "G", self.update_nexus))
+                                              h=40,
+                                              draw_labels=draw_labels)
+        self.set_glyph(glyph=GeneratorSymbol(self, 40, 40))
 
     @property
     def api_object(self) -> Generator:
@@ -69,13 +70,6 @@ class GeneratorGraphicItem(InjectionTemplateGraphicItem):
         """
         menu = self.get_base_context_menu()
         menu.addSection("Generator")
-
-        add_menu_entry(menu=menu,
-                       text="Voltage control",
-                       icon_path="",
-                       function_ptr=self.enable_disable_control_toggle,
-                       checkeable=True,
-                       checked_value=self.api_object.is_controlled)
 
         add_menu_entry(menu=menu,
                        text="Set regulation bus",
@@ -139,13 +133,6 @@ class GeneratorGraphicItem(InjectionTemplateGraphicItem):
                              'Convert generator')
         if ok:
             self._editor.convert_generator_to_battery(gen=self.api_object, graphic_object=self)
-
-    def enable_disable_control_toggle(self):
-        """
-        Enable / Disable device voltage control
-        """
-        if self.api_object is not None:
-            self.api_object.is_controlled = not self.api_object.is_controlled
 
     def set_regulation_bus(self):
         """

@@ -16,15 +16,17 @@ from VeraGridEngine.Simulations.Derivatives.csc_derivatives import dSbus_dV_with
 from VeraGridEngine.Utils.NumericalMethods.common import find_closest_number, make_complex
 from VeraGridEngine.Utils.Sparse.csc2 import (CSC, CxCSC, scipy_to_mat, sp_slice, csc_stack_2d_ff)
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls import (control_q_for_generalized_method,
+                                                                                     DiscreteShuntControlState,
+                                                                                     QvDroopControlState,
                                                                                      compute_slack_distribution)
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions import expand
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions import compute_fx_error
 from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_formulation_template import PfFormulationTemplate
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions import (compute_zip_power, compute_power,
                                                                                     polar_to_rect, voltage_q_droop,
-                                                                                    solve_reactive_power)
+                                                                                    asynchronous_gen_q)
 from VeraGridEngine.enumerations import (TapPhaseControl, TapModuleControl, HvdcControlType, ConverterControlType,
-                                         ConverterFaultControlType, ShuntControlMode, GeneratorType)
+                                         ConverterFaultControlType, GeneratorType)
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.converter_fault_controls import wecc_wt_type_4b
 from VeraGridEngine.basic_structures import Vec, IntVec, CxVec, Logger
 
@@ -700,12 +702,10 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
         if self.options.verbose > 1:
             print("Ybus\n", self.adm.Ybus.toarray())
 
-        # Discrete Shunts
-        self.buses_with_discrete_shunts_control: List[Tuple[int, int]] = list()
-        self.shunt_step = self.nc.shunt_data.step.copy()
-        for sh_i, bus_i in enumerate(self.nc.shunt_data.bus_idx):
-            if self.nc.shunt_data.control_mode[sh_i] == ShuntControlMode.Discrete:
-                self.buses_with_discrete_shunts_control.append((bus_i, sh_i))
+        # Store the control states in lightweight wrappers that forward the
+        # numerical work to the existing Numba kernels.
+        self.discrete_shunt_control = DiscreteShuntControlState(nc=self.nc)
+        self.qv_droop_control = QvDroopControlState(S0=self.S0, nc=self.nc)
 
     def _update_Qlim_indices(self, i_u_vm: IntVec, i_k_q: IntVec) -> None:
         """
@@ -750,7 +750,7 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
             ctrl_tau = self.nc.active_branch_data.tap_phase_control_mode[k]
 
             # analyze tap-module controls
-            if ctrl_m == TapModuleControl.Vm:
+            if ctrl_m == TapModuleControl.Vm.idx():
 
                 # Every bus controlled by m has to become a PQV bus
                 bus_idx: int = int(self.nc.active_branch_data.tap_controlled_buses[k])
@@ -765,44 +765,38 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                     self.logger.add_error("Controlled bus index outside of the island, skipping control",
                                           device=self.nc.passive_branch_data.idtag[k])
 
-            elif ctrl_m == TapModuleControl.Qf:
+            elif ctrl_m == TapModuleControl.Qf.idx():
                 u_cbr_m.append(k)
                 k_cbr_qf.append(k)
                 cbr_qf_set.append(self.nc.active_branch_data.Qset[k])
 
-            elif ctrl_m == TapModuleControl.Qt:
+            elif ctrl_m == TapModuleControl.Qt.idx():
                 u_cbr_m.append(k)
                 k_cbr_qt.append(k)
                 cbr_qt_set.append(self.nc.active_branch_data.Qset[k])
 
-            elif ctrl_m == TapModuleControl.fixed:
+            elif ctrl_m == TapModuleControl.fixed.idx():
                 # bus_idx = self.nc.active_branch_data.tap_controlled_buses[k]
                 # self.is_vm_controlled[bus_idx] = False
                 # self.m[k] = self.nc.active_branch_data.tap_module[k]
-                pass
-
-            elif ctrl_m == 0:
                 pass
 
             else:
                 raise Exception(f"Unknown tap phase module mode {ctrl_m}")
 
             # analyze tap-phase controls
-            if ctrl_tau == TapPhaseControl.Pf:
+            if ctrl_tau == TapPhaseControl.Pf.idx():
                 u_cbr_tau.append(k)
                 k_cbr_pf.append(k)
                 cbr_pf_set.append(self.nc.active_branch_data.Pset[k])
 
-            elif ctrl_tau == TapPhaseControl.Pt:
+            elif ctrl_tau == TapPhaseControl.Pt.idx():
                 u_cbr_tau.append(k)
                 k_cbr_pt.append(k)
                 cbr_pt_set.append(self.nc.active_branch_data.Pset[k])
 
-            elif ctrl_tau == TapPhaseControl.fixed:
+            elif ctrl_tau == TapPhaseControl.fixed.idx():
                 # self.tau[k] = self.nc.active_branch_data.tap_angle[k]
-                pass
-
-            elif ctrl_tau == 0:
                 pass
 
             else:
@@ -853,8 +847,8 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                 if self.nc.vsc_data.F_dcn[k] > -1:
                     k_vsc_has_dc_n.append(k)
 
-                control1 = self.nc.vsc_data.control1[k]
-                control2 = self.nc.vsc_data.control2[k]
+                control1 = self.nc.vsc_data.control1_int[k]
+                control2 = self.nc.vsc_data.control2_int[k]
                 assert control1 != control2, f"VSC control types must be different for VSC indexed at {k}"
 
                 control1_magnitude = self.nc.vsc_data.control1_val[k]
@@ -876,17 +870,17 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                 Pac = 'P_ac'
                 Imax = 'Imax'
                 """
-                if control1 == ConverterControlType.Fault1 and control2 == ConverterControlType.Fault2:
+                if control1 == ConverterControlType.Fault1.idx() and control2 == ConverterControlType.Fault2.idx():
                     u_vsc_pfp.append(k)
                     u_vsc_pt.append(k)
                     u_vsc_qt.append(k)
 
-                elif control1 == ConverterControlType.Vm_dc and control2 == ConverterControlType.Vm_dc:
+                elif control1 == ConverterControlType.Vm_dc.idx() and control2 == ConverterControlType.Vm_dc.idx():
                     self.logger.add_error(
                         f"VSC control1 and control2 are the same for VSC indexed at {k},"
                         f" control1: {control1}, control2: {control2}")
 
-                elif control1 == ConverterControlType.Vm_dc and control2 == ConverterControlType.Vm_ac:
+                elif control1 == ConverterControlType.Vm_dc.idx() and control2 == ConverterControlType.Vm_ac.idx():
                     if control1_bus_device > -1:
                         self.is_vm_controlled[control1_bus_device] = True
                     if control2_bus_device > -1:
@@ -898,7 +892,7 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                     u_vsc_pt.append(k)
                     u_vsc_qt.append(k)
 
-                elif control1 == ConverterControlType.Vm_dc and control2 == ConverterControlType.Va_ac:
+                elif control1 == ConverterControlType.Vm_dc.idx() and control2 == ConverterControlType.Va_ac.idx():
                     if control1_bus_device > -1:
                         self.is_vm_controlled[control1_bus_device] = True
                     if control2_bus_device > -1:
@@ -910,7 +904,9 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                     u_vsc_pt.append(k)
                     u_vsc_qt.append(k)
 
-                elif control1 == ConverterControlType.Vm_dc and (control2 == ConverterControlType.Qac or control2 == ConverterControlType.Q_droop):
+                elif (control1 == ConverterControlType.Vm_dc.idx()
+                      and (control2 == ConverterControlType.Qac.idx()
+                           or control2 == ConverterControlType.Q_droop.idx())):
                     if control1_bus_device > -1:
                         self.is_vm_controlled[control1_bus_device] = True
                     if control2_bus_device > -1:
@@ -928,7 +924,7 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
 
                         vsc_qt_set.append(control2_magnitude)
 
-                elif control1 == ConverterControlType.Vm_dc and control2 == ConverterControlType.Pdc:
+                elif control1 == ConverterControlType.Vm_dc.idx() and control2 == ConverterControlType.Pdc.idx():
                     if control1_bus_device > -1:
                         self.is_vm_controlled[control1_bus_device] = True
                     if control2_bus_device > -1:
@@ -946,7 +942,7 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
 
                         vsc_pfp_set.append(control2_magnitude)
 
-                elif control1 == ConverterControlType.Vm_dc and control2 == ConverterControlType.Pac:
+                elif control1 == ConverterControlType.Vm_dc.idx() and control2 == ConverterControlType.Pac.idx():
                     if control1_bus_device > -1:
                         self.is_vm_controlled[control1_bus_device] = True
                     if control2_bus_device > -1:
@@ -965,7 +961,7 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
 
                         vsc_pt_set.append(control2_magnitude)
 
-                elif control1 == ConverterControlType.Vm_dc and control2 == ConverterControlType.Imax:
+                elif control1 == ConverterControlType.Vm_dc.idx() and control2 == ConverterControlType.Imax.idx():
                     if control1_bus_device > -1:
                         self.is_vm_controlled[control1_bus_device] = True
                     if control2_bus_device > -1:
@@ -985,7 +981,8 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
 
                         vsc_i_set.append(control2_magnitude)
 
-                elif control1 == ConverterControlType.Vm_ac and control2 == ConverterControlType.Vm_dc:
+                elif (control1 == ConverterControlType.Vm_ac.idx()
+                      and control2 == ConverterControlType.Vm_dc.idx()):
                     if control1_bus_device > -1:
                         self.is_vm_controlled[control1_bus_device] = True
                     if control2_bus_device > -1:
@@ -997,12 +994,14 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                     u_vsc_pt.append(k)
                     u_vsc_qt.append(k)
 
-                elif control1 == ConverterControlType.Vm_ac and control2 == ConverterControlType.Vm_ac:
+                elif (control1 == ConverterControlType.Vm_ac.idx()
+                      and control2 == ConverterControlType.Vm_ac.idx()):
                     self.logger.add_error(
                         f"VSC control1 and control2 are the same for VSC indexed at {k},"
                         f" control1: {control1}, control2: {control2}")
 
-                elif control1 == ConverterControlType.Vm_ac and control2 == ConverterControlType.Va_ac:
+                elif (control1 == ConverterControlType.Vm_ac.idx()
+                      and control2 == ConverterControlType.Va_ac.idx()):
                     if control1_bus_device > -1:
                         self.is_vm_controlled[control1_bus_device] = True
                     if control2_bus_device > -1:
@@ -1014,7 +1013,8 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                     u_vsc_pt.append(k)
                     u_vsc_qt.append(k)
 
-                elif control1 == ConverterControlType.Vm_ac and control2 == ConverterControlType.Qac:
+                elif (control1 == ConverterControlType.Vm_ac.idx()
+                      and control2 == ConverterControlType.Qac.idx()):
                     if control1_bus_device > -1:
                         self.is_vm_controlled[control1_bus_device] = True
                     if control2_bus_device > -1:
@@ -1031,7 +1031,8 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_qt.append(control2_branch_device)
                         vsc_qt_set.append(control2_magnitude)
 
-                elif control1 == ConverterControlType.Vm_ac and control2 == ConverterControlType.Pdc:
+                elif (control1 == ConverterControlType.Vm_ac.idx()
+                      and control2 == ConverterControlType.Pdc.idx()):
                     if control1_bus_device > -1:
                         self.is_vm_controlled[control1_bus_device] = True
                     if control2_bus_device > -1:
@@ -1048,7 +1049,8 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_pfp.append(control2_branch_device)
                         vsc_pfp_set.append(control2_magnitude)
 
-                elif control1 == ConverterControlType.Vm_ac and control2 == ConverterControlType.Pac:
+                elif (control1 == ConverterControlType.Vm_ac.idx()
+                      and control2 == ConverterControlType.Pac.idx()):
                     if control1_bus_device > -1:
                         self.is_vm_controlled[control1_bus_device] = True
                     if control2_bus_device > -1:
@@ -1065,7 +1067,8 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_pt.append(control2_branch_device)
                         vsc_pt_set.append(control2_magnitude)
 
-                elif control1 == ConverterControlType.Vm_ac and control2 == ConverterControlType.Imax:
+                elif (control1 == ConverterControlType.Vm_ac.idx()
+                      and control2 == ConverterControlType.Imax.idx()):
                     if control1_bus_device > -1:
                         self.is_vm_controlled[control1_bus_device] = True
                     if control2_bus_device > -1:
@@ -1084,7 +1087,8 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
 
                         vsc_i_set.append(control2_magnitude)
 
-                elif control1 == ConverterControlType.Va_ac and control2 == ConverterControlType.Vm_dc:
+                elif (control1 == ConverterControlType.Va_ac.idx()
+                      and control2 == ConverterControlType.Vm_dc.idx()):
                     if control1_bus_device > -1:
                         self.is_va_controlled[control1_bus_device] = True
                     if control2_bus_device > -1:
@@ -1096,7 +1100,8 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                     u_vsc_pt.append(k)
                     u_vsc_qt.append(k)
 
-                elif control1 == ConverterControlType.Va_ac and control2 == ConverterControlType.Vm_ac:
+                elif (control1 == ConverterControlType.Va_ac.idx()
+                      and control2 == ConverterControlType.Vm_ac.idx()):
                     if control1_bus_device > -1:
                         self.is_va_controlled[control1_bus_device] = True
                     if control2_bus_device > -1:
@@ -1108,12 +1113,15 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                     u_vsc_pt.append(k)
                     u_vsc_qt.append(k)
 
-                elif control1 == ConverterControlType.Va_ac and control2 == ConverterControlType.Va_ac:
+                elif (control1 == ConverterControlType.Va_ac.idx()
+                      and control2 == ConverterControlType.Va_ac.idx()):
                     self.logger.add_error(
                         f"VSC control1 and control2 are the same for VSC indexed at {k},"
                         f" control1: {control1}, control2: {control2}")
 
-                elif control1 == ConverterControlType.Va_ac and (control2 == ConverterControlType.Qac or control2 == ConverterControlType.Q_droop):
+                elif (control1 == ConverterControlType.Va_ac.idx()
+                      and (control2 == ConverterControlType.Qac.idx()
+                           or control2 == ConverterControlType.Q_droop.idx())):
                     if control1_bus_device > -1:
                         self.is_va_controlled[control1_bus_device] = True
                     if control2_bus_device > -1:
@@ -1130,7 +1138,8 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_qt.append(control2_branch_device)
                         vsc_qt_set.append(control2_magnitude)
 
-                elif control1 == ConverterControlType.Va_ac and control2 == ConverterControlType.Pdc:
+                elif (control1 == ConverterControlType.Va_ac.idx()
+                      and control2 == ConverterControlType.Pdc.idx()):
                     if control1_bus_device > -1:
                         self.is_va_controlled[control1_bus_device] = True
                     if control2_bus_device > -1:
@@ -1147,7 +1156,8 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_pfp.append(control2_branch_device)
                         vsc_pfp_set.append(control2_magnitude)
 
-                elif control1 == ConverterControlType.Va_ac and control2 == ConverterControlType.Pac:
+                elif (control1 == ConverterControlType.Va_ac.idx()
+                      and control2 == ConverterControlType.Pac.idx()):
                     if control1_bus_device > -1:
                         self.is_va_controlled[control1_bus_device] = True
                     if control2_bus_device > -1:
@@ -1164,7 +1174,8 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_pt.append(control2_branch_device)
                         vsc_pt_set.append(control2_magnitude)
 
-                elif control1 == ConverterControlType.Va_ac and control2 == ConverterControlType.Imax:
+                elif (control1 == ConverterControlType.Va_ac.idx()
+                      and control2 == ConverterControlType.Imax.idx()):
                     if control1_bus_device > -1:
                         self.is_va_controlled[control1_bus_device] = True
                     if control2_bus_device > -1:
@@ -1183,7 +1194,9 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
 
                         vsc_i_set.append(control2_magnitude)
 
-                elif (control1 == ConverterControlType.Qac or control1 == ConverterControlType.Q_droop) and control2 == ConverterControlType.Vm_dc:
+                elif ((control1 == ConverterControlType.Qac.idx()
+                       or control1 == ConverterControlType.Q_droop.idx())
+                      and control2 == ConverterControlType.Vm_dc.idx()):
                     if control2_bus_device > -1:
                         self.is_vm_controlled[control2_bus_device] = True
                     if control1_branch_device > -1:
@@ -1196,7 +1209,10 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_qt.append(control1_branch_device)
                         vsc_qt_set.append(control1_magnitude)
 
-                elif (control1 == ConverterControlType.Qac or control1 == ConverterControlType.Q_droop) and control2 == ConverterControlType.Vm_ac:
+                elif ((control1 == ConverterControlType.Qac.idx()
+                       or control1 == ConverterControlType.Q_droop.idx())
+                      and control2 == ConverterControlType.Vm_ac.idx()):
+
                     if control2_bus_device > -1:
                         self.is_vm_controlled[control2_bus_device] = True
                     if control1_branch_device > -1:
@@ -1209,7 +1225,9 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_qt.append(control1_branch_device)
                         vsc_qt_set.append(control1_magnitude)
 
-                elif (control1 == ConverterControlType.Qac or control1 == ConverterControlType.Q_droop) and control2 == ConverterControlType.Va_ac:
+                elif ((control1 == ConverterControlType.Qac.idx()
+                       or control1 == ConverterControlType.Q_droop.idx())
+                      and control2 == ConverterControlType.Va_ac.idx()):
                     if control2_bus_device > -1:
                         self.is_va_controlled[control2_bus_device] = True
                     if control1_branch_device > -1:
@@ -1223,12 +1241,17 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_qt.append(control1_branch_device)
                         vsc_qt_set.append(control1_magnitude)
 
-                elif (control1 == ConverterControlType.Qac or control1 == ConverterControlType.Q_droop) and (control2 == ConverterControlType.Qac or control2 == ConverterControlType.Q_droop):
+                elif ((control1 == ConverterControlType.Qac.idx()
+                       or control1 == ConverterControlType.Q_droop.idx())
+                      and (control2 == ConverterControlType.Qac.idx()
+                           or control2 == ConverterControlType.Q_droop.idx())):
                     self.logger.add_error(
                         f"VSC control1 and control2 are the same for VSC indexed at {k},"
                         f" control1: {control1}, control2: {control2}")
 
-                elif (control1 == ConverterControlType.Qac or control1 == ConverterControlType.Q_droop) and control2 == ConverterControlType.Pdc:
+                elif ((control1 == ConverterControlType.Qac.idx()
+                       or control1 == ConverterControlType.Q_droop.idx())
+                      and control2 == ConverterControlType.Pdc.idx()):
                     if control1_branch_device > -1:
 
                         if self.nc.vsc_data.F_dcn[k] > -1:
@@ -1241,7 +1264,9 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_pfp.append(control2_branch_device)
                         vsc_pfp_set.append(control2_magnitude)
 
-                elif (control1 == ConverterControlType.Qac or control1 == ConverterControlType.Q_droop) and control2 == ConverterControlType.Pac:
+                elif ((control1 == ConverterControlType.Qac.idx()
+                       or control1 == ConverterControlType.Q_droop.idx())
+                      and control2 == ConverterControlType.Pac.idx()):
                     if control1_branch_device > -1:
                         u_vsc_pfp.append(control1_branch_device)
 
@@ -1254,7 +1279,10 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_pt.append(control2_branch_device)
                         vsc_pt_set.append(control2_magnitude)
 
-                elif (control1 == ConverterControlType.Qac or control1 == ConverterControlType.Q_droop) and control2 == ConverterControlType.Imax:
+                elif ((control1 == ConverterControlType.Qac.idx()
+                       or control1 == ConverterControlType.Q_droop.idx())
+                      and control2 == ConverterControlType.Imax.idx()):
+
                     if control1_branch_device > -1:
                         u_vsc_pfp.append(control1_branch_device)
 
@@ -1268,7 +1296,9 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_i.append(control2_branch_device)
                         vsc_i_set.append(control2_magnitude)
 
-                elif control1 == ConverterControlType.Pdc and control2 == ConverterControlType.Vm_dc:
+                elif (control1 == ConverterControlType.Pdc.idx()
+                      and control2 == ConverterControlType.Vm_dc.idx()):
+
                     if control2_bus_device > -1:
                         self.is_vm_controlled[control2_bus_device] = True
                     if control1_branch_device > -1:
@@ -1281,7 +1311,9 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_pfp.append(control1_branch_device)
                         vsc_pfp_set.append(control1_magnitude)
 
-                elif control1 == ConverterControlType.Pdc and control2 == ConverterControlType.Vm_ac:
+                elif (control1 == ConverterControlType.Pdc.idx()
+                      and control2 == ConverterControlType.Vm_ac.idx()):
+
                     if control2_bus_device > -1:
                         self.is_vm_controlled[control2_bus_device] = True
                     if control1_branch_device > -1:
@@ -1294,7 +1326,9 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_pfp.append(control1_branch_device)
                         vsc_pfp_set.append(control1_magnitude)
 
-                elif control1 == ConverterControlType.Pdc and control2 == ConverterControlType.Va_ac:
+                elif (control1 == ConverterControlType.Pdc.idx()
+                      and control2 == ConverterControlType.Va_ac.idx()):
+
                     if control2_bus_device > -1:
                         self.is_va_controlled[control2_bus_device] = True
                     if control1_branch_device > -1:
@@ -1307,7 +1341,10 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_pfp.append(control1_branch_device)
                         vsc_pfp_set.append(control1_magnitude)
 
-                elif control1 == ConverterControlType.Pdc and (control2 == ConverterControlType.Qac or control2 == ConverterControlType.Q_droop):
+                elif (control1 == ConverterControlType.Pdc.idx()
+                      and (control2 == ConverterControlType.Qac.idx()
+                           or control2 == ConverterControlType.Q_droop.idx())):
+
                     if control1_branch_device > -1:
                         u_vsc_pt.append(control1_branch_device)
 
@@ -1321,12 +1358,16 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_qt.append(control2_branch_device)
                         vsc_qt_set.append(control2_magnitude)
 
-                elif control1 == ConverterControlType.Pdc and control2 == ConverterControlType.Pdc:
+                elif (control1 == ConverterControlType.Pdc.idx()
+                      and control2 == ConverterControlType.Pdc.idx()):
+
                     self.logger.add_error(
                         f"VSC control1 and control2 are the same for VSC indexed at {k},"
                         f" control1: {control1}, control2: {control2}")
 
-                elif control1 == ConverterControlType.Pdc and control2 == ConverterControlType.Pac:
+                elif (control1 == ConverterControlType.Pdc.idx()
+                      and control2 == ConverterControlType.Pac.idx()):
+
                     if control1_branch_device > -1:
                         u_vsc_pt.append(control1_branch_device)
                         u_vsc_qt.append(control1_branch_device)
@@ -1340,7 +1381,9 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_pt.append(control1_branch_device)
                         vsc_pt_set.append(control1_magnitude)
 
-                elif control1 == ConverterControlType.Pdc and control2 == ConverterControlType.Imax:
+                elif (control1 == ConverterControlType.Pdc.idx()
+                      and control2 == ConverterControlType.Imax.idx()):
+
                     if control1_branch_device > -1:
                         u_vsc_pt.append(control1_branch_device)
                         u_vsc_qt.append(control1_branch_device)
@@ -1355,7 +1398,9 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_i.append(control2_branch_device)
                         vsc_i_set.append(control2_magnitude)
 
-                elif control1 == ConverterControlType.Pac and control2 == ConverterControlType.Vm_dc:
+                elif (control1 == ConverterControlType.Pac.idx()
+                      and control2 == ConverterControlType.Vm_dc.idx()):
+
                     if control2_bus_device > -1:
                         self.is_vm_controlled[control2_bus_device] = True
                     if control1_branch_device > -1:
@@ -1368,7 +1413,9 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_pt.append(control1_branch_device)
                         vsc_pt_set.append(control1_magnitude)
 
-                elif control1 == ConverterControlType.Pac and control2 == ConverterControlType.Vm_ac:
+                elif (control1 == ConverterControlType.Pac.idx()
+                      and control2 == ConverterControlType.Vm_ac.idx()):
+
                     if control2_bus_device > -1:
                         self.is_vm_controlled[control2_bus_device] = True
                         self.is_q_controlled[control2_bus_device] = False
@@ -1381,7 +1428,9 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_pt.append(control1_branch_device)
                         vsc_pt_set.append(control1_magnitude)
 
-                elif control1 == ConverterControlType.Pac and control2 == ConverterControlType.Va_ac:
+                elif (control1 == ConverterControlType.Pac.idx()
+                      and control2 == ConverterControlType.Va_ac.idx()):
+
                     if control2_bus_device > -1:
                         self.is_va_controlled[control2_bus_device] = True
                     if control1_branch_device > -1:
@@ -1394,7 +1443,10 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_pt.append(control1_branch_device)
                         vsc_pt_set.append(control1_magnitude)
 
-                elif control1 == ConverterControlType.Pac and (control2 == ConverterControlType.Qac or control2 == ConverterControlType.Q_droop):
+                elif (control1 == ConverterControlType.Pac.idx()
+                      and (control2 == ConverterControlType.Qac.idx()
+                           or control2 == ConverterControlType.Q_droop.idx())):
+
                     if control1_branch_device > -1:
                         u_vsc_pfp.append(control1_branch_device)
 
@@ -1406,7 +1458,9 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         vsc_qt_set.append(control2_magnitude)
                         vsc_pt_set.append(control1_magnitude)
 
-                elif control1 == ConverterControlType.Pac and control2 == ConverterControlType.Pdc:
+                elif (control1 == ConverterControlType.Pac.idx()
+                      and control2 == ConverterControlType.Pdc.idx()):
+
                     if control1_branch_device > -1:
 
                         if self.nc.vsc_data.F_dcn[k] > -1:
@@ -1420,12 +1474,16 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_pt.append(control1_branch_device)
                         vsc_pt_set.append(control1_magnitude)
 
-                elif control1 == ConverterControlType.Pac and control2 == ConverterControlType.Pac:
+                elif (control1 == ConverterControlType.Pac.idx()
+                      and control2 == ConverterControlType.Pac.idx()):
+
                     self.logger.add_error(
                         f"VSC control1 and control2 are the same for VSC indexed at {k},"
                         f" control1: {control1}, control2: {control2}")
 
-                elif control1 == ConverterControlType.Pac and control2 == ConverterControlType.Imax:
+                elif (control1 == ConverterControlType.Pac.idx()
+                      and control2 == ConverterControlType.Imax.idx()):
+
                     if control1_branch_device > -1:
                         u_vsc_pfp.append(control1_branch_device)
 
@@ -1440,7 +1498,9 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_i.append(control2_branch_device)
                         vsc_i_set.append(control2_magnitude)
 
-                elif control1 == ConverterControlType.Imax and control2 == ConverterControlType.Vm_dc:
+                elif (control1 == ConverterControlType.Imax.idx()
+                      and control2 == ConverterControlType.Vm_dc.idx()):
+
                     if control1_branch_device > -1:
                         u_vsc_pfp.append(control1_branch_device)
 
@@ -1456,7 +1516,9 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                     if control2_bus_device > -1:
                         self.is_vm_controlled[control2_bus_device] = True
 
-                elif control1 == ConverterControlType.Imax and control2 == ConverterControlType.Vm_ac:
+                elif (control1 == ConverterControlType.Imax.idx()
+                      and control2 == ConverterControlType.Vm_ac.idx()):
+
                     if control1_branch_device > -1:
                         u_vsc_pfp.append(control1_branch_device)
 
@@ -1471,7 +1533,9 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                     if control2_bus_device > -1:
                         self.is_vm_controlled[control2_bus_device] = True
 
-                elif control1 == ConverterControlType.Imax and control2 == ConverterControlType.Va_ac:
+                elif (control1 == ConverterControlType.Imax.idx()
+                      and control2 == ConverterControlType.Va_ac.idx()):
+
                     if control1_branch_device > -1:
                         u_vsc_pfp.append(control1_branch_device)
 
@@ -1487,7 +1551,10 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                     if control2_bus_device > -1:
                         self.is_va_controlled[control2_bus_device] = True
 
-                elif control1 == ConverterControlType.Imax and (control2 == ConverterControlType.Qac or control2 == ConverterControlType.Q_droop):
+                elif (control1 == ConverterControlType.Imax.idx()
+                      and (control2 == ConverterControlType.Qac.idx()
+                           or control2 == ConverterControlType.Q_droop.idx())):
+
                     if control1_branch_device > -1:
                         u_vsc_pfp.append(control1_branch_device)
 
@@ -1503,7 +1570,9 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_qt.append(control1_branch_device)
                         vsc_qt_set.append(control1_magnitude)
 
-                elif control1 == ConverterControlType.Imax and control2 == ConverterControlType.Pdc:
+                elif (control1 == ConverterControlType.Imax.idx()
+                      and control2 == ConverterControlType.Pdc.idx()):
+
                     if control1_branch_device > -1:
 
                         if self.nc.vsc_data.F_dcn[k] > -1:
@@ -1519,7 +1588,9 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_pfp.append(control2_branch_device)
                         vsc_pfp_set.append(control2_magnitude)
 
-                elif control1 == ConverterControlType.Imax and control2 == ConverterControlType.Pac:
+                elif (control1 == ConverterControlType.Imax.idx()
+                      and control2 == ConverterControlType.Pac.idx()):
+
                     if control1_branch_device > -1:
                         u_vsc_pfp.append(control1_branch_device)
 
@@ -1535,7 +1606,9 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         k_vsc_pt.append(control2_branch_device)
                         vsc_pt_set.append(control2_magnitude)
 
-                elif control1 == ConverterControlType.Imax and control2 == ConverterControlType.Imax:
+                elif (control1 == ConverterControlType.Imax.idx()
+                      and control2 == ConverterControlType.Imax.idx()):
+
                     self.logger.add_error(
                         f"VSC control1 and control2 are the same for VSC indexed at {k},"
                         f" control1: {control1}, control2: {control2}")
@@ -1572,7 +1645,7 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
             self.is_q_controlled[self.nc.hvdc_data.F[k]] = True
             self.is_q_controlled[self.nc.hvdc_data.T[k]] = True
 
-            if self.nc.hvdc_data.control_mode[k] == HvdcControlType.type_0_free:
+            if self.nc.hvdc_data.control_mode_int[k] == HvdcControlType.type_0_free.idx():
                 hvdc_droop_idx.append(k)
 
         # self.hvdc = np.array(hvdc, dtype=int)
@@ -1740,16 +1813,18 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
 
         # Asynchronous Generators --------------------------------------------------------------------------------------
         Qag = np.zeros_like(self.S0, dtype=float)
-        for ag in range(len(self.nc.generator_data.type)):
-            if self.nc.generator_data.type[ag] == GeneratorType.Asynchronous:
-                Qag[self.nc.generator_data.bus_idx[ag]] = solve_reactive_power(u=V[self.nc.generator_data.bus_idx[ag]],
-                                                                               Rs=self.nc.generator_data.Rs[ag],
-                                                                               Xs=self.nc.generator_data.Xs[ag],
-                                                                               Xm=self.nc.generator_data.Xm[ag],
-                                                                               Rr=self.nc.generator_data.Rr[ag],
-                                                                               Xr=self.nc.generator_data.Xr[ag],
-                                                                               P=self.nc.generator_data.p[ag],
-                                                                               Sr=self.nc.generator_data.snom[ag])
+        for k, gen_type in enumerate(self.nc.generator_data.tpe_int):
+            if gen_type == GeneratorType.Asynchronous.idx():
+                Qag[self.nc.generator_data.bus_idx[k]] = asynchronous_gen_q(
+                    u=V[self.nc.generator_data.bus_idx[k]],
+                    Rs=self.nc.generator_data.Rs[k],
+                    Xs=self.nc.generator_data.Xs[k],
+                    Xm=self.nc.generator_data.Xm[k],
+                    Rr=self.nc.generator_data.Rr[k],
+                    Xr=self.nc.generator_data.Xr[k],
+                    P=self.nc.generator_data.p[k],
+                    Sr=self.nc.generator_data.snom[k]
+                )
 
         # Use V instead of Vm (not a device-centered axis). Thus avoid compute_zip_power()
         # We add self.Y0 despite it being zero
@@ -1815,13 +1890,13 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
 
             if self.nc.vsc_data.ysvs[k] != 0.0:
 
-                if self.nc.vsc_data.control1[k] == ConverterControlType.Qac:
+                if self.nc.vsc_data.control1_int[k] == ConverterControlType.Qac.idx():
                     Qt_vsc_[k] = np.abs(V[self.nc.vsc_data.T[k]] ** 2) * self.nc.vsc_data.ysvs[k] / self.nc.Sbase
 
-                elif self.nc.vsc_data.control2[k] == ConverterControlType.Qac:
+                elif self.nc.vsc_data.control2_int[k] == ConverterControlType.Qac.idx():
                     Qt_vsc_[k] = np.abs(V[self.nc.vsc_data.T[k]] ** 2) * self.nc.vsc_data.ysvs[k] / self.nc.Sbase
 
-            if self.nc.vsc_data.control1[k] == ConverterControlType.Q_droop:
+            if self.nc.vsc_data.control1_int[k] == ConverterControlType.Q_droop.idx():
                 Qt_vsc_[k] = voltage_q_droop(
                     ut=V[self.nc.vsc_data.T[k]],
                     u_setpoint_min=self.nc.vsc_data.control1_droop_val_min[k],
@@ -1834,7 +1909,7 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                     Q_max=self.nc.vsc_data.control1_val_max[k],
                     S_base=self.nc.Sbase
                 )
-            elif self.nc.vsc_data.control2[k] == ConverterControlType.Q_droop:
+            elif self.nc.vsc_data.control2_int[k] == ConverterControlType.Q_droop.idx():
                 Qt_vsc_[k] = voltage_q_droop(
                     ut=V[self.nc.vsc_data.T[k]],
                     u_setpoint_min=self.nc.vsc_data.control2_droop_val_min[k],
@@ -2024,35 +2099,11 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                     x = self.var2x()
 
             # discrete shunt logic
-            for bus_i, sh_i in self.buses_with_discrete_shunts_control:
-                if self.Vm[bus_i] > self.nc.shunt_data.vmax[sh_i]:
-                    # decrease B
-                    g_steps: IntVec = self.nc.shunt_data.g_steps[sh_i]
-                    b_steps: IntVec = self.nc.shunt_data.b_steps[sh_i]
-                    if self.shunt_step[sh_i] > 0:
-                        prev_g = g_steps[self.shunt_step[sh_i]] / self.nc.Sbase
-                        prev_b = b_steps[self.shunt_step[sh_i]] / self.nc.Sbase
-                        self.shunt_step[sh_i] -= 1
-                        g = prev_g - g_steps[self.shunt_step[sh_i]] / self.nc.Sbase
-                        b = prev_b - b_steps[self.shunt_step[sh_i]] / self.nc.Sbase
-                        self.adm.Ybus[bus_i, bus_i] += complex(g, b) - complex(prev_g, prev_b)
-                        any_change = True
+            if self.discrete_shunt_control.apply(Vm=self.Vm, adm=self.adm):
+                any_change = True
 
-                elif self.Vm[bus_i] < self.nc.shunt_data.vmin[sh_i]:
-                    # increase B
-                    g_steps: IntVec = self.nc.shunt_data.g_steps[sh_i]
-                    b_steps: IntVec = self.nc.shunt_data.b_steps[sh_i]
-                    if self.shunt_step[sh_i] < (len(b_steps) - 1):
-                        prev_g = g_steps[self.shunt_step[sh_i]] / self.nc.Sbase
-                        prev_b = b_steps[self.shunt_step[sh_i]] / self.nc.Sbase
-                        self.shunt_step[sh_i] += 1
-                        g = prev_g + g_steps[self.shunt_step[sh_i]] / self.nc.Sbase
-                        b = prev_b + b_steps[self.shunt_step[sh_i]] / self.nc.Sbase
-                        self.adm.Ybus[bus_i, bus_i] += complex(g, b) - complex(prev_g, prev_b)
-                        any_change = True
-                else:
-                    # within boundaries
-                    pass
+            if self.qv_droop_control.apply(S0=self.S0, Vm=self.Vm):
+                any_change = True
 
             # update Slack control
             # as before but noticed it can cause slow convergence
@@ -2087,7 +2138,7 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         m_fixed_idx.append(i)
 
                         # self.tap_module_control_mode[k] = TapModuleControl.fixed
-                        self.nc.active_branch_data.tap_module_control_mode[k] = TapModuleControl.fixed
+                        self.nc.active_branch_data.tap_module_control_mode[k] = TapModuleControl.fixed.idx()
                         self.nc.active_branch_data.tap_module[k] = self.m[i]
 
                         branch_ctrl_change = True
@@ -2100,7 +2151,7 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         m_fixed_idx.append(i)
 
                         # self.tap_module_control_mode[k] = TapModuleControl.fixed
-                        self.nc.active_branch_data.tap_module_control_mode[k] = TapModuleControl.fixed
+                        self.nc.active_branch_data.tap_module_control_mode[k] = TapModuleControl.fixed.idx()
                         self.nc.active_branch_data.tap_module[k] = self.m[i]
 
                         branch_ctrl_change = True
@@ -2122,7 +2173,7 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         self.tau[i] = self.nc.active_branch_data.tap_angle_min[k]
                         tau_fixed_idx.append(i)
 
-                        self.nc.active_branch_data.tap_phase_control_mode[k] = TapPhaseControl.fixed
+                        self.nc.active_branch_data.tap_phase_control_mode[k] = TapPhaseControl.fixed.idx()
                         self.nc.active_branch_data.tap_angle[k] = self.tau[i]
 
                         branch_ctrl_change = True
@@ -2134,7 +2185,7 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         self.tau[i] = self.nc.active_branch_data.tap_angle_max[k]
                         tau_fixed_idx.append(i)
 
-                        self.nc.active_branch_data.tap_phase_control_mode[k] = TapPhaseControl.fixed
+                        self.nc.active_branch_data.tap_phase_control_mode[k] = TapPhaseControl.fixed.idx()
                         self.nc.active_branch_data.tap_angle[k] = self.tau[i]
 
                         branch_ctrl_change = True
@@ -2151,7 +2202,7 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
 
                 for i in range(self.nc.nvsc):
 
-                    if self.nc.vsc_data.fault_control[i] == ConverterFaultControlType.WECC_WT_Type_4B:
+                    if self.nc.vsc_data.fault_control_int[i] == ConverterFaultControlType.WECC_WT_Type_4B.idx():
 
                         self.Pt_vsc[i], self.Qt_vsc[i] = wecc_wt_type_4b(
                             V_measured=self.V[self.nc.vsc_data.T[i]],
@@ -2161,7 +2212,7 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                             Vpf=abs(self.V0[self.nc.vsc_data.T[i]])
                         )
 
-                    elif self.nc.vsc_data.fault_control[i] == ConverterFaultControlType.Standard:
+                    elif self.nc.vsc_data.fault_control_int[i] == ConverterFaultControlType.Standard.idx():
 
                         It_i = np.sqrt(self.Pt_vsc[i] ** 2 + self.Qt_vsc[i] ** 2) / self.Vm[self.nc.vsc_data.T[i]]
                         Imax = self.nc.vsc_data.rates[i] / self.nc.Sbase  # Assume 1.0 p.u. base voltage
@@ -2169,82 +2220,82 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                         # print(f"Josep current: {It_i}, Imax: {Imax}")
 
                         if (It_i > Imax
-                                and self.nc.vsc_data.control1[i] != ConverterControlType.Imax
-                                and self.nc.vsc_data.control2[i] != ConverterControlType.Imax):
+                                and self.nc.vsc_data.control1_int[i] != ConverterControlType.Imax.idx()
+                                and self.nc.vsc_data.control2_int[i] != ConverterControlType.Imax.idx()):
 
                             self.logger.add_info("VSC current limit reached",
                                                  device=self.nc.vsc_data.names[i],
                                                  value=It_i)
 
-                            if self.nc.vsc_data.control1[i] == ConverterControlType.Vm_ac:
+                            if self.nc.vsc_data.control1_int[i] == ConverterControlType.Vm_ac.idx():
                                 self.nc.bus_data.is_vm_controlled[self.nc.vsc_data.T[i]] = False
-                                self.nc.vsc_data.control1[i] = ConverterControlType.Imax
+                                self.nc.vsc_data.control1_int[i] = ConverterControlType.Imax.idx()
                                 self.nc.vsc_data.control1_val[i] = Imax
                                 self.nc.vsc_data.control1_branch_idx[i] = i
                                 branch_ctrl_change = True
-                            elif self.nc.vsc_data.control2[i] == ConverterControlType.Vm_ac:
+                            elif self.nc.vsc_data.control2_int[i] == ConverterControlType.Vm_ac.idx():
                                 self.nc.bus_data.is_vm_controlled[self.nc.vsc_data.T[i]] = False
-                                self.nc.vsc_data.control2[i] = ConverterControlType.Imax
+                                self.nc.vsc_data.control2_int[i] = ConverterControlType.Imax.idx()
                                 self.nc.vsc_data.control2_val[i] = Imax
                                 self.nc.vsc_data.control2_branch_idx[i] = i
                                 branch_ctrl_change = True
-                            elif self.nc.vsc_data.control1[i] == ConverterControlType.Pdc:
-                                self.nc.vsc_data.control1[i] = ConverterControlType.Imax
+                            elif self.nc.vsc_data.control1_int[i] == ConverterControlType.Pdc.idx():
+                                self.nc.vsc_data.control1_int[i] = ConverterControlType.Imax.idx()
                                 self.nc.vsc_data.control1_val[i] = Imax
                                 self.nc.vsc_data.control1_branch_idx[i] = i
                                 branch_ctrl_change = True
-                            elif self.nc.vsc_data.control2[i] == ConverterControlType.Pdc:
-                                self.nc.vsc_data.control2[i] = ConverterControlType.Imax
+                            elif self.nc.vsc_data.control2_int[i] == ConverterControlType.Pdc.idx():
+                                self.nc.vsc_data.control2_int[i] = ConverterControlType.Imax.idx()
                                 self.nc.vsc_data.control2_val[i] = Imax
                                 self.nc.vsc_data.control2_branch_idx[i] = i
                                 branch_ctrl_change = True
-                            elif self.nc.vsc_data.control1[i] == ConverterControlType.Pac:
-                                self.nc.vsc_data.control1[i] = ConverterControlType.Imax
+                            elif self.nc.vsc_data.control1_int[i] == ConverterControlType.Pac.idx():
+                                self.nc.vsc_data.control1_int[i] = ConverterControlType.Imax.idx()
                                 self.nc.vsc_data.control1_val[i] = Imax
                                 self.nc.vsc_data.control1_branch_idx[i] = i
                                 branch_ctrl_change = True
-                            elif self.nc.vsc_data.control2[i] == ConverterControlType.Pac:
-                                self.nc.vsc_data.control2[i] = ConverterControlType.Imax
+                            elif self.nc.vsc_data.control2_int[i] == ConverterControlType.Pac.idx():
+                                self.nc.vsc_data.control2_int[i] = ConverterControlType.Imax.idx()
                                 self.nc.vsc_data.control2_val[i] = Imax
                                 self.nc.vsc_data.control2_branch_idx[i] = i
                                 branch_ctrl_change = True
-                            elif self.nc.vsc_data.control1[i] == ConverterControlType.Qac:
-                                self.nc.vsc_data.control1[i] = ConverterControlType.Imax
+                            elif self.nc.vsc_data.control1_int[i] == ConverterControlType.Qac.idx():
+                                self.nc.vsc_data.control1_int[i] = ConverterControlType.Imax.idx()
                                 self.nc.vsc_data.control1_val[i] = Imax
                                 self.nc.vsc_data.control1_branch_idx[i] = i
                                 branch_ctrl_change = True
-                            elif self.nc.vsc_data.control2[i] == ConverterControlType.Qac:
-                                self.nc.vsc_data.control2[i] = ConverterControlType.Imax
+                            elif self.nc.vsc_data.control2_int[i] == ConverterControlType.Qac.idx():
+                                self.nc.vsc_data.control2_int[i] = ConverterControlType.Imax.idx()
                                 self.nc.vsc_data.control2_val[i] = Imax
                                 self.nc.vsc_data.control2_branch_idx[i] = i
                                 branch_ctrl_change = True
-                            elif self.nc.vsc_data.control1[i] == ConverterControlType.Vm_dc:
+                            elif self.nc.vsc_data.control1_int[i] == ConverterControlType.Vm_dc.idx():
                                 self.nc.bus_data.is_vm_controlled[self.nc.vsc_data.F[i]] = False
-                                self.nc.vsc_data.control1[i] = ConverterControlType.Imax
+                                self.nc.vsc_data.control1_int[i] = ConverterControlType.Imax.idx()
                                 self.nc.vsc_data.control1_val[i] = Imax
                                 self.nc.vsc_data.control1_branch_idx[i] = i
                                 branch_ctrl_change = True
-                            elif self.nc.vsc_data.control2[i] == ConverterControlType.Vm_dc:
+                            elif self.nc.vsc_data.control2_int[i] == ConverterControlType.Vm_dc.idx():
                                 self.nc.bus_data.is_vm_controlled[self.nc.vsc_data.F[i]] = False
-                                self.nc.vsc_data.control2[i] = ConverterControlType.Imax
+                                self.nc.vsc_data.control2_int[i] = ConverterControlType.Imax.idx()
                                 self.nc.vsc_data.control2_val[i] = Imax
                                 self.nc.vsc_data.control2_branch_idx[i] = i
                                 branch_ctrl_change = True
-                            elif self.nc.vsc_data.control1[i] == ConverterControlType.Va_ac:
+                            elif self.nc.vsc_data.control1_int[i] == ConverterControlType.Va_ac.idx():
                                 self.nc.bus_data.is_va_controlled[self.nc.vsc_data.T[i]] = False
-                                self.nc.vsc_data.control1[i] = ConverterControlType.Imax
+                                self.nc.vsc_data.control1_int[i] = ConverterControlType.Imax.idx()
                                 self.nc.vsc_data.control1_val[i] = Imax
                                 self.nc.vsc_data.control1_branch_idx[i] = i
                                 branch_ctrl_change = True
-                            elif self.nc.vsc_data.control2[i] == ConverterControlType.Va_ac:
+                            elif self.nc.vsc_data.control2_int[i] == ConverterControlType.Va_ac.idx():
                                 self.nc.bus_data.is_va_controlled[self.nc.vsc_data.T[i]] = False
-                                self.nc.vsc_data.control2[i] = ConverterControlType.Imax
+                                self.nc.vsc_data.control2_int[i] = ConverterControlType.Imax.idx()
                                 self.nc.vsc_data.control2_val[i] = Imax
                                 self.nc.vsc_data.control2_branch_idx[i] = i
                                 branch_ctrl_change = True
                             else:
                                 raise ValueError(f"Unfound control type when switching to current limiting: "
-                                                 f"{self.nc.vsc_data.control1[i]}")
+                                                 f"{self.nc.vsc_data.control1_int[i]}")
 
                             # print(It_i, Imax)
 
@@ -2253,8 +2304,8 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                             # Control Q and then it will naturally get to a point that does not surpass Imax
 
                         elif (It_i > Imax * 1.1
-                              and self.nc.vsc_data.control1[i] == ConverterControlType.Imax
-                              and self.nc.vsc_data.control2[i] == ConverterControlType.Imax):
+                              and self.nc.vsc_data.control1_int[i] == ConverterControlType.Imax.idx()
+                              and self.nc.vsc_data.control2_int[i] == ConverterControlType.Imax.idx()):
                             """
                             We give some margin to the current because it may not exactly converge to Imax
                             in just one iteration. 10% buffer seems enough.
@@ -2264,24 +2315,24 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                             As a last resort, set Q to zero
                             """
 
-                            if self.nc.vsc_data.control1[i] == ConverterControlType.Pdc:
+                            if self.nc.vsc_data.control1_int[i] == ConverterControlType.Pdc.idx():
                                 self.nc.vsc_data.control1_val[i] = 0.0
-                            elif self.nc.vsc_data.control2[i] == ConverterControlType.Pdc:
+                            elif self.nc.vsc_data.control2_int[i] == ConverterControlType.Pdc.idx():
                                 self.nc.vsc_data.control2_val[i] = 0.0
-                            elif self.nc.vsc_data.control1[i] == ConverterControlType.Pac:
+                            elif self.nc.vsc_data.control1_int[i] == ConverterControlType.Pac.idx():
                                 self.nc.vsc_data.control1_val[i] = 0.0
-                            elif self.nc.vsc_data.control2[i] == ConverterControlType.Pac:
+                            elif self.nc.vsc_data.control2_int[i] == ConverterControlType.Pac.idx():
                                 self.nc.vsc_data.control2_val[i] = 0.0
-                            elif self.nc.vsc_data.control1[i] == ConverterControlType.Qac:
+                            elif self.nc.vsc_data.control1_int[i] == ConverterControlType.Qac.idx():
                                 self.nc.vsc_data.control1_val[i] = 0.0
-                            elif self.nc.vsc_data.control2[i] == ConverterControlType.Qac:
+                            elif self.nc.vsc_data.control2_int[i] == ConverterControlType.Qac.idx():
                                 self.nc.vsc_data.control2_val[i] = 0.0
                             else:
                                 raise ValueError(f"Unfound control type when switching to current limiting: "
-                                                 f"{self.nc.vsc_data.control1[i]}")
+                                                 f"{self.nc.vsc_data.control1_int[i]}")
 
                         # print(f"VSC {i} control 1: {self.nc.vsc_data.control1[i]}")
-                        print(f"VSC {i} control 2: {self.nc.vsc_data.control2[i]}")
+                        print(f"VSC {i} control 2: {self.nc.vsc_data.control2_int[i]}")
 
             # Check minimum AC voltage threshold for VSC disconnection
             n_disconnected_vscs = 0
@@ -2296,35 +2347,35 @@ class PfAcDcWithNegativePolesSc(PfFormulationTemplate):
                     if ac_voltage < min_v:
                         # Switch controls to Pac=0, Qac=0 to effectively disconnect the VSC
                         # while keeping it active in the system (avoids size mismatch issues)
-                        control1 = self.nc.vsc_data.control1[i]
-                        control2 = self.nc.vsc_data.control2[i]
+                        control1 = self.nc.vsc_data.control1_int[i]
+                        control2 = self.nc.vsc_data.control2_int[i]
                         ctrl1_bus = self.nc.vsc_data.control1_bus_idx[i]
                         ctrl2_bus = self.nc.vsc_data.control2_bus_idx[i]
 
                         # Release bus voltage/angle control flags for current controls
-                        if control1 in (ConverterControlType.Vm_dc, ConverterControlType.Vm_ac):
+                        if control1 in (ConverterControlType.Vm_dc.idx(), ConverterControlType.Vm_ac.idx()):
                             if ctrl1_bus > -1:
                                 self.nc.bus_data.is_vm_controlled[ctrl1_bus] = False
-                        elif control1 == ConverterControlType.Va_ac:
+                        elif control1 == ConverterControlType.Va_ac.idx():
                             if ctrl1_bus > -1:
                                 self.nc.bus_data.is_va_controlled[ctrl1_bus] = False
 
-                        if control2 in (ConverterControlType.Vm_dc, ConverterControlType.Vm_ac):
+                        if control2 in (ConverterControlType.Vm_dc.idx(), ConverterControlType.Vm_ac.idx()):
                             if ctrl2_bus > -1:
                                 self.nc.bus_data.is_vm_controlled[ctrl2_bus] = False
-                        elif control2 == ConverterControlType.Va_ac:
+                        elif control2 == ConverterControlType.Va_ac.idx():
                             if ctrl2_bus > -1:
                                 self.nc.bus_data.is_va_controlled[ctrl2_bus] = False
 
                         branch_ctrl_change = True
 
                         # Switch to Pac=0, Qac=0
-                        self.nc.vsc_data.control1[i] = ConverterControlType.Pac
+                        self.nc.vsc_data.control1_int[i] = ConverterControlType.Pac.idx()
                         self.nc.vsc_data.control1_val[i] = 0.0
                         self.nc.vsc_data.control1_branch_idx[i] = i
                         self.nc.vsc_data.control1_bus_idx[i] = -1
 
-                        self.nc.vsc_data.control2[i] = ConverterControlType.Qac
+                        self.nc.vsc_data.control2_int[i] = ConverterControlType.Qac.idx()
                         self.nc.vsc_data.control2_val[i] = 0.0
                         self.nc.vsc_data.control2_branch_idx[i] = i
                         self.nc.vsc_data.control2_bus_idx[i] = -1

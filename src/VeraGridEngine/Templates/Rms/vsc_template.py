@@ -8,7 +8,7 @@ import numpy as np
 from VeraGridEngine.enumerations import DeviceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Utils.Symbolic.block import (Block, VarPowerFlowRefferenceType)
+from VeraGridEngine.Utils.Symbolic.block import (Block, VarPowerFlowReferenceType)
 from VeraGridEngine.Utils.Symbolic.block_helpers import tf_to_diffblock_with_antiwindup
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
 
@@ -63,13 +63,13 @@ def VSCShuntBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
     vsc_block.out_vars = [P_ac, Q_ac, alpha, am]
 
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.Vmt: inputs[0],
-        VarPowerFlowRefferenceType.Vat: inputs[1],
-        VarPowerFlowRefferenceType.Pt: P_ac,
-        VarPowerFlowRefferenceType.Qt: Q_ac,
-        VarPowerFlowRefferenceType.Pf: v_dc * i_dc,
-        VarPowerFlowRefferenceType.Vdc: v_dc,
-        VarPowerFlowRefferenceType.Idc: i_dc,
+        VarPowerFlowReferenceType.Vmt: inputs[0],
+        VarPowerFlowReferenceType.Vat: inputs[1],
+        VarPowerFlowReferenceType.Pt: P_ac,
+        VarPowerFlowReferenceType.Qt: Q_ac,
+        VarPowerFlowReferenceType.Pf: v_dc * i_dc,
+        VarPowerFlowReferenceType.Vdc: v_dc,
+        VarPowerFlowReferenceType.Idc: i_dc,
     }
 
     vsc_block.name = name
@@ -126,13 +126,13 @@ def VSCShuntBuild2(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
     vsc_block.out_vars = [Pt_vsc, Qt_vsc, vsh, ash, Pf_vsc]
 
     vsc_block.external_mapping = {
-        VarPowerFlowRefferenceType.Vmt: inputs[0],
-        VarPowerFlowRefferenceType.Vat: inputs[1],
-        VarPowerFlowRefferenceType.Pt: Pt_vsc,
-        VarPowerFlowRefferenceType.Qt: Qt_vsc,
-        VarPowerFlowRefferenceType.Pf: Pf_vsc,
-        VarPowerFlowRefferenceType.Qf: Qf,
-        VarPowerFlowRefferenceType.Vdc: v_dc,
+        VarPowerFlowReferenceType.Vmt: inputs[0],
+        VarPowerFlowReferenceType.Vat: inputs[1],
+        VarPowerFlowReferenceType.Pt: Pt_vsc,
+        VarPowerFlowReferenceType.Qt: Qt_vsc,
+        VarPowerFlowReferenceType.Pf: Pf_vsc,
+        VarPowerFlowReferenceType.Qf: Qf,
+        VarPowerFlowReferenceType.Vdc: v_dc,
     }
 
     vsc_block.name = name
@@ -350,9 +350,9 @@ def PVCellBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
         in_vars=inputs,
         out_vars=[Pdc, Idc],
         external_mapping={
-            VarPowerFlowRefferenceType.P: Pdc,
-            VarPowerFlowRefferenceType.Idc: Idc,
-            VarPowerFlowRefferenceType.Vdc: Vdc,
+            VarPowerFlowReferenceType.P: Pdc,
+            VarPowerFlowReferenceType.Idc: Idc,
+            VarPowerFlowReferenceType.Vdc: Vdc,
         },
         init_eqs={
             Idc: Pdc / Vdc,
@@ -386,10 +386,10 @@ def VscControlledPV(vfactory: VarFactory, name='VscControlledPV') -> RmsModelTem
     templ.block = Block(children=[pv_block, pv_cell_block])
 
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.Vm: vsc_block.in_vars[0],
-        VarPowerFlowRefferenceType.Va: vsc_block.in_vars[1],
-        VarPowerFlowRefferenceType.P: vsc_block.out_vars[0],
-        VarPowerFlowRefferenceType.Q: vsc_block.out_vars[1],
+        VarPowerFlowReferenceType.Vm: vsc_block.in_vars[0],
+        VarPowerFlowReferenceType.Va: vsc_block.in_vars[1],
+        VarPowerFlowReferenceType.P: vsc_block.out_vars[0],
+        VarPowerFlowReferenceType.Q: vsc_block.out_vars[1],
     }
 
     return templ

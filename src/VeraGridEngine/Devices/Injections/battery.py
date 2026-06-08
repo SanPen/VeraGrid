@@ -7,7 +7,7 @@
 from typing import Tuple
 
 from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
-from VeraGridEngine.enumerations import PrpCat
+from VeraGridEngine.enumerations import PrpCat, GeneratorControlMode
 from VeraGridEngine.Devices.Injections.generator import Generator, BuildStatus
 
 
@@ -95,7 +95,7 @@ class Battery(Generator):
                  Qmax=9999,
                  power_factor=0.8,
                  vset=1.0,
-                 is_controlled=True,
+                 control_mode: GeneratorControlMode = GeneratorControlMode.V,
                  Snom=9999,
                  Enom=9999,
                  Cost=1.0,
@@ -120,7 +120,7 @@ class Battery(Generator):
         :param P: Active power in MW
         :param power_factor: Power factor
         :param vset: Voltage setpoint in per unit
-        :param is_controlled: Is the unit voltage controlled (if so, the connection bus becomes a PV bus)
+        :param control_mode: Generator control mode
         :param Qmin: Minimum reactive power in MVAr
         :param Qmax: Maximum reactive power in MVAr
         :param Snom: Nominal apparent power in MVA
@@ -159,7 +159,7 @@ class Battery(Generator):
                            Qmin=Qmin, Qmax=Qmax, Snom=Snom,
                            power_factor=power_factor,
                            vset=vset,
-                           is_controlled=is_controlled,
+                           control_mode=control_mode,
                            active=active,
                            Cost=Cost,
                            Sbase=Sbase,

@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import List
 
 from VeraGridEngine.Utils.Symbolic.block import Var
-from VeraGridEngine.enumerations import DeviceType, EmtLineTypes, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, EmtLineTypes, VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 
@@ -42,16 +42,16 @@ def get_jmarti_line_emt_template(vf: VarFactory,
     active_phases: List[str] = list()
     phase_index: int = 0
     vf_keys = dict({
-        "N": VarPowerFlowRefferenceType.vf_N,
-        "A": VarPowerFlowRefferenceType.vf_A,
-        "B": VarPowerFlowRefferenceType.vf_B,
-        "C": VarPowerFlowRefferenceType.vf_C,
+        "N": VarPowerFlowReferenceType.vf_N,
+        "A": VarPowerFlowReferenceType.vf_A,
+        "B": VarPowerFlowReferenceType.vf_B,
+        "C": VarPowerFlowReferenceType.vf_C,
     })
     vt_keys = dict({
-        "N": VarPowerFlowRefferenceType.vt_N,
-        "A": VarPowerFlowRefferenceType.vt_A,
-        "B": VarPowerFlowRefferenceType.vt_B,
-        "C": VarPowerFlowRefferenceType.vt_C,
+        "N": VarPowerFlowReferenceType.vt_N,
+        "A": VarPowerFlowReferenceType.vt_A,
+        "B": VarPowerFlowReferenceType.vt_B,
+        "C": VarPowerFlowReferenceType.vt_C,
     })
     vf_vars: List[Var] = list()
     vt_vars: List[Var] = list()

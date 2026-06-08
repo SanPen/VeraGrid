@@ -7,7 +7,7 @@ from typing import List
 import numpy as np
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowRefferenceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowReferenceType, VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, cos, sin
 from VeraGridEngine.Utils.Symbolic.block import Block
@@ -23,15 +23,15 @@ def get_line_rms_template(vfactory: VarFactory, name="Line_rms_template") -> Rms
     templ.tpe = DeviceType.LineDevice
     templ.name = name
 
-    inputs: List[Var] = [vfactory.add_var("Vmf_" + name, reference=VarPowerFlowRefferenceType.Vmf),
-                         vfactory.add_var("Vaf_" + name, reference=VarPowerFlowRefferenceType.Vaf),
-                         vfactory.add_var("Vmt_" + name, reference=VarPowerFlowRefferenceType.Vmt),
-                         vfactory.add_var("Vat_" + name, reference=VarPowerFlowRefferenceType.Vat),]
+    inputs: List[Var] = [vfactory.add_var("Vmf_" + name, reference=VarPowerFlowReferenceType.Vmf),
+                         vfactory.add_var("Vaf_" + name, reference=VarPowerFlowReferenceType.Vaf),
+                         vfactory.add_var("Vmt_" + name, reference=VarPowerFlowReferenceType.Vmt),
+                         vfactory.add_var("Vat_" + name, reference=VarPowerFlowReferenceType.Vat), ]
 
-    Qf = vfactory.add_var("Qf",reference=VarPowerFlowRefferenceType.Qf)
-    Qt = vfactory.add_var("Qt", reference=VarPowerFlowRefferenceType.Qt)
-    Pf = vfactory.add_var("Pf", reference=VarPowerFlowRefferenceType.Pf)
-    Pt = vfactory.add_var("Pt", reference=VarPowerFlowRefferenceType.Pt)
+    Qf = vfactory.add_var("Qf", reference=VarPowerFlowReferenceType.Qf)
+    Qt = vfactory.add_var("Qt", reference=VarPowerFlowReferenceType.Qt)
+    Pf = vfactory.add_var("Pf", reference=VarPowerFlowReferenceType.Pf)
+    Pt = vfactory.add_var("Pt", reference=VarPowerFlowReferenceType.Pt)
 
     g = vfactory.add_var("g")
     b = vfactory.add_var("b")
@@ -66,20 +66,20 @@ def get_line_rms_template(vfactory: VarFactory, name="Line_rms_template") -> Rms
     templ.block.children.append(block)
 
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.Vaf: inputs[1],
-        VarPowerFlowRefferenceType.Vat: inputs[3],
-        VarPowerFlowRefferenceType.Vmf: inputs[0],
-        VarPowerFlowRefferenceType.Vmt: inputs[2],
-        VarPowerFlowRefferenceType.Pf: Pf,
-        VarPowerFlowRefferenceType.Pt: Pt,
-        VarPowerFlowRefferenceType.Qf: Qf,
-        VarPowerFlowRefferenceType.Qt: Qt,
+        VarPowerFlowReferenceType.Vaf: inputs[1],
+        VarPowerFlowReferenceType.Vat: inputs[3],
+        VarPowerFlowReferenceType.Vmf: inputs[0],
+        VarPowerFlowReferenceType.Vmt: inputs[2],
+        VarPowerFlowReferenceType.Pf: Pf,
+        VarPowerFlowReferenceType.Pt: Pt,
+        VarPowerFlowReferenceType.Qf: Qf,
+        VarPowerFlowReferenceType.Qt: Qt,
     }
 
     templ.block.api_obj_mapping = {
-        ParamPowerFlowRefferenceType.g: g,
-        ParamPowerFlowRefferenceType.b: b,
-        ParamPowerFlowRefferenceType.bsh: bsh,
+        ParamPowerFlowReferenceType.g: g,
+        ParamPowerFlowReferenceType.b: b,
+        ParamPowerFlowReferenceType.bsh: bsh,
            }
 
     templ.block.in_vars = inputs
@@ -98,8 +98,8 @@ def get_dc_line_rms_template(vfactory: VarFactory, name="DC_Line_rms_template") 
     templ.tpe = DeviceType.DCLineDevice
     templ.name = name
 
-    Vdcf = vfactory.add_var("Vdcf_" + name, reference=VarPowerFlowRefferenceType.Vmf)
-    Vdct = vfactory.add_var("Vdct_" + name, reference=VarPowerFlowRefferenceType.Vmt)
+    Vdcf = vfactory.add_var("Vdcf_" + name, reference=VarPowerFlowReferenceType.Vmf)
+    Vdct = vfactory.add_var("Vdct_" + name, reference=VarPowerFlowReferenceType.Vmt)
     inputs: List[Var] = [Vdcf, Vdct]
 
     If_dc = vfactory.add_var("If_dc")
@@ -136,16 +136,16 @@ def get_dc_line_rms_template(vfactory: VarFactory, name="DC_Line_rms_template") 
     block.name = name
 
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.Vmf: Vdcf,
-        VarPowerFlowRefferenceType.Vmt: Vdct,
-        VarPowerFlowRefferenceType.If_dc: If_dc,
-        VarPowerFlowRefferenceType.Pf: Pf,
-        VarPowerFlowRefferenceType.Pt: Pt,
+        VarPowerFlowReferenceType.Vmf: Vdcf,
+        VarPowerFlowReferenceType.Vmt: Vdct,
+        VarPowerFlowReferenceType.If_dc: If_dc,
+        VarPowerFlowReferenceType.Pf: Pf,
+        VarPowerFlowReferenceType.Pt: Pt,
     }
 
     templ.block.api_obj_mapping = {
-        ParamPowerFlowRefferenceType.r: r,
-        #ParamPowerFlowRefferenceType.l: l,
+        ParamPowerFlowReferenceType.r: r,
+        #ParamPowerFlowReferenceType.l: l,
     }
 
     templ.block.in_vars = inputs

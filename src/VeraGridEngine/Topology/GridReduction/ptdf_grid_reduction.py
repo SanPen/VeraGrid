@@ -14,6 +14,7 @@ from VeraGridEngine.Devices.Injections.battery import Battery
 from VeraGridEngine.Devices.Injections.static_generator import StaticGenerator
 from VeraGridEngine.Devices.Injections.load import Load
 from VeraGridEngine.Simulations.LinearFactors.linear_analysis import LinearAnalysisTs, LinearAnalysis
+from VeraGridEngine.enumerations import BusMode, GeneratorControlMode
 
 
 if TYPE_CHECKING:
@@ -218,15 +219,28 @@ def _collapse_generators(generators: List[Generator], bus: "Bus",
     :return: Single collapsed Generator object
     """
     total_P = 0.0
+    any_voltage_controlled = False
 
     # Sum P (weighted by active status)
     for gen in generators:
         if gen.active:
             total_P += gen.P
+        if gen.is_controlled:
+            any_voltage_controlled = True
+
+    # Keep voltage control only if at least one collapsed generator was a real 
+    # voltage-controlling unit. Otherwise just a regular PQ component
+    if any_voltage_controlled:
+        control_mode = GeneratorControlMode.V
+    else:
+        control_mode = GeneratorControlMode.Q
 
     # Create the collapsed generator
-    name = f"collapsed SRAP gen @ {bus.name}" if srap_enabled else f"collapsed non-SRAP gen @ {bus.name}"
-    collapsed_gen = Generator(name=name, P=total_P, srap_enabled=srap_enabled)
+    if srap_enabled:
+        name = f"collapsed SRAP gen @ {bus.name}"
+    else:
+        name = f"collapsed non-SRAP gen @ {bus.name}"
+    collapsed_gen = Generator(name=name, P=total_P, srap_enabled=srap_enabled, control_mode=control_mode)
 
     if has_ts and nt > 0:
         # Sum time-series profiles (already weighted by active status)
@@ -959,12 +973,31 @@ def ptdf_reduction_projected(grid: MultiCircuit,
             extra_power_allocation[boundary_indices_new] = True
             denom = float(len(boundary_indices_new))
     else:
-        # Distribute uniformly among boundary buses
-        if len(boundary_indices_new) > 0:
+        # Enters here if distribute slack is True
+
+        # Previously we were allocating the deficient to the boundary even if
+        # they were not in the slack set, so it perturbed the flows 
+        participating = np.zeros(n2, dtype=bool)
+        for island in lin2.islands:
+            itypes = island.bus_data.bus_types
+            gidx = island.bus_data.original_idx
+            for li in range(len(gidx)):
+                if itypes[li] == BusMode.PV_tpe.value or itypes[li] == BusMode.Slack_tpe.value:
+                    participating[int(gidx[li])] = True
+
+        # The compensation generators created are meant to be more like PQ 
+        # buses rather than setting the voltage. 
+        # Do not change the indices type because of that
+        part_idx = np.where(participating)[0]
+        if len(part_idx) > 0:
+            extra_power_allocation[part_idx] = True
+            denom = float(len(part_idx))
+        elif len(boundary_indices_new) > 0:
+            # Fallback if no participating buses were found, to the boundary
             extra_power_allocation[boundary_indices_new] = True
             denom = float(len(boundary_indices_new))
         else:
-            denom = 0.0 
+            denom = 0.0
 
     if denom > 0:
         extra_Pgen_no_srap_per_bus = APgen_no_srap / denom
@@ -991,9 +1024,11 @@ def ptdf_reduction_projected(grid: MultiCircuit,
         P_load_to_add = dP_load[i] - extra_load
         
         if abs(P_gen_no_srap_to_add) > tol:
-            elm_gen = Generator(name=f"compensated gen {i}", 
-                                P=P_gen_no_srap_to_add, 
-                                srap_enabled=False)
+            # Q mode gen
+            elm_gen = Generator(name=f"compensated gen {i}",
+                                P=P_gen_no_srap_to_add,
+                                srap_enabled=False,
+                                control_mode=GeneratorControlMode.Q)
             
             if dPbus_gen_ts is not None:
                 elm_gen.P_prof = -dPbus_gen_ts[:, i]
@@ -1003,9 +1038,11 @@ def ptdf_reduction_projected(grid: MultiCircuit,
             grid.add_generator(bus=bus, api_obj=elm_gen)
 
         if abs(P_gen_yes_srap_to_add) > tol:
-            elm_gen = Generator(name=f"compensated gen {i}", 
-                                P=P_gen_yes_srap_to_add, 
-                                srap_enabled=True)
+            # Q mode gen like we do with the SRAP ones
+            elm_gen = Generator(name=f"compensated gen {i}",
+                                P=P_gen_yes_srap_to_add,
+                                srap_enabled=True,
+                                control_mode=GeneratorControlMode.Q)
             
             if dPbus_gen_srap_ts is not None:
                 elm_gen.P_prof = -dPbus_gen_srap_ts[:, i]

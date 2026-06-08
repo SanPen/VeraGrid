@@ -7,7 +7,7 @@ import numpy as np
 import math
 
 from VeraGridEngine.Utils.Symbolic.block_helpers import tf_to_block
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Branches.hvdc_line import HvdcLine
@@ -147,10 +147,10 @@ class HvdcRmsTemplate(RmsModelTemplate):
 
             # External mapping for power flow references
             block.external_mapping = {
-                VarPowerFlowRefferenceType.Pf: Pf,
-                VarPowerFlowRefferenceType.Pt: Pt,
-                VarPowerFlowRefferenceType.Qf: Qf,
-                VarPowerFlowRefferenceType.Qt: Qt,
+                VarPowerFlowReferenceType.Pf: Pf,
+                VarPowerFlowReferenceType.Pt: Pt,
+                VarPowerFlowReferenceType.Qf: Qf,
+                VarPowerFlowReferenceType.Qt: Qt,
             }
             block.unify_blocks()
             self._block = block

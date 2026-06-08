@@ -45,6 +45,7 @@ class BranchParent(DynamicDevice):
         '_capex',
         '_opex',
         'build_status',
+        '_design_rate',
         '_rate',
         '_rate_prof',
         '_contingency_factor',
@@ -90,12 +91,19 @@ class BranchParent(DynamicDevice):
             cat=[PrpCat.TP],
         ),
         GCProp(
+            prop_name='design_rate',
+            units="MVA",
+            tpe=float,
+            definition='Design thermal rating power that is not modified for operational reasons or otherwise',
+            cat=[PrpCat.TP, PrpCat.PF],
+        ),
+        GCProp(
             prop_name='rate',
             units="MVA",
             tpe=float,
-            definition='Thermal rating power',
+            definition='Operational thermal rating power',
             profile_name="rate_prof",
-            cat=[PrpCat.PF],
+            cat=[PrpCat.PF, PrpCat.OPF],
         ),
         GCProp(
             prop_name='contingency_factor',
@@ -103,7 +111,7 @@ class BranchParent(DynamicDevice):
             tpe=float,
             definition='Rating multiplier for contingencies',
             profile_name="contingency_factor_prof",
-            cat=[PrpCat.CON],
+            cat=[PrpCat.CON, PrpCat.OPF],
         ),
         GCProp(
             prop_name='protection_rating_factor',
@@ -118,7 +126,7 @@ class BranchParent(DynamicDevice):
             units="",
             tpe=bool,
             definition="Monitor this device loading for OPF, NTC or contingency studies.",
-            cat=[PrpCat.CON],
+            cat=[PrpCat.CON, PrpCat.OPF],
         ),
         GCProp(
             prop_name='mttf',
@@ -219,6 +227,7 @@ class BranchParent(DynamicDevice):
                  bus_to: Union[Bus, None],
                  active: bool,
                  reducible: bool,
+                 design_rate: float,
                  rate: float,
                  contingency_factor: float,
                  protection_rating_factor: float,
@@ -243,7 +252,8 @@ class BranchParent(DynamicDevice):
         :param bus_from: Name of the bus at the "from" side
         :param bus_to: Name of the bus at the "to" side
         :param active: Is active?
-        :param rate: Branch rating (MVA)
+        :param design_rate: Rate that is not manipulated for operational reasons or otherwise (MVA)
+        :param rate: Branch operational rating (MVA)
         :param contingency_factor: Factor to multiply the rating in case of contingency
         :param contingency_enabled: Enabled contingency (Legacy, better use contingency objects)
         :param monitor_loading: Monitor loading (Legacy)
@@ -307,6 +317,8 @@ class BranchParent(DynamicDevice):
         self.capex = capex
 
         self.opex = opex
+
+        self._design_rate = design_rate
 
         # line rating in MVA
         if not isinstance(rate, Union[float, int]):
@@ -511,6 +523,22 @@ class BranchParent(DynamicDevice):
         :return:
         """
         return get_at(self.temp_oper, self._temp_oper_prof, t)
+
+    @property
+    def design_rate(self):
+        """
+        Rate (MVA)
+        :return:
+        """
+        return self._design_rate
+
+    @design_rate.setter
+    def design_rate(self, val: float):
+        val = float(val)
+        if isinstance(val, float):
+            self._design_rate = val
+        else:
+            raise ValueError(f'{val} is not a float')
 
     @property
     def rate(self):

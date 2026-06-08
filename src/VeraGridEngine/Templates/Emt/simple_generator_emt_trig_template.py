@@ -9,7 +9,7 @@ from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Utils.Symbolic import symbolic as sym
 from VeraGridEngine.Utils.Symbolic.block import Block, find_name_in_block
-from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowRefferenceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowReferenceType, VarPowerFlowReferenceType
 from VeraGridEngine.Templates.Emt.generator_emt_type_template import (
     get_exciter_emt,
     get_governor_emt,
@@ -34,16 +34,16 @@ def get_simple_generator_emt_template_trig_transform(
     templ.name = name
     templ.block.name = name
 
-    v_A = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowRefferenceType.v_A)
-    v_B = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowRefferenceType.v_B)
-    v_C = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowRefferenceType.v_C)
+    v_A = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowReferenceType.v_A)
+    v_B = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowReferenceType.v_B)
+    v_C = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowReferenceType.v_C)
     Tm = vf.add_var(name=f"Tm_{name}")
     v_f = vf.add_var(name=f"v_f_{name}")
 
-    Ipk = vf.add_var(name="Ipk", reference=VarPowerFlowRefferenceType.Ipk)
-    Vpk = vf.add_var(name="Vpk", reference=VarPowerFlowRefferenceType.Vpk)
-    phi = vf.add_var(name="phi", reference=VarPowerFlowRefferenceType.phi)
-    phi_v = vf.add_var(name="phi_v", reference=VarPowerFlowRefferenceType.phi_v)
+    Ipk = vf.add_var(name="Ipk", reference=VarPowerFlowReferenceType.Ipk)
+    Vpk = vf.add_var(name="Vpk", reference=VarPowerFlowReferenceType.Vpk)
+    phi = vf.add_var(name="phi", reference=VarPowerFlowReferenceType.phi)
+    phi_v = vf.add_var(name="phi_v", reference=VarPowerFlowReferenceType.phi_v)
     inputs = [v_A, v_B, v_C]
 
     theta = vf.add_var("theta_" + name)
@@ -62,9 +62,9 @@ def get_simple_generator_emt_template_trig_transform(
     d_psi_f = vf.add_diff_var(name=f"d_psi_f_{name}", base_var=psi_f)
     d_et = vf.add_diff_var(name=f"d_et_{name}", base_var=et)
 
-    i_A = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowRefferenceType.i_A)
-    i_B = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowRefferenceType.i_B)
-    i_C = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowRefferenceType.i_C)
+    i_A = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowReferenceType.i_A)
+    i_B = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowReferenceType.i_B)
+    i_C = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowReferenceType.i_C)
 
     v_d = vf.add_var("v_d_" + name)
     v_q = vf.add_var("v_q_" + name)
@@ -148,26 +148,26 @@ def get_simple_generator_emt_template_trig_transform(
     templ.block.diff_vars = [d_psi_d, d_psi_q, d_psi_0, d_psi_f, d_theta, d_omega, d_et, d_u_cos, d_u_sin]
 
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.P_N: None,
-        VarPowerFlowRefferenceType.Q_N: None,
-        VarPowerFlowRefferenceType.P_A: None,
-        VarPowerFlowRefferenceType.Q_A: None,
-        VarPowerFlowRefferenceType.P_B: None,
-        VarPowerFlowRefferenceType.Q_B: None,
-        VarPowerFlowRefferenceType.P_C: None,
-        VarPowerFlowRefferenceType.Q_C: None,
-        VarPowerFlowRefferenceType.i_N: None,
-        VarPowerFlowRefferenceType.i_A: i_A,
-        VarPowerFlowRefferenceType.i_B: i_B,
-        VarPowerFlowRefferenceType.i_C: i_C,
-        VarPowerFlowRefferenceType.phi_v: phi_v,
-        VarPowerFlowRefferenceType.phi: phi,
-        VarPowerFlowRefferenceType.Vpk: Vpk,
-        VarPowerFlowRefferenceType.Ipk: Ipk,
-        VarPowerFlowRefferenceType.d_v_N: None,
-        VarPowerFlowRefferenceType.d_v_A: None,
-        VarPowerFlowRefferenceType.d_v_B: None,
-        VarPowerFlowRefferenceType.d_v_C: None,
+        VarPowerFlowReferenceType.P_N: None,
+        VarPowerFlowReferenceType.Q_N: None,
+        VarPowerFlowReferenceType.P_A: None,
+        VarPowerFlowReferenceType.Q_A: None,
+        VarPowerFlowReferenceType.P_B: None,
+        VarPowerFlowReferenceType.Q_B: None,
+        VarPowerFlowReferenceType.P_C: None,
+        VarPowerFlowReferenceType.Q_C: None,
+        VarPowerFlowReferenceType.i_N: None,
+        VarPowerFlowReferenceType.i_A: i_A,
+        VarPowerFlowReferenceType.i_B: i_B,
+        VarPowerFlowReferenceType.i_C: i_C,
+        VarPowerFlowReferenceType.phi_v: phi_v,
+        VarPowerFlowReferenceType.phi: phi,
+        VarPowerFlowReferenceType.Vpk: Vpk,
+        VarPowerFlowReferenceType.Ipk: Ipk,
+        VarPowerFlowReferenceType.d_v_N: None,
+        VarPowerFlowReferenceType.d_v_A: None,
+        VarPowerFlowReferenceType.d_v_B: None,
+        VarPowerFlowReferenceType.d_v_C: None,
     }
 
     templ.block.event_dict = {
@@ -191,10 +191,10 @@ def get_simple_generator_emt_template_trig_transform(
     }
 
     templ.block.api_obj_mapping = {
-        ParamPowerFlowRefferenceType.omega_base: omega_base,
-        ParamPowerFlowRefferenceType.R1: Ra,
-        ParamPowerFlowRefferenceType.X1: Ld,
-        ParamPowerFlowRefferenceType.X0: L0,
+        ParamPowerFlowReferenceType.omega_base: omega_base,
+        ParamPowerFlowReferenceType.R1: Ra,
+        ParamPowerFlowReferenceType.X1: Ld,
+        ParamPowerFlowReferenceType.X0: L0,
     }
 
     templ.block.init_eqs = {
@@ -276,37 +276,37 @@ def get_simple_multilinear_generator_reference_template(
     templ.block.unify_blocks()
 
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.v_N: None,
-        VarPowerFlowRefferenceType.v_A: gen_mdl.in_vars[0],
-        VarPowerFlowRefferenceType.v_B: gen_mdl.in_vars[1],
-        VarPowerFlowRefferenceType.v_C: gen_mdl.in_vars[2],
-        VarPowerFlowRefferenceType.P_N: None,
-        VarPowerFlowRefferenceType.Q_N: None,
-        VarPowerFlowRefferenceType.P_A: None,
-        VarPowerFlowRefferenceType.Q_A: None,
-        VarPowerFlowRefferenceType.P_B: None,
-        VarPowerFlowRefferenceType.Q_B: None,
-        VarPowerFlowRefferenceType.P_C: None,
-        VarPowerFlowRefferenceType.Q_C: None,
-        VarPowerFlowRefferenceType.i_N: None,
-        VarPowerFlowRefferenceType.i_A: gen_mdl.out_vars[0],
-        VarPowerFlowRefferenceType.i_B: gen_mdl.out_vars[1],
-        VarPowerFlowRefferenceType.i_C: gen_mdl.out_vars[2],
-        VarPowerFlowRefferenceType.phi_v: gen_mdl.in_vars[5],
-        VarPowerFlowRefferenceType.phi: gen_mdl.in_vars[6],
-        VarPowerFlowRefferenceType.Vpk: gen_mdl.in_vars[7],
-        VarPowerFlowRefferenceType.Ipk: gen_mdl.in_vars[8],
-        VarPowerFlowRefferenceType.d_v_N: None,
-        VarPowerFlowRefferenceType.d_v_A: None,
-        VarPowerFlowRefferenceType.d_v_B: None,
-        VarPowerFlowRefferenceType.d_v_C: None,
+        VarPowerFlowReferenceType.v_N: None,
+        VarPowerFlowReferenceType.v_A: gen_mdl.in_vars[0],
+        VarPowerFlowReferenceType.v_B: gen_mdl.in_vars[1],
+        VarPowerFlowReferenceType.v_C: gen_mdl.in_vars[2],
+        VarPowerFlowReferenceType.P_N: None,
+        VarPowerFlowReferenceType.Q_N: None,
+        VarPowerFlowReferenceType.P_A: None,
+        VarPowerFlowReferenceType.Q_A: None,
+        VarPowerFlowReferenceType.P_B: None,
+        VarPowerFlowReferenceType.Q_B: None,
+        VarPowerFlowReferenceType.P_C: None,
+        VarPowerFlowReferenceType.Q_C: None,
+        VarPowerFlowReferenceType.i_N: None,
+        VarPowerFlowReferenceType.i_A: gen_mdl.out_vars[0],
+        VarPowerFlowReferenceType.i_B: gen_mdl.out_vars[1],
+        VarPowerFlowReferenceType.i_C: gen_mdl.out_vars[2],
+        VarPowerFlowReferenceType.phi_v: gen_mdl.in_vars[5],
+        VarPowerFlowReferenceType.phi: gen_mdl.in_vars[6],
+        VarPowerFlowReferenceType.Vpk: gen_mdl.in_vars[7],
+        VarPowerFlowReferenceType.Ipk: gen_mdl.in_vars[8],
+        VarPowerFlowReferenceType.d_v_N: None,
+        VarPowerFlowReferenceType.d_v_A: None,
+        VarPowerFlowReferenceType.d_v_B: None,
+        VarPowerFlowReferenceType.d_v_C: None,
     }
 
     templ.block.api_obj_mapping = {
-        ParamPowerFlowRefferenceType.omega_base: gen_mdl.api_obj_mapping[ParamPowerFlowRefferenceType.omega_base],
-        ParamPowerFlowRefferenceType.R1: gen_mdl.api_obj_mapping[ParamPowerFlowRefferenceType.R1],
-        ParamPowerFlowRefferenceType.X1: gen_mdl.api_obj_mapping[ParamPowerFlowRefferenceType.X1],
-        ParamPowerFlowRefferenceType.X0: gen_mdl.api_obj_mapping[ParamPowerFlowRefferenceType.X0],
+        ParamPowerFlowReferenceType.omega_base: gen_mdl.api_obj_mapping[ParamPowerFlowReferenceType.omega_base],
+        ParamPowerFlowReferenceType.R1: gen_mdl.api_obj_mapping[ParamPowerFlowReferenceType.R1],
+        ParamPowerFlowReferenceType.X1: gen_mdl.api_obj_mapping[ParamPowerFlowReferenceType.X1],
+        ParamPowerFlowReferenceType.X0: gen_mdl.api_obj_mapping[ParamPowerFlowReferenceType.X0],
     }
 
     templ.block.in_vars = [gen_mdl.in_vars[0], gen_mdl.in_vars[1], gen_mdl.in_vars[2]]

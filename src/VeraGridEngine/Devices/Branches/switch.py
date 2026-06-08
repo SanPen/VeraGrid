@@ -2,6 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
+from __future__ import annotations
 
 from typing import Tuple
 
@@ -78,15 +79,15 @@ class Switch(BranchParent):
                  code='',
                  r=1e-20,
                  x=1e-20,
-                 rate=1.0,
+                 design_rate: float = 9999,
+                 rate=9999.0,
                  active=True,
                  contingency_factor=1.0,
                  protection_rating_factor: float = 1.4,
                  retained=False,
                  normal_open=False,
                  rated_current=0.0,
-                 graphic_type: SwitchGraphicType = SwitchGraphicType.CircuitBreaker,
-                 retain: bool | None = None):
+                 graphic_type: SwitchGraphicType = SwitchGraphicType.CircuitBreaker):
         """
         Switch device
         :param bus_from: Bus from
@@ -96,6 +97,7 @@ class Switch(BranchParent):
         :param code: secondary ID
         :param r: resistance in p.u.
         :param x: reactance in p.u.
+        :param design_rate: design rate in p.u.
         :param rate: Branch rating (MW)
         :param active: is it active?
         :param contingency_factor: Rating factor in case of contingency
@@ -109,6 +111,7 @@ class Switch(BranchParent):
                               bus_to=bus_to,
                               active=active,
                               reducible=True,
+                              design_rate=design_rate,
                               rate=rate,
                               contingency_factor=contingency_factor,
                               protection_rating_factor=protection_rating_factor,

@@ -17,7 +17,7 @@ from VeraGridEngine.Templates.Emt.source_emt_template import _get_voltage_refere
 from VeraGridEngine.Utils.Symbolic.block import Expr, Var
 from VeraGridEngine.Utils.Symbolic import symbolic as sym
 from VeraGridEngine.Utils.Symbolic.symbolic import CmpOp, Comparison
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
 
 
 def _build_time_state(vf: VarFactory, template: EmtModelTemplate, resolved_name: str) -> Var:

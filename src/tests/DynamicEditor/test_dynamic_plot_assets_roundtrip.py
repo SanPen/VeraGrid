@@ -30,7 +30,7 @@ from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, Const
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import connect_bus_variables_emt, connect_bus_variables_rms
 from VeraGridEngine.enumerations import (DeviceType, FileType, PlotSimulationType, DynamicSimulationMode,
-                                         DynamicPlotEntryKind, ParamPowerFlowRefferenceType,
+                                         DynamicPlotEntryKind, ParamPowerFlowReferenceType,
                                          DynamicPlotMode, DynamicPlotEntryRole)
 
 
@@ -64,7 +64,7 @@ def build_pre_simulation_rms_circuit() -> MultiCircuit:
         state_vars=[omega_var],
         algebraic_vars=[efd_var],
         parameters={omega_var: Const(1.05)},
-        api_obj_mapping={ParamPowerFlowRefferenceType.omega_ref: omega_var},
+        api_obj_mapping={ParamPowerFlowReferenceType.omega_ref: omega_var},
         event_dict={efd_var: Const(0.9)},
     )
     circuit.set_elements_list_by_type(device_type=DeviceType.GeneratorDevice, devices=[generator])
@@ -128,7 +128,7 @@ def build_parameter_collection_block() -> Block:
     event_only_parameter: Var = Var(name="event_only_parameter", uid=803)
     block: Block = Block(
         parameters={api_parameter: Const(1.0), duplicate_parameter: Const(2.0), event_only_parameter: Const(3.0)},
-        api_obj_mapping={ParamPowerFlowRefferenceType.K: api_parameter, ParamPowerFlowRefferenceType.Kp: duplicate_parameter},
+        api_obj_mapping={ParamPowerFlowReferenceType.K: api_parameter, ParamPowerFlowReferenceType.Kp: duplicate_parameter},
         event_dict={duplicate_parameter: Const(4.0), event_only_parameter: Const(5.0)},
     )
     return block

@@ -231,6 +231,14 @@ class ResultsTemplate(metaclass=ResultsTemplateMeta):
         """
         pass
 
+    def prepare_for_saving(self) -> None:
+        """
+        Refresh any derived payload that must be serialized with the results.
+
+        :return: None.
+        """
+        pass
+
     def get_dict(self) -> Dict[str, Any]:
         """
         Get data to pass via json
@@ -550,7 +558,7 @@ class ResultsTemplate(metaclass=ResultsTemplateMeta):
                 print("No clusters!")
 
     def parse_saved_data(self, grid: MultiCircuit,
-                         data_dict: Dict[str, pd.DataFrame],
+                         data_dict: Dict[str, pd.DataFrame | np.ndarray],
                          logger: Logger = Logger()) -> None:
         """
 
@@ -561,7 +569,7 @@ class ResultsTemplate(metaclass=ResultsTemplateMeta):
         """
         self.time_array = grid.get_time_array()
 
-        for arr_name, df in data_dict.items():
+        for arr_name, stored_data in data_dict.items():
 
             is_complex = '__complex__' in arr_name
             arr_name = arr_name.replace('__complex__', '')
@@ -569,19 +577,36 @@ class ResultsTemplate(metaclass=ResultsTemplateMeta):
             # try to get the property of the saved file
             res_prop: ResultsProperty = self._data_variables.get(arr_name, None)
 
-            if df is not None and res_prop is not None:
+            if stored_data is not None and res_prop is not None:
 
                 # it may be complex...
                 if is_complex:
-                    split_pt = int(df.columns.size / 2)
-                    r = df.values[:, :split_pt]
-                    i = df.values[:, split_pt:]
+                    values_2d: np.ndarray
+                    if isinstance(stored_data, pd.DataFrame):
+                        values_2d = stored_data.values
+                    else:
+                        values_2d = np.asarray(stored_data)
+
+                    split_pt = int(values_2d.shape[1] / 2)
+                    r = values_2d[:, :split_pt]
+                    i = values_2d[:, split_pt:]
                     array = r + 1j * i
                 else:
-                    # keep the 2D shape
-                    array = df.values
+                    if isinstance(stored_data, pd.DataFrame):
+                        # Keep the 2-D shape for the historical parquet path.
+                        array = stored_data.values
+                    else:
+                        # NumPy payloads are already restored with their native shape.
+                        array = np.asarray(stored_data)
 
-                if array.shape[1] == 1:
+                vector_like_types = (Vec, IntVec, StrVec, BoolVec, CxVec)
+
+                if (
+                        isinstance(array, np.ndarray)
+                        and array.ndim == 2
+                        and array.shape[1] == 1
+                        and res_prop.tpe in vector_like_types
+                ):
                     # if there is only one column, convert to array directly
                     array = array[:, 0]
 
@@ -590,20 +615,26 @@ class ResultsTemplate(metaclass=ResultsTemplateMeta):
                     if array.size == 1:
                         array = array[0]
 
+                if res_prop.tpe == DateVec:
+                    array = pd.to_datetime(np.asarray(array).reshape(-1))
+                else:
+                    pass
+
                 curr_value = getattr(self, res_prop.name)
 
-                if isinstance(curr_value, np.ndarray):
+                if isinstance(curr_value, (np.ndarray, pd.Index)):
 
                     # if results arrays are exactly 0, don't check
-                    dont_check = sum(curr_value.shape) == 0
+                    curr_shape = np.shape(curr_value)
+                    dont_check = len(curr_shape) > 0 and sum(curr_shape) == 0
 
-                    if curr_value.shape == array.shape or dont_check:
+                    if np.shape(curr_value) == np.shape(array) or dont_check:
                         setattr(self, res_prop.name, array)
                     else:
                         logger.add_error(msg="Wrong array shape",
                                          device_class=self.name,
                                          device_property=res_prop.name,
-                                         value=str(array.shape),
-                                         expected_value=str(curr_value.shape))
+                                         value=str(np.shape(array)),
+                                         expected_value=str(np.shape(curr_value)))
                 else:
                     setattr(self, res_prop.name, array)

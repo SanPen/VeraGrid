@@ -5,6 +5,7 @@
 from __future__ import annotations
 from uuid import uuid4
 import pandas as pd
+import numpy as np
 from PySide6.QtCore import QThread, Signal
 from typing import Dict, Union, List, Tuple, Any, Generator
 from collections.abc import Callable
@@ -47,6 +48,10 @@ from VeraGridEngine.Simulations.CatalogueOptimization.catalogue_optimization_dri
 from VeraGridEngine.Simulations.SigmaAnalysis.sigma_analysis_driver import SigmaAnalysisResults
 from VeraGridEngine.Simulations.NTC.ntc_driver import (OptimalNetTransferCapacityResults,
                                                        OptimalNetTransferCapacityDriver)
+from VeraGridEngine.Simulations.NTC.ntc_ts_driver import (
+    OptimalNetTransferCapacityTimeSeriesDriver,
+    OptimalNetTransferCapacityTimeSeriesResults,
+)
 from VeraGridEngine.Simulations.NodalCapacity.nodal_capacity_ts_driver import (NodalCapacityTimeSeriesDriver,
                                                                                NodalCapacityTimeSeriesResults)
 from VeraGridEngine.Simulations.Reliability.reliability_driver import ReliabilityStudyDriver, ReliabilityResults
@@ -370,9 +375,87 @@ class SimulationSession:
         )
 
         if drv is not None:
+            if drv.results is None:
+                if driver_tpe == SimulationTypes.RmsDynamic_run:
+                    drv.results = RmsResults(
+                        time_array=pd.DatetimeIndex([]),
+                        rms_events_group_names=np.array([], dtype=str),
+                        rms_events_group_idtags=np.array([], dtype=str),
+                        variables=list(),
+                        uid2idx=dict(),
+                        vars_glob_name2uid=dict(),
+                        devices_vars_info=dict(),
+                        parameter_value_maps=list(),
+                        has_event_group_results=np.array([], dtype=bool),
+                    )
+                elif driver_tpe == SimulationTypes.EmtDynamic_run:
+                    drv.results = EmtResults(
+                        time_array=pd.DatetimeIndex([]),
+                        emt_events_group_names=np.array([], dtype=str),
+                        emt_events_group_idtags=np.array([], dtype=str),
+                        variables=list(),
+                        diff_variables=list(),
+                        uid2idx_vars=dict(),
+                        uid2idx_diff=dict(),
+                        vars_glob_name2uid=dict(),
+                        devices_vars_info=dict(),
+                        parameter_value_maps=list(),
+                        has_event_group_results=np.array([], dtype=bool),
+                    )
+                elif driver_tpe == SimulationTypes.StateEstimation_run:
+                    drv.results = StateEstimationResults(
+                        n=grid.get_bus_number(),
+                        m=grid.get_branch_number(add_hvdc=False, add_vsc=False, add_switch=True),
+                        n_hvdc=grid.get_hvdc_number(),
+                        n_vsc=grid.get_vsc_number(),
+                        n_gen=grid.get_generation_like_number(),
+                        n_batt=grid.get_batteries_number(),
+                        n_sh=grid.get_shunt_like_device_number(),
+                        bus_names=grid.get_bus_names(),
+                        branch_names=grid.get_branch_names(add_hvdc=False, add_vsc=False, add_switch=True),
+                        hvdc_names=grid.get_hvdc_names(),
+                        vsc_names=grid.get_vsc_names(),
+                        gen_names=grid.get_generation_like_names(),
+                        batt_names=grid.get_battery_names(),
+                        sh_names=grid.get_shunt_like_devices_names(),
+                        bus_types=np.ones(grid.get_bus_number(), dtype=int),
+                    )
+                elif driver_tpe == SimulationTypes.SigmaAnalysis_run:
+                    drv.results = SigmaAnalysisResults(n=grid.get_bus_number())
+                elif driver_tpe == SimulationTypes.OPF_NTC_run:
+                    drv.results = OptimalNetTransferCapacityResults(
+                        bus_names=grid.get_bus_names(),
+                        branch_names=grid.get_branch_names(add_hvdc=False, add_vsc=False, add_switch=True),
+                        hvdc_names=grid.get_hvdc_names(),
+                        vsc_names=grid.get_vsc_names(),
+                        contingency_group_names=grid.get_contingency_group_names(),
+                    )
+                elif (
+                        driver_tpe == SimulationTypes.OptimalNetTransferCapacityTimeSeries_run
+                        or driver_tpe == SimulationTypes.OPF_NTC_TS_run
+                ):
+                    drv.results = OptimalNetTransferCapacityTimeSeriesResults(
+                        branch_names=grid.get_branch_names(add_hvdc=False, add_vsc=False, add_switch=True),
+                        bus_names=grid.get_bus_names(),
+                        hvdc_names=grid.get_hvdc_names(),
+                        vsc_names=grid.get_vsc_names(),
+                        contingency_group_names=grid.get_contingency_group_names(),
+                        time_array=pd.DatetimeIndex([]),
+                        time_indices=np.zeros(0, dtype=int),
+                        clustering_results=None,
+                    )
+                else:
+                    pass
 
             # fill in the saved results
             drv.results.parse_saved_data(grid=grid, data_dict=data_dict, logger=logger)
+
+            if driver_tpe == SimulationTypes.RmsDynamic_run:
+                drv.results.restore_dynamic_metadata(grid=grid)
+            elif driver_tpe == SimulationTypes.EmtDynamic_run:
+                drv.results.restore_dynamic_metadata(grid=grid)
+            else:
+                pass
 
             # perform whatever operations are needed after loading
             drv.results.consolidate_after_loading()

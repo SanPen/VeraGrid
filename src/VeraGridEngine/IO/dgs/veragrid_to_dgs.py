@@ -18,7 +18,8 @@ from VeraGridEngine.enumerations import (
     TapChangerTypes,
     TapModuleControl,
     WindingType,
-    ShuntControlMode
+    ShuntControlMode,
+    GeneratorControlMode
 )
 from VeraGridEngine.Devices.Branches.transformer_type import reverse_transformer_short_circuit_study
 
@@ -633,7 +634,7 @@ def convert_generator(gen: dev.Generator, tpe_new_id: str, new_id: str, bus_v_co
 
     if not bus_v_controlled[gen.bus]:
         # NOTE: in power factory, only one generator can control the bus voltage
-        e.av_mode = "constv" if gen.is_controlled else "constq"
+        e.av_mode = "constv" if gen.control_mode == GeneratorControlMode.V else "constq"
         bus_v_controlled[gen.bus] = True
     else:
         # the bus was flagged already

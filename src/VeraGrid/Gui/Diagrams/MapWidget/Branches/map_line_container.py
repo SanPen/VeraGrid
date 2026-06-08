@@ -916,8 +916,8 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
         
         :return: Total length in kilometers
         """
-        from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import haversine_distance
-        
+        from VeraGridEngine.Utils.GeographicalMethods.haversine_distance import haversine_distance
+
         # Get all connection points (substations and intermediate points)
         connection_points = []
         

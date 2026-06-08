@@ -35,7 +35,7 @@ def test_3bus_ps_3ph() -> None:
     gen_slack = vge.Generator()
     grid.add_generator(bus=bus_slack, api_obj=gen_slack)
 
-    gen_pv = vge.Generator(P=5, is_controlled=True)
+    gen_pv = vge.Generator(P=5, control_mode=vge.GeneratorControlMode.V)
     grid.add_generator(bus=bus_pv, api_obj=gen_pv)
 
     # ----------------------------------------------------------------------------------------------------------------------
@@ -113,7 +113,7 @@ def test_3bus_ps_3ph_with_q_control_enabled() -> None:
     gen_slack = vge.Generator()
     grid.add_generator(bus=bus_slack, api_obj=gen_slack)
 
-    gen_pv = vge.Generator(P=5.0, is_controlled=True)
+    gen_pv = vge.Generator(P=5.0, control_mode=vge.GeneratorControlMode.V)
     grid.add_generator(bus=bus_pv, api_obj=gen_pv)
 
     grid.add_line(obj=vge.Line(bus_from=bus_slack, bus_to=bus_pv, name='Slack-PV', r=0.1, x=1.0, b=0.1))

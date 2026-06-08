@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: MPL-2.0
 import numpy as np
 from typing import Union, Tuple, Sequence
+
+from VeraGridEngine import ShuntControlMode
 from VeraGridEngine.Utils.NumericalMethods.ips import interior_point_solver
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
@@ -120,7 +122,7 @@ def run_nonlinear_opf(grid: MultiCircuit,
                       gen_idx=island.generator_data.original_idx,
                       hvdc_idx=island.hvdc_data.original_idx,
                       ncap_idx=capacity_nodes_idx_org,
-                      contshunt_idx=np.where(island.shunt_data.is_pv_control == True)[0],
+                      contshunt_idx=np.where(island.shunt_data.control_mode_int == ShuntControlMode.Continuous.idx())[0],
                       acopf_mode=opf_options.acopf_mode,
                       vsc_idx=island.vsc_data.original_idx)
         if i > 0:

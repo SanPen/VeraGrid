@@ -7,7 +7,7 @@ from __future__ import annotations
 #
 from typing import Any
 #
-from VeraGridEngine.enumerations import VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 
 from VeraGridEngine.Utils.Symbolic.block import Block
@@ -28,7 +28,7 @@ def connect_line_rms_from(mdl1: Block, mdl2: Block, var_factory:VarFactory):
         (outp, inpt)
         for outp in mdl1.out_vars
         for inpt in mdl2.in_vars
-        if outp.ref == VarPowerFlowRefferenceType.Vm and inpt.ref == VarPowerFlowRefferenceType.Vmf
+        if outp.ref == VarPowerFlowReferenceType.Vm and inpt.ref == VarPowerFlowReferenceType.Vmf
     ]
     for outp, inpt in pairs:
         var_factory.add_connections([inpt], [outp])
@@ -38,7 +38,7 @@ def connect_line_rms_from(mdl1: Block, mdl2: Block, var_factory:VarFactory):
         (outp, inpt)
         for outp in mdl1.out_vars
         for inpt in mdl2.in_vars
-        if outp.ref == VarPowerFlowRefferenceType.Va and inpt.ref == VarPowerFlowRefferenceType.Vaf
+        if outp.ref == VarPowerFlowReferenceType.Va and inpt.ref == VarPowerFlowReferenceType.Vaf
     ]
     for outp, inpt in pairs:
         var_factory.add_connections([inpt], [outp])
@@ -77,7 +77,7 @@ def connect_line_rms_to(mdl1: Block, mdl2: Block, var_factory:VarFactory):
         (outp, inpt)
         for outp in mdl1.out_vars
         for inpt in mdl2.in_vars
-        if outp.ref == VarPowerFlowRefferenceType.Vm and inpt.ref == VarPowerFlowRefferenceType.Vmt
+        if outp.ref == VarPowerFlowReferenceType.Vm and inpt.ref == VarPowerFlowReferenceType.Vmt
     ]
     for outp, inpt in pairs:
         var_factory.add_connections([inpt], [outp])
@@ -87,7 +87,7 @@ def connect_line_rms_to(mdl1: Block, mdl2: Block, var_factory:VarFactory):
         (outp, inpt)
         for outp in mdl1.out_vars
         for inpt in mdl2.in_vars
-        if outp.ref == VarPowerFlowRefferenceType.Va and inpt.ref == VarPowerFlowRefferenceType.Vat
+        if outp.ref == VarPowerFlowReferenceType.Va and inpt.ref == VarPowerFlowReferenceType.Vat
     ]
     for outp, inpt in pairs:
         var_factory.add_connections([inpt], [outp])
@@ -103,7 +103,7 @@ def connect_line_phasor_rms_from(mdl1: Block, mdl2: Block, var_factory:VarFactor
         (outp, inpt)
         for outp in mdl1.out_vars
         for inpt in mdl2.in_vars
-        if outp.ref == VarPowerFlowRefferenceType.Vr and inpt.ref == VarPowerFlowRefferenceType.Vrf
+        if outp.ref == VarPowerFlowReferenceType.Vr and inpt.ref == VarPowerFlowReferenceType.Vrf
     ]
     for outp, inpt in pairs:
         var_factory.add_connections([inpt], [outp])
@@ -113,7 +113,7 @@ def connect_line_phasor_rms_from(mdl1: Block, mdl2: Block, var_factory:VarFactor
         (outp, inpt)
         for outp in mdl1.out_vars
         for inpt in mdl2.in_vars
-        if outp.ref == VarPowerFlowRefferenceType.Vi and inpt.ref == VarPowerFlowRefferenceType.Vif
+        if outp.ref == VarPowerFlowReferenceType.Vi and inpt.ref == VarPowerFlowReferenceType.Vif
     ]
     for outp, inpt in pairs:
         var_factory.add_connections([inpt], [outp])
@@ -129,7 +129,7 @@ def connect_line_phasor_rms_to(mdl1: Block, mdl2: Block, var_factory:VarFactory)
         (outp, inpt)
         for outp in mdl1.out_vars
         for inpt in mdl2.in_vars
-        if outp.ref == VarPowerFlowRefferenceType.Vr and inpt.ref == VarPowerFlowRefferenceType.Vrt
+        if outp.ref == VarPowerFlowReferenceType.Vr and inpt.ref == VarPowerFlowReferenceType.Vrt
     ]
     for outp, inpt in pairs:
         var_factory.add_connections([inpt], [outp])
@@ -139,7 +139,7 @@ def connect_line_phasor_rms_to(mdl1: Block, mdl2: Block, var_factory:VarFactory)
         (outp, inpt)
         for outp in mdl1.out_vars
         for inpt in mdl2.in_vars
-        if outp.ref == VarPowerFlowRefferenceType.Vi and inpt.ref == VarPowerFlowRefferenceType.Vit
+        if outp.ref == VarPowerFlowReferenceType.Vi and inpt.ref == VarPowerFlowReferenceType.Vit
     ]
     for outp, inpt in pairs:
         var_factory.add_connections([inpt], [outp])
@@ -199,7 +199,7 @@ def connect_bus_variables_rms(device: Any, model:Block, var_factory: VarFactory 
                 raise ValueError("var factory not associated to grid element")
 
         # Check if bus has Vr/Vi (phasor) or Vm/Va (polar) outputs
-        has_phasor = any(v.ref == VarPowerFlowRefferenceType.Vr for v in bus_model.out_vars)
+        has_phasor = any(v.ref == VarPowerFlowReferenceType.Vr for v in bus_model.out_vars)
         if has_phasor:
             if var_factory is not None:
                 connect_line_phasor_rms_from(device.bus_from.rms_model, model, var_factory)
@@ -215,7 +215,7 @@ def connect_bus_variables_rms(device: Any, model:Block, var_factory: VarFactory 
             else:
                 raise ValueError("var factory not associated to grid element")
         # Check if bus has Vr/Vi (phasor) or Vm/Va (polar) outputs
-        has_phasor = any(v.ref == VarPowerFlowRefferenceType.Vr for v in bus_model.out_vars)
+        has_phasor = any(v.ref == VarPowerFlowReferenceType.Vr for v in bus_model.out_vars)
         if has_phasor:
             if var_factory is not None:
                 connect_line_phasor_rms_to(device.bus_to.rms_model, model, var_factory)
@@ -331,10 +331,10 @@ def connect_bus_variables_emt(device: Any,
 
                     # Detect which AC phases are already present in the existing bus model
                     existing_mask = [False, False, False, False]  # [N, A, B, C]
-                    existing_mask[0] = external_mapping.get(VarPowerFlowRefferenceType.v_N, None) is not None
-                    existing_mask[1] = external_mapping.get(VarPowerFlowRefferenceType.v_A, None) is not None
-                    existing_mask[2] = external_mapping.get(VarPowerFlowRefferenceType.v_B, None) is not None
-                    existing_mask[3] = external_mapping.get(VarPowerFlowRefferenceType.v_C, None) is not None
+                    existing_mask[0] = external_mapping.get(VarPowerFlowReferenceType.v_N, None) is not None
+                    existing_mask[1] = external_mapping.get(VarPowerFlowReferenceType.v_A, None) is not None
+                    existing_mask[2] = external_mapping.get(VarPowerFlowReferenceType.v_B, None) is not None
+                    existing_mask[3] = external_mapping.get(VarPowerFlowReferenceType.v_C, None) is not None
                     # Merge the phases required by the already existing bus model and the new device
                     required_mask = [
                         existing_mask[0] or mask[0],
@@ -411,10 +411,10 @@ def connect_bus_variables_emt(device: Any,
 
                     # Detect which AC phases are already present in the existing bus model
                     existing_mask = [False, False, False, False]  # [N, A, B, C]
-                    existing_mask[0] = external_mapping.get(VarPowerFlowRefferenceType.v_N, None) is not None
-                    existing_mask[1] = external_mapping.get(VarPowerFlowRefferenceType.v_A, None) is not None
-                    existing_mask[2] = external_mapping.get(VarPowerFlowRefferenceType.v_B, None) is not None
-                    existing_mask[3] = external_mapping.get(VarPowerFlowRefferenceType.v_C, None) is not None
+                    existing_mask[0] = external_mapping.get(VarPowerFlowReferenceType.v_N, None) is not None
+                    existing_mask[1] = external_mapping.get(VarPowerFlowReferenceType.v_A, None) is not None
+                    existing_mask[2] = external_mapping.get(VarPowerFlowReferenceType.v_B, None) is not None
+                    existing_mask[3] = external_mapping.get(VarPowerFlowReferenceType.v_C, None) is not None
                     # Merge the phases required by the already existing bus model and the new device
                     required_mask = [
                         existing_mask[0] or mask[0],
@@ -482,7 +482,7 @@ def set_rms_model(device: Any, model:Block, var_factory: VarFactory):
         bus_model = device.bus_from.rms_model
         if not bus_model.empty():
             # Check if bus has Vr/Vi (phasor) or Vm/Va (polar) outputs
-            has_phasor = any(v.ref == VarPowerFlowRefferenceType.Vr for v in bus_model.out_vars)
+            has_phasor = any(v.ref == VarPowerFlowReferenceType.Vr for v in bus_model.out_vars)
             if has_phasor:
                 connect_line_phasor_rms_from(device.bus_from.rms_model, model, var_factory)
             else:
@@ -493,7 +493,7 @@ def set_rms_model(device: Any, model:Block, var_factory: VarFactory):
         bus_model = device.bus_to.rms_model
         if not bus_model.empty():
             # Check if bus has Vr/Vi (phasor) or Vm/Va (polar) outputs
-            has_phasor = any(v.ref == VarPowerFlowRefferenceType.Vr for v in bus_model.out_vars)
+            has_phasor = any(v.ref == VarPowerFlowReferenceType.Vr for v in bus_model.out_vars)
             if has_phasor:
                 connect_line_phasor_rms_to(device.bus_to.rms_model, model, var_factory)
             else:
@@ -534,11 +534,11 @@ def connect_line_emt_from(mdl1: Block, mdl2: Block, var_factory:VarFactory):
     # Create a dictionary to map the bus output variable
     # to the corresponding line input variable ("from" side)
     phase_map = {
-        VarPowerFlowRefferenceType.v_N: VarPowerFlowRefferenceType.vf_N,
-        VarPowerFlowRefferenceType.v_A: VarPowerFlowRefferenceType.vf_A,
-        VarPowerFlowRefferenceType.v_B: VarPowerFlowRefferenceType.vf_B,
-        VarPowerFlowRefferenceType.v_C: VarPowerFlowRefferenceType.vf_C,
-        VarPowerFlowRefferenceType.Vdc: VarPowerFlowRefferenceType.Vf_dc,
+        VarPowerFlowReferenceType.v_N: VarPowerFlowReferenceType.vf_N,
+        VarPowerFlowReferenceType.v_A: VarPowerFlowReferenceType.vf_A,
+        VarPowerFlowReferenceType.v_B: VarPowerFlowReferenceType.vf_B,
+        VarPowerFlowReferenceType.v_C: VarPowerFlowReferenceType.vf_C,
+        VarPowerFlowReferenceType.Vdc: VarPowerFlowReferenceType.Vf_dc,
     }
 
     # Find the variable pairs that match our mapping
@@ -567,11 +567,11 @@ def connect_line_emt_to(mdl1: Block, mdl2: Block, var_factory:VarFactory):
     # Create a dictionary to map the bus output variable
     # to the corresponding line input variable ("to" side)
     phase_map = {
-        VarPowerFlowRefferenceType.v_N: VarPowerFlowRefferenceType.vt_N,
-        VarPowerFlowRefferenceType.v_A: VarPowerFlowRefferenceType.vt_A,
-        VarPowerFlowRefferenceType.v_B: VarPowerFlowRefferenceType.vt_B,
-        VarPowerFlowRefferenceType.v_C: VarPowerFlowRefferenceType.vt_C,
-        VarPowerFlowRefferenceType.Vdc: VarPowerFlowRefferenceType.Vt_dc,
+        VarPowerFlowReferenceType.v_N: VarPowerFlowReferenceType.vt_N,
+        VarPowerFlowReferenceType.v_A: VarPowerFlowReferenceType.vt_A,
+        VarPowerFlowReferenceType.v_B: VarPowerFlowReferenceType.vt_B,
+        VarPowerFlowReferenceType.v_C: VarPowerFlowReferenceType.vt_C,
+        VarPowerFlowReferenceType.Vdc: VarPowerFlowReferenceType.Vt_dc,
     }
 
     # Find the variable pairs that match our mapping
@@ -603,11 +603,11 @@ def connect_injection_emt(mdl1: Block, mdl2: Block, var_factory:VarFactory) -> N
     # Single-bus EMT devices use the same enum references as the bus shell, so
     # the algorithm only needs to match equal EMT voltage references.
     phase_map = {
-        VarPowerFlowRefferenceType.v_N: VarPowerFlowRefferenceType.v_N,
-        VarPowerFlowRefferenceType.v_A: VarPowerFlowRefferenceType.v_A,
-        VarPowerFlowRefferenceType.v_B: VarPowerFlowRefferenceType.v_B,
-        VarPowerFlowRefferenceType.v_C: VarPowerFlowRefferenceType.v_C,
-        VarPowerFlowRefferenceType.Vdc: VarPowerFlowRefferenceType.Vdc,
+        VarPowerFlowReferenceType.v_N: VarPowerFlowReferenceType.v_N,
+        VarPowerFlowReferenceType.v_A: VarPowerFlowReferenceType.v_A,
+        VarPowerFlowReferenceType.v_B: VarPowerFlowReferenceType.v_B,
+        VarPowerFlowReferenceType.v_C: VarPowerFlowReferenceType.v_C,
+        VarPowerFlowReferenceType.Vdc: VarPowerFlowReferenceType.Vdc,
     }
 
     pairs = [
@@ -634,7 +634,7 @@ def connect_vsc_emt_from(mdl1: Block, mdl2: Block, var_factory:VarFactory,is_dc_
     if is_dc_bus:
         # DC bus: connect Vdc
         dc_map = {
-            VarPowerFlowRefferenceType.Vdc: VarPowerFlowRefferenceType.Vdc
+            VarPowerFlowReferenceType.Vdc: VarPowerFlowReferenceType.Vdc
         }
         pairs = [
             (outp, inpt)
@@ -645,9 +645,9 @@ def connect_vsc_emt_from(mdl1: Block, mdl2: Block, var_factory:VarFactory,is_dc_
     else:
         # AC bus: connect abc voltages
         phase_map = {
-            VarPowerFlowRefferenceType.v_A: VarPowerFlowRefferenceType.v_A,
-            VarPowerFlowRefferenceType.v_B: VarPowerFlowRefferenceType.v_B,
-            VarPowerFlowRefferenceType.v_C: VarPowerFlowRefferenceType.v_C
+            VarPowerFlowReferenceType.v_A: VarPowerFlowReferenceType.v_A,
+            VarPowerFlowReferenceType.v_B: VarPowerFlowReferenceType.v_B,
+            VarPowerFlowReferenceType.v_C: VarPowerFlowReferenceType.v_C
         }
         pairs = [
             (outp, inpt)
@@ -674,7 +674,7 @@ def connect_vsc_emt_to(mdl1: Block, mdl2: Block, var_factory:VarFactory, is_dc_b
     if is_dc_bus:
         # DC bus: connect Vdc
         dc_map = {
-            VarPowerFlowRefferenceType.Vdc: VarPowerFlowRefferenceType.Vdc
+            VarPowerFlowReferenceType.Vdc: VarPowerFlowReferenceType.Vdc
         }
         pairs = [
             (outp, inpt)
@@ -685,9 +685,9 @@ def connect_vsc_emt_to(mdl1: Block, mdl2: Block, var_factory:VarFactory, is_dc_b
     else:
         # AC bus: connect abc voltages
         phase_map = {
-            VarPowerFlowRefferenceType.v_A: VarPowerFlowRefferenceType.v_A,
-            VarPowerFlowRefferenceType.v_B: VarPowerFlowRefferenceType.v_B,
-            VarPowerFlowRefferenceType.v_C: VarPowerFlowRefferenceType.v_C
+            VarPowerFlowReferenceType.v_A: VarPowerFlowReferenceType.v_A,
+            VarPowerFlowReferenceType.v_B: VarPowerFlowReferenceType.v_B,
+            VarPowerFlowReferenceType.v_C: VarPowerFlowReferenceType.v_C
         }
         pairs = [
             (outp, inpt)

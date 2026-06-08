@@ -26,7 +26,7 @@ from VeraGridEngine.IO.fmu.importer.experimental_me import (
 )
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
 
 
 def _tmp_root() -> Path:
@@ -100,8 +100,8 @@ def test_rms_device_config_can_restore_runtime_spec() -> None:
             vfactory=VarFactory(name="restore_rms_var_factory"),
             config=FmuImportConfig(fmu_path=exported_fmu, extraction_root=output_root),
             input_bindings=tuple(),
-            output_bindings=(FmuRefBinding(VarPowerFlowRefferenceType.P, "y"),),
-            output_defaults={VarPowerFlowRefferenceType.P: 0.0},
+            output_bindings=(FmuRefBinding(VarPowerFlowReferenceType.P, "y"),),
+            output_defaults={VarPowerFlowReferenceType.P: 0.0},
             name="restore_rms_template",
         )
 
@@ -144,8 +144,8 @@ def test_emt_device_config_can_restore_runtime_spec() -> None:
             vfactory=VarFactory(name="restore_emt_var_factory"),
             config=FmuImportConfig(fmu_path=exported_fmu, extraction_root=output_root),
             input_bindings=tuple(),
-            output_bindings=(FmuRefBinding(VarPowerFlowRefferenceType.i_A, "y"),),
-            output_defaults={VarPowerFlowRefferenceType.i_A: 0.0},
+            output_bindings=(FmuRefBinding(VarPowerFlowReferenceType.i_A, "y"),),
+            output_defaults={VarPowerFlowReferenceType.i_A: 0.0},
             name="restore_emt_template",
         )
 
@@ -187,9 +187,9 @@ def test_rms_me_device_config_can_restore_runtime_spec() -> None:
             device=device,
             vfactory=VarFactory(name="restore_rms_me_var_factory"),
             config=FmuImportConfig(fmu_path=exported_fmu, extraction_root=output_root),
-            input_bindings=(FmuRefBinding(VarPowerFlowRefferenceType.Vm, "u"),),
-            output_bindings=(FmuRefBinding(VarPowerFlowRefferenceType.P, "y"),),
-            output_defaults={VarPowerFlowRefferenceType.P: 0.0},
+            input_bindings=(FmuRefBinding(VarPowerFlowReferenceType.Vm, "u"),),
+            output_bindings=(FmuRefBinding(VarPowerFlowReferenceType.P, "y"),),
+            output_defaults={VarPowerFlowReferenceType.P: 0.0},
             integration_method=FmuMeIntegrationMethod.EXPLICIT_EULER,
             name="restore_rms_me_template",
         )
@@ -233,8 +233,8 @@ def test_emt_me_device_config_can_restore_runtime_spec() -> None:
             vfactory=VarFactory(name="restore_emt_me_var_factory"),
             config=FmuImportConfig(fmu_path=exported_fmu, extraction_root=output_root),
             input_bindings=tuple(),
-            output_bindings=(FmuRefBinding(reference=VarPowerFlowRefferenceType.i_A, fmu_variable_name="y"),),
-            output_defaults={VarPowerFlowRefferenceType.i_A: 0.0},
+            output_bindings=(FmuRefBinding(reference=VarPowerFlowReferenceType.i_A, fmu_variable_name="y"),),
+            output_defaults={VarPowerFlowReferenceType.i_A: 0.0},
             integration_method=FmuMeIntegrationMethod.EXPLICIT_EULER,
             name="restore_emt_me_template",
         )

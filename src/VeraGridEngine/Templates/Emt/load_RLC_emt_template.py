@@ -12,7 +12,7 @@ from typing import Dict, List, Tuple
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import Block, Expr, Var
-from VeraGridEngine.enumerations import BlockType, DeviceType, ParamPowerFlowRefferenceType, ShuntConnectionType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import BlockType, DeviceType, ParamPowerFlowReferenceType, ShuntConnectionType, VarPowerFlowReferenceType
 
 
 def _get_active_phases(phA: bool, phB: bool, phC: bool) -> List[str]:
@@ -82,80 +82,80 @@ def _get_phase_count_name(base_name: str, phase_count: int, requested_name: str 
     return resolved_name
 
 
-def _get_voltage_reference(phase_label: str) -> VarPowerFlowRefferenceType:
+def _get_voltage_reference(phase_label: str) -> VarPowerFlowReferenceType:
     """Return the EMT voltage reference enum for one phase.
 
     :param phase_label: Phase label ``A``, ``B`` or ``C``.
     :return: Matching external voltage reference enum.
     """
     if phase_label == "A":
-        reference: VarPowerFlowRefferenceType = VarPowerFlowRefferenceType.v_A
+        reference: VarPowerFlowReferenceType = VarPowerFlowReferenceType.v_A
     else:
         if phase_label == "B":
-            reference = VarPowerFlowRefferenceType.v_B
+            reference = VarPowerFlowReferenceType.v_B
         else:
             if phase_label == "C":
-                reference = VarPowerFlowRefferenceType.v_C
+                reference = VarPowerFlowReferenceType.v_C
             else:
                 raise ValueError(f"Unsupported phase label '{phase_label}'")
 
     return reference
 
 
-def _get_current_reference(phase_label: str) -> VarPowerFlowRefferenceType:
+def _get_current_reference(phase_label: str) -> VarPowerFlowReferenceType:
     """Return the EMT injected-current reference enum for one phase.
 
     :param phase_label: Phase label ``A``, ``B`` or ``C``.
     :return: Matching external current reference enum.
     """
     if phase_label == "A":
-        reference: VarPowerFlowRefferenceType = VarPowerFlowRefferenceType.i_A
+        reference: VarPowerFlowReferenceType = VarPowerFlowReferenceType.i_A
     else:
         if phase_label == "B":
-            reference = VarPowerFlowRefferenceType.i_B
+            reference = VarPowerFlowReferenceType.i_B
         else:
             if phase_label == "C":
-                reference = VarPowerFlowRefferenceType.i_C
+                reference = VarPowerFlowReferenceType.i_C
             else:
                 raise ValueError(f"Unsupported phase label '{phase_label}'")
 
     return reference
 
 
-def _get_pl0_reference(phase_label: str) -> ParamPowerFlowRefferenceType:
+def _get_pl0_reference(phase_label: str) -> ParamPowerFlowReferenceType:
     """Return the active-power parameter reference for one phase.
 
     :param phase_label: Phase label ``A``, ``B`` or ``C``.
     :return: Matching API parameter enum.
     """
     if phase_label == "A":
-        reference: ParamPowerFlowRefferenceType = ParamPowerFlowRefferenceType.Pl0_A
+        reference: ParamPowerFlowReferenceType = ParamPowerFlowReferenceType.Pl0_A
     else:
         if phase_label == "B":
-            reference = ParamPowerFlowRefferenceType.Pl0_B
+            reference = ParamPowerFlowReferenceType.Pl0_B
         else:
             if phase_label == "C":
-                reference = ParamPowerFlowRefferenceType.Pl0_C
+                reference = ParamPowerFlowReferenceType.Pl0_C
             else:
                 raise ValueError(f"Unsupported phase label '{phase_label}'")
 
     return reference
 
 
-def _get_ql0_reference(phase_label: str) -> ParamPowerFlowRefferenceType:
+def _get_ql0_reference(phase_label: str) -> ParamPowerFlowReferenceType:
     """Return the reactive-power parameter reference for one phase.
 
     :param phase_label: Phase label ``A``, ``B`` or ``C``.
     :return: Matching API parameter enum.
     """
     if phase_label == "A":
-        reference: ParamPowerFlowRefferenceType = ParamPowerFlowRefferenceType.Ql0_A
+        reference: ParamPowerFlowReferenceType = ParamPowerFlowReferenceType.Ql0_A
     else:
         if phase_label == "B":
-            reference = ParamPowerFlowRefferenceType.Ql0_B
+            reference = ParamPowerFlowReferenceType.Ql0_B
         else:
             if phase_label == "C":
-                reference = ParamPowerFlowRefferenceType.Ql0_C
+                reference = ParamPowerFlowReferenceType.Ql0_C
             else:
                 raise ValueError(f"Unsupported phase label '{phase_label}'")
 
@@ -169,7 +169,7 @@ def _build_external_mapping(
     neutral_current_var: Var | None = None,
     voltage_derivative_vars: Dict[str, Var] | None = None,
     neutral_voltage_derivative_var: Var | None = None,
-) -> Dict[VarPowerFlowRefferenceType, Var | None]:
+) -> Dict[VarPowerFlowReferenceType, Var | None]:
     """Build a full external mapping with inactive phases set to ``None``.
 
     :param voltage_vars: Active terminal voltages keyed by phase label.
@@ -184,33 +184,33 @@ def _build_external_mapping(
 
     # The EMT connection workflow uses a fixed enum contract, so inactive phases
     # must still appear explicitly with ``None`` entries.
-    mapping: Dict[VarPowerFlowRefferenceType, Var | None] = dict({
-        VarPowerFlowRefferenceType.v_N: neutral_voltage_var,
-        VarPowerFlowRefferenceType.v_A: voltage_vars.get("A", None),
-        VarPowerFlowRefferenceType.v_B: voltage_vars.get("B", None),
-        VarPowerFlowRefferenceType.v_C: voltage_vars.get("C", None),
-        VarPowerFlowRefferenceType.P: None,
-        VarPowerFlowRefferenceType.Q: None,
-        VarPowerFlowRefferenceType.P_N: None,
-        VarPowerFlowRefferenceType.Q_N: None,
-        VarPowerFlowRefferenceType.P_A: None,
-        VarPowerFlowRefferenceType.Q_A: None,
-        VarPowerFlowRefferenceType.P_B: None,
-        VarPowerFlowRefferenceType.Q_B: None,
-        VarPowerFlowRefferenceType.P_C: None,
-        VarPowerFlowRefferenceType.Q_C: None,
-        VarPowerFlowRefferenceType.i_N: neutral_current_var,
-        VarPowerFlowRefferenceType.i_A: current_vars.get("A", None),
-        VarPowerFlowRefferenceType.i_B: current_vars.get("B", None),
-        VarPowerFlowRefferenceType.i_C: current_vars.get("C", None),
-        VarPowerFlowRefferenceType.phi_v: None,
-        VarPowerFlowRefferenceType.phi: None,
-        VarPowerFlowRefferenceType.Vpk: None,
-        VarPowerFlowRefferenceType.Ipk: None,
-        VarPowerFlowRefferenceType.d_v_N: neutral_voltage_derivative_var,
-        VarPowerFlowRefferenceType.d_v_A: derivative_vars.get("A", None),
-        VarPowerFlowRefferenceType.d_v_B: derivative_vars.get("B", None),
-        VarPowerFlowRefferenceType.d_v_C: derivative_vars.get("C", None),
+    mapping: Dict[VarPowerFlowReferenceType, Var | None] = dict({
+        VarPowerFlowReferenceType.v_N: neutral_voltage_var,
+        VarPowerFlowReferenceType.v_A: voltage_vars.get("A", None),
+        VarPowerFlowReferenceType.v_B: voltage_vars.get("B", None),
+        VarPowerFlowReferenceType.v_C: voltage_vars.get("C", None),
+        VarPowerFlowReferenceType.P: None,
+        VarPowerFlowReferenceType.Q: None,
+        VarPowerFlowReferenceType.P_N: None,
+        VarPowerFlowReferenceType.Q_N: None,
+        VarPowerFlowReferenceType.P_A: None,
+        VarPowerFlowReferenceType.Q_A: None,
+        VarPowerFlowReferenceType.P_B: None,
+        VarPowerFlowReferenceType.Q_B: None,
+        VarPowerFlowReferenceType.P_C: None,
+        VarPowerFlowReferenceType.Q_C: None,
+        VarPowerFlowReferenceType.i_N: neutral_current_var,
+        VarPowerFlowReferenceType.i_A: current_vars.get("A", None),
+        VarPowerFlowReferenceType.i_B: current_vars.get("B", None),
+        VarPowerFlowReferenceType.i_C: current_vars.get("C", None),
+        VarPowerFlowReferenceType.phi_v: None,
+        VarPowerFlowReferenceType.phi: None,
+        VarPowerFlowReferenceType.Vpk: None,
+        VarPowerFlowReferenceType.Ipk: None,
+        VarPowerFlowReferenceType.d_v_N: neutral_voltage_derivative_var,
+        VarPowerFlowReferenceType.d_v_A: derivative_vars.get("A", None),
+        VarPowerFlowReferenceType.d_v_B: derivative_vars.get("B", None),
+        VarPowerFlowReferenceType.d_v_C: derivative_vars.get("C", None),
     })
 
     return mapping
@@ -295,8 +295,8 @@ def get_grounding_link_emt_template(
     templ.name = name
     templ.block.name = name
 
-    node_voltage_var: Var = vf.add_var(name=f"v_N_{name}", reference=VarPowerFlowRefferenceType.v_N)
-    current_var: Var = vf.add_var(name=f"i_N_{name}", reference=VarPowerFlowRefferenceType.i_N)
+    node_voltage_var: Var = vf.add_var(name=f"v_N_{name}", reference=VarPowerFlowReferenceType.v_N)
+    current_var: Var = vf.add_var(name=f"i_N_{name}", reference=VarPowerFlowReferenceType.i_N)
     ground_node_var: Var = vf.add_var(name=f"v_gnd_{name}")
     ground_template: EmtModelTemplate = get_ground_emt_template(vf=vf, name=name + "_ground")
     vf.add_connections(ground_template.block.in_vars, [ground_node_var])
@@ -541,7 +541,7 @@ def wrap_ground_referenced_load_emt_template(
 
     child_block: Block = core_template.block
     child_block.name = name + "_core"
-    child_external_mapping: Dict[VarPowerFlowRefferenceType, Var | None] = dict(child_block.external_mapping)
+    child_external_mapping: Dict[VarPowerFlowReferenceType, Var | None] = dict(child_block.external_mapping)
     child_block.external_mapping = dict()
 
     phase_voltage_vars: Dict[str, Var] = dict()
@@ -561,7 +561,7 @@ def wrap_ground_referenced_load_emt_template(
     grounding_link_block: Block | None = None
 
     if connection_type in {ShuntConnectionType.NeutralStar, ShuntConnectionType.GroundedStar}:
-        neutral_voltage_var = vf.add_var(name=f"v_N_{name}", reference=VarPowerFlowRefferenceType.v_N)
+        neutral_voltage_var = vf.add_var(name=f"v_N_{name}", reference=VarPowerFlowReferenceType.v_N)
         in_vars.append(neutral_voltage_var)
         neutral_voltage_derivative_var = vf.add_var(name=f"d_v_N_{name}")
         wrapped_template.block.event_dict[neutral_voltage_derivative_var] = vf.add_const(None)
@@ -615,7 +615,7 @@ def wrap_ground_referenced_load_emt_template(
 
     child_phase_label: str
     for child_phase_label in active_phases:
-        derivative_key: VarPowerFlowRefferenceType = VarPowerFlowRefferenceType[f"d_v_{child_phase_label}"]
+        derivative_key: VarPowerFlowReferenceType = VarPowerFlowReferenceType[f"d_v_{child_phase_label}"]
         child_derivative_var = child_external_mapping.get(derivative_key, None)
 
         if child_derivative_var is not None:
@@ -632,7 +632,7 @@ def wrap_ground_referenced_load_emt_template(
         algebraic_eqs.append(total_current_vars[phase_label] - child_block.out_vars[phase_index])
 
     if connection_type in {ShuntConnectionType.NeutralStar, ShuntConnectionType.GroundedStar}:
-        neutral_current_var = vf.add_var(name=f"i_N_{name}", reference=VarPowerFlowRefferenceType.i_N)
+        neutral_current_var = vf.add_var(name=f"i_N_{name}", reference=VarPowerFlowReferenceType.i_N)
         algebraic_vars.append(neutral_current_var)
         out_vars.insert(0, neutral_current_var)
 
@@ -665,18 +665,18 @@ def wrap_ground_referenced_load_emt_template(
         neutral_voltage_derivative_var=neutral_voltage_derivative_var,
     )
 
-    mapping_key: VarPowerFlowRefferenceType
+    mapping_key: VarPowerFlowReferenceType
     mapping_var: Var | None
     for mapping_key, mapping_var in child_external_mapping.items():
         if mapping_key in {
-            VarPowerFlowRefferenceType.v_N,
-            VarPowerFlowRefferenceType.v_A,
-            VarPowerFlowRefferenceType.v_B,
-            VarPowerFlowRefferenceType.v_C,
-            VarPowerFlowRefferenceType.i_N,
-            VarPowerFlowRefferenceType.i_A,
-            VarPowerFlowRefferenceType.i_B,
-            VarPowerFlowRefferenceType.i_C,
+            VarPowerFlowReferenceType.v_N,
+            VarPowerFlowReferenceType.v_A,
+            VarPowerFlowReferenceType.v_B,
+            VarPowerFlowReferenceType.v_C,
+            VarPowerFlowReferenceType.i_N,
+            VarPowerFlowReferenceType.i_A,
+            VarPowerFlowReferenceType.i_B,
+            VarPowerFlowReferenceType.i_C,
         }:
             pass
         else:
@@ -722,7 +722,7 @@ def wrap_delta_referenced_load_emt_template(
 
     child_block: Block = core_template.block
     child_block.name = name + "_core"
-    child_external_mapping: Dict[VarPowerFlowRefferenceType, Var | None] = dict(child_block.external_mapping)
+    child_external_mapping: Dict[VarPowerFlowReferenceType, Var | None] = dict(child_block.external_mapping)
     child_block.external_mapping = dict()
 
     phase_voltage_vars: Dict[str, Var] = dict()
@@ -774,7 +774,7 @@ def wrap_delta_referenced_load_emt_template(
         phase_current_exprs[phase_from] = phase_current_exprs[phase_from] - child_current_var
         phase_current_exprs[phase_to] = phase_current_exprs[phase_to] + child_current_var
 
-        derivative_key = VarPowerFlowRefferenceType[f"d_v_{branch_label[0]}"]
+        derivative_key = VarPowerFlowReferenceType[f"d_v_{branch_label[0]}"]
         child_derivative_var = child_external_mapping.get(derivative_key, None)
         if child_derivative_var is not None:
             child_block.event_dict[child_derivative_var] = phase_voltage_derivative_vars[phase_from] - phase_voltage_derivative_vars[phase_to]
@@ -796,22 +796,22 @@ def wrap_delta_referenced_load_emt_template(
         voltage_derivative_vars=phase_voltage_derivative_vars,
     )
 
-    mapping_key: VarPowerFlowRefferenceType
+    mapping_key: VarPowerFlowReferenceType
     mapping_var: Var | None
     for mapping_key, mapping_var in child_external_mapping.items():
         if mapping_key in {
-            VarPowerFlowRefferenceType.v_N,
-            VarPowerFlowRefferenceType.v_A,
-            VarPowerFlowRefferenceType.v_B,
-            VarPowerFlowRefferenceType.v_C,
-            VarPowerFlowRefferenceType.i_N,
-            VarPowerFlowRefferenceType.i_A,
-            VarPowerFlowRefferenceType.i_B,
-            VarPowerFlowRefferenceType.i_C,
-            VarPowerFlowRefferenceType.d_v_N,
-            VarPowerFlowRefferenceType.d_v_A,
-            VarPowerFlowRefferenceType.d_v_B,
-            VarPowerFlowRefferenceType.d_v_C,
+            VarPowerFlowReferenceType.v_N,
+            VarPowerFlowReferenceType.v_A,
+            VarPowerFlowReferenceType.v_B,
+            VarPowerFlowReferenceType.v_C,
+            VarPowerFlowReferenceType.i_N,
+            VarPowerFlowReferenceType.i_A,
+            VarPowerFlowReferenceType.i_B,
+            VarPowerFlowReferenceType.i_C,
+            VarPowerFlowReferenceType.d_v_N,
+            VarPowerFlowReferenceType.d_v_A,
+            VarPowerFlowReferenceType.d_v_B,
+            VarPowerFlowReferenceType.d_v_C,
         }:
             pass
         else:
@@ -1017,7 +1017,7 @@ def _get_delta_shunt_rlc_combo_emt_template(
     return templ
 
 
-def _build_resistor_api_mapping(pl0_vars: Dict[str, Var]) -> Dict[ParamPowerFlowRefferenceType, Var | None]:
+def _build_resistor_api_mapping(pl0_vars: Dict[str, Var]) -> Dict[ParamPowerFlowReferenceType, Var | None]:
     """Build the API mapping for an EMT shunt resistor.
 
     :param pl0_vars: Active per-phase active-power variables.
@@ -1025,14 +1025,14 @@ def _build_resistor_api_mapping(pl0_vars: Dict[str, Var]) -> Dict[ParamPowerFlow
     """
     # Only active phases publish parameter variables so the generated metadata
     # remains dimensionally aligned with the equations created above.
-    mapping: Dict[ParamPowerFlowRefferenceType, Var | None] = dict({
-        ParamPowerFlowRefferenceType.omega_base: None,
-        ParamPowerFlowRefferenceType.Pl0_A: pl0_vars.get("A", None),
-        ParamPowerFlowRefferenceType.Pl0_B: pl0_vars.get("B", None),
-        ParamPowerFlowRefferenceType.Pl0_C: pl0_vars.get("C", None),
-        ParamPowerFlowRefferenceType.Ql0_A: None,
-        ParamPowerFlowRefferenceType.Ql0_B: None,
-        ParamPowerFlowRefferenceType.Ql0_C: None,
+    mapping: Dict[ParamPowerFlowReferenceType, Var | None] = dict({
+        ParamPowerFlowReferenceType.omega_base: None,
+        ParamPowerFlowReferenceType.Pl0_A: pl0_vars.get("A", None),
+        ParamPowerFlowReferenceType.Pl0_B: pl0_vars.get("B", None),
+        ParamPowerFlowReferenceType.Pl0_C: pl0_vars.get("C", None),
+        ParamPowerFlowReferenceType.Ql0_A: None,
+        ParamPowerFlowReferenceType.Ql0_B: None,
+        ParamPowerFlowReferenceType.Ql0_C: None,
     })
 
     return mapping
@@ -1041,7 +1041,7 @@ def _build_resistor_api_mapping(pl0_vars: Dict[str, Var]) -> Dict[ParamPowerFlow
 def _build_reactive_api_mapping(
     omega_base_var: Var,
     ql0_vars: Dict[str, Var],
-) -> Dict[ParamPowerFlowRefferenceType, Var | None]:
+) -> Dict[ParamPowerFlowReferenceType, Var | None]:
     """Build the API mapping for an EMT shunt inductor or capacitor.
 
     :param omega_base_var: Shared base-frequency variable.
@@ -1050,14 +1050,14 @@ def _build_reactive_api_mapping(
     """
     # The EMT initializer writes base frequency and per-phase reactive power into
     # these enum slots before the symbolic expressions are evaluated.
-    mapping: Dict[ParamPowerFlowRefferenceType, Var | None] = dict({
-        ParamPowerFlowRefferenceType.omega_base: omega_base_var,
-        ParamPowerFlowRefferenceType.Pl0_A: None,
-        ParamPowerFlowRefferenceType.Pl0_B: None,
-        ParamPowerFlowRefferenceType.Pl0_C: None,
-        ParamPowerFlowRefferenceType.Ql0_A: ql0_vars.get("A", None),
-        ParamPowerFlowRefferenceType.Ql0_B: ql0_vars.get("B", None),
-        ParamPowerFlowRefferenceType.Ql0_C: ql0_vars.get("C", None),
+    mapping: Dict[ParamPowerFlowReferenceType, Var | None] = dict({
+        ParamPowerFlowReferenceType.omega_base: omega_base_var,
+        ParamPowerFlowReferenceType.Pl0_A: None,
+        ParamPowerFlowReferenceType.Pl0_B: None,
+        ParamPowerFlowReferenceType.Pl0_C: None,
+        ParamPowerFlowReferenceType.Ql0_A: ql0_vars.get("A", None),
+        ParamPowerFlowReferenceType.Ql0_B: ql0_vars.get("B", None),
+        ParamPowerFlowReferenceType.Ql0_C: ql0_vars.get("C", None),
     })
 
     return mapping
@@ -1415,7 +1415,7 @@ def get_shunt_rlc_combo_emt_template(
     grounding_link_block: Block | None = None
 
     if connection_type in {ShuntConnectionType.NeutralStar, ShuntConnectionType.GroundedStar}:
-        neutral_voltage_var = vf.add_var(name=f"v_N_{name}", reference=VarPowerFlowRefferenceType.v_N)
+        neutral_voltage_var = vf.add_var(name=f"v_N_{name}", reference=VarPowerFlowReferenceType.v_N)
         in_vars.append(neutral_voltage_var)
     else:
         neutral_voltage_var = vf.add_var(name=f"v_N_internal_{name}")
@@ -1462,7 +1462,7 @@ def get_shunt_rlc_combo_emt_template(
             pass
 
         omega_base_var = vf.add_var("w_base_" + name)
-        templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.omega_base] = omega_base_var
+        templ.block.api_obj_mapping[ParamPowerFlowReferenceType.omega_base] = omega_base_var
     else:
         pass
 
@@ -1552,7 +1552,7 @@ def get_shunt_rlc_combo_emt_template(
             neutral_kcl = neutral_kcl + total_current_vars[phase_label]
         algebraic_eqs.append(neutral_kcl)
     elif connection_type in {ShuntConnectionType.NeutralStar, ShuntConnectionType.GroundedStar}:
-        neutral_current_var = vf.add_var(name=f"i_N_{name}", reference=VarPowerFlowRefferenceType.i_N)
+        neutral_current_var = vf.add_var(name=f"i_N_{name}", reference=VarPowerFlowReferenceType.i_N)
         algebraic_vars.append(neutral_current_var)
         out_vars.insert(0, neutral_current_var)
 

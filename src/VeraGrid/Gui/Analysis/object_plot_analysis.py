@@ -950,7 +950,6 @@ def analyze_generators(elements: List[Generator],
                                                         value_low=obj.Qmin,
                                                         value_high=obj.Qmax))
 
-        # elif obj.Qmax == obj.Qmin and obj.is_controlled:
         elif obj.Qmax == obj.Qmin:
 
             if obj.Qmax == 0.0:

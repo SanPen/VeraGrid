@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Utils.Symbolic.block import Block
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
@@ -26,8 +26,8 @@ def VoltageSourceBuild(
     templ = RmsModelTemplate()
     templ.tpe = DeviceType.ExternalGridDevice
 
-    Vm = vfactory.add_var("Vm_" + name, VarPowerFlowRefferenceType.Vm)
-    Va = vfactory.add_var("Va_" + name, VarPowerFlowRefferenceType.Va)
+    Vm = vfactory.add_var("Vm_" + name, VarPowerFlowReferenceType.Vm)
+    Va = vfactory.add_var("Va_" + name, VarPowerFlowReferenceType.Va)
     inputs = [Vm, Va]
 
     P = vfactory.add_var("P")
@@ -73,10 +73,10 @@ def VoltageSourceBuild(
 
     templ.block.name = "Voltage Source"
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.P: P,
-        VarPowerFlowRefferenceType.Q: Q,
-        VarPowerFlowRefferenceType.Vm: Vm,
-        VarPowerFlowRefferenceType.Va: Va,
+        VarPowerFlowReferenceType.P: P,
+        VarPowerFlowReferenceType.Q: Q,
+        VarPowerFlowReferenceType.Vm: Vm,
+        VarPowerFlowReferenceType.Va: Va,
     }
     templ.block.in_vars = inputs
 

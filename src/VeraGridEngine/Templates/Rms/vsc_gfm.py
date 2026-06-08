@@ -6,8 +6,8 @@
 from typing import List
 import math
 
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
-from VeraGridEngine.enumerations import ParamPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
+from VeraGridEngine.enumerations import ParamPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import (Block, Var)
@@ -276,8 +276,8 @@ def build_gfm_converter_model(vfactory: VarFactory, inputs: List[Var],
             id_hat: iq_c - id_g - Cf * omega * vd_f,
         },
         external_mapping={
-            VarPowerFlowRefferenceType.P: P,
-            VarPowerFlowRefferenceType.Q: Q,
+            VarPowerFlowReferenceType.P: P,
+            VarPowerFlowReferenceType.Q: Q,
         }
     )
     res_block.add(core_block)
@@ -342,13 +342,13 @@ def VscGfmBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
         algebraic_vars=[Pt_vsc, Qt_vsc, Pf_vsc],
         event_dict=event_dict,
         external_mapping={
-            VarPowerFlowRefferenceType.Vmt: inputs[0],
-            VarPowerFlowRefferenceType.Vat: inputs[1],
-            VarPowerFlowRefferenceType.Pt: Pt_vsc,
-            VarPowerFlowRefferenceType.Qt: Qt_vsc,
-            VarPowerFlowRefferenceType.Pf: Pf_vsc,
-            VarPowerFlowRefferenceType.Qf: Qf,
-            VarPowerFlowRefferenceType.Vdc: v_dc,
+            VarPowerFlowReferenceType.Vmt: inputs[0],
+            VarPowerFlowReferenceType.Vat: inputs[1],
+            VarPowerFlowReferenceType.Pt: Pt_vsc,
+            VarPowerFlowReferenceType.Qt: Qt_vsc,
+            VarPowerFlowReferenceType.Pf: Pf_vsc,
+            VarPowerFlowReferenceType.Qf: Qf,
+            VarPowerFlowReferenceType.Vdc: v_dc,
         },
         in_vars=inputs,
         init_eqs={
@@ -365,11 +365,11 @@ def VscGfmBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
     vsc_wrapper.init_eqs[Pf_vsc] = -P_conv
 
     vsc_wrapper.api_obj_mapping = {
-        ParamPowerFlowRefferenceType.R1: internals["Rf"],
-        ParamPowerFlowRefferenceType.X1: internals["L"],
-        ParamPowerFlowRefferenceType.alpha1: a0,
-        ParamPowerFlowRefferenceType.alpha2: a1,
-        ParamPowerFlowRefferenceType.alpha3: a2,
+        ParamPowerFlowReferenceType.R1: internals["Rf"],
+        ParamPowerFlowReferenceType.X1: internals["L"],
+        ParamPowerFlowReferenceType.alpha1: a0,
+        ParamPowerFlowReferenceType.alpha2: a1,
+        ParamPowerFlowReferenceType.alpha3: a2,
     }
 
     templ.block = vsc_wrapper

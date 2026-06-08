@@ -3,11 +3,11 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 import numpy as np
-from VeraGridEngine.enumerations import DeviceType, TapPhaseControl, TapModuleControl, WindingType, ParamPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, TapPhaseControl, TapModuleControl, WindingType, ParamPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Branches.transformer import Transformer2W
-from VeraGridEngine.Utils.Symbolic.block import Block, VarPowerFlowRefferenceType
+from VeraGridEngine.Utils.Symbolic.block import Block, VarPowerFlowReferenceType
 from VeraGridEngine.Utils.Symbolic.symbolic import sin, cos
 from VeraGridEngine.Utils.Symbolic.block_helpers import tf_to_block, tf_to_diffblock_with_output, discrete_control_block
 from VeraGridEngine.enumerations import WindingsConnection
@@ -83,10 +83,10 @@ class TrafoRmsTemplate(RmsModelTemplate):
             #print(f"vtap  t is {vtap_t}")
             #print(f'ys is {ys} ysh is {ysh}')
 
-            Vmf = trafo.bus_from.rms_model.E(VarPowerFlowRefferenceType.Vm)
-            Vaf = trafo.bus_from.rms_model.E(VarPowerFlowRefferenceType.Va)
-            Vmt = trafo.bus_to.rms_model.E(VarPowerFlowRefferenceType.Vm)
-            Vat = trafo.bus_to.rms_model.E(VarPowerFlowRefferenceType.Va)
+            Vmf = trafo.bus_from.rms_model.E(VarPowerFlowReferenceType.Vm)
+            Vaf = trafo.bus_from.rms_model.E(VarPowerFlowReferenceType.Va)
+            Vmt = trafo.bus_to.rms_model.E(VarPowerFlowReferenceType.Vm)
+            Vat = trafo.bus_to.rms_model.E(VarPowerFlowReferenceType.Va)
 
             # Calculate phase displacement matching transformer_admittance logic
             # Use conn attribute (preserves user intent) instead of conn_f/conn_t (may be overwritten by template)
@@ -127,10 +127,10 @@ class TrafoRmsTemplate(RmsModelTemplate):
             )
 
             block.external_mapping = {
-                VarPowerFlowRefferenceType.Pf: Pf,
-                VarPowerFlowRefferenceType.Pt: Pt,
-                VarPowerFlowRefferenceType.Qf: Qf,
-                VarPowerFlowRefferenceType.Qt: Qt,
+                VarPowerFlowReferenceType.Pf: Pf,
+                VarPowerFlowReferenceType.Pt: Pt,
+                VarPowerFlowReferenceType.Qf: Qf,
+                VarPowerFlowReferenceType.Qt: Qt,
             }
 
             block.parameters[gt] = vf.add_const(ys.real)
@@ -246,10 +246,10 @@ class TrafoPhasorRmsTemplate(RmsModelTemplate):
 
         self.tpe: DeviceType = DeviceType.TransformerTypeDevice
         if trafo.rms_model.empty():
-            Vrf = vf.add_var("Vrf_" + name, VarPowerFlowRefferenceType.Vrf)
-            Vif = vf.add_var("Vif_" + name, VarPowerFlowRefferenceType.Vif)
-            Vrt = vf.add_var("Vrt_" + name, VarPowerFlowRefferenceType.Vrt)
-            Vit = vf.add_var("Vit_" + name, VarPowerFlowRefferenceType.Vit)
+            Vrf = vf.add_var("Vrf_" + name, VarPowerFlowReferenceType.Vrf)
+            Vif = vf.add_var("Vif_" + name, VarPowerFlowReferenceType.Vif)
+            Vrt = vf.add_var("Vrt_" + name, VarPowerFlowReferenceType.Vrt)
+            Vit = vf.add_var("Vit_" + name, VarPowerFlowReferenceType.Vit)
 
             Irf = vf.add_var("Irf")
             Iif = vf.add_var("Iif")
@@ -311,20 +311,20 @@ class TrafoPhasorRmsTemplate(RmsModelTemplate):
             )
 
             block.external_mapping = {
-                VarPowerFlowRefferenceType.Vrf: Vrf,
-                VarPowerFlowRefferenceType.Vif: Vif,
-                VarPowerFlowRefferenceType.Vrt: Vrt,
-                VarPowerFlowRefferenceType.Vit: Vit,
-                VarPowerFlowRefferenceType.Irf: Irf,
-                VarPowerFlowRefferenceType.Iif: Iif,
-                VarPowerFlowRefferenceType.Irt: Irt,
-                VarPowerFlowRefferenceType.Iit: Iit,
+                VarPowerFlowReferenceType.Vrf: Vrf,
+                VarPowerFlowReferenceType.Vif: Vif,
+                VarPowerFlowReferenceType.Vrt: Vrt,
+                VarPowerFlowReferenceType.Vit: Vit,
+                VarPowerFlowReferenceType.Irf: Irf,
+                VarPowerFlowReferenceType.Iif: Iif,
+                VarPowerFlowReferenceType.Irt: Irt,
+                VarPowerFlowReferenceType.Iit: Iit,
             }
 
             block.api_obj_mapping = {
-                ParamPowerFlowRefferenceType.g: gt,
-                ParamPowerFlowRefferenceType.b: bt,
-                ParamPowerFlowRefferenceType.bsh: bmu,
+                ParamPowerFlowReferenceType.g: gt,
+                ParamPowerFlowReferenceType.b: bt,
+                ParamPowerFlowReferenceType.bsh: bmu,
             }
 
             block.parameters[gt] = vf.add_const(ys.real)
@@ -344,7 +344,7 @@ def initialize_trafo_rms(trafo: Transformer2W, vf: VarFactory, Sbase: float = 10
     """
     
     if not trafo.bus_from.rms_model.empty():
-        use_phasor_template = any(v.ref == VarPowerFlowRefferenceType.Vr for v in trafo.bus_from.rms_model.out_vars)
+        use_phasor_template = any(v.ref == VarPowerFlowReferenceType.Vr for v in trafo.bus_from.rms_model.out_vars)
 
     if use_phasor_template:
         templ = TrafoPhasorRmsTemplate(vf=vf, trafo=trafo)

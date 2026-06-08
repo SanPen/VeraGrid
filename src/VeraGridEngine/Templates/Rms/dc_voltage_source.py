@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
-from VeraGridEngine.Utils.Symbolic.block import (Block, VarPowerFlowRefferenceType)
+from VeraGridEngine.Utils.Symbolic.block import (Block, VarPowerFlowReferenceType)
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic import symbolic as sym
 
@@ -68,9 +68,9 @@ def DCVoltageSource(vfactory: VarFactory, Vdc, name: str = "") -> RmsModelTempla
             Vpv: Vpv0,
         },
         external_mapping={
-            VarPowerFlowRefferenceType.P: Pdc,
-            VarPowerFlowRefferenceType.Idc: Idc,
-            VarPowerFlowRefferenceType.Vdc: Vdc,
+            VarPowerFlowReferenceType.P: Pdc,
+            VarPowerFlowReferenceType.Idc: Idc,
+            VarPowerFlowReferenceType.Vdc: Vdc,
         },
     )
     templ.block = dc_block
@@ -139,9 +139,9 @@ def DCCurrentSource(vfactory: VarFactory, Vdc, name: str = "") -> RmsModelTempla
             Vpv0: Vdc + Rpv * (Pdc / Vdc),
         },
         external_mapping={
-            VarPowerFlowRefferenceType.P: Pdc,
-            VarPowerFlowRefferenceType.Idc: Idc,
-            VarPowerFlowRefferenceType.Vdc: Vdc,
+            VarPowerFlowReferenceType.P: Pdc,
+            VarPowerFlowReferenceType.Idc: Idc,
+            VarPowerFlowReferenceType.Vdc: Vdc,
         },
     )
     templ.block = dc_block
@@ -202,9 +202,9 @@ def DCPowerLimitedSource(vfactory: VarFactory, Vdc, name: str = "") -> RmsModelT
             Pdc_ref0: Pdc,
         },
         external_mapping={
-            VarPowerFlowRefferenceType.P: Pdc,
-            VarPowerFlowRefferenceType.Idc: Idc,
-            VarPowerFlowRefferenceType.Vdc: Vdc,
+            VarPowerFlowReferenceType.P: Pdc,
+            VarPowerFlowReferenceType.Idc: Idc,
+            VarPowerFlowReferenceType.Vdc: Vdc,
         },
     )
 
@@ -290,9 +290,9 @@ def DCPVSourceAveraged(vfactory: VarFactory, Vdc, name: str = "") -> RmsModelTem
             Idc: Idc_src,
         },
         external_mapping={
-            VarPowerFlowRefferenceType.P: Pdc,
-            VarPowerFlowRefferenceType.Idc: Idc,
-            VarPowerFlowRefferenceType.Vdc: Vdc,
+            VarPowerFlowReferenceType.P: Pdc,
+            VarPowerFlowReferenceType.Idc: Idc,
+            VarPowerFlowReferenceType.Vdc: Vdc,
         },
     )
     templ.block = dc_block
@@ -392,9 +392,9 @@ def DCSimpleSourceAveraged(vfactory: VarFactory, Vdc, name: str = "") -> RmsMode
             Idc_conv: Pdc / (Vdc + eps_v)
         },
         external_mapping={
-            VarPowerFlowRefferenceType.P: Pdc,
-            VarPowerFlowRefferenceType.Idc: Idc_conv,
-            VarPowerFlowRefferenceType.Vdc: Vdc,
+            VarPowerFlowReferenceType.P: Pdc,
+            VarPowerFlowReferenceType.Idc: Idc_conv,
+            VarPowerFlowReferenceType.Vdc: Vdc,
         },
     )
 

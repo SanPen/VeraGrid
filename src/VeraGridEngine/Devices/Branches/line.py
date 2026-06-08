@@ -233,7 +233,8 @@ class Line(BranchParent):
                  idtag=None,
                  code='',
                  r=1e-20, x=0.00001, b=1e-20,
-                 rate=1.0,
+                 design_rate: float = 9999.0,
+                 rate=9999.0,
                  active=True,
                  tolerance=0.0,
                  cost=100.0,
@@ -267,6 +268,7 @@ class Line(BranchParent):
         :param r: Branch resistance in per unit
         :param x: Branch reactance in per unit
         :param b: Branch shunt susceptance in per unit
+        :param design_rate: Design rate (MVA)
         :param rate: Branch rate in MVA
         :param active: Is the branch active?
         :param tolerance: Tolerance specified for the branch impedance in %
@@ -304,6 +306,7 @@ class Line(BranchParent):
                               bus_to=bus_to,
                               active=active,
                               reducible=False,
+                              design_rate=design_rate,
                               rate=rate,
                               contingency_factor=contingency_factor,
                               protection_rating_factor=protection_rating_factor,
@@ -359,7 +362,6 @@ class Line(BranchParent):
 
         # Line locations
         self._locations: LineLocations = LineLocations()
-
 
     @property
     def R(self):

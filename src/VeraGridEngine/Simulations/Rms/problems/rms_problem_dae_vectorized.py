@@ -9,7 +9,7 @@ import pandas as pd
 import scipy.sparse as sp
 
 
-from VeraGridEngine.enumerations import ParamPowerFlowRefferenceType, DeviceType, DynamicEventTransitionType
+from VeraGridEngine.enumerations import ParamPowerFlowReferenceType, DeviceType, DynamicEventTransitionType
 from VeraGridEngine.Devices import MultiCircuit
 from VeraGridEngine.Simulations.driver_template import DummySignal
 from VeraGridEngine.Utils.Symbolic.symbolic import (Var, Const, Expr, piecewise, get_expression_vars, heaviside,
@@ -17,7 +17,7 @@ from VeraGridEngine.Utils.Symbolic.symbolic import (Var, Const, Expr, piecewise,
 from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicParamsVector, SymbolicDerivative, SymbolicJacobian
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic_io import block_deep_copy
-from VeraGridEngine.enumerations import VarPowerFlowRefferenceType, RmsInitializationMethod
+from VeraGridEngine.enumerations import VarPowerFlowReferenceType, RmsInitializationMethod
 from VeraGridEngine.basic_structures import Vec, ObjVec, BoolVec, Logger
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowResults
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
@@ -30,7 +30,7 @@ from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Devices.Events.rms_event import RmsEvent
 from VeraGridEngine.Devices.Branches.transformer import Transformer2W
-from VeraGridEngine.Utils.Symbolic.jit_compiler import RMSCompiler
+from VeraGridEngine.Utils.Symbolic.jit_compiler import RMSCompiler, RMSCompilerVec
 from VeraGridEngine.Utils.Symbolic.bus_rms_template import get_bus_rms_algebraic_vars
 from VeraGridEngine.Utils.procedural_logic import build_boundary_updater_from_block
 from VeraGridEngine.IO.fmu.importer.experimental_cs import (
@@ -54,22 +54,22 @@ from VeraGridEngine.Utils.Symbolic.static_parameter_mapping_rms import (
 from VeraGridEngine.Utils.procedural_logic import BlockProceduralLogicUpdater
 from VeraGridEngine.Utils.rms_models_types import build_equivalence_classes_dict
 
-def assign_static_parameters(elm:Any, parameter_reference: ParamPowerFlowRefferenceType) -> Const:
+def assign_static_parameters(elm:Any, parameter_reference: ParamPowerFlowReferenceType) -> Const:
     if elm.device_type == DeviceType.LineDevice:
         return assign_line_static_parameters(elm, parameter_reference)
     else:
         raise ValueError(f"Not possible to assign static values to {elm.device_type}")
 
-def assign_line_static_parameters(elm: Any, parameter_reference: ParamPowerFlowRefferenceType) -> Const:
-    if parameter_reference == ParamPowerFlowRefferenceType.g:
+def assign_line_static_parameters(elm: Any, parameter_reference: ParamPowerFlowReferenceType) -> Const:
+    if parameter_reference == ParamPowerFlowReferenceType.g:
         return Const(float(elm.R / (elm.R ** 2 + elm.X ** 2)))
-    if parameter_reference == ParamPowerFlowRefferenceType.b:
+    if parameter_reference == ParamPowerFlowReferenceType.b:
         return Const(float(-elm.X / (elm.R ** 2 + elm.X ** 2)))
-    if parameter_reference == ParamPowerFlowRefferenceType.bsh:
+    if parameter_reference == ParamPowerFlowReferenceType.bsh:
         return Const(elm.B)
-    if parameter_reference == ParamPowerFlowRefferenceType.r:
+    if parameter_reference == ParamPowerFlowReferenceType.r:
         return Const(elm.R)
-    if parameter_reference == ParamPowerFlowRefferenceType.l:
+    if parameter_reference == ParamPowerFlowReferenceType.l:
         return Const(elm.X)
     else:
         raise ValueError("parameter reference expression missing")
@@ -278,7 +278,11 @@ def setQ(Q: ObjVec, Q_used: BoolVec, k: int, val: object):
         Q[k] += val
 
 
-class RmsProblemDae(RmsProblemTemplate):
+def get_all_uids_from_block_composition_dict(block_composition_dict: Dict[int, List[int]]) -> List[int]:
+    return [uid for uids in block_composition_dict.values() for uid in uids]
+
+
+class RmsProblemDaeVec(RmsProblemTemplate):
     """
     DAE (Differential-Algebraic Equation) class to store and manage.
 
@@ -291,6 +295,10 @@ class RmsProblemDae(RmsProblemTemplate):
     VARS_NAME = "vrs"
     VARS_BUS_VM_NAME = "varsbusvm"
     VARS_BUS_VA_NAME = "varsbusva"
+    VARS_BUS_VMF_NAME = "varsbusvmf"
+    VARS_BUS_VAF_NAME = "varsbusvaf"
+    VARS_BUS_VMT_NAME = "varsbusvmt"
+    VARS_BUS_VAT_NAME = "varsbusvat"
     VARIABLE_PARAMS_NAME = "vprms"
     CONSTANT_PARAMS_NAME = "cprms"
     DIFF_NAME = "diff"
@@ -326,12 +334,40 @@ class RmsProblemDae(RmsProblemTemplate):
         self._algebraic_vars: List[Var] = list()
         self._algebraic_eqs: List[Expr] = list()
 
+        # for vectorization, we need to compute blocks separately and also balance equations
+        self._balance_equations: List[Expr] = list()
+
         # for vectorization, a dict of [equivalence class uid, list of expressions], every item corresponds to a type of model
         # when precessing the first model op a type the dictionaries will be filled.
         self._algebraic_eqs_equiv_class_dict: Dict[int, List[Expr]] = dict()
         self._algebraic_vars_equiv_class_dict: Dict[int, List[Var]] = dict()
         self._state_eqs_equiv_class_dict: Dict[int, List[Expr]] = dict()
         self._state_vars_equiv_class_dict: Dict[int, List[Var]] = dict()
+        self._diff_vars_equiv_class_dict: Dict[int, List[Var]] = dict()
+        self._constant_parameters_equiv_class_dict: Dict[int, List[Var]] = dict()
+        self._variable_parameters_equiv_class_dict: Dict[int, List[Var]] = dict()
+
+        # imput matrices by model for vectorization
+        self._input_matrices_by_model: Dict[int, List[Vec]] = dict()
+
+        # precomputed gather indices for vectorized input assembly
+        self._x_gather_idx: Dict[int, np.ndarray] = dict()
+        self._dx_gather_idx: Dict[int, np.ndarray] = dict()
+        self._vp_gather_idx: Dict[int, np.ndarray] = dict()
+        self._cp_gather_idx: Dict[int, np.ndarray] = dict()
+
+        # Jacobian vectorization: per-type column offsets for global assembly
+        self._jac_state_col_off: Dict[int, np.ndarray] = dict()
+        self._jac_algeb_col_off: Dict[int, np.ndarray] = dict()
+
+        # Global Jacobian templates and scatter maps for Vec assembly
+        # Each entry: (csc_template, scatter_map)
+        # scatter_map[model_type] -> array (nnz_type, n_inst) of global data indices
+        self._jac_global_data: Dict[str, Tuple[sp.csc_matrix, Dict[int, np.ndarray]]] = dict()
+
+        # mapping from model uid → global start index of its state equations
+        self._model_state_eq_start_idx: Dict[int, int] = dict()
+        self._model_algebraic_eq_start_idx: Dict[int, int] = dict()
 
         # when vectorizing this will be a list of lists
         self._state_vars: List[Var] = list()
@@ -365,6 +401,17 @@ class RmsProblemDae(RmsProblemTemplate):
         self._mode_runtime_initialized_uids: Set[int] = set()
         self._procedural_logic_updater: BlockProceduralLogicUpdater | None = None
 
+        self._rhs_state_fn_by_types: Dict[int, Callable[[Vec, Vec, Vec, Vec], Vec]] = dict()
+        self._rhs_algeb_fn_by_types: Dict[int, Callable[[Vec, Vec, Vec, Vec], Vec]] = dict()
+        self._rhs_algeb_energy_balance_fn: Callable[[Vec, Vec, Vec, Vec], Vec] | None = None
+
+        self._j11_fn_by_types: Dict[int,Callable[[Vec, Vec, Vec, Vec, float], sp.csc_matrix]] = dict()
+        self._j12_fn_by_types: Dict[int,Callable[[Vec, Vec, Vec, Vec, float], sp.csc_matrix]] = dict()
+        self._j21_fn_by_types: Dict[int,Callable[[Vec, Vec, Vec, Vec, float], sp.csc_matrix]] = dict()
+        self._j22_fn_by_types: Dict[int,Callable[[Vec, Vec, Vec, Vec, float], sp.csc_matrix]] = dict()
+
+        self._jbalance_fn: Callable[[Vec, Vec, Vec, Vec, float], sp.csc_matrix] | None = None
+        self._jbalance_state_fn: Callable[[Vec, Vec, Vec, Vec, float], sp.csc_matrix] | None = None
         # function pointers
         self._derivative_fn: SymbolicDerivative | None = None
         self._event_params_fn: SymbolicParamsVector | None = None
@@ -401,9 +448,21 @@ class RmsProblemDae(RmsProblemTemplate):
         self._compiler_names_dict_vect: Dict[int, Dict[int, str]]= dict()
         self._alias_names_dict_vect: Dict[int, Dict[int, str]]= dict()
 
+        # per-class variable/parameter counters (indices restart from 0 for each class)
+        self._class_n_vars: Dict[int, int] = dict()
+        self._class_n_diff: Dict[int, int] = dict()
+        self._class_n_params: Dict[int, int] = dict()
+        self._class_n_event_params: Dict[int, int] = dict()
+
         # dictionaries for compilation names
         self._compiler_names_dict: Dict[int, str] = dict()
         self._alias_names_dict: Dict[int, str] = dict()
+
+        # dictionaries for variable position in the variables arrays vectorized
+        self._uid2idx_vars_vec: Dict[int, Dict[int, int]] = dict()
+        self._uid2idx_event_params_vec: Dict[int, Dict[int, int]] = dict()
+        self._uid2idx_params_vec: Dict[int, Dict[int, int]] = dict()
+        self._uid2idx_diff_vec: Dict[int, Dict[int, int]] = dict()
 
         # dictionaries for variable position in the variables arrays
         self._uid2idx_vars: Dict[int, int] = dict()
@@ -446,8 +505,11 @@ class RmsProblemDae(RmsProblemTemplate):
         self._n_event_params = 0
         self._n_diff = 0
 
-        self.equivalence_dict, self.variable_equivalence_dict = build_equivalence_classes_dict(self.grid)
+        print("starting to type models")
 
+        self.equivalence_dict, self.variables_equivalence_dict, self.block_composition_dict = build_equivalence_classes_dict(self.grid)
+
+        print("typing models done!")
         ######################################## Initialize devices ########################################
 
         # initialize buses
@@ -457,18 +519,19 @@ class RmsProblemDae(RmsProblemTemplate):
 
             bus_dict[elm] = bus_num
 
+
             self.add_variables_to_compilation_dicts(elm, elm.rms_model)
 
             # add init values from powerflow to initial guess
             if elm.is_dc:
                 # DC bus: use Vdc (magnitude) - angle is not applicable for DC
-                self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Vdc,
+                self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Vdc,
                                     float(np.abs(self.power_flow_results.voltage[bus_num])))
             else:
                 # AC bus: use Vm and Va
-                self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Vm,
+                self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Vm,
                                     float(np.abs(self.power_flow_results.voltage[bus_num])))
-                self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Va,
+                self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Va,
                                     float(np.angle(self.power_flow_results.voltage[bus_num])))
 
             # add model to system block
@@ -490,17 +553,17 @@ class RmsProblemDae(RmsProblemTemplate):
                                                             logger=None)
 
                 Vmf, Vaf = get_bus_rms_algebraic_vars(elm.bus_from.rms_model)
-                Vmt, Vat = get_bus_rms_algebraic_vars(elm.bus_to.rms_model)
+
 
                 self.add_variables_to_compilation_dicts(elm, elm.rms_model)
                 register_rms_fmu_cs_device(self, elm, elm.rms_model)
                 register_rms_fmu_me_device(self, elm, elm.rms_model)
 
                 # add init values from powerflow to initial guess
-                self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Pf, self.Sf[branch_num].real)
-                self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Qf, self.Sf[branch_num].imag)
-                self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Pt, self.St[branch_num].real)
-                self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Qt, self.St[branch_num].imag)
+                self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Pf, self.Sf[branch_num].real)
+                self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Qf, self.Sf[branch_num].imag)
+                self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Pt, self.St[branch_num].real)
+                self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Qt, self.St[branch_num].imag)
 
                 f_idx = bus_dict[elm.bus_from]
                 t_idx = bus_dict[elm.bus_to]
@@ -509,7 +572,7 @@ class RmsProblemDae(RmsProblemTemplate):
                 branch_bus_p[t_idx] += self.St[branch_num].real
                 branch_bus_q[t_idx] += self.St[branch_num].imag
 
-                if VarPowerFlowRefferenceType.If_dc in elm.rms_model.external_mapping and Vmf is not None:
+                if VarPowerFlowReferenceType.If_dc in elm.rms_model.external_mapping and Vmf is not None:
                     if Vmf.uid in self.uid2idx_vars:
                         vmf_idx = self.uid2idx_vars[Vmf.uid]
                         if vmf_idx in self.init_guess:
@@ -518,7 +581,7 @@ class RmsProblemDae(RmsProblemTemplate):
                             if abs(vmf0) > 1e-9:
                                 self.set_init_guess(
                                     elm.rms_model,
-                                    VarPowerFlowRefferenceType.If_dc,
+                                    VarPowerFlowReferenceType.If_dc,
                                     self.Sf[branch_num].real / vmf0,
                                 )
                         else:
@@ -591,14 +654,14 @@ class RmsProblemDae(RmsProblemTemplate):
                 f = bus_dict[elm.bus_from]
                 t = bus_dict[elm.bus_to]
 
-                setP(P, P_used, f, -elm.rms_model.E(VarPowerFlowRefferenceType.Pf))
-                setP(P, P_used, t, -elm.rms_model.E(VarPowerFlowRefferenceType.Pt))
-                if not elm.bus_from.is_dc and VarPowerFlowRefferenceType.Qf in elm.rms_model.external_mapping:
-                    setQ(Q, Q_used, f, -elm.rms_model.E(VarPowerFlowRefferenceType.Qf))
+                setP(P, P_used, f, -elm.rms_model.E(VarPowerFlowReferenceType.Pf))
+                setP(P, P_used, t, -elm.rms_model.E(VarPowerFlowReferenceType.Pt))
+                if not elm.bus_from.is_dc and VarPowerFlowReferenceType.Qf in elm.rms_model.external_mapping:
+                    setQ(Q, Q_used, f, -elm.rms_model.E(VarPowerFlowReferenceType.Qf))
                 else:
                     pass
-                if not elm.bus_to.is_dc and VarPowerFlowRefferenceType.Qt in elm.rms_model.external_mapping:
-                    setQ(Q, Q_used, t, -elm.rms_model.E(VarPowerFlowRefferenceType.Qt))
+                if not elm.bus_to.is_dc and VarPowerFlowReferenceType.Qt in elm.rms_model.external_mapping:
+                    setQ(Q, Q_used, t, -elm.rms_model.E(VarPowerFlowReferenceType.Qt))
                 else:
                     pass
         # Populating VSCs init guess
@@ -634,19 +697,19 @@ class RmsProblemDae(RmsProblemTemplate):
                     if np.isfinite(it_mag) and it_mag > 0.0:
                         im_init = it_mag
 
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pf, Sf_vsc)
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pt, pt_init)
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Qt, qt_init)
-                if VarPowerFlowRefferenceType.Im in mdl.external_mapping:
+                self.set_init_guess(mdl, VarPowerFlowReferenceType.Pf, Sf_vsc)
+                self.set_init_guess(mdl, VarPowerFlowReferenceType.Pt, pt_init)
+                self.set_init_guess(mdl, VarPowerFlowReferenceType.Qt, qt_init)
+                if VarPowerFlowReferenceType.Im in mdl.external_mapping:
                     im_init = float(np.abs(self.power_flow_results.It_vsc[i]) / self.grid.Sbase)
-                    self.set_init_guess(mdl, VarPowerFlowRefferenceType.Im, im_init)
+                    self.set_init_guess(mdl, VarPowerFlowReferenceType.Im, im_init)
                 else:
                     pass
 
-                setP(P, P_used, f, -mdl.E(VarPowerFlowRefferenceType.Pf))
-                setP(P, P_used, t, -mdl.E(VarPowerFlowRefferenceType.Pt))
-                if VarPowerFlowRefferenceType.Qt in mdl.external_mapping and not elm.bus_to.is_dc:
-                    setQ(Q, Q_used, t, -mdl.E(VarPowerFlowRefferenceType.Qt))
+                setP(P, P_used, f, -mdl.E(VarPowerFlowReferenceType.Pf))
+                setP(P, P_used, t, -mdl.E(VarPowerFlowReferenceType.Pt))
+                if VarPowerFlowReferenceType.Qt in mdl.external_mapping and not elm.bus_to.is_dc:
+                    setQ(Q, Q_used, t, -mdl.E(VarPowerFlowReferenceType.Qt))
                 else:
                     pass
                 self.sys_block.add(mdl)
@@ -662,18 +725,18 @@ class RmsProblemDae(RmsProblemTemplate):
 
                 self.add_variables_to_compilation_dicts(elm, mdl)
 
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pf_hvdc,
+                self.set_init_guess(mdl, VarPowerFlowReferenceType.Pf_hvdc,
                                     self.power_flow_results.Pf_hvdc[i] / self.grid.Sbase)
 
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pt_hvdc,
+                self.set_init_guess(mdl, VarPowerFlowReferenceType.Pt_hvdc,
                                     self.power_flow_results.Pt_hvdc[i] / self.grid.Sbase)
 
                 f = bus_dict[elm.bus_from]
                 t = bus_dict[elm.bus_to]
-                setP(P, P_used, f, -mdl.E(VarPowerFlowRefferenceType.Pf))
-                setP(P, P_used, t, -mdl.E(VarPowerFlowRefferenceType.Pt))
-                setQ(Q, Q_used, f, -mdl.E(VarPowerFlowRefferenceType.Qf))
-                setQ(Q, Q_used, t, -mdl.E(VarPowerFlowRefferenceType.Qt))
+                setP(P, P_used, f, -mdl.E(VarPowerFlowReferenceType.Pf))
+                setP(P, P_used, t, -mdl.E(VarPowerFlowReferenceType.Pt))
+                setQ(Q, Q_used, f, -mdl.E(VarPowerFlowReferenceType.Qf))
+                setQ(Q, Q_used, t, -mdl.E(VarPowerFlowReferenceType.Qt))
                 self.sys_block.add(mdl)
 
         # initialize injections
@@ -817,7 +880,7 @@ class RmsProblemDae(RmsProblemTemplate):
                 register_rms_fmu_me_device(self, elm, elm.rms_model)
 
                 if elm.bus.is_dc:
-                    self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.P,
+                    self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.P,
                                         np.real(self.power_flow_results.Sbus[bus_index] / grid.Sbase))
                 else:
                     Vbus = self.power_flow_results.voltage[bus_index]
@@ -864,16 +927,16 @@ class RmsProblemDae(RmsProblemTemplate):
                     else:
                         Sdev = self.power_flow_results.Sbus[bus_index] / grid.Sbase
 
-                    self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.P,
+                    self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.P,
                                         Sdev.real)
-                    self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Q,
+                    self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Q,
                                         Sdev.imag)
 
                 k = bus_dict[elm.bus]
-                if VarPowerFlowRefferenceType.P in elm.rms_model.external_mapping:
-                    setP(P, P_used, k, elm.rms_model.E(VarPowerFlowRefferenceType.P))
-                if VarPowerFlowRefferenceType.Q in elm.rms_model.external_mapping:
-                    setQ(Q, Q_used, k, elm.rms_model.E(VarPowerFlowRefferenceType.Q))
+                if VarPowerFlowReferenceType.P in elm.rms_model.external_mapping:
+                    setP(P, P_used, k, elm.rms_model.E(VarPowerFlowReferenceType.P))
+                if VarPowerFlowReferenceType.Q in elm.rms_model.external_mapping:
+                    setQ(Q, Q_used, k, elm.rms_model.E(VarPowerFlowReferenceType.Q))
 
                 if self.options.initialization_method == RmsInitializationMethod.Explicit:
 
@@ -964,7 +1027,8 @@ class RmsProblemDae(RmsProblemTemplate):
                 self.sys_block.add(elm.rms_model)
 
         total_init_explicit_time += time.perf_counter() - t0
-        print(f"\nTotal time explicit initialization: {total_init_explicit_time:.6f} seconds")
+        # print(f"\nTotal time explicit initialization: {total_init_explicit_time:.6f} seconds")
+        self.logger.add_info("Total time explicit initialization", value=total_init_explicit_time)
         if self.progress_signal is not None:
             self.progress_signal.emit(10)
 
@@ -999,18 +1063,19 @@ class RmsProblemDae(RmsProblemTemplate):
         # add the nodal balance equations
         ac_virtual_buses = [elm.bus_to.idtag for elm in grid.get_vsc()]
         for i, elm in enumerate(self.grid.buses):
-            mdl = block_deep_copy(elm.rms_model, grid.var_factory)
-            if len(mdl.algebraic_eqs) == 0:
-                if not P_used[i] and not Q_used[i]:
-                    self.logger.add_error("Isolated bus", value=i)
+            if not P_used[i] and not Q_used[i]:
+                self.logger.add_error("Isolated bus", value=i)
+            else:
+                if elm.is_dc:
+                    self._algebraic_eqs.append(P[i])
+                elif (elm.idtag in ac_virtual_buses):
+                    self._algebraic_eqs.append(P[i])
                 else:
-                    if elm.is_dc:
-                        self._algebraic_eqs.append(P[i])
-                    elif (elm.idtag in ac_virtual_buses):
-                        self._algebraic_eqs.append(P[i])
-                    else:
-                        self._algebraic_eqs.append(Q[i])
-                        self._algebraic_eqs.append(P[i])
+                    self._algebraic_eqs.append(Q[i])
+                    self._algebraic_eqs.append(P[i])
+                    # vectorization
+                    self._balance_equations.append(Q[i])
+                    self._balance_equations.append(P[i])
 
         # We define the parameter dt and delta
         self._dt = Var(name='dt')
@@ -1035,6 +1100,8 @@ class RmsProblemDae(RmsProblemTemplate):
         self._alias_names_dict[self._delta.uid] = f"{self.VARIABLE_PARAMS_NAME}_{self._n_event_params}"
         self._uid2idx_event_params[self._delta.uid] = self._n_event_params
         self._n_event_params += 1
+
+
 
         self._runtime_all_eqs_source0 = list(self._runtime_all_eqs_source)
 
@@ -1267,7 +1334,7 @@ class RmsProblemDae(RmsProblemTemplate):
         timings = dict()
         # print("Compiling RMS using JIT Native Compiler...")
         t0 = _tic()
-        rms_compiler = RMSCompiler(
+        rms_compiler_all_models = RMSCompiler(
             variables=self._state_algeb_vars,
             diff_vars=self._diff_vars,
             v_params=self._variable_parameters,
@@ -1278,11 +1345,11 @@ class RmsProblemDae(RmsProblemTemplate):
         timings["Compiler Setup"] = _toc(t0)
 
         t0 = _tic()
-        self._derivative_fn = rms_compiler.compile_derivative_fn(self._uid2idx_vars)
+        self._derivative_fn = rms_compiler_all_models.compile_derivative_fn(self._uid2idx_vars)
         timings["SymbolicDerivative"] = _toc(t0)
 
         t0 = _tic()
-        self._event_params_fn = rms_compiler.compile_event_params_fn(
+        self._event_params_fn = rms_compiler_all_models.compile_event_params_fn(
             eqs=self._event_parameters_eqs,
             alias_names_dict=self._alias_names_dict,
             EVENT_PARAMS_NAME=self.VARIABLE_PARAMS_NAME,
@@ -1291,34 +1358,97 @@ class RmsProblemDae(RmsProblemTemplate):
         timings["Event parameters"] = _toc(t0)
 
         t0 = _tic()
-        self._rhs_algeb_fn = rms_compiler.compile_rhs(self._algebraic_eqs, "rhs_algeb")
-        timings["RHS algebraic"] = _toc(t0)
+        # here we iterate throurgh equivalence_dict and fill the self._rhs_by_types
+        for model_type in self.equivalence_dict.keys():
+            if  self._algebraic_eqs_equiv_class_dict[model_type] or self._state_eqs_equiv_class_dict[model_type]:
 
-        if len(self._state_eqs) != 0:
-            t0 = _tic()
-            self._rhs_state_fn = rms_compiler.compile_rhs(self._state_eqs, "rhs_state")
-            timings["RHS state"] = _toc(t0)
+                rms_compiler = RMSCompilerVec(
+                    variables=self._state_vars_equiv_class_dict[model_type] + self._algebraic_vars_equiv_class_dict[model_type],
+                    diff_vars=self._diff_vars_equiv_class_dict[model_type],
+                    v_params=self._variable_parameters_equiv_class_dict[model_type],
+                    c_params=self._constant_parameters_equiv_class_dict[model_type],
+                    dt_var=self._dt,
+                    compiler_names_dict=self._compiler_names_dict_vect[model_type]
+                )
 
-            t0 = _tic()
-            self._j11_fn = rms_compiler.compile_sparse_jacobian(self._state_eqs, self._state_vars, "j11")
-            timings["J11 (dF/dx)"] = _toc(t0)
+                rhs_algeb_fn = rms_compiler.compile_rhs(self._algebraic_eqs_equiv_class_dict[model_type], "rhs_algeb_" + str(model_type))
+                if len(self._state_eqs_equiv_class_dict[model_type]) != 0:
+                    t0 = _tic()
+                    rhs_state_fn = rms_compiler.compile_rhs(self._state_eqs_equiv_class_dict[model_type], "rhs_state_" + str(model_type))
+                    timings["RHS state"] = _toc(t0)
 
-            t0 = _tic()
-            self._j12_fn = rms_compiler.compile_sparse_jacobian(self._state_eqs, self._algebraic_vars, "j12")
-            timings["J12 (dF/dy)"] = _toc(t0)
+                    t0 = _tic()
+                    j11_fn = rms_compiler.compile_sparse_jacobian(self._state_eqs_equiv_class_dict[model_type], self._state_vars_equiv_class_dict[model_type], "j11_" + str(model_type))
+                    timings["J11 (dF/dx)"] = _toc(t0)
 
-            t0 = _tic()
-            self._j21_fn = rms_compiler.compile_sparse_jacobian(self._algebraic_eqs, self._state_vars, "j21")
-            timings["J21 (dG/dx)"] = _toc(t0)
+                    t0 = _tic()
+                    j12_fn = rms_compiler.compile_sparse_jacobian(self._state_eqs_equiv_class_dict[model_type], self._algebraic_vars_equiv_class_dict[model_type], "j12_" + str(model_type))
+                    timings["J12 (dF/dy)"] = _toc(t0)
 
-            t0 = _tic()
-            self._j22_fn = rms_compiler.compile_sparse_jacobian(self._algebraic_eqs, self._algebraic_vars, "j22")
-            timings["J22 (dG/dy)"] = _toc(t0)
+                    t0 = _tic()
+                    j21_fn = rms_compiler.compile_sparse_jacobian(self._algebraic_eqs_equiv_class_dict[model_type], self._state_vars_equiv_class_dict[model_type], "j21_" + str(model_type))
+                    timings["J21 (dG/dx)"] = _toc(t0)
 
-        else:
-            t0 = _tic()
-            self._j22_fn = rms_compiler.compile_sparse_jacobian(self._algebraic_eqs, self._algebraic_vars, "j22")
-            timings["J22 only (no states)"] = _toc(t0)
+                    t0 = _tic()
+                    j22_fn = rms_compiler.compile_sparse_jacobian(self._algebraic_eqs_equiv_class_dict[model_type], self._algebraic_vars_equiv_class_dict[model_type], "j22_" + str(model_type))
+                    timings["J22 (dG/dy)"] = _toc(t0)
+
+                else:
+                    t0 = _tic()
+                    j22_fn = rms_compiler.compile_sparse_jacobian(self._algebraic_eqs_equiv_class_dict[model_type], self._algebraic_vars_equiv_class_dict[model_type], "j22_" + str(model_type))
+                    timings["J22 only (no states)"] = _toc(t0)
+
+                    rhs_state_fn = None
+                    j11_fn = None
+                    j12_fn = None
+                    j21_fn = None
+
+                self._rhs_state_fn_by_types[model_type] = rhs_state_fn
+                self._rhs_algeb_fn_by_types[model_type] = rhs_algeb_fn
+
+                self._j11_fn_by_types[model_type] = j11_fn
+                self._j12_fn_by_types[model_type] = j12_fn
+                self._j21_fn_by_types[model_type] = j21_fn
+                self._j22_fn_by_types[model_type] = j22_fn
+
+        self._rhs_algeb_energy_balance_fn = rms_compiler_all_models.compile_rhs(self._balance_equations, "rhs_algeb_balance")
+        if len(self._balance_equations) > 0:
+            self._jbalance_fn = rms_compiler_all_models.compile_sparse_jacobian(
+                self._balance_equations, self._algebraic_vars, "j_balance"
+            )
+            self._jbalance_state_fn = rms_compiler_all_models.compile_sparse_jacobian(
+                self._balance_equations, self._state_vars, "j_balance_state"
+            )
+
+        # self._rhs_algeb_fn = rms_compiler_all_models.compile_rhs(self._algebraic_eqs, "rhs_algeb")
+        # timings["RHS algebraic"] = _toc(t0)
+        #
+        #
+        # if len(self._state_eqs) != 0:
+        #     t0 = _tic()
+        #     self._rhs_state_fn = rms_compiler_all_models.compile_rhs(self._state_eqs, "rhs_state")
+        #     timings["RHS state"] = _toc(t0)
+        #
+        #     t0 = _tic()
+        #     self._j11_fn = rms_compiler_all_models.compile_sparse_jacobian(self._state_eqs, self._state_vars, "j11")
+        #     timings["J11 (dF/dx)"] = _toc(t0)
+        #
+        #     t0 = _tic()
+        #     self._j12_fn = rms_compiler_all_models.compile_sparse_jacobian(self._state_eqs, self._algebraic_vars, "j12")
+        #     timings["J12 (dF/dy)"] = _toc(t0)
+        #
+        #     t0 = _tic()
+        #     self._j21_fn = rms_compiler_all_models.compile_sparse_jacobian(self._algebraic_eqs, self._state_vars, "j21")
+        #     timings["J21 (dG/dx)"] = _toc(t0)
+        #
+        #     t0 = _tic()
+        #     self._j22_fn = rms_compiler_all_models.compile_sparse_jacobian(self._algebraic_eqs, self._algebraic_vars, "j22")
+        #     timings["J22 (dG/dy)"] = _toc(t0)
+        #
+        # else:
+        #     t0 = _tic()
+        #     self._j22_fn = rms_compiler_all_models.compile_sparse_jacobian(self._algebraic_eqs, self._algebraic_vars, "j22")
+        #     timings["J22 only (no states)"] = _toc(t0)
 
         if self.options.verbose > 0:
             print(f"Model compiled with {self._n_vars} variables")
@@ -1326,6 +1456,8 @@ class RmsProblemDae(RmsProblemTemplate):
             for k, v in timings.items():
                 print(f"  {k:30s}: {v:8.4f} s")
             print(f"\nTotal JIT compile time: {sum(timings.values()):.4f} s")
+
+        self._precompute_gather_indices()
 
         variable_parameters_init = np.ones(self.get_variable_parameter_number())
 
@@ -1343,8 +1475,115 @@ class RmsProblemDae(RmsProblemTemplate):
         if self.options.verbose > 0:
             print(f"\nTotal compile time: {sum(timings.values()):.4f} s")
 
+        # Build global Jacobian templates for Vec assembly
+        self._build_global_jacobian_templates()
+
         # we mark the problem as ready for simulation
         self.set_initialize_flag()
+
+    def _build_global_jacobian_templates(self):
+        n_states = self.get_states_number()
+        n_algebraic = self._n_algebraic
+
+        # Each Jacobian block references variables that are NOT necessarily
+        # contiguous in the global variable vector (bus branch algebraic
+        # variables sit at local positions 0..n_bus_vars-1, then block state
+        # vars, then block algebraic vars).  We therefore build a column
+        # index mapping per (local_col, instance) from _x_gather_idx instead
+        # of using a single offset per instance.
+        block_specs = [
+            ("j11", "_j11_fn_by_types", "_model_state_eq_start_idx", False, False),
+            ("j12", "_j12_fn_by_types", "_model_state_eq_start_idx", False, True),
+            ("j21", "_j21_fn_by_types", "_model_algebraic_eq_start_idx", True, False),
+            ("j22", "_j22_fn_by_types", "_model_algebraic_eq_start_idx", True, True),
+        ]
+
+        # Map block to the wrk_vars list used during compilation
+        wrt_vars_key = {
+            "j11": "_state_vars_equiv_class_dict",
+            "j12": "_algebraic_vars_equiv_class_dict",
+            "j21": "_state_vars_equiv_class_dict",
+            "j22": "_algebraic_vars_equiv_class_dict",
+        }
+
+        for block_name, fn_key, row_key, algeb_rows, algeb_cols in block_specs:
+            fn_dict = getattr(self, fn_key)
+            row_off_dict = getattr(self, row_key)
+
+            entries = []
+            nnz_per_type = {}
+
+            for model_type, fn in fn_dict.items():
+                if fn is None:
+                    continue
+                indices, indptr, n_rows_type, n_cols_type = fn.get_sparsity()
+                nnz_type = len(indices)
+                if nnz_type == 0:
+                    continue
+
+                model_uids = [model_type] + self.equivalence_dict.get(model_type, [])
+                n_inst = len(model_uids)
+                nnz_per_type[model_type] = (nnz_type, n_inst)
+
+                local_rows = np.asarray(indices, dtype=np.intp)
+                col_counts = np.diff(indptr)
+                local_cols = np.repeat(np.arange(n_cols_type, dtype=np.intp), col_counts)
+
+                # Build column index map: (lc, inst) -> global column index
+                wrt_vars_list = getattr(self, wrt_vars_key[block_name]).get(model_type, [])
+                uid2pos = self._uid2idx_vars_vec.get(model_type, {})
+                x_gather = self._x_gather_idx.get(model_type)
+                if x_gather is None:
+                    continue
+                col_idx = np.zeros((n_cols_type, n_inst), dtype=np.intp)
+                for lc, var in enumerate(wrt_vars_list):
+                    local_pos = uid2pos.get(var.uid, 0)
+                    col_idx[lc, :] = x_gather[local_pos, :n_inst]
+                    if algeb_cols:
+                        col_idx[lc, :] -= n_states
+
+                for j, uid in enumerate(model_uids):
+                    row_off = row_off_dict.get(uid, 0)
+                    for i in range(nnz_type):
+                        gr = local_rows[i] + row_off
+                        gc = col_idx[local_cols[i], j]
+                        entries.append((gc, gr, model_type, j, i))
+
+            # Sort by (col, row) to establish CSC data order
+            entries.sort(key=lambda e: (e[0], e[1]))
+
+            # Build CSC matrix directly from sorted entries.
+            # We must NOT use sp.coo_matrix here because it merges duplicate
+            # (row, col) entries, which would shrink the data array and break
+            # the scatter-map indexing.  Entries are already sorted by (col, row).
+            n_rows_global = n_algebraic if algeb_rows else n_states
+            n_cols_global = n_algebraic if algeb_cols else n_states
+
+            if entries:
+                nnz_total = len(entries)
+                j_data = np.zeros(nnz_total, dtype=np.float64)
+                csc_indices = np.array([e[1] for e in entries], dtype=np.int32)
+                csc_indptr = np.zeros(n_cols_global + 1, dtype=np.int32)
+                for e in entries:
+                    csc_indptr[e[0] + 1] += 1
+                np.cumsum(csc_indptr, out=csc_indptr)
+                csc = sp.csc_matrix(
+                    (j_data, csc_indices, csc_indptr),
+                    shape=(n_rows_global, n_cols_global)
+                )
+            else:
+                csc = sp.csc_matrix((n_rows_global, n_cols_global), dtype=np.float64)
+
+            # Build scatter map: for each model type, 2D array (nnz_type, n_inst)
+            # of indices into the CSC data array (same order as sorted entries).
+            scatter_map = {}
+            for data_idx, (gc, gr, mt, j, i) in enumerate(entries):
+                if mt not in scatter_map:
+                    nnz_t, n_i = nnz_per_type[mt]
+                    scatter_map[mt] = np.empty((nnz_t, n_i), dtype=np.intp)
+                scatter_map[mt][i, j] = data_idx
+
+            self._jac_global_data[block_name] = (csc, scatter_map)
 
     def get_next_forced_event_time(self, t_prev: float, t_target: float) -> Optional[float]:
         t_mode = _get_next_forced_mode_event_time(self._scheduled_mode_events, t_prev, t_target)
@@ -1796,22 +2035,90 @@ class RmsProblemDae(RmsProblemTemplate):
         :rtype: None
         """
 
+        if mdl.uid in self.equivalence_dict.keys():
+            self._compiler_names_dict_vect[mdl.uid] = dict()
+            self._alias_names_dict_vect[mdl.uid] = dict()
+            self._uid2idx_vars_vec[mdl.uid] = dict()
+            self._uid2idx_params_vec[mdl.uid] = dict()
+            self._uid2idx_event_params_vec[mdl.uid] = dict()
+            self._uid2idx_diff_vec[mdl.uid] = dict()
+            self._input_matrices_by_model[mdl.uid] = [np.zeros(1), np.zeros(1), np.zeros(1), np.zeros(1)]
+            self._state_vars_equiv_class_dict[mdl.uid] = list()
+            self._algebraic_vars_equiv_class_dict[mdl.uid] = list()
+            self._diff_vars_equiv_class_dict[mdl.uid] = list()
+            self._constant_parameters_equiv_class_dict[mdl.uid] = list()
+            self._variable_parameters_equiv_class_dict[mdl.uid] = list()
+            self._state_eqs_equiv_class_dict[mdl.uid] = list()
+            self._algebraic_eqs_equiv_class_dict[mdl.uid] = list()
+
+            # we add bus variables for vectorization
+            class_idx = self._class_n_vars.get(mdl.uid, 0)
+            if elm in self.grid.get_branches_iter():
+                Vmf, Vaf = get_bus_rms_algebraic_vars(elm.bus_from.rms_model)
+                self._compiler_names_dict_vect[mdl.uid][Vmf.uid] = f"{self.VARS_NAME}[{class_idx}]"
+                self._alias_names_dict_vect[mdl.uid][Vmf.uid] = f"{self.VARS_NAME}_{class_idx}"
+                self._uid2idx_vars_vec[mdl.uid][Vmf.uid] = class_idx
+                self._algebraic_vars_equiv_class_dict[mdl.uid].append(Vmf)
+                self._class_n_vars[mdl.uid] = class_idx + 1
+
+                class_idx = self._class_n_vars.get(mdl.uid, 0)
+                self._compiler_names_dict_vect[mdl.uid][Vaf.uid] = f"{self.VARS_NAME}[{class_idx}]"
+                self._alias_names_dict_vect[mdl.uid][Vaf.uid] =f"{self.VARS_NAME}_{class_idx}"
+                self._uid2idx_vars_vec[mdl.uid][Vaf.uid] = class_idx
+                self._algebraic_vars_equiv_class_dict[mdl.uid].append(Vaf)
+                self._class_n_vars[mdl.uid] = class_idx + 1
+
+                class_idx = self._class_n_vars.get(mdl.uid, 0)
+                Vmt, Vat = get_bus_rms_algebraic_vars(elm.bus_to.rms_model)
+                self._compiler_names_dict_vect[mdl.uid][Vmt.uid] = f"{self.VARS_NAME}[{class_idx}]"
+                self._alias_names_dict_vect[mdl.uid][Vmt.uid] = f"{self.VARS_NAME}_{class_idx}"
+                self._uid2idx_vars_vec[mdl.uid][Vmt.uid] = class_idx
+                self._algebraic_vars_equiv_class_dict[mdl.uid].append(Vmt)
+                self._class_n_vars[mdl.uid] = class_idx + 1
+
+                class_idx = self._class_n_vars.get(mdl.uid, 0)
+                self._compiler_names_dict_vect[mdl.uid][Vat.uid] = f"{self.VARS_NAME}[{class_idx}]"
+                self._alias_names_dict_vect[mdl.uid][Vat.uid] = f"{self.VARS_NAME}_{class_idx}"
+                self._uid2idx_vars_vec[mdl.uid][Vat.uid] = class_idx
+                self._algebraic_vars_equiv_class_dict[mdl.uid].append(Vat)
+                self._class_n_vars[mdl.uid] = class_idx + 1
+
+            if elm in self.grid.get_injection_devices_iter():
+                Vm, Va = get_bus_rms_algebraic_vars(elm.bus.rms_model)
+                class_idx = self._class_n_vars.get(mdl.uid, 0)
+                self._compiler_names_dict_vect[mdl.uid][Vm.uid] =f"{self.VARS_NAME}[{class_idx}]"
+                self._alias_names_dict_vect[mdl.uid][Vm.uid] = f"{self.VARS_NAME}_{class_idx}"
+                self._uid2idx_vars_vec[mdl.uid][Vm.uid] = class_idx
+                self._algebraic_vars_equiv_class_dict[mdl.uid].append(Vm)
+                self._class_n_vars[mdl.uid] = class_idx + 1
+
+                class_idx = self._class_n_vars.get(mdl.uid, 0)
+                self._compiler_names_dict_vect[mdl.uid][Va.uid] = f"{self.VARS_NAME}[{class_idx}]"
+                self._alias_names_dict_vect[mdl.uid][Va.uid] = f"{self.VARS_NAME}_{class_idx}"
+                self._uid2idx_vars_vec[mdl.uid][Va.uid] = class_idx
+                self._algebraic_vars_equiv_class_dict[mdl.uid].append(Va)
+                self._class_n_vars[mdl.uid] = class_idx + 1
+
+
+        equiv_class_uid = next((uid for uid, list_uid in self.block_composition_dict.items() if mdl.uid in list_uid), None)
+
         # i is for variables
         for v in mdl.state_vars:
             if v.uid in self._uid2idx_vars:
                 raise ValueError(f"State variable '{v.name}' (uid={v.uid}) is already registered in the system. "
                                  f"Previous device may have created a duplicate variable.")
-            # here we have to check if an equivalent variable of v has already been registered in compiler_names_dict
-            # if not:
-            self._compiler_names_dict_vect[mdl.uid][v.uid] =  f"{self.VARS_NAME}[{self._n_vars}]"
-            self._alias_names_dict_vect[mdl.uid][v.uid] = f"{self.VARS_NAME}_{self._n_vars}"
-            self._state_vars_equiv_class_dict[mdl.uid] = list()
-            self._state_vars_equiv_class_dict[mdl.uid].append(v)
-            # if yes: do nothing and continue
+            if equiv_class_uid:
+
+                class_idx = self._class_n_vars.get(equiv_class_uid, 0)
+                self._compiler_names_dict_vect[equiv_class_uid][v.uid] = f"{self.VARS_NAME}[{class_idx}]"
+                self._alias_names_dict_vect[equiv_class_uid][v.uid] = f"{self.VARS_NAME}_{class_idx}"
+                self._uid2idx_vars_vec[equiv_class_uid][v.uid] = class_idx
+                self._state_vars_equiv_class_dict[equiv_class_uid].append(v)
+                self._class_n_vars[equiv_class_uid] = class_idx + 1
+
 
             self._compiler_names_dict[v.uid] = f"{self.VARS_NAME}[{self._n_vars}]"
             self._alias_names_dict[v.uid] = f"{self.VARS_NAME}_{self._n_vars}"
-
             self._uid2idx_vars[v.uid] = self._n_vars
             self._register_global_var_name(name_key=v.name + elm.name, uid=v.uid, block=mdl)
             self.add_device_var(dev=elm, var=v)
@@ -1823,13 +2130,17 @@ class RmsProblemDae(RmsProblemTemplate):
             if v.uid in self._uid2idx_vars:
                 raise ValueError(f"Algebraic variable '{v.name}' (uid={v.uid}) is already registered in the system. "
                                  f"Previous device may have created a duplicate variable.")
-            # here we have to check if an equivalent variable of v has already been registered in compiler_names_dict
-            # if not:
-            self._compiler_names_dict_vect[mdl.uid][v.uid] = f"{self.VARS_NAME}[{self._n_vars}]"
-            self._alias_names_dict_vect[mdl.uid][v.uid] = f"{self.VARS_NAME}_{self._n_vars}"
-            self._algebraic_vars_equiv_class_dict[mdl.uid] = list()
-            self._algebraic_vars_equiv_class_dict[mdl.uid].append(v)
-            # if yes: do nothing
+
+            if equiv_class_uid:
+
+                class_idx = self._class_n_vars.get(equiv_class_uid, 0)
+                self._compiler_names_dict_vect[equiv_class_uid][v.uid] = f"{self.VARS_NAME}[{class_idx}]"
+                self._alias_names_dict_vect[equiv_class_uid][v.uid] = f"{self.VARS_NAME}_{class_idx}"
+                self._uid2idx_vars_vec[equiv_class_uid][v.uid] = class_idx
+                self._algebraic_vars_equiv_class_dict[equiv_class_uid].append(v)
+                self._class_n_vars[equiv_class_uid] = class_idx + 1
+
+
 
             self._compiler_names_dict[v.uid] = f"{self.VARS_NAME}[{self._n_vars}]"
             self._alias_names_dict[v.uid] = f"{self.VARS_NAME}_{self._n_vars}"
@@ -1842,14 +2153,20 @@ class RmsProblemDae(RmsProblemTemplate):
             self._n_vars += 1
 
         for ep, const in mdl.parameters.items():
+            if ep.name == "g":
+                print("")
             if ep.uid in self._uid2idx_params:
                 raise ValueError(f"Parameter '{ep.name}' (uid={ep.uid}) is already registered in the system. "
                                  f"Previous device may have created a duplicate parameter.")
-            # here we have to check if an equivalent variable of v has already been registered in compiler_names_dict
-            # if not:
-            self._compiler_names_dict_vect[mdl.uid][ep.uid] = f"{self.CONSTANT_PARAMS_NAME}[{self._n_params}]"
-            self._alias_names_dict_vect[mdl.uid][ep.uid] = f"{self.CONSTANT_PARAMS_NAME}_{self._n_params}"
-            # if yes: do nothing
+            if equiv_class_uid:
+
+                class_idx = self._class_n_params.get(equiv_class_uid, 0)
+                self._compiler_names_dict_vect[equiv_class_uid][ep.uid] = f"{self.CONSTANT_PARAMS_NAME}[{class_idx}]"
+                self._alias_names_dict_vect[equiv_class_uid][ep.uid] = f"{self.CONSTANT_PARAMS_NAME}_{class_idx}"
+                self._uid2idx_params_vec[equiv_class_uid][ep.uid] = class_idx
+                self._constant_parameters_equiv_class_dict[equiv_class_uid].append(ep)
+                self._class_n_params[equiv_class_uid] = class_idx + 1
+
 
             self._compiler_names_dict[ep.uid] = f"{self.CONSTANT_PARAMS_NAME}[{self._n_params}]"
             self._alias_names_dict[ep.uid] = f"{self.CONSTANT_PARAMS_NAME}_{self._n_params}"
@@ -1871,14 +2188,17 @@ class RmsProblemDae(RmsProblemTemplate):
             if ep.uid in self._uid2idx_event_params:
                 raise ValueError(f"Event parameter '{ep.name}' (uid={ep.uid}) is already registered in the system. "
                                  f"Previous device may have created a duplicate event parameter.")
-            # here we have to check if an equivalent variable of v has already been registered in compiler_names_dict
-            # if not:
-            self._compiler_names_dict_vect[mdl.uid][ep.uid] = f"{self.VARIABLE_PARAMS_NAME}[{self._n_event_params}]"
-            self._alias_names_dict_vect[mdl.uid][ep.uid] = f"{self.VARIABLE_PARAMS_NAME}_{self._n_event_params}"
-            # if yes: do nothing
+            if equiv_class_uid:
+
+                class_idx = self._class_n_event_params.get(equiv_class_uid, 0)
+                self._compiler_names_dict_vect[equiv_class_uid][ep.uid] = f"{self.VARIABLE_PARAMS_NAME}[{class_idx}]"
+                self._alias_names_dict_vect[equiv_class_uid][ep.uid] = f"{self.VARIABLE_PARAMS_NAME}_{class_idx}"
+                self._uid2idx_event_params_vec[equiv_class_uid][ep.uid] = class_idx
+                self._variable_parameters_equiv_class_dict[equiv_class_uid].append(ep)
+                self._class_n_event_params[equiv_class_uid] = class_idx + 1
+
             self._compiler_names_dict[ep.uid] = f"{self.VARIABLE_PARAMS_NAME}[{self._n_event_params}]"
             self._alias_names_dict[ep.uid] = f"{self.VARIABLE_PARAMS_NAME}_{self._n_event_params}"
-            # if yes: do nothing
             self._uid2idx_event_params[ep.uid] = self._n_event_params
 
             effective_eq: Expr | Const = eq
@@ -1894,6 +2214,8 @@ class RmsProblemDae(RmsProblemTemplate):
             self._variable_parameters.append(ep)
             self._event_parameters_eqs0.append(effective_eq)
             self._runtime_all_parameters_source.append(ep)
+
+
             runtime_expression: Expr | Const = effective_eq if runtime_eq is None else runtime_eq
 
             if runtime_eq is None and ep.uid in self._discrete_event_parameter_uids:
@@ -1919,37 +2241,40 @@ class RmsProblemDae(RmsProblemTemplate):
             if v.uid in self._uid2idx_diff:
                 raise ValueError(f"Differential variable '{v.name}' (uid={v.uid}) is already registered in the system. "
                                  f"Previous device may have created a duplicate differential variable.")
-            # here we have to check if an equivalent variable of v has already been registered in compiler_names_dict
-            # if not:
-            self._compiler_names_dict_vect[mdl.uid][v.uid] = f"{self.DIFF_NAME}[{self._n_diff}]"
-            self._alias_names_dict_vect[mdl.uid][v.uid] = f"{self.DIFF_NAME}_{self._n_diff}"
+            if equiv_class_uid:
+
+                class_idx = self._class_n_diff.get(equiv_class_uid, 0)
+                self._compiler_names_dict_vect[equiv_class_uid][v.uid] = f"{self.DIFF_NAME}[{class_idx}]"
+                self._alias_names_dict_vect[equiv_class_uid][v.uid] = f"{self.DIFF_NAME}_{class_idx}"
+                self._uid2idx_diff_vec[equiv_class_uid][v.uid] = class_idx
+                self._diff_vars_equiv_class_dict[equiv_class_uid].append(v)
+                self._class_n_diff[equiv_class_uid] = class_idx + 1
+
 
             self._compiler_names_dict[v.uid] = f"{self.DIFF_NAME}[{self._n_diff}]"
             self._alias_names_dict[v.uid] = f"{self.DIFF_NAME}_{self._n_diff}"
-            # if yes: do nothing
             self._uid2idx_diff[v.uid] = self._n_diff
             self._register_global_var_name(name_key=v.name + elm.name, uid=v.uid, block=mdl)
             self.add_device_var(dev=elm, var=v)
             self._diff_vars.append(v)
             self._n_diff += 1
-        # here we have to check if and equivalent model has been processed, if not:
-        self._state_eqs_equiv_class_dict[mdl.uid] = list()
-        self._state_eqs_equiv_class_dict[mdl.uid].extend(mdl.state_eqs)
-        self._algebraic_eqs_equiv_class_dict[mdl.uid] = list()
-        self._algebraic_eqs_equiv_class_dict[mdl.uid].extend(mdl.algebraic_eqs)
 
-        # we add bus variables for vectorization
-        Vm, Va = get_bus_rms_algebraic_vars(elm.bus.rms_model)
-        self._compiler_names_dict_vect[mdl.uid][Vm.uid] = f"{self.VARS_BUS_VM_NAME}"
-        self._alias_names_dict_vect[mdl.uid][Va.uid] = f"{self.VARS_BUS_VA_NAME}"
 
+        if equiv_class_uid:
+
+            self._state_eqs_equiv_class_dict[equiv_class_uid].extend(mdl.state_eqs)
+            self._algebraic_eqs_equiv_class_dict[equiv_class_uid].extend(mdl.algebraic_eqs)
+
+
+        self._model_state_eq_start_idx[mdl.uid] = len(self._state_eqs)
         self._state_eqs.extend(mdl.state_eqs)
+        self._model_algebraic_eq_start_idx[mdl.uid] = len(self._algebraic_eqs)
         self._algebraic_eqs.extend(mdl.algebraic_eqs)
 
         if self.progress_signal is not None:
             self.progress_signal.emit(20)
 
-    def set_init_guess(self, mdl: Block, reference_powerflow: VarPowerFlowRefferenceType, val: float):
+    def set_init_guess(self, mdl: Block, reference_powerflow: VarPowerFlowReferenceType, val: float):
         """
         add values from powerflow to initial guess
 
@@ -2289,6 +2614,203 @@ class RmsProblemDae(RmsProblemTemplate):
             raise ValueError("_derivative_fn is None")
 
         return self._derivative_fn(x, xn, dx, h)
+
+    ########### vectorized functions ##########################
+
+    def _precompute_gather_indices(self) -> None:
+        for model_type in self._rhs_state_fn_by_types.keys():
+            var_equiv_lists = self.variables_equivalence_dict.get(model_type, [])
+            var_equiv: Dict[int, List[int]] = {}
+            for eq_list in var_equiv_lists:
+                var_equiv[eq_list[0]] = eq_list
+
+            n_inst = len(self.equivalence_dict.get(model_type, [])) + 1
+
+            # x variables
+            n_vars = len(self._uid2idx_vars_vec.get(model_type, {}))
+            if n_vars:
+                idx_x = np.zeros((n_vars, n_inst), dtype=np.intp)
+                for var_uid, var_pos in self._uid2idx_vars_vec[model_type].items():
+                    eq_list = var_equiv.get(var_uid, [var_uid])
+                    for i, uid in enumerate(eq_list):
+                        idx_x[var_pos, i] = self._uid2idx_vars[uid]
+                self._x_gather_idx[model_type] = idx_x
+
+            # dx variables
+            n_dx = len(self._uid2idx_diff_vec.get(model_type, {}))
+            if n_dx:
+                idx_dx = np.zeros((n_dx, n_inst), dtype=np.intp)
+                for var_uid, var_pos in self._uid2idx_diff_vec[model_type].items():
+                    eq_list = var_equiv.get(var_uid, [var_uid])
+                    for i, uid in enumerate(eq_list):
+                        idx_dx[var_pos, i] = self._uid2idx_diff[uid]
+                self._dx_gather_idx[model_type] = idx_dx
+
+            # vp params
+            n_vp = len(self._uid2idx_event_params_vec.get(model_type, {}))
+            if n_vp:
+                idx_vp = np.zeros((n_vp, n_inst), dtype=np.intp)
+                for vp_uid, vp_pos in self._uid2idx_event_params_vec[model_type].items():
+                    eq_list = var_equiv.get(vp_uid, [vp_uid])
+                    for i, uid in enumerate(eq_list):
+                        idx_vp[vp_pos, i] = self._uid2idx_event_params[uid]
+                self._vp_gather_idx[model_type] = idx_vp
+
+            # cp params
+            n_cp = len(self._uid2idx_params_vec.get(model_type, {}))
+            if n_cp:
+                idx_cp = np.zeros((n_cp, n_inst), dtype=np.intp)
+                for cp_uid, cp_pos in self._uid2idx_params_vec[model_type].items():
+                    eq_list = var_equiv.get(cp_uid, [cp_uid])
+                    for i, uid in enumerate(eq_list):
+                        idx_cp[cp_pos, i] = self._uid2idx_params[uid]
+                self._cp_gather_idx[model_type] = idx_cp
+
+    def update_input_matrices_by_model(self, x: Vec, dx: Vec):
+        _t0 = time.time()
+        for model_type in self._rhs_state_fn_by_types.keys():
+            self._input_matrices_by_model[model_type][0] = x[self._x_gather_idx[model_type]]
+            dx_gather = self._dx_gather_idx.get(model_type)
+            if dx_gather is not None:
+                self._input_matrices_by_model[model_type][1] = dx[dx_gather]
+            vp_gather = self._vp_gather_idx.get(model_type)
+            if vp_gather is not None:
+                self._input_matrices_by_model[model_type][2] = self._variable_parameters_values[vp_gather]
+            cp_gather = self._cp_gather_idx.get(model_type)
+            if cp_gather is not None:
+                self._input_matrices_by_model[model_type][3] = self._constant_params[cp_gather]
+        if not hasattr(self, '_prof_timings'):
+            self._prof_timings = {}
+        self._prof_timings['total_gather_time'] = self._prof_timings.get('total_gather_time', 0.0) + time.time() - _t0
+
+
+
+    def rhs_state_vec(self) -> Vec:
+
+        # here we need to iterate through equivalence_dict and build rhs for every model and then
+        # fill the complete rhs
+        complete_rhs_state = np.zeros(len(self._state_eqs))
+        for model_type in self._rhs_state_fn_by_types.keys():
+            rhs_state_fn = self._rhs_state_fn_by_types[model_type]
+            if rhs_state_fn is not None:
+                _t0 = time.time()
+                rhs_state = rhs_state_fn(self._input_matrices_by_model[model_type][0],
+                                         self._input_matrices_by_model[model_type][1],
+                                         self._input_matrices_by_model[model_type][2],
+                                         self._input_matrices_by_model[model_type][3])
+                _t1 = time.time()
+                if rhs_state.ndim == 1:
+                    rhs_state = rhs_state.reshape(-1, 1)
+                # fill complete_rhs_state
+                model_uids = [model_type] + self.equivalence_dict.get(model_type, [])
+                n_eqs = rhs_state.shape[0]
+                for inst_idx, uid in enumerate(model_uids):
+                    start = self._model_state_eq_start_idx[uid]
+                    complete_rhs_state[start:start + n_eqs] = rhs_state[:, inst_idx]
+                if not hasattr(self, '_prof_timings'):
+                    self._prof_timings = {}
+                self._prof_timings['rhs_state_filler_total'] = self._prof_timings.get('rhs_state_filler_total', 0.0) + _t1 - _t0
+                self._prof_timings['rhs_state_scatter_total'] = self._prof_timings.get('rhs_state_scatter_total', 0.0) + time.time() - _t1
+
+        return complete_rhs_state
+
+    def rhs_algebraic_vec(self, x: Vec, dx: Vec) -> Vec:
+
+        # here we need to iterate through equivalence_dict and build rhs for every model and then
+        # fill the complete rhs
+        complete_rhs_algeb = np.zeros(len(self._algebraic_eqs))
+
+        for model_type in self._rhs_algeb_fn_by_types.keys():
+            rhs_algeb_fn = self._rhs_algeb_fn_by_types[model_type]
+            _t0 = time.time()
+            rhs_algeb = rhs_algeb_fn(self._input_matrices_by_model[model_type][0],
+                                     self._input_matrices_by_model[model_type][1],
+                                     self._input_matrices_by_model[model_type][2],
+                                     self._input_matrices_by_model[model_type][3])
+            _t1 = time.time()
+            if rhs_algeb.ndim == 1:
+                rhs_algeb = rhs_algeb.reshape(-1, 1)
+            model_uids = [model_type] + self.equivalence_dict.get(model_type, [])
+            n_eqs = rhs_algeb.shape[0]
+            for inst_idx, uid in enumerate(model_uids):
+                start = self._model_algebraic_eq_start_idx[uid]
+                complete_rhs_algeb[start:start + n_eqs] = rhs_algeb[:, inst_idx]
+            if not hasattr(self, '_prof_timings'):
+                self._prof_timings = {}
+            self._prof_timings['rhs_algeb_filler_total'] = self._prof_timings.get('rhs_algeb_filler_total', 0.0) + _t1 - _t0
+            self._prof_timings['rhs_algeb_scatter_total'] = self._prof_timings.get('rhs_algeb_scatter_total', 0.0) + time.time() - _t1
+
+        # energy balance equations
+        if self._rhs_algeb_energy_balance_fn is None:
+            raise ValueError("_rhs_algeb_balance_fn is None")
+        rhs_energy_balance = self._rhs_algeb_energy_balance_fn(x, dx, self._variable_parameters_values, self._constant_params)
+        complete_rhs_algeb[-len(rhs_energy_balance):] = rhs_energy_balance
+
+        return complete_rhs_algeb
+
+    def _fill_jacobian_block(self, block_name: str, fn_key: str, h: float) -> sp.csc_matrix:
+        csc_template, scatter_map = self._jac_global_data[block_name]
+        if csc_template.nnz == 0:
+            return csc_template
+
+        csc_template.data[:] = 0.0
+
+        if not hasattr(self, '_prof_timings'):
+            self._prof_timings = {}
+
+        _t0 = time.time()
+        fn_dict = getattr(self, fn_key)
+        for model_type, fn in fn_dict.items():
+            if fn is None:
+                continue
+            data_out = fn(
+                self._input_matrices_by_model[model_type][0],
+                self._input_matrices_by_model[model_type][1],
+                self._input_matrices_by_model[model_type][2],
+                self._input_matrices_by_model[model_type][3],
+                h,
+            )
+            if data_out.ndim == 1:
+                data_out = data_out.reshape(-1, 1)
+            smap = scatter_map.get(model_type)
+            if smap is not None:
+                csc_template.data[smap] = data_out
+        _t1 = time.time()
+        self._prof_timings['jac_filler_' + block_name] = self._prof_timings.get('jac_filler_' + block_name, 0.0) + _t1 - _t0
+
+        return csc_template
+
+    def _add_balance_jacobian(self, j_sub: sp.csc_matrix, balance_fn, x, dx, h, is_state_block: bool) -> sp.csc_matrix:
+        if balance_fn is None or len(self._balance_equations) == 0:
+            return j_sub
+        j_bal = balance_fn(x, dx, self._variable_parameters_values, self._constant_params, h)
+        if j_bal.nnz == 0:
+            return j_sub
+        n_model_algeb = self._n_algebraic - len(self._balance_equations)
+        n_cols = self.get_states_number() if is_state_block else self._n_algebraic
+        top = sp.csc_matrix((n_model_algeb, n_cols), dtype=np.float64)
+        return (j_sub + sp.vstack([top, j_bal])).tocsc()
+
+    def get_j11_vec(self, h: float) -> sp.csc_matrix:
+        if not self._jac_global_data.get("j11"):
+            raise ValueError("J11 templates not built")
+        return self._fill_jacobian_block("j11", "_j11_fn_by_types", h)
+
+    def get_j12_vec(self, h: float) -> sp.csc_matrix:
+        if not self._jac_global_data.get("j12"):
+            raise ValueError("J12 templates not built")
+        return self._fill_jacobian_block("j12", "_j12_fn_by_types", h)
+
+    def get_j21_vec(self, h: float) -> sp.csc_matrix:
+        if not self._jac_global_data.get("j21"):
+            raise ValueError("J21 templates not built")
+        return self._fill_jacobian_block("j21", "_j21_fn_by_types", h)
+
+    def get_j22_vec(self, x: Vec, dx: Vec, h: float) -> sp.csc_matrix:
+        if not self._jac_global_data.get("j22"):
+            raise ValueError("J22 templates not built")
+        j22 = self._fill_jacobian_block("j22", "_j22_fn_by_types", h)
+        return self._add_balance_jacobian(j22, self._jbalance_fn, x, dx, h, is_state_block=False)
 
     def rhs_state(self, x: Vec, dx: Vec) -> Vec:
 

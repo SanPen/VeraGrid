@@ -13,8 +13,8 @@ from VeraGridEngine.enumerations import (
     DeviceType,
     FmuTemplateDomain,
     FmuTemplateMode,
-    ParamPowerFlowRefferenceType,
-    VarPowerFlowRefferenceType,
+    ParamPowerFlowReferenceType,
+    VarPowerFlowReferenceType,
 )
 from VeraGridEngine.Utils.Symbolic.block import Block
 
@@ -77,17 +77,17 @@ def _sanitize_symbol_name(text: str) -> str:
         return candidate
 
 
-def _build_var_reference_aliases() -> dict[str, VarPowerFlowRefferenceType]:
+def _build_var_reference_aliases() -> dict[str, VarPowerFlowReferenceType]:
     """
     Build the alias map used to auto-match FMU variable names to VeraGrid references.
 
     :return: Normalized alias map.
     """
 
-    aliases: dict[str, VarPowerFlowRefferenceType] = dict()
-    reference: VarPowerFlowRefferenceType
-    for reference in VarPowerFlowRefferenceType:
-        if reference == VarPowerFlowRefferenceType.NOTHING:
+    aliases: dict[str, VarPowerFlowReferenceType] = dict()
+    reference: VarPowerFlowReferenceType
+    for reference in VarPowerFlowReferenceType:
+        if reference == VarPowerFlowReferenceType.NOTHING:
             pass
         else:
             aliases[_normalize_identifier(reference.name)] = reference
@@ -95,17 +95,17 @@ def _build_var_reference_aliases() -> dict[str, VarPowerFlowRefferenceType]:
     return aliases
 
 
-def _build_param_reference_aliases() -> dict[str, ParamPowerFlowRefferenceType]:
+def _build_param_reference_aliases() -> dict[str, ParamPowerFlowReferenceType]:
     """
     Build the alias map used to auto-match FMU parameter names to VeraGrid parameter references.
 
     :return: Normalized alias map.
     """
 
-    aliases: dict[str, ParamPowerFlowRefferenceType] = dict()
-    reference: ParamPowerFlowRefferenceType
-    for reference in ParamPowerFlowRefferenceType:
-        if reference == ParamPowerFlowRefferenceType.NOTHING:
+    aliases: dict[str, ParamPowerFlowReferenceType] = dict()
+    reference: ParamPowerFlowReferenceType
+    for reference in ParamPowerFlowReferenceType:
+        if reference == ParamPowerFlowReferenceType.NOTHING:
             pass
         else:
             aliases[_normalize_identifier(reference.name)] = reference
@@ -113,7 +113,7 @@ def _build_param_reference_aliases() -> dict[str, ParamPowerFlowRefferenceType]:
     return aliases
 
 
-def _resolve_variable_reference(variable_name: str) -> VarPowerFlowRefferenceType | None:
+def _resolve_variable_reference(variable_name: str) -> VarPowerFlowReferenceType | None:
     """
     Resolve one FMU variable name into a VeraGrid runtime reference when possible.
 
@@ -125,7 +125,7 @@ def _resolve_variable_reference(variable_name: str) -> VarPowerFlowRefferenceTyp
     return aliases.get(_normalize_identifier(variable_name), None)
 
 
-def _resolve_parameter_reference(variable_name: str) -> ParamPowerFlowRefferenceType | None:
+def _resolve_parameter_reference(variable_name: str) -> ParamPowerFlowReferenceType | None:
     """
     Resolve one FMU parameter name into a VeraGrid device-parameter reference when possible.
 
@@ -200,7 +200,7 @@ def _build_auto_input_bindings(metadata: FmuModelDescription) -> tuple[FmuRefBin
     """
 
     bindings: list[FmuRefBinding] = list()
-    seen_references: set[VarPowerFlowRefferenceType] = set()
+    seen_references: set[VarPowerFlowReferenceType] = set()
     variable: FmuVariableDescription
     for variable in _list_input_variables(metadata):
         reference = _resolve_variable_reference(variable.name)
@@ -224,7 +224,7 @@ def _build_auto_output_bindings(metadata: FmuModelDescription) -> tuple[FmuRefBi
     """
 
     bindings: list[FmuRefBinding] = list()
-    seen_references: set[VarPowerFlowRefferenceType] = set()
+    seen_references: set[VarPowerFlowReferenceType] = set()
     variable: FmuVariableDescription
     for variable in _list_output_variables(metadata):
         reference = _resolve_variable_reference(variable.name)
@@ -268,7 +268,7 @@ def _parse_numeric_start_value(variable: FmuVariableDescription) -> float:
 
 
 def _build_output_defaults(metadata: FmuModelDescription,
-                           output_bindings: tuple[FmuRefBinding, ...]) -> dict[VarPowerFlowRefferenceType, float]:
+                           output_bindings: tuple[FmuRefBinding, ...]) -> dict[VarPowerFlowReferenceType, float]:
     """
     Build default output values for the bound FMU output references.
 
@@ -277,7 +277,7 @@ def _build_output_defaults(metadata: FmuModelDescription,
     :return: Default values indexed by VeraGrid reference.
     """
 
-    defaults: dict[VarPowerFlowRefferenceType, float] = dict()
+    defaults: dict[VarPowerFlowReferenceType, float] = dict()
     binding: FmuRefBinding
     for binding in output_bindings:
         defaults[binding.reference] = _parse_numeric_start_value(metadata.get_variable(binding.fmu_variable_name))
@@ -399,7 +399,7 @@ def _append_visual_input_ports(block: Block,
     :return: None.
     """
 
-    bound_references: dict[str, VarPowerFlowRefferenceType] = dict()
+    bound_references: dict[str, VarPowerFlowReferenceType] = dict()
     binding: FmuRefBinding
     for binding in input_bindings:
         bound_references[binding.fmu_variable_name] = binding.reference

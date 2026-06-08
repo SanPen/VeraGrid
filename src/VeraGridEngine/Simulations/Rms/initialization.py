@@ -22,7 +22,7 @@ from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicVector, Sym
 from VeraGridEngine.Utils.Symbolic.symbolic import get_expression_vars
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, Const, Expr, find_vars_order
-from VeraGridEngine.enumerations import VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import VarPowerFlowReferenceType
 from VeraGridEngine.basic_structures import Vec
 
 
@@ -996,8 +996,8 @@ def init_pseudo_transient(mdl: Block,
     # PF-based seeds for freed controller references.
     p_seed = None
     vm_seed = None
-    pf_p_var = mdl_work.external_mapping.get(VarPowerFlowRefferenceType.P)
-    pf_vm_var = mdl_work.external_mapping.get(VarPowerFlowRefferenceType.Vm)
+    pf_p_var = mdl_work.external_mapping.get(VarPowerFlowReferenceType.P)
+    pf_vm_var = mdl_work.external_mapping.get(VarPowerFlowReferenceType.Vm)
     if isinstance(pf_p_var, Var) and pf_p_var.uid in uid2idx_vars:
         p_seed = float(x_global[uid2idx_vars[pf_p_var.uid]])
     if isinstance(pf_vm_var, Var) and pf_vm_var.uid in uid2idx_vars:
@@ -1009,18 +1009,18 @@ def init_pseudo_transient(mdl: Block,
 
     # Variable names to keep fixed over pseudo-transient iterations.
     # UIDs are resolved from the *final local problem* ordering below.
-    fix_references =  True
+    fix_references =  False
     if fix_references:
         fixed_ref_names = {"Pm_ref", "Pref", "P_ref", "UsRefPu", "Vref", "V_ref", "U_ref"}
     else:
         fixed_ref_names = {}
     # Freeze PF anchors in this local model: P, Q, Vm, Va, Vdc.
     pf_var_references = [
-        VarPowerFlowRefferenceType.P,
-        VarPowerFlowRefferenceType.Q,
-        VarPowerFlowRefferenceType.Vm,
-        VarPowerFlowRefferenceType.Va,
-        VarPowerFlowRefferenceType.Vdc,
+        VarPowerFlowReferenceType.P,
+        VarPowerFlowReferenceType.Q,
+        VarPowerFlowReferenceType.Vm,
+        VarPowerFlowReferenceType.Va,
+        VarPowerFlowReferenceType.Vdc,
     ]
     for pf_ref in pf_var_references:
         if pf_ref not in mdl_work.external_mapping:
@@ -1085,11 +1085,11 @@ def init_pseudo_transient(mdl: Block,
     solver = PseudoTransient(
         problem=problem,
         h=1.0,
-        dtau0=1e-0,
-        dtau_max=1e2,
+        dtau0=1e-2,
+        dtau_max=1e5,
         dtau_min=1e-6,
         tol=tol,
-        max_iter=1000,
+        max_iter=2000,
         verbose=verbose,
         reference_error_tol=-1,
         fixed_var_uids=fixed_ref_uids,

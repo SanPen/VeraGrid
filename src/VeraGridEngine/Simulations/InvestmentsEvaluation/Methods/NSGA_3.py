@@ -2,6 +2,8 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
+from __future__ import annotations
+
 import numpy as np
 from pymoo.core.problem import ElementwiseProblem
 from pymoo.core.population import Population
@@ -13,6 +15,7 @@ from pymoo.operators.repair.rounding import RoundingRepair
 from pymoo.core.mixed import MixedVariableSampling
 from pymoo.core.sampling import Sampling
 from pymoo.operators.sampling.rnd import IntegerRandomSampling
+from pymoo.core.termination import Termination
 from pymoo.core.mutation import Mutation
 from VeraGridEngine.basic_structures import Vec, IntVec, IntMat, Mat
 
@@ -366,6 +369,8 @@ def NSGA_3(obj_func,
                       eliminate_duplicates=True,
                       ref_dirs=ref_dirs)
 
+    # term = Termination()
+
     res = minimize(problem=problem,
                    algorithm=algorithm,
                    termination=('n_eval', max_evals),
@@ -373,7 +378,4 @@ def NSGA_3(obj_func,
                    verbose=True,
                    save_history=False)
 
-    # import pandas as pd
-    # dff = pd.DataFrame(res.F)
-    # dff.to_excel('nsga.xlsx')
     return res.X, res.F

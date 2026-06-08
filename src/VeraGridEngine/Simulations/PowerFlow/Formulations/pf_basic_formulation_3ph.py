@@ -17,13 +17,14 @@ from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls imp
                                                                                      compute_slack_distribution)
 from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_formulation_template import PfFormulationTemplate
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions import (compute_current,
-                                                                                     compute_power,
-                                                                                     compute_fx,
-                                                                                     polar_to_rect,
-                                                                                     fortescue_012_to_abc)
+                                                                                    compute_power,
+                                                                                    compute_fx,
+                                                                                    polar_to_rect,
+                                                                                    fortescue_012_to_abc)
 from VeraGridEngine.Topology.simulation_indices import compile_types
 from VeraGridEngine.basic_structures import Vec, IntVec, CxVec, CxMat, BoolVec, Logger
 from VeraGridEngine.Utils.Sparse.csc2 import (CSC, scipy_to_mat)
+from VeraGridEngine.enumerations import WindingType
 
 
 @nb.njit(cache=True)
@@ -147,12 +148,13 @@ def compute_ybus(nc: NumericalCircuit) -> Tuple[csc_matrix, csc_matrix, csc_matr
     T = np.array(nc.passive_branch_data.T, dtype=int)
 
     # --- build CSR-like incidence list: branches per bus (Numba-friendly) ---
-    deg = np.zeros(n, dtype=np.int64) # number of incident branches per bus (the bus “degree”)
+    deg = np.zeros(n, dtype=np.int64)  # number of incident branches per bus (the bus “degree”)
     for k in range(m):
         deg[F[k]] += 1
         deg[T[k]] += 1
 
-    ptr = np.zeros(n + 1, dtype=np.int64) # Index pointer into bus_branches that gives where each bus’s incident branches start and end
+    # Index pointer into bus_branches that gives where each bus’s incident branches start and end
+    ptr = np.zeros(n + 1, dtype=np.int64)
     for i in range(n):
         ptr[i + 1] = ptr[i] + deg[i]
 
@@ -188,11 +190,11 @@ def compute_ybus(nc: NumericalCircuit) -> Tuple[csc_matrix, csc_matrix, csc_matr
             for p in range(start, end):
                 k = bus_branches[p]
 
-                if F[k] == bus_idx and nc.passive_branch_data.conn_f[k].value == 'Yg':
+                if F[k] == bus_idx and nc.passive_branch_data.conn_f[k] == WindingType.GroundedStar.idx():
                     grounded_here = True
                     break
                 else:
-                    if T[k] == bus_idx and nc.passive_branch_data.conn_t[k].value == 'Yg':
+                    if T[k] == bus_idx and nc.passive_branch_data.conn_t[k] == WindingType.GroundedStar.idx():
                         grounded_here = True
                         break
                     else:
@@ -237,17 +239,26 @@ def compute_ybus(nc: NumericalCircuit) -> Tuple[csc_matrix, csc_matrix, csc_matr
 def compute_generators(bus_idx: IntVec,
                        bus_lookup: IntVec,
                        V: CxVec,
-                       P: CxVec,
-                       Q: CxVec,
-                       is_controlled: BoolVec) -> CxVec:
+                       P: Vec,
+                       Q: Vec,
+                       control_mode_int: IntVec) -> CxVec:
+    """
 
+    :param bus_idx:
+    :param bus_lookup:
+    :param V:
+    :param P:
+    :param Q:
+    :param control_mode_int:
+    :return:
+    """
     n = len(V)
     nelm = len(bus_idx)
     Igen = np.zeros(n, dtype=complex)
 
     for k in range(nelm):
 
-        if is_controlled[k]:
+        if control_mode_int[k] == 1:  # GeneratorControlMode.V: 1
             Q[k] = 0.0
 
         f = bus_idx[k]
@@ -1009,30 +1020,36 @@ class PfBasicFormulation3Ph(PfFormulationTemplate):
         # compute the function residual
         # Assumes the internal vars were updated already with self.x2var()
 
-        Igen = compute_generators(bus_idx=self.nc.generator_data.bus_idx,
-                                  bus_lookup=self.bus_lookup,
-                                  V=V,
-                                  P=self.nc.generator_data.p,
-                                  Q=self.nc.generator_data.q,
-                                  is_controlled=self.nc.generator_data.controllable)
+        Igen = compute_generators(
+            bus_idx=self.nc.generator_data.bus_idx,
+            bus_lookup=self.bus_lookup,
+            V=V,
+            P=self.nc.generator_data.p,
+            Q=self.nc.generator_data.q,
+            control_mode_int=self.nc.generator_data.control_mode_int
+        )
 
         (Ipower,
          Y_power_linear,
-         self.Un_floating_power) = compute_power_loads(bus_idx=self.nc.load_data.bus_idx,
-                                                       bus_lookup=self.bus_lookup,
-                                                       V=V,
-                                                       Sstar=self.nc.load_data.S3_star,
-                                                       Sfloating=self.nc.load_data.S3_floatingstar,
-                                                       Sdelta=self.nc.load_data.S3_delta)
+         self.Un_floating_power) = compute_power_loads(
+            bus_idx=self.nc.load_data.bus_idx,
+            bus_lookup=self.bus_lookup,
+            V=V,
+            Sstar=self.nc.load_data.S3_star,
+            Sfloating=self.nc.load_data.S3_floatingstar,
+            Sdelta=self.nc.load_data.S3_delta
+        )
 
         (Icurrent,
          Y_current_linear,
-         self.Un_floating_current) = compute_current_loads(bus_idx=self.nc.load_data.bus_idx,
-                                                           bus_lookup=self.bus_lookup,
-                                                           V=V,
-                                                           Istar=self.nc.load_data.I3_star,
-                                                           Idelta=self.nc.load_data.I3_delta,
-                                                           Ifloating=self.nc.load_data.I3_floatingstar)
+         self.Un_floating_current) = compute_current_loads(
+            bus_idx=self.nc.load_data.bus_idx,
+            bus_lookup=self.bus_lookup,
+            V=V,
+            Istar=self.nc.load_data.I3_star,
+            Idelta=self.nc.load_data.I3_delta,
+            Ifloating=self.nc.load_data.I3_floatingstar
+        )
 
         Ibus = (Igen + Ipower + Icurrent) / (self.nc.Sbase / 3) / (V / np.abs(V))
         Icalc = compute_current(self.Ybus, V) / (V / np.abs(V))
@@ -1066,12 +1083,14 @@ class PfBasicFormulation3Ph(PfFormulationTemplate):
         # compute the function residual
         # Assumes the internal vars were updated already with self.x2var()
 
-        Igen = compute_generators(bus_idx=self.nc.generator_data.bus_idx,
-                                  bus_lookup=self.bus_lookup,
-                                  V=V,
-                                  P=self.nc.generator_data.p,
-                                  Q=self.nc.generator_data.q,
-                                  is_controlled=self.nc.generator_data.controllable)
+        Igen = compute_generators(
+            bus_idx=self.nc.generator_data.bus_idx,
+            bus_lookup=self.bus_lookup,
+            V=V,
+            P=self.nc.generator_data.p,
+            Q=self.nc.generator_data.q,
+            control_mode_int=self.nc.generator_data.control_mode_int
+        )
 
         (Ipower,
          Y_power_linear,
@@ -1122,12 +1141,14 @@ class PfBasicFormulation3Ph(PfFormulationTemplate):
         # compute the function residual
         # Assumes the internal vars were updated already with self.x2var()
 
-        Igen = compute_generators(bus_idx=self.nc.generator_data.bus_idx,
-                                  bus_lookup=self.bus_lookup,
-                                  V=self.V,
-                                  P=self.nc.generator_data.p,
-                                  Q=self.nc.generator_data.q,
-                                  is_controlled=self.nc.generator_data.controllable)
+        Igen = compute_generators(
+            bus_idx=self.nc.generator_data.bus_idx,
+            bus_lookup=self.bus_lookup,
+            V=self.V,
+            P=self.nc.generator_data.p,
+            Q=self.nc.generator_data.q,
+            control_mode_int=self.nc.generator_data.control_mode_int
+        )
 
         (Ipower,
          Y_power_linear,
@@ -1193,7 +1214,8 @@ class PfBasicFormulation3Ph(PfFormulationTemplate):
             if self.options.distributed_slack:
                 ok, delta = compute_slack_distribution(Scalc=self.Scalc,
                                                        vd=self.vd,
-                                                       bus_installed_power=expand3ph(self.nc.bus_data.installed_power)[self.mask])
+                                                       bus_installed_power=expand3ph(self.nc.bus_data.installed_power)[
+                                                           self.mask])
                 if ok:
                     any_change = True
                     # Update the objective power to reflect the slack distribution
@@ -1220,12 +1242,14 @@ class PfBasicFormulation3Ph(PfFormulationTemplate):
 
         # NOTE: Assumes the internal vars were updated already with self.x2var()
 
-        Igen = compute_generators(bus_idx=self.nc.generator_data.bus_idx,
-                                  bus_lookup=self.bus_lookup,
-                                  V=self.V,
-                                  P=self.nc.generator_data.p,
-                                  Q=self.nc.generator_data.q,
-                                  is_controlled=self.nc.generator_data.controllable)
+        Igen = compute_generators(
+            bus_idx=self.nc.generator_data.bus_idx,
+            bus_lookup=self.bus_lookup,
+            V=self.V,
+            P=self.nc.generator_data.p,
+            Q=self.nc.generator_data.q,
+            control_mode_int=self.nc.generator_data.control_mode_int
+        )
 
         Ipower, Y_power_linear, self.Un_floating_power = compute_power_loads(bus_idx=self.nc.load_data.bus_idx,
                                                                              bus_lookup=self.bus_lookup,

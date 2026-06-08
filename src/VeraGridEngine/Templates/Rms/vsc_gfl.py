@@ -6,7 +6,7 @@
 import numpy as np
 import math
 
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType, ParamPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType, ParamPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Utils.Symbolic.block import (Block, Var)
 from VeraGridEngine.Utils.Symbolic.block_helpers import tf_to_block
@@ -441,8 +441,8 @@ def build_gfl_converter_model(vfactory: VarFactory, inputs,
         event_dict= event_dict,
         init_eqs=init_eqs,
         external_mapping={
-            VarPowerFlowRefferenceType.P:P,
-            VarPowerFlowRefferenceType.Q:Q,
+            VarPowerFlowReferenceType.P:P,
+            VarPowerFlowReferenceType.Q:Q,
         }
     )
     gfl_block.add(gfl_block_aux)
@@ -584,27 +584,27 @@ def VscGflBuild(vfactory: VarFactory, name: str = "",
         },
         event_dict= event_dict,
         external_mapping={
-            VarPowerFlowRefferenceType.P: P,
-            VarPowerFlowRefferenceType.Q: Q,
+            VarPowerFlowReferenceType.P: P,
+            VarPowerFlowReferenceType.Q: Q,
         },
         in_vars= inputs,
         out_vars = [Pt_vsc, Qt_vsc, Pf_vsc]
     )
     vsc_block.external_mapping = {
-        VarPowerFlowRefferenceType.Vmt: inputs[0],
-        VarPowerFlowRefferenceType.Vat: inputs[1],
-        VarPowerFlowRefferenceType.Vdc: inputs[2],
-        VarPowerFlowRefferenceType.Pt: Pt_vsc,
-        VarPowerFlowRefferenceType.Qt: Qt_vsc,
-        VarPowerFlowRefferenceType.Pf: Pf_vsc,
-        VarPowerFlowRefferenceType.Qf: Qf,
+        VarPowerFlowReferenceType.Vmt: inputs[0],
+        VarPowerFlowReferenceType.Vat: inputs[1],
+        VarPowerFlowReferenceType.Vdc: inputs[2],
+        VarPowerFlowReferenceType.Pt: Pt_vsc,
+        VarPowerFlowReferenceType.Qt: Qt_vsc,
+        VarPowerFlowReferenceType.Pf: Pf_vsc,
+        VarPowerFlowReferenceType.Qf: Qf,
     }
     vsc_block.api_obj_mapping = {
-        ParamPowerFlowRefferenceType.R1: internals["R"],
-        ParamPowerFlowRefferenceType.X1: internals["L"],
-        ParamPowerFlowRefferenceType.alpha1: a0,
-        ParamPowerFlowRefferenceType.alpha2: a1,
-        ParamPowerFlowRefferenceType.alpha3: a2,
+        ParamPowerFlowReferenceType.R1: internals["R"],
+        ParamPowerFlowReferenceType.X1: internals["L"],
+        ParamPowerFlowReferenceType.alpha1: a0,
+        ParamPowerFlowReferenceType.alpha2: a1,
+        ParamPowerFlowReferenceType.alpha3: a2,
     }
 
     vsc_block.add(gfl_block)
@@ -680,22 +680,22 @@ def TrafoGflBuild(vfactory: VarFactory, name: str = "",
     )
 
     vsc_block.external_mapping = {
-        VarPowerFlowRefferenceType.Vmf: Vm_f,
-        VarPowerFlowRefferenceType.Vaf: Va_f,
-        VarPowerFlowRefferenceType.Vmt: Vm_t,
-        VarPowerFlowRefferenceType.Vat: Va_t,
-        VarPowerFlowRefferenceType.Vdc: Vdc,
-        VarPowerFlowRefferenceType.Pt: Pt_vsc,
-        VarPowerFlowRefferenceType.Qt: Qt_vsc,
-        VarPowerFlowRefferenceType.Pf: Pf_vsc,
-        VarPowerFlowRefferenceType.Qf: Qf_vsc,
+        VarPowerFlowReferenceType.Vmf: Vm_f,
+        VarPowerFlowReferenceType.Vaf: Va_f,
+        VarPowerFlowReferenceType.Vmt: Vm_t,
+        VarPowerFlowReferenceType.Vat: Va_t,
+        VarPowerFlowReferenceType.Vdc: Vdc,
+        VarPowerFlowReferenceType.Pt: Pt_vsc,
+        VarPowerFlowReferenceType.Qt: Qt_vsc,
+        VarPowerFlowReferenceType.Pf: Pf_vsc,
+        VarPowerFlowReferenceType.Qf: Qf_vsc,
     }
     vsc_block.api_obj_mapping = {
-        ParamPowerFlowRefferenceType.R1: internals["R"],
-        ParamPowerFlowRefferenceType.X1: internals["L"],
-        ParamPowerFlowRefferenceType.alpha1: a0,
-        ParamPowerFlowRefferenceType.alpha2: a1,
-        ParamPowerFlowRefferenceType.alpha3: a2,
+        ParamPowerFlowReferenceType.R1: internals["R"],
+        ParamPowerFlowReferenceType.X1: internals["L"],
+        ParamPowerFlowReferenceType.alpha1: a0,
+        ParamPowerFlowReferenceType.alpha2: a1,
+        ParamPowerFlowReferenceType.alpha3: a2,
     }
 
     vsc_block.add(gfl_block)

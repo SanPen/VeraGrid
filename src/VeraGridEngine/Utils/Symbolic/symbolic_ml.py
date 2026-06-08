@@ -119,13 +119,7 @@ def mti_hard_sat(
 ):
     """MTI hard saturation following toolbox-style mixed constraints.
 
-    Binary pairs are enforced with equality constraints:
-    - b1*b2 = 0, b1 + b2 - 1 = 0
-    - b3*b4 = 0, b3 + b4 - 1 = 0
 
-    Range coupling is enforced with inequalities in residual form (G <= 0):
-    - -(b1 - b2) * (u - ul) <= 0
-    - -(b3 - b4) * (u - uu) <= 0
     """
     b1 = vf.add_var("b1_" + name)
     b2 = vf.add_var("b2_" + name)
@@ -133,35 +127,31 @@ def mti_hard_sat(
     b4 = vf.add_var("b4_" + name)
     y = vf.add_var("y_sat_" + name)
 
-    s = (yu - yl) / (uu - ul)
-    y_mid = (u - ul) * s + yl
-    y_expr = b2 * yl + b1 * b4 * y_mid + b3 * yu
+
+    y_expr = b2 * yl + b1 * b4 * u + b3 * yu
 
     block = Block(
         algebraic_vars=[y],
         algebraic_eqs=[
             y - y_expr,
-            b1 * b2,
-            b1 + b2 - Const(1.0),
-            b3 * b4,
-            b3 + b4 - Const(1.0),
+            b1 + b2 - 1,
+            b3 + b4 - 1,
         ],
         inequalities=[
             -(b1 - b2) * (u - ul),
             -(b3 - b4) * (u - uu),
         ],
         init_eqs={
-            y: sym.hard_sat((u - ul) * s + yl, yl, yu),
+            y: sym.hard_sat(u, yl, yu),
         },
-        # Boolean mode initialization/selection is driven by guards.
-        # Guard convention in MTI is residual <= 0 means True.
-        boolean_guards={
-            b1: -(u - ul),
-            b2: (u - ul),
-            b3: -(u - uu),
-            b4: (u - uu),
+        boolean_guards= {
+            b1: sym.heaviside(u - ul),
+            b2: 1 - sym.heaviside(u - ul),
+            b3: sym.heaviside(u - uu),
+            b4: 1 - sym.heaviside(u - uu),
         }
     )
+
     return block, y
 
 def exponential_ml(vf: VarFactory, x:Expr, name:str=""):

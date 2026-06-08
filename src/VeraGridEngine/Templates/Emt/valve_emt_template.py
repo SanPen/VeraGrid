@@ -10,7 +10,7 @@ from VeraGridEngine.enumerations import (
     ValveEmtModelVariant,
     ValveEmtType,
     ValveInitializationState,
-    VarPowerFlowRefferenceType,
+    VarPowerFlowReferenceType,
 )
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var, abs
@@ -154,8 +154,8 @@ def get_valve_emt_template(
     # ------------------------------------------------------------------
     # Terminal inputs.
     # ------------------------------------------------------------------
-    v_f_dc: Var = vf.add_var(name=f"v_f_dc_{name}", reference=VarPowerFlowRefferenceType.Vf_dc)
-    v_t_dc: Var = vf.add_var(name=f"v_t_dc_{name}", reference=VarPowerFlowRefferenceType.Vt_dc)
+    v_f_dc: Var = vf.add_var(name=f"v_f_dc_{name}", reference=VarPowerFlowReferenceType.Vf_dc)
+    v_t_dc: Var = vf.add_var(name=f"v_t_dc_{name}", reference=VarPowerFlowReferenceType.Vt_dc)
 
     # ------------------------------------------------------------------
     # Runtime parameters.
@@ -190,10 +190,10 @@ def get_valve_emt_template(
     v_valve: Var = vf.add_var(name=f"v_valve_{name}")
     i_static: Var = vf.add_var(name=f"i_static_{name}")
     i_capacitive: Var = vf.add_var(name=f"i_capacitive_{name}")
-    i_f_dc: Var = vf.add_var(name=f"i_f_dc_{name}", reference=VarPowerFlowRefferenceType.If_dc)
-    i_t_dc: Var = vf.add_var(name=f"i_t_dc_{name}", reference=VarPowerFlowRefferenceType.It_dc)
-    p_f: Var = vf.add_var(name=f"p_f_{name}", reference=VarPowerFlowRefferenceType.Pf)
-    p_t: Var = vf.add_var(name=f"p_t_{name}", reference=VarPowerFlowRefferenceType.Pt)
+    i_f_dc: Var = vf.add_var(name=f"i_f_dc_{name}", reference=VarPowerFlowReferenceType.If_dc)
+    i_t_dc: Var = vf.add_var(name=f"i_t_dc_{name}", reference=VarPowerFlowReferenceType.It_dc)
+    p_f: Var = vf.add_var(name=f"p_f_{name}", reference=VarPowerFlowReferenceType.Pf)
+    p_t: Var = vf.add_var(name=f"p_t_{name}", reference=VarPowerFlowReferenceType.Pt)
     i_rating_margin: Var = vf.add_var(name=f"i_rating_margin_{name}")
 
     # ------------------------------------------------------------------
@@ -291,15 +291,15 @@ def get_valve_emt_template(
             (d_q_snubber, c_zero),
         ]),
         external_mapping=dict([
-            (VarPowerFlowRefferenceType.Vf_dc, v_f_dc),
-            (VarPowerFlowRefferenceType.Vt_dc, v_t_dc),
-            (VarPowerFlowRefferenceType.Vdc, v_f_dc),
-            (VarPowerFlowRefferenceType.If_dc, i_f_dc),
-            (VarPowerFlowRefferenceType.It_dc, i_t_dc),
-            (VarPowerFlowRefferenceType.Idc, i_f_dc),
-            (VarPowerFlowRefferenceType.Pf, p_f),
-            (VarPowerFlowRefferenceType.Pt, p_t),
-            (VarPowerFlowRefferenceType.DcPathModeSeed, path_mode_pf_seed),
+            (VarPowerFlowReferenceType.Vf_dc, v_f_dc),
+            (VarPowerFlowReferenceType.Vt_dc, v_t_dc),
+            (VarPowerFlowReferenceType.Vdc, v_f_dc),
+            (VarPowerFlowReferenceType.If_dc, i_f_dc),
+            (VarPowerFlowReferenceType.It_dc, i_t_dc),
+            (VarPowerFlowReferenceType.Idc, i_f_dc),
+            (VarPowerFlowReferenceType.Pf, p_f),
+            (VarPowerFlowReferenceType.Pt, p_t),
+            (VarPowerFlowReferenceType.DcPathModeSeed, path_mode_pf_seed),
         ]),
         procedural_logic=list([
             ValveStateLogic(

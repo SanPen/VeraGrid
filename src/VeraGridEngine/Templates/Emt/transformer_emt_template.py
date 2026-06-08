@@ -9,8 +9,8 @@ from typing import Dict, List, Tuple
 from VeraGridEngine.enumerations import (
     BlockType,
     DeviceType,
-    ParamPowerFlowRefferenceType,
-    VarPowerFlowRefferenceType,
+    ParamPowerFlowReferenceType,
+    VarPowerFlowReferenceType,
     WindingType,
 )
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
@@ -174,13 +174,13 @@ def get_transformer_emt_template(
     gm: Var = vf.add_var(name=f"trafo_gm_{name}")  # kept for compatibility, unused here
     total_voltage_ratio: Var = vf.add_var(name=f"trafo_tap_ratio_{name}")
 
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_winding1_resistance_pu] = r1
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_winding2_resistance_pu] = r2
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_winding1_inductance_pu_s] = l1
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_winding2_inductance_pu_s] = l2
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_mutual_inductance_pu_s] = m12
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_magnetizing_conductance_pu] = gm
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_total_voltage_ratio] = total_voltage_ratio
+    templ.block.api_obj_mapping[ParamPowerFlowReferenceType.transformer_winding1_resistance_pu] = r1
+    templ.block.api_obj_mapping[ParamPowerFlowReferenceType.transformer_winding2_resistance_pu] = r2
+    templ.block.api_obj_mapping[ParamPowerFlowReferenceType.transformer_winding1_inductance_pu_s] = l1
+    templ.block.api_obj_mapping[ParamPowerFlowReferenceType.transformer_winding2_inductance_pu_s] = l2
+    templ.block.api_obj_mapping[ParamPowerFlowReferenceType.transformer_mutual_inductance_pu_s] = m12
+    templ.block.api_obj_mapping[ParamPowerFlowReferenceType.transformer_magnetizing_conductance_pu] = gm
+    templ.block.api_obj_mapping[ParamPowerFlowReferenceType.transformer_total_voltage_ratio] = total_voltage_ratio
 
     # ------------------------------------------------------------------
     # Terminal voltages
@@ -193,12 +193,12 @@ def get_transformer_emt_template(
     to_grounding_link_block: Block | None = None
 
     if from_has_neutral_port:
-        vf_n = vf.add_var(name=f"vf_N_{name}", reference=VarPowerFlowRefferenceType.vf_N)
+        vf_n = vf.add_var(name=f"vf_N_{name}", reference=VarPowerFlowReferenceType.vf_N)
     else:
         pass
 
     if to_has_neutral_port:
-        vt_n = vf.add_var(name=f"vt_N_{name}", reference=VarPowerFlowRefferenceType.vt_N)
+        vt_n = vf.add_var(name=f"vt_N_{name}", reference=VarPowerFlowReferenceType.vt_N)
     else:
         pass
 
@@ -237,14 +237,14 @@ def get_transformer_emt_template(
         pass
 
     vf_vars: list[Var] = [
-        vf.add_var(name=f"vf_A_{name}", reference=VarPowerFlowRefferenceType.vf_A),
-        vf.add_var(name=f"vf_B_{name}", reference=VarPowerFlowRefferenceType.vf_B),
-        vf.add_var(name=f"vf_C_{name}", reference=VarPowerFlowRefferenceType.vf_C),
+        vf.add_var(name=f"vf_A_{name}", reference=VarPowerFlowReferenceType.vf_A),
+        vf.add_var(name=f"vf_B_{name}", reference=VarPowerFlowReferenceType.vf_B),
+        vf.add_var(name=f"vf_C_{name}", reference=VarPowerFlowReferenceType.vf_C),
     ]
     vt_vars: list[Var] = [
-        vf.add_var(name=f"vt_A_{name}", reference=VarPowerFlowRefferenceType.vt_A),
-        vf.add_var(name=f"vt_B_{name}", reference=VarPowerFlowRefferenceType.vt_B),
-        vf.add_var(name=f"vt_C_{name}", reference=VarPowerFlowRefferenceType.vt_C),
+        vf.add_var(name=f"vt_A_{name}", reference=VarPowerFlowReferenceType.vt_A),
+        vf.add_var(name=f"vt_B_{name}", reference=VarPowerFlowReferenceType.vt_B),
+        vf.add_var(name=f"vt_C_{name}", reference=VarPowerFlowReferenceType.vt_C),
     ]
 
     # ------------------------------------------------------------------
@@ -410,23 +410,23 @@ def get_transformer_emt_template(
     # External mapping for network stamping / PF seeding
     # ------------------------------------------------------------------
     templ.block.external_mapping = dict({
-        VarPowerFlowRefferenceType.if_N: if_n_act,
-        VarPowerFlowRefferenceType.if_A: if_act[0],
-        VarPowerFlowRefferenceType.if_B: if_act[1],
-        VarPowerFlowRefferenceType.if_C: if_act[2],
-        VarPowerFlowRefferenceType.it_N: it_n_act,
-        VarPowerFlowRefferenceType.it_A: it_act[0],
-        VarPowerFlowRefferenceType.it_B: it_act[1],
-        VarPowerFlowRefferenceType.it_C: it_act[2],
+        VarPowerFlowReferenceType.if_N: if_n_act,
+        VarPowerFlowReferenceType.if_A: if_act[0],
+        VarPowerFlowReferenceType.if_B: if_act[1],
+        VarPowerFlowReferenceType.if_C: if_act[2],
+        VarPowerFlowReferenceType.it_N: it_n_act,
+        VarPowerFlowReferenceType.it_A: it_act[0],
+        VarPowerFlowReferenceType.it_B: it_act[1],
+        VarPowerFlowReferenceType.it_C: it_act[2],
     })
-    templ.block.external_mapping[VarPowerFlowRefferenceType.vf_N] = vf_n
-    templ.block.external_mapping[VarPowerFlowRefferenceType.vt_N] = vt_n
-    templ.block.external_mapping[VarPowerFlowRefferenceType.vf_A] = vf_vars[0]
-    templ.block.external_mapping[VarPowerFlowRefferenceType.vf_B] = vf_vars[1]
-    templ.block.external_mapping[VarPowerFlowRefferenceType.vf_C] = vf_vars[2]
-    templ.block.external_mapping[VarPowerFlowRefferenceType.vt_A] = vt_vars[0]
-    templ.block.external_mapping[VarPowerFlowRefferenceType.vt_B] = vt_vars[1]
-    templ.block.external_mapping[VarPowerFlowRefferenceType.vt_C] = vt_vars[2]
+    templ.block.external_mapping[VarPowerFlowReferenceType.vf_N] = vf_n
+    templ.block.external_mapping[VarPowerFlowReferenceType.vt_N] = vt_n
+    templ.block.external_mapping[VarPowerFlowReferenceType.vf_A] = vf_vars[0]
+    templ.block.external_mapping[VarPowerFlowReferenceType.vf_B] = vf_vars[1]
+    templ.block.external_mapping[VarPowerFlowReferenceType.vf_C] = vf_vars[2]
+    templ.block.external_mapping[VarPowerFlowReferenceType.vt_A] = vt_vars[0]
+    templ.block.external_mapping[VarPowerFlowReferenceType.vt_B] = vt_vars[1]
+    templ.block.external_mapping[VarPowerFlowReferenceType.vt_C] = vt_vars[2]
 
     # ------------------------------------------------------------------
     # State initialization

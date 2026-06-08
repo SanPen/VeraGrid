@@ -8,13 +8,13 @@ import time
 import numpy as np
 import pandas as pd
 
-from VeraGridEngine.enumerations import ParamPowerFlowRefferenceType
+from VeraGridEngine.enumerations import ParamPowerFlowReferenceType
 from VeraGridEngine.Devices import MultiCircuit
 from VeraGridEngine.Utils.Symbolic.symbolic import (Var, Const, Expr, piecewise)
 from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicParamsVector, SymbolicDerivative
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic_io import block_deep_copy
-from VeraGridEngine.enumerations import VarPowerFlowRefferenceType, RmsInitializationMethod, DeviceType
+from VeraGridEngine.enumerations import VarPowerFlowReferenceType, RmsInitializationMethod, DeviceType
 from VeraGridEngine.basic_structures import Vec, ObjVec, BoolVec, Logger
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowResults
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
@@ -184,22 +184,22 @@ class RmsProblemComplex(RmsProblemTemplate):
             # Add init values from powerflow to initial guess
             # Convert polar (Vm, Va) to complex phasor
             if elm.is_dc:
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Vdc, 
-                                   np.abs(self.power_flow_results.voltage[bus_num]))
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.P,
-                                   float(np.real(self.power_flow_results.Sbus[bus_num] / self.grid.Sbase)))
+                self.set_init_guess(mdl, VarPowerFlowReferenceType.Vdc,
+                                    np.abs(self.power_flow_results.voltage[bus_num]))
+                self.set_init_guess(mdl, VarPowerFlowReferenceType.P,
+                                    float(np.real(self.power_flow_results.Sbus[bus_num] / self.grid.Sbase)))
             else:
                 Vm = np.abs(self.power_flow_results.voltage[bus_num])
                 Va = np.angle(self.power_flow_results.voltage[bus_num])
                 V_complex = polar_to_complex(Vm, Va)
                 Vr, Vi = V_complex.real, V_complex.imag
                 
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Vr, Vr)
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Vi, Vi)
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.P,
-                                   float(np.real(self.power_flow_results.Sbus[bus_num] / self.grid.Sbase)))
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Q,
-                                   float(np.imag(self.power_flow_results.Sbus[bus_num] / self.grid.Sbase)))
+                self.set_init_guess(mdl, VarPowerFlowReferenceType.Vr, Vr)
+                self.set_init_guess(mdl, VarPowerFlowReferenceType.Vi, Vi)
+                self.set_init_guess(mdl, VarPowerFlowReferenceType.P,
+                                    float(np.real(self.power_flow_results.Sbus[bus_num] / self.grid.Sbase)))
+                self.set_init_guess(mdl, VarPowerFlowReferenceType.Q,
+                                    float(np.imag(self.power_flow_results.Sbus[bus_num] / self.grid.Sbase)))
 
             # Add model to system block
             self.sys_block.add(mdl)
@@ -245,17 +245,17 @@ class RmsProblemComplex(RmsProblemTemplate):
                 mdl = elm.rms_model
                 
                 # Set line parameters
-                mdl.parameters[mdl.api_obj_mapping[ParamPowerFlowRefferenceType.g]] = Const(float(elm.R / (elm.R ** 2 + elm.X ** 2)))
-                mdl.parameters[mdl.api_obj_mapping[ParamPowerFlowRefferenceType.b]] = Const(float(-elm.X / (elm.R ** 2 + elm.X ** 2)))
-                mdl.parameters[mdl.api_obj_mapping[ParamPowerFlowRefferenceType.bsh]] = Const(elm.B)
+                mdl.parameters[mdl.api_obj_mapping[ParamPowerFlowReferenceType.g]] = Const(float(elm.R / (elm.R ** 2 + elm.X ** 2)))
+                mdl.parameters[mdl.api_obj_mapping[ParamPowerFlowReferenceType.b]] = Const(float(-elm.X / (elm.R ** 2 + elm.X ** 2)))
+                mdl.parameters[mdl.api_obj_mapping[ParamPowerFlowReferenceType.bsh]] = Const(elm.B)
 
                 self.add_variables_to_compilation_dicts(elm, mdl)
 
                 # Add init values from powerflow to initial guess
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pf, self.Sf[line_idx].real)
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Qf, self.Sf[line_idx].imag)
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pt, self.St[line_idx].real)
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Qt, self.St[line_idx].imag)
+                self.set_init_guess(mdl, VarPowerFlowReferenceType.Pf, self.Sf[line_idx].real)
+                self.set_init_guess(mdl, VarPowerFlowReferenceType.Qf, self.Sf[line_idx].imag)
+                self.set_init_guess(mdl, VarPowerFlowReferenceType.Pt, self.St[line_idx].real)
+                self.set_init_guess(mdl, VarPowerFlowReferenceType.Qt, self.St[line_idx].imag)
                 line_idx += 1
 
                 # Add model to system block
@@ -265,12 +265,12 @@ class RmsProblemComplex(RmsProblemTemplate):
                 f = bus_dict[elm.bus_from]
                 t = bus_dict[elm.bus_to]
 
-                setP(P, P_used, f, -mdl.E(VarPowerFlowRefferenceType.Pf))
-                setP(P, P_used, t, -mdl.E(VarPowerFlowRefferenceType.Pt))
+                setP(P, P_used, f, -mdl.E(VarPowerFlowReferenceType.Pf))
+                setP(P, P_used, t, -mdl.E(VarPowerFlowReferenceType.Pt))
                 if not elm.bus_from.is_dc:
-                    setQ(Q, Q_used, f, -mdl.E(VarPowerFlowRefferenceType.Qf))
+                    setQ(Q, Q_used, f, -mdl.E(VarPowerFlowReferenceType.Qf))
                 if not elm.bus_to.is_dc:
-                    setQ(Q, Q_used, t, -mdl.E(VarPowerFlowRefferenceType.Qt))
+                    setQ(Q, Q_used, t, -mdl.E(VarPowerFlowReferenceType.Qt))
                     
             elif elm.rms_model is None or elm.rms_model.empty():
                 self.logger.add_error("No RMS model",
@@ -285,14 +285,14 @@ class RmsProblemComplex(RmsProblemTemplate):
                 self.add_variables_to_compilation_dicts(elm, mdl)
 
                 # Add init values from powerflow to initial guess
-                if VarPowerFlowRefferenceType.Pf in mdl.external_mapping:
-                    self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pf, self.Sf[line_idx].real if line_idx < len(self.Sf) else 0.0)
-                if VarPowerFlowRefferenceType.Qf in mdl.external_mapping:
-                    self.set_init_guess(mdl, VarPowerFlowRefferenceType.Qf, self.Sf[line_idx].imag if line_idx < len(self.Sf) else 0.0)
-                if VarPowerFlowRefferenceType.Pt in mdl.external_mapping:
-                    self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pt, self.St[line_idx].real if line_idx < len(self.St) else 0.0)
-                if VarPowerFlowRefferenceType.Qt in mdl.external_mapping:
-                    self.set_init_guess(mdl, VarPowerFlowRefferenceType.Qt, self.St[line_idx].imag if line_idx < len(self.St) else 0.0)
+                if VarPowerFlowReferenceType.Pf in mdl.external_mapping:
+                    self.set_init_guess(mdl, VarPowerFlowReferenceType.Pf, self.Sf[line_idx].real if line_idx < len(self.Sf) else 0.0)
+                if VarPowerFlowReferenceType.Qf in mdl.external_mapping:
+                    self.set_init_guess(mdl, VarPowerFlowReferenceType.Qf, self.Sf[line_idx].imag if line_idx < len(self.Sf) else 0.0)
+                if VarPowerFlowReferenceType.Pt in mdl.external_mapping:
+                    self.set_init_guess(mdl, VarPowerFlowReferenceType.Pt, self.St[line_idx].real if line_idx < len(self.St) else 0.0)
+                if VarPowerFlowReferenceType.Qt in mdl.external_mapping:
+                    self.set_init_guess(mdl, VarPowerFlowReferenceType.Qt, self.St[line_idx].imag if line_idx < len(self.St) else 0.0)
                 line_idx += 1
 
                 # Add model to system block
@@ -302,14 +302,14 @@ class RmsProblemComplex(RmsProblemTemplate):
                 f = bus_dict[elm.bus_from]
                 t = bus_dict[elm.bus_to]
 
-                if VarPowerFlowRefferenceType.Pf in mdl.external_mapping:
-                    setP(P, P_used, f, -mdl.E(VarPowerFlowRefferenceType.Pf))
-                if VarPowerFlowRefferenceType.Pt in mdl.external_mapping:
-                    setP(P, P_used, t, -mdl.E(VarPowerFlowRefferenceType.Pt))
-                if not elm.bus_from.is_dc and VarPowerFlowRefferenceType.Qf in mdl.external_mapping:
-                    setQ(Q, Q_used, f, -mdl.E(VarPowerFlowRefferenceType.Qf))
-                if not elm.bus_to.is_dc and VarPowerFlowRefferenceType.Qt in mdl.external_mapping:
-                    setQ(Q, Q_used, t, -mdl.E(VarPowerFlowRefferenceType.Qt))
+                if VarPowerFlowReferenceType.Pf in mdl.external_mapping:
+                    setP(P, P_used, f, -mdl.E(VarPowerFlowReferenceType.Pf))
+                if VarPowerFlowReferenceType.Pt in mdl.external_mapping:
+                    setP(P, P_used, t, -mdl.E(VarPowerFlowReferenceType.Pt))
+                if not elm.bus_from.is_dc and VarPowerFlowReferenceType.Qf in mdl.external_mapping:
+                    setQ(Q, Q_used, f, -mdl.E(VarPowerFlowReferenceType.Qf))
+                if not elm.bus_to.is_dc and VarPowerFlowReferenceType.Qt in mdl.external_mapping:
+                    setQ(Q, Q_used, t, -mdl.E(VarPowerFlowReferenceType.Qt))
 
         # Process VSCs
         for i, elm in enumerate(self.grid.get_vsc()):
@@ -324,19 +324,19 @@ class RmsProblemComplex(RmsProblemTemplate):
             Sf_vsc = (self.power_flow_results.Pfn_vsc[i] + self.power_flow_results.Pfp_vsc[i]) / self.grid.Sbase
 
             # Fill init_guess
-            if VarPowerFlowRefferenceType.Pf in mdl.external_mapping:
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pf, Sf_vsc)
-            if VarPowerFlowRefferenceType.Pt in mdl.external_mapping:
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pt, St_vsc[i].real)
-            if VarPowerFlowRefferenceType.Qt in mdl.external_mapping:
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Qt, St_vsc[i].imag)
+            if VarPowerFlowReferenceType.Pf in mdl.external_mapping:
+                self.set_init_guess(mdl, VarPowerFlowReferenceType.Pf, Sf_vsc)
+            if VarPowerFlowReferenceType.Pt in mdl.external_mapping:
+                self.set_init_guess(mdl, VarPowerFlowReferenceType.Pt, St_vsc[i].real)
+            if VarPowerFlowReferenceType.Qt in mdl.external_mapping:
+                self.set_init_guess(mdl, VarPowerFlowReferenceType.Qt, St_vsc[i].imag)
 
             # Initialize Vdc from DC bus
             dc_bus_model = elm.bus_from.rms_model
-            if VarPowerFlowRefferenceType.Vdc in mdl.external_mapping and VarPowerFlowRefferenceType.Vdc in dc_bus_model.external_mapping:
-                dc_bus_vdc_var = dc_bus_model.external_mapping[VarPowerFlowRefferenceType.Vdc]
+            if VarPowerFlowReferenceType.Vdc in mdl.external_mapping and VarPowerFlowReferenceType.Vdc in dc_bus_model.external_mapping:
+                dc_bus_vdc_var = dc_bus_model.external_mapping[VarPowerFlowReferenceType.Vdc]
                 if dc_bus_vdc_var.uid in self.init_guess:
-                    self.set_init_guess(mdl, VarPowerFlowRefferenceType.Vdc, self.init_guess[dc_bus_vdc_var.uid])
+                    self.set_init_guess(mdl, VarPowerFlowReferenceType.Vdc, self.init_guess[dc_bus_vdc_var.uid])
 
             self.sys_block.add(mdl)
 
@@ -355,17 +355,17 @@ class RmsProblemComplex(RmsProblemTemplate):
                 self.add_variables_to_compilation_dicts(elm, mdl)
 
                 # Fill init guess
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.P,
-                                   np.real(self.power_flow_results.Sbus[bus_index] / self.grid.Sbase))
+                self.set_init_guess(mdl, VarPowerFlowReferenceType.P,
+                                    np.real(self.power_flow_results.Sbus[bus_index] / self.grid.Sbase))
                 if not elm.bus.is_dc:
-                    self.set_init_guess(mdl, VarPowerFlowRefferenceType.Q,
-                                       np.imag(self.power_flow_results.Sbus[bus_index] / self.grid.Sbase))
+                    self.set_init_guess(mdl, VarPowerFlowReferenceType.Q,
+                                        np.imag(self.power_flow_results.Sbus[bus_index] / self.grid.Sbase))
 
                 # Add to conservation equations
                 k = bus_dict[elm.bus]
-                setP(P, P_used, k, mdl.E(VarPowerFlowRefferenceType.P))
+                setP(P, P_used, k, mdl.E(VarPowerFlowReferenceType.P))
                 if not elm.bus.is_dc:
-                    setQ(Q, Q_used, k, mdl.E(VarPowerFlowRefferenceType.Q))
+                    setQ(Q, Q_used, k, mdl.E(VarPowerFlowReferenceType.Q))
 
                 # Find init values
                 if self.options.initialization_method == RmsInitializationMethod.Explicit:
@@ -632,7 +632,7 @@ class RmsProblemComplex(RmsProblemTemplate):
         if self.options.verbose > 0:
             print(f"\nTotal compile time: {sum(timings.values()):.4f} s")
 
-    def set_init_guess(self, mdl: Block, reference_powerflow: VarPowerFlowRefferenceType, val: float):
+    def set_init_guess(self, mdl: Block, reference_powerflow: VarPowerFlowReferenceType, val: float):
         """Add values from powerflow to initial guess."""
         var = mdl.external_mapping[reference_powerflow]
         self.init_guess[var.uid] = val

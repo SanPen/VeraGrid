@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Device Relationship Graph</title>
+  <style>
+    :root {
+      --bg: #f3efe6;
+      --panel: rgba(255, 252, 245, 0.96);
+      --ink: #1f2933;
+      --muted: #5f6c76;
+      --border: #d7ccbc;
+      --accent: #0f766e;
+      --accent-2: #b45309;
+      --edge: rgba(82, 95, 111, 0.28);
+      --reference: rgba(180, 83, 9, 0.38);
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      background:
+        radial-gradient(circle at top left, rgba(15, 118, 110, 0.10), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(180, 83, 9, 0.10), transparent 32%),
+        var(--bg);
+      color: var(--ink);
+      font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+    }
+    .app {
+      display: grid;
+      grid-template-columns: 320px 1fr 320px;
+      height: 100%;
+      gap: 12px;
+      padding: 12px;
+      box-sizing: border-box;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: 0 18px 40px rgba(31, 41, 51, 0.08);
+      backdrop-filter: blur(8px);
+      overflow: hidden;
+    }
+    .panel-inner {
+      padding: 16px 18px;
+      height: 100%;
+      box-sizing: border-box;
+      overflow: auto;
+    }
+    h1, h2 {
+      margin: 0 0 10px 0;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+    h1 {
+      font-size: 1.25rem;
+    }
+    h2 {
+      font-size: 0.95rem;
+      margin-top: 18px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    p, li, label, input, button, a {
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+    a {
+      color: var(--accent);
+    }
+    input[type="search"] {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      box-sizing: border-box;
+      background: rgba(255, 255, 255, 0.84);
+    }
+    .checklist {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .checklist label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .stat {
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid var(--border);
+    }
+    .stat strong {
+      display: block;
+      font-size: 1.15rem;
+      margin-bottom: 3px;
+    }
+    .graph-wrap {
+      position: relative;
+      min-height: 0;
+    }
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: grab;
+    }
+    canvas.dragging {
+      cursor: grabbing;
+    }
+    .legend {
+      position: absolute;
+      left: 18px;
+      bottom: 18px;
+      display: grid;
+      gap: 8px;
+      padding: 12px 14px;
+      background: rgba(255, 252, 245, 0.88);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+    }
+    .swatch {
+      width: 18px;
+      height: 3px;
+      border-radius: 999px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 3px 10px;
+      background: rgba(255,255,255,0.85);
+      border: 1px solid var(--border);
+      margin: 3px 6px 0 0;
+      color: var(--muted);
+    }
+    .muted {
+      color: var(--muted);
+    }
+    .empty {
+      color: var(--muted);
+      font-style: italic;
+    }
+    button {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.8);
+      padding: 8px 10px;
+      cursor: pointer;
+    }
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    @media (max-width: 1200px) {
+      .app {
+        grid-template-columns: 280px 1fr;
+        grid-template-rows: minmax(360px, 1fr) 300px;
+      }
+      .details {
+        grid-column: 1 / -1;
+      }
+    }
+    @media (max-width: 860px) {
+      .app {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto minmax(420px, 1fr) auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <section class="panel">
+      <div class="panel-inner">
+        <h1>Device Relationship Graph</h1>
+        <p class="muted">Explore typed property references among the final device classes exposed by <code>MultiCircuit</code>.</p>
+        <h2>Search</h2>
+        <input id="search" type="search" placeholder="Find a class or device type">
+        <div class="toolbar">
+          <button id="resetView" type="button">Reset view</button>
+          <button id="focusSearch" type="button">Focus search</button>
+        </div>
+        <h2>Node kinds</h2>
+        <div class="checklist" id="kindFilters"></div>
+        <h2>Edge kinds</h2>
+        <div class="checklist" id="edgeFilters"></div>
+        <h2>Categories</h2>
+        <div class="checklist" id="categoryFilters"></div>
+        <div class="stats">
+          <div class="stat"><strong id="visibleNodes">0</strong><span>visible nodes</span></div>
+          <div class="stat"><strong id="visibleEdges">0</strong><span>visible edges</span></div>
+          <div class="stat"><strong id="totalNodes">0</strong><span>total nodes</span></div>
+          <div class="stat"><strong id="totalEdges">0</strong><span>total edges</span></div>
+        </div>
+      </div>
+    </section>
+    <section class="panel graph-wrap">
+      <canvas id="graph"></canvas>
+      <div class="legend">
+        <div class="legend-row"><span class="swatch" style="background: var(--reference)"></span><span>Typed property reference</span></div>
+      </div>
+    </section>
+    <aside class="panel details">
+      <div class="panel-inner" id="details"></div>
+    </aside>
+  </div>
+  <script>
+    const graph = {"nodes":[{"id":"Area","label":"Area","kind":"exposed","category":"Regions","module_name":"src.VeraGridEngine.Devices.Aggregation.area","file_path":"src/VeraGridEngine/Devices/Aggregation/area.py","bases":["GenericAreaGroup"],"doc_url":"../md_source/modelling.html#area"},{"id":"Battery","label":"Battery","kind":"exposed","category":"Injections","module_name":"src.VeraGridEngine.Devices.Injections.battery","file_path":"src/VeraGridEngine/Devices/Injections/battery.py","bases":["Generator"],"doc_url":"../md_source/modelling.html#battery"},{"id":"BranchGroup","label":"BranchGroup","kind":"exposed","category":"Groups","module_name":"src.VeraGridEngine.Devices.Aggregation.branch_group","file_path":"src/VeraGridEngine/Devices/Aggregation/branch_group.py","bases":["EditableDevice"],"doc_url":"../md_source/modelling.html#branchgroup"},{"id":"Bus","label":"Bus","kind":"exposed","category":"Substation","module_name":"src.VeraGridEngine.Devices.Substation.bus","file_path":"src/VeraGridEngine/Devices/Substation/bus.py","bases":["DynamicBusDevice"],"doc_url":"../md_source/modelling.html#bus"},{"id":"BusBar","label":"BusBar","kind":"exposed","category":"Substation","module_name":"src.VeraGridEngine.Devices.Substation.busbar","file_path":"src/VeraGridEngine/Devices/Substation/busbar.py","bases":["PhysicalDevice"],"doc_url":"../md_source/modelling.html#busbar"},{"id":"Community","label":"Community","kind":"exposed","category":"Regions","module_name":"src.VeraGridEngine.Devices.Aggregation.community","file_path":"src/VeraGridEngine/Devices/Aggregation/community.py","bases":["GenericAreaGroup"],"doc_url":"../md_source/modelling.html#community"},{"id":"Contingency","label":"Contingency","kind":"exposed","category":"Contingencies","module_name":"src.VeraGridEngine.Devices.Events.contingency","file_path":"src/VeraGridEngine/Devices/Events/contingency.py","bases":["PointerDeviceParent"],"doc_url":"../md_source/modelling.html#contingency"},{"id":"ContingencyGroup","label":"ContingencyGroup","kind":"exposed","category":"Contingencies","module_name":"src.VeraGridEngine.Devices.Events.contingency_group","file_path":"src/VeraGridEngine/Devices/Events/contingency_group.py","bases":["EditableDevice"],"doc_url":"../md_source/modelling.html#contingencygroup"},{"id":"ControllableShunt","label":"ControllableShunt","kind":"exposed","category":"Injections","module_name":"src.VeraGridEngine.Devices.Injections.controllable_shunt","file_path":"src/VeraGridEngine/Devices/Injections/controllable_shunt.py","bases":["ShuntParent"],"doc_url":"../md_source/modelling.html#controllableshunt"},{"id":"Country","label":"Country","kind":"exposed","category":"Regions","module_name":"src.VeraGridEngine.Devices.Aggregation.country","file_path":"src/VeraGridEngine/Devices/Aggregation/country.py","bases":["GenericAreaGroup"],"doc_url":"../md_source/modelling.html#country"},{"id":"CurrentInjection","label":"CurrentInjection","kind":"exposed","category":"Injections","module_name":"src.VeraGridEngine.Devices.Injections.current_injection","file_path":"src/VeraGridEngine/Devices/Injections/current_injection.py","bases":["InjectionParent"],"doc_url":"../md_source/modelling.html#currentinjection"},{"id":"DcLine","label":"DcLine","kind":"exposed","category":"Branches","module_name":"src.VeraGridEngine.Devices.Branches.dc_line","file_path":"src/VeraGridEngine/Devices/Branches/dc_line.py","bases":["BranchParent"],"doc_url":"../md_source/modelling.html#dcline"},{"id":"EmissionGas","label":"EmissionGas","kind":"exposed","category":"Associations","module_name":"src.VeraGridEngine.Devices.Associations.emission_gas","file_path":"src/VeraGridEngine/Devices/Associations/emission_gas.py","bases":["EditableDevice"],"doc_url":"../md_source/modelling.html#emissiongas"},{"id":"EmtEvent","label":"EmtEvent","kind":"exposed","category":"Dynamic","module_name":"src.VeraGridEngine.Devices.Events.emt_event","file_path":"src/VeraGridEngine/Devices/Events/emt_event.py","bases":["PointerDeviceParent"],"doc_url":"../md_source/modelling.html#emtevent"},{"id":"EmtEventsGroup","label":"EmtEventsGroup","kind":"exposed","category":"Dynamic","module_name":"src.VeraGridEngine.Devices.Events.emt_events_group","file_path":"src/VeraGridEngine/Devices/Events/emt_events_group.py","bases":["EditableDevice"],"doc_url":"../md_source/modelling.html#emteventsgroup"},{"id":"EmtModelTemplate","label":"EmtModelTemplate","kind":"exposed","category":"Templates","module_name":"src.VeraGridEngine.Devices.Dynamic.emt_template","file_path":"src/VeraGridEngine/Devices/Dynamic/emt_template.py","bases":["PointerDeviceParent"],"doc_url":"../md_source/modelling.html#emtmodeltemplate"},{"id":"ExternalGrid","label":"ExternalGrid","kind":"exposed","category":"Injections","module_name":"src.VeraGridEngine.Devices.Injections.external_grid","file_path":"src/VeraGridEngine/Devices/Injections/external_grid.py","bases":["LoadParent"],"doc_url":"../md_source/modelling.html#externalgrid"},{"id":"Facility","label":"Facility","kind":"exposed","category":"Groups","module_name":"src.VeraGridEngine.Devices.Aggregation.facility","file_path":"src/VeraGridEngine/Devices/Aggregation/facility.py","bases":["GenericAreaGroup"],"doc_url":"../md_source/modelling.html#facility"},{"id":"FluidNode","label":"FluidNode","kind":"exposed","category":"Fluid","module_name":"src.VeraGridEngine.Devices.Fluid.fluid_node","file_path":"src/VeraGridEngine/Devices/Fluid/fluid_node.py","bases":["PhysicalDevice"],"doc_url":"../md_source/modelling.html#fluidnode"},{"id":"FluidP2x","label":"FluidP2x","kind":"exposed","category":"Fluid","module_name":"src.VeraGridEngine.Devices.Fluid.fluid_p2x","file_path":"src/VeraGridEngine/Devices/Fluid/fluid_p2x.py","bases":["FluidInjectionTemplate"],"doc_url":"../md_source/modelling.html#fluidp2x"},{"id":"FluidPath","label":"FluidPath","kind":"exposed","category":"Fluid","module_name":"src.VeraGridEngine.Devices.Fluid.fluid_path","file_path":"src/VeraGridEngine/Devices/Fluid/fluid_path.py","bases":["PhysicalDevice"],"doc_url":"../md_source/modelling.html#fluidpath"},{"id":"FluidPump","label":"FluidPump","kind":"exposed","category":"Fluid","module_name":"src.VeraGridEngine.Devices.Fluid.fluid_pump","file_path":"src/VeraGridEngine/Devices/Fluid/fluid_pump.py","bases":["FluidInjectionTemplate"],"doc_url":"../md_source/modelling.html#fluidpump"},{"id":"FluidTurbine","label":"FluidTurbine","kind":"exposed","category":"Fluid","module_name":"src.VeraGridEngine.Devices.Fluid.fluid_turbine","file_path":"src/VeraGridEngine/Devices/Fluid/fluid_turbine.py","bases":["FluidInjectionTemplate"],"doc_url":"../md_source/modelling.html#fluidturbine"},{"id":"FmuTemplate","label":"FmuTemplate","kind":"exposed","category":"Templates","module_name":"src.VeraGridEngine.Devices.Dynamic.fmu_template","file_path":"src/VeraGridEngine/Devices/Dynamic/fmu_template.py","bases":["PointerDeviceParent"],"doc_url":"../md_source/modelling.html#fmutemplate"},{"id":"Fuel","label":"Fuel","kind":"exposed","category":"Associations","module_name":"src.VeraGridEngine.Devices.Associations.fuel","file_path":"src/VeraGridEngine/Devices/Associations/fuel.py","bases":["EditableDevice"],"doc_url":"../md_source/modelling.html#fuel"},{"id":"Generator","label":"Generator","kind":"exposed","category":"Injections","module_name":"src.VeraGridEngine.Devices.Injections.generator","file_path":"src/VeraGridEngine/Devices/Injections/generator.py","bases":["InjectionParent"],"doc_url":"../md_source/modelling.html#generator"},{"id":"HvdcLine","label":"HvdcLine","kind":"exposed","category":"Branches","module_name":"src.VeraGridEngine.Devices.Branches.hvdc_line","file_path":"src/VeraGridEngine/Devices/Branches/hvdc_line.py","bases":["BranchParent"],"doc_url":"../md_source/modelling.html#hvdcline"},{"id":"IfMeasurement","label":"IfMeasurement","kind":"exposed","category":"Measurements","module_name":"src.VeraGridEngine.Devices.measurement","file_path":"src/VeraGridEngine/Devices/measurement.py","bases":["MeasurementTemplate"],"doc_url":"../md_source/modelling.html#ifmeasurement"},{"id":"Investment","label":"Investment","kind":"exposed","category":"Investments","module_name":"src.VeraGridEngine.Devices.Aggregation.investment","file_path":"src/VeraGridEngine/Devices/Aggregation/investment.py","bases":["PointerDeviceParent"],"doc_url":"../md_source/modelling.html#investment"},{"id":"InvestmentsGroup","label":"InvestmentsGroup","kind":"exposed","category":"Investments","module_name":"src.VeraGridEngine.Devices.Aggregation.investments_group","file_path":"src/VeraGridEngine/Devices/Aggregation/investments_group.py","bases":["EditableDevice"],"doc_url":"../md_source/modelling.html#investmentsgroup"},{"id":"ItMeasurement","label":"ItMeasurement","kind":"exposed","category":"Measurements","module_name":"src.VeraGridEngine.Devices.measurement","file_path":"src/VeraGridEngine/Devices/measurement.py","bases":["MeasurementTemplate"],"doc_url":"../md_source/modelling.html#itmeasurement"},{"id":"Line","label":"Line","kind":"exposed","category":"Branches","module_name":"src.VeraGridEngine.Devices.Branches.line","file_path":"src/VeraGridEngine/Devices/Branches/line.py","bases":["BranchParent"],"doc_url":"../md_source/modelling.html#line"},{"id":"Load","label":"Load","kind":"exposed","category":"Injections","module_name":"src.VeraGridEngine.Devices.Injections.load","file_path":"src/VeraGridEngine/Devices/Injections/load.py","bases":["LoadParent"],"doc_url":"../md_source/modelling.html#load"},{"id":"ModellingAuthority","label":"ModellingAuthority","kind":"exposed","category":"Groups","module_name":"src.VeraGridEngine.Devices.Aggregation.modelling_authority","file_path":"src/VeraGridEngine/Devices/Aggregation/modelling_authority.py","bases":["EditableDevice"],"doc_url":"../md_source/modelling.html#modellingauthority"},{"id":"Municipality","label":"Municipality","kind":"exposed","category":"Regions","module_name":"src.VeraGridEngine.Devices.Aggregation.municipality","file_path":"src/VeraGridEngine/Devices/Aggregation/municipality.py","bases":["GenericAreaGroup"],"doc_url":"../md_source/modelling.html#municipality"},{"id":"OverheadLineType","label":"OverheadLineType","kind":"exposed","category":"Catalogue","module_name":"src.VeraGridEngine.Devices.Branches.overhead_line_type","file_path":"src/VeraGridEngine/Devices/Branches/overhead_line_type.py","bases":["DynamicDevice"],"doc_url":"../md_source/modelling.html#overheadlinetype"},{"id":"Owner","label":"Owner","kind":"exposed","category":"Associations","module_name":"src.VeraGridEngine.Devices.Associations.owner","file_path":"src/VeraGridEngine/Devices/Associations/owner.py","bases":["EditableDevice"],"doc_url":"../md_source/modelling.html#owner"},{"id":"PfMeasurement","label":"PfMeasurement","kind":"exposed","category":"Measurements","module_name":"src.VeraGridEngine.Devices.measurement","file_path":"src/VeraGridEngine/Devices/measurement.py","bases":["MeasurementTemplate"],"doc_url":"../md_source/modelling.html#pfmeasurement"},{"id":"PgMeasurement","label":"PgMeasurement","kind":"exposed","category":"Measurements","module_name":"src.VeraGridEngine.Devices.measurement","file_path":"src/VeraGridEngine/Devices/measurement.py","bases":["MeasurementTemplate"],"doc_url":"../md_source/modelling.html#pgmeasurement"},{"id":"PiMeasurement","label":"PiMeasurement","kind":"exposed","category":"Measurements","module_name":"src.VeraGridEngine.Devices.measurement","file_path":"src/VeraGridEngine/Devices/measurement.py","bases":["MeasurementTemplate"],"doc_url":"../md_source/modelling.html#pimeasurement"},{"id":"PtMeasurement","label":"PtMeasurement","kind":"exposed","category":"Measurements","module_name":"src.VeraGridEngine.Devices.measurement","file_path":"src/VeraGridEngine/Devices/measurement.py","bases":["MeasurementTemplate"],"doc_url":"../md_source/modelling.html#ptmeasurement"},{"id":"QfMeasurement","label":"QfMeasurement","kind":"exposed","category":"Measurements","module_name":"src.VeraGridEngine.Devices.measurement","file_path":"src/VeraGridEngine/Devices/measurement.py","bases":["MeasurementTemplate"],"doc_url":"../md_source/modelling.html#qfmeasurement"},{"id":"QgMeasurement","label":"QgMeasurement","kind":"exposed","category":"Measurements","module_name":"src.VeraGridEngine.Devices.measurement","file_path":"src/VeraGridEngine/Devices/measurement.py","bases":["MeasurementTemplate"],"doc_url":"../md_source/modelling.html#qgmeasurement"},{"id":"QiMeasurement","label":"QiMeasurement","kind":"exposed","category":"Measurements","module_name":"src.VeraGridEngine.Devices.measurement","file_path":"src/VeraGridEngine/Devices/measurement.py","bases":["MeasurementTemplate"],"doc_url":"../md_source/modelling.html#qimeasurement"},{"id":"QtMeasurement","label":"QtMeasurement","kind":"exposed","category":"Measurements","module_name":"src.VeraGridEngine.Devices.measurement","file_path":"src/VeraGridEngine/Devices/measurement.py","bases":["MeasurementTemplate"],"doc_url":"../md_source/modelling.html#qtmeasurement"},{"id":"Region","label":"Region","kind":"exposed","category":"Regions","module_name":"src.VeraGridEngine.Devices.Aggregation.region","file_path":"src/VeraGridEngine/Devices/Aggregation/region.py","bases":["GenericAreaGroup"],"doc_url":"../md_source/modelling.html#region"},{"id":"RemedialAction","label":"RemedialAction","kind":"exposed","category":"Contingencies","module_name":"src.VeraGridEngine.Devices.Events.remedial_action","file_path":"src/VeraGridEngine/Devices/Events/remedial_action.py","bases":["PointerDeviceParent"],"doc_url":"../md_source/modelling.html#remedialaction"},{"id":"RemedialActionGroup","label":"RemedialActionGroup","kind":"exposed","category":"Contingencies","module_name":"src.VeraGridEngine.Devices.Events.remedial_action_group","file_path":"src/VeraGridEngine/Devices/Events/remedial_action_group.py","bases":["EditableDevice"],"doc_url":"../md_source/modelling.html#remedialactiongroup"},{"id":"RmsEvent","label":"RmsEvent","kind":"exposed","category":"Dynamic","module_name":"src.VeraGridEngine.Devices.Events.rms_event","file_path":"src/VeraGridEngine/Devices/Events/rms_event.py","bases":["PointerDeviceParent"],"doc_url":"../md_source/modelling.html#rmsevent"},{"id":"RmsEventsGroup","label":"RmsEventsGroup","kind":"exposed","category":"Dynamic","module_name":"src.VeraGridEngine.Devices.Events.rms_events_group","file_path":"src/VeraGridEngine/Devices/Events/rms_events_group.py","bases":["EditableDevice"],"doc_url":"../md_source/modelling.html#rmseventsgroup"},{"id":"RmsModelTemplate","label":"RmsModelTemplate","kind":"exposed","category":"Templates","module_name":"src.VeraGridEngine.Devices.Dynamic.rms_template","file_path":"src/VeraGridEngine/Devices/Dynamic/rms_template.py","bases":["PointerDeviceParent"],"doc_url":"../md_source/modelling.html#rmsmodeltemplate"},{"id":"SequenceLineType","label":"SequenceLineType","kind":"exposed","category":"Catalogue","module_name":"src.VeraGridEngine.Devices.Branches.sequence_line_type","file_path":"src/VeraGridEngine/Devices/Branches/sequence_line_type.py","bases":["DynamicDevice"],"doc_url":"../md_source/modelling.html#sequencelinetype"},{"id":"SeriesReactance","label":"SeriesReactance","kind":"exposed","category":"Branches","module_name":"src.VeraGridEngine.Devices.Branches.series_reactance","file_path":"src/VeraGridEngine/Devices/Branches/series_reactance.py","bases":["BranchParent"],"doc_url":"../md_source/modelling.html#seriesreactance"},{"id":"ShortCircuitEvent","label":"ShortCircuitEvent","kind":"exposed","category":"Contingencies","module_name":"src.VeraGridEngine.Devices.Events.short_cirtcuit_event","file_path":"src/VeraGridEngine/Devices/Events/short_cirtcuit_event.py","bases":["PointerDeviceParent"],"doc_url":"../md_source/modelling.html#shortcircuitevent"},{"id":"Shunt","label":"Shunt","kind":"exposed","category":"Injections","module_name":"src.VeraGridEngine.Devices.Injections.shunt","file_path":"src/VeraGridEngine/Devices/Injections/shunt.py","bases":["ShuntParent"],"doc_url":"../md_source/modelling.html#shunt"},{"id":"StaticGenerator","label":"StaticGenerator","kind":"exposed","category":"Injections","module_name":"src.VeraGridEngine.Devices.Injections.static_generator","file_path":"src/VeraGridEngine/Devices/Injections/static_generator.py","bases":["LoadParent"],"doc_url":"../md_source/modelling.html#staticgenerator"},{"id":"Substation","label":"Substation","kind":"exposed","category":"Substation","module_name":"src.VeraGridEngine.Devices.Substation.substation","file_path":"src/VeraGridEngine/Devices/Substation/substation.py","bases":["PhysicalDevice"],"doc_url":"../md_source/modelling.html#substation"},{"id":"Switch","label":"Switch","kind":"exposed","category":"Branches","module_name":"src.VeraGridEngine.Devices.Branches.switch","file_path":"src/VeraGridEngine/Devices/Branches/switch.py","bases":["BranchParent"],"doc_url":"../md_source/modelling.html#switch"},{"id":"Technology","label":"Technology","kind":"exposed","category":"Associations","module_name":"src.VeraGridEngine.Devices.Associations.technology","file_path":"src/VeraGridEngine/Devices/Associations/technology.py","bases":["EditableDevice"],"doc_url":"../md_source/modelling.html#technology"},{"id":"Transformer2W","label":"Transformer2W","kind":"exposed","category":"Branches","module_name":"src.VeraGridEngine.Devices.Branches.transformer","file_path":"src/VeraGridEngine/Devices/Branches/transformer.py","bases":["ControllableBranchParent"],"doc_url":"../md_source/modelling.html#transformer2w"},{"id":"Transformer3W","label":"Transformer3W","kind":"exposed","category":"Branches","module_name":"src.VeraGridEngine.Devices.Branches.transformer3w","file_path":"src/VeraGridEngine/Devices/Branches/transformer3w.py","bases":["PhysicalDevice"],"doc_url":"../md_source/modelling.html#transformer3w"},{"id":"TransformerNW","label":"TransformerNW","kind":"exposed","category":"Branches","module_name":"src.VeraGridEngine.Devices.Branches.transformerNw","file_path":"src/VeraGridEngine/Devices/Branches/transformerNw.py","bases":["PhysicalDevice"],"doc_url":"../md_source/modelling.html#transformernw"},{"id":"TransformerType","label":"TransformerType","kind":"exposed","category":"Catalogue","module_name":"src.VeraGridEngine.Devices.Branches.transformer_type","file_path":"src/VeraGridEngine/Devices/Branches/transformer_type.py","bases":["DynamicDevice"],"doc_url":"../md_source/modelling.html#transformertype"},{"id":"UPFC","label":"UPFC","kind":"exposed","category":"Branches","module_name":"src.VeraGridEngine.Devices.Branches.upfc","file_path":"src/VeraGridEngine/Devices/Branches/upfc.py","bases":["BranchParent"],"doc_url":"../md_source/modelling.html#upfc"},{"id":"UndergroundLineType","label":"UndergroundLineType","kind":"exposed","category":"Catalogue","module_name":"src.VeraGridEngine.Devices.Branches.underground_line_type","file_path":"src/VeraGridEngine/Devices/Branches/underground_line_type.py","bases":["DynamicDevice"],"doc_url":"../md_source/modelling.html#undergroundlinetype"},{"id":"VSC","label":"VSC","kind":"exposed","category":"Branches","module_name":"src.VeraGridEngine.Devices.Branches.vsc","file_path":"src/VeraGridEngine/Devices/Branches/vsc.py","bases":["BranchParent"],"doc_url":"../md_source/modelling.html#vsc"},{"id":"VaMeasurement","label":"VaMeasurement","kind":"exposed","category":"Measurements","module_name":"src.VeraGridEngine.Devices.measurement","file_path":"src/VeraGridEngine/Devices/measurement.py","bases":["MeasurementTemplate"],"doc_url":"../md_source/modelling.html#vameasurement"},{"id":"VmMeasurement","label":"VmMeasurement","kind":"exposed","category":"Measurements","module_name":"src.VeraGridEngine.Devices.measurement","file_path":"src/VeraGridEngine/Devices/measurement.py","bases":["MeasurementTemplate"],"doc_url":"../md_source/modelling.html#vmmeasurement"},{"id":"VoltageLevel","label":"VoltageLevel","kind":"exposed","category":"Substation","module_name":"src.VeraGridEngine.Devices.Substation.voltage_level","file_path":"src/VeraGridEngine/Devices/Substation/voltage_level.py","bases":["PhysicalDevice"],"doc_url":"../md_source/modelling.html#voltagelevel"},{"id":"Winding","label":"Winding","kind":"exposed","category":"Branches","module_name":"src.VeraGridEngine.Devices.Branches.winding","file_path":"src/VeraGridEngine/Devices/Branches/winding.py","bases":["Transformer2W"],"doc_url":"../md_source/modelling.html#winding"},{"id":"Wire","label":"Wire","kind":"exposed","category":"Catalogue","module_name":"src.VeraGridEngine.Devices.Branches.wire","file_path":"src/VeraGridEngine/Devices/Branches/wire.py","bases":["EditableDevice"],"doc_url":"../md_source/modelling.html#wire"},{"id":"Zone","label":"Zone","kind":"exposed","category":"Regions","module_name":"src.VeraGridEngine.Devices.Aggregation.zone","file_path":"src/VeraGridEngine/Devices/Aggregation/zone.py","bases":["GenericAreaGroup"],"doc_url":"../md_source/modelling.html#zone"}],"edges":[{"source":"Battery","target":"Bus","kind":"references","properties":["bus","control_bus"]},{"source":"Battery","target":"EmtModelTemplate","kind":"references","properties":["emt_template"]},{"source":"Battery","target":"Facility","kind":"references","properties":["facility"]},{"source":"Battery","target":"FmuTemplate","kind":"references","properties":["emt_fmu_template","rms_fmu_template"]},{"source":"Battery","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"Battery","target":"RmsModelTemplate","kind":"references","properties":["rms_template"]},{"source":"Bus","target":"Area","kind":"references","properties":["area"]},{"source":"Bus","target":"BusBar","kind":"references","properties":["bus_bar"]},{"source":"Bus","target":"Country","kind":"references","properties":["country"]},{"source":"Bus","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"Bus","target":"Substation","kind":"references","properties":["substation"]},{"source":"Bus","target":"VoltageLevel","kind":"references","properties":["voltage_level"]},{"source":"Bus","target":"Zone","kind":"references","properties":["zone"]},{"source":"BusBar","target":"Bus","kind":"references","properties":["voltage_level"]},{"source":"BusBar","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"Community","target":"Country","kind":"references","properties":["country"]},{"source":"Contingency","target":"ContingencyGroup","kind":"references","properties":["group"]},{"source":"ControllableShunt","target":"Bus","kind":"references","properties":["bus","control_bus"]},{"source":"ControllableShunt","target":"EmtModelTemplate","kind":"references","properties":["emt_template"]},{"source":"ControllableShunt","target":"Facility","kind":"references","properties":["facility"]},{"source":"ControllableShunt","target":"FmuTemplate","kind":"references","properties":["emt_fmu_template","rms_fmu_template"]},{"source":"ControllableShunt","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"ControllableShunt","target":"RmsModelTemplate","kind":"references","properties":["rms_template"]},{"source":"CurrentInjection","target":"Bus","kind":"references","properties":["bus"]},{"source":"CurrentInjection","target":"EmtModelTemplate","kind":"references","properties":["emt_template"]},{"source":"CurrentInjection","target":"Facility","kind":"references","properties":["facility"]},{"source":"CurrentInjection","target":"FmuTemplate","kind":"references","properties":["emt_fmu_template","rms_fmu_template"]},{"source":"CurrentInjection","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"CurrentInjection","target":"RmsModelTemplate","kind":"references","properties":["rms_template"]},{"source":"DcLine","target":"BranchGroup","kind":"references","properties":["group"]},{"source":"DcLine","target":"Bus","kind":"references","properties":["bus_from","bus_to"]},{"source":"DcLine","target":"EmtModelTemplate","kind":"references","properties":["emt_template"]},{"source":"DcLine","target":"FmuTemplate","kind":"references","properties":["emt_fmu_template","rms_fmu_template"]},{"source":"DcLine","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"DcLine","target":"RmsModelTemplate","kind":"references","properties":["rms_template"]},{"source":"EmtEvent","target":"EmtEventsGroup","kind":"references","properties":["group"]},{"source":"ExternalGrid","target":"Bus","kind":"references","properties":["bus"]},{"source":"ExternalGrid","target":"EmtModelTemplate","kind":"references","properties":["emt_template"]},{"source":"ExternalGrid","target":"Facility","kind":"references","properties":["facility"]},{"source":"ExternalGrid","target":"FmuTemplate","kind":"references","properties":["emt_fmu_template","rms_fmu_template"]},{"source":"ExternalGrid","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"ExternalGrid","target":"RmsModelTemplate","kind":"references","properties":["rms_template"]},{"source":"FluidNode","target":"Bus","kind":"references","properties":["bus"]},{"source":"FluidNode","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"FluidP2x","target":"Facility","kind":"references","properties":["facility"]},{"source":"FluidP2x","target":"FluidNode","kind":"references","properties":["plant"]},{"source":"FluidP2x","target":"Generator","kind":"references","properties":["generator"]},{"source":"FluidP2x","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"FluidPath","target":"FluidNode","kind":"references","properties":["source","target"]},{"source":"FluidPath","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"FluidPump","target":"Facility","kind":"references","properties":["facility"]},{"source":"FluidPump","target":"FluidNode","kind":"references","properties":["plant"]},{"source":"FluidPump","target":"Generator","kind":"references","properties":["generator"]},{"source":"FluidPump","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"FluidTurbine","target":"Facility","kind":"references","properties":["facility"]},{"source":"FluidTurbine","target":"FluidNode","kind":"references","properties":["plant"]},{"source":"FluidTurbine","target":"Generator","kind":"references","properties":["generator"]},{"source":"FluidTurbine","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"Generator","target":"Bus","kind":"references","properties":["bus","control_bus"]},{"source":"Generator","target":"EmtModelTemplate","kind":"references","properties":["emt_template"]},{"source":"Generator","target":"Facility","kind":"references","properties":["facility"]},{"source":"Generator","target":"FmuTemplate","kind":"references","properties":["emt_fmu_template","rms_fmu_template"]},{"source":"Generator","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"Generator","target":"RmsModelTemplate","kind":"references","properties":["rms_template"]},{"source":"HvdcLine","target":"BranchGroup","kind":"references","properties":["group"]},{"source":"HvdcLine","target":"Bus","kind":"references","properties":["bus_from","bus_to"]},{"source":"HvdcLine","target":"EmtModelTemplate","kind":"references","properties":["emt_template"]},{"source":"HvdcLine","target":"FmuTemplate","kind":"references","properties":["emt_fmu_template","rms_fmu_template"]},{"source":"HvdcLine","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"HvdcLine","target":"RmsModelTemplate","kind":"references","properties":["rms_template"]},{"source":"Investment","target":"InvestmentsGroup","kind":"references","properties":["group"]},{"source":"Line","target":"BranchGroup","kind":"references","properties":["group"]},{"source":"Line","target":"Bus","kind":"references","properties":["bus_from","bus_to"]},{"source":"Line","target":"EmtModelTemplate","kind":"references","properties":["emt_template"]},{"source":"Line","target":"FmuTemplate","kind":"references","properties":["emt_fmu_template","rms_fmu_template"]},{"source":"Line","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"Line","target":"RmsModelTemplate","kind":"references","properties":["rms_template"]},{"source":"Load","target":"Bus","kind":"references","properties":["bus"]},{"source":"Load","target":"EmtModelTemplate","kind":"references","properties":["emt_template"]},{"source":"Load","target":"Facility","kind":"references","properties":["facility"]},{"source":"Load","target":"FmuTemplate","kind":"references","properties":["emt_fmu_template","rms_fmu_template"]},{"source":"Load","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"Load","target":"RmsModelTemplate","kind":"references","properties":["rms_template"]},{"source":"Municipality","target":"Region","kind":"references","properties":["region"]},{"source":"OverheadLineType","target":"EmtModelTemplate","kind":"references","properties":["emt_template"]},{"source":"OverheadLineType","target":"FmuTemplate","kind":"references","properties":["emt_fmu_template","rms_fmu_template"]},{"source":"OverheadLineType","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"OverheadLineType","target":"RmsModelTemplate","kind":"references","properties":["rms_template"]},{"source":"Region","target":"Community","kind":"references","properties":["community"]},{"source":"RemedialAction","target":"RemedialActionGroup","kind":"references","properties":["group"]},{"source":"RemedialActionGroup","target":"ContingencyGroup","kind":"references","properties":["conn_group"]},{"source":"RmsEvent","target":"RmsEventsGroup","kind":"references","properties":["group"]},{"source":"SequenceLineType","target":"EmtModelTemplate","kind":"references","properties":["emt_template"]},{"source":"SequenceLineType","target":"FmuTemplate","kind":"references","properties":["emt_fmu_template","rms_fmu_template"]},{"source":"SequenceLineType","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"SequenceLineType","target":"RmsModelTemplate","kind":"references","properties":["rms_template"]},{"source":"SeriesReactance","target":"BranchGroup","kind":"references","properties":["group"]},{"source":"SeriesReactance","target":"Bus","kind":"references","properties":["bus_from","bus_to"]},{"source":"SeriesReactance","target":"EmtModelTemplate","kind":"references","properties":["emt_template"]},{"source":"SeriesReactance","target":"FmuTemplate","kind":"references","properties":["emt_fmu_template","rms_fmu_template"]},{"source":"SeriesReactance","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"SeriesReactance","target":"RmsModelTemplate","kind":"references","properties":["rms_template"]},{"source":"Shunt","target":"Bus","kind":"references","properties":["bus"]},{"source":"Shunt","target":"EmtModelTemplate","kind":"references","properties":["emt_template"]},{"source":"Shunt","target":"Facility","kind":"references","properties":["facility"]},{"source":"Shunt","target":"FmuTemplate","kind":"references","properties":["emt_fmu_template","rms_fmu_template"]},{"source":"Shunt","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"Shunt","target":"RmsModelTemplate","kind":"references","properties":["rms_template"]},{"source":"StaticGenerator","target":"Bus","kind":"references","properties":["bus"]},{"source":"StaticGenerator","target":"EmtModelTemplate","kind":"references","properties":["emt_template"]},{"source":"StaticGenerator","target":"Facility","kind":"references","properties":["facility"]},{"source":"StaticGenerator","target":"FmuTemplate","kind":"references","properties":["emt_fmu_template","rms_fmu_template"]},{"source":"StaticGenerator","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"StaticGenerator","target":"RmsModelTemplate","kind":"references","properties":["rms_template"]},{"source":"Substation","target":"Area","kind":"references","properties":["area"]},{"source":"Substation","target":"Community","kind":"references","properties":["community"]},{"source":"Substation","target":"Country","kind":"references","properties":["country"]},{"source":"Substation","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"Substation","target":"Municipality","kind":"references","properties":["municipality"]},{"source":"Substation","target":"Region","kind":"references","properties":["region"]},{"source":"Substation","target":"Zone","kind":"references","properties":["zone"]},{"source":"Switch","target":"BranchGroup","kind":"references","properties":["group"]},{"source":"Switch","target":"Bus","kind":"references","properties":["bus_from","bus_to"]},{"source":"Switch","target":"EmtModelTemplate","kind":"references","properties":["emt_template"]},{"source":"Switch","target":"FmuTemplate","kind":"references","properties":["emt_fmu_template","rms_fmu_template"]},{"source":"Switch","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"Switch","target":"RmsModelTemplate","kind":"references","properties":["rms_template"]},{"source":"Transformer2W","target":"BranchGroup","kind":"references","properties":["group"]},{"source":"Transformer2W","target":"Bus","kind":"references","properties":["bus_from","bus_to","regulation_bus"]},{"source":"Transformer2W","target":"EmtModelTemplate","kind":"references","properties":["emt_template"]},{"source":"Transformer2W","target":"FmuTemplate","kind":"references","properties":["emt_fmu_template","rms_fmu_template"]},{"source":"Transformer2W","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"Transformer2W","target":"RmsModelTemplate","kind":"references","properties":["rms_template"]},{"source":"Transformer2W","target":"TransformerType","kind":"references","properties":["template"]},{"source":"Transformer3W","target":"Bus","kind":"references","properties":["bus0","bus1","bus2","bus3"]},{"source":"Transformer3W","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"Transformer3W","target":"Winding","kind":"references","properties":["winding1","winding2","winding3"]},{"source":"TransformerNW","target":"Bus","kind":"references","properties":["bus0"]},{"source":"TransformerNW","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"TransformerType","target":"EmtModelTemplate","kind":"references","properties":["emt_template"]},{"source":"TransformerType","target":"FmuTemplate","kind":"references","properties":["emt_fmu_template","rms_fmu_template"]},{"source":"TransformerType","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"TransformerType","target":"RmsModelTemplate","kind":"references","properties":["rms_template"]},{"source":"UPFC","target":"BranchGroup","kind":"references","properties":["group"]},{"source":"UPFC","target":"Bus","kind":"references","properties":["bus_from","bus_to"]},{"source":"UPFC","target":"EmtModelTemplate","kind":"references","properties":["emt_template"]},{"source":"UPFC","target":"FmuTemplate","kind":"references","properties":["emt_fmu_template","rms_fmu_template"]},{"source":"UPFC","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"UPFC","target":"RmsModelTemplate","kind":"references","properties":["rms_template"]},{"source":"UndergroundLineType","target":"EmtModelTemplate","kind":"references","properties":["emt_template"]},{"source":"UndergroundLineType","target":"FmuTemplate","kind":"references","properties":["emt_fmu_template","rms_fmu_template"]},{"source":"UndergroundLineType","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"UndergroundLineType","target":"RmsModelTemplate","kind":"references","properties":["rms_template"]},{"source":"VSC","target":"BranchGroup","kind":"references","properties":["group"]},{"source":"VSC","target":"Bus","kind":"references","properties":["bus_dc_n","bus_from","bus_to"]},{"source":"VSC","target":"EmtModelTemplate","kind":"references","properties":["emt_template"]},{"source":"VSC","target":"FmuTemplate","kind":"references","properties":["emt_fmu_template","rms_fmu_template"]},{"source":"VSC","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"VSC","target":"RmsModelTemplate","kind":"references","properties":["rms_template"]},{"source":"VoltageLevel","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"VoltageLevel","target":"Substation","kind":"references","properties":["substation"]},{"source":"Winding","target":"BranchGroup","kind":"references","properties":["group"]},{"source":"Winding","target":"Bus","kind":"references","properties":["bus_from","bus_to","regulation_bus"]},{"source":"Winding","target":"EmtModelTemplate","kind":"references","properties":["emt_template"]},{"source":"Winding","target":"FmuTemplate","kind":"references","properties":["emt_fmu_template","rms_fmu_template"]},{"source":"Winding","target":"ModellingAuthority","kind":"references","properties":["modelling_authority"]},{"source":"Winding","target":"RmsModelTemplate","kind":"references","properties":["rms_template"]},{"source":"Winding","target":"TransformerType","kind":"references","properties":["template"]},{"source":"Zone","target":"Area","kind":"references","properties":["area"]}],"meta":{"categories":["Associations","Branches","Catalogue","Contingencies","Dynamic","Fluid","Groups","Injections","Investments","Measurements","Regions","Substation","Templates"],"nodeKinds":["exposed"],"edgeKinds":["references"],"categoryPalette":{"Associations":"#8b5cf6","Branches":"#0f766e","Catalogue":"#2563eb","Contingencies":"#dc2626","Dynamic":"#7c3aed","Fluid":"#0891b2","Groups":"#475569","Injections":"#15803d","Investments":"#b91c1c","Measurements":"#c2410c","Regions":"#7c2d12","Substation":"#1d4ed8","Templates":"#be185d"}}};
+    const canvas = document.getElementById("graph");
+    const ctx = canvas.getContext("2d");
+    const details = document.getElementById("details");
+    const search = document.getElementById("search");
+    const kindFilters = document.getElementById("kindFilters");
+    const edgeFilters = document.getElementById("edgeFilters");
+    const categoryFilters = document.getElementById("categoryFilters");
+    const focusSearchButton = document.getElementById("focusSearch");
+    const resetViewButton = document.getElementById("resetView");
+    const totalNodesEl = document.getElementById("totalNodes");
+    const totalEdgesEl = document.getElementById("totalEdges");
+    const visibleNodesEl = document.getElementById("visibleNodes");
+    const visibleEdgesEl = document.getElementById("visibleEdges");
+
+    const state = {
+      width: 0,
+      height: 0,
+      panX: 0,
+      panY: 0,
+      zoom: 1,
+      draggingNode: null,
+      hoveringNode: null,
+      selectedNode: null,
+      lastPointer: null,
+      isPanning: false,
+      searchTerm: "",
+      categorySelection: new Set(graph.meta.categories),
+      kindSelection: new Set(graph.meta.nodeKinds),
+      edgeSelection: new Set(graph.meta.edgeKinds),
+    };
+
+    const nodes = graph.nodes.map((node, idx) => {
+      const angle = (idx / Math.max(graph.nodes.length, 1)) * Math.PI * 2;
+      return {
+        ...node,
+        x: Math.cos(angle) * (260 + (idx % 7) * 18),
+        y: Math.sin(angle) * (260 + (idx % 11) * 14),
+        vx: 0,
+        vy: 0,
+        radius: 22,
+        visible: true,
+        match: false,
+      };
+    });
+    const nodeById = new Map(nodes.map((node) => [node.id, node]));
+    const edges = graph.edges.map((edge) => ({
+      ...edge,
+      sourceNode: nodeById.get(edge.source),
+      targetNode: nodeById.get(edge.target),
+      visible: true,
+    }));
+
+    totalNodesEl.textContent = String(nodes.length);
+    totalEdgesEl.textContent = String(edges.length);
+
+    function nodeColor(node) {
+      const palette = graph.meta.categoryPalette[node.category] || "#3b82f6";
+      return palette;
+    }
+
+    function edgeColor(edge) {
+      return getComputedStyle(document.documentElement).getPropertyValue("--reference").trim();
+    }
+
+    function buildChecklist(container, values, selectedSet) {
+      container.innerHTML = "";
+      values.forEach((value) => {
+        const id = container.id + "-" + value.replace(/[^a-z0-9]+/gi, "-").toLowerCase();
+        const label = document.createElement("label");
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = id;
+        checkbox.checked = selectedSet.has(value);
+        checkbox.addEventListener("change", () => {
+          if (checkbox.checked) selectedSet.add(value);
+          else selectedSet.delete(value);
+          applyFilters();
+        });
+        const text = document.createElement("span");
+        text.textContent = value;
+        label.appendChild(checkbox);
+        label.appendChild(text);
+        container.appendChild(label);
+      });
+    }
+
+    function resize() {
+      const rect = canvas.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
+      canvas.width = Math.round(rect.width * ratio);
+      canvas.height = Math.round(rect.height * ratio);
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      state.width = rect.width;
+      state.height = rect.height;
+      if (state.panX === 0 && state.panY === 0) {
+        state.panX = state.width / 2;
+        state.panY = state.height / 2;
+      }
+    }
+
+    function worldToScreen(x, y) {
+      return {
+        x: x * state.zoom + state.panX,
+        y: y * state.zoom + state.panY,
+      };
+    }
+
+    function screenToWorld(x, y) {
+      return {
+        x: (x - state.panX) / state.zoom,
+        y: (y - state.panY) / state.zoom,
+      };
+    }
+
+    function findNodeAt(x, y) {
+      const world = screenToWorld(x, y);
+      for (let i = nodes.length - 1; i >= 0; i -= 1) {
+        const node = nodes[i];
+        if (!node.visible) continue;
+        const dx = world.x - node.x;
+        const dy = world.y - node.y;
+        const radius = node.radius + 4 / state.zoom;
+        if ((dx * dx) + (dy * dy) <= radius * radius) return node;
+      }
+      return null;
+    }
+
+    function normalize(text) {
+      return String(text || "").toLowerCase();
+    }
+
+    function applyFilters() {
+      state.searchTerm = normalize(search.value.trim());
+      nodes.forEach((node) => {
+        const categoryOk = state.categorySelection.has(node.category);
+        const kindOk = state.kindSelection.has(node.kind);
+        const text = normalize(node.label + " " + node.category + " " + node.module_name);
+        node.match = !state.searchTerm || text.includes(state.searchTerm);
+        node.visible = categoryOk && kindOk;
+      });
+
+      edges.forEach((edge) => {
+        edge.visible = state.edgeSelection.has(edge.kind) &&
+          edge.sourceNode.visible &&
+          edge.targetNode.visible;
+      });
+
+      if (state.selectedNode && !state.selectedNode.visible) {
+        state.selectedNode = null;
+      }
+      if (state.hoveringNode && !state.hoveringNode.visible) {
+        state.hoveringNode = null;
+      }
+      updateStats();
+      updateDetails();
+    }
+
+    function updateStats() {
+      visibleNodesEl.textContent = String(nodes.filter((node) => node.visible).length);
+      visibleEdgesEl.textContent = String(edges.filter((edge) => edge.visible).length);
+    }
+
+    function updateDetails() {
+      const node = state.selectedNode;
+      if (!node) {
+        details.innerHTML = `
+          <h1>Details</h1>
+          <p class="muted">Click a node to inspect its typed references, module path, and documentation link.</p>
+          <h2>What is shown</h2>
+          <p>Nodes come from <code>MultiCircuit.template_objects_dict</code>. Edges come only from typed <code>GCProp(..., tpe=DeviceType.*)</code> relationships that resolve to another exposed final device class, including typed properties inherited from parent classes.</p>
+        `;
+        return;
+      }
+
+      const outgoing = edges.filter((edge) => edge.visible && edge.source === node.id);
+      const incoming = edges.filter((edge) => edge.visible && edge.target === node.id);
+      const outgoingList = outgoing.length
+        ? outgoing.map((edge) => {
+            const target = nodeById.get(edge.target);
+            const label = `${edge.properties.join(", ")} -> ${target.label}`;
+            return `<li>${label}</li>`;
+          }).join("")
+        : `<li class="empty">No outgoing edges in the current filter set.</li>`;
+      const incomingList = incoming.length
+        ? incoming.map((edge) => {
+            const source = nodeById.get(edge.source);
+            const label = `${source.label} references it through ${edge.properties.join(", ")}`;
+            return `<li>${label}</li>`;
+          }).join("")
+        : `<li class="empty">No incoming edges in the current filter set.</li>`;
+      const pills = node.bases.length
+        ? node.bases.map((base) => `<span class="pill">${base}</span>`).join("")
+        : `<span class="empty">No direct base classes recorded.</span>`;
+      const docLink = node.doc_url
+        ? `<p><a href="${node.doc_url}" target="_top" rel="noopener">Open modelling chapter section</a></p>`
+        : "";
+
+      details.innerHTML = `
+        <h1>${node.label}</h1>
+        <p class="muted">${node.category} · ${node.kind} · <code>${node.module_name}</code></p>
+        ${docLink}
+        <h2>Base classes</h2>
+        <div>${pills}</div>
+        <h2>Outgoing</h2>
+        <ul>${outgoingList}</ul>
+        <h2>Incoming</h2>
+        <ul>${incomingList}</ul>
+      `;
+    }
+
+    function centerOnNode(node) {
+      state.panX = state.width / 2 - node.x * state.zoom;
+      state.panY = state.height / 2 - node.y * state.zoom;
+    }
+
+    function focusSearchResult() {
+      const match = nodes.find((node) => node.visible && node.match);
+      if (!match) return;
+      state.selectedNode = match;
+      centerOnNode(match);
+      updateDetails();
+    }
+
+    function resetView() {
+      state.zoom = 1;
+      state.panX = state.width / 2;
+      state.panY = state.height / 2;
+    }
+
+    function physicsStep() {
+      const visibleNodes = nodes.filter((node) => node.visible);
+      const visibleEdges = edges.filter((edge) => edge.visible);
+
+      for (let i = 0; i < visibleNodes.length; i += 1) {
+        const a = visibleNodes[i];
+        for (let j = i + 1; j < visibleNodes.length; j += 1) {
+          const b = visibleNodes[j];
+          const dx = b.x - a.x;
+          const dy = b.y - a.y;
+          const distSq = Math.max(100, dx * dx + dy * dy);
+          const force = 1500 / distSq;
+          const nx = dx / Math.sqrt(distSq);
+          const ny = dy / Math.sqrt(distSq);
+          a.vx -= nx * force;
+          a.vy -= ny * force;
+          b.vx += nx * force;
+          b.vy += ny * force;
+        }
+      }
+
+      visibleEdges.forEach((edge) => {
+        const a = edge.sourceNode;
+        const b = edge.targetNode;
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const dist = Math.max(1, Math.sqrt(dx * dx + dy * dy));
+        const target = 170;
+        const force = (dist - target) * 0.0022;
+        const nx = dx / dist;
+        const ny = dy / dist;
+        a.vx += nx * force;
+        a.vy += ny * force;
+        b.vx -= nx * force;
+        b.vy -= ny * force;
+      });
+
+      visibleNodes.forEach((node) => {
+        if (state.draggingNode === node) return;
+        const pull = 0.0012;
+        node.vx += -node.x * pull;
+        node.vy += -node.y * pull;
+        node.vx *= 0.92;
+        node.vy *= 0.92;
+        node.x += node.vx;
+        node.y += node.vy;
+      });
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, state.width, state.height);
+      ctx.lineCap = "round";
+
+      edges.forEach((edge) => {
+        if (!edge.visible) return;
+        const from = worldToScreen(edge.sourceNode.x, edge.sourceNode.y);
+        const to = worldToScreen(edge.targetNode.x, edge.targetNode.y);
+        ctx.strokeStyle = edgeColor(edge);
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.moveTo(from.x, from.y);
+        ctx.lineTo(to.x, to.y);
+        ctx.stroke();
+      });
+
+      nodes.forEach((node) => {
+        if (!node.visible) return;
+        const pos = worldToScreen(node.x, node.y);
+        const radius = node.radius * state.zoom;
+        ctx.beginPath();
+        ctx.fillStyle = nodeColor(node);
+        ctx.arc(pos.x, pos.y, Math.max(4, radius), 0, Math.PI * 2);
+        ctx.fill();
+
+        if (node === state.selectedNode || node === state.hoveringNode || node.match) {
+          ctx.strokeStyle = node === state.selectedNode ? "#111827" : "rgba(17, 24, 39, 0.55)";
+          ctx.lineWidth = node === state.selectedNode ? 3 : 2;
+          ctx.beginPath();
+          ctx.arc(pos.x, pos.y, Math.max(7, radius + 4), 0, Math.PI * 2);
+          ctx.stroke();
+        }
+
+        if (state.zoom > 0.52 || node === state.selectedNode || node.match) {
+          ctx.font = `${Math.max(11, 12 * state.zoom)}px IBM Plex Sans, Segoe UI, sans-serif`;
+          ctx.fillStyle = "#1f2933";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "top";
+          ctx.fillText(node.label, pos.x, pos.y + Math.max(8, radius + 6));
+        }
+      });
+    }
+
+    function tick() {
+      physicsStep();
+      draw();
+      requestAnimationFrame(tick);
+    }
+
+    function pointerPosition(event) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top,
+      };
+    }
+
+    canvas.addEventListener("pointerdown", (event) => {
+      const pos = pointerPosition(event);
+      const node = findNodeAt(pos.x, pos.y);
+      state.lastPointer = pos;
+      if (node) {
+        state.draggingNode = node;
+        state.selectedNode = node;
+        node.vx = 0;
+        node.vy = 0;
+        canvas.classList.add("dragging");
+        updateDetails();
+      } else {
+        state.isPanning = true;
+        canvas.classList.add("dragging");
+      }
+      canvas.setPointerCapture(event.pointerId);
+    });
+
+    canvas.addEventListener("pointermove", (event) => {
+      const pos = pointerPosition(event);
+      if (state.draggingNode) {
+        const world = screenToWorld(pos.x, pos.y);
+        state.draggingNode.x = world.x;
+        state.draggingNode.y = world.y;
+      } else if (state.isPanning && state.lastPointer) {
+        state.panX += pos.x - state.lastPointer.x;
+        state.panY += pos.y - state.lastPointer.y;
+      } else {
+        state.hoveringNode = findNodeAt(pos.x, pos.y);
+      }
+      state.lastPointer = pos;
+    });
+
+    canvas.addEventListener("pointerup", (event) => {
+      canvas.releasePointerCapture(event.pointerId);
+      state.draggingNode = null;
+      state.isPanning = false;
+      state.lastPointer = null;
+      canvas.classList.remove("dragging");
+    });
+
+    canvas.addEventListener("wheel", (event) => {
+      event.preventDefault();
+      const pos = pointerPosition(event);
+      const worldBefore = screenToWorld(pos.x, pos.y);
+      const factor = event.deltaY < 0 ? 1.08 : 0.92;
+      state.zoom = Math.min(2.8, Math.max(0.28, state.zoom * factor));
+      const worldAfter = screenToWorld(pos.x, pos.y);
+      state.panX += (worldAfter.x - worldBefore.x) * state.zoom;
+      state.panY += (worldAfter.y - worldBefore.y) * state.zoom;
+    }, { passive: false });
+
+    search.addEventListener("input", applyFilters);
+    focusSearchButton.addEventListener("click", focusSearchResult);
+    resetViewButton.addEventListener("click", resetView);
+    window.addEventListener("resize", resize);
+
+    buildChecklist(kindFilters, graph.meta.nodeKinds, state.kindSelection);
+    buildChecklist(edgeFilters, graph.meta.edgeKinds, state.edgeSelection);
+    buildChecklist(categoryFilters, graph.meta.categories, state.categorySelection);
+    resize();
+    applyFilters();
+    updateDetails();
+    tick();
+  </script>
+</body>
+</html>

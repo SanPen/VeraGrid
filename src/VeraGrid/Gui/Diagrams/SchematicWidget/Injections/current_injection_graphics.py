@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from VeraGrid.Gui.Diagrams.generic_graphics import Square
+from VeraGrid.Gui.Diagrams.generic_graphics import CurrentInjectionSymbol
 from VeraGridEngine.Devices.Injections.current_injection import CurrentInjection
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionTemplateGraphicItem
 
@@ -18,7 +18,7 @@ class CurrentInjectionGraphicItem(InjectionTemplateGraphicItem):
     ExternalGrid graphic item
     """
 
-    def __init__(self, parent, api_obj: CurrentInjection, editor: SchematicWidget):
+    def __init__(self, parent, api_obj: CurrentInjection, editor: SchematicWidget, draw_labels: bool = True):
         """
 
         :param parent:
@@ -31,11 +31,10 @@ class CurrentInjectionGraphicItem(InjectionTemplateGraphicItem):
                                               editor=editor,
                                               device_type_name='Current injection',
                                               w=40,
-                                              h=40)
-        self.set_glyph(glyph=Square(self, 40, 40, "I", self.update_nexus))
+                                              h=40,
+                                              draw_labels=draw_labels)
+        self.set_glyph(glyph=CurrentInjectionSymbol(self, h=40, w=40))
 
     @property
     def api_object(self) -> CurrentInjection:
         return self._api_object
-
-

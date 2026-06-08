@@ -197,8 +197,9 @@ class Branch(BranchParent):
                  bus_to: Bus = None,
                  name='Branch',
                  idtag=None,
-                 r=1e-20, x=1e-20, g=1e-20, b=1e-20,
-                 rate=1.0,
+                 r=1e-20, x=1e-5, g=1e-20, b=1e-20,
+                 design_rate: float = 9999.0,
+                 rate=9999.0,
                  tap=1.0,
                  shift_angle=0,
                  active=True,
@@ -230,6 +231,7 @@ class Branch(BranchParent):
         :param x: Branch reactance in per unit
         :param g: Branch shunt conductance in per unit
         :param b: Branch shunt susceptance in per unit
+        :param design_rate: Design rate (MVA)
         :param rate: Branch rate in MVA
         :param tap: Branch tap module
         :param shift_angle: Tap shift angle in radians
@@ -258,6 +260,7 @@ class Branch(BranchParent):
                               bus_to=bus_to,
                               active=active,
                               reducible=False,
+                              design_rate=design_rate,
                               rate=rate,
                               contingency_factor=1.0,
                               protection_rating_factor=1.4,

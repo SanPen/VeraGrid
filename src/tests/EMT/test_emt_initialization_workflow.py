@@ -14,6 +14,8 @@ from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import EmtProb
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowOptions
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver_3ph import PowerFlowDriver3Ph
 from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_emt_template
+from VeraGridEngine.Templates.Emt.line_matrix_conversion import build_physical_line_matrices_from_stored_admittances
+from VeraGridEngine.Utils.Symbolic.static_parameter_mapping_rms import build_line_static_matrices
 from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_shunt_r_emt_template
 from VeraGridEngine.Templates.Emt.load_zip_emt_template import get_load_ZIP_emt_template
 from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template
@@ -264,6 +266,43 @@ def build_unresolved_state_problem() -> Tuple[GenericEmtProblem, SimpleInitializ
     return problem, context
 
 
+def build_pf_seed_vs_explicit_seed_problem() -> Tuple[GenericEmtProblem, SimpleInitializationContext]:
+    """
+    Build a tiny EMT problem where explicit initialization changes the seeded state.
+
+    The problem is designed to distinguish the power-flow seed from the explicit
+    seed. The state variable is pre-seeded to one value, while ``init_eqs`` forces
+    a different explicit initialization value.
+
+    :returns: Tuple of (problem, context) where problem is the EMT problem and
+              context contains variable references.
+    """
+    var_factory: VarFactory = VarFactory()
+    x_var: Var = var_factory.add_var("x_pf_vs_explicit")
+    y_var: Var = var_factory.add_var("y_pf_vs_explicit")
+    dx_var: Var = var_factory.add_diff_var(name="d_x_pf_vs_explicit", base_var=x_var)
+
+    block = Block(
+        name="PfSeedVsExplicitSeedInit",
+        state_vars=[x_var],
+        diff_vars=[dx_var],
+        state_eqs=[y_var - x_var],
+        algebraic_vars=[y_var],
+        algebraic_eqs=[y_var - x_var],
+        init_eqs={x_var: Const(5.0)},
+    )
+    static_parameter_values_mapping: Dict[Var, Const] = dict()
+    problem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=var_factory.add_var("t_glob_init_pf_vs_explicit"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
+    problem.init_guess[x_var.uid] = 1.0
+    problem.init_guess[y_var.uid] = 1.0
+    context = SimpleInitializationContext(x_var=x_var, y_var=y_var, dx_var=dx_var)
+    return problem, context
+
+
 def evaluate_algebraic_residual_inf(problem: EmtProblemTemplate) -> float:
     """
     Evaluate the infinity-norm of the algebraic residual at the current stored
@@ -415,11 +454,12 @@ def build_two_bus_real_emt_case(
 
 def test_consistent_newton_initializes_missing_algebraic_and_dx0() -> None:
     """
-    Test that Consistent Newton initializes missing algebraic variable and dx0.
+    Test the helper-level Explicit plus ConsistentNewton sequence on a tiny problem.
 
-    Verifies that the Consistent Newton method correctly resolves
-    a simple problem with one state and one algebraic variable,
-    producing x = 2.0, y = 2.0, and dx = 0.0.
+    This test explicitly runs the symbolic explicit stage first and then calls the
+    native ConsistentNewton helper. It verifies that the helper pair resolves a
+    simple problem with one state and one algebraic variable, producing
+    x = 2.0, y = 2.0, and dx = 0.0.
     """
     problem, context = build_single_state_single_algebraic_problem()
     options = EmtOptions(initialization_method=EmtInitializationMethod.ConsistentNewton)
@@ -485,10 +525,10 @@ def test_reduced_initialization_problem_keeps_seeded_algebraic_equations() -> No
 
 def test_consistent_newton_uses_state_equilibrium_for_unresolved_states() -> None:
     """
-    Test that Consistent Newton uses state equilibrium for unresolved states.
+    Test that the native ConsistentNewton helper uses state equilibrium for unresolved states.
 
     Verifies that when no explicit initial conditions are provided,
-    the method finds the steady-state equilibrium with x = 3.0, y = 3.0.
+    the helper finds the steady-state equilibrium with x = 3.0, y = 3.0.
     """
     problem, context = build_unresolved_state_problem()
     options = EmtOptions(initialization_method=EmtInitializationMethod.ConsistentNewton)
@@ -510,10 +550,11 @@ def test_consistent_newton_uses_state_equilibrium_for_unresolved_states() -> Non
 
 def test_pseudo_transient_method_converges_on_simple_problem() -> None:
     """
-    Test that Pseudo Transient method converges on simple problem.
+    Test that the native PseudoTransient helper converges on a simple problem.
 
-    Verifies that the Pseudo Transient initialization method
-    successfully resolves the same problem with residual below tolerance.
+    This is a helper-level convergence test. The workflow-policy tests that prove
+    pure PseudoTransient skips explicit initialization and avoids Newton are
+    covered separately below.
     """
     problem, _ = build_unresolved_state_problem()
     options = EmtOptions(
@@ -527,6 +568,125 @@ def test_pseudo_transient_method_converges_on_simple_problem() -> None:
     assert report.status == EmtInitializationStatus.RESOLVED
     assert report.method_used == EmtInitializationMethod.PseudoTransient
     assert report.final_residual_inf <= options.init_newton_tol
+
+
+def test_explicit_mode_runs_only_explicit_in_problem_build() -> None:
+    """
+    Verify that Explicit mode completes during the explicit stage only.
+
+    The top-level EMT build path must stop after explicit initialization and must
+    not report any Newton or pseudo-transient work.
+    """
+    explicit_problem, _ = build_two_bus_real_emt_case(
+        zip_load=True,
+        initialization_method=EmtInitializationMethod.Explicit,
+    )
+
+    assert explicit_problem.initialization_report is not None
+    assert explicit_problem.initialization_report.method_requested == EmtInitializationMethod.Explicit
+    assert explicit_problem.initialization_report.method_used == EmtInitializationMethod.Explicit
+    assert explicit_problem.initialization_report.status == EmtInitializationStatus.RESOLVED
+    assert explicit_problem.initialization_report.newton_iterations == 0
+    assert explicit_problem.initialization_report.pseudo_transient_steps == 0
+
+
+def test_pseudotransient_mode_skips_explicit_seed_on_direct_native_path() -> None:
+    """
+    Verify that pure PseudoTransient keeps the power-flow seed and skips explicit init.
+
+    The problem is seeded manually before the native initialization call. If
+    explicit initialization ran, the state would move from 1.0 to 5.0 before the
+    pseudo-transient loop starts. The current pure pseudo-transient policy must
+    preserve the original seed because explicit initialization is intentionally
+    skipped on this path.
+    """
+    problem, context = build_pf_seed_vs_explicit_seed_problem()
+    options = EmtOptions(
+        initialization_method=EmtInitializationMethod.PseudoTransient,
+        init_newton_tol=1e-8,
+        init_ptc_max_iter=40,
+    )
+    idx_x: int = problem.get_var_idx(context.get_x_var())
+    x0_before: np.ndarray = problem.get_x0().copy()
+    seeded_x_before: float = float(x0_before[idx_x])
+
+    report = run_emt_native_initialization(problem, options)
+
+    x0_after: np.ndarray = problem.get_x0()
+    seeded_x_after: float = float(x0_after[idx_x])
+    assert report.method_requested == EmtInitializationMethod.PseudoTransient
+    assert seeded_x_before == 1.0
+    assert seeded_x_after == seeded_x_before
+
+
+def test_pseudotransient_mode_uses_no_newton() -> None:
+    """
+    Verify that pure PseudoTransient performs no Newton iterations.
+
+    The native initialization dispatcher must keep pure PseudoTransient limited to
+    the pseudo-transient path only.
+    """
+    problem, _ = build_unresolved_state_problem()
+    options = EmtOptions(
+        initialization_method=EmtInitializationMethod.PseudoTransient,
+        init_newton_tol=1e-8,
+        init_ptc_max_iter=80,
+    )
+
+    report = run_emt_native_initialization(problem, options)
+
+    assert report.status == EmtInitializationStatus.RESOLVED
+    assert report.method_used == EmtInitializationMethod.PseudoTransient
+    assert report.newton_iterations == 0
+    assert report.pseudo_transient_steps >= 0
+
+
+def test_pseudotransient_mode_starts_from_pf_seed_only() -> None:
+    """
+    Verify that pure PseudoTransient starts from the PF seed, not the explicit seed.
+
+    This test uses the same seed-distinguishing tiny problem as the explicit-skip
+    test, but focuses on the start-value contract instead of the report fields.
+    """
+    problem, context = build_pf_seed_vs_explicit_seed_problem()
+    options = EmtOptions(
+        initialization_method=EmtInitializationMethod.PseudoTransient,
+        init_newton_tol=1e-8,
+        init_ptc_max_iter=40,
+    )
+    idx_x: int = problem.get_var_idx(context.get_x_var())
+
+    assert float(problem.get_x0()[idx_x]) == 1.0
+    report = run_emt_native_initialization(problem, options)
+
+    assert report.method_requested == EmtInitializationMethod.PseudoTransient
+    assert float(problem.get_x0()[idx_x]) == 1.0
+
+
+def test_consistent_newton_mode_runs_explicit_then_newton() -> None:
+    """
+    Verify that ConsistentNewton uses explicit seeding and then Newton solving.
+
+    The tiny problem has an explicit state seed and one unresolved algebraic
+    variable. The explicit stage must set the state value, and the Newton stage
+    must finish the consistent solve without entering the pseudo-transient path.
+    """
+    problem, context = build_single_state_single_algebraic_problem()
+    options = EmtOptions(initialization_method=EmtInitializationMethod.ConsistentNewton)
+    idx_x: int = problem.get_var_idx(context.get_x_var())
+    idx_y: int = problem.get_var_idx(context.get_y_var())
+
+    run_emt_explicit_initialization(problem)
+    x_after_explicit: np.ndarray = problem.get_x0().copy()
+    report = run_emt_native_initialization(problem, options)
+    x_after_native: np.ndarray = problem.get_x0()
+
+    assert float(x_after_explicit[idx_x]) == 2.0
+    assert report.status == EmtInitializationStatus.RESOLVED
+    assert report.method_used == EmtInitializationMethod.ConsistentNewton
+    assert report.pseudo_transient_steps == 0
+    assert float(x_after_native[idx_x]) == 2.0
+    assert float(x_after_native[idx_y]) == 2.0
 
 
 def test_auto_initialization_is_not_worse_than_explicit_on_real_case() -> None:
@@ -553,6 +713,104 @@ def test_auto_initialization_is_not_worse_than_explicit_on_real_case() -> None:
     assert auto_res <= explicit_res + 1.0e-8
     assert auto_problem.initialization_report is not None
     assert auto_problem.initialization_report.status in {EmtInitializationStatus.RESOLVED, EmtInitializationStatus.FAILED}
+
+
+def test_pi_line_matrix_parameters_receive_compiler_names() -> None:
+    """
+    Ensure pi-line static matrix parameters are visible to EMT compilation.
+
+    The pi-line state equations reference API-mapped matrix symbols such as
+    ``Linv_aa_Pi``. Those symbols must be present in the constant-parameter map
+    before the native initializer compiles the state right-hand side expressions.
+
+    :return: None.
+    """
+    problem, context = build_two_bus_real_emt_case(
+        zip_load=False,
+        initialization_method=EmtInitializationMethod.Auto,
+    )
+    compiler_names_dict = problem.get_compiler_names_dict()
+    line_block = context.get_grid().lines[0].emt_model
+    parameter_name: str = "Linv_aa_Pi"
+    found_uid: int | None = None
+
+    for parameter in line_block.parameters.keys():
+        if parameter.name == parameter_name:
+            found_uid = parameter.uid
+        else:
+            pass
+
+    assert found_uid is not None
+    assert found_uid in compiler_names_dict
+
+
+def test_real_pi_line_problem_uses_template_equivalent_static_matrix_values() -> None:
+    """
+    Ensure the real EMT pi-line build keeps the historical overhead-line values.
+
+    This test compares the constant parameters that reach the full EMT problem
+    against the original template-based line-matrix formulas used before the
+    persisted ``line.ys`` and ``line.ysh`` reconstruction refactor.
+
+    :return: None.
+    """
+    problem, context = build_two_bus_real_emt_case(
+        zip_load=False,
+        initialization_method=EmtInitializationMethod.Auto,
+    )
+    line = context.get_grid().lines[0]
+    line_template = line.template
+    assert bool(line.ys.phN) is False
+    assert bool(line.ys.phA) is True
+    assert bool(line.ys.phB) is True
+    assert bool(line.ys.phC) is True
+    assert line.ys.values.shape == (4, 4)
+    assert line.ysh.values.shape == (4, 4)
+    compiler_names_dict = problem.get_compiler_names_dict()
+    r_full_actual, l_full_actual, c_full_actual = build_line_static_matrices(context.get_grid(), line)
+    constant_parameters = problem.get_constant_parameters()
+    constant_parameter_values = problem.get_parameters_values()
+    constant_by_name: Dict[str, float] = dict()
+    parameter_index: int = 0
+
+    while parameter_index < len(constant_parameters):
+        constant_by_name[constant_parameters[parameter_index].name] = float(constant_parameter_values[parameter_index].value)
+        parameter_index += 1
+
+    assert "Linv_aa_Pi" in constant_by_name
+    assert "Caa_Pi" in constant_by_name
+    assert any(name == "cprms[0]" for name in compiler_names_dict.values())
+
+    omega: float = 2.0 * np.pi * float(context.get_grid().fBase)
+    voltage_base: float = float(line.bus_from.Vnom) * 1.0e3
+    sbase_va: float = float(context.get_grid().Sbase) * 1.0e6
+    zbase: float = (voltage_base * voltage_base) / sbase_va
+    ybase: float = 1.0 / zbase
+    z_phys_total: np.ndarray = line_template.z_nabc * float(line.length)
+    y_phys_total: np.ndarray = line_template.y_nabc * float(line.length)
+    z_phys_recovered, y_phys_recovered = build_physical_line_matrices_from_stored_admittances(
+        line=line,
+        sbase_mva=float(context.get_grid().Sbase),
+    )
+    assert z_phys_recovered is not None
+    assert y_phys_recovered is not None
+    assert np.isclose(float(np.imag(z_phys_recovered[1, 1])), float(np.imag(z_phys_total[0, 0])))
+    assert np.isclose(float(np.imag(z_phys_recovered[2, 2])), float(np.imag(z_phys_total[1, 1])))
+    assert np.isclose(float(np.imag(z_phys_recovered[3, 3])), float(np.imag(z_phys_total[2, 2])))
+    assert np.isclose(float(np.imag(y_phys_recovered[1, 1])), float(np.imag(y_phys_total[0, 0])))
+    assert np.isclose(float(np.imag(y_phys_recovered[2, 2])), float(np.imag(y_phys_total[1, 1])))
+    assert np.isclose(float(np.imag(y_phys_recovered[3, 3])), float(np.imag(y_phys_total[2, 2])))
+    z_pu: np.ndarray = z_phys_total / zbase
+    y_pu: np.ndarray = y_phys_total / ybase
+    l_expected: np.ndarray = np.imag(z_pu) / omega
+    c_expected: np.ndarray = (np.imag(y_pu) / omega) / 2.0
+    linv_expected: np.ndarray = np.linalg.inv(l_expected)
+
+    assert np.isclose(float(l_full_actual[0, 0]), float(l_expected[0, 0]))
+    assert np.isclose(float(c_full_actual[0, 0]), float(c_expected[0, 0]))
+
+    assert np.isclose(constant_by_name["Linv_aa_Pi"], float(linv_expected[0, 0]))
+    assert np.isclose(constant_by_name["Caa_Pi"], float(c_expected[0, 0]))
 
 
 if __name__ == "__main__":

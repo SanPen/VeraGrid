@@ -40,7 +40,7 @@ class HvdcData(BranchParentData):
         self.Vnt: Vec = np.zeros(nelm, dtype=float)
 
         self.angle_droop: Vec = np.zeros(nelm, dtype=float)
-        self.control_mode: np.ndarray = np.zeros(nelm, dtype=object)
+        self.control_mode_int: IntVec = np.zeros(nelm, dtype=int)
 
         self.Qmin_f: Vec = np.zeros(nelm, dtype=float)
         self.Qmax_f: Vec = np.zeros(nelm, dtype=float)
@@ -78,7 +78,7 @@ class HvdcData(BranchParentData):
         data.Vnt = self.Vnt[elm_idx]
 
         data.angle_droop = self.angle_droop[elm_idx]
-        data.control_mode = self.control_mode[elm_idx]
+        data.control_mode_int = self.control_mode_int[elm_idx]
 
         data.Qmin_f = self.Qmin_f[elm_idx]
         data.Qmax_f = self.Qmax_f[elm_idx]
@@ -123,7 +123,7 @@ class HvdcData(BranchParentData):
         data.Vnt = self.Vnt.copy()
 
         data.angle_droop = self.angle_droop.copy()
-        data.control_mode = self.control_mode.copy()
+        data.control_mode_int = self.control_mode_int.copy()
 
         data.Qmin_f = self.Qmin_f.copy()
         data.Qmax_f = self.Qmax_f.copy()
@@ -233,10 +233,10 @@ class HvdcData(BranchParentData):
 
             if self.active[i]:
 
-                if self.control_mode[i] == HvdcControlType.type_1_Pset:
+                if self.control_mode_int[i] == HvdcControlType.type_1_Pset.idx():
                     Pcalc = self.Pset[i]
 
-                elif self.control_mode[i] == HvdcControlType.type_0_free:
+                elif self.control_mode_int[i] == HvdcControlType.type_0_free.idx():
                     Pcalc = self.Pset[i] + self.angle_droop[i] * np.rad2deg(theta[self.F[i]] - theta[self.T[i]])
 
                     nfree += 1

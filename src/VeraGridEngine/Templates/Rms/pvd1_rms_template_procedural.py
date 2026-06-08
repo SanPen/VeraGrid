@@ -5,7 +5,7 @@
 
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
 from VeraGridEngine.Utils.Symbolic.block import Block
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
 import numpy as np
@@ -28,8 +28,8 @@ def get_pvd1_rms_template(vfactory: VarFactory, name: str = "PVD1 RMS template")
 
     from VeraGridEngine.Utils.procedural_logic import sampled_value
 
-    vm = vfactory.add_var(f"Vm_{name}", VarPowerFlowRefferenceType.Vm)
-    va = vfactory.add_var(f"Va_{name}", VarPowerFlowRefferenceType.Va)
+    vm = vfactory.add_var(f"Vm_{name}", VarPowerFlowReferenceType.Vm)
+    va = vfactory.add_var(f"Va_{name}", VarPowerFlowReferenceType.Va)
     inputs = [vm, va]
 
     p = vfactory.add_var("P_pvd1")
@@ -197,10 +197,10 @@ def get_pvd1_rms_template(vfactory: VarFactory, name: str = "PVD1 RMS template")
 
     block.name = name
     block.external_mapping = {
-        VarPowerFlowRefferenceType.Vm: vm,
-        VarPowerFlowRefferenceType.Va: va,
-        VarPowerFlowRefferenceType.P: p,
-        VarPowerFlowRefferenceType.Q: q,
+        VarPowerFlowReferenceType.Vm: vm,
+        VarPowerFlowReferenceType.Va: va,
+        VarPowerFlowReferenceType.P: p,
+        VarPowerFlowReferenceType.Q: q,
     }
     block.out_vars = [p, q, ipout, iqout, q_droop, p_sum, q_sum, f_trip, v_trip]
 
@@ -230,8 +230,8 @@ def get_pvd1_complete_rms_template(vfactory: VarFactory, name: str = "PVD1 compl
     # Local import avoids a package import cycle at module load time.
     from VeraGridEngine.Utils.procedural_logic import flipflop, bool_and, bool_or, sampled_value
 
-    vm = vfactory.add_var(f"Vm_{name}", VarPowerFlowRefferenceType.Vm)
-    va = vfactory.add_var(f"Va_{name}", VarPowerFlowRefferenceType.Va)
+    vm = vfactory.add_var(f"Vm_{name}", VarPowerFlowReferenceType.Vm)
+    va = vfactory.add_var(f"Va_{name}", VarPowerFlowReferenceType.Va)
     inputs = [vm, va]
 
     p = vfactory.add_var("P_pvd1")
@@ -536,10 +536,10 @@ def get_pvd1_complete_rms_template(vfactory: VarFactory, name: str = "PVD1 compl
 
     block.name = name
     block.external_mapping = {
-        VarPowerFlowRefferenceType.Vm: vm,
-        VarPowerFlowRefferenceType.Va: va,
-        VarPowerFlowRefferenceType.P: p,
-        VarPowerFlowRefferenceType.Q: q,
+        VarPowerFlowReferenceType.Vm: vm,
+        VarPowerFlowReferenceType.Va: va,
+        VarPowerFlowReferenceType.P: p,
+        VarPowerFlowReferenceType.Q: q,
     }
     block.out_vars = [
         p,
@@ -582,8 +582,8 @@ def get_pvd1_dc_mppt_rms_template(vfactory: VarFactory, name: str = "PVD1 DC-MPP
 
     from VeraGridEngine.Utils.procedural_logic import sampled_value
 
-    vm = vfactory.add_var(f"Vm_{name}", VarPowerFlowRefferenceType.Vm)
-    va = vfactory.add_var(f"Va_{name}", VarPowerFlowRefferenceType.Va)
+    vm = vfactory.add_var(f"Vm_{name}", VarPowerFlowReferenceType.Vm)
+    va = vfactory.add_var(f"Va_{name}", VarPowerFlowReferenceType.Va)
     inputs = [vm, va]
 
     p = vfactory.add_var("P_pvd1")
@@ -777,10 +777,10 @@ def get_pvd1_dc_mppt_rms_template(vfactory: VarFactory, name: str = "PVD1 DC-MPP
 
     block.name = name
     block.external_mapping = {
-        VarPowerFlowRefferenceType.Vm: vm,
-        VarPowerFlowRefferenceType.Va: va,
-        VarPowerFlowRefferenceType.P: p,
-        VarPowerFlowRefferenceType.Q: q,
+        VarPowerFlowReferenceType.Vm: vm,
+        VarPowerFlowReferenceType.Va: va,
+        VarPowerFlowReferenceType.P: p,
+        VarPowerFlowReferenceType.Q: q,
     }
     block.out_vars = [p, q, ipout, iqout, pavail, pmppt, p_sum, q_sum, f_trip, v_trip]
 
@@ -802,8 +802,8 @@ def get_pvd1_dc_link_mppt_rms_template(vfactory: VarFactory, name: str = "PVD1 D
 
     from VeraGridEngine.Utils.procedural_logic import sampled_value
 
-    vm = vfactory.add_var(f"Vm_{name}", VarPowerFlowRefferenceType.Vm)
-    va = vfactory.add_var(f"Va_{name}", VarPowerFlowRefferenceType.Va)
+    vm = vfactory.add_var(f"Vm_{name}", VarPowerFlowReferenceType.Vm)
+    va = vfactory.add_var(f"Va_{name}", VarPowerFlowReferenceType.Va)
     inputs = [vm, va]
 
     p = vfactory.add_var("P_pvd1")
@@ -1088,10 +1088,10 @@ def get_pvd1_dc_link_mppt_rms_template(vfactory: VarFactory, name: str = "PVD1 D
 
     block.name = name
     block.external_mapping = {
-        VarPowerFlowRefferenceType.Vm: vm,
-        VarPowerFlowRefferenceType.Va: va,
-        VarPowerFlowRefferenceType.P: p,
-        VarPowerFlowRefferenceType.Q: q,
+        VarPowerFlowReferenceType.Vm: vm,
+        VarPowerFlowReferenceType.Va: va,
+        VarPowerFlowReferenceType.P: p,
+        VarPowerFlowReferenceType.Q: q,
     }
     block.out_vars = [p, q, ipout, iqout, p_sum, q_sum, pavail, psrc, pinv, vpv, vdc, duty, vmp, imp]
 
@@ -1119,8 +1119,8 @@ def get_pvd1_dc_link_bess_rms_template(vfactory: VarFactory, name: str = "PVD1 D
 
     from VeraGridEngine.Utils.procedural_logic import sampled_value
 
-    vm = vfactory.add_var(f"Vm_{name}", VarPowerFlowRefferenceType.Vm)
-    va = vfactory.add_var(f"Va_{name}", VarPowerFlowRefferenceType.Va)
+    vm = vfactory.add_var(f"Vm_{name}", VarPowerFlowReferenceType.Vm)
+    va = vfactory.add_var(f"Va_{name}", VarPowerFlowReferenceType.Va)
     inputs = [vm, va]
 
     p = vfactory.add_var("P_pvd1")
@@ -1366,10 +1366,10 @@ def get_pvd1_dc_link_bess_rms_template(vfactory: VarFactory, name: str = "PVD1 D
 
     block.name = name
     block.external_mapping = {
-        VarPowerFlowRefferenceType.Vm: vm,
-        VarPowerFlowRefferenceType.Va: va,
-        VarPowerFlowRefferenceType.P: p,
-        VarPowerFlowRefferenceType.Q: q,
+        VarPowerFlowReferenceType.Vm: vm,
+        VarPowerFlowReferenceType.Va: va,
+        VarPowerFlowReferenceType.P: p,
+        VarPowerFlowReferenceType.Q: q,
     }
     block.out_vars = [
         p,

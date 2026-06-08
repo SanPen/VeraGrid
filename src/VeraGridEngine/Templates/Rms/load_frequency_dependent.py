@@ -3,7 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import Block
@@ -79,9 +79,9 @@ def FrequencyLoadBuild(vfactory: VarFactory, name: str = "", Pl0=1.0, Ql0=0.1) -
     )
 
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.P: P,
-        VarPowerFlowRefferenceType.Q: Q,
-        VarPowerFlowRefferenceType.Vm: inputs[0],
+        VarPowerFlowReferenceType.P: P,
+        VarPowerFlowReferenceType.Q: Q,
+        VarPowerFlowReferenceType.Vm: inputs[0],
     }
 
     templ.block.in_vars = inputs

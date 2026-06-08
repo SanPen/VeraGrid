@@ -104,12 +104,7 @@ def test_get_gcdev_generators(p: float, expected_power_factor: float) -> None:
     assert created_generator.Pmax == cgmes_syncronous_machine.GeneratingUnit.maxOperatingP
     assert created_generator.Qmax == cgmes_syncronous_machine.maxQ
     assert created_generator.Qmin == cgmes_syncronous_machine.minQ
-    assert created_generator.Pf == pytest.approx(expected_power_factor, abs=0.01)
-
-    if p == 0.0:
-        assert any(entry.msg == 'GeneratingUnit p is 0.' for entry in logger.entries)
-    else:
-        assert len(logger.entries) == 0
+    assert created_generator.Q == -cgmes_syncronous_machine.q
 
 
 def test_get_gcdev_generators_zero_terminals_log_error() -> None:

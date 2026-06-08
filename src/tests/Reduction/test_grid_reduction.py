@@ -496,6 +496,71 @@ def test_ptdf_projected_antena():
     assert abs(red_grid.loads[3].P - 10.0) < 1e-4
 
 
+def _internal_branch_indices(grid: gce.MultiCircuit, remove_set: set) -> list:
+    """
+    Indices of the AC branches whose both ends are kept (internal to the
+    maintained area), in the original grid branch order
+    """
+    idx = {id(b): i for i, b in enumerate(grid.buses)}
+    keep = set(i for i in range(grid.get_bus_number()) if i not in remove_set)
+    return [k for k, br in enumerate(grid.get_branches(add_vsc=False, add_hvdc=False, add_switch=False))
+            if idx[id(br.bus_from)] in keep and idx[id(br.bus_to)] in keep]
+
+
+def _internal_flow_error_after_reduction(fname: str, remove: list, slack_bus: int,
+                                         distribute_slack: bool) -> float:
+    """
+    To compute the flow difference before and after
+    """
+    grid = gce.open_file(filename=fname)
+    for i, b in enumerate(grid.buses):
+        b.is_slack = (i == slack_bus)
+
+    remove_set = set(int(x) for x in remove)
+    int_idx = _internal_branch_indices(grid, remove_set)
+
+    opt = gce.LinearAnalysisOptions(distribute_slack=distribute_slack)
+    dr = gce.LinearAnalysisDriver(grid=grid, options=opt)
+    dr.run()
+    f0 = dr.results.Sf[int_idx]
+
+    red, _ = ptdf_reduction_projected(grid=grid, reduction_bus_indices=np.array(remove),
+                                      distribute_slack=distribute_slack)
+    dr2 = gce.LinearAnalysisDriver(grid=red, options=gce.LinearAnalysisOptions(distribute_slack=distribute_slack))
+    dr2.run()
+    f1 = dr2.results.Sf
+
+    m = min(len(f0), len(f1))
+    return float(np.max(np.abs(np.asarray(f0[:m]) - np.asarray(f1[:m]))))
+
+
+def test_ptdf_projected_slack_position_independence():
+    """
+    The PTDF projected reduction must preserve the maintained-area branch flows
+    regardless of where the slack bus sits (kept area or removed area), for both
+    distribute_slack settings
+
+    Regression test to cover the distributed_slack=True non-coinciding cases
+    """
+    cases = [
+        (os.path.join('data', 'grids', '6bus_antena.veragrid'), [1]),
+        (os.path.join('data', 'grids', 'ptdf_red_many_buses.veragrid'), [6, 8]),
+        (os.path.join('data', 'grids', '5bus_linear.veragrid'), [0]),
+        (os.path.join('data', 'grids', 'Matpower', 'case14.matpower'), [9, 10, 11, 12, 13]),
+    ]
+
+    for fname, remove in cases:
+        nbus = gce.open_file(filename=fname).get_bus_number()
+        for distribute_slack in (True, False):
+            for slack_bus in range(nbus):
+                err = _internal_flow_error_after_reduction(fname, remove, slack_bus, distribute_slack)
+                assert err < 1e-4, (
+                    f"{os.path.basename(fname)} slack@bus{slack_bus} "
+                    f"distribute_slack={distribute_slack}: internal flow error "
+                    f"{err:.3e} MW exceeds tolerance"
+                )
+
+
 def test_ptdf_projected_gb():
     """
     Test to check if only the necessary injection is added

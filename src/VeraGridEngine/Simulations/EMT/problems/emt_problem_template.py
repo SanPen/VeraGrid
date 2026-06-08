@@ -12,7 +12,7 @@ from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var, hard_sat, h
 from VeraGridEngine.basic_structures import Vec
 from VeraGridEngine.Simulations.driver_template import DummySignal
 from VeraGridEngine.Devices.Events.emt_events_group import EmtEventsGroup
-from VeraGridEngine.enumerations import DynamicEventTransitionType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DynamicEventTransitionType, VarPowerFlowReferenceType
 
 
 def _get_diff_var_sort_key(diff_var: Var) -> int:
@@ -652,10 +652,31 @@ class EmtProblemTemplate(ABC):
                     if idx_const is not None:
                         return float(self._parameters_values[idx_const].value)
                     else:
-                        raise KeyError(f"Unknown runtime expression variable uid={expression.uid}")
+                        idx_var: int | None = self._uid2idx_vars.get(expression.uid, None)
+                        if idx_var is not None:
+                            init_value: float | int | complex | None = self.init_guess.get(expression.uid, None)
+                            if init_value is None:
+                                return 0.0
+                            else:
+                                return float(init_value)
+                        else:
+                            idx_diff: int | None = self._uid2idx_diff.get(expression.uid, None)
+                            if idx_diff is not None:
+                                diff_init_value: float | int | complex | None = self.diff_init_guess.get(expression.uid, None)
+                                if diff_init_value is None:
+                                    return 0.0
+                                else:
+                                    return float(diff_init_value)
+                            else:
+                                return 0.0
 
         elif isinstance(expression, Expr):
             uid_bindings: Dict[int, float] = dict()
+            uid: int
+            idx: int
+            init_value: float | int | complex | None
+            diff_init_value: float | int | complex | None
+            var: Var
 
             for uid, idx in self._uid2idx_event_params.items():
                 uid_bindings[uid] = float(runtime_params[idx])
@@ -663,12 +684,26 @@ class EmtProblemTemplate(ABC):
             for uid, idx in self._uid2idx_params.items():
                 uid_bindings[uid] = float(self._parameters_values[idx].value)
 
-            #TODO is this okkkk?
-            # for uid, idx in self._uid2idx_vars.items():
-            #     uid_bindings[uid] = float(self.init_guess[uid])
-            #
-            # for uid, idx in self._uid2idx_diff.items():
-            #     uid_bindings[uid] = float(self.diff_init_guess[uid])
+            # Runtime mode parameters such as delayed outputs may depend on the
+            # already initialized algebraic, state, and differential values of
+            # the EMT problem. The broader explicit-initialization algorithm has
+            # already assembled those guesses before this runtime initialization
+            # stage runs, so we expose them here as UID bindings. This lets one
+            # retained mode variable start from the same operating point as the
+            # algebraic signal it delays.
+            for uid, idx in self._uid2idx_vars.items():
+                init_value = self.init_guess.get(uid, None)
+                if init_value is None:
+                    pass
+                else:
+                    uid_bindings[uid] = float(init_value)
+
+            for uid, idx in self._uid2idx_diff.items():
+                diff_init_value = self.diff_init_guess.get(uid, None)
+                if diff_init_value is None:
+                    pass
+                else:
+                    uid_bindings[uid] = float(diff_init_value)
 
             uid_bindings[self._glob_time.uid] = float(tm)
             for var in expression.get_vars():
@@ -936,7 +971,7 @@ class EmtProblemTemplate(ABC):
         """
         return self._vars_glob_name2uid
 
-    # def set_init_guess(self, mdl: Block, reference_powerflow: VarPowerFlowRefferenceType, val: float) -> None:
+    # def set_init_guess(self, mdl: Block, reference_powerflow: VarPowerFlowReferenceType, val: float) -> None:
     #     """
     #     Set the initialization guess associated with a model external mapping.
     #

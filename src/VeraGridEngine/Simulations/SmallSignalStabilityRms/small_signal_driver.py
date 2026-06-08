@@ -114,6 +114,43 @@ def compute_participation_factors(v: np.ndarray,
     return PF_norm
 
 
+def compute_participation_factors_generalized(v: np.ndarray,
+                                              w: np.ndarray,
+                                              E: Union[np.ndarray, sp.spmatrix]) -> np.ndarray:
+    """
+    Participation factors for generalized eigenproblems A x = lambda E x.
+    Normalization uses w^T E v = 1 per mode.
+    """
+    v_c = v.astype(np.complex128, copy=False)
+    w_c = w.astype(np.complex128, copy=False).copy()
+
+    if sp.issparse(E):
+        Ev = E @ v_c
+        Etw = E.T @ w_c
+    else:
+        E_arr = np.asarray(E, dtype=np.complex128)
+        Ev = E_arr @ v_c
+        Etw = E_arr.T @ w_c
+
+    k = v_c.shape[1]
+    for i in range(k):
+        norm_factor = np.vdot(w_c[:, i], Ev[:, i])
+        if np.abs(norm_factor) > 1e-15:
+            w_c[:, i] /= norm_factor
+        else:
+            pass
+
+    PF = np.abs(v_c * Etw)
+    col_sum = np.sum(PF, axis=0)
+    PF_norm = PF.copy()
+    for i in range(PF.shape[1]):
+        if col_sum[i] > 1e-15:
+            PF_norm[:, i] /= col_sum[i]
+        else:
+            pass
+    return PF_norm.astype(np.float64, copy=False)
+
+
 def select_eigs_without_conjugates(eigenvalues: Vec) -> Vec:
     """
     Select oscillatory modes. Conjugate modes appear only once in the selection.
@@ -251,9 +288,11 @@ def run_dense_small_signal_stability(problem: RmsProblemTemplate,
         A_bal += sp.eye(A_bal.shape[0]) * 1e-10
         eig_results = list(la.eig(A_bal, left=True, right=True))
     else:
-        E_matrix = problem.get_E_matrix(x, dx)
-        A_dense = np.asarray(problem.get_static_state_matrix(x, dx), dtype=float)
-        #A_dense += np.eye(A_dense.shape[0]) * 1e-10
+        E_raw = problem.get_E_matrix(x, dx)
+        E_matrix = E_raw.toarray() if sp.issparse(E_raw) else np.asarray(E_raw, dtype=float)
+        A_raw = problem.get_static_state_matrix(x, dx)
+        A_dense = A_raw.toarray() if sp.issparse(A_raw) else np.asarray(A_raw, dtype=float)
+        A_dense += np.eye(A_dense.shape[0]) * 1e-7
         A_orig = A_dense.copy()
         # Convert to dense for eig
         eig_results = list(la.eig(A_dense, -E_matrix, left=True, right=True))
@@ -268,7 +307,10 @@ def run_dense_small_signal_stability(problem: RmsProblemTemplate,
     v = v.astype(np.complex128, copy=False)
     w = w.astype(np.complex128, copy=False)
 
-    participation_factors = compute_participation_factors(v=v, w=w)
+    if differential_vars == 0:
+        participation_factors = compute_participation_factors(v=v, w=w)
+    else:
+        participation_factors = compute_participation_factors_generalized(v=v, w=w, E=E_matrix)
 
     eig_no_conjugates = select_eigs_without_conjugates(eigenvalues)
     damping_ratios, conjugate_freq = compute_damping_ratios_and_frequencies(eigenvalues, eig_no_conjugates)
@@ -299,58 +341,116 @@ def run_sparse_small_signal_stability(problem: RmsProblemTemplate,
     """
 
     t0: float = time.perf_counter()
-    A_static = np.asarray(problem.get_static_state_matrix(x, dx), dtype=float)
-    J_aug = sp.csc_matrix(A_static)
+    A_static = problem.get_static_state_matrix(x, dx)
+    J_aug = A_static.tocsc() if sp.issparse(A_static) else sp.csc_matrix(np.asarray(A_static, dtype=float))
+    differential_vars = problem.get_diff_var_number()
     n_states: int = problem.get_states_number()
+    E = None
 
-    # 2. SUPER-LU FACTORIZATION OF THE ENTIRE SYSTEM
-    J_aug_lu = spla.splu(J_aug)
+    if differential_vars == 0:
+        # 2. SUPER-LU FACTORIZATION OF THE ENTIRE SYSTEM
+        J_aug_lu = spla.splu(J_aug)
 
-    if problem.get_diff_var_number() == 0:
         # 3. CREATE THE SHIFT-AND-INVERT OPERATOR (A^-1 * v)
         op_methods = SparseShiftAndInvertMethods(n_states=n_states,
                                                  total_size=J_aug.shape[0],
                                                  J_aug_lu=J_aug_lu)
+        Inv_A_op = spla.LinearOperator(shape=(n_states, n_states),
+                                       matvec=op_methods.matvec,
+                                       rmatvec=op_methods.rmatvec)
+
+        # 4. MODAL EXTRACTION
+        # In small systems, k_search cannot exceed the dimension of the operator.
+        k_search = min(k + 6, n_states - 2)
+        if k_search <= 0:
+            k_search = k
+        else:
+            pass
+
+        mu_R, v_raw = spla.eigs(Inv_A_op, k=k_search, which="LM", tol=1e-10)
+        mu_L, w_raw = spla.eigs(Inv_A_op.T, k=k_search, which="LM", tol=1e-10)
+
+        # Tolerance for filtering algebraic noise (mu -> 0 means lambda -> inf)
+        tol_mu = 1e-8
+
+        # --- Rights Filtering ---
+        valid_mask_R = np.abs(mu_R) > tol_mu
+        mu_R_valid = mu_R[valid_mask_R]
+        v_valid = v_raw[:, valid_mask_R]
+        eigenvalues_R = 1.0 / mu_R_valid
+
+        # --- Left Filtering ---
+        valid_mask_L = np.abs(mu_L) > tol_mu
+        mu_L_valid = mu_L[valid_mask_L]
+        w_valid = w_raw[:, valid_mask_L]
+        eigenvalues_L = 1.0 / mu_L_valid
     else:
-        # 3. CREATE THE SHIFT-AND-INVERT OPERATOR (A^-1 * E * v)
-        E = problem.get_E_matrix(x, dx)
-        n_states = problem.get_diff_var_number()
-        op_methods = SparseGeneralizedShiftInvertMethods(
-            n_states=n_states,
-            total_size=J_aug.shape[0],
-            J_aug_lu=J_aug_lu,
-            E=E
-        )
+        # Sparse generalized shift-invert using custom LinearOperator.
+        E_raw = problem.get_E_matrix(x, dx)
+        E = E_raw.tocsc() if sp.issparse(E_raw) else sp.csc_matrix(E_raw)
+        # Keep sign convention consistent with dense path:
+        # dense solves la.eig(A_dense, -E_matrix, ...)
+        E_eff = (-E).tocsc()
+        n_states = J_aug.shape[0]
 
-    Inv_A_op = spla.LinearOperator(shape=(n_states, n_states),
-                                   matvec=op_methods.matvec,
-                                   rmatvec=op_methods.rmatvec)
+        k_search = min(k + 6, n_states - 2)
+        if k_search <= 0:
+            k_search = min(max(1, k), n_states - 2)
+        else:
+            pass
 
-    # 4. MODAL EXTRACTION
-    # In small systems, k_search cannot exceed the dimension of the operator.
-    k_search = min(k + 6, n_states - 2)
-    if k_search <= 0:
-        k_search = k
-    else:
-        pass
+        sigma_candidates = (1e-5, 1e-4, 1e-3, 1e-2, 1e-1)
+        eig_ok = False
+        last_err = None
 
-    mu_R, v_raw = spla.eigs(Inv_A_op, k=k_search, which="LM", tol=1e-10)
-    mu_L, w_raw = spla.eigs(Inv_A_op.T, k=k_search, which="LM", tol=1e-10)
+        for sigma in sigma_candidates:
+            try:
+                J_shift = (J_aug - sigma * E_eff).tocsc()
+                J_shift_lu = spla.splu(J_shift)
 
-    # Tolerance for filtering algebraic noise (mu -> 0 means lambda -> inf)
-    tol_mu = 1e-8
+                op_methods = SparseGeneralizedShiftInvertMethods(n_states=n_states,
+                                                                 total_size=J_shift.shape[0],
+                                                                 J_aug_lu=J_shift_lu,
+                                                                 E=E_eff)
+                inv_op = spla.LinearOperator(shape=(n_states, n_states),
+                                             matvec=op_methods.matvec,
+                                             rmatvec=op_methods.rmatvec,
+                                             dtype=np.complex128)
 
-    # --- Rights Filtering ---
-    valid_mask_R = np.abs(mu_R) > tol_mu
-    mu_R_valid = mu_R[valid_mask_R]
-    v_valid = v_raw[:, valid_mask_R]
-    eigenvalues_R = 1.0 / mu_R_valid
+                mu_R, v_raw = spla.eigs(inv_op, k=k_search, which="LM", tol=1e-10)
+                mu_L, w_raw = spla.eigs(inv_op.T, k=k_search, which="LM", tol=1e-10)
 
-    # --- Left Filtering ---
-    valid_mask_L = np.abs(mu_L) > tol_mu
-    mu_L_valid = mu_L[valid_mask_L]
-    w_valid = w_raw[:, valid_mask_L]
-    eigenvalues_L = 1.0 / mu_L_valid
+                tol_mu = 1e-8
+                valid_mask_R = np.isfinite(mu_R) & (np.abs(mu_R) > tol_mu)
+                valid_mask_L = np.isfinite(mu_L) & (np.abs(mu_L) > tol_mu)
+
+                mu_R_valid = mu_R[valid_mask_R]
+                mu_L_valid = mu_L[valid_mask_L]
+                v_valid = v_raw[:, valid_mask_R]
+                w_valid = w_raw[:, valid_mask_L]
+
+                eigenvalues_R = sigma + 1.0 / mu_R_valid
+                eigenvalues_L = sigma + 1.0 / mu_L_valid
+
+                if (eigenvalues_R.size == 0
+                        or eigenvalues_L.size == 0
+                        or not np.all(np.isfinite(eigenvalues_R))
+                        or not np.all(np.isfinite(eigenvalues_L))
+                        or v_valid.shape[1] == 0
+                        or w_valid.shape[1] == 0):
+                    raise ValueError("ARPACK returned empty or non-finite generalized eigenvalues")
+
+                eig_ok = True
+                if verbose:
+                    print(f"Sparse generalized shift-invert eigs converged with sigma={sigma:.1e}")
+                break
+            except (RuntimeError, ValueError) as err:
+                last_err = err
+                if verbose:
+                    print(f"Sparse generalized shift-invert eigs failed with sigma={sigma:.1e}: {err}")
+
+        if not eig_ok:
+            raise RuntimeError(f"Sparse generalized eigensolver failed with all sigma candidates: {last_err}")
 
     # 5. STRICT MATCHING
     # To avoid Arnoldi asymmetries, we use a metric that combines Re and Im.
@@ -382,7 +482,10 @@ def run_sparse_small_signal_stability(problem: RmsProblemTemplate,
     # Ensure eigenvectors are complex (scipy may return float64 for real eigenvalues)
     v_valid = v_valid.astype(np.complex128, copy=False)
     w_valid = w_valid.astype(np.complex128, copy=False)
-    participation_factors = compute_participation_factors(v=v_valid, w=w_valid)
+    if differential_vars == 0:
+        participation_factors = compute_participation_factors(v=v_valid, w=w_valid)
+    else:
+        participation_factors = compute_participation_factors_generalized(v=v_valid, w=w_valid, E=E)
 
     eig_no_conjugates = select_eigs_without_conjugates(eigenvalues)
     damping_ratios, conjugate_freq = compute_damping_ratios_and_frequencies(eigenvalues, eig_no_conjugates)
@@ -407,16 +510,26 @@ class SparseGeneralizedShiftInvertMethods:
         self.E = E.tocsc()
 
     def matvec(self, v: np.ndarray) -> np.ndarray:
-        rhs = np.zeros(self.total_size, dtype=np.complex128)
-        rhs[:self.n_states] = self.E @ v
-        sol = self.J_aug_lu.solve(rhs)
-        return sol[:self.n_states]
+        ev = self.E @ v
+        rhs_r = np.zeros(self.total_size, dtype=np.float64)
+        rhs_i = np.zeros(self.total_size, dtype=np.float64)
+        rhs_r[:self.n_states] = np.asarray(ev.real, dtype=np.float64)
+        rhs_i[:self.n_states] = np.asarray(ev.imag, dtype=np.float64)
+
+        sol_r = self.J_aug_lu.solve(rhs_r)
+        sol_i = self.J_aug_lu.solve(rhs_i)
+        return sol_r[:self.n_states] + 1j * sol_i[:self.n_states]
 
     def rmatvec(self, v: np.ndarray) -> np.ndarray:
-        rhs = np.zeros(self.total_size, dtype=np.complex128)
-        rhs[:self.n_states] = v
-        sol = self.J_aug_lu.solve(rhs, trans='H')
-        return self.E.T @ sol[:self.n_states]
+        rhs_r = np.zeros(self.total_size, dtype=np.float64)
+        rhs_i = np.zeros(self.total_size, dtype=np.float64)
+        rhs_r[:self.n_states] = np.asarray(v.real, dtype=np.float64)
+        rhs_i[:self.n_states] = np.asarray(v.imag, dtype=np.float64)
+
+        sol_r = self.J_aug_lu.solve(rhs_r, trans='T')
+        sol_i = self.J_aug_lu.solve(rhs_i, trans='T')
+        sol = sol_r[:self.n_states] + 1j * sol_i[:self.n_states]
+        return self.E.T @ sol
 
 
 class SparseShiftAndInvertMethods:
@@ -516,7 +629,8 @@ class SmallSignalStabilityRmsDriver(DriverTemplate):
         self.sss_options: RmsSmallSignalStabilityOptions = RmsSmallSignalStabilityOptions() if sss_options is None else sss_options
         self.assessment_time = self.sss_options.ss_assessment_time
 
-        self.k = self.sss_options.k if self.sss_options.k is not None else self.problem.get_states_number()
+        n_modes = self.problem.get_states_number() + self.problem.get_diff_var_number()
+        self.k = self.sss_options.k if self.sss_options.k is not None else n_modes
 
         self.rms_options: RmsOptions = RmsOptions() if rms_options is None else rms_options
 
@@ -568,7 +682,7 @@ class SmallSignalStabilityRmsDriver(DriverTemplate):
         else:
             pass
 
-        n = self.problem.get_states_number()
+        n = self.problem.get_states_number() + self.problem.get_diff_var_number()
         if self.k >= n - 1 or self.k == 0:
             (eigenvalues,
              participation_factors,

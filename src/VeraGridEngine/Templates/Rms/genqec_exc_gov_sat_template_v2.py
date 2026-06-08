@@ -20,8 +20,8 @@ from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Expr, Var
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
 from VeraGridEngine.enumerations import DeviceType
-from VeraGridEngine.enumerations import ParamPowerFlowRefferenceType
-from VeraGridEngine.enumerations import VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import ParamPowerFlowReferenceType
+from VeraGridEngine.enumerations import VarPowerFlowReferenceType
 
 def get_genqec_rms(vfactory: VarFactory, name: str = "Genqec_rms_template") -> RmsModelTemplate:
     """
@@ -38,8 +38,8 @@ def get_genqec_rms(vfactory: VarFactory, name: str = "Genqec_rms_template") -> R
     # Tm: mechanical torque (from governor)
     # Vf: excitation voltage (from exciter)
 
-    inputs = [vfactory.add_var("Vm_" + name, reference=VarPowerFlowRefferenceType.Vm),
-              vfactory.add_var("Va_" + name, reference=VarPowerFlowRefferenceType.Va),
+    inputs = [vfactory.add_var("Vm_" + name, reference=VarPowerFlowReferenceType.Vm),
+              vfactory.add_var("Va_" + name, reference=VarPowerFlowReferenceType.Va),
               vfactory.add_var("Tm_" + name, shared_reference="tm_reference"),
               vfactory.add_var("Vf_" + name, shared_reference="vf_reference")]
 
@@ -58,8 +58,8 @@ def get_genqec_rms(vfactory: VarFactory, name: str = "Genqec_rms_template") -> R
     Psiq_prime = vfactory.add_var("Psiq_prime" + name)  # transient voltage d-axis
 
     # Algebraic variables
-    Pg = vfactory.add_var('Pg' + name, reference=VarPowerFlowRefferenceType.P)
-    Qg = vfactory.add_var('Qg' + name, reference=VarPowerFlowRefferenceType.Q)
+    Pg = vfactory.add_var('Pg' + name, reference=VarPowerFlowReferenceType.P)
+    Qg = vfactory.add_var('Qg' + name, reference=VarPowerFlowReferenceType.Q)
     Id = vfactory.add_var("Id" + name)
     Iq = vfactory.add_var("Iq" + name)
     Vd = vfactory.add_var("Vd" + name)
@@ -271,10 +271,10 @@ def get_genqec_rms(vfactory: VarFactory, name: str = "Genqec_rms_template") -> R
             # We initialize some specific parameters:
         },
         external_mapping={
-            VarPowerFlowRefferenceType.P: Pg,
-            VarPowerFlowRefferenceType.Q: Qg,
-            VarPowerFlowRefferenceType.Vm: inputs[0],
-            VarPowerFlowRefferenceType.Va: inputs[1],
+            VarPowerFlowReferenceType.P: Pg,
+            VarPowerFlowReferenceType.Q: Qg,
+            VarPowerFlowReferenceType.Vm: inputs[0],
+            VarPowerFlowReferenceType.Va: inputs[1],
         },
 
         api_obj_mapping={  },
@@ -416,18 +416,18 @@ def get_governor_rms(vfactory: VarFactory, name: str = "Governor") -> RmsModelTe
     init_eqs[et] = sym.Const(0.0)
     templ.block.init_eqs = init_eqs
 
-    api_obj_mapping: dict[ParamPowerFlowRefferenceType, Var] = dict()
-    api_obj_mapping[ParamPowerFlowRefferenceType.K] = K
-    api_obj_mapping[ParamPowerFlowRefferenceType.Pmax] = Pmax
-    api_obj_mapping[ParamPowerFlowRefferenceType.Pmin] = Pmin
-    api_obj_mapping[ParamPowerFlowRefferenceType.Uc] = Uc
-    api_obj_mapping[ParamPowerFlowRefferenceType.Uo] = Uo
-    api_obj_mapping[ParamPowerFlowRefferenceType.T_aux] = T_aux
-    api_obj_mapping[ParamPowerFlowRefferenceType.Kp] = Kp
-    api_obj_mapping[ParamPowerFlowRefferenceType.Ki] = Ki
-    api_obj_mapping[ParamPowerFlowRefferenceType.omega_ref] = omega_ref
-    api_obj_mapping[ParamPowerFlowRefferenceType.p0] = p0
-    api_obj_mapping[ParamPowerFlowRefferenceType.P0] = P0
+    api_obj_mapping: dict[ParamPowerFlowReferenceType, Var] = dict()
+    api_obj_mapping[ParamPowerFlowReferenceType.K] = K
+    api_obj_mapping[ParamPowerFlowReferenceType.Pmax] = Pmax
+    api_obj_mapping[ParamPowerFlowReferenceType.Pmin] = Pmin
+    api_obj_mapping[ParamPowerFlowReferenceType.Uc] = Uc
+    api_obj_mapping[ParamPowerFlowReferenceType.Uo] = Uo
+    api_obj_mapping[ParamPowerFlowReferenceType.T_aux] = T_aux
+    api_obj_mapping[ParamPowerFlowReferenceType.Kp] = Kp
+    api_obj_mapping[ParamPowerFlowReferenceType.Ki] = Ki
+    api_obj_mapping[ParamPowerFlowReferenceType.omega_ref] = omega_ref
+    api_obj_mapping[ParamPowerFlowReferenceType.p0] = p0
+    api_obj_mapping[ParamPowerFlowReferenceType.P0] = P0
     templ.block.api_obj_mapping = api_obj_mapping
 
     return templ
@@ -558,7 +558,7 @@ def get_exciter_rms(vfactory: VarFactory, name: str = "exciter") -> RmsModelTemp
     }
 
     inputs: list[Var] = [vfactory.add_var("IRPu_", shared_reference="irpu_reference"),
-                         vfactory.add_var("Vm_", reference=VarPowerFlowRefferenceType.Vm),
+                         vfactory.add_var("Vm_", reference=VarPowerFlowReferenceType.Vm),
                          vfactory.add_var("Vpss_", shared_reference="vpss_reference")]
 
     Vf: Var = vfactory.add_var("Vf", shared_reference="vf_reference")
@@ -720,10 +720,10 @@ def get_complete_generator_template_rms(vfactory: VarFactory, name: str = "compl
     templ.block.children.append(stabilizer_mdl)
     templ.block.children.append(exciter_mdl)
     templ.block.external_mapping = dict()
-    templ.block.external_mapping[VarPowerFlowRefferenceType.Vm] = genqec_mdl.in_vars[0]
-    templ.block.external_mapping[VarPowerFlowRefferenceType.Va] = genqec_mdl.in_vars[1]
-    templ.block.external_mapping[VarPowerFlowRefferenceType.P] = genqec_mdl.out_vars[0]
-    templ.block.external_mapping[VarPowerFlowRefferenceType.Q] = genqec_mdl.out_vars[1]
+    templ.block.external_mapping[VarPowerFlowReferenceType.Vm] = genqec_mdl.in_vars[0]
+    templ.block.external_mapping[VarPowerFlowReferenceType.Va] = genqec_mdl.in_vars[1]
+    templ.block.external_mapping[VarPowerFlowReferenceType.P] = genqec_mdl.out_vars[0]
+    templ.block.external_mapping[VarPowerFlowReferenceType.Q] = genqec_mdl.out_vars[1]
     templ.block.in_vars = [genqec_mdl.in_vars[0], genqec_mdl.in_vars[1]]
     templ.block.out_vars = [genqec_mdl.out_vars[0], genqec_mdl.out_vars[1]]
     templ.block.name = name

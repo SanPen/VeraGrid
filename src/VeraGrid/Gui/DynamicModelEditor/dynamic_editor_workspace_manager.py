@@ -40,6 +40,13 @@ class DynamicEditorWorkspaceManager(QtCore.QObject):
         self._pending_drag_page: QtWidgets.QWidget | None = None
         self._pending_drag_workspace: DynamicEditorWorkspaceWindow | None = None
 
+        # Permanent strong references ("anchors") to every window this manager
+        # creates: workspace windows AND the editor pages (both QMainWindows).
+        # We have to avoid macos GUI crashes
+
+        self._retained_workspaces: list[DynamicEditorWorkspaceWindow] = list()
+        self._retained_pages: list[DynamicBlockEditorGUI] = list()
+
     @classmethod
     def instance(cls) -> "DynamicEditorWorkspaceManager":
         if cls._instance is None:
@@ -58,6 +65,8 @@ class DynamicEditorWorkspaceManager(QtCore.QObject):
             pass
 
         self._workspaces.clear()
+        self._retained_workspaces.clear()
+        self._retained_pages.clear()
         self._page_to_workspace.clear()
         self._page_to_entry.clear()
         self._page_to_mode.clear()
@@ -67,9 +76,18 @@ class DynamicEditorWorkspaceManager(QtCore.QObject):
         self._pending_drag_page = None
         self._pending_drag_workspace = None
 
+    def get_open_workspaces(self) -> "list[DynamicEditorWorkspaceWindow]":
+        """
+        Currently registered (open) editor workspace windows.
+        """
+        return list(self._workspaces)
+
     def register_workspace(self, workspace: DynamicEditorWorkspaceWindow) -> None:
         if workspace not in self._workspaces:
             self._workspaces.append(workspace)
+        # Keep a permanent root so the cyclic GC can never reclaim this window
+        if workspace not in self._retained_workspaces:
+            self._retained_workspaces.append(workspace)
         self._last_active_workspace = workspace
 
     def unregister_workspace(self, workspace: DynamicEditorWorkspaceWindow) -> None:
@@ -151,6 +169,8 @@ class DynamicEditorWorkspaceManager(QtCore.QObject):
             workspace_embedded=True,
         )
         self._connect_page_signals(page)
+        # Anchor the page so the cyclic GC can never reclaim it 
+        self._retained_pages.append(page)
         return page
 
     def open_entry(self,

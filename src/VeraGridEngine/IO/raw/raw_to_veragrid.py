@@ -28,7 +28,8 @@ from VeraGridEngine.IO.raw.raw_types import (
     RawVscDCLineLike,
 )
 from VeraGridEngine.enumerations import (
-    TapChangerTypes, TapPhaseControl, TapModuleControl, ShuntControlMode, SwitchGraphicType
+    TapChangerTypes, TapPhaseControl, TapModuleControl, ShuntControlMode, SwitchGraphicType,
+    GeneratorControlMode
 )
 
 
@@ -93,7 +94,8 @@ def create_node_breaker_buses(
         zone_dict: Dict[int, dev.Zone],
         substation_dict: Dict[int, dev.Substation],
         circuit: MultiCircuit,
-        logger: Logger) -> tuple[Dict[tuple[int, int], dev.Bus], Dict[tuple[int, int], dev.Bus], Dict[int, dev.Bus], set[int]]:
+        logger: Logger) -> tuple[
+    Dict[tuple[int, int], dev.Bus], Dict[tuple[int, int], dev.Bus], Dict[int, dev.Bus], set[int]]:
     """
     Create VeraGrid buses for PSSE node-breaker nodes.
 
@@ -609,7 +611,8 @@ def get_veragrid_switch(psse_elm: RawSystemSwitchingDeviceLike,
     return elm
 
 
-def get_veragrid_generator(psse_elm: RawGeneratorLike, psse_bus_dict: Dict[int, dev.Bus], logger: Logger) -> dev.Generator:
+def get_veragrid_generator(psse_elm: RawGeneratorLike, psse_bus_dict: Dict[int, dev.Bus],
+                           logger: Logger) -> dev.Generator:
     """
 
     :param psse_elm:
@@ -620,17 +623,17 @@ def get_veragrid_generator(psse_elm: RawGeneratorLike, psse_bus_dict: Dict[int, 
     name = str(psse_elm.I) + '_' + str(psse_elm.ID).replace("'", "")
 
     if psse_elm.WMOD == 0:  # Conventional machine
-        is_controlled = True
-        Q=psse_elm.QG
+        control_mode = GeneratorControlMode.V
+        Q = psse_elm.QG
         Qmin = psse_elm.QB
         Qmax = psse_elm.QT
     elif psse_elm.WMOD == 1:  # Standard Qmin, Qmax limits
-        is_controlled = True
-        Q=psse_elm.QG
+        control_mode = GeneratorControlMode.V
+        Q = psse_elm.QG
         Qmin = psse_elm.QB
         Qmax = psse_elm.QT
     elif psse_elm.WMOD == 2:  # Qmin, Qmax based based on WPF
-        is_controlled = True
+        control_mode = GeneratorControlMode.V
         # pf = psse_elm.WPF
         # NOTE: the QB and QT limits come correct already, no need to compute this here
         Q = psse_elm.QG
@@ -639,36 +642,38 @@ def get_veragrid_generator(psse_elm: RawGeneratorLike, psse_bus_dict: Dict[int, 
         Qmin = psse_elm.QB
         Qmax = psse_elm.QT
     elif psse_elm.WMOD == 3:  # Fixed Q
-        is_controlled = False
+        control_mode = GeneratorControlMode.Q
         pf = psse_elm.WPF if psse_elm.WPF is not None else 0.8
         Q = psse_elm.PG * np.sqrt((1.0 / (pf ** 2)) - 1.0)
         Qmin = psse_elm.QB
         Qmax = psse_elm.QT
     elif psse_elm.WMOD == 4:  # Infeed machine
-        is_controlled = False
+        control_mode = GeneratorControlMode.Q
         pf = psse_elm.WPF if psse_elm.WPF is not None else 0.8
         Q = psse_elm.PG * np.sqrt((1.0 / (pf ** 2)) - 1.0)
         Qmin = psse_elm.QB
         Qmax = psse_elm.QT
     else:
-        is_controlled = True
+        control_mode = GeneratorControlMode.V
         Qmin = psse_elm.QB
         Qmax = psse_elm.QT
         Q = psse_elm.QG
 
-    elm = dev.Generator(name=name,
-                        idtag=None,
-                        code=name,
-                        P=psse_elm.PG,
-                        Q=Q,
-                        vset=psse_elm.VS,
-                        Qmin=Qmin,
-                        Qmax=Qmax,
-                        Snom=psse_elm.MBASE,
-                        Pmax=psse_elm.PT,
-                        Pmin=psse_elm.PB,
-                        active=bool(psse_elm.STAT),
-                        is_controlled=is_controlled)
+    elm = dev.Generator(
+        name=name,
+        idtag=None,
+        code=name,
+        P=psse_elm.PG,
+        Q=Q,
+        vset=psse_elm.VS,
+        Qmin=Qmin,
+        Qmax=Qmax,
+        Snom=psse_elm.MBASE,
+        Pmax=psse_elm.PT,
+        Pmin=psse_elm.PB,
+        active=bool(psse_elm.STAT),
+        control_mode=control_mode
+    )
 
     if psse_elm.IREG > 0:
         if psse_elm.IREG != psse_elm.I:
@@ -1615,7 +1620,6 @@ def psse_to_veragrid(psse_circuit: PsseCircuit,
             api_obj.control_bus = api_obj.control_bus
 
         circuit.add_generator(bus, api_obj)
-        # api_obj.is_controlled = psse_gen.WMOD == 0 or psse_gen.WMOD == 1
 
     # Go through Branches
     branches_already_there = set()
@@ -1634,8 +1638,10 @@ def psse_to_veragrid(psse_circuit: PsseCircuit,
         )
 
         if n_windings == 2:
-            bus_from = find_terminal_bus(terminal_bus_lookup, '2', psse_transformer.I, psse_transformer.J, 0, psse_transformer.CKT)
-            bus_to = find_terminal_bus(terminal_bus_lookup, '2', psse_transformer.J, psse_transformer.I, 0, psse_transformer.CKT)
+            bus_from = find_terminal_bus(terminal_bus_lookup, '2', psse_transformer.I, psse_transformer.J, 0,
+                                         psse_transformer.CKT)
+            bus_to = find_terminal_bus(terminal_bus_lookup, '2', psse_transformer.J, psse_transformer.I, 0,
+                                       psse_transformer.CKT)
 
             if bus_from is not None:
                 transformer.bus_from = bus_from
@@ -1648,7 +1654,8 @@ def psse_to_veragrid(psse_circuit: PsseCircuit,
                 transformer.bus_to = transformer.bus_to
 
             if psse_transformer.CONT1 > 0 and psse_transformer.NODE1 > 0:
-                control_bus = find_control_node_bus(node_bus_by_bus_and_node, psse_transformer.CONT1, psse_transformer.NODE1)
+                control_bus = find_control_node_bus(node_bus_by_bus_and_node, psse_transformer.CONT1,
+                                                    psse_transformer.NODE1)
                 if control_bus is not None:
                     transformer.regulation_bus = control_bus
                 else:
@@ -1656,9 +1663,12 @@ def psse_to_veragrid(psse_circuit: PsseCircuit,
             else:
                 transformer.regulation_bus = transformer.regulation_bus
         else:
-            bus_1 = find_terminal_bus(terminal_bus_lookup, '3', psse_transformer.I, psse_transformer.J, psse_transformer.K, psse_transformer.CKT)
-            bus_2 = find_terminal_bus(terminal_bus_lookup, '3', psse_transformer.J, psse_transformer.I, psse_transformer.K, psse_transformer.CKT)
-            bus_3 = find_terminal_bus(terminal_bus_lookup, '3', psse_transformer.K, psse_transformer.I, psse_transformer.J, psse_transformer.CKT)
+            bus_1 = find_terminal_bus(terminal_bus_lookup, '3', psse_transformer.I, psse_transformer.J,
+                                      psse_transformer.K, psse_transformer.CKT)
+            bus_2 = find_terminal_bus(terminal_bus_lookup, '3', psse_transformer.J, psse_transformer.I,
+                                      psse_transformer.K, psse_transformer.CKT)
+            bus_3 = find_terminal_bus(terminal_bus_lookup, '3', psse_transformer.K, psse_transformer.I,
+                                      psse_transformer.J, psse_transformer.CKT)
 
             if bus_1 is not None:
                 transformer.bus1 = bus_1

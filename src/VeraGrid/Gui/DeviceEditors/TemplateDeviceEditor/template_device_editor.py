@@ -22,7 +22,7 @@ from VeraGridEngine.Devices.Associations.association import Associations
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp
 from VeraGridEngine.Devices.Profiles import AnyProfile
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-from VeraGridEngine.enumerations import DeviceType, PrpCat
+from VeraGridEngine.enumerations import DeviceType, PrpCat, GeneratorControlMode
 
 
 
@@ -1003,7 +1003,7 @@ if __name__ == "__main__":
         Pmin=15.0,
         Pmax=90.0,
         Snom=100.0,
-        is_controlled=True,
+        control_mode=GeneratorControlMode.V,
         power_factor=0.95,
     )
     circuit_demo.add_generator(bus=bus_demo, api_obj=generator_demo)

@@ -7,7 +7,7 @@ from typing import List
 import numpy as np
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowRefferenceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowReferenceType, VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
 
@@ -143,25 +143,25 @@ def get_line_complex_rms_template(vfactory: VarFactory, name="Line_complex_rms_t
     # External mapping for reference
     templ.block.external_mapping = {
         # Complex phasor mapping
-        VarPowerFlowRefferenceType.Vf_complex: If_complex,  # Complex current from
-        VarPowerFlowRefferenceType.Vt_complex: It_complex,  # Complex current to
-        VarPowerFlowRefferenceType.Sf_complex: Pf,  # Will be combined with Qf
-        VarPowerFlowRefferenceType.St_complex: Pt,  # Will be combined with Qt
+        VarPowerFlowReferenceType.Vf_complex: If_complex,  # Complex current from
+        VarPowerFlowReferenceType.Vt_complex: It_complex,  # Complex current to
+        VarPowerFlowReferenceType.Sf_complex: Pf,  # Will be combined with Qf
+        VarPowerFlowReferenceType.St_complex: Pt,  # Will be combined with Qt
         # Real/imaginary component mapping
-        VarPowerFlowRefferenceType.Vrf: inputs[0],
-        VarPowerFlowRefferenceType.Vif: inputs[1],
-        VarPowerFlowRefferenceType.Vrt: inputs[2],
-        VarPowerFlowRefferenceType.Vit: inputs[3],
-        VarPowerFlowRefferenceType.Pf: Pf,
-        VarPowerFlowRefferenceType.Pt: Pt,
-        VarPowerFlowRefferenceType.Qf: Qf,
-        VarPowerFlowRefferenceType.Qt: Qt,
+        VarPowerFlowReferenceType.Vrf: inputs[0],
+        VarPowerFlowReferenceType.Vif: inputs[1],
+        VarPowerFlowReferenceType.Vrt: inputs[2],
+        VarPowerFlowReferenceType.Vit: inputs[3],
+        VarPowerFlowReferenceType.Pf: Pf,
+        VarPowerFlowReferenceType.Pt: Pt,
+        VarPowerFlowReferenceType.Qf: Qf,
+        VarPowerFlowReferenceType.Qt: Qt,
     }
 
     templ.block.api_obj_mapping = {
-        ParamPowerFlowRefferenceType.g: g,
-        ParamPowerFlowRefferenceType.b: b,
-        ParamPowerFlowRefferenceType.bsh: bsh,
+        ParamPowerFlowReferenceType.g: g,
+        ParamPowerFlowReferenceType.b: b,
+        ParamPowerFlowReferenceType.bsh: bsh,
     }
 
     templ.block.in_vars = inputs

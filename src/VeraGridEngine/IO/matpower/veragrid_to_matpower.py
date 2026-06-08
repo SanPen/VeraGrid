@@ -18,7 +18,7 @@ from VeraGridEngine.Devices.Injections.external_grid import ExternalGrid
 from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.enumerations import BusMode, ExternalGridMode
+from VeraGridEngine.enumerations import BusMode, ExternalGridMode, GeneratorControlMode
 
 MatpowerScalar = int | float
 MATPOWER_EXTERNAL_GRID_LIMIT: float = 1.0e6
@@ -202,7 +202,7 @@ def _collect_bus_controller_data(
             pass
         elif not generator.get_active_at(t_idx):
             pass
-        elif generator.is_controlled:
+        elif generator.control_mode == GeneratorControlMode.V:
             if generator.bus not in controlled_generation_by_bus:
                 controlled_generation_by_bus[generator.bus] = generator
             else:
@@ -216,7 +216,7 @@ def _collect_bus_controller_data(
             pass
         elif not battery.get_active_at(t_idx):
             pass
-        elif battery.is_controlled:
+        elif battery.control_mode == GeneratorControlMode.V:
             if battery.bus not in controlled_generation_by_bus:
                 controlled_generation_by_bus[battery.bus] = battery
             else:

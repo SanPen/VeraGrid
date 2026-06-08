@@ -11,7 +11,7 @@ from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory, Connection
 from VeraGridEngine.Utils.Symbolic import SharedVarReferenceType
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, Expr, Const, BinOp, UnOp, Func, Func2
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.enumerations import VarPowerFlowRefferenceType, ParamPowerFlowRefferenceType
+from VeraGridEngine.enumerations import VarPowerFlowReferenceType, ParamPowerFlowReferenceType
 
 
 def symbolic_objects_to_dict(obj_dict: Dict[int | str, Var | Const | Var | SharedVarReferenceType]) -> List[Dict[str, Any]]:
@@ -784,9 +784,9 @@ class BlockParser:
             var = self.var_factory.get_var(entry["var"])
             init_values[var] = Const(entry["value"])
 
-        external_mapping: Dict[VarPowerFlowRefferenceType, Var|None] = dict()
+        external_mapping: Dict[VarPowerFlowReferenceType, Var | None] = dict()
         for key_str, var_uid in data["external_mapping"].items():
-            key = VarPowerFlowRefferenceType(key_str)
+            key = VarPowerFlowReferenceType(key_str)
             # Rebuild PF-exposed mappings using the stable symbolic identity.
             # This preserves the original variable object selected by the
             # template even when runtime connections have aliased mutable UIDs.
@@ -796,9 +796,9 @@ class BlockParser:
             else:
                 external_mapping[key] = None
 
-        api_obj_mapping: Dict[ParamPowerFlowRefferenceType, Var] = dict()
+        api_obj_mapping: Dict[ParamPowerFlowReferenceType, Var] = dict()
         for key_str, var_uid in data["api_obj_mapping"].items():
-            key = ParamPowerFlowRefferenceType(key_str)
+            key = ParamPowerFlowReferenceType(key_str)
             api_obj_mapping[key] = self.var_factory.get_var(var_uid)
 
         reformulated_vars = [self.var_factory.get_var(v_uid) for v_uid in data["reformulated_vars"]]
@@ -1207,11 +1207,11 @@ def _duplicate_block(block: Block,
         for k, v in block.init_values.items()
     }
 
-    new_external_mapping: Dict[VarPowerFlowRefferenceType, Var | None] = {
+    new_external_mapping: Dict[VarPowerFlowReferenceType, Var | None] = {
         k: duplicate_var(var_factory, old_to_new_var, v)
         for k, v in block.external_mapping.items()
     }
-    new_api_obj_mapping: Dict[ParamPowerFlowRefferenceType, Var | None] = {
+    new_api_obj_mapping: Dict[ParamPowerFlowReferenceType, Var | None] = {
         k: duplicate_var(var_factory, old_to_new_var, v)
         for k, v in block.api_obj_mapping.items()
     }

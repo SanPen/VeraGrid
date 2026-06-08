@@ -4,7 +4,7 @@ import math
 import numpy as np
 
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
-from VeraGridEngine.Utils.Symbolic.block import Block, VarPowerFlowRefferenceType
+from VeraGridEngine.Utils.Symbolic.block import Block, VarPowerFlowReferenceType
 from VeraGridEngine.Utils.Symbolic.block_helpers import tf_to_block
 
 
@@ -29,9 +29,9 @@ def park_transform_block(vfactory, v_abc, theta, name: str = ""):
 
 
 def inverse_park_currents_block(vfactory, i_d, i_q, theta):
-    i_a = vfactory.add_var("i_A_gfm_emt", reference=VarPowerFlowRefferenceType.i_A)
-    i_b = vfactory.add_var("i_B_gfm_emt", reference=VarPowerFlowRefferenceType.i_B)
-    i_c = vfactory.add_var("i_C_gfm_emt", reference=VarPowerFlowRefferenceType.i_C)
+    i_a = vfactory.add_var("i_A_gfm_emt", reference=VarPowerFlowReferenceType.i_A)
+    i_b = vfactory.add_var("i_B_gfm_emt", reference=VarPowerFlowReferenceType.i_B)
+    i_c = vfactory.add_var("i_C_gfm_emt", reference=VarPowerFlowReferenceType.i_C)
     sqrt3 = vfactory.add_const(np.sqrt(3))
     half = vfactory.add_const(0.5)
     two = vfactory.add_const(2.0)
@@ -47,10 +47,10 @@ def inverse_park_currents_block(vfactory, i_d, i_q, theta):
 
 
 def build_vsc_gfm_emt_park(vfactory, name: str = "gfm_emt"):
-    v_a = vfactory.add_var(f"v_A_{name}", reference=VarPowerFlowRefferenceType.v_A)
-    v_b = vfactory.add_var(f"v_B_{name}", reference=VarPowerFlowRefferenceType.v_B)
-    v_c = vfactory.add_var(f"v_C_{name}", reference=VarPowerFlowRefferenceType.v_C)
-    v_dc = vfactory.add_var(f"Vdc_{name}", reference=VarPowerFlowRefferenceType.Vdc)
+    v_a = vfactory.add_var(f"v_A_{name}", reference=VarPowerFlowReferenceType.v_A)
+    v_b = vfactory.add_var(f"v_B_{name}", reference=VarPowerFlowReferenceType.v_B)
+    v_c = vfactory.add_var(f"v_C_{name}", reference=VarPowerFlowReferenceType.v_C)
+    v_dc = vfactory.add_var(f"Vdc_{name}", reference=VarPowerFlowReferenceType.Vdc)
 
     Pt_vsc = vfactory.add_var(f"Pt_vsc_{name}")
     Qt_vsc = vfactory.add_var(f"Qt_vsc_{name}")
@@ -90,8 +90,8 @@ def build_vsc_gfm_emt_park(vfactory, name: str = "gfm_emt"):
     vd_c_ref = vfactory.add_var(f"vd_c_ref_{name}")
     vq_c_ref = vfactory.add_var(f"vq_c_ref_{name}")
 
-    P = vfactory.add_var(f"P_{name}", reference=VarPowerFlowRefferenceType.P)
-    Q = vfactory.add_var(f"Q_{name}", reference=VarPowerFlowRefferenceType.Q)
+    P = vfactory.add_var(f"P_{name}", reference=VarPowerFlowReferenceType.P)
+    Q = vfactory.add_var(f"Q_{name}", reference=VarPowerFlowReferenceType.Q)
     P_ref = vfactory.add_var(f"P_ref_{name}")
     Q_ref = vfactory.add_var(f"Q_ref_{name}")
     V_ref = vfactory.add_var(f"V_ref_{name}")
@@ -215,18 +215,18 @@ def build_vsc_gfm_emt_park(vfactory, name: str = "gfm_emt"):
         in_vars=[v_a, v_b, v_c, v_dc],
         out_vars=[i_A, i_B, i_C],
         external_mapping={
-            VarPowerFlowRefferenceType.v_A: v_a,
-            VarPowerFlowRefferenceType.v_B: v_b,
-            VarPowerFlowRefferenceType.v_C: v_c,
-            VarPowerFlowRefferenceType.Vdc: v_dc,
-            VarPowerFlowRefferenceType.i_A: i_A,
-            VarPowerFlowRefferenceType.i_B: i_B,
-            VarPowerFlowRefferenceType.i_C: i_C,
-            VarPowerFlowRefferenceType.Pt: Pt_vsc,
-            VarPowerFlowRefferenceType.Qt: Qt_vsc,
-            VarPowerFlowRefferenceType.Pf: P,
-            VarPowerFlowRefferenceType.P: P,
-            VarPowerFlowRefferenceType.Q: Q,
+            VarPowerFlowReferenceType.v_A: v_a,
+            VarPowerFlowReferenceType.v_B: v_b,
+            VarPowerFlowReferenceType.v_C: v_c,
+            VarPowerFlowReferenceType.Vdc: v_dc,
+            VarPowerFlowReferenceType.i_A: i_A,
+            VarPowerFlowReferenceType.i_B: i_B,
+            VarPowerFlowReferenceType.i_C: i_C,
+            VarPowerFlowReferenceType.Pt: Pt_vsc,
+            VarPowerFlowReferenceType.Qt: Qt_vsc,
+            VarPowerFlowReferenceType.Pf: P,
+            VarPowerFlowReferenceType.P: P,
+            VarPowerFlowReferenceType.Q: Q,
         },
     )
 

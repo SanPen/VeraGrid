@@ -19,6 +19,8 @@ sys.path.insert(0, os.path.abspath('../src'))
 sys.path.append("..")
 sys.setrecursionlimit(5000)
 from doc.auto_document_models import write_models_to_md
+from doc.generate_device_docs import generate_device_docs
+from doc.generate_device_graph import generate_device_graph
 from VeraGridEngine.__version__ import __VeraGridEngine_VERSION__
 
 # -- Project information -----------------------------------------------------
@@ -66,6 +68,8 @@ myst_dmath_allow_labels = True
 
 # generate CGMES, PSSe and VeraGrid data models' rst files
 write_models_to_md(os.path.join('md_source', 'data_models.md'))
+generate_device_docs()
+generate_device_graph()
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -105,7 +109,7 @@ language = "en"
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', 'md_source/devices/*']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None

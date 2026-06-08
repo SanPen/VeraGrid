@@ -7,7 +7,7 @@ from VeraGridEngine.Templates.Emt.dc_source_emt_template import get_controlled_d
 from VeraGridEngine.Templates.Emt.dc_source_emt_template import get_controlled_dc_voltage_source_emt_template
 from VeraGridEngine.Templates.Emt.dc_source_emt_template import get_dc_current_source_emt_template
 from VeraGridEngine.Templates.Emt.dc_source_emt_template import get_dc_voltage_source_emt_template
-from VeraGridEngine.enumerations import VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import VarPowerFlowReferenceType
 
 
 def test_dc_current_source_emt_template_exposes_dc_bus_input_and_event_current() -> None:
@@ -17,8 +17,8 @@ def test_dc_current_source_emt_template_exposes_dc_bus_input_and_event_current()
     assert [var.name for var in templ.block.in_vars] == ["v_dc_DcCurrentCase"]
     assert [var.name for var in templ.block.out_vars] == ["i_dc_DcCurrentCase"]
     assert sorted(var.name for var in templ.block.event_dict.keys()) == ["I_src_DcCurrentCase"]
-    assert templ.block.external_mapping[VarPowerFlowRefferenceType.Vdc].name == "v_dc_DcCurrentCase"
-    assert templ.block.external_mapping[VarPowerFlowRefferenceType.Idc].name == "i_dc_DcCurrentCase"
+    assert templ.block.external_mapping[VarPowerFlowReferenceType.Vdc].name == "v_dc_DcCurrentCase"
+    assert templ.block.external_mapping[VarPowerFlowReferenceType.Idc].name == "i_dc_DcCurrentCase"
 
 
 def test_controlled_dc_current_source_emt_template_exposes_current_command_input() -> None:

@@ -5,9 +5,9 @@
 
 import numpy as np
 from typing import List, Dict, Tuple
-from VeraGridEngine.enumerations import DeviceType, ConverterControlType, ParamPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, ConverterControlType, ParamPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
-from VeraGridEngine.Utils.Symbolic.block import Block, VarPowerFlowRefferenceType
+from VeraGridEngine.Utils.Symbolic.block import Block, VarPowerFlowReferenceType
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, Const
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
@@ -145,28 +145,28 @@ def get_emt_ideal_converter(
     # INPUT VARIABLES (from buses)
     # =================================================================
     # AC side voltages from the AC bus
-    v_A = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowRefferenceType.v_A)
-    v_B = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowRefferenceType.v_B)
-    v_C = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowRefferenceType.v_C)
+    v_A = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowReferenceType.v_A)
+    v_B = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowReferenceType.v_B)
+    v_C = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowReferenceType.v_C)
 
     # DC side voltage from the DC bus
-    v_dc = vf.add_var(name=f"v_dc_{name}", reference=VarPowerFlowRefferenceType.Vdc)
+    v_dc = vf.add_var(name=f"v_dc_{name}", reference=VarPowerFlowReferenceType.Vdc)
 
     inputs = [v_A, v_B, v_C, v_dc]
 
     # =================================================================
     # OUTPUT VARIABLES (to buses)
     # =================================================================
-    i_A = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowRefferenceType.i_A)
-    i_B = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowRefferenceType.i_B)
-    i_C = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowRefferenceType.i_C)
+    i_A = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowReferenceType.i_A)
+    i_B = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowReferenceType.i_B)
+    i_C = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowReferenceType.i_C)
     theta = vf.add_var(name=f"theta_{name}")
 
     d_theta = vf.add_diff_var(name=f"d_theta_{name}", base_var=theta)
 
-    i_dc = vf.add_var(name=f"i_dc_{name}", reference=VarPowerFlowRefferenceType.Idc)
-    P = vf.add_var(name=f"P_{name}", reference=VarPowerFlowRefferenceType.P)
-    Q = vf.add_var(name=f"Q_{name}", reference=VarPowerFlowRefferenceType.Q)
+    i_dc = vf.add_var(name=f"i_dc_{name}", reference=VarPowerFlowReferenceType.Idc)
+    P = vf.add_var(name=f"P_{name}", reference=VarPowerFlowReferenceType.P)
+    Q = vf.add_var(name=f"Q_{name}", reference=VarPowerFlowReferenceType.Q)
 
     # =================================================================
     # INTERNAL VARIABLES
@@ -298,14 +298,14 @@ def get_emt_ideal_converter(
         out_vars=[i_A, i_B, i_C, i_dc],
     )
     converter_block.api_obj_mapping = {
-        ParamPowerFlowRefferenceType.Sbase: sbase,
-        ParamPowerFlowRefferenceType.converter_loss_power_0: P_loss,
-        # ParamPowerFlowRefferenceType.P0: P0,
-        ParamPowerFlowRefferenceType.omega_base: omega_base,
-        ParamPowerFlowRefferenceType.converter_control_mode_1: control1,
-        ParamPowerFlowRefferenceType.converter_control_mode_2: control2,
-        ParamPowerFlowRefferenceType.converter_control_target_1: control1_val,
-        ParamPowerFlowRefferenceType.converter_control_target_2: control2_val,
+        ParamPowerFlowReferenceType.Sbase: sbase,
+        ParamPowerFlowReferenceType.converter_loss_power_0: P_loss,
+        # ParamPowerFlowReferenceType.P0: P0,
+        ParamPowerFlowReferenceType.omega_base: omega_base,
+        ParamPowerFlowReferenceType.converter_control_mode_1: control1,
+        ParamPowerFlowReferenceType.converter_control_mode_2: control2,
+        ParamPowerFlowReferenceType.converter_control_target_1: control1_val,
+        ParamPowerFlowReferenceType.converter_control_target_2: control2_val,
     }
 
     # =================================================================
@@ -314,22 +314,22 @@ def get_emt_ideal_converter(
     # This mapping tells EmtProblemDae how to connect the converter
     # to the buses based on the device configuration
     converter_block.external_mapping = {
-        VarPowerFlowRefferenceType.v_A: v_A,
-        VarPowerFlowRefferenceType.v_B: v_B,
-        VarPowerFlowRefferenceType.v_C: v_C,
+        VarPowerFlowReferenceType.v_A: v_A,
+        VarPowerFlowReferenceType.v_B: v_B,
+        VarPowerFlowReferenceType.v_C: v_C,
 
-        VarPowerFlowRefferenceType.Vdc: v_dc,
+        VarPowerFlowReferenceType.Vdc: v_dc,
 
-        VarPowerFlowRefferenceType.i_A: i_A,
-        VarPowerFlowRefferenceType.i_B: i_B,
-        VarPowerFlowRefferenceType.i_C: i_C,
+        VarPowerFlowReferenceType.i_A: i_A,
+        VarPowerFlowReferenceType.i_B: i_B,
+        VarPowerFlowReferenceType.i_C: i_C,
 
         # For KCL at DC bus (bus_from)
-        VarPowerFlowRefferenceType.Idc: i_dc,
-        VarPowerFlowRefferenceType.P: P,
-        VarPowerFlowRefferenceType.Q: Q,
-        VarPowerFlowRefferenceType.phi_v: phi_v,
-        VarPowerFlowRefferenceType.Vpk: Vpk,
+        VarPowerFlowReferenceType.Idc: i_dc,
+        VarPowerFlowReferenceType.P: P,
+        VarPowerFlowReferenceType.Q: Q,
+        VarPowerFlowReferenceType.phi_v: phi_v,
+        VarPowerFlowReferenceType.Vpk: Vpk,
     }
 
     converter_block.name = name
@@ -357,9 +357,9 @@ def _build_pseudo_emt_converter_vsc_block(
     v_dc = vf.add_var(name=f"v_dc_{name}")
     d_v_dc = vf.add_diff_var(name=f"d_v_dc_{name}", base_var=v_dc)
 
-    i_dc = vf.add_var(name=f"i_dc_{name}", reference=VarPowerFlowRefferenceType.Idc)
-    P = vf.add_var(name=f"P_{name}", reference=VarPowerFlowRefferenceType.P)
-    Q = vf.add_var(name=f"Q_{name}", reference=VarPowerFlowRefferenceType.Q)
+    i_dc = vf.add_var(name=f"i_dc_{name}", reference=VarPowerFlowReferenceType.Idc)
+    P = vf.add_var(name=f"P_{name}", reference=VarPowerFlowReferenceType.P)
+    Q = vf.add_var(name=f"Q_{name}", reference=VarPowerFlowReferenceType.Q)
     i_mag = vf.add_var(name=f"i_mag_{name}")
     P_loss = vf.add_var(name=f"P_loss_{name}")
     i_dc_conv = vf.add_var(name=f"i_dc_conv_{name}")
@@ -531,14 +531,14 @@ def _build_pseudo_emt_converter_vsc_block(
         name=f"{name}_vsc",
     )
     block.api_obj_mapping = {
-        ParamPowerFlowRefferenceType.Sbase: sbase,
-        ParamPowerFlowRefferenceType.P0: P0_sched,
-        ParamPowerFlowRefferenceType.converter_loss_power_0: P_loss0,
-        ParamPowerFlowRefferenceType.omega_base: omega_base,
-        ParamPowerFlowRefferenceType.converter_control_mode_1: control1,
-        ParamPowerFlowRefferenceType.converter_control_mode_2: control2,
-        ParamPowerFlowRefferenceType.converter_control_target_1: control1_val,
-        ParamPowerFlowRefferenceType.converter_control_target_2: control2_val,
+        ParamPowerFlowReferenceType.Sbase: sbase,
+        ParamPowerFlowReferenceType.P0: P0_sched,
+        ParamPowerFlowReferenceType.converter_loss_power_0: P_loss0,
+        ParamPowerFlowReferenceType.omega_base: omega_base,
+        ParamPowerFlowReferenceType.converter_control_mode_1: control1,
+        ParamPowerFlowReferenceType.converter_control_mode_2: control2,
+        ParamPowerFlowReferenceType.converter_control_target_1: control1_val,
+        ParamPowerFlowReferenceType.converter_control_target_2: control2_val,
     }
     return block
 def _build_pseudo_emt_converter_pll_block(vf: VarFactory, name: str) -> Block:
@@ -867,9 +867,9 @@ def _build_pseudo_emt_converter_transformer_block(vf: VarFactory, name: str) -> 
     d_i_q = vf.add_diff_var(name=f"d_i_q_{name}", base_var=i_q)
     d_i_0 = vf.add_diff_var(name=f"d_i_0_{name}", base_var=i_0)
 
-    i_A = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowRefferenceType.i_A)
-    i_B = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowRefferenceType.i_B)
-    i_C = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowRefferenceType.i_C)
+    i_A = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowReferenceType.i_A)
+    i_B = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowReferenceType.i_B)
+    i_C = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowReferenceType.i_C)
     v_d = vf.add_var(name=f"v_d_{name}")
     v_q = vf.add_var(name=f"v_q_{name}")
     v_0 = vf.add_var(name=f"v_0_{name}")
@@ -931,9 +931,9 @@ def get_full_pseudo_emt_converter(
     templ.name = name
     templ.block.name = name
 
-    v_A = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowRefferenceType.v_A)
-    v_B = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowRefferenceType.v_B)
-    v_C = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowRefferenceType.v_C)
+    v_A = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowReferenceType.v_A)
+    v_B = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowReferenceType.v_B)
+    v_C = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowReferenceType.v_C)
     # AC/DC physical converter block: parameters, DC link, power, losses, and DC terminal relation.
     vsc_block = _build_pseudo_emt_converter_vsc_block(
         vf=vf,
@@ -1008,42 +1008,42 @@ def get_full_pseudo_emt_converter(
     ]
 
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.v_N: None,
-        VarPowerFlowRefferenceType.v_A: v_A,
-        VarPowerFlowRefferenceType.v_B: v_B,
-        VarPowerFlowRefferenceType.v_C: v_C,
-        VarPowerFlowRefferenceType.Vdc: v_dc_bus,
-        VarPowerFlowRefferenceType.i_N: None,
-        VarPowerFlowRefferenceType.i_A: transformer_block.out_vars[0],
-        VarPowerFlowRefferenceType.i_B: transformer_block.out_vars[1],
-        VarPowerFlowRefferenceType.i_C: transformer_block.out_vars[2],
-        VarPowerFlowRefferenceType.if_N: None,
-        VarPowerFlowRefferenceType.if_A: None,
-        VarPowerFlowRefferenceType.if_B: None,
-        VarPowerFlowRefferenceType.if_C: None,
-        VarPowerFlowRefferenceType.it_N: None,
-        VarPowerFlowRefferenceType.it_A: None,
-        VarPowerFlowRefferenceType.it_B: None,
-        VarPowerFlowRefferenceType.it_C: None,
-        VarPowerFlowRefferenceType.Sf_A: None,
-        VarPowerFlowRefferenceType.Sf_B: None,
-        VarPowerFlowRefferenceType.Sf_C: None,
-        VarPowerFlowRefferenceType.St_A: None,
-        VarPowerFlowRefferenceType.St_B: None,
-        VarPowerFlowRefferenceType.St_C: None,
-        VarPowerFlowRefferenceType.d_v_N_f: None,
-        VarPowerFlowRefferenceType.d_v_A_f: None,
-        VarPowerFlowRefferenceType.d_v_B_f: None,
-        VarPowerFlowRefferenceType.d_v_C_f: None,
-        VarPowerFlowRefferenceType.d_v_N_t: None,
-        VarPowerFlowRefferenceType.d_v_A_t: None,
-        VarPowerFlowRefferenceType.d_v_B_t: None,
-        VarPowerFlowRefferenceType.d_v_C_t: None,
-        VarPowerFlowRefferenceType.Idc: vsc_block.out_vars[1],
-        VarPowerFlowRefferenceType.P: vsc_block.out_vars[2],
-        VarPowerFlowRefferenceType.Q: vsc_block.out_vars[3],
-        VarPowerFlowRefferenceType.phi_v: vsc_block.out_vars[9],
-        VarPowerFlowRefferenceType.Vpk: vsc_block.out_vars[10],
+        VarPowerFlowReferenceType.v_N: None,
+        VarPowerFlowReferenceType.v_A: v_A,
+        VarPowerFlowReferenceType.v_B: v_B,
+        VarPowerFlowReferenceType.v_C: v_C,
+        VarPowerFlowReferenceType.Vdc: v_dc_bus,
+        VarPowerFlowReferenceType.i_N: None,
+        VarPowerFlowReferenceType.i_A: transformer_block.out_vars[0],
+        VarPowerFlowReferenceType.i_B: transformer_block.out_vars[1],
+        VarPowerFlowReferenceType.i_C: transformer_block.out_vars[2],
+        VarPowerFlowReferenceType.if_N: None,
+        VarPowerFlowReferenceType.if_A: None,
+        VarPowerFlowReferenceType.if_B: None,
+        VarPowerFlowReferenceType.if_C: None,
+        VarPowerFlowReferenceType.it_N: None,
+        VarPowerFlowReferenceType.it_A: None,
+        VarPowerFlowReferenceType.it_B: None,
+        VarPowerFlowReferenceType.it_C: None,
+        VarPowerFlowReferenceType.Sf_A: None,
+        VarPowerFlowReferenceType.Sf_B: None,
+        VarPowerFlowReferenceType.Sf_C: None,
+        VarPowerFlowReferenceType.St_A: None,
+        VarPowerFlowReferenceType.St_B: None,
+        VarPowerFlowReferenceType.St_C: None,
+        VarPowerFlowReferenceType.d_v_N_f: None,
+        VarPowerFlowReferenceType.d_v_A_f: None,
+        VarPowerFlowReferenceType.d_v_B_f: None,
+        VarPowerFlowReferenceType.d_v_C_f: None,
+        VarPowerFlowReferenceType.d_v_N_t: None,
+        VarPowerFlowReferenceType.d_v_A_t: None,
+        VarPowerFlowReferenceType.d_v_B_t: None,
+        VarPowerFlowReferenceType.d_v_C_t: None,
+        VarPowerFlowReferenceType.Idc: vsc_block.out_vars[1],
+        VarPowerFlowReferenceType.P: vsc_block.out_vars[2],
+        VarPowerFlowReferenceType.Q: vsc_block.out_vars[3],
+        VarPowerFlowReferenceType.phi_v: vsc_block.out_vars[9],
+        VarPowerFlowReferenceType.Vpk: vsc_block.out_vars[10],
     }
     templ.block.api_obj_mapping = dict(vsc_block.api_obj_mapping)
 

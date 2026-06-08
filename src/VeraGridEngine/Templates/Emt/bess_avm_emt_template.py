@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import Block, Expr
@@ -83,7 +83,7 @@ def get_battery_avm_emt_template(vf: VarFactory, name: str) -> EmtModelTemplate:
     # ------------------------------------------------------------------
     # Algebraic battery variables.
     # ------------------------------------------------------------------
-    v_dc_bus = vf.add_var(name=f"v_dc_bus_bat_{name}", reference=VarPowerFlowRefferenceType.Vdc)
+    v_dc_bus = vf.add_var(name=f"v_dc_bus_bat_{name}", reference=VarPowerFlowReferenceType.Vdc)
     v_oc = vf.add_var(name=f"v_oc_bat_{name}")
     i_bat = vf.add_var(name=f"i_bat_{name}")
     p_bat = vf.add_var(name=f"p_bat_{name}")
@@ -372,9 +372,9 @@ def get_bess_avm_grid_following_emt_template(
     # device with an internal battery, so the DC bus voltage is produced by the
     # battery block rather than received from an external DC network.
     # ------------------------------------------------------------------
-    v_A = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowRefferenceType.v_A)
-    v_B = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowRefferenceType.v_B)
-    v_C = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowRefferenceType.v_C)
+    v_A = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowReferenceType.v_A)
+    v_B = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowReferenceType.v_B)
+    v_C = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowReferenceType.v_C)
 
     # ------------------------------------------------------------------
     # Imported converter/control blocks.
@@ -502,22 +502,22 @@ def get_bess_avm_grid_following_emt_template(
     # External mapping for EmtProblemDae.
     # ------------------------------------------------------------------
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.v_A: v_A,
-        VarPowerFlowRefferenceType.v_B: v_B,
-        VarPowerFlowRefferenceType.v_C: v_C,
+        VarPowerFlowReferenceType.v_A: v_A,
+        VarPowerFlowReferenceType.v_B: v_B,
+        VarPowerFlowReferenceType.v_C: v_C,
         # The BESS has an internal battery/DC source. Do not expose an external
         # DC-voltage network port here, otherwise the EMT assembler tries to
         # connect an additional DC-network equation to an internal algebraic
         # variable and the compiled DAE can become non-square.
-        VarPowerFlowRefferenceType.i_A: transformer_block.out_vars[0],
-        VarPowerFlowRefferenceType.i_B: transformer_block.out_vars[1],
-        VarPowerFlowRefferenceType.i_C: transformer_block.out_vars[2],
+        VarPowerFlowReferenceType.i_A: transformer_block.out_vars[0],
+        VarPowerFlowReferenceType.i_B: transformer_block.out_vars[1],
+        VarPowerFlowReferenceType.i_C: transformer_block.out_vars[2],
         # Idc is internal to the BESS battery/VSC coupling. The AC network only
         # sees the three-phase current injection.
-        VarPowerFlowRefferenceType.P: vsc_block.out_vars[2],
-        VarPowerFlowRefferenceType.Q: vsc_block.out_vars[3],
-        VarPowerFlowRefferenceType.phi_v: vsc_block.out_vars[9],
-        VarPowerFlowRefferenceType.Vpk: vsc_block.out_vars[10],
+        VarPowerFlowReferenceType.P: vsc_block.out_vars[2],
+        VarPowerFlowReferenceType.Q: vsc_block.out_vars[3],
+        VarPowerFlowReferenceType.phi_v: vsc_block.out_vars[9],
+        VarPowerFlowReferenceType.Vpk: vsc_block.out_vars[10],
     }
 
     # The static/API mapping remains exactly the one expected by the imported

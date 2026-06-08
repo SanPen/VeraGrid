@@ -292,6 +292,37 @@ def _replace_all_vars_same_placeholder(expr: Expr, placeholder: Var) -> Expr:
     return expr
 
 
+def _replace_all_vars_with_name_placeholder(expr: Expr) -> Expr:
+    """Replace each variable with a placeholder named after the variable's name.
+    This allows distinguishing structurally identical equations that contain
+    differently-named variables (e.g. Pf vs Pt equations).
+    """
+    if isinstance(expr, Var):
+        return Var(name=f"PH_{expr.name}")
+
+    if isinstance(expr, BinOp):
+        return BinOp(
+            _replace_all_vars_with_name_placeholder(expr.left),
+            expr.op,
+            _replace_all_vars_with_name_placeholder(expr.right),
+        )
+
+    if isinstance(expr, UnOp):
+        return UnOp(expr.op, _replace_all_vars_with_name_placeholder(expr.operand))
+
+    if isinstance(expr, Func):
+        return Func(_replace_all_vars_with_name_placeholder(expr.arg), expr.op)
+
+    if isinstance(expr, Func2):
+        return Func2(
+            expr.name,
+            _replace_all_vars_with_name_placeholder(expr.arg1),
+            _replace_all_vars_with_name_placeholder(expr.arg2),
+        )
+
+    return expr
+
+
 class VariableAlignmentEngine:
     """Computes exact 1-to-1 mapping between variables of equivalent systems."""
 
@@ -350,10 +381,13 @@ class VariableAlignmentEngine:
         all_occurrences = _get_all_var_occurrences(eq)
         if not all_occurrences:
             return
-        
+
+        # Use name-based placeholders so equations with differently-named variables
+        # (e.g. Pf vs Pt) produce different context hashes, even if they are
+        # structurally identical after blanket placeholder replacement.
         placeholder = Var(name=PLACEHOLDER_NAME)
-        all_placeholder_expr = _replace_all_vars_same_placeholder(eq, placeholder)
-        all_placeholder_hash = structural_hash(canonical(all_placeholder_expr))
+        all_name_placeholder_expr = _replace_all_vars_with_name_placeholder(eq)
+        all_placeholder_hash = structural_hash(canonical(all_name_placeholder_expr))
         
         all_paths = _compute_all_path_signatures(eq, all_occurrences)
         

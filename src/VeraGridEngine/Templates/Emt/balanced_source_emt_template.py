@@ -9,7 +9,7 @@ from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import Expr, Var
 from VeraGridEngine.Utils.Symbolic import symbolic as sym
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
 
 
 def _phase_angle_expression(theta_var: Var, phase_a_deg_var: Var, phase_shift_deg: float) -> Expr:
@@ -25,7 +25,7 @@ def _phase_angle_expression(theta_var: Var, phase_a_deg_var: Var, phase_shift_de
     return theta_var + deg_to_rad * (phase_a_deg_var + sym.Const(float(phase_shift_deg)))
 
 
-def _build_external_mapping(v_a: Var, v_b: Var, v_c: Var, i_a: Var, i_b: Var, i_c: Var) -> dict[VarPowerFlowRefferenceType, Var | None]:
+def _build_external_mapping(v_a: Var, v_b: Var, v_c: Var, i_a: Var, i_b: Var, i_c: Var) -> dict[VarPowerFlowReferenceType, Var | None]:
     """
     Build one ABC external mapping for a balanced source.
 
@@ -38,14 +38,14 @@ def _build_external_mapping(v_a: Var, v_b: Var, v_c: Var, i_a: Var, i_b: Var, i_
     :return: External mapping dictionary.
     """
     return {
-        VarPowerFlowRefferenceType.v_N: None,
-        VarPowerFlowRefferenceType.v_A: v_a,
-        VarPowerFlowRefferenceType.v_B: v_b,
-        VarPowerFlowRefferenceType.v_C: v_c,
-        VarPowerFlowRefferenceType.i_N: None,
-        VarPowerFlowRefferenceType.i_A: i_a,
-        VarPowerFlowRefferenceType.i_B: i_b,
-        VarPowerFlowRefferenceType.i_C: i_c,
+        VarPowerFlowReferenceType.v_N: None,
+        VarPowerFlowReferenceType.v_A: v_a,
+        VarPowerFlowReferenceType.v_B: v_b,
+        VarPowerFlowReferenceType.v_C: v_c,
+        VarPowerFlowReferenceType.i_N: None,
+        VarPowerFlowReferenceType.i_A: i_a,
+        VarPowerFlowReferenceType.i_B: i_b,
+        VarPowerFlowReferenceType.i_C: i_c,
     }
 
 
@@ -71,12 +71,12 @@ def get_balanced_3ph_current_source_emt_template(vf: VarFactory,
     templ.name = name
     templ.block.name = name
 
-    v_a: Var = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowRefferenceType.v_A)
-    v_b: Var = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowRefferenceType.v_B)
-    v_c: Var = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowRefferenceType.v_C)
-    i_a: Var = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowRefferenceType.i_A)
-    i_b: Var = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowRefferenceType.i_B)
-    i_c: Var = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowRefferenceType.i_C)
+    v_a: Var = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowReferenceType.v_A)
+    v_b: Var = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowReferenceType.v_B)
+    v_c: Var = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowReferenceType.v_C)
+    i_a: Var = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowReferenceType.i_A)
+    i_b: Var = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowReferenceType.i_B)
+    i_c: Var = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowReferenceType.i_C)
     theta_var: Var = vf.add_var(name=f"theta_src_{name}")
     d_theta_var: Var = vf.add_diff_var(name=f"d_theta_src_{name}", base_var=theta_var)
     frequency_var: Var = vf.add_var(name=f"f_src_{name}")
@@ -125,13 +125,13 @@ def get_controlled_balanced_3ph_current_source_emt_template(vf: VarFactory,
     templ.name = name
     templ.block.name = name
 
-    v_a: Var = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowRefferenceType.v_A)
-    v_b: Var = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowRefferenceType.v_B)
-    v_c: Var = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowRefferenceType.v_C)
+    v_a: Var = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowReferenceType.v_A)
+    v_b: Var = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowReferenceType.v_B)
+    v_c: Var = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowReferenceType.v_C)
     i_amp_cmd: Var = vf.add_var(name=f"i_amp_cmd_{name}")
-    i_a: Var = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowRefferenceType.i_A)
-    i_b: Var = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowRefferenceType.i_B)
-    i_c: Var = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowRefferenceType.i_C)
+    i_a: Var = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowReferenceType.i_A)
+    i_b: Var = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowReferenceType.i_B)
+    i_c: Var = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowReferenceType.i_C)
     theta_var: Var = vf.add_var(name=f"theta_src_{name}")
     d_theta_var: Var = vf.add_diff_var(name=f"d_theta_src_{name}", base_var=theta_var)
     frequency_var: Var = vf.add_var(name=f"f_src_{name}")
@@ -182,12 +182,12 @@ def get_balanced_3ph_voltage_source_emt_template(vf: VarFactory,
     templ.name = name
     templ.block.name = name
 
-    v_a: Var = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowRefferenceType.v_A)
-    v_b: Var = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowRefferenceType.v_B)
-    v_c: Var = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowRefferenceType.v_C)
-    i_a: Var = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowRefferenceType.i_A)
-    i_b: Var = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowRefferenceType.i_B)
-    i_c: Var = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowRefferenceType.i_C)
+    v_a: Var = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowReferenceType.v_A)
+    v_b: Var = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowReferenceType.v_B)
+    v_c: Var = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowReferenceType.v_C)
+    i_a: Var = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowReferenceType.i_A)
+    i_b: Var = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowReferenceType.i_B)
+    i_c: Var = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowReferenceType.i_C)
     theta_var: Var = vf.add_var(name=f"theta_src_{name}")
     d_theta_var: Var = vf.add_diff_var(name=f"d_theta_src_{name}", base_var=theta_var)
     frequency_var: Var = vf.add_var(name=f"f_src_{name}")
@@ -244,13 +244,13 @@ def get_controlled_balanced_3ph_voltage_source_emt_template(vf: VarFactory,
     templ.name = name
     templ.block.name = name
 
-    v_a: Var = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowRefferenceType.v_A)
-    v_b: Var = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowRefferenceType.v_B)
-    v_c: Var = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowRefferenceType.v_C)
+    v_a: Var = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowReferenceType.v_A)
+    v_b: Var = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowReferenceType.v_B)
+    v_c: Var = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowReferenceType.v_C)
     v_amp_cmd: Var = vf.add_var(name=f"v_amp_cmd_{name}")
-    i_a: Var = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowRefferenceType.i_A)
-    i_b: Var = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowRefferenceType.i_B)
-    i_c: Var = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowRefferenceType.i_C)
+    i_a: Var = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowReferenceType.i_A)
+    i_b: Var = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowReferenceType.i_B)
+    i_c: Var = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowReferenceType.i_C)
     theta_var: Var = vf.add_var(name=f"theta_src_{name}")
     d_theta_var: Var = vf.add_diff_var(name=f"d_theta_src_{name}", base_var=theta_var)
     frequency_var: Var = vf.add_var(name=f"f_src_{name}")

@@ -10,7 +10,7 @@ from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic import symbolic as sym
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.enumerations import VarPowerFlowRefferenceType, DeviceType, ParamPowerFlowRefferenceType
+from VeraGridEngine.enumerations import VarPowerFlowReferenceType, DeviceType, ParamPowerFlowReferenceType
 from VeraGridEngine.Templates.Emt.generator_emt_type_template import get_pf_positive_sequence_init_refs
 
 def get_generator_thevenin_rl_emt_template_with_ref(
@@ -91,9 +91,9 @@ def get_generator_thevenin_rl_emt_template_with_ref(
     # ------------------------------------------------------------------
     # Inputs: terminal bus voltages in abc.
     # ------------------------------------------------------------------
-    v_A = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowRefferenceType.v_A)
-    v_B = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowRefferenceType.v_B)
-    v_C = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowRefferenceType.v_C)
+    v_A = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowReferenceType.v_A)
+    v_B = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowReferenceType.v_B)
+    v_C = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowReferenceType.v_C)
     inputs: List[Any] = list([v_A, v_B, v_C])
 
     # ------------------------------------------------------------------
@@ -101,9 +101,9 @@ def get_generator_thevenin_rl_emt_template_with_ref(
     # - current dynamics
     # - absolute synchronous angle
     # ------------------------------------------------------------------
-    i_A = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowRefferenceType.i_A)
-    i_B = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowRefferenceType.i_B)
-    i_C = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowRefferenceType.i_C)
+    i_A = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowReferenceType.i_A)
+    i_B = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowReferenceType.i_B)
+    i_C = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowReferenceType.i_C)
 
     theta = vf.add_var(name=f"theta_{name}")
 
@@ -215,25 +215,25 @@ def get_generator_thevenin_rl_emt_template_with_ref(
     # keep the original EMT injection interface intact.
     # ------------------------------------------------------------------
     templ.block.external_mapping = dict({
-        VarPowerFlowRefferenceType.v_A: v_A,
-        VarPowerFlowRefferenceType.v_B: v_B,
-        VarPowerFlowRefferenceType.v_C: v_C,
-        VarPowerFlowRefferenceType.i_A: i_A,
-        VarPowerFlowRefferenceType.i_B: i_B,
-        VarPowerFlowRefferenceType.i_C: i_C,
-        VarPowerFlowRefferenceType.phi_v: phi_v,
-        VarPowerFlowRefferenceType.phi: phi,
-        VarPowerFlowRefferenceType.Vpk: Vpk,
-        VarPowerFlowRefferenceType.Ipk: Ipk,
-        VarPowerFlowRefferenceType.d_v_A: None,
-        VarPowerFlowRefferenceType.d_v_B: None,
-        VarPowerFlowRefferenceType.d_v_C: None,
-        VarPowerFlowRefferenceType.P_A: None,
-        VarPowerFlowRefferenceType.Q_A: None,
-        VarPowerFlowRefferenceType.P_B: None,
-        VarPowerFlowRefferenceType.Q_B: None,
-        VarPowerFlowRefferenceType.P_C: None,
-        VarPowerFlowRefferenceType.Q_C: None,
+        VarPowerFlowReferenceType.v_A: v_A,
+        VarPowerFlowReferenceType.v_B: v_B,
+        VarPowerFlowReferenceType.v_C: v_C,
+        VarPowerFlowReferenceType.i_A: i_A,
+        VarPowerFlowReferenceType.i_B: i_B,
+        VarPowerFlowReferenceType.i_C: i_C,
+        VarPowerFlowReferenceType.phi_v: phi_v,
+        VarPowerFlowReferenceType.phi: phi,
+        VarPowerFlowReferenceType.Vpk: Vpk,
+        VarPowerFlowReferenceType.Ipk: Ipk,
+        VarPowerFlowReferenceType.d_v_A: None,
+        VarPowerFlowReferenceType.d_v_B: None,
+        VarPowerFlowReferenceType.d_v_C: None,
+        VarPowerFlowReferenceType.P_A: None,
+        VarPowerFlowReferenceType.Q_A: None,
+        VarPowerFlowReferenceType.P_B: None,
+        VarPowerFlowReferenceType.Q_B: None,
+        VarPowerFlowReferenceType.P_C: None,
+        VarPowerFlowReferenceType.Q_C: None,
     })
 
     # ------------------------------------------------------------------
@@ -242,13 +242,13 @@ def get_generator_thevenin_rl_emt_template_with_ref(
     # by EmtProblemDae.
     # ------------------------------------------------------------------
     templ.block.api_obj_mapping = dict({
-        ParamPowerFlowRefferenceType.omega_base: omega_base,
-        ParamPowerFlowRefferenceType.R1: R_s,
-        ParamPowerFlowRefferenceType.X1: X_s,
-        ParamPowerFlowRefferenceType.X0: None,
-        ParamPowerFlowRefferenceType.generator_share_enable: share_enable,
-        ParamPowerFlowRefferenceType.generator_share_p_ref: P_share_ref,
-        ParamPowerFlowRefferenceType.generator_share_q_ref: Q_share_ref,
+        ParamPowerFlowReferenceType.omega_base: omega_base,
+        ParamPowerFlowReferenceType.R1: R_s,
+        ParamPowerFlowReferenceType.X1: X_s,
+        ParamPowerFlowReferenceType.X0: None,
+        ParamPowerFlowReferenceType.generator_share_enable: share_enable,
+        ParamPowerFlowReferenceType.generator_share_p_ref: P_share_ref,
+        ParamPowerFlowReferenceType.generator_share_q_ref: Q_share_ref,
     })
 
     # ------------------------------------------------------------------

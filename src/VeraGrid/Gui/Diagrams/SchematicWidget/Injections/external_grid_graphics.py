@@ -5,7 +5,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from PySide6 import QtWidgets
-from VeraGrid.Gui.Diagrams.generic_graphics import Square
+from VeraGrid.Gui.Diagrams.generic_graphics import ExternalGridSymbol
 from VeraGridEngine.Devices.Injections.external_grid import ExternalGrid
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionTemplateGraphicItem
 
@@ -20,7 +20,7 @@ class ExternalGridGraphicItem(InjectionTemplateGraphicItem):
     ExternalGrid graphic item
     """
 
-    def __init__(self, parent, api_obj: ExternalGrid, editor: SchematicWidget):
+    def __init__(self, parent, api_obj: ExternalGrid, editor: SchematicWidget, draw_labels: bool = True):
         """
 
         :param parent:
@@ -33,8 +33,9 @@ class ExternalGridGraphicItem(InjectionTemplateGraphicItem):
                                               editor=editor,
                                               device_type_name='external grid',
                                               w=40,
-                                              h=40)
-        self.set_glyph(glyph=Square(self, 40, 40, "E", self.update_nexus))
+                                              h=40,
+                                              draw_labels=draw_labels)
+        self.set_glyph(glyph=ExternalGridSymbol(self, h=40, w=40))
 
     @property
     def api_object(self) -> ExternalGrid:
@@ -53,5 +54,3 @@ class ExternalGridGraphicItem(InjectionTemplateGraphicItem):
             menu.exec(event.screenPos())
         else:
             self.editor.gui.show_error_toast("The graphic has no API object!")
-
-

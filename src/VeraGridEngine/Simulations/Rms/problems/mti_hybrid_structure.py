@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 import numpy as np
 import scipy.sparse as sp
-from scipy.sparse.csgraph import maximum_bipartite_matching
+from scipy.sparse.csgraph import connected_components, maximum_bipartite_matching
 
 
 @dataclass
@@ -116,24 +116,58 @@ def _order_incidence_matrix_dmperm_like(incidence: np.ndarray) -> tuple[np.ndarr
     Structural row/column ordering for square incidence.
 
     MATLAB toolbox uses dmperm(I) and flips permutations. SciPy does not expose
-    dmperm, so we first compute a full structural matching and then order by
-    matched column index. This keeps a strict square structural ordering with
-    no fallback path.
+    dmperm, so approximate the well-determined square case by:
+      1. computing a full structural matching,
+      2. building the directed dependency graph induced by that matching,
+      3. ordering strongly connected components topologically,
+      4. flipping the final permutations to match toolbox convention.
+
+    This is much closer to dmperm block-triangular form than connected
+    components or matched-column sorting alone.
     """
     n_eq, n_var = incidence.shape
     if n_eq != n_var:
         raise ValueError(f"Incidence must be square, got ({n_eq}, {n_var})")
 
     inc_csr = sp.csr_matrix((incidence != 0).astype(int))
-    row_to_col = maximum_bipartite_matching(inc_csr, perm_type='row')
+    row_to_col = maximum_bipartite_matching(inc_csr, perm_type='column')
     if np.any(row_to_col < 0):
         raise ValueError("Incidence has no full structural matching")
     print("[MTI-ORDER] structural matching complete")
 
-    row_sort = np.arange(n_eq, dtype=int)
-    # Order rows by matched column index, then flip to align with toolbox-style
-    # descending post-permutation ordering.
-    row_sort = row_sort[np.argsort(row_to_col)]
+    col_to_row = np.empty(n_var, dtype=int)
+    col_to_row[row_to_col] = np.arange(n_eq, dtype=int)
+
+    dep_rows: list[int] = []
+    dep_cols: list[int] = []
+    inc_coo = inc_csr.tocoo()
+    for row, col in zip(inc_coo.row, inc_coo.col):
+        matched_row = int(col_to_row[int(col)])
+        if int(row) == matched_row:
+            continue
+        # Row `row` depends on the variable matched to `matched_row`.
+        dep_rows.append(int(row))
+        dep_cols.append(matched_row)
+
+    if len(dep_rows) == 0:
+        dep_graph = sp.csr_matrix((n_eq, n_eq), dtype=int)
+    else:
+        dep_graph = sp.csr_matrix((np.ones(len(dep_rows), dtype=int), (dep_rows, dep_cols)), shape=(n_eq, n_eq))
+
+    n_comp, labels = connected_components(dep_graph, directed=True, connection="strong", return_labels=True)
+    comp_order = _topological_component_order(dep_graph, labels, n_comp)
+
+    rows_by_comp: dict[int, list[int]] = {int(comp): [] for comp in range(n_comp)}
+    for row in range(n_eq):
+        rows_by_comp[int(labels[row])].append(row)
+
+    ordered_rows: list[int] = []
+    for comp in comp_order:
+        comp_rows = rows_by_comp[int(comp)]
+        comp_rows.sort(key=lambda r: (int(row_to_col[int(r)]), int(r)))
+        ordered_rows.extend(comp_rows)
+
+    row_sort = np.asarray(ordered_rows, dtype=int)
     col_sort = row_to_col[row_sort]
     row_sort = row_sort[::-1]
     col_sort = col_sort[::-1]
@@ -143,4 +177,43 @@ def _order_incidence_matrix_dmperm_like(incidence: np.ndarray) -> tuple[np.ndarr
         f"[MTI-ORDER] perm head rows={row_sort[:min(8, row_sort.size)].tolist()} "
         f"cols={col_sort[:min(8, col_sort.size)].tolist()}"
     )
+    comp_sizes = [len(rows_by_comp[int(comp)]) for comp in comp_order]
+    print(
+        f"[MTI-ORDER] dmperm-like components={n_comp} "
+        f"sizes_head={comp_sizes[:min(8, len(comp_sizes))]}"
+    )
     return Isorted.astype(int), row_sort.astype(int), col_sort.astype(int)
+
+
+def _topological_component_order(dep_graph: sp.csr_matrix, labels: np.ndarray, n_comp: int) -> list[int]:
+    """Topologically order SCC labels from a directed dependency graph."""
+    if n_comp <= 1:
+        return list(range(n_comp))
+
+    dag_successors: dict[int, set[int]] = {i: set() for i in range(n_comp)}
+    indegree = np.zeros(n_comp, dtype=int)
+    coo = dep_graph.tocoo()
+    for row, col in zip(coo.row, coo.col):
+        src = int(labels[int(row)])
+        dst = int(labels[int(col)])
+        if src == dst or dst in dag_successors[src]:
+            continue
+        dag_successors[src].add(dst)
+        indegree[dst] += 1
+
+    ready = sorted([i for i in range(n_comp) if indegree[i] == 0])
+    order: list[int] = []
+    while ready:
+        comp = ready.pop(0)
+        order.append(comp)
+        for succ in sorted(dag_successors[comp]):
+            indegree[succ] -= 1
+            if indegree[succ] == 0:
+                ready.append(succ)
+        ready.sort()
+
+    if len(order) != n_comp:
+        # Should not happen after SCC condensation, but keep deterministic output.
+        seen = set(order)
+        order.extend([i for i in range(n_comp) if i not in seen])
+    return order

@@ -52,9 +52,9 @@ from VeraGridEngine.enumerations import (
     DynamicIntegrationMethod,
     EmtInitializationMethod,
     EmtSolverTypes,
-    ParamPowerFlowRefferenceType,
+    ParamPowerFlowReferenceType,
     ShuntConnectionType,
-    VarPowerFlowRefferenceType,
+    VarPowerFlowReferenceType,
     SolverType,
 )
 
@@ -90,12 +90,12 @@ def _build_rl_line_emt_template(
     X_par = vf.add_var(name=f"X_{name}")
     omega_base = vf.add_var(name=f"omega_base_{name}")
 
-    vf_A = vf.add_var(name=f"vf_A_{name}", reference=VarPowerFlowRefferenceType.vf_A)
-    vf_B = vf.add_var(name=f"vf_B_{name}", reference=VarPowerFlowRefferenceType.vf_B)
-    vf_C = vf.add_var(name=f"vf_C_{name}", reference=VarPowerFlowRefferenceType.vf_C)
-    vt_A = vf.add_var(name=f"vt_A_{name}", reference=VarPowerFlowRefferenceType.vt_A)
-    vt_B = vf.add_var(name=f"vt_B_{name}", reference=VarPowerFlowRefferenceType.vt_B)
-    vt_C = vf.add_var(name=f"vt_C_{name}", reference=VarPowerFlowRefferenceType.vt_C)
+    vf_A = vf.add_var(name=f"vf_A_{name}", reference=VarPowerFlowReferenceType.vf_A)
+    vf_B = vf.add_var(name=f"vf_B_{name}", reference=VarPowerFlowReferenceType.vf_B)
+    vf_C = vf.add_var(name=f"vf_C_{name}", reference=VarPowerFlowReferenceType.vf_C)
+    vt_A = vf.add_var(name=f"vt_A_{name}", reference=VarPowerFlowReferenceType.vt_A)
+    vt_B = vf.add_var(name=f"vt_B_{name}", reference=VarPowerFlowReferenceType.vt_B)
+    vt_C = vf.add_var(name=f"vt_C_{name}", reference=VarPowerFlowReferenceType.vt_C)
 
     i_ser_A = vf.add_var(name=f"i_ser_A_{name}")
     i_ser_B = vf.add_var(name=f"i_ser_B_{name}")
@@ -104,12 +104,12 @@ def _build_rl_line_emt_template(
     di_B = vf.add_diff_var(name=f"di_B_{name}", base_var=i_ser_B)
     di_C = vf.add_diff_var(name=f"di_C_{name}", base_var=i_ser_C)
 
-    if_A = vf.add_var(name=f"if_A_{name}", reference=VarPowerFlowRefferenceType.if_A)
-    if_B = vf.add_var(name=f"if_B_{name}", reference=VarPowerFlowRefferenceType.if_B)
-    if_C = vf.add_var(name=f"if_C_{name}", reference=VarPowerFlowRefferenceType.if_C)
-    it_A = vf.add_var(name=f"it_A_{name}", reference=VarPowerFlowRefferenceType.it_A)
-    it_B = vf.add_var(name=f"it_B_{name}", reference=VarPowerFlowRefferenceType.it_B)
-    it_C = vf.add_var(name=f"it_C_{name}", reference=VarPowerFlowRefferenceType.it_C)
+    if_A = vf.add_var(name=f"if_A_{name}", reference=VarPowerFlowReferenceType.if_A)
+    if_B = vf.add_var(name=f"if_B_{name}", reference=VarPowerFlowReferenceType.if_B)
+    if_C = vf.add_var(name=f"if_C_{name}", reference=VarPowerFlowReferenceType.if_C)
+    it_A = vf.add_var(name=f"it_A_{name}", reference=VarPowerFlowReferenceType.it_A)
+    it_B = vf.add_var(name=f"it_B_{name}", reference=VarPowerFlowReferenceType.it_B)
+    it_C = vf.add_var(name=f"it_C_{name}", reference=VarPowerFlowReferenceType.it_C)
 
     state_eqs = [
         omega_base * (vf_A - vt_A - R_par * i_ser_A) / X_par,
@@ -134,21 +134,21 @@ def _build_rl_line_emt_template(
     )
     templ.block.diff_vars = [di_A, di_B, di_C]
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.vf_A: vf_A,
-        VarPowerFlowRefferenceType.vf_B: vf_B,
-        VarPowerFlowRefferenceType.vf_C: vf_C,
-        VarPowerFlowRefferenceType.vt_A: vt_A,
-        VarPowerFlowRefferenceType.vt_B: vt_B,
-        VarPowerFlowRefferenceType.vt_C: vt_C,
-        VarPowerFlowRefferenceType.if_A: if_A,
-        VarPowerFlowRefferenceType.if_B: if_B,
-        VarPowerFlowRefferenceType.if_C: if_C,
-        VarPowerFlowRefferenceType.it_A: it_A,
-        VarPowerFlowRefferenceType.it_B: it_B,
-        VarPowerFlowRefferenceType.it_C: it_C,
+        VarPowerFlowReferenceType.vf_A: vf_A,
+        VarPowerFlowReferenceType.vf_B: vf_B,
+        VarPowerFlowReferenceType.vf_C: vf_C,
+        VarPowerFlowReferenceType.vt_A: vt_A,
+        VarPowerFlowReferenceType.vt_B: vt_B,
+        VarPowerFlowReferenceType.vt_C: vt_C,
+        VarPowerFlowReferenceType.if_A: if_A,
+        VarPowerFlowReferenceType.if_B: if_B,
+        VarPowerFlowReferenceType.if_C: if_C,
+        VarPowerFlowReferenceType.it_A: it_A,
+        VarPowerFlowReferenceType.it_B: it_B,
+        VarPowerFlowReferenceType.it_C: it_C,
     }
     templ.block.api_obj_mapping = {
-        ParamPowerFlowRefferenceType.omega_base: omega_base,
+        ParamPowerFlowReferenceType.omega_base: omega_base,
     }
     templ.block.event_dict = {
         omega_base: vf.add_const(2.0 * np.pi * 50.0),

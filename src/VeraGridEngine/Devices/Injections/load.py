@@ -13,7 +13,7 @@ from VeraGridEngine.Templates.Rms.load_rms_template import get_load_rms_template
 from VeraGridEngine.enumerations import DeviceType, BuildStatus, PrpCat
 from VeraGridEngine.Devices.Parents.load_parent import LoadParent
 from VeraGridEngine.Devices.Profiles import ProfileFloat, ProfileInt
-from VeraGridEngine.Utils.Symbolic.block import VarPowerFlowRefferenceType
+from VeraGridEngine.Utils.Symbolic.block import VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 
 
@@ -845,8 +845,8 @@ class Load(LoadParent):
             raise Exception(str(type(val)) + 'not supported to be set into n_customers_prof')
 
     def assign_input_vars_and_params(self):
-        self.Vm = self.bus.rms_model.E(VarPowerFlowRefferenceType.Vm)
-        self.Va = self.bus.rms_model.E(VarPowerFlowRefferenceType.Va)
+        self.Vm = self.bus.rms_model.E(VarPowerFlowReferenceType.Vm)
+        self.Va = self.bus.rms_model.E(VarPowerFlowReferenceType.Va)
 
     def plot_profiles(self, time=None, show_fig=True):
         """

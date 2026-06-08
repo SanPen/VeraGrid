@@ -379,10 +379,10 @@ def __multi_island_pf_nc_limited_support_3ph(nc: NumericalCircuit,
     shunt_idx = nc.shunt_data.original_idx
     for i in shunt_idx:
 
-        if nc.shunt_data.A_floatingstar[i] != 0.0 + 0.0j:
-            results.shunt_Vn[i] = nc.shunt_data.A_floatingstar[i] * results.voltage_A[shunt_bus_idx[i]] + \
-                                  nc.shunt_data.B_floatingstar[i] * results.voltage_B[shunt_bus_idx[i]] + \
-                                  nc.shunt_data.C_floatingstar[i] * results.voltage_C[shunt_bus_idx[i]]
+        if nc.shunt_data.A_floating_star[i] != 0.0 + 0.0j:
+            results.shunt_Vn[i] = nc.shunt_data.A_floating_star[i] * results.voltage_A[shunt_bus_idx[i]] + \
+                                  nc.shunt_data.B_floating_star[i] * results.voltage_B[shunt_bus_idx[i]] + \
+                                  nc.shunt_data.C_floating_star[i] * results.voltage_C[shunt_bus_idx[i]]
 
         else:
             results.shunt_Vn[i] = results.voltage_N[shunt_bus_idx[i]]

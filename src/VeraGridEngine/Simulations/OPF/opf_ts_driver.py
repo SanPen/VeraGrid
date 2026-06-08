@@ -593,6 +593,19 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
 
         self.tic()
 
+        if self.engine == EngineType.GSLV:
+            if not gslv.GSLV_AVAILABLE:
+                self.engine = EngineType.VeraGrid
+                self.logger.add_warning('GSLV not available, falling back to VeraGrid')
+            else:
+                if self.options.solver != SolverType.LINEAR_OPF:
+                    self.engine = EngineType.VeraGrid
+                    self.logger.add_warning('GSLV OPF time series only supports LINEAR_OPF, falling back to VeraGrid')
+                else:
+                    pass
+        else:
+            pass
+
         if self.engine == EngineType.VeraGrid:
 
             if self.options.time_grouping == TimeGrouping.NoGrouping:

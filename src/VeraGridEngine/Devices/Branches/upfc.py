@@ -159,6 +159,7 @@ class UPFC(BranchParent):
                  rp=0.0, xp=0.0,
                  vp=1.0,
                  Pset=0.0, Qset=0.0,
+                 design_rate: float = 9999,
                  rate=9999,
                  mttf=0, mttr=0, cost=100,
                  contingency_factor=1.0,
@@ -186,6 +187,7 @@ class UPFC(BranchParent):
         :param vp: shunt voltage set point (p.u.)
         :param Pset: Power set point (MW)
         :param Qset:
+        :param design_rate: Design rate (MVA)
         :param rate: Power rating (MVA)
         :param mttf:
         :param mttr:
@@ -214,6 +216,7 @@ class UPFC(BranchParent):
                               bus_to=bus_to,
                               active=active,
                               reducible=False,
+                              design_rate=design_rate,
                               rate=rate,
                               contingency_factor=contingency_factor,
                               protection_rating_factor=protection_rating_factor,

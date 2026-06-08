@@ -109,6 +109,28 @@ class _EditorStub:
         """
         return None
 
+    def update_label_drawing_status(self, device: Any, draw_labels: bool) -> None:
+        """
+        Persist label-drawing updates issued by generic graphics helpers.
+
+        :param device: Device whose graphics state changed.
+        :param draw_labels: Updated label visibility flag.
+        :return: ``None``.
+        """
+        update_record: dict[str, Any] = self.diagram_updates.get(id(device), dict())
+        update_record["draw_labels"] = draw_labels
+        self.diagram_updates[id(device)] = update_record
+
+    def update_label_drwaing_status(self, device: Any, draw_labels: bool) -> None:
+        """
+        Backward-compatible alias for the current graphics callback name.
+
+        :param device: Device whose graphics state changed.
+        :param draw_labels: Updated label visibility flag.
+        :return: ``None``.
+        """
+        self.update_label_drawing_status(device=device, draw_labels=draw_labels)
+
     def get_persisted_attachment(self, api_object: Any, endpoint: str) -> dict[str, Any]:
         """
         Return persisted attachment data for a fake branch endpoint.

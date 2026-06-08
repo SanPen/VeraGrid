@@ -16,7 +16,7 @@ from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.IO.ucte.devices.ucte_base import coalesce_number, is_defined_number
 from VeraGridEngine.IO.ucte.devices.ucte_circuit import UcteCircuit
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.enumerations import TapChangerTypes, TapModuleControl, TapPhaseControl
+from VeraGridEngine.enumerations import TapChangerTypes, TapModuleControl, TapPhaseControl, GeneratorControlMode
 
 
 def is_xnode_code(node_code: str) -> bool:
@@ -257,8 +257,10 @@ def parse_nodes(ucte_grid: UcteCircuit, grid: MultiCircuit, logger: Logger) -> D
             grid.add_load(bus=elm, api_obj=ld)
 
         if ucte_elm.has_gen():
-            is_controlled = ucte_elm.is_regulating_voltage() and is_defined_number(ucte_elm.voltage_reference)
-
+            if ucte_elm.is_regulating_voltage() and is_defined_number(ucte_elm.voltage_reference):
+                control_mode = GeneratorControlMode.V
+            else:
+                control_mode = GeneratorControlMode.Q
             pmin = -coalesce_number(ucte_elm.max_gen_mw, get_default_power_limit())
             pmax = -coalesce_number(ucte_elm.min_gen_mw, -get_default_power_limit())
 
@@ -266,8 +268,9 @@ def parse_nodes(ucte_grid: UcteCircuit, grid: MultiCircuit, logger: Logger) -> D
             qmax_ucte = ucte_elm.max_gen_mvar
 
             # Handle potentially missing reactive limits in non-standard UCTE files
-            if is_controlled and (not is_defined_number(qmin_ucte) or qmin_ucte == 0.0) \
-                           and (not is_defined_number(qmax_ucte) or qmax_ucte == 0.0):
+            if ((control_mode == GeneratorControlMode.V)
+                    and (not is_defined_number(qmin_ucte) or qmin_ucte == 0.0)
+                    and (not is_defined_number(qmax_ucte) or qmax_ucte == 0.0)):
                 qmin = -get_default_power_limit()
                 qmax = get_default_power_limit()
             else:
@@ -283,8 +286,8 @@ def parse_nodes(ucte_grid: UcteCircuit, grid: MultiCircuit, logger: Logger) -> D
                 Pmax=pmax,
                 Qmin=qmin,
                 Qmax=qmax,
-                vset=vm0 if is_controlled else 1.0,
-                is_controlled=is_controlled,
+                vset=vm0 if (control_mode == GeneratorControlMode.V) else 1.0,
+                control_mode=control_mode,
             )
 
             tech = tech_dict.get(ucte_elm.plant_type, None)
@@ -294,6 +297,7 @@ def parse_nodes(ucte_grid: UcteCircuit, grid: MultiCircuit, logger: Logger) -> D
             grid.add_generator(bus=elm, api_obj=gen)
 
     return bus_dict
+
 
 def add_switch(grid: MultiCircuit,
                code: str,
@@ -378,10 +382,10 @@ def add_standard_line(grid: MultiCircuit, ucte_elm, bus_f: dev.Bus, bus_t: dev.B
 
 def is_fictitious_shunt_line(ucte_elm, tol: float = 1e-9) -> bool:
     return (
-        (is_fictitious_shunt_code(ucte_elm.node1) or is_fictitious_shunt_code(ucte_elm.node2))
-        and abs(ucte_elm.resistance) <= tol
-        and abs(ucte_elm.reactance - 0.05) <= 1e-6
-        and abs(ucte_elm.susceptance) > tol
+            (is_fictitious_shunt_code(ucte_elm.node1) or is_fictitious_shunt_code(ucte_elm.node2))
+            and abs(ucte_elm.resistance) <= tol
+            and abs(ucte_elm.reactance - 0.05) <= 1e-6
+            and abs(ucte_elm.susceptance) > tol
     )
 
 
@@ -525,10 +529,10 @@ def parse_lines(ucte_grid: UcteCircuit, grid: MultiCircuit, bus_dict: Dict[str, 
 def has_zero_transformer_impedance(ucte_elm, tol: float = 1e-9) -> bool:
     conductance = ucte_elm.conductance if is_defined_number(ucte_elm.conductance) else 0.0
     return (
-        abs(ucte_elm.resistance) <= tol
-        and abs(ucte_elm.reactance) <= tol
-        and abs(ucte_elm.susceptance) <= tol
-        and abs(conductance) <= tol
+            abs(ucte_elm.resistance) <= tol
+            and abs(ucte_elm.reactance) <= tol
+            and abs(ucte_elm.susceptance) <= tol
+            and abs(conductance) <= tol
     )
 
 
@@ -754,8 +758,9 @@ def parse_transformer(ucte_grid: UcteCircuit, grid: MultiCircuit, bus_dict: Dict
                                    device=ucte_elm.name or ucte_elm.get_primary_key())
 
             if not has_zero_transformer_impedance(ucte_elm):
-                logger.add_warning("UCTE transformer coupler has non-zero impedance/admittance, importing it as a switch",
-                                   device=ucte_elm.name or ucte_elm.get_primary_key())
+                logger.add_warning(
+                    "UCTE transformer coupler has non-zero impedance/admittance, importing it as a switch",
+                    device=ucte_elm.name or ucte_elm.get_primary_key())
 
             add_switch_from_transformer(grid, ucte_elm, bus_f, bus_t, active, reducible)
             continue

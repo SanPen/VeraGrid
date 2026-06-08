@@ -11,10 +11,10 @@ import VeraGridEngine.Utils.Symbolic.symbolic as sym
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Templates.Emt.bridge_filter_control_2level_3ph_emt_template import get_bridge_filter_control_2level_3ph_emt_template
-from VeraGridEngine.Utils.Symbolic.block import Block, VarPowerFlowRefferenceType, build_name_to_var_lookup
+from VeraGridEngine.Utils.Symbolic.block import Block, VarPowerFlowReferenceType, build_name_to_var_lookup
 from VeraGridEngine.Utils.Symbolic.symbolic import BinOp, Const, Expr, Var
 from VeraGridEngine.Utils.procedural_logic import startup_handover
-from VeraGridEngine.enumerations import ConverterControlType, DeviceType, ParamPowerFlowRefferenceType
+from VeraGridEngine.enumerations import ConverterControlType, DeviceType, ParamPowerFlowReferenceType
 
 
 def _converter_control_type_code(control: ConverterControlType | None) -> int:
@@ -123,9 +123,9 @@ def _build_pseudo_emt_converter_vsc_block(vf: VarFactory, name: str) -> Block:
     v_dc: Var = vf.add_var(name=f"v_dc_{name}")
     d_v_dc: Var = vf.add_diff_var(name=f"d_v_dc_{name}", base_var=v_dc)
 
-    i_dc: Var = vf.add_var(name=f"i_dc_{name}", reference=VarPowerFlowRefferenceType.Idc)
-    P: Var = vf.add_var(name=f"P_{name}", reference=VarPowerFlowRefferenceType.P)
-    Q: Var = vf.add_var(name=f"Q_{name}", reference=VarPowerFlowRefferenceType.Q)
+    i_dc: Var = vf.add_var(name=f"i_dc_{name}", reference=VarPowerFlowReferenceType.Idc)
+    P: Var = vf.add_var(name=f"P_{name}", reference=VarPowerFlowReferenceType.P)
+    Q: Var = vf.add_var(name=f"Q_{name}", reference=VarPowerFlowReferenceType.Q)
     i_mag: Var = vf.add_var(name=f"i_mag_{name}")
     P_loss: Var = vf.add_var(name=f"P_loss_{name}")
     i_dc_conv: Var = vf.add_var(name=f"i_dc_conv_{name}")
@@ -276,14 +276,14 @@ def _build_pseudo_emt_converter_vsc_block(vf: VarFactory, name: str) -> Block:
         name=f"{name}_vsc",
     )
     block.api_obj_mapping = dict([
-        (ParamPowerFlowRefferenceType.Sbase, sbase),
-        (ParamPowerFlowRefferenceType.P0, P0_sched),
-        (ParamPowerFlowRefferenceType.converter_loss_power_0, P_loss0),
-        (ParamPowerFlowRefferenceType.omega_base, omega_base),
-        (ParamPowerFlowRefferenceType.converter_control_mode_1, control1),
-        (ParamPowerFlowRefferenceType.converter_control_mode_2, control2),
-        (ParamPowerFlowRefferenceType.converter_control_target_1, control1_val),
-        (ParamPowerFlowRefferenceType.converter_control_target_2, control2_val),
+        (ParamPowerFlowReferenceType.Sbase, sbase),
+        (ParamPowerFlowReferenceType.P0, P0_sched),
+        (ParamPowerFlowReferenceType.converter_loss_power_0, P_loss0),
+        (ParamPowerFlowReferenceType.omega_base, omega_base),
+        (ParamPowerFlowReferenceType.converter_control_mode_1, control1),
+        (ParamPowerFlowReferenceType.converter_control_mode_2, control2),
+        (ParamPowerFlowReferenceType.converter_control_target_1, control1_val),
+        (ParamPowerFlowReferenceType.converter_control_target_2, control2_val),
     ])
     return block
 
@@ -735,15 +735,15 @@ def get_switched_emt_converter(vf: VarFactory, name: str = "switched_converter_e
     templ.name = name
     templ.block.name = name
 
-    v_A: Var = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowRefferenceType.v_A)
-    v_B: Var = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowRefferenceType.v_B)
-    v_C: Var = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowRefferenceType.v_C)
-    v_dc_bus: Var = vf.add_var(name=f"v_dc_bus_{name}", reference=VarPowerFlowRefferenceType.Vdc)
+    v_A: Var = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowReferenceType.v_A)
+    v_B: Var = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowReferenceType.v_B)
+    v_C: Var = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowReferenceType.v_C)
+    v_dc_bus: Var = vf.add_var(name=f"v_dc_bus_{name}", reference=VarPowerFlowReferenceType.Vdc)
     switching_enabled_mode: Var = vf.add_var(name=f"switching_enabled_mode_{name}")
     t_enable_sw: Var = vf.add_var(name=f"t_enable_sw_{name}")
-    i_A: Var = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowRefferenceType.i_A)
-    i_B: Var = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowRefferenceType.i_B)
-    i_C: Var = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowRefferenceType.i_C)
+    i_A: Var = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowReferenceType.i_A)
+    i_B: Var = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowReferenceType.i_B)
+    i_C: Var = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowReferenceType.i_C)
     gate_a: Var = vf.add_var(name=f"gate_a_{name}")
     gate_b: Var = vf.add_var(name=f"gate_b_{name}")
     gate_c: Var = vf.add_var(name=f"gate_c_{name}")
@@ -1004,18 +1004,18 @@ def get_switched_emt_converter(vf: VarFactory, name: str = "switched_converter_e
     ])
 
     templ.block.external_mapping = dict([
-        (VarPowerFlowRefferenceType.v_A, v_A),
-        (VarPowerFlowRefferenceType.v_B, v_B),
-        (VarPowerFlowRefferenceType.v_C, v_C),
-        (VarPowerFlowRefferenceType.Vdc, v_dc_bus),
-        (VarPowerFlowRefferenceType.i_A, i_A),
-        (VarPowerFlowRefferenceType.i_B, i_B),
-        (VarPowerFlowRefferenceType.i_C, i_C),
-        (VarPowerFlowRefferenceType.Idc, data_idc),
-        (VarPowerFlowRefferenceType.P, data_p),
-        (VarPowerFlowRefferenceType.Q, data_q),
-        (VarPowerFlowRefferenceType.phi_v, data_phi_v),
-        (VarPowerFlowRefferenceType.Vpk, data_vpk),
+        (VarPowerFlowReferenceType.v_A, v_A),
+        (VarPowerFlowReferenceType.v_B, v_B),
+        (VarPowerFlowReferenceType.v_C, v_C),
+        (VarPowerFlowReferenceType.Vdc, v_dc_bus),
+        (VarPowerFlowReferenceType.i_A, i_A),
+        (VarPowerFlowReferenceType.i_B, i_B),
+        (VarPowerFlowReferenceType.i_C, i_C),
+        (VarPowerFlowReferenceType.Idc, data_idc),
+        (VarPowerFlowReferenceType.P, data_p),
+        (VarPowerFlowReferenceType.Q, data_q),
+        (VarPowerFlowReferenceType.phi_v, data_phi_v),
+        (VarPowerFlowReferenceType.Vpk, data_vpk),
     ])
 
     templ.block.api_obj_mapping = dict(data_block.api_obj_mapping)

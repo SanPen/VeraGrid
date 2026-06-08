@@ -7,7 +7,7 @@ import numpy as np
 from typing import List
 import math
 
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType, ParamPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType, ParamPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Utils.Symbolic.block import (Block, Var)
 from VeraGridEngine.Utils.Symbolic.block_helpers import tf_to_block
@@ -67,9 +67,9 @@ def build_vsc_rms(vfactory: VarFactory, name:str = ''):
     vm_t = vfactory.add_var("Vm_t_" + name)
     inputs: List[Var] = [vm_t]
 
-    Pf  = vfactory.add_var("Pf_vsc", VarPowerFlowRefferenceType.Pf)
-    Pt  = vfactory.add_var("Pt", VarPowerFlowRefferenceType.Pt)
-    Qt_ref = vfactory.add_var("Qt_ref", VarPowerFlowRefferenceType.Qt)
+    Pf  = vfactory.add_var("Pf_vsc", VarPowerFlowReferenceType.Pf)
+    Pt  = vfactory.add_var("Pt", VarPowerFlowReferenceType.Pt)
+    Qt_ref = vfactory.add_var("Qt_ref", VarPowerFlowReferenceType.Qt)
 
     alpha1 = vfactory.add_var("alpha1")
     alpha2 = vfactory.add_var("alpha2")
@@ -89,15 +89,15 @@ def build_vsc_rms(vfactory: VarFactory, name:str = ''):
         Pf + Pt - 1.0 * (alpha1 + alpha2 * im + alpha3 * im ** 2),
     ]
     block.external_mapping = {
-        VarPowerFlowRefferenceType.Vm: vm_t,
-        VarPowerFlowRefferenceType.Pf: Pf,
-        VarPowerFlowRefferenceType.Pt: Pt,
+        VarPowerFlowReferenceType.Vm: vm_t,
+        VarPowerFlowReferenceType.Pf: Pf,
+        VarPowerFlowReferenceType.Pt: Pt,
     }
 
     block.api_obj_mapping= {
-        ParamPowerFlowRefferenceType.alpha1 : alpha1,
-        ParamPowerFlowRefferenceType.alpha2 : alpha2,
-        ParamPowerFlowRefferenceType.alpha3 : alpha3,
+        ParamPowerFlowReferenceType.alpha1 : alpha1,
+        ParamPowerFlowReferenceType.alpha2 : alpha2,
+        ParamPowerFlowReferenceType.alpha3 : alpha3,
     }
 
     block.in_vars =  inputs
@@ -166,11 +166,11 @@ def build_trafo_vsc(vf:VarFactory, trafo:Transformer2W, name:str = ''):
     templ = RmsModelTemplate()
     model_name = name or trafo.name
     templ.name = model_name
-    vdc = vf.add_var('vdc_' + model_name, VarPowerFlowRefferenceType.Vdc)
-    vmf = vf.add_var('vmf_' + model_name, VarPowerFlowRefferenceType.Vmf)
-    vmt = vf.add_var('vmt_' + model_name, VarPowerFlowRefferenceType.Vmt)
-    vaf = vf.add_var('vaf_' + model_name, VarPowerFlowRefferenceType.Vaf)
-    vat = vf.add_var('vat_' + model_name, VarPowerFlowRefferenceType.Vat)
+    vdc = vf.add_var('vdc_' + model_name, VarPowerFlowReferenceType.Vdc)
+    vmf = vf.add_var('vmf_' + model_name, VarPowerFlowReferenceType.Vmf)
+    vmt = vf.add_var('vmt_' + model_name, VarPowerFlowReferenceType.Vmt)
+    vaf = vf.add_var('vaf_' + model_name, VarPowerFlowReferenceType.Vaf)
+    vat = vf.add_var('vat_' + model_name, VarPowerFlowReferenceType.Vat)
     m = vf.add_var('m')
     inputs = [vdc, vmf, vmt, vaf, vat, m]
 
@@ -178,10 +178,10 @@ def build_trafo_vsc(vf:VarFactory, trafo:Transformer2W, name:str = ''):
     control_block, am, phi = build_vsc_transformer_control(vf=vf, Vm=vmt, vdc=vdc, name=model_name)
 
     #Variables
-    Qf = vf.add_var("Qf_" + model_name,VarPowerFlowRefferenceType.Qf)
-    Qt = vf.add_var("Qt_" + model_name,VarPowerFlowRefferenceType.Qt)
-    Pf = vf.add_var("Pf_" + model_name,VarPowerFlowRefferenceType.Pf)
-    Pt = vf.add_var("Pt_" + model_name,VarPowerFlowRefferenceType.Pt)
+    Qf = vf.add_var("Qf_" + model_name, VarPowerFlowReferenceType.Qf)
+    Qt = vf.add_var("Qt_" + model_name, VarPowerFlowReferenceType.Qt)
+    Pf = vf.add_var("Pf_" + model_name, VarPowerFlowReferenceType.Pf)
+    Pt = vf.add_var("Pt_" + model_name, VarPowerFlowReferenceType.Pt)
     Im = vf.add_var("Im_" + model_name)
 
 
@@ -255,20 +255,20 @@ def build_trafo_vsc(vf:VarFactory, trafo:Transformer2W, name:str = ''):
     block.children.append(control_block)
 
     block.external_mapping = {
-        VarPowerFlowRefferenceType.Vaf: vaf,
-        VarPowerFlowRefferenceType.Vat: vat,
-        VarPowerFlowRefferenceType.Vmf: vmf,
-        VarPowerFlowRefferenceType.Vmt: vmt,
-        VarPowerFlowRefferenceType.Pf: Pf,
-        VarPowerFlowRefferenceType.Pt: Pt,
-        VarPowerFlowRefferenceType.Qf: Qf,
-        VarPowerFlowRefferenceType.Qt: Qt,
+        VarPowerFlowReferenceType.Vaf: vaf,
+        VarPowerFlowReferenceType.Vat: vat,
+        VarPowerFlowReferenceType.Vmf: vmf,
+        VarPowerFlowReferenceType.Vmt: vmt,
+        VarPowerFlowReferenceType.Pf: Pf,
+        VarPowerFlowReferenceType.Pt: Pt,
+        VarPowerFlowReferenceType.Qf: Qf,
+        VarPowerFlowReferenceType.Qt: Qt,
     }
 
     block.api_obj_mapping = {
-        ParamPowerFlowRefferenceType.g: gt,
-        ParamPowerFlowRefferenceType.b: bt,
-        ParamPowerFlowRefferenceType.bsh: bmu,
+        ParamPowerFlowReferenceType.g: gt,
+        ParamPowerFlowReferenceType.b: bt,
+        ParamPowerFlowReferenceType.bsh: bmu,
     }
     block.parameters = {
         gt:vf.add_const(ys.real),

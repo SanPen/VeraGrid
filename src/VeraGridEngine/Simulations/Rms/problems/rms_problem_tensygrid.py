@@ -14,7 +14,7 @@ from VeraGridEngine.Utils.Symbolic.symbolic import (Var, Const, Expr, piecewise)
 from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicParamsVector, \
     SymbolicDerivative
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.enumerations import VarPowerFlowRefferenceType, RmsInitializationMethod
+from VeraGridEngine.enumerations import VarPowerFlowReferenceType, RmsInitializationMethod
 from VeraGridEngine.basic_structures import Vec, ObjVec, BoolVec, Logger
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowResults
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
@@ -180,8 +180,8 @@ class RmsProblemTensygrid(RmsProblemTemplate):
             self.add_variables_to_compilation_dicts(elm, mdl)
 
             # add init values from powerflow to initial guess
-            self.set_init_guess(mdl, VarPowerFlowRefferenceType.Vm, np.abs(self.power_flow_results.voltage[bus_num]))
-            self.set_init_guess(mdl, VarPowerFlowRefferenceType.Va, np.angle(self.power_flow_results.voltage[bus_num]))
+            self.set_init_guess(mdl, VarPowerFlowReferenceType.Vm, np.abs(self.power_flow_results.voltage[bus_num]))
+            self.set_init_guess(mdl, VarPowerFlowReferenceType.Va, np.angle(self.power_flow_results.voltage[bus_num]))
 
             # add model to system block
             self.sys_block.add(mdl)
@@ -196,10 +196,10 @@ class RmsProblemTensygrid(RmsProblemTemplate):
             self.add_variables_to_compilation_dicts(elm, mdl)
 
             # add init values from powerflow to initial guess
-            self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pf, self.Sf[branch_num].real)
-            self.set_init_guess(mdl, VarPowerFlowRefferenceType.Qf, self.Sf[branch_num].imag)
-            self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pt, self.St[branch_num].real)
-            self.set_init_guess(mdl, VarPowerFlowRefferenceType.Qt, self.St[branch_num].imag)
+            self.set_init_guess(mdl, VarPowerFlowReferenceType.Pf, self.Sf[branch_num].real)
+            self.set_init_guess(mdl, VarPowerFlowReferenceType.Qf, self.Sf[branch_num].imag)
+            self.set_init_guess(mdl, VarPowerFlowReferenceType.Pt, self.St[branch_num].real)
+            self.set_init_guess(mdl, VarPowerFlowReferenceType.Qt, self.St[branch_num].imag)
 
             # add model to system block
             self.sys_block.add(mdl)
@@ -208,10 +208,10 @@ class RmsProblemTensygrid(RmsProblemTemplate):
             f = bus_dict[elm.bus_from]
             t = bus_dict[elm.bus_to]
 
-            setP(P, P_used, f, -mdl.E(VarPowerFlowRefferenceType.Pf))
-            setP(P, P_used, t, -mdl.E(VarPowerFlowRefferenceType.Pt))
-            setQ(Q, Q_used, f, -mdl.E(VarPowerFlowRefferenceType.Qf))
-            setQ(Q, Q_used, t, -mdl.E(VarPowerFlowRefferenceType.Qt))
+            setP(P, P_used, f, -mdl.E(VarPowerFlowReferenceType.Pf))
+            setP(P, P_used, t, -mdl.E(VarPowerFlowReferenceType.Pt))
+            setQ(Q, Q_used, f, -mdl.E(VarPowerFlowReferenceType.Qf))
+            setQ(Q, Q_used, t, -mdl.E(VarPowerFlowReferenceType.Qt))
 
         # initialize injections
 
@@ -228,15 +228,15 @@ class RmsProblemTensygrid(RmsProblemTemplate):
                     self.add_variables_to_compilation_dicts(elm, mdl)
 
                     # fill general init guess for known variables values
-                    self.set_init_guess(mdl, VarPowerFlowRefferenceType.P,
+                    self.set_init_guess(mdl, VarPowerFlowReferenceType.P,
                                         np.real(self.power_flow_results.Sbus[bus_index] / grid.Sbase))
-                    self.set_init_guess(mdl, VarPowerFlowRefferenceType.Q,
+                    self.set_init_guess(mdl, VarPowerFlowReferenceType.Q,
                                         np.imag(self.power_flow_results.Sbus[bus_index] / grid.Sbase))
 
                     # add variable to conservation equations of the bus to which the element is connected
                     k = bus_dict[elm.bus]
-                    setP(P, P_used, k, mdl.E(VarPowerFlowRefferenceType.P))
-                    setQ(Q, Q_used, k, mdl.E(VarPowerFlowRefferenceType.Q))
+                    setP(P, P_used, k, mdl.E(VarPowerFlowReferenceType.P))
+                    setQ(Q, Q_used, k, mdl.E(VarPowerFlowReferenceType.Q))
 
                     # find init values for the variables of this model
                     if self.options.initialization_method == RmsInitializationMethod.Explicit:
@@ -265,7 +265,8 @@ class RmsProblemTensygrid(RmsProblemTemplate):
                     self.sys_block.add(mdl)
 
         total_init_explicit_time += time.perf_counter() - t0
-        print(f"\nTotal time explicit initialization: {total_init_explicit_time:.6f} seconds")
+        # print(f"\nTotal time explicit initialization: {total_init_explicit_time:.6f} seconds")
+        self.logger.add_info("Total time explicit initialization", value=total_init_explicit_time)
         if self.progress_signal is not None:
             self.progress_signal.emit(10)
 
@@ -586,7 +587,7 @@ class RmsProblemTensygrid(RmsProblemTemplate):
         if self.progress_signal is not None:
             self.progress_signal.emit(20)
 
-    def set_init_guess(self, mdl: Block, reference_powerflow: VarPowerFlowRefferenceType, val: float):
+    def set_init_guess(self, mdl: Block, reference_powerflow: VarPowerFlowReferenceType, val: float):
         """
         add values from powerflow to initial guess
 

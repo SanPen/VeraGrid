@@ -9,7 +9,7 @@ import math
 
 from VeraGridEngine.enumerations import DeviceType
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
-from VeraGridEngine.Utils.Symbolic.block import (Block, Var, VarPowerFlowRefferenceType)
+from VeraGridEngine.Utils.Symbolic.block import (Block, Var, VarPowerFlowReferenceType)
 from VeraGridEngine.Utils.Symbolic.block_helpers import tf_to_block
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
@@ -397,8 +397,8 @@ def build_gfl_converter_model_emt(vfactory: VarFactory, inputs,
         event_dict= event_dict,
         init_eqs=init_eqs,
         external_mapping={
-            VarPowerFlowRefferenceType.P:P,
-            VarPowerFlowRefferenceType.Q:Q,
+            VarPowerFlowReferenceType.P:P,
+            VarPowerFlowReferenceType.Q:Q,
         }
     )
     gfl_block.add(gfl_block_aux)
@@ -483,24 +483,24 @@ def VscGflEmtBuild(vfactory: VarFactory, name: str = "",
         algebraic_vars=[Pt_vsc, Qt_vsc],
         event_dict= event_dict,
         external_mapping={
-            VarPowerFlowRefferenceType.P: P,
-            VarPowerFlowRefferenceType.Q: Q,
+            VarPowerFlowReferenceType.P: P,
+            VarPowerFlowReferenceType.Q: Q,
         },
         in_vars= inputs,
         out_vars = [i_a, i_b, i_c]  # EMT: output three-phase currents
     )
     vsc_block.external_mapping = {
-        VarPowerFlowRefferenceType.v_A: inputs[0],
-        VarPowerFlowRefferenceType.v_B: inputs[1],
-        VarPowerFlowRefferenceType.v_C: inputs[2],
-        VarPowerFlowRefferenceType.Vdc: inputs[3],
-        VarPowerFlowRefferenceType.Pt: Pt_vsc,
-        VarPowerFlowRefferenceType.Qt: Qt_vsc,
-        VarPowerFlowRefferenceType.Pf: P,
-        VarPowerFlowRefferenceType.Qf: Qf,
-        VarPowerFlowRefferenceType.i_A: i_a,
-        VarPowerFlowRefferenceType.i_B: i_b,
-        VarPowerFlowRefferenceType.i_C: i_c,
+        VarPowerFlowReferenceType.v_A: inputs[0],
+        VarPowerFlowReferenceType.v_B: inputs[1],
+        VarPowerFlowReferenceType.v_C: inputs[2],
+        VarPowerFlowReferenceType.Vdc: inputs[3],
+        VarPowerFlowReferenceType.Pt: Pt_vsc,
+        VarPowerFlowReferenceType.Qt: Qt_vsc,
+        VarPowerFlowReferenceType.Pf: P,
+        VarPowerFlowReferenceType.Qf: Qf,
+        VarPowerFlowReferenceType.i_A: i_a,
+        VarPowerFlowReferenceType.i_B: i_b,
+        VarPowerFlowReferenceType.i_C: i_c,
     }
 
     vsc_block.add(gfl_block)

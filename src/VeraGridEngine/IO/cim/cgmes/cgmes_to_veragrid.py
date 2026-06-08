@@ -11,7 +11,7 @@ import VeraGridEngine.IO.cim.cgmes.cgmes_enums as cgmes_enums
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.enumerations import (CGMESVersions, CgmesTopologyMode, CgmesBoundaryPlaceholderMode,
                                          ConverterControlType, ExternalGridMode,
-                                         ContingencyOperationTypes)
+                                         ContingencyOperationTypes, GeneratorControlMode)
 import VeraGridEngine.Devices as gcdev
 import VeraGridEngine.IO.cim.cgmes.cgmes_assets.cgmes_2_4_15_assets as cgmes24
 import VeraGridEngine.IO.cim.cgmes.cgmes_assets.cgmes_3_0_0_assets as cgmes30
@@ -2884,17 +2884,8 @@ def get_gcdev_generators(cgmes_model: CgmesCircuit,
                 p_value = get_cgmes_property_value(cgmes_elm=cgmes_elm, property_name="p", fallback=0.0)
                 q_value = get_cgmes_property_value(cgmes_elm=cgmes_elm, property_name="q", fallback=0.0)
 
-                if p_value != 0.0:
-                    pf = np.cos(np.arctan(q_value / p_value))
-                else:
-                    pf = 1.0  # default is 0.8 in gc
-                    logger.add_warning(msg='GeneratingUnit p is 0.',
-                                       device=cgmes_elm.rdfid,
-                                       device_class=cgmes_elm.tpe,
-                                       device_property="p",
-                                       value='0')
-
-                technology = tech_dict.get(generating_unit.tpe, general_tech) if generating_unit is not None else general_tech
+                technology = tech_dict.get(generating_unit.tpe,
+                                           general_tech) if generating_unit is not None else general_tech
                 if generating_unit is not None and generating_unit.tpe == "WindGeneratingUnit":
                     if generating_unit.windGenUnitType == cgmes_enums.WindGenUnitKind.onshore:
                         technology = technology[0]
@@ -2913,6 +2904,7 @@ def get_gcdev_generators(cgmes_model: CgmesCircuit,
                 qmax = get_cgmes_property_value(cgmes_elm=cgmes_elm, property_name="maxQ", fallback=9999.0)
                 qmin = get_cgmes_property_value(cgmes_elm=cgmes_elm, property_name="minQ", fallback=-9999.0)
                 generator_p = -p_value
+                generator_q = -q_value
 
                 asynchronous_machine_type = get_cgmes_property_value(cgmes_elm=cgmes_elm,
                                                                      property_name="asynchronousMachineType")
@@ -2920,20 +2912,21 @@ def get_gcdev_generators(cgmes_model: CgmesCircuit,
                     # Keep motor-like operation as non-generating even when source sign is inconsistent.
                     generator_p = -abs(float(generator_p))
 
-                gcdev_elm = gcdev.Generator(idtag=cgmes_elm.uuid,
-                                            code=cgmes_elm.description,
-                                            name=cgmes_elm.name,
-                                            active=get_cgmes_equipment_active_state(cgmes_elm),
-                                            Snom=snom,
-                                            P=generator_p,
-                                            Pmin=pmin,
-                                            Pmax=pmax,
-                                            power_factor=pf,
-                                            Qmax=qmax,
-                                            Qmin=qmin,
-                                            vset=v_set,
-                                            is_controlled=is_controlled,
-                                            )
+                gcdev_elm = gcdev.Generator(
+                    idtag=cgmes_elm.uuid,
+                    code=cgmes_elm.description,
+                    name=cgmes_elm.name,
+                    active=get_cgmes_equipment_active_state(cgmes_elm),
+                    Snom=snom,
+                    P=generator_p,
+                    Pmin=pmin,
+                    Pmax=pmax,
+                    Q=generator_q,
+                    Qmax=qmax,
+                    Qmin=qmin,
+                    vset=v_set,
+                    control_mode=GeneratorControlMode.V if is_controlled else GeneratorControlMode.V.Q,
+                )
                 gcdev_elm.control_bus = controlled_bus
 
                 gcdev_model.add_generator(bus=calc_node, api_obj=gcdev_elm)
@@ -3019,9 +3012,11 @@ def get_gcdev_external_grids(cgmes_model: CgmesCircuit,
                             expected_value="finite target and Bus.Vnom > 0")
                 elif bool(get_cgmes_property_value(cgmes_elm=cgmes_elm, property_name="controlEnabled",
                                                    fallback=False)):
-                    regulating_control = get_cgmes_property_value(cgmes_elm=cgmes_elm, property_name="RegulatingControl")
+                    regulating_control = get_cgmes_property_value(cgmes_elm=cgmes_elm,
+                                                                  property_name="RegulatingControl")
                     if regulating_control is not None:
-                        target_value = get_cgmes_property_value(cgmes_elm=regulating_control, property_name="targetValue")
+                        target_value = get_cgmes_property_value(cgmes_elm=regulating_control,
+                                                                property_name="targetValue")
                         if target_value is not None and calc_node.Vnom > 0.0:
                             vm = float(target_value) / float(calc_node.Vnom)
                             vm = sanitize_voltage_setpoint(v_set=vm,

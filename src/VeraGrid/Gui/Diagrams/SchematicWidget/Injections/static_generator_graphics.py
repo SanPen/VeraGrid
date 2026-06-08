@@ -6,7 +6,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from VeraGridEngine.Devices.Injections.static_generator import StaticGenerator
-from VeraGrid.Gui.Diagrams.generic_graphics import Square
+from VeraGrid.Gui.Diagrams.generic_graphics import StaticGeneratorSymbol
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionTemplateGraphicItem
 
 
@@ -16,7 +16,7 @@ if TYPE_CHECKING:  # Only imports the below statements during type checking
 
 class StaticGeneratorGraphicItem(InjectionTemplateGraphicItem):
 
-    def __init__(self, parent, api_obj: StaticGenerator, editor: SchematicWidget):
+    def __init__(self, parent, api_obj: StaticGenerator, editor: SchematicWidget, draw_labels: bool = True):
         """
 
         :param parent:
@@ -28,8 +28,9 @@ class StaticGeneratorGraphicItem(InjectionTemplateGraphicItem):
                                               editor=editor,
                                               device_type_name='static_generator',
                                               w=40,
-                                              h=40)
-        self.set_glyph(glyph=Square(self, h=40, w=40, label_letter="S", update_nexus_fcn=self.update_nexus))
+                                              h=40,
+                                              draw_labels=draw_labels)
+        self.set_glyph(glyph=StaticGeneratorSymbol(self, h=40, w=40))
 
     @property
     def api_object(self) -> StaticGenerator:

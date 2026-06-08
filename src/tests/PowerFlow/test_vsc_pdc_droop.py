@@ -135,6 +135,7 @@ def _build_case_study():
 
     # Onshore VSCs: Qac + Pdc_droop (DC voltage droop)
     grid.add_vsc(gce.VSC(name="VSC_GS_1", bus_from=bus1_dc, bus_to=bus1_ac,
+                         rate=100.0,
                          alpha1=a, alpha2=b, alpha3=c,
                          control1=ConverterControlType.Qac,
                          control2=ConverterControlType.Pdc_droop,
@@ -144,6 +145,7 @@ def _build_case_study():
                          control2_droop_val_min=0.9,
                          control2_droop_val_max=1.1))
     grid.add_vsc(gce.VSC(name="VSC_GS_2", bus_from=bus2_dc, bus_to=bus2_ac,
+                         rate=100.0,
                          alpha1=a, alpha2=b, alpha3=c,
                          control1=ConverterControlType.Qac,
                          control2=ConverterControlType.Pdc_droop,
@@ -155,11 +157,13 @@ def _build_case_study():
 
     # Offshore VSCs: Vm_ac + Va_ac (grid-forming for the wind farms)
     grid.add_vsc(gce.VSC(name="VSC_WF_3", bus_from=bus3_dc, bus_to=bus3_ac,
+                         rate=100.0,
                          alpha1=a, alpha2=b, alpha3=c,
                          control1=ConverterControlType.Vm_ac,
                          control2=ConverterControlType.Va_ac,
                          control1_val=1.0, control2_val=0.0))
     grid.add_vsc(gce.VSC(name="VSC_WF_4", bus_from=bus4_dc, bus_to=bus4_ac,
+                         rate=100.0,
                          alpha1=a, alpha2=b, alpha3=c,
                          control1=ConverterControlType.Vm_ac,
                          control2=ConverterControlType.Va_ac,

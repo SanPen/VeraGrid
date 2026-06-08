@@ -10,7 +10,8 @@ from PySide6 import QtWidgets, QtCore, QtGui
 
 from VeraGrid.ThirdParty.adjustText import adjust_text
 from VeraGrid.Gui.Diagrams.MapWidget.Substation.substation_graphic_item import SubstationGraphicItem
-from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import haversine_distance, GridMapWidget
+from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import GridMapWidget
+from VeraGridEngine.Utils.GeographicalMethods.haversine_distance import haversine_distance
 from VeraGridEngine.Devices.Diagrams.map_location import MapLocation
 import VeraGridEngine.Devices as dev
 from VeraGrid.Gui.ProceduralGrid.procedural_grid_ui import Ui_Dialog

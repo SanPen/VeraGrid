@@ -165,6 +165,31 @@ def get_local_results_declarations(relative_path: str, class_name: str) -> dict[
                 "loss_avg_conv": "Mat",
             },
         ),
+        (
+            "src/VeraGridEngine/Simulations/Rms/rms_results.py",
+            "RmsResults",
+            {
+                "time_array": "DateVec",
+                "values": "Vec",
+                "rms_events_group_idtags": "StrVec",
+                "has_event_group_results": "BoolVec",
+                "well_initialized": "BoolVec",
+                "converged": "BoolVec",
+            },
+        ),
+        (
+            "src/VeraGridEngine/Simulations/EMT/emt_results.py",
+            "EmtResults",
+            {
+                "time_array": "DateVec",
+                "values": "Vec",
+                "diff_values": "Vec",
+                "emt_events_group_idtags": "StrVec",
+                "has_event_group_results": "BoolVec",
+                "well_initialized": "BoolVec",
+                "converged": "BoolVec",
+            },
+        ),
     ],
 )
 def test_result_data_fields_are_registered(relative_path, class_name, expected_properties) -> None:

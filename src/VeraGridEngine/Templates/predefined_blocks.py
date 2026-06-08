@@ -232,6 +232,33 @@ def pi_controller(var_factory: VarFactory, err: sym.Var, kp: float, ki: float, n
                  out_vars=[u])
 
 
+def signal_pair(var_factory: VarFactory, item_name: str = "") -> Tuple[Block, Block]:
+    """
+    Create a signal pair: one block with an input port and one block with
+    an output port that share the same variable. When an external output
+    is connected to the input block, the output block exposes the same
+    variable automatically.
+
+    :param var_factory:
+    :param item_name:
+    :return: (input_block, output_block)
+    """
+    v = var_factory.add_var("signal_" + item_name)
+
+    blk_in = Block(
+        in_vars=[v],
+        name="From" + item_name
+    )
+
+    blk_out = Block(
+        algebraic_vars=[v],
+        out_vars=[v],
+        name="To" + item_name
+    )
+
+    return blk_in, blk_out
+
+
 def generic(var_factory: VarFactory, 
             inputs: int,
             outputs: int,

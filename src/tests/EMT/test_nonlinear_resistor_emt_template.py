@@ -3,7 +3,7 @@ from __future__ import annotations
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Templates.Emt.nonlinear_resistor_emt_template import get_nonlinear_resistor_emt_template
-from VeraGridEngine.enumerations import VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import VarPowerFlowReferenceType
 
 
 def test_nonlinear_resistor_emt_template_builds_grounded_vi_curve_block() -> None:
@@ -19,10 +19,10 @@ def test_nonlinear_resistor_emt_template_builds_grounded_vi_curve_block() -> Non
 
     assert len(templ.block.in_vars) == 1
     assert len(templ.block.out_vars) == 1
-    assert templ.block.external_mapping[VarPowerFlowRefferenceType.v_N] is templ.block.in_vars[0]
-    assert templ.block.external_mapping[VarPowerFlowRefferenceType.i_N] is templ.block.out_vars[0]
-    assert templ.block.in_vars[0].ref == VarPowerFlowRefferenceType.v_N
-    assert templ.block.out_vars[0].ref == VarPowerFlowRefferenceType.i_N
+    assert templ.block.external_mapping[VarPowerFlowReferenceType.v_N] is templ.block.in_vars[0]
+    assert templ.block.external_mapping[VarPowerFlowReferenceType.i_N] is templ.block.out_vars[0]
+    assert templ.block.in_vars[0].ref == VarPowerFlowReferenceType.v_N
+    assert templ.block.out_vars[0].ref == VarPowerFlowReferenceType.i_N
     assert templ.block.out_vars[0] in templ.block.init_eqs
     assert any(child.name.endswith("_ground") for child in templ.block.children)
     assert "arr_v1_nlr_case" in event_names

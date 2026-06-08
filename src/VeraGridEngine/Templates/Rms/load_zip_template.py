@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import Block
@@ -41,8 +41,8 @@ def ZIPLoadBuild(vfactory: VarFactory, name: str = "ZIP model", Pl0=1.0, Ql0=0.1
     inputs = [vfactory.add_var("Vm_")]
 
     # Vars:
-    P = vfactory.add_var('P_zip', reference=VarPowerFlowRefferenceType.P)
-    Q = vfactory.add_var('Q_zip', reference=VarPowerFlowRefferenceType.Q)
+    P = vfactory.add_var('P_zip', reference=VarPowerFlowReferenceType.P)
+    Q = vfactory.add_var('Q_zip', reference=VarPowerFlowReferenceType.Q)
 
     # Parameters:
     P0 = vfactory.add_var('P0')
@@ -108,9 +108,9 @@ def ZIPLoadBuild(vfactory: VarFactory, name: str = "ZIP model", Pl0=1.0, Ql0=0.1
 
     templ.block.name = 'ZIP Load'
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.P: P,
-        VarPowerFlowRefferenceType.Q: Q,
-        VarPowerFlowRefferenceType.Vm: inputs[0],
+        VarPowerFlowReferenceType.P: P,
+        VarPowerFlowReferenceType.Q: Q,
+        VarPowerFlowReferenceType.Vm: inputs[0],
     }
 
     templ.block.in_vars = inputs

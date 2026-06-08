@@ -10,7 +10,7 @@ from VeraGridEngine.enumerations import DeviceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 
-from VeraGridEngine.Utils.Symbolic.block import Block, VarPowerFlowRefferenceType
+from VeraGridEngine.Utils.Symbolic.block import Block, VarPowerFlowReferenceType
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
 
 from VeraGridEngine.Devices.Substation.bus import Bus
@@ -43,14 +43,14 @@ class BusRmsTemplate(RmsModelTemplate):
                 out_vars = [Vdc])
 
             self._block.external_mapping = {
-                VarPowerFlowRefferenceType.Vdc: Vdc,
-                VarPowerFlowRefferenceType.P: P,
-                VarPowerFlowRefferenceType.Q: Q
+                VarPowerFlowReferenceType.Vdc: Vdc,
+                VarPowerFlowReferenceType.P: P,
+                VarPowerFlowReferenceType.Q: Q
             }
 
         else:
-            self.Vm = vf.add_var("Vm", reference=VarPowerFlowRefferenceType.Vm)
-            self.Va = vf.add_var("Va", reference=VarPowerFlowRefferenceType.Va)
+            self.Vm = vf.add_var("Vm", reference=VarPowerFlowReferenceType.Vm)
+            self.Va = vf.add_var("Va", reference=VarPowerFlowReferenceType.Va)
 
 
             self._block = Block(
@@ -59,8 +59,8 @@ class BusRmsTemplate(RmsModelTemplate):
             )
     
             self._block.external_mapping = {
-                VarPowerFlowRefferenceType.Vm: self.Vm,
-                VarPowerFlowRefferenceType.Va: self.Va,
+                VarPowerFlowReferenceType.Vm: self.Vm,
+                VarPowerFlowReferenceType.Va: self.Va,
             }
 
 
@@ -86,16 +86,16 @@ def get_bus_rms_algebraic_vars(bus_rms_model: Block) -> Tuple[Var, Var] | Var:
     :return: Tuple with two positions to preserve the project API
     """
     mapping = bus_rms_model.external_mapping
-    if VarPowerFlowRefferenceType.Vdc in mapping:
-        vdc = mapping[VarPowerFlowRefferenceType.Vdc]
+    if VarPowerFlowReferenceType.Vdc in mapping:
+        vdc = mapping[VarPowerFlowReferenceType.Vdc]
         if vdc is not None:
             return vdc, None
         else:
             raise ValueError("Invalid RMS bus model: expected either (Vdc) or (Vm, Va)")
 
     else:
-        Vm = mapping[VarPowerFlowRefferenceType.Vm]
-        Va = mapping[VarPowerFlowRefferenceType.Va]
+        Vm = mapping[VarPowerFlowReferenceType.Vm]
+        Va = mapping[VarPowerFlowReferenceType.Va]
 
         if Vm is not None and Va is not None:
             return Vm, Va

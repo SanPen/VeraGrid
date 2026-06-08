@@ -4,10 +4,12 @@
 # SPDX-License-Identifier: MPL-2.0
 import json
 from enum import Enum
-from typing import Dict, List, Sequence, Set, Optional
+from typing import Dict, List, Sequence, Set, Optional, Protocol, Union
 import numpy as np
 import pandas as pd
-from matplotlib import pyplot as plt
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationToolbar
 from PySide6 import QtCore, QtGui, QtWidgets
 
 from VeraGrid.Gui.Icons.icon_associations import device_type_icons
@@ -15,6 +17,8 @@ from VeraGrid.Gui.dynamic_events_editor_dialog import create_dynamic_events_grou
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Devices.Events.dynamic_plot import DynamicPlot
 from VeraGridEngine.Devices.Events.dynamic_plot_entry import DynamicPlotEntry
+from VeraGridEngine.Devices.Events.rms_event import RmsEvent
+from VeraGridEngine.Devices.Events.emt_event import EmtEvent
 from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Devices.Events.emt_events_group import EmtEventsGroup
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
@@ -29,9 +33,33 @@ from VeraGridEngine.Utils.Symbolic.symbolic import Const
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
 from VeraGridEngine.enumerations import (DeviceType, StudyResultsType, PlotSimulationType,
                                          DynamicSimulationMode, DynamicPlotEntryKind, TreeStateNodeKind,
-                                         DynamicEntrySection, DynamicPlotMode, DynamicPlotEntryRole)
+                                         DynamicEntrySection, DynamicPlotMode, DynamicPlotEntryRole,
+                                         DynamicEventTransitionType)
 from VeraGridEngine.Simulations.results_table import ResultsTable
 from VeraGrid.Gui.results_model import ResultsModel
+
+
+class _GenericDynamicsPlotsDropHandler(Protocol):
+    def get_group_name_role(self) -> int:
+        ...
+
+    def get_drag_mime_type(self) -> str:
+        ...
+
+    def get_tree_state_role(self) -> int:
+        ...
+
+    def get_group_name_from_drop_index(self, index: QtCore.QModelIndex) -> str | None:
+        ...
+
+    def add_series_to_group(self, group_name: str, series_key: "DynamicResultSeriesKey") -> bool:
+        ...
+
+    def get_candidate_from_payload(self, payload: str) -> "DynamicPlotCandidate | None":
+        ...
+
+    def add_candidate_to_group(self, group_name: str, candidate: "DynamicPlotCandidate") -> bool:
+        ...
 
 
 class DynamicResultSeriesKey:
@@ -772,20 +800,6 @@ class DynamicDeviceEntryCollection:
         return list(self._parameters)
 
 
-def _get_dynamic_simulation_mode(simulation_type: PlotSimulationType) -> DynamicSimulationMode:
-    """
-    Convert one plot simulation family into the matching dynamic-event mode.
-
-    :param simulation_type: Plot simulation family used by the handler.
-    :return: Matching dynamic-event mode.
-    """
-    if simulation_type == PlotSimulationType.RMS:
-        return DynamicSimulationMode.RMS
-    elif simulation_type == PlotSimulationType.EMT:
-        return DynamicSimulationMode.EMT
-    else:
-        raise ValueError(f"Unsupported plot simulation type: {simulation_type}")
-
 def ensure_dynamic_plot_event_group(circuit: MultiCircuit,
                                     simulation_type: PlotSimulationType,
                                     parent: QtWidgets.QWidget | None = None) -> RmsEventsGroup | EmtEventsGroup | None:
@@ -809,7 +823,16 @@ def ensure_dynamic_plot_event_group(circuit: MultiCircuit,
     else:
         pass
 
-    mode: DynamicSimulationMode = _get_dynamic_simulation_mode(simulation_type=simulation_type)
+    # The event-group creation dialog expects the dynamic simulation mode, so
+    # convert the plot-family enum here where the dialog invocation happens.
+    mode: DynamicSimulationMode
+    if simulation_type == PlotSimulationType.RMS:
+        mode = DynamicSimulationMode.RMS
+    elif simulation_type == PlotSimulationType.EMT:
+        mode = DynamicSimulationMode.EMT
+    else:
+        raise ValueError(f"Unsupported plot simulation type: {simulation_type}")
+
     missing_group_message: str = ""
     if simulation_type == PlotSimulationType.RMS:
         missing_group_message = "No RMS Events Group found, please create one before adding a dynamic plot entry."
@@ -970,27 +993,6 @@ def _build_xy_slot_label(role: DynamicPlotEntryRole,
             return role_prefix + entry_label
 
 
-def _build_parameter_candidate_custom_name(parameter: DynamicPlotParameter,
-                                           device_label: str,
-                                           bus_label: str,
-                                           source_label: str) -> str:
-    """
-    Build the default visible label for one parameter candidate.
-
-    :param parameter: Parameter descriptor.
-    :param device_label: Visible device label.
-    :param bus_label: Visible bus label suffix.
-    :param source_label: Visible event-group label, or an empty string.
-    :return: Joined visible label.
-    """
-    return _join_plot_label_parts([
-        parameter.get_display_name(),
-        device_label,
-        bus_label,
-        source_label,
-    ])
-
-
 def _build_runtime_parameter_candidate(simulation_type: PlotSimulationType,
                                        device_tpe: DeviceType,
                                        device_idtag: str,
@@ -1012,6 +1014,16 @@ def _build_runtime_parameter_candidate(simulation_type: PlotSimulationType,
     :param event_group_name: Visible event-group name.
     :return: Runtime parameter candidate.
     """
+    # The default custom label must carry the parameter, device, bus, and
+    # event-group source so pre-simulation candidates remain uniquely
+    # identifiable after they are persisted into plot entries.
+    variable_custom_name: str = _join_plot_label_parts([
+        parameter.get_display_name(),
+        device_label,
+        bus_label,
+        event_group_name,
+    ])
+
     return DynamicPlotCandidate(
         simulation_type=simulation_type,
         entry_kind=DynamicPlotEntryKind.PARAMETER,
@@ -1023,12 +1035,7 @@ def _build_runtime_parameter_candidate(simulation_type: PlotSimulationType,
         bus_label=bus_label,
         variable_name=parameter.get_canonical_name(),
         result_path_kind="parameter",
-        variable_custom_name=_build_parameter_candidate_custom_name(
-            parameter=parameter,
-            device_label=device_label,
-            bus_label=bus_label,
-            source_label=event_group_name,
-        ),
+        variable_custom_name=variable_custom_name,
         var=None,
         parameter=parameter,
     )
@@ -1388,25 +1395,25 @@ def _build_parameter_alias_name(parameter_name: str) -> str:
             return clean_parameter_name
 
 
-def _build_parameter_canonical_name_from_display(parameter_name: str) -> str:
-    """
-    Build one canonical symbolic parameter name from a display alias.
-
-    :param parameter_name: User-facing parameter name.
-    :return: Canonical symbolic parameter name candidate.
-
-    This helper reverses the small set of legacy GUI aliases so entries loaded
-    from older projects or created through display labels still resolve against
-    the symbolic names stored inside model blocks and exported results maps.
-    """
-    clean_parameter_name: str = str(parameter_name)
-    if clean_parameter_name == "PI0":
-        return "Pl0"
-    else:
-        if clean_parameter_name == "QI0":
-            return "Ql0"
-        else:
-            return clean_parameter_name
+# def _build_parameter_canonical_name_from_display(parameter_name: str) -> str:
+#     """
+#     Build one canonical symbolic parameter name from a display alias.
+#
+#     :param parameter_name: User-facing parameter name.
+#     :return: Canonical symbolic parameter name candidate.
+#
+#     This helper reverses the small set of legacy GUI aliases so entries loaded
+#     from older projects or created through display labels still resolve against
+#     the symbolic names stored inside model blocks and exported results maps.
+#     """
+#     clean_parameter_name: str = str(parameter_name)
+#     if clean_parameter_name == "PI0":
+#         return "Pl0"
+#     else:
+#         if clean_parameter_name == "QI0":
+#             return "Ql0"
+#         else:
+#             return clean_parameter_name
 
 
 def _append_unique_variables(target: List[Var], seen_uids: Set[int], variables: Sequence[Var]) -> None:
@@ -1606,6 +1613,270 @@ def _collect_dynamic_model_diff_var_uids(model: Block) -> Set[int]:
             diff_var_uids.add(variable.uid)
 
     return diff_var_uids
+
+
+def _dynamic_event_time_sort_key(event_item: RmsEvent | EmtEvent) -> tuple[float, float]:
+    """
+    Build the chronological sort key for one dynamic event.
+
+    :param event_item: RMS or EMT event.
+    :return: Tuple containing start and end times.
+
+    Event reconstruction must process the updates in deterministic temporal
+    order. A dedicated key function keeps that ordering logic explicit and avoids
+    embedding anonymous sorting logic inside the caller.
+    """
+    end_time_value: float
+    if event_item.end_time is not None:
+        end_time_value = float(event_item.end_time)
+    else:
+        end_time_value = float(event_item.time)
+
+    return float(event_item.time), end_time_value
+
+
+def _sort_dynamic_events_by_time(events: Sequence[RmsEvent | EmtEvent]) -> List[RmsEvent | EmtEvent]:
+    """
+    Sort dynamic events by start time and end time.
+
+    :param events: Unordered dynamic events.
+    :return: Sorted dynamic events.
+
+    Parameter reconstruction must apply events in the same chronological order
+    used by the simulation logic. Sorting by start time first, and then by end
+    time, makes the event application stable and deterministic.
+    """
+    sorted_events: List[RmsEvent | EmtEvent] = sorted(
+        events,
+        key=_dynamic_event_time_sort_key,
+    )
+    return sorted_events
+
+
+def _get_dynamic_event_parameter_name(event_item: RmsEvent | EmtEvent) -> str | None:
+    """
+    Resolve the canonical parameter name referenced by one dynamic event.
+
+    :param event_item: RMS or EMT event.
+    :return: Canonical parameter name, or ``None``.
+
+    Dynamic events point to symbolic parameters through ``event.parameter``.
+    The plotting layer needs the canonical symbolic name so it can compare the
+    event target against the persistent plot entry parameter identity.
+    """
+    if isinstance(event_item.parameter, Var):
+        return str(event_item.parameter.name)
+    else:
+        return None
+
+
+def _dynamic_event_matches_parameter_entry(event_item: RmsEvent | EmtEvent,
+                                           entry: DynamicPlotEntry) -> bool:
+    """
+    Check whether one dynamic event affects one parameter plot entry.
+
+    :param event_item: RMS or EMT event.
+    :param entry: Persistent parameter plot entry.
+    :return: ``True`` when the event targets the plotted parameter.
+
+    The reconstruction path must only consume events that belong to the same
+    device and symbolic parameter selected in the plot entry. Matching is kept
+    tolerant through the existing parameter alias rules.
+    """
+    parameter_name: str | None = _get_dynamic_event_parameter_name(event_item=event_item)
+    if parameter_name is not None:
+        if event_item.device is not None:
+            event_device_idtag: str = str(event_item.device.idtag)
+            if event_device_idtag == str(entry.device_idtag):
+                return _parameter_name_matches(candidate_name=parameter_name,
+                                               requested_name=str(entry.variable_name))
+            else:
+                return False
+        else:
+            return False
+    else:
+        return False
+
+
+def _get_dynamic_events_for_plot_entry(circuit: MultiCircuit,
+                                       entry: DynamicPlotEntry) -> List[RmsEvent | EmtEvent]:
+    """
+    Get the dynamic events that affect one parameter plot entry.
+
+    :param circuit: Circuit that owns the dynamic event assets.
+    :param entry: Persistent parameter plot entry.
+    :return: Ordered matching events.
+
+    Parameter plotting must follow only the events from the selected event
+    group. The handler therefore resolves the matching group first and only then
+    filters its events by device and parameter identity.
+    """
+    matching_events: List[RmsEvent | EmtEvent] = list()
+    group_events: List[tuple[RmsEventsGroup | EmtEventsGroup, List[RmsEvent | EmtEvent]]] = list()
+
+    if entry.simulation_type == PlotSimulationType.RMS:
+        rms_group: RmsEventsGroup
+        rms_events: List[RmsEvent]
+        for rms_group, rms_events in circuit.get_rms_event_by_groups():
+            group_events.append((rms_group, list(rms_events)))
+    else:
+        if entry.simulation_type == PlotSimulationType.EMT:
+            emt_group: EmtEventsGroup
+            emt_events: List[EmtEvent]
+            for emt_group, emt_events in circuit.get_emt_event_by_groups():
+                group_events.append((emt_group, list(emt_events)))
+        else:
+            pass
+
+    group_item: RmsEventsGroup | EmtEventsGroup
+    event_list: List[RmsEvent | EmtEvent]
+    for group_item, event_list in group_events:
+        matches_group_idtag: bool = str(group_item.idtag) == str(entry.event_group_idtag) and str(entry.event_group_idtag) != ""
+        matches_group_name: bool = str(group_item.name) == str(entry.event_group_name) and str(entry.event_group_name) != ""
+
+        if matches_group_idtag or matches_group_name:
+            event_item: RmsEvent | EmtEvent
+            for event_item in event_list:
+                if _dynamic_event_matches_parameter_entry(event_item=event_item, entry=entry):
+                    matching_events.append(event_item)
+                else:
+                    pass
+        else:
+            pass
+
+    return _sort_dynamic_events_by_time(events=matching_events)
+
+
+def _apply_step_event_to_parameter_series(time_axis: np.ndarray,
+                                          y_values: np.ndarray,
+                                          event_item: RmsEvent | EmtEvent) -> None:
+    """
+    Apply one step event to one parameter time series in place.
+
+    :param time_axis: Relative simulation time axis.
+    :param y_values: Mutable parameter values aligned with ``time_axis``.
+    :param event_item: Dynamic event to apply.
+    :return: None.
+
+    A step event replaces the parameter value from the event time onward. The
+    whole suffix must be updated so later events start from the correct already-
+    modified trace.
+    """
+    event_time: float = float(event_item.time)
+    event_value: float = float(event_item.value)
+    affected_mask: np.ndarray = time_axis >= event_time
+    y_values[affected_mask] = event_value
+
+
+def _apply_ramp_event_to_parameter_series(time_axis: np.ndarray,
+                                          y_values: np.ndarray,
+                                          event_item: RmsEvent | EmtEvent) -> None:
+    """
+    Apply one ramp event to one parameter time series in place.
+
+    :param time_axis: Relative simulation time axis.
+    :param y_values: Mutable parameter values aligned with ``time_axis``.
+    :param event_item: Dynamic event to apply.
+    :return: None.
+
+    A ramp event must preserve the parameter value before the ramp start, blend
+    linearly toward the target during the ramp interval, and then hold the final
+    value afterwards. Updating the array in place keeps the event composition
+    simple and lets later events build on the already-applied earlier ones.
+    """
+    start_time: float = float(event_item.time)
+    end_time: float | None = event_item.end_time
+
+    if end_time is not None:
+        if float(end_time) > start_time:
+            pass
+        else:
+            _apply_step_event_to_parameter_series(time_axis=time_axis,
+                                                  y_values=y_values,
+                                                  event_item=event_item)
+            return
+    else:
+        _apply_step_event_to_parameter_series(time_axis=time_axis,
+                                              y_values=y_values,
+                                              event_item=event_item)
+        return
+
+    resolved_end_time: float = float(end_time)
+    pre_start_mask: np.ndarray = time_axis < start_time
+    in_ramp_mask: np.ndarray = (time_axis >= start_time) & (time_axis < resolved_end_time)
+    post_end_mask: np.ndarray = time_axis >= resolved_end_time
+
+    if np.any(pre_start_mask):
+        pass
+    else:
+        pass
+
+    start_index_candidates: np.ndarray = np.nonzero(time_axis >= start_time)[0]
+    start_value: float
+    if len(start_index_candidates) > 0:
+        start_index: int = int(start_index_candidates[0])
+        start_value = float(y_values[start_index])
+    else:
+        if len(y_values) > 0:
+            start_value = float(y_values[-1])
+        else:
+            start_value = float(event_item.value)
+
+    if np.any(in_ramp_mask):
+        ramp_times: np.ndarray = time_axis[in_ramp_mask]
+        ramp_progress: np.ndarray = (ramp_times - start_time) / (resolved_end_time - start_time)
+        y_values[in_ramp_mask] = start_value + ramp_progress * (float(event_item.value) - start_value)
+    else:
+        pass
+
+    if np.any(post_end_mask):
+        y_values[post_end_mask] = float(event_item.value)
+    else:
+        pass
+
+
+def _build_parameter_plot_data_from_events(circuit: MultiCircuit,
+                                           entry: DynamicPlotEntry,
+                                           time_axis: np.ndarray,
+                                           base_value: float) -> tuple[np.ndarray, np.ndarray] | None:
+    """
+    Build parameter plot arrays by replaying matching dynamic events.
+
+    :param circuit: Circuit that owns the event assets.
+    :param entry: Persistent parameter plot entry.
+    :param time_axis: Relative simulation time axis.
+    :param base_value: Initial parameter value before any event happens.
+    :return: Plot arrays, or ``None`` when no matching events exist.
+
+    The results containers only expose one scalar snapshot for parameters. When
+    a parameter is changed by events, the GUI must rebuild the visible trace from
+    the declarative event definitions so step and ramp transitions appear in the
+    parameter plot.
+    """
+    matching_events: List[RmsEvent | EmtEvent] = _get_dynamic_events_for_plot_entry(circuit=circuit, entry=entry)
+    if len(matching_events) > 0:
+        y_values: np.ndarray = np.empty(len(time_axis), dtype=float)
+        y_values[:] = float(base_value)
+
+        event_item: RmsEvent | EmtEvent
+        for event_item in matching_events:
+            if event_item.transition_type == DynamicEventTransitionType.Step:
+                _apply_step_event_to_parameter_series(time_axis=time_axis,
+                                                      y_values=y_values,
+                                                      event_item=event_item)
+            else:
+                if event_item.transition_type == DynamicEventTransitionType.Ramp:
+                    _apply_ramp_event_to_parameter_series(time_axis=time_axis,
+                                                          y_values=y_values,
+                                                          event_item=event_item)
+                else:
+                    _apply_step_event_to_parameter_series(time_axis=time_axis,
+                                                          y_values=y_values,
+                                                          event_item=event_item)
+
+        return time_axis, y_values
+    else:
+        return None
 
 
 def _parse_plot_simulation_type(simulation_type: str) -> PlotSimulationType:
@@ -2131,14 +2402,14 @@ class DynamicsPlotsTreeModel(QtGui.QStandardItemModel):
 
     __slots__ = ("_handler",)
 
-    def __init__(self, handler: "DynamicsResultsHandler"):
+    def __init__(self, handler: Union["DynamicsResultsHandler", _GenericDynamicsPlotsDropHandler]):
         """
         Build the plots tree model.
 
         :param handler: Dynamics-results handler that owns the plot-group state.
         """
         QtGui.QStandardItemModel.__init__(self)
-        self._handler: DynamicsResultsHandler = handler
+        self._handler: Union["DynamicsResultsHandler", _GenericDynamicsPlotsDropHandler] = handler
 
     def flags(self, index: QtCore.QModelIndex) -> QtCore.Qt.ItemFlag:
         """
@@ -2219,6 +2490,7 @@ class DynamicsPlotsTreeModel(QtGui.QStandardItemModel):
             if isinstance(self._handler, DynamicsResultsHandler):
                 resolved_drop_group_name: str | None = self._handler.get_plot_group_name_from_index(index=parent)
             else:
+                # Fallback handlers expose their own drop-index resolver.
                 resolved_drop_group_name = self._handler.get_group_name_from_drop_index(index=parent)
             if resolved_drop_group_name is not None:
                 return True
@@ -2437,7 +2709,7 @@ class DynamicsResultsHandler:
     __slots__ = ("results", "circuit", "dialog_parent", "plot_simulation_type",
                   "pre_simulation_mode", "tree_data", "tree_model", "proxy_model", "plots_model", "group_idx",
                   "var_role", "group_name_role", "tree_state_role", "drag_mime_type", "drop_target_role", "entry_role_role", "plot_groups", "series_by_key",
-                  "series_by_var_uid", "candidates_by_parameter_name", "source_labels")
+                  "series_by_var_uid", "candidates_by_parameter_name", "source_labels", "_open_plot_dialogs")
 
     def __init__(self,
                  results: RmsResults | EmtResults | None,
@@ -2481,6 +2753,10 @@ class DynamicsResultsHandler:
         self.series_by_var_uid: Dict[int, List[DynamicResultSeries | DynamicPlotCandidate]] = dict()
         self.candidates_by_parameter_name: Dict[str, List[DynamicPlotCandidate]] = dict()
         self.source_labels: List[str] = list()
+
+        # Open plot windows are kept referenced so they are not garbage collected
+        # while still visible; entries are pruned when the user closes them.
+        self._open_plot_dialogs: List[QtWidgets.QDialog] = list()
 
         # The proxy model owns the reversible filtering state used by the device tree view.
         self.proxy_model: QtCore.QSortFilterProxyModel = QtCore.QSortFilterProxyModel()
@@ -3671,15 +3947,6 @@ class DynamicsResultsHandler:
         else:
             return None
 
-    def get_group_name_from_drop_index(self, index: QtCore.QModelIndex) -> str | None:
-        """
-        Resolve the plot-group name targeted by a drop operation.
-
-        :param index: Drop target index.
-        :return: Group name, or ``None`` when the drop target is invalid.
-        """
-        return self.get_plot_group_name_from_index(index=index)
-
     def get_plot_series_from_index(self, index: QtCore.QModelIndex) -> DynamicResultSeries | None:
         """
         Get the series represented by a plots-tree index.
@@ -4595,6 +4862,43 @@ class DynamicsResultsHandler:
         """
         return len(self.source_labels) > 1
 
+    def _show_figure(self, figure: Figure, title: str) -> None:
+        """
+        Display a Matplotlib figure in an embedded Qt window.
+
+        The figure is embedded in a ``FigureCanvasQTAgg`` inside a modeless
+        ``QDialog`` instead of being shown with ``pyplot.show()``. 
+        Before ``pyplot.show()`` was starting starts a second GUI event loop
+        on top of the already-running Qt application which is a hard
+        crash on the macOS backend.
+
+        :param figure: Figure to display (built with ``matplotlib.figure.Figure``).
+        :param title: Window title.
+        :return: Nothing.
+        """
+        dialog: QtWidgets.QDialog = QtWidgets.QDialog(self.dialog_parent)
+        dialog.setWindowTitle(title)
+        dialog.setWindowFlag(QtCore.Qt.WindowType.Window, True)
+        dialog.setAttribute(QtCore.Qt.WidgetAttribute.WA_DeleteOnClose, True)
+
+        canvas: FigureCanvas = FigureCanvas(figure)
+        toolbar: NavigationToolbar = NavigationToolbar(canvas, dialog)
+
+        layout: QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout(dialog)
+        layout.addWidget(toolbar)
+        layout.addWidget(canvas)
+        dialog.resize(900, 600)
+
+        self._open_plot_dialogs.append(dialog)
+
+        # Drop our reference once the window is closed so the dialog can be freed
+        def _forget(_result: int = 0, _dialog: QtWidgets.QDialog = dialog) -> None:
+            if _dialog in self._open_plot_dialogs:
+                self._open_plot_dialogs.remove(_dialog)
+
+        dialog.finished.connect(_forget)
+        dialog.show()
+
     def plot_series(self, series: DynamicResultSeries) -> None:
         """
         Plot one source-specific series.
@@ -4602,14 +4906,14 @@ class DynamicsResultsHandler:
         :param series: Series to plot.
         :return: Nothing.
         """
-        figure = plt.figure(figsize=(12, 8))
+        figure = Figure(figsize=(12, 8))
         axis = figure.add_subplot(111)
         x_values, y_values = self._get_series_plot_data(series=series)
         axis.plot(x_values, y_values, label=series.get_plot_label(has_multiple_sources=self.has_multiple_sources()))
         axis.set_title(series.get_var().name)
         axis.set_xlabel("Time [s]")
         axis.legend()
-        plt.show()
+        self._show_figure(figure=figure, title=series.get_var().name)
 
     def plot_var(self, var: Var, group_name: str) -> None:
         """
@@ -4655,7 +4959,7 @@ class DynamicsResultsHandler:
         else:
             pass
 
-        figure = plt.figure(figsize=(12, 8))
+        figure = Figure(figsize=(12, 8))
         axis = figure.add_subplot(111)
 
         variable: DynamicResultSeries | DynamicPlotEntry | Var
@@ -4714,10 +5018,9 @@ class DynamicsResultsHandler:
             axis.legend()
             axis.set_xlabel("Time [s]")
             axis.set_title(plot_group_name)
-            plt.show()
+            self._show_figure(figure=figure, title=plot_group_name)
             return True
         else:
-            plt.close(figure)
             return False
 
     def _resolve_entry_signal(self,
@@ -4809,7 +5112,7 @@ class DynamicsResultsHandler:
         else:
             pass
 
-        figure = plt.figure(figsize=(12, 8))
+        figure = Figure(figsize=(12, 8))
         axis = figure.add_subplot(111)
 
         finite_mask: np.ndarray = np.isfinite(x_values) & np.isfinite(y_values)
@@ -4817,7 +5120,6 @@ class DynamicsResultsHandler:
         y_plot: np.ndarray = y_values[finite_mask]
 
         if len(x_plot) == 0:
-            plt.close(figure)
             return False
         else:
             pass
@@ -4850,7 +5152,7 @@ class DynamicsResultsHandler:
         else:
             pass
 
-        plt.show()
+        self._show_figure(figure=figure, title=plot_group.get_name())
         return True
 
 
@@ -5282,7 +5584,9 @@ class DynamicsResultsHandler:
             else:
                 pass
 
-            canonical_parameter_name: str = _build_parameter_canonical_name_from_display(entry.variable_name)
+            # canonical_parameter_name: str = _build_parameter_canonical_name_from_display(entry.variable_name)
+            canonical_parameter_name: str = str(entry.variable_name)
+            x_values: np.ndarray = _build_relative_time_axis(time_array=self.results.time_array)
             event_group_index: int | None = None
             group_idtags: Sequence[str] = self._get_group_idtags(results=self.results)
             group_names: Sequence[str] = self._get_group_names(results=self.results)
@@ -5299,19 +5603,28 @@ class DynamicsResultsHandler:
                 if self._has_event_group_results(results=self.results, group_idx=event_group_index):
                     # RMS and EMT currently export parameter snapshots through the
                     # per-event-group ``parameter_value_maps`` structure. When a
-                    # snapshot exists, plotting expands that scalar onto the real
-                    # simulation time axis so the parameter becomes a constant
-                    # trace without pretending to be a normal state variable.
+                    # snapshot exists, the plotting path uses it as the baseline
+                    # parameter value before replaying any matching events. This
+                    # keeps plain constant parameters cheap while still allowing
+                    # event-driven parameters to show their visible changes.
                     exported_parameter_value: float | None = self.results.get_parameter_value(
                         group_idx=event_group_index,
                         device_idtag=entry.device_idtag,
                         parameter_name=canonical_parameter_name,
                     )
                     if exported_parameter_value is not None:
-                        x_values: np.ndarray = _build_relative_time_axis(time_array=self.results.time_array)
-                        y_values: np.ndarray = np.empty(len(x_values), dtype=float)
-                        y_values[:] = float(exported_parameter_value)
-                        return x_values, y_values
+                        event_plot_data: tuple[np.ndarray, np.ndarray] | None = _build_parameter_plot_data_from_events(
+                            circuit=self.circuit,
+                            entry=entry,
+                            time_axis=x_values,
+                            base_value=float(exported_parameter_value),
+                        )
+                        if event_plot_data is not None:
+                            return event_plot_data
+                        else:
+                            y_values: np.ndarray = np.empty(len(x_values), dtype=float)
+                            y_values[:] = float(exported_parameter_value)
+                            return x_values, y_values
                     else:
                         pass
                 else:
@@ -5326,18 +5639,27 @@ class DynamicsResultsHandler:
             if isinstance(device, (DynamicDevice, DynamicBusDevice)):
                 # Some parameters are static model constants and therefore do not
                 # appear in the exported per-group snapshot map. In that case the
-                # live model block still carries the scalar value and the plot can
-                # reuse it over the actual simulation time axis.
+                # live model block still carries the scalar value. That scalar is
+                # used as the baseline before replaying matching events, and only
+                # falls back to a plain constant trace when no event changes it.
                 model_block: Block = _get_pre_simulation_block(device=device, simulation_type=entry.simulation_type)
                 parameter_value: float | None = _get_runtime_parameter_scalar_from_block(
                     model=model_block,
                     parameter_name=canonical_parameter_name,
                 )
                 if parameter_value is not None:
-                    x_values = _build_relative_time_axis(time_array=self.results.time_array)
-                    y_values = np.empty(len(x_values), dtype=float)
-                    y_values[:] = parameter_value
-                    return x_values, y_values
+                    event_plot_data = _build_parameter_plot_data_from_events(
+                        circuit=self.circuit,
+                        entry=entry,
+                        time_axis=x_values,
+                        base_value=float(parameter_value),
+                    )
+                    if event_plot_data is not None:
+                        return event_plot_data
+                    else:
+                        y_values: np.ndarray = np.empty(len(x_values), dtype=float)
+                        y_values[:] = parameter_value
+                        return x_values, y_values
                 else:
                     return None
             else:
@@ -5358,13 +5680,13 @@ class DynamicsResultsHandler:
             y_values: np.ndarray = parameter_plot_data[1]
             label: str = _build_parameter_plot_entry_label(entry=entry)
 
-            figure = plt.figure(figsize=(12, 8))
+            figure = Figure(figsize=(12, 8))
             axis = figure.add_subplot(111)
             axis.plot(x_values, y_values, label=label)
             axis.set_title(entry.variable_name)
             axis.set_xlabel("Time [s]")
             axis.legend()
-            plt.show()
+            self._show_figure(figure=figure, title=entry.variable_name)
             return True
         else:
             return False

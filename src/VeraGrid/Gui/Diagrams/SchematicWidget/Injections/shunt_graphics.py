@@ -6,7 +6,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionTemplateGraphicItem
-from VeraGrid.Gui.Diagrams.generic_graphics import Condenser
+from VeraGrid.Gui.Diagrams.generic_graphics import ShuntSymbol
 from VeraGridEngine.Devices.Injections.shunt import Shunt
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
@@ -15,7 +15,7 @@ if TYPE_CHECKING:  # Only imports the below statements during type checking
 
 class ShuntGraphicItem(InjectionTemplateGraphicItem):
 
-    def __init__(self, parent, api_obj: Shunt, editor: "SchematicWidget"):
+    def __init__(self, parent, api_obj: Shunt, editor: "SchematicWidget", draw_labels: bool = True):
         """
 
         :param parent:
@@ -25,10 +25,11 @@ class ShuntGraphicItem(InjectionTemplateGraphicItem):
                                               parent=parent,
                                               api_obj=api_obj,
                                               editor=editor,
-                                              device_type_name='generator',
-                                              w=20,
-                                              h=40)
-        self.set_glyph(glyph=Condenser(self, h=self.h, w=self.w, update_nexus_fcn=self.update_nexus))
+                                              device_type_name='shunt',
+                                              w=28,
+                                              h=40,
+                                              draw_labels=draw_labels)
+        self.set_glyph(glyph=ShuntSymbol(self, h=self.h, w=self.w))
 
     @property
     def api_object(self) -> Shunt:

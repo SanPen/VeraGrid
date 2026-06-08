@@ -9,7 +9,7 @@ from VeraGridEngine.enumerations import DeviceType
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.Utils.Symbolic.block import Block, VarPowerFlowRefferenceType
+from VeraGridEngine.Utils.Symbolic.block import Block, VarPowerFlowReferenceType
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
 
 if TYPE_CHECKING:
@@ -45,7 +45,7 @@ class BusEmtTemplate(EmtModelTemplate):
         self._block.name = name
         if is_dc:
             # For a DC bus in EMT, we track the instantaneous DC voltage.
-            self.v_DC = vf.add_var(name=f"v_DC_{name}", reference=VarPowerFlowRefferenceType.Vdc)
+            self.v_DC = vf.add_var(name=f"v_DC_{name}", reference=VarPowerFlowReferenceType.Vdc)
 
             self._block = Block(
                 algebraic_vars=[self.v_DC],
@@ -57,20 +57,20 @@ class BusEmtTemplate(EmtModelTemplate):
             # Include v_N, v_A, v_B, v_C as None so that the loop in emt_problem_dae
             # can iterate over all phases without errors.
             self._block.external_mapping = {
-                VarPowerFlowRefferenceType.Vdc: self.v_DC,
-                VarPowerFlowRefferenceType.v_N: None,
-                VarPowerFlowRefferenceType.v_A: None,
-                VarPowerFlowRefferenceType.v_B: None,
-                VarPowerFlowRefferenceType.v_C: None,
-                VarPowerFlowRefferenceType.P: None,
-                VarPowerFlowRefferenceType.Q: None
+                VarPowerFlowReferenceType.Vdc: self.v_DC,
+                VarPowerFlowReferenceType.v_N: None,
+                VarPowerFlowReferenceType.v_A: None,
+                VarPowerFlowReferenceType.v_B: None,
+                VarPowerFlowReferenceType.v_C: None,
+                VarPowerFlowReferenceType.P: None,
+                VarPowerFlowReferenceType.Q: None
             }
 
         else:
-            self.v_N = vf.add_var(name=f"v_N_{name}", reference=VarPowerFlowRefferenceType.v_N) if mask[0] else None
-            self.v_A = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowRefferenceType.v_A) if mask[1] else None
-            self.v_B = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowRefferenceType.v_B) if mask[2] else None
-            self.v_C = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowRefferenceType.v_C) if mask[3] else None
+            self.v_N = vf.add_var(name=f"v_N_{name}", reference=VarPowerFlowReferenceType.v_N) if mask[0] else None
+            self.v_A = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowReferenceType.v_A) if mask[1] else None
+            self.v_B = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowReferenceType.v_B) if mask[2] else None
+            self.v_C = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowReferenceType.v_C) if mask[3] else None
 
             v_list = [v for v in (self.v_N, self.v_A, self.v_B, self.v_C) if v is not None]
             if not v_list:
@@ -82,13 +82,13 @@ class BusEmtTemplate(EmtModelTemplate):
             )
 
             self._block.external_mapping = {
-                VarPowerFlowRefferenceType.Vdc: None,
-                VarPowerFlowRefferenceType.v_N: self.v_N,
-                VarPowerFlowRefferenceType.v_A: self.v_A,
-                VarPowerFlowRefferenceType.v_B: self.v_B,
-                VarPowerFlowRefferenceType.v_C: self.v_C,
-                VarPowerFlowRefferenceType.P: None,
-                VarPowerFlowRefferenceType.Q: None
+                VarPowerFlowReferenceType.Vdc: None,
+                VarPowerFlowReferenceType.v_N: self.v_N,
+                VarPowerFlowReferenceType.v_A: self.v_A,
+                VarPowerFlowReferenceType.v_B: self.v_B,
+                VarPowerFlowReferenceType.v_C: self.v_C,
+                VarPowerFlowReferenceType.P: None,
+                VarPowerFlowReferenceType.Q: None
             }
 
     @property
@@ -179,15 +179,15 @@ def get_bus_emt_algebraic_vars(bus_emt_model: Block) -> Tuple[
     external_mapping = bus_emt_model.external_mapping
 
     # DC bus
-    vdc = external_mapping.get(VarPowerFlowRefferenceType.Vdc, None)
+    vdc = external_mapping.get(VarPowerFlowReferenceType.Vdc, None)
     if vdc is not None:
         return vdc, None, None, None
 
     # AC bus
-    v_n = external_mapping.get(VarPowerFlowRefferenceType.v_N, None)
-    v_a = external_mapping.get(VarPowerFlowRefferenceType.v_A, None)
-    v_b = external_mapping.get(VarPowerFlowRefferenceType.v_B, None)
-    v_c = external_mapping.get(VarPowerFlowRefferenceType.v_C, None)
+    v_n = external_mapping.get(VarPowerFlowReferenceType.v_N, None)
+    v_a = external_mapping.get(VarPowerFlowReferenceType.v_A, None)
+    v_b = external_mapping.get(VarPowerFlowReferenceType.v_B, None)
+    v_c = external_mapping.get(VarPowerFlowReferenceType.v_C, None)
 
     if v_n is None and v_a is None and v_b is None and v_c is None:
         raise ValueError("Invalid EMT bus model: no voltage algebraic variables found")

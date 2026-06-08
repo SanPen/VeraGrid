@@ -57,6 +57,8 @@ from VeraGrid.Gui.SyncDialogue.sync_dialogue import SyncDialogueWindow
 from VeraGrid.Gui.DeviceEditors.TowerBuilder.LineBuilderDialogue import TowerBuilderGUI
 from VeraGrid.Gui.GridReduce.grid_reduce import GridReduceDialogue
 from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI
+from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_window import DynamicEditorWorkspaceWindow
+from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import DynamicEditorWorkspaceManager
 from VeraGrid.Gui.Diagrams.SchematicWidget.diagram_bus_selection_dialogue import DiagramBusSelectorDialogue
 from VeraGrid.Gui.Diagrams.generic_graphics import IS_DARK
 from VeraGrid.Gui.python_console import PythonConsole
@@ -250,6 +252,11 @@ class BaseMainGui(QMainWindow):
         self.about_msg_window: Union[AboutDialogueGuiGUI, None] = None
         self.tower_builder_window: Union[TowerBuilderGUI, None] = None
         self.rms_model_Editor_window: Union[DynamicBlockEditorGUI, None] = None
+        # Dynamic (RMS/EMT) model editor workspaces are top-level QMainWindows
+        # Rooting them here keeps them out of the cyclic collector; 
+        # Needed to avoid macos GUI crashing issues
+        # We use a list because there can be multiple dynamic windows at once
+        self.dynamic_editor_windows: List[DynamicEditorWorkspaceWindow] = list()
         self.investment_checks_diag: Union[CheckListDialogue, None] = None
         self.new_se_dlg: Union[CheckListDialogue, None] = None
         self.contingency_checks_diag: Union[CheckListDialogue, None] = None
@@ -406,6 +413,21 @@ class BaseMainGui(QMainWindow):
         """
         for i in (0, 1, 2):
             gc.collect(generation=i)
+
+    def retain_dynamic_editor_windows(self) -> None:
+        """
+        Keep a strong reference from the main window to every open dynamic
+        (RMS/EMT) model editor workspace.
+
+        These windows are otherwise referenced only by the editor's singleton
+        manager and by internal signal/lambda cycles. A root reference here keeps
+        their lifetime out of Python's cyclic garbage collector, which on macOS
+        can run on a worker thread and destroy the window (NSWindow).
+        Windows are only added (never dropped here)
+        """
+        for workspace in DynamicEditorWorkspaceManager.instance().get_open_workspaces():
+            if workspace not in self.dynamic_editor_windows:
+                self.dynamic_editor_windows.append(workspace)
 
     def get_simulation_threads(self) -> List[GcThread]:
         """

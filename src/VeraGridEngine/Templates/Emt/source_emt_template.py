@@ -12,7 +12,7 @@ from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Templates.Emt.load_RLC_emt_template import _get_phase_count_name
 from VeraGridEngine.Utils.Symbolic.block import Expr, Var
 from VeraGridEngine.Utils.Symbolic import symbolic as sym
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
 
 
 def _get_active_nabc_labels(phN: bool, phA: bool, phB: bool, phC: bool) -> List[str]:
@@ -54,7 +54,7 @@ def _get_active_nabc_labels(phN: bool, phA: bool, phB: bool, phC: bool) -> List[
         raise ValueError("At least one source terminal must be enabled for an EMT source template")
 
 
-def _get_voltage_reference(phase_label: str) -> VarPowerFlowRefferenceType:
+def _get_voltage_reference(phase_label: str) -> VarPowerFlowReferenceType:
     """
     Return the EMT voltage reference enum for one NABC label.
 
@@ -62,18 +62,18 @@ def _get_voltage_reference(phase_label: str) -> VarPowerFlowRefferenceType:
     :return: Matching voltage reference enum.
     """
     if phase_label == "N":
-        return VarPowerFlowRefferenceType.v_N
+        return VarPowerFlowReferenceType.v_N
     elif phase_label == "A":
-        return VarPowerFlowRefferenceType.v_A
+        return VarPowerFlowReferenceType.v_A
     elif phase_label == "B":
-        return VarPowerFlowRefferenceType.v_B
+        return VarPowerFlowReferenceType.v_B
     elif phase_label == "C":
-        return VarPowerFlowRefferenceType.v_C
+        return VarPowerFlowReferenceType.v_C
     else:
         raise ValueError(f"Unsupported source phase label '{phase_label}'")
 
 
-def _get_current_reference(phase_label: str) -> VarPowerFlowRefferenceType:
+def _get_current_reference(phase_label: str) -> VarPowerFlowReferenceType:
     """
     Return the EMT injected-current reference enum for one NABC label.
 
@@ -81,18 +81,18 @@ def _get_current_reference(phase_label: str) -> VarPowerFlowRefferenceType:
     :return: Matching current reference enum.
     """
     if phase_label == "N":
-        return VarPowerFlowRefferenceType.i_N
+        return VarPowerFlowReferenceType.i_N
     elif phase_label == "A":
-        return VarPowerFlowRefferenceType.i_A
+        return VarPowerFlowReferenceType.i_A
     elif phase_label == "B":
-        return VarPowerFlowRefferenceType.i_B
+        return VarPowerFlowReferenceType.i_B
     elif phase_label == "C":
-        return VarPowerFlowRefferenceType.i_C
+        return VarPowerFlowReferenceType.i_C
     else:
         raise ValueError(f"Unsupported source phase label '{phase_label}'")
 
 
-def _build_external_mapping(voltage_vars: Dict[str, Var], current_vars: Dict[str, Var]) -> Dict[VarPowerFlowRefferenceType, Var | None]:
+def _build_external_mapping(voltage_vars: Dict[str, Var], current_vars: Dict[str, Var]) -> Dict[VarPowerFlowReferenceType, Var | None]:
     """
     Build one full EMT external mapping with inactive entries set to ``None``.
 
@@ -101,14 +101,14 @@ def _build_external_mapping(voltage_vars: Dict[str, Var], current_vars: Dict[str
     :return: External mapping dictionary.
     """
     return dict({
-        VarPowerFlowRefferenceType.v_N: voltage_vars.get("N", None),
-        VarPowerFlowRefferenceType.v_A: voltage_vars.get("A", None),
-        VarPowerFlowRefferenceType.v_B: voltage_vars.get("B", None),
-        VarPowerFlowRefferenceType.v_C: voltage_vars.get("C", None),
-        VarPowerFlowRefferenceType.i_N: current_vars.get("N", None),
-        VarPowerFlowRefferenceType.i_A: current_vars.get("A", None),
-        VarPowerFlowRefferenceType.i_B: current_vars.get("B", None),
-        VarPowerFlowRefferenceType.i_C: current_vars.get("C", None),
+        VarPowerFlowReferenceType.v_N: voltage_vars.get("N", None),
+        VarPowerFlowReferenceType.v_A: voltage_vars.get("A", None),
+        VarPowerFlowReferenceType.v_B: voltage_vars.get("B", None),
+        VarPowerFlowReferenceType.v_C: voltage_vars.get("C", None),
+        VarPowerFlowReferenceType.i_N: current_vars.get("N", None),
+        VarPowerFlowReferenceType.i_A: current_vars.get("A", None),
+        VarPowerFlowReferenceType.i_B: current_vars.get("B", None),
+        VarPowerFlowReferenceType.i_C: current_vars.get("C", None),
     })
 
 

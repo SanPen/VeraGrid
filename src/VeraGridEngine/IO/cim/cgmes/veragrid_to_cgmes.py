@@ -48,7 +48,7 @@ from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowRes
 from VeraGridEngine.data_logger import DataLogger
 from VeraGridEngine.enumerations import (TapChangerTypes, TapPhaseControl, TapModuleControl, CGMESVersions,
                                          ExternalGridMode, ShuntControlMode, ConverterControlType,
-                                         ContingencyOperationTypes)
+                                         ContingencyOperationTypes, GeneratorControlMode)
 
 
 def set_declared_cgmes_property(cgmes_object: CGMES_ASSETS,
@@ -1671,7 +1671,7 @@ def get_cgmes_generators(multicircuit_model: MultiCircuit,
         # CONTROL : has_control: do we have control?
         # control_type: voltage or power control, ..
         # is_controlled: enabling flag (already have)
-        if mc_elm.is_controlled:
+        if mc_elm.control_mode == GeneratorControlMode.V:
             cgmes_syn.RegulatingControl = (
                 create_cgmes_regulating_control(cgmes_syn, mc_elm, cgmes_model, ver, logger))
             cgmes_syn.RegulatingControl.targetValue = mc_elm.get_Vset_at(t_idx) * mc_elm.bus.Vnom

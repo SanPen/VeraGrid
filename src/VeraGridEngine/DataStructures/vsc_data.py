@@ -6,8 +6,7 @@ from __future__ import annotations
 
 import numpy as np
 from VeraGridEngine.DataStructures.branch_parent_data import BranchParentData
-from VeraGridEngine.enumerations import ConverterControlType, ConverterFaultControlType
-from VeraGridEngine.basic_structures import Vec, IntVec, ObjVec, Logger
+from VeraGridEngine.basic_structures import Vec, IntVec, Logger
 
 
 class VscData(BranchParentData):
@@ -30,9 +29,9 @@ class VscData(BranchParentData):
         self.alpha2: Vec = np.zeros(self.nelm, dtype=float)  # converter losses parameter (alpha2) (switching loss)
         self.alpha3: Vec = np.zeros(self.nelm, dtype=float)  # converter losses parameter (alpha3) (resistive loss)
 
-        self.control1: ObjVec = np.full(self.nelm, fill_value=ConverterControlType.Vm_dc, dtype=object)
-        self.control2: ObjVec = np.full(self.nelm, fill_value=ConverterControlType.Pac, dtype=object)
-        self.fault_control: ObjVec = np.full(self.nelm, fill_value=ConverterFaultControlType.Standard, dtype=object)
+        self.control1_int: IntVec = np.zeros(self.nelm, dtype=int)  # Values from ConverterControlType
+        self.control2_int: IntVec = np.zeros(self.nelm, dtype=int)  # Values from ConverterControlType
+        self.fault_control_int: IntVec = np.zeros(self.nelm, dtype=int)  # Values from ConverterControlType
 
         self.control1_val: Vec = np.ones(self.nelm, dtype=float)
         self.control2_val: Vec = np.ones(self.nelm, dtype=float)
@@ -81,9 +80,9 @@ class VscData(BranchParentData):
         data.alpha2 = self.alpha2[elm_idx]
         data.alpha3 = self.alpha3[elm_idx]
 
-        data.control1 = self.control1[elm_idx]
-        data.control2 = self.control2[elm_idx]
-        data.fault_control = self.fault_control[elm_idx]
+        data.control1_int = self.control1_int[elm_idx]
+        data.control2_int = self.control2_int[elm_idx]
+        data.fault_control_int = self.fault_control_int[elm_idx]
 
         data.control1_val = self.control1_val[elm_idx]
         data.control2_val = self.control2_val[elm_idx]
@@ -146,9 +145,9 @@ class VscData(BranchParentData):
         data.alpha2 = self.alpha2.copy()
         data.alpha3 = self.alpha3.copy()
 
-        data.control1 = self.control1.copy()
-        data.control2 = self.control2.copy()
-        data.fault_control = self.fault_control.copy()
+        data.control1_int = self.control1_int.copy()
+        data.control2_int = self.control2_int.copy()
+        data.fault_control_int = self.fault_control_int.copy()
 
         data.control1_val = self.control1_val.copy()
         data.control2_val = self.control2_val.copy()

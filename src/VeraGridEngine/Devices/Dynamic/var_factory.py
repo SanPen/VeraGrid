@@ -8,7 +8,7 @@ from typing import Union, List, Dict, Any, Tuple
 import uuid
 
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, Const, SharedVarReferenceType
 
 
@@ -100,7 +100,7 @@ class VarFactory(EditableDevice):
 
     def add_var(self,
                 name: str,
-                reference: VarPowerFlowRefferenceType | None = None,
+                reference: VarPowerFlowReferenceType | None = None,
                 network_conn: bool = False,
                 shared_reference: str | None | SharedVarReferenceType = None,
                 non_mutable_uid: int | None = None,
@@ -158,7 +158,7 @@ class VarFactory(EditableDevice):
 
     def add_diff_var(self,
                      name: str,
-                     reference: VarPowerFlowRefferenceType | None = None,
+                     reference: VarPowerFlowReferenceType | None = None,
                      network_conn: bool = False,
                      shared_reference: str | None | SharedVarReferenceType = None,
                      non_mutable_uid: int | None = None,
@@ -379,10 +379,10 @@ class VarFactory(EditableDevice):
                     key_ref = None
 
             ref_power_flow_data: Any = data.get("ref", None)
-            key_power_flow_ref: VarPowerFlowRefferenceType | None
+            key_power_flow_ref: VarPowerFlowReferenceType | None
 
             if ref_power_flow_data is not None:
-                key_power_flow_ref = VarPowerFlowRefferenceType(ref_power_flow_data)
+                key_power_flow_ref = VarPowerFlowReferenceType(ref_power_flow_data)
             else:
                 key_power_flow_ref = None
 
@@ -409,7 +409,7 @@ class VarFactory(EditableDevice):
         The loader must rebuild each differential variable using the exact
         symbolic metadata stored in the ``.veragrid`` payload. In particular,
         the power-flow reference has to be converted back to the
-        ``VarPowerFlowRefferenceType`` enum so downstream EMT connection logic
+        ``VarPowerFlowReferenceType`` enum so downstream EMT connection logic
         can distinguish branch terminal references such as ``vf_A`` and
         ``vt_A`` from bus references such as ``v_A``.
 
@@ -464,9 +464,9 @@ class VarFactory(EditableDevice):
             # Keeping the enum identity is required so EMT topology validation
             # can still recognize branch-side references after reopening files.
             reference_power_flow_data: Any = data.get("ref", None)
-            reference_power_flow: VarPowerFlowRefferenceType | None
+            reference_power_flow: VarPowerFlowReferenceType | None
             if reference_power_flow_data is not None:
-                reference_power_flow = VarPowerFlowRefferenceType(reference_power_flow_data)
+                reference_power_flow = VarPowerFlowReferenceType(reference_power_flow_data)
             else:
                 reference_power_flow = None
 

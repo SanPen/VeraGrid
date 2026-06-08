@@ -5,7 +5,7 @@
 
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType, ParamPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType, ParamPowerFlowReferenceType
 from VeraGridEngine.Utils.Symbolic.block import Block
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
 
@@ -28,8 +28,8 @@ def get_esd1_rms_template(vfactory: VarFactory, name: str = "ESD1 RMS template")
     templ = RmsModelTemplate(name=name)
     templ.tpe = DeviceType.BatteryDevice
 
-    vm = vfactory.add_var(f"Vm_{name}", reference=VarPowerFlowRefferenceType.Vm)
-    va = vfactory.add_var(f"Va_{name}", reference=VarPowerFlowRefferenceType.Va)
+    vm = vfactory.add_var(f"Vm_{name}", reference=VarPowerFlowReferenceType.Vm)
+    va = vfactory.add_var(f"Va_{name}", reference=VarPowerFlowReferenceType.Va)
     inputs = [vm, va]
 
     p = vfactory.add_var("P_esd1")
@@ -196,18 +196,18 @@ def get_esd1_rms_template(vfactory: VarFactory, name: str = "ESD1 RMS template")
 
     block.name = name
     block.external_mapping = {
-        VarPowerFlowRefferenceType.Vm: vm,
-        VarPowerFlowRefferenceType.Va: va,
-        VarPowerFlowRefferenceType.P: p,
-        VarPowerFlowRefferenceType.Q: q,
+        VarPowerFlowReferenceType.Vm: vm,
+        VarPowerFlowReferenceType.Va: va,
+        VarPowerFlowReferenceType.P: p,
+        VarPowerFlowReferenceType.Q: q,
     }
     block.api_obj_mapping = {
-        ParamPowerFlowRefferenceType.battery_enom_mwh: ecap_h,
-        ParamPowerFlowRefferenceType.battery_soc_0_pu: soc0,
-        ParamPowerFlowRefferenceType.battery_max_soc_pu: soc_max,
-        ParamPowerFlowRefferenceType.battery_min_soc_pu: soc_min,
-        ParamPowerFlowRefferenceType.battery_charge_efficiency_pu: eta_ch,
-        ParamPowerFlowRefferenceType.battery_discharge_efficiency_pu: eta_dis,
+        ParamPowerFlowReferenceType.battery_enom_mwh: ecap_h,
+        ParamPowerFlowReferenceType.battery_soc_0_pu: soc0,
+        ParamPowerFlowReferenceType.battery_max_soc_pu: soc_max,
+        ParamPowerFlowReferenceType.battery_min_soc_pu: soc_min,
+        ParamPowerFlowReferenceType.battery_charge_efficiency_pu: eta_ch,
+        ParamPowerFlowReferenceType.battery_discharge_efficiency_pu: eta_dis,
     }
     block.out_vars = [p, q, ipout, iqout, soc, p_sum, q_sum, p_dis_av, p_ch_av]
 

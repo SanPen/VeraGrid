@@ -37,6 +37,13 @@ from VeraGridEngine.Devices.Branches.hvdc_line import HvdcLine
 from VeraGridEngine.Devices.Branches.transformer3w import Transformer3W, Winding
 from VeraGridEngine.Devices.Branches.transformerNw import TransformerNW
 from VeraGridEngine.Devices.Injections.generator import Generator
+from VeraGridEngine.Devices.Injections.battery import Battery
+from VeraGridEngine.Devices.Injections.shunt import Shunt
+from VeraGridEngine.Devices.Injections.controllable_shunt import ControllableShunt
+from VeraGridEngine.Devices.Injections.static_generator import StaticGenerator
+from VeraGridEngine.Devices.Injections.load import Load
+from VeraGridEngine.Devices.Injections.external_grid import ExternalGrid
+from VeraGridEngine.Devices.Injections.current_injection import CurrentInjection
 from VeraGridEngine.Devices.Fluid import FluidNode, FluidPath
 from VeraGridEngine.Devices.Diagrams.schematic_diagram import SchematicDiagram
 from VeraGridEngine.Devices.Diagrams.graphic_location import GraphicLocation
@@ -3327,6 +3334,10 @@ class SchematicWidget(BaseDiagramWidget):
         Change the colour according to the system theme
         :return:
         """
+        palette = self.palette()
+        ACTIVE['color'] = QColor(palette.color(palette.ColorGroup.Active, palette.ColorRole.WindowText))
+        ACTIVE['text'] = QColor(palette.color(palette.ColorGroup.Active, palette.ColorRole.Text))
+        ACTIVE['background'] = QColor(palette.color(palette.ColorGroup.Active, palette.ColorRole.Window))
 
         for device_type, graphics_dict in self.graphics_manager.graphic_dict.items():
             for idtag, graphic_object in graphics_dict.items():
@@ -3391,9 +3402,6 @@ class SchematicWidget(BaseDiagramWidget):
         :return:
         """
         if not self.diagram.use_api_colors:
-            ACTIVE['color'] = QColor(255, 255, 255, 255)  # white
-            ACTIVE['text'] = QColor(255, 255, 255, 255)  # white
-            ACTIVE['background'] = QColor(0, 0, 0, 255)  # black
             self.recolour_mode()
 
     def set_light_mode(self) -> None:
@@ -3402,9 +3410,6 @@ class SchematicWidget(BaseDiagramWidget):
         :return:
         """
         if not self.diagram.use_api_colors:
-            ACTIVE['color'] = QColor(0, 0, 0, 255)  # black
-            ACTIVE['text'] = QColor(0, 0, 0, 255)  # black
-            ACTIVE['background'] = QColor(255, 255, 255, 255)  # white
             self.recolour_mode()
 
     def _sync_multiwinding_transformer_result_colours(self) -> None:
@@ -3438,6 +3443,13 @@ class SchematicWidget(BaseDiagramWidget):
                                   value: float,
                                   cmap: palettes.Colormaps | None,
                                   voltage_cmap: Callable) -> QColor:
+        """
+
+        :param value:
+        :param cmap:
+        :param voltage_cmap:
+        :return:
+        """
         a = 255
         if cmap == palettes.Colormaps.Green2Red:
             b, g, r = palettes.green_to_red_bgr(value)
@@ -3453,11 +3465,19 @@ class SchematicWidget(BaseDiagramWidget):
             a *= 255
         return QColor(r, g, b, a)
 
-    def _get_branch_result_color(self,
-                                 value: float,
+    @staticmethod
+    def _get_branch_result_color(value: float,
                                  cmap: palettes.Colormaps | None,
                                  loading_cmap: Callable,
                                  nominal_voltage: float) -> QColor:
+        """
+
+        :param value:
+        :param cmap:
+        :param loading_cmap:
+        :param nominal_voltage:
+        :return:
+        """
         a = 255
         if cmap == palettes.Colormaps.Green2Red:
             b, g, r = palettes.green_to_red_bgr(value)
@@ -3483,7 +3503,22 @@ class SchematicWidget(BaseDiagramWidget):
                             bus_types: list[str],
                             voltage_cmap: Callable,
                             cmap: palettes.Colormaps | None,
-                            use_flow_based_width: bool) -> None:
+                            use_flow_based_width: bool,
+                            apply_result_coloring: bool = True) -> None:
+        """
+
+        :param Sbus:
+        :param bus_active:
+        :param vabs:
+        :param vang:
+        :param vnorm:
+        :param types:
+        :param bus_types:
+        :param voltage_cmap:
+        :param cmap:
+        :param use_flow_based_width:
+        :return:
+        """
         nbus = self.circuit.get_bus_number()
         if nbus != len(vnorm):
             error_msg("Bus results length differs from the number of Bus results. \n"
@@ -3502,7 +3537,10 @@ class SchematicWidget(BaseDiagramWidget):
                                           P=Sbus[i].real if Sbus is not None else None,
                                           Q=Sbus[i].imag if Sbus is not None else None,
                                           tpe=bus_types[int(types[i])] if types is not None else None)
-                graphic_object.set_tile_color(self._get_voltage_result_color(vnorm[i], cmap, voltage_cmap))
+                if apply_result_coloring:
+                    graphic_object.set_tile_color(self._get_voltage_result_color(vnorm[i], cmap, voltage_cmap))
+                else:
+                    graphic_object.update_color()
                 if use_flow_based_width:
                     graphic_object.change_size(w=graphic_object.w)
             else:
@@ -3525,6 +3563,25 @@ class SchematicWidget(BaseDiagramWidget):
                                ma: Vec | None,
                                tau: Vec | None,
                                is_three_phase: bool = False) -> float | None:
+        """
+
+        :param Sf:
+        :param St:
+        :param loadings:
+        :param losses:
+        :param br_active:
+        :param hvdc_Pf:
+        :param loading_label:
+        :param use_flow_based_width:
+        :param min_branch_width:
+        :param max_branch_width:
+        :param loading_cmap:
+        :param cmap:
+        :param ma:
+        :param tau:
+        :param is_three_phase:
+        :return:
+        """
         if Sf is None or len(Sf) == 0:
             return 1.0
 
@@ -3623,6 +3680,23 @@ class SchematicWidget(BaseDiagramWidget):
                             loading_cmap: Callable,
                             cmap: palettes.Colormaps | None,
                             max_flow: float) -> None:
+        """
+
+        :param vsc_Pf:
+        :param vsc_Pt:
+        :param vsc_Qt:
+        :param vsc_losses:
+        :param vsc_loading:
+        :param vsc_active:
+        :param loading_label:
+        :param use_flow_based_width:
+        :param min_branch_width:
+        :param max_branch_width:
+        :param loading_cmap:
+        :param cmap:
+        :param max_flow:
+        :return:
+        """
         if vsc_Pf is None:
             return
 
@@ -3688,6 +3762,22 @@ class SchematicWidget(BaseDiagramWidget):
                              loading_cmap: Callable,
                              cmap: palettes.Colormaps | None,
                              max_flow: float) -> None:
+        """
+
+        :param hvdc_Pf:
+        :param hvdc_Pt:
+        :param hvdc_losses:
+        :param hvdc_loading:
+        :param hvdc_active:
+        :param loading_label:
+        :param use_flow_based_width:
+        :param min_branch_width:
+        :param max_branch_width:
+        :param loading_cmap:
+        :param cmap:
+        :param max_flow:
+        :return:
+        """
         if hvdc_Pf is None:
             return
 
@@ -3732,6 +3822,11 @@ class SchematicWidget(BaseDiagramWidget):
                                             Qt.PenStyle.DashLine))
 
     def _colour_fluid_path_results(self, fluid_path_flow: Vec | None) -> None:
+        """
+
+        :param fluid_path_flow:
+        :return:
+        """
         if fluid_path_flow is None:
             return
 
@@ -3755,6 +3850,20 @@ class SchematicWidget(BaseDiagramWidget):
                                    fluid_node_spillage: Vec | None,
                                    fluid_node_flow_in: Vec | None,
                                    fluid_node_flow_out: Vec | None) -> None:
+        """
+
+        :param vabs:
+        :param vang:
+        :param Sbus:
+        :param types:
+        :param bus_types:
+        :param fluid_node_p2x_flow:
+        :param fluid_node_current_level:
+        :param fluid_node_spillage:
+        :param fluid_node_flow_in:
+        :param fluid_node_flow_out:
+        :return:
+        """
         if fluid_node_current_level is None:
             return
 
@@ -3778,6 +3887,1077 @@ class SchematicWidget(BaseDiagramWidget):
                     fluid_node_flow_in=fluid_node_flow_in[i] if fluid_node_flow_in is not None else None,
                     fluid_node_flow_out=fluid_node_flow_out[i] if fluid_node_flow_out is not None else None,
                 )
+
+    def _clear_all_injection_results(self) -> None:
+        """
+        Clear every injection result overlay.
+
+        :return: ``None``.
+        """
+        device_type: DeviceType
+
+        for device_type in (
+            DeviceType.GeneratorDevice,
+            DeviceType.BatteryDevice,
+            DeviceType.StaticGeneratorDevice,
+            DeviceType.ShuntDevice,
+            DeviceType.ControllableShuntDevice,
+            DeviceType.LoadDevice,
+            DeviceType.ExternalGridDevice,
+            DeviceType.CurrentInjectionDevice,
+        ):
+            graphics_dict = self.graphics_manager.get_device_type_dict(device_type)
+            graphic_object: INJECTION_GRAPHICS | None
+
+            for graphic_object in graphics_dict.values():
+                if graphic_object is None:
+                    pass
+                else:
+                    graphic_object.clear_result_visuals()
+
+    def _build_injection_name_lookup(self, names: np.ndarray | list[str] | None) -> dict[str, int]:
+        """
+        Build a name-to-index lookup for injection result arrays.
+
+        :param names: Result name sequence.
+        :return: Lookup from device name to result index.
+        """
+        lookup: dict[str, int] = dict()
+        index: int
+
+        if names is None:
+            pass
+        else:
+            for index, name in enumerate(names):
+                name_str: str = str(name)
+
+                if name_str in lookup:
+                    pass
+                else:
+                    lookup[name_str] = index
+
+        return lookup
+
+    def _has_single_phase_explicit_injection_results(self,
+                                                     gen_p: Vec | None,
+                                                     gen_q: Vec | None,
+                                                     battery_p: Vec | None,
+                                                     battery_q: Vec | None,
+                                                     shunt_q: Vec | None) -> bool:
+        """
+        Tell whether the active study exported explicit single-phase injection results.
+
+        :param gen_p: Generator active powers.
+        :param gen_q: Generator reactive powers.
+        :param battery_p: Battery active powers.
+        :param battery_q: Battery reactive powers.
+        :param shunt_q: Shunt-like reactive powers.
+        :return: ``True`` when at least one explicit injection result channel is present.
+        """
+        # Dynamic and fallback colouring paths can reuse ``colour_results()``
+        # without providing any per-device injection arrays. In those cases the
+        # GUI must clear stale overlays and stop, otherwise profile-backed
+        # setpoints get painted as if they were simulation results.
+        if gen_p is not None or gen_q is not None:
+            return True
+        else:
+            pass
+
+        if battery_p is not None or battery_q is not None:
+            return True
+        else:
+            pass
+
+        if shunt_q is not None:
+            return True
+        else:
+            return False
+
+    def _has_three_phase_explicit_injection_results(self,
+                                                    gen_q_a: Vec | None,
+                                                    gen_q_b: Vec | None,
+                                                    gen_q_c: Vec | None,
+                                                    battery_q_a: Vec | None,
+                                                    battery_q_b: Vec | None,
+                                                    battery_q_c: Vec | None,
+                                                    shunt_q_a: Vec | None,
+                                                    shunt_q_b: Vec | None,
+                                                    shunt_q_c: Vec | None) -> bool:
+        """
+        Tell whether the active study exported explicit three-phase injection results.
+
+        :param gen_q_a: Generator phase-a reactive powers.
+        :param gen_q_b: Generator phase-b reactive powers.
+        :param gen_q_c: Generator phase-c reactive powers.
+        :param battery_q_a: Battery phase-a reactive powers.
+        :param battery_q_b: Battery phase-b reactive powers.
+        :param battery_q_c: Battery phase-c reactive powers.
+        :param shunt_q_a: Shunt-like phase-a reactive powers.
+        :param shunt_q_b: Shunt-like phase-b reactive powers.
+        :param shunt_q_c: Shunt-like phase-c reactive powers.
+        :return: ``True`` when at least one explicit 3-phase injection result channel is present.
+        """
+        if gen_q_a is not None or gen_q_b is not None or gen_q_c is not None:
+            return True
+        else:
+            pass
+
+        if battery_q_a is not None or battery_q_b is not None or battery_q_c is not None:
+            return True
+        else:
+            pass
+
+        if shunt_q_a is not None or shunt_q_b is not None or shunt_q_c is not None:
+            return True
+        else:
+            return False
+
+    def _get_injection_result_color(self, graphic_object: INJECTION_GRAPHICS) -> QColor:
+        """
+        Get the result overlay color for an injection graphic.
+
+        :param graphic_object: Injection graphic item.
+        :return: Overlay color.
+        """
+        parent_graphic = graphic_object.parent
+        color: QColor = ACTIVE['color']
+
+        # Use the host bus color when available so the overlay remains visually tied to the node state.
+        if isinstance(parent_graphic, BusGraphicItem):
+            if parent_graphic.tile is None:
+                color = parent_graphic.terminal.brush().color()
+            else:
+                color = parent_graphic.tile.brush().color()
+        else:
+            pass
+
+        return color
+
+    def _apply_single_phase_injection_result(self,
+                                             graphic_object: INJECTION_GRAPHICS,
+                                             device_name: str,
+                                             tooltip_title: str,
+                                             p_value: float | None,
+                                             q_value: float | None) -> None:
+        """
+        Apply a single-phase result badge to an injection graphic.
+
+        :param graphic_object: Injection graphic item.
+        :param device_name: Injection device name.
+        :param tooltip_title: Tooltip title.
+        :param p_value: Active power value.
+        :param q_value: Reactive power value.
+        :return: ``None``.
+        """
+        if p_value is None and q_value is None:
+            pass
+        else:
+            color: QColor = self._get_injection_result_color(graphic_object=graphic_object)
+            lines: list[str] = list()
+
+            # Only show channels that are present in the resolved result for this device.
+            if p_value is None:
+                pass
+            else:
+                lines.append(f"P {p_value:+.1f} MW")
+
+            if q_value is None:
+                pass
+            else:
+                lines.append(f"Q {q_value:+.1f} MVAr")
+
+            tooltip_lines: list[str] = [device_name, tooltip_title]
+            tooltip_lines.extend(lines)
+            graphic_object.set_result_visuals(lines=lines,
+                                              tooltip="\n".join(tooltip_lines),
+                                              color=color)
+
+    def _colour_generator_results(self,
+                                  gen_p: Vec | None,
+                                  gen_q: Vec | None,
+                                  generator_lookup: dict[str, int]) -> None:
+        """
+        Colour generator injection results.
+
+        :param gen_p: Generator active powers.
+        :param gen_q: Generator reactive powers.
+        :param generator_lookup: Generator result-name lookup.
+        :return: ``None``.
+        """
+        generator_devices: list[Generator] = self.circuit.get_generators()
+        generator_index: int
+        generator: Generator
+
+        # Result name vectors can be reordered by the engine, so named matches take priority.
+        for generator_index, generator in enumerate(generator_devices):
+            graphic_object: INJECTION_GRAPHICS | None = self.graphics_manager.query(generator)
+
+            if graphic_object is None:
+                pass
+            else:
+                result_index: int | None = generator_lookup.get(generator.name, None)
+                p_value: float | None = None
+                q_value: float | None = None
+
+                if result_index is None:
+                    if gen_p is not None and generator_index < len(gen_p):
+                        p_value = float(gen_p[generator_index])
+                    else:
+                        pass
+
+                    if gen_q is not None and generator_index < len(gen_q):
+                        q_value = float(gen_q[generator_index])
+                    else:
+                        pass
+                else:
+                    if gen_p is not None and result_index < len(gen_p):
+                        p_value = float(gen_p[result_index])
+                    else:
+                        pass
+
+                    if gen_q is not None and result_index < len(gen_q):
+                        q_value = float(gen_q[result_index])
+                    else:
+                        pass
+
+                self._apply_single_phase_injection_result(graphic_object=graphic_object,
+                                                          device_name=generator.name,
+                                                          tooltip_title="Generator results",
+                                                          p_value=p_value,
+                                                          q_value=q_value)
+
+    def _colour_battery_results(self,
+                                battery_p: Vec | None,
+                                battery_q: Vec | None,
+                                battery_lookup: dict[str, int]) -> None:
+        """
+        Colour battery injection results.
+
+        :param battery_p: Battery active powers.
+        :param battery_q: Battery reactive powers.
+        :param battery_lookup: Battery result-name lookup.
+        :return: ``None``.
+        """
+        battery_devices: list[Battery] = self.circuit.get_batteries()
+        battery_index: int
+        battery: Battery
+
+        for battery_index, battery in enumerate(battery_devices):
+            graphic_object: INJECTION_GRAPHICS | None = self.graphics_manager.query(battery)
+
+            if graphic_object is None:
+                pass
+            else:
+                result_index: int | None = battery_lookup.get(battery.name, None)
+                p_value: float | None = None
+                q_value: float | None = None
+
+                # Battery studies may omit Q altogether, so both channels stay optional.
+                if result_index is None:
+                    if battery_p is not None and battery_index < len(battery_p):
+                        p_value = float(battery_p[battery_index])
+                    else:
+                        pass
+
+                    if battery_q is not None and battery_index < len(battery_q):
+                        q_value = float(battery_q[battery_index])
+                    else:
+                        pass
+                else:
+                    if battery_p is not None and result_index < len(battery_p):
+                        p_value = float(battery_p[result_index])
+                    else:
+                        pass
+
+                    if battery_q is not None and result_index < len(battery_q):
+                        q_value = float(battery_q[result_index])
+                    else:
+                        pass
+
+                self._apply_single_phase_injection_result(graphic_object=graphic_object,
+                                                          device_name=battery.name,
+                                                          tooltip_title="Battery results",
+                                                          p_value=p_value,
+                                                          q_value=q_value)
+
+    def _colour_shunt_like_results(self,
+                                   shunt_q: Vec | None,
+                                   shunt_lookup: dict[str, int]) -> None:
+        """
+        Colour shunt-like injection results.
+
+        :param shunt_q: Shunt-like reactive powers.
+        :param shunt_lookup: Shunt-like result-name lookup.
+        :return: ``None``.
+        """
+        shunt_like_devices: list[INJECTION_DEVICE_TYPES] = self.circuit.get_shunt_like_devices()
+        shunt_index: int
+        shunt_like_device: INJECTION_DEVICE_TYPES
+
+        for shunt_index, shunt_like_device in enumerate(shunt_like_devices):
+            graphic_object: INJECTION_GRAPHICS | None = self.graphics_manager.query(shunt_like_device)
+
+            if graphic_object is None:
+                pass
+            else:
+                result_index: int | None = shunt_lookup.get(shunt_like_device.name, None)
+                q_value: float | None = None
+
+                # Power-flow shunt-like results are ordered against the multi-circuit shunt-like collection.
+                if result_index is None:
+                    if shunt_q is not None and shunt_index < len(shunt_q):
+                        q_value = float(shunt_q[shunt_index])
+                    else:
+                        pass
+                else:
+                    if shunt_q is not None and result_index < len(shunt_q):
+                        q_value = float(shunt_q[result_index])
+                    else:
+                        pass
+
+                if isinstance(shunt_like_device, ControllableShunt):
+                    tooltip_title: str = "Controllable shunt results"
+                else:
+                    tooltip_title = "Shunt results"
+
+                self._apply_single_phase_injection_result(graphic_object=graphic_object,
+                                                          device_name=shunt_like_device.name,
+                                                          tooltip_title=tooltip_title,
+                                                          p_value=None,
+                                                          q_value=q_value)
+
+    def _colour_static_generator_results(self, t_idx: int | None) -> None:
+        """
+        Colour static-generator injection results.
+
+        :param t_idx: Optional time index for profile-backed injections.
+        :return: ``None``.
+        """
+        static_generator_devices: list[StaticGenerator] = self.circuit.get_static_generators()
+        static_generator: StaticGenerator
+
+        for static_generator in static_generator_devices:
+            graphic_object: INJECTION_GRAPHICS | None = self.graphics_manager.query(static_generator)
+
+            if graphic_object is None:
+                pass
+            else:
+                p_value: float = float(static_generator.get_P_at(t_idx))
+                q_value: float = float(static_generator.get_Q_at(t_idx))
+
+                if p_value == 0.0:
+                    resolved_p_value: float | None = None
+                else:
+                    resolved_p_value = p_value
+
+                if q_value == 0.0:
+                    resolved_q_value: float | None = None
+                else:
+                    resolved_q_value = q_value
+
+                self._apply_single_phase_injection_result(graphic_object=graphic_object,
+                                                          device_name=static_generator.name,
+                                                          tooltip_title="Static generator setpoint",
+                                                          p_value=resolved_p_value,
+                                                          q_value=resolved_q_value)
+
+    def _colour_load_results(self, t_idx: int | None) -> None:
+        """
+        Colour load injection results.
+
+        :param t_idx: Optional time index for profile-backed injections.
+        :return: ``None``.
+        """
+        load_devices: list[Load] = self.circuit.get_loads()
+        load_device: Load
+
+        for load_device in load_devices:
+            graphic_object: INJECTION_GRAPHICS | None = self.graphics_manager.query(load_device)
+
+            if graphic_object is None:
+                pass
+            else:
+                p_value: float = -float(load_device.get_P_at(t_idx))
+                q_value: float = -float(load_device.get_Q_at(t_idx))
+
+                # Fall back to equivalent current channels when the ZIP power channels are empty.
+                if p_value == 0.0 and q_value == 0.0:
+                    p_value = -float(load_device.get_Ir_at(t_idx))
+                    q_value = -float(load_device.get_Ii_at(t_idx))
+                else:
+                    pass
+
+                if p_value == 0.0:
+                    resolved_p_value: float | None = None
+                else:
+                    resolved_p_value = p_value
+
+                if q_value == 0.0:
+                    resolved_q_value: float | None = None
+                else:
+                    resolved_q_value = q_value
+
+                self._apply_single_phase_injection_result(graphic_object=graphic_object,
+                                                          device_name=load_device.name,
+                                                          tooltip_title="Load equivalent injection",
+                                                          p_value=resolved_p_value,
+                                                          q_value=resolved_q_value)
+
+    def _colour_external_grid_results(self, t_idx: int | None) -> None:
+        """
+        Colour external-grid injection results.
+
+        :param t_idx: Optional time index for profile-backed injections.
+        :return: ``None``.
+        """
+        external_grid_devices: list[ExternalGrid] = self.circuit.get_external_grids()
+        external_grid: ExternalGrid
+
+        for external_grid in external_grid_devices:
+            graphic_object: INJECTION_GRAPHICS | None = self.graphics_manager.query(external_grid)
+
+            if graphic_object is None:
+                pass
+            else:
+                p_value: float = -float(external_grid.get_P_at(t_idx))
+                q_value: float = -float(external_grid.get_Q_at(t_idx))
+
+                if p_value == 0.0:
+                    resolved_p_value: float | None = None
+                else:
+                    resolved_p_value = p_value
+
+                if q_value == 0.0:
+                    resolved_q_value: float | None = None
+                else:
+                    resolved_q_value = q_value
+
+                self._apply_single_phase_injection_result(graphic_object=graphic_object,
+                                                          device_name=external_grid.name,
+                                                          tooltip_title="External grid equivalent injection",
+                                                          p_value=resolved_p_value,
+                                                          q_value=resolved_q_value)
+
+    def _colour_current_injection_results(self, t_idx: int | None) -> None:
+        """
+        Colour current-injection results.
+
+        :param t_idx: Optional time index for profile-backed injections.
+        :return: ``None``.
+        """
+        current_injection_devices: list[CurrentInjection] = self.circuit.get_current_injections()
+        current_injection: CurrentInjection
+
+        for current_injection in current_injection_devices:
+            graphic_object: INJECTION_GRAPHICS | None = self.graphics_manager.query(current_injection)
+
+            if graphic_object is None:
+                pass
+            else:
+                p_value: float = -float(current_injection.get_Ir_at(t_idx))
+                q_value: float = -float(current_injection.get_Ii_at(t_idx))
+
+                if p_value == 0.0:
+                    resolved_p_value: float | None = None
+                else:
+                    resolved_p_value = p_value
+
+                if q_value == 0.0:
+                    resolved_q_value: float | None = None
+                else:
+                    resolved_q_value = q_value
+
+                self._apply_single_phase_injection_result(graphic_object=graphic_object,
+                                                          device_name=current_injection.name,
+                                                          tooltip_title="Current injection equivalent power",
+                                                          p_value=resolved_p_value,
+                                                          q_value=resolved_q_value)
+
+    def _apply_three_phase_injection_result(self,
+                                            graphic_object: INJECTION_GRAPHICS,
+                                            device_name: str,
+                                            tooltip_title: str,
+                                            qa: float | None,
+                                            qb: float | None,
+                                            qc: float | None,
+                                            include_total_p: bool = False,
+                                            pa: float | None = None,
+                                            pb: float | None = None,
+                                            pc: float | None = None) -> None:
+        """
+        Apply a three-phase result badge to an injection graphic.
+
+        :param graphic_object: Injection graphic item.
+        :param device_name: Injection device name.
+        :param tooltip_title: Tooltip title.
+        :param qa: Phase-a reactive power.
+        :param qb: Phase-b reactive power.
+        :param qc: Phase-c reactive power.
+        :param include_total_p: Include aggregated active power in the badge.
+        :param pa: Phase-a active power.
+        :param pb: Phase-b active power.
+        :param pc: Phase-c active power.
+        :return: ``None``.
+        """
+        if qa is None and qb is None and qc is None:
+            pass
+        else:
+            color: QColor = self._get_injection_result_color(graphic_object=graphic_object)
+            total_q: float = float((0.0 if qa is None else qa) +
+                                   (0.0 if qb is None else qb) +
+                                   (0.0 if qc is None else qc))
+            lines: list[str] = list()
+
+            if include_total_p:
+                total_p: float = float((0.0 if pa is None else pa) +
+                                       (0.0 if pb is None else pb) +
+                                       (0.0 if pc is None else pc))
+                lines.append(f"PΣ {total_p:+.1f} MW")
+            else:
+                pass
+
+            lines.append(f"QΣ {total_q:+.1f} MVAr")
+
+            tooltip_lines: list[str] = [device_name, tooltip_title]
+
+            if include_total_p:
+                if pa is None:
+                    pass
+                else:
+                    tooltip_lines.append(f"Pa {pa:+.1f} MW")
+
+                if pb is None:
+                    pass
+                else:
+                    tooltip_lines.append(f"Pb {pb:+.1f} MW")
+
+                if pc is None:
+                    pass
+                else:
+                    tooltip_lines.append(f"Pc {pc:+.1f} MW")
+            else:
+                pass
+
+            if qa is None:
+                pass
+            else:
+                tooltip_lines.append(f"Qa {qa:+.1f} MVAr")
+
+            if qb is None:
+                pass
+            else:
+                tooltip_lines.append(f"Qb {qb:+.1f} MVAr")
+
+            if qc is None:
+                pass
+            else:
+                tooltip_lines.append(f"Qc {qc:+.1f} MVAr")
+
+            graphic_object.set_result_visuals(lines=lines,
+                                              tooltip="\n".join(tooltip_lines),
+                                              color=color)
+
+    def _colour_generator_results_3ph(self,
+                                      gen_q_a: Vec | None,
+                                      gen_q_b: Vec | None,
+                                      gen_q_c: Vec | None,
+                                      generator_lookup: dict[str, int]) -> None:
+        """
+        Colour three-phase generator results.
+
+        :param gen_q_a: Generator phase-a reactive powers.
+        :param gen_q_b: Generator phase-b reactive powers.
+        :param gen_q_c: Generator phase-c reactive powers.
+        :param generator_lookup: Generator result-name lookup.
+        :return: ``None``.
+        """
+        generator_devices: list[Generator] = self.circuit.get_generators()
+        index: int
+        generator: Generator
+
+        for index, generator in enumerate(generator_devices):
+            graphic_object: INJECTION_GRAPHICS | None = self.graphics_manager.query(generator)
+
+            if graphic_object is None:
+                pass
+            else:
+                result_index: int | None = generator_lookup.get(generator.name, None)
+                qa: float | None = None
+                qb: float | None = None
+                qc: float | None = None
+
+                if result_index is None:
+                    if gen_q_a is not None and index < len(gen_q_a):
+                        qa = float(gen_q_a[index])
+                    else:
+                        pass
+
+                    if gen_q_b is not None and index < len(gen_q_b):
+                        qb = float(gen_q_b[index])
+                    else:
+                        pass
+
+                    if gen_q_c is not None and index < len(gen_q_c):
+                        qc = float(gen_q_c[index])
+                    else:
+                        pass
+                else:
+                    if gen_q_a is not None and result_index < len(gen_q_a):
+                        qa = float(gen_q_a[result_index])
+                    else:
+                        pass
+
+                    if gen_q_b is not None and result_index < len(gen_q_b):
+                        qb = float(gen_q_b[result_index])
+                    else:
+                        pass
+
+                    if gen_q_c is not None and result_index < len(gen_q_c):
+                        qc = float(gen_q_c[result_index])
+                    else:
+                        pass
+
+                self._apply_three_phase_injection_result(graphic_object=graphic_object,
+                                                         device_name=generator.name,
+                                                         tooltip_title="Generator 3ph results",
+                                                         qa=qa,
+                                                         qb=qb,
+                                                         qc=qc)
+
+    def _colour_battery_results_3ph(self,
+                                    battery_q_a: Vec | None,
+                                    battery_q_b: Vec | None,
+                                    battery_q_c: Vec | None,
+                                    battery_lookup: dict[str, int]) -> None:
+        """
+        Colour three-phase battery results.
+
+        :param battery_q_a: Battery phase-a reactive powers.
+        :param battery_q_b: Battery phase-b reactive powers.
+        :param battery_q_c: Battery phase-c reactive powers.
+        :param battery_lookup: Battery result-name lookup.
+        :return: ``None``.
+        """
+        battery_devices: list[Battery] = self.circuit.get_batteries()
+        index: int
+        battery: Battery
+
+        for index, battery in enumerate(battery_devices):
+            graphic_object: INJECTION_GRAPHICS | None = self.graphics_manager.query(battery)
+
+            if graphic_object is None:
+                pass
+            else:
+                result_index: int | None = battery_lookup.get(battery.name, None)
+                qa: float | None = None
+                qb: float | None = None
+                qc: float | None = None
+
+                if result_index is None:
+                    if battery_q_a is not None and index < len(battery_q_a):
+                        qa = float(battery_q_a[index])
+                    else:
+                        pass
+
+                    if battery_q_b is not None and index < len(battery_q_b):
+                        qb = float(battery_q_b[index])
+                    else:
+                        pass
+
+                    if battery_q_c is not None and index < len(battery_q_c):
+                        qc = float(battery_q_c[index])
+                    else:
+                        pass
+                else:
+                    if battery_q_a is not None and result_index < len(battery_q_a):
+                        qa = float(battery_q_a[result_index])
+                    else:
+                        pass
+
+                    if battery_q_b is not None and result_index < len(battery_q_b):
+                        qb = float(battery_q_b[result_index])
+                    else:
+                        pass
+
+                    if battery_q_c is not None and result_index < len(battery_q_c):
+                        qc = float(battery_q_c[result_index])
+                    else:
+                        pass
+
+                self._apply_three_phase_injection_result(graphic_object=graphic_object,
+                                                         device_name=battery.name,
+                                                         tooltip_title="Battery 3ph results",
+                                                         qa=qa,
+                                                         qb=qb,
+                                                         qc=qc)
+
+    def _colour_shunt_like_results_3ph(self,
+                                       shunt_q_a: Vec | None,
+                                       shunt_q_b: Vec | None,
+                                       shunt_q_c: Vec | None,
+                                       shunt_lookup: dict[str, int]) -> None:
+        """
+        Colour three-phase shunt-like results.
+
+        :param shunt_q_a: Shunt-like phase-a reactive powers.
+        :param shunt_q_b: Shunt-like phase-b reactive powers.
+        :param shunt_q_c: Shunt-like phase-c reactive powers.
+        :param shunt_lookup: Shunt-like result-name lookup.
+        :return: ``None``.
+        """
+        shunt_like_devices: list[INJECTION_DEVICE_TYPES] = self.circuit.get_shunt_like_devices()
+        index: int
+        shunt_like_device: INJECTION_DEVICE_TYPES
+
+        for index, shunt_like_device in enumerate(shunt_like_devices):
+            graphic_object: INJECTION_GRAPHICS | None = self.graphics_manager.query(shunt_like_device)
+
+            if graphic_object is None:
+                pass
+            else:
+                result_index: int | None = shunt_lookup.get(shunt_like_device.name, None)
+                qa: float | None = None
+                qb: float | None = None
+                qc: float | None = None
+
+                if result_index is None:
+                    if shunt_q_a is not None and index < len(shunt_q_a):
+                        qa = float(shunt_q_a[index])
+                    else:
+                        pass
+
+                    if shunt_q_b is not None and index < len(shunt_q_b):
+                        qb = float(shunt_q_b[index])
+                    else:
+                        pass
+
+                    if shunt_q_c is not None and index < len(shunt_q_c):
+                        qc = float(shunt_q_c[index])
+                    else:
+                        pass
+                else:
+                    if shunt_q_a is not None and result_index < len(shunt_q_a):
+                        qa = float(shunt_q_a[result_index])
+                    else:
+                        pass
+
+                    if shunt_q_b is not None and result_index < len(shunt_q_b):
+                        qb = float(shunt_q_b[result_index])
+                    else:
+                        pass
+
+                    if shunt_q_c is not None and result_index < len(shunt_q_c):
+                        qc = float(shunt_q_c[result_index])
+                    else:
+                        pass
+
+                if isinstance(shunt_like_device, ControllableShunt):
+                    tooltip_title: str = "Controllable shunt 3ph results"
+                else:
+                    tooltip_title = "Shunt 3ph results"
+
+                self._apply_three_phase_injection_result(graphic_object=graphic_object,
+                                                         device_name=shunt_like_device.name,
+                                                         tooltip_title=tooltip_title,
+                                                         qa=qa,
+                                                         qb=qb,
+                                                         qc=qc)
+
+    def _colour_static_generator_results_3ph(self, t_idx: int | None) -> None:
+        """
+        Colour three-phase static-generator results.
+
+        :param t_idx: Optional time index for profile-backed injections.
+        :return: ``None``.
+        """
+        static_generator_devices: list[StaticGenerator] = self.circuit.get_static_generators()
+        static_generator: StaticGenerator
+
+        for static_generator in static_generator_devices:
+            graphic_object: INJECTION_GRAPHICS | None = self.graphics_manager.query(static_generator)
+
+            if graphic_object is None:
+                pass
+            else:
+                pa: float = float(static_generator.get_Pa_at(t_idx))
+                pb: float = float(static_generator.get_Pb_at(t_idx))
+                pc: float = float(static_generator.get_Pc_at(t_idx))
+                qa: float = float(static_generator.get_Qa_at(t_idx))
+                qb: float = float(static_generator.get_Qb_at(t_idx))
+                qc: float = float(static_generator.get_Qc_at(t_idx))
+                total_p: float = pa + pb + pc
+                total_q: float = qa + qb + qc
+
+                if total_p == 0.0 and total_q == 0.0:
+                    pass
+                else:
+                    self._apply_three_phase_injection_result(graphic_object=graphic_object,
+                                                             device_name=static_generator.name,
+                                                             tooltip_title="Static generator 3ph setpoint",
+                                                             qa=qa,
+                                                             qb=qb,
+                                                             qc=qc,
+                                                             include_total_p=True,
+                                                             pa=pa,
+                                                             pb=pb,
+                                                             pc=pc)
+
+    def _colour_load_results_3ph(self, t_idx: int | None) -> None:
+        """
+        Colour three-phase load results.
+
+        :param t_idx: Optional time index for profile-backed injections.
+        :return: ``None``.
+        """
+        load_devices: list[Load] = self.circuit.get_loads()
+        load_device: Load
+
+        for load_device in load_devices:
+            graphic_object: INJECTION_GRAPHICS | None = self.graphics_manager.query(load_device)
+
+            if graphic_object is None:
+                pass
+            else:
+                pa: float = -float(load_device.get_Pa_at(t_idx))
+                pb: float = -float(load_device.get_Pb_at(t_idx))
+                pc: float = -float(load_device.get_Pc_at(t_idx))
+                qa: float = -float(load_device.get_Qa_at(t_idx))
+                qb: float = -float(load_device.get_Qb_at(t_idx))
+                qc: float = -float(load_device.get_Qc_at(t_idx))
+                total_p: float = pa + pb + pc
+                total_q: float = qa + qb + qc
+
+                # Fall back to equivalent current channels when the ZIP power channels are empty.
+                if total_p == 0.0 and total_q == 0.0:
+                    pa = -float(load_device.get_Ir1_at(t_idx))
+                    pb = -float(load_device.get_Ir2_at(t_idx))
+                    pc = -float(load_device.get_Ir3_at(t_idx))
+                    qa = -float(load_device.get_Ii1_at(t_idx))
+                    qb = -float(load_device.get_Ii2_at(t_idx))
+                    qc = -float(load_device.get_Ii3_at(t_idx))
+                    total_p = pa + pb + pc
+                    total_q = qa + qb + qc
+                else:
+                    pass
+
+                if total_p == 0.0 and total_q == 0.0:
+                    pass
+                else:
+                    self._apply_three_phase_injection_result(graphic_object=graphic_object,
+                                                             device_name=load_device.name,
+                                                             tooltip_title="Load 3ph equivalent injection",
+                                                             qa=qa,
+                                                             qb=qb,
+                                                             qc=qc,
+                                                             include_total_p=True,
+                                                             pa=pa,
+                                                             pb=pb,
+                                                             pc=pc)
+
+    def _colour_external_grid_results_3ph(self, t_idx: int | None) -> None:
+        """
+        Colour three-phase external-grid results.
+
+        :param t_idx: Optional time index for profile-backed injections.
+        :return: ``None``.
+        """
+        external_grid_devices: list[ExternalGrid] = self.circuit.get_external_grids()
+        external_grid: ExternalGrid
+
+        for external_grid in external_grid_devices:
+            graphic_object: INJECTION_GRAPHICS | None = self.graphics_manager.query(external_grid)
+
+            if graphic_object is None:
+                pass
+            else:
+                pa: float = -float(external_grid.get_Pa_at(t_idx))
+                pb: float = -float(external_grid.get_Pb_at(t_idx))
+                pc: float = -float(external_grid.get_Pc_at(t_idx))
+                qa: float = -float(external_grid.get_Qa_at(t_idx))
+                qb: float = -float(external_grid.get_Qb_at(t_idx))
+                qc: float = -float(external_grid.get_Qc_at(t_idx))
+                total_p: float = pa + pb + pc
+                total_q: float = qa + qb + qc
+
+                if total_p == 0.0 and total_q == 0.0:
+                    pass
+                else:
+                    self._apply_three_phase_injection_result(graphic_object=graphic_object,
+                                                             device_name=external_grid.name,
+                                                             tooltip_title="External grid 3ph equivalent injection",
+                                                             qa=qa,
+                                                             qb=qb,
+                                                             qc=qc,
+                                                             include_total_p=True,
+                                                             pa=pa,
+                                                             pb=pb,
+                                                             pc=pc)
+
+    def _colour_current_injection_results_3ph(self, t_idx: int | None) -> None:
+        """
+        Colour three-phase current-injection results.
+
+        :param t_idx: Optional time index for profile-backed injections.
+        :return: ``None``.
+        """
+        current_injection_devices: list[CurrentInjection] = self.circuit.get_current_injections()
+        current_injection: CurrentInjection
+
+        for current_injection in current_injection_devices:
+            graphic_object: INJECTION_GRAPHICS | None = self.graphics_manager.query(current_injection)
+
+            if graphic_object is None:
+                pass
+            else:
+                pa: float = -float(current_injection.get_Ir1_at(t_idx))
+                pb: float = -float(current_injection.get_Ir2_at(t_idx))
+                pc: float = -float(current_injection.get_Ir3_at(t_idx))
+                qa: float = -float(current_injection.get_Ii1_at(t_idx))
+                qb: float = -float(current_injection.get_Ii2_at(t_idx))
+                qc: float = -float(current_injection.get_Ii3_at(t_idx))
+                total_p: float = pa + pb + pc
+                total_q: float = qa + qb + qc
+
+                if total_p == 0.0 and total_q == 0.0:
+                    pass
+                else:
+                    self._apply_three_phase_injection_result(graphic_object=graphic_object,
+                                                             device_name=current_injection.name,
+                                                             tooltip_title="Current injection 3ph equivalent power",
+                                                             qa=qa,
+                                                             qb=qb,
+                                                             qc=qc,
+                                                             include_total_p=True,
+                                                             pa=pa,
+                                                             pb=pb,
+                                                             pc=pc)
+
+    def _colour_injection_results(self,
+                                  gen_p: Vec | None,
+                                  gen_q: Vec | None,
+                                  gen_names: np.ndarray | list[str] | None,
+                                  battery_p: Vec | None,
+                                  battery_q: Vec | None,
+                                  battery_names: np.ndarray | list[str] | None,
+                                  shunt_q: Vec | None,
+                                  shunt_names: np.ndarray | list[str] | None,
+                                  t_idx: int | None) -> None:
+        """
+        Apply snapshot injection result overlays using the existing coloring flow.
+
+        :param gen_p: Generator active powers.
+        :param gen_q: Generator reactive powers.
+        :param gen_names: Generator result names.
+        :param battery_p: Battery active powers.
+        :param battery_q: Battery reactive powers.
+        :param battery_names: Battery result names.
+        :param shunt_q: Shunt-like reactive powers.
+        :param shunt_names: Shunt-like result names.
+        :param t_idx: Optional time index for profile-backed injections.
+        :return: ``None``.
+        """
+        self._clear_all_injection_results()
+
+        generator_lookup: dict[str, int] = self._build_injection_name_lookup(names=gen_names)
+        battery_lookup: dict[str, int] = self._build_injection_name_lookup(names=battery_names)
+        shunt_lookup: dict[str, int] = self._build_injection_name_lookup(names=shunt_names)
+        has_explicit_results: bool = self._has_single_phase_explicit_injection_results(
+            gen_p=gen_p,
+            gen_q=gen_q,
+            battery_p=battery_p,
+            battery_q=battery_q,
+            shunt_q=shunt_q,
+        )
+
+        self._colour_generator_results(gen_p=gen_p,
+                                       gen_q=gen_q,
+                                       generator_lookup=generator_lookup)
+        self._colour_battery_results(battery_p=battery_p,
+                                     battery_q=battery_q,
+                                     battery_lookup=battery_lookup)
+        self._colour_shunt_like_results(shunt_q=shunt_q,
+                                        shunt_lookup=shunt_lookup)
+
+        # Only studies that export some explicit per-device injection channels
+        # should fall back to the profile-backed injections that still lack
+        # study-native result vectors.
+        if has_explicit_results:
+            self._colour_static_generator_results(t_idx=t_idx)
+            self._colour_load_results(t_idx=t_idx)
+            self._colour_external_grid_results(t_idx=t_idx)
+            self._colour_current_injection_results(t_idx=t_idx)
+        else:
+            pass
+
+    def _colour_injection_results_3ph(self,
+                                      gen_q_a: Vec | None,
+                                      gen_q_b: Vec | None,
+                                      gen_q_c: Vec | None,
+                                      gen_names: np.ndarray | list[str] | None,
+                                      battery_q_a: Vec | None,
+                                      battery_q_b: Vec | None,
+                                      battery_q_c: Vec | None,
+                                      battery_names: np.ndarray | list[str] | None,
+                                      shunt_q_a: Vec | None,
+                                      shunt_q_b: Vec | None,
+                                      shunt_q_c: Vec | None,
+                                      shunt_names: np.ndarray | list[str] | None,
+                                      t_idx: int | None) -> None:
+        """
+        Apply three-phase injection result overlays.
+
+        :param gen_q_a: Generator phase-a reactive powers.
+        :param gen_q_b: Generator phase-b reactive powers.
+        :param gen_q_c: Generator phase-c reactive powers.
+        :param gen_names: Generator result names.
+        :param battery_q_a: Battery phase-a reactive powers.
+        :param battery_q_b: Battery phase-b reactive powers.
+        :param battery_q_c: Battery phase-c reactive powers.
+        :param battery_names: Battery result names.
+        :param shunt_q_a: Shunt phase-a reactive powers.
+        :param shunt_q_b: Shunt phase-b reactive powers.
+        :param shunt_q_c: Shunt phase-c reactive powers.
+        :param shunt_names: Shunt result names.
+        :param t_idx: Optional time index for profile-backed injections.
+        :return: ``None``.
+        """
+        self._clear_all_injection_results()
+
+        generator_lookup: dict[str, int] = self._build_injection_name_lookup(names=gen_names)
+        battery_lookup: dict[str, int] = self._build_injection_name_lookup(names=battery_names)
+        shunt_lookup: dict[str, int] = self._build_injection_name_lookup(names=shunt_names)
+        has_explicit_results: bool = self._has_three_phase_explicit_injection_results(
+            gen_q_a=gen_q_a,
+            gen_q_b=gen_q_b,
+            gen_q_c=gen_q_c,
+            battery_q_a=battery_q_a,
+            battery_q_b=battery_q_b,
+            battery_q_c=battery_q_c,
+            shunt_q_a=shunt_q_a,
+            shunt_q_b=shunt_q_b,
+            shunt_q_c=shunt_q_c,
+        )
+
+        self._colour_generator_results_3ph(gen_q_a=gen_q_a,
+                                           gen_q_b=gen_q_b,
+                                           gen_q_c=gen_q_c,
+                                           generator_lookup=generator_lookup)
+        self._colour_battery_results_3ph(battery_q_a=battery_q_a,
+                                         battery_q_b=battery_q_b,
+                                         battery_q_c=battery_q_c,
+                                         battery_lookup=battery_lookup)
+        self._colour_shunt_like_results_3ph(shunt_q_a=shunt_q_a,
+                                            shunt_q_b=shunt_q_b,
+                                            shunt_q_c=shunt_q_c,
+                                            shunt_lookup=shunt_lookup)
+
+        if has_explicit_results:
+            self._colour_static_generator_results_3ph(t_idx=t_idx)
+            self._colour_load_results_3ph(t_idx=t_idx)
+            self._colour_external_grid_results_3ph(t_idx=t_idx)
+            self._colour_current_injection_results_3ph(t_idx=t_idx)
+        else:
+            pass
 
     def colour_results(self,
                        Sbus: CxVec,
@@ -3803,6 +4983,14 @@ class SchematicWidget(BaseDiagramWidget):
                        vsc_active: IntVec = None,
                        ma: Vec = None,
                        tau: Vec = None,
+                       gen_p: Vec = None,
+                       gen_q: Vec = None,
+                       gen_names: np.ndarray | list[str] | None = None,
+                       battery_p: Vec = None,
+                       battery_q: Vec = None,
+                       battery_names: np.ndarray | list[str] | None = None,
+                       shunt_q: Vec = None,
+                       shunt_names: np.ndarray | list[str] | None = None,
                        fluid_node_p2x_flow: Vec = None,
                        fluid_node_current_level: Vec = None,
                        fluid_node_spillage: Vec = None,
@@ -3810,13 +4998,15 @@ class SchematicWidget(BaseDiagramWidget):
                        fluid_node_flow_out: Vec = None,
                        fluid_path_flow: Vec = None,
                        fluid_injection_flow: Vec = None,
+                       t_idx: int | None = None,
                        use_flow_based_width: bool = False,
                        min_branch_width: int = 5,
                        max_branch_width=5,
                        min_bus_width=20,
                        max_bus_width=20,
                        cmap: palettes.Colormaps = None,
-                       is_three_phase: bool = False):
+                       is_three_phase: bool = False,
+                       apply_bus_result_coloring: bool = True):
         """
         Color objects based on the results passed.
         """
@@ -3839,7 +5029,18 @@ class SchematicWidget(BaseDiagramWidget):
                                  bus_types=bus_types,
                                  voltage_cmap=voltage_cmap,
                                  cmap=cmap,
-                                 use_flow_based_width=use_flow_based_width)
+                                 use_flow_based_width=use_flow_based_width,
+                                 apply_result_coloring=apply_bus_result_coloring)
+
+        self._colour_injection_results(gen_p=gen_p,
+                                       gen_q=gen_q,
+                                       gen_names=gen_names,
+                                       battery_p=battery_p,
+                                       battery_q=battery_q,
+                                       battery_names=battery_names,
+                                       shunt_q=shunt_q,
+                                       shunt_names=shunt_names,
+                                       t_idx=t_idx)
 
         max_flow = self._colour_branch_results(Sf=Sf,
                                                St=St,
@@ -3911,6 +5112,22 @@ class SchematicWidget(BaseDiagramWidget):
                                 voltage_cmap: Callable,
                                 cmap: palettes.Colormaps | None,
                                 use_flow_based_width: bool) -> None:
+        """
+
+        :param VmA:
+        :param VmB:
+        :param VmC:
+        :param VaA:
+        :param VaB:
+        :param VaC:
+        :param bus_active:
+        :param types:
+        :param bus_types:
+        :param voltage_cmap:
+        :param cmap:
+        :param use_flow_based_width:
+        :return:
+        """
         nbus = self.circuit.get_bus_number()
         if nbus != len(VmA):
             error_msg("Bus results length differs from the number of Bus results. \n"
@@ -3965,6 +5182,27 @@ class SchematicWidget(BaseDiagramWidget):
                                 loading_cmap: Callable,
                                 cmap: palettes.Colormaps | None,
                                 max_flow: float) -> None:
+        """
+
+        :param vsc_Pf:
+        :param vsc_PtA:
+        :param vsc_PtB:
+        :param vsc_PtC:
+        :param vsc_QtA:
+        :param vsc_QtB:
+        :param vsc_QtC:
+        :param vsc_losses:
+        :param vsc_loading:
+        :param vsc_active:
+        :param loading_label:
+        :param use_flow_based_width:
+        :param min_branch_width:
+        :param max_branch_width:
+        :param loading_cmap:
+        :param cmap:
+        :param max_flow:
+        :return:
+        """
         if vsc_Pf is None:
             return
 
@@ -4021,6 +5259,22 @@ class SchematicWidget(BaseDiagramWidget):
                                  loading_cmap: Callable,
                                  cmap: palettes.Colormaps | None,
                                  max_flow: float) -> None:
+        """
+
+        :param hvdc_PfA:
+        :param hvdc_PtA:
+        :param hvdc_losses:
+        :param hvdc_loading:
+        :param hvdc_active:
+        :param loading_label:
+        :param use_flow_based_width:
+        :param min_branch_width:
+        :param max_branch_width:
+        :param loading_cmap:
+        :param cmap:
+        :param max_flow:
+        :return:
+        """
         if len(hvdc_PfA) == 0:
             return
 
@@ -4111,9 +5365,84 @@ class SchematicWidget(BaseDiagramWidget):
                            cmap: palettes.Colormaps = None,
                            ma: Vec | None = None,
                            tau: Vec | None = None,
-                           ):
+                           t_idx: int | None = None,
+                           gen_q_a: Vec | None = None,
+                           gen_q_b: Vec | None = None,
+                           gen_q_c: Vec | None = None,
+                           gen_names: np.ndarray | list[str] | None = None,
+                           battery_q_a: Vec | None = None,
+                           battery_q_b: Vec | None = None,
+                           battery_q_c: Vec | None = None,
+                           battery_names: np.ndarray | list[str] | None = None,
+                           shunt_q_a: Vec | None = None,
+                           shunt_q_b: Vec | None = None,
+                           shunt_q_c: Vec | None = None,
+                           shunt_names: np.ndarray | list[str] | None = None):
         """
         Color objects based on the three-phase results passed.
+        :param SbusA:
+        :param SbusB:
+        :param SbusC:
+        :param voltagesA:
+        :param voltagesB:
+        :param voltagesC:
+        :param bus_active:
+        :param types:
+        :param SfA:
+        :param SfB:
+        :param SfC:
+        :param StA:
+        :param StB:
+        :param StC:
+        :param loadingsA:
+        :param loadingsB:
+        :param loadingsC:
+        :param lossesA:
+        :param lossesB:
+        :param lossesC:
+        :param br_active:
+        :param hvdc_PfA:
+        :param hvdc_PfB:
+        :param hvdc_PfC:
+        :param hvdc_PtA:
+        :param hvdc_PtB:
+        :param hvdc_PtC:
+        :param hvdc_losses:
+        :param hvdc_loading:
+        :param hvdc_active:
+        :param vsc_Pf:
+        :param vsc_PtA:
+        :param vsc_PtB:
+        :param vsc_PtC:
+        :param vsc_QtA:
+        :param vsc_QtB:
+        :param vsc_QtC:
+        :param vsc_losses:
+        :param vsc_loading:
+        :param vsc_active:
+        :param loading_label:
+        :param use_flow_based_width:
+        :param min_branch_width:
+        :param max_branch_width:
+        :param min_bus_width:
+        :param max_bus_width:
+        :param cmap:
+        :param ma:
+        :param tau:
+        :param t_idx:
+        :param gen_q_a:
+        :param gen_q_b:
+        :param gen_q_c:
+        :param gen_names:
+        :param battery_q_a:
+        :param battery_q_b:
+        :param battery_q_c:
+        :param battery_names:
+        :param shunt_q_a:
+        :param shunt_q_b:
+        :param shunt_q_c:
+        :param shunt_names:
+        :return:
         """
         VmA = np.abs(voltagesA)
         VmB = np.abs(voltagesB)
@@ -4137,6 +5466,20 @@ class SchematicWidget(BaseDiagramWidget):
                                      voltage_cmap=voltage_cmap,
                                      cmap=cmap,
                                      use_flow_based_width=use_flow_based_width)
+
+        self._colour_injection_results_3ph(gen_q_a=gen_q_a,
+                                           gen_q_b=gen_q_b,
+                                           gen_q_c=gen_q_c,
+                                           gen_names=gen_names,
+                                           battery_q_a=battery_q_a,
+                                           battery_q_b=battery_q_b,
+                                           battery_q_c=battery_q_c,
+                                           battery_names=battery_names,
+                                           shunt_q_a=shunt_q_a,
+                                           shunt_q_b=shunt_q_b,
+                                           shunt_q_c=shunt_q_c,
+                                           shunt_names=shunt_names,
+                                           t_idx=t_idx)
 
         Sf = np.empty(0, dtype=complex)
         St = np.empty(0, dtype=complex)

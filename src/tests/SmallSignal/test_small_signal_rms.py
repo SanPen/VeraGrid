@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import numpy as np
 
-from VeraGridEngine.enumerations import VarPowerFlowRefferenceType, DynamicIntegrationMethod, RmsInitializationMethod
+from VeraGridEngine.enumerations import VarPowerFlowReferenceType, DynamicIntegrationMethod, RmsInitializationMethod
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.Injections.generator import Generator
 from VeraGridEngine.Devices.Branches.line import Line
@@ -365,17 +365,17 @@ def stability_kundur_no_shunt():
     big_gen3 = Block(children=[genrow_mdl3])
     big_gen4 = Block(children=[genrow_mdl4])
 
-    big_gen1.external_mapping.update({VarPowerFlowRefferenceType.P: genrow_mdl1.out_vars[0]})
-    big_gen1.external_mapping.update({VarPowerFlowRefferenceType.Q: genrow_mdl1.out_vars[1]})
+    big_gen1.external_mapping.update({VarPowerFlowReferenceType.P: genrow_mdl1.out_vars[0]})
+    big_gen1.external_mapping.update({VarPowerFlowReferenceType.Q: genrow_mdl1.out_vars[1]})
 
-    big_gen2.external_mapping.update({VarPowerFlowRefferenceType.P: genrow_mdl2.out_vars[0]})
-    big_gen2.external_mapping.update({VarPowerFlowRefferenceType.Q: genrow_mdl2.out_vars[1]})
+    big_gen2.external_mapping.update({VarPowerFlowReferenceType.P: genrow_mdl2.out_vars[0]})
+    big_gen2.external_mapping.update({VarPowerFlowReferenceType.Q: genrow_mdl2.out_vars[1]})
 
-    big_gen3.external_mapping.update({VarPowerFlowRefferenceType.P: genrow_mdl3.out_vars[0]})
-    big_gen3.external_mapping.update({VarPowerFlowRefferenceType.Q: genrow_mdl3.out_vars[1]})
+    big_gen3.external_mapping.update({VarPowerFlowReferenceType.P: genrow_mdl3.out_vars[0]})
+    big_gen3.external_mapping.update({VarPowerFlowReferenceType.Q: genrow_mdl3.out_vars[1]})
 
-    big_gen4.external_mapping.update({VarPowerFlowRefferenceType.P: genrow_mdl4.out_vars[0]})
-    big_gen4.external_mapping.update({VarPowerFlowRefferenceType.Q: genrow_mdl4.out_vars[1]})
+    big_gen4.external_mapping.update({VarPowerFlowReferenceType.P: genrow_mdl4.out_vars[0]})
+    big_gen4.external_mapping.update({VarPowerFlowReferenceType.Q: genrow_mdl4.out_vars[1]})
 
     # add models to opi objects
 

@@ -14,6 +14,7 @@ from VeraGridEngine.Simulations.PowerFlow.power_flow_results import NumericPower
 import VeraGridEngine.api as gce
 from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_generalized_formulation import PfGeneralizedFormulation
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.newton_raphson_fx import newton_raphson_fx
+from VeraGridEngine.enumerations import GeneratorControlMode
 
 TEST_FOLDER = os.path.join("")
 
@@ -167,7 +168,7 @@ def test_voltage_local_control_with_generation() -> None:
 
     # control local bus with generator 4
     gen = grid.generators[4]
-    gen.is_controlled = True
+    gen.control_mode = GeneratorControlMode.V
     gen.Q = 0  # otherwise the raw will assign a Q that is controlling V...
     bus_dict = grid.get_bus_index_dict()
     bus_i = bus_dict[gen.bus]
@@ -186,7 +187,7 @@ def test_voltage_local_control_with_generation() -> None:
     assert np.isclose(vm[bus_i], gen.Vset, atol=options.tolerance)
 
     # run power flow with the local voltage control disabled
-    gen.is_controlled = False
+    gen.control_mode = GeneratorControlMode.Q
 
     options = PowerFlowOptions(gce.SolverType.NR,
                                verbose=0,
@@ -583,7 +584,7 @@ def test_transformer_m_lims() -> None:
                                    control_remote_voltage=False,
                                    apply_temperature_correction=False,
                                    distributed_slack=False,
-                                   orthogonalize_controls=True,)
+                                   orthogonalize_controls=True, )
 
         problem, solution = solve_generalized(grid=grid, options=options)
 

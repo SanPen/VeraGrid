@@ -30,7 +30,6 @@ class EmtOptions(OptionsTemplate):
         GCProp(key="init_newton_max_iter", tpe=int),
         GCProp(key="init_newton_backtracking", tpe=bool),
         GCProp(key="init_dense_threshold", tpe=int),
-        GCProp(key="init_pseudo_transient_enable", tpe=bool),
         GCProp(key="init_ptc_dtau0", tpe=float),
         GCProp(key="init_ptc_dtau_min", tpe=float),
         GCProp(key="init_ptc_dtau_max", tpe=float),
@@ -69,7 +68,6 @@ class EmtOptions(OptionsTemplate):
                  init_newton_max_iter: int = 20,
                  init_newton_backtracking: bool = True,
                  init_dense_threshold: int = 48,
-                 init_pseudo_transient_enable: bool = True,
                  init_ptc_dtau0: float = 1.0,
                  init_ptc_dtau_min: float = 1e-6,
                  init_ptc_dtau_max: float = 1e1,
@@ -115,7 +113,6 @@ class EmtOptions(OptionsTemplate):
         self.init_newton_max_iter: int = init_newton_max_iter
         self.init_newton_backtracking: bool = init_newton_backtracking
         self.init_dense_threshold: int = init_dense_threshold
-        self.init_pseudo_transient_enable: bool = init_pseudo_transient_enable
         self.init_ptc_dtau0: float = init_ptc_dtau0
         self.init_ptc_dtau_min: float = init_ptc_dtau_min
         self.init_ptc_dtau_max: float = init_ptc_dtau_max

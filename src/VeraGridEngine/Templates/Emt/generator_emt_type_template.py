@@ -9,7 +9,7 @@ from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic import symbolic as sym
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Utils.Symbolic.block import Block, find_name_in_block, Const
-from VeraGridEngine.enumerations import VarPowerFlowRefferenceType, DeviceType, ParamPowerFlowRefferenceType
+from VeraGridEngine.enumerations import VarPowerFlowReferenceType, DeviceType, ParamPowerFlowReferenceType
 from VeraGridEngine.Utils.Symbolic.block_helpers import tf_to_block, tf_to_diffblock_with_output, \
     tf_to_block_with_states, tf_to_diffblock_with_antiwindup
 
@@ -203,21 +203,21 @@ def get_simple_generator_emt_template(vf: VarFactory, name: str = "simple_emt_ty
     # --------------------------------------------------------------------------------------
     # Inputs: instantaneous abc terminal voltages in pu (at bus)
     # --------------------------------------------------------------------------------------
-    v_A = vf.add_var(name=f"v_A_{name}", reference= VarPowerFlowRefferenceType.v_A)
-    v_B = vf.add_var(name=f"v_B_{name}", reference= VarPowerFlowRefferenceType.v_B)
-    v_C = vf.add_var(name=f"v_C_{name}", reference= VarPowerFlowRefferenceType.v_C)
+    v_A = vf.add_var(name=f"v_A_{name}", reference= VarPowerFlowReferenceType.v_A)
+    v_B = vf.add_var(name=f"v_B_{name}", reference= VarPowerFlowReferenceType.v_B)
+    v_C = vf.add_var(name=f"v_C_{name}", reference= VarPowerFlowReferenceType.v_C)
     Tm = vf.add_var(name=f"Tm_{name}")
     v_f = vf.add_var(name=f"v_f_{name}")
 
-    d_v_A = vf.add_var(name=f"d_v_A_{name}", reference=VarPowerFlowRefferenceType.d_v_A)
-    d_v_B = vf.add_var(name=f"d_v_B_{name}", reference=VarPowerFlowRefferenceType.d_v_B)
-    d_v_C = vf.add_var(name=f"d_v_C_{name}", reference=VarPowerFlowRefferenceType.d_v_C)
-    p_A = vf.add_var(name=f"P_A_{name}", reference=VarPowerFlowRefferenceType.P_A)
-    q_A = vf.add_var(name=f"Q_A_{name}", reference=VarPowerFlowRefferenceType.Q_A)
-    p_B = vf.add_var(name=f"P_B_{name}", reference=VarPowerFlowRefferenceType.P_B)
-    q_B = vf.add_var(name=f"Q_B_{name}", reference=VarPowerFlowRefferenceType.Q_B)
-    p_C = vf.add_var(name=f"P_C_{name}", reference=VarPowerFlowRefferenceType.P_C)
-    q_C = vf.add_var(name=f"Q_C_{name}", reference=VarPowerFlowRefferenceType.Q_C)
+    d_v_A = vf.add_var(name=f"d_v_A_{name}", reference=VarPowerFlowReferenceType.d_v_A)
+    d_v_B = vf.add_var(name=f"d_v_B_{name}", reference=VarPowerFlowReferenceType.d_v_B)
+    d_v_C = vf.add_var(name=f"d_v_C_{name}", reference=VarPowerFlowReferenceType.d_v_C)
+    p_A = vf.add_var(name=f"P_A_{name}", reference=VarPowerFlowReferenceType.P_A)
+    q_A = vf.add_var(name=f"Q_A_{name}", reference=VarPowerFlowReferenceType.Q_A)
+    p_B = vf.add_var(name=f"P_B_{name}", reference=VarPowerFlowReferenceType.P_B)
+    q_B = vf.add_var(name=f"Q_B_{name}", reference=VarPowerFlowReferenceType.Q_B)
+    p_C = vf.add_var(name=f"P_C_{name}", reference=VarPowerFlowReferenceType.P_C)
+    q_C = vf.add_var(name=f"Q_C_{name}", reference=VarPowerFlowReferenceType.Q_C)
     inputs = [v_A, v_B, v_C, Tm, v_f]
     # --------------------------------------------------------------------------------------
     # States (pu, except theta [rad])
@@ -242,9 +242,9 @@ def get_simple_generator_emt_template(vf: VarFactory, name: str = "simple_emt_ty
     # --------------------------------------------------------------------------------------
     # Algebraic eqs
     # --------------------------------------------------------------------------------------
-    i_A = vf.add_var(name=f"i_A_{name}", reference= VarPowerFlowRefferenceType.i_A)
-    i_B = vf.add_var(name=f"i_B_{name}", reference= VarPowerFlowRefferenceType.i_B)
-    i_C = vf.add_var(name=f"i_C_{name}", reference= VarPowerFlowRefferenceType.i_C)
+    i_A = vf.add_var(name=f"i_A_{name}", reference= VarPowerFlowReferenceType.i_A)
+    i_B = vf.add_var(name=f"i_B_{name}", reference= VarPowerFlowReferenceType.i_B)
+    i_C = vf.add_var(name=f"i_C_{name}", reference= VarPowerFlowReferenceType.i_C)
 
     # dq0 voltages
     v_d = vf.add_var("v_d_" + name)
@@ -366,31 +366,31 @@ def get_simple_generator_emt_template(vf: VarFactory, name: str = "simple_emt_ty
     # --------------------------------------------------------------------------------------
 
     templ.block.external_mapping = {
-        # VarPowerFlowRefferenceType.P_N: None,
-        # VarPowerFlowRefferenceType.Q_N: None,
-        # VarPowerFlowRefferenceType.P_A: None,
-        # VarPowerFlowRefferenceType.Q_A: None,
-        # VarPowerFlowRefferenceType.P_B: None,
-        # VarPowerFlowRefferenceType.Q_B: None,
-        # VarPowerFlowRefferenceType.P_C: None,
-        # VarPowerFlowRefferenceType.Q_C: None,
-        # VarPowerFlowRefferenceType.i_N: None,
-        VarPowerFlowRefferenceType.i_A: i_A,
-        VarPowerFlowRefferenceType.i_B: i_B,
-        VarPowerFlowRefferenceType.i_C: i_C,
-        VarPowerFlowRefferenceType.d_v_A: d_v_A,
-        VarPowerFlowRefferenceType.d_v_B: d_v_B,
-        VarPowerFlowRefferenceType.d_v_C: d_v_C,
-        VarPowerFlowRefferenceType.P_A: p_A,
-        VarPowerFlowRefferenceType.Q_A: q_A,
-        VarPowerFlowRefferenceType.P_B: p_B,
-        VarPowerFlowRefferenceType.Q_B: q_B,
-        VarPowerFlowRefferenceType.P_C: p_C,
-        VarPowerFlowRefferenceType.Q_C: q_C,
-        # VarPowerFlowRefferenceType.d_v_N: None,
-        # VarPowerFlowRefferenceType.d_v_A: None,
-        # VarPowerFlowRefferenceType.d_v_B: None,
-        # VarPowerFlowRefferenceType.d_v_C: None,
+        # VarPowerFlowReferenceType.P_N: None,
+        # VarPowerFlowReferenceType.Q_N: None,
+        # VarPowerFlowReferenceType.P_A: None,
+        # VarPowerFlowReferenceType.Q_A: None,
+        # VarPowerFlowReferenceType.P_B: None,
+        # VarPowerFlowReferenceType.Q_B: None,
+        # VarPowerFlowReferenceType.P_C: None,
+        # VarPowerFlowReferenceType.Q_C: None,
+        # VarPowerFlowReferenceType.i_N: None,
+        VarPowerFlowReferenceType.i_A: i_A,
+        VarPowerFlowReferenceType.i_B: i_B,
+        VarPowerFlowReferenceType.i_C: i_C,
+        VarPowerFlowReferenceType.d_v_A: d_v_A,
+        VarPowerFlowReferenceType.d_v_B: d_v_B,
+        VarPowerFlowReferenceType.d_v_C: d_v_C,
+        VarPowerFlowReferenceType.P_A: p_A,
+        VarPowerFlowReferenceType.Q_A: q_A,
+        VarPowerFlowReferenceType.P_B: p_B,
+        VarPowerFlowReferenceType.Q_B: q_B,
+        VarPowerFlowReferenceType.P_C: p_C,
+        VarPowerFlowReferenceType.Q_C: q_C,
+        # VarPowerFlowReferenceType.d_v_N: None,
+        # VarPowerFlowReferenceType.d_v_A: None,
+        # VarPowerFlowReferenceType.d_v_B: None,
+        # VarPowerFlowReferenceType.d_v_C: None,
     }
 
 
@@ -420,10 +420,10 @@ def get_simple_generator_emt_template(vf: VarFactory, name: str = "simple_emt_ty
         delta: vf.add_const(None),
     }
     templ.block.api_obj_mapping = {
-        ParamPowerFlowRefferenceType.omega_base : omega_base,
-        ParamPowerFlowRefferenceType.R1: Ra,
-        ParamPowerFlowRefferenceType.X1: Ld,
-        ParamPowerFlowRefferenceType.X0: L0,
+        ParamPowerFlowReferenceType.omega_base : omega_base,
+        ParamPowerFlowReferenceType.R1: Ra,
+        ParamPowerFlowReferenceType.X1: Ld,
+        ParamPowerFlowReferenceType.X0: L0,
     }
 
 
@@ -510,21 +510,21 @@ def get_generator_emt_type_template(vf: VarFactory, name: str = "emt_type_genera
     # ----------------------------------------------------------------------------------
     # Inputs: instantaneous abc terminal voltages at the bus
     # ----------------------------------------------------------------------------------
-    v_A = vf.add_var("v_A_" + name, reference=VarPowerFlowRefferenceType.v_A)
-    v_B = vf.add_var("v_B_" + name, reference=VarPowerFlowRefferenceType.v_B)
-    v_C = vf.add_var("v_C_" + name, reference=VarPowerFlowRefferenceType.v_C)
+    v_A = vf.add_var("v_A_" + name, reference=VarPowerFlowReferenceType.v_A)
+    v_B = vf.add_var("v_B_" + name, reference=VarPowerFlowReferenceType.v_B)
+    v_C = vf.add_var("v_C_" + name, reference=VarPowerFlowReferenceType.v_C)
     Tm = vf.add_var("Tm_" + name)
     v_f = vf.add_var("v_f_" + name)
 
-    d_v_A = vf.add_var("d_v_A_" + name, reference=VarPowerFlowRefferenceType.d_v_A)
-    d_v_B = vf.add_var("d_v_B_" + name, reference=VarPowerFlowRefferenceType.d_v_B)
-    d_v_C = vf.add_var("d_v_C_" + name, reference=VarPowerFlowRefferenceType.d_v_C)
-    p_A = vf.add_var("P_A_" + name, reference=VarPowerFlowRefferenceType.P_A)
-    q_A = vf.add_var("Q_A_" + name, reference=VarPowerFlowRefferenceType.Q_A)
-    p_B = vf.add_var("P_B_" + name, reference=VarPowerFlowRefferenceType.P_B)
-    q_B = vf.add_var("Q_B_" + name, reference=VarPowerFlowRefferenceType.Q_B)
-    p_C = vf.add_var("P_C_" + name, reference=VarPowerFlowRefferenceType.P_C)
-    q_C = vf.add_var("Q_C_" + name, reference=VarPowerFlowRefferenceType.Q_C)
+    d_v_A = vf.add_var("d_v_A_" + name, reference=VarPowerFlowReferenceType.d_v_A)
+    d_v_B = vf.add_var("d_v_B_" + name, reference=VarPowerFlowReferenceType.d_v_B)
+    d_v_C = vf.add_var("d_v_C_" + name, reference=VarPowerFlowReferenceType.d_v_C)
+    p_A = vf.add_var("P_A_" + name, reference=VarPowerFlowReferenceType.P_A)
+    q_A = vf.add_var("Q_A_" + name, reference=VarPowerFlowReferenceType.Q_A)
+    p_B = vf.add_var("P_B_" + name, reference=VarPowerFlowReferenceType.P_B)
+    q_B = vf.add_var("Q_B_" + name, reference=VarPowerFlowReferenceType.Q_B)
+    p_C = vf.add_var("P_C_" + name, reference=VarPowerFlowReferenceType.P_C)
+    q_C = vf.add_var("Q_C_" + name, reference=VarPowerFlowReferenceType.Q_C)
     inputs = [v_A, v_B, v_C, Tm, v_f]
 
     # ----------------------------------------------------------------------------------
@@ -568,9 +568,9 @@ def get_generator_emt_type_template(vf: VarFactory, name: str = "emt_type_genera
     v_0 = vf.add_var("v_0_" + name)
 
     # abc stator currents (positive when machine injects into the bus)
-    i_A = vf.add_var("i_A_" + name, reference=VarPowerFlowRefferenceType.i_A)
-    i_B = vf.add_var("i_B_" + name, reference=VarPowerFlowRefferenceType.i_B)
-    i_C = vf.add_var("i_C_" + name, reference=VarPowerFlowRefferenceType.i_C)
+    i_A = vf.add_var("i_A_" + name, reference=VarPowerFlowReferenceType.i_A)
+    i_B = vf.add_var("i_B_" + name, reference=VarPowerFlowReferenceType.i_B)
+    i_C = vf.add_var("i_C_" + name, reference=VarPowerFlowReferenceType.i_C)
 
     # dq0 and rotor currents
     i_d = vf.add_var("i_d_" + name)
@@ -750,31 +750,31 @@ def get_generator_emt_type_template(vf: VarFactory, name: str = "emt_type_genera
     # External Mapping (Connecting to Grid/Power Flow)
     # ----------------------------------------------------------------------------------
     templ.block.external_mapping = {
-        # VarPowerFlowRefferenceType.P_N: None,
-        # VarPowerFlowRefferenceType.Q_N: None,
-        # VarPowerFlowRefferenceType.P_A: None,
-        # VarPowerFlowRefferenceType.Q_A: None,
-        # VarPowerFlowRefferenceType.P_B: None,
-        # VarPowerFlowRefferenceType.Q_B: None,
-        # VarPowerFlowRefferenceType.P_C: None,
-        # VarPowerFlowRefferenceType.Q_C: None,
-        # VarPowerFlowRefferenceType.i_N: None,
-        VarPowerFlowRefferenceType.i_A: i_A,
-        VarPowerFlowRefferenceType.i_B: i_B,
-        VarPowerFlowRefferenceType.i_C: i_C,
-        VarPowerFlowRefferenceType.d_v_A: d_v_A,
-        VarPowerFlowRefferenceType.d_v_B: d_v_B,
-        VarPowerFlowRefferenceType.d_v_C: d_v_C,
-        VarPowerFlowRefferenceType.P_A: p_A,
-        VarPowerFlowRefferenceType.Q_A: q_A,
-        VarPowerFlowRefferenceType.P_B: p_B,
-        VarPowerFlowRefferenceType.Q_B: q_B,
-        VarPowerFlowRefferenceType.P_C: p_C,
-        VarPowerFlowRefferenceType.Q_C: q_C,
-        # VarPowerFlowRefferenceType.d_v_N: None,
-        # VarPowerFlowRefferenceType.d_v_A: None,
-        # VarPowerFlowRefferenceType.d_v_B: None,
-        # VarPowerFlowRefferenceType.d_v_C: None,
+        # VarPowerFlowReferenceType.P_N: None,
+        # VarPowerFlowReferenceType.Q_N: None,
+        # VarPowerFlowReferenceType.P_A: None,
+        # VarPowerFlowReferenceType.Q_A: None,
+        # VarPowerFlowReferenceType.P_B: None,
+        # VarPowerFlowReferenceType.Q_B: None,
+        # VarPowerFlowReferenceType.P_C: None,
+        # VarPowerFlowReferenceType.Q_C: None,
+        # VarPowerFlowReferenceType.i_N: None,
+        VarPowerFlowReferenceType.i_A: i_A,
+        VarPowerFlowReferenceType.i_B: i_B,
+        VarPowerFlowReferenceType.i_C: i_C,
+        VarPowerFlowReferenceType.d_v_A: d_v_A,
+        VarPowerFlowReferenceType.d_v_B: d_v_B,
+        VarPowerFlowReferenceType.d_v_C: d_v_C,
+        VarPowerFlowReferenceType.P_A: p_A,
+        VarPowerFlowReferenceType.Q_A: q_A,
+        VarPowerFlowReferenceType.P_B: p_B,
+        VarPowerFlowReferenceType.Q_B: q_B,
+        VarPowerFlowReferenceType.P_C: p_C,
+        VarPowerFlowReferenceType.Q_C: q_C,
+        # VarPowerFlowReferenceType.d_v_N: None,
+        # VarPowerFlowReferenceType.d_v_A: None,
+        # VarPowerFlowReferenceType.d_v_B: None,
+        # VarPowerFlowReferenceType.d_v_C: None,
     }
 
     # ----------------------------------------------------------------------------------
@@ -871,10 +871,10 @@ def get_generator_emt_type_template(vf: VarFactory, name: str = "emt_type_genera
     }
 
     templ.block.api_obj_mapping = {
-        ParamPowerFlowRefferenceType.omega_base: omega_base,
-        ParamPowerFlowRefferenceType.R1: Ra,
-        ParamPowerFlowRefferenceType.X1: Ld,
-        ParamPowerFlowRefferenceType.X0: L0,
+        ParamPowerFlowReferenceType.omega_base: omega_base,
+        ParamPowerFlowReferenceType.R1: Ra,
+        ParamPowerFlowReferenceType.X1: Ld,
+        ParamPowerFlowReferenceType.X0: L0,
     }
 
     # ----------------------------------------------------------------------------------
@@ -1066,21 +1066,21 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
     # ------------------------------------------------------------------
     # Inputs: abc terminal voltages + controller inputs
     # ------------------------------------------------------------------
-    v_A = vf.add_var("v_A_" + name, reference=VarPowerFlowRefferenceType.v_A)
-    v_B = vf.add_var("v_B_" + name, reference=VarPowerFlowRefferenceType.v_B)
-    v_C = vf.add_var("v_C_" + name, reference=VarPowerFlowRefferenceType.v_C)
+    v_A = vf.add_var("v_A_" + name, reference=VarPowerFlowReferenceType.v_A)
+    v_B = vf.add_var("v_B_" + name, reference=VarPowerFlowReferenceType.v_B)
+    v_C = vf.add_var("v_C_" + name, reference=VarPowerFlowReferenceType.v_C)
     Tm = vf.add_var("Tm_" + name, shared_reference = "Tm_reference")
     v_f = vf.add_var("v_f_" + name, shared_reference = "v_f_reference")
 
-    d_v_A = vf.add_var("d_v_A_" + name, reference=VarPowerFlowRefferenceType.d_v_A)
-    d_v_B = vf.add_var("d_v_B_" + name, reference=VarPowerFlowRefferenceType.d_v_B)
-    d_v_C = vf.add_var("d_v_C_" + name, reference=VarPowerFlowRefferenceType.d_v_C)
-    p_A = vf.add_var("P_A_" + name, reference=VarPowerFlowRefferenceType.P_A)
-    q_A = vf.add_var("Q_A_" + name, reference=VarPowerFlowRefferenceType.Q_A)
-    p_B = vf.add_var("P_B_" + name, reference=VarPowerFlowRefferenceType.P_B)
-    q_B = vf.add_var("Q_B_" + name, reference=VarPowerFlowRefferenceType.Q_B)
-    p_C = vf.add_var("P_C_" + name, reference=VarPowerFlowRefferenceType.P_C)
-    q_C = vf.add_var("Q_C_" + name, reference=VarPowerFlowRefferenceType.Q_C)
+    d_v_A = vf.add_var("d_v_A_" + name, reference=VarPowerFlowReferenceType.d_v_A)
+    d_v_B = vf.add_var("d_v_B_" + name, reference=VarPowerFlowReferenceType.d_v_B)
+    d_v_C = vf.add_var("d_v_C_" + name, reference=VarPowerFlowReferenceType.d_v_C)
+    p_A = vf.add_var("P_A_" + name, reference=VarPowerFlowReferenceType.P_A)
+    q_A = vf.add_var("Q_A_" + name, reference=VarPowerFlowReferenceType.Q_A)
+    p_B = vf.add_var("P_B_" + name, reference=VarPowerFlowReferenceType.P_B)
+    q_B = vf.add_var("Q_B_" + name, reference=VarPowerFlowReferenceType.Q_B)
+    p_C = vf.add_var("P_C_" + name, reference=VarPowerFlowReferenceType.P_C)
+    q_C = vf.add_var("Q_C_" + name, reference=VarPowerFlowReferenceType.Q_C)
     inputs = [v_A, v_B, v_C, Tm, v_f]
     #
     # ------------------------------------------------------------------
@@ -1124,9 +1124,9 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
     i_q = vf.add_var("i_q_" + name)
     i_0 = vf.add_var("i_0_" + name)
 
-    i_A = vf.add_var("i_A_" + name, reference=VarPowerFlowRefferenceType.i_A)
-    i_B = vf.add_var("i_B_" + name, reference=VarPowerFlowRefferenceType.i_B)
-    i_C = vf.add_var("i_C_" + name, reference=VarPowerFlowRefferenceType.i_C)
+    i_A = vf.add_var("i_A_" + name, reference=VarPowerFlowReferenceType.i_A)
+    i_B = vf.add_var("i_B_" + name, reference=VarPowerFlowReferenceType.i_B)
+    i_C = vf.add_var("i_C_" + name, reference=VarPowerFlowReferenceType.i_C)
 
     Te = vf.add_var("Te_" + name, shared_reference = "Te_reference")
     p_e = vf.add_var("p_e_" + name)
@@ -1338,10 +1338,10 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
     }
 
     templ.block.api_obj_mapping = {
-        ParamPowerFlowRefferenceType.omega_base: omega_b,
-        ParamPowerFlowRefferenceType.R1: ra,
-        ParamPowerFlowRefferenceType.X1: xd,
-        ParamPowerFlowRefferenceType.X0: x0,
+        ParamPowerFlowReferenceType.omega_base: omega_b,
+        ParamPowerFlowReferenceType.R1: ra,
+        ParamPowerFlowReferenceType.X1: xd,
+        ParamPowerFlowReferenceType.X0: x0,
     }
     # ------------------------------------------------------------------
     # INITIALIZATION
@@ -1442,31 +1442,31 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
     # External mapping
     # ------------------------------------------------------------------
     templ.block.external_mapping = {
-        # VarPowerFlowRefferenceType.P_N: None,
-        # VarPowerFlowRefferenceType.Q_N: None,
-        # VarPowerFlowRefferenceType.P_A: None,
-        # VarPowerFlowRefferenceType.Q_A: None,
-        # VarPowerFlowRefferenceType.P_B: None,
-        # VarPowerFlowRefferenceType.Q_B: None,
-        # VarPowerFlowRefferenceType.P_C: None,
-        # VarPowerFlowRefferenceType.Q_C: None,
-        # VarPowerFlowRefferenceType.i_N: None,
-        VarPowerFlowRefferenceType.i_A: i_A,
-        VarPowerFlowRefferenceType.i_B: i_B,
-        VarPowerFlowRefferenceType.i_C: i_C,
-        VarPowerFlowRefferenceType.d_v_A: d_v_A,
-        VarPowerFlowRefferenceType.d_v_B: d_v_B,
-        VarPowerFlowRefferenceType.d_v_C: d_v_C,
-        VarPowerFlowRefferenceType.P_A: p_A,
-        VarPowerFlowRefferenceType.Q_A: q_A,
-        VarPowerFlowRefferenceType.P_B: p_B,
-        VarPowerFlowRefferenceType.Q_B: q_B,
-        VarPowerFlowRefferenceType.P_C: p_C,
-        VarPowerFlowRefferenceType.Q_C: q_C,
-        # VarPowerFlowRefferenceType.d_v_N: None,
-        # VarPowerFlowRefferenceType.d_v_A: None,
-        # VarPowerFlowRefferenceType.d_v_B: None,
-        # VarPowerFlowRefferenceType.d_v_C: None,
+        # VarPowerFlowReferenceType.P_N: None,
+        # VarPowerFlowReferenceType.Q_N: None,
+        # VarPowerFlowReferenceType.P_A: None,
+        # VarPowerFlowReferenceType.Q_A: None,
+        # VarPowerFlowReferenceType.P_B: None,
+        # VarPowerFlowReferenceType.Q_B: None,
+        # VarPowerFlowReferenceType.P_C: None,
+        # VarPowerFlowReferenceType.Q_C: None,
+        # VarPowerFlowReferenceType.i_N: None,
+        VarPowerFlowReferenceType.i_A: i_A,
+        VarPowerFlowReferenceType.i_B: i_B,
+        VarPowerFlowReferenceType.i_C: i_C,
+        VarPowerFlowReferenceType.d_v_A: d_v_A,
+        VarPowerFlowReferenceType.d_v_B: d_v_B,
+        VarPowerFlowReferenceType.d_v_C: d_v_C,
+        VarPowerFlowReferenceType.P_A: p_A,
+        VarPowerFlowReferenceType.Q_A: q_A,
+        VarPowerFlowReferenceType.P_B: p_B,
+        VarPowerFlowReferenceType.Q_B: q_B,
+        VarPowerFlowReferenceType.P_C: p_C,
+        VarPowerFlowReferenceType.Q_C: q_C,
+        # VarPowerFlowReferenceType.d_v_N: None,
+        # VarPowerFlowReferenceType.d_v_A: None,
+        # VarPowerFlowReferenceType.d_v_B: None,
+        # VarPowerFlowReferenceType.d_v_C: None,
     }
 
     return templ
@@ -1548,22 +1548,22 @@ def get_governor_emt(vf: VarFactory, name: str = "Governor") -> EmtModelTemplate
         },
         api_obj_mapping={
             # Gains and limits
-            ParamPowerFlowRefferenceType.K: K,  # governor gain (inverse droop)
-            ParamPowerFlowRefferenceType.Pmax: Pmax,  # max mechanical power (pu)
-            ParamPowerFlowRefferenceType.Pmin: Pmin,  # min mechanical power (pu)
-            ParamPowerFlowRefferenceType.Uc: Uc,  # max valve closing rate (pu/s)
-            ParamPowerFlowRefferenceType.Uo: Uo,  # max valve opening rate (pu/s)
-            ParamPowerFlowRefferenceType.T_aux: T_aux,
+            ParamPowerFlowReferenceType.K: K,  # governor gain (inverse droop)
+            ParamPowerFlowReferenceType.Pmax: Pmax,  # max mechanical power (pu)
+            ParamPowerFlowReferenceType.Pmin: Pmin,  # min mechanical power (pu)
+            ParamPowerFlowReferenceType.Uc: Uc,  # max valve closing rate (pu/s)
+            ParamPowerFlowReferenceType.Uo: Uo,  # max valve opening rate (pu/s)
+            ParamPowerFlowReferenceType.T_aux: T_aux,
 
             # Control
-            ParamPowerFlowRefferenceType.Kp: Kp,
-            ParamPowerFlowRefferenceType.Ki: Ki,
-            ParamPowerFlowRefferenceType.omega_ref: omega_ref,
-            ParamPowerFlowRefferenceType.p0: p0,
-            ParamPowerFlowRefferenceType.P0: P0,
+            ParamPowerFlowReferenceType.Kp: Kp,
+            ParamPowerFlowReferenceType.Ki: Ki,
+            ParamPowerFlowReferenceType.omega_ref: omega_ref,
+            ParamPowerFlowReferenceType.p0: p0,
+            ParamPowerFlowReferenceType.P0: P0,
 
             # shared ref
-            ParamPowerFlowRefferenceType.generator_share_p_ref: Pm_ref
+            ParamPowerFlowReferenceType.generator_share_p_ref: Pm_ref
         }
 
     )
@@ -1834,9 +1834,9 @@ def get_complete_generator_template_emt(vf: VarFactory, name="complete_generator
     # bind the complete generator at the wrapper boundary. The internal machine
     # and exciter inputs are then connected to these wrapper variables before the
     # child blocks are flattened.
-    v_a_in = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowRefferenceType.v_A)
-    v_b_in = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowRefferenceType.v_B)
-    v_c_in = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowRefferenceType.v_C)
+    v_a_in = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowReferenceType.v_A)
+    v_b_in = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowReferenceType.v_B)
+    v_c_in = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowReferenceType.v_C)
 
     # generate models
     # The exciter interface is defined in terms of IRPu -> v_f, which matches the
@@ -1897,33 +1897,33 @@ def get_complete_generator_template_emt(vf: VarFactory, name="complete_generator
     #         pass
 
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.v_A: v_a_in,
-        VarPowerFlowRefferenceType.v_B: v_b_in,
-        VarPowerFlowRefferenceType.v_C: v_c_in,
-        VarPowerFlowRefferenceType.i_A: gen_mdl.out_vars[0],
-        VarPowerFlowRefferenceType.i_B: gen_mdl.out_vars[1],
-        VarPowerFlowRefferenceType.i_C: gen_mdl.out_vars[2],
-        VarPowerFlowRefferenceType.d_v_A: gen_mdl.external_mapping[VarPowerFlowRefferenceType.d_v_A],
-        VarPowerFlowRefferenceType.d_v_B: gen_mdl.external_mapping[VarPowerFlowRefferenceType.d_v_B],
-        VarPowerFlowRefferenceType.d_v_C: gen_mdl.external_mapping[VarPowerFlowRefferenceType.d_v_C],
-        VarPowerFlowRefferenceType.P_A: gen_mdl.external_mapping[VarPowerFlowRefferenceType.P_A],
-        VarPowerFlowRefferenceType.Q_A: gen_mdl.external_mapping[VarPowerFlowRefferenceType.Q_A],
-        VarPowerFlowRefferenceType.P_B: gen_mdl.external_mapping[VarPowerFlowRefferenceType.P_B],
-        VarPowerFlowRefferenceType.Q_B: gen_mdl.external_mapping[VarPowerFlowRefferenceType.Q_B],
-        VarPowerFlowRefferenceType.P_C: gen_mdl.external_mapping[VarPowerFlowRefferenceType.P_C],
-        VarPowerFlowRefferenceType.Q_C: gen_mdl.external_mapping[VarPowerFlowRefferenceType.Q_C],
+        VarPowerFlowReferenceType.v_A: v_a_in,
+        VarPowerFlowReferenceType.v_B: v_b_in,
+        VarPowerFlowReferenceType.v_C: v_c_in,
+        VarPowerFlowReferenceType.i_A: gen_mdl.out_vars[0],
+        VarPowerFlowReferenceType.i_B: gen_mdl.out_vars[1],
+        VarPowerFlowReferenceType.i_C: gen_mdl.out_vars[2],
+        VarPowerFlowReferenceType.d_v_A: gen_mdl.external_mapping[VarPowerFlowReferenceType.d_v_A],
+        VarPowerFlowReferenceType.d_v_B: gen_mdl.external_mapping[VarPowerFlowReferenceType.d_v_B],
+        VarPowerFlowReferenceType.d_v_C: gen_mdl.external_mapping[VarPowerFlowReferenceType.d_v_C],
+        VarPowerFlowReferenceType.P_A: gen_mdl.external_mapping[VarPowerFlowReferenceType.P_A],
+        VarPowerFlowReferenceType.Q_A: gen_mdl.external_mapping[VarPowerFlowReferenceType.Q_A],
+        VarPowerFlowReferenceType.P_B: gen_mdl.external_mapping[VarPowerFlowReferenceType.P_B],
+        VarPowerFlowReferenceType.Q_B: gen_mdl.external_mapping[VarPowerFlowReferenceType.Q_B],
+        VarPowerFlowReferenceType.P_C: gen_mdl.external_mapping[VarPowerFlowReferenceType.P_C],
+        VarPowerFlowReferenceType.Q_C: gen_mdl.external_mapping[VarPowerFlowReferenceType.Q_C],
     }
 
     templ.block.api_obj_mapping = {
-        ParamPowerFlowRefferenceType.omega_base:
-            gen_mdl.api_obj_mapping[ParamPowerFlowRefferenceType.omega_base],
-        ParamPowerFlowRefferenceType.R1:
-            gen_mdl.api_obj_mapping[ParamPowerFlowRefferenceType.R1],
-        ParamPowerFlowRefferenceType.X1:
-            gen_mdl.api_obj_mapping[ParamPowerFlowRefferenceType.X1],
-        ParamPowerFlowRefferenceType.X0:
-            gen_mdl.api_obj_mapping[ParamPowerFlowRefferenceType.X0],
-        ParamPowerFlowRefferenceType.generator_share_p_ref: governor_mdl.api_obj_mapping[ParamPowerFlowRefferenceType.generator_share_p_ref],
+        ParamPowerFlowReferenceType.omega_base:
+            gen_mdl.api_obj_mapping[ParamPowerFlowReferenceType.omega_base],
+        ParamPowerFlowReferenceType.R1:
+            gen_mdl.api_obj_mapping[ParamPowerFlowReferenceType.R1],
+        ParamPowerFlowReferenceType.X1:
+            gen_mdl.api_obj_mapping[ParamPowerFlowReferenceType.X1],
+        ParamPowerFlowReferenceType.X0:
+            gen_mdl.api_obj_mapping[ParamPowerFlowReferenceType.X0],
+        ParamPowerFlowReferenceType.generator_share_p_ref: governor_mdl.api_obj_mapping[ParamPowerFlowReferenceType.generator_share_p_ref],
     }
 
     templ.block.in_vars = [v_a_in, v_b_in, v_c_in] # v_abc

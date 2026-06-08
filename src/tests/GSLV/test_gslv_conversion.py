@@ -5,7 +5,13 @@
 import os
 import numpy as np
 import VeraGridEngine.api as vg
-from VeraGridEngine.Compilers.circuit_to_gslv import GSLV_AVAILABLE, pg, to_gslv, compare_nc, CheckArr
+from VeraGridEngine.Compilers.circuit_to_gslv import (
+    GSLV_AVAILABLE,
+    pg,
+    to_gslv,
+    compare_nc,
+    CheckArr,
+)
 
 
 def compare_inputs(grid_gslv: "pg.MultiCircuit", grid_gc: vg.MultiCircuit, tol=1e-6, t_idx=None):
@@ -176,6 +182,31 @@ def test_power_flow_ts():
     drv.run()
 
     res = drv.results
+
+
+def test_power_flow_snapshot_device_active_power_results():
+    """
+    Verify that direct GSLV per-device active-power PF channels are mapped when
+    the loaded GSLV build exposes them.
+    """
+    if not GSLV_AVAILABLE:
+        return
+
+    grid = vg.open_file(filename=os.path.join('data', 'grids', 'case14.gridcal'))
+    options = vg.PowerFlowOptions(verbose=False)
+
+    drv_native = vg.PowerFlowDriver(grid=grid,
+                                    options=options,
+                                    engine=vg.EngineType.VeraGrid)
+    drv_native.run()
+
+    drv_gslv = vg.PowerFlowDriver(grid=grid,
+                                  options=options,
+                                  engine=vg.EngineType.GSLV)
+    drv_gslv.run()
+
+    assert np.allclose(drv_native.results.gen_p, drv_gslv.results.gen_p, atol=1e-4)
+    assert np.allclose(drv_native.results.battery_p, drv_gslv.results.battery_p, atol=1e-4)
 
 
 def test_contingencies_ts():

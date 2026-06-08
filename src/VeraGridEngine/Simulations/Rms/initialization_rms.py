@@ -683,7 +683,6 @@ def build_persistent_initialization_cache_key(
         str(int(options.init_dense_threshold)),
         str(bool(options.init_newton_backtracking)),
         str(bool(options.init_allow_state_equilibrium)),
-        str(bool(options.init_pseudo_transient_enable)),
         f"{float(options.init_ptc_dtau0):.12g}",
         f"{float(options.init_ptc_dtau_min):.12g}",
         f"{float(options.init_ptc_dtau_max):.12g}",

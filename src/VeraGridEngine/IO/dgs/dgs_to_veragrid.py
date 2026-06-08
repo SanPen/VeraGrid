@@ -16,7 +16,8 @@ from VeraGridEngine.enumerations import (
     ShuntControlMode,
     ConverterControlType,
     ConverterFaultControlType,
-    GeneratorType
+    GeneratorType,
+    GeneratorControlMode
 )
 import VeraGridEngine.Devices as dev
 from VeraGridEngine.Devices.Branches.wire import Wire
@@ -2464,17 +2465,17 @@ def convert_dgs_staticgen_to_battery(elmgenstat: ElmGenstat,
     Q = float(elmgenstat.qgini)
     pf = np.cos(np.atan(Q / (P + 1e-20)))
 
-    batttery = dev.Battery(
+    battery = dev.Battery(
         name=name,
         idtag=battery_idtag,
         P=P,
-        power_factor=pf,
-        is_controlled=False,
+        Q=Q,
+        control_mode=GeneratorControlMode.Q,
         Snom=float(elmgenstat.sgn),
         active=not bool(elmgenstat.outserv)
     )
 
-    return bus, batttery
+    return bus, battery
 
 
 def convert_dgs_to_static_gen(elmgenstat: ElmGenstat,
@@ -3352,11 +3353,14 @@ def convert_dgs_to_generator(elmsym: ElmSym,
 
     if elmsym.av_mode != "":
         if elmsym.av_mode == "constv":
-            is_controlled = True
+            control_mode = GeneratorControlMode.V
         else:
-            is_controlled = False
+            control_mode = GeneratorControlMode.Q
     else:
-        is_controlled = elmsym.iv_mode != 0
+        if elmsym.iv_mode != 0:
+            control_mode = GeneratorControlMode.V
+        else:
+            control_mode = GeneratorControlMode.Q
 
     # Power factor (used mainly when not controlled)
     pf = elmsym.cosgini
@@ -3405,7 +3409,7 @@ def convert_dgs_to_generator(elmsym: ElmSym,
                         Q=q_mvar,
                         power_factor=pf,
                         vset=vset,
-                        is_controlled=is_controlled,
+                        control_mode=control_mode,
                         Qmin=qmin,
                         Qmax=qmax,
                         Snom=snom,
@@ -3498,7 +3502,7 @@ def convert_dgs_to_asm_generator(elmasm: ElmAsm,
                                         idtag=generator_idtag,
                                         P=P,
                                         power_factor=1.0,
-                                        is_controlled=False,
+                                        control_mode=GeneratorControlMode.Q,
                                         Snom=Sr,
                                         active=(elmasm.outserv == 0),
                                         Rs=Rs,
@@ -3522,7 +3526,7 @@ def convert_dgs_to_asm_generator(elmasm: ElmAsm,
                                         idtag=generator_idtag,
                                         P=P,
                                         power_factor=1.0,
-                                        is_controlled=False,
+                                        control_mode=GeneratorControlMode.Q,
                                         Snom=P,
                                         active=(elmasm.outserv == 0),
                                         tpe=GeneratorType.Asynchronous)
@@ -3539,7 +3543,7 @@ def convert_dgs_to_asm_generator(elmasm: ElmAsm,
                                     idtag=generator_idtag,
                                     P=0.0,
                                     power_factor=1.0,
-                                    is_controlled=False,
+                                    control_mode=GeneratorControlMode.Q,
                                     active=(elmasm.outserv == 0),
                                     tpe=GeneratorType.Asynchronous)
 
@@ -3555,7 +3559,7 @@ def convert_dgs_to_asm_generator(elmasm: ElmAsm,
                                 idtag=generator_idtag,
                                 P=0.0,
                                 power_factor=1.0,
-                                is_controlled=False,
+                                control_mode=GeneratorControlMode.Q,
                                 active=(elmasm.outserv == 0),
                                 tpe=GeneratorType.Asynchronous)
 
@@ -3571,7 +3575,7 @@ def convert_dgs_to_asm_generator(elmasm: ElmAsm,
                             idtag=generator_idtag,
                             P=0.0,
                             power_factor=1.0,
-                            is_controlled=False,
+                            control_mode=GeneratorControlMode.Q,
                             active=(elmasm.outserv == 0),
                             tpe=GeneratorType.Asynchronous)
 

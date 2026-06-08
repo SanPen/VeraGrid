@@ -61,6 +61,7 @@ Contents
     md_source/user_interface.md
     md_source/structure.md
     md_source/modelling.md
+    md_source/device_relationships.md
     md_source/small_signal_stability.md
     md_source/model_debugging.md
     md_source/file_operations.md

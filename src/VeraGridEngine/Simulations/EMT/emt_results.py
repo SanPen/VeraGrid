@@ -2,13 +2,13 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
-
+import json
 import numpy as np
 from matplotlib import pyplot as plt
 from typing import List, Dict, Optional
 
 from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
-from VeraGridEngine.basic_structures import Vec, StrVec,  DateVec, Mat
+from VeraGridEngine.basic_structures import Vec, StrVec, DateVec, Mat, BoolVec
 from VeraGridEngine.enumerations import StudyResultsType,  DeviceType
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
@@ -17,8 +17,15 @@ from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 class EmtResults(ResultsTemplate):
 
     LOCAL_RESULTS_DECLARATIONS = (
+        ResultsProperty(name='time_array', tpe=DateVec, old_names=list(), expandable=False),
         ResultsProperty(name='values', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='diff_values', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='emt_events_group_names', tpe=StrVec, old_names=list(), expandable=False),
         ResultsProperty(name='emt_events_group_idtags', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='has_event_group_results', tpe=BoolVec, old_names=list(), expandable=False),
+        ResultsProperty(name='well_initialized', tpe=BoolVec, old_names=list(), expandable=False),
+        ResultsProperty(name='converged', tpe=BoolVec, old_names=list(), expandable=False),
+        ResultsProperty(name='dynamic_metadata_json', tpe=StrVec, old_names=list(), expandable=False),
     )
 
     __slots__ = (
@@ -31,6 +38,7 @@ class EmtResults(ResultsTemplate):
         "has_event_group_results",
         "well_initialized",
         "converged",
+        "dynamic_metadata_json",
         "variables",
         "diff_variables",
         "uid2vars_glob_name",
@@ -106,6 +114,7 @@ class EmtResults(ResultsTemplate):
 
         self.well_initialized = np.zeros(self.ng, dtype=bool)
         self.converged = np.zeros(self.ng, dtype=bool)
+        self.dynamic_metadata_json = np.array([""], dtype=str)
 
         self.variables = variables
         self.diff_variables = diff_variables
@@ -140,6 +149,104 @@ class EmtResults(ResultsTemplate):
         self.variable_array = np.array([self.uid2vars_glob_name[var.uid] for var in variables], dtype=str)
         self.values = np.zeros((self.nt, self.nv, self.ng), dtype=float)
         self.diff_values = np.zeros((self.nt, self.ndv, self.ng), dtype=float)
+        self.prepare_for_saving()
+
+    def _build_dynamic_metadata_payload(self) -> Dict[str, object]:
+        """
+        Build the serialized dynamic metadata payload.
+
+        :return: JSON-safe metadata dictionary.
+        """
+        payload: Dict[str, object] = dict()
+        payload["variables"] = [{"uid": int(var.uid), "name": str(var.name)} for var in self.variables]
+        payload["diff_variables"] = [{"uid": int(var.uid), "name": str(var.name)} for var in self.diff_variables]
+        payload["uid2idx_vars"] = {str(uid): int(idx) for uid, idx in self.uid2idx_vars.items()}
+        payload["uid2idx_diff"] = {str(uid): int(idx) for uid, idx in self.uid2idx_diff.items()}
+        payload["vars_glob_name2uid"] = {str(name): int(uid) for name, uid in self.vars_glob_name2uid.items()}
+        payload["devices_vars_info"] = [
+            {
+                "device_idtag": str(device.idtag),
+                "variables": [{"uid": int(var.uid), "name": str(var.name)} for var in variables],
+            }
+            for device, variables in self.devices_vars_info.items()
+        ]
+        payload["parameter_value_maps"] = [
+            {str(key): float(value) for key, value in parameter_map.items()}
+            for parameter_map in self.parameter_value_maps
+        ]
+        return payload
+
+    def prepare_for_saving(self) -> None:
+        """
+        Refresh the serialized dynamic metadata before the result archive is written.
+
+        :return: None.
+        """
+        self.dynamic_metadata_json = np.array(
+            [json.dumps(self._build_dynamic_metadata_payload(), separators=(",", ":"))],
+            dtype=str,
+        )
+
+    def restore_dynamic_metadata(self, grid) -> None:
+        """
+        Restore dynamic variable metadata from the serialized payload.
+
+        :param grid: Current circuit used to resolve device idtags.
+        :return: None.
+        """
+        if len(self.dynamic_metadata_json) == 0 or str(self.dynamic_metadata_json[0]) == "":
+            return
+        else:
+            pass
+
+        metadata = json.loads(str(self.dynamic_metadata_json[0]))
+        var_by_uid: Dict[int, Var] = dict()
+
+        variable_defs = metadata.get("variables", list())
+        diff_variable_defs = metadata.get("diff_variables", list())
+        variable_def: Dict[str, object]
+        for variable_def in variable_defs + diff_variable_defs:
+            uid = int(variable_def["uid"])
+            var_by_uid[uid] = Var(name=str(variable_def["name"]), uid=uid)
+
+        self.variables = [var_by_uid[int(variable_def["uid"])] for variable_def in variable_defs]
+        self.diff_variables = [var_by_uid[int(variable_def["uid"])] for variable_def in diff_variable_defs]
+        self.uid2idx_vars = {int(uid): int(idx) for uid, idx in metadata.get("uid2idx_vars", dict()).items()}
+        self.uid2idx_diff = {int(uid): int(idx) for uid, idx in metadata.get("uid2idx_diff", dict()).items()}
+        self.uid2idx = dict()
+        self.uid2idx.update(self.uid2idx_vars)
+        self.uid2idx.update(self.uid2idx_diff)
+        self.vars_glob_name2uid = {
+            str(name): int(uid) for name, uid in metadata.get("vars_glob_name2uid", dict()).items()
+        }
+        self.uid2vars_glob_name = {uid: name for name, uid in self.vars_glob_name2uid.items()}
+        self.variable_array = np.array([var.name for var in self.variables], dtype=str)
+
+        device_by_idtag = {str(device.idtag): device for device in grid.get_all_elements_iter()}
+        self.devices_vars_info = dict()
+        device_record: Dict[str, object]
+        for device_record in metadata.get("devices_vars_info", list()):
+            device = device_by_idtag.get(str(device_record.get("device_idtag", "")), None)
+            if device is not None:
+                device_vars = list()
+                variable_record: Dict[str, object]
+                for variable_record in device_record.get("variables", list()):
+                    uid = int(variable_record["uid"])
+                    variable = var_by_uid.get(uid, None)
+                    if variable is None:
+                        variable = Var(name=str(variable_record["name"]), uid=uid)
+                        var_by_uid[uid] = variable
+                    else:
+                        pass
+                    device_vars.append(variable)
+                self.devices_vars_info[device] = device_vars
+            else:
+                pass
+
+        self.parameter_value_maps = [
+            {str(key): float(value) for key, value in parameter_map.items()}
+            for parameter_map in metadata.get("parameter_value_maps", list())
+        ]
 
 
     def get_var(self, uid: int) -> Var:
@@ -242,3 +349,18 @@ class EmtResults(ResultsTemplate):
 
         return data
 
+    def consolidate_after_loading(self) -> None:
+        """
+        Refresh the dynamic dimensions after disk restore.
+
+        :return: None.
+        """
+        self.nt = int(self.values.shape[0]) if self.values.ndim >= 1 else 0
+        self.nv = int(self.values.shape[1]) if self.values.ndim >= 2 else 0
+        self.ng = int(self.values.shape[2]) if self.values.ndim >= 3 else 0
+        self.ndv = int(self.diff_values.shape[1]) if self.diff_values.ndim >= 2 else 0
+
+        if len(self.emt_events_group_names) == 0 and len(self.emt_events_group_idtags) > 0:
+            self.emt_events_group_names = np.array(self.emt_events_group_idtags, dtype=str)
+        else:
+            pass

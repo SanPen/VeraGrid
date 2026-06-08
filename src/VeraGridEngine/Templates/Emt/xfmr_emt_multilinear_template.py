@@ -12,7 +12,7 @@ from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Templates.Emt.xfmr_emt_template import _project_currents
 from VeraGridEngine.Utils.Symbolic.block import Expr, Var
-from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowRefferenceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowReferenceType, VarPowerFlowReferenceType
 
 
 def get_xfmr_emt_template_multilinear(
@@ -57,49 +57,49 @@ def get_xfmr_emt_template_multilinear(
     xfmr_sc_loss_kw: Var = vf.add_var(name=f"xfmr_sc_loss_kw_{name}")
     xfmr_tap_module: Var = vf.add_var(name=f"xfmr_tap_module_{name}")
 
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.omega_base] = omega_base
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_rated_power_mva] = xfmr_s_rated_mva
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_open_circuit_current_pct] = xfmr_oc_current_pct
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_open_circuit_loss_kw] = xfmr_oc_loss_kw
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_short_circuit_voltage_pct] = xfmr_sc_voltage_pct
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_short_circuit_loss_kw] = xfmr_sc_loss_kw
-    templ.block.api_obj_mapping[ParamPowerFlowRefferenceType.transformer_tap_ratio] = xfmr_tap_module
+    templ.block.api_obj_mapping[ParamPowerFlowReferenceType.omega_base] = omega_base
+    templ.block.api_obj_mapping[ParamPowerFlowReferenceType.transformer_rated_power_mva] = xfmr_s_rated_mva
+    templ.block.api_obj_mapping[ParamPowerFlowReferenceType.transformer_open_circuit_current_pct] = xfmr_oc_current_pct
+    templ.block.api_obj_mapping[ParamPowerFlowReferenceType.transformer_open_circuit_loss_kw] = xfmr_oc_loss_kw
+    templ.block.api_obj_mapping[ParamPowerFlowReferenceType.transformer_short_circuit_voltage_pct] = xfmr_sc_voltage_pct
+    templ.block.api_obj_mapping[ParamPowerFlowReferenceType.transformer_short_circuit_loss_kw] = xfmr_sc_loss_kw
+    templ.block.api_obj_mapping[ParamPowerFlowReferenceType.transformer_tap_ratio] = xfmr_tap_module
 
     # ------------------------------------------------------------------
     # Mapped winding-connection matrices.
     # ------------------------------------------------------------------
-    cf_enums: list[list[ParamPowerFlowRefferenceType]] = [
+    cf_enums: list[list[ParamPowerFlowReferenceType]] = [
         [
-            ParamPowerFlowRefferenceType.transformer_from_connection_aa,
-            ParamPowerFlowRefferenceType.transformer_from_connection_ab,
-            ParamPowerFlowRefferenceType.transformer_from_connection_ac,
+            ParamPowerFlowReferenceType.transformer_from_connection_aa,
+            ParamPowerFlowReferenceType.transformer_from_connection_ab,
+            ParamPowerFlowReferenceType.transformer_from_connection_ac,
         ],
         [
-            ParamPowerFlowRefferenceType.transformer_from_connection_ba,
-            ParamPowerFlowRefferenceType.transformer_from_connection_bb,
-            ParamPowerFlowRefferenceType.transformer_from_connection_bc,
+            ParamPowerFlowReferenceType.transformer_from_connection_ba,
+            ParamPowerFlowReferenceType.transformer_from_connection_bb,
+            ParamPowerFlowReferenceType.transformer_from_connection_bc,
         ],
         [
-            ParamPowerFlowRefferenceType.transformer_from_connection_ca,
-            ParamPowerFlowRefferenceType.transformer_from_connection_cb,
-            ParamPowerFlowRefferenceType.transformer_from_connection_cc,
+            ParamPowerFlowReferenceType.transformer_from_connection_ca,
+            ParamPowerFlowReferenceType.transformer_from_connection_cb,
+            ParamPowerFlowReferenceType.transformer_from_connection_cc,
         ],
     ]
-    ct_enums: list[list[ParamPowerFlowRefferenceType]] = [
+    ct_enums: list[list[ParamPowerFlowReferenceType]] = [
         [
-            ParamPowerFlowRefferenceType.transformer_to_connection_aa,
-            ParamPowerFlowRefferenceType.transformer_to_connection_ab,
-            ParamPowerFlowRefferenceType.transformer_to_connection_ac,
+            ParamPowerFlowReferenceType.transformer_to_connection_aa,
+            ParamPowerFlowReferenceType.transformer_to_connection_ab,
+            ParamPowerFlowReferenceType.transformer_to_connection_ac,
         ],
         [
-            ParamPowerFlowRefferenceType.transformer_to_connection_ba,
-            ParamPowerFlowRefferenceType.transformer_to_connection_bb,
-            ParamPowerFlowRefferenceType.transformer_to_connection_bc,
+            ParamPowerFlowReferenceType.transformer_to_connection_ba,
+            ParamPowerFlowReferenceType.transformer_to_connection_bb,
+            ParamPowerFlowReferenceType.transformer_to_connection_bc,
         ],
         [
-            ParamPowerFlowRefferenceType.transformer_to_connection_ca,
-            ParamPowerFlowRefferenceType.transformer_to_connection_cb,
-            ParamPowerFlowRefferenceType.transformer_to_connection_cc,
+            ParamPowerFlowReferenceType.transformer_to_connection_ca,
+            ParamPowerFlowReferenceType.transformer_to_connection_cb,
+            ParamPowerFlowReferenceType.transformer_to_connection_cc,
         ],
     ]
 
@@ -191,17 +191,17 @@ def get_xfmr_emt_template_multilinear(
     # ------------------------------------------------------------------
     # Terminal electrical interface variables in abc frame.
     # ------------------------------------------------------------------
-    vf_keys: Dict[str, VarPowerFlowRefferenceType] = {
-        "N": VarPowerFlowRefferenceType.vf_N,
-        "A": VarPowerFlowRefferenceType.vf_A,
-        "B": VarPowerFlowRefferenceType.vf_B,
-        "C": VarPowerFlowRefferenceType.vf_C,
+    vf_keys: Dict[str, VarPowerFlowReferenceType] = {
+        "N": VarPowerFlowReferenceType.vf_N,
+        "A": VarPowerFlowReferenceType.vf_A,
+        "B": VarPowerFlowReferenceType.vf_B,
+        "C": VarPowerFlowReferenceType.vf_C,
     }
-    vt_keys: Dict[str, VarPowerFlowRefferenceType] = {
-        "N": VarPowerFlowRefferenceType.vt_N,
-        "A": VarPowerFlowRefferenceType.vt_A,
-        "B": VarPowerFlowRefferenceType.vt_B,
-        "C": VarPowerFlowRefferenceType.vt_C,
+    vt_keys: Dict[str, VarPowerFlowReferenceType] = {
+        "N": VarPowerFlowReferenceType.vt_N,
+        "A": VarPowerFlowReferenceType.vt_A,
+        "B": VarPowerFlowReferenceType.vt_B,
+        "C": VarPowerFlowReferenceType.vt_C,
     }
 
     v_f: list[Var] = [
@@ -464,42 +464,42 @@ def get_xfmr_emt_template_multilinear(
     # ------------------------------------------------------------------
     # External mapping.
     # ------------------------------------------------------------------
-    if_keys: Dict[str, VarPowerFlowRefferenceType] = {
-        "N": VarPowerFlowRefferenceType.if_N,
-        "A": VarPowerFlowRefferenceType.if_A,
-        "B": VarPowerFlowRefferenceType.if_B,
-        "C": VarPowerFlowRefferenceType.if_C,
+    if_keys: Dict[str, VarPowerFlowReferenceType] = {
+        "N": VarPowerFlowReferenceType.if_N,
+        "A": VarPowerFlowReferenceType.if_A,
+        "B": VarPowerFlowReferenceType.if_B,
+        "C": VarPowerFlowReferenceType.if_C,
     }
-    it_keys: Dict[str, VarPowerFlowRefferenceType] = {
-        "N": VarPowerFlowRefferenceType.it_N,
-        "A": VarPowerFlowRefferenceType.it_A,
-        "B": VarPowerFlowRefferenceType.it_B,
-        "C": VarPowerFlowRefferenceType.it_C,
+    it_keys: Dict[str, VarPowerFlowReferenceType] = {
+        "N": VarPowerFlowReferenceType.it_N,
+        "A": VarPowerFlowReferenceType.it_A,
+        "B": VarPowerFlowReferenceType.it_B,
+        "C": VarPowerFlowReferenceType.it_C,
     }
-    Sf_keys: Dict[str, VarPowerFlowRefferenceType] = {
-        "A": VarPowerFlowRefferenceType.Sf_A,
-        "B": VarPowerFlowRefferenceType.Sf_B,
-        "C": VarPowerFlowRefferenceType.Sf_C,
+    Sf_keys: Dict[str, VarPowerFlowReferenceType] = {
+        "A": VarPowerFlowReferenceType.Sf_A,
+        "B": VarPowerFlowReferenceType.Sf_B,
+        "C": VarPowerFlowReferenceType.Sf_C,
     }
-    St_keys: Dict[str, VarPowerFlowRefferenceType] = {
-        "A": VarPowerFlowRefferenceType.St_A,
-        "B": VarPowerFlowRefferenceType.St_B,
-        "C": VarPowerFlowRefferenceType.St_C,
+    St_keys: Dict[str, VarPowerFlowReferenceType] = {
+        "A": VarPowerFlowReferenceType.St_A,
+        "B": VarPowerFlowReferenceType.St_B,
+        "C": VarPowerFlowReferenceType.St_C,
     }
-    d_vf_keys: Dict[str, VarPowerFlowRefferenceType] = {
-        "N": VarPowerFlowRefferenceType.d_v_N_f,
-        "A": VarPowerFlowRefferenceType.d_v_A_f,
-        "B": VarPowerFlowRefferenceType.d_v_B_f,
-        "C": VarPowerFlowRefferenceType.d_v_C_f,
+    d_vf_keys: Dict[str, VarPowerFlowReferenceType] = {
+        "N": VarPowerFlowReferenceType.d_v_N_f,
+        "A": VarPowerFlowReferenceType.d_v_A_f,
+        "B": VarPowerFlowReferenceType.d_v_B_f,
+        "C": VarPowerFlowReferenceType.d_v_C_f,
     }
-    d_vt_keys: Dict[str, VarPowerFlowRefferenceType] = {
-        "N": VarPowerFlowRefferenceType.d_v_N_t,
-        "A": VarPowerFlowRefferenceType.d_v_A_t,
-        "B": VarPowerFlowRefferenceType.d_v_B_t,
-        "C": VarPowerFlowRefferenceType.d_v_C_t,
+    d_vt_keys: Dict[str, VarPowerFlowReferenceType] = {
+        "N": VarPowerFlowReferenceType.d_v_N_t,
+        "A": VarPowerFlowReferenceType.d_v_A_t,
+        "B": VarPowerFlowReferenceType.d_v_B_t,
+        "C": VarPowerFlowReferenceType.d_v_C_t,
     }
 
-    mapping: Dict[VarPowerFlowRefferenceType, Var | None] = {
+    mapping: Dict[VarPowerFlowReferenceType, Var | None] = {
         if_keys["N"]: None,
         if_keys["A"]: None,
         if_keys["B"]: None,

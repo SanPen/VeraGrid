@@ -134,7 +134,7 @@ def transform_bus_into_voltage_level(
     :param bar_by_segments: Have the bar with connectivity and impedance instead of a single bus-bar?
     :param skip_injections_reconnection: if true the injections are not included in the reconnections list
     :param enable_transfer_bus: if true, adds a transfer bus (JBPT) connected to all position buses if it makes sense
-    :param reducible_branches: if true, mark new branches as reducible for topology processing
+    :param reducible_branches: if true, every switch created in this conversion is marked reducible
     :param bay_assignments: list of (device_name, bay_number, assigned_bus) tuples for custom bay order
     :param x0: base x coordinate
     :param y0: base y coordinate
@@ -416,8 +416,7 @@ def transform_bus_into_voltage_level(
                 name=f"Dis_JBPT_{i}",
                 bus_from=conn_bus,
                 bus_to=transfer_bus,
-                graphic_type=SwitchGraphicType.Disconnector,
-                retained=not reducible_branches
+                graphic_type=SwitchGraphicType.Disconnector
             )
             grid.add_switch(dis_to_transfer)
 
@@ -430,10 +429,20 @@ def transform_bus_into_voltage_level(
                 name=f"CB_JBPT_to_Bar{i + 1}",
                 bus_from=transfer_bus,
                 bus_to=main_bar,
-                graphic_type=SwitchGraphicType.CircuitBreaker,
-                retained=not reducible_branches
+                graphic_type=SwitchGraphicType.CircuitBreaker
             )
             grid.add_switch(cb_to_main)
+
+    # Configure every switch created in this voltage level (both ends among the new buses).
+    # A tiny but non-zero reactance avoids numerical issues when a switch is retained
+    vl_bus_idtags = {b.idtag for b in all_buses}
+    for sw in grid.get_switches():
+        if (sw.bus_from is not None and sw.bus_to is not None
+                and sw.bus_from.idtag in vl_bus_idtags
+                and sw.bus_to.idtag in vl_bus_idtags):
+            sw.reducible = reducible_branches
+            sw.retained = not reducible_branches
+            sw.X = 1e-5
 
     # Now we reconnect the branches and injections to the new position-buses
 

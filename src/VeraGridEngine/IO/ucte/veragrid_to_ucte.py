@@ -13,7 +13,7 @@ from VeraGridEngine.Devices.Injections.external_grid import ExternalGrid
 from VeraGridEngine.Devices.Injections.static_generator import StaticGenerator
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.enumerations import ExternalGridMode, TapModuleControl, TapPhaseControl
+from VeraGridEngine.enumerations import ExternalGridMode, TapModuleControl, TapPhaseControl, GeneratorControlMode
 
 
 class UcteBusAggregate:
@@ -466,7 +466,7 @@ def update_aggregate_voltage_control_from_generator(aggregate: UcteBusAggregate,
     :param t_idx: Optional profile index.
     :return: None.
     """
-    if generator.is_controlled:
+    if generator.control_mode == GeneratorControlMode.V:
         if aggregate.node_type != 3:
             aggregate.node_type = 2
         else:

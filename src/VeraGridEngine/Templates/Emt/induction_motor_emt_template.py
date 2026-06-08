@@ -50,7 +50,7 @@ from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic import symbolic as sym
 from VeraGridEngine.Utils.Symbolic.block import Block, Expr, Var
-from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowRefferenceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowReferenceType, VarPowerFlowReferenceType
 
 
 _PI: float = math.pi
@@ -69,7 +69,7 @@ def _build_motor_external_mapping(
     d_v_a: Var,
     d_v_b: Var,
     d_v_c: Var,
-) -> Dict[VarPowerFlowRefferenceType, Var | None]:
+) -> Dict[VarPowerFlowReferenceType, Var | None]:
     """Build one ABC load external mapping for the motor.
 
     :param v_a: Phase-A terminal voltage.
@@ -84,32 +84,32 @@ def _build_motor_external_mapping(
     :return: EMT external mapping dictionary.
     """
     return dict({
-        VarPowerFlowRefferenceType.v_N: None,
-        VarPowerFlowRefferenceType.v_A: v_a,
-        VarPowerFlowRefferenceType.v_B: v_b,
-        VarPowerFlowRefferenceType.v_C: v_c,
-        VarPowerFlowRefferenceType.P: None,
-        VarPowerFlowRefferenceType.Q: None,
-        VarPowerFlowRefferenceType.P_N: None,
-        VarPowerFlowRefferenceType.Q_N: None,
-        VarPowerFlowRefferenceType.P_A: None,
-        VarPowerFlowRefferenceType.Q_A: None,
-        VarPowerFlowRefferenceType.P_B: None,
-        VarPowerFlowRefferenceType.Q_B: None,
-        VarPowerFlowRefferenceType.P_C: None,
-        VarPowerFlowRefferenceType.Q_C: None,
-        VarPowerFlowRefferenceType.i_N: None,
-        VarPowerFlowRefferenceType.i_A: i_a,
-        VarPowerFlowRefferenceType.i_B: i_b,
-        VarPowerFlowRefferenceType.i_C: i_c,
-        VarPowerFlowRefferenceType.phi_v: None,
-        VarPowerFlowRefferenceType.phi: None,
-        VarPowerFlowRefferenceType.Vpk: None,
-        VarPowerFlowRefferenceType.Ipk: None,
-        VarPowerFlowRefferenceType.d_v_N: None,
-        VarPowerFlowRefferenceType.d_v_A: d_v_a,
-        VarPowerFlowRefferenceType.d_v_B: d_v_b,
-        VarPowerFlowRefferenceType.d_v_C: d_v_c,
+        VarPowerFlowReferenceType.v_N: None,
+        VarPowerFlowReferenceType.v_A: v_a,
+        VarPowerFlowReferenceType.v_B: v_b,
+        VarPowerFlowReferenceType.v_C: v_c,
+        VarPowerFlowReferenceType.P: None,
+        VarPowerFlowReferenceType.Q: None,
+        VarPowerFlowReferenceType.P_N: None,
+        VarPowerFlowReferenceType.Q_N: None,
+        VarPowerFlowReferenceType.P_A: None,
+        VarPowerFlowReferenceType.Q_A: None,
+        VarPowerFlowReferenceType.P_B: None,
+        VarPowerFlowReferenceType.Q_B: None,
+        VarPowerFlowReferenceType.P_C: None,
+        VarPowerFlowReferenceType.Q_C: None,
+        VarPowerFlowReferenceType.i_N: None,
+        VarPowerFlowReferenceType.i_A: i_a,
+        VarPowerFlowReferenceType.i_B: i_b,
+        VarPowerFlowReferenceType.i_C: i_c,
+        VarPowerFlowReferenceType.phi_v: None,
+        VarPowerFlowReferenceType.phi: None,
+        VarPowerFlowReferenceType.Vpk: None,
+        VarPowerFlowReferenceType.Ipk: None,
+        VarPowerFlowReferenceType.d_v_N: None,
+        VarPowerFlowReferenceType.d_v_A: d_v_a,
+        VarPowerFlowReferenceType.d_v_B: d_v_b,
+        VarPowerFlowReferenceType.d_v_C: d_v_c,
     })
 
 
@@ -121,7 +121,7 @@ def _build_motor_api_mapping(
     q0_a: Var,
     q0_b: Var,
     q0_c: Var,
-) -> Dict[ParamPowerFlowRefferenceType, Var | None]:
+) -> Dict[ParamPowerFlowReferenceType, Var | None]:
     """Build the API parameter mapping used by EMT initialization.
 
     :param omega_base: Electrical base speed in rad/s.
@@ -134,13 +134,13 @@ def _build_motor_api_mapping(
     :return: API object mapping dictionary.
     """
     return dict({
-        ParamPowerFlowRefferenceType.omega_base: omega_base,
-        ParamPowerFlowRefferenceType.Pl0_A: p0_a,
-        ParamPowerFlowRefferenceType.Pl0_B: p0_b,
-        ParamPowerFlowRefferenceType.Pl0_C: p0_c,
-        ParamPowerFlowRefferenceType.Ql0_A: q0_a,
-        ParamPowerFlowRefferenceType.Ql0_B: q0_b,
-        ParamPowerFlowRefferenceType.Ql0_C: q0_c,
+        ParamPowerFlowReferenceType.omega_base: omega_base,
+        ParamPowerFlowReferenceType.Pl0_A: p0_a,
+        ParamPowerFlowReferenceType.Pl0_B: p0_b,
+        ParamPowerFlowReferenceType.Pl0_C: p0_c,
+        ParamPowerFlowReferenceType.Ql0_A: q0_a,
+        ParamPowerFlowReferenceType.Ql0_B: q0_b,
+        ParamPowerFlowReferenceType.Ql0_C: q0_c,
     })
 
 
@@ -409,9 +409,9 @@ def get_induction_motor_single_cage_emt_template(
     block.event_dict[r_r] = vf.add_const(0.02)
     block.event_dict[x_lr] = vf.add_const(0.12)
 
-    v_a: Var = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowRefferenceType.v_A)
-    v_b: Var = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowRefferenceType.v_B)
-    v_c: Var = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowRefferenceType.v_C)
+    v_a: Var = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowReferenceType.v_A)
+    v_b: Var = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowReferenceType.v_B)
+    v_c: Var = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowReferenceType.v_C)
     d_v_a: Var = vf.add_var(name=f"d_v_A_{name}")
     d_v_b: Var = vf.add_var(name=f"d_v_B_{name}")
     d_v_c: Var = vf.add_var(name=f"d_v_C_{name}")
@@ -435,9 +435,9 @@ def get_induction_motor_single_cage_emt_template(
     i_s_beta: Var = vf.add_var(name=f"i_s_beta_{name}")
     i_r_alpha: Var = vf.add_var(name=f"i_r_alpha_{name}")
     i_r_beta: Var = vf.add_var(name=f"i_r_beta_{name}")
-    i_a: Var = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowRefferenceType.i_A)
-    i_b: Var = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowRefferenceType.i_B)
-    i_c: Var = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowRefferenceType.i_C)
+    i_a: Var = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowReferenceType.i_A)
+    i_b: Var = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowReferenceType.i_B)
+    i_c: Var = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowReferenceType.i_C)
     p_motor: Var = vf.add_var(name=f"P_motor_{name}")
     q_motor: Var = vf.add_var(name=f"Q_motor_{name}")
     torque_e: Var = vf.add_var(name=f"T_e_{name}")
@@ -702,9 +702,9 @@ def get_induction_motor_double_cage_emt_template(
     block.event_dict[r_r2] = vf.add_const(0.080)
     block.event_dict[x_lr2] = vf.add_const(0.35)
 
-    v_a: Var = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowRefferenceType.v_A)
-    v_b: Var = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowRefferenceType.v_B)
-    v_c: Var = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowRefferenceType.v_C)
+    v_a: Var = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowReferenceType.v_A)
+    v_b: Var = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowReferenceType.v_B)
+    v_c: Var = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowReferenceType.v_C)
     d_v_a: Var = vf.add_var(name=f"d_v_A_{name}")
     d_v_b: Var = vf.add_var(name=f"d_v_B_{name}")
     d_v_c: Var = vf.add_var(name=f"d_v_C_{name}")
@@ -734,9 +734,9 @@ def get_induction_motor_double_cage_emt_template(
     i_r1_beta: Var = vf.add_var(name=f"i_r1_beta_{name}")
     i_r2_alpha: Var = vf.add_var(name=f"i_r2_alpha_{name}")
     i_r2_beta: Var = vf.add_var(name=f"i_r2_beta_{name}")
-    i_a: Var = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowRefferenceType.i_A)
-    i_b: Var = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowRefferenceType.i_B)
-    i_c: Var = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowRefferenceType.i_C)
+    i_a: Var = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowReferenceType.i_A)
+    i_b: Var = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowReferenceType.i_B)
+    i_c: Var = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowReferenceType.i_C)
     p_motor: Var = vf.add_var(name=f"P_motor_{name}")
     q_motor: Var = vf.add_var(name=f"Q_motor_{name}")
     torque_e: Var = vf.add_var(name=f"T_e_{name}")

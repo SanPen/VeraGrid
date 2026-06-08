@@ -7,14 +7,15 @@ from typing import Dict, List
 import time
 import numpy as np
 import pandas as pd
+import scipy.sparse as sp
 
-from VeraGridEngine.enumerations import ParamPowerFlowRefferenceType
+from VeraGridEngine.enumerations import ParamPowerFlowReferenceType
 from VeraGridEngine.Devices import MultiCircuit
 from VeraGridEngine.Utils.Symbolic.symbolic import (Var, Const, Expr, piecewise)
 from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicJacobian
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic_io import block_deep_copy
-from VeraGridEngine.enumerations import VarPowerFlowRefferenceType, RmsInitializationMethod, DeviceType
+from VeraGridEngine.enumerations import VarPowerFlowReferenceType, RmsInitializationMethod, DeviceType
 from VeraGridEngine.basic_structures import Vec, ObjVec, BoolVec, Logger
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowResults
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
@@ -220,13 +221,13 @@ class RmsProblemPhasor(RmsProblemTemplate):
             # add init values from powerflow to initial guess
             if elm.is_dc:
                 # DC bus: use Vdc (magnitude) - angle is not applicable for DC
-                self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Vdc,
+                self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Vdc,
                                     np.abs(self.power_flow_results.voltage[bus_num]))
             else:
                 # AC bus: use Vm and Va
-                self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Vi,
+                self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Vi,
                                     np.imag(self.power_flow_results.voltage[bus_num]))
-                self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Vr,
+                self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Vr,
                                     np.real(self.power_flow_results.voltage[bus_num]))
 
             # add model to system block
@@ -251,16 +252,16 @@ class RmsProblemPhasor(RmsProblemTemplate):
                 bsh_val = active_factor * float(elm.B)
 
                 elm.rms_model.parameters[
-                elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.g]] = Const(g_val)
+                elm.rms_model.api_obj_mapping[ParamPowerFlowReferenceType.g]] = Const(g_val)
                 elm.rms_model.parameters[
-                elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.b]] = Const(b_val)
+                elm.rms_model.api_obj_mapping[ParamPowerFlowReferenceType.b]] = Const(b_val)
                 elm.rms_model.parameters[
-                elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.bsh]] = Const(bsh_val)
+                elm.rms_model.api_obj_mapping[ParamPowerFlowReferenceType.bsh]] = Const(bsh_val)
 
-                if ParamPowerFlowRefferenceType.vtap_f in elm.rms_model.api_obj_mapping:
-                    elm.rms_model.parameters[elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.vtap_f]] = Const(1.0)
-                if ParamPowerFlowRefferenceType.vtap_t in elm.rms_model.api_obj_mapping:
-                    elm.rms_model.parameters[elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.vtap_t]] = Const(
+                if ParamPowerFlowReferenceType.vtap_f in elm.rms_model.api_obj_mapping:
+                    elm.rms_model.parameters[elm.rms_model.api_obj_mapping[ParamPowerFlowReferenceType.vtap_f]] = Const(1.0)
+                if ParamPowerFlowReferenceType.vtap_t in elm.rms_model.api_obj_mapping:
+                    elm.rms_model.parameters[elm.rms_model.api_obj_mapping[ParamPowerFlowReferenceType.vtap_t]] = Const(
                         float(elm.bus_from.Vnom / elm.bus_to.Vnom)
                     )
 
@@ -290,10 +291,10 @@ class RmsProblemPhasor(RmsProblemTemplate):
                 Iit = (St.real * Vt.imag - St.imag * Vt.real) / Vt_mag_sq
                 
                 # add init values from powerflow to initial guess
-                self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Irf, Irf)
-                self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Iif, Iif)
-                self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Irt, Irt)
-                self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Iit, Iit)
+                self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Irf, Irf)
+                self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Iif, Iif)
+                self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Irt, Irt)
+                self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Iit, Iit)
 
                 branch_bus_r[f_idx] += Irf
                 branch_bus_i[f_idx] += Iif
@@ -330,10 +331,10 @@ class RmsProblemPhasor(RmsProblemTemplate):
                 t = bus_dict[elm.bus_to]
 
                 # Phasor formulation: use current balance instead of power balance
-                setIr(Ir, Ir_used, f, -elm.rms_model.E(VarPowerFlowRefferenceType.Irf))
-                setIr(Ir, Ir_used, t, -elm.rms_model.E(VarPowerFlowRefferenceType.Irt))
-                setIi(Ii, Ii_used, f, -elm.rms_model.E(VarPowerFlowRefferenceType.Iif))
-                setIi(Ii, Ii_used, t, -elm.rms_model.E(VarPowerFlowRefferenceType.Iit))
+                setIr(Ir, Ir_used, f, -elm.rms_model.E(VarPowerFlowReferenceType.Irf))
+                setIr(Ir, Ir_used, t, -elm.rms_model.E(VarPowerFlowReferenceType.Irt))
+                setIi(Ii, Ii_used, f, -elm.rms_model.E(VarPowerFlowReferenceType.Iif))
+                setIi(Ii, Ii_used, t, -elm.rms_model.E(VarPowerFlowReferenceType.Iit))
 
         # Populating VSCs init guess
         for i, elm in enumerate(self.grid.get_vsc()):
@@ -352,15 +353,15 @@ class RmsProblemPhasor(RmsProblemTemplate):
                 # fill init_guess
 
                 self.add_variables_to_compilation_dicts(elm, mdl)
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pf, Sf_vsc)
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pt, St_vsc[i].real)
-                self.set_init_guess(mdl, VarPowerFlowRefferenceType.Qt, St_vsc[i].imag)
+                self.set_init_guess(mdl, VarPowerFlowReferenceType.Pf, Sf_vsc)
+                self.set_init_guess(mdl, VarPowerFlowReferenceType.Pt, St_vsc[i].real)
+                self.set_init_guess(mdl, VarPowerFlowReferenceType.Qt, St_vsc[i].imag)
 
                 f = bus_dict[elm.bus_from]
                 t = bus_dict[elm.bus_to]
-                setP(P, P_used, f, -mdl.E(VarPowerFlowRefferenceType.Pf))
-                setP(P, P_used, t, -mdl.E(VarPowerFlowRefferenceType.Pt))
-                setQ(Q, Q_used, t, -mdl.E(VarPowerFlowRefferenceType.Qt))
+                setP(P, P_used, f, -mdl.E(VarPowerFlowReferenceType.Pf))
+                setP(P, P_used, t, -mdl.E(VarPowerFlowReferenceType.Pt))
+                setQ(Q, Q_used, t, -mdl.E(VarPowerFlowReferenceType.Qt))
                 self.sys_block.add(mdl)
 
         # Populating HVDC init guess (similar to VSCs)
@@ -379,15 +380,15 @@ class RmsProblemPhasor(RmsProblemTemplate):
 
                 # Set initialization values for HVDC
                 # Real number only (no Q values)
-                # self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pf, Pf_hvdc)
-                # self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pt, Pt_hvdc)
+                # self.set_init_guess(mdl, VarPowerFlowReferenceType.Pf, Pf_hvdc)
+                # self.set_init_guess(mdl, VarPowerFlowReferenceType.Pt, Pt_hvdc)
 
                 f = bus_dict[elm.bus_from]
                 t = bus_dict[elm.bus_to]
-                setP(P, P_used, f, -mdl.E(VarPowerFlowRefferenceType.Pf))
-                setP(P, P_used, t, -mdl.E(VarPowerFlowRefferenceType.Pt))
-                setQ(Q, Q_used, f, -mdl.E(VarPowerFlowRefferenceType.Qf))
-                setQ(Q, Q_used, t, -mdl.E(VarPowerFlowRefferenceType.Qt))
+                setP(P, P_used, f, -mdl.E(VarPowerFlowReferenceType.Pf))
+                setP(P, P_used, t, -mdl.E(VarPowerFlowReferenceType.Pt))
+                setQ(Q, Q_used, f, -mdl.E(VarPowerFlowReferenceType.Qf))
+                setQ(Q, Q_used, t, -mdl.E(VarPowerFlowReferenceType.Qt))
                 self.sys_block.add(mdl)
 
         # initialize injections
@@ -456,12 +457,12 @@ class RmsProblemPhasor(RmsProblemTemplate):
             if dev.bus.is_dc:
                 continue
 
-            has_ir = VarPowerFlowRefferenceType.Ir in dev.rms_model.external_mapping
-            has_ii = VarPowerFlowRefferenceType.Ii in dev.rms_model.external_mapping
+            has_ir = VarPowerFlowReferenceType.Ir in dev.rms_model.external_mapping
+            has_ii = VarPowerFlowReferenceType.Ii in dev.rms_model.external_mapping
             is_adjustable_load_current = (
-                has_ir and has_ii and
-                ParamPowerFlowRefferenceType.Ir0 in dev.rms_model.api_obj_mapping and
-                ParamPowerFlowRefferenceType.Ii0 in dev.rms_model.api_obj_mapping
+                    has_ir and has_ii and
+                    ParamPowerFlowReferenceType.Ir0 in dev.rms_model.api_obj_mapping and
+                    ParamPowerFlowReferenceType.Ii0 in dev.rms_model.api_obj_mapping
             )
 
             if is_adjustable_load_current:
@@ -508,8 +509,8 @@ class RmsProblemPhasor(RmsProblemTemplate):
                 bus_index = bus_dict[elm.bus]
 
                 if elm.device_type == DeviceType.ShuntDevice:
-                    elm.rms_model.parameters[elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.g]] = Const(float(elm.G)/grid.Sbase)
-                    elm.rms_model.parameters[elm.rms_model.api_obj_mapping[ParamPowerFlowRefferenceType.b]] = Const(float(elm.B)/grid.Sbase)
+                    elm.rms_model.parameters[elm.rms_model.api_obj_mapping[ParamPowerFlowReferenceType.g]] = Const(float(elm.G) / grid.Sbase)
+                    elm.rms_model.parameters[elm.rms_model.api_obj_mapping[ParamPowerFlowReferenceType.b]] = Const(float(elm.B) / grid.Sbase)
                 elm.rms_model.unify_blocks()
                 self.add_variables_to_compilation_dicts(elm, elm.rms_model)
                 register_rms_fmu_cs_device(self, elm, elm.rms_model)
@@ -518,21 +519,21 @@ class RmsProblemPhasor(RmsProblemTemplate):
                 if elm.bus.is_dc:
                     # DC buses: use power directly if supported, otherwise skip
                     Sbus_dc = self.power_flow_results.Sbus[bus_index]
-                    if VarPowerFlowRefferenceType.P in elm.rms_model.external_mapping:
-                        self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.P, np.real(Sbus_dc))
-                    if VarPowerFlowRefferenceType.Ir in elm.rms_model.external_mapping:
+                    if VarPowerFlowReferenceType.P in elm.rms_model.external_mapping:
+                        self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.P, np.real(Sbus_dc))
+                    if VarPowerFlowReferenceType.Ir in elm.rms_model.external_mapping:
                         # Approximate: I = P/V (assuming V ≈ 1)
-                        self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Ir, np.real(Sbus_dc))
+                        self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Ir, np.real(Sbus_dc))
                 else:
                     # Phasor formulation: convert per-device power injection to current
                     Vbus = self.power_flow_results.voltage[bus_index]
 
-                    has_ir = VarPowerFlowRefferenceType.Ir in elm.rms_model.external_mapping
-                    has_ii = VarPowerFlowRefferenceType.Ii in elm.rms_model.external_mapping
+                    has_ir = VarPowerFlowReferenceType.Ir in elm.rms_model.external_mapping
+                    has_ii = VarPowerFlowReferenceType.Ii in elm.rms_model.external_mapping
                     is_adjustable_load_current = (
-                        has_ir and has_ii and
-                        ParamPowerFlowRefferenceType.Ir0 in elm.rms_model.api_obj_mapping and
-                        ParamPowerFlowRefferenceType.Ii0 in elm.rms_model.api_obj_mapping
+                            has_ir and has_ii and
+                            ParamPowerFlowReferenceType.Ir0 in elm.rms_model.api_obj_mapping and
+                            ParamPowerFlowReferenceType.Ii0 in elm.rms_model.api_obj_mapping
                     )
 
                     if elm.idtag in gen_idx_map:
@@ -565,21 +566,21 @@ class RmsProblemPhasor(RmsProblemTemplate):
 
                     Ir_val, Ii_val = _s_to_i(Sdev, Vbus)
                     print(f"Device {elm.name} at bus {elm.bus.name}: S={Sdev:.4f}, V={Vbus:.4f}, Ir={Ir_val:.4f}, Ii={Ii_val:.4f}")
-                    if VarPowerFlowRefferenceType.Ir in elm.rms_model.external_mapping:
-                        self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Ir, Ir_val)
-                    if VarPowerFlowRefferenceType.Ii in elm.rms_model.external_mapping:
-                        self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Ii, Ii_val)
-                    if VarPowerFlowRefferenceType.P in elm.rms_model.external_mapping:
-                        self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.P, Sdev.real)
-                    if VarPowerFlowRefferenceType.Q in elm.rms_model.external_mapping:
-                        self.set_init_guess(elm.rms_model, VarPowerFlowRefferenceType.Q, Sdev.imag)
+                    if VarPowerFlowReferenceType.Ir in elm.rms_model.external_mapping:
+                        self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Ir, Ir_val)
+                    if VarPowerFlowReferenceType.Ii in elm.rms_model.external_mapping:
+                        self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Ii, Ii_val)
+                    if VarPowerFlowReferenceType.P in elm.rms_model.external_mapping:
+                        self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.P, Sdev.real)
+                    if VarPowerFlowReferenceType.Q in elm.rms_model.external_mapping:
+                        self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Q, Sdev.imag)
 
                 k = bus_dict[elm.bus]
                 # Phasor formulation: use current balance
-                if VarPowerFlowRefferenceType.Ir in elm.rms_model.external_mapping:
-                    setIr(Ir, Ir_used, k, elm.rms_model.E(VarPowerFlowRefferenceType.Ir))
-                if VarPowerFlowRefferenceType.Ii in elm.rms_model.external_mapping:
-                    setIi(Ii, Ii_used, k, elm.rms_model.E(VarPowerFlowRefferenceType.Ii))
+                if VarPowerFlowReferenceType.Ir in elm.rms_model.external_mapping:
+                    setIr(Ir, Ir_used, k, elm.rms_model.E(VarPowerFlowReferenceType.Ir))
+                if VarPowerFlowReferenceType.Ii in elm.rms_model.external_mapping:
+                    setIi(Ii, Ii_used, k, elm.rms_model.E(VarPowerFlowReferenceType.Ii))
 
                 if self.options.initialization_method == RmsInitializationMethod.Explicit:
 
@@ -630,7 +631,8 @@ class RmsProblemPhasor(RmsProblemTemplate):
                 self.sys_block.add(elm.rms_model)
 
         total_init_explicit_time += time.perf_counter() - t0
-        print(f"\nTotal time explicit initialization: {total_init_explicit_time:.6f} seconds")
+        # print(f"\nTotal time explicit initialization: {total_init_explicit_time:.6f} seconds")
+        self.logger.add_info("Total time explicit initialization", value=total_init_explicit_time)
         if self.progress_signal is not None:
             self.progress_signal.emit(10)
 
@@ -927,14 +929,14 @@ class RmsProblemPhasor(RmsProblemTemplate):
         if self.progress_signal is not None:
             self.progress_signal.emit(20)
 
-    def set_init_guess(self, mdl: Block, reference_powerflow: VarPowerFlowRefferenceType, val: float):
+    def set_init_guess(self, mdl: Block, reference_powerflow: VarPowerFlowReferenceType, val: float):
         """
         Add values from powerflow to initial guess.
         """
         if reference_powerflow in mdl.external_mapping:
             var = mdl.external_mapping[reference_powerflow]
             self.init_guess[var.uid] = val
-            #print(f"DEBUG: set_init_guess {reference_powerflow.value} = {val} for var {var.name} (uid={var.uid})")
+            print(f"DEBUG: set_init_guess {var.name} = {val} for var {var.name} (uid={var.uid})")
         else:
             print(
                 f"DEBUG: set_init_guess {reference_powerflow.value} NOT FOUND in external_mapping. Available: {[k.value for k in mdl.external_mapping.keys()]}")
@@ -982,14 +984,8 @@ class RmsProblemPhasor(RmsProblemTemplate):
         cp = self._constant_params
 
         n_vars = self._n_vars
-        E_value = np.zeros((n_vars, n_vars))
-        E_partial = E_call(x, dx, vp, cp, h=0).toarray()
-        print(f"DEBUG: E_partial shape: {E_partial.shape}")
-        print(f"DEBUG: E_partial sample values (non-zero):")
-        nz = np.nonzero(E_partial)
-        for i in range(min(20, len(nz[0]))):
-            row, col = nz[0][i], nz[1][i]
-            print(f"  E_partial[{row},{col}] = {E_partial[row,col]}")
+        E_value = sp.lil_matrix((n_vars, n_vars), dtype=np.float64)
+        E_partial = E_call(x, dx, vp, cp, h=0).tocsc()
     
         
         # Map each d(eq)/d(diff_var_j) column to the column of the diff_var base
@@ -1001,23 +997,21 @@ class RmsProblemPhasor(RmsProblemTemplate):
                 E_value[:, col_idx] += E_partial[:, j]
             else:    
                 pass
-        E_value[:n_states, :n_states] -= np.eye(n_states, dtype=E_value.dtype)
+        E_value[:n_states, :n_states] -= sp.eye(n_states, dtype=E_value.dtype, format="lil")
 
-        return E_value
+        return E_value.tocsc()
     
     def get_static_state_matrix(self, x:Vec, dx:Vec):
         nx = self.get_states_number()
-        ny = self.get_algebraic_var_number()
 
         if nx == 0:
-            gy = self.get_j22(x, dx, 1e15).toarray()
-            return gy
+            return self.get_j22(x, dx, 1e15).tocsc()
 
-        fx = self.get_j11(x, dx, 1e10).toarray()
-        fy = self.get_j12(x, dx, 1e10).toarray()
-        gx = self.get_j21(x, dx, 1e10).toarray()
-        gy = self.get_j22(x, dx, 1e15).toarray()
-        return np.block([[fx, fy], [gx, gy]])
+        fx = self.get_j11(x, dx, 1e10).tocsc()
+        fy = self.get_j12(x, dx, 1e10).tocsc()
+        gx = self.get_j21(x, dx, 1e10).tocsc()
+        gy = self.get_j22(x, dx, 1e15).tocsc()
+        return sp.bmat([[fx, fy], [gx, gy]], format="csc")
 
     def get_device_vars_dict(self) -> Dict[ALL_DEV_TYPES, List[Var]]:
         """Get dictionary of device variables."""

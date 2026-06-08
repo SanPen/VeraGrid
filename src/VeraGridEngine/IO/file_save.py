@@ -166,9 +166,17 @@ def save_veragrid_multiverse(file_name: str,
         # this is to make the leaf the actual diff for saving
         multiverse.commit_current()
 
+        active_grid_idtag: str | None = None
+        if multiverse.current_node is not None:
+            active_grid_idtag = multiverse.current_node.circuit.idtag
+        else:
+            pass
+
         save_veragrid_multiverse_data_to_zip(filename_zip=file_name,
                                              multiverse=multiverse,
                                              json_files=options.dictionary_of_json_files,
+                                             active_grid_idtag=active_grid_idtag,
+                                             active_sessions_data=options.sessions_data,
                                              text_func=text_func,
                                              progress_func=progress_func,
                                              logger=logger)

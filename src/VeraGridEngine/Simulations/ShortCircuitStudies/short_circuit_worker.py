@@ -836,9 +836,9 @@ def short_circuit_vsc(nc: NumericalCircuit,
             Egen = Ugen + Igen / Ygen[bus_gen_idx[gen_i]]
             I0_linear[bus_gen_idx[gen_i]] += Ygen[bus_gen_idx[gen_i]] * Egen
 
-        for vsc_i in range(len(nc.vsc_data.control1)):
-            nc.vsc_data.control1[vsc_i] = ConverterControlType.Fault1
-            nc.vsc_data.control2[vsc_i] = ConverterControlType.Fault2
+        for vsc_i in range(len(nc.vsc_data.control1_int)):
+            nc.vsc_data.control1_int[vsc_i] = ConverterControlType.Fault1.idx()
+            nc.vsc_data.control2_int[vsc_i] = ConverterControlType.Fault2.idx()
 
         if len(indices.vd) > 0:
 

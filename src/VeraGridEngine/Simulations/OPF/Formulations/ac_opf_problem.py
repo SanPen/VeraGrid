@@ -11,11 +11,12 @@ from scipy import sparse as sp
 from scipy.sparse import csc_matrix as csc
 from scipy.sparse import lil_matrix
 
+from VeraGridEngine import ShuntControlMode
 from VeraGridEngine.Utils.Sparse.csc import diags
 from VeraGridEngine.Compilers.circuit_to_data import NumericalCircuit
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions import (compute_power, polar_to_rect)
 from VeraGridEngine.Simulations.OPF.opf_options import OptimalPowerFlowOptions
-from VeraGridEngine.enumerations import AcOpfMode, BusMode, TapPhaseControl, TapModuleControl
+from VeraGridEngine.enumerations import AcOpfMode, BusMode, TapPhaseControl, TapModuleControl, ShuntControlMode
 from VeraGridEngine.basic_structures import Vec, CxVec, IntVec, Logger, csr_matrix, csc_matrix
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions import get_Sf, get_St
 from VeraGridEngine.Simulations.OPF.NumericalMethods.newton_raphson_ips_fx import IpsSolution
@@ -377,7 +378,7 @@ class NonLinearOptimalPfProblem:
         # Shunt elements are treated as generators with fixed P.
         # As such, their limits are added in the generator limits array.
 
-        self.id_sh = np.where(nc.shunt_data.is_pv_control == True)[0]
+        self.id_sh = np.where(nc.shunt_data.control_mode_int == ShuntControlMode.Continuous.idx())[0]
         self.sh_bus_idx = nc.shunt_data.get_bus_indices()[self.id_sh]
         self.nsh = len(self.id_sh)
 
@@ -706,36 +707,33 @@ class NonLinearOptimalPfProblem:
             ctrl_tau = self.nc.active_branch_data.tap_phase_control_mode[k]
 
             # analyze tap-module controls
-            if ctrl_m == TapModuleControl.Vm:
+            if ctrl_m == TapModuleControl.Vm.idx():
 
                 # In any other case, the voltage is managed by the tap module
                 k_v_m.append(k)
 
-            elif ctrl_m == TapModuleControl.Qf:
+            elif ctrl_m == TapModuleControl.Qf.idx():
 
                 k_qf_m.append(k)
 
-            elif ctrl_m == TapModuleControl.Qt:
+            elif ctrl_m == TapModuleControl.Qt.idx():
                 k_qt_m.append(k)
 
-            elif ctrl_m == TapModuleControl.fixed:
-                pass
-
-            elif ctrl_m == 0:
+            elif ctrl_m == TapModuleControl.fixed.idx():
                 pass
 
             else:
                 raise Exception(f"Unknown tap phase module mode {ctrl_m}")
 
             # analyze tap-phase controls
-            if ctrl_tau == TapPhaseControl.Pf:
+            if ctrl_tau == TapPhaseControl.Pf.idx():
                 k_pf_tau.append(k)
 
-            elif ctrl_tau == TapPhaseControl.Pt:
+            elif ctrl_tau == TapPhaseControl.Pt.idx():
                 k_pt_tau.append(k)
 
-            elif ctrl_tau == TapPhaseControl.fixed:
-                if ctrl_m == TapModuleControl.fixed:
+            elif ctrl_tau == TapPhaseControl.fixed.idx():
+                if ctrl_m == TapModuleControl.fixed.idx():
                     conv_type = 1
 
             # elif ctrl_tau == TapPhaseControl.Droop:

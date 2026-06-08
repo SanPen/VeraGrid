@@ -7,7 +7,7 @@ import numpy as np
 from typing import Union, Dict, Tuple, TYPE_CHECKING
 
 import VeraGridEngine.Simulations.PowerFlow as pflw
-from VeraGridEngine.enumerations import SolverType
+from VeraGridEngine.enumerations import SolverType, GeneratorControlMode, BusMode
 from VeraGridEngine.basic_structures import Logger, ConvergenceReport
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
@@ -15,7 +15,11 @@ from VeraGridEngine.Simulations.PowerFlow.power_flow_results import NumericPower
 from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_basic_formulation import PfBasicFormulation
 from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_full_acdc_with_negative_poles import PfAcDcWithNegativePoles
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.newton_raphson_fx import newton_raphson_fx
-from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions import split_bus_quantity
+from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions import (
+    split_bus_quantity,
+    split_reactive_power_between_generators_and_batteries,
+    split_slack_bus_quantity_between_generators_and_batteries,
+)
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.powell_fx import powell_fx
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.levenberg_marquadt_fx import levenberg_marquardt_fx
 from VeraGridEngine.Topology.simulation_indices import SimulationIndices
@@ -953,21 +957,85 @@ def multi_island_pf_nc(nc: NumericalCircuit,
         if nc.topology_performed:
             results.voltage = nc.propagate_bus_result(results.voltage)
 
-        # do the reactive power partition and store the values
-        results.gen_q, results.battery_q = split_bus_quantity(
+        vm_abs: Vec = np.abs(results.voltage)
+        slack_bus_mask: np.ndarray = (nc.bus_data.bus_types == BusMode.Slack_tpe.value)
+        fixed_load_bus: CxVec = (
+            nc.load_data.get_injections_per_bus()
+            + results.voltage * np.conj(
+                nc.load_data.get_current_injections_per_bus()
+                + nc.load_data.get_admittance_injections_per_bus() * results.voltage
+            )
+        )
+        fixed_shunt_bus: CxVec = results.voltage * np.conj(
+            nc.shunt_data.get_injections_per_bus() * results.voltage
+        )
+        fixed_non_generator_bus: CxVec = fixed_load_bus + fixed_shunt_bus
+        qfixed_bus: Vec = (
+            nc.bus_data.q_fixed
+            - (nc.bus_data.ii_fixed + nc.bus_data.b_fixed * vm_abs) * vm_abs
+        )
+
+        # Reconstruct the fixed shunt-like device reactive power from the final
+        # solved voltage so the reported device values remain in nodal balance.
+        results.shunt_q = -(nc.shunt_data.Y.imag * np.power(vm_abs[nc.shunt_data.bus_idx], 2.0)) * nc.shunt_data.active
+
+        # Split only the remaining generator-like reactive power after removing
+        # the fixed compiled bus contribution.
+        results.gen_q, results.battery_q = split_reactive_power_between_generators_and_batteries(
             Qbus=results.Sbus.imag,
+            Qfixed_bus=qfixed_bus,
             gen_bus_idx=nc.generator_data.bus_idx,
             Qmin_gen=nc.generator_data.qmin,
             Qmax_gen=nc.generator_data.qmax,
             gen_status=nc.generator_data.active,
-            is_controlling=nc.generator_data.controllable,
+            control_mode_int_gen=nc.generator_data.control_mode_int,
             Q0_gen=nc.generator_data.q,
+            Vset_gen=nc.generator_data.v,
+            k_droop_gen=nc.generator_data.k_droop,
+            dead_band_gen=nc.generator_data.dead_band,
             batt_bus_idx=nc.battery_data.bus_idx,
             Qmin_batt=nc.battery_data.qmin,
             Qmax_batt=nc.battery_data.qmax,
             batt_status=nc.battery_data.active,
-            batt_is_controlling=nc.battery_data.controllable,
+            control_mode_int_batt=nc.battery_data.control_mode_int,
             Q0_batt=nc.battery_data.q,
+            v_ctrl_val_gen=GeneratorControlMode.V.idx(),
+            qv_droop_val_gen=GeneratorControlMode.QVDroop.idx(),
+            Vm=vm_abs,
+            atol=1e-12,
+        )
+
+        results.gen_q, results.battery_q = split_slack_bus_quantity_between_generators_and_batteries(
+            Qbus=results.Sbus.imag,
+            Qfixed_bus=fixed_non_generator_bus.imag,
+            slack_bus_mask=slack_bus_mask,
+            gen_bus_idx=nc.generator_data.bus_idx,
+            Qmin_gen=nc.generator_data.qmin,
+            Qmax_gen=nc.generator_data.qmax,
+            gen_status=nc.generator_data.active,
+            Q0_gen=results.gen_q,
+            batt_bus_idx=nc.battery_data.bus_idx,
+            Qmin_batt=nc.battery_data.qmin,
+            Qmax_batt=nc.battery_data.qmax,
+            batt_status=nc.battery_data.active,
+            Q0_batt=results.battery_q,
+            atol=1e-12,
+        )
+
+        results.gen_p, results.battery_p = split_slack_bus_quantity_between_generators_and_batteries(
+            Qbus=results.Sbus.real,
+            Qfixed_bus=fixed_non_generator_bus.real,
+            slack_bus_mask=slack_bus_mask,
+            gen_bus_idx=nc.generator_data.bus_idx,
+            Qmin_gen=nc.generator_data.pmin,
+            Qmax_gen=nc.generator_data.pmax,
+            gen_status=nc.generator_data.active,
+            Q0_gen=nc.generator_data.p,
+            batt_bus_idx=nc.battery_data.bus_idx,
+            Qmin_batt=nc.battery_data.pmin,
+            Qmax_batt=nc.battery_data.pmax,
+            batt_status=nc.battery_data.active,
+            Q0_batt=nc.battery_data.p,
             atol=1e-12,
         )
 
@@ -987,21 +1055,66 @@ def multi_island_pf_nc(nc: NumericalCircuit,
         if nc.topology_performed:
             results.voltage = nc.propagate_bus_result(results.voltage)
 
-        # do the reactive power partition and store the values
-        results.gen_q, results.battery_q = split_bus_quantity(
+        vm_abs: Vec = np.abs(results.voltage)
+        slack_bus_mask: np.ndarray = (nc.bus_data.bus_types == BusMode.Slack_tpe.value)
+        fixed_load_bus: CxVec = (
+            nc.load_data.get_injections_per_bus()
+            + results.voltage * np.conj(
+                nc.load_data.get_current_injections_per_bus()
+                + nc.load_data.get_admittance_injections_per_bus() * results.voltage
+            )
+        )
+        fixed_shunt_bus: CxVec = results.voltage * np.conj(
+            nc.shunt_data.get_injections_per_bus() * results.voltage
+        )
+        fixed_non_generator_bus: CxVec = fixed_load_bus + fixed_shunt_bus
+        qfixed_bus: Vec = (
+            nc.bus_data.q_fixed
+            - (nc.bus_data.ii_fixed + nc.bus_data.b_fixed * vm_abs) * vm_abs
+        )
+
+        results.shunt_q = -(nc.shunt_data.Y.imag * np.power(vm_abs[nc.shunt_data.bus_idx], 2.0)) * nc.shunt_data.active
+
+        # Remove the compiled fixed bus-side Q before allocating the solved
+        # residual to generator-like voltage controllers.
+        results.gen_q, results.battery_q = split_reactive_power_between_generators_and_batteries(
             Qbus=results.Sbus.imag,
+            Qfixed_bus=qfixed_bus,
             gen_bus_idx=nc.generator_data.bus_idx,
             Qmin_gen=nc.generator_data.qmin,
             Qmax_gen=nc.generator_data.qmax,
             gen_status=nc.generator_data.active,
-            is_controlling=nc.generator_data.controllable,
+            control_mode_int_gen=nc.generator_data.control_mode_int,
             Q0_gen=nc.generator_data.q,
+            Vset_gen=nc.generator_data.v,
+            k_droop_gen=nc.generator_data.k_droop,
+            dead_band_gen=nc.generator_data.dead_band,
             batt_bus_idx=nc.battery_data.bus_idx,
             Qmin_batt=nc.battery_data.qmin,
             Qmax_batt=nc.battery_data.qmax,
             batt_status=nc.battery_data.active,
-            batt_is_controlling=nc.battery_data.controllable,
+            control_mode_int_batt=nc.battery_data.control_mode_int,
             Q0_batt=nc.battery_data.q,
+            v_ctrl_val_gen=GeneratorControlMode.V.idx(),
+            qv_droop_val_gen=GeneratorControlMode.QVDroop.idx(),
+            Vm=vm_abs,
+            atol=1e-12,
+        )
+
+        results.gen_q, results.battery_q = split_slack_bus_quantity_between_generators_and_batteries(
+            Qbus=results.Sbus.imag,
+            Qfixed_bus=fixed_non_generator_bus.imag,
+            slack_bus_mask=slack_bus_mask,
+            gen_bus_idx=nc.generator_data.bus_idx,
+            Qmin_gen=nc.generator_data.qmin,
+            Qmax_gen=nc.generator_data.qmax,
+            gen_status=nc.generator_data.active,
+            Q0_gen=results.gen_q,
+            batt_bus_idx=nc.battery_data.bus_idx,
+            Qmin_batt=nc.battery_data.qmin,
+            Qmax_batt=nc.battery_data.qmax,
+            batt_status=nc.battery_data.active,
+            Q0_batt=results.battery_q,
             atol=1e-12,
         )
 
@@ -1012,19 +1125,37 @@ def multi_island_pf_nc(nc: NumericalCircuit,
                 Qmin_gen=nc.generator_data.pmin,
                 Qmax_gen=nc.generator_data.pmax,
                 gen_status=nc.generator_data.active,
-                is_controlling=nc.generator_data.active,
+                control_mode_int_gen=nc.generator_data.control_mode_int,
                 Q0_gen=nc.generator_data.p,
                 batt_bus_idx=nc.battery_data.bus_idx,
                 Qmin_batt=nc.battery_data.pmin,
                 Qmax_batt=nc.battery_data.pmax,
                 batt_status=nc.battery_data.active,
-                batt_is_controlling=nc.battery_data.active,
+                control_mode_int_batt=nc.battery_data.control_mode_int,
                 Q0_batt=nc.battery_data.p,
+                v_ctrl_val_gen=GeneratorControlMode.V.idx(),
                 atol=1e-12,
             )
         else:
             results.gen_p = nc.generator_data.p
             results.battery_p = nc.battery_data.p
+
+        results.gen_p, results.battery_p = split_slack_bus_quantity_between_generators_and_batteries(
+            Qbus=results.Sbus.real,
+            Qfixed_bus=fixed_non_generator_bus.real,
+            slack_bus_mask=slack_bus_mask,
+            gen_bus_idx=nc.generator_data.bus_idx,
+            Qmin_gen=nc.generator_data.pmin,
+            Qmax_gen=nc.generator_data.pmax,
+            gen_status=nc.generator_data.active,
+            Q0_gen=results.gen_p,
+            batt_bus_idx=nc.battery_data.bus_idx,
+            Qmin_batt=nc.battery_data.pmin,
+            Qmax_batt=nc.battery_data.pmax,
+            batt_status=nc.battery_data.active,
+            Q0_batt=results.battery_p,
+            atol=1e-12,
+        )
 
         return results
 

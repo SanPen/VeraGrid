@@ -136,10 +136,11 @@ class Transformer2W(ControllableBranchParent):
                  no_load_current: float = 0.0,
                  short_circuit_voltage: float = 0.0,
                  r: float = 1e-20,
-                 x: float = 1e-20,
+                 x: float = 1e-5,
                  g: float = 1e-20,
                  b: float = 1e-20,
-                 rate: float = 1.0,
+                 design_rate: float = 9999.0,
+                 rate: float = 9999.0,
                  tap_module: float = 1.0,
                  tap_module_max: float = 1.2,
                  tap_module_min: float = 0.5,
@@ -201,6 +202,7 @@ class Transformer2W(ControllableBranchParent):
         :param x: reactance in per unit
         :param g: shunt conductance in per unit
         :param b: shunt susceptance in per unit
+        :param design_rate: Design rate (MVA)
         :param rate: rate in MVA
         :param tap_module: tap module in p.u.
         :param tap_module_max:
@@ -244,6 +246,7 @@ class Transformer2W(ControllableBranchParent):
                                           bus_to=bus_to,
                                           active=active,
                                           reducible=reducible,
+                                          design_rate=design_rate,
                                           rate=rate,
                                           r=r,
                                           x=x,

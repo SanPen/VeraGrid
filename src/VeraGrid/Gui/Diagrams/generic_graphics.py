@@ -6,9 +6,10 @@ from __future__ import annotations
 from typing import Union, List, TYPE_CHECKING, Callable
 import VeraGrid.ThirdParty.darkdetect as darkdetect
 from PySide6.QtCore import Qt, QPointF, QLineF
-from PySide6.QtWidgets import (QGraphicsLineItem, QGraphicsItem, QGraphicsPolygonItem, QGraphicsItemGroup,
-                               QGraphicsRectItem, QGraphicsEllipseItem, QGraphicsTextItem)
-from PySide6.QtGui import QColor, QPen, QPolygon, QPolygonF
+from PySide6.QtWidgets import (QApplication, QGraphicsLineItem, QGraphicsItem, QGraphicsPolygonItem,
+                               QGraphicsItemGroup, QGraphicsRectItem, QGraphicsEllipseItem, QGraphicsTextItem,
+                               QGraphicsPathItem)
+from PySide6.QtGui import QColor, QPen, QPolygon, QPolygonF, QPainterPath, QBrush, QPalette
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGrid.Gui.messages import warning_msg
 
@@ -44,16 +45,34 @@ def set_dark_mode() -> None:
     """
     Set the dark mode
     """
-    ACTIVE['color'] = WHITE
-    ACTIVE['text'] = WHITE
+    app: QApplication | None = QApplication.instance()
+
+    if app is None:
+        ACTIVE['color'] = WHITE
+        ACTIVE['text'] = WHITE
+        ACTIVE['background'] = BLACK
+    else:
+        palette: QPalette = app.palette()
+        ACTIVE['color'] = QColor(palette.color(QPalette.ColorGroup.Active, QPalette.ColorRole.WindowText))
+        ACTIVE['text'] = QColor(palette.color(QPalette.ColorGroup.Active, QPalette.ColorRole.Text))
+        ACTIVE['background'] = QColor(palette.color(QPalette.ColorGroup.Active, QPalette.ColorRole.Window))
 
 
 def set_light_mode() -> None:
     """
     Set the light mode
     """
-    ACTIVE['color'] = BLACK
-    ACTIVE['text'] = BLACK
+    app: QApplication | None = QApplication.instance()
+
+    if app is None:
+        ACTIVE['color'] = BLACK
+        ACTIVE['text'] = BLACK
+        ACTIVE['background'] = WHITE
+    else:
+        palette: QPalette = app.palette()
+        ACTIVE['color'] = QColor(palette.color(QPalette.ColorGroup.Active, QPalette.ColorRole.WindowText))
+        ACTIVE['text'] = QColor(palette.color(QPalette.ColorGroup.Active, QPalette.ColorRole.Text))
+        ACTIVE['background'] = QColor(palette.color(QPalette.ColorGroup.Active, QPalette.ColorRole.Window))
 
 
 def is_dark_mode() -> bool:
@@ -173,7 +192,10 @@ class GenericDiagramWidget:
 
         :return:
         """
-        self.draw_labels = not self.draw_labels
+        if self.draw_labels:
+            self.disable_label_drawing()
+        else:
+            self.enable_label_drawing()
 
     def delete_from_associations(self):
         """
@@ -228,6 +250,65 @@ class GenericDiagramWidget:
             "Device editor",
         )
         return False
+
+
+class DraggableLabelItem(QGraphicsTextItem):
+    """
+    Movable text label that preserves a manual offset from one layout anchor.
+    """
+
+    __slots__ = ("_anchor_position", "_offset", "_internal_move", "_moved_callback")
+
+    def __init__(self, parent: QGraphicsItem, moved_callback: Callable[[], None] | None = None) -> None:
+        """
+        Build one movable label item.
+
+        :param parent: Parent graphics item.
+        :param moved_callback: Callback executed after one user move.
+        :return: ``None``.
+        """
+        QGraphicsTextItem.__init__(self, parent)
+        self._anchor_position: QPointF = QPointF(0.0, 0.0)
+        self._offset: QPointF = QPointF(0.0, 0.0)
+        self._internal_move: bool = False
+        self._moved_callback: Callable[[], None] | None = moved_callback
+        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, True)
+        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemSendsGeometryChanges, True)
+        self.setCursor(Qt.CursorShape.OpenHandCursor)
+
+    def set_anchor_position(self, anchor_position: QPointF) -> None:
+        """
+        Update the layout anchor while preserving the manual offset.
+
+        :param anchor_position: Base label anchor.
+        :return: ``None``.
+        """
+        self._anchor_position = QPointF(float(anchor_position.x()), float(anchor_position.y()))
+        self._internal_move = True
+        self.setPos(self._anchor_position + self._offset)
+        self._internal_move = False
+
+    def itemChange(self, change: QGraphicsItem.GraphicsItemChange, value: QPointF | int) -> QPointF | int:
+        """
+        Track user movement as one offset from the current anchor.
+
+        :param change: Item change kind.
+        :param value: Proposed value.
+        :return: Value to apply.
+        """
+        if change == QGraphicsItem.GraphicsItemChange.ItemPositionChange and isinstance(value, QPointF):
+            if self._internal_move:
+                pass
+            else:
+                self._offset = QPointF(float(value.x() - self._anchor_position.x()),
+                                       float(value.y() - self._anchor_position.y()))
+                if self._moved_callback is None:
+                    pass
+                else:
+                    self._moved_callback()
+            return value
+        else:
+            return QGraphicsTextItem.itemChange(self, change, value)
 
 
 class Polygon(QGraphicsPolygonItem):
@@ -381,6 +462,339 @@ class Condenser(QGraphicsItemGroup):
         if change == QGraphicsItem.GraphicsItemChange.ItemScenePositionHasChanged:
             self.update_nexus_fcn(value)
         return super(QGraphicsItemGroup, self).itemChange(change, value)
+
+
+class InjectionSymbolBase(QGraphicsItemGroup):
+    """
+    Shared vector symbol base for injection devices.
+    """
+
+    def __init__(self, parent, w: float, h: float) -> None:
+        """
+        Build one vector injection symbol container.
+
+        :param parent: Parent graphics item.
+        :param w: Symbol width.
+        :param h: Symbol height.
+        :return: ``None``.
+        """
+        super().__init__(parent)
+        self.setAcceptedMouseButtons(Qt.MouseButton.NoButton)
+        self.w: float = float(w)
+        self.h: float = float(h)
+        self._stroke_items: list[
+            QGraphicsLineItem | QGraphicsRectItem | QGraphicsEllipseItem | QGraphicsPolygonItem | QGraphicsPathItem
+        ] = list()
+        self._fill_items: list[
+            QGraphicsRectItem | QGraphicsEllipseItem | QGraphicsPolygonItem | QGraphicsPathItem
+        ] = list()
+        self._text_items: list[QGraphicsTextItem] = list()
+
+    def _register_stroke_item(self,
+                              item: QGraphicsLineItem | QGraphicsRectItem | QGraphicsEllipseItem
+                              | QGraphicsPolygonItem | QGraphicsPathItem | QGraphicsTextItem,
+                              fill_item: bool = False,
+                              text_item: bool = False) -> QGraphicsLineItem | QGraphicsRectItem \
+                                                      | QGraphicsEllipseItem | QGraphicsPolygonItem \
+                                                      | QGraphicsPathItem | QGraphicsTextItem:
+        """
+        Track child items that follow the symbol pen and brush.
+
+        :param item: Registered primitive.
+        :param fill_item: Register it for fill updates too.
+        :param text_item: Register it as text content.
+        :return: The same registered item.
+        """
+        if isinstance(item, (QGraphicsLineItem,
+                             QGraphicsRectItem,
+                             QGraphicsEllipseItem,
+                             QGraphicsPolygonItem,
+                             QGraphicsPathItem)):
+            item.setAcceptedMouseButtons(Qt.MouseButton.NoButton)
+            self._stroke_items.append(item)
+        else:
+            if isinstance(item, QGraphicsTextItem):
+                item.setAcceptedMouseButtons(Qt.MouseButton.NoButton)
+            else:
+                pass
+
+        if fill_item and isinstance(item, (QGraphicsRectItem,
+                                           QGraphicsEllipseItem,
+                                           QGraphicsPolygonItem,
+                                           QGraphicsPathItem)):
+            self._fill_items.append(item)
+        else:
+            pass
+
+        if text_item and isinstance(item, QGraphicsTextItem):
+            self._text_items.append(item)
+        else:
+            pass
+
+        return item
+
+    def setPen(self, pen: QPen) -> None:
+        """
+        Apply one pen to every registered vector primitive.
+
+        :param pen: Symbol pen.
+        :return: ``None``.
+        """
+        item: QGraphicsLineItem | QGraphicsRectItem | QGraphicsEllipseItem | QGraphicsPolygonItem | QGraphicsPathItem
+        for item in self._stroke_items:
+            item.setPen(pen)
+
+        text_item: QGraphicsTextItem
+        for text_item in self._text_items:
+            text_item.setDefaultTextColor(pen.color())
+
+    def setBrush(self, brush: QBrush | QColor) -> None:
+        """
+        Apply one fill brush to the symbol body primitives.
+
+        :param brush: Fill brush or color.
+        :return: ``None``.
+        """
+        brush_obj: QBrush = brush if isinstance(brush, QBrush) else QBrush(brush)
+        item: QGraphicsRectItem | QGraphicsEllipseItem | QGraphicsPolygonItem | QGraphicsPathItem
+
+        for item in self._fill_items:
+            item.setBrush(brush_obj)
+
+
+class GeneratorSymbol(InjectionSymbolBase):
+    """
+    Vector generator symbol with a rotor waveform.
+    """
+
+    def __init__(self, parent, h: int, w: int) -> None:
+        """
+        Build one generator symbol.
+
+        :param parent: Parent graphics item.
+        :param h: Symbol height.
+        :param w: Symbol width.
+        :return: ``None``.
+        """
+        super().__init__(parent=parent, w=w, h=h)
+
+        body = QGraphicsEllipseItem(0, 0, self.w, self.h, parent=self)
+        self._register_stroke_item(body, fill_item=True)
+
+        rotor_path = QPainterPath()
+        rotor_path.moveTo(self.w * 0.18, self.h * 0.50)
+        rotor_path.cubicTo(self.w * 0.28, self.h * 0.24,
+                           self.w * 0.42, self.h * 0.24,
+                           self.w * 0.50, self.h * 0.50)
+        rotor_path.cubicTo(self.w * 0.58, self.h * 0.76,
+                           self.w * 0.72, self.h * 0.76,
+                           self.w * 0.82, self.h * 0.50)
+        rotor = QGraphicsPathItem(rotor_path, parent=self)
+        self._register_stroke_item(rotor)
+
+
+class BatterySymbol(InjectionSymbolBase):
+    """
+    Vector battery symbol.
+    """
+
+    def __init__(self, parent, h: int, w: int) -> None:
+        """
+        Build one battery symbol.
+
+        :param parent: Parent graphics item.
+        :param h: Symbol height.
+        :param w: Symbol width.
+        :return: ``None``.
+        """
+        super().__init__(parent=parent, w=w, h=h)
+
+        body_path = QPainterPath()
+        body_path.addRoundedRect(self.w * 0.08, self.h * 0.16, self.w * 0.74, self.h * 0.68, 4.0, 4.0)
+        body = QGraphicsPathItem(body_path, parent=self)
+        self._register_stroke_item(body, fill_item=True)
+
+        terminal = QGraphicsRectItem(self.w * 0.84, self.h * 0.36, self.w * 0.10, self.h * 0.28, parent=self)
+        self._register_stroke_item(terminal, fill_item=True)
+
+        plus_h = QGraphicsLineItem(self.w * 0.56, self.h * 0.50, self.w * 0.70, self.h * 0.50, parent=self)
+        plus_v = QGraphicsLineItem(self.w * 0.63, self.h * 0.40, self.w * 0.63, self.h * 0.60, parent=self)
+        minus_h = QGraphicsLineItem(self.w * 0.22, self.h * 0.50, self.w * 0.38, self.h * 0.50, parent=self)
+        self._register_stroke_item(plus_h)
+        self._register_stroke_item(plus_v)
+        self._register_stroke_item(minus_h)
+
+
+class StaticGeneratorSymbol(InjectionSymbolBase):
+    """
+    Vector static generator symbol.
+    """
+
+    def __init__(self, parent, h: int, w: int) -> None:
+        """
+        Build one static generator symbol.
+
+        :param parent: Parent graphics item.
+        :param h: Symbol height.
+        :param w: Symbol width.
+        :return: ``None``.
+        """
+        super().__init__(parent=parent, w=w, h=h)
+
+        body_points = QPolygonF([
+            QPointF(self.w * 0.24, self.h * 0.12),
+            QPointF(self.w * 0.76, self.h * 0.12),
+            QPointF(self.w * 0.92, self.h * 0.50),
+            QPointF(self.w * 0.76, self.h * 0.88),
+            QPointF(self.w * 0.24, self.h * 0.88),
+            QPointF(self.w * 0.08, self.h * 0.50),
+        ])
+        body = QGraphicsPolygonItem(body_points, parent=self)
+        self._register_stroke_item(body, fill_item=True)
+
+        left_bar = QGraphicsLineItem(self.w * 0.30, self.h * 0.30, self.w * 0.30, self.h * 0.70, parent=self)
+        right_bar = QGraphicsLineItem(self.w * 0.42, self.h * 0.30, self.w * 0.42, self.h * 0.70, parent=self)
+        arrow_shaft = QGraphicsLineItem(self.w * 0.50, self.h * 0.50, self.w * 0.76, self.h * 0.50, parent=self)
+        self._register_stroke_item(left_bar)
+        self._register_stroke_item(right_bar)
+        self._register_stroke_item(arrow_shaft)
+
+        arrow_head = QPolygonF([
+            QPointF(self.w * 0.76, self.h * 0.50),
+            QPointF(self.w * 0.62, self.h * 0.40),
+            QPointF(self.w * 0.62, self.h * 0.60),
+        ])
+        arrow_head_item = QGraphicsPolygonItem(arrow_head, parent=self)
+        self._register_stroke_item(arrow_head_item, fill_item=True)
+
+
+class CurrentInjectionSymbol(InjectionSymbolBase):
+    """
+    Vector current injection symbol.
+    """
+
+    def __init__(self, parent, h: int, w: int) -> None:
+        """
+        Build one current injection symbol.
+
+        :param parent: Parent graphics item.
+        :param h: Symbol height.
+        :param w: Symbol width.
+        :return: ``None``.
+        """
+        super().__init__(parent=parent, w=w, h=h)
+
+        diamond = QPolygonF([
+            QPointF(self.w * 0.50, 0.0),
+            QPointF(self.w, self.h * 0.50),
+            QPointF(self.w * 0.50, self.h),
+            QPointF(0.0, self.h * 0.50),
+        ])
+        body = QGraphicsPolygonItem(diamond, parent=self)
+        self._register_stroke_item(body, fill_item=True)
+
+        arrow = QPainterPath()
+        arrow.moveTo(self.w * 0.28, self.h * 0.62)
+        arrow.lineTo(self.w * 0.60, self.h * 0.30)
+        arrow.lineTo(self.w * 0.60, self.h * 0.44)
+        arrow.moveTo(self.w * 0.60, self.h * 0.30)
+        arrow.lineTo(self.w * 0.46, self.h * 0.30)
+        arrow_path = QGraphicsPathItem(arrow, parent=self)
+        self._register_stroke_item(arrow_path)
+
+
+class ExternalGridSymbol(InjectionSymbolBase):
+    """
+    Vector external grid symbol.
+    """
+
+    def __init__(self, parent, h: int, w: int) -> None:
+        """
+        Build one external grid symbol.
+
+        :param parent: Parent graphics item.
+        :param h: Symbol height.
+        :param w: Symbol width.
+        :return: ``None``.
+        """
+        super().__init__(parent=parent, w=w, h=h)
+
+        body_path = QPainterPath()
+        body_path.addRoundedRect(self.w * 0.10, self.h * 0.14, self.w * 0.80, self.h * 0.72, 4.0, 4.0)
+        body = QGraphicsPathItem(body_path, parent=self)
+        self._register_stroke_item(body, fill_item=True)
+
+        top_stub = QGraphicsLineItem(self.w * 0.50, 0.0, self.w * 0.50, self.h * 0.14, parent=self)
+        bottom_stub = QGraphicsLineItem(self.w * 0.50, self.h * 0.86, self.w * 0.50, self.h, parent=self)
+        self._register_stroke_item(top_stub)
+        self._register_stroke_item(bottom_stub)
+
+        grill_positions = [0.26, 0.42, 0.58, 0.74]
+        grill_x: float
+        for grill_x in grill_positions:
+            grill_bar = QGraphicsLineItem(self.w * grill_x, self.h * 0.24,
+                                          self.w * grill_x, self.h * 0.76, parent=self)
+            self._register_stroke_item(grill_bar)
+
+
+class ShuntSymbol(InjectionSymbolBase):
+    """
+    Vector shunt symbol.
+    """
+
+    def __init__(self, parent, h: int, w: int) -> None:
+        """
+        Build one shunt symbol.
+
+        :param parent: Parent graphics item.
+        :param h: Symbol height.
+        :param w: Symbol width.
+        :return: ``None``.
+        """
+        super().__init__(parent=parent, w=w, h=h)
+
+        line_specs = [
+            (self.w * 0.50, 0.0, self.w * 0.50, self.h * 0.22),
+            (self.w * 0.24, self.h * 0.26, self.w * 0.76, self.h * 0.26),
+            (self.w * 0.24, self.h * 0.44, self.w * 0.76, self.h * 0.44),
+            (self.w * 0.50, self.h * 0.44, self.w * 0.50, self.h * 0.70),
+            (self.w * 0.18, self.h * 0.76, self.w * 0.82, self.h * 0.76),
+            (self.w * 0.28, self.h * 0.88, self.w * 0.72, self.h * 0.88),
+            (self.w * 0.38, self.h, self.w * 0.62, self.h),
+        ]
+
+        spec: tuple[float, float, float, float]
+        for spec in line_specs:
+            line = QGraphicsLineItem(*spec, parent=self)
+            self._register_stroke_item(line)
+
+
+class ControllableShuntSymbol(ShuntSymbol):
+    """
+    Vector controllable shunt symbol with a control arrow.
+    """
+
+    def __init__(self, parent, h: int, w: int) -> None:
+        """
+        Build one controllable shunt symbol.
+
+        :param parent: Parent graphics item.
+        :param h: Symbol height.
+        :param w: Symbol width.
+        :return: ``None``.
+        """
+        super().__init__(parent=parent, h=h, w=w)
+
+        arrow_line = QGraphicsLineItem(self.w * 0.16, self.h * 0.86, self.w * 0.80, self.h * 0.20, parent=self)
+        self._register_stroke_item(arrow_line)
+
+        arrow_head = QPolygonF([
+            QPointF(self.w * 0.80, self.h * 0.20),
+            QPointF(self.w * 0.62, self.h * 0.22),
+            QPointF(self.w * 0.76, self.h * 0.36),
+        ])
+        head = QGraphicsPolygonItem(arrow_head, parent=self)
+        self._register_stroke_item(head, fill_item=True)
 
 
 class Line(QGraphicsLineItem):

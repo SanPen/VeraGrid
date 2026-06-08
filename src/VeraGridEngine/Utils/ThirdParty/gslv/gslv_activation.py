@@ -13,7 +13,7 @@ from VeraGridEngine.enumerations import TapModuleControl, TapPhaseControl, BusMo
 from VeraGridEngine.enumerations import (HvdcControlType, SolverType, TimeGrouping,
                                          ZonalGrouping, MIPSolvers, ContingencyMethod, ContingencyOperationTypes,
                                          BuildStatus, BranchGroupTypes, ConverterControlType)
-GSLV_RECOMMENDED_VERSION = "0.5.6"
+GSLV_RECOMMENDED_VERSION = "0.7.0"
 GSLV_VERSION = ''
 GSLV_AVAILABLE = False
 try:

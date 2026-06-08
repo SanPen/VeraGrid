@@ -739,6 +739,14 @@ class BaseDiagramWidget(QSplitter):
                        vsc_active: IntVec = None,
                        ma: Vec = None,
                        tau: Vec = None,
+                       gen_p: Vec = None,
+                       gen_q: Vec = None,
+                       gen_names: np.ndarray | list[str] | None = None,
+                       battery_p: Vec = None,
+                       battery_q: Vec = None,
+                       battery_names: np.ndarray | list[str] | None = None,
+                       shunt_q: Vec = None,
+                       shunt_names: np.ndarray | list[str] | None = None,
                        fluid_node_p2x_flow: Vec = None,
                        fluid_node_current_level: Vec = None,
                        fluid_node_spillage: Vec = None,
@@ -746,6 +754,7 @@ class BaseDiagramWidget(QSplitter):
                        fluid_node_flow_out: Vec = None,
                        fluid_path_flow: Vec = None,
                        fluid_injection_flow: Vec = None,
+                       t_idx: int | None = None,
                        use_flow_based_width: bool = False,
                        min_branch_width: int = 5,
                        max_branch_width=5,
@@ -778,6 +787,14 @@ class BaseDiagramWidget(QSplitter):
         :param vsc_active:
         :param ma:
         :param tau:
+        :param gen_p:
+        :param gen_q:
+        :param gen_names:
+        :param battery_p:
+        :param battery_q:
+        :param battery_names:
+        :param shunt_q:
+        :param shunt_names:
         :param fluid_node_p2x_flow:
         :param fluid_node_current_level:
         :param fluid_node_spillage:
@@ -845,7 +862,8 @@ class BaseDiagramWidget(QSplitter):
                            max_branch_width=5,
                            min_bus_width=20,
                            max_bus_width=20,
-                           cmap: palettes.Colormaps = None):
+                           cmap: palettes.Colormaps = None,
+                           t_idx: int | None = None):
         pass
 
     def disable_all_results_tags(self):

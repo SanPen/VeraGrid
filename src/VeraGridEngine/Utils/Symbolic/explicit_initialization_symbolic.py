@@ -373,6 +373,7 @@ def add_items(blk, init_vars, init_event):
     """
 
     init_vars.update(blk.init_eqs)
+    init_vars.update(blk.diff_init_eqs)
     init_event.update(blk.event_dict)
 
 def build_init_dict(mdl, init_vars, init_event):

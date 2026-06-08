@@ -5,7 +5,7 @@
 
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowRefferenceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowReferenceType, VarPowerFlowReferenceType
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var
 
 
@@ -42,8 +42,8 @@ def get_dc_line_emt_template(vf: VarFactory, name: str = "dc_line_emt_template")
     # ------------------------------------------------------------------
     # External terminal voltages.
     # ------------------------------------------------------------------
-    v_f_dc: Var = vf.add_var(name=f"v_f_dc_{name}", reference=VarPowerFlowRefferenceType.Vf_dc)
-    v_t_dc: Var = vf.add_var(name=f"v_t_dc_{name}", reference=VarPowerFlowRefferenceType.Vt_dc)
+    v_f_dc: Var = vf.add_var(name=f"v_f_dc_{name}", reference=VarPowerFlowReferenceType.Vf_dc)
+    v_t_dc: Var = vf.add_var(name=f"v_t_dc_{name}", reference=VarPowerFlowReferenceType.Vt_dc)
 
     # ------------------------------------------------------------------
     # API-mapped electrical parameter.
@@ -64,10 +64,10 @@ def get_dc_line_emt_template(vf: VarFactory, name: str = "dc_line_emt_template")
 
     i_cap_f: Var = vf.add_var(name=f"i_cap_f_{name}")
     i_cap_t: Var = vf.add_var(name=f"i_cap_t_{name}")
-    i_f_dc: Var = vf.add_var(name=f"i_f_dc_{name}", reference=VarPowerFlowRefferenceType.If_dc)
-    i_t_dc: Var = vf.add_var(name=f"i_t_dc_{name}", reference=VarPowerFlowRefferenceType.It_dc)
-    p_f: Var = vf.add_var(name=f"p_f_dc_{name}", reference=VarPowerFlowRefferenceType.Pf)
-    p_t: Var = vf.add_var(name=f"p_t_dc_{name}", reference=VarPowerFlowRefferenceType.Pt)
+    i_f_dc: Var = vf.add_var(name=f"i_f_dc_{name}", reference=VarPowerFlowReferenceType.If_dc)
+    i_t_dc: Var = vf.add_var(name=f"i_t_dc_{name}", reference=VarPowerFlowReferenceType.It_dc)
+    p_f: Var = vf.add_var(name=f"p_f_dc_{name}", reference=VarPowerFlowReferenceType.Pf)
+    p_t: Var = vf.add_var(name=f"p_t_dc_{name}", reference=VarPowerFlowReferenceType.Pt)
 
     # ------------------------------------------------------------------
     # Series-branch dynamics.
@@ -100,18 +100,18 @@ def get_dc_line_emt_template(vf: VarFactory, name: str = "dc_line_emt_template")
     templ.block.out_vars = list([i_f_dc, i_t_dc])
 
     templ.block.external_mapping = dict([
-        (VarPowerFlowRefferenceType.Vf_dc, v_f_dc),
-        (VarPowerFlowRefferenceType.Vt_dc, v_t_dc),
-        (VarPowerFlowRefferenceType.Vdc, v_f_dc),
-        (VarPowerFlowRefferenceType.If_dc, i_f_dc),
-        (VarPowerFlowRefferenceType.It_dc, i_t_dc),
-        (VarPowerFlowRefferenceType.Idc, i_f_dc),
-        (VarPowerFlowRefferenceType.Pf, p_f),
-        (VarPowerFlowRefferenceType.Pt, p_t),
+        (VarPowerFlowReferenceType.Vf_dc, v_f_dc),
+        (VarPowerFlowReferenceType.Vt_dc, v_t_dc),
+        (VarPowerFlowReferenceType.Vdc, v_f_dc),
+        (VarPowerFlowReferenceType.If_dc, i_f_dc),
+        (VarPowerFlowReferenceType.It_dc, i_t_dc),
+        (VarPowerFlowReferenceType.Idc, i_f_dc),
+        (VarPowerFlowReferenceType.Pf, p_f),
+        (VarPowerFlowReferenceType.Pt, p_t),
     ])
 
     templ.block.api_obj_mapping = dict([
-        (ParamPowerFlowRefferenceType.g, g_ser),
+        (ParamPowerFlowReferenceType.g, g_ser),
     ])
 
     templ.block.init_eqs = dict([
@@ -166,8 +166,8 @@ def get_dc_line_with_power_input_emt_template(vf: VarFactory, name: str = "dc_li
     eps = Const(1.0e-9)
     g_damp = Const(1.0e-8)
 
-    v_f_dc: Var = vf.add_var(name=f"v_f_dc_{name}", reference=VarPowerFlowRefferenceType.Vf_dc)
-    v_t_dc: Var = vf.add_var(name=f"v_t_dc_{name}", reference=VarPowerFlowRefferenceType.Vt_dc)
+    v_f_dc: Var = vf.add_var(name=f"v_f_dc_{name}", reference=VarPowerFlowReferenceType.Vf_dc)
+    v_t_dc: Var = vf.add_var(name=f"v_t_dc_{name}", reference=VarPowerFlowReferenceType.Vt_dc)
 
     r1 = vf.add_var(name=f"R1_{name}")
     l1 = vf.add_var(name=f"L1_{name}")
@@ -203,10 +203,10 @@ def get_dc_line_with_power_input_emt_template(vf: VarFactory, name: str = "dc_li
     i_cap_mid_1 = vf.add_var(name=f"i_cap_mid_1_{name}")
     i_cap_mid_2 = vf.add_var(name=f"i_cap_mid_2_{name}")
     i_cap_end_t = vf.add_var(name=f"i_cap_end_t_{name}")
-    i_f_dc = vf.add_var(name=f"i_f_dc_{name}", reference=VarPowerFlowRefferenceType.If_dc)
-    i_t_dc = vf.add_var(name=f"i_t_dc_{name}", reference=VarPowerFlowRefferenceType.It_dc)
-    p_f = vf.add_var(name=f"p_f_dc_{name}", reference=VarPowerFlowRefferenceType.Pf)
-    p_t = vf.add_var(name=f"p_t_dc_{name}", reference=VarPowerFlowRefferenceType.Pt)
+    i_f_dc = vf.add_var(name=f"i_f_dc_{name}", reference=VarPowerFlowReferenceType.If_dc)
+    i_t_dc = vf.add_var(name=f"i_t_dc_{name}", reference=VarPowerFlowReferenceType.It_dc)
+    p_f = vf.add_var(name=f"p_f_dc_{name}", reference=VarPowerFlowReferenceType.Pf)
+    p_t = vf.add_var(name=f"p_t_dc_{name}", reference=VarPowerFlowReferenceType.Pt)
     i_n1 = vf.add_var(name=f"i_n1_{name}")
     i_n2 = vf.add_var(name=f"i_n2_{name}")
 
@@ -280,14 +280,14 @@ def get_dc_line_with_power_input_emt_template(vf: VarFactory, name: str = "dc_li
     # templ.block.out_vars = [i_f_dc, i_t_dc, p_f, p_t]
     templ.block.out_vars = [i_f_dc, i_t_dc]
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.Vf_dc: v_f_dc,
-        VarPowerFlowRefferenceType.Vt_dc: v_t_dc,
-        VarPowerFlowRefferenceType.Vdc: v_f_dc,
-        VarPowerFlowRefferenceType.If_dc: i_f_dc,
-        VarPowerFlowRefferenceType.It_dc: i_t_dc,
-        VarPowerFlowRefferenceType.Idc: i_f_dc,
-        VarPowerFlowRefferenceType.Pf: p_f,
-        VarPowerFlowRefferenceType.Pt: p_t,
+        VarPowerFlowReferenceType.Vf_dc: v_f_dc,
+        VarPowerFlowReferenceType.Vt_dc: v_t_dc,
+        VarPowerFlowReferenceType.Vdc: v_f_dc,
+        VarPowerFlowReferenceType.If_dc: i_f_dc,
+        VarPowerFlowReferenceType.It_dc: i_t_dc,
+        VarPowerFlowReferenceType.Idc: i_f_dc,
+        VarPowerFlowReferenceType.Pf: p_f,
+        VarPowerFlowReferenceType.Pt: p_t,
     }
 
     templ.block.api_obj_mapping = dict()

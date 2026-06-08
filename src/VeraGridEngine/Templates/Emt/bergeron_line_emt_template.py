@@ -7,7 +7,7 @@ import scipy.linalg as spla
 from typing import List, Tuple, Any
 
 from VeraGridEngine.Utils.Symbolic.block import Block, Var
-from VeraGridEngine.enumerations import DeviceType, EmtLineTypes, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, EmtLineTypes, VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 
@@ -69,10 +69,15 @@ def _build_line_parameter_matrices_from_template_or_balanced_data(line: Any,
         zbase_ohm: float = (vbase_volt * vbase_volt) / sbase_va
         ybase_siemens: float = 1.0 / zbase_ohm
 
-        # The template stores Carson matrices per km. Bergeron uses per-meter and
-        # then converts them to per-unit before forming the total line matrices.
+        # Bergeron travelling-wave dynamics are highly sensitive to the exact
+        # per-length ``Z`` and ``Y`` matrices. The original template matrices are
+        # already stored in the precise physical form expected by this model, and
+        # the delay calculation in ``line.get_tau()`` still uses that same source.
+        # Keeping Bergeron on the template path therefore preserves one internally
+        # consistent representation for ``R/L/C`` and ``tau``.
         z_phys_m: np.ndarray = np.asarray(line.template.z_nabc, dtype=np.complex128) / 1e3
         y_phys_m: np.ndarray = np.asarray(line.template.y_nabc, dtype=np.complex128) / 1e3
+
         z_pu_m: np.ndarray = z_phys_m / zbase_ohm
         y_pu_m: np.ndarray = y_phys_m / ybase_siemens
 
@@ -170,16 +175,16 @@ def get_bergeron_line_emt_template(
     active_ph = [lab for lab, on in zip(ph_labels, ph_mask) if on]
 
     vf_keys = dict({
-        "N": VarPowerFlowRefferenceType.vf_N,
-        "A": VarPowerFlowRefferenceType.vf_A,
-        "B": VarPowerFlowRefferenceType.vf_B,
-        "C": VarPowerFlowRefferenceType.vf_C,
+        "N": VarPowerFlowReferenceType.vf_N,
+        "A": VarPowerFlowReferenceType.vf_A,
+        "B": VarPowerFlowReferenceType.vf_B,
+        "C": VarPowerFlowReferenceType.vf_C,
     })
     vt_keys = dict({
-        "N": VarPowerFlowRefferenceType.vt_N,
-        "A": VarPowerFlowRefferenceType.vt_A,
-        "B": VarPowerFlowRefferenceType.vt_B,
-        "C": VarPowerFlowRefferenceType.vt_C,
+        "N": VarPowerFlowReferenceType.vt_N,
+        "A": VarPowerFlowReferenceType.vt_A,
+        "B": VarPowerFlowReferenceType.vt_B,
+        "C": VarPowerFlowReferenceType.vt_C,
     })
 
     vf_vars = [vf.add_var(name=f"vf_{ph_label}_{name}", reference=vf_keys[ph_label]) for ph_label in active_ph]

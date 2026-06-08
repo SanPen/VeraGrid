@@ -282,7 +282,8 @@ class VSC(BranchParent):
                  idtag: str | None = None,
                  code='',
                  active=True,
-                 rate: float = 100.0,
+                 design_rate: float = 9999.0,
+                 rate: float = 9999.0,
                  alpha1=0.0001,
                  alpha2=0.015,
                  alpha3=0.2,
@@ -334,6 +335,7 @@ class VSC(BranchParent):
         :param idtag:
         :param code:
         :param active:
+        :param design_rate: Design rate (MVA)
         :param rate:
         :param alpha1:
         :param alpha2:
@@ -365,6 +367,7 @@ class VSC(BranchParent):
                               bus_to=bus_to,
                               active=active,
                               reducible=False,
+                              design_rate=design_rate,
                               rate=rate,
                               cost=cost,
                               mttf=mttf,

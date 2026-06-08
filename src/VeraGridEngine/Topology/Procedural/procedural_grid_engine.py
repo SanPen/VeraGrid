@@ -12,7 +12,7 @@ from VeraGridEngine.basic_structures import Mat, Vec, Logger
 from scipy.spatial.distance import cdist
 from scipy.sparse.csgraph import minimum_spanning_tree
 from scipy.special import gammaincinv
-from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import haversine_distance
+from VeraGridEngine.Utils.GeographicalMethods.haversine_distance import haversine_distance
 from collections import deque
 from typing import Optional
 

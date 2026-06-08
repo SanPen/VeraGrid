@@ -10,6 +10,8 @@ import numpy as np
 
 from VeraGridEngine.Devices.Branches.dc_line import DcLine
 from VeraGridEngine.Devices.Branches.line import Line
+from VeraGridEngine.Devices.Branches.overhead_line_type import OverheadLineType
+from VeraGridEngine.Devices.Branches.wire import Wire
 from VeraGridEngine.Devices.Branches.transformer import Transformer2W
 from VeraGridEngine.Devices.Branches.vsc import VSC
 from VeraGridEngine.Devices.Injections.external_grid import ExternalGrid
@@ -27,7 +29,7 @@ from VeraGridEngine.Utils.Symbolic.symbolic import Const, Var
 from VeraGridEngine.enumerations import (
     ConverterControlType,
     ExternalGridMode,
-    ParamPowerFlowRefferenceType,
+    ParamPowerFlowReferenceType,
     WindingType,
 )
 
@@ -42,12 +44,12 @@ def _make_var(name: str) -> Var:
     return Var(name=name)
 
 
-def _make_block(mapping: dict[ParamPowerFlowRefferenceType, Var | None]) -> Block:
+def _make_block(mapping: dict[ParamPowerFlowReferenceType, Var | None]) -> Block:
     """Create a symbolic block exposing an ``api_obj_mapping``."""
     return Block(api_obj_mapping=dict(mapping))
 
 
-def _const_value(block: Block, key: ParamPowerFlowRefferenceType) -> float:
+def _const_value(block: Block, key: ParamPowerFlowReferenceType) -> float:
     """Return the assigned constant value for one exposed mapping key."""
     target: Var | None = block.api_obj_mapping[key]
     assert target is not None
@@ -61,13 +63,13 @@ def test_assign_api_mapping_never_writes_event_dict() -> None:
     """Static api-object mapping must skip ``event_dict`` targets."""
     target: Var = _make_var("static_param")
     block: Block = Block(
-        api_obj_mapping=dict({ParamPowerFlowRefferenceType.device_active: target}),
+        api_obj_mapping=dict({ParamPowerFlowReferenceType.device_active: target}),
         event_dict=dict({target: Const(9.0)}),
     )
 
     assigned: bool = assign_api_mapping_value_if_present(
         mdl=block,
-        key=ParamPowerFlowRefferenceType.device_active,
+        key=ParamPowerFlowReferenceType.device_active,
         value=1.0,
         logger=None,
         device_name="device",
@@ -84,7 +86,7 @@ def test_missing_keys_are_skipped_silently() -> None:
 
     assigned: bool = assign_api_mapping_value_if_present(
         mdl=block,
-        key=ParamPowerFlowRefferenceType.device_active,
+        key=ParamPowerFlowReferenceType.device_active,
         value=1.0,
         logger=None,
         device_name="device",
@@ -103,16 +105,16 @@ def test_load_subset_mapping_assigns_only_requested_keys() -> None:
 
     block: Block = _make_block(
         dict({
-            ParamPowerFlowRefferenceType.device_active: _make_var("active"),
-            ParamPowerFlowRefferenceType.load_pa_pu: _make_var("pa"),
+            ParamPowerFlowReferenceType.device_active: _make_var("active"),
+            ParamPowerFlowReferenceType.Pl0_A: _make_var("pa"),
         })
     )
 
     assign_static_api_object_mapping_for_device(grid=grid, device=load, mdl=block, logger=None)
 
     assert len(block.parameters) == 2
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.device_active), 0.0)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.load_pa_pu), 0.3)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.device_active), 0.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.Pl0_A), 0.3)
 
 
 def test_external_grid_enum_mapping_is_explicit() -> None:
@@ -124,15 +126,15 @@ def test_external_grid_enum_mapping_is_explicit() -> None:
 
     block: Block = _make_block(
         dict({
-            ParamPowerFlowRefferenceType.external_grid_mode_code: _make_var("mode"),
-            ParamPowerFlowRefferenceType.external_grid_vm_pu: _make_var("vm"),
+            ParamPowerFlowReferenceType.external_grid_mode_code: _make_var("mode"),
+            ParamPowerFlowReferenceType.external_grid_vm_pu: _make_var("vm"),
         })
     )
 
     assign_static_api_object_mapping_for_device(grid=grid, device=external_grid, mdl=block, logger=None)
 
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.external_grid_mode_code), 3.0)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.external_grid_vm_pu), 1.03)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.external_grid_mode_code), 3.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.external_grid_vm_pu), 1.03)
 
 
 def test_existing_load_mapping_values_remain_unchanged() -> None:
@@ -144,25 +146,25 @@ def test_existing_load_mapping_values_remain_unchanged() -> None:
 
     block: Block = _make_block(
         dict({
-            ParamPowerFlowRefferenceType.Pl0_A: _make_var("pla"),
-            ParamPowerFlowRefferenceType.Pl0_B: _make_var("plb"),
-            ParamPowerFlowRefferenceType.Pl0_C: _make_var("plc"),
-            ParamPowerFlowRefferenceType.Ql0_A: _make_var("qla"),
-            ParamPowerFlowRefferenceType.Ql0_B: _make_var("qlb"),
-            ParamPowerFlowRefferenceType.Ql0_C: _make_var("qlc"),
-            ParamPowerFlowRefferenceType.omega_base: _make_var("omega"),
+            ParamPowerFlowReferenceType.Pl0_A: _make_var("pla"),
+            ParamPowerFlowReferenceType.Pl0_B: _make_var("plb"),
+            ParamPowerFlowReferenceType.Pl0_C: _make_var("plc"),
+            ParamPowerFlowReferenceType.Ql0_A: _make_var("qla"),
+            ParamPowerFlowReferenceType.Ql0_B: _make_var("qlb"),
+            ParamPowerFlowReferenceType.Ql0_C: _make_var("qlc"),
+            ParamPowerFlowReferenceType.omega_base: _make_var("omega"),
         })
     )
 
     assign_static_api_object_mapping_for_device(grid=grid, device=load, mdl=block, logger=None)
 
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.Pl0_A), 0.3)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.Pl0_B), 0.2)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.Pl0_C), 0.1)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.Ql0_A), 0.15)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.Ql0_B), 0.1)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.Ql0_C), 0.05)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.omega_base), 2.0 * np.pi * 60.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.Pl0_A), 0.3)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.Pl0_B), 0.2)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.Pl0_C), 0.1)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.Ql0_A), 0.15)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.Ql0_B), 0.1)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.Ql0_C), 0.05)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.omega_base), 2.0 * np.pi * 60.0)
 
 
 def test_balanced_load_values_are_distributed_to_phase_keys() -> None:
@@ -174,27 +176,27 @@ def test_balanced_load_values_are_distributed_to_phase_keys() -> None:
 
     block: Block = _make_block(
         dict({
-            ParamPowerFlowRefferenceType.load_pa_pu: _make_var("pa"),
-            ParamPowerFlowRefferenceType.load_qb_pu: _make_var("qb"),
-            ParamPowerFlowRefferenceType.load_gc_pu: _make_var("gc"),
-            ParamPowerFlowRefferenceType.load_ba_pu: _make_var("ba"),
-            ParamPowerFlowRefferenceType.load_irb_pu: _make_var("irb"),
-            ParamPowerFlowRefferenceType.load_iic_pu: _make_var("iic"),
-            ParamPowerFlowRefferenceType.Pl0_C: _make_var("plc"),
-            ParamPowerFlowRefferenceType.Ql0_A: _make_var("qla"),
+            ParamPowerFlowReferenceType.Pl0_A: _make_var("pa"),
+            ParamPowerFlowReferenceType.Ql0_B: _make_var("qb"),
+            ParamPowerFlowReferenceType.load_gc_pu: _make_var("gc"),
+            ParamPowerFlowReferenceType.load_ba_pu: _make_var("ba"),
+            ParamPowerFlowReferenceType.load_irb_pu: _make_var("irb"),
+            ParamPowerFlowReferenceType.load_iic_pu: _make_var("iic"),
+            ParamPowerFlowReferenceType.Pl0_C: _make_var("plc"),
+            ParamPowerFlowReferenceType.Ql0_A: _make_var("qla"),
         })
     )
 
     assign_static_api_object_mapping_for_device(grid=grid, device=load, mdl=block, logger=None)
 
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.load_pa_pu), 0.1)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.load_qb_pu), 1.0 / 30.0)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.load_gc_pu), 1.0 / 15.0)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.load_ba_pu), 1.0 / 45.0)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.load_irb_pu), 2.0 / 45.0)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.load_iic_pu), 1.0 / 90.0)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.Pl0_C), 0.1)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.Ql0_A), 1.0 / 30.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.Pl0_A), 0.1)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.Ql0_B), 1.0 / 30.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.load_gc_pu), 1.0 / 15.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.load_ba_pu), 1.0 / 45.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.load_irb_pu), 2.0 / 45.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.load_iic_pu), 1.0 / 90.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.Pl0_C), 0.1)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.Ql0_A), 1.0 / 30.0)
 
 
 def test_load_static_api_mapping_does_not_seed_runtime_event_dict_targets() -> None:
@@ -209,9 +211,9 @@ def test_load_static_api_mapping_does_not_seed_runtime_event_dict_targets() -> N
     omega_target: Var = _make_var("omega_evt")
     block: Block = Block(
         api_obj_mapping=dict({
-            ParamPowerFlowRefferenceType.Pl0_A: p_target,
-            ParamPowerFlowRefferenceType.Ql0_A: q_target,
-            ParamPowerFlowRefferenceType.omega_base: omega_target,
+            ParamPowerFlowReferenceType.Pl0_A: p_target,
+            ParamPowerFlowReferenceType.Ql0_A: q_target,
+            ParamPowerFlowReferenceType.omega_base: omega_target,
         }),
         event_dict=dict({
             p_target: Const(0.0),
@@ -239,19 +241,19 @@ def test_existing_generator_mapping_values_remain_unchanged() -> None:
 
     block: Block = _make_block(
         dict({
-            ParamPowerFlowRefferenceType.omega_base: _make_var("omega"),
-            ParamPowerFlowRefferenceType.R1: _make_var("r1"),
-            ParamPowerFlowRefferenceType.X1: _make_var("x1"),
-            ParamPowerFlowRefferenceType.X0: _make_var("x0"),
+            ParamPowerFlowReferenceType.omega_base: _make_var("omega"),
+            ParamPowerFlowReferenceType.R1: _make_var("r1"),
+            ParamPowerFlowReferenceType.X1: _make_var("x1"),
+            ParamPowerFlowReferenceType.X0: _make_var("x0"),
         })
     )
 
     assign_static_api_object_mapping_for_device(grid=grid, device=generator, mdl=block, logger=None)
 
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.omega_base), 2.0 * np.pi * 60.0)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.R1), 0.01)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.X1), 0.2)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.X0), 0.08)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.omega_base), 2.0 * np.pi * 60.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.R1), 0.01)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.X1), 0.2)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.X0), 0.08)
 
 
 def test_generator_nominal_frequency_candidates_are_available() -> None:
@@ -263,17 +265,17 @@ def test_generator_nominal_frequency_candidates_are_available() -> None:
 
     block: Block = _make_block(
         dict({
-            ParamPowerFlowRefferenceType.fn: _make_var("fn"),
-            ParamPowerFlowRefferenceType.ws: _make_var("ws"),
-            ParamPowerFlowRefferenceType.freq: _make_var("freq"),
+            ParamPowerFlowReferenceType.fn: _make_var("fn"),
+            ParamPowerFlowReferenceType.ws: _make_var("ws"),
+            ParamPowerFlowReferenceType.freq: _make_var("freq"),
         })
     )
 
     assign_static_api_object_mapping_for_device(grid=grid, device=generator, mdl=block, logger=None)
 
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.fn), 60.0)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.ws), 2.0 * np.pi * 60.0)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.freq), 55.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.fn), 60.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.ws), 2.0 * np.pi * 60.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.freq), 55.0)
 
 
 def test_existing_vsc_static_values_remain_unchanged() -> None:
@@ -293,23 +295,23 @@ def test_existing_vsc_static_values_remain_unchanged() -> None:
 
     block: Block = _make_block(
         dict({
-            ParamPowerFlowRefferenceType.Sbase: _make_var("sbase"),
-            ParamPowerFlowRefferenceType.omega_base: _make_var("omega"),
-            ParamPowerFlowRefferenceType.converter_control_mode_1: _make_var("c1"),
-            ParamPowerFlowRefferenceType.converter_control_mode_2: _make_var("c2"),
-            ParamPowerFlowRefferenceType.converter_control_target_1: _make_var("t1"),
-            ParamPowerFlowRefferenceType.converter_control_target_2: _make_var("t2"),
+            ParamPowerFlowReferenceType.Sbase: _make_var("sbase"),
+            ParamPowerFlowReferenceType.omega_base: _make_var("omega"),
+            ParamPowerFlowReferenceType.converter_control_mode_1: _make_var("c1"),
+            ParamPowerFlowReferenceType.converter_control_mode_2: _make_var("c2"),
+            ParamPowerFlowReferenceType.converter_control_target_1: _make_var("t1"),
+            ParamPowerFlowReferenceType.converter_control_target_2: _make_var("t2"),
         })
     )
 
     assign_static_api_object_mapping_for_device(grid=grid, device=vsc, mdl=block, logger=None)
 
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.Sbase), 150.0)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.omega_base), 2.0 * np.pi * 50.0)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.converter_control_mode_1), 1.0)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.converter_control_mode_2), 6.0)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.converter_control_target_1), 1.05)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.converter_control_target_2), 20.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.Sbase), 150.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.omega_base), 2.0 * np.pi * 50.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.converter_control_mode_1), 1.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.converter_control_mode_2), 6.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.converter_control_target_1), 1.05)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.converter_control_target_2), 20.0)
 
 
 def test_existing_dc_line_mapping_values_remain_unchanged() -> None:
@@ -321,17 +323,17 @@ def test_existing_dc_line_mapping_values_remain_unchanged() -> None:
 
     block: Block = _make_block(
         dict({
-            ParamPowerFlowRefferenceType.g: _make_var("g"),
-            ParamPowerFlowRefferenceType.b: _make_var("b"),
-            ParamPowerFlowRefferenceType.bsh: _make_var("bsh"),
+            ParamPowerFlowReferenceType.g: _make_var("g"),
+            ParamPowerFlowReferenceType.b: _make_var("b"),
+            ParamPowerFlowReferenceType.bsh: _make_var("bsh"),
         })
     )
 
     assign_static_api_object_mapping_for_device(grid=grid, device=dc_line, mdl=block, logger=None)
 
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.g), 2.0)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.b), 0.0)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.bsh), 0.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.g), 2.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.b), 0.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.bsh), 0.0)
 
 
 def test_transformer_direct_static_keys_receive_only_direct_values() -> None:
@@ -356,33 +358,33 @@ def test_transformer_direct_static_keys_receive_only_direct_values() -> None:
 
     block: Block = _make_block(
         dict({
-            ParamPowerFlowRefferenceType.omega_base: _make_var("omega"),
-            ParamPowerFlowRefferenceType.transformer_rated_power_mva: _make_var("sn"),
-            ParamPowerFlowRefferenceType.transformer_open_circuit_current_pct: _make_var("i0"),
-            ParamPowerFlowRefferenceType.transformer_open_circuit_loss_kw: _make_var("pfe"),
-            ParamPowerFlowRefferenceType.transformer_short_circuit_voltage_pct: _make_var("vsc"),
-            ParamPowerFlowRefferenceType.transformer_short_circuit_loss_kw: _make_var("pcu"),
-            ParamPowerFlowRefferenceType.transformer_tap_module: _make_var("tap_module"),
-            ParamPowerFlowRefferenceType.transformer_nominal_voltage_ratio: _make_var("nominal_ratio"),
-            ParamPowerFlowRefferenceType.transformer_total_voltage_ratio: _make_var("total_ratio"),
-            ParamPowerFlowRefferenceType.transformer_from_connection_aa: _make_var("faa"),
-            ParamPowerFlowRefferenceType.transformer_to_connection_cc: _make_var("tcc"),
+            ParamPowerFlowReferenceType.omega_base: _make_var("omega"),
+            ParamPowerFlowReferenceType.transformer_rated_power_mva: _make_var("sn"),
+            ParamPowerFlowReferenceType.transformer_open_circuit_current_pct: _make_var("i0"),
+            ParamPowerFlowReferenceType.transformer_open_circuit_loss_kw: _make_var("pfe"),
+            ParamPowerFlowReferenceType.transformer_short_circuit_voltage_pct: _make_var("vsc"),
+            ParamPowerFlowReferenceType.transformer_short_circuit_loss_kw: _make_var("pcu"),
+            ParamPowerFlowReferenceType.tap_module: _make_var("tap_module"),
+            ParamPowerFlowReferenceType.transformer_nominal_voltage_ratio: _make_var("nominal_ratio"),
+            ParamPowerFlowReferenceType.transformer_total_voltage_ratio: _make_var("total_ratio"),
+            ParamPowerFlowReferenceType.transformer_from_connection_aa: _make_var("faa"),
+            ParamPowerFlowReferenceType.transformer_to_connection_cc: _make_var("tcc"),
         })
     )
 
     assign_static_api_object_mapping_for_device(grid=grid, device=transformer, mdl=block, logger=None)
 
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.omega_base), 2.0 * np.pi * 50.0)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.transformer_rated_power_mva), 40.0)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.transformer_open_circuit_current_pct), 1.2)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.transformer_open_circuit_loss_kw), 30.0)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.transformer_short_circuit_voltage_pct), 8.0)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.transformer_short_circuit_loss_kw), 120.0)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.transformer_tap_module), 1.05)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.transformer_nominal_voltage_ratio), 110.0 / 20.0)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.transformer_total_voltage_ratio), (110.0 / 20.0) * 1.05)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.transformer_from_connection_aa), 1.0)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.transformer_to_connection_cc), 1.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.omega_base), 2.0 * np.pi * 50.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.transformer_rated_power_mva), 40.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.transformer_open_circuit_current_pct), 1.2)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.transformer_open_circuit_loss_kw), 30.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.transformer_short_circuit_voltage_pct), 8.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.transformer_short_circuit_loss_kw), 120.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.tap_module), 1.05)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.transformer_nominal_voltage_ratio), 110.0 / 20.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.transformer_total_voltage_ratio), (110.0 / 20.0) * 1.05)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.transformer_from_connection_aa), 1.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.transformer_to_connection_cc), 1.0)
     assert len(block.parameters) == 11
 
 
@@ -407,12 +409,12 @@ def test_transformer_equivalent_circuit_keys_receive_only_derived_values() -> No
 
     block: Block = _make_block(
         dict({
-            ParamPowerFlowRefferenceType.transformer_winding1_resistance_pu: _make_var("r1"),
-            ParamPowerFlowRefferenceType.transformer_winding2_resistance_pu: _make_var("r2"),
-            ParamPowerFlowRefferenceType.transformer_winding1_inductance_pu_s: _make_var("l1"),
-            ParamPowerFlowRefferenceType.transformer_winding2_inductance_pu_s: _make_var("l2"),
-            ParamPowerFlowRefferenceType.transformer_mutual_inductance_pu_s: _make_var("m"),
-            ParamPowerFlowRefferenceType.transformer_magnetizing_conductance_pu: _make_var("g"),
+            ParamPowerFlowReferenceType.transformer_winding1_resistance_pu: _make_var("r1"),
+            ParamPowerFlowReferenceType.transformer_winding2_resistance_pu: _make_var("r2"),
+            ParamPowerFlowReferenceType.transformer_winding1_inductance_pu_s: _make_var("l1"),
+            ParamPowerFlowReferenceType.transformer_winding2_inductance_pu_s: _make_var("l2"),
+            ParamPowerFlowReferenceType.transformer_mutual_inductance_pu_s: _make_var("m"),
+            ParamPowerFlowReferenceType.transformer_magnetizing_conductance_pu: _make_var("g"),
         })
     )
 
@@ -427,21 +429,21 @@ def test_transformer_equivalent_circuit_keys_receive_only_derived_values() -> No
     leakage_l_primary: float = 0.5 * 0.08 / omega
     leakage_l_secondary: float = leakage_l_primary / total_ratio_square
 
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.transformer_winding1_resistance_pu), 0.01)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.transformer_winding1_resistance_pu), 0.01)
     assert np.isclose(
-        _const_value(block, ParamPowerFlowRefferenceType.transformer_winding2_resistance_pu),
+        _const_value(block, ParamPowerFlowReferenceType.transformer_winding2_resistance_pu),
         0.01 / total_ratio_square,
     )
     assert np.isclose(
-        _const_value(block, ParamPowerFlowRefferenceType.transformer_winding1_inductance_pu_s),
+        _const_value(block, ParamPowerFlowReferenceType.transformer_winding1_inductance_pu_s),
         leakage_l_primary + magnetizing_l_primary,
     )
     assert np.isclose(
-        _const_value(block, ParamPowerFlowRefferenceType.transformer_winding2_inductance_pu_s),
+        _const_value(block, ParamPowerFlowReferenceType.transformer_winding2_inductance_pu_s),
         leakage_l_secondary + magnetizing_l_secondary,
     )
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.transformer_mutual_inductance_pu_s), mutual_inductance)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.transformer_magnetizing_conductance_pu), 0.001)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.transformer_mutual_inductance_pu_s), mutual_inductance)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.transformer_magnetizing_conductance_pu), 0.001)
     assert len(block.parameters) == 6
 
 
@@ -471,10 +473,10 @@ def test_transformer_direct_and_derived_keys_receive_both_sets() -> None:
 
     block: Block = _make_block(
         dict({
-            ParamPowerFlowRefferenceType.transformer_tap_module: _make_var("tap_module"),
-            ParamPowerFlowRefferenceType.transformer_total_voltage_ratio: _make_var("total_ratio"),
-            ParamPowerFlowRefferenceType.transformer_winding1_resistance_pu: _make_var("r1"),
-            ParamPowerFlowRefferenceType.transformer_mutual_inductance_pu_s: _make_var("m"),
+            ParamPowerFlowReferenceType.tap_module: _make_var("tap_module"),
+            ParamPowerFlowReferenceType.transformer_total_voltage_ratio: _make_var("total_ratio"),
+            ParamPowerFlowReferenceType.transformer_winding1_resistance_pu: _make_var("r1"),
+            ParamPowerFlowReferenceType.transformer_mutual_inductance_pu_s: _make_var("m"),
         })
     )
 
@@ -485,10 +487,10 @@ def test_transformer_direct_and_derived_keys_receive_both_sets() -> None:
     magnetizing_l_primary: float = 1000.0 / omega
     mutual_inductance: float = magnetizing_l_primary / total_ratio
 
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.transformer_tap_module), 1.1)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.transformer_total_voltage_ratio), total_ratio)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.transformer_winding1_resistance_pu), 0.01)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.transformer_mutual_inductance_pu_s), mutual_inductance)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.tap_module), 1.1)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.transformer_total_voltage_ratio), total_ratio)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.transformer_winding1_resistance_pu), 0.01)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.transformer_mutual_inductance_pu_s), mutual_inductance)
     assert len(block.parameters) == 4
 
 
@@ -515,19 +517,19 @@ def test_transformer_ratio_key_semantics_are_not_ambiguous() -> None:
 
     block: Block = _make_block(
         dict({
-            ParamPowerFlowRefferenceType.transformer_tap_ratio: _make_var("tap_ratio_legacy"),
-            ParamPowerFlowRefferenceType.transformer_tap_module: _make_var("tap_module"),
-            ParamPowerFlowRefferenceType.transformer_nominal_voltage_ratio: _make_var("nominal_ratio"),
-            ParamPowerFlowRefferenceType.transformer_total_voltage_ratio: _make_var("total_ratio"),
+            ParamPowerFlowReferenceType.transformer_tap_ratio: _make_var("tap_ratio_legacy"),
+            ParamPowerFlowReferenceType.tap_module: _make_var("tap_module"),
+            ParamPowerFlowReferenceType.transformer_nominal_voltage_ratio: _make_var("nominal_ratio"),
+            ParamPowerFlowReferenceType.transformer_total_voltage_ratio: _make_var("total_ratio"),
         })
     )
 
     assign_static_api_object_mapping_for_device(grid=grid, device=transformer, mdl=block, logger=None)
 
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.transformer_tap_ratio), 1.1)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.transformer_tap_module), 1.1)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.transformer_nominal_voltage_ratio), 5.5)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.transformer_total_voltage_ratio), 6.05)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.transformer_tap_ratio), 1.1)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.tap_module), 1.1)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.transformer_nominal_voltage_ratio), 5.5)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.transformer_total_voltage_ratio), 6.05)
 
 
 def test_existing_line_mapping_values_remain_unchanged() -> None:
@@ -542,12 +544,12 @@ def test_existing_line_mapping_values_remain_unchanged() -> None:
 
     block: Block = _make_block(
         dict({
-            ParamPowerFlowRefferenceType.Rnn: _make_var("rnn"),
-            ParamPowerFlowRefferenceType.Raa: _make_var("raa"),
-            ParamPowerFlowRefferenceType.Rbb: _make_var("rbb"),
-            ParamPowerFlowRefferenceType.Rcc: _make_var("rcc"),
-            ParamPowerFlowRefferenceType.Linv_aa: _make_var("laa"),
-            ParamPowerFlowRefferenceType.Caa: _make_var("caa"),
+            ParamPowerFlowReferenceType.Rnn: _make_var("rnn"),
+            ParamPowerFlowReferenceType.Raa: _make_var("raa"),
+            ParamPowerFlowReferenceType.Rbb: _make_var("rbb"),
+            ParamPowerFlowReferenceType.Rcc: _make_var("rcc"),
+            ParamPowerFlowReferenceType.Linv_aa: _make_var("laa"),
+            ParamPowerFlowReferenceType.Caa: _make_var("caa"),
         })
     )
 
@@ -557,12 +559,12 @@ def test_existing_line_mapping_values_remain_unchanged() -> None:
     expected_linv: float = omega / 0.3
     expected_c: float = 0.2 / (2.0 * omega)
 
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.Rnn), 0.0)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.Raa), 0.1)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.Rbb), 0.1)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.Rcc), 0.1)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.Linv_aa), expected_linv)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.Caa), expected_c)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.Rnn), 0.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.Raa), 0.1)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.Rbb), 0.1)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.Rcc), 0.1)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.Linv_aa), expected_linv)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.Caa), expected_c)
 
 
 def test_uncoupled_line_mapping_uses_direct_reactance_when_historical_slot_is_zero() -> None:
@@ -577,8 +579,8 @@ def test_uncoupled_line_mapping_uses_direct_reactance_when_historical_slot_is_ze
 
     block: Block = _make_block(
         dict({
-            ParamPowerFlowRefferenceType.Linv_aa: _make_var("laa"),
-            ParamPowerFlowRefferenceType.Caa: _make_var("caa"),
+            ParamPowerFlowReferenceType.Linv_aa: _make_var("laa"),
+            ParamPowerFlowReferenceType.Caa: _make_var("caa"),
         })
     )
 
@@ -586,8 +588,55 @@ def test_uncoupled_line_mapping_uses_direct_reactance_when_historical_slot_is_ze
 
     omega: float = 2.0 * np.pi * 50.0
 
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.Linv_aa), omega / 0.2)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.Caa), 0.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.Linv_aa), omega / 0.2)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.Caa), 0.0)
+
+
+def test_overhead_line_mapping_matches_original_template_based_values() -> None:
+    """Overhead pi-line mapping must match the original template-based matrices."""
+    grid: SimpleNamespace = _make_grid(sbase=2.0, fbase=50.0)
+    bus_from: Bus = Bus(name="from", Vnom=10.0)
+    bus_to: Bus = Bus(name="to", Vnom=10.0)
+    line: Line = Line(name="line", bus_from=bus_from, bus_to=bus_to, length=10.0)
+
+    tower: OverheadLineType = OverheadLineType(name="Tower", Vnom=10.0)
+    wire: Wire = Wire(
+        name="Panther 30/7 ACSR",
+        diameter=21.0,
+        diameter_internal=9.0,
+        is_tube=True,
+        r=0.1363,
+        max_current=1,
+    )
+    tower.add_wire_relationship(wire=wire, xpos=-12.65, ypos=27.5, phase=1)
+    tower.add_wire_relationship(wire=wire, xpos=0.0, ypos=27.5, phase=2)
+    tower.add_wire_relationship(wire=wire, xpos=12.65, ypos=27.5, phase=3)
+    tower.compute()
+    line.apply_template(tower, grid.Sbase, grid.fBase)
+
+    block: Block = _make_block(
+        dict({
+            ParamPowerFlowReferenceType.Linv_aa: _make_var("laa"),
+            ParamPowerFlowReferenceType.Caa: _make_var("caa"),
+        })
+    )
+    assign_static_api_object_mapping_for_device(grid=grid, device=line, mdl=block, logger=None)
+
+    omega: float = 2.0 * np.pi * float(grid.fBase)
+    voltage_base: float = float(bus_from.Vnom) * 1.0e3
+    sbase_va: float = float(grid.Sbase) * 1.0e6
+    zbase: float = (voltage_base * voltage_base) / sbase_va
+    ybase: float = 1.0 / zbase
+    z_phys_total: np.ndarray = tower.z_nabc * float(line.length)
+    y_phys_total: np.ndarray = tower.y_nabc * float(line.length)
+    z_pu: np.ndarray = z_phys_total / zbase
+    y_pu: np.ndarray = y_phys_total / ybase
+    l_expected: np.ndarray = np.imag(z_pu) / omega
+    c_expected: np.ndarray = (np.imag(y_pu) / omega) / 2.0
+    linv_expected: np.ndarray = np.linalg.inv(l_expected)
+
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.Linv_aa), float(linv_expected[0, 0]))
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.Caa), float(c_expected[0, 0]))
 
 
 def test_shunt_phase_keys_fall_back_to_balanced_totals() -> None:
@@ -599,15 +648,15 @@ def test_shunt_phase_keys_fall_back_to_balanced_totals() -> None:
 
     block: Block = _make_block(
         dict({
-            ParamPowerFlowRefferenceType.shunt_ga_pu: _make_var("ga"),
-            ParamPowerFlowRefferenceType.shunt_bb_pu: _make_var("bb"),
+            ParamPowerFlowReferenceType.shunt_ga_pu: _make_var("ga"),
+            ParamPowerFlowReferenceType.shunt_bb_pu: _make_var("bb"),
         })
     )
 
     assign_static_api_object_mapping_for_device(grid=grid, device=shunt, mdl=block, logger=None)
 
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.shunt_ga_pu), 1.0 / 30.0)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.shunt_bb_pu), 1.0 / 60.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.shunt_ga_pu), 1.0 / 30.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.shunt_bb_pu), 1.0 / 60.0)
 
 
 def test_current_injection_phase_keys_fall_back_to_balanced_totals() -> None:
@@ -619,12 +668,12 @@ def test_current_injection_phase_keys_fall_back_to_balanced_totals() -> None:
 
     block: Block = _make_block(
         dict({
-            ParamPowerFlowRefferenceType.current_injection_ira_pu: _make_var("ira"),
-            ParamPowerFlowRefferenceType.current_injection_iic_pu: _make_var("iic"),
+            ParamPowerFlowReferenceType.current_injection_ira_pu: _make_var("ira"),
+            ParamPowerFlowReferenceType.current_injection_iic_pu: _make_var("iic"),
         })
     )
 
     assign_static_api_object_mapping_for_device(grid=grid, device=current_injection, mdl=block, logger=None)
 
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.current_injection_ira_pu), 0.02)
-    assert np.isclose(_const_value(block, ParamPowerFlowRefferenceType.current_injection_iic_pu), 1.0 / 75.0)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.current_injection_ira_pu), 0.02)
+    assert np.isclose(_const_value(block, ParamPowerFlowReferenceType.current_injection_iic_pu), 1.0 / 75.0)

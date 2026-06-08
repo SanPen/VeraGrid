@@ -5,7 +5,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from VeraGrid.Gui.Diagrams.generic_graphics import Square
+from VeraGrid.Gui.Diagrams.generic_graphics import ControllableShuntSymbol
 from VeraGridEngine.Devices.Injections.controllable_shunt import ControllableShunt
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionTemplateGraphicItem
 from VeraGrid.Gui.DeviceEditors.ControllableShuntEditor.controllable_shunt_device_editor import (
@@ -21,7 +21,7 @@ class ControllableShuntGraphicItem(InjectionTemplateGraphicItem):
     ExternalGrid graphic item
     """
 
-    def __init__(self, parent, api_obj: ControllableShunt, editor: SchematicWidget):
+    def __init__(self, parent, api_obj: ControllableShunt, editor: SchematicWidget, draw_labels: bool = True):
         """
 
         :param parent:
@@ -32,10 +32,11 @@ class ControllableShuntGraphicItem(InjectionTemplateGraphicItem):
                                               parent=parent,
                                               api_obj=api_obj,
                                               editor=editor,
-                                              device_type_name='external grid',
-                                              w=40,
-                                              h=40)
-        self.set_glyph(glyph=Square(self, 40, 40, "C", self.update_nexus))
+                                              device_type_name='controllable shunt',
+                                              w=28,
+                                              h=40,
+                                              draw_labels=draw_labels)
+        self.set_glyph(glyph=ControllableShuntSymbol(self, h=self.h, w=self.w))
 
     @property
     def api_object(self) -> ControllableShunt:

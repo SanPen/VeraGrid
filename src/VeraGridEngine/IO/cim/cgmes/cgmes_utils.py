@@ -1119,6 +1119,7 @@ def get_regulating_control_params(cgmes_elm,
     :param TopologicalNode_tpe:
     :param DCTopologicalNode_tpe:
     :param logger:
+    :param prefer_connectivity_node
     :return:
     """
 
@@ -1155,7 +1156,7 @@ def get_regulating_control_params(cgmes_elm,
             if v_control_value is not None:
                 # In imported CGMES profiles, targetValue is already represented in the same
                 # engineering voltage scale used by BaseVoltage.nominalVoltage (kV in practice).
-                # Therefore no additional targetValueUnitMultiplier scaling is applied here.
+                # Therefore, no additional targetValueUnitMultiplier scaling is applied here.
                 v_control_value_num = float(v_control_value)
             else:
                 logger.add_warning(msg='RegulatingControl targetValue is missing; fallback to 1.0 p.u.',

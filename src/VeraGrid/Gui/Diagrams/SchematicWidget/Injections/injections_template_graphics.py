@@ -5,22 +5,23 @@
 
 from __future__ import annotations
 from typing import TYPE_CHECKING, List, Any
-from PySide6.QtCore import Qt, QPointF
-from PySide6.QtGui import QPen, QCursor, QPainterPath, QColor, QBrush, QPainterPathStroker
+from PySide6.QtCore import Qt, QPointF, QRectF
+from PySide6.QtGui import QPen, QCursor, QPainter, QPainterPath, QColor, QBrush, QPainterPathStroker
 from PySide6.QtWidgets import (QGraphicsItem, QGraphicsItemGroup, QMenu,
                                QGraphicsSceneContextMenuEvent, QGraphicsPathItem,
-                               QGraphicsEllipseItem, QGraphicsRectItem, QGraphicsSceneMouseEvent)
+                               QGraphicsEllipseItem, QGraphicsRectItem, QGraphicsSceneMouseEvent,
+                               QGraphicsSceneHoverEvent, QGraphicsTextItem, QStyleOptionGraphicsItem, QWidget)
 from VeraGrid.Gui.messages import yes_no_question, error_msg
 from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
 from VeraGrid.Gui.gui_functions import add_menu_entry
 from VeraGrid.Gui.Diagrams.generic_graphics import (GenericDiagramWidget, ACTIVE, DEACTIVATED, OTHER, Square, Circle,
-                                                    Polygon, Condenser)
+                                                    Polygon, Condenser, InjectionSymbolBase, DraggableLabelItem)
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.route_geometry import (merge_route_with_endpoints,
                                                                            move_polyline_route_segment,
                                                                            move_polyline_route_vertex,
                                                                            normalize_route_points)
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry import (SchematicAttachmentSlot,
-                                                                          project_point_to_rectangle_perimeter)
+                                                                          )
 from VeraGridEngine.Devices.Diagrams.schematic_layout import (build_default_branch_route,
                                                               parse_schematic_route_kind)
 from VeraGridEngine.enumerations import SchematicRouteKind, DynamicSimulationMode
@@ -402,7 +403,8 @@ class InjectionTemplateGraphicItem(GenericDiagramWidget, QGraphicsItemGroup):
                  device_type_name: str,
                  w: int,
                  h: int,
-                 editor: SchematicWidget):
+                 editor: SchematicWidget,
+                 draw_labels: bool = True):
         """
 
         :param parent:
@@ -411,12 +413,16 @@ class InjectionTemplateGraphicItem(GenericDiagramWidget, QGraphicsItemGroup):
         :param w:
         :param h:
         """
-        GenericDiagramWidget.__init__(self, parent=parent, api_object=api_obj, editor=editor, draw_labels=True)
+        GenericDiagramWidget.__init__(self,
+                                      parent=parent,
+                                      api_object=api_obj,
+                                      editor=editor,
+                                      draw_labels=draw_labels)
         QGraphicsItemGroup.__init__(self, parent)
 
         self.w = w
         self.h = h
-        self.glyph: Square | Circle | Polygon | Condenser | None = None
+        self.glyph: Square | Circle | Polygon | Condenser | InjectionSymbolBase | None = None
         self.scale = 1.0
         self.device_type_name = device_type_name
 
@@ -424,13 +430,46 @@ class InjectionTemplateGraphicItem(GenericDiagramWidget, QGraphicsItemGroup):
         self.setFlags(self.GraphicsItemFlag.ItemIsSelectable | self.GraphicsItemFlag.ItemIsMovable)
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemSendsScenePositionChanges, True)
         self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+        self.setAcceptHoverEvents(True)
 
         self.width = 4
+        self._is_hovered: bool = False
+        self._result_color: QColor | None = None
+        self._result_lines: list[str] = list()
+        self._default_tooltip: str = self.api_object.name if self.api_object is not None else ""
 
         # Routed nexus path tying this object with the original bus or node.
         self.nexus = InjectionNexusPathItem(owner_item=self)
-        self.nexus.setPen(QPen(self.color, self.width, self.style))
+        self.nexus.setPen(QPen(self.color,
+                               self.width,
+                               self.style,
+                               Qt.PenCapStyle.FlatCap,
+                               Qt.PenJoinStyle.MiterJoin))
         self.nexus.setBrush(Qt.BrushStyle.NoBrush)
+
+        self._interaction_target = QGraphicsPathItem(parent=self)
+        self._interaction_target.setPen(QPen(QColor(0, 0, 0, 0), 14.0, Qt.PenStyle.SolidLine,
+                                             Qt.PenCapStyle.RoundCap, Qt.PenJoinStyle.RoundJoin))
+        self._interaction_target.setBrush(Qt.BrushStyle.NoBrush)
+        self._interaction_target.setAcceptedMouseButtons(Qt.MouseButton.NoButton)
+        self._interaction_target.setZValue(-3)
+
+        self._interaction_ring = QGraphicsPathItem(parent=self)
+        self._interaction_ring.setBrush(Qt.BrushStyle.NoBrush)
+        self._interaction_ring.setAcceptedMouseButtons(Qt.MouseButton.NoButton)
+        self._interaction_ring.setZValue(-2)
+
+        self._result_badge = QGraphicsPathItem(parent=self)
+        self._result_badge.setAcceptedMouseButtons(Qt.MouseButton.NoButton)
+        self._result_badge.setVisible(False)
+        self._result_badge.setZValue(2)
+
+        self._result_label = DraggableLabelItem(parent=self, moved_callback=self.refresh_result_label_badge_geometry)
+        self._result_label.document().setDocumentMargin(0.0)
+        self._result_label.setAcceptedMouseButtons(Qt.MouseButton.LeftButton)
+        self._result_label.setVisible(False)
+        self._result_label.setZValue(3)
+
         self._nexus_route_points: list[tuple[float, float]] = list()
         self._nexus_segment_handles: list[NexusSegmentHandleItem] = list()
         self._nexus_vertex_handles: list[NexusVertexHandleItem] = list()
@@ -444,18 +483,19 @@ class InjectionTemplateGraphicItem(GenericDiagramWidget, QGraphicsItemGroup):
         self._parent_movable_before_nexus_edit: bool = True
         self.setTransformOriginPoint(self.get_rotation_origin_local_point())
 
-    def set_glyph(self, glyph: Square | Circle | Polygon | Condenser):
+    def set_glyph(self, glyph: QGraphicsItem) -> None:
         """
 
         :param glyph:
         :return:
         """
-        pen = QPen(self.color, self.width, self.style)
         self.glyph = glyph
-        self.glyph.setPen(pen)
         self.addToGroup(self.glyph)
 
         self.setPos(0.0, 100.0)
+        self.clear_result_visuals()
+        self.refresh_visual_style()
+        self.refresh_result_label_layout()
         self.update_nexus(self.scenePos())
 
         self._editor.add_to_scene(self.nexus)
@@ -526,12 +566,7 @@ class InjectionTemplateGraphicItem(GenericDiagramWidget, QGraphicsItemGroup):
         Change the colour according to the system theme
         """
         super().recolour_mode()
-
-        pen = QPen(self.color, self.width, self.style)
-        self.nexus.setPen(pen)
-        self.glyph.setPen(pen)
-
-        return pen
+        self.refresh_visual_style()
 
     def enable_disable_toggle(self):
         """
@@ -570,7 +605,192 @@ class InjectionTemplateGraphicItem(GenericDiagramWidget, QGraphicsItemGroup):
             self.style = OTHER['style']
             self.color = OTHER['color']
 
-        self.glyph.setPen(QPen(self.color, self.width, self.style))
+        self.refresh_visual_style()
+
+    def enable_label_drawing(self):
+        """
+        Enable visible result badges for this injection.
+        """
+        super().enable_label_drawing()
+        self.refresh_result_label_layout()
+
+    def disable_label_drawing(self):
+        """
+        Disable visible result badges for this injection.
+        """
+        super().disable_label_drawing()
+        self.refresh_result_label_layout()
+
+    def _get_glyph_bounds(self) -> QGraphicsRectItem | Any:
+        """
+        Return the current glyph bounds in owner-local coordinates.
+        """
+        if self.glyph is None:
+            return self.childrenBoundingRect()
+        else:
+            return self.glyph.mapRectToParent(self.glyph.boundingRect())
+
+    def _build_interaction_path(self) -> QPainterPath:
+        """
+        Build the padded local path used for hit-testing and hover affordance.
+        """
+        glyph_bounds = self._get_glyph_bounds()
+        widget_bounds = QRectF(0.0, 0.0, float(self.w), float(self.h))
+        bounds = glyph_bounds.united(widget_bounds).adjusted(-6.0, -6.0, 6.0, 6.0)
+        path = QPainterPath()
+        path.addRoundedRect(bounds, 8.0, 8.0)
+        return path
+
+    def _apply_tooltip(self, text: str) -> None:
+        """
+        Apply one tooltip to the parent item and the visible child overlays.
+        """
+        self.setToolTip(text)
+        self.nexus.setToolTip(text)
+        self._interaction_target.setToolTip(text)
+        self._interaction_ring.setToolTip(text)
+        self._result_badge.setToolTip(text)
+        self._result_label.setToolTip(text)
+
+        if self.glyph is not None:
+            self.glyph.setToolTip(text)
+        else:
+            pass
+
+    def _get_symbol_fill_brush(self) -> QBrush:
+        """
+        Build the current symbol fill brush.
+        """
+        if self.api_object is not None and not self.api_object.active:
+            fill_color = QColor(115, 115, 115, 32)
+        elif self._result_color is not None:
+            fill_color = QColor(self._result_color)
+            fill_color.setAlpha(68)
+        else:
+            fill_color = QColor(ACTIVE['background'])
+            fill_color.setAlpha(28)
+
+        return QBrush(fill_color)
+
+    def refresh_visual_style(self) -> None:
+        """
+        Refresh the symbol, nexus, hover ring, and results badge styling.
+        """
+        glyph_color = QColor(self.color)
+
+        if self.api_object is not None and self.api_object.active and self._result_color is not None:
+            glyph_color = QColor(self._result_color)
+        else:
+            pass
+
+        glyph_pen = QPen(glyph_color, self.width, self.style, Qt.PenCapStyle.RoundCap, Qt.PenJoinStyle.RoundJoin)
+        nexus_pen = QPen(glyph_color, self.width, self.style, Qt.PenCapStyle.FlatCap, Qt.PenJoinStyle.MiterJoin)
+        self.nexus.setPen(nexus_pen)
+
+        if self.glyph is not None:
+            self.glyph.setPen(glyph_pen)
+        else:
+            pass
+
+        if isinstance(self.glyph, (Square, Circle, Polygon, InjectionSymbolBase)):
+            self.glyph.setBrush(self._get_symbol_fill_brush())
+        else:
+            pass
+
+        self._interaction_target.setPath(self._build_interaction_path())
+        self._interaction_ring.setPath(self._build_interaction_path())
+
+        ring_color = QColor(glyph_color)
+        ring_color.setAlpha(200 if (self.isSelected() or self._is_hovered) else 0)
+        ring_width = 2.4 if self.isSelected() else 1.6
+        self._interaction_ring.setPen(QPen(ring_color, ring_width, Qt.PenStyle.SolidLine,
+                                           Qt.PenCapStyle.RoundCap, Qt.PenJoinStyle.RoundJoin))
+
+        badge_stroke = QColor(glyph_color)
+        badge_stroke.setAlpha(150)
+        badge_fill = QColor(ACTIVE['background'])
+        badge_fill.setAlpha(215)
+        self._result_badge.setPen(QPen(badge_stroke, 1.0))
+        self._result_badge.setBrush(QBrush(badge_fill))
+        self._result_label.setDefaultTextColor(glyph_color if self._result_color is not None else ACTIVE['text'])
+        self.refresh_result_label_layout()
+
+    def refresh_result_label_layout(self) -> None:
+        """
+        Position and show or hide the compact results badge.
+        """
+        has_label: bool = self.draw_labels and len(self._result_lines) > 0
+        self._result_label.setVisible(has_label)
+        self._result_badge.setVisible(has_label)
+
+        if not has_label:
+            return
+        else:
+            pass
+
+        badge_rows: str = "<br/>".join(self._result_lines)
+        self._result_label.setHtml(
+            f'<div style="font-size:9pt; font-weight:600; text-align:center;">{badge_rows}</div>'
+        )
+        label_rect = self._result_label.boundingRect()
+        label_x = float(self.w) * 0.5 - (label_rect.x() + label_rect.width() * 0.5)
+        bounds = self._get_glyph_bounds()
+        symbol_bottom: float = max(float(bounds.bottom()), float(self.h))
+        label_y = symbol_bottom + 8.0
+        self._result_label.set_anchor_position(QPointF(label_x, label_y))
+        self.refresh_result_label_badge_geometry()
+
+    def refresh_result_label_badge_geometry(self) -> None:
+        """
+        Refresh the rounded badge path around the current result label position.
+
+        :return: ``None``.
+        """
+        if not self._result_label.isVisible():
+            return
+        else:
+            pass
+
+        label_rect = self._result_label.boundingRect()
+        badge_rect = self._result_label.mapRectToParent(label_rect).adjusted(-4.0, -2.0, 4.0, 2.0)
+        badge_path = QPainterPath()
+        badge_path.addRoundedRect(badge_rect, 4.0, 4.0)
+        self._result_badge.setPath(badge_path)
+
+    def clear_result_visuals(self) -> None:
+        """
+        Remove result-driven styling and restore the default tooltip.
+        """
+        self._result_color = None
+        self._result_lines = list()
+        self._result_label.setHtml("")
+        self._apply_tooltip(self._default_tooltip)
+        self.refresh_visual_style()
+
+    def set_result_visuals(self, lines: list[str], tooltip: str, color: QColor | None = None) -> None:
+        """
+        Apply one set of compact result lines and one result-driven color.
+        """
+        self._result_lines = [line for line in lines if line]
+        self._result_color = QColor(color) if color is not None else None
+        self._apply_tooltip(tooltip if len(tooltip) > 0 else self._default_tooltip)
+        self.refresh_visual_style()
+
+    def hoverEnterEvent(self, event: QGraphicsSceneHoverEvent) -> None:
+        """
+        Show a subtle halo when the injection is hovered.
+        """
+        self._is_hovered = True
+        self.refresh_visual_style()
+        QGraphicsItemGroup.hoverEnterEvent(self, event)
+
+    def hoverLeaveEvent(self, event: QGraphicsSceneHoverEvent) -> None:
+        """
+        Hide the hover halo when the pointer leaves the injection.
+        """
+        self._is_hovered = False
+        self.refresh_visual_style()
+        QGraphicsItemGroup.hoverLeaveEvent(self, event)
 
     def update_nexus(self, pos: QPointF):
         """
@@ -598,6 +818,12 @@ class InjectionTemplateGraphicItem(GenericDiagramWidget, QGraphicsItemGroup):
         Keep the nexus line synchronized with scene-position changes.
         """
         if change == QGraphicsItem.GraphicsItemChange.ItemScenePositionHasChanged:
+            if self.editor.is_loading_diagram():
+                pass
+            elif self.nexus.isSelected():
+                pass
+            else:
+                self.sync_manual_dock_metadata_from_position()
             self.update_nexus(self.scenePos())
             return value
         elif change == QGraphicsItem.GraphicsItemChange.ItemSelectedHasChanged:
@@ -608,9 +834,28 @@ class InjectionTemplateGraphicItem(GenericDiagramWidget, QGraphicsItemGroup):
             self.clear_nexus_edit_if_fully_deselected()
             self.refresh_nexus_z_order()
             self.refresh_nexus_handles()
+            self.refresh_visual_style()
             return value
         else:
             return super().itemChange(change, value)
+
+    def paint(self,
+              painter: QPainter,
+              option: QStyleOptionGraphicsItem,
+              widget: QWidget | None = None) -> None:
+        """
+        Keep the container item visually inert.
+
+        Children paint the actual symbol, labels, and nexus overlays. The group item
+        itself must not add the default Qt selection rectangle because selection is
+        represented by the shared rounded interaction ring instead.
+
+        :param painter: Unused painter.
+        :param option: Unused style option.
+        :param widget: Unused target widget.
+        :return: ``None``.
+        """
+        return None
 
     def mouseReleaseEvent(self, event: QGraphicsSceneMouseEvent) -> None:
         """
@@ -647,27 +892,71 @@ class InjectionTemplateGraphicItem(GenericDiagramWidget, QGraphicsItemGroup):
         """
         self.editor.diagram.set_dock(self.api_object, dock)
 
-    def get_manual_dock_alignment(self) -> float:
+    def infer_manual_dock_side(self) -> SchematicAttachmentSlot:
         """
-        Compute the normalized horizontal alignment of the child center.
+        Infer the dock side from the current child center relative to the parent center.
 
+        :return: Inferred dock side.
+        """
+        parent_center_x: float = float(self.parent.rect().width()) * 0.5
+        parent_center_y: float = float(self.parent.rect().height()) * 0.5
+        child_center_x: float = float(self.x()) + float(self.w) * 0.5
+        child_center_y: float = float(self.y()) + float(self.h) * 0.5
+
+        dx: float = child_center_x - parent_center_x
+        dy: float = child_center_y - parent_center_y
+        norm_x: float = abs(dx) / max(parent_center_x, 1e-9)
+        norm_y: float = abs(dy) / max(parent_center_y, 1e-9)
+
+        if norm_x > norm_y:
+            if dx < 0.0:
+                return SchematicAttachmentSlot.LEFT
+            else:
+                return SchematicAttachmentSlot.RIGHT
+        else:
+            if dy < 0.0:
+                return SchematicAttachmentSlot.TOP
+            else:
+                return SchematicAttachmentSlot.BOTTOM
+
+    def get_manual_dock_alignment(self, side: SchematicAttachmentSlot) -> float:
+        """
+        Compute the normalized alignment of the child center on one dock side.
+
+        :param side: Dock side.
         :return: Alignment factor.
         """
-        parent_width: float = float(self.parent.rect().width())
         local_center_x: float = float(self.x()) + float(self.w) * 0.5
+        local_center_y: float = float(self.y()) + float(self.h) * 0.5
+        parent_width: float = float(self.parent.rect().width())
+        parent_height: float = float(self.parent.rect().height())
 
-        if parent_width <= 0.0:
-            return 0.5
+        if side == SchematicAttachmentSlot.LEFT or side == SchematicAttachmentSlot.RIGHT:
+            if parent_height <= 0.0:
+                return 0.5
+            else:
+                return clamp_alignment(local_center_y / parent_height)
         else:
-            return clamp_alignment(local_center_x / parent_width)
+            if parent_width <= 0.0:
+                return 0.5
+            else:
+                return clamp_alignment(local_center_x / parent_width)
 
-    def get_manual_dock_offset(self) -> float:
+    def get_manual_dock_offset(self, side: SchematicAttachmentSlot) -> float:
         """
-        Compute the vertical offset of the child origin from the parent bottom-dock baseline.
+        Compute the perpendicular offset of the child origin from one dock side baseline.
 
+        :param side: Dock side.
         :return: Dock offset.
         """
-        return float(self.y()) - float(self.parent.get_bottom_dock_baseline())
+        if side == SchematicAttachmentSlot.TOP:
+            return max(0.0, -float(self.y()) - float(self.h) - 40.0)
+        elif side == SchematicAttachmentSlot.LEFT:
+            return max(0.0, -float(self.x()) - float(self.w) - 40.0)
+        elif side == SchematicAttachmentSlot.RIGHT:
+            return max(0.0, float(self.x()) - float(self.parent.w) - 40.0)
+        else:
+            return max(0.0, float(self.y()) - float(self.parent.get_bottom_dock_baseline()))
 
     def get_child_anchor_local_point_from_parent_scene_anchor(self, parent_scene_anchor: QPointF) -> QPointF:
         """
@@ -677,11 +966,27 @@ class InjectionTemplateGraphicItem(GenericDiagramWidget, QGraphicsItemGroup):
         :return: Child-local anchor point.
         """
         local_reference_point: QPointF = self.mapFromScene(parent_scene_anchor)
-        projected_x, projected_y = project_point_to_rectangle_perimeter(width=float(self.w),
-                                                                        height=float(self.h),
-                                                                        point_x=float(local_reference_point.x()),
-                                                                        point_y=float(local_reference_point.y()))
-        return QPointF(projected_x, projected_y)
+        dock = self.get_dock_metadata()
+        side_value: str = str(dock.get("side", SchematicAttachmentSlot.BOTTOM.value))
+
+        if side_value == SchematicAttachmentSlot.TOP.value:
+            child_side: SchematicAttachmentSlot = SchematicAttachmentSlot.BOTTOM
+        elif side_value == SchematicAttachmentSlot.LEFT.value:
+            child_side = SchematicAttachmentSlot.RIGHT
+        elif side_value == SchematicAttachmentSlot.RIGHT.value:
+            child_side = SchematicAttachmentSlot.LEFT
+        else:
+            child_side = SchematicAttachmentSlot.TOP
+
+        if child_side == SchematicAttachmentSlot.TOP or child_side == SchematicAttachmentSlot.BOTTOM:
+            alignment: float = clamp_alignment(float(local_reference_point.x()) / max(float(self.w), 1e-9))
+        else:
+            alignment = clamp_alignment(float(local_reference_point.y()) / max(float(self.h), 1e-9))
+
+        return get_local_rect_side_anchor(width=float(self.w),
+                                          height=float(self.h),
+                                          side=child_side,
+                                          alignment=alignment)
 
     def get_child_anchor_local_point_from_dock(self, dock: dict[str, Any]) -> QPointF:
         """
@@ -697,7 +1002,26 @@ class InjectionTemplateGraphicItem(GenericDiagramWidget, QGraphicsItemGroup):
             parent_anchor_scene_point: QPointF = self.get_parent_nexus_anchor()
             return self.get_child_anchor_local_point_from_parent_scene_anchor(parent_scene_anchor=parent_anchor_scene_point)
         else:
-            return QPointF(float(child_anchor_x), float(child_anchor_y))
+            side_value: str = str(dock.get("side", SchematicAttachmentSlot.BOTTOM.value))
+
+            if side_value == SchematicAttachmentSlot.TOP.value:
+                child_side: SchematicAttachmentSlot = SchematicAttachmentSlot.BOTTOM
+            elif side_value == SchematicAttachmentSlot.LEFT.value:
+                child_side = SchematicAttachmentSlot.RIGHT
+            elif side_value == SchematicAttachmentSlot.RIGHT.value:
+                child_side = SchematicAttachmentSlot.LEFT
+            else:
+                child_side = SchematicAttachmentSlot.TOP
+
+            if child_side == SchematicAttachmentSlot.TOP or child_side == SchematicAttachmentSlot.BOTTOM:
+                alignment: float = clamp_alignment(float(child_anchor_x) / max(float(self.w), 1e-9))
+            else:
+                alignment = clamp_alignment(float(child_anchor_y) / max(float(self.h), 1e-9))
+
+            return get_local_rect_side_anchor(width=float(self.w),
+                                              height=float(self.h),
+                                              side=child_side,
+                                              alignment=alignment)
 
     def sync_manual_dock_metadata_from_position(self) -> None:
         """
@@ -706,18 +1030,12 @@ class InjectionTemplateGraphicItem(GenericDiagramWidget, QGraphicsItemGroup):
         :return: ``None``.
         """
         dock = self.get_dock_metadata()
-        alignment: float = self.get_manual_dock_alignment()
-        offset: float = self.get_manual_dock_offset()
-        anchor_x: Any = dock.get("anchor_x", None)
-        anchor_y: Any = dock.get("anchor_y", None)
+        side: SchematicAttachmentSlot = self.infer_manual_dock_side()
+        alignment: float = self.get_manual_dock_alignment(side=side)
+        offset: float = self.get_manual_dock_offset(side=side)
         child_anchor_x: Any = dock.get("child_anchor_x", None)
         child_anchor_y: Any = dock.get("child_anchor_y", None)
-        anchor_auto: bool = bool(dock.get("anchor_auto", True))
-
-        if anchor_auto or anchor_x is None or anchor_y is None:
-            parent_anchor_local_point: QPointF = self.get_parent_anchor_local_point_from_child_position()
-        else:
-            parent_anchor_local_point = QPointF(float(anchor_x), float(anchor_y))
+        parent_anchor_local_point: QPointF = self.get_parent_anchor_local_point_from_child_position()
 
         if child_anchor_x is None or child_anchor_y is None:
             child_anchor_local_point: QPointF = self.get_child_anchor_local_point_from_parent_scene_anchor(
@@ -726,6 +1044,7 @@ class InjectionTemplateGraphicItem(GenericDiagramWidget, QGraphicsItemGroup):
         else:
             child_anchor_local_point = QPointF(float(child_anchor_x), float(child_anchor_y))
 
+        dock["side"] = side.value
         dock["alignment"] = alignment
         dock["offset"] = offset
         dock["auto_layout"] = False
@@ -915,7 +1234,6 @@ class InjectionTemplateGraphicItem(GenericDiagramWidget, QGraphicsItemGroup):
             dock["anchor_y"] = float(parent_anchor_local_point.y())
             dock["anchor_auto"] = False
         else:
-            local_point = self.mapFromScene(scene_pos)
             child_anchor_local_point = self.get_child_anchor_local_point_from_parent_scene_anchor(parent_scene_anchor=scene_pos)
             dock["child_anchor_x"] = float(child_anchor_local_point.x())
             dock["child_anchor_y"] = float(child_anchor_local_point.y())
@@ -946,7 +1264,7 @@ class InjectionTemplateGraphicItem(GenericDiagramWidget, QGraphicsItemGroup):
 
         :return: ``True`` when nexus handles should be visible.
         """
-        return self._nexus_edit_active and (self.isSelected() or self.nexus.isSelected())
+        return self._nexus_edit_active and self.nexus.isSelected()
 
     def set_nexus_edit_active(self, active: bool) -> None:
         """
@@ -959,6 +1277,14 @@ class InjectionTemplateGraphicItem(GenericDiagramWidget, QGraphicsItemGroup):
         :return: ``None``.
         """
         self._nexus_edit_active = bool(active)
+
+        # Keep the nexus selection synchronized with the explicit edit-mode state so programmatic
+        # activation follows the same path as a direct nexus click.
+        if active:
+            self.nexus.setSelected(True)
+        else:
+            pass
+
         self.refresh_nexus_z_order()
         self.refresh_nexus_handles()
 
@@ -1260,6 +1586,12 @@ class InjectionTemplateGraphicItem(GenericDiagramWidget, QGraphicsItemGroup):
                        text="Change bus",
                        function_ptr=self.change_bus,
                        icon_path=":/Icons/icons/move_bus.png")
+
+        add_menu_entry(menu=menu,
+                       text="Draw labels",
+                       function_ptr=self.enable_disable_label_drawing,
+                       checkeable=True,
+                       checked_value=self.draw_labels)
 
         add_menu_entry(menu=menu,
                        text="Editor",

@@ -11,8 +11,8 @@ from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.enumerations import (
     DeviceType,
-    ParamPowerFlowRefferenceType,
-    VarPowerFlowRefferenceType,
+    ParamPowerFlowReferenceType,
+    VarPowerFlowReferenceType,
 )
 from VeraGridEngine.Utils.Symbolic import symbolic as sym
 from VeraGridEngine.Utils.Symbolic.block import Block
@@ -56,16 +56,16 @@ def get_gfm_emt_template(vf: VarFactory, name: str = "VSC_GridForming") -> EmtMo
     templ.block.name = name
 
     # Inputs: instantaneous abc bus voltages + DC bus voltage.
-    v_A = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowRefferenceType.v_A)
-    v_B = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowRefferenceType.v_B)
-    v_C = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowRefferenceType.v_C)
-    v_dc = vf.add_var(name=f"v_dc_{name}", reference=VarPowerFlowRefferenceType.Vdc)
+    v_A = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowReferenceType.v_A)
+    v_B = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowReferenceType.v_B)
+    v_C = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowReferenceType.v_C)
+    v_dc = vf.add_var(name=f"v_dc_{name}", reference=VarPowerFlowReferenceType.Vdc)
     inputs: List[Any] = [v_A, v_B, v_C, v_dc]
 
     # States: three phase currents, internal angle, frequency, EMF.
-    i_A = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowRefferenceType.i_A)
-    i_B = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowRefferenceType.i_B)
-    i_C = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowRefferenceType.i_C)
+    i_A = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowReferenceType.i_A)
+    i_B = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowReferenceType.i_B)
+    i_C = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowReferenceType.i_C)
     theta = vf.add_var(name=f"theta_{name}")
     omega = vf.add_var(name=f"omega_{name}")
     Epk = vf.add_var(name=f"Epk_{name}")
@@ -83,6 +83,10 @@ def get_gfm_emt_template(vf: VarFactory, name: str = "VSC_GridForming") -> EmtMo
     e_C = vf.add_var(name=f"e_C_{name}")
     Pe = vf.add_var(name=f"Pe_{name}")
     Qe = vf.add_var(name=f"Qe_{name}")
+    # DC-side current injection (branch ``if_dc`` terminal). It closes the DC
+    # bus KCL when the VSC is connected to a real DC bus (e.g. through the GUI
+    # branch connector). Defined by the lossless power balance below.
+    i_dc = vf.add_var(name=f"i_dc_{name}", reference=VarPowerFlowReferenceType.Idc)
 
     # Static parameters and droop / control set-points.
     omega_base = vf.add_var(name=f"omega_base_{name}")
@@ -203,10 +207,14 @@ def get_gfm_emt_template(vf: VarFactory, name: str = "VSC_GridForming") -> EmtMo
         e_C - Epk * sym.sin(theta + two_pi_over_3),
         Pe - Pe_expr,
         Qe - Qe_expr,
+        # Lossless DC power balance (same convention as get_emt_ideal_converter):
+        # the DC bus supplies the active power the converter delivers to the AC
+        # side, so v_dc * i_dc + Pe = 0  ->  i_dc = -Pe / v_dc.
+        i_dc * v_dc + Pe,
     ]
     algebraic_vars: List[Any] = [
         e_A, e_B, e_C,
-        Pe, Qe,
+        Pe, Qe, i_dc,
     ]
 
     templ.block = Block(
@@ -215,7 +223,7 @@ def get_gfm_emt_template(vf: VarFactory, name: str = "VSC_GridForming") -> EmtMo
         algebraic_eqs=algebraic_eqs,
         algebraic_vars=algebraic_vars,
         in_vars=inputs,
-        out_vars=[i_A, i_B, i_C],
+        out_vars=[i_A, i_B, i_C, i_dc],
     )
 
     templ.block.diff_vars = [d_i_A, d_i_B, d_i_C, d_theta, d_omega, d_Epk]
@@ -224,25 +232,26 @@ def get_gfm_emt_template(vf: VarFactory, name: str = "VSC_GridForming") -> EmtMo
     # entries are what the EMT bridge populates from the PF positive-
     # sequence solution (see ``_set_vsc_pf_positive_sequence``).
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.v_A: v_A,
-        VarPowerFlowRefferenceType.v_B: v_B,
-        VarPowerFlowRefferenceType.v_C: v_C,
-        VarPowerFlowRefferenceType.i_A: i_A,
-        VarPowerFlowRefferenceType.i_B: i_B,
-        VarPowerFlowRefferenceType.i_C: i_C,
-        VarPowerFlowRefferenceType.Vdc: v_dc,
-        VarPowerFlowRefferenceType.Qf: Qf,
-        VarPowerFlowRefferenceType.Vpk: Vpk_ref,
-        VarPowerFlowRefferenceType.phi_v: phi_v_ref,
-        VarPowerFlowRefferenceType.Ipk: Ipk_ref,
-        VarPowerFlowRefferenceType.phi: phi_ref,
+        VarPowerFlowReferenceType.v_A: v_A,
+        VarPowerFlowReferenceType.v_B: v_B,
+        VarPowerFlowReferenceType.v_C: v_C,
+        VarPowerFlowReferenceType.i_A: i_A,
+        VarPowerFlowReferenceType.i_B: i_B,
+        VarPowerFlowReferenceType.i_C: i_C,
+        VarPowerFlowReferenceType.Vdc: v_dc,
+        VarPowerFlowReferenceType.Idc: i_dc,
+        VarPowerFlowReferenceType.Qf: Qf,
+        VarPowerFlowReferenceType.Vpk: Vpk_ref,
+        VarPowerFlowReferenceType.phi_v: phi_v_ref,
+        VarPowerFlowReferenceType.Ipk: Ipk_ref,
+        VarPowerFlowReferenceType.phi: phi_ref,
     }
 
     # API-object mapping.
     templ.block.api_obj_mapping = {
-        ParamPowerFlowRefferenceType.omega_base: omega_base,
-        ParamPowerFlowRefferenceType.R1: R_s,
-        ParamPowerFlowRefferenceType.X1: X_s,
+        ParamPowerFlowReferenceType.omega_base: omega_base,
+        ParamPowerFlowReferenceType.R1: R_s,
+        ParamPowerFlowReferenceType.X1: X_s,
     }
 
     # Runtime / PF-bound parameters.

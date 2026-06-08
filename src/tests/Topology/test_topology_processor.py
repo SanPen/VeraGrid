@@ -11,7 +11,7 @@ from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.api import power_flow
 from VeraGridEngine.Topology.topology import compute_connectivity_flexible
 from VeraGridEngine.Simulations.PowerFlow.power_flow_worker import multi_island_pf_nc
-from VeraGridEngine.enumerations import BusMode
+from VeraGridEngine.enumerations import BusMode, GeneratorControlMode
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -27,7 +27,11 @@ def test_topology_control_propagation_vm():
     b1 = grid.add_bus(dev.Bus(name="B1"))
 
     grid.add_switch(dev.Switch(name="SW", bus_from=b0, bus_to=b1, active=True))
-    grid.add_generator(api_obj=dev.Generator(name="G1", P=10.0, vset=1.03, is_controlled=True), bus=b1)
+    grid.add_generator(api_obj=dev.Generator(name="G1",
+                                             P=10.0,
+                                             vset=1.03,
+                                             control_mode=GeneratorControlMode.V),
+                       bus=b1)
 
     nc = compile_numerical_circuit_at(grid)
 

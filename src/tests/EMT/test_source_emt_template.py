@@ -7,7 +7,7 @@ from VeraGridEngine.Templates.Emt.source_emt_template import get_controlled_curr
 from VeraGridEngine.Templates.Emt.source_emt_template import get_controlled_voltage_source_emt_template
 from VeraGridEngine.Templates.Emt.source_emt_template import get_current_source_emt_template
 from VeraGridEngine.Templates.Emt.source_emt_template import get_voltage_source_emt_template
-from VeraGridEngine.enumerations import VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import VarPowerFlowReferenceType
 
 
 def test_current_source_emt_template_exposes_phase_inputs_outputs_and_event_values() -> None:
@@ -32,8 +32,8 @@ def test_current_source_emt_template_exposes_phase_inputs_outputs_and_event_valu
         f"phi_deg_A_{resolved_name}",
         f"phi_deg_C_{resolved_name}",
     ]
-    assert templ.block.external_mapping[VarPowerFlowRefferenceType.v_A].name == f"v_A_{resolved_name}"
-    assert templ.block.external_mapping[VarPowerFlowRefferenceType.i_C].name == f"i_C_{resolved_name}"
+    assert templ.block.external_mapping[VarPowerFlowReferenceType.v_A].name == f"v_A_{resolved_name}"
+    assert templ.block.external_mapping[VarPowerFlowReferenceType.i_C].name == f"i_C_{resolved_name}"
 
 
 def test_controlled_current_source_emt_template_exposes_command_inputs() -> None:

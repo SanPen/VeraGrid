@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import numpy as np
 from VeraGridEngine.Utils.Sparse.sparse_array import SparseObjectArray
-from VeraGridEngine.basic_structures import Vec, IntVec, ObjVec, CxVec, Logger
+from VeraGridEngine.basic_structures import Vec, IntVec, CxVec, Logger
 
 
 class ActiveBranchData:
@@ -30,8 +30,8 @@ class ActiveBranchData:
         self.tap_angle: Vec = np.zeros(nelm, dtype=float)
         self.tap_angle_min: Vec = np.full(nelm, fill_value=-6.28, dtype=float)
         self.tap_angle_max: Vec = np.full(nelm, fill_value=6.28, dtype=float)
-        self.tap_module_control_mode: ObjVec = np.zeros(self.nelm, dtype=object)
-        self.tap_phase_control_mode: ObjVec = np.zeros(self.nelm, dtype=object)
+        self.tap_module_control_mode: IntVec = np.zeros(self.nelm, dtype=int)
+        self.tap_phase_control_mode: IntVec = np.zeros(self.nelm, dtype=int)
         self.tap_controlled_buses: IntVec = np.zeros(self.nelm, dtype=int)
 
         self.Pset: Vec = np.zeros(nelm, dtype=float)  # always over the controlled side

@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from enum import IntEnum
 
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import Block, Var, Expr
@@ -196,16 +196,16 @@ def _set_common_external_mapping(
     :return: None.
     """
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.v_A: v_A,
-        VarPowerFlowRefferenceType.v_B: v_B,
-        VarPowerFlowRefferenceType.v_C: v_C,
-        VarPowerFlowRefferenceType.i_A: transformer_block.out_vars[0],
-        VarPowerFlowRefferenceType.i_B: transformer_block.out_vars[1],
-        VarPowerFlowRefferenceType.i_C: transformer_block.out_vars[2],
-        VarPowerFlowRefferenceType.P: vsc_block.out_vars[2],
-        VarPowerFlowRefferenceType.Q: vsc_block.out_vars[3],
-        VarPowerFlowRefferenceType.phi_v: vsc_block.out_vars[9],
-        VarPowerFlowRefferenceType.Vpk: vsc_block.out_vars[10],
+        VarPowerFlowReferenceType.v_A: v_A,
+        VarPowerFlowReferenceType.v_B: v_B,
+        VarPowerFlowReferenceType.v_C: v_C,
+        VarPowerFlowReferenceType.i_A: transformer_block.out_vars[0],
+        VarPowerFlowReferenceType.i_B: transformer_block.out_vars[1],
+        VarPowerFlowReferenceType.i_C: transformer_block.out_vars[2],
+        VarPowerFlowReferenceType.P: vsc_block.out_vars[2],
+        VarPowerFlowReferenceType.Q: vsc_block.out_vars[3],
+        VarPowerFlowReferenceType.phi_v: vsc_block.out_vars[9],
+        VarPowerFlowReferenceType.Vpk: vsc_block.out_vars[10],
     }
 
 
@@ -240,7 +240,7 @@ def _build_level1_pv_availability_block(vf: VarFactory, name: str) -> Block:
     p_mppt = vf.add_var(name=f"p_mppt_l1_{name}")
     d_p_mppt = vf.add_diff_var(name=f"d_p_mppt_l1_{name}", base_var=p_mppt)
 
-    v_dc_bus = vf.add_var(name=f"v_dc_bus_pv_l1_{name}", reference=VarPowerFlowRefferenceType.Vdc)
+    v_dc_bus = vf.add_var(name=f"v_dc_bus_pv_l1_{name}", reference=VarPowerFlowReferenceType.Vdc)
     p_avail = vf.add_var(name=f"p_avail_l1_{name}")
     p_pv = vf.add_var(name=f"p_pv_l1_{name}")
     i_pv = vf.add_var(name=f"i_pv_l1_{name}")
@@ -388,9 +388,9 @@ def get_pv_avm_grid_following_emt_template(
     templ.name = name
     templ.block.name = name
 
-    v_A: Var = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowRefferenceType.v_A)
-    v_B: Var = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowRefferenceType.v_B)
-    v_C: Var = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowRefferenceType.v_C)
+    v_A: Var = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowReferenceType.v_A)
+    v_B: Var = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowReferenceType.v_B)
+    v_C: Var = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowReferenceType.v_C)
 
     vsc_block: Block = _build_pseudo_emt_converter_vsc_block(vf=vf, name=name)
     pll_block: Block = _build_pseudo_emt_converter_pll_block(vf=vf, name=name)
@@ -476,7 +476,7 @@ def _build_level2_pv_boost_block(vf: VarFactory, name: str) -> Block:
     d_xi_mppt = vf.add_diff_var(name=f"d_xi_mppt_l2_{name}", base_var=xi_mppt)
     d_duty = vf.add_diff_var(name=f"d_duty_l2_{name}", base_var=duty)
 
-    v_dc_bus = vf.add_var(name=f"v_dc_bus_pv_l2_{name}", reference=VarPowerFlowRefferenceType.Vdc)
+    v_dc_bus = vf.add_var(name=f"v_dc_bus_pv_l2_{name}", reference=VarPowerFlowReferenceType.Vdc)
     v_mp = vf.add_var(name=f"v_mp_l2_{name}")
     i_mp = vf.add_var(name=f"i_mp_l2_{name}")
     p_avail = vf.add_var(name=f"p_avail_l2_{name}")
@@ -651,9 +651,9 @@ def get_pv_avm_boost_grid_following_emt_template(
     templ.name = name
     templ.block.name = name
 
-    v_A: Var = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowRefferenceType.v_A)
-    v_B: Var = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowRefferenceType.v_B)
-    v_C: Var = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowRefferenceType.v_C)
+    v_A: Var = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowReferenceType.v_A)
+    v_B: Var = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowReferenceType.v_B)
+    v_C: Var = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowReferenceType.v_C)
 
     vsc_block, pll_block, outer_loop_block, inner_loop_block, transformer_block = _build_converter_blocks(vf=vf, name=name)
     pv_boost_block: Block = _build_level2_pv_boost_block(vf=vf, name=name)

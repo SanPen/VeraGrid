@@ -14,9 +14,9 @@ from VeraGridEngine.Templates.Emt.converter_emt_template import (
     _converter_control_type_code,
     _resolve_converter_control_reference_exprs,
 )
-from VeraGridEngine.Utils.Symbolic.block import VarPowerFlowRefferenceType
+from VeraGridEngine.Utils.Symbolic.block import VarPowerFlowReferenceType
 from VeraGridEngine.Utils.Symbolic.symbolic import Expr, Var
-from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowReferenceType
 
 
 def get_emt_ideal_converter_multilinear(
@@ -35,17 +35,17 @@ def get_emt_ideal_converter_multilinear(
     templ.name = name
     templ.block.name = name
 
-    v_A: Var = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowRefferenceType.v_A)
-    v_B: Var = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowRefferenceType.v_B)
-    v_C: Var = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowRefferenceType.v_C)
-    v_dc: Var = vf.add_var(name=f"v_dc_{name}", reference=VarPowerFlowRefferenceType.Vdc)
+    v_A: Var = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowReferenceType.v_A)
+    v_B: Var = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowReferenceType.v_B)
+    v_C: Var = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowReferenceType.v_C)
+    v_dc: Var = vf.add_var(name=f"v_dc_{name}", reference=VarPowerFlowReferenceType.Vdc)
 
-    i_A: Var = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowRefferenceType.i_A)
-    i_B: Var = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowRefferenceType.i_B)
-    i_C: Var = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowRefferenceType.i_C)
-    i_dc: Var = vf.add_var(name=f"i_dc_{name}", reference=VarPowerFlowRefferenceType.Idc)
-    P: Var = vf.add_var(name=f"P_{name}", reference=VarPowerFlowRefferenceType.P)
-    Q: Var = vf.add_var(name=f"Q_{name}", reference=VarPowerFlowRefferenceType.Q)
+    i_A: Var = vf.add_var(name=f"i_A_{name}", reference=VarPowerFlowReferenceType.i_A)
+    i_B: Var = vf.add_var(name=f"i_B_{name}", reference=VarPowerFlowReferenceType.i_B)
+    i_C: Var = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowReferenceType.i_C)
+    i_dc: Var = vf.add_var(name=f"i_dc_{name}", reference=VarPowerFlowReferenceType.Idc)
+    P: Var = vf.add_var(name=f"P_{name}", reference=VarPowerFlowReferenceType.P)
+    Q: Var = vf.add_var(name=f"Q_{name}", reference=VarPowerFlowReferenceType.Q)
 
     theta: Var = vf.add_var(name=f"theta_{name}")
     d_theta: Var = vf.add_diff_var(name=f"d_theta_{name}", base_var=theta)
@@ -189,29 +189,29 @@ def get_emt_ideal_converter_multilinear(
     })
 
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.v_A: v_A,
-        VarPowerFlowRefferenceType.v_B: v_B,
-        VarPowerFlowRefferenceType.v_C: v_C,
-        VarPowerFlowRefferenceType.Vdc: v_dc,
-        VarPowerFlowRefferenceType.i_A: i_A,
-        VarPowerFlowRefferenceType.i_B: i_B,
-        VarPowerFlowRefferenceType.i_C: i_C,
-        VarPowerFlowRefferenceType.Idc: i_dc,
-        VarPowerFlowRefferenceType.P: P,
-        VarPowerFlowRefferenceType.Q: Q,
-        VarPowerFlowRefferenceType.phi_v: phi_v,
-        VarPowerFlowRefferenceType.Vpk: Vpk,
+        VarPowerFlowReferenceType.v_A: v_A,
+        VarPowerFlowReferenceType.v_B: v_B,
+        VarPowerFlowReferenceType.v_C: v_C,
+        VarPowerFlowReferenceType.Vdc: v_dc,
+        VarPowerFlowReferenceType.i_A: i_A,
+        VarPowerFlowReferenceType.i_B: i_B,
+        VarPowerFlowReferenceType.i_C: i_C,
+        VarPowerFlowReferenceType.Idc: i_dc,
+        VarPowerFlowReferenceType.P: P,
+        VarPowerFlowReferenceType.Q: Q,
+        VarPowerFlowReferenceType.phi_v: phi_v,
+        VarPowerFlowReferenceType.Vpk: Vpk,
     }
 
     templ.block.api_obj_mapping = {
-        ParamPowerFlowRefferenceType.Sbase: sbase,
-        ParamPowerFlowRefferenceType.converter_loss_power_0: P_loss,
-        ParamPowerFlowRefferenceType.P0: P0,
-        ParamPowerFlowRefferenceType.omega_base: omega_base,
-        ParamPowerFlowRefferenceType.converter_control_mode_1: control1,
-        ParamPowerFlowRefferenceType.converter_control_mode_2: control2,
-        ParamPowerFlowRefferenceType.converter_control_target_1: control1_val,
-        ParamPowerFlowRefferenceType.converter_control_target_2: control2_val,
+        ParamPowerFlowReferenceType.Sbase: sbase,
+        ParamPowerFlowReferenceType.converter_loss_power_0: P_loss,
+        ParamPowerFlowReferenceType.P0: P0,
+        ParamPowerFlowReferenceType.omega_base: omega_base,
+        ParamPowerFlowReferenceType.converter_control_mode_1: control1,
+        ParamPowerFlowReferenceType.converter_control_mode_2: control2,
+        ParamPowerFlowReferenceType.converter_control_target_1: control1_val,
+        ParamPowerFlowReferenceType.converter_control_target_2: control2_val,
     }
 
     return templ

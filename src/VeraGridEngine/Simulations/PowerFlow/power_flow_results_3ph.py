@@ -1527,7 +1527,7 @@ class PowerFlowResults3Ph(ResultsTemplate):
                                 ylabel='(MW)',
                                 units='(MW)')
 
-        elif result_type == ResultTypes.VscPowerFrom:
+        elif result_type == ResultTypes.VscPowerFromPositive:
 
             return ResultsTable(data=self.Pfp_vsc,
                                 index=self.vsc_names,

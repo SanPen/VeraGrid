@@ -8,6 +8,7 @@ from math import comb
 
 import numpy as np
 
+from VeraGridEngine.Compilers.circuit_to_gslv import GSLV_AVAILABLE, gslv_investments_evaluation
 from VeraGridEngine.Simulations.driver_template import DriverTemplate
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Utils.NumericalMethods.MVRSM_mo_pareto import MVRSM_mo_pareto
@@ -21,7 +22,7 @@ from VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.toot_pint_cba impo
     get_toot_pint_seed_population,
 )
 from VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.black_box_problem_template import BlackBoxProblemTemplate
-from VeraGridEngine.enumerations import InvestmentEvaluationMethod, SimulationTypes
+from VeraGridEngine.enumerations import EngineType, InvestmentEvaluationMethod, InvestmentsEvaluationObjectives, SimulationTypes
 from VeraGridEngine.basic_structures import IntVec, IntMat, Vec, Mat
 
 
@@ -37,15 +38,17 @@ class InvestmentsEvaluationDriver(DriverTemplate):
     def __init__(self,
                  grid: MultiCircuit,
                  options: InvestmentsEvaluationOptions,
-                 problem: BlackBoxProblemTemplate):
+                 problem: BlackBoxProblemTemplate,
+                 engine: EngineType = EngineType.VeraGrid):
         """
         InputsAnalysisDriver class constructor
         :param grid: MultiCircuit instance
         :param options: InvestmentsEvaluationOptions
         :param problem: BlackBoxProblemTemplate
+        :param engine: EngineType
         """
 
-        super().__init__(grid=grid)
+        super().__init__(grid=grid, engine=engine)
 
         # options object
         self.options = options
@@ -360,7 +363,43 @@ class InvestmentsEvaluationDriver(DriverTemplate):
         self.logger.add_info(msg="Solver", value=f"{self.options.solver.value}")
         self.logger.add_info(msg="Max evaluations", value=f"{self.options.max_eval}")
 
-        if self.options.solver == InvestmentEvaluationMethod.CBA_PINT_TOOT:
+        if self.engine == EngineType.GSLV and not GSLV_AVAILABLE:
+            self.engine = EngineType.VeraGrid
+            self.logger.add_warning('GSLV not available, falling back to VeraGrid')
+        else:
+            pass
+
+        if self.engine == EngineType.GSLV:
+            if self.options.objf_tpe not in (
+                    InvestmentsEvaluationObjectives.PowerFlow,
+                    InvestmentsEvaluationObjectives.TimeSeriesPowerFlow,
+                    InvestmentsEvaluationObjectives.LinearOptimalPowerFlowTimeSeries):
+                self.engine = EngineType.VeraGrid
+                self.logger.add_warning(
+                    'GSLV investments evaluation does not support this objective, falling back to VeraGrid'
+                )
+            else:
+                pass
+        else:
+            pass
+
+        if self.engine == EngineType.GSLV and self.options.solver == InvestmentEvaluationMethod.FromPlugin:
+            self.engine = EngineType.VeraGrid
+            self.logger.add_warning(
+                'GSLV investments evaluation does not support VeraGrid plugin solvers, falling back to VeraGrid'
+            )
+        else:
+            pass
+
+        if self.engine == EngineType.GSLV:
+            self.report_text("Evaluating investments with GSLV...")
+            self.results = gslv_investments_evaluation(
+                circuit=self.grid,
+                options=self.options,
+                logger=self.logger,
+            )
+
+        elif self.options.solver == InvestmentEvaluationMethod.CBA_PINT_TOOT:
             self.independent_evaluation()
 
         elif self.options.solver == InvestmentEvaluationMethod.MVRSM:
@@ -386,12 +425,23 @@ class InvestmentsEvaluationDriver(DriverTemplate):
 
         # finalize
         self.report_text("Finalizing the results object...")
-        self.results.finalize()
+        if self.engine != EngineType.GSLV:
+            self.results.finalize()
+        else:
+            pass
 
         # report the combination
-        inv_list = self.problem.get_investments_for_combination(x=self.results.f_best)
+        if self.problem is not None:
+            inv_list = self.problem.get_investments_for_combination(x=self.results.f_best)
+        else:
+            inv_list = list()
         for inv in inv_list:
             self.logger.add_info(msg=f"Best combination", device=inv.idtag, value=inv.name)
 
         self.toc()
         self.report_done()
+
+    def cancel(self):
+        self.__cancel__ = True
+
+        self.report_done("Cancelled!")

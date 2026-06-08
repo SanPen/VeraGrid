@@ -52,6 +52,7 @@ class  PseudoTransient:
         self.use_weighted_residual = os.getenv("VERAGRID_PSEUDO_WEIGHTED_RESIDUAL", "0").lower() in {"1", "true", "yes", "on"}
         self.weight_network = float(os.getenv("VERAGRID_PSEUDO_WEIGHT_NETWORK", "3.0"))
         self.weight_power = float(os.getenv("VERAGRID_PSEUDO_WEIGHT_POWER", "2.0"))
+        self.allow_lsqr_fallback = os.getenv("PSEUDO_ALLOW_LSQR", "1").lower() in {"1", "true", "yes", "on"}
         self.fixed_var_uids = set(fixed_var_uids or [])
         uid2idx = getattr(self.problem, "uid2idx_vars", {})
         self._fixed_var_indices = sorted([uid2idx[uid] for uid in self.fixed_var_uids if uid in uid2idx])
@@ -817,6 +818,30 @@ class  PseudoTransient:
 
             self._report_selected_var_values(x, labels=("Vd", "Vq", "Id", "Iq"))
 
+            # Show equations most directly coupled to Vf-like variables.
+            vf_cols = [i for i in range(J.shape[1]) if "vf" in self._var_index_name(i).lower()]
+            if len(vf_cols) > 0:
+                for c in vf_cols[:3]:
+                    col = J.getcol(c)
+                    if col.nnz == 0:
+                        print(
+                            f"[PseudoTransient][Singular] Vf-coupled column {self._var_index_name(c)} has no nonzeros",
+                            file=sys.stderr,
+                        )
+                        continue
+                    rows = col.indices
+                    vals = col.data
+                    order = np.argsort(np.abs(vals))[::-1]
+                    top = order[:8]
+                    eqs = [
+                        f"{self._rhs_index_equation_repr(int(rows[k]))}: d/d{self._var_index_name(c)}={vals[k]:+.3e}"
+                        for k in top
+                    ]
+                    print(
+                        f"[PseudoTransient][Singular] equations coupled to {self._var_index_name(c)}: {eqs}",
+                        file=sys.stderr,
+                    )
+
             # SVD-based diagnostics for moderate size systems.
             n = J.shape[0]
             if n <= 220:
@@ -993,44 +1018,49 @@ class  PseudoTransient:
         return pack_4_by_4_scipy(j11, j12, j21, j22)
 
     def _solve_linear_system(self, J: sp.csc_matrix, rhs: Vec, x: Vec, context: str) -> np.ndarray:
-        n = int(J.shape[0])
-        if n == 0:
+        m = int(J.shape[0])
+        n = int(J.shape[1])
+        if m == 0 or n == 0:
             return np.array([], dtype=float)
 
-        reg_scales = (0.0, 1e-10, 1e-8, 1e-6)
-        I = sp.eye(n, format="csc")
+        def solve_lsqr(reason: str) -> np.ndarray:
+            if not self.allow_lsqr_fallback:
+                raise RuntimeError(f"{context}: singular linear system in pseudo-transient ({reason})")
 
-        for reg in reg_scales:
-            J_eff = J if reg == 0.0 else (J + reg * I)
+            self._dbg(f"{context}: {reason}; trying lsqr fallback")
+            delta_lsqr, *_ = spla.lsqr(
+                J,
+                -rhs,
+                damp=1e-8,
+                atol=1e-10,
+                btol=1e-10,
+                iter_lim=max(200, 2 * max(m, n)),
+            )
+            if np.all(np.isfinite(delta_lsqr)):
+                self._dbg(f"{context}: lsqr fallback succeeded")
+                return np.asarray(delta_lsqr, dtype=float)
+            raise RuntimeError(f"{context}: lsqr fallback failed after {reason}")
 
-            with warnings.catch_warnings():
-                warnings.filterwarnings("ignore", message="Matrix is exactly singular")
-                try:
-                    delta = spla.spsolve(J_eff, -rhs)
-                except Exception:
-                    delta = np.full(rhs.shape, np.nan, dtype=float)
+        # Rectangular systems cannot be solved by spsolve; use least-squares.
+        if m != n:
+            return solve_lsqr(f"rectangular Jacobian {J.shape}")
 
-            if np.all(np.isfinite(delta)):
-                if reg > 0.0:
-                    self._dbg(f"{context}: solved with regularization={reg:.1e}")
-                return np.asarray(delta, dtype=float)
-
-            if reg == 0.0:
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", message="Matrix is exactly singular")
+            try:
+                delta = spla.spsolve(J, -rhs)
+            except Exception as exc:
                 self._report_singularity_diagnostics(J, rhs, x=x, context=context)
+                try:
+                    return solve_lsqr(f"spsolve failed ({exc})")
+                except RuntimeError as fallback_exc:
+                    raise fallback_exc from exc
 
-            damp = reg if reg > 0.0 else 0.0
-            delta, *_ = spla.lsqr(J_eff, -rhs, damp=damp, atol=1e-10, btol=1e-10, iter_lim=max(200, 2 * n))
+        if not np.all(np.isfinite(delta)):
+            self._report_singularity_diagnostics(J, rhs, x=x, context=context)
+            return solve_lsqr("non-finite spsolve result")
 
-
-            if np.all(np.isfinite(delta)):
-                if reg > 0.0:
-                    self._dbg(f"{context}: lsqr solved with regularization={reg:.1e}")
-                else:
-                    self._dbg(f"{context}: lsqr fallback used")
-                return np.asarray(delta, dtype=float)
-
-        self._dbg(f"{context}: failed to solve linear system")
-        return np.full(rhs.shape, np.nan, dtype=float)
+        return np.asarray(delta, dtype=float)
 
     def _newton_polish(self, x: Vec, tol: float, max_iter: int = 8) -> tuple[Vec, float]:
         dx = np.zeros(self.problem.get_diff_var_number(), dtype=float)
@@ -1052,7 +1082,7 @@ class  PseudoTransient:
                 self._dbg(f"newton polish abort: linear solve failed at iter={k + 1}")
                 break
 
-            trial_scales = (1.0, 0.5, 0.25, 0.1)
+            trial_scales = (1.0)
             best_x = x
             best_res = np.inf
             for scale in trial_scales:
@@ -1086,7 +1116,6 @@ class  PseudoTransient:
         :return [f_state_update, f_algeb]
         """
         f_algeb = self.problem.rhs_algebraic(x,  dx)
-        h = 1e9
         if self.problem.get_states_number() > 0:
             f_state = self.problem.rhs_state(x, dx)
             f_state_update = (x[:self.problem.get_states_number()] - xn[:self.problem.get_states_number()]) / h - f_state
@@ -1230,9 +1259,53 @@ class  PseudoTransient:
         if x0.size != n_vars:
             raise ValueError(f"Invalid x0 size for pseudo-transient: got {x0.size}, expected {n_vars}")
 
-        x0 = self._find_initial_diff_free_feasible_point(x0, max_iter=20)
+        #x0 = self._find_initial_diff_free_feasible_point(x0, max_iter=50)
         #x0 = self._predictor_project_initial_guess(x0)
         #x0 = self._apply_fixed_mask(x0, x0)
+        n_x0_tries = int(os.getenv("PSEUDO_X0_TRIES", "1"))
+        seed_text = os.getenv("PSEUDO_X0_SEED", "")
+        rng = np.random.default_rng(None if seed_text.strip() == "" else int(seed_text))
+        if n_x0_tries <= 1:
+            x0 = np.random.rand(n_vars)
+        else:
+            best_x0 = None
+            best_res = np.inf
+            dx_probe = np.zeros(self.problem.get_diff_var_number(), dtype=float)
+            chosen_idx = -1
+            for k in range(n_x0_tries):
+                x_try = rng.random(n_vars)
+                x_try = self._apply_fixed_mask(x_try, x_try)
+                rhs_try = self._rhs_pseudo_transient(x_try, x_try, dx_probe, self.dtau0)
+                if not np.all(np.isfinite(rhs_try)):
+                    continue
+                res_try = float(np.linalg.norm(rhs_try, np.inf)) if rhs_try.size > 0 else 0.0
+                J_try = self._jacobian_pseudo_transient(x_try, dx_probe, self.dtau0)
+                square_ok = J_try.shape[0] == J_try.shape[1]
+                solvable = False
+                if square_ok:
+                    with warnings.catch_warnings():
+                        warnings.filterwarnings("ignore", message="Matrix is exactly singular")
+                        try:
+                            d_try = spla.spsolve(J_try, -rhs_try)
+                            solvable = np.all(np.isfinite(d_try))
+                        except Exception:
+                            solvable = False
+
+                if res_try < best_res:
+                    best_res = res_try
+                    best_x0 = x_try
+
+                if solvable:
+                    chosen_idx = k
+                    x0 = x_try
+                    break
+
+            if chosen_idx >= 0:
+                self._dbg(f"x0 multi-try selected candidate={chosen_idx + 1}/{n_x0_tries}")
+            else:
+                x0 = best_x0 if best_x0 is not None else rng.random(n_vars)
+                self._dbg(f"x0 multi-try found no solvable Jacobian; using best residual candidate with ||rhs||_inf={best_res:.3e}")
+
 
         if len(self._fixed_var_indices) > 0:
             fixed_preview = [
@@ -1294,7 +1367,7 @@ class  PseudoTransient:
                         xlast = xn 
                     xn = y[-1].copy()
 
-                rhs  = self._rhs_pseudo_transient(x_new, xn, 0 * dx, dtau)
+                rhs  = self._rhs_pseudo_transient(x_new, xn, dx, dtau)
                 rhs2 = self._rhs_pseudo_transient(x_new, xn, dx, dtau)
                 if rhs_weights is None or rhs_weights.size != rhs.size:
                     rhs_weights = self._build_residual_weights(rhs.size)
@@ -1317,7 +1390,31 @@ class  PseudoTransient:
                     )
                 Jf = self._jacobian_pseudo_transient(x_new, dx, dtau)
                 residual = self._weighted_norm(rhs, rhs_weights)
+
+                # Structural guard: ensure linear solve dimensions match state vector.
+                if Jf.shape[0] != rhs.size or Jf.shape[1] != x_new.size:
+                    eq_preview = [self._rhs_index_equation_begin(i) for i in range(min(8, rhs.size))]
+                    var_preview = [self._var_index_name(i) for i in range(min(8, x_new.size))]
+                    unmatched = []
+                    if Jf.shape[1] < x_new.size:
+                        unmatched = [self._var_index_name(i) for i in range(Jf.shape[1], x_new.size)]
+                    raise ValueError(
+                        "PseudoTransient dimension mismatch before linear solve: "
+                        f"J={Jf.shape}, rhs={rhs.size}, x={x_new.size}, "
+                        f"n_states={self.problem.get_states_number()}, "
+                        f"n_algebraic={self.problem.get_algebraic_var_number()}, "
+                        f"n_vars={self.problem.get_all_vars_number()}, "
+                        f"eq_preview={eq_preview}, var_preview={var_preview}, "
+                        f"unmatched_var_tail={unmatched}"
+                    )
+
                 delta = self._solve_linear_system(Jf, rhs, x=x_new, context=f"pseudo step={step_idx + 1} try={tries}")
+
+                if delta.size != x_new.size:
+                    raise ValueError(
+                        "PseudoTransient linear step size mismatch: "
+                        f"delta={delta.size}, x={x_new.size}, J={Jf.shape}, rhs={rhs.size}"
+                    )
                 n_states = int(self.problem.get_states_number())
                 g = rhs[n_states:]
                 Jg = Jf[n_states:, :]
@@ -1350,7 +1447,7 @@ class  PseudoTransient:
                 for scale in trial_scales:
                     x_trial = x_new + scale * delta
                     x_trial = self._apply_fixed_mask(x_trial, x_fixed_ref)
-                    rhs_trial = self._rhs_pseudo_transient(x_trial, xn, 0 * dx, dtau)
+                    rhs_trial = self._rhs_pseudo_transient(x_trial, xn, dx, dtau)
                     if not np.all(np.isfinite(rhs_trial)):
                         continue
                     residual_trial = self._weighted_norm(rhs_trial, rhs_weights)

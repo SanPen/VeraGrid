@@ -22,6 +22,7 @@ from VeraGridEngine.Devices.Injections.generator_q_curve import GeneratorQCurve
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.basic_structures import Mat, Vec
+from VeraGridEngine.enumerations import GeneratorControlMode
 
 
 def build_safe_single_point_curve(qmin: float, qmax: float) -> Mat:
@@ -880,7 +881,7 @@ if __name__ == "__main__":
         Pmin=15.0,
         Pmax=90.0,
         Snom=100.0,
-        is_controlled=True,
+        control_mode=GeneratorControlMode.V,
         power_factor=0.95,
     )
     circuit_demo.add_generator(bus=bus_demo, api_obj=generator_demo)

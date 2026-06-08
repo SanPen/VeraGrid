@@ -394,7 +394,7 @@ def make_acdc_ptdf(nc: NumericalCircuit,
         f = nc.vsc_data.F[k]
         t = nc.vsc_data.T[k]
 
-        if nc.vsc_data.control1[k] == ConverterControlType.Pdc_angle_droop:
+        if nc.vsc_data.control1_int[k] == ConverterControlType.Pdc_angle_droop.idx():
             # P-MODE 3: The VSC behaves as a droop control
             # P = P0 + k * (theta_f - theta_t)
             # k is in MW/deg, we need it in p.u./rad
@@ -413,7 +413,7 @@ def make_acdc_ptdf(nc: NumericalCircuit,
         f = nc.hvdc_data.F[k]
         t = nc.hvdc_data.T[k]
 
-        if nc.hvdc_data.control_mode[k] == HvdcControlType.type_0_free:
+        if nc.hvdc_data.control_mode_int[k] == HvdcControlType.type_0_free.idx():
             # Free mode: P = Pset + angle_droop * (theta_f - theta_t)
             # angle_droop is in MW/deg, we need it in p.u./rad
             ys = nc.hvdc_data.angle_droop[k] * 57.295779513 / nc.Sbase

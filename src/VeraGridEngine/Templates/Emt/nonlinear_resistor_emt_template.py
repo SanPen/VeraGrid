@@ -12,7 +12,7 @@ from VeraGridEngine.Templates.Emt.load_RLC_emt_template import _build_external_m
 from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_ground_emt_template
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import CmpOp, Comparison, Const, Expr, Var
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
 
 
 def get_nonlinear_resistor_emt_template(
@@ -44,8 +44,8 @@ def get_nonlinear_resistor_emt_template(
     template.name = name
     template.block.name = name
 
-    node_voltage_var: Var = vf.add_var(name=f"v_N_{name}", reference=VarPowerFlowRefferenceType.v_N)
-    current_var: Var = vf.add_var(name=f"i_N_{name}", reference=VarPowerFlowRefferenceType.i_N)
+    node_voltage_var: Var = vf.add_var(name=f"v_N_{name}", reference=VarPowerFlowReferenceType.v_N)
+    current_var: Var = vf.add_var(name=f"i_N_{name}", reference=VarPowerFlowReferenceType.i_N)
     ground_node_var: Var = vf.add_var(name=f"v_gnd_{name}")
     abs_voltage_var: Var = vf.add_var(name=f"v_abs_{name}")
     one_const: Const = Const(1.0)

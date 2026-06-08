@@ -5,7 +5,7 @@
 from __future__ import annotations
 import time
 import numpy as np
-from typing import List, Dict, Union, Tuple, TYPE_CHECKING
+from typing import List, Dict, Union, TYPE_CHECKING
 
 
 from VeraGridEngine.Utils.ThirdParty.gslv.gslv_activation import (pg, build_status_dict, tap_module_control_mode_dict,
@@ -21,14 +21,21 @@ from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 import VeraGridEngine.Devices as dev
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
+from VeraGridEngine.Simulations.PowerFlow.power_flow_ts_results import PowerFlowTimeSeriesResults
 from VeraGridEngine.enumerations import ShuntControlMode
 from VeraGridEngine.enumerations import TapModuleControl, TapPhaseControl
 from VeraGridEngine.enumerations import SolverType, OpfDispatchMode, MIPSolvers, ZonalGrouping, TimeGrouping
-from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
+from VeraGridEngine.enumerations import InvestmentEvaluationMethod, InvestmentsEvaluationObjectives
 
 from VeraGridEngine.basic_structures import Logger
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
+    from VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options import (
+        InvestmentsEvaluationOptions,
+    )
+    from VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results import (
+        InvestmentsEvaluationResults,
+    )
     from VeraGridEngine.Simulations.OPF.opf_results import OptimalPowerFlowResults
     from VeraGridEngine.Simulations.OPF.opf_options import OptimalPowerFlowOptions
     from VeraGridEngine.Simulations.ContingencyAnalysis.contingency_analysis_options import ContingencyAnalysisOptions
@@ -2480,12 +2487,14 @@ def gslv_pf(circuit: MultiCircuit,
     return pf_res
 
 
-def translate_gslv_pf_results(grid: MultiCircuit, res: "pg.PowerFlowResults", logger: Logger) -> PowerFlowResults:
+def translate_gslv_pf_results(
+        grid: MultiCircuit,
+        res: "pg.PowerFlowResults",
+) -> PowerFlowResults:
     """
     Translate the GSLV Power Analytics results back to VeraGrid
     :param grid: MultiCircuit instance
     :param res: GSLV's PowerFlowResults instance
-    :param logger: Logger
     :return: PowerFlowResults instance
     """
     results = PowerFlowResults(
@@ -2528,10 +2537,14 @@ def translate_gslv_pf_results(grid: MultiCircuit, res: "pg.PowerFlowResults", lo
     results.losses_hvdc = res.losses_hvdc[0, :]
 
     results.Pfp_vsc = res.Pf_vsc[0, :]
+    results.Pfn_vsc = res.Pfn_vsc[0, :]
     results.St_vsc = res.St_vsc[0, :]
+    results.If_vsc = res.If_vsc[0, :]
+    results.It_vsc = res.It_vsc[0, :]
     results.loading_vsc = res.loading_vsc[0, :]
     results.losses_vsc = res.losses_vsc[0, :]
-
+    results.gen_p = res.gen_p[0, :]
+    results.battery_p = res.battery_p[0, :]
     results.gen_q = res.gen_q[0, :]
     results.battery_q = res.battery_q[0, :]
     results.shunt_q = res.shunt_q[0, :]
@@ -2549,6 +2562,84 @@ def translate_gslv_pf_results(grid: MultiCircuit, res: "pg.PowerFlowResults", lo
                        elapsed=rep.elapsed[i],
                        iterations=rep.iterations[i])
             results.convergence_reports.append(report)
+
+    return results
+
+
+def translate_gslv_pf_time_series_results(
+        grid: MultiCircuit,
+        res: "pg.PowerFlowResults",
+        options: PowerFlowOptions,
+        time_indices: Union[IntVec, None],
+        clustering_results,
+) -> PowerFlowTimeSeriesResults:
+    """
+    Translate GSLV time-series power-flow results to VeraGrid results.
+
+    :param grid: MultiCircuit instance.
+    :param res: GSLV power-flow results.
+    :param options: Power-flow options used for the run.
+    :param time_indices: Requested global time indices, or ``None`` for all.
+    :param clustering_results: Optional clustering metadata.
+    :return: PowerFlowTimeSeriesResults instance.
+    """
+    if time_indices is None:
+        selected_time_indices: IntVec = np.array(grid.get_all_time_indices(), dtype=int)
+    else:
+        selected_time_indices = np.array(time_indices, dtype=int)
+
+    n_bus: int = grid.get_bus_number()
+    results = PowerFlowTimeSeriesResults(
+        n=n_bus,
+        m=grid.get_branch_number(add_switch=True, add_vsc=False, add_hvdc=False),
+        n_hvdc=grid.get_hvdc_number(),
+        n_vsc=grid.get_vsc_number(),
+        n_gen=grid.get_generators_number(),
+        n_batt=grid.get_batteries_number(),
+        n_sh=grid.get_shunt_like_device_number(),
+        bus_names=grid.get_bus_names(),
+        branch_names=grid.get_branch_names(add_switch=True, add_vsc=False, add_hvdc=False),
+        hvdc_names=grid.get_hvdc_names(),
+        vsc_names=grid.get_vsc_names(),
+        gen_names=grid.get_generator_names(),
+        batt_names=grid.get_battery_names(),
+        sh_names=grid.get_shunt_like_devices_names(),
+        bus_types=np.ones(n_bus, dtype=int),
+        time_array=grid.get_time_array()[selected_time_indices],
+        area_names=grid.get_area_names(),
+        clustering_results=clustering_results,
+    )
+
+    # GSLV returns full-length time-series arrays. Slice them to the requested
+    # time positions so the VeraGrid result object preserves its usual shape.
+    results.voltage = res.voltage[selected_time_indices, :]
+    results.S = res.S[selected_time_indices, :]
+    results.Sf = res.Sf[selected_time_indices, :]
+    results.St = res.St[selected_time_indices, :]
+    results.If = res.If[selected_time_indices, :]
+    results.It = res.It[selected_time_indices, :]
+    results.loading = res.loading[selected_time_indices, :]
+    results.losses = res.losses[selected_time_indices, :]
+    results.tap_module = res.tap_module[selected_time_indices, :]
+    results.tap_angle = res.tap_angle[selected_time_indices, :]
+    results.hvdc_Pf = res.Pf_hvdc[selected_time_indices, :]
+    results.hvdc_Pt = res.Pt_hvdc[selected_time_indices, :]
+    results.hvdc_loading = res.loading_hvdc[selected_time_indices, :]
+    results.hvdc_losses = res.losses_hvdc[selected_time_indices, :]
+    results.Pf_vsc = res.Pf_vsc[selected_time_indices, :]
+    results.Pfn_vsc = res.Pfn_vsc[selected_time_indices, :]
+    results.St_vsc = res.St_vsc[selected_time_indices, :]
+    results.If_vsc = res.If_vsc[selected_time_indices, :]
+    results.It_vsc = res.It_vsc[selected_time_indices, :]
+    results.loading_vsc = res.loading_vsc[selected_time_indices, :]
+    results.losses_vsc = res.losses_vsc[selected_time_indices, :]
+    results.gen_p = res.gen_p[selected_time_indices, :]
+    results.battery_p = res.battery_p[selected_time_indices, :]
+    results.gen_q = res.gen_q[selected_time_indices, :]
+    results.battery_q = res.battery_q[selected_time_indices, :]
+    results.shunt_q = res.shunt_q[selected_time_indices, :]
+    results.error_values = res.error_values[selected_time_indices]
+    results.converged_values = res.converged_values[selected_time_indices]
 
     return results
 
@@ -2619,6 +2710,124 @@ def get_gslv_opf_options(opt: OptimalPowerFlowOptions,
         verbose=opt.verbose,
         robust=opt.robust,
     )
+
+
+def get_gslv_investments_evaluation_options(
+        opt: "InvestmentsEvaluationOptions",
+        circuit: MultiCircuit,
+        gslv_circuit: "pg.MultiCircuit",
+) -> "pg.InvestmentsEvaluationOptions":
+    """
+    Translate VeraGrid investment-evaluation options to GSLV options.
+
+    :param opt: VeraGrid investments-evaluation options.
+    :param circuit: VeraGrid circuit.
+    :param gslv_circuit: Converted GSLV circuit.
+    :return: GSLV investments-evaluation options.
+    """
+    solver_dict = {
+        InvestmentEvaluationMethod.CBA_PINT_TOOT: pg.InvestmentEvaluationMethod.CBA_PINT_TOOT,
+        InvestmentEvaluationMethod.PINT_TOOT_NSGA3: pg.InvestmentEvaluationMethod.PINT_TOOT_NSGA3,
+        InvestmentEvaluationMethod.Hyperopt: pg.InvestmentEvaluationMethod.Hyperopt,
+        InvestmentEvaluationMethod.MVRSM: pg.InvestmentEvaluationMethod.MVRSM,
+        InvestmentEvaluationMethod.NSGA3: pg.InvestmentEvaluationMethod.NSGA3,
+        InvestmentEvaluationMethod.Random: pg.InvestmentEvaluationMethod.Random,
+        InvestmentEvaluationMethod.MixedVariableGA: pg.InvestmentEvaluationMethod.MixedVariableGA,
+        InvestmentEvaluationMethod.FromPlugin: pg.InvestmentEvaluationMethod.FromPlugin,
+    }
+
+    objective_type_dict = {
+        InvestmentsEvaluationObjectives.PowerFlow: pg.InvestmentsEvaluationObjectives.PowerFlow,
+        InvestmentsEvaluationObjectives.TimeSeriesPowerFlow: pg.InvestmentsEvaluationObjectives.TimeSeriesPowerFlow,
+        InvestmentsEvaluationObjectives.LinearOptimalPowerFlowTimeSeries:
+            pg.InvestmentsEvaluationObjectives.TimeSeriesOptimalPowerFlow,
+        InvestmentsEvaluationObjectives.FromPlugin: pg.InvestmentsEvaluationObjectives.FromPlugin,
+    }
+
+    return pg.InvestmentsEvaluationOptions(
+        max_eval=opt.max_eval,
+        solver=solver_dict[opt.solver],
+        objective_type=objective_type_dict[opt.objf_tpe],
+        pf_options=get_gslv_pf_options(opt.pf_options),
+        opf_options=get_gslv_opf_options(opt.opf_options, circuit=circuit, gslv_circuit=gslv_circuit),
+    )
+
+
+def translate_gslv_investments_evaluation_results(
+        res: "pg.InvestmentsEvaluationResults",
+) -> InvestmentsEvaluationResults:
+    """
+    Translate GSLV investment-evaluation results to VeraGrid results.
+
+    :param res: GSLV investments-evaluation results.
+    :return: VeraGrid investments-evaluation results.
+    """
+    from VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results import (
+        InvestmentsEvaluationResults,
+    )
+
+    results = InvestmentsEvaluationResults(
+        f_names=np.array(res.f_names, dtype=str),
+        x_names=np.array(res.x_names, dtype=str),
+        max_eval=int(res.max_eval),
+        plot_x_idx=int(res.plot_x_idx),
+        plot_y_idx=int(res.plot_y_idx),
+    )
+
+    results.x = np.array(res.x, dtype=float)
+    results.f = np.array(res.f, dtype=float)
+    results.f_best = np.array(res.best_combination, dtype=float)
+    results.sorting_indices = np.array(res.sorting_indices, dtype=int)
+    results.max_eval = int(res.eval_count)
+
+    return results
+
+
+def gslv_investments_evaluation(
+        circuit: MultiCircuit,
+        options: "InvestmentsEvaluationOptions",
+        logger: Logger = Logger(),
+) -> InvestmentsEvaluationResults:
+    """
+    Run GSLV investments evaluation and translate its results back to VeraGrid.
+
+    :param circuit: VeraGrid circuit.
+    :param options: VeraGrid investments-evaluation options.
+    :param logger: VeraGrid logger instance.
+    :return: VeraGrid investments-evaluation results.
+    """
+    use_time_series: bool = options.objf_tpe in (
+        InvestmentsEvaluationObjectives.TimeSeriesPowerFlow,
+        InvestmentsEvaluationObjectives.LinearOptimalPowerFlowTimeSeries,
+    )
+
+    if use_time_series:
+        time_indices: IntVec | None = circuit.get_all_time_indices()
+    else:
+        time_indices = None
+
+    gslv_grid, _ = to_gslv(
+        circuit=circuit,
+        use_time_series=use_time_series,
+        time_indices=time_indices,
+    )
+    gslv_options = get_gslv_investments_evaluation_options(
+        opt=options,
+        circuit=circuit,
+        gslv_circuit=gslv_grid,
+    )
+    gslv_logger = pg.Logger()
+
+    t0 = time.time()
+    gslv_results = pg.investments_evaluation(
+        grid=gslv_grid,
+        options=gslv_options,
+        logger=gslv_logger,
+        clustering_results=None,
+    )
+    logger.add_info("gslv time", value=f"{(time.time() - t0)} s")
+
+    return translate_gslv_investments_evaluation_results(res=gslv_results)
 
 
 def gslv_opf(circuit: MultiCircuit,
@@ -2867,6 +3076,11 @@ def convert_arr(arr, d: Dict):
     return np.array([d[e] for e in arr])
 
 
+def convert_gslv_arr_to_idx(arr, d: Dict):
+    pg_to_idx = {pg_val: gc_val.idx() for gc_val, pg_val in d.items()}
+    return np.array([pg_to_idx[e] for e in arr], dtype=int)
+
+
 def compare_branch_parent_data(gslv_branch_data: pg.BranchParentData,
                                gc_branch_data: BranchParentData,
                                tol: float,
@@ -2953,11 +3167,11 @@ def compare_nc(nc_gslv: "pg.NumericalCircuit", nc_gc: NumericalCircuit, tol: flo
     errors += CheckArr(nc_gslv.vsc_data.alpha2, nc_gc.vsc_data.alpha2, tol, 'VscData', 'alpha2')
     errors += CheckArr(nc_gslv.vsc_data.alpha3, nc_gc.vsc_data.alpha3, tol, 'VscData', 'alpha3')
 
-    errors += CheckArrEq(np.array(nc_gslv.vsc_data.control1),
-                         convert_arr(nc_gc.vsc_data.control1, converter_control_type_dict),
+    errors += CheckArrEq(convert_gslv_arr_to_idx(np.array(nc_gslv.vsc_data.control1), converter_control_type_dict),
+                         nc_gc.vsc_data.control1_int,
                          'VscData', 'control1')
-    errors += CheckArrEq(np.array(nc_gslv.vsc_data.control2),
-                         convert_arr(nc_gc.vsc_data.control2, converter_control_type_dict),
+    errors += CheckArrEq(convert_gslv_arr_to_idx(np.array(nc_gslv.vsc_data.control2), converter_control_type_dict),
+                         nc_gc.vsc_data.control2_int,
                          'VscData', 'control2')
 
     errors += CheckArr(nc_gslv.vsc_data.control1_val, nc_gc.vsc_data.control1_val, tol, 'VscData', 'control1_val')
@@ -2985,8 +3199,8 @@ def compare_nc(nc_gslv: "pg.NumericalCircuit", nc_gc: NumericalCircuit, tol: flo
     errors += CheckArr(nc_gslv.hvdc_data.Vnt, nc_gc.hvdc_data.Vnt, tol, 'HvdcData', 'Vnt')
     errors += CheckArr(nc_gslv.hvdc_data.angle_droop, nc_gc.hvdc_data.angle_droop, tol, 'HvdcData', 'control1_val')
 
-    errors += CheckArrEq(np.array(nc_gslv.hvdc_data.control_mode),
-                         convert_arr(nc_gc.hvdc_data.control_mode, hvdc_control_mode_dict),
+    errors += CheckArrEq(convert_gslv_arr_to_idx(np.array(nc_gslv.hvdc_data.control_mode), hvdc_control_mode_dict),
+                         nc_gc.hvdc_data.control_mode_int,
                          'HvdcData', 'control_mode')
 
     errors += CheckArr(nc_gslv.hvdc_data.Qmin_f, nc_gc.hvdc_data.Qmin_f, tol, 'HvdcData', 'Qmin_f')

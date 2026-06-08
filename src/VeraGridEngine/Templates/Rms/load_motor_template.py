@@ -7,7 +7,7 @@ import math
 
 from VeraGridEngine.enumerations import DeviceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
-from VeraGridEngine.Utils.Symbolic.block import (Block, VarPowerFlowRefferenceType)
+from VeraGridEngine.Utils.Symbolic.block import (Block, VarPowerFlowReferenceType)
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
 
@@ -141,10 +141,10 @@ def MotorLoadBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
     res_block = Block(children=[block1, block2])
     res_block.event_dict = events_dict
     res_block.external_mapping = {
-        VarPowerFlowRefferenceType.Vm: inputs[0],
-        VarPowerFlowRefferenceType.Va: inputs[1],
-        VarPowerFlowRefferenceType.P: P,
-        VarPowerFlowRefferenceType.Q: Q,
+        VarPowerFlowReferenceType.Vm: inputs[0],
+        VarPowerFlowReferenceType.Va: inputs[1],
+        VarPowerFlowReferenceType.P: P,
+        VarPowerFlowReferenceType.Q: Q,
     }
     res_block.in_vars = inputs
 

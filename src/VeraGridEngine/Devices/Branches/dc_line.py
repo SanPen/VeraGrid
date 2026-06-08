@@ -82,7 +82,8 @@ class DcLine(BranchParent):
                  idtag: Union[str, None] = None,
                  code: str = '',
                  r=1e-20,
-                 rate=1.0,
+                 design_rate: float = 9999,
+                 rate=9999.0,
                  active=True,
                  tolerance=0,
                  cost=0.0,
@@ -110,6 +111,7 @@ class DcLine(BranchParent):
         :param idtag: UUID code
         :param code: secondary ID
         :param r: resistance in p.u.
+        :param design_rate: Design rate (MW)
         :param rate: Branch rating (MW)
         :param active: is it active?
         :param tolerance: Tolerance specified for the branch impedance in %
@@ -139,6 +141,7 @@ class DcLine(BranchParent):
                               bus_to=bus_to,
                               active=active,
                               reducible=False,
+                              design_rate=design_rate,
                               rate=rate,
                               contingency_factor=contingency_factor,
                               protection_rating_factor=protection_rating_factor,

@@ -12,7 +12,7 @@ from VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data import JMarti
 from VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data import JMartiRuntimeData
 from VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime_data import build_jmarti_runtime_data
 from VeraGridEngine.Utils.Symbolic.block import Block, Var
-from VeraGridEngine.enumerations import VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import VarPowerFlowReferenceType
 
 
 class JMartiHistoryRuntime:

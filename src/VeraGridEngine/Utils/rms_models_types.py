@@ -6,29 +6,20 @@
 from __future__ import annotations
 
 from typing import Dict, List, Tuple
-import uuid
 
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-from VeraGridEngine.Utils.Symbolic.block import compare_n_blocks_structurally
+from VeraGridEngine.Utils.Symbolic.block import compare_n_blocks_structurally, _get_var_attribute_mapping
 from VeraGridEngine.enumerations import (
     ConverterControlType,
     DeviceType,
     ExternalGridMode,
-    ParamPowerFlowRefferenceType,
+    ParamPowerFlowReferenceType,
     ShuntConnectionType,
     ShuntControlMode,
     WindingType,
 )
 
-def _new_uid() -> int:
-    """
-    Generate a fresh UUID‑v4 string.
-    :return: UUIDv4 in integer format
-    """
-    return uuid.uuid4().int
-
-
-def build_equivalence_classes_dict(grid:MultiCircuit)-> Tuple[Dict[int, List[int]], Dict[int, List[int]]]:
+def build_equivalence_classes_dict(grid:MultiCircuit)-> Tuple[Dict[int, List[int]], Dict[int, List[List[int]]], Dict[int, List[int]]]:
     """
     this functions receives the grid and return a dictionary with clases of equivalence of the dynamic models
     and a dictionary with clases of equivalence of their variables.
@@ -36,196 +27,124 @@ def build_equivalence_classes_dict(grid:MultiCircuit)-> Tuple[Dict[int, List[int
     :type grid:
     :return: Tuple of:
         - Dict with new uid as keys and lists of equivalent block uids as values
-        - Dict with variable uid as keys and lists of equivalent variable uids as values
+        - Dict with representative uid as keys and lists of lists of equivalent variable uids as values
+        - Dict with representative uid as keys and lists of all block uids composing that model (including children)
     :rtype:
     """
 
     class_equivalence_dict = {}
+    block_composition_dict = {}
+    all_model_lists = [
+        [], [], [], [], [], [], [], [], [], [],
+        [], [], [], [], [], [], [], []
+    ]
+    BUS, LOAD, STATIC_GEN, EXT_GRID, SHUNT, CTRL_SHUNT, CURR_INJ = range(7)
+    GEN, BATTERY, VSC, DC_LINE, TRANSFORMER, WINDING, LINE = range(7, 14)
+    HVDC, SERIES_REACT, SWITCH, UPFC = range(14, 18)
 
-    bus_dyn_models_uid = list()
-    for elm in grid.buses:
-        bus_dyn_models_uid.append(elm.rms_model.uid)
-    bus_equivalences_dict = {_new_uid(): bus_dyn_models_uid}
-    class_equivalence_dict.update(bus_equivalences_dict)
-
-    load_dyn_models = list()
-    static_gen_dyn_models = list()
-    external_grid_dyn_models = list()
-    shunt_dyn_models = list()
-    controllable_shunt_dyn_models = list()
-    current_injection_dyn_models = list()
-    generator_dyn_models = list()
-    battery_dyn_models = list()
-    vsc_dyn_models = list()
-    dc_line_dyn_models = list()
-    transformer2w_dyn_models = list()
-    winding_dyn_models = list()
-    line_dyn_models = list()
-    hvdc_line_dyn_models = list()
-    series_reactance_dyn_models = list()
-    switch_dyn_models = list()
-    upfc_dyn_models = list()
+    # for elm in grid.buses:
+    #     all_model_lists[BUS].append(elm.rms_model)
 
     for elm in grid.get_branches_iter():
         if elm.device_type == DeviceType.LoadDevice:
-            load_dyn_models.append(elm.rms_model)
+            all_model_lists[LOAD].append(elm.rms_model)
         elif elm.device_type == DeviceType.StaticGeneratorDevice:
-            static_gen_dyn_models.append(elm.rms_model)
+            all_model_lists[STATIC_GEN].append(elm.rms_model)
         elif elm.device_type == DeviceType.ExternalGridDevice:
-            external_grid_dyn_models.append(elm.rms_model)
+            all_model_lists[EXT_GRID].append(elm.rms_model)
         elif elm.device_type == DeviceType.ShuntDevice:
-            shunt_dyn_models.append(elm.rms_model)
+            all_model_lists[SHUNT].append(elm.rms_model)
         elif elm.device_type == DeviceType.ControllableShuntDevice:
-            controllable_shunt_dyn_models.append(elm.rms_model)
+            all_model_lists[CTRL_SHUNT].append(elm.rms_model)
         elif elm.device_type == DeviceType.CurrentInjectionDevice:
-            current_injection_dyn_models.append(elm.rms_model)
+            all_model_lists[CURR_INJ].append(elm.rms_model)
         elif elm.device_type == DeviceType.GeneratorDevice:
-            generator_dyn_models.append(elm.rms_model)
+            all_model_lists[GEN].append(elm.rms_model)
         elif elm.device_type == DeviceType.BatteryDevice:
-            battery_dyn_models.append(elm.rms_model)
+            all_model_lists[BATTERY].append(elm.rms_model)
         elif elm.device_type == DeviceType.VscDevice:
-            vsc_dyn_models.append(elm.rms_model)
+            all_model_lists[VSC].append(elm.rms_model)
         elif elm.device_type == DeviceType.DCLineDevice:
-            dc_line_dyn_models.append(elm.rms_model)
+            all_model_lists[DC_LINE].append(elm.rms_model)
         elif elm.device_type == DeviceType.Transformer2WDevice:
-            transformer2w_dyn_models.append(elm.rms_model)
+            all_model_lists[TRANSFORMER].append(elm.rms_model)
         elif elm.device_type == DeviceType.WindingDevice:
-            winding_dyn_models.append(elm.rms_model)
+            all_model_lists[WINDING].append(elm.rms_model)
         elif elm.device_type == DeviceType.LineDevice:
-            line_dyn_models.append(elm.rms_model)
+            all_model_lists[LINE].append(elm.rms_model)
         elif elm.device_type == DeviceType.HVDCLineDevice:
-            hvdc_line_dyn_models.append(elm.rms_model)
+            all_model_lists[HVDC].append(elm.rms_model)
         elif elm.device_type == DeviceType.SeriesReactanceDevice:
-            series_reactance_dyn_models.append(elm.rms_model)
+            all_model_lists[SERIES_REACT].append(elm.rms_model)
         elif elm.device_type == DeviceType.SwitchDevice:
-            switch_dyn_models.append(elm.rms_model)
+            all_model_lists[SWITCH].append(elm.rms_model)
         elif elm.device_type == DeviceType.UpfcDevice:
-            upfc_dyn_models.append(elm.rms_model)
+            all_model_lists[UPFC].append(elm.rms_model)
 
     for elm in grid.get_injection_devices_iter():
         if elm.device_type == DeviceType.LoadDevice:
-            load_dyn_models.append(elm.rms_model)
+            all_model_lists[LOAD].append(elm.rms_model)
         elif elm.device_type == DeviceType.StaticGeneratorDevice:
-            static_gen_dyn_models.append(elm.rms_model)
+            all_model_lists[STATIC_GEN].append(elm.rms_model)
         elif elm.device_type == DeviceType.ExternalGridDevice:
-            external_grid_dyn_models.append(elm.rms_model)
+            all_model_lists[EXT_GRID].append(elm.rms_model)
         elif elm.device_type == DeviceType.ShuntDevice:
-            shunt_dyn_models.append(elm.rms_model)
+            all_model_lists[SHUNT].append(elm.rms_model)
         elif elm.device_type == DeviceType.ControllableShuntDevice:
-            controllable_shunt_dyn_models.append(elm.rms_model)
+            all_model_lists[CTRL_SHUNT].append(elm.rms_model)
         elif elm.device_type == DeviceType.CurrentInjectionDevice:
-            current_injection_dyn_models.append(elm.rms_model)
+            all_model_lists[CURR_INJ].append(elm.rms_model)
         elif elm.device_type == DeviceType.GeneratorDevice:
-            generator_dyn_models.append(elm.rms_model)
+            all_model_lists[GEN].append(elm.rms_model)
         elif elm.device_type == DeviceType.BatteryDevice:
-            battery_dyn_models.append(elm.rms_model)
+            all_model_lists[BATTERY].append(elm.rms_model)
         elif elm.device_type == DeviceType.VscDevice:
-            vsc_dyn_models.append(elm.rms_model)
+            all_model_lists[VSC].append(elm.rms_model)
         elif elm.device_type == DeviceType.DCLineDevice:
-            dc_line_dyn_models.append(elm.rms_model)
+            all_model_lists[DC_LINE].append(elm.rms_model)
         elif elm.device_type == DeviceType.Transformer2WDevice:
-            transformer2w_dyn_models.append(elm.rms_model)
+            all_model_lists[TRANSFORMER].append(elm.rms_model)
         elif elm.device_type == DeviceType.WindingDevice:
-            winding_dyn_models.append(elm.rms_model)
+            all_model_lists[WINDING].append(elm.rms_model)
         elif elm.device_type == DeviceType.LineDevice:
-            line_dyn_models.append(elm.rms_model)
+            all_model_lists[LINE].append(elm.rms_model)
         elif elm.device_type == DeviceType.HVDCLineDevice:
-            hvdc_line_dyn_models.append(elm.rms_model)
+            all_model_lists[HVDC].append(elm.rms_model)
         elif elm.device_type == DeviceType.SeriesReactanceDevice:
-            series_reactance_dyn_models.append(elm.rms_model)
+            all_model_lists[SERIES_REACT].append(elm.rms_model)
         elif elm.device_type == DeviceType.SwitchDevice:
-            switch_dyn_models.append(elm.rms_model)
+            all_model_lists[SWITCH].append(elm.rms_model)
         elif elm.device_type == DeviceType.UpfcDevice:
-            upfc_dyn_models.append(elm.rms_model)
+            all_model_lists[UPFC].append(elm.rms_model)
 
-    variable_equivalence_dict = {}
+    uid_to_block = {}
+    for block_list in all_model_lists:
+        for block in block_list:
+            uid_to_block[block.uid] = block
 
-    if load_dyn_models:
-        load_equivalences_dict, load_var_dict = compare_n_blocks_structurally(load_dyn_models)
-        class_equivalence_dict.update(load_equivalences_dict)
-        variable_equivalence_dict.update(load_var_dict)
+    variables_equivalence_dict: Dict[int, List[List[int]]] = {}
 
-    if static_gen_dyn_models:
-        static_gen_equivalences_dict, static_gen_var_dict = compare_n_blocks_structurally(static_gen_dyn_models)
-        class_equivalence_dict.update(static_gen_equivalences_dict)
-        variable_equivalence_dict.update(static_gen_var_dict)
+    for model_list in all_model_lists:
+        if model_list:
+            model_result, var_result = compare_n_blocks_structurally(model_list)
+            class_equivalence_dict.update(model_result)
+            for rep_uid in model_result:
+                rep_block = uid_to_block[rep_uid]
+                rep_var_uids = set()
+                for b in rep_block.get_all_blocks():
+                    rep_var_uids.update(_get_var_attribute_mapping(b).keys())
+                var_lists = []
+                for ref_var_uid, equiv_uids in var_result.items():
+                    if ref_var_uid in rep_var_uids:
+                        var_lists.append([ref_var_uid] + equiv_uids)
+                if var_lists:
+                    variables_equivalence_dict[rep_uid] = var_lists
 
-    if external_grid_dyn_models:
-        external_grid_equivalences_dict, external_grid_var_dict = compare_n_blocks_structurally(external_grid_dyn_models)
-        class_equivalence_dict.update(external_grid_equivalences_dict)
-        variable_equivalence_dict.update(external_grid_var_dict)
+    for rep_uid in class_equivalence_dict:
+        if rep_uid not in block_composition_dict and rep_uid in uid_to_block:
+            block_composition_dict[rep_uid] = [b.uid for b in uid_to_block[rep_uid].get_all_blocks()]
 
-    if shunt_dyn_models:
-        shunt_equivalences_dict, shunt_var_dict = compare_n_blocks_structurally(shunt_dyn_models)
-        class_equivalence_dict.update(shunt_equivalences_dict)
-        variable_equivalence_dict.update(shunt_var_dict)
-
-    if controllable_shunt_dyn_models:
-        controllable_shunt_equivalences_dict, controllable_shunt_var_dict = compare_n_blocks_structurally(controllable_shunt_dyn_models)
-        class_equivalence_dict.update(controllable_shunt_equivalences_dict)
-        variable_equivalence_dict.update(controllable_shunt_var_dict)
-
-    if current_injection_dyn_models:
-        current_injection_equivalences_dict, current_injection_var_dict = compare_n_blocks_structurally(current_injection_dyn_models)
-        class_equivalence_dict.update(current_injection_equivalences_dict)
-        variable_equivalence_dict.update(current_injection_var_dict)
-
-    if generator_dyn_models:
-        generator_equivalences_dict, generator_var_dict = compare_n_blocks_structurally(generator_dyn_models)
-        class_equivalence_dict.update(generator_equivalences_dict)
-        variable_equivalence_dict.update(generator_var_dict)
-
-    if battery_dyn_models:
-        battery_equivalences_dict, battery_var_dict = compare_n_blocks_structurally(battery_dyn_models)
-        class_equivalence_dict.update(battery_equivalences_dict)
-        variable_equivalence_dict.update(battery_var_dict)
-
-    if vsc_dyn_models:
-        vsc_equivalences_dict, vsc_var_dict = compare_n_blocks_structurally(vsc_dyn_models)
-        class_equivalence_dict.update(vsc_equivalences_dict)
-        variable_equivalence_dict.update(vsc_var_dict)
-
-    if dc_line_dyn_models:
-        dc_line_equivalences_dict, dc_line_var_dict = compare_n_blocks_structurally(dc_line_dyn_models)
-        class_equivalence_dict.update(dc_line_equivalences_dict)
-        variable_equivalence_dict.update(dc_line_var_dict)
-
-    if transformer2w_dyn_models:
-        transformer2w_equivalences_dict, transformer2w_var_dict = compare_n_blocks_structurally(transformer2w_dyn_models)
-        class_equivalence_dict.update(transformer2w_equivalences_dict)
-        variable_equivalence_dict.update(transformer2w_var_dict)
-
-    if winding_dyn_models:
-        winding_equivalences_dict, winding_var_dict = compare_n_blocks_structurally(winding_dyn_models)
-        class_equivalence_dict.update(winding_equivalences_dict)
-        variable_equivalence_dict.update(winding_var_dict)
-
-    if line_dyn_models:
-        line_equivalences_dict, line_var_dict = compare_n_blocks_structurally(line_dyn_models)
-        class_equivalence_dict.update(line_equivalences_dict)
-        variable_equivalence_dict.update(line_var_dict)
-
-    if hvdc_line_dyn_models:
-        hvdc_line_equivalences_dict, hvdc_line_var_dict = compare_n_blocks_structurally(hvdc_line_dyn_models)
-        class_equivalence_dict.update(hvdc_line_equivalences_dict)
-        variable_equivalence_dict.update(hvdc_line_var_dict)
-
-    if series_reactance_dyn_models:
-        series_reactance_equivalences_dict, series_reactance_var_dict = compare_n_blocks_structurally(series_reactance_dyn_models)
-        class_equivalence_dict.update(series_reactance_equivalences_dict)
-        variable_equivalence_dict.update(series_reactance_var_dict)
-
-    if switch_dyn_models:
-        switch_equivalences_dict, switch_var_dict = compare_n_blocks_structurally(switch_dyn_models)
-        class_equivalence_dict.update(switch_equivalences_dict)
-        variable_equivalence_dict.update(switch_var_dict)
-
-    if upfc_dyn_models:
-        upfc_equivalences_dict, upfc_var_dict = compare_n_blocks_structurally(upfc_dyn_models)
-        class_equivalence_dict.update(upfc_equivalences_dict)
-        variable_equivalence_dict.update(upfc_var_dict)
-
-    return class_equivalence_dict, variable_equivalence_dict
+    return class_equivalence_dict, variables_equivalence_dict, block_composition_dict
 
 
 

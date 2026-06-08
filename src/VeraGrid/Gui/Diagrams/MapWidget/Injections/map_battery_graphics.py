@@ -70,13 +70,6 @@ class MapBatteryGraphicItem(MapInjectionTemplateGraphicItem):
         menu.addSection("Battery")
 
         add_menu_entry(menu=menu,
-                       text="Voltage control",
-                       icon_path="",
-                       function_ptr=self.enable_disable_control_toggle,
-                       checkeable=True,
-                       checked_value=self.api_object.is_controlled)
-
-        add_menu_entry(menu=menu,
                        text="RMS Editor",
                        function_ptr=self.edit_rms,
                        icon_path=":/Icons/icons/dyn_edit.png")
@@ -90,13 +83,6 @@ class MapBatteryGraphicItem(MapInjectionTemplateGraphicItem):
                        text="Qcurve edit",
                        function_ptr=self.edit_q_curve,
                        icon_path=":/Icons/icons/edit.png")
-
-    def enable_disable_control_toggle(self):
-        """
-        Enable / Disable device voltage control
-        """
-        if self.api_object is not None:
-            self.api_object.is_controlled = not self.api_object.is_controlled
 
     def edit_rms(self):
         """

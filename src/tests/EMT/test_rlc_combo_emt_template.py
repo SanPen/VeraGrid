@@ -5,7 +5,7 @@ from VeraGridEngine.Templates.Emt.load_exponential_emt_template import get_expon
 from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_grounding_link_emt_template
 from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_shunt_rlc_combo_emt_template
 from VeraGridEngine.Templates.Emt.load_zip_emt_template import get_load_ZIP_emt_template
-from VeraGridEngine.enumerations import BlockType, ShuntConnectionType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import BlockType, ShuntConnectionType, VarPowerFlowReferenceType
 
 
 def test_rlc_combo_emt_template_builds_r_plus_l_star_case() -> None:
@@ -50,8 +50,8 @@ def test_rlc_combo_emt_template_builds_neutralstar_with_explicit_neutral_port() 
 
     assert input_names == ["v_N_rlc_combo_neutral", "v_A_rlc_combo_neutral"]
     assert output_names == ["i_N_rlc_combo_neutral", "i_A_rlc_combo_neutral"]
-    assert templ.block.external_mapping[VarPowerFlowRefferenceType.v_N] is templ.block.in_vars[0]
-    assert templ.block.external_mapping[VarPowerFlowRefferenceType.i_N] is templ.block.out_vars[0]
+    assert templ.block.external_mapping[VarPowerFlowReferenceType.v_N] is templ.block.in_vars[0]
+    assert templ.block.external_mapping[VarPowerFlowReferenceType.i_N] is templ.block.out_vars[0]
     assert not any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in templ.block.diagram.node_data.values())
 
 
@@ -82,8 +82,8 @@ def test_rlc_combo_emt_template_builds_delta_with_direct_values() -> None:
 
     assert len(templ.block.in_vars) == 3
     assert len(templ.block.out_vars) == 3
-    assert templ.block.external_mapping[VarPowerFlowRefferenceType.v_N] is None
-    assert templ.block.external_mapping[VarPowerFlowRefferenceType.i_N] is None
+    assert templ.block.external_mapping[VarPowerFlowReferenceType.v_N] is None
+    assert templ.block.external_mapping[VarPowerFlowReferenceType.i_N] is None
     assert not any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in templ.block.diagram.node_data.values())
     assert event_values_by_name["R_AB_rlc_combo_delta"] == 25.0
     assert event_values_by_name["R_BC_rlc_combo_delta"] == 25.0
@@ -168,8 +168,8 @@ def test_grounding_link_emt_template_builds_direct_r_plus_c_case() -> None:
 
     assert len(templ.block.in_vars) == 1
     assert len(templ.block.out_vars) == 1
-    assert templ.block.external_mapping[VarPowerFlowRefferenceType.v_N] is templ.block.in_vars[0]
-    assert templ.block.external_mapping[VarPowerFlowRefferenceType.i_N] is templ.block.out_vars[0]
+    assert templ.block.external_mapping[VarPowerFlowReferenceType.v_N] is templ.block.in_vars[0]
+    assert templ.block.external_mapping[VarPowerFlowReferenceType.i_N] is templ.block.out_vars[0]
     assert any(child.name.endswith("_ground") for child in templ.block.children)
     assert event_values_by_prefix["R_"] == 15.0
     assert event_values_by_prefix["C_"] == 3.0e-6
@@ -191,8 +191,8 @@ def test_exponential_load_emt_template_builds_neutralstar_topology() -> None:
 
     assert input_names == ["v_N_exp_load_neutral_1ph", "v_A_exp_load_neutral_1ph"]
     assert output_names == ["i_N_exp_load_neutral_1ph", "i_A_exp_load_neutral_1ph"]
-    assert templ.block.external_mapping[VarPowerFlowRefferenceType.v_N] is templ.block.in_vars[0]
-    assert templ.block.external_mapping[VarPowerFlowRefferenceType.i_N] is templ.block.out_vars[0]
+    assert templ.block.external_mapping[VarPowerFlowReferenceType.v_N] is templ.block.in_vars[0]
+    assert templ.block.external_mapping[VarPowerFlowReferenceType.i_N] is templ.block.out_vars[0]
     assert not any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in templ.block.diagram.node_data.values())
 
 
@@ -212,8 +212,8 @@ def test_exponential_load_emt_template_builds_delta_topology() -> None:
 
     assert input_names == ["v_A_exp_load_delta_3ph", "v_B_exp_load_delta_3ph", "v_C_exp_load_delta_3ph"]
     assert output_names == ["i_A_exp_load_delta_3ph", "i_B_exp_load_delta_3ph", "i_C_exp_load_delta_3ph"]
-    assert templ.block.external_mapping[VarPowerFlowRefferenceType.v_N] is None
-    assert templ.block.external_mapping[VarPowerFlowRefferenceType.i_N] is None
+    assert templ.block.external_mapping[VarPowerFlowReferenceType.v_N] is None
+    assert templ.block.external_mapping[VarPowerFlowReferenceType.i_N] is None
 
 
 def test_zip_load_emt_template_builds_delta_topology() -> None:
@@ -232,5 +232,5 @@ def test_zip_load_emt_template_builds_delta_topology() -> None:
 
     assert input_names == ["v_A_zip_load_delta_3ph", "v_B_zip_load_delta_3ph", "v_C_zip_load_delta_3ph"]
     assert output_names == ["i_A_zip_load_delta_3ph", "i_B_zip_load_delta_3ph", "i_C_zip_load_delta_3ph"]
-    assert templ.block.external_mapping[VarPowerFlowRefferenceType.v_N] is None
-    assert templ.block.external_mapping[VarPowerFlowRefferenceType.i_N] is None
+    assert templ.block.external_mapping[VarPowerFlowReferenceType.v_N] is None
+    assert templ.block.external_mapping[VarPowerFlowReferenceType.i_N] is None

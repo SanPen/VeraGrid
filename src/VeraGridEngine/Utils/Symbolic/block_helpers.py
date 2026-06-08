@@ -10,9 +10,10 @@ from typing import List, Optional, Tuple
 import numpy as np
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.enumerations import ParamPowerFlowRefferenceType
+from VeraGridEngine.enumerations import ParamPowerFlowReferenceType
 from VeraGridEngine.basic_structures import Vec
 from VeraGridEngine.Utils.Symbolic.symbolic import (Var, Const, Expr, BinOp, CmpOp, Comparison, heaviside, hard_sat, expression2numba, get_expression_vars)
+from VeraGridEngine.Utils.Symbolic.symbolic_ml import mti_hard_sat, ml_hard_sat, ml_heaviside
 
 
 def tf_to_block(var_factory: VarFactory,
@@ -489,58 +490,237 @@ def tf_to_diffblock_with_antiwindup(
         diff_vars_y.append(y.diff_var)
         base_var = y.diff_var
 
-    # Base equations
-    rhs = np.array(diff_vars_x) @ np.array(num)
-    lhs = np.array(diff_vars_y) @ np.array(den)
+    is_simple_integrator = (
+        len(num) == 1
+        and len(den) == 2
+        and den[0] == 0
+    )
 
-    # -----------------------------------------------------------
-    # ANTI-WINDUP BY MULTIPLYING ALL COEFFICIENTS BY h
-    # -----------------------------------------------------------
-
-    # TODO: review multilinear implementation
-    # if not multilinear:
-    h1 = heaviside(y - sat_min)
-    h2 = heaviside(sat_max - y)
-
-    # TODO: review multilinear implementation
-    # else:
-    #     h1, ml_block1 = heaviside(y - sat_min, name=f'h1_{name}')
-    #     h2, ml_block2 = heaviside(sat_max - y, name=f'h2_{name}')
-
-    # Build LHS term-by-term, skipping multiplication on dy
-    rhs = Const(0.0)
-    lhs = Const(0.0)
-    if not PI:
-        for i, term in enumerate(np.array(den) * np.array(diff_vars_y)):
-            if i != 1:
-                lhs += term
-        for i, term in enumerate(np.array(num) * np.array(diff_vars_x)):
-            rhs += term
+    if is_simple_integrator:
+        # 1/(sT): dy/dt = (num[0]/den[1]) * u
+        f = (num[0] * diff_vars_x[0]) / den[1]
     else:
-        for i, term in enumerate(np.array(num) * np.array(diff_vars_x)):
+        # Generic TF fallback
+        rhs = Const(0.0)
+        lhs_wo_dy = Const(0.0)
+        if not PI:
+            for i, term in enumerate(np.array(den) * np.array(diff_vars_y)):
+                if i != 1:
+                    lhs_wo_dy += term
+        for term in np.array(num) * np.array(diff_vars_x):
             rhs += term
+        f = (rhs - lhs_wo_dy) / Const(den[1])
 
-    f = (rhs - lhs) / Const(den[1])
-    hf = heaviside(rhs - lhs)
-    ha = h1 * h2
-    hb = (1 - h1) * hf
-    hc = (1 - h2) * (1 - hf)
-    h = heaviside(ha + hb + hc)
-    # Differential equation (single equation)
-    eq_main = (diff_vars_y[1] - h * f).simplify()
+    # Integrator with non-windup limiter (Figure E.2 behavior):
+    # - freeze when already at upper bound and f > 0
+    # - freeze when already at lower bound and f < 0
+    # - otherwise integrate with dy/dt = f
+    if not multilinear:
+        at_or_above_min = heaviside(y - sat_min)
+        at_or_below_max = heaviside(sat_max - y)
+        f_pos = heaviside(f)
+        f_neg = Const(1.0) - f_pos
+
+        allow_integrate = heaviside(
+            at_or_above_min * at_or_below_max
+            + (Const(1.0) - at_or_below_max) * f_neg
+            + (Const(1.0) - at_or_above_min) * f_pos
+        )
+        eq_main = (diff_vars_y[1] - allow_integrate * f).simplify()
+        algebraic_vars = [y] + aux_vars
+        algebraic_eqs = [eq_main] + aux_eqs
+        init_eqs = {}
+    else:
+        sat_block, y_sat = mti_hard_sat(
+            vf=var_factory,
+            u=y,
+            ul=sat_min,
+            uu=sat_max,
+            yl=sat_min,
+            yu=sat_max,
+            name=f"{name}_aw_sat",
+        )
+
+        hv_up_block, at_upper = ml_heaviside(var_factory, y - sat_max, name=f"{name}_aw_up")
+        hv_lo_block, at_lower = ml_heaviside(var_factory, sat_min - y, name=f"{name}_aw_lo")
+        hv_f_block, f_pos = ml_heaviside(var_factory, f, name=f"{name}_aw_f")
+        f_neg = Const(1.0) - f_pos
+        freeze = at_upper * f_pos + at_lower * f_neg
+
+        eq_main = (diff_vars_y[1] - (Const(1.0) - freeze) * f).simplify()
+        algebraic_vars = [y_sat, y] + aux_vars + list(sat_block.algebraic_vars) + list(hv_up_block.algebraic_vars) + list(hv_lo_block.algebraic_vars) + list(hv_f_block.algebraic_vars)
+        algebraic_eqs = [eq_main, y_sat - y] + aux_eqs + list(sat_block.algebraic_eqs) + list(hv_up_block.algebraic_eqs) + list(hv_lo_block.algebraic_eqs) + list(hv_f_block.algebraic_eqs)
+        init_eqs = {**dict(sat_block.init_eqs), **dict(hv_up_block.init_eqs), **dict(hv_lo_block.init_eqs), **dict(hv_f_block.init_eqs)}
 
     block = Block(
         name=name,
-        algebraic_vars=[y] + aux_vars,
-        algebraic_eqs=[eq_main] + aux_eqs,
+        algebraic_vars=algebraic_vars,
+        algebraic_eqs=algebraic_eqs,
         diff_vars=diff_vars,
+        init_eqs=init_eqs,
     )
     block.diff_init_eqs = diff_init_eqs  # ADDED
 
-    # TODO: review multilinear implementation
-    # if multilinear:
-    #     block.add(ml_block1)
-    #     block.add(ml_block2)
+    return block, y
+
+
+def integrator_with_non_windup(
+        var_factory: VarFactory,
+        x: Var | Expr,
+        T: Expr | float,
+        y: Var = None,
+        name: Optional[str] = '',
+        sat_min: Expr = Const(float(-1e6)),
+        sat_max: Expr = Const(float(1e6)),
+        multilinear: bool = False):
+    """
+    Integrator with non-windup limiter (Figure E.2 style):
+
+        dy/dt = (1/T) * x
+
+    with clamping logic:
+    - if y >= sat_max and dy/dt would be positive -> dy/dt = 0
+    - if y <= sat_min and dy/dt would be negative -> dy/dt = 0
+    - otherwise dy/dt = (1/T) * x
+    """
+
+    if y is None:
+        y = var_factory.add_var('y_' + name)
+
+    aux_eqs = []
+    aux_vars = []
+    init_eqs = {}
+
+    if not isinstance(x, Var):
+        u = var_factory.add_var('u_' + name)
+        aux_eqs.append((u - x).simplify())
+        aux_vars.append(u)
+        init_eqs[u] = x
+        x = u
+
+    if y.diff_var is None:
+        dy = var_factory.add_diff_var(name=f'dt_1_{y.name}', base_var=y)
+    else:
+        dy = y.diff_var
+
+    f = x / T
+
+    if not multilinear:
+        at_or_above_min = heaviside(y - sat_min)
+        at_or_below_max = heaviside(sat_max - y)
+        f_pos = heaviside(f)
+        f_neg = Const(1.0) - f_pos
+        allow_integrate = heaviside(
+            at_or_above_min * at_or_below_max
+            + (Const(1.0) - at_or_below_max) * f_neg
+            + (Const(1.0) - at_or_above_min) * f_pos
+        )
+        eq_main = (dy - allow_integrate * f).simplify()
+
+        block = Block(
+            name=name,
+            algebraic_vars=[y] + aux_vars,
+            algebraic_eqs=[eq_main] + aux_eqs,
+            diff_vars=[dy],
+            init_eqs=init_eqs,
+        )
+    else:
+        sat_block, y_sat_expr = ml_hard_sat(
+            vf=var_factory,
+            u=y,
+            u_min=sat_min,
+            u_max=sat_max,
+            name=f"{name}_aw_sat",
+        )
+        y_sat = var_factory.add_var(f"y_sat_{name}")
+
+        hv_up_block, at_upper = ml_heaviside(var_factory, y - sat_max, name=f"{name}_aw_up")
+        hv_lo_block, at_lower = ml_heaviside(var_factory, sat_min - y, name=f"{name}_aw_lo")
+        hv_f_block, f_pos = ml_heaviside(var_factory, f, name=f"{name}_aw_f")
+        f_neg = Const(1.0) - f_pos
+        freeze = at_upper * f_pos + at_lower * f_neg
+        eq_main = (dy - (Const(1.0) - freeze) * f).simplify()
+
+        block = Block(
+            name=name,
+            algebraic_vars=[y_sat, y] + aux_vars + list(sat_block.algebraic_vars) + list(hv_up_block.algebraic_vars) + list(hv_lo_block.algebraic_vars) + list(hv_f_block.algebraic_vars),
+            algebraic_eqs=[eq_main, y_sat - y_sat_expr, y_sat - y] + aux_eqs + list(sat_block.algebraic_eqs) + list(hv_up_block.algebraic_eqs) + list(hv_lo_block.algebraic_eqs) + list(hv_f_block.algebraic_eqs),
+            diff_vars=[dy],
+            init_eqs={
+                **init_eqs,
+                **dict(sat_block.init_eqs),
+                **dict(hv_up_block.init_eqs),
+                **dict(hv_lo_block.init_eqs),
+                **dict(hv_f_block.init_eqs),
+                y_sat: hard_sat(y, sat_min, sat_max),
+            },
+        )
+
+    return block, y
+
+
+def integrator_with_windup(
+        var_factory: VarFactory,
+        x: Var | Expr,
+        T: Expr | float,
+        y: Var = None,
+        name: Optional[str] = '',
+        sat_min: Expr = Const(float(-1e6)),
+        sat_max: Expr = Const(float(1e6)),
+        multilinear: bool = False):
+    """
+    Simple 1/(sT) integrator followed by output saturation (windup behavior).
+
+    Internal state:
+        dz/dt = x / T
+
+    Output:
+        y = sat(z)
+    """
+    if y is None:
+        y = var_factory.add_var('y_' + name)
+
+    z = var_factory.add_var('z_' + name)
+    dz = var_factory.add_diff_var(name=f'dt_1_{z.name}', base_var=z)
+
+    aux_eqs = []
+    aux_vars = []
+    init_eqs = {z: Const(0.0)}
+
+    if not isinstance(x, Var):
+        u = var_factory.add_var('u_' + name)
+        aux_eqs.append((u - x).simplify())
+        aux_vars.append(u)
+        init_eqs[u] = x
+        x = u
+
+    eq_int = (dz - (x / T)).simplify()
+
+    if not multilinear:
+        eq_sat = (y - hard_sat(z, sat_min, sat_max)).simplify()
+        block = Block(
+            name=name,
+            algebraic_vars=[y, z] + aux_vars,
+            algebraic_eqs=[eq_int, eq_sat] + aux_eqs,
+            diff_vars=[dz],
+            init_eqs={**init_eqs, y: hard_sat(z, sat_min, sat_max)},
+        )
+    else:
+        sat_block, y_sat_expr = ml_hard_sat(
+            vf=var_factory,
+            u=z,
+            u_min=sat_min,
+            u_max=sat_max,
+            name=f"{name}_windup_sat",
+        )
+        block = Block(
+            name=name,
+            algebraic_vars=[y, z] + aux_vars + list(sat_block.algebraic_vars),
+            algebraic_eqs=[eq_int, y - y_sat_expr] + aux_eqs + list(sat_block.algebraic_eqs),
+            diff_vars=[dz],
+            init_eqs={**init_eqs, **dict(sat_block.init_eqs), y: hard_sat(z, sat_min, sat_max)},
+        )
+
     return block, y
 
 
@@ -686,7 +866,7 @@ def discrete_control_block(
             m:hard_sat(m + inc * tick, m_min, m_max),
             m_last: m,
         },
-        api_obj_mapping={dt: ParamPowerFlowRefferenceType.dt}
+        api_obj_mapping={dt: ParamPowerFlowReferenceType.dt}
     )
     return block, m
 

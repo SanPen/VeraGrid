@@ -161,7 +161,7 @@ class GCProp:
                  profile_name: str = '',
                  display: bool = True,
                  editable: bool = True,
-                 old_names: Union[List[str], Tuple[str, ...], None] = None,
+                 old_names: List[str] | Tuple[str, ...] | None = None,
                  is_color: bool = False,
                  is_date: bool = False,
                  key: Union[str, None] = None,

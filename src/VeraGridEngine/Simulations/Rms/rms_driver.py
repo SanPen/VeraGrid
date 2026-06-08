@@ -4,8 +4,10 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from __future__ import annotations
+import time
 import pandas as pd
 import numpy as np
+from typing import Dict
 
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Simulations.driver_template import DriverTemplate
@@ -13,10 +15,13 @@ from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
 from VeraGridEngine.Simulations.Rms.rms_results import RmsResults
 from VeraGridEngine.Simulations.Rms.rms_problem_factory import build_rms_problem
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae import RmsProblemDae
+from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae_vectorized import RmsProblemDaeVec
 from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx import BackEulerImplicitIntegration
+from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx_vectorized import BackEulerImplicitIntegrationVec
 from VeraGridEngine.enumerations import EngineType, SimulationTypes, DynamicIntegrationMethod
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowResults
 from VeraGridEngine.basic_structures import Vec, StrVec
+from VeraGridEngine.enumerations import RmsProblemTypes
 
 
 def _collect_rms_group_parameter_values(problem: RmsProblemDae) -> Dict[str, float]:
@@ -112,6 +117,8 @@ class RmsSimulationDriver(DriverTemplate):
         rms_events_group_names: StrVec = np.array([elm.name for elm in rms_events_groups])
         rms_events_group_idtags: StrVec = np.array([str(elm.idtag) for elm in rms_events_groups])
 
+        # self.options.problem_type = RmsProblemTypes.PowerBalanceVectorized
+
         problem = build_rms_problem(
             grid=self.grid,
             options=self.options,
@@ -183,8 +190,11 @@ class RmsSimulationDriver(DriverTemplate):
                         h=self.options.time_step,
                         max_iter=self.options.max_iter
                     )
-
+                
+                _t_start = time.time()
                 t, y, well_initialized, converged = solver.simulate()
+                _t_end = time.time()
+                # print(f"RMS simulation time: {_t_end - _t_start:.4f} s")
 
                 self.results.converged[group_idx] = converged
                 self.results.well_initialized[group_idx] = well_initialized

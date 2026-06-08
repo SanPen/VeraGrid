@@ -14,6 +14,7 @@ from VeraGridEngine.data_logger import DataLogger
 from VeraGridEngine.IO.cim.cgmes.cgmes_circuit import CgmesCircuit, CGMES_ASSETS
 from VeraGridEngine.Devices.Branches.line_locations import LineLocations
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
+from VeraGridEngine.enumerations import SimulationTypes
 from VeraGrid.Gui.font_config import MENU_FONT_SIZE
 
 if TYPE_CHECKING:
@@ -940,6 +941,45 @@ def get_tree_model(d, top='', icons: Dict[str, str] = None) -> QtGui.QStandardIt
     fill_model_from_dict(model.invisibleRootItem(), d=d, editable=False, icons=icons)
 
     return model
+
+
+def get_simulation_tree_icons() -> Dict[str, str]:
+    """
+    Build the icon map shared by simulation-oriented tree views.
+
+    :return: Mapping from simulation display name to icon resource path.
+    """
+    return {
+        SimulationTypes.PowerFlow_run.value: ':/Icons/icons/pf',
+        SimulationTypes.PowerFlow3ph_run.value: ':/Icons/icons/pf3',
+        SimulationTypes.PowerFlowTimeSeries_run.value: ':/Icons/icons/pf_ts.png',
+        SimulationTypes.OPF_run.value: ':/Icons/icons/dcopf.png',
+        SimulationTypes.OPFTimeSeries_run.value: ':/Icons/icons/dcopf_ts.png',
+        SimulationTypes.ShortCircuit_run.value: ':/Icons/icons/short_circuit.png',
+        SimulationTypes.LinearAnalysis_run.value: ':/Icons/icons/ptdf.png',
+        SimulationTypes.LinearAnalysis_TS_run.value: ':/Icons/icons/ptdf_ts.png',
+        SimulationTypes.SigmaAnalysis_run.value: ':/Icons/icons/sigma.png',
+        SimulationTypes.StochasticPowerFlow.value: ':/Icons/icons/stochastic_power_flow.png',
+        SimulationTypes.ContingencyAnalysis_run.value: ':/Icons/icons/otdf.png',
+        SimulationTypes.ContingencyAnalysisTS_run.value: ':/Icons/icons/otdf_ts.png',
+        SimulationTypes.NetTransferCapacity_run.value: ':/Icons/icons/atc.png',
+        SimulationTypes.NetTransferCapacityTS_run.value: ':/Icons/icons/atc_ts.png',
+        SimulationTypes.OptimalNetTransferCapacityTimeSeries_run.value: ':/Icons/icons/ntc_opf_ts.png',
+        SimulationTypes.InputsAnalysis_run.value: ':/Icons/icons/stats.png',
+        SimulationTypes.NodeGrouping_run.value: ':/Icons/icons/ml.png',
+        SimulationTypes.ContinuationPowerFlow_run.value: ':/Icons/icons/continuation_power_flow.png',
+        SimulationTypes.ClusteringAnalysis_run.value: ':/Icons/icons/clustering.png',
+        SimulationTypes.InvestmentsEvaluation_run.value: ':/Icons/icons/expansion_planning.png',
+        SimulationTypes.NodalCapacityTimeSeries_run.value: ':/Icons/icons/nodal_capacity.png',
+        SimulationTypes.OPF_NTC_run.value: ':/Icons/icons/ntc_opf.png',
+        SimulationTypes.OPF_NTC_TS_run.value: ':/Icons/icons/ntc_opf_ts.png',
+        SimulationTypes.Reliability_run.value: ':/Icons/icons/reliability.png',
+        SimulationTypes.RmsSmallSignal_run.value: ':/Icons/icons/ss_icon.png',
+        SimulationTypes.RmsDynamic_run.value: ':/Icons/icons/dyn.png',
+        SimulationTypes.EmtSmallSignal_run.value: ':/Icons/icons/ss_emt_icon.png',
+        SimulationTypes.EmtDynamic_run.value: ':/Icons/icons/dyn_emt.png',
+        SimulationTypes.StateEstimation_run.value: ':/Icons/icons/SE.png',
+    }
 
 
 def get_tree_item_path(item: QtGui.QStandardItem) -> List[str]:

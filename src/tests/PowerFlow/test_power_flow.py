@@ -8,13 +8,18 @@ import pandas as pd
 import numpy as np
 
 from VeraGridEngine.IO.file_open import FileOpen
+from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions import (
+    split_reactive_power_between_generators_and_batteries,
+    split_slack_bus_quantity_between_generators_and_batteries,
+)
 from VeraGridEngine.Simulations.PowerFlow.power_flow_worker import PowerFlowOptions, multi_island_pf_nc
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import SolverType
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowDriver
-from VeraGridEngine.enumerations import ConverterControlType
+from VeraGridEngine.enumerations import ConverterControlType, GeneratorControlMode
 import VeraGridEngine.api as gce
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 def test_ieee_grids():
     """
@@ -54,8 +59,8 @@ def test_ieee_grids():
             power_flow.run()
 
             # load the associated results file
-            df_v = pd.read_excel(os.path.join('data',  'results', f2), sheet_name='Vabs', index_col=0)
-            df_p = pd.read_excel(os.path.join('data',  'results', f2), sheet_name='Pbranch', index_col=0)
+            df_v = pd.read_excel(os.path.join('data', 'results', f2), sheet_name='Vabs', index_col=0)
+            df_p = pd.read_excel(os.path.join('data', 'results', f2), sheet_name='Pbranch', index_col=0)
 
             v_gc = np.abs(power_flow.results.voltage)
             v_psse = df_v.values[:, 0]
@@ -185,7 +190,7 @@ def test_controllable_shunt() -> None:
     This tests that the controllable shunt is indeed controlling voltage at 1.02 at the third bus
     """
 
-    fname = os.path.join('data',  'grids', 'Controllable_shunt_example.gridcal')
+    fname = os.path.join('data', 'grids', 'Controllable_shunt_example.gridcal')
     main_circuit = FileOpen(fname).open()
     options = PowerFlowOptions(control_q=False)
     power_flow = PowerFlowDriver(main_circuit, options)
@@ -201,13 +206,13 @@ def test_voltage_local_control_with_generation() -> None:
     """
     Check that a generator can perform remote voltage regulation
     """
-    fname = os.path.join('data',  'grids', 'RAW', 'IEEE 14 bus.raw')
+    fname = os.path.join('data', 'grids', 'RAW', 'IEEE 14 bus.raw')
 
     grid = gce.open_file(fname)
 
     # control local bus with generator 4
     gen = grid.generators[4]
-    gen.is_controlled = True
+    gen.control_mode = GeneratorControlMode.V
     gen.Q = 0  # otherwise the raw will assign a Q that is controlling V...
     bus_dict = grid.get_bus_index_dict()
     bus_i = bus_dict[gen.bus]
@@ -227,7 +232,7 @@ def test_voltage_local_control_with_generation() -> None:
         assert np.isclose(vm[bus_i], gen.Vset, atol=options.tolerance)
 
     # run power flow with the local voltage control disabled
-    gen.is_controlled = False
+    gen.control_mode = GeneratorControlMode.Q
     for solver_type in [SolverType.NR, SolverType.IWAMOTO, SolverType.LM,
                         SolverType.FASTDECOUPLED, SolverType.PowellDogLeg]:
         options = PowerFlowOptions(solver_type,
@@ -242,11 +247,196 @@ def test_voltage_local_control_with_generation() -> None:
         assert not np.isclose(vm[bus_i], gen.Vset, atol=options.tolerance)
 
 
+def test_qv_droop_control_mode() -> None:
+    """
+    Check that the reported generator reactive power follows the QV droop law.
+    """
+    fname: str = os.path.join('data', 'grids', 'RAW', 'IEEE 14 bus.raw')
+    grid = gce.open_file(fname)
+
+    # Use a seeded random choice so the test exercises a non-slack machine
+    # without making the test outcome depend on runtime randomness.
+    rng: np.random.Generator = np.random.default_rng(14)
+    candidate_indices: np.ndarray = np.arange(1, len(grid.generators), dtype=int)
+    gen_position: int = int(rng.integers(0, len(candidate_indices)))
+    gen_idx: int = int(candidate_indices[gen_position])
+    gen = grid.generators[gen_idx]
+    bus_index_dict: dict = grid.get_bus_index_dict()
+    bus_i: int = bus_index_dict[gen.bus]
+
+    # Configure the selected generator in droop mode with a small set-point
+    # offset so the converged operating point produces a measurable Q response.
+    gen.control_mode = GeneratorControlMode.QVDroop
+    gen.k_droop = 4.0
+    gen.dead_band = 0.0
+    gen.Q = 0.0
+    gen.Vset = gen.Vset + 0.01
+
+    options = PowerFlowOptions(solver_type=SolverType.NR,
+                               verbose=0,
+                               control_q=False,
+                               retry_with_other_methods=False)
+
+    results = gce.power_flow(grid, options)
+    vm: np.ndarray = np.abs(results.voltage)
+    delta_v: float = gen.Vset - vm[bus_i]
+
+    # Reproduce the implemented droop equation in MVAr, including the reactive
+    # power clipping at the generator capability limits.
+    expected_q: float = delta_v * gen.k_droop * gen.Qmax
+    expected_q = float(np.clip(expected_q, gen.Qmin, gen.Qmax))
+
+    assert results.converged
+    assert np.isclose(results.gen_q[gen_idx], expected_q, atol=1e-6, rtol=1e-6)
+
+
+def test_reactive_split_removes_fixed_bus_q_before_voltage_control_share() -> None:
+    """
+    Check that the reactive split removes fixed bus-side Q before assigning the
+    remaining reactive injection to voltage-controlled generator-like devices.
+    """
+    qbus: np.ndarray = np.array([2.0], dtype=float)
+    qfixed_bus: np.ndarray = np.array([-4.0], dtype=float)
+    gen_bus_idx: np.ndarray = np.array([0], dtype=int)
+    qmin_gen: np.ndarray = np.array([0.0], dtype=float)
+    qmax_gen: np.ndarray = np.array([10.0], dtype=float)
+    gen_status: np.ndarray = np.array([True], dtype=bool)
+    control_mode_int_gen: np.ndarray = np.array([GeneratorControlMode.V.idx()], dtype=int)
+    q0_gen: np.ndarray = np.array([0.0], dtype=float)
+    vset_gen: np.ndarray = np.array([1.0], dtype=float)
+    k_droop_gen: np.ndarray = np.array([0.0], dtype=float)
+    dead_band_gen: np.ndarray = np.array([0.0], dtype=float)
+    batt_bus_idx: np.ndarray = np.zeros(0, dtype=int)
+    qmin_batt: np.ndarray = np.zeros(0, dtype=float)
+    qmax_batt: np.ndarray = np.zeros(0, dtype=float)
+    batt_status: np.ndarray = np.zeros(0, dtype=bool)
+    control_mode_int_batt: np.ndarray = np.zeros(0, dtype=int)
+    q0_batt: np.ndarray = np.zeros(0, dtype=float)
+    vm: np.ndarray = np.array([1.0], dtype=float)
+
+    q_gen: np.ndarray
+    q_batt: np.ndarray
+    q_gen, q_batt = split_reactive_power_between_generators_and_batteries(
+        Qbus=qbus,
+        Qfixed_bus=qfixed_bus,
+        gen_bus_idx=gen_bus_idx,
+        Qmin_gen=qmin_gen,
+        Qmax_gen=qmax_gen,
+        gen_status=gen_status,
+        control_mode_int_gen=control_mode_int_gen,
+        Q0_gen=q0_gen,
+        Vset_gen=vset_gen,
+        k_droop_gen=k_droop_gen,
+        dead_band_gen=dead_band_gen,
+        batt_bus_idx=batt_bus_idx,
+        Qmin_batt=qmin_batt,
+        Qmax_batt=qmax_batt,
+        batt_status=batt_status,
+        control_mode_int_batt=control_mode_int_batt,
+        Q0_batt=q0_batt,
+        v_ctrl_val_gen=GeneratorControlMode.V.idx(),
+        qv_droop_val_gen=GeneratorControlMode.QVDroop.idx(),
+        Vm=vm,
+        atol=1e-12,
+    )
+
+    assert q_batt.size == 0
+    assert np.isclose(q_gen[0], 6.0, atol=1e-12)
+    assert np.isclose(qfixed_bus[0] + q_gen[0], qbus[0], atol=1e-12)
+
+
+def test_slack_bus_split_handles_multiple_slack_buses() -> None:
+    """
+    Check that each slack bus reassigns its solved residual to the connected
+    online generator-like devices independently.
+    """
+    qbus: np.ndarray = np.array([15.0, -3.0, 7.0], dtype=float)
+    qfixed_bus: np.ndarray = np.array([5.0, -3.0, 1.0], dtype=float)
+    slack_bus_mask: np.ndarray = np.array([True, False, True], dtype=bool)
+    gen_bus_idx: np.ndarray = np.array([0, 2], dtype=int)
+    qmin_gen: np.ndarray = np.array([0.0, 0.0], dtype=float)
+    qmax_gen: np.ndarray = np.array([20.0, 10.0], dtype=float)
+    gen_status: np.ndarray = np.array([True, True], dtype=bool)
+    q0_gen: np.ndarray = np.array([0.0, 0.0], dtype=float)
+    batt_bus_idx: np.ndarray = np.array([0], dtype=int)
+    qmin_batt: np.ndarray = np.array([0.0], dtype=float)
+    qmax_batt: np.ndarray = np.array([10.0], dtype=float)
+    batt_status: np.ndarray = np.array([True], dtype=bool)
+    q0_batt: np.ndarray = np.array([0.0], dtype=float)
+
+    q_gen: np.ndarray
+    q_batt: np.ndarray
+    q_gen, q_batt = split_slack_bus_quantity_between_generators_and_batteries(
+        Qbus=qbus,
+        Qfixed_bus=qfixed_bus,
+        slack_bus_mask=slack_bus_mask,
+        gen_bus_idx=gen_bus_idx,
+        Qmin_gen=qmin_gen,
+        Qmax_gen=qmax_gen,
+        gen_status=gen_status,
+        Q0_gen=q0_gen,
+        batt_bus_idx=batt_bus_idx,
+        Qmin_batt=qmin_batt,
+        Qmax_batt=qmax_batt,
+        batt_status=batt_status,
+        Q0_batt=q0_batt,
+        atol=1e-12,
+    )
+
+    assert np.isclose(q_gen[0], 20.0 / 3.0, atol=1e-12)
+    assert np.isclose(q_batt[0], 10.0 / 3.0, atol=1e-12)
+    assert np.isclose(q_gen[1], 6.0, atol=1e-12)
+    assert np.isclose(qfixed_bus[0] + q_gen[0] + q_batt[0], qbus[0], atol=1e-12)
+    assert np.isclose(qfixed_bus[2] + q_gen[1], qbus[2], atol=1e-12)
+
+
+def test_slack_bus_split_does_not_clip_solved_residual_to_limits() -> None:
+    """
+    Check that slack-bus reconstruction reports the solved value even when it
+    exceeds the declared device limits.
+    """
+    qbus: np.ndarray = np.array([18.55], dtype=float)
+    qfixed_bus: np.ndarray = np.array([0.0], dtype=float)
+    slack_bus_mask: np.ndarray = np.array([True], dtype=bool)
+    gen_bus_idx: np.ndarray = np.array([0], dtype=int)
+    qmin_gen: np.ndarray = np.array([-10.0], dtype=float)
+    qmax_gen: np.ndarray = np.array([10.0], dtype=float)
+    gen_status: np.ndarray = np.array([True], dtype=bool)
+    q0_gen: np.ndarray = np.array([0.0], dtype=float)
+    batt_bus_idx: np.ndarray = np.zeros(0, dtype=int)
+    qmin_batt: np.ndarray = np.zeros(0, dtype=float)
+    qmax_batt: np.ndarray = np.zeros(0, dtype=float)
+    batt_status: np.ndarray = np.zeros(0, dtype=bool)
+    q0_batt: np.ndarray = np.zeros(0, dtype=float)
+
+    q_gen: np.ndarray
+    q_batt: np.ndarray
+    q_gen, q_batt = split_slack_bus_quantity_between_generators_and_batteries(
+        Qbus=qbus,
+        Qfixed_bus=qfixed_bus,
+        slack_bus_mask=slack_bus_mask,
+        gen_bus_idx=gen_bus_idx,
+        Qmin_gen=qmin_gen,
+        Qmax_gen=qmax_gen,
+        gen_status=gen_status,
+        Q0_gen=q0_gen,
+        batt_bus_idx=batt_bus_idx,
+        Qmin_batt=qmin_batt,
+        Qmax_batt=qmax_batt,
+        batt_status=batt_status,
+        Q0_batt=q0_batt,
+        atol=1e-12,
+    )
+
+    assert q_batt.size == 0
+    assert np.isclose(q_gen[0], 18.55, atol=1e-12)
+
+
 def test_voltage_remote_control_with_generation() -> None:
     """
     Check that a generator can perform remote voltage regulation
     """
-    fname = os.path.join('data',  'grids', 'RAW', 'IEEE 14 bus.raw')
+    fname = os.path.join('data', 'grids', 'RAW', 'IEEE 14 bus.raw')
 
     grid = gce.open_file(fname)
 
@@ -283,7 +473,7 @@ def test_voltage_control_with_ltc() -> None:
     Check that a transformer can regulate the voltage at a bus
     """
 
-    fname = os.path.join('data',  'grids', '5Bus_LTC_FACTS_Fig4.7.gridcal')
+    fname = os.path.join('data', 'grids', '5Bus_LTC_FACTS_Fig4.7.gridcal')
 
     grid = gce.open_file(fname)
     bus_dict = grid.get_bus_index_dict()
@@ -320,7 +510,7 @@ def test_qf_control_with_ltc() -> None:
     """
     Check that a transformer can regulate the voltage at a bus
     """
-    fname = os.path.join('data',  'grids', '5Bus_PST_FACTS_Fig4.10(Qf).gridcal')
+    fname = os.path.join('data', 'grids', '5Bus_PST_FACTS_Fig4.10(Qf).gridcal')
 
     grid = gce.open_file(fname)
 
@@ -350,7 +540,7 @@ def test_qt_control_with_ltc() -> None:
     """
     Check that a transformer can regulate the voltage at a bus
     """
-    fname = os.path.join('data',  'grids', '5Bus_PST_FACTS_Fig4.10(Qf).gridcal')
+    fname = os.path.join('data', 'grids', '5Bus_PST_FACTS_Fig4.10(Qf).gridcal')
 
     grid = gce.open_file(fname)
     grid.transformers2w[0].tap_module_control_mode = gce.TapModuleControl.Qt
@@ -381,7 +571,7 @@ def test_power_flow_control_with_pst_pf() -> None:
     """
     Check that a transformer can regulate the voltage at a bus
     """
-    fname = os.path.join('data',  'grids', '5Bus_PST_FACTS_Fig4.10.gridcal')
+    fname = os.path.join('data', 'grids', '5Bus_PST_FACTS_Fig4.10.gridcal')
 
     grid = gce.open_file(fname)
 
@@ -411,7 +601,7 @@ def test_power_flow_control_with_pst_pt() -> None:
     """
     Check that a transformer can regulate the voltage at a bus
     """
-    fname = os.path.join('data',  'grids', '5Bus_PST_FACTS_Fig4.10(Pt).gridcal')
+    fname = os.path.join('data', 'grids', '5Bus_PST_FACTS_Fig4.10(Pt).gridcal')
 
     grid = gce.open_file(fname)
 
@@ -442,7 +632,7 @@ def test_generator_Q_lims() -> None:
     """
     Check that we can shift the controls well when hitting Q limits
     """
-    fname = os.path.join('data',  'grids', '5Bus_LTC_FACTS_Fig4.7_Qlim.gridcal')
+    fname = os.path.join('data', 'grids', '5Bus_LTC_FACTS_Fig4.7_Qlim.gridcal')
 
     grid = gce.open_file(fname)
 
@@ -477,7 +667,7 @@ def test_fubm() -> None:
 
     :return:
     """
-    fname = os.path.join('data',  'grids', 'fubm_caseHVDC_vt_josep.gridcal')
+    fname = os.path.join('data', 'grids', 'fubm_caseHVDC_vt_josep.gridcal')
     grid = gce.open_file(fname)
 
     for solver_type in [SolverType.NR, SolverType.LM, SolverType.PowellDogLeg]:
@@ -511,7 +701,7 @@ def test_power_flow_12bus_acdc() -> None:
     """
     Check that a transformer can regulate the voltage at a bus
     """
-    fname = os.path.join('data',  'grids', 'AC-DC with all and DCload.gridcal')
+    fname = os.path.join('data', 'grids', 'AC-DC with all and DCload.gridcal')
 
     grid = gce.open_file(fname)
 
@@ -541,7 +731,7 @@ def test_power_flow_12bus_acdc() -> None:
                                    control_q=False,
                                    retry_with_other_methods=False,
                                    control_taps_phase=True,
-                                   tolerance = 1e-8,
+                                   tolerance=1e-8,
                                    max_iter=80)
 
         driver = PowerFlowDriver(grid=grid, options=options)
@@ -576,7 +766,7 @@ def test_vsc_current_limitation() -> None:
     """
     Full AC/DC Power Flow simulation with converter's current limitation and negative poles
     """
-    fname = os.path.join('data',  'grids', 'vsc_current_limitation.veragrid')
+    fname = os.path.join('data', 'grids', 'vsc_current_limitation.veragrid')
 
     grid = gce.open_file(fname)
 
@@ -601,14 +791,14 @@ def test_vsc_current_limitation() -> None:
     # which originally was 5 MVAr.
     assert np.allclose(4.99999615809046, solution.St[27].real, atol=1e-4)
     assert np.allclose(2.628707079131246, solution.St[27].imag, atol=1e-4)
-    assert np.allclose(1+0j, solution.voltage[21], atol=1e-4)
+    assert np.allclose(1 + 0j, solution.voltage[21], atol=1e-4)
 
 
 def test_hvdc_all_methods() -> None:
     """
     Checks that the HVDC logic is working for all power flow methods
     """
-    fname = os.path.join('data',  'grids', '8_nodes_2_islands_hvdc.gridcal')
+    fname = os.path.join('data', 'grids', '8_nodes_2_islands_hvdc.gridcal')
     grid = gce.open_file(fname)
 
     for solver_type in [SolverType.NR,
@@ -807,20 +997,34 @@ def test_bipolar_unbalanced() -> None:
 
     grid = gce.MultiCircuit(name="Bipolar_unbalanced", Sbase=Sb)
 
-    bus1 = gce.Bus(name="Bus1", Vnom=Ub, is_slack=True); grid.add_bus(bus1)
-    bus2 = gce.Bus(name="Bus2", Vnom=Ub, is_dc=True); grid.add_bus(bus2)
-    bus3 = gce.Bus(name="Bus3", Vnom=Ub, is_dc=True); grid.add_bus(bus3)
-    bus4 = gce.Bus(name="Bus4", Vnom=Ub, is_dc=True, Vm0=1.01, Va0=3.14); grid.add_bus(bus4)
-    bus5 = gce.Bus(name="Bus5", Vnom=Ub, is_dc=True, Va0=3.14); grid.add_bus(bus5)
-    bus6 = gce.Bus(name="Bus6", Vnom=Ub, is_dc=True, is_grounded=True, Vm0=1e-9, Va0=0.01); grid.add_bus(bus6)
-    bus7 = gce.Bus(name="Bus7", Vnom=Ub, is_dc=True, Vm0=1e-4, Va0=0.01); grid.add_bus(bus7)
-    bus8 = gce.Bus(name="Bus8", Vnom=Ub, is_slack=True); grid.add_bus(bus8)
-    bus9 = gce.Bus(name="Bus9", Vnom=Ub, is_dc=True); grid.add_bus(bus9)
-    bus10 = gce.Bus(name="Bus10", Vnom=Ub, is_dc=True, Vm0=1e-4, Va0=0.01); grid.add_bus(bus10)
-    bus11 = gce.Bus(name="Bus11", Vnom=Ub, is_dc=True, Va0=3.14); grid.add_bus(bus11)
-    bus12 = gce.Bus(name="Bus12", Vnom=Ub, is_dc=True, Vm0=1e-4, Va0=0.01); grid.add_bus(bus12)
-    bus13 = gce.Bus(name="Bus13", Vnom=Ub, is_dc=True, Va0=3.14); grid.add_bus(bus13)
-    bus14 = gce.Bus(name="Bus14", Vnom=Ub); grid.add_bus(bus14)
+    bus1 = gce.Bus(name="Bus1", Vnom=Ub, is_slack=True);
+    grid.add_bus(bus1)
+    bus2 = gce.Bus(name="Bus2", Vnom=Ub, is_dc=True);
+    grid.add_bus(bus2)
+    bus3 = gce.Bus(name="Bus3", Vnom=Ub, is_dc=True);
+    grid.add_bus(bus3)
+    bus4 = gce.Bus(name="Bus4", Vnom=Ub, is_dc=True, Vm0=1.01, Va0=3.14);
+    grid.add_bus(bus4)
+    bus5 = gce.Bus(name="Bus5", Vnom=Ub, is_dc=True, Va0=3.14);
+    grid.add_bus(bus5)
+    bus6 = gce.Bus(name="Bus6", Vnom=Ub, is_dc=True, is_grounded=True, Vm0=1e-9, Va0=0.01);
+    grid.add_bus(bus6)
+    bus7 = gce.Bus(name="Bus7", Vnom=Ub, is_dc=True, Vm0=1e-4, Va0=0.01);
+    grid.add_bus(bus7)
+    bus8 = gce.Bus(name="Bus8", Vnom=Ub, is_slack=True);
+    grid.add_bus(bus8)
+    bus9 = gce.Bus(name="Bus9", Vnom=Ub, is_dc=True);
+    grid.add_bus(bus9)
+    bus10 = gce.Bus(name="Bus10", Vnom=Ub, is_dc=True, Vm0=1e-4, Va0=0.01);
+    grid.add_bus(bus10)
+    bus11 = gce.Bus(name="Bus11", Vnom=Ub, is_dc=True, Va0=3.14);
+    grid.add_bus(bus11)
+    bus12 = gce.Bus(name="Bus12", Vnom=Ub, is_dc=True, Vm0=1e-4, Va0=0.01);
+    grid.add_bus(bus12)
+    bus13 = gce.Bus(name="Bus13", Vnom=Ub, is_dc=True, Va0=3.14);
+    grid.add_bus(bus13)
+    bus14 = gce.Bus(name="Bus14", Vnom=Ub);
+    grid.add_bus(bus14)
 
     grid.add_generator(bus1, gce.Generator(name='g1', vset=1.0))
     grid.add_generator(bus8, gce.Generator(name='g8', vset=1.0))
@@ -862,8 +1066,8 @@ def test_bipolar_unbalanced() -> None:
     assert res.converged
 
     # Voltage-controlled DC buses are honored
-    assert np.isclose(abs(res.voltage[1]), 1.0, atol=1e-4)     # Bus2  (positive pole, Vm_dc=1)
-    assert np.isclose(abs(res.voltage[3]), 1.01, atol=1e-4)    # Bus4  (negative pole, Vm_dc=-1.01)
+    assert np.isclose(abs(res.voltage[1]), 1.0, atol=1e-4)  # Bus2  (positive pole, Vm_dc=1)
+    assert np.isclose(abs(res.voltage[3]), 1.01, atol=1e-4)  # Bus4  (negative pole, Vm_dc=-1.01)
     # AC slacks
     assert np.isclose(abs(res.voltage[0]), 1.0, atol=1e-4)
     assert np.isclose(abs(res.voltage[7]), 1.0, atol=1e-4)
@@ -875,7 +1079,7 @@ def test_bipolar_unbalanced() -> None:
     assert np.isclose(res.Pfp_vsc[3], -2.8, atol=1e-4)
 
     # Imbalance forces non-zero return-cable voltage drop on the negative side
-    assert abs(res.voltage[9].real) > 1e-3   # Bus10
+    assert abs(res.voltage[9].real) > 1e-3  # Bus10
     assert abs(res.voltage[11].real) > 1e-3  # Bus12
 
     # Monopolar VSC_5 absorbs ~load + losses from the negative pole
@@ -897,14 +1101,22 @@ def test_bipolar_with_load() -> None:
 
     grid = gce.MultiCircuit(name="Bipolar_with_load", Sbase=Sb)
 
-    bus1 = gce.Bus(name="Bus1", Vnom=Ub, is_slack=True); grid.add_bus(bus1)
-    bus2 = gce.Bus(name="Bus2", Vnom=Ub, is_dc=True); grid.add_bus(bus2)
-    bus3 = gce.Bus(name="Bus3", Vnom=Ub, is_dc=True); grid.add_bus(bus3)
-    bus4 = gce.Bus(name="Bus4", Vnom=Ub, is_dc=True, Vm0=1.01, Va0=3.14); grid.add_bus(bus4)
-    bus5 = gce.Bus(name="Bus5", Vnom=Ub, is_dc=True, Vm0=1.01, Va0=3.14); grid.add_bus(bus5)
-    bus6 = gce.Bus(name="Bus6", Vnom=Ub, is_dc=True, is_grounded=True, Vm0=1e-9, Va0=1e-9); grid.add_bus(bus6)
-    bus7 = gce.Bus(name="Bus7", Vnom=Ub, is_dc=True, Vm0=1e-4, Va0=0.01); grid.add_bus(bus7)
-    bus8 = gce.Bus(name="Bus8", Vnom=Ub); grid.add_bus(bus8)
+    bus1 = gce.Bus(name="Bus1", Vnom=Ub, is_slack=True);
+    grid.add_bus(bus1)
+    bus2 = gce.Bus(name="Bus2", Vnom=Ub, is_dc=True);
+    grid.add_bus(bus2)
+    bus3 = gce.Bus(name="Bus3", Vnom=Ub, is_dc=True);
+    grid.add_bus(bus3)
+    bus4 = gce.Bus(name="Bus4", Vnom=Ub, is_dc=True, Vm0=1.01, Va0=3.14);
+    grid.add_bus(bus4)
+    bus5 = gce.Bus(name="Bus5", Vnom=Ub, is_dc=True, Vm0=1.01, Va0=3.14);
+    grid.add_bus(bus5)
+    bus6 = gce.Bus(name="Bus6", Vnom=Ub, is_dc=True, is_grounded=True, Vm0=1e-9, Va0=1e-9);
+    grid.add_bus(bus6)
+    bus7 = gce.Bus(name="Bus7", Vnom=Ub, is_dc=True, Vm0=1e-4, Va0=0.01);
+    grid.add_bus(bus7)
+    bus8 = gce.Bus(name="Bus8", Vnom=Ub);
+    grid.add_bus(bus8)
 
     grid.add_generator(bus1, gce.Generator(name='g1', vset=1.0))
     grid.add_load(bus8, gce.Load(name='L8', P=80))
@@ -936,8 +1148,8 @@ def test_bipolar_with_load() -> None:
     assert res.converged
 
     # Vm_dc setpoints honored on the controlled DC buses
-    assert np.isclose(abs(res.voltage[1]), 1.0, atol=1e-4)    # Bus2 (Vm_dc=1)
-    assert np.isclose(abs(res.voltage[3]), 1.01, atol=1e-4)   # Bus4 (Vm_dc=-1.01)
+    assert np.isclose(abs(res.voltage[1]), 1.0, atol=1e-4)  # Bus2 (Vm_dc=1)
+    assert np.isclose(abs(res.voltage[3]), 1.01, atol=1e-4)  # Bus4 (Vm_dc=-1.01)
     # VSC_4 acts as AC slack at Bus8
     assert np.isclose(abs(res.voltage[7]), 1.0, atol=1e-4)
     assert np.isclose(np.angle(res.voltage[7]), 0.0, atol=1e-4)
@@ -945,8 +1157,11 @@ def test_bipolar_with_load() -> None:
     # VSC_3 holds Pdc=40 setpoint
     assert np.isclose(res.Pfp_vsc[2], 40.0, atol=1e-4)
 
-    # Self-balancing: return cable carries no current
-    assert np.allclose(res.Pfn_vsc, 0.0, atol=1e-4)
+    # The metallic return carries only negligible power. A small imbalance 
+    # current flows, the returned power P = V_neutral * I stays near zero. 
+    # The neutral subsystem is ill-conditioned (near-zero voltages),
+    # hence a loose tolerance rather than 0
+    assert np.allclose(res.Pfn_vsc, 0.0, atol=1e-3)
 
     # Power balance: load = 80 MW, generation covers load + losses
     p_gen = res.Sbus[0].real

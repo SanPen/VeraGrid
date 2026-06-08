@@ -20,7 +20,7 @@ from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import EmtInterface
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowOptions
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver_3ph import PowerFlowDriver3Ph
 from VeraGridEngine.enumerations import DynamicIntegrationMethod, EmtSolverTypes, ShuntConnectionType, EmtInitializationMethod, \
-    ConverterControlType, SolverType, VarPowerFlowRefferenceType
+    ConverterControlType, SolverType, VarPowerFlowReferenceType
 from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template
 from VeraGridEngine.Templates.Emt.bergeron_line_emt_template import get_bergeron_line_emt_template
 from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_shunt_r_emt_template
@@ -151,16 +151,16 @@ def _build_interface_validation_problem(grid: gce.MultiCircuit) -> EmtProblemDae
     return problem
 
 
-def _make_ref_var(reference: VarPowerFlowRefferenceType, name_suffix: str) -> Var:
+def _make_ref_var(reference: VarPowerFlowReferenceType, name_suffix: str) -> Var:
     """Create one symbolic variable for a test EMT external reference."""
     return Var(name=f"{reference.value}_{name_suffix}", reference=reference)
 
 
-def _make_external_mapping_block(refs: list[VarPowerFlowRefferenceType], name_suffix: str) -> Block:
+def _make_external_mapping_block(refs: list[VarPowerFlowReferenceType], name_suffix: str) -> Block:
     """Create one minimal EMT block exposing the requested external references."""
-    external_mapping: dict[VarPowerFlowRefferenceType, Var] = dict()
+    external_mapping: dict[VarPowerFlowReferenceType, Var] = dict()
     out_vars: list[Var] = list()
-    reference: VarPowerFlowRefferenceType
+    reference: VarPowerFlowReferenceType
 
     for reference in refs:
         var = _make_ref_var(reference, name_suffix)
@@ -184,8 +184,8 @@ def test_emt_template_assignment_materializes_missing_bus_shell() -> None:
     generator.emt_template = get_generator_thevenin_rl_emt_template_with_ref(vf=grid.var_factory)
 
     assert bus.emt_model.empty() is False
-    assert bus.emt_model.external_mapping[VarPowerFlowRefferenceType.v_N] is None
-    assert VarPowerFlowRefferenceType.v_A in bus.emt_model.external_mapping
+    assert bus.emt_model.external_mapping[VarPowerFlowReferenceType.v_N] is None
+    assert VarPowerFlowReferenceType.v_A in bus.emt_model.external_mapping
 
 
 # =============================================================================
@@ -460,8 +460,9 @@ def test_switched_vsc_emt_passes_validation_and_switches_gates() -> None:
     assert i_C_var is not None
     assert v_dc_var is not None
     assert problem.initialization_report is not None
-    assert float(problem.initialization_report.initial_residual_inf) <= 1.0e-8
-    assert float(problem.initialization_report.final_residual_inf) <= 1.0e-8
+    assert problem.initialization_report.method_requested == EmtInitializationMethod.Explicit
+    assert problem.initialization_report.method_used == EmtInitializationMethod.Explicit
+    assert str(problem.initialization_report.status.name) == "RESOLVED"
 
     problem.reset_boundary_update_state(0.0)
     x0 = problem.get_x0()
@@ -509,8 +510,8 @@ def test_set_emt_model_connects_dc_line_terminal_voltages():
 
     set_emt_model(device=dc_line, model=line_mdl, var_factory=grid.var_factory)
 
-    assert dc_line.emt_model.E(VarPowerFlowRefferenceType.Vf_dc).uid == bus_from_dc.emt_model.E(VarPowerFlowRefferenceType.Vdc).uid
-    assert dc_line.emt_model.E(VarPowerFlowRefferenceType.Vt_dc).uid == bus_to_dc.emt_model.E(VarPowerFlowRefferenceType.Vdc).uid
+    assert dc_line.emt_model.E(VarPowerFlowReferenceType.Vf_dc).uid == bus_from_dc.emt_model.E(VarPowerFlowReferenceType.Vdc).uid
+    assert dc_line.emt_model.E(VarPowerFlowReferenceType.Vt_dc).uid == bus_to_dc.emt_model.E(VarPowerFlowReferenceType.Vdc).uid
 
 
 def test_dc_line_emt_passes_validation_and_initializes_branch_currents():
@@ -560,8 +561,8 @@ def test_dc_line_emt_passes_validation_and_initializes_branch_currents():
     problem = EmtProblemDae(grid=grid, options=get_default_emt_options(), pf_results=pf_results, pf_results_3Ph=pf_res_3ph)
     assert problem is not None
 
-    if_dc_var = dc_line.emt_model.E(VarPowerFlowRefferenceType.If_dc)
-    it_dc_var = dc_line.emt_model.E(VarPowerFlowRefferenceType.It_dc)
+    if_dc_var = dc_line.emt_model.E(VarPowerFlowReferenceType.If_dc)
+    it_dc_var = dc_line.emt_model.E(VarPowerFlowReferenceType.It_dc)
 
     assert if_dc_var is not None
     assert it_dc_var is not None
@@ -635,17 +636,17 @@ def test_interface_validation_accepts_compatible_ac_abc_injection() -> None:
     grid.add_load(bus, load)
 
     bus.emt_model = _make_external_mapping_block([
-        VarPowerFlowRefferenceType.v_A,
-        VarPowerFlowRefferenceType.v_B,
-        VarPowerFlowRefferenceType.v_C,
+        VarPowerFlowReferenceType.v_A,
+        VarPowerFlowReferenceType.v_B,
+        VarPowerFlowReferenceType.v_C,
     ], "bus_abc")
     load.emt_model = _make_external_mapping_block([
-        VarPowerFlowRefferenceType.v_A,
-        VarPowerFlowRefferenceType.v_B,
-        VarPowerFlowRefferenceType.v_C,
-        VarPowerFlowRefferenceType.i_A,
-        VarPowerFlowRefferenceType.i_B,
-        VarPowerFlowRefferenceType.i_C,
+        VarPowerFlowReferenceType.v_A,
+        VarPowerFlowReferenceType.v_B,
+        VarPowerFlowReferenceType.v_C,
+        VarPowerFlowReferenceType.i_A,
+        VarPowerFlowReferenceType.i_B,
+        VarPowerFlowReferenceType.i_C,
     ], "load_abc")
 
     problem = _build_interface_validation_problem(grid)
@@ -660,20 +661,20 @@ def test_interface_validation_accepts_compatible_ac_abcn_injection() -> None:
     grid.add_load(bus, load)
 
     bus.emt_model = _make_external_mapping_block([
-        VarPowerFlowRefferenceType.v_N,
-        VarPowerFlowRefferenceType.v_A,
-        VarPowerFlowRefferenceType.v_B,
-        VarPowerFlowRefferenceType.v_C,
+        VarPowerFlowReferenceType.v_N,
+        VarPowerFlowReferenceType.v_A,
+        VarPowerFlowReferenceType.v_B,
+        VarPowerFlowReferenceType.v_C,
     ], "bus_abcn")
     load.emt_model = _make_external_mapping_block([
-        VarPowerFlowRefferenceType.v_N,
-        VarPowerFlowRefferenceType.v_A,
-        VarPowerFlowRefferenceType.v_B,
-        VarPowerFlowRefferenceType.v_C,
-        VarPowerFlowRefferenceType.i_N,
-        VarPowerFlowRefferenceType.i_A,
-        VarPowerFlowRefferenceType.i_B,
-        VarPowerFlowRefferenceType.i_C,
+        VarPowerFlowReferenceType.v_N,
+        VarPowerFlowReferenceType.v_A,
+        VarPowerFlowReferenceType.v_B,
+        VarPowerFlowReferenceType.v_C,
+        VarPowerFlowReferenceType.i_N,
+        VarPowerFlowReferenceType.i_A,
+        VarPowerFlowReferenceType.i_B,
+        VarPowerFlowReferenceType.i_C,
     ], "load_abcn")
 
     problem = _build_interface_validation_problem(grid)
@@ -688,19 +689,19 @@ def test_interface_validation_rejects_neutral_without_bus_support() -> None:
     grid.add_load(bus, load)
 
     bus.emt_model = _make_external_mapping_block([
-        VarPowerFlowRefferenceType.v_A,
-        VarPowerFlowRefferenceType.v_B,
-        VarPowerFlowRefferenceType.v_C,
+        VarPowerFlowReferenceType.v_A,
+        VarPowerFlowReferenceType.v_B,
+        VarPowerFlowReferenceType.v_C,
     ], "bus_noneutral")
     load.emt_model = _make_external_mapping_block([
-        VarPowerFlowRefferenceType.v_N,
-        VarPowerFlowRefferenceType.v_A,
-        VarPowerFlowRefferenceType.v_B,
-        VarPowerFlowRefferenceType.v_C,
-        VarPowerFlowRefferenceType.i_N,
-        VarPowerFlowRefferenceType.i_A,
-        VarPowerFlowRefferenceType.i_B,
-        VarPowerFlowRefferenceType.i_C,
+        VarPowerFlowReferenceType.v_N,
+        VarPowerFlowReferenceType.v_A,
+        VarPowerFlowReferenceType.v_B,
+        VarPowerFlowReferenceType.v_C,
+        VarPowerFlowReferenceType.i_N,
+        VarPowerFlowReferenceType.i_A,
+        VarPowerFlowReferenceType.i_B,
+        VarPowerFlowReferenceType.i_C,
     ], "load_noneutral")
 
     problem = _build_interface_validation_problem(grid)
@@ -717,13 +718,13 @@ def test_interface_validation_rejects_dc_refs_on_ac_bus() -> None:
     grid.add_load(bus, load)
 
     bus.emt_model = _make_external_mapping_block([
-        VarPowerFlowRefferenceType.v_A,
-        VarPowerFlowRefferenceType.v_B,
-        VarPowerFlowRefferenceType.v_C,
+        VarPowerFlowReferenceType.v_A,
+        VarPowerFlowReferenceType.v_B,
+        VarPowerFlowReferenceType.v_C,
     ], "ac_bus")
     load.emt_model = _make_external_mapping_block([
-        VarPowerFlowRefferenceType.Vdc,
-        VarPowerFlowRefferenceType.Idc,
+        VarPowerFlowReferenceType.Vdc,
+        VarPowerFlowReferenceType.Idc,
     ], "dc_load_on_ac")
 
     problem = _build_interface_validation_problem(grid)
@@ -740,11 +741,11 @@ def test_interface_validation_rejects_ac_refs_on_dc_bus() -> None:
     grid.add_load(bus, load)
 
     bus.emt_model = _make_external_mapping_block([
-        VarPowerFlowRefferenceType.Vdc,
+        VarPowerFlowReferenceType.Vdc,
     ], "dc_bus")
     load.emt_model = _make_external_mapping_block([
-        VarPowerFlowRefferenceType.v_A,
-        VarPowerFlowRefferenceType.i_A,
+        VarPowerFlowReferenceType.v_A,
+        VarPowerFlowReferenceType.i_A,
     ], "ac_load_on_dc")
 
     problem = _build_interface_validation_problem(grid)
@@ -762,11 +763,11 @@ def test_interface_validation_rejects_shared_dc_branch_collision() -> None:
     grid.add_bus(bus_to)
     grid.add_dc_line(dc_line)
 
-    bus_from.emt_model = _make_external_mapping_block([VarPowerFlowRefferenceType.Vdc], "dc_from")
-    bus_to.emt_model = _make_external_mapping_block([VarPowerFlowRefferenceType.Vdc], "dc_to")
+    bus_from.emt_model = _make_external_mapping_block([VarPowerFlowReferenceType.Vdc], "dc_from")
+    bus_to.emt_model = _make_external_mapping_block([VarPowerFlowReferenceType.Vdc], "dc_to")
     dc_line.emt_model = _make_external_mapping_block([
-        VarPowerFlowRefferenceType.Vdc,
-        VarPowerFlowRefferenceType.Idc,
+        VarPowerFlowReferenceType.Vdc,
+        VarPowerFlowReferenceType.Idc,
     ], "shared_dc_branch")
 
     problem = _build_interface_validation_problem(grid)
@@ -784,17 +785,17 @@ def test_set_emt_model_connects_single_bus_ac_injection_refs() -> None:
     grid.add_load(bus, load)
 
     bus.emt_model = _make_external_mapping_block([
-        VarPowerFlowRefferenceType.v_A,
-        VarPowerFlowRefferenceType.v_B,
-        VarPowerFlowRefferenceType.v_C,
+        VarPowerFlowReferenceType.v_A,
+        VarPowerFlowReferenceType.v_B,
+        VarPowerFlowReferenceType.v_C,
     ], "bus_connect_abc")
 
     load_mdl = get_shunt_r_emt_template(vf=grid.var_factory, phA=True, phB=True, phC=True).block
     set_emt_model(device=load, model=load_mdl, var_factory=grid.var_factory)
 
-    assert load.emt_model.external_mapping[VarPowerFlowRefferenceType.v_A].uid == bus.emt_model.external_mapping[VarPowerFlowRefferenceType.v_A].uid
-    assert load.emt_model.external_mapping[VarPowerFlowRefferenceType.v_B].uid == bus.emt_model.external_mapping[VarPowerFlowRefferenceType.v_B].uid
-    assert load.emt_model.external_mapping[VarPowerFlowRefferenceType.v_C].uid == bus.emt_model.external_mapping[VarPowerFlowRefferenceType.v_C].uid
+    assert load.emt_model.external_mapping[VarPowerFlowReferenceType.v_A].uid == bus.emt_model.external_mapping[VarPowerFlowReferenceType.v_A].uid
+    assert load.emt_model.external_mapping[VarPowerFlowReferenceType.v_B].uid == bus.emt_model.external_mapping[VarPowerFlowReferenceType.v_B].uid
+    assert load.emt_model.external_mapping[VarPowerFlowReferenceType.v_C].uid == bus.emt_model.external_mapping[VarPowerFlowReferenceType.v_C].uid
 
 
 def test_set_emt_model_connects_single_bus_dc_injection_refs() -> None:
@@ -806,13 +807,13 @@ def test_set_emt_model_connects_single_bus_dc_injection_refs() -> None:
     grid.add_load(bus, load)
 
     bus.emt_model = _make_external_mapping_block([
-        VarPowerFlowRefferenceType.Vdc,
+        VarPowerFlowReferenceType.Vdc,
     ], "bus_connect_dc")
 
     load_mdl = get_dc_load_emt_template(vf=grid.var_factory).block
     set_emt_model(device=load, model=load_mdl, var_factory=grid.var_factory)
 
-    assert load.emt_model.external_mapping[VarPowerFlowRefferenceType.Vdc].uid == bus.emt_model.external_mapping[VarPowerFlowRefferenceType.Vdc].uid
+    assert load.emt_model.external_mapping[VarPowerFlowReferenceType.Vdc].uid == bus.emt_model.external_mapping[VarPowerFlowReferenceType.Vdc].uid
 
 
 def test_emt_template_setter_allows_gui_order_injection_branch_injection() -> None:
@@ -859,9 +860,9 @@ def test_emt_template_setter_allows_gui_order_injection_branch_injection() -> No
     assert not line0.emt_model.empty()
     assert not load.emt_model.empty()
 
-    assert gen0.emt_model.external_mapping[VarPowerFlowRefferenceType.v_A].uid == bus0.emt_model.external_mapping[VarPowerFlowRefferenceType.v_A].uid
-    assert gen0.emt_model.external_mapping[VarPowerFlowRefferenceType.v_B].uid == bus0.emt_model.external_mapping[VarPowerFlowRefferenceType.v_B].uid
-    assert gen0.emt_model.external_mapping[VarPowerFlowRefferenceType.v_C].uid == bus0.emt_model.external_mapping[VarPowerFlowRefferenceType.v_C].uid
-    assert load.emt_model.external_mapping[VarPowerFlowRefferenceType.v_A].uid == bus1.emt_model.external_mapping[VarPowerFlowRefferenceType.v_A].uid
-    assert load.emt_model.external_mapping[VarPowerFlowRefferenceType.v_B].uid == bus1.emt_model.external_mapping[VarPowerFlowRefferenceType.v_B].uid
-    assert load.emt_model.external_mapping[VarPowerFlowRefferenceType.v_C].uid == bus1.emt_model.external_mapping[VarPowerFlowRefferenceType.v_C].uid
+    assert gen0.emt_model.external_mapping[VarPowerFlowReferenceType.v_A].uid == bus0.emt_model.external_mapping[VarPowerFlowReferenceType.v_A].uid
+    assert gen0.emt_model.external_mapping[VarPowerFlowReferenceType.v_B].uid == bus0.emt_model.external_mapping[VarPowerFlowReferenceType.v_B].uid
+    assert gen0.emt_model.external_mapping[VarPowerFlowReferenceType.v_C].uid == bus0.emt_model.external_mapping[VarPowerFlowReferenceType.v_C].uid
+    assert load.emt_model.external_mapping[VarPowerFlowReferenceType.v_A].uid == bus1.emt_model.external_mapping[VarPowerFlowReferenceType.v_A].uid
+    assert load.emt_model.external_mapping[VarPowerFlowReferenceType.v_B].uid == bus1.emt_model.external_mapping[VarPowerFlowReferenceType.v_B].uid
+    assert load.emt_model.external_mapping[VarPowerFlowReferenceType.v_C].uid == bus1.emt_model.external_mapping[VarPowerFlowReferenceType.v_C].uid

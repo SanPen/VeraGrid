@@ -8,7 +8,7 @@ from __future__ import annotations
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import Var
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
 
 
 def get_dc_current_source_emt_template(vf: VarFactory,
@@ -29,8 +29,8 @@ def get_dc_current_source_emt_template(vf: VarFactory,
     templ.name = name
     templ.block.name = name
 
-    v_dc: Var = vf.add_var(name=f"v_dc_{name}", reference=VarPowerFlowRefferenceType.Vdc)
-    i_dc: Var = vf.add_var(name=f"i_dc_{name}", reference=VarPowerFlowRefferenceType.Idc)
+    v_dc: Var = vf.add_var(name=f"v_dc_{name}", reference=VarPowerFlowReferenceType.Vdc)
+    i_dc: Var = vf.add_var(name=f"i_dc_{name}", reference=VarPowerFlowReferenceType.Idc)
     i_src: Var = vf.add_var(name=f"I_src_{name}")
     templ.block.event_dict[i_src] = vf.add_const(float(source_current_value))
 
@@ -39,8 +39,8 @@ def get_dc_current_source_emt_template(vf: VarFactory,
     templ.block.algebraic_eqs = [i_dc - i_src]
     templ.block.out_vars = [i_dc]
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.Vdc: v_dc,
-        VarPowerFlowRefferenceType.Idc: i_dc,
+        VarPowerFlowReferenceType.Vdc: v_dc,
+        VarPowerFlowReferenceType.Idc: i_dc,
     }
     templ.block.init_eqs[i_dc] = i_src
     return templ
@@ -62,17 +62,17 @@ def get_controlled_dc_current_source_emt_template(vf: VarFactory,
     templ.name = name
     templ.block.name = name
 
-    v_dc: Var = vf.add_var(name=f"v_dc_{name}", reference=VarPowerFlowRefferenceType.Vdc)
+    v_dc: Var = vf.add_var(name=f"v_dc_{name}", reference=VarPowerFlowReferenceType.Vdc)
     i_cmd: Var = vf.add_var(name=f"i_cmd_{name}")
-    i_dc: Var = vf.add_var(name=f"i_dc_{name}", reference=VarPowerFlowRefferenceType.Idc)
+    i_dc: Var = vf.add_var(name=f"i_dc_{name}", reference=VarPowerFlowReferenceType.Idc)
 
     templ.block.in_vars = [v_dc, i_cmd]
     templ.block.algebraic_vars = [i_dc]
     templ.block.algebraic_eqs = [i_dc - i_cmd]
     templ.block.out_vars = [i_dc]
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.Vdc: v_dc,
-        VarPowerFlowRefferenceType.Idc: i_dc,
+        VarPowerFlowReferenceType.Vdc: v_dc,
+        VarPowerFlowReferenceType.Idc: i_dc,
     }
     templ.block.init_eqs[i_dc] = i_cmd
     return templ
@@ -98,8 +98,8 @@ def get_dc_voltage_source_emt_template(vf: VarFactory,
     templ.name = name
     templ.block.name = name
 
-    v_dc: Var = vf.add_var(name=f"v_dc_{name}", reference=VarPowerFlowRefferenceType.Vdc)
-    i_dc: Var = vf.add_var(name=f"i_dc_{name}", reference=VarPowerFlowRefferenceType.Idc)
+    v_dc: Var = vf.add_var(name=f"v_dc_{name}", reference=VarPowerFlowReferenceType.Vdc)
+    i_dc: Var = vf.add_var(name=f"i_dc_{name}", reference=VarPowerFlowReferenceType.Idc)
     v_src: Var = vf.add_var(name=f"V_src_{name}")
     g_src: Var = vf.add_var(name=f"g_src_{name}")
     templ.block.event_dict[v_src] = vf.add_const(float(source_voltage_value))
@@ -110,8 +110,8 @@ def get_dc_voltage_source_emt_template(vf: VarFactory,
     templ.block.algebraic_eqs = [i_dc - g_src * (v_src - v_dc)]
     templ.block.out_vars = [i_dc]
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.Vdc: v_dc,
-        VarPowerFlowRefferenceType.Idc: i_dc,
+        VarPowerFlowReferenceType.Vdc: v_dc,
+        VarPowerFlowReferenceType.Idc: i_dc,
     }
     templ.block.init_eqs[i_dc] = g_src * (v_src - v_dc)
     return templ
@@ -136,9 +136,9 @@ def get_controlled_dc_voltage_source_emt_template(vf: VarFactory,
     templ.name = name
     templ.block.name = name
 
-    v_dc: Var = vf.add_var(name=f"v_dc_{name}", reference=VarPowerFlowRefferenceType.Vdc)
+    v_dc: Var = vf.add_var(name=f"v_dc_{name}", reference=VarPowerFlowReferenceType.Vdc)
     v_cmd: Var = vf.add_var(name=f"v_cmd_{name}")
-    i_dc: Var = vf.add_var(name=f"i_dc_{name}", reference=VarPowerFlowRefferenceType.Idc)
+    i_dc: Var = vf.add_var(name=f"i_dc_{name}", reference=VarPowerFlowReferenceType.Idc)
     g_src: Var = vf.add_var(name=f"g_src_{name}")
     templ.block.event_dict[g_src] = vf.add_const(float(source_conductance_value))
 
@@ -147,8 +147,8 @@ def get_controlled_dc_voltage_source_emt_template(vf: VarFactory,
     templ.block.algebraic_eqs = [i_dc - g_src * (v_cmd - v_dc)]
     templ.block.out_vars = [i_dc]
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.Vdc: v_dc,
-        VarPowerFlowRefferenceType.Idc: i_dc,
+        VarPowerFlowReferenceType.Vdc: v_dc,
+        VarPowerFlowReferenceType.Idc: i_dc,
     }
     templ.block.init_eqs[i_dc] = g_src * (v_cmd - v_dc)
     return templ

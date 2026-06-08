@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 
 
@@ -41,10 +41,10 @@ def get_load2_rms_template(var_factory: VarFactory, name = "Load rms template") 
                 Ql - Ql0]
 
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.Va: inputs[0],
-        VarPowerFlowRefferenceType.Vm: inputs[1],
-        VarPowerFlowRefferenceType.P: Pl,
-        VarPowerFlowRefferenceType.Q: Ql
+        VarPowerFlowReferenceType.Va: inputs[0],
+        VarPowerFlowReferenceType.Vm: inputs[1],
+        VarPowerFlowReferenceType.P: Pl,
+        VarPowerFlowReferenceType.Q: Ql
     }
 
     templ.block.in_vars = inputs

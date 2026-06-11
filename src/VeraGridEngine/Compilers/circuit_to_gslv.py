@@ -5,7 +5,7 @@
 from __future__ import annotations
 import time
 import numpy as np
-from typing import List, Dict, Union, TYPE_CHECKING
+from typing import List, Dict, Union, Tuple, TYPE_CHECKING
 
 
 from VeraGridEngine.Utils.ThirdParty.gslv.gslv_activation import (pg, build_status_dict, tap_module_control_mode_dict,
@@ -22,10 +22,10 @@ import VeraGridEngine.Devices as dev
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
 from VeraGridEngine.Simulations.PowerFlow.power_flow_ts_results import PowerFlowTimeSeriesResults
-from VeraGridEngine.enumerations import ShuntControlMode
-from VeraGridEngine.enumerations import TapModuleControl, TapPhaseControl
-from VeraGridEngine.enumerations import SolverType, OpfDispatchMode, MIPSolvers, ZonalGrouping, TimeGrouping
-from VeraGridEngine.enumerations import InvestmentEvaluationMethod, InvestmentsEvaluationObjectives
+from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
+from VeraGridEngine.enumerations import (ShuntControlMode, TapModuleControl, TapPhaseControl, SolverType,
+                                         OpfDispatchMode, MIPSolvers, ZonalGrouping, TimeGrouping,
+                                         InvestmentEvaluationMethod, InvestmentsEvaluationObjectives)
 
 from VeraGridEngine.basic_structures import Logger
 
@@ -2853,7 +2853,8 @@ def gslv_opf(circuit: MultiCircuit,
     opf_options = get_gslv_opf_options(opf_options, circuit, gslv_grid)
 
     if time_series:
-        # it is already sliced to the relevant time indices
+        # Keep the GSLV grid at the circuit time resolution and ask the solver
+        # for the requested global time indices explicitly.
         if time_indices is None:
             time_indices = [i for i in range(circuit.get_time_number())]
         else:
@@ -2868,7 +2869,8 @@ def gslv_opf(circuit: MultiCircuit,
     opf_res = pg.optimal_power_flow(
         grid=gslv_grid,
         options=opf_options,
-        n_threads=n_threads
+        n_threads=n_threads,
+        time_indices=time_indices,
     )
 
     logger.add_info("gslv time", value=f"{(time.time() - t0)} s")

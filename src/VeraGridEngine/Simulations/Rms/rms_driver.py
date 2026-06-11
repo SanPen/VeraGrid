@@ -50,6 +50,32 @@ def _collect_rms_group_parameter_values(problem: RmsProblemDae) -> Dict[str, flo
     return parameter_values
 
 
+def _collect_rms_group_initial_parameter_values(problem: RmsProblemDae) -> Dict[str, float]:
+    """
+    Export one event-group initial parameter snapshot from the RMS problem.
+
+    :param problem: RMS problem instance before event evolution.
+    :return: Initial parameter scalar map keyed by ``device_idtag:param_name``.
+    """
+    parameter_values: Dict[str, float] = dict()
+    event_parameter_count: int = len(problem._variable_parameters)
+    parameter_index: int
+
+    if problem._variable_parameters_values is not None:
+        for parameter_index in range(event_parameter_count):
+            parameter_var = problem._variable_parameters[parameter_index]
+            device_idtag: str | None = problem._event_parameter_device_idtags.get(parameter_var.uid, None)
+            if device_idtag is not None:
+                parameter_key: str = str(device_idtag) + ":" + str(parameter_var.name)
+                parameter_values[parameter_key] = float(problem._variable_parameters_values[parameter_index])
+            else:
+                pass
+    else:
+        pass
+
+    return parameter_values
+
+
 class RmsSimulationDriver(DriverTemplate):
     __slots__ = (
         "pf_results",
@@ -119,6 +145,10 @@ class RmsSimulationDriver(DriverTemplate):
 
         # self.options.problem_type = RmsProblemTypes.PowerBalanceVectorized
 
+        if self.is_cancel():
+            self.report_text("Cancelled!")
+            return
+
         problem = build_rms_problem(
             grid=self.grid,
             options=self.options,
@@ -126,6 +156,11 @@ class RmsSimulationDriver(DriverTemplate):
             progress_signal=self.progress_signal,
         )
         self.problem = problem
+
+        if self.is_cancel():
+            self.report_text("Cancelled!")
+            return
+
         # The results container keeps the full declared event-group layout so
         # downstream code can preserve stable event-group identities. The extra
         # availability mask records which of those declared groups are actually
@@ -144,6 +179,10 @@ class RmsSimulationDriver(DriverTemplate):
         )
 
         for group_idx, rms_events_group in enumerate(rms_events_groups):
+
+            if self.is_cancel():
+                self.report_text("Cancelled!")
+                return
 
             if rms_events_group.active:
 
@@ -173,7 +212,8 @@ class RmsSimulationDriver(DriverTemplate):
                         t0=0,
                         t_end=self.options.simulation_time,
                         h=self.options.time_step,
-                        max_iter=self.options.max_iter
+                        max_iter=self.options.max_iter,
+                        cancel_checker=self.is_cancel,
                     )
 
                 else:
@@ -188,13 +228,19 @@ class RmsSimulationDriver(DriverTemplate):
                         t0=0,
                         t_end=self.options.simulation_time,
                         h=self.options.time_step,
-                        max_iter=self.options.max_iter
+                        max_iter=self.options.max_iter,
+                        cancel_checker=self.is_cancel,
                     )
                 
                 _t_start = time.time()
+                self.results.initial_parameter_value_maps[group_idx] = _collect_rms_group_initial_parameter_values(problem=problem)
                 t, y, well_initialized, converged = solver.simulate()
                 _t_end = time.time()
                 # print(f"RMS simulation time: {_t_end - _t_start:.4f} s")
+
+                if self.is_cancel():
+                    self.report_text("Cancelled!")
+                    return
 
                 self.results.converged[group_idx] = converged
                 self.results.well_initialized[group_idx] = well_initialized

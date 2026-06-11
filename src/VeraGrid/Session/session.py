@@ -368,10 +368,23 @@ class SimulationSession:
 
         driver_tpe = SimulationTypes(study_name)
 
+        pf_results = None
+        if driver_tpe == SimulationTypes.RmsSmallSignal_run:
+            _, pf_results = self.power_flow
+            if pf_results is None:
+                logger.add_warning(
+                    msg="Power Flow results must be loaded before RMS Small Signal stability results",
+                    device=study_name,
+                )
+                return logger
+        else:
+            pass
+
         drv: DRIVER_OBJECTS | None = create_driver(
             grid=grid,
             driver_tpe=driver_tpe,
-            time_indices=time_indices
+            time_indices=time_indices,
+            pf_results=pf_results,
         )
 
         if drv is not None:

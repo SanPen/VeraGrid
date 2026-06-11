@@ -9,6 +9,8 @@ import os
 from itertools import product
 
 import numpy as np
+import scipy.sparse as sp
+from scipy.sparse.csgraph import connected_components
 
 from VeraGridEngine.basic_structures import Vec
 from VeraGridEngine.Utils.Symbolic.symbolic import Expr, Comparison, Const, get_expression_vars
@@ -46,11 +48,14 @@ class RmsProblemMTI(RmsProblemPhasor):
         self._j_ineq_dx_fn = None
         self._j_ineq_x_static_fn = None
         self._j_ineq_dx_static_fn = None
+        self._j_eq_x_static_fn = None
+        self._j_eq_dx_static_fn = None
         self._mti_bool_param_indices: list[int] = []
         self._mti_bool_guard_compiled_by_param_idx: dict[int, object] = {}
         self._mti_bool_guard_var_positions_by_param_idx: dict[int, np.ndarray] = {}
         self._mti_incidence_includes_inequalities = False
         self._compile_mti_inequalities()
+        self._compile_mti_equality_jacobians()
         self._compile_mti_boolean_guards()
         self._initialize_mti_booleans_at_t0()
         self._mti_incidence: np.ndarray | None = None
@@ -66,6 +71,7 @@ class RmsProblemMTI(RmsProblemPhasor):
         self._mti_col_to_continuous_var_idx_map: dict[int, int] = {}
         self._mti_col_meta: list[tuple[str, int, object | None]] = []
         self._mti_row_meta: list[tuple[str, int]] = []
+        self._mti_base_xp_incidence_mask: np.ndarray | None = None
         self._ineq_var_positions: list[np.ndarray] = []
         self._build_inequality_variable_positions()
 
@@ -270,6 +276,36 @@ class RmsProblemMTI(RmsProblemPhasor):
             static=True,
         )
 
+    def _compile_mti_equality_jacobians(self) -> None:
+        eqs = list(self._state_eqs) + list(self._algebraic_eqs)
+        if len(eqs) == 0:
+            self._j_eq_x_static_fn = None
+            self._j_eq_dx_static_fn = None
+            return
+
+        self._j_eq_x_static_fn = SymbolicJacobian(
+            eqs=eqs,
+            variables=self._state_algeb_vars,
+            compiler_names_dict=self._compiler_names_dict,
+            alias_names_dict=self._alias_names_dict,
+            VARS_NAME=self.VARS_NAME,
+            DIFF_NAME=self.DIFF_NAME,
+            EVENT_PARAMS_NAME=self.VARIABLE_PARAMS_NAME,
+            PARAMS_NAME=self.CONSTANT_PARAMS_NAME,
+            static=True,
+        )
+        self._j_eq_dx_static_fn = SymbolicJacobian(
+            eqs=eqs,
+            variables=self._diff_vars,
+            compiler_names_dict=self._compiler_names_dict,
+            alias_names_dict=self._alias_names_dict,
+            VARS_NAME=self.VARS_NAME,
+            DIFF_NAME=self.DIFF_NAME,
+            EVENT_PARAMS_NAME=self.VARIABLE_PARAMS_NAME,
+            PARAMS_NAME=self.CONSTANT_PARAMS_NAME,
+            static=True,
+        )
+
     def _compile_mti_boolean_guards(self) -> None:
         self._mti_bool_param_indices = []
         self._mti_bool_guard_compiled_by_param_idx = {}
@@ -339,6 +375,65 @@ class RmsProblemMTI(RmsProblemPhasor):
         Compute inequality vector G (constraint convention: G <= 0).
         """
         return np.asarray(self.rhs_inequalities(x, dx), dtype=float)
+
+    def make_mti_direct_state(self, x_ref: Vec, dx_ref: Vec) -> tuple[Vec, Vec]:
+        return np.asarray(x_ref, dtype=float).copy(), np.asarray(dx_ref, dtype=float).copy()
+
+    def mti_direct_pack(self, x: Vec, dx: Vec, var_idx: np.ndarray) -> Vec:
+        vals: list[float] = []
+        for idx in np.asarray(var_idx, dtype=int):
+            col = self._mti_continuous_var_idx_to_col.get(int(idx), None)
+            if col is None:
+                vals.append(float(np.asarray(x, dtype=float)[int(idx)]))
+                continue
+            if col < len(self._mti_xp_vars):
+                dvar = self._mti_xp_vars[int(col)]
+                didx = self._uid2idx_diff.get(dvar.uid, None)
+                vals.append(float(np.asarray(dx, dtype=float)[int(didx)]) if didx is not None else 0.0)
+            else:
+                vals.append(float(np.asarray(x, dtype=float)[int(idx)]))
+        return np.asarray(vals, dtype=float)
+
+    def mti_direct_apply(self, w: Vec, x_ref: Vec, dx_ref: Vec, var_idx: np.ndarray) -> tuple[Vec, Vec]:
+        x = np.asarray(x_ref, dtype=float).copy()
+        dx = np.asarray(dx_ref, dtype=float).copy()
+        for val, idx in zip(np.asarray(w, dtype=float), np.asarray(var_idx, dtype=int)):
+            col = self._mti_continuous_var_idx_to_col.get(int(idx), None)
+            if col is None:
+                x[int(idx)] = float(val)
+                continue
+            if col < len(self._mti_xp_vars):
+                dvar = self._mti_xp_vars[int(col)]
+                didx = self._uid2idx_diff.get(dvar.uid, None)
+                if didx is not None:
+                    dx[int(didx)] = float(val)
+            else:
+                x[int(idx)] = float(val)
+        return x, dx
+
+    def compute_mti_direct_equalities(self, x: Vec, dx: Vec) -> Vec:
+        f_algeb = self.rhs_algebraic(x, dx)
+        if len(self._state_eqs) > 0:
+            f_state = self.rhs_state(x, dx)
+            return np.r_[f_state, f_algeb]
+        return np.asarray(f_algeb, dtype=float)
+
+    def jacobian_mti_direct_equalities(self, x: Vec, dx: Vec, var_idx: np.ndarray) -> sp.csr_matrix:
+        rows = len(self._state_eqs) + len(self._algebraic_eqs)
+        cols: list[sp.spmatrix] = []
+        jx = self._j_eq_x_static_fn(x, dx, self._variable_parameters_values, self._constant_params, 0.0).tocsr() if self._j_eq_x_static_fn is not None else None
+        jdx = self._j_eq_dx_static_fn(x, dx, self._variable_parameters_values, self._constant_params, 0.0).tocsr() if self._j_eq_dx_static_fn is not None else None
+        for idx in np.asarray(var_idx, dtype=int):
+            col = self._mti_continuous_var_idx_to_col.get(int(idx), None)
+            if col is not None and col < len(self._mti_xp_vars):
+                dvar = self._mti_xp_vars[int(col)]
+                didx = self._uid2idx_diff.get(dvar.uid, None)
+                cols.append(jdx[:, int(didx)] if (jdx is not None and didx is not None) else sp.csr_matrix((rows, 1)))
+            else:
+                cols.append(jx[:, int(idx)] if jx is not None else sp.csr_matrix((rows, 1)))
+        if len(cols) == 0:
+            return sp.csr_matrix((rows, 0))
+        return sp.hstack(cols, format="csr")
 
     def update_mti_boolean_state(self, x: Vec, dx: Vec, xn: Vec, h: float) -> Vec:
         """
@@ -489,6 +584,316 @@ class RmsProblemMTI(RmsProblemPhasor):
         n_sub = len({int(r.subproblem) for r in order}) if len(order) > 0 else 0
         n_subset = len({int(r.subset) for r in order}) if len(order) > 0 else 0
         print(f"[MTI-INC] solving_order_rows={len(order)} subsets={n_subset} subproblems={n_sub}")
+        if os.getenv("RMS_MTI_INCIDENCE_DIAG", "0").strip() in ("1", "true", "True", "yes", "on"):
+            self.print_mti_incidence_diagnostics()
+
+    def print_mti_solving_order_summary(self) -> None:
+        order = list(getattr(self, "_mti_solving_order", []) or [])
+        if len(order) == 0:
+            print("[MTI-ORDER-DETAIL] empty")
+            return
+
+        print("[MTI-ORDER-DETAIL] subproblem decomposition")
+        by_subproblem: dict[int, list] = {}
+        for row in order:
+            by_subproblem.setdefault(int(row.subproblem), []).append(row)
+
+        for sub_id in sorted(by_subproblem):
+            rows = by_subproblem[sub_id]
+            subsets = sorted(set(int(r.subset) for r in rows))
+            n_explicit = sum(1 for r in rows if int(r.explicit) == 1)
+            row_counts = {"eq": 0, "ineq": 0, "unknown": 0}
+            col_counts = {"xp": 0, "y": 0, "z": 0, "unknown": 0}
+            eq_indices: list[int] = []
+            ineq_indices: list[int] = []
+
+            for item in rows:
+                row_idx = int(item.eq_idx) - 1
+                if 0 <= row_idx < len(self._mti_row_meta):
+                    kind, local_idx = self._mti_row_meta[row_idx]
+                    row_counts[kind if kind in row_counts else "unknown"] += 1
+                    if kind == "eq":
+                        eq_indices.append(int(local_idx))
+                    elif kind == "ineq":
+                        ineq_indices.append(int(local_idx))
+                else:
+                    row_counts["unknown"] += 1
+
+                col_idx = int(item.var_idx) - 1
+                if 0 <= col_idx < len(self._mti_col_meta):
+                    kind = str(self._mti_col_meta[col_idx][0])
+                    col_counts[kind if kind in col_counts else "unknown"] += 1
+                else:
+                    col_counts["unknown"] += 1
+
+            print(
+                f"[MTI-ORDER-DETAIL] subproblem={sub_id} subsets={subsets} rows={len(rows)} "
+                f"explicit={n_explicit} eq={row_counts['eq']} ineq={row_counts['ineq']} "
+                f"vars_xp={col_counts['xp']} vars_y={col_counts['y']} vars_z={col_counts['z']}"
+            )
+            if len(eq_indices) > 0:
+                print(
+                    f"[MTI-ORDER-DETAIL]   eq_range={min(eq_indices)}..{max(eq_indices)} "
+                    f"eq_count={len(set(eq_indices))}"
+                )
+            if len(ineq_indices) > 0:
+                print(
+                    f"[MTI-ORDER-DETAIL]   ineq_indices={sorted(set(ineq_indices))}"
+                )
+
+    def print_mti_incidence_diagnostics(self) -> None:
+        inc = self._mti_incidence
+        order = list(getattr(self, "_mti_solving_order", []) or [])
+        if inc is None or inc.size == 0 or len(order) == 0:
+            print("[MTI-DIAG] empty incidence/order")
+            return
+
+        by_subproblem: dict[int, list[MTISubProblemRow]] = {}
+        for item in order:
+            by_subproblem.setdefault(int(item.subproblem), []).append(item)
+        largest_sub, largest_rows = max(by_subproblem.items(), key=lambda kv: len(kv[1]))
+        block_rows = np.asarray(sorted({int(r.eq_idx) - 1 for r in largest_rows}), dtype=int)
+        block_cols = np.asarray(sorted({int(r.var_idx) - 1 for r in largest_rows}), dtype=int)
+        block = inc[np.ix_(block_rows, block_cols)] if block_rows.size and block_cols.size else np.zeros((0, 0), dtype=int)
+
+        print(
+            f"[MTI-DIAG] largest_subproblem={largest_sub} rows={block_rows.size} "
+            f"cols={block_cols.size} nnz={int(np.count_nonzero(block))}"
+        )
+        self._print_mti_diag_membership(block_rows, block_cols)
+        self._print_mti_diag_edge_counts(inc, block_rows, block_cols)
+        self._print_mti_diag_ablation_summary(inc)
+        self._print_mti_diag_degree_summary(inc, block_rows, block_cols)
+        self._print_mti_diag_bridge_candidates(inc, block_rows, block_cols)
+
+    def _print_mti_diag_membership(self, rows: np.ndarray, cols: np.ndarray) -> None:
+        row_counts: dict[str, int] = {}
+        col_counts: dict[str, int] = {}
+        row_preview: list[str] = []
+        col_preview: list[str] = []
+
+        for r in rows.tolist():
+            label = self._mti_row_kind_label(int(r))
+            row_counts[label] = row_counts.get(label, 0) + 1
+            if len(row_preview) < 12:
+                row_preview.append(self._mti_row_label(int(r)))
+        for c in cols.tolist():
+            kind = self._mti_col_kind(int(c))
+            col_counts[kind] = col_counts.get(kind, 0) + 1
+            if len(col_preview) < 12:
+                col_preview.append(self._mti_col_label(int(c)))
+
+        print(f"[MTI-DIAG] row_kinds={row_counts}")
+        print(f"[MTI-DIAG] col_kinds={col_counts}")
+        print(f"[MTI-DIAG] rows_head={row_preview}")
+        print(f"[MTI-DIAG] cols_head={col_preview}")
+
+    def _print_mti_diag_edge_counts(self, inc: np.ndarray, rows: np.ndarray, cols: np.ndarray) -> None:
+        if rows.size == 0 or cols.size == 0:
+            return
+        block = inc[np.ix_(rows, cols)]
+        counts_by_col_kind: dict[str, int] = {}
+        counts_by_row_kind: dict[str, int] = {}
+        for local_col, col in enumerate(cols.tolist()):
+            kind = self._mti_col_kind(int(col))
+            counts_by_col_kind[kind] = counts_by_col_kind.get(kind, 0) + int(np.count_nonzero(block[:, local_col]))
+        for local_row, row in enumerate(rows.tolist()):
+            kind = self._mti_row_kind_label(int(row))
+            counts_by_row_kind[kind] = counts_by_row_kind.get(kind, 0) + int(np.count_nonzero(block[local_row, :]))
+        print(f"[MTI-DIAG] block_edges_by_col_kind={counts_by_col_kind}")
+        print(f"[MTI-DIAG] block_edges_by_row_kind={counts_by_row_kind}")
+
+    def _print_mti_diag_ablation_summary(self, inc: np.ndarray) -> None:
+        ablations: list[tuple[str, np.ndarray]] = [("original", inc.copy())]
+
+        if self._mti_base_xp_incidence_mask is not None and self._mti_base_xp_incidence_mask.shape == inc.shape:
+            m = inc.copy()
+            m[self._mti_base_xp_incidence_mask] = 0
+            ablations.append(("remove_base_x_to_xp_edges", m))
+
+        z_cols = [i for i in range(inc.shape[1]) if self._mti_col_kind(i) == "z"]
+        if z_cols:
+            m = inc.copy()
+            m[:, np.asarray(z_cols, dtype=int)] = 0
+            ablations.append(("remove_boolean_columns", m))
+
+        ineq_rows = [i for i in range(inc.shape[0]) if self._mti_row_kind_label(i) == "ineq"]
+        if ineq_rows:
+            m = inc.copy()
+            m[np.asarray(ineq_rows, dtype=int), :] = 0
+            ablations.append(("remove_inequality_rows", m))
+
+        network_rows = [i for i in range(inc.shape[0]) if self._mti_row_is_network_like(i, inc)]
+        if network_rows:
+            m = inc.copy()
+            m[np.asarray(network_rows, dtype=int), :] = 0
+            ablations.append(("remove_network_like_rows", m))
+
+        branch_rows = [i for i in range(inc.shape[0]) if self._mti_row_is_branch_current_like(i, inc)]
+        if branch_rows:
+            m = inc.copy()
+            m[np.asarray(branch_rows, dtype=int), :] = 0
+            ablations.append(("remove_branch_current_like_rows", m))
+
+        print("[MTI-DIAG] component ablations")
+        for name, mat in ablations:
+            summary = self._mti_bipartite_component_summary(mat)
+            print(
+                f"[MTI-DIAG]   {name}: row_components={summary['row_components']} "
+                f"largest_rows={summary['largest_rows']} sizes_head={summary['sizes_head']} "
+                f"nonzero_rows={summary['nonzero_rows']} nonzero_cols={summary['nonzero_cols']}"
+            )
+
+    def _print_mti_diag_degree_summary(self, inc: np.ndarray, rows: np.ndarray, cols: np.ndarray) -> None:
+        if rows.size == 0 or cols.size == 0:
+            return
+        block = inc[np.ix_(rows, cols)]
+        row_deg = np.asarray(block.sum(axis=1), dtype=int).reshape(-1)
+        col_deg = np.asarray(block.sum(axis=0), dtype=int).reshape(-1)
+        top_rows = np.argsort(-row_deg, kind="stable")[:15]
+        top_cols = np.argsort(-col_deg, kind="stable")[:15]
+        print("[MTI-DIAG] high_degree_rows")
+        for idx in top_rows.tolist():
+            if int(row_deg[idx]) <= 0:
+                continue
+            print(f"[MTI-DIAG]   degree={int(row_deg[idx])} {self._mti_row_label(int(rows[idx]))}")
+        print("[MTI-DIAG] high_degree_cols")
+        for idx in top_cols.tolist():
+            if int(col_deg[idx]) <= 0:
+                continue
+            print(f"[MTI-DIAG]   degree={int(col_deg[idx])} {self._mti_col_label(int(cols[idx]))}")
+
+    def _print_mti_diag_bridge_candidates(self, inc: np.ndarray, rows: np.ndarray, cols: np.ndarray) -> None:
+        if rows.size == 0 or cols.size == 0:
+            return
+        block = inc[np.ix_(rows, cols)]
+        base = self._mti_bipartite_component_summary(block)
+        base_largest = int(base["largest_rows"])
+        row_deg = np.asarray(block.sum(axis=1), dtype=int).reshape(-1)
+        col_deg = np.asarray(block.sum(axis=0), dtype=int).reshape(-1)
+        row_candidates = np.argsort(-row_deg, kind="stable")[:30]
+        col_candidates = np.argsort(-col_deg, kind="stable")[:30]
+
+        row_effects: list[tuple[int, int, int, int]] = []
+        for idx in row_candidates.tolist():
+            if int(row_deg[idx]) <= 0:
+                continue
+            m = block.copy()
+            m[int(idx), :] = 0
+            s = self._mti_bipartite_component_summary(m)
+            row_effects.append((int(s["row_components"]), base_largest - int(s["largest_rows"]), int(row_deg[idx]), int(idx)))
+
+        col_effects: list[tuple[int, int, int, int]] = []
+        for idx in col_candidates.tolist():
+            if int(col_deg[idx]) <= 0:
+                continue
+            m = block.copy()
+            m[:, int(idx)] = 0
+            s = self._mti_bipartite_component_summary(m)
+            col_effects.append((int(s["row_components"]), base_largest - int(s["largest_rows"]), int(col_deg[idx]), int(idx)))
+
+        row_effects.sort(reverse=True)
+        col_effects.sort(reverse=True)
+        print("[MTI-DIAG] row_bridge_candidates")
+        for comps, largest_drop, degree, idx in row_effects[:10]:
+            print(
+                f"[MTI-DIAG]   comps_after={comps} largest_drop={largest_drop} "
+                f"degree={degree} {self._mti_row_label(int(rows[idx]))}"
+            )
+        print("[MTI-DIAG] col_bridge_candidates")
+        for comps, largest_drop, degree, idx in col_effects[:10]:
+            print(
+                f"[MTI-DIAG]   comps_after={comps} largest_drop={largest_drop} "
+                f"degree={degree} {self._mti_col_label(int(cols[idx]))}"
+            )
+
+    def _mti_bipartite_component_summary(self, incidence: np.ndarray) -> dict[str, object]:
+        mat = (np.asarray(incidence) != 0).astype(int)
+        n_row, n_col = mat.shape
+        if n_row == 0 or n_col == 0:
+            return {"row_components": 0, "largest_rows": 0, "sizes_head": [], "nonzero_rows": 0, "nonzero_cols": 0}
+
+        coo = sp.coo_matrix(mat)
+        upper = sp.csr_matrix((np.ones(coo.nnz, dtype=int), (coo.row, n_row + coo.col)), shape=(n_row + n_col, n_row + n_col))
+        graph = upper + upper.T
+        n_comp, labels = connected_components(graph, directed=False, return_labels=True)
+        row_deg = np.asarray(mat.sum(axis=1), dtype=int).reshape(-1)
+        col_deg = np.asarray(mat.sum(axis=0), dtype=int).reshape(-1)
+        active_rows = np.where(row_deg > 0)[0]
+        active_cols = np.where(col_deg > 0)[0]
+
+        sizes: list[int] = []
+        for comp in range(int(n_comp)):
+            row_count = int(np.sum(labels[:n_row] == comp))
+            col_count = int(np.sum(labels[n_row:] == comp))
+            if row_count > 0 and col_count > 0:
+                sizes.append(row_count)
+        sizes.sort(reverse=True)
+        return {
+            "row_components": len(sizes),
+            "largest_rows": sizes[0] if sizes else 0,
+            "sizes_head": sizes[:8],
+            "nonzero_rows": int(active_rows.size),
+            "nonzero_cols": int(active_cols.size),
+        }
+
+    def _mti_row_kind_label(self, row: int) -> str:
+        if 0 <= row < len(self._mti_row_meta):
+            kind, local_idx = self._mti_row_meta[row]
+            if kind == "eq":
+                n_state = len(self._state_eqs)
+                return "state_eq" if int(local_idx) < n_state else "alg_eq"
+            return str(kind)
+        return "unknown"
+
+    def _mti_row_label(self, row: int) -> str:
+        if 0 <= row < len(self._mti_row_meta):
+            kind, local_idx = self._mti_row_meta[row]
+            if kind == "eq":
+                n_state = len(self._state_eqs)
+                if int(local_idx) < n_state:
+                    return f"row={row}:state_eq[{int(local_idx)}]"
+                return f"row={row}:alg_eq[{int(local_idx) - n_state}]"
+            return f"row={row}:ineq[{int(local_idx)}]"
+        return f"row={row}:unknown"
+
+    def _mti_col_kind(self, col: int) -> str:
+        if 0 <= col < len(self._mti_col_meta):
+            return str(self._mti_col_meta[col][0])
+        return "unknown"
+
+    def _mti_col_label(self, col: int) -> str:
+        if 0 <= col < len(self._mti_col_meta):
+            kind, local_idx, obj = self._mti_col_meta[col]
+            return f"col={col}:{kind}[{int(local_idx)}]:{self._mti_obj_name(obj)}"
+        return f"col={col}:unknown"
+
+    @staticmethod
+    def _mti_obj_name(obj: object | None) -> str:
+        if obj is None:
+            return "None"
+        for attr in ("name", "idtag", "code", "device", "label"):
+            val = getattr(obj, attr, None)
+            if val is not None:
+                text = str(val)
+                if len(text) > 0:
+                    return text
+        return type(obj).__name__
+
+    def _mti_row_is_network_like(self, row: int, inc: np.ndarray) -> bool:
+        if self._mti_row_kind_label(row) != "alg_eq":
+            return False
+        cols = np.where(inc[int(row), :] != 0)[0]
+        names = [self._mti_col_label(int(c)) for c in cols.tolist()]
+        return any(":Vr" in name or ":Vi" in name or "Vr" in name or "Vi" in name for name in names)
+
+    def _mti_row_is_branch_current_like(self, row: int, inc: np.ndarray) -> bool:
+        if self._mti_row_kind_label(row) != "alg_eq":
+            return False
+        cols = np.where(inc[int(row), :] != 0)[0]
+        names = [self._mti_col_label(int(c)) for c in cols.tolist()]
+        needles = ("Irf", "Iif", "Irt", "Iit", "branch")
+        return any(any(needle in name for needle in needles) for name in names)
 
     def _build_incidence_from_equation_structure(self) -> np.ndarray:
         """
@@ -547,6 +952,7 @@ class RmsProblemMTI(RmsProblemPhasor):
         off_bool = n_xp + n_y
         n_rows = n_eq + (n_ineq if include_ineq_rows else 0)
         incidence_matrix = np.zeros((n_rows, n_col), dtype=int)
+        base_xp_mask = np.zeros((n_rows, n_col), dtype=bool)
 
         self._mti_col_meta = []
         self._mti_continuous_var_idx_to_col = {}
@@ -580,7 +986,9 @@ class RmsProblemMTI(RmsProblemPhasor):
                 if v.uid in diff_uid_to_xp_col:
                     incidence_matrix[i, off_diff + int(diff_uid_to_xp_col[v.uid])] = 1
                 elif v.uid in base_uid_to_xp_col:
-                    incidence_matrix[i, off_diff + int(base_uid_to_xp_col[v.uid])] = 1
+                    col = off_diff + int(base_uid_to_xp_col[v.uid])
+                    incidence_matrix[i, col] = 1
+                    base_xp_mask[i, col] = True
                 elif v.uid in alg_uid_to_y_col:
                     incidence_matrix[i, off_alg + int(alg_uid_to_y_col[v.uid])] = 1
                 elif v.uid in bool_uid_to_local_col:
@@ -593,7 +1001,9 @@ class RmsProblemMTI(RmsProblemPhasor):
                 if v.uid in diff_uid_to_xp_col:
                     incidence_matrix[row, off_diff + int(diff_uid_to_xp_col[v.uid])] = 1
                 elif v.uid in base_uid_to_xp_col:
-                    incidence_matrix[row, off_diff + int(base_uid_to_xp_col[v.uid])] = 1
+                    col = off_diff + int(base_uid_to_xp_col[v.uid])
+                    incidence_matrix[row, col] = 1
+                    base_xp_mask[row, col] = True
                 elif v.uid in alg_uid_to_y_col:
                     incidence_matrix[row, off_alg + int(alg_uid_to_y_col[v.uid])] = 1
                 elif v.uid in bool_uid_to_local_col:
@@ -607,7 +1017,9 @@ class RmsProblemMTI(RmsProblemPhasor):
                     if v.uid in diff_uid_to_xp_col:
                         incidence_matrix[row, off_diff + int(diff_uid_to_xp_col[v.uid])] = 1
                     elif v.uid in base_uid_to_xp_col:
-                        incidence_matrix[row, off_diff + int(base_uid_to_xp_col[v.uid])] = 1
+                        col = off_diff + int(base_uid_to_xp_col[v.uid])
+                        incidence_matrix[row, col] = 1
+                        base_xp_mask[row, col] = True
                     elif v.uid in alg_uid_to_y_col:
                         incidence_matrix[row, off_alg + int(alg_uid_to_y_col[v.uid])] = 1
                     elif v.uid in bool_uid_to_local_col:
@@ -619,6 +1031,7 @@ class RmsProblemMTI(RmsProblemPhasor):
             f"eq={n_eq} ineq={n_ineq} ineq_rows={int(include_ineq_rows)} "
             f"xp={n_xp} y={n_y} bool={n_bool} nnz={nnz}"
         )
+        self._mti_base_xp_incidence_mask = base_xp_mask
         return incidence_matrix
 
     def get_mti_solving_order(self) -> list[MTISubProblemRow]:

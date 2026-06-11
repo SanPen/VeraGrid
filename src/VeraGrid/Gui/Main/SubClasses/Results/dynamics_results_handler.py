@@ -1879,6 +1879,62 @@ def _build_parameter_plot_data_from_events(circuit: MultiCircuit,
         return None
 
 
+def _find_matching_event_group_index(group_idtags: Sequence[str],
+                                     group_names: Sequence[str],
+                                     entry: DynamicPlotEntry) -> int | None:
+    """
+    Resolve the runtime event-group index for one parameter plot entry.
+
+    :param group_idtags: Ordered event-group idtags from the results object.
+    :param group_names: Ordered event-group names from the results object.
+    :param entry: Persistent parameter plot entry.
+    :return: Matching group index, or ``None``.
+
+    Parameter reconstruction must align one persistent entry with the exact
+    event-group column used during simulation. The lookup prefers stable idtags
+    and falls back to visible names when the idtag is unavailable.
+    """
+    event_group_index: int | None = None
+    idx: int
+    for idx in range(len(group_idtags)):
+        matches_idtag: bool = str(group_idtags[idx]) == entry.event_group_idtag and entry.event_group_idtag != ""
+        matches_name: bool = str(group_names[idx]) == entry.event_group_name and entry.event_group_name != ""
+        if matches_idtag or matches_name:
+            event_group_index = idx
+        else:
+            pass
+
+    return event_group_index
+
+
+def _get_parameter_constant_fallback(results: RmsResults | EmtResults,
+                                     event_group_index: int | None,
+                                     device_idtag: str,
+                                     parameter_name: str) -> float | None:
+    """
+    Resolve the final constant fallback value for one parameter trace.
+
+    :param results: Runtime results object.
+    :param event_group_index: Matching event-group index, or ``None``.
+    :param device_idtag: Stable device identifier.
+    :param parameter_name: Canonical symbolic parameter name.
+    :return: Final scalar value, or ``None``.
+
+    When no event-driven reconstruction data is available, the plotting path may
+    still show a constant parameter trace from the exported final snapshot. This
+    helper keeps that fallback explicit and isolated from the main algorithm.
+    """
+    if event_group_index is not None:
+        exported_parameter_value: float | None = results.get_parameter_value(
+            group_idx=event_group_index,
+            device_idtag=device_idtag,
+            parameter_name=parameter_name,
+        )
+        return exported_parameter_value
+    else:
+        return None
+
+
 def _parse_plot_simulation_type(simulation_type: str) -> PlotSimulationType:
     """
     Parse one simulation-family label into the handler enum.
@@ -5584,70 +5640,54 @@ class DynamicsResultsHandler:
             else:
                 pass
 
-            # canonical_parameter_name: str = _build_parameter_canonical_name_from_display(entry.variable_name)
             canonical_parameter_name: str = str(entry.variable_name)
             x_values: np.ndarray = _build_relative_time_axis(time_array=self.results.time_array)
-            event_group_index: int | None = None
             group_idtags: Sequence[str] = self._get_group_idtags(results=self.results)
             group_names: Sequence[str] = self._get_group_names(results=self.results)
-            idx: int
-            for idx in range(len(group_idtags)):
-                matches_idtag: bool = str(group_idtags[idx]) == entry.event_group_idtag and entry.event_group_idtag != ""
-                matches_name: bool = str(group_names[idx]) == entry.event_group_name and entry.event_group_name != ""
-                if matches_idtag or matches_name:
-                    event_group_index = idx
-                else:
-                    pass
+            event_group_index: int | None = _find_matching_event_group_index(
+                group_idtags=group_idtags,
+                group_names=group_names,
+                entry=entry,
+            )
 
-            if event_group_index is not None:
-                if self._has_event_group_results(results=self.results, group_idx=event_group_index):
-                    # RMS and EMT currently export parameter snapshots through the
-                    # per-event-group ``parameter_value_maps`` structure. When a
-                    # snapshot exists, the plotting path uses it as the baseline
-                    # parameter value before replaying any matching events. This
-                    # keeps plain constant parameters cheap while still allowing
-                    # event-driven parameters to show their visible changes.
-                    exported_parameter_value: float | None = self.results.get_parameter_value(
+            device: ALL_DEV_TYPES | None = self._get_device_by_entry(entry=entry)
+            if isinstance(device, (DynamicDevice, DynamicBusDevice)):
+                # The reconstruction algorithm must start from the true initial
+                # scalar for this parameter and then replay the matching events in
+                # time order. The results object now provides that initial scalar
+                # per event group. The live model block remains a fallback only
+                # for parameters that were not exported into the results maps.
+                model_block: Block = _get_pre_simulation_block(device=device, simulation_type=entry.simulation_type)
+                parameter_value: float | None = None
+                if event_group_index is not None:
+                    parameter_value = self.results.get_initial_parameter_value(
                         group_idx=event_group_index,
                         device_idtag=entry.device_idtag,
                         parameter_name=canonical_parameter_name,
                     )
-                    if exported_parameter_value is not None:
-                        event_plot_data: tuple[np.ndarray, np.ndarray] | None = _build_parameter_plot_data_from_events(
-                            circuit=self.circuit,
-                            entry=entry,
-                            time_axis=x_values,
-                            base_value=float(exported_parameter_value),
-                        )
-                        if event_plot_data is not None:
-                            return event_plot_data
+                else:
+                    pass
+
+                if parameter_value is None:
+                    parameter_value = _get_runtime_parameter_scalar_from_block(
+                        model=model_block,
+                        parameter_name=canonical_parameter_name,
+                    )
+                else:
+                    pass
+
+                if parameter_value is not None:
+                    if event_group_index is not None:
+                        if self._has_event_group_results(results=self.results, group_idx=event_group_index):
+                            pass
                         else:
-                            y_values: np.ndarray = np.empty(len(x_values), dtype=float)
-                            y_values[:] = float(exported_parameter_value)
-                            return x_values, y_values
+                            # Declared-but-unsimulated event groups intentionally stay
+                            # unresolved because their result column would otherwise look
+                            # like a valid constant trace even though no simulation ran.
+                            return None
                     else:
                         pass
-                else:
-                    # Declared-but-unsimulated event groups intentionally stay
-                    # unresolved because their result column would otherwise look
-                    # like a valid constant trace even though no simulation ran.
-                    return None
-            else:
-                pass
 
-            device: ALL_DEV_TYPES | None = self._get_device_by_entry(entry=entry)
-            if isinstance(device, (DynamicDevice, DynamicBusDevice)):
-                # Some parameters are static model constants and therefore do not
-                # appear in the exported per-group snapshot map. In that case the
-                # live model block still carries the scalar value. That scalar is
-                # used as the baseline before replaying matching events, and only
-                # falls back to a plain constant trace when no event changes it.
-                model_block: Block = _get_pre_simulation_block(device=device, simulation_type=entry.simulation_type)
-                parameter_value: float | None = _get_runtime_parameter_scalar_from_block(
-                    model=model_block,
-                    parameter_name=canonical_parameter_name,
-                )
-                if parameter_value is not None:
                     event_plot_data = _build_parameter_plot_data_from_events(
                         circuit=self.circuit,
                         entry=entry,
@@ -5657,11 +5697,44 @@ class DynamicsResultsHandler:
                     if event_plot_data is not None:
                         return event_plot_data
                     else:
+                        # If no event changes the parameter, the visible trace must
+                        # remain constant. The final exported snapshot is still a
+                        # useful constant fallback for legacy cases where neither
+                        # the initial results map nor the live model block exposes
+                        # the scalar directly.
+                        exported_parameter_value: float | None = _get_parameter_constant_fallback(
+                            results=self.results,
+                            event_group_index=event_group_index,
+                            device_idtag=entry.device_idtag,
+                            parameter_name=canonical_parameter_name,
+                        )
+                        if exported_parameter_value is not None:
+                            parameter_value = float(exported_parameter_value)
+                        else:
+                            pass
+
                         y_values: np.ndarray = np.empty(len(x_values), dtype=float)
                         y_values[:] = parameter_value
                         return x_values, y_values
                 else:
-                    return None
+                    if event_group_index is not None:
+                        if self._has_event_group_results(results=self.results, group_idx=event_group_index):
+                            exported_parameter_value: float | None = _get_parameter_constant_fallback(
+                                results=self.results,
+                                event_group_index=event_group_index,
+                                device_idtag=entry.device_idtag,
+                                parameter_name=canonical_parameter_name,
+                            )
+                            if exported_parameter_value is not None:
+                                y_values: np.ndarray = np.empty(len(x_values), dtype=float)
+                                y_values[:] = float(exported_parameter_value)
+                                return x_values, y_values
+                            else:
+                                return None
+                        else:
+                            return None
+                    else:
+                        return None
             else:
                 return None
         else:

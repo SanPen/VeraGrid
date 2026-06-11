@@ -15,6 +15,8 @@ from VeraGridEngine.Simulations.EMT.solvers.structural_compiled_solver import St
 from VeraGridEngine.enumerations import DynamicIntegrationMethod
 from VeraGridEngine.Utils.NumericalMethods.emt_sparse_solver_registry import resolve_emt_sparse_solver_backend_provider
 from VeraGridEngine.Utils.Symbolic.diagnostic import NewtonDiagnosticsConfig
+from collections.abc import Callable
+from typing import Any
 
 
 EMT_SOLVER_CLASS_MAP = {
@@ -31,7 +33,30 @@ def build_emt_solver(options: EmtOptions,
                      t_end: float,
                      h: float,
                      method: DynamicIntegrationMethod = DynamicIntegrationMethod.DaeTrapezoidal,
-                     newton_diag_config: NewtonDiagnosticsConfig | None = None):
+                     newton_diag_config: NewtonDiagnosticsConfig | None = None,
+                     cancel_checker: Callable[[], bool] | None = None) -> Any:
+    """
+    Build the configured EMT solver.
+
+    :param options: EMT options selecting the solver implementation.
+    :type options: EmtOptions
+    :param problem: EMT problem instance consumed by the solver.
+    :type problem: EmtProblemTemplate
+    :param t0: Initial simulation time.
+    :type t0: float
+    :param t_end: Final simulation time.
+    :type t_end: float
+    :param h: Nominal integration time step.
+    :type h: float
+    :param method: Integration method used by the solver.
+    :type method: DynamicIntegrationMethod
+    :param newton_diag_config: Optional Newton diagnostics configuration.
+    :type newton_diag_config: NewtonDiagnosticsConfig | None
+    :param cancel_checker: Optional cancellation callback checked by the solver at safe boundaries.
+    :type cancel_checker: Callable[[], bool] | None
+    :return: Configured EMT solver instance.
+    :rtype: Any
+    """
 
     if options.solver_type in EMT_SOLVER_CLASS_MAP:
         solver_cls = EMT_SOLVER_CLASS_MAP[options.solver_type]
@@ -53,7 +78,8 @@ def build_emt_solver(options: EmtOptions,
                           newton_max_iter=options.init_newton_max_iter,
                           warmup_policy=options.compiled_warmup_policy,
                           sparse_solver_backend_provider=sparse_backend_provider,
-                          newton_diag_config=newton_diag_config)
+                          newton_diag_config=newton_diag_config,
+                          cancel_checker=cancel_checker)
     elif options.solver_type == EmtSolverTypes.StructuralAD:
         sparse_backend_provider = resolve_emt_sparse_solver_backend_provider(
             solver_type=options.sparse_solver,
@@ -68,7 +94,8 @@ def build_emt_solver(options: EmtOptions,
                           method=method,
                           newton_max_iter=options.init_newton_max_iter,
                           sparse_solver_backend_provider=sparse_backend_provider,
-                          newton_diag_config=newton_diag_config)
+                          newton_diag_config=newton_diag_config,
+                          cancel_checker=cancel_checker)
     else:
         return solver_cls(problem=problem,
                           t0=t0,
@@ -76,4 +103,5 @@ def build_emt_solver(options: EmtOptions,
                           h=h,
                           method=method,
                           newton_max_iter=options.init_newton_max_iter,
-                          newton_diag_config=newton_diag_config)
+                          newton_diag_config=newton_diag_config,
+                          cancel_checker=cancel_checker)

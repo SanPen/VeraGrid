@@ -19,7 +19,7 @@ from VeraGridEngine.enumerations import (
     WindingType,
 )
 
-def build_equivalence_classes_dict(grid:MultiCircuit)-> Tuple[Dict[int, List[int]], Dict[int, List[List[int]]], Dict[int, List[int]]]:
+def build_equivalence_classes_dict(grid:MultiCircuit)-> Tuple[Dict[int, List[int]], Dict[int, List[List[int]]], Dict[int, List[int]], Dict[int, List[int]]]:
     """
     this functions receives the grid and return a dictionary with clases of equivalence of the dynamic models
     and a dictionary with clases of equivalence of their variables.
@@ -29,6 +29,7 @@ def build_equivalence_classes_dict(grid:MultiCircuit)-> Tuple[Dict[int, List[int
         - Dict with new uid as keys and lists of equivalent block uids as values
         - Dict with representative uid as keys and lists of lists of equivalent variable uids as values
         - Dict with representative uid as keys and lists of all block uids composing that model (including children)
+        - Dict with representative uid as keys and lists of all block uids in the reference class (equivalent blocks and their children recursively, plus the representative and its children)
     :rtype:
     """
 
@@ -144,7 +145,18 @@ def build_equivalence_classes_dict(grid:MultiCircuit)-> Tuple[Dict[int, List[int
         if rep_uid not in block_composition_dict and rep_uid in uid_to_block:
             block_composition_dict[rep_uid] = [b.uid for b in uid_to_block[rep_uid].get_all_blocks()]
 
-    return class_equivalence_dict, variables_equivalence_dict, block_composition_dict
+    reference_class_for_all_blocks_dict: Dict[int, List[int]] = {}
+    for rep_uid, equiv_uids in class_equivalence_dict.items():
+        all_uids = {rep_uid}
+        if rep_uid in uid_to_block:
+            all_uids.update(b.uid for b in uid_to_block[rep_uid].get_all_blocks())
+        all_uids.update(equiv_uids)
+        for equiv_uid in equiv_uids:
+            if equiv_uid in uid_to_block:
+                all_uids.update(b.uid for b in uid_to_block[equiv_uid].get_all_blocks())
+        reference_class_for_all_blocks_dict[rep_uid] = sorted(all_uids)
+
+    return class_equivalence_dict, variables_equivalence_dict, block_composition_dict, reference_class_for_all_blocks_dict
 
 
 

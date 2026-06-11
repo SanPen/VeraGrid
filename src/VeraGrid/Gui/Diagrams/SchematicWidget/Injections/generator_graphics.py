@@ -116,14 +116,18 @@ class GeneratorGraphicItem(InjectionTemplateGraphicItem):
         Open the unified dynamic editor workspace for this generator.
         """
 
-        open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit, preferred_mode=DynamicSimulationMode.RMS)
+        open_dynamic_editor(api_object=self.api_object,
+                            circuit=self.editor.circuit,
+                            preferred_mode=DynamicSimulationMode.RMS)
 
     def edit_dynamic_emt(self):
         """
         Open the unified dynamic editor workspace for this generator.
         """
 
-        open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit, preferred_mode=DynamicSimulationMode.EMT)
+        open_dynamic_editor(api_object=self.api_object,
+                            circuit=self.editor.circuit,
+                            preferred_mode=DynamicSimulationMode.EMT)
 
     def to_battery(self):
         """

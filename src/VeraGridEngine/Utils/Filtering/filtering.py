@@ -256,6 +256,28 @@ class Filter:
         :param val: value to compare
         :return: passes the filter?
         """
+        obj_is_none: bool = obj_val is None or str(obj_val).strip().lower() == "none"
+        val_is_none: bool = val is None or str(val).strip().lower() == "none"
+
+        if obj_is_none or val_is_none:
+            obj_text: str = "none" if obj_is_none else str(obj_val).strip().lower()
+            val_text: str = "none" if val_is_none else str(val).strip().lower()
+
+            if self.op == CompOps.EQ:
+                return obj_text == val_text
+            elif self.op == CompOps.NOT_EQ:
+                return obj_text != val_text
+            elif self.op == CompOps.LIKE:
+                return val_text in obj_text
+            elif self.op == CompOps.NOT_LIKE:
+                return val_text not in obj_text
+            elif self.op == CompOps.STARTS:
+                return obj_text.startswith(val_text)
+            elif self.op == CompOps.ENDS:
+                return obj_text.endswith(val_text)
+            else:
+                return False
+
         if self.op == CompOps.GT:
             if self.try_numeric(obj_val) and self.try_numeric(val):
                 obj_val = float(obj_val)

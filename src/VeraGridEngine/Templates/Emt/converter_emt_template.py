@@ -992,7 +992,6 @@ def get_full_pseudo_emt_converter(
     ])
 
     templ.block.children.extend([vsc_block, pll_block, inner_loop_block, outer_loop_block, transformer_block])
-    templ.block.unify_blocks()
     templ.block.in_vars = [v_A, v_B, v_C, v_dc_bus]
     templ.block.out_vars = [
         transformer_block.out_vars[0],
@@ -1040,5 +1039,6 @@ def get_full_pseudo_emt_converter(
         VarPowerFlowReferenceType.Vpk: vsc_block.out_vars[10],
     }
     templ.block.api_obj_mapping = dict(vsc_block.api_obj_mapping)
+    templ.block.unify_blocks()
 
     return templ

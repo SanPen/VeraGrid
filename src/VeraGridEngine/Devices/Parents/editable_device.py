@@ -1368,7 +1368,7 @@ class EditableDevice(metaclass=EditableDeviceMeta):
 
             if prop.has_profile():
                 p1 = self.get_profile_by_prop(prop=prop)
-                p2 = self.get_profile_by_prop(prop=prop)
+                p2 = other.get_profile_by_prop(prop=prop)
 
                 if p1 != p2:
                     logger.add_info(msg="Different profile values",
@@ -1377,7 +1377,8 @@ class EditableDevice(metaclass=EditableDeviceMeta):
                                     object_value=p2,
                                     expected_object_value=p1)
                     action = ActionType.Modify
-                    properties_changed.append(prop)
+                    if prop not in properties_changed:
+                        properties_changed.append(prop)
 
                 if detailed_profile_comparison:
                     for t_idx in range(nt):
@@ -1393,6 +1394,8 @@ class EditableDevice(metaclass=EditableDeviceMeta):
                                             value=v2,
                                             expected_value=v1)
                             action = ActionType.Modify
+                            if prop not in properties_changed:
+                                properties_changed.append(prop)
 
                         v1b = self.get_property_value(prop=prop, t_idx=t_idx)
                         v2b = other.get_property_value(prop=prop, t_idx=t_idx)

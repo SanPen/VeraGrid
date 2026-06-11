@@ -2385,6 +2385,7 @@ class StructuralCompiledSolver:
         "_newton_diag_config",
         "_sparse_factorization_manager",
         "_sparse_solver_backend_provider",
+        "_cancel_checker",
     ]
 
     def __init__(
@@ -2402,6 +2403,7 @@ class StructuralCompiledSolver:
             warmup_policy: StructuralCompiledWarmupPolicy = StructuralCompiledWarmupPolicy.Adaptive,
             sparse_solver_backend_provider: SparseLinearSolverBackendProvider | None = None,
             newton_diag_config: NewtonDiagnosticsConfig | None = None,
+            cancel_checker: Callable[[], bool] | None = None,
     ) -> None:
         """
         Create the structural compiled EMT solver.
@@ -2515,6 +2517,7 @@ class StructuralCompiledSolver:
         self._last_runtime_stats: Dict[str, float] = dict()
         self._predictor = StructuralCompiledPredictor(self._n_state)
         self._backend_build_stats: Dict[str, float] = dict()
+        self._cancel_checker = cancel_checker
 
         if auto_build:
             self._build_vectorized_backend(method)
@@ -3024,6 +3027,9 @@ class StructuralCompiledSolver:
 
         step_index: int = 0
         while step_index < steps:
+            if self._cancel_checker is not None and self._cancel_checker():
+                return t[:step_index + 1].copy(), y[:step_index + 1, :].copy(), dy[:step_index + 1, :].copy(), well_initialized, converged
+
             t_step_start: float = float(t[step_index])
             t_step_target: float = float(t[step_index + 1])
             t_local_prev: float = t_step_start

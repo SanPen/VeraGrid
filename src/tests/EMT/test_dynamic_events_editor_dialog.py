@@ -13,6 +13,90 @@ from VeraGridEngine.Devices.Events.emt_events_group import EmtEventsGroup
 from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.enumerations import DynamicEventTransitionType, DynamicSimulationMode
+from VeraGridEngine.Devices.Events.emt_event import EmtEvent
+from VeraGridEngine.Devices.Events.rms_event import RmsEvent
+
+
+class WarningRecorder:
+    """
+    Collect warning dialog calls emitted during dialog validation tests.
+    """
+
+    __slots__ = (
+        "messages",
+    )
+
+    def __init__(self) -> None:
+        """
+        Build an empty warning recorder.
+
+        :return: None.
+        """
+        self.messages: list[tuple[str, str]] = list()
+
+    def warning(self,
+                parent: QtWidgets.QWidget,
+                title: str,
+                text: str) -> int:
+        """
+        Record one warning dialog invocation.
+
+        :param parent: Parent widget passed by the dialog.
+        :param title: Warning title.
+        :param text: Warning body.
+        :return: QMessageBox standard result code.
+        """
+        del parent
+        self.messages.append((title, text))
+        return int(QtWidgets.QMessageBox.StandardButton.Ok)
+
+
+def _set_event_row_data(row: object,
+                        parameter_index: int,
+                        target_time: float,
+                        value: float,
+                        transition_type: DynamicEventTransitionType,
+                        end_time: float | None) -> None:
+    """
+    Populate one dynamic-event dialog row with explicit values.
+
+    :param row: Target row object.
+    :param parameter_index: Parameter combo index.
+    :param target_time: Event start time.
+    :param value: Event target value.
+    :param transition_type: Step or ramp profile.
+    :param end_time: Optional ramp end time.
+    :return: None.
+    """
+    row.param_combo.setCurrentIndex(parameter_index)
+    row.time_spin.setValue(float(target_time))
+    row.value_spin.setValue(float(value))
+
+    if row.transition_combo is not None:
+        transition_index: int = row.transition_combo.findData(transition_type)
+        row.transition_combo.setCurrentIndex(transition_index)
+    else:
+        pass
+
+    if row.end_time_spin is not None:
+        if end_time is not None:
+            row.end_time_spin.setValue(float(end_time))
+        else:
+            pass
+    else:
+        pass
+
+
+def _install_warning_recorder(recorder: WarningRecorder,
+                              monkeypatch: object) -> None:
+    """
+    Redirect QMessageBox warnings into a local recorder.
+
+    :param recorder: Warning recorder instance.
+    :param monkeypatch: Pytest monkeypatch fixture.
+    :return: None.
+    """
+    monkeypatch.setattr(QtWidgets.QMessageBox, "warning", recorder.warning)
 
 
 def _get_app() -> QtWidgets.QApplication:
@@ -238,3 +322,184 @@ def test_collect_block_runtime_event_parameters_includes_child_mode_dict() -> No
 
     assert parameters == [child_mode]
     assert mode_uids == {child_mode.uid}
+
+
+def test_rms_event_dialog_rejects_overlapping_step_events_in_same_group(monkeypatch: object) -> None:
+    """
+    Ensure RMS validation blocks two step events at the same time and parameter.
+
+    :param monkeypatch: Pytest monkeypatch fixture.
+    :return: None.
+    """
+    _get_app()
+    circuit: MultiCircuit = MultiCircuit()
+    group: RmsEventsGroup = RmsEventsGroup(name="group")
+    circuit.add_rms_events_group(group)
+
+    vf: VarFactory = VarFactory()
+    event_var = vf.add_var("event_param")
+    dialog = DynamicEventDialogue(circuit=circuit,
+                                  parameters_list=[event_var],
+                                  target_device_name="Device",
+                                  mode=DynamicSimulationMode.RMS,
+                                  mode_parameter_uids=set())
+    recorder: WarningRecorder = WarningRecorder()
+    _install_warning_recorder(recorder=recorder, monkeypatch=monkeypatch)
+
+    first_row = dialog.add_row()
+    second_row = dialog.add_row()
+    _set_event_row_data(row=first_row,
+                        parameter_index=0,
+                        target_time=2.0,
+                        value=1.0,
+                        transition_type=DynamicEventTransitionType.Step,
+                        end_time=None)
+    _set_event_row_data(row=second_row,
+                        parameter_index=0,
+                        target_time=2.0,
+                        value=3.0,
+                        transition_type=DynamicEventTransitionType.Step,
+                        end_time=None)
+
+    dialog.accept_dialog()
+
+    assert len(recorder.messages) == 1
+    assert recorder.messages[0][0] == "Overlapping Events"
+    assert "parameter=event_param" in recorder.messages[0][1]
+    assert "New row 1" in recorder.messages[0][1]
+    assert "New row 2" in recorder.messages[0][1]
+    assert dialog.result() == 0
+    dialog.close()
+
+
+def test_emt_event_dialog_rejects_step_inside_existing_ramp(monkeypatch: object) -> None:
+    """
+    Ensure EMT validation blocks a new step placed inside an existing ramp.
+
+    :param monkeypatch: Pytest monkeypatch fixture.
+    :return: None.
+    """
+    _get_app()
+    circuit: MultiCircuit = MultiCircuit()
+    group: EmtEventsGroup = EmtEventsGroup(name="group")
+    circuit.add_emt_events_group(group)
+
+    vf: VarFactory = VarFactory()
+    event_var = vf.add_var("event_param")
+    existing_event: EmtEvent = EmtEvent(parameter=event_var,
+                                        time=1.0,
+                                        end_time=3.0,
+                                        value=2.0,
+                                        group=group,
+                                        transition_type=DynamicEventTransitionType.Ramp)
+    circuit.add_emt_event(existing_event)
+
+    dialog = DynamicEventDialogue(circuit=circuit,
+                                  parameters_list=[event_var],
+                                  target_device_name="Device",
+                                  mode=DynamicSimulationMode.EMT,
+                                  mode_parameter_uids=set())
+    recorder: WarningRecorder = WarningRecorder()
+    _install_warning_recorder(recorder=recorder, monkeypatch=monkeypatch)
+
+    row = dialog.add_row()
+    _set_event_row_data(row=row,
+                        parameter_index=0,
+                        target_time=2.0,
+                        value=5.0,
+                        transition_type=DynamicEventTransitionType.Step,
+                        end_time=None)
+
+    dialog.accept_dialog()
+
+    assert len(recorder.messages) == 1
+    assert recorder.messages[0][0] == "Overlapping Events"
+    assert "Existing event" in recorder.messages[0][1]
+    assert "New row 1" in recorder.messages[0][1]
+    assert dialog.result() == 0
+    dialog.close()
+
+
+def test_rms_event_dialog_allows_same_time_for_different_parameters(monkeypatch: object) -> None:
+    """
+    Ensure RMS validation does not block independent parameters at one time.
+
+    :param monkeypatch: Pytest monkeypatch fixture.
+    :return: None.
+    """
+    _get_app()
+    circuit: MultiCircuit = MultiCircuit()
+    group: RmsEventsGroup = RmsEventsGroup(name="group")
+    circuit.add_rms_events_group(group)
+
+    vf: VarFactory = VarFactory()
+    first_var = vf.add_var("event_param_1")
+    second_var = vf.add_var("event_param_2")
+    dialog = DynamicEventDialogue(circuit=circuit,
+                                  parameters_list=[first_var, second_var],
+                                  target_device_name="Device",
+                                  mode=DynamicSimulationMode.RMS,
+                                  mode_parameter_uids=set())
+    recorder: WarningRecorder = WarningRecorder()
+    _install_warning_recorder(recorder=recorder, monkeypatch=monkeypatch)
+
+    first_row = dialog.add_row()
+    second_row = dialog.add_row()
+    _set_event_row_data(row=first_row,
+                        parameter_index=0,
+                        target_time=2.0,
+                        value=1.0,
+                        transition_type=DynamicEventTransitionType.Step,
+                        end_time=None)
+    _set_event_row_data(row=second_row,
+                        parameter_index=1,
+                        target_time=2.0,
+                        value=3.0,
+                        transition_type=DynamicEventTransitionType.Step,
+                        end_time=None)
+
+    dialog.accept_dialog()
+
+    assert len(recorder.messages) == 0
+    assert dialog.result() == int(QtWidgets.QDialog.DialogCode.Accepted)
+    assert dialog.get_data()["parameters"] == [first_var, second_var]
+    dialog.close()
+
+
+def test_emt_event_dialog_rejects_invalid_ramp_interval(monkeypatch: object) -> None:
+    """
+    Ensure EMT validation blocks ramps whose end time is before the start time.
+
+    :param monkeypatch: Pytest monkeypatch fixture.
+    :return: None.
+    """
+    _get_app()
+    circuit: MultiCircuit = MultiCircuit()
+    group: EmtEventsGroup = EmtEventsGroup(name="group")
+    circuit.add_emt_events_group(group)
+
+    vf: VarFactory = VarFactory()
+    event_var = vf.add_var("event_param")
+    dialog = DynamicEventDialogue(circuit=circuit,
+                                  parameters_list=[event_var],
+                                  target_device_name="Device",
+                                  mode=DynamicSimulationMode.EMT,
+                                  mode_parameter_uids=set())
+    recorder: WarningRecorder = WarningRecorder()
+    _install_warning_recorder(recorder=recorder, monkeypatch=monkeypatch)
+
+    row = dialog.add_row()
+    _set_event_row_data(row=row,
+                        parameter_index=0,
+                        target_time=3.0,
+                        value=5.0,
+                        transition_type=DynamicEventTransitionType.Ramp,
+                        end_time=2.0)
+
+    dialog.accept_dialog()
+
+    assert len(recorder.messages) == 1
+    assert recorder.messages[0][0] == "Overlapping Events"
+    assert "invalid ramp interval" in recorder.messages[0][1]
+    assert dialog.result() == 0
+    dialog.close()

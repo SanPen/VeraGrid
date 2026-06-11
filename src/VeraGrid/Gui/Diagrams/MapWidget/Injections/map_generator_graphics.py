@@ -142,7 +142,8 @@ class MapGeneratorGraphicItem(MapInjectionTemplateGraphicItem):
         Open the unified dynamic editor workspace for this map generator.
         """
 
-        open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit)
+        open_dynamic_editor(api_object=self.api_object,
+                            circuit=self.editor.circuit)
 
     def to_battery(self):
         """

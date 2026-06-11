@@ -109,7 +109,8 @@ class IoMain(ScenariosMain):
 
         # Buttons
         self.ui.exportSimulationDataButton.clicked.connect(self.export_simulation_data)
-        self.ui.loadResultFromDiskButton.clicked.connect(self.load_results_driver)
+        self.ui.diskSessionsTreeView.customContextMenuRequested.connect(self.show_disk_sessions_context_menu)
+        self.ui.diskSessionsTreeView.setContextMenuPolicy(QtGui.Qt.ContextMenuPolicy.CustomContextMenu)
 
     def check_extension(self, path: str) -> bool:
         """
@@ -1050,6 +1051,26 @@ class IoMain(ScenariosMain):
                     error_msg('No file driver declared :/')
             else:
                 info_msg('Select a driver inside a session', 'Driver load from disk')
+
+    def show_disk_sessions_context_menu(self, pos) -> None:
+        """
+        Display the context menu for loading saved results from disk.
+
+        :param pos: Local click position in the tree view.
+        :return: None.
+        """
+        index = self.ui.diskSessionsTreeView.indexAt(pos)
+
+        if index.isValid():
+            self.ui.diskSessionsTreeView.setCurrentIndex(index)
+            menu = QtWidgets.QMenu(self.ui.diskSessionsTreeView)
+            gf.add_menu_entry(menu=menu,
+                              text="Load results from disk",
+                              icon_path=":/Icons/icons/loadc.png",
+                              function_ptr=self.load_results_driver)
+            menu.exec(self.ui.diskSessionsTreeView.viewport().mapToGlobal(pos))
+        else:
+            pass
 
     def import_contingencies(self) -> None:
         """

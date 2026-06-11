@@ -1,6 +1,6 @@
 # 🔍 Small-Signal stability analysis
 
-Stability assessment is crucial for any system and of course, VeraGrid has it.
+RMS Small-Signal Stability assessment is crucial for any system and of course, VeraGrid has it.
 
 ⚠️Before performing small-signal stability analysis, a power flow calculation must be completed! 
 ### Settings
@@ -100,77 +100,86 @@ The EMT result stores the simulated variable values.
 
 ## API
 
-Using the simplified API:
+Using the RMS small-signal API:
 
 ```python
 import os
-from VeraGridEngine.Utils.Symbolic.block_solver_no_diff import BlockSolverNoDiff
-from VeraGridEngine.Simulations.Rms.initialization import initialize_rms
-from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowOptions
-from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowDriver
-from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_driver import run_small_signal_stability,
 
-plot_stability
+from VeraGridEngine.enumerations import DynamicIntegrationMethod
+from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowOptions, PowerFlowDriver
+from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
+from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_driver import (
+    SmallSignalStabilityRmsDriver,
+    plot_stability,
+)
+from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_options import (
+    RmsSmallSignalStabilityOptions,
+)
 import VeraGridEngine.api as gce
 
 folder = os.path.join('..', 'Grids_and_profiles', 'grids')
 fname = os.path.join(folder, 'IEEE39_1W.veragrid')
 grid = gce.open_file(fname)
 
-# power flow
-pf_options = gce.PowerFlowOptions(gce.SolverType.NR, verbose=False)
-power_flow = gce.PowerFlowDriver(grid, pf_options)
+# A power flow must be available before the RMS small-signal assessment.
+pf_options = PowerFlowOptions(solver_type=gce.SolverType.NR, verbose=False)
+power_flow = PowerFlowDriver(grid=grid, options=pf_options)
 power_flow.run()
-res = power_flow.results
+pf_results = power_flow.results
 
-# initialization of variables
-ss, init_guess = initialize_rms(grid, res)
-params_mapping = {}
-
-# The need of performing the power flow and initialization of variables 
-# before the Stability assessment is noted.
-# - If the Stability assessment time is not zero the dynamic simulation 
-#   is performed before the Stability assessment:
-
-
-t_assess = 20.0
-h = 0.001
-slv = BlockSolverNoDiff(ss, grid.time)
-
-params0 = slv.build_init_params_vector(params_mapping)
-x0 = slv.build_init_vars_vector_from_uid(init_guess)
-
-t, y = slv.simulate(
-    t0=0,
-    t_end=t_assess,
-    h=h,
-    x0=x0,
-    params0=params0,
-    method="implicit_euler"
+# RMS options are only used when ss_assessment_time > 0, because the driver
+# performs an RMS simulation from t=0 up to the assessment instant.
+rms_options = RmsOptions(
+    time_step=0.001,
+    simulation_time=20.0,
+    tolerance=1e-6,
+    integration_method=DynamicIntegrationMethod.DaeBackEuler,
+    max_iter=1000,
+    verbose=0,
 )
 
-# And finally the Small-Signal Stability assessment:
+# Case 1: assessment at t = 0 s (no RMS dynamic simulation is run).
+ss_options_t0 = RmsSmallSignalStabilityOptions(
+    ss_assessment_time=0.0,
+    k=0,
+    verbose=1,
+)
 
+small_signal_t0 = SmallSignalStabilityRmsDriver(
+    grid=grid,
+    rms_options=rms_options,
+    sss_options=ss_options_t0,
+    pf_results=pf_results,
+)
+small_signal_t0.run_small_signal_stability()
 
-(Eigenvalues,
- PFactors,
- damping_ratios,
- conjugate_frequencies) = run_small_signal_stability(slv=slv,
-                                                     x=x0,
-                                                     params=params0,
-                                                     verbose=1)
+eigenvalues_t0 = small_signal_t0.results.eigenvalues
+participation_factors_t0 = small_signal_t0.results.participation_factors
+damping_ratios_t0 = small_signal_t0.results.damping_ratios
+conjugate_frequencies_t0 = small_signal_t0.results.conjugate_frequencies
+state_matrix_t0 = small_signal_t0.results.state_matrix
 
-# - If the Stability assessment time is not zero:
+# Case 2: assessment at t = 20 s.
+# The driver first runs the RMS simulation and then linearizes the system at t = 20 s.
+ss_options_t20 = RmsSmallSignalStabilityOptions(
+    ss_assessment_time=20.0,
+    k=0,
+    verbose=1,
+)
 
-i = t_assess / h
-(Eigenvalues,
- PFactors,
- damping_ratios,
- conjugate_frequencies) = run_small_signal_stability(slv=slv,
-                                                     x=y[i],
-                                                     params=params0,
-                                                     verbose=1)
+small_signal_t20 = SmallSignalStabilityRmsDriver(
+    grid=grid,
+    rms_options=rms_options,
+    sss_options=ss_options_t20,
+    pf_results=pf_results,
+)
+small_signal_t20.run_small_signal_stability()
 
+eigenvalues_t20 = small_signal_t20.results.eigenvalues
+participation_factors_t20 = small_signal_t20.results.participation_factors
+damping_ratios_t20 = small_signal_t20.results.damping_ratios
+conjugate_frequencies_t20 = small_signal_t20.results.conjugate_frequencies
+state_matrix_t20 = small_signal_t20.results.state_matrix
 ```
  
 Output:
@@ -205,12 +214,8 @@ Participation factors: [[0.00357204 0.00357204 0.0926209  0.00074082 0.00074082 
 
 ```
 
-The S-Domain stability plot will be given as a result adding the following function_
-
-```python
-plot_stability(Eigenvalues, plot_units = "rad/s" )
-```
-Note that the plot units can be "rad/s" or "Hz" for the imaginary part.
+The S-Domain stability plot can be obtained running Small-signal stability from the GUI. Note that the plot units can be
+"rad/s" or "Hz" for the imaginary part.
 
 
 ## Benchmark
@@ -485,27 +490,19 @@ The following code can be used to model the Kundur two area system without shunt
 Stability analysis.
 
 ```python
-import numpy as np
-import pandas as pd
-
-import sys
-import time
-import os
-
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.Injections.generator import Generator
 from VeraGridEngine.Devices.Injections.load import Load
 from VeraGridEngine.Devices.Branches.line import Line
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-from VeraGridEngine.Utils.Symbolic.block_solver_no_diff import BlockSolverNoDiff
-from VeraGridEngine.Simulations.Rms.initialization import initialize_rms
-from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_driver import run_small_signal_stability,
-
-plot_stability
-from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowResults, PowerFlowOptions
-from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowDriver
+from VeraGridEngine.enumerations import DynamicIntegrationMethod, RmsInitializationMethod
+from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowOptions, PowerFlowDriver
+from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
+from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_driver import SmallSignalStabilityRmsDriver
+from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_options import (
+    RmsSmallSignalStabilityOptions,
+)
 import VeraGridEngine.api as gce
 
 grid = MultiCircuit()
@@ -593,28 +590,28 @@ line13 = grid.add_line(
          r=0.00500, x=0.05000, b=0.02187, rate=750.0))
 
 # Transformers
-trafo_G1 = grid.add_line(
+grid.add_line(
     Line(name="trafo 5-1", bus_from=bus5, bus_to=bus1,
          r=0.00000, x=0.15 * (100.0 / 900.0), b=0.0, rate=900.0))
 
-trafo_G2 = grid.add_line(
+grid.add_line(
     Line(name="trafo 6-2", bus_from=bus6, bus_to=bus2,
          r=0.00000, x=0.15 * (100.0 / 900.0), b=0.0, rate=900.0))
 
-trafo_G3 = grid.add_line(
+grid.add_line(
     Line(name="trafo 11-3", bus_from=bus11, bus_to=bus3,
          r=0.00000, x=0.15 * (100.0 / 900.0), b=0.0, rate=900.0))
 
-trafo_G4 = grid.add_line(
+grid.add_line(
     Line(name="trafo 10-4", bus_from=bus10, bus_to=bus4,
          r=0.00000, x=0.15 * (100.0 / 900.0), b=0.0, rate=900.0))
 
 # load
 load1 = Load(name="load1", P=967.0, Q=100.0, Pl0=-9.670000000007317, Ql0=-0.9999999999967969)
-load1_grid = grid.add_load(bus=bus7, api_obj=load1)
+grid.add_load(bus=bus7, api_obj=load1)
 
 load2 = Load(name="load2", P=1767.0, Q=100.0, Pl0=-17.6699999999199, Ql0=-0.999999999989467)
-load2_grid = grid.add_load(bus=bus9, api_obj=load2)
+grid.add_load(bus=bus9, api_obj=load2)
 
 # Generators
 fn_1 = 60.0
@@ -732,27 +729,39 @@ print(res.get_bus_df())
 print(res.get_branch_df())
 print(f"Converged: {res.converged}")
 
-# initialization
-ss, init_guess = initialize_rms(grid, res)
-print("init_guess")
-print(init_guess)
+# Small-signal stability assessment at t = 0 s.
+rms_options = RmsOptions(
+    time_step=0.001,
+    simulation_time=10.0,
+    tolerance=1e-6,
+    integration_method=DynamicIntegrationMethod.DaeBackEuler,
+    initialization_method=RmsInitializationMethod.Explicit,
+    use_init_values=False,
+    max_iter=1000,
+    verbose=0,
+)
 
-params_mapping = {}
+ss_options = RmsSmallSignalStabilityOptions(
+    ss_assessment_time=0.0,
+    k=0,
+    verbose=1,
+)
 
-# Solver
-slv = BlockSolverNoDiff(ss, grid.time, use_jit=False)
+small_signal_driver = SmallSignalStabilityRmsDriver(
+    grid=grid,
+    rms_options=rms_options,
+    sss_options=ss_options,
+    pf_results=res,
+)
+small_signal_driver.run()
 
-params0 = slv.build_init_params_vector(params_mapping)
-x0 = slv.build_init_vars_vector_from_uid(init_guess)
-
-# stability assessment
-(Eigenvalues,
- PFactors,
- damping_ratios,
- conjugate_frequencies) = run_small_signal_stability(slv=slv,
-                                                     x=x0,
-                                                     params=params0,
-                                                     verbose=1)
+Eigenvalues = small_signal_driver.results.eigenvalues
+PFactors = small_signal_driver.results.participation_factors
+damping_ratios = small_signal_driver.results.damping_ratios
+conjugate_frequencies = small_signal_driver.results.conjugate_frequencies
+state_matrix = small_signal_driver.results.state_matrix
 
 plot_stability(Eigenvalues, plot_units="rad/s")
+
+
 ```

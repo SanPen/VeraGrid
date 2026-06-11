@@ -60,7 +60,6 @@ class ResultsMain(SimulationsMain):
         self.ui.dynamicsTablePlotButton.clicked.connect(self.plot_dynamic_plot_entry)
         self.ui.prepareRmsDynamicPlotsButton.clicked.connect(self.prepare_rms_dynamic_plots)
         self.ui.prepareEmtDynamicPlotsButton.clicked.connect(self.prepare_emt_dynamic_plots)
-        self.ui.deleteDriverButton.clicked.connect(self.delete_results_driver)
         self.ui.saveResultsLogsButton.clicked.connect(self.save_results_logs)
 
         # tree-click
@@ -74,6 +73,8 @@ class ResultsMain(SimulationsMain):
 
         # The plots tree exposes group actions through a context menu so the
         # double-click interaction can remain dedicated to plotting.
+        self.ui.results_treeView.customContextMenuRequested.connect(self.show_results_tree_context_menu)
+        self.ui.results_treeView.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.CustomContextMenu)
         self.ui.dynamicsPlotsTreeView.customContextMenuRequested.connect(self.show_dynamic_plots_context_menu)
         self.ui.dynamicsPlotsTreeView.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.CustomContextMenu)
 
@@ -271,6 +272,26 @@ class ResultsMain(SimulationsMain):
                     return None
         else:
             return None
+
+    def show_results_tree_context_menu(self, pos: QtCore.QPoint) -> None:
+        """
+        Display the context menu for the results tree.
+
+        :param pos: Local click position in the tree view.
+        :return: None.
+        """
+        index: QtCore.QModelIndex = self.ui.results_treeView.indexAt(pos)
+
+        if index.isValid():
+            self.ui.results_treeView.setCurrentIndex(index)
+            menu: QtWidgets.QMenu = QtWidgets.QMenu(self.ui.results_treeView)
+            gf.add_menu_entry(menu=menu,
+                              text="Delete driver",
+                              icon_path=":/Icons/icons/minus.png",
+                              function_ptr=self.delete_results_driver)
+            menu.exec(self.ui.results_treeView.viewport().mapToGlobal(pos))
+        else:
+            pass
 
     def dynamic_plots_tree_view_dbl_click(self, index: QtCore.QModelIndex) -> None:
         """

@@ -28,9 +28,11 @@ from VeraGridEngine.DataStructures.bus_data import BusData
 from VeraGridEngine.basic_structures import Logger, Vec, IntVec, BoolVec, CxMat, Mat, ObjVec
 from VeraGridEngine.Utils.MIP.selected_interface import LpExp, LpVar, OrToolsLpModel, join, LpModel, get_model_instance
 from VeraGridEngine.enumerations import TapPhaseControl, HvdcControlType, AvailableTransferMode, ConverterControlType
-from VeraGridEngine.Simulations.LinearFactors.linear_analysis import LinearAnalysis, LinearMultiContingencies
+from VeraGridEngine.Simulations.LinearFactors.linear_analysis import (LinearAnalysis, LinearMultiContingencies,
+                                                                      LinearMultiContingency)
 from VeraGridEngine.Simulations.ATC.available_transfer_capacity_driver import compute_alpha, compute_alpha_n1, \
     compute_dP
+from VeraGridEngine.Simulations.NTC.ntc_opf import add_corrective_contingency_formulation
 from VeraGridEngine.IO.file_system import opf_file_path
 
 
@@ -760,15 +762,17 @@ class BranchNtcVars:
         return data
 
     def add_contingency_flow(self, t: int, m: int, c: int,
-                             flow_var: Union[float, LpVar, LpExp]):
+                             flow_var: Union[float, LpVar, LpExp],
+                             neg_slack: Union[float, LpVar, None] = None,
+                             pos_slack: Union[float, LpVar, None] = None):
         """
         Add contingency flow
         :param t: time index
         :param m: monitored index
         :param c: contingency group index
         :param flow_var: flow var
-        :param neg_slack: negative flow slack variable
-        :param pos_slack: positive flow slack variable
+        :param neg_slack: negative flow slack variable (accepted for interface compatibility, not stored)
+        :param pos_slack: positive flow slack variable (accepted for interface compatibility, not stored)
         """
         self.contingency_flow_data.append((t, m, c, flow_var))
 
@@ -1293,6 +1297,89 @@ def add_linear_branches_formulation(t_idx: int,
     return f_obj
 
 
+def add_preventive_contingency_formulation_strict(t_idx: int,
+                                                  c: int,
+                                                  Sbase: float,
+                                                  contingency: LinearMultiContingency,
+                                                  contingency_flows: ObjVec,
+                                                  mask: BoolVec,
+                                                  branch_data_t: PassiveBranchData,
+                                                  branch_vars: BranchNtcVars,
+                                                  monitor_only_ntc_load_rule_branches: bool,
+                                                  monitor_only_sensitive_branches: bool,
+                                                  structural_ntc: float,
+                                                  ntc_load_rule: float,
+                                                  alpha_threshold: float,
+                                                  alpha_n1_abs: Mat,
+                                                  prob: OrToolsLpModel) -> float:
+    """
+    Formulate a single contingency with the preventive N-1 rule in the strict formulation
+
+    :param t_idx: time index being formulated
+    :param c: contingency (group) index, used to build unique constraint names
+    :param Sbase:
+    :param contingency: the linear multi-contingency providing the outaged-branch indices
+    :param contingency_flows: per-branch post-contingency flow expressions (preventive redistribution)
+    :param mask: per-branch flag telling whether the branch flow changes under this contingency
+    :param branch_data_t: passive branch data
+    :param branch_vars: branch LP variable container
+    :param monitor_only_ntc_load_rule_branches: only monitor branches that pass the ACER
+    :param monitor_only_sensitive_branches: only monitor branches sensitive enough
+    :param structural_ntc: structural NTC used by the ACER
+    :param ntc_load_rule: fraction of the rating reserved to the exchange (ACER rule)
+    :param alpha_threshold: minimum N-1 exchange sensitivity for a branch to be monitored
+    :param alpha_n1_abs: absolute N-1 exchange-sensitivity matrix indexed as (branch, outaged-branch)
+    :param prob: linear problem the constraints are added to
+    :return: always 0.0 
+    """
+    # iterate every branch; only those flagged by the mask and depending on variables are limited
+    for m, contingency_flow in enumerate(contingency_flows):
+
+        if mask[m] and isinstance(contingency_flow, LpExp):
+
+            # Monitoring logic: avoid unrealistic NTC flows over the CEP-rule limit in the N-1 condition (ACER).
+            if monitor_only_ntc_load_rule_branches:
+                monitor_by_load_rule_n1: bool = True
+                for c_br in contingency.branch_indices:
+                    monitor_by_load_rule_n1 = (monitor_by_load_rule_n1 and
+                                               (ntc_load_rule * branch_data_t.rates[m] /
+                                                (alpha_n1_abs[m, c_br] + 1e-20) <= structural_ntc))
+            else:
+                # the load-rule filter is disabled: keep the branch as a candidate
+                monitor_by_load_rule_n1 = True
+
+            # Monitoring logic: exclude branches not sensitive enough to the exchange 
+            if monitor_only_sensitive_branches:
+                monitor_by_sensitivity_n1: bool = True
+                for c_br in contingency.branch_indices:
+                    monitor_by_sensitivity_n1 = (monitor_by_sensitivity_n1 and
+                                                 (alpha_n1_abs[m, c_br] > alpha_threshold))
+            else:
+                # the sensitivity filter is disabled: keep the branch as a candidate
+                monitor_by_sensitivity_n1 = True
+
+            # DC branches are always monitored because their AC-PTDF sensitivity alpha is zero
+            if branch_data_t.dc[m] or (monitor_by_load_rule_n1 and monitor_by_sensitivity_n1):
+                # record the flow so the result extraction can evaluate the post-contingency loading later
+                branch_vars.add_contingency_flow(t=t_idx, m=m, c=c, flow_var=contingency_flow)
+
+                # hard upper rate constraint
+                prob.add_cst(cst=contingency_flow <= branch_data_t.contingency_rates[m] / Sbase,
+                             name=join("br_cst_flow_upper_lim_", [t_idx, m, c]))
+
+                # hard lower rate constraint
+                prob.add_cst(cst=contingency_flow >= -branch_data_t.contingency_rates[m] / Sbase,
+                             name=join("br_cst_flow_lower_lim_", [t_idx, m, c]))
+            else:
+                # the branch is not monitored under this contingency: nothing to enforce
+                pass
+        else:
+            # the branch flow is unaffected by this contingency or is a pure constant: nothing to constrain
+            pass
+
+    return 0.0
+
+
 def add_linear_branches_contingencies_formulation(t_idx: int,
                                                   Sbase: float,
                                                   branch_data_t: PassiveBranchData,
@@ -1307,7 +1394,10 @@ def add_linear_branches_contingencies_formulation(t_idx: int,
                                                   structural_ntc: float,
                                                   ntc_load_rule: float,
                                                   alpha_threshold: float,
-                                                  alpha_n1_abs: Mat):
+                                                  alpha_n1_abs: Mat,
+                                                  corrective_contingencies: bool = False,
+                                                  vsc_active: BoolVec | None = None,
+                                                  hvdc_active: BoolVec | None = None):
     """
     Formulate the branches
     :param t_idx: time index
@@ -1328,6 +1418,11 @@ def add_linear_branches_contingencies_formulation(t_idx: int,
     :return objective function
     """
     f_obj = 0.0
+
+    # con_loading is used by the corrective path to skip already-overloaded branches; the strict
+    # formulation does not pre-compute it, so use zeros (no pre-skip; slacks still capture overloads).
+    con_loading_zeros = np.zeros(branch_data_t.nelm)
+
     for c, contingency in enumerate(linear_multi_contingencies.multi_contingencies):
 
         contingency_flows, mask, changed_idx = contingency.get_lp_contingency_flows(
@@ -1337,61 +1432,24 @@ def add_linear_branches_contingencies_formulation(t_idx: int,
             vsc_flow=vsc_vars.flows[t_idx, :]
         )
 
-        for m, contingency_flow in enumerate(contingency_flows):
-
-            if mask[m]:
-
-                if isinstance(contingency_flow, LpExp):
-
-                    # Monitoring logic: Avoid unrealistic ntc flows over CEP rule limit in N-1 condition
-                    if monitor_only_ntc_load_rule_branches:
-                        """
-                        Calculo el porcentaje del ratio de la línea que se reserva al intercambio según la regla de ACER,
-                        y paso dicho valor a la frontera, y si el valor es mayor que el máximo intercambio estructural
-                        significa que la linea no puede limitar el intercambio
-                        Ejemplo:
-                            ntc_load_rule = 0.7
-                            rate = 1700
-                            alpha_n1 = 0.05
-                            structural_rate = 5200
-                            0.7 * 1700 --> 1190 mw para el intercambio
-                            1190 / 0.05 --> 23.800 MW en la frontera en N
-                            23.800 >>>> 5200 --> esta linea no puede ser declarada como limitante en la NTC en N.
-                           """
-                        monitor_by_load_rule_n1 = True
-                        for c_br in contingency.branch_indices:
-                            monitor_by_load_rule_n1 = (monitor_by_load_rule_n1 and
-                                                       (ntc_load_rule * branch_data_t.rates[m] /
-                                                        (alpha_n1_abs[m, c_br] + 1e-20) <= structural_ntc))
-
-                    else:
-                        monitor_by_load_rule_n1 = True
-
-                    # Monitoring logic: Exclude branches with not enough sensibility to exchange in N-1 condition
-                    if monitor_only_sensitive_branches:
-                        monitor_by_sensitivity_n1 = True
-                        for c_br in contingency.branch_indices:
-                            monitor_by_sensitivity_n1 = (monitor_by_sensitivity_n1 and
-                                                         (alpha_n1_abs[m, c_br] > alpha_threshold))
-                    else:
-                        monitor_by_sensitivity_n1 = True
-
-                    # DC branches are always monitored (their PTDF sensitivity alpha is 0)
-                    if branch_data_t.dc[m] or (monitor_by_load_rule_n1 and monitor_by_sensitivity_n1):
-                        # register the contingency data to evaluate the result at the end
-                        branch_vars.add_contingency_flow(t=t_idx, m=m, c=c, flow_var=contingency_flow)
-
-                        # add upper rate constraint
-                        prob.add_cst(
-                            cst=contingency_flow <= branch_data_t.contingency_rates[m] / Sbase,
-                            name=join("br_cst_flow_upper_lim_", [t_idx, m, c])
-                        )
-
-                        # add lower rate constraint
-                        prob.add_cst(
-                            cst=contingency_flow >= -branch_data_t.contingency_rates[m] / Sbase,
-                            name=join("br_cst_flow_lower_lim_", [t_idx, m, c])
-                        )
+        if corrective_contingencies:
+            # corrective N-1: the converters may change their set-points after the outage (shared helper)
+            f_obj = f_obj + add_corrective_contingency_formulation(
+                t_idx=t_idx, c=c, Sbase=Sbase, contingency=contingency,
+                contingency_flows=contingency_flows, changed_idx=changed_idx,
+                branch_data_t=branch_data_t, branch_vars=branch_vars,
+                vsc_vars=vsc_vars, hvdc_vars=hvdc_vars, con_loading=con_loading_zeros,
+                prob=prob, logger=Logger(), vsc_active=vsc_active, hvdc_active=hvdc_active)
+        else:
+            # preventive N-1: the converters stay at their base-case set-point (hard limits, no slack)
+            f_obj = f_obj + add_preventive_contingency_formulation_strict(
+                t_idx=t_idx, c=c, Sbase=Sbase, contingency=contingency,
+                contingency_flows=contingency_flows, mask=mask,
+                branch_data_t=branch_data_t, branch_vars=branch_vars,
+                monitor_only_ntc_load_rule_branches=monitor_only_ntc_load_rule_branches,
+                monitor_only_sensitive_branches=monitor_only_sensitive_branches,
+                structural_ntc=structural_ntc, ntc_load_rule=ntc_load_rule,
+                alpha_threshold=alpha_threshold, alpha_n1_abs=alpha_n1_abs, prob=prob)
 
     # copy the contingency rates
     branch_vars.contingency_rates[t_idx, :] = branch_data_t.contingency_rates
@@ -1771,6 +1829,7 @@ def run_linear_ntc_opf_strict(grid: MultiCircuit,
                               zonal_grouping: ZonalGrouping = ZonalGrouping.NoGrouping,
                               skip_generation_limits: bool = False,
                               consider_contingencies: bool = False,
+                              corrective_contingencies: bool = True,
                               contingency_groups_used: List[ContingencyGroup] = (),
                               alpha_threshold: float = 0.001,
                               lodf_threshold: float = 0.001,
@@ -1794,6 +1853,7 @@ def run_linear_ntc_opf_strict(grid: MultiCircuit,
     :param zonal_grouping: Zonal grouping?
     :param skip_generation_limits: Skip the generation limits?
     :param consider_contingencies: Consider the contingencies?
+    :param corrective_contingencies: allow corrective re-dispatch of the VSC/HVDC converters
     :param contingency_groups_used: List of contingency groups to simulate
     :param alpha_threshold: threshold to consider the exchange sensitivity
     :param lodf_threshold: threshold to consider LODF sensitivities
@@ -1988,7 +2048,8 @@ def run_linear_ntc_opf_strict(grid: MultiCircuit,
                                                 contingency_groups_used=contingency_groups_used)
                 mctg.compute(lin=ls,
                              ptdf_threshold=lodf_threshold,
-                             lodf_threshold=lodf_threshold)
+                             lodf_threshold=lodf_threshold,
+                             with_corrective_converter_df=corrective_contingencies)
 
                 alpha_n1 = compute_alpha_n1(
                     ptdf=ls.PTDF,
@@ -2014,7 +2075,10 @@ def run_linear_ntc_opf_strict(grid: MultiCircuit,
                     structural_ntc=structural_ntc,
                     ntc_load_rule=ntc_load_rule,
                     alpha_threshold=alpha_threshold,
-                    alpha_n1_abs=np.abs(alpha_n1)  # as per RE requirement
+                    alpha_n1_abs=np.abs(alpha_n1),  # as per RE requirement
+                    corrective_contingencies=corrective_contingencies,
+                    vsc_active=nc.vsc_data.active,
+                    hvdc_active=nc.hvdc_data.active
                 )
 
             else:

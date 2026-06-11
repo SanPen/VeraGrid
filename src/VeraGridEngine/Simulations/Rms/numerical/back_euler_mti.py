@@ -15,9 +15,13 @@ from scipy.sparse.linalg import MatrixRankWarning
 from scipy.optimize import least_squares
 
 from VeraGridEngine.Simulations.Rms.numerical.back_euler_fx import BackEulerImplicitIntegration
-from VeraGridEngine.Simulations.Rms.problems.rms_problem_MTI import RmsProblemMTI
 from VeraGridEngine.basic_structures import Mat, Vec
 from VeraGridEngine.Utils.Symbolic.symbolic import get_expression_vars
+
+try:
+    from VeraGridEngine.Simulations.Rms.problems.rms_problem_MTI import RmsProblemMTI
+except ImportError:  # pragma: no cover - keeps the solver usable without RMS imports in EMT-only contexts.
+    RmsProblemMTI = object
 
 
 class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
@@ -51,6 +55,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
         self.inequality_tolerance = inequality_tolerance
         self.z: Mat = np.empty((self.steps + 1, 0), dtype=float)
         self.debug = os.getenv("RMS_MTI_DEBUG", "0").strip() in ("1", "true", "True", "yes", "on")
+        self.debug_solve = os.getenv("RMS_MTI_DEBUG_SOLVE", "0").strip() in ("1", "true", "True", "yes", "on")
         self.debug_newton = os.getenv("RMS_MTI_DEBUG_NEWTON", "0").strip() in ("1", "true", "True", "yes", "on")
         self.debug_residuals = os.getenv("RMS_MTI_DEBUG_RESIDUALS", "0").strip() in ("1", "true", "True", "yes", "on")
         self.compare = os.getenv("RMS_MTI_COMPARE", "0").strip() in ("1", "true", "True", "yes", "on")
@@ -63,6 +68,9 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
             "1", "true", "True", "yes", "on"
         )
         self.use_nonlinear_subproblem_lsq = os.getenv("RMS_MTI_NONLINEAR_SUBPROBLEM_LSQ", "0").strip() in (
+            "1", "true", "True", "yes", "on"
+        )
+        self.use_direct_xp_subproblem = os.getenv("RMS_MTI_DIRECT_XP_SOLVE", "0").strip() in (
             "1", "true", "True", "yes", "on"
         )
         self._debug_x0_ref: Vec | None = None
@@ -83,6 +91,63 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
             self.mti_lsqr_iter_lim = max(1, int(os.getenv("RMS_MTI_LSQR_ITER", "100")))
         except Exception:
             self.mti_lsqr_iter_lim = 100
+
+    def _runtime_parameter_values(self) -> Vec | None:
+        """Return the problem runtime-parameter vector for RMS or EMT problems."""
+        if hasattr(self.problem, "_variable_parameters_values"):
+            return getattr(self.problem, "_variable_parameters_values")
+        if hasattr(self.problem, "_event_params_values"):
+            return getattr(self.problem, "_event_params_values")
+        if hasattr(self.problem, "event_params_values"):
+            return getattr(self.problem, "event_params_values")
+        return None
+
+    def _constant_parameter_values(self) -> Vec | None:
+        """Return the problem static-parameter vector for RMS or EMT problems."""
+        if hasattr(self.problem, "_constant_params"):
+            return getattr(self.problem, "_constant_params")
+        if hasattr(self.problem, "_constant_params_values"):
+            return getattr(self.problem, "_constant_params_values")
+        if hasattr(self.problem, "get_parameters_values"):
+            try:
+                return np.asarray([float(c.value) for c in self.problem.get_parameters_values()], dtype=float)
+            except Exception:
+                return None
+        return None
+
+    def _update_problem_boundary(self, t_curr: float, x_snapshot: Vec) -> None:
+        """Call the RMS or EMT boundary update hook with the active runtime vector."""
+        runtime_params = self._runtime_parameter_values()
+        if runtime_params is None:
+            return
+        try:
+            self.problem.update(t_curr, x_snapshot, runtime_params)
+        except Exception:
+            return
+
+    def _get_boolean_state_from_problem(self, bool_indices: list[int]) -> Vec | None:
+        """Read boolean values from the active runtime vector."""
+        runtime_params = self._runtime_parameter_values()
+        if runtime_params is None:
+            return None
+        out = np.zeros(len(bool_indices), dtype=float)
+        for k, idx in enumerate(bool_indices):
+            out[k] = float(runtime_params[int(idx)])
+        return out
+
+    def _rhs_implicit(self, x: Vec, dx: Vec, xn: Vec, h: float) -> Vec:
+        """Prefer a problem-provided MTI equality residual, otherwise use the RMS base residual."""
+        if hasattr(self.problem, "compute_mti_equalities"):
+            return np.asarray(self.problem.compute_mti_equalities(x, dx, xn, h), dtype=float)
+        return super()._rhs_implicit(x=x, dx=dx, xn=xn, h=h)
+
+    def _jacobian_implicit(self, x: Vec, dx: Vec, h: float) -> sp.csc_matrix:
+        """Prefer a full MTI Jacobian hook, otherwise use the RMS block Jacobian path."""
+        jac_fn = getattr(self.problem, "jacobian_mti_equalities", None)
+        if jac_fn is not None:
+            jac = jac_fn(x, dx, h)
+            return jac.tocsc() if sp.issparse(jac) else sp.csc_matrix(jac)
+        return super()._jacobian_implicit(x=x, dx=dx, h=h)
 
     def _debug_print_top_residuals(
         self,
@@ -145,11 +210,15 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
                                 continue
                             p_idx = self.problem._uid2idx_params.get(vr.uid, None)
                             if p_idx is not None:
-                                uid_bindings[vr.uid] = float(self.problem._constant_params[p_idx])
+                                constant_params = self._constant_parameter_values()
+                                if constant_params is not None:
+                                    uid_bindings[vr.uid] = float(constant_params[p_idx])
                                 continue
                             e_idx = self.problem._uid2idx_event_params.get(vr.uid, None)
                             if e_idx is not None:
-                                uid_bindings[vr.uid] = float(self.problem._variable_parameters_values[e_idx])
+                                runtime_params = self._runtime_parameter_values()
+                                if runtime_params is not None:
+                                    uid_bindings[vr.uid] = float(runtime_params[e_idx])
                         sym_val = float(eq.eval_uid(uid_bindings))
                         print(f"     compiled={arr[ii]:+.6e} symbolic={sym_val:+.6e} diff={(arr[ii]-sym_val):+.6e}")
 
@@ -165,11 +234,15 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
                                 continue
                             p_idx = self.problem._uid2idx_params.get(vr.uid, None)
                             if p_idx is not None:
-                                vars_preview.append(f"{vr.name}=cprms[{p_idx}]={self.problem._constant_params[p_idx]:+.3e}")
+                                constant_params = self._constant_parameter_values()
+                                if constant_params is not None:
+                                    vars_preview.append(f"{vr.name}=cprms[{p_idx}]={constant_params[p_idx]:+.3e}")
                                 continue
                             e_idx = self.problem._uid2idx_event_params.get(vr.uid, None)
                             if e_idx is not None:
-                                vars_preview.append(f"{vr.name}=vprms[{e_idx}]={self.problem._variable_parameters_values[e_idx]:+.3e}")
+                                runtime_params = self._runtime_parameter_values()
+                                if runtime_params is not None:
+                                    vars_preview.append(f"{vr.name}=vprms[{e_idx}]={runtime_params[e_idx]:+.3e}")
                         if len(vars_preview) > 0:
                             print("     bindings: " + ", ".join(vars_preview[:12]))
             except Exception as ex:
@@ -274,9 +347,18 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
         h_eff: float,
         force_zero_dx: bool = False,
     ) -> tuple[bool, Vec, Vec, float]:
+        ok_mti, x_mti, dx_mti, res_mti = self._solve_full_fixed_z_mti_rows(
+            x_prev=x_prev,
+            dx_last=dx_last,
+            h_eff=h_eff,
+            force_zero_dx=force_zero_dx,
+        )
+        if ok_mti:
+            return True, x_mti, dx_mti, res_mti
+
         seeds = [x_prev.copy()]
 
-        best = (False, x_prev.copy(), dx_last.copy(), np.inf)
+        best = (ok_mti, x_mti, dx_mti, res_mti)
         for seed in seeds:
             ok, x_try, dx_try, res = self._solve_continuous_for_fixed_boolean(
                 seed,
@@ -290,6 +372,50 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
             if res < best[3]:
                 best = (ok, x_try, dx_try, res)
         return best
+
+    def _solve_full_fixed_z_mti_rows(
+        self,
+        x_prev: Vec,
+        dx_last: Vec,
+        h_eff: float,
+        force_zero_dx: bool = False,
+    ) -> tuple[bool, Vec, Vec, float]:
+        row_meta = getattr(self.problem, "_mti_row_meta", [])
+        col_meta = getattr(self.problem, "_mti_col_meta", [])
+        n_xp = len(getattr(self.problem, "_mti_xp_vars", []))
+        n_y = len(getattr(self.problem, "_mti_y_vars", []))
+        if len(row_meta) == 0 or len(col_meta) == 0 or (n_xp + n_y) <= 0:
+            return False, np.asarray(x_prev, dtype=float).copy(), np.asarray(dx_last, dtype=float).copy(), np.inf
+
+        raw_rows = np.arange(len(row_meta), dtype=int)
+        var_idx: list[int] = []
+        for col in range(n_xp + n_y):
+            idx = self.problem._mti_col_to_continuous_var_idx(col)
+            if idx is not None:
+                var_idx.append(int(idx))
+
+        if len(var_idx) == 0:
+            return False, np.asarray(x_prev, dtype=float).copy(), np.asarray(dx_last, dtype=float).copy(), np.inf
+
+        if self.debug_solve:
+            eq_rows = self.problem.get_continuous_equality_row_indices(raw_rows)
+            fixed_bool_eq = self.problem.get_fixed_boolean_equality_row_indices(raw_rows)
+            ineq_rows = self.problem.get_inequality_row_indices(raw_rows)
+            print(
+                f"[MTI-FIXZ-FULL] rows={raw_rows.size} eq_rows={eq_rows.size} "
+                f"fixed_bool_eq={fixed_bool_eq.size} ineq_rows={ineq_rows.size} vars={len(var_idx)}"
+            )
+
+        return self._solve_subproblem_fix_z(
+            x_seed=np.asarray(x_prev, dtype=float).copy(),
+            x_prev=x_prev,
+            dx_last=dx_last,
+            h_eff=h_eff,
+            eq_idx=raw_rows,
+            var_idx=np.asarray(sorted(set(var_idx)), dtype=int),
+            force_zero_dx=force_zero_dx,
+            check_inequalities=False,
+        )
 
     def _detect_inequality_event(
         self,
@@ -389,7 +515,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
             else:
                 lo = hm
 
-        if self.debug:
+        if self.debug_solve:
             print(
                 f"[MTI-EVENT-LOC] ineq={event_idx} h={h_eff:.6e} "
                 f"h_event={hi:.6e}"
@@ -404,6 +530,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
         z_prev: Vec,
         force_zero_dx: bool,
         forced_ineq_idx: int | None = None,
+        require_z_change: bool = False,
     ) -> tuple[bool, Vec, Vec, Vec, float, Vec, Vec]:
         """
         MATLAB eventTotalDerivative-style event handler.
@@ -428,7 +555,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
         candidates = self.problem.get_event_local_boolean_candidates(ie, z_prev)
         candidates.sort(key=lambda zc: self._hamming_distance(np.asarray(zc, dtype=float), z_prev))
 
-        if self.debug:
+        if self.debug_solve:
             n_bool = len(z_prev)
             full_count = (2 ** n_bool) if n_bool > 0 else 1
             n_cands = len(candidates)
@@ -455,6 +582,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
                 eq_idx=np.asarray(eqg, dtype=int),
                 var_idx=np.asarray(varg, dtype=int),
                 force_zero_dx=force_zero_dx,
+                direct_xp_solve=self.use_direct_xp_subproblem,
             )
             if not okg:
                 break
@@ -474,6 +602,13 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
                     if self.debug:
                         print(f"[MTI-CAND] debug_limit_reached={max_iter_cands}")
                     break
+                if require_z_change and self._hamming_distance(np.asarray(z_candidate, dtype=float), z_prev) == 0:
+                    if self.debug:
+                        print(
+                            f"[MTI-CAND] idx={cand_idx} z={np.asarray(z_candidate, dtype=int)} "
+                            f"decision=no_z_change_at_event"
+                        )
+                    continue
                 self.problem.set_mti_boolean_state(z_candidate)
 
                 x_try = x_stage.copy()
@@ -491,6 +626,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
                         var_idx=np.asarray(varg, dtype=int),
                         force_zero_dx=force_zero_dx,
                         check_inequalities=False,
+                        direct_xp_solve=self.use_direct_xp_subproblem,
                     )
                     if not ok:
                         if self.debug:
@@ -507,7 +643,8 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
                         eq_arr = np.asarray(eqg, dtype=int)
                         var_arr = np.asarray(varg, dtype=int)
                         bool_positions = self.problem.get_subproblem_boolean_positions(eq_arr, var_arr)
-                        if len(bool_positions) > 0:
+                        group_subset_ids = self.problem.get_group_subset_ids(eq_arr, var_arr)
+                        if len(group_subset_ids & event_subset_ids) > 0:
                             ok, x_try, dx_try, z_follow, res_try = self._solve_subproblem_variable_z(
                                 x_seed=x_try,
                                 x_prev=x_prev,
@@ -517,6 +654,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
                                 eq_idx=eq_arr,
                                 var_idx=var_arr,
                                 force_zero_dx=force_zero_dx,
+                                direct_xp_solve=self.use_direct_xp_subproblem,
                             )
                         else:
                             self.problem.set_mti_boolean_state(z_follow)
@@ -528,6 +666,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
                                 eq_idx=eq_arr,
                                 var_idx=var_arr,
                                 force_zero_dx=force_zero_dx,
+                                direct_xp_solve=self.use_direct_xp_subproblem,
                             )
                         if not ok:
                             if self.debug:
@@ -622,7 +761,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
         if ok_evt:
             return True, x_evt, dx_evt, z_evt, best_fail_res, best_fail_x, best_fail_dx
 
-        if self.debug:
+        if self.debug_solve:
             print("[MTI-CAND] no local candidate accepted; skipping full boolean enumeration")
         return False, x_prev, dx_last, z_prev, best_fail_res, best_fail_x, best_fail_dx
 
@@ -685,7 +824,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
             if not np.all(np.isfinite(delta)):
                 delta, *_ = sp.linalg.lsqr(jf, -rhs, iter_lim=self.mti_lsqr_iter_lim, atol=self.mti_solve_tol, btol=self.mti_solve_tol)
             if not np.all(np.isfinite(delta)):
-                if self.debug:
+                if self.debug_solve:
                     print("[MTI] plain DAE linear solve returned non-finite delta")
                 return False, x_new, dx, np.inf
 
@@ -734,6 +873,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
         var_idx: np.ndarray,
         force_zero_dx: bool = False,
         check_inequalities: bool = False,
+        direct_xp_solve: bool = False,
     ) -> tuple[bool, Vec, Vec, float]:
         self._last_subproblem_fail_reason = "solve_fail"
         self._last_subproblem_context = "fix-z"
@@ -742,7 +882,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
         fixed_bool_eq_idx = self.problem.get_fixed_boolean_equality_row_indices(raw_eq_idx)
         eq_idx = self.problem.get_continuous_equality_row_indices(raw_eq_idx)
         var_idx = np.asarray(var_idx, dtype=int)
-        if self.debug:
+        if self.debug_solve:
             print(
                 f"[MTI-SUB] kind=fix-z raw_rows={raw_eq_idx.size} eq_rows={eq_idx.size} "
                 f"fixed_bool_eq={fixed_bool_eq_idx.size} ineq_rows={ineq_idx.size} "
@@ -761,12 +901,27 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
                 return False, x_seed.copy(), dx, bool_res
             return True, x_seed.copy(), dx, 0.0
 
+        if direct_xp_solve and not force_zero_dx:
+            ok_direct, x_direct, dx_direct, res_direct = self._solve_subproblem_fix_z_direct_xp(
+                x_seed=x_seed,
+                x_prev=x_prev,
+                dx_last=dx_last,
+                h_eff=h_eff,
+                eq_idx=eq_idx,
+                var_idx=var_idx,
+                ineq_idx=ineq_idx,
+                fixed_bool_eq_idx=fixed_bool_eq_idx,
+                check_inequalities=check_inequalities,
+            )
+            if ok_direct or np.isfinite(res_direct):
+                return ok_direct, x_direct, dx_direct, res_direct
+
         x_new = x_seed.copy()
         dx_out = dx_last.copy()
         residual = np.inf
 
         explicit_pairs, eq_idx, var_idx = self.problem.split_explicit_subproblem_pairs(eq_idx=eq_idx, var_idx=var_idx)
-        if self.debug:
+        if self.debug_solve:
             print(
                 f"[MTI-SUBSPLIT] explicit_pairs={len(explicit_pairs)} "
                 f"rest_eq={eq_idx.size} rest_var={var_idx.size}"
@@ -779,7 +934,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
                     return False, x_new, dx, np.inf
                 rhs = np.asarray([float(rhs_full[int(eq0)])], dtype=float)
                 residual = abs(float(rhs[0]))
-                if self.debug:
+                if self.debug_solve:
                     g_max = self._subproblem_inequality_violation(x_new, dx, x_prev, h_eff, ineq_idx)
                     print(
                         f"[MTI-SUBERR] phase=explicit it={it + 1}/{self.mti_max_iter} "
@@ -812,7 +967,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
                 eq_eval = self.problem.get_equality_row_indices(raw_eq_idx)
                 rhs = np.asarray(rhs_full, dtype=float)[eq_eval] if eq_eval.size > 0 else np.zeros(0, dtype=float)
                 residual = float(np.linalg.norm(rhs, np.inf)) if rhs.size > 0 else 0.0
-            if self.debug:
+            if self.debug_solve:
                 g_max = self._subproblem_inequality_violation(x_new, dx, x_prev, h_eff, ineq_idx)
                 print(
                     f"[MTI-SUBERR] phase=early-return eq={eq_idx.size} var={var_idx.size} "
@@ -853,10 +1008,11 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
             rhs = np.asarray(rhs_full, dtype=float)[eq_idx]
             residual = float(np.linalg.norm(rhs, np.inf)) if rhs.size > 0 else 0.0
             g_max_dbg = self._subproblem_inequality_violation(x_new, dx, x_prev, h_eff, ineq_idx)
-            print(
-                f"[MTI-SUBERR] phase=implicit it={it + 1}/{self.mti_max_iter} "
-                f"eq={eq_idx.size} var={var_idx.size} res={residual:.6e} localG={g_max_dbg:.6e}"
-            )
+            if self.debug_solve:
+                print(
+                    f"[MTI-SUBERR] phase=implicit it={it + 1}/{self.mti_max_iter} "
+                    f"eq={eq_idx.size} var={var_idx.size} res={residual:.6e} localG={g_max_dbg:.6e}"
+                )
             if residual <= self.mti_solve_tol:
                 bool_res = self._fixed_boolean_equality_residual(x_new, dx, x_prev, h_eff, fixed_bool_eq_idx)
                 if bool_res > self.mti_solve_tol:
@@ -888,8 +1044,68 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
             x_new = x_trial
             dx_out = dx.copy()
 
-        print(f"[MTI-SUBFAIL] kind=fix-z final_residual={residual:.6e}")
+        if self.debug_solve:
+            print(f"[MTI-SUBFAIL] kind=fix-z final_residual={residual:.6e}")
         return False, x_new, dx_out, residual
+
+    def _solve_subproblem_fix_z_direct_xp(
+        self,
+        x_seed: Vec,
+        x_prev: Vec,
+        dx_last: Vec,
+        h_eff: float,
+        eq_idx: np.ndarray,
+        var_idx: np.ndarray,
+        ineq_idx: np.ndarray,
+        fixed_bool_eq_idx: np.ndarray,
+        check_inequalities: bool,
+    ) -> tuple[bool, Vec, Vec, float]:
+        x_ref, dx_ref = self.problem.make_mti_direct_state(x_seed, dx_last)
+        w = self.problem.mti_direct_pack(x_seed, dx_last, var_idx)
+        residual = np.inf
+        x_eval = x_seed.copy()
+        dx_eval = dx_last.copy()
+
+        for it in range(self.mti_max_iter):
+            x_eval, dx_eval = self.problem.mti_direct_apply(w, x_ref, dx_ref, var_idx)
+            rhs_full = self.problem.compute_mti_direct_equalities(x_eval, dx_eval)
+            if rhs_full.size == 0 or not np.all(np.isfinite(rhs_full)):
+                return False, x_eval, dx_eval, np.inf
+            rhs = np.asarray(rhs_full, dtype=float)[eq_idx]
+            residual = float(np.linalg.norm(rhs, np.inf)) if rhs.size > 0 else 0.0
+            if self.debug_solve:
+                g_max_dbg = self._subproblem_inequality_violation(x_eval, dx_eval, x_prev, h_eff, ineq_idx)
+                print(
+                    f"[MTI-SUBERR] phase=direct-xp it={it + 1}/{self.mti_max_iter} "
+                    f"eq={eq_idx.size} var={var_idx.size} res={residual:.6e} localG={g_max_dbg:.6e}"
+                )
+            if residual <= self.mti_solve_tol:
+                bool_res = self._fixed_boolean_equality_residual(x_eval, dx_eval, x_prev, h_eff, fixed_bool_eq_idx)
+                if bool_res > self.mti_solve_tol:
+                    self._last_subproblem_fail_reason = "bool_eq_fail"
+                    return False, x_eval, dx_eval, max(residual, bool_res)
+                if check_inequalities:
+                    g_max = self._subproblem_inequality_violation(x_eval, dx_eval, x_prev, h_eff, ineq_idx)
+                    if g_max > self.inequality_tolerance:
+                        self._last_subproblem_fail_reason = "ineq_fail"
+                        return False, x_eval, dx_eval, max(residual, g_max)
+                return True, x_eval, dx_eval, residual
+
+            j_full = self.problem.jacobian_mti_direct_equalities(x_eval, dx_eval, var_idx).tocsr()
+            j_sub = j_full[eq_idx, :]
+            try:
+                with warnings.catch_warnings():
+                    warnings.filterwarnings("error", category=MatrixRankWarning)
+                    delta = sp.linalg.spsolve(j_sub, -rhs)
+            except Exception:
+                delta, *_ = sp.linalg.lsqr(j_sub, -rhs, iter_lim=self.mti_lsqr_iter_lim, atol=self.mti_solve_tol, btol=self.mti_solve_tol)
+            if not np.all(np.isfinite(delta)):
+                return False, x_eval, dx_eval, np.inf
+            w = w + np.asarray(delta, dtype=float)
+
+        if self.debug_solve:
+            print(f"[MTI-SUBFAIL] kind=direct-xp final_residual={residual:.6e}")
+        return False, x_eval, dx_eval, residual
 
     def _solve_subproblem_nonlinear_lsq(
         self,
@@ -1009,6 +1225,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
         eq_idx: np.ndarray,
         var_idx: np.ndarray,
         force_zero_dx: bool = False,
+        direct_xp_solve: bool = False,
     ) -> tuple[bool, Vec, Vec, Vec, float]:
         self._last_subproblem_context = "variable-z"
         bool_positions = self.problem.get_subproblem_boolean_positions(eq_idx=eq_idx, var_idx=var_idx)
@@ -1030,6 +1247,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
                 var_idx=var_idx,
                 force_zero_dx=force_zero_dx,
                 check_inequalities=True,
+                direct_xp_solve=direct_xp_solve,
             )
             return ok, x_try, dx_try, np.asarray(z_seed, dtype=float).copy(), res
 
@@ -1056,6 +1274,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
                 var_idx=var_idx,
                 force_zero_dx=force_zero_dx,
                 check_inequalities=False,
+                direct_xp_solve=direct_xp_solve,
             )
             if not ok:
                 if np.isfinite(res) and res < best[4]:
@@ -1152,7 +1371,10 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
         # Initialization quality is assessed from algebraic consistency at t0,
         # not by whether the first dynamic integration step converges.
         try:
-            f0_alg = np.asarray(self.problem.rhs_algebraic(x0, dx0), dtype=float)
+            if hasattr(self.problem, "rhs_algebraic"):
+                f0_alg = np.asarray(self.problem.rhs_algebraic(x0, dx0), dtype=float)
+            else:
+                f0_alg = np.asarray(self.problem.compute_mti_equalities(x0, dx0, x0, 0.0), dtype=float)
             if f0_alg.size > 0:
                 r0 = float(np.linalg.norm(f0_alg, np.inf))
                 well_initialized = bool(np.isfinite(r0) and r0 <= max(self.tol, 1e-6))
@@ -1168,9 +1390,9 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
 
         n_bool_from_problem = len(self.problem.get_mti_boolean_parameter_indices)
         z0 = np.zeros(n_bool_from_problem, dtype=float)
-        if n_bool_from_problem > 0 and self.problem._variable_parameters_values is not None:
-            for k, idx in enumerate(self.problem.get_mti_boolean_parameter_indices):
-                z0[k] = float(self.problem._variable_parameters_values[idx])
+        z0_from_problem = self._get_boolean_state_from_problem(self.problem.get_mti_boolean_parameter_indices)
+        if n_bool_from_problem > 0 and z0_from_problem is not None:
+            z0 = z0_from_problem
         elif n_bool_from_problem > 0:
             z0 = self.problem.update_mti_boolean_state(x0, dx0, x0, self.h)
             if z0 is None:
@@ -1183,6 +1405,9 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
                 self.problem.build_mti_incidence_and_order(x0, dx0, self.h)
             except Exception as ex:
                 raise RuntimeError(f"Failed to build MTI incidence/solving order: {ex}") from ex
+            if os.getenv("RMS_MTI_ORDER_ONLY", "0").strip() in ("1", "true", "True", "yes", "on"):
+                self.problem.print_mti_solving_order_summary()
+                raise SystemExit(0)
 
         self.z = np.full((self.steps + 1, len(z0)), np.nan, dtype=float)
         if len(z0) > 0:
@@ -1223,16 +1448,14 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
                     self.problem.update_variable_params(t=t_local_prev, x_snapshot=x_local)
                 except TypeError:
                     self.problem.update_variable_params(t_local_prev)
-                try:
-                    self.problem.update(t_curr, x_local, self.problem._variable_parameters_values)
-                except Exception:
-                    pass
+                self._update_problem_boundary(t_curr=t_curr, x_snapshot=x_local)
 
                 bool_indices = self.problem.get_mti_boolean_parameter_indices
                 n_bool = len(bool_indices)
                 accepted_x: Vec | None = None
                 accepted_dx: Vec | None = None
                 accepted_z: Vec | None = None
+                accepted_t_curr = t_curr
                 # MATLAB-aligned intent: keep current z unless event handling is needed.
                 self.problem.set_mti_boolean_state(z_prev)
                 ok_fix, x_fix, dx_fix, res_fix = self._solve_continuous_with_fallback(
@@ -1302,11 +1525,13 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
                     if ok_loc:
                         if ok_fix:
                             remaining_h = max(0.0, float(h_eff) - float(h_event))
+                            require_z_change = float(h_event) <= 1e-12
                             # Match MATLAB's split/restart flow: eventTotalDerivative
                             # resolves the mode and derivatives at the event instant;
                             # the post-event continuous segment is solved separately.
                             event_solve_h = max(min(float(h_eff), 1e-9), 1e-12)
                         else:
+                            require_z_change = False
                             # No fixed-z trajectory exists to localize against;
                             # keep the prior candidate solve semantics for this
                             # recovery path rather than inventing an event time.
@@ -1324,6 +1549,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
                             z_prev=z_prev,
                             force_zero_dx=False,
                             forced_ineq_idx=event_idx if ok_fix else None,
+                            require_z_change=require_z_change,
                         )
                     else:
                         ok_evt = False
@@ -1335,41 +1561,22 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
                         best_fail_dx_evt = dx_fix
 
                     if ok_evt and ok_loc:
-                        if (not ok_fix) or remaining_h <= 1e-15:
+                        if not ok_fix:
                             accepted_x = x_evt
                             accepted_dx = dx_evt
                             converged = True
                         else:
-                            self.problem.set_mti_boolean_state(z_evt)
-                            ok_post, x_post, dx_post, res_post = self._solve_continuous_with_fallback(
-                                x_prev=x_evt,
-                                dx_last=dx_evt,
-                                h_eff=remaining_h,
-                                force_zero_dx=False,
-                            )
+                            accepted_x = x_evt
+                            accepted_dx = dx_evt
+                            accepted_t_curr = t_local_prev + float(h_event)
+                            made_progress = accepted_t_curr > t_local_prev + 1e-15
+                            changed_z = self._hamming_distance(np.asarray(z_evt, dtype=float), z_prev) > 0
+                            converged = bool(made_progress or changed_z)
                             if self.debug:
                                 print(
-                                    f"[MTI-POST-EVENT] ok={int(ok_post)} "
-                                    f"remaining={float(remaining_h):.6e} res={float(res_post):.6e}"
+                                    f"[MTI-RESTART] accepted_event_time={float(accepted_t_curr):.6e} "
+                                    f"remaining={float(remaining_h):.6e} progress={int(made_progress)} z_change={int(changed_z)}"
                                 )
-                            if ok_post:
-                                g_post = self.problem.compute_mti_inequalities(x_post, dx_post, x_event, remaining_h)
-                                h_safe_post = max(float(remaining_h), 1e-12)
-                                xpp_post = (np.asarray(dx_post, dtype=float) - np.asarray(dx_evt, dtype=float)) / h_safe_post
-                                dg_post = self.problem.total_derivative_inequalities(x_post, dx_post, xpp=xpp_post)
-                                post_event_needed, _ = self._detect_inequality_event(g_post, dg_post)
-                                if not post_event_needed:
-                                    accepted_x = x_post
-                                    accepted_dx = dx_post
-                                    converged = True
-                                elif np.isfinite(res_post) and res_post < best_fail_res:
-                                    best_fail_res = float(res_post)
-                                    best_fail_x = x_post
-                                    best_fail_dx = dx_post
-                            elif np.isfinite(res_post) and res_post < best_fail_res:
-                                best_fail_res = float(res_post)
-                                best_fail_x = x_post
-                                best_fail_dx = dx_post
                         if converged:
                             accepted_z = z_evt
                     if np.isfinite(best_fail_res_evt) and best_fail_res_evt < best_fail_res:
@@ -1416,7 +1623,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
 
                 x_local = accepted_x
                 dx_last = accepted_dx
-                t_local_prev = t_curr
+                t_local_prev = accepted_t_curr
                 is_first_local_step = False
                 if accepted_z is not None and len(accepted_z) > 0:
                     z_prev = np.asarray(accepted_z, dtype=float)

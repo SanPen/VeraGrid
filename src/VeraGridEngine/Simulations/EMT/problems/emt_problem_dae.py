@@ -7323,6 +7323,14 @@ class EmtProblemDae(EmtProblemTemplate):
 
         return stack
 
+    def get_floquet_jacobian_evaluator(self, default_jacobian_evaluator: Optional[Any] = None) -> Optional[Any]:
+        """Return the Jacobian evaluator used by EMT Floquet analysis.
+
+        Subclasses can override this to provide problem-specific Jacobian backends
+        while keeping the small-signal driver unchanged.
+        """
+        return default_jacobian_evaluator
+
     def _get_or_create_working_emt_model(self, dev: Any) -> Block:
         """
         Return the EMT block used by this EmtProblemDae instance.
@@ -7491,4 +7499,3 @@ class EmtProblemDae(EmtProblemTemplate):
             key=ParamPowerFlowReferenceType.generator_share_q_ref,
             value=q_ref_value,
         )
-

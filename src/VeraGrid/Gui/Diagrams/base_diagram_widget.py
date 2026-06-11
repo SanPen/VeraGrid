@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 from typing import List, Set, Dict, Union, Tuple, Generator, TYPE_CHECKING
+from time import perf_counter
 import numpy as np
 import cv2
 from matplotlib import pyplot as plt
@@ -96,36 +97,35 @@ def qimage_to_cv(qimage: QImage, logger: Logger, force_disk=False) -> np.ndarray
         return opencv_image
     else:
         try:
-            # convert picture using the memory
-            # we need to delete the alpha channel, otherwise the video frame is not saved
-            cv_mat = np.array(qimage.constBits()).reshape(height, width, 4).astype(np.uint8)[:, :, :3]
+            # Convert to a 4-byte-per-pixel format so row padding stays aligned and predictable.
+            if qimage.format() != QImage.Format.Format_RGBA8888:
+                qimage = qimage.convertToFormat(QImage.Format.Format_RGBA8888)
+
+            stride = qimage.bytesPerLine()
+            ptr = qimage.constBits()
+            buffer = np.frombuffer(ptr, dtype=np.uint8, count=height * stride)
+            rgba_mat = buffer.reshape((height, stride // 4, 4))[:, :width, :]
+            cv_mat = cv2.cvtColor(rgba_mat, cv2.COLOR_RGBA2BGR)
 
             return cv_mat
 
-        except ValueError as e:
+        except (ValueError, TypeError, BufferError) as e:
 
             logger.add_error(msg=f"Could not convert frame: {e}, failed over to second image conversion method.")
 
             try:
-                # Convert the QImage to RGB format if it is not already in that format
-                qimage = qimage.convertToFormat(QImage.Format.Format_RGB888)
+                # Fallback to a 4-byte RGB32 image and then drop the alpha channel explicitly.
+                qimage = qimage.convertToFormat(QImage.Format.Format_RGB32)
 
-                # Get the pointer to the data and stride (bytes per line)
-                ptr = qimage.bits()
-                # ptr.itemsize = qimage.sizeInBytes()  # Set the size of the memoryview
-                stride = qimage.bytesPerLine()  # Get the number of bytes per line (width * channels + padding)
+                ptr = qimage.constBits()
+                stride = qimage.bytesPerLine()
 
-                # Create a numpy array with the correct shape based on the stride
-                arr = np.array(ptr).reshape((height, stride // 3, 3)).astype(np.uint8)  # Adjust for stride
-
-                # Crop the width to the actual image width (in case stride > width * channels)
+                arr = np.frombuffer(ptr, dtype=np.uint8, count=height * stride).reshape((height, stride // 4, 4))
                 arr = arr[:, :width, :]
-
-                # Convert RGB to BGR for OpenCV
-                cv_mat = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
+                cv_mat = cv2.cvtColor(arr, cv2.COLOR_BGRA2BGR)
 
                 return cv_mat
-            except ValueError as e2:
+            except (ValueError, TypeError, BufferError) as e2:
                 logger.add_error(msg=f"Could not convert frame: {e2}, failed over to disk converison method")
 
                 # try the last method, saving to disk and reading again
@@ -247,6 +247,23 @@ class BaseDiagramWidget(QSplitter):
 
         # video pointer
         self._video: Union[None, cv2.VideoWriter] = None
+        self._video_export_active: bool = False
+
+    def set_video_export_active(self, value: bool) -> None:
+        """
+        Set whether the diagram is being updated for video export.
+
+        :param value: Export mode flag
+        """
+        self._video_export_active = value
+
+    def is_video_export_active(self) -> bool:
+        """
+        Get whether the diagram is being updated for video export.
+
+        :return: Export mode flag
+        """
+        return self._video_export_active
 
     def items(self) -> Generator[ALL_GRAPHICS, None, None]:
         """
@@ -923,8 +940,6 @@ class BaseDiagramWidget(QSplitter):
         image = self.get_image()
         w = image.width()
         h = image.height()
-        cv2_image = qimage_to_cv(image, logger)
-        w2, h2, _ = cv2_image.shape
 
         if fname.endswith('.mp4'):
             self._video = cv2.VideoWriter(filename=fname,
@@ -959,6 +974,46 @@ class BaseDiagramWidget(QSplitter):
 
         if cv2_image is not None:
             self._video.write(cv2_image)
+        else:
+            pass
+
+    def capture_video_frame_timed(self, w: int, h: int, logger: Logger) -> Tuple[float, float]:
+        """
+        Save a video frame and report the capture and encoder durations separately.
+
+        :param w: Expected frame width
+        :param h: Expected frame height
+        :param logger: Logger instance
+        :return: Tuple ``(capture_time_s, write_time_s)``
+        """
+        capture_start_time: float = perf_counter()
+        image = self.get_image()
+        w2: int = image.width()
+        h2: int = image.height()
+
+        if w != w2:
+            logger.add_error(f"Width {w2} different from expected width {w}")
+        else:
+            pass
+
+        if h != h2:
+            logger.add_error(f"Height {h2} different from expected width {h}")
+        else:
+            pass
+
+        cv2_image: np.ndarray | None = qimage_to_cv(image, logger)
+        capture_end_time: float = perf_counter()
+
+        write_start_time: float = capture_end_time
+        if cv2_image is not None:
+            self._video.write(cv2_image)
+        else:
+            pass
+        write_end_time: float = perf_counter()
+
+        capture_elapsed_time: float = capture_end_time - capture_start_time
+        write_elapsed_time: float = write_end_time - write_start_time
+        return capture_elapsed_time, write_elapsed_time
 
     def end_video_recording(self):
         """

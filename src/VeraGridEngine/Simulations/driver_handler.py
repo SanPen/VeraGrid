@@ -42,12 +42,15 @@ from VeraGridEngine.Simulations.NodalCapacity.nodal_capacity_ts_driver import (N
 from VeraGridEngine.Simulations.OPF.opf_driver import OptimalPowerFlowDriver
 from VeraGridEngine.Simulations.OPF.opf_ts_driver import (OptimalPowerFlowTimeSeriesDriver)
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowDriver
+from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver_3ph import PowerFlowDriver3Ph
 from VeraGridEngine.Simulations.PowerFlow.power_flow_ts_driver import (PowerFlowTimeSeriesDriver)
 from VeraGridEngine.Simulations.Reliability.blackout_driver import CascadingDriver
 from VeraGridEngine.Simulations.Reliability.reliability_driver import ReliabilityStudyDriver
 from VeraGridEngine.Simulations.Rms.rms_driver import RmsSimulationDriver
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
+from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_driver import SmallSignalStabilityRmsDriver
+from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_options import RmsSmallSignalStabilityOptions
 from VeraGridEngine.Simulations.EMT.emt_driver import EmtSimulationDriver
 from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
 from VeraGridEngine.Simulations.SigmaAnalysis.sigma_analysis_driver import SigmaAnalysisDriver
@@ -65,7 +68,8 @@ from VeraGridEngine.basic_structures import IntVec
 
 def create_driver(grid: MultiCircuit,
                   driver_tpe: SimulationTypes,
-                  time_indices: IntVec | None) -> DRIVER_OBJECTS | None:
+                  time_indices: IntVec | None,
+                  pf_results: PowerFlowResults | None = None) -> DRIVER_OBJECTS | None:
     """
     Create driver with the results
     :param grid: MultiCircuit instance
@@ -158,6 +162,20 @@ def create_driver(grid: MultiCircuit,
             grid=grid,
             options=RmsOptions(),
             pf_results=None
+        )
+
+    elif driver_tpe == SimulationTypes.RmsSmallSignal_run:
+        if pf_results is None:
+            warn("Session RMS Small Signal stability requires loaded Power Flow results for disk retrieval :/")
+            return None
+
+        # Disk retrieval only needs a driver shell that owns the correct results
+        # class. Saved small-signal results already contain the solved modes.
+        drv = SmallSignalStabilityRmsDriver(
+            grid=grid,
+            rms_options=RmsOptions(),
+            sss_options=RmsSmallSignalStabilityOptions(),
+            pf_results=pf_results,
         )
 
     elif driver_tpe == SimulationTypes.EmtDynamic_run:

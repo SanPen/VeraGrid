@@ -5,11 +5,13 @@
 from __future__ import annotations
 import numpy as np
 import pandas as pd
-from typing import List, Union
+from typing import Any, Dict, List, Union
 from PySide6 import QtCore, QtWidgets
 from warnings import warn
 
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
+from VeraGridEngine.Devices.Profiles.profile_device import ProfileDevice
+from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.enumerations import DeviceType
 from VeraGrid.Gui.gui_functions import (ComboDelegate, TextDelegate, FloatDelegate, ComplexDelegate)
 from VeraGrid.Gui.wrappable_table_model import WrappableTableModel
@@ -92,6 +94,7 @@ class ProfilesModel(WrappableTableModel):
                  device_type: DeviceType,
                  magnitude: str,
                  data_format,
+                 dictionary_of_lists: Dict[Any, List[ALL_DEV_TYPES]] | None,
                  parent,
                  max_undo_states=100):
         """
@@ -115,6 +118,8 @@ class ProfilesModel(WrappableTableModel):
 
         self.magnitude = magnitude
 
+        self.dictionary_of_lists: Dict[Any, List[ALL_DEV_TYPES]] = dictionary_of_lists if dictionary_of_lists is not None else dict()
+
         self.non_editable_indices = list()
 
         self.editable = True
@@ -136,8 +141,22 @@ class ProfilesModel(WrappableTableModel):
         Set the cell editor types depending on the attribute_types array
         :return:
         """
+        profile: object | None = self._get_reference_profile()
 
-        if self.data_format is bool:
+        if isinstance(profile, ProfileDevice):
+            delegate_objects: List[ALL_DEV_TYPES] | None = self.dictionary_of_lists.get(profile.dtype, None)
+
+            if delegate_objects is not None:
+                delegate = ComboDelegate(
+                    parent=self.parent,
+                    objects=[None] + delegate_objects,
+                    object_names=["None"] + [x.name for x in delegate_objects],
+                )
+                self.parent.setItemDelegate(delegate)
+            else:
+                self.parent.setItemDelegate(None)
+
+        elif self.data_format is bool:
             delegate = ComboDelegate(self.parent, [True, False], ['True', 'False'])
             self.parent.setItemDelegate(delegate)
 
@@ -152,6 +171,20 @@ class ProfilesModel(WrappableTableModel):
         elif self.data_format is complex:
             delegate = ComplexDelegate(self.parent)
             self.parent.setItemDelegate(delegate)
+
+        else:
+            self.parent.setItemDelegate(None)
+
+    def _get_reference_profile(self) -> object | None:
+        """
+        Return one representative profile for the current magnitude.
+
+        :return: Profile instance when available.
+        """
+        if len(self.elements) > 0:
+            return self.elements[0].get_profile(magnitude=self.magnitude)
+        else:
+            return None
 
     def update(self):
         """

@@ -41,6 +41,21 @@ def open_file(filename: Union[str, List[str]],
         raise Exception("File open error")
     return drv.circuit
 
+def open_multiverse(filename: Union[str, List[str]],
+              options: FileOpenOptions | None = None) -> MultiVerse:
+    """
+    Open file
+    :param filename: name of the file (.veragrid, .ejson, .m, .xml, .zip, etc.) or list of files (.xml, .zip)
+    :param options: FileOpenOptions instance (optional)
+    :return: MultiVerse instance
+    """
+    drv = FileOpen(file_name=filename, options=options)
+    drv.open()
+    if drv.multiverse is None:
+        raise Exception("No multiverse found :(")
+    else:
+        return drv.multiverse
+
 
 def save_file(grid: MultiCircuit, filename: str, drivers_to_save: List[DriverToSave] | None = None):
     """
@@ -58,15 +73,18 @@ def save_file(grid: MultiCircuit, filename: str, drivers_to_save: List[DriverToS
     ).save()
 
 
-def save_multiverse(mv: MultiVerse, filename: str):
+def save_multiverse(mv: MultiVerse, filename: str, drivers_to_save: List[DriverToSave] | None = None):
     """
     Save file
     :param mv: MultiVerse instance
     :param filename: name of the file (.veragrid)
+    :param drivers_to_save: List of drivers to save, this structure can be obtained from driver.get_save_data()
     """
     save_veragrid_multiverse(
         file_name=filename,
-        options=FileSavingOptions(),
+        options=FileSavingOptions(
+            sessions_data=list() if drivers_to_save is None else drivers_to_save,
+        ),
         multiverse=mv
     )
 

@@ -67,6 +67,12 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
         self._context_lat: float | None = None
         self._context_lon: float | None = None
         self._context_scene_pos: QPointF | None = None
+        self._last_export_color: QColor | None = None
+        self._last_export_style: Qt.PenStyle | None = None
+        self._last_export_power_from: complex | None = None
+        self._last_export_power_to: complex | None = None
+        self._last_export_hvdc_power_from: float | None = None
+        self._last_export_hvdc_power_to: float | None = None
 
     @property
     def api_object(self) -> Union[BRANCH_TYPES, FluidPath]:
@@ -255,21 +261,56 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
         :param tool_tip: tool tip text
         :return:
         """
+        export_mode: bool = self.editor.is_video_export_active()
+        update_hidden_segments: bool = not export_mode or self.segments_drawn
+
+        # During export, avoid repainting the full line hierarchy when the visible state is unchanged.
+        if export_mode:
+            if self._last_export_color is not None and self._last_export_style is not None:
+                if self._last_export_color == color and self._last_export_style == style:
+                    return
+                else:
+                    pass
+            else:
+                pass
+        else:
+            pass
+
         self.color = QColor(color)
         self.style = style
 
-        for segment in self.segments_list:
-            segment.setToolTip(tool_tip)
-            segment.set_colour(color=color, style=style)
+        # When the map is not in edit mode the visible representation is the polyline, not the hidden segments.
+        # Export can therefore skip touching every hidden segment without changing the rendered output.
+        if update_hidden_segments:
+            for segment in self.segments_list:
+                if export_mode:
+                    pass
+                else:
+                    segment.setToolTip(tool_tip)
+                segment.set_colour(color=color, style=style)
+        else:
+            pass
 
         if self.polyline is not None:
-            self.polyline.setToolTip(tool_tip)
+            if export_mode:
+                pass
+            else:
+                self.polyline.setToolTip(tool_tip)
             polyline_pen = QPen(self.color,
                                 self.width,
                                 self.style,
                                 Qt.PenCapStyle.RoundCap,
                                 Qt.PenJoinStyle.RoundJoin)
             self.polyline.set_pen(polyline_pen)
+        else:
+            pass
+
+        if export_mode:
+            self._last_export_color = QColor(self.color)
+            self._last_export_style = self.style
+        else:
+            self._last_export_color = None
+            self._last_export_style = None
 
     def update_connectors(self) -> None:
         """
@@ -895,8 +936,27 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
         :param St:
         :return:
         """
-        for segment in self.segments_list:
-            segment.set_arrows_with_power(Sf=Sf, St=St)
+        export_mode: bool = self.editor.is_video_export_active()
+        update_hidden_segments: bool = not export_mode or self.segments_drawn
+
+        # During export, skip rebuilding arrow geometry when the flow values are identical.
+        if export_mode:
+            if self._last_export_power_from == Sf and self._last_export_power_to == St:
+                return
+            else:
+                pass
+        else:
+            pass
+
+        # Hidden segments do not contribute to the exported image, so avoid updating their arrow items.
+        if update_hidden_segments:
+            for segment in self.segments_list:
+                segment.set_arrows_with_power(Sf=Sf, St=St)
+        else:
+            pass
+
+        self._last_export_power_from = Sf
+        self._last_export_power_to = St
 
     def set_arrows_with_hvdc_power(self, Pf: float, Pt: float) -> None:
         """
@@ -905,8 +965,27 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
         :param Pt:
         :return:
         """
-        for segment in self.segments_list:
-            segment.set_arrows_with_hvdc_power(Pf=Pf, Pt=Pt)
+        export_mode: bool = self.editor.is_video_export_active()
+        update_hidden_segments: bool = not export_mode or self.segments_drawn
+
+        # During export, skip rebuilding arrow geometry when the HVDC flow values are identical.
+        if export_mode:
+            if self._last_export_hvdc_power_from == Pf and self._last_export_hvdc_power_to == Pt:
+                return
+            else:
+                pass
+        else:
+            pass
+
+        # Hidden segments do not contribute to the exported image, so avoid updating their arrow items.
+        if update_hidden_segments:
+            for segment in self.segments_list:
+                segment.set_arrows_with_hvdc_power(Pf=Pf, Pt=Pt)
+        else:
+            pass
+
+        self._last_export_hvdc_power_from = Pf
+        self._last_export_hvdc_power_to = Pt
 
     def calculate_total_length(self) -> float:
         """

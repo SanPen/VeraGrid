@@ -6,6 +6,7 @@ import numpy as np
 import time
 import scipy.sparse as sp
 from scipy.sparse import csc_matrix
+from collections.abc import Callable
 
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae_vectorized import RmsProblemDaeVec
 from VeraGridEngine.Utils.Sparse.csc import pack_4_by_4_scipy
@@ -20,7 +21,8 @@ class BackEulerImplicitIntegrationVec:
                  t_end: float,
                  h: float,
                  max_iter: int,
-                 tolerance: float = 1e-7):
+                 tolerance: float = 1e-7,
+                 cancel_checker: Callable[[], bool] | None = None) -> None:
         """
         Initializes an object to solve a given DAE (Differential-Algebraic Equation) problem using numerical
         methods. This constructor sets up the time grid and prepares storage for results.
@@ -36,19 +38,26 @@ class BackEulerImplicitIntegrationVec:
         :type h: float
         :param max_iter: The maximum number of iterations for internal solver routines or convergence tests.
         :type max_iter: int
+        :param tolerance: Non-linear residual tolerance used by the Newton loop.
+        :type tolerance: float
+        :param cancel_checker: Optional cancellation callback checked at each macro time step.
+        :type cancel_checker: Callable[[], bool] | None
+        :return: None
+        :rtype: None
         """
 
         # if not problem.is_initialized():
         #     raise Exception('Problem is not initialized')
 
-        self.problem = problem
-        self.t0 = t0
-        self.h = h
-        self.max_iter_0 = max_iter
-        self.steps = int(np.ceil((t_end - t0) / h))
+        self.problem: RmsProblemDaeVec = problem
+        self.t0: float = t0
+        self.h: float = h
+        self.max_iter_0: int = max_iter
+        self.steps: int = int(np.ceil((t_end - t0) / h))
         self.t: Vec = np.empty(self.steps + 1)
         self.y: Mat = np.empty((self.steps + 1, self.problem.get_all_vars_number()))
-        self.tol = tolerance
+        self.tol: float = tolerance
+        self._cancel_checker: Callable[[], bool] | None = cancel_checker
 
     def _rhs_implicit_vec(self,
                       x: Vec,
@@ -187,6 +196,9 @@ class BackEulerImplicitIntegrationVec:
 
         try:
             for step_idx in range(self.steps):
+                if self._cancel_checker is not None and self._cancel_checker():
+                    return self.t[:step_idx + 1].copy(), self.y[:step_idx + 1, :].copy(), well_initialized, converged
+
                 self.problem.report_progress2(step_idx, self.steps)
 
                 t_current_macro: float = self.t[step_idx]

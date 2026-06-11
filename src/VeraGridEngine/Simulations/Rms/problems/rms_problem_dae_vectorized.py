@@ -507,7 +507,7 @@ class RmsProblemDaeVec(RmsProblemTemplate):
 
         print("starting to type models")
 
-        self.equivalence_dict, self.variables_equivalence_dict, self.block_composition_dict = build_equivalence_classes_dict(self.grid)
+        self.equivalence_dict, self.variables_equivalence_dict, self.block_composition_dict, self.reference_class_for_all_blocks_dict = build_equivalence_classes_dict(self.grid)
 
         print("typing models done!")
         ######################################## Initialize devices ########################################
@@ -2290,10 +2290,6 @@ class RmsProblemDaeVec(RmsProblemTemplate):
         if reference_powerflow in mdl.external_mapping:
             var = mdl.external_mapping[reference_powerflow]
             self.init_guess[var.uid] = val
-            # print(f"DEBUG: set_init_guess {reference_powerflow.value} = {val} for var {var.name} (uid={var.uid})")
-        else:
-            print(
-                f"DEBUG: set_init_guess {reference_powerflow.value} NOT FOUND in external_mapping. Available: {[k.value for k in mdl.external_mapping.keys()]}")
 
     def get_equation_at(self, i: int) -> Expr:
         """
@@ -2910,20 +2906,6 @@ class RmsProblemDaeVec(RmsProblemTemplate):
         n_vars = self._n_vars
         E_value = np.zeros((n_vars, n_vars))
         E_partial = E_call(x, dx, vp, cp, h=0).toarray()
-        print(f"DEBUG: E_partial shape: {E_partial.shape}")
-        print(f"DEBUG: E_partial sample values (non-zero):")
-        nz = np.nonzero(E_partial)
-        # for i in range(min(20, len(nz[0]))):
-        #     row, col = nz[0][i], nz[1][i]
-        #     print(f"  E_partial[{row},{col}] = {E_partial[row, col]}")
-
-        # Debug: show equation 70
-        # print(f"\nDEBUG: Equation 70:")
-        # print(f"  {all_eqs[70]}")
-        # print(f"\nDEBUG: Diff vars involved in row 70:")
-        # for col in range(E_partial.shape[1]):
-        #     if abs(E_partial[70, col]) > 1e-10:
-        #         print(f"  diff_var[{col}] = {xdot[col]}, value = {E_partial[70, col]}")
 
         E_value[:, :n_diff] = E_partial
         E_value[:n_states, :n_states] -= np.eye(n_states, dtype=E_value.dtype)

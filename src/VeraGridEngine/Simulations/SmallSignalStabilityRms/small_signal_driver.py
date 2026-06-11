@@ -134,9 +134,10 @@ def compute_participation_factors_generalized(v: np.ndarray,
 
     k = v_c.shape[1]
     for i in range(k):
-        norm_factor = np.vdot(w_c[:, i], Ev[:, i])
+        norm_factor = np.vdot(w_c[:, i], Ev[:, i]) # Double conjugation detected here (<w_i|v_i>_E but w_i was already
+                                                   # conjugated before after getting it from la.eig)
         if np.abs(norm_factor) > 1e-15:
-            w_c[:, i] /= norm_factor
+            w_c[:, i] /= norm_factor # Never used. Maybe Etw should be computed after this?
         else:
             pass
 

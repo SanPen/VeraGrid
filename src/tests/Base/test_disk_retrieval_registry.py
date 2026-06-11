@@ -10,6 +10,7 @@ from VeraGrid.Session.session import SimulationSession
 from VeraGridEngine.Simulations.driver_handler import create_driver
 from VeraGridEngine.Simulations.NTC.ntc_results import OptimalNetTransferCapacityResults
 from VeraGridEngine.Simulations.SigmaAnalysis.sigma_analysis_driver import SigmaAnalysisResults
+from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_driver import SmallSignalStabilityRmsResults
 from VeraGridEngine.Simulations.StateEstimation.state_estimation_results import StateEstimationResults
 from VeraGridEngine.enumerations import SimulationTypes
 from VeraGridEngine.IO.veragrid.zip_interface import load_session_driver_objects
@@ -28,6 +29,7 @@ GRID_FOLDER = Path(__file__).resolve().parents[1] / "data" / "grids"
         SimulationTypes.Reliability_run,
         SimulationTypes.Cascade_run,
         SimulationTypes.NodeGrouping_run,
+        SimulationTypes.InvestmentsEvaluation_run,
         SimulationTypes.CatalogueOptimization_run,
         SimulationTypes.OPF_NTC_run,
         SimulationTypes.OptimalNetTransferCapacityTimeSeries_run,
@@ -158,6 +160,120 @@ def test_sigma_results_register_from_disk_data(tmp_path: Path) -> None:
 
     assert not logger.has_logs()
     assert session.exists(SimulationTypes.SigmaAnalysis_run)
+
+
+def test_rms_small_signal_results_register_from_disk_data(tmp_path: Path) -> None:
+    """
+    RMS small-signal result shells must support disk registration.
+
+    :param tmp_path: Temporary pytest path.
+    :return: None.
+    """
+    grid = vg.open_file(str(GRID_FOLDER / "lynn5node.gridcal"))
+    pf_driver = create_driver(grid=grid, driver_tpe=SimulationTypes.PowerFlow_run, time_indices=None)
+    assert pf_driver is not None
+
+    driver = create_driver(
+        grid=grid,
+        driver_tpe=SimulationTypes.RmsSmallSignal_run,
+        time_indices=None,
+        pf_results=pf_driver.results,
+    )
+    assert driver is not None
+
+    driver.results = SmallSignalStabilityRmsResults(
+        eigenvalues=np.array([-1.0, -2.0], dtype=float),
+        participation_factors=np.array([[0.8, 0.2], [0.2, 0.8]], dtype=float),
+        damping_ratios=np.array([1.0, 1.0], dtype=float),
+        conjugate_frequencies=np.array([0.0, 0.0], dtype=float),
+        state_matrix=np.array([[-1.0, 0.0], [0.0, -2.0]], dtype=float),
+        stat_vars=list(),
+    )
+    driver.results.stat_vars_array = np.array(["x1", "x2"], dtype=str)
+
+    file_name = tmp_path / "rms_small_signal_disk_driver.veragrid"
+    vg.save_file(
+        grid=grid,
+        filename=str(file_name),
+        drivers_to_save=[pf_driver.get_save_data(), driver.get_save_data()],
+    )
+
+    pf_stored_data = load_session_driver_objects(
+        file_name_zip=str(file_name),
+        session_name=pf_driver.name,
+        study_name=pf_driver.tpe.value,
+    )
+    small_signal_stored_data = load_session_driver_objects(
+        file_name_zip=str(file_name),
+        session_name=driver.name,
+        study_name=driver.tpe.value,
+    )
+
+    session = SimulationSession()
+    pf_logger = session.register_driver_from_disk_data(
+        grid=grid,
+        study_name=pf_driver.tpe.value,
+        data_dict=pf_stored_data,
+    )
+    assert not pf_logger.has_logs()
+
+    logger = session.register_driver_from_disk_data(
+        grid=grid,
+        study_name=driver.tpe.value,
+        data_dict=small_signal_stored_data,
+    )
+
+    assert not logger.has_logs()
+    assert session.exists(SimulationTypes.RmsSmallSignal_run)
+
+    _, results = session.small_signal_stability_simulation
+    assert results is not None
+    assert np.array_equal(results.stat_vars_array, driver.results.stat_vars_array)
+    assert np.array_equal(results.eigenvalues, driver.results.eigenvalues)
+    assert np.array_equal(results.participation_factors, driver.results.participation_factors)
+    assert np.array_equal(results.damping_ratios, driver.results.damping_ratios)
+    assert np.array_equal(results.conjugate_frequencies, driver.results.conjugate_frequencies)
+    assert np.array_equal(results.state_matrix, driver.results.state_matrix)
+
+
+def test_rms_small_signal_results_warn_when_power_flow_is_not_loaded(tmp_path: Path) -> None:
+    """
+    RMS small-signal disk registration depends on power-flow results in the loaded session.
+
+    :param tmp_path: Temporary pytest path.
+    :return: None.
+    """
+    grid = vg.open_file(str(GRID_FOLDER / "lynn5node.gridcal"))
+    pf_driver = create_driver(grid=grid, driver_tpe=SimulationTypes.PowerFlow_run, time_indices=None)
+    assert pf_driver is not None
+
+    driver = create_driver(
+        grid=grid,
+        driver_tpe=SimulationTypes.RmsSmallSignal_run,
+        time_indices=None,
+        pf_results=pf_driver.results,
+    )
+    assert driver is not None
+
+    file_name = tmp_path / "rms_small_signal_without_pf.veragrid"
+    vg.save_file(grid=grid, filename=str(file_name), drivers_to_save=[driver.get_save_data()])
+
+    stored_data = load_session_driver_objects(
+        file_name_zip=str(file_name),
+        session_name=driver.name,
+        study_name=driver.tpe.value,
+    )
+
+    session = SimulationSession()
+    logger = session.register_driver_from_disk_data(
+        grid=grid,
+        study_name=driver.tpe.value,
+        data_dict=stored_data,
+    )
+
+    assert logger.has_logs()
+    assert "Power Flow results must be loaded" in logger.entries[0].msg
+    assert not session.exists(SimulationTypes.RmsSmallSignal_run)
 
 
 def test_ntc_results_register_from_disk_data(tmp_path: Path) -> None:

@@ -10,7 +10,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from VeraGridEngine.enumerations import BusMode, DeviceType, BusGraphicType, BuildStatus, PrpCat
 from VeraGridEngine.Devices.Parents.dynamic_bus_parent import DynamicBusDevice
-from VeraGridEngine.Devices.Aggregation import Area, Zone, Country
+from VeraGridEngine.Devices.Aggregation import Area, Zone, Country, Community, Region, Municipality
 from VeraGridEngine.Devices.Substation.substation import Substation
 from VeraGridEngine.Devices.Substation.busbar import BusBar
 from VeraGridEngine.Devices.Substation.voltage_level import VoltageLevel
@@ -543,6 +543,140 @@ class Bus(DynamicBusDevice):
             return BusMode.Slack_tpe
 
         return BusMode.PQ_tpe
+
+    def get_country(self) -> Country | None:
+        """
+        Get the country associated to this bus.
+
+        The bus-level reference has priority because it is the most specific
+        assignment for this object. If it is not available, the method falls
+        back to the substation hierarchy.
+
+        :return: Country object or ``None``
+        """
+        if self.country is not None:
+            return self.country
+        else:
+            substation: Substation | None = self.get_substation()
+            if substation is not None:
+                return substation.country
+            else:
+                return None
+
+    def get_area(self) -> Area | None:
+        """
+        Get the area associated to this bus.
+
+        The bus-level reference has priority because it is the most specific
+        assignment for this object. If it is not available, the method falls
+        back to the substation hierarchy.
+
+        :return: Area object or ``None``
+        """
+        if self.area is not None:
+            return self.area
+        else:
+            substation: Substation | None = self.get_substation()
+            if substation is not None:
+                return substation.area
+            else:
+                return None
+
+    def get_zone(self) -> Zone | None:
+        """
+        Get the zone associated to this bus.
+
+        The bus-level reference has priority because it is the most specific
+        assignment for this object. If it is not available, the method falls
+        back to the substation hierarchy.
+
+        :return: Zone object or ``None``
+        """
+        if self.zone is not None:
+            return self.zone
+        else:
+            substation: Substation | None = self.get_substation()
+            if substation is not None:
+                return substation.zone
+            else:
+                return None
+
+    def get_substation(self) -> Substation | None:
+        """
+        Get the substation associated to this bus.
+
+        The bus-level reference has priority because it is the direct
+        association stored by the bus. If it is not available, the method
+        falls back to the voltage-level hierarchy.
+
+        :return: Substation object or ``None``
+        """
+        if self.substation is not None:
+            return self.substation
+        else:
+            if self.voltage_level is not None:
+                return self.voltage_level.substation
+            else:
+                return None
+
+    def get_voltage_level(self) -> VoltageLevel | None:
+        """
+        Get the voltage level associated to this bus.
+
+        The bus stores the voltage-level reference directly, so there is no
+        alternative hierarchy to inspect.
+
+        :return: VoltageLevel object or ``None``
+        """
+        if self.voltage_level is not None:
+            return self.voltage_level
+        else:
+            return None
+
+    def get_community(self) -> Community | None:
+        """
+        Get the community associated to this bus.
+
+        The value is obtained through the substation hierarchy because the bus
+        does not store a direct community reference.
+
+        :return: Community object or ``None``
+        """
+        substation: Substation | None = self.get_substation()
+        if substation is not None:
+            return substation.community
+        else:
+            return None
+
+    def get_region(self) -> Region | None:
+        """
+        Get the region associated to this bus.
+
+        The value is obtained through the substation hierarchy because the bus
+        does not store a direct region reference.
+
+        :return: Region object or ``None``
+        """
+        substation: Substation | None = self.get_substation()
+        if substation is not None:
+            return substation.region
+        else:
+            return None
+
+    def get_municipality(self) -> Municipality | None:
+        """
+        Get the municipality associated to this bus.
+
+        The value is obtained through the substation hierarchy because the bus
+        does not store a direct municipality reference.
+
+        :return: Municipality object or ``None``
+        """
+        substation: Substation | None = self.get_substation()
+        if substation is not None:
+            return substation.municipality
+        else:
+            return None
 
     def get_voltage_guess(self, use_stored_guess=False) -> complex:
         """

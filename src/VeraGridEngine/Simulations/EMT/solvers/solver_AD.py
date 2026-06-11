@@ -662,7 +662,7 @@ class JitAdSolver:
         'state_vars', 'algebraic_vars', 'state_eqs', 'algebraic_eqs', '_newton_diag_config',
         '_predictor', '_runtime_param_count', '_static_parameter_buffer', '_full_parameter_buffer',
         '_residual_buffer', '_trial_state_buffer', '_trial_residual_buffer',
-        '_backend_build_stats', '_last_runtime_stats', '_last_sim_loop_time'
+        '_backend_build_stats', '_last_runtime_stats', '_last_sim_loop_time', '_cancel_checker'
     ]
     def __init__(self,
                  problem: EmtProblemTemplate,
@@ -674,7 +674,8 @@ class JitAdSolver:
                  dense_threshold: int = 100,
                  verbose: bool = False,
                  newton_max_iter: int = 15,
-                 newton_diag_config: NewtonDiagnosticsConfig | None = None)-> None:
+                 newton_diag_config: NewtonDiagnosticsConfig | None = None,
+                 cancel_checker: Callable[[], bool] | None = None)-> None:
         """
         Initializes the JIT AD Solver.
 
@@ -750,6 +751,7 @@ class JitAdSolver:
         )
         self._last_runtime_stats: Dict[str, float] = dict()
         self._last_sim_loop_time: float = 0.0
+        self._cancel_checker = cancel_checker
 
     def build_jit_ad(self, only_jacobian: bool = False)-> None:
         """
@@ -954,6 +956,9 @@ class JitAdSolver:
         aligned_substep_count: int = 0
 
         for i in range(self.steps):
+
+            if self._cancel_checker is not None and self._cancel_checker():
+                return t[:i + 1].copy(), self.y[:i + 1, :].copy(), self.dy[:i + 1, :].copy(), well_initialized, converged
 
             t_step_start = float(t[i])
             t_step_target = float(t[i + 1])

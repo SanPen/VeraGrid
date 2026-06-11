@@ -13,11 +13,12 @@ from VeraGridEngine.basic_structures import Logger, CxVec
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import (DeviceType, BuildStatus, SubObjectType, GeneratorType, PrpCat,
                                          GeneratorControlMode)
+from VeraGridEngine.Devices.Aggregation.market_unit import MarketUnit
 from VeraGridEngine.Devices.Associations.association import Associations
 from VeraGridEngine.Devices.Associations.fuel import Fuel
 from VeraGridEngine.Devices.Associations.emission_gas import EmissionGas
 from VeraGridEngine.Devices.Injections.generator_q_curve import GeneratorQCurve
-from VeraGridEngine.Devices.Profiles import ProfileBool, ProfileFloat
+from VeraGridEngine.Devices.Profiles import ProfileBool, ProfileFloat, ProfileDevice
 from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
 
@@ -105,6 +106,10 @@ class Generator(InjectionParent):
         '_Cost0_prof',
         'emissions',
         'fuels',
+        '_market_unit',
+        '_market_unit_prof',
+        '_market_unit_share',
+        '_market_unit_share_prof',
         'Sbase',
         'freq',
         '_must_run',
@@ -406,6 +411,22 @@ class Generator(InjectionParent):
             cat=[PrpCat.OPF],
         ),
         GCProp(
+            prop_name='market_unit',
+            units='',
+            tpe=DeviceType.MarketUnitDevice,
+            definition='Market unit associated to this generator.',
+            profile_name='market_unit_prof',
+            cat=[PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='market_unit_share',
+            units='p.u.',
+            tpe=float,
+            definition='Participation share of the generator inside the market unit.',
+            profile_name='market_unit_share_prof',
+            cat=[PrpCat.OPF],
+        ),
+        GCProp(
             prop_name='srap_enabled',
             units='',
             tpe=bool,
@@ -443,6 +464,8 @@ class Generator(InjectionParent):
                  Cost: float = 1.0,
                  Cost2: float = 0.0,
                  Cost0: float = 0.0,
+                 market_unit: MarketUnit | None = None,
+                 market_unit_share: float = 1.0,
                  Sbase: float = 100,
                  enabled_dispatch=True,
                  mttf: float = 0.0,
@@ -491,6 +514,8 @@ class Generator(InjectionParent):
         :param Cost: Proportional cost [e/MWh]
         :param Cost2: Quadratic cost [e/MWh^2]
         :param Cost0: Fixed cost [e]
+        :param market_unit: Market unit associated to the generator
+        :param market_unit_share: Participation share of the generator in the market unit
         :param Sbase: Nominal apparent power in MVA
         :param enabled_dispatch: Is the generator enabled for OPF?
         :param mttf: Mean time to failure [h]
@@ -642,6 +667,12 @@ class Generator(InjectionParent):
 
         self.emissions: Associations = Associations(device_type=DeviceType.EmissionGasDevice)
         self.fuels: Associations = Associations(device_type=DeviceType.FuelDevice)
+
+        self._market_unit: MarketUnit | None = market_unit
+        self._market_unit_prof = ProfileDevice(default_value=self._market_unit, device_type=DeviceType.MarketUnitDevice)
+
+        self._market_unit_share: float = float(market_unit_share)
+        self._market_unit_share_prof = ProfileFloat(default_value=self._market_unit_share)
 
         # system base power MVA
         self.Sbase = float(Sbase)
@@ -1026,6 +1057,113 @@ class Generator(InjectionParent):
         :return:
         """
         return get_at(self.Cost0, self.Cost0_prof, t)
+
+    @property
+    def market_unit(self) -> MarketUnit | None:
+        """
+        Get ``market_unit``.
+
+        :return: MarketUnit or ``None``
+        """
+        return self._market_unit
+
+    @market_unit.setter
+    def market_unit(self, val: MarketUnit | None) -> None:
+        """
+        Set ``market_unit``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        if isinstance(val, MarketUnit) or val is None:
+            self._market_unit = val
+        else:
+            raise ValueError("The value must be a MarketUnit or None")
+
+    @property
+    def market_unit_prof(self) -> ProfileDevice:
+        """
+        Get ``market_unit_prof``.
+
+        :return: ProfileDevice
+        """
+        return self._market_unit_prof
+
+    @market_unit_prof.setter
+    def market_unit_prof(self, val: Union[ProfileDevice, np.ndarray]) -> None:
+        """
+        Set ``market_unit_prof``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        if isinstance(val, ProfileDevice):
+            self._market_unit_prof = val
+        elif isinstance(val, np.ndarray):
+            self._market_unit_prof.set(arr=val)
+        else:
+            raise ValueError("The value must be a ProfileDevice or ndarray")
+
+    def get_market_unit_at(self, t: int | None) -> MarketUnit | None:
+        """
+        Get the market unit value at a time index.
+
+        :param t: Time index
+        :return: MarketUnit or ``None``
+        """
+        return get_at(self.market_unit, self.market_unit_prof, t)
+
+    @property
+    def market_unit_share(self) -> float:
+        """
+        Get ``market_unit_share``.
+
+        :return: float
+        """
+        return self._market_unit_share
+
+    @market_unit_share.setter
+    def market_unit_share(self, val: float) -> None:
+        """
+        Set ``market_unit_share``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._market_unit_share = float(val)
+
+    @property
+    def market_unit_share_prof(self) -> ProfileFloat:
+        """
+        Get ``market_unit_share_prof``.
+
+        :return: ProfileFloat
+        """
+        return self._market_unit_share_prof
+
+    @market_unit_share_prof.setter
+    def market_unit_share_prof(self, val: Union[ProfileFloat, np.ndarray]) -> None:
+        """
+        Set ``market_unit_share_prof``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        if isinstance(val, ProfileFloat):
+            self._market_unit_share_prof = val
+        elif isinstance(val, np.ndarray):
+            self._market_unit_share_prof.set(arr=val)
+        else:
+            raise ValueError("The value must be a ProfileFloat or ndarray")
+
+    def get_market_unit_share_at(self, t: int | None) -> float:
+        """
+        Get the market unit share value at a time index.
+
+        :param t: Time index
+        :return: float
+        """
+        return get_at(self.market_unit_share, self.market_unit_share_prof, t)
 
     @property
     def enabled_dispatch_prof(self) -> ProfileBool:

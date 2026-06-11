@@ -1,8 +1,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import os
+import shutil
+import subprocess
+import tempfile
 
 import numpy as np
+from scipy.io import loadmat, savemat
 import scipy.sparse as sp
 from scipy.sparse.csgraph import connected_components, maximum_bipartite_matching
 
@@ -129,32 +134,22 @@ def _order_incidence_matrix_dmperm_like(incidence: np.ndarray) -> tuple[np.ndarr
     if n_eq != n_var:
         raise ValueError(f"Incidence must be square, got ({n_eq}, {n_var})")
 
+    backend = os.getenv("RMS_MTI_DMPERM_BACKEND", "python").strip().lower()
+    if backend in ("octave", "matlab", "auto"):
+        try:
+            return _order_incidence_matrix_external_dmperm(incidence, backend)
+        except Exception as ex:
+            if backend in ("octave", "matlab"):
+                raise
+            print(f"[MTI-ORDER] external dmperm unavailable, using Python fallback: {ex}")
+
     inc_csr = sp.csr_matrix((incidence != 0).astype(int))
-    row_to_col = maximum_bipartite_matching(inc_csr, perm_type='column')
-    if np.any(row_to_col < 0):
-        raise ValueError("Incidence has no full structural matching")
+    row_to_col, n_comp, labels, dep_graph = _best_structural_matching(inc_csr)
     print("[MTI-ORDER] structural matching complete")
 
     col_to_row = np.empty(n_var, dtype=int)
     col_to_row[row_to_col] = np.arange(n_eq, dtype=int)
 
-    dep_rows: list[int] = []
-    dep_cols: list[int] = []
-    inc_coo = inc_csr.tocoo()
-    for row, col in zip(inc_coo.row, inc_coo.col):
-        matched_row = int(col_to_row[int(col)])
-        if int(row) == matched_row:
-            continue
-        # Row `row` depends on the variable matched to `matched_row`.
-        dep_rows.append(int(row))
-        dep_cols.append(matched_row)
-
-    if len(dep_rows) == 0:
-        dep_graph = sp.csr_matrix((n_eq, n_eq), dtype=int)
-    else:
-        dep_graph = sp.csr_matrix((np.ones(len(dep_rows), dtype=int), (dep_rows, dep_cols)), shape=(n_eq, n_eq))
-
-    n_comp, labels = connected_components(dep_graph, directed=True, connection="strong", return_labels=True)
     comp_order = _topological_component_order(dep_graph, labels, n_comp)
 
     rows_by_comp: dict[int, list[int]] = {int(comp): [] for comp in range(n_comp)}
@@ -183,6 +178,165 @@ def _order_incidence_matrix_dmperm_like(incidence: np.ndarray) -> tuple[np.ndarr
         f"sizes_head={comp_sizes[:min(8, len(comp_sizes))]}"
     )
     return Isorted.astype(int), row_sort.astype(int), col_sort.astype(int)
+
+
+def _order_incidence_matrix_external_dmperm(
+    incidence: np.ndarray,
+    backend: str,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Use Octave/MATLAB dmperm exactly, then apply toolbox flip(p), flip(q)."""
+    executable = _dmperm_executable(backend)
+    if executable is None:
+        raise RuntimeError(f"No executable found for dmperm backend '{backend}'")
+
+    with tempfile.TemporaryDirectory(prefix="veragrid_mti_dmperm_") as tmp:
+        in_file = os.path.join(tmp, "dmperm_in.mat")
+        out_file = os.path.join(tmp, "dmperm_out.mat")
+        savemat(in_file, {"I": sp.csc_matrix((incidence != 0).astype(float))})
+
+        code = (
+            f"load('{in_file}'); "
+            "[p,q,r,s,cc,rr] = dmperm(sparse(I)); "
+            "p = double(p(:)); q = double(q(:)); "
+            f"save('-mat', '{out_file}', 'p', 'q');"
+        )
+        cmd = [executable, "--quiet", "--eval", code] if os.path.basename(executable).startswith("octave") else [executable, "-batch", code]
+        proc = subprocess.run(cmd, check=False, capture_output=True, text=True, timeout=120)
+        if proc.returncode != 0:
+            msg = (proc.stderr or proc.stdout or "dmperm command failed").strip()
+            raise RuntimeError(msg)
+
+        data = loadmat(out_file)
+        p = np.asarray(data["p"], dtype=int).reshape(-1) - 1
+        q = np.asarray(data["q"], dtype=int).reshape(-1) - 1
+
+    if p.size != incidence.shape[0] or q.size != incidence.shape[1]:
+        raise RuntimeError(f"dmperm returned invalid permutation sizes p={p.size} q={q.size}")
+
+    row_sort = p[::-1].astype(int)
+    col_sort = q[::-1].astype(int)
+    Isorted = incidence[np.ix_(row_sort, col_sort)]
+    print(
+        f"[MTI-ORDER] external dmperm backend={os.path.basename(executable)} "
+        f"perm head rows={row_sort[:min(8, row_sort.size)].tolist()} "
+        f"cols={col_sort[:min(8, col_sort.size)].tolist()}"
+    )
+    return Isorted.astype(int), row_sort, col_sort
+
+
+def _dmperm_executable(backend: str) -> str | None:
+    if backend == "matlab":
+        return shutil.which("matlab")
+    if backend == "octave":
+        return shutil.which("octave")
+    return shutil.which("octave") or shutil.which("matlab")
+
+
+def _best_structural_matching(inc_csr: sp.csr_matrix) -> tuple[np.ndarray, int, np.ndarray, sp.csr_matrix]:
+    """
+    Pick a perfect structural matching that exposes fine BTF blocks.
+
+    MATLAB's dmperm is not just any maximum matching. SciPy's matching can be
+    valid but poor for block triangular form, so try deterministic row/column
+    degree permutations and keep the matching with the most SCCs and smallest
+    largest SCC in the induced dependency graph.
+    """
+    n_eq, n_var = inc_csr.shape
+    row_degree = np.asarray(inc_csr.sum(axis=1)).reshape(-1)
+    col_degree = np.asarray(inc_csr.sum(axis=0)).reshape(-1)
+
+    row_orders = _unique_orders([
+        np.arange(n_eq, dtype=int),
+        np.argsort(row_degree, kind="stable"),
+        np.argsort(-row_degree, kind="stable"),
+    ])
+    col_orders = _unique_orders([
+        np.arange(n_var, dtype=int),
+        np.argsort(col_degree, kind="stable"),
+        np.argsort(-col_degree, kind="stable"),
+    ])
+
+    best: tuple[tuple[int, int, int, int], np.ndarray, int, np.ndarray, sp.csr_matrix] | None = None
+    for row_order in row_orders:
+        for col_order in col_orders:
+            permuted = inc_csr[row_order, :][:, col_order]
+            match_perm = maximum_bipartite_matching(permuted, perm_type="column")
+            if match_perm.size != n_eq:
+                continue
+
+            unmatched = int(np.sum(match_perm < 0))
+            match_perm = _complete_matching(match_perm, n_var)
+            row_to_col = np.empty(n_eq, dtype=int)
+            row_to_col[row_order] = col_order[np.asarray(match_perm, dtype=int)]
+            n_comp, labels, dep_graph = _matching_dependency_components(inc_csr, row_to_col)
+            comp_sizes = np.bincount(labels, minlength=n_comp) if n_comp > 0 else np.zeros(0, dtype=int)
+            largest = int(np.max(comp_sizes)) if comp_sizes.size > 0 else 0
+            singleton_count = int(np.sum(comp_sizes == 1)) if comp_sizes.size > 0 else 0
+            score = (-unmatched, int(n_comp), -largest, singleton_count)
+            if best is None or score > best[0]:
+                best = (score, row_to_col, n_comp, labels, dep_graph)
+
+    if best is None:
+        raise ValueError("Incidence has no structural matching")
+
+    score, row_to_col, n_comp, labels, dep_graph = best
+    print(
+        f"[MTI-ORDER] matching score unmatched={-score[0]} components={score[1]} "
+        f"largest={-score[2]} singletons={score[3]}"
+    )
+    return row_to_col, n_comp, labels, dep_graph
+
+
+def _complete_matching(match_perm: np.ndarray, n_var: int) -> np.ndarray:
+    """Complete a possibly deficient row->column matching deterministically."""
+    out = np.asarray(match_perm, dtype=int).copy()
+    used_cols = {int(c) for c in out.tolist() if int(c) >= 0}
+    free_cols = [c for c in range(n_var) if c not in used_cols]
+    free_iter = iter(free_cols)
+    for row in np.where(out < 0)[0]:
+        out[int(row)] = int(next(free_iter))
+    return out
+
+
+def _matching_dependency_components(
+    inc_csr: sp.csr_matrix,
+    row_to_col: np.ndarray,
+) -> tuple[int, np.ndarray, sp.csr_matrix]:
+    n_eq, n_var = inc_csr.shape
+    col_to_row = np.empty(n_var, dtype=int)
+    col_to_row[np.asarray(row_to_col, dtype=int)] = np.arange(n_eq, dtype=int)
+
+    dep_rows: list[int] = []
+    dep_cols: list[int] = []
+    inc_coo = inc_csr.tocoo()
+    for row, col in zip(inc_coo.row, inc_coo.col):
+        matched_row = int(col_to_row[int(col)])
+        if int(row) == matched_row:
+            continue
+        # Row `row` depends on the variable matched to `matched_row`.
+        dep_rows.append(int(row))
+        dep_cols.append(matched_row)
+
+    if len(dep_rows) == 0:
+        dep_graph = sp.csr_matrix((n_eq, n_eq), dtype=int)
+    else:
+        dep_graph = sp.csr_matrix((np.ones(len(dep_rows), dtype=int), (dep_rows, dep_cols)), shape=(n_eq, n_eq))
+
+    n_comp, labels = connected_components(dep_graph, directed=True, connection="strong", return_labels=True)
+    return int(n_comp), np.asarray(labels, dtype=int), dep_graph
+
+
+def _unique_orders(orders: list[np.ndarray]) -> list[np.ndarray]:
+    unique: list[np.ndarray] = []
+    seen: set[tuple[int, ...]] = set()
+    for order in orders:
+        arr = np.asarray(order, dtype=int)
+        key = tuple(int(i) for i in arr.tolist())
+        if key in seen:
+            continue
+        seen.add(key)
+        unique.append(arr)
+    return unique
 
 
 def _topological_component_order(dep_graph: sp.csr_matrix, labels: np.ndarray, n_comp: int) -> list[int]:

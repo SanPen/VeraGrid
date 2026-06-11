@@ -12,8 +12,8 @@ from VeraGridEngine import Logger
 from VeraGridEngine.enumerations import ParamPowerFlowReferenceType, DeviceType, DynamicEventTransitionType
 from VeraGridEngine.Devices import MultiCircuit
 from VeraGridEngine.Simulations.driver_template import DummySignal
-from VeraGridEngine.Utils.Symbolic.symbolic import (Var, Const, Expr, piecewise, get_expression_vars, heaviside,
-                                                    hard_sat)
+from VeraGridEngine.Utils.Symbolic.symbolic import (Var, Const, Expr, eval_uid as eval_expr_uid, piecewise,
+                                                    get_expression_vars, heaviside, hard_sat)
 from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicParamsVector, SymbolicDerivative, SymbolicJacobian
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic_io import block_deep_copy
@@ -1312,6 +1312,8 @@ class RmsProblemDae(RmsProblemTemplate):
                 else:
                     self._continuous_runtime_events[parameter_uid] = sorted_events
 
+        active_runtime_eqs = self._freeze_runtime_state_references(active_runtime_eqs)
+
         self._runtime_all_eqs_source = active_runtime_eqs
         self._scheduled_mode_events = scheduled_mode_events
         self._active_events_group = rms_events_group
@@ -1538,6 +1540,50 @@ class RmsProblemDae(RmsProblemTemplate):
                 pass
 
         return selected_events
+
+    def _freeze_runtime_state_references(self, runtime_eqs: List[Expr | Const]) -> List[Expr | Const]:
+        uid_bindings: Dict[int, float] = dict()
+
+        for uid, value in self.init_guess.items():
+            if value is None:
+                continue
+            try:
+                value_real = float(np.real(value))
+            except Exception:
+                continue
+            if np.isfinite(value_real):
+                uid_bindings[int(uid)] = value_real
+
+        for parameter, equation in zip(self._runtime_all_parameters_source, runtime_eqs):
+            if not isinstance(parameter, Var):
+                continue
+            if isinstance(equation, Const) and equation.value is not None:
+                try:
+                    value = float(equation.value)
+                except Exception:
+                    continue
+                if np.isfinite(value):
+                    uid_bindings[parameter.uid] = value
+
+        frozen_eqs: List[Expr | Const] = list(runtime_eqs)
+        for i, equation in enumerate(runtime_eqs):
+            if not isinstance(equation, Expr) or isinstance(equation, Const):
+                continue
+
+            expr_vars = get_expression_vars(equation)
+            if not any(isinstance(v, Var) and v.uid in self._uid2idx_vars for v in expr_vars):
+                continue
+            if not all(isinstance(v, Var) and v.uid in uid_bindings for v in expr_vars):
+                continue
+
+            try:
+                value = float(eval_expr_uid(equation, uid_bindings))
+            except Exception:
+                continue
+            if np.isfinite(value):
+                frozen_eqs[i] = Const(value)
+
+        return frozen_eqs
 
     def _rebuild_runtime_parameter_partition(self) -> None:
         self._runtime_continuous_parameters = list()
@@ -2454,20 +2500,6 @@ class RmsProblemDae(RmsProblemTemplate):
         n_vars = self._n_vars
         E_value = np.zeros((n_vars, n_vars))
         E_partial = E_call(x, dx, vp, cp, h=0).toarray()
-        print(f"DEBUG: E_partial shape: {E_partial.shape}")
-        print(f"DEBUG: E_partial sample values (non-zero):")
-        nz = np.nonzero(E_partial)
-        # for i in range(min(20, len(nz[0]))):
-        #     row, col = nz[0][i], nz[1][i]
-        #     print(f"  E_partial[{row},{col}] = {E_partial[row, col]}")
-
-        # Debug: show equation 70
-        # print(f"\nDEBUG: Equation 70:")
-        # print(f"  {all_eqs[70]}")
-        # print(f"\nDEBUG: Diff vars involved in row 70:")
-        # for col in range(E_partial.shape[1]):
-        #     if abs(E_partial[70, col]) > 1e-10:
-        #         print(f"  diff_var[{col}] = {xdot[col]}, value = {E_partial[70, col]}")
 
         # Map each d(eq)/d(diff_var_j) column to the column of the diff_var base
         # variable in the global [state_vars + algebraic_vars] ordering.

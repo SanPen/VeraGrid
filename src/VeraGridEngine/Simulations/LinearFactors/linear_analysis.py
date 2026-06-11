@@ -840,7 +840,9 @@ class LinearMultiContingency:
                  compensated_ptdf_factors: sp.csc_matrix,
                  hvdc_odf: sp.csc_matrix,
                  vsc_odf: sp.csc_matrix,
-                 injections_factor: Vec):
+                 injections_factor: Vec,
+                 compensated_vsc_df: sp.csc_matrix | None = None,
+                 compensated_hvdc_df: sp.csc_matrix | None = None):
         """
         Linear multi contingency object
         :param branch_indices: contingency branch indices.
@@ -856,6 +858,14 @@ class LinearMultiContingency:
 
         :param injections_factor: Injection contingency factors,
                                   i.e percentage to decrease an injection (len(bus indices))
+
+        :param compensated_vsc_df: post-contingency VSC distribution factors (all_branches, n_vsc), used for
+                                   corrective N-1, i.e. the change of branch m flow per unit change of VSC v
+                                   set-point given the outaged elements of this contingency.
+                                   Should be: VscDF[k, v] + MLODF[k, βδ] x VscDF[βδ, v]
+
+        :param compensated_hvdc_df: post-contingency HVDC distribution factors (all_branches, n_hvdc), used for
+                                    corrective N-1 (analogous to compensated_vsc_df).
         """
 
         assert len(bus_indices) == len(injections_factor)
@@ -878,6 +888,10 @@ class LinearMultiContingency:
 
         self.hvdc_odf = hvdc_odf
         self.vsc_odf = vsc_odf
+
+        # post-contingency converter distribution factors for corrective N-1 (may be None if not requested)
+        self.compensated_vsc_df: sp.csc_matrix | None = compensated_vsc_df
+        self.compensated_hvdc_df: sp.csc_matrix | None = compensated_hvdc_df
 
         # store flag for contingency emptyness
         # self.enabled: bool = (self.mlodf_factors.nnz > 0
@@ -1133,12 +1147,16 @@ class LinearMultiContingencies:
     def compute(self,
                 lin: LinearAnalysis,
                 ptdf_threshold: float = 0.0001,
-                lodf_threshold: float = 0.0001) -> None:
+                lodf_threshold: float = 0.0001,
+                with_corrective_converter_df: bool = False) -> None:
         """
         Make the LODF with any contingency combination using the declared contingency objects
         :param lin: LinearAnalysis instance
         :param ptdf_threshold: threshold to discard values
         :param lodf_threshold: Threshold for LODF conversion to sparse
+        :param with_corrective_converter_df: if True, also compute the post-contingency converter distribution
+                                             factors (compensated_vsc_df / compensated_hvdc_df) used to allow
+                                             corrective (N-1) re-dispatch of VSC/HVDC set-points.
         :return: None
         """
 
@@ -1246,6 +1264,43 @@ class LinearMultiContingencies:
                 mat=lin.VscODF[:, contingency_indices.vsc_contingency_indices],
                 threshold=lodf_threshold
             )
+
+            # Post-contingency converter distribution factors for corrective N-1
+            # The branch changes by cDF[k, d] = DF[k, d] + MLODF[k, βδ] x DF[βδ, d]
+            # where DF is VscDF / HvdcDF (= PTDF[:, to] - PTDF[:, from]).
+            compensated_vsc_df: sp.csc_matrix | None = None
+            compensated_hvdc_df: sp.csc_matrix | None = None
+            if with_corrective_converter_df:
+                # indices of the branches tripped by this contingency (empty for pure injection contingencies)
+                br_idx: IntVec = contingency_indices.branch_contingency_indices
+
+                # VSC converters: compensate the base factors with the outaged branches when there are any
+                if lin.VscDF.shape[1] > 0:
+                    if len(br_idx) > 0:
+                        vsc_df: Mat = np.asarray(lin.VscDF + (mlodf_factors @ lin.VscDF[br_idx, :]))
+                    else:
+                        # no branch is tripped (e.g. injection-only contingency): the base factors already apply
+                        vsc_df = np.asarray(lin.VscDF)
+                    compensated_vsc_df = dense_to_csc(mat=vsc_df, threshold=lodf_threshold)
+                else:
+                    # the grid has no VSC converters: leave the factor matrix as None
+                    pass
+
+                # HVDC links: identical compensation to the VSC converters
+                if lin.HvdcDF.shape[1] > 0:
+                    if len(br_idx) > 0:
+                        hvdc_df: Mat = np.asarray(lin.HvdcDF + (mlodf_factors @ lin.HvdcDF[br_idx, :]))
+                    else:
+                        # no branch is tripped: the base factors already apply
+                        hvdc_df = np.asarray(lin.HvdcDF)
+                    compensated_hvdc_df = dense_to_csc(mat=hvdc_df, threshold=lodf_threshold)
+                else:
+                    # the grid has no HVDC links: leave the factor matrix as None
+                    pass
+            else:
+                # corrective N-1 was not requested: keep the converter factors as None (preventive behaviour)
+                pass
+
             # append values
             self.multi_contingencies.append(
                 LinearMultiContingency(
@@ -1257,7 +1312,9 @@ class LinearMultiContingencies:
                     compensated_ptdf_factors=compensated_ptdf_factors,
                     injections_factor=contingency_indices.injections_factors,
                     hvdc_odf=hvdc_odf,
-                    vsc_odf=vsc_odf
+                    vsc_odf=vsc_odf,
+                    compensated_vsc_df=compensated_vsc_df,
+                    compensated_hvdc_df=compensated_hvdc_df
                 )
             )
 
@@ -1490,3 +1547,58 @@ class LinearAnalysisTs:
             )
 
         return Pbus
+
+    def get_hvdc_flows_ts(self, Pdc_hvdc_ts: Mat) -> Mat:
+        """
+        Get the AC branch flow time series due to the HVDC transfers
+        :param Pdc_hvdc_ts: (nt, nhvdc) HVDC from->to transfer time series (see get_hvdc_Pdc_ts), in MW
+        :return: (nt, nbr) branch flows due to the HVDC lines, in MW
+        """
+        assert Pdc_hvdc_ts.shape[0] == self.nt
+
+        flows = np.zeros((self.nt, self.nbr))
+
+        for t_idx, time_steps in self.groups.items():
+            lin: LinearAnalysis = self._linear_analysis[t_idx]
+            flows[time_steps, :] = (lin.HvdcDF @ Pdc_hvdc_ts[time_steps, :].T).T
+
+        return flows
+
+
+def get_hvdc_Pdc_ts(grid: MultiCircuit) -> Mat:
+    """
+    Get the HVDC scheduled from->to transfer time series in MW
+    (this equals -Pf of HvdcData.get_power evaluated at theta=0)
+    :param grid: MultiCircuit
+    :return: (nt, nhvdc) transfer of each HvdcLine, positive from->to, in MW
+    """
+    nt = grid.get_time_number()
+    nhvdc = len(grid.hvdc_lines)
+    Pdc = np.zeros((nt, nhvdc), dtype=float)
+
+    for i, elm in enumerate(grid.hvdc_lines):
+        active = elm.active_prof.toarray().astype(bool)
+
+        if elm.control_mode == HvdcControlType.type_1_Pset:
+            Pcalc = elm.Pset_prof.toarray() * active
+        elif elm.control_mode == HvdcControlType.type_0_free:
+            # at theta=0 the angle droop term is zero; clip to the rating
+            rates = elm.rate_prof.toarray()
+            Pcalc = np.clip(elm.Pset_prof.toarray(), -rates, rates) * active
+        else:
+            Pcalc = np.zeros(nt)
+
+        # -Pf as in HvdcData.get_power: Pcalc (+ losses on the sending side when Pcalc < 0)
+        Vnt = elm.bus_to.Vnom
+        Vset_t = elm.Vset_t_prof.toarray()
+
+        pos = Pcalc > 0.0
+        neg = Pcalc < 0.0
+
+        Pdc[pos, i] = Pcalc[pos]
+
+        I_neg = Pcalc[neg] / (Vnt * Vset_t[neg])  # kA
+        losses_neg = elm.r * I_neg * I_neg  # MW
+        Pdc[neg, i] = Pcalc[neg] + losses_neg
+
+    return Pdc

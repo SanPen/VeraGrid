@@ -304,10 +304,12 @@ class SmallSignalStabilityEmtDriver(DriverTemplate):
             t0=0.0,
             t_end=self.options.ss_assessment_time,
             h=h,
-            integration_method=self.emt_options.integration_method,
+            method=self.emt_options.integration_method,
             verbose=self.options.verbose > 0
         )
-        t_full, y_full = solver.simulate()
+        sim_result = solver.simulate()
+        t_full = sim_result[0]
+        y_full = sim_result[1]
 
         steps_per_period = int(self.options.target_period / h)
         y_limit = y_full[-steps_per_period:]
@@ -315,7 +317,9 @@ class SmallSignalStabilityEmtDriver(DriverTemplate):
 
         static_params = np.array([c.value for c in params_values], dtype=np.float64)
 
-        return y_limit, t_limit, solver.vec_jacobian, static_params, n_event_params
+        jacobian_evaluator = self.problem.get_floquet_jacobian_evaluator(solver.vec_jacobian)
+
+        return y_limit, t_limit, jacobian_evaluator, static_params, n_event_params
 
     def run_arnoldi(self):
         """

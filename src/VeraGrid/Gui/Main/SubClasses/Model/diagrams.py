@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import os
+from time import perf_counter
 from typing import List, Tuple, Union, Callable, Iterable
 
 import networkx as nx
@@ -96,29 +97,77 @@ class VideoExportWorker(QtCore.QThread):
         Run function
         :return:
         """
-        # start recording...
-        w, h = self.diagram.start_video_recording(fname=self.filename, fps=self.fps, logger=self.logger)
+        total_start_time: float = perf_counter()
+        colour_elapsed_time: float = 0.0
+        capture_elapsed_time: float = 0.0
+        write_elapsed_time: float = 0.0
+        frame_count: int = max(self.end_idx - self.start_idx, 0)
 
-        # paint and capture
-        for t_idx in range(self.start_idx, self.end_idx):
-            self.grid_colour_function(
-                self.diagram,  # diagram
-                self.current_study,  # current_study
-                t_idx,  # t_idx
-                False  # allow_popups
+        # Mark export mode explicitly so the diagram can skip non-visual work.
+        self.diagram.set_video_export_active(True)
+
+        try:
+            # Start the encoder only once before the frame loop begins.
+            w, h = self.diagram.start_video_recording(fname=self.filename, fps=self.fps, logger=self.logger)
+
+            # Recolour the diagram for each simulation step and then capture it.
+            for t_idx in range(self.start_idx, self.end_idx):
+                colour_start_time: float = perf_counter()
+                self.grid_colour_function(
+                    self.diagram,
+                    self.current_study,
+                    t_idx,
+                    False
+                )
+                colour_end_time: float = perf_counter()
+                colour_elapsed_time += colour_end_time - colour_start_time
+
+                frame_capture_elapsed_time: float
+                frame_write_elapsed_time: float
+                frame_capture_elapsed_time, frame_write_elapsed_time = self.diagram.capture_video_frame_timed(
+                    w=w,
+                    h=h,
+                    logger=self.logger
+                )
+                capture_elapsed_time += frame_capture_elapsed_time
+                write_elapsed_time += frame_write_elapsed_time
+
+                self.progress_text.emit(f"Saving frame {t_idx} / {self.end_idx}")
+                self.progress_signal.emit(t_idx / self.end_idx)
+
+                print_progress_bar(t_idx + 1, self.end_idx)
+
+            # Finalize the encoder after all frames have been flushed.
+            self.diagram.end_video_recording()
+
+            self.logger.add_info(f"Video saved to {self.filename}")
+            total_end_time: float = perf_counter()
+            total_elapsed_time: float = total_end_time - total_start_time
+            other_elapsed_time: float = total_elapsed_time - colour_elapsed_time - capture_elapsed_time - write_elapsed_time
+
+            self.logger.add_info(
+                "Video export timing "
+                f"frames={frame_count}, "
+                f"total={total_elapsed_time * 1000.0:.1f} ms, "
+                f"colour={colour_elapsed_time * 1000.0:.1f} ms, "
+                f"capture={capture_elapsed_time * 1000.0:.1f} ms, "
+                f"write={write_elapsed_time * 1000.0:.1f} ms, "
+                f"other={other_elapsed_time * 1000.0:.1f} ms"
             )
 
-            self.diagram.capture_video_frame(w=w, h=h, logger=self.logger)
+            if frame_count > 0:
+                self.logger.add_info(
+                    "Video export timing per frame "
+                    f"colour={colour_elapsed_time * 1000.0 / frame_count:.1f} ms, "
+                    f"capture={capture_elapsed_time * 1000.0 / frame_count:.1f} ms, "
+                    f"write={write_elapsed_time * 1000.0 / frame_count:.1f} ms"
+                )
+            else:
+                pass
 
-            self.progress_text.emit(f"Saving frame {t_idx} / {self.end_idx}")
-            self.progress_signal.emit(t_idx / self.end_idx)
-
-            print_progress_bar(t_idx + 1, self.end_idx)
-
-        # finalize
-        self.diagram.end_video_recording()
-
-        self.logger.add_info(f"Video saved to {self.filename}")
+        finally:
+            # Always restore the interactive colouring mode even after export failures.
+            self.diagram.set_video_export_active(False)
 
         self.done_signal.emit()
 

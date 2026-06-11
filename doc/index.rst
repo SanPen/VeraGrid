@@ -62,7 +62,6 @@ Contents
     md_source/structure.md
     md_source/modelling.md
     md_source/device_relationships.md
-    md_source/small_signal_stability.md
     md_source/model_debugging.md
     md_source/file_operations.md
 
@@ -89,12 +88,20 @@ Contents
     md_source/reliability.md
     md_source/state_estimation.md
 
+
+    md_source/dynamic_simulations.md
+    md_source/rms_simulations.md
+    md_source/small_signal_stability.md
+    md_source/emt_simulations.md
+
     md_source/development.md
     md_source/plugins.md
     md_source/license.md
     rst_source/change_log
     md_source/data_models.md
     rst_source/api/auto/modules
+
+
 
 
 

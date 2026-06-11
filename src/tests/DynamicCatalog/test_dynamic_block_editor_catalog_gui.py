@@ -405,16 +405,16 @@ def test_side_panel_loads_only_the_visible_table_for_selected_block() -> None:
     block_item.setSelected(True)
     QtWidgets.QApplication.processEvents()
 
-    assert editor.variables_table_model.rowCount() == 0
-    assert editor.parameters_table_model.rowCount() == 0
-    assert editor.equations_table_model.rowCount() == 0
+    assert editor.variables_model.rowCount() == 0
+    assert editor.parameters_model.rowCount() == 0
+    assert editor.equations_model.rowCount() == 0
 
     editor.ui.toolBox.setCurrentWidget(editor.ui.page_2)
     QtWidgets.QApplication.processEvents()
 
-    assert editor.parameters_table_model.rowCount() > 0
-    assert editor.variables_table_model.rowCount() == 0
-    assert editor.equations_table_model.rowCount() == 0
+    assert editor.parameters_model.rowCount() > 0
+    assert editor.variables_model.rowCount() == 0
+    assert editor.equations_model.rowCount() == 0
 
     editor.has_unapplied_changes = False
     editor.close()
@@ -430,15 +430,15 @@ def test_parameter_edit_does_not_rebuild_scene_for_non_structural_change() -> No
     editor.ui.toolBox.setCurrentWidget(editor.ui.page_2)
     QtWidgets.QApplication.processEvents()
 
-    assert editor.parameters_table_model.rowCount() > 0
+    assert editor.parameters_model.rowCount() > 0
 
     def _record_rebuild() -> None:
         rebuild_calls.append("rebuild")
 
     editor.rebuild_scene_from_diagram = _record_rebuild
-    value_index = editor.parameters_table_model.index(0, 2)
+    value_index = editor.parameters_model.index(0, 2)
 
-    assert editor.parameters_table_model.setData(value_index, 1.0, QtCore.Qt.ItemDataRole.EditRole)
+    assert editor.parameters_model.setData(value_index, 1.0, QtCore.Qt.ItemDataRole.EditRole)
     QtWidgets.QApplication.processEvents()
     assert rebuild_calls == list()
 
@@ -457,9 +457,9 @@ def test_parameter_panel_includes_mode_parameters_for_pulse_block() -> None:
 
     row_types: list[str] = list()
     row_index: int
-    for row_index in range(editor.parameters_table_model.rowCount()):
-        index = editor.parameters_table_model.index(row_index, 0)
-        row_types.append(str(editor.parameters_table_model.data(index, QtCore.Qt.ItemDataRole.DisplayRole)))
+    for row_index in range(editor.parameters_model.rowCount()):
+        index = editor.parameters_model.index(row_index, 0)
+        row_types.append(str(editor.parameters_model.data(index, QtCore.Qt.ItemDataRole.DisplayRole)))
 
     assert "Event Parameter" in row_types
     assert "Mode Parameter" in row_types

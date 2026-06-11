@@ -39,7 +39,6 @@ class DynamicEditorWorkspaceManager(QtCore.QObject):
         self._last_active_workspace: DynamicEditorWorkspaceWindow | None = None
         self._pending_drag_page: QtWidgets.QWidget | None = None
         self._pending_drag_workspace: DynamicEditorWorkspaceWindow | None = None
-
         # Permanent strong references ("anchors") to every window this manager
         # creates: workspace windows AND the editor pages (both QMainWindows).
         # We have to avoid macos GUI crashes
@@ -208,7 +207,8 @@ class DynamicEditorWorkspaceManager(QtCore.QObject):
         entry = build_dynamic_editor_entry(api_object, circuit)
         if entry is None:
             return None
-        return self.open_entry(entry, preferred_mode=preferred_mode, target_workspace=target_workspace)
+        else:
+            return self.open_entry(entry, preferred_mode=preferred_mode, target_workspace=target_workspace)
 
     def unregister_page(self, page: QtWidgets.QWidget) -> None:
         entry = self._page_to_entry.pop(page, None)

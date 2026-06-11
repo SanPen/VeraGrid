@@ -133,6 +133,7 @@ class Assets:
         '_fuels',
         '_emission_gases',
         '_facilities',
+        '_market_units',
         '_fluid_nodes',
         '_fluid_paths',
         '_turbines',
@@ -325,6 +326,9 @@ class Assets:
         # list of facilities
         self._facilities: List[dev.Facility] = list()
 
+        # list of market units
+        self._market_units: List[dev.MarketUnit] = list()
+
         # fluids
         self._fluid_nodes: List[dev.FluidNode] = list()
 
@@ -422,6 +426,9 @@ class Assets:
             "Investments": [
                 dev.InvestmentsGroup(),
                 dev.Investment(),
+            ],
+            "Market": [
+                dev.MarketUnit()
             ],
             "Dynamic": [
                 dev.RmsEventsGroup(),
@@ -5732,6 +5739,65 @@ class Assets:
             pass
 
     # ------------------------------------------------------------------------------------------------------------------
+    # Market units
+    # ------------------------------------------------------------------------------------------------------------------
+
+    @property
+    def market_units(self) -> List[dev.MarketUnit]:
+        """
+        Get the list of market units
+        :return:
+        """
+        return self._market_units
+
+    @market_units.setter
+    def market_units(self, value: List[dev.MarketUnit]):
+        self._market_units = value
+
+    def get_market_units(self) -> List[dev.MarketUnit]:
+        """
+        Get list of market units
+        :return: List[dev.MarketUnit]
+        """
+        return self._market_units
+
+    def get_market_unit_names(self) -> StrVec:
+        """
+        Get array of market unit names
+        :return: StrVec
+        """
+        return np.array([a.name for a in self._market_units])
+
+    def get_market_unit_number(self) -> int:
+        """
+        Get number of market units
+        :return: number of market units
+        """
+        return len(self._market_units)
+
+    def add_market_unit(self, obj: dev.MarketUnit):
+        """
+        Add market unit
+        :param obj: MarketUnit object
+        """
+        self._market_units.append(obj)
+
+    def delete_market_unit(self, obj: dev.MarketUnit):
+        """
+        Delete market unit
+        :param obj: MarketUnit
+        """
+        for elm in self.get_generators():
+            if elm.market_unit == obj:
+                elm.market_unit = None
+                elm.market_unit_prof.fill(None)
+
+        try:
+            self._market_units.remove(obj)
+        except ValueError:
+            pass
+
+    # ------------------------------------------------------------------------------------------------------------------
     # Fuels
     # ------------------------------------------------------------------------------------------------------------------
 
@@ -7367,6 +7433,9 @@ class Assets:
         elif device_type == DeviceType.FacilityDevice:
             return self.facilities
 
+        elif device_type == DeviceType.MarketUnitDevice:
+            return self.market_units
+
         elif device_type == DeviceType.LambdaDevice:
             return list()
 
@@ -7661,6 +7730,9 @@ class Assets:
         elif device_type == DeviceType.FacilityDevice:
             self._facilities = devices
 
+        elif device_type == DeviceType.MarketUnitDevice:
+            self._market_units = devices
+
         elif device_type == DeviceType.RmsModelTemplateDevice:
             self._rms_models = devices
 
@@ -7886,6 +7958,9 @@ class Assets:
 
         elif obj.device_type == DeviceType.FacilityDevice:
             self.add_facility(obj=obj)
+
+        elif obj.device_type == DeviceType.MarketUnitDevice:
+            self.add_market_unit(obj=obj)
 
         elif obj.device_type == DeviceType.RmsModelTemplateDevice:
             self.add_rms_model(obj=obj)
@@ -8121,6 +8196,9 @@ class Assets:
         elif obj.device_type == DeviceType.FacilityDevice:
             self.delete_facility(obj)
 
+        elif obj.device_type == DeviceType.MarketUnitDevice:
+            self.delete_market_unit(obj)
+
         elif obj.device_type == DeviceType.LineLocation:
             pass
 
@@ -8195,6 +8273,9 @@ class Assets:
                     for prop in changed_props:
                         val = api_obj.get_property_value(prop=prop, t_idx=None)
                         elm_from_base.set_property_value(prop=prop, value=val, t_idx=None)
+                        if prop.has_profile():
+                            elm_from_base.set_profile(prop=prop,
+                                                      arr=api_obj.get_profile_by_prop(prop=prop).copy())
                 else:
                     new_obj = api_obj.copy(forced_new_idtag=False)
                     new_obj.rebind_device_references(objects_by_idtag=all_elms_base_dict)
@@ -8410,6 +8491,7 @@ class Assets:
                 DeviceType.FuelDevice: self.fuels,
                 DeviceType.EmissionGasDevice: self.emission_gases,
                 DeviceType.ModellingAuthority: self.modelling_authorities,
+                DeviceType.MarketUnitDevice: self.market_units,
                 DeviceType.FacilityDevice: self.facilities,
                 DeviceType.BusDevice: self.buses,
                 DeviceType.RmsModelTemplateDevice: self.get_rms_models_by_device_type(elm_type),
@@ -8741,6 +8823,10 @@ class Assets:
             elm = dev.Facility()
             dictionary_of_lists = dict()
 
+        elif elm_type == DeviceType.MarketUnitDevice:
+            elm = dev.MarketUnit()
+            dictionary_of_lists = dict()
+
         elif elm_type == DeviceType.RmsModelTemplateDevice:
             elm = dev.RmsModelTemplate()
             dictionary_of_lists = dict()
@@ -8913,6 +8999,7 @@ class Assets:
             tem.get_line_rms_template(vfactory=self._var_factory),
             tem.get_load_rms_template(vfactory=self._var_factory),
             tem.get_pvd1_rms_template(vfactory=self._var_factory),
+            tem.build_vsc_rms(vfactory=self._var_factory)
         ]
 
     def add_emt_model_catalogue(self):

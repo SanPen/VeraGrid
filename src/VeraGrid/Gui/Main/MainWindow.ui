@@ -349,8 +349,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>262</width>
-                            <height>362</height>
+                            <width>382</width>
+                            <height>360</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -744,8 +744,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>174</width>
-                            <height>240</height>
+                            <width>396</width>
+                            <height>322</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -895,8 +895,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>124</width>
-                            <height>244</height>
+                            <width>396</width>
+                            <height>322</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -2354,7 +2354,7 @@
              <property name="orientation">
               <enum>Qt::Orientation::Horizontal</enum>
              </property>
-             <widget class="QTabWidget" name="tabWidget_3">
+             <widget class="QToolBox" name="toolBox_3">
               <property name="minimumSize">
                <size>
                 <width>240</width>
@@ -2364,33 +2364,12 @@
               <property name="toolTip">
                <string/>
               </property>
-              <property name="tabPosition">
-               <enum>QTabWidget::TabPosition::South</enum>
-              </property>
-              <property name="currentIndex">
-               <number>0</number>
-              </property>
-              <property name="documentMode">
-               <bool>true</bool>
-              </property>
-              <property name="tabsClosable">
-               <bool>false</bool>
-              </property>
-              <property name="movable">
-               <bool>false</bool>
-              </property>
-              <property name="tabBarAutoHide">
-               <bool>true</bool>
-              </property>
-              <widget class="QWidget" name="tab_8">
-               <property name="toolTip">
-                <string>List of current reults</string>
-               </property>
+              <widget class="QWidget" name="toolBox_3Page1" native="true">
                <attribute name="icon">
                 <iconset resource="../Icons/icons.qrc">
-                 <normaloff>:/Icons/icons/data.png</normaloff>:/Icons/icons/data.png</iconset>
+                 <normaloff>:/Icons/icons/plot.png</normaloff>:/Icons/icons/plot.png</iconset>
                </attribute>
-               <attribute name="title">
+               <attribute name="label">
                 <string>Results</string>
                </attribute>
                <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -2422,107 +2401,6 @@
                     <number>0</number>
                    </property>
                    <item>
-                    <widget class="QFrame" name="frame_62">
-                     <property name="frameShape">
-                      <enum>QFrame::Shape::NoFrame</enum>
-                     </property>
-                     <property name="frameShadow">
-                      <enum>QFrame::Shadow::Raised</enum>
-                     </property>
-                     <layout class="QHBoxLayout" name="horizontalLayout_34">
-                      <property name="leftMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="bottomMargin">
-                       <number>1</number>
-                      </property>
-                      <item>
-                       <widget class="QLabel" name="label_16">
-                        <property name="minimumSize">
-                         <size>
-                          <width>0</width>
-                          <height>24</height>
-                         </size>
-                        </property>
-                        <property name="palette">
-                         <palette>
-                          <active>
-                           <colorrole role="WindowText">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>119</red>
-                              <green>118</green>
-                              <blue>123</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                          </active>
-                          <inactive>
-                           <colorrole role="WindowText">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>119</red>
-                              <green>118</green>
-                              <blue>123</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                          </inactive>
-                          <disabled>
-                           <colorrole role="WindowText">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>190</red>
-                              <green>190</green>
-                              <blue>190</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                          </disabled>
-                         </palette>
-                        </property>
-                        <property name="text">
-                         <string>Session results</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <spacer name="horizontalSpacer_22">
-                        <property name="orientation">
-                         <enum>Qt::Orientation::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>40</width>
-                          <height>20</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="deleteDriverButton">
-                        <property name="toolTip">
-                         <string>Delete selected driver</string>
-                        </property>
-                        <property name="text">
-                         <string/>
-                        </property>
-                        <property name="icon">
-                         <iconset resource="../Icons/icons.qrc">
-                          <normaloff>:/Icons/icons/minus.png</normaloff>:/Icons/icons/minus.png</iconset>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                   <item>
                     <widget class="QTreeView" name="results_treeView">
                      <property name="animated">
                       <bool>true</bool>
@@ -2534,16 +2412,13 @@
                 </item>
                </layout>
               </widget>
-              <widget class="QWidget" name="tab_12">
-               <property name="toolTip">
-                <string>Saved sessions on the disk file</string>
-               </property>
+              <widget class="QWidget" name="toolBox_3Page2" native="true">
                <attribute name="icon">
                 <iconset resource="../Icons/icons.qrc">
-                 <normaloff>:/Icons/icons/load.png</normaloff>:/Icons/icons/load.png</iconset>
+                 <normaloff>:/Icons/icons/load_add.png</normaloff>:/Icons/icons/load_add.png</iconset>
                </attribute>
-               <attribute name="title">
-                <string>Saved</string>
+               <attribute name="label">
+                <string>Saved results in this file</string>
                </attribute>
                <layout class="QVBoxLayout" name="verticalLayout_44">
                 <property name="leftMargin">
@@ -2570,101 +2445,6 @@
                    <property name="rightMargin">
                     <number>0</number>
                    </property>
-                   <item>
-                    <widget class="QFrame" name="frame_60">
-                     <property name="frameShape">
-                      <enum>QFrame::Shape::NoFrame</enum>
-                     </property>
-                     <property name="frameShadow">
-                      <enum>QFrame::Shadow::Raised</enum>
-                     </property>
-                     <layout class="QHBoxLayout" name="horizontalLayout_33">
-                      <property name="leftMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="topMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="rightMargin">
-                       <number>0</number>
-                      </property>
-                      <property name="bottomMargin">
-                       <number>0</number>
-                      </property>
-                      <item>
-                       <widget class="QLabel" name="label_37">
-                        <property name="palette">
-                         <palette>
-                          <active>
-                           <colorrole role="WindowText">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>119</red>
-                              <green>118</green>
-                              <blue>123</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                          </active>
-                          <inactive>
-                           <colorrole role="WindowText">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>119</red>
-                              <green>118</green>
-                              <blue>123</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                          </inactive>
-                          <disabled>
-                           <colorrole role="WindowText">
-                            <brush brushstyle="SolidPattern">
-                             <color alpha="255">
-                              <red>190</red>
-                              <green>190</green>
-                              <blue>190</blue>
-                             </color>
-                            </brush>
-                           </colorrole>
-                          </disabled>
-                         </palette>
-                        </property>
-                        <property name="text">
-                         <string>Disk persistance</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <spacer name="horizontalSpacer_21">
-                        <property name="orientation">
-                         <enum>Qt::Orientation::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>40</width>
-                          <height>20</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="loadResultFromDiskButton">
-                        <property name="toolTip">
-                         <string>Load result from the VeraGrid file</string>
-                        </property>
-                        <property name="text">
-                         <string/>
-                        </property>
-                        <property name="icon">
-                         <iconset resource="../Icons/icons.qrc">
-                          <normaloff>:/Icons/icons/loadc.png</normaloff>:/Icons/icons/loadc.png</iconset>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
                    <item>
                     <widget class="QTreeView" name="diskSessionsTreeView">
                      <property name="animated">

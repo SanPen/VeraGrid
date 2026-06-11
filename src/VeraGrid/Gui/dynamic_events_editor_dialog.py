@@ -3,7 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import List, Dict, Set
+from typing import List, Dict, Set, Sequence
 
 from PySide6 import QtWidgets, QtCore
 
@@ -14,7 +14,395 @@ from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
 from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Devices.Events.emt_events_group import EmtEventsGroup
+from VeraGridEngine.Devices.Events.rms_event import RmsEvent
+from VeraGridEngine.Devices.Events.emt_event import EmtEvent
 from VeraGridEngine.enumerations import DynamicEventTransitionType, DynamicSimulationMode
+
+
+EVENT_TIME_TOLERANCE: float = 1.0e-9
+
+
+class EventValidationEntry:
+    """
+    Normalized dynamic-event entry used by overlap validation.
+    """
+
+    __slots__ = (
+        "parameter",
+        "start_time",
+        "end_time",
+        "value",
+        "group",
+        "transition_type",
+        "origin",
+    )
+
+    def __init__(self,
+                 parameter: Var,
+                 start_time: float,
+                 end_time: float,
+                 value: float,
+                 group: RmsEventsGroup | EmtEventsGroup,
+                 transition_type: DynamicEventTransitionType,
+                 origin: str) -> None:
+        """
+        Build one normalized validation entry.
+
+        :param parameter: Target runtime parameter.
+        :param start_time: Event start time.
+        :param end_time: Event end time after step/ramp normalization.
+        :param value: Target value applied by the event.
+        :param group: Event group that contains the event.
+        :param transition_type: Transition profile.
+        :param origin: Human-readable origin used in validation messages.
+        :return: None.
+        """
+        self.parameter: Var = parameter
+        self.start_time: float = float(start_time)
+        self.end_time: float = float(end_time)
+        self.value: float = float(value)
+        self.group: RmsEventsGroup | EmtEventsGroup = group
+        self.transition_type: DynamicEventTransitionType = transition_type
+        self.origin: str = origin
+
+
+class EventValidationConflict:
+    """
+    Pair of normalized events that overlap in time.
+    """
+
+    __slots__ = (
+        "group",
+        "first_event",
+        "second_event",
+    )
+
+    def __init__(self,
+                 group: RmsEventsGroup | EmtEventsGroup,
+                 first_event: EventValidationEntry,
+                 second_event: EventValidationEntry) -> None:
+        """
+        Build one validation conflict.
+
+        :param group: Group that contains the conflicting events.
+        :param first_event: First conflicting event.
+        :param second_event: Second conflicting event.
+        :return: None.
+        """
+        self.group: RmsEventsGroup | EmtEventsGroup = group
+        self.first_event: EventValidationEntry = first_event
+        self.second_event: EventValidationEntry = second_event
+
+
+def _normalize_event_interval(start_time: float,
+                              end_time: float | None,
+                              transition_type: DynamicEventTransitionType) -> tuple[float, float]:
+    """
+    Normalize one event into an explicit occupied time interval.
+
+    The overlap algorithm works on intervals only, so both step and ramp
+    events are reduced to a common representation before any group-level
+    comparison happens.
+
+    :param start_time: Event start time.
+    :param end_time: Optional event end time.
+    :param transition_type: Step or ramp transition type.
+    :return: Normalized ``(start_time, end_time)`` interval.
+    """
+    normalized_start_time: float = float(start_time)
+    normalized_end_time: float
+
+    if transition_type == DynamicEventTransitionType.Ramp:
+        if end_time is None:
+            normalized_end_time = normalized_start_time
+        else:
+            normalized_end_time = float(end_time)
+    else:
+        normalized_end_time = normalized_start_time
+
+    return normalized_start_time, normalized_end_time
+
+
+def _build_validation_entry(parameter: Var,
+                            start_time: float,
+                            end_time: float | None,
+                            value: float,
+                            group: RmsEventsGroup | EmtEventsGroup,
+                            transition_type: DynamicEventTransitionType,
+                            origin: str) -> EventValidationEntry:
+    """
+    Build one normalized validation entry from raw event data.
+
+    :param parameter: Target runtime parameter.
+    :param start_time: Event start time.
+    :param end_time: Optional event end time.
+    :param value: Target value.
+    :param group: Target group.
+    :param transition_type: Transition profile.
+    :param origin: Human-readable origin used in messages.
+    :return: Normalized validation entry.
+    """
+    normalized_start_time: float
+    normalized_end_time: float
+    normalized_start_time, normalized_end_time = _normalize_event_interval(start_time=start_time,
+                                                                          end_time=end_time,
+                                                                          transition_type=transition_type)
+    return EventValidationEntry(parameter=parameter,
+                                start_time=normalized_start_time,
+                                end_time=normalized_end_time,
+                                value=value,
+                                group=group,
+                                transition_type=transition_type,
+                                origin=origin)
+
+
+def _validate_event_interval(entry: EventValidationEntry) -> str | None:
+    """
+    Validate the local time interval of one normalized event entry.
+
+    The overlap check assumes that every event interval is well-formed first.
+    Invalid intervals are therefore reported before any pairwise comparison.
+
+    :param entry: Normalized event entry.
+    :return: Error message or ``None`` when the interval is valid.
+    """
+    error_message: str | None = None
+
+    if entry.transition_type == DynamicEventTransitionType.Ramp:
+        if entry.end_time + EVENT_TIME_TOLERANCE < entry.start_time:
+            error_message = (
+                f"{entry.origin} has an invalid ramp interval for parameter {entry.parameter.name}: "
+                f"time={entry.start_time:.4f} s, end_time={entry.end_time:.4f} s."
+            )
+        else:
+            pass
+    else:
+        error_message = None
+
+    return error_message
+
+
+def _get_existing_dynamic_events(circuit: MultiCircuit,
+                                 mode: DynamicSimulationMode) -> Sequence[RmsEvent] | Sequence[EmtEvent]:
+    """
+    Return the persisted events for the selected simulation family.
+
+    The dialog must compare pending rows against already stored circuit events
+    so the validation covers the complete state that the solver would see.
+
+    :param circuit: Circuit that stores canonical events.
+    :param mode: Selected simulation family.
+    :return: Sequence of existing RMS or EMT events.
+    """
+    existing_events: Sequence[RmsEvent] | Sequence[EmtEvent]
+
+    if mode == DynamicSimulationMode.RMS:
+        existing_events = circuit.rms_events
+    else:
+        existing_events = circuit.emt_events
+
+    return existing_events
+
+
+def _build_validation_entries_from_existing_events(circuit: MultiCircuit,
+                                                   mode: DynamicSimulationMode) -> List[EventValidationEntry]:
+    """
+    Normalize the circuit events already stored for the selected mode.
+
+    :param circuit: Circuit that stores canonical events.
+    :param mode: Selected simulation family.
+    :return: Normalized existing-event entries.
+    """
+    existing_entries: List[EventValidationEntry] = list()
+    existing_events: Sequence[RmsEvent] | Sequence[EmtEvent] = _get_existing_dynamic_events(circuit=circuit,
+                                                                                            mode=mode)
+    event_item: RmsEvent | EmtEvent
+
+    for event_item in existing_events:
+        origin: str = "Existing event"
+        existing_entries.append(_build_validation_entry(parameter=event_item.parameter,
+                                                        start_time=float(event_item.time),
+                                                        end_time=event_item.end_time,
+                                                        value=float(event_item.value),
+                                                        group=event_item.group,
+                                                        transition_type=event_item.transition_type,
+                                                        origin=origin))
+
+    return existing_entries
+
+
+def _intervals_overlap(first_entry: EventValidationEntry,
+                       second_entry: EventValidationEntry) -> bool:
+    """
+    Check whether two normalized event intervals intersect.
+
+    :param first_entry: First normalized event.
+    :param second_entry: Second normalized event.
+    :return: True when the occupied intervals overlap.
+    """
+    overlap_start: float = first_entry.start_time
+    overlap_end: float = first_entry.end_time
+
+    if second_entry.start_time > overlap_start:
+        overlap_start = second_entry.start_time
+    else:
+        pass
+
+    if second_entry.end_time < overlap_end:
+        overlap_end = second_entry.end_time
+    else:
+        pass
+
+    return overlap_start <= overlap_end + EVENT_TIME_TOLERANCE
+
+
+def _format_validation_entry(entry: EventValidationEntry) -> str:
+    """
+    Format one normalized event for the validation message box.
+
+    :param entry: Normalized event entry.
+    :return: Human-readable event description.
+    """
+    transition_name: str
+    message: str
+
+    if entry.transition_type == DynamicEventTransitionType.Ramp:
+        transition_name = "Ramp"
+        message = (
+            f"{entry.origin}: {transition_name}, parameter={entry.parameter.name}, "
+            f"time={entry.start_time:.4f} s, end_time={entry.end_time:.4f} s, value={entry.value:.6f}"
+        )
+    else:
+        transition_name = "Step"
+        message = (
+            f"{entry.origin}: {transition_name}, parameter={entry.parameter.name}, "
+            f"time={entry.start_time:.4f} s, value={entry.value:.6f}"
+        )
+
+    return message
+
+
+def _build_overlap_conflict_message(conflicts: Sequence[EventValidationConflict]) -> str:
+    """
+    Build the warning text shown when overlapping events are found.
+
+    :param conflicts: Overlap conflicts detected across all validated groups.
+    :return: Full warning message.
+    """
+    message_lines: List[str] = list()
+    conflict: EventValidationConflict
+
+    message_lines.append("Some events are overlapped and cannot be applied.")
+    message_lines.append("")
+
+    for conflict in conflicts:
+        message_lines.append(f"Group: {conflict.group.name}")
+        message_lines.append(_format_validation_entry(entry=conflict.first_event))
+        message_lines.append(_format_validation_entry(entry=conflict.second_event))
+        message_lines.append("")
+
+    return "\n".join(message_lines).rstrip()
+
+
+def _sort_validation_entries(entries: Sequence[EventValidationEntry]) -> List[EventValidationEntry]:
+    """
+    Return validation entries ordered by start, end and value.
+
+    :param entries: Entries to sort.
+    :return: Sorted list.
+    """
+    return sorted(entries, key=lambda item: (item.start_time, item.end_time, item.value))
+
+
+def _find_overlapping_event_conflicts(entries: Sequence[EventValidationEntry]) -> List[EventValidationConflict]:
+    """
+    Detect pairwise overlaps between normalized dynamic events.
+
+    The algorithm groups events by events-group and parameter first because only
+    those events compete for the same runtime value. It then performs an ordered
+    pairwise scan inside each bucket and records every interval intersection.
+
+    :param entries: Normalized event entries from both persisted and pending data.
+    :return: List of overlap conflicts.
+    """
+    conflicts: List[EventValidationConflict] = list()
+    grouped_entries: Dict[tuple[int, int], List[EventValidationEntry]] = dict()
+    entry: EventValidationEntry
+
+    for entry in entries:
+        grouping_key: tuple[int, int] = (id(entry.group), entry.parameter.uid)
+        bucket: List[EventValidationEntry] | None = grouped_entries.get(grouping_key, None)
+
+        if bucket is None:
+            bucket = list()
+            grouped_entries[grouping_key] = bucket
+        else:
+            pass
+
+        bucket.append(entry)
+
+    bucket_entries: List[EventValidationEntry]
+
+    for bucket_entries in grouped_entries.values():
+        sorted_entries: List[EventValidationEntry] = _sort_validation_entries(entries=bucket_entries)
+        first_index: int = 0
+
+        while first_index < len(sorted_entries):
+            second_index: int = first_index + 1
+
+            while second_index < len(sorted_entries):
+                first_entry: EventValidationEntry = sorted_entries[first_index]
+                second_entry: EventValidationEntry = sorted_entries[second_index]
+
+                if _intervals_overlap(first_entry=first_entry, second_entry=second_entry):
+                    conflicts.append(EventValidationConflict(group=first_entry.group,
+                                                             first_event=first_entry,
+                                                             second_event=second_entry))
+                else:
+                    if second_entry.start_time > first_entry.end_time + EVENT_TIME_TOLERANCE:
+                        break
+                    else:
+                        pass
+
+                second_index += 1
+
+            first_index += 1
+
+    return conflicts
+
+
+def _validate_dynamic_event_entries(circuit: MultiCircuit,
+                                    mode: DynamicSimulationMode,
+                                    new_entries: Sequence[EventValidationEntry]) -> str | None:
+    """
+    Validate pending dialog events against existing and new overlap conflicts.
+
+    :param circuit: Circuit that stores canonical events.
+    :param mode: Selected simulation family.
+    :param new_entries: Pending dialog events already normalized.
+    :return: Validation error message or ``None`` when validation succeeds.
+    """
+    validation_entries: List[EventValidationEntry] = list()
+    interval_error: str | None = None
+    entry: EventValidationEntry
+
+    validation_entries.extend(_build_validation_entries_from_existing_events(circuit=circuit, mode=mode))
+    validation_entries.extend(new_entries)
+
+    for entry in validation_entries:
+        interval_error = _validate_event_interval(entry=entry)
+
+        if interval_error is not None:
+            return interval_error
+        else:
+            pass
+
+    conflicts: List[EventValidationConflict] = _find_overlapping_event_conflicts(entries=validation_entries)
+
+    if len(conflicts) > 0:
+        return _build_overlap_conflict_message(conflicts=conflicts)
+    else:
+        return None
 
 
 def create_dynamic_events_group_with_dialog(circuit: MultiCircuit,
@@ -769,6 +1157,7 @@ class DynamicEventDialogue(QtWidgets.QDialog):
         groups = []
         force_step_alignment_flags = []
         transition_types = []
+        validation_entries: List[EventValidationEntry] = list()
 
         for i, row in enumerate(self.rows):
 
@@ -791,6 +1180,28 @@ class DynamicEventDialogue(QtWidgets.QDialog):
             groups.append(group)
             force_step_alignment_flags.append(force_step_alignment)
             transition_types.append(transition_type)
+
+            validation_origin: str = f"New row {i + 1}"
+            validation_entries.append(_build_validation_entry(parameter=param,
+                                                              start_time=float(t),
+                                                              end_time=end_time,
+                                                              value=float(v),
+                                                              group=group,
+                                                              transition_type=transition_type,
+                                                              origin=validation_origin))
+
+        validation_error_message: str | None = _validate_dynamic_event_entries(circuit=self.circuit,
+                                                                               mode=self.mode,
+                                                                               new_entries=validation_entries)
+
+        if validation_error_message is not None:
+            QtWidgets.QMessageBox.warning(self,
+                                          "Overlapping Events",
+                                          validation_error_message)
+            return
+        else:
+            pass
+
         self.data["parameters"] = parameters
         self.data["target_times"] = target_times
         self.data["end_times"] = end_times
@@ -867,7 +1278,5 @@ class DynamicEventsGroupsDialog(QtWidgets.QDialog):
         Returns the entered name
         """
         return self._name
-
-
 
 

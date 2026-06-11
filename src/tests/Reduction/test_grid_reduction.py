@@ -8,6 +8,22 @@ import VeraGridEngine.api as gce
 from VeraGridEngine.Topology.GridReduction.ptdf_grid_reduction import ptdf_reduction, ptdf_reduction_projected
 from VeraGridEngine.Topology.GridReduction.ward_equivalents import ward_standard_reduction
 from VeraGridEngine.Topology.GridReduction.di_shi_grid_reduction import di_shi_reduction
+from VeraGridEngine.Simulations.LinearFactors.linear_analysis import get_hvdc_Pdc_ts
+
+
+def get_linear_flows_ts_with_hvdc(grid: gce.MultiCircuit) -> np.ndarray:
+    """
+    Get the linear TS flows including the HVDC contribution (the physical flows)
+    :param grid: MultiCircuit instance
+    :return: (nt, nbr) flows in MW
+    """
+    lin_ts = gce.LinearAnalysisTs(grid=grid, distributed_slack=False, compute_multi_contingencies=False)
+    flows = lin_ts.get_flows_ts(P=grid.get_Pbus_prof(apply_active=True))
+
+    if len(grid.hvdc_lines) > 0:
+        flows = flows + lin_ts.get_hvdc_flows_ts(Pdc_hvdc_ts=get_hvdc_Pdc_ts(grid))
+
+    return flows
 
 
 def get_total_generation(grid: gce.MultiCircuit) -> float:
@@ -1064,6 +1080,61 @@ def test_compact_devices_reduces_device_count():
         "Total load should be same with and without compaction"
 
 
+def test_ptdf_projected_ts_hvdc():
+    """
+    Test that the PTDF projected reduction preserves the time series flows including
+    the HVDC contribution, when the HVDC lines are in the removed (external) region
+    and the slack stays in the kept region.
+    """
+    grid = gce.MultiCircuit()
+    nt = 5
+    grid.create_profiles(steps=nt, step_length=1, step_unit='h')
+
+    buses = []
+    for i in range(6):
+        b = gce.Bus(name=f'B{i}', Vnom=400)
+        grid.add_bus(b)
+        buses.append(b)
+
+    buses[0].is_slack = True
+
+    # internal mesh: 0-1, 1-2, 0-2 ; boundary ties: 2-3 and 0-5 ; external: 3-4, 4-5
+    for f, t in [(0, 1), (1, 2), (0, 2), (2, 3), (0, 5), (3, 4), (4, 5)]:
+        grid.add_line(gce.Line(bus_from=buses[f], bus_to=buses[t], name=f'L{f}{t}',
+                               r=0.001, x=0.05, rate=2000))
+
+    # HVDC fully in the external region, in parallel with the AC path,
+    # so that it drives a loop flow through the internal grid
+    hv = gce.HvdcLine(bus_from=buses[3], bus_to=buses[5], name='HVDC ext', rate=500, Pset=300.0)
+    hv.Pset_prof = np.array([0.0, 100.0, -200.0, 300.0, 50.0])
+    grid.add_hvdc(hv)
+
+    g0 = gce.Generator(name='G0', P=400.0)
+    grid.add_generator(bus=buses[0], api_obj=g0)
+    g0.P_prof = np.array([400.0, 380.0, 420.0, 410.0, 390.0])
+
+    g4 = gce.Generator(name='G4', P=200.0)
+    grid.add_generator(bus=buses[4], api_obj=g4)
+    g4.P_prof = np.array([200.0, 210.0, 190.0, 205.0, 195.0])
+
+    for k, P in [(1, 150.0), (2, 100.0), (4, 120.0), (5, 230.0)]:
+        ld = gce.Load(name=f'Ld{k}', P=P)
+        grid.add_load(bus=buses[k], api_obj=ld)
+        ld.P_prof = P * np.linspace(0.8, 1.2, nt)
+
+    flows_orig = get_linear_flows_ts_with_hvdc(grid)
+
+    bus_to_remove = np.array([3, 4, 5])
+    _, _, _, _, internal_branches = grid.get_reduction_sets(reduction_bus_indices=bus_to_remove)
+
+    red_grid, logger = ptdf_reduction_projected(grid=grid, reduction_bus_indices=bus_to_remove,
+                                                distribute_slack=False)
+
+    flows_red = get_linear_flows_ts_with_hvdc(red_grid)
+
+    assert np.allclose(flows_orig[:, internal_branches], flows_red, atol=1e-6)
+
+
 def ptdf_projected_large_real_syst_snapshot():
     """
     Test to check if the snapshot reduction works well in a large grid
@@ -1163,9 +1234,8 @@ def ptdf_projected_large_real_syst_time_series():
     _, _, _, _, internal_branches = grid_orig.get_reduction_sets(reduction_bus_indices=bus_to_remove)
 
     # First run time series linear analysis on original grid
-    lin_ts = gce.LinearAnalysisTs(grid=grid_orig, distributed_slack=False)
-    P_orig = grid_orig.get_Pbus_prof()
-    Flows_orig = lin_ts.get_flows_ts(P=P_orig)
+    # (including the HVDC contribution: these are the physical flows to preserve)
+    Flows_orig = get_linear_flows_ts_with_hvdc(grid_orig)
 
     # ---- Reduce WITHOUT compaction ----
     grid_no_compact = gce.open_file(filename=fname)
@@ -1199,10 +1269,8 @@ def ptdf_projected_large_real_syst_time_series():
           f"{n_gens_no_compact - n_gens_compact} generators")
     print(f"{'='*60}\n")
 
-    # Run time series linear analysis on compacted reduced grid
-    lin_ts_red = gce.LinearAnalysisTs(grid=red_grid_compact, distributed_slack=False)
-    P_red = red_grid_compact.get_Pbus_prof()
-    Flows_red = lin_ts_red.get_flows_ts(P=P_red)
+    # Run time series linear analysis on compacted reduced grid (including HVDC)
+    Flows_red = get_linear_flows_ts_with_hvdc(red_grid_compact)
 
     # Compare flows on internal branches
     Flows_orig_internal = Flows_orig[:, internal_branches]

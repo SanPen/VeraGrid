@@ -397,17 +397,26 @@ class OptimalPowerFlowDriver(TimeSeriesDriverTemplate):
             self.results.Sbus = gslv_res.Sbus[0, :].real
             self.results.bus_shadow_prices = gslv_res.bus_shadow_prices[0, :]
 
+            self.results.load_power = gslv_res.load_power[0, :]
             self.results.load_shedding = gslv_res.load_shedding[0, :]
+            self.results.load_shedding_cost = gslv_res.load_shedding_cost[0, :]
             self.results.battery_power = gslv_res.battery_power[0, :]
             self.results.generator_power = gslv_res.generator_power[0, :]
+            self.results.generator_reactive_power = gslv_res.generator_reactive_power[0, :]
             self.results.Sf = gslv_res.Sf[0, :].real
             self.results.St = gslv_res.St[0, :].real
             self.results.overloads = gslv_res.overloads[0, :].real
+            self.results.overloads_cost = gslv_res.overloads_cost[0, :]
             self.results.loading = gslv_res.loading[0, :].real
+            self.results.losses = gslv_res.losses[0, :]
             self.results.tap_angle = gslv_res.tap_angle[0, :]
+            self.results.tap_module = gslv_res.tap_module[0, :]
 
             self.results.hvdc_Pf = gslv_res.hvdc_Pf[0, :]
             self.results.hvdc_loading = gslv_res.hvdc_loading[0, :]
+            self.results.vsc_Pf = gslv_res.vsc_Pf[0, :]
+            self.results.vsc_loading = gslv_res.vsc_loading[0, :]
+            self.results.shunt_like_reactive_power = gslv_res.shunt_like_reactive_power[0, :]
 
             self.results.fluid_node_current_level = gslv_res.fluid_node_current_level[0, :]
             self.results.fluid_node_flow_in = gslv_res.fluid_node_flow_in[0, :]

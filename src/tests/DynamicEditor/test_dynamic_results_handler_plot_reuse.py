@@ -135,6 +135,7 @@ def build_rms_results(device_entries: Sequence[Tuple[FakeDynamicDevice, Sequence
         uid2idx=uid2idx,
         vars_glob_name2uid=vars_glob_name2uid,
         devices_vars_info=devices_vars_info,
+        initial_parameter_value_maps=[dict() for _ in range(len(group_names))],
         has_event_group_results=has_event_group_results,
     )
 
@@ -185,6 +186,7 @@ def build_emt_results(device_entries: Sequence[Tuple[FakeDynamicDevice, Sequence
         uid2idx_diff=uid2idx_diff,
         vars_glob_name2uid=vars_glob_name2uid,
         devices_vars_info=devices_vars_info,
+        initial_parameter_value_maps=[dict() for _ in range(len(group_names))],
         has_event_group_results=has_event_group_results,
     )
 
@@ -215,6 +217,7 @@ def build_rms_results_with_unexported_device_var(device: FakeDynamicDevice,
         uid2idx={exported_var.uid: 0},
         vars_glob_name2uid={device.idtag + ":" + exported_var.name + ":" + str(exported_var.uid): exported_var.uid},
         devices_vars_info={device: [exported_var, unexported_var]},
+        initial_parameter_value_maps=[dict()],
         has_event_group_results=np.ones(1, dtype=bool),
     )
     results.values[:, :, 0] = np.array([[0.0], [1.0]], dtype=float)

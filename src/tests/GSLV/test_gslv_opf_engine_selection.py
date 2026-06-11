@@ -43,16 +43,25 @@ def test_gslv_snapshot_linear_opf_uses_gslv(monkeypatch) -> None:
             "voltage",
             "Sbus",
             "bus_shadow_prices",
+            "load_power",
             "load_shedding",
+            "load_shedding_cost",
             "battery_power",
             "generator_power",
+            "generator_reactive_power",
             "Sf",
             "St",
             "overloads",
+            "overloads_cost",
             "loading",
+            "losses",
             "tap_angle",
+            "tap_module",
             "hvdc_Pf",
             "hvdc_loading",
+            "vsc_Pf",
+            "vsc_loading",
+            "shunt_like_reactive_power",
             "fluid_node_current_level",
             "fluid_node_flow_in",
             "fluid_node_flow_out",
@@ -71,16 +80,25 @@ def test_gslv_snapshot_linear_opf_uses_gslv(monkeypatch) -> None:
         result.voltage = np.zeros((1, grid.get_bus_number()), dtype=np.complex128)
         result.Sbus = np.zeros((1, grid.get_bus_number()), dtype=np.complex128)
         result.bus_shadow_prices = np.zeros((1, grid.get_bus_number()), dtype=float)
+        result.load_power = np.zeros((1, grid.get_loads_number()), dtype=float)
         result.load_shedding = np.zeros((1, grid.get_loads_number()), dtype=float)
+        result.load_shedding_cost = np.zeros((1, grid.get_loads_number()), dtype=float)
         result.battery_power = np.zeros((1, grid.get_batteries_number()), dtype=float)
         result.generator_power = np.zeros((1, grid.get_generators_number()), dtype=float)
+        result.generator_reactive_power = np.zeros((1, grid.get_generators_number()), dtype=float)
         result.Sf = np.zeros((1, grid.get_branch_number(add_hvdc=False, add_vsc=False, add_switch=True)), dtype=np.complex128)
         result.St = np.zeros((1, grid.get_branch_number(add_hvdc=False, add_vsc=False, add_switch=True)), dtype=np.complex128)
         result.overloads = np.zeros((1, grid.get_branch_number(add_hvdc=False, add_vsc=False, add_switch=True)), dtype=np.complex128)
+        result.overloads_cost = np.zeros((1, grid.get_branch_number(add_hvdc=False, add_vsc=False, add_switch=True)), dtype=float)
         result.loading = np.zeros((1, grid.get_branch_number(add_hvdc=False, add_vsc=False, add_switch=True)), dtype=np.complex128)
+        result.losses = np.zeros((1, grid.get_branch_number(add_hvdc=False, add_vsc=False, add_switch=True)), dtype=float)
         result.tap_angle = np.zeros((1, grid.get_branch_number(add_hvdc=False, add_vsc=False, add_switch=True)), dtype=float)
+        result.tap_module = np.zeros((1, grid.get_branch_number(add_hvdc=False, add_vsc=False, add_switch=True)), dtype=float)
         result.hvdc_Pf = np.zeros((1, grid.get_hvdc_number()), dtype=float)
         result.hvdc_loading = np.zeros((1, grid.get_hvdc_number()), dtype=float)
+        result.vsc_Pf = np.zeros((1, grid.get_vsc_number()), dtype=float)
+        result.vsc_loading = np.zeros((1, grid.get_vsc_number()), dtype=float)
+        result.shunt_like_reactive_power = np.zeros((1, grid.get_shunt_like_device_number()), dtype=float)
         result.fluid_node_current_level = np.zeros((1, grid.get_fluid_nodes_number()), dtype=float)
         result.fluid_node_flow_in = np.zeros((1, grid.get_fluid_nodes_number()), dtype=float)
         result.fluid_node_flow_out = np.zeros((1, grid.get_fluid_nodes_number()), dtype=float)

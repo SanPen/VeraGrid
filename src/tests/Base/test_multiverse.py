@@ -5,12 +5,15 @@
 import os
 from pathlib import Path
 import pytest
+import numpy as np
+import pandas as pd
 
 import VeraGridEngine.api as vge
 from VeraGridEngine.Devices.Diagrams.graphic_location import GraphicLocation
 from VeraGridEngine.Devices.Diagrams.map_location import MapLocation
 from VeraGridEngine.Devices.Dynamic.fmu_template import FmuTemplate
 from VeraGridEngine.enumerations import DeviceType, FmuTemplateDomain
+from VeraGridEngine.IO.file_save import FileSavingOptions, save_veragrid_multiverse
 from VeraGridEngine.IO.file_open import FileOpen
 from VeraGridEngine.Utils.Symbolic.block import Block
 
@@ -135,6 +138,19 @@ def _build_grid_with_dynamic_templates():
     load.rms_fmu_template = fmu_template
 
     return grid, rms_template, emt_template, fmu_template
+
+
+def _build_grid_with_time_series():
+    """
+    Build a minimal time-series grid with one line profile that can be changed in a scenario delta.
+    """
+    grid = vge.MultiCircuit(name="time-series-profile-grid")
+    bus_from = grid.add_bus(vge.Bus(name="B1", Vnom=10.0, is_slack=True))
+    bus_to = grid.add_bus(vge.Bus(name="B2", Vnom=10.0))
+    line = grid.add_line(vge.Line(name="L12", bus_from=bus_from, bus_to=bus_to, r=0.1, x=0.2, rate=100.0))
+    grid.format_profiles(pd.date_range("2030-01-01", periods=3, freq="h"))
+    line.active_prof.set(np.array([True, True, True], dtype=bool))
+    return grid
 
 
 def _assert_diagram_locations_point_to_circuit_objects(grid) -> None:
@@ -352,6 +368,64 @@ def test_multiverse_nested_checkout_replays_parent_deltas() -> None:
     assert _get_bus_by_name(child_grid, "grandchild_only_bus") is None
     assert _get_bus_by_name(grandchild_grid, "child_only_bus") is not None
     assert _get_bus_by_name(grandchild_grid, "grandchild_only_bus") is not None
+
+
+def test_multiverse_profile_only_child_delta_roundtrips_without_defaulting_to_ones(tmp_path: Path) -> None:
+    """
+    Profile-only scenario edits must be stored as real deltas, not recreated from active=True defaults on save.
+    """
+    mv = vge.MultiVerse(_build_grid_with_time_series())
+    root = mv.root_nodes[0]
+    child = mv.create_node(
+        data=vge.MultiCircuit(name="profile-child"),
+        parent_id=root.node_id,
+        position=root.child_count(),
+    )
+
+    expected_profile = np.array([True, False, True], dtype=bool)
+
+    child_grid = mv.activate_scenario(child.node_id)
+    child_line = next(line for line in child_grid.lines if line.name == "L12")
+    child_line.active_prof.set(expected_profile)
+    mv.commit_current()
+
+    # The stored child payload is a delta, so the modified line must be present there.
+    assert len(child.circuit.lines) == 1
+    np.testing.assert_array_equal(child.circuit.lines[0].active_prof.toarray(), expected_profile)
+
+    file_name = tmp_path / "profile_only_delta.veragrid"
+    save_veragrid_multiverse(
+        file_name=str(file_name),
+        multiverse=mv,
+        options=FileSavingOptions(),
+    )
+
+    drv = FileOpen(str(file_name))
+    drv.open()
+    loaded_mv = drv.multiverse
+    assert loaded_mv is not None
+
+    loaded_child = loaded_mv.get_node(child.node_id)
+    loaded_child_grid = loaded_mv.checkout(loaded_child)
+    loaded_line = next(line for line in loaded_child_grid.lines if line.name == "L12")
+    np.testing.assert_array_equal(loaded_line.active_prof.toarray(), expected_profile)
+
+
+def test_multiverse_save_rejects_degenerate_epoch_time_profile(tmp_path: Path) -> None:
+    """
+    A multi-step master time profile made only of epoch-near duplicate values is almost certainly corrupted.
+    """
+    grid = _build_grid_with_time_series()
+    grid.set_unix_time(np.ones(grid.get_time_number(), dtype=int))
+    mv = vge.MultiVerse(grid)
+
+    file_name = tmp_path / "bad_time_profile.veragrid"
+    with pytest.raises(ValueError, match="degenerate master time profile"):
+        save_veragrid_multiverse(
+            file_name=str(file_name),
+            multiverse=mv,
+            options=FileSavingOptions(),
+        )
 
 
 def test_multiverse_parse_json_roundtrip() -> None:

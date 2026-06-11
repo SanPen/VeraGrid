@@ -23,6 +23,8 @@ from VeraGridEngine.Templates.predefined_blocks import (
 from VeraGridEngine.Templates.Rms.genrow_rms_template import get_genrow_rms_template
 from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
 from VeraGridEngine.Templates.Rms.load_rms_template import get_load_rms_template
+from VeraGridEngine.Templates.Rms.dc_voltage_source import DCPVSourceAveraged
+from VeraGridEngine.Templates.Rms.vsc_gfl_dclinked import build_vsc_rms
 # from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template import (get_genqec_rms,
 #                                                                       get_governor_rms,
 #                                                                       get_stabilizer_rms,
@@ -139,6 +141,18 @@ def create_block_of_type(var_factory: VarFactory,
         blk = get_load_rms_template(var_factory).block
         blk.name = item_name
         return blk
+
+    # VSC grid following
+    elif block_type == BlockType.GFL_VSC_RMS:
+        blk = build_vsc_rms(var_factory).block
+        blk.name = item_name
+        return blk
+
+    # DC PV source averaged
+    # elif block_type == BlockType.DC_PV_SOURCE_RMS:
+    #     blk = tem.DCPVSourceAveraged(var_factory).block
+    #     blk.name = item_name
+    #     return blk
 
     # ---------- EMT BLOCKS ----------
     # EMT type GENERATOR

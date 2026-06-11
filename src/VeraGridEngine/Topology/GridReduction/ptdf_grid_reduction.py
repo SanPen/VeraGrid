@@ -13,7 +13,8 @@ from VeraGridEngine.Devices.Injections.generator import Generator
 from VeraGridEngine.Devices.Injections.battery import Battery
 from VeraGridEngine.Devices.Injections.static_generator import StaticGenerator
 from VeraGridEngine.Devices.Injections.load import Load
-from VeraGridEngine.Simulations.LinearFactors.linear_analysis import LinearAnalysisTs, LinearAnalysis
+from VeraGridEngine.Simulations.LinearFactors.linear_analysis import (LinearAnalysisTs, LinearAnalysis,
+                                                                      get_hvdc_Pdc_ts)
 from VeraGridEngine.enumerations import BusMode, GeneratorControlMode
 
 
@@ -478,7 +479,7 @@ def ptdf_reduction(grid: MultiCircuit,
     Flows0 = lin.PTDF @ Pbus0
 
     if grid.has_time_series:
-        lin_ts = LinearAnalysisTs(grid=grid)
+        lin_ts = LinearAnalysisTs(grid=grid, compute_multi_contingencies=False)
         Pbus0_ts = grid.get_Pbus_prof(apply_active=True)
         Flows0_ts = lin_ts.get_flows_ts(P=Pbus0_ts)
     else:
@@ -502,7 +503,7 @@ def ptdf_reduction(grid: MultiCircuit,
     dPbus = Pbus2 - Pbus3
 
     if grid.has_time_series:
-        lin_ts2 = LinearAnalysisTs(grid=grid)
+        lin_ts2 = LinearAnalysisTs(grid=grid, compute_multi_contingencies=False)
         Pbus3_ts = lin_ts2.get_reverse_injections_ts(flows_ts=Flows0_ts[:, i_branches])
         Pbus2_ts = grid.get_Pbus_prof(apply_active=True)
         dPbus_ts = Pbus2_ts - Pbus3_ts
@@ -732,7 +733,9 @@ def ptdf_reduction_projected(grid: MultiCircuit,
     # Get HVDC power contribution (HVDC lines inject/withdraw power at their terminals)
     if nc.hvdc_data.nelm > 0:
         _, _, Pf_hvdc_pu, _, _, _ = nc.hvdc_data.get_power(Sbase=nc.Sbase, theta=np.zeros(nc.nbus))
-        Flow0_hvdc = lin.HvdcDF @ (Pf_hvdc_pu * nc.Sbase)
+        # HvdcDF is the sensitivity to the from->to transfer, and get_power returns Pf as the
+        # injection at the from bus, hence we invert the sign
+        Flow0_hvdc = lin.HvdcDF @ (-Pf_hvdc_pu * nc.Sbase)
     else:
         Flow0_hvdc = np.zeros(nc.nbr)
 
@@ -746,15 +749,24 @@ def ptdf_reduction_projected(grid: MultiCircuit,
         Pload_ts = get_Pload_ts(grid)
         Pgen_ts, Pgen_srap_ts = get_Pgen_ts(grid)
 
-        lin_ts = LinearAnalysisTs(grid=grid, distributed_slack=distribute_slack)
+        lin_ts = LinearAnalysisTs(grid=grid, distributed_slack=distribute_slack,
+                                  compute_multi_contingencies=False)
 
         Flows0_load_ts = lin_ts.get_flows_ts(P=Pload_ts)
         Flows0_gen_ts = lin_ts.get_flows_ts(P=Pgen_ts)
         Flows0_gen_srap_ts = lin_ts.get_flows_ts(P=Pgen_srap_ts)
+
+        # AC flows due to the HVDCs for time series (mirrors the snapshot)
+        if nc.hvdc_data.nelm > 0:
+            Pdc_hvdc_ts0 = get_hvdc_Pdc_ts(grid)
+            Flows0_hvdc_ts = lin_ts.get_hvdc_flows_ts(Pdc_hvdc_ts=Pdc_hvdc_ts0)
+        else:
+            Flows0_hvdc_ts = np.zeros((grid.get_time_number(), nc.nbr))
     else:
         Flows0_load_ts = None
         Flows0_gen_ts = None
         Flows0_gen_srap_ts = None
+        Flows0_hvdc_ts = None
     
     # Now relocate injections if the slack is being removed
     # This moves devices from external buses to internal buses so they are not lost during deletion
@@ -863,7 +875,9 @@ def ptdf_reduction_projected(grid: MultiCircuit,
     # Note: get_power returns Pf in p.u., need to convert to MW
     if nc2.hvdc_data.nelm > 0:
         _, _, Pf_hvdc2_pu, _, _, _ = nc2.hvdc_data.get_power(Sbase=nc2.Sbase, theta=np.zeros(nc2.nbus))
-        Flow2_hvdc = lin2.HvdcDF @ (Pf_hvdc2_pu * nc2.Sbase)
+        # same sign convention as Flow0_hvdc
+        # HvdcDF times the from->to transfer (= -Pf)
+        Flow2_hvdc = lin2.HvdcDF @ (-Pf_hvdc2_pu * nc2.Sbase)
     else:
         Flow2_hvdc = np.zeros(nc2.nbr)
     
@@ -907,12 +921,13 @@ def ptdf_reduction_projected(grid: MultiCircuit,
         Pload2_ts = get_Pload_ts(grid)
         Pgen2_ts, Pgen2_srap_ts = get_Pgen_ts(grid)
 
-        lin_ts2 = LinearAnalysisTs(grid=grid, distributed_slack=distribute_slack)
+        lin_ts2 = LinearAnalysisTs(grid=grid, distributed_slack=distribute_slack,
+                                   compute_multi_contingencies=False)
 
         # Reconstruct injections that should be to keep the flows the same (TS)
         # We use the same logic as for the static case but for each time step (vectorized)
         # The target flows on internal branches must be preserved
-        
+
         # Target flows (TS) on internal branches
         Flows0_load_ts_i = Flows0_load_ts[:, i_branches]
         Flows0_gen_ts_i = Flows0_gen_ts[:, i_branches]
@@ -927,15 +942,47 @@ def ptdf_reduction_projected(grid: MultiCircuit,
         dPbus_gen_ts = Pgen2_ts - Pbus3_gen_ts
         dPbus_gen_srap_ts = Pgen2_srap_ts - Pbus3_gen_srap_ts
 
+        # HVDC correction for time series to mirror the snapshot
+        if len(grid.hvdc_lines) > 0:
+            Pdc_hvdc_ts2 = get_hvdc_Pdc_ts(grid)
+            Flows2_hvdc_ts = lin_ts2.get_hvdc_flows_ts(Pdc_hvdc_ts=Pdc_hvdc_ts2)
+        else:
+            Flows2_hvdc_ts = np.zeros((grid.get_time_number(), len(i_branches)))
+
+        residual_hvdc_ts = Flows0_hvdc_ts[:, i_branches] - Flows2_hvdc_ts
+
+        if np.any(np.abs(residual_hvdc_ts) > tol):
+            dP_hvdc_ts = lin_ts2.get_reverse_injections_ts(flows_ts=residual_hvdc_ts)
+
+            dPbus_gen_srap_ts = dPbus_gen_srap_ts - dP_hvdc_ts
+
         # Zero out small values
         dPbus_load_ts[:, zero_influence_mask] = 0.0
         dPbus_gen_ts[:, zero_influence_mask] = 0.0
         dPbus_gen_srap_ts[:, zero_influence_mask] = 0.0
 
+        # Per-time-step totals deficits (mirror of the snapshot APgen / APload terms below)
+        # Without these we were getting non-matching results depending on the slack position
+
+        APgen_no_srap_ts = (np.sum(Pgen_ts, axis=1) 
+                            - (np.sum(Pgen2_ts, axis=1) 
+                            - (np.sum(dPbus_gen_ts, axis=1))))
+
+        APgen_yes_srap_ts = (np.sum(Pgen_srap_ts, axis=1)
+                             - (np.sum(Pgen2_srap_ts, axis=1) 
+                             - (np.sum(dPbus_gen_srap_ts, axis=1))))
+
+        APload_ts = (np.sum(Pload_ts, axis=1) 
+                     - (np.sum(Pload2_ts, axis=1) 
+                     - (np.sum(dPbus_load_ts, axis=1))))
+
     else:
         dPbus_load_ts = None
         dPbus_gen_ts = None
         dPbus_gen_srap_ts = None
+        APgen_no_srap_ts = None
+        APgen_yes_srap_ts = None
+        APload_ts = None
 
     # Original totals
     total_gen_no_srap_orig = np.sum(Pgen)
@@ -1022,40 +1069,61 @@ def ptdf_reduction_projected(grid: MultiCircuit,
         P_gen_no_srap_to_add = dP_gen[i] + extra_gen
         P_gen_yes_srap_to_add = dP_gen_srap[i] + extra_gen_srap
         P_load_to_add = dP_load[i] - extra_load
-        
-        if abs(P_gen_no_srap_to_add) > tol:
+
+        # Time series profiles of the devices to add, including the per-step deficit
+        if dPbus_gen_ts is not None:
+            gen_prof = -dPbus_gen_ts[:, i]
+            gen_srap_prof = -dPbus_gen_srap_ts[:, i]
+            load_prof = dPbus_load_ts[:, i]
+
+            if alloc and denom > 0:
+                gen_prof = gen_prof + APgen_no_srap_ts / denom
+                gen_srap_prof = gen_srap_prof + APgen_yes_srap_ts / denom
+                load_prof = load_prof - APload_ts / denom
+        else:
+            gen_prof = None
+            gen_srap_prof = None
+            load_prof = None
+
+        # a device is also needed if the snapshot compensation is roughly 0 but the
+        # time series compensation is not
+        gen_ts_needed = gen_prof is not None and np.any(np.abs(gen_prof) > tol)
+        gen_srap_ts_needed = gen_srap_prof is not None and np.any(np.abs(gen_srap_prof) > tol)
+        load_ts_needed = load_prof is not None and np.any(np.abs(load_prof) > tol)
+
+        if abs(P_gen_no_srap_to_add) > tol or gen_ts_needed:
             # Q mode gen
             elm_gen = Generator(name=f"compensated gen {i}",
                                 P=P_gen_no_srap_to_add,
                                 srap_enabled=False,
                                 control_mode=GeneratorControlMode.Q)
-            
-            if dPbus_gen_ts is not None:
-                elm_gen.P_prof = -dPbus_gen_ts[:, i]
+
+            if gen_prof is not None:
+                elm_gen.P_prof = gen_prof
                 # Enforce active true to avoid the issues I had
                 elm_gen.active_prof = np.ones(grid.get_time_number())
 
             grid.add_generator(bus=bus, api_obj=elm_gen)
 
-        if abs(P_gen_yes_srap_to_add) > tol:
+        if abs(P_gen_yes_srap_to_add) > tol or gen_srap_ts_needed:
             # Q mode gen like we do with the SRAP ones
             elm_gen = Generator(name=f"compensated gen {i}",
                                 P=P_gen_yes_srap_to_add,
                                 srap_enabled=True,
                                 control_mode=GeneratorControlMode.Q)
-            
-            if dPbus_gen_srap_ts is not None:
-                elm_gen.P_prof = -dPbus_gen_srap_ts[:, i]
+
+            if gen_srap_prof is not None:
+                elm_gen.P_prof = gen_srap_prof
                 elm_gen.active_prof = np.ones(grid.get_time_number())
 
             grid.add_generator(bus=bus, api_obj=elm_gen)
 
-        if abs(P_load_to_add) > tol:
-            elm_load = Load(name=f"compensated load {i}", 
+        if abs(P_load_to_add) > tol or load_ts_needed:
+            elm_load = Load(name=f"compensated load {i}",
                             P=-P_load_to_add)
-            
-            if dPbus_load_ts is not None:
-                elm_load.P_prof = dPbus_load_ts[:, i]
+
+            if load_prof is not None:
+                elm_load.P_prof = load_prof
                 elm_load.active_prof = np.ones(grid.get_time_number())
 
             grid.add_load(bus=bus, api_obj=elm_load)

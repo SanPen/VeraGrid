@@ -19,6 +19,7 @@ from VeraGridEngine.Devices.assets import Assets
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
 from VeraGridEngine.Devices.Parents.dynamic_parent import DynamicDevice
 from VeraGridEngine.Devices.Parents.dynamic_bus_parent import DynamicBusDevice
+from VeraGridEngine.Utils.GeographicalMethods.haversine_distance import haversine_distance, closest_point_on_segment
 from VeraGridEngine.basic_structures import IntVec, Vec, Mat, CxVec, IntMat, CxMat, BoolVec
 
 import VeraGridEngine.Devices as dev
@@ -26,7 +27,7 @@ from VeraGridEngine.Devices.types import ALL_DEV_TYPES, INJECTION_DEVICE_TYPES, 
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Topology.topology import find_different_states
 from VeraGridEngine.enumerations import (DeviceType, ActionType, SubObjectType, ConverterControlType, ExternalGridMode,
-                                         BusGraphicType)
+                                          BusGraphicType, VarPowerFlowReferenceType)
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic_io import compare_blocks
 
@@ -125,6 +126,182 @@ def get_fused_device_lst(elm_list: List[INJECTION_DEVICE_TYPES], property_names:
     else:
         # the list is empty
         return list(), list()
+
+
+def _get_emt_external_var(mdl: Block, reference: VarPowerFlowReferenceType) -> dev.Var | None:
+    """
+    Return one EMT external-mapping variable when present.
+
+    :param mdl: EMT block to inspect.
+    :param reference: External interface reference.
+    :return: Mapped variable or ``None``.
+    """
+    if mdl.empty():
+        return None
+    else:
+        return mdl.external_mapping.get(reference, None)
+
+
+def _validate_bus_side_emt_reference(logger: Logger,
+                                     device: ALL_DEV_TYPES,
+                                     device_mdl: Block,
+                                     bus_mdl: Block,
+                                     device_reference: VarPowerFlowReferenceType,
+                                     bus_reference: VarPowerFlowReferenceType,
+                                     property_name: str) -> None:
+    """
+    Validate that one device EMT interface variable is bound to the live bus EMT shell.
+
+    :param logger: Validation logger.
+    :param device: Device being validated.
+    :param device_mdl: Device EMT model.
+    :param bus_mdl: Bus EMT shell.
+    :param device_reference: Reference exposed by the device EMT interface.
+    :param bus_reference: Reference exposed by the bus EMT shell.
+    :param property_name: Human-readable property label for logs.
+    :return: None.
+    """
+    if device_mdl.empty() or bus_mdl.empty():
+        return
+    else:
+        pass
+
+    device_var = _get_emt_external_var(device_mdl, device_reference)
+    bus_var = _get_emt_external_var(bus_mdl, bus_reference)
+
+    if device_var is None or bus_var is None:
+        return
+    else:
+        pass
+
+    if device_var.uid == bus_var.uid:
+        return
+    else:
+        logger.add_error(
+            msg="Stale EMT bus connection",
+            device=device.name,
+            value=f"uid={device_var.uid}",
+            expected_value=f"uid={bus_var.uid}",
+            device_class=device.device_type.value,
+            device_property=property_name,
+            object_value=device_var.name,
+            expected_object_value=bus_var.name,
+        )
+
+
+def _validate_branch_emt_bus_connections(logger: Logger,
+                                         branch: ALL_DEV_TYPES) -> None:
+    """
+    Validate bus-side EMT voltage bindings for one branch-like device.
+
+    :param logger: Validation logger.
+    :param branch: Branch-like device.
+    :return: None.
+    """
+    mdl = branch.emt_model
+
+    if mdl.empty():
+        return
+    else:
+        pass
+
+    if branch.device_type == DeviceType.VscDevice:
+        _validate_bus_side_emt_reference(logger, branch, mdl, branch.bus_from.emt_model,
+                                         VarPowerFlowReferenceType.Vdc,
+                                         VarPowerFlowReferenceType.Vdc,
+                                         "bus_from.Vdc")
+        _validate_bus_side_emt_reference(logger, branch, mdl, branch.bus_to.emt_model,
+                                         VarPowerFlowReferenceType.v_A,
+                                         VarPowerFlowReferenceType.v_A,
+                                         "bus_to.v_A")
+        _validate_bus_side_emt_reference(logger, branch, mdl, branch.bus_to.emt_model,
+                                         VarPowerFlowReferenceType.v_B,
+                                         VarPowerFlowReferenceType.v_B,
+                                         "bus_to.v_B")
+        _validate_bus_side_emt_reference(logger, branch, mdl, branch.bus_to.emt_model,
+                                         VarPowerFlowReferenceType.v_C,
+                                         VarPowerFlowReferenceType.v_C,
+                                         "bus_to.v_C")
+    else:
+        _validate_bus_side_emt_reference(logger, branch, mdl, branch.bus_from.emt_model,
+                                         VarPowerFlowReferenceType.Vf_dc,
+                                         VarPowerFlowReferenceType.Vdc,
+                                         "bus_from.Vf_dc")
+        _validate_bus_side_emt_reference(logger, branch, mdl, branch.bus_to.emt_model,
+                                         VarPowerFlowReferenceType.Vt_dc,
+                                         VarPowerFlowReferenceType.Vdc,
+                                         "bus_to.Vt_dc")
+        _validate_bus_side_emt_reference(logger, branch, mdl, branch.bus_from.emt_model,
+                                         VarPowerFlowReferenceType.vf_N,
+                                         VarPowerFlowReferenceType.v_N,
+                                         "bus_from.vf_N")
+        _validate_bus_side_emt_reference(logger, branch, mdl, branch.bus_from.emt_model,
+                                         VarPowerFlowReferenceType.vf_A,
+                                         VarPowerFlowReferenceType.v_A,
+                                         "bus_from.vf_A")
+        _validate_bus_side_emt_reference(logger, branch, mdl, branch.bus_from.emt_model,
+                                         VarPowerFlowReferenceType.vf_B,
+                                         VarPowerFlowReferenceType.v_B,
+                                         "bus_from.vf_B")
+        _validate_bus_side_emt_reference(logger, branch, mdl, branch.bus_from.emt_model,
+                                         VarPowerFlowReferenceType.vf_C,
+                                         VarPowerFlowReferenceType.v_C,
+                                         "bus_from.vf_C")
+        _validate_bus_side_emt_reference(logger, branch, mdl, branch.bus_to.emt_model,
+                                         VarPowerFlowReferenceType.vt_N,
+                                         VarPowerFlowReferenceType.v_N,
+                                         "bus_to.vt_N")
+        _validate_bus_side_emt_reference(logger, branch, mdl, branch.bus_to.emt_model,
+                                         VarPowerFlowReferenceType.vt_A,
+                                         VarPowerFlowReferenceType.v_A,
+                                         "bus_to.vt_A")
+        _validate_bus_side_emt_reference(logger, branch, mdl, branch.bus_to.emt_model,
+                                         VarPowerFlowReferenceType.vt_B,
+                                         VarPowerFlowReferenceType.v_B,
+                                         "bus_to.vt_B")
+        _validate_bus_side_emt_reference(logger, branch, mdl, branch.bus_to.emt_model,
+                                         VarPowerFlowReferenceType.vt_C,
+                                         VarPowerFlowReferenceType.v_C,
+                                         "bus_to.vt_C")
+
+
+def _validate_injection_emt_bus_connections(logger: Logger,
+                                            injection: ALL_DEV_TYPES) -> None:
+    """
+    Validate bus-side EMT voltage bindings for one single-bus injection device.
+
+    :param logger: Validation logger.
+    :param injection: Injection device.
+    :return: None.
+    """
+    mdl = injection.emt_model
+
+    if mdl.empty():
+        return
+    else:
+        pass
+
+    bus_mdl = injection.bus.emt_model
+    _validate_bus_side_emt_reference(logger, injection, mdl, bus_mdl,
+                                     VarPowerFlowReferenceType.Vdc,
+                                     VarPowerFlowReferenceType.Vdc,
+                                     "bus.Vdc")
+    _validate_bus_side_emt_reference(logger, injection, mdl, bus_mdl,
+                                     VarPowerFlowReferenceType.v_N,
+                                     VarPowerFlowReferenceType.v_N,
+                                     "bus.v_N")
+    _validate_bus_side_emt_reference(logger, injection, mdl, bus_mdl,
+                                     VarPowerFlowReferenceType.v_A,
+                                     VarPowerFlowReferenceType.v_A,
+                                     "bus.v_A")
+    _validate_bus_side_emt_reference(logger, injection, mdl, bus_mdl,
+                                     VarPowerFlowReferenceType.v_B,
+                                     VarPowerFlowReferenceType.v_B,
+                                     "bus.v_B")
+    _validate_bus_side_emt_reference(logger, injection, mdl, bus_mdl,
+                                     VarPowerFlowReferenceType.v_C,
+                                     VarPowerFlowReferenceType.v_C,
+                                     "bus.v_C")
 
 
 class MultiCircuit(Assets):
@@ -3343,10 +3520,254 @@ class MultiCircuit(Assets):
                 logger.add_error("Missing EMT model",
                                  device_class=elm.device_type.value,
                                  device=elm.name)
+            else:
+                _validate_branch_emt_bus_connections(logger=logger, branch=elm)
 
         for elm in self.get_injection_devices_iter():
             if elm.emt_model.empty():
                 logger.add_error("Missing EMT model",
                                  device_class=elm.device_type.value,
                                  device=elm.name)
+            else:
+                _validate_injection_emt_bus_connections(logger=logger, injection=elm)
         return logger
+
+    def create_in_out_respecting_line_locations(self, line: dev.Line, bus: dev.Bus, remove_line: bool = False) -> tuple[dev.Line, dev.Line]:
+        """
+        Create an in/out connection that splits a line at the point on its geographic path closest
+        to the given bus.
+
+        The original line is split into two new lines: one from ``line.bus_from`` to ``bus`` and another
+        from ``bus`` to ``line.bus_to``. The split point is the location on the line's waypoint path that is
+        geographically closest to the substation of ``bus``.
+
+        The original line is deactivated. If ``remove_line`` is True it is also
+        deleted from the circuit.
+
+        Parameters
+        ----------
+        line : dev.Line
+            The line to split. Both of its buses must belong to a substation with valid coordinates.
+        bus : dev.Bus
+            The bus where the new in/out connection is created. Must belong to a substation and have a
+            nominal voltage compatible with the line.
+        remove_line : bool, optional
+            If True, delete the original line from the circuit instead of only deactivating it.
+            Defaults to False.
+
+        Returns
+        -------
+        tuple[dev.Line, dev.Line]
+            The two newly created lines: (bus_from -> bus, bus -> bus_to).
+
+        """
+        vnom = line.get_voltage_level_to().Vnom
+        substation = bus.substation
+
+        if substation is None:
+            raise ValueError(f"bus {bus.name!r} has no substation")
+
+        if abs(bus.Vnom - vnom) > 0.01:
+            raise ValueError(f"bus {bus.name!r} and line {line.name!r} have incompatible voltage levels")
+
+        bus_from = line.bus_from
+        bus_to = line.bus_to
+
+        if bus_from is None:
+            raise ValueError(f"bus_from of {line.name!r} is None")
+        if bus_to is None:
+            raise ValueError(f"bus_to of {line.name!r} is None")
+
+        substation_from = bus_from.substation
+        substation_to = bus_to.substation
+
+        if substation_from is None:
+            raise ValueError(f"bus {bus_from.name!r} has no substation")
+        if substation_to is None:
+            raise ValueError(f"bus {bus_to.name!r} has no substation")
+
+        # Step 1: Collect all waypoints of the original line
+        waypoints = list()
+
+        # Add the "from" substation
+        waypoints.append((substation_from.latitude, substation_from.longitude))
+
+        # Add all intermediate points
+        for node in line.locations.data:
+            waypoints.append((node.lat, node.long))
+
+        # Add the "to" substation
+        waypoints.append((substation_to.latitude, substation_to.longitude))
+
+        # Step 2: Find the closest segment to the selected substation
+        substation_lat = substation.latitude
+        substation_lon = substation.longitude
+
+        min_distance = float('inf')
+        closest_segment_idx = 0
+        closest_point = (0, 0)
+
+        for i in range(len(waypoints) - 1):
+            lat1, lon1 = waypoints[i]
+            lat2, lon2 = waypoints[i + 1]
+
+            # Find the closest point on this segment to the substation
+            point, distance = closest_point_on_segment(
+                lat1, lon1, lat2, lon2, substation_lat, substation_lon
+            )
+
+            if distance < min_distance:
+                min_distance = distance
+                closest_segment_idx = i
+                closest_point = point
+
+        # --- Unpack closest point coordinates ---
+        closest_lat, closest_lon = closest_point
+        extreme_point1 = waypoints[closest_segment_idx]
+        extreme_point2 = waypoints[closest_segment_idx + 1]
+        ex1_lat, ex1_lon = extreme_point1
+        ex2_lat, ex2_lon = extreme_point2
+
+        A1_lat = closest_lat - ex1_lat
+        A1_lon = closest_lon - ex1_lon
+        A2_lat = closest_lat - ex2_lat
+        A2_lon = closest_lon - ex2_lon
+
+        new_lat1 = ex1_lat + 0.95 * A1_lat
+        new_lon1 = ex1_lon + 0.95 * A1_lon
+        new_lat2 = ex2_lat + 0.95 * A2_lat
+        new_lon2 = ex2_lon + 0.95 * A2_lon
+
+        new_waypoint1 = (new_lat1, new_lon1)
+        new_waypoint2 = (new_lat2, new_lon2)
+
+        # Step 3: Calculate the lengths of the two new segments
+        length1 = 0.0
+
+        # Calculate length of first segment (from original start to insertion point)
+        for i in range(closest_segment_idx):
+            lat1, lon1 = waypoints[i]
+            lat2, lon2 = waypoints[i + 1]
+            length1 += haversine_distance(lat1, lon1, lat2, lon2)
+
+        # Add distance from last waypoint to insertion point
+        lat1, lon1 = waypoints[closest_segment_idx]
+        lat2, lon2 = new_waypoint1
+        length1 += haversine_distance(lat1, lon1, lat2, lon2)
+
+        # Add distance from insertion point to new substation
+        lat1, lon1 = substation_lat, substation_lon
+        lat2, lon2 = new_waypoint1
+        length1 += haversine_distance(lat1, lon1, lat2, lon2)
+
+        # Calculate length of second segment (from insertion point to original end)
+        # First, add distance from insertion point to next waypoint
+        lat1, lon1 = new_waypoint2
+        lat2, lon2 = waypoints[closest_segment_idx + 1]
+        length2 = haversine_distance(lat1, lon1, lat2, lon2)
+
+        # Add remaining segments
+        for i in range(closest_segment_idx + 1, len(waypoints) - 1):
+            lat1, lon1 = waypoints[i]
+            lat2, lon2 = waypoints[i + 1]
+            length2 += haversine_distance(lat1, lon1, lat2, lon2)
+
+        # Add distance from insertion point to new substation
+        lat1, lon1 = substation_lat, substation_lon
+        lat2, lon2 = new_waypoint2
+        length2 += haversine_distance(lat1, lon1, lat2, lon2)
+
+        # Step 4: Calculate the proportion of each segment
+        total_length = length1 + length2
+        if total_length == 0:
+            ratio1 = ratio2 = 0
+        else:
+            ratio1 = length1 / total_length
+            ratio2 = length2 / total_length
+
+        # Step 5: Create the new lines with the correct properties from the start
+        # Line 1: from original bus_from to new_bus
+        line1 = dev.Line(name=f"Linea de {bus_from.name} a {bus.name}",
+                         active=True,
+                         bus_from=bus_from,
+                         bus_to=bus,
+                         code=line.code,
+                         r=line.R * ratio1,  # Set impedance proportional to length
+                         x=line.X * ratio1,
+                         b=line.B * ratio1,
+                         r0=line.R0 * ratio1,
+                         x0=line.X0 * ratio1,
+                         b0=line.B0 * ratio1,
+                         r2=line.R2 * ratio1,
+                         x2=line.X2 * ratio1,
+                         b2=line.B2 * ratio1,
+                         length=length1,  # Set the actual calculated length
+                         rate=line.rate,
+                         contingency_factor=line.contingency_factor,
+                         protection_rating_factor=line.protection_rating_factor,
+                         circuit_idx=line.circuit_idx,
+                         temp_oper=line.temp_oper)
+
+        # Line 2: from new bus to bus_to
+        line2 = dev.Line(name=f"Linea de {bus_to.name} a {bus.name}",
+                         active=True,
+                         bus_from=bus,
+                         bus_to=bus_to,
+                         code=line.code,
+                         r=line.R * ratio2,  # Set impedance proportional to length
+                         x=line.X * ratio2,
+                         b=line.B * ratio2,
+                         r0=line.R0 * ratio2,
+                         x0=line.X0 * ratio2,
+                         b0=line.B0 * ratio2,
+                         r2=line.R2 * ratio2,
+                         x2=line.X2 * ratio2,
+                         b2=line.B2 * ratio2,
+                         length=length2,  # Set the actual calculated length
+                         rate=line.rate,
+                         contingency_factor=line.contingency_factor,
+                         protection_rating_factor=line.protection_rating_factor,
+                         circuit_idx=line.circuit_idx,
+                         temp_oper=line.temp_oper)
+
+        if line.template is not None:
+            line1.apply_template(line.template, Sbase=self.Sbase, freq=self.fBase)
+            line2.apply_template(line.template, Sbase=self.Sbase, freq=self.fBase)
+
+        # Copy other properties from the original line
+        line1.color = line.color
+        line1.comment = line.comment
+
+        # Copy other properties from the original line
+        line2.color = line.color
+        line2.comment = line.comment
+
+        # Preserve waypoints for line 1 (from start to insertion point)
+        # Add all waypoints from the original line up to the closest segment
+        for i in range(1, closest_segment_idx + 1):
+            line1.locations.add_location(lat=waypoints[i][0], long=waypoints[i][1], alt=0.0)
+
+        # --- Assign offset waypoints ---
+        # Add the 'backwards' point as the last waypoint for line1
+        line1.locations.add_location(lat=new_lat1, long=new_lon1, alt=0.0)
+        # line1.locations.add_location(lat=substation_lat, long=substation_lon, alt=0.0)
+
+        # Add the 'forwards' point as the first waypoint for line2
+        # line2.locations.add_location(lat=substation_lat, long=substation_lon, alt=0.0)
+        line2.locations.add_location(lat=new_lat2, long=new_lon2, alt=0.0)
+
+        # Preserve waypoints for line 2 (from insertion point to end)
+        # Store waypoints from the segment *after* the split onwards
+        for i in range(closest_segment_idx + 1, len(waypoints) - 1):
+            line2.locations.add_location(lat=waypoints[i][0], long=waypoints[i][1], alt=0.0)
+
+        # Add the new lines to the circuit
+        self.add_line(line1)
+        self.add_line(line2)
+
+        # Remove the original line from db
+        line.active = False
+        if remove_line:
+            self.delete_line(line)
+
+        return line1, line2

@@ -17,7 +17,8 @@ from matplotlib import pyplot as plt
 from PySide6.QtWidgets import QGraphicsItem, QMessageBox, QDialog, QVBoxLayout, QLabel, QPushButton
 from collections.abc import Callable
 from PySide6.QtCore import (Qt, QMimeData, QIODevice, QByteArray, QDataStream, QModelIndex, QRunnable, QThreadPool)
-from PySide6.QtGui import (QIcon, QPixmap, QImage, QStandardItemModel, QStandardItem, QColor, QDropEvent, QWheelEvent)
+from PySide6.QtGui import (QIcon, QPixmap, QImage, QStandardItemModel, QStandardItem, QColor, QDropEvent,
+                           QWheelEvent, QPainter)
 
 from VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container import MapLineContainer
 from VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_polyline import MapLinePolyline
@@ -38,7 +39,7 @@ from VeraGridEngine.Devices.Injections.external_grid import ExternalGrid
 from VeraGridEngine.Devices.Injections.static_generator import StaticGenerator
 from VeraGridEngine.Devices.Diagrams.map_diagram import MapDiagram
 from VeraGridEngine.Devices.Fluid import FluidNode, FluidPath
-from VeraGridEngine.Utils.GeographicalMethods.haversine_distance import haversine_distance
+from VeraGridEngine.Utils.GeographicalMethods.haversine_distance import haversine_distance, closest_point_on_segment
 from VeraGridEngine.basic_structures import Vec, CxVec, IntVec
 from VeraGridEngine.Devices.Substation.substation import Substation
 from VeraGridEngine.Devices.Substation.voltage_level import VoltageLevel
@@ -1520,6 +1521,7 @@ class GridMapWidget(BaseDiagramWidget):
 
         # voltage_cmap = viz.get_voltage_color_map()
         loading_cmap = viz.get_loading_color_map()
+        video_export_active: bool = self.is_video_export_active()
 
         # nbus = self.circuit.get_bus_number()
         # longitudes = np.zeros(nbus)
@@ -1551,13 +1553,20 @@ class GridMapWidget(BaseDiagramWidget):
 
                 if graphic_object:
 
-                    # compose the tooltip
-                    tooltip = str(i) + ': ' + branch.name
-                    tooltip += '\n' + loading_label + ': ' + "{:10.4f}".format(lnorm[i] * 100) + ' [%]'
-                    if Sf is not None:
-                        tooltip += '\nPower: ' + "{:10.4f}".format(Sf[i]) + ' [MVA]'
-                    if losses is not None:
-                        tooltip += '\nLosses: ' + "{:10.4f}".format(losses[i]) + ' [MVA]'
+                    # Tooltips are not visible in the export, so avoid rebuilding them per frame.
+                    if video_export_active:
+                        tooltip: str = ''
+                    else:
+                        tooltip = str(i) + ': ' + branch.name
+                        tooltip += '\n' + loading_label + ': ' + "{:10.4f}".format(lnorm[i] * 100) + ' [%]'
+                        if Sf is not None:
+                            tooltip += '\nPower: ' + "{:10.4f}".format(Sf[i]) + ' [MVA]'
+                        else:
+                            pass
+                        if losses is not None:
+                            tooltip += '\nLosses: ' + "{:10.4f}".format(losses[i]) + ' [MVA]'
+                        else:
+                            pass
 
                     # get the line colour
 
@@ -1590,11 +1599,10 @@ class GridMapWidget(BaseDiagramWidget):
 
                     graphic_object.set_colour(color=color, style=style, tool_tip=tooltip)
 
-                    if hasattr(graphic_object, 'set_arrows_with_power'):
-                        graphic_object.set_arrows_with_power(
-                            Sf=Sf[i] if Sf is not None else None,
-                            St=St[i] if St is not None else None
-                        )
+                    graphic_object.set_arrows_with_power(
+                        Sf=Sf[i] if Sf is not None else None,
+                        St=St[i] if St is not None else None
+                    )
                 else:
                     # the graphic object is None
                     pass
@@ -1613,14 +1621,6 @@ class GridMapWidget(BaseDiagramWidget):
                 graphic_object: MapHvdcLine = self.graphics_manager.query(branch)
 
                 if graphic_object:
-
-                    # compose the tooltip
-                    tooltip = str(i) + ': ' + branch.name
-                    tooltip += '\n' + loading_label + ': ' + "{:10.4f}".format(lnorm[i] * 100) + ' [%]'
-                    if Sf is not None:
-                        tooltip += '\nPower: ' + "{:10.4f}".format(hvdc_Pf[i]) + ' [MW]'
-                    if losses is not None:
-                        tooltip += '\nLosses: ' + "{:10.4f}".format(hvdc_losses[i]) + ' [MW]'
 
                     # get the line colour
                     a = 255
@@ -1647,16 +1647,23 @@ class GridMapWidget(BaseDiagramWidget):
                             np.floor(min_branch_width + Sfnorm[i] * (max_branch_width - min_branch_width) * 0.1)
                         )
                         graphic_object.set_width_scale(width=weight, arrow_width=arrow_size)
+                    else:
+                        pass
 
-                    tooltip = str(i) + ': ' + graphic_object.api_object.name
-                    tooltip += '\n' + loading_label + ': ' + "{:10.4f}".format(
-                        abs(hvdc_loading[i]) * 100) + ' [%]'
-
-                    tooltip += '\nPower (from):\t' + "{:10.4f}".format(hvdc_Pf[i]) + ' [MW]'
+                    if video_export_active:
+                        tooltip = ''
+                    else:
+                        tooltip = str(i) + ': ' + graphic_object.api_object.name
+                        tooltip += '\n' + loading_label + ': ' + "{:10.4f}".format(
+                            abs(hvdc_loading[i]) * 100) + ' [%]'
+                        tooltip += '\nPower (from):\t' + "{:10.4f}".format(hvdc_Pf[i]) + ' [MW]'
+                        if hvdc_losses is not None:
+                            tooltip += '\nPower (to):\t' + "{:10.4f}".format(hvdc_Pt[i]) + ' [MW]'
+                            tooltip += '\nLosses: \t\t' + "{:10.4f}".format(hvdc_losses[i]) + ' [MW]'
+                        else:
+                            pass
 
                     if hvdc_losses is not None:
-                        tooltip += '\nPower (to):\t' + "{:10.4f}".format(hvdc_Pt[i]) + ' [MW]'
-                        tooltip += '\nLosses: \t\t' + "{:10.4f}".format(hvdc_losses[i]) + ' [MW]'
                         graphic_object.set_arrows_with_hvdc_power(Pf=float(hvdc_Pf[i]), Pt=float(hvdc_Pt[i]))
                     else:
                         graphic_object.set_arrows_with_hvdc_power(Pf=float(hvdc_Pf[i]), Pt=-hvdc_Pf[i])
@@ -2357,7 +2364,7 @@ class GridMapWidget(BaseDiagramWidget):
             lat2, lon2 = waypoints[i + 1]
 
             # Find the closest point on this segment to the substation
-            point, distance = self._closest_point_on_segment(
+            point, distance = closest_point_on_segment(
                 lat1, lon1, lat2, lon2, substation_lat, substation_lon
             )
 
@@ -2510,101 +2517,6 @@ class GridMapWidget(BaseDiagramWidget):
             f'{line1.name} ({line1.length:.3f}km) and {line2.name} ({line2.length:.3f}km) created. {line_api.name} removed.'
         )
 
-    def _closest_point_on_segment(self, lat1, lon1, lat2, lon2, lat3, lon3):
-        """
-        Find the closest point on a line segment to a given point using geographic coordinates.
-
-        :param lat1, lon1: Coordinates of the first endpoint of the segment
-        :param lat2, lon2: Coordinates of the second endpoint of the segment
-        :param lat3, lon3: Coordinates of the point to find the closest point to
-        :return: (closest_lat, closest_lon), distance_in_km
-        """
-        # For very short segments, just return the midpoint
-        if haversine_distance(lat1, lon1, lat2, lon2) < 0.001:  # Less than 1 meter
-            closest_lat = (lat1 + lat2) / 2
-            closest_lon = (lon1 + lon2) / 2
-            distance = haversine_distance(closest_lat, closest_lon, lat3, lon3)
-            return (closest_lat, closest_lon), distance
-
-        # Calculate distances to the endpoints
-        dist_to_p1 = haversine_distance(lat1, lon1, lat3, lon3)
-        dist_to_p2 = haversine_distance(lat2, lon2, lat3, lon3)
-
-        # Convert to radians for spherical calculations
-        lat1_rad = math.radians(lat1)
-        lon1_rad = math.radians(lon1)
-        lat2_rad = math.radians(lat2)
-        lon2_rad = math.radians(lon2)
-        lat3_rad = math.radians(lat3)
-        lon3_rad = math.radians(lon3)
-
-        # Earth's radius in km
-        R = 6371.0
-
-        # Calculate the bearing from point 1 to point 2
-        y = math.sin(lon2_rad - lon1_rad) * math.cos(lat2_rad)
-        x = math.cos(lat1_rad) * math.sin(lat2_rad) - math.sin(lat1_rad) * math.cos(lat2_rad) * math.cos(
-            lon2_rad - lon1_rad)
-        bearing_1_to_2 = math.atan2(y, x)
-
-        # Calculate the bearing from point 1 to point 3
-        y = math.sin(lon3_rad - lon1_rad) * math.cos(lat3_rad)
-        x = math.cos(lat1_rad) * math.sin(lat3_rad) - math.sin(lat1_rad) * math.cos(lat3_rad) * math.cos(
-            lon3_rad - lon1_rad)
-        bearing_1_to_3 = math.atan2(y, x)
-
-        # Calculate the angular distance from point 1 to point 3
-        angular_dist_1_to_3 = math.acos(
-            math.sin(lat1_rad) * math.sin(lat3_rad) +
-            math.cos(lat1_rad) * math.cos(lat3_rad) * math.cos(lon3_rad - lon1_rad)
-        )
-
-        # Calculate the cross-track distance (perpendicular distance to the great circle path)
-        cross_track_dist = math.asin(
-            math.sin(angular_dist_1_to_3) * math.sin(bearing_1_to_3 - bearing_1_to_2)
-        )
-
-        # Calculate the along-track distance (distance from point 1 to the closest point)
-        along_track_dist = math.acos(
-            math.cos(angular_dist_1_to_3) / math.cos(cross_track_dist)
-        )
-
-        # Calculate the total distance of the segment
-        segment_dist_rad = math.acos(
-            math.sin(lat1_rad) * math.sin(lat2_rad) +
-            math.cos(lat1_rad) * math.cos(lat2_rad) * math.cos(lon2_rad - lon1_rad)
-        )
-
-        # Check if the closest point is on the segment
-        if along_track_dist > segment_dist_rad:
-            # Closest point is beyond point 2
-            return (lat2, lon2), dist_to_p2
-        elif along_track_dist < 0:
-            # Closest point is before point 1
-            return (lat1, lon1), dist_to_p1
-        else:
-            # Closest point is on the segment
-            # Calculate the position of the closest point
-            closest_lat_rad = math.asin(
-                math.sin(lat1_rad) * math.cos(along_track_dist) +
-                math.cos(lat1_rad) * math.sin(along_track_dist) * math.cos(bearing_1_to_2)
-            )
-
-            closest_lon_rad = lon1_rad + math.atan2(
-                math.sin(bearing_1_to_2) * math.sin(along_track_dist) * math.cos(lat1_rad),
-                math.cos(along_track_dist) - math.sin(lat1_rad) * math.sin(closest_lat_rad)
-            )
-
-            closest_lat = math.degrees(closest_lat_rad)
-            closest_lon = math.degrees(closest_lon_rad)
-
-            # Calculate the distance from point 3 to the closest point
-            distance = R * math.acos(
-                math.sin(lat3_rad) * math.sin(closest_lat_rad) +
-                math.cos(lat3_rad) * math.cos(closest_lat_rad) * math.cos(closest_lon_rad - lon3_rad)
-            )
-
-            return (closest_lat, closest_lon), distance
 
     def create_t_joint_to_substation(self):
         """

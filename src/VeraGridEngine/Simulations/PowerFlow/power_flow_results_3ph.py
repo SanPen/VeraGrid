@@ -241,7 +241,7 @@ class PowerFlowResults3Ph(ResultsTemplate):
 
                 ResultTypes.VscResults: [
                     ResultTypes.VscPowerFromPositive,
-                    ResultTypes.VscPowerFromNegative,
+                    # ResultTypes.VscPowerFromNegative,
 
                     ResultTypes.VscPowerToA,
                     ResultTypes.VscPowerToB,

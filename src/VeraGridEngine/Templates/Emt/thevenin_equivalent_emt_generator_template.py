@@ -106,6 +106,10 @@ def get_generator_thevenin_rl_emt_template_with_ref(
     i_C = vf.add_var(name=f"i_C_{name}", reference=VarPowerFlowReferenceType.i_C)
 
     theta = vf.add_var(name=f"theta_{name}")
+    # parameter to create a phase jump
+    theta_deviation_param = vf.add_var(name=f"theta_deviation_param_{name}")
+    # parameter to create RoCoF
+    w_scale = vf.add_var(name=f"f_scale_{name}")
 
     d_i_A = vf.add_diff_var(name=f"d_i_A_{name}", base_var=i_A)
     d_i_B = vf.add_diff_var(name=f"d_i_B_{name}", base_var=i_B)
@@ -170,7 +174,7 @@ def get_generator_thevenin_rl_emt_template_with_ref(
         omega_base * (e_A - R_s * i_A - v_A) / X_s,
         omega_base * (e_B - R_s * i_B - v_B) / X_s,
         omega_base * (e_C - R_s * i_C - v_C) / X_s,
-        theta_speed,
+        theta_speed * w_scale,
     ])
 
     state_vars: List[Any] = list([
@@ -181,9 +185,9 @@ def get_generator_thevenin_rl_emt_template_with_ref(
     ])
 
     algebraic_eqs: List[Any] = list([
-        e_A - E_scale * Epk_expr * sym.sin(theta),
-        e_B - E_scale * Epk_expr * sym.sin(theta - 2.0 * np.pi / 3.0),
-        e_C - E_scale * Epk_expr * sym.sin(theta + 2.0 * np.pi / 3.0),
+        e_A - E_scale * Epk_expr * sym.sin(theta + theta_deviation_param),
+        e_B - E_scale * Epk_expr * sym.sin(theta - 2.0 * np.pi / 3.0 + theta_deviation_param),
+        e_C - E_scale * Epk_expr * sym.sin(theta + 2.0 * np.pi / 3.0 + theta_deviation_param),
         Pe - (i_A * v_A + i_B * v_B + i_C * v_C),
         Qe - (1.0 / np.sqrt(3.0)) * (
             (v_A - v_B) * i_C +
@@ -265,6 +269,8 @@ def get_generator_thevenin_rl_emt_template_with_ref(
         # This remains a pure event/runtime parameter so scripts and EMT events
         # can scale the Thevenin source magnitude from outside the model.
         E_scale: vf.add_const(1.0),
+        theta_deviation_param: vf.add_const(0.0),
+        w_scale: vf.add_const(1.0),
     })
 
     # ------------------------------------------------------------------
@@ -274,9 +280,9 @@ def get_generator_thevenin_rl_emt_template_with_ref(
     # ------------------------------------------------------------------
     templ.block.init_eqs = dict({
         theta: phi_v + delta_expr,
-        e_A: E_scale * Epk_expr * sym.sin(theta),
-        e_B: E_scale * Epk_expr * sym.sin(theta - 2.0 * np.pi / 3.0),
-        e_C: E_scale * Epk_expr * sym.sin(theta + 2.0 * np.pi / 3.0),
+        e_A: E_scale * Epk_expr * sym.sin(theta + theta_deviation_param),
+        e_B: E_scale * Epk_expr * sym.sin(theta - 2.0 * np.pi / 3.0 + theta_deviation_param),
+        e_C: E_scale * Epk_expr * sym.sin(theta + 2.0 * np.pi / 3.0 + theta_deviation_param),
         Pe: (i_A * v_A + i_B * v_B + i_C * v_C),
         Qe: (1.0 / np.sqrt(3.0)) * (
             (v_A - v_B) * i_C +
@@ -293,7 +299,7 @@ def get_generator_thevenin_rl_emt_template_with_ref(
         d_i_A: omega_base * (e_A - R_s * i_A - v_A) / X_s,
         d_i_B: omega_base * (e_B - R_s * i_B - v_B) / X_s,
         d_i_C: omega_base * (e_C - R_s * i_C - v_C) / X_s,
-        d_theta: theta_speed,
+        d_theta: theta_speed * w_scale,
     })
 
     return templ

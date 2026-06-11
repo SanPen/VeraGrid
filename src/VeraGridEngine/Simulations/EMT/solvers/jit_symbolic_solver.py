@@ -585,7 +585,7 @@ class JitSymbolicSolver:
         '_predictor', '_runtime_param_count', '_static_parameter_buffer', '_full_parameter_buffer',
         '_residual_buffer', '_trial_state_buffer', '_trial_residual_buffer', '_trial_residual_evaluator',
         '_backend_build_stats', '_last_runtime_stats', '_last_sim_loop_time',
-        '_max_residual_inf_fail', '_max_state_residual_inf_fail'
+        '_max_residual_inf_fail', '_max_state_residual_inf_fail', '_cancel_checker'
     ]
 
     def __init__(self,
@@ -600,7 +600,8 @@ class JitSymbolicSolver:
                  newton_max_iter: int = 15,
                  newton_diag_config: NewtonDiagnosticsConfig | None = None,
                  max_residual_inf_fail: float = np.inf,
-                 max_state_residual_inf_fail: float = np.inf)-> None:
+                 max_state_residual_inf_fail: float = np.inf,
+                 cancel_checker: Callable[[], bool] | None = None)-> None:
         """
         :param problem: The DAE problem definition.
         :param t0: Initial time.
@@ -669,6 +670,7 @@ class JitSymbolicSolver:
         )
         self._last_runtime_stats: Dict[str, Any] = dict()
         self._last_sim_loop_time: float = 0.0
+        self._cancel_checker = cancel_checker
 
     # ==============================================================================
     # 2. JIT IMPLICIT ENGINE (Optimized with Batching)
@@ -1059,6 +1061,9 @@ class JitSymbolicSolver:
         failed_substep_times_s: list[float] = list()
 
         for i in range(self.steps):
+
+            if self._cancel_checker is not None and self._cancel_checker():
+                return self.t[:i + 1].copy(), self.y[:i + 1, :].copy(), self.dy[:i + 1, :].copy(), well_initialized, converged
 
             t_step_start: float = self.t0 + i * self.h
             t_step_target: float = self.t0 + (i + 1) * self.h

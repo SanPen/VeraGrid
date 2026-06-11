@@ -50,9 +50,24 @@ class  PseudoTransient:
         self.reference_error_tol = float(reference_error_tol)
         self.verbose = verbose
         self.use_weighted_residual = os.getenv("VERAGRID_PSEUDO_WEIGHTED_RESIDUAL", "0").lower() in {"1", "true", "yes", "on"}
-        self.weight_network = float(os.getenv("VERAGRID_PSEUDO_WEIGHT_NETWORK", "3.0"))
-        self.weight_power = float(os.getenv("VERAGRID_PSEUDO_WEIGHT_POWER", "2.0"))
+        self.weight_algebraic = float(os.getenv("VERAGRID_PSEUDO_WEIGHT_ALGEBRAIC", "10.0"))
+        self.use_weighted_linear_solve = os.getenv("VERAGRID_PSEUDO_WEIGHTED_LINEAR_SOLVE", "0").lower() in {"1", "true", "yes", "on"}
+        self.linear_solve_state_weight = float(os.getenv("VERAGRID_PSEUDO_LINEAR_STATE_WEIGHT", "1.0"))
+        self.linear_solve_algebraic_weight = float(os.getenv("VERAGRID_PSEUDO_LINEAR_ALGEBRAIC_WEIGHT", "10.0"))
+        self.use_state_tau_scaling = os.getenv("VERAGRID_PSEUDO_STATE_TAU_SCALING", "1").lower() in {"1", "true", "yes", "on"}
+        self.state_tau_min = float(os.getenv("VERAGRID_PSEUDO_STATE_TAU_MIN", str(dtau_min)))
+        self.state_tau_max = float(os.getenv("VERAGRID_PSEUDO_STATE_TAU_MAX", str(dtau_max)))
+        self.state_tau_eps = float(os.getenv("VERAGRID_PSEUDO_STATE_TAU_EPS", "1e-12"))
         self.allow_lsqr_fallback = os.getenv("PSEUDO_ALLOW_LSQR", "1").lower() in {"1", "true", "yes", "on"}
+        self.use_svd_diagnostics = os.getenv("VERAGRID_PSEUDO_SVD_DIAGNOSTICS", "0").lower() in {"1", "true", "yes", "on"}
+        self.svd_diagnostics_limit = int(os.getenv("VERAGRID_PSEUDO_SVD_DIAGNOSTICS_LIMIT", "5"))
+        self.linear_solve_damp = float(os.getenv("VERAGRID_PSEUDO_LINEAR_DAMP", "1e-6"))
+        self.dtau_ser_min_factor = float(os.getenv("VERAGRID_PSEUDO_DTAU_SER_MIN_FACTOR", "0.5"))
+        self.dtau_ser_max_factor = float(os.getenv("VERAGRID_PSEUDO_DTAU_SER_MAX_FACTOR", "5.0"))
+        self.dtau_stall_ratio = float(os.getenv("VERAGRID_PSEUDO_DTAU_STALL_RATIO", "1.02"))
+        self.dtau_stall_steps = int(os.getenv("VERAGRID_PSEUDO_DTAU_STALL_STEPS", "5"))
+        self.dtau_stall_boost = float(os.getenv("VERAGRID_PSEUDO_DTAU_STALL_BOOST", "2.0"))
+        self.dtau_max_reset_steps = int(os.getenv("VERAGRID_PSEUDO_DTAU_MAX_RESET_STEPS", "5"))
         self.fixed_var_uids = set(fixed_var_uids or [])
         uid2idx = getattr(self.problem, "uid2idx_vars", {})
         self._fixed_var_indices = sorted([uid2idx[uid] for uid in self.fixed_var_uids if uid in uid2idx])
@@ -60,7 +75,9 @@ class  PseudoTransient:
         self.debug_x_new_abs_max = float(debug_x_new_abs_max)
         self.t: Vec = np.empty(self.steps + 1)
         self.y: Mat = np.empty((self.steps + 1, self.problem.get_all_vars_number()))
+        self.state_tau: Vec = np.full(int(self.problem.get_states_number()), float(dtau0), dtype=float)
         self._singular_report_count = 0
+        self._svd_report_count = 0
 
     def _apply_fixed_mask(self, x: Vec, x_ref: Vec) -> Vec:
         if len(self._fixed_var_indices) == 0:
@@ -92,18 +109,29 @@ class  PseudoTransient:
         if not self.use_weighted_residual:
             return w
         n_states = int(self.problem.get_states_number())
-
-        # Prioritize key network and power-balance equations in algebraic block.
-        # rhs index = n_states + algebraic_index
-        for aidx in (0, 1, 4, 5):
-            ridx = n_states + aidx
-            if 0 <= ridx < n_rhs:
-                w[ridx] = self.weight_network
-        for aidx in (2, 3):
-            ridx = n_states + aidx
-            if 0 <= ridx < n_rhs:
-                w[ridx] = max(w[ridx], self.weight_power)
+        if n_states < n_rhs:
+            w[n_states:] = self.weight_algebraic
         return w
+
+    def _build_linear_solve_weights(self, n_rhs: int) -> np.ndarray:
+        w = np.ones(n_rhs, dtype=float)
+        if not self.use_weighted_linear_solve:
+            return w
+
+        n_states = int(self.problem.get_states_number())
+        if n_states > 0:
+            w[:min(n_states, n_rhs)] = self.linear_solve_state_weight
+        if n_states < n_rhs:
+            w[n_states:] = self.linear_solve_algebraic_weight
+        return w
+
+    def _apply_linear_solve_weights(self, J: sp.csc_matrix, rhs: Vec, w: np.ndarray) -> tuple[sp.csc_matrix, Vec]:
+        if w.size != rhs.size or not self.use_weighted_linear_solve:
+            return J, rhs
+        if np.all(w == 1.0):
+            return J, rhs
+        W = sp.diags(w, format="csc")
+        return (W @ J).tocsc(), w * rhs
 
     @staticmethod
     def _weighted_norm(v: np.ndarray, w: np.ndarray) -> float:
@@ -324,336 +352,6 @@ class  PseudoTransient:
                 used.add(idx)
         return found
 
-    def _predictor_stable_algebraic_indices(self) -> list[int]:
-        """
-        Keep algebraic equations that do not explicitly depend on diff vars.
-        Mirrors old `_algebraic_eqs_stable` idea.
-        """
-        algebraic_eqs = self._get_problem_algebraic_eqs()
-        diff_vars = self._problem_diff_vars()
-        diff_uids = {v.uid for v in diff_vars if isinstance(v, Var)}
-        if len(algebraic_eqs) == 0:
-            return list()
-        if len(diff_uids) == 0:
-            return list(range(len(algebraic_eqs)))
-
-        stable = list()
-        for i, eq in enumerate(algebraic_eqs):
-            vars_in_eq = get_expression_vars(eq)
-            uses_diff = any(v.base_var is not None for v in vars_in_eq)
-            if not uses_diff:
-                stable.append(i)
-
-        return stable
-
-    def _diff_free_equation_indices(self) -> list[int]:
-        n_states = int(self.problem.get_states_number())
-        algebraic_eqs = self._get_problem_algebraic_eqs()
-
-        diff_vars = self._problem_diff_vars()
-        diff_uids = {v.uid for v in diff_vars if isinstance(v, Var)}
-
-        selected = list()
-
-        for j, eq in enumerate(algebraic_eqs):
-            vars_in_eq = get_expression_vars(eq)
-            uses_diff = any(v.base_var is not None for v in vars_in_eq)
-            if not uses_diff:
-                selected.append(n_states + j)
-
-        if self.verbose:
-            self._dbg(
-                f"diff-free equations: selected={len(selected)} / algebraic={len(algebraic_eqs)} "
-                f"(n_states_offset={n_states})"
-            )
-            for rhs_idx in selected:
-                self._dbg(f"  diff-free rhs[{rhs_idx}]: {self._rhs_index_equation_repr(int(rhs_idx))}")
-
-        return selected
-
-    def _find_initial_diff_free_feasible_point(self, x0: Vec, max_iter: int = 10) -> Vec:
-        x = np.array(x0, dtype=float, copy=True)
-        x_ref = np.array(x0, dtype=float, copy=True)
-        dx0 = np.zeros(self.problem.get_diff_var_number(), dtype=float)
-
-        eq_idx = self._diff_free_equation_indices()
-        if len(eq_idx) == 0:
-            self._dbg("diff-free init: no equations selected")
-            return self._apply_fixed_mask(x, x_ref)
-
-        n_vars = int(self.problem.get_all_vars_number())
-        fixed_cols = set(self._fixed_var_indices)
-
-        # Temporary initialization pins to break near-nullspace directions.
-        # This is local to this method (unpins automatically when we return).
-        # Prefer reference-like variables (Pref, Vref), then fallback options.
-        pin_priority_groups = (
-            ("Pm_ref", "Pref", "P_ref"),
-            ("UsRefPu", "Vref", "V_ref", "U_ref"),
-            ("u_gov1", "dt_1_y_gov1"),
-        )
-        pinned_indices = list()
-        for group in pin_priority_groups:
-            pin_idx = None
-            for i in range(n_vars):
-                if i in fixed_cols:
-                    continue
-                nm = self._var_index_name(i)
-                if any(tok in nm for tok in group):
-                    pin_idx = i
-                    break
-            if pin_idx is not None:
-                fixed_cols.add(pin_idx)
-                pinned_indices.append(pin_idx)
-
-        if len(pinned_indices) > 0:
-            labels = [f"{i}:{self._var_index_name(i)}" for i in pinned_indices]
-            self._dbg(f"diff-free init: temporary pins enabled: {labels}")
-        else:
-            self._dbg("diff-free init: temporary pins not found (Pref/Vref groups)")
-
-        free_cols = [i for i in range(n_vars) if i not in fixed_cols]
-        if len(free_cols) == 0:
-            self._dbg("diff-free init: no free variables")
-            return self._apply_fixed_mask(x, x_ref)
-
-        tol_proj = max(self.tol * 10.0, 1e-8)
-        converged = False
-
-        rhs0 = self._rhs_steady(x, dx0)
-        if rhs0.size > 0 and np.all(np.isfinite(rhs0)):
-            r0 = rhs0[eq_idx]
-            r0_inf = float(np.linalg.norm(r0, np.inf)) if r0.size > 0 else 0.0
-            self._dbg(
-                f"diff-free init start: n_eq={len(eq_idx)}, n_free={len(free_cols)}, residual_inf={r0_inf:.3e}"
-            )
-
-        for k in range(max_iter):
-            rhs_full = self._rhs_steady(x, dx0)
-            if rhs_full.size == 0 or not np.all(np.isfinite(rhs_full)):
-                self._dbg(f"diff-free init abort: non-finite rhs at iter={k + 1}")
-                break
-
-            r = rhs_full[eq_idx]
-            r_inf = float(np.linalg.norm(r, np.inf)) if r.size > 0 else 0.0
-            if r_inf <= tol_proj:
-                self._dbg(f"diff-free init converged at iter={k + 1}, residual_inf={r_inf:.3e}")
-                converged = True
-                break
-
-            J_full = self._jacobian_steady(x, dx0).tocsc()
-            J_sel = J_full[eq_idx, :][:, free_cols]
-
-            delta_free, *_ = spla.lsqr(
-                J_sel,
-                -r,
-                atol=1e-10,
-                btol=1e-10,
-                iter_lim=max(200, 2 * len(free_cols))
-            )
-            delta_free = np.asarray(delta_free, dtype=float)
-            if delta_free.size != len(free_cols) or not np.all(np.isfinite(delta_free)):
-                self._report_singularity_diagnostics(J_sel.tocsc(), r, x=x, context=f"diff-free init iter={k + 1}")
-                self._dbg(f"diff-free init abort: invalid correction at iter={k + 1}")
-                break
-
-            best_x = None
-            best_r = np.inf
-            accepted_alpha = 1.0
-            tie_tol = max(1e-12, 1e-10 * max(1.0, r_inf))
-            for alpha in (1.0, 0.5, 0.25, 0.1):
-                xt = np.array(x, copy=True)
-                xt[np.array(free_cols, dtype=int)] += alpha * delta_free
-                xt = self._apply_fixed_mask(xt, x_ref)
-
-                rt_full = self._rhs_steady(xt, dx0)
-                if not np.all(np.isfinite(rt_full)):
-                    continue
-                rt = rt_full[eq_idx]
-                rt_inf = float(np.linalg.norm(rt, np.inf)) if rt.size > 0 else 0.0
-
-                if best_x is None:
-                    best_x = xt
-                    best_r = rt_inf
-                    accepted_alpha = alpha
-                    if rt_inf <= r_inf * (1.0 - 1e-4 * alpha):
-                        break
-                    continue
-
-                if rt_inf < best_r:
-                    best_r = rt_inf
-                    best_x = xt
-                    accepted_alpha = alpha
-                elif abs(rt_inf - best_r) <= tie_tol and alpha > accepted_alpha:
-                    # Allow movement along flat/null directions when residual is unchanged.
-                    best_x = xt
-                    accepted_alpha = alpha
-                if rt_inf <= r_inf * (1.0 - 1e-4 * alpha):
-                    break
-
-            if best_x is None:
-                # No finite trial point; fall back to full step update.
-                best_x = np.array(x, copy=True)
-                best_x[np.array(free_cols, dtype=int)] += delta_free
-                best_x = self._apply_fixed_mask(best_x, x_ref)
-                best_r = r_inf
-                accepted_alpha = 1.0
-
-            x = best_x
-            self._dbg(
-                f"diff-free init iter={k + 1}: residual_inf={r_inf:.3e}->{best_r:.3e}, "
-                f"|delta|_2={np.linalg.norm(delta_free):.3e}, alpha={accepted_alpha:.2f}"
-            )
-
-        rhsf = self._rhs_steady(x, dx0)
-        if rhsf.size > 0 and np.all(np.isfinite(rhsf)):
-            rf = rhsf[eq_idx]
-            rf_inf = float(np.linalg.norm(rf, np.inf)) if rf.size > 0 else 0.0
-            self._dbg(f"diff-free init finish: residual_inf={rf_inf:.3e}")
-
-            if not converged and rf_inf > tol_proj:
-                abs_rf = np.abs(rf)
-                ranked_local = np.argsort(-abs_rf)
-                n_show = min(20, ranked_local.size)
-                self._dbg(
-                    f"diff-free init failed: top {n_show} residual equations "
-                    f"(threshold={tol_proj:.3e})"
-                )
-                for kk in ranked_local[:n_show]:
-                    rhs_idx = int(eq_idx[int(kk)])
-                    val = float(rf[int(kk)])
-                    self._dbg(f"  rhs[{rhs_idx}]={val:+.6e} | {self._rhs_index_equation_repr(rhs_idx)}")
-
-        return self._apply_fixed_mask(x, x_ref)
-
-    def _predictor_project_initial_guess(self, x0: Vec) -> Vec:
-        n_states = int(self.problem.get_states_number())
-        n_alg = int(self.problem.get_algebraic_var_number())
-        if n_alg == 0:
-            return x0
-
-        x_proj = np.array(x0, dtype=float, copy=True)
-        dx_proj = np.zeros(self.problem.get_diff_var_number(), dtype=float)
-        proj_tol = max(self.tol * 10.0, 1e-8)
-
-        stable_idx = self._predictor_stable_algebraic_indices()
-        if len(stable_idx) == 0:
-            stable_idx = list(range(n_alg))
-        self._dbg(f"predictor setup: n_alg={n_alg}, n_stable={len(stable_idx)}")
-
-        for k in range(8):
-            r_alg_full = self.problem.rhs_algebraic(x_proj, dx_proj)
-            if r_alg_full.size == 0:
-                break
-            if not np.all(np.isfinite(r_alg_full)):
-                self._dbg(f"predictor abort: non-finite algebraic rhs at iter={k + 1}")
-                break
-
-            r_alg = r_alg_full[stable_idx]
-            rinf = float(np.linalg.norm(r_alg, np.inf)) if r_alg.size > 0 else 0.0
-            if rinf <= proj_tol:
-                self._dbg(f"predictor converged at iter={k + 1}, residual_inf={rinf:.3e}")
-                break
-
-            J22_full = self.problem.get_j22(x_proj, dx_proj, max(abs(self.dtau0), 1e-6)).tocsc()
-            Jp = J22_full[stable_idx, :]
-
-            # Predictor Jacobian is generally rectangular on reduced stable set.
-            delta_alg, *_ = spla.lsqr(Jp, -r_alg, atol=1e-10, btol=1e-10, iter_lim=max(200, 2 * n_alg))
-            delta_alg = np.asarray(delta_alg, dtype=float)
-            if delta_alg.size != n_alg or not np.all(np.isfinite(delta_alg)):
-                self._report_singularity_diagnostics(Jp.tocsc(), r_alg, x=x_proj, context=f"predictor iter={k + 1}")
-                self._dbg(
-                    f"predictor abort: invalid correction at iter={k + 1}, "
-                    f"delta_size={delta_alg.size}, n_alg={n_alg}"
-                )
-                break
-
-            best_x = x_proj
-            best_rinf = rinf
-            for alpha in (1.0, 0.5, 0.25, 0.1):
-                xt = np.array(x_proj, copy=True)
-                xt[n_states:n_states + n_alg] += alpha * delta_alg
-                rt_full = self.problem.rhs_algebraic(xt, dx_proj)
-                if not np.all(np.isfinite(rt_full)):
-                    continue
-                rt = rt_full[stable_idx]
-                rt_inf = float(np.linalg.norm(rt, np.inf)) if rt.size > 0 else 0.0
-                if rt_inf < best_rinf:
-                    best_rinf = rt_inf
-                    best_x = xt
-                if rt_inf <= rinf * (1.0 - 1e-4 * alpha):
-                    break
-
-            x_proj = best_x
-            self._dbg(
-                f"predictor iter={k + 1}: residual_inf={rinf:.3e}->{best_rinf:.3e}, "
-                f"|delta_alg|_2={np.linalg.norm(delta_alg):.3e}"
-            )
-
-        return self._apply_fixed_mask(x_proj, x0)
-
-    def _project_feasible_x(self, x: Vec, dx: Vec, x_ref: Vec | None = None, max_iter: int = 4) -> Vec:
-        n_states = int(self.problem.get_states_number())
-        n_alg = int(self.problem.get_algebraic_var_number())
-        if n_alg == 0:
-            return np.array(x, dtype=float, copy=True)
-
-        x_proj = np.array(x, dtype=float, copy=True)
-        if x_ref is None:
-            x_ref = x_proj
-
-        stable_idx = self._predictor_stable_algebraic_indices()
-        if len(stable_idx) == 0:
-            stable_idx = list(range(n_alg))
-
-        proj_tol = max(self.tol * 5.0, 1e-8)
-        dt_jac = max(abs(self.dtau0), 1e-6)
-        # Feasibility projection is based on algebraic/stability equations,
-        # so derivative terms are neutralized.
-        dx_feasible = np.zeros_like(dx)
-
-        for _ in range(max_iter):
-            rhs_alg_full = self.problem.rhs_algebraic(x_proj, dx_feasible)
-            if rhs_alg_full.size == 0 or not np.all(np.isfinite(rhs_alg_full)):
-                break
-
-            rhs_alg = rhs_alg_full[stable_idx]
-            residual_inf = float(np.linalg.norm(rhs_alg, np.inf)) if rhs_alg.size > 0 else 0.0
-            if residual_inf <= proj_tol:
-                break
-
-            J22_full = self.problem.get_j22(x_proj, dx_feasible, dt_jac).tocsc()
-            J_proj = J22_full[stable_idx, :]
-
-            delta_alg, *_ = spla.lsqr(J_proj, -rhs_alg, atol=1e-10, btol=1e-10, iter_lim=max(200, 2 * n_alg))
-            delta_alg = np.asarray(delta_alg, dtype=float)
-            if delta_alg.size != n_alg or not np.all(np.isfinite(delta_alg)):
-                break
-
-            best_x = x_proj
-            best_residual = residual_inf
-            for alpha in (1.0, 0.5, 0.25, 0.1):
-                xt = np.array(x_proj, copy=True)
-                xt[n_states:n_states + n_alg] += alpha * delta_alg
-                xt = self._apply_fixed_mask(xt, x_ref)
-
-                rt_full = self.problem.rhs_algebraic(xt, dx_feasible)
-                if not np.all(np.isfinite(rt_full)):
-                    continue
-
-                rt = rt_full[stable_idx]
-                rt_inf = float(np.linalg.norm(rt, np.inf)) if rt.size > 0 else 0.0
-                if rt_inf < best_residual:
-                    best_residual = rt_inf
-                    best_x = xt
-                if rt_inf <= residual_inf * (1.0 - 1e-4 * alpha):
-                    break
-
-            x_proj = best_x
-
-        return self._apply_fixed_mask(x_proj, x_ref)
-
     def _var_index_name(self, idx: int) -> str:
         vars_all = self._problem_state_vars() + self._problem_algebraic_vars()
         if 0 <= idx < len(vars_all):
@@ -726,56 +424,6 @@ class  PseudoTransient:
             f"[PseudoTransient][Singular] piecewise/heaviside residuals (top {len(top)}): {payload}",
             file=sys.stderr,
         )
-
-    def _report_key_equation_tracking(self, rhs: Vec, x_new: Vec, x_prev: Vec, tag: str) -> None:
-        if rhs.size == 0 or x_new.size == 0 or x_prev.size == 0:
-            return
-        n_states = int(self.problem.get_states_number())
-        key_alg = (0, 1, 2, 3, 4, 5, 14)
-        entries: list[str] = []
-        for aidx in key_alg:
-            ridx = n_states + aidx
-            if 0 <= ridx < rhs.size:
-                entries.append(f"rhs[{ridx}]={rhs[ridx]:+.3e} (alg[{aidx}])")
-        if entries:
-            print(f"[PseudoTransient][Track] {tag} key equations: {entries}", file=sys.stderr)
-
-        watch_tokens = (
-            "deltaGen",
-            "omegaGen",
-            "VdGen",
-            "VqGen",
-            "IdGen",
-            "IqGen",
-            "Psid_prime",
-            "Psiq_prime",
-            "Eq_prime",
-            "Ed_prime",
-            "SaGen",
-            "Psi_ag",
-        )
-        vars_all = self._problem_state_vars() + self._problem_algebraic_vars()
-        deltas: list[str] = []
-        used = set()
-        for tok in watch_tokens:
-            tok_l = tok.lower()
-            hit = None
-            for i, var in enumerate(vars_all):
-                nm = (getattr(var, "name", "") or "").lower()
-                if i in used:
-                    continue
-                if tok_l in nm:
-                    hit = i
-                    break
-            if hit is None or hit >= x_new.size or hit >= x_prev.size:
-                continue
-            used.add(hit)
-            dv = float(x_new[hit] - x_prev[hit])
-            if abs(dv) > 0.0:
-                name = getattr(vars_all[hit], "name", f"x[{hit}]")
-                deltas.append(f"{name}: dx={dv:+.3e}")
-        if deltas:
-            print(f"[PseudoTransient][Track] {tag} variable deltas: {deltas}", file=sys.stderr)
 
     def _report_singularity_diagnostics(self, J: sp.csc_matrix, rhs: Vec, x: Vec, context: str) -> None:
         # Print diagnostics at every failing step/try during debugging.
@@ -889,6 +537,87 @@ class  PseudoTransient:
         except Exception as e:
             print(f"[PseudoTransient][Singular] diagnostics failed: {e}", file=sys.stderr)
 
+    def _report_svd_diagnostics(self,
+                                J: sp.csc_matrix,
+                                rhs: Vec,
+                                J_solve: sp.csc_matrix,
+                                rhs_solve: Vec,
+                                context: str) -> None:
+        if not self.use_svd_diagnostics:
+            return
+        if self._svd_report_count >= self.svd_diagnostics_limit:
+            return
+        if J_solve.shape[0] == 0 or J_solve.shape[1] == 0 or J_solve.shape[0] > 240 or J_solve.shape[1] > 240:
+            return
+        if rhs_solve.size != J_solve.shape[0] or not np.all(np.isfinite(rhs_solve)):
+            return
+
+        self._svd_report_count += 1
+        try:
+            A = J_solve.toarray()
+            b = -np.array(rhs_solve, dtype=float, copy=False)
+            u, s, vh = np.linalg.svd(A, full_matrices=True)
+            smax = float(s[0]) if s.size > 0 else 0.0
+            tol = max(A.shape) * np.finfo(float).eps * max(smax, 1.0)
+            rank = int(np.sum(s > tol))
+            smin = float(s[-1]) if s.size > 0 else 0.0
+            cond = float(smax / smin) if smin > 0.0 else float("inf")
+
+            delta_lstsq, *_ = np.linalg.lstsq(A, b, rcond=None)
+            residual_vec = A @ delta_lstsq - b
+            residual_norm = float(np.linalg.norm(residual_vec))
+            b_norm = float(np.linalg.norm(b))
+            residual_frac = residual_norm / max(b_norm, 1e-30)
+            preview_s = [f"{val:.3e}" for val in s[:min(6, s.size)]]
+            tail_s = [f"{val:.3e}" for val in s[max(0, s.size - 6):]]
+
+            self._dbg(
+                f"[SVD] {context}: shape={A.shape}, rank={rank}, sigma_max={smax:.3e}, "
+                f"sigma_min={smin:.3e}, cond~={cond:.3e}, weighted_lstsq_res={residual_norm:.3e}, "
+                f"weighted_res_frac={residual_frac:.3e}, sigma_head={preview_s}, sigma_tail={tail_s}"
+            )
+
+            if vh.size > 0 and s.size > 0:
+                v_min = vh[min(rank, vh.shape[0] - 1), :] if rank < vh.shape[0] else vh[-1, :]
+                dom = np.argsort(np.abs(v_min))[::-1][:8]
+                dom_vars = [f"{self._var_index_name(int(j))}: {v_min[int(j)]:+.3e}" for j in dom]
+                self._dbg(f"[SVD] {context}: weak right-singular variables={dom_vars}")
+
+            left_null_start = rank
+            if u.shape[1] > left_null_start:
+                coeffs = u[:, left_null_start:].T @ b
+                if coeffs.size > 0:
+                    order = np.argsort(np.abs(coeffs))[::-1]
+                    for pos in order[:min(3, order.size)]:
+                        left_vec = u[:, left_null_start + int(pos)]
+                        coeff = float(coeffs[int(pos)])
+                        dom_rows = np.argsort(np.abs(left_vec))[::-1][:8]
+                        row_labels = [
+                            f"{self._rhs_index_equation_begin(int(i))}: {left_vec[int(i)]:+.3e}"
+                            for i in dom_rows
+                        ]
+                        self._dbg(
+                            f"[SVD] {context}: left-null coeff={coeff:+.3e}, "
+                            f"dominant_rows={row_labels}"
+                        )
+
+            if J.shape == J_solve.shape and rhs.size == rhs_solve.size:
+                return
+
+            A0 = J.toarray()
+            b0 = -np.array(rhs, dtype=float, copy=False)
+            if b0.size == A0.shape[0]:
+                delta0, *_ = np.linalg.lstsq(A0, b0, rcond=None)
+                r0 = A0 @ delta0 - b0
+                r0_norm = float(np.linalg.norm(r0))
+                b0_norm = float(np.linalg.norm(b0))
+                self._dbg(
+                    f"[SVD] {context}: unweighted_lstsq_res={r0_norm:.3e}, "
+                    f"unweighted_res_frac={r0_norm / max(b0_norm, 1e-30):.3e}"
+                )
+        except Exception as exc:
+            self._dbg(f"[SVD] {context}: diagnostics failed ({exc})")
+
     def _rhs_implicit(self,
                       x: Vec,
                       dx: Vec,
@@ -975,8 +704,8 @@ class  PseudoTransient:
             j_full = jac_full_fn(x, dx, h).tocsc()
             n_total = j_full.shape[0]
             n_alg = n_total - n_states
-            I = sp.eye(m=n_states, n=n_states, format="csc")
-            j11 = ((1.0 / h) * I - j_full[:n_states, :n_states]).tocsc()
+            tau_diag = self._state_tau_inv_diag(n_states, h)
+            j11 = (tau_diag - j_full[:n_states, :n_states]).tocsc()
             j12 = (-j_full[:n_states, n_states:n_states + n_alg]).tocsc()
             j21 = j_full[n_states:n_states + n_alg, :n_states].tocsc()
             j22 = j_full[n_states:n_states + n_alg, n_states:n_states + n_alg].tocsc()
@@ -987,13 +716,45 @@ class  PseudoTransient:
         j21_val: csc_matrix = self.problem.get_j21(x, dx, h)
         j22_val: csc_matrix = self.problem.get_j22(x, dx, h)
 
-        I = sp.eye(m=n_states, n=n_states, format="csc")
-        j11 = ((1.0 / h) * I - j11_val).tocsc()
+        tau_diag = self._state_tau_inv_diag(n_states, h)
+        j11 = (tau_diag - j11_val).tocsc()
         j12 = (-j12_val).tocsc()
         j21 = j21_val.tocsc()
         j22 = j22_val.tocsc()
 
         return pack_4_by_4_scipy(j11, j12, j21, j22)
+
+    def _state_tau_inv_diag(self, n_states: int, h: float) -> sp.csc_matrix:
+        if n_states <= 0:
+            return sp.csc_matrix((0, 0))
+        tau = self._state_tau_vector(n_states, h)
+        return sp.diags(1.0 / tau, format="csc")
+
+    def _state_tau_vector(self, n_states: int, h: float) -> np.ndarray:
+        if not self.use_state_tau_scaling:
+            return np.full(n_states, h, dtype=float)
+        if self.state_tau.size != n_states:
+            self.state_tau = np.full(n_states, h, dtype=float)
+        return self.state_tau
+
+    def _update_state_tau_from_derivative(self, f_state: Vec, step_idx: int) -> None:
+        if not self.use_state_tau_scaling:
+            return
+        n_states = int(self.problem.get_states_number())
+        if n_states <= 0 or f_state.size < n_states:
+            return
+
+        tau = 1.0 / (np.abs(f_state[:n_states]) + self.state_tau_eps)
+        tau = np.clip(tau, self.state_tau_min, self.state_tau_max)
+        if self.state_tau.size != n_states or np.any(tau != self.state_tau):
+            self.state_tau = tau
+            if self.verbose and (step_idx <= 5 or step_idx % 25 == 0):
+                state_vars = self._problem_state_vars()
+                preview = []
+                for i in range(min(n_states, 8)):
+                    name = state_vars[i].name if i < len(state_vars) else f"state[{i}]"
+                    preview.append(f"{name}: tau={tau[i]:.3e}, f={f_state[i]:+.3e}")
+                self._dbg(f"state tau step={step_idx}: {preview}")
 
     def _rhs_steady(self, x: Vec, dx: Vec) -> Vec:
         f_algeb = self.problem.rhs_algebraic(x, dx)
@@ -1018,10 +779,14 @@ class  PseudoTransient:
         return pack_4_by_4_scipy(j11, j12, j21, j22)
 
     def _solve_linear_system(self, J: sp.csc_matrix, rhs: Vec, x: Vec, context: str) -> np.ndarray:
+        solve_weights = self._build_linear_solve_weights(rhs.size)
+        J_solve, rhs_solve = self._apply_linear_solve_weights(J, rhs, solve_weights)
         m = int(J.shape[0])
         n = int(J.shape[1])
         if m == 0 or n == 0:
             return np.array([], dtype=float)
+
+        self._report_svd_diagnostics(J, rhs, J_solve, rhs_solve, context)
 
         def solve_lsqr(reason: str) -> np.ndarray:
             if not self.allow_lsqr_fallback:
@@ -1029,9 +794,9 @@ class  PseudoTransient:
 
             self._dbg(f"{context}: {reason}; trying lsqr fallback")
             delta_lsqr, *_ = spla.lsqr(
-                J,
-                -rhs,
-                damp=1e-8,
+                J_solve,
+                -rhs_solve,
+                damp=self.linear_solve_damp,
                 atol=1e-10,
                 btol=1e-10,
                 iter_lim=max(200, 2 * max(m, n)),
@@ -1045,10 +810,13 @@ class  PseudoTransient:
         if m != n:
             return solve_lsqr(f"rectangular Jacobian {J.shape}")
 
+        if self.linear_solve_damp > 0.0:
+            return solve_lsqr(f"regularized damped solve requested (damp={self.linear_solve_damp:.3e})")
+
         with warnings.catch_warnings():
             warnings.filterwarnings("ignore", message="Matrix is exactly singular")
             try:
-                delta = spla.spsolve(J, -rhs)
+                delta = spla.spsolve(J_solve, -rhs_solve)
             except Exception as exc:
                 self._report_singularity_diagnostics(J, rhs, x=x, context=context)
                 try:
@@ -1118,7 +886,9 @@ class  PseudoTransient:
         f_algeb = self.problem.rhs_algebraic(x,  dx)
         if self.problem.get_states_number() > 0:
             f_state = self.problem.rhs_state(x, dx)
-            f_state_update = (x[:self.problem.get_states_number()] - xn[:self.problem.get_states_number()]) / h - f_state
+            n_states = self.problem.get_states_number()
+            tau = self._state_tau_vector(n_states, h)
+            f_state_update = (x[:n_states] - xn[:n_states]) / tau - f_state
             return np.r_[f_state_update, f_algeb]
 
         else:
@@ -1259,52 +1029,7 @@ class  PseudoTransient:
         if x0.size != n_vars:
             raise ValueError(f"Invalid x0 size for pseudo-transient: got {x0.size}, expected {n_vars}")
 
-        #x0 = self._find_initial_diff_free_feasible_point(x0, max_iter=50)
-        #x0 = self._predictor_project_initial_guess(x0)
-        #x0 = self._apply_fixed_mask(x0, x0)
-        n_x0_tries = int(os.getenv("PSEUDO_X0_TRIES", "1"))
-        seed_text = os.getenv("PSEUDO_X0_SEED", "")
-        rng = np.random.default_rng(None if seed_text.strip() == "" else int(seed_text))
-        if n_x0_tries <= 1:
-            x0 = np.random.rand(n_vars)
-        else:
-            best_x0 = None
-            best_res = np.inf
-            dx_probe = np.zeros(self.problem.get_diff_var_number(), dtype=float)
-            chosen_idx = -1
-            for k in range(n_x0_tries):
-                x_try = rng.random(n_vars)
-                x_try = self._apply_fixed_mask(x_try, x_try)
-                rhs_try = self._rhs_pseudo_transient(x_try, x_try, dx_probe, self.dtau0)
-                if not np.all(np.isfinite(rhs_try)):
-                    continue
-                res_try = float(np.linalg.norm(rhs_try, np.inf)) if rhs_try.size > 0 else 0.0
-                J_try = self._jacobian_pseudo_transient(x_try, dx_probe, self.dtau0)
-                square_ok = J_try.shape[0] == J_try.shape[1]
-                solvable = False
-                if square_ok:
-                    with warnings.catch_warnings():
-                        warnings.filterwarnings("ignore", message="Matrix is exactly singular")
-                        try:
-                            d_try = spla.spsolve(J_try, -rhs_try)
-                            solvable = np.all(np.isfinite(d_try))
-                        except Exception:
-                            solvable = False
-
-                if res_try < best_res:
-                    best_res = res_try
-                    best_x0 = x_try
-
-                if solvable:
-                    chosen_idx = k
-                    x0 = x_try
-                    break
-
-            if chosen_idx >= 0:
-                self._dbg(f"x0 multi-try selected candidate={chosen_idx + 1}/{n_x0_tries}")
-            else:
-                x0 = best_x0 if best_x0 is not None else rng.random(n_vars)
-                self._dbg(f"x0 multi-try found no solvable Jacobian; using best residual candidate with ||rhs||_inf={best_res:.3e}")
+        x0 = self._apply_fixed_mask(x0, x0)
 
 
         if len(self._fixed_var_indices) > 0:
@@ -1327,8 +1052,8 @@ class  PseudoTransient:
         y = np.tile(x0, (5, 1))
         step_idx = 0
         x_new = x0.copy()
-        xn = x0.copy()
-        x_fixed_ref = x0.copy()
+        xn = x_new.copy()
+        x_fixed_ref = x_new.copy()
         released_fixed_refs = False
         tries = 0
         
@@ -1338,8 +1063,8 @@ class  PseudoTransient:
         dx_error = 1
         residual = 10
         old_residual = 10
-        good_step_streak = 0
         dtau_stall_streak = 0
+        dtau_max_streak = 0
         rhs_weights: np.ndarray | None = None
 
         # history containers
@@ -1367,14 +1092,15 @@ class  PseudoTransient:
                         xlast = xn 
                     xn = y[-1].copy()
 
+                if self.problem.get_states_number() > 0:
+                    self._update_state_tau_from_derivative(self.problem.rhs_state(x_new, dx), step_idx=step_idx)
                 rhs  = self._rhs_pseudo_transient(x_new, xn, dx, dtau)
-                rhs2 = self._rhs_pseudo_transient(x_new, xn, dx, dtau)
+                rhs2 = rhs
                 if rhs_weights is None or rhs_weights.size != rhs.size:
                     rhs_weights = self._build_residual_weights(rhs.size)
                     if self.use_weighted_residual:
                         self._dbg(
-                            f"weighted residual enabled: network={self.weight_network:.3g}, "
-                            f"power={self.weight_power:.3g}"
+                            f"weighted residual enabled: algebraic={self.weight_algebraic:.3g}"
                         )
                 residual2 = self._weighted_norm(rhs2, rhs_weights)
                 if not np.all(np.isfinite(rhs)):
@@ -1415,17 +1141,6 @@ class  PseudoTransient:
                         "PseudoTransient linear step size mismatch: "
                         f"delta={delta.size}, x={x_new.size}, J={Jf.shape}, rhs={rhs.size}"
                     )
-                n_states = int(self.problem.get_states_number())
-                g = rhs[n_states:]
-                Jg = Jf[n_states:, :]
-
-                alg_lin_res = Jg @ delta + g
-
-                print(
-                    "[PseudoTransient diagnostics] algebraic linear solve check: "
-                    f"|g|_inf={np.linalg.norm(g, np.inf):.6e}, "
-                    f"|Jg*delta+g|_inf={np.linalg.norm(alg_lin_res, np.inf):.6e}"
-                )
                 solved = np.all(np.isfinite(delta))
 
                 if not solved:  # or not np.all(np.isfinite(delta)):
@@ -1439,7 +1154,7 @@ class  PseudoTransient:
                         f"Newton step failed at try {tries} and step {step_idx}: delta has NaN/Inf values with dtau {dtau}")
                 dx0 = dx
                 base_residual = residual
-                trial_scales = (1.0, 0.5, 0.25, 0.1, 0.05)
+                trial_scales = (1.0, 0.5, 0.25, 0.125, 0.0625)
                 best_scale = 0.0
                 best_x = None
                 best_residual = np.inf
@@ -1478,9 +1193,6 @@ class  PseudoTransient:
                     f"step={step_idx + 1} try={tries}: residual2={residual:.3e}, "
                     f"residual_inf={newton_residual:.3e}, |delta|_2={np.linalg.norm(delta):.3e}, dtau={dtau:.3e}"
                 )
-                if self.verbose:
-                    self._report_key_equation_tracking(rhs, x_new, xn, tag=f"step={step_idx + 1} try={tries}")
-
                 if (
                     (not released_fixed_refs)
                     and len(self._fixed_var_indices) > 0
@@ -1512,6 +1224,8 @@ class  PseudoTransient:
                     
                     dx = self.problem.get_dx(xn, xlast, dx, dtau)
                     dx_error = np.linalg.norm(dx)
+                    f_state_tau = self.problem.rhs_state(x_new, dx)
+                    self._update_state_tau_from_derivative(f_state_tau, step_idx=step_idx)
                     rhs = self._rhs_pseudo_transient(x_new, xn, dx, dtau)
                     residual = self._weighted_norm(rhs, rhs_weights)
 
@@ -1532,66 +1246,62 @@ class  PseudoTransient:
                         f"accepted step={step_idx}: residual2={residual:.3e}, dx_error={dx_error:.3e}, dtau={dtau:.3e}"
                     )
                     eps = 1e-14
-                    avg_residual = 0.8 * old_residual + 0.2 * residual
-                    ratio = (avg_residual + eps) / (residual + eps)
+                    residual_before = float(base_residual) if np.isfinite(base_residual) else float(old_residual)
+                    if not np.isfinite(residual_before) or residual_before <= 0.0:
+                        residual_before = max(float(residual), eps)
+                    beta_raw = (residual_before + eps) / (float(residual) + eps)
+                    beta = float(np.clip(
+                        beta_raw,
+                        max(self.dtau_ser_min_factor, eps),
+                        max(self.dtau_ser_max_factor, self.dtau_ser_min_factor),
+                    ))
 
-                    # Hysteresis prevents 2x/0.5x ping-pong when ratio hovers near 1.
-                    if ratio > 1.20:
-                        beta = 1.35
-                    elif ratio > 1.05:
-                        beta = 1.15
-                    elif ratio < 0.80:
-                        beta = 0.70
-                    elif ratio < 0.95:
-                        beta = 0.87
+                    if 1.0 <= beta_raw < max(self.dtau_stall_ratio, 1.0) and residual > self.tol:
+                        dtau_stall_streak += 1
                     else:
-                        beta = 1.0
+                        dtau_stall_streak = 0
 
-                    # If progress is consistently good, force a gentle dtau ramp-up.
-                    # This avoids stalling when ratio remains near 1 due to smoothing.
-                    good_step = (residual < 0.995 * old_residual) and (best_scale >= 0.25)
-                    if good_step:
-                        good_step_streak += 1
-                    else:
-                        good_step_streak = 0
-
-                    if good_step_streak >= 3 and residual > self.tol:
-                        beta = max(beta, 1.20)
+                    if (
+                        self.dtau_stall_steps > 0
+                        and dtau_stall_streak >= self.dtau_stall_steps
+                        and abs(dtau) < dtau_max
+                    ):
+                        beta = max(beta, max(self.dtau_stall_boost, 1.0))
                         self._dbg(
-                            f"adaptive dtau boost: streak={good_step_streak}, "
-                            f"best_scale={best_scale:.2f}, forced_beta={beta:.3e}"
+                            f"adaptive dtau stall boost: streak={dtau_stall_streak}, "
+                            f"boost_beta={beta:.3e}"
                         )
-                        good_step_streak = 0
+                        dtau_stall_streak = 0
 
-                    self._dbg(f"adaptive dtau: old={dtau:.3e}, beta={beta:.3e}")
+                    self._dbg(
+                        f"adaptive dtau SER: old={dtau:.3e}, "
+                        f"res_before={residual_before:.3e}, res_after={residual:.3e}, "
+                        f"ratio={beta_raw:.3e}, beta={beta:.3e}"
+                    )
                     dtau_prev = dtau
                     if dtau > 0:
                         dtau = min(dtau_max, max(dtau_min, dtau * beta))
                     else:
                         dtau = -min(dtau_max, max(dtau_min, -dtau * beta))
 
-                    if np.isclose(dtau, dtau_prev, rtol=1e-12, atol=1e-15):
-                        dtau_stall_streak += 1
-                    else:
-                        dtau_stall_streak = 0
-
-                    abs_dtau_prev = abs(dtau_prev)
-                    if (
-                        dtau_stall_streak >= 3
-                        and abs_dtau_prev < 0.999 * dtau_max
-                        and residual > self.tol
-                        and best_scale >= 0.25
-                    ):
-                        forced = min(dtau_max, max(dtau_min, abs_dtau_prev * 1.25))
-                        dtau = forced if dtau_prev >= 0 else -forced
-                        self._dbg(
-                            f"adaptive dtau anti-stall: streak={dtau_stall_streak}, "
-                            f"best_scale={best_scale:.2f}, forced_dtau={dtau:.3e}"
-                        )
-                        dtau_stall_streak = 0
-
-                    if abs(dtau) >= 0.999 * dtau_max:
+                    dtau_is_capped = abs(dtau) >= 0.999 * dtau_max
+                    if dtau_is_capped:
                         self._dbg(f"adaptive dtau capped at dtau_max={dtau_max:.3e}")
+
+                    if dtau_is_capped and 1.0 <= beta_raw < max(self.dtau_stall_ratio, 1.0) and residual > self.tol:
+                        dtau_max_streak += 1
+                    else:
+                        dtau_max_streak = 0
+
+                    if self.dtau_max_reset_steps > 0 and dtau_max_streak >= self.dtau_max_reset_steps:
+                        reset_dtau = max(dtau_min, min(abs(self.dtau0), dtau_max))
+                        dtau = reset_dtau if dtau_prev >= 0 else -reset_dtau
+                        dtau_stall_streak = 0
+                        dtau_max_streak = 0
+                        self._dbg(
+                            f"adaptive dtau max reset: reset_dtau={dtau:.3e}, "
+                            f"residual={residual:.3e}, ratio={beta_raw:.3e}"
+                        )
                     self._dbg(f"adaptive dtau: new={dtau:.3e}")
 
                     old_residual = residual
@@ -1616,7 +1326,8 @@ class  PseudoTransient:
             f"finish: steps={step_idx}, final_residual2={residual:.3e}, final_dtau={dtau:.3e}, "
             f"x_inf={np.linalg.norm(x_new, np.inf):.3e}"
         )
-        self._report_rhs_offenders(x=x_new, xn=xn, dx=dx, dtau=dtau)
+        if residual > self.tol:
+            self._report_rhs_offenders(x=x_new, xn=xn, dx=dx, dtau=dtau)
 
         init_guess = dict()
         for var in self._problem_state_vars() + self._problem_algebraic_vars():

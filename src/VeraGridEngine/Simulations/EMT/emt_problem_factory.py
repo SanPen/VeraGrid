@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import EmtProblemDae
+from VeraGridEngine.Simulations.EMT.problems.emt_problem_multilinear import EmtProblemMultilinear
 from VeraGridEngine.Devices import MultiCircuit
 
 from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
@@ -15,6 +16,7 @@ from VeraGridEngine.Simulations.driver_template import DummySignal
 
 EMT_PROBLEM_CLASS_MAP = {
     EmtProblemTypes.CurrentBalance: EmtProblemDae,
+    EmtProblemTypes.Multilinear: EmtProblemMultilinear,
 }
 
 
@@ -26,7 +28,7 @@ def build_emt_problem(grid: MultiCircuit,
     if options.problem_type in EMT_PROBLEM_CLASS_MAP:
         problem_cls = EMT_PROBLEM_CLASS_MAP[options.problem_type]
     else:
-        raise ValueError(f"Unsupported RMS problem type: {options.problem_type}")
+        raise ValueError(f"Unsupported EMT problem type: {options.problem_type}")
 
     return problem_cls(
         grid=grid,

@@ -4,13 +4,10 @@
 # SPDX-License-Identifier: MPL-2.0
 
 
-import cProfile
-import time
 import os
 import warnings
 from copy import deepcopy
-import traceback
-from typing import Dict, List, Tuple, Any
+from typing import Dict, List
 import numpy as np
 from collections import defaultdict, deque
 
@@ -18,31 +15,12 @@ from VeraGridEngine.Utils.Symbolic.jit_compiler import RMSCompiler
 import scipy.sparse as sp
 from scipy.sparse.linalg import MatrixRankWarning
 
-from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicVector, SymbolicParamsVectorInit, SymbolicDerivative, SymbolicJacobian
-from VeraGridEngine.Utils.Symbolic.symbolic import get_expression_vars
+from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicVector, SymbolicParamsVector, SymbolicDerivative, SymbolicJacobian
+from VeraGridEngine.Utils.Symbolic.symbolic import eval_uid as eval_expr_uid, get_expression_vars
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, Const, Expr, find_vars_order
 from VeraGridEngine.enumerations import VarPowerFlowReferenceType
 from VeraGridEngine.basic_structures import Vec
-
-
-
-
-
-def add_items(blk, init_vars, init_event):
-    """
-    adds items from a block to the dictionary
-    :param blk:
-    :type blk:
-    :param init_vars:
-    :param init_event:
-    init_dict
-    :return:
-    :rtype:
-    """
-
-    init_vars.update(blk.init_eqs)
-    init_event.update(blk.event_dict)
 
 def build_init_dict(mdl, init_vars, init_event):
     """
@@ -56,30 +34,12 @@ def build_init_dict(mdl, init_vars, init_event):
     :return:
     :rtype:
     """
-    add_items(mdl, init_vars, init_event)
+    init_vars.update(mdl.init_eqs)
+    init_event.update(mdl.event_dict)
     for blk in mdl.children:
         build_init_dict(blk, init_vars, init_event)
 
 
-
-# ask Maria for usages and delete
-def build_init_vars_vector(uid2idx_vars, mapping: dict[Var, float]) -> np.ndarray:
-    """
-    Helper function to build the initial vector
-    :param uid2idx_vars:
-    :param mapping: var->initial value mapping
-    :return: array matching with the mapping, matching the solver ordering
-    """
-    x = np.zeros(len(mapping.items()))
-
-    for key, val in mapping.items():
-        if key.uid in uid2idx_vars.keys():
-            i = uid2idx_vars[key.uid]
-            x[i] = val
-        else:
-            raise ValueError(f"Missing variable {key} definition")
-
-    return x
 
 def solve_secant(eq_fn, x, idx, event_params_array, params_array,
                  tol=1e-8, max_iter=50, seed: float | None = None, fallback_seed: float = 10.0):
@@ -126,37 +86,6 @@ def solve_secant(eq_fn, x, idx, event_params_array, params_array,
         raise ValueError(f"Secant init failed to converge to a finite value at idx={idx}")
 
     return x1
-
-def solve_newton(eq_fn, x, idx, event_params_array, params_array,
-                 dummy_diff,
-                 tol=1e-8, max_iter=20, h=1e-6):
-
-    x0 = x[idx]
-
-    for _ in range(max_iter):
-
-        x[idx] = x0
-        fx = float(eq_fn(x, dummy_diff, event_params_array, params_array)[0])
-
-        # g(x) = f(x) - x
-        gx = fx - x0
-
-        if abs(gx) < tol:
-            return x0
-
-        # numeric derivative
-        x[idx] = x0 + h
-        fx_h = float(eq_fn(x, dummy_diff, event_params_array, params_array)[0])
-
-        g_prime = (fx_h - fx)/h - 1.0
-
-        if abs(g_prime) < 1e-12:
-            break
-
-        x0 = x0 - gx / g_prime
-
-    return x0
-
 
 def init_explicit(mdl: Block,
                   sys_vars: Dict[int, Var],
@@ -239,21 +168,6 @@ def init_explicit(mdl: Block,
 
     # compute and assign known event parameters value
     event_params_array = np.ones(len(variable_parameters))
-    # for event_param in mdl.event_dict.keys():
-    #     eq = mdl.event_dict[event_param]
-    #
-    #     if (isinstance(eq, Const) and eq.value is not None) or not isinstance(eq, Const):
-    #         vars_list = find_vars_order(eq)
-    #
-    #         uid_bindings: Dict[int, float] = {
-    #             var.uid: event_params_array[uid2idx_event_params[var.uid]]
-    #             for var in vars_list
-    #         }
-    #         result = eq.eval_uid(uid_bindings)
-    #         # eq_fn = SymbolicParamsVectorInit([eq], compiler_names_dict, alias_names_dict, VARS_NAME,
-    #         #                                  VARIABLE_PARAMS_NAME, TIME_NAME)
-    #         # result = float(eq_fn(x, event_params_array, 0.0)[0])
-    #         event_params_array[uid2idx_event_params[event_param.uid]] = result
 
     # unify event_dict and init_equations
     init_vars = dict()
@@ -265,9 +179,6 @@ def init_explicit(mdl: Block,
             init_vars[key] = val
         else:
             pass
-
-    # init_dict = mdl.event_dict.copy()
-    # init_dict.update(mdl.init_eqs)
 
     # compute and assign missing init_vars and None event parameters
 
@@ -347,10 +258,6 @@ def init_explicit(mdl: Block,
                 )
 
             result = eq.eval_uid(uid_bindings)
-            # eq_fn = SymbolicParamsVectorInit([eq], compiler_names_dict, alias_names_dict, VARS_NAME,
-            #                                  VARIABLE_PARAMS_NAME, TIME_NAME)
-            #
-            # result = float(eq_fn(x, event_params_array, 0.0)[0])
             resolved_result = _resolve_numeric(result)
             if not np.isfinite(resolved_result):
                 raise ValueError(
@@ -383,8 +290,6 @@ def init_explicit(mdl: Block,
                     )
 
                 result = eq.eval_uid(uid_bindings)
-                # eq_fn = rms_compiler.compile_rhs([eq], "equation")
-                # result = float(eq_fn(x, np.ones(1), event_params_array, params_array)[0])
                 resolved_result = _resolve_numeric(result)
                 if not np.isfinite(resolved_result):
                     raise ValueError(
@@ -421,28 +326,6 @@ def init_explicit(mdl: Block,
                 init_guess[var.uid] = init_val
                 x[uid2idx_vars[var.uid]] = init_val
 
-    # Debug print: show initialized values for all variables/params in this model
-    seen = set()
-    debug_vars = list(mdl.algebraic_vars) + list(mdl.state_vars) + list(mdl.diff_vars)
-    for var in debug_vars:
-        if var.uid in seen:
-            continue
-        seen.add(var.uid)
-
-        if var.uid in uid2idx_vars:
-            _=0
-            #print(f"DEBUG_INIT_ALL: {var.name} = {x[uid2idx_vars[var.uid]]}")
-
-
-def init_custom(mdl, init_guess):
-    for lst in [mdl.state_vars, mdl.algebraic_vars]:
-        for var in lst:
-            init_guess[var.uid] = mdl.init_values[var.uid]
-
-
-
-
-
 class PseudoTransientInitProblem:
     """
     Lightweight problem class for pseudo-transient initialization of a single device block.
@@ -470,16 +353,32 @@ class PseudoTransientInitProblem:
         self.compiler_names_dict = compiler_names_dict
         self.alias_names_dict = alias_names_dict
         self._uid2idx_vars_global = uid2idx_vars
-        self._variable_parameters = variable_parameters
+        self._variable_parameters = list(variable_parameters)
         self._constant_parameters = constant_parameters
+        self._event_params_fn: SymbolicParamsVector | None = None
 
         event_uid_map = {v.uid: eq for v, eq in block.event_dict.items()}
         mode_uid_map = {v.uid: eq for v, eq in block.mode_dict.items()}
         param_uid_map = {v.uid: c for v, c in block.parameters.items()}
         
-        # Get block's variables (state + algebraic)
+        self.equilibrium_inputs_as_params = os.getenv(
+            "VERAGRID_PSEUDO_EQUILIBRIUM_INPUTS_AS_PARAMS", "0"
+        ).lower() in {"1", "true", "yes", "on"}
+
+        equilibrium_input_uids = set()
+        if self.equilibrium_inputs_as_params:
+            equilibrium_input_uids = {
+                v.uid for v in block.in_vars
+                if isinstance(v, Var) and self._is_equilibrium_input_var(v)
+            }
+
+        # Get block's variables (state + algebraic). Generator equilibrium inputs
+        # are compiled as mutable parameters, not pseudo-transient unknowns.
         self._state_vars = list(block.state_vars)
-        self._algebraic_vars = list(block.algebraic_vars)
+        self._algebraic_vars = [
+            v for v in block.algebraic_vars
+            if not (isinstance(v, Var) and v.uid in equilibrium_input_uids)
+        ]
 
         # Ensure local init system is square whenever equations reference extra
         # free variables (commonly open controller inputs like Tm/Vf in bare
@@ -491,6 +390,8 @@ class PseudoTransientInitProblem:
                 if not isinstance(used_var, Var):
                     continue
                 if used_var.uid in known_uids:
+                    continue
+                if used_var.uid in equilibrium_input_uids:
                     continue
                 if used_var.uid in self.compiler_names_dict:
                     continue
@@ -517,6 +418,17 @@ class PseudoTransientInitProblem:
             self._compiler_names_dict_local[uid] = f"{DIFF_NAME}[{i}]"
             self._alias_names_dict_local[uid] = f"{DIFF_NAME}_{i}"
 
+        self._equilibrium_param_indices: dict[str, int] = dict()
+        for in_var in self.block.in_vars:
+            if not isinstance(in_var, Var) or in_var.uid not in equilibrium_input_uids:
+                continue
+            pidx = self._ensure_variable_parameter(in_var)
+            self._compiler_names_dict_local[in_var.uid] = f"{VARIABLE_PARAMS_NAME}[{pidx}]"
+            self._alias_names_dict_local[in_var.uid] = f"{VARIABLE_PARAMS_NAME}_{pidx}"
+            kind = self._equilibrium_input_kind(in_var)
+            if kind is not None:
+                self._equilibrium_param_indices[kind] = pidx
+
         # Some device-only blocks may keep open controller inputs in `in_vars`
         # (e.g. Tm/Vf for a bare generator). If those inputs are used in equations
         # but are not part of state/algebraic unknowns, ensure they still get a
@@ -539,8 +451,8 @@ class PseudoTransientInitProblem:
             self._alias_names_dict_local[in_var.uid] = f"input_{in_var.uid}"
         
         # Initialize parameter arrays
-        self._variable_parameters_values = np.zeros(len(variable_parameters), dtype=float)
-        for i, p in enumerate(variable_parameters):
+        self._variable_parameters_values = np.zeros(len(self._variable_parameters), dtype=float)
+        for i, p in enumerate(self._variable_parameters):
             if p.uid in event_uid_map:
                 eq = event_uid_map[p.uid]
                 if isinstance(eq, Const) and eq.value is not None:
@@ -556,6 +468,82 @@ class PseudoTransientInitProblem:
         
         # Compile functions
         self._compile_functions(VARS_NAME, DIFF_NAME, VARIABLE_PARAMS_NAME, CONSTANT_PARAMS_NAME)
+        self._compile_event_params_function(VARIABLE_PARAMS_NAME, "glob_time")
+        self.update_variable_params(0.0)
+        self.update_variable_params(0.0)
+
+    @staticmethod
+    def _var_name_l(var: Var) -> str:
+        return var.name.lower()
+
+    @classmethod
+    def _equilibrium_input_kind(cls, var: Var) -> str | None:
+        name = cls._var_name_l(var)
+        if name.startswith("tm"):
+            return "tm"
+        if name.startswith("vf") or name.startswith("efd"):
+            return "vf"
+        return None
+
+    @classmethod
+    def _is_equilibrium_input_var(cls, var: Var) -> bool:
+        return cls._equilibrium_input_kind(var) is not None
+
+    def _ensure_variable_parameter(self, var: Var) -> int:
+        for i, param in enumerate(self._variable_parameters):
+            if isinstance(param, Var) and param.uid == var.uid:
+                return i
+        self._variable_parameters.append(var)
+        return len(self._variable_parameters) - 1
+
+    def _find_local_var_index(self, tokens: tuple[str, ...], *, startswith: bool = False) -> int | None:
+        for i, var in enumerate(self._all_vars):
+            name = self._var_name_l(var)
+            if startswith:
+                if any(name.startswith(tok) for tok in tokens):
+                    return i
+            elif any(tok in name for tok in tokens):
+                return i
+        return None
+
+    def _get_parameter_value_by_name(self, names: tuple[str, ...], default: float | None = None) -> float | None:
+        names_l = {n.lower() for n in names}
+        for i, param in enumerate(self._constant_parameters):
+            if i < len(self._constant_params) and self._var_name_l(param) in names_l:
+                return float(self._constant_params[i])
+        for i, param in enumerate(self._variable_parameters):
+            if i < len(self._variable_parameters_values) and self._var_name_l(param) in names_l:
+                return float(self._variable_parameters_values[i])
+        return default
+
+    def update_equilibrium_parameters(self, x: Vec) -> None:
+        if len(self._equilibrium_param_indices) == 0 or x.size == 0:
+            return
+
+        tm_pidx = self._equilibrium_param_indices.get("tm")
+        if tm_pidx is not None and tm_pidx < len(self._variable_parameters_values):
+            te_idx = self._find_local_var_index(("te",), startswith=True)
+            omega_idx = self._find_local_var_index(("omega",))
+            d_value = self._get_parameter_value_by_name(("d",), default=0.0)
+            if te_idx is not None and omega_idx is not None and te_idx < x.size and omega_idx < x.size and d_value is not None:
+                self._variable_parameters_values[tm_pidx] = float(x[te_idx] + d_value * (x[omega_idx] - 1.0))
+
+        vf_pidx = self._equilibrium_param_indices.get("vf")
+        if vf_pidx is not None and vf_pidx < len(self._variable_parameters_values):
+            eq1_idx = self._find_local_var_index(("eq1",))
+            irpu_idx = self._find_local_var_index(("irpu",), startswith=True)
+            sat_idx = self._find_local_var_index(("sat",), startswith=True)
+            if irpu_idx is not None and irpu_idx < x.size:
+                self._variable_parameters_values[vf_pidx] = float(x[irpu_idx])
+            elif eq1_idx is not None and eq1_idx < x.size:
+                sat_value = 1.0
+                if sat_idx is not None and sat_idx < x.size:
+                    sat_value = float(x[sat_idx])
+                else:
+                    sat_param = self._get_parameter_value_by_name(("sat",), default=1.0)
+                    if sat_param is not None:
+                        sat_value = sat_param
+                self._variable_parameters_values[vf_pidx] = float(sat_value * x[eq1_idx])
     
     def _compile_functions(self, VARS_NAME: str, DIFF_NAME: str,
                            VARIABLE_PARAMS_NAME: str, CONSTANT_PARAMS_NAME: str):
@@ -596,6 +584,26 @@ class PseudoTransientInitProblem:
             diff_vars=self._diff_vars,
             compiler_names_dict=self._compiler_names_dict_local
         )
+
+    def _compile_event_params_function(self, VARIABLE_PARAMS_NAME: str, TIME_NAME: str) -> None:
+        param_eqs: list[Expr | Const] = []
+        for i, param in enumerate(self._variable_parameters):
+            eq = self.block.event_dict.get(param, self.block.mode_dict.get(param))
+            if eq is None:
+                current = 0.0
+                if i < len(self._variable_parameters_values):
+                    current = float(self._variable_parameters_values[i])
+                eq = Const(current)
+            param_eqs.append(eq)
+
+        self._event_params_fn = SymbolicParamsVector(
+            eqs=param_eqs,
+            compiler_names_dict=self._compiler_names_dict_local,
+            alias_names_dict=self._alias_names_dict_local,
+            EVENT_PARAMS_NAME=VARIABLE_PARAMS_NAME,
+            TIME_NAME=TIME_NAME,
+            use_jit=True,
+        )
     
     def get_all_vars_number(self) -> int:
         return self._n_vars
@@ -622,7 +630,8 @@ class PseudoTransientInitProblem:
         """Evaluate RHS for algebraic equations."""
         if self._rhs_fn is None:
             return np.array([])
-        
+
+        self.update_equilibrium_parameters(x)
         full_rhs = self._rhs_fn(x, dx, self._variable_parameters_values, self._constant_params)
         # Return only algebraic part
         if self._n_states > 0:
@@ -633,7 +642,8 @@ class PseudoTransientInitProblem:
         """Evaluate RHS for state equations."""
         if self._rhs_fn is None or self._n_states == 0:
             return np.array([])
-        
+
+        self.update_equilibrium_parameters(x)
         full_rhs = self._rhs_fn(x, dx, self._variable_parameters_values, self._constant_params)
         return full_rhs[:self._n_states]
     
@@ -643,11 +653,13 @@ class PseudoTransientInitProblem:
     
     def update_variable_params(self, t: float):
         """Update variable parameters at time t."""
-        for i, param in enumerate(self._variable_parameters):
-            if param in self.block.event_dict:
-                eq = self.block.event_dict[param]
-                if isinstance(eq, Const):
-                    self._variable_parameters_values[i] = eq.value
+        if self._event_params_fn is None:
+            return
+        self._variable_parameters_values = np.array(
+            self._event_params_fn(self._variable_parameters_values, float(t)),
+            dtype=float,
+            copy=True,
+        )
 
     def _compute_numerical_jacobian(self, x: Vec, dx: Vec, h: float) -> sp.csc_matrix:
         """Compute Jacobian with compiled symbolic fallback to finite differences."""
@@ -655,6 +667,7 @@ class PseudoTransientInitProblem:
         if n_total == 0:
             return sp.csc_matrix((0, 0))
 
+        self.update_equilibrium_parameters(x)
         if self._jacobian_fn is not None:
             try:
                 return self._jacobian_fn(x, dx, self._variable_parameters_values, self._constant_params, h).tocsc()
@@ -715,210 +728,6 @@ class PseudoTransientInitProblem:
             return self._compute_numerical_jacobian(x, dx, h)
         J_full = self._compute_numerical_jacobian(x, dx, h)
         return J_full[self._n_states:, self._n_states:self._n_states + n_alg]
-
-    def find_feasible_point(self,
-                            x0: Vec,
-                            max_steps: int = 2000,
-                            tol: float = 1e-4,
-                            alpha: float = 1.0,
-                            h_jac: float = 1e-3) -> Vec:
-        """Project initial guess to algebraic feasible manifold g(x, y)=0.
-
-        Keeps state variables fixed and updates algebraic variables with LSQR.
-        """
-        n_states = int(self._n_states)
-        n_vars = int(self._n_vars)
-        n_alg = n_vars - n_states
-        if n_alg <= 0:
-            return np.array(x0, dtype=float, copy=True)
-
-        x = np.array(x0, dtype=float, copy=True)
-        x_states = np.array(x[:n_states], dtype=float, copy=True)
-        dx0 = np.zeros(self.get_diff_var_number(), dtype=float)
-
-        if x.size > n_states:
-            alg = x[n_states:]
-            zero_mask = (alg == 0.0)
-            if np.any(zero_mask):
-                alg = np.array(alg, dtype=float, copy=True)
-                alg[zero_mask] += 0.2 * np.random.rand(int(np.sum(zero_mask)))
-                x[n_states:] = alg
-
-        residual = np.inf
-        step = 0
-        while residual > float(tol) and step < int(max_steps):
-            x[:n_states] = x_states
-            g = np.array(self.rhs_algebraic(x, dx0), dtype=float, copy=True)
-            if g.size == 0 or not np.all(np.isfinite(g)):
-                break
-
-            residual = float(np.linalg.norm(g))
-            if residual <= float(tol):
-                break
-
-            J_full = self._compute_numerical_jacobian(x, dx0, h=h_jac).tocsc()
-            J_gy = J_full[n_states:, n_states:]
-
-            try:
-                delta = sp.linalg.lsqr(J_gy, -g, atol=1e-12, btol=1e-12, iter_lim=max(200, 2 * max(1, n_alg)))[0]
-            except Exception:
-                break
-
-            delta = np.asarray(delta, dtype=float)
-            if delta.size != n_alg or not np.all(np.isfinite(delta)):
-                break
-
-            x_old = np.array(x, dtype=float, copy=True)
-            x[n_states:] += delta
-            x[n_states:] = alpha * x[n_states:] + (1.0 - alpha) * x_old[n_states:]
-            step += 1
-
-        x[:n_states] = x_states
-        return x
-
-    def find_feasible_point_joint(self,
-                                  x0: Vec,
-                                  free_state_names: tuple[str, ...] = ("delta", "omega"),
-                                  max_steps: int = 200,
-                                  tol: float = 1e-5,
-                                  h_jac: float = 1e-3) -> Vec:
-        """Joint feasibility projection on algebraics plus selected states.
-
-        Solves a reduced nonlinear system using variables:
-        - all algebraic variables
-        - selected state variables (name contains tokens in free_state_names)
-        """
-        x = np.array(x0, dtype=float, copy=True)
-        n_states = int(self._n_states)
-        n_vars = int(self._n_vars)
-        if n_vars == 0:
-            return x
-
-        state_names = [(v.name.lower() if isinstance(v, Var) and v.name else "") for v in self._state_vars]
-        free_state_idx = [i for i, n in enumerate(state_names) if any(tok in n for tok in free_state_names)]
-        alg_idx = list(range(n_states, n_vars))
-        cols = np.array(free_state_idx + alg_idx, dtype=int)
-        if cols.size == 0:
-            return x
-
-        dx0 = np.zeros(self.get_diff_var_number(), dtype=float)
-        for _ in range(int(max_steps)):
-            f_state = np.array(self.rhs_state(x, dx0), dtype=float, copy=True)
-            g_alg = np.array(self.rhs_algebraic(x, dx0), dtype=float, copy=True)
-            if not np.all(np.isfinite(f_state)) or not np.all(np.isfinite(g_alg)):
-                break
-
-            free_state_rows = [i for i in free_state_idx if 0 <= i < f_state.size]
-            rows = np.array(
-                free_state_rows + list(range(f_state.size, f_state.size + g_alg.size)),
-                dtype=int
-            )
-
-            r = np.r_[f_state[free_state_rows] if len(free_state_rows) > 0 else np.array([], dtype=float), g_alg]
-            r_inf = float(np.linalg.norm(r, np.inf)) if r.size > 0 else 0.0
-            if r_inf <= float(tol):
-                break
-
-            J = self._compute_numerical_jacobian(x, dx0, h=h_jac).tocsc()
-            J_sub = J[rows, :][:, cols]
-            step, *_ = sp.linalg.lsqr(J_sub, -r, atol=1e-12, btol=1e-12, iter_lim=max(200, 2 * max(1, cols.size)))
-            step = np.asarray(step, dtype=float)
-            if step.size != cols.size or not np.all(np.isfinite(step)):
-                break
-
-            accepted = False
-            for a in (1.0, 0.5, 0.25, 0.1):
-                xt = np.array(x, dtype=float, copy=True)
-                xt[cols] += a * step
-                f_try = np.array(self.rhs_state(xt, dx0), dtype=float, copy=True)
-                g_try = np.array(self.rhs_algebraic(xt, dx0), dtype=float, copy=True)
-                if not np.all(np.isfinite(f_try)) or not np.all(np.isfinite(g_try)):
-                    continue
-                r_try = np.r_[f_try[free_state_rows] if len(free_state_rows) > 0 else np.array([], dtype=float), g_try]
-                if (float(np.linalg.norm(r_try, np.inf)) if r_try.size > 0 else 0.0) < r_inf:
-                    x = xt
-                    accepted = True
-                    break
-            if not accepted:
-                break
-
-        return x
-
-    def find_feasible_point_staged(self,
-                                   x0: Vec,
-                                   max_steps_stage: int = 120,
-                                   tol_stage1: float = 1e-4,
-                                   tol_stage2: float = 1e-5,
-                                   h_jac: float = 1e-3) -> Vec:
-        """Staged feasibility: first network subset, then full joint system."""
-        x = np.array(x0, dtype=float, copy=True)
-        n_states = int(self._n_states)
-        n_vars = int(self._n_vars)
-        if n_vars == 0:
-            return x
-
-        all_vars = list(self._state_vars) + list(self._algebraic_vars)
-        names = [(v.name.lower() if isinstance(v, Var) and v.name else "") for v in all_vars]
-
-        # Stage 1: solve network/electrical subset first.
-        target_tokens = ("delta", "omega", "vd", "vq", "id", "iq")
-        col_idx = [i for i, n in enumerate(names) if any(tok in n for tok in target_tokens)]
-        state_rows = [i for i in col_idx if i < n_states]
-        alg_rows = [i - n_states for i in col_idx if i >= n_states]
-
-        if len(col_idx) > 0:
-            dx0 = np.zeros(self.get_diff_var_number(), dtype=float)
-            cols = np.array(sorted(set(col_idx)), dtype=int)
-            rows = np.array(sorted(set(state_rows + [n_states + i for i in alg_rows])), dtype=int)
-
-            for _ in range(int(max_steps_stage)):
-                f = np.array(self.rhs_state(x, dx0), dtype=float, copy=True)
-                g = np.array(self.rhs_algebraic(x, dx0), dtype=float, copy=True)
-                if not np.all(np.isfinite(f)) or not np.all(np.isfinite(g)):
-                    break
-
-                r_state = f[state_rows] if len(state_rows) > 0 else np.array([], dtype=float)
-                r_alg = g[alg_rows] if len(alg_rows) > 0 else np.array([], dtype=float)
-                r = np.r_[r_state, r_alg]
-                if r.size == 0:
-                    break
-                if float(np.linalg.norm(r, np.inf)) <= float(tol_stage1):
-                    break
-
-                J = self._compute_numerical_jacobian(x, dx0, h=h_jac).tocsc()
-                J_sub = J[rows, :][:, cols]
-                d, *_ = sp.linalg.lsqr(J_sub, -r, atol=1e-12, btol=1e-12, iter_lim=max(200, 2 * max(1, cols.size)))
-                d = np.asarray(d, dtype=float)
-                if d.size != cols.size or not np.all(np.isfinite(d)):
-                    break
-
-                accepted = False
-                base = float(np.linalg.norm(r, np.inf))
-                for a in (1.0, 0.5, 0.25, 0.1):
-                    xt = np.array(x, dtype=float, copy=True)
-                    xt[cols] += a * d
-                    ft = np.array(self.rhs_state(xt, dx0), dtype=float, copy=True)
-                    gt = np.array(self.rhs_algebraic(xt, dx0), dtype=float, copy=True)
-                    if not np.all(np.isfinite(ft)) or not np.all(np.isfinite(gt)):
-                        continue
-                    rt = np.r_[ft[state_rows] if len(state_rows) > 0 else np.array([], dtype=float),
-                               gt[alg_rows] if len(alg_rows) > 0 else np.array([], dtype=float)]
-                    if rt.size > 0 and float(np.linalg.norm(rt, np.inf)) < base:
-                        x = xt
-                        accepted = True
-                        break
-                if not accepted:
-                    break
-
-        # Stage 2: full joint solve.
-        x = self.find_feasible_point_joint(
-            x0=x,
-            free_state_names=("delta", "omega"),
-            max_steps=max_steps_stage,
-            tol=tol_stage2,
-            h_jac=h_jac,
-        )
-        return x
 
     @property
     def uid2idx_vars(self):
@@ -993,27 +802,10 @@ def init_pseudo_transient(mdl: Block,
             if 0 <= gidx < x_global.size:
                 x_global[gidx] = float(val)
 
-    # PF-based seeds for freed controller references.
-    p_seed = None
-    vm_seed = None
-    pf_p_var = mdl_work.external_mapping.get(VarPowerFlowReferenceType.P)
-    pf_vm_var = mdl_work.external_mapping.get(VarPowerFlowReferenceType.Vm)
-    if isinstance(pf_p_var, Var) and pf_p_var.uid in uid2idx_vars:
-        p_seed = float(x_global[uid2idx_vars[pf_p_var.uid]])
-    if isinstance(pf_vm_var, Var) and pf_vm_var.uid in uid2idx_vars:
-        vm_seed = float(x_global[uid2idx_vars[pf_vm_var.uid]])
-
     # Force deterministic reference values across runs.
     pref_fixed = float(os.getenv("VERAGRID_INIT_PREF", "1.0316406365799007"))
     vref_fixed = float(os.getenv("VERAGRID_INIT_VREF", "1.0"))
 
-    # Variable names to keep fixed over pseudo-transient iterations.
-    # UIDs are resolved from the *final local problem* ordering below.
-    fix_references =  False
-    if fix_references:
-        fixed_ref_names = {"Pm_ref", "Pref", "P_ref", "UsRefPu", "Vref", "V_ref", "U_ref"}
-    else:
-        fixed_ref_names = {}
     # Freeze PF anchors in this local model: P, Q, Vm, Va, Vdc.
     pf_var_references = [
         VarPowerFlowReferenceType.P,
@@ -1074,25 +866,23 @@ def init_pseudo_transient(mdl: Block,
     problem._uid2idx_event_params = uid2idx_event_params
 
     local_vars = list(problem._state_vars) + list(problem._algebraic_vars)
-    fixed_ref_uids = sorted({
-        v.uid for v in local_vars
-        if isinstance(v, Var) and v.name in fixed_ref_names
-    })
-    
+    if problem.get_all_vars_number() == 0:
+        return dict(init_guess)
+
     # Use the existing PseudoTransient solver
     # Note: h parameter is not used for initialization, we set it to 1.0
 
     solver = PseudoTransient(
         problem=problem,
         h=1.0,
-        dtau0=1e-2,
+        dtau0=1e3,
         dtau_max=1e5,
-        dtau_min=1e-6,
+        dtau_min=1e-5,
         tol=tol,
-        max_iter=2000,
+        max_iter=1000,
         verbose=verbose,
         reference_error_tol=-1,
-        fixed_var_uids=fixed_ref_uids,
+        fixed_var_uids=[],
     )
     
     # Build initial guess: random baseline, then overwrite with known init_guess values.
@@ -1102,6 +892,22 @@ def init_pseudo_transient(mdl: Block,
             continue
         if var.uid in init_guess and init_guess[var.uid] is not None:
             x0[local_idx] = float(init_guess[var.uid])
+
+    # Start rotor angles close to the network reference for pseudo-transient.
+    # This is only a seed; delta remains a solved state afterwards.
+    delta_seed_text = os.getenv("VERAGRID_INIT_DELTA_SEED", "0.0").strip()
+    delta_seed = float(delta_seed_text) if delta_seed_text != "" else None
+
+    def _enforce_delta_seed(x_vec: np.ndarray) -> np.ndarray:
+        if delta_seed is None:
+            return x_vec
+        x_out = np.array(x_vec, dtype=float, copy=True)
+        for local_idx, var in enumerate(local_vars):
+            if local_idx < len(x_out) and isinstance(var, Var) and var.name.lower().startswith("delta"):
+                x_out[local_idx] = delta_seed
+        return x_out
+
+    x0 = _enforce_delta_seed(x0)
 
     # Seed and force freed references to deterministic constants.
     ref_fixed_values = {
@@ -1132,80 +938,6 @@ def init_pseudo_transient(mdl: Block,
             x0[local_idx] = vref_fixed
     x0 = _enforce_reference_values(x0)
 
-    seeded_pm = [float(x0[i]) for i, v in enumerate(local_vars) if isinstance(v, Var) and v.name == "Pm_ref" and i < len(x0)]
-    seeded_vref = [float(x0[i]) for i, v in enumerate(local_vars) if isinstance(v, Var) and v.name == "UsRefPu" and i < len(x0)]
-    print(
-        f"[PseudoTransientInit] x0 seeding: "
-        f"P_seed={p_seed}, Vm_seed={vm_seed}, Pref_fixed={pref_fixed}, Vref_fixed={vref_fixed}, fixed_ref_uids={fixed_ref_uids}, "
-        f"Pm_ref_x0={seeded_pm}, UsRefPu_x0={seeded_vref}"
-    )
-
-    # Keep reference variables strictly fixed to their seeded values across
-    # pseudo-transient and Newton-polish phases.
-    fixed_local_idx = [i for i, v in enumerate(local_vars) if isinstance(v, Var) and v.uid in fixed_ref_uids]
-    fixed_local_vals_seed = {i: float(x0[i]) for i in fixed_local_idx if 0 <= i < x0.size}
-
-    # Re-evaluate runtime variable parameters from declared equations.
-    ev0 = np.array(problem._variable_parameters_values, dtype=float, copy=True)
-    params0 = np.array(problem._constant_params, dtype=float, copy=True)
-    dx0 = np.zeros(problem.get_diff_var_number(), dtype=float)
-    uid2idx_diff_empty: Dict[int, int] = dict()
-
-    problem._variable_parameters_values = ev0
-
-    # Feasible pre-step using LSQR algebraic projection.
-    g_before = np.array(problem.rhs_algebraic(x0, dx0), dtype=float, copy=True)
-    g_before_inf = float(np.linalg.norm(g_before, np.inf)) if g_before.size > 0 and np.all(np.isfinite(g_before)) else np.nan
-    x0 = problem.find_feasible_point(
-        x0=np.array(x0, dtype=float, copy=True),
-        max_steps=2000,
-        tol=max(float(tol), 1e-4),
-        alpha=1.0,
-        h_jac=1e-3,
-    )
-    x0 = _enforce_reference_values(x0)
-    x0 = problem.find_feasible_point_joint(
-        x0=np.array(x0, dtype=float, copy=True),
-        free_state_names=("delta", "omega"),
-        max_steps=200,
-        tol=max(float(tol), 1e-5),
-        h_jac=1e-3,
-    )
-    x0 = _enforce_reference_values(x0)
-    x0 = problem.find_feasible_point_staged(
-        x0=np.array(x0, dtype=float, copy=True),
-        max_steps_stage=120,
-        tol_stage1=max(float(tol), 1e-4),
-        tol_stage2=max(float(tol), 1e-5),
-        h_jac=1e-3,
-    )
-    x0 = _enforce_reference_values(x0)
-    if verbose:
-        g_after = np.array(problem.rhs_algebraic(x0, dx0), dtype=float, copy=True)
-        g_after_inf = float(np.linalg.norm(g_after, np.inf)) if g_after.size > 0 and np.all(np.isfinite(g_after)) else np.nan
-        print(f"[PseudoTransientInit][Proj] g_inf {g_before_inf:.6e} -> {g_after_inf:.6e}")
-    
-    # Optional secondary feasibility projection using pseudo-transient stable projector.
-    try:
-        g_before = np.array(problem.rhs_algebraic(x0, dx0), dtype=float, copy=True)
-        g_before_inf = float(np.linalg.norm(g_before, np.inf)) if g_before.size > 0 and np.all(np.isfinite(g_before)) else np.nan
-        x0 = solver._project_feasible_x(
-            x=np.array(x0, dtype=float, copy=True),
-            dx=np.array(dx0, dtype=float, copy=True),
-            x_ref=np.array(x0, dtype=float, copy=True),
-            max_iter=10,
-        )
-        x0 = _enforce_reference_values(x0)
-        if verbose:
-            g_after = np.array(problem.rhs_algebraic(x0, dx0), dtype=float, copy=True)
-            g_after_inf = float(np.linalg.norm(g_after, np.inf)) if g_after.size > 0 and np.all(np.isfinite(g_after)) else np.nan
-            print(
-                "[PseudoTransientInit][Feasible] g_inf "
-                f"{g_before_inf:.6e} -> {g_after_inf:.6e}"
-            )
-    except Exception:
-        pass
-
     # Run pseudo-transient simulation
     x0 = _enforce_reference_values(x0)
     x_solution, _ = solver.simulate(plot=bool(verbose), x0=x0)
@@ -1220,7 +952,6 @@ def init_pseudo_transient(mdl: Block,
     # Here f(x) is the stacked explicit RHS [f_state(x), g_algebraic(x)] with dx=0.
     dx_newton = np.zeros(problem.get_diff_var_number(), dtype=float)
     x_nr = np.array(x_solution, dtype=float, copy=True)
-    fixed_local_vals = {i: fixed_local_vals_seed[i] for i in fixed_local_idx if i in fixed_local_vals_seed}
 
     newton_max_iter = 25
     newton_tol = max(float(tol), 1e-8)
@@ -1281,9 +1012,6 @@ def init_pseudo_transient(mdl: Block,
         base_inf = rhs_inf
         for _ in range(8):
             x_try = x_nr - alpha * np.asarray(delta, dtype=float)
-            for idx, val in fixed_local_vals.items():
-                if 0 <= idx < x_try.size:
-                    x_try[idx] = val
 
             dx_try = dx_newton
             if dx_newton.size > 0:
@@ -1357,5 +1085,44 @@ def init_pseudo_transient(mdl: Block,
             ep_idx = uid2idx_event_params[var.uid]
             if 0 <= ep_idx < len(event_parameters_eqs):
                 event_parameters_eqs[ep_idx] = Const(value)
+
+    for pidx in getattr(problem, "_equilibrium_param_indices", {}).values():
+        if pidx < 0 or pidx >= len(problem._variable_parameters):
+            continue
+        if pidx >= len(problem._variable_parameters_values):
+            continue
+        var = problem._variable_parameters[pidx]
+        value = float(problem._variable_parameters_values[pidx])
+        if var.uid in uid2idx_event_params:
+            ep_idx = uid2idx_event_params[var.uid]
+            if 0 <= ep_idx < len(event_parameters_eqs):
+                event_parameters_eqs[ep_idx] = Const(value)
+
+    uid_bindings: dict[int, float] = {
+        uid: float(value) for uid, value in init_guess.items() if value is not None
+    }
+    for var in variable_parameters:
+        if not isinstance(var, Var) or var.uid not in uid2idx_event_params:
+            continue
+        ep_idx = uid2idx_event_params[var.uid]
+        if 0 <= ep_idx < len(event_parameters_eqs):
+            eq = event_parameters_eqs[ep_idx]
+            if isinstance(eq, Const) and eq.value is not None:
+                uid_bindings[var.uid] = float(eq.value)
+
+    for ep_idx, eq in enumerate(list(event_parameters_eqs)):
+        if not isinstance(eq, Expr) or isinstance(eq, Const):
+            continue
+        expr_vars = get_expression_vars(eq)
+        if not any(isinstance(v, Var) and v.uid in uid2idx_vars for v in expr_vars):
+            continue
+        if not all(isinstance(v, Var) and v.uid in uid_bindings for v in expr_vars):
+            continue
+        try:
+            value = float(eval_expr_uid(eq, uid_bindings))
+        except Exception:
+            continue
+        if np.isfinite(value):
+            event_parameters_eqs[ep_idx] = Const(value)
 
     return init_guess

@@ -154,6 +154,309 @@ def mti_hard_sat(
 
     return block, y
 
+
+def mti_three_phase_carrier_pwm_direct(
+    vf: VarFactory,
+    ref_a: Expr,
+    ref_b: Expr,
+    ref_c: Expr,
+    carrier: Expr,
+    eps: Expr | float | int | None = None,
+    name: str = "",
+):
+    """
+    Direct three-phase MTI carrier PWM comparator.
+
+    The generated gates follow the memoryless comparator rule
+    ``gate = 1`` when ``ref - carrier >= 0`` and ``gate = 0`` when
+    ``ref - carrier <= 0``. Inequalities use VeraGrid's MTI convention
+    ``G <= 0``.
+    """
+    b_a = vf.add_var("b_pwm_a_" + name)
+    b_b = vf.add_var("b_pwm_b_" + name)
+    b_c = vf.add_var("b_pwm_c_" + name)
+    gate_a = vf.add_var("gate_pwm_a_" + name)
+    gate_b = vf.add_var("gate_pwm_b_" + name)
+    gate_c = vf.add_var("gate_pwm_c_" + name)
+
+    s_a = ref_a - carrier
+    s_b = ref_b - carrier
+    s_c = ref_c - carrier
+
+    if eps is None:
+        inequalities = [
+            -(2 * b_a - 1) * s_a,
+            -(2 * b_b - 1) * s_b,
+            -(2 * b_c - 1) * s_c,
+        ]
+    else:
+        eps_expr = Const(float(eps)) if isinstance(eps, (float, int)) else eps
+        inequalities = [
+            b_a * (-(s_a + eps_expr)) + (1 - b_a) * (s_a - eps_expr),
+            b_b * (-(s_b + eps_expr)) + (1 - b_b) * (s_b - eps_expr),
+            b_c * (-(s_c + eps_expr)) + (1 - b_c) * (s_c - eps_expr),
+        ]
+
+    block = Block(
+        algebraic_vars=[gate_a, gate_b, gate_c],
+        algebraic_eqs=[
+            gate_a - b_a,
+            gate_b - b_b,
+            gate_c - b_c,
+        ],
+        inequalities=inequalities,
+        init_eqs={
+            gate_a: sym.heaviside(s_a),
+            gate_b: sym.heaviside(s_b),
+            gate_c: sym.heaviside(s_c),
+        },
+        boolean_guards={
+            b_a: sym.heaviside(s_a),
+            b_b: sym.heaviside(s_b),
+            b_c: sym.heaviside(s_c),
+        },
+    )
+
+    return block, gate_a, gate_b, gate_c
+
+
+def mti_three_phase_carrier_pwm_direct_params(
+    vf: VarFactory,
+    name: str = "",
+    eps: Expr | float | int | None = None,
+    ref_a0: float = 0.0,
+    ref_b0: float = 0.0,
+    ref_c0: float = 0.0,
+    carrier0: float = 0.0,
+):
+    """
+    Direct three-phase MTI carrier PWM comparator with input signals modeled as runtime parameters.
+
+    This mirrors toolbox-style ``u`` inputs in VeraGrid's current block model by
+    declaring ``u_ref_a``, ``u_ref_b``, ``u_ref_c`` and ``u_carrier`` in
+    ``event_dict``. The MTI inequalities then switch boolean gate modes from the
+    parameter residuals ``u_ref_phase - u_carrier``.
+    """
+    ref_a = vf.add_var("u_ref_a_pwm_" + name)
+    ref_b = vf.add_var("u_ref_b_pwm_" + name)
+    ref_c = vf.add_var("u_ref_c_pwm_" + name)
+    carrier = vf.add_var("u_carrier_pwm_" + name)
+
+    block, gate_a, gate_b, gate_c = mti_three_phase_carrier_pwm_direct(
+        vf=vf,
+        ref_a=ref_a,
+        ref_b=ref_b,
+        ref_c=ref_c,
+        carrier=carrier,
+        eps=eps,
+        name=name,
+    )
+    block.event_dict.update({
+        ref_a: Const(float(ref_a0)),
+        ref_b: Const(float(ref_b0)),
+        ref_c: Const(float(ref_c0)),
+        carrier: Const(float(carrier0)),
+    })
+
+    return block, gate_a, gate_b, gate_c, ref_a, ref_b, ref_c, carrier
+
+
+def mti_three_phase_carrier_pwm_internal_carrier_params(
+    vf: VarFactory,
+    name: str = "",
+    omega_sw0: float = 2.0 * np.pi * 1000.0,
+    direction_eps: Expr | float | int = 1.0e-9,
+    ref_a0: float = 0.0,
+    ref_b0: float = 0.0,
+    ref_c0: float = 0.0,
+    carrier0: float = -1.0,
+    carrier_rising0: float = 1.0,
+):
+    """
+    Three-phase MTI PWM with runtime-parameter references and internal triangular carrier.
+
+    The reference signals are modeled as runtime parameters because the current
+    VeraGrid MTI path has no first-class ``u`` input category. The triangular
+    carrier direction is not external: it is represented by the internal boolean
+    ``b_carrier_rise`` and the carrier is a continuous state with slope selected
+    by that boolean.
+    """
+    ref_a = vf.add_var("u_ref_a_pwm_" + name)
+    ref_b = vf.add_var("u_ref_b_pwm_" + name)
+    ref_c = vf.add_var("u_ref_c_pwm_" + name)
+    omega_sw = vf.add_var("u_omega_sw_pwm_" + name)
+
+    carrier = vf.add_var("carrier_pwm_" + name)
+    dcarrier = vf.add_diff_var("dt_carrier_pwm_" + name, base_var=carrier)
+    b_carrier_rise = vf.add_var("b_carrier_rise_pwm_" + name)
+
+    b_a = vf.add_var("b_pwm_a_" + name)
+    b_b = vf.add_var("b_pwm_b_" + name)
+    b_c = vf.add_var("b_pwm_c_" + name)
+    gate_a = vf.add_var("gate_pwm_a_" + name)
+    gate_b = vf.add_var("gate_pwm_b_" + name)
+    gate_c = vf.add_var("gate_pwm_c_" + name)
+
+    c_one = Const(1.0)
+    c_two = Const(2.0)
+    slope_abs = Const(2.0 / np.pi) * omega_sw
+    carrier_slope = (c_two * b_carrier_rise - c_one) * slope_abs
+    direction_for_switching_surface = c_one - c_two * b_carrier_rise
+    direction_eps_expr = Const(float(direction_eps)) if isinstance(direction_eps, (float, int)) else direction_eps
+
+    s_a = ref_a - carrier + direction_eps_expr * direction_for_switching_surface
+    s_b = ref_b - carrier + direction_eps_expr * direction_for_switching_surface
+    s_c = ref_c - carrier + direction_eps_expr * direction_for_switching_surface
+
+    block = Block(
+        state_vars=[carrier],
+        state_eqs=[carrier_slope],
+        diff_vars=[dcarrier],
+        algebraic_vars=[gate_a, gate_b, gate_c],
+        algebraic_eqs=[
+            gate_a - b_a,
+            gate_b - b_b,
+            gate_c - b_c,
+        ],
+        inequalities=[
+            -(c_two * b_a - c_one) * s_a,
+            -(c_two * b_b - c_one) * s_b,
+            -(c_two * b_c - c_one) * s_c,
+            b_carrier_rise * (carrier - c_one) + (c_one - b_carrier_rise) * (-carrier - c_one),
+        ],
+        event_dict={
+            ref_a: Const(float(ref_a0)),
+            ref_b: Const(float(ref_b0)),
+            ref_c: Const(float(ref_c0)),
+            omega_sw: Const(float(omega_sw0)),
+        },
+        init_eqs={
+            carrier: Const(float(carrier0)),
+            gate_a: sym.heaviside(s_a),
+            gate_b: sym.heaviside(s_b),
+            gate_c: sym.heaviside(s_c),
+        },
+        boolean_guards={
+            b_a: sym.heaviside(s_a),
+            b_b: sym.heaviside(s_b),
+            b_c: sym.heaviside(s_c),
+            b_carrier_rise: sym.heaviside(Const(float(carrier_rising0)) - Const(0.5)),
+        },
+    )
+
+    return block, gate_a, gate_b, gate_c, ref_a, ref_b, ref_c, omega_sw, carrier, b_carrier_rise
+
+
+def mti_three_phase_carrier_pwm_scheduled_params(
+    vf: VarFactory,
+    time: Expr,
+    name: str = "",
+    transition_eps: Expr | float | int = 1.0e-9,
+    ref_a0: float = 0.0,
+    ref_b0: float = 0.0,
+    ref_c0: float = 0.0,
+    interval_start0: float = 0.0,
+    half_period0: float = 5.0e-4,
+    carrier_rising0: float = 1.0,
+):
+    """
+    Scheduled-event MTI approximation of regular-sampled carrier PWM.
+
+    The block models the procedural PWM schedule explicitly: sampled references
+    and interval timing are runtime parameters, while the phase transition modes
+    are MTI booleans driven by ``time - t_cross`` inequalities.
+    """
+    ref_a = vf.add_var("u_ref_a_sched_pwm_" + name)
+    ref_b = vf.add_var("u_ref_b_sched_pwm_" + name)
+    ref_c = vf.add_var("u_ref_c_sched_pwm_" + name)
+    interval_start = vf.add_var("u_interval_start_sched_pwm_" + name)
+    half_period = vf.add_var("u_half_period_sched_pwm_" + name)
+
+    b_carrier_rise = vf.add_var("b_carrier_rise_sched_pwm_" + name)
+    q_a = vf.add_var("q_after_a_sched_pwm_" + name)
+    q_b = vf.add_var("q_after_b_sched_pwm_" + name)
+    q_c = vf.add_var("q_after_c_sched_pwm_" + name)
+
+    t_cross_a = vf.add_var("t_cross_a_sched_pwm_" + name)
+    t_cross_b = vf.add_var("t_cross_b_sched_pwm_" + name)
+    t_cross_c = vf.add_var("t_cross_c_sched_pwm_" + name)
+    gate_a = vf.add_var("gate_pwm_a_" + name)
+    gate_b = vf.add_var("gate_pwm_b_" + name)
+    gate_c = vf.add_var("gate_pwm_c_" + name)
+
+    c_one = Const(1.0)
+    c_half = Const(0.5)
+    eps_expr = Const(float(transition_eps)) if isinstance(transition_eps, (float, int)) else transition_eps
+
+    def cross_time(ref: Expr) -> Expr:
+        rising_cross = interval_start + c_half * (ref + c_one) * half_period
+        falling_cross = interval_start + c_half * (c_one - ref) * half_period
+        return b_carrier_rise * rising_cross + (c_one - b_carrier_rise) * falling_cross
+
+    def gate_expr(q_after: Expr) -> Expr:
+        return (c_one - q_after) * b_carrier_rise + q_after * (c_one - b_carrier_rise)
+
+    tau_a = time - t_cross_a + eps_expr
+    tau_b = time - t_cross_b + eps_expr
+    tau_c = time - t_cross_c + eps_expr
+
+    block = Block(
+        algebraic_vars=[t_cross_a, t_cross_b, t_cross_c, gate_a, gate_b, gate_c],
+        algebraic_eqs=[
+            t_cross_a - cross_time(ref_a),
+            t_cross_b - cross_time(ref_b),
+            t_cross_c - cross_time(ref_c),
+            gate_a - gate_expr(q_a),
+            gate_b - gate_expr(q_b),
+            gate_c - gate_expr(q_c),
+        ],
+        inequalities=[
+            -(Const(2.0) * q_a - c_one) * tau_a,
+            -(Const(2.0) * q_b - c_one) * tau_b,
+            -(Const(2.0) * q_c - c_one) * tau_c,
+        ],
+        event_dict={
+            ref_a: Const(float(ref_a0)),
+            ref_b: Const(float(ref_b0)),
+            ref_c: Const(float(ref_c0)),
+            interval_start: Const(float(interval_start0)),
+            half_period: Const(float(half_period0)),
+        },
+        init_eqs={
+            t_cross_a: cross_time(ref_a),
+            t_cross_b: cross_time(ref_b),
+            t_cross_c: cross_time(ref_c),
+            gate_a: gate_expr(q_a),
+            gate_b: gate_expr(q_b),
+            gate_c: gate_expr(q_c),
+        },
+        boolean_guards={
+            q_a: sym.heaviside(tau_a),
+            q_b: sym.heaviside(tau_b),
+            q_c: sym.heaviside(tau_c),
+            b_carrier_rise: sym.heaviside(Const(float(carrier_rising0)) - Const(0.5)),
+        },
+    )
+
+    return (
+        block,
+        gate_a,
+        gate_b,
+        gate_c,
+        t_cross_a,
+        t_cross_b,
+        t_cross_c,
+        ref_a,
+        ref_b,
+        ref_c,
+        interval_start,
+        half_period,
+        q_a,
+        q_b,
+        q_c,
+        b_carrier_rise,
+    )
+
 def exponential_ml(vf: VarFactory, x:Expr, name:str=""):
     algebraic_eqs = list()
     algebraic_vars = list()

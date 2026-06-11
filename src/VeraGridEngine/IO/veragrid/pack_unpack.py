@@ -57,6 +57,8 @@ def get_objects_dictionary() -> Dict[str, ALL_DEV_TYPES]:
 
         'facility': dev.Facility(),
 
+        'market_unit': dev.MarketUnit(),
+
         'rms_model_template': dev.RmsModelTemplate(),
         'emt_model_template': dev.EmtModelTemplate(),
         'fmu_template': dev.FmuTemplate(),
@@ -785,6 +787,12 @@ def gather_model_as_jsons(circuit: MultiCircuit,
 
     # time
     unix_time = circuit.get_unix_time()
+    if len(unix_time) > 1 and np.all(unix_time == unix_time[0]) and abs(int(unix_time[0])) <= 10:
+        raise ValueError(
+            f"Refusing to save degenerate master time profile: all {len(unix_time)} unix values are "
+            f"{int(unix_time[0])}. This usually means circuit.time_profile was overwritten before saving."
+        )
+
     data['time'] = {'unix': unix_time.tolist(),
                     'prob': list(np.ones(len(unix_time))),
                     'snapshot_unix': circuit.get_snapshot_time_unix()}
@@ -1200,7 +1208,12 @@ def parse_object_type_from_dataframe(
                         dfp = data.get(profile_key, None)
 
                         if dfp is not None:
-                            elm.set_profile(gc_prop, arr=dfp.values[:, i].astype(gc_prop.tpe))
+                            try:
+                                elm.set_profile(gc_prop, arr=dfp.values[:, i].astype(gc_prop.tpe))
+                            except TypeError as terr:
+                                logger.add_error(msg="Cannot set profile value",
+                                                 device_property=gc_prop.profile_name,
+                                                 device=elm.name)
 
                         else:
                             skip = False
@@ -1807,7 +1820,7 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
     # These files are just .json stored in the model_data inside the zip file
 
     block_parser = BlockParser(circuit.var_factory)
-    symbolic_data = data.get('symbolic_data', None)
+    symbolic_data: Dict[str, Any] | None = data.get('symbolic_data', None)
     if symbolic_data is not None:
         if len(symbolic_data) > 0:
             if "shared_references" in symbolic_data:

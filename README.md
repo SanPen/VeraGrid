@@ -51,7 +51,7 @@ To install everything, you only need to install the VeraGrid package and the oth
 
 If you don't know what is this Python thing, we offer a Windows installation:
 
-[Windows setup](https://www.eroots.tech/software)
+[Windows setup](https://eroots.tech/veragrid-form)
 
 This will install VeraGrid as a normal windows program, and you don't need to worry
 about any of the previous instructions. Still, if you need some guidance, the

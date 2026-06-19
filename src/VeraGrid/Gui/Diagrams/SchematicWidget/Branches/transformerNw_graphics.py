@@ -11,6 +11,7 @@ from PySide6.QtCore import Qt, QPoint, QPointF
 from PySide6.QtGui import QPen, QCursor, QColor
 from PySide6.QtWidgets import QGraphicsItem, QGraphicsEllipseItem, QGraphicsRectItem, QMenu, QGraphicsSceneMouseEvent
 
+from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
 from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE, DEACTIVATED, GenericDiagramWidget
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.winding_graphics import WindingGraphicItem
 from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import RoundTerminalItem
@@ -118,6 +119,16 @@ class TransformerNWGraphicItem(GenericDiagramWidget, QGraphicsRectItem):
     def editor(self) -> SchematicWidget:
         return self._editor
 
+    def open_device_editor(self) -> bool:
+        """
+        Open the generic device editor for this transformer.
+
+        :return: ``True`` when the editor was opened.
+        """
+        dialog = TemplateDeviceEditor(api_object=self.api_object, circuit=self.editor.circuit)
+        dialog.exec()
+        return True
+
     def get_associated_widgets(self) -> List[WindingGraphicItem | None]:
         return self.connection_lines
 
@@ -174,7 +185,10 @@ class TransformerNWGraphicItem(GenericDiagramWidget, QGraphicsRectItem):
             self.editor.set_editor_model(api_object=self.api_object)
 
     def mouseDoubleClickEvent(self, event):
-        return None
+        if self.api_object is not None:
+            self.open_device_editor()
+        else:
+            pass
 
     def contextMenuEvent(self, event):
         if self.api_object is not None:
@@ -187,6 +201,11 @@ class TransformerNWGraphicItem(GenericDiagramWidget, QGraphicsRectItem):
                            checkeable=True,
                            checked_value=self.api_object.active)
 
+            add_menu_entry(menu=menu,
+                           text="Editor",
+                           function_ptr=self.edit,
+                           icon_path=":/Icons/icons/edit.png")
+
             menu.addSeparator()
 
             add_menu_entry(menu=menu,
@@ -195,6 +214,14 @@ class TransformerNWGraphicItem(GenericDiagramWidget, QGraphicsRectItem):
                            icon_path=":/Icons/icons/delete_schematic.png")
 
             menu.exec_(event.screenPos())
+
+    def edit(self) -> None:
+        """
+        Open the appropriate editor dialogue.
+
+        :return: ``None``.
+        """
+        self.open_device_editor()
 
     def enable_disable_toggle(self):
         if self.api_object is not None:

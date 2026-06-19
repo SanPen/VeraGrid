@@ -698,7 +698,17 @@ class LoadDesigner(QtWidgets.QDialog):
             except (ValueError, TypeError) as err:
                 self.msg(text=str(err), title="Load designer")
         else:
-            self.msg(text=message, title="Load designer")
+            if message == "The time profile is empty":
+                # An absent circuit time profile is a valid state for the editor.
+                # Keep the designer quiet and leave the result disabled instead of
+                # presenting it as an error condition to the user.
+                self.P = np.zeros(0, dtype=float)
+                self.Q = np.zeros(0, dtype=float)
+                self.temperature = None
+                self.wind_speed = None
+                self.update_results()
+            else:
+                self.msg(text=message, title="Load designer")
 
     def update_weather_profiles(self, time_index: pd.DatetimeIndex) -> None:
         """
@@ -710,7 +720,12 @@ class LoadDesigner(QtWidgets.QDialog):
         self.temperature = None
         self.wind_speed = None
 
-        if self.latitude is None or self.longitude is None:
+        # Weather enrichment requires a non-empty time profile. When the circuit
+        # has no time series yet, keep the optional weather arrays unset and exit
+        # quietly instead of treating it as an error.
+        if len(time_index) == 0:
+            return
+        elif self.latitude is None or self.longitude is None:
             pass
         else:
             reference_ok: bool
@@ -756,7 +771,11 @@ class LoadDesigner(QtWidgets.QDialog):
         axis = self.ui.plotwidget.get_axis()
         result_df.plot(ax=axis)
         self.ui.plotwidget.redraw()
-        self.is_generated = len(self.P) == len(self.time_array) and len(self.Q) == len(self.time_array)
+        # Zero-length arrays mean that the circuit has no usable time profile yet,
+        # so the designer must remain disabled even though the lengths match.
+        self.is_generated = (len(self.time_array) > 0 and
+                             len(self.P) == len(self.time_array) and
+                             len(self.Q) == len(self.time_array))
         self.is_accepted = False
 
     def accept_click(self) -> None:

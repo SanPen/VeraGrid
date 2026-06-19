@@ -22,7 +22,8 @@ def tf_to_block(var_factory: VarFactory,
                 x: Var | Expr,
                 y: Var = None,
                 create_state: bool = False,
-                name: Optional[str] = '') -> Tuple[Block, Var]:
+                name: Optional[str] = '',
+                output_var_name: str = 'y_') -> Tuple[Block, Var]:
     """
     "transform definition" to block
     num: list of numerator coefficients [b0, b1, ..., bm]
@@ -34,7 +35,7 @@ def tf_to_block(var_factory: VarFactory,
         raise ValueError("Transfer function is improper: numerator degree > denominator degree.")
 
     if y is None:
-        y = var_factory.add_var('y_' + name)
+        y = var_factory.add_var(output_var_name + name)
 
     aux_eqs: List[Expr] = list()
     aux_vars: List[Expr] = list()

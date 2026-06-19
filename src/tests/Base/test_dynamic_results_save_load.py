@@ -15,7 +15,7 @@ from VeraGrid.Session.session import SimulationSession
 from VeraGridEngine.Simulations.EMT.emt_driver import EmtSimulationDriver
 from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
 from VeraGridEngine.Simulations.EMT.emt_results import EmtResults
-from VeraGridEngine.Simulations.PowerFlow.power_flow_driver_3ph import PowerFlowDriver3Ph
+from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_driver_3ph import PowerFlowDriver3Ph
 from VeraGridEngine.Simulations.Rms.rms_driver import RmsSimulationDriver
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
 from VeraGridEngine.Simulations.Rms.rms_results import RmsResults

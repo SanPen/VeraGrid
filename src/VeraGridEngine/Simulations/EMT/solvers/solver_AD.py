@@ -21,8 +21,9 @@ from VeraGridEngine.enumerations import DynamicIntegrationMethod
 from VeraGridEngine.Utils.Symbolic.jit_compiler import EagerEquationCompiler, EquationCompiler
 from VeraGridEngine.Utils.Symbolic.diagnostic import (with_newton_diagnostics, NewtonDiagnosticsConfig,
                                                        NewtonSolveContext, dense_lstsq_fallback,
-                                                        sparse_lsqr_fallback, maybe_check_index1,
-                                                        maybe_apply_backtracking)
+                                                         sparse_lsqr_fallback, maybe_check_index1,
+                                                         maybe_apply_backtracking)
+from VeraGridEngine.Simulations.driver_template import DummySignal
 from VeraGridEngine.basic_structures import Vec, Mat
 from typing import Tuple, Callable, List, Any, Dict, Set, Union
 from scipy.sparse import csc_matrix
@@ -662,7 +663,7 @@ class JitAdSolver:
         'state_vars', 'algebraic_vars', 'state_eqs', 'algebraic_eqs', '_newton_diag_config',
         '_predictor', '_runtime_param_count', '_static_parameter_buffer', '_full_parameter_buffer',
         '_residual_buffer', '_trial_state_buffer', '_trial_residual_buffer',
-        '_backend_build_stats', '_last_runtime_stats', '_last_sim_loop_time', '_cancel_checker'
+        '_backend_build_stats', '_last_runtime_stats', '_last_sim_loop_time', '_cancel_checker', '_progress_signal'
     ]
     def __init__(self,
                  problem: EmtProblemTemplate,
@@ -675,6 +676,7 @@ class JitAdSolver:
                  verbose: bool = False,
                  newton_max_iter: int = 15,
                  newton_diag_config: NewtonDiagnosticsConfig | None = None,
+                 progress_signal: DummySignal | None = None,
                  cancel_checker: Callable[[], bool] | None = None)-> None:
         """
         Initializes the JIT AD Solver.
@@ -697,6 +699,8 @@ class JitAdSolver:
         :type verbose: bool
         :param newton_max_iter: Maximum Newton iterations per local EMT substep.
         :type newton_max_iter: int
+        :param progress_signal: Optional progress signal updated during the simulation loop.
+        :type progress_signal: DummySignal | None
         """
         self.problem = problem
         self.t0 = t0
@@ -751,6 +755,7 @@ class JitAdSolver:
         )
         self._last_runtime_stats: Dict[str, float] = dict()
         self._last_sim_loop_time: float = 0.0
+        self._progress_signal: DummySignal | None = progress_signal
         self._cancel_checker = cancel_checker
 
     def build_jit_ad(self, only_jacobian: bool = False)-> None:
@@ -956,6 +961,11 @@ class JitAdSolver:
         aligned_substep_count: int = 0
 
         for i in range(self.steps):
+
+            if self._progress_signal is not None:
+                self.problem.report_progress2(i, self.steps)
+            else:
+                pass
 
             if self._cancel_checker is not None and self._cancel_checker():
                 return t[:i + 1].copy(), self.y[:i + 1, :].copy(), self.dy[:i + 1, :].copy(), well_initialized, converged

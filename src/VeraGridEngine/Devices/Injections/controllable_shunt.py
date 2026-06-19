@@ -7,7 +7,8 @@ from __future__ import annotations
 from typing import Union, Tuple
 import numpy as np
 
-from VeraGridEngine.enumerations import DeviceType, BuildStatus, SubObjectType, ShuntControlMode, PrpCat
+from VeraGridEngine.enumerations import (DeviceType, BuildStatus, SubObjectType, ShuntControlMode, PrpCat,
+                                         ParamPowerFlowReferenceType)
 from VeraGridEngine.Devices.Parents.shunt_parent import ShuntParent
 from VeraGridEngine.Devices.Profiles import ProfileFloat, ProfileInt
 from VeraGridEngine.Devices.Substation.bus import Bus
@@ -47,6 +48,7 @@ class ControllableShunt(ShuntParent):
             tpe=ShuntControlMode,
             definition='Shunt control mode',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.controllable_shunt_control_mode_code,
         ),
         GCProp(
             prop_name='control_bus',
@@ -78,6 +80,7 @@ class ControllableShunt(ShuntParent):
             definition='Maximum conductance',
             editable=True,
             cat=[PrpCat.PF, PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.controllable_shunt_gmax_pu,
         ),
         GCProp(
             prop_name='Gmin',
@@ -86,6 +89,7 @@ class ControllableShunt(ShuntParent):
             definition='Minimum conductance',
             editable=True,
             cat=[PrpCat.PF, PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.controllable_shunt_gmin_pu,
         ),
         GCProp(
             prop_name='Bmax',
@@ -94,6 +98,7 @@ class ControllableShunt(ShuntParent):
             definition='Maximum susceptance',
             editable=True,
             cat=[PrpCat.PF, PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.controllable_shunt_bmax_pu,
         ),
         GCProp(
             prop_name='Bmin',
@@ -102,6 +107,7 @@ class ControllableShunt(ShuntParent):
             definition='Minimum susceptance',
             editable=True,
             cat=[PrpCat.PF, PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.controllable_shunt_bmin_pu,
         ),
         GCProp(
             prop_name='active_steps',
@@ -118,6 +124,7 @@ class ControllableShunt(ShuntParent):
             definition='Device step position (0~N-1)',
             profile_name='step_prof',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.controllable_shunt_step,
         ),
         GCProp(
             prop_name='Vmin',
@@ -125,6 +132,7 @@ class ControllableShunt(ShuntParent):
             tpe=float,
             definition='Lower range voltage value when regulating with Discrete mode',
             cat=[PrpCat.PF, PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.controllable_shunt_vmin_pu,
         ),
         GCProp(
             prop_name='Vset',
@@ -133,6 +141,7 @@ class ControllableShunt(ShuntParent):
             definition='Set voltage. This is used for controlled shunts.',
             profile_name='Vset_prof',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.controllable_shunt_vset_pu,
         ),
         GCProp(
             prop_name='Vmax',
@@ -140,6 +149,7 @@ class ControllableShunt(ShuntParent):
             tpe=float,
             definition='Upper range voltage value when regulating with Discrete mode.',
             cat=[PrpCat.PF, PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.controllable_shunt_vmax_pu,
         ),
     )
 

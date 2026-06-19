@@ -12,15 +12,15 @@ from VeraGridEngine.Simulations.ShortCircuitStudies.short_circuit import short_c
 from VeraGridEngine.Topology.admittance_matrices import compute_admittances
 from VeraGridEngine.Simulations.ShortCircuitStudies.short_circuit_results import ShortCircuitResults
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions import polar_to_rect
-from VeraGridEngine.enumerations import FaultType, MethodShortCircuit, PhasesShortCircuit, ConverterControlType
+from VeraGridEngine.enumerations import FaultType, PhasesShortCircuit, ConverterControlType
 from VeraGridEngine.basic_structures import CxVec, Vec, IntVec
-from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_basic_formulation_3ph import (compute_ybus,
-                                                                                        compute_current_loads,
-                                                                                        compute_power_loads,
-                                                                                        compute_ybus_generator,
-                                                                                        expand_magnitudes,
-                                                                                        expand_indices_3ph,
-                                                                                        expand3ph)
+from VeraGridEngine.Simulations.PowerFlow3ph.Formulations.pf_basic_formulation_3ph import (compute_ybus,
+                                                                                           compute_current_loads,
+                                                                                           compute_power_loads,
+                                                                                           compute_ybus_generator,
+                                                                                           expand_magnitudes,
+                                                                                           expand_indices_3ph,
+                                                                                           expand3ph)
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
 from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_full_acdc_with_negative_poles_sc import \

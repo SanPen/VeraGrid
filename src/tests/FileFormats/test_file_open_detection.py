@@ -17,3 +17,10 @@ def test_determine_file_type_keeps_supported_compound_extensions() -> None:
     Compound extensions that are meaningful formats still need to be recognized.
     """
     assert determine_file_type("network.v1.xiidm.bz2") == FileType.Iidm
+
+
+def test_determine_file_type_detects_eurostag_files() -> None:
+    assert determine_file_type("case1.ech") == FileType.Eurostag
+    assert determine_file_type("case1.dta") == FileType.Eurostag
+    assert determine_file_type(["case1.ech", "case1.dta"]) == FileType.Eurostag
+    assert determine_file_type(["case1.ech", "case1.dta", "case1.lf"]) == FileType.Eurostag

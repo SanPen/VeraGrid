@@ -60,7 +60,7 @@ from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEdi
 from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_window import DynamicEditorWorkspaceWindow
 from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import DynamicEditorWorkspaceManager
 from VeraGrid.Gui.Diagrams.SchematicWidget.diagram_bus_selection_dialogue import DiagramBusSelectorDialogue
-from VeraGrid.Gui.Diagrams.generic_graphics import IS_DARK
+from VeraGrid.Gui.Diagrams.generic_graphics import is_dark_mode
 from VeraGrid.Gui.python_console import PythonConsole
 from VeraGrid.Gui.python_script_editor import PythonCodeEditor
 from VeraGrid.Gui.toast_widget import ToastManager
@@ -297,7 +297,7 @@ class BaseMainGui(QMainWindow):
         self.exchange_places_dict = {x.value: x for x in exchange_places}
 
         # dark mode detection ------------------------------------------------------------------------------------------
-        self.ui.dark_mode_checkBox.setChecked(IS_DARK)
+        self.ui.dark_mode_checkBox.setChecked(is_dark_mode())
 
         self.calculation_inputs_to_display = None
 
@@ -1118,7 +1118,9 @@ class BaseMainGui(QMainWindow):
         Display the grid analysis GUI
         """
 
-        self.analysis_dialogue = GridAnalysisGUI(circuit=self.circuit)
+        self.analysis_dialogue = GridAnalysisGUI(circuit=self.circuit,
+                                                 power_flow_options=self.get_selected_power_flow_options(),
+                                                 parent=self)
 
         self.analysis_dialogue.resize(int(1.61 * 600.0), 600)
         self.analysis_dialogue.show()

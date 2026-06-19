@@ -34,6 +34,7 @@ from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import (
 from VeraGridEngine.Utils.emt_boundary_update_wrapper import BoundaryUpdateWrapper
 from VeraGridEngine.Utils.Symbolic.jit_compiler import EagerEquationCompiler, EquationCompiler, MatrixVectorizedCompiler, _compile_to_file
 from VeraGridEngine.Simulations.EMT.solvers.structural_compiled_solver import StructuralCompiledSparseFactorizationManager
+from VeraGridEngine.Simulations.driver_template import DummySignal
 from VeraGridEngine.Utils.NumericalMethods.external_sparse_solver_interface import SparseLinearSolverBackendProvider
 from VeraGridEngine.enumerations import DynamicIntegrationMethod
 from VeraGridEngine.basic_structures import Vec, Mat
@@ -1187,7 +1188,7 @@ class StructuralVectorizedSolver:
         'jit_jacobians_ad', 'vectorized_ready', '_last_sim_loop_time', '_newton_diag_config', '_vectorized_warmup_done',
         '_predictor', '_runtime_param_count', '_static_parameter_buffer', '_full_parameter_buffer', '_residual_buffer',
         '_trial_state_buffer', '_trial_residual_buffer', '_trial_residual_evaluator',
-        '_backend_build_stats', '_last_runtime_stats', '_sparse_solver_backend_provider', '_sparse_factorization_manager', '_cancel_checker'
+        '_backend_build_stats', '_last_runtime_stats', '_sparse_solver_backend_provider', '_sparse_factorization_manager', '_cancel_checker', '_progress_signal'
     ]
 
     def __init__(self,
@@ -1203,6 +1204,7 @@ class StructuralVectorizedSolver:
                  auto_vectorization: bool = True,
                  sparse_solver_backend_provider: SparseLinearSolverBackendProvider | None = None,
                  newton_diag_config: NewtonDiagnosticsConfig | None = None,
+                 progress_signal: DummySignal | None = None,
                  cancel_checker: Callable[[], bool] | None = None)-> None:
         """
         :param problem: The DAE problem definition.
@@ -1216,6 +1218,8 @@ class StructuralVectorizedSolver:
         :param newton_max_iter: Maximum Newton iterations per local EMT substep.
         :param sparse_solver_backend_provider: Sparse linear solver backend provider.
         :type sparse_solver_backend_provider: SparseLinearSolverBackendProvider | None
+        :param progress_signal: Optional progress signal updated during the simulation loop.
+        :type progress_signal: DummySignal | None
         """
         self.problem = problem
         self.t0 = t0
@@ -1280,6 +1284,7 @@ class StructuralVectorizedSolver:
         self._last_runtime_stats: Dict[str, float] = dict()
         self._sparse_solver_backend_provider = sparse_solver_backend_provider
         self._sparse_factorization_manager = None
+        self._progress_signal: DummySignal | None = progress_signal
         self._cancel_checker = cancel_checker
 
         if auto_vectorization:
@@ -1637,6 +1642,11 @@ class StructuralVectorizedSolver:
             pass
 
         for i in range(steps):
+
+            if self._progress_signal is not None:
+                self.problem.report_progress2(i, steps)
+            else:
+                pass
 
             if self._cancel_checker is not None and self._cancel_checker():
                 return t[:i + 1].copy(), y[:i + 1, :].copy(), dy[:i + 1, :].copy(), well_initialized, converged

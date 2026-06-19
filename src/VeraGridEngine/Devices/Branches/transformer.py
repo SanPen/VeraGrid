@@ -9,7 +9,8 @@ from typing import Tuple
 from VeraGridEngine.basic_structures import Logger, Mat, IntVec
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import (WindingsConnection, BuildStatus, TapPhaseControl,
-                                         TapModuleControl, TapChangerTypes, WindingType, PrpCat)
+                                         TapModuleControl, TapChangerTypes, WindingType, PrpCat,
+                                         ParamPowerFlowReferenceType)
 from VeraGridEngine.Devices.Parents.controllable_branch_parent import ControllableBranchParent
 from VeraGridEngine.Devices.Branches.transformer_type import TransformerType, reverse_transformer_short_circuit_study
 from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
@@ -40,6 +41,7 @@ class Transformer2W(ControllableBranchParent):
             tpe=float,
             definition='High voltage rating',
             cat=[PrpCat.TP],
+            dyn_ref=ParamPowerFlowReferenceType.transformer_winding1_rated_voltage_ll_kv,
         ),
         GCProp(
             prop_name='LV',
@@ -47,6 +49,7 @@ class Transformer2W(ControllableBranchParent):
             tpe=float,
             definition='Low voltage rating',
             cat=[PrpCat.TP],
+            dyn_ref=ParamPowerFlowReferenceType.transformer_winding2_rated_voltage_ll_kv,
         ),
         GCProp(
             prop_name='Sn',
@@ -54,6 +57,7 @@ class Transformer2W(ControllableBranchParent):
             tpe=float,
             definition='Nominal power',
             cat=[PrpCat.TP],
+            dyn_ref=ParamPowerFlowReferenceType.transformer_rated_power_mva,
         ),
         GCProp(
             prop_name='Pcu',
@@ -61,6 +65,7 @@ class Transformer2W(ControllableBranchParent):
             tpe=float,
             definition='Copper losses (optional)',
             cat=[PrpCat.TP],
+            dyn_ref=ParamPowerFlowReferenceType.transformer_short_circuit_loss_kw,
         ),
         GCProp(
             prop_name='Pfe',
@@ -68,6 +73,7 @@ class Transformer2W(ControllableBranchParent):
             tpe=float,
             definition='Iron losses (optional)',
             cat=[PrpCat.TP],
+            dyn_ref=ParamPowerFlowReferenceType.transformer_open_circuit_loss_kw,
         ),
         GCProp(
             prop_name='I0',
@@ -75,6 +81,7 @@ class Transformer2W(ControllableBranchParent):
             tpe=float,
             definition='No-load current (optional)',
             cat=[PrpCat.TP],
+            dyn_ref=ParamPowerFlowReferenceType.transformer_open_circuit_current_pct,
         ),
         GCProp(
             prop_name='Vsc',
@@ -82,6 +89,7 @@ class Transformer2W(ControllableBranchParent):
             tpe=float,
             definition='Short-circuit voltage (optional)',
             cat=[PrpCat.TP],
+            dyn_ref=ParamPowerFlowReferenceType.transformer_short_circuit_voltage_pct,
         ),
         GCProp(
             prop_name='conn',
@@ -111,6 +119,7 @@ class Transformer2W(ControllableBranchParent):
             definition='Vector group number. It indicates the structural phase:'
                           'phase = vector_group_number · 30º',
             cat=[PrpCat.TP, PrpCat.PF3, PrpCat.SC],
+            dyn_ref=ParamPowerFlowReferenceType.transformer_connection_clock,
         ),
         GCProp(
             prop_name='template',

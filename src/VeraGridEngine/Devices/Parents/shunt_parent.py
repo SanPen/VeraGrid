@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.enumerations import BuildStatus, DeviceType, SubObjectType, PrpCat
+from VeraGridEngine.enumerations import BuildStatus, DeviceType, SubObjectType, PrpCat, ParamPowerFlowReferenceType
 from VeraGridEngine.Devices.Profiles import ProfileFloat
 from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
 from VeraGridEngine.Devices.admittance_matrix import AdmittanceMatrix
@@ -53,6 +53,7 @@ class ShuntParent(InjectionParent):
             definition='Active power',
             profile_name='G_prof',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.shunt_g_pu,
         ),
         GCProp(
             prop_name='G0',
@@ -61,6 +62,7 @@ class ShuntParent(InjectionParent):
             definition='Zero sequence active power of the impedance component at V=1.0 p.u.',
             profile_name='G0_prof',
             cat=[PrpCat.PF3, PrpCat.SC],
+            dyn_ref=ParamPowerFlowReferenceType.shunt_g0_pu,
         ),
         GCProp(
             prop_name='Ga',
@@ -69,6 +71,7 @@ class ShuntParent(InjectionParent):
             definition='Active power',
             profile_name='Ga_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.shunt_ga_pu,
         ),
         GCProp(
             prop_name='Gb',
@@ -77,6 +80,7 @@ class ShuntParent(InjectionParent):
             definition='Active power',
             profile_name='Gb_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.shunt_gb_pu,
         ),
         GCProp(
             prop_name='Gc',
@@ -85,6 +89,7 @@ class ShuntParent(InjectionParent):
             definition='Active power',
             profile_name='Gc_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.shunt_gc_pu,
         ),
         GCProp(
             prop_name='B',
@@ -93,6 +98,7 @@ class ShuntParent(InjectionParent):
             definition='Reactive power',
             profile_name='B_prof',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.shunt_b_pu,
         ),
         GCProp(
             prop_name='B0',
@@ -101,6 +107,7 @@ class ShuntParent(InjectionParent):
             definition='Zero sequence reactive power of the impedance component at V=1.0 p.u.',
             profile_name='B0_prof',
             cat=[PrpCat.PF3, PrpCat.SC],
+            dyn_ref=ParamPowerFlowReferenceType.shunt_b0_pu,
         ),
         GCProp(
             prop_name='Ba',
@@ -109,6 +116,7 @@ class ShuntParent(InjectionParent):
             definition='Reactive power',
             profile_name='Ba_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.shunt_ba_pu,
         ),
         GCProp(
             prop_name='Bb',
@@ -117,6 +125,7 @@ class ShuntParent(InjectionParent):
             definition='Reactive power',
             profile_name='Bb_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.shunt_bb_pu,
         ),
         GCProp(
             prop_name='Bc',
@@ -125,6 +134,7 @@ class ShuntParent(InjectionParent):
             definition='Reactive power',
             profile_name='Bc_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.shunt_bc_pu,
         ),
         GCProp(
             prop_name='ysh',

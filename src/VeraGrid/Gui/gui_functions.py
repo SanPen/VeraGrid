@@ -952,6 +952,7 @@ def get_simulation_tree_icons() -> Dict[str, str]:
     return {
         SimulationTypes.PowerFlow_run.value: ':/Icons/icons/pf',
         SimulationTypes.PowerFlow3ph_run.value: ':/Icons/icons/pf3',
+        SimulationTypes.PowerFlowTimeSeries3ph_run.value: ':/Icons/icons/pf3',
         SimulationTypes.PowerFlowTimeSeries_run.value: ':/Icons/icons/pf_ts.png',
         SimulationTypes.OPF_run.value: ':/Icons/icons/dcopf.png',
         SimulationTypes.OPFTimeSeries_run.value: ':/Icons/icons/dcopf_ts.png',

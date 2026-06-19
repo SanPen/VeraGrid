@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.enumerations import BuildStatus, DeviceType, PrpCat
+from VeraGridEngine.enumerations import BuildStatus, DeviceType, PrpCat, ParamPowerFlowReferenceType
 from VeraGridEngine.basic_structures import CxVec
 from VeraGridEngine.Devices.Profiles import ProfileFloat
 from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
@@ -48,6 +48,7 @@ class LoadParent(InjectionParent):
             definition='Active power',
             profile_name='P_prof',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.Pl0,
         ),
         GCProp(
             prop_name='Pa',
@@ -56,6 +57,7 @@ class LoadParent(InjectionParent):
             definition='Phase A active power',
             profile_name='Pa_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.Pl0_A,
         ),
         GCProp(
             prop_name='Pb',
@@ -64,6 +66,7 @@ class LoadParent(InjectionParent):
             definition='Phase B active power',
             profile_name='Pb_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.Pl0_B,
         ),
         GCProp(
             prop_name='Pc',
@@ -72,6 +75,7 @@ class LoadParent(InjectionParent):
             definition='Phase C active power',
             profile_name='Pc_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.Pl0_C,
         ),
         GCProp(
             prop_name='Q',
@@ -80,6 +84,7 @@ class LoadParent(InjectionParent):
             definition='Reactive power',
             profile_name='Q_prof',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.Ql0,
         ),
         GCProp(
             prop_name='Qa',
@@ -88,6 +93,7 @@ class LoadParent(InjectionParent):
             definition='Phase A reactive power',
             profile_name='Qa_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.Ql0_A,
         ),
         GCProp(
             prop_name='Qb',
@@ -96,6 +102,7 @@ class LoadParent(InjectionParent):
             definition='Phase B reactive power',
             profile_name='Qb_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.Ql0_B,
         ),
         GCProp(
             prop_name='Qc',
@@ -104,6 +111,7 @@ class LoadParent(InjectionParent):
             definition='Phase C reactive power',
             profile_name='Qc_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.Ql0_C,
         ),
     )
 

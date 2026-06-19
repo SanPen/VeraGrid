@@ -1580,8 +1580,10 @@ def split_slack_bus_quantity_between_generators_and_batteries(
     qfixed_per_bus: Vec = Qfixed_bus.copy()
     qmin_control_per_bus: Vec = np.zeros(n_bus, dtype=np.float64)
     qmax_control_per_bus: Vec = np.zeros(n_bus, dtype=np.float64)
+    qrange_control_per_bus: Vec = np.zeros(n_bus, dtype=np.float64)
     control_count_per_bus: np.ndarray = np.zeros(n_bus, dtype=np.int64)
     qshare_per_bus: Vec = np.zeros(n_bus, dtype=np.float64)
+    qflat_extra_per_bus: Vec = np.zeros(n_bus, dtype=np.float64)
 
     gen_idx: int
     batt_idx: int
@@ -1617,6 +1619,7 @@ def split_slack_bus_quantity_between_generators_and_batteries(
         qmin_control_value: float = qmin_control_per_bus[bus_idx]
         qmax_control_value: float = qmax_control_per_bus[bus_idx]
         qrange_control_value: float = qmax_control_value - qmin_control_value
+        qrange_control_per_bus[bus_idx] = qrange_control_value
         qcontrol_required_value: float = Qbus[bus_idx] - qfixed_per_bus[bus_idx]
         control_count_value: int = int(control_count_per_bus[bus_idx])
 
@@ -1632,6 +1635,9 @@ def split_slack_bus_quantity_between_generators_and_batteries(
                     )
                 else:
                     qshare_per_bus[bus_idx] = 0.0
+                    qflat_extra_per_bus[bus_idx] = (
+                        (qcontrol_required_value - qmin_control_value) / control_count_value
+                    )
             else:
                 qshare_per_bus[bus_idx] = 0.0
         else:
@@ -1645,7 +1651,10 @@ def split_slack_bus_quantity_between_generators_and_batteries(
                 qmin_gen_value: float = Qmin_gen[gen_idx]
                 qmax_gen_value: float = Qmax_gen[gen_idx]
                 qrange_gen_value: float = qmax_gen_value - qmin_gen_value
-                q_gen[gen_idx] = qmin_gen_value + qshare_per_bus[bus_idx] * qrange_gen_value
+                if qrange_control_per_bus[bus_idx] > atol:
+                    q_gen[gen_idx] = qmin_gen_value + qshare_per_bus[bus_idx] * qrange_gen_value
+                else:
+                    q_gen[gen_idx] = qmin_gen_value + qflat_extra_per_bus[bus_idx]
             else:
                 q_gen[gen_idx] = Q0_gen[gen_idx]
         else:
@@ -1659,7 +1668,10 @@ def split_slack_bus_quantity_between_generators_and_batteries(
                 qmin_batt_value: float = Qmin_batt[batt_idx]
                 qmax_batt_value: float = Qmax_batt[batt_idx]
                 qrange_batt_value: float = qmax_batt_value - qmin_batt_value
-                q_batt[batt_idx] = qmin_batt_value + qshare_per_bus[bus_idx] * qrange_batt_value
+                if qrange_control_per_bus[bus_idx] > atol:
+                    q_batt[batt_idx] = qmin_batt_value + qshare_per_bus[bus_idx] * qrange_batt_value
+                else:
+                    q_batt[batt_idx] = qmin_batt_value + qflat_extra_per_bus[bus_idx]
             else:
                 q_batt[batt_idx] = Q0_batt[batt_idx]
         else:

@@ -21,7 +21,8 @@ from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
 from VeraGridEngine.IO.file_system import tiles_path
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.Simulations import PowerFlowResults, ContinuationPowerFlowResults, PowerFlowTimeSeriesResults
-from VeraGridEngine.Simulations.PowerFlow.power_flow_results_3ph import PowerFlowResults3Ph
+from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_results_3ph import PowerFlowResults3Ph
+from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_ts_results_3ph import PowerFlowTimeSeriesResults3Ph
 from VeraGridEngine.Simulations.StateEstimation.state_estimation_results import StateEstimationResults
 from VeraGridEngine.Utils.progress_bar import print_progress_bar
 from VeraGridEngine.basic_structures import Logger
@@ -52,7 +53,7 @@ from VeraGrid.Gui.dynamic_events_editor_dialog import collect_block_runtime_even
 from VeraGrid.Gui.Diagrams.MapWidget.Substation.substation_graphic_item import SubstationGraphicItem
 from VeraGrid.Gui.ShortCircuitEditor.short_circuit_selector import ShortCircuitSelector
 from VeraGrid.Gui.general_dialogues import (CheckListDialogue, StartEndSelectionDialogue,
-                                            InputNumberDialogue, LogsDialogue)
+                                            InputNumberDialogue)
 
 ALL_EDITORS = Union[SchematicWidget, GridMapWidget, BaseDiagramWidget]
 ALL_EDITORS_NONE = Union[None, SchematicWidget, GridMapWidget]
@@ -832,6 +833,95 @@ class DiagramsMain(CompiledArraysMain):
                                              shunt_q=results.shunt_q[t_idx, :],
                                              shunt_names=results.sh_names,
                                              t_idx=t_idx)
+
+    def pf_3ph_ts_colouring(self, t_idx: int,
+                            diagram_widget: ALL_EDITORS,
+                            results: PowerFlowTimeSeriesResults3Ph, cmap: Colormaps,
+                            use_flow_based_width: bool = False,
+                            min_branch_width: int = 2,
+                            max_branch_width: int = 5,
+                            min_bus_width: int = 2,
+                            max_bus_width: int = 5):
+        """
+
+        :param t_idx:
+        :param diagram_widget:
+        :param results:
+        :param cmap:
+        :param use_flow_based_width:
+        :param min_branch_width:
+        :param max_branch_width:
+        :param min_bus_width:
+        :param max_bus_width:
+        :return:
+        """
+        bus_active = self.circuit.get_bus_actives(t_idx=t_idx)
+        br_active = self.circuit.get_branch_actives(t_idx=t_idx, add_vsc=False, add_hvdc=False, add_switch=True)
+        hvdc_active = self.circuit.get_hvdc_actives(t_idx=t_idx)
+        vsc_active = self.circuit.get_vsc_actives(t_idx=t_idx)
+
+        return diagram_widget.colour_results_3ph(
+            SbusA=results.Sbus_A[t_idx, :],
+            SbusB=results.Sbus_B[t_idx, :],
+            SbusC=results.Sbus_C[t_idx, :],
+            voltagesA=results.voltage_A[t_idx, :],
+            voltagesB=results.voltage_B[t_idx, :],
+            voltagesC=results.voltage_C[t_idx, :],
+            bus_active=bus_active,
+            types=results.bus_types,
+            SfA=results.Sf_A[t_idx, :],
+            SfB=results.Sf_B[t_idx, :],
+            SfC=results.Sf_C[t_idx, :],
+            StA=results.St_A[t_idx, :],
+            StB=results.St_B[t_idx, :],
+            StC=results.St_C[t_idx, :],
+            loadingsA=results.loading_A[t_idx, :],
+            loadingsB=results.loading_B[t_idx, :],
+            loadingsC=results.loading_C[t_idx, :],
+            lossesA=results.losses_A[t_idx, :],
+            lossesB=results.losses_B[t_idx, :],
+            lossesC=results.losses_C[t_idx, :],
+            br_active=br_active,
+            ma=results.tap_module[t_idx, :],
+            tau=results.tap_angle[t_idx, :],
+            hvdc_PfA=results.Pf_hvdc_A[t_idx, :],
+            hvdc_PfB=results.Pf_hvdc_B[t_idx, :],
+            hvdc_PfC=results.Pf_hvdc_C[t_idx, :],
+            hvdc_PtA=results.Pt_hvdc_A[t_idx, :],
+            hvdc_PtB=results.Pt_hvdc_B[t_idx, :],
+            hvdc_PtC=results.Pt_hvdc_C[t_idx, :],
+            hvdc_losses=results.losses_hvdc[t_idx, :],
+            hvdc_loading=results.loading_hvdc[t_idx, :],
+            hvdc_active=hvdc_active,
+            vsc_Pf=results.Pfp_vsc[t_idx, :],
+            vsc_PtA=results.St_vsc_A[t_idx, :].real,
+            vsc_PtB=results.St_vsc_B[t_idx, :].real,
+            vsc_PtC=results.St_vsc_C[t_idx, :].real,
+            vsc_QtA=results.St_vsc_A[t_idx, :].imag,
+            vsc_QtB=results.St_vsc_B[t_idx, :].imag,
+            vsc_QtC=results.St_vsc_C[t_idx, :].imag,
+            vsc_losses=results.losses_vsc[t_idx, :],
+            vsc_loading=results.loading_vsc[t_idx, :],
+            vsc_active=vsc_active,
+            loading_label='loading',
+            use_flow_based_width=use_flow_based_width,
+            min_branch_width=min_branch_width,
+            max_branch_width=max_branch_width,
+            min_bus_width=min_bus_width,
+            max_bus_width=max_bus_width,
+            cmap=cmap,
+            gen_q_a=results.gen_q_A[t_idx, :],
+            gen_q_b=results.gen_q_B[t_idx, :],
+            gen_q_c=results.gen_q_C[t_idx, :],
+            gen_names=results.gen_names,
+            battery_q_a=results.battery_q_A[t_idx, :],
+            battery_q_b=results.battery_q_B[t_idx, :],
+            battery_q_c=results.battery_q_C[t_idx, :],
+            battery_names=results.batt_names,
+            shunt_q_a=results.shunt_q_A[t_idx, :],
+            shunt_q_b=results.shunt_q_B[t_idx, :],
+            shunt_q_c=results.shunt_q_C[t_idx, :],
+            shunt_names=results.sh_names)
 
     def cpf_colouring(self, diagram_widget: ALL_EDITORS,
                       results: ContinuationPowerFlowResults, cmap: Colormaps,
@@ -1634,6 +1724,23 @@ class DiagramsMain(CompiledArraysMain):
                                      max_branch_width=max_branch_width,
                                      min_bus_width=min_bus_width,
                                      max_bus_width=max_bus_width)
+
+            else:
+                if allow_popups:
+                    self.show_warning_toast(f"{current_study} does not have values for the snapshot")
+
+        elif current_study == sim.PowerFlowTimeSeriesDriver3Ph.tpe.value:
+            if t_idx is not None:
+                _, results = self.session.power_flow_3ph_ts
+                self.pf_3ph_ts_colouring(t_idx=t_idx,
+                                         diagram_widget=diagram_widget,
+                                         results=results,
+                                         cmap=cmap,
+                                         use_flow_based_width=use_flow_based_width,
+                                         min_branch_width=min_branch_width,
+                                         max_branch_width=max_branch_width,
+                                         min_bus_width=min_bus_width,
+                                         max_bus_width=max_bus_width)
 
             else:
                 if allow_popups:

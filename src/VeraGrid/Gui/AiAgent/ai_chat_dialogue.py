@@ -542,7 +542,6 @@ def build_default_grid_analysis_parameters() -> dict[str, object]:
     parameters["min_vcc"] = 8.0
     parameters["max_vcc"] = 18.0
     parameters["branch_x_threshold"] = 1e-4
-    parameters["condition_number_threshold"] = 1e-4
     parameters["eps_max"] = 1e20
     parameters["eps_min"] = 1e-20
 
@@ -620,7 +619,6 @@ def build_grid_analysis_payload_from_app(
         max_vcc=float(parameters["max_vcc"]),
         logger=logger,
         branch_x_threshold=float(parameters["branch_x_threshold"]),
-        condition_number_threshold=float(parameters["condition_number_threshold"]),
         eps_max=float(parameters["eps_max"]),
         eps_min=float(parameters["eps_min"]),
     )

@@ -21,7 +21,9 @@ from VeraGridEngine.Simulations.OPF.opf_driver import OptimalPowerFlowDriver, Op
 from VeraGridEngine.Simulations.OPF.opf_ts_driver import (OptimalPowerFlowTimeSeriesDriver,
                                                           OptimalPowerFlowTimeSeriesResults)
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowDriver, PowerFlowResults
-from VeraGridEngine.Simulations.PowerFlow.power_flow_driver_3ph import PowerFlowDriver3Ph, PowerFlowResults3Ph
+from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_driver_3ph import PowerFlowDriver3Ph, PowerFlowResults3Ph
+from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_ts_driver_3ph import (
+    PowerFlowTimeSeriesDriver3Ph, PowerFlowTimeSeriesResults3Ph)
 from VeraGridEngine.Simulations.PowerFlow.power_flow_ts_driver import (PowerFlowTimeSeriesDriver,
                                                                        PowerFlowTimeSeriesResults)
 from VeraGridEngine.Simulations.ShortCircuitStudies.short_circuit_driver import ShortCircuitDriver, ShortCircuitResults
@@ -67,6 +69,7 @@ DRIVER_OBJECTS = Union[
     OptimalPowerFlowTimeSeriesDriver,
     PowerFlowDriver,
     PowerFlowDriver3Ph,
+    PowerFlowTimeSeriesDriver3Ph,
     PowerFlowTimeSeriesDriver,
     StateEstimationDriver,
     ShortCircuitDriver,
@@ -100,6 +103,7 @@ RESULTS_OBJECTS = Union[
     OptimalPowerFlowTimeSeriesResults,
     PowerFlowResults,
     PowerFlowResults3Ph,
+    PowerFlowTimeSeriesResults3Ph,
     PowerFlowTimeSeriesResults,
     ShortCircuitResults,
     StochasticPowerFlowResults,

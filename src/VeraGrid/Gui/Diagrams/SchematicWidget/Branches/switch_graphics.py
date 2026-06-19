@@ -6,6 +6,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Union
 from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtWidgets import QMenu
+from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
 from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
 from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import BarTerminalItem, RoundTerminalItem
 from VeraGrid.Gui.gui_functions import add_menu_entry
@@ -46,6 +47,16 @@ class SwitchGraphicItem(LineGraphicTemplateItem):
     def api_object(self) -> Switch:
         return self._api_object
 
+    def open_device_editor(self) -> bool:
+        """
+        Open the generic device editor for this switch.
+
+        :return: ``True`` when the editor was opened.
+        """
+        dialog = TemplateDeviceEditor(api_object=self.api_object, circuit=self.editor.circuit)
+        dialog.exec()
+        return True
+
     def contextMenuEvent(self, event):
         """
         Show context menu
@@ -66,6 +77,11 @@ class SwitchGraphicItem(LineGraphicTemplateItem):
                            function_ptr=self.enable_disable_label_drawing,
                            checkeable=True,
                            checked_value=self.draw_labels)
+
+            add_menu_entry(menu=menu,
+                           text="Editor",
+                           function_ptr=self.edit,
+                           icon_path=":/Icons/icons/edit.png")
 
             add_menu_entry(menu=menu,
                            text="RMS Editor",
@@ -116,6 +132,26 @@ class SwitchGraphicItem(LineGraphicTemplateItem):
             menu.exec_(event.screenPos())
         else:
             pass
+
+    def mouseDoubleClickEvent(self, event) -> None:
+        """
+        Open the switch editor on double click.
+
+        :param event: Mouse event.
+        :return: ``None``.
+        """
+        if self.api_object is not None:
+            self.open_device_editor()
+        else:
+            pass
+
+    def edit(self) -> None:
+        """
+        Open the appropriate editor dialogue.
+
+        :return: ``None``.
+        """
+        self.open_device_editor()
 
     def edit_dynamic_rms(self) -> None:
         """

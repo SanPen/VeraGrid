@@ -209,7 +209,7 @@ class _GraphicsManagerStub:
 
 
 class _DiagramStub:
-    __slots__ = ("docks", "attachments", "locations")
+    __slots__ = ("docks", "attachments", "locations", "use_api_colors")
 
     def __init__(self) -> None:
         """
@@ -220,6 +220,7 @@ class _DiagramStub:
         self.docks: dict[int, dict[str, Any]] = dict()
         self.attachments: dict[tuple[int, str], dict[str, Any]] = dict()
         self.locations: dict[int, GraphicLocation] = dict()
+        self.use_api_colors: bool = False
 
     def get_dock(self, api_object: Any) -> dict[str, Any]:
         """

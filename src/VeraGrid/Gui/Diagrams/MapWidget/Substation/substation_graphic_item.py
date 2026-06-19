@@ -16,6 +16,7 @@ from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics import Ge
 from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_load_graphics import Load
 from VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container import MapLineContainer
 from VeraGrid.Gui.Diagrams.MapWidget.Substation.node_template import NodeTemplate
+from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
 from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget
 from VeraGrid.Gui.gui_functions import add_menu_entry
 from VeraGrid.Gui.messages import yes_no_question, info_msg
@@ -149,6 +150,16 @@ class SubstationGraphicItem(NodeTemplate, QGraphicsRectItem):
         :return:
         """
         return self._api_object
+
+    def open_device_editor(self) -> bool:
+        """
+        Open the generic device editor for this substation.
+
+        :return: ``True`` when the editor was opened.
+        """
+        dialog = TemplateDeviceEditor(api_object=self.api_object, circuit=self.editor.circuit)
+        dialog.exec()
+        return True
 
     def merge(self, se: "SubstationGraphicItem"):
         """
@@ -387,6 +398,18 @@ class SubstationGraphicItem(NodeTemplate, QGraphicsRectItem):
         if self.api_object is not None:
             self.editor.set_editor_model(api_object=self.api_object)
 
+    def mouseDoubleClickEvent(self, event: QGraphicsSceneMouseEvent) -> None:
+        """
+        Open the substation editor on double click.
+
+        :param event: Mouse event.
+        :return: ``None``.
+        """
+        if self.api_object is not None:
+            self.open_device_editor()
+        else:
+            pass
+
     def mouseReleaseEvent(self, event: QGraphicsSceneMouseEvent):
         """
         Event handler for mouse release events.
@@ -417,6 +440,11 @@ class SubstationGraphicItem(NodeTemplate, QGraphicsRectItem):
         :param event:
         """
         menu = QMenu()
+
+        add_menu_entry(menu=menu,
+                       text="Editor",
+                       icon_path=":/Icons/icons/edit.png",
+                       function_ptr=self.edit)
 
         add_menu_entry(menu=menu,
                        text="Add voltage level",
@@ -1039,3 +1067,11 @@ class SubstationGraphicItem(NodeTemplate, QGraphicsRectItem):
                 )
             else:
                 self.editor.gui.show_error_toast("Select only one bus")
+
+    def edit(self) -> None:
+        """
+        Open the appropriate editor dialogue.
+
+        :return: ``None``.
+        """
+        self.open_device_editor()

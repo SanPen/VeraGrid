@@ -945,6 +945,15 @@ def multi_island_pf_nc(nc: NumericalCircuit,
         )
 
         if not results.converged:
+            logger.add_warning(
+                msg="Control-aware power flow did not converge; falling back to the "
+                    "limited-support solver, which does NOT enforce branch/VSC/HVDC "
+                    "controls (tap module, phase shift, converter set-points). "
+                    "The returned solution may not honour those control targets.",
+                device="PowerFlow",
+                value="control-aware solver failed",
+                expected_value="converged solution with controls enforced"
+            )
             results = __multi_island_pf_nc_limited_support(
                 nc=nc,
                 options=options,

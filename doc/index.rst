@@ -59,6 +59,7 @@ Contents
 
     md_source/installation.md
     md_source/user_interface.md
+    md_source/grid_analysis.md
     md_source/structure.md
     md_source/modelling.md
     md_source/device_relationships.md

@@ -12,7 +12,7 @@ from matplotlib import pyplot as plt
 from VeraGridEngine.basic_structures import Logger, CxVec
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import (DeviceType, BuildStatus, SubObjectType, GeneratorType, PrpCat,
-                                         GeneratorControlMode)
+                                         GeneratorControlMode, ParamPowerFlowReferenceType)
 from VeraGridEngine.Devices.Aggregation.market_unit import MarketUnit
 from VeraGridEngine.Devices.Associations.association import Associations
 from VeraGridEngine.Devices.Associations.fuel import Fuel
@@ -126,6 +126,7 @@ class Generator(InjectionParent):
             definition='Active power',
             profile_name='P_prof',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.generator_p_pu,
         ),
         GCProp(
             prop_name='Pmin',
@@ -134,6 +135,7 @@ class Generator(InjectionParent):
             definition='Minimum active power. Used in OPF.',
             profile_name='Pmin_prof',
             cat=[PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.Pmin,
         ),
         GCProp(
             prop_name='Pmax',
@@ -142,6 +144,7 @@ class Generator(InjectionParent):
             definition='Maximum active power. Used in OPF.',
             profile_name='Pmax_prof',
             cat=[PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.Pmax,
         ),
         GCProp(
             prop_name='Q',
@@ -150,6 +153,7 @@ class Generator(InjectionParent):
             definition='Reactive power',
             profile_name='Q_prof',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.generator_q_pu,
         ),
         GCProp(
             prop_name='Qmin',
@@ -158,6 +162,7 @@ class Generator(InjectionParent):
             definition='Minimum reactive power.',
             profile_name='Qmin_prof',
             cat=[PrpCat.PF, PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.generator_qmin_pu,
         ),
         GCProp(
             prop_name='Qmax',
@@ -166,6 +171,7 @@ class Generator(InjectionParent):
             definition='Maximum reactive power.',
             profile_name='Qmax_prof',
             cat=[PrpCat.PF, PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.generator_qmax_pu,
         ),
         GCProp(
             prop_name='control_mode',
@@ -173,7 +179,8 @@ class Generator(InjectionParent):
             tpe=GeneratorControlMode,
             definition='Generator control mode',
             cat=[PrpCat.PF],
-            old_names=("is_controlled",)
+            old_names=("is_controlled",),
+            dyn_ref=ParamPowerFlowReferenceType.generator_control_mode,
         ),
         GCProp(
             prop_name='control_bus',
@@ -190,6 +197,7 @@ class Generator(InjectionParent):
             definition='Power factor (cos(phi)). This is used for non-controlled generators.',
             profile_name='Pf_prof',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.generator_power_factor,
         ),
         GCProp(
             prop_name='Vset',
@@ -198,6 +206,7 @@ class Generator(InjectionParent):
             definition='Set voltage. This is used for controlled generators.',
             profile_name='Vset_prof',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.generator_vset_pu,
         ),
         GCProp(
             prop_name='k_droop',
@@ -219,6 +228,7 @@ class Generator(InjectionParent):
             tpe=float,
             definition='Nominal power.',
             cat=[PrpCat.TP],
+            dyn_ref=ParamPowerFlowReferenceType.generator_snom_mva,
         ),
 
         GCProp(
@@ -227,6 +237,7 @@ class Generator(InjectionParent):
             tpe=bool,
             definition='Use the reactive power capability curve?',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.generator_use_reactive_power_curve,
         ),
         GCProp(
             prop_name='q_curve',
@@ -243,6 +254,7 @@ class Generator(InjectionParent):
             tpe=float,
             definition='Total positive sequence resistance.',
             cat=[PrpCat.SC],
+            dyn_ref=ParamPowerFlowReferenceType.R1,
         ),
         GCProp(
             prop_name='X1',
@@ -250,6 +262,7 @@ class Generator(InjectionParent):
             tpe=float,
             definition='Total positive sequence reactance.',
             cat=[PrpCat.SC],
+            dyn_ref=ParamPowerFlowReferenceType.X1,
         ),
         GCProp(
             prop_name='R0',
@@ -257,6 +270,7 @@ class Generator(InjectionParent):
             tpe=float,
             definition='Total zero sequence resistance.',
             cat=[PrpCat.SC],
+            dyn_ref=ParamPowerFlowReferenceType.generator_r0_pu,
         ),
         GCProp(
             prop_name='X0',
@@ -264,6 +278,7 @@ class Generator(InjectionParent):
             tpe=float,
             definition='Total zero sequence reactance.',
             cat=[PrpCat.SC],
+            dyn_ref=ParamPowerFlowReferenceType.X0,
         ),
         GCProp(
             prop_name='R2',
@@ -271,6 +286,7 @@ class Generator(InjectionParent):
             tpe=float,
             definition='Total negative sequence resistance.',
             cat=[PrpCat.SC],
+            dyn_ref=ParamPowerFlowReferenceType.generator_r2_pu,
         ),
         GCProp(
             prop_name='X2',
@@ -278,6 +294,7 @@ class Generator(InjectionParent):
             tpe=float,
             definition='Total negative sequence reactance.',
             cat=[PrpCat.SC],
+            dyn_ref=ParamPowerFlowReferenceType.generator_x2_pu,
         ),
         GCProp(
             prop_name='Rs',
@@ -385,6 +402,7 @@ class Generator(InjectionParent):
             profile_name="enabled_dispatch_prof",
             definition='Enabled for dispatch? Used in OPF.',
             cat=[PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.generator_enabled_dispatch,
         ),
         GCProp(
             prop_name='must_run',
@@ -393,6 +411,7 @@ class Generator(InjectionParent):
             profile_name="must_run_prof",
             definition='P >= Pmin constraint. Used in OPF with unit commitment active.',
             cat=[PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.generator_must_run,
         ),
         GCProp(
             prop_name='emissions',
@@ -1331,13 +1350,33 @@ class Generator(InjectionParent):
         return self._control_mode
 
     @control_mode.setter
-    def control_mode(self, val: GeneratorControlMode) -> None:
+    def control_mode(self, val: GeneratorControlMode | str | bool) -> None:
         """
         Set control mode
         :param val:
         :return:
         """
-        self._control_mode = val
+        if isinstance(val, GeneratorControlMode):
+            self._control_mode = val
+            return
+
+        if isinstance(val, bool):
+            self._control_mode = GeneratorControlMode.V if val else GeneratorControlMode.Q
+            return
+
+        if isinstance(val, str):
+            parsed = GeneratorControlMode.argparse(val)
+
+            if isinstance(parsed, GeneratorControlMode):
+                self._control_mode = parsed
+                return
+
+            for mode in GeneratorControlMode:
+                if val == mode.value:
+                    self._control_mode = mode
+                    return
+
+        raise TypeError(f"Unsupported generator control mode: {val!r}")
 
     @property
     def Pf(self) -> float:

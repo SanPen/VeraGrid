@@ -65,8 +65,6 @@ def propagate_controls(chosen_idx: int,
         is_vm=is_vm_controlled[chosen_idx],
         is_va=is_va_controlled[chosen_idx],
     )
-    donor_vm = np.abs(Vbus[chosen_idx]) if is_vm_controlled[chosen_idx] else -1.0
-
     for idx in other_idx:
         priority = _control_priority(
             is_p=is_p_controlled[idx],
@@ -79,15 +77,12 @@ def propagate_controls(chosen_idx: int,
         if priority > donor_priority:
             donor_idx = idx
             donor_priority = priority
-            donor_vm = np.abs(Vbus[idx]) if is_vm_controlled[idx] else -1.0
-        # For equally strong voltage-controlled buses, keep the one with the
-        # highest stored setpoint so the surviving bus inherits a deterministic
-        # donor instead of depending on island ordering.
-        elif priority == donor_priority and is_vm_controlled[idx]:
-            vm = np.abs(Vbus[idx])
-            if vm > donor_vm:
-                donor_idx = idx
-                donor_vm = vm
+        # For equally strong voltage-controlled buses, keep the one with the lowest
+        # bus index. PSSe retains the lowest-numbered bus of a merged (switch-joined)
+        # node, so when generators with conflicting setpoints land on the same node
+        # its setpoint wins. This is also deterministic (independent of island ordering).
+        elif priority == donor_priority and is_vm_controlled[idx] and idx < donor_idx:
+            donor_idx = idx
 
     # Once the donor is chosen, copy its control flags and bus type as one block.
     if donor_idx != chosen_idx:

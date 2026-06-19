@@ -34,6 +34,7 @@ def build_emt_solver(options: EmtOptions,
                      h: float,
                      method: DynamicIntegrationMethod = DynamicIntegrationMethod.DaeTrapezoidal,
                      newton_diag_config: NewtonDiagnosticsConfig | None = None,
+                     progress_signal: DummySignal | None = None,
                      cancel_checker: Callable[[], bool] | None = None) -> Any:
     """
     Build the configured EMT solver.
@@ -52,6 +53,8 @@ def build_emt_solver(options: EmtOptions,
     :type method: DynamicIntegrationMethod
     :param newton_diag_config: Optional Newton diagnostics configuration.
     :type newton_diag_config: NewtonDiagnosticsConfig | None
+    :param progress_signal: Optional progress signal propagated to the solver loop.
+    :type progress_signal: DummySignal | None
     :param cancel_checker: Optional cancellation callback checked by the solver at safe boundaries.
     :type cancel_checker: Callable[[], bool] | None
     :return: Configured EMT solver instance.
@@ -79,6 +82,7 @@ def build_emt_solver(options: EmtOptions,
                           warmup_policy=options.compiled_warmup_policy,
                           sparse_solver_backend_provider=sparse_backend_provider,
                           newton_diag_config=newton_diag_config,
+                          progress_signal=progress_signal,
                           cancel_checker=cancel_checker)
     elif options.solver_type == EmtSolverTypes.StructuralAD:
         sparse_backend_provider = resolve_emt_sparse_solver_backend_provider(
@@ -95,6 +99,7 @@ def build_emt_solver(options: EmtOptions,
                           newton_max_iter=options.init_newton_max_iter,
                           sparse_solver_backend_provider=sparse_backend_provider,
                           newton_diag_config=newton_diag_config,
+                          progress_signal=progress_signal,
                           cancel_checker=cancel_checker)
     else:
         return solver_cls(problem=problem,
@@ -104,4 +109,5 @@ def build_emt_solver(options: EmtOptions,
                           method=method,
                           newton_max_iter=options.init_newton_max_iter,
                           newton_diag_config=newton_diag_config,
+                          progress_signal=progress_signal,
                           cancel_checker=cancel_checker)

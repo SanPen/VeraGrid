@@ -53,22 +53,6 @@ from VeraGridEngine.Utils.Symbolic.static_parameter_mapping_rms import (
 
 from VeraGridEngine.Utils.procedural_logic import BlockProceduralLogicUpdater
 
-
-def assign_line_static_parameters(elm: Any, parameter_reference: ParamPowerFlowReferenceType) -> Const:
-    if parameter_reference == ParamPowerFlowReferenceType.g:
-        return Const(float(elm.R / (elm.R ** 2 + elm.X ** 2)))
-    if parameter_reference == ParamPowerFlowReferenceType.b:
-        return Const(float(-elm.X / (elm.R ** 2 + elm.X ** 2)))
-    if parameter_reference == ParamPowerFlowReferenceType.bsh:
-        return Const(elm.B)
-    if parameter_reference == ParamPowerFlowReferenceType.r:
-        return Const(elm.R)
-    if parameter_reference == ParamPowerFlowReferenceType.l:
-        return Const(elm.X)
-    else:
-        raise ValueError("parameter reference expression missing")
-
-
 def _tic():
     return time.perf_counter()
 

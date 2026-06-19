@@ -10,7 +10,7 @@ from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Devices.Substation.substation import Substation
 from VeraGridEngine.Devices.Substation.voltage_level import VoltageLevel
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.enumerations import BuildStatus, DeviceType, PrpCat
+from VeraGridEngine.enumerations import BuildStatus, DeviceType, PrpCat, ParamPowerFlowReferenceType
 from VeraGridEngine.Devices.Parents.dynamic_parent import DynamicDevice
 from VeraGridEngine.Devices.Aggregation.branch_group import BranchGroup
 from VeraGridEngine.Devices.Profiles import ProfileBool, ProfileFloat
@@ -82,6 +82,7 @@ class BranchParent(DynamicDevice):
             definition='Is active?',
             profile_name="active_prof",
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.device_active,
         ),
         GCProp(
             prop_name='reducible',
@@ -104,6 +105,7 @@ class BranchParent(DynamicDevice):
             definition='Operational thermal rating power',
             profile_name="rate_prof",
             cat=[PrpCat.PF, PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.branch_rate_mva,
         ),
         GCProp(
             prop_name='contingency_factor',
@@ -199,6 +201,7 @@ class BranchParent(DynamicDevice):
             tpe=float,
             definition='Base temperature at which R was measured.',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.branch_temp_base_deg_c,
         ),
         GCProp(
             prop_name='temp_oper',
@@ -207,6 +210,7 @@ class BranchParent(DynamicDevice):
             definition='Operation temperature to modify R.',
             profile_name='temp_oper_prof',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.branch_temp_oper_deg_c,
         ),
         GCProp(
             prop_name='alpha',
@@ -216,6 +220,7 @@ class BranchParent(DynamicDevice):
                           'approximation.For example:Copper @ 20ºC: 0.004041,Copper @ 75ºC: 0.00323,'
                           'Annealed copper @ 20ºC: 0.00393,Aluminum @ 20ºC: 0.004308,Aluminum @ 75ºC: 0.00330',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.branch_alpha_per_deg_c,
         ),
     )
 

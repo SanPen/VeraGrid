@@ -18,7 +18,7 @@ from scipy.sparse.linalg import MatrixRankWarning
 from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import EmtInterfaceValidationError, EmtProblemDae, EmtTopologyError
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowOptions
-from VeraGridEngine.Simulations.PowerFlow.power_flow_driver_3ph import PowerFlowDriver3Ph
+from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_driver_3ph import PowerFlowDriver3Ph
 from VeraGridEngine.enumerations import DynamicIntegrationMethod, EmtSolverTypes, ShuntConnectionType, EmtInitializationMethod, \
     ConverterControlType, SolverType, VarPowerFlowReferenceType
 from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template

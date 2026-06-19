@@ -105,8 +105,76 @@ def park_transform_block(vfactory: VarFactory, v_abc: list[Var], theta: Var, mul
 
     return park_block, (x_d, x_q), aux_vars
 
+def get_pll_transform_rms(vfactory: VarFactory, name: str = "Pll_transform_rms") -> RmsModelTemplate:
+    """
+     Pll
+    """
+    suffix = f"_{name}" if name else ""
+    templ = RmsModelTemplate(name=name)
+    templ.tpe = DeviceType.GeneratorDevice
+
+    inputs = [vfactory.add_var("Vm_" + name, reference=VarPowerFlowReferenceType.Vm),
+              vfactory.add_var("Va_" + name, reference=VarPowerFlowReferenceType.Va),
+              vfactory.add_var("omega_" + name, shared_reference="omega_reference")]
+
+    # Variables
+    theta = vfactory.add_var(f'theta{suffix}', shared_reference="theta_reference")
+    vd = vfactory.add_var(f'vd{suffix}', shared_reference="vd_reference")
+    vq = vfactory.add_var(f'vq{suffix}', shared_reference="vq_reference")
+
+    # Parameters
+    Kp_pll = vfactory.add_var(f'Kp_pll{suffix}')
+    Ki_pll = vfactory.add_var(f'Ki_pll{suffix}')
+    fn = vfactory.add_var(f'fn{suffix}')
+
+    res_event_dict = {
+        fn: vfactory.add_const(50),
+    }
+
+    PI_event_dict = {
+        Kp_pll: vfactory.add_const(0.001),
+        Ki_pll: vfactory.add_const(0.1),
+    }
+
+    block = Block()
+
+    res_block = Block(
+        state_eqs=[2 * math.pi * fn * (inputs[2] - 1)],
+        state_vars=[theta],
+        algebraic_eqs=[
+            vd - inputs[0] * sym.sin(inputs[1] - theta),
+            vq - inputs[0] * sym.cos(inputs[1] - theta),
+        ],
+        algebraic_vars=[vd, vq],
+        event_dict=res_event_dict,
+        init_eqs={
+            theta: inputs[1],
+            vd: inputs[0] * sym.sin(inputs[1] - theta),
+            vq: inputs[0] * sym.cos(inputs[1] - theta),
+        },
+    )
+
+    PI_block, omega = tf_to_block(vfactory,
+                                  num=[Ki_pll, Kp_pll],
+                                  den=[0, 1],
+                                  x=(inputs[0] * sym.sin(inputs[1] - theta)),
+                                  name='PLL_integrator'
+                                  )
+    #Todo: add this method to var factory
+    vfactory.add_shared_ref_to_var(omega, "omega_reference")
+    PI_block.event_dict = PI_event_dict
+
+    block.children = [res_block, PI_block]
+    block.out_vars = [vd, vq, theta, omega]
+
+    templ.block = block
+
+
+    return templ
+
 def pll_transform_rms(vfactory: VarFactory, Vm, Va, name:str = ''):
     suffix = f"_{name}" if name else ""
+
 
     # Variables
     theta = vfactory.add_var(f'theta{suffix}')
@@ -202,6 +270,7 @@ def build_gfl_converter_model(vfactory: VarFactory, inputs,
         i_d, i_q: Current references
         P, Q: Active and reactive power measurements
     """
+    # to connect variables put the same shared_reference and then we can remove outputs
     Vm     = inputs[0]  
     Va     = inputs[1]  
     v_dc   = inputs[2]  # DC voltage for DC voltage control mode
@@ -218,12 +287,15 @@ def build_gfl_converter_model(vfactory: VarFactory, inputs,
     # ==============================
 
     pll_block, outputs = pll_transform_rms(vfactory, Vm, Va, name = 'vg')
+
+    # to connect variables put the same shared_reference and then we can remove outputs
     v_d_g = outputs[0]
     v_q_g = outputs[1]
     theta = outputs[2]
     omega = outputs[3]
 
     # Parameters
+    # can be defined in control blocks
     Kp_icl = vfactory.add_var('Kp_icl')     # proportional gain for inner current loop
     Ki_icl = vfactory.add_var('Ki_icl')     # integral gain for inner current loop
     Kp_pol = vfactory.add_var('Kp_pol')     # proportional gain for outer power loop
@@ -272,10 +344,10 @@ def build_gfl_converter_model(vfactory: VarFactory, inputs,
     }
 
     # P and Q at the point of common coupling
-    algebraic_eqs.append(P - (v_q_g * i_q + v_d_g * i_d))
-    algebraic_eqs.append(Q - (v_q_g * i_d - v_d_g * i_q))
-    algebraic_vars.append(P)
-    algebraic_vars.append(Q)
+    # algebraic_eqs.append(P - (v_q_g * i_q + v_d_g * i_d))
+    # algebraic_eqs.append(Q - (v_q_g * i_d - v_d_g * i_q))
+    # algebraic_vars.append(P)
+    # algebraic_vars.append(Q)
 
     # ==============================
     # CONTROL 1: Active Power Axis (i_q_ref)
@@ -353,6 +425,8 @@ def build_gfl_converter_model(vfactory: VarFactory, inputs,
                         f"Supported: Qac, Vm_ac")
 
     # Physical Current Limits, TODO add AntiWindup
+    #  current limiter block
+
     I_max = vfactory.add_const(1.2)
     operation = 'normal'
     if operation == 'normal':
@@ -362,9 +436,15 @@ def build_gfl_converter_model(vfactory: VarFactory, inputs,
 
     i_d_ref_sat_var = vfactory.add_var('i_d_ref_sat')
     i_q_ref_sat_var = vfactory.add_var('i_q_ref_sat')
-    algebraic_eqs.append(i_d_ref_sat_var - i_d_ref_sat)
-    algebraic_eqs.append(i_q_ref_sat_var - i_q_ref_sat)
-    algebraic_vars.extend([i_d_ref_sat_var, i_q_ref_sat_var])
+    current_limiter_block = Block(
+        algebraic_eqs = [i_d_ref_sat_var - i_d_ref_sat,
+                         i_q_ref_sat_var - i_q_ref_sat,
+                         ],
+        algebraic_vars = [i_d_ref_sat_var, i_q_ref_sat_var]
+    )
+    # algebraic_eqs.append(i_d_ref_sat_var - i_d_ref_sat)
+    # algebraic_eqs.append(i_q_ref_sat_var - i_q_ref_sat)
+    # algebraic_vars.extend([i_d_ref_sat_var, i_q_ref_sat_var])
 
     # Voltage Control Loop (Inner Current Loop)
     control_block_iq , vq_hat = tf_to_block(vfactory,
@@ -383,17 +463,24 @@ def build_gfl_converter_model(vfactory: VarFactory, inputs,
     # EMT block (differential equations for currents)
     dt_id = vfactory.add_diff_var('dt_id', base_var= i_d)
     dt_iq = vfactory.add_diff_var('dt_iq', base_var= i_q)
-    EMT_block=Block(
+    electrical_block=Block(
         algebraic_eqs = [
             v_d_c - v_d_g + ( R*i_d + L*dt_id - omega*L*i_q),
             v_q_c - v_q_g + (-R*i_q + L*dt_iq - omega*L*i_d),
+            v_d_c - (vd_hat + v_d_g - L * (omega) * i_q),
+            v_q_c - (vq_hat + v_q_g + L * (omega) * i_d),
+            P - (v_q_g * i_q + v_d_g * i_d),
+            Q - (v_q_g * i_d - v_d_g * i_q)
+
+
         ],
+        algebraic_vars = [v_q_c, v_d_c, i_d, i_q, P, Q],
         diff_vars= [dt_id, dt_iq]
     )
 
-    algebraic_eqs.append(v_d_c - (vd_hat + v_d_g - L*(omega)*i_q))
-    algebraic_eqs.append(v_q_c - (vq_hat + v_q_g + L*(omega)*i_d))
-    algebraic_vars.extend([v_q_c, v_d_c, i_d, i_q])
+    # algebraic_eqs.append(v_d_c - (vd_hat + v_d_g - L*(omega)*i_q))
+    # algebraic_eqs.append(v_q_c - (vq_hat + v_q_g + L*(omega)*i_d))
+    # algebraic_vars.extend([v_q_c, v_d_c, i_d, i_q])
 
     # Build initialization equations based on control modes
     # P and Q are initialized from power flow results via external mapping
@@ -454,7 +541,7 @@ def build_gfl_converter_model(vfactory: VarFactory, inputs,
     gfl_block.add(control_block_iq)
 
     gfl_block.add(pll_block)
-    gfl_block.add(EMT_block)
+    gfl_block.add(electrical_block)
     gfl_block.unify_blocks()
 
     internals = {
@@ -498,6 +585,7 @@ def trafo_gfl_converter_model(vfactory: VarFactory,
     )
 
     # Enforce converter dq voltages on the internal AC bus side.
+    # to connect variables put the same shared_reference and then we can remove internals
     theta = internals["theta"]
     v_d_c = internals["v_d_c"]
     v_q_c = internals["v_q_c"]

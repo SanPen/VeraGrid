@@ -878,7 +878,8 @@ def test_template_style_pre_simulation_emt_tree_includes_bus_voltage_variables()
     connect_bus_variables_emt(device=generator,
                               model=generator_model,
                               var_factory=circuit.var_factory,
-                              allow_deferred_connection=True)
+                              allow_deferred_connection=True,
+                              grid=circuit)
     generator.emt_model = generator_model
 
     handler: DynamicsResultsHandler = DynamicsResultsHandler(results=None, circuit=circuit, simulation_type="EMT")

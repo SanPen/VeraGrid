@@ -47,6 +47,7 @@ from VeraGridEngine.Templates.Emt.source_emt_template import get_controlled_volt
 from VeraGridEngine.Templates.Emt.source_emt_template import get_current_source_emt_template
 from VeraGridEngine.Templates.Emt.source_emt_template import get_voltage_source_emt_template
 from VeraGridEngine.Templates.Emt.switch_emt_template import get_switch_emt_template
+from VeraGridEngine.Templates.Emt.fault_emt_template import get_fault_emt_template
 from VeraGridEngine.Templates.Emt.nonlinear_resistor_emt_template import get_nonlinear_resistor_emt_template
 from VeraGridEngine.Templates.Emt.valve_emt_template import get_valve_emt_template
 from VeraGridEngine.Templates.Emt.transformer_emt_template import get_transformer_emt_template

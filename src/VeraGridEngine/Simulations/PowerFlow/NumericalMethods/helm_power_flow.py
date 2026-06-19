@@ -313,7 +313,6 @@ def helm_coefficients_josep(Ybus: CscMat, Yseries: CscMat, V0: CxVec, S0: CxVec,
 
     pq_ = pq - nsl_counted[pq]
     pv_ = pv - nsl_counted[pv]
-    pqpv_ = np.sort(np.r_[pq_, pv_])
 
     # .......................CALCULATION OF TERMS [0] ------------------------------------------------------------------
 
@@ -329,14 +328,16 @@ def helm_coefficients_josep(Ybus: CscMat, Yseries: CscMat, V0: CxVec, S0: CxVec,
     valor = np.zeros(n_no_slack, dtype=complex)
 
     # get the current Injections that appear due to the slack buses reduction
-    I_inj_slack = Yslack[pqpv_, :] * Vslack
+    # `@ Vslack` can leave a column-shaped result; ravel() makes it a plain 1-D vector for `valor[...]`.
+    I_inj_slack_pq = np.asarray(Yslack[pq_, :] @ Vslack).ravel()
+    I_inj_slack_pv = np.asarray(Yslack[pv_, :] @ Vslack).ravel()
 
-    valor[pq_] = (I_inj_slack[pq_]
+    valor[pq_] = (I_inj_slack_pq
                   - Yslack[pq_].sum(axis=1).A1
                   + (vec_P[pq_] - vec_Q[pq_] * 1j) * X[0, pq_]
                   - U[0, pq_] * Ysh[pq_])
 
-    valor[pv_] = (I_inj_slack[pv_]
+    valor[pv_] = (I_inj_slack_pv
                   - Yslack[pv_].sum(axis=1).A1
                   + (vec_P[pv_]) * X[0, pv_]
                   - U[0, pv_] * Ysh[pv_])

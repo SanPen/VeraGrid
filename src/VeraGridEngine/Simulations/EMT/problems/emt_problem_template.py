@@ -303,6 +303,37 @@ class EmtProblemTemplate(ABC):
         """
         return None
 
+    def report_progress(self, val: float) -> None:
+        """
+        Emit one absolute progress update.
+
+        :param val: Progress value in percent.
+        :type val: float
+        :return: None
+        :rtype: None
+        """
+        if self.progress_signal is not None:
+            self.progress_signal.emit(val)
+        else:
+            pass
+
+    def report_progress2(self, current: int, total: int) -> None:
+        """
+        Emit one progress update from a zero-based iteration index.
+
+        :param current: Zero-based iteration index.
+        :type current: int
+        :param total: Total number of iterations.
+        :type total: int
+        :return: None
+        :rtype: None
+        """
+        if self.progress_signal is not None:
+            val: float = ((current + 1) / total) * 100
+            self.progress_signal.emit(val)
+        else:
+            pass
+
     def _finalize_order_and_maps(self)->None:
         """
         Build canonical ordering, index maps and internal counters.

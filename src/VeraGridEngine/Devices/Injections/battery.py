@@ -7,7 +7,7 @@
 from typing import Tuple
 
 from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
-from VeraGridEngine.enumerations import PrpCat, GeneratorControlMode
+from VeraGridEngine.enumerations import PrpCat, GeneratorControlMode, ParamPowerFlowReferenceType
 from VeraGridEngine.Devices.Injections.generator import Generator, BuildStatus
 
 
@@ -38,6 +38,7 @@ class Battery(Generator):
             tpe=float,
             definition='Nominal energy capacity.',
             cat=[PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.battery_enom_mwh,
         ),
         GCProp(
             prop_name='max_soc',
@@ -45,6 +46,7 @@ class Battery(Generator):
             tpe=float,
             definition='Minimum state of charge.',
             cat=[PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.battery_max_soc_pu,
         ),
         GCProp(
             prop_name='min_soc',
@@ -52,6 +54,7 @@ class Battery(Generator):
             tpe=float,
             definition='Maximum state of charge.',
             cat=[PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.battery_min_soc_pu,
         ),
         GCProp(
             prop_name='soc_0',
@@ -59,6 +62,7 @@ class Battery(Generator):
             tpe=float,
             definition='Initial state of charge.',
             cat=[PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.battery_soc_0_pu,
         ),
         GCProp(
             prop_name='charge_efficiency',
@@ -66,6 +70,7 @@ class Battery(Generator):
             tpe=float,
             definition='Charging efficiency.',
             cat=[PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.battery_charge_efficiency_pu,
         ),
         GCProp(
             prop_name='discharge_efficiency',
@@ -73,6 +78,7 @@ class Battery(Generator):
             tpe=float,
             definition='Discharge efficiency.',
             cat=[PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.battery_discharge_efficiency_pu,
         ),
         GCProp(
             prop_name='discharge_per_cycle',
@@ -80,6 +86,7 @@ class Battery(Generator):
             tpe=float,
             definition='',
             cat=[PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.battery_discharge_per_cycle_pu,
         ),
     )
 

@@ -68,6 +68,7 @@ class IoMain(ScenariosMain):
                                     '.iidm', '.xiidm', '.xiidm.bz2',
                                     '.ejson2', '.ejson3', '.p', '.nc', '.hdf5',
                                     '.xml', '.rawx', '.zip', '.dpx', '.pwf', '.epc', '.EPC',
+                                    '.ech', '.dta',
                                     '.vgplugin', '.gslv']
 
         # window pointers
@@ -331,12 +332,13 @@ class IoMain(ScenariosMain):
 
         files_types += "*.gch5 *.xlsx *.xls *.sqlite *.dgs *.iidm *.xiidm"
         files_types += "*.m *.matpower *.raw *.RAW *.rawx *.uct *.json *.ejson2 *.ejson3 *.xml "
-        files_types += "*.zip *.dpx *.pwf *.epc *.EPC *.nc *.hdf5 *.p"
+        files_types += "*.zip *.dpx *.pwf *.epc *.EPC *.ech *.dta *.nc *.hdf5 *.p"
 
         dialogue = QtWidgets.QFileDialog(None,
                                          caption=title,
                                          directory=self.project_directory,
                                          filter=f"Formats ({files_types})")
+        dialogue.setFileMode(QtWidgets.QFileDialog.FileMode.ExistingFiles)
 
         if dialogue.exec():
             filenames = dialogue.selectedFiles()

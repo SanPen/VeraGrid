@@ -12,7 +12,7 @@ import os
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import EmtProblemDae
-from VeraGridEngine.Simulations.PowerFlow.power_flow_driver_3ph import PowerFlowDriver3Ph
+from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_driver_3ph import PowerFlowDriver3Ph
 from VeraGridEngine.Devices.Events.emt_events_group import EmtEventsGroup
 from VeraGridEngine.Devices.Events.emt_event import EmtEvent
 

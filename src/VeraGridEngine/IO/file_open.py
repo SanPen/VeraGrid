@@ -20,6 +20,7 @@ from VeraGridEngine.IO.veragrid.pack_unpack import (parse_veragrid_data, parse_m
 from VeraGridEngine.IO.matpower.legacy.matpower_parser import interpret_data_v1
 from VeraGridEngine.IO.matpower.devices.matpower_circuit import MatpowerCircuit
 from VeraGridEngine.IO.matpower.matpower_to_veragrid import matpower_to_veragrid
+from VeraGridEngine.IO.Eurostag.eurostag_parser import open_eurostag
 from VeraGridEngine.IO.dgs.dgs_to_veragrid import dgs_to_circuit
 from VeraGridEngine.IO.others.dpx_parser import load_dpx
 from VeraGridEngine.IO.others.ipa_parser import load_iPA
@@ -210,6 +211,10 @@ def determine_file_type(file_name: List[str] | str) -> FileType | None:
     :param file_name: file path(s) with the extension
     """
     if isinstance(file_name, list):
+        suffixes = {pathlib.Path(f).suffix.lower() for f in file_name}
+
+        if {'.ech', '.dta'}.issubset(suffixes):
+            return FileType.Eurostag
 
         looks_like_ucte = False
         for f in file_name:
@@ -268,6 +273,9 @@ def determine_file_type(file_name: List[str] | str) -> FileType | None:
 
         elif file_extension in ['.m', '.matpower']:
             return FileType.Matpower
+
+        elif file_extension in ['.ech', '.dta']:
+            return FileType.Eurostag
 
         elif file_extension == '.dpx':
             return FileType.DPX
@@ -547,6 +555,9 @@ class FileOpen:
             else:
                 self.logger.add("File name is not a string")
                 return None
+
+        elif self.file_type == FileType.Eurostag:
+            self.circuit = open_eurostag(files=self.file_name, logger=self.logger)
 
         elif self.file_type == FileType.DPX:
             self.circuit, log = load_dpx(self.file_name)

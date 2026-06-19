@@ -43,7 +43,8 @@ from VeraGridEngine.Simulations.OPF.opf_driver import OptimalPowerFlowDriver
 from VeraGridEngine.Simulations.OPF.opf_ts_driver import (OptimalPowerFlowTimeSeriesDriver)
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowDriver
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
-from VeraGridEngine.Simulations.PowerFlow.power_flow_driver_3ph import PowerFlowDriver3Ph
+from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_driver_3ph import PowerFlowDriver3Ph
+from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_ts_driver_3ph import PowerFlowTimeSeriesDriver3Ph
 from VeraGridEngine.Simulations.PowerFlow.power_flow_ts_driver import (PowerFlowTimeSeriesDriver)
 from VeraGridEngine.Simulations.Reliability.blackout_driver import CascadingDriver
 from VeraGridEngine.Simulations.Reliability.reliability_driver import ReliabilityStudyDriver
@@ -142,6 +143,12 @@ def create_driver(grid: MultiCircuit,
 
     elif driver_tpe == SimulationTypes.PowerFlow3ph_run:
         drv = PowerFlowDriver3Ph(grid=grid, options=PowerFlowOptions())
+
+    elif driver_tpe == SimulationTypes.PowerFlowTimeSeries3ph_run:
+        drv = PowerFlowTimeSeriesDriver3Ph(grid=grid,
+                                           options=PowerFlowOptions(),
+                                           time_indices=time_indices,
+                                           clustering_results=None)
 
     elif driver_tpe == SimulationTypes.PowerFlowTimeSeries_run:
         drv = PowerFlowTimeSeriesDriver(grid=grid,

@@ -9,7 +9,7 @@ from VeraGridEngine.Devices import MultiCircuit
 
 from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
 from VeraGridEngine.enumerations import EmtProblemTypes
-from VeraGridEngine.Simulations.PowerFlow.power_flow_results_3ph import PowerFlowResults3Ph
+from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_results_3ph import PowerFlowResults3Ph
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
 from VeraGridEngine.Simulations.driver_template import DummySignal
 

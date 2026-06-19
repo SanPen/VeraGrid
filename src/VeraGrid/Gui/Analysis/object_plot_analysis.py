@@ -22,9 +22,10 @@ from VeraGridEngine.Devices.Injections.load import Load
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.enumerations import DeviceType
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
-from VeraGridEngine.Utils.NumericalMethods.numerical_stability import (sparse_instability_svd_test,
-                                                                       sparse_instability_lu_test)
-from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
+from VeraGridEngine.Simulations.LinearFactors.linear_analysis_driver import LinearAnalysisDriver
+from VeraGridEngine.Simulations.LinearFactors.linear_analysis_options import LinearAnalysisOptions
+from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowDriver
+from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
 
 
 class GridErrorLog:
@@ -490,7 +491,7 @@ def analyze_lines(elements: List[Line],
             logger.add(object_type=object_type.value,
                        element_name=elm.name,
                        element_index=i,
-                       severity=LogSeverity.Error,
+                       severity=LogSeverity.Warning,
                        propty='B',
                        message='There is no susceptance, this could hurt numerical conditioning.',
                        val=elm.B)
@@ -1198,22 +1199,133 @@ def analyze_load(elements: List[Load],
     return Pl, Ql, Pl_prof, Ql_prof
 
 
+def summarize_logger_messages(normal_logger: Logger,
+                              severity: LogSeverity,
+                              max_messages: int) -> str:
+    """
+    Build a compact, de-duplicated summary of logger messages for one severity.
+
+    :param normal_logger: Logger containing solver diagnostics
+    :param severity: Severity to keep in the summary
+    :param max_messages: Maximum number of unique messages to keep
+    :return: Compact summary string
+    """
+    unique_messages: List[str] = list()
+    entry_index: int = 0
+
+    # The drivers can emit repeated diagnostics, so this compresses them into a short explanation.
+    while entry_index < len(normal_logger.entries):
+        entry_message: str = str(normal_logger.entries[entry_index].msg)
+
+        if normal_logger.entries[entry_index].severity == severity:
+            if entry_message not in unique_messages:
+                unique_messages.append(entry_message)
+            else:
+                pass
+        else:
+            pass
+
+        entry_index += 1
+
+    if len(unique_messages) > 0:
+        return "; ".join(unique_messages[:max_messages])
+    else:
+        return ""
+
+
+def run_snapshot_solver_checks(circuit: MultiCircuit,
+                               power_flow_options: Union[PowerFlowOptions, None],
+                               logger: GridErrorLog) -> None:
+    """
+    Run a snapshot AC power flow first and use linear analysis only as a fallback solvability check.
+
+    :param circuit: Circuit to analyze
+    :param power_flow_options: Snapshot power-flow options
+    :param logger: Dashboard logger receiving the resulting finding
+    """
+    pf_options: PowerFlowOptions
+    pf_driver: PowerFlowDriver
+    pf_converged: bool
+    pf_detail_text: str
+    linear_driver: LinearAnalysisDriver
+    linear_failed: bool
+    linear_detail_text: str
+
+    # Reuse the caller options when available so this mirrors the same AC setup selected by the user.
+    if power_flow_options is None:
+        pf_options = PowerFlowOptions()
+    else:
+        pf_options = power_flow_options
+
+    pf_driver = PowerFlowDriver(grid=circuit, options=pf_options)
+
+    # The nonlinear AC power flow is the primary truth source for the snapshot state.
+    try:
+        pf_driver.run()
+    except Exception as exc:
+        pf_converged = False
+        pf_detail_text = str(exc)
+    else:
+        pf_converged = bool(pf_driver.results.converged)
+        pf_detail_text = "max error {:.4e}".format(pf_driver.results.error)
+
+    if pf_converged:
+        pass
+    else:
+        # The linear solver is only a fallback structural check after the AC solve fails.
+        linear_driver = LinearAnalysisDriver(grid=circuit, options=LinearAnalysisOptions())
+
+        try:
+            linear_driver.run()
+        except Exception as exc:
+            linear_failed = True
+            linear_detail_text = str(exc)
+        else:
+            linear_failed = linear_driver.logger.has_errors()
+            linear_detail_text = summarize_logger_messages(normal_logger=linear_driver.logger,
+                                                           severity=LogSeverity.Error,
+                                                           max_messages=3)
+
+        if linear_failed:
+            if linear_detail_text == "":
+                linear_detail_text = "linear analysis did not provide further details"
+            else:
+                pass
+
+            logger.add(object_type='Grid snapshot',
+                       element_name=circuit,
+                       element_index=-1,
+                       severity=LogSeverity.Error,
+                       propty='Snapshot solvability',
+                       message='Snapshot power flow failed and linear analysis also failed',
+                       val=pf_detail_text,
+                       upper=linear_detail_text)
+        else:
+            logger.add(object_type='Grid snapshot',
+                       element_name=circuit,
+                       element_index=-1,
+                       severity=LogSeverity.Warning,
+                       propty='Snapshot solvability',
+                       message='Snapshot power flow failed, but linear analysis is still available',
+                       val=pf_detail_text)
+
+
 def grid_analysis(circuit: MultiCircuit,
-                  analyze_ts=True,
-                  imbalance_threshold=0.02,
-                  v_low=0.95,
-                  v_high=1.05,
-                  tap_min=0.95,
-                  tap_max=1.05,
-                  transformer_virtual_tap_tolerance=0.1,
-                  branch_connection_voltage_tolerance=0.1,
-                  min_vcc=8,
-                  max_vcc=18,
-                  logger=GridErrorLog(),
-                  branch_x_threshold=1e-4,
-                  condition_number_threshold=1e4,
+                  analyze_ts: bool = True,
+                  imbalance_threshold: float = 0.02,
+                  v_low: float = 0.95,
+                  v_high: float = 1.05,
+                  tap_min: float = 0.95,
+                  tap_max: float = 1.05,
+                  transformer_virtual_tap_tolerance: float = 0.1,
+                  branch_connection_voltage_tolerance: float = 0.1,
+                  min_vcc: float = 8,
+                  max_vcc: float = 18,
+                  logger: GridErrorLog = GridErrorLog(),
+                  branch_x_threshold: float = 1e-4,
+                  power_flow_options: Union[PowerFlowOptions, None] = None,
                   eps_max: float = 1e20,
-                  eps_min: float = 1e-20):
+                  eps_min: float = 1e-20) -> List["FIXABLE_ERROR_TYPES"]:
     """
     Analyze the model data
     :param circuit: Circuit to analyze
@@ -1229,7 +1341,7 @@ def grid_analysis(circuit: MultiCircuit,
     :param min_vcc: Minimum short circuit voltage (%)
     :param logger: GridErrorLog
     :param branch_x_threshold: Value to compare branches X such that it is numerically stable
-    :param condition_number_threshold: Condition number threshold to report unstability
+    :param power_flow_options: Snapshot power-flow options for the fallback solvability check
     :param eps_max: Max epsylon value for comparison
     :param eps_min: Min epsylon value for comparison
     :return: list of fixable error objects
@@ -1361,7 +1473,7 @@ def grid_analysis(circuit: MultiCircuit,
         logger.add(object_type='Grid snapshot',
                    element_name=circuit,
                    element_index=-1,
-                   severity=LogSeverity.Error,
+                   severity=LogSeverity.Warning,
                    propty="Reactive power out of bounds",
                    message='There is too much reactive power imbalance',
                    lower=str(Qmin),
@@ -1370,66 +1482,73 @@ def grid_analysis(circuit: MultiCircuit,
 
     # analyze the time series data
     if analyze_ts:
+        active_imbalance_count: int = 0
+        active_imbalance_max_percent: float = 0.0
+        reactive_imbalance_count: int = 0
+        reactive_imbalance_worst_value: float = 0.0
+
         if circuit.time_profile is not None:
             nt = len(circuit.time_profile)
+        else:
+            nt = 0
 
         for t in range(nt):
             # compare loads
             p_ratio = abs(Pl_prof[t] - Pg_prof[t]) / (Pl_prof[t] + eps_min)
             if p_ratio > imbalance_threshold:
-                msg = ">> " + str(imbalance_threshold) + "%"
-                logger.add(object_type='Active power balance',
-                           element_name=circuit,
-                           element_index=t,
-                           severity=LogSeverity.Error,
-                           propty=msg,
-                           message='There is too much active power imbalance',
-                           val="{:.1f}".format(p_ratio * 100))
+                active_imbalance_count += 1
+
+                if (p_ratio * 100.0) > active_imbalance_max_percent:
+                    active_imbalance_max_percent = p_ratio * 100.0
+                else:
+                    pass
+            else:
+                pass
 
             # compare reactive power limits
             if not (Qmin <= -Ql_prof[t] <= Qmax):
-                logger.add(object_type='Reactive power power balance',
-                           element_name=circuit,
-                           element_index=t,
-                           severity=LogSeverity.Error,
-                           propty="Reactive power out of bounds",
-                           message='There is too much reactive power imbalance',
-                           lower=str(Qmin),
-                           val=float(Ql_prof[t]),
-                           upper=str(Qmax))
+                reactive_imbalance_count += 1
 
-    # analyze the numerical stability
-    nc = compile_numerical_circuit_at(circuit, t_idx=None)  # compile the snapshot
+                if abs(float(Ql_prof[t])) > abs(reactive_imbalance_worst_value):
+                    reactive_imbalance_worst_value = float(Ql_prof[t])
+                else:
+                    pass
+            else:
+                pass
 
-    Sbus = nc.get_power_injections()
-    indices = nc.get_simulation_indices(Sbus=Sbus)
-    lin_adm = nc.get_linear_admittance_matrices(indices=indices)
-    rcond, unstable = sparse_instability_svd_test(lin_adm.Bbus, condition_number_thrshold=1.0 / condition_number_threshold)
+        if active_imbalance_count > 0:
+            msg = ">> " + str(imbalance_threshold) + "%"
+            logger.add(object_type='Grid time series',
+                       element_name=circuit,
+                       element_index=-1,
+                       severity=LogSeverity.Error,
+                       propty='Active power balance ' + msg,
+                       message='There is too much active power imbalance in the time series',
+                       val="{:.1f}% max across {} steps".format(active_imbalance_max_percent,
+                                                                active_imbalance_count))
+        else:
+            pass
 
-    if unstable:
-        logger.add(object_type='matrix',
-                   element_name=circuit,
-                   element_index=-1,
-                   severity=LogSeverity.Error,
-                   propty="condition number",
-                   message='B matrix is SVD-Unstable: this may make linear power flows output nonsense',
-                   lower="",
-                   val=str(rcond),
-                   upper=str(1.0 / condition_number_threshold))
+        if reactive_imbalance_count > 0:
+            logger.add(object_type='Grid time series',
+                       element_name=circuit,
+                       element_index=-1,
+                       severity=LogSeverity.Warning,
+                       propty="Reactive power out of bounds",
+                       message='There is too much reactive power imbalance in the time series',
+                       lower=str(Qmin),
+                       val="{:.6g} worst across {} steps".format(reactive_imbalance_worst_value,
+                                                                 reactive_imbalance_count),
+                       upper=str(Qmax))
+        else:
+            pass
+    else:
+        pass
 
-    rcond, unstable = sparse_instability_lu_test(lin_adm.get_Bred(pqpv=indices.no_slack),
-                                                 condition_number_thrshold=condition_number_threshold)
-
-    if unstable:
-        logger.add(object_type='matrix',
-                   element_name=circuit,
-                   element_index=-1,
-                   severity=LogSeverity.Error,
-                   propty="condition number",
-                   message='B matrix is LU-Unstable: this may make linear power flows output nonsense',
-                   lower="",
-                   val=str(rcond),
-                   upper=str(condition_number_threshold))
+    # A failed AC solve is meaningful; a failed matrix heuristic was not.
+    run_snapshot_solver_checks(circuit=circuit,
+                               power_flow_options=power_flow_options,
+                               logger=logger)
 
     return fixable_errors
 

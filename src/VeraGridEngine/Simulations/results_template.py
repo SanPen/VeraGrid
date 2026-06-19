@@ -627,9 +627,17 @@ class ResultsTemplate(metaclass=ResultsTemplateMeta):
                     # if results arrays are exactly 0, don't check
                     curr_shape = np.shape(curr_value)
                     dont_check = len(curr_shape) > 0 and sum(curr_shape) == 0
+                    both_empty = (
+                        isinstance(array, np.ndarray)
+                        and isinstance(curr_value, np.ndarray)
+                        and array.size == 0
+                        and curr_value.size == 0
+                    )
 
                     if np.shape(curr_value) == np.shape(array) or dont_check:
                         setattr(self, res_prop.name, array)
+                    elif both_empty:
+                        pass
                     else:
                         logger.add_error(msg="Wrong array shape",
                                          device_class=self.name,

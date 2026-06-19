@@ -18,7 +18,6 @@ import scipy.sparse as sp
 import scipy.sparse.linalg as spla
 import numpy.linalg as la
 from typing import Dict, List, Any, Set, Optional, Tuple
-from itertools import chain
 import copy
 
 from VeraGridEngine.Devices import MultiCircuit
@@ -36,13 +35,12 @@ from VeraGridEngine.enumerations import (
     EmtInitializationMethod,
     EmtInitializationStatus,
     EmtLineTypes,
-    WindingType,
 )
 from VeraGridEngine.basic_structures import Logger, CxVec
 from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
 from VeraGridEngine.Templates.Emt.bergeron_line_emt_template import BergeronHistoryRuntime
 from VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime import JMartiHistoryRuntime
-from VeraGridEngine.Simulations.PowerFlow.power_flow_results_3ph import PowerFlowResults3Ph
+from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_results_3ph import PowerFlowResults3Ph
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
 from VeraGridEngine.Simulations.EMT.initialization_emt import EmtInitializationReport, run_emt_native_initialization, _compute_missing_dx0
 from VeraGridEngine.Utils.Symbolic.explicit_initialization_symbolic import init_explicit_common, build_symbolic_vector_single_equation_compiler

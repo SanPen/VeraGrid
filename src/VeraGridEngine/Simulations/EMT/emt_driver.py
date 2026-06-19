@@ -14,7 +14,7 @@ from VeraGridEngine.Simulations.EMT.emt_results import EmtResults
 from VeraGridEngine.Simulations.EMT.emt_problem_factory import build_emt_problem
 from VeraGridEngine.Simulations.EMT.emt_solver_factory import build_emt_solver
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import EmtProblemDae
-from VeraGridEngine.Simulations.PowerFlow.power_flow_results_3ph import PowerFlowResults3Ph
+from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_results_3ph import PowerFlowResults3Ph
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
 from VeraGridEngine.Utils.Symbolic.diagnostic import NewtonDiagnosticsConfig
 from VeraGridEngine.IO.fmu.importer.emt_boundary import build_emt_boundary_updater
@@ -241,6 +241,7 @@ class EmtSimulationDriver(DriverTemplate):
                     h=self.options.time_step,
                     method=self.options.integration_method,
                     newton_diag_config=newton_diag_config,
+                    progress_signal=self.progress_signal,
                     cancel_checker=self.is_cancel,
                 )
 

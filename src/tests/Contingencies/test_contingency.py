@@ -121,6 +121,31 @@ def test_contingency_ts_clustering_ieee39_1w() -> None:
         assert np.allclose(full_driver.results.max_loading[t, :], clustered_driver.results.max_loading[t, :])
 
 
+def test_contingency_ts_linear_helm_ny_activs_regression() -> None:
+    fname = os.path.join("data", "grids", "NY_activs.gridcal")
+    main_circuit = FileOpen(fname).open()
+
+    options = ContingencyAnalysisOptions(
+        pf_options=PowerFlowOptions(
+            solver_type=SolverType.HELM,
+            verbose=False,
+            retry_with_other_methods=False,
+        ),
+        contingency_method=ContingencyMethod.Linear,
+        detailed_massive_report=False,
+    )
+
+    driver = ContingencyAnalysisTimeSeriesDriver(
+        grid=main_circuit,
+        options=options,
+        time_indices=np.array([0]),
+    )
+    driver.run()
+
+    assert driver.results is not None
+    assert driver.results.max_flows.shape[0] == 1
+
+
 # def test_ieee14_contingencies() -> None:
 #     """
 #     Check that the contingencies match conceptually

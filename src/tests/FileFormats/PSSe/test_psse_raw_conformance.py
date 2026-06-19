@@ -32,7 +32,7 @@ from VeraGridEngine.IO.raw.raw_to_veragrid import psse_to_veragrid
 from VeraGridEngine.IO.raw.veragrid_to_raw import (RawNodeBreakerExportData, append_psse_terminal,
                                                    get_psse_substation_switch, veragrid_to_raw)
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.enumerations import PsseTopologyExportMode
+from VeraGridEngine.enumerations import PsseTopologyExportMode, TapModuleControl
 
 
 def test_read_raw_keeps_psse35_system_wide_records_out_of_bus_section(tmp_path: Path) -> None:
@@ -850,6 +850,67 @@ def test_veragrid_to_raw_switch_normal_status_uses_psse_semantics() -> None:
 
     assert exported_switches[0].NSTATUS == 0
     assert exported_switches[1].NSTATUS == 1
+
+
+def test_veragrid_to_raw_preserves_three_winding_voltage_regulation_fields() -> None:
+    """Three-winding tap regulation must export the RAW control fields explicitly."""
+
+    grid = MultiCircuit()
+    bus1 = dev.Bus(name="Bus1", Vnom=220.0, code="1")
+    bus2 = dev.Bus(name="Bus2", Vnom=110.0, code="2")
+    bus3 = dev.Bus(name="Bus3", Vnom=33.0, code="3")
+    grid.add_bus(bus1)
+    grid.add_bus(bus2)
+    grid.add_bus(bus3)
+
+    transformer = dev.Transformer3W(V1=220.0,
+                                    V2=110.0,
+                                    V3=33.0,
+                                    bus1=bus1,
+                                    bus2=bus2,
+                                    bus3=bus3,
+                                    x12=0.01,
+                                    x23=0.01,
+                                    x31=0.01,
+                                    rate12=100.0,
+                                    rate23=90.0,
+                                    rate31=80.0)
+    transformer.code = "1_2_3_1"
+    grid.add_transformer3w(obj=transformer)
+
+    transformer.winding1.tap_module_control_mode = TapModuleControl.Vm
+    transformer.winding1.regulation_bus = bus2
+    transformer.winding1.tap_module_max = 1.10
+    transformer.winding1.tap_module_min = 0.90
+    transformer.winding1.vset = 1.03
+    transformer.winding1.tap_changer.total_positions = 17
+
+    transformer.winding2.tap_module_control_mode = TapModuleControl.Vm
+    transformer.winding2.regulation_bus = bus3
+    transformer.winding2.tap_module_max = 1.08
+    transformer.winding2.tap_module_min = 0.92
+    transformer.winding2.vset = 0.99
+    transformer.winding2.tap_changer.total_positions = 9
+
+    exported_transformer = veragrid_to_raw(grid=grid, version=35, logger=Logger()).transformers[0]
+
+    assert exported_transformer.COD1 == 1
+    assert exported_transformer.CONT1 == exported_transformer.J
+    assert exported_transformer.RMA1 == 1.10
+    assert exported_transformer.RMI1 == 0.90
+    assert exported_transformer.VMA1 == 1.03
+    assert exported_transformer.VMI1 == 1.03
+    assert exported_transformer.NTP1 == 17
+
+    assert exported_transformer.COD2 == 1
+    assert exported_transformer.CONT2 == exported_transformer.K
+    assert exported_transformer.RMA2 == 1.08
+    assert exported_transformer.RMI2 == 0.92
+    assert exported_transformer.VMA2 == 0.99
+    assert exported_transformer.VMI2 == 0.99
+    assert exported_transformer.NTP2 == 9
+
+    assert exported_transformer.COD3 == 0
 
 
 def test_psse33_transformer_preserves_second_winding_rate_b_value() -> None:

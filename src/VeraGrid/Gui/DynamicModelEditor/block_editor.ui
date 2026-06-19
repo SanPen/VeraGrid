@@ -155,8 +155,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>459</width>
-                <height>318</height>
+                <width>98</width>
+                <height>68</height>
                </rect>
               </property>
               <attribute name="label">
@@ -189,8 +189,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>459</width>
-                <height>318</height>
+                <width>98</width>
+                <height>68</height>
                </rect>
               </property>
               <attribute name="label">
@@ -223,8 +223,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>459</width>
-                <height>318</height>
+                <width>98</width>
+                <height>68</height>
                </rect>
               </property>
               <attribute name="label">
@@ -341,6 +341,16 @@
         </spacer>
        </item>
        <item>
+        <widget class="QPushButton" name="validateConsistencyButton">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Model consistency validation&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run an informational validation of the edited model structure, mappings, initialization, and port connectivity. This check reports issues but does not block saving the model.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Validate model consistency</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="doItButton">
          <property name="text">
           <string>Do it!</string>
@@ -383,8 +393,6 @@
    <addaction name="actionCenter"/>
    <addaction name="actionZoom_out"/>
    <addaction name="actionZoom_in"/>
-   <addaction name="actionSave_block_to_my_catalogue"/>
-   <addaction name="actionExport_block"/>
   </widget>
   <action name="block_editor_actionCheckModel">
    <property name="icon">
@@ -429,34 +437,6 @@
    </property>
    <property name="text">
     <string>Zoom out</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
-   </property>
-  </action>
-  <action name="actionSave_block_to_my_catalogue">
-   <property name="icon">
-    <iconset theme="QIcon::ThemeIcon::DocumentSaveAs"/>
-   </property>
-   <property name="text">
-    <string>Save block to my catalogue</string>
-   </property>
-   <property name="toolTip">
-    <string>Save block to my catalogue</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
-   </property>
-  </action>
-  <action name="actionExport_block">
-   <property name="icon">
-    <iconset theme="QIcon::ThemeIcon::DocumentSave"/>
-   </property>
-   <property name="text">
-    <string>Export block</string>
-   </property>
-   <property name="toolTip">
-    <string>Export block</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>

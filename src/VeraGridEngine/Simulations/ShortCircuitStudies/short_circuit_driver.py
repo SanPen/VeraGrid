@@ -11,7 +11,7 @@ from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.basic_structures import CxVec
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowResults, PowerFlowOptions
-from VeraGridEngine.Simulations.PowerFlow.power_flow_driver_3ph import PowerFlowResults3Ph
+from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_driver_3ph import PowerFlowResults3Ph
 from VeraGridEngine.Simulations.OPF.opf_results import OptimalPowerFlowResults
 from VeraGridEngine.Simulations.ShortCircuitStudies.short_circuit_worker import (short_circuit_ph3,
                                                                                  short_circuit_unbalanced,
@@ -23,8 +23,7 @@ from VeraGridEngine.Devices import Line, Bus
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGridEngine.Simulations.driver_template import DriverTemplate
 from VeraGridEngine.Simulations.ShortCircuitStudies.short_circuit_options import ShortCircuitOptions
-from VeraGridEngine.enumerations import FaultType, SimulationTypes, MethodShortCircuit, PhasesShortCircuit, \
-    ConverterFaultControlType
+from VeraGridEngine.enumerations import FaultType, SimulationTypes, MethodShortCircuit, PhasesShortCircuit
 from VeraGridEngine.Devices.types import BRANCH_TYPES
 
 

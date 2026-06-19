@@ -8,6 +8,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Union
 from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtWidgets import QMenu
+from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
 from VeraGrid.Gui.gui_functions import add_menu_entry
 from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import BarTerminalItem, RoundTerminalItem
 from VeraGridEngine.Devices.Branches.winding import Winding
@@ -55,6 +56,16 @@ class WindingGraphicItem(LineGraphicTemplateItem):
     def api_object(self, api_object: Winding):
         self._api_object = api_object
 
+    def open_device_editor(self) -> bool:
+        """
+        Open the generic device editor for this winding.
+
+        :return: ``True`` when the editor was opened.
+        """
+        dialog = TemplateDeviceEditor(api_object=self.api_object, circuit=self.editor.circuit)
+        dialog.exec()
+        return True
+
     def contextMenuEvent(self, event):
         """
         Show context menu
@@ -75,6 +86,11 @@ class WindingGraphicItem(LineGraphicTemplateItem):
                            function_ptr=self.enable_disable_label_drawing,
                            checkeable=True,
                            checked_value=self.draw_labels)
+
+            add_menu_entry(menu=menu,
+                           text="Editor",
+                           function_ptr=self.edit,
+                           icon_path=":/Icons/icons/edit.png")
 
             add_menu_entry(menu=menu,
                            text="RMS Editor",
@@ -120,6 +136,26 @@ class WindingGraphicItem(LineGraphicTemplateItem):
         else:
             pass
 
+    def mouseDoubleClickEvent(self, event) -> None:
+        """
+        Open the winding editor on double click.
+
+        :param event: Mouse event.
+        :return: ``None``.
+        """
+        if self.api_object is not None:
+            self.open_device_editor()
+        else:
+            pass
+
+    def edit(self) -> None:
+        """
+        Open the appropriate editor dialogue.
+
+        :return: ``None``.
+        """
+        self.open_device_editor()
+
     def delete(self, ask=True):
         """
         Remove this object in the diagram and the API
@@ -151,4 +187,3 @@ class WindingGraphicItem(LineGraphicTemplateItem):
         open_dynamic_editor(api_object=self.api_object,
                             circuit=self.editor.circuit,
                             preferred_mode=DynamicSimulationMode.EMT)
-

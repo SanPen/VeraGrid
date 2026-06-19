@@ -1059,7 +1059,8 @@ def find_connections(mdl1: Block, mdl2: Block) -> tuple[List[tuple[Var, Var]], L
         for outp in mdl1.out_vars
         for inpt in mdl2.in_vars
         if
-        outp.shared_ref == inpt.shared_ref and outp.shared_ref is not None and inpt.shared_ref is not None and outp.uid == inpt.uid
+        # outp.shared_ref == inpt.shared_ref and outp.shared_ref is not None and inpt.shared_ref is not None and outp.uid == inpt.uid
+        outp.shared_ref == inpt.shared_ref and outp.shared_ref is not None and inpt.shared_ref is not None
     ]
 
     power_flow_pairs =  [
@@ -1067,7 +1068,8 @@ def find_connections(mdl1: Block, mdl2: Block) -> tuple[List[tuple[Var, Var]], L
         for outp in mdl1.out_vars
         for inpt in mdl2.in_vars
         if
-        outp.ref == inpt.ref and outp.ref is not None and inpt.ref is not None and outp.uid == inpt.uid
+        # outp.ref == inpt.ref and outp.ref is not None and inpt.ref is not None and outp.uid == inpt.uid
+        outp.ref == inpt.ref and outp.ref is not None and inpt.ref is not None
     ]
 
 

@@ -41,6 +41,7 @@ from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import (
     get_solver_forced_event_time,
     resolve_solver_boundary_updater,
 )
+from VeraGridEngine.Simulations.driver_template import DummySignal
 from VeraGridEngine.enumerations import DynamicIntegrationMethod
 from VeraGridEngine.basic_structures import Mat, Vec
 
@@ -2386,6 +2387,7 @@ class StructuralCompiledSolver:
         "_sparse_factorization_manager",
         "_sparse_solver_backend_provider",
         "_cancel_checker",
+        "_progress_signal",
     ]
 
     def __init__(
@@ -2403,6 +2405,7 @@ class StructuralCompiledSolver:
             warmup_policy: StructuralCompiledWarmupPolicy = StructuralCompiledWarmupPolicy.Adaptive,
             sparse_solver_backend_provider: SparseLinearSolverBackendProvider | None = None,
             newton_diag_config: NewtonDiagnosticsConfig | None = None,
+            progress_signal: DummySignal | None = None,
             cancel_checker: Callable[[], bool] | None = None,
     ) -> None:
         """
@@ -2432,6 +2435,8 @@ class StructuralCompiledSolver:
         :type warmup_policy: StructuralCompiledWarmupPolicy
         :param sparse_solver_backend_provider: Sparse linear solver backend provider.
         :type sparse_solver_backend_provider: SparseLinearSolverBackendProvider | None
+        :param progress_signal: Optional progress signal updated during the simulation loop.
+        :type progress_signal: DummySignal | None
         :return: None
         :rtype: None
         """
@@ -2517,6 +2522,7 @@ class StructuralCompiledSolver:
         self._last_runtime_stats: Dict[str, float] = dict()
         self._predictor = StructuralCompiledPredictor(self._n_state)
         self._backend_build_stats: Dict[str, float] = dict()
+        self._progress_signal: DummySignal | None = progress_signal
         self._cancel_checker = cancel_checker
 
         if auto_build:
@@ -3027,6 +3033,11 @@ class StructuralCompiledSolver:
 
         step_index: int = 0
         while step_index < steps:
+            if self._progress_signal is not None:
+                self._problem.report_progress2(step_index, steps)
+            else:
+                pass
+
             if self._cancel_checker is not None and self._cancel_checker():
                 return t[:step_index + 1].copy(), y[:step_index + 1, :].copy(), dy[:step_index + 1, :].copy(), well_initialized, converged
 

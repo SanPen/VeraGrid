@@ -192,6 +192,45 @@ def power_flow3ph(grid: MultiCircuit,
     return driver.results
 
 
+def power_flow3ph_ts(grid: MultiCircuit,
+                     options: PowerFlowOptions | None = None,
+                     time_indices: Union[IntVec, None] = None,
+                     clustering_results: Union[ClusteringResults, None] = None,
+                     auto_expand: bool = True,
+                     engine=EngineType.VeraGrid) -> PowerFlowTimeSeriesResults3Ph:
+    """
+    Run three-phase power flow on the time series.
+
+    :param grid: MultiCircuit instance.
+    :param options: PowerFlowOptions instance (optional).
+    :param time_indices: Array of time indices to simulate, if ``None`` all are used.
+    :param clustering_results: ClusteringResults (optional).
+    :param auto_expand: If true the clustering results are expanded if clustering_results is provided.
+    :param engine: Engine to run with.
+    :return: Three-phase time-series power-flow results.
+    """
+    if options is None:
+        options = PowerFlowOptions()
+    else:
+        pass
+
+    ti = grid.get_all_time_indices() if time_indices is None else time_indices
+
+    driver = PowerFlowTimeSeriesDriver3Ph(grid=grid,
+                                          options=options,
+                                          time_indices=ti,
+                                          clustering_results=clustering_results,
+                                          engine=engine)
+    driver.run()
+
+    if auto_expand and clustering_results is not None:
+        driver.results.expand_clustered_results()
+    else:
+        pass
+
+    return driver.results
+
+
 def power_flow_ts(grid: MultiCircuit,
                   options: PowerFlowOptions | None = None,
                   time_indices: Union[IntVec, None] = None,

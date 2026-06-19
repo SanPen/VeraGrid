@@ -913,10 +913,13 @@ def get_shunt_data(
                 data.Y[ii] += elm.get_Y_at(t_idx)
 
             if elm.control_mode == ShuntControlMode.Discrete:
-                if elm.step < len(elm.g_steps):
-                    data.Y[ii] += elm.step * complex(elm.g_steps[elm.step], elm.b_steps[elm.step])
-                else:
-                    data.Y[ii] += complex(elm.g_steps[0], elm.b_steps[0])
+                # Base injection at the current step, using the same 0-prepended
+                # cumulative ladder as data.b_steps/data.g_steps and the discrete
+                # controller (step 0 = neutral/off, step k = first k blocks on).
+                cum_b = np.insert(np.cumsum(elm.b_steps), 0, 0.0)
+                cum_g = np.insert(np.cumsum(elm.g_steps), 0, 0.0)
+                s = elm.step if 0 <= elm.step < len(cum_b) else 0
+                data.Y[ii] += complex(cum_g[s], cum_b[s])
 
             if fill_three_phase:
                 if elm.conn == ShuntConnectionType.GroundedStar:

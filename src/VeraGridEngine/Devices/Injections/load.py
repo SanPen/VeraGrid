@@ -10,7 +10,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 
 from VeraGridEngine.Templates.Rms.load_rms_template import get_load_rms_template
-from VeraGridEngine.enumerations import DeviceType, BuildStatus, PrpCat
+from VeraGridEngine.enumerations import DeviceType, BuildStatus, PrpCat, ParamPowerFlowReferenceType
 from VeraGridEngine.Devices.Parents.load_parent import LoadParent
 from VeraGridEngine.Devices.Profiles import ProfileFloat, ProfileInt
 from VeraGridEngine.Utils.Symbolic.block import VarPowerFlowReferenceType
@@ -67,6 +67,7 @@ class Load(LoadParent):
             definition='Active power of the current component at V=1.0 p.u.',
             profile_name='Ir_prof',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.load_ir_pu,
         ),
         GCProp(
             prop_name='Ir1',
@@ -75,6 +76,7 @@ class Load(LoadParent):
             definition='Active power of the phase 1 current component at V=1.0 p.u.',
             profile_name='Ir1_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.load_ira_pu,
         ),
         GCProp(
             prop_name='Ir2',
@@ -83,6 +85,7 @@ class Load(LoadParent):
             definition='Active power of the phase 2 current component at V=1.0 p.u.',
             profile_name='Ir2_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.load_irb_pu,
         ),
         GCProp(
             prop_name='Ir3',
@@ -91,6 +94,7 @@ class Load(LoadParent):
             definition='Active power of the phase 3 current component at V=1.0 p.u.',
             profile_name='Ir3_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.load_irc_pu,
         ),
         GCProp(
             prop_name='Ii',
@@ -99,6 +103,7 @@ class Load(LoadParent):
             definition='Reactive power of the current component at V=1.0 p.u.',
             profile_name='Ii_prof',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.load_ii_pu,
         ),
         GCProp(
             prop_name='Ii1',
@@ -107,6 +112,7 @@ class Load(LoadParent):
             definition='Reactive power of the phase 1 current component at V=1.0 p.u.',
             profile_name='Ii1_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.load_iia_pu,
         ),
         GCProp(
             prop_name='Ii2',
@@ -115,6 +121,7 @@ class Load(LoadParent):
             definition='Reactive power of the phase 2 current component at V=1.0 p.u.',
             profile_name='Ii2_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.load_iib_pu,
         ),
         GCProp(
             prop_name='Ii3',
@@ -123,6 +130,7 @@ class Load(LoadParent):
             definition='Reactive power of the phase 3 current component at V=1.0 p.u.',
             profile_name='Ii3_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.load_iic_pu,
         ),
         GCProp(
             prop_name='G',
@@ -131,6 +139,7 @@ class Load(LoadParent):
             definition='Active power of the impedance component at V=1.0 p.u.',
             profile_name='G_prof',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.load_g_pu,
         ),
         GCProp(
             prop_name='G1',
@@ -139,6 +148,7 @@ class Load(LoadParent):
             definition='Active power of the phase 1 impedance component at V=1.0 p.u.',
             profile_name='G1_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.load_ga_pu,
         ),
         GCProp(
             prop_name='G2',
@@ -147,6 +157,7 @@ class Load(LoadParent):
             definition='Active power of the phase 2 impedance component at V=1.0 p.u.',
             profile_name='G2_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.load_gb_pu,
         ),
         GCProp(
             prop_name='G3',
@@ -155,6 +166,7 @@ class Load(LoadParent):
             definition='Active power of the phase 3 impedance component at V=1.0 p.u.',
             profile_name='G3_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.load_gc_pu,
         ),
         GCProp(
             prop_name='B',
@@ -163,6 +175,7 @@ class Load(LoadParent):
             definition='Reactive power of the impedance component at V=1.0 p.u.',
             profile_name='B_prof',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.load_b_pu,
         ),
         GCProp(
             prop_name='B1',
@@ -171,6 +184,7 @@ class Load(LoadParent):
             definition='Reactive power of the phase 1 impedance component at V=1.0 p.u.',
             profile_name='B1_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.load_ba_pu,
         ),
         GCProp(
             prop_name='B2',
@@ -179,6 +193,7 @@ class Load(LoadParent):
             definition='Reactive power of the phase 2 impedance component at V=1.0 p.u.',
             profile_name='B2_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.load_bb_pu,
         ),
         GCProp(
             prop_name='B3',
@@ -187,6 +202,7 @@ class Load(LoadParent):
             definition='Reactive power of the phase 3 impedance component at V=1.0 p.u.',
             profile_name='B3_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.load_bc_pu,
         ),
         GCProp(
             prop_name='n_customers',
@@ -202,6 +218,7 @@ class Load(LoadParent):
             tpe=float,
             definition='Nominal contracted power',
             cat=[PrpCat.REL],
+            dyn_ref=ParamPowerFlowReferenceType.load_contract_power_pu,
         ),
     )
 
@@ -1196,5 +1213,4 @@ class Load(LoadParent):
         :return: None
         """
         self._B3 = float(val)
-
 

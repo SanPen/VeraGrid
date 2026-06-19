@@ -352,7 +352,7 @@ def _build_pseudo_emt_converter_vsc_block(
     i_d = vf.add_var(name=f"i_d_in_{name}")
     i_q = vf.add_var(name=f"i_q_in_{name}")
     i_0 = vf.add_var(name=f"i_0_in_{name}")
-    v_dc_bus = vf.add_var(name=f"v_dc_bus_in_{name}")
+    v_dc_bus = vf.add_var(name=f"v_dc_bus_in_{name}", reference=VarPowerFlowReferenceType.Vdc)
 
     v_dc = vf.add_var(name=f"v_dc_{name}")
     d_v_dc = vf.add_diff_var(name=f"d_v_dc_{name}", base_var=v_dc)

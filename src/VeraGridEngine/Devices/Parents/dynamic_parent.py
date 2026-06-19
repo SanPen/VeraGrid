@@ -12,7 +12,7 @@ from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.fmu_template import FmuTemplate
 from VeraGridEngine.enumerations import (DeviceType, BuildStatus, SubObjectType, FmuTemplateDomain, FmuTemplateMode,
-                                         PrpCat)
+                                          PrpCat)
 from VeraGridEngine.Utils.Symbolic.symbolic_io import duplicate_block
 
 
@@ -130,13 +130,19 @@ class DynamicDevice(PhysicalDevice):
                  device_type: DeviceType,
                  build_status: BuildStatus = BuildStatus.Commissioned):
         """
+        Build one dynamic-capable device shell.
 
-        :param name:
-        :param idtag:
-        :param code:
-        :param device_type:
-        :param build_status:
+        :param name: Device display name.
+        :param idtag: Persistent identifier or ``None``.
+        :param code: Short device code.
+        :param device_type: Concrete device type.
+        :param build_status: Build lifecycle state.
+        :return: None.
         """
+
+        # The physical-device parent owns the common metadata required by every
+        # network element, so it must be initialized before any dynamic state is
+        # attached to this object.
         PhysicalDevice.__init__(self,
                                 name=name,
                                 idtag=idtag,
@@ -144,14 +150,20 @@ class DynamicDevice(PhysicalDevice):
                                 device_type=device_type,
                                 build_status=build_status)
 
+        # The variable factory is injected later because the editor/circuit owns
+        # the shared symbol namespace and devices must reuse it consistently.
         self._var_factory: VarFactory | None = None
 
+        # RMS state is always present as a block shell so callers can interact
+        # with a concrete object even before a template is assigned.
         self._rms_model: Block = Block()
         self._rms_template: RmsModelTemplate | None = None
         self._rms_fmu_template: FmuTemplate | None = None
         self._rms_fmu_import_config: str = ""
         self._rms_fmu_me_import_config: str = ""
 
+        # EMT state mirrors the RMS structure so both domains can be managed
+        # independently while exposing the same lifecycle to callers.
         self._emt_model: Block = Block()
         self._emt_template: EmtModelTemplate | None = None
         self._emt_fmu_template: FmuTemplate | None = None
@@ -165,6 +177,8 @@ class DynamicDevice(PhysicalDevice):
         :return: None.
         """
 
+        # Clearing both serialized forms prevents stale runtime settings from
+        # surviving after the assigned FMU source changes.
         self._rms_fmu_import_config = ""
         self._rms_fmu_me_import_config = ""
 
@@ -175,6 +189,8 @@ class DynamicDevice(PhysicalDevice):
         :return: None.
         """
 
+        # Clearing both serialized forms prevents stale runtime settings from
+        # surviving after the assigned FMU source changes.
         self._emt_fmu_import_config = ""
         self._emt_fmu_me_import_config = ""
 
@@ -186,15 +202,21 @@ class DynamicDevice(PhysicalDevice):
         :return: None.
         """
 
+        # Native templates and FMU templates are mutually exclusive sources for
+        # the runtime model, so assigning one must clear the other.
         self._rms_template = None
         self._clear_rms_fmu_config()
         if self.auto_update_enabled:
+            # The template block is normalized before duplication so the device
+            # receives a self-contained shell with consistent symbolic wiring.
             template.block.unify_blocks()
             self.rms_model = duplicate_block(template.block, self._var_factory)
         else:
             pass
 
         if template.mode == FmuTemplateMode.CO_SIMULATION:
+            # The serialized configuration is routed to the field that matches
+            # the FMU execution mode so downstream import code can stay explicit.
             self._rms_fmu_import_config = template.serialized_config
         else:
             if template.mode == FmuTemplateMode.MODEL_EXCHANGE:
@@ -210,15 +232,21 @@ class DynamicDevice(PhysicalDevice):
         :return: None.
         """
 
+        # Native templates and FMU templates are mutually exclusive sources for
+        # the runtime model, so assigning one must clear the other.
         self._emt_template = None
         self._clear_emt_fmu_config()
         if self.auto_update_enabled:
+            # The template block is normalized before duplication so the device
+            # receives a self-contained shell with consistent symbolic wiring.
             template.block.unify_blocks()
             self.emt_model = duplicate_block(template.block, self._var_factory)
         else:
             pass
 
         if template.mode == FmuTemplateMode.CO_SIMULATION:
+            # The serialized configuration is routed to the field that matches
+            # the FMU execution mode so downstream import code can stay explicit.
             self._emt_fmu_import_config = template.serialized_config
         else:
             if template.mode == FmuTemplateMode.MODEL_EXCHANGE:
@@ -242,12 +270,21 @@ class DynamicDevice(PhysicalDevice):
     @property
     def rms_model(self) -> Block:
         """
-        Get the RMS model
+        Return the RMS symbolic model.
+
+        :return: RMS symbolic block.
         """
         return self._rms_model
 
     @rms_model.setter
     def rms_model(self, val: Block) -> None:
+        """
+        Store the RMS symbolic model.
+
+        :param val: RMS symbolic block.
+        :return: None.
+        """
+
         if isinstance(val, Block):
             self._rms_model = val
         else:
@@ -256,12 +293,21 @@ class DynamicDevice(PhysicalDevice):
     @property
     def emt_model(self) -> Block:
         """
-        Get the EMT model
+        Return the EMT symbolic model.
+
+        :return: EMT symbolic block.
         """
         return self._emt_model
 
     @emt_model.setter
     def emt_model(self, val: Block) -> None:
+        """
+        Store the EMT symbolic model.
+
+        :param val: EMT symbolic block.
+        :return: None.
+        """
+
         if isinstance(val, Block):
             self._emt_model = val
         else:
@@ -270,50 +316,71 @@ class DynamicDevice(PhysicalDevice):
     @property
     def rms_template(self) -> RmsModelTemplate | None:
         """
-        Get the RMS model
+        Return the assigned native RMS template.
+
+        :return: RMS template or ``None``.
         """
         return self._rms_template
 
     @rms_template.setter
     def rms_template(self, val: RmsModelTemplate | None) -> None:
         if isinstance(val, RmsModelTemplate):
+            # Native template assignment clears any FMU assignment because the
+            # device must derive its RMS model from exactly one template source.
             self._rms_template = val
             self._rms_fmu_template = None
             self._clear_rms_fmu_config()
 
             if self.auto_update_enabled:
+                # Duplicating the template avoids mutating shared library blocks,
+                # and bus variables are rebound to this specific device instance.
                 rms_mdl = duplicate_block(val.block, self._var_factory)
+                rms_mdl.name = val.name
                 connect_bus_variables_rms(self, rms_mdl, self._var_factory)
                 self.rms_model = rms_mdl
 
         elif val is None:
+            # Clearing the native template removes the editor-facing assignment
+            # and resets the runtime block to an empty shell.
             self._rms_template = None
-            self.rms_model = Block()
-            print("")
+            # self.rms_model = Block()
         else:
             raise ValueError(f"RMS template cannot accept {val}")
 
     @property
     def emt_template(self) -> EmtModelTemplate | None:
         """
-        Get the EMT template
+        Return the assigned native EMT template.
+
+        :return: EMT template or ``None``.
         """
         return self._emt_template
 
     @emt_template.setter
     def emt_template(self, val: EmtModelTemplate | None) -> None:
         if isinstance(val, EmtModelTemplate):
+            # Native template assignment clears any FMU assignment because the
+            # device must derive its EMT model from exactly one template source.
             self._emt_template = val
             self._emt_fmu_template = None
             self._clear_emt_fmu_config()
 
             if self.auto_update_enabled:
-                # val.block.unify_blocks()
+                # Duplicating the template avoids mutating shared library blocks,
+                # and bus variables are rebound to this specific device instance.
                 emt_mdl = duplicate_block(val.block, self._var_factory)
-                connect_bus_variables_emt(self, emt_mdl, self._var_factory, allow_deferred_connection=True)
+                emt_mdl.name = val.name
+                connect_bus_variables_emt(self,
+                                          emt_mdl,
+                                          self._var_factory,
+                                          allow_deferred_connection=True)
 
                 self.emt_model = emt_mdl
         elif val is None:
+            # Clearing the template makes any previously registered bus endpoint
+            # stale because the device no longer guarantees that its current EMT
+            # model remains valid for bus-driven rebinding.
+            # unregister_connected_emt_model_from_attached_buses(device=self)
             self._emt_template = None
         else:
             raise ValueError(f"EMT template cannot accept {val}")

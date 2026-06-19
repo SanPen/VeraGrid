@@ -8,7 +8,7 @@ from typing import Union, Tuple
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-from VeraGridEngine.enumerations import DeviceType, BuildStatus, PrpCat
+from VeraGridEngine.enumerations import DeviceType, BuildStatus, PrpCat, ParamPowerFlowReferenceType
 from VeraGridEngine.Devices.Parents.load_parent import InjectionParent
 from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 from VeraGridEngine.Devices.Profiles import ProfileFloat
@@ -45,6 +45,7 @@ class CurrentInjection(InjectionParent):
             definition='Active power of the current component at V=1.0 p.u.',
             profile_name='Ir_prof',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.current_injection_ir_pu,
         ),
         GCProp(
             prop_name='Ir1',
@@ -53,6 +54,7 @@ class CurrentInjection(InjectionParent):
             definition='Active power of the current component at V=1.0 p.u.',
             profile_name='Ir1_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.current_injection_ira_pu,
         ),
         GCProp(
             prop_name='Ir2',
@@ -61,6 +63,7 @@ class CurrentInjection(InjectionParent):
             definition='Active power of the current component at V=1.0 p.u.',
             profile_name='Ir2_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.current_injection_irb_pu,
         ),
         GCProp(
             prop_name='Ir3',
@@ -69,6 +72,7 @@ class CurrentInjection(InjectionParent):
             definition='Active power of the current component at V=1.0 p.u.',
             profile_name='Ir3_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.current_injection_irc_pu,
         ),
         GCProp(
             prop_name='Ii',
@@ -77,6 +81,7 @@ class CurrentInjection(InjectionParent):
             definition='Reactive power of the current component at V=1.0 p.u.',
             profile_name='Ii_prof',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.current_injection_ii_pu,
         ),
         GCProp(
             prop_name='Ii1',
@@ -85,6 +90,7 @@ class CurrentInjection(InjectionParent):
             definition='Reactive power of the current component at V=1.0 p.u.',
             profile_name='Ii1_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.current_injection_iia_pu,
         ),
         GCProp(
             prop_name='Ii2',
@@ -93,6 +99,7 @@ class CurrentInjection(InjectionParent):
             definition='Reactive power of the current component at V=1.0 p.u.',
             profile_name='Ii2_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.current_injection_iib_pu,
         ),
         GCProp(
             prop_name='Ii3',
@@ -101,6 +108,7 @@ class CurrentInjection(InjectionParent):
             definition='Reactive power of the current component at V=1.0 p.u.',
             profile_name='Ii3_prof',
             cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.current_injection_iic_pu,
         ),
     )
 

@@ -1684,9 +1684,9 @@ def get_exciter_emt(vf: VarFactory, name: str = "exciter") -> EmtModelTemplate:
     # Vpss: output from power system stabilizer (pu)
 
     IRPu = vf.add_var(f"IRPu_{name}", shared_reference = "IRPu_reference")
-    v_A = vf.add_var(f"v_A_{name}")
-    v_B = vf.add_var(f"v_B_{name}")
-    v_C = vf.add_var(f"v_C_{name}")
+    v_A = vf.add_var("v_A_" + name, reference=VarPowerFlowReferenceType.v_A)
+    v_B = vf.add_var("v_B_" + name, reference=VarPowerFlowReferenceType.v_B)
+    v_C = vf.add_var("v_C_" + name, reference=VarPowerFlowReferenceType.v_C)
     Vpss = vf.add_var(f"V_pss_{name}", shared_reference = "V_pss_reference")
 
     inputs = [IRPu, v_A, v_B, v_C, Vpss]
@@ -1815,6 +1815,7 @@ def get_exciter_emt(vf: VarFactory, name: str = "exciter") -> EmtModelTemplate:
             y3: Efe / parameters["Ka"].value,
             UsRefPu: y1 + y2 - inputs[4] + y3,
         },
+        name=name,
     )
 
     return templ

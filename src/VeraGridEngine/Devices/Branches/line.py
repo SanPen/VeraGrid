@@ -8,7 +8,8 @@ import pandas as pd
 from typing import Union, Tuple
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.enumerations import (BuildStatus, SubObjectType, DeviceType, PrpCat)
+from VeraGridEngine.enumerations import (BuildStatus, SubObjectType, DeviceType, PrpCat,
+                                         ParamPowerFlowReferenceType)
 from VeraGridEngine.Devices.Branches.underground_line_type import UndergroundLineType
 from VeraGridEngine.Devices.Branches.overhead_line_type import OverheadLineType
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
@@ -181,6 +182,7 @@ class Line(BranchParent):
             tpe=float,
             definition='Length of the line (not used for calculation)',
             cat=[PrpCat.TP],
+            dyn_ref=ParamPowerFlowReferenceType.line_length_km,
         ),
         GCProp(
             prop_name='template',

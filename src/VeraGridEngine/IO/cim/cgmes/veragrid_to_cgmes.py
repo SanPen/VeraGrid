@@ -323,12 +323,13 @@ def get_transformer_tap_values_for_cgmes_export(mc_elm: gcdev.Transformer2W | gc
 
     low, high, normal, neutral, step_voltage_increment, step = tap_changer.get_cgmes_values()
 
-    if original_type == TapChangerTypes.NoRegulation:
+    if original_type in (TapChangerTypes.NoRegulation, TapChangerTypes.VoltageRegulation):
         target_tap_module = float(mc_elm.get_tap_module_at(t_idx))
         if np.isclose(target_tap_module, 1.0):
             return low, high, normal, neutral, step_voltage_increment, step
 
-        tap_changer.tc_type = TapChangerTypes.VoltageRegulation
+        if original_type == TapChangerTypes.NoRegulation:
+            tap_changer.tc_type = TapChangerTypes.VoltageRegulation
         exported_tap_module = tap_changer.set_tap_module(tap_module=target_tap_module)
         low, high, normal, neutral, step_voltage_increment, step = tap_changer.get_cgmes_values()
 
@@ -559,6 +560,7 @@ def create_cgmes_tap_changer_for_transformer_end(mc_elm: gcdev.Transformer2W | g
     sv_tap_step.TapChanger = tap_changer
 
     cgmes_model.add(tap_changer)
+    cgmes_model.add(sv_tap_step)
 
 
 def find_terminals_by_conducting_equipment_uuid(cgmes_model: CgmesCircuit,

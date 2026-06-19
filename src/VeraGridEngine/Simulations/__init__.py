@@ -7,6 +7,7 @@
 from VeraGridEngine.Simulations.ContinuationPowerFlow import *
 from VeraGridEngine.Simulations.Stochastic import *
 from VeraGridEngine.Simulations.PowerFlow import *
+from VeraGridEngine.Simulations.PowerFlow3ph import *
 from VeraGridEngine.Simulations.ShortCircuitStudies import *
 from VeraGridEngine.Simulations.StateEstimation import *
 from VeraGridEngine.Simulations.OPF import *

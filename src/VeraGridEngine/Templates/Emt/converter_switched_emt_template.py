@@ -118,7 +118,7 @@ def _build_pseudo_emt_converter_vsc_block(vf: VarFactory, name: str) -> Block:
     i_d: Var = vf.add_var(name=f"i_d_in_{name}")
     i_q: Var = vf.add_var(name=f"i_q_in_{name}")
     i_0: Var = vf.add_var(name=f"i_0_in_{name}")
-    v_dc_bus: Var = vf.add_var(name=f"v_dc_bus_in_{name}")
+    v_dc_bus: Var = vf.add_var(name=f"v_dc_bus_in_{name}", reference=VarPowerFlowReferenceType.Vdc)
 
     v_dc: Var = vf.add_var(name=f"v_dc_{name}")
     d_v_dc: Var = vf.add_diff_var(name=f"d_v_dc_{name}", base_var=v_dc)

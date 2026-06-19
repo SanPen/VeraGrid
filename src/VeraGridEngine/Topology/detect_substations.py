@@ -88,7 +88,7 @@ def detect_substations(grid: MultiCircuit, r_x_threshold=1e-3) -> None:
     islands = find_islands(adj=A, active=bus_active)
 
     for is_idx, island in enumerate(islands):
-        bus0 = grid.get_buses()[island[0]]
+        bus0: dev.Bus = grid.get_buses()[island[0]]
 
         sub = get_bus_group_substation(bus_indices=island, buses=buses)
 
@@ -104,7 +104,7 @@ def detect_substations(grid: MultiCircuit, r_x_threshold=1e-3) -> None:
         # set the substation, and get the different voltages
         voltages = set()
         for i in island:
-            bus = buses[i]
+            bus: dev.Bus = buses[i]
             bus.substation = sub
             voltages.add(bus.Vnom)
 
@@ -119,7 +119,7 @@ def detect_substations(grid: MultiCircuit, r_x_threshold=1e-3) -> None:
 
         # assign the VL's
         for i in island:
-            bus = buses[i]
+            bus: dev.Bus = buses[i]
             bus.voltage_level = voltages_vl[bus.Vnom]
 
 

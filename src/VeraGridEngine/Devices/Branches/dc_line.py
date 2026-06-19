@@ -10,7 +10,7 @@ import numpy as np
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 from VeraGridEngine.Devices.Profiles import ProfileFloat
-from VeraGridEngine.enumerations import DeviceType, BuildStatus, SubObjectType, PrpCat
+from VeraGridEngine.enumerations import DeviceType, BuildStatus, SubObjectType, PrpCat, ParamPowerFlowReferenceType
 from VeraGridEngine.Devices.Branches.line_locations import LineLocations
 from VeraGridEngine.Devices.Parents.editable_device import GCProp
 
@@ -34,6 +34,7 @@ class DcLine(BranchParent):
             tpe=float,
             definition='Total positive sequence resistance.',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.dc_line_r_pu,
         ),
         GCProp(
             prop_name='length',
@@ -41,6 +42,7 @@ class DcLine(BranchParent):
             tpe=float,
             definition='Length of the line (not used for calculation)',
             cat=[PrpCat.TP],
+            dyn_ref=ParamPowerFlowReferenceType.dc_line_length_km,
         ),
         GCProp(
             prop_name='r_fault',
@@ -426,5 +428,4 @@ class DcLine(BranchParent):
         :return: None
         """
         self._fault_pos = float(val)
-
 

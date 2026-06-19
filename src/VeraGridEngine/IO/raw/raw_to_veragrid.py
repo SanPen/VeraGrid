@@ -540,22 +540,6 @@ def get_veragrid_shunt_switched(
             value=psse_elm.MODSW,
         )
 
-    elm = dev.ControllableShunt(
-        name='Switched shunt ' + busnum_id,
-        code=busnum_id,
-        active=bool(psse_elm.STAT),
-        B=b_init,
-        step=0,
-        vset=vset,
-        vmin=float(psse_elm.VSWLO),
-        vmax=float(psse_elm.VSWHI),
-        control_mode=control_mode,
-    )
-
-    if psse_elm.SWREG > 0:
-        if psse_elm.SWREG != psse_elm.I:
-            elm.control_bus = psse_bus_dict[psse_elm.SWREG]
-
     n_list: list[int] = list()
     b_list: list[float] = list()
 
@@ -566,6 +550,29 @@ def get_veragrid_shunt_switched(
         if s == 1:
             n_list.append(n)
             b_list.append(psse_elm.get_block_admittance(i))
+
+    # Pick the discrete step whose cumulative susceptance matches the in-service
+    # initial value BINIT. The raw is a solved snapshot, so BINIT is the susceptance
+    # PSSe converged with; starting here lets a controls-off solve reproduce it
+    # (step 0 = neutral/off, step k = first k blocks on).
+    cum_b = np.insert(np.cumsum([n * b for n, b in zip(n_list, b_list)]), 0, 0.0)
+    init_step = int(np.argmin(np.abs(cum_b - psse_elm.BINIT))) if len(cum_b) > 1 else 0
+
+    elm = dev.ControllableShunt(
+        name='Switched shunt ' + busnum_id,
+        code=busnum_id,
+        active=bool(psse_elm.STAT),
+        B=b_init,
+        step=init_step,
+        vset=vset,
+        vmin=float(psse_elm.VSWLO),
+        vmax=float(psse_elm.VSWHI),
+        control_mode=control_mode,
+    )
+
+    if psse_elm.SWREG > 0:
+        if psse_elm.SWREG != psse_elm.I:
+            elm.control_bus = psse_bus_dict[psse_elm.SWREG]
 
     elm.set_blocks(n_list, b_list)
 
@@ -658,6 +665,13 @@ def get_veragrid_generator(psse_elm: RawGeneratorLike, psse_bus_dict: Dict[int, 
         Qmin = psse_elm.QB
         Qmax = psse_elm.QT
         Q = psse_elm.QG
+
+    # A non-slack generator with no reactive range (QT == QB) cannot regulate voltage.
+    # Keep the slack machine as voltage-controlled even when its reactive range is zero,
+    # because the RAW slack/reference bus still defines the system angle and voltage target.
+    bus = psse_bus_dict[psse_elm.I]
+    if Qmax == Qmin and not bus.is_slack:
+        control_mode = GeneratorControlMode.Q
 
     elm = dev.Generator(
         name=name,
@@ -1000,6 +1014,7 @@ def get_veragrid_transformer(
         mf, mt = elm.get_virtual_taps()
 
         # we need to discount that PSSe includes the virtual tap inside the normal tap
+        # NOTE: may need to be `/ mf / mt` (small Va error on some radial buses); see admittance_matrices.py
         elm.tap_module = tap_module / mf * mt
 
         return elm, 2
@@ -1115,15 +1130,64 @@ def get_veragrid_transformer(
                                  rate23=rate2_1,
                                  rate31=rate3_1)
 
-        # NOTE: These seem to be related to the vector group and not to the power flow tap
+        # PSSe defines the winding off-nominal turns ratio (WINDVn) and phase shift (ANGn)
+        # on the winding-bus side. The windings are oriented winding-bus(bus_from) ->
+        # star(bus_to) with the tap applied on the bus_from (winding-bus) side, so the
+        # PSSe winding-side values are used directly.
         tr3w.winding1.tap_phase = np.deg2rad(psse_elm.ANG1)
         tr3w.winding2.tap_phase = np.deg2rad(psse_elm.ANG2)
         tr3w.winding3.tap_phase = np.deg2rad(psse_elm.ANG3)
+
+        # STAT=2/3/4 means winding 1/2/3 is individually out of service
+        if psse_elm.STAT == 0:
+            tr3w.winding1.active = False
+            tr3w.winding2.active = False
+            tr3w.winding3.active = False
+        elif psse_elm.STAT == 1:
+            tr3w.winding1.active = True
+            tr3w.winding2.active = True
+            tr3w.winding3.active = True
+        elif psse_elm.STAT == 2:
+            tr3w.winding1.active = True
+            tr3w.winding2.active = False
+            tr3w.winding3.active = True
+        elif psse_elm.STAT == 3:
+            tr3w.winding1.active = True
+            tr3w.winding2.active = True
+            tr3w.winding3.active = False
+        elif psse_elm.STAT == 4:
+            tr3w.winding1.active = False
+            tr3w.winding2.active = True
+            tr3w.winding3.active = True
+
+        # STAT=2/3/4 means winding 1/2/3 is individually out of service
+        if psse_elm.STAT == 0:
+            tr3w.winding1.active = False
+            tr3w.winding2.active = False
+            tr3w.winding3.active = False
+        elif psse_elm.STAT == 1:
+            tr3w.winding1.active = True
+            tr3w.winding2.active = True
+            tr3w.winding3.active = True
+        elif psse_elm.STAT == 2:
+            tr3w.winding1.active = True
+            tr3w.winding2.active = False
+            tr3w.winding3.active = True
+        elif psse_elm.STAT == 3:
+            tr3w.winding1.active = True
+            tr3w.winding2.active = True
+            tr3w.winding3.active = False
+        elif psse_elm.STAT == 4:
+            tr3w.winding1.active = False
+            tr3w.winding2.active = True
+            tr3w.winding3.active = True
 
         NOMV1 = psse_elm.NOMV1 if psse_elm.NOMV1 > 0 else bus_1.Vnom
         NOMV2 = psse_elm.NOMV2 if psse_elm.NOMV2 > 0 else bus_2.Vnom
         NOMV3 = psse_elm.NOMV3 if psse_elm.NOMV3 > 0 else bus_3.Vnom
 
+        # winding-bus-side off-nominal ratio in pu (per PSSe convention), applied directly
+        # because the winding tap is on the winding-bus (bus_from) side.
         if psse_elm.CW == 1:
 
             tr3w.winding1.tap_module = psse_elm.WINDV1
@@ -1143,6 +1207,48 @@ def get_veragrid_transformer(
             tr3w.winding3.tap_module = psse_elm.WINDV3 / NOMV3
         else:
             raise Exception('Unknown impedance combination CW=' + str(psse_elm.CZ))
+
+        # --------------------------------------------------------------------------------------
+        # Winding tap regulation. With COD = +-1 a winding steps its tap to hold the controlled
+        # bus (CONTn) voltage within the band [VMIn, VMAn], the tap ratio moving within
+        # [RMIn, RMAn] over NTPn discrete positions. PSSe writes the *initial* tap into WINDVn
+        # and adjusts it during the solve, so importing the regulation lets VeraGrid reproduce
+        # the regulated tap instead of staying frozen at the input value.
+        # --------------------------------------------------------------------------------------
+        winding_controls = [
+            (tr3w.winding1, psse_elm.COD1, psse_elm.CONT1, psse_elm.RMA1, psse_elm.RMI1,
+             psse_elm.VMA1, psse_elm.VMI1, psse_elm.NTP1),
+            (tr3w.winding2, psse_elm.COD2, psse_elm.CONT2, psse_elm.RMA2, psse_elm.RMI2,
+             psse_elm.VMA2, psse_elm.VMI2, psse_elm.NTP2),
+            (tr3w.winding3, psse_elm.COD3, psse_elm.CONT3, psse_elm.RMA3, psse_elm.RMI3,
+             psse_elm.VMA3, psse_elm.VMI3, psse_elm.NTP3),
+        ]
+        for w, cod, cont, rma, rmi, vma, vmi, ntp in winding_controls:
+            if cod in (1, -1):  # voltage control (negative => locked, kept fixed)
+                w.tap_module_control_mode = TapModuleControl.Vm if cod > 0 else TapModuleControl.fixed
+
+                reg_bus = psse_bus_dict.get(abs(int(cont)), None)
+                if reg_bus is not None:
+                    w.regulation_bus = reg_bus
+
+                # controlled-voltage band -> regulate towards its midpoint
+                if vma > 0.0 and vmi > 0.0:
+                    w.vset = 0.5 * (vma + vmi)
+
+                # tap-ratio limits and discrete positions. The parsed tap_module (WINDVn) is
+                # the regulator's starting position and is left untouched; only the changer
+                # ladder is configured so the solver can step it within [RMIn, RMAn].
+                if rma > 0.0 and rmi > 0.0:
+                    w.tap_module_max = rma
+                    w.tap_module_min = rmi
+                    if ntp > 1:
+                        tc = w.tap_changer
+                        tc.tc_type = TapChangerTypes.VoltageRegulation
+                        tc.total_positions = int(ntp)
+                        tc.neutral_position = int(ntp // 2)
+                        tc.normal_position = int(ntp // 2)
+                        tc.dV = (rma - rmi) / (ntp - 1)
+                        tc.recalc()
 
         tr3w.compute_delta_to_star()
 

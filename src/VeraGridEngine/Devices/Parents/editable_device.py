@@ -11,7 +11,7 @@ import pandas as pd
 
 from typing import List, Dict, AnyStr, Any, Union, Type, Tuple
 from VeraGridEngine.basic_structures import Logger, IntVec
-from VeraGridEngine.Devices.Profiles import ProfileBool, ProfileDevice, ProfileEnum, ProfileFloat, ProfileInt, AnyProfile, PROFILE_INSTANCE_TYPES
+from VeraGridEngine.Devices.Profiles import AnyProfile, PROFILE_INSTANCE_TYPES
 from VeraGridEngine.enumerations import (DeviceType, PrpCat, TimeFrame, BuildStatus, WindingsConnection,
                                          TapModuleControl, TapPhaseControl, SubObjectType, ConverterControlType,
                                          HvdcControlType, ActionType, AvailableTransferMode, ContingencyMethod,
@@ -25,7 +25,8 @@ from VeraGridEngine.enumerations import (DeviceType, PrpCat, TimeFrame, BuildSta
                                          SmallSignalEmtBuildTypes, FmuTemplateDomain, DynamicPlotMode,
                                          EraSvdSolverType, ShuntControlMode, RmsProblemTypes, FmuTemplateDomain,
                                          FmuTemplateMode, RmsInitializationMethod, EmtSolverTypes, PlotSimulationType,
-                                         DynamicEventTransitionType, DynamicPlotEntryKind, DynamicPlotEntryRole)
+                                         DynamicEventTransitionType, DynamicPlotEntryKind, DynamicPlotEntryRole,
+                                         ParamPowerFlowReferenceType)
 # types that can be assigned to a VeraGrid property
 GCPROP_TYPES = Union[
     Type[int],
@@ -150,7 +151,8 @@ class GCProp:
         "_old_names",
         "_is_color",
         "_is_date",
-        "_category"
+        "_category",
+        "dyn_ref"
     )
 
     def __init__(self,
@@ -165,7 +167,8 @@ class GCProp:
                  is_color: bool = False,
                  is_date: bool = False,
                  key: Union[str, None] = None,
-                 cat: List[PrpCat] | None = None):
+                 cat: List[PrpCat] | None = None,
+                 dyn_ref: ParamPowerFlowReferenceType | None = None,):
         """
         VeraGrid property
         :param prop_name:
@@ -177,6 +180,9 @@ class GCProp:
         :param editable: Is this editable?
         :param is_color: Is this a color? i.e. the tpe is str, but it represents a color
         :param is_date: Is this a date? i.e. the tpe is int but represents a date
+        :param key: Property key
+        :param cat: Property categories
+        :param dyn_ref: Property dynamic reference
         """
 
         if prop_name is None:
@@ -198,6 +204,7 @@ class GCProp:
         self._editable: bool = editable
         self._is_color: bool = is_color
         self._is_date: bool = is_date
+        self.dyn_ref = dyn_ref
         if old_names is None:
             self._old_names: Tuple[str, ...] = tuple()
         else:
@@ -517,6 +524,14 @@ class EditableDevice(metaclass=EditableDeviceMeta):
             tpe=ActionType,
             definition='Object action to perform.\nOnly used for model merging.',
             display=False,
+        ),
+        GCProp(
+            prop_name='selected_to_merge',
+            units='',
+            tpe=bool,
+            definition='Whether this object should be applied during diff merge.',
+            display=False,
+            editable=False,
         ),
         GCProp(
             prop_name='comment',

@@ -10,7 +10,8 @@ from matplotlib import pyplot as plt
 from typing import List, Tuple, TYPE_CHECKING
 from VeraGridEngine.Devices.Profiles import ProfileDevice, ProfileEnum, ProfileFloat
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.enumerations import BuildStatus, ConverterControlType, ConverterFaultControlType, PrpCat
+from VeraGridEngine.enumerations import (BuildStatus, ConverterControlType, ConverterFaultControlType, PrpCat,
+                                         ParamPowerFlowReferenceType)
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
 from VeraGridEngine.Devices.Parents.editable_device import get_at
@@ -83,18 +84,21 @@ class VSC(BranchParent):
             units='',
             tpe=float,
             definition='Losses constant parameter (IEC 62751-2 loss Correction, idle loss).',
+            dyn_ref=ParamPowerFlowReferenceType.alpha1,
         ),
         GCProp(
             prop_name='alpha2',
             units='',
             tpe=float,
             definition='Losses linear parameter (IEC 62751-2 loss Correction, Switching loss).',
+            dyn_ref=ParamPowerFlowReferenceType.alpha2,
         ),
         GCProp(
             prop_name='alpha3',
             units='',
             tpe=float,
             definition='Losses quadratic parameter (IEC 62751-2 loss Correction, resistive loss).',
+            dyn_ref=ParamPowerFlowReferenceType.alpha3,
         ),
 
 
@@ -105,6 +109,7 @@ class VSC(BranchParent):
             profile_name="control1_prof",
             definition='Control mode 1.',
             cat=[PrpCat.PF, PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.converter_control_mode_1,
         ),
         GCProp(
             prop_name='control1_dev',
@@ -126,6 +131,7 @@ class VSC(BranchParent):
                           'MW for P\n'
                           'MVAr for Q',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.converter_control_target_1,
         ),
         GCProp(
             prop_name='control1_val_min',
@@ -146,6 +152,7 @@ class VSC(BranchParent):
             profile_name="control1_val_droop_prof",
             old_names=['control1_droop'],
             cat=[PrpCat.PF, PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.vsc_kdp_pu,
         ),
         GCProp(
             prop_name='control1_droop_val',
@@ -174,6 +181,7 @@ class VSC(BranchParent):
             profile_name="control2_prof",
             definition='Control mode 2.',
             cat=[PrpCat.PF, PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.converter_control_mode_2,
         ),
         GCProp(
             prop_name='control2_dev',
@@ -195,6 +203,7 @@ class VSC(BranchParent):
                                  'MW for P\n'
                                  'MVAr for Q',
             cat=[PrpCat.PF, PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.converter_control_target_2,
         ),
         GCProp(
             prop_name='control2_val_min',
@@ -250,6 +259,7 @@ class VSC(BranchParent):
             definition='Minimum AC voltage threshold. '
                                  'If the AC bus voltage drops below this value, the VSC is disconnected.',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.vsc_min_ac_voltage_pu,
         ),
         GCProp(
             prop_name='ysvs',

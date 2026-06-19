@@ -11,6 +11,7 @@ from PySide6.QtCore import Qt, QRectF, QRect, QPointF
 from PySide6.QtGui import QPen, QCursor, QBrush, QColor, QPainterPath
 from PySide6.QtWidgets import QMenu, QGraphicsSceneMouseEvent, QGraphicsItem, QGraphicsPathItem
 
+from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionTemplateGraphicItem
 from VeraGrid.Gui.messages import yes_no_question, warning_msg
 from VeraGrid.Gui.gui_functions import add_menu_entry
@@ -339,11 +340,18 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
 
         :return: Brush used for the idle bus appearance.
         """
-        if self.api_object.active:
+        if not self.api_object.active:
+            return QBrush(DEACTIVATED['color'])
+        else:
+            pass
+
+        # The bus idle colour must follow the active GUI theme unless the user has
+        # explicitly requested API/device colours for the whole diagram.
+        if self.editor.diagram.use_api_colors:
             color_hex: str = str(self.api_object.color)
             return QBrush(QColor(color_hex))
         else:
-            return QBrush(DEACTIVATED['color'])
+            return QBrush(QColor(ACTIVE['color']))
 
     def enable_label_drawing(self) -> None:
         """
@@ -802,6 +810,11 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         menu.addSection("Bus")
 
         add_menu_entry(menu=menu,
+                       text="Editor",
+                       icon_path=":/Icons/icons/edit.png",
+                       function_ptr=self.edit)
+
+        add_menu_entry(menu=menu,
                        text="Active",
                        icon_path="",
                        function_ptr=self.enable_disable_toggle,
@@ -1062,11 +1075,28 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         Mouse double click
         :param event: event object
         """
-        title = self._api_object.name if self._api_object is not None else ""
-        msg = ""
-        self.set_label_content(title=title, msg=msg)
+        if self._api_object is not None:
+            self.open_device_editor()
+        else:
+            pass
 
-        self.setToolTip(msg)
+    def open_device_editor(self) -> bool:
+        """
+        Open the generic device editor for this bus.
+
+        :return: ``True`` when the editor was opened.
+        """
+        dialog = TemplateDeviceEditor(api_object=self.api_object, circuit=self.editor.circuit)
+        dialog.exec()
+        return True
+
+    def edit(self) -> None:
+        """
+        Open the appropriate editor dialogue.
+
+        :return: ``None``.
+        """
+        self.open_device_editor()
 
     def get_terminal(self) -> BarTerminalItem:
         """
@@ -1502,6 +1532,9 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
             else:
                 graphic.update_nexus(graphic.scenePos())
 
+        # Child graphics inherit the bus scene item, so they bypass the editor
+        # add_to_scene() hook and must normalize their active/theme styling here.
+        graphic.recolour_mode()
         self._child_graphics.append(graphic)
         if self.editor.is_loading_diagram():
             pass

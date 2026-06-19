@@ -17,7 +17,7 @@ from VeraGrid.Gui.gui_functions import add_menu_entry
 
 
 def gui_struct_to_data(data_: Dict[str, Union[float, int, str, bool, Dict[str, Union[float, int, str, bool, Dict]]]],
-                       struct_: Dict[str, Dict[str, any]]):
+                       struct_: Dict[str, Dict[str, Any]]):
     """
     Recursive function to get the config dictionary from the GUI values
     :param data_: Dictionary to fill
@@ -117,7 +117,9 @@ class ConfigurationMain(ResultsMain):
         self.plugins_info = PluginsInfo()
 
         # check boxes
-        self.ui.dark_mode_checkBox.clicked.connect(self.change_theme_mode)
+        # Use the checkbox state-change signal so the theme refresh path runs for both
+        # user clicks and programmatic setChecked() calls during configuration loading.
+        self.ui.dark_mode_checkBox.toggled.connect(self.change_theme_mode)
 
         self.plugins_investment_evaluation_method_dict = dict()
 
@@ -126,19 +128,21 @@ class ConfigurationMain(ResultsMain):
 
         self.plugin_windows_list = list()
 
-    def change_theme_mode(self) -> None:
+    def change_theme_mode(self, _checked: bool | None = None) -> None:
         """
-        Change the GUI theme
+        Change the GUI theme.
+
+        :param _checked: Checkbox state provided by the Qt signal when available.
+        :return: None.
         """
         custom_colors = {"primary": "#00aa88ff",
                          "primary>list.selectionBackground": "#00aa88be"}
 
         if self.ui.dark_mode_checkBox.isChecked():
-            set_dark_mode()
-
             qdarktheme.setup_theme(theme='dark',
                                    custom_colors=custom_colors,
                                    additional_qss="QToolTip {color: white; background-color: black; border: 0px; }")
+            set_dark_mode()
 
             # note: The 0px border on the tooltips allow it to render properly
             for diagram in self.diagram_widgets_list:
@@ -148,10 +152,10 @@ class ConfigurationMain(ResultsMain):
             self.colour_diagrams()
 
         else:
-            set_light_mode()
             qdarktheme.setup_theme(theme='light',
                                    custom_colors=custom_colors,
                                    additional_qss="QToolTip {color: black; background-color: white; border: 0px;}")
+            set_light_mode()
 
             # note: The 0px border on the tooltips allow it to render properly
             for diagram in self.diagram_widgets_list:
@@ -175,7 +179,7 @@ class ConfigurationMain(ResultsMain):
         """
         return os.path.exists(self.config_file_path())
 
-    def get_config_structure(self) -> Dict[str, Dict[str, any]]:
+    def get_config_structure(self) -> Dict[str, Dict[str, Any]]:
         """
         Get the settings configuration dictionary
         This serves to collect automatically the settings

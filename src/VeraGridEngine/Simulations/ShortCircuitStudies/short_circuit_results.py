@@ -7,10 +7,8 @@ import numpy as np
 import pandas as pd
 from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
 from VeraGridEngine.Simulations.results_table import ResultsTable
-from VeraGridEngine.enumerations import FaultType
 from VeraGridEngine.basic_structures import IntVec, Vec, StrVec, CxVec
 from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
-from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_basic_formulation_3ph import (expand_indices_3ph)
 
 
 class ShortCircuitResults(ResultsTemplate):

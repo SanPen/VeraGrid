@@ -380,6 +380,9 @@ class ObjectsModel(WrappableTableModel):
                 else:
                     return str(self.data_with_type(index))
 
+            elif role == QtCore.Qt.ItemDataRole.EditRole:
+                return self.data_with_type(index)
+
             elif role == QtCore.Qt.ItemDataRole.BackgroundRole:
 
                 if self.property_list[attr_idx].is_color:

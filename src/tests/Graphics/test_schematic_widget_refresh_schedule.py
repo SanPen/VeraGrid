@@ -1,10 +1,12 @@
 from typing import Callable
 
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QGraphicsView
+from PySide6.QtCore import Qt, QRectF
+from PySide6.QtWidgets import QGraphicsItem, QGraphicsView
 
 import VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget as schematic_widget_module
 from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import CustomGraphicsView, SchematicWidget
+from VeraGridEngine.Devices.Branches.winding import Winding
+from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import DeviceType, SchematicAutoRouteStyle
 
 
@@ -157,6 +159,119 @@ class _RefreshScheduleStub:
         return None
 
 
+class _WindingTerminalGraphicStub:
+    __slots__ = tuple()
+
+    @staticmethod
+    def get_terminal():
+        return "terminal"
+
+
+class _WindingWidgetStub:
+    __slots__ = ("queried_buses", "add_api_branch_call")
+
+    def __init__(self) -> None:
+        self.queried_buses: list[Bus | None] = list()
+        self.add_api_branch_call: tuple | None = None
+
+    def _query_bus_graphic(self, bus: Bus | None):
+        self.queried_buses.append(bus)
+        return _WindingTerminalGraphicStub()
+
+    def add_api_branch(self, **kwargs):
+        self.add_api_branch_call = kwargs
+        return "created-winding"
+
+
+class _CenterNodesSceneStub:
+    __slots__ = ("_rect", "set_rect_calls")
+
+    def __init__(self, rect: QRectF) -> None:
+        self._rect = rect
+        self.set_rect_calls: list[QRectF] = list()
+
+    def itemsBoundingRect(self) -> QRectF:
+        return QRectF(self._rect)
+
+    def setSceneRect(self, rect: QRectF) -> None:
+        self.set_rect_calls.append(QRectF(rect))
+
+
+class _CenterNodesViewStub:
+    __slots__ = ("fit_calls", "scale_calls")
+
+    def __init__(self) -> None:
+        self.fit_calls: list[QRectF] = list()
+        self.scale_calls: list[tuple[float, float]] = list()
+
+    def fitInView(self, rect: QRectF, _mode) -> None:
+        self.fit_calls.append(QRectF(rect))
+
+    def scale(self, sx: float, sy: float) -> None:
+        self.scale_calls.append((sx, sy))
+
+
+class _CenterNodesWidgetStub:
+    __slots__ = ("diagram_scene", "editor_graphics_view")
+
+    def __init__(self, rect: QRectF) -> None:
+        self.diagram_scene = _CenterNodesSceneStub(rect=rect)
+        self.editor_graphics_view = _CenterNodesViewStub()
+
+
+class _PersistSelectedGraphicStub:
+    __slots__ = ("_api_object", "_pos", "_rotation", "w", "h", "_draw_labels", "_movable")
+
+    def __init__(self, api_object, x: float, y: float, movable: bool = True) -> None:
+        self._api_object = api_object
+        self._pos = type("PointStub", (), {"x": lambda self: x, "y": lambda self: y})()
+        self._rotation = 7.0
+        self.w = 30.0
+        self.h = 40.0
+        self._draw_labels = False
+        self._movable = movable
+
+    @property
+    def api_object(self):
+        return self._api_object
+
+    @property
+    def draw_labels(self):
+        return self._draw_labels
+
+    def pos(self):
+        return self._pos
+
+    def rotation(self) -> float:
+        return self._rotation
+
+    def flags(self):
+        if self._movable:
+            return QGraphicsItem.GraphicsItemFlag.ItemIsMovable
+        return QGraphicsItem.GraphicsItemFlag(0)
+
+
+class _PersistSelectedSceneStub:
+    __slots__ = ("_selected_items",)
+
+    def __init__(self, selected_items: list[object]) -> None:
+        self._selected_items = selected_items
+
+    def selectedItems(self) -> list[object]:
+        return list(self._selected_items)
+
+
+class _PersistSelectedWidgetStub:
+    __slots__ = ("diagram_scene", "calls")
+
+    def __init__(self, selected_items: list[object]) -> None:
+        self.diagram_scene = _PersistSelectedSceneStub(selected_items=selected_items)
+        self.calls: list[dict[str, object]] = list()
+
+    def update_diagram_element(self, **kwargs) -> None:
+        self.calls.append(kwargs)
+
+
 def test_schedule_branch_callbacks_after_draw_coalesces_visible_refresh(override_attrs) -> None:
     """
     Visible widgets should queue at most one branch-refresh callback.
@@ -277,7 +392,6 @@ def test_set_all_branch_drawing_styles_updates_all_registered_branch_widgets(ove
         "LineGraphicTemplateItem",
         _BranchStyleLineGraphicStub
     )
-
     graphics_manager.device_type_lists[DeviceType.LineDevice] = [line_graphic, non_branch_graphic]
     graphics_manager.device_type_lists[DeviceType.FluidPathDevice] = [fluid_path_graphic]
 
@@ -286,3 +400,58 @@ def test_set_all_branch_drawing_styles_updates_all_registered_branch_widgets(ove
     assert line_graphic.styles == [SchematicAutoRouteStyle.RETICULAR]
     assert fluid_path_graphic.styles == [SchematicAutoRouteStyle.RETICULAR]
     assert non_branch_graphic.styles == list()
+
+
+def test_add_api_winding_uses_visible_winding_terminal_bus() -> None:
+    """
+    Winding graphics should query the visible transformer terminal bus after the winding orientation flip.
+    """
+    visible_bus = Bus(name="Visible", Vnom=110.0)
+    internal_bus = Bus(name="Internal", Vnom=1.0, is_internal=True)
+    winding = Winding(bus_from=visible_bus, bus_to=internal_bus)
+    stub = _WindingWidgetStub()
+
+    result = SchematicWidget.add_api_winding(stub,
+                                             branch=winding,
+                                             from_port="from-port",
+                                             draw_labels=True)
+
+    assert result == "created-winding"
+    assert stub.queried_buses == [visible_bus]
+    assert stub.add_api_branch_call is not None
+    assert stub.add_api_branch_call["to_port"] == "terminal"
+
+
+def test_center_nodes_uses_full_scene_bounds() -> None:
+    """
+    Centering the view should use the full scene bounds, not just bus-like widgets.
+    """
+    stub = _CenterNodesWidgetStub(QRectF(10.0, 20.0, 200.0, 100.0))
+
+    SchematicWidget.center_nodes(stub, margin_factor=0.1)
+
+    assert len(stub.diagram_scene.set_rect_calls) == 1
+    assert len(stub.editor_graphics_view.fit_calls) == 1
+    assert stub.editor_graphics_view.scale_calls == [(1.0, 1.0)]
+
+    rect = stub.diagram_scene.set_rect_calls[0]
+    assert rect.x() == -10.0
+    assert rect.y() == 10.0
+    assert rect.width() == 240.0
+    assert rect.height() == 120.0
+
+
+def test_persist_selected_item_positions_updates_all_selected_movable_items() -> None:
+    """
+    Releasing a multi-selection drag should persist every moved item position.
+    """
+    first = _PersistSelectedGraphicStub(api_object="first", x=10.0, y=20.0, movable=True)
+    second = _PersistSelectedGraphicStub(api_object="second", x=30.0, y=40.0, movable=True)
+    ignored = _PersistSelectedGraphicStub(api_object="ignored", x=50.0, y=60.0, movable=False)
+    stub = _PersistSelectedWidgetStub(selected_items=[first, second, ignored])
+
+    SchematicWidget.persist_selected_item_positions(stub)
+
+    assert len(stub.calls) == 2
+    assert [call["device"] for call in stub.calls] == ["first", "second"]
+    assert [(call["x"], call["y"]) for call in stub.calls] == [(10.0, 20.0), (30.0, 40.0)]

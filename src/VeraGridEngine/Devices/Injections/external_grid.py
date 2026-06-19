@@ -8,7 +8,7 @@ from typing import Union, Tuple
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-from VeraGridEngine.enumerations import DeviceType, BuildStatus, ExternalGridMode, PrpCat
+from VeraGridEngine.enumerations import DeviceType, BuildStatus, ExternalGridMode, PrpCat, ParamPowerFlowReferenceType
 from VeraGridEngine.Devices.Parents.load_parent import LoadParent
 from VeraGridEngine.Devices.Profiles import ProfileFloat
 from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
@@ -31,6 +31,7 @@ class ExternalGrid(LoadParent):
             tpe=ExternalGridMode,
             definition='Operation mode of the external grid (voltage or load)',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.external_grid_mode_code,
         ),
         GCProp(
             prop_name='substituted_device_id',
@@ -45,6 +46,7 @@ class ExternalGrid(LoadParent):
             definition='Active power',
             profile_name='Vm_prof',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.external_grid_vm_pu,
         ),
         GCProp(
             prop_name='Va',
@@ -53,6 +55,7 @@ class ExternalGrid(LoadParent):
             definition='Reactive power',
             profile_name='Va_prof',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.external_grid_va_rad,
         ),
     )
 

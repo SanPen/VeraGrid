@@ -90,6 +90,11 @@ class RlcComboEmtDialog(QtWidgets.QDialog):
         phase_layout.addStretch()
         form_layout.addRow("Phases", phase_widget)
 
+        self.use_static_device_values_check = QtWidgets.QCheckBox("Use static device values and connection", self)
+        self.use_static_device_values_check.setEnabled(self._allow_static_device_values)
+        self.use_static_device_values_check.setChecked(False)
+        form_layout.addRow("Value Source", self.use_static_device_values_check)
+
         self.connection_combo = QtWidgets.QComboBox(self)
         self.connection_combo.addItem("Grounded Star (Yg)", ShuntConnectionType.GroundedStar)
         self.connection_combo.addItem("Neutral Star (Yn)", ShuntConnectionType.NeutralStar)
@@ -100,11 +105,6 @@ class RlcComboEmtDialog(QtWidgets.QDialog):
         self.static_connection_label = QtWidgets.QLabel(self)
         self.static_connection_label.setWordWrap(True)
         form_layout.addRow("Static connection", self.static_connection_label)
-
-        self.use_static_device_values_check = QtWidgets.QCheckBox("Use static device values and connection", self)
-        self.use_static_device_values_check.setEnabled(self._allow_static_device_values)
-        self.use_static_device_values_check.setChecked(False)
-        form_layout.addRow("Value Source", self.use_static_device_values_check)
 
         self.input_mode_combo = QtWidgets.QComboBox(self)
         self.input_mode_combo.addItem("Physical R/L/C", "physical")

@@ -77,7 +77,7 @@ def get_upgrade_command(latest_version=None):
     cmd = [sys.executable, '-m', 'pip', 'install',
            'VeraGrid=={}'.format(latest_version),
            '--upgrade',
-           '--no-dependencies']
+           '--break-system-packages']
 
     return cmd
 

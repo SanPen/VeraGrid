@@ -237,6 +237,7 @@ def get_ground_emt_template(vf: VarFactory, name: str = "ground_emt") -> EmtMode
     templ.block.in_vars = [neutral_voltage_var]
     templ.block.algebraic_vars = [ground_current_var]
     templ.block.algebraic_eqs = [neutral_voltage_var]
+    templ.block.init_eqs[ground_current_var] = vf.add_const(0.0)
     templ.block.out_vars = [ground_current_var]
     return templ
 
@@ -311,6 +312,8 @@ def get_grounding_link_emt_template(
     templ.block.state_vars = list()
     templ.block.state_eqs = list()
     templ.block.diff_vars = list()
+    templ.block.init_eqs[current_var] = vf.add_const(0.0)
+    templ.block.init_eqs[ground_node_var] = vf.add_const(0.0)
     templ.block.add(ground_template.block)
 
     if solid_connection:

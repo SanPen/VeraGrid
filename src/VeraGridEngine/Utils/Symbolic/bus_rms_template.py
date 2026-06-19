@@ -35,6 +35,8 @@ class BusRmsTemplate(RmsModelTemplate):
         self.tpe: DeviceType = DeviceType.BusDevice
         if is_dc:
             Vdc = vf.add_var("Vdc")
+            Va = vf.add_var("Va")
+            Vm = vf.add_var("Vm")
             P = vf.add_var("P")
             Q = vf.add_var("Q")
 
@@ -44,6 +46,8 @@ class BusRmsTemplate(RmsModelTemplate):
 
             self._block.external_mapping = {
                 VarPowerFlowReferenceType.Vdc: Vdc,
+                VarPowerFlowReferenceType.Vm: Vm,
+                VarPowerFlowReferenceType.Va: Va,
                 VarPowerFlowReferenceType.P: P,
                 VarPowerFlowReferenceType.Q: Q
             }
@@ -72,7 +76,7 @@ def initialize_bus_rms(bus: Bus, vf: VarFactory):
     :return:
     """
     bus.rms_model = BusRmsTemplate(vf=vf, is_dc=bus.is_dc).block
-def get_bus_rms_algebraic_vars(bus_rms_model: Block) -> Tuple[Var, Var] | Var:
+def get_bus_rms_algebraic_vars(bus_rms_model: Block) -> Tuple[Var, Var] | Tuple[Var, Var, Var]:
     """
     Return the RMS bus algebraic voltage variables.
 
@@ -87,9 +91,11 @@ def get_bus_rms_algebraic_vars(bus_rms_model: Block) -> Tuple[Var, Var] | Var:
     """
     mapping = bus_rms_model.external_mapping
     if VarPowerFlowReferenceType.Vdc in mapping:
-        vdc = mapping[VarPowerFlowReferenceType.Vdc]
-        if vdc is not None:
-            return vdc, None
+        Vdc = mapping[VarPowerFlowReferenceType.Vdc]
+        Vm = mapping[VarPowerFlowReferenceType.Vm]
+        Va = mapping[VarPowerFlowReferenceType.Va]
+        if Vdc is not None and Vm is not None and Va is not None:
+            return Vdc, Vm, Va
         else:
             raise ValueError("Invalid RMS bus model: expected either (Vdc) or (Vm, Va)")
 

@@ -60,7 +60,7 @@ def get_dc_load_emt_template(
         p_dc - v_dc * i_dc,
     ]
 
-    templ.block.out_vars = [i_dc, p_dc]
+    templ.block.out_vars = [i_dc]
 
     templ.block.external_mapping = {
         VarPowerFlowReferenceType.Vdc: v_dc,

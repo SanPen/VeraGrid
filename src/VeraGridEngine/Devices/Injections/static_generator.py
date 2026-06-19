@@ -6,7 +6,7 @@
 
 from typing import Tuple
 
-from VeraGridEngine.enumerations import BuildStatus, DeviceType, PrpCat
+from VeraGridEngine.enumerations import BuildStatus, DeviceType, PrpCat, ParamPowerFlowReferenceType
 from VeraGridEngine.Devices.Parents.load_parent import LoadParent
 from VeraGridEngine.Devices.Parents.editable_device import GCProp
 
@@ -20,7 +20,8 @@ class StaticGenerator(LoadParent):
             units='MVA',
             tpe=float,
             definition='Nominal power.',
-            cat=[PrpCat.OPF]
+            cat=[PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.static_generator_snom_mva,
         ),
     )
 

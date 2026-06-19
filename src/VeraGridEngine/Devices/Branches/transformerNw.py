@@ -223,8 +223,8 @@ class TransformerNW(PhysicalDevice):
         return self._windings[i]
 
     def _prepare_winding(self, winding: Winding, bus: Bus | None, index: int) -> Winding:
-        winding.bus_from = self.bus0
-        winding.bus_to = bus
+        winding.bus_from = bus
+        winding.bus_to = self.bus0
 
         if winding.name == "Winding":
             winding.name = f"{self.name}_W{index + 1}"
@@ -246,9 +246,9 @@ class TransformerNW(PhysicalDevice):
         else:
             winding.set_hv_and_lv(HV=hv, LV=lv)
 
-        if winding.Sn <= 0.0 and winding.rate > 0.0:
+        if winding.Sn <= 0.0 < winding.rate:
             winding.Sn = winding.rate
-        elif winding.rate <= 0.0 and winding.Sn > 0.0:
+        elif winding.rate <= 0.0 < winding.Sn:
             winding.rate = winding.Sn
 
         return winding
@@ -259,7 +259,8 @@ class TransformerNW(PhysicalDevice):
         """
         self._buses[i] = bus
         winding = self._windings[i]
-        winding.bus_to = bus
+        winding.bus_from = bus
+        winding.bus_to = self.bus0
 
         if bus is not None:
             winding.set_hv_and_lv(HV=winding.HV, LV=winding.LV)
@@ -268,7 +269,7 @@ class TransformerNW(PhysicalDevice):
         """
         Replace a winding at position ``i``.
         """
-        target_bus = winding.bus_to if bus is None else bus
+        target_bus = winding.bus_from if bus is None else bus
         prepared = self._prepare_winding(winding=winding, bus=target_bus, index=i)
         self._windings[i] = prepared
         self._buses[i] = target_bus
@@ -288,8 +289,8 @@ class TransformerNW(PhysicalDevice):
             hv = nominal_voltage if nominal_voltage is not None else (bus.Vnom if bus is not None else 1.0)
             rate = nominal_power if nominal_power > 0.0 else 1.0
             sn = nominal_power if nominal_power > 0.0 else 0.001
-            winding = Winding(bus_from=self.bus0,
-                              bus_to=bus,
+            winding = Winding(bus_from=bus,
+                              bus_to=self.bus0,
                               name=f"{self.name}_W{index + 1}",
                               idtag=w_idtag,
                               HV=hv,
@@ -298,9 +299,11 @@ class TransformerNW(PhysicalDevice):
                               rate=rate,
                               active=self.active)
 
-        prepared = self._prepare_winding(winding=winding, bus=bus if bus is not None else winding.bus_to, index=index)
+        prepared = self._prepare_winding(winding=winding,
+                                         bus=bus if bus is not None else winding.bus_from,
+                                         index=index)
         self._windings.append(prepared)
-        self._buses.append(prepared.bus_to)
+        self._buses.append(prepared.bus_from)
         return prepared
 
     def delete_winding(self, i: int) -> Winding:
@@ -362,7 +365,7 @@ class TransformerNW(PhysicalDevice):
             if winding.rate <= 0.0:
                 winding.rate = nominal_power
 
-            hv = winding.HV if winding.HV is not None else (winding.bus_to.Vnom if winding.bus_to is not None else 1.0)
+            hv = winding.HV if winding.HV is not None else (winding.bus_from.Vnom if winding.bus_from is not None else 1.0)
             lv = winding.LV if winding.LV is not None and winding.LV > 0.0 else 1.0
 
             z_series, y_shunt = get_impedances(

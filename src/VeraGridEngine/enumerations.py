@@ -1124,6 +1124,40 @@ class FaultType(Enum):
         return list(enum_item.value for enum_item in cls)
 
 
+class EmtFaultPlacementSide(Enum):
+    """
+    Internal EMT fault placement side within one composed branch model.
+    """
+    FromSide = 'FromSide'
+    ToSide = 'ToSide'
+
+    def __str__(self):
+        return str(self.value)
+
+    def __repr__(self):
+        return str(self)
+
+    @staticmethod
+    def argparse(s):
+        """
+
+        :param s:
+        :return:
+        """
+        try:
+            return EmtFaultPlacementSide[s]
+        except KeyError:
+            return s
+
+    @classmethod
+    def list(cls):
+        """
+
+        :return:
+        """
+        return list(enum_item.value for enum_item in cls)
+
+
 class MethodShortCircuit(Enum):
     """
     Short circuit type
@@ -1955,6 +1989,7 @@ class FileType(Enum):
     PyPsa = "PyPsa"
     PandaPower = "Pandapower"
     Iidm = "Iidm"
+    Eurostag = "Eurostag"
     PSSE_raw = "PSS/e raw"
     PSSE_rawx = "PSS/e rawx"
     DGS = "DGS"
@@ -2885,6 +2920,7 @@ class SimulationTypes(Enum):
     TemplateDriver = 'Template'
     PowerFlow_run = 'Power flow'
     PowerFlow3ph_run = 'Power flow 3ph'
+    PowerFlowTimeSeries3ph_run = 'Power flow time series 3ph'
     StateEstimation_run = 'State estimation'
     ShortCircuit_run = 'Short circuit'
     MonteCarlo_run = 'Monte Carlo'
@@ -4285,6 +4321,10 @@ class BlockType(Enum):
     LOAD_RMS = "Load_RMS"
     GFL_VSC_RMS = "GFL_VSC_RMS"
     DC_PV_SOURCE_RMS = "DC_PV_SOURCE_RMS"
+    PLL_TRANSFORM_RMS = "Pll_transform_rms"
+    PI_CURRENT_CONTROLLER = "Pi_current_controller"
+    PI_POWER_CONTROLLER = "Pi_power_controller"
+    GFL_CONVERTER_RMS = "Gfl_converter_rms"
 
     # EMT
     EMT_GENERATOR = "EMT_GENERATOR"
@@ -4317,6 +4357,7 @@ class BlockType(Enum):
     HEIDLER_CURRENT_SOURCE_EMT = "HEIDLER_CURRENT_SOURCE_EMT"
     CIGRE_SURGE_CURRENT_SOURCE_EMT = "CIGRE_SURGE_CURRENT_SOURCE_EMT"
     SWITCH_EMT = "SWITCH_EMT"
+    FAULT_EMT = "FAULT_EMT"
     GROUND_EMT = "GROUND_EMT"
     GROUNDING_LINK_EMT = "GROUNDING_LINK_EMT"
     NONLINEAR_RESISTOR_EMT = "NONLINEAR_RESISTOR_EMT"

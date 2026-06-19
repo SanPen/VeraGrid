@@ -31,7 +31,9 @@ from VeraGridEngine.Simulations.OPF.opf_driver import OptimalPowerFlowDriver, Op
 from VeraGridEngine.Simulations.OPF.opf_ts_driver import (OptimalPowerFlowTimeSeriesDriver,
                                                           OptimalPowerFlowTimeSeriesResults)
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowDriver, PowerFlowResults
-from VeraGridEngine.Simulations.PowerFlow.power_flow_driver_3ph import PowerFlowDriver3Ph, PowerFlowResults3Ph
+from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_driver_3ph import PowerFlowDriver3Ph, PowerFlowResults3Ph
+from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_ts_driver_3ph import (
+    PowerFlowTimeSeriesDriver3Ph, PowerFlowTimeSeriesResults3Ph)
 from VeraGridEngine.Simulations.PowerFlow.power_flow_ts_driver import (PowerFlowTimeSeriesDriver,
                                                                        PowerFlowTimeSeriesResults)
 from VeraGridEngine.Simulations.ShortCircuitStudies.short_circuit_driver import ShortCircuitDriver, ShortCircuitResults
@@ -49,7 +51,6 @@ from VeraGridEngine.Simulations.SigmaAnalysis.sigma_analysis_driver import Sigma
 from VeraGridEngine.Simulations.NTC.ntc_driver import (OptimalNetTransferCapacityResults,
                                                        OptimalNetTransferCapacityDriver)
 from VeraGridEngine.Simulations.NTC.ntc_ts_driver import (
-    OptimalNetTransferCapacityTimeSeriesDriver,
     OptimalNetTransferCapacityTimeSeriesResults,
 )
 from VeraGridEngine.Simulations.NodalCapacity.nodal_capacity_ts_driver import (NodalCapacityTimeSeriesDriver,
@@ -366,6 +367,13 @@ class SimulationSession:
 
         time_indices = data_dict.get('time_indices', grid.get_all_time_indices())
 
+        if isinstance(time_indices, pd.DataFrame):
+            time_indices = np.asarray(time_indices.values).reshape(-1).astype(int)
+        elif isinstance(time_indices, np.ndarray):
+            time_indices = np.asarray(time_indices).reshape(-1).astype(int)
+        else:
+            pass
+
         driver_tpe = SimulationTypes(study_name)
 
         pf_results = None
@@ -535,6 +543,15 @@ class SimulationSession:
         :return:
         """
         drv, results = self.get_driver_results(SimulationTypes.PowerFlow3ph_run)
+        return drv, results
+
+    @property
+    def power_flow_3ph_ts(self) -> Tuple[PowerFlowTimeSeriesDriver3Ph, PowerFlowTimeSeriesResults3Ph]:
+        """
+
+        :return:
+        """
+        drv, results = self.get_driver_results(SimulationTypes.PowerFlowTimeSeries3ph_run)
         return drv, results
 
     @property

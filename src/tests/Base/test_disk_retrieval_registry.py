@@ -23,6 +23,7 @@ GRID_FOLDER = Path(__file__).resolve().parents[1] / "data" / "grids"
     "driver_tpe",
     [
         SimulationTypes.PowerFlow3ph_run,
+        SimulationTypes.PowerFlowTimeSeries3ph_run,
         SimulationTypes.StateEstimation_run,
         SimulationTypes.SigmaAnalysis_run,
         SimulationTypes.InputsAnalysis_run,
@@ -78,6 +79,41 @@ def test_power_flow_3ph_results_register_from_disk_data(tmp_path: Path) -> None:
 
     assert not logger.has_logs()
     assert session.exists(SimulationTypes.PowerFlow3ph_run)
+
+
+def test_power_flow_3ph_time_series_results_register_from_disk_data(tmp_path: Path) -> None:
+    """
+    Three-phase power-flow time-series results must support disk registration.
+
+    :param tmp_path: Temporary pytest path.
+    :return: None.
+    """
+    grid = vg.open_file(str(GRID_FOLDER / "lynn5node.gridcal"))
+    driver = create_driver(
+        grid=grid,
+        driver_tpe=SimulationTypes.PowerFlowTimeSeries3ph_run,
+        time_indices=grid.get_all_time_indices(),
+    )
+    assert driver is not None
+
+    file_name = tmp_path / "pf3_ts_disk_driver.veragrid"
+    vg.save_file(grid=grid, filename=str(file_name), drivers_to_save=[driver.get_save_data()])
+
+    stored_data = load_session_driver_objects(
+        file_name_zip=str(file_name),
+        session_name=driver.name,
+        study_name=driver.tpe.value,
+    )
+
+    session = SimulationSession()
+    logger = session.register_driver_from_disk_data(
+        grid=grid,
+        study_name=driver.tpe.value,
+        data_dict=stored_data,
+    )
+
+    assert not logger.has_logs(), logger.to_df().to_string()
+    assert session.exists(SimulationTypes.PowerFlowTimeSeries3ph_run)
 
 
 def test_state_estimation_results_register_from_disk_data(tmp_path: Path) -> None:

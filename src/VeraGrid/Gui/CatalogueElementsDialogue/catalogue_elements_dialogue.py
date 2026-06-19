@@ -83,7 +83,7 @@ class CatalogueElementsSelectionDialogue(QtWidgets.QDialog):
 
         # Populate.
         self.populate_from_dict()
-        self.ui.treeView.expandAll()
+        # self.ui.treeView.expandAll()
         self.ui.treeView.resizeColumnToContents(self._COL_NAME)
 
     @property

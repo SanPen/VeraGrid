@@ -7,6 +7,7 @@ from typing import Union, TYPE_CHECKING
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPen, QColor
 from PySide6.QtWidgets import QMenu
+from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
 from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import BarTerminalItem, RoundTerminalItem
 from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget, ACTIVE
 from VeraGrid.Gui.messages import yes_no_question
@@ -64,6 +65,16 @@ class FluidPathGraphicItem(LineGraphicTemplateItem):
     def api_object(self) -> FluidPath:
         return self._api_object
 
+    def open_device_editor(self) -> bool:
+        """
+        Open the generic device editor for this fluid path.
+
+        :return: ``True`` when the editor was opened.
+        """
+        dialog = TemplateDeviceEditor(api_object=self.api_object, circuit=self.editor.circuit)
+        dialog.exec()
+        return True
+
     def set_api_object_color(self):
         """
         Gather the color from the api object and apply
@@ -109,12 +120,9 @@ class FluidPathGraphicItem(LineGraphicTemplateItem):
         :return:
         """
         if self.api_object is not None:
-            if self.api_object.device_type in [DeviceType.Transformer2WDevice, DeviceType.LineDevice]:
-                # trigger the editor
-                self.edit()
-            elif self.api_object.device_type is DeviceType.SwitchDevice:
-                # change state
-                self.enable_disable_toggle()
+            self.edit()
+        else:
+            pass
 
     def contextMenuEvent(self, event):
         """
@@ -125,6 +133,11 @@ class FluidPathGraphicItem(LineGraphicTemplateItem):
         if self.api_object is not None:
             menu = QMenu()
             menu.addSection("FluidPath")
+
+            add_menu_entry(menu=menu,
+                           text="Editor",
+                           icon_path=":/Icons/icons/edit.png",
+                           function_ptr=self.edit)
 
             menu.addSeparator()
 
@@ -165,7 +178,7 @@ class FluidPathGraphicItem(LineGraphicTemplateItem):
         Open the appropriate editor dialogue
         :return:
         """
-        pass
+        self.open_device_editor()
 
     def to_line(self):
         """

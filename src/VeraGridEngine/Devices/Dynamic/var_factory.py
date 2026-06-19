@@ -152,8 +152,26 @@ class VarFactory(EditableDevice):
         else:
             v = Var(name=name, reference=reference, network_conn=network_conn, shared_reference=shared_reference, uid=uid,
                     diff_var=None, base_var=None)
+            if shared_reference is not None:
+                self.save_var_in_vars_references_dict(v, shared_reference.name)
             self._var_dict[v.non_mutable_uid] = v
             return v
+
+    def add_shared_ref_to_var(self, v: Var, shared_reference: str | SharedVarReferenceType):
+
+        if isinstance(shared_reference, str):
+            if shared_reference not in self._references_dict:
+                self.create_reference(shared_reference)
+                self._vars_references_dict[self._references_dict[shared_reference].uid] = list()
+
+            v.shared_ref = self._references_dict[shared_reference]
+            self.save_var_in_vars_references_dict(v, shared_reference)
+
+        else:
+            v.shared_ref = shared_reference
+            if shared_reference is not None:
+                self.save_var_in_vars_references_dict(v, shared_reference.name)
+
 
 
     def save_var_in_vars_references_dict(self, var:Var, reference:str):
@@ -232,14 +250,23 @@ class VarFactory(EditableDevice):
         self._const_dict[v.uid] = v
         return v
 
-    def connect_variables_by_uid(self, var_to_subs_non_mutable_uid: int,  incoming_var_uid: int, incoming_var_name: str):
+    def connect_variables_by_uid(self,
+                                 var_to_subs_non_mutable_uid: int,
+                                 incoming_var_uid: int,
+                                 incoming_var_name: str) -> None:
 
         if var_to_subs_non_mutable_uid in self._var_dict:
             self._var_dict[var_to_subs_non_mutable_uid].uid = incoming_var_uid
             self._var_dict[var_to_subs_non_mutable_uid].name = incoming_var_name
         elif var_to_subs_non_mutable_uid in self._diff_var_dict:
-            self._var_dict[var_to_subs_non_mutable_uid].uid = incoming_var_uid
-            self._var_dict[var_to_subs_non_mutable_uid].name = incoming_var_name
+            # Differential variables are stored in the dedicated diff-variable
+            # registry. Updating the wrong dictionary leaves the propagated
+            # symbolic identity stale and breaks later validation against the
+            # live bus variables.
+            self._diff_var_dict[var_to_subs_non_mutable_uid].uid = incoming_var_uid
+            self._diff_var_dict[var_to_subs_non_mutable_uid].name = incoming_var_name
+        else:
+            pass
 
         # recursitity for previous connected vars
         if var_to_subs_non_mutable_uid in self._vars_connected_dict:

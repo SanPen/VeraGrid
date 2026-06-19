@@ -16,6 +16,7 @@ from VeraGridEngine.enumerations import DeviceType, FaultType, SchematicBranchEn
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
 from VeraGridEngine.Devices.types import FLUID_TYPES
 
+from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
 from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE, FONT_SCALE, GenericDiagramWidget
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry import (SchematicAttachmentSlot,
                                                                           build_explicit_slot_key,
@@ -157,6 +158,16 @@ class FluidNodeGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         """
         self.label.setPlainText(val)
 
+    def open_device_editor(self) -> bool:
+        """
+        Open the generic device editor for this fluid node.
+
+        :return: ``True`` when the editor was opened.
+        """
+        dialog = TemplateDeviceEditor(api_object=self.api_object, circuit=self.editor.circuit)
+        dialog.exec()
+        return True
+
     def mousePressEvent(self, event: QGraphicsSceneMouseEvent) -> None:
         """
         mouse press: display the editor
@@ -165,6 +176,18 @@ class FluidNodeGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         """
         if self.api_object is not None:
             self.editor.set_editor_model(api_object=self.api_object)
+
+    def mouseDoubleClickEvent(self, event: QGraphicsSceneMouseEvent) -> None:
+        """
+        Open the fluid-node editor on double click.
+
+        :param event: Mouse event.
+        :return: ``None``.
+        """
+        if self.api_object is not None:
+            self.open_device_editor()
+        else:
+            pass
 
     def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent) -> None:
         """
@@ -426,6 +449,11 @@ class FluidNodeGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         menu.addSection("Fluid node")
 
         add_menu_entry(menu=menu,
+                       text="Editor",
+                       icon_path=":/Icons/icons/edit.png",
+                       function_ptr=self.edit)
+
+        add_menu_entry(menu=menu,
                        text="Plot electrical profiles",
                        icon_path=":/Icons/icons/plot.png",
                        function_ptr=self.plot_electrical_profiles)
@@ -468,6 +496,14 @@ class FluidNodeGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
                        function_ptr=self.add_p2x)
 
         menu.exec_(event.screenPos())
+
+    def edit(self) -> None:
+        """
+        Open the appropriate editor dialogue.
+
+        :return: ``None``.
+        """
+        self.open_device_editor()
 
     def get_terminal(self) -> BarTerminalItem:
         """

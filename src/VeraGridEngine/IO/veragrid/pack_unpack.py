@@ -1178,18 +1178,12 @@ def parse_object_type_from_dataframe(
                                 prof.fill(bool(property_value))
 
                         elif isinstance(gc_prop.tpe, EnumType):
-
-                            try:
-                                val = gc_prop.tpe(property_value)
-                                elm.set_snapshot_value(gc_prop.name, val)
-
-                                if gc_prop.has_profile():
-                                    prof.fill(val)
-
-                            except ValueError:
-                                logger.add_error(f'Cannot cast value to {gc_prop.tpe}',
-                                                 device=elm.name,
-                                                 value=property_value)
+                            val, ok = set_enum_snapshot_value(elm=elm,
+                                                              gc_prop=gc_prop,
+                                                              property_value=property_value,
+                                                              logger=logger)
+                            if ok and gc_prop.has_profile():
+                                prof.fill(val)
 
                         else:
                             raise Exception(f'Unsupported property type: {gc_prop.tpe}')
@@ -1301,6 +1295,45 @@ def search_property_into_json(json_entry: dict, prop: GCProp):
 
         # we found the property at first
         return property_value
+
+
+def set_enum_snapshot_value(elm: ALL_DEV_TYPES,
+                            gc_prop: GCProp,
+                            property_value: Any,
+                            logger: Logger) -> tuple[Any, bool]:
+    """
+    Set one enum snapshot value, allowing property setters to translate legacy values.
+    :return: (typed value, success)
+    """
+    try:
+        val = gc_prop.tpe(property_value)
+    except (TypeError, ValueError):
+        try:
+            elm.set_snapshot_value(gc_prop.name, property_value)
+        except (TypeError, ValueError) as e:
+            logger.add_error(f'Cannot cast the value to the snapshot',
+                             device=elm.name,
+                             value=property_value,
+                             comment=str(e))
+            return property_value, False
+
+        val = elm.get_snapshot_value_by_name(gc_prop.name)
+        if not isinstance(val, gc_prop.tpe):
+            logger.add_error(f'Cannot cast the value to the snapshot',
+                             device=elm.name,
+                             value=property_value)
+            return property_value, False
+    else:
+        try:
+            elm.set_snapshot_value(gc_prop.name, val)
+        except (TypeError, ValueError) as e:
+            logger.add_error(f'Cannot set the snapshot',
+                             device=elm.name,
+                             value=property_value,
+                             comment=str(e))
+            return property_value, False
+
+    return val, True
 
 
 def search_and_apply_json_profile(json_entry: Dict[str, Dict[str, Union[str, Union[Any, Dict[str, Any]]]]],
@@ -1561,19 +1594,11 @@ def parse_object_type_from_json(template_elm: ALL_DEV_TYPES,
                                                               property_value=val)
 
                             elif isinstance(gc_prop.tpe, EnumType):
-
-                                try:
-                                    val = gc_prop.tpe(property_value)
-
-                                    try:
-                                        elm.set_snapshot_value(gc_prop.name, val)
-
-                                    except ValueError as e:
-                                        logger.add_error(f'Cannot set the snapshot',
-                                                         device=elm.name,
-                                                         value=property_value,
-                                                         comment=str(e))
-
+                                val, ok = set_enum_snapshot_value(elm=elm,
+                                                                  gc_prop=gc_prop,
+                                                                  property_value=property_value,
+                                                                  logger=logger)
+                                if ok:
                                     try:
                                         search_and_apply_json_profile(json_entry=json_entry,
                                                                       gc_prop=gc_prop,
@@ -1585,12 +1610,6 @@ def parse_object_type_from_json(template_elm: ALL_DEV_TYPES,
                                                          device=elm.name,
                                                          value=property_value,
                                                          comment=str(e))
-
-                                except ValueError as e:
-                                    logger.add_error(f'Cannot cast the value to the snapshot',
-                                                     device=elm.name,
-                                                     value=property_value,
-                                                     comment=str(e))
 
                             else:
                                 raise Exception(f'Unsupported property type: {gc_prop.tpe} for {gc_prop.name}')

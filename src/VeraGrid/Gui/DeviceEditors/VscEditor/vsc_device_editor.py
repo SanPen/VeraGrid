@@ -5,12 +5,12 @@
 from __future__ import annotations
 
 import sys
+from typing import Any
 
 from PySide6 import QtWidgets
 
 from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
 from VeraGrid.Gui.DeviceEditors.VscEditor.vsc_editor_widget import Ui_VscDeviceEditorWidget
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
 from VeraGridEngine.Devices.Branches.vsc import VSC
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
@@ -35,15 +35,22 @@ class VscDeviceEditor(TemplateDeviceEditor):
     Specialized VSC editor that extends ``TemplateDeviceEditor``.
     """
 
-    def __init__(self, api_object: VSC, circuit: MultiCircuit | None = None) -> None:
+    def __init__(
+        self,
+        api_object: VSC,
+        circuit: MultiCircuit | None = None,
+        main_gui: Any | None = None,
+    ) -> None:
         """
         Build the VSC editor.
 
         :param api_object: VSC device edited in place.
         :param circuit: Optional circuit context.
+        :param main_gui: Main GUI instance that owns the dynamic-editor session.
         """
         TemplateDeviceEditor.__init__(self, api_object=api_object, circuit=circuit)
         self.api_object: VSC = api_object
+        self.main_gui: Any | None = main_gui
         self.setWindowTitle("VSC editor")
 
         self._build_vsc_tab()
@@ -85,10 +92,10 @@ class VscDeviceEditor(TemplateDeviceEditor):
         """
         Open RMS dynamic editor for the current VSC.
         """
-        if self.circuit is not None:
-            open_dynamic_editor(api_object=self.api_object,
-                                circuit=self.circuit,
-                                preferred_mode=DynamicSimulationMode.RMS)
+        if self.circuit is not None and self.main_gui is not None:
+            self.main_gui.open_dynamic_editor(api_object=self.api_object,
+                                              circuit=self.circuit,
+                                              preferred_mode=DynamicSimulationMode.RMS)
         else:
             pass
 
@@ -96,10 +103,10 @@ class VscDeviceEditor(TemplateDeviceEditor):
         """
         Open EMT dynamic editor for the current VSC.
         """
-        if self.circuit is not None:
-            open_dynamic_editor(api_object=self.api_object,
-                                circuit=self.circuit,
-                                preferred_mode=DynamicSimulationMode.EMT)
+        if self.circuit is not None and self.main_gui is not None:
+            self.main_gui.open_dynamic_editor(api_object=self.api_object,
+                                              circuit=self.circuit,
+                                              preferred_mode=DynamicSimulationMode.EMT)
         else:
             pass
 

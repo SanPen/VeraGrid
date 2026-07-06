@@ -17,7 +17,7 @@ from VeraGridEngine.Devices.Branches.transformer3w import Transformer3W
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGrid.Gui.messages import yes_no_question
 from VeraGridEngine.enumerations import DeviceType
-from VeraGrid.Gui.gui_functions import add_menu_entry
+from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
 
 if TYPE_CHECKING:
     # Only imports the below statements during type checking
@@ -268,23 +268,23 @@ class Transformer3WGraphicItem(GenericDiagramWidget, QGraphicsRectItem):
         """
         if self.api_object is not None:
             menu = QMenu()
-            menu.addSection("3w-Transformer")
+            menu.addSection(translate_context_menu_text("3w-Transformer"))
 
             add_menu_entry(menu=menu,
-                           text="Active",
+                           text=translate_context_menu_text("Active"),
                            function_ptr=self.enable_disable_toggle,
                            checkeable=True,
                            checked_value=self.api_object.active)
 
             add_menu_entry(menu=menu,
-                           text="Editor",
+                           text=translate_context_menu_text("Editor"),
                            function_ptr=self.edit,
                            icon_path=":/Icons/icons/edit.png")
 
             menu.addSeparator()
 
             add_menu_entry(menu=menu,
-                           text="Delete",
+                           text=translate_context_menu_text("Delete"),
                            function_ptr=self.delete,
                            icon_path=":/Icons/icons/delete_schematic.png")
 

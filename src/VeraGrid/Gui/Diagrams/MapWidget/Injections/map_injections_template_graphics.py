@@ -10,8 +10,9 @@ from PySide6.QtGui import QCursor, QColor, QBrush
 from PySide6.QtWidgets import (QGraphicsEllipseItem, QMenu,
                                QGraphicsSceneContextMenuEvent,
                                QGraphicsSceneMouseEvent)
-from VeraGrid.Gui.gui_functions import add_menu_entry
+from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
 from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
+from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget
 from VeraGrid.Gui.Diagrams.MapWidget.Substation.node_template import NodeTemplate
 from VeraGridEngine.enumerations import DeviceType
 from VeraGridEngine.Devices.types import INJECTION_DEVICE_TYPES
@@ -239,17 +240,17 @@ class MapInjectionTemplateGraphicItem(NodeTemplate, QGraphicsEllipseItem):
         menu = QMenu()
 
         add_menu_entry(menu=menu,
-                       text="Plot profiles",
+                       text=translate_context_menu_text("Plot profiles"),
                        function_ptr=self.plot,
                        icon_path=":/Icons/icons/plot.png")
 
         add_menu_entry(menu=menu,
-                       text="Editor",
+                       text=translate_context_menu_text("Editor"),
                        function_ptr=self.open_device_editor,
                        icon_path=":/Icons/icons/edit.png")
 
         add_menu_entry(menu=menu,
-                       text="Consolidate coordinates",
+                       text=translate_context_menu_text("Consolidate coordinates"),
                        function_ptr=self.editor.consolidate_object_coordinates,
                        icon_path=":/Icons/icons/assign_to_profile.png")
 
@@ -257,7 +258,7 @@ class MapInjectionTemplateGraphicItem(NodeTemplate, QGraphicsEllipseItem):
         menu.addSeparator()
 
         add_menu_entry(menu=menu,
-                       text="Delete",
+                       text=translate_context_menu_text("Delete"),
                        function_ptr=self.delete,
                        icon_path=":/Icons/icons/delete_schematic.png")
 
@@ -265,19 +266,22 @@ class MapInjectionTemplateGraphicItem(NodeTemplate, QGraphicsEllipseItem):
         ss_counter = 0
         gen_counter = 0
 
-        for graphic_obj in self.editor._get_selected():
-            if hasattr(graphic_obj, 'api_object'):
-                if hasattr(graphic_obj.api_object, 'device_type'):
-                    if graphic_obj.api_object.device_type == DeviceType.SubstationDevice:
-                        has_substation = True
-                        ss_counter += 1
-                    elif graphic_obj.api_object.device_type == DeviceType.GeneratorDevice:
-                        gen_counter += 1
+        for graphic_obj in self.editor.get_selected():
+            if isinstance(graphic_obj, GenericDiagramWidget):
+                if graphic_obj.api_object.device_type == DeviceType.SubstationDevice:
+                    has_substation = True
+                    ss_counter += 1
+                elif graphic_obj.api_object.device_type == DeviceType.GeneratorDevice:
+                    gen_counter += 1
+                else:
+                    pass
+            else:
+                pass
         if ss_counter == 1 and gen_counter > 0:
             menu.addSeparator()
 
             add_menu_entry(menu=menu,
-                           text="Change bus connection for the generator",
+                           text=translate_context_menu_text("Change bus connection for the generator"),
                            function_ptr=self.editor.change_generator_bus_connection,
                            icon_path=":/Icons/icons/move_bus.png")
 

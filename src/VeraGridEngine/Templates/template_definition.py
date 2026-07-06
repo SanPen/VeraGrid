@@ -1,0 +1,114 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
+
+from __future__ import annotations
+from typing import Sequence, Any, Union, Type
+from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
+from VeraGridEngine.basic_structures import Vec
+from VeraGridEngine.enumerations import WindingType
+
+
+
+TEMPLATEPROP_TYPES = Union[
+    Type[int],
+    Type[bool],
+    Type[float],
+    Type[str],
+    Type[Sequence[Vec]],
+    Type[WindingType]
+]
+
+class TemplateProp:
+    """
+    property representing a template input
+    """
+
+    __slots__ = (
+        "name",
+        "units",
+        "descr",
+        "tpe",
+        "display",
+        "editable",
+        "value",
+
+    )
+
+    def __init__(self, name: str, units: str, descr: str, tpe: TEMPLATEPROP_TYPES, value: Any = None):
+        self.name: str = name
+        self.units: str = units
+        self.descr: str = descr
+        self.tpe: TEMPLATEPROP_TYPES = tpe
+        self.display: bool = True
+        self.editable: bool = True
+        self.value: Any = value
+
+
+class TemplateDefinition:
+
+    def __init__(self, vf, params):
+        """
+
+        :param vf:
+        :param params:
+        """
+        self.vf = vf
+        self.params = params
+        self.params_dict = {p.name: p for p in params}
+
+    def get_value(self, name: str) -> Any:
+        """
+
+        :param name:
+        :return:
+        """
+        prp = self.params_dict.get(name, None)
+        if prp is None:
+            raise ValueError(f"Unknown parameter: {name}")
+        else:
+            return prp.value
+
+    def eval(self) -> Any:
+        raise NotImplementedError("Not implemented eval")
+
+
+
+# class ArbitraryWaveformVoltageSourceEmtTemplate(TemplateDefinition):
+#
+#     def __init__(self, vf):
+#         """
+#
+#         :param vf: variable factory.
+#         """
+#         super().__init__(
+#             vf,
+#             params=[
+#                 TemplateProp(name="phN", units="", descr="Whether neutral is active.", tpe=bool),
+#                 TemplateProp(name="phA", units="", descr="Whether phase A is active.", tpe=bool),
+#                 TemplateProp(name="phB", units="", descr="Whether phase B is active.", tpe=bool),
+#                 TemplateProp(name="phC", units="", descr="Whether phase C is active.", tpe=bool),
+#                 TemplateProp(name="time_points", units="s", descr="Strictly increasing waveform times.", tpe=Sequence[float]),
+#                 TemplateProp(name="value_points", units="", descr="Matching waveform values.", tpe=Sequence[float]),
+#                 TemplateProp(name="source_conductance_value", units="Siemens", descr="Norton conductance.", tpe=float),
+#                 TemplateProp(name="name", units="", descr="Name of the emt model.", tpe=str),
+#             ]
+#         )
+#
+#     def eval(self) -> EmtModelTemplate:
+#         """
+#         """
+#
+#         phN: bool = self.get_value("phN")
+#         phA: bool = self.get_value("phN")
+#         phB: bool = self.get_value("phN")
+#         phC: bool = self.get_value("phN")
+#         time_points: Sequence[float] = self.get_value("time_points")
+#         value_points: Sequence[float] = self.get_value("value_points")
+#         source_conductance_value: float = self.get_value("source_conductance_value")
+#         name: str = self.get_value("name")
+#
+#         return get_arbitrary_waveform_voltage_source_emt_template(
+#             self.vf, phN, phA, phB, phC, time_points, value_points, source_conductance_value, name
+#         )

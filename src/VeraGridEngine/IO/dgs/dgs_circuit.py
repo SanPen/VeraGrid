@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 from typing import Dict, List, Type, Optional, Tuple
 from VeraGridEngine.IO.dgs.dgs_objects import *
+from VeraGridEngine.basic_structures import Logger
 
 
 def _populate_from_pf_object(pf_obj: DGSElement, dgs_cls: Type[DGSElement]):
@@ -268,6 +269,8 @@ class DgsCircuit:
             TypVt: self.typvts,
         }
 
+        self.logger = Logger()
+
     def new_id(self) -> str:
         """
 
@@ -309,11 +312,11 @@ class DgsCircuit:
         """
         Parse a DGS file and populate the typed lists.
         """
-        path = Path(path)
+        path2 = Path(path)
         current_cls: Optional[Type[DGSElement]] = None
         header_map: Dict[str, int] | None = None
 
-        with path.open("r", encoding="utf-8", errors="ignore") as f:
+        with path2.open("r", encoding="utf-8", errors="ignore") as f:
             for raw_line in f:
                 line = raw_line.strip()
 
@@ -339,9 +342,9 @@ class DgsCircuit:
         """
         Write the circuit back to a DGS file.
         """
-        path = Path(path)
+        path2 = Path(path)
 
-        with path.open("w", encoding="utf-8") as f:
+        with path2.open("w", encoding="utf-8") as f:
 
             comment = "*" * 80 + "\n"
             comment += "* Created with VeraGrid\n"

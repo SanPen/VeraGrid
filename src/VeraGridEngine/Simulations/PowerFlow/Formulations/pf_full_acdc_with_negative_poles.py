@@ -778,6 +778,113 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
         self.discrete_shunt_control = DiscreteShuntControlState(nc=self.nc)
         self.qv_droop_control = QvDroopControlState(S0=self.S0, nc=self.nc)
 
+        # On a flat start the negative DC poles sit at +1 instead
+        # of -1 and the grounded buses at 1 instead of 0. Init them correctly
+        if not self.options.use_stored_guess:
+            self._apply_bipolar_flat_start()
+
+    def _apply_bipolar_flat_start(self, v_ground: float = 1e-8) -> None:
+        """
+        Init Vm/Va so a bipolar AC/DC grid flat starts in the right basin:
+            positive DC pole -> +1
+            negative DC pole -> -1
+            Return/ground -> ~0 
+
+        AC buses are left untouched 
+
+        Polarity is inferred from the grid structure:
+          1. split the DC network into islands 
+          2. the grounding area is any island holding a grounded bus or a VSC
+             negative terminal (F_dcn) -> seeded to roughly 0
+          3. every other island is a live pole, where its sign comes from 
+          a Vm_dc voltage reference
+
+        A pole island with no Vm_dc reference is under-defined (its sign would be
+        fixed only by the initial guess). We default it to +1 and warn, because a
+        well conditioned bipolar grid must anchor each pole with a V reference.
+
+        :param v_ground: small non-zero magnitude for grounded buses
+        :return: nothing
+        """
+        vsc = self.nc.vsc_data
+        is_dc = self.nc.bus_data.is_dc
+        F_pb = self.nc.passive_branch_data.F
+        T_pb = self.nc.passive_branch_data.T
+        dc_pb = self.nc.passive_branch_data.dc
+
+        # We label each DC bus with its island id (running a BFS over DC lines)
+        adj: Dict[int, List[int]] = dict()
+        for k in np.where(dc_pb != 0)[0]:
+            f, t = int(F_pb[k]), int(T_pb[k])
+            adj.setdefault(f, list()).append(t)
+            adj.setdefault(t, list()).append(f)
+
+        comp: Dict[int, int] = dict()  # bus -> island id
+        comp_buses: List[List[int]] = list()  # island id -> buses
+        for b0 in np.where(is_dc != 0)[0]:
+            b0 = int(b0)
+            if b0 not in comp:
+                cid = len(comp_buses)
+                members: List[int] = list()
+                stack = [b0]
+                comp[b0] = cid
+                while stack:
+                    u = stack.pop()
+                    members.append(u)
+                    for w in adj.get(u, ()):
+                        if w not in comp:
+                            comp[w] = cid
+                            stack.append(w)
+                comp_buses.append(members)
+
+        # The positive DC pole fp is never meant to be grounded
+        for k in range(vsc.nelm):
+            if vsc.active[k] and self.bus_grounded[int(vsc.F[k])]:
+                self.logger.add_warning(
+                    msg="VSC positive DC terminal is grounded, while the positive "
+                        "pole is never meant to be grounded",
+                    device=str(self.nc.bus_data.names[int(vsc.F[k])]))
+
+        # Set the grounding area for islands with a grounded bus or a VSC negative
+        is_return = [bool(np.any(self.bus_grounded[m] != 0)) for m in comp_buses]
+        for fn in vsc.F_dcn:
+            if fn > -1 and int(fn) in comp:
+                is_return[comp[int(fn)]] = True
+
+        # Each pole island gets the sign from a Vm_dc reference on its fp side
+        vmdc = ConverterControlType.Vm_dc.idx()
+        sign: Dict[int, int] = dict()  # pole island, so apply +-1
+        for k in range(vsc.nelm):
+            if vsc.active[k]:
+                pole = comp.get(int(vsc.F[k]))
+                if pole is not None and not is_return[pole]:
+                    if vsc.control1_int[k] == vmdc:
+                        sign[pole] = 1 if vsc.control1_val[k] >= 0.0 else -1
+                    elif vsc.control2_int[k] == vmdc:
+                        sign[pole] = 1 if vsc.control2_val[k] >= 0.0 else -1
+
+        # under-defined pole islands (no Vm_dc reference) default to +1 and warn
+        for cid, members in enumerate(comp_buses):
+            if not is_return[cid] and cid not in sign:
+                sign[cid] = 1
+                self.logger.add_warning(
+                    msg="DC pole has no Vm_dc voltage reference; sign defaults to +1 "
+                        "and depends on the initial guess. Anchor the pole to make it well posed.",
+                    device=str(self.nc.bus_data.names[members[0]]))
+
+        # Populate the DC bus voltage with the guess
+        for b in np.where(is_dc != 0)[0]:
+            b = int(b)
+            cid = comp[b]
+            if is_return[cid]:
+                self._Vm[b] = v_ground
+                self._Va[b] = 0.0
+            elif sign.get(cid, 1) > 0:
+                self._Va[b] = 0.0
+            else:
+                self._Va[b] = np.pi  # Like a minus sign
+        self.V = polar_to_rect(self._Vm, self._Va)
+
     def _update_Qlim_indices(self, i_u_vm: IntVec, i_k_q: IntVec) -> None:
         """
         Update the indices due to applying Q limits
@@ -3010,6 +3117,10 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
 
         Pfp_vsc = self.Pfp_vsc * self.nc.Sbase
         Pfn_vsc = self.Pfn_vsc * self.nc.Sbase
+        # DC pole-to-pole voltage Vfp - Vfn (Vfn = 0 for monopolar VSCs, F_dcn == -1)
+        Fdcn = self.nc.vsc_data.F_dcn
+        Vfn = np.where(Fdcn > -1, self.V[Fdcn].real, 0.0)
+        Vdc_vsc = self.V[self.nc.vsc_data.F].real - Vfn
         St_vsc = make_complex(self.Pt_vsc, self.Qt_vsc) * self.nc.Sbase
         If_vsc = self.Pfp_vsc / self.Vm[self.nc.vsc_data.F]
         It_vsc = make_complex(self.Pt_vsc, self.Qt_vsc) / self.Vm[self.nc.vsc_data.T]
@@ -3063,6 +3174,7 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
             losses=losses,
             Pfp_vsc=Pfp_vsc,
             Pfn_vsc=Pfn_vsc,
+            Vdc_vsc=Vdc_vsc,
             St_vsc=St_vsc,
             If_vsc=If_vsc,
             It_vsc=It_vsc,

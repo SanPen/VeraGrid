@@ -33,6 +33,7 @@ class NumericPowerFlowResults:
         "tap_angle",
         "Pfp_vsc",
         "Pfn_vsc",
+        "Vdc_vsc",
         "St_vsc",
         "If_vsc",
         "It_vsc",
@@ -74,7 +75,8 @@ class NumericPowerFlowResults:
                  norm_f: float,
                  converged: bool,
                  iterations: int,
-                 elapsed: float):
+                 elapsed: float,
+                 Vdc_vsc: Vec | None = None):
         """
         Object to store the results returned by a numeric power flow routine
         :param V: Voltage vector
@@ -119,6 +121,7 @@ class NumericPowerFlowResults:
         # VSC
         self.Pfp_vsc = Pfp_vsc
         self.Pfn_vsc = Pfn_vsc
+        self.Vdc_vsc = Vdc_vsc if Vdc_vsc is not None else np.zeros_like(Pfp_vsc)
         self.St_vsc = St_vsc
         self.If_vsc = If_vsc
         self.It_vsc = It_vsc
@@ -174,6 +177,7 @@ class PowerFlowResults(ResultsTemplate):
         ResultsProperty(name='losses_vsc', tpe=Vec, old_names=list(), expandable=False),
         ResultsProperty(name='Pfp_vsc', tpe=Vec, old_names=list(), expandable=False),
         ResultsProperty(name='Pfn_vsc', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='Vdc_vsc', tpe=Vec, old_names=list(), expandable=False),
         ResultsProperty(name='St_vsc', tpe=CxVec, old_names=list(), expandable=False),
         ResultsProperty(name='If_vsc', tpe=Vec, old_names=list(), expandable=False),
         ResultsProperty(name='It_vsc', tpe=CxVec, old_names=list(), expandable=False),
@@ -211,6 +215,7 @@ class PowerFlowResults(ResultsTemplate):
         "loading_hvdc",
         "Pfp_vsc",
         "Pfn_vsc",
+        "Vdc_vsc",
         "St_vsc",
         "If_vsc",
         "It_vsc",
@@ -296,6 +301,8 @@ class PowerFlowResults(ResultsTemplate):
                 ResultTypes.VscResults: [
                     ResultTypes.VscPowerFromPositive,
                     ResultTypes.VscPowerFromNegative,
+                    ResultTypes.VscPdc,
+                    ResultTypes.VscVdc,
                     ResultTypes.VscPowerTo,
                     ResultTypes.VscLosses,
                 ],
@@ -361,6 +368,7 @@ class PowerFlowResults(ResultsTemplate):
         # VSC
         self.Pfp_vsc = np.zeros(n_vsc, dtype=float)
         self.Pfn_vsc = np.zeros(n_vsc, dtype=float)
+        self.Vdc_vsc = np.zeros(n_vsc, dtype=float)
         self.St_vsc = np.zeros(n_vsc, dtype=complex)
         self.If_vsc = np.zeros(n_vsc, dtype=float)
         self.It_vsc = np.zeros(n_vsc, dtype=complex)
@@ -471,6 +479,7 @@ class PowerFlowResults(ResultsTemplate):
         # VSC
         self.Pfp_vsc[vsc_idx] = results.Pfp_vsc
         self.Pfn_vsc[vsc_idx] = results.Pfn_vsc
+        self.Vdc_vsc[vsc_idx] = results.Vdc_vsc
         self.St_vsc[vsc_idx] = results.St_vsc
         self.If_vsc[vsc_idx] = results.If_vsc
         self.It_vsc[vsc_idx] = results.It_vsc
@@ -866,6 +875,28 @@ class PowerFlowResults(ResultsTemplate):
                                 title=result_type.value,
                                 ylabel='(MW)',
                                 units='(MW)')
+
+        elif result_type == ResultTypes.VscPdc:
+
+            return ResultsTable(data=self.Pfp_vsc + self.Pfn_vsc,
+                                index=self.vsc_names,
+                                idx_device_type=DeviceType.VscDevice,
+                                columns=np.array([result_type.value]),
+                                cols_device_type=DeviceType.NoDevice,
+                                title=result_type.value,
+                                ylabel='(MW)',
+                                units='(MW)')
+
+        elif result_type == ResultTypes.VscVdc:
+
+            return ResultsTable(data=self.Vdc_vsc,
+                                index=self.vsc_names,
+                                idx_device_type=DeviceType.VscDevice,
+                                columns=np.array([result_type.value]),
+                                cols_device_type=DeviceType.NoDevice,
+                                title=result_type.value,
+                                ylabel='(p.u.)',
+                                units='(p.u.)')
 
         elif result_type == ResultTypes.VscPowerTo:
 

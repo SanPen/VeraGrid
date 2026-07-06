@@ -31,7 +31,7 @@ class SubstationDesigner(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        self.setWindowTitle('Substation maker')
+        self.setWindowTitle(self.tr("Substation maker"))
 
         self.grid = grid
 
@@ -42,7 +42,9 @@ class SubstationDesigner(QtWidgets.QDialog):
 
         self._accepted = False
 
-        self.ui.se_name_lineEdit.setText(f"Substation {self.grid.get_substation_number()}")
+        self.ui.se_name_lineEdit.setText(
+            self.tr("Substation {number}").format(number=self.grid.get_substation_number())
+        )
         self.ui.se_code_lineEdit.setText('')
 
         obj1 = VoltageLevelTemplate(name="VL", voltage=self.default_voltage,
@@ -153,7 +155,7 @@ class SubstationDesigner(QtWidgets.QDialog):
             self._accepted = True
             self.close()
         else:
-            ok = yes_no_question("There are no voltage levels, so no substation will be created, ok?")
+            ok = yes_no_question(self.tr("There are no voltage levels, so no substation will be created, ok?"))
             if ok:
                 self._accepted = False
                 self.close()

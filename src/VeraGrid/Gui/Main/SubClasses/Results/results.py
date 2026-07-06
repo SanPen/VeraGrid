@@ -286,7 +286,7 @@ class ResultsMain(SimulationsMain):
             self.ui.results_treeView.setCurrentIndex(index)
             menu: QtWidgets.QMenu = QtWidgets.QMenu(self.ui.results_treeView)
             gf.add_menu_entry(menu=menu,
-                              text="Delete driver",
+                              text=self.tr("Delete driver"),
                               icon_path=":/Icons/icons/minus.png",
                               function_ptr=self.delete_results_driver)
             menu.exec(self.ui.results_treeView.viewport().mapToGlobal(pos))
@@ -401,7 +401,7 @@ class ResultsMain(SimulationsMain):
                 if item is not None:
                     if item.parent() is None:
                         menu: QtWidgets.QMenu = QtWidgets.QMenu(parent=self.ui.dynamicsPlotsTreeView)
-                        rename_action: QtGui.QAction = menu.addAction("Rename group")
+                        rename_action: QtGui.QAction = menu.addAction(self.tr("Rename group"))
                         selected_action: QtGui.QAction | None = menu.exec_(
                             self.ui.dynamicsPlotsTreeView.viewport().mapToGlobal(pos)
                         )
@@ -411,7 +411,7 @@ class ResultsMain(SimulationsMain):
                             pass
                     else:
                         menu = QtWidgets.QMenu(parent=self.ui.dynamicsPlotsTreeView)
-                        rename_action = menu.addAction("Rename variable")
+                        rename_action = menu.addAction(self.tr("Rename variable"))
                         selected_action = menu.exec_(
                             self.ui.dynamicsPlotsTreeView.viewport().mapToGlobal(pos)
                         )
@@ -442,8 +442,8 @@ class ResultsMain(SimulationsMain):
                 accepted: bool
                 new_name, accepted = QtWidgets.QInputDialog.getText(
                     self,
-                    "Rename dynamic plot",
-                    "Plot name",
+                    self.tr("Rename dynamic plot"),
+                    self.tr("Plot name"),
                     text=old_name
                 )
                 if accepted:
@@ -452,13 +452,13 @@ class ResultsMain(SimulationsMain):
                     if renamed:
                         self.ui.dynamicsPlotsTreeView.update()
                     else:
-                        self.show_warning_toast("The plot group name is empty or already exists.")
+                        self.show_warning_toast(self.tr("The plot group name is empty or already exists."))
                 else:
                     pass
             else:
-                self.show_warning_toast("Select a plot group first.")
+                self.show_warning_toast(self.tr("Select a plot group first."))
         else:
-            self.show_warning_toast("There are no RMS dynamics results loaded.")
+            self.show_warning_toast(self.tr("There are no RMS dynamics results loaded."))
 
     def rename_dynamic_plot_variable(self, index: QtCore.QModelIndex) -> None:
         """
@@ -489,8 +489,8 @@ class ResultsMain(SimulationsMain):
                 accepted: bool
                 new_name, accepted = QtWidgets.QInputDialog.getText(
                     self,
-                    "Rename dynamic variable",
-                    "Variable name",
+                    self.tr("Rename dynamic variable"),
+                    self.tr("Variable name"),
                     text=current_name
                 )
                 if accepted:
@@ -501,13 +501,13 @@ class ResultsMain(SimulationsMain):
                     if renamed:
                         self.ui.dynamicsPlotsTreeView.update()
                     else:
-                        self.show_warning_toast("The variable name is empty or could not be changed.")
+                        self.show_warning_toast(self.tr("The variable name is empty or could not be changed."))
                 else:
                     pass
             else:
-                self.show_warning_toast("Select a variable first.")
+                self.show_warning_toast(self.tr("Select a variable first."))
         else:
-            self.show_warning_toast("There are no RMS dynamics results loaded.")
+            self.show_warning_toast(self.tr("There are no RMS dynamics results loaded."))
 
     def expand_dynamic_plots_tree(self,
                                   parent: QtCore.QModelIndex,
@@ -542,17 +542,17 @@ class ResultsMain(SimulationsMain):
         if self.dynamic_results_handler is not None:
             suggested_name: str = self.dynamic_results_handler.get_next_group_name()
             dialog: QtWidgets.QDialog = QtWidgets.QDialog(self)
-            dialog.setWindowTitle("New dynamic plot")
+            dialog.setWindowTitle(self.tr("New dynamic plot"))
             layout: QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout(dialog)
-            name_label: QtWidgets.QLabel = QtWidgets.QLabel("Plot name", dialog)
+            name_label: QtWidgets.QLabel = QtWidgets.QLabel(self.tr("Plot name"), dialog)
             name_edit: QtWidgets.QLineEdit = QtWidgets.QLineEdit(dialog)
-            mode_label: QtWidgets.QLabel = QtWidgets.QLabel("Plot mode", dialog)
+            mode_label: QtWidgets.QLabel = QtWidgets.QLabel(self.tr("Plot mode"), dialog)
             mode_combo: QtWidgets.QComboBox = QtWidgets.QComboBox(dialog)
             buttons: QtWidgets.QDialogButtonBox = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.StandardButton.Ok | QtWidgets.QDialogButtonBox.StandardButton.Cancel,
                                                                               dialog)
             name_edit.setText(suggested_name)
-            mode_combo.addItem("Time Series (Y vs Time)", DynamicPlotMode.TIME_SERIES)
-            mode_combo.addItem("X-Y Plot (Y vs X)", DynamicPlotMode.XY)
+            mode_combo.addItem(self.tr("Time Series (Y vs Time)"), DynamicPlotMode.TIME_SERIES)
+            mode_combo.addItem(self.tr("X-Y Plot (Y vs X)"), DynamicPlotMode.XY)
             buttons.accepted.connect(dialog.accept)
             buttons.rejected.connect(dialog.reject)
             layout.addWidget(name_label)
@@ -573,11 +573,11 @@ class ResultsMain(SimulationsMain):
                 if created:
                     self.ui.dynamicsPlotsTreeView.expandAll()
                 else:
-                    self.show_warning_toast("The plot group name is empty or already exists.")
+                    self.show_warning_toast(self.tr("The plot group name is empty or already exists."))
             else:
                 pass
         else:
-            self.show_warning_toast("There are no RMS dynamics results loaded.")
+            self.show_warning_toast(self.tr("There are no RMS dynamics results loaded."))
 
     def delete_dynamic_plot_entry(self) -> None:
         """
@@ -592,11 +592,11 @@ class ResultsMain(SimulationsMain):
                 if deleted:
                     self.ui.dynamicsPlotsTreeView.update()
                 else:
-                    self.show_warning_toast("The selected dynamic plot entry could not be deleted.")
+                    self.show_warning_toast(self.tr("The selected dynamic plot entry could not be deleted."))
             else:
-                self.show_warning_toast("Select a plot group or variable first.")
+                self.show_warning_toast(self.tr("Select a plot group or variable first."))
         else:
-            self.show_warning_toast("There are no RMS dynamics results loaded.")
+            self.show_warning_toast(self.tr("There are no RMS dynamics results loaded."))
 
     def plot_dynamic_plot_entry(self) -> None:
         """
@@ -613,13 +613,13 @@ class ResultsMain(SimulationsMain):
                 if plotted:
                     return None
                 else:
-                    self.show_warning_toast("The selected dynamic plot entry could not be plotted.")
+                    self.show_warning_toast(self.tr("The selected dynamic plot entry could not be plotted."))
                     return None
             else:
-                self.show_warning_toast("Select a plot group or variable first.")
+                self.show_warning_toast(self.tr("Select a plot group or variable first."))
                 return None
         else:
-            self.show_warning_toast("There are no RMS dynamics results loaded.")
+            self.show_warning_toast(self.tr("There are no RMS dynamics results loaded."))
             return None
 
     def search_dynamic_objects(self) -> None:
@@ -731,8 +731,9 @@ class ResultsMain(SimulationsMain):
             n_cols = mdl.table.c
 
             if n_cols > 50:
-                ok = yes_no_question(text=f"There are {n_cols} columns, the plot might take a lot to render.\n"
-                                          "Are you ok with potentially waiting a lot?", title="Plot")
+                ok = yes_no_question(text=self.tr("There are {columns} columns, the plot might take a lot to render.\n"
+                                                  "Are you ok with potentially waiting a lot?").format(columns=n_cols),
+                                     title=self.tr("Plot"))
             else:
                 ok = True
 
@@ -778,8 +779,8 @@ class ResultsMain(SimulationsMain):
         mdl: ResultsModel = self.ui.resultsTableView.model()
 
         if mdl is not None:
-            file, filter_ = QtWidgets.QFileDialog.getSaveFileName(self, "Export results", '',
-                                                                  filter="CSV (*.csv);;Excel files (*.xlsx)")
+            file, filter_ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr("Export results"), '',
+                                                                  filter=self.tr("CSV (*.csv);;Excel files (*.xlsx)"))
 
             if file != '':
                 if 'xlsx' in filter_:
@@ -795,9 +796,10 @@ class ResultsMain(SimulationsMain):
                     mdl.save_to_csv(f)
                     print('Saved!')
                 else:
-                    error_msg(file[0] + ' is not valid :(')
+                    error_msg(file + self.tr(" is not valid :("))
         else:
-            warning_msg('There is no profile displayed, please display one', 'Copy profile to clipboard')
+            warning_msg(self.tr("There is no profile displayed, please display one"),
+                        self.tr("Copy profile to clipboard"))
 
     def copy_results_data(self):
         """
@@ -806,9 +808,10 @@ class ResultsMain(SimulationsMain):
         mdl = self.ui.resultsTableView.model()
         if mdl is not None:
             mdl.copy_to_clipboard()
-            self.show_info_toast('Copied!')
+            self.show_info_toast(self.tr("Copied!"))
         else:
-            warning_msg('There is no profile displayed, please display one', 'Copy profile to clipboard')
+            warning_msg(self.tr("There is no profile displayed, please display one"),
+                        self.tr("Copy profile to clipboard"))
 
     def copy_results_data_as_numpy(self):
         """
@@ -817,9 +820,10 @@ class ResultsMain(SimulationsMain):
         mdl = self.ui.resultsTableView.model()
         if mdl is not None:
             mdl.copy_numpy_to_clipboard()
-            self.show_info_toast('Copied!')
+            self.show_info_toast(self.tr("Copied!"))
         else:
-            warning_msg('There is no profile displayed, please display one', 'Copy profile to clipboard')
+            warning_msg(self.tr("There is no profile displayed, please display one"),
+                        self.tr("Copy profile to clipboard"))
 
     def search_in_results(self):
         """
@@ -836,10 +840,10 @@ class ResultsMain(SimulationsMain):
                 filter_.parse(expression=txt)
                 filtered_table = filter_.apply()
             except ValueError as e:
-                error_msg(str(e), "Fiter parse")
+                error_msg(str(e), self.tr("Filter parse"))
                 return None
             except Exception as e:
-                error_msg(str(e), "Fiter parse")
+                error_msg(str(e), self.tr("Filter parse"))
                 return None
 
             self.results_mdl = ResultsModel(filtered_table)
@@ -862,8 +866,10 @@ class ResultsMain(SimulationsMain):
                 study_name = path[0]
                 study_type = self.available_results_dict[study_name]
 
-                quit_msg = "Do you want to delete_with_dialogue the results driver " + study_name + "?"
-                reply = QtWidgets.QMessageBox.question(self, 'Message',
+                quit_msg = self.tr("Do you want to delete the results driver {study_name}?").format(
+                    study_name=study_name
+                )
+                reply = QtWidgets.QMessageBox.question(self, self.tr("Message"),
                                                        quit_msg,
                                                        QtWidgets.QMessageBox.StandardButton.Yes,
                                                        QtWidgets.QMessageBox.StandardButton.No)
@@ -908,40 +914,40 @@ class ResultsMain(SimulationsMain):
         _, results = self.session.optimal_power_flow
         if results is not None:
 
-            ok = yes_no_question('Are you sure that you want to overwrite '
-                                 'the generation, batteries and load snapshot values '
-                                 'with the OPF results?',
-                                 title="Overwrite profiles with OPF results")
+            ok = yes_no_question(self.tr('Are you sure that you want to overwrite '
+                                         'the generation, batteries and load snapshot values '
+                                         'with the OPF results?'),
+                                 title=self.tr("Overwrite profiles with OPF results"))
 
             if ok:
                 self.circuit.set_opf_snapshot_results(results)
-                self.show_info_toast("P snapshot set from the OPF results")
+                self.show_info_toast(self.tr("P snapshot set from the OPF results"))
 
         else:
-            self.show_warning_toast('The OPF time series has no results :(')
+            self.show_warning_toast(self.tr('The OPF time series has no results :('))
 
         # copy the time series if that exists --------------------------------------------------------------------------
         _, results = self.session.optimal_power_flow_ts
         if results is not None:
 
-            ok = yes_no_question('Are you sure that you want to overwrite '
-                                 'the generation, batteries and load profiles '
-                                 'with the OPF time series results?',
-                                 title="Overwrite profiles with OPF results")
+            ok = yes_no_question(self.tr('Are you sure that you want to overwrite '
+                                         'the generation, batteries and load profiles '
+                                         'with the OPF time series results?'),
+                                 title=self.tr("Overwrite profiles with OPF results"))
 
             if ok:
                 self.circuit.set_opf_ts_results(results)
-                self.show_info_toast("P profiles set from the OPF results")
+                self.show_info_toast(self.tr("P profiles set from the OPF results"))
 
         else:
-            self.show_warning_toast('The OPF time series has no results :(')
+            self.show_warning_toast(self.tr('The OPF time series has no results :('))
 
     def save_results_logs(self):
         """
         Save the results' logs
         """
-        file, filter_ = QtWidgets.QFileDialog.getSaveFileName(self, "Export logs", '',
-                                                              filter="CSV (*.csv);;Excel files (*.xlsx)", )
+        file, filter_ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr("Export logs"), '',
+                                                              filter=self.tr("CSV (*.csv);;Excel files (*.xlsx)"), )
 
         if file != '':
             if 'xlsx' in filter_:

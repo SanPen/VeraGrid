@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 
 import VeraGridEngine.api as vge
+import VeraGridEngine.Templates as tem
 from VeraGridEngine.Devices.Diagrams.graphic_location import GraphicLocation
 from VeraGridEngine.Devices.Diagrams.map_location import MapLocation
 from VeraGridEngine.Devices.Dynamic.fmu_template import FmuTemplate
@@ -112,6 +113,70 @@ def _build_grid_with_internal_references():
     return grid
 
 
+def add_rms_model_catalogue(grid):
+    """
+    Here the list of all rms templates must be returned in a list
+    :return:
+    """
+    # TODO: eliminate
+    grid.rms_models += [
+        tem.get_genqec_rms(vfactory=grid.var_factory),
+        tem.get_governor_rms(vfactory=grid.var_factory),
+        tem.get_stabilizer_rms(vfactory=grid.var_factory),
+        tem.get_exciter_rms(vfactory=grid.var_factory),
+        tem.get_complete_generator_template_rms(vfactory=grid.var_factory),
+        tem.get_genrow_rms_template(vfactory=grid.var_factory),
+        tem.get_line_rms_template(vfactory=grid.var_factory),
+        tem.get_load_rms_template(vfactory=grid.var_factory),
+        tem.get_pvd1_rms_template(vfactory=grid.var_factory),
+        tem.build_vsc_rms(vfactory=grid.var_factory)
+    ]
+
+def add_emt_model_catalogue(grid):
+    """
+    Create default catalogue of EMT values
+    :return:
+    """
+    grid.emt_models += [
+
+        tem.get_simple_generator_emt_template(vf=grid.var_factory),
+        tem.get_generator_sauer_pai_type_emt_template(vf=grid.var_factory),
+        tem.get_governor_emt(vf=grid.var_factory),
+        tem.get_stabilizer_emt(vf=grid.var_factory),
+        tem.get_exciter_emt(vf=grid.var_factory),
+        tem.get_complete_generator_template_emt(vf=grid.var_factory),
+
+        tem.get_generator_thevenin_rl_emt_template_with_ref(vf=grid.var_factory),
+        tem.get_emt_ideal_converter(vf=grid.var_factory),
+        tem.get_full_pseudo_emt_converter(vf=grid.var_factory),
+        tem.get_switched_emt_converter(vf=grid.var_factory),
+        tem.get_bridge_2level_3ph_emt_template(vf=grid.var_factory),
+        tem.get_bridge_filter_2level_3ph_emt_template(vf=grid.var_factory),
+        tem.get_bridge_filter_control_2level_3ph_emt_template(vf=grid.var_factory),
+        tem.get_dc_load_emt_template(vf=grid.var_factory),
+        # tem.get_dc_line_emt_template(vf=self._var_factory),
+        tem.get_dc_line_with_power_input_emt_template(vf=grid.var_factory),
+        tem.get_valve_emt_template(vf=grid.var_factory),
+        tem.get_transformer_emt_template(vf=grid.var_factory),
+        tem.get_xfmr_emt_template(vf=grid.var_factory),
+        tem.get_induction_motor_single_cage_emt_template(vf=grid.var_factory),
+        tem.get_induction_motor_double_cage_emt_template(vf=grid.var_factory),
+        tem.get_bess_avm_grid_following_emt_template(vf=grid.var_factory),
+        tem.get_pv_avm_grid_following_emt_template(vf=grid.var_factory),
+        tem.get_pv_avm_boost_grid_following_emt_template(vf=grid.var_factory),
+        tem.get_gfm_emt_template(vf=grid.var_factory),
+
+        # the following are functions that generate templates depending on phases or things
+        tem.get_shunt_c_emt_template(vf=grid.var_factory, phA=True, phB=True, phC=True),
+        tem.get_shunt_l_emt_template(vf=grid.var_factory, phA=True, phB=True, phC=True),
+        tem.get_shunt_r_emt_template(vf=grid.var_factory, phA=True, phB=True, phC=True),
+        tem.get_exponential_load_emt(vf=grid.var_factory, phA=True, phB=True, phC=True),
+        tem.get_load_ZIP_emt_template(vf=grid.var_factory, phA=True, phB=True, phC=True),
+        tem.get_pi_line_emt_template(vf=grid.var_factory, phN=False, phA=True, phB=True, phC=True),
+        tem.get_bergeron_line_emt_template(vf=grid.var_factory, phN=False, phA=True, phB=True, phC=True),
+
+    ]
+
 def _build_grid_with_dynamic_templates():
     """
     Build a grid with native RMS/EMT templates and one RMS FMU template.
@@ -122,8 +187,8 @@ def _build_grid_with_dynamic_templates():
     line = grid.add_line(vge.Line(name="L12", bus_from=bus_from, bus_to=bus_to, r=0.1, x=0.2, rate=100.0))
     load = grid.add_load(bus=bus_to, api_obj=vge.Load(name="LD"))
 
-    grid.add_rms_model_catalogue()
-    grid.add_emt_model_catalogue()
+    add_rms_model_catalogue(grid)
+    add_emt_model_catalogue(grid)
 
     rms_template = next(t for t in grid.rms_models if t.tpe == DeviceType.LineDevice)
     emt_template = next(t for t in grid.emt_models if t.tpe == DeviceType.LineDevice)

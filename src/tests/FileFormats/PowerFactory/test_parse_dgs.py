@@ -6,9 +6,12 @@
 import os
 import pandas as pd
 import numpy as np
+from types import SimpleNamespace
 
 import VeraGridEngine.Devices as dev
+from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.IO.file_open import FileOpen
+from VeraGridEngine.IO.dgs.dgs_to_veragrid import _apply_elmtow_tower_coupling
 from VeraGridEngine.Simulations.PowerFlow.power_flow_worker import PowerFlowOptions
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import SolverType
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowDriver
@@ -190,3 +193,40 @@ def test_circuit_to_dgs_uses_profile_values_when_t_idx_is_provided() -> None:
     assert np.isclose(profile_export.typswitches[0].InomA, profile_switch_current)
     assert snapshot_export.elmcoups[0].on_off == 1
     assert profile_export.elmcoups[0].on_off == 0
+
+
+def test_dgs_tower_coupling_logs_non_empty_message_for_blank_value_error() -> None:
+    class FakeLine:
+        def __init__(self) -> None:
+            self.name = "L1"
+
+        def set_circuit_idx(self, val: int, obj) -> None:
+            pass
+
+        def apply_template(self, obj, Sbase: float, freq: float, logger: Logger) -> None:
+            raise ValueError()
+
+    logger = Logger()
+    dgs_grid = SimpleNamespace(
+        elmtows=[
+            SimpleNamespace(
+                outserv=0,
+                pGeo=["tower-1"],
+                loc_name="Tower 1",
+                ID="tower-id",
+                plines=["line-1"],
+            )
+        ]
+    )
+
+    _apply_elmtow_tower_coupling(
+        dgs_grid=dgs_grid,
+        line_by_dgs_id={"line-1": [FakeLine()]},
+        overhead_line_type_dict={"tower-1": object()},
+        baseMVA=100.0,
+        frequency=50.0,
+        logger=logger,
+    )
+
+    assert len(logger.entries) == 1
+    assert logger.entries[0].msg == "Failed to apply tower template."

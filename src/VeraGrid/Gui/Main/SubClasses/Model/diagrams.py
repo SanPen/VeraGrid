@@ -261,7 +261,7 @@ class DiagramsMain(CompiledArraysMain):
         if 'fivethirtyeight' in plt.style.available:
             self.ui.plt_style_comboBox.setCurrentText('fivethirtyeight')
 
-        self.ui.diagramSearchLineEdit.setPlaceholderText("Type to search in the current diagram")
+        self.ui.diagramSearchLineEdit.setPlaceholderText(self.tr("Type to search in the current diagram"))
 
         # configure matplotlib for pandas time series
         register_matplotlib_converters()
@@ -313,6 +313,7 @@ class DiagramsMain(CompiledArraysMain):
 
         self.ui.actionSetReticularBranchStyles.triggered.connect(self.set_diagram_branches_reticular_style)
         self.ui.actionSetStraightBranchStyles.triggered.connect(self.set_diagram_branches_straight_style)
+        self.ui.actionRepair_diagram.triggered.connect(self.repair_selected_schematic_diagram)
 
         # Buttons
         self.ui.colour_results_pushButton.clicked.connect(self.colour_diagrams)
@@ -416,8 +417,9 @@ class DiagramsMain(CompiledArraysMain):
 
                 # if the ask, checkbox is checked, then ask
                 if self.ui.ask_before_appliying_layout_checkBox.isChecked():
-                    reply = QtWidgets.QMessageBox.question(self, 'Message',
-                                                           'Are you sure that you want to try an automatic layout?',
+                    reply = QtWidgets.QMessageBox.question(self,
+                                                           self.tr("Message"),
+                                                           self.tr("Are you sure that you want to try an automatic layout?"),
                                                            QtWidgets.QMessageBox.StandardButton.Yes,
                                                            QtWidgets.QMessageBox.StandardButton.No)
 
@@ -2091,6 +2093,18 @@ class DiagramsMain(CompiledArraysMain):
         self.diagram_widgets_list.append(widget)
         return widget
 
+    def dispose_diagram_widget(self, widget: DIAGRAM_WIDGETS) -> None:
+        """
+        Clear and queue one diagram widget for Qt-side destruction.
+        """
+        widget.prepare_to_delete()
+
+        # Queue Qt-side destruction on the main thread after clearing scene items now.
+        # This avoids orphaned QGraphics objects surviving until later GC/finalization.
+        self.ui.schematic_layout.removeWidget(widget)
+        widget.setParent(None)
+        widget.deleteLater()
+
     def _create_widget_from_diagram(self, diagram: dev.SchematicDiagram | dev.MapDiagram) -> ALL_EDITORS:
         """
         Create a diagram widget from a stored diagram object.
@@ -2466,6 +2480,9 @@ class DiagramsMain(CompiledArraysMain):
         Create as Widgets the diagrams stored in the circuit
         :return:
         """
+        for widget in self.diagram_widgets_list:
+            self.dispose_diagram_widget(widget)
+
         self.diagram_widgets_list.clear()
         self.remove_all_diagram_widgets()
 
@@ -2608,6 +2625,7 @@ class DiagramsMain(CompiledArraysMain):
             widget = self.diagram_widgets_list.pop(row)
             if isinstance(widget, (SchematicWidget, GridMapWidget)):
                 self.circuit.remove_diagram(widget.diagram)
+                self.dispose_diagram_widget(widget)
 
         # Remove currently shown widget and rebuild list view selection.
         self.remove_all_diagram_widgets()
@@ -2642,6 +2660,9 @@ class DiagramsMain(CompiledArraysMain):
         """
         Remove all diagrams and their widgets
         """
+        for widget in self.diagram_widgets_list:
+            self.dispose_diagram_widget(widget)
+
         self.diagram_widgets_list.clear()
         self.remove_all_diagram_widgets()
         self.ui.diagramsListView.setModel(None)
@@ -2782,8 +2803,12 @@ class DiagramsMain(CompiledArraysMain):
                 f_name = str(os.path.join(self.project_directory, self.ui.grid_name_line_edit.text()))
 
                 # call dialog to select the file
-                filename, type_selected = QtWidgets.QFileDialog.getSaveFileName(self, 'Save image file',
-                                                                                f_name, files_types)
+                filename, type_selected = QtWidgets.QFileDialog.getSaveFileName(
+                    self,
+                    self.tr('Save image file'),
+                    f_name,
+                    self.tr(files_types),
+                )
 
                 if filename != "":
                     if 'svg' in type_selected:
@@ -2813,8 +2838,12 @@ class DiagramsMain(CompiledArraysMain):
                     f_name = str(os.path.join(self.project_directory, self.ui.grid_name_line_edit.text()))
 
                     # call dialog to select the file
-                    filename, type_selected = QtWidgets.QFileDialog.getSaveFileName(self, 'Save video file',
-                                                                                    f_name, files_types)
+                    filename, type_selected = QtWidgets.QFileDialog.getSaveFileName(
+                        self,
+                        self.tr('Save video file'),
+                        f_name,
+                        self.tr(files_types),
+                    )
 
                     if filename != "":
                         if type_selected == "MP4 (*.mp4)" and not filename.endswith('.mp4'):
@@ -3513,28 +3542,28 @@ class DiagramsMain(CompiledArraysMain):
         context_menu = QtWidgets.QMenu(parent=self.ui.diagramsListView)
 
         gf.add_menu_entry(menu=context_menu,
-                          text="New schematic",
+                          text=self.tr("New schematic"),
                           icon_path=":/Icons/icons/schematic.png",
                           function_ptr=self.add_complete_bus_branch_diagram)
 
         gf.add_menu_entry(menu=context_menu,
-                          text="New schematic from selection",
+                          text=self.tr("New schematic from selection"),
                           icon_path=":/Icons/icons/schematic.png",
                           function_ptr=self.new_bus_branch_diagram_from_selection)
 
         gf.add_menu_entry(menu=context_menu,
-                          text="New map",
+                          text=self.tr("New map"),
                           icon_path=":/Icons/icons/map (add).png",
                           function_ptr=self.add_map_diagram)
 
         gf.add_menu_entry(menu=context_menu,
-                          text="Duplicate",
+                          text=self.tr("Duplicate"),
                           icon_path=":/Icons/icons/copy.png",
                           function_ptr=self.duplicate_diagram)
 
         context_menu.addSeparator()
         gf.add_menu_entry(menu=context_menu,
-                          text="Remove",
+                          text=self.tr("Remove"),
                           icon_path=":/Icons/icons/delete3.png",
                           function_ptr=self.remove_diagram)
 
@@ -3993,3 +4022,15 @@ class DiagramsMain(CompiledArraysMain):
 
         if isinstance(diagram, SchematicWidget):
             diagram.set_all_branch_drawing_styles(SchematicAutoRouteStyle.STRAIGHT)
+
+    def repair_selected_schematic_diagram(self):
+        """
+        Repair suspicious legacy manual injection positions in the selected schematic.
+        """
+        diagram = self.get_selected_diagram_widget()
+
+        if isinstance(diagram, SchematicWidget):
+            repaired_count = diagram.repair_suspicious_injection_positions()
+            self.show_info_toast(f"Repaired {repaired_count} suspicious injection positions")
+        else:
+            self.show_warning_toast("The current diagram is not a schematic :(")

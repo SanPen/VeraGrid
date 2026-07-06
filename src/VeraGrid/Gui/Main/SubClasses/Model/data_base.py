@@ -33,7 +33,6 @@ from VeraGrid.Gui.DeviceEditors.LoadDesigner.load_device_editor import LoadDevic
 from VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor import GeneratorEditorDialog
 from VeraGrid.Gui.DeviceEditors.VscEditor.vsc_device_editor import VscDeviceEditorDialog
 from VeraGrid.Gui.DeviceEditors.TowerBuilder.LineBuilderDialogue import TowerBuilderGUI
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
 from VeraGrid.Gui.FmuTemplateEditor.fmu_template_editor import FmuTemplateEditorDialog
 from VeraGrid.Gui.SystemScaler.system_scaler import SystemScaler
 from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import GridMapWidget, generate_map_diagram
@@ -79,7 +78,9 @@ class DataBaseTableMain(DiagramsMain):
         )
         self.ui.goToTsPointComboBox.setModel(ts_search_points_mdl)
 
-        self.ui.smart_search_lineEdit.setPlaceholderText("Type the object name or a smart filter expression ...")
+        self.ui.smart_search_lineEdit.setPlaceholderText(
+            self.tr("Type the object name or a smart filter expression ...")
+        )
 
         self.prop_filter_dict, prop_filter_mdl = gf.enums_to_icons_model(
             [
@@ -1028,7 +1029,7 @@ class DataBaseTableMain(DiagramsMain):
                             pass
 
                     elif elm_type == DeviceType.VscDevice.value:
-                        dlg = VscDeviceEditorDialog(api_object=elm, circuit=self.circuit)
+                        dlg = VscDeviceEditorDialog(api_object=elm, circuit=self.circuit, main_gui=self)
                         if dlg.exec():
                             pass
 
@@ -1063,14 +1064,12 @@ class DataBaseTableMain(DiagramsMain):
                             pass
 
                     elif elm_type == DeviceType.RmsModelTemplateDevice.value:
-                        open_dynamic_editor(api_object=elm, circuit=self.circuit,
-                                            preferred_mode=DynamicSimulationMode.RMS)
-                        self.retain_dynamic_editor_windows()
+                        self.open_dynamic_editor(api_object=elm, circuit=self.circuit,
+                                                 preferred_mode=DynamicSimulationMode.RMS)
 
                     elif elm_type == DeviceType.EmtModelTemplateDevice.value:
-                        open_dynamic_editor(api_object=elm, circuit=self.circuit,
-                                            preferred_mode=DynamicSimulationMode.EMT)
-                        self.retain_dynamic_editor_windows()
+                        self.open_dynamic_editor(api_object=elm, circuit=self.circuit,
+                                                 preferred_mode=DynamicSimulationMode.EMT)
 
                     elif elm_type == DeviceType.FmuTemplateDevice.value:
                         dlg = FmuTemplateEditorDialog(
@@ -1474,97 +1473,97 @@ class DataBaseTableMain(DiagramsMain):
             context_menu = QtWidgets.QMenu(parent=self.ui.diagramsListView)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Edit",
+                              text=self.tr("Edit"),
                               icon_path=":/Icons/icons/edit.png",
                               function_ptr=self.launch_object_editor)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Add",
+                              text=self.tr("Add"),
                               icon_path=":/Icons/icons/plus.png",
                               function_ptr=self.add_objects)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Delete",
+                              text=self.tr("Delete"),
                               icon_path=":/Icons/icons/minus.png",
                               function_ptr=self.delete_selected_db_table_objects)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Duplicate object",
+                              text=self.tr("Duplicate object"),
                               icon_path=":/Icons/icons/copy.png",
                               function_ptr=self.duplicate_selected_db_table_objects)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Merge",
+                              text=self.tr("Merge"),
                               icon_path=":/Icons/icons/fusion.png",
                               function_ptr=self.fuse_selected_db_table_objects)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Copy idtag",
+                              text=self.tr("Copy idtag"),
                               icon_path=":/Icons/icons/copy.png",
                               function_ptr=self.copy_selected_idtag)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Crop model to buses selection",
+                              text=self.tr("Crop model to buses selection"),
                               icon_path=":/Icons/icons/schematic.png",
                               function_ptr=self.crop_model_to_buses_selection)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Grid reduction",
+                              text=self.tr("Grid reduction"),
                               icon_path=":/Icons/icons/schematic.png",
                               function_ptr=self.grid_reduction_from_table_selection)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Copy table",
+                              text=self.tr("Copy table"),
                               icon_path=":/Icons/icons/copy.png",
                               function_ptr=self.copy_objects_data)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Set value to column",
+                              text=self.tr("Set value to column"),
                               icon_path=":/Icons/icons/copy2down.png",
                               function_ptr=self.set_value_to_column)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Assign to profile",
+                              text=self.tr("Assign to profile"),
                               icon_path=":/Icons/icons/assign_to_profile.png",
                               function_ptr=self.assign_to_profile)
 
             if elm_type == DeviceType.BranchGroupDevice.value:
                 gf.add_menu_entry(menu=context_menu,
-                                  text="Colour branches like this",
+                                  text=self.tr("Colour branches like this"),
                                   icon_path=":/Icons/icons/assign_to_profile.png",
                                   function_ptr=self.colour_branches_like_group)
 
             context_menu.addSeparator()
 
             gf.add_menu_entry(menu=context_menu,
-                              text="New vicinity diagram",
+                              text=self.tr("New vicinity diagram"),
                               icon_path=":/Icons/icons/grid_icon.png",
                               function_ptr=self.add_bus_vicinity_diagram_from_model)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="New diagram from selection",
+                              text=self.tr("New diagram from selection"),
                               icon_path=":/Icons/icons/schematicadd_to.png",
                               function_ptr=self.add_new_bus_diagram_from_selection)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Add to current diagram",
+                              text=self.tr("Add to current diagram"),
                               icon_path=":/Icons/icons/schematicadd_to.png",
                               function_ptr=self.add_objects_to_current_diagram)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Highlight buses selection",
+                              text=self.tr("Highlight buses selection"),
                               icon_path=":/Icons/icons/highlight.png",
                               function_ptr=self.highlight_selection_buses)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Highlight based on property",
+                              text=self.tr("Highlight based on property"),
                               icon_path=":/Icons/icons/highlight2.png",
                               function_ptr=self.highlight_based_on_property)
 
             context_menu.addSeparator()
 
             gf.add_menu_entry(menu=context_menu,
-                              text="New map from selection",
+                              text=self.tr("New map from selection"),
                               icon_path=":/Icons/icons/map.png",
                               function_ptr=self.add_new_map_from_database_selection)
 

@@ -739,8 +739,12 @@ class RawTransformer(RawObject):
             """
             WINDV1 is the Winding 1 off-nominal turns ratio in pu of nominal Winding 1 voltage,
             """
-            ti = self.WINDV1 / NOMV1
-            tj = self.WINDV2 / NOMV2
+            # ti = self.WINDV1 / NOMV1
+            # tj = self.WINDV2 / NOMV2
+
+            ti = self.WINDV1 * NOMV1 / bus_i_base_voltage
+            tj = self.WINDV2 * NOMV2 / bus_j_base_voltage
+
             tap_module = ti / tj
         else:
             raise Exception("Invalid value of CW")

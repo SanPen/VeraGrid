@@ -45,6 +45,32 @@ from VeraGridEngine.enumerations import (DeviceType, AvailableTransferMode, Solv
                                          DynamicSimulationMode)
 
 
+def get_valid_controls_start_tolerance_index(tolerance_idx: int,
+                                             controls_start_tolerance_idx: int,
+                                             controls_start_tolerance_min_idx: int) -> int:
+    """
+    Keep the controls activation tolerance above the solver tolerance.
+
+    :param tolerance_idx: Solver tolerance exponent shown as ``1e-idx``
+    :param controls_start_tolerance_idx: Controls activation exponent shown as ``1e-idx``
+    :param controls_start_tolerance_min_idx: Minimum exponent allowed by the GUI spin box
+    :return: Valid controls activation exponent
+    """
+    if controls_start_tolerance_idx > tolerance_idx:
+        # The GUI stores exponents, so ``tol * 100`` means subtracting two decades.
+        adjusted_idx: int = tolerance_idx - 2
+
+        # Clamp to the spin box minimum because the GUI cannot represent values larger than ``1e-1``.
+        if adjusted_idx < controls_start_tolerance_min_idx:
+            adjusted_idx = controls_start_tolerance_min_idx
+        else:
+            pass
+
+        return adjusted_idx
+    else:
+        return controls_start_tolerance_idx
+
+
 class SimulationsMain(TimeEventsMain):
     """
     SimulationsMain
@@ -340,6 +366,8 @@ class SimulationsMain(TimeEventsMain):
         self.ui.contingency_filter_by_comboBox.currentTextChanged.connect(self.modify_contingency_filter_mode)
         self.ui.available_results_to_color_comboBox.currentTextChanged.connect(self.changed_study)
         self.ui.mip_framework_comboBox.currentTextChanged.connect(self.update_available_mip_solvers)
+        self.ui.tolerance_spinBox.valueChanged.connect(self.adjust_controls_start_tolerance)
+        self.ui.controls_start_tolerance_spinBox.valueChanged.connect(self.adjust_controls_start_tolerance)
 
         # button
         self.ui.find_automatic_precission_Button.clicked.connect(self.automatic_pf_precision)
@@ -368,9 +396,12 @@ class SimulationsMain(TimeEventsMain):
 
         for drv in self.get_simulations():
             if drv is not None:
-                if hasattr(drv, 'results'):
-                    if drv.results is not None:
-                        lst.append(drv)
+                if drv.results is not None:
+                    lst.append(drv)
+                else:
+                    pass
+            else:
+                pass
 
         return lst
 
@@ -705,9 +736,21 @@ class SimulationsMain(TimeEventsMain):
 
         self.ui.sbase_doubleSpinBox.setValue(self.circuit.Sbase)
         self.ui.fbase_doubleSpinBox.setValue(self.circuit.fBase)
-        self.ui.model_version_label.setText('Model v. ' + str(self.circuit.model_version))
-        self.ui.grid_idtag_label.setText('idtag. ' + str(self.circuit.idtag))
-        self.ui.user_name_label.setText('User: ' + str(self.circuit.user_name))
+        self.ui.model_version_label.setText(
+            QtCore.QCoreApplication.translate("SimulationsMain", "Model v. {model_version}").format(
+                model_version=self.circuit.model_version,
+            )
+        )
+        self.ui.grid_idtag_label.setText(
+            QtCore.QCoreApplication.translate("SimulationsMain", "idtag. {idtag}").format(
+                idtag=self.circuit.idtag,
+            )
+        )
+        self.ui.user_name_label.setText(
+            QtCore.QCoreApplication.translate("SimulationsMain", "User: {user_name}").format(
+                user_name=self.circuit.user_name,
+            )
+        )
         if self.open_file_thread_object is not None:
             if isinstance(self.open_file_thread_object.file_name, str):
                 self.ui.file_information_label.setText(self.open_file_thread_object.file_name)
@@ -724,7 +767,9 @@ class SimulationsMain(TimeEventsMain):
         :return: QStandardItemModel with one top-level row per Pareto combination
         """
         model: QtGui.QStandardItemModel = QtGui.QStandardItemModel()
-        model.setHorizontalHeaderLabels(["Pareto combination"] + list(drv.results.f_names))
+        model.setHorizontalHeaderLabels(
+            [QtCore.QCoreApplication.translate("SimulationsMain", "Pareto combination")] + list(drv.results.f_names)
+        )
 
         # Iterate only over Pareto-front rows. sorting_indices points back into the
         # full _x/_f arrays, so drv.results.x[i, :] is still the right way to look
@@ -734,7 +779,11 @@ class SimulationsMain(TimeEventsMain):
         for i in drv.results.sorting_indices:
             idx: np.ndarray = np.where(drv.results.x[i, :] != 0)[0]
             if len(idx):
-                label_item: QtGui.QStandardItem = QtGui.QStandardItem(f"Pareto combination {i}")
+                label_item: QtGui.QStandardItem = QtGui.QStandardItem(
+                    QtCore.QCoreApplication.translate("SimulationsMain", "Pareto combination {index}").format(
+                        index=i,
+                    )
+                )
                 label_item.setData(int(i), QtCore.Qt.ItemDataRole.UserRole)
                 row_items: List[QtGui.QStandardItem] = [label_item] + [
                     QtGui.QStandardItem(f"{fi:.2f}") for fi in drv.results.f[i, :]
@@ -768,7 +817,9 @@ class SimulationsMain(TimeEventsMain):
         :return: QStandardItemModel with one top-level row per Pareto combination
         """
         model: QtGui.QStandardItemModel = QtGui.QStandardItemModel()
-        model.setHorizontalHeaderLabels(["Pareto combination"] + list(drv.results.f_names))
+        model.setHorizontalHeaderLabels(
+            [QtCore.QCoreApplication.translate("SimulationsMain", "Pareto combination")] + list(drv.results.f_names)
+        )
 
         # Iterate over Pareto-front rows only. sorting_indices points back into
         # the full _x/_f arrays, so drv.results.x[i, :] is the right slice. We
@@ -777,7 +828,11 @@ class SimulationsMain(TimeEventsMain):
         # sorting or filtering applied to the view.
         for i in drv.results.sorting_indices:
             x_vec: np.ndarray = drv.results.x[i, :]
-            label_item: QtGui.QStandardItem = QtGui.QStandardItem(f"Pareto combination {i}")
+            label_item: QtGui.QStandardItem = QtGui.QStandardItem(
+                QtCore.QCoreApplication.translate("SimulationsMain", "Pareto combination {index}").format(
+                    index=i,
+                )
+            )
             label_item.setData(int(i), QtCore.Qt.ItemDataRole.UserRole)
             row_items: List[QtGui.QStandardItem] = [label_item] + [
                 QtGui.QStandardItem(f"{fi:.2f}") for fi in drv.results.f[i, :]
@@ -804,7 +859,7 @@ class SimulationsMain(TimeEventsMain):
         :return:
         """
         model = QtGui.QStandardItemModel()
-        model.setHorizontalHeaderLabels(["Short circuits"])
+        model.setHorizontalHeaderLabels([QtCore.QCoreApplication.translate("SimulationsMain", "Short circuits")])
 
         for i, sc_name in enumerate(drv.results.sc_names):
             row_items = [QtGui.QStandardItem(sc_name)]
@@ -844,13 +899,16 @@ class SimulationsMain(TimeEventsMain):
         current_study_name = self.ui.available_results_to_color_comboBox.currentText()
         drv_dict = {driver.tpe.value: driver for driver in self.get_available_drivers()}
         drv = drv_dict.get(current_study_name, None)
-        if drv is not None and hasattr(drv, 'time_indices'):
-            if drv.time_indices is not None:
-                if len(drv.time_indices):
-                    a = drv.time_indices[0]
-                    b = drv.time_indices[-1]
-                    self.ui.diagram_step_slider.setRange(a, b)
-                    self.ui.diagram_step_slider.setValue(a)
+        if drv is not None:
+            if drv.results is not None:
+                if drv.results.time_indices is not None:
+                    if len(drv.results.time_indices):
+                        a = drv.results.time_indices[0]
+                        b = drv.results.time_indices[-1]
+                        self.ui.diagram_step_slider.setRange(a, b)
+                        self.ui.diagram_step_slider.setValue(a)
+                    else:
+                        self.setup_time_sliders()
                 else:
                     self.setup_time_sliders()
             else:
@@ -932,8 +990,10 @@ class SimulationsMain(TimeEventsMain):
         Gather power flow run options
         :return: sim.PowerFlowOptions
         """
+        self.adjust_controls_start_tolerance()
 
         tolerance = 1.0 / (10.0 ** self.ui.tolerance_spinBox.value())
+        controls_start_tolerance = 1.0 / (10.0 ** self.ui.controls_start_tolerance_spinBox.value())
 
         if self.ui.apply_impedance_tolerances_checkBox.isChecked():
             branch_impedance_tolerance_mode = BranchImpedanceMode.Upper
@@ -945,6 +1005,7 @@ class SimulationsMain(TimeEventsMain):
             retry_with_other_methods=self.ui.helm_retry_checkBox.isChecked(),
             verbose=self.ui.verbositySpinBox.value(),
             tolerance=tolerance,
+            controls_start_tolerance=controls_start_tolerance,
             max_iter=self.ui.max_iterations_spinBox.value(),
             control_q=self.ui.control_q_checkBox.isChecked(),
             control_taps_phase=self.ui.control_tap_phase_checkBox.isChecked(),
@@ -962,6 +1023,28 @@ class SimulationsMain(TimeEventsMain):
         )
 
         return ops
+
+    def adjust_controls_start_tolerance(self, value: int | None = None) -> None:
+        """
+        Keep the controls activation tolerance consistent with the solver tolerance.
+
+        :param value: Qt signal payload, unused
+        :return: Nothing
+        """
+        del value
+
+        tolerance_idx: int = self.ui.tolerance_spinBox.value()
+        controls_start_tolerance_idx: int = self.ui.controls_start_tolerance_spinBox.value()
+        adjusted_idx: int = get_valid_controls_start_tolerance_index(
+            tolerance_idx=tolerance_idx,
+            controls_start_tolerance_idx=controls_start_tolerance_idx,
+            controls_start_tolerance_min_idx=self.ui.controls_start_tolerance_spinBox.minimum(),
+        )
+
+        if adjusted_idx != controls_start_tolerance_idx:
+            self.ui.controls_start_tolerance_spinBox.setValue(adjusted_idx)
+        else:
+            pass
 
     def get_selected_rms_simulation_options(self) -> sim.RmsOptions:
         """
@@ -1422,7 +1505,7 @@ class SimulationsMain(TimeEventsMain):
 
                 self.add_simulation(SimulationTypes.PowerFlow_run)
 
-                self.ui.progress_label.setText('Compiling the grid...')
+                self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                 QtGui.QGuiApplication.processEvents()
 
                 # get the power flow options from the GUI
@@ -1430,7 +1513,7 @@ class SimulationsMain(TimeEventsMain):
 
                 opf_results = self.get_opf_results(use_opf=self.ui.actionOpf_to_Power_flow.isChecked())
 
-                self.ui.progress_label.setText('Running power flow...')
+                self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Running power flow..."))
                 QtGui.QGuiApplication.processEvents()
 
                 # set power flow object instance
@@ -1463,7 +1546,7 @@ class SimulationsMain(TimeEventsMain):
 
                 self.add_simulation(SimulationTypes.PowerFlow_run)
 
-                self.ui.progress_label.setText('Compiling the grid...')
+                self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                 QtGui.QGuiApplication.processEvents()
 
                 # get the power flow options from the GUI
@@ -1471,7 +1554,7 @@ class SimulationsMain(TimeEventsMain):
 
                 opf_results = self.get_opf_results(use_opf=self.ui.actionOpf_to_Power_flow.isChecked())
 
-                self.ui.progress_label.setText('Running power flow...')
+                self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Running power flow..."))
                 QtGui.QGuiApplication.processEvents()
 
                 # set power flow object instance
@@ -1531,7 +1614,7 @@ class SimulationsMain(TimeEventsMain):
 
                 self.add_simulation(SimulationTypes.PowerFlow3ph_run)
 
-                self.ui.progress_label.setText('Compiling the grid...')
+                self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                 QtGui.QGuiApplication.processEvents()
 
                 # get the power flow options from the GUI
@@ -1539,7 +1622,7 @@ class SimulationsMain(TimeEventsMain):
 
                 opf_results = self.get_opf_results(use_opf=self.ui.actionOpf_to_Power_flow.isChecked())
 
-                self.ui.progress_label.setText('Running power flow...')
+                self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Running power flow..."))
                 QtGui.QGuiApplication.processEvents()
 
                 # set power flow object instance
@@ -1600,7 +1683,7 @@ class SimulationsMain(TimeEventsMain):
 
                     self.add_simulation(SimulationTypes.PowerFlowTimeSeries3ph_run)
 
-                    self.ui.progress_label.setText('Compiling the grid...')
+                    self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                     QtGui.QGuiApplication.processEvents()
 
                     opf_time_series_results = self.get_opf_ts_results(
@@ -1680,7 +1763,7 @@ class SimulationsMain(TimeEventsMain):
 
                 self.add_simulation(SimulationTypes.StateEstimation_run)
 
-                self.ui.progress_label.setText('Compiling the grid...')
+                self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                 QtGui.QGuiApplication.processEvents()
 
                 # get the power flow options from the GUI
@@ -2407,7 +2490,7 @@ class SimulationsMain(TimeEventsMain):
                         # lock the UI
                         self.LOCK()
 
-                        self.ui.progress_label.setText('Compiling the grid...')
+                        self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                         QtGui.QGuiApplication.processEvents()
 
                         #  compose the base power
@@ -2511,7 +2594,7 @@ class SimulationsMain(TimeEventsMain):
 
                     self.add_simulation(SimulationTypes.PowerFlowTimeSeries_run)
 
-                    self.ui.progress_label.setText('Compiling the grid...')
+                    self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                     QtGui.QGuiApplication.processEvents()
 
                     opf_time_series_results = self.get_opf_ts_results(
@@ -2580,7 +2663,7 @@ class SimulationsMain(TimeEventsMain):
 
                     self.add_simulation(SimulationTypes.StochasticPowerFlow)
 
-                    self.ui.progress_label.setText('Compiling the grid...')
+                    self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                     QtGui.QGuiApplication.processEvents()
 
                     pf_options = self.get_selected_power_flow_options()
@@ -2834,7 +2917,7 @@ class SimulationsMain(TimeEventsMain):
                         self.LOCK()
 
                         # Compile the grid
-                        self.ui.progress_label.setText('Compiling the grid...')
+                        self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                         QtGui.QGuiApplication.processEvents()
 
                         # get the power flow options from the GUI
@@ -3584,7 +3667,7 @@ class SimulationsMain(TimeEventsMain):
                 self.LOCK()
 
                 # Compile the grid
-                self.ui.progress_label.setText('Compiling the grid...')
+                self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                 QtGui.QGuiApplication.processEvents()
 
                 if options is not None:
@@ -3650,7 +3733,7 @@ class SimulationsMain(TimeEventsMain):
                     self.LOCK()
 
                     # Compile the grid
-                    self.ui.progress_label.setText('Compiling the grid...')
+                    self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                     QtGui.QGuiApplication.processEvents()
 
                     pf_options = self.get_selected_power_flow_options()
@@ -4082,7 +4165,7 @@ class SimulationsMain(TimeEventsMain):
                         self.LOCK()
 
                         # Compile the grid
-                        self.ui.progress_label.setText('Compiling the grid...')
+                        self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                         QtGui.QGuiApplication.processEvents()
 
                         # get the small signal stability analysis simulation options from the GUI
@@ -4161,7 +4244,7 @@ class SimulationsMain(TimeEventsMain):
                         self.LOCK()
 
                         # Compile the grid
-                        self.ui.progress_label.setText('Compiling the grid...')
+                        self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                         QtGui.QGuiApplication.processEvents()
 
                         # get the small-signal stability analysis simulation options from the GUI

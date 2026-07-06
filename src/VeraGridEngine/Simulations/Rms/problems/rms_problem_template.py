@@ -5,8 +5,10 @@
 
 from abc import ABC
 from typing import List, Dict
+import numpy as np
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
+from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
 from VeraGridEngine.basic_structures import Vec
 from VeraGridEngine.Simulations.driver_template import DummySignal
@@ -108,6 +110,102 @@ class RmsProblemTemplate(ABC):
     def get_dt_value(self):
         return NotImplementedError("get_dt_value")
 
+    def get_generator_injection_data(self, i: int, elm: ALL_DEV_TYPES) -> complex:
+        if elm.active:
+            return complex(self.power_flow_results.gen_p[i], self.power_flow_results.gen_q[i]) / self.grid.Sbase
+        else:
+            return complex(0.0, 0.0)
+
+    def get_battery_injection_data(self, i: int, elm: ALL_DEV_TYPES) -> complex:
+        if elm.active:
+            return complex(self.power_flow_results.battery_p[i], self.power_flow_results.battery_q[i]) / self.grid.Sbase
+        else:
+            return complex(0.0, 0.0)
+
+    def get_load_injection_data(self, elm: ALL_DEV_TYPES, bus_dict: Dict[Bus, int]) -> complex:
+        if elm.active:
+            bus_index = bus_dict[elm.bus]
+            Vm = abs(self.power_flow_results.voltage[bus_index])
+            scale = 1000.0 if elm.use_kw else 1.0
+            S0 = -elm.get_S_at(None) / scale / self.grid.Sbase
+            I0 = -elm.get_I_at(None) / scale / self.grid.Sbase
+            Y0 = -elm.get_Y_at(None) / scale / self.grid.Sbase
+            return S0 + np.conj(I0 + Y0 * Vm) * Vm
+        else:
+            return complex(0.0, 0.0)
+
+    def get_external_grid_injection_data(self, elm: ALL_DEV_TYPES) -> complex:
+        if elm.active:
+            scale = 1000.0 if elm.use_kw else 1.0
+            return -elm.get_S_at(None) / scale / self.grid.Sbase
+        else:
+            return complex(0.0, 0.0)
+
+    def get_static_generator_injection_data(self, elm: ALL_DEV_TYPES) -> complex:
+        if elm.active:
+            scale = 1000.0 if elm.use_kw else 1.0
+            return elm.get_S_at(None) / scale / self.grid.Sbase
+        else:
+            return complex(0.0, 0.0)
+
+    def get_shunt_injection_data(self, elm: ALL_DEV_TYPES, bus_dict: Dict[Bus, int]) -> complex:
+        if elm.active:
+            bus_index = bus_dict[elm.bus]
+            Vbus = self.power_flow_results.voltage[bus_index]
+            scale = 1000.0 if elm.use_kw else 1.0
+            return Vbus * np.conj((elm.get_Y_at(None) / scale / self.grid.Sbase) * Vbus)
+        else:
+            return complex(0.0, 0.0)
+
+    def get_controllable_shunt_injection_data(self, elm: ALL_DEV_TYPES, bus_dict: Dict[Bus, int]) -> complex:
+        return self.get_shunt_injection_data(elm=elm, bus_dict=bus_dict)
+
+    def get_current_injection_data(self, elm: ALL_DEV_TYPES, bus_dict: Dict[Bus, int]) -> complex:
+        if elm.active:
+            bus_index = bus_dict[elm.bus]
+            Vbus = self.power_flow_results.voltage[bus_index]
+            scale = 1000.0 if elm.use_kw else 1.0
+            return -Vbus * np.conj(elm.get_I_at(None) / scale / self.grid.Sbase)
+        else:
+            return complex(0.0, 0.0)
+
+    def get_injection_init_data(self, bus_dict: Dict[Bus, int]) -> Dict[str, complex]:
+        injection_init_data: Dict[str, complex] = dict()
+
+        for i, elm in enumerate(self.grid.get_generators()):
+            Sdev = self.get_generator_injection_data(i=i, elm=elm)
+            injection_init_data[elm.idtag] = Sdev
+
+        for i, elm in enumerate(self.grid.get_batteries()):
+            Sdev = self.get_battery_injection_data(i=i, elm=elm)
+            injection_init_data[elm.idtag] = Sdev
+
+        for elm in self.grid.get_loads():
+            Sdev = self.get_load_injection_data(elm=elm, bus_dict=bus_dict)
+            injection_init_data[elm.idtag] = Sdev
+
+        for elm in self.grid.get_external_grids():
+            Sdev = self.get_external_grid_injection_data(elm=elm)
+            injection_init_data[elm.idtag] = Sdev
+
+        for elm in self.grid.get_static_generators():
+            Sdev = self.get_static_generator_injection_data(elm=elm)
+            injection_init_data[elm.idtag] = Sdev
+
+        for elm in self.grid.get_shunts():
+            Sdev = self.get_shunt_injection_data(elm=elm, bus_dict=bus_dict)
+            injection_init_data[elm.idtag] = Sdev
+
+        for elm in self.grid.get_controllable_shunts():
+            Sdev = self.get_controllable_shunt_injection_data(elm=elm, bus_dict=bus_dict)
+            injection_init_data[elm.idtag] = Sdev
+
+        for elm in self.grid.get_current_injections():
+            Sdev = self.get_current_injection_data(elm=elm, bus_dict=bus_dict)
+            injection_init_data[elm.idtag] = Sdev
+
+        return injection_init_data
+
     def report_progress(self, val: float):
         """
         Report progress
@@ -131,4 +229,3 @@ class RmsProblemTemplate(ABC):
         :param val: text value
         """
         self.progress_text.emit(val)
-

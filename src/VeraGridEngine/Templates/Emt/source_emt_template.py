@@ -12,6 +12,7 @@ from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Templates.Emt.load_RLC_emt_template import _get_phase_count_name
 from VeraGridEngine.Utils.Symbolic.block import Expr, Var
 from VeraGridEngine.Utils.Symbolic import symbolic as sym
+from VeraGridEngine.Templates.template_definition import TemplateDefinition, TemplateProp
 from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
 
 
@@ -167,6 +168,41 @@ def _build_sinusoidal_wave_expression(amplitude_expr: Expr,
     return offset_var + amplitude_expr * sym.sin(theta_var + phase_rad_expr)
 
 
+class CurrentSourceEmtTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        super().__init__(
+            vf,
+            params=[
+                TemplateProp(name="phN", units="", descr="Whether neutral is active.", tpe=bool, value=False),
+                TemplateProp(name="phA", units="", descr="Whether phase A is active.", tpe=bool, value=True),
+                TemplateProp(name="phB", units="", descr="Whether phase B is active.", tpe=bool, value=True),
+                TemplateProp(name="phC", units="", descr="Whether phase C is active.", tpe=bool, value=True),
+                TemplateProp(name="amplitude_values", units="", descr="Optional sinusoidal amplitudes by phase label.", tpe=dict, value=None),
+                TemplateProp(name="frequency_hz", units="Hz", descr="Common sinusoidal frequency.", tpe=float, value=50.0),
+                TemplateProp(name="phase_angle_deg", units="", descr="Optional phase offsets in degrees by phase label.", tpe=dict, value=None),
+                TemplateProp(name="offset_values", units="", descr="Optional DC offsets by phase label.", tpe=dict, value=None),
+                TemplateProp(name="name", units="", descr="Symbolic block name.", tpe=str, value="current_source_emt"),
+            ]
+        )
+
+    def eval(self) -> EmtModelTemplate:
+        phN: bool = self.get_value("phN")
+        phA: bool = self.get_value("phA")
+        phB: bool = self.get_value("phB")
+        phC: bool = self.get_value("phC")
+        amplitude_values: Dict[str, float] | None = self.get_value("amplitude_values")
+        frequency_hz: float = self.get_value("frequency_hz")
+        phase_angle_deg: Dict[str, float] | None = self.get_value("phase_angle_deg")
+        offset_values: Dict[str, float] | None = self.get_value("offset_values")
+        name: str | None = self.get_value("name")
+
+        return get_current_source_emt_template(
+            self.vf, phN, phA, phB, phC, amplitude_values, frequency_hz,
+            phase_angle_deg, offset_values, name,
+        )
+
+
 def get_current_source_emt_template(vf: VarFactory,
                                     phN: bool = False,
                                     phA: bool = True,
@@ -244,6 +280,39 @@ def get_current_source_emt_template(vf: VarFactory,
     return template
 
 
+class ControlledCurrentSourceEmtTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        super().__init__(
+            vf,
+            params=[
+                TemplateProp(name="phN", units="", descr="Whether neutral is active.", tpe=bool, value=False),
+                TemplateProp(name="phA", units="", descr="Whether phase A is active.", tpe=bool, value=True),
+                TemplateProp(name="phB", units="", descr="Whether phase B is active.", tpe=bool, value=True),
+                TemplateProp(name="phC", units="", descr="Whether phase C is active.", tpe=bool, value=True),
+                TemplateProp(name="frequency_hz", units="Hz", descr="Common sinusoidal frequency.", tpe=float, value=50.0),
+                TemplateProp(name="phase_angle_deg", units="", descr="Optional phase offsets in degrees by phase label.", tpe=dict, value=None),
+                TemplateProp(name="offset_values", units="", descr="Optional DC offsets by phase label.", tpe=dict, value=None),
+                TemplateProp(name="name", units="", descr="Symbolic block name.", tpe=str, value="controlled_current_source_emt"),
+            ]
+        )
+
+    def eval(self) -> EmtModelTemplate:
+        phN: bool = self.get_value("phN")
+        phA: bool = self.get_value("phA")
+        phB: bool = self.get_value("phB")
+        phC: bool = self.get_value("phC")
+        frequency_hz: float = self.get_value("frequency_hz")
+        phase_angle_deg: Dict[str, float] | None = self.get_value("phase_angle_deg")
+        offset_values: Dict[str, float] | None = self.get_value("offset_values")
+        name: str | None = self.get_value("name")
+
+        return get_controlled_current_source_emt_template(
+            self.vf, phN, phA, phB, phC, frequency_hz,
+            phase_angle_deg, offset_values, name,
+        )
+
+
 def get_controlled_current_source_emt_template(vf: VarFactory,
                                                phN: bool = False,
                                                phA: bool = True,
@@ -316,6 +385,43 @@ def get_controlled_current_source_emt_template(vf: VarFactory,
     template.block.external_mapping = _build_external_mapping(voltage_vars, current_vars)
     template.block.init_eqs[theta_var] = sym.Const(0.0)
     return template
+
+
+class VoltageSourceEmtTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        super().__init__(
+            vf,
+            params=[
+                TemplateProp(name="phN", units="", descr="Whether neutral is active.", tpe=bool, value=False),
+                TemplateProp(name="phA", units="", descr="Whether phase A is active.", tpe=bool, value=True),
+                TemplateProp(name="phB", units="", descr="Whether phase B is active.", tpe=bool, value=True),
+                TemplateProp(name="phC", units="", descr="Whether phase C is active.", tpe=bool, value=True),
+                TemplateProp(name="amplitude_values", units="", descr="Optional sinusoidal amplitudes by phase label.", tpe=dict, value=None),
+                TemplateProp(name="frequency_hz", units="Hz", descr="Common sinusoidal frequency.", tpe=float, value=50.0),
+                TemplateProp(name="phase_angle_deg", units="", descr="Optional phase offsets in degrees by phase label.", tpe=dict, value=None),
+                TemplateProp(name="offset_values", units="", descr="Optional DC offsets by phase label.", tpe=dict, value=None),
+                TemplateProp(name="source_conductance_value", units="S", descr="Common Norton conductance.", tpe=float, value=0.0),
+                TemplateProp(name="name", units="", descr="Symbolic block name.", tpe=str, value="voltage_source_emt"),
+            ]
+        )
+
+    def eval(self) -> EmtModelTemplate:
+        phN: bool = self.get_value("phN")
+        phA: bool = self.get_value("phA")
+        phB: bool = self.get_value("phB")
+        phC: bool = self.get_value("phC")
+        amplitude_values: Dict[str, float] | None = self.get_value("amplitude_values")
+        frequency_hz: float = self.get_value("frequency_hz")
+        phase_angle_deg: Dict[str, float] | None = self.get_value("phase_angle_deg")
+        offset_values: Dict[str, float] | None = self.get_value("offset_values")
+        source_conductance_value: float = self.get_value("source_conductance_value")
+        name: str | None = self.get_value("name")
+
+        return get_voltage_source_emt_template(
+            self.vf, phN, phA, phB, phC, amplitude_values, frequency_hz,
+            phase_angle_deg, offset_values, source_conductance_value, name,
+        )
 
 
 def get_voltage_source_emt_template(vf: VarFactory,
@@ -397,6 +503,41 @@ def get_voltage_source_emt_template(vf: VarFactory,
     template.block.external_mapping = _build_external_mapping(voltage_vars, current_vars)
     template.block.init_eqs[theta_var] = sym.Const(0.0)
     return template
+
+
+class ControlledVoltageSourceEmtTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        super().__init__(
+            vf,
+            params=[
+                TemplateProp(name="phN", units="", descr="Whether neutral is active.", tpe=bool, value=False),
+                TemplateProp(name="phA", units="", descr="Whether phase A is active.", tpe=bool, value=True),
+                TemplateProp(name="phB", units="", descr="Whether phase B is active.", tpe=bool, value=True),
+                TemplateProp(name="phC", units="", descr="Whether phase C is active.", tpe=bool, value=True),
+                TemplateProp(name="frequency_hz", units="Hz", descr="Common sinusoidal frequency.", tpe=float, value=50.0),
+                TemplateProp(name="phase_angle_deg", units="", descr="Optional phase offsets in degrees by phase label.", tpe=dict, value=None),
+                TemplateProp(name="offset_values", units="", descr="Optional DC offsets by phase label.", tpe=dict, value=None),
+                TemplateProp(name="source_conductance_value", units="S", descr="Common Norton conductance.", tpe=float, value=0.0),
+                TemplateProp(name="name", units="", descr="Symbolic block name.", tpe=str, value="controlled_voltage_source_emt"),
+            ]
+        )
+
+    def eval(self) -> EmtModelTemplate:
+        phN: bool = self.get_value("phN")
+        phA: bool = self.get_value("phA")
+        phB: bool = self.get_value("phB")
+        phC: bool = self.get_value("phC")
+        frequency_hz: float = self.get_value("frequency_hz")
+        phase_angle_deg: Dict[str, float] | None = self.get_value("phase_angle_deg")
+        offset_values: Dict[str, float] | None = self.get_value("offset_values")
+        source_conductance_value: float = self.get_value("source_conductance_value")
+        name: str | None = self.get_value("name")
+
+        return get_controlled_voltage_source_emt_template(
+            self.vf, phN, phA, phB, phC, frequency_hz,
+            phase_angle_deg, offset_values, source_conductance_value, name,
+        )
 
 
 def get_controlled_voltage_source_emt_template(vf: VarFactory,

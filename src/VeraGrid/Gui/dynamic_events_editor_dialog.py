@@ -267,16 +267,34 @@ def _format_validation_entry(entry: EventValidationEntry) -> str:
     message: str
 
     if entry.transition_type == DynamicEventTransitionType.Ramp:
-        transition_name = "Ramp"
+        transition_name = QtCore.QCoreApplication.translate("DynamicEventDialogue", "Ramp")
         message = (
-            f"{entry.origin}: {transition_name}, parameter={entry.parameter.name}, "
-            f"time={entry.start_time:.4f} s, end_time={entry.end_time:.4f} s, value={entry.value:.6f}"
+            QtCore.QCoreApplication.translate(
+                "DynamicEventDialogue",
+                "{origin}: {transition}, parameter={parameter}, time={time:.4f} s, "
+                "end_time={end_time:.4f} s, value={value:.6f}",
+            ).format(
+                origin=entry.origin,
+                transition=transition_name,
+                parameter=entry.parameter.name,
+                time=entry.start_time,
+                end_time=entry.end_time,
+                value=entry.value,
+            )
         )
     else:
-        transition_name = "Step"
+        transition_name = QtCore.QCoreApplication.translate("DynamicEventDialogue", "Step")
         message = (
-            f"{entry.origin}: {transition_name}, parameter={entry.parameter.name}, "
-            f"time={entry.start_time:.4f} s, value={entry.value:.6f}"
+            QtCore.QCoreApplication.translate(
+                "DynamicEventDialogue",
+                "{origin}: {transition}, parameter={parameter}, time={time:.4f} s, value={value:.6f}",
+            ).format(
+                origin=entry.origin,
+                transition=transition_name,
+                parameter=entry.parameter.name,
+                time=entry.start_time,
+                value=entry.value,
+            )
         )
 
     return message
@@ -292,11 +310,17 @@ def _build_overlap_conflict_message(conflicts: Sequence[EventValidationConflict]
     message_lines: List[str] = list()
     conflict: EventValidationConflict
 
-    message_lines.append("Some events are overlapped and cannot be applied.")
+    message_lines.append(
+        QtCore.QCoreApplication.translate("DynamicEventDialogue", "Some events are overlapped and cannot be applied.")
+    )
     message_lines.append("")
 
     for conflict in conflicts:
-        message_lines.append(f"Group: {conflict.group.name}")
+        message_lines.append(
+            QtCore.QCoreApplication.translate("DynamicEventDialogue", "Group: {group_name}").format(
+                group_name=conflict.group.name,
+            )
+        )
         message_lines.append(_format_validation_entry(entry=conflict.first_event))
         message_lines.append(_format_validation_entry(entry=conflict.second_event))
         message_lines.append("")
@@ -428,9 +452,9 @@ def create_dynamic_events_group_with_dialog(circuit: MultiCircuit,
     # at least one event-group asset. Reusing this flow keeps event creation
     # semantics identical across the GUI.
     if mode == DynamicSimulationMode.RMS:
-        dialog_title = "No RMS Events Group"
+        dialog_title = QtCore.QCoreApplication.translate("DynamicEventDialogue", "No RMS Events Group")
     else:
-        dialog_title = "No EMT Events Group"
+        dialog_title = QtCore.QCoreApplication.translate("DynamicEventDialogue", "No EMT Events Group")
 
     if parent is not None:
         QtWidgets.QMessageBox.information(parent, dialog_title, missing_group_message)
@@ -455,7 +479,10 @@ def create_dynamic_events_group_with_dialog(circuit: MultiCircuit,
             QtWidgets.QMessageBox.information(
                 parent,
                 created_group_message_title,
-                f"{created_group_message_body_prefix}: {group_name}"
+                QtCore.QCoreApplication.translate("DynamicEventDialogue", "{prefix}: {group_name}").format(
+                    prefix=created_group_message_body_prefix,
+                    group_name=group_name,
+                )
             )
         else:
             pass
@@ -514,8 +541,14 @@ class EventRow:
 
         if self.mode == DynamicSimulationMode.EMT or self.mode == DynamicSimulationMode.RMS:
             self.transition_combo = QtWidgets.QComboBox()
-            self.transition_combo.addItem("Step", DynamicEventTransitionType.Step)
-            self.transition_combo.addItem("Ramp", DynamicEventTransitionType.Ramp)
+            self.transition_combo.addItem(
+                QtCore.QCoreApplication.translate("DynamicEventDialogue", "Step"),
+                DynamicEventTransitionType.Step,
+            )
+            self.transition_combo.addItem(
+                QtCore.QCoreApplication.translate("DynamicEventDialogue", "Ramp"),
+                DynamicEventTransitionType.Ramp,
+            )
             table.setCellWidget(row, 4, self.transition_combo)
 
             self.end_time_spin = QtWidgets.QDoubleSpinBox()
@@ -560,7 +593,7 @@ class EventRow:
         group = self.group_combo.currentData()
 
         if param is None or group is None:
-            raise ValueError("Missing fields")
+            raise ValueError(QtCore.QCoreApplication.translate("DynamicEventDialogue", "Missing fields"))
 
         t = self.time_spin.value()
         v = self.value_spin.value()
@@ -572,7 +605,12 @@ class EventRow:
             if isinstance(transition_data, DynamicEventTransitionType):
                 transition_type = transition_data
             else:
-                raise TypeError("transition_type must be DynamicEventTransitionType")
+                raise TypeError(
+                    QtCore.QCoreApplication.translate(
+                        "DynamicEventDialogue",
+                        "transition_type must be DynamicEventTransitionType",
+                    )
+                )
         else:
             pass
 
@@ -742,8 +780,8 @@ class SwitchSequenceRow:
         table.setCellWidget(row, 1, self.time_spin)
 
         self.state_combo = QtWidgets.QComboBox()
-        self.state_combo.addItem("Open", 0.0)
-        self.state_combo.addItem("Close", 1.0)
+        self.state_combo.addItem(QtCore.QCoreApplication.translate("SwitchSequenceDialog", "Open"), 0.0)
+        self.state_combo.addItem(QtCore.QCoreApplication.translate("SwitchSequenceDialog", "Close"), 1.0)
         table.setCellWidget(row, 2, self.state_combo)
 
     def is_checked(self) -> bool:
@@ -772,7 +810,7 @@ class SwitchSequenceDialog(QtWidgets.QDialog):
                  events_groups: List[EmtEventsGroup],
                  parent: QtWidgets.QWidget | None = None) -> None:
         super().__init__(parent)
-        self.setWindowTitle("Switch Sequence Wizard")
+        self.setWindowTitle(self.tr("Switch Sequence Wizard"))
         self.setMinimumWidth(520)
         self.mode_parameters = mode_parameters
         self.events_groups = events_groups
@@ -786,15 +824,15 @@ class SwitchSequenceDialog(QtWidgets.QDialog):
         self.parameter_combo = QtWidgets.QComboBox()
         for parameter in mode_parameters:
             self.parameter_combo.addItem(parameter.name, parameter)
-        form_layout.addRow("Mode Parameter", self.parameter_combo)
+        form_layout.addRow(self.tr("Mode Parameter"), self.parameter_combo)
 
         self.group_combo = QtWidgets.QComboBox()
         for group in events_groups:
             self.group_combo.addItem(group.name, group)
-        form_layout.addRow("Group", self.group_combo)
+        form_layout.addRow(self.tr("Group"), self.group_combo)
 
         self.sequence_table = QtWidgets.QTableWidget(0, 3)
-        self.sequence_table.setHorizontalHeaderLabels(["", "Time", "State"])
+        self.sequence_table.setHorizontalHeaderLabels(["", self.tr("Time"), self.tr("State")])
         self.sequence_table.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
         self.sequence_table.horizontalHeader().setStretchLastSection(True)
         self.sequence_table.verticalHeader().setVisible(False)
@@ -802,8 +840,8 @@ class SwitchSequenceDialog(QtWidgets.QDialog):
         layout.addWidget(self.sequence_table)
 
         buttons_layout = QtWidgets.QHBoxLayout()
-        self.add_row_btn = QtWidgets.QPushButton("Add Sequence Step")
-        self.remove_row_btn = QtWidgets.QPushButton("Remove Selected Rows")
+        self.add_row_btn = QtWidgets.QPushButton(self.tr("Add Sequence Step"))
+        self.remove_row_btn = QtWidgets.QPushButton(self.tr("Remove Selected Rows"))
         buttons_layout.addWidget(self.add_row_btn)
         buttons_layout.addWidget(self.remove_row_btn)
         layout.addLayout(buttons_layout)
@@ -831,7 +869,9 @@ class SwitchSequenceDialog(QtWidgets.QDialog):
         rows_to_remove = [row for row in self.rows if row.is_checked()]
 
         if len(rows_to_remove) == 0:
-            QtWidgets.QMessageBox.information(self, "Switch Sequence", "Please check at least one row to remove.")
+            QtWidgets.QMessageBox.information(self,
+                                              self.tr("Switch Sequence"),
+                                              self.tr("Please check at least one row to remove."))
         else:
             for row in reversed(rows_to_remove):
                 self.sequence_table.removeRow(row.row)
@@ -848,13 +888,17 @@ class SwitchSequenceDialog(QtWidgets.QDialog):
         row: SwitchSequenceRow
 
         if parameter is None or group is None:
-            QtWidgets.QMessageBox.warning(self, "Switch Sequence", "Select a mode parameter and an events group.")
+            QtWidgets.QMessageBox.warning(self,
+                                          self.tr("Switch Sequence"),
+                                          self.tr("Select a mode parameter and an events group."))
             return
         else:
             pass
 
         if len(self.rows) == 0:
-            QtWidgets.QMessageBox.warning(self, "Switch Sequence", "Add at least one sequence row.")
+            QtWidgets.QMessageBox.warning(self,
+                                          self.tr("Switch Sequence"),
+                                          self.tr("Add at least one sequence row."))
             return
         else:
             pass
@@ -892,9 +936,9 @@ class DynamicEventDialogue(QtWidgets.QDialog):
         self.mode = mode
 
         if self.mode == DynamicSimulationMode.RMS:
-            self.setWindowTitle("RMS Event Editor")
+            self.setWindowTitle(self.tr("RMS Event Editor"))
         elif self.mode == DynamicSimulationMode.EMT:
-            self.setWindowTitle("EMT Event Editor")
+            self.setWindowTitle(self.tr("EMT Event Editor"))
         self.setMinimumWidth(600)
 
         self.circuit = circuit
@@ -919,7 +963,7 @@ class DynamicEventDialogue(QtWidgets.QDialog):
 
         # --- Device label ---
         label_device = QtWidgets.QLabel(
-            f"<b>Target device:</b> {target_device_name}"
+            f"<b>{self.tr('Target device:')}</b> {target_device_name}"
         )
         layout.addWidget(label_device)
 
@@ -927,12 +971,19 @@ class DynamicEventDialogue(QtWidgets.QDialog):
         if self.mode == DynamicSimulationMode.EMT or self.mode == DynamicSimulationMode.RMS:
             self.table = QtWidgets.QTableWidget(0, 8)
             self.table.setHorizontalHeaderLabels(
-                ["", "Parameter", "Time", "New Value", "Transition", "End Time", "Group", "Align Step"]
+                ["",
+                 self.tr("Parameter"),
+                 self.tr("Time"),
+                 self.tr("New Value"),
+                 self.tr("Transition"),
+                 self.tr("End Time"),
+                 self.tr("Group"),
+                 self.tr("Align Step")]
             )
         else:
             self.table = QtWidgets.QTableWidget(0, 5)
             self.table.setHorizontalHeaderLabels(
-                ["", "Parameter", "Time", "New Value", "Group"]
+                ["", self.tr("Parameter"), self.tr("Time"), self.tr("New Value"), self.tr("Group")]
             )
 
         self.table.horizontalHeader().setSectionResizeMode(
@@ -952,7 +1003,7 @@ class DynamicEventDialogue(QtWidgets.QDialog):
         # --- Groups controls ---
         groups_layout = QtWidgets.QHBoxLayout()
 
-        self.new_group_btn = QtWidgets.QPushButton("➕ New Event Group")
+        self.new_group_btn = QtWidgets.QPushButton(self.tr("➕ New Event Group"))
 
         groups_layout.addStretch()
         groups_layout.addWidget(self.new_group_btn)
@@ -963,8 +1014,8 @@ class DynamicEventDialogue(QtWidgets.QDialog):
         # --- Table control buttons ---
         table_button_layout = QtWidgets.QHBoxLayout()
 
-        self.add_row_btn = QtWidgets.QPushButton("➕ Add New Event")
-        self.remove_row_btn = QtWidgets.QPushButton("❌ Remove Selected Rows")
+        self.add_row_btn = QtWidgets.QPushButton(self.tr("➕ Add New Event"))
+        self.remove_row_btn = QtWidgets.QPushButton(self.tr("❌ Remove Selected Rows"))
 
         table_button_layout.addWidget(self.add_row_btn)
         table_button_layout.addWidget(self.remove_row_btn)
@@ -973,7 +1024,7 @@ class DynamicEventDialogue(QtWidgets.QDialog):
 
         self.switch_sequence_btn: QtWidgets.QPushButton | None = None
         if self.mode == DynamicSimulationMode.EMT:
-            self.switch_sequence_btn = QtWidgets.QPushButton("Switch Sequence Wizard")
+            self.switch_sequence_btn = QtWidgets.QPushButton(self.tr("Switch Sequence Wizard"))
             layout.addWidget(self.switch_sequence_btn)
         else:
             pass
@@ -981,8 +1032,8 @@ class DynamicEventDialogue(QtWidgets.QDialog):
         # --- Bottom buttons ---
         button_layout = QtWidgets.QHBoxLayout()
 
-        self.ok_button = QtWidgets.QPushButton("✅ Add Events")
-        self.cancel_button = QtWidgets.QPushButton("Cancel")
+        self.ok_button = QtWidgets.QPushButton(self.tr("✅ Add Events"))
+        self.cancel_button = QtWidgets.QPushButton(self.tr("Cancel"))
 
         button_layout.addStretch()
         button_layout.addWidget(self.ok_button)
@@ -1043,8 +1094,8 @@ class DynamicEventDialogue(QtWidgets.QDialog):
         if not rows_to_remove:
             QtWidgets.QMessageBox.information(
                 self,
-                "No Rows Selected",
-                "Please check at least one row to remove.",
+                self.tr("No Rows Selected"),
+                self.tr("Please check at least one row to remove."),
             )
             return
 
@@ -1064,14 +1115,14 @@ class DynamicEventDialogue(QtWidgets.QDialog):
         """
         missing_group_message: str
         created_group_message_title: str
-        created_group_message_body_prefix: str = "New group name"
+        created_group_message_body_prefix: str = self.tr("New group name")
 
         if self.mode == DynamicSimulationMode.RMS:
-            missing_group_message = "No RMS Events Group found, please create one before adding an event."
-            created_group_message_title = "RMS group Created"
+            missing_group_message = self.tr("No RMS Events Group found, please create one before adding an event.")
+            created_group_message_title = self.tr("RMS group Created")
         else:
-            missing_group_message = "No EMT Events Group found, please create one before adding an event."
-            created_group_message_title = "EMT group Created"
+            missing_group_message = self.tr("No EMT Events Group found, please create one before adding an event.")
+            created_group_message_title = self.tr("EMT group Created")
 
         new_group: RmsEventsGroup | EmtEventsGroup | None = create_dynamic_events_group_with_dialog(
             circuit=self.circuit,
@@ -1107,8 +1158,8 @@ class DynamicEventDialogue(QtWidgets.QDialog):
         if len(mode_parameters) == 0:
             QtWidgets.QMessageBox.information(
                 self,
-                "Switch Sequence",
-                "No switch EMT mode parameter is available in this device.",
+                self.tr("Switch Sequence"),
+                self.tr("No switch EMT mode parameter is available in this device."),
             )
             return
         else:
@@ -1145,8 +1196,8 @@ class DynamicEventDialogue(QtWidgets.QDialog):
         if not self.rows:
             QtWidgets.QMessageBox.warning(
                 self,
-                "No Events",
-                "Please add at least one event before confirming.",
+                self.tr("No Events"),
+                self.tr("Please add at least one event before confirming."),
             )
             return
 
@@ -1168,8 +1219,8 @@ class DynamicEventDialogue(QtWidgets.QDialog):
 
                 QtWidgets.QMessageBox.warning(
                     self,
-                    "Invalid Input",
-                    f"Row {i + 1}: {exc}",
+                    self.tr("Invalid Input"),
+                    self.tr("Row {row_number}: {message}").format(row_number=i + 1, message=exc),
                 )
                 return
 
@@ -1181,7 +1232,7 @@ class DynamicEventDialogue(QtWidgets.QDialog):
             force_step_alignment_flags.append(force_step_alignment)
             transition_types.append(transition_type)
 
-            validation_origin: str = f"New row {i + 1}"
+            validation_origin: str = self.tr("New row {row_number}").format(row_number=i + 1)
             validation_entries.append(_build_validation_entry(parameter=param,
                                                               start_time=float(t),
                                                               end_time=end_time,
@@ -1196,7 +1247,7 @@ class DynamicEventDialogue(QtWidgets.QDialog):
 
         if validation_error_message is not None:
             QtWidgets.QMessageBox.warning(self,
-                                          "Overlapping Events",
+                                          self.tr("Overlapping Events"),
                                           validation_error_message)
             return
         else:
@@ -1224,18 +1275,18 @@ class DynamicEventsGroupsDialog(QtWidgets.QDialog):
 
         self.mode = mode
         if self.mode == DynamicSimulationMode.RMS:
-            self.setWindowTitle("Create RMS Events Group")
+            self.setWindowTitle(self.tr("Create RMS Events Group"))
         elif self.mode == DynamicSimulationMode.EMT:
-            self.setWindowTitle("Create EMT Events Group")
+            self.setWindowTitle(self.tr("Create EMT Events Group"))
         self.setModal(True)
         self.setMinimumWidth(300)
 
         self._name: str|None = None
 
         # Widgets
-        self.name_label = QtWidgets.QLabel("Name:")
+        self.name_label = QtWidgets.QLabel(self.tr("Name:"))
         self.name_edit = QtWidgets.QLineEdit()
-        self.name_edit.setPlaceholderText("Enter group name")
+        self.name_edit.setPlaceholderText(self.tr("Enter group name"))
 
         # Buttons
         self.buttons = QtWidgets.QDialogButtonBox(
@@ -1265,8 +1316,8 @@ class DynamicEventsGroupsDialog(QtWidgets.QDialog):
         if not name:
             QtWidgets.QMessageBox.warning(
                 self,
-                "Invalid name",
-                "The name cannot be empty."
+                self.tr("Invalid name"),
+                self.tr("The name cannot be empty.")
             )
             return
 
@@ -1278,5 +1329,3 @@ class DynamicEventsGroupsDialog(QtWidgets.QDialog):
         Returns the entered name
         """
         return self._name
-
-

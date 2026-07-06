@@ -774,7 +774,8 @@ def test_power_flow_12bus_acdc() -> None:
                                    retry_with_other_methods=False,
                                    control_taps_phase=True,
                                    tolerance=1e-8,
-                                   max_iter=80)
+                                   max_iter=80,
+                                   controls_start_tolerance=1e-6)
 
         driver = PowerFlowDriver(grid=grid, options=options)
         driver.run()

@@ -176,7 +176,7 @@ class ResultsTemplate(metaclass=ResultsTemplateMeta):
         return type(self).CLASS_DATA_VARIABLES
 
     @property
-    def time_array(self) -> DateVec:
+    def time_array(self) -> DateVec | None:
         """
         Array of time steps
         :return:

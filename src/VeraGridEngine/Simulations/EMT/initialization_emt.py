@@ -883,23 +883,33 @@ def _collect_missing_dx_problem(problem: EmtProblemTemplate,
     :rtype: Tuple[List[Var], List[Expr]]
     """
     diff_vars: List[Var] = problem.get_diff_vars()
+    state_vars: List[Var] = problem.get_state_vars()
     state_eqs: List[Expr] = problem.get_state_eqs()
+    state_eq_by_uid: Dict[int, Expr] = {
+        state_var.uid: state_eqs[idx]
+        for idx, state_var in enumerate(state_vars)
+        if idx < len(state_eqs)
+    }
     missing_diff_vars: List[Var] = list()
     missing_state_eqs: List[Expr] = list()
     idx: int = 0
 
     while idx < len(diff_vars):
         diff_var: Var = diff_vars[idx]
+        base_var: Var | None = diff_var.base_var
+        state_eq: Expr | None = None if base_var is None else state_eq_by_uid.get(base_var.uid, None)
 
         if include_existing:
-            missing_diff_vars.append(diff_var)
-            missing_state_eqs.append(state_eqs[idx])
+            if state_eq is not None:
+                missing_diff_vars.append(diff_var)
+                missing_state_eqs.append(state_eq)
         else:
             if diff_var.uid in problem.diff_init_guess:
                 diff_var = diff_var
             else:
-                missing_diff_vars.append(diff_var)
-                missing_state_eqs.append(state_eqs[idx])
+                if state_eq is not None:
+                    missing_diff_vars.append(diff_var)
+                    missing_state_eqs.append(state_eq)
 
         idx += 1
 

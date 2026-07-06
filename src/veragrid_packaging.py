@@ -7,6 +7,7 @@ import sys
 import tarfile
 import zipfile
 import hashlib
+import ast
 from pathlib import Path
 from typing import List, Tuple
 from subprocess import call
@@ -140,14 +141,100 @@ def find_pkg_files(path: str, ext_filter: List[str]) -> List[Tuple[str, str]]:
     if ext_filter is None:
         ext_filter = ['py']
 
+    excluded_directories: set[str] = set()
     files_list = list()
+
+    excluded_directories.add('__pycache__')
+    excluded_directories.add('build')
+    excluded_directories.add('dist')
+
     for (dirpath, dirnames, filenames) in os.walk(path):
+        filtered_dirnames: List[str] = list()
+
+        # Skip generated packaging folders so the wheel only contains source assets.
+        for dirname in dirnames:
+            if dirname in excluded_directories:
+                pass
+            elif dirname.endswith('.egg-info'):
+                pass
+            else:
+                filtered_dirnames.append(dirname)
+
+        dirnames[:] = filtered_dirnames
+
         for fname in filenames:
             if check_ext(filename=fname, ext_filter=ext_filter):
                 pth = os.path.join(dirpath, fname)
                 files_list.append((fname, pth))
 
     return files_list
+
+
+def collect_extra_package_files(pkg_name: str, relative_folder: str, suffixes: List[str]) -> List[str]:
+    """
+    Collect package-relative files that must be included explicitly.
+    :param pkg_name: package root folder name
+    :param relative_folder: folder inside the package to inspect
+    :param suffixes: allowed file suffixes
+    :return: list of package-relative file paths
+    """
+    package_path: Path = Path(pkg_name)
+    folder_path: Path = package_path / relative_folder
+    allowed_suffixes: set[str] = set()
+    extra_files: List[str] = list()
+
+    # Normalize the suffix list once so each file test stays explicit.
+    for suffix in suffixes:
+        normalized_suffix: str = suffix.lower()
+        allowed_suffixes.add(normalized_suffix)
+
+    # Missing folders are tolerated because some package variants may not ship these assets.
+    if folder_path.exists():
+        # Traverse recursively so nested assets are picked up without adding more packaging code later.
+        for file_path in sorted(folder_path.rglob('*')):
+            if file_path.is_file():
+                file_suffix: str = file_path.suffix.lower()
+
+                # Keep only the requested asset types.
+                if file_suffix in allowed_suffixes:
+                    relative_path: Path = file_path.relative_to(package_path)
+                    extra_files.append(str(relative_path))
+                else:
+                    pass
+            else:
+                pass
+    else:
+        pass
+
+    return extra_files
+
+
+def read_module_constant(module_path: str | Path, constant_name: str) -> str:
+    """
+    Read a simple module-level constant without importing the package.
+    """
+    module_file = Path(module_path)
+    module_ast = ast.parse(module_file.read_text(encoding='utf-8'), filename=str(module_file))
+
+    for node in module_ast.body:
+        if isinstance(node, ast.Assign):
+            for target in node.targets:
+                if isinstance(target, ast.Name) and target.id == constant_name:
+                    value = ast.literal_eval(node.value)
+                    return str(value)
+
+    raise ValueError(f"Constant {constant_name!r} not found in {module_file}")
+
+
+def get_repo_readme_path() -> Path | None:
+    """
+    Return the top-level README used for package descriptions when available.
+    """
+    candidate = Path(__file__).resolve().parent.parent / 'README.md'
+    if candidate.exists():
+        return candidate
+
+    return None
 
 
 def build_tar_gz_pkg(pkg_name: str,
@@ -227,6 +314,8 @@ def build_tar_gz_pkg(pkg_name: str,
     with open(setup_cfg_path, 'w') as f:
         f.write(setup_cfg)
 
+    readme_path = get_repo_readme_path()
+
     with tarfile.open(output_filename, "w:gz") as tar:
         for name, file_path in files:
             if not name.endswith('setup.py'):
@@ -238,6 +327,8 @@ def build_tar_gz_pkg(pkg_name: str,
         # add
         tar.add(pkg_info_path, arcname=os.path.join(pkg_name2, 'PKG-INFO'))
         tar.add(setup_cfg_path, arcname=os.path.join(pkg_name2, 'setup.cfg'))
+        if readme_path is not None:
+            tar.add(readme_path, arcname=os.path.join(pkg_name2, 'README.md'))
 
     os.remove(pkg_info_path)
     os.remove(setup_cfg_path)
@@ -331,11 +422,15 @@ def build_wheel(pkg_name: str,
                                    long_description=long_description)
     wheel_info = get_wheel_info()
     record_info = get_record_info(files)
+    readme_path = get_repo_readme_path()
 
     with zipfile.ZipFile(output_filename, "w", zipfile.ZIP_DEFLATED) as tar:
         for name, file_path in files:
             if not name.endswith('setup.py'):
                 tar.write(file_path, arcname=file_path)
+
+        if readme_path is not None:
+            tar.write(readme_path, arcname='README.md')
 
         # add the setup where it belongs
         # tar.write(setup_path, arcname=os.path.join(pkg_name, 'setup.py'))

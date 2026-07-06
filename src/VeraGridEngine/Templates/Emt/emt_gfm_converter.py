@@ -5,7 +5,6 @@ import numpy as np
 
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
 from VeraGridEngine.Utils.Symbolic.block import Block, VarPowerFlowReferenceType
-from VeraGridEngine.Utils.Symbolic.block_helpers import tf_to_block
 from VeraGridEngine.enumerations import ConverterControlType, ParamPowerFlowReferenceType
 
 
@@ -110,6 +109,20 @@ def build_emt_gfm_aggregated_model(
     vd_c_ref = vf.add_var(f"vd_c_ref_{name}")
     vq_c_ref = vf.add_var(f"vq_c_ref_{name}")
 
+    p_lp = vf.add_var(f"y_p_lp_{name}")
+    q_lp = vf.add_var(f"y_q_lp_{name}")
+    z_vd = vf.add_var(f"z_vd_loop_{name}")
+    z_vq = vf.add_var(f"z_vq_loop_{name}")
+    z_id = vf.add_var(f"z_id_loop_{name}")
+    z_iq = vf.add_var(f"z_iq_loop_{name}")
+
+    d_p_lp = vf.add_diff_var(f"d_y_p_lp_{name}", base_var=p_lp)
+    d_q_lp = vf.add_diff_var(f"d_y_q_lp_{name}", base_var=q_lp)
+    d_z_vd = vf.add_diff_var(f"d_z_vd_loop_{name}", base_var=z_vd)
+    d_z_vq = vf.add_diff_var(f"d_z_vq_loop_{name}", base_var=z_vq)
+    d_z_id = vf.add_diff_var(f"d_z_id_loop_{name}", base_var=z_id)
+    d_z_iq = vf.add_diff_var(f"d_z_iq_loop_{name}", base_var=z_iq)
+
     Rf = vf.add_var(f"Rf_{name}")
     Lf = vf.add_var(f"Lf_{name}")
     Rc = vf.add_var(f"Rc_{name}")
@@ -151,21 +164,15 @@ def build_emt_gfm_aggregated_model(
         q - (q_a + q_b + q_c),
     ]
 
-    block_p, p_lp = tf_to_block(vf, num=[vf.add_const(1.0)], den=[vf.add_const(1.0), tau_p], x=p, name=f"p_lp_{name}")
-    block_q, q_lp = tf_to_block(vf, num=[vf.add_const(1.0)], den=[vf.add_const(1.0), tau_q], x=q, name=f"q_lp_{name}")
-    block_p.init_eqs = {p_lp: p}
-    block_q.init_eqs = {q_lp: q}
-
     eqs += [
         omega - (vf.add_const(1.0) - Kdp * (p_lp - p_ref)),
         v_mag - (v_ref - Kdq * (q_lp - q_ref)),
-        dtheta - omega_base * omega,
         vd_ref - vf.add_const(0.0),
         vq_ref - v_mag,
     ]
 
-    block_vd, id_hat = tf_to_block(vf, num=[Ki, Kp], den=[0, 1], x=vd_ref - vd_f, name=f"vd_loop_{name}")
-    block_vq, iq_hat = tf_to_block(vf, num=[Ki, Kp], den=[0, 1], x=vq_ref - vq_f, name=f"vq_loop_{name}")
+    id_hat = Kp * (vd_ref - vd_f) + Ki * z_vd
+    iq_hat = Kp * (vq_ref - vq_f) + Ki * z_vq
 
     id_raw = iq_hat + iq_g - Cf * omega * vq_f
     iq_raw = id_hat + id_g + Cf * omega * vd_f
@@ -179,10 +186,12 @@ def build_emt_gfm_aggregated_model(
         iq_ref - iq_ref_sat,
     ]
 
-    block_id, vd_hat = tf_to_block(vf, num=[Ki, Kp], den=[0, 1], x=id_ref - id_c, y=vd_ctrl_out, name=f"id_loop_{name}")
-    block_iq, vq_hat = tf_to_block(vf, num=[Ki, Kp], den=[0, 1], x=iq_ref - iq_c, y=vq_ctrl_out, name=f"iq_loop_{name}")
+    vd_hat = vd_ctrl_out
+    vq_hat = vq_ctrl_out
 
     eqs += [
+        vd_ctrl_out - (Kp * (id_ref - id_c) + Ki * z_id),
+        vq_ctrl_out - (Kp * (iq_ref - iq_c) + Ki * z_iq),
         vd_c_ref - (vd_hat + vd_f - Lf * omega * iq_c),
         vq_c_ref - (vq_hat + vq_f + Lf * omega * id_c),
         vd_c - vd_c_ref,
@@ -203,23 +212,38 @@ def build_emt_gfm_aggregated_model(
     ]
 
     model = Block(
+        state_eqs=[
+            omega_base * omega,
+            (p - p_lp) / tau_p,
+            (q - q_lp) / tau_q,
+            vd_ref - vd_f,
+            vq_ref - vq_f,
+            id_ref - id_c,
+            iq_ref - iq_c,
+        ],
+        state_vars=[theta, p_lp, q_lp, z_vd, z_vq, z_id, z_iq],
         algebraic_eqs=eqs,
         algebraic_vars=[
-            pt, qt, pf, qf, d_v_a, d_v_b, d_v_c, p, q, p_ref, q_ref, omega, theta, v_mag, v_ref,
+            pt, qt, pf, qf, d_v_a, d_v_b, d_v_c, p, q, omega, v_mag,
             p_a, p_b, p_c, q_a, q_b, q_c,
             vd_ref, vq_ref, vd_g, vq_g, vd_f, vq_f, vd_c, vq_c,
-            id_g, iq_g, id_c, iq_c, id_ref, iq_ref, id_ref_sat, iq_ref_sat, vd_c_ref, vq_c_ref,
+            id_g, iq_g, id_c, iq_c, id_ref, iq_ref, id_ref_sat, iq_ref_sat,
+            vd_ctrl_out, vq_ctrl_out, vd_c_ref, vq_c_ref,
         ],
-        diff_vars=[dtheta],
+        diff_vars=[dtheta, d_p_lp, d_q_lp, d_z_vd, d_z_vq, d_z_id, d_z_iq],
         event_dict={
             Rf: vf.add_const(0.02), Lf: vf.add_const(0.15), Rc: vf.add_const(0.01), Lc: vf.add_const(0.1),
             Cf: vf.add_const(0.05), Rcap: vf.add_const(1e6), Kdp: vf.add_const(0.05), Kdq: vf.add_const(0.05),
             fn: vf.add_const(50.0), omega_base: vf.add_const(2.0 * math.pi * 50.0), Kp: vf.add_const(0.05), Ki: vf.add_const(50.0), tau_p: vf.add_const(0.01),
             tau_q: vf.add_const(0.01), i_max: vf.add_const(1.2), a0: vf.add_const(0.0), a1: vf.add_const(0.0), a2: vf.add_const(0.0),
+            p_ref: vf.add_const(None), q_ref: vf.add_const(None), v_ref: vf.add_const(None),
         },
         init_eqs={
             theta: vf.add_const(0.0), omega: vf.add_const(1.0),
             p: -pt, q: -qt, p_ref: p, q_ref: q,
+            p_lp: p, q_lp: q,
+            z_vd: vf.add_const(0.0), z_vq: vf.add_const(0.0),
+            z_id: vf.add_const(0.0), z_iq: vf.add_const(0.0),
             p_a: vf.add_const(0.0), p_b: vf.add_const(0.0), p_c: vf.add_const(0.0),
             q_a: vf.add_const(0.0), q_b: vf.add_const(0.0), q_c: vf.add_const(0.0),
             v_ref: vf.add_const(1.0), v_mag: vf.add_const(1.0),
@@ -230,6 +254,7 @@ def build_emt_gfm_aggregated_model(
             id_c: id_g, iq_c: iq_g,
             id_ref: id_c, iq_ref: iq_c,
             id_ref_sat: id_c, iq_ref_sat: iq_c,
+            vd_ctrl_out: vf.add_const(0.0), vq_ctrl_out: vf.add_const(0.0),
             vd_c_ref: vd_f, vq_c_ref: vq_f,
             vd_c: vd_c_ref, vq_c: vq_c_ref,
             pf: -p_conv + p_loss, qf: vf.add_const(0.0),
@@ -268,11 +293,5 @@ def build_emt_gfm_aggregated_model(
 
     model.add(park_v_block)
     model.add(inv_i_block)
-    model.add(block_p)
-    model.add(block_q)
-    model.add(block_vd)
-    model.add(block_vq)
-    model.add(block_id)
-    model.add(block_iq)
     model.unify_blocks()
     return model

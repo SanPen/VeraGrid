@@ -8,11 +8,10 @@ from typing import TYPE_CHECKING, Union
 from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtWidgets import QMenu
 from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
-from VeraGrid.Gui.gui_functions import add_menu_entry
+from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
 from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import BarTerminalItem, RoundTerminalItem
 from VeraGridEngine.Devices.Branches.series_reactance import SeriesReactance
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template import LineGraphicTemplateItem
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
 from VeraGridEngine.enumerations import DynamicSimulationMode
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
@@ -67,7 +66,7 @@ class SeriesReactanceGraphicItem(LineGraphicTemplateItem):
         if self.api_object is not None:
             menu = QMenu()
 
-            pe = menu.addAction('Enable/Disable')
+            pe = menu.addAction(translate_context_menu_text("Enable/Disable"))
             pe_icon = QIcon()
             if self.api_object.active:
                 pe_icon.addPixmap(QPixmap(":/Icons/icons/uncheck_all.png"))
@@ -77,21 +76,21 @@ class SeriesReactanceGraphicItem(LineGraphicTemplateItem):
             pe.triggered.connect(self.enable_disable_toggle)
 
             add_menu_entry(menu=menu,
-                           text="Editor",
+                           text=translate_context_menu_text("Editor"),
                            function_ptr=self.edit,
                            icon_path=":/Icons/icons/edit.png")
 
             add_menu_entry(menu=menu,
-                           text="RMS Editor",
+                           text=translate_context_menu_text("RMS Editor"),
                            function_ptr=self.edit_dynamic_rms,
                            icon_path=":/Icons/icons/dyn_edit.png")
 
             add_menu_entry(menu=menu,
-                           text="EMT Editor",
+                           text=translate_context_menu_text("EMT Editor"),
                            function_ptr=self.edit_dynamic_emt,
                            icon_path=":/Icons/icons/dyn_emt_edit.png")
 
-            rabf = menu.addAction('Change bus')
+            rabf = menu.addAction(translate_context_menu_text("Change bus"))
             move_bus_icon = QIcon()
             move_bus_icon.addPixmap(QPixmap(":/Icons/icons/move_bus.png"))
             rabf.setIcon(move_bus_icon)
@@ -99,7 +98,7 @@ class SeriesReactanceGraphicItem(LineGraphicTemplateItem):
 
             menu.addSeparator()
 
-            ra2 = menu.addAction('Delete')
+            ra2 = menu.addAction(translate_context_menu_text("Delete"))
             del_icon = QIcon()
             del_icon.addPixmap(QPixmap(":/Icons/icons/delete3.png"))
             ra2.setIcon(del_icon)
@@ -107,19 +106,19 @@ class SeriesReactanceGraphicItem(LineGraphicTemplateItem):
 
             menu.addSeparator()
 
-            ra6 = menu.addAction('Plot profiles')
+            ra6 = menu.addAction(translate_context_menu_text("Plot profiles"))
             plot_icon = QIcon()
             plot_icon.addPixmap(QPixmap(":/Icons/icons/plot.png"))
             ra6.setIcon(plot_icon)
             ra6.triggered.connect(self.plot_profiles)
 
-            ra4 = menu.addAction('Assign rate to profile')
+            ra4 = menu.addAction(translate_context_menu_text("Assign rate to profile"))
             ra4_icon = QIcon()
             ra4_icon.addPixmap(QPixmap(":/Icons/icons/assign_to_profile.png"))
             ra4.setIcon(ra4_icon)
             ra4.triggered.connect(self.assign_rate_to_profile)
 
-            ra5 = menu.addAction('Assign active state to profile')
+            ra5 = menu.addAction(translate_context_menu_text("Assign active state to profile"))
             ra5_icon = QIcon()
             ra5_icon.addPixmap(QPixmap(":/Icons/icons/assign_to_profile.png"))
             ra5.setIcon(ra5_icon)
@@ -158,15 +157,15 @@ class SeriesReactanceGraphicItem(LineGraphicTemplateItem):
         Open the unified dynamic editor workspace for this generator.
         """
 
-        open_dynamic_editor(api_object=self.api_object,
-                            circuit=self.editor.circuit,
-                            preferred_mode=DynamicSimulationMode.RMS)
+        self.editor.gui.open_dynamic_editor(api_object=self.api_object,
+                                            circuit=self.editor.circuit,
+                                            preferred_mode=DynamicSimulationMode.RMS)
 
     def edit_dynamic_emt(self):
         """
         Open the unified dynamic editor workspace for this generator.
         """
 
-        open_dynamic_editor(api_object=self.api_object,
-                            circuit=self.editor.circuit,
-                            preferred_mode=DynamicSimulationMode.EMT)
+        self.editor.gui.open_dynamic_editor(api_object=self.api_object,
+                                            circuit=self.editor.circuit,
+                                            preferred_mode=DynamicSimulationMode.EMT)

@@ -83,6 +83,6 @@ class Ui_PsseImportDialog(object):
 #if QT_CONFIG(tooltip)
         self.flatten_virtual_taps_checkBox.setToolTip(QCoreApplication.translate("PsseImportDialog", u"<html><head/><body><p>PSS/e does not handle the difference of nominal </p><p>voltage between the bus and the transformer (the vitual tap) </p><p>If checked, this will make the transformer nominal voltages </p><p>equal to the buses nominal voltage to behave like PSS/e</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
-        self.flatten_virtual_taps_checkBox.setText(QCoreApplication.translate("PsseImportDialog", u"Flatten viatual taps", None))
+        self.flatten_virtual_taps_checkBox.setText(QCoreApplication.translate("PsseImportDialog", u"Flatten virtual taps", None))
     # retranslateUi
 

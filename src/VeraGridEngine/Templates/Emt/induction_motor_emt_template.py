@@ -48,6 +48,7 @@ from typing import Dict, List, Tuple
 
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
+from VeraGridEngine.Templates.template_definition import TemplateDefinition, TemplateProp
 from VeraGridEngine.Utils.Symbolic import symbolic as sym
 from VeraGridEngine.Utils.Symbolic.block import Block, Expr, Var
 from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowReferenceType, VarPowerFlowReferenceType
@@ -1025,6 +1026,29 @@ def get_induction_motor_double_cage_emt_template(
         d_omega_r: (torque_e - torque_m - params["d"] * (omega_r - c_one)) / (c_two * params["h"] + c_eps),
     })
     return templ
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# INDUCTION MOTOR
+# ----------------------------------------------------------------------------------------------------------------------
+class InductionMotorEmtTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        super().__init__(
+            vf,
+            params=[
+                TemplateProp(name="level", units="", descr="Model fidelity level (2=single-cage, 3=double-cage).", tpe=int, value=2),
+                TemplateProp(name="name", units="", descr="Name of the emt model.", tpe=str, value="induction_motor_emt_template"),
+            ]
+        )
+
+    def eval(self) -> EmtModelTemplate:
+        level: int = self.get_value("level")
+        name: str = self.get_value("name")
+
+        return get_induction_motor_emt_template(
+            self.vf, level, name
+        )
 
 
 def get_induction_motor_emt_template(

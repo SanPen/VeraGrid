@@ -16,8 +16,7 @@ from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics
 from VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizzard import SolarPvWizard
 from VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard import WindFarmWizard
 from VeraGrid.Gui.profile_wizard_utils import fill_substation_weather_profiles
-from VeraGrid.Gui.gui_functions import add_menu_entry
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
+from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
 from VeraGridEngine.enumerations import DynamicSimulationMode
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
@@ -72,39 +71,39 @@ class MapGeneratorGraphicItem(MapInjectionTemplateGraphicItem):
         """
         menu = self.get_base_context_menu()
 
-        menu.addSection("Generator")
+        menu.addSection(translate_context_menu_text("Generator"))
 
         add_menu_entry(menu=menu,
-                       text="RMS Editor",
+                       text=translate_context_menu_text("RMS Editor"),
                        function_ptr=self.edit_rms,
                        icon_path=":/Icons/icons/dyn_edit.png")
 
         add_menu_entry(menu=menu,
-                       text="EMT Editor",
+                       text=translate_context_menu_text("EMT Editor"),
                        function_ptr=self.edit_emt,
                        icon_path=":/Icons/icons/dyn_emt_edit.png")
 
         add_menu_entry(menu=menu,
-                       text="Qcurve edit",
+                       text=translate_context_menu_text("Qcurve edit"),
                        function_ptr=self.edit_q_curve,
                        icon_path=":/Icons/icons/edit.png")
 
         menu.addSeparator()
 
         add_menu_entry(menu=menu,
-                       text="Solar photovoltaic wizard",
+                       text=translate_context_menu_text("Solar photovoltaic wizard"),
                        icon_path=":/Icons/icons/solar_power.png",
                        function_ptr=self.solar_pv_wizard)
 
         add_menu_entry(menu=menu,
-                       text="Wind farm wizard",
+                       text=translate_context_menu_text("Wind farm wizard"),
                        icon_path=":/Icons/icons/wind_power.png",
                        function_ptr=self.wind_farm_wizard)
 
         menu.addSeparator()
 
         add_menu_entry(menu=menu,
-                       text="Convert to battery",
+                       text=translate_context_menu_text("Convert to battery"),
                        icon_path=":/Icons/icons/add_batt.png",
                        function_ptr=self.to_battery)
 
@@ -124,8 +123,8 @@ class MapGeneratorGraphicItem(MapInjectionTemplateGraphicItem):
 
         :return:
         """
-        open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit,
-                            preferred_mode=DynamicSimulationMode.RMS)
+        self.editor.gui.open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit,
+                                            preferred_mode=DynamicSimulationMode.RMS)
 
     def edit_emt(self):
         """
@@ -134,16 +133,16 @@ class MapGeneratorGraphicItem(MapInjectionTemplateGraphicItem):
         :return: None.
         """
 
-        open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit,
-                            preferred_mode=DynamicSimulationMode.EMT)
+        self.editor.gui.open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit,
+                                            preferred_mode=DynamicSimulationMode.EMT)
 
     def edit_dynamic(self):
         """
         Open the unified dynamic editor workspace for this map generator.
         """
 
-        open_dynamic_editor(api_object=self.api_object,
-                            circuit=self.editor.circuit)
+        self.editor.gui.open_dynamic_editor(api_object=self.api_object,
+                                            circuit=self.editor.circuit)
 
     def to_battery(self):
         """

@@ -1,8 +1,9 @@
 from typing import Tuple
 
-from PySide6 import QtWidgets
+from PySide6 import QtCore, QtWidgets
 
 from VeraGrid.Gui.Main.MainWindow import Ui_mainWindow
+from VeraGrid.Gui.Main.SubClasses.base_gui import refresh_translated_splitter_layouts
 
 
 def build_main_window() -> Tuple[QtWidgets.QMainWindow, Ui_mainWindow]:
@@ -85,6 +86,40 @@ def test_generated_main_window_exposes_main_actions(qt_app: object) -> None:
     assert ui.actionRun_Small_Signal_EMT_Simulation.text() != ""
     assert ui.actionDelete_selected.text() != ""
     assert ui.actionSync.text() != ""
+
+    window.close()
+    window.deleteLater()
+
+
+def test_refresh_translated_splitter_layouts_respects_updated_widget_hints(qt_app: object) -> None:
+    """
+    Check that the splitter refresh helper keeps sections large enough for updated hints.
+
+    :param qt_app: Shared Qt application fixture.
+    :return: Nothing.
+    """
+    del qt_app
+
+    window: QtWidgets.QWidget = QtWidgets.QWidget()
+    layout: QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout(window)
+    splitter: QtWidgets.QSplitter = QtWidgets.QSplitter(QtCore.Qt.Orientation.Horizontal)
+    left_label: QtWidgets.QLabel = QtWidgets.QLabel("Short")
+    right_label: QtWidgets.QLabel = QtWidgets.QLabel("Right")
+    sizes: list[int]
+
+    splitter.addWidget(left_label)
+    splitter.addWidget(right_label)
+    layout.addWidget(splitter)
+    window.resize(400, 100)
+    window.show()
+    QtWidgets.QApplication.processEvents()
+
+    left_label.setMinimumWidth(220)
+    refresh_translated_splitter_layouts(window)
+    QtWidgets.QApplication.processEvents()
+    sizes = splitter.sizes()
+
+    assert sizes[0] >= 220
 
     window.close()
     window.deleteLater()

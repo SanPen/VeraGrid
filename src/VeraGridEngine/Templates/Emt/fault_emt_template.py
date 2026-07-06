@@ -11,10 +11,49 @@ from typing import Dict, List, Tuple
 
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
+from VeraGridEngine.Templates.template_definition import TemplateDefinition, TemplateProp
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.procedural_logic import sampled_value
 from VeraGridEngine.Utils.Symbolic.symbolic import CmpOp, Comparison, Const, Expr, Var
 from VeraGridEngine.enumerations import BlockType, DeviceType, EmtFaultPlacementSide, FaultType
+
+
+class FaultEmtTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        super().__init__(vf, params=[
+            TemplateProp(name="fault_type", units="", descr="Requested short-circuit topology.", tpe=FaultType | str),
+            TemplateProp(name="placement_side", units="", descr="Placement side inside the composed branch.", tpe=EmtFaultPlacementSide | str),
+            TemplateProp(name="phA", units="", descr="Enable phase A.", tpe=bool, value=True),
+            TemplateProp(name="phB", units="", descr="Enable phase B.", tpe=bool, value=False),
+            TemplateProp(name="phC", units="", descr="Enable phase C.", tpe=bool, value=False),
+            TemplateProp(name="signal_controlled", units="", descr="If True, expose one control input and procedural logic.", tpe=bool, value=False),
+            TemplateProp(name="initial_closed", units="", descr="Initial fault status.", tpe=bool, value=False),
+            TemplateProp(name="fault_resistance", units="Ohm", descr="Phase-to-phase fault resistance.", tpe=float, value=1.0e-2),
+            TemplateProp(name="ground_resistance", units="Ohm", descr="Phase-to-ground fault resistance.", tpe=float, value=1.0e-2),
+            TemplateProp(name="open_conductance", units="Siemens", descr="Open-state leakage conductance.", tpe=float, value=1.0e-8),
+            TemplateProp(name="fault_time_constant", units="s", descr="Unused regularization compatibility parameter.", tpe=float, value=1.0e-4),
+            TemplateProp(name="command_threshold", units="", descr="Control threshold for the external command.", tpe=float, value=0.5),
+            TemplateProp(name="name", units="", descr="Name of the emt model.", tpe=str, value="fault_emt_template"),
+        ])
+
+    def eval(self) -> EmtModelTemplate:
+        return get_fault_emt_template(
+            self.vf,
+            self.get_value("fault_type"),
+            self.get_value("placement_side"),
+            self.get_value("phA"),
+            self.get_value("phB"),
+            self.get_value("phC"),
+            self.get_value("signal_controlled"),
+            self.get_value("initial_closed"),
+            self.get_value("fault_resistance"),
+            self.get_value("ground_resistance"),
+            self.get_value("open_conductance"),
+            self.get_value("fault_time_constant"),
+            self.get_value("command_threshold"),
+            self.get_value("name"),
+        )
 
 
 def _get_active_phases(phA: bool, phB: bool, phC: bool) -> List[str]:

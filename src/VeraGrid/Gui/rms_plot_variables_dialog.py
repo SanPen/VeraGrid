@@ -41,7 +41,7 @@ class RmsPlotDialog(QDialog):
                 )
             ]
 
-        self.setWindowTitle("Plot Variables")
+        self.setWindowTitle(self.tr("Plot Variables"))
         self.uid2idx = results.uid2idx
         self.vars_glob_name2uid = results.vars_glob_name2uid
         self.devices = devices_options
@@ -51,11 +51,11 @@ class RmsPlotDialog(QDialog):
             data=np.array(results.values),
             index=np.array(pd.to_datetime(results.time_array).astype(str), dtype=np.str_),
             columns=results.variable_array,
-            title="Rms Simulation Results",
+            title=self.tr("Rms Simulation Results"),
             units=results.units,
             idx_device_type=DeviceType.TimeDevice,
             cols_device_type=DeviceType.NoDevice,
-            xlabel="time (s)",
+            xlabel=self.tr("time (s)"),
             ylabel="",
         )
 
@@ -66,7 +66,7 @@ class RmsPlotDialog(QDialog):
 
         # device selector
         dev_layout = QHBoxLayout()
-        dev_layout.addWidget(QLabel("Device:"))
+        dev_layout.addWidget(QLabel(self.tr("Device:")))
         self.device_combo = QComboBox()
         self.device_combo.addItems(list(devices_options.keys()))
         self.device_combo.currentIndexChanged.connect(self.update_variables)
@@ -75,13 +75,13 @@ class RmsPlotDialog(QDialog):
 
         # variable selector
         var_layout = QHBoxLayout()
-        var_layout.addWidget(QLabel("Variable:"))
+        var_layout.addWidget(QLabel(self.tr("Variable:")))
         self.var_combo = QComboBox()
         var_layout.addWidget(self.var_combo)
         layout.addLayout(var_layout)
 
         # add variables button
-        add_btn = QPushButton("Add")
+        add_btn = QPushButton(self.tr("Add"))
         add_btn.clicked.connect(self.add_variable)
         layout.addWidget(add_btn)
 
@@ -106,7 +106,7 @@ class RmsPlotDialog(QDialog):
         buttons_layout.addWidget(self.buttons)
 
         # show in separate window button
-        show_window_btn = QPushButton("Show in new window")
+        show_window_btn = QPushButton(self.tr("Show in new window"))
         show_window_btn.clicked.connect(self.show_external_plot)
         buttons_layout.addWidget(show_window_btn)
 
@@ -134,7 +134,7 @@ class RmsPlotDialog(QDialog):
         item = self.list_widget.itemAt(pos)
         if item is not None:
             menu = QMenu(self)
-            remove_action = menu.addAction("Remove variable")
+            remove_action = menu.addAction(self.tr("Remove variable"))
             action = menu.exec(self.list_widget.mapToGlobal(pos))
             if action == remove_action:
                 self.remove_variable(item)
@@ -170,7 +170,7 @@ class RmsPlotDialog(QDialog):
 
         # Create a separate dialog for the plot
         external_dialog = QDialog(self)
-        external_dialog.setWindowTitle("Plot Window")
+        external_dialog.setWindowTitle(self.tr("Plot Window"))
         external_dialog.resize(900, 500)
 
         layout = QVBoxLayout(external_dialog)
@@ -191,4 +191,3 @@ class RmsPlotDialog(QDialog):
         canvas.draw()
 
         external_dialog.show()
-

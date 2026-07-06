@@ -10,31 +10,50 @@ https://github.com/pypa/sampleproject
 """
 
 # Always prefer setuptools over distutils
+import ast
+from pathlib import Path
 from setuptools import setup, find_packages
-import os
-from VeraGridEngine.__version__ import __VeraGridEngine_VERSION__
-
-here = os.path.abspath(os.path.dirname(__file__))
-
-long_description = """# VeraGrid
-
-This software aims to be a complete platform for power systems research and simulation.
-
-[Watch the video https](https://youtu.be/SY66WgLGo54)
-
-[Check out the documentation](https://veragrid.readthedocs.io)
-
-
-## Installation
-
-pip install VeraGridEngine
-
-For more options (including a standalone setup one), follow the
-[installation instructions]( https://veragrid.readthedocs.io/en/latest/getting_started/install.html)
-from the project's [documentation](https://veragrid.readthedocs.io)
-"""
 
 description = 'VeraGrid is a Power Systems simulation program intended for professional use and research'
+
+
+def read_module_constant(constant_name: str) -> str:
+    src_root = Path(__file__).resolve().parent
+
+    for candidate in (
+        src_root / '__version__.py',
+        src_root / 'VeraGridEngine' / '__version__.py',
+    ):
+        if candidate.exists():
+            module_ast = ast.parse(candidate.read_text(encoding='utf-8'), filename=str(candidate))
+
+            for node in module_ast.body:
+                if isinstance(node, ast.Assign):
+                    for target in node.targets:
+                        if isinstance(target, ast.Name) and target.id == constant_name:
+                            return str(ast.literal_eval(node.value))
+        else:
+            pass
+
+    raise FileNotFoundError(f'{constant_name} source file not found next to setup.py or in VeraGridEngine/')
+
+
+def read_long_description() -> str:
+    src_root = Path(__file__).resolve().parent
+
+    for candidate in (
+        src_root / 'README.md',
+        src_root.parent / 'README.md',
+        src_root.parent.parent / 'README.md',
+    ):
+        if candidate.exists():
+            return candidate.read_text(encoding='utf-8')
+
+    return description
+
+
+long_description = read_long_description()
+__VeraGridEngine_VERSION__ = read_module_constant('__VeraGridEngine_VERSION__')
 
 pkgs_to_exclude = ['docs', 'research', 'tests', 'tutorials', 'VeraGrid']
 

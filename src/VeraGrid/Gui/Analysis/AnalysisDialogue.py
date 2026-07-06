@@ -31,6 +31,18 @@ from VeraGridEngine.Simulations.SigmaAnalysis.sigma_analysis_driver import Sigma
 from VeraGridEngine.enumerations import LogSeverity, ResultTypes
 
 
+def translate_analysis_dialog(source_text: str, disambiguation: str | None = None, n: int = -1) -> str:
+    """
+    Translate one runtime dashboard string through the generated UI context.
+
+    :param source_text: Source string to translate.
+    :param disambiguation: Optional Qt disambiguation text.
+    :param n: Optional plural parameter.
+    :return: Translated text.
+    """
+    return QtCore.QCoreApplication.translate("MainWindow", source_text, disambiguation, n)
+
+
 class IssueEntry:
     """
     Lightweight record containing one normalized dashboard issue row.
@@ -100,7 +112,7 @@ class IssueEntry:
         :return: True when the row should remain visible
         """
         severity_matches: bool = False
-        if severity_filter_text == "All severities":
+        if severity_filter_text == translate_analysis_dialog("All severities"):
             severity_matches = True
         else:
             if severity_filter_text == severity_to_text(self.severity):
@@ -109,7 +121,7 @@ class IssueEntry:
                 severity_matches = False
 
         object_type_matches: bool = False
-        if object_type_filter_text == "All object types":
+        if object_type_filter_text == translate_analysis_dialog("All object types"):
             object_type_matches = True
         else:
             if object_type_filter_text == self.object_type:
@@ -253,15 +265,15 @@ def severity_to_text(severity: LogSeverity) -> str:
     :return: Display label
     """
     if severity == LogSeverity.Error:
-        return "Error"
+        return translate_analysis_dialog("Error")
     else:
         if severity == LogSeverity.Warning:
-            return "Warning"
+            return translate_analysis_dialog("Warning")
         else:
             if severity == LogSeverity.Information:
-                return "Information"
+                return translate_analysis_dialog("Information")
             else:
-                return "Divergence"
+                return translate_analysis_dialog("Divergence")
 
 
 def severity_sort_weight(severity: LogSeverity) -> int:
@@ -490,7 +502,7 @@ class GridAnalysisGUI(QtWidgets.QMainWindow):
             overall_score=0,
             grade="F",
             sigma_available=False,
-            sigma_status_text="Sigma analysis pending.",
+            sigma_status_text=self.tr("Sigma analysis pending."),
             min_sigma_distance=0.0,
             mean_sigma_distance=0.0,
             top_message="",
@@ -507,12 +519,23 @@ class GridAnalysisGUI(QtWidgets.QMainWindow):
         # Run the first analysis immediately so the dashboard opens populated.
         self.analyze_all()
 
+    def tr(self, source_text: str, disambiguation: str | None = None, n: int = -1) -> str:
+        """
+        Translate runtime strings through the ``MainWindow`` catalog context.
+
+        :param source_text: Source string to translate.
+        :param disambiguation: Optional Qt disambiguation text.
+        :param n: Optional plural parameter.
+        :return: Translated text.
+        """
+        return translate_analysis_dialog(source_text, disambiguation, n)
+
     def configure_window(self) -> None:
         """
         Apply one-time dashboard-level window configuration.
         """
         # Set the window title and icons so the dashboard feels like a first-class tool.
-        self.setWindowTitle("Grid Health Dashboard")
+        self.setWindowTitle(self.tr("Grid Health Dashboard"))
         self.setWindowIcon(QtGui.QIcon(":/icons/icons/inputs_analysis 2.png"))
         self.ui.actionAnalyze.setIcon(QtGui.QIcon(":/Icons/icons/inputs_analysis 2.png"))
         self.ui.actionFixIssues.setIcon(QtGui.QIcon(":/Icons/icons/fix.png"))
@@ -524,7 +547,7 @@ class GridAnalysisGUI(QtWidgets.QMainWindow):
         # Surface basic context immediately in the hero panel.
         circuit_name: str = self.circuit.name.strip()
         if circuit_name == "":
-            circuit_name = "Unnamed grid"
+            circuit_name = self.tr("Unnamed grid")
         else:
             pass
 
@@ -532,7 +555,12 @@ class GridAnalysisGUI(QtWidgets.QMainWindow):
         line_count: int = len(self.circuit.get_lines())
         transformer_count: int = len(self.circuit.get_transformers2w()) + len(self.circuit.get_windings())
         self.ui.gridNameLabel.setText(
-            f"{circuit_name}  •  {bus_count} buses  •  {line_count} lines  •  {transformer_count} transformers"
+            self.tr("{grid_name}  •  {bus_count} buses  •  {line_count} lines  •  {transformer_count} transformers").format(
+                grid_name=circuit_name,
+                bus_count=bus_count,
+                line_count=line_count,
+                transformer_count=transformer_count,
+            )
         )
 
         # Sync the auxiliary dashboard visuals with the current application theme.
@@ -544,7 +572,13 @@ class GridAnalysisGUI(QtWidgets.QMainWindow):
         """
         # Configure the findings tree for grouped browsing by severity, message and object.
         self.issue_model.setHorizontalHeaderLabels(
-            ["Item", "Property", "Lower", "Value", "Upper", "Index", "Auto-fix"]
+            [self.tr("Item"),
+             self.tr("Property"),
+             self.tr("Lower"),
+             self.tr("Value"),
+             self.tr("Upper"),
+             self.tr("Index"),
+             self.tr("Auto-fix")]
         )
         self.ui.issuesTreeView.setModel(self.issue_model)
         self.ui.issuesTreeView.setAlternatingRowColors(True)
@@ -584,14 +618,14 @@ class GridAnalysisGUI(QtWidgets.QMainWindow):
         header_layout: QtWidgets.QHBoxLayout = QtWidgets.QHBoxLayout()
         header_layout.setSpacing(10)
 
-        title_label: QtWidgets.QLabel = QtWidgets.QLabel("Balance Explorer", panel_frame)
+        title_label: QtWidgets.QLabel = QtWidgets.QLabel(self.tr("Balance Explorer"), panel_frame)
         title_label.setObjectName("balanceTitleLabel")
         title_label.setProperty("cssClass", "sectionTitle")
         header_layout.addWidget(title_label)
 
         header_layout.addStretch(1)
 
-        aggregation_label: QtWidgets.QLabel = QtWidgets.QLabel("Aggregation", panel_frame)
+        aggregation_label: QtWidgets.QLabel = QtWidgets.QLabel(self.tr("Aggregation"), panel_frame)
         aggregation_label.setObjectName("balanceAggregationLabel")
         header_layout.addWidget(aggregation_label)
 
@@ -599,7 +633,7 @@ class GridAnalysisGUI(QtWidgets.QMainWindow):
         self.balanceAggregationComboBox.setObjectName("balanceAggregationComboBox")
         header_layout.addWidget(self.balanceAggregationComboBox)
 
-        top_n_label: QtWidgets.QLabel = QtWidgets.QLabel("Top N", panel_frame)
+        top_n_label: QtWidgets.QLabel = QtWidgets.QLabel(self.tr("Top N"), panel_frame)
         top_n_label.setObjectName("balanceTopNLabel")
         header_layout.addWidget(top_n_label)
 
@@ -612,7 +646,7 @@ class GridAnalysisGUI(QtWidgets.QMainWindow):
 
         panel_layout.addLayout(header_layout)
 
-        self.balanceSummaryLabel = QtWidgets.QLabel("Inputs analysis pending.", panel_frame)
+        self.balanceSummaryLabel = QtWidgets.QLabel(self.tr("Inputs analysis pending."), panel_frame)
         self.balanceSummaryLabel.setObjectName("balanceSummaryLabel")
         self.balanceSummaryLabel.setWordWrap(True)
         panel_layout.addWidget(self.balanceSummaryLabel)
@@ -625,9 +659,9 @@ class GridAnalysisGUI(QtWidgets.QMainWindow):
 
         controls_index: int = self.ui.mainTabWidget.indexOf(self.ui.controlsPage)
         if controls_index >= 0:
-            self.ui.mainTabWidget.insertTab(controls_index, self.balance_page, "Balance Explorer")
+            self.ui.mainTabWidget.insertTab(controls_index, self.balance_page, self.tr("Balance Explorer"))
         else:
-            self.ui.mainTabWidget.addTab(self.balance_page, "Balance Explorer")
+            self.ui.mainTabWidget.addTab(self.balance_page, self.tr("Balance Explorer"))
 
     def populate_static_controls(self) -> None:
         """
@@ -635,24 +669,24 @@ class GridAnalysisGUI(QtWidgets.QMainWindow):
         """
         # Populate the filter combo once because the dashboard reuses the same labels repeatedly.
         self.ui.severityFilterComboBox.clear()
-        self.ui.severityFilterComboBox.addItem("All severities")
-        self.ui.severityFilterComboBox.addItem("Error")
-        self.ui.severityFilterComboBox.addItem("Warning")
-        self.ui.severityFilterComboBox.addItem("Information")
-        self.ui.severityFilterComboBox.addItem("Divergence")
+        self.ui.severityFilterComboBox.addItem(self.tr("All severities"))
+        self.ui.severityFilterComboBox.addItem(self.tr("Error"))
+        self.ui.severityFilterComboBox.addItem(self.tr("Warning"))
+        self.ui.severityFilterComboBox.addItem(self.tr("Information"))
+        self.ui.severityFilterComboBox.addItem(self.tr("Divergence"))
 
         self.ui.objectTypeFilterComboBox.clear()
-        self.ui.objectTypeFilterComboBox.addItem("All object types")
+        self.ui.objectTypeFilterComboBox.addItem(self.tr("All object types"))
 
         self.balanceAggregationComboBox.clear()
-        self.balanceAggregationComboBox.addItem("Area")
-        self.balanceAggregationComboBox.addItem("Zone")
-        self.balanceAggregationComboBox.addItem("Substation")
-        self.balanceAggregationComboBox.addItem("VoltageLevel")
-        self.balanceAggregationComboBox.addItem("Country")
-        self.balanceAggregationComboBox.addItem("Community")
-        self.balanceAggregationComboBox.addItem("Region")
-        self.balanceAggregationComboBox.addItem("Municipality")
+        self.balanceAggregationComboBox.addItem(self.tr("Area"))
+        self.balanceAggregationComboBox.addItem(self.tr("Zone"))
+        self.balanceAggregationComboBox.addItem(self.tr("Substation"))
+        self.balanceAggregationComboBox.addItem(self.tr("VoltageLevel"))
+        self.balanceAggregationComboBox.addItem(self.tr("Country"))
+        self.balanceAggregationComboBox.addItem(self.tr("Community"))
+        self.balanceAggregationComboBox.addItem(self.tr("Region"))
+        self.balanceAggregationComboBox.addItem(self.tr("Municipality"))
 
     def populate_object_type_filter(self) -> None:
         """
@@ -663,7 +697,7 @@ class GridAnalysisGUI(QtWidgets.QMainWindow):
 
         self.ui.objectTypeFilterComboBox.blockSignals(True)
         self.ui.objectTypeFilterComboBox.clear()
-        self.ui.objectTypeFilterComboBox.addItem("All object types")
+        self.ui.objectTypeFilterComboBox.addItem(self.tr("All object types"))
         for object_type in object_types:
             self.ui.objectTypeFilterComboBox.addItem(object_type)
 
@@ -1015,7 +1049,10 @@ QWidget#overviewPage QProgressBar::chunk {{
         self.update_sigma_panel()
         self.update_narrative()
         self.statusBar().showMessage(
-            f"Dashboard refreshed: {self.summary.issue_count} findings, score {self.summary.overall_score}/100.",
+            self.tr("Dashboard refreshed: {issue_count} findings, score {overall_score}/100.").format(
+                issue_count=self.summary.issue_count,
+                overall_score=self.summary.overall_score,
+            ),
             8000,
         )
 
@@ -1042,25 +1079,25 @@ QWidget#overviewPage QProgressBar::chunk {{
         :param aggregation: Aggregation label selected in the balance explorer
         :return: Matching balance result type
         """
-        if aggregation == "Area":
+        if aggregation == self.tr("Area"):
             return ResultTypes.AreaBalanceAnalysis
         else:
-            if aggregation == "Zone":
+            if aggregation == self.tr("Zone"):
                 return ResultTypes.ZoneBalanceAnalysis
             else:
-                if aggregation == "Substation":
+                if aggregation == self.tr("Substation"):
                     return ResultTypes.SubstationBalanceAnalysis
                 else:
-                    if aggregation == "VoltageLevel":
+                    if aggregation == self.tr("VoltageLevel"):
                         return ResultTypes.VoltageLevelBalanceAnalysis
                     else:
-                        if aggregation == "Country":
+                        if aggregation == self.tr("Country"):
                             return ResultTypes.CountryBalanceAnalysis
                         else:
-                            if aggregation == "Community":
+                            if aggregation == self.tr("Community"):
                                 return ResultTypes.CommunityBalanceAnalysis
                             else:
-                                if aggregation == "Region":
+                                if aggregation == self.tr("Region"):
                                     return ResultTypes.RegionBalanceAnalysis
                                 else:
                                     return ResultTypes.MunicipalityBalanceAnalysis
@@ -1094,10 +1131,10 @@ QWidget#overviewPage QProgressBar::chunk {{
         axis.set_facecolor(axis_facecolor)
 
         if self.inputs_results is None:
-            self.balanceSummaryLabel.setText("Inputs analysis is unavailable for the current grid.")
+            self.balanceSummaryLabel.setText(self.tr("Inputs analysis is unavailable for the current grid."))
             axis.text(0.5,
                       0.5,
-                      "Inputs analysis unavailable",
+                      self.tr("Inputs analysis unavailable"),
                       ha="center",
                       va="center",
                       fontsize=12,
@@ -1134,7 +1171,8 @@ QWidget#overviewPage QProgressBar::chunk {{
 
         figure.tight_layout()
         self.balancePlotWidget.redraw()
-        self.ui.mainTabWidget.setTabText(self.ui.mainTabWidget.indexOf(self.balance_page), "Balance Explorer")
+        self.ui.mainTabWidget.setTabText(self.ui.mainTabWidget.indexOf(self.balance_page),
+                                         self.tr("Balance Explorer"))
 
     def plot_time_series_balances(self,
                                   aggregation: str,
@@ -1162,10 +1200,14 @@ QWidget#overviewPage QProgressBar::chunk {{
         selected_indices: np.ndarray = ranking[:min(top_n, len(ranking))]
 
         if len(selected_indices) == 0:
-            self.balanceSummaryLabel.setText(f"No {aggregation.lower()} balances are available to plot.")
+            self.balanceSummaryLabel.setText(
+                self.tr("No {aggregation} balances are available to plot.").format(
+                    aggregation=aggregation.lower(),
+                )
+            )
             axis.text(0.5,
                       0.5,
-                      "No balance series available",
+                      self.tr("No balance series available"),
                       ha="center",
                       va="center",
                       fontsize=12,
@@ -1200,16 +1242,26 @@ QWidget#overviewPage QProgressBar::chunk {{
         axis.title.set_color(label_color)
         axis.xaxis.label.set_color(label_color)
         axis.yaxis.label.set_color(label_color)
-        axis.set_title(f"Top {len(selected_indices)} {aggregation} balances over time")
-        axis.set_xlabel("Time")
-        axis.set_ylabel("Net balance (MW)")
+        axis.set_title(
+            self.tr("Top {count} {aggregation} balances over time").format(
+                count=len(selected_indices),
+                aggregation=aggregation,
+            )
+        )
+        axis.set_xlabel(self.tr("Time"))
+        axis.set_ylabel(self.tr("Net balance (MW)"))
         axis.legend(loc="best")
 
         top_column_name: str = str(result_table.cols_c[selected_indices[0]])
         top_column_value: float = float(magnitude[selected_indices[0]])
         self.balanceSummaryLabel.setText(
-            f"Showing the {len(selected_indices)} strongest {aggregation.lower()} balance traces. "
-            f"Largest absolute balance: {top_column_name} at {top_column_value:.3f} MW."
+            self.tr("Showing the {count} strongest {aggregation} balance traces. "
+                    "Largest absolute balance: {column_name} at {column_value:.3f} MW.").format(
+                count=len(selected_indices),
+                aggregation=aggregation.lower(),
+                column_name=top_column_name,
+                column_value=top_column_value,
+            )
         )
 
     def plot_snapshot_balances(self,
@@ -1237,10 +1289,14 @@ QWidget#overviewPage QProgressBar::chunk {{
         selected_series: pd.Series = ordered_series.head(top_n)
 
         if selected_series.empty:
-            self.balanceSummaryLabel.setText(f"No {aggregation.lower()} balances are available to plot.")
+            self.balanceSummaryLabel.setText(
+                self.tr("No {aggregation} balances are available to plot.").format(
+                    aggregation=aggregation.lower(),
+                )
+            )
             axis.text(0.5,
                       0.5,
-                      "No snapshot balances available",
+                      self.tr("No snapshot balances available"),
                       ha="center",
                       va="center",
                       fontsize=12,
@@ -1272,8 +1328,13 @@ QWidget#overviewPage QProgressBar::chunk {{
         axis.title.set_color(label_color)
         axis.xaxis.label.set_color(label_color)
         axis.yaxis.label.set_color(label_color)
-        axis.set_title(f"Top {len(values)} {aggregation} snapshot balances")
-        axis.set_xlabel("Net balance (MW)")
+        axis.set_title(
+            self.tr("Top {count} {aggregation} snapshot balances").format(
+                count=len(values),
+                aggregation=aggregation,
+            )
+        )
+        axis.set_xlabel(self.tr("Net balance (MW)"))
         axis.set_ylabel(aggregation)
 
         exporter_name: str = str(selected_series.idxmax())
@@ -1281,9 +1342,15 @@ QWidget#overviewPage QProgressBar::chunk {{
         importer_name: str = str(selected_series.idxmin())
         importer_value: float = float(selected_series.min())
         self.balanceSummaryLabel.setText(
-            f"Snapshot net balances by {aggregation.lower()}. "
-            f"Largest exporter: {exporter_name} ({exporter_value:.3f} MW). "
-            f"Largest importer: {importer_name} ({importer_value:.3f} MW)."
+            self.tr("Snapshot net balances by {aggregation}. "
+                    "Largest exporter: {exporter_name} ({exporter_value:.3f} MW). "
+                    "Largest importer: {importer_name} ({importer_value:.3f} MW).").format(
+                aggregation=aggregation.lower(),
+                exporter_name=exporter_name,
+                exporter_value=exporter_value,
+                importer_name=importer_name,
+                importer_value=importer_value,
+            )
         )
 
     def sort_issue_entries(self, issue: IssueEntry) -> Tuple[int, str, str]:
@@ -1356,13 +1423,13 @@ QWidget#overviewPage QProgressBar::chunk {{
         if not results.converged:
             entries.append(
                 IssueEntry(
-                    message="Sigma analysis did not converge",
-                    object_type="Sigma analysis",
-                    element_name="Global",
+                    message=self.tr("Sigma analysis did not converge"),
+                    object_type=self.tr("Sigma analysis"),
+                    element_name=self.tr("Global"),
                     element_index=-1,
                     severity=LogSeverity.Error,
-                    property_name="Status",
-                    lower="Converged",
+                    property_name=self.tr("Status"),
+                    lower=self.tr("Converged"),
                     value=sigma_status_text,
                     upper="",
                     fixable=False,
@@ -1379,12 +1446,12 @@ QWidget#overviewPage QProgressBar::chunk {{
             if np.isnan(distance):
                 entries.append(
                     IssueEntry(
-                        message="Sigma distance is not available",
-                        object_type="Bus",
+                        message=self.tr("Sigma distance is not available"),
+                        object_type=self.tr("Bus"),
                         element_name=display_text(bus_names[index]),
                         element_index=index,
                         severity=LogSeverity.Error,
-                        property_name="Sigma distance",
+                        property_name=self.tr("Sigma distance"),
                         lower="0.0",
                         value="nan",
                         upper="inf",
@@ -1398,12 +1465,12 @@ QWidget#overviewPage QProgressBar::chunk {{
                 if sigma_point_is_outside_curve(sigma_real=sigma_real, sigma_imag=sigma_imag):
                     entries.append(
                         IssueEntry(
-                            message="Sigma point is outside the stability curve",
-                            object_type="Bus",
+                            message=self.tr("Sigma point is outside the stability curve"),
+                            object_type=self.tr("Bus"),
                             element_name=display_text(bus_names[index]),
                             element_index=index,
                             severity=LogSeverity.Error,
-                            property_name="Sigma distance",
+                            property_name=self.tr("Sigma distance"),
                             lower="0.0",
                             value=f"{abs(float(distance)):.6f}",
                             upper="inf",
@@ -1473,16 +1540,16 @@ QWidget#overviewPage QProgressBar::chunk {{
                         pass
 
                     if results.converged:
-                        status_text = "Sigma analysis converged."
+                        status_text = self.tr("Sigma analysis converged.")
                     else:
-                        status_text = "Sigma coefficients did not fully converge."
+                        status_text = self.tr("Sigma coefficients did not fully converge.")
                 else:
-                    status_text = "Sigma analysis returned no results."
+                    status_text = self.tr("Sigma analysis returned no results.")
             except Exception as exception:
                 results = None
-                status_text = f"Sigma analysis failed: {exception}"
+                status_text = self.tr("Sigma analysis failed: {exception}").format(exception=exception)
         else:
-            status_text = "Sigma analysis unavailable because the grid is not valid for simulation."
+            status_text = self.tr("Sigma analysis unavailable because the grid is not valid for simulation.")
 
         return results, status_text
 
@@ -1668,7 +1735,7 @@ QWidget#overviewPage QProgressBar::chunk {{
         """
         # Update the hero cards first because they provide the user-facing summary at a glance.
         self.ui.scoreValueLabel.setText(str(self.summary.overall_score))
-        self.ui.scoreGradeLabel.setText(f"Grade {self.summary.grade}")
+        self.ui.scoreGradeLabel.setText(self.tr("Grade {grade}").format(grade=self.summary.grade))
         self.ui.scoreProgressBar.setValue(self.summary.overall_score)
         self.ui.issueCountValueLabel.setText(str(self.summary.issue_count))
         self.ui.criticalCountValueLabel.setText(str(self.summary.critical_count))
@@ -1678,21 +1745,31 @@ QWidget#overviewPage QProgressBar::chunk {{
         if self.summary.sigma_available:
             self.ui.sigmaHealthValueLabel.setText(f"{self.summary.min_sigma_distance:.3f}")
             self.ui.sigmaFootnoteLabel.setText(
-                f"Minimum distance {self.summary.min_sigma_distance:.3f} p.u. • "
-                f"mean distance {self.summary.mean_sigma_distance:.3f} p.u."
+                self.tr("Minimum distance {min_distance:.3f} p.u. • "
+                        "mean distance {mean_distance:.3f} p.u.").format(
+                    min_distance=self.summary.min_sigma_distance,
+                    mean_distance=self.summary.mean_sigma_distance,
+                )
             )
         else:
-            self.ui.sigmaHealthValueLabel.setText("N/A")
-            self.ui.sigmaFootnoteLabel.setText("Sigma analysis could not be produced for the current grid state.")
+            self.ui.sigmaHealthValueLabel.setText(self.tr("N/A"))
+            self.ui.sigmaFootnoteLabel.setText(
+                self.tr("Sigma analysis could not be produced for the current grid state.")
+            )
 
         # Keep the score explanation explicit so users understand what the dashboard is scoring.
         if self.summary.sigma_available:
             self.ui.scoreExplainerLabel.setText(
-                f"Issue score {self.summary.issue_score:.1f}/100 • sigma score {self.summary.sigma_score:.1f}/100."
+                self.tr("Issue score {issue_score:.1f}/100 • sigma score {sigma_score:.1f}/100.").format(
+                    issue_score=self.summary.issue_score,
+                    sigma_score=self.summary.sigma_score,
+                )
             )
         else:
             self.ui.scoreExplainerLabel.setText(
-                f"Issue score {self.summary.issue_score:.1f}/100 • sigma score unavailable."
+                self.tr("Issue score {issue_score:.1f}/100 • sigma score unavailable.").format(
+                    issue_score=self.summary.issue_score,
+                )
             )
 
     def refresh_issue_table(self) -> None:
@@ -1780,11 +1857,11 @@ QWidget#overviewPage QProgressBar::chunk {{
 
         # Keep the current findings count visible in the section title after filtering.
         filtered_count: int = len(filtered_issues)
-        self.ui.findingsTitleLabel.setText(f"Findings ({filtered_count})")
+        self.ui.findingsTitleLabel.setText(self.tr("Findings ({count})").format(count=filtered_count))
         self.ui.mainTabWidget.setTabText(self.ui.mainTabWidget.indexOf(self.ui.findingsPage),
-                                         f"Findings Explorer ({filtered_count})")
+                                         self.tr("Findings Explorer ({count})").format(count=filtered_count))
         self.ui.mainTabWidget.setTabText(self.ui.mainTabWidget.indexOf(self.ui.narrativePage),
-                                         "Action Narrative")
+                                         self.tr("Action Narrative"))
         self.ui.issuesTreeView.expandToDepth(1)
 
     def build_empty_issue_columns(self) -> List[QtGui.QStandardItem]:
@@ -1854,7 +1931,7 @@ QWidget#overviewPage QProgressBar::chunk {{
             issue.value,
             issue.upper,
             str(issue.element_index),
-            "Yes" if issue.fixable else "No",
+            self.tr("Yes") if issue.fixable else self.tr("No"),
         ]
         items: List[QtGui.QStandardItem] = list()
         for value in values:
@@ -1944,9 +2021,12 @@ QWidget#overviewPage QProgressBar::chunk {{
             self.populate_sigma_table()
 
             sigma_status_text: str = (
-                f"{self.summary.sigma_status_text} "
-                f"Min distance {self.summary.min_sigma_distance:.3f} p.u. • "
-                f"mean distance {self.summary.mean_sigma_distance:.3f} p.u."
+                self.tr("{status_text} Min distance {min_distance:.3f} p.u. • "
+                        "mean distance {mean_distance:.3f} p.u.").format(
+                    status_text=self.summary.sigma_status_text,
+                    min_distance=self.summary.min_sigma_distance,
+                    mean_distance=self.summary.mean_sigma_distance,
+                )
             )
             self.ui.sigmaStatusLabel.setText(sigma_status_text)
         else:
@@ -1968,9 +2048,9 @@ QWidget#overviewPage QProgressBar::chunk {{
             self.ui.sigmaPlotWidget.redraw()
             self.ui.sigmaStatusLabel.setText(self.summary.sigma_status_text)
         self.ui.mainTabWidget.setTabText(self.ui.mainTabWidget.indexOf(self.ui.sigmaPage),
-                                         "Sigma Stability")
+                                         self.tr("Sigma Stability"))
         self.ui.mainTabWidget.setTabText(self.ui.mainTabWidget.indexOf(self.ui.controlsPage),
-                                         "Assessment Controls")
+                                         self.tr("Assessment Controls"))
 
     def apply_sigma_plot_theme(self,
                                axis,
@@ -2047,58 +2127,131 @@ QWidget#overviewPage QProgressBar::chunk {{
 
         parts: List[str] = list()
         parts.append(f"<div style='font-family: DejaVu Sans; color: {body_text_color};'>")
-        parts.append(f"<h3 style='margin-top: 0px; color: {heading_text_color};'>Score Rationale</h3>")
         parts.append(
-            f"<p>The grid scores <b>{self.summary.overall_score}/100</b> "
-            f"(<b>grade {html.escape(self.summary.grade)}</b>) across "
-            f"<b>{self.summary.asset_count}</b> analyzed assets.</p>"
+            f"<h3 style='margin-top: 0px; color: {heading_text_color};'>{self.tr('Score Rationale')}</h3>"
+        )
+        parts.append(
+            "<p>"
+            + self.tr("The grid scores <b>{overall_score}/100</b> "
+                      "(<b>grade {grade}</b>) across <b>{asset_count}</b> analyzed assets.").format(
+                overall_score=self.summary.overall_score,
+                grade=html.escape(self.summary.grade),
+                asset_count=self.summary.asset_count,
+            )
+            + "</p>"
         )
 
         # Explain what is driving the score numerically.
         parts.append("<ul>")
-        parts.append(f"<li><b>{self.summary.error_count}</b> errors and <b>{self.summary.divergence_count}</b> divergences are blocking the score most strongly.</li>")
-        parts.append(f"<li><b>{self.summary.warning_count}</b> warnings and <b>{self.summary.information_count}</b> informational findings still reduce confidence.</li>")
-        parts.append(f"<li><b>{self.summary.fixable_count}</b> findings can be auto-corrected safely from this dashboard.</li>")
+        parts.append(
+            "<li>"
+            + self.tr("<b>{error_count}</b> errors and <b>{divergence_count}</b> divergences are blocking the score most strongly.").format(
+                error_count=self.summary.error_count,
+                divergence_count=self.summary.divergence_count,
+            )
+            + "</li>"
+        )
+        parts.append(
+            "<li>"
+            + self.tr("<b>{warning_count}</b> warnings and <b>{information_count}</b> informational findings still reduce confidence.").format(
+                warning_count=self.summary.warning_count,
+                information_count=self.summary.information_count,
+            )
+            + "</li>"
+        )
+        parts.append(
+            "<li>"
+            + self.tr("<b>{fixable_count}</b> findings can be auto-corrected safely from this dashboard.").format(
+                fixable_count=self.summary.fixable_count,
+            )
+            + "</li>"
+        )
         if self.summary.sigma_available:
             parts.append(
-                f"<li>Sigma stability margin is available with minimum distance "
-                f"<b>{self.summary.min_sigma_distance:.3f} p.u.</b> and mean distance "
-                f"<b>{self.summary.mean_sigma_distance:.3f} p.u.</b>.</li>"
+                "<li>"
+                + self.tr("Sigma stability margin is available with minimum distance <b>{min_distance:.3f} p.u.</b> "
+                          "and mean distance <b>{mean_distance:.3f} p.u.</b>.").format(
+                    min_distance=self.summary.min_sigma_distance,
+                    mean_distance=self.summary.mean_sigma_distance,
+                )
+                + "</li>"
             )
         else:
-            parts.append("<li>Sigma stability could not be included in the score because the simulation could not be produced.</li>")
+            parts.append(
+                "<li>"
+                + self.tr("Sigma stability could not be included in the score because the simulation could not be produced.")
+                + "</li>"
+            )
         parts.append("</ul>")
 
         # Show the most repeated issue family because repeated patterns often define the best first move.
         if self.summary.top_message_count > 0:
-            parts.append(f"<h3 style='color: {heading_text_color};'>Most Repeated Finding</h3>")
+            parts.append(
+                f"<h3 style='color: {heading_text_color};'>{self.tr('Most Repeated Finding')}</h3>"
+            )
             parts.append(
                 f"<p><b>{self.summary.top_message_count}×</b> "
                 f"{html.escape(self.summary.top_message)}</p>"
             )
         else:
-            parts.append(f"<h3 style='color: {heading_text_color};'>Most Repeated Finding</h3>")
-            parts.append("<p>No findings were produced by the current analysis settings.</p>")
+            parts.append(
+                f"<h3 style='color: {heading_text_color};'>{self.tr('Most Repeated Finding')}</h3>"
+            )
+            parts.append(f"<p>{self.tr('No findings were produced by the current analysis settings.')}</p>")
 
         # Finish with explicit next actions so the dashboard is operational rather than decorative.
-        parts.append(f"<h3 style='color: {heading_text_color};'>Recommended Next Actions</h3>")
+        parts.append(
+            f"<h3 style='color: {heading_text_color};'>{self.tr('Recommended Next Actions')}</h3>"
+        )
         parts.append("<ol>")
         if self.summary.fixable_count > 0:
-            parts.append("<li>Use <b>Fix Safe Issues</b> to correct the problems already covered by automatic repairs, then refresh the score.</li>")
+            parts.append(
+                "<li>"
+                + self.tr("Use <b>Fix Safe Issues</b> to correct the problems already covered by automatic repairs, then refresh the score.")
+                + "</li>"
+            )
         else:
-            parts.append("<li>No safe automatic fixes were detected, so the next step is a manual review of the highest-severity findings.</li>")
+            parts.append(
+                "<li>"
+                + self.tr("No safe automatic fixes were detected, so the next step is a manual review of the highest-severity findings.")
+                + "</li>"
+            )
         if self.summary.critical_count > 0:
-            parts.append("<li>Prioritize errors and divergences before warnings, especially the rows tagged with severe numerical or connectivity issues.</li>")
+            parts.append(
+                "<li>"
+                + self.tr("Prioritize errors and divergences before warnings, especially the rows tagged with severe numerical or connectivity issues.")
+                + "</li>"
+            )
         else:
-            parts.append("<li>There are no critical findings, so the remaining work is mainly quality hardening and model cleanup.</li>")
+            parts.append(
+                "<li>"
+                + self.tr("There are no critical findings, so the remaining work is mainly quality hardening and model cleanup.")
+                + "</li>"
+            )
         if self.summary.sigma_available:
             if self.summary.min_sigma_distance < 0.10:
-                parts.append("<li>Investigate buses with the smallest sigma distances because the current stability margin is tight.</li>")
+                parts.append(
+                    "<li>"
+                    + self.tr("Investigate buses with the smallest sigma distances because the current stability margin is tight.")
+                    + "</li>"
+                )
             else:
-                parts.append("<li>Sigma margin is acceptable, so focus on structural cleanup before attempting aggressive operational studies.</li>")
+                parts.append(
+                    "<li>"
+                    + self.tr("Sigma margin is acceptable, so focus on structural cleanup before attempting aggressive operational studies.")
+                    + "</li>"
+                )
         else:
-            parts.append("<li>Make the grid simulation-ready and rerun the dashboard so sigma margin can join the report.</li>")
-        parts.append("<li>Export the full report once the score and findings reflect the scenario you want to share.</li>")
+            parts.append(
+                "<li>"
+                + self.tr("Make the grid simulation-ready and rerun the dashboard so sigma margin can join the report.")
+                + "</li>"
+            )
+        parts.append(
+            "<li>"
+            + self.tr("Export the full report once the score and findings reflect the scenario you want to share.")
+            + "</li>"
+        )
         parts.append("</ol>")
         parts.append("</div>")
         return "".join(parts)
@@ -2110,9 +2263,10 @@ QWidget#overviewPage QProgressBar::chunk {{
         # Reuse the existing results model capability when sigma data is available.
         if self.sigma_model is not None:
             self.sigma_model.copy_to_clipboard()
-            self.statusBar().showMessage("Sigma table copied to clipboard.", 5000)
+            self.statusBar().showMessage(self.tr("Sigma table copied to clipboard."), 5000)
         else:
-            self.show_information_message("There is no sigma table available to copy.", "Sigma table")
+            self.show_information_message(self.tr("There is no sigma table available to copy."),
+                                          self.tr("Sigma table"))
 
     def fix_all(self) -> None:
         """
@@ -2125,7 +2279,7 @@ QWidget#overviewPage QProgressBar::chunk {{
                 fixable_error.fix(logger=logger, fix_ts=self.ui.fixTimeSeriesCheckBox.isChecked())
 
             if logger.has_logs():
-                dialogue: LogsDialogue = LogsDialogue("Fixed issues", logger)
+                dialogue: LogsDialogue = LogsDialogue(self.tr("Fixed issues"), logger)
                 dialogue.setModal(True)
                 dialogue.exec()
             else:
@@ -2133,20 +2287,22 @@ QWidget#overviewPage QProgressBar::chunk {{
 
             self.analyze_all()
         else:
-            self.show_information_message("The current dashboard state does not expose any safe automatic fixes.",
-                                          "Fix safe issues")
+            self.show_information_message(
+                self.tr("The current dashboard state does not expose any safe automatic fixes."),
+                self.tr("Fix safe issues"),
+            )
 
     def save_diagnostic(self) -> None:
         """
         Export only the diagnostic issue list and summary as an Excel workbook.
         """
         # Keep the legacy behavior available, but augment it with the current score summary.
-        file_types: str = "Excel (*.xlsx)"
+        file_types: str = self.tr("Excel (*.xlsx)")
         default_name: str = "grid_diagnostics_dashboard.xlsx"
         file_name: str
         selected_filter: str
         file_name, selected_filter = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                                           "Export issues only",
+                                                                           self.tr("Export issues only"),
                                                                            default_name,
                                                                            file_types)
 
@@ -2157,9 +2313,9 @@ QWidget#overviewPage QProgressBar::chunk {{
                 final_name = f"{file_name}.xlsx"
 
             with pd.ExcelWriter(final_name) as excel_writer:
-                self.build_summary_data_frame().to_excel(excel_writer, sheet_name="Summary", index=False)
-                self.build_issue_data_frame().to_excel(excel_writer, sheet_name="Issues", index=False)
-            self.statusBar().showMessage(f"Issues exported to {final_name}.", 8000)
+                self.build_summary_data_frame().to_excel(excel_writer, sheet_name=self.tr("Summary"), index=False)
+                self.build_issue_data_frame().to_excel(excel_writer, sheet_name=self.tr("Issues"), index=False)
+            self.statusBar().showMessage(self.tr("Issues exported to {file_name}.").format(file_name=final_name), 8000)
         else:
             pass
 
@@ -2168,12 +2324,12 @@ QWidget#overviewPage QProgressBar::chunk {{
         Export the dashboard report as Excel, HTML or PDF.
         """
         # Offer portable report formats because the dashboard is meant to be shared outside the GUI.
-        file_types: str = "Excel (*.xlsx);;HTML (*.html);;PDF (*.pdf)"
+        file_types: str = self.tr("Excel (*.xlsx);;HTML (*.html);;PDF (*.pdf)")
         default_name: str = "grid_health_dashboard_report.pdf"
         file_name: str
         selected_filter: str
         file_name, selected_filter = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                                           "Export full report",
+                                                                           self.tr("Export full report"),
                                                                            default_name,
                                                                            file_types)
 
@@ -2209,12 +2365,15 @@ QWidget#overviewPage QProgressBar::chunk {{
         """
         # Write separate sheets so the report is useful both for reading and for follow-up analysis.
         with pd.ExcelWriter(file_name) as excel_writer:
-            self.build_summary_data_frame().to_excel(excel_writer, sheet_name="Summary", index=False)
-            self.build_thresholds_data_frame().to_excel(excel_writer, sheet_name="Thresholds", index=False)
-            self.build_issue_data_frame().to_excel(excel_writer, sheet_name="Issues", index=False)
-            self.build_sigma_data_frame().to_excel(excel_writer, sheet_name="Sigma", index=False)
+            self.build_summary_data_frame().to_excel(excel_writer, sheet_name=self.tr("Summary"), index=False)
+            self.build_thresholds_data_frame().to_excel(excel_writer, sheet_name=self.tr("Thresholds"), index=False)
+            self.build_issue_data_frame().to_excel(excel_writer, sheet_name=self.tr("Issues"), index=False)
+            self.build_sigma_data_frame().to_excel(excel_writer, sheet_name=self.tr("Sigma"), index=False)
 
-        self.statusBar().showMessage(f"Full dashboard report exported to {file_name}.", 8000)
+        self.statusBar().showMessage(
+            self.tr("Full dashboard report exported to {file_name}.").format(file_name=file_name),
+            8000,
+        )
 
     def export_report_to_html(self, file_name: str) -> None:
         """
@@ -2227,7 +2386,10 @@ QWidget#overviewPage QProgressBar::chunk {{
         with open(file_name, "w", encoding="utf-8") as file_handle:
             file_handle.write(html_report)
 
-        self.statusBar().showMessage(f"Full dashboard report exported to {file_name}.", 8000)
+        self.statusBar().showMessage(
+            self.tr("Full dashboard report exported to {file_name}.").format(file_name=file_name),
+            8000,
+        )
 
     def export_report_to_pdf(self, file_name: str) -> None:
         """
@@ -2251,7 +2413,10 @@ QWidget#overviewPage QProgressBar::chunk {{
         document.setPageSize(QtCore.QSizeF(float(paint_rect.width()), float(paint_rect.height())))
         document.print_(pdf_writer)
 
-        self.statusBar().showMessage(f"Full dashboard report exported to {file_name}.", 8000)
+        self.statusBar().showMessage(
+            self.tr("Full dashboard report exported to {file_name}.").format(file_name=file_name),
+            8000,
+        )
 
     def build_summary_data_frame(self) -> pd.DataFrame:
         """
@@ -2261,25 +2426,25 @@ QWidget#overviewPage QProgressBar::chunk {{
         """
         # Represent the summary as key-value rows because that layout exports cleanly to both Excel and HTML.
         rows: List[List[object]] = list()
-        rows.append(["Overall score", self.summary.overall_score])
-        rows.append(["Grade", self.summary.grade])
-        rows.append(["Issue score", round(self.summary.issue_score, 3)])
-        rows.append(["Sigma score", round(self.summary.sigma_score, 3)])
-        rows.append(["Total findings", self.summary.issue_count])
-        rows.append(["Critical findings", self.summary.critical_count])
-        rows.append(["Errors", self.summary.error_count])
-        rows.append(["Warnings", self.summary.warning_count])
-        rows.append(["Information", self.summary.information_count])
-        rows.append(["Divergences", self.summary.divergence_count])
-        rows.append(["Auto-fix ready", self.summary.fixable_count])
-        rows.append(["Analyzed assets", self.summary.asset_count])
-        rows.append(["Sigma available", self.summary.sigma_available])
-        rows.append(["Sigma status", self.summary.sigma_status_text])
-        rows.append(["Minimum sigma distance", round(self.summary.min_sigma_distance, 6)])
-        rows.append(["Mean sigma distance", round(self.summary.mean_sigma_distance, 6)])
-        rows.append(["Most repeated finding", self.summary.top_message])
-        rows.append(["Most repeated finding count", self.summary.top_message_count])
-        return pd.DataFrame(rows, columns=["Metric", "Value"])
+        rows.append([self.tr("Overall score"), self.summary.overall_score])
+        rows.append([self.tr("Grade"), self.summary.grade])
+        rows.append([self.tr("Issue score"), round(self.summary.issue_score, 3)])
+        rows.append([self.tr("Sigma score"), round(self.summary.sigma_score, 3)])
+        rows.append([self.tr("Total findings"), self.summary.issue_count])
+        rows.append([self.tr("Critical findings"), self.summary.critical_count])
+        rows.append([self.tr("Errors"), self.summary.error_count])
+        rows.append([self.tr("Warnings"), self.summary.warning_count])
+        rows.append([self.tr("Information"), self.summary.information_count])
+        rows.append([self.tr("Divergences"), self.summary.divergence_count])
+        rows.append([self.tr("Auto-fix ready"), self.summary.fixable_count])
+        rows.append([self.tr("Analyzed assets"), self.summary.asset_count])
+        rows.append([self.tr("Sigma available"), self.summary.sigma_available])
+        rows.append([self.tr("Sigma status"), self.summary.sigma_status_text])
+        rows.append([self.tr("Minimum sigma distance"), round(self.summary.min_sigma_distance, 6)])
+        rows.append([self.tr("Mean sigma distance"), round(self.summary.mean_sigma_distance, 6)])
+        rows.append([self.tr("Most repeated finding"), self.summary.top_message])
+        rows.append([self.tr("Most repeated finding count"), self.summary.top_message_count])
+        return pd.DataFrame(rows, columns=[self.tr("Metric"), self.tr("Value")])
 
     def build_thresholds_data_frame(self) -> pd.DataFrame:
         """
@@ -2289,17 +2454,17 @@ QWidget#overviewPage QProgressBar::chunk {{
         """
         # Report the exact thresholds used so exported scores remain auditable.
         rows: List[List[object]] = list()
-        rows.append(["Active power imbalance (%)", self.ui.activePowerImbalanceSpinBox.value()])
-        rows.append(["Generator Vset min", self.ui.genVsetMinSpinBox.value()])
-        rows.append(["Generator Vset max", self.ui.genVsetMaxSpinBox.value()])
-        rows.append(["Transformer tap module min", self.ui.transformerTapModuleMinSpinBox.value()])
-        rows.append(["Transformer tap module max", self.ui.transformerTapModuleMaxSpinBox.value()])
-        rows.append(["Virtual tap tolerance (%)", self.ui.virtualTapToleranceSpinBox.value()])
-        rows.append(["Line voltage mismatch tolerance (%)", self.ui.lineNominalVoltageToleranceSpinBox.value()])
-        rows.append(["Transformer Vcc min (%)", self.ui.transformerVccMinSpinBox.value()])
-        rows.append(["Transformer Vcc max (%)", self.ui.transformerVccMaxSpinBox.value()])
-        rows.append(["Apply fixes to time series", self.ui.fixTimeSeriesCheckBox.isChecked()])
-        return pd.DataFrame(rows, columns=["Threshold", "Value"])
+        rows.append([self.tr("Active power imbalance (%)"), self.ui.activePowerImbalanceSpinBox.value()])
+        rows.append([self.tr("Generator Vset min"), self.ui.genVsetMinSpinBox.value()])
+        rows.append([self.tr("Generator Vset max"), self.ui.genVsetMaxSpinBox.value()])
+        rows.append([self.tr("Transformer tap module min"), self.ui.transformerTapModuleMinSpinBox.value()])
+        rows.append([self.tr("Transformer tap module max"), self.ui.transformerTapModuleMaxSpinBox.value()])
+        rows.append([self.tr("Virtual tap tolerance (%)"), self.ui.virtualTapToleranceSpinBox.value()])
+        rows.append([self.tr("Line voltage mismatch tolerance (%)"), self.ui.lineNominalVoltageToleranceSpinBox.value()])
+        rows.append([self.tr("Transformer Vcc min (%)"), self.ui.transformerVccMinSpinBox.value()])
+        rows.append([self.tr("Transformer Vcc max (%)"), self.ui.transformerVccMaxSpinBox.value()])
+        rows.append([self.tr("Apply fixes to time series"), self.ui.fixTimeSeriesCheckBox.isChecked()])
+        return pd.DataFrame(rows, columns=[self.tr("Threshold"), self.tr("Value")])
 
     def build_issue_data_frame(self) -> pd.DataFrame:
         """
@@ -2323,8 +2488,16 @@ QWidget#overviewPage QProgressBar::chunk {{
                 issue.fixable,
             ])
         return pd.DataFrame(rows,
-                            columns=["Severity", "Message", "Object", "Name", "Property",
-                                     "Lower", "Value", "Upper", "Index", "Auto-fix"])
+                            columns=[self.tr("Severity"),
+                                     self.tr("Message"),
+                                     self.tr("Object"),
+                                     self.tr("Name"),
+                                     self.tr("Property"),
+                                     self.tr("Lower"),
+                                     self.tr("Value"),
+                                     self.tr("Upper"),
+                                     self.tr("Index"),
+                                     self.tr("Auto-fix")])
 
     def build_sigma_data_frame(self) -> pd.DataFrame:
         """
@@ -2337,8 +2510,8 @@ QWidget#overviewPage QProgressBar::chunk {{
             return self.sigma_model.to_df().reset_index()
         else:
             rows: List[List[object]] = list()
-            rows.append(["Status", self.summary.sigma_status_text])
-            return pd.DataFrame(rows, columns=["Field", "Value"])
+            rows.append([self.tr("Status"), self.summary.sigma_status_text])
+            return pd.DataFrame(rows, columns=[self.tr("Field"), self.tr("Value")])
 
     def build_html_report(self) -> str:
         """
@@ -2357,7 +2530,7 @@ QWidget#overviewPage QProgressBar::chunk {{
         # Compose a lightweight website-like report so exported results match the dashboard spirit.
         parts: List[str] = list()
         parts.append("<html><head><meta charset='utf-8'>")
-        parts.append("<title>Grid Health Dashboard Report</title>")
+        parts.append(f"<title>{self.tr('Grid Health Dashboard Report')}</title>")
         parts.append("<style>")
         parts.append("body { background:#f3f7fb; color:#17324a; font-family:'DejaVu Sans'; margin:0; }")
         parts.append(".page { max-width:1360px; margin:0 auto; padding:24px; }")
@@ -2375,26 +2548,52 @@ QWidget#overviewPage QProgressBar::chunk {{
         parts.append(".plot { margin-top:16px; }")
         parts.append("</style></head><body><div class='page'>")
         parts.append("<div class='hero'>")
-        parts.append("<div style='font-size:12px;font-weight:700;letter-spacing:0.08em;'>SCORING DASHBOARD</div>")
-        parts.append("<h1 style='margin-bottom:8px;'>Grid Health Dashboard Report</h1>")
+        parts.append(
+            f"<div style='font-size:12px;font-weight:700;letter-spacing:0.08em;'>{self.tr('SCORING DASHBOARD')}</div>"
+        )
+        parts.append(f"<h1 style='margin-bottom:8px;'>{self.tr('Grid Health Dashboard Report')}</h1>")
         parts.append(f"<p style='max-width:920px;'>{html.escape(self.summary.sigma_status_text)}</p>")
         parts.append("</div>")
         parts.append("<div class='grid'>")
-        parts.append(f"<div class='card'><div class='cardsmall'>Overall Score</div><div class='cardvalue'>{self.summary.overall_score}</div><div>Grade {html.escape(self.summary.grade)}</div></div>")
-        parts.append(f"<div class='card'><div class='cardsmall'>Total Findings</div><div class='cardvalue'>{self.summary.issue_count}</div><div>{self.summary.critical_count} critical findings</div></div>")
-        parts.append(f"<div class='card'><div class='cardsmall'>Auto-Fix Ready</div><div class='cardvalue'>{self.summary.fixable_count}</div><div>Safe corrections available</div></div>")
+        parts.append(
+            f"<div class='card'><div class='cardsmall'>{self.tr('Overall Score')}</div>"
+            f"<div class='cardvalue'>{self.summary.overall_score}</div>"
+            f"<div>{self.tr('Grade {grade}').format(grade=html.escape(self.summary.grade))}</div></div>"
+        )
+        parts.append(
+            f"<div class='card'><div class='cardsmall'>{self.tr('Total Findings')}</div>"
+            f"<div class='cardvalue'>{self.summary.issue_count}</div>"
+            f"<div>{self.tr('{critical_count} critical findings').format(critical_count=self.summary.critical_count)}</div></div>"
+        )
+        parts.append(
+            f"<div class='card'><div class='cardsmall'>{self.tr('Auto-Fix Ready')}</div>"
+            f"<div class='cardvalue'>{self.summary.fixable_count}</div>"
+            f"<div>{self.tr('Safe corrections available')}</div></div>"
+        )
         if self.summary.sigma_available:
-            parts.append(f"<div class='card'><div class='cardsmall'>Sigma Margin</div><div class='cardvalue'>{self.summary.min_sigma_distance:.3f}</div><div>Mean {self.summary.mean_sigma_distance:.3f} p.u.</div></div>")
+            parts.append(
+                f"<div class='card'><div class='cardsmall'>{self.tr('Sigma Margin')}</div>"
+                f"<div class='cardvalue'>{self.summary.min_sigma_distance:.3f}</div>"
+                f"<div>{self.tr('Mean {mean_distance:.3f} p.u.').format(mean_distance=self.summary.mean_sigma_distance)}</div></div>"
+            )
         else:
-            parts.append("<div class='card'><div class='cardsmall'>Sigma Margin</div><div class='cardvalue'>N/A</div><div>Sigma data unavailable</div></div>")
+            parts.append(
+                f"<div class='card'><div class='cardsmall'>{self.tr('Sigma Margin')}</div>"
+                f"<div class='cardvalue'>{self.tr('N/A')}</div>"
+                f"<div>{self.tr('Sigma data unavailable')}</div></div>"
+            )
         parts.append("</div>")
         parts.append("<div class='panelgrid'>")
-        parts.append(f"<div class='panel section'><h2>What Needs Attention</h2>{narrative_html}</div>")
-        parts.append(f"<div class='panel section'><h2>Summary</h2>{summary_table_html}<div class='plot'>{sigma_plot_html}</div></div>")
+        parts.append(
+            f"<div class='panel section'><h2>{self.tr('What Needs Attention')}</h2>{narrative_html}</div>"
+        )
+        parts.append(
+            f"<div class='panel section'><h2>{self.tr('Summary')}</h2>{summary_table_html}<div class='plot'>{sigma_plot_html}</div></div>"
+        )
         parts.append("</div>")
-        parts.append(f"<div class='panel section'><h2>Thresholds</h2>{thresholds_table_html}</div>")
-        parts.append(f"<div class='panel section'><h2>Findings</h2>{issues_table_html}</div>")
-        parts.append(f"<div class='panel section'><h2>Sigma Table</h2>{sigma_table_html}</div>")
+        parts.append(f"<div class='panel section'><h2>{self.tr('Thresholds')}</h2>{thresholds_table_html}</div>")
+        parts.append(f"<div class='panel section'><h2>{self.tr('Findings')}</h2>{issues_table_html}</div>")
+        parts.append(f"<div class='panel section'><h2>{self.tr('Sigma Table')}</h2>{sigma_table_html}</div>")
         parts.append("</div></body></html>")
         return "".join(parts)
 
@@ -2408,12 +2607,12 @@ QWidget#overviewPage QProgressBar::chunk {{
         if self.sigma_results is not None:
             image_base64: str = self.get_sigma_plot_base64()
             return (
-                "<h3>Sigma Plot</h3>"
-                f"<img alt='Sigma plot' style='max-width:100%; border-radius:18px; border:1px solid #dce7f2;' "
+                f"<h3>{self.tr('Sigma Plot')}</h3>"
+                f"<img alt='{self.tr('Sigma plot')}' style='max-width:100%; border-radius:18px; border:1px solid #dce7f2;' "
                 f"src='data:image/png;base64,{image_base64}' />"
             )
         else:
-            return "<h3>Sigma Plot</h3><p>Sigma plot is unavailable for the current grid state.</p>"
+            return f"<h3>{self.tr('Sigma Plot')}</h3><p>{self.tr('Sigma plot is unavailable for the current grid state.')}</p>"
 
     def get_sigma_plot_base64(self) -> str:
         """

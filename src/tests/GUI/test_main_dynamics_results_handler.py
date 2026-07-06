@@ -259,7 +259,7 @@ def test_dynamics_tree_model_exports_only_variable_leaf_mime_data(qt_app: object
         mime_type=mime_type,
         state_key_role=state_key_role,
         series_by_var_uid=series_by_var_uid,
-        candidates_by_parameter_name=dict(),
+        candidates_by_parameter_key=dict(),
         has_multiple_sources=False,
     )
     device_type_item: QtGui.QStandardItem = model.item(0, 0)

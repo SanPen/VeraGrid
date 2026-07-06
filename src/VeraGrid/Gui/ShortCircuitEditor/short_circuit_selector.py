@@ -48,7 +48,7 @@ class ShortCircuitSelector(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self)
         self.ui = Ui_ShortCircuitSelectorDialog()
         self.ui.setupUi(self)
-        self.setWindowTitle('Short Circuit Configuration')
+        self.setWindowTitle(self.tr("Short Circuit Configuration"))
         self.setModal(True)
 
         # self.app = app
@@ -136,15 +136,19 @@ class ShortCircuitSelector(QtWidgets.QDialog):
             },
         }
 
-        self.ui.cb_fault.addItems([e.value for e in FaultType])
-        self.ui.cb_method.addItems([e.value for e in MethodShortCircuit])
-        self.ui.cb_phases.addItems([e.value for e in PhasesShortCircuit])
-        self.ui.cb_type.addItems([k for k, _ in self.fault_info_dict.items()])
+        for fault in FaultType:
+            self.ui.cb_fault.addItem(self.tr(fault.value), fault)
+        for method in MethodShortCircuit:
+            self.ui.cb_method.addItem(self.tr(method.value), method)
+        for phase in PhasesShortCircuit:
+            self.ui.cb_phases.addItem(self.tr(phase.value), phase)
+        for preset_name in self.fault_info_dict.keys():
+            self.ui.cb_type.addItem(self.tr(preset_name), preset_name)
 
         self.update_logic()
-        self.fault = FaultType(self.ui.cb_fault.currentText())
-        self.method = MethodShortCircuit(self.ui.cb_method.currentText())
-        self.phases = PhasesShortCircuit(self.ui.cb_phases.currentText())
+        self.fault = self._current_fault()
+        self.method = self._current_method()
+        self.phases = self._current_phase()
         self.r_ohm = self.ui.r_doubleSpinBox.value()
         self.x_ohm = self.ui.x_doubleSpinBox.value()
         self.was_accepted = False
@@ -154,74 +158,119 @@ class ShortCircuitSelector(QtWidgets.QDialog):
         self.ui.cb_fault.currentIndexChanged.connect(self.update_logic)
         self.ui.cb_type.currentIndexChanged.connect(self.update_r_x)
 
+    def _current_fault(self) -> FaultType:
+        """
+        Return the selected fault enum regardless of the displayed label text.
+
+        :returns: Selected fault type.
+        """
+        data = self.ui.cb_fault.currentData()
+        if isinstance(data, FaultType):
+            return data
+        else:
+            return FaultType(self.ui.cb_fault.currentText())
+
+    def _current_method(self) -> MethodShortCircuit:
+        """
+        Return the selected short-circuit method.
+
+        :returns: Selected method.
+        """
+        data = self.ui.cb_method.currentData()
+        if isinstance(data, MethodShortCircuit):
+            return data
+        else:
+            return MethodShortCircuit(self.ui.cb_method.currentText())
+
+    def _current_phase(self) -> PhasesShortCircuit:
+        """
+        Return the selected phase option.
+
+        :returns: Selected phase option.
+        """
+        data = self.ui.cb_phases.currentData()
+        if isinstance(data, PhasesShortCircuit):
+            return data
+        else:
+            return PhasesShortCircuit(self.ui.cb_phases.currentText())
+
     def update_view(self):
         """
 
         :return:
         """
 
-        fault = FaultType(self.ui.cb_fault.currentText())
+        fault = self._current_fault()
 
         # -------- UPDATE PHASES --------
-        if self.ui.cb_method.currentText() == MethodShortCircuit.sequences.value:
+        if self._current_method() == MethodShortCircuit.sequences:
             self.ui.cb_phases.setVisible(False)
             self.ui.phases_label.setVisible(False)
         else:
             self.ui.cb_phases.setVisible(True)
             self.ui.phases_label.setVisible(True)
             allowed_phases = valid_phases_for_fault(fault)
-            current_phase = self.ui.cb_phases.currentText()
+            current_phase = self._current_phase()
 
             self.ui.cb_phases.clear()
             for p in allowed_phases:
-                self.ui.cb_phases.addItem(p.value)
+                self.ui.cb_phases.addItem(self.tr(p.value), p)
 
-            if current_phase in [p.value for p in allowed_phases]:
-                self.ui.cb_phases.setCurrentText(current_phase)
+            current_phase_index = self.ui.cb_phases.findData(current_phase)
+            if current_phase_index >= 0:
+                self.ui.cb_phases.setCurrentIndex(current_phase_index)
+            else:
+                pass
 
     def update_logic(self):
         """Update available method and phase options based on the fault type."""
 
-        fault = FaultType(self.ui.cb_fault.currentText())
+        fault = self._current_fault()
 
         # -------- UPDATE METHOD --------
         allowed_methods = valid_methods_for_fault(fault)
-        current_method = self.ui.cb_method.currentText()
+        current_method = self._current_method()
 
         self.ui.cb_method.clear()
         for m in allowed_methods:
-            self.ui.cb_method.addItem(m.value)
+            self.ui.cb_method.addItem(self.tr(m.value), m)
 
-        if current_method in [m.value for m in allowed_methods]:
-            self.ui.cb_method.setCurrentText(current_method)
+        current_method_index = self.ui.cb_method.findData(current_method)
+        if current_method_index >= 0:
+            self.ui.cb_method.setCurrentIndex(current_method_index)
+        else:
+            pass
 
         # -------- UPDATE PHASES --------
-        if current_method == MethodShortCircuit.sequences.value:
+        if current_method == MethodShortCircuit.sequences:
             self.ui.cb_phases.setVisible(False)
             self.ui.phases_label.setVisible(False)
         else:
             self.ui.cb_phases.setVisible(True)
             self.ui.phases_label.setVisible(True)
             allowed_phases = valid_phases_for_fault(fault)
-            current_phase = self.ui.cb_phases.currentText()
+            current_phase = self._current_phase()
 
             self.ui.cb_phases.clear()
             for p in allowed_phases:
-                self.ui.cb_phases.addItem(p.value)
+                self.ui.cb_phases.addItem(self.tr(p.value), p)
 
-            if current_phase in [p.value for p in allowed_phases]:
-                self.ui.cb_phases.setCurrentText(current_phase)
+            current_phase_index = self.ui.cb_phases.findData(current_phase)
+            if current_phase_index >= 0:
+                self.ui.cb_phases.setCurrentIndex(current_phase_index)
+            else:
+                pass
 
-        self.fault = FaultType(self.ui.cb_fault.currentText())
-        self.method = MethodShortCircuit(self.ui.cb_method.currentText())
-        self.phases = PhasesShortCircuit(self.ui.cb_phases.currentText())
+        self.fault = self._current_fault()
+        self.method = self._current_method()
+        self.phases = self._current_phase()
 
     def get_selection(self):
         """Return the selected configuration as enums."""
         return (
-            FaultType(self.ui.cb_fault.currentText()),
-            MethodShortCircuit(self.ui.cb_method.currentText()),
-            PhasesShortCircuit(self.ui.cb_phases.currentText()),
+            self._current_fault(),
+            self._current_method(),
+            self._current_phase(),
         )
 
     def update_r_x(self):
@@ -229,14 +278,14 @@ class ShortCircuitSelector(QtWidgets.QDialog):
 
         :return:
         """
-        sel = self.ui.cb_type.currentText()
+        sel = self.ui.cb_type.currentData()
 
         data = self.fault_info_dict.get(sel, None)
 
         if data is not None:
             self.ui.r_doubleSpinBox.setValue(data["R_ohm"])
             self.ui.x_doubleSpinBox.setValue(data["X_ohm"])
-            self.ui.typeLabel.setText(data["description"])
+            self.ui.typeLabel.setText(self.tr(data["description"]))
         else:
             self.ui.r_doubleSpinBox.setValue(0)
             self.ui.x_doubleSpinBox.setValue(0)
@@ -257,9 +306,9 @@ class ShortCircuitSelector(QtWidgets.QDialog):
 
     def accept_clicked(self):
         """Check if values are valid and close dialog."""
-        self.fault = FaultType(self.ui.cb_fault.currentText())
-        self.method = MethodShortCircuit(self.ui.cb_method.currentText())
-        self.phases = PhasesShortCircuit(self.ui.cb_phases.currentText())
+        self.fault = self._current_fault()
+        self.method = self._current_method()
+        self.phases = self._current_phase()
         self.r_ohm = self.ui.r_doubleSpinBox.value()
         self.x_ohm = self.ui.x_doubleSpinBox.value()
         self.was_accepted = True

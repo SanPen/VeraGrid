@@ -7,11 +7,12 @@ from typing import Tuple, List, TYPE_CHECKING
 
 from VeraGridEngine.enumerations import DeviceType
 from PySide6.QtWidgets import QMenu, QGraphicsSceneContextMenuEvent
-from VeraGrid.Gui.gui_functions import add_menu_entry
+from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
 from PySide6 import QtWidgets
 from PySide6.QtCore import Qt, QPointF
 from PySide6.QtGui import QBrush, QColor
 
+from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget
 from VeraGrid.Gui.messages import yes_no_question
 from VeraGridEngine.Devices.Branches.line_locations import LineLocation
 from VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container import MapLineContainer
@@ -255,12 +256,12 @@ class LineLocationGraphicItem(QtWidgets.QGraphicsEllipseItem, NodeTemplate):
         menu = QMenu()
 
         add_menu_entry(menu=menu,
-                       text="Delete",
+                       text=translate_context_menu_text("Delete"),
                        icon_path=":/Icons/icons/delete_schematic.png",
                        function_ptr=self.remove)
 
         add_menu_entry(menu=menu,
-                       text="Transform waypoint into substation",
+                       text=translate_context_menu_text("Transform waypoint into substation"),
                        function_ptr=self.editor.transform_waypoint_to_substation,
                        icon_path=":/Icons/icons/divide.png")
 
@@ -268,16 +269,19 @@ class LineLocationGraphicItem(QtWidgets.QGraphicsEllipseItem, NodeTemplate):
 
         has_substation = False
 
-        for graphic_obj in self.editor._get_selected():
-            if hasattr(graphic_obj, 'api_object'):
-                if hasattr(graphic_obj.api_object, 'device_type'):
-                    if graphic_obj.api_object.device_type == DeviceType.SubstationDevice:
-                        has_substation = True
+        for graphic_obj in self.editor.get_selected():
+            if isinstance(graphic_obj, GenericDiagramWidget):
+                if graphic_obj.api_object.device_type == DeviceType.SubstationDevice:
+                    has_substation = True
+                else:
+                    pass
+            else:
+                pass
 
         if has_substation:
 
             add_menu_entry(menu=menu,
-                           text="Connect line to selected substation (T-joint) at this waypoint",
+                           text=translate_context_menu_text("Connect line to selected substation (T-joint) at this waypoint"),
                            function_ptr=self.editor.create_t_joint_to_substation,
                            icon_path=":/Icons/icons/divide.png")
 
@@ -350,4 +354,3 @@ class LineLocationGraphicItem(QtWidgets.QGraphicsEllipseItem, NodeTemplate):
         pen = self.pen()
         pen.setWidth(width)
         self.setPen(pen)
-

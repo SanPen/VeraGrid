@@ -15,7 +15,7 @@ from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor impo
 from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE, DEACTIVATED, GenericDiagramWidget
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.winding_graphics import WindingGraphicItem
 from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import RoundTerminalItem
-from VeraGrid.Gui.gui_functions import add_menu_entry
+from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
 from VeraGrid.Gui.messages import yes_no_question
 from VeraGridEngine.Devices.Branches.transformerNw import TransformerNW
 from VeraGridEngine.Devices.Branches.winding import Winding
@@ -193,23 +193,23 @@ class TransformerNWGraphicItem(GenericDiagramWidget, QGraphicsRectItem):
     def contextMenuEvent(self, event):
         if self.api_object is not None:
             menu = QMenu()
-            menu.addSection("Transformer NW")
+            menu.addSection(translate_context_menu_text("Transformer NW"))
 
             add_menu_entry(menu=menu,
-                           text="Active",
+                           text=translate_context_menu_text("Active"),
                            function_ptr=self.enable_disable_toggle,
                            checkeable=True,
                            checked_value=self.api_object.active)
 
             add_menu_entry(menu=menu,
-                           text="Editor",
+                           text=translate_context_menu_text("Editor"),
                            function_ptr=self.edit,
                            icon_path=":/Icons/icons/edit.png")
 
             menu.addSeparator()
 
             add_menu_entry(menu=menu,
-                           text="Delete",
+                           text=translate_context_menu_text("Delete"),
                            function_ptr=self.delete,
                            icon_path=":/Icons/icons/delete_schematic.png")
 

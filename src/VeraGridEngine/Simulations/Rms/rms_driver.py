@@ -213,6 +213,7 @@ class RmsSimulationDriver(DriverTemplate):
                         t_end=self.options.simulation_time,
                         h=self.options.time_step,
                         max_iter=self.options.max_iter,
+                        tolerance=self.options.tolerance,
                         cancel_checker=self.is_cancel,
                     )
 
@@ -229,6 +230,7 @@ class RmsSimulationDriver(DriverTemplate):
                         t_end=self.options.simulation_time,
                         h=self.options.time_step,
                         max_iter=self.options.max_iter,
+                        tolerance=self.options.tolerance,
                         cancel_checker=self.is_cancel,
                     )
                 

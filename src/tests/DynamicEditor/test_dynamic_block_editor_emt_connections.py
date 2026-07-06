@@ -4,10 +4,12 @@ import sys
 
 import pytest
 from PySide6 import QtWidgets
+from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 
 from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import BlockItem, DynamicBlockEditorGUI
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import register_saved_emt_model_vars_for_device
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import connect_bus_variables_emt
+from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import Block, find_connections
@@ -189,12 +191,13 @@ def _make_template(mapping_refs: list[VarPowerFlowReferenceType]) -> EmtModelTem
     return template
 
 
-def _build_editor(api_object: object) -> DynamicBlockEditorGUI:
+def _build_editor(api_object: ALL_DEV_TYPES) -> DynamicBlockEditorGUI:
     _get_app()
     editor = DynamicBlockEditorGUI(
         var_factory=VarFactory(),
         block=Block(),
         api_object=api_object,
+        circuit=MultiCircuit(),
         mode=DynamicSimulationMode.EMT,
         templates_list=list(),
         main_editor=False,

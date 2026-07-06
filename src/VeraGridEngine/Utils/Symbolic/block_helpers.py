@@ -85,9 +85,9 @@ def tf_to_block(var_factory: VarFactory,
     lhs = np.array(diff_vars_y) @ np.array(den)
 
     # Pure integrator-style blocks (den[0] == 0) need a derivative init that
-    # matches the input, otherwise the first consistency check leaves a residual.
-    if len(den) > 1 and den[0] == 0 and y.base_var is not None:
-        diff_init_eqs[y.diff_var] = x / den[1]
+    # matches the full numerator side of the transfer-function equation.
+    if len(den) > 1 and den[0] == 0 and y.diff_var is not None:
+        diff_init_eqs[y.diff_var] = rhs / den[1]
 
     block = Block()
     block.algebraic_vars = [y] + aux_vars

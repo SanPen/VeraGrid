@@ -83,15 +83,28 @@ class TileWorker(QThread):
         self.error_image = error_image
         self.daemon = True
         self.refresh_tiles_after_days = refresh_tiles_after_days
+        self._running = True
+
+    def stop(self) -> None:
+        """
+        Ask the worker to stop after its current request and unblock queue waits.
+        """
+        self._running = False
+        self.requests_cue.put(None)
 
     def run(self):
         """
 
         :return:
         """
-        while True:
+        while self._running:
             # get zoom level and tile coordinates to retrieve
-            (level, x, y) = self.requests_cue.get()
+            request_data = self.requests_cue.get()
+            if request_data is None:
+                self.requests_cue.task_done()
+                break
+
+            (level, x, y) = request_data
 
             # try to retrieve the image
             error = False

@@ -486,6 +486,9 @@ class MultiVerse:
     def roots_number(self):
         return len(self._root_nodes)
 
+    def check_node(self, node_id: int) -> bool:
+        return node_id in self._nodes_by_id
+
     def get_node(self, node_id: int) -> ScenarioNode:
         """
 
@@ -766,31 +769,36 @@ class MultiVerse:
                 position_raw = record.get("position", None)
                 position = None if position_raw is None else int(position_raw)
 
-                node = ScenarioNode(
-                    node_id=node_id,
-                    data=diffs_dict[circuit_idtag],
-                    diagrams=diffs_dict[circuit_idtag].diagrams,
-                    parent=parent,
-                )
+                data = diffs_dict.get(circuit_idtag, None)
 
-                if parent is None:
-                    if position is None:
-                        self._root_nodes.append(node)
+                if data is not None:
+                    node = ScenarioNode(
+                        node_id=node_id,
+                        data=data,
+                        diagrams=data.diagrams,
+                        parent=parent,
+                    )
+
+                    if parent is None:
+                        if position is None:
+                            self._root_nodes.append(node)
+                        else:
+                            self._root_nodes.insert(position, node)
                     else:
-                        self._root_nodes.insert(position, node)
+                        if position is None:
+                            parent.append_child(node)
+                        else:
+                            parent.insert_child(position, node)
+
+                    self.set_node(node_id, node)
+                    built_nodes[node_id] = node
+                    del pending[metadata_node_id]
+                    progressed = True
+
+                    if node_id > max_id:
+                        max_id = node_id
                 else:
-                    if position is None:
-                        parent.append_child(node)
-                    else:
-                        parent.insert_child(position, node)
-
-                self.set_node(node_id, node)
-                built_nodes[node_id] = node
-                del pending[metadata_node_id]
-                progressed = True
-
-                if node_id > max_id:
-                    max_id = node_id
+                    pass
 
             if not progressed:
                 unresolved = ", ".join(str(node_id) for node_id in pending.keys())

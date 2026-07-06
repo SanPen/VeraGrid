@@ -6,6 +6,7 @@
 import numpy as np
 import math
 
+from VeraGridEngine.Templates.template_definiton import TemplateDefinition, TemplateProp
 from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType, ParamPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Utils.Symbolic.block import (Block, Var)
@@ -13,6 +14,32 @@ from VeraGridEngine.Utils.Symbolic.block_helpers import tf_to_block
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
 from VeraGridEngine.enumerations import ConverterControlType
+
+
+class VscGflRmsTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        super().__init__(vf, params=[
+            TemplateProp(name="control1", units="", descr="First control mode (Pac, Pdc, or Vm_dc).", tpe=ConverterControlType),
+            TemplateProp(name="control2", units="", descr="Second control mode (Qac or Vm_ac).", tpe=ConverterControlType),
+            TemplateProp(name="name", units="", descr="Name of the rms model.", tpe=str),
+        ])
+
+    def eval(self) -> RmsModelTemplate:
+        return VscGflBuild(self.vf, self.get_value("name"), self.get_value("control1"), self.get_value("control2"))
+
+
+class TrafoGflRmsTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        super().__init__(vf, params=[
+            TemplateProp(name="control1", units="", descr="First control mode (Pac, Pdc, or Vm_dc).", tpe=ConverterControlType),
+            TemplateProp(name="control2", units="", descr="Second control mode (Qac or Vm_ac).", tpe=ConverterControlType),
+            TemplateProp(name="name", units="", descr="Name of the rms model.", tpe=str),
+        ])
+
+    def eval(self) -> RmsModelTemplate:
+        return TrafoGflBuild(self.vf, self.get_value("name"), self.get_value("control1"), self.get_value("control2"))
 
 
 def inverse_park_transform_block(vfactory: VarFactory,
@@ -659,10 +686,11 @@ def VscGflBuild(vfactory: VarFactory, name: str = "",
     }
     
     Im = sym.sqrt(i_d**2 + i_q**2 + vfactory.add_const(1e-11))
+    P_conv = internals["v_q_c"] * i_q + internals["v_d_c"] * i_d
     vsc_block = Block(
         algebraic_eqs=[
-            Pf_vsc + P - (a0 + a1*Im + a2*Im**2),
-            Pt_vsc + P,
+            Pf_vsc + Pt_vsc - (a0 + a1*Im + a2*Im**2),
+            Pt_vsc + P_conv,
             Qt_vsc + Q,
         ],
         algebraic_vars=[Pt_vsc, Qt_vsc, Pf_vsc],

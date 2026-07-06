@@ -413,7 +413,12 @@ def _get_injection_result_index(device_name: str,
     :param lookup: Result name lookup.
     :return: Resolved result index.
     """
-    return lookup.get(device_name, fallback_index)
+    normalized_name: str = str(device_name).strip()
+
+    if normalized_name:
+        return lookup.get(normalized_name, fallback_index)
+    else:
+        return fallback_index
 
 
 def _has_single_phase_explicit_injection_results(gen_p: Vec | None,
@@ -1520,23 +1525,260 @@ class SchematicWidget(BaseDiagramWidget):
         graphic_object: QGraphicsItem
 
         for graphic_object in self.diagram_scene.selectedItems():
-            if not graphic_object.flags() & QGraphicsItem.GraphicsItemFlag.ItemIsMovable:
-                continue
-            if not hasattr(graphic_object, "api_object"):
-                continue
+            if graphic_object.flags() & QGraphicsItem.GraphicsItemFlag.ItemIsMovable:
+                if isinstance(graphic_object, GenericDiagramWidget):
+                    api_object = graphic_object.api_object
+                    draw_labels_value: bool = graphic_object.draw_labels
+                else:
+                    try:
+                        api_object = graphic_object.api_object
+                        draw_labels_value = graphic_object.draw_labels
+                    except AttributeError:
+                        api_object = None
+                        draw_labels_value = True
+            else:
+                api_object = None
+                draw_labels_value = True
 
-            api_object = graphic_object.api_object
-            if api_object is None:
-                continue
+            if api_object is not None:
+                # Only the resizable diagram widgets persist their stored width and
+                # height. All other movable graphics only need the new position.
+                if isinstance(graphic_object,
+                              (BusGraphicItem,
+                               FluidNodeGraphicItem,
+                               InjectionTemplateGraphicItem,
+                               Transformer3WGraphicItem,
+                               TransformerNWGraphicItem,
+                               VscGraphicItem3Term)):
+                    width_value: float = float(graphic_object.w)
+                    height_value: float = float(graphic_object.h)
+                else:
+                    width_value = 0.0
+                    height_value = 0.0
 
-            self.update_diagram_element(device=api_object,
-                                        x=graphic_object.pos().x(),
-                                        y=graphic_object.pos().y(),
-                                        w=getattr(graphic_object, "w", 0.0),
-                                        h=getattr(graphic_object, "h", 0.0),
-                                        r=graphic_object.rotation(),
-                                        draw_labels=getattr(graphic_object, "draw_labels", True),
-                                        graphic_object=graphic_object)
+                scene_position: QPointF = graphic_object.scenePos()
+
+                self.update_diagram_element(device=api_object,
+                                            x=scene_position.x(),
+                                            y=scene_position.y(),
+                                            w=width_value,
+                                            h=height_value,
+                                            r=graphic_object.rotation(),
+                                            draw_labels=draw_labels_value,
+                                            graphic_object=graphic_object)
+            else:
+                pass
+
+    @staticmethod
+    def _clamp_manual_injection_alignment(alignment: Any) -> float:
+        """
+        Clamp one optional manual injection alignment value.
+
+        :param alignment: Raw alignment value.
+        :return: Clamped normalized alignment.
+        """
+        if alignment is None:
+            return 0.5
+        else:
+            pass
+
+        alignment_value: float = float(alignment)
+
+        if alignment_value < 0.0:
+            return 0.0
+        elif alignment_value > 1.0:
+            return 1.0
+        else:
+            return alignment_value
+
+    @staticmethod
+    def _is_plausible_manual_injection_local_position(owner_graphic: Any,
+                                                      injection_graphic: Any,
+                                                      local_position: QPointF,
+                                                      multiplier: float) -> bool:
+        """
+        Check whether one manual child position is broadly plausible in owner-local coordinates.
+
+        :param owner_graphic: Parent node graphic.
+        :param injection_graphic: Child injection graphic.
+        :param local_position: Candidate position in owner-local coordinates.
+        :param multiplier: Width-based plausibility margin multiplier.
+        :return: ``True`` when the local point looks reasonable.
+        """
+        margin: float = max(0.0, float(multiplier) * float(owner_graphic.w))
+        min_x: float = -float(injection_graphic.w) - margin
+        max_x: float = float(owner_graphic.w) + margin
+        min_y: float = -float(injection_graphic.h) - margin
+        max_y: float = float(owner_graphic.h) + margin
+
+        return min_x <= float(local_position.x()) <= max_x and min_y <= float(local_position.y()) <= max_y
+
+    @staticmethod
+    def _build_manual_injection_local_position_from_dock(owner_graphic: Any,
+                                                         injection_graphic: Any,
+                                                         dock: dict[str, Any]) -> QPointF:
+        """
+        Rebuild the expected owner-local position from persisted manual dock metadata.
+
+        The dock metadata stores side, alignment, and offset derived from the
+        child local coordinates. Rebuilding that position gives a stronger
+        legacy-repair signal than a large plausibility box because it preserves
+        the user's original dock intent.
+
+        :param owner_graphic: Parent node graphic.
+        :param injection_graphic: Child injection graphic.
+        :param dock: Persisted dock metadata.
+        :return: Expected owner-local child origin.
+        """
+        side_value: str = str(dock.get("side", "bottom")).strip().lower()
+        alignment: float = SchematicWidget._clamp_manual_injection_alignment(dock.get("alignment", None))
+        offset: float = max(0.0, float(dock.get("offset", 0.0)))
+
+        if side_value == "top":
+            x_pos = float(owner_graphic.w) * alignment - float(injection_graphic.w) * 0.5
+            y_pos = -float(injection_graphic.h) - 40.0 - offset
+        elif side_value == "left":
+            x_pos = -float(injection_graphic.w) - 40.0 - offset
+            y_pos = float(owner_graphic.h) * alignment - float(injection_graphic.h) * 0.5
+        elif side_value == "right":
+            x_pos = float(owner_graphic.w) + 40.0 + offset
+            y_pos = float(owner_graphic.h) * alignment - float(injection_graphic.h) * 0.5
+        else:
+            x_pos = float(owner_graphic.w) * alignment - float(injection_graphic.w) * 0.5
+            y_pos = float(owner_graphic.get_bottom_dock_baseline()) + offset
+
+        return QPointF(x_pos, y_pos)
+
+    def repair_suspicious_injection_positions(self, multiplier: float = 4.0) -> int:
+        """
+        Repair legacy manual injection positions that were accidentally persisted in owner-local space.
+
+        Only injections with ``auto_layout == False`` are considered. The helper
+        repairs a point only when the canonical scene-space interpretation is not
+        plausible but the raw stored value treated as owner-local is plausible.
+
+        :param multiplier: Width-based plausibility margin multiplier.
+        :return: Number of repaired injections.
+        """
+        repaired_count: int = 0
+        owners_to_refresh: list[BusGraphicItem] = list()
+        device_type: DeviceType
+
+        for device_type in (
+                DeviceType.GeneratorDevice,
+                DeviceType.BatteryDevice,
+                DeviceType.StaticGeneratorDevice,
+                DeviceType.ShuntDevice,
+                DeviceType.ControllableShuntDevice,
+                DeviceType.LoadDevice,
+                DeviceType.ExternalGridDevice,
+                DeviceType.CurrentInjectionDevice,
+        ):
+            for graphic_object in self._get_device_type_graphics(device_type, InjectionTemplateGraphicItem):
+                location: GraphicLocation | None = self.diagram.query_point(graphic_object.api_object)
+                should_inspect_graphic: bool = location is not None
+                dock: dict[str, Any] = dict()
+                owner_graphic: BusGraphicItem | None = None
+
+                # The repair only makes sense for persisted manual layouts.
+                # Automatic layouts and graphics without stored coordinates are ignored explicitly.
+                if should_inspect_graphic:
+                    dock = self.diagram.get_dock(graphic_object.api_object)
+                    if bool(dock.get("auto_layout", True)):
+                        should_inspect_graphic = False
+                    else:
+                        should_inspect_graphic = True
+                else:
+                    should_inspect_graphic = False
+
+                # The repair logic needs a concrete owner graphic because the legacy bug
+                # mixed owner-local coordinates with scene coordinates.
+                if should_inspect_graphic:
+                    owner_graphic = graphic_object.parent
+
+                    if owner_graphic is None:
+                        should_inspect_graphic = False
+                    else:
+                        should_inspect_graphic = True
+                else:
+                    owner_graphic = None
+
+                if should_inspect_graphic and owner_graphic is not None and location is not None:
+                    # Evaluate the stored point both as canonical scene coordinates and
+                    # as the legacy broken owner-local coordinates.
+                    scene_candidate_local: QPointF = owner_graphic.mapFromScene(QPointF(float(location.x),
+                                                                                        float(location.y)))
+                    raw_candidate_local: QPointF = QPointF(float(location.x), float(location.y))
+
+                    # Rebuild the expected docked local position from the saved dock metadata.
+                    # This gives a much stronger signal than a wide plausibility box alone.
+                    expected_local: QPointF = SchematicWidget._build_manual_injection_local_position_from_dock(
+                        owner_graphic=owner_graphic,
+                        injection_graphic=graphic_object,
+                        dock=dock
+                    )
+                    raw_distance_to_expected: float = float(np.hypot(float(raw_candidate_local.x()
+                                                                            - expected_local.x()),
+                                                                     float(raw_candidate_local.y()
+                                                                           - expected_local.y())))
+                    scene_distance_to_expected: float = float(np.hypot(float(scene_candidate_local.x()
+                                                                              - expected_local.x()),
+                                                                       float(scene_candidate_local.y()
+                                                                             - expected_local.y())))
+                    repair_distance_margin: float = max(20.0, float(owner_graphic.w) * 0.1)
+
+                    # The legacy bug stores the intended owner-local point directly in the
+                    # scene-space slots. When that happens, the raw stored values remain much
+                    # closer to the dock-derived expectation than the scene-space interpretation.
+                    # A clear distance win is enough for the manual repair tool.
+                    scene_is_plausible: bool = SchematicWidget._is_plausible_manual_injection_local_position(
+                        owner_graphic=owner_graphic,
+                        injection_graphic=graphic_object,
+                        local_position=scene_candidate_local,
+                        multiplier=multiplier
+                    )
+                    raw_is_plausible: bool = SchematicWidget._is_plausible_manual_injection_local_position(
+                        owner_graphic=owner_graphic,
+                        injection_graphic=graphic_object,
+                        local_position=raw_candidate_local,
+                        multiplier=multiplier
+                    )
+
+                    if raw_distance_to_expected + repair_distance_margin < scene_distance_to_expected:
+                        should_repair: bool = True
+                    elif raw_is_plausible and not scene_is_plausible:
+                        should_repair = True
+                    else:
+                        should_repair = False
+
+                    # Rewrite the stored point back to canonical scene coordinates.
+                    if should_repair:
+                        graphic_object.setPos(float(raw_candidate_local.x()), float(raw_candidate_local.y()))
+                        scene_position: QPointF = graphic_object.scenePos()
+                        self.update_diagram_element(device=graphic_object.api_object,
+                                                    x=scene_position.x(),
+                                                    y=scene_position.y(),
+                                                    w=float(graphic_object.w),
+                                                    h=float(graphic_object.h),
+                                                    r=float(graphic_object.rotation()),
+                                                    draw_labels=graphic_object.draw_labels,
+                                                    graphic_object=graphic_object)
+                        repaired_count += 1
+
+                        if not any(owner_graphic is existing_owner for existing_owner in owners_to_refresh):
+                            owners_to_refresh.append(owner_graphic)
+                        else:
+                            pass
+                    else:
+                        pass
+                else:
+                    pass
+
+        owner_graphic: BusGraphicItem
+        for owner_graphic in owners_to_refresh:
+            owner_graphic.arrange_children()
+
+        return repaired_count
 
     def set_selected_buses(self, buses: List[Bus]):
         """
@@ -3914,13 +4156,13 @@ class SchematicWidget(BaseDiagramWidget):
                                                       branch.get_max_bus_nominal_voltage())
                 graphic_object.setToolTipText(tooltip)
                 graphic_object.set_colour(color, width, Qt.PenStyle.SolidLine)
-                if hasattr(graphic_object, 'set_arrows_with_power'):
+                if isinstance(graphic_object, LineGraphicTemplateItem):
                     graphic_object.set_arrows_with_power(Sf=arrow_sf, St=arrow_st)
             else:
                 width = graphic_object.pen_width
                 graphic_object.set_pen(QPen(QColor(115, 115, 115, 255), width, Qt.PenStyle.DashLine))
                 graphic_object.setToolTipText("")
-                if hasattr(graphic_object, 'set_arrows_with_power'):
+                if isinstance(graphic_object, LineGraphicTemplateItem):
                     graphic_object.set_arrows_with_power(Sf=None, St=None)
 
         self._sync_multiwinding_transformer_result_colours()
@@ -4177,18 +4419,27 @@ class SchematicWidget(BaseDiagramWidget):
         :return: Lookup from device name to result index.
         """
         lookup: dict[str, int] = dict()
-        index: int
+        counts: dict[str, int] = dict()
 
         if names is None:
             pass
         else:
-            for index, name in enumerate(names):
-                name_str: str = str(name)
+            for name in names:
+                name_str: str = str(name).strip()
 
-                if name_str in lookup:
-                    pass
+                if name_str:
+                    counts[name_str] = counts.get(name_str, 0) + 1
                 else:
+                    pass
+
+            for index, name in enumerate(names):
+                name_str = str(name).strip()
+
+                # Ambiguous or blank result names cannot identify a unique device.
+                if name_str and counts.get(name_str, 0) == 1:
                     lookup[name_str] = index
+                else:
+                    pass
 
         return lookup
 
@@ -4518,41 +4769,29 @@ class SchematicWidget(BaseDiagramWidget):
             if graphic_object is None:
                 pass
             else:
-                result_index: int | None = generator_lookup.get(generator.name, None)
+                result_index: int = _get_injection_result_index(
+                    device_name=generator.name,
+                    fallback_index=index,
+                    lookup=generator_lookup,
+                )
                 qa: float | None = None
                 qb: float | None = None
                 qc: float | None = None
 
-                if result_index is None:
-                    if gen_q_a is not None and index < len(gen_q_a):
-                        qa = float(gen_q_a[index])
-                    else:
-                        pass
-
-                    if gen_q_b is not None and index < len(gen_q_b):
-                        qb = float(gen_q_b[index])
-                    else:
-                        pass
-
-                    if gen_q_c is not None and index < len(gen_q_c):
-                        qc = float(gen_q_c[index])
-                    else:
-                        pass
+                if gen_q_a is not None and result_index < len(gen_q_a):
+                    qa = float(gen_q_a[result_index])
                 else:
-                    if gen_q_a is not None and result_index < len(gen_q_a):
-                        qa = float(gen_q_a[result_index])
-                    else:
-                        pass
+                    pass
 
-                    if gen_q_b is not None and result_index < len(gen_q_b):
-                        qb = float(gen_q_b[result_index])
-                    else:
-                        pass
+                if gen_q_b is not None and result_index < len(gen_q_b):
+                    qb = float(gen_q_b[result_index])
+                else:
+                    pass
 
-                    if gen_q_c is not None and result_index < len(gen_q_c):
-                        qc = float(gen_q_c[result_index])
-                    else:
-                        pass
+                if gen_q_c is not None and result_index < len(gen_q_c):
+                    qc = float(gen_q_c[result_index])
+                else:
+                    pass
 
                 self._apply_three_phase_injection_result(graphic_object=graphic_object,
                                                          device_name=generator.name,
@@ -4585,41 +4824,29 @@ class SchematicWidget(BaseDiagramWidget):
             if graphic_object is None:
                 pass
             else:
-                result_index: int | None = battery_lookup.get(battery.name, None)
+                result_index: int = _get_injection_result_index(
+                    device_name=battery.name,
+                    fallback_index=index,
+                    lookup=battery_lookup,
+                )
                 qa: float | None = None
                 qb: float | None = None
                 qc: float | None = None
 
-                if result_index is None:
-                    if battery_q_a is not None and index < len(battery_q_a):
-                        qa = float(battery_q_a[index])
-                    else:
-                        pass
-
-                    if battery_q_b is not None and index < len(battery_q_b):
-                        qb = float(battery_q_b[index])
-                    else:
-                        pass
-
-                    if battery_q_c is not None and index < len(battery_q_c):
-                        qc = float(battery_q_c[index])
-                    else:
-                        pass
+                if battery_q_a is not None and result_index < len(battery_q_a):
+                    qa = float(battery_q_a[result_index])
                 else:
-                    if battery_q_a is not None and result_index < len(battery_q_a):
-                        qa = float(battery_q_a[result_index])
-                    else:
-                        pass
+                    pass
 
-                    if battery_q_b is not None and result_index < len(battery_q_b):
-                        qb = float(battery_q_b[result_index])
-                    else:
-                        pass
+                if battery_q_b is not None and result_index < len(battery_q_b):
+                    qb = float(battery_q_b[result_index])
+                else:
+                    pass
 
-                    if battery_q_c is not None and result_index < len(battery_q_c):
-                        qc = float(battery_q_c[result_index])
-                    else:
-                        pass
+                if battery_q_c is not None and result_index < len(battery_q_c):
+                    qc = float(battery_q_c[result_index])
+                else:
+                    pass
 
                 self._apply_three_phase_injection_result(graphic_object=graphic_object,
                                                          device_name=battery.name,
@@ -4652,41 +4879,29 @@ class SchematicWidget(BaseDiagramWidget):
             if graphic_object is None:
                 pass
             else:
-                result_index: int | None = shunt_lookup.get(shunt_like_device.name, None)
+                result_index: int = _get_injection_result_index(
+                    device_name=shunt_like_device.name,
+                    fallback_index=index,
+                    lookup=shunt_lookup,
+                )
                 qa: float | None = None
                 qb: float | None = None
                 qc: float | None = None
 
-                if result_index is None:
-                    if shunt_q_a is not None and index < len(shunt_q_a):
-                        qa = float(shunt_q_a[index])
-                    else:
-                        pass
-
-                    if shunt_q_b is not None and index < len(shunt_q_b):
-                        qb = float(shunt_q_b[index])
-                    else:
-                        pass
-
-                    if shunt_q_c is not None and index < len(shunt_q_c):
-                        qc = float(shunt_q_c[index])
-                    else:
-                        pass
+                if shunt_q_a is not None and result_index < len(shunt_q_a):
+                    qa = float(shunt_q_a[result_index])
                 else:
-                    if shunt_q_a is not None and result_index < len(shunt_q_a):
-                        qa = float(shunt_q_a[result_index])
-                    else:
-                        pass
+                    pass
 
-                    if shunt_q_b is not None and result_index < len(shunt_q_b):
-                        qb = float(shunt_q_b[result_index])
-                    else:
-                        pass
+                if shunt_q_b is not None and result_index < len(shunt_q_b):
+                    qb = float(shunt_q_b[result_index])
+                else:
+                    pass
 
-                    if shunt_q_c is not None and result_index < len(shunt_q_c):
-                        qc = float(shunt_q_c[result_index])
-                    else:
-                        pass
+                if shunt_q_c is not None and result_index < len(shunt_q_c):
+                    qc = float(shunt_q_c[result_index])
+                else:
+                    pass
 
                 if isinstance(shunt_like_device, ControllableShunt):
                     tooltip_title: str = "Controllable shunt 3ph results"
@@ -5596,28 +5811,28 @@ class SchematicWidget(BaseDiagramWidget):
             if graphical_obj.api_object is not None:
 
                 if use_api_color:
-                    if hasattr(graphical_obj.api_object, 'color'):
-                        color_hex = graphical_obj.api_object.color
-                        color = QColor(color_hex)
-                        if isinstance(graphical_obj, BusGraphicItem):
-                            brush = QBrush(color)
-                            graphical_obj.set_tile_color(brush)
+                    if isinstance(graphical_obj, BusGraphicItem):
+                        color = QColor(graphical_obj.api_object.color)
+                        brush = QBrush(color)
+                        graphical_obj.set_tile_color(brush)
 
-                        elif isinstance(graphical_obj, (TransformerGraphicItem, LineGraphicItem)):
+                    elif isinstance(graphical_obj, (TransformerGraphicItem, LineGraphicItem)):
+                        color = QColor(graphical_obj.api_object.color)
+                        w = graphical_obj.pen_width
 
-                            w = graphical_obj.pen_width
+                        if graphical_obj.api_object.active:  # TODO: gather the property at the time step too
+                            style = Qt.PenStyle.SolidLine
+                        else:
+                            style = Qt.PenStyle.DashLine
 
-                            if graphical_obj.api_object.active:  # TODO: gather the property at the time step too
-                                style = Qt.PenStyle.SolidLine
-                            else:
-                                style = Qt.PenStyle.DashLine
-
-                            graphical_obj.set_colour(color, w=w, style=style)
+                        graphical_obj.set_colour(color, w=w, style=style)
+                    else:
+                        pass
 
                 else:
                     graphical_obj.recolour_mode()
 
-    def _get_selected(self) -> List[GenericDiagramWidget | QGraphicsItem]:
+    def get_selected(self) -> List[GenericDiagramWidget | QGraphicsItem]:
         """
         Get selection
         :return: List of EditableDevice, QGraphicsItem
@@ -5629,7 +5844,7 @@ class SchematicWidget(BaseDiagramWidget):
         Get a list of the API objects from the selection
         :return: List[EditableDevice]
         """
-        return [e.api_object for e in self._get_selected() if hasattr(e, 'api_object')]
+        return [e.api_object for e in self.get_selected() if isinstance(e, GenericDiagramWidget)]
 
     def create_schematic_from_selection(self) -> SchematicDiagram:
         """
@@ -5640,7 +5855,7 @@ class SchematicWidget(BaseDiagramWidget):
 
         # first pass (only buses)
         bus_dict = dict()
-        for item in self._get_selected():
+        for item in self.get_selected():
             if isinstance(item, BusGraphicItem):
                 # check that the bus is in the original diagram
                 location = self.diagram.query_point(item.api_object)

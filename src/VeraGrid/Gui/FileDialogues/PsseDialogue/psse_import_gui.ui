@@ -75,7 +75,7 @@
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;PSS/e does not handle the difference of nominal &lt;/p&gt;&lt;p&gt;voltage between the bus and the transformer (the vitual tap) &lt;/p&gt;&lt;p&gt;If checked, this will make the transformer nominal voltages &lt;/p&gt;&lt;p&gt;equal to the buses nominal voltage to behave like PSS/e&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
-         <string>Flatten viatual taps</string>
+         <string>Flatten virtual taps</string>
         </property>
        </widget>
       </item>

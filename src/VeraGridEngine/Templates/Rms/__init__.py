@@ -22,3 +22,4 @@ from VeraGridEngine.Templates.Rms.voltage_source_template import VoltageSourceBu
 from VeraGridEngine.Templates.Rms.vsc_gfl_dclinked import build_vsc_rms
 from VeraGridEngine.Templates.Rms.dc_voltage_source import DCPVSourceAveraged
 from VeraGridEngine.Templates.Rms.basic_devices import get_pll_transform_rms, get_pi_current_controller, get_pi_power_controller, get_gfl_converter_rms
+from VeraGridEngine.Templates.Rms.empty_rms_template import get_empty_rms_template

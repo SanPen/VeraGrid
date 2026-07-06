@@ -390,6 +390,14 @@ class DynamicPlotCandidate:
         """
         return self._entry_kind
 
+    def get_variable_name(self) -> str:
+        """
+        Get the canonical variable or parameter name stored in this candidate.
+
+        :return: Canonical variable or parameter name.
+        """
+        return self._variable_name
+
     def get_tree_leaf_label(self, has_multiple_sources: bool) -> str:
         """
         Get the label shown for this source-tree leaf.
@@ -1041,6 +1049,28 @@ def _build_runtime_parameter_candidate(simulation_type: PlotSimulationType,
     )
 
 
+def _build_parameter_candidate_chain_key(device_tpe: DeviceType,
+                                         device_state_id: str,
+                                         parameter_canonical_name: str) -> str:
+    """
+    Build the full tree-identity key for one parameter candidate chain.
+
+    :param device_tpe: Device type that owns the parameter.
+    :param device_state_id: Stable tree identity for the owning device.
+    :param parameter_canonical_name: Canonical symbolic parameter name.
+    :return: Stable lookup key for parameter candidates.
+
+    Parameter candidates must be resolved by the same semantic chain used by
+    the source tree itself. Using only the visible parameter name merges equal
+    parameter names across different devices, which makes double-click and drag
+    operations select the wrong device parameter.
+    """
+    return _build_tree_state_key(
+        node_kind=TreeStateNodeKind.PARAMETER,
+        parts=[str(device_tpe.value), str(device_state_id), str(parameter_canonical_name)],
+    )
+
+
 def _capture_tree_view_state(view: QtWidgets.QTreeView, model: QtGui.QStandardItemModel, key_role: int) -> TreeStateSnapshot:
     """
     Capture expansion and current-item state from one tree view.
@@ -1495,6 +1525,46 @@ def _build_relative_time_axis(time_array: np.ndarray | pd.DatetimeIndex) -> np.n
                 pass
 
     return relative_time_axis
+
+
+class _OpenPlotDialogCloser(QtCore.QObject):
+    """
+    Qt slot wrapper that removes one closed dialog from the retained list.
+
+    :param open_plot_dialogs: Mutable list of retained modeless plot dialogs.
+    :param dialog: Dialog instance whose close event must release the reference.
+    :return: None.
+    """
+
+    __slots__ = ("_open_plot_dialogs", "_dialog")
+
+    def __init__(self,
+                 open_plot_dialogs: List[QtWidgets.QDialog],
+                 dialog: QtWidgets.QDialog) -> None:
+        """
+        Build one explicit close-handler object.
+
+        :param open_plot_dialogs: Mutable list of retained modeless plot dialogs.
+        :param dialog: Dialog instance whose close event must release the reference.
+        :return: None.
+        """
+        QtCore.QObject.__init__(self, dialog)
+        self._open_plot_dialogs: List[QtWidgets.QDialog] = open_plot_dialogs
+        self._dialog: QtWidgets.QDialog = dialog
+
+    def on_dialog_finished(self, result: int) -> None:
+        """
+        Remove the dialog from the retained list after it closes.
+
+        :param result: Qt finished result code.
+        :return: None.
+        """
+        del result
+
+        if self._dialog in self._open_plot_dialogs:
+            self._open_plot_dialogs.remove(self._dialog)
+        else:
+            pass
 
 
 def collect_dynamic_model_plot_variables(model: Block,
@@ -2615,7 +2685,7 @@ def build_dynamics_tree_model(tree_data: Dict[DeviceType, Dict[ALL_DEV_TYPES, Dy
                               mime_type: str,
                               state_key_role: int,
                               series_by_var_uid: Dict[int, List[DynamicResultSeries | DynamicPlotCandidate]],
-                              candidates_by_parameter_name: Dict[str, List[DynamicPlotCandidate]],
+                              candidates_by_parameter_key: Dict[str, List[DynamicPlotCandidate]],
                               has_multiple_sources: bool) -> DynamicsDeviceTreeModel:
     """
     Build the source tree-view model for RMS/EMT dynamics results.
@@ -2624,7 +2694,7 @@ def build_dynamics_tree_model(tree_data: Dict[DeviceType, Dict[ALL_DEV_TYPES, Dy
     :param var_role: Qt item-data role used to store the ``Var`` instance in leaf nodes.
     :param mime_type: Mime type exported when dragging a variable.
     :param series_by_var_uid: Source-specific selectors grouped by current variable uid.
-    :param candidates_by_parameter_name: Source-specific parameter selectors grouped by parameter name.
+    :param candidates_by_parameter_key: Source-specific parameter selectors grouped by full parameter chain key.
     :param has_multiple_sources: ``True`` when multiple event-group sources must be shown.
     :return: Source tree model ready to be assigned to a QTreeView.
 
@@ -2637,7 +2707,9 @@ def build_dynamics_tree_model(tree_data: Dict[DeviceType, Dict[ALL_DEV_TYPES, Dy
     model: DynamicsDeviceTreeModel = DynamicsDeviceTreeModel(var_role=var_role,
                                                              mime_type=mime_type,
                                                              state_key_role=state_key_role)
-    model.setHorizontalHeaderLabels(["Dynamics results"])
+    model.setHorizontalHeaderLabels(
+        [QtCore.QCoreApplication.translate("DynamicsResultsHandler", "Dynamics results")]
+    )
 
     # The invisible root is Qt's insertion point for first-level tree nodes.
     root_item: QtGui.QStandardItem = model.invisibleRootItem()
@@ -2725,7 +2797,12 @@ def build_dynamics_tree_model(tree_data: Dict[DeviceType, Dict[ALL_DEV_TYPES, Dy
                 )
                 parameters_section_item.appendRow(parameter_item)
 
-                parameter_candidate_list: List[DynamicPlotCandidate] = candidates_by_parameter_name.get(parameter.get_display_name(), list())
+                parameter_candidate_key: str = _build_parameter_candidate_chain_key(
+                    device_tpe=device_tpe,
+                    device_state_id=device_state_id,
+                    parameter_canonical_name=parameter.get_canonical_name(),
+                )
+                parameter_candidate_list: List[DynamicPlotCandidate] = candidates_by_parameter_key.get(parameter_candidate_key, list())
                 if has_multiple_sources:
                         parameter_candidate: DynamicPlotCandidate
                         for parameter_candidate in parameter_candidate_list:
@@ -2765,7 +2842,7 @@ class DynamicsResultsHandler:
     __slots__ = ("results", "circuit", "dialog_parent", "plot_simulation_type",
                   "pre_simulation_mode", "tree_data", "tree_model", "proxy_model", "plots_model", "group_idx",
                   "var_role", "group_name_role", "tree_state_role", "drag_mime_type", "drop_target_role", "entry_role_role", "plot_groups", "series_by_key",
-                  "series_by_var_uid", "candidates_by_parameter_name", "source_labels", "_open_plot_dialogs")
+                  "series_by_var_uid", "candidates_by_parameter_key", "source_labels", "_open_plot_dialogs")
 
     def __init__(self,
                  results: RmsResults | EmtResults | None,
@@ -2807,7 +2884,7 @@ class DynamicsResultsHandler:
         self.tree_model: DynamicsDeviceTreeModel | None = None
         self.series_by_key: Dict[DynamicResultSeriesKey, List[DynamicResultSeries]] = dict()
         self.series_by_var_uid: Dict[int, List[DynamicResultSeries | DynamicPlotCandidate]] = dict()
-        self.candidates_by_parameter_name: Dict[str, List[DynamicPlotCandidate]] = dict()
+        self.candidates_by_parameter_key: Dict[str, List[DynamicPlotCandidate]] = dict()
         self.source_labels: List[str] = list()
 
         # Open plot windows are kept referenced so they are not garbage collected
@@ -2891,6 +2968,31 @@ class DynamicsResultsHandler:
         :return: Plot-groups tree model.
         """
         return self.plots_model
+
+    @property
+    def candidates_by_parameter_name(self) -> Dict[str, List[DynamicPlotCandidate]]:
+        """
+        Build the legacy parameter-candidate view grouped by canonical parameter name.
+
+        :return: Parameter candidates grouped by canonical parameter name.
+
+        The handler now stores parameter candidates by full device-specific tree
+        identity so equal parameter names on different devices do not collide.
+        Some tests and older callers still inspect the legacy name-grouped view,
+        so this property rebuilds that compatibility projection on demand without
+        changing the internal identity model used by the GUI.
+        """
+        candidates_by_parameter_name: Dict[str, List[DynamicPlotCandidate]] = dict()
+        parameter_candidate_list: List[DynamicPlotCandidate]
+        for parameter_candidate_list in self.candidates_by_parameter_key.values():
+            parameter_candidate: DynamicPlotCandidate
+            for parameter_candidate in parameter_candidate_list:
+                parameter_name: str = parameter_candidate.get_variable_name()
+                grouped_candidates: List[DynamicPlotCandidate] = candidates_by_parameter_name.get(parameter_name, list())
+                grouped_candidates.append(parameter_candidate)
+                candidates_by_parameter_name[parameter_name] = grouped_candidates
+
+        return candidates_by_parameter_name
 
     def capture_plots_tree_state(self, view: QtWidgets.QTreeView | None) -> TreeStateSnapshot | None:
         """
@@ -3282,7 +3384,7 @@ class DynamicsResultsHandler:
         :return: Pair of candidate indexes grouped by variable uid and parameter name.
         """
         candidates_by_var_uid: Dict[int, List[DynamicPlotCandidate]] = dict()
-        candidates_by_parameter_name: Dict[str, List[DynamicPlotCandidate]] = dict()
+        candidates_by_parameter_key: Dict[str, List[DynamicPlotCandidate]] = dict()
         group_assets: Sequence[RmsEventsGroup | EmtEventsGroup] = self._get_pre_simulation_group_assets()
 
         device_tpe: DeviceType
@@ -3351,7 +3453,12 @@ class DynamicsResultsHandler:
 
                     parameter: DynamicPlotParameter
                     for parameter in entry_collection.get_parameters():
-                        parameter_entries: List[DynamicPlotCandidate] = candidates_by_parameter_name.get(parameter.get_display_name(), list())
+                        parameter_chain_key: str = _build_parameter_candidate_chain_key(
+                            device_tpe=device_tpe,
+                            device_state_id=_get_device_state_id(device=device),
+                            parameter_canonical_name=parameter.get_canonical_name(),
+                        )
+                        parameter_entries: List[DynamicPlotCandidate] = candidates_by_parameter_key.get(parameter_chain_key, list())
                         if len(group_assets) > 0:
                             for group_asset in group_assets:
                                 parameter_candidate: DynamicPlotCandidate = _build_runtime_parameter_candidate(
@@ -3377,19 +3484,19 @@ class DynamicsResultsHandler:
                                 event_group_name="",
                             )
                             parameter_entries.append(parameter_candidate)
-                        candidates_by_parameter_name[parameter.get_display_name()] = parameter_entries
+                        candidates_by_parameter_key[parameter_chain_key] = parameter_entries
                 else:
                     pass
 
-        return candidates_by_var_uid, candidates_by_parameter_name
+        return candidates_by_var_uid, candidates_by_parameter_key
 
     def _build_runtime_parameter_candidate_index(self) -> Dict[str, List[DynamicPlotCandidate]]:
         """
         Build the draggable runtime parameter-candidate index from live results metadata.
 
-        :return: Parameter candidates grouped by display name.
+        :return: Parameter candidates grouped by full parameter chain key.
         """
-        candidates_by_parameter_name: Dict[str, List[DynamicPlotCandidate]] = dict()
+        candidates_by_parameter_key: Dict[str, List[DynamicPlotCandidate]] = dict()
 
         device_tpe: DeviceType
         devices_data: Dict[ALL_DEV_TYPES, DynamicDeviceEntryCollection]
@@ -3400,11 +3507,17 @@ class DynamicsResultsHandler:
                 device_label: str = _get_device_label(device=device)
                 bus_label: str = _get_device_bus_label(device=device)
                 device_idtag: str = str(device.idtag)
+                device_state_id: str = _get_device_state_id(device=device)
 
                 parameter: DynamicPlotParameter
                 for parameter in entry_collection.get_parameters():
-                    parameter_entries: List[DynamicPlotCandidate] = candidates_by_parameter_name.get(
-                        parameter.get_display_name(),
+                    parameter_chain_key: str = _build_parameter_candidate_chain_key(
+                        device_tpe=device_tpe,
+                        device_state_id=device_state_id,
+                        parameter_canonical_name=parameter.get_canonical_name(),
+                    )
+                    parameter_entries: List[DynamicPlotCandidate] = candidates_by_parameter_key.get(
+                        parameter_chain_key,
                         list(),
                     )
 
@@ -3423,9 +3536,9 @@ class DynamicsResultsHandler:
                         )
                         parameter_entries.append(parameter_candidate)
 
-                    candidates_by_parameter_name[parameter.get_display_name()] = parameter_entries
+                    candidates_by_parameter_key[parameter_chain_key] = parameter_entries
 
-        return candidates_by_parameter_name
+        return candidates_by_parameter_key
 
     def _refresh_pre_simulation_state(self) -> None:
         """
@@ -3450,15 +3563,15 @@ class DynamicsResultsHandler:
 
         self.series_by_key = dict()
         self.series_by_var_uid = dict()
-        self.candidates_by_parameter_name = dict()
+        self.candidates_by_parameter_key = dict()
         pre_simulation_candidates: tuple[Dict[int, List[DynamicPlotCandidate]], Dict[str, List[DynamicPlotCandidate]]] = self._build_pre_simulation_candidate_index()
         candidates_by_var_uid: Dict[int, List[DynamicPlotCandidate]] = pre_simulation_candidates[0]
-        candidates_by_parameter_name: Dict[str, List[DynamicPlotCandidate]] = pre_simulation_candidates[1]
+        candidates_by_parameter_key: Dict[str, List[DynamicPlotCandidate]] = pre_simulation_candidates[1]
         var_uid: int
         candidate_list: List[DynamicPlotCandidate]
         for var_uid, candidate_list in candidates_by_var_uid.items():
             self.series_by_var_uid[var_uid] = list(candidate_list)
-        self.candidates_by_parameter_name = candidates_by_parameter_name
+        self.candidates_by_parameter_key = candidates_by_parameter_key
 
         self.tree_model = build_dynamics_tree_model(
             tree_data=self.tree_data,
@@ -3466,7 +3579,7 @@ class DynamicsResultsHandler:
             mime_type=self.drag_mime_type,
             state_key_role=self.tree_state_role,
             series_by_var_uid=self.series_by_var_uid,
-            candidates_by_parameter_name=self.candidates_by_parameter_name,
+            candidates_by_parameter_key=self.candidates_by_parameter_key,
             has_multiple_sources=self.has_multiple_sources(),
         )
         self.proxy_model.setSourceModel(self.tree_model)
@@ -3780,7 +3893,7 @@ class DynamicsResultsHandler:
                             self._build_asset_entry_binding_signature(entry=existing_entry)
                         )
                         candidate_signature: tuple[str, str, str, str, str, str] = (
-                            str(candidate._simulation_type),
+                            str(candidate._simulation_type.value),
                             str(candidate._event_group_idtag),
                             str(candidate._device_type.value),
                             str(candidate._device_idtag),
@@ -3966,7 +4079,7 @@ class DynamicsResultsHandler:
                     pass
 
         parameter_candidate_list: List[DynamicPlotCandidate]
-        for parameter_candidate_list in self.candidates_by_parameter_name.values():
+        for parameter_candidate_list in self.candidates_by_parameter_key.values():
             parameter_candidate: DynamicPlotCandidate
             for parameter_candidate in parameter_candidate_list:
                 if parameter_candidate.to_payload() == payload:
@@ -4108,7 +4221,9 @@ class DynamicsResultsHandler:
 
         # The Qt model is treated as a projection of the handler state so every CRUD operation remains explicit.
         self.plots_model.clear()
-        self.plots_model.setHorizontalHeaderLabels(["Dynamic plots"])
+        self.plots_model.setHorizontalHeaderLabels(
+            [QtCore.QCoreApplication.translate("DynamicsResultsHandler", "Dynamic plots")]
+        )
 
         root_item: QtGui.QStandardItem = self.plots_model.invisibleRootItem()
         group: DynamicsPlotGroup
@@ -4504,16 +4619,28 @@ class DynamicsResultsHandler:
         del candidate_label
         x_entry: DynamicResultSeries | DynamicPlotEntry | Var | None = group.get_entry_for_role(role=DynamicPlotEntryRole.X_AXIS)
         y_entry: DynamicResultSeries | DynamicPlotEntry | Var | None = group.get_entry_for_role(role=DynamicPlotEntryRole.Y_AXIS)
-        title: str = "X-Y plot slot"
+        title: str = QtCore.QCoreApplication.translate("DynamicsResultsHandler", "X-Y plot slot")
 
         if x_entry is None and y_entry is None:
             if self.dialog_parent is not None:
                 message_box: QtWidgets.QMessageBox = QtWidgets.QMessageBox(self.dialog_parent)
                 message_box.setWindowTitle(title)
-                message_box.setText("Choose whether to place the dropped signal on the X axis or Y axis.")
-                replace_x_button: QtWidgets.QAbstractButton = message_box.addButton("X axis", QtWidgets.QMessageBox.ButtonRole.AcceptRole)
-                replace_y_button: QtWidgets.QAbstractButton = message_box.addButton("Y axis", QtWidgets.QMessageBox.ButtonRole.AcceptRole)
-                message_box.addButton("Cancel", QtWidgets.QMessageBox.ButtonRole.RejectRole)
+                message_box.setText(QtCore.QCoreApplication.translate(
+                    "DynamicsResultsHandler",
+                    "Choose whether to place the dropped signal on the X axis or Y axis.",
+                ))
+                replace_x_button: QtWidgets.QAbstractButton = message_box.addButton(
+                    QtCore.QCoreApplication.translate("DynamicsResultsHandler", "X axis"),
+                    QtWidgets.QMessageBox.ButtonRole.AcceptRole,
+                )
+                replace_y_button: QtWidgets.QAbstractButton = message_box.addButton(
+                    QtCore.QCoreApplication.translate("DynamicsResultsHandler", "Y axis"),
+                    QtWidgets.QMessageBox.ButtonRole.AcceptRole,
+                )
+                message_box.addButton(
+                    QtCore.QCoreApplication.translate("DynamicsResultsHandler", "Cancel"),
+                    QtWidgets.QMessageBox.ButtonRole.RejectRole,
+                )
                 message_box.exec()
                 clicked_button: QtWidgets.QAbstractButton | None = message_box.clickedButton()
                 if clicked_button is replace_x_button:
@@ -4535,10 +4662,22 @@ class DynamicsResultsHandler:
                     if self.dialog_parent is not None:
                         message_box = QtWidgets.QMessageBox(self.dialog_parent)
                         message_box.setWindowTitle(title)
-                        message_box.setText("This X-Y plot already has X and Y signals. Replace X, replace Y, or cancel?")
-                        replace_x_button = message_box.addButton("Replace X", QtWidgets.QMessageBox.ButtonRole.AcceptRole)
-                        replace_y_button = message_box.addButton("Replace Y", QtWidgets.QMessageBox.ButtonRole.AcceptRole)
-                        message_box.addButton("Cancel", QtWidgets.QMessageBox.ButtonRole.RejectRole)
+                        message_box.setText(QtCore.QCoreApplication.translate(
+                            "DynamicsResultsHandler",
+                            "This X-Y plot already has X and Y signals. Replace X, replace Y, or cancel?",
+                        ))
+                        replace_x_button = message_box.addButton(
+                            QtCore.QCoreApplication.translate("DynamicsResultsHandler", "Replace X"),
+                            QtWidgets.QMessageBox.ButtonRole.AcceptRole,
+                        )
+                        replace_y_button = message_box.addButton(
+                            QtCore.QCoreApplication.translate("DynamicsResultsHandler", "Replace Y"),
+                            QtWidgets.QMessageBox.ButtonRole.AcceptRole,
+                        )
+                        message_box.addButton(
+                            QtCore.QCoreApplication.translate("DynamicsResultsHandler", "Cancel"),
+                            QtWidgets.QMessageBox.ButtonRole.RejectRole,
+                        )
                         message_box.exec()
                         clicked_button = message_box.clickedButton()
                         if clicked_button is replace_x_button:
@@ -4946,13 +5085,10 @@ class DynamicsResultsHandler:
         dialog.resize(900, 600)
 
         self._open_plot_dialogs.append(dialog)
+        dialog_closer: _OpenPlotDialogCloser = _OpenPlotDialogCloser(self._open_plot_dialogs, dialog)
 
         # Drop our reference once the window is closed so the dialog can be freed
-        def _forget(_result: int = 0, _dialog: QtWidgets.QDialog = dialog) -> None:
-            if _dialog in self._open_plot_dialogs:
-                self._open_plot_dialogs.remove(_dialog)
-
-        dialog.finished.connect(_forget)
+        dialog.finished.connect(dialog_closer.on_dialog_finished)
         dialog.show()
 
     def plot_series(self, series: DynamicResultSeries) -> None:
@@ -5513,7 +5649,7 @@ class DynamicsResultsHandler:
         self.tree_data = self._build_exported_results_tree_data()
         self.series_by_key = dict()
         self.series_by_var_uid = dict()
-        self.candidates_by_parameter_name = dict()
+        self.candidates_by_parameter_key = dict()
 
         device_tpe: DeviceType
         devices_data: Dict[ALL_DEV_TYPES, DynamicDeviceEntryCollection]
@@ -5577,7 +5713,7 @@ class DynamicsResultsHandler:
         # them, but they still need a drag payload and a double-click plotting
         # identity. This candidate index supplies that parameter-specific
         # semantic payload for the live post-simulation tree.
-        self.candidates_by_parameter_name = self._build_runtime_parameter_candidate_index()
+        self.candidates_by_parameter_key = self._build_runtime_parameter_candidate_index()
 
         self.tree_model = build_dynamics_tree_model(
             tree_data=self.tree_data,
@@ -5585,7 +5721,7 @@ class DynamicsResultsHandler:
             mime_type=self.drag_mime_type,
             state_key_role=self.tree_state_role,
             series_by_var_uid=self.series_by_var_uid,
-            candidates_by_parameter_name=self.candidates_by_parameter_name,
+            candidates_by_parameter_key=self.candidates_by_parameter_key,
             has_multiple_sources=self.has_multiple_sources(),
         )
         self.proxy_model.setSourceModel(self.tree_model)

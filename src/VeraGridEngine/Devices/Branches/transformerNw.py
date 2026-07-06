@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import Sequence, Tuple, Union
+from typing import Sequence, Tuple, Union, List
 
 import numpy as np
 
@@ -14,7 +14,35 @@ from VeraGridEngine.Devices.Parents.editable_device import GCProp, get_at
 from VeraGridEngine.Devices.Parents.physical_device import PhysicalDevice
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.Profiles import ProfileBool
-from VeraGridEngine.enumerations import BuildStatus, DeviceType, PrpCat
+from VeraGridEngine.enumerations import BuildStatus, DeviceType, PrpCat, SubObjectType
+
+class ImpedanceTriplet:
+    __slots__ = ("i", "j", "imp")
+    def __init__(self, i: int = 0, j: int = 0, imp:complex = complex(0,0)) -> None:
+        self.i = i
+        self.j = j
+        self.imp = imp
+
+    def to_list(self) -> List[int|float]:
+        return [self.i, self.j, self.imp.real, self.imp.imag]
+
+    def from_list(self, value: List[int|float]) -> "ImpedanceTriplet":
+        self.i = int(value[0])
+        self.j = int(value[1])
+        self.imp = complex(value[2], value[3])
+        return self
+
+class ImpedanceTripletList:
+    def __init__(self):
+        self.__list = []
+    def append(self, imp: ImpedanceTriplet) -> None:
+        self.__list.append(imp)
+    def to_list(self) -> List[ImpedanceTripletList]:
+        return [x.to_list() for x in self.__list]
+    def parse(self, data: List[List[int|float]]) -> None:
+        for entry in data:
+            self.append(ImpedanceTriplet().from_list(entry))
+
 
 
 class TransformerNW(PhysicalDevice):
@@ -39,6 +67,7 @@ class TransformerNW(PhysicalDevice):
         "_I0",
         "_x",
         "_y",
+        "_internal_impedances"
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
@@ -92,6 +121,13 @@ class TransformerNW(PhysicalDevice):
             units="px",
             tpe=float,
             definition="y position",
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name="internal_impedances",
+            units="p.u.",
+            tpe= SubObjectType.ImpedanceTripletList,
+            definition="Internal Impedance List",
             cat=[PrpCat.TP],
         ),
     )
@@ -153,7 +189,11 @@ class TransformerNW(PhysicalDevice):
         self.x = float(x)
         self.y = float(y)
 
+        self._internal_impedances = ImpedanceTripletList()
+
         self.initialize_windings(winding_count=winding_count, buses=buses)
+
+
 
     @property
     def active_prof(self) -> ProfileBool:
@@ -203,6 +243,20 @@ class TransformerNW(PhysicalDevice):
         Winding objects connected to the internal bus.
         """
         return tuple(self._windings)
+
+    @property
+    def internal_impedances(self) -> ImpedanceTripletList:
+        """
+        Internal impedances of transformer model
+        """
+        return self._internal_impedances
+
+    @internal_impedances.setter
+    def internal_impedances(self, val: ImpedanceTripletList):
+        if isinstance(val, ImpedanceTripletList):
+            self._internal_impedances = val
+        else:
+            raise ValueError("Internal impedances in incorrect format")
 
     def all_connected(self) -> bool:
         """

@@ -11,6 +11,8 @@ from PySide6.QtWidgets import (QApplication, QGraphicsLineItem, QGraphicsItem, Q
                                QGraphicsPathItem)
 from PySide6.QtGui import QColor, QPen, QPolygon, QPolygonF, QPainterPath, QBrush, QPalette
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
+from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
+from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 from VeraGrid.Gui.messages import warning_msg
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
@@ -163,7 +165,7 @@ class GenericDiagramWidget:
         Change the colour according to the system theme
         """
         if self.api_object is not None:
-            if hasattr(self.api_object, 'active'):
+            if isinstance(self.api_object, (InjectionParent, BranchParent)):
                 if self.api_object.active:
                     self.color = ACTIVE['color']
                     self.style = ACTIVE['style']

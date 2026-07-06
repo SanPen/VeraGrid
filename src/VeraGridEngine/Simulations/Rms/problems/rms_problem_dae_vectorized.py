@@ -12,11 +12,9 @@ import scipy.sparse as sp
 from VeraGridEngine.enumerations import ParamPowerFlowReferenceType, DeviceType, DynamicEventTransitionType
 from VeraGridEngine.Devices import MultiCircuit
 from VeraGridEngine.Simulations.driver_template import DummySignal
-from VeraGridEngine.Utils.Symbolic.symbolic import (Var, Const, Expr, piecewise, get_expression_vars, heaviside,
-                                                    hard_sat)
+from VeraGridEngine.Utils.Symbolic.symbolic import (Var, Const, Expr, piecewise, get_expression_vars, hard_sat)
 from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicParamsVector, SymbolicDerivative, SymbolicJacobian
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.Utils.Symbolic.symbolic_io import block_deep_copy
 from VeraGridEngine.enumerations import VarPowerFlowReferenceType, RmsInitializationMethod
 from VeraGridEngine.basic_structures import Vec, ObjVec, BoolVec, Logger
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowResults
@@ -47,7 +45,7 @@ from VeraGridEngine.IO.fmu.importer.experimental_me import (
     register_rms_fmu_me_device,
 )
 
-from VeraGridEngine.Utils.Symbolic.static_parameter_mapping_rms import (
+from VeraGridEngine.Devices.Dynamic.static_parameter_mapping import (
     assign_static_api_object_mapping_for_device,
 )
 
@@ -496,8 +494,6 @@ class RmsProblemDaeVec(RmsProblemTemplate):
         Q: ObjVec = np.zeros(n, dtype=object)
         P_used: BoolVec = np.zeros(n, dtype=bool)
         Q_used: BoolVec = np.zeros(n, dtype=bool)
-        branch_bus_p = np.zeros(n, dtype=float)
-        branch_bus_q = np.zeros(n, dtype=float)
 
         # general indexes for variables and parameters
         self._n_vars = 0
@@ -564,13 +560,6 @@ class RmsProblemDaeVec(RmsProblemTemplate):
                 self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Qf, self.Sf[branch_num].imag)
                 self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Pt, self.St[branch_num].real)
                 self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Qt, self.St[branch_num].imag)
-
-                f_idx = bus_dict[elm.bus_from]
-                t_idx = bus_dict[elm.bus_to]
-                branch_bus_p[f_idx] += self.Sf[branch_num].real
-                branch_bus_q[f_idx] += self.Sf[branch_num].imag
-                branch_bus_p[t_idx] += self.St[branch_num].real
-                branch_bus_q[t_idx] += self.St[branch_num].imag
 
                 if VarPowerFlowReferenceType.If_dc in elm.rms_model.external_mapping and Vmf is not None:
                     if Vmf.uid in self.uid2idx_vars:
@@ -821,50 +810,7 @@ class RmsProblemDaeVec(RmsProblemTemplate):
                 # add model to system block
                 self.sys_block.add(elm.rms_model)
 
-        gen_idx_map = {elm.idtag: i for i, elm in enumerate(grid.generators)}
-        batt_idx_map = {elm.idtag: i for i, elm in enumerate(grid.batteries)}
-        shunt_idx_map = {elm.idtag: i for i, elm in enumerate(grid.shunts)}
-        loads_idx_map = {elm.idtag: i for i, elm in enumerate(grid.loads)}
-
-        fixed_inj_p = np.zeros(n, dtype=float)
-        fixed_inj_q = np.zeros(n, dtype=float)
-        slack_gen_count = np.zeros(n, dtype=int)
-        slack_gen_snom = np.zeros(n, dtype=float)
-
-        for dev in grid.get_injection_devices_iter():
-            bidx = bus_dict[dev.bus]
-            if not dev.rms_model.empty() and not dev.bus.is_dc:
-
-                if dev.idtag in gen_idx_map and dev.bus.is_slack:
-                    slack_gen_count[bidx] += 1
-                    snom = dev.Snom
-                    if snom <= 0.0:
-                        snom = 1.0
-                    slack_gen_snom[bidx] += snom
-                else:
-                    Vbus_pf = self.power_flow_results.voltage[bidx]
-                    if dev.idtag in gen_idx_map:
-                        gidx = gen_idx_map[dev.idtag]
-                        Sdev_pf = complex(float(dev.P), float(self.power_flow_results.gen_q[gidx])) / grid.Sbase
-                    elif dev.idtag in batt_idx_map:
-                        bdid = batt_idx_map[dev.idtag]
-                        Sdev_pf = complex(float(dev.P), float(self.power_flow_results.battery_q[bdid])) / grid.Sbase
-                    elif dev.idtag in shunt_idx_map:
-                        g_sh = float(dev.G) / grid.Sbase
-                        b_sh = float(dev.B) / grid.Sbase
-                        Sdev_pf = complex(g_sh * (abs(Vbus_pf) ** 2), -b_sh * (abs(Vbus_pf) ** 2))
-                    elif dev.idtag in loads_idx_map:
-                        Sdev_pf = complex(-float(dev.P), -float(dev.Q)) / grid.Sbase
-                    else:
-                        Sdev_pf = complex(0.0, 0.0)
-
-                    fixed_inj_p[bidx] += Sdev_pf.real
-                    fixed_inj_q[bidx] += Sdev_pf.imag
-
-        residual_p = branch_bus_p - fixed_inj_p
-        residual_q = branch_bus_q - fixed_inj_q
-        remaining_slack_gen = slack_gen_count.copy()
-        remaining_slack_gen_snom = slack_gen_snom.copy()
+        injection_init_data = self.get_injection_init_data(bus_dict=bus_dict)
 
         for elm in grid.get_injection_devices_iter():
 
@@ -883,49 +829,7 @@ class RmsProblemDaeVec(RmsProblemTemplate):
                     self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.P,
                                         np.real(self.power_flow_results.Sbus[bus_index] / grid.Sbase))
                 else:
-                    Vbus = self.power_flow_results.voltage[bus_index]
-                    elm_active = bool(elm.get_active_at(None))
-                    if elm.idtag in gen_idx_map:
-                        if not elm_active:
-                            Sdev = complex(0, 0)
-                        elif elm.bus.is_slack and remaining_slack_gen[bus_index] > 0:
-                            elm_snom = float(elm.Snom)
-                            if elm_snom <= 0.0:
-                                elm_snom = 1.0
-
-                            if remaining_slack_gen[bus_index] == 1:
-                                share = 1.0
-                            else:
-                                snom_den = remaining_slack_gen_snom[bus_index]
-                                if snom_den <= 0.0:
-                                    share = 1.0 / remaining_slack_gen[bus_index]
-                                else:
-                                    share = elm_snom / snom_den
-
-                            P_val = residual_p[bus_index] * share
-                            Q_val = residual_q[bus_index] * share
-                            remaining_slack_gen[bus_index] -= 1
-                            remaining_slack_gen_snom[bus_index] -= elm_snom
-                            residual_p[bus_index] -= P_val
-                            residual_q[bus_index] -= Q_val
-                            Sdev = complex(P_val, Q_val)
-                        else:
-                            gidx = gen_idx_map[elm.idtag]
-                            Sdev = complex(float(elm.P), float(self.power_flow_results.gen_q[gidx])) / grid.Sbase
-                    elif elm.idtag in batt_idx_map:
-                        if not elm_active:
-                            Sdev = complex(0, 0)
-                        else:
-                            bidx = batt_idx_map[elm.idtag]
-                            Sdev = complex(float(elm.P), float(self.power_flow_results.battery_q[bidx])) / grid.Sbase
-                    elif elm.idtag in shunt_idx_map:
-                        g_sh = float(elm.G) / grid.Sbase
-                        b_sh = float(elm.B) / grid.Sbase
-                        Sdev = complex(g_sh * (abs(Vbus) ** 2), -b_sh * (abs(Vbus) ** 2))
-                    elif elm.idtag in loads_idx_map:
-                        Sdev = complex(-float(elm.P), -float(elm.Q)) / grid.Sbase
-                    else:
-                        Sdev = self.power_flow_results.Sbus[bus_index] / grid.Sbase
+                    Sdev = injection_init_data[elm.idtag]
 
                     self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.P,
                                         Sdev.real)

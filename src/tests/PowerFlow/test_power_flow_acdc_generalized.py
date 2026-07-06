@@ -255,7 +255,8 @@ def test_voltage_control_with_ltc() -> None:
                                    control_taps_modules=control_taps_modules,
                                    control_taps_phase=False,
                                    control_remote_voltage=False,
-                                   apply_temperature_correction=False)
+                                   apply_temperature_correction=False,
+                                   controls_start_tolerance=1e-6)
 
         problem, solution = solve_generalized(grid=grid, options=options)
 
@@ -508,7 +509,8 @@ def test_power_flow_12bus_acdc() -> None:
                                control_q=False,
                                retry_with_other_methods=False,
                                control_taps_phase=True,
-                               max_iter=80)
+                               max_iter=80,
+                               controls_start_tolerance=1e-6)
 
     problem, solution = solve_generalized(grid=grid, options=options)
 

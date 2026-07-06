@@ -7,10 +7,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from PySide6 import QtWidgets
-from VeraGrid.Gui.gui_functions import add_menu_entry
+from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
 from VeraGrid.Gui.profile_wizard_utils import fill_substation_weather_profiles
 from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics import MapInjectionTemplateGraphicItem
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
 from VeraGrid.Gui.DeviceEditors.LoadDesigner.load_designer import LoadDesigner
 from VeraGrid.Gui.DeviceEditors.LoadDesigner.load_device_editor import LoadDeviceEditorDialog
 from VeraGridEngine.Devices.Injections.load import Load
@@ -65,20 +64,20 @@ class MapLoadGraphicItem(MapInjectionTemplateGraphicItem):
         """
         if self.api_object is not None:
             menu = self.get_base_context_menu()
-            menu.addSection("Load")
+            menu.addSection(translate_context_menu_text("Load"))
 
             add_menu_entry(menu=menu,
-                           text="Load profile wizard",
+                           text=translate_context_menu_text("Load profile wizard"),
                            function_ptr=self.load_profile_wizard,
                            icon_path=":/Icons/icons/load_wizard.png")
 
             add_menu_entry(menu=menu,
-                           text="RMS Editor",
+                           text=translate_context_menu_text("RMS Editor"),
                            function_ptr=self.edit_rms,
                            icon_path=":/Icons/icons/dyn_edit.png")
 
             add_menu_entry(menu=menu,
-                           text="EMT Editor",
+                           text=translate_context_menu_text("EMT Editor"),
                            function_ptr=self.edit_emt,
                            icon_path=":/Icons/icons/dyn_emt_edit.png")
 
@@ -87,8 +86,8 @@ class MapLoadGraphicItem(MapInjectionTemplateGraphicItem):
             self.editor.gui.show_error_toast("The graphic has no API object!")
 
     def edit_rms(self):
-        open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit,
-                            preferred_mode=DynamicSimulationMode.RMS)
+        self.editor.gui.open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit,
+                                            preferred_mode=DynamicSimulationMode.RMS)
 
     def edit_emt(self):
         """
@@ -97,8 +96,8 @@ class MapLoadGraphicItem(MapInjectionTemplateGraphicItem):
         :return: None.
         """
 
-        open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit,
-                            preferred_mode=DynamicSimulationMode.EMT)
+        self.editor.gui.open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit,
+                                            preferred_mode=DynamicSimulationMode.EMT)
 
     def load_profile_wizard(self) -> None:
         """

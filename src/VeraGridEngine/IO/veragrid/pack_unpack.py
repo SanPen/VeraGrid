@@ -23,6 +23,13 @@ from VeraGridEngine.Devices.Diagrams.base_diagram import copy_diagrams
 from VeraGridEngine.enumerations import (DiagramType, DeviceType, SubObjectType, TapPhaseControl, TapModuleControl,
                                          ContingencyOperationTypes)
 
+ProfileDictionary = Dict[str, bool | int | str | dict[str, dict[int, Any | None] | dict[Any, Any]] | Any]
+
+ModelDictionary = dict[str,
+dict[str, dict[str, str] | list[dict[str, str]]]
+| dict[str, list[dict[str, Any]] | dict[int, list[Any]] | dict[int, dict[str, Any]] | list[int]]
+]
+
 
 def get_objects_dictionary() -> Dict[str, ALL_DEV_TYPES]:
     """
@@ -239,7 +246,8 @@ def _resolve_circuit_fmu_paths(circuit: MultiCircuit, project_directory: Path | 
                 if property_name in elm.registered_properties:
                     current_value = elm.get_snapshot_value_by_name(property_name)
                     if isinstance(current_value, str):
-                        elm.set_snapshot_value(property_name, _resolve_project_fmu_config(current_value, project_directory))
+                        elm.set_snapshot_value(property_name,
+                                               _resolve_project_fmu_config(current_value, project_directory))
                     else:
                         pass
                 else:
@@ -300,7 +308,7 @@ def get_multiverse_node_metadata(metadata: Dict[str, Any]) -> Dict[str, Dict[str
     return metadata
 
 
-def order_multiverse_records(metadata: Dict[str, Dict[str | int | float]] | Dict[str, Any]) -> List[Dict[str, Any]]:
+def order_multiverse_records(metadata: Dict[str, Dict[str, int | float]] | Dict[str, Any]) -> List[Dict[str, Any]]:
     """
     Return multiverse metadata records in a parent-before-child order.
 
@@ -458,7 +466,7 @@ def gather_model_as_data_frames(circuit: MultiCircuit,
     return dfs
 
 
-def profile_todict(profile: AnyProfile) -> Dict[str, str | bool]:
+def profile_todict(profile: AnyProfile) -> ProfileDictionary:
     """
     Get a dictionary representation of the profile
     :return:
@@ -493,7 +501,7 @@ def profile_todict(profile: AnyProfile) -> Dict[str, str | bool]:
         }
 
 
-def profile_todict_idtag(profile: AnyProfile) -> Dict[str, str]:
+def profile_todict_idtag(profile: AnyProfile) -> ProfileDictionary:
     """
     Get a dictionary representation of the profile
     :return:
@@ -521,7 +529,7 @@ def profile_todict_idtag(profile: AnyProfile) -> Dict[str, str]:
         }
 
 
-def profile_todict_str(profile: AnyProfile) -> Dict[str, str]:
+def profile_todict_str(profile: AnyProfile) -> ProfileDictionary:
     """
     Get a dictionary representation of the profile
     :return:
@@ -558,9 +566,9 @@ def profile_todict_str(profile: AnyProfile) -> Dict[str, str]:
 
 
 def cast_profile_value(
-    profile: AnyProfile,
-    value: Any,
-    collection: Union[None, Dict[str, Any]] = None,
+        profile: AnyProfile,
+        value: Any,
+        collection: Union[None, Dict[str, Any]] = None,
 ) -> Any:
     """
     Convert serialized profile payloads into the concrete type required by ``profile``.
@@ -687,6 +695,9 @@ def veragrid_object_to_json(elm: ALL_DEV_TYPES,
         elif prop.tpe == SubObjectType.LineLocations:
             data[name] = obj.to_list()
 
+        elif prop.tpe == SubObjectType.ImpedanceTripletList:
+            data[name] = obj.to_list()
+
         elif prop.tpe == SubObjectType.ListOfWires:
             data[name] = obj.to_list()
 
@@ -749,12 +760,11 @@ def veragrid_object_to_json(elm: ALL_DEV_TYPES,
 
 
 def gather_model_as_jsons(circuit: MultiCircuit,
-                          project_directory: Path | None = None) -> dict[
-    str, dict[str, dict[str, str] | list[dict[str, str]]] | dict[
-        str, list[dict[str, Any]] | dict[int, list[Any]] | dict[int, dict[str, Any]] | list[int]]]:
+                          project_directory: Path | None = None) -> ModelDictionary:
     """
     Transform a MultiCircuit into a collection of Json files
     :param circuit:
+    :param project_directory:
     :return:
     """
 
@@ -1486,6 +1496,14 @@ def parse_object_type_from_json(template_elm: ALL_DEV_TYPES,
                                     list_of_wires.parse(data=property_value,
                                                         wire_dict=elements_dict_by_type[DeviceType.WireDevice])
 
+
+                                elif gc_prop.tpe == SubObjectType.ImpedanceTripletList:
+
+                                    # get the line locations object and fill it with the json data
+                                    impedance_triplet_list: dev.ImpedanceTripletList = elm.get_snapshot_value(
+                                        prop=gc_prop)
+                                    impedance_triplet_list.parse(data=property_value)
+
                                 elif gc_prop.tpe == SubObjectType.TapChanger:
 
                                     # get the line locations object and fill it with the json data
@@ -2047,8 +2065,8 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
     return circuit
 
 
-def parse_multiverse_data(data: dict[str, VERAGRID_FILE_TYPE],
-                          metadata: Dict[str, Dict[str | int | float] | int | None],
+def parse_multiverse_data(data: Dict[str, VERAGRID_FILE_TYPE],
+                          metadata: Dict[str, Dict[str, int | float] | int | None],
                           text_func: Union[Callable, None] = None,
                           progress_func: Union[Callable, None] = None,
                           logger: Logger = Logger()) -> dev.MultiVerse:
@@ -2100,72 +2118,91 @@ def parse_multiverse_data(data: dict[str, VERAGRID_FILE_TYPE],
         parent_id_raw = record["parent_id"]
         parent_id = None if parent_id_raw is None else int(parent_id_raw)
 
-        model_data = data["multiverse"][circuit_idtag]
-        diagrams_dict[circuit_idtag] = model_data.get("diagrams", list())
+        multiverse_data = data.get("multiverse", None)
+        if multiverse_data is not None:
+            model_data = multiverse_data.get(circuit_idtag, None)
 
-        model_without_diagrams = dict(model_data)
-        model_without_diagrams["diagrams"] = list()
+            if model_data is not None:
+                diagrams_dict[circuit_idtag] = model_data.get("diagrams", list())
 
-        previous_circuit = None if parent_id is None else composed_by_node_id[parent_id]
+                model_without_diagrams = dict(model_data)
+                model_without_diagrams["diagrams"] = list()
 
-        grid = parse_veragrid_data(data=model_without_diagrams,
-                                   previous_circuit=previous_circuit,
-                                   refine_pointers=False,
-                                   text_func=text_func,
-                                   progress_func=progress_func,
-                                   logger=logger)
+                previous_circuit = None if parent_id is None else composed_by_node_id[parent_id]
 
-        # we create a dictionary of all the elements in all the scenarios such that finding pointers doesn't fail later
-        d, ok = grid.get_all_elements_dict(logger=logger)
-        all_elements_dict.update(d)
+                grid = parse_veragrid_data(data=model_without_diagrams,
+                                           previous_circuit=previous_circuit,
+                                           refine_pointers=False,
+                                           text_func=text_func,
+                                           progress_func=progress_func,
+                                           logger=logger)
 
-        grid.idtag = circuit_idtag
-        diffs_dict[circuit_idtag] = grid
+                # we create a dictionary of all the elements in all the scenarios such that finding pointers doesn't fail later
+                d, ok = grid.get_all_elements_dict(logger=logger)
+                all_elements_dict.update(d)
 
-        if parent_id is None:
-            composed_by_node_id[node_id] = grid.copy()
+                grid.idtag = circuit_idtag
+                diffs_dict[circuit_idtag] = grid
+
+                if parent_id is None:
+                    composed_by_node_id[node_id] = grid.copy()
+                else:
+                    composed = composed_by_node_id[parent_id].copy()
+                    composed.merge_circuit(grid)
+                    composed.name = grid.name
+                    composed_by_node_id[node_id] = composed
+            else:
+                # model_data is None
+                pass
         else:
-            composed = composed_by_node_id[parent_id].copy()
-            composed.merge_circuit(grid)
-            composed.name = grid.name
-            composed_by_node_id[node_id] = composed
+            # multiverse is None
+            pass
 
     # Refine pointer in all grids
     for idtag, grid in diffs_dict.items():
         grid.refine_pointer_objects(logger=logger, all_elements_dict=all_elements_dict)
 
-    mv.parse_json(diffs_dict, metadata)
+    # Parse the multiverse data
+    try:
+        mv.parse_json(diffs_dict=diffs_dict, metadata=metadata)
+    except ValueError as e:
+        logger.add_error(str(e))
 
     # Parse diagrams only after the multiverse tree exists, so each node can resolve them
     # against its full composed scenario instead of its raw delta payload.
     for record in node_metadata.values():
         node_id = int(record["node_id"])
         circuit_idtag = str(record["circuit_idtag"])
-        node = mv.get_node(node_id)
-        full_circuit = mv.checkout(node)
-        obj_dict = full_circuit.get_all_elements_dict_by_type(add_locations=True)
-        parsed_diagrams: List[Any] = list()
+        if mv.check_node(node_id):
+            node = mv.get_node(node_id)
+            full_circuit = mv.checkout(node)
+            obj_dict = full_circuit.get_all_elements_dict_by_type(add_locations=True)
+            parsed_diagrams: List[Any] = list()
 
-        for diagram_dict in diagrams_dict.get(circuit_idtag, list()):
-            if diagram_dict['type'] in [DiagramType.Schematic.value, "bus-branch"]:
-                diagram = dev.SchematicDiagram()
-                diagram.parse_data(data=diagram_dict, obj_dict=obj_dict, logger=logger)
-                parsed_diagrams.append(diagram)
+            for diagram_dict in diagrams_dict.get(circuit_idtag, list()):
+                if diagram_dict['type'] in [DiagramType.Schematic.value, "bus-branch"]:
+                    diagram = dev.SchematicDiagram()
+                    diagram.parse_data(data=diagram_dict, obj_dict=obj_dict, logger=logger)
+                    parsed_diagrams.append(diagram)
 
-            elif diagram_dict['type'] == DiagramType.SubstationLineMap.value:
-                diagram = dev.MapDiagram()
-                diagram.parse_data(data=diagram_dict, obj_dict=obj_dict, logger=logger)
-                parsed_diagrams.append(diagram)
+                elif diagram_dict['type'] == DiagramType.SubstationLineMap.value:
+                    diagram = dev.MapDiagram()
+                    diagram.parse_data(data=diagram_dict, obj_dict=obj_dict, logger=logger)
+                    parsed_diagrams.append(diagram)
 
-        node.diagrams = parsed_diagrams
+            node.diagrams = parsed_diagrams
+        else:
+            logger.add_error("Node ID not found", value=str(node_id))
 
-    active_node_id_raw = metadata.get("active_node_id", None) if isinstance(metadata, dict) else None
-    if mv.current_node is not None and mv.current_model is not None:
-        obj_dict = mv.current_model.get_all_elements_dict_by_type(add_locations=True)
-        mv.current_model.diagrams = copy_diagrams(diagrams=mv.current_node.diagrams, obj_dict=obj_dict)
+    if isinstance(metadata, dict):
+        active_node_id_raw: int = metadata.get("active_node_id", -1)
+        if mv.current_node is not None and mv.current_model is not None:
+            obj_dict = mv.current_model.get_all_elements_dict_by_type(add_locations=True)
+            mv.current_model.diagrams = copy_diagrams(diagrams=mv.current_node.diagrams, obj_dict=obj_dict)
 
-    if active_node_id_raw is not None and (
-            mv.current_node is None or mv.current_node.node_id != int(active_node_id_raw)):
-        mv.activate_scenario(int(active_node_id_raw))
+        if (active_node_id_raw > -1
+                and (mv.current_node is None or mv.current_node.node_id != int(active_node_id_raw))):
+            if mv.check_node(active_node_id_raw):
+                mv.activate_scenario(int(active_node_id_raw))
 
     return mv

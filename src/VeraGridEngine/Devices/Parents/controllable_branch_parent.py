@@ -78,6 +78,7 @@ class ControllableBranchParent(BranchParent):
             tpe=float,
             definition='Total positive sequence shunt conductance.',
             cat=[PrpCat.PF, PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.gFe,
         ),
         GCProp(
             prop_name='B',
@@ -85,6 +86,7 @@ class ControllableBranchParent(BranchParent):
             tpe=float,
             definition='Total positive sequence shunt susceptance.',
             cat=[PrpCat.PF, PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.bsh,
         ),
         GCProp(
             prop_name='R0',

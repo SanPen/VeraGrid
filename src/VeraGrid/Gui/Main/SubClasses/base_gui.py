@@ -24,7 +24,7 @@ from VeraGrid.Gui.scenario_tree_model import ScenarioTreeModel
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Devices.multiverse import MultiVerse
 import VeraGridEngine.Simulations as sim
-from VeraGridEngine.enumerations import EngineType, DeviceType, SimulationTypes
+from VeraGridEngine.enumerations import EngineType, DeviceType, SimulationTypes, DynamicSimulationMode
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
@@ -58,7 +58,7 @@ from VeraGrid.Gui.DeviceEditors.TowerBuilder.LineBuilderDialogue import TowerBui
 from VeraGrid.Gui.GridReduce.grid_reduce import GridReduceDialogue
 from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI
 from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_window import DynamicEditorWorkspaceWindow
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import DynamicEditorWorkspaceManager
+from VeraGrid.Session.dynamic_editor_workspace_session import DynamicEditorWorkspaceSession
 from VeraGrid.Gui.Diagrams.SchematicWidget.diagram_bus_selection_dialogue import DiagramBusSelectorDialogue
 from VeraGrid.Gui.Diagrams.generic_graphics import is_dark_mode
 from VeraGrid.Gui.python_console import PythonConsole
@@ -68,6 +68,12 @@ from VeraGrid.Gui.FileDialogues.PsseDialogue.psse_import import PsseImportDialog
 from VeraGrid.Gui.ProceduralGrid.procedural_grid import ProceduralGridWindow
 from VeraGrid.Gui.AiAgent.ai_chat_dialogue import AiChatDialogue, AiBackendState
 from VeraGrid.Gui.AiAgent.ai_backend import ProviderType
+from VeraGrid.Gui.i18n import (
+    ActionShortcutState,
+    ApplicationTranslator,
+    collect_action_shortcut_states,
+    restore_action_shortcut_states,
+)
 from VeraGridEngine.IO.file_system import get_create_veragrid_folder
 from VeraGrid.Gui.general_dialogues import LogsDialogue
 
@@ -127,6 +133,60 @@ def traverse_objects(name, obj, lst: list, i=0):
                             traverse_objects(name=name + "/" + name2, obj=obj2, lst=lst, i=i + 1)
 
 
+def get_splitter_section_hint(splitter: QtWidgets.QSplitter, section_index: int) -> int:
+    """
+    Return the current size hint for one splitter section.
+
+    :param splitter: Splitter to inspect.
+    :param section_index: Section index inside the splitter.
+    :returns: Preferred section size along the splitter orientation.
+    """
+    section_widget: QtWidgets.QWidget | None = splitter.widget(section_index)
+
+    if section_widget is None:
+        return 0
+    else:
+        section_widget.updateGeometry()
+
+        if splitter.orientation() == QtCore.Qt.Orientation.Horizontal:
+            return max(section_widget.minimumSizeHint().width(), section_widget.minimumWidth())
+        else:
+            return max(section_widget.minimumSizeHint().height(), section_widget.minimumHeight())
+
+
+def refresh_translated_splitter_layouts(root_widget: QtWidgets.QWidget) -> None:
+    """
+    Refresh splitter sections after a language change.
+
+    When translated labels become wider, Qt retranslates the text but can keep
+    old splitter allocations until another layout pass happens. This helper
+    nudges every splitter to re-evaluate its section sizes against the updated
+    widget hints.
+
+    :param root_widget: Top-level widget owning the splitters.
+    :returns: None.
+    """
+    splitter: QtWidgets.QSplitter
+
+    for splitter in root_widget.findChildren(QtWidgets.QSplitter):
+        current_sizes: list[int] = splitter.sizes()
+        desired_sizes: list[int] = list(current_sizes)
+        section_index: int
+
+        if len(current_sizes) == 0:
+            pass
+        else:
+            for section_index in range(splitter.count()):
+                section_hint: int = get_splitter_section_hint(splitter=splitter, section_index=section_index)
+
+                if desired_sizes[section_index] < section_hint:
+                    desired_sizes[section_index] = section_hint
+                else:
+                    pass
+
+            splitter.setSizes(desired_sizes)
+
+
 class BaseMainGui(QMainWindow):
     """
     DiagramFunctionsMain
@@ -141,6 +201,9 @@ class BaseMainGui(QMainWindow):
         QMainWindow.__init__(self, parent)
         self.ui = Ui_mainWindow()
         self.ui.setupUi(self)
+        # Cache the source-language shortcuts once so language changes do not overwrite them
+        # with translated shortcut strings that Qt may parse differently or drop entirely.
+        self._action_shortcut_states: list[ActionShortcutState] = collect_action_shortcut_states(self)
 
         # Declare circuit
         # self.circuit: MultiCircuit = MultiCircuit()
@@ -153,6 +216,7 @@ class BaseMainGui(QMainWindow):
         self.stuff_running_now: List[SimulationTypes] = list()
 
         self.session: SimulationSession = SimulationSession(name='GUI session')
+        self.dynamic_editor_workspace_session: DynamicEditorWorkspaceSession = DynamicEditorWorkspaceSession()
 
         self._file_name = ''
 
@@ -252,11 +316,6 @@ class BaseMainGui(QMainWindow):
         self.about_msg_window: Union[AboutDialogueGuiGUI, None] = None
         self.tower_builder_window: Union[TowerBuilderGUI, None] = None
         self.rms_model_Editor_window: Union[DynamicBlockEditorGUI, None] = None
-        # Dynamic (RMS/EMT) model editor workspaces are top-level QMainWindows
-        # Rooting them here keeps them out of the cyclic collector; 
-        # Needed to avoid macos GUI crashing issues
-        # We use a list because there can be multiple dynamic windows at once
-        self.dynamic_editor_windows: List[DynamicEditorWorkspaceWindow] = list()
         self.investment_checks_diag: Union[CheckListDialogue, None] = None
         self.new_se_dlg: Union[CheckListDialogue, None] = None
         self.contingency_checks_diag: Union[CheckListDialogue, None] = None
@@ -271,6 +330,7 @@ class BaseMainGui(QMainWindow):
         self.ai_chat_dialogue: AiChatDialogue | None = None
         self.ai_backend_state: AiBackendState = self.build_default_ai_backend_state()
         self.ai_restore_visible: bool = False
+        self.translation_controller: ApplicationTranslator | None = None
 
         # available engines --------------------------------------------------------------------------------------------
         engine_lst = [EngineType.VeraGrid]
@@ -307,6 +367,7 @@ class BaseMainGui(QMainWindow):
         self.ui.actionAuto_rate_branches.triggered.connect(self.auto_rate_branches)
         self.ui.actionDetect_transformers.triggered.connect(self.detect_transformers)
         self.ui.actionLaunch_data_analysis_tool.triggered.connect(self.display_grid_analysis)
+        self.ui.actionShow_dynamic_models_editor.triggered.connect(self.display_dynamic_models_editor)
         self.ui.actionOnline_documentation.triggered.connect(self.show_online_docs)
         self.ui.actionReport_a_bug.triggered.connect(self.report_a_bug)
 
@@ -332,6 +393,46 @@ class BaseMainGui(QMainWindow):
         self.ui.toComboBox.currentTextChanged.connect(self.update_from_to_list_views)
         self.ui.engineComboBox.currentTextChanged.connect(self.refresh_ai_context_if_available)
         self.ui.available_results_to_color_comboBox.currentTextChanged.connect(self.refresh_ai_context_if_available)
+
+    def changeEvent(self, event: QtCore.QEvent) -> None:
+        """
+        Refresh the generated UI text after one Qt language change event.
+
+        Qt only emits the language-change notification. The main window must
+        re-run the generated ``retranslateUi()`` function explicitly so every
+        Designer-owned label, menu and tab title is rebuilt in the new language.
+
+        :param event: Incoming Qt change event.
+        :returns: None.
+        """
+        QtWidgets.QMainWindow.changeEvent(self, event)
+
+        if event.type() == QtCore.QEvent.Type.LanguageChange:
+            self.ui.retranslateUi(self)
+            restore_action_shortcut_states(self, self._action_shortcut_states)
+            self.refresh_runtime_translations()
+            QtCore.QTimer.singleShot(0, self.refresh_translated_layouts)
+        else:
+            pass
+
+    def refresh_runtime_translations(self) -> None:
+        """
+        Refresh Python-owned strings after the generated UI has been retransated.
+
+        Subclasses override this hook for strings that are not owned by the
+        ``.ui`` files, such as dynamic window titles or runtime-built combo-box items.
+
+        :returns: None.
+        """
+        pass
+
+    def refresh_translated_layouts(self) -> None:
+        """
+        Refresh splitter geometry after translated texts have changed widget hints.
+
+        :returns: None.
+        """
+        refresh_translated_splitter_layouts(root_widget=self)
 
     def LOCK(self, val: bool = True) -> None:
         """
@@ -383,8 +484,11 @@ class BaseMainGui(QMainWindow):
 
     @circuit.setter
     def circuit(self, val: MultiCircuit):
-        self.multiverse.current_model = val
-        self.multiverse.base_model = val
+        if isinstance(val, MultiCircuit):
+            self.multiverse.current_model = val
+            self.multiverse.base_model = val
+        else:
+            print("Setting circuit with None...")
 
     @property
     def file_name(self) -> str:
@@ -414,20 +518,53 @@ class BaseMainGui(QMainWindow):
         for i in (0, 1, 2):
             gc.collect(generation=i)
 
-    def retain_dynamic_editor_windows(self) -> None:
+    def create_dynamic_editor_workspace(self, show_tree: bool = False) -> DynamicEditorWorkspaceWindow:
         """
-        Keep a strong reference from the main window to every open dynamic
-        (RMS/EMT) model editor workspace.
+        Create one dynamic-editor workspace owned by this main GUI.
 
-        These windows are otherwise referenced only by the editor's singleton
-        manager and by internal signal/lambda cycles. A root reference here keeps
-        their lifetime out of Python's cyclic garbage collector, which on macOS
-        can run on a worker thread and destroy the window (NSWindow).
-        Windows are only added (never dropped here)
+        :param show_tree: Whether the workspace should show its device tree.
+        :return: Newly created workspace window.
         """
-        for workspace in DynamicEditorWorkspaceManager.instance().get_open_workspaces():
-            if workspace not in self.dynamic_editor_windows:
-                self.dynamic_editor_windows.append(workspace)
+        workspace = DynamicEditorWorkspaceWindow(session=self.dynamic_editor_workspace_session)
+        workspace.set_tree_visible(show_tree)
+        workspace.show()
+        workspace.raise_()
+        workspace.activateWindow()
+        return workspace
+
+    def open_dynamic_editor(
+        self,
+        api_object,
+        circuit,
+        preferred_mode: DynamicSimulationMode | None = None,
+        target_workspace: DynamicEditorWorkspaceWindow | None = None,
+        show_tree: bool = False,
+    ) -> DynamicBlockEditorGUI | None:
+        """
+        Open one dynamic editor in this main GUI workspace session.
+
+        :param api_object: Device or template to edit.
+        :param circuit: Circuit that owns the device.
+        :param preferred_mode: Explicit requested mode, if any.
+        :param target_workspace: Preferred destination workspace.
+        :param show_tree: Whether the destination workspace should show its tree panel.
+        :return: Open editor page or ``None`` when no dynamic editor exists.
+        """
+        workspace = target_workspace if target_workspace is not None else self.dynamic_editor_workspace_session.get_last_active_workspace()
+        if workspace is None:
+            workspace = self.create_dynamic_editor_workspace(show_tree=show_tree)
+        else:
+            workspace.set_tree_visible(show_tree)
+            workspace.show()
+            workspace.raise_()
+            workspace.activateWindow()
+
+        return workspace.open_dynamic_editor_for(
+            api_object=api_object,
+            circuit=circuit,
+            preferred_mode=preferred_mode,
+            target_workspace=workspace,
+        )
 
     def get_simulation_threads(self) -> List[GcThread]:
         """
@@ -1124,6 +1261,23 @@ class BaseMainGui(QMainWindow):
 
         self.analysis_dialogue.resize(int(1.61 * 600.0), 600)
         self.analysis_dialogue.show()
+
+    def display_dynamic_models_editor(self):
+        """
+        Display the dynamic models editor workspace with the tree panel visible.
+
+        :return: None.
+        """
+        workspace = self.dynamic_editor_workspace_session.get_last_active_workspace()
+        if workspace is None:
+            workspace = self.create_dynamic_editor_workspace(show_tree=True)
+        else:
+            workspace.set_tree_visible(True)
+            workspace.show()
+            workspace.raise_()
+            workspace.activateWindow()
+
+        workspace._set_workspace_circuit(self.circuit)
 
     def change_circuit_base(self):
         """

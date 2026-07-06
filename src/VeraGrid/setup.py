@@ -12,35 +12,41 @@ https://github.com/pypa/sampleproject
 # Always prefer setuptools over distutils
 from pathlib import Path
 from setuptools import setup, find_packages
-
 from VeraGrid.__version__ import __VeraGrid_VERSION__
-
-long_description = '''# VeraGrid
-
-This software aims to be a complete platform for power systems research and simulation.
-
-[Watch the video https](https://youtu.be/SY66WgLGo54)
-
-[Check out the documentation](https://veragrid.readthedocs.io)
-
-
-## Installation
-
-pip install veragrid
-
-For more options (including a standalone setup one), follow the
-[installation instructions]( https://veragrid.readthedocs.io/en/latest/getting_started/install.html)
-from the project's [documentation](https://veragrid.readthedocs.io)
-'''
 
 description = 'VeraGrid is a Power Systems simulation program intended for professional use and research'
 
-SRC_ROOT = Path(__file__).resolve().parent
-base_path = SRC_ROOT / 'VeraGrid'
+
+def get_package_prefix() -> str:
+    src_root = Path(__file__).resolve().parent
+    if (src_root / 'VeraGrid' / '__init__.py').exists():
+        return 'VeraGrid.'
+
+    return ''
+
+
+def package_name(relative_name: str) -> str:
+    return get_package_prefix() + relative_name
+
+def read_long_description() -> str:
+    src_root = Path(__file__).resolve().parent
+
+    for candidate in (
+        src_root / 'README.md',
+        src_root.parent / 'README.md',
+        src_root.parent.parent / 'README.md',
+    ):
+        if candidate.exists():
+            return candidate.read_text(encoding='utf-8')
+
+    return description
+
+
+long_description = read_long_description()
 
 pkgs_to_exclude = ['docs', 'research', 'tests', 'tutorials', 'VeraGridEngine']
 
-packages = find_packages(exclude=pkgs_to_exclude)
+packages = find_packages(where=str(Path(__file__).resolve().parent), exclude=pkgs_to_exclude)
 
 # ... so we have to do the filtering ourselves
 packages2 = list()
@@ -54,18 +60,18 @@ for package in packages:
     if not excluded:
         packages2.append(package)
 
-package_data = {'VeraGrid': ['*.md',
-                            '*.rst',
-                            'LICENSE.txt',
-                            'setup.py',
-                            'Gui/AiAgent/knowledge/*.md',
-                            'data/cables.csv',
-                            'data/transformers.csv',
-                            'data/wires.csv',
-                            'data/sequence_lines.csv',
-                            'data/VeraGrid.svg',
-                            'data/VeraGrid.ico'],
-                }
+package_data = {
+    package_name('Gui.AiAgent.knowledge'): ['*.md'],
+    package_name('Gui.translations'): ['*.qm'],
+    package_name('data'): [
+        'cables.csv',
+        'transformers.csv',
+        'wires.csv',
+        'sequence_lines.csv',
+        'VeraGrid.svg',
+        'VeraGrid.ico',
+    ],
+}
 
 dependencies = ["numpy>=2.2.0,<3",
                 "PySide6>=6.8.0",  # 5.14 breaks the UI generation for development, 6.7.0 breaks all

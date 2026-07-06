@@ -6,10 +6,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Union
 from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtWidgets import QMenu
-from VeraGrid.Gui.gui_functions import add_menu_entry
+from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
 from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import BarTerminalItem, RoundTerminalItem
 from VeraGrid.Gui.DeviceEditors.VscEditor.vsc_device_editor import VscDeviceEditorDialog
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_manager import open_dynamic_editor
 from VeraGridEngine.Devices.Branches.vsc import VSC
 from VeraGridEngine.enumerations import TapModuleControl, DynamicSimulationMode
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template import LineGraphicTemplateItem
@@ -74,7 +73,7 @@ class VscGraphicItem(LineGraphicTemplateItem):
 
         :return: ``True`` when the editor was opened.
         """
-        dlg = VscDeviceEditorDialog(api_object=self.api_object, circuit=self.editor.circuit)
+        dlg = VscDeviceEditorDialog(api_object=self.api_object, circuit=self.editor.circuit, main_gui=self.editor.gui)
         if dlg.exec():
             return True
         else:
@@ -89,7 +88,7 @@ class VscGraphicItem(LineGraphicTemplateItem):
         if self.api_object is not None:
             menu = QMenu()
 
-            pe = menu.addAction('Enable/Disable')
+            pe = menu.addAction(translate_context_menu_text("Enable/Disable"))
             pe_icon = QIcon()
             if self.api_object.active:
                 pe_icon.addPixmap(QPixmap(":/Icons/icons/uncheck_all.png"))
@@ -99,44 +98,38 @@ class VscGraphicItem(LineGraphicTemplateItem):
             pe.triggered.connect(self.enable_disable_toggle)
 
             add_menu_entry(menu=menu,
-                           text="Draw labels",
+                           text=translate_context_menu_text("Draw labels"),
                            function_ptr=self.enable_disable_label_drawing,
                            checkeable=True,
                            checked_value=self.draw_labels)
 
-            # rabf = menu.addAction('Change bus')
-            # move_bus_icon = QIcon()
-            # move_bus_icon.addPixmap(QPixmap(":/Icons/icons/move_bus.png"))
-            # rabf.setIcon(move_bus_icon)
-            # rabf.triggered.connect(self.change_bus)
-
             add_menu_entry(menu=menu,
-                           text="Change bus",
+                           text=translate_context_menu_text("Change bus"),
                            function_ptr=self.change_bus,
                            icon_path=":/Icons/icons/move_bus.png")
 
             add_menu_entry(menu=menu,
-                           text="Set Control dev 1",
+                           text=translate_context_menu_text("Set Control dev 1"),
                            function_ptr=self.set_control_dev_1,
                            icon_path=":/Icons/icons/move_bus.png")
 
             add_menu_entry(menu=menu,
-                           text="Set Control dev 2",
+                           text=translate_context_menu_text("Set Control dev 2"),
                            function_ptr=self.set_control_dev_2,
                            icon_path=":/Icons/icons/move_bus.png")
 
             add_menu_entry(menu=menu,
-                           text="Editor",
+                           text=translate_context_menu_text("Editor"),
                            function_ptr=self.edit,
                            icon_path=":/Icons/icons/edit.png")
 
             add_menu_entry(menu=menu,
-                           text="RMS Editor",
+                           text=translate_context_menu_text("RMS Editor"),
                            function_ptr=self.edit_dynamic_rms,
                            icon_path=":/Icons/icons/dyn_edit.png")
 
             add_menu_entry(menu=menu,
-                           text="EMT Editor",
+                           text=translate_context_menu_text("EMT Editor"),
                            function_ptr=self.edit_dynamic_emt,
                            icon_path=":/Icons/icons/dyn_emt_edit.png")
 
@@ -144,44 +137,38 @@ class VscGraphicItem(LineGraphicTemplateItem):
             self.add_auto_route_style_menu(menu=menu)
             menu.addSeparator()
 
-            # ra2 = menu.addAction('Delete')
-            # del_icon = QIcon()
-            # del_icon.addPixmap(QPixmap(":/Icons/icons/delete3.png"))
-            # ra2.setIcon(del_icon)
-            # ra2.triggered.connect(self.delete)
-
             add_menu_entry(menu=menu,
-                           text="Delete",
+                           text=translate_context_menu_text("Delete"),
                            function_ptr=self.delete,
                            icon_path=":/Icons/icons/delete3.png")
 
             menu.addSeparator()
 
             add_menu_entry(menu=menu,
-                           text="Control V from",
+                           text=translate_context_menu_text("Control V from"),
                            function_ptr=self.control_v_from,
                            icon_path=":/Icons/icons/edit.png")
 
             add_menu_entry(menu=menu,
-                           text="Control V to",
+                           text=translate_context_menu_text("Control V to"),
                            function_ptr=self.control_v_to,
                            icon_path=":/Icons/icons/edit.png")
 
             menu.addSeparator()
 
-            ra6 = menu.addAction('Plot profiles')
+            ra6 = menu.addAction(translate_context_menu_text("Plot profiles"))
             plot_icon = QIcon()
             plot_icon.addPixmap(QPixmap(":/Icons/icons/plot.png"))
             ra6.setIcon(plot_icon)
             ra6.triggered.connect(self.plot_profiles)
 
-            ra4 = menu.addAction('Assign rate to profile')
+            ra4 = menu.addAction(translate_context_menu_text("Assign rate to profile"))
             ra4_icon = QIcon()
             ra4_icon.addPixmap(QPixmap(":/Icons/icons/assign_to_profile.png"))
             ra4.setIcon(ra4_icon)
             ra4.triggered.connect(self.assign_rate_to_profile)
 
-            ra5 = menu.addAction('Assign active state to profile')
+            ra5 = menu.addAction(translate_context_menu_text("Assign active state to profile"))
             ra5_icon = QIcon()
             ra5_icon.addPixmap(QPixmap(":/Icons/icons/assign_to_profile.png"))
             ra5.setIcon(ra5_icon)
@@ -197,16 +184,16 @@ class VscGraphicItem(LineGraphicTemplateItem):
         Open the unified dynamic editor workspace for this generator.
         """
 
-        open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit,
-                            preferred_mode=DynamicSimulationMode.RMS)
+        self.editor.gui.open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit,
+                                            preferred_mode=DynamicSimulationMode.RMS)
 
     def edit_dynamic_emt(self):
         """
         Open the unified dynamic editor workspace for this generator.
         """
 
-        open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit,
-                            preferred_mode=DynamicSimulationMode.EMT)
+        self.editor.gui.open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit,
+                                            preferred_mode=DynamicSimulationMode.EMT)
 
     def mouseDoubleClickEvent(self, event):
         """

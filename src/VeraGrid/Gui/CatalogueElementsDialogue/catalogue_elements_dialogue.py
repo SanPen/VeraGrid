@@ -263,30 +263,30 @@ class CatalogueElementsSelectionDialogue(QtWidgets.QDialog):
                                        unique_key='rms:get_genqec_rms',
                                        function_ptr=tem.get_genqec_rms)
                        )
-        actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
-                                       args=(self._circuit.var_factory,),
-                                       name='Governor',
-                                       voltage_text='',
-                                       power_text='',
-                                       unique_key='rms:get_governor_rms',
-                                       function_ptr=tem.get_governor_rms)
-                       )
-        actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
-                                       args=(self._circuit.var_factory,),
-                                       name='Stabilizer',
-                                       voltage_text='',
-                                       power_text='',
-                                       unique_key='rms:get_stabilizer_rms',
-                                       function_ptr=tem.get_stabilizer_rms)
-                       )
-        actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
-                                       args=(self._circuit.var_factory,),
-                                       name='Exciter',
-                                       voltage_text='',
-                                       power_text='',
-                                       unique_key='rms:get_exciter_rms',
-                                       function_ptr=tem.get_exciter_rms)
-                       )
+        # actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
+        #                                args=(self._circuit.var_factory,),
+        #                                name='Governor',
+        #                                voltage_text='',
+        #                                power_text='',
+        #                                unique_key='rms:get_governor_rms',
+        #                                function_ptr=tem.get_governor_rms)
+        #                )
+        # actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
+        #                                args=(self._circuit.var_factory,),
+        #                                name='Stabilizer',
+        #                                voltage_text='',
+        #                                power_text='',
+        #                                unique_key='rms:get_stabilizer_rms',
+        #                                function_ptr=tem.get_stabilizer_rms)
+        #                )
+        # actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
+        #                                args=(self._circuit.var_factory,),
+        #                                name='Exciter',
+        #                                voltage_text='',
+        #                                power_text='',
+        #                                unique_key='rms:get_exciter_rms',
+        #                                function_ptr=tem.get_exciter_rms)
+        #                )
         actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
                                        args=(self._circuit.var_factory,),
                                        name='Complete generator',
@@ -359,6 +359,14 @@ class CatalogueElementsSelectionDialogue(QtWidgets.QDialog):
         #                                unique_key='rms:DCPVSourceAveraged',
         #                                function_ptr=tem.DCPVSourceAveraged)
         #                )
+        # actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
+        #                                args=(self._circuit.var_factory,),
+        #                                name='Empty template',
+        #                                voltage_text='',
+        #                                power_text='',
+        #                                unique_key='rms:get_empty_rms_template',
+        #                                function_ptr=tem.get_empty_rms_template)
+        #                )
         return actions
 
     def build_emt_actions(self) -> List[CatalogueAction]:
@@ -368,14 +376,14 @@ class CatalogueElementsSelectionDialogue(QtWidgets.QDialog):
         :return: List[CatalogueAction]
         """
         actions: List[CatalogueAction] = list()
-        actions.append(CatalogueAction(
-            kind=CatalogueActionKind.AddEmtTemplate,
-            args=(self._circuit.var_factory,),
-            name='Simple generator',
-            voltage_text='', power_text='',
-            unique_key='emt:get_simple_generator_emt_template',
-            function_ptr=tem.get_simple_generator_emt_template)
-        )
+        # actions.append(CatalogueAction(
+        #     kind=CatalogueActionKind.AddEmtTemplate,
+        #     args=(self._circuit.var_factory,),
+        #     name='Simple generator',
+        #     voltage_text='', power_text='',
+        #     unique_key='emt:get_simple_generator_emt_template',
+        #     function_ptr=tem.get_simple_generator_emt_template)
+        # )
         # actions.append(CatalogueAction(
         #     kind=CatalogueActionKind.AddEmtTemplate,
         #     args=(self._circuit.var_factory,),
@@ -383,30 +391,6 @@ class CatalogueElementsSelectionDialogue(QtWidgets.QDialog):
         #     voltage_text='', power_text='',
         #     unique_key='emt:get_generator_sauer_pai_type_emt_template',
         #     function_ptr=tem.get_generator_sauer_pai_type_emt_template)
-        # )
-        # actions.append(CatalogueAction(
-        #     kind=CatalogueActionKind.AddEmtTemplate,
-        #     args=(self._circuit.var_factory,),
-        #     name='Governor',
-        #     voltage_text='', power_text='',
-        #     unique_key='emt:get_governor_emt',
-        #     function_ptr=tem.get_governor_emt)
-        # )
-        # actions.append(CatalogueAction(
-        #     kind=CatalogueActionKind.AddEmtTemplate,
-        #     args=(self._circuit.var_factory,),
-        #     name='Stabilizer',
-        #     voltage_text='', power_text='',
-        #     unique_key='emt:get_stabilizer_emt',
-        #     function_ptr=tem.get_stabilizer_emt)
-        # )
-        # actions.append(CatalogueAction(
-        #     kind=CatalogueActionKind.AddEmtTemplate,
-        #     args=(self._circuit.var_factory,),
-        #     name='Exciter',
-        #     voltage_text='', power_text='',
-        #     unique_key='emt:get_exciter_emt',
-        #     function_ptr=tem.get_exciter_emt)
         # )
         actions.append(CatalogueAction(
             kind=CatalogueActionKind.AddEmtTemplate,
@@ -448,30 +432,30 @@ class CatalogueElementsSelectionDialogue(QtWidgets.QDialog):
             unique_key='emt:get_switched_emt_converter',
             function_ptr=tem.get_switched_emt_converter)
         )
-        actions.append(CatalogueAction(
-            kind=CatalogueActionKind.AddEmtTemplate,
-            args=(self._circuit.var_factory,),
-            name='Bridge 2-level 3ph',
-            voltage_text='', power_text='',
-            unique_key='emt:get_bridge_2level_3ph_emt_template',
-            function_ptr=tem.get_bridge_2level_3ph_emt_template)
-        )
-        actions.append(CatalogueAction(
-            kind=CatalogueActionKind.AddEmtTemplate,
-            args=(self._circuit.var_factory,),
-            name='Bridge filter 2-level 3ph',
-            voltage_text='', power_text='',
-            unique_key='emt:get_bridge_filter_2level_3ph_emt_template',
-            function_ptr=tem.get_bridge_filter_2level_3ph_emt_template)
-        )
-        actions.append(CatalogueAction(
-            kind=CatalogueActionKind.AddEmtTemplate,
-            args=(self._circuit.var_factory,),
-            name='Bridge filter control 2-level 3ph',
-            voltage_text='', power_text='',
-            unique_key='emt:get_bridge_filter_control_2level_3ph_emt_template',
-            function_ptr=tem.get_bridge_filter_control_2level_3ph_emt_template)
-        )
+        # actions.append(CatalogueAction(
+        #     kind=CatalogueActionKind.AddEmtTemplate,
+        #     args=(self._circuit.var_factory,),
+        #     name='Bridge 2-level 3ph',
+        #     voltage_text='', power_text='',
+        #     unique_key='emt:get_bridge_2level_3ph_emt_template',
+        #     function_ptr=tem.get_bridge_2level_3ph_emt_template)
+        # )
+        # actions.append(CatalogueAction(
+        #     kind=CatalogueActionKind.AddEmtTemplate,
+        #     args=(self._circuit.var_factory,),
+        #     name='Bridge filter 2-level 3ph',
+        #     voltage_text='', power_text='',
+        #     unique_key='emt:get_bridge_filter_2level_3ph_emt_template',
+        #     function_ptr=tem.get_bridge_filter_2level_3ph_emt_template)
+        # )
+        # actions.append(CatalogueAction(
+        #     kind=CatalogueActionKind.AddEmtTemplate,
+        #     args=(self._circuit.var_factory,),
+        #     name='Bridge filter control 2-level 3ph',
+        #     voltage_text='', power_text='',
+        #     unique_key='emt:get_bridge_filter_control_2level_3ph_emt_template',
+        #     function_ptr=tem.get_bridge_filter_control_2level_3ph_emt_template)
+        # )
         actions.append(CatalogueAction(
             kind=CatalogueActionKind.AddEmtTemplate,
             args=(self._circuit.var_factory,),
@@ -496,14 +480,7 @@ class CatalogueElementsSelectionDialogue(QtWidgets.QDialog):
         #     unique_key='emt:get_dc_line_emt_template',
         #     function_ptr=tem.get_dc_line_emt_template)
         # )
-        # actions.append(CatalogueAction(
-        #     kind=CatalogueActionKind.AddEmtTemplate,
-        #     args=(self._circuit.var_factory,),
-        #     name='Valve',
-        #     voltage_text='', power_text='',
-        #     unique_key='emt:get_valve_emt_template',
-        #     function_ptr=tem.get_valve_emt_template)
-        # )
+
         actions.append(CatalogueAction(
             kind=CatalogueActionKind.AddEmtTemplate,
             args=(self._circuit.var_factory,),
@@ -609,14 +586,14 @@ class CatalogueElementsSelectionDialogue(QtWidgets.QDialog):
             unique_key='emt:get_pv_avm_grid_following_emt_template:abc',
             function_ptr=tem.get_pv_avm_grid_following_emt_template)
         )
-        actions.append(CatalogueAction(
-            kind=CatalogueActionKind.AddEmtTemplate,
-            args=(self._circuit.var_factory,),
-            name='PV plant boost grid following',
-            voltage_text='', power_text='',
-            unique_key='emt:get_pv_avm_boost_grid_following_emt_template:abc',
-            function_ptr=tem.get_pv_avm_boost_grid_following_emt_template)
-        )
+        # actions.append(CatalogueAction(
+        #     kind=CatalogueActionKind.AddEmtTemplate,
+        #     args=(self._circuit.var_factory,),
+        #     name='PV plant boost grid following',
+        #     voltage_text='', power_text='',
+        #     unique_key='emt:get_pv_avm_boost_grid_following_emt_template:abc',
+        #     function_ptr=tem.get_pv_avm_boost_grid_following_emt_template)
+        # )
         actions.append(CatalogueAction(
             kind=CatalogueActionKind.AddEmtTemplate,
             args=(self._circuit.var_factory,),
@@ -625,6 +602,14 @@ class CatalogueElementsSelectionDialogue(QtWidgets.QDialog):
             unique_key='emt:get_gfm_emt_template',
             function_ptr=tem.get_gfm_emt_template)
         )
+        # actions.append(CatalogueAction(kind=CatalogueActionKind.AddEmtTemplate,
+        #                                args=(self._circuit.var_factory,),
+        #                                name='Empty template',
+        #                                voltage_text='',
+        #                                power_text='',
+        #                                unique_key='emt:get_empty_emt_template',
+        #                                function_ptr=tem.get_empty_emt_template)
+        #                )
         return actions
 
     def get_existing_keys(self) -> Dict[str, bool]:

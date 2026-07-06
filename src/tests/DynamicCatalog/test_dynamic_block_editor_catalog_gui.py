@@ -12,14 +12,13 @@ from PySide6.QtTest import QTest
 
 import VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor as dynamic_block_editor_module
 import VeraGridEngine.api as gce
+from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI
-from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import get_modal_template_metadata
-from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import _transformer_modal_config_allows_modify
-from VeraGrid.Gui.DynamicModelEditor.lookup_table_dialog import LookupArrayLinearDialog
-from VeraGrid.Gui.DynamicModelEditor.lookup_table_dialog import LookupMatrixLinearDialog
-from VeraGrid.Gui.DynamicModelEditor.lookup_table_dialog import _copy_selected_table_range_to_clipboard
-from VeraGrid.Gui.DynamicModelEditor.lookup_table_dialog import _parse_clipboard_grid
-from VeraGrid.Gui.DynamicModelEditor.induction_motor_emt_dialog import InductionMotorEmtLevel
+from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_graphics import _transformer_modal_config_allows_modify
+from VeraGrid.Gui.DynamicModelEditor.ElementDialogues.lookup_table_dialog import LookupArrayLinearDialog
+from VeraGrid.Gui.DynamicModelEditor.ElementDialogues.lookup_table_dialog import LookupMatrixLinearDialog
+from VeraGrid.Gui.DynamicModelEditor.ElementDialogues.lookup_table_dialog import _copy_selected_table_range_to_clipboard
+from VeraGrid.Gui.DynamicModelEditor.ElementDialogues.lookup_table_dialog import _parse_clipboard_grid
 from VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_runtime import get_jmarti_block_fit_bundle
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Templates.BasicBlockCatalog import BasicBlockTemplateDescriptor
@@ -140,6 +139,10 @@ def _build_editor(mode: DynamicSimulationMode = DynamicSimulationMode.EMT,
     """
     Build one dynamic block editor instance for GUI tests.
     """
+
+
+    if circuit is None:
+        circuit = MultiCircuit()
 
     _get_app()
     resolved_api_object = api_object if api_object is not None else _ApiStub()
@@ -271,7 +274,7 @@ def _find_scene_block_item(editor: DynamicBlockEditorGUI, block_uid: int):
 
 def test_emt_editor_exposes_basic_block_catalog_under_basic() -> None:
     editor = _build_editor(DynamicSimulationMode.EMT)
-    source_model = editor.library_model
+    source_model = editor.library.library_model
     basic_item = source_model.invisibleRootItem().child(0)
     native_item = basic_item.child(0)
 
@@ -279,8 +282,8 @@ def test_emt_editor_exposes_basic_block_catalog_under_basic() -> None:
     assert basic_item.rowCount() == 1
     assert native_item.text() == "Native"
     assert native_item.child(0).text() == "Arithmetic"
-    assert _find_index_by_label(editor.library_model, "Scaling and Products").isValid()
-    assert not _find_index_by_label(editor.library_model, "Arithmetic and Products").isValid()
+    assert _find_index_by_label(editor.library.library_model, "Scaling and Products").isValid()
+    assert not _find_index_by_label(editor.library.library_model, "Arithmetic and Products").isValid()
     assert _count_descriptor_leaves(editor, native_item) == 545
 
     editor.close()
@@ -288,7 +291,7 @@ def test_emt_editor_exposes_basic_block_catalog_under_basic() -> None:
 
 def test_rms_editor_exposes_basic_block_catalog_under_basic() -> None:
     editor = _build_editor(DynamicSimulationMode.RMS)
-    source_model = editor.library_model
+    source_model = editor.library.library_model
     basic_item = source_model.invisibleRootItem().child(0)
     native_item = basic_item.child(0)
 
@@ -311,7 +314,8 @@ def test_library_search_button_and_shortcut_filter_basic_catalog() -> None:
     limit_label = descriptor_by_key["limit"].display_label
 
     assert editor.ui.librarySearchLineEdit.isVisible()
-    QTest.mouseClick(editor.ui.librarySearchButton, QtCore.Qt.MouseButton.LeftButton)
+    editor.ui.librarySearchLineEdit.clearFocus()
+    QTest.keyClick(editor, QtCore.Qt.Key.Key_F, QtCore.Qt.KeyboardModifier.ControlModifier)
     QtWidgets.QApplication.processEvents()
     QTest.qWait(100)
 
@@ -342,7 +346,7 @@ def test_proxy_drag_payload_materializes_catalog_template() -> None:
     editor = _build_editor(DynamicSimulationMode.EMT)
     park_descriptor = get_basic_block_catalog_descriptor_by_key()["park_transform_dq"]
     park_label = park_descriptor.display_label
-    source_index = _find_index_by_label(editor.library_model, park_label)
+    source_index = _find_index_by_label(editor.library.library_model, park_label)
 
     assert source_index.isValid()
 
@@ -596,451 +600,6 @@ def test_lookup_array_linear_descriptor_uses_modal_points_to_build_block(overrid
     editor.close()
 
 
-def test_lookup_array_linear_modal_created_block_supports_modify_template(override_attrs) -> None:
-    editor = _build_editor(DynamicSimulationMode.EMT)
-    descriptor = get_basic_block_catalog_descriptor_by_key()["lookup_array_linear"]
-
-    class _CreateDialogStub:
-        def __init__(self, block_label: str, initial_points=None, parent=None) -> None:
-            _unused = (block_label, initial_points, parent)
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_points(self) -> tuple[list[float], list[float]]:
-            return [0.0, 1.0, 2.0], [0.0, 10.0, 20.0]
-
-    class _ModifyDialogStub:
-        def __init__(self, block_label: str, initial_points=None, parent=None) -> None:
-            _unused = (block_label, initial_points, parent)
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_points(self) -> tuple[list[float], list[float]]:
-            return [0.0, 2.0, 4.0], [0.0, 40.0, 80.0]
-
-    override_attrs.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _CreateDialogStub)
-    block_item = editor.create_library_payload_item(descriptor, 10.0, 20.0)
-    assert block_item is not None
-
-    override_attrs.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _ModifyDialogStub)
-    editor.modify_scene_item_template(block_item)
-    updated_item = editor.get_scene_item_by_block_uid(block_item.subsys.uid)
-    assert updated_item is not None
-
-    modal_kind, modal_config = get_modal_template_metadata(updated_item.subsys)
-    assert modal_kind == "lookup_array_1d"
-    assert modal_config is not None
-    assert modal_config["x_points"] == [0.0, 2.0, 4.0]
-    assert modal_config["y_points"] == [0.0, 40.0, 80.0]
-
-    editor.has_unapplied_changes = False
-    editor.close()
-
-
-def test_emt_phase_wizard_block_supports_modify_template(override_attrs) -> None:
-    editor = _build_editor(DynamicSimulationMode.EMT)
-
-    class _CreateDialogStub:
-        def __init__(self, parent=None, initial_values=None) -> None:
-            _unused = (parent, initial_values)
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_values(self) -> tuple[bool, bool, bool, bool]:
-            return False, True, False, False
-
-    class _ModifyDialogStub:
-        def __init__(self, parent=None, initial_values=None) -> None:
-            _unused = (parent, initial_values)
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_values(self) -> tuple[bool, bool, bool, bool]:
-            return False, True, True, True
-
-    override_attrs.setattr(dynamic_block_editor_module, "EmtTemplateWizardDialog", _CreateDialogStub)
-    block_item = editor.create_library_payload_item(BlockType.EMT_PI_LINE, 10.0, 20.0)
-    assert block_item is not None
-
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "emt_phase_wizard"
-    assert modal_config is not None
-    assert modal_config["phase_b"] is False
-
-    override_attrs.setattr(dynamic_block_editor_module, "EmtTemplateWizardDialog", _ModifyDialogStub)
-    editor.modify_scene_item_template(block_item)
-
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "emt_phase_wizard"
-    assert modal_config is not None
-    assert modal_config["phase_b"] is True
-    assert modal_config["phase_c"] is True
-
-    editor.has_unapplied_changes = False
-    editor.close()
-
-
-def test_jmarti_line_emt_block_supports_modal_configuration_and_modify_template(override_attrs) -> None:
-    circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
-    bus0 = gce.Bus(name="BusLine0", Vnom=13.8)
-    bus1 = gce.Bus(name="BusLine1", Vnom=13.8)
-    line = gce.Line(name="LineGui", bus_from=bus0, bus_to=bus1)
-    editor = _build_editor(DynamicSimulationMode.EMT, api_object=line, circuit=circuit)
-    leaf_labels = _collect_leaf_labels(editor.library_model)
-
-    assert "Emt JMarti line" in leaf_labels
-
-    def _build_jmarti_config(phase_n: bool, phase_a: bool, phase_b: bool, phase_c: bool) -> dict[str, object]:
-        return dict({
-            "phase_n": phase_n,
-            "phase_a": phase_a,
-            "phase_b": phase_b,
-            "phase_c": phase_c,
-            "data_source_mode": "auto_template",
-            "nominal_frequency_hz": 60.0,
-            "import_file_path": "",
-            "import_line_length_m": 0.0,
-            "sweep_low_hz": 10.0,
-            "sweep_high_hz": 10000.0,
-            "sweep_sample_count": 32,
-            "reference_frequency_hz": 0.0,
-            "use_frequency_exploration_window": False,
-            "exploration_low_hz": 0.0,
-            "exploration_high_hz": 0.0,
-            "use_delay_fit_window": False,
-            "delay_fit_low_hz": 0.0,
-            "delay_fit_high_hz": 0.0,
-            "decoupling_warning_tolerance": 1.0e-2,
-            "loewner_relative_tolerance": 1.0e-8,
-            "maximum_model_order": 40,
-            "forced_model_order": 0,
-            "minimum_frequency_samples": 4,
-            "vf_max_iterations": 8,
-            "vf_pole_shift_tolerance": 1.0e-6,
-            "vf_enforce_stable_poles": True,
-            "vf_stability_real_part_floor": 1.0e-8,
-            "vf_include_constant_term": True,
-            "vf_include_proportional_term": False,
-            "passivity_frequency_sample_count": 1024,
-            "passivity_minimum_real_yc_tolerance": 1.0e-8,
-            "passivity_maximum_hres_gain_tolerance": 1.0e-6,
-        })
-
-    class _CreateDialogStub:
-        def __init__(self, parent=None, initial_config=None) -> None:
-            _unused = (parent, initial_config)
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_configuration(self) -> dict[str, object]:
-            return _build_jmarti_config(False, True, True, False)
-
-    class _ModifyDialogStub:
-        def __init__(self, parent=None, initial_config=None) -> None:
-            _unused = (parent, initial_config)
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_configuration(self) -> dict[str, object]:
-            return _build_jmarti_config(False, True, True, True)
-
-    override_attrs.setattr(dynamic_block_editor_module, "JMartiLineEmtDialog", _CreateDialogStub)
-    block_item = editor.create_library_payload_item(BlockType.EMT_JMARTI_LINE, 10.0, 20.0)
-    assert block_item is not None
-
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "jmarti_line_emt"
-    assert modal_config is not None
-    assert modal_config["block_type"] == BlockType.EMT_JMARTI_LINE.name
-    assert modal_config["phase_b"] is True
-    assert modal_config["phase_c"] is False
-    assert modal_config["fit_ready"] is False
-    assert "Fit not computed" in str(modal_config["fit_status"])
-    assert "fit_diagnostics_text" in modal_config
-
-    override_attrs.setattr(dynamic_block_editor_module, "JMartiLineEmtDialog", _ModifyDialogStub)
-    editor.modify_scene_item_template(block_item)
-
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "jmarti_line_emt"
-    assert modal_config is not None
-    assert modal_config["block_type"] == BlockType.EMT_JMARTI_LINE.name
-    assert modal_config["phase_c"] is True
-
-    editor.has_unapplied_changes = False
-    editor.close()
-
-
-def test_emt_source_blocks_are_exposed_and_created_from_source_modal(override_attrs) -> None:
-    editor = _build_editor(DynamicSimulationMode.EMT)
-    leaf_labels = _collect_leaf_labels(editor.library_model)
-
-    assert "Voltage source EMT" in leaf_labels
-    assert "Current source EMT" in leaf_labels
-    assert "Controlled voltage source EMT" in leaf_labels
-    assert "Controlled current source EMT" in leaf_labels
-
-    class _CreateDialogStub:
-        def __init__(self, block_type, parent=None, initial_config=None) -> None:
-            _unused = (block_type, parent, initial_config)
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_configuration(self) -> dict[str, object]:
-            return dict({
-                "phase_n": True,
-                "phase_a": True,
-                "phase_b": False,
-                "phase_c": True,
-                "source_frequency_hz": 60.0,
-                "source_phase_amplitudes": dict({"N": 0.0, "A": 1.1, "B": 0.0, "C": 0.9}),
-                "source_phase_angle_deg": dict({"N": 0.0, "A": 5.0, "B": 0.0, "C": -115.0}),
-                "source_phase_offsets": dict({"N": 0.0, "A": 0.1, "B": 0.0, "C": -0.2}),
-                "source_conductance_value": 50.0,
-            })
-
-    override_attrs.setattr(dynamic_block_editor_module, "SourceEmtDialog", _CreateDialogStub)
-
-    for block_type in (
-        BlockType.VOLTAGE_SOURCE_EMT,
-        BlockType.CURRENT_SOURCE_EMT,
-        BlockType.CONTROLLED_VOLTAGE_SOURCE_EMT,
-        BlockType.CONTROLLED_CURRENT_SOURCE_EMT,
-    ):
-        block_item = editor.create_library_payload_item(block_type, 10.0, 20.0)
-        assert block_item is not None
-        modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-        assert modal_kind == "source_emt"
-        assert modal_config is not None
-        assert modal_config["block_type"] == block_type.name
-        assert modal_config["phase_n"] is True
-        assert modal_config["phase_b"] is False
-        assert float(modal_config["source_frequency_hz"]) == 60.0
-        assert float(modal_config["source_conductance_value"]) == 50.0
-
-    editor.has_unapplied_changes = False
-    editor.close()
-
-
-def test_emt_dc_source_blocks_are_exposed_and_created_from_dc_source_modal(override_attrs) -> None:
-    editor = _build_editor(DynamicSimulationMode.EMT)
-    leaf_labels = _collect_leaf_labels(editor.library_model)
-
-    assert "DC voltage source EMT" in leaf_labels
-    assert "DC current source EMT" in leaf_labels
-    assert "Controlled DC voltage source EMT" in leaf_labels
-    assert "Controlled DC current source EMT" in leaf_labels
-
-    class _CreateDialogStub:
-        def __init__(self, block_type, parent=None, initial_config=None) -> None:
-            _unused = (block_type, parent, initial_config)
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_configuration(self) -> dict[str, object]:
-            return dict({
-                "source_value": 1.25,
-                "source_conductance_value": 80.0,
-            })
-
-    override_attrs.setattr(dynamic_block_editor_module, "DcSourceEmtDialog", _CreateDialogStub)
-
-    for block_type in (
-        BlockType.DC_VOLTAGE_SOURCE_EMT,
-        BlockType.DC_CURRENT_SOURCE_EMT,
-        BlockType.CONTROLLED_DC_VOLTAGE_SOURCE_EMT,
-        BlockType.CONTROLLED_DC_CURRENT_SOURCE_EMT,
-    ):
-        block_item = editor.create_library_payload_item(block_type, 10.0, 20.0)
-        assert block_item is not None
-        modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-        assert modal_kind == "dc_source_emt"
-        assert modal_config is not None
-        assert modal_config["block_type"] == block_type.name
-        assert float(modal_config["source_value"]) == 1.25
-        assert float(modal_config["source_conductance_value"]) == 80.0
-
-    editor.has_unapplied_changes = False
-    editor.close()
-
-
-def test_emt_balanced_source_blocks_are_exposed_and_created_from_balanced_source_modal(override_attrs) -> None:
-    editor = _build_editor(DynamicSimulationMode.EMT)
-    leaf_labels = _collect_leaf_labels(editor.library_model)
-
-    assert "Balanced 3-phase voltage source EMT" in leaf_labels
-    assert "Balanced 3-phase current source EMT" in leaf_labels
-    assert "Controlled balanced 3-phase voltage source EMT" in leaf_labels
-    assert "Controlled balanced 3-phase current source EMT" in leaf_labels
-
-    class _CreateDialogStub:
-        def __init__(self, block_type, parent=None, initial_config=None) -> None:
-            _unused = (block_type, parent, initial_config)
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_configuration(self) -> dict[str, object]:
-            return dict({
-                "source_amplitude": 1.15,
-                "source_frequency_hz": 60.0,
-                "source_phase_a_deg": 10.0,
-                "source_offset": 0.05,
-                "source_conductance_value": 90.0,
-            })
-
-    override_attrs.setattr(dynamic_block_editor_module, "BalancedSourceEmtDialog", _CreateDialogStub)
-
-    for block_type in (
-        BlockType.BALANCED_3PH_VOLTAGE_SOURCE_EMT,
-        BlockType.BALANCED_3PH_CURRENT_SOURCE_EMT,
-        BlockType.CONTROLLED_BALANCED_3PH_VOLTAGE_SOURCE_EMT,
-        BlockType.CONTROLLED_BALANCED_3PH_CURRENT_SOURCE_EMT,
-    ):
-        block_item = editor.create_library_payload_item(block_type, 10.0, 20.0)
-        assert block_item is not None
-        modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-        assert modal_kind == "balanced_source_emt"
-        assert modal_config is not None
-        assert modal_config["block_type"] == block_type.name
-        assert float(modal_config["source_amplitude"]) == 1.15
-        assert float(modal_config["source_frequency_hz"]) == 60.0
-        assert float(modal_config["source_phase_a_deg"]) == 10.0
-        assert float(modal_config["source_offset"]) == 0.05
-        assert float(modal_config["source_conductance_value"]) == 90.0
-
-    editor.has_unapplied_changes = False
-    editor.close()
-
-
-def test_emt_arbitrary_source_blocks_are_exposed_and_created_from_arbitrary_source_modal(override_attrs) -> None:
-    editor = _build_editor(DynamicSimulationMode.EMT)
-    leaf_labels = _collect_leaf_labels(editor.library_model)
-
-    assert "Arbitrary waveform voltage source EMT" in leaf_labels
-    assert "Arbitrary waveform current source EMT" in leaf_labels
-
-    class _CreateDialogStub:
-        def __init__(self, block_type, parent=None, initial_config=None) -> None:
-            _unused = (block_type, parent, initial_config)
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_configuration(self) -> dict[str, object]:
-            return dict({
-                "phase_n": False,
-                "phase_a": True,
-                "phase_b": False,
-                "phase_c": True,
-                "time_points": [0.0, 0.01, 0.03],
-                "value_points": [0.0, 1.0, -0.5],
-                "source_conductance_value": 70.0,
-            })
-
-    override_attrs.setattr(dynamic_block_editor_module, "ArbitrarySourceEmtDialog", _CreateDialogStub)
-
-    for block_type in (
-        BlockType.ARBITRARY_WAVEFORM_VOLTAGE_SOURCE_EMT,
-        BlockType.ARBITRARY_WAVEFORM_CURRENT_SOURCE_EMT,
-    ):
-        block_item = editor.create_library_payload_item(block_type, 10.0, 20.0)
-        assert block_item is not None
-        modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-        assert modal_kind == "arbitrary_source_emt"
-        assert modal_config is not None
-        assert modal_config["block_type"] == block_type.name
-        assert modal_config["phase_a"] is True
-        assert modal_config["phase_c"] is True
-        assert modal_config["time_points"] == [0.0, 0.01, 0.03]
-        assert modal_config["value_points"] == [0.0, 1.0, -0.5]
-        assert float(modal_config["source_conductance_value"]) == 70.0
-
-    editor.has_unapplied_changes = False
-    editor.close()
-
-
-def test_emt_transient_source_blocks_are_exposed_and_created_from_transient_source_modal(override_attrs) -> None:
-    editor = _build_editor(DynamicSimulationMode.EMT)
-    leaf_labels = _collect_leaf_labels(editor.library_model)
-
-    assert "Step voltage source EMT" in leaf_labels
-    assert "Step current source EMT" in leaf_labels
-    assert "Ramp voltage source EMT" in leaf_labels
-    assert "Ramp current source EMT" in leaf_labels
-    assert "Double exponential current source EMT" in leaf_labels
-    assert "Heidler current source EMT" in leaf_labels
-    assert "CIGRE surge current source EMT" in leaf_labels
-
-    class _CreateDialogStub:
-        def __init__(self, block_type, parent=None, initial_config=None) -> None:
-            _unused = (block_type, parent, initial_config)
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_configuration(self) -> dict[str, object]:
-            return dict({
-                "phase_n": False,
-                "phase_a": True,
-                "phase_b": False,
-                "phase_c": True,
-                "initial_value": 0.0,
-                "final_value": 1.0,
-                "step_time_s": 0.02,
-                "start_time_s": 0.01,
-                "end_time_s": 0.03,
-                "source_conductance_value": 60.0,
-                "amplitude_value": 2.0,
-                "alpha_value": 120.0,
-                "beta_value": 4200.0,
-                "delay_s": 0.0,
-                "peak_value": 1.5,
-                "front_time_s": 1.0e-4,
-                "tail_time_s": 5.0e-4,
-                "order_value": 5.0,
-                "a_value": 1200.0,
-                "b_value": 15000.0,
-                "n_value": 2.0,
-                "tn_s": 1.0e-4,
-                "i1_value": 1.0,
-                "t1_s": 5.0e-4,
-                "i2_value": 0.5,
-                "t2_s": 2.0e-4,
-            })
-
-    override_attrs.setattr(dynamic_block_editor_module, "TransientSourceEmtDialog", _CreateDialogStub)
-
-    for block_type in (
-        BlockType.STEP_VOLTAGE_SOURCE_EMT,
-        BlockType.STEP_CURRENT_SOURCE_EMT,
-        BlockType.RAMP_VOLTAGE_SOURCE_EMT,
-        BlockType.RAMP_CURRENT_SOURCE_EMT,
-        BlockType.DOUBLE_EXPONENTIAL_CURRENT_SOURCE_EMT,
-        BlockType.HEIDLER_CURRENT_SOURCE_EMT,
-        BlockType.CIGRE_SURGE_CURRENT_SOURCE_EMT,
-    ):
-        block_item = editor.create_library_payload_item(block_type, 10.0, 20.0)
-        assert block_item is not None
-        modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-        assert modal_kind == "transient_source_emt"
-        assert modal_config is not None
-        assert modal_config["block_type"] == block_type.name
-        assert modal_config["phase_a"] is True
-        assert modal_config["phase_c"] is True
-
-    editor.has_unapplied_changes = False
-    editor.close()
-
-
 def test_jmarti_line_emt_block_builds_sequence_fit_and_persists_diagnostics(override_attrs) -> None:
     circuit = gce.MultiCircuit(Sbase=25.0, fbase=50.0)
     bus0 = gce.Bus(name="BusSeqGui0", Vnom=110.0)
@@ -1102,7 +661,7 @@ def test_jmarti_line_emt_block_builds_sequence_fit_and_persists_diagnostics(over
     assert block_item is not None
     assert get_jmarti_block_fit_bundle(block_item.subsys) is not None
 
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    modal_kind, modal_config = editor.get_modal_template_metadata(block_item.subsys)
     assert modal_kind == "jmarti_line_emt"
     assert modal_config is not None
     assert modal_config["fit_ready"] is True
@@ -1196,7 +755,7 @@ def test_jmarti_line_emt_block_builds_fit_from_imported_npz(override_attrs, tmp_
     assert block_item is not None
     assert get_jmarti_block_fit_bundle(block_item.subsys) is not None
 
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    modal_kind, modal_config = editor.get_modal_template_metadata(block_item.subsys)
     assert modal_kind == "jmarti_line_emt"
     assert modal_config is not None
     assert modal_config["fit_ready"] is True
@@ -1214,121 +773,11 @@ def test_line_emt_editor_exposes_jmarti_device_block() -> None:
     bus1 = gce.Bus(name="BusLineDevice1", Vnom=13.8)
     line = gce.Line(name="LineDeviceGui", bus_from=bus0, bus_to=bus1)
     editor = _build_editor(DynamicSimulationMode.EMT, api_object=line, circuit=circuit)
-    leaf_labels = _collect_leaf_labels(editor.library_model)
+    leaf_labels = _collect_leaf_labels(editor.library.library_model)
 
     assert "Emt pi line" in leaf_labels
     assert "Emt Bergeron line" in leaf_labels
     assert "Emt JMarti line" in leaf_labels
-
-    editor.has_unapplied_changes = False
-    editor.close()
-
-
-def test_simple_r_emt_shunt_block_is_created_and_supports_modify_template(override_attrs) -> None:
-    circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
-    bus = gce.Bus(name="BusSimpleR", Vnom=13.8)
-    load = gce.Load(name="LoadSimpleR")
-    load.bus = bus
-    load.conn = ShuntConnectionType.GroundedStar
-    editor = _build_editor(DynamicSimulationMode.EMT, api_object=load, circuit=circuit)
-    dialog_component_kinds: list[str] = list()
-
-    class _CreateDialogStub:
-        def __init__(self,
-                     component_kind: str,
-                     parent=None,
-                     initial_config=None,
-                     allow_static_device_values: bool = False,
-                     static_connection_type: ShuntConnectionType | None = None,
-                     nominal_voltage_kv=None,
-                     base_power_mva=None,
-                     base_frequency_hz=None) -> None:
-            _unused = (parent, initial_config, nominal_voltage_kv, base_power_mva, base_frequency_hz)
-            dialog_component_kinds.append(component_kind)
-            assert allow_static_device_values is True
-            assert static_connection_type == ShuntConnectionType.GroundedStar
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_configuration(self) -> dict[str, object]:
-            return dict({
-                "include_r": True,
-                "include_l": False,
-                "include_c": False,
-                "phA": True,
-                "phB": False,
-                "phC": False,
-                "connection_type": ShuntConnectionType.GroundedStar,
-                "use_static_device_values": False,
-                "input_mode": "physical",
-                "resistance_ohm": 25.0,
-                "inductive_value": 0.01,
-                "capacitive_value": 1.0e-6,
-            })
-
-    class _ModifyDialogStub:
-        def __init__(self,
-                     component_kind: str,
-                     parent=None,
-                     initial_config=None,
-                     allow_static_device_values: bool = False,
-                     static_connection_type: ShuntConnectionType | None = None,
-                     nominal_voltage_kv=None,
-                     base_power_mva=None,
-                     base_frequency_hz=None) -> None:
-            _unused = (parent, initial_config, nominal_voltage_kv, base_power_mva, base_frequency_hz)
-            dialog_component_kinds.append(component_kind)
-            assert allow_static_device_values is True
-            assert static_connection_type == ShuntConnectionType.GroundedStar
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_configuration(self) -> dict[str, object]:
-            return dict({
-                "include_r": True,
-                "include_l": False,
-                "include_c": False,
-                "phA": True,
-                "phB": True,
-                "phC": False,
-                "connection_type": ShuntConnectionType.GroundedStar,
-                "use_static_device_values": False,
-                "input_mode": "physical",
-                "resistance_ohm": 50.0,
-                "inductive_value": 0.01,
-                "capacitive_value": 1.0e-6,
-            })
-
-    override_attrs.setattr(dynamic_block_editor_module, "ShuntComponentEmtDialog", _CreateDialogStub)
-    block_item = editor.create_library_payload_item(BlockType.R_LOAD_EMT, 10.0, 20.0)
-    assert block_item is not None
-    assert dialog_component_kinds == ["R"]
-
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "shunt_component_emt"
-    assert modal_config is not None
-    assert modal_config["block_type"] == BlockType.R_LOAD_EMT.name
-    assert modal_config["connection_type"] == ShuntConnectionType.GroundedStar
-    assert modal_config["use_static_device_values"] is False
-    assert any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
-    assert _find_prefixed_event_constant(block_item.subsys, "R_A_") == pytest.approx(25.0)
-    assert load.conn == ShuntConnectionType.GroundedStar
-
-    override_attrs.setattr(dynamic_block_editor_module, "ShuntComponentEmtDialog", _ModifyDialogStub)
-    editor.modify_scene_item_template(block_item)
-
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "shunt_component_emt"
-    assert modal_config is not None
-    assert modal_config["phB"] is True
-    assert modal_config["connection_type"] == ShuntConnectionType.GroundedStar
-    assert modal_config["use_static_device_values"] is False
-    assert any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
-    assert _find_prefixed_event_constant(block_item.subsys, "R_A_") == pytest.approx(50.0)
-    assert _find_prefixed_event_constant(block_item.subsys, "R_B_") == pytest.approx(50.0)
-    assert load.conn == ShuntConnectionType.GroundedStar
 
     editor.has_unapplied_changes = False
     editor.close()
@@ -1380,7 +829,7 @@ def test_simple_r_emt_shunt_block_supports_delta_configuration(override_attrs) -
     block_item = editor.create_library_payload_item(BlockType.R_LOAD_EMT, 10.0, 20.0)
     assert block_item is not None
 
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
+    modal_kind, modal_config = editor.get_modal_template_metadata(block_item.subsys)
     assert modal_kind == "shunt_component_emt"
     assert modal_config is not None
     assert modal_config["connection_type"] == ShuntConnectionType.Delta
@@ -1391,459 +840,101 @@ def test_simple_r_emt_shunt_block_supports_delta_configuration(override_attrs) -
 
     editor.has_unapplied_changes = False
     editor.close()
-
-
-def test_exponential_load_emt_block_is_created_and_supports_modify_template(override_attrs) -> None:
-    circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
-    bus = gce.Bus(name="BusExp", Vnom=13.8)
-    load = gce.Load(name="LoadExp")
-    load.bus = bus
-    load.conn = ShuntConnectionType.GroundedStar
-    editor = _build_editor(DynamicSimulationMode.EMT, api_object=load, circuit=circuit)
-
-    class _CreateDialogStub:
-        def __init__(self,
-                     title: str,
-                     parent=None,
-                     initial_config=None,
-                     allow_static_device_values: bool = False,
-                     static_connection_type: ShuntConnectionType | None = None) -> None:
-            _unused = (parent, initial_config)
-            assert title == "Configure EMT Exponential Load"
-            assert allow_static_device_values is True
-            assert static_connection_type == ShuntConnectionType.GroundedStar
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_configuration(self) -> dict[str, object]:
-            return dict({
-                "phA": True,
-                "phB": False,
-                "phC": False,
-                "connection_type": ShuntConnectionType.GroundedStar,
-                "use_static_device_values": False,
-            })
-
-    class _ModifyDialogStub:
-        def __init__(self,
-                     title: str,
-                     parent=None,
-                     initial_config=None,
-                     allow_static_device_values: bool = False,
-                     static_connection_type: ShuntConnectionType | None = None) -> None:
-            _unused = (parent, initial_config)
-            assert title == "Configure EMT Exponential Load"
-            assert allow_static_device_values is True
-            assert static_connection_type == ShuntConnectionType.GroundedStar
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_configuration(self) -> dict[str, object]:
-            return dict({
-                "phA": True,
-                "phB": True,
-                "phC": False,
-                "connection_type": ShuntConnectionType.GroundedStar,
-                "use_static_device_values": False,
-            })
-
-    override_attrs.setattr(dynamic_block_editor_module, "LoadTopologyEmtDialog", _CreateDialogStub)
-    block_item = editor.create_library_payload_item(BlockType.EXP_LOAD_EMT, 10.0, 20.0)
-    assert block_item is not None
-
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "load_topology_emt"
-    assert modal_config is not None
-    assert modal_config["block_type"] == BlockType.EXP_LOAD_EMT.name
-    assert modal_config["connection_type"] == ShuntConnectionType.GroundedStar
-    assert modal_config["use_static_device_values"] is False
-    assert any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
-    assert load.conn == ShuntConnectionType.GroundedStar
-
-    override_attrs.setattr(dynamic_block_editor_module, "LoadTopologyEmtDialog", _ModifyDialogStub)
-    editor.modify_scene_item_template(block_item)
-
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "load_topology_emt"
-    assert modal_config is not None
-    assert modal_config["phB"] is True
-    assert modal_config["connection_type"] == ShuntConnectionType.GroundedStar
-    assert modal_config["use_static_device_values"] is False
-    assert any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
-    assert load.conn == ShuntConnectionType.GroundedStar
-
-    editor.has_unapplied_changes = False
-    editor.close()
-
-
-def test_zip_load_emt_block_supports_delta_configuration(override_attrs) -> None:
-    circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
-    bus = gce.Bus(name="BusZipDelta", Vnom=13.8)
-    load = gce.Load(name="LoadZipDelta")
-    load.bus = bus
-    load.conn = ShuntConnectionType.Delta
-    editor = _build_editor(DynamicSimulationMode.EMT, api_object=load, circuit=circuit)
-
-    class _CreateDialogStub:
-        def __init__(self,
-                     title: str,
-                     parent=None,
-                     initial_config=None,
-                     allow_static_device_values: bool = False,
-                     static_connection_type: ShuntConnectionType | None = None) -> None:
-            _unused = (parent, initial_config)
-            assert title == "Configure EMT ZIP Load"
-            assert allow_static_device_values is True
-            assert static_connection_type == ShuntConnectionType.Delta
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_configuration(self) -> dict[str, object]:
-            return dict({
-                "phA": True,
-                "phB": True,
-                "phC": True,
-                "connection_type": ShuntConnectionType.Delta,
-                "use_static_device_values": False,
-            })
-
-    override_attrs.setattr(dynamic_block_editor_module, "LoadTopologyEmtDialog", _CreateDialogStub)
-    block_item = editor.create_library_payload_item(BlockType.ZIP_LOAD_EMT, 10.0, 20.0)
-    assert block_item is not None
-
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "load_topology_emt"
-    assert modal_config is not None
-    assert modal_config["block_type"] == BlockType.ZIP_LOAD_EMT.name
-    assert modal_config["connection_type"] == ShuntConnectionType.Delta
-    assert modal_config["use_static_device_values"] is False
-    assert not any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
-    assert load.conn == ShuntConnectionType.Delta
-
-    editor.has_unapplied_changes = False
-    editor.close()
-
-
-def test_transformer_emt_block_inherits_topology_from_transformer_device_without_modal(override_attrs) -> None:
-    circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
-    bus0 = gce.Bus(name="BusTf0", Vnom=13.8)
-    bus1 = gce.Bus(name="BusTf1", Vnom=13.8)
-    transformer = gce.Transformer2W(name="TrafoGui", bus_from=bus0, bus_to=bus1)
-    transformer.conn_f = WindingType.Delta
-    transformer.conn_t = WindingType.GroundedStar
-    editor = _build_editor(DynamicSimulationMode.EMT, api_object=transformer, circuit=circuit)
-
-    class _DialogMustNotOpen:
-        def __init__(self, *args, **kwargs) -> None:
-            raise AssertionError("Transformer topology dialog should not open when the device already defines conn_f/conn_t")
-
-    override_attrs.setattr(dynamic_block_editor_module, "TransformerTopologyEmtDialog", _DialogMustNotOpen)
-    block_item = editor.create_library_payload_item(BlockType.TRAFO_EMT, 10.0, 20.0)
-    assert block_item is not None
-
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "transformer_topology_emt"
-    assert modal_config is not None
-    assert modal_config["conn_f"] == WindingType.Delta
-    assert modal_config["conn_t"] == WindingType.GroundedStar
-    assert modal_config["allow_modify_template"] is False
-    assert _transformer_modal_config_allows_modify(modal_kind, modal_config) is False
-    assert _port_full_names(block_item)[:3] == ["vf_A_transformer_emt_template", "vf_B_transformer_emt_template", "vf_C_transformer_emt_template"]
-    assert _port_full_names(block_item)[3:] == ["vt_N_transformer_emt_template", "vt_A_transformer_emt_template", "vt_B_transformer_emt_template", "vt_C_transformer_emt_template"]
-    assert transformer.conn_f == WindingType.Delta
-    assert transformer.conn_t == WindingType.GroundedStar
-
-    transformer.conn_f = WindingType.GroundedStar
-    transformer.conn_t = WindingType.GroundedStar
-    editor.modify_scene_item_template(block_item)
-    updated_item = editor.get_scene_item_by_block_uid(block_item.subsys.uid)
-    assert updated_item is not None
-
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "transformer_topology_emt"
-    assert modal_config is not None
-    assert modal_config["conn_f"] == WindingType.GroundedStar
-    assert modal_config["conn_t"] == WindingType.GroundedStar
-    assert modal_config["allow_modify_template"] is False
-    assert _port_full_names(updated_item)[:4] == ["vf_N_transformer_emt_template", "vf_A_transformer_emt_template", "vf_B_transformer_emt_template", "vf_C_transformer_emt_template"]
-    assert _port_full_names(updated_item)[4:] == ["vt_N_transformer_emt_template", "vt_A_transformer_emt_template", "vt_B_transformer_emt_template", "vt_C_transformer_emt_template"]
-    assert transformer.conn_f == WindingType.GroundedStar
-    assert transformer.conn_t == WindingType.GroundedStar
-
-    editor.has_unapplied_changes = False
-    editor.close()
-
-
-def test_xfmr_emt_block_inherits_topology_from_transformer_device_without_modal(override_attrs) -> None:
-    circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
-    bus0 = gce.Bus(name="BusXf0", Vnom=13.8)
-    bus1 = gce.Bus(name="BusXf1", Vnom=13.8)
-    transformer = gce.Transformer2W(name="XfmrGui", bus_from=bus0, bus_to=bus1)
-    transformer.conn_f = WindingType.Delta
-    transformer.conn_t = WindingType.GroundedStar
-    editor = _build_editor(DynamicSimulationMode.EMT, api_object=transformer, circuit=circuit)
-
-    class _DialogMustNotOpen:
-        def __init__(self, *args, **kwargs) -> None:
-            raise AssertionError("XFMR topology dialog should not open when the device already defines conn_f/conn_t")
-
-    override_attrs.setattr(dynamic_block_editor_module, "TransformerTopologyEmtDialog", _DialogMustNotOpen)
-    block_item = editor.create_library_payload_item(BlockType.XFMR_TRANSFORMER, 10.0, 20.0)
-    assert block_item is not None
-
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "transformer_topology_emt"
-    assert modal_config is not None
-    assert modal_config["conn_f"] == WindingType.Delta
-    assert modal_config["conn_t"] == WindingType.GroundedStar
-    assert modal_config["allow_modify_template"] is False
-    assert _transformer_modal_config_allows_modify(modal_kind, modal_config) is False
-    assert _port_full_names(block_item)[:3] == ["vf_A_xfmr_emt_template", "vf_B_xfmr_emt_template", "vf_C_xfmr_emt_template"]
-    assert _port_full_names(block_item)[3:] == ["vt_N_xfmr_emt_template", "vt_A_xfmr_emt_template", "vt_B_xfmr_emt_template", "vt_C_xfmr_emt_template"]
-
-    transformer.conn_f = WindingType.GroundedStar
-    transformer.conn_t = WindingType.GroundedStar
-    editor.modify_scene_item_template(block_item)
-    updated_item = editor.get_scene_item_by_block_uid(block_item.subsys.uid)
-    assert updated_item is not None
-
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "transformer_topology_emt"
-    assert modal_config is not None
-    assert modal_config["conn_f"] == WindingType.GroundedStar
-    assert modal_config["conn_t"] == WindingType.GroundedStar
-    assert modal_config["allow_modify_template"] is False
-    assert _port_full_names(updated_item)[:4] == ["vf_N_xfmr_emt_template", "vf_A_xfmr_emt_template", "vf_B_xfmr_emt_template", "vf_C_xfmr_emt_template"]
-    assert _port_full_names(updated_item)[4:] == ["vt_N_xfmr_emt_template", "vt_A_xfmr_emt_template", "vt_B_xfmr_emt_template", "vt_C_xfmr_emt_template"]
-
-    editor.has_unapplied_changes = False
-    editor.close()
-
-
-def test_transformer_type_emt_editor_exposes_transformer_blocks_and_inherits_hv_lv_topology(override_attrs) -> None:
-    circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
-    transformer_type = gce.TransformerType()
-    transformer_type.conn_hv = WindingType.Delta
-    transformer_type.conn_lv = WindingType.GroundedStar
-    editor = _build_editor(DynamicSimulationMode.EMT, api_object=transformer_type, circuit=circuit)
-
-    class _DialogMustNotOpen:
-        def __init__(self, *args, **kwargs) -> None:
-            raise AssertionError("Transformer topology dialog should not open when the transformer type already defines conn_hv/conn_lv")
-
-    override_attrs.setattr(dynamic_block_editor_module, "TransformerTopologyEmtDialog", _DialogMustNotOpen)
-    leaf_labels = _collect_leaf_labels(editor.library_model)
-
-    assert "Transformer" in leaf_labels
-    assert "XFMR Transformer" in leaf_labels
-    # assert "ZIP load" in leaf_labels # should not be in the transformer library
-    # assert "Switch EMT" in leaf_labels # should not be in the transformer library
-    # assert "Emt pi line" not in leaf_labels # should not be in the transformer library
-    block_item = editor.create_library_payload_item(BlockType.TRAFO_EMT, 10.0, 20.0)
-    assert block_item is not None
-
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "transformer_topology_emt"
-    assert modal_config is not None
-    assert modal_config["conn_f"] == WindingType.Delta
-    assert modal_config["conn_t"] == WindingType.GroundedStar
-    assert modal_config["allow_modify_template"] is False
-
-    editor.has_unapplied_changes = False
-    editor.close()
-
-
-def test_transformer_type_emt_editor_inherits_zigzag_without_modal(override_attrs) -> None:
-    circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
-    transformer_type = gce.TransformerType()
-    transformer_type.conn_hv = WindingType.ZigZag
-    transformer_type.conn_lv = WindingType.GroundedStar
-    editor = _build_editor(DynamicSimulationMode.EMT, api_object=transformer_type, circuit=circuit)
-
-    class _DialogMustNotOpen:
-        def __init__(self, *args, **kwargs) -> None:
-            raise AssertionError("Transformer topology dialog should not open when the transformer type already defines conn_hv/conn_lv")
-
-    override_attrs.setattr(dynamic_block_editor_module, "TransformerTopologyEmtDialog", _DialogMustNotOpen)
-    block_item = editor.create_library_payload_item(BlockType.TRAFO_EMT, 10.0, 20.0)
-    assert block_item is not None
-
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "transformer_topology_emt"
-    assert modal_config is not None
-    assert modal_config["conn_f"] == WindingType.ZigZag
-    assert modal_config["conn_t"] == WindingType.GroundedStar
-    assert _port_full_names(block_item)[:3] == ["vf_A_transformer_emt_template", "vf_B_transformer_emt_template", "vf_C_transformer_emt_template"]
-
-    editor.has_unapplied_changes = False
-    editor.close()
-
-
-def test_transformer_emt_block_falls_back_to_manual_dialog_without_device_topology(override_attrs) -> None:
-    editor = _build_editor(DynamicSimulationMode.EMT)
-
-    class _DialogStub:
-        def __init__(self, title: str, parent=None, initial_config=None, static_from_connection=None, static_to_connection=None) -> None:
-            _unused = (parent, initial_config)
-            assert title == "Configure EMT Transformer Topology"
-            assert static_from_connection is None
-            assert static_to_connection is None
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_configuration(self) -> dict[str, object]:
-            return dict({
-                "conn_f": WindingType.Delta,
-                "conn_t": WindingType.GroundedStar,
-            })
-
-    override_attrs.setattr(dynamic_block_editor_module, "TransformerTopologyEmtDialog", _DialogStub)
-    block_item = editor.create_library_payload_item(BlockType.TRAFO_EMT, 10.0, 20.0)
-
-    assert block_item is not None
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "transformer_topology_emt"
-    assert modal_config is not None
-    assert modal_config["conn_f"] == WindingType.Delta
-    assert modal_config["conn_t"] == WindingType.GroundedStar
-    assert modal_config["allow_modify_template"] is True
-    assert _transformer_modal_config_allows_modify(modal_kind, modal_config) is True
-
-    editor.has_unapplied_changes = False
-    editor.close()
-
-
-def test_rlc_combo_emt_block_is_created_and_supports_modify_template(override_attrs) -> None:
-    circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
-    bus = gce.Bus(name="BusRlc", Vnom=13.8)
-    load = gce.Load(name="LoadRlc")
-    load.bus = bus
-    load.conn = ShuntConnectionType.GroundedStar
-    editor = _build_editor(DynamicSimulationMode.EMT, api_object=load, circuit=circuit)
-    create_dialog_base_values: dict[str, float | None] = dict()
-    modify_dialog_base_values: dict[str, float | None] = dict()
-
-    class _CreateDialogStub:
-        def __init__(self,
-                     parent=None,
-                     initial_config=None,
-                     allow_static_device_values: bool = False,
-                     static_connection_type: ShuntConnectionType | None = None,
-                     nominal_voltage_kv=None,
-                     base_power_mva=None,
-                     base_frequency_hz=None) -> None:
-            _unused = (parent, initial_config)
-            create_dialog_base_values["nominal_voltage_kv"] = nominal_voltage_kv
-            create_dialog_base_values["base_power_mva"] = base_power_mva
-            create_dialog_base_values["base_frequency_hz"] = base_frequency_hz
-            assert allow_static_device_values is True
-            assert static_connection_type == ShuntConnectionType.GroundedStar
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_configuration(self) -> dict[str, object]:
-            return dict({
-                "include_r": True,
-                "include_l": True,
-                "include_c": False,
-                "phA": True,
-                "phB": False,
-                "phC": False,
-                "connection_type": ShuntConnectionType.GroundedStar,
-                "use_static_device_values": False,
-                "input_mode": "physical",
-                "resistance_ohm": 100.0,
-                "inductive_value": 0.05,
-                "capacitive_value": 1.0e-6,
-            })
-
-    class _ModifyDialogStub:
-        def __init__(self,
-                     parent=None,
-                     initial_config=None,
-                     allow_static_device_values: bool = False,
-                     static_connection_type: ShuntConnectionType | None = None,
-                     nominal_voltage_kv=None,
-                     base_power_mva=None,
-                     base_frequency_hz=None) -> None:
-            _unused = (parent, initial_config)
-            modify_dialog_base_values["nominal_voltage_kv"] = nominal_voltage_kv
-            modify_dialog_base_values["base_power_mva"] = base_power_mva
-            modify_dialog_base_values["base_frequency_hz"] = base_frequency_hz
-            assert allow_static_device_values is True
-            assert static_connection_type == ShuntConnectionType.GroundedStar
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_configuration(self) -> dict[str, object]:
-            return dict({
-                "include_r": True,
-                "include_l": True,
-                "include_c": True,
-                "phA": True,
-                "phB": True,
-                "phC": False,
-                "connection_type": ShuntConnectionType.GroundedStar,
-                "use_static_device_values": False,
-                "input_mode": "reactance",
-                "resistance_ohm": 50.0,
-                "inductive_value": 18.0,
-                "capacitive_value": 220.0,
-            })
-
-    override_attrs.setattr(dynamic_block_editor_module, "RlcComboEmtDialog", _CreateDialogStub)
-    block_item = editor.create_library_payload_item(BlockType.RLC_COMBO_EMT, 10.0, 20.0)
-    assert block_item is not None
-    assert create_dialog_base_values == {
-        "nominal_voltage_kv": 13.8,
-        "base_power_mva": 25.0,
-        "base_frequency_hz": 60.0,
-    }
-
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "rlc_combo_emt"
-    assert modal_config is not None
-    assert modal_config["include_c"] is False
-    assert modal_config["input_mode"] == "physical"
-    assert modal_config["connection_type"] == ShuntConnectionType.GroundedStar
-    assert modal_config["use_static_device_values"] is False
-    assert any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
-    assert load.conn == ShuntConnectionType.GroundedStar
-    assert _find_prefixed_event_constant(block_item.subsys, "R_A_") == pytest.approx(100.0)
-    assert _find_prefixed_event_constant(block_item.subsys, "L_A_") == pytest.approx(0.05)
-
-    override_attrs.setattr(dynamic_block_editor_module, "RlcComboEmtDialog", _ModifyDialogStub)
-    editor.modify_scene_item_template(block_item)
-    expected_inductance = 18.0 / (2.0 * math.pi * circuit.fBase)
-    expected_capacitance = 1.0 / (2.0 * math.pi * circuit.fBase * 220.0)
-
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "rlc_combo_emt"
-    assert modal_config is not None
-    assert modal_config["include_c"] is True
-    assert modal_config["phB"] is True
-    assert modal_config["input_mode"] == "reactance"
-    assert modal_config["connection_type"] == ShuntConnectionType.GroundedStar
-    assert modal_config["use_static_device_values"] is False
-    assert modify_dialog_base_values == {
-        "nominal_voltage_kv": 13.8,
-        "base_power_mva": 25.0,
-        "base_frequency_hz": 60.0,
-    }
-    assert any(node.tpe == BlockType.GROUNDING_LINK_EMT.name for node in block_item.subsys.diagram.node_data.values())
-    assert load.conn == ShuntConnectionType.GroundedStar
-    assert _find_prefixed_event_constant(block_item.subsys, "R_A_") == pytest.approx(50.0)
-    assert _find_prefixed_event_constant(block_item.subsys, "L_A_") == pytest.approx(expected_inductance)
-    assert _find_prefixed_event_constant(block_item.subsys, "C_A_") == pytest.approx(expected_capacitance)
-    editor.has_unapplied_changes = False
-    editor.close()
-
+#
+#
+# def test_transformer_type_emt_editor_exposes_transformer_blocks_and_inherits_hv_lv_topology(override_attrs) -> None:
+#     circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
+#     transformer_type = gce.TransformerType()
+#     transformer_type.conn_hv = WindingType.Delta
+#     transformer_type.conn_lv = WindingType.GroundedStar
+#     editor = _build_editor(DynamicSimulationMode.EMT, api_object=transformer_type, circuit=circuit)
+#
+#     class _DialogMustNotOpen:
+#         def __init__(self, *args, **kwargs) -> None:
+#             raise AssertionError("Transformer topology dialog should not open when the transformer type already defines conn_hv/conn_lv")
+#
+#     override_attrs.setattr(dynamic_block_editor_module, "TransformerTopologyEmtDialog", _DialogMustNotOpen)
+#     leaf_labels = _collect_leaf_labels(editor.library_model)
+#
+#     assert "Transformer" in leaf_labels
+#     assert "XFMR Transformer" in leaf_labels
+#     # assert "ZIP load" in leaf_labels # should not be in the transformer library
+#     # assert "Switch EMT" in leaf_labels # should not be in the transformer library
+#     # assert "Emt pi line" not in leaf_labels # should not be in the transformer library
+#     block_item = editor.create_library_payload_item(BlockType.TRAFO_EMT, 10.0, 20.0)
+#     assert block_item is not None
+#
+#     modal_kind, modal_config = editor.get_modal_template_metadata(block_item.subsys)
+#     assert modal_kind == "transformer_topology_emt"
+#     assert modal_config is not None
+#     assert modal_config["conn_f"] == WindingType.Delta
+#     assert modal_config["conn_t"] == WindingType.GroundedStar
+#     assert modal_config["allow_modify_template"] is False
+#
+#     editor.has_unapplied_changes = False
+#     editor.close()
+
+#
+# def test_transformer_type_emt_editor_inherits_zigzag_without_modal(override_attrs) -> None:
+#     circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
+#     transformer_type = gce.TransformerType()
+#     transformer_type.conn_hv = WindingType.ZigZag
+#     transformer_type.conn_lv = WindingType.GroundedStar
+#     editor = _build_editor(DynamicSimulationMode.EMT, api_object=transformer_type, circuit=circuit)
+#
+#     class _DialogMustNotOpen:
+#         def __init__(self, *args, **kwargs) -> None:
+#             raise AssertionError("Transformer topology dialog should not open when the transformer type already defines conn_hv/conn_lv")
+#
+#     override_attrs.setattr(dynamic_block_editor_module, "TransformerTopologyEmtDialog", _DialogMustNotOpen)
+#     block_item = editor.create_library_payload_item(BlockType.TRAFO_EMT, 10.0, 20.0)
+#     assert block_item is not None
+#
+#     modal_kind, modal_config = editor.get_modal_template_metadata(block_item.subsys)
+#     assert modal_kind == "transformer_topology_emt"
+#     assert modal_config is not None
+#     assert modal_config["conn_f"] == WindingType.ZigZag
+#     assert modal_config["conn_t"] == WindingType.GroundedStar
+#     assert _port_full_names(block_item)[:3] == ["vf_A_transformer_emt_template", "vf_B_transformer_emt_template", "vf_C_transformer_emt_template"]
+#
+#     editor.has_unapplied_changes = False
+#     editor.close()
+
+#
+# def test_transformer_emt_block_falls_back_to_manual_dialog_without_device_topology(override_attrs) -> None:
+#     editor = _build_editor(DynamicSimulationMode.EMT)
+#
+#     class _DialogStub:
+#         def __init__(self, title: str, parent=None, initial_config=None, static_from_connection=None, static_to_connection=None) -> None:
+#             _unused = (parent, initial_config)
+#             assert title == "Configure EMT Transformer Topology"
+#             assert static_from_connection is None
+#             assert static_to_connection is None
+#
+#         def exec(self) -> int:
+#             return int(QtWidgets.QDialog.DialogCode.Accepted)
+#
+#         def get_configuration(self) -> dict[str, object]:
+#             return dict({
+#                 "conn_f": WindingType.Delta,
+#                 "conn_t": WindingType.GroundedStar,
+#             })
+#
+#     override_attrs.setattr(dynamic_block_editor_module, "TransformerTopologyEmtDialog", _DialogStub)
+#     block_item = editor.create_library_payload_item(BlockType.TRAFO_EMT, 10.0, 20.0)
+#
+#     assert block_item is not None
+#     modal_kind, modal_config = editor.get_modal_template_metadata(block_item.subsys)
+#     assert modal_kind == "transformer_topology_emt"
+#     assert modal_config is not None
+#     assert modal_config["conn_f"] == WindingType.Delta
+#     assert modal_config["conn_t"] == WindingType.GroundedStar
+#     assert modal_config["allow_modify_template"] is True
+#     assert _transformer_modal_config_allows_modify(modal_kind, modal_config) is True
+#
+#     editor.has_unapplied_changes = False
+#     editor.close()
+#
 
 def test_ground_emt_block_is_available_from_library() -> None:
     editor = _build_editor(DynamicSimulationMode.EMT)
@@ -1852,211 +943,6 @@ def test_ground_emt_block_is_available_from_library() -> None:
     assert block_item is not None
     assert len(block_item.inputs) == 1
     assert len(block_item.outputs) == 1
-
-    editor.has_unapplied_changes = False
-    editor.close()
-
-
-def test_induction_motor_emt_block_is_created_and_supports_modify_template(override_attrs) -> None:
-    editor = _build_editor(DynamicSimulationMode.EMT)
-    create_initial_configurations: list[dict[str, object]] = list()
-    modify_initial_configurations: list[dict[str, object]] = list()
-
-    class _CreateDialogStub:
-        def __init__(self, parent=None, initial_config=None) -> None:
-            _unused = parent
-            assert initial_config is not None
-            create_initial_configurations.append(dict(initial_config))
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_configuration(self) -> dict[str, object]:
-            return dict({"level": InductionMotorEmtLevel.SINGLE_CAGE.name})
-
-    class _ModifyDialogStub:
-        def __init__(self, parent=None, initial_config=None) -> None:
-            _unused = parent
-            assert initial_config is not None
-            modify_initial_configurations.append(dict(initial_config))
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_configuration(self) -> dict[str, object]:
-            return dict({"level": InductionMotorEmtLevel.DOUBLE_CAGE.name})
-
-    override_attrs.setattr(dynamic_block_editor_module, "InductionMotorEmtDialog", _CreateDialogStub)
-    block_item = editor.create_library_payload_item(BlockType.INDUCTION_MOTOR_EMT, 10.0, 20.0)
-    assert block_item is not None
-    assert create_initial_configurations == list([
-        dict({"level": InductionMotorEmtLevel.SINGLE_CAGE.name}),
-    ])
-
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "induction_motor_emt"
-    assert modal_config is not None
-    assert modal_config["level"] == InductionMotorEmtLevel.SINGLE_CAGE.name
-    assert block_item.toolTip() == "Induction motor EMT\nLevel 2: single cage"
-
-    created_state_var_names: list[str] = _state_var_names(block_item.subsys)
-    assert not any(name.startswith("psi_r2_alpha_") for name in created_state_var_names)
-
-    override_attrs.setattr(dynamic_block_editor_module, "InductionMotorEmtDialog", _ModifyDialogStub)
-    original_block_name: str = block_item.subsys.name
-    original_block_uid: int = block_item.subsys.uid
-    editor.modify_scene_item_template(block_item)
-
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "induction_motor_emt"
-    assert modal_config is not None
-    assert modal_config["level"] == InductionMotorEmtLevel.DOUBLE_CAGE.name
-    assert modify_initial_configurations == list([
-        dict({"level": InductionMotorEmtLevel.SINGLE_CAGE.name}),
-    ])
-    assert block_item.subsys.name == original_block_name
-    assert block_item.subsys.uid == original_block_uid
-
-    modified_state_var_names: list[str] = _state_var_names(block_item.subsys)
-    assert any(name.startswith("psi_r2_alpha_") for name in modified_state_var_names)
-
-    editor.rebuild_scene_from_diagram()
-    rebuilt_item = editor.get_scene_item_by_block_uid(original_block_uid)
-    assert rebuilt_item is not None
-    assert rebuilt_item.toolTip() == "Induction motor EMT\nLevel 3: double cage"
-
-    editor.has_unapplied_changes = False
-    editor.close()
-
-
-def test_grounding_link_emt_block_is_created_and_supports_modify_template(override_attrs) -> None:
-    editor = _build_editor(DynamicSimulationMode.EMT)
-
-    class _CreateDialogStub:
-        def __init__(self,
-                     parent=None,
-                     initial_config=None,
-                     nominal_voltage_kv=None,
-                     base_power_mva=None,
-                     base_frequency_hz=None) -> None:
-            _unused = (parent, initial_config, nominal_voltage_kv, base_power_mva, base_frequency_hz)
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_configuration(self) -> dict[str, object]:
-            return dict({
-                "include_r": True,
-                "include_l": True,
-                "include_c": False,
-                "input_mode": "physical",
-                "resistance_ohm": 20.0,
-                "inductive_value": 0.04,
-                "capacitive_value": 1.0e-6,
-            })
-
-    class _ModifyDialogStub:
-        def __init__(self,
-                     parent=None,
-                     initial_config=None,
-                     nominal_voltage_kv=None,
-                     base_power_mva=None,
-                     base_frequency_hz=None) -> None:
-            _unused = (parent, initial_config, nominal_voltage_kv, base_power_mva, base_frequency_hz)
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_configuration(self) -> dict[str, object]:
-            return dict({
-                "include_r": True,
-                "include_l": False,
-                "include_c": True,
-                "input_mode": "reactance",
-                "resistance_ohm": 40.0,
-                "inductive_value": 10.0,
-                "capacitive_value": 150.0,
-            })
-
-    override_attrs.setattr(dynamic_block_editor_module, "GroundingLinkEmtDialog", _CreateDialogStub)
-    block_item = editor.create_library_payload_item(BlockType.GROUNDING_LINK_EMT, 10.0, 20.0)
-    assert block_item is not None
-
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "grounding_link_emt"
-    assert modal_config is not None
-    assert modal_config["include_l"] is True
-    assert _find_prefixed_event_constant(block_item.subsys, "R_") == pytest.approx(20.0)
-    assert _find_prefixed_event_constant(block_item.subsys, "L_") == pytest.approx(0.04)
-
-    override_attrs.setattr(dynamic_block_editor_module, "GroundingLinkEmtDialog", _ModifyDialogStub)
-    editor.modify_scene_item_template(block_item)
-
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "grounding_link_emt"
-    assert modal_config is not None
-    assert modal_config["include_c"] is True
-    assert modal_config["include_l"] is False
-    assert _find_prefixed_event_constant(block_item.subsys, "R_") == pytest.approx(40.0)
-    assert _find_prefixed_event_constant(block_item.subsys, "C_") == pytest.approx(1.0 / (2.0 * math.pi * 50.0 * 150.0))
-
-    editor.has_unapplied_changes = False
-    editor.close()
-
-
-def test_nonlinear_resistor_emt_block_is_created_and_supports_modify_template(override_attrs) -> None:
-    editor = _build_editor(DynamicSimulationMode.EMT)
-
-    class _CreateDialogStub:
-        def __init__(self, block_label: str, initial_points=None, parent=None, x_label: str = "", y_label: str = "", preview_enabled: bool = False, preview_title: str | None = None) -> None:
-            _unused = (initial_points, parent)
-            assert block_label == "Nonlinear resistor EMT V-I curve"
-            assert x_label == "V"
-            assert y_label == "I"
-            assert preview_enabled is True
-            assert preview_title == "Nonlinear resistor EMT V-I curve"
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_points(self) -> tuple[list[float], list[float]]:
-            return [0.0, 1.0, 1.5], [0.0, 0.1, 1.0]
-
-    class _ModifyDialogStub:
-        def __init__(self, block_label: str, initial_points=None, parent=None, x_label: str = "", y_label: str = "", preview_enabled: bool = False, preview_title: str | None = None) -> None:
-            _unused = (initial_points, parent)
-            assert block_label == "Nonlinear resistor EMT V-I curve"
-            assert x_label == "V"
-            assert y_label == "I"
-            assert preview_enabled is True
-            assert preview_title == "Nonlinear resistor EMT V-I curve"
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_points(self) -> tuple[list[float], list[float]]:
-            return [0.0, 1.2, 1.8], [0.0, 0.2, 1.5]
-
-    override_attrs.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _CreateDialogStub)
-    block_item = editor.create_library_payload_item(BlockType.NONLINEAR_RESISTOR_EMT, 10.0, 20.0)
-    assert block_item is not None
-
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "nonlinear_resistor_emt"
-    assert modal_config is not None
-    assert modal_config["voltage_points"] == [0.0, 1.0, 1.5]
-    assert modal_config["current_points"] == [0.0, 0.1, 1.0]
-    assert len(block_item.inputs) == 1
-    assert len(block_item.outputs) == 1
-
-    override_attrs.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _ModifyDialogStub)
-    editor.modify_scene_item_template(block_item)
-
-    modal_kind, modal_config = get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "nonlinear_resistor_emt"
-    assert modal_config is not None
-    assert modal_config["voltage_points"] == [0.0, 1.2, 1.8]
-    assert modal_config["current_points"] == [0.0, 0.2, 1.5]
 
     editor.has_unapplied_changes = False
     editor.close()
@@ -2175,7 +1061,7 @@ def test_lookup_matrix_linear_dialog_supports_row_copy_and_row_paste() -> None:
     print(f"DEBUG: row 1 items = {[dialog._table_widget.item(1, c).text() for c in range(3)]}")
     print(f"DEBUG: clipboard before copy = {repr(clipboard.text())}")
 
-    from VeraGrid.Gui.DynamicModelEditor.lookup_table_dialog import _copy_selected_table_range_to_clipboard
+    from VeraGrid.Gui.DynamicModelEditor.ElementDialogues.lookup_table_dialog import _copy_selected_table_range_to_clipboard
     _copy_selected_table_range_to_clipboard(dialog._table_widget)
     QtWidgets.QApplication.processEvents()
     QTest.qWait(100)

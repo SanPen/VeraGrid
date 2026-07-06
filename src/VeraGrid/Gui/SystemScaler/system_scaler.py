@@ -915,7 +915,7 @@ class SystemScaler(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        self.setWindowTitle('System scaling')
+        self.setWindowTitle(self.tr("System scaling"))
 
         self.grid = grid
         self.checkpoints: list[SystemScalingCheckpoint] = list()
@@ -930,7 +930,7 @@ class SystemScaler(QtWidgets.QDialog):
         self.ui.verticalLayout_2.addWidget(self.plot_canvas)
 
         plot_axis = self.plot_figure.add_subplot(111)
-        plot_axis.text(0.5, 0.5, "Press plot to preview scaling", ha="center", va="center")
+        plot_axis.text(0.5, 0.5, self.tr("Press plot to preview scaling"), ha="center", va="center")
         plot_axis.set_axis_off()
         self.plot_canvas.draw()
 
@@ -1492,27 +1492,33 @@ class SystemScaler(QtWidgets.QDialog):
             power_axis = self.plot_figure.add_subplot(211)
             energy_axis = self.plot_figure.add_subplot(212, sharex=power_axis)
 
-            power_axis.plot(time_profile, original_generation, label="Original generation", linewidth=2.0)
-            power_axis.plot(time_profile, scaled_generation, label="Scaled generation", linewidth=2.0)
-            power_axis.plot(time_profile, -original_load, label="Original load", linewidth=2.0)
-            power_axis.plot(time_profile, -scaled_load, label="Scaled load", linewidth=2.0)
+            power_axis.plot(time_profile,
+                            original_generation,
+                            label=self.tr("Original generation"),
+                            linewidth=2.0)
+            power_axis.plot(time_profile,
+                            scaled_generation,
+                            label=self.tr("Scaled generation"),
+                            linewidth=2.0)
+            power_axis.plot(time_profile, -original_load, label=self.tr("Original load"), linewidth=2.0)
+            power_axis.plot(time_profile, -scaled_load, label=self.tr("Scaled load"), linewidth=2.0)
             power_axis.axhline(0.0, color="black", linewidth=0.8)
-            power_axis.set_ylabel("MW")
-            power_axis.set_title("Aggregated power scaling preview")
+            power_axis.set_ylabel(self.tr("MW"))
+            power_axis.set_title(self.tr("Aggregated power scaling preview"))
             power_axis.grid(True)
             power_axis.legend()
 
             energy_axis.fill_between(time_profile, 0.0, scaled_generation_energy,
-                                     alpha=0.35, label="Scaled generation energy")
+                                     alpha=0.35, label=self.tr("Scaled generation energy"))
             energy_axis.fill_between(time_profile, 0.0, scaled_load_energy,
-                                     alpha=0.35, label="Scaled load energy")
+                                     alpha=0.35, label=self.tr("Scaled load energy"))
             energy_axis.plot(time_profile, original_generation_energy,
-                             linestyle="--", linewidth=1.6, label="Original generation energy")
+                             linestyle="--", linewidth=1.6, label=self.tr("Original generation energy"))
             energy_axis.plot(time_profile, original_load_energy,
-                             linestyle="--", linewidth=1.6, label="Original load energy")
+                             linestyle="--", linewidth=1.6, label=self.tr("Original load energy"))
             energy_axis.axhline(0.0, color="black", linewidth=0.8)
-            energy_axis.set_ylabel("MWh")
-            energy_axis.set_title("Aggregated energy scaling preview")
+            energy_axis.set_ylabel(self.tr("MWh"))
+            energy_axis.set_title(self.tr("Aggregated energy scaling preview"))
             energy_axis.grid(True)
             energy_axis.legend()
 
@@ -1521,17 +1527,17 @@ class SystemScaler(QtWidgets.QDialog):
             self.plot_canvas.draw()
         else:
             QtWidgets.QMessageBox.warning(self,
-                                          "System scaling",
-                                          "There is no time series to plot.")
+                                          self.tr("System scaling"),
+                                          self.tr("There is no time series to plot."))
 
     def do_it(self):
         """
 
         :return:
         """
-        ok = yes_no_question("This operation will alter the generation "
-                             "and load composition irreversibly\nAre you sure?",
-                             "System scaling")
+        ok = yes_no_question(self.tr("This operation will alter the generation "
+                                     "and load composition irreversibly\nAre you sure?"),
+                             self.tr("System scaling"))
 
         if ok:
             if len(self.checkpoints) > 0:

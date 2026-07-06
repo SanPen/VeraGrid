@@ -36,6 +36,22 @@
     <file>icons/area.png</file>
     <file>icons/groups.png</file>
     <file>icons/country.png</file>
+    <file>icons/flag_system.png</file>
+    <file>icons/flag_en.png</file>
+    <file>icons/flag_ja.png</file>
+    <file>icons/flag_eu.png</file>
+    <file>icons/flag_gl.png</file>
+    <file>icons/flag_ar.png</file>
+    <file>icons/flag_it.png</file>
+    <file>icons/flag_el.png</file>
+    <file>icons/flag_nl.png</file>
+    <file>icons/flag_ca.png</file>
+    <file>icons/flag_zh.png</file>
+    <file>icons/flag_hi.png</file>
+    <file>icons/flag_de.png</file>
+    <file>icons/flag_fr.png</file>
+    <file>icons/flag_pt.png</file>
+    <file>icons/flag_es.png</file>
     <file>icons/region.png</file>
     <file>icons/rotate.png</file>
     <file>icons/community.png</file>

@@ -3,19 +3,17 @@
 # file, You can see it at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Any, Sequence
+from typing import Sequence
 
 from VeraGridEngine.enumerations import BlockType
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template
-from VeraGridEngine.Templates.Emt.bergeron_line_emt_template import get_bergeron_line_emt_template
-from VeraGridEngine.Templates.predefined_blocks import (
+from VeraGridEngine.Templates.BasicBlockCatalog.predefined_blocks import (
     constant,
     gain,
     adder,
     substract,
-    product,
+    product_2,
     divide,
     absolut,
     generic
@@ -23,7 +21,6 @@ from VeraGridEngine.Templates.predefined_blocks import (
 from VeraGridEngine.Templates.Rms.genrow_rms_template import get_genrow_rms_template
 from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
 from VeraGridEngine.Templates.Rms.load_rms_template import get_load_rms_template
-from VeraGridEngine.Templates.Rms.dc_voltage_source import DCPVSourceAveraged
 from VeraGridEngine.Templates.Rms.vsc_gfl_dclinked import build_vsc_rms
 # from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template import (get_genqec_rms,
 #                                                                       get_governor_rms,
@@ -48,7 +45,10 @@ from VeraGridEngine.Templates.Emt.load_exponential_emt_template import get_expon
 from VeraGridEngine.Templates.Emt.load_zip_emt_template import get_load_ZIP_emt_template
 from VeraGridEngine.Templates.Emt.dc_load_emt_template import get_dc_load_emt_template
 
-
+def create_sum_block(var_factory: VarFactory, item_name: str)  -> Block | None:
+    blk = adder(var_factory, minuend_inputs, substrahend_inputs, item_name)
+    blk.name = item_name
+    return blk
 
 def create_block_of_type(var_factory: VarFactory,
                          block_type: BlockType,
@@ -70,6 +70,7 @@ def create_block_of_type(var_factory: VarFactory,
 
     # SUM / ADDER (2 inputs)
     elif block_type == BlockType.SUM:
+
         blk = adder(var_factory, item_name)
         blk.name = item_name
         return blk
@@ -82,7 +83,7 @@ def create_block_of_type(var_factory: VarFactory,
 
     # PRODUCT (2 inputs)
     elif block_type == BlockType.PRODUCT:
-        blk = product(var_factory, item_name)
+        blk = product_2(var_factory, item_name)
         blk.name = item_name
         return blk
 

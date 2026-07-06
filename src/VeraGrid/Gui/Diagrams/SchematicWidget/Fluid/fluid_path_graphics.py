@@ -11,7 +11,7 @@ from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor impo
 from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import BarTerminalItem, RoundTerminalItem
 from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget, ACTIVE
 from VeraGrid.Gui.messages import yes_no_question
-from VeraGrid.Gui.gui_functions import add_menu_entry
+from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template import LineGraphicTemplateItem
 from VeraGridEngine.Devices.Fluid.fluid_path import FluidPath
 from VeraGridEngine.enumerations import DeviceType
@@ -132,30 +132,30 @@ class FluidPathGraphicItem(LineGraphicTemplateItem):
         """
         if self.api_object is not None:
             menu = QMenu()
-            menu.addSection("FluidPath")
+            menu.addSection(translate_context_menu_text("FluidPath"))
 
             add_menu_entry(menu=menu,
-                           text="Editor",
+                           text=translate_context_menu_text("Editor"),
                            icon_path=":/Icons/icons/edit.png",
                            function_ptr=self.edit)
 
             menu.addSeparator()
 
             add_menu_entry(menu=menu,
-                           text="Plot profiles",
+                           text=translate_context_menu_text("Plot profiles"),
                            icon_path=":/Icons/icons/plot.png",
                            function_ptr=self.plot_profiles)
 
             add_menu_entry(menu=menu,
-                           text="Delete",
+                           text=translate_context_menu_text("Delete"),
                            icon_path=":/Icons/icons/delete3.png",
                            function_ptr=self.delete)
 
             menu.addSeparator()
             self.add_auto_route_style_menu(menu=menu)
-            menu.addSection('Convert to')
+            menu.addSection(translate_context_menu_text("Convert to"))
             add_menu_entry(menu=menu,
-                           text="Convert to line",
+                           text=translate_context_menu_text("Convert to line"),
                            icon_path=":/Icons/icons/assign_to_profile.png",
                            function_ptr=self.to_line)
 

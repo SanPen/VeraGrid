@@ -872,48 +872,37 @@ def get_veragrid_transformer(
             tc_neutral_position = int((psse_elm.NTP1 + 1) / 2)
             tc_normal_position = int((psse_elm.NTP1 + 1) / 2)
 
-            alpha_per_2 = math.radians(psse_elm.RMA1 / 2)
-            # NTP1 should be an odd number
-            number_of_symmetrical_step = (psse_elm.NTP1 - 1) / 2
-            tc_dV = 2 * math.tan(alpha_per_2) / number_of_symmetrical_step
+            if psse_elm.NTP1 > 1:
 
-            d_ang = psse_elm.RMA1 / ((psse_elm.NTP1 - 1) / 2)
-            # ?: this value is set internally by set_tap_phase
-            # tc_tap_position
-            if d_ang != 0.0:
-                tc_step = round(psse_elm.ANG1 / d_ang)
-                if tc_step - (psse_elm.ANG1 / d_ang) > 0.1:
-                    logger.add_warning(
-                        device=psse_elm,
-                        device_class=psse_elm.class_name,
-                        msg="Tap changer is not on discrete step.",
-                        value=psse_elm.ANG1 / d_ang,
-                    )
-                tc_tap_pos = tc_neutral_position + tc_step
+                alpha_per_2 = math.radians(psse_elm.RMA1 / 2)
+                # NTP1 should be an odd number
+                number_of_symmetrical_step = (psse_elm.NTP1 - 1) / 2
+                tc_dV = 2 * math.tan(alpha_per_2) / number_of_symmetrical_step
+
+                d_ang = psse_elm.RMA1 / ((psse_elm.NTP1 - 1) / 2)
+                # ?: this value is set internally by set_tap_phase
+                # tc_tap_position
+                if d_ang != 0.0:
+                    tc_step = round(psse_elm.ANG1 / d_ang)
+                    if tc_step - (psse_elm.ANG1 / d_ang) > 0.1:
+                        logger.add_warning(
+                            device=psse_elm,
+                            device_class=psse_elm.class_name,
+                            msg="Tap changer is not on discrete step.",
+                            value=psse_elm.ANG1 / d_ang,
+                        )
+                    tc_tap_pos = tc_neutral_position + tc_step
+                else:
+                    tc_step = 0
             else:
-                tc_step = 0
-            # print()
-            # corrected_phase = elm.tap_changer.set_tap_phase(elm.tap_phase)
-            # elm.tap_phase = corrected_phase
-            #
-            # print("Tap module, and phase calculated:",
-            #       elm.tap_module, elm.tap_phase)
 
-            # if psse_elm.NTP1 > 1:
-            #     tc_total_positions = psse_elm.NTP1
-            #     tc_neutral_position = int((psse_elm.NTP1 + 1) / 2)
-            #     tc_normal_position = int((psse_elm.NTP1 + 1) / 2)
-            #     alpha_per_2 = math.radians(psse_elm.RMA1)
-            #     number_of_symmetrical_step = (psse_elm.NTP1 - 1) / 2
-            #     tc_dV = 2 * math.tan(alpha_per_2) / number_of_symmetrical_step
-            # else:
-            #     tc_total_positions = 1
-            #     tc_neutral_position = 0
-            #     tc_normal_position = 0
-            #     alpha_per_2 = math.radians(psse_elm.RMA1)
-            #     tc_dV = 0.0
-            #     logger.add_warning(msg='Number of tap positions == 1', value=1)
-
+                tc_total_positions = 1
+                tc_neutral_position = 0
+                tc_normal_position = 0
+                alpha_per_2 = math.radians(psse_elm.RMA1)
+                tc_dV = 0.0
+                logger.add_warning(msg='Number of tap positions == 1', value=1)
+         
         elif psse_elm.COD1 in [4, -4]:  # for control of a dc line quantity
             # (valid only for two-winding transformers)
 

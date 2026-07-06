@@ -11,7 +11,7 @@ from PySide6.QtWidgets import (QMenu, QGraphicsSceneContextMenuEvent, QGraphicsS
 
 from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
 from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget
-from VeraGrid.Gui.gui_functions import add_menu_entry
+from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
 
 from VeraGridEngine.Devices.Substation.voltage_level import VoltageLevel
 from VeraGridEngine.Devices.Substation.bus import Bus
@@ -239,12 +239,12 @@ class VoltageLevelGraphicItem(GenericDiagramWidget, QGraphicsEllipseItem):
         menu = QMenu()
 
         add_menu_entry(menu=menu,
-                       text="Editor",
+                       text=translate_context_menu_text("Editor"),
                        icon_path=":/Icons/icons/edit.png",
                        function_ptr=self.edit)
 
         add_menu_entry(menu=menu,
-                       text="Add bus",
+                       text=translate_context_menu_text("Add bus"),
                        icon_path="",
                        function_ptr=self.add_bus)
 

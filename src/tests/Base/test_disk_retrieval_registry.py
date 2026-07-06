@@ -224,6 +224,7 @@ def test_rms_small_signal_results_register_from_disk_data(tmp_path: Path) -> Non
         conjugate_frequencies=np.array([0.0, 0.0], dtype=float),
         state_matrix=np.array([[-1.0, 0.0], [0.0, -2.0]], dtype=float),
         stat_vars=list(),
+        algebraic_vars=list()
     )
     driver.results.stat_vars_array = np.array(["x1", "x2"], dtype=str)
 

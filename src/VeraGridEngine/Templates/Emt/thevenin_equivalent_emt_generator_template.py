@@ -303,4 +303,3 @@ def get_generator_thevenin_rl_emt_template_with_ref(
     })
 
     return templ
-

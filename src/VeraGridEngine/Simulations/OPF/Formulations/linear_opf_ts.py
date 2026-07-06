@@ -1772,10 +1772,10 @@ def add_linear_battery_formulation(t: Union[int, None],
                                                  join("batt_e_", [t, k], "_"))
 
                 if t > 0:
-                    # energy decreases / increases with power · dt
+                    # energy falls when discharging (p_pos) and rises when charging (p_neg)
                     prob.add_cst(cst=(batt_vars.e[t, k] == batt_vars.e[t - 1, k]
-                                      + dt * (batt_data_t.discharge_efficiency[k] * p_pos
-                                              - batt_data_t.charge_efficiency[k] * p_neg)),
+                                      + dt * (batt_data_t.charge_efficiency[k] * p_neg
+                                              - p_pos / batt_data_t.discharge_efficiency[k])),
                                  name=join("batt_energy_", [t, k], "_"))
                 else:
                     # set the initial energy value

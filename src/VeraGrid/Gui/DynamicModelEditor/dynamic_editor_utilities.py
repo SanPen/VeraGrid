@@ -2,15 +2,15 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can see it at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
-from typing import Sequence
 
+from typing import Dict, Any
 
 from VeraGridEngine.Devices.Branches.transformer import Transformer2W
 from VeraGridEngine.Devices.Branches.winding import Winding
 from VeraGridEngine.enumerations import BlockType, WindingType
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.Templates.predefined_blocks import (
+from VeraGridEngine.Templates.BasicBlockCatalog.predefined_blocks import (
     constant,
     gain,
     adder,
@@ -22,7 +22,52 @@ from VeraGridEngine.Templates.predefined_blocks import (
 )
 
 import VeraGridEngine.Templates as tem
+import VeraGridEngine.Templates.Emt as emt_templates
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
+
+
+def get_blocktype2template_builder_dict():
+
+    return {
+        BlockType.FAULT_EMT: emt_templates.FaultEmtTemplate,
+        BlockType.SWITCH_EMT: emt_templates.SwitchEmtTemplate,
+        BlockType.GROUNDING_LINK_EMT: emt_templates.GroundingLinkEmtTemplate,
+        BlockType.RLC_COMBO_EMT: emt_templates.ShuntRlcComboEmtTemplate,
+        BlockType.INDUCTION_MOTOR_EMT: emt_templates.InductionMotorEmtTemplate,
+
+        BlockType.VOLTAGE_SOURCE_EMT: emt_templates.VoltageSourceEmtTemplate,
+        BlockType.CURRENT_SOURCE_EMT: emt_templates.CurrentSourceEmtTemplate,
+        BlockType.CONTROLLED_VOLTAGE_SOURCE_EMT: emt_templates.ControlledVoltageSourceEmtTemplate,
+        BlockType.CONTROLLED_CURRENT_SOURCE_EMT: emt_templates.ControlledCurrentSourceEmtTemplate,
+
+        BlockType.DC_VOLTAGE_SOURCE_EMT: emt_templates.DcVoltageSourceEmtTemplate,
+        BlockType.DC_CURRENT_SOURCE_EMT: emt_templates.DcCurrentSourceEmtTemplate,
+        BlockType.CONTROLLED_DC_VOLTAGE_SOURCE_EMT: emt_templates.ControlledDcVoltageSourceEmtTemplate,
+        BlockType.CONTROLLED_DC_CURRENT_SOURCE_EMT: emt_templates.ControlledDcCurrentSourceEmtTemplate,
+
+        BlockType.BALANCED_3PH_VOLTAGE_SOURCE_EMT: emt_templates.Balanced3phVoltageSourceEmtTemplate,
+        BlockType.BALANCED_3PH_CURRENT_SOURCE_EMT: emt_templates.Balanced3phCurrentSourceEmtTemplate,
+        BlockType.CONTROLLED_BALANCED_3PH_VOLTAGE_SOURCE_EMT: emt_templates.ControlledBalanced3phVoltageSourceEmtTemplate,
+        BlockType.CONTROLLED_BALANCED_3PH_CURRENT_SOURCE_EMT: emt_templates.ControlledBalanced3phCurrentSourceEmtTemplate,
+
+        BlockType.ARBITRARY_WAVEFORM_VOLTAGE_SOURCE_EMT: emt_templates.ArbitraryWaveformVoltageSourceEmtTemplate,
+        BlockType.ARBITRARY_WAVEFORM_CURRENT_SOURCE_EMT: emt_templates.ArbitraryWaveformCurrentSourceEmtTemplate,
+
+        BlockType.STEP_VOLTAGE_SOURCE_EMT: emt_templates.StepVoltageSourceEmtTemplate,
+        BlockType.STEP_CURRENT_SOURCE_EMT: emt_templates.StepCurrentSourceEmtTemplate,
+        BlockType.RAMP_VOLTAGE_SOURCE_EMT: emt_templates.RampVoltageSourceEmtTemplate,
+        BlockType.RAMP_CURRENT_SOURCE_EMT: emt_templates.RampCurrentSourceEmtTemplate,
+        BlockType.DOUBLE_EXPONENTIAL_CURRENT_SOURCE_EMT: emt_templates.DoubleExponentialCurrentSourceEmtTemplate,
+        BlockType.HEIDLER_CURRENT_SOURCE_EMT: emt_templates.HeidlerCurrentSourceEmtTemplate,
+        BlockType.CIGRE_SURGE_CURRENT_SOURCE_EMT: emt_templates.CigreSurgeCurrentSourceEmtTemplate,
+
+        BlockType.EXP_LOAD_EMT: emt_templates.ExponentialLoadEmtTemplate,
+        BlockType.ZIP_LOAD_EMT: emt_templates.LoadZIPEmtTemplate,
+
+        BlockType.TRAFO_EMT: emt_templates.TransformerEmtTemplate,
+        BlockType.XFMR_TRANSFORMER: emt_templates.XfmrEmtTemplate
+
+    }
 
 
 

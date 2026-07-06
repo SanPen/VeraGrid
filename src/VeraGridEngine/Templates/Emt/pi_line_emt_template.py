@@ -9,7 +9,30 @@ import numpy as np
 from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType, ParamPowerFlowReferenceType, EmtLineTypes
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
+from VeraGridEngine.Templates.template_definition import TemplateDefinition, TemplateProp
 from VeraGridEngine.Utils.Symbolic.block import Var, Expr
+
+
+class PiLineEmtTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        super().__init__(vf, params=[
+            TemplateProp(name="phN", units="", descr="Bool. True if the line has neutral, else False.", tpe=bool),
+            TemplateProp(name="phA", units="", descr="Bool. True if the line has phase A, else False.", tpe=bool),
+            TemplateProp(name="phB", units="", descr="Bool. True if the line has phase B, else False.", tpe=bool),
+            TemplateProp(name="phC", units="", descr="Bool. True if the line has phase C, else False.", tpe=bool),
+            TemplateProp(name="name", units="", descr="Name of the emt model.", tpe=str),
+        ])
+
+    def eval(self) -> EmtModelTemplate:
+        return get_pi_line_emt_template(
+            self.vf,
+            self.get_value("phN"),
+            self.get_value("phA"),
+            self.get_value("phB"),
+            self.get_value("phC"),
+            self.get_value("name"),
+        )
 
 def get_pi_line_emt_template(vf: VarFactory,
                              phN: bool = False,

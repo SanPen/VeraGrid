@@ -28,6 +28,7 @@ from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import BarTerminalItem,
 from VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics import BusGraphicItem
 from VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics import FluidNodeGraphicItem
 from VeraGrid.Gui.messages import yes_no_question
+from VeraGrid.Gui.gui_functions import translate_context_menu_text
 
 from VeraGridEngine.Devices.Diagrams.schematic_layout import build_default_branch_route
 from VeraGridEngine.Devices.Substation.bus import Bus
@@ -45,6 +46,7 @@ from VeraGridEngine.Devices.Fluid.fluid_node import FluidNode
 from VeraGridEngine.Devices.Fluid.fluid_path import FluidPath
 from VeraGridEngine.Devices.types import BRANCH_TYPES
 from VeraGridEngine.enumerations import SchematicAutoRouteStyle, SchematicRouteKind, SwitchGraphicType
+
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
@@ -1306,16 +1308,16 @@ class LineGraphicTemplateItem(GenericDiagramWidget, QGraphicsLineItem):
         if self.api_object is None:
             if self.is_vsc3_terminal_connection():
                 current_route_style = self.get_branch_auto_route_style()
-                route_style_menu = menu.addMenu("Auto route style")
-                reticular_action = route_style_menu.addAction("Reticular")
-                straight_action = route_style_menu.addAction("Straight")
+                route_style_menu = menu.addMenu(translate_context_menu_text("Auto route style"))
+                reticular_action = route_style_menu.addAction(translate_context_menu_text("Reticular"))
+                straight_action = route_style_menu.addAction(translate_context_menu_text("Straight"))
             else:
                 return
         else:
             current_route_style = self.get_branch_auto_route_style()
-            route_style_menu = menu.addMenu("Auto route style")
-            reticular_action = route_style_menu.addAction("Reticular")
-            straight_action = route_style_menu.addAction("Straight")
+            route_style_menu = menu.addMenu(translate_context_menu_text("Auto route style"))
+            reticular_action = route_style_menu.addAction(translate_context_menu_text("Reticular"))
+            straight_action = route_style_menu.addAction(translate_context_menu_text("Straight"))
 
         reticular_action.setCheckable(True)
         straight_action.setCheckable(True)

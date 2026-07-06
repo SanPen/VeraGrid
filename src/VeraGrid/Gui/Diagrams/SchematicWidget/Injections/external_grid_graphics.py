@@ -6,6 +6,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from PySide6 import QtWidgets
 from VeraGrid.Gui.Diagrams.generic_graphics import ExternalGridSymbol
+from VeraGrid.Gui.gui_functions import translate_context_menu_text
 from VeraGridEngine.Devices.Injections.external_grid import ExternalGrid
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionTemplateGraphicItem
 
@@ -49,7 +50,7 @@ class ExternalGridGraphicItem(InjectionTemplateGraphicItem):
         """
         if self.api_object is not None:
             menu = self.get_base_context_menu()
-            menu.addSection("External grid")
+            menu.addSection(translate_context_menu_text("External grid"))
 
             menu.exec(event.screenPos())
         else:

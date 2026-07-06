@@ -3064,6 +3064,31 @@ class BlockProceduralLogicUpdater(BoundaryUpdateWrapper):
         for logic in self.logic_entries:
             logic.update(t, x, params)
 
+    def initialize_modes(self, t: float, x: Vec, params: Vec) -> None:
+        """
+        Initialize retained procedural mode outputs at startup.
+
+        The generic EMT runtime-parameter initialization seeds ``mode_dict``
+        values before the procedural layer is active. For procedural outputs such
+        as sampled values and saturations, the correct startup value is the
+        value produced by the procedural logic itself when evaluated at the
+        initialized operating point. This startup pass applies the same update
+        logic once after the continuous initialization has populated the state,
+        algebraic, and differential guesses, so retained mode outputs start from
+        the exact operating-point sample that the runtime layer will hold.
+
+        :param t: Startup simulation time.
+        :param x: Initialized state/algebraic vector.
+        :param params: Runtime parameter vector updated in place.
+        :return: None
+        """
+        logic: ProceduralLogicBase
+
+        # Reuse each logic object's update rule so startup mode seeding matches
+        # the runtime semantics of that procedural block exactly.
+        for logic in self.logic_entries:
+            logic.update(t, x, params)
+
     def get_next_forced_event_time(self, t_prev: float, t_target: float) -> Optional[float]:
         """
         Return the earliest forced event requested by any procedural logic entry.

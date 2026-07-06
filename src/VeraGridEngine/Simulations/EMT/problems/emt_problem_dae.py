@@ -58,18 +58,18 @@ from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import (
     EmtBoundaryUpdateProtocol,
     EmtProblemTemplate,
 )
-# from VeraGridEngine.Utils.Symbolic.static_parameter_mapping import (
-#     abc_to_nabc,
-#     assign_static_api_object_mapping_for_device,
-#     get_load_power_phase_values_pu_abc,
-#     get_shunt_phase_values_pu_abc,
-# )
-from VeraGridEngine.Utils.Symbolic.static_parameter_mapping_rms import (
+from VeraGridEngine.Devices.Dynamic.static_parameter_mapping import (
     abc_to_nabc,
     assign_static_api_object_mapping_for_device,
     get_load_power_phase_values_pu_abc,
     get_shunt_phase_values_pu_abc,
 )
+# from VeraGridEngine.Devices.Dynamic.static_parameter_mapping_rms import (
+#     abc_to_nabc,
+#     assign_static_api_object_mapping_for_device,
+#     get_load_power_phase_values_pu_abc,
+#     get_shunt_phase_values_pu_abc,
+# )
 
 
 def _tic() -> float:
@@ -4721,40 +4721,40 @@ class EmtProblemDae(EmtProblemTemplate):
             if _get_external_mapping_var_if_present(mdl=mdl, key=VarPowerFlowReferenceType.v_N) is not None:
                 V_N = self.power_flow_results_3ph.voltage_N[bus_index]
                 v_N: float = np.sqrt(2.0) * np.imag(V_N)
-                # d_v_N: float = omega_base * np.sqrt(2.0) * np.real(V_N)
+                d_v_N: float = omega_base * np.sqrt(2.0) * np.real(V_N)
 
                 self.set_init_guess_and_preserve_post_init(mdl, VarPowerFlowReferenceType.v_N, v_N)
-                # self.set_diff_init_guess(mdl, VarPowerFlowReferenceType.d_v_N, d_v_N)
+                self.set_diff_init_guess(mdl, VarPowerFlowReferenceType.d_v_N, d_v_N)
             else:
                 pass
 
             if _get_external_mapping_var_if_present(mdl=mdl, key=VarPowerFlowReferenceType.v_A) is not None:
                 V_A = self.power_flow_results_3ph.voltage_A[bus_index]
                 v_A: float = np.sqrt(2.0) * np.imag(V_A)
-                # d_v_A: float = omega_base * np.sqrt(2.0) * np.real(V_A)
+                d_v_A: float = omega_base * np.sqrt(2.0) * np.real(V_A)
 
                 self.set_init_guess_and_preserve_post_init(mdl, VarPowerFlowReferenceType.v_A, v_A)
-                # self.set_diff_init_guess(mdl, VarPowerFlowReferenceType.d_v_A, d_v_A)
+                self.set_diff_init_guess(mdl, VarPowerFlowReferenceType.d_v_A, d_v_A)
             else:
                 pass
 
             if _get_external_mapping_var_if_present(mdl=mdl, key=VarPowerFlowReferenceType.v_B) is not None:
                 V_B = self.power_flow_results_3ph.voltage_B[bus_index]
                 v_B: float = np.sqrt(2.0) * np.imag(V_B)
-                # d_v_B: float = omega_base * np.sqrt(2.0) * np.real(V_B)
+                d_v_B: float = omega_base * np.sqrt(2.0) * np.real(V_B)
 
                 self.set_init_guess_and_preserve_post_init(mdl, VarPowerFlowReferenceType.v_B, v_B)
-                # self.set_diff_init_guess(mdl, VarPowerFlowReferenceType.d_v_B, d_v_B)
+                self.set_diff_init_guess(mdl, VarPowerFlowReferenceType.d_v_B, d_v_B)
             else:
                 pass
 
             if _get_external_mapping_var_if_present(mdl=mdl, key=VarPowerFlowReferenceType.v_C) is not None:
                 V_C = self.power_flow_results_3ph.voltage_C[bus_index]
                 v_C: float = np.sqrt(2.0) * np.imag(V_C)
-                # d_v_C: float = omega_base * np.sqrt(2.0) * np.real(V_C)
+                d_v_C: float = omega_base * np.sqrt(2.0) * np.real(V_C)
 
                 self.set_init_guess_and_preserve_post_init(mdl, VarPowerFlowReferenceType.v_C, v_C)
-                # self.set_diff_init_guess(mdl, VarPowerFlowReferenceType.d_v_C, d_v_C)
+                self.set_diff_init_guess(mdl, VarPowerFlowReferenceType.d_v_C, d_v_C)
             else:
                 pass
 
@@ -4876,12 +4876,19 @@ class EmtProblemDae(EmtProblemTemplate):
         """
         a = np.exp(1j * 2.0 * np.pi / 3.0)
 
-        V1 = (VA + a * VB + (a * a) * VC) / 3.0
-        I1 = (IA + a * IB + (a * a) * IC) / 3.0
+        # Build the balanced positive-sequence voltage from the PF bus phasors.
+        V1: complex = (VA + a * VB + (a * a) * VC) / 3.0
+        I1: complex = (IA + a * IB + (a * a) * IC) / 3.0
 
         phi_V = float(np.angle(V1))
         phi_I = float(np.angle(I1))
-        ang = phi_I - phi_V
+
+        # VSC EMT templates interpret ``phi`` in the converter-delivered-power
+        # convention while the PF branch current uses the network branch
+        # convention. Shifting by ``pi`` preserves the seeded current states and
+        # branch/KCL signs while making the analytical VSC power initialization
+        # consistent with positive converter export.
+        ang = phi_I - phi_V + np.pi
         phi = float(np.arctan2(np.sin(ang), np.cos(ang)))
 
         external_mapping: Optional[Dict[Any, Var]] = _get_external_mapping(mdl)
@@ -5506,7 +5513,12 @@ class EmtProblemDae(EmtProblemTemplate):
             "B": self.power_flow_results_3ph.voltage_B,
             "C": self.power_flow_results_3ph.voltage_C,
         }
-        voltage_to_dict = voltage_from_dict
+        voltage_to_dict = {
+            "N": self.power_flow_results_3ph.voltage_N,
+            "A": self.power_flow_results_3ph.voltage_A,
+            "B": self.power_flow_results_3ph.voltage_B,
+            "C": self.power_flow_results_3ph.voltage_C,
+        }
 
         sf_array_dict = {
             "N": None,
@@ -5907,17 +5919,20 @@ class EmtProblemDae(EmtProblemTemplate):
                     if abs(vt_ph) <= 1e-12:
                         i_t = 0.0 + 0.0j
                     else:
-                        i_t = np.conj(st_phase_total / vt_ph)
+                        i_t = np.conj(st_total / vt_ph)
+                        # i_t = np.conj(st_phase_total / vt_ph)
                 else:
                     if abs(vf_ph) <= 1e-12:
                         i_f = 0.0 + 0.0j
                     else:
-                        i_f = np.conj(sf_phase_total / vf_ph)
+                        i_f = np.conj(sf_total / vf_ph)
+                        # i_f = np.conj(sf_phase_total / vf_ph)
 
                     if abs(vt_ph) <= 1e-12:
                         i_t = 0.0 + 0.0j
                     else:
-                        i_t = np.conj(st_phase_total / vt_ph)
+                        i_t = np.conj(st_total / vt_ph)
+                        # i_t = np.conj(st_phase_total / vt_ph)
 
                 i_f0: float = np.sqrt(2.0) * np.imag(i_f)
                 i_t0: float = np.sqrt(2.0) * np.imag(i_t)
@@ -7180,6 +7195,17 @@ class EmtProblemDae(EmtProblemTemplate):
         self._initialize_mode_event_state()
         from VeraGridEngine.Utils.procedural_logic import build_boundary_updater_from_block
         self._block_boundary_updater = build_boundary_updater_from_block(self)
+
+        if self._block_boundary_updater is None:
+            pass
+        else:
+            x0: np.ndarray = self.get_x0()
+
+            # Procedural outputs such as sampled modes and saturations are
+            # retained runtime parameters. Their startup value must come from
+            # evaluating the procedural logic on the initialized operating
+            # point, not only from the generic mode_dict seed.
+            self._block_boundary_updater.initialize_modes(float(t0), x0, self._event_params_values)
 
     def emt_boundary_update(
             self,

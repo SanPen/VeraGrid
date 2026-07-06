@@ -28,7 +28,7 @@ from VeraGridEngine.IO.raw.versioned.v35.transformer import RawTransformerV35
 from VeraGridEngine.IO.raw.versioned.v34.vsc_dc_line import RawVscDCLineV34
 from VeraGridEngine.IO.raw.versioned.v35.vsc_dc_line import RawVscDCLineV35
 from VeraGridEngine.IO.raw.raw_parser_writer import interpret_line, read_and_split, read_raw
-from VeraGridEngine.IO.raw.raw_to_veragrid import psse_to_veragrid
+from VeraGridEngine.IO.raw.raw_to_veragrid import get_veragrid_transformer, psse_to_veragrid
 from VeraGridEngine.IO.raw.veragrid_to_raw import (RawNodeBreakerExportData, append_psse_terminal,
                                                    get_psse_substation_switch, veragrid_to_raw)
 from VeraGridEngine.basic_structures import Logger
@@ -594,6 +594,104 @@ def test_transformer_writer_uses_version_specific_psse34_and_psse35_layouts() ->
     assert len(raw_values_35_line_1) == 21
     assert len(raw_values_35_line_3) == 27
     assert raw_values_35_line_3[17] == 7
+
+
+def test_psse_cw3_two_winding_import_keeps_tap_ratio_on_bus_base() -> None:
+    """
+    CW=3 two-winding imports must keep the nominal-voltage ratio out of the effective tap.
+    See: https://github.com/SanPen/VeraGrid/issues/463
+    """
+
+    logger: Logger = Logger()
+    psse_bus_dict: dict[int, dev.Bus] = dict()
+    psse_bus_dict[1] = dev.Bus(name="HV", code="1", Vnom=275.0)
+    psse_bus_dict[2] = dev.Bus(name="LV", code="2", Vnom=1.0)
+
+    # This matches the reported 275 kV -> 1 kV step-up case where the tap should stay near unity.
+    raw_transformer: RawTransformerV35 = RawTransformerV35()
+    raw_transformer.windings = 2
+    raw_transformer.I = 1
+    raw_transformer.J = 2
+    raw_transformer.K = 0
+    raw_transformer.CKT = "1"
+    raw_transformer.NAME = "CW3_2W"
+    raw_transformer.CW = 3
+    raw_transformer.CZ = 1
+    raw_transformer.CM = 1
+    raw_transformer.R1_2 = 0.0
+    raw_transformer.X1_2 = 5.0e-3
+    raw_transformer.SBASE1_2 = 100.0
+    raw_transformer.WINDV1 = 1.075
+    raw_transformer.NOMV1 = 275.0
+    raw_transformer.WINDV2 = 1.0
+    raw_transformer.NOMV2 = 1.0
+
+    result: tuple[dev.Transformer2W | dev.Transformer3W, int] = get_veragrid_transformer(
+        psse_elm=raw_transformer,
+        psse_bus_dict=psse_bus_dict,
+        Sbase=100.0,
+        logger=logger,
+        adjust_taps_to_discrete_positions=False,
+        simple_naming=True,
+        flatten_virtual_taps=False,
+    )
+    imported_transformer: dev.Transformer2W | dev.Transformer3W = result[0]
+    winding_count: int = result[1]
+
+    assert winding_count == 2
+    assert np.isclose(imported_transformer.tap_module, 1.075)
+
+
+def test_psse_phase_shifter_with_single_tap_position_imports_without_dividing_by_zero() -> None:
+    """
+    NTP1=1 phase shifters must import as fixed single-position changers without crashing.
+    See: https://github.com/SanPen/VeraGrid/issues/463
+    """
+
+    logger: Logger = Logger()
+    psse_bus_dict: dict[int, dev.Bus] = dict()
+    psse_bus_dict[1] = dev.Bus(name="FROM", code="1", Vnom=110.0)
+    psse_bus_dict[2] = dev.Bus(name="TO", code="2", Vnom=110.0)
+
+    # COD1=3 takes the phase-shifter path that previously divided by zero when NTP1 was 1.
+    raw_transformer: RawTransformerV35 = RawTransformerV35()
+    raw_transformer.windings = 2
+    raw_transformer.I = 1
+    raw_transformer.J = 2
+    raw_transformer.K = 0
+    raw_transformer.CKT = "1"
+    raw_transformer.NAME = "NTP1_EQ_1"
+    raw_transformer.CW = 1
+    raw_transformer.CZ = 1
+    raw_transformer.CM = 1
+    raw_transformer.R1_2 = 0.0
+    raw_transformer.X1_2 = 0.1
+    raw_transformer.SBASE1_2 = 100.0
+    raw_transformer.WINDV1 = 1.0
+    raw_transformer.NOMV1 = 110.0
+    raw_transformer.WINDV2 = 1.0
+    raw_transformer.NOMV2 = 110.0
+    raw_transformer.COD1 = 3
+    raw_transformer.RMA1 = 10.0
+    raw_transformer.NTP1 = 1
+
+    result: tuple[dev.Transformer2W | dev.Transformer3W, int] = get_veragrid_transformer(
+        psse_elm=raw_transformer,
+        psse_bus_dict=psse_bus_dict,
+        Sbase=100.0,
+        logger=logger,
+        adjust_taps_to_discrete_positions=False,
+        simple_naming=True,
+        flatten_virtual_taps=False,
+    )
+    imported_transformer: dev.Transformer2W | dev.Transformer3W = result[0]
+    winding_count: int = result[1]
+
+    assert winding_count == 2
+    assert imported_transformer.tap_changer.total_positions == 1
+    assert imported_transformer.tap_changer.neutral_position == 0
+    assert imported_transformer.tap_changer.normal_position == 0
+    assert np.isclose(imported_transformer.tap_changer.dV, 0.0)
 
 
 def test_psse33_branch_writer_uses_rateabc_field_order() -> None:

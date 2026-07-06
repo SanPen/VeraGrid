@@ -75,12 +75,12 @@ class FmuTemplateEditorDialog(QtWidgets.QDialog):
         :return: None.
         """
 
-        self.setWindowTitle("FMU Template Editor")
+        self.setWindowTitle(self.tr("FMU Template Editor"))
         self.resize(760, 420)
 
         form_layout = QtWidgets.QFormLayout()
         path_layout = QtWidgets.QHBoxLayout()
-        browse_button = QtWidgets.QPushButton("Browse...", self)
+        browse_button = QtWidgets.QPushButton(self.tr("Browse..."), self)
         path_layout.addWidget(self._path_edit)
         path_layout.addWidget(browse_button)
 
@@ -97,14 +97,16 @@ class FmuTemplateEditorDialog(QtWidgets.QDialog):
             self._mode_combo.addItem(mode.value, mode)
 
         self._metadata_view.setReadOnly(True)
-        self._metadata_view.setPlainText("Choose an FMU archive to load its metadata and build the visual block.")
+        self._metadata_view.setPlainText(
+            self.tr("Choose an FMU archive to load its metadata and build the visual block.")
+        )
 
-        form_layout.addRow("Name", self._name_edit)
-        form_layout.addRow("FMU file", path_layout)
-        form_layout.addRow("Device type", self._device_type_combo)
-        form_layout.addRow("Domain", self._domain_combo)
-        form_layout.addRow("Mode", self._mode_combo)
-        form_layout.addRow("Metadata", self._metadata_view)
+        form_layout.addRow(self.tr("Name"), self._name_edit)
+        form_layout.addRow(self.tr("FMU file"), path_layout)
+        form_layout.addRow(self.tr("Device type"), self._device_type_combo)
+        form_layout.addRow(self.tr("Domain"), self._domain_combo)
+        form_layout.addRow(self.tr("Mode"), self._mode_combo)
+        form_layout.addRow(self.tr("Metadata"), self._metadata_view)
 
         buttons = QtWidgets.QDialogButtonBox(
             QtWidgets.QDialogButtonBox.StandardButton.Ok | QtWidgets.QDialogButtonBox.StandardButton.Cancel,
@@ -194,9 +196,9 @@ class FmuTemplateEditorDialog(QtWidgets.QDialog):
 
         file_name, _ = QtWidgets.QFileDialog.getOpenFileName(
             self,
-            "Select FMU file",
+            self.tr("Select FMU file"),
             initial_directory,
-            "FMU files (*.fmu)",
+            self.tr("FMU files (*.fmu)"),
         )
         if len(file_name) > 0:
             self._path_edit.setText(file_name)
@@ -256,12 +258,16 @@ class FmuTemplateEditorDialog(QtWidgets.QDialog):
 
         fmu_path = self._resolve_fmu_path(self._path_edit.text())
         if fmu_path is None:
-            self._metadata_view.setPlainText("Choose an FMU archive to load its metadata and build the visual block.")
+            self._metadata_view.setPlainText(
+                self.tr("Choose an FMU archive to load its metadata and build the visual block.")
+            )
         else:
             if fmu_path.exists():
                 self._render_metadata(fmu_path)
             else:
-                self._metadata_view.setPlainText(f"FMU file not found:\n{fmu_path}")
+                self._metadata_view.setPlainText(
+                    self.tr("FMU file not found:\n{path}").format(path=fmu_path)
+                )
 
     def _accept_dialog(self) -> None:
         """
@@ -272,11 +278,19 @@ class FmuTemplateEditorDialog(QtWidgets.QDialog):
 
         fmu_path = self._resolve_fmu_path(self._path_edit.text())
         if fmu_path is None:
-            QtWidgets.QMessageBox.warning(self, "FMU Template Editor", "Choose an FMU file first.")
+            QtWidgets.QMessageBox.warning(
+                self,
+                self.tr("FMU Template Editor"),
+                self.tr("Choose an FMU file first."),
+            )
             return
         else:
             if not fmu_path.exists():
-                QtWidgets.QMessageBox.warning(self, "FMU Template Editor", f"FMU file not found:\n{fmu_path}")
+                QtWidgets.QMessageBox.warning(
+                    self,
+                    self.tr("FMU Template Editor"),
+                    self.tr("FMU file not found:\n{path}").format(path=fmu_path),
+                )
                 return
             else:
                 pass
@@ -297,7 +311,7 @@ class FmuTemplateEditorDialog(QtWidgets.QDialog):
                 template_name=template_name,
             )
         except Exception as exc:
-            QtWidgets.QMessageBox.warning(self, "FMU Template Editor", str(exc))
+            QtWidgets.QMessageBox.warning(self, self.tr("FMU Template Editor"), str(exc))
             return
 
         self.accept()

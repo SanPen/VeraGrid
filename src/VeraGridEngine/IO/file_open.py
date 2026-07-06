@@ -395,7 +395,7 @@ class FileOpen:
                                                             progress_func=progress_func,
                                                             logger=self.logger)
                 # interpret file content
-                if data_dictionary is not None:
+                if isinstance(data_dictionary, dict):
                     if has_multiverse_data:
                         self.multiverse = parse_multiverse_data(data=data_dictionary,
                                                                 metadata=self.json_files["metadata"],

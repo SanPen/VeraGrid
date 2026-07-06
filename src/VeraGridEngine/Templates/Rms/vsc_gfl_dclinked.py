@@ -92,6 +92,7 @@ def build_vsc_rms(vfactory: VarFactory, name:str = ''):
         VarPowerFlowReferenceType.Vm: vm_t,
         VarPowerFlowReferenceType.Pf: Pf,
         VarPowerFlowReferenceType.Pt: Pt,
+        VarPowerFlowReferenceType.Qt: Qt_ref,
     }
 
     block.api_obj_mapping= {

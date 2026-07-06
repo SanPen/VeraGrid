@@ -11,6 +11,7 @@ from typing import Dict, List, Tuple
 
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
+from VeraGridEngine.Templates.template_definition import TemplateDefinition, TemplateProp
 from VeraGridEngine.Utils.Symbolic.block import Block, Expr, Var
 from VeraGridEngine.enumerations import BlockType, DeviceType, ParamPowerFlowReferenceType, ShuntConnectionType, VarPowerFlowReferenceType
 
@@ -240,6 +241,42 @@ def get_ground_emt_template(vf: VarFactory, name: str = "ground_emt") -> EmtMode
     templ.block.init_eqs[ground_current_var] = vf.add_const(0.0)
     templ.block.out_vars = [ground_current_var]
     return templ
+
+
+# ---
+class GroundingLinkEmtTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        super().__init__(
+            vf,
+            params=[
+                TemplateProp(name="include_r", units="", descr="Include the resistor branch.", tpe=bool, value=False),
+                TemplateProp(name="include_l", units="", descr="Include the inductor branch.", tpe=bool, value=False),
+                TemplateProp(name="include_c", units="", descr="Include the capacitor branch.", tpe=bool, value=False),
+                TemplateProp(name="solid_connection", units="", descr="Solid (direct) grounding connection.", tpe=bool, value=False),
+                TemplateProp(name="nested", units="", descr="Whether the template is nested inside another template.", tpe=bool, value=False),
+                TemplateProp(name="direct_r_value", units="Ohm", descr="Direct resistance value.", tpe=float, value=None),
+                TemplateProp(name="direct_l_value", units="H", descr="Direct inductance value.", tpe=float, value=None),
+                TemplateProp(name="direct_c_value", units="F", descr="Direct capacitance value.", tpe=float, value=None),
+                TemplateProp(name="name", units="", descr="Name of the emt model.", tpe=str, value="grounding_link_emt"),
+            ]
+        )
+
+    def eval(self) -> EmtModelTemplate:
+        include_r: bool = self.get_value("include_r")
+        include_l: bool = self.get_value("include_l")
+        include_c: bool = self.get_value("include_c")
+        solid_connection: bool = self.get_value("solid_connection")
+        nested: bool = self.get_value("nested")
+        direct_r_value: float | None = self.get_value("direct_r_value")
+        direct_l_value: float | None = self.get_value("direct_l_value")
+        direct_c_value: float | None = self.get_value("direct_c_value")
+        name: str = self.get_value("name")
+
+        return get_grounding_link_emt_template(
+            self.vf, include_r, include_l, include_c, solid_connection, nested,
+            direct_r_value, direct_l_value, direct_c_value, name,
+        )
 
 
 def get_grounding_link_emt_template(
@@ -1322,6 +1359,45 @@ def get_shunt_c_emt_template(
     templ.block.api_obj_mapping = _build_reactive_api_mapping(omega_base_var=omega_base_var, ql0_vars=ql0_vars)
 
     return templ
+
+
+class ShuntRlcComboEmtTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        super().__init__(
+            vf,
+            params=[
+                TemplateProp(name="include_r", units="", descr="Include the resistor branch.", tpe=bool, value=False),
+                TemplateProp(name="include_l", units="", descr="Include the inductor branch.", tpe=bool, value=False),
+                TemplateProp(name="include_c", units="", descr="Include the capacitor branch.", tpe=bool, value=False),
+                TemplateProp(name="phA", units="", descr="Whether phase A is active.", tpe=bool, value=True),
+                TemplateProp(name="phB", units="", descr="Whether phase B is active.", tpe=bool, value=True),
+                TemplateProp(name="phC", units="", descr="Whether phase C is active.", tpe=bool, value=True),
+                TemplateProp(name="connection_type", units="", descr="Star connection topology.", tpe=ShuntConnectionType, value=ShuntConnectionType.GroundedStar),
+                TemplateProp(name="direct_r_value", units="Ohm", descr="Direct resistance value.", tpe=float, value=None),
+                TemplateProp(name="direct_l_value", units="H", descr="Direct inductance value.", tpe=float, value=None),
+                TemplateProp(name="direct_c_value", units="F", descr="Direct capacitance value.", tpe=float, value=None),
+                TemplateProp(name="name", units="", descr="Name of the emt model.", tpe=str, value="RLC_combo_emt"),
+            ]
+        )
+
+    def eval(self) -> EmtModelTemplate:
+        include_r: bool = self.get_value("include_r")
+        include_l: bool = self.get_value("include_l")
+        include_c: bool = self.get_value("include_c")
+        phA: bool = self.get_value("phA")
+        phB: bool = self.get_value("phB")
+        phC: bool = self.get_value("phC")
+        connection_type: ShuntConnectionType | None = self.get_value("connection_type")
+        direct_r_value: float | None = self.get_value("direct_r_value")
+        direct_l_value: float | None = self.get_value("direct_l_value")
+        direct_c_value: float | None = self.get_value("direct_c_value")
+        name: str = self.get_value("name")
+
+        return get_shunt_rlc_combo_emt_template(
+            self.vf, include_r, include_l, include_c, phA, phB, phC, connection_type,
+            direct_r_value, direct_l_value, direct_c_value, name,
+        )
 
 
 def get_shunt_rlc_combo_emt_template(

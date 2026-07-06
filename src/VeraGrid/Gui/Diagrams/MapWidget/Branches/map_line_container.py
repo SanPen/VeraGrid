@@ -18,7 +18,7 @@ from VeraGridEngine.Devices.types import BRANCH_TYPES, FluidPath
 from VeraGridEngine.enumerations import DeviceType
 from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE, DEACTIVATED
 from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget
-from VeraGrid.Gui.gui_functions import add_menu_entry
+from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
 from VeraGrid.Gui.DeviceEditors.DcLineEditor.dc_line_device_editor import DcLineDeviceEditorDialog
 from VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor import LineDeviceEditorDialog
 from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
@@ -524,85 +524,85 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
         Show the line context menu for the given click position.
         """
         menu = QMenu()
-        menu.addSection("Line")
+        menu.addSection(translate_context_menu_text("Line"))
 
         add_menu_entry(menu=menu,
-                       text="Active",
+                       text=translate_context_menu_text("Active"),
                        function_ptr=self.enable_disable_toggle,
                        checkeable=True,
                        checked_value=self.api_object.active)
 
         add_menu_entry(menu=menu,
-                       text="Draw labels",
+                       text=translate_context_menu_text("Draw labels"),
                        function_ptr=self.enable_disable_label_drawing,
                        checkeable=True,
                        checked_value=self.draw_labels)
 
         add_menu_entry(menu=menu,
-                       text="Editor",
+                       text=translate_context_menu_text("Editor"),
                        function_ptr=self.call_editor,
                        icon_path=":/Icons/icons/edit.png")
 
         add_menu_entry(menu=menu,
-                       text="Calculate total length",
+                       text=translate_context_menu_text("Calculate total length"),
                        function_ptr=self.calculate_total_length_toast,
                        icon_path=":/Icons/icons/ruler.png")
 
         add_menu_entry(menu=menu,
-                       text="Consolidate selected objects coordinates",
+                       text=translate_context_menu_text("Consolidate selected objects coordinates"),
                        function_ptr=self.editor.consolidate_object_coordinates,
                        icon_path=":/Icons/icons/assign_to_profile.png")
 
         menu.addSeparator()
 
         add_menu_entry(menu=menu,
-                       text="Merge selected lines",
+                       text=translate_context_menu_text("Merge selected lines"),
                        function_ptr=self._run_merge_selected_lines,
                        icon_path=":/Icons/icons/fusion.png")
 
         menu.addSeparator()
 
         add_menu_entry(menu=menu,
-                       text="Split line to selected substation (In-Out)",
+                       text=translate_context_menu_text("Split line to selected substation (In-Out)"),
                        function_ptr=self._run_split_line_to_substation,
                        icon_path=":/Icons/icons/divide.png")
 
         add_menu_entry(menu=menu,
-                       text="Change substation connection of the line",
+                       text=translate_context_menu_text("Change substation connection of the line"),
                        function_ptr=self._run_change_line_connection,
                        icon_path=":/Icons/icons/move_bus.png")
 
         add_menu_entry(menu=menu,
-                       text="Plot profiles",
+                       text=translate_context_menu_text("Plot profiles"),
                        function_ptr=self.plot_profiles,
                        icon_path=":/Icons/icons/plot.png")
 
         self._context_scene_pos = scene_pos
         self._context_lat, self._context_lon = self.editor.to_lat_lon(x=scene_pos.x(), y=scene_pos.y())
         add_menu_entry(menu=menu,
-                       text="Open in Street view",
+                       text=translate_context_menu_text("Open in Street view"),
                        function_ptr=self._open_street_view_context,
                        icon_path=":/Icons/icons/map.png")
 
         add_menu_entry(menu=menu,
-                       text="Assign rate to profile",
+                       text=translate_context_menu_text("Assign rate to profile"),
                        function_ptr=self.assign_rate_to_profile,
                        icon_path=":/Icons/icons/assign_to_profile.png")
 
         add_menu_entry(menu=menu,
-                       text="Assign active state to profile",
+                       text=translate_context_menu_text("Assign active state to profile"),
                        function_ptr=self.assign_status_to_profile,
                        icon_path=":/Icons/icons/assign_to_profile.png")
 
         add_menu_entry(menu=menu,
-                       text="Add point",
+                       text=translate_context_menu_text("Add point"),
                        function_ptr=self._add_point_from_context,
                        icon_path=":/Icons/icons/cn_icon.png")
 
         menu.addSeparator()
 
         add_menu_entry(menu=menu,
-                       text="Delete",
+                       text=translate_context_menu_text("Delete"),
                        function_ptr=self.delete,
                        icon_path=":/Icons/icons/delete_schematic.png")
 

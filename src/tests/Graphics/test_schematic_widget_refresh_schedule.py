@@ -1,6 +1,6 @@
 from typing import Callable
 
-from PySide6.QtCore import Qt, QRectF
+from PySide6.QtCore import Qt, QRectF, QPointF
 from PySide6.QtWidgets import QGraphicsItem, QGraphicsView
 
 import VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget as schematic_widget_module
@@ -220,11 +220,28 @@ class _CenterNodesWidgetStub:
 
 
 class _PersistSelectedGraphicStub:
-    __slots__ = ("_api_object", "_pos", "_rotation", "w", "h", "_draw_labels", "_movable")
+    __slots__ = ("_api_object", "_pos", "_scene_pos", "_rotation", "w", "h", "_draw_labels", "_movable")
 
-    def __init__(self, api_object, x: float, y: float, movable: bool = True) -> None:
+    def __init__(self,
+                 api_object,
+                 x: float,
+                 y: float,
+                 movable: bool = True,
+                 scene_x: float | None = None,
+                 scene_y: float | None = None) -> None:
         self._api_object = api_object
         self._pos = type("PointStub", (), {"x": lambda self: x, "y": lambda self: y})()
+        if scene_x is None:
+            scene_x = x
+        else:
+            pass
+
+        if scene_y is None:
+            scene_y = y
+        else:
+            pass
+
+        self._scene_pos = type("PointStub", (), {"x": lambda self: scene_x, "y": lambda self: scene_y})()
         self._rotation = 7.0
         self.w = 30.0
         self.h = 40.0
@@ -241,6 +258,9 @@ class _PersistSelectedGraphicStub:
 
     def pos(self):
         return self._pos
+
+    def scenePos(self):
+        return self._scene_pos
 
     def rotation(self) -> float:
         return self._rotation
@@ -270,6 +290,123 @@ class _PersistSelectedWidgetStub:
 
     def update_diagram_element(self, **kwargs) -> None:
         self.calls.append(kwargs)
+
+
+class _RepairInjectionApiStub:
+    __slots__ = ("device_type",)
+
+    def __init__(self, device_type: DeviceType) -> None:
+        self.device_type = device_type
+
+
+class _RepairLocationStub:
+    __slots__ = ("x", "y")
+
+    def __init__(self, x: float, y: float) -> None:
+        self.x = x
+        self.y = y
+
+
+class _RepairOwnerGraphicStub:
+    __slots__ = ("w", "h", "scene_x", "scene_y", "arrange_calls")
+
+    def __init__(self, scene_x: float, scene_y: float, w: float = 180.0, h: float = 40.0) -> None:
+        self.w = w
+        self.h = h
+        self.scene_x = scene_x
+        self.scene_y = scene_y
+        self.arrange_calls = 0
+
+    def mapFromScene(self, point: QPointF) -> QPointF:
+        return QPointF(float(point.x()) - self.scene_x, float(point.y()) - self.scene_y)
+
+    def get_bottom_dock_baseline(self) -> float:
+        return 40.0
+
+    def arrange_children(self) -> None:
+        self.arrange_calls += 1
+
+
+class _RepairInjectionGraphicStub:
+    __slots__ = ("api_object", "parent", "w", "h", "_x", "_y", "_rotation", "draw_labels", "nexus_updates")
+
+    def __init__(self,
+                 api_object: _RepairInjectionApiStub,
+                 parent: _RepairOwnerGraphicStub,
+                 x: float = 0.0,
+                 y: float = 0.0) -> None:
+        self.api_object = api_object
+        self.parent = parent
+        self.w = 20.0
+        self.h = 20.0
+        self._x = x
+        self._y = y
+        self._rotation = 0.0
+        self.draw_labels = True
+        self.nexus_updates = 0
+
+    def setPos(self, x: float, y: float) -> None:
+        self._x = float(x)
+        self._y = float(y)
+
+    def scenePos(self) -> QPointF:
+        return QPointF(self.parent.scene_x + self._x, self.parent.scene_y + self._y)
+
+    def rotation(self) -> float:
+        return self._rotation
+
+    def update_nexus(self, _pos: QPointF) -> None:
+        self.nexus_updates += 1
+
+
+class _RepairGraphicsManagerStub:
+    __slots__ = ("graphics_by_type",)
+
+    def __init__(self, graphics_by_type: dict[DeviceType, list[object]]) -> None:
+        self.graphics_by_type = graphics_by_type
+
+    def get_device_type_list(self, device_type: DeviceType) -> list[object]:
+        return list(self.graphics_by_type.get(device_type, list()))
+
+
+class _RepairDiagramStub:
+    __slots__ = ("locations", "docks")
+
+    def __init__(self,
+                 locations: dict[object, _RepairLocationStub],
+                 docks: dict[object, dict[str, object]]) -> None:
+        self.locations = locations
+        self.docks = docks
+
+    def query_point(self, api_object) -> _RepairLocationStub | None:
+        return self.locations.get(api_object)
+
+    def get_dock(self, api_object) -> dict[str, object]:
+        return dict(self.docks.get(api_object, dict()))
+
+
+class _RepairWidgetStub:
+    __slots__ = ("diagram", "graphics_manager", "calls")
+
+    def __init__(self,
+                 diagram: _RepairDiagramStub,
+                 graphics_manager: _RepairGraphicsManagerStub) -> None:
+        self.diagram = diagram
+        self.graphics_manager = graphics_manager
+        self.calls: list[dict[str, object]] = list()
+
+    def _get_device_type_graphics(self, device_type: DeviceType, graphic_type: type) -> list[object]:
+        return list(self.graphics_manager.get_device_type_list(device_type))
+
+    def update_diagram_element(self, **kwargs) -> None:
+        self.calls.append(kwargs)
+        location = self.diagram.query_point(kwargs["device"])
+
+        if location is not None:
+            location.x = float(kwargs["x"])
+            location.y = float(kwargs["y"])
+        else:
+            pass
 
 
 def test_schedule_branch_callbacks_after_draw_coalesces_visible_refresh(override_attrs) -> None:
@@ -445,8 +582,18 @@ def test_persist_selected_item_positions_updates_all_selected_movable_items() ->
     """
     Releasing a multi-selection drag should persist every moved item position.
     """
-    first = _PersistSelectedGraphicStub(api_object="first", x=10.0, y=20.0, movable=True)
-    second = _PersistSelectedGraphicStub(api_object="second", x=30.0, y=40.0, movable=True)
+    first = _PersistSelectedGraphicStub(api_object="first",
+                                        x=10.0,
+                                        y=20.0,
+                                        movable=True,
+                                        scene_x=110.0,
+                                        scene_y=120.0)
+    second = _PersistSelectedGraphicStub(api_object="second",
+                                         x=30.0,
+                                         y=40.0,
+                                         movable=True,
+                                         scene_x=130.0,
+                                         scene_y=140.0)
     ignored = _PersistSelectedGraphicStub(api_object="ignored", x=50.0, y=60.0, movable=False)
     stub = _PersistSelectedWidgetStub(selected_items=[first, second, ignored])
 
@@ -454,4 +601,74 @@ def test_persist_selected_item_positions_updates_all_selected_movable_items() ->
 
     assert len(stub.calls) == 2
     assert [call["device"] for call in stub.calls] == ["first", "second"]
-    assert [(call["x"], call["y"]) for call in stub.calls] == [(10.0, 20.0), (30.0, 40.0)]
+    assert [(call["x"], call["y"]) for call in stub.calls] == [(110.0, 120.0), (130.0, 140.0)]
+
+
+def test_repair_suspicious_injection_positions_repairs_legacy_local_coordinates(monkeypatch) -> None:
+    """
+    Legacy manual injection positions saved in owner-local space should be rewritten to scene space.
+    """
+    monkeypatch.setattr(schematic_widget_module, "InjectionTemplateGraphicItem", _RepairInjectionGraphicStub)
+    owner = _RepairOwnerGraphicStub(scene_x=1000.0, scene_y=500.0)
+    api_object = _RepairInjectionApiStub(device_type=DeviceType.LoadDevice)
+    graphic = _RepairInjectionGraphicStub(api_object=api_object, parent=owner)
+    location = _RepairLocationStub(x=50.0, y=80.0)
+    diagram = _RepairDiagramStub(locations={api_object: location},
+                                 docks={api_object: {"auto_layout": False}})
+    graphics_manager = _RepairGraphicsManagerStub(graphics_by_type={DeviceType.LoadDevice: [graphic]})
+    stub = _RepairWidgetStub(diagram=diagram, graphics_manager=graphics_manager)
+
+    repaired_count = SchematicWidget.repair_suspicious_injection_positions(stub, multiplier=4.0)
+
+    assert repaired_count == 1
+    assert len(stub.calls) == 1
+    assert (graphic._x, graphic._y) == (50.0, 80.0)
+    assert (location.x, location.y) == (1050.0, 580.0)
+    assert owner.arrange_calls == 1
+
+
+def test_repair_suspicious_injection_positions_skips_valid_scene_coordinates(monkeypatch) -> None:
+    """
+    Already-correct manual scene coordinates should not be touched.
+    """
+    monkeypatch.setattr(schematic_widget_module, "InjectionTemplateGraphicItem", _RepairInjectionGraphicStub)
+    owner = _RepairOwnerGraphicStub(scene_x=1000.0, scene_y=500.0)
+    api_object = _RepairInjectionApiStub(device_type=DeviceType.LoadDevice)
+    graphic = _RepairInjectionGraphicStub(api_object=api_object, parent=owner)
+    location = _RepairLocationStub(x=1050.0, y=580.0)
+    diagram = _RepairDiagramStub(locations={api_object: location},
+                                 docks={api_object: {"auto_layout": False}})
+    graphics_manager = _RepairGraphicsManagerStub(graphics_by_type={DeviceType.LoadDevice: [graphic]})
+    stub = _RepairWidgetStub(diagram=diagram, graphics_manager=graphics_manager)
+
+    repaired_count = SchematicWidget.repair_suspicious_injection_positions(stub, multiplier=4.0)
+
+    assert repaired_count == 0
+    assert len(stub.calls) == 0
+    assert (location.x, location.y) == (1050.0, 580.0)
+    assert owner.arrange_calls == 0
+
+
+def test_repair_suspicious_injection_positions_repairs_when_wrong_scene_is_still_broadly_plausible(monkeypatch) -> None:
+    """
+    Legacy local coordinates should still be repaired when the scene-space interpretation falls inside the old wide box.
+    """
+    monkeypatch.setattr(schematic_widget_module, "InjectionTemplateGraphicItem", _RepairInjectionGraphicStub)
+    owner = _RepairOwnerGraphicStub(scene_x=300.0, scene_y=100.0)
+    api_object = _RepairInjectionApiStub(device_type=DeviceType.GeneratorDevice)
+    graphic = _RepairInjectionGraphicStub(api_object=api_object, parent=owner)
+    location = _RepairLocationStub(x=50.0, y=80.0)
+    diagram = _RepairDiagramStub(locations={api_object: location},
+                                 docks={api_object: {"auto_layout": False,
+                                                     "side": "bottom",
+                                                     "alignment": (50.0 + graphic.w * 0.5) / owner.w,
+                                                     "offset": 40.0}})
+    graphics_manager = _RepairGraphicsManagerStub(graphics_by_type={DeviceType.GeneratorDevice: [graphic]})
+    stub = _RepairWidgetStub(diagram=diagram, graphics_manager=graphics_manager)
+
+    repaired_count = SchematicWidget.repair_suspicious_injection_positions(stub, multiplier=4.0)
+
+    assert repaired_count == 1
+    assert len(stub.calls) == 1
+    assert (location.x, location.y) == (350.0, 180.0)
+    assert owner.arrange_calls == 1

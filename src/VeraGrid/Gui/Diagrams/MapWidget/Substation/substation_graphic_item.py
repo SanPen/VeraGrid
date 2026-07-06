@@ -18,7 +18,7 @@ from VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container import MapLineC
 from VeraGrid.Gui.Diagrams.MapWidget.Substation.node_template import NodeTemplate
 from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
 from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget
-from VeraGrid.Gui.gui_functions import add_menu_entry
+from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
 from VeraGrid.Gui.messages import yes_no_question, info_msg
 from VeraGrid.Gui.general_dialogues import InputNumberDialogue, CheckListDialogue
 from VeraGrid.Gui.object_model import ObjectsModel
@@ -442,76 +442,76 @@ class SubstationGraphicItem(NodeTemplate, QGraphicsRectItem):
         menu = QMenu()
 
         add_menu_entry(menu=menu,
-                       text="Editor",
+                       text=translate_context_menu_text("Editor"),
                        icon_path=":/Icons/icons/edit.png",
                        function_ptr=self.edit)
 
         add_menu_entry(menu=menu,
-                       text="Add voltage level",
+                       text=translate_context_menu_text("Add voltage level"),
                        icon_path=":/Icons/icons/plus.png",
                        function_ptr=self.add_voltage_level)
 
         add_menu_entry(menu=menu,
-                       text="Create line from here",
+                       text=translate_context_menu_text("Create line from here"),
                        icon_path=":/Icons/icons/plus.png",
                        function_ptr=self.create_new_line)
 
         add_menu_entry(menu=menu,
-                       text="Merge selected substations here",
+                       text=translate_context_menu_text("Merge selected substations here"),
                        icon_path=":/Icons/icons/fusion.png",
                        function_ptr=self.merge_selected_substations)
 
         add_menu_entry(menu=menu,
-                       text="Set coordinates to DB",
+                       text=translate_context_menu_text("Set coordinates to DB"),
                        icon_path=":/Icons/icons/down.png",
                        function_ptr=self.move_to_api_coordinates)
 
         add_menu_entry(menu=menu,
-                       text="Remove substation",
+                       text=translate_context_menu_text("Remove substation"),
                        icon_path=":/Icons/icons/delete_schematic.png",
                        function_ptr=self.delete)
 
         add_menu_entry(menu=menu,
-                       text="Substation diagram",
+                       text=translate_context_menu_text("Substation diagram"),
                        icon_path=":/Icons/icons/grid_icon.png",
                        function_ptr=self.new_substation_diagram)
 
         add_menu_entry(menu=menu,
-                       text="Plot",
+                       text=translate_context_menu_text("Plot"),
                        icon_path=":/Icons/icons/plot.png",
                        function_ptr=self.plot)
 
         add_menu_entry(menu=menu,
-                       text="Open in street view",
+                       text=translate_context_menu_text("Open in street view"),
                        icon_path=":/Icons/icons/map.png",
                        function_ptr=self.open_street_view)
 
         add_menu_entry(menu=menu,
-                       text="Consolidate selected objects coordinates",
+                       text=translate_context_menu_text("Consolidate selected objects coordinates"),
                        function_ptr=self.editor.consolidate_object_coordinates,
                        icon_path=":/Icons/icons/assign_to_profile.png")
 
-        menu.addSection("Add")
+        menu.addSection(translate_context_menu_text("Add"))
 
         # Actions under the "Add" section
-        add_menu_entry(menu, text='Load',
+        add_menu_entry(menu, text=translate_context_menu_text("Load"),
                        icon_path=":/Icons/icons/add_load.png",
                        function_ptr=self.add_load)
 
-        add_menu_entry(menu, text='Generator',
+        add_menu_entry(menu, text=translate_context_menu_text("Generator"),
                        icon_path=":/Icons/icons/add_gen.png",
                        function_ptr=self.add_generator)
 
-        add_menu_entry(menu, text='Static generator',
+        add_menu_entry(menu, text=translate_context_menu_text("Static generator"),
                        icon_path=":/Icons/icons/add_stagen.png",
                        function_ptr=self.add_static_generator)
 
-        add_menu_entry(menu, text='Battery',
+        add_menu_entry(menu, text=translate_context_menu_text("Battery"),
                        icon_path=":/Icons/icons/add_batt.png",
                        function_ptr=self.add_battery)
 
         add_menu_entry(menu,
-                       text='External grid',
+                       text=translate_context_menu_text("External grid"),
                        icon_path=":/Icons/icons/add_external_grid.png",
                        function_ptr=self.add_external_grid)
 

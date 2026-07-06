@@ -125,15 +125,17 @@ VeraGrid is packed with features:
 - AC Continuation power flow
 - Contingency analysis (Power flow and LODF variants)
 - Sigma analysis (one-shot stability analysis)
-- Investments analysis
-- Bus-branch schematic
-- Substation-line map diagram
-- Time series and snapshot for most simulations
-- Overhead tower designer
-- Inputs analysis
-- Model bug report and repair
-- Import many formats (PSSe .raw/rawx, epc, dgs, matpower, pypsa, json, cim, cgmes)
-- Export in many formats (veragrid .xlsx/.veragrid/.json, cgmes, psse .raw/.rawx)
+- RMS simulation in positive sequence.
+- EMT simulation in unbalanced ABC formulation.
+- Investments analysis.
+- Bus-branch schematic.
+- Substation-line map diagram.
+- Time series and snapshot for most simulations.
+- Overhead tower designer.
+- Inputs analysis.
+- Model bug report and repair.
+- Import many formats (PSSe .raw/rawx, epc, dgs, matpower, pypsa, json, cim, cgmes).
+- Export in many formats (veragrid .xlsx/.veragrid/.json, matpower, cgmes, psse .raw/.rawx).
 
 All of these are industry tested algorithms, some of which surpass most commercially available software.
 The aim is to be a drop-in replacement for the expensive and less usable commercial
@@ -180,7 +182,7 @@ And of course, VeraGrid solves all Matpower 8 provided grids, solving the contin
 
 [![VeraGrid](Grids_and_profiles/matpower_benchmark/n_buses_vs_time.png)]
 
-Find the results at the [benchmarks page](https://veragrid.readthedocs.io/en/latest/rst_source/development/benchmarks.html) 
+Find the results at the [benchmarks page](https://veragrid.readthedocs.io/en/latest/md_source/power_flow.html#benchmark) 
 for more details.
 
 _Results simulated with AMD 9750x and 64 GB of RAM under Ubuntu 24.04.

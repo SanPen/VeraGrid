@@ -7,7 +7,21 @@
 from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
+from VeraGridEngine.Templates.template_definiton import TemplateDefinition, TemplateProp
 from VeraGridEngine.Utils.Symbolic.block import Block
+
+
+class ZipLoadRmsTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        super().__init__(vf, params=[
+            TemplateProp(name="Pl0", units="pu", descr="Initial active power at nominal voltage (pu).", tpe=float),
+            TemplateProp(name="Ql0", units="pu", descr="Initial reactive power at nominal voltage (pu).", tpe=float),
+            TemplateProp(name="name", units="", descr="Name of the rms model.", tpe=str),
+        ])
+
+    def eval(self) -> RmsModelTemplate:
+        return ZIPLoadBuild(self.vf, self.get_value("name"), self.get_value("Pl0"), self.get_value("Ql0"))
 
 
 def ZIPLoadBuild(vfactory: VarFactory, name: str = "ZIP model", Pl0=1.0, Ql0=0.1) -> RmsModelTemplate:

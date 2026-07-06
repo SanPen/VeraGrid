@@ -108,6 +108,15 @@ class _IoStub:
     def show_info_toast(self, message: str) -> None:
         self.messages.append(message)
 
+    def tr(self, text: str) -> str:
+        """
+        Mimic Qt translation by returning the input string unchanged.
+
+        :param text: Source text.
+        :return: Untranslated text.
+        """
+        return text
+
     def should_materialize_dynamic_catalogues_for_refresh(self) -> bool:
         return False
 

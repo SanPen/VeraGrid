@@ -74,103 +74,74 @@ class ScriptingMain(IoMain):
         self.add_console_vars()
 
     def print_console_help(self):
+        help_lines: list[str] = [
+            "",
+            self.tr('VeraGrid internal commands.\n'),
+            self.tr('If a command is unavailable is because the study has not been executed yet.'),
+            self.tr('\n\nclc():\tclear the console.'),
+            self.tr('\n\nApp functions:'),
+            self.tr('\tapp.new_project(): Clear all.'),
+            self.tr('\tapp.open_file(): Prompt to load VeraGrid compatible file'),
+            self.tr('\tapp.save_file(): Prompt to save VeraGrid file'),
+            self.tr('\tapp.export_diagram(): Prompt to export the diagram in png.'),
+            self.tr('\tapp.create_schematic_from_api(): Create the schematic from the circuit information.'),
+            self.tr('\tapp.adjust_all_node_width(): Adjust the width of all the nodes according to their name.'),
+            self.tr('\tapp.numerical_circuit: get compilation of the assets.'),
+            self.tr('\tapp.islands: get compilation of the assets split into the topological islands.'),
+            self.tr('\n\nCircuit functions:'),
+            self.tr('\tapp.circuit.plot_graph(): Plot a graph in a Matplotlib window. Call plt.show() after.'),
+            self.tr('\n\nPower flow results:'),
+            self.tr('\tapp.session.power_flow.voltage:\t the nodal voltages in per unit'),
+            self.tr('\tapp.session.power_flow.current:\t the branch currents in per unit'),
+            self.tr('\tapp.session.power_flow.loading:\t the branch loading in %'),
+            self.tr('\tapp.session.power_flow.losses:\t the branch losses in per unit'),
+            self.tr('\tapp.session.power_flow.power:\t the nodal power Injections in per unit'),
+            self.tr('\tapp.session.power_flow.Sf:\t the branch power Injections in per unit at the "from" side'),
+            self.tr('\tapp.session.power_flow.St:\t the branch power Injections in per unit at the "to" side'),
+            self.tr('\n\nShort circuit results:'),
+            self.tr('\tapp.session.short_circuit.voltage:\t the nodal voltages in per unit'),
+            self.tr('\tapp.session.short_circuit.current:\t the branch currents in per unit'),
+            self.tr('\tapp.session.short_circuit.loading:\t the branch loading in %'),
+            self.tr('\tapp.session.short_circuit.losses:\t the branch losses in per unit'),
+            self.tr('\tapp.session.short_circuit.power:\t the nodal power Injections in per unit'),
+            self.tr('\tapp.session.short_circuit.power_from:\t the branch power Injections in per unit at the "from" side'),
+            self.tr('\tapp.session.short_circuit.power_to:\t the branch power Injections in per unit at the "to" side'),
+            self.tr('\tapp.session.short_circuit.short_circuit_power:\t Short circuit power in MVA of the grid nodes'),
+            self.tr('\n\nOptimal power flow results:'),
+            self.tr('\tapp.session.optimal_power_flow.voltage:\t the nodal voltages angles in rad'),
+            self.tr('\tapp.session.optimal_power_flow.load_shedding:\t the branch loading in %'),
+            self.tr('\tapp.session.optimal_power_flow.losses:\t the branch losses in per unit'),
+            self.tr('\tapp.session.optimal_power_flow.Sbus:\t the nodal power Injections in MW'),
+            self.tr('\tapp.session.optimal_power_flow.Sf:\t the branch power Sf'),
+            self.tr('\n\nTime series power flow results:'),
+            self.tr('\tapp.session.power_flow_ts.time:\t Profiles time index (pandas DateTimeIndex object)'),
+            self.tr('\tapp.session.power_flow_ts.load_profiles:\t Load profiles matrix (row: time, col: node)'),
+            self.tr('\tapp.session.power_flow_ts.gen_profiles:\t Generation profiles matrix (row: time, col: node)'),
+            self.tr('\tapp.session.power_flow_ts.voltages:\t nodal voltages results matrix (row: time, col: node)'),
+            self.tr('\tapp.session.power_flow_ts.currents:\t Branches currents results matrix (row: time, col: branch)'),
+            self.tr('\tapp.session.power_flow_ts.loadings:\t Branches loadings results matrix (row: time, col: branch)'),
+            self.tr('\tapp.session.power_flow_ts.losses:\t Branches losses results matrix (row: time, col: branch)'),
+            self.tr('\n\nVoltage stability power flow results:'),
+            self.tr('\tapp.session.continuation_power_flow.voltage:\t Voltage values for every power multiplication factor.'),
+            self.tr('\tapp.session.continuation_power_flow.lambda:\t Value of power multiplication factor applied'),
+            self.tr('\tapp.session.continuation_power_flow.Sf:\t Power values for every power multiplication factor.'),
+            self.tr('\n\nMonte Carlo power flow results:'),
+            self.tr('\tapp.session.stochastic_power_flow.V_avg:\t nodal voltage average result.'),
+            self.tr('\tapp.session.stochastic_power_flow.I_avg:\t branch current average result.'),
+            self.tr('\tapp.session.stochastic_power_flow.Loading_avg:\t branch loading average result.'),
+            self.tr('\tapp.session.stochastic_power_flow.Losses_avg:\t branch losses average result.'),
+            self.tr('\tapp.session.stochastic_power_flow.V_std:\t nodal voltage standard deviation result.'),
+            self.tr('\tapp.session.stochastic_power_flow.I_std:\t branch current standard deviation result.'),
+            self.tr('\tapp.session.stochastic_power_flow.Loading_std:\t branch loading standard deviation result.'),
+            self.tr('\tapp.session.stochastic_power_flow.Losses_std:\t branch losses standard deviation result.'),
+            self.tr('\tapp.session.stochastic_power_flow.V_avg_series:\t nodal voltage average series.'),
+            self.tr('\tapp.session.stochastic_power_flow.V_std_series:\t branch current standard deviation series.'),
+            self.tr('\tapp.session.stochastic_power_flow.error_series:\t Monte Carlo error series (the convergence value).'),
+            self.tr('The same for app.latin_hypercube_sampling'),
+        ]
 
-        self.console.append_output("")
-        self.console.append_output('VeraGrid internal commands.\n')
-        self.console.append_output('If a command is unavailable is because the study has not been executed yet.')
-
-        self.console.append_output('\n\nclc():\tclear the console.')
-
-        self.console.append_output('\n\nApp functions:')
-        self.console.append_output('\tapp.new_project(): Clear all.')
-        self.console.append_output('\tapp.open_file(): Prompt to load VeraGrid compatible file')
-        self.console.append_output('\tapp.save_file(): Prompt to save VeraGrid file')
-        self.console.append_output('\tapp.export_diagram(): Prompt to export the diagram in png.')
-        self.console.append_output(
-            '\tapp.create_schematic_from_api(): Create the schematic from the circuit information.')
-        self.console.append_output(
-            '\tapp.adjust_all_node_width(): Adjust the width of all the nodes according to their name.')
-        self.console.append_output('\tapp.numerical_circuit: get compilation of the assets.')
-        self.console.append_output('\tapp.islands: get compilation of the assets split into the topological islands.')
-
-        self.console.append_output('\n\nCircuit functions:')
-        self.console.append_output(
-            '\tapp.circuit.plot_graph(): Plot a graph in a Matplotlib window. Call plt.show() after.')
-
-        self.console.append_output('\n\nPower flow results:')
-        self.console.append_output('\tapp.session.power_flow.voltage:\t the nodal voltages in per unit')
-        self.console.append_output('\tapp.session.power_flow.current:\t the branch currents in per unit')
-        self.console.append_output('\tapp.session.power_flow.loading:\t the branch loading in %')
-        self.console.append_output('\tapp.session.power_flow.losses:\t the branch losses in per unit')
-        self.console.append_output('\tapp.session.power_flow.power:\t the nodal power Injections in per unit')
-        self.console.append_output(
-            '\tapp.session.power_flow.Sf:\t the branch power Injections in per unit at the "from" side')
-        self.console.append_output(
-            '\tapp.session.power_flow.St:\t the branch power Injections in per unit at the "to" side')
-
-        self.console.append_output('\n\nShort circuit results:')
-        self.console.append_output('\tapp.session.short_circuit.voltage:\t the nodal voltages in per unit')
-        self.console.append_output('\tapp.session.short_circuit.current:\t the branch currents in per unit')
-        self.console.append_output('\tapp.session.short_circuit.loading:\t the branch loading in %')
-        self.console.append_output('\tapp.session.short_circuit.losses:\t the branch losses in per unit')
-        self.console.append_output('\tapp.session.short_circuit.power:\t the nodal power Injections in per unit')
-        self.console.append_output(
-            '\tapp.session.short_circuit.power_from:\t the branch power Injections in per unit at the "from" side')
-        self.console.append_output(
-            '\tapp.session.short_circuit.power_to:\t the branch power Injections in per unit at the "to" side')
-        self.console.append_output(
-            '\tapp.session.short_circuit.short_circuit_power:\t Short circuit power in MVA of the grid nodes')
-
-        self.console.append_output('\n\nOptimal power flow results:')
-        self.console.append_output('\tapp.session.optimal_power_flow.voltage:\t the nodal voltages angles in rad')
-        self.console.append_output('\tapp.session.optimal_power_flow.load_shedding:\t the branch loading in %')
-        self.console.append_output('\tapp.session.optimal_power_flow.losses:\t the branch losses in per unit')
-        self.console.append_output('\tapp.session.optimal_power_flow.Sbus:\t the nodal power Injections in MW')
-        self.console.append_output('\tapp.session.optimal_power_flow.Sf:\t the branch power Sf')
-
-        self.console.append_output('\n\nTime series power flow results:')
-        self.console.append_output(
-            '\tapp.session.power_flow_ts.time:\t Profiles time index (pandas DateTimeIndex object)')
-        self.console.append_output(
-            '\tapp.session.power_flow_ts.load_profiles:\t Load profiles matrix (row: time, col: node)')
-        self.console.append_output(
-            '\tapp.session.power_flow_ts.gen_profiles:\t Generation profiles matrix (row: time, col: node)')
-        self.console.append_output(
-            '\tapp.session.power_flow_ts.voltages:\t nodal voltages results matrix (row: time, col: node)')
-        self.console.append_output(
-            '\tapp.session.power_flow_ts.currents:\t Branches currents results matrix (row: time, col: branch)')
-        self.console.append_output(
-            '\tapp.session.power_flow_ts.loadings:\t Branches loadings results matrix (row: time, col: branch)')
-        self.console.append_output(
-            '\tapp.session.power_flow_ts.losses:\t Branches losses results matrix (row: time, col: branch)')
-
-        self.console.append_output('\n\nVoltage stability power flow results:')
-        self.console.append_output(
-            '\tapp.session.continuation_power_flow.voltage:\t Voltage values for every power multiplication factor.')
-        self.console.append_output(
-            '\tapp.session.continuation_power_flow.lambda:\t Value of power multiplication factor applied')
-        self.console.append_output(
-            '\tapp.session.continuation_power_flow.Sf:\t Power values for every power multiplication factor.')
-
-        self.console.append_output('\n\nMonte Carlo power flow results:')
-        self.console.append_output('\tapp.session.stochastic_power_flow.V_avg:\t nodal voltage average result.')
-        self.console.append_output('\tapp.session.stochastic_power_flow.I_avg:\t branch current average result.')
-        self.console.append_output('\tapp.session.stochastic_power_flow.Loading_avg:\t branch loading average result.')
-        self.console.append_output('\tapp.session.stochastic_power_flow.Losses_avg:\t branch losses average result.')
-        self.console.append_output(
-            '\tapp.session.stochastic_power_flow.V_std:\t nodal voltage standard deviation result.')
-        self.console.append_output(
-            '\tapp.session.stochastic_power_flow.I_std:\t branch current standard deviation result.')
-        self.console.append_output(
-            '\tapp.session.stochastic_power_flow.Loading_std:\t branch loading standard deviation result.')
-        self.console.append_output(
-            '\tapp.session.stochastic_power_flow.Losses_std:\t branch losses standard deviation result.')
-        self.console.append_output('\tapp.session.stochastic_power_flow.V_avg_series:\t nodal voltage average series.')
-        self.console.append_output(
-            '\tapp.session.stochastic_power_flow.V_std_series:\t branch current standard deviation series.')
-        self.console.append_output(
-            '\tapp.session.stochastic_power_flow.error_series:\t Monte Carlo error series (the convergence value).')
-        self.console.append_output('The same for app.latin_hypercube_sampling')
+        for line in help_lines:
+            self.console.append_output(line)
 
     def add_console_vars(self):
         """
@@ -222,14 +193,14 @@ class ScriptingMain(IoMain):
             name = os.path.basename(pth)
             self.ui.sourceCodeNameLineEdit.setText(name.replace('.py', ''))
         else:
-            error_msg(pth + ' does not exists :/', 'Open script')
+            error_msg(pth + self.tr(' does not exist :/'), self.tr('Open script'))
 
     def clear_source_code(self):
         """
         Clear source code
         """
-        ok = yes_no_question(text='Are you sure you want to clear source code?',
-                             title='Clear Source Code')
+        ok = yes_no_question(text=self.tr('Are you sure you want to clear source code?'),
+                             title=self.tr('Clear source code'))
 
         if ok:
             self.ui.sourceCodeNameLineEdit.setText("")
@@ -247,7 +218,7 @@ class ScriptingMain(IoMain):
             with open(pth, 'w') as f:
                 f.write(self.code_editor.toPlainText())
         else:
-            error_msg("Please enter a name for the script", title="Save script")
+            error_msg(self.tr("Please enter a name for the script"), title=self.tr("Save script"))
 
     def delete_source_code(self):
         """
@@ -256,13 +227,13 @@ class ScriptingMain(IoMain):
         index = self.ui.sourceCodeTreeView.currentIndex()
         pth = self.python_fs_model.filePath(index)
         if os.path.exists(pth):
-            ok = yes_no_question(text="Do you want to delete_with_dialogue {}?".format(pth),
-                                 title="Delete source code file")
+            ok = yes_no_question(text=self.tr("Do you want to delete {path}?").format(path=pth),
+                                 title=self.tr("Delete source code file"))
 
             if ok:
                 os.remove(pth)
         else:
-            error_msg(pth + ' does not exists :/', "Delete source code file")
+            error_msg(pth + self.tr(' does not exist :/'), self.tr("Delete source code file"))
 
     def show_source_code_tree_context_menu(self, pos: QtCore.QPoint):
         """
@@ -272,7 +243,7 @@ class ScriptingMain(IoMain):
         context_menu = QtWidgets.QMenu(parent=self.ui.diagramsListView)
 
         gf.add_menu_entry(menu=context_menu,
-                          text="Delete",
+                          text=self.tr("Delete"),
                           icon_path=":/Icons/icons/delete_with_dialogue.png",
                           function_ptr=self.delete_source_code)
 

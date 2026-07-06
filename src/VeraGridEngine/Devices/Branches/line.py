@@ -85,6 +85,7 @@ class Line(BranchParent):
             tpe=float,
             definition='Total positive sequence resistance.',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.r,
         ),
         GCProp(
             prop_name='X',
@@ -92,6 +93,7 @@ class Line(BranchParent):
             tpe=float,
             definition='Total positive sequence reactance.',
             cat=[PrpCat.PF, PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.l,
         ),
         GCProp(
             prop_name='B',
@@ -99,6 +101,7 @@ class Line(BranchParent):
             tpe=float,
             definition='Total positive sequence shunt susceptance.',
             cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.bsh,
         ),
         GCProp(
             prop_name='R0',

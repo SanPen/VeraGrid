@@ -12,6 +12,7 @@ import numpy as np
 
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
+from VeraGridEngine.Templates.template_definition import TemplateDefinition, TemplateProp
 from VeraGridEngine.Utils.Symbolic import symbolic as sym
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Comparison
@@ -579,6 +580,29 @@ def build_lookup_array_linear_runtime_template(
         name=template_name,
     )
     return template
+
+
+# ---
+class InverseLookupArrayLinearRuntimeTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        super().__init__(
+            vf,
+            params=[
+                TemplateProp(name="x_points", units="", descr="Original x values.", tpe=Sequence[float]),
+                TemplateProp(name="y_points", units="", descr="Original y values to invert.", tpe=Sequence[float]),
+                TemplateProp(name="name", units="", descr="Name of the runtime template.", tpe=str),
+            ]
+        )
+
+    def eval(self) -> EmtModelTemplate:
+        x_points: Sequence[float] = self.get_value("x_points")
+        y_points: Sequence[float] = self.get_value("y_points")
+        name: str | None = self.get_value("name")
+
+        return build_inverse_lookup_array_linear_runtime_template(
+            self.vf, x_points, y_points, name
+        )
 
 
 def build_inverse_lookup_array_linear_runtime_template(

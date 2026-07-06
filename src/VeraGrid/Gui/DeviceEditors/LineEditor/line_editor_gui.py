@@ -177,7 +177,7 @@ class Ui_LineEditorDialog(object):
         self.reactanceLabel.setText(QCoreApplication.translate("LineEditorDialog", u"X: Inductance", None))
         self.reactanceSpinBox.setSuffix(QCoreApplication.translate("LineEditorDialog", u" \u03a9/km", None))
         self.susceptanceLabel.setText(QCoreApplication.translate("LineEditorDialog", u"S: Susceptance", None))
-        self.susceptanceSpinBox.setSuffix(QCoreApplication.translate("LineEditorDialog", u" uS/Km", None))
+        self.susceptanceSpinBox.setSuffix(QCoreApplication.translate("LineEditorDialog", u" uS/km", None))
         self.applyToProfilesCheckBox.setText(QCoreApplication.translate("LineEditorDialog", u"Apply to profiles", None))
         self.acceptButton.setText(QCoreApplication.translate("LineEditorDialog", u"Accept", None))
     # retranslateUi

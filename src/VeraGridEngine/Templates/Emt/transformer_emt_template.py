@@ -15,6 +15,7 @@ from VeraGridEngine.enumerations import (
 )
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
+from VeraGridEngine.Templates.template_definition import TemplateDefinition, TemplateProp
 from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_grounding_link_emt_template
 from VeraGridEngine.Utils.Symbolic.block import Block, Var, Expr
 
@@ -145,6 +146,8 @@ def get_transformer_emt_template(
     :param name: Symbolic model name.
     :return: EMT transformer model template.
     """
+
+    name = "transformer_emt_template"
 
     templ: EmtModelTemplate = EmtModelTemplate()
     templ.tpe = DeviceType.Transformer2WDevice
@@ -478,3 +481,24 @@ def get_transformer_emt_template(
     )
 
     return templ
+
+
+class TransformerEmtTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        super().__init__(
+            vf,
+            params=[
+                TemplateProp(name="conn_f", units="", descr="From-side winding connection.", tpe=WindingType, value=None),
+                TemplateProp(name="conn_t", units="", descr="To-side winding connection.", tpe=WindingType, value=None),
+                TemplateProp(name="name", units="", descr="Name of the emt model.", tpe=str, value="transformer_emt_template"),
+            ]
+        )
+
+    def eval(self) -> EmtModelTemplate:
+        return get_transformer_emt_template(
+            self.vf,
+            conn_f=self.get_value("conn_f"),
+            conn_t=self.get_value("conn_t"),
+            name=self.get_value("name"),
+        )

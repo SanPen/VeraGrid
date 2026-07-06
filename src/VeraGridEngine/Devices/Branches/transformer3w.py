@@ -6,7 +6,7 @@
 from typing import Tuple, Union
 import numpy as np
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.Devices.Parents.physical_device import PhysicalDevice
+from VeraGridEngine.Devices.Parents.dynamic_parent import DynamicDevice
 from VeraGridEngine.Devices.Branches.winding import Winding
 from VeraGridEngine.Devices.Branches.transformer_type import get_impedances
 from VeraGridEngine.Devices.Profiles import ProfileBool
@@ -103,7 +103,7 @@ def star_to_delta(z1: float, z2: float, z3: float) -> Tuple[float, float, float]
     return z12, z23, z31
 
 
-class Transformer3W(PhysicalDevice):
+class Transformer3W(DynamicDevice):
     __slots__ = (
         'bus0',
         'cn0',
@@ -406,12 +406,12 @@ class Transformer3W(PhysicalDevice):
         :param x: graphical x position (px)
         :param y: graphical y position (px)
         """
-        PhysicalDevice.__init__(self,
-                                name=name,
-                                idtag=idtag,
-                                code=code,
-                                device_type=DeviceType.Transformer3WDevice,
-                                build_status=build_status)
+        DynamicDevice.__init__(self,
+                               name=name,
+                               idtag=idtag,
+                               code=code,
+                               device_type=DeviceType.Transformer3WDevice,
+                               build_status=build_status)
 
         if bus0 is None:
             self.bus0: Bus = Bus(name=name + '_bus', Vnom=1.0,

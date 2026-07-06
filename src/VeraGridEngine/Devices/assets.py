@@ -15,7 +15,7 @@ import VeraGridEngine.Devices as dev
 import VeraGridEngine.Templates as tem
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES, BRANCH_TYPES, INJECTION_DEVICE_TYPES, FLUID_TYPES
 from VeraGridEngine.Devices.Parents.editable_device import GCPROP_TYPES
-from VeraGridEngine.enumerations import DeviceType, ActionType, FmuTemplateDomain
+from VeraGridEngine.enumerations import DeviceType, ActionType, FmuTemplateDomain, ParamPowerFlowReferenceType
 from VeraGridEngine.basic_structures import Logger, ListSet
 from VeraGridEngine.data_logger import DataLogger
 
@@ -599,7 +599,8 @@ class Assets:
         :return:
         """
         if self.has_time_series:
-            return self._time_profile.values.astype(np.int64) // 10 ** 9
+            # resolution-independent: time_profile may be datetime64[ns] or [us] depending on pandas
+            return ((self._time_profile - pd.Timestamp("1970-01-01")) // pd.Timedelta("1s")).values.astype(np.int64)
         else:
             return np.zeros(0, dtype=np.int64)
 
@@ -6363,7 +6364,8 @@ class Assets:
         :param tpe:
         :return:
         """
-        return [elm for elm in self.rms_models if elm.tpe == tpe]
+        # return [elm for elm in self.rms_models if elm.tpe == tpe]
+        return [elm for elm in self.rms_models if _matches_dynamic_template_device_type(tpe, elm.tpe)]
 
     def get_loaded_rms_models_by_device_type(self, tpe: DeviceType) -> List[dev.RmsModelTemplate]:
         """
@@ -6372,7 +6374,8 @@ class Assets:
         :param tpe: Supported device type.
         :return: Matching loaded RMS templates.
         """
-        return [elm for elm in self._rms_models if elm.tpe == tpe]
+        # return [elm for elm in self._rms_models if elm.tpe == tpe]
+        return [elm for elm in self._rms_models if _matches_dynamic_template_device_type(tpe, elm.tpe)]
 
     # ------------------------------------------------------------------------------------------------------------------
     # EmtModel
@@ -8983,66 +8986,26 @@ class Assets:
         for elm in objects_to_remove:
             self.delete_element(obj=elm)
 
-    def add_rms_model_catalogue(self):
+    def get_devices_static_params_mapping(self) -> Dict[DeviceType, List[ParamPowerFlowReferenceType]]:
         """
-        Here the list of all rms templates must be returned in a list
-        :return:
+        Generate the dictionary of static references for the dynamic data mapping
+        :return: Dict[DeviceType, List[ParamPowerFlowReferenceType]]
         """
-        # TODO: eliminate
-        self.rms_models += [
-            tem.get_genqec_rms(vfactory=self._var_factory),
-            tem.get_governor_rms(vfactory=self._var_factory),
-            tem.get_stabilizer_rms(vfactory=self._var_factory),
-            tem.get_exciter_rms(vfactory=self._var_factory),
-            tem.get_complete_generator_template_rms(vfactory=self._var_factory),
-            tem.get_genrow_rms_template(vfactory=self._var_factory),
-            tem.get_line_rms_template(vfactory=self._var_factory),
-            tem.get_load_rms_template(vfactory=self._var_factory),
-            tem.get_pvd1_rms_template(vfactory=self._var_factory),
-            tem.build_vsc_rms(vfactory=self._var_factory)
-        ]
+        data: Dict[DeviceType, List[ParamPowerFlowReferenceType]] = dict()
 
-    def add_emt_model_catalogue(self):
-        """
-        Create default catalogue of EMT values
-        :return:
-        """
-        self.emt_models += [
+        for cat, elms in self.template_objects_dict.items():
 
-            tem.get_simple_generator_emt_template(vf=self._var_factory),
-            tem.get_generator_sauer_pai_type_emt_template(vf=self._var_factory),
-            tem.get_governor_emt(vf=self._var_factory),
-            tem.get_stabilizer_emt(vf=self._var_factory),
-            tem.get_exciter_emt(vf=self._var_factory),
-            tem.get_complete_generator_template_emt(vf=self._var_factory),
+            for elm in elms:  # for each device type
+                lst: List[ParamPowerFlowReferenceType] = list()
+                # The dynamic mapping contract must include inherited schema
+                # declarations because many static-to-dynamic references live in
+                # shared parent classes such as InjectionParent, LoadParent,
+                # BranchParent and ShuntParent.
+                for prop in elm.CLASS_PROPERTY_DECLARATIONS:
+                    if prop.dyn_ref is not None:
+                        lst.append(prop.dyn_ref)
+                    else:
+                        pass
+                data[elm.device_type] = lst
 
-            tem.get_generator_thevenin_rl_emt_template_with_ref(vf=self._var_factory),
-            tem.get_emt_ideal_converter(vf=self._var_factory),
-            tem.get_full_pseudo_emt_converter(vf=self._var_factory),
-            tem.get_switched_emt_converter(vf=self._var_factory),
-            tem.get_bridge_2level_3ph_emt_template(vf=self._var_factory),
-            tem.get_bridge_filter_2level_3ph_emt_template(vf=self._var_factory),
-            tem.get_bridge_filter_control_2level_3ph_emt_template(vf=self._var_factory),
-            tem.get_dc_load_emt_template(vf=self._var_factory),
-            # tem.get_dc_line_emt_template(vf=self._var_factory),
-            tem.get_dc_line_with_power_input_emt_template(vf=self._var_factory),
-            tem.get_valve_emt_template(vf=self._var_factory),
-            tem.get_transformer_emt_template(vf=self._var_factory),
-            tem.get_xfmr_emt_template(vf=self._var_factory),
-            tem.get_induction_motor_single_cage_emt_template(vf=self._var_factory),
-            tem.get_induction_motor_double_cage_emt_template(vf=self._var_factory),
-            tem.get_bess_avm_grid_following_emt_template(vf=self._var_factory),
-            tem.get_pv_avm_grid_following_emt_template(vf=self._var_factory),
-            tem.get_pv_avm_boost_grid_following_emt_template(vf=self._var_factory),
-            tem.get_gfm_emt_template(vf=self._var_factory),
-
-            # the following are functions that generate templates depending on phases or things
-            tem.get_shunt_c_emt_template(vf=self._var_factory, phA=True, phB=True, phC=True),
-            tem.get_shunt_l_emt_template(vf=self._var_factory, phA=True, phB=True, phC=True),
-            tem.get_shunt_r_emt_template(vf=self._var_factory, phA=True, phB=True, phC=True),
-            tem.get_exponential_load_emt(vf=self._var_factory, phA=True, phB=True, phC=True),
-            tem.get_load_ZIP_emt_template(vf=self._var_factory, phA=True, phB=True, phC=True),
-            tem.get_pi_line_emt_template(vf=self._var_factory, phN=False, phA=True, phB=True, phC=True),
-            tem.get_bergeron_line_emt_template(vf=self._var_factory, phN=False, phA=True, phB=True, phC=True),
-
-        ]
+        return data

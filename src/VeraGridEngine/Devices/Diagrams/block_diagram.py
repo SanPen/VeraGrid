@@ -185,7 +185,7 @@ class BlockDiagram:
             state_outs=list() if state_outs is None else state_outs,
             algeb_ins=algeb_ins,
             algeb_outs=list() if algeb_outs is None else algeb_outs,
-            color="#C0C0C0" if color is None else color,  # light blue as default
+            color="#f5fdff" if color is None else color,
             sub_diagram=subdiagram
         )
 

@@ -5,10 +5,36 @@
 
 from __future__ import annotations
 
+from typing import Optional
+
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
+from VeraGridEngine.Templates.template_definition import TemplateDefinition, TemplateProp
 from VeraGridEngine.Utils.Symbolic.block import Var
 from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# DC CURRENT SOURCE
+# ----------------------------------------------------------------------------------------------------------------------
+class DcCurrentSourceEmtTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        super().__init__(
+            vf,
+            params=[
+                TemplateProp(name="source_current_value", units="A", descr="Fixed injected DC current.", tpe=float, value=0.0),
+                TemplateProp(name="name", units="", descr="Name of the emt model.", tpe=str, value="dc_current_source_emt"),
+            ]
+        )
+
+    def eval(self) -> EmtModelTemplate:
+        source_current_value: float = self.get_value("source_current_value")
+        name: str = self.get_value("name")
+
+        return get_dc_current_source_emt_template(
+            self.vf, source_current_value, name
+        )
 
 
 def get_dc_current_source_emt_template(vf: VarFactory,
@@ -46,6 +72,27 @@ def get_dc_current_source_emt_template(vf: VarFactory,
     return templ
 
 
+# ----------------------------------------------------------------------------------------------------------------------
+# CONTROLLED DC CURRENT SOURCE
+# ----------------------------------------------------------------------------------------------------------------------
+class ControlledDcCurrentSourceEmtTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        super().__init__(
+            vf,
+            params=[
+                TemplateProp(name="name", units="", descr="Name of the emt model.", tpe=str, value="controlled_dc_current_source_emt"),
+            ]
+        )
+
+    def eval(self) -> EmtModelTemplate:
+        name: str = self.get_value("name")
+
+        return get_controlled_dc_current_source_emt_template(
+            self.vf, name
+        )
+
+
 def get_controlled_dc_current_source_emt_template(vf: VarFactory,
                                                   name: str = "controlled_dc_current_source_emt") -> EmtModelTemplate:
     """
@@ -78,8 +125,33 @@ def get_controlled_dc_current_source_emt_template(vf: VarFactory,
     return templ
 
 
+# ----------------------------------------------------------------------------------------------------------------------
+# DC VOLTAGE SOURCE
+# ----------------------------------------------------------------------------------------------------------------------
+class DcVoltageSourceEmtTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        super().__init__(
+            vf,
+            params=[
+                TemplateProp(name="source_voltage_value", units="V", descr="Fixed source voltage.", tpe=float, value=0.0),
+                TemplateProp(name="source_conductance_value", units="S", descr="Norton conductance.", tpe=float, value=100.0),
+                TemplateProp(name="name", units="", descr="Name of the emt model.", tpe=str, value="dc_voltage_source_emt"),
+            ]
+        )
+
+    def eval(self) -> EmtModelTemplate:
+        source_voltage_value: float = self.get_value("source_voltage_value")
+        source_conductance_value: float = self.get_value("source_conductance_value")
+        name: str = self.get_value("name")
+
+        return get_dc_voltage_source_emt_template(
+            self.vf, source_voltage_value, source_conductance_value, name
+        )
+
+
 def get_dc_voltage_source_emt_template(vf: VarFactory,
-                                       source_voltage_value: float = 0.0,
+                                       source_voltage_value: Optional[float] = 0.0,
                                        source_conductance_value: float = 100.0,
                                        name: str = "dc_voltage_source_emt") -> EmtModelTemplate:
     """
@@ -102,7 +174,9 @@ def get_dc_voltage_source_emt_template(vf: VarFactory,
     i_dc: Var = vf.add_var(name=f"i_dc_{name}", reference=VarPowerFlowReferenceType.Idc)
     v_src: Var = vf.add_var(name=f"V_src_{name}")
     g_src: Var = vf.add_var(name=f"g_src_{name}")
-    templ.block.event_dict[v_src] = vf.add_const(float(source_voltage_value))
+    templ.block.event_dict[v_src] = vf.add_const(
+        None if source_voltage_value is None else float(source_voltage_value)
+    )
     templ.block.event_dict[g_src] = vf.add_const(float(source_conductance_value))
 
     templ.block.in_vars = [v_dc]
@@ -114,7 +188,31 @@ def get_dc_voltage_source_emt_template(vf: VarFactory,
         VarPowerFlowReferenceType.Idc: i_dc,
     }
     templ.block.init_eqs[i_dc] = g_src * (v_src - v_dc)
+    templ.block.init_eqs[v_src] = v_dc + i_dc / g_src
     return templ
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# CONTROLLED DC VOLTAGE SOURCE
+# ----------------------------------------------------------------------------------------------------------------------
+class ControlledDcVoltageSourceEmtTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        super().__init__(
+            vf,
+            params=[
+                TemplateProp(name="source_conductance_value", units="S", descr="Norton conductance.", tpe=float, value=100.0),
+                TemplateProp(name="name", units="", descr="Name of the emt model.", tpe=str, value="controlled_dc_voltage_source_emt"),
+            ]
+        )
+
+    def eval(self) -> EmtModelTemplate:
+        source_conductance_value: float = self.get_value("source_conductance_value")
+        name: str = self.get_value("name")
+
+        return get_controlled_dc_voltage_source_emt_template(
+            self.vf, source_conductance_value, name
+        )
 
 
 def get_controlled_dc_voltage_source_emt_template(vf: VarFactory,

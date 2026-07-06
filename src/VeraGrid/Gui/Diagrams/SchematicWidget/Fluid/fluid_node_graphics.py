@@ -32,7 +32,7 @@ from VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_turbine_graphics import F
 from VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_pump_graphics import FluidPumpGraphicItem
 from VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_p2x_graphics import FluidP2xGraphicItem
 from VeraGrid.Gui.messages import yes_no_question, error_msg
-from VeraGrid.Gui.gui_functions import add_menu_entry
+from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template import LineGraphicTemplateItem
@@ -446,52 +446,52 @@ class FluidNodeGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         @return:
         """
         menu = QMenu()
-        menu.addSection("Fluid node")
+        menu.addSection(translate_context_menu_text("Fluid node"))
 
         add_menu_entry(menu=menu,
-                       text="Editor",
+                       text=translate_context_menu_text("Editor"),
                        icon_path=":/Icons/icons/edit.png",
                        function_ptr=self.edit)
 
         add_menu_entry(menu=menu,
-                       text="Plot electrical profiles",
+                       text=translate_context_menu_text("Plot electrical profiles"),
                        icon_path=":/Icons/icons/plot.png",
                        function_ptr=self.plot_electrical_profiles)
 
         add_menu_entry(menu=menu,
-                       text="Plot fluid profiles",
+                       text=translate_context_menu_text("Plot fluid profiles"),
                        icon_path=":/Icons/icons/plot.png",
                        function_ptr=self.plot_fluid_profiles)
 
         add_menu_entry(menu=menu,
-                       text="Arrange",
+                       text=translate_context_menu_text("Arrange"),
                        icon_path=":/Icons/icons/automatic_layout.png",
                        function_ptr=self.arrange_children)
 
         add_menu_entry(menu=menu,
-                       text="Delete all the connections",
+                       text=translate_context_menu_text("Delete all the connections"),
                        icon_path=":/Icons/icons/delete_conn.png",
                        function_ptr=lambda: self.delete_all_connections(ask=True, delete_from_db=True))
 
         add_menu_entry(menu=menu,
-                       text="Delete",
+                       text=translate_context_menu_text("Delete"),
                        icon_path=":/Icons/icons/delete3.png",
                        function_ptr=self.remove)
 
-        menu.addSection("Add")
+        menu.addSection(translate_context_menu_text("Add"))
 
         add_menu_entry(menu=menu,
-                       text="Turbine",
+                       text=translate_context_menu_text("Turbine"),
                        icon_path=":/Icons/icons/add_gen.png",
                        function_ptr=self.add_turbine)
 
         add_menu_entry(menu=menu,
-                       text="Pump",
+                       text=translate_context_menu_text("Pump"),
                        icon_path=":/Icons/icons/add_gen.png",
                        function_ptr=self.add_pump)
 
         add_menu_entry(menu=menu,
-                       text="P2X",
+                       text=translate_context_menu_text("P2X"),
                        icon_path=":/Icons/icons/add_gen.png",
                        function_ptr=self.add_p2x)
 

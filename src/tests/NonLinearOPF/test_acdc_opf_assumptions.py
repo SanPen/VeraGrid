@@ -64,7 +64,8 @@ def _solve_generalized_pf(grid):
     """
     options = gce.PowerFlowOptions(gce.SolverType.NR, verbose=0, control_q=False,
                                    retry_with_other_methods=False,
-                                   control_taps_phase=True, max_iter=80)
+                                   control_taps_phase=True, max_iter=80,
+                                   controls_start_tolerance=1e-6)
     nc = gce.compile_numerical_circuit_at(
         grid, t_idx=None, apply_temperature=False,
         branch_tolerance_mode=gce.BranchImpedanceMode.Specified,

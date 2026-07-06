@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 from PySide6 import QtWidgets
 from PySide6.QtCore import QPointF
 from PySide6.QtGui import QPolygonF
-from VeraGrid.Gui.gui_functions import add_menu_entry
+from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
 from VeraGrid.Gui.profile_wizard_utils import fill_substation_weather_profiles
 from VeraGrid.Gui.Diagrams.generic_graphics import Polygon
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionTemplateGraphicItem
@@ -72,10 +72,10 @@ class LoadGraphicItem(InjectionTemplateGraphicItem):
         """
         if self.api_object is not None:
             menu = self.get_base_context_menu()
-            menu.addSection("Load")
+            menu.addSection(translate_context_menu_text("Load"))
 
             add_menu_entry(menu=menu,
-                           text="Load profile wizard",
+                           text=translate_context_menu_text("Load profile wizard"),
                            function_ptr=self.load_profile_wizard,
                            icon_path=":/Icons/icons/load_wizard.png")
 

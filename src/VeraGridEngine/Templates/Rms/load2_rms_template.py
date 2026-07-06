@@ -41,8 +41,8 @@ def get_load2_rms_template(var_factory: VarFactory, name = "Load rms template") 
                 Ql - Ql0]
 
     templ.block.external_mapping = {
-        VarPowerFlowReferenceType.Va: inputs[0],
-        VarPowerFlowReferenceType.Vm: inputs[1],
+        VarPowerFlowReferenceType.Va: inputs[1],
+        VarPowerFlowReferenceType.Vm: inputs[0],
         VarPowerFlowReferenceType.P: Pl,
         VarPowerFlowReferenceType.Q: Ql
     }

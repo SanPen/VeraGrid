@@ -557,6 +557,8 @@ class MapWidget(QWidget):
         level, longitude, latitude = self.get_level_and_position()
 
         if tile_src.tile_set_name != self._tile_src.tile_set_name:  # avoid changing tile sets to themselves
+            old_tile_src: Tiles = self._tile_src
+            old_tile_src.shutdown()
             self._tile_src: Tiles = tile_src.copy()
             self._tile_src.setCallback(self.on_tile_available)
             self.view.set_notice(val=self._tile_src.attribution_string)
@@ -567,7 +569,8 @@ class MapWidget(QWidget):
             # Use the synchronized zoom path so map and graphics overlay keep
             # the same transform basis after a tile-source switch.
             if self.apply_zoom_level(level=level):
-                self.go_to_position(longitude=longitude, latitude=latitude)
+                if longitude is not None and latitude is not None:
+                    self.go_to_position(longitude=longitude, latitude=latitude)
                 self.view.center_schema()
             else:
                 while abs(self.view.schema_zoom - 0.015625) > 0.00001:

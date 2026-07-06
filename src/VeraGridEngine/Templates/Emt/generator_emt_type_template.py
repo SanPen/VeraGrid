@@ -1087,7 +1087,6 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
     # State variables
     # ------------------------------------------------------------------
     theta_abs = vf.add_var("theta_abs_" + name)
-    delta_rel = vf.add_var("delta_rel_" + name)
     omega = vf.add_var("omega_" + name, shared_reference = "omega_reference")
 
     psi_d = vf.add_var("psi_d_" + name)
@@ -1101,7 +1100,6 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
 
     # Differential variables
     d_theta_abs = vf.add_diff_var(name=f"d_theta_abs_{name}", base_var=theta_abs)
-    d_delta_rel = vf.add_diff_var(name=f"d_delta_rel_{name}", base_var=delta_rel)
     d_omega = vf.add_diff_var(name=f"d_omega_{name}", base_var=omega)
 
     d_psi_d = vf.add_diff_var(name=f"d_psi_d_{name}", base_var=psi_d)
@@ -1192,9 +1190,6 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
             # absolute electrical angle for EMT transforms
             omega_b * omega,
 
-            # Milano relative rotor angle
-            omega_b * (omega - omega_s),
-
             # swing equation driven by governor torque input
             (Tm - Te - D * (omega - omega_s)) / (2.0 * H),
 
@@ -1212,12 +1207,12 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
             (-psi_pp_q - e_dp - (xqp - xl) * i_q) / Tq0pp,
         ],
         state_vars=[
-            theta_abs, delta_rel, omega,
+            theta_abs, omega,
             psi_d, psi_q, psi_0,
             e_qp, e_dp, psi_pp_d, psi_pp_q
         ],
         diff_vars=[
-            d_theta_abs, d_delta_rel, d_omega,
+            d_theta_abs, d_omega,
             d_psi_d, d_psi_q, d_psi_0,
             d_e_qp, d_e_dp, d_psi_pp_d, d_psi_pp_q
         ],
@@ -1268,7 +1263,7 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
             ),
 
             # electromagnetic torque
-            Te - (psi_d * i_q - psi_q * i_d),
+            Te - (3.0 / 2.0) * (psi_d * i_q - psi_q * i_d),
 
             # terminal powers
             p_e - (v_A * i_A + v_B * i_B + v_C * i_C),
@@ -1372,9 +1367,7 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
 
         omega: omega_s,
 
-        theta_abs: sym.atan(E_im / E_re),
-        delta_rel: theta_abs,
-
+        theta_abs: sym.atan2(E_im, E_re),
         # terminal dq0 values in Milano physical axes
         v_d: vpk_init * sym.sin(theta_abs - phi_v_init),
         v_q: vpk_init * sym.cos(theta_abs - phi_v_init),
@@ -1393,12 +1386,17 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
         # zero-sequence magnetic initialization
         psi_0: -x0 * i_0,
 
-        # Sauer-Pai magnetic algebraic initialization
+        # Sauer-Pai q-axis steady-state initialization. These expressions are
+        # chosen to satisfy both d_psi_pp_q = 0 and d_e_dp = 0 for the
+        # implemented model equations.
         e_qp: psi_d + xdp * i_d,
-        e_dp: e_dp_init,
+        e_dp: (
+            (xq - xqp) * (gamma_q1 + gamma_q2 * (xqp - xl))
+            / (c1 - (xq - xqp) * gamma_q2)
+        ) * i_q,
 
         psi_pp_d: (psi_d + xdpp * i_d - gamma_d1 * e_qp) / (c1 - gamma_d1),
-        psi_pp_q: psi_pp_q_init,
+        psi_pp_q: -e_dp - (xqp - xl) * i_q,
 
         # abc current injection
         i_A: i_q * sym.sin(theta_abs) - i_d * sym.cos(theta_abs) + i_0,
@@ -1410,7 +1408,7 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
         ),
 
         # electromagnetic torque
-        Te: psi_d * i_q - psi_q * i_d,
+        Te: (3.0 / 2.0) * (psi_d * i_q - psi_q * i_d),
 
         v_f: e_qp + (xd - xdp) * (
             gamma_d1 * i_d - gamma_d2 * psi_pp_d + gamma_d2 * e_qp
@@ -1427,7 +1425,6 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
 
     templ.block.diff_init_eqs = {
         d_theta_abs: omega_b * c1,
-        d_delta_rel: c0,
         d_omega: c0,
         d_psi_d: c0,
         d_psi_q: c0,
@@ -1523,11 +1520,12 @@ def get_governor_emt(vf: VarFactory, name: str = "Governor") -> EmtModelTemplate
     # The governor regulates around the assigned mechanical-power reference so a
     # shared slack-bus initialization can prescribe one target per generator.
     torque_order = Pm_ref + y_gov0
+    torque_tracking_error = inputs[1] - Pm_ref
     ramped_torque_order = sym.hard_sat(torque_order, Pmin, Pmax)
 
     templ.block = Block(
         state_eqs=[
-            (K * speed_error - y_gov0) / T1,
+            (K * speed_error + torque_tracking_error - y_gov0) / T1,
         ],
         state_vars=[y_gov0],
         diff_vars=[d_y_gov0],
@@ -1543,8 +1541,8 @@ def get_governor_emt(vf: VarFactory, name: str = "Governor") -> EmtModelTemplate
 
         init_eqs={
             y_gov0: vf.add_const(0.0),
-            y2_3: Pm_ref,
-            Tm: Pm_ref
+            y2_3: ramped_torque_order,
+            Tm: ramped_torque_order
         },
         api_obj_mapping={
             # Gains and limits
@@ -1782,7 +1780,6 @@ def get_exciter_emt(vf: VarFactory, name: str = "exciter") -> EmtModelTemplate:
     field_feedback_init = parameters['Ke'].value * vf_init + AEx * sym.hard_sat(vf_init, vf.add_const(0.0), vf.add_const(1e6)) * (
         sym.exp(BEx * (sym.hard_sat(vf_init, vf.add_const(0.0), vf.add_const(1e6)) - Se_threshold)) - vf.add_const(1.0)
     ) * sym.heaviside(sym.hard_sat(vf_init, vf.add_const(0.0), vf.add_const(1e6)) - Se_threshold)
-
     templ.block = Block(
         state_eqs=[
             (Vm - y1) / parameters["tR"].value,

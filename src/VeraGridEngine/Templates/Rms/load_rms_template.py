@@ -4,9 +4,23 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
+from VeraGridEngine.Templates.template_definition import TemplateDefinition, TemplateProp
 from VeraGridEngine.enumerations import ParamPowerFlowReferenceType, VarPowerFlowReferenceType, DeviceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Utils.Symbolic.block import Block
+
+
+class LoadRmsTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        super().__init__(vf, params=[
+            TemplateProp(name="pl0_init", units="pu", descr="Initial active power at nominal voltage.", tpe=float | None),
+            TemplateProp(name="ql0_init", units="pu", descr="Initial reactive power at nominal voltage.", tpe=float | None),
+            TemplateProp(name="name", units="", descr="Name of the rms model.", tpe=str),
+        ])
+
+    def eval(self) -> RmsModelTemplate:
+        return get_load_rms_template(self.vf, self.get_value("name"), self.get_value("pl0_init"), self.get_value("ql0_init"))
 
 
 def get_load_rms_template(
@@ -51,8 +65,8 @@ def get_load_rms_template(
     templ.block.children.append(block)
 
     templ.block.external_mapping = {
-        VarPowerFlowReferenceType.Va: inputs[0],
-        VarPowerFlowReferenceType.Vm: inputs[1],
+        VarPowerFlowReferenceType.Va: inputs[1],
+        VarPowerFlowReferenceType.Vm: inputs[0],
         VarPowerFlowReferenceType.P: Pl,
         VarPowerFlowReferenceType.Q: Ql
     }

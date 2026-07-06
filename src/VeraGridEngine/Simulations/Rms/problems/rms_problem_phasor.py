@@ -428,10 +428,7 @@ class RmsProblemPhasor(RmsProblemTemplate):
                 # add model to system block
                 self.sys_block.add(elm.rms_model)
 
-        gen_idx_map = {elm.idtag: i for i, elm in enumerate(grid.generators)}
-        batt_idx_map = {elm.idtag: i for i, elm in enumerate(grid.batteries)}
-        shunt_idx_map = {elm.idtag: i for i, elm in enumerate(grid.shunts)}
-        loads_idx_map = {elm.idtag: i for i, elm in enumerate(grid.loads)}
+        injection_init_data = self.get_injection_init_data(bus_dict=bus_dict)
 
         def _s_to_i(S: complex, V: complex) -> tuple[float, float]:
             v2 = np.abs(V) ** 2
@@ -469,26 +466,12 @@ class RmsProblemPhasor(RmsProblemTemplate):
                 adjustable_count[bidx] += 1
                 continue
 
-            if dev.idtag in gen_idx_map and dev.bus.is_slack:
+            if dev.device_type == DeviceType.GeneratorDevice and dev.bus.is_slack:
                 slack_gen_count[bidx] += 1
                 continue
 
             Vbus_pf = self.power_flow_results.voltage[bidx]
-            if dev.idtag in gen_idx_map:
-                gidx = gen_idx_map[dev.idtag]
-                Sdev_pf = complex(float(dev.P), float(self.power_flow_results.gen_q[gidx])) / grid.Sbase
-            elif dev.idtag in batt_idx_map:
-                bdid = batt_idx_map[dev.idtag]
-                P_b = float(dev.P)
-                Sdev_pf = complex(P_b, float(self.power_flow_results.battery_q[bdid])) / grid.Sbase
-            elif dev.idtag in shunt_idx_map:
-                g_sh = float(dev.G) / grid.Sbase
-                b_sh = float(dev.B) / grid.Sbase
-                Sdev_pf = complex(g_sh * (abs(Vbus_pf) ** 2), -b_sh * (abs(Vbus_pf) ** 2))
-            elif dev.idtag in loads_idx_map:
-                P_load = dev.P
-                Q_load = dev.Q
-                Sdev_pf = complex(-P_load, -Q_load) / grid.Sbase
+            Sdev_pf = injection_init_data[dev.idtag]
 
             ir_pf, ii_pf = _s_to_i(Sdev_pf, Vbus_pf)
             fixed_inj_r[bidx] += ir_pf
@@ -536,36 +519,30 @@ class RmsProblemPhasor(RmsProblemTemplate):
                             ParamPowerFlowReferenceType.Ii0 in elm.rms_model.api_obj_mapping
                     )
 
-                    if elm.idtag in gen_idx_map:
-                        if elm.bus.is_slack and remaining_slack_gen[bus_index] > 0:
-                            Ir_val = residual_r[bus_index] / remaining_slack_gen[bus_index]
-                            Ii_val = residual_i[bus_index] / remaining_slack_gen[bus_index]
-                            remaining_slack_gen[bus_index] -= 1
-                            residual_r[bus_index] -= Ir_val
-                            residual_i[bus_index] -= Ii_val
-                            Sdev = complex(
-                                Vbus.real * Ir_val + Vbus.imag * Ii_val,
-                                Vbus.imag * Ir_val - Vbus.real * Ii_val
-                            )
-                        else:
-                            gidx = gen_idx_map[elm.idtag]
-                            Sdev = complex(float(elm.P), float(self.power_flow_results.gen_q[gidx])) / grid.Sbase
-                    elif elm.idtag in batt_idx_map:
-                        bidx = batt_idx_map[elm.idtag]
-                        P_b = float(elm.P)
-                        Sdev = complex(P_b, float(self.power_flow_results.battery_q[bidx])) / grid.Sbase
-                    elif elm.idtag in shunt_idx_map:
-                        g_sh = float(elm.G) / grid.Sbase
-                        b_sh = float(elm.B) / grid.Sbase
-                        Sdev = complex(g_sh * (abs(Vbus) ** 2), -b_sh * (abs(Vbus) ** 2))
-
-                    elif elm.idtag in loads_idx_map:
-                        P_load = elm.P
-                        Q_load = elm.Q
-                        Sdev = complex(-P_load, -Q_load) / grid.Sbase
+                    if is_adjustable_load_current and remaining_adjustable[bus_index] > 0:
+                        Ir_val = residual_r[bus_index] / remaining_adjustable[bus_index]
+                        Ii_val = residual_i[bus_index] / remaining_adjustable[bus_index]
+                        remaining_adjustable[bus_index] -= 1
+                        residual_r[bus_index] -= Ir_val
+                        residual_i[bus_index] -= Ii_val
+                        Sdev = complex(
+                            Vbus.real * Ir_val + Vbus.imag * Ii_val,
+                            Vbus.imag * Ir_val - Vbus.real * Ii_val
+                        )
+                    elif elm.device_type == DeviceType.GeneratorDevice and elm.bus.is_slack and remaining_slack_gen[bus_index] > 0:
+                        Ir_val = residual_r[bus_index] / remaining_slack_gen[bus_index]
+                        Ii_val = residual_i[bus_index] / remaining_slack_gen[bus_index]
+                        remaining_slack_gen[bus_index] -= 1
+                        residual_r[bus_index] -= Ir_val
+                        residual_i[bus_index] -= Ii_val
+                        Sdev = complex(
+                            Vbus.real * Ir_val + Vbus.imag * Ii_val,
+                            Vbus.imag * Ir_val - Vbus.real * Ii_val
+                        )
+                    else:
+                        Sdev = injection_init_data[elm.idtag]
 
                     Ir_val, Ii_val = _s_to_i(Sdev, Vbus)
-                    print(f"Device {elm.name} at bus {elm.bus.name}: S={Sdev:.4f}, V={Vbus:.4f}, Ir={Ir_val:.4f}, Ii={Ii_val:.4f}")
                     if VarPowerFlowReferenceType.Ir in elm.rms_model.external_mapping:
                         self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Ir, Ir_val)
                     if VarPowerFlowReferenceType.Ii in elm.rms_model.external_mapping:

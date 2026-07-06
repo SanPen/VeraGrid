@@ -317,7 +317,7 @@ def get_genqec_phasor(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
 
         api_obj_mapping={
             ParamPowerFlowReferenceType.fn: fn,
-            ParamPowerFlowReferenceType.ws: ws,
+            ParamPowerFlowReferenceType.omega_base: ws,
             ParamPowerFlowReferenceType.M: M,
             ParamPowerFlowReferenceType.D: D,
             ParamPowerFlowReferenceType.Rs: Rs,

@@ -107,30 +107,40 @@ def pll_transform(vfactory: VarFactory, v_abc, multilinear:bool = False, name:st
     """
     theta = Var('theta')
     omega = Var('omega')
-    omega_nom = vfactory.add_const(2*math.pi*50)
-    Kp_pll = vfactory.add_const(0.001)      # proportional gain
-    Ki_pll = vfactory.add_const(0.1)      # integral gain
+    omega_base = vfactory.add_var('omega_base')
+    Kp_pll = vfactory.add_var('Kp_pll')      # proportional gain
+    Ki_pll = vfactory.add_var('Ki_pll')      # integral gain
 
     park_block, v_dq, aux_vars = park_transform_block(vfactory, v_abc, theta, multilinear=multilinear, name = name) 
     v_d, v_q = v_dq
     res_block = Block()
-
-    pi_block, _ = tf_to_block(vfactory,
-        num=[Ki_pll, Kp_pll],
-        den=[0, 1],
-        x= v_d,
-        y = omega,
-        name='PLL_pi'
+    pll_error = vfactory.add_var('u_PLL_pi')
+    xi_pll = vfactory.add_var('xi_PLL')
+    one = vfactory.add_const(1.0)
+    d_theta = vfactory.add_diff_var(name='dt_1_theta', base_var=theta)
+    d_xi_pll = vfactory.add_diff_var(name='dt_1_xi_PLL', base_var=xi_pll)
+    integrator = Block(
+        algebraic_eqs=[
+            pll_error - v_d,
+            omega - (one + Kp_pll * pll_error + Ki_pll * xi_pll),
+        ],
+        algebraic_vars=[pll_error, omega],
+        state_eqs=[omega_base * omega, pll_error],
+        state_vars=[theta, xi_pll],
+        diff_vars=[d_theta, d_xi_pll],
+        init_eqs={
+            pll_error: v_d,
+            xi_pll: vfactory.add_const(0.0),
+            omega: one,
+        },
+        diff_init_eqs={d_theta: omega_base * omega, d_xi_pll: pll_error},
     )
-    integrator, _ = tf_to_block(vfactory,
-        num=[1],
-        den=[0, 1],
-        x= (omega),
-        y = theta,
-        name='PLL_integrator'
-    )
 
-    res_block.add(pi_block)
+    res_block.add(Block(event_dict={
+        omega_base: vfactory.add_const(2.0 * math.pi * 50.0),
+        Kp_pll: vfactory.add_const(0.001),
+        Ki_pll: vfactory.add_const(0.1),
+    }))
     res_block.add(integrator)
     res_block.add(park_block)
     return res_block, v_dq, omega, theta, aux_vars
@@ -145,22 +155,31 @@ def build_gfl_converter_model_emt(vfactory: VarFactory, inputs,
     Supports multiple control modes via ConverterControlType.
 
     Args:
-        inputs: [Va, Vb, Vc, Vdc] - AC instantaneous three-phase voltages, DC voltage
+        inputs: [vc_A, vc_B, vc_C, vg_A, vg_B, vg_C, i_A, i_B, i_C, Vdc,
+                 Pt_vsc, Qt_vsc, Vpk_ref, phi_v_ref]
         control1: First control mode (typically active power or DC voltage related)
         control2: Second control mode (typically reactive power or AC voltage related)
         multilinear: Use multilinearization for Park transforms
 
     Returns:
         gfl_block: The complete converter block
-        i_a, i_b, i_c: Three-phase current outputs
+        i_a_inj, i_b_inj, i_c_inj: Three-phase bus injection currents
         P, Q: Active and reactive power measurements
     """
-    v_a    = inputs[0]  
-    v_b    = inputs[1]  
-    v_c    = inputs[2]
-    v_dc   = inputs[3]  # DC voltage for DC voltage control mode
-    Pt_vsc = inputs[4]  # Power flow initial values
-    Qt_vsc = inputs[5]
+    vc_a   = inputs[0]
+    vc_b   = inputs[1]
+    vc_c   = inputs[2]
+    vg_a   = inputs[3]
+    vg_b   = inputs[4]
+    vg_c   = inputs[5]
+    i_a_line = inputs[6]
+    i_b_line = inputs[7]
+    i_c_line = inputs[8]
+    v_dc   = inputs[9]  # DC voltage for DC voltage control mode
+    Pt_vsc = inputs[10]  # Power flow initial values
+    Qt_vsc = inputs[11]
+    Vpk_ref = inputs[12]
+    phi_v_ref = inputs[13]
 
     algebraic_eqs = []
     algebraic_vars = []
@@ -171,10 +190,16 @@ def build_gfl_converter_model_emt(vfactory: VarFactory, inputs,
     # Inputs and variables
     # ==============================
 
-    v_abc = [v_a, v_b, v_c]
-    pll_block, v_dq, omega, theta, aux_vars = pll_transform(vfactory, v_abc, multilinear=multilinear, name = 'vg')
+    vc_abc = [vc_a, vc_b, vc_c]
+    vg_abc = [vg_a, vg_b, vg_c]
+    i_abc = [i_a_line, i_b_line, i_c_line]
+
+    pll_block, v_dq, omega, theta, aux_vars = pll_transform(vfactory, vg_abc, multilinear=multilinear, name = 'vg')
     v_d_g = v_dq[0]
     v_q_g = v_dq[1]
+    i_park_block, i_dq, _ = park_transform_block(vfactory, i_abc, theta, multilinear=multilinear, name='i_line')
+    i_d_line = i_dq[0]
+    i_q_line = i_dq[1]
 
     # Parameters
     Kp_icl = vfactory.add_var('Kp_icl')     # proportional gain for inner current loop
@@ -185,12 +210,11 @@ def build_gfl_converter_model_emt(vfactory: VarFactory, inputs,
     Ki_vdc = vfactory.add_var('Ki_vdc')     # integral gain for DC voltage control
     Kp_vac = vfactory.add_var('Kp_vac')     # proportional gain for AC voltage control
     Ki_vac = vfactory.add_var('Ki_vac')     # integral gain for AC voltage control
-    R = vfactory.add_var('R') 
     L = vfactory.add_var('L') 
 
-    # VARS
-    i_d = vfactory.add_var('i_d')
-    i_q = vfactory.add_var('i_q')
+    # Current measurements come directly from the external line current inputs.
+    i_d = i_d_line
+    i_q = i_q_line
     i_d_ref = vfactory.add_var('i_d_ref')
     i_q_ref = vfactory.add_var('i_q_ref')
     
@@ -207,10 +231,10 @@ def build_gfl_converter_model_emt(vfactory: VarFactory, inputs,
     v_d_c = vfactory.add_var('v_d_c')
     v_q_c = vfactory.add_var('v_q_c')
 
-    # Three-phase currents
-    i_a = vfactory.add_var('i_a')
-    i_b = vfactory.add_var('i_b')
-    i_c = vfactory.add_var('i_c')
+    # Ideal voltage-source terminal currents are solved by network KCL.
+    i_a_inj = vfactory.add_var('i_a')
+    i_b_inj = vfactory.add_var('i_b')
+    i_c_inj = vfactory.add_var('i_c')
 
     event_dict = {
         Kp_icl: vfactory.add_const(0.05),
@@ -221,7 +245,6 @@ def build_gfl_converter_model_emt(vfactory: VarFactory, inputs,
         Ki_vdc: vfactory.add_const(2.0),
         Kp_vac: vfactory.add_const(0.1),
         Ki_vac: vfactory.add_const(2.0),
-        R: vfactory.add_const(0.1),
         L: vfactory.add_const(0.1),
         P_ref: vfactory.add_const(0.0),
         Q_ref: vfactory.add_const(0.0),
@@ -229,7 +252,7 @@ def build_gfl_converter_model_emt(vfactory: VarFactory, inputs,
         Vm_ac_ref: vfactory.add_const(1.0),
     }
 
-    # P and Q at the point of common coupling
+    # P and Q at the grid-side point of common coupling.
     algebraic_eqs.append(P - vfactory.add_const(3/2)*(v_q_g*i_q + v_d_g*i_d))
     algebraic_eqs.append(Q - vfactory.add_const(3/2)*(v_q_g*i_d - v_d_g*i_q))
     algebraic_vars.append(P)
@@ -283,7 +306,7 @@ def build_gfl_converter_model_emt(vfactory: VarFactory, inputs,
     # ==============================
     # Control2 maps to i_d_ref (d-axis current controls reactive power)
     
-    if control2 == ConverterControlType.Qac:
+    if control2 == ConverterControlType.Qac or True:
         # Reactive power control
         control_block_2, _ = tf_to_block(vfactory,
             num=[Ki_pol, Kp_pol],
@@ -331,47 +354,36 @@ def build_gfl_converter_model_emt(vfactory: VarFactory, inputs,
         name='vd_hat'
     )
 
-    # EMT block (differential equations for currents)
-    dt_id = vfactory.add_diff_var('dt_id', base_var= i_d)
-    dt_iq = vfactory.add_diff_var('dt_iq', base_var= i_q)
-    EMT_block=Block(
-        algebraic_eqs = [
-            v_d_c - v_d_g - (R*i_d + L*dt_id - omega*L*i_q),
-            v_q_c - v_q_g - (R*i_q + L*dt_iq - omega*L*i_d),
-        ],
-        diff_vars= [dt_id, dt_iq]
-    )
-
     algebraic_eqs.append(v_d_c - (vd_hat + v_d_g + L*(omega)*i_q))
     algebraic_eqs.append(v_q_c - (vq_hat + v_q_g - L*(omega)*i_d))
-    algebraic_vars.extend([v_q_c, v_d_c, i_d, i_q])
+    algebraic_vars.extend([v_d_c, v_q_c])
 
-    # Inverse Park transform to get three-phase currents
-    inv_park_block, i_abc, _ = inverse_park_transform_block(vfactory, [i_d, i_q], theta, name='i')
-    i_a_out, i_b_out, i_c_out = i_abc
-    
+    # Imposed converter current injection. Measured line current is only used
+    # for feedback above and is intentionally not equated to this command.
+    inv_park_block, i_abc_out, _ = inverse_park_transform_block(vfactory, [i_d_ref_sat, -i_q_ref_sat], theta, name='i')
+    i_a_out, i_b_out, i_c_out = i_abc_out
     algebraic_eqs.extend([
-        i_a - i_a_out,
-        i_b - i_b_out,
-        i_c - i_c_out,
+        i_a_inj - i_a_out,
+        i_b_inj - i_b_out,
+        i_c_inj - i_c_out,
     ])
-    algebraic_vars.extend([i_a, i_b, i_c])
+    algebraic_vars.extend([i_a_inj, i_b_inj, i_c_inj])
 
     # Build initialization equations based on control modes
     # P and Q are initialized from power flow results via external mapping
     init_eqs = {
         P: -Pt_vsc,
         Q: -Qt_vsc,
-        theta: vfactory.add_const(0),  # EMT: initialize theta to 0 (will track actual angle)
+        theta: phi_v_ref - vfactory.add_const(np.pi),
         omega: vfactory.add_const(1),
         v_d_g: vfactory.add_const(0),
-        v_q_g: sym.sqrt(v_a**2 + v_b**2 + v_c**2) / vfactory.add_const(np.sqrt(3/2)),  # Approximate Vm from abc
+        v_q_g: Vpk_ref,
         i_q: (2 / 3) * P / v_q_g,
         i_d: (2 / 3) * Q / v_q_g,
         i_q_ref: i_q,
         i_d_ref: i_d,
-        v_d_c: v_d_g + (R*i_d - omega*L*i_q),
-        v_q_c: v_q_g + (R*i_q - omega*L*i_d),
+        v_d_c: v_d_g + L*(omega)*i_q,
+        v_q_c: v_q_g - L*(omega)*i_d,
         vd_hat: v_d_c - (v_d_g + L*(omega)*i_q),
         vq_hat: v_q_c - (v_q_g - L*(omega)*i_d),
     }
@@ -410,11 +422,11 @@ def build_gfl_converter_model_emt(vfactory: VarFactory, inputs,
     gfl_block.add(control_block_iq)
 
     gfl_block.add(pll_block)
-    gfl_block.add(EMT_block)
+    gfl_block.add(i_park_block)
     gfl_block.add(inv_park_block)
     gfl_block.unify_blocks()
 
-    return gfl_block, i_a, i_b, i_c, P, Q
+    return gfl_block, i_a_inj, i_b_inj, i_c_inj, P, Q
 
 def VscGflEmtBuild(vfactory: VarFactory, name: str = "",
                    control1: ConverterControlType = ConverterControlType.Pac,
@@ -438,16 +450,25 @@ def VscGflEmtBuild(vfactory: VarFactory, name: str = "",
     """
     templ = EmtModelTemplate()
     templ.tpe = DeviceType.VscDevice
-    # Inputs: Va, Vb, Vc, Vdc (Pt_vsc and Qt_vsc come from power flow initialization)
-    inputs = [vfactory.add_var("Va_"), vfactory.add_var("Vb_"), vfactory.add_var("Vc_"), vfactory.add_var("Vdc_")]
-    v_a = inputs[0]
-    v_b = inputs[1]
-    v_c = inputs[2]
-    v_dc = inputs[3]
+    # Inputs: converter-side voltage, grid-side voltage, measured line current, and DC voltage.
+    inputs = [
+        vfactory.add_var("vc_A", reference=VarPowerFlowReferenceType.v_A),
+        vfactory.add_var("vc_B", reference=VarPowerFlowReferenceType.v_B),
+        vfactory.add_var("vc_C", reference=VarPowerFlowReferenceType.v_C),
+        vfactory.add_var("vg_A"),
+        vfactory.add_var("vg_B"),
+        vfactory.add_var("vg_C"),
+        vfactory.add_var("i_line_A"),
+        vfactory.add_var("i_line_B"),
+        vfactory.add_var("i_line_C"),
+        vfactory.add_var("Vdc_", reference=VarPowerFlowReferenceType.Vdc),
+    ]
 
     # Vars:
     Pt_vsc = vfactory.add_var('Pt_vsc')
     Qt_vsc = vfactory.add_var('Qt_vsc')
+    Vpk_ref = vfactory.add_var('Vpk_ref')
+    phi_v_ref = vfactory.add_var('phi_v_ref')
 
     # Parameters:
     bt = vfactory.add_var('bt')
@@ -460,7 +481,7 @@ def VscGflEmtBuild(vfactory: VarFactory, name: str = "",
     # Build the converter model with specified control modes
     gfl_block, i_a, i_b, i_c, P, Q = build_gfl_converter_model_emt(
         vfactory=vfactory,
-        inputs=[v_a, v_b, v_c, v_dc, Pt_vsc, Qt_vsc],
+        inputs=[*inputs, Pt_vsc, Qt_vsc, Vpk_ref, phi_v_ref],
         control1=control1,
         control2=control2
     )
@@ -472,6 +493,8 @@ def VscGflEmtBuild(vfactory: VarFactory, name: str = "",
         a0: vfactory.add_const(0.0),
         a1: vfactory.add_const(0.0),
         a2: vfactory.add_const(0.0),
+        Vpk_ref: vfactory.add_const(None),
+        phi_v_ref: vfactory.add_const(None),
     }
     
     # EMT model outputs three-phase currents
@@ -487,20 +510,25 @@ def VscGflEmtBuild(vfactory: VarFactory, name: str = "",
             VarPowerFlowReferenceType.Q: Q,
         },
         in_vars= inputs,
-        out_vars = [i_a, i_b, i_c]  # EMT: output three-phase currents
+        out_vars = []
     )
     vsc_block.external_mapping = {
         VarPowerFlowReferenceType.v_A: inputs[0],
         VarPowerFlowReferenceType.v_B: inputs[1],
         VarPowerFlowReferenceType.v_C: inputs[2],
-        VarPowerFlowReferenceType.Vdc: inputs[3],
+        VarPowerFlowReferenceType.vt_A: inputs[0],
+        VarPowerFlowReferenceType.vt_B: inputs[1],
+        VarPowerFlowReferenceType.vt_C: inputs[2],
+        VarPowerFlowReferenceType.Vdc: inputs[9],
         VarPowerFlowReferenceType.Pt: Pt_vsc,
         VarPowerFlowReferenceType.Qt: Qt_vsc,
         VarPowerFlowReferenceType.Pf: P,
         VarPowerFlowReferenceType.Qf: Qf,
-        VarPowerFlowReferenceType.i_A: i_a,
-        VarPowerFlowReferenceType.i_B: i_b,
-        VarPowerFlowReferenceType.i_C: i_c,
+        VarPowerFlowReferenceType.i_A: -i_a,
+        VarPowerFlowReferenceType.i_B: -i_b,
+        VarPowerFlowReferenceType.i_C: -i_c,
+        VarPowerFlowReferenceType.Vpk: Vpk_ref,
+        VarPowerFlowReferenceType.phi_v: phi_v_ref,
     }
 
     vsc_block.add(gfl_block)

@@ -14,7 +14,7 @@ from PySide6.QtWidgets import QMenu, QGraphicsSceneMouseEvent, QGraphicsItem, QG
 from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionTemplateGraphicItem
 from VeraGrid.Gui.messages import yes_no_question, warning_msg
-from VeraGrid.Gui.gui_functions import add_menu_entry
+from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
 from VeraGrid.Gui.ShortCircuitEditor.short_circuit_selector import ShortCircuitSelector
 from VeraGrid.Gui.Diagrams.generic_graphics import (GenericDiagramWidget, ACTIVE, DEACTIVATED,
                                                     FONT_SCALE, TRANSPARENT, DraggableLabelItem)
@@ -807,118 +807,118 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         @return:
         """
         menu = QMenu()
-        menu.addSection("Bus")
+        menu.addSection(translate_context_menu_text("Bus"))
 
         add_menu_entry(menu=menu,
-                       text="Editor",
+                       text=translate_context_menu_text("Editor"),
                        icon_path=":/Icons/icons/edit.png",
                        function_ptr=self.edit)
 
         add_menu_entry(menu=menu,
-                       text="Active",
+                       text=translate_context_menu_text("Active"),
                        icon_path="",
                        function_ptr=self.enable_disable_toggle,
                        checkeable=True,
                        checked_value=self.api_object.active)
 
         add_menu_entry(menu=menu,
-                       text="Draw labels",
+                       text=translate_context_menu_text("Draw labels"),
                        icon_path="",
                        function_ptr=self.enable_disable_label_drawing,
                        checkeable=True,
                        checked_value=self.draw_labels)
 
         add_menu_entry(menu=menu,
-                       text="add Short circuit",
+                       text=translate_context_menu_text("add Short circuit"),
                        icon_path=":/Icons/icons/short_circuit_plus.png",
                        function_ptr=self.add_short_circuit)
 
         add_menu_entry(menu=menu,
-                       text="Is a DC bus",
+                       text=translate_context_menu_text("Is a DC bus"),
                        icon_path=":/Icons/icons/dc.png",
                        function_ptr=self.enable_disable_dc,
                        checkeable=True,
                        checked_value=self.api_object.is_dc)
 
         add_menu_entry(menu=menu,
-                       text="Plot profiles",
+                       text=translate_context_menu_text("Plot profiles"),
                        icon_path=":/Icons/icons/plot.png",
                        function_ptr=self.plot_profiles)
 
         add_menu_entry(menu,
-                       text='Arrange',
+                       text=translate_context_menu_text("Arrange"),
                        icon_path=":/Icons/icons/automatic_layout.png",
                        function_ptr=self.arrange_children)
 
         add_menu_entry(menu,
-                       text='Rotate 90',
+                       text=translate_context_menu_text("Rotate 90"),
                        icon_path=":/Icons/icons/rotate.svg",
                        function_ptr=self.rotate)
 
         add_menu_entry(menu,
-                       text='Assign active state to profile',
+                       text=translate_context_menu_text("Assign active state to profile"),
                        icon_path=":/Icons/icons/assign_to_profile.png",
                        function_ptr=self.assign_status_to_profile)
 
-        add_menu_entry(menu, text='Delete',
+        add_menu_entry(menu, text=translate_context_menu_text("Delete"),
                        icon_path=":/Icons/icons/delete_schematic.png",
                        function_ptr=self.delete)
 
-        add_menu_entry(menu, text='Convert to voltage level',
+        add_menu_entry(menu, text=translate_context_menu_text("Convert to voltage level"),
                        icon_path=":/Icons/icons/voltage_level.png",
                        function_ptr=self.convert_to_voltage_level)
 
-        add_menu_entry(menu, text='Convert to impedances circuit',
+        add_menu_entry(menu, text=translate_context_menu_text("Convert to impedances circuit"),
                        icon_path=":/Icons/icons/voltage_level.png",
                        function_ptr=self.convert_to_connectivity_grid)
 
-        add_menu_entry(menu, text='Expand schematic',
+        add_menu_entry(menu, text=translate_context_menu_text("Expand schematic"),
                        icon_path=":/Icons/icons/grid_icon.png",
                        function_ptr=self.expand_diagram_from_bus)
 
-        add_menu_entry(menu, text='Vicinity diagram from here',
+        add_menu_entry(menu, text=translate_context_menu_text("Vicinity diagram from here"),
                        icon_path=":/Icons/icons/grid_icon.png",
                        function_ptr=self.new_vicinity_diagram_from_here)
 
         add_menu_entry(menu=menu,
-                       text="Open in street view",
+                       text=translate_context_menu_text("Open in street view"),
                        icon_path=":/Icons/icons/map.png",
                        function_ptr=self.open_street_view)
 
-        menu.addSection("Add")
+        menu.addSection(translate_context_menu_text("Add"))
 
         # Actions under the "Add" section
-        add_menu_entry(menu, text='Load',
+        add_menu_entry(menu, text=translate_context_menu_text("Load"),
                        icon_path=":/Icons/icons/add_load.png",
                        function_ptr=self.add_load)
 
-        add_menu_entry(menu, text='Current injection',
+        add_menu_entry(menu, text=translate_context_menu_text("Current injection"),
                        icon_path=":/Icons/icons/add_load.png",
                        function_ptr=self.add_current_injection)
 
-        add_menu_entry(menu, text='Shunt',
+        add_menu_entry(menu, text=translate_context_menu_text("Shunt"),
                        icon_path=":/Icons/icons/add_shunt.png",
                        function_ptr=self.add_shunt)
 
         add_menu_entry(menu,
-                       text='Controllable shunt',
+                       text=translate_context_menu_text("Controllable shunt"),
                        icon_path=":/Icons/icons/add_shunt.png",
                        function_ptr=self.add_controllable_shunt)
 
-        add_menu_entry(menu, text='Generator',
+        add_menu_entry(menu, text=translate_context_menu_text("Generator"),
                        icon_path=":/Icons/icons/add_gen.png",
                        function_ptr=self.add_generator)
 
-        add_menu_entry(menu, text='Static generator',
+        add_menu_entry(menu, text=translate_context_menu_text("Static generator"),
                        icon_path=":/Icons/icons/add_stagen.png",
                        function_ptr=self.add_static_generator)
 
-        add_menu_entry(menu, text='Battery',
+        add_menu_entry(menu, text=translate_context_menu_text("Battery"),
                        icon_path=":/Icons/icons/add_batt.png",
                        function_ptr=self.add_battery)
 
         add_menu_entry(menu,
-                       text='External grid',
+                       text=translate_context_menu_text("External grid"),
                        icon_path=":/Icons/icons/add_external_grid.png",
                        function_ptr=self.add_external_grid)
 

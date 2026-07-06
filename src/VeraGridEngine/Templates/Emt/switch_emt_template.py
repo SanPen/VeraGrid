@@ -10,6 +10,7 @@ from typing import Dict, List
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowReferenceType, VarPowerFlowReferenceType
+from VeraGridEngine.Templates.template_definition import TemplateDefinition, TemplateProp
 from VeraGridEngine.Utils.procedural_logic import sampled_value
 from VeraGridEngine.Utils.Symbolic.symbolic import CmpOp, Comparison, Const, Expr, Var
 
@@ -96,6 +97,48 @@ def _get_to_current_reference(phase_label: str) -> VarPowerFlowReferenceType:
                 return VarPowerFlowReferenceType.it_C
             else:
                 raise ValueError(f"Unsupported phase label '{phase_label}'")
+
+
+class SwitchEmtTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        super().__init__(
+            vf,
+            params=[
+                TemplateProp(name="phA", units="", descr="Enable phase A.", tpe=bool, value=True),
+                TemplateProp(name="phB", units="", descr="Enable phase B.", tpe=bool, value=True),
+                TemplateProp(name="phC", units="", descr="Enable phase C.", tpe=bool, value=True),
+                TemplateProp(name="signal_controlled", units="", descr="If True, expose one control input and procedural logic.", tpe=bool, value=False),
+                TemplateProp(name="seed_from_pf_active", units="", descr="If True, seed the closed/open mode from Switch.active.", tpe=bool, value=True),
+                TemplateProp(name="initial_closed", units="", descr="Default closed state when PF seeding is disabled.", tpe=bool, value=True),
+                TemplateProp(name="use_device_conductance", units="", descr="If True, use the switch static R/X to derive the closed conductance.", tpe=bool, value=True),
+                TemplateProp(name="manual_closed_conductance", units="S", descr="Manual closed conductance fallback.", tpe=float, value=1.0e4),
+                TemplateProp(name="open_conductance", units="S", descr="Open-state leakage conductance.", tpe=float, value=1.0e-8),
+                TemplateProp(name="switch_time_constant", units="s", descr="First-order current time constant.", tpe=float, value=1.0e-4),
+                TemplateProp(name="command_threshold", units="", descr="Control threshold for the external command.", tpe=float, value=0.5),
+                TemplateProp(name="name", units="", descr="Symbolic model name.", tpe=str, value="switch_emt_template"),
+            ]
+        )
+
+    def eval(self) -> EmtModelTemplate:
+        phA: bool = self.get_value("phA")
+        phB: bool = self.get_value("phB")
+        phC: bool = self.get_value("phC")
+        signal_controlled: bool = self.get_value("signal_controlled")
+        seed_from_pf_active: bool = self.get_value("seed_from_pf_active")
+        initial_closed: bool = self.get_value("initial_closed")
+        use_device_conductance: bool = self.get_value("use_device_conductance")
+        manual_closed_conductance: float = self.get_value("manual_closed_conductance")
+        open_conductance: float = self.get_value("open_conductance")
+        switch_time_constant: float = self.get_value("switch_time_constant")
+        command_threshold: float = self.get_value("command_threshold")
+        name: str = self.get_value("name")
+
+        return get_switch_emt_template(
+            self.vf, phA, phB, phC, signal_controlled, seed_from_pf_active,
+            initial_closed, use_device_conductance, manual_closed_conductance,
+            open_conductance, switch_time_constant, command_threshold, name,
+        )
 
 
 def get_switch_emt_template(

@@ -8,13 +8,18 @@ from __future__ import annotations
 from ctypes import c_double
 from pathlib import Path
 from typing import Any, Optional
-import importlib
 import shutil
 import tempfile
 
 from VeraGridEngine.IO.fmu.importer.bindings import FmuImportConfig
 from VeraGridEngine.IO.fmu.importer.errors import FmuDependencyError, FmuModeError
 from VeraGridEngine.IO.fmu.importer.model_description import FmuInterfaceMode, FmuModelDescription, read_fmu_model_description
+
+try:
+    import fmpy
+    import fmpy.fmi2
+except ModuleNotFoundError:
+    fmpy = None
 
 
 def _require_fmpy_module() -> Any:
@@ -23,10 +28,10 @@ def _require_fmpy_module() -> Any:
     :return: Imported `fmpy` module.
     """
 
-    try:
-        return importlib.import_module("fmpy")
-    except ModuleNotFoundError as exc:
-        raise FmuDependencyError("FMPy is required to execute imported FMUs") from exc
+    if fmpy is None:
+        raise FmuDependencyError("FMPy is required to execute imported FMUs")
+    else:
+        return fmpy
 
 
 def _prepare_runtime_directory(fmu_path: Path, extraction_root: Path | None) -> tuple[Path, bool]:
@@ -384,7 +389,11 @@ def open_fmu_runtime_host(config: FmuImportConfig) -> FmuRuntimeHost:
 
     try:
         fmpy_module: Any = _require_fmpy_module()
-        fmi2_module: Any = importlib.import_module("fmpy.fmi2")
+        fmi2_module: Any
+        if fmpy is None:
+            raise FmuDependencyError("FMPy is required to execute imported FMUs")
+        else:
+            fmi2_module = fmpy.fmi2
         model_description: Any = fmpy_module.read_model_description(str(extracted_dir))
         model_identifier: str = metadata.get_model_identifier(mode)
 

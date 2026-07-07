@@ -9,7 +9,7 @@ Collection of functions to create new CGMES instances for CGMES export.
 import numpy as np
 from datetime import datetime
 from typing import List, Union, Tuple
-from VeraGridEngine import StrVec
+from VeraGridEngine.basic_structures import StrVec
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.IO.cim.cgmes.base import get_new_rdfid, form_rdfid
 import VeraGridEngine.IO.cim.cgmes.cgmes_assets.cgmes_2_4_15_assets as cgmes24
@@ -465,6 +465,14 @@ def create_cgmes_regulating_control(cgmes_elm,
     :param logger:
     :return:
     """
+    if isinstance(mc_gen, gcdev.Generator) or isinstance(mc_gen, gcdev.ControllableShunt):
+        pass
+    else:
+        raise TypeError(
+            "create_cgmes_regulating_control() only supports Generator or ControllableShunt; "
+            f"got {mc_gen.__class__.__name__}"
+        )
+
     new_rdf_id = get_new_rdfid()
 
     if ver == CGMESVersions.v2_4_15:
@@ -531,21 +539,25 @@ def create_cgmes_tap_changer_control(
     # SSH
     tcc.discrete = True
     tcc.targetDeadband = 0.5
-    tcc.targetValueUnitMultiplier = UnitMultiplier.k
     tcc.enabled = tcc_enabled
-    voltage: float | None = get_voltage_terminal(tcc.Terminal, logger)
 
-    if voltage is not None:
+    if tcc_mode == RegulatingControlModeKind.voltage:
+        voltage: float | None = get_voltage_terminal(tcc.Terminal, logger)
+        if voltage is None:
+            return tcc
+        tcc.targetValueUnitMultiplier = UnitMultiplier.k
         tcc.targetValue = mc_trafo.vset * voltage
+    elif tcc_mode == RegulatingControlModeKind.activePower:
+        tcc.targetValueUnitMultiplier = UnitMultiplier.M
+        tcc.targetValue = mc_trafo.Pset
+    else:
+        # Remaining RegulatingControlModeKind values are not supported by VeraGrid
+        # tap changers; fall back to voltage mode with a neutral target.
+        voltage = get_voltage_terminal(tcc.Terminal, logger)
+        tcc.targetValueUnitMultiplier = UnitMultiplier.k
+        tcc.targetValue = voltage if voltage is not None else 1.0
 
-        # TODO consider other control types
-        # if mc_trafo.tap_module_control_mode ...:
-        #     tcc.targetValue = mc_trafo.Pset
-        # tcc.RegulatingCondEq not required .?
-        # control_cn.Vnom ?
-
-        cgmes_model.add(tcc)
-
+    cgmes_model.add(tcc)
     return tcc
 
 
@@ -727,6 +739,7 @@ def create_cgmes_vsc_converter(cgmes_model: CgmesCircuit,
                                gc_vsc: Union[gcdev.VSC, None],
                                p_set: float,
                                v_set: float,
+                               target_upcc_base_voltage: float | None,
                                ver: CGMESVersions,
                                logger: DataLogger) -> Tuple[CGMES_VS_CONVERTER, CGMES_DC_CONVERTER_UNIT]:
     """
@@ -738,6 +751,8 @@ def create_cgmes_vsc_converter(cgmes_model: CgmesCircuit,
     :param p_set: power set point
     :param v_set: voltage set point, only used if gc_vsc is None,
                   otherwise the set point is from gc_vsc.vset
+    :param target_upcc_base_voltage: AC-side base voltage in kV used to export
+                                     targetUpcc in CGMES engineering units.
     :param ver:
     :param logger: DataLogger
     :return: VsConverter and DCConverterUnit objects
@@ -768,6 +783,11 @@ def create_cgmes_vsc_converter(cgmes_model: CgmesCircuit,
         vs_converter.name = f'VSC_{i + 1}'
         vs_converter.description = f'VSC_{i + 1}'
         targetUpcc = v_set
+
+    if target_upcc_base_voltage is not None and target_upcc_base_voltage > 0.0:
+        targetUpcc = float(targetUpcc) * float(target_upcc_base_voltage)
+    else:
+        targetUpcc = float(targetUpcc)
 
     # EQ
     vs_converter.baseS = 9999
@@ -1022,7 +1042,6 @@ def create_cgmes_dc_converter_unit(cgmes_model: CgmesCircuit,
     else:
         raise NotImplemented()
 
-    dc_cu.Substation = None  # TODO
     dc_cu.operationMode = DCConverterOperatingModeKind.monopolarGroundReturn
 
     cgmes_model.add(dc_cu)

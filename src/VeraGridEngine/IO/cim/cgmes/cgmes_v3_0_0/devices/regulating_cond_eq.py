@@ -7,13 +7,14 @@ from typing import TYPE_CHECKING
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.energy_connection import EnergyConnection
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 if TYPE_CHECKING:
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.regulating_control import RegulatingControl
 
 class RegulatingCondEq(EnergyConnection):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='RegulatingControl', class_type='RegulatingControl', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The regulating control scheme in which this equipment participates.''', profiles=[]),
-		CgmesProperty(property_name='controlEnabled', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Specifies the regulation status of the equipment.  True is regulating, false is not regulating.''', profiles=[]),
+		CgmesProperty(property_name='RegulatingControl', class_type='RegulatingControl', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The regulating control scheme in which this equipment participates.''', profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='controlEnabled', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Specifies the regulation status of the equipment.  True is regulating, false is not regulating.''', mandatory=True, profiles=[CgmesProfileType.SSH], default_value=False),
 	)
 	__slots__ = ('RegulatingControl', 'controlEnabled')
 	def __init__(self, rdfid='', tpe='RegulatingCondEq'):

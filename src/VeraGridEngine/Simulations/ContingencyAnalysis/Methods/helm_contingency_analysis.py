@@ -73,6 +73,8 @@ def helm_contingency_analysis(grid: MultiCircuit,
     pf_res_0 = multi_island_pf_nc(nc=nc,
                                   options=pf_opts)
 
+    results.Sf_base = pf_res_0.Sf
+
     helm_variations = HelmVariations(numerical_circuit=nc)
 
     Sbus = nc.get_power_injections_pu()

@@ -1,0 +1,290 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:126cd132-af5b-420c-9998-a646e338997e> {
+    <urn:uuid:808b9ea1-bf10-448d-b03a-822ce473dbbb>
+            rdf:type                       nc:AssessedElement;
+            cim:IdentifiedObject.description
+                    "This is an example of assessed element.";
+            cim:IdentifiedObject.mRID      "808b9ea1-bf10-448d-b03a-822ce473dbbb";
+            cim:IdentifiedObject.name      "AE3";
+            nc:AssessedElement.AssessedSystemOperator
+                    <urn:uuid:b9fbb881-573b-4e98-9b7b-31f00a45ebe0>;
+            nc:AssessedElement.ConductingEquipment
+                    <urn:uuid:6f5e600f-dc92-80ac-b046-a4641f7b1db1>;
+            nc:AssessedElement.OperationalLimit
+                    <urn:uuid:97cd7bb9-db25-f4de-2be2-8a0b2cc0ed3e>;
+            nc:AssessedElement.ScannedForRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:AssessedElement.inBaseCase  true .
+    
+    <urn:uuid:65174269-44fb-44ae-9d3e-f743176c4bcb>
+            rdf:type                       nc:AssessedElement;
+            cim:IdentifiedObject.description
+                    "This is an example of assessed element.";
+            cim:IdentifiedObject.mRID      "65174269-44fb-44ae-9d3e-f743176c4bcb";
+            cim:IdentifiedObject.name      "AE1";
+            nc:AssessedElement.AssessedSystemOperator
+                    <urn:uuid:b9fbb881-573b-4e98-9b7b-31f00a45ebe0>;
+            nc:AssessedElement.ConductingEquipment
+                    <urn:uuid:63d8319b-fae4-3511-0909-dd62359c17f2>;
+            nc:AssessedElement.OperationalLimit
+                    <urn:uuid:a8078f99-e0ae-4ba4-0cbd-a1d1e2dccbd3>;
+            nc:AssessedElement.ScannedForRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:AssessedElement.inBaseCase  true .
+    
+    <urn:uuid:ba2c0214-9901-44a5-b3ce-574dccbd9792>
+            rdf:type  nc:AssessedElementWithContingency;
+            nc:AssessedElementWithContingency.AssessedElement
+                    <urn:uuid:614648d2-457e-4d67-838b-821102ce16ee>;
+            nc:AssessedElementWithContingency.Contingency
+                    <urn:uuid:d9ef0d5e-732d-441e-9611-c817b0afbc41>;
+            nc:AssessedElementWithContingency.combinationConstraintKind
+                    nc:ElementCombinationConstraintKind.included;
+            nc:AssessedElementWithContingency.mRID
+                    "ba2c0214-9901-44a5-b3ce-574dccbd9792";
+            nc:AssessedElementWithContingency.normalEnabled
+                    true .
+    
+    <urn:uuid:614648d2-457e-4d67-838b-821102ce16ee>
+            rdf:type                       nc:AssessedElement;
+            cim:IdentifiedObject.description
+                    "This is an example of assessed element.";
+            cim:IdentifiedObject.mRID      "614648d2-457e-4d67-838b-821102ce16ee";
+            cim:IdentifiedObject.name      "AE8";
+            nc:AssessedElement.AssessedSystemOperator
+                    <urn:uuid:b9fbb881-573b-4e98-9b7b-31f00a45ebe0>;
+            nc:AssessedElement.ConductingEquipment
+                    <urn:uuid:6f5e600f-dc92-80ac-b046-a4641f7b1db1>;
+            nc:AssessedElement.OperationalLimit
+                    <urn:uuid:97cd7bb9-db25-f4de-2be2-8a0b2cc0ed3e>;
+            nc:AssessedElement.ScannedForRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:AssessedElement.inBaseCase  true .
+    
+    <urn:uuid:05675c5e-985b-4859-a774-f7e371623b87>
+            rdf:type                       nc:AssessedElement;
+            cim:IdentifiedObject.description
+                    "This is an example of assessed element.";
+            cim:IdentifiedObject.mRID      "05675c5e-985b-4859-a774-f7e371623b87";
+            cim:IdentifiedObject.name      "AE5";
+            nc:AssessedElement.AssessedSystemOperator
+                    <urn:uuid:b9fbb881-573b-4e98-9b7b-31f00a45ebe0>;
+            nc:AssessedElement.ConductingEquipment
+                    <urn:uuid:20f3f6ca-906f-4c6c-bc12-89ffff80b03b>;
+            nc:AssessedElement.OperationalLimit
+                    <urn:uuid:be78f806-2f47-3e72-d5e1-58d186a193f9>;
+            nc:AssessedElement.ScannedForRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:AssessedElement.inBaseCase  true .
+    
+    <urn:uuid:8eadfd27-7de1-483b-8ac2-52baa9b64608>
+            rdf:type  nc:AssessedElementWithContingency;
+            nc:AssessedElementWithContingency.AssessedElement
+                    <urn:uuid:05675c5e-985b-4859-a774-f7e371623b87>;
+            nc:AssessedElementWithContingency.Contingency
+                    <urn:uuid:5d587c7e-9ced-416a-ad17-6ef9b241a998>;
+            nc:AssessedElementWithContingency.combinationConstraintKind
+                    nc:ElementCombinationConstraintKind.included;
+            nc:AssessedElementWithContingency.mRID
+                    "8eadfd27-7de1-483b-8ac2-52baa9b64608";
+            nc:AssessedElementWithContingency.normalEnabled
+                    true .
+    
+    <urn:uuid:662cc3bd-25bf-4b7f-96e9-eab3bec328f7>
+            rdf:type                       nc:AssessedElement;
+            cim:IdentifiedObject.description
+                    "This is an example of assessed element.";
+            cim:IdentifiedObject.mRID      "662cc3bd-25bf-4b7f-96e9-eab3bec328f7";
+            cim:IdentifiedObject.name      "AE2";
+            nc:AssessedElement.AssessedSystemOperator
+                    <urn:uuid:b9fbb881-573b-4e98-9b7b-31f00a45ebe0>;
+            nc:AssessedElement.ConductingEquipment
+                    <urn:uuid:c1324554-fa88-4259-9782-b3aaf0cb97d2>;
+            nc:AssessedElement.OperationalLimit
+                    <urn:uuid:aaf4daa7-43ba-24f1-2517-d8362b1a0297>;
+            nc:AssessedElement.ScannedForRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:AssessedElement.inBaseCase  true .
+    
+    <urn:uuid:2cb8db8c-faa6-42a2-9949-56ea98dc4a24>
+            rdf:type                       nc:AssessedElement;
+            cim:IdentifiedObject.description
+                    "This is an example of assessed element.";
+            cim:IdentifiedObject.mRID      "2cb8db8c-faa6-42a2-9949-56ea98dc4a24";
+            cim:IdentifiedObject.name      "AE6";
+            nc:AssessedElement.AssessedSystemOperator
+                    <urn:uuid:b9fbb881-573b-4e98-9b7b-31f00a45ebe0>;
+            nc:AssessedElement.ConductingEquipment
+                    <urn:uuid:c77668c9-6993-4391-8c03-29fc802ad605>;
+            nc:AssessedElement.ScannedForRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:AssessedElement.inBaseCase  true .
+    
+    <urn:uuid:256a1257-6e49-4064-8add-cea8a377cddb>
+            rdf:type  nc:AssessedElementWithContingency;
+            nc:AssessedElementWithContingency.AssessedElement
+                    <urn:uuid:2cb8db8c-faa6-42a2-9949-56ea98dc4a24>;
+            nc:AssessedElementWithContingency.Contingency
+                    <urn:uuid:264e9a19-ae28-4c85-a43c-6b7818ca0e6c>;
+            nc:AssessedElementWithContingency.combinationConstraintKind
+                    nc:ElementCombinationConstraintKind.included;
+            nc:AssessedElementWithContingency.mRID
+                    "256a1257-6e49-4064-8add-cea8a377cddb";
+            nc:AssessedElementWithContingency.normalEnabled
+                    true .
+    
+    <urn:uuid:126cd132-af5b-420c-9998-a646e338997e>
+            rdf:type              dcat:Dataset;
+            dct:accessRights      "https://energy.referencedata.eu/Confidentiality/Public";
+            dct:conformsTo        "https://ap.cim4.eu/AssessedElement/2.4" , "https://cim.ucaiug.io/ns#" , "https://cim4.eu/ns/nc/2.4#" , "http://iec.ch/TC57/2013/CIM-schema-cim16#";
+            dct:description       "This is assessed element dataset for Svedala part of ReliCapGrid."@en;
+            dct:identifier        "126cd132-af5b-420c-9998-a646e338997e";
+            dct:issued            "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dct:license           "https://creativecommons.org/licenses/by/4.0/";
+            dct:publisher         "https://energy.referencedata.eu/Test/Party/Svedala";
+            dct:requires          <urn:uuid:f7b94ef6-e043-4d2a-a359-2718e6e20507>;
+            dct:rights            "Copyright";
+            dct:rightsHolder      "ENTSO-E";
+            dct:spatial           "https://energy.referencedata.eu/Test/Frame/Svedala-Power-Transmission-System";
+            dct:title             "20220615_Svedala_AE_1.0.0";
+            dcat:endDate          "2023-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Svedala-AE>;
+            dcat:keyword          "AE";
+            dcat:startDate        "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:version          "1.0.0";
+            prov:generatedAtTime  "2022-06-10T07:06:25Z"^^xsd:dateTime;
+            prov:wasGeneratedBy   "https://energy.referencedata.eu/Activity/CGM-AE" .
+    
+    <urn:uuid:35e22789-6d31-4b67-b67b-a59119c08e80>
+            rdf:type  nc:AssessedElementWithContingency;
+            nc:AssessedElementWithContingency.AssessedElement
+                    <urn:uuid:808b9ea1-bf10-448d-b03a-822ce473dbbb>;
+            nc:AssessedElementWithContingency.Contingency
+                    <urn:uuid:e05bbe20-9d4a-40da-9777-8424d216785d>;
+            nc:AssessedElementWithContingency.combinationConstraintKind
+                    nc:ElementCombinationConstraintKind.included;
+            nc:AssessedElementWithContingency.mRID
+                    "35e22789-6d31-4b67-b67b-a59119c08e80";
+            nc:AssessedElementWithContingency.normalEnabled
+                    true .
+    
+    <urn:uuid:43587d4c-c6fa-4949-9c3b-466d1cf2a693>
+            rdf:type                      nc:CrossBorderRelevance;
+            nc:CrossBorderRelevance.AssessedElement
+                    <urn:uuid:dd12129d-1807-408b-84c7-d670958e8e64>;
+            nc:CrossBorderRelevance.mRID  "43587d4c-c6fa-4949-9c3b-466d1cf2a693";
+            nc:CrossBorderRelevance.normalEnabled
+                    true .
+    
+    <urn:uuid:53aec823-9237-4625-bd68-c5a5b2925384>
+            rdf:type                       nc:AssessedElement;
+            cim:IdentifiedObject.description
+                    "This is an example of assessed element.";
+            cim:IdentifiedObject.mRID      "53aec823-9237-4625-bd68-c5a5b2925384";
+            cim:IdentifiedObject.name      "AE7";
+            nc:AssessedElement.AssessedSystemOperator
+                    <urn:uuid:b9fbb881-573b-4e98-9b7b-31f00a45ebe0>;
+            nc:AssessedElement.ConductingEquipment
+                    <urn:uuid:20f3f6ca-906f-4c6c-bc12-89ffff80b03b>;
+            nc:AssessedElement.OperationalLimit
+                    <urn:uuid:be78f806-2f47-3e72-d5e1-58d186a193f9>;
+            nc:AssessedElement.ScannedForRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:AssessedElement.inBaseCase  true .
+    
+    <urn:uuid:675c5ed8-5b85-49c7-944c-e3b1a28b875a>
+            rdf:type  nc:AssessedElementWithContingency;
+            nc:AssessedElementWithContingency.AssessedElement
+                    <urn:uuid:07c95f06-f154-4e3a-a359-2829e6e21618>;
+            nc:AssessedElementWithContingency.Contingency
+                    <urn:uuid:475ba18f-cbf5-490b-b65d-e8e03f9bcbc4>;
+            nc:AssessedElementWithContingency.combinationConstraintKind
+                    nc:ElementCombinationConstraintKind.included;
+            nc:AssessedElementWithContingency.mRID
+                    "675c5ed8-5b85-49c7-944c-e3b1a28b875a";
+            nc:AssessedElementWithContingency.normalEnabled
+                    true .
+    
+    <urn:uuid:bde1ef4b-58f2-4a6d-8102-f6e3898d0931>
+            rdf:type                       nc:AssessedElement;
+            cim:IdentifiedObject.description
+                    "This is an example of Assessed Element (XNE) that can only be solved with a specific Curative Remedial Action.";
+            cim:IdentifiedObject.mRID      "bde1ef4b-58f2-4a6d-8102-f6e3898d0931";
+            cim:IdentifiedObject.name      "AE11_Exclusive_CRA";
+            nc:AssessedElement.AssessedSystemOperator
+                    <urn:uuid:b9fbb881-573b-4e98-9b7b-31f00a45ebe0>;
+            nc:AssessedElement.ConductingEquipment
+                    <urn:uuid:2ab1b800-0c93-4517-86b5-8fd6a3a24ee7>;
+            nc:AssessedElement.CrossBorderRelevance
+                    <https://energy.referencedata.eu/Test/Model/Svedala-AE#_dd12129d-1807-408b-84c7-d670958e8e64>;
+            nc:AssessedElement.OperationalLimit
+                    <urn:uuid:27b21fb5-7b8b-9818-dc11-7053f69b7aaf>;
+            nc:AssessedElement.ScannedForRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:AssessedElement.inBaseCase  true;
+            nc:AssessedElement.isCombinableWithRemedialAction
+                    true .
+    
+    <urn:uuid:57246b44-8564-4b4d-b74a-759c7733bd2a>
+            rdf:type                       nc:AssessedElement;
+            cim:IdentifiedObject.description
+                    "This is an example of assessed element.";
+            cim:IdentifiedObject.mRID      "57246b44-8564-4b4d-b74a-759c7733bd2a";
+            cim:IdentifiedObject.name      "AE10";
+            nc:AssessedElement.AssessedSystemOperator
+                    <urn:uuid:b9fbb881-573b-4e98-9b7b-31f00a45ebe0>;
+            nc:AssessedElement.ConductingEquipment
+                    <urn:uuid:f0dee14e-aa43-411e-a2ea-b9879c20f3be>;
+            nc:AssessedElement.OperationalLimit
+                    <urn:uuid:0268de53-f6a6-5649-7e09-2eb8f3df08ba>;
+            nc:AssessedElement.ScannedForRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:AssessedElement.inBaseCase  true .
+    
+    <urn:uuid:abb23ba4-0fb8-46cf-8bac-aaec71c1c9aa>
+            rdf:type  nc:AssessedElementWithRemedialAction;
+            nc:AssessedElementWithRemedialAction.AssessedElement
+                    <urn:uuid:bde1ef4b-58f2-4a6d-8102-f6e3898d0931>;
+            nc:AssessedElementWithRemedialAction.RemedialAction
+                    <urn:uuid:347f4f7e-a2b6-4880-846a-8bd1effb00d5>;
+            nc:AssessedElementWithRemedialAction.combinationConstraintKind
+                    nc:ElementCombinationConstraintKind.included;
+            nc:AssessedElementWithRemedialAction.mRID
+                    "abb23ba4-0fb8-46cf-8bac-aaec71c1c9aa";
+            nc:AssessedElementWithRemedialAction.normalEnabled
+                    true .
+    
+    <urn:uuid:07c95f06-f154-4e3a-a359-2829e6e21618>
+            rdf:type                       nc:AssessedElement;
+            cim:IdentifiedObject.description
+                    "This is an example of assessed element.";
+            cim:IdentifiedObject.mRID      "07c95f06-f154-4e3a-a359-2829e6e21618";
+            cim:IdentifiedObject.name      "AE4";
+            nc:AssessedElement.AssessedSystemOperator
+                    <urn:uuid:b9fbb881-573b-4e98-9b7b-31f00a45ebe0>;
+            nc:AssessedElement.ConductingEquipment
+                    <urn:uuid:134e7e0a-4c7e-4faf-923f-6c15e53792d3>;
+            nc:AssessedElement.OperationalLimit
+                    <urn:uuid:4c9015de-a4aa-2098-8ed0-34609f0a2e7e>;
+            nc:AssessedElement.ScannedForRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:AssessedElement.inBaseCase  true .
+}

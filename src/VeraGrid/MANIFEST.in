@@ -1,6 +1,15 @@
 
+include __init__.py
+include __version__.py
+include ExecuteVeraGrid.py
 include setup.py
 include LICENSE.txt
 recursive-include data *.*
+recursive-include Gui *.*
+recursive-include VeraGrid/Gui *.*
+recursive-exclude Gui/translations *.ts
+recursive-exclude VeraGrid/Gui/translations *.ts
+recursive-include Session *.*
+recursive-include ThirdParty *.*
 recursive-exclude tests *.*
 recursive-exclude research *.*

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:nc="https://cim4.eu/ns/nc#"
+    xmlns:cim="https://cim.ucaiug.io/ns#"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:eumd="https://cim4.eu/ns/Metadata-European#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#" > 
+  <dcat:Dataset rdf:about="urn:uuid:8a82ef13-ae28-4037-8a44-f84b1f639ba4">
+    <dcterms:accessRights>https://energy.referencedata.eu/Confidentiality/Public</dcterms:accessRights>
+    <dcterms:conformsTo>https://ap.cim4.eu/PowerSchedule/2.4</dcterms:conformsTo>
+    <dcterms:conformsTo>https://cim4.eu/ns/nc/2.4#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/CIM100#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/2013/CIM-schema-cim16#</dcterms:conformsTo>
+    <dcterms:description xml:lang="en">This is the power schedule dataset for Belgovia part of ReliCapGrid.</dcterms:description>
+    <dcat:endDate>2023-06-15T22:30:00Z</dcat:endDate>
+    <prov:generatedAtTime>2022-06-10T07:06:25Z</prov:generatedAtTime>
+    <dcterms:identifier>8a82ef13-ae28-4037-8a44-f84b1f639ba4</dcterms:identifier>
+    <dcat:isVersionOf rdf:resource="https://energy.referencedata.eu/Test/Model/Belgovia-PS"/>
+    <dcat:keyword>PS</dcat:keyword>
+    <dcterms:license>https://creativecommons.org/licenses/by/4.0/</dcterms:license>
+    <dcterms:publisher>https://energy.referencedata.eu/test/party/Belgovia</dcterms:publisher>
+    <dcterms:rights>Copyright</dcterms:rights>
+    <dcterms:rightsHolder>ENTSO-E</dcterms:rightsHolder>	
+    <dcterms:requires rdf:resource="urn:uuid:7528537a-551c-45bf-9e4f-1854287d5cdc"/>
+    <dcat:startDate>2022-06-15T22:30:00Z</dcat:startDate>
+    <dcterms:title>20220615_Belgovia_AE_1.0.0</dcterms:title>
+    <dcat:version>1.0.0</dcat:version>
+    <prov:wasGeneratedBy>https://energy.referencedata.eu/Activity/CGM-PS</prov:wasGeneratedBy>
+    <dcterms:spatial>https://energy.referencedata.eu/Test/Frame/Belgovia-Power-Transmission-System</dcterms:spatial>
+    <dcterms:issued>2022-06-15T22:30:00Z</dcterms:issued>
+  </dcat:Dataset>
+
+  <!-- 7.1.8.3.2 Defining a Power (Countertrade) Remedial Action by using Power Schedule  -->
+  <nc:PowerSchedule rdf:ID="_27940387-6935-47b6-ab25-8742bac2a266">
+    <cim:IdentifiedObject.mRID>27940387-6935-47b6-ab25-8742bac2a266</cim:IdentifiedObject.mRID>
+    <nc:PowerSchedule.PowerRemedialAction rdf:resource="#_30f6377d-5e35-4dd0-a53d-c1992043855e"/>
+    <nc:PowerSchedule.GeneratingUnit rdf:resource="#_413bbc8a-683c-7e07-4fb9-aa6ec83278e0"/>
+    <nc:PowerSchedule.powerScheduleKind rdf:resource="https://cim4.eu/ns/nc#PowerScheduleKind.power"/>
+    <nc:BaseTimeSeries.timeSeriesKind rdf:resource="https://cim4.eu/ns/nc#BaseTimeSeriesKind.forecast"/>
+    <nc:BaseTimeSeries.interpolationKind rdf:resource="https://cim4.eu/ns/nc#TimeSeriesInterpolationKind.none"/>
+  </nc:PowerSchedule>
+  <nc:PowerTimePoint rdf:ID="_014615b6-134c-40c3-9d1b-b4d3aa6704fc">
+    <nc:PowerTimePoint.activatedP>45.2835</nc:PowerTimePoint.activatedP>
+    <nc:PowerTimePoint.atTime>2024-02-22T14:30:00Z</nc:PowerTimePoint.atTime>
+    <nc:PowerTimePoint.PowerSchedule rdf:resource="#_27940387-6935-47b6-ab25-8742bac2a266"/>
+  </nc:PowerTimePoint>
+
+</rdf:RDF>

@@ -12,6 +12,8 @@ from VeraGridEngine.Simulations.Derivatives.ac_jacobian import create_J_vc_csc
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions import (compute_fx_error,
                                                                                     power_flow_post_process_nonlinear)
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.discrete_controls import (control_q_inside_method,
+                                                                                     DiscreteShuntControlState,
+                                                                                     QvDroopControlState,
                                                                                      compute_slack_distribution)
 from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_formulation_template import PfFormulationTemplate
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions import (compute_zip_power, compute_power,
@@ -19,13 +21,17 @@ from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions impo
 from VeraGridEngine.Topology.simulation_indices import compile_types
 from VeraGridEngine.basic_structures import Vec, IntVec, CxVec
 from VeraGridEngine.Utils.Sparse.csc2 import CSC
-from VeraGridEngine.enumerations import ShuntControlMode
-
-
 class PfBasicFormulation(PfFormulationTemplate):
 
-    def __init__(self, V0: CxVec, S0: CxVec, I0: CxVec, Y0: CxVec, Qmin: Vec, Qmax: Vec,
-                 nc: NumericalCircuit, options: PowerFlowOptions):
+    def __init__(self,
+                 V0: CxVec,
+                 S0: CxVec,
+                 I0: CxVec,
+                 Y0: CxVec,
+                 Qmin: Vec,
+                 Qmax: Vec,
+                 nc: NumericalCircuit,
+                 options: PowerFlowOptions):
         """
 
         :param V0:
@@ -39,9 +45,12 @@ class PfBasicFormulation(PfFormulationTemplate):
         PfFormulationTemplate.__init__(self, V0=V0, options=options)
 
         self.nc = nc
+
+        # Compile the admittances
         self.adm: AdmittanceMatrices = nc.get_admittance_matrices()
         if options.verbose > 1:
             print(f"Ybus: \n {self.adm.Ybus.toarray()}")
+
         self.S0: CxVec = S0
         self.I0: CxVec = I0
         self.Y0: CxVec = Y0
@@ -49,21 +58,22 @@ class PfBasicFormulation(PfFormulationTemplate):
         self.Qmin = Qmin
         self.Qmax = Qmax
 
+        # Store the control states in lightweight wrappers that forward the
+        # numerical work to the existing Numba kernels.
+        self.discrete_shunt_control = DiscreteShuntControlState(nc=self.nc)
+        self.qv_droop_control = QvDroopControlState(S0=self.S0, nc=self.nc)
+
+        # Compile the classical bus types
         self.vd, self.pq, self.pv, self.pqv, self.p, self.no_slack = compile_types(
             Pbus=S0.real,
             types=self.nc.bus_data.bus_types
         )
 
+        # Arrays for index slicing
         self.idx_dVa = np.r_[self.pv, self.pq, self.pqv, self.p]
         self.idx_dVm = np.r_[self.pq, self.p]
         self.idx_dP = self.idx_dVa
         self.idx_dQ = np.r_[self.pq, self.pqv]
-
-        self.buses_with_discrete_shunts_control: List[Tuple[int, int]] = list()
-        self.shunt_step = self.nc.shunt_data.step.copy()
-        for sh_i, bus_i in enumerate(self.nc.shunt_data.bus_idx):
-            if self.nc.shunt_data.control_mode[sh_i] == ShuntControlMode.Discrete:
-                self.buses_with_discrete_shunts_control.append((bus_i, sh_i))
 
     def x2var(self, x: Vec):
         """
@@ -79,7 +89,7 @@ class PfBasicFormulation(PfFormulationTemplate):
 
     def var2x(self) -> Vec:
         """
-        Convert the internal decission variables into the vector
+        Convert the internal decision variables into the vector
         :return: Vector
         """
         return np.r_[
@@ -140,7 +150,7 @@ class PfBasicFormulation(PfFormulationTemplate):
             dS[self.idx_dP].real,
             dS[self.idx_dQ].imag
         ]
-        
+
         # compute the error
         return compute_fx_error(_f), x
 
@@ -171,14 +181,14 @@ class PfBasicFormulation(PfFormulationTemplate):
         # compute the error
         self._error = compute_fx_error(self._f)
 
-        # review reactive power limits
+        # review reactive power limits ---------------------------------------------------------------------------------
         # it is only worth checking Q limits with a low error
         # since with higher errors, the Q values may be far from realistic
         # finally, the Q control only makes sense if there are pv nodes
         if update_controls and self._error < self._controls_tol:
             any_change = False
 
-            # update Q limits control
+            # update Q limits control-----------------------------------------------------------------------------------
             if self.options.control_Q and (len(self.pv) + len(self.p)) > 0:
 
                 # check and adjust the reactive power
@@ -199,42 +209,21 @@ class PfBasicFormulation(PfFormulationTemplate):
                     # the composition of x may have changed, so recompute
                     x = self.var2x()
 
-            # discrete shunt logic
-            for bus_i, sh_i in self.buses_with_discrete_shunts_control:
-                if self.Vm[bus_i] > self.nc.shunt_data.vmax[sh_i]:
-                    # decrease B
-                    g_steps: IntVec = self.nc.shunt_data.g_steps[sh_i]
-                    b_steps: IntVec = self.nc.shunt_data.b_steps[sh_i]
-                    if self.shunt_step[sh_i] > 0:
-                        prev_g = g_steps[self.shunt_step[sh_i]] / self.nc.Sbase
-                        prev_b = b_steps[self.shunt_step[sh_i]] / self.nc.Sbase
-                        self.shunt_step[sh_i] -= 1
-                        g = prev_g - g_steps[self.shunt_step[sh_i]] / self.nc.Sbase
-                        b = prev_b - b_steps[self.shunt_step[sh_i]] / self.nc.Sbase
-                        self.adm.Ybus[bus_i, bus_i] += complex(g, b) - complex(prev_g, prev_b)
-                        any_change = True
+            # discrete shunt logic -------------------------------------------------------------------------------------
+            if self.discrete_shunt_control.apply(Vm=self.Vm, adm=self.adm):
+                any_change = True
 
-                elif self.Vm[bus_i] < self.nc.shunt_data.vmin[sh_i]:
-                    # increase B
-                    g_steps: IntVec = self.nc.shunt_data.g_steps[sh_i]
-                    b_steps: IntVec = self.nc.shunt_data.b_steps[sh_i]
-                    if self.shunt_step[sh_i] < (len(b_steps) - 1):
-                        prev_g = g_steps[self.shunt_step[sh_i]] / self.nc.Sbase
-                        prev_b = b_steps[self.shunt_step[sh_i]] / self.nc.Sbase
-                        self.shunt_step[sh_i] += 1
-                        g = prev_g + g_steps[self.shunt_step[sh_i]] / self.nc.Sbase
-                        b = prev_b + b_steps[self.shunt_step[sh_i]] / self.nc.Sbase
-                        self.adm.Ybus[bus_i, bus_i] += complex(g, b) - complex(prev_g, prev_b)
-                        any_change = True
-                else:
-                    # within boundaries
-                    pass
+            # update QV droop generators -------------------------------------------------------------------------------
+            if self.qv_droop_control.apply(S0=self.S0, Vm=self.Vm):
+                any_change = True
 
-            # update Slack control
+            # update Slack control -------------------------------------------------------------------------------------
             if self.options.distributed_slack:
-                ok, delta = compute_slack_distribution(Scalc=self.Scalc,
-                                                       vd=self.vd,
-                                                       bus_installed_power=self.nc.bus_data.installed_power)
+                ok, delta = compute_slack_distribution(
+                    Scalc=self.Scalc,
+                    vd=self.vd,
+                    bus_installed_power=self.nc.bus_data.installed_power
+                )
                 if ok:
                     any_change = True
                     # Update the objective power to reflect the slack distribution
@@ -247,7 +236,7 @@ class PfBasicFormulation(PfFormulationTemplate):
                 # compute the error
                 self._error = compute_fx_error(self._f)
 
-        # converged?
+        # converged? ---------------------------------------------------------------------------------------------------
         self._converged = self._error < self.options.tolerance
 
         return self._error, self._converged, x, self.f

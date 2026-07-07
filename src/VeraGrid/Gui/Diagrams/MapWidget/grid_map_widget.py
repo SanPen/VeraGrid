@@ -17,9 +17,11 @@ from matplotlib import pyplot as plt
 from PySide6.QtWidgets import QGraphicsItem, QMessageBox, QDialog, QVBoxLayout, QLabel, QPushButton
 from collections.abc import Callable
 from PySide6.QtCore import (Qt, QMimeData, QIODevice, QByteArray, QDataStream, QModelIndex, QRunnable, QThreadPool)
-from PySide6.QtGui import (QIcon, QPixmap, QImage, QStandardItemModel, QStandardItem, QColor, QDropEvent)
+from PySide6.QtGui import (QIcon, QPixmap, QImage, QStandardItemModel, QStandardItem, QColor, QDropEvent,
+                           QWheelEvent, QPainter)
 
 from VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container import MapLineContainer
+from VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_polyline import MapLinePolyline
 from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics import MapInjectionTemplateGraphicItem
 from VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics import BusGraphicItem
 from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget
@@ -37,6 +39,7 @@ from VeraGridEngine.Devices.Injections.external_grid import ExternalGrid
 from VeraGridEngine.Devices.Injections.static_generator import StaticGenerator
 from VeraGridEngine.Devices.Diagrams.map_diagram import MapDiagram
 from VeraGridEngine.Devices.Fluid import FluidNode, FluidPath
+from VeraGridEngine.Utils.GeographicalMethods.haversine_distance import haversine_distance, closest_point_on_segment
 from VeraGridEngine.basic_structures import Vec, CxVec, IntVec
 from VeraGridEngine.Devices.Substation.substation import Substation
 from VeraGridEngine.Devices.Substation.voltage_level import VoltageLevel
@@ -80,24 +83,6 @@ if TYPE_CHECKING:
 MAP_BRANCH_GRAPHIC_TYPES = Union[
     MapAcLine, MapDcLine, MapHvdcLine, MapFluidPathLine
 ]
-
-
-def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
-    """
-    Distance between two lat,lon points
-    :param lat1:
-    :param lon1:
-    :param lat2:
-    :param lon2:
-    :return:
-    """
-    R = 6371  # Earth radius in kilometers
-    dLat = math.radians(lat2 - lat1)
-    dLon = math.radians(lon2 - lon1)
-    a = math.sin(dLat / 2) * math.sin(dLat / 2) + math.cos(math.radians(lat1)) * math.cos(
-        math.radians(lat2)) * math.sin(dLon / 2) * math.sin(dLon / 2)
-    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-    return R * c
 
 
 class MapLibraryModel(QStandardItemModel):
@@ -191,28 +176,36 @@ class SelectionDialog(QDialog):
 
     def __init__(self, branch: MAP_BRANCH_GRAPHIC_TYPES, vnom: float, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Waiting for Selection")
+        self.setWindowTitle(self.tr("Waiting for Selection"))
         self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
 
         layout = QVBoxLayout()
 
         # Add instructions
-        instruction_label = QLabel(f"Click on a substation to reconnect branch {branch.api_object.name}")
+        instruction_label = QLabel(
+            self.tr("Click on a substation to reconnect branch {branch_name}").format(
+                branch_name=branch.api_object.name,
+            )
+        )
         instruction_label.setWordWrap(True)
         layout.addWidget(instruction_label)
 
         # Add more detailed instructions
-        detail_label = QLabel(f"The substation should have a compatible voltage level ({vnom} kV)")
+        detail_label = QLabel(
+            self.tr("The substation should have a compatible voltage level ({voltage} kV)").format(
+                voltage=vnom,
+            )
+        )
         detail_label.setWordWrap(True)
         layout.addWidget(detail_label)
 
         # Add a status label that will be updated
-        self.status_label = QLabel("Waiting for selection...")
+        self.status_label = QLabel(self.tr("Waiting for selection..."))
         self.status_label.setWordWrap(True)
         layout.addWidget(self.status_label)
 
         # Add a cancel button
-        cancel_button = QPushButton("Cancel")
+        cancel_button = QPushButton(self.tr("Cancel"))
         cancel_button.clicked.connect(self.reject)
         layout.addWidget(cancel_button)
 
@@ -235,7 +228,7 @@ class GridMapWidget(BaseDiagramWidget):
                  longitude: float,
                  latitude: float,
                  name: str,
-                 diagram: Union[None, MapDiagram] = None):
+                 diagram: MapDiagram):
         """
         GridMapWidget
         :param tile_src: Tiles instance
@@ -243,11 +236,10 @@ class GridMapWidget(BaseDiagramWidget):
         :param longitude: Center point Longitude (deg)
         :param latitude: Center point Latitude (deg)
         :param name: Name of the diagram
-        :param circuit: MultiCircuit instance
         :param diagram: Diagram instance (optional)
         """
-        is_new_diagram = diagram is None
-        render_level = 6 if tile_src.level_in_range(6) else max(tile_src.min_level, min(start_level, tile_src.max_level))
+        render_level = 6 if tile_src.level_in_range(6) else max(tile_src.min_level,
+                                                                min(start_level, tile_src.max_level))
 
         super().__init__(
             gui=gui,
@@ -267,6 +259,7 @@ class GridMapWidget(BaseDiagramWidget):
                              editor=self,
                              zoom_callback=self.zoom_callback,
                              position_callback=self.position_callback)
+        self.diagram_scene.selectionChanged.connect(self._sync_line_handle_visibility)
 
         # Draw the overlay at a stable base zoom, then move to the persisted
         # viewport using the synchronized zoom path.
@@ -277,18 +270,25 @@ class GridMapWidget(BaseDiagramWidget):
         # pool of runnable tasks that work best done asynch with a runnable
         self.thread_pool = QThreadPool()
         self.wheel_move_task: QRunnable | None = None
+        self.zoom_angle_step: float = 120.0
+        self.zoom_pixel_step: float = 240.0
+        self.zoom_max_event_steps: float = 1.0
 
-        # Draw the diagram. New diagrams are auto-centered from their graphics;
+        # Draw the diagram. New diagrams are auto-centered from their graphics after the map viewport is initialized;
         # loaded diagrams must preserve their persisted viewport.
         self.draw()
-        if is_new_diagram:
-            self.center()
+        self._sync_line_handle_visibility()
 
         if self.diagram.start_level != self.map.level:
             self.map.apply_zoom_level(level=self.diagram.start_level)
 
         self.map.go_to_position(longitude=self.diagram.longitude,
                                 latitude=self.diagram.latitude)
+
+        self.center()
+        self._last_branch_width: float | None = None
+        self._last_arrow_width: float | None = None
+        self._last_substation_width: float | None = None
 
     def set_diagram(self, diagram: MapDiagram):
         """
@@ -298,7 +298,9 @@ class GridMapWidget(BaseDiagramWidget):
         """
         self.diagram = diagram
 
-    def delete_element_utility_function(self, device: ALL_DEV_TYPES, propagate: bool = True,
+    def delete_element_utility_function(self,
+                                        device: ALL_DEV_TYPES,
+                                        propagate: bool = True,
                                         graphic_object: QGraphicsItem | None = None):
         """
 
@@ -342,7 +344,7 @@ class GridMapWidget(BaseDiagramWidget):
         """
         return self.map.diagram_scene
 
-    def _get_selected(self) -> List[ALL_MAP_GRAPHICS | QGraphicsItem]:
+    def get_selected(self) -> List[ALL_MAP_GRAPHICS | QGraphicsItem]:
         """
         Get selection
         :return: List of ALL_MAP_GRAPHICS
@@ -354,63 +356,101 @@ class GridMapWidget(BaseDiagramWidget):
         Get a list of the API objects from the selection
         :return: List[EditableDevice]
         """
-        return [e.api_object for e in self._get_selected()]
+        return [e.api_object for e in self.get_selected()]
 
-    def get_selected_line_segments_tup(self) -> List[Tuple[Line, (MapAcLine,
-                                                                  MapDcLine,
-                                                                  MapHvdcLine,
-                                                                  MapFluidPathLine)]]:
+    def _get_selected_line_containers(self) -> List[MAP_BRANCH_GRAPHIC_TYPES]:
+        """
+        Get selected line containers from selected lines, segments or waypoints.
+        """
+        selected_lines: List[MAP_BRANCH_GRAPHIC_TYPES] = list()
+        selected_line_ids: set[int] = set()
+        item: QGraphicsItem
+        for item in self.diagram_scene.selectedItems():
+            if isinstance(item, (MapAcLine,
+                                 MapDcLine,
+                                 MapHvdcLine,
+                                 MapFluidPathLine)):
+                line_id = id(item)
+                if line_id not in selected_line_ids:
+                    selected_line_ids.add(line_id)
+                    selected_lines.append(item)
+            elif isinstance(item, MapLinePolyline):
+                line_id = id(item.container)
+                if line_id not in selected_line_ids:
+                    selected_line_ids.add(line_id)
+                    selected_lines.append(item.container)
+
+        return selected_lines
+
+    def _sync_line_handle_visibility(self) -> None:
+        """
+        Keep waypoint handles visible only for selected lines.
+        """
+        selected_lines = self._get_selected_line_containers()
+        selected_line_ids: set[int] = set(id(line_container) for line_container in selected_lines)
+
+        for dev_tpe in [DeviceType.LineDevice,
+                        DeviceType.DCLineDevice,
+                        DeviceType.HVDCLineDevice,
+                        DeviceType.FluidPathDevice]:
+            for line_container in self.graphics_manager.get_device_type_list(dev_tpe):
+                line_container.set_handles_visible(id(line_container) in selected_line_ids)
+
+    def get_selected_line_segments_tuple(self) -> List[Tuple[Line, (MapAcLine |
+                                                                    MapDcLine |
+                                                                    MapHvdcLine |
+                                                                    MapFluidPathLine)]]:
         """
         Get only selected line segments from the scene
 
         :return: List of (Line, (MapAcLine, MapDcLine, MapHvdcLine, MapFluidPathLine)) tuples
         """
-        selected_line_segments = []
-        for item in self.diagram_scene.selectedItems():
-            if (hasattr(item, 'api_object') and hasattr(item, 'container')
-                    and isinstance(item.container,
-                                   (MapAcLine,
-                                    MapDcLine,
-                                    MapHvdcLine,
-                                    MapFluidPathLine))):
-                selected_line_segments.append((item.api_object, item.container))
+        selected_line_segments = list()
+        for line_container in self._get_selected_line_containers():
+            selected_line_segments.append((line_container.api_object, line_container))
         return selected_line_segments
 
-    def get_selected_substations_tup(self) -> List[Tuple[Substation, SubstationGraphicItem]]:
+    def get_selected_substations_tuple(self) -> List[Tuple[Substation, SubstationGraphicItem]]:
         """
         Get only selected substations from the scene
 
         :return: List of (Substation, SubstationGraphicItem) tuples
         """
-        selected_substations = []
+        selected_substations = list()
         for item in self.diagram_scene.selectedItems():
-            if hasattr(item, 'api_object') and isinstance(item, SubstationGraphicItem):
+            if isinstance(item, SubstationGraphicItem):
                 selected_substations.append((item.api_object, item))
+            else:
+                pass
         return selected_substations
 
-    def get_selected_generators_tup(self) -> List[Tuple[Generator, MapGeneratorGraphicItem]]:
+    def get_selected_generators_tuple(self) -> List[Tuple[Generator, MapGeneratorGraphicItem]]:
         """
         Get only selected generators from the scene
 
         :return: List of (Generator, GeneratorGraphicItem) tuples
         """
-        selected_generators = []
+        selected_generators = list()
         for item in self.diagram_scene.selectedItems():
-            if hasattr(item, 'api_object') and isinstance(item, MapGeneratorGraphicItem):
+            if isinstance(item, MapGeneratorGraphicItem):
                 selected_generators.append((item.api_object, item))
+            else:
+                pass
         return selected_generators
 
-    def get_selected_linelocations_tup(self) -> List[Tuple[LineLocation, LineLocationGraphicItem]]:
+    def get_selected_line_locations_tuple(self) -> List[Tuple[LineLocation, LineLocationGraphicItem]]:
         """
         Get only selected Line Locations from the scene
 
         :return: List of (LineLocation, LineLocationGraphicItem) tuples
         """
-        selected_linelocations = []
+        selected_line_locations = list()
         for item in self.diagram_scene.selectedItems():
-            if hasattr(item, 'api_object') and isinstance(item, LineLocationGraphicItem):
-                selected_linelocations.append((item.api_object, item))
-        return selected_linelocations
+            if isinstance(item, LineLocationGraphicItem):
+                selected_line_locations.append((item.api_object, item))
+            else:
+                pass
+        return selected_line_locations
 
     def add_to_scene(self, graphic_object: ALL_MAP_GRAPHICS = None) -> None:
         """
@@ -425,10 +465,28 @@ class GridMapWidget(BaseDiagramWidget):
         Remove item from the diagram scene
         :param graphic_object: Graphic object associated
         """
-        api_object = getattr(graphic_object, 'api_object', None)
-        if api_object is not None:
-            self.graphics_manager.delete_device(api_object)
+        if isinstance(graphic_object, GenericDiagramWidget):
+            if graphic_object.api_object is not None:
+                self.graphics_manager.delete_device(graphic_object.api_object)
+            else:
+                pass
+        else:
+            pass
         self.diagram_scene.removeItem(graphic_object)
+
+    def clear(self) -> None:
+        """
+        Clear the map diagram scene and graphics registry.
+        """
+        super().clear()
+        self.diagram_scene.clear()
+
+    def prepare_to_delete(self) -> None:
+        """
+        Stop map-specific background work before widget destruction.
+        """
+        self.map.tile_src.shutdown()
+        super().prepare_to_delete()
 
     def remove_element(self,
                        device: ALL_DEV_TYPES,
@@ -476,19 +534,48 @@ class GridMapWidget(BaseDiagramWidget):
         self.diagram.latitude = latitude
         self.diagram.longitude = longitude
 
-    def zoom_in(self):
+    def zoom_in(self) -> None:
         """
         Zoom in
         """
         if self.map.level + 1 <= self.map.max_level:
             self.map.apply_zoom_level(level=self.map.level + 1)
 
-    def zoom_out(self):
+    def zoom_out(self) -> None:
         """
         Zoom out
         """
         if self.map.level - 1 >= self.map.min_level:
             self.map.apply_zoom_level(level=self.map.level - 1)
+
+    def get_wheel_zoom_steps(self, event: QWheelEvent) -> float:
+        """
+        Convert a wheel event into a normalized zoom step count.
+
+        A mouse wheel commonly emits an angle delta of 120 units per notch, while laptop touchpads emit many smaller
+        high-resolution events and may provide pixel deltas. Normalizing by the event magnitude keeps mouse-wheel zoom
+        unchanged and lets touchpad gestures accumulate progressively instead of changing one map level per event.
+
+        :param event: Wheel event coming from the map view.
+        :return: Signed zoom step count.
+        """
+        pixel_delta_y: int = event.pixelDelta().y()
+        angle_delta_y: int = event.angleDelta().y()
+
+        if pixel_delta_y != 0:
+            zoom_steps: float = float(pixel_delta_y) / self.zoom_pixel_step
+        else:
+            zoom_steps = float(angle_delta_y) / self.zoom_angle_step
+
+        if zoom_steps > self.zoom_max_event_steps:
+            normalized_zoom_steps: float = self.zoom_max_event_steps
+        else:
+            if zoom_steps < -self.zoom_max_event_steps:
+                normalized_zoom_steps = -self.zoom_max_event_steps
+            else:
+                normalized_zoom_steps = zoom_steps
+
+        return normalized_zoom_steps
 
     def to_lat_lon(self, x: float, y: float) -> Tuple[float, float]:
         """
@@ -586,14 +673,15 @@ class GridMapWidget(BaseDiagramWidget):
 
         return buses
 
-    def get_substations(self) -> List[Tuple[int, Substation, SubstationGraphicItem]]:
+    def get_substations(self) -> List[Tuple[int, Substation, SubstationGraphicItem | None]]:
         """
         Get all the substations
         :return: tuple(substation index, substation_api_object, substation_graphic_object)
         """
-        lst: List[Tuple[int, Substation, Union[SubstationGraphicItem, None]]] = list()
+        lst: List[Tuple[int, Substation, SubstationGraphicItem | None]] = list()
         substation_graphics_dict = self.graphics_manager.get_device_type_dict(DeviceType.SubstationDevice)
-        substations_dict: Dict[str: Tuple[int, Bus]] = {b.idtag: (i, b) for i, b in enumerate(self.circuit.substations)}
+        substations_dict: Dict[str, Tuple[int, Substation]] = {b.idtag: (i, b)
+                                                               for i, b in enumerate(self.circuit.substations)}
 
         for bus_idtag, graphic_object in substation_graphics_dict.items():
             idx, substation = substations_dict[bus_idtag]
@@ -672,6 +760,10 @@ class GridMapWidget(BaseDiagramWidget):
 
                     self.graphics_manager.delete_device(elm.api_object)
 
+                    if elm.polyline is not None:
+                        self.diagram_scene.removeItem(elm.polyline)
+                        elm.polyline = None
+
                     for segment in elm.segments_list:
                         self._remove_from_scene(segment)
 
@@ -703,6 +795,10 @@ class GridMapWidget(BaseDiagramWidget):
 
             if delete_from_db:
                 self.circuit.delete_branch(obj=line.api_object)
+
+            if lin.polyline is not None:
+                self.diagram_scene.removeItem(lin.polyline)
+                lin.polyline = None
 
             for seg in lin.segments_list:
                 self._remove_from_scene(seg)
@@ -798,6 +894,11 @@ class GridMapWidget(BaseDiagramWidget):
                                          graphic=graphic_object)
 
         self.add_to_scene(graphic_object=graphic_object)
+
+        self.diagram.set_point(device=api_object,
+                               location=MapLocation(latitude=lat,
+                                                    longitude=lon,
+                                                    api_object=api_object))
 
         return graphic_object
 
@@ -1088,18 +1189,15 @@ class GridMapWidget(BaseDiagramWidget):
 
             elif isinstance(elm, DcLine):
                 line_container = self.add_api_dc_line(elm)
-                for segment in line_container.segments_list:
-                    self.add_to_scene(graphic_object=segment)
+                self.add_to_scene(graphic_object=line_container)
 
             elif isinstance(elm, HvdcLine):
                 line_container = self.add_api_hvdc_line(elm)
-                for segment in line_container.segments_list:
-                    self.add_to_scene(graphic_object=segment)
+                self.add_to_scene(graphic_object=line_container)
 
             elif isinstance(elm, FluidPath):
                 line_container = self.add_api_fluid_path(elm)
-                for segment in line_container.segments_list:
-                    self.add_to_scene(graphic_object=segment)
+                self.add_to_scene(graphic_object=line_container)
 
             else:
                 logger.add_warning("Unsupported device class",
@@ -1223,45 +1321,56 @@ class GridMapWidget(BaseDiagramWidget):
         Update the devices' sizes
         :return:
         """
-        print('Updating device sizes!')
-        self.diagram_scene.blockSignals(True)
-        self.diagram_scene.invalidate(self.diagram_scene.sceneRect())
-
         branch_width = self.diagram.min_branch_width  # self.get_branch_width()
         arrow_width = self.diagram.arrow_size  # self.get_arrow_scale()
         se_width = self.diagram.min_bus_width  # self.get_substation_scale()
 
-        # rescale lines
-        for dev_tpe in [DeviceType.LineDevice,
-                        DeviceType.DCLineDevice,
-                        DeviceType.HVDCLineDevice,
-                        DeviceType.FluidPathDevice]:
-            graphics_dict = self.graphics_manager.get_device_type_dict(device_type=dev_tpe)
+        if self._last_branch_width == branch_width and self._last_arrow_width == arrow_width and self._last_substation_width == se_width:
+            return
+        else:
+            pass
 
-            #  TODO: this is super-slow
+        self.diagram_scene.blockSignals(True)
+        self.map.view.setUpdatesEnabled(False)
+
+        try:
+            # rescale lines
+            for dev_tpe in [DeviceType.LineDevice,
+                            DeviceType.DCLineDevice,
+                            DeviceType.HVDCLineDevice,
+                            DeviceType.FluidPathDevice]:
+                graphics_dict = self.graphics_manager.get_device_type_dict(device_type=dev_tpe)
+
+                #  TODO: this is super-slow
+                for key, elm_graphics in graphics_dict.items():
+                    elm_graphics.set_width_scale(width=branch_width, arrow_width=arrow_width)
+
+            # Rescale LineLocations:
+            graphics_dict = self.graphics_manager.get_device_type_dict(device_type=DeviceType.LineLocation)
+
             for key, elm_graphics in graphics_dict.items():
-                elm_graphics.set_width_scale(width=branch_width, arrow_width=arrow_width)
+                elm_graphics.resize(new_radius=branch_width)
 
-        # Rescale LineLocations:
-        graphics_dict = self.graphics_manager.get_device_type_dict(device_type=DeviceType.LineLocation)
+            # rescale substations (this is super-fast)
+            for dev_tpe in [DeviceType.SubstationDevice,
+                            DeviceType.GeneratorDevice,
+                            DeviceType.BatteryDevice,
+                            DeviceType.LoadDevice,
+                            DeviceType.ExternalGridDevice,
+                            DeviceType.StaticGeneratorDevice]:
+                data: Dict[str, SubstationGraphicItem] = self.graphics_manager.get_device_type_dict(dev_tpe)
+                for se_key, elm_graphics in data.items():
+                    elm_graphics.set_api_object_color()
+                    elm_graphics.set_size(r=se_width)
 
-        for key, elm_graphics in graphics_dict.items():
-            elm_graphics.resize(new_radius=branch_width)
+            self._last_branch_width = branch_width
+            self._last_arrow_width = arrow_width
+            self._last_substation_width = se_width
+        finally:
+            self.map.view.setUpdatesEnabled(True)
+            self.diagram_scene.blockSignals(False)
 
-        # rescale substations (this is super-fast)
-        for dev_tpe in [DeviceType.SubstationDevice,
-                        DeviceType.GeneratorDevice,
-                        DeviceType.BatteryDevice,
-                        DeviceType.LoadDevice,
-                        DeviceType.ExternalGridDevice,
-                        DeviceType.StaticGeneratorDevice]:
-            data: Dict[str, SubstationGraphicItem] = self.graphics_manager.get_device_type_dict(dev_tpe)
-            for se_key, elm_graphics in data.items():
-                elm_graphics.set_api_object_color()
-                elm_graphics.set_size(r=se_width)
-
-        self.diagram_scene.blockSignals(False)
-        self.diagram_scene.update(self.diagram_scene.sceneRect())
+        self.diagram_scene.update()
 
     def center(self) -> None:
         """
@@ -1378,6 +1487,14 @@ class GridMapWidget(BaseDiagramWidget):
                        vsc_active: IntVec = None,
                        ma: Vec = None,
                        tau: Vec = None,
+                       gen_p: Vec = None,
+                       gen_q: Vec = None,
+                       gen_names: np.ndarray | list[str] | None = None,
+                       battery_p: Vec = None,
+                       battery_q: Vec = None,
+                       battery_names: np.ndarray | list[str] | None = None,
+                       shunt_q: Vec = None,
+                       shunt_names: np.ndarray | list[str] | None = None,
                        fluid_node_p2x_flow: Vec = None,
                        fluid_node_current_level: Vec = None,
                        fluid_node_spillage: Vec = None,
@@ -1385,6 +1502,7 @@ class GridMapWidget(BaseDiagramWidget):
                        fluid_node_flow_out: Vec = None,
                        fluid_path_flow: Vec = None,
                        fluid_injection_flow: Vec = None,
+                       t_idx: int | None = None,
                        use_flow_based_width: bool = False,
                        min_branch_width: int = 5,
                        max_branch_width=5,
@@ -1435,6 +1553,7 @@ class GridMapWidget(BaseDiagramWidget):
 
         # voltage_cmap = viz.get_voltage_color_map()
         loading_cmap = viz.get_loading_color_map()
+        video_export_active: bool = self.is_video_export_active()
 
         # nbus = self.circuit.get_bus_number()
         # longitudes = np.zeros(nbus)
@@ -1466,13 +1585,20 @@ class GridMapWidget(BaseDiagramWidget):
 
                 if graphic_object:
 
-                    # compose the tooltip
-                    tooltip = str(i) + ': ' + branch.name
-                    tooltip += '\n' + loading_label + ': ' + "{:10.4f}".format(lnorm[i] * 100) + ' [%]'
-                    if Sf is not None:
-                        tooltip += '\nPower: ' + "{:10.4f}".format(Sf[i]) + ' [MVA]'
-                    if losses is not None:
-                        tooltip += '\nLosses: ' + "{:10.4f}".format(losses[i]) + ' [MVA]'
+                    # Tooltips are not visible in the export, so avoid rebuilding them per frame.
+                    if video_export_active:
+                        tooltip: str = ''
+                    else:
+                        tooltip = str(i) + ': ' + branch.name
+                        tooltip += '\n' + loading_label + ': ' + "{:10.4f}".format(lnorm[i] * 100) + ' [%]'
+                        if Sf is not None:
+                            tooltip += '\nPower: ' + "{:10.4f}".format(Sf[i]) + ' [MVA]'
+                        else:
+                            pass
+                        if losses is not None:
+                            tooltip += '\nLosses: ' + "{:10.4f}".format(losses[i]) + ' [MVA]'
+                        else:
+                            pass
 
                     # get the line colour
 
@@ -1505,11 +1631,10 @@ class GridMapWidget(BaseDiagramWidget):
 
                     graphic_object.set_colour(color=color, style=style, tool_tip=tooltip)
 
-                    if hasattr(graphic_object, 'set_arrows_with_power'):
-                        graphic_object.set_arrows_with_power(
-                            Sf=Sf[i] if Sf is not None else None,
-                            St=St[i] if St is not None else None
-                        )
+                    graphic_object.set_arrows_with_power(
+                        Sf=Sf[i] if Sf is not None else None,
+                        St=St[i] if St is not None else None
+                    )
                 else:
                     # the graphic object is None
                     pass
@@ -1528,14 +1653,6 @@ class GridMapWidget(BaseDiagramWidget):
                 graphic_object: MapHvdcLine = self.graphics_manager.query(branch)
 
                 if graphic_object:
-
-                    # compose the tooltip
-                    tooltip = str(i) + ': ' + branch.name
-                    tooltip += '\n' + loading_label + ': ' + "{:10.4f}".format(lnorm[i] * 100) + ' [%]'
-                    if Sf is not None:
-                        tooltip += '\nPower: ' + "{:10.4f}".format(hvdc_Pf[i]) + ' [MW]'
-                    if losses is not None:
-                        tooltip += '\nLosses: ' + "{:10.4f}".format(hvdc_losses[i]) + ' [MW]'
 
                     # get the line colour
                     a = 255
@@ -1562,16 +1679,23 @@ class GridMapWidget(BaseDiagramWidget):
                             np.floor(min_branch_width + Sfnorm[i] * (max_branch_width - min_branch_width) * 0.1)
                         )
                         graphic_object.set_width_scale(width=weight, arrow_width=arrow_size)
+                    else:
+                        pass
 
-                    tooltip = str(i) + ': ' + graphic_object.api_object.name
-                    tooltip += '\n' + loading_label + ': ' + "{:10.4f}".format(
-                        abs(hvdc_loading[i]) * 100) + ' [%]'
-
-                    tooltip += '\nPower (from):\t' + "{:10.4f}".format(hvdc_Pf[i]) + ' [MW]'
+                    if video_export_active:
+                        tooltip = ''
+                    else:
+                        tooltip = str(i) + ': ' + graphic_object.api_object.name
+                        tooltip += '\n' + loading_label + ': ' + "{:10.4f}".format(
+                            abs(hvdc_loading[i]) * 100) + ' [%]'
+                        tooltip += '\nPower (from):\t' + "{:10.4f}".format(hvdc_Pf[i]) + ' [MW]'
+                        if hvdc_losses is not None:
+                            tooltip += '\nPower (to):\t' + "{:10.4f}".format(hvdc_Pt[i]) + ' [MW]'
+                            tooltip += '\nLosses: \t\t' + "{:10.4f}".format(hvdc_losses[i]) + ' [MW]'
+                        else:
+                            pass
 
                     if hvdc_losses is not None:
-                        tooltip += '\nPower (to):\t' + "{:10.4f}".format(hvdc_Pt[i]) + ' [MW]'
-                        tooltip += '\nLosses: \t\t' + "{:10.4f}".format(hvdc_losses[i]) + ' [MW]'
                         graphic_object.set_arrows_with_hvdc_power(Pf=float(hvdc_Pf[i]), Pt=float(hvdc_Pt[i]))
                     else:
                         graphic_object.set_arrows_with_hvdc_power(Pf=float(hvdc_Pf[i]), Pt=-hvdc_Pf[i])
@@ -1624,11 +1748,10 @@ class GridMapWidget(BaseDiagramWidget):
         Deep copy of this widget
         :return: GridMapWidget
         """
-        d_copy = MapDiagram(name=self.diagram.name + '_copy')
-        j_data = json.dumps(self.diagram.get_data_dict(), indent=4)
-        d_copy.parse_data(data=json.loads(j_data),
-                          obj_dict=self.circuit.get_all_elements_dict_by_type(add_locations=True),
-                          logger=self.logger)
+        d_copy: MapDiagram = self.diagram.copy(
+            obj_dict=self.circuit.get_all_elements_dict_by_type(add_locations=True)
+        )
+        d_copy.name = self.diagram.name + '_copy'
 
         return GridMapWidget(
             gui=self.gui,
@@ -1793,8 +1916,11 @@ class GridMapWidget(BaseDiagramWidget):
             self.gui.show_error_toast("There are no time series, so nothing to plot :/")
 
     def transform_waypoint_to_substation(self):
+        """
 
-        selected_lineloc = self.get_selected_linelocations_tup()
+        :return:
+        """
+        selected_lineloc = self.get_selected_line_locations_tuple()
 
         if len(selected_lineloc) != 1:
             self.gui.show_error_toast('More than one waypoint selected. Could not determine where '
@@ -1811,7 +1937,7 @@ class GridMapWidget(BaseDiagramWidget):
 
             splitting_index = None
 
-            line_graphic = selected_lineloc[0][1].line_container
+            line_graphic: MapAcLine = selected_lineloc[0][1].line_container
             line = line_graphic.api_object
 
             selected_waypoint = selected_lineloc[0][0]
@@ -1972,8 +2098,8 @@ class GridMapWidget(BaseDiagramWidget):
 
     def change_generator_bus_connection(self):
 
-        selected_generators = self.get_selected_generators_tup()
-        selected_substations = self.get_selected_substations_tup()
+        selected_generators = self.get_selected_generators_tuple()
+        selected_substations = self.get_selected_substations_tuple()
 
         if len(selected_substations) > 1:
             self.gui.show_error_toast('More than one substation has been selected to reconnect generators. '
@@ -2000,7 +2126,7 @@ class GridMapWidget(BaseDiagramWidget):
 
     def merge_selected_lines(self):
 
-        selected_lines = self.get_selected_line_segments_tup()
+        selected_lines = self.get_selected_line_segments_tuple()
 
         if len(selected_lines) != 2:
             self.gui.show_error_toast('Line merging not done. Number of lines selected should be exactly equal to 2.')
@@ -2153,9 +2279,9 @@ class GridMapWidget(BaseDiagramWidget):
 
         :return:
         """
-        selected_lines = self.get_selected_line_segments_tup()
-        selected_substations = self.get_selected_substations_tup()
-        selected_generators = self.get_selected_generators_tup()
+        selected_lines = self.get_selected_line_segments_tuple()
+        selected_substations = self.get_selected_substations_tuple()
+        selected_generators = self.get_selected_generators_tuple()
         line_graphics_list = []
         for subst, subst_graphic in selected_substations:
             subst.latitude = subst_graphic.lat
@@ -2198,14 +2324,14 @@ class GridMapWidget(BaseDiagramWidget):
         """
 
         # Find the line and substation in the selection
-        selected_lines = self.get_selected_line_segments_tup()
-        selected_substations = self.get_selected_substations_tup()
+        selected_lines = self.get_selected_line_segments_tuple()
+        selected_substations = self.get_selected_substations_tuple()
 
         if len(selected_lines) != 1 or len(selected_substations) != 1:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Icon.Information)
-            msg.setText("Please select exactly one line and one substation.")
-            msg.setWindowTitle("Selection Error")
+            msg.setText(self.tr("Please select exactly one line and one substation."))
+            msg.setWindowTitle(self.tr("Selection Error"))
             msg.exec()
             return
 
@@ -2233,10 +2359,16 @@ class GridMapWidget(BaseDiagramWidget):
         if suitable_bus is None:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Icon.Warning)
-            msg.setText(f"No suitable voltage level ({vnom:.2f} kV) found in substation \"{substation_api.name}\".")
+            msg.setText(
+                self.tr("No suitable voltage level ({voltage:.2f} kV) found in substation \"{substation_name}\".").format(
+                    voltage=vnom,
+                    substation_name=substation_api.name,
+                )
+            )
             msg.setInformativeText(
-                "The line cannot be connected. Please ensure the target substation has a bus with a matching nominal voltage.")
-            msg.setWindowTitle("Connection Error")
+                self.tr("The line cannot be connected. Please ensure the target substation has a bus with a matching nominal voltage.")
+            )
+            msg.setWindowTitle(self.tr("Connection Error"))
             msg.exec()
             return
 
@@ -2270,7 +2402,7 @@ class GridMapWidget(BaseDiagramWidget):
             lat2, lon2 = waypoints[i + 1]
 
             # Find the closest point on this segment to the substation
-            point, distance = self._closest_point_on_segment(
+            point, distance = closest_point_on_segment(
                 lat1, lon1, lat2, lon2, substation_lat, substation_lon
             )
 
@@ -2310,13 +2442,11 @@ class GridMapWidget(BaseDiagramWidget):
 
         # Add distance from last waypoint to insertion point
         lat1, lon1 = waypoints[closest_segment_idx]
-        # lat2, lon2 = closest_point
         lat2, lon2 = new_waypoint1
         length1 += haversine_distance(lat1, lon1, lat2, lon2)
 
         # Calculate length of second segment (from insertion point to original end)
         # First, add distance from insertion point to next waypoint
-        # lat1, lon1 = closest_point
         lat1, lon1 = new_waypoint2
         lat2, lon2 = waypoints[closest_segment_idx + 1]
         length2 = haversine_distance(lat1, lon1, lat2, lon2)
@@ -2354,7 +2484,7 @@ class GridMapWidget(BaseDiagramWidget):
                      protection_rating_factor=line_api.protection_rating_factor,
                      circuit_idx=line_api.circuit_idx)
 
-        # Line 2: from new bus to bus_to 
+        # Line 2: from new bus to bus_to
         line2 = Line(name=f"{line_api.name}_2",
                      active=line_api.active,
                      bus_from=suitable_bus,
@@ -2380,19 +2510,17 @@ class GridMapWidget(BaseDiagramWidget):
             line2.apply_template(line_api.template, Sbase=self.circuit.Sbase, freq=self.circuit.fBase)
 
         # Copy other properties from the original line
-        if hasattr(line_api, 'color'):
-            line1.color = line_api.color
+        line1.color = line_api.color
 
         # Copy other properties from the original line
-        if hasattr(line_api, 'color'):
-            line2.color = line_api.color
+        line2.color = line_api.color
 
         # Preserve waypoints for line 1 (from start to insertion point)
         # Add all waypoints from the original line up to the closest segment
         for i in range(1, closest_segment_idx + 1):
             line1.locations.add_location(lat=waypoints[i][0], long=waypoints[i][1], alt=0.0)
 
-        # --- Assign offset waypoints --- 
+        # --- Assign offset waypoints ---
         # Add the 'backwards' point as the last waypoint for line1
         line1.locations.add_location(lat=new_lat1, long=new_lon1, alt=0.0)
         # line1.locations.add_location(lat=substation_lat, long=substation_lon, alt=0.0)
@@ -2427,117 +2555,22 @@ class GridMapWidget(BaseDiagramWidget):
             f'{line1.name} ({line1.length:.3f}km) and {line2.name} ({line2.length:.3f}km) created. {line_api.name} removed.'
         )
 
-    def _closest_point_on_segment(self, lat1, lon1, lat2, lon2, lat3, lon3):
-        """
-        Find the closest point on a line segment to a given point using geographic coordinates.
-        
-        :param lat1, lon1: Coordinates of the first endpoint of the segment
-        :param lat2, lon2: Coordinates of the second endpoint of the segment
-        :param lat3, lon3: Coordinates of the point to find the closest point to
-        :return: (closest_lat, closest_lon), distance_in_km
-        """
-        # For very short segments, just return the midpoint
-        if haversine_distance(lat1, lon1, lat2, lon2) < 0.001:  # Less than 1 meter
-            closest_lat = (lat1 + lat2) / 2
-            closest_lon = (lon1 + lon2) / 2
-            distance = haversine_distance(closest_lat, closest_lon, lat3, lon3)
-            return (closest_lat, closest_lon), distance
-
-        # Calculate distances to the endpoints
-        dist_to_p1 = haversine_distance(lat1, lon1, lat3, lon3)
-        dist_to_p2 = haversine_distance(lat2, lon2, lat3, lon3)
-
-        # Convert to radians for spherical calculations
-        lat1_rad = math.radians(lat1)
-        lon1_rad = math.radians(lon1)
-        lat2_rad = math.radians(lat2)
-        lon2_rad = math.radians(lon2)
-        lat3_rad = math.radians(lat3)
-        lon3_rad = math.radians(lon3)
-
-        # Earth's radius in km
-        R = 6371.0
-
-        # Calculate the bearing from point 1 to point 2
-        y = math.sin(lon2_rad - lon1_rad) * math.cos(lat2_rad)
-        x = math.cos(lat1_rad) * math.sin(lat2_rad) - math.sin(lat1_rad) * math.cos(lat2_rad) * math.cos(
-            lon2_rad - lon1_rad)
-        bearing_1_to_2 = math.atan2(y, x)
-
-        # Calculate the bearing from point 1 to point 3
-        y = math.sin(lon3_rad - lon1_rad) * math.cos(lat3_rad)
-        x = math.cos(lat1_rad) * math.sin(lat3_rad) - math.sin(lat1_rad) * math.cos(lat3_rad) * math.cos(
-            lon3_rad - lon1_rad)
-        bearing_1_to_3 = math.atan2(y, x)
-
-        # Calculate the angular distance from point 1 to point 3
-        angular_dist_1_to_3 = math.acos(
-            math.sin(lat1_rad) * math.sin(lat3_rad) +
-            math.cos(lat1_rad) * math.cos(lat3_rad) * math.cos(lon3_rad - lon1_rad)
-        )
-
-        # Calculate the cross-track distance (perpendicular distance to the great circle path)
-        cross_track_dist = math.asin(
-            math.sin(angular_dist_1_to_3) * math.sin(bearing_1_to_3 - bearing_1_to_2)
-        )
-
-        # Calculate the along-track distance (distance from point 1 to the closest point)
-        along_track_dist = math.acos(
-            math.cos(angular_dist_1_to_3) / math.cos(cross_track_dist)
-        )
-
-        # Calculate the total distance of the segment
-        segment_dist_rad = math.acos(
-            math.sin(lat1_rad) * math.sin(lat2_rad) +
-            math.cos(lat1_rad) * math.cos(lat2_rad) * math.cos(lon2_rad - lon1_rad)
-        )
-
-        # Check if the closest point is on the segment
-        if along_track_dist > segment_dist_rad:
-            # Closest point is beyond point 2
-            return (lat2, lon2), dist_to_p2
-        elif along_track_dist < 0:
-            # Closest point is before point 1
-            return (lat1, lon1), dist_to_p1
-        else:
-            # Closest point is on the segment
-            # Calculate the position of the closest point
-            closest_lat_rad = math.asin(
-                math.sin(lat1_rad) * math.cos(along_track_dist) +
-                math.cos(lat1_rad) * math.sin(along_track_dist) * math.cos(bearing_1_to_2)
-            )
-
-            closest_lon_rad = lon1_rad + math.atan2(
-                math.sin(bearing_1_to_2) * math.sin(along_track_dist) * math.cos(lat1_rad),
-                math.cos(along_track_dist) - math.sin(lat1_rad) * math.sin(closest_lat_rad)
-            )
-
-            closest_lat = math.degrees(closest_lat_rad)
-            closest_lon = math.degrees(closest_lon_rad)
-
-            # Calculate the distance from point 3 to the closest point
-            distance = R * math.acos(
-                math.sin(lat3_rad) * math.sin(closest_lat_rad) +
-                math.cos(lat3_rad) * math.cos(closest_lat_rad) * math.cos(closest_lon_rad - lon3_rad)
-            )
-
-            return (closest_lat, closest_lon), distance
 
     def create_t_joint_to_substation(self):
         """
         Create a T-joint connection between a line and a selected substation using a selected waypoint.
         This replaces the waypoint with a new substation, splits the original line into two segments,
         and creates a new line connecting the selected substation to the new substation at the waypoint.
-        
+
         The user only needs to select a waypoint and a substation. The line is automatically determined
         from the waypoint.
         """
         # Get selected items
-        selected_items = self._get_selected()
+        selected_items = self.get_selected()
 
         # Find the substation and waypoint in the selection
-        list_sel_substations = self.get_selected_substations_tup()
-        list_sel_waypoint = self.get_selected_linelocations_tup()
+        list_sel_substations = self.get_selected_substations_tuple()
+        list_sel_waypoint = self.get_selected_line_locations_tuple()
 
         # Check if we have a substation and a waypoint selected
         if len(list_sel_substations) != 1 or len(list_sel_waypoint) != 1:
@@ -2548,6 +2581,12 @@ class GridMapWidget(BaseDiagramWidget):
         # Get the line container from the waypoint
         original_line_container = list_sel_waypoint[0][1].line_container
         line_api = original_line_container.api_object
+        if not isinstance(line_api, Line):
+            self.gui.show_error_toast(message="The selected waypoint does not belong to an AC line.")
+            return
+        else:
+            pass
+        line_code_text: str = line_api.code if isinstance(line_api.code, str) else ""
 
         # Get the API objects
         substation_api, substation_graphic = list_sel_substations[0]
@@ -2572,10 +2611,9 @@ class GridMapWidget(BaseDiagramWidget):
 
         # --- Safely evaluate line_api.code ---
         code_list = []  # Default to empty list
-        if hasattr(line_api, 'code') and line_api.code and isinstance(line_api.code,
-                                                                      str):  # Check if it exists, is not empty, and is a string
+        if line_code_text:
             try:
-                evaluated_code = ast.literal_eval(line_api.code)
+                evaluated_code = ast.literal_eval(line_code_text)
                 # Ensure it's a list or treat as single item if string
                 if isinstance(evaluated_code, list):
                     code_list = evaluated_code
@@ -2585,8 +2623,8 @@ class GridMapWidget(BaseDiagramWidget):
             except (ValueError, SyntaxError, TypeError):
                 # Handle cases where the string is not a valid literal
                 # If it doesn't look like a list, treat the original string as the code
-                if not line_api.code.strip().startswith('[') and not line_api.code.strip().endswith(']'):
-                    code_list = [line_api.code]
+                if not line_code_text.strip().startswith('[') and not line_code_text.strip().endswith(']'):
+                    code_list = [line_code_text]
 
         # Modify the code list
         new_code_list = [f"{subcode}_Junction" for subcode in code_list]
@@ -2714,16 +2752,16 @@ class GridMapWidget(BaseDiagramWidget):
 
         # --- Safely evaluate line_api.code for line1 ---
         code_list_for_line1 = []  # Default to empty list
-        if hasattr(line_api, 'code') and line_api.code and isinstance(line_api.code, str):
+        if line_code_text:
             try:
-                evaluated_code = ast.literal_eval(line_api.code)
+                evaluated_code = ast.literal_eval(line_code_text)
                 if isinstance(evaluated_code, list):
                     code_list_for_line1 = evaluated_code
                 elif isinstance(evaluated_code, str):
                     code_list_for_line1 = [evaluated_code]
             except (ValueError, SyntaxError, TypeError):
-                if not line_api.code.strip().startswith('[') and not line_api.code.strip().endswith(']'):
-                    code_list_for_line1 = [line_api.code]
+                if not line_code_text.strip().startswith('[') and not line_code_text.strip().endswith(']'):
+                    code_list_for_line1 = [line_code_text]
 
         # Modify the code list
         line1_modified_code_list = [f"{subcode}_1" for subcode in code_list_for_line1]
@@ -2750,15 +2788,6 @@ class GridMapWidget(BaseDiagramWidget):
                      active=line_api.active)
         line1.color = line_api.color
 
-        # SPV: Never use hasattr, we work very hard for type consistency
-        # # Copy other properties from the original line
-        # if hasattr(line_api, 'color'):
-        #     line1.color = line_api.color
-        # if hasattr(line_api, 'tags') and line_api.tags:
-        #     line1.tags = line_api.tags.copy() if isinstance(line_api.tags, list) else line_api.tags
-        # if hasattr(line_api, 'active'):
-        #     line1.active = line_api.active
-
         # Preserve waypoints for line 1 (from start to waypoint)
         # Add all waypoints from the original line up to the waypoint
         for i in range(waypoint_idx):
@@ -2771,16 +2800,16 @@ class GridMapWidget(BaseDiagramWidget):
 
         # --- Safely evaluate line_api.code for line2 ---
         code_list_for_line2 = []  # Default to empty list
-        if hasattr(line_api, 'code') and line_api.code and isinstance(line_api.code, str):
+        if line_code_text:
             try:
-                evaluated_code = ast.literal_eval(line_api.code)
+                evaluated_code = ast.literal_eval(line_code_text)
                 if isinstance(evaluated_code, list):
                     code_list_for_line2 = evaluated_code
                 elif isinstance(evaluated_code, str):
                     code_list_for_line2 = [evaluated_code]
             except (ValueError, SyntaxError, TypeError):
-                if not line_api.code.strip().startswith('[') and not line_api.code.strip().endswith(']'):
-                    code_list_for_line2 = [line_api.code]
+                if not line_code_text.strip().startswith('[') and not line_code_text.strip().endswith(']'):
+                    code_list_for_line2 = [line_code_text]
 
         # Modify the code list
         line2_modified_code_list = [f"{subcode}_2" for subcode in code_list_for_line2]
@@ -2812,15 +2841,6 @@ class GridMapWidget(BaseDiagramWidget):
 
         line2.color = line_api.color
 
-        # SPV: never use hasattr, we work very hard for type consistency
-        # Copy other properties from the original line
-        # if hasattr(line_api, 'color'):
-        #     line2.color = line_api.color
-        # if hasattr(line_api, 'tags') and line_api.tags:
-        #     line2.tags = line_api.tags.copy() if isinstance(line_api.tags, list) else line_api.tags
-        # if hasattr(line_api, 'active'):
-        #     line2.active = line_api.active
-
         # Preserve waypoints for line 2 (from waypoint to end)
         # Add all remaining waypoints from the original line after the waypoint
         for i in range(waypoint_idx + 1, len(original_line_container.nodes_list)):
@@ -2851,21 +2871,12 @@ class GridMapWidget(BaseDiagramWidget):
                                contingency_factor=line_api.contingency_factor,
                                protection_rating_factor=line_api.protection_rating_factor,
                                circuit_idx=line_api.circuit_idx,
-                               active = line_api.active)
+                               active=line_api.active)
 
         if line_api.template is not None:
             connection_line.apply_template(line_api.template, Sbase=self.circuit.Sbase, freq=self.circuit.fBase)
 
         connection_line.color = line_api.color
-
-        # SPV: never use hasattr, we work very hard for type consistency
-        # # Copy other properties from the original line
-        # if hasattr(line_api, 'color'):
-        #     connection_line.color = line_api.color
-        # if hasattr(line_api, 'tags') and line_api.tags:
-        #     connection_line.tags = line_api.tags.copy() if isinstance(line_api.tags, list) else line_api.tags
-        # if hasattr(line_api, 'active'):
-        #     connection_line.active = line_api.active
 
         # No waypoints needed for the connection line - it will go directly from one substation to the other
 
@@ -2905,16 +2916,33 @@ class GridMapWidget(BaseDiagramWidget):
         # Notify the user
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Icon.Information)
-        msg.setText(f"T-joint connection created between {substation_api.name} and {line_api.name}.")
+        msg.setText(
+            self.tr("T-joint connection created between {substation_name} and {line_name}.").format(
+                substation_name=substation_api.name,
+                line_name=line_api.name,
+            )
+        )
         msg.setInformativeText(
-            f"Waypoint replaced with new substation '{new_substation.name}'.\nOriginal line split into two segments:\n- {line1.name}: {length1:.2f} km\n- {line2.name}: {length2:.2f} km\nNew connection line: {distance:.2f} km")
-        msg.setWindowTitle("Operation Successful")
+            self.tr("Waypoint replaced with new substation '{substation_name}'.\n"
+                    "Original line split into two segments:\n"
+                    "- {line1_name}: {length1:.2f} km\n"
+                    "- {line2_name}: {length2:.2f} km\n"
+                    "New connection line: {distance:.2f} km").format(
+                substation_name=new_substation.name,
+                line1_name=line1.name,
+                line2_name=line2.name,
+                length1=length1,
+                length2=length2,
+                distance=distance,
+            )
+        )
+        msg.setWindowTitle(self.tr("Operation Successful"))
         msg.exec()
 
     def change_line_connection(self):
 
-        selected_lines = self.get_selected_line_segments_tup()
-        selected_substations = self.get_selected_substations_tup()
+        selected_lines = self.get_selected_line_segments_tuple()
+        selected_substations = self.get_selected_substations_tuple()
 
         if len(selected_lines) != 1 or len(selected_substations) != 2:
             self.gui.show_error_toast(message="Please select exactly one line and two substations.")
@@ -3208,7 +3236,7 @@ def generate_map_diagram2(circuit: MultiCircuit):
         external_grids=circuit.external_grids,
         static_generators=circuit.static_generators,
         loads=circuit.loads,
-        batteries=circuit.batteries ,
+        batteries=circuit.batteries,
         generators=circuit.generators,
         prog_func=None,
         text_func=None,

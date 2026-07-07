@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:adms="http://www.w3.org/ns/adms#"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+    xmlns:provcim="https://cim4.eu/ns/provcim#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+  xml:base="https://energy.referencedata.eu" > 
+  <skos:ConceptScheme rdf:about="https://energy.referencedata.eu/test/ModelScheme/NCP/1.0">
+    <dcterms:accessRights rdf:resource="https://energy.referencedata.eu/Confidentiality/Public"/>
+    <skos:definition xml:lang="en">Reference dataset and concept scheme listing recognized abstract CIM model identities that may be used as the object of dcat:isVersionOf for versioned datasets.</skos:definition>
+    <dcterms:description xml:lang="en">Reference dataset containing recognized abstract CIM model identities for use in dataset versioning, provenance, and cataloguing.</dcterms:description>
+    <prov:generatedAtTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-03-22T00:00:00Z</prov:generatedAtTime>
+    <dcterms:hasPart rdf:resource="https://energy.referencedata.eu/test/ModelScheme/NCP/1.0#collection_ncp_model"/>
+    <dcterms:identifier>f4f9cafc-d146-4275-92b5-6d04f9b26b56</dcterms:identifier>
+    <dcat:isVersionOf rdf:resource="https://energy.referencedata.eu/test/ModelScheme"/>
+    <dcterms:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2026-03-22</dcterms:issued>
+    <dcterms:license rdf:resource="https://creativecommons.org/licenses/by/4.0/"/>
+    <skos:prefLabel xml:lang="en">Energy Reference Data Model Scheme</skos:prefLabel>
+    <dcterms:publisher rdf:resource="https://www.entsoe.eu/"/>
+    <dcterms:rights>Copyright</dcterms:rights>
+    <dcterms:rightsHolder>ENTSO-E</dcterms:rightsHolder>
+    <dcterms:title>Test-ModelScheme-NCP-1.0</dcterms:title>
+    <rdf:type rdf:resource="http://www.w3.org/ns/dcat#Dataset"/>
+    <dcat:version>1.0.0</dcat:version>
+    <adms:versionNotes xml:lang="en">Initial version of the Energy Reference Data Model Scheme for ReliCapGrid.</adms:versionNotes>
+  </skos:ConceptScheme>
+  <provcim:Model rdf:about="https://energy.referencedata.eu/test/model/TSO-Galia_IGM-ER">
+    <dcterms:description xml:lang="en">Abstract identity for the CIM-based Individual Grid Model (IGM) Equipment Reliability (ER) representation of the Galia transmission system governed by TSO-Galia.</dcterms:description>
+    <dcterms:identifier>9db94464-5b71-4f83-8345-e83f3d604761</dcterms:identifier>
+    <provcim:modelAuthority rdf:resource="https://energy.referencedata.eu/test/party/TSO-Galia"/>
+    <skos:prefLabel xml:lang="en">TSO-Galia IGM-ER Model of Galia-Transmission.</skos:prefLabel>
+    <dcterms:spatial rdf:resource="https://energy.referencedata.eu/test/frame/Galia-Transmission"/>
+  </provcim:Model>
+  <provcim:Model rdf:about="https://energy.referencedata.eu/test/model/TSO-Svedala_IGM-EQ">
+    <dcterms:description xml:lang="en">Abstract identity for the CIM-based Individual Grid Model (IGM) of Equipment (EQ) representation of the Svedala transmission system governed by TSO-Svedala.</dcterms:description>
+    <dcterms:identifier>bbee31bf-dfb6-456a-9b5e-4d1ff0713000</dcterms:identifier>
+    <provcim:modelAuthority rdf:resource="https://energy.referencedata.eu/test/party/TSO-Svedala"/>
+    <skos:prefLabel xml:lang="en">TSO-Svedala IGM-EQ Model of Svedala-Transmission.</skos:prefLabel>
+    <dcterms:spatial rdf:resource="https://energy.referencedata.eu/test/frame/Svedala-Transmission"/>
+  </provcim:Model>
+  <prov:Collection rdf:about="https://energy.referencedata.eu/test/ModelScheme/NCP/1.0#collection_ncp_model">
+    <prov:hadMember rdf:resource="https://energy.referencedata.eu/test/model/TSO-Svedala_EQ"/>
+    <prov:hadMember rdf:resource="https://energy.referencedata.eu/test/model/TSO-Galia_ER"/>
+    <dcterms:identifier>3c0d7db0-6380-4ce8-ac1f-39bb5687311c</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Collection of recognized models for NCP and ReliCapGrid.</skos:prefLabel>
+  </prov:Collection>
+</rdf:RDF>

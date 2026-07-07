@@ -3,16 +3,13 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 import os
-import numpy as np
 from VeraGridEngine.basic_structures import Logger
 import VeraGridEngine.api as gce
-from VeraGridEngine.Utils.Symbolic import Block
-from VeraGridEngine.Utils.Symbolic.symbolic_io import compare_blocks
 from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
 from VeraGridEngine.Templates.Rms.load_rms_template import get_load_rms_template
 from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template import get_complete_generator_template_rms
-from VeraGridEngine.Templates.Rms.bus_rms_template import initialize_bus_rms
-from VeraGridEngine.Templates.templates_common_functions import set_rms_model
+from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
+from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_rms_model
 
 def test_new_grid_save_load_compare() -> None:
     """
@@ -55,10 +52,10 @@ def test_new_grid_save_load_compare() -> None:
     grid1.add_load(bus=bus1, api_obj=load)
     grid1.add_generator(bus=bus0, api_obj=gen0)
 
-    if not os.path.exists("output"):
-        os.makedirs("output")
+    if not os.path.exists(os.path.join("data", "output")):
+        os.makedirs(os.path.join("data", "output"))
     name = '2bus_genqec_new_grid_test.veragrid'
-    fname = os.path.join("output", name + '_to_save.veragrid')
+    fname = os.path.join("data", "output", name + '_to_save.veragrid')
 
     # save the created grid
     gce.save_file(grid=grid1, filename=fname)
@@ -146,10 +143,10 @@ def test_new_grid_save_load_compare_rms() -> None:
 
     set_rms_model(device=load, model=load_mdl, var_factory=grid1.var_factory)
 
-    if not os.path.exists("output"):
-        os.makedirs("output")
+    if not os.path.exists(os.path.join("data", "output")):
+        os.makedirs(os.path.join("data", "output"))
     name = '2bus_genqec_new_grid_test.veragrid'
-    fname = os.path.join("output", name + '_to_save.veragrid')
+    fname = os.path.join("data", "output", name + '_to_save.veragrid')
 
     # save the created grid
     gce.save_file(grid=grid1, filename=fname)

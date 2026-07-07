@@ -9,14 +9,12 @@ import numpy as np
 from numpy import pi, log, sqrt
 from matplotlib import pyplot as plt
 import math
-
-from VeraGridEngine import BuildStatus
 from VeraGridEngine.Devices.admittance_matrix import AdmittanceMatrix
 from VeraGridEngine.basic_structures import Logger, Mat, IntVec, Vec, CxMat
 from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
 from VeraGridEngine.Devices.Parents.dynamic_parent import DynamicDevice
 from VeraGridEngine.Devices.Branches.wire import Wire
-from VeraGridEngine.enumerations import SubObjectType
+from VeraGridEngine.enumerations import SubObjectType, PrpCat
 
 """
 Equations source:
@@ -867,13 +865,50 @@ class OverheadLineType(DynamicDevice):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='earth_resistivity', units='Ohm/m3', tpe=float, definition='Earth resistivity'),
-        GCProp(key='frequency', units='Hz', tpe=float, definition='Frequency'),
-        GCProp(key='Vnom', units='kV', tpe=float, definition='Voltage rating of the line'),
-        GCProp(key='wires_in_tower', units='', tpe=SubObjectType.ListOfWires,
-                      definition='List of wires', editable=False, display=False),
-        GCProp(key='capex', units='currency/km', tpe=float, definition='Capital expenditure per km'),
-        GCProp(key='opex', units='currency/MWh', tpe=float, definition='Operational expenditure'),
+        GCProp(
+            prop_name='earth_resistivity',
+            units='Ohm/m3',
+            tpe=float,
+            definition='Earth resistivity',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='frequency',
+            units='Hz',
+            tpe=float,
+            definition='Frequency',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='Vnom',
+            units='kV',
+            tpe=float,
+            definition='Voltage rating of the line',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='wires_in_tower',
+            units='',
+            tpe=SubObjectType.ListOfWires,
+            definition='List of wires',
+            editable=False,
+            display=False,
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='capex',
+            units='currency/km',
+            tpe=float,
+            definition='Capital expenditure per km',
+            cat=[PrpCat.INV],
+        ),
+        GCProp(
+            prop_name='opex',
+            units='currency/MWh',
+            tpe=float,
+            definition='Operational expenditure',
+            cat=[PrpCat.INV],
+        ),
     )
 
     def __init__(self, name='Tower', idtag: str | None = None,

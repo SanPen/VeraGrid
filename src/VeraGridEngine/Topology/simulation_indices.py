@@ -17,11 +17,6 @@ def compile_types(Pbus: Vec,
     :param Pbus: array of real power Injections per node used to choose the slack as
                  the node with greater generation if no slack is provided
     :param types: array of tentative node types (it may be modified internally)
-    :param pq_val: value of PQ type
-    :param pv_val: value of PV values to use
-    :param vd_val: value of VD values to use
-    :param pqv_val: value of PQ values to use
-    :param p_val: value of PQ values to use
     :return: ref, pq, pv, pqpv
     """
 
@@ -115,8 +110,8 @@ class SimulationIndices:
     def __init__(self,
                  bus_types: IntVec,
                  Pbus: Vec,
-                 tap_module_control_mode: List[TapModuleControl],
-                 tap_phase_control_mode: List[TapPhaseControl],
+                 tap_module_control_mode: IntVec, # List[TapModuleControl],
+                 tap_phase_control_mode: IntVec,  # List[TapPhaseControl],
                  tap_controlled_buses: IntVec,
                  F: IntVec,
                  T: IntVec,
@@ -181,19 +176,19 @@ class SimulationIndices:
             ctrl_tau = self.tap_phase_control_mode[k]
 
             # analyze tap-module controls
-            if ctrl_m == TapModuleControl.Vm:
+            if ctrl_m == TapModuleControl.Vm.idx():
 
                 # In any other case, the voltage is managed by the tap module
                 k_v_m.append(k)
 
-            elif ctrl_m == TapModuleControl.Qf:
+            elif ctrl_m == TapModuleControl.Qf.idx():
 
                 k_qf_m.append(k)
 
-            elif ctrl_m == TapModuleControl.Qt:
+            elif ctrl_m == TapModuleControl.Qt.idx():
                 k_qt_m.append(k)
 
-            elif ctrl_m == TapModuleControl.fixed:
+            elif ctrl_m == TapModuleControl.fixed.idx():
                 pass
 
             elif ctrl_m == 0:
@@ -203,13 +198,13 @@ class SimulationIndices:
                 raise Exception(f"Unknown tap phase module mode {ctrl_m}")
 
             # analyze tap-phase controls
-            if ctrl_tau == TapPhaseControl.Pf:
+            if ctrl_tau == TapPhaseControl.Pf.idx():
                 k_pf_tau.append(k)
 
-            elif ctrl_tau == TapPhaseControl.Pt:
+            elif ctrl_tau == TapPhaseControl.Pt.idx():
                 k_pt_tau.append(k)
 
-            elif ctrl_tau == TapPhaseControl.fixed:
+            elif ctrl_tau == TapPhaseControl.fixed.idx():
                 pass
 
             elif ctrl_tau == 0:

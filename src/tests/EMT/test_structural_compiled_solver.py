@@ -3,7 +3,7 @@
 # file, You can see it at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Any, List, Sequence, Tuple, cast
+from typing import Any, Dict, List, Sequence, Tuple, cast
 
 import numba as nb
 import numpy as np
@@ -429,7 +429,12 @@ def test_structural_compiled_backend_builds_and_collapses_repeated_structure() -
     exactly 1 kernel spec (not 4 separate kernels).
     """
     block, _ = build_repeated_decay_block(n_states=4, k_val=2.0)
-    problem: GenericEmtProblem = GenericEmtProblem(block, Var("t_glob"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+    problem: GenericEmtProblem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=Var("t_glob"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
 
     solver: StructuralCompiledSolver = StructuralCompiledSolver(
         problem=problem,
@@ -463,7 +468,12 @@ def test_structural_compiled_residual_and_jacobian_buffers_are_reused_in_place()
     memory locations (no reallocation).
     """
     block, _ = build_repeated_decay_block(n_states=3, k_val=2.0)
-    problem: GenericEmtProblem = GenericEmtProblem(block, Var("t_glob"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+    problem: GenericEmtProblem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=Var("t_glob"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
 
     solver: StructuralCompiledSolver = StructuralCompiledSolver(
         problem=problem,
@@ -544,8 +554,18 @@ def test_structural_compiled_jacobian_matches_structural_vectorized_backend_and_
     block_fast, _ = build_repeated_decay_block(n_states=4, k_val=2.0)
     block_base, _ = build_repeated_decay_block(n_states=4, k_val=2.0)
 
-    problem_fast: GenericEmtProblem = GenericEmtProblem(block_fast, Var("t_fast"))
-    problem_base: GenericEmtProblem = GenericEmtProblem(block_base, Var("t_base"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict(block_fast.parameters)
+    problem_fast: GenericEmtProblem = GenericEmtProblem(
+        sys_block=block_fast,
+        glob_time=Var("t_fast"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
+    static_parameter_values_mapping = dict(block_base.parameters)
+    problem_base: GenericEmtProblem = GenericEmtProblem(
+        sys_block=block_base,
+        glob_time=Var("t_base"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
 
     compiled_solver: StructuralCompiledSolver = StructuralCompiledSolver(
         problem=problem_fast,
@@ -609,8 +629,18 @@ def test_structural_compiled_simulation_matches_structural_vectorized_solver() -
     block_fast, _ = build_repeated_decay_block(n_states=3, k_val=1.5)
     block_base, _ = build_repeated_decay_block(n_states=3, k_val=1.5)
 
-    problem_fast: GenericEmtProblem = GenericEmtProblem(block_fast, Var("t_fast"))
-    problem_base: GenericEmtProblem = GenericEmtProblem(block_base, Var("t_base"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict(block_fast.parameters)
+    problem_fast: GenericEmtProblem = GenericEmtProblem(
+        sys_block=block_fast,
+        glob_time=Var("t_fast"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
+    static_parameter_values_mapping = dict(block_base.parameters)
+    problem_base: GenericEmtProblem = GenericEmtProblem(
+        sys_block=block_base,
+        glob_time=Var("t_base"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
 
     x0: np.ndarray = np.array([1.0, -0.5, 2.0], dtype=np.float64)
     dx0: np.ndarray = -1.5 * x0
@@ -640,8 +670,8 @@ def test_structural_compiled_simulation_matches_structural_vectorized_solver() -
         auto_vectorization=True,
     )
 
-    t_compiled, y_compiled, dy_compiled = compiled_solver.simulate(x0=x0, dx0=dx0, params0=p0_fast)
-    t_base, y_base, dy_base = base_solver.simulate(x0=x0.copy(), dx0=dx0.copy(), params0=p0_base)
+    t_compiled, y_compiled, dy_compiled, _, _ = compiled_solver.simulate(x0=x0, dx0=dx0, params0=p0_fast)
+    t_base, y_base, dy_base, _, _ = base_solver.simulate(x0=x0.copy(), dx0=dx0.copy(), params0=p0_base)
 
     np.testing.assert_allclose(t_compiled, t_base, rtol=0.0, atol=0.0)
     np.testing.assert_allclose(y_compiled, y_base, rtol=1e-9, atol=1e-10)
@@ -659,7 +689,12 @@ def test_structural_compiled_solver_uses_forced_alignment_and_boundary_updates()
     - All forced events are captured
     """
     block: Block = build_zero_dynamics_block()
-    problem: GenericEmtProblem = GenericEmtProblem(block, Var("t_glob"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+    problem: GenericEmtProblem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=Var("t_glob"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
 
     solver: StructuralCompiledSolver = StructuralCompiledSolver(
         problem=problem,
@@ -678,7 +713,7 @@ def test_structural_compiled_solver_uses_forced_alignment_and_boundary_updates()
     dx0: np.ndarray = np.array([0.0], dtype=np.float64)
     p0: np.ndarray = np.zeros(problem.get_variable_parameter_number(), dtype=np.float64)
 
-    t, y, dy = solver.simulate(
+    t, y, dy, _, _ = solver.simulate(
         x0=x0,
         dx0=dx0,
         params0=p0,
@@ -713,7 +748,12 @@ def test_structural_solvers_record_newton_trace_data() -> None:
     """
     for solver_class in (StructuralVectorizedSolver, StructuralCompiledSolver):
         block, _ = build_repeated_decay_block(n_states=2, k_val=1.5)
-        problem: GenericEmtProblem = GenericEmtProblem(block, Var(f"t_{solver_class.__name__}"))
+        static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+        problem: GenericEmtProblem = GenericEmtProblem(
+            sys_block=block,
+            glob_time=Var(f"t_{solver_class.__name__}"),
+            static_parameter_values_mapping=static_parameter_values_mapping,
+        )
         collector: NewtonTraceCollector = NewtonTraceCollector()
         problem.set_newton_trace_collector(collector)
 
@@ -825,8 +865,13 @@ def test_backtracking_improves_convergence_in_difficult_solve() -> None:
         )
 
         if solver_class is StructuralVectorizedSolver:
+            static_parameter_values_mapping: Dict[Var, Const] = dict()
             solver_plain = solver_class(
-                problem=GenericEmtProblem(build_scalar_state_block(), Var(f"t_bt_{solver_name}_plain")),
+                problem=GenericEmtProblem(
+                    sys_block=build_scalar_state_block(),
+                    glob_time=Var(f"t_bt_{solver_name}_plain"),
+                    static_parameter_values_mapping=static_parameter_values_mapping,
+                ),
                 t0=0.0,
                 t_end=0.1,
                 h=0.1,
@@ -842,7 +887,11 @@ def test_backtracking_improves_convergence_in_difficult_solve() -> None:
             solver_plain.vec_jacobian = InexactVectorizedJacobian()
 
             solver_bt = solver_class(
-                problem=GenericEmtProblem(build_scalar_state_block(), Var(f"t_bt_{solver_name}_bt")),
+                problem=GenericEmtProblem(
+                    sys_block=build_scalar_state_block(),
+                    glob_time=Var(f"t_bt_{solver_name}_bt"),
+                    static_parameter_values_mapping=static_parameter_values_mapping,
+                ),
                 t0=0.0,
                 t_end=0.1,
                 h=0.1,
@@ -857,8 +906,13 @@ def test_backtracking_improves_convergence_in_difficult_solve() -> None:
             solver_bt.fused_residual = inexact_vectorized_residual
             solver_bt.vec_jacobian = InexactVectorizedJacobian()
         else:
+            static_parameter_values_mapping: Dict[Var, Const] = dict()
             solver_plain = solver_class(
-                problem=GenericEmtProblem(build_scalar_state_block(), Var(f"t_bt_{solver_name}_plain")),
+                problem=GenericEmtProblem(
+                    sys_block=build_scalar_state_block(),
+                    glob_time=Var(f"t_bt_{solver_name}_plain"),
+                    static_parameter_values_mapping=static_parameter_values_mapping,
+                ),
                 t0=0.0,
                 t_end=0.1,
                 h=0.1,
@@ -873,7 +927,11 @@ def test_backtracking_improves_convergence_in_difficult_solve() -> None:
             solver_plain._jacobian_evaluator = cast(Any, InexactCompiledJacobian())
 
             solver_bt = solver_class(
-                problem=GenericEmtProblem(build_scalar_state_block(), Var(f"t_bt_{solver_name}_bt")),
+                problem=GenericEmtProblem(
+                    sys_block=build_scalar_state_block(),
+                    glob_time=Var(f"t_bt_{solver_name}_bt"),
+                    static_parameter_values_mapping=static_parameter_values_mapping,
+                ),
                 t0=0.0,
                 t_end=0.1,
                 h=0.1,
@@ -887,12 +945,12 @@ def test_backtracking_improves_convergence_in_difficult_solve() -> None:
             solver_bt._residual_assembler = cast(Any, InexactCompiledResidualAssembler())
             solver_bt._jacobian_evaluator = cast(Any, InexactCompiledJacobian())
 
-        _, y_plain, _ = solver_plain.simulate(
+        _, y_plain, _, _, _ = solver_plain.simulate(
             x0=np.array([0.1], dtype=np.float64),
             dx0=np.array([0.0], dtype=np.float64),
             params0=np.zeros(0, dtype=np.float64),
         )
-        _, y_bt, _ = solver_bt.simulate(
+        _, y_bt, _, _, _ = solver_bt.simulate(
             x0=np.array([0.1], dtype=np.float64),
             dx0=np.array([0.0], dtype=np.float64),
             params0=np.zeros(0, dtype=np.float64),
@@ -922,8 +980,13 @@ def test_index1_guard_triggers_runtime_error_during_simulation() -> None:
         )
 
         if solver_class is StructuralVectorizedSolver:
+            static_parameter_values_mapping: Dict[Var, Const] = dict()
             solver = solver_class(
-                problem=GenericEmtProblem(build_singular_dae_block(), Var(f"t_idx_{solver_name}")),
+                problem=GenericEmtProblem(
+                    sys_block=build_singular_dae_block(),
+                    glob_time=Var(f"t_idx_{solver_name}"),
+                    static_parameter_values_mapping=static_parameter_values_mapping,
+                ),
                 t0=0.0,
                 t_end=0.1,
                 h=0.1,
@@ -938,8 +1001,13 @@ def test_index1_guard_triggers_runtime_error_during_simulation() -> None:
             solver.fused_residual = singular_vectorized_residual
             solver.vec_jacobian = SingularVectorizedJacobian()
         else:
+            static_parameter_values_mapping: Dict[Var, Const] = dict()
             solver = solver_class(
-                problem=GenericEmtProblem(build_singular_dae_block(), Var(f"t_idx_{solver_name}")),
+                problem=GenericEmtProblem(
+                    sys_block=build_singular_dae_block(),
+                    glob_time=Var(f"t_idx_{solver_name}"),
+                    static_parameter_values_mapping=static_parameter_values_mapping,
+                ),
                 t0=0.0,
                 t_end=0.1,
                 h=0.1,

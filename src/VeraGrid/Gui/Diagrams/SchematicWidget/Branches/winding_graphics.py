@@ -8,11 +8,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Union
 from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtWidgets import QMenu
-from VeraGrid.Gui.gui_functions import add_menu_entry
+from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
+from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
 from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import BarTerminalItem, RoundTerminalItem
-from VeraGrid.Gui.messages import yes_no_question
 from VeraGridEngine.Devices.Branches.winding import Winding
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template import LineGraphicTemplateItem
+from VeraGridEngine.enumerations import DynamicSimulationMode
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
@@ -54,6 +55,16 @@ class WindingGraphicItem(LineGraphicTemplateItem):
     def api_object(self, api_object: Winding):
         self._api_object = api_object
 
+    def open_device_editor(self) -> bool:
+        """
+        Open the generic device editor for this winding.
+
+        :return: ``True`` when the editor was opened.
+        """
+        dialog = TemplateDeviceEditor(api_object=self.api_object, circuit=self.editor.circuit)
+        dialog.exec()
+        return True
+
     def contextMenuEvent(self, event):
         """
         Show context menu
@@ -62,34 +73,49 @@ class WindingGraphicItem(LineGraphicTemplateItem):
         """
         if self.api_object is not None:
             menu = QMenu()
-            menu.addSection("Winding")
+            menu.addSection(translate_context_menu_text("Winding"))
 
-            pe = menu.addAction('Active')
+            pe = menu.addAction(translate_context_menu_text("Active"))
             pe.setCheckable(True)
             pe.setChecked(self.api_object.active)
             pe.triggered.connect(self.enable_disable_toggle)
 
             add_menu_entry(menu=menu,
-                           text="Draw labels",
+                           text=translate_context_menu_text("Draw labels"),
                            function_ptr=self.enable_disable_label_drawing,
                            checkeable=True,
                            checked_value=self.draw_labels)
 
+            add_menu_entry(menu=menu,
+                           text=translate_context_menu_text("Editor"),
+                           function_ptr=self.edit,
+                           icon_path=":/Icons/icons/edit.png")
+
+            add_menu_entry(menu=menu,
+                           text=translate_context_menu_text("RMS Editor"),
+                           function_ptr=self.edit_dynamic_rms,
+                           icon_path=":/Icons/icons/dyn_edit.png")
+
+            add_menu_entry(menu=menu,
+                           text=translate_context_menu_text("EMT Editor"),
+                           function_ptr=self.edit_dynamic_emt,
+                           icon_path=":/Icons/icons/dyn_emt_edit.png")
+
             # menu.addSeparator()
 
-            ra6 = menu.addAction('Plot profiles')
+            ra6 = menu.addAction(translate_context_menu_text("Plot profiles"))
             plot_icon = QIcon()
             plot_icon.addPixmap(QPixmap(":/Icons/icons/plot.png"))
             ra6.setIcon(plot_icon)
             ra6.triggered.connect(self.plot_profiles)
 
-            ra4 = menu.addAction('Assign rate to profile')
+            ra4 = menu.addAction(translate_context_menu_text("Assign rate to profile"))
             ra4_icon = QIcon()
             ra4_icon.addPixmap(QPixmap(":/Icons/icons/assign_to_profile.png"))
             ra4.setIcon(ra4_icon)
             ra4.triggered.connect(self.assign_rate_to_profile)
 
-            ra5 = menu.addAction('Assign active state to profile')
+            ra5 = menu.addAction(translate_context_menu_text("Assign active state to profile"))
             ra5_icon = QIcon()
             ra5_icon.addPixmap(QPixmap(":/Icons/icons/assign_to_profile.png"))
             ra5.setIcon(ra5_icon)
@@ -99,7 +125,7 @@ class WindingGraphicItem(LineGraphicTemplateItem):
             self.add_auto_route_style_menu(menu=menu)
             menu.addSeparator()
 
-            ra2 = menu.addAction('Delete')
+            ra2 = menu.addAction(translate_context_menu_text("Delete"))
             del_icon = QIcon()
             del_icon.addPixmap(QPixmap(":/Icons/icons/delete3.png"))
             ra2.setIcon(del_icon)
@@ -108,6 +134,26 @@ class WindingGraphicItem(LineGraphicTemplateItem):
             menu.exec_(event.screenPos())
         else:
             pass
+
+    def mouseDoubleClickEvent(self, event) -> None:
+        """
+        Open the winding editor on double click.
+
+        :param event: Mouse event.
+        :return: ``None``.
+        """
+        if self.api_object is not None:
+            self.open_device_editor()
+        else:
+            pass
+
+    def edit(self) -> None:
+        """
+        Open the appropriate editor dialogue.
+
+        :return: ``None``.
+        """
+        self.open_device_editor()
 
     def delete(self, ask=True):
         """
@@ -123,3 +169,20 @@ class WindingGraphicItem(LineGraphicTemplateItem):
             # unregister the winding
             self.parent_tr3_graphics_item.remove_winding(self.winding_number)
 
+    def edit_dynamic_rms(self):
+        """
+        Open the unified dynamic editor workspace for this generator.
+        """
+
+        self.editor.gui.open_dynamic_editor(api_object=self.api_object,
+                                            circuit=self.editor.circuit,
+                                            preferred_mode=DynamicSimulationMode.RMS)
+
+    def edit_dynamic_emt(self):
+        """
+        Open the unified dynamic editor workspace for this generator.
+        """
+
+        self.editor.gui.open_dynamic_editor(api_object=self.api_object,
+                                            circuit=self.editor.circuit,
+                                            preferred_mode=DynamicSimulationMode.EMT)

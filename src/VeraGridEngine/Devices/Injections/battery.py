@@ -7,6 +7,7 @@
 from typing import Tuple
 
 from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
+from VeraGridEngine.enumerations import PrpCat, GeneratorControlMode, ParamPowerFlowReferenceType
 from VeraGridEngine.Devices.Injections.generator import Generator, BuildStatus
 
 
@@ -31,13 +32,62 @@ class Battery(Generator):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='Enom', units='MWh', tpe=float, definition='Nominal energy capacity.'),
-        GCProp(key='max_soc', units='p.u.', tpe=float, definition='Minimum state of charge.'),
-        GCProp(key='min_soc', units='p.u.', tpe=float, definition='Maximum state of charge.'),
-        GCProp(key='soc_0', units='p.u.', tpe=float, definition='Initial state of charge.'),
-        GCProp(key='charge_efficiency', units='p.u.', tpe=float, definition='Charging efficiency.'),
-        GCProp(key='discharge_efficiency', units='p.u.', tpe=float, definition='Discharge efficiency.'),
-        GCProp(key='discharge_per_cycle', units='p.u.', tpe=float, definition=''),
+        GCProp(
+            prop_name='Enom',
+            units='MWh',
+            tpe=float,
+            definition='Nominal energy capacity.',
+            cat=[PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.battery_enom_mwh,
+        ),
+        GCProp(
+            prop_name='max_soc',
+            units='p.u.',
+            tpe=float,
+            definition='Minimum state of charge.',
+            cat=[PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.battery_max_soc_pu,
+        ),
+        GCProp(
+            prop_name='min_soc',
+            units='p.u.',
+            tpe=float,
+            definition='Maximum state of charge.',
+            cat=[PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.battery_min_soc_pu,
+        ),
+        GCProp(
+            prop_name='soc_0',
+            units='p.u.',
+            tpe=float,
+            definition='Initial state of charge.',
+            cat=[PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.battery_soc_0_pu,
+        ),
+        GCProp(
+            prop_name='charge_efficiency',
+            units='p.u.',
+            tpe=float,
+            definition='Charging efficiency.',
+            cat=[PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.battery_charge_efficiency_pu,
+        ),
+        GCProp(
+            prop_name='discharge_efficiency',
+            units='p.u.',
+            tpe=float,
+            definition='Discharge efficiency.',
+            cat=[PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.battery_discharge_efficiency_pu,
+        ),
+        GCProp(
+            prop_name='discharge_per_cycle',
+            units='p.u.',
+            tpe=float,
+            definition='',
+            cat=[PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.battery_discharge_per_cycle_pu,
+        ),
     )
 
     def __init__(self,
@@ -52,7 +102,7 @@ class Battery(Generator):
                  Qmax=9999,
                  power_factor=0.8,
                  vset=1.0,
-                 is_controlled=True,
+                 control_mode: GeneratorControlMode = GeneratorControlMode.V,
                  Snom=9999,
                  Enom=9999,
                  Cost=1.0,
@@ -77,7 +127,7 @@ class Battery(Generator):
         :param P: Active power in MW
         :param power_factor: Power factor
         :param vset: Voltage setpoint in per unit
-        :param is_controlled: Is the unit voltage controlled (if so, the connection bus becomes a PV bus)
+        :param control_mode: Generator control mode
         :param Qmin: Minimum reactive power in MVAr
         :param Qmax: Maximum reactive power in MVAr
         :param Snom: Nominal apparent power in MVA
@@ -116,7 +166,7 @@ class Battery(Generator):
                            Qmin=Qmin, Qmax=Qmax, Snom=Snom,
                            power_factor=power_factor,
                            vset=vset,
-                           is_controlled=is_controlled,
+                           control_mode=control_mode,
                            active=active,
                            Cost=Cost,
                            Sbase=Sbase,

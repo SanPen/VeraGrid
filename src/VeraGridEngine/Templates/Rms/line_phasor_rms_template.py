@@ -7,7 +7,7 @@ from typing import List
 import numpy as np
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowRefferenceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowReferenceType, VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
 
@@ -31,10 +31,10 @@ def get_line_phasor_rms_template(vfactory: VarFactory, name="Line_phasor_rms_tem
     templ.name = name
 
     # Inputs: phasor voltages at from and to buses
-    inputs: List[Var] = [vfactory.add_var("Vrf_" + name, VarPowerFlowRefferenceType.Vrf),
-                         vfactory.add_var("Vif_" + name, VarPowerFlowRefferenceType.Vif),
-                         vfactory.add_var("Vrt_" + name, VarPowerFlowRefferenceType.Vrt),
-                         vfactory.add_var("Vit_" + name, VarPowerFlowRefferenceType.Vit)]
+    inputs: List[Var] = [vfactory.add_var("Vrf", VarPowerFlowReferenceType.Vrf),
+                         vfactory.add_var("Vif", VarPowerFlowReferenceType.Vif),
+                         vfactory.add_var("Vrt", VarPowerFlowReferenceType.Vrt),
+                         vfactory.add_var("Vit", VarPowerFlowReferenceType.Vit)]
 
     # Outputs: currents (for current balance formulation)
     Irf = vfactory.add_var("Irf")
@@ -80,22 +80,22 @@ def get_line_phasor_rms_template(vfactory: VarFactory, name="Line_phasor_rms_tem
     ]
 
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.Vrf: inputs[0],
-        VarPowerFlowRefferenceType.Vif: inputs[1],
-        VarPowerFlowRefferenceType.Vrt: inputs[2],
-        VarPowerFlowRefferenceType.Vit: inputs[3],
-        VarPowerFlowRefferenceType.Irf: Irf,
-        VarPowerFlowRefferenceType.Iif: Iif,
-        VarPowerFlowRefferenceType.Irt: Irt,
-        VarPowerFlowRefferenceType.Iit: Iit,
+        VarPowerFlowReferenceType.Vrf: inputs[0],
+        VarPowerFlowReferenceType.Vif: inputs[1],
+        VarPowerFlowReferenceType.Vrt: inputs[2],
+        VarPowerFlowReferenceType.Vit: inputs[3],
+        VarPowerFlowReferenceType.Irf: Irf,
+        VarPowerFlowReferenceType.Iif: Iif,
+        VarPowerFlowReferenceType.Irt: Irt,
+        VarPowerFlowReferenceType.Iit: Iit,
     }
 
     templ.block.api_obj_mapping = {
-        ParamPowerFlowRefferenceType.g: g,
-        ParamPowerFlowRefferenceType.b: b,
-        ParamPowerFlowRefferenceType.bsh: bsh,
-        ParamPowerFlowRefferenceType.vtap_f: vtap_f,
-        ParamPowerFlowRefferenceType.vtap_t: vtap_t,
+        ParamPowerFlowReferenceType.g: g,
+        ParamPowerFlowReferenceType.b: b,
+        ParamPowerFlowReferenceType.bsh: bsh,
+        ParamPowerFlowReferenceType.vtap_f: vtap_f,
+        ParamPowerFlowReferenceType.vtap_t: vtap_t,
     }
 
     templ.block.in_vars = inputs

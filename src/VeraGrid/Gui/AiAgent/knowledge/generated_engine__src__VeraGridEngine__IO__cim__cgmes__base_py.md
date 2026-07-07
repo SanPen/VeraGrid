@@ -71,4 +71,4 @@ Converts a simple string, eg. idtag (without hyphens or underscores)
 - `get_all_properties(self)`
   Summary: Get the list of properties of this object
 - `detect_circular_references(self, visited)`
-  Summary: Get path, leading to a circular refference
+  Summary: Get path, leading to a circular reference

@@ -1,0 +1,1576 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:9212d819-3f09-4062-aa13-82d4be4e2f4a> {
+    <urn:uuid:dd5d4800-dde3-4d30-8f25-49446e88e660>
+            rdf:type                   cim:DCNode;
+            cim:DCNode.DCEquipmentContainer
+                    <urn:uuid:90387e73-f91c-444f-87ba-6c97a453dea5>;
+            cim:IdentifiedObject.mRID  "dd5d4800-dde3-4d30-8f25-49446e88e660";
+            cim:IdentifiedObject.name  "TDC B plus" .
+    
+    <urn:uuid:5dfef055-80c1-721a-667e-506a89bee690>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "5dfef055-80c1-721a-667e-506a89bee690";
+            cim:IdentifiedObject.name      "Cub_4";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:aa9617a0-213c-4cff-b108-02ba4236815d>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:7b2ebf97-7150-426b-beb1-c60686ca8cb2> .
+    
+    <urn:uuid:512ac1ce-7df4-4caf-937c-5bb9380140e9>
+            rdf:type                      cim:VoltageLevel;
+            cim:IdentifiedObject.mRID     "512ac1ce-7df4-4caf-937c-5bb9380140e9";
+            cim:IdentifiedObject.name     "VL 220 kV";
+            cim:VoltageLevel.BaseVoltage  <urn:uuid:a7f1d8de-d658-428a-821b-3a5ae5965fd1>;
+            cim:VoltageLevel.Substation   <urn:uuid:9cc142f1-ee51-4b0e-9e50-c9e124527813> .
+    
+    <urn:uuid:471d1e90-5fb2-45f7-ba23-9ea6cf67bcde>
+            rdf:type                   cim:EquivalentInjection;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:512ac1ce-7df4-4caf-937c-5bb9380140e9>;
+            cim:EquivalentInjection.regulationCapability
+                    false;
+            cim:IdentifiedObject.mRID  "471d1e90-5fb2-45f7-ba23-9ea6cf67bcde";
+            cim:IdentifiedObject.name  "EI NH-GA HVDC side" .
+    
+    <urn:uuid:1fde346e-919a-6b3d-ceec-d206c9ab89b6>
+            rdf:type                   cim:VsCapabilityCurve;
+            cim:Curve.curveStyle       cim:CurveStyle.straightLineYValues;
+            cim:Curve.xUnit            cim:UnitSymbol.W;
+            cim:Curve.y1Unit           cim:UnitSymbol.VAr;
+            cim:Curve.y2Unit           cim:UnitSymbol.VAr;
+            cim:IdentifiedObject.mRID  "1fde346e-919a-6b3d-ceec-d206c9ab89b6";
+            cim:IdentifiedObject.name  "MMC Converter Am" .
+    
+    <urn:uuid:847a95fa-afd6-41d4-8a49-af868f47bf74>
+            rdf:type                   cim:ConnectivityNode;
+            cim:ConnectivityNode.ConnectivityNodeContainer
+                    <urn:uuid:d487ff06-4419-477b-a85a-b55c34598b1b>;
+            cim:IdentifiedObject.mRID  "847a95fa-afd6-41d4-8a49-af868f47bf74";
+            cim:IdentifiedObject.name  "TAC Ap" .
+    
+    <urn:uuid:3bf2f24f-ade8-7c98-f652-1de0978c0d0c>
+            rdf:type                        cim:PowerTransformerEnd;
+            cim:IdentifiedObject.mRID       "3bf2f24f-ade8-7c98-f652-1de0978c0d0c";
+            cim:IdentifiedObject.name       "HVDC Transformer Am";
+            cim:PowerTransformerEnd.PowerTransformer
+                    <urn:uuid:b21d3f39-ac5f-4778-8c99-f6a8741f3f1b>;
+            cim:PowerTransformerEnd.b       "0"^^xsd:float;
+            cim:PowerTransformerEnd.connectionKind
+                    cim:WindingConnection.Yn;
+            cim:PowerTransformerEnd.g       "0"^^xsd:float;
+            cim:PowerTransformerEnd.r       "0.107556"^^xsd:float;
+            cim:PowerTransformerEnd.ratedS  "450"^^xsd:float;
+            cim:PowerTransformerEnd.ratedU  "220"^^xsd:float;
+            cim:PowerTransformerEnd.x       "12.9062"^^xsd:float;
+            cim:TransformerEnd.BaseVoltage  <urn:uuid:a7f1d8de-d658-428a-821b-3a5ae5965fd1>;
+            cim:TransformerEnd.Terminal     <urn:uuid:458009ac-cb20-90bf-8a6a-cec8a53241b7>;
+            cim:TransformerEnd.endNumber    1 .
+    
+    <urn:uuid:4b3cb0b6-f46e-4716-bf60-df31d3857b8d>
+            rdf:type                   cim:ConnectivityNode;
+            cim:ConnectivityNode.ConnectivityNodeContainer
+                    <urn:uuid:d487ff06-4419-477b-a85a-b55c34598b1b>;
+            cim:IdentifiedObject.mRID  "4b3cb0b6-f46e-4716-bf60-df31d3857b8d";
+            cim:IdentifiedObject.name  "TAC Bm" .
+    
+    <urn:uuid:baf70f3a-f4b3-d6e3-bd74-dd0c5096c675>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "1732.05"^^xsd:float;
+            cim:IdentifiedObject.mRID     "baf70f3a-f4b3-d6e3-bd74-dd0c5096c675";
+            cim:IdentifiedObject.name     "patl for HVDC Transformer Am";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:7ba47243-1594-2a79-3503-bd062c5abfc0>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:cd4d39af-12b2-dcbf-6ee4-1bc8929ed094> .
+    
+    <urn:uuid:de4b18a6-17d1-2be4-e580-60b7cb144b3f>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "de4b18a6-17d1-2be4-e580-60b7cb144b3f";
+            cim:IdentifiedObject.name  "Voltage limits for TAC Bp";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:e929a537-59db-0a68-fed5-cf14830b6cb4> .
+    
+    <urn:uuid:43e7ef11-9353-4ea0-9511-7c9baec7c99e>
+            rdf:type                    cim:VsConverter;
+            cim:ACDCConverter.baseS     "450"^^xsd:float;
+            cim:ACDCConverter.idleLoss  "2.25"^^xsd:float;
+            cim:ACDCConverter.maxP      "99999"^^xsd:float;
+            cim:ACDCConverter.minP      "-99999"^^xsd:float;
+            cim:ACDCConverter.ratedUdc  "320"^^xsd:float;
+            cim:ACDCConverter.resistiveLoss
+                    "0.001"^^xsd:float;
+            cim:ACDCConverter.switchingLoss
+                    "1e-6"^^xsd:float;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:e6f01bb2-7817-4e83-afff-1589659a2123>;
+            cim:IdentifiedObject.mRID   "43e7ef11-9353-4ea0-9511-7c9baec7c99e";
+            cim:IdentifiedObject.name   "MMC Converter Ap";
+            cim:VsConverter.CapabilityCurve
+                    <urn:uuid:0ca04317-674b-638d-d04c-c72a4a25ba40> .
+    
+    <urn:uuid:cd4d39af-12b2-dcbf-6ee4-1bc8929ed094>
+            rdf:type                      cim:OperationalLimitType;
+            cim:IdentifiedObject.mRID     "cd4d39af-12b2-dcbf-6ee4-1bc8929ed094";
+            cim:IdentifiedObject.name     "patl";
+            cim:OperationalLimitType.direction
+                    cim:OperationalLimitDirectionKind.absoluteValue;
+            cim:OperationalLimitType.isInfiniteDuration
+                    true;
+            eu:OperationalLimitType.kind  eu:LimitKind.patl .
+    
+    <urn:uuid:8b9fae9c-8127-a058-dc6a-6687589de85c>
+            rdf:type               cim:CurveData;
+            cim:CurveData.Curve    <urn:uuid:85bb8efc-94f7-035a-4a6f-38efe7b2f6ac>;
+            cim:CurveData.xvalue   "-99999"^^xsd:float;
+            cim:CurveData.y1value  "-450"^^xsd:float;
+            cim:CurveData.y2value  "450"^^xsd:float .
+    
+    <urn:uuid:e36a8761-2412-d838-2db3-dd2002e9e3aa>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "e36a8761-2412-d838-2db3-dd2002e9e3aa";
+            cim:IdentifiedObject.name  "Current rating for HVDC Transformer Bm";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:cdb39691-018d-3e5e-1592-28761b4138cb> .
+    
+    <urn:uuid:7ba47243-1594-2a79-3503-bd062c5abfc0>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "7ba47243-1594-2a79-3503-bd062c5abfc0";
+            cim:IdentifiedObject.name  "Current rating for HVDC Transformer Am";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:83274019-cf88-d03e-c291-efc418632b61> .
+    
+    <urn:uuid:2cb059da-8262-dc6a-1849-83863c5bfc65>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "2cb059da-8262-dc6a-1849-83863c5bfc65";
+            cim:IdentifiedObject.name      "Cub_2";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:a01d72f5-9f13-43bd-a4b5-8d9acdf5b0d7>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:7c70a084-c500-491f-8b74-0cc08ce4d3b6> .
+    
+    <urn:uuid:fad46165-4174-1665-2cf1-7d147603822a>
+            rdf:type                   cim:DCTerminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:f04df7ea-bb4d-428e-8adf-3bd61cf27083>;
+            cim:DCTerminal.DCConductingEquipment
+                    <urn:uuid:519ee264-1a60-4743-9875-fde11b22a9d2>;
+            cim:IdentifiedObject.mRID  "fad46165-4174-1665-2cf1-7d147603822a";
+            cim:IdentifiedObject.name  "Cub_6" .
+    
+    <urn:uuid:20f89beb-e1f2-2b78-4b5b-a8bbf10680cf>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "20f89beb-e1f2-2b78-4b5b-a8bbf10680cf";
+            cim:IdentifiedObject.name  "Current rating for Neutral return";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:fad46165-4174-1665-2cf1-7d147603822a> .
+    
+    <urn:uuid:da8c1b77-195d-10cb-0c02-7ccd5eea88f0>
+            rdf:type                   cim:DCTerminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:f04df7ea-bb4d-428e-8adf-3bd61cf27083>;
+            cim:DCTerminal.DCConductingEquipment
+                    <urn:uuid:3c3ebf0a-d0de-658f-9257-7851c0835f80>;
+            cim:IdentifiedObject.mRID  "da8c1b77-195d-10cb-0c02-7ccd5eea88f0";
+            cim:IdentifiedObject.name  "TDC B neutral" .
+    
+    <urn:uuid:c2f20696-d9a8-df6a-1b3f-717a3aec4573>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "1732.05"^^xsd:float;
+            cim:IdentifiedObject.mRID     "c2f20696-d9a8-df6a-1b3f-717a3aec4573";
+            cim:IdentifiedObject.name     "patl for HVDC Transformer Bp";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:bcbc34f6-ae98-52df-b056-63f81e56ed2a>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:cd4d39af-12b2-dcbf-6ee4-1bc8929ed094> .
+    
+    <urn:uuid:4461bb4a-4944-fc41-0cf1-bcce336a634d>
+            rdf:type               cim:CurveData;
+            cim:CurveData.Curve    <urn:uuid:a1272ccc-d77f-6988-e232-b2e3cf20d841>;
+            cim:CurveData.xvalue   "-99999"^^xsd:float;
+            cim:CurveData.y1value  "-450"^^xsd:float;
+            cim:CurveData.y2value  "450"^^xsd:float .
+    
+    <urn:uuid:d5f89c40-6db1-34a4-7c2e-2cce77758e9c>
+            rdf:type                   cim:DCTerminal;
+            cim:ACDCTerminal.sequenceNumber
+                    2;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:b84af5c9-7a47-4e4a-b7d1-465fa5102bf9>;
+            cim:DCTerminal.DCConductingEquipment
+                    <urn:uuid:06339500-e732-4d41-be63-2a74973ba5e2>;
+            cim:IdentifiedObject.mRID  "d5f89c40-6db1-34a4-7c2e-2cce77758e9c";
+            cim:IdentifiedObject.name  "Cub_2" .
+    
+    <urn:uuid:cdb39691-018d-3e5e-1592-28761b4138cb>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    2;
+            cim:IdentifiedObject.mRID      "cdb39691-018d-3e5e-1592-28761b4138cb";
+            cim:IdentifiedObject.name      "Cub_3";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:a69c940b-2e2c-4dbd-bb82-c62900eb8c35>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:4b3cb0b6-f46e-4716-bf60-df31d3857b8d> .
+    
+    <urn:uuid:6379efcf-f5ac-4288-ab73-77a45ba32550>
+            rdf:type                   cim:ConnectivityNode;
+            cim:ConnectivityNode.ConnectivityNodeContainer
+                    <urn:uuid:d487ff06-4419-477b-a85a-b55c34598b1b>;
+            cim:IdentifiedObject.mRID  "6379efcf-f5ac-4288-ab73-77a45ba32550";
+            cim:IdentifiedObject.name  "TAC Bp" .
+    
+    <urn:uuid:9879e9f7-e639-becc-f0db-1b4e4a0f220d>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "9879e9f7-e639-becc-f0db-1b4e4a0f220d";
+            cim:IdentifiedObject.name  "Voltage limits for TerminalGA-NH_A220";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:0831b9ee-77a2-76b7-bfb5-a077baf7eb47> .
+    
+    <urn:uuid:ecd803a7-dd69-4e16-9ebe-610fb55deabd>
+            rdf:type                   cim:DCBusbar;
+            cim:DCConductingEquipment.ratedUdc
+                    "1"^^xsd:float;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:e6f01bb2-7817-4e83-afff-1589659a2123>;
+            cim:IdentifiedObject.mRID  "ecd803a7-dd69-4e16-9ebe-610fb55deabd";
+            cim:IdentifiedObject.name  "TDC A neutral" .
+    
+    <urn:uuid:901a22a7-dd1f-d867-a11d-c68bc26b5375>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "901a22a7-dd1f-d867-a11d-c68bc26b5375";
+            cim:IdentifiedObject.name  "Current rating for DCLine2";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:43fe5fc7-2a55-48ab-016e-e0ea4f270d4d> .
+    
+    <urn:uuid:ea624363-eea7-0e2e-10a2-7c689d724173>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "1180.94"^^xsd:float;
+            cim:IdentifiedObject.mRID     "ea624363-eea7-0e2e-10a2-7c689d724173";
+            cim:IdentifiedObject.name     "patl for HVDC Transformer Bp";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:96e775ad-c86e-2dc2-102c-7be12fc1407d>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:cd4d39af-12b2-dcbf-6ee4-1bc8929ed094> .
+    
+    <urn:uuid:b0d36cfe-adc1-3a9b-89e7-74ce2ed513f1>
+            rdf:type                   cim:DCBusbar;
+            cim:DCConductingEquipment.ratedUdc
+                    "320"^^xsd:float;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:90387e73-f91c-444f-87ba-6c97a453dea5>;
+            cim:IdentifiedObject.mRID  "b0d36cfe-adc1-3a9b-89e7-74ce2ed513f1";
+            cim:IdentifiedObject.name  "TDC B plus" .
+    
+    <urn:uuid:2b4ffb8b-aecd-e84b-98d6-71e843443e6c>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "2b4ffb8b-aecd-e84b-98d6-71e843443e6c";
+            cim:IdentifiedObject.name  "Current rating for TieLine_HVDC_GA_NH-GA_1";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:e3577666-c328-a706-f204-3ea836df517a> .
+    
+    <urn:uuid:4b642b97-39cf-13b4-536b-7663f1042ba8>
+            rdf:type               cim:CurveData;
+            cim:CurveData.Curve    <urn:uuid:0ca04317-674b-638d-d04c-c72a4a25ba40>;
+            cim:CurveData.xvalue   "-99999"^^xsd:float;
+            cim:CurveData.y1value  "-450"^^xsd:float;
+            cim:CurveData.y2value  "450"^^xsd:float .
+    
+    <urn:uuid:6d218e49-0d6b-4e14-9079-2ee1c6832fa3>
+            rdf:type                   cim:DCNode;
+            cim:DCNode.DCEquipmentContainer
+                    <urn:uuid:e6f01bb2-7817-4e83-afff-1589659a2123>;
+            cim:IdentifiedObject.mRID  "6d218e49-0d6b-4e14-9079-2ee1c6832fa3";
+            cim:IdentifiedObject.name  "TDC A plus" .
+    
+    <urn:uuid:b54ff9d9-a108-8be9-36d8-a7c153a99ac5>
+            rdf:type                      cim:OperationalLimitType;
+            cim:IdentifiedObject.mRID     "b54ff9d9-a108-8be9-36d8-a7c153a99ac5";
+            cim:IdentifiedObject.name     "highVoltage";
+            cim:OperationalLimitType.direction
+                    cim:OperationalLimitDirectionKind.high;
+            cim:OperationalLimitType.isInfiniteDuration
+                    true;
+            eu:OperationalLimitType.kind  eu:LimitKind.highVoltage .
+    
+    <urn:uuid:f04df7ea-bb4d-428e-8adf-3bd61cf27083>
+            rdf:type                   cim:DCNode;
+            cim:DCNode.DCEquipmentContainer
+                    <urn:uuid:90387e73-f91c-444f-87ba-6c97a453dea5>;
+            cim:IdentifiedObject.mRID  "f04df7ea-bb4d-428e-8adf-3bd61cf27083";
+            cim:IdentifiedObject.name  "TDC B neutral" .
+    
+    <urn:uuid:96e775ad-c86e-2dc2-102c-7be12fc1407d>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "96e775ad-c86e-2dc2-102c-7be12fc1407d";
+            cim:IdentifiedObject.name  "Current rating for HVDC Transformer Bp";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:5dfef055-80c1-721a-667e-506a89bee690> .
+    
+    <urn:uuid:1413fe8d-03de-51bb-998f-9c8c4c841b98>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "1413fe8d-03de-51bb-998f-9c8c4c841b98";
+            cim:IdentifiedObject.name      "Cub_2";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:43e7ef11-9353-4ea0-9511-7c9baec7c99e>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:847a95fa-afd6-41d4-8a49-af868f47bf74> .
+    
+    <urn:uuid:caaedd6a-eb5f-32ed-2da0-d558473815b5>
+            rdf:type               cim:CurveData;
+            cim:CurveData.Curve    <urn:uuid:85bb8efc-94f7-035a-4a6f-38efe7b2f6ac>;
+            cim:CurveData.xvalue   "99999"^^xsd:float;
+            cim:CurveData.y1value  "-450"^^xsd:float;
+            cim:CurveData.y2value  "450"^^xsd:float .
+    
+    <urn:uuid:03092750-41f7-347b-fd90-e82e1b8b5704>
+            rdf:type                   cim:DCTerminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:6d218e49-0d6b-4e14-9079-2ee1c6832fa3>;
+            cim:DCTerminal.DCConductingEquipment
+                    <urn:uuid:0c57041f-9801-40c2-8bce-39938b85311d>;
+            cim:IdentifiedObject.mRID  "03092750-41f7-347b-fd90-e82e1b8b5704";
+            cim:IdentifiedObject.name  "Cub_2" .
+    
+    <urn:uuid:e929a537-59db-0a68-fed5-cf14830b6cb4>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    2;
+            cim:IdentifiedObject.mRID      "e929a537-59db-0a68-fed5-cf14830b6cb4";
+            cim:IdentifiedObject.name      "Cub_4";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:aa9617a0-213c-4cff-b108-02ba4236815d>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:6379efcf-f5ac-4288-ab73-77a45ba32550> .
+    
+    <urn:uuid:828adff2-1875-bc26-891f-bb45748f0c11>
+            rdf:type                   cim:DCTerminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:02c4895a-677a-4858-b5c2-bcd0fe13ed62>;
+            cim:DCTerminal.DCConductingEquipment
+                    <urn:uuid:ecd803a7-dd69-4e16-9ebe-610fb55deabd>;
+            cim:IdentifiedObject.mRID  "828adff2-1875-bc26-891f-bb45748f0c11";
+            cim:IdentifiedObject.name  "TDC A neutral" .
+    
+    <urn:uuid:e6f01bb2-7817-4e83-afff-1589659a2123>
+            rdf:type                        cim:DCConverterUnit;
+            cim:DCConverterUnit.Substation  <urn:uuid:9cc142f1-ee51-4b0e-9e50-c9e124527813>;
+            cim:DCConverterUnit.operationMode
+                    cim:DCConverterOperatingModeKind.monopolarGroundReturn;
+            cim:IdentifiedObject.mRID       "e6f01bb2-7817-4e83-afff-1589659a2123";
+            cim:IdentifiedObject.name       "DC1" .
+    
+    <urn:uuid:e094248f-c55d-eae4-1cd3-23186f2b0df5>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "e094248f-c55d-eae4-1cd3-23186f2b0df5";
+            cim:IdentifiedObject.name      "Cub_2";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:3e4ed89b-19de-4590-bd16-39eb93f652b5>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:4b3cb0b6-f46e-4716-bf60-df31d3857b8d> .
+    
+    <urn:uuid:9cc142f1-ee51-4b0e-9e50-c9e124527813>
+            rdf:type                   cim:Substation;
+            cim:IdentifiedObject.mRID  "9cc142f1-ee51-4b0e-9e50-c9e124527813";
+            cim:IdentifiedObject.name  "HVDC Station";
+            cim:Substation.Region      <urn:uuid:5d499e23-65f2-49e6-80c1-c5668dacefd4> .
+    
+    <urn:uuid:85d65acc-bc98-d9c5-731e-a6bab6f2851e>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "1732.05"^^xsd:float;
+            cim:IdentifiedObject.mRID     "85d65acc-bc98-d9c5-731e-a6bab6f2851e";
+            cim:IdentifiedObject.name     "patl for HVDC Transformer Ap";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:88b72805-4bf9-3543-f7a1-7d9fcc220010>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:cd4d39af-12b2-dcbf-6ee4-1bc8929ed094> .
+    
+    <urn:uuid:958f8d0f-5c32-49bd-9d0f-c0378152d539>
+            rdf:type                   cim:SubLoadArea;
+            cim:IdentifiedObject.mRID  "958f8d0f-5c32-49bd-9d0f-c0378152d539";
+            cim:IdentifiedObject.name  "General Load_HVDC";
+            cim:SubLoadArea.LoadArea   <urn:uuid:7cf58e7f-eadf-48ca-bed5-79bfe2dd41ad> .
+    
+    <urn:uuid:a766f6f1-c667-3aa7-de61-7fdb17873e3a>
+            rdf:type                    cim:PhaseTapChangerSymmetrical;
+            cim:IdentifiedObject.mRID   "a766f6f1-c667-3aa7-de61-7fdb17873e3a";
+            cim:IdentifiedObject.name   "HVDC Transformer Bm";
+            cim:PhaseTapChanger.TransformerEnd
+                    <urn:uuid:2278806f-c67b-4b42-b3b4-524a32237687>;
+            cim:PhaseTapChangerNonLinear.voltageStepIncrement
+                    "1.25"^^xsd:float;
+            cim:PhaseTapChangerNonLinear.xMax
+                    "7.29782"^^xsd:float;
+            cim:PhaseTapChangerNonLinear.xMin
+                    "12.9062"^^xsd:float;
+            cim:TapChanger.highStep     25;
+            cim:TapChanger.lowStep      1;
+            cim:TapChanger.ltcFlag      true;
+            cim:TapChanger.neutralStep  13;
+            cim:TapChanger.neutralU     "220"^^xsd:float;
+            cim:TapChanger.normalStep   13 .
+    
+    <urn:uuid:e92ea4b9-33e8-65b9-bf3b-f466b6cd8672>
+            rdf:type                   cim:ACDCConverterDCTerminal;
+            cim:ACDCConverterDCTerminal.DCConductingEquipment
+                    <urn:uuid:3e4ed89b-19de-4590-bd16-39eb93f652b5>;
+            cim:ACDCConverterDCTerminal.polarity
+                    cim:DCPolarityKind.positive;
+            cim:ACDCTerminal.sequenceNumber
+                    2;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:b84af5c9-7a47-4e4a-b7d1-465fa5102bf9>;
+            cim:IdentifiedObject.mRID  "e92ea4b9-33e8-65b9-bf3b-f466b6cd8672";
+            cim:IdentifiedObject.name  "Cub_3" .
+    
+    <urn:uuid:78071be9-bfbc-e33e-b986-56e9ebe3ecd2>
+            rdf:type                   cim:DCBusbar;
+            cim:DCConductingEquipment.ratedUdc
+                    "320"^^xsd:float;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:e6f01bb2-7817-4e83-afff-1589659a2123>;
+            cim:IdentifiedObject.mRID  "78071be9-bfbc-e33e-b986-56e9ebe3ecd2";
+            cim:IdentifiedObject.name  "TDC A plus" .
+    
+    <urn:uuid:b84af5c9-7a47-4e4a-b7d1-465fa5102bf9>
+            rdf:type                   cim:DCNode;
+            cim:DCNode.DCEquipmentContainer
+                    <urn:uuid:90387e73-f91c-444f-87ba-6c97a453dea5>;
+            cim:IdentifiedObject.mRID  "b84af5c9-7a47-4e4a-b7d1-465fa5102bf9";
+            cim:IdentifiedObject.name  "TDC B minus" .
+    
+    <urn:uuid:97b1df49-4f00-7c2e-378c-c71da2bd5604>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "2000"^^xsd:float;
+            cim:IdentifiedObject.mRID     "97b1df49-4f00-7c2e-378c-c71da2bd5604";
+            cim:IdentifiedObject.name     "patl for DCLine1";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:f89d2968-76bc-18de-d9b9-0d968b8fbfe7>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:cd4d39af-12b2-dcbf-6ee4-1bc8929ed094> .
+    
+    <urn:uuid:5d499e23-65f2-49e6-80c1-c5668dacefd4>
+            rdf:type                   cim:SubGeographicalRegion;
+            cim:IdentifiedObject.mRID  "5d499e23-65f2-49e6-80c1-c5668dacefd4";
+            cim:IdentifiedObject.name  "HVDC Subarea";
+            cim:SubGeographicalRegion.Region
+                    <urn:uuid:d121cf41-5b6d-47c9-87a4-67bfb994d8ec> .
+    
+    <urn:uuid:458009ac-cb20-90bf-8a6a-cec8a53241b7>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "458009ac-cb20-90bf-8a6a-cec8a53241b7";
+            cim:IdentifiedObject.name      "Cub_3";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:b21d3f39-ac5f-4778-8c99-f6a8741f3f1b>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:76a4b6ea-2c0d-49ca-928c-cca6fb0b4123> .
+    
+    <urn:uuid:9212d819-3f09-4062-aa13-82d4be4e2f4a>
+            rdf:type           rdfg:Graph , dcat:Dataset;
+            dct:conformsTo     <http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/3.0>;
+            dct:description    "The equipment dataset for Nordheim-Galia, which is part of the ReliCapGrid.";
+            dct:identifier     "9212d819-3f09-4062-aa13-82d4be4e2f4a";
+            dct:issued         "2025-02-06"^^xsd:date;
+            dct:requires       <urn:uuid:5f8c11a8-c61c-42c9-925d-8cdbc0146c1a> , <urn:uuid:1b65ada7-39ca-42b8-a278-39c457ed82c3>;
+            dct:temporal       [ rdf:type        dct:PeriodOfTime;
+                                 dcat:startDate  "2022-06-16T23:30:00Z"^^xsd:dateTime
+                               ];
+            dcat:distribution  [ rdf:type    dcat:Distribution;
+                                 dct:issued  "2025-02-06T14:18:22Z"^^xsd:dateTime
+                               ];
+            dcat:isVersionOf   <http://nordheim-galia.ng/CGMES>;
+            dcat:version       "1";
+            json-ld:base       "http://nordheim-galia.ng/CGMES#" .
+    
+    <urn:uuid:e5a7e724-2524-9444-377a-b78fb9a27d23>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "e5a7e724-2524-9444-377a-b78fb9a27d23";
+            cim:IdentifiedObject.name  "Current rating for DCLine1";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:048a6928-aa41-246c-97a2-970cd8e32d20> .
+    
+    <urn:uuid:02c4895a-677a-4858-b5c2-bcd0fe13ed62>
+            rdf:type                   cim:DCNode;
+            cim:DCNode.DCEquipmentContainer
+                    <urn:uuid:e6f01bb2-7817-4e83-afff-1589659a2123>;
+            cim:IdentifiedObject.mRID  "02c4895a-677a-4858-b5c2-bcd0fe13ed62";
+            cim:IdentifiedObject.name  "TDC A neutral" .
+    
+    <urn:uuid:0cede893-c54d-4103-a19a-37f3dedd8ffa>
+            rdf:type                   cim:PowerTransformer;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:9cc142f1-ee51-4b0e-9e50-c9e124527813>;
+            cim:IdentifiedObject.mRID  "0cede893-c54d-4103-a19a-37f3dedd8ffa";
+            cim:IdentifiedObject.name  "HVDC Transformer Ap" .
+    
+    <urn:uuid:829f372c-49aa-1699-4118-8ac55ceb4374>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "1180.94"^^xsd:float;
+            cim:IdentifiedObject.mRID     "829f372c-49aa-1699-4118-8ac55ceb4374";
+            cim:IdentifiedObject.name     "patl for HVDC Transformer Bm";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:43ac86fc-9acd-b6fe-5f72-333fe9b825a4>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:cd4d39af-12b2-dcbf-6ee4-1bc8929ed094> .
+    
+    <urn:uuid:732f3965-a158-3bec-8ff9-84adfbbd2009>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "1180.94"^^xsd:float;
+            cim:IdentifiedObject.mRID     "732f3965-a158-3bec-8ff9-84adfbbd2009";
+            cim:IdentifiedObject.name     "patl for HVDC Transformer Am";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:75ca6b45-d86b-1418-6e4b-18df61b99d9a>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:cd4d39af-12b2-dcbf-6ee4-1bc8929ed094> .
+    
+    <urn:uuid:2a3e947d-b654-56e2-17c9-f8f04d00883d>
+            rdf:type                   cim:DCTerminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:b84af5c9-7a47-4e4a-b7d1-465fa5102bf9>;
+            cim:DCTerminal.DCConductingEquipment
+                    <urn:uuid:cc76b0f3-cb2f-4bdd-4210-6a550d0ff42e>;
+            cim:IdentifiedObject.mRID  "2a3e947d-b654-56e2-17c9-f8f04d00883d";
+            cim:IdentifiedObject.name  "TDC B minus" .
+    
+    <urn:uuid:85bb8efc-94f7-035a-4a6f-38efe7b2f6ac>
+            rdf:type                   cim:VsCapabilityCurve;
+            cim:Curve.curveStyle       cim:CurveStyle.straightLineYValues;
+            cim:Curve.xUnit            cim:UnitSymbol.W;
+            cim:Curve.y1Unit           cim:UnitSymbol.VAr;
+            cim:Curve.y2Unit           cim:UnitSymbol.VAr;
+            cim:IdentifiedObject.mRID  "85bb8efc-94f7-035a-4a6f-38efe7b2f6ac";
+            cim:IdentifiedObject.name  "MMC Converter Bm" .
+    
+    <urn:uuid:7b2ebf97-7150-426b-beb1-c60686ca8cb2>
+            rdf:type                   cim:ConnectivityNode;
+            cim:ConnectivityNode.ConnectivityNodeContainer
+                    <urn:uuid:512ac1ce-7df4-4caf-937c-5bb9380140e9>;
+            cim:IdentifiedObject.mRID  "7b2ebf97-7150-426b-beb1-c60686ca8cb2";
+            cim:IdentifiedObject.name  "Terminal B_220" .
+    
+    <urn:uuid:47d92ee2-d35d-f28e-e56a-5a60a9658537>
+            rdf:type                        cim:PowerTransformerEnd;
+            cim:IdentifiedObject.mRID       "47d92ee2-d35d-f28e-e56a-5a60a9658537";
+            cim:IdentifiedObject.name       "HVDC Transformer Ap";
+            cim:PowerTransformerEnd.PowerTransformer
+                    <urn:uuid:0cede893-c54d-4103-a19a-37f3dedd8ffa>;
+            cim:PowerTransformerEnd.b       "0"^^xsd:float;
+            cim:PowerTransformerEnd.connectionKind
+                    cim:WindingConnection.Yn;
+            cim:PowerTransformerEnd.g       "0"^^xsd:float;
+            cim:PowerTransformerEnd.r       "0.107556"^^xsd:float;
+            cim:PowerTransformerEnd.ratedS  "450"^^xsd:float;
+            cim:PowerTransformerEnd.ratedU  "220"^^xsd:float;
+            cim:PowerTransformerEnd.x       "12.9062"^^xsd:float;
+            cim:TransformerEnd.BaseVoltage  <urn:uuid:a7f1d8de-d658-428a-821b-3a5ae5965fd1>;
+            cim:TransformerEnd.Terminal     <urn:uuid:ba5b81c8-d9da-4698-3aba-fc5f15d7ba4f>;
+            cim:TransformerEnd.endNumber    1 .
+    
+    <urn:uuid:896ecaac-02e1-9880-75b7-a1b0da73b359>
+            rdf:type                   cim:DCTerminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:dd5d4800-dde3-4d30-8f25-49446e88e660>;
+            cim:DCTerminal.DCConductingEquipment
+                    <urn:uuid:b0d36cfe-adc1-3a9b-89e7-74ce2ed513f1>;
+            cim:IdentifiedObject.mRID  "896ecaac-02e1-9880-75b7-a1b0da73b359";
+            cim:IdentifiedObject.name  "TDC B plus" .
+    
+    <urn:uuid:5b56c674-94c8-49ae-82c0-1b95bc12574d>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "5b56c674-94c8-49ae-82c0-1b95bc12574d";
+            cim:IdentifiedObject.name      "T EI";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:471d1e90-5fb2-45f7-ba23-9ea6cf67bcde>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:892ef502-162b-469f-b93f-266aae828227> .
+    
+    <urn:uuid:0831b9ee-77a2-76b7-bfb5-a077baf7eb47>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "0831b9ee-77a2-76b7-bfb5-a077baf7eb47";
+            cim:IdentifiedObject.name      "Cub_4";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:36806868-226e-4416-99ac-489fb1523bca>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:76a4b6ea-2c0d-49ca-928c-cca6fb0b4123> .
+    
+    <urn:uuid:98e20046-a199-d1a5-7317-8b1ec06b5821>
+            rdf:type                   cim:DCTerminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:6d218e49-0d6b-4e14-9079-2ee1c6832fa3>;
+            cim:DCTerminal.DCConductingEquipment
+                    <urn:uuid:78071be9-bfbc-e33e-b986-56e9ebe3ecd2>;
+            cim:IdentifiedObject.mRID  "98e20046-a199-d1a5-7317-8b1ec06b5821";
+            cim:IdentifiedObject.name  "TDC A plus" .
+    
+    <urn:uuid:65d2962d-d32d-49a8-a879-a93240bdb147>
+            rdf:type                       cim:VsConverter;
+            cim:ACDCConverter.PccTerminal  <urn:uuid:5dfef055-80c1-721a-667e-506a89bee690>;
+            cim:ACDCConverter.baseS        "450"^^xsd:float;
+            cim:ACDCConverter.idleLoss     "2.25"^^xsd:float;
+            cim:ACDCConverter.maxP         "99999"^^xsd:float;
+            cim:ACDCConverter.minP         "-99999"^^xsd:float;
+            cim:ACDCConverter.ratedUdc     "320"^^xsd:float;
+            cim:ACDCConverter.resistiveLoss
+                    "0.001"^^xsd:float;
+            cim:ACDCConverter.switchingLoss
+                    "1e-6"^^xsd:float;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:90387e73-f91c-444f-87ba-6c97a453dea5>;
+            cim:IdentifiedObject.mRID      "65d2962d-d32d-49a8-a879-a93240bdb147";
+            cim:IdentifiedObject.name      "MMC Converter Bp";
+            cim:VsConverter.CapabilityCurve
+                    <urn:uuid:a1272ccc-d77f-6988-e232-b2e3cf20d841> .
+    
+    <urn:uuid:83274019-cf88-d03e-c291-efc418632b61>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    2;
+            cim:IdentifiedObject.mRID      "83274019-cf88-d03e-c291-efc418632b61";
+            cim:IdentifiedObject.name      "Cub_3";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:b21d3f39-ac5f-4778-8c99-f6a8741f3f1b>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:7c70a084-c500-491f-8b74-0cc08ce4d3b6> .
+    
+    <urn:uuid:519ee264-1a60-4743-9875-fde11b22a9d2>
+            rdf:type                       cim:DCLineSegment;
+            cim:DCConductingEquipment.ratedUdc
+                    "320"^^xsd:float;
+            cim:DCLineSegment.capacitance  "0"^^xsd:float;
+            cim:DCLineSegment.inductance   "0.05"^^xsd:float;
+            cim:DCLineSegment.length       "200"^^xsd:float;
+            cim:DCLineSegment.resistance   "2"^^xsd:float;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:8044aa29-c410-42a9-8691-1da535f55342>;
+            cim:IdentifiedObject.mRID      "519ee264-1a60-4743-9875-fde11b22a9d2";
+            cim:IdentifiedObject.name      "Neutral return" .
+    
+    <urn:uuid:9f3060b5-4709-4b71-6eae-60ac63291a4b>
+            rdf:type                    cim:TieFlow;
+            cim:IdentifiedObject.mRID   "9f3060b5-4709-4b71-6eae-60ac63291a4b";
+            cim:IdentifiedObject.name   "TieFlow GA";
+            cim:TieFlow.ControlArea     <urn:uuid:6a460b27-ee5c-4f31-aa4c-5ed99b640135>;
+            cim:TieFlow.Terminal        <urn:uuid:e3577666-c328-a706-f204-3ea836df517a>;
+            cim:TieFlow.positiveFlowIn  true .
+    
+    <urn:uuid:75ca6b45-d86b-1418-6e4b-18df61b99d9a>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "75ca6b45-d86b-1418-6e4b-18df61b99d9a";
+            cim:IdentifiedObject.name  "Current rating for HVDC Transformer Am";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:458009ac-cb20-90bf-8a6a-cec8a53241b7> .
+    
+    <urn:uuid:048a6928-aa41-246c-97a2-970cd8e32d20>
+            rdf:type                   cim:DCTerminal;
+            cim:ACDCTerminal.sequenceNumber
+                    2;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:dd5d4800-dde3-4d30-8f25-49446e88e660>;
+            cim:DCTerminal.DCConductingEquipment
+                    <urn:uuid:0c57041f-9801-40c2-8bce-39938b85311d>;
+            cim:IdentifiedObject.mRID  "048a6928-aa41-246c-97a2-970cd8e32d20";
+            cim:IdentifiedObject.name  "Cub_2" .
+    
+    <urn:uuid:bf5508a7-e1dc-a620-c75c-a5d69e82fd0a>
+            rdf:type                      cim:VoltageLimit;
+            cim:IdentifiedObject.mRID     "bf5508a7-e1dc-a620-c75c-a5d69e82fd0a";
+            cim:IdentifiedObject.name     "high limit for TAC Bp";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:de4b18a6-17d1-2be4-e580-60b7cb144b3f>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:b54ff9d9-a108-8be9-36d8-a7c153a99ac5>;
+            cim:VoltageLimit.normalValue  "157.5"^^xsd:float .
+    
+    <urn:uuid:4a5fabef-523a-45cd-8924-11158628afe2>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "4a5fabef-523a-45cd-8924-11158628afe2";
+            cim:IdentifiedObject.name      "T1 b";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:673c0ba3-9afb-441c-af31-403125d0d18c>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:7b2ebf97-7150-426b-beb1-c60686ca8cb2> .
+    
+    <urn:uuid:0c57041f-9801-40c2-8bce-39938b85311d>
+            rdf:type                       cim:DCLineSegment;
+            cim:DCConductingEquipment.ratedUdc
+                    "320"^^xsd:float;
+            cim:DCLineSegment.capacitance  "0"^^xsd:float;
+            cim:DCLineSegment.inductance   "0.05"^^xsd:float;
+            cim:DCLineSegment.length       "200"^^xsd:float;
+            cim:DCLineSegment.resistance   "2"^^xsd:float;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:7576bb81-2d83-4625-8b37-1ea713b39f33>;
+            cim:IdentifiedObject.mRID      "0c57041f-9801-40c2-8bce-39938b85311d";
+            cim:IdentifiedObject.name      "DCLine1" .
+    
+    <urn:uuid:0ca04317-674b-638d-d04c-c72a4a25ba40>
+            rdf:type                   cim:VsCapabilityCurve;
+            cim:Curve.curveStyle       cim:CurveStyle.straightLineYValues;
+            cim:Curve.xUnit            cim:UnitSymbol.W;
+            cim:Curve.y1Unit           cim:UnitSymbol.VAr;
+            cim:Curve.y2Unit           cim:UnitSymbol.VAr;
+            cim:IdentifiedObject.mRID  "0ca04317-674b-638d-d04c-c72a4a25ba40";
+            cim:IdentifiedObject.name  "MMC Converter Ap" .
+    
+    <urn:uuid:2278806f-c67b-4b42-b3b4-524a32237687>
+            rdf:type                        cim:PowerTransformerEnd;
+            cim:IdentifiedObject.mRID       "2278806f-c67b-4b42-b3b4-524a32237687";
+            cim:IdentifiedObject.name       "HVDC Transformer Bm";
+            cim:PowerTransformerEnd.PowerTransformer
+                    <urn:uuid:a69c940b-2e2c-4dbd-bb82-c62900eb8c35>;
+            cim:PowerTransformerEnd.b       "0"^^xsd:float;
+            cim:PowerTransformerEnd.connectionKind
+                    cim:WindingConnection.Yn;
+            cim:PowerTransformerEnd.g       "0"^^xsd:float;
+            cim:PowerTransformerEnd.r       "0.107556"^^xsd:float;
+            cim:PowerTransformerEnd.ratedS  "450"^^xsd:float;
+            cim:PowerTransformerEnd.ratedU  "220"^^xsd:float;
+            cim:PowerTransformerEnd.x       "12.9062"^^xsd:float;
+            cim:TransformerEnd.BaseVoltage  <urn:uuid:a7f1d8de-d658-428a-821b-3a5ae5965fd1>;
+            cim:TransformerEnd.Terminal     <urn:uuid:e00f8ed5-1aa8-65ed-1f5d-c4b310349438>;
+            cim:TransformerEnd.endNumber    1 .
+    
+    <urn:uuid:c6f18223-4697-bf02-a281-c6e41bab09a2>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "c6f18223-4697-bf02-a281-c6e41bab09a2";
+            cim:IdentifiedObject.name  "Voltage limits for TAC Ap";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:bb580ab8-eb07-4e59-8932-8a078288e409> .
+    
+    <urn:uuid:3c3ebf0a-d0de-658f-9257-7851c0835f80>
+            rdf:type                   cim:DCBusbar;
+            cim:DCConductingEquipment.ratedUdc
+                    "1"^^xsd:float;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:90387e73-f91c-444f-87ba-6c97a453dea5>;
+            cim:IdentifiedObject.mRID  "3c3ebf0a-d0de-658f-9257-7851c0835f80";
+            cim:IdentifiedObject.name  "TDC B neutral" .
+    
+    <urn:uuid:f454bc8f-294b-9424-8bbe-c33d2e55a5b2>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "2000"^^xsd:float;
+            cim:IdentifiedObject.mRID     "f454bc8f-294b-9424-8bbe-c33d2e55a5b2";
+            cim:IdentifiedObject.name     "patl for DCLine1";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:e5a7e724-2524-9444-377a-b78fb9a27d23>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:cd4d39af-12b2-dcbf-6ee4-1bc8929ed094> .
+    
+    <urn:uuid:b21d3f39-ac5f-4778-8c99-f6a8741f3f1b>
+            rdf:type                   cim:PowerTransformer;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:9cc142f1-ee51-4b0e-9e50-c9e124527813>;
+            cim:IdentifiedObject.mRID  "b21d3f39-ac5f-4778-8c99-f6a8741f3f1b";
+            cim:IdentifiedObject.name  "HVDC Transformer Am" .
+    
+    <urn:uuid:459864d0-ecd4-1901-aacf-5e2b5223f829>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "459864d0-ecd4-1901-aacf-5e2b5223f829";
+            cim:IdentifiedObject.name      "Cub_3";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:65d2962d-d32d-49a8-a879-a93240bdb147>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:6379efcf-f5ac-4288-ab73-77a45ba32550> .
+    
+    <urn:uuid:d487ff06-4419-477b-a85a-b55c34598b1b>
+            rdf:type                      cim:VoltageLevel;
+            cim:IdentifiedObject.mRID     "d487ff06-4419-477b-a85a-b55c34598b1b";
+            cim:IdentifiedObject.name     "VL 150 kV";
+            cim:VoltageLevel.BaseVoltage  <urn:uuid:5ff755c5-dd8d-b345-1221-44482d996bb3>;
+            cim:VoltageLevel.Substation   <urn:uuid:9cc142f1-ee51-4b0e-9e50-c9e124527813> .
+    
+    <urn:uuid:d6296fd9-41c1-0b8c-abb0-7bbcd4e653b1>
+            rdf:type                    cim:PhaseTapChangerSymmetrical;
+            cim:IdentifiedObject.mRID   "d6296fd9-41c1-0b8c-abb0-7bbcd4e653b1";
+            cim:IdentifiedObject.name   "HVDC Transformer Bp";
+            cim:PhaseTapChanger.TransformerEnd
+                    <urn:uuid:e899d056-fec4-6c87-d35f-87f3342b365a>;
+            cim:PhaseTapChangerNonLinear.voltageStepIncrement
+                    "1.25"^^xsd:float;
+            cim:PhaseTapChangerNonLinear.xMax
+                    "7.29782"^^xsd:float;
+            cim:PhaseTapChangerNonLinear.xMin
+                    "12.9062"^^xsd:float;
+            cim:TapChanger.highStep     25;
+            cim:TapChanger.lowStep      1;
+            cim:TapChanger.ltcFlag      true;
+            cim:TapChanger.neutralStep  13;
+            cim:TapChanger.neutralU     "220"^^xsd:float;
+            cim:TapChanger.normalStep   13 .
+    
+    <urn:uuid:ba5b81c8-d9da-4698-3aba-fc5f15d7ba4f>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "ba5b81c8-d9da-4698-3aba-fc5f15d7ba4f";
+            cim:IdentifiedObject.name      "Cub_2";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:0cede893-c54d-4103-a19a-37f3dedd8ffa>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:76a4b6ea-2c0d-49ca-928c-cca6fb0b4123> .
+    
+    <urn:uuid:ae84ff4a-f89b-41d4-93b8-c8104f27ef1a>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "1574"^^xsd:float;
+            cim:IdentifiedObject.mRID     "ae84ff4a-f89b-41d4-93b8-c8104f27ef1a";
+            cim:IdentifiedObject.name     "patl for TieLine_HVDC_GA_NH-GA_1";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:874e15fe-6aeb-0dc0-faee-6b17d3cbad94>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:cd4d39af-12b2-dcbf-6ee4-1bc8929ed094> .
+    
+    <urn:uuid:c39e8639-4497-0a3a-3f6b-2862cea9560e>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "2000"^^xsd:float;
+            cim:IdentifiedObject.mRID     "c39e8639-4497-0a3a-3f6b-2862cea9560e";
+            cim:IdentifiedObject.name     "patl for DCLine2";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:901a22a7-dd1f-d867-a11d-c68bc26b5375>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:cd4d39af-12b2-dcbf-6ee4-1bc8929ed094> .
+    
+    <urn:uuid:ab48d675-1ea0-23fc-ae4d-6e04133adf11>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "ab48d675-1ea0-23fc-ae4d-6e04133adf11";
+            cim:IdentifiedObject.name  "Current rating for Neutral return";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:13b855a8-a566-02a3-4602-4ce2ad44bf22> .
+    
+    <urn:uuid:06339500-e732-4d41-be63-2a74973ba5e2>
+            rdf:type                       cim:DCLineSegment;
+            cim:DCConductingEquipment.ratedUdc
+                    "320"^^xsd:float;
+            cim:DCLineSegment.capacitance  "0"^^xsd:float;
+            cim:DCLineSegment.inductance   "0.05"^^xsd:float;
+            cim:DCLineSegment.length       "200"^^xsd:float;
+            cim:DCLineSegment.resistance   "2"^^xsd:float;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:ce658cfc-d1f7-41c5-861b-dcd43de57895>;
+            cim:IdentifiedObject.mRID      "06339500-e732-4d41-be63-2a74973ba5e2";
+            cim:IdentifiedObject.name      "DCLine2" .
+    
+    <urn:uuid:673c0ba3-9afb-441c-af31-403125d0d18c>
+            rdf:type                   cim:Breaker;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:e61f8ecf-8129-4702-a3a2-826bdf5ad13d>;
+            cim:IdentifiedObject.mRID  "673c0ba3-9afb-441c-af31-403125d0d18c";
+            cim:IdentifiedObject.name  "hvdc-no breaker";
+            cim:Switch.normalOpen      false;
+            cim:Switch.retained        false .
+    
+    <urn:uuid:36806868-226e-4416-99ac-489fb1523bca>
+            rdf:type                   cim:ACLineSegment;
+            cim:ACLineSegment.bch      "4.08407e-5"^^xsd:float;
+            cim:ACLineSegment.gch      "1.1e-5"^^xsd:float;
+            cim:ACLineSegment.r        "1"^^xsd:float;
+            cim:ACLineSegment.x        "30"^^xsd:float;
+            cim:ConductingEquipment.BaseVoltage
+                    <urn:uuid:a7f1d8de-d658-428a-821b-3a5ae5965fd1>;
+            cim:Conductor.length       "10"^^xsd:float;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:82abfaf2-36df-44ac-b4e5-e40a535affa4>;
+            cim:IdentifiedObject.mRID  "36806868-226e-4416-99ac-489fb1523bca";
+            cim:IdentifiedObject.name  "TieLine_HVDC_GA_NH-GA_1" .
+    
+    <urn:uuid:9fb9aa4c-a4a1-dfe1-a673-a1ba60a7f0c4>
+            rdf:type                   cim:ACDCConverterDCTerminal;
+            cim:ACDCConverterDCTerminal.DCConductingEquipment
+                    <urn:uuid:65d2962d-d32d-49a8-a879-a93240bdb147>;
+            cim:ACDCConverterDCTerminal.polarity
+                    cim:DCPolarityKind.negative;
+            cim:ACDCTerminal.sequenceNumber
+                    3;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:f04df7ea-bb4d-428e-8adf-3bd61cf27083>;
+            cim:IdentifiedObject.mRID  "9fb9aa4c-a4a1-dfe1-a673-a1ba60a7f0c4";
+            cim:IdentifiedObject.name  "Cub_3" .
+    
+    <urn:uuid:7c70a084-c500-491f-8b74-0cc08ce4d3b6>
+            rdf:type                   cim:ConnectivityNode;
+            cim:ConnectivityNode.ConnectivityNodeContainer
+                    <urn:uuid:d487ff06-4419-477b-a85a-b55c34598b1b>;
+            cim:IdentifiedObject.mRID  "7c70a084-c500-491f-8b74-0cc08ce4d3b6";
+            cim:IdentifiedObject.name  "TAC Am" .
+    
+    <urn:uuid:6c146240-e9eb-b552-7f35-cfa76c3dbcf5>
+            rdf:type                   cim:DCTerminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:0bfcb7d0-9a61-4690-89b5-8237adb1fdc9>;
+            cim:DCTerminal.DCConductingEquipment
+                    <urn:uuid:186a4acf-9aeb-d4cb-e9d6-9bdcc3097186>;
+            cim:IdentifiedObject.mRID  "6c146240-e9eb-b552-7f35-cfa76c3dbcf5";
+            cim:IdentifiedObject.name  "TDC A minus" .
+    
+    <urn:uuid:96c168b0-bed9-7246-6ee9-0f32c0ae0059>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "96c168b0-bed9-7246-6ee9-0f32c0ae0059";
+            cim:IdentifiedObject.name      "BI_Terminal";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:b24417f8-c669-44e5-6525-17fce5cd57d1>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:d9574184-b375-45f6-8fcc-20ec0470bf93> .
+    
+    <urn:uuid:0bece6f3-2a66-5c06-6f9b-b7c1414d5dcc>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "1732.05"^^xsd:float;
+            cim:IdentifiedObject.mRID     "0bece6f3-2a66-5c06-6f9b-b7c1414d5dcc";
+            cim:IdentifiedObject.name     "patl for HVDC Transformer Bm";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:e36a8761-2412-d838-2db3-dd2002e9e3aa>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:cd4d39af-12b2-dcbf-6ee4-1bc8929ed094> .
+    
+    <urn:uuid:2324d84d-02b7-96f7-d5b1-4e6f4fe50fc0>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "2000"^^xsd:float;
+            cim:IdentifiedObject.mRID     "2324d84d-02b7-96f7-d5b1-4e6f4fe50fc0";
+            cim:IdentifiedObject.name     "patl for Neutral return";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:20f89beb-e1f2-2b78-4b5b-a8bbf10680cf>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:cd4d39af-12b2-dcbf-6ee4-1bc8929ed094> .
+    
+    <urn:uuid:e899d056-fec4-6c87-d35f-87f3342b365a>
+            rdf:type                        cim:PowerTransformerEnd;
+            cim:IdentifiedObject.mRID       "e899d056-fec4-6c87-d35f-87f3342b365a";
+            cim:IdentifiedObject.name       "HVDC Transformer Bp";
+            cim:PowerTransformerEnd.PowerTransformer
+                    <urn:uuid:aa9617a0-213c-4cff-b108-02ba4236815d>;
+            cim:PowerTransformerEnd.b       "0"^^xsd:float;
+            cim:PowerTransformerEnd.connectionKind
+                    cim:WindingConnection.Yn;
+            cim:PowerTransformerEnd.g       "0"^^xsd:float;
+            cim:PowerTransformerEnd.r       "0.107556"^^xsd:float;
+            cim:PowerTransformerEnd.ratedS  "450"^^xsd:float;
+            cim:PowerTransformerEnd.ratedU  "220"^^xsd:float;
+            cim:PowerTransformerEnd.x       "12.9062"^^xsd:float;
+            cim:TransformerEnd.BaseVoltage  <urn:uuid:a7f1d8de-d658-428a-821b-3a5ae5965fd1>;
+            cim:TransformerEnd.Terminal     <urn:uuid:5dfef055-80c1-721a-667e-506a89bee690>;
+            cim:TransformerEnd.endNumber    1 .
+    
+    <urn:uuid:9e30e094-94ab-44a4-a5b3-a7982c5ecb99>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "9e30e094-94ab-44a4-a5b3-a7982c5ecb99";
+            cim:IdentifiedObject.name      "T L";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:c9aeb203-8bd9-4278-8c6d-0b959c6dde66>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:76a4b6ea-2c0d-49ca-928c-cca6fb0b4123> .
+    
+    <urn:uuid:186a4acf-9aeb-d4cb-e9d6-9bdcc3097186>
+            rdf:type                   cim:DCBusbar;
+            cim:DCConductingEquipment.ratedUdc
+                    "320"^^xsd:float;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:e6f01bb2-7817-4e83-afff-1589659a2123>;
+            cim:IdentifiedObject.mRID  "186a4acf-9aeb-d4cb-e9d6-9bdcc3097186";
+            cim:IdentifiedObject.name  "TDC A minus" .
+    
+    <urn:uuid:c9aeb203-8bd9-4278-8c6d-0b959c6dde66>
+            rdf:type                      cim:NonConformLoad;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:512ac1ce-7df4-4caf-937c-5bb9380140e9>;
+            cim:IdentifiedObject.mRID     "c9aeb203-8bd9-4278-8c6d-0b959c6dde66";
+            cim:IdentifiedObject.name     "General Load_HVDC";
+            cim:NonConformLoad.LoadGroup  <urn:uuid:950a4257-95cf-4570-b641-864adc38ee14> .
+    
+    <urn:uuid:96dadd4c-6b73-4ede-a07f-c7ae95194d9d>
+            rdf:type                    cim:TieFlow;
+            cim:IdentifiedObject.mRID   "96dadd4c-6b73-4ede-a07f-c7ae95194d9d";
+            cim:IdentifiedObject.name   "TieFlow NH";
+            cim:TieFlow.ControlArea     <urn:uuid:6a460b27-ee5c-4f31-aa4c-5ed99b640135>;
+            cim:TieFlow.Terminal        <urn:uuid:e3577666-c328-a706-f204-3ea836df517a>;
+            cim:TieFlow.positiveFlowIn  true .
+    
+    <urn:uuid:26ab4425-eab1-f413-88fa-e80050548253>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "2000"^^xsd:float;
+            cim:IdentifiedObject.mRID     "26ab4425-eab1-f413-88fa-e80050548253";
+            cim:IdentifiedObject.name     "patl for DCLine2";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:5bf84038-e1e4-c8af-5a87-acc2148ec0e1>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:cd4d39af-12b2-dcbf-6ee4-1bc8929ed094> .
+    
+    <urn:uuid:90387e73-f91c-444f-87ba-6c97a453dea5>
+            rdf:type                        cim:DCConverterUnit;
+            cim:DCConverterUnit.Substation  <urn:uuid:9cc142f1-ee51-4b0e-9e50-c9e124527813>;
+            cim:DCConverterUnit.operationMode
+                    cim:DCConverterOperatingModeKind.monopolarGroundReturn;
+            cim:IdentifiedObject.mRID       "90387e73-f91c-444f-87ba-6c97a453dea5";
+            cim:IdentifiedObject.name       "DC2" .
+    
+    <urn:uuid:e3577666-c328-a706-f204-3ea836df517a>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    2;
+            cim:IdentifiedObject.mRID      "e3577666-c328-a706-f204-3ea836df517a";
+            cim:IdentifiedObject.name      "Cub_1";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:36806868-226e-4416-99ac-489fb1523bca>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:d9574184-b375-45f6-8fcc-20ec0470bf93> .
+    
+    <urn:uuid:88b72805-4bf9-3543-f7a1-7d9fcc220010>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "88b72805-4bf9-3543-f7a1-7d9fcc220010";
+            cim:IdentifiedObject.name  "Current rating for HVDC Transformer Ap";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:bb580ab8-eb07-4e59-8932-8a078288e409> .
+    
+    <urn:uuid:7576bb81-2d83-4625-8b37-1ea713b39f33>
+            rdf:type                   cim:DCLine;
+            cim:DCLine.Region          <urn:uuid:5d499e23-65f2-49e6-80c1-c5668dacefd4>;
+            cim:IdentifiedObject.mRID  "7576bb81-2d83-4625-8b37-1ea713b39f33";
+            cim:IdentifiedObject.name  "DC-Branch" .
+    
+    <urn:uuid:8ba164fa-0f3b-e7d8-8b5c-7d0f154a9a2b>
+            rdf:type                      cim:VoltageLimit;
+            cim:IdentifiedObject.mRID     "8ba164fa-0f3b-e7d8-8b5c-7d0f154a9a2b";
+            cim:IdentifiedObject.name     "high limit for TerminalGA-NH_A220";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:9879e9f7-e639-becc-f0db-1b4e4a0f220d>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:b54ff9d9-a108-8be9-36d8-a7c153a99ac5>;
+            cim:VoltageLimit.normalValue  "231"^^xsd:float .
+    
+    <urn:uuid:01b2badd-2a1e-f41a-0a38-0f2febea94d9>
+            rdf:type                        cim:PowerTransformerEnd;
+            cim:IdentifiedObject.mRID       "01b2badd-2a1e-f41a-0a38-0f2febea94d9";
+            cim:IdentifiedObject.name       "HVDC Transformer Bp";
+            cim:PowerTransformerEnd.PowerTransformer
+                    <urn:uuid:aa9617a0-213c-4cff-b108-02ba4236815d>;
+            cim:PowerTransformerEnd.b       "0"^^xsd:float;
+            cim:PowerTransformerEnd.connectionKind
+                    cim:WindingConnection.D;
+            cim:PowerTransformerEnd.g       "0"^^xsd:float;
+            cim:PowerTransformerEnd.r       "0"^^xsd:float;
+            cim:PowerTransformerEnd.ratedS  "450"^^xsd:float;
+            cim:PowerTransformerEnd.ratedU  "150"^^xsd:float;
+            cim:PowerTransformerEnd.x       "0"^^xsd:float;
+            cim:TransformerEnd.BaseVoltage  <urn:uuid:5ff755c5-dd8d-b345-1221-44482d996bb3>;
+            cim:TransformerEnd.Terminal     <urn:uuid:e929a537-59db-0a68-fed5-cf14830b6cb4>;
+            cim:TransformerEnd.endNumber    2 .
+    
+    <urn:uuid:3f18531d-c60c-b689-953e-632ad9ff974b>
+            rdf:type                        cim:PowerTransformerEnd;
+            cim:IdentifiedObject.mRID       "3f18531d-c60c-b689-953e-632ad9ff974b";
+            cim:IdentifiedObject.name       "HVDC Transformer Bm";
+            cim:PowerTransformerEnd.PowerTransformer
+                    <urn:uuid:a69c940b-2e2c-4dbd-bb82-c62900eb8c35>;
+            cim:PowerTransformerEnd.b       "0"^^xsd:float;
+            cim:PowerTransformerEnd.connectionKind
+                    cim:WindingConnection.D;
+            cim:PowerTransformerEnd.g       "0"^^xsd:float;
+            cim:PowerTransformerEnd.r       "0"^^xsd:float;
+            cim:PowerTransformerEnd.ratedS  "450"^^xsd:float;
+            cim:PowerTransformerEnd.ratedU  "150"^^xsd:float;
+            cim:PowerTransformerEnd.x       "0"^^xsd:float;
+            cim:TransformerEnd.BaseVoltage  <urn:uuid:5ff755c5-dd8d-b345-1221-44482d996bb3>;
+            cim:TransformerEnd.Terminal     <urn:uuid:cdb39691-018d-3e5e-1592-28761b4138cb>;
+            cim:TransformerEnd.endNumber    2 .
+    
+    <urn:uuid:a1272ccc-d77f-6988-e232-b2e3cf20d841>
+            rdf:type                   cim:VsCapabilityCurve;
+            cim:Curve.curveStyle       cim:CurveStyle.straightLineYValues;
+            cim:Curve.xUnit            cim:UnitSymbol.W;
+            cim:Curve.y1Unit           cim:UnitSymbol.VAr;
+            cim:Curve.y2Unit           cim:UnitSymbol.VAr;
+            cim:IdentifiedObject.mRID  "a1272ccc-d77f-6988-e232-b2e3cf20d841";
+            cim:IdentifiedObject.name  "MMC Converter Bp" .
+    
+    <urn:uuid:96bd9e0b-bc5c-805c-6d2f-3478c5113b69>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "96bd9e0b-bc5c-805c-6d2f-3478c5113b69";
+            cim:IdentifiedObject.name  "Voltage limits for TAC Am";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:83274019-cf88-d03e-c291-efc418632b61> .
+    
+    <urn:uuid:5bf84038-e1e4-c8af-5a87-acc2148ec0e1>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "5bf84038-e1e4-c8af-5a87-acc2148ec0e1";
+            cim:IdentifiedObject.name  "Current rating for DCLine2";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:d5f89c40-6db1-34a4-7c2e-2cce77758e9c> .
+    
+    <urn:uuid:b26fc9c3-e33e-333f-4a43-7c0dd7fd9274>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "b26fc9c3-e33e-333f-4a43-7c0dd7fd9274";
+            cim:IdentifiedObject.name  "Current rating for HVDC Transformer Ap";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:ba5b81c8-d9da-4698-3aba-fc5f15d7ba4f> .
+    
+    <urn:uuid:ee5fdd9c-5208-ce74-d693-81699b07a7bb>
+            rdf:type               cim:CurveData;
+            cim:CurveData.Curve    <urn:uuid:a1272ccc-d77f-6988-e232-b2e3cf20d841>;
+            cim:CurveData.xvalue   "99999"^^xsd:float;
+            cim:CurveData.y1value  "-450"^^xsd:float;
+            cim:CurveData.y2value  "450"^^xsd:float .
+    
+    <urn:uuid:9ba30534-4b14-3924-4dac-5cd5ba47464a>
+            rdf:type                   cim:ACDCConverterDCTerminal;
+            cim:ACDCConverterDCTerminal.DCConductingEquipment
+                    <urn:uuid:3e4ed89b-19de-4590-bd16-39eb93f652b5>;
+            cim:ACDCConverterDCTerminal.polarity
+                    cim:DCPolarityKind.negative;
+            cim:ACDCTerminal.sequenceNumber
+                    3;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:f04df7ea-bb4d-428e-8adf-3bd61cf27083>;
+            cim:IdentifiedObject.mRID  "9ba30534-4b14-3924-4dac-5cd5ba47464a";
+            cim:IdentifiedObject.name  "Cub_2" .
+    
+    <urn:uuid:d121cf41-5b6d-47c9-87a4-67bfb994d8ec>
+            rdf:type                       cim:GeographicalRegion;
+            cim:IdentifiedObject.description
+                    "GA-NH HVDC link";
+            cim:IdentifiedObject.mRID      "d121cf41-5b6d-47c9-87a4-67bfb994d8ec";
+            cim:IdentifiedObject.name      "Nordheim-Galia";
+            eu:IdentifiedObject.energyIdentCodeEic
+                    "10T-GA-NH-123456";
+            eu:IdentifiedObject.shortName  "GA-NH" .
+    
+    <urn:uuid:6a460b27-ee5c-4f31-aa4c-5ed99b640135>
+            rdf:type                    cim:ControlArea;
+            cim:ControlArea.EnergyArea  <urn:uuid:7cf58e7f-eadf-48ca-bed5-79bfe2dd41ad>;
+            cim:ControlArea.type        cim:ControlAreaTypeKind.Interchange;
+            cim:IdentifiedObject.mRID   "6a460b27-ee5c-4f31-aa4c-5ed99b640135";
+            cim:IdentifiedObject.name   "Nordheim-Galia" .
+    
+    <urn:uuid:f673428b-ae13-1a15-528a-7236b5d19c27>
+            rdf:type                      cim:VoltageLimit;
+            cim:IdentifiedObject.mRID     "f673428b-ae13-1a15-528a-7236b5d19c27";
+            cim:IdentifiedObject.name     "high limit for TAC Ap";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:c6f18223-4697-bf02-a281-c6e41bab09a2>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:b54ff9d9-a108-8be9-36d8-a7c153a99ac5>;
+            cim:VoltageLimit.normalValue  "157.5"^^xsd:float .
+    
+    <urn:uuid:950a4257-95cf-4570-b641-864adc38ee14>
+            rdf:type                   cim:NonConformLoadGroup;
+            cim:IdentifiedObject.mRID  "950a4257-95cf-4570-b641-864adc38ee14";
+            cim:IdentifiedObject.name  "General Load_HVDC";
+            cim:LoadGroup.SubLoadArea  <urn:uuid:958f8d0f-5c32-49bd-9d0f-c0378152d539> .
+    
+    <urn:uuid:f80bfb93-f4d5-d5e7-bc8a-59eef1dad69c>
+            rdf:type               cim:CurveData;
+            cim:CurveData.Curve    <urn:uuid:0ca04317-674b-638d-d04c-c72a4a25ba40>;
+            cim:CurveData.xvalue   "99999"^^xsd:float;
+            cim:CurveData.y1value  "-450"^^xsd:float;
+            cim:CurveData.y2value  "450"^^xsd:float .
+    
+    <urn:uuid:76a4b6ea-2c0d-49ca-928c-cca6fb0b4123>
+            rdf:type                       cim:ConnectivityNode;
+            cim:ConnectivityNode.ConnectivityNodeContainer
+                    <urn:uuid:512ac1ce-7df4-4caf-937c-5bb9380140e9>;
+            cim:IdentifiedObject.description
+                    "BP_GA-NH";
+            cim:IdentifiedObject.mRID      "76a4b6ea-2c0d-49ca-928c-cca6fb0b4123";
+            cim:IdentifiedObject.name      "TerminalGA-NH_A220";
+            eu:IdentifiedObject.shortName  "BP_GA-NH" .
+    
+    <urn:uuid:8044aa29-c410-42a9-8691-1da535f55342>
+            rdf:type                   cim:DCLine;
+            cim:DCLine.Region          <urn:uuid:5d499e23-65f2-49e6-80c1-c5668dacefd4>;
+            cim:IdentifiedObject.mRID  "8044aa29-c410-42a9-8691-1da535f55342";
+            cim:IdentifiedObject.name  "DC-Branch3" .
+    
+    <urn:uuid:3b7d5055-2785-41ec-9829-db927ef7fa0b>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    2;
+            cim:IdentifiedObject.mRID      "3b7d5055-2785-41ec-9829-db927ef7fa0b";
+            cim:IdentifiedObject.name      "T2 b";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:673c0ba3-9afb-441c-af31-403125d0d18c>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:892ef502-162b-469f-b93f-266aae828227> .
+    
+    <urn:uuid:789a8aa1-426b-e93b-6ace-75021ae39253>
+            rdf:type                   cim:ACDCConverterDCTerminal;
+            cim:ACDCConverterDCTerminal.DCConductingEquipment
+                    <urn:uuid:a01d72f5-9f13-43bd-a4b5-8d9acdf5b0d7>;
+            cim:ACDCConverterDCTerminal.polarity
+                    cim:DCPolarityKind.negative;
+            cim:ACDCTerminal.sequenceNumber
+                    3;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:02c4895a-677a-4858-b5c2-bcd0fe13ed62>;
+            cim:IdentifiedObject.mRID  "789a8aa1-426b-e93b-6ace-75021ae39253";
+            cim:IdentifiedObject.name  "Cub_2" .
+    
+    <urn:uuid:3e4ed89b-19de-4590-bd16-39eb93f652b5>
+            rdf:type                       cim:VsConverter;
+            cim:ACDCConverter.PccTerminal  <urn:uuid:e00f8ed5-1aa8-65ed-1f5d-c4b310349438>;
+            cim:ACDCConverter.baseS        "450"^^xsd:float;
+            cim:ACDCConverter.idleLoss     "2.25"^^xsd:float;
+            cim:ACDCConverter.maxP         "99999"^^xsd:float;
+            cim:ACDCConverter.minP         "-99999"^^xsd:float;
+            cim:ACDCConverter.ratedUdc     "320"^^xsd:float;
+            cim:ACDCConverter.resistiveLoss
+                    "0.001"^^xsd:float;
+            cim:ACDCConverter.switchingLoss
+                    "1e-6"^^xsd:float;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:90387e73-f91c-444f-87ba-6c97a453dea5>;
+            cim:IdentifiedObject.mRID      "3e4ed89b-19de-4590-bd16-39eb93f652b5";
+            cim:IdentifiedObject.name      "MMC Converter Bm";
+            cim:VsConverter.CapabilityCurve
+                    <urn:uuid:85bb8efc-94f7-035a-4a6f-38efe7b2f6ac> .
+    
+    <urn:uuid:4fa963e0-3f22-d193-e967-0635e0e35d7b>
+            rdf:type                        cim:PowerTransformerEnd;
+            cim:IdentifiedObject.mRID       "4fa963e0-3f22-d193-e967-0635e0e35d7b";
+            cim:IdentifiedObject.name       "HVDC Transformer Am";
+            cim:PowerTransformerEnd.PowerTransformer
+                    <urn:uuid:b21d3f39-ac5f-4778-8c99-f6a8741f3f1b>;
+            cim:PowerTransformerEnd.b       "0"^^xsd:float;
+            cim:PowerTransformerEnd.connectionKind
+                    cim:WindingConnection.D;
+            cim:PowerTransformerEnd.g       "0"^^xsd:float;
+            cim:PowerTransformerEnd.r       "0"^^xsd:float;
+            cim:PowerTransformerEnd.ratedS  "450"^^xsd:float;
+            cim:PowerTransformerEnd.ratedU  "150"^^xsd:float;
+            cim:PowerTransformerEnd.x       "0"^^xsd:float;
+            cim:TransformerEnd.BaseVoltage  <urn:uuid:5ff755c5-dd8d-b345-1221-44482d996bb3>;
+            cim:TransformerEnd.Terminal     <urn:uuid:83274019-cf88-d03e-c291-efc418632b61>;
+            cim:TransformerEnd.endNumber    2 .
+    
+    <urn:uuid:43fe5fc7-2a55-48ab-016e-e0ea4f270d4d>
+            rdf:type                   cim:DCTerminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:0bfcb7d0-9a61-4690-89b5-8237adb1fdc9>;
+            cim:DCTerminal.DCConductingEquipment
+                    <urn:uuid:06339500-e732-4d41-be63-2a74973ba5e2>;
+            cim:IdentifiedObject.mRID  "43fe5fc7-2a55-48ab-016e-e0ea4f270d4d";
+            cim:IdentifiedObject.name  "Cub_2" .
+    
+    <urn:uuid:ce658cfc-d1f7-41c5-861b-dcd43de57895>
+            rdf:type                   cim:DCLine;
+            cim:DCLine.Region          <urn:uuid:5d499e23-65f2-49e6-80c1-c5668dacefd4>;
+            cim:IdentifiedObject.mRID  "ce658cfc-d1f7-41c5-861b-dcd43de57895";
+            cim:IdentifiedObject.name  "DC-Branch2" .
+    
+    <urn:uuid:43ac86fc-9acd-b6fe-5f72-333fe9b825a4>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "43ac86fc-9acd-b6fe-5f72-333fe9b825a4";
+            cim:IdentifiedObject.name  "Current rating for HVDC Transformer Bm";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:e00f8ed5-1aa8-65ed-1f5d-c4b310349438> .
+    
+    <urn:uuid:e645cb00-0808-e128-770c-f492108bb07e>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "1574"^^xsd:float;
+            cim:IdentifiedObject.mRID     "e645cb00-0808-e128-770c-f492108bb07e";
+            cim:IdentifiedObject.name     "patl for TieLine_HVDC_GA_NH-GA_1";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:2b4ffb8b-aecd-e84b-98d6-71e843443e6c>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:cd4d39af-12b2-dcbf-6ee4-1bc8929ed094> .
+    
+    <urn:uuid:70f8810a-5e2d-c1b2-fb66-cc0783d0ee3a>
+            rdf:type                    cim:PhaseTapChangerSymmetrical;
+            cim:IdentifiedObject.mRID   "70f8810a-5e2d-c1b2-fb66-cc0783d0ee3a";
+            cim:IdentifiedObject.name   "HVDC Transformer Am";
+            cim:PhaseTapChanger.TransformerEnd
+                    <urn:uuid:3bf2f24f-ade8-7c98-f652-1de0978c0d0c>;
+            cim:PhaseTapChangerNonLinear.voltageStepIncrement
+                    "1.25"^^xsd:float;
+            cim:PhaseTapChangerNonLinear.xMax
+                    "7.29782"^^xsd:float;
+            cim:PhaseTapChangerNonLinear.xMin
+                    "12.9062"^^xsd:float;
+            cim:TapChanger.highStep     25;
+            cim:TapChanger.lowStep      1;
+            cim:TapChanger.ltcFlag      true;
+            cim:TapChanger.neutralStep  13;
+            cim:TapChanger.neutralU     "220"^^xsd:float;
+            cim:TapChanger.normalStep   18 .
+    
+    <urn:uuid:0bfcb7d0-9a61-4690-89b5-8237adb1fdc9>
+            rdf:type                   cim:DCNode;
+            cim:DCNode.DCEquipmentContainer
+                    <urn:uuid:e6f01bb2-7817-4e83-afff-1589659a2123>;
+            cim:IdentifiedObject.mRID  "0bfcb7d0-9a61-4690-89b5-8237adb1fdc9";
+            cim:IdentifiedObject.name  "TDC A minus" .
+    
+    <urn:uuid:bcbc34f6-ae98-52df-b056-63f81e56ed2a>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "bcbc34f6-ae98-52df-b056-63f81e56ed2a";
+            cim:IdentifiedObject.name  "Current rating for HVDC Transformer Bp";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:e929a537-59db-0a68-fed5-cf14830b6cb4> .
+    
+    <urn:uuid:467ac4ac-5431-6f5f-c414-aefbd03a4f5e>
+            rdf:type                   cim:ACDCConverterDCTerminal;
+            cim:ACDCConverterDCTerminal.DCConductingEquipment
+                    <urn:uuid:a01d72f5-9f13-43bd-a4b5-8d9acdf5b0d7>;
+            cim:ACDCConverterDCTerminal.polarity
+                    cim:DCPolarityKind.positive;
+            cim:ACDCTerminal.sequenceNumber
+                    2;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:0bfcb7d0-9a61-4690-89b5-8237adb1fdc9>;
+            cim:IdentifiedObject.mRID  "467ac4ac-5431-6f5f-c414-aefbd03a4f5e";
+            cim:IdentifiedObject.name  "Cub_3" .
+    
+    <urn:uuid:f3f35913-24d0-b468-3b37-161163cfa3ad>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "1180.94"^^xsd:float;
+            cim:IdentifiedObject.mRID     "f3f35913-24d0-b468-3b37-161163cfa3ad";
+            cim:IdentifiedObject.name     "patl for HVDC Transformer Ap";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:b26fc9c3-e33e-333f-4a43-7c0dd7fd9274>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:cd4d39af-12b2-dcbf-6ee4-1bc8929ed094> .
+    
+    <urn:uuid:7cf58e7f-eadf-48ca-bed5-79bfe2dd41ad>
+            rdf:type                   cim:LoadArea;
+            cim:IdentifiedObject.mRID  "7cf58e7f-eadf-48ca-bed5-79bfe2dd41ad";
+            cim:IdentifiedObject.name  "General Load_HVDC" .
+    
+    <urn:uuid:1e61d523-25a4-36a1-0ab8-66a2cb7b873b>
+            rdf:type                    cim:PhaseTapChangerSymmetrical;
+            cim:IdentifiedObject.mRID   "1e61d523-25a4-36a1-0ab8-66a2cb7b873b";
+            cim:IdentifiedObject.name   "HVDC Transformer Ap";
+            cim:PhaseTapChanger.TransformerEnd
+                    <urn:uuid:47d92ee2-d35d-f28e-e56a-5a60a9658537>;
+            cim:PhaseTapChangerNonLinear.voltageStepIncrement
+                    "1.25"^^xsd:float;
+            cim:PhaseTapChangerNonLinear.xMax
+                    "7.29782"^^xsd:float;
+            cim:PhaseTapChangerNonLinear.xMin
+                    "12.9062"^^xsd:float;
+            cim:TapChanger.highStep     25;
+            cim:TapChanger.lowStep      1;
+            cim:TapChanger.ltcFlag      true;
+            cim:TapChanger.neutralStep  13;
+            cim:TapChanger.neutralU     "220"^^xsd:float;
+            cim:TapChanger.normalStep   18 .
+    
+    <urn:uuid:b24417f8-c669-44e5-6525-17fce5cd57d1>
+            rdf:type                   cim:EquivalentInjection;
+            cim:ConductingEquipment.BaseVoltage
+                    <urn:uuid:a7f1d8de-d658-428a-821b-3a5ae5965fd1>;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:82abfaf2-36df-44ac-b4e5-e40a535affa4>;
+            cim:EquivalentInjection.regulationCapability
+                    false;
+            cim:IdentifiedObject.mRID  "b24417f8-c669-44e5-6525-17fce5cd57d1";
+            cim:IdentifiedObject.name  "BoundaryInjectionEq" .
+    
+    <urn:uuid:5d0f954c-abd1-e51b-f279-81318768e04a>
+            rdf:type                   cim:ACDCConverterDCTerminal;
+            cim:ACDCConverterDCTerminal.DCConductingEquipment
+                    <urn:uuid:65d2962d-d32d-49a8-a879-a93240bdb147>;
+            cim:ACDCConverterDCTerminal.polarity
+                    cim:DCPolarityKind.positive;
+            cim:ACDCTerminal.sequenceNumber
+                    2;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:dd5d4800-dde3-4d30-8f25-49446e88e660>;
+            cim:IdentifiedObject.mRID  "5d0f954c-abd1-e51b-f279-81318768e04a";
+            cim:IdentifiedObject.name  "Cub_3" .
+    
+    <urn:uuid:444589a1-3498-6847-c354-c153ddd7ae56>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "2000"^^xsd:float;
+            cim:IdentifiedObject.mRID     "444589a1-3498-6847-c354-c153ddd7ae56";
+            cim:IdentifiedObject.name     "patl for Neutral return";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:ab48d675-1ea0-23fc-ae4d-6e04133adf11>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:cd4d39af-12b2-dcbf-6ee4-1bc8929ed094> .
+    
+    <urn:uuid:aa9617a0-213c-4cff-b108-02ba4236815d>
+            rdf:type                   cim:PowerTransformer;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:9cc142f1-ee51-4b0e-9e50-c9e124527813>;
+            cim:IdentifiedObject.mRID  "aa9617a0-213c-4cff-b108-02ba4236815d";
+            cim:IdentifiedObject.name  "HVDC Transformer Bp" .
+    
+    <urn:uuid:ee2b579c-ab78-ec48-a644-25bac2c6c000>
+            rdf:type                   cim:ACDCConverterDCTerminal;
+            cim:ACDCConverterDCTerminal.DCConductingEquipment
+                    <urn:uuid:43e7ef11-9353-4ea0-9511-7c9baec7c99e>;
+            cim:ACDCConverterDCTerminal.polarity
+                    cim:DCPolarityKind.negative;
+            cim:ACDCTerminal.sequenceNumber
+                    3;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:02c4895a-677a-4858-b5c2-bcd0fe13ed62>;
+            cim:IdentifiedObject.mRID  "ee2b579c-ab78-ec48-a644-25bac2c6c000";
+            cim:IdentifiedObject.name  "Cub_1" .
+    
+    <urn:uuid:2b56e06e-9cce-2f45-5109-cf55bb59bfe1>
+            rdf:type                        cim:PowerTransformerEnd;
+            cim:IdentifiedObject.mRID       "2b56e06e-9cce-2f45-5109-cf55bb59bfe1";
+            cim:IdentifiedObject.name       "HVDC Transformer Ap";
+            cim:PowerTransformerEnd.PowerTransformer
+                    <urn:uuid:0cede893-c54d-4103-a19a-37f3dedd8ffa>;
+            cim:PowerTransformerEnd.b       "0"^^xsd:float;
+            cim:PowerTransformerEnd.connectionKind
+                    cim:WindingConnection.D;
+            cim:PowerTransformerEnd.g       "0"^^xsd:float;
+            cim:PowerTransformerEnd.r       "0"^^xsd:float;
+            cim:PowerTransformerEnd.ratedS  "450"^^xsd:float;
+            cim:PowerTransformerEnd.ratedU  "150"^^xsd:float;
+            cim:PowerTransformerEnd.x       "0"^^xsd:float;
+            cim:TransformerEnd.BaseVoltage  <urn:uuid:5ff755c5-dd8d-b345-1221-44482d996bb3>;
+            cim:TransformerEnd.Terminal     <urn:uuid:bb580ab8-eb07-4e59-8932-8a078288e409>;
+            cim:TransformerEnd.endNumber    2 .
+    
+    <urn:uuid:684b751b-b587-871d-3015-86a3fba4e031>
+            rdf:type                      cim:VoltageLimit;
+            cim:IdentifiedObject.mRID     "684b751b-b587-871d-3015-86a3fba4e031";
+            cim:IdentifiedObject.name     "high limit for TAC Bm";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:c62e2b31-6938-7a01-fb12-156828a0d614>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:b54ff9d9-a108-8be9-36d8-a7c153a99ac5>;
+            cim:VoltageLimit.normalValue  "157.5"^^xsd:float .
+    
+    <urn:uuid:e00f8ed5-1aa8-65ed-1f5d-c4b310349438>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "e00f8ed5-1aa8-65ed-1f5d-c4b310349438";
+            cim:IdentifiedObject.name      "Cub_3";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:a69c940b-2e2c-4dbd-bb82-c62900eb8c35>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:7b2ebf97-7150-426b-beb1-c60686ca8cb2> .
+    
+    <urn:uuid:a69c940b-2e2c-4dbd-bb82-c62900eb8c35>
+            rdf:type                   cim:PowerTransformer;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:9cc142f1-ee51-4b0e-9e50-c9e124527813>;
+            cim:IdentifiedObject.mRID  "a69c940b-2e2c-4dbd-bb82-c62900eb8c35";
+            cim:IdentifiedObject.name  "HVDC Transformer Bm" .
+    
+    <urn:uuid:a785c8d2-0a78-f87e-2028-547a46594869>
+            rdf:type                   cim:ACDCConverterDCTerminal;
+            cim:ACDCConverterDCTerminal.DCConductingEquipment
+                    <urn:uuid:43e7ef11-9353-4ea0-9511-7c9baec7c99e>;
+            cim:ACDCConverterDCTerminal.polarity
+                    cim:DCPolarityKind.positive;
+            cim:ACDCTerminal.sequenceNumber
+                    2;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:6d218e49-0d6b-4e14-9079-2ee1c6832fa3>;
+            cim:IdentifiedObject.mRID  "a785c8d2-0a78-f87e-2028-547a46594869";
+            cim:IdentifiedObject.name  "Cub_3" .
+    
+    <urn:uuid:c5fe5af5-445a-3977-8be7-dda0923bdd09>
+            rdf:type               cim:CurveData;
+            cim:CurveData.Curve    <urn:uuid:1fde346e-919a-6b3d-ceec-d206c9ab89b6>;
+            cim:CurveData.xvalue   "99999"^^xsd:float;
+            cim:CurveData.y1value  "-450"^^xsd:float;
+            cim:CurveData.y2value  "450"^^xsd:float .
+    
+    <urn:uuid:c62e2b31-6938-7a01-fb12-156828a0d614>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "c62e2b31-6938-7a01-fb12-156828a0d614";
+            cim:IdentifiedObject.name  "Voltage limits for TAC Bm";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:cdb39691-018d-3e5e-1592-28761b4138cb> .
+    
+    <urn:uuid:bb580ab8-eb07-4e59-8932-8a078288e409>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    2;
+            cim:IdentifiedObject.mRID      "bb580ab8-eb07-4e59-8932-8a078288e409";
+            cim:IdentifiedObject.name      "Cub_1";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:0cede893-c54d-4103-a19a-37f3dedd8ffa>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:847a95fa-afd6-41d4-8a49-af868f47bf74> .
+    
+    <urn:uuid:cc76b0f3-cb2f-4bdd-4210-6a550d0ff42e>
+            rdf:type                   cim:DCBusbar;
+            cim:DCConductingEquipment.ratedUdc
+                    "320"^^xsd:float;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:90387e73-f91c-444f-87ba-6c97a453dea5>;
+            cim:IdentifiedObject.mRID  "cc76b0f3-cb2f-4bdd-4210-6a550d0ff42e";
+            cim:IdentifiedObject.name  "TDC B minus" .
+    
+    <urn:uuid:874e15fe-6aeb-0dc0-faee-6b17d3cbad94>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "874e15fe-6aeb-0dc0-faee-6b17d3cbad94";
+            cim:IdentifiedObject.name  "Current rating for TieLine_HVDC_GA_NH-GA_1";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:0831b9ee-77a2-76b7-bfb5-a077baf7eb47> .
+    
+    <urn:uuid:511bd389-fef7-3e1d-75cc-16b606407146>
+            rdf:type               cim:CurveData;
+            cim:CurveData.Curve    <urn:uuid:1fde346e-919a-6b3d-ceec-d206c9ab89b6>;
+            cim:CurveData.xvalue   "-99999"^^xsd:float;
+            cim:CurveData.y1value  "-450"^^xsd:float;
+            cim:CurveData.y2value  "450"^^xsd:float .
+    
+    <urn:uuid:a01d72f5-9f13-43bd-a4b5-8d9acdf5b0d7>
+            rdf:type                    cim:VsConverter;
+            cim:ACDCConverter.baseS     "450"^^xsd:float;
+            cim:ACDCConverter.idleLoss  "2.25"^^xsd:float;
+            cim:ACDCConverter.maxP      "99999"^^xsd:float;
+            cim:ACDCConverter.minP      "-99999"^^xsd:float;
+            cim:ACDCConverter.ratedUdc  "320"^^xsd:float;
+            cim:ACDCConverter.resistiveLoss
+                    "0.001"^^xsd:float;
+            cim:ACDCConverter.switchingLoss
+                    "1e-6"^^xsd:float;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:e6f01bb2-7817-4e83-afff-1589659a2123>;
+            cim:IdentifiedObject.mRID   "a01d72f5-9f13-43bd-a4b5-8d9acdf5b0d7";
+            cim:IdentifiedObject.name   "MMC Converter Am";
+            cim:VsConverter.CapabilityCurve
+                    <urn:uuid:1fde346e-919a-6b3d-ceec-d206c9ab89b6> .
+    
+    <urn:uuid:f89d2968-76bc-18de-d9b9-0d968b8fbfe7>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "f89d2968-76bc-18de-d9b9-0d968b8fbfe7";
+            cim:IdentifiedObject.name  "Current rating for DCLine1";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:03092750-41f7-347b-fd90-e82e1b8b5704> .
+    
+    <urn:uuid:13b855a8-a566-02a3-4602-4ce2ad44bf22>
+            rdf:type                   cim:DCTerminal;
+            cim:ACDCTerminal.sequenceNumber
+                    2;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:02c4895a-677a-4858-b5c2-bcd0fe13ed62>;
+            cim:DCTerminal.DCConductingEquipment
+                    <urn:uuid:519ee264-1a60-4743-9875-fde11b22a9d2>;
+            cim:IdentifiedObject.mRID  "13b855a8-a566-02a3-4602-4ce2ad44bf22";
+            cim:IdentifiedObject.name  "Cub_3(1)" .
+    
+    <urn:uuid:ab56f354-8385-1948-280e-1f95fd97cf9d>
+            rdf:type                      cim:VoltageLimit;
+            cim:IdentifiedObject.mRID     "ab56f354-8385-1948-280e-1f95fd97cf9d";
+            cim:IdentifiedObject.name     "high limit for TAC Am";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:96bd9e0b-bc5c-805c-6d2f-3478c5113b69>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:b54ff9d9-a108-8be9-36d8-a7c153a99ac5>;
+            cim:VoltageLimit.normalValue  "157.5"^^xsd:float .
+}

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:nc="https://cim4.eu/ns/nc#"
+    xmlns:cim="https://cim.ucaiug.io/ns#"
+    xmlns:eumd="https://cim4.eu/ns/Metadata-European#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:adms="http://www.w3.org/ns/adms#"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:dcatcim="https://cim4.eu/ns/dcatcim#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#" > 
+  <dcat:Dataset rdf:about="urn:uuid:adaaff90-c3bd-463b-a405-b84d7389b351">
+    <dcterms:accessRights>https://energy.referencedata.eu/Confidentiality/Public</dcterms:accessRights>
+    <eumd:applicationSoftware>PowerFactory-2022.SP2</eumd:applicationSoftware>
+    <dcterms:conformsTo>https://ap.cim4.eu/RemedialActionSchedule/2.4</dcterms:conformsTo>
+    <dcterms:conformsTo>https://cim4.eu/ns/nc/2.4#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/CIM100#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/2013/CIM-schema-cim16#</dcterms:conformsTo>
+    <dcterms:description xml:lang="en">This is an example of remedial action schedule profile dataset proposed by a TSO.</dcterms:description>
+    <dcat:endDate>2023-06-15T22:30:00Z</dcat:endDate>
+    <prov:generatedAtTime>2022-06-10T07:06:25Z</prov:generatedAtTime>
+    <dcterms:identifier>adaaff90-c3bd-463b-a405-b84d7389b351</dcterms:identifier>
+    <dcat:isVersionOf rdf:resource="https://energy.referencedata.eu/Test/Model/Svedala-RAS"/>
+    <dcat:keyword>RAS</dcat:keyword>
+    <dcterms:license>https://creativecommons.org/licenses/by/4.0/</dcterms:license>
+    <dcterms:publisher>https://energy.referencedata.eu/Test/Party/Svedala</dcterms:publisher>
+    <dcterms:rights>Copyright</dcterms:rights>
+    <dcterms:rightsHolder>ENTSO-E</dcterms:rightsHolder>	
+    <dcterms:requires rdf:resource="urn:uuid:f7b94ef6-e043-4d2a-a359-2718e6e20507"/>
+    <dcat:startDate>2022-06-15T22:30:00Z</dcat:startDate>
+    <dcterms:title>20220615_Svedala_RAS_1.0.0</dcterms:title> 
+    <dcat:version>1.0.0</dcat:version>
+    <prov:wasGeneratedBy>https://energy.referencedata.eu/Action/CGM-RAS</prov:wasGeneratedBy>
+    <dcterms:spatial>https://energy.referencedata.eu/Test/Frame/Svedala-Power-Transmission-System</dcterms:spatial>
+    <dcterms:issued>2022-06-15T22:30:00Z</dcterms:issued>
+  </dcat:Dataset>
+   <nc:RemedialActionSchedule rdf:ID="_51361821-0a40-4e5a-a49d-29c266ea2ecc">
+    <cim:IdentifiedObject.mRID>51361821-0a40-4e5a-a49d-29c266ea2ecc</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>TP RA One Switch</cim:IdentifiedObject.name>
+    <nc:RemedialActionSchedule.RemedialAction rdf:resource="#_6d2c8901-d068-4d22-8ce9-7379644b4f17"/>
+    <nc:RemedialActionSchedule.statusKind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleStatusKind.ordered"/>
+  </nc:RemedialActionSchedule>
+  <nc:EventSchedule rdf:ID="_bbf76944-5049-4393-89c4-4f0e4d34c086">
+    <nc:BaseTimeSeries.interpolationKind rdf:resource="https://cim4.eu/ns/nc#TimeSeriesInterpolationKind.none"/>
+    <nc:EventSchedule.RemedialActionSchedule rdf:resource="#_51361821-0a40-4e5a-a49d-29c266ea2ecc"/>
+    <cim:IdentifiedObject.mRID>bbf76944-5049-4393-89c4-4f0e4d34c086</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>TP RA One Switch</cim:IdentifiedObject.name>
+  </nc:EventSchedule>
+  <nc:EventTimePoint rdf:ID="_595e55c7-b635-416d-97e8-95485951a91e">
+    <nc:EventTimePoint.EventSchedule rdf:resource="#_bbf76944-5049-4393-89c4-4f0e4d34c086"/>
+    <nc:EventTimePoint.atTime>2024-11-20T02:30:00Z</nc:EventTimePoint.atTime>
+    <nc:EventTimePoint.isActive>false</nc:EventTimePoint.isActive>
+  </nc:EventTimePoint>
+  
+  <nc:RemedialActionScheduleResponse rdf:ID="_96f93b71-420f-456f-932e-9ac3f724b683">
+    <nc:RemedialActionScheduleResponse.mRID>96f93b71-420f-456f-932e-9ac3f724b683</nc:RemedialActionScheduleResponse.mRID>
+    <nc:RemedialActionScheduleResponse.kind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleResponseKind.refused"/>
+    <nc:RemedialActionScheduleResponse.RemedialActionSchedule rdf:resource="#_17527637-6099-4ee6-8b21-fea8dfec4c75"/>	
+    <nc:RemedialActionScheduleResponse.RespondingEntity rdf:resource="#_b9fbb881-573b-4e98-9b7b-31f00a45ebe0"/>
+  </nc:RemedialActionScheduleResponse>
+
+  <nc:RemedialActionScheduleDependency rdf:ID="_f7231aa5-d497-41f3-a5d5-9d4af74444f0">
+    <nc:RemedialActionScheduleDependency.mRID>f7231aa5-d497-41f3-a5d5-9d4af74444f0</nc:RemedialActionScheduleDependency.mRID>
+    <nc:RemedialActionScheduleDependency.kind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleDependencyKind.none"/>
+    <nc:RemedialActionScheduleDependency.ProposedRemedialActionSchedule rdf:resource="#_51361821-0a40-4e5a-a49d-29c266ea2ecc"/>	
+    <nc:RemedialActionScheduleDependency.ReplacedRemedialActionSchedule rdf:resource="#_17527637-6099-4ee6-8b21-fea8dfec4c75"/>	
+  </nc:RemedialActionScheduleDependency>  
+ 
+   <nc:RemedialActionScheduleResponse rdf:ID="_92d129af-b852-4931-b7fa-62c567e3eedc">
+    <nc:RemedialActionScheduleResponse.mRID>92d129af-b852-4931-b7fa-62c567e3eedc</nc:RemedialActionScheduleResponse.mRID>
+    <nc:RemedialActionScheduleResponse.kind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleResponseKind.accepted"/>
+    <nc:RemedialActionScheduleResponse.RemedialActionSchedule rdf:resource="#_589e558b-937d-4497-9e11-12dbd7aaf12e"/>	
+    <nc:RemedialActionScheduleResponse.RespondingEntity rdf:resource="#_b9fbb881-573b-4e98-9b7b-31f00a45ebe0"/>
+  </nc:RemedialActionScheduleResponse>
+  
+   <nc:RemedialActionScheduleResponse rdf:ID="_64e07907-7deb-413f-8f9a-dd0a2e07a85a">
+    <nc:RemedialActionScheduleResponse.mRID>64e07907-7deb-413f-8f9a-dd0a2e07a85a</nc:RemedialActionScheduleResponse.mRID>
+    <nc:RemedialActionScheduleResponse.kind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleResponseKind.accepted"/>
+    <nc:RemedialActionScheduleResponse.RemedialActionSchedule rdf:resource="#_aa124b6e-4df6-485e-bdce-9793b7bcdb3b"/>	
+    <nc:RemedialActionScheduleResponse.RespondingEntity rdf:resource="#_b9fbb881-573b-4e98-9b7b-31f00a45ebe0"/>
+  </nc:RemedialActionScheduleResponse>
+  
+   <nc:RemedialActionScheduleResponse rdf:ID="_f641de8f-61b4-4df7-8cfc-16b582d6d82b">
+    <nc:RemedialActionScheduleResponse.mRID>f641de8f-61b4-4df7-8cfc-16b582d6d82b</nc:RemedialActionScheduleResponse.mRID>
+    <nc:RemedialActionScheduleResponse.kind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleResponseKind.accepted"/>
+    <nc:RemedialActionScheduleResponse.RemedialActionSchedule rdf:resource="#_279bfb00-1b2a-4592-af3a-dba9403d1abd"/>	
+    <nc:RemedialActionScheduleResponse.RespondingEntity rdf:resource="#_b9fbb881-573b-4e98-9b7b-31f00a45ebe0"/>
+  </nc:RemedialActionScheduleResponse>
+  
+   <nc:RemedialActionScheduleResponse rdf:ID="_92f63706-a704-43e6-80f5-7803f5ece294">
+    <nc:RemedialActionScheduleResponse.mRID>92f63706-a704-43e6-80f5-7803f5ece294</nc:RemedialActionScheduleResponse.mRID>
+    <nc:RemedialActionScheduleResponse.kind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleResponseKind.accepted"/>
+    <nc:RemedialActionScheduleResponse.RemedialActionSchedule rdf:resource="#_26035028-03ee-4e29-bda4-0817694a3d30"/>	
+    <nc:RemedialActionScheduleResponse.RespondingEntity rdf:resource="#_b9fbb881-573b-4e98-9b7b-31f00a45ebe0"/>
+  </nc:RemedialActionScheduleResponse>
+  
+     <nc:RemedialActionScheduleResponse rdf:ID="_f9d89230-f625-4c58-a7a4-ecbc64be95b7">
+    <nc:RemedialActionScheduleResponse.mRID>f9d89230-f625-4c58-a7a4-ecbc64be95b7</nc:RemedialActionScheduleResponse.mRID>
+    <nc:RemedialActionScheduleResponse.kind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleResponseKind.accepted"/>
+    <nc:RemedialActionScheduleResponse.RemedialActionSchedule rdf:resource="#_eb4861bc-3bc1-40ae-97e2-5e4d5a3aec2c"/>	
+    <nc:RemedialActionScheduleResponse.RespondingEntity rdf:resource="#_b9fbb881-573b-4e98-9b7b-31f00a45ebe0"/>
+  </nc:RemedialActionScheduleResponse>
+  
+   <nc:RemedialActionScheduleResponse rdf:ID="_c2048707-74c1-45a5-a41f-ceac1e2a3761">
+    <nc:RemedialActionScheduleResponse.mRID>c2048707-74c1-45a5-a41f-ceac1e2a3761</nc:RemedialActionScheduleResponse.mRID>
+    <nc:RemedialActionScheduleResponse.kind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleResponseKind.accepted"/>
+    <nc:RemedialActionScheduleResponse.RemedialActionSchedule rdf:resource="#_5ceba553-3b0d-4ff6-9780-3d395e851f48"/>	
+    <nc:RemedialActionScheduleResponse.RespondingEntity rdf:resource="#_b9fbb881-573b-4e98-9b7b-31f00a45ebe0"/>
+  </nc:RemedialActionScheduleResponse>
+  
+   <nc:RemedialActionScheduleResponse rdf:ID="_4c87f8d4-6e7c-492d-92e4-1a4a7736b4e5">
+    <nc:RemedialActionScheduleResponse.mRID>4c87f8d4-6e7c-492d-92e4-1a4a7736b4e5</nc:RemedialActionScheduleResponse.mRID>
+    <nc:RemedialActionScheduleResponse.kind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleResponseKind.accepted"/>
+    <nc:RemedialActionScheduleResponse.RemedialActionSchedule rdf:resource="#_264f9a19-ae29-4c95-b44c-6b7919ca0f6c"/>	
+    <nc:RemedialActionScheduleResponse.RespondingEntity rdf:resource="#_b9fbb881-573b-4e98-9b7b-31f00a45ebe0"/>
+  </nc:RemedialActionScheduleResponse>
+  
+   <nc:RemedialActionScheduleResponse rdf:ID="_8e91d112-2dfb-4491-a3ca-3c6970a65457">
+    <nc:RemedialActionScheduleResponse.mRID>8e91d112-2dfb-4491-a3ca-3c6970a65457</nc:RemedialActionScheduleResponse.mRID>
+    <nc:RemedialActionScheduleResponse.kind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleResponseKind.accepted"/>
+    <nc:RemedialActionScheduleResponse.RemedialActionSchedule rdf:resource="#_1ca7da8c-faa6-42a1-9949-56da97dc3a23"/>	
+    <nc:RemedialActionScheduleResponse.RespondingEntity rdf:resource="#_b9fbb881-573b-4e98-9b7b-31f00a45ebe0"/>
+  </nc:RemedialActionScheduleResponse>
+     <nc:RemedialActionScheduleResponse rdf:ID="_e6177f83-c51b-4413-943c-82d33e16c11a">
+    <nc:RemedialActionScheduleResponse.mRID>e6177f83-c51b-4413-943c-82d33e16c11a</nc:RemedialActionScheduleResponse.mRID>
+    <nc:RemedialActionScheduleResponse.kind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleResponseKind.accepted"/>
+    <nc:RemedialActionScheduleResponse.RemedialActionSchedule rdf:resource="#_87e90c47-43d8-4e5c-b2ad-5c67d3a74842"/>	
+    <nc:RemedialActionScheduleResponse.RespondingEntity rdf:resource="#_b9fbb881-573b-4e98-9b7b-31f00a45ebe0"/>
+  </nc:RemedialActionScheduleResponse>
+  
+   <nc:RemedialActionScheduleResponse rdf:ID="_a99b012c-7603-48f3-bfe1-2636ea242832">
+    <nc:RemedialActionScheduleResponse.mRID>a99b012c-7603-48f3-bfe1-2636ea242832</nc:RemedialActionScheduleResponse.mRID>
+    <nc:RemedialActionScheduleResponse.kind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleResponseKind.accepted"/>
+    <nc:RemedialActionScheduleResponse.RemedialActionSchedule rdf:resource="#_cefc01ca-f500-4215-9c86-dbef2b2cbdd2"/>	
+    <nc:RemedialActionScheduleResponse.RespondingEntity rdf:resource="#_b9fbb881-573b-4e98-9b7b-31f00a45ebe0"/>
+  </nc:RemedialActionScheduleResponse>
+  
+   <nc:RemedialActionScheduleResponse rdf:ID="_0c827624-5b2c-480d-9ca2-adc07c8778c1">
+    <nc:RemedialActionScheduleResponse.mRID>0c827624-5b2c-480d-9ca2-adc07c8778c1</nc:RemedialActionScheduleResponse.mRID>
+    <nc:RemedialActionScheduleResponse.kind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleResponseKind.accepted"/>
+    <nc:RemedialActionScheduleResponse.RemedialActionSchedule rdf:resource="#_231c3e6a-b437-47d2-827f-6c7d813936ea"/>	
+    <nc:RemedialActionScheduleResponse.RespondingEntity rdf:resource="#_b9fbb881-573b-4e98-9b7b-31f00a45ebe0"/>
+  </nc:RemedialActionScheduleResponse>
+  
+
+ 
+</rdf:RDF>

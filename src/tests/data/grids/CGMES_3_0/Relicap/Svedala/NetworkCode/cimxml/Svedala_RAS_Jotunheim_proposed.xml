@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:nc="https://cim4.eu/ns/nc#"
+    xmlns:cim="https://cim.ucaiug.io/ns#"
+    xmlns:eumd="https://cim4.eu/ns/Metadata-European#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:adms="http://www.w3.org/ns/adms#"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:dcatcim="https://cim4.eu/ns/dcatcim#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#" > 
+  <dcat:Dataset rdf:about="urn:uuid:baf8c34a-4944-4309-8d9f-8f39c3e4bac1">
+    <dcterms:accessRights>https://energy.referencedata.eu/Confidentiality/Public</dcterms:accessRights>
+    <dcterms:conformsTo>https://ap.cim4.eu/RemedialActionSchedule/2.4</dcterms:conformsTo>
+    <dcterms:conformsTo>https://cim4.eu/ns/nc/2.4#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/CIM100#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/2013/CIM-schema-cim16#</dcterms:conformsTo>
+    <dcterms:description xml:lang="en">This is the remedial action schedule dataset for Svedala part of ReliCapGrid.</dcterms:description>
+    <dcat:endDate>2023-06-15T22:30:00Z</dcat:endDate>
+    <prov:generatedAtTime>2022-06-10T07:06:25Z</prov:generatedAtTime>
+    <dcterms:identifier>baf8c34a-4944-4309-8d9f-8f39c3e4bac1</dcterms:identifier>
+    <dcat:isVersionOf rdf:resource="https://energy.referencedata.eu/Test/Model/TSO-Svedala-RAS"/>
+    <dcat:keyword>RAS</dcat:keyword>
+    <dcterms:license>https://creativecommons.org/licenses/by/4.0/</dcterms:license>
+    <dcterms:publisher>https://energy.referencedata.eu/test/party/JOTUNHEIM</dcterms:publisher>
+    <dcterms:rights>Copyright</dcterms:rights>
+    <dcterms:rightsHolder>ENTSO-E</dcterms:rightsHolder>	
+    <dcterms:requires rdf:resource="urn:uuid:f7b94ef6-e043-4d2a-a359-2718e6e20507"/>
+    <dcat:startDate>2022-06-15T22:30:00Z</dcat:startDate>
+    <dcterms:title>20220615_Svedala_RAS_1.0.0</dcterms:title> 
+    <dcat:version>1.0.0</dcat:version>
+    <prov:wasGeneratedBy>https://energy.referencedata.eu/Activity/CGM-RAS</prov:wasGeneratedBy>
+    <dcterms:spatial>https://energy.referencedata.eu/Test/Frame/Svedala-Power-Transmission-System</dcterms:spatial>
+    <dcterms:issued>2022-06-15T22:30:00Z</dcterms:issued>
+  </dcat:Dataset>
+  <nc:EventSchedule rdf:ID="_1c1e39cf-15a1-4874-9739-d9e6dc90ee11">
+    <nc:BaseTimeSeries.interpolationKind rdf:resource="https://cim4.eu/ns/nc#TimeSeriesInterpolationKind.none"/>
+    <nc:EventSchedule.RemedialActionSchedule rdf:resource="#_279bfb00-1b2a-4592-af3a-dba9403d1abd"/>
+    <cim:IdentifiedObject.mRID>1c1e39cf-15a1-4874-9739-d9e6dc90ee11</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>NCP386</cim:IdentifiedObject.name>
+  </nc:EventSchedule>
+  <nc:EventSchedule rdf:ID="_023512a8-150d-4300-8159-807275eafd48">
+    <nc:BaseTimeSeries.interpolationKind rdf:resource="https://cim4.eu/ns/nc#TimeSeriesInterpolationKind.none"/>
+    <nc:EventSchedule.RemedialActionSchedule rdf:resource="#_87e90c47-43d8-4e5c-b2ad-5c67d3a74842"/>
+    <cim:IdentifiedObject.mRID>023512a8-150d-4300-8159-807275eafd48</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>NCP386</cim:IdentifiedObject.name>
+  </nc:EventSchedule>
+  <nc:EventTimePoint rdf:ID="_fa8958bd-298c-4240-946e-74a3c3129b3b">
+    <nc:EventTimePoint.EventSchedule rdf:resource="#_1c1e39cf-15a1-4874-9739-d9e6dc90ee11"/>
+    <nc:EventTimePoint.atTime>2024-11-20T02:30:00Z</nc:EventTimePoint.atTime>
+    <nc:EventTimePoint.isActive>true</nc:EventTimePoint.isActive>
+  </nc:EventTimePoint>
+  <nc:EventTimePoint rdf:ID="_e153cb0a-2b31-45f4-b6fd-c39a00eb3409">
+    <nc:EventTimePoint.EventSchedule rdf:resource="#_1c1e39cf-15a1-4874-9739-d9e6dc90ee11"/>
+    <nc:EventTimePoint.atTime>2024-11-20T01:30:00Z</nc:EventTimePoint.atTime>
+    <nc:EventTimePoint.isActive>true</nc:EventTimePoint.isActive>
+  </nc:EventTimePoint>
+  <nc:EventTimePoint rdf:ID="_c2212ad2-6d9e-4214-93cf-6255454208b2">
+    <nc:EventTimePoint.EventSchedule rdf:resource="#_1c1e39cf-15a1-4874-9739-d9e6dc90ee11"/>
+    <nc:EventTimePoint.atTime>2024-11-20T00:30:00Z</nc:EventTimePoint.atTime>
+    <nc:EventTimePoint.isActive>true</nc:EventTimePoint.isActive>
+  </nc:EventTimePoint>
+  <nc:EventTimePoint rdf:ID="_e9e00f12-c30d-466b-a602-e1189ee2fe6c">
+    <nc:EventTimePoint.EventSchedule rdf:resource="#_023512a8-150d-4300-8159-807275eafd48"/>
+    <nc:EventTimePoint.atTime>2024-11-20T02:30:00Z</nc:EventTimePoint.atTime>
+    <nc:EventTimePoint.isActive>true</nc:EventTimePoint.isActive>
+  </nc:EventTimePoint>
+  <nc:EventTimePoint rdf:ID="_120c37be-a75c-4820-bf15-a83b5b983d45">
+    <nc:EventTimePoint.EventSchedule rdf:resource="#_023512a8-150d-4300-8159-807275eafd48"/>
+    <nc:EventTimePoint.atTime>2024-11-20T01:30:00Z</nc:EventTimePoint.atTime>
+    <nc:EventTimePoint.isActive>true</nc:EventTimePoint.isActive>
+  </nc:EventTimePoint>
+  <nc:EventTimePoint rdf:ID="_479eb9fd-2b28-4c06-bad6-e5b329a7578c">
+    <nc:EventTimePoint.EventSchedule rdf:resource="#_023512a8-150d-4300-8159-807275eafd48"/>
+    <nc:EventTimePoint.atTime>2024-11-20T00:30:00Z</nc:EventTimePoint.atTime>
+    <nc:EventTimePoint.isActive>true</nc:EventTimePoint.isActive>
+  </nc:EventTimePoint>
+  <nc:GenericValueTimePoint rdf:ID="_34faa19b-f39d-495d-94c7-c8919ca1f6d5">
+    <nc:GenericValueTimePoint.GenericValueSchedule rdf:resource="#_659d3958-fd77-4289-a835-556df2bfe456"/>
+    <nc:GenericValueTimePoint.atTime>2022-06-16T00:30:00Z</nc:GenericValueTimePoint.atTime>
+    <nc:GenericValueTimePoint.value>1.0</nc:GenericValueTimePoint.value>
+  </nc:GenericValueTimePoint>
+  <nc:GenericValueTimePoint rdf:ID="_7e42c78e-78cb-46a2-8ad1-90916e6a8d8f">
+    <nc:GenericValueTimePoint.GenericValueSchedule rdf:resource="#_c02149d0-13a9-423c-b574-dccbd8ad2aae"/>
+    <nc:GenericValueTimePoint.atTime>2022-06-16T02:30:00Z</nc:GenericValueTimePoint.atTime>
+    <nc:GenericValueTimePoint.value>1.0</nc:GenericValueTimePoint.value>
+  </nc:GenericValueTimePoint>
+  <nc:GenericValueTimePoint rdf:ID="_90ae0e37-8ee2-493c-8bd3-62caaab75719">
+    <nc:GenericValueTimePoint.GenericValueSchedule rdf:resource="#_9ef0d5e7-32d4-41e3-911c-817b0afbc410"/>
+    <nc:GenericValueTimePoint.atTime>2022-06-16T03:30:00Z</nc:GenericValueTimePoint.atTime>
+    <nc:GenericValueTimePoint.value>0.0</nc:GenericValueTimePoint.value>
+  </nc:GenericValueTimePoint>
+  <nc:GenericValueTimePoint rdf:ID="_955fdd0a-4698-4d84-ac36-3779eb7ab738">
+    <nc:GenericValueTimePoint.GenericValueSchedule rdf:resource="#_919d20c5-9b8d-40e3-8b99-db2fd1dc3e01"/>
+    <nc:GenericValueTimePoint.atTime>2022-06-16T12:30:00Z</nc:GenericValueTimePoint.atTime>
+    <nc:GenericValueTimePoint.value>1.0</nc:GenericValueTimePoint.value>
+  </nc:GenericValueTimePoint>
+  <nc:GenericValueTimePoint rdf:ID="_5325ae52-5ba3-44d4-985e-22139be7bb02">
+    <nc:GenericValueTimePoint.GenericValueSchedule rdf:resource="#_a58a9c26-89b3-42ab-97df-c65546135a33"/>
+    <nc:GenericValueTimePoint.atTime>2022-06-16T00:30:00Z</nc:GenericValueTimePoint.atTime>
+    <nc:GenericValueTimePoint.value>1.0</nc:GenericValueTimePoint.value>
+  </nc:GenericValueTimePoint>
+  <nc:GenericValueTimePoint rdf:ID="_16f2f4e3-57bd-4567-b06d-2ff3c6d65a0a">
+    <nc:GenericValueTimePoint.GenericValueSchedule rdf:resource="#_27de0747-47c3-4f4d-a421-73a75dc4ee8f"/>
+    <nc:GenericValueTimePoint.atTime>2022-06-16T09:30:00Z</nc:GenericValueTimePoint.atTime>
+    <nc:GenericValueTimePoint.value>1.0</nc:GenericValueTimePoint.value>
+  </nc:GenericValueTimePoint>
+  <nc:GenericValueTimePoint rdf:ID="_aaf669ca-48e5-4a95-b222-3ece8cb12308">
+    <nc:GenericValueTimePoint.GenericValueSchedule rdf:resource="#_3e1370f5-2307-41a9-9064-15833ee7ad6c"/>
+    <nc:GenericValueTimePoint.atTime>2022-06-16T05:30:00Z</nc:GenericValueTimePoint.atTime>
+    <nc:GenericValueTimePoint.value>0.0</nc:GenericValueTimePoint.value>
+  </nc:GenericValueTimePoint>
+  <nc:GenericValueTimePoint rdf:ID="_c5084ff2-c71b-49a5-8f3d-0bd77817f641">
+    <nc:GenericValueTimePoint.GenericValueSchedule rdf:resource="#_ab913026-a54a-460b-92db-579e1647b8c9"/>
+    <nc:GenericValueTimePoint.atTime>2022-06-16T11:30:00Z</nc:GenericValueTimePoint.atTime>
+    <nc:GenericValueTimePoint.value>1.0</nc:GenericValueTimePoint.value>
+  </nc:GenericValueTimePoint>
+  <nc:GenericValueTimePoint rdf:ID="_4af163bb-e6ef-467e-a1ab-1df5b4eb5cd5">
+    <nc:GenericValueTimePoint.GenericValueSchedule rdf:resource="#_6e5cb27c-0ca2-4d53-97ad-e8992f0b4a2b"/>
+    <nc:GenericValueTimePoint.atTime>2022-06-16T17:30:00Z</nc:GenericValueTimePoint.atTime>
+    <nc:GenericValueTimePoint.value>1.0</nc:GenericValueTimePoint.value>
+  </nc:GenericValueTimePoint>
+  <nc:GridStateIntensitySchedule rdf:ID="_659d3958-fd77-4289-a835-556df2bfe456">
+    <nc:BaseTimeSeries.interpolationKind rdf:resource="https://cim4.eu/ns/nc#TimeSeriesInterpolationKind.next"/>
+    <nc:GridStateIntensitySchedule.GridStateAlteration rdf:resource="#_889535e6-2789-46e7-8ba7-da7be9951914"/>
+    <nc:GridStateIntensitySchedule.valueKind rdf:resource="https://cim4.eu/ns/nc#ValueOffsetKind.absolute"/>
+    <cim:IdentifiedObject.mRID>659d3958-fd77-4289-a835-556df2bfe456</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>intensity schedule</cim:IdentifiedObject.name>
+  </nc:GridStateIntensitySchedule>
+  <nc:GridStateIntensitySchedule rdf:ID="_27de0747-47c3-4f4d-a421-73a75dc4ee8f">
+    <nc:BaseTimeSeries.interpolationKind rdf:resource="https://cim4.eu/ns/nc#TimeSeriesInterpolationKind.next"/>
+    <nc:GridStateIntensitySchedule.GridStateAlteration rdf:resource="#_4ab66db6-53a4-4ebf-af6e-1ea32b6e77bb"/>
+    <nc:GridStateIntensitySchedule.valueKind rdf:resource="https://cim4.eu/ns/nc#ValueOffsetKind.absolute"/>
+    <cim:IdentifiedObject.mRID>27de0747-47c3-4f4d-a421-73a75dc4ee8f</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>intensity schedule</cim:IdentifiedObject.name>
+  </nc:GridStateIntensitySchedule>
+  <nc:GridStateIntensitySchedule rdf:ID="_9ef0d5e7-32d4-41e3-911c-817b0afbc410">
+    <nc:BaseTimeSeries.interpolationKind rdf:resource="https://cim4.eu/ns/nc#TimeSeriesInterpolationKind.next"/>
+    <nc:GridStateIntensitySchedule.GridStateAlteration rdf:resource="#_beee0b9b-588d-4efc-9972-cd4cd25b0b70"/>
+    <nc:GridStateIntensitySchedule.valueKind rdf:resource="https://cim4.eu/ns/nc#ValueOffsetKind.absolute"/>
+    <cim:IdentifiedObject.mRID>9ef0d5e7-32d4-41e3-911c-817b0afbc410</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>intensity schedule</cim:IdentifiedObject.name>
+  </nc:GridStateIntensitySchedule>
+  <nc:GridStateIntensitySchedule rdf:ID="_919d20c5-9b8d-40e3-8b99-db2fd1dc3e01">
+    <nc:BaseTimeSeries.interpolationKind rdf:resource="https://cim4.eu/ns/nc#TimeSeriesInterpolationKind.next"/>
+    <nc:GridStateIntensitySchedule.GridStateAlteration rdf:resource="#_457f111e-43ce-4368-923e-11457cb694f9"/>
+    <nc:GridStateIntensitySchedule.valueKind rdf:resource="https://cim4.eu/ns/nc#ValueOffsetKind.absolute"/>
+    <cim:IdentifiedObject.mRID>919d20c5-9b8d-40e3-8b99-db2fd1dc3e01</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>intensity schedule</cim:IdentifiedObject.name>
+  </nc:GridStateIntensitySchedule>
+  <nc:GridStateIntensitySchedule rdf:ID="_c02149d0-13a9-423c-b574-dccbd8ad2aae">
+    <nc:BaseTimeSeries.interpolationKind rdf:resource="https://cim4.eu/ns/nc#TimeSeriesInterpolationKind.next"/>
+    <nc:GridStateIntensitySchedule.GridStateAlteration rdf:resource="#_55a11475-e39f-4541-accc-d979376bcda3"/>
+    <nc:GridStateIntensitySchedule.valueKind rdf:resource="https://cim4.eu/ns/nc#ValueOffsetKind.absolute"/>
+    <cim:IdentifiedObject.mRID>c02149d0-13a9-423c-b574-dccbd8ad2aae</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>intensity schedule</cim:IdentifiedObject.name>
+  </nc:GridStateIntensitySchedule>
+  <nc:GridStateIntensitySchedule rdf:ID="_ab913026-a54a-460b-92db-579e1647b8c9">
+    <nc:BaseTimeSeries.interpolationKind rdf:resource="https://cim4.eu/ns/nc#TimeSeriesInterpolationKind.next"/>
+    <nc:GridStateIntensitySchedule.GridStateAlteration rdf:resource="#_1dd4c309-ed8b-4bb6-a26d-4888b8e1f009"/>
+    <nc:GridStateIntensitySchedule.valueKind rdf:resource="https://cim4.eu/ns/nc#ValueOffsetKind.absolute"/>
+    <cim:IdentifiedObject.mRID>ab913026-a54a-460b-92db-579e1647b8c9</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>intensity schedule</cim:IdentifiedObject.name>
+  </nc:GridStateIntensitySchedule>
+  <nc:GridStateIntensitySchedule rdf:ID="_3e1370f5-2307-41a9-9064-15833ee7ad6c">
+    <nc:BaseTimeSeries.interpolationKind rdf:resource="https://cim4.eu/ns/nc#TimeSeriesInterpolationKind.next"/>
+    <nc:GridStateIntensitySchedule.GridStateAlteration rdf:resource="#_bd7aaf12-e6b9-44ef-9e04-3d2992581718"/>
+    <nc:GridStateIntensitySchedule.valueKind rdf:resource="https://cim4.eu/ns/nc#ValueOffsetKind.absolute"/>
+    <cim:IdentifiedObject.mRID>3e1370f5-2307-41a9-9064-15833ee7ad6c</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>intensity schedule</cim:IdentifiedObject.name>
+  </nc:GridStateIntensitySchedule>
+  <nc:GridStateIntensitySchedule rdf:ID="_a58a9c26-89b3-42ab-97df-c65546135a33">
+    <nc:BaseTimeSeries.interpolationKind rdf:resource="https://cim4.eu/ns/nc#TimeSeriesInterpolationKind.next"/>
+    <nc:GridStateIntensitySchedule.GridStateAlteration rdf:resource="#_4b1410d4-3958-4a8c-8289-b3d6b57cfc65"/>
+    <nc:GridStateIntensitySchedule.valueKind rdf:resource="https://cim4.eu/ns/nc#ValueOffsetKind.absolute"/>
+    <cim:IdentifiedObject.mRID>a58a9c26-89b3-42ab-97df-c65546135a33</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>intensity schedule</cim:IdentifiedObject.name>
+  </nc:GridStateIntensitySchedule>
+  <nc:GridStateIntensitySchedule rdf:ID="_6e5cb27c-0ca2-4d53-97ad-e8992f0b4a2b">
+    <nc:BaseTimeSeries.interpolationKind rdf:resource="https://cim4.eu/ns/nc#TimeSeriesInterpolationKind.next"/>
+    <nc:GridStateIntensitySchedule.GridStateAlteration rdf:resource="#_55a11475-e39f-4541-accc-d979376bcda3"/>
+    <nc:GridStateIntensitySchedule.valueKind rdf:resource="https://cim4.eu/ns/nc#ValueOffsetKind.absolute"/>
+    <cim:IdentifiedObject.mRID>6e5cb27c-0ca2-4d53-97ad-e8992f0b4a2b</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>intensity schedule</cim:IdentifiedObject.name>
+  </nc:GridStateIntensitySchedule>
+  <nc:RemedialActionSchedule rdf:ID="_589e558b-937d-4497-9e11-12dbd7aaf12e">
+    <cim:IdentifiedObject.mRID>589e558b-937d-4497-9e11-12dbd7aaf12e</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>RAS</cim:IdentifiedObject.name>
+    <nc:RemedialActionSchedule.Contingency rdf:resource="#_475ba18f-cbf5-490b-b65d-e8e03f9bcbc4"/>
+    <nc:RemedialActionSchedule.ProposingEntity rdf:resource="#_5f5820d9-3e05-473e-94c8-3c767be03e1a"/>
+    <nc:RemedialActionSchedule.RemedialAction rdf:resource="#_5e401955-387e-45ce-b126-dd142b06b20c"/>
+    <nc:RemedialActionSchedule.statusKind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleStatusKind.proposed"/>
+  </nc:RemedialActionSchedule>
+  <nc:RemedialActionSchedule rdf:ID="_aa124b6e-4df6-485e-bdce-9793b7bcdb3b">
+    <cim:IdentifiedObject.mRID>aa124b6e-4df6-485e-bdce-9793b7bcdb3b</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>RAS</cim:IdentifiedObject.name>
+    <nc:RemedialActionSchedule.ProposingEntity rdf:resource="#_5f5820d9-3e05-473e-94c8-3c767be03e1a"/>
+    <nc:RemedialActionSchedule.RemedialAction rdf:resource="#_68255abc-9164-4e9a-89ae-d8c44cf3b2b3"/>
+    <nc:RemedialActionSchedule.statusKind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleStatusKind.proposed"/>
+  </nc:RemedialActionSchedule>
+  <nc:RemedialActionSchedule rdf:ID="_279bfb00-1b2a-4592-af3a-dba9403d1abd">
+    <cim:IdentifiedObject.mRID>279bfb00-1b2a-4592-af3a-dba9403d1abd</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>NCP386</cim:IdentifiedObject.name>
+    <nc:RemedialActionSchedule.RemedialAction rdf:resource="#_fa3e3533-345a-4ef1-a46d-3ab6d251924a"/>
+    <nc:RemedialActionSchedule.statusKind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleStatusKind.proposed"/>
+  </nc:RemedialActionSchedule>
+  <nc:RemedialActionSchedule rdf:ID="_26035028-03ee-4e29-bda4-0817694a3d30">
+    <cim:IdentifiedObject.mRID>26035028-03ee-4e29-bda4-0817694a3d30</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>RAS</cim:IdentifiedObject.name>
+    <nc:RemedialActionSchedule.ProposingEntity rdf:resource="#_5f5820d9-3e05-473e-94c8-3c767be03e1a"/>
+    <nc:RemedialActionSchedule.RemedialAction rdf:resource="#_b2555ccc-6562-4887-8abc-19a6e51cfe36"/>
+    <nc:RemedialActionSchedule.statusKind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleStatusKind.proposed"/>
+  </nc:RemedialActionSchedule>
+  <nc:RemedialActionSchedule rdf:ID="_eb4861bc-3bc1-40ae-97e2-5e4d5a3aec2c">
+    <cim:IdentifiedObject.mRID>eb4861bc-3bc1-40ae-97e2-5e4d5a3aec2c</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>RAS</cim:IdentifiedObject.name>
+    <nc:RemedialActionSchedule.ProposingEntity rdf:resource="#_5f5820d9-3e05-473e-94c8-3c767be03e1a"/>
+    <nc:RemedialActionSchedule.RemedialAction rdf:resource="#_d9bd3aaf-cda3-4b54-bb2e-b03dd9925817"/>
+    <nc:RemedialActionSchedule.statusKind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleStatusKind.proposed"/>
+  </nc:RemedialActionSchedule>
+  <nc:RemedialActionSchedule rdf:ID="_5ceba553-3b0d-4ff6-9780-3d395e851f48">
+    <cim:IdentifiedObject.mRID>5ceba553-3b0d-4ff6-9780-3d395e851f48</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>RAS</cim:IdentifiedObject.name>
+    <nc:RemedialActionSchedule.ProposingEntity rdf:resource="#_5f5820d9-3e05-473e-94c8-3c767be03e1a"/>
+    <nc:RemedialActionSchedule.RemedialAction rdf:resource="#_cfabf356-c5e1-4391-b91b-3330bc24f0c9"/>
+    <nc:RemedialActionSchedule.statusKind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleStatusKind.proposed"/>
+  </nc:RemedialActionSchedule>
+  <nc:RemedialActionSchedule rdf:ID="_264f9a19-ae29-4c95-b44c-6b7919ca0f6c">
+    <cim:IdentifiedObject.mRID>264f9a19-ae29-4c95-b44c-6b7919ca0f6c</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>RAS</cim:IdentifiedObject.name>
+    <nc:RemedialActionSchedule.Contingency rdf:resource="#_5d587c7e-9ced-416a-ad17-6ef9b241a998"/>
+    <nc:RemedialActionSchedule.ProposingEntity rdf:resource="#_5f5820d9-3e05-473e-94c8-3c767be03e1a"/>
+    <nc:RemedialActionSchedule.RemedialAction rdf:resource="#_587cb391-ed16-4a1d-876e-f90241addce5"/>
+    <nc:RemedialActionSchedule.statusKind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleStatusKind.proposed"/>
+  </nc:RemedialActionSchedule>
+  <nc:RemedialActionSchedule rdf:ID="_1ca7da8c-faa6-42a1-9949-56da97dc3a23">
+    <cim:IdentifiedObject.mRID>1ca7da8c-faa6-42a1-9949-56da97dc3a23</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>RAS</cim:IdentifiedObject.name>
+    <nc:RemedialActionSchedule.Contingency rdf:resource="#_e05bbe20-9d4a-40da-9777-8424d216785d"/>
+    <nc:RemedialActionSchedule.ProposingEntity rdf:resource="#_5f5820d9-3e05-473e-94c8-3c767be03e1a"/>
+    <nc:RemedialActionSchedule.RemedialAction rdf:resource="#_31d41e36-11c8-417b-bafb-c410d4391898"/>
+    <nc:RemedialActionSchedule.statusKind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleStatusKind.proposed"/>
+  </nc:RemedialActionSchedule>
+  <nc:RemedialActionSchedule rdf:ID="_87e90c47-43d8-4e5c-b2ad-5c67d3a74842">
+    <cim:IdentifiedObject.mRID>87e90c47-43d8-4e5c-b2ad-5c67d3a74842</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>NCP386</cim:IdentifiedObject.name>
+    <nc:RemedialActionSchedule.RemedialAction rdf:resource="#_7e422768-207d-455f-976e-0b1cb2338509"/>
+    <nc:RemedialActionSchedule.statusKind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleStatusKind.proposed"/>
+  </nc:RemedialActionSchedule>
+  <nc:RemedialActionSchedule rdf:ID="_cefc01ca-f500-4215-9c86-dbef2b2cbdd2">
+    <cim:IdentifiedObject.mRID>cefc01ca-f500-4215-9c86-dbef2b2cbdd2</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>RAS</cim:IdentifiedObject.name>
+    <nc:RemedialActionSchedule.Contingency rdf:resource="#_264e9a19-ae28-4c85-a43c-6b7818ca0e6c"/>
+    <nc:RemedialActionSchedule.ProposingEntity rdf:resource="#_5f5820d9-3e05-473e-94c8-3c767be03e1a"/>
+    <nc:RemedialActionSchedule.RemedialAction rdf:resource="#_b5f07ec3-3a3c-49ec-8e85-02a77d4f79c1"/>
+    <nc:RemedialActionSchedule.statusKind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleStatusKind.proposed"/>
+  </nc:RemedialActionSchedule>
+  <nc:RemedialActionSchedule rdf:ID="_231c3e6a-b437-47d2-827f-6c7d813936ea">
+    <cim:IdentifiedObject.mRID>231c3e6a-b437-47d2-827f-6c7d813936ea</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>RAS</cim:IdentifiedObject.name>
+    <nc:RemedialActionSchedule.Contingency rdf:resource="#_d9ef0d5e-732d-441e-9611-c817b0afbc41"/>
+    <nc:RemedialActionSchedule.ProposingEntity rdf:resource="#_5f5820d9-3e05-473e-94c8-3c767be03e1a"/>
+    <nc:RemedialActionSchedule.RemedialAction rdf:resource="#_bf8157d8-d787-44f7-a997-751e50e69165"/>
+    <nc:RemedialActionSchedule.statusKind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleStatusKind.proposed"/>
+  </nc:RemedialActionSchedule>
+  
+  <nc:RemedialActionSchedule rdf:ID="_17527637-6099-4ee6-8b21-fea8dfec4c75">
+    <cim:IdentifiedObject.mRID>17527637-6099-4ee6-8b21-fea8dfec4c75</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>TP RA One Switch</cim:IdentifiedObject.name>
+    <nc:RemedialActionSchedule.RemedialAction rdf:resource="#_6d2c8901-d068-4d22-8ce9-7379644b4f17"/>
+    <nc:RemedialActionSchedule.statusKind rdf:resource="https://cim4.eu/ns/nc#RemedialActionScheduleStatusKind.proposed"/>
+  </nc:RemedialActionSchedule>
+  <nc:EventSchedule rdf:ID="_e4908d3f-2d0a-4716-b6f2-c9034b04cb2c">
+    <nc:BaseTimeSeries.interpolationKind rdf:resource="https://cim4.eu/ns/nc#TimeSeriesInterpolationKind.none"/>
+    <nc:EventSchedule.RemedialActionSchedule rdf:resource="#_17527637-6099-4ee6-8b21-fea8dfec4c75"/>
+    <cim:IdentifiedObject.mRID>e4908d3f-2d0a-4716-b6f2-c9034b04cb2c</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>TP RA One Switch</cim:IdentifiedObject.name>
+  </nc:EventSchedule>
+  <nc:EventTimePoint rdf:ID="_8cd0de5b-aa2d-49be-8c0a-3644a99e474e">
+    <nc:EventTimePoint.EventSchedule rdf:resource="#_e4908d3f-2d0a-4716-b6f2-c9034b04cb2c"/>
+    <nc:EventTimePoint.atTime>2024-11-20T02:30:00Z</nc:EventTimePoint.atTime>
+    <nc:EventTimePoint.isActive>true</nc:EventTimePoint.isActive>
+  </nc:EventTimePoint>
+</rdf:RDF>

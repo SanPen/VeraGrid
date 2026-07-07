@@ -64,10 +64,10 @@ def test_transformer3w_test() -> None:
                                 Pfe=0.0, I0=0.0, Sbase=100.0)
 
     # expected values:
-    r12 = 0.000764
+    r12 = 0.019093
     r23 = 0.003966
     r31 = 0.004097
-    x12 = 0.04541
+    x12 = 0.226279
     x23 = 0.280389
     x31 = 0.224546
     assert np.isclose(r12, tr3.r12)

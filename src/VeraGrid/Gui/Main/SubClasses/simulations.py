@@ -5,16 +5,15 @@
 from __future__ import annotations
 
 import numpy as np
-from collections import OrderedDict
 from typing import List, Tuple, Dict, Union
 
 # GUI imports
-from PySide6 import QtGui
+from PySide6 import QtGui, QtCore
 from matplotlib.colors import LinearSegmentedColormap
 
 import VeraGrid.Gui.gui_functions as gf
 from VeraGrid.Gui.general_dialogues import LogsDialogue
-from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
+from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget, make_diagram_from_buses
 from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import MapWidget
 from VeraGrid.Gui.messages import yes_no_question, error_msg, warning_msg, info_msg
 from VeraGrid.Gui.Main.SubClasses.Model.time_events import TimeEventsMain
@@ -22,11 +21,14 @@ from VeraGrid.Gui.SigmaAnalysis.sigma_analysis_dialogue import SigmaAnalysisGUI
 from VeraGrid.Gui.ProceduralGrid.procedural_grid import ProceduralGridWindow
 from VeraGrid.Gui.ProceduralGrid.map_warning import MapWarningDialog
 from VeraGrid.Session.server_driver import RemoteJobDriver
+from VeraGrid.Gui.dynamic_events_editor_dialog import create_dynamic_events_group_with_dialog
 
 # Engine imports
 import VeraGridEngine.Devices as dev
 import VeraGridEngine.Simulations as sim
 import VeraGridEngine.Simulations.PowerFlow.grid_analysis as grid_analysis
+from VeraGridEngine.Devices.Events.emt_events_group import EmtEventsGroup
+from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Compilers.circuit_to_newton_pa import get_newton_mip_solvers_list
 from VeraGridEngine.Utils.MIP.selected_interface import get_available_mip_solvers, get_available_mip_frameworks
 from VeraGridEngine.IO.veragrid.remote import RemoteInstruction
@@ -38,7 +40,34 @@ from VeraGridEngine.enumerations import (DeviceType, AvailableTransferMode, Solv
                                          BranchImpedanceMode, ResultTypes, SimulationTypes, NodalCapacityMethod,
                                          ContingencyFilteringMethods, InvestmentsEvaluationObjectives,
                                          ReliabilityMode, OpfDispatchMode, DynamicIntegrationMethod,
-                                         RmsInitializationMethod, EmtInitializationMethod, EmtSolverTypes)
+                                         RmsInitializationMethod, EmtInitializationMethod, EmtSolverTypes,
+                                         DynamicSimulationMode)
+
+
+def get_valid_controls_start_tolerance_index(tolerance_idx: int,
+                                             controls_start_tolerance_idx: int,
+                                             controls_start_tolerance_min_idx: int) -> int:
+    """
+    Keep the controls activation tolerance above the solver tolerance.
+
+    :param tolerance_idx: Solver tolerance exponent shown as ``1e-idx``
+    :param controls_start_tolerance_idx: Controls activation exponent shown as ``1e-idx``
+    :param controls_start_tolerance_min_idx: Minimum exponent allowed by the GUI spin box
+    :return: Valid controls activation exponent
+    """
+    if controls_start_tolerance_idx > tolerance_idx:
+        # The GUI stores exponents, so ``tol * 100`` means subtracting two decades.
+        adjusted_idx: int = tolerance_idx - 2
+
+        # Clamp to the spin box minimum because the GUI cannot represent values larger than ``1e-1``.
+        if adjusted_idx < controls_start_tolerance_min_idx:
+            adjusted_idx = controls_start_tolerance_min_idx
+        else:
+            pass
+
+        return adjusted_idx
+    else:
+        return controls_start_tolerance_idx
 
 
 class SimulationsMain(TimeEventsMain):
@@ -57,98 +86,106 @@ class SimulationsMain(TimeEventsMain):
 
         self._remote_jobs: Dict[str, RemoteJobDriver] = dict()
 
+        # Snapshot of every Investment in the live circuit at the moment an
+        # Investments-evaluation run finishes. The Variations-panel click handler
+        # uses it to deactivate every investment-touched device first, and then
+        # activate only the investments belonging to the clicked Pareto
+        # combination — matching the convention the optimizer used internally
+        # (an x vector of zeros = every investment off).
+        # WARNING: snapshot semantic only. set_investments_status overwrites each
+        # touched device's active *profile* (per-timestep) on every click. Any
+        # pre-existing time-series active profile on these devices is lost
+        # permanently after the first click. Save the project before exploring
+        # combinations if the original profile shape matters.
+        self._investments_all: List[dev.Investment] = list()
+
         # Power Flow Methods
-        self.se_solvers_dict, se_solvers_mdl = gf.enums_to_model(
-            [SolverType.NR,
-             SolverType.LM,
-             SolverType.GN]
+        self.ui.se_solver_comboBox.setModel(
+            gf.ComboModel(enum_values=[SolverType.NR,
+                                       SolverType.LM,
+                                       SolverType.GN],
+                          translate=self.tr)
         )
-        self.ui.se_solver_comboBox.setModel(se_solvers_mdl)
         self.ui.se_solver_comboBox.setCurrentIndex(0)
 
         # SE Methods
-        self.solvers_dict, solvers_mdl = gf.enums_to_model(
-            [SolverType.NR,
-             SolverType.IWAMOTO,
-             SolverType.LM,
-             SolverType.PowellDogLeg,
-             SolverType.FASTDECOUPLED,
-             SolverType.HELM,
-             SolverType.GAUSS,
-             SolverType.LACPF,
-             SolverType.Linear]
+        self.ui.solver_comboBox.setModel(
+            gf.ComboModel(enum_values=[SolverType.NR,
+                                       SolverType.IWAMOTO,
+                                       SolverType.LM,
+                                       SolverType.PowellDogLeg,
+                                       SolverType.FASTDECOUPLED,
+                                       SolverType.HELM,
+                                       SolverType.GAUSS,
+                                       SolverType.LACPF,
+                                       SolverType.Linear],
+                          translate=self.tr)
         )
-        self.ui.solver_comboBox.setModel(solvers_mdl)
         self.ui.solver_comboBox.setCurrentIndex(0)
 
         # transfer modes
-        self.transfer_modes_dict, transfer_modes_mdl = gf.enums_to_model(
-            [AvailableTransferMode.Generation,
-             AvailableTransferMode.InstalledPower,
-             AvailableTransferMode.Load,
-             AvailableTransferMode.GenerationAndLoad]
+        self.ui.transferMethodComboBox.setModel(
+            gf.ComboModel(enum_values=[AvailableTransferMode.Generation,
+                                       AvailableTransferMode.InstalledPower,
+                                       AvailableTransferMode.Load,
+                                       AvailableTransferMode.GenerationAndLoad],
+                          translate=self.tr)
         )
-        self.ui.transferMethodComboBox.setModel(transfer_modes_mdl)
         self.ui.transferMethodComboBox.setCurrentIndex(1)
 
         # opf solvers dictionary
-        self.lp_solvers_dict, lp_solvers_mdl = gf.enums_to_model(
-            [SolverType.LINEAR_OPF,
-             SolverType.NONLINEAR_OPF,
-             SolverType.GREEDY_DISPATCH_OPF]
+        self.ui.lpf_solver_comboBox.setModel(
+            gf.ComboModel(enum_values=[SolverType.LINEAR_OPF,
+                                       SolverType.NONLINEAR_OPF,
+                                       SolverType.GREEDY_DISPATCH_OPF],
+                          translate=self.tr)
         )
-        self.ui.lpf_solver_comboBox.setModel(lp_solvers_mdl)
 
         # opf dispatch methods
-        self.opf_dispatch_mode_dict, opf_dispatch_mode_mdl = gf.enums_to_model(
-            [OpfDispatchMode.Normal,
-             OpfDispatchMode.UnitCommitment,
-             OpfDispatchMode.InterAreaRedispatch,
-             OpfDispatchMode.GenerationExpansionPlanning]
+        self.ui.opfDispatchModeComboBox.setModel(
+            gf.ComboModel(enum_values=[OpfDispatchMode.Normal,
+                                       OpfDispatchMode.UnitCommitment,
+                                       OpfDispatchMode.InterAreaRedispatch,
+                                       OpfDispatchMode.GenerationExpansionPlanning],
+                          translate=self.tr)
         )
-        self.ui.opfDispatchModeComboBox.setModel(opf_dispatch_mode_mdl)
 
         # MIP frameworks
-        self.opf_mip_framework_dict, opf_mip_framework_mdl = gf.enums_to_model(
-            get_available_mip_frameworks()
+        self.ui.mip_framework_comboBox.setModel(
+            gf.ComboModel(enum_values=get_available_mip_frameworks(), translate=self.tr)
         )
-        self.ui.mip_framework_comboBox.setModel(opf_mip_framework_mdl)
 
         # reliability modes
-        (self.reliability_mode_dict,
-         reliability_mode_dict_mdl) = gf.enums_to_model(
-            [ReliabilityMode.GenerationAdequacy,
-             ReliabilityMode.GridMetrics]
+        self.ui.reliability_method_comboBox.setModel(
+            gf.ComboModel(enum_values=[ReliabilityMode.GenerationAdequacy,
+                                       ReliabilityMode.GridMetrics],
+                          translate=self.tr)
         )
-        self.ui.reliability_method_comboBox.setModel(reliability_mode_dict_mdl)
 
         # ips solvers dictionary
-        (self.ips_solvers_dict,
-         ips_solvers_dict_mdl) = gf.enums_to_model(
-            [SolverType.NR]
+        self.ui.ips_method_comboBox.setModel(
+            gf.ComboModel(enum_values=[SolverType.NR], translate=self.tr)
         )
-        self.ui.ips_method_comboBox.setModel(ips_solvers_dict_mdl)
 
         # the MIP combobox models assigning is done in modify_ui_options_according_to_the_engine
-        (self.mip_solvers_dict,
-         mip_solvers_dict_mdl) = gf.enums_to_model(
-            [MIPSolvers.HIGHS,
-             MIPSolvers.SCIP,
-             MIPSolvers.CPLEX,
-             MIPSolvers.GUROBI,
-             MIPSolvers.XPRESS,
-             MIPSolvers.CBC,
-             MIPSolvers.PDLP]
+        self.ui.mip_solver_comboBox.setModel(
+            gf.ComboModel(enum_values=[MIPSolvers.HIGHS,
+                                       MIPSolvers.SCIP,
+                                       MIPSolvers.CPLEX,
+                                       MIPSolvers.GUROBI,
+                                       MIPSolvers.XPRESS,
+                                       MIPSolvers.CBC,
+                                       MIPSolvers.PDLP],
+                          translate=self.tr)
         )
 
         # opf solvers dictionary
-        (self.nodal_capacity_methods_dict,
-         nodal_capacity_methods_mdl) = gf.enums_to_model(
-            [NodalCapacityMethod.LinearOptimization,
-             NodalCapacityMethod.NonlinearOptimization,
-             NodalCapacityMethod.CPF]
+        self.ui.nodal_capacity_method_comboBox.setModel(
+            gf.ComboModel(enum_values=[NodalCapacityMethod.LinearOptimization,
+                                       NodalCapacityMethod.NonlinearOptimization,
+                                       NodalCapacityMethod.CPF],
+                          translate=self.tr)
         )
-        self.ui.nodal_capacity_method_comboBox.setModel(nodal_capacity_methods_mdl)
 
         # branch types for reduction
         mdl = gf.get_list_model([DeviceType.LineDevice.value,
@@ -156,123 +193,118 @@ class SimulationsMain(TimeEventsMain):
         self.ui.removeByTypeListView.setModel(mdl)
 
         # OPF grouping modes
-        (self.opf_time_groups,
-         opf_time_groups_mdl) = gf.enums_to_model(
-            [TimeGrouping.NoGrouping,
-             TimeGrouping.Monthly,
-             TimeGrouping.Weekly,
-             TimeGrouping.Daily,
-             TimeGrouping.Hourly]
+        self.ui.opf_time_grouping_comboBox.setModel(
+            gf.ComboModel(enum_values=[TimeGrouping.NoGrouping,
+                                       TimeGrouping.Monthly,
+                                       TimeGrouping.Weekly,
+                                       TimeGrouping.Daily,
+                                       TimeGrouping.Hourly],
+                          translate=self.tr)
         )
-        self.ui.opf_time_grouping_comboBox.setModel(opf_time_groups_mdl)
 
         # zonal opf grouping
-        (self.opf_zonal_groups,
-         opf_zonal_groups_mdl) = gf.enums_to_model(
-            [ZonalGrouping.NoGrouping,
-             ZonalGrouping.All]
+        self.ui.opfZonalGroupByComboBox.setModel(
+            gf.ComboModel(enum_values=[ZonalGrouping.NoGrouping,
+                                       ZonalGrouping.All],
+                          translate=self.tr)
         )
-        self.ui.opfZonalGroupByComboBox.setModel(opf_zonal_groups_mdl)
 
         # voltage collapse mode (full, nose)
-        self.ui.vc_stop_at_comboBox.setModel(gf.get_list_model([sim.CpfStopAt.Nose.value,
-                                                                sim.CpfStopAt.ExtraOverloads.value]))
+        self.ui.vc_stop_at_comboBox.setModel(
+            gf.ComboModel(enum_values=[sim.CpfStopAt.Nose,
+                                       sim.CpfStopAt.ExtraOverloads],
+                          translate=self.tr)
+        )
         self.ui.vc_stop_at_comboBox.setCurrentIndex(0)
 
         # reactive power controls
-        (self.contingency_engines_dict,
-         contingency_engines_mdl) = gf.enums_to_model(
-            [ContingencyMethod.PowerFlow,
-             ContingencyMethod.Linear,
-             ContingencyMethod.PTDF_scan,
-             ContingencyMethod.HELM]
+        self.ui.contingencyEngineComboBox.setModel(
+            gf.ComboModel(enum_values=[ContingencyMethod.PowerFlow,
+                                       ContingencyMethod.Linear,
+                                       ContingencyMethod.PTDF_scan,
+                                       ContingencyMethod.HELM],
+                          translate=self.tr)
         )
-        self.ui.contingencyEngineComboBox.setModel(contingency_engines_mdl)
 
         # list of stochastic power flow methods
-        (self.stochastic_pf_methods_dict,
-         stochastic_pf_methods_mdl) = gf.enums_to_model(
-            [sim.StochasticPowerFlowType.LatinHypercube,
-             sim.StochasticPowerFlowType.MonteCarlo]
+        self.ui.stochastic_pf_method_comboBox.setModel(
+            gf.ComboModel(enum_values=[sim.StochasticPowerFlowType.LatinHypercube,
+                                       sim.StochasticPowerFlowType.MonteCarlo],
+                          translate=self.tr)
         )
-        self.ui.stochastic_pf_method_comboBox.setModel(stochastic_pf_methods_mdl)
 
         # investment evaluation methods
-        (self.investment_evaluation_method_dict,
-         investment_evaluation_method_mdl) = gf.enums_to_model(
-            [InvestmentEvaluationMethod.Independent,
-             InvestmentEvaluationMethod.NSGA3,
-             InvestmentEvaluationMethod.MVRSM,
-             InvestmentEvaluationMethod.MixedVariableGA, ]
+        self.ui.investment_evaluation_method_ComboBox.setModel(
+            gf.ComboModel(enum_values=[InvestmentEvaluationMethod.CBA_PINT_TOOT,
+                                       InvestmentEvaluationMethod.PINT_TOOT_NSGA3,
+                                       InvestmentEvaluationMethod.NSGA3,
+                                       InvestmentEvaluationMethod.MVRSM,
+                                       InvestmentEvaluationMethod.MixedVariableGA],
+                          translate=self.tr)
         )
-        self.ui.investment_evaluation_method_ComboBox.setModel(investment_evaluation_method_mdl)
 
         # contingency filtering modes
-        (self.contingency_filter_modes_dict,
-         contingency_filter_modes_mdl) = gf.enums_to_model(
-            [ContingencyFilteringMethods.AllActive,
-             ContingencyFilteringMethods.Country,
-             ContingencyFilteringMethods.Community,
-             ContingencyFilteringMethods.Region,
-             ContingencyFilteringMethods.Municipality,
-             ContingencyFilteringMethods.Area,
-             ContingencyFilteringMethods.Zone,
-             ContingencyFilteringMethods.SensitiveToMonitored]
+        self.ui.contingency_filter_by_comboBox.setModel(
+            gf.ComboModel(enum_values=[ContingencyFilteringMethods.AllActive,
+                                       ContingencyFilteringMethods.Country,
+                                       ContingencyFilteringMethods.Community,
+                                       ContingencyFilteringMethods.Region,
+                                       ContingencyFilteringMethods.Municipality,
+                                       ContingencyFilteringMethods.Area,
+                                       ContingencyFilteringMethods.Zone,
+                                       ContingencyFilteringMethods.SensitiveToMonitored],
+                          translate=self.tr)
         )
-        self.ui.contingency_filter_by_comboBox.setModel(contingency_filter_modes_mdl)
 
         # investment modes
-        (self.investment_evaluation_objfunc_dict,
-         investment_evaluation_objfunc_mdl) = gf.enums_to_model(
-            [InvestmentsEvaluationObjectives.PowerFlow,
-             InvestmentsEvaluationObjectives.TimeSeriesPowerFlow,
-             InvestmentsEvaluationObjectives.GenerationAdequacy,
-             InvestmentsEvaluationObjectives.SimpleDispatch]
+        self.ui.investment_evaluation_objfunc_ComboBox.setModel(
+            gf.ComboModel(enum_values=[InvestmentsEvaluationObjectives.PowerFlow,
+                                       InvestmentsEvaluationObjectives.TimeSeriesPowerFlow,
+                                       InvestmentsEvaluationObjectives.LinearOptimalPowerFlowTimeSeries,
+                                       InvestmentsEvaluationObjectives.GenerationAdequacy,
+                                       InvestmentsEvaluationObjectives.SimpleDispatch],
+                          translate=self.tr)
         )
-        self.ui.investment_evaluation_objfunc_ComboBox.setModel(investment_evaluation_objfunc_mdl)
 
         # rms simulation
-        self.rms_integration_method_dict, rms_integration_method_mdl = gf.enums_to_model(
-            [DynamicIntegrationMethod.DaeBackEuler,
-             DynamicIntegrationMethod.DaeTrapezoidal,
-             DynamicIntegrationMethod.DaeBDF2,
-             DynamicIntegrationMethod.DaeBackEuler,
-             DynamicIntegrationMethod.OdeEuler]
+        self.ui.rms_integration_method_comboBox.setModel(
+            gf.ComboModel(enum_values=[DynamicIntegrationMethod.DaeBackEuler,
+                                       DynamicIntegrationMethod.DaeTrapezoidal,
+                                       DynamicIntegrationMethod.DaeBDF2,
+                                       DynamicIntegrationMethod.DaeBackEuler,
+                                       DynamicIntegrationMethod.OdeEuler],
+                          translate=self.tr)
         )
-        self.ui.rms_integration_method_comboBox.setModel(rms_integration_method_mdl)
 
-        self.rms_initialization_method_dict, rms_initialization_method_mdl = gf.enums_to_model(
-            [RmsInitializationMethod.Explicit,
-             RmsInitializationMethod.PseudoTransient]
+        self.ui.rms_initialization_method_comboBox.setModel(
+            gf.ComboModel(enum_values=[RmsInitializationMethod.Explicit,
+                                       RmsInitializationMethod.PseudoTransient],
+                          translate=self.tr)
         )
-        self.ui.rms_initialization_method_comboBox.setModel(rms_initialization_method_mdl)
 
         # emt simulation
-        self.emt_integration_method_dict, emt_integration_method_mdl = gf.enums_to_model(
-            [DynamicIntegrationMethod.DaeBackEuler,
-             DynamicIntegrationMethod.DaeTrapezoidal,
-             DynamicIntegrationMethod.DaeBDF2
-             ]
+        self.ui.emt_integration_method_comboBox.setModel(
+            gf.ComboModel(enum_values=[DynamicIntegrationMethod.DaeBackEuler,
+                                       DynamicIntegrationMethod.DaeTrapezoidal,
+                                       DynamicIntegrationMethod.DaeBDF2],
+                          translate=self.tr)
         )
-        self.ui.emt_integration_method_comboBox.setModel(emt_integration_method_mdl)
 
-        self.emt_initialization_method_dict, emt_initialization_method_mdl = gf.enums_to_model(
-            [EmtInitializationMethod.Explicit,
-             EmtInitializationMethod.ConsistentNewton,
-             EmtInitializationMethod.PseudoTransient,
-             EmtInitializationMethod.Auto
-             ]
+        self.ui.emt_initialization_method_comboBox.setModel(
+            gf.ComboModel(enum_values=[EmtInitializationMethod.Explicit,
+                                       EmtInitializationMethod.ConsistentNewton,
+                                       EmtInitializationMethod.PseudoTransient,
+                                       EmtInitializationMethod.Auto],
+                          translate=self.tr)
         )
-        self.ui.emt_initialization_method_comboBox.setModel(emt_initialization_method_mdl)
 
-        self.emt_solver_type_dict, emt_solver_type_mdl = gf.enums_to_model(
-            [EmtSolverTypes.Symbolic,
-             EmtSolverTypes.StructuralAD,
-             EmtSolverTypes.StructuralCompiled,
-             EmtSolverTypes.Automatic
-             ]
+        self.ui.emt_solver_type_comboBox.setModel(
+            gf.ComboModel(enum_values=[EmtSolverTypes.Symbolic,
+                                       EmtSolverTypes.StructuralAD,
+                                       EmtSolverTypes.StructuralCompiled,
+                                       EmtSolverTypes.Automatic],
+                          translate=self.tr)
         )
-        self.ui.emt_solver_type_comboBox.setModel(emt_solver_type_mdl)
 
         # dictionaries for available results
         self.available_results_dict: Union[Dict[str, Dict[str, ResultTypes]], None] = dict()
@@ -311,15 +343,18 @@ class SimulationsMain(TimeEventsMain):
         self.ui.actionRun_Dynamic_EMT_Simulation.triggered.connect(self.emt_dispatcher)
         self.ui.actionRun_Small_Signal_EMT_Simulation.triggered.connect(self.emt_small_signal_dispatcher)
         self.ui.actionProcedural_grid_expansion.triggered.connect(self.procedural_grid_expansion)
+        self.ui.actionCatalogue_element_optimization.triggered.connect(self.catalogue_element_optimization)
 
         self.ui.actionUse_clustering.triggered.connect(self.activate_clustering)
         self.ui.actionNodal_capacity.triggered.connect(self.run_nodal_capacity)
 
         # combobox change
-        self.ui.engineComboBox.currentTextChanged.connect(self.modify_ui_options_according_to_the_engine)
+        self.ui.engineComboBox.currentIndexChanged.connect(self.modify_ui_options_according_to_the_engine)
         self.ui.contingency_filter_by_comboBox.currentTextChanged.connect(self.modify_contingency_filter_mode)
-        self.ui.available_results_to_color_comboBox.currentTextChanged.connect(self.changed_study)
-        self.ui.mip_framework_comboBox.currentTextChanged.connect(self.update_available_mip_solvers)
+        self.ui.available_results_to_color_comboBox.currentIndexChanged.connect(self.changed_study)
+        self.ui.mip_framework_comboBox.currentIndexChanged.connect(self.update_available_mip_solvers)
+        self.ui.tolerance_spinBox.valueChanged.connect(self.adjust_controls_start_tolerance)
+        self.ui.controls_start_tolerance_spinBox.valueChanged.connect(self.adjust_controls_start_tolerance)
 
         # button
         self.ui.find_automatic_precission_Button.clicked.connect(self.automatic_pf_precision)
@@ -348,9 +383,12 @@ class SimulationsMain(TimeEventsMain):
 
         for drv in self.get_simulations():
             if drv is not None:
-                if hasattr(drv, 'results'):
-                    if drv.results is not None:
-                        lst.append(drv)
+                if drv.results is not None:
+                    lst.append(drv)
+                else:
+                    pass
+            else:
+                pass
 
         return lst
 
@@ -378,23 +416,25 @@ class SimulationsMain(TimeEventsMain):
         if eng == EngineType.GSLV:
 
             # add the AC_OPF option
-            self.lp_solvers_dict = OrderedDict()
-            self.lp_solvers_dict[SolverType.LINEAR_OPF.value] = SolverType.LINEAR_OPF
-            self.lp_solvers_dict[SolverType.NONLINEAR_OPF.value] = SolverType.NONLINEAR_OPF
-            self.lp_solvers_dict[SolverType.GREEDY_DISPATCH_OPF.value] = SolverType.GREEDY_DISPATCH_OPF
-            self.ui.lpf_solver_comboBox.setModel(gf.get_list_model(list(self.lp_solvers_dict.keys())))
+            self.ui.lpf_solver_comboBox.setModel(
+                gf.ComboModel(enum_values=[SolverType.LINEAR_OPF,
+                                           SolverType.NONLINEAR_OPF,
+                                           SolverType.GREEDY_DISPATCH_OPF],
+                              translate=self.tr)
+            )
 
             # Power Flow Methods
-            self.solvers_dict[SolverType.NR.value] = SolverType.NR
-            self.solvers_dict[SolverType.IWAMOTO.value] = SolverType.IWAMOTO
-            self.solvers_dict[SolverType.LM.value] = SolverType.LM
-            self.solvers_dict[SolverType.FASTDECOUPLED.value] = SolverType.FASTDECOUPLED
-            self.solvers_dict[SolverType.HELM.value] = SolverType.HELM
-            self.solvers_dict[SolverType.GAUSS.value] = SolverType.GAUSS
-            self.solvers_dict[SolverType.LACPF.value] = SolverType.LACPF
-            self.solvers_dict[SolverType.Linear.value] = SolverType.Linear
-
-            self.ui.solver_comboBox.setModel(gf.get_list_model(list(self.solvers_dict.keys())))
+            self.ui.solver_comboBox.setModel(
+                gf.ComboModel(enum_values=[SolverType.NR,
+                                           SolverType.IWAMOTO,
+                                           SolverType.LM,
+                                           SolverType.FASTDECOUPLED,
+                                           SolverType.HELM,
+                                           SolverType.GAUSS,
+                                           SolverType.LACPF,
+                                           SolverType.Linear],
+                              translate=self.tr)
+            )
             self.ui.solver_comboBox.setCurrentIndex(0)
 
             self.update_available_mip_solvers()
@@ -402,51 +442,55 @@ class SimulationsMain(TimeEventsMain):
         elif eng == EngineType.NewtonPA:
 
             # add the AC_OPF option
-            self.lp_solvers_dict = OrderedDict()
-            self.lp_solvers_dict[SolverType.LINEAR_OPF.value] = SolverType.LINEAR_OPF
-            self.lp_solvers_dict[SolverType.NONLINEAR_OPF.value] = SolverType.NONLINEAR_OPF
-            self.lp_solvers_dict[SolverType.GREEDY_DISPATCH_OPF.value] = SolverType.GREEDY_DISPATCH_OPF
-            self.ui.lpf_solver_comboBox.setModel(gf.get_list_model(list(self.lp_solvers_dict.keys())))
+            self.ui.lpf_solver_comboBox.setModel(
+                gf.ComboModel(enum_values=[SolverType.LINEAR_OPF,
+                                           SolverType.NONLINEAR_OPF,
+                                           SolverType.GREEDY_DISPATCH_OPF],
+                              translate=self.tr)
+            )
 
             # Power Flow Methods
-            self.solvers_dict[SolverType.NR.value] = SolverType.NR
-            self.solvers_dict[SolverType.IWAMOTO.value] = SolverType.IWAMOTO
-
-            self.solvers_dict[SolverType.LM.value] = SolverType.LM
-            self.solvers_dict[SolverType.FASTDECOUPLED.value] = SolverType.FASTDECOUPLED
-            self.solvers_dict[SolverType.HELM.value] = SolverType.HELM
-            self.solvers_dict[SolverType.GAUSS.value] = SolverType.GAUSS
-            self.solvers_dict[SolverType.LACPF.value] = SolverType.LACPF
-            self.solvers_dict[SolverType.Linear.value] = SolverType.Linear
-
-            self.ui.solver_comboBox.setModel(gf.get_list_model(list(self.solvers_dict.keys())))
+            self.ui.solver_comboBox.setModel(
+                gf.ComboModel(enum_values=[SolverType.NR,
+                                           SolverType.IWAMOTO,
+                                           SolverType.LM,
+                                           SolverType.FASTDECOUPLED,
+                                           SolverType.HELM,
+                                           SolverType.GAUSS,
+                                           SolverType.LACPF,
+                                           SolverType.Linear],
+                              translate=self.tr)
+            )
             self.ui.solver_comboBox.setCurrentIndex(0)
 
-            mip_solvers = get_newton_mip_solvers_list()
-            self.ui.mip_solver_comboBox.setModel(gf.get_list_model(mip_solvers))
+            self.ui.mip_solver_comboBox.setModel(
+                gf.ComboModel(enum_values=[MIPSolvers(name) for name in get_newton_mip_solvers_list()],
+                              translate=self.tr)
+            )
 
         elif eng == EngineType.VeraGrid:
 
             # no AC opf option
-            self.lp_solvers_dict = OrderedDict()
-            self.lp_solvers_dict[SolverType.LINEAR_OPF.value] = SolverType.LINEAR_OPF
-            self.lp_solvers_dict[SolverType.NONLINEAR_OPF.value] = SolverType.NONLINEAR_OPF
-            self.lp_solvers_dict[SolverType.GREEDY_DISPATCH_OPF.value] = SolverType.GREEDY_DISPATCH_OPF
-            self.ui.lpf_solver_comboBox.setModel(gf.get_list_model(list(self.lp_solvers_dict.keys())))
+            self.ui.lpf_solver_comboBox.setModel(
+                gf.ComboModel(enum_values=[SolverType.LINEAR_OPF,
+                                           SolverType.NONLINEAR_OPF,
+                                           SolverType.GREEDY_DISPATCH_OPF],
+                              translate=self.tr)
+            )
 
             # Power Flow Methods
-            self.solvers_dict = OrderedDict()
-            self.solvers_dict[SolverType.NR.value] = SolverType.NR
-            self.solvers_dict[SolverType.IWAMOTO.value] = SolverType.IWAMOTO
-            self.solvers_dict[SolverType.LM.value] = SolverType.LM
-            self.solvers_dict[SolverType.PowellDogLeg.value] = SolverType.PowellDogLeg
-            self.solvers_dict[SolverType.FASTDECOUPLED.value] = SolverType.FASTDECOUPLED
-            self.solvers_dict[SolverType.HELM.value] = SolverType.HELM
-            self.solvers_dict[SolverType.GAUSS.value] = SolverType.GAUSS
-            self.solvers_dict[SolverType.LACPF.value] = SolverType.LACPF
-            self.solvers_dict[SolverType.Linear.value] = SolverType.Linear
-
-            self.ui.solver_comboBox.setModel(gf.get_list_model(list(self.solvers_dict.keys())))
+            self.ui.solver_comboBox.setModel(
+                gf.ComboModel(enum_values=[SolverType.NR,
+                                           SolverType.IWAMOTO,
+                                           SolverType.LM,
+                                           SolverType.PowellDogLeg,
+                                           SolverType.FASTDECOUPLED,
+                                           SolverType.HELM,
+                                           SolverType.GAUSS,
+                                           SolverType.LACPF,
+                                           SolverType.Linear],
+                              translate=self.tr)
+            )
             self.ui.solver_comboBox.setCurrentIndex(0)
 
             # MIP solvers
@@ -455,41 +499,43 @@ class SimulationsMain(TimeEventsMain):
         elif eng == EngineType.Bentayga:
 
             # no AC opf option
-            self.lp_solvers_dict = OrderedDict()
-            self.lp_solvers_dict[SolverType.LINEAR_OPF.value] = SolverType.LINEAR_OPF
-            self.lp_solvers_dict[SolverType.GREEDY_DISPATCH_OPF.value] = SolverType.GREEDY_DISPATCH_OPF
-            self.ui.lpf_solver_comboBox.setModel(gf.get_list_model(list(self.lp_solvers_dict.keys())))
+            self.ui.lpf_solver_comboBox.setModel(
+                gf.ComboModel(enum_values=[SolverType.LINEAR_OPF,
+                                           SolverType.GREEDY_DISPATCH_OPF],
+                              translate=self.tr)
+            )
 
             # Power Flow Methods
-            self.solvers_dict = OrderedDict()
-            self.solvers_dict[SolverType.NR.value] = SolverType.NR
-            self.solvers_dict[SolverType.IWAMOTO.value] = SolverType.IWAMOTO
-            self.solvers_dict[SolverType.LM.value] = SolverType.LM
-            self.solvers_dict[SolverType.FASTDECOUPLED.value] = SolverType.FASTDECOUPLED
-            self.solvers_dict[SolverType.HELM.value] = SolverType.HELM
-            self.solvers_dict[SolverType.GAUSS.value] = SolverType.GAUSS
-            self.solvers_dict[SolverType.LACPF.value] = SolverType.LACPF
-            self.solvers_dict[SolverType.Linear.value] = SolverType.Linear
-
-            self.ui.solver_comboBox.setModel(gf.get_list_model(list(self.solvers_dict.keys())))
+            self.ui.solver_comboBox.setModel(
+                gf.ComboModel(enum_values=[SolverType.NR,
+                                           SolverType.IWAMOTO,
+                                           SolverType.LM,
+                                           SolverType.FASTDECOUPLED,
+                                           SolverType.HELM,
+                                           SolverType.GAUSS,
+                                           SolverType.LACPF,
+                                           SolverType.Linear],
+                              translate=self.tr)
+            )
             self.ui.solver_comboBox.setCurrentIndex(0)
 
         elif eng == EngineType.PGM:
 
             # no AC opf option
-            self.lp_solvers_dict = OrderedDict()
-            self.lp_solvers_dict[SolverType.LINEAR_OPF.value] = SolverType.LINEAR_OPF
-            self.lp_solvers_dict[SolverType.GREEDY_DISPATCH_OPF.value] = SolverType.GREEDY_DISPATCH_OPF
-            self.ui.lpf_solver_comboBox.setModel(gf.get_list_model(list(self.lp_solvers_dict.keys())))
+            self.ui.lpf_solver_comboBox.setModel(
+                gf.ComboModel(enum_values=[SolverType.LINEAR_OPF,
+                                           SolverType.GREEDY_DISPATCH_OPF],
+                              translate=self.tr)
+            )
 
             # Power Flow Methods
-            self.solvers_dict = OrderedDict()
-            self.solvers_dict[SolverType.NR.value] = SolverType.NR
-            self.solvers_dict[SolverType.BFS.value] = SolverType.BFS
-            self.solvers_dict[SolverType.BFS_linear.value] = SolverType.BFS_linear
-            self.solvers_dict[SolverType.Constant_Impedance_linear.value] = SolverType.Constant_Impedance_linear
-
-            self.ui.solver_comboBox.setModel(gf.get_list_model(list(self.solvers_dict.keys())))
+            self.ui.solver_comboBox.setModel(
+                gf.ComboModel(enum_values=[SolverType.NR,
+                                           SolverType.BFS,
+                                           SolverType.BFS_linear,
+                                           SolverType.Constant_Impedance_linear],
+                              translate=self.tr)
+            )
             self.ui.solver_comboBox.setCurrentIndex(0)
 
         else:
@@ -499,7 +545,7 @@ class SimulationsMain(TimeEventsMain):
         """
         Modify the objects
         """
-        filter_mode = self.contingency_filter_modes_dict[self.ui.contingency_filter_by_comboBox.currentText()]
+        filter_mode = self.ui.contingency_filter_by_comboBox.currentData()
 
         if filter_mode == ContingencyFilteringMethods.AllActive:
             mdl = None
@@ -558,7 +604,7 @@ class SimulationsMain(TimeEventsMain):
         """
 
         # get the filter mode
-        filter_mode = self.contingency_filter_modes_dict[self.ui.contingency_filter_by_comboBox.currentText()]
+        filter_mode = self.ui.contingency_filter_by_comboBox.currentData()
 
         if filter_mode == ContingencyFilteringMethods.AllActive:
             # no filtering, we're safe
@@ -685,9 +731,21 @@ class SimulationsMain(TimeEventsMain):
 
         self.ui.sbase_doubleSpinBox.setValue(self.circuit.Sbase)
         self.ui.fbase_doubleSpinBox.setValue(self.circuit.fBase)
-        self.ui.model_version_label.setText('Model v. ' + str(self.circuit.model_version))
-        self.ui.grid_idtag_label.setText('idtag. ' + str(self.circuit.idtag))
-        self.ui.user_name_label.setText('User: ' + str(self.circuit.user_name))
+        self.ui.model_version_label.setText(
+            QtCore.QCoreApplication.translate("SimulationsMain", "Model v. {model_version}").format(
+                model_version=self.circuit.model_version,
+            )
+        )
+        self.ui.grid_idtag_label.setText(
+            QtCore.QCoreApplication.translate("SimulationsMain", "idtag. {idtag}").format(
+                idtag=self.circuit.idtag,
+            )
+        )
+        self.ui.user_name_label.setText(
+            QtCore.QCoreApplication.translate("SimulationsMain", "User: {user_name}").format(
+                user_name=self.circuit.user_name,
+            )
+        )
         if self.open_file_thread_object is not None:
             if isinstance(self.open_file_thread_object.file_name, str):
                 self.ui.file_information_label.setText(self.open_file_thread_object.file_name)
@@ -697,26 +755,94 @@ class SimulationsMain(TimeEventsMain):
     @staticmethod
     def get_investments_combination_tree_model(drv: sim.InvestmentsEvaluationDriver) -> QtGui.QStandardItemModel:
         """
-        Get the investments combination tree model
-        :param drv:
-        :return:
-        """
-        model = QtGui.QStandardItemModel()
-        model.setHorizontalHeaderLabels(["Combination"] + list(drv.results.f_names))
+        Build the model for the Variations panel after an Investments evaluation.
+        Only Pareto-front combinations are listed.
 
-        for i in range(drv.results.max_eval):
-            idx = np.where(drv.results.x[i, :] != 0)[0]
+        :param drv: InvestmentsEvaluationDriver instance with finalized results
+        :return: QStandardItemModel with one top-level row per Pareto combination
+        """
+        model: QtGui.QStandardItemModel = QtGui.QStandardItemModel()
+        model.setHorizontalHeaderLabels(
+            [QtCore.QCoreApplication.translate("SimulationsMain", "Pareto combination")] + list(drv.results.f_names)
+        )
+
+        # Iterate only over Pareto-front rows. sorting_indices points back into the
+        # full _x/_f arrays, so drv.results.x[i, :] is still the right way to look
+        # up the x vector. We tag each row with its original index via UserRole so
+        # the click handler can recover the x vector regardless of how Qt later
+        # sorts or filters the panel.
+        for i in drv.results.sorting_indices:
+            idx: np.ndarray = np.where(drv.results.x[i, :] != 0)[0]
             if len(idx):
-                row_items = [QtGui.QStandardItem(f"Combination {i}")] + [
+                label_item: QtGui.QStandardItem = QtGui.QStandardItem(
+                    QtCore.QCoreApplication.translate("SimulationsMain", "Pareto combination {index}").format(
+                        index=i,
+                    )
+                )
+                label_item.setData(int(i), QtCore.Qt.ItemDataRole.UserRole)
+                row_items: List[QtGui.QStandardItem] = [label_item] + [
                     QtGui.QStandardItem(f"{fi:.2f}") for fi in drv.results.f[i, :]
                 ]
                 model.appendRow(row_items)
 
-                # Add names as child nodes under this combination
-                names_parent_item = row_items[0]  # Use the first column (Combination) as parent
+                # Investment names go under the combination row as children. Clicks
+                # on a child still trigger combinations_tree_clicked, which walks
+                # back up to the top-level row to recover the combination index.
                 for k in idx:
-                    name_item = QtGui.QStandardItem(drv.results.x_names[k])
-                    names_parent_item.appendRow([name_item])
+                    name_item: QtGui.QStandardItem = QtGui.QStandardItem(drv.results.x_names[k])
+                    label_item.appendRow([name_item])
+            else:
+                # empty combination (no investments active) - skip it
+                pass
+
+        return model
+
+    @staticmethod
+    def get_catalogue_combination_tree_model(
+            drv: sim.CatalogueOptimizationDriver) -> QtGui.QStandardItemModel:
+        """
+        Build the model for the Variations panel after a Catalogue Optimization run.
+        Only Pareto-front combinations are listed (using the deduplicated indices
+        produced by InvestmentsEvaluationResults.finalize). Each combination row
+        is expanded to show one child per decision variable in the form
+        "<branch_name>: <integer index>", so the user can read off which
+        template-pool index was chosen for each branch.
+
+        :param drv: CatalogueOptimizationDriver instance with finalized results
+        :return: QStandardItemModel with one top-level row per Pareto combination
+        """
+        model: QtGui.QStandardItemModel = QtGui.QStandardItemModel()
+        model.setHorizontalHeaderLabels(
+            [QtCore.QCoreApplication.translate("SimulationsMain", "Pareto combination")] + list(drv.results.f_names)
+        )
+
+        # Iterate over Pareto-front rows only. sorting_indices points back into
+        # the full _x/_f arrays, so drv.results.x[i, :] is the right slice. We
+        # tag each row with its combination index via UserRole so the click
+        # handler can recover the integer x vector independently of any Qt
+        # sorting or filtering applied to the view.
+        for i in drv.results.sorting_indices:
+            x_vec: np.ndarray = drv.results.x[i, :]
+            label_item: QtGui.QStandardItem = QtGui.QStandardItem(
+                QtCore.QCoreApplication.translate("SimulationsMain", "Pareto combination {index}").format(
+                    index=i,
+                )
+            )
+            label_item.setData(int(i), QtCore.Qt.ItemDataRole.UserRole)
+            row_items: List[QtGui.QStandardItem] = [label_item] + [
+                QtGui.QStandardItem(f"{fi:.2f}") for fi in drv.results.f[i, :]
+            ]
+            model.appendRow(row_items)
+
+            # One child per decision variable: "<branch name>: <integer index>".
+            # Unlike the Investments panel (binary vector, where zeros are
+            # hidden), every catalogue slot has a meaningful non-zero meaning,
+            # so we list all of them — the integer alone tells the user which
+            # template pool index NSGA-3 picked for each branch.
+            for k in range(len(x_vec)):
+                child_text: str = f"{drv.results.x_names[k]}: {int(x_vec[k])}"
+                name_item: QtGui.QStandardItem = QtGui.QStandardItem(child_text)
+                label_item.appendRow([name_item])
 
         return model
 
@@ -728,7 +854,7 @@ class SimulationsMain(TimeEventsMain):
         :return:
         """
         model = QtGui.QStandardItemModel()
-        model.setHorizontalHeaderLabels(["Short circuits"])
+        model.setHorizontalHeaderLabels([QtCore.QCoreApplication.translate("SimulationsMain", "Short circuits")])
 
         for i, sc_name in enumerate(drv.results.sc_names):
             row_items = [QtGui.QStandardItem(sc_name)]
@@ -748,6 +874,10 @@ class SimulationsMain(TimeEventsMain):
                 model = self.get_investments_combination_tree_model(drv=drv)
                 self.ui.combinationsTreeView.setModel(model)
 
+            elif drv.tpe == SimulationTypes.CatalogueOptimization_run:
+                model = self.get_catalogue_combination_tree_model(drv=drv)
+                self.ui.combinationsTreeView.setModel(model)
+
             elif drv.tpe == SimulationTypes.ShortCircuit_run:
                 model = self.get_short_circuits_combination_tree_model(drv=drv)
                 self.ui.combinationsTreeView.setModel(model)
@@ -761,16 +891,19 @@ class SimulationsMain(TimeEventsMain):
 
         :return:
         """
-        current_study_name = self.ui.available_results_to_color_comboBox.currentText()
+        current_study_name = self.ui.available_results_to_color_comboBox.currentData()
         drv_dict = {driver.tpe.value: driver for driver in self.get_available_drivers()}
         drv = drv_dict.get(current_study_name, None)
-        if drv is not None and hasattr(drv, 'time_indices'):
-            if drv.time_indices is not None:
-                if len(drv.time_indices):
-                    a = drv.time_indices[0]
-                    b = drv.time_indices[-1]
-                    self.ui.diagram_step_slider.setRange(a, b)
-                    self.ui.diagram_step_slider.setValue(a)
+        if drv is not None:
+            if drv.results is not None:
+                if drv.results.time_indices is not None:
+                    if len(drv.results.time_indices):
+                        a = drv.results.time_indices[0]
+                        b = drv.results.time_indices[-1]
+                        self.ui.diagram_step_slider.setRange(a, b)
+                        self.ui.diagram_step_slider.setValue(a)
+                    else:
+                        self.setup_time_sliders()
                 else:
                     self.setup_time_sliders()
             else:
@@ -805,39 +938,11 @@ class SimulationsMain(TimeEventsMain):
             if len(steps) > max_steps:
                 max_steps = len(steps)
 
-        icons = {
-            SimulationTypes.PowerFlow_run.value: ':/Icons/icons/pf',
-            SimulationTypes.PowerFlow3ph_run.value: ':/Icons/icons/pf3',
-            SimulationTypes.PowerFlowTimeSeries_run.value: ':/Icons/icons/pf_ts.png',
-            SimulationTypes.OPF_run.value: ':/Icons/icons/dcopf.png',
-            SimulationTypes.OPFTimeSeries_run.value: ':/Icons/icons/dcopf_ts.png',
-            SimulationTypes.ShortCircuit_run.value: ':/Icons/icons/short_circuit.png',
-            SimulationTypes.LinearAnalysis_run.value: ':/Icons/icons/ptdf.png',
-            SimulationTypes.LinearAnalysis_TS_run.value: ':/Icons/icons/ptdf_ts.png',
-            SimulationTypes.SigmaAnalysis_run.value: ':/Icons/icons/sigma.png',
-            SimulationTypes.StochasticPowerFlow.value: ':/Icons/icons/stochastic_power_flow.png',
-            SimulationTypes.ContingencyAnalysis_run.value: ':/Icons/icons/otdf.png',
-            SimulationTypes.ContingencyAnalysisTS_run.value: ':/Icons/icons/otdf_ts.png',
-            SimulationTypes.NetTransferCapacity_run.value: ':/Icons/icons/atc.png',
-            SimulationTypes.NetTransferCapacityTS_run.value: ':/Icons/icons/atc_ts.png',
-            SimulationTypes.OptimalNetTransferCapacityTimeSeries_run.value: ':/Icons/icons/ntc_opf_ts.png',
-            SimulationTypes.InputsAnalysis_run.value: ':/Icons/icons/stats.png',
-            SimulationTypes.NodeGrouping_run.value: ':/Icons/icons/ml.png',
-            SimulationTypes.ContinuationPowerFlow_run.value: ':/Icons/icons/continuation_power_flow.png',
-            SimulationTypes.ClusteringAnalysis_run.value: ':/Icons/icons/clustering.png',
-            SimulationTypes.InvestmentsEvaluation_run.value: ':/Icons/icons/expansion_planning.png',
-            SimulationTypes.NodalCapacityTimeSeries_run.value: ':/Icons/icons/nodal_capacity.png',
-            SimulationTypes.OPF_NTC_run.value: ':/Icons/icons/ntc_opf.png',
-            SimulationTypes.OPF_NTC_TS_run.value: ':/Icons/icons/ntc_opf_ts.png',
-            SimulationTypes.Reliability_run.value: ':/Icons/icons/reliability.png',
-            SimulationTypes.RmsSmallSignal_run.value: ':/Icons/icons/ss_icon.png',
-            SimulationTypes.RmsDynamic_run.value: ':/Icons/icons/dyn.png',
-            SimulationTypes.StateEstimation_run.value: ':/Icons/icons/SE.png',
-        }
+        icons = gf.get_simulation_tree_icons()
 
         self.ui.results_treeView.setModel(gf.get_tree_model(d, 'Results', icons=icons))
         lst.reverse()  # this is to show the latest simulation first
-        mdl = gf.get_list_model(lst)
+        mdl = gf.ComboModel(text_items=[(name, name) for name in lst])
         self.ui.available_results_to_color_comboBox.setModel(mdl)
         self.ui.resultsTableView.setModel(None)
         self.ui.resultsLogsTreeView.setModel(None)
@@ -849,7 +954,7 @@ class SimulationsMain(TimeEventsMain):
         :return: InterAggregationInfo
         """
         if self.ui.fromListView.model() is not None:
-            dev_tpe_from = self.exchange_places_dict[self.ui.fromComboBox.currentText()]
+            dev_tpe_from = self.ui.fromComboBox.currentData()
             devs_from = self.circuit.get_elements_by_type(dev_tpe_from)
             from_idx = gf.get_checked_indices(self.ui.fromListView.model())
             objects_from = [devs_from[i] for i in from_idx]
@@ -858,7 +963,7 @@ class SimulationsMain(TimeEventsMain):
             self.show_error_toast("No from areas!")
 
         if self.ui.toListView.model() is not None:
-            dev_tpe_to = self.exchange_places_dict[self.ui.toComboBox.currentText()]
+            dev_tpe_to = self.ui.toComboBox.currentData()
             devs_to = self.circuit.get_elements_by_type(dev_tpe_to)
             to_idx = gf.get_checked_indices(self.ui.toListView.model())
             objects_to = [devs_to[i] for i in to_idx]
@@ -871,9 +976,7 @@ class SimulationsMain(TimeEventsMain):
 
         if info.logger.has_logs():
             # Show dialogue
-            dlg = LogsDialogue(name="Add selected DB objects to current diagram", logger=info.logger)
-            dlg.setModal(True)
-            dlg.exec()
+            self.show_logs(name="Add selected DB objects to current diagram", logger=info.logger)
 
         return info
 
@@ -882,8 +985,10 @@ class SimulationsMain(TimeEventsMain):
         Gather power flow run options
         :return: sim.PowerFlowOptions
         """
+        self.adjust_controls_start_tolerance()
 
         tolerance = 1.0 / (10.0 ** self.ui.tolerance_spinBox.value())
+        controls_start_tolerance = 1.0 / (10.0 ** self.ui.controls_start_tolerance_spinBox.value())
 
         if self.ui.apply_impedance_tolerances_checkBox.isChecked():
             branch_impedance_tolerance_mode = BranchImpedanceMode.Upper
@@ -891,10 +996,11 @@ class SimulationsMain(TimeEventsMain):
             branch_impedance_tolerance_mode = BranchImpedanceMode.Specified
 
         ops = sim.PowerFlowOptions(
-            solver_type=self.solvers_dict[self.ui.solver_comboBox.currentText()],
+            solver_type=self.ui.solver_comboBox.currentData(),
             retry_with_other_methods=self.ui.helm_retry_checkBox.isChecked(),
             verbose=self.ui.verbositySpinBox.value(),
             tolerance=tolerance,
+            controls_start_tolerance=controls_start_tolerance,
             max_iter=self.ui.max_iterations_spinBox.value(),
             control_q=self.ui.control_q_checkBox.isChecked(),
             control_taps_phase=self.ui.control_tap_phase_checkBox.isChecked(),
@@ -913,6 +1019,28 @@ class SimulationsMain(TimeEventsMain):
 
         return ops
 
+    def adjust_controls_start_tolerance(self, value: int | None = None) -> None:
+        """
+        Keep the controls activation tolerance consistent with the solver tolerance.
+
+        :param value: Qt signal payload, unused
+        :return: Nothing
+        """
+        del value
+
+        tolerance_idx: int = self.ui.tolerance_spinBox.value()
+        controls_start_tolerance_idx: int = self.ui.controls_start_tolerance_spinBox.value()
+        adjusted_idx: int = get_valid_controls_start_tolerance_index(
+            tolerance_idx=tolerance_idx,
+            controls_start_tolerance_idx=controls_start_tolerance_idx,
+            controls_start_tolerance_min_idx=self.ui.controls_start_tolerance_spinBox.minimum(),
+        )
+
+        if adjusted_idx != controls_start_tolerance_idx:
+            self.ui.controls_start_tolerance_spinBox.setValue(adjusted_idx)
+        else:
+            pass
+
     def get_selected_rms_simulation_options(self) -> sim.RmsOptions:
         """
         Gather rms simulation run options
@@ -922,9 +1050,8 @@ class SimulationsMain(TimeEventsMain):
             time_step=self.ui.rms_h_spinBox.value(),
             simulation_time=self.ui.rms_sim_time_spinBox.value(),
             tolerance=self.ui.tolerance_rms_spinBox.value(),
-            integration_method=self.rms_integration_method_dict[self.ui.rms_integration_method_comboBox.currentText()],
-            initialization_method=self.rms_initialization_method_dict[
-                self.ui.rms_initialization_method_comboBox.currentText()],
+            integration_method=self.ui.rms_integration_method_comboBox.currentData(),
+            initialization_method=self.ui.rms_initialization_method_comboBox.currentData(),
         )
 
         return ops
@@ -950,22 +1077,22 @@ class SimulationsMain(TimeEventsMain):
             time_step=self.ui.emt_h_spinBox.value(),
             simulation_time=self.ui.emt_sim_time_spinBox.value(),
             tolerance=self.ui.tolerance_emt_spinBox.value(),
-            integration_method=self.emt_integration_method_dict[self.ui.emt_integration_method_comboBox.currentText()],
-            initialization_method=self.emt_initialization_method_dict[
-                self.ui.emt_initialization_method_comboBox.currentText()],
-            solver_type=self.emt_solver_type_dict[self.ui.emt_solver_type_comboBox.currentText()],
+            integration_method=self.ui.emt_integration_method_comboBox.currentData(),
+            initialization_method=self.ui.emt_initialization_method_comboBox.currentData(),
+            solver_type=self.ui.emt_solver_type_comboBox.currentData(),
         )
 
         return ops
 
-    def get_selected_emt_small_signal_stability_options(self) -> sim.EmtSmallSignalStabilityOptions:
+    def get_selected_emt_small_signal_stability_options(self) -> sim.SmallSignalStabilityEmtOptions:
         """
         Gather EMT SmallSignal simulation run options
         :return: sim.SmallSignalOptions
         """
-        ops = sim.EmtSmallSignalStabilityOptions(
+        ops = sim.SmallSignalStabilityEmtOptions(
             k=self.ui.emt_small_signal_modes_number_spinBox.value(),
             ss_assessment_time=self.ui.emt_ss_assessment_time_spinBox.value(),
+            # build_type=
         )
 
         return ops
@@ -1065,15 +1192,15 @@ class SimulationsMain(TimeEventsMain):
         """
         if self.server_driver.is_running():
             if self.ts_flag():
-                instruction = RemoteInstruction(operation=SimulationTypes.PowerFlowTimeSeries_run)
+                instruction = RemoteInstruction(operation=SimulationTypes.PowerFlowTimeSeries3ph_run)
             else:
-                instruction = RemoteInstruction(operation=SimulationTypes.PowerFlow_run)
+                instruction = RemoteInstruction(operation=SimulationTypes.PowerFlow3ph_run)
 
             self.run_remote(instruction=instruction)
 
         else:
             if self.ts_flag():
-                self.show_warning_toast("Time series not available yer for 3-phase formulation :/")
+                self.run_power_flow_time_series_3ph()
             else:
                 self.run_power_flow3ph()
 
@@ -1190,7 +1317,47 @@ class SimulationsMain(TimeEventsMain):
             self.run_remote(instruction=instruction)
 
         else:
-            self.run_rms()
+            if self.circuit.valid_for_simulation():
+
+                if not self.session.is_this_running(SimulationTypes.RmsDynamic_run):
+
+                    logger = self.circuit.check_rms_models()
+                    if logger.has_errors():
+                        # Show dialogue
+                        dlg = LogsDialogue(name="RMS pre simulation check",
+                                           logger=logger)
+                        dlg.setModal(True)
+                        dlg.exec()
+                        return
+                    else:
+                        if not len(self.circuit.rms_events_groups) == 0:
+                            self.run_rms()
+
+                        else:
+                            mode: DynamicSimulationMode = DynamicSimulationMode.RMS
+                            missing_group_message = "No RMS Events Group found, please create one before running a RMS simulation."
+                            created_group_message_body_prefix: str = "New group name"
+                            created_group_message_title = "RMS group Created"
+
+                            created_group: RmsEventsGroup | None = create_dynamic_events_group_with_dialog(
+                                circuit=self.circuit,
+                                mode=mode,
+                                parent=None,
+                                missing_group_message=missing_group_message,
+                                created_group_message_title=created_group_message_title,
+                                created_group_message_body_prefix=created_group_message_body_prefix,
+                            )
+
+                            if created_group is not None:
+                                self.run_rms()
+                            else:
+                                info_msg(f"No RMS Events Group was added. The RMS simulation can't run.")
+
+                else:
+                    self.show_warning_toast('Another rms simulation is running already...')
+
+            else:
+                pass
 
     def emt_dispatcher(self):
         """
@@ -1202,7 +1369,97 @@ class SimulationsMain(TimeEventsMain):
             self.run_remote(instruction=instruction)
 
         else:
-            self.run_emt()
+            if self.circuit.valid_for_simulation():
+
+                if not self.session.is_this_running(SimulationTypes.EmtDynamic_run):
+
+                    logger = self.circuit.check_emt_models()
+                    if logger.has_errors():
+                        # Show dialogue
+                        dlg = LogsDialogue(name="EMT pre simulation check",
+                                           logger=logger)
+                        dlg.setModal(True)
+                        dlg.exec()
+                        return
+                    else:
+
+                        if not len(self.circuit.emt_events_groups) == 0:
+                            self.run_emt()
+
+                            # self.remove_simulation(SimulationTypes.EmtDynamic_run)
+                            #
+                            # _, pf_results_3ph = self.session.power_flow_3ph
+                            #
+                            # _, pf_results = self.session.power_flow
+                            #
+                            # emt_options = self.get_selected_emt_simulation_options()
+                            # if emt_options.simulation_time > 0.0:
+                            #     if pf_results_3ph is not None:
+                            #
+                            #         self.add_simulation(SimulationTypes.EmtDynamic_run)
+                            #         self.ui.progress_label.setText('Running emt simulation...')
+                            #         QtGui.QGuiApplication.processEvents()
+                            #         self.LOCK()
+                            #
+                            #         drv = sim.EmtSimulationDriver(grid=self.circuit,
+                            #                                       options=self.get_selected_emt_simulation_options(),
+                            #                                       pf_results_3ph=pf_results_3ph)
+                            #
+                            #         self.session.run(drv,
+                            #                          post_func=self.post_emt,
+                            #                          prog_func=self.ui.progressBar.setValue,
+                            #                          text_func=self.ui.progress_label.setText)
+                            #
+                            #     elif pf_results is not None:
+                            #
+                            #         # self.add_simulation(SimulationTypes.RmsDynamic_run)
+                            #         self.ui.progress_label.setText(
+                            #             'Running emt simulation from balanced power flow results ...')
+                            #         QtGui.QGuiApplication.processEvents()
+                            #         self.LOCK()
+                            #
+                            #         drv = sim.EmtSimulationDriver(grid=self.circuit,
+                            #                                       options=self.get_selected_emt_simulation_options(),
+                            #                                       pf_results=pf_results)
+                            #
+                            #         self.session.run(drv,
+                            #                          post_func=self.post_emt,
+                            #                          prog_func=self.ui.progressBar.setValue,
+                            #                          text_func=self.ui.progress_label.setText)
+                            #
+                            #     else:
+                            #         info_msg('Run a power flow simulation first.\n'
+                            #                  'The results are needed to initialize this simulation.')
+                            #
+                            # else:
+                            #     info_msg('The simulation time is 0. Change it to a proper time in settings.')
+
+                        else:
+                            mode: DynamicSimulationMode = DynamicSimulationMode.EMT
+                            missing_group_message = "No EMT Events Group found, please create one before running a EMT simulation."
+                            created_group_message_body_prefix: str = "New group name"
+                            created_group_message_title = "EMT group Created"
+
+                            created_group: EmtEventsGroup | None = create_dynamic_events_group_with_dialog(
+                                circuit=self.circuit,
+                                mode=mode,
+                                parent=None,
+                                missing_group_message=missing_group_message,
+                                created_group_message_title=created_group_message_title,
+                                created_group_message_body_prefix=created_group_message_body_prefix,
+                            )
+
+                            if created_group is not None:
+                                self.run_emt()
+                            else:
+                                info_msg(f"No EMT Events Group was added. The EMT simulation can't run.")
+
+
+                else:
+                    self.show_warning_toast('Another EMT simulation is running already...')
+
+            else:
+                pass
 
     def rms_small_signal_dispatcher(self):
         """
@@ -1241,7 +1498,7 @@ class SimulationsMain(TimeEventsMain):
 
                 self.add_simulation(SimulationTypes.PowerFlow_run)
 
-                self.ui.progress_label.setText('Compiling the grid...')
+                self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                 QtGui.QGuiApplication.processEvents()
 
                 # get the power flow options from the GUI
@@ -1249,7 +1506,7 @@ class SimulationsMain(TimeEventsMain):
 
                 opf_results = self.get_opf_results(use_opf=self.ui.actionOpf_to_Power_flow.isChecked())
 
-                self.ui.progress_label.setText('Running power flow...')
+                self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Running power flow..."))
                 QtGui.QGuiApplication.processEvents()
 
                 # set power flow object instance
@@ -1282,7 +1539,7 @@ class SimulationsMain(TimeEventsMain):
 
                 self.add_simulation(SimulationTypes.PowerFlow_run)
 
-                self.ui.progress_label.setText('Compiling the grid...')
+                self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                 QtGui.QGuiApplication.processEvents()
 
                 # get the power flow options from the GUI
@@ -1290,7 +1547,7 @@ class SimulationsMain(TimeEventsMain):
 
                 opf_results = self.get_opf_results(use_opf=self.ui.actionOpf_to_Power_flow.isChecked())
 
-                self.ui.progress_label.setText('Running power flow...')
+                self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Running power flow..."))
                 QtGui.QGuiApplication.processEvents()
 
                 # set power flow object instance
@@ -1350,7 +1607,7 @@ class SimulationsMain(TimeEventsMain):
 
                 self.add_simulation(SimulationTypes.PowerFlow3ph_run)
 
-                self.ui.progress_label.setText('Compiling the grid...')
+                self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                 QtGui.QGuiApplication.processEvents()
 
                 # get the power flow options from the GUI
@@ -1358,7 +1615,7 @@ class SimulationsMain(TimeEventsMain):
 
                 opf_results = self.get_opf_results(use_opf=self.ui.actionOpf_to_Power_flow.isChecked())
 
-                self.ui.progress_label.setText('Running power flow...')
+                self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Running power flow..."))
                 QtGui.QGuiApplication.processEvents()
 
                 # set power flow object instance
@@ -1406,13 +1663,73 @@ class SimulationsMain(TimeEventsMain):
         if not self.session.is_anything_running():
             self.UNLOCK()
 
+    def run_power_flow_time_series_3ph(self):
+        """
+        Run a three-phase power-flow time-series simulation in a separated thread from the GUI.
+
+        :return: None.
+        """
+        if self.circuit.valid_for_simulation():
+            if not self.session.is_this_running(SimulationTypes.PowerFlowTimeSeries3ph_run):
+                if self.valid_time_series():
+                    self.LOCK()
+
+                    self.add_simulation(SimulationTypes.PowerFlowTimeSeries3ph_run)
+
+                    self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
+                    QtGui.QGuiApplication.processEvents()
+
+                    opf_time_series_results = self.get_opf_ts_results(
+                        use_opf=self.ui.actionOpf_to_Power_flow.isChecked()
+                    )
+                    options = self.get_selected_power_flow_options()
+
+                    drv = sim.PowerFlowTimeSeriesDriver3Ph(grid=self.circuit,
+                                                          options=options,
+                                                          time_indices=self.get_time_indices(),
+                                                          opf_time_series_results=opf_time_series_results,
+                                                          clustering_results=self.get_clustering_results(),
+                                                          engine=self.get_preferred_engine())
+
+                    self.session.run(drv,
+                                     post_func=self.post_power_flow_time_series_3ph,
+                                     prog_func=self.ui.progressBar.setValue,
+                                     text_func=self.ui.progress_label.setText)
+                else:
+                    self.show_warning_toast('There are no time series.')
+            else:
+                self.show_warning_toast('Another three-phase time series power flow is being executed now...')
+        else:
+            pass
+
+    def post_power_flow_time_series_3ph(self):
+        """
+        Events to do when the three-phase time-series simulation has finished.
+
+        :return: None.
+        """
+        _, results = self.session.power_flow_3ph_ts
+
+        if results is not None:
+            results.expand_clustered_results()
+
+            self.remove_simulation(SimulationTypes.PowerFlowTimeSeries3ph_run)
+
+            self.update_available_results()
+            self.colour_diagrams()
+        else:
+            self.show_warning_toast('No results for the three-phase time series simulation.')
+
+        if not self.session.is_anything_running():
+            self.UNLOCK()
+
     def get_se_options(self) -> sim.StateEstimationOptions:
         """
 
         :return:
         """
         return sim.StateEstimationOptions(
-            solver=self.se_solvers_dict.get(self.ui.se_solver_comboBox.currentText()),
+            solver=self.ui.se_solver_comboBox.currentData(),
             tol=self.ui.se_tolerance_spinBox.value(),
             max_iter=self.ui.se_max_iterations_spinBox.value(),
             verbose=0,
@@ -1439,7 +1756,7 @@ class SimulationsMain(TimeEventsMain):
 
                 self.add_simulation(SimulationTypes.StateEstimation_run)
 
-                self.ui.progress_label.setText('Compiling the grid...')
+                self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                 QtGui.QGuiApplication.processEvents()
 
                 # get the power flow options from the GUI
@@ -1705,7 +2022,7 @@ class SimulationsMain(TimeEventsMain):
             srap_rever_to_nominal_rating=self.ui.srap_revert_to_nominal_rating_checkBox.isChecked(),
             detailed_massive_report=self.ui.contingency_detailed_massive_report_checkBox.isChecked(),
             contingency_deadband=self.ui.contingency_deadband_SpinBox.value(),
-            contingency_method=self.contingency_engines_dict[self.ui.contingencyEngineComboBox.currentText()],
+            contingency_method=self.ui.contingencyEngineComboBox.currentData(),
             contingency_groups=self.get_contingency_groups_matching_the_filter()
         )
 
@@ -1892,7 +2209,7 @@ class SimulationsMain(TimeEventsMain):
                     error_msg('There are no inter-area Branches!')
                     return
 
-                mode = self.transfer_modes_dict[self.ui.transferMethodComboBox.currentText()]
+                mode = self.ui.transferMethodComboBox.currentData()
 
                 options = sim.AvailableTransferCapacityOptions(distributed_slack=distributed_slack,
                                                                use_provided_flows=use_provided_flows,
@@ -2006,7 +2323,7 @@ class SimulationsMain(TimeEventsMain):
                         error_msg('There are no inter-area Branches!')
                         return
 
-                    mode = self.transfer_modes_dict[self.ui.transferMethodComboBox.currentText()]
+                    mode = self.ui.transferMethodComboBox.currentData()
                     cluster_number = self.ui.cluster_number_spinBox.value()
                     options = sim.AvailableTransferCapacityOptions(distributed_slack=distributed_slack,
                                                                    use_provided_flows=use_provided_flows,
@@ -2138,12 +2455,6 @@ class SimulationsMain(TimeEventsMain):
                                         'of buses with zero injection will be infinite.', 'Continuation Power Flow')
                             return
 
-                    mode = self.ui.vc_stop_at_comboBox.currentText()
-
-                    vc_stop_at_dict = {sim.CpfStopAt.Nose.value: sim.CpfStopAt.Nose,
-                                       sim.CpfStopAt.Full.value: sim.CpfStopAt.Full,
-                                       sim.CpfStopAt.ExtraOverloads.value: sim.CpfStopAt.ExtraOverloads}
-
                     pf_options = self.get_selected_power_flow_options()
 
                     # declare voltage collapse options
@@ -2155,7 +2466,7 @@ class SimulationsMain(TimeEventsMain):
                                                                   error_tol=1e-3,
                                                                   tol=pf_options.tolerance,
                                                                   max_it=pf_options.max_iter,
-                                                                  stop_at=vc_stop_at_dict[mode],
+                                                                  stop_at=self.ui.vc_stop_at_comboBox.currentData(),
                                                                   verbose=0)
 
                     if use_alpha:
@@ -2166,7 +2477,7 @@ class SimulationsMain(TimeEventsMain):
                         # lock the UI
                         self.LOCK()
 
-                        self.ui.progress_label.setText('Compiling the grid...')
+                        self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                         QtGui.QGuiApplication.processEvents()
 
                         #  compose the base power
@@ -2270,7 +2581,7 @@ class SimulationsMain(TimeEventsMain):
 
                     self.add_simulation(SimulationTypes.PowerFlowTimeSeries_run)
 
-                    self.ui.progress_label.setText('Compiling the grid...')
+                    self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                     QtGui.QGuiApplication.processEvents()
 
                     opf_time_series_results = self.get_opf_ts_results(
@@ -2339,13 +2650,12 @@ class SimulationsMain(TimeEventsMain):
 
                     self.add_simulation(SimulationTypes.StochasticPowerFlow)
 
-                    self.ui.progress_label.setText('Compiling the grid...')
+                    self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                     QtGui.QGuiApplication.processEvents()
 
                     pf_options = self.get_selected_power_flow_options()
 
-                    simulation_type = self.stochastic_pf_methods_dict[
-                        self.ui.stochastic_pf_method_comboBox.currentText()]
+                    simulation_type = self.ui.stochastic_pf_method_comboBox.currentData()
 
                     tol = 10 ** (-1 * self.ui.tolerance_stochastic_spinBox.value())
                     max_iter = self.ui.max_iterations_stochastic_spinBox.value()
@@ -2429,11 +2739,11 @@ class SimulationsMain(TimeEventsMain):
         Get the GUI OPF options
         """
         # get the power flow options from the GUI
-        solver = self.lp_solvers_dict[self.ui.lpf_solver_comboBox.currentText()]
-        dispatch_mode = self.opf_dispatch_mode_dict[self.ui.opfDispatchModeComboBox.currentText()]
-        mip_solver = self.mip_solvers_dict.get(self.ui.mip_solver_comboBox.currentText(), MIPSolvers.HIGHS)
-        time_grouping = self.opf_time_groups[self.ui.opf_time_grouping_comboBox.currentText()]
-        zonal_grouping = self.opf_zonal_groups[self.ui.opfZonalGroupByComboBox.currentText()]
+        solver = self.ui.lpf_solver_comboBox.currentData()
+        dispatch_mode = self.ui.opfDispatchModeComboBox.currentData()
+        mip_solver = self.ui.mip_solver_comboBox.currentData() or MIPSolvers.HIGHS
+        time_grouping = self.ui.opf_time_grouping_comboBox.currentData()
+        zonal_grouping = self.ui.opfZonalGroupByComboBox.currentData()
         pf_options = self.get_selected_power_flow_options()
         consider_contingencies = self.ui.considerContingenciesOpfCheckBox.isChecked()
         contingency_groups_used = self.get_contingency_groups_matching_the_filter()
@@ -2465,7 +2775,7 @@ class SimulationsMain(TimeEventsMain):
         else:
             inter_aggregation_info = None
 
-        ips_method = self.ips_solvers_dict[self.ui.ips_method_comboBox.currentText()]
+        ips_method = self.ui.ips_method_comboBox.currentData()
         ips_tolerance = 1.0 / (10.0 ** self.ui.ips_tolerance_spinBox.value())
         ips_iterations = self.ui.ips_iterations_spinBox.value()
         ips_trust_radius = self.ui.ips_trust_radius_doubleSpinBox.value()
@@ -2485,7 +2795,7 @@ class SimulationsMain(TimeEventsMain):
 
         verbose = self.ui.ips_verbose_spinBox.value()
 
-        mip_framework = self.opf_mip_framework_dict[self.ui.mip_framework_comboBox.currentText()]
+        mip_framework = self.ui.mip_framework_comboBox.currentData()
 
         options = sim.OptimalPowerFlowOptions(
             solver=solver,
@@ -2593,7 +2903,7 @@ class SimulationsMain(TimeEventsMain):
                         self.LOCK()
 
                         # Compile the grid
-                        self.ui.progress_label.setText('Compiling the grid...')
+                        self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                         QtGui.QGuiApplication.processEvents()
 
                         # get the power flow options from the GUI
@@ -2688,7 +2998,7 @@ class SimulationsMain(TimeEventsMain):
         opts = sim.OptimalNetTransferCapacityOptions(
             sending_bus_idx=idx_from,
             receiving_bus_idx=idx_to,
-            transfer_method=self.transfer_modes_dict[self.ui.transferMethodComboBox.currentText()],
+            transfer_method=self.ui.transferMethodComboBox.currentData(),
             loading_threshold_to_report=self.ui.ntcReportLoadingThresholdSpinBox.value(),
             skip_generation_limits=self.ui.skipNtcGenerationLimitsCheckBox.isChecked(),
             transmission_reliability_margin=self.ui.trmSpinBox.value(),  # MW
@@ -3010,13 +3320,8 @@ class SimulationsMain(TimeEventsMain):
                 if not self.session.is_this_running(SimulationTypes.InvestmentsEvaluation_run):
 
                     # evaluation method
-                    method = self.investment_evaluation_method_dict[
-                        self.ui.investment_evaluation_method_ComboBox.currentText()
-                    ]
-
-                    obj_fn_tpe = self.investment_evaluation_objfunc_dict[
-                        self.ui.investment_evaluation_objfunc_ComboBox.currentText()
-                    ]
+                    method = self.ui.investment_evaluation_method_ComboBox.currentData()
+                    obj_fn_tpe = self.ui.investment_evaluation_objfunc_ComboBox.currentData()
 
                     # maximum number of function evaluations as a factor of the number of investments
                     max_eval = self.ui.max_investments_evluation_number_spinBox.value() * len(
@@ -3049,6 +3354,20 @@ class SimulationsMain(TimeEventsMain):
                             ),
                             engine=self.get_preferred_engine()
                         )
+
+                    elif obj_fn_tpe == InvestmentsEvaluationObjectives.LinearOptimalPowerFlowTimeSeries:
+
+                        if self.circuit.has_time_series:
+                            problem = sim.TimeSeriesLinearOptimalPowerFlowInvestmentProblem(
+                                grid=self.circuit,
+                                opf_options=self.get_opf_options(),
+                                time_indices=self.get_time_indices(),
+                                clustering_results=self.get_clustering_results(),
+                                engine=self.get_preferred_engine()
+                            )
+                        else:
+                            self.show_warning_toast('Linear OPF investment studies need time data...')
+                            return
 
                     elif obj_fn_tpe == InvestmentsEvaluationObjectives.GenerationAdequacy:
 
@@ -3087,7 +3406,8 @@ class SimulationsMain(TimeEventsMain):
                     drv = sim.InvestmentsEvaluationDriver(
                         grid=self.circuit,
                         options=options,
-                        problem=problem
+                        problem=problem,
+                        engine=self.get_preferred_engine()
                     )
 
                     self.session.run(
@@ -3112,7 +3432,7 @@ class SimulationsMain(TimeEventsMain):
         """
         Post investments evaluation
         """
-        _, results = self.session.investments_evaluation
+        driver, results = self.session.investments_evaluation
 
         # update the results in the circuit structures
         if results is not None:
@@ -3122,6 +3442,62 @@ class SimulationsMain(TimeEventsMain):
             QtGui.QGuiApplication.processEvents()
 
             self.update_available_results()
+
+            # Cache every Investment object in the live grid so the Variations-panel
+            # click handler can deactivate them all before activating just the ones
+            # in the clicked Pareto combination. We snapshot the list itself (not
+            # device states) because per-click semantics are "force every touched
+            # device to inactive, then activate the selected subset" — exactly the
+            # convention the optimizer used. This avoids the bug where capturing
+            # device.active states could leak True flags through the revert path.
+            self._investments_all = list(self.circuit.investments)
+            all_elements_dict, _ = self.circuit.get_all_elements_dict()
+
+            # create a schematic diagram for the best Pareto-optimal investment combination
+            if driver is not None and len(results.sorting_indices) > 0:
+                best_x = results.x[results.sorting_indices[0], :]
+                inv_list = driver.problem.get_investments_for_combination(x=best_x)
+
+                # Apply the best Pareto combination directly on self.circuit (no copy).
+                # Reason: the auto-generated diagram below must be bound to self.circuit
+                # so that subsequent clicks in the Variations panel — which mutate
+                # self.circuit — actually update the visible graphics. If we kept the
+                # old self.circuit.copy() pattern, every graphic's api_object would
+                # point to the copy, and clicking a Pareto combination later would
+                # silently change self.circuit while the diagram (still bound to the
+                # untouched copy) showed every branch as dashed forever.
+                # First deactivate every investment-touched device, then activate
+                # only the ones in best_x — same all-off-then-selected convention
+                # the click handler uses, so the auto-generated diagram is
+                # consistent with what a click on the same Pareto row would do.
+                self.circuit.set_investments_status(investments_list=self._investments_all,
+                                                    status=False,
+                                                    all_elements_dict=all_elements_dict)
+                self.circuit.set_investments_status(investments_list=inv_list,
+                                                    status=True,
+                                                    all_elements_dict=all_elements_dict)
+
+                diagram = make_diagram_from_buses(
+                    circuit=self.circuit,
+                    buses=self.circuit.buses,
+                    name='Investments evaluation (best Pareto)'
+                )
+
+                diagram_widget = SchematicWidget(
+                    gui=self,
+                    diagram=diagram,
+                    default_bus_voltage=self.ui.defaultBusVoltageSpinBox.value(),
+                    time_index=self.get_diagram_slider_index()
+                )
+
+                self.add_diagram_widget_and_diagram(diagram_widget=diagram_widget,
+                                                    diagram=diagram)
+                self.set_diagrams_list_view()
+            else:
+                # no Pareto results - nothing to apply or auto-display
+                pass
+
+            # apply result-based colouring after the baseline + best-Pareto state is set
             self.colour_diagrams()
         else:
             self.show_error_toast('Something went wrong, There are no investments evaluation results.')
@@ -3235,7 +3611,7 @@ class SimulationsMain(TimeEventsMain):
         sel_buses = self.get_diagram_selected_buses()
         capacity_nodes_idx = np.array([bus_dict[b] for _, b, _ in sel_buses])
 
-        method = self.nodal_capacity_methods_dict[self.ui.nodal_capacity_method_comboBox.currentText()]
+        method = self.ui.nodal_capacity_method_comboBox.currentData()
 
         opt = sim.NodalCapacityOptions(opf_options=self.get_opf_options(),
                                        capacity_nodes_idx=capacity_nodes_idx,
@@ -3272,7 +3648,7 @@ class SimulationsMain(TimeEventsMain):
                 self.LOCK()
 
                 # Compile the grid
-                self.ui.progress_label.setText('Compiling the grid...')
+                self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                 QtGui.QGuiApplication.processEvents()
 
                 if options is not None:
@@ -3338,12 +3714,12 @@ class SimulationsMain(TimeEventsMain):
                     self.LOCK()
 
                     # Compile the grid
-                    self.ui.progress_label.setText('Compiling the grid...')
+                    self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                     QtGui.QGuiApplication.processEvents()
 
                     pf_options = self.get_selected_power_flow_options()
 
-                    mode = self.reliability_mode_dict[self.ui.reliability_method_comboBox.currentText()]
+                    mode = self.ui.reliability_method_comboBox.currentData()
 
                     drv = sim.ReliabilityStudyDriver(grid=self.circuit,
                                                      pf_options=pf_options,
@@ -3389,60 +3765,44 @@ class SimulationsMain(TimeEventsMain):
         Run rms simulation
         :return:
         """
-        if self.circuit.valid_for_simulation():
+        self.remove_simulation(SimulationTypes.RmsDynamic_run)
 
-            if not self.session.is_this_running(SimulationTypes.RmsDynamic_run):
+        _, pf_results = self.session.power_flow
 
-                logger = self.circuit.check_rms_models()
-                if logger.has_errors():
-                    # Show dialogue
-                    dlg = LogsDialogue(name="RMS pre simulation check",
-                                       logger=logger)
-                    dlg.setModal(True)
-                    dlg.exec()
-                    return
-                else:
 
-                    self.remove_simulation(SimulationTypes.RmsDynamic_run)
+        rms_options = self.get_selected_rms_simulation_options()
+        if rms_options.simulation_time > 0.0:
 
-                    _, pf_results = self.session.power_flow
+            if pf_results is not None:
 
-                    if not len(self.circuit.rms_events_groups) == 0:
+                self.add_simulation(SimulationTypes.RmsDynamic_run)
 
-                        if pf_results is not None:
+                # self.add_simulation(SimulationTypes.RmsDynamic_run)
+                self.ui.progress_label.setText('Running rms simulation...')
+                QtGui.QGuiApplication.processEvents()
+                self.LOCK()
 
-                            # self.add_simulation(SimulationTypes.RmsDynamic_run)
-                            self.ui.progress_label.setText('Running rms simulation...')
-                            QtGui.QGuiApplication.processEvents()
-                            self.LOCK()
+                drv = sim.RmsSimulationDriver(grid=self.circuit,
+                                              options=self.get_selected_rms_simulation_options(),
+                                              pf_results=pf_results)
 
-                            drv = sim.RmsSimulationDriver(grid=self.circuit,
-                                                          options=self.get_selected_rms_simulation_options(),
-                                                          pf_results=pf_results)
-
-                            self.session.run(drv,
-                                             post_func=self.post_rms,
-                                             prog_func=self.ui.progressBar.setValue,
-                                             text_func=self.ui.progress_label.setText)
-
-                        else:
-                            info_msg('Run a power flow simulation first.\n'
-                                     'The results are needed to initialize this simulation.')
-
-                    else:
-                        info_msg('Add a RMS Events Group even if it is empty.\n'
-                                 'Go to database -> RMS Events Group to add it.')
+                self.session.run(drv,
+                                 post_func=self.post_rms,
+                                 prog_func=self.ui.progressBar.setValue,
+                                 text_func=self.ui.progress_label.setText)
 
             else:
-                self.show_warning_toast('Another rms simulation is running already...')
-
+                info_msg('Run a power flow simulation first.\n'
+                         'The results are needed to initialize this simulation.')
         else:
-            pass
+            info_msg('The simulation time is 0. Change it to a proper time in settings.')
 
-    def post_rms(self):
+
+    def post_rms(self) -> None:
         """
+        Finalize the RMS simulation workflow and report only active-group status.
 
-        :return:
+        :return: None.
         """
         _, results = self.session.rms_dynamic_simulation
 
@@ -3451,6 +3811,56 @@ class SimulationsMain(TimeEventsMain):
             # delete from the current simulations
             self.remove_simulation(SimulationTypes.RmsDynamic_run)
             self.update_available_results()
+
+            # Only active event groups are simulated, so the completion report
+            # must ignore inactive groups whose default result flags remain False.
+            active_group_indices: list[int] = list()
+            group_count: int = min(len(self.circuit.rms_events_groups), len(results.rms_events_group_names))
+            group_index: int
+            for group_index in range(group_count):
+                rms_events_group = self.circuit.rms_events_groups[group_index]
+                if rms_events_group.active:
+                    active_group_indices.append(group_index)
+                else:
+                    pass
+
+            if len(active_group_indices) > 0:
+                # Report initialization failures only for groups that were part
+                # of the executed simulation batch.
+                bad_initialization_names: list[str] = list()
+                active_index: int
+                group_name: str
+                for active_index in active_group_indices:
+                    group_name = str(results.rms_events_group_names[active_index])
+                    if results.well_initialized[active_index]:
+                        pass
+                    else:
+                        bad_initialization_names.append(group_name)
+
+                if len(bad_initialization_names) > 0:
+                    group_name: str
+                    for group_name in bad_initialization_names:
+                        self.show_warning_toast(f"Simulation bad initialized for {group_name}:/")
+                else:
+                    self.show_info_toast("Simulation well initialized for all active simulation groups :)")
+
+                # Report convergence failures only for groups that were part of
+                # the executed simulation batch.
+                not_converged_names: list[str] = list()
+                for active_index in active_group_indices:
+                    group_name = str(results.rms_events_group_names[active_index])
+                    if results.converged[active_index]:
+                        pass
+                    else:
+                        not_converged_names.append(group_name)
+
+                if len(not_converged_names) > 0:
+                    for group_name in not_converged_names:
+                        self.show_warning_toast(f"Simulation not converged for {group_name}:/")
+                else:
+                    self.show_info_toast("Simulation converged for all active simulation groups :)")
+            else:
+                self.show_info_toast("There are no active RMS event groups to report.")
 
         else:
             warning_msg('There are no rms simulation results.', 'Rms simulation')
@@ -3463,77 +3873,135 @@ class SimulationsMain(TimeEventsMain):
         Run emt simulation
         :return:
         """
-        if self.circuit.valid_for_simulation():
 
-            if not self.session.is_this_running(SimulationTypes.EmtDynamic_run):
+        self.remove_simulation(SimulationTypes.EmtDynamic_run)
 
-                logger = self.circuit.check_emt_models()
-                if logger.has_errors():
-                    # Show dialogue
-                    dlg = LogsDialogue(name="EMT pre simulation check",
-                                       logger=logger)
-                    dlg.setModal(True)
-                    dlg.exec()
-                    return
-                else:
+        _, pf_results_3ph = self.session.power_flow_3ph
 
-                    self.remove_simulation(SimulationTypes.EmtDynamic_run)
+        _, pf_results = self.session.power_flow
 
-                    _, pf_results_3ph = self.session.power_flow_3ph
+        emt_options = self.get_selected_emt_simulation_options()
+        if emt_options.simulation_time > 0.0:
+            if pf_results_3ph is not None:
 
-                    _, pf_results = self.session.power_flow
+                self.add_simulation(SimulationTypes.EmtDynamic_run)
+                self.ui.progress_label.setText('Running EMT simulation...')
+                QtGui.QGuiApplication.processEvents()
+                self.LOCK()
 
-                    if not len(self.circuit.emt_events_groups) == 0:
-                        if pf_results_3ph is not None:
-                            # self.add_simulation(SimulationTypes.RmsDynamic_run)
-                            self.ui.progress_label.setText('Running emt simulation...')
-                            QtGui.QGuiApplication.processEvents()
-                            self.LOCK()
+                drv = sim.EmtSimulationDriver(grid=self.circuit,
+                                              options=self.get_selected_emt_simulation_options(),
+                                              pf_results_3ph=pf_results_3ph)
 
-                            drv = sim.EmtSimulationDriver(grid=self.circuit,
-                                                          options=self.get_selected_emt_simulation_options(),
-                                                          pf_results_3ph=pf_results_3ph)
+                self.session.run(drv,
+                                 post_func=self.post_emt,
+                                 prog_func=self.ui.progressBar.setValue,
+                                 text_func=self.ui.progress_label.setText)
 
-                            self.session.run(drv,
-                                             post_func=self.post_emt,
-                                             prog_func=self.ui.progressBar.setValue,
-                                             text_func=self.ui.progress_label.setText)
+            elif pf_results is not None:
 
-                        elif pf_results is not None:
+                # self.add_simulation(SimulationTypes.RmsDynamic_run)
+                self.ui.progress_label.setText(
+                    'Running EMT simulation from balanced power flow results ...')
+                QtGui.QGuiApplication.processEvents()
+                self.LOCK()
 
-                            # self.add_simulation(SimulationTypes.RmsDynamic_run)
-                            self.ui.progress_label.setText('Running emt simulation from balanced power flow results ...')
-                            QtGui.QGuiApplication.processEvents()
-                            self.LOCK()
+                drv = sim.EmtSimulationDriver(grid=self.circuit,
+                                              options=self.get_selected_emt_simulation_options(),
+                                              pf_results=pf_results)
 
-                            drv = sim.EmtSimulationDriver(grid=self.circuit,
-                                                          options=self.get_selected_emt_simulation_options(),
-                                                          pf_results=pf_results)
-
-                            self.session.run(drv,
-                                             post_func=self.post_emt,
-                                             prog_func=self.ui.progressBar.setValue,
-                                             text_func=self.ui.progress_label.setText)
-
-                        else:
-                            info_msg('Run a power flow simulation first.\n'
-                                     'The results are needed to initialize this simulation.')
-
-                    else:
-                        info_msg('Add an EMT Events Group even if it is empty.\n'
-                                 'Go to database -> EMT Events Group to add it.')
-
+                self.session.run(drv,
+                                 post_func=self.post_emt,
+                                 prog_func=self.ui.progressBar.setValue,
+                                 text_func=self.ui.progress_label.setText)
 
             else:
-                self.show_warning_toast('Another EMT simulation is running already...')
+                info_msg('Run a power flow simulation first.\n'
+                         'The results are needed to initialize this simulation.')
 
         else:
-            pass
+            info_msg('The simulation time is 0. Change it to a proper time in settings.')
 
-    def post_emt(self):
+
+
+        # if self.circuit.valid_for_simulation():
+        #
+        #     if not self.session.is_this_running(SimulationTypes.EmtDynamic_run):
+        #
+        #         logger = self.circuit.check_emt_models()
+        #         if logger.has_errors():
+        #             # Show dialogue
+        #             dlg = LogsDialogue(name="EMT pre simulation check",
+        #                                logger=logger)
+        #             dlg.setModal(True)
+        #             dlg.exec()
+        #             return
+        #         else:
+        #
+        #             self.remove_simulation(SimulationTypes.EmtDynamic_run)
+        #
+        #             _, pf_results_3ph = self.session.power_flow_3ph
+        #
+        #             _, pf_results = self.session.power_flow
+        #
+        #             if not len(self.circuit.emt_events_groups) == 0:
+        #                 emt_options = self.get_selected_emt_simulation_options()
+        #                 if emt_options.simulation_time > 0.0:
+        #                     if pf_results_3ph is not None:
+        #
+        #                         self.add_simulation(SimulationTypes.EmtDynamic_run)
+        #                         self.ui.progress_label.setText('Running emt simulation...')
+        #                         QtGui.QGuiApplication.processEvents()
+        #                         self.LOCK()
+        #
+        #                         drv = sim.EmtSimulationDriver(grid=self.circuit,
+        #                                                       options=self.get_selected_emt_simulation_options(),
+        #                                                       pf_results_3ph=pf_results_3ph)
+        #
+        #                         self.session.run(drv,
+        #                                          post_func=self.post_emt,
+        #                                          prog_func=self.ui.progressBar.setValue,
+        #                                          text_func=self.ui.progress_label.setText)
+        #
+        #                     elif pf_results is not None:
+        #
+        #                         # self.add_simulation(SimulationTypes.RmsDynamic_run)
+        #                         self.ui.progress_label.setText('Running emt simulation from balanced power flow results ...')
+        #                         QtGui.QGuiApplication.processEvents()
+        #                         self.LOCK()
+        #
+        #                         drv = sim.EmtSimulationDriver(grid=self.circuit,
+        #                                                       options=self.get_selected_emt_simulation_options(),
+        #                                                       pf_results=pf_results)
+        #
+        #                         self.session.run(drv,
+        #                                          post_func=self.post_emt,
+        #                                          prog_func=self.ui.progressBar.setValue,
+        #                                          text_func=self.ui.progress_label.setText)
+        #
+        #                     else:
+        #                         info_msg('Run a power flow simulation first.\n'
+        #                                  'The results are needed to initialize this simulation.')
+        #
+        #                 else:
+        #                     info_msg('The simulation time is 0. Change it to a proper time in settings.')
+        #
+        #             else:
+        #                 info_msg('Add an EMT Events Group even if it is empty.\n'
+        #                          'Go to database -> EMT Events Group to add it.')
+        #
+        #
+        #     else:
+        #         self.show_warning_toast('Another EMT simulation is running already...')
+        #
+        # else:
+        #     pass
+
+    def post_emt(self) -> None:
         """
+        Finalize the EMT simulation workflow and report only active-group status.
 
-        :return:
+        :return: None.
         """
         _, results = self.session.emt_dynamic_simulation
 
@@ -3543,8 +4011,57 @@ class SimulationsMain(TimeEventsMain):
             self.remove_simulation(SimulationTypes.EmtDynamic_run)
             self.update_available_results()
 
+            # Only active event groups are simulated, so the completion report
+            # must ignore inactive groups whose default result flags remain False.
+            active_group_indices: list[int] = list()
+            group_count: int = min(len(self.circuit.emt_events_groups), len(results.emt_events_group_names))
+            group_index: int
+            for group_index in range(group_count):
+                emt_events_group = self.circuit.emt_events_groups[group_index]
+                if emt_events_group.active:
+                    active_group_indices.append(group_index)
+                else:
+                    pass
+
+            if len(active_group_indices) > 0:
+                # Report initialization failures only for groups that were part
+                # of the executed simulation batch.
+                bad_initialization_names: list[str] = list()
+                active_index: int
+                group_name: str
+                for active_index in active_group_indices:
+                    group_name = str(results.emt_events_group_names[active_index])
+                    if results.well_initialized[active_index]:
+                        pass
+                    else:
+                        bad_initialization_names.append(group_name)
+
+                if len(bad_initialization_names) > 0:
+                    for group_name in bad_initialization_names:
+                        self.show_warning_toast(f"Simulation bad initialized for {group_name}:/")
+                else:
+                    self.show_info_toast("Simulation well initialized for all active simulation groups :)")
+
+                # Report convergence failures only for groups that were part of
+                # the executed simulation batch.
+                not_converged_names: list[str] = list()
+                for active_index in active_group_indices:
+                    group_name = str(results.emt_events_group_names[active_index])
+                    if results.converged[active_index]:
+                        pass
+                    else:
+                        not_converged_names.append(group_name)
+
+                if len(not_converged_names) > 0:
+                    for group_name in not_converged_names:
+                        self.show_warning_toast(f"Simulation not converged for {group_name}:/")
+                else:
+                    self.show_info_toast("Simulation converged for all active simulation groups :)")
+            else:
+                self.show_info_toast("There are no active EMT event groups to report.")
+
         else:
-            warning_msg('There are no emt simulation results.', 'Rms simulation')
+            warning_msg('There are no emt simulation results.', 'Emt simulation')
 
         if not self.session.is_anything_running():
             self.UNLOCK()
@@ -3592,9 +4109,7 @@ class SimulationsMain(TimeEventsMain):
         if remote_job_driver is not None:
             if remote_job_driver.logger.has_logs():
                 # Show dialogue
-                dlg = LogsDialogue(name="Remote connection logs", logger=remote_job_driver.logger)
-                dlg.setModal(True)
-                dlg.exec()
+                self.show_logs(remote_job_driver.logger, name="Remote connection logs")
 
             self.update_available_results()
             self.colour_diagrams()
@@ -3605,46 +4120,57 @@ class SimulationsMain(TimeEventsMain):
 
     def run_rms_small_signal_stability(self):
         """
-        Run small signal simulation
+        Run small-signal simulation RMS
         :return:
         """
         if self.circuit.valid_for_simulation():
 
             if not self.session.is_this_running(SimulationTypes.RmsSmallSignal_run):
 
-                _, pf_results = self.session.power_flow
-
-                if pf_results is not None:
-
-                    self.add_simulation(SimulationTypes.RmsSmallSignal_run)
-
-                    self.LOCK()
-
-                    # Compile the grid
-                    self.ui.progress_label.setText('Compiling the grid...')
-                    QtGui.QGuiApplication.processEvents()
-
-                    # get the small signal stability analysis simulation options from the GUI
-                    options = self.get_selected_rms_small_signal_stability_options()
-                    rms_options = self.get_selected_rms_simulation_options()
-
-                    self.ui.progress_label.setText('Performing Small Signal Stability analysis...')
-
-                    drv = sim.SmallSignalStabilityRmsDriver(grid=self.circuit,
-                                                            rms_options=rms_options,
-                                                            sss_options=options,
-                                                            pf_results=pf_results)
-
-                    self.session.run(drv,
-                                     post_func=self.post_rms_small_signal_stability,
-                                     prog_func=self.ui.progressBar.setValue,
-                                     text_func=self.ui.progress_label.setText)
-
+                logger = self.circuit.check_rms_models()
+                if logger.has_errors():
+                    # Show dialogue
+                    dlg = LogsDialogue(name="Small-signal stability RMS pre simulation check",
+                                       logger=logger)
+                    dlg.setModal(True)
+                    dlg.exec()
+                    return
                 else:
-                    info_msg('Run a power flow simulation first.\n'
-                             'The results are needed to initialize this simulation.')
+
+                    _, pf_results = self.session.power_flow
+
+                    if pf_results is not None:
+
+                        self.add_simulation(SimulationTypes.RmsSmallSignal_run)
+
+                        self.LOCK()
+
+                        # Compile the grid
+                        self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
+                        QtGui.QGuiApplication.processEvents()
+
+                        # get the small signal stability analysis simulation options from the GUI
+                        options = self.get_selected_rms_small_signal_stability_options()
+                        rms_options = self.get_selected_rms_simulation_options()
+
+                        self.ui.progress_label.setText('Performing Small-Signal Stability analysis...')
+
+                        drv = sim.SmallSignalStabilityRmsDriver(grid=self.circuit,
+                                                                rms_options=rms_options,
+                                                                sss_options=options,
+                                                                pf_results=pf_results)
+
+                        self.session.run(drv,
+                                         post_func=self.post_rms_small_signal_stability,
+                                         prog_func=self.ui.progressBar.setValue,
+                                         text_func=self.ui.progress_label.setText)
+
+                    else:
+                        info_msg('Run a power flow simulation first.\n'
+                                 'The results are needed to initialize this simulation.')
+
             else:
-                self.show_warning_toast('Another Small Signal stability analysis simulation is running already...')
+                self.show_warning_toast('Another Small-Signal stability analysis simulation is running already...')
 
         else:
             pass
@@ -3662,10 +4188,10 @@ class SimulationsMain(TimeEventsMain):
             self.remove_simulation(SimulationTypes.RmsSmallSignal_run)
             self.update_available_results()
 
-            self.show_info_toast("Small-signal stability analysis has finished correctly!")
+            self.show_info_toast("Small-signal stability analysis RMS has finished correctly!")
 
         else:
-            warning_msg('There are no Small Signal Stability analysis results.', 'Small Signal Stability analysis')
+            warning_msg('There are no Small-Signal Stability analysis RMS results.', 'Small-Signal Stability analysis RMS')
 
         if not self.session.is_anything_running():
             self.UNLOCK()
@@ -3673,46 +4199,56 @@ class SimulationsMain(TimeEventsMain):
 
     def run_emt_small_signal_stability(self):
         """
-        Run small signal simulation
+        Run small-signal simulation EMT
         :return:
         """
         if self.circuit.valid_for_simulation():
 
             if not self.session.is_this_running(SimulationTypes.EmtSmallSignal_run):
 
-                _, pf_results = self.session.power_flow_3ph
-
-                if pf_results is not None:
-
-                    self.add_simulation(SimulationTypes.EmtSmallSignal_run)
-
-                    self.LOCK()
-
-                    # Compile the grid
-                    self.ui.progress_label.setText('Compiling the grid...')
-                    QtGui.QGuiApplication.processEvents()
-
-                    # get the small signal stability analysis simulation options from the GUI
-                    options = self.get_selected_emt_small_signal_stability_options()
-                    rms_options = self.get_selected_emt_simulation_options()
-
-                    self.ui.progress_label.setText('Performing Small Signal Stability analysis...')
-
-                    drv = sim.SmallSignalStabilityEmtDriver(grid=self.circuit,
-                                                            rms_options=rms_options,
-                                                            sss_options=options,
-                                                            pf_results=pf_results)
-
-                    self.session.run(drv,
-                                     post_func=self.post_emt_small_signal_stability,
-                                     prog_func=self.ui.progressBar.setValue,
-                                     text_func=self.ui.progress_label.setText)
-
+                logger = self.circuit.check_emt_models()
+                if logger.has_errors():
+                    # Show dialogue
+                    dlg = LogsDialogue(name="Small-signal stability EMT pre simulation check",
+                                       logger=logger)
+                    dlg.setModal(True)
+                    dlg.exec()
+                    return
                 else:
-                    info_msg('Run a power flow simulation first.\n'
-                             'The results are needed to initialize this simulation.')
+
+                    _, pf_results = self.session.power_flow_3ph
+
+                    if pf_results is not None:
+
+                        self.add_simulation(SimulationTypes.EmtSmallSignal_run)
+
+                        self.LOCK()
+
+                        # Compile the grid
+                        self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
+                        QtGui.QGuiApplication.processEvents()
+
+                        # get the small-signal stability analysis simulation options from the GUI
+                        sss_options = self.get_selected_emt_small_signal_stability_options()
+                        emt_options = self.get_selected_emt_simulation_options()
+
+                        self.ui.progress_label.setText('Performing Small-Signal Stability analysis...')
+
+                        drv = sim.SmallSignalStabilityEmtDriver(grid=self.circuit,
+                                                                emt_options=emt_options,
+                                                                sss_options=sss_options,
+                                                                pf_results=pf_results)
+
+                        self.session.run(drv,
+                                         post_func=self.post_emt_small_signal_stability,
+                                         prog_func=self.ui.progressBar.setValue,
+                                         text_func=self.ui.progress_label.setText)
+
+                    else:
+                        info_msg('Run a power flow simulation first.\n'
+                                 'The results are needed to initialize this simulation.')
             else:
-                self.show_warning_toast('Another Small Signal stability analysis simulation is running already...')
+                self.show_warning_toast('Another Small-Signal stability analysis EMT simulation is running already...')
 
         else:
             pass
@@ -3730,10 +4266,10 @@ class SimulationsMain(TimeEventsMain):
             self.remove_simulation(SimulationTypes.EmtSmallSignal_run)
             self.update_available_results()
 
-            self.show_info_toast("Small-signal stability analysis has finished correctly!")
+            self.show_info_toast("Small-Signal stability analysis EMT has finished correctly!")
 
         else:
-            warning_msg('There are no Small Signal Stability analysis results.', 'Small Signal Stability analysis')
+            warning_msg('There are no Small-Signal Stability analysis EMT results.', 'Small-Signal Stability analysis EMT')
 
         if not self.session.is_anything_running():
             self.UNLOCK()
@@ -3744,9 +4280,25 @@ class SimulationsMain(TimeEventsMain):
 
         :return:
         """
-        current_mip_framework = self.opf_mip_framework_dict[self.ui.mip_framework_comboBox.currentText()]
+        current_mip_framework = self.ui.mip_framework_comboBox.currentData()
         mip_solvers = get_available_mip_solvers(tpe=current_mip_framework)
-        self.ui.mip_solver_comboBox.setModel(gf.get_list_model(mip_solvers))
+        mip_solver_enums: List[MIPSolvers] = list()
+        mip_solver_lookup: Dict[str, MIPSolvers] = {solver.value: solver for solver in MIPSolvers}
+        for solver_name in mip_solvers:
+            mip_solver: MIPSolvers | None = mip_solver_lookup.get(solver_name, None)
+            if mip_solver is None:
+                pass
+            else:
+                mip_solver_enums.append(mip_solver)
+
+        if len(mip_solver_enums) == 0:
+            mip_solver_enums.append(MIPSolvers.HIGHS)
+        else:
+            pass
+
+        self.ui.mip_solver_comboBox.setModel(
+            gf.ComboModel(enum_values=mip_solver_enums, translate=self.tr)
+        )
 
     def procedural_grid_expansion(self):
         """
@@ -3764,3 +4316,141 @@ class SimulationsMain(TimeEventsMain):
 
         self.procedural_grid_window = ProceduralGridWindow(app=self)
         self.procedural_grid_window.exec()
+
+    def catalogue_element_optimization(self) -> None:
+        """
+        Handler for the "Catalogue element optimization" menu action.
+
+        Optimises the choice of catalogue templates for the user-selected branches using NSGA-3.
+        Only AC `Line` and `Transformer2W` branches are considered at this stage.
+
+        :return:
+        """
+        # Bail out early if the circuit cannot be simulated (no buses, etc.).
+        if not self.circuit.valid_for_simulation():
+            return
+        else:
+            pass
+
+        # The catalogue optimization works off a schematic selection: only schematic widgets expose
+        # the per-element selection API needed below.
+        current_diagram = self.get_selected_diagram_widget()
+        if not isinstance(current_diagram, SchematicWidget):
+            warning_msg("Catalogue optimization requires an active schematic diagram with a selection.",
+                        "Catalogue optimization")
+            return
+        else:
+            pass
+
+        # Pull the API objects underlying the selected schematic items and keep only the ones we
+        # know how to optimise. The GUI restricts the user to AC lines and 2-winding transformers.
+        api_selection = current_diagram._get_selection_api_objects()
+        selected_branches: List[Union[dev.Line, dev.Transformer2W]] = list()
+        for elm in api_selection:
+            if isinstance(elm, dev.Line):
+                selected_branches.append(elm)
+            elif isinstance(elm, dev.Transformer2W):
+                selected_branches.append(elm)
+            else:
+                pass  # ignore non-branch selections silently; they are not optimisable here
+
+        # Empty selection: warn the user and stop. Running the optimization would have nothing to do.
+        if len(selected_branches) == 0:
+            warning_msg("Select at least one AC line or two-winding transformer in the schematic "
+                        "before running the catalogue optimization.",
+                        "Catalogue optimization")
+            return
+        else:
+            pass
+
+        # Block re-entry: only one catalogue optimization at a time.
+        if self.session.is_this_running(SimulationTypes.CatalogueOptimization_run):
+            self.show_warning_toast('Another catalogue optimization is already running...')
+            return
+        else:
+            pass
+
+        # Build the problem first; it raises ValueError if every selected branch ended up with
+        # one option or fewer (in which case there is nothing to optimise over).
+        try:
+            problem = sim.CatalogueOptimizationProblem(
+                grid=self.circuit,
+                pf_options=self.get_selected_power_flow_options(),
+                selected_branches=selected_branches,
+                voltage_tolerance=0.1,
+            )
+        except ValueError as ex:
+            warning_msg(str(ex), "Catalogue optimization")
+            return
+
+        # Maximum number of evaluations: scale the per-decision spinbox by the number of slots.
+        # Reuse the investments-evaluation spinbox to avoid adding a new GUI widget.
+        max_eval: int = (self.ui.max_investments_evluation_number_spinBox.value()
+                         * problem.n_vars())
+
+        # Compose the options object.
+        options = sim.CatalogueOptimizationOptions(
+            max_eval=max_eval,
+            pf_options=self.get_selected_power_flow_options(),
+        )
+
+        # Build and launch the driver via the standard session pipeline.
+        drv = sim.CatalogueOptimizationDriver(
+            grid=self.circuit,
+            options=options,
+            problem=problem,
+        )
+
+        self.session.run(
+            drv,
+            post_func=self.post_catalogue_element_optimization,
+            prog_func=self.ui.progressBar.setValue,
+            text_func=self.ui.progress_label.setText,
+        )
+        self.add_simulation(SimulationTypes.CatalogueOptimization_run)
+        self.LOCK()
+
+    def post_catalogue_element_optimization(self) -> None:
+        """
+        Post-execution callback for the catalogue optimization driver.
+
+        Mirrors `post_investments_evaluation`: clears the running-simulation flag,
+        refreshes the available-results combo, applies the best Pareto member's
+        templates to the live MultiCircuit so the user lands on a usable grid
+        state, and recolours the diagrams to expose the new results.
+
+        :return:
+        """
+        driver, results = self.session.catalogue_optimization
+
+        if results is not None:
+            # Clear the "running" flag so the GUI re-enables future runs.
+            self.remove_simulation(SimulationTypes.CatalogueOptimization_run)
+
+            self.ui.progress_label.setText('Colouring catalogue optimization results in the grid...')
+            QtGui.QGuiApplication.processEvents()
+
+            self.update_available_results()
+
+            # Apply the best Pareto member's templates to the live grid so the
+            # diagram immediately reflects the optimizer's top recommendation.
+            # The driver itself reverts state after every evaluation (via the
+            # problem's _restore_baseline), so right now every branch is back
+            # at its pre-evaluation baseline. We re-apply the chosen combo on
+            # top so subsequent clicks in the Variations panel can use the
+            # same restore-then-apply convention without ambiguity about what
+            # state the grid is currently in.
+            if driver is not None and len(results.sorting_indices) > 0:
+                best_x: np.ndarray = results.x[results.sorting_indices[0], :]
+                # Restore baseline first, then apply: matches the click handler
+                # so the auto-displayed state is identical to what clicking the
+                # same Pareto row would produce.
+                driver.problem._restore_baseline()
+                driver.problem._apply_combination(x=best_x)
+            else:
+                # No Pareto results available - leave the grid at baseline.
+                pass
+
+            self.colour_diagrams()
+        else:
+            pass

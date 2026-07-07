@@ -763,7 +763,7 @@ def csc_cumsum_i(p, c, n):
     return int(nz2)  # return sum (c [0..n-1])
 
 
-@nb.njit(cache=True)
+@nb.njit(cache=False)
 def sp_transpose(A: CSC) -> CSC:
     """
     Actual CSC transpose unlike scipy's
@@ -789,7 +789,7 @@ def sp_transpose(A: CSC) -> CSC:
     return C
 
 
-@nb.njit(cache=True)
+@nb.njit(cache=False)
 def sp_slice_cols(A: CSC, cols: IntMat) -> CSC:
     """
     Slice columns
@@ -823,7 +823,7 @@ def sp_slice_cols(A: CSC, cols: IntMat) -> CSC:
     return res
 
 
-@nb.njit(cache=True)
+@nb.njit(cache=False)
 def sp_slice_rows(mat: CSC, rows: np.ndarray) -> CSC:
     """
     Slice rows

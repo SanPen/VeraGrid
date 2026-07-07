@@ -3,12 +3,12 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from unittest.mock import patch
 from VeraGridEngine.Devices.Branches.overhead_line_type import OverheadLineType
 from VeraGridEngine.Devices.Branches.underground_line_type import UndergroundLineType
 from VeraGridEngine.Devices.Branches.sequence_line_type import SequenceLineType
 from VeraGridEngine.Devices.Branches.line import Line
 from VeraGridEngine import VeraGridEngine as gce
+import builtins
 
 
 def test_valid_circuit_idx():
@@ -157,17 +157,19 @@ def test_valid_circuit_idx_with_different_template():
     assert line._circuit_idx == 1
 
 
-def test_circuit_idx_setter():
+def test_circuit_idx_setter(override_attrs):
     line = Line()
     line.enable_auto_updates()  # Enable auto-update for testing
 
     # Test with a valid value
-    with patch('builtins.print') as mock_print:
-        line.circuit_idx = 2
-        assert line._circuit_idx == 2
-        mock_print.assert_called_once_with(
-            "No impedance updates are being done, use the apply_template method to update the impedance values"
-        )
+    captured_messages = list()
+    override_attrs.setattr(builtins, "print", lambda *args, **kwargs: captured_messages.append((args, kwargs)))
+    line.circuit_idx = 2
+    assert line._circuit_idx == 2
+    assert len(captured_messages) == 1
+    assert captured_messages[0][0] == (
+        "No impedance updates are being done, use the apply_template method to update the impedance values",
+    )
 
     # Test with an invalid value (<= 0)
     line.disable_auto_updates()  # Disable auto-update for this test

@@ -7,27 +7,37 @@ import time
 import numpy as np
 from typing import List, Dict, Union, Tuple, TYPE_CHECKING
 
-from VeraGridEngine import ShuntControlMode
+
 from VeraGridEngine.Utils.ThirdParty.gslv.gslv_activation import (pg, build_status_dict, tap_module_control_mode_dict,
                                                                   tap_phase_control_mode_dict, hvdc_control_mode_dict,
                                                                   group_type_dict, contingency_ops_type_dict,
                                                                   contingency_method_dict, converter_control_type_dict,
-                                                                  bus_type_dict,
+                                                                  bus_type_dict, shunt_connection_type_dict,
+                                                                  winding_type_dict, windings_connection_dict,
                                                                   GSLV_AVAILABLE, GSLV_RECOMMENDED_VERSION, GSLV_VERSION)
 from VeraGridEngine.DataStructures.branch_parent_data import BranchParentData
-from VeraGridEngine.basic_structures import IntVec, Vec, ConvergenceReport
+from VeraGridEngine.basic_structures import IntVec, Vec, StrVec, ConvergenceReport
 from VeraGridEngine.Devices.Profiles import AnyProfile
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 import VeraGridEngine.Devices as dev
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
-from VeraGridEngine.enumerations import TapModuleControl, TapPhaseControl
-from VeraGridEngine.enumerations import SolverType, OpfDispatchMode, MIPSolvers, ZonalGrouping, TimeGrouping
+from VeraGridEngine.Simulations.PowerFlow.power_flow_ts_results import PowerFlowTimeSeriesResults
+from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_results_3ph import PowerFlowResults3Ph
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
+from VeraGridEngine.enumerations import (ShuntControlMode, TapModuleControl, TapPhaseControl, SolverType,
+                                         OpfDispatchMode, MIPSolvers, ZonalGrouping, TimeGrouping,
+                                         InvestmentEvaluationMethod, InvestmentsEvaluationObjectives)
 
 from VeraGridEngine.basic_structures import Logger
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
+    from VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options import (
+        InvestmentsEvaluationOptions,
+    )
+    from VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results import (
+        InvestmentsEvaluationResults,
+    )
     from VeraGridEngine.Simulations.OPF.opf_results import OptimalPowerFlowResults
     from VeraGridEngine.Simulations.OPF.opf_options import OptimalPowerFlowOptions
     from VeraGridEngine.Simulations.ContingencyAnalysis.contingency_analysis_options import ContingencyAnalysisOptions
@@ -182,29 +192,190 @@ def fill_profile_with_array(gslv_profile: "pg.Profiledouble",
                             arr: Vec,
                             use_time_series: bool,
                             time_indices: Union[IntVec, None],
-                            n_time=1,
-                            default_val=0) -> None:
+                            n_time: int = 1,
+                            default_val: float = 0.0) -> None:
     """
-    Generates a default time series
-    :param gslv_profile: Profile from gslv to fill in
-    :param arr:  array to fill in
-    :param use_time_series: use time series?
-    :param time_indices: time series indices if any (optional)
-    :param n_time: number of time steps
-    :param default_val: Default value
+    Generate one profile from a dense array.
+
+    :param gslv_profile: GSLV profile to fill.
+    :param arr: Dense VeraGrid array.
+    :param use_time_series: Whether time-series data is being exported.
+    :param time_indices: Optional time-series selection.
+    :param n_time: Number of exported time steps.
+    :param default_val: Scalar fallback value for snapshot exports.
+    :return: None.
     """
 
     if use_time_series:
         if time_indices is None:
-            # we pick all the profile
+            # When there is no slicing request, the entire dense profile is exported.
             gslv_profile.init_dense(arr)
         else:
             assert len(time_indices) == n_time
-            # we need a sliced version
+            # The time-series export must preserve the selected VeraGrid slice only.
             gslv_profile.init_dense(arr[time_indices])
-
     else:
+        # Snapshot exports collapse the profile to a single scalar value.
         gslv_profile.fill(default_val)
+
+
+def get_single_three_phase_snapshot_index(
+        use_time_series: bool,
+        time_indices: Union[IntVec, None],
+        n_time: int) -> int | None:
+    """
+    Return the original VeraGrid snapshot index when one three-phase slice is being exported.
+
+    :param use_time_series: Whether the conversion uses time-series slicing.
+    :param time_indices: Requested time indices.
+    :param n_time: Number of exported time steps.
+    :return: Original time index when there is exactly one slice, else ``None``.
+    """
+    if use_time_series:
+        if time_indices is not None:
+            if n_time == 1:
+                return int(time_indices[0])
+            else:
+                return None
+        else:
+            return None
+    else:
+        return None
+
+
+def apply_three_phase_load_data(gslv_load: "pg.Load", elm: dev.Load, time_index: int | None) -> None:
+    """
+    Copy explicit three-phase load data into one GSLV load object.
+
+    :param gslv_load: Target GSLV load.
+    :param elm: Source VeraGrid load.
+    :param time_index: Source time index when exporting one time slice.
+    :return: None.
+    """
+    pa: float
+    pb: float
+    pc: float
+    qa: float
+    qb: float
+    qc: float
+    g1: float
+    g2: float
+    g3: float
+    b1: float
+    b2: float
+    b3: float
+    ir1: float
+    ir2: float
+    ir3: float
+    ii1: float
+    ii2: float
+    ii3: float
+
+    # The GSLV wrapper only exposes scalar three-phase setters, so each export must
+    # resolve the VeraGrid phase values at one concrete time slice.
+    if time_index is None:
+        pa = float(elm.Pa)
+        pb = float(elm.Pb)
+        pc = float(elm.Pc)
+        qa = float(elm.Qa)
+        qb = float(elm.Qb)
+        qc = float(elm.Qc)
+        g1 = float(elm.G1)
+        g2 = float(elm.G2)
+        g3 = float(elm.G3)
+        b1 = float(elm.B1)
+        b2 = float(elm.B2)
+        b3 = float(elm.B3)
+        ir1 = float(elm.Ir1)
+        ir2 = float(elm.Ir2)
+        ir3 = float(elm.Ir3)
+        ii1 = float(elm.Ii1)
+        ii2 = float(elm.Ii2)
+        ii3 = float(elm.Ii3)
+    else:
+        pa = float(elm.get_Pa_at(time_index))
+        pb = float(elm.get_Pb_at(time_index))
+        pc = float(elm.get_Pc_at(time_index))
+        qa = float(elm.get_Qa_at(time_index))
+        qb = float(elm.get_Qb_at(time_index))
+        qc = float(elm.get_Qc_at(time_index))
+        g1 = float(elm.get_G1_at(time_index))
+        g2 = float(elm.get_G2_at(time_index))
+        g3 = float(elm.get_G3_at(time_index))
+        b1 = float(elm.get_B1_at(time_index))
+        b2 = float(elm.get_B2_at(time_index))
+        b3 = float(elm.get_B3_at(time_index))
+        ir1 = float(elm.get_Ir1_at(time_index))
+        ir2 = float(elm.get_Ir2_at(time_index))
+        ir3 = float(elm.get_Ir3_at(time_index))
+        ii1 = float(elm.get_Ii1_at(time_index))
+        ii2 = float(elm.get_Ii2_at(time_index))
+        ii3 = float(elm.get_Ii3_at(time_index))
+
+    # The connection enum changes how the solver maps the phase injections.
+    gslv_load.conn = shunt_connection_type_dict[elm.conn]
+    gslv_load.set_P1_val(pa)
+    gslv_load.set_P2_val(pb)
+    gslv_load.set_P3_val(pc)
+    gslv_load.set_Q1_val(qa)
+    gslv_load.set_Q2_val(qb)
+    gslv_load.set_Q3_val(qc)
+    gslv_load.set_G1_val(g1)
+    gslv_load.set_G2_val(g2)
+    gslv_load.set_G3_val(g3)
+    gslv_load.set_B1_val(b1)
+    gslv_load.set_B2_val(b2)
+    gslv_load.set_B3_val(b3)
+    gslv_load.set_Ir1_val(ir1)
+    gslv_load.set_Ir2_val(ir2)
+    gslv_load.set_Ir3_val(ir3)
+    gslv_load.set_Ii1_val(ii1)
+    gslv_load.set_Ii2_val(ii2)
+    gslv_load.set_Ii3_val(ii3)
+
+
+def apply_three_phase_shunt_data(
+        gslv_shunt: "pg.Shunt | pg.ControllableShunt",
+        elm: dev.ShuntParent,
+        time_index: int | None) -> None:
+    """
+    Copy explicit three-phase shunt data into one GSLV shunt-like object.
+
+    :param gslv_shunt: Target GSLV shunt-like object.
+    :param elm: Source VeraGrid shunt-like object.
+    :param time_index: Source time index when exporting one time slice.
+    :return: None.
+    """
+    ga: float
+    gb: float
+    gc: float
+    ba: float
+    bb: float
+    bc: float
+
+    # The shunt connection and per-phase admittances define the unbalanced branch to neutral.
+    if time_index is None:
+        ga = float(elm.Ga)
+        gb = float(elm.Gb)
+        gc = float(elm.Gc)
+        ba = float(elm.Ba)
+        bb = float(elm.Bb)
+        bc = float(elm.Bc)
+    else:
+        ga = float(elm.get_Ga_at(time_index))
+        gb = float(elm.get_Gb_at(time_index))
+        gc = float(elm.get_Gc_at(time_index))
+        ba = float(elm.get_Ba_at(time_index))
+        bb = float(elm.get_Bb_at(time_index))
+        bc = float(elm.get_Bc_at(time_index))
+
+    gslv_shunt.conn = shunt_connection_type_dict[elm.conn]
+    gslv_shunt.set_Ga_val(ga)
+    gslv_shunt.set_Gb_val(gb)
+    gslv_shunt.set_Gc_val(gc)
+    gslv_shunt.set_Ba_val(ba)
+    gslv_shunt.set_Bb_val(bb)
+    gslv_shunt.set_Bc_val(bc)
 
 
 def convert_area(area: dev.Area) -> "pg.Area":
@@ -680,8 +851,8 @@ def convert_bus(elm: dev.Bus, n_time: int,
                  vmax=elm.Vmax,
                  angle_min=elm.angle_min,
                  angle_max=elm.angle_max,
-                 r_fault=elm.r_fault,
-                 x_fault=elm.x_fault,
+                 # r_fault=elm.r_fault,
+                 # x_fault=elm.x_fault,
                  active_default=elm.active,
 
                  is_slack=elm.is_slack,
@@ -762,17 +933,20 @@ def add_buses(
 
 def convert_load(k: int, elm: dev.Load, bus_dict: Dict[str, "pg.Bus"], n_time: int,
                  use_time_series: bool, time_indices: IntVec | None = None,
-                 opf_results: OptimalPowerFlowResults | None = None) -> "pg.Load":
+                 opf_results: OptimalPowerFlowResults | None = None,
+                 add_three_phase_data: bool = False) -> "pg.Load":
     """
+    Convert one VeraGrid load into one GSLV load.
 
-    :param k:
-    :param elm:
-    :param bus_dict:
-    :param n_time:
-    :param use_time_series:
-    :param time_indices:
-    :param opf_results:
-    :return:
+    :param k: Load index.
+    :param elm: VeraGrid load.
+    :param bus_dict: Bus lookup by VeraGrid id tag.
+    :param n_time: Number of exported time steps.
+    :param use_time_series: Whether the export is time-series based.
+    :param time_indices: Optional time-series selection.
+    :param opf_results: Optional OPF results.
+    :param add_three_phase_data: Export explicit three-phase fields when available.
+    :return: GSLV load.
     """
 
     load = pg.Load(
@@ -860,6 +1034,17 @@ def convert_load(k: int, elm: dev.Load, bus_dict: Dict[str, "pg.Bus"], n_time: i
                  n_time=n_time,
                  default_val=elm.Cost)
 
+    if add_three_phase_data:
+        # Native three-phase GSLV studies need the explicit per-phase payload.
+        snapshot_time_index: int | None = get_single_three_phase_snapshot_index(
+            use_time_series=use_time_series,
+            time_indices=time_indices,
+            n_time=n_time,
+        )
+        apply_three_phase_load_data(gslv_load=load, elm=elm, time_index=snapshot_time_index)
+    else:
+        pass
+
     return load
 
 
@@ -867,10 +1052,12 @@ def add_loads(circuit: MultiCircuit,
               gslv_grid: "pg.MultiCircuit",
               bus_dict: Dict[str, "pg.Bus"],
               use_time_series: bool,
-              n_time=1,
+              n_time: int = 1,
               time_indices: IntVec | None = None,
-              opf_results: OptimalPowerFlowResults | None = None):
+              opf_results: OptimalPowerFlowResults | None = None,
+              add_three_phase_data: bool = False) -> None:
     """
+    Add every VeraGrid load to the target GSLV grid.
 
     :param circuit: VeraGrid circuit
     :param gslv_grid: GSLV circuit
@@ -879,13 +1066,15 @@ def add_loads(circuit: MultiCircuit,
     :param n_time: number of time steps
     :param time_indices:
     :param opf_results:
-    :return:
+    :param add_three_phase_data: Export explicit three-phase fields when available.
+    :return: None.
     """
     devices = circuit.get_loads()
     for k, elm in enumerate(devices):
         load = convert_load(k=k, elm=elm, bus_dict=bus_dict,
                             n_time=n_time, use_time_series=use_time_series,
-                            time_indices=time_indices, opf_results=opf_results)
+                            time_indices=time_indices, opf_results=opf_results,
+                            add_three_phase_data=add_three_phase_data)
         gslv_grid.add_load(load)
 
 
@@ -911,7 +1100,7 @@ def convert_static_generator(elm: dev.StaticGenerator,
         bus=None if elm.bus is None else bus_dict[elm.bus.idtag],
         nt=n_time,
         P=elm.P,
-        Q=elm.Q,
+        power_factor=elm.Pf,
         build_status=elm.build_status,
     )
 
@@ -968,15 +1157,18 @@ def add_static_generators(circuit: MultiCircuit, gslv_grid: "pg.MultiCircuit",
 
 
 def convert_shunt(elm: dev.Shunt, bus_dict: Dict[str, "pg.Bus"], n_time: int,
-                  use_time_series: bool, time_indices: IntVec | None = None, ) -> "pg.Shunt":
+                  use_time_series: bool, time_indices: IntVec | None = None,
+                  add_three_phase_data: bool = False) -> "pg.Shunt":
     """
+    Convert one VeraGrid shunt into one GSLV shunt.
 
-    :param elm:
-    :param bus_dict:
-    :param n_time:
-    :param use_time_series:
-    :param time_indices:
-    :return:
+    :param elm: VeraGrid shunt.
+    :param bus_dict: Bus lookup by VeraGrid id tag.
+    :param n_time: Number of exported time steps.
+    :param use_time_series: Whether the export is time-series based.
+    :param time_indices: Optional time-series selection.
+    :param add_three_phase_data: Export explicit three-phase fields when available.
+    :return: GSLV shunt.
     """
     sh = pg.Shunt(
         nt=n_time,
@@ -1017,6 +1209,16 @@ def convert_shunt(elm: dev.Shunt, bus_dict: Dict[str, "pg.Bus"], n_time: int,
                  n_time=n_time,
                  default_val=elm.Cost)
 
+    if add_three_phase_data:
+        snapshot_time_index: int | None = get_single_three_phase_snapshot_index(
+            use_time_series=use_time_series,
+            time_indices=time_indices,
+            n_time=n_time,
+        )
+        apply_three_phase_shunt_data(gslv_shunt=sh, elm=elm, time_index=snapshot_time_index)
+    else:
+        pass
+
     return sh
 
 
@@ -1024,8 +1226,9 @@ def add_shunts(circuit: MultiCircuit,
                gslv_grid: "pg.MultiCircuit",
                bus_dict: Dict[str, "pg.Bus"],
                time_series: bool,
-               n_time=1,
-               time_indices: Union[IntVec, None] = None):
+               n_time: int = 1,
+               time_indices: Union[IntVec, None] = None,
+               add_three_phase_data: bool = False) -> None:
     """
 
     :param circuit: VeraGrid circuit
@@ -1034,38 +1237,69 @@ def add_shunts(circuit: MultiCircuit,
     :param bus_dict: dictionary of bus id to GSLV bus object
     :param n_time: number of time steps
     :param time_indices: Array of time indices
+    :param add_three_phase_data: Export explicit three-phase fields when available.
+    :return: None.
     """
     devices = circuit.get_shunts()
     for k, elm in enumerate(devices):
         sh = convert_shunt(elm=elm, bus_dict=bus_dict, n_time=n_time,
-                           use_time_series=time_series, time_indices=time_indices)
+                           use_time_series=time_series, time_indices=time_indices,
+                           add_three_phase_data=add_three_phase_data)
         gslv_grid.add_shunt(sh)
 
 
 def convert_controllable_shunt(elm: dev.ControllableShunt, bus_dict: Dict[str, "pg.Bus"], n_time: int,
                                use_time_series: bool,
                                shunt_control_mode_dict: Dict[ShuntControlMode, "pg.ShuntControlMode"],
-                               time_indices: IntVec | None = None) -> "pg.ControllableShunt":
+                               time_indices: IntVec | None = None,
+                               add_three_phase_data: bool = False) -> "pg.ControllableShunt":
     """
+    Convert one VeraGrid controllable shunt into one GSLV controllable shunt.
 
-    :param elm:
-    :param bus_dict:
-    :param n_time:
-    :param use_time_series:
-    :param shunt_control_mode_dict:
-    :param time_indices:
-    :return:
+    :param elm: VeraGrid controllable shunt.
+    :param bus_dict: Bus lookup by VeraGrid id tag.
+    :param n_time: Number of exported time steps.
+    :param use_time_series: Whether the export is time-series based.
+    :param shunt_control_mode_dict: Shunt-control enum translator.
+    :param time_indices: Optional time-series selection.
+    :param add_three_phase_data: Export explicit three-phase fields when available.
+    :return: GSLV controllable shunt.
     """
+    if not isinstance(elm.g_steps, np.ndarray):
+        raise TypeError(f"ControllableShunt.g_steps must be np.ndarray, got {type(elm.g_steps)}")
+    if not isinstance(elm.b_steps, np.ndarray):
+        raise TypeError(f"ControllableShunt.b_steps must be np.ndarray, got {type(elm.b_steps)}")
+
+    g_steps = np.asarray(elm.g_steps, dtype=float).reshape(-1)
+    b_steps = np.asarray(elm.b_steps, dtype=float).reshape(-1)
+
+    number_of_steps = max(int(g_steps.size), int(b_steps.size), 1)
+    if g_steps.size == 0:
+        g_steps = np.zeros(number_of_steps, dtype=float)
+    elif b_steps.size not in (0, g_steps.size):
+        raise ValueError(f"ControllableShunt {elm.name} has mismatched step arrays")
+    else:
+        pass
+
+    if b_steps.size == 0:
+        b_steps = np.zeros(number_of_steps, dtype=float)
+    elif g_steps.size != b_steps.size:
+        raise ValueError(f"ControllableShunt {elm.name} has mismatched step arrays")
+    else:
+        pass
+
+    step = min(max(int(elm.step), 0), number_of_steps - 1)
+
     sh = pg.ControllableShunt(
         nt=n_time,
         bus=None if elm.bus is None else bus_dict[elm.bus.idtag],
         name=elm.name,
         idtag=elm.idtag,
         code=str(elm.code),
-        number_of_steps=elm.g_steps.size(),
-        step=elm.step,
-        g_per_step=elm.g_per_step,
-        b_per_step=elm.b_per_step,
+        number_of_steps=number_of_steps,
+        step=step,
+        g_per_step=0.0,
+        b_per_step=0.0,
         Cost=elm.Cost,
         active=elm.active,
         G=elm.G,
@@ -1079,10 +1313,23 @@ def convert_controllable_shunt(elm: dev.ControllableShunt, bus_dict: Dict[str, "
         mttr=elm.mttr,
         capex=elm.capex,
         opex=elm.opex,
-        control_bus=None if elm.bus is None else bus_dict[elm.control_bus.idtag],
+        control_bus=None if elm.control_bus is None else bus_dict[elm.control_bus.idtag],
         control_mode=shunt_control_mode_dict[elm.control_mode],
         build_status=build_status_dict[elm.build_status],
     )
+
+    sh.g_steps = g_steps.tolist()
+    sh.b_steps = b_steps.tolist()
+
+    if add_three_phase_data:
+        snapshot_time_index: int | None = get_single_three_phase_snapshot_index(
+            use_time_series=use_time_series,
+            time_indices=time_indices,
+            n_time=n_time,
+        )
+        apply_three_phase_shunt_data(gslv_shunt=sh, elm=elm, time_index=snapshot_time_index)
+    else:
+        pass
 
     fill_profile(gslv_profile=sh.active,
                  gc_profile=elm.active_prof,
@@ -1112,6 +1359,13 @@ def convert_controllable_shunt(elm: dev.ControllableShunt, bus_dict: Dict[str, "
                  n_time=n_time,
                  default_val=elm.Cost)
 
+    fill_profile(gslv_profile=sh.Vset,
+                 gc_profile=elm.Vset_prof,
+                 use_time_series=use_time_series,
+                 time_indices=time_indices,
+                 n_time=n_time,
+                 default_val=elm.Vset)
+
     return sh
 
 
@@ -1119,8 +1373,9 @@ def add_controllable_shunts(circuit: MultiCircuit,
                             gslv_grid: "pg.MultiCircuit",
                             bus_dict: Dict[str, "pg.Bus"],
                             time_series: bool,
-                            n_time=1,
-                            time_indices: Union[IntVec, None] = None):
+                            n_time: int = 1,
+                            time_indices: Union[IntVec, None] = None,
+                            add_three_phase_data: bool = False) -> None:
     """
 
     :param circuit: VeraGrid circuit
@@ -1129,6 +1384,8 @@ def add_controllable_shunts(circuit: MultiCircuit,
     :param bus_dict: dictionary of bus id to GSLV bus object
     :param n_time: number of time steps
     :param time_indices: Array of time indices
+    :param add_three_phase_data: Export explicit three-phase fields when available.
+    :return: None.
     """
 
     shunt_control_mode_dict = {
@@ -1144,24 +1401,44 @@ def add_controllable_shunts(circuit: MultiCircuit,
                                         n_time=n_time,
                                         use_time_series=time_series,
                                         time_indices=time_indices,
-                                        shunt_control_mode_dict=shunt_control_mode_dict)
+                                        shunt_control_mode_dict=shunt_control_mode_dict,
+                                        add_three_phase_data=add_three_phase_data)
         gslv_grid.add_controllable_shunt(sh)
 
 
 def convert_generator(k: int, elm: dev.Generator, bus_dict: Dict[str, "pg.Bus"], n_time: int,
                       use_time_series: bool, time_indices: IntVec | None = None,
-                      opf_results: OptimalPowerFlowResults | None = None) -> "pg.Generator":
+                      opf_results: OptimalPowerFlowResults | None = None,
+                      add_three_phase_data: bool = False) -> "pg.Generator":
     """
+    Convert one VeraGrid generator into one GSLV generator.
 
-    :param k:
-    :param elm:
-    :param bus_dict:
-    :param n_time:
-    :param use_time_series:
-    :param time_indices:
-    :param opf_results:
-    :return:
+    :param k: Generator index.
+    :param elm: VeraGrid generator.
+    :param bus_dict: Bus lookup by VeraGrid id tag.
+    :param n_time: Number of exported time steps.
+    :param use_time_series: Whether the export is time-series based.
+    :param time_indices: Optional time-series selection.
+    :param opf_results: Optional OPF results.
+    :param add_three_phase_data: Export sequence impedances needed by three-phase studies.
+    :return: GSLV generator.
     """
+    generator_r0: float
+    generator_x0: float
+    generator_r2: float
+    generator_x2: float
+
+    if add_three_phase_data:
+        generator_r0 = float(elm.R0)
+        generator_x0 = float(elm.X0)
+        generator_r2 = float(elm.R2)
+        generator_x2 = float(elm.X2)
+    else:
+        generator_r0 = 1e-20
+        generator_x0 = 1e-20
+        generator_r2 = 1e-20
+        generator_x2 = 1e-20
+
     gen = pg.Generator(
         nt=n_time,
         bus=None if elm.bus is None else bus_dict[elm.bus.idtag],
@@ -1169,7 +1446,7 @@ def convert_generator(k: int, elm: dev.Generator, bus_dict: Dict[str, "pg.Bus"],
         idtag=elm.idtag,
         active=elm.active,
         P=elm.P,
-        power_factor=elm.Pf,
+        Q=elm.Q,
         vset=elm.Vset,
         Pmin=elm.Pmin,
         Pmax=elm.Pmax,
@@ -1179,7 +1456,11 @@ def convert_generator(k: int, elm: dev.Generator, bus_dict: Dict[str, "pg.Bus"],
         is_controlled=elm.is_controlled,
         enabled_dispatch=elm.enabled_dispatch,  # TODO: pass to profile
         q_points=elm.q_curve.get_data().tolist(),
-        use_reactive_power_curve=elm.use_reactive_power_curve
+        use_reactive_power_curve=elm.use_reactive_power_curve,
+        r0=generator_r0,
+        x0=generator_x0,
+        r2=generator_r2,
+        x2=generator_x2,
     )
 
     fill_profile(gslv_profile=gen.active,
@@ -1204,12 +1485,12 @@ def convert_generator(k: int, elm: dev.Generator, bus_dict: Dict[str, "pg.Bus"],
                                 n_time=n_time,
                                 default_val=elm.P)
 
-    fill_profile(gslv_profile=gen.Pf,
-                 gc_profile=elm.Pf_prof,
+    fill_profile(gslv_profile=gen.Q,
+                 gc_profile=elm.Q_prof,
                  use_time_series=use_time_series,
                  time_indices=time_indices,
                  n_time=n_time,
-                 default_val=elm.Pf)
+                 default_val=elm.Q)
 
     fill_profile(gslv_profile=gen.Vset,
                  gc_profile=elm.Vset_prof,
@@ -1246,9 +1527,10 @@ def add_generators(circuit: MultiCircuit,
                    gslv_grid: "pg.MultiCircuit",
                    bus_dict: Dict[str, "pg.Bus"],
                    time_series: bool,
-                   n_time=1,
+                   n_time: int = 1,
                    time_indices: Union[IntVec, None] = None,
-                   opf_results: Union[None, OptimalPowerFlowResults] = None):
+                   opf_results: Union[None, OptimalPowerFlowResults] = None,
+                   add_three_phase_data: bool = False) -> None:
     """
 
     :param circuit: VeraGrid circuit
@@ -1258,31 +1540,53 @@ def add_generators(circuit: MultiCircuit,
     :param n_time: number of time steps
     :param time_indices: Array of time indices
     :param opf_results: OptimalPowerFlowResults (optional)
+    :param add_three_phase_data: Export sequence impedances needed by three-phase studies.
+    :return: None.
     """
     devices = circuit.get_generators()
 
     for k, elm in enumerate(devices):
         gen = convert_generator(k=k, elm=elm, bus_dict=bus_dict,
                                 n_time=n_time, use_time_series=time_series,
-                                time_indices=time_indices, opf_results=opf_results)
+                                time_indices=time_indices, opf_results=opf_results,
+                                add_three_phase_data=add_three_phase_data)
 
         gslv_grid.add_generator(gen)
 
 
 def convert_battery(k: int, elm: dev.Battery, bus_dict: Dict[str, "pg.Bus"], n_time: int,
                     use_time_series: bool, time_indices: IntVec | None = None,
-                    opf_results: OptimalPowerFlowResults | None = None) -> "pg.Battery":
+                    opf_results: OptimalPowerFlowResults | None = None,
+                    add_three_phase_data: bool = False) -> "pg.Battery":
     """
+    Convert one VeraGrid battery into one GSLV battery.
 
-    :param k:
-    :param elm:
-    :param bus_dict:
-    :param n_time:
-    :param use_time_series:
-    :param time_indices:
-    :param opf_results:
-    :return:
+    :param k: Battery index.
+    :param elm: VeraGrid battery.
+    :param bus_dict: Bus lookup by VeraGrid id tag.
+    :param n_time: Number of exported time steps.
+    :param use_time_series: Whether the export is time-series based.
+    :param time_indices: Optional time-series selection.
+    :param opf_results: Optional OPF results.
+    :param add_three_phase_data: Export sequence impedances needed by three-phase studies.
+    :return: GSLV battery.
     """
+    battery_r0: float
+    battery_x0: float
+    battery_r2: float
+    battery_x2: float
+
+    if add_three_phase_data:
+        battery_r0 = float(elm.R0)
+        battery_x0 = float(elm.X0)
+        battery_r2 = float(elm.R2)
+        battery_x2 = float(elm.X2)
+    else:
+        battery_r0 = 1e-20
+        battery_x0 = 1e-20
+        battery_r2 = 1e-20
+        battery_x2 = 1e-20
+
     gen = pg.Battery(
         nt=n_time,
         bus=None if elm.bus is None else bus_dict[elm.bus.idtag],
@@ -1302,6 +1606,10 @@ def convert_battery(k: int, elm: dev.Battery, bus_dict: Dict[str, "pg.Bus"], n_t
         charge_efficiency=elm.charge_efficiency,
         discharge_efficiency=elm.discharge_efficiency,
         is_controlled=elm.is_controlled,
+        r0=battery_r0,
+        x0=battery_x0,
+        r2=battery_r2,
+        x2=battery_x2,
     )
 
     fill_profile(gslv_profile=gen.active,
@@ -1326,12 +1634,12 @@ def convert_battery(k: int, elm: dev.Battery, bus_dict: Dict[str, "pg.Bus"], n_t
                                 n_time=n_time,
                                 default_val=elm.P)
 
-    fill_profile(gslv_profile=gen.Pf,
-                 gc_profile=elm.Pf_prof,
+    fill_profile(gslv_profile=gen.Q,
+                 gc_profile=elm.Q_prof,
                  use_time_series=use_time_series,
                  time_indices=time_indices,
                  n_time=n_time,
-                 default_val=elm.Pf)
+                 default_val=elm.Q)
 
     fill_profile(gslv_profile=gen.Vset,
                  gc_profile=elm.Vset_prof,
@@ -1370,7 +1678,8 @@ def add_battery_data(circuit: MultiCircuit,
                      time_series: bool,
                      n_time: int = 1,
                      time_indices: Union[IntVec, None] = None,
-                     opf_results: Union[None, OptimalPowerFlowResults] = None):
+                     opf_results: Union[None, OptimalPowerFlowResults] = None,
+                     add_three_phase_data: bool = False) -> None:
     """
 
     :param circuit: VeraGrid circuit
@@ -1380,13 +1689,16 @@ def add_battery_data(circuit: MultiCircuit,
     :param n_time: number of time steps
     :param time_indices: Array of time indices
     :param opf_results: OptimelPowerFlowResults (optional)
+    :param add_three_phase_data: Export sequence impedances needed by three-phase studies.
+    :return: None.
     """
     devices = circuit.get_batteries()
 
     for k, elm in enumerate(devices):
         batt = convert_battery(k=k, elm=elm, bus_dict=bus_dict,
                                n_time=n_time, use_time_series=time_series,
-                               time_indices=time_indices, opf_results=opf_results)
+                               time_indices=time_indices, opf_results=opf_results,
+                               add_three_phase_data=add_three_phase_data)
 
         gslv_grid.add_battery(batt)
 
@@ -1395,17 +1707,42 @@ def convert_line(elm: dev.Line,
                  n_time: int,
                  bus_dict: Dict[str, "pg.Bus"],
                  branch_groups_dict: Dict[dev.BranchGroup, "pg.BranchGroup"],
-                 use_time_series: bool, time_indices: IntVec | None = None, ) -> "pg.Line":
+                 use_time_series: bool, time_indices: IntVec | None = None,
+                 add_three_phase_data: bool = False) -> "pg.Line":
     """
+    Convert one VeraGrid line into one GSLV line.
 
-    :param elm:
-    :param n_time:
-    :param bus_dict:
-    :param branch_groups_dict:
-    :param use_time_series:
-    :param time_indices:
-    :return:
+    :param elm: VeraGrid line.
+    :param n_time: Number of exported time steps.
+    :param bus_dict: Bus lookup by VeraGrid id tag.
+    :param branch_groups_dict: Branch-group lookup.
+    :param use_time_series: Whether the export is time-series based.
+    :param time_indices: Optional time-series selection.
+    :param add_three_phase_data: Export sequence parameters needed by three-phase studies.
+    :return: GSLV line.
     """
+    line_r0: float
+    line_x0: float
+    line_b0: float
+    line_r2: float
+    line_x2: float
+    line_b2: float
+
+    if add_three_phase_data:
+        line_r0 = float(elm.R0)
+        line_x0 = float(elm.X0)
+        line_b0 = float(elm.B0)
+        line_r2 = float(elm.R2)
+        line_x2 = float(elm.X2)
+        line_b2 = float(elm.B2)
+    else:
+        line_r0 = 1e-20
+        line_x0 = 1e-20
+        line_b0 = 1e-20
+        line_r2 = 1e-20
+        line_x2 = 1e-20
+        line_b2 = 1e-20
+
     lne = pg.Line(
         idtag=elm.idtag,
         code=str(elm.code),
@@ -1420,6 +1757,12 @@ def convert_line(elm: dev.Line,
         x=elm.X,
         b=elm.B,
         monitor_loading=elm.monitor_loading,
+        r0=line_r0,
+        x0=line_x0,
+        b0=line_b0,
+        r2=line_r2,
+        x2=line_x2,
+        b2=line_b2,
     )
 
     lne.group = branch_groups_dict.get(elm.group, None)
@@ -1461,7 +1804,8 @@ def add_lines(circuit: MultiCircuit,
               branch_groups_dict: Dict[dev.BranchGroup, "pg.BranchGroup"],
               time_series: bool,
               n_time: int = 1,
-              time_indices: Union[IntVec, None] = None):
+              time_indices: Union[IntVec, None] = None,
+              add_three_phase_data: bool = False) -> None:
     """
 
     :param circuit: VeraGrid circuit
@@ -1471,6 +1815,8 @@ def add_lines(circuit: MultiCircuit,
     :param branch_groups_dict: dictionary of converted branch groups
     :param n_time: number of time steps
     :param time_indices: Array of time indices
+    :param add_three_phase_data: Export sequence parameters needed by three-phase studies.
+    :return: None.
     """
 
     # Compile the lines
@@ -1480,7 +1826,8 @@ def add_lines(circuit: MultiCircuit,
                            branch_groups_dict=branch_groups_dict,
                            n_time=n_time,
                            use_time_series=time_series,
-                           time_indices=time_indices)
+                           time_indices=time_indices,
+                           add_three_phase_data=add_three_phase_data)
         gslv_grid.add_line(lne)
 
 
@@ -1489,18 +1836,52 @@ def convert_transformer(elm: dev.Transformer2W,
                         branch_groups_dict: Dict[dev.BranchGroup, "pg.BranchGroup"],
                         n_time: int,
                         use_time_series: bool, time_indices: IntVec | None,
-                        override_controls: bool) -> "pg.Transformer2W":
+                        override_controls: bool,
+                        add_three_phase_data: bool = False) -> "pg.Transformer2W":
     """
+    Convert one VeraGrid two-winding transformer into one GSLV transformer.
 
-    :param elm:
-    :param bus_dict:
-    :param branch_groups_dict:
-    :param n_time:
-    :param use_time_series:
-    :param time_indices:
-    :param override_controls:
-    :return:
+    :param elm: VeraGrid transformer.
+    :param bus_dict: Bus lookup by VeraGrid id tag.
+    :param branch_groups_dict: Branch-group lookup.
+    :param n_time: Number of exported time steps.
+    :param use_time_series: Whether the export is time-series based.
+    :param time_indices: Optional time-series selection.
+    :param override_controls: Whether transformer control modes must be forced to fixed.
+    :param add_three_phase_data: Export sequence parameters and winding connections.
+    :return: GSLV transformer.
     """
+    transformer_r0: float
+    transformer_x0: float
+    transformer_g0: float
+    transformer_b0: float
+    transformer_r2: float
+    transformer_x2: float
+    transformer_g2: float
+    transformer_b2: float
+    transformer_conn: "pg.WindingsConnection"
+
+    if add_three_phase_data:
+        transformer_r0 = float(elm.R0)
+        transformer_x0 = float(elm.X0)
+        transformer_g0 = float(elm.G0)
+        transformer_b0 = float(elm.B0)
+        transformer_r2 = float(elm.R2)
+        transformer_x2 = float(elm.X2)
+        transformer_g2 = float(elm.G2)
+        transformer_b2 = float(elm.B2)
+        transformer_conn = windings_connection_dict[elm.conn]
+    else:
+        transformer_r0 = 1e-20
+        transformer_x0 = 1e-20
+        transformer_g0 = 1e-20
+        transformer_b0 = 1e-20
+        transformer_r2 = 1e-20
+        transformer_x2 = 1e-20
+        transformer_g2 = 1e-20
+        transformer_b2 = 1e-20
+        transformer_conn = pg.WindingsConnection.GG
+
     tr2 = pg.Transformer2W(idtag=elm.idtag,
                            code=str(elm.code),
                            name=elm.name,
@@ -1551,8 +1932,22 @@ def convert_transformer(elm: dev.Transformer2W,
                            protection_rating_factor=elm.protection_rating_factor,
 
                            monitor_loading=elm.monitor_loading,
-
+                           r0=transformer_r0,
+                           x0=transformer_x0,
+                           g0=transformer_g0,
+                           b0=transformer_b0,
+                           r2=transformer_r2,
+                           x2=transformer_x2,
+                           g2=transformer_g2,
+                           b2=transformer_b2,
+                           conn=transformer_conn,
                            )
+
+    if add_three_phase_data:
+        tr2.conn_f = winding_type_dict[elm.conn_f]
+        tr2.conn_t = winding_type_dict[elm.conn_t]
+    else:
+        pass
 
     tr2.tap_phase_min = elm.tap_phase_min
     tr2.tap_phase_max = elm.tap_phase_max
@@ -1656,7 +2051,8 @@ def add_transformers(circuit: MultiCircuit,
                      time_series: bool,
                      n_time: int = 1,
                      time_indices: Union[IntVec, None] = None,
-                     override_controls=False):
+                     override_controls: bool = False,
+                     add_three_phase_data: bool = False) -> None:
     """
 
     :param circuit: VeraGrid circuit
@@ -1667,6 +2063,8 @@ def add_transformers(circuit: MultiCircuit,
     :param n_time: number of time steps
     :param time_indices: Array of time indices
     :param override_controls: If true the controls are set to Fix
+    :param add_three_phase_data: Export sequence parameters and winding connections.
+    :return: None.
     """
 
     for i, elm in enumerate(circuit.transformers2w):
@@ -1676,7 +2074,8 @@ def add_transformers(circuit: MultiCircuit,
                                   n_time=n_time,
                                   use_time_series=time_series,
                                   time_indices=time_indices,
-                                  override_controls=override_controls)
+                                  override_controls=override_controls,
+                                  add_three_phase_data=add_three_phase_data)
         gslv_grid.add_transformer(tr2)
 
 
@@ -1765,7 +2164,7 @@ def convert_vsc(elm: dev.VSC, bus_dict: Dict[str, "pg.Bus"], n_time: int,
         code=str(elm.code),
         active=elm.active,
         rate=9999.0,
-        kdp=elm.kdp,
+        kdp=elm.control1_val_droop,
         alpha1=elm.alpha1,
         alpha2=elm.alpha2,
         alpha3=elm.alpha3,
@@ -2059,8 +2458,9 @@ class GslvDicts:
 def to_gslv(circuit: MultiCircuit,
             use_time_series: bool,
             time_indices: Union[IntVec, None] = None,
-            override_branch_controls=False,
-            opf_results: Union[None, OptimalPowerFlowResults] = None) -> Tuple["pg.MultiCircuit", GslvDicts]:
+            override_branch_controls: bool = False,
+            opf_results: Union[None, OptimalPowerFlowResults] = None,
+            add_three_phase_data: bool = False) -> Tuple["pg.MultiCircuit", GslvDicts]:
     """
     Convert VeraGrid circuit to GSLV
     :param circuit: MultiCircuit
@@ -2068,6 +2468,7 @@ def to_gslv(circuit: MultiCircuit,
     :param time_indices: Array of time indices
     :param override_branch_controls: If true the branch controls are set to Fix
     :param opf_results:
+    :param add_three_phase_data: Export explicit three-phase device data when possible.
     :return: pg.MultiCircuit instance
     """
 
@@ -2135,6 +2536,7 @@ def to_gslv(circuit: MultiCircuit,
         use_time_series=use_time_series,
         n_time=n_time,
         time_indices=time_indices,
+        add_three_phase_data=add_three_phase_data,
     )
 
     add_static_generators(
@@ -2143,8 +2545,7 @@ def to_gslv(circuit: MultiCircuit,
         bus_dict=bus_dict,
         time_series=use_time_series,
         n_time=n_time,
-        time_indices=time_indices
-
+        time_indices=time_indices,
     )
 
     add_shunts(
@@ -2153,7 +2554,8 @@ def to_gslv(circuit: MultiCircuit,
         bus_dict=bus_dict,
         time_series=use_time_series,
         n_time=n_time,
-        time_indices=time_indices
+        time_indices=time_indices,
+        add_three_phase_data=add_three_phase_data,
     )
 
     add_controllable_shunts(
@@ -2162,7 +2564,8 @@ def to_gslv(circuit: MultiCircuit,
         bus_dict=bus_dict,
         time_series=use_time_series,
         n_time=n_time,
-        time_indices=time_indices
+        time_indices=time_indices,
+        add_three_phase_data=add_three_phase_data,
     )
 
     add_generators(
@@ -2172,7 +2575,8 @@ def to_gslv(circuit: MultiCircuit,
         time_series=use_time_series,
         n_time=n_time,
         time_indices=time_indices,
-        opf_results=opf_results
+        opf_results=opf_results,
+        add_three_phase_data=add_three_phase_data,
     )
 
     add_battery_data(
@@ -2182,7 +2586,8 @@ def to_gslv(circuit: MultiCircuit,
         time_series=use_time_series,
         n_time=n_time,
         time_indices=time_indices,
-        opf_results=opf_results
+        opf_results=opf_results,
+        add_three_phase_data=add_three_phase_data,
     )
 
     add_lines(
@@ -2192,7 +2597,8 @@ def to_gslv(circuit: MultiCircuit,
         branch_groups_dict=dicts.branch_groups_dict,
         time_series=use_time_series,
         n_time=n_time,
-        time_indices=time_indices
+        time_indices=time_indices,
+        add_three_phase_data=add_three_phase_data,
     )
 
     add_transformers(
@@ -2203,7 +2609,8 @@ def to_gslv(circuit: MultiCircuit,
         time_series=use_time_series,
         n_time=n_time,
         time_indices=time_indices,
-        override_controls=override_branch_controls
+        override_controls=override_branch_controls,
+        add_three_phase_data=add_three_phase_data,
     )
 
     add_transformers3w(
@@ -2252,6 +2659,11 @@ class FakeAdmittances:
     """
 
     def __init__(self) -> None:
+        """
+        Build one placeholder admittance container.
+
+        :return: None.
+        """
         self.Ybus = None
         self.Yf = None
         self.Yt = None
@@ -2431,10 +2843,10 @@ def gslv_pf(circuit: MultiCircuit,
             time_series: bool = False,
             time_indices: Union[IntVec, None] = None,
             opf_results: Union[None, OptimalPowerFlowResults] = None,
-            logger: Logger = Logger()) -> "pg.PowerFlowResults":
+            logger: Logger | None = None) -> "pg.PowerFlowResults":
     """
     GSLV power flow
-    :param logger:
+    :param logger: Optional execution logger.
     :param circuit: MultiCircuit instance
     :param pf_opt: Power Flow Options
     :param time_series: Compile with VeraGrid time series?
@@ -2442,7 +2854,13 @@ def gslv_pf(circuit: MultiCircuit,
     :param opf_results: Instance of
     :return: GSLV Power flow results object
     """
+    logger_obj: Logger
     override_branch_controls = not (pf_opt.control_taps_modules and pf_opt.control_taps_phase)
+
+    if logger is None:
+        logger_obj = Logger()
+    else:
+        logger_obj = logger
 
     gslv_grid, _ = to_gslv(circuit,
                            use_time_series=time_series,
@@ -2458,7 +2876,8 @@ def gslv_pf(circuit: MultiCircuit,
             time_indices = [i for i in range(circuit.get_time_number())]
         else:
             time_indices = list(time_indices)
-        n_threads = 0  # max threads
+        # GSLV's batched multi-threaded PF path is not stable with controllable shunts.
+        n_threads = 1 if len(circuit.get_controllable_shunts()) > 0 else 0
     else:
         time_indices = [0]
         n_threads = 1
@@ -2469,17 +2888,122 @@ def gslv_pf(circuit: MultiCircuit,
                                 time_indices=time_indices,
                                 n_threads=n_threads)
 
-    logger.add_info("gslv time", value=f"{(time.time() - t0)} s")
+    logger_obj.add_info("gslv time", value=f"{(time.time() - t0)} s")
 
     return pf_res
 
 
-def translate_gslv_pf_results(grid: MultiCircuit, res: "pg.PowerFlowResults", logger: Logger) -> PowerFlowResults:
+def gslv_pf_3ph(circuit: MultiCircuit,
+                pf_opt: PowerFlowOptions,
+                t_idx: int | None = None,
+                logger: Logger | None = None) -> "pg.NumericPowerFlowResults":
+    """
+    Run one native GSLV three-phase power flow.
+
+    :param circuit: VeraGrid circuit.
+    :param pf_opt: VeraGrid power-flow options.
+    :param t_idx: Optional VeraGrid time index to export as one sliced snapshot.
+    :param logger: Optional execution logger.
+    :return: GSLV numeric three-phase results.
+    """
+    logger_obj: Logger
+    pf_options = get_gslv_pf_options(pf_opt)
+    snapshot_time_indices: IntVec | None
+
+    if logger is None:
+        logger_obj = Logger()
+    else:
+        logger_obj = logger
+
+    if t_idx is None:
+        snapshot_time_indices = None
+    else:
+        snapshot_time_indices = np.array([int(t_idx)], dtype=int)
+
+    gslv_grid, _ = to_gslv(
+        circuit=circuit,
+        use_time_series=t_idx is not None,
+        time_indices=snapshot_time_indices,
+        override_branch_controls=not (pf_opt.control_taps_modules and pf_opt.control_taps_phase),
+        opf_results=None,
+        add_three_phase_data=True,
+    )
+
+    t0: float = time.time()
+    results = pg.power_flow_3ph(
+        grid=gslv_grid,
+        options=pf_options,
+        t_idx=0,
+        logger=pg.Logger(),
+    )
+    logger_obj.add_info("gslv 3ph time", value=f"{(time.time() - t0)} s")
+    return results
+
+
+def translate_gslv_pf_3ph_results(grid: MultiCircuit,
+                                  res: "pg.NumericPowerFlowResults") -> PowerFlowResults3Ph:
+    """
+    Translate one GSLV native three-phase result into VeraGrid's three-phase container.
+
+    :param grid: Original VeraGrid circuit.
+    :param res: GSLV three-phase numeric result.
+    :return: VeraGrid three-phase power-flow results.
+    """
+    bus_names: StrVec = grid.get_bus_names()
+    branch_names: StrVec = grid.get_branch_names(add_hvdc=False, add_vsc=False, add_switch=True)
+    results = PowerFlowResults3Ph(
+        n=3 * len(bus_names),
+        m=3 * len(branch_names),
+        n_hvdc=grid.get_hvdc_number(),
+        n_vsc=grid.get_vsc_number(),
+        n_gen=grid.get_generation_like_number(),
+        n_batt=grid.get_batteries_number(),
+        n_sh=grid.get_shunt_like_device_number(),
+        n_load=grid.get_load_like_device_number(),
+        bus_names=bus_names,
+        branch_names=branch_names,
+        hvdc_names=grid.get_hvdc_names(),
+        vsc_names=grid.get_vsc_names(),
+        gen_names=grid.get_generation_like_names(),
+        batt_names=grid.get_battery_names(),
+        sh_names=grid.get_shunt_like_devices_names(),
+        load_names=grid.get_load_like_devices_names(),
+        bus_types=np.ones(len(bus_names), dtype=int),
+    )
+
+    bus_idx: IntVec = np.arange(len(bus_names), dtype=int)
+    branch_idx: IntVec = np.arange(len(branch_names), dtype=int)
+    hvdc_idx: IntVec = np.arange(grid.get_hvdc_number(), dtype=int)
+    vsc_idx: IntVec = np.arange(grid.get_vsc_number(), dtype=int)
+    report: ConvergenceReport = ConvergenceReport()
+
+    report.add(
+        method=res.method,
+        converged=bool(res.converged),
+        error=float(res.norm_f),
+        elapsed=float(res.elapsed),
+        iterations=int(res.iterations),
+    )
+
+    results.apply_from_island(
+        results=res,
+        b_idx=bus_idx,
+        br_idx=branch_idx,
+        hvdc_idx=hvdc_idx,
+        vsc_idx=vsc_idx,
+    )
+    results.convergence_reports.append(report)
+    return results
+
+
+def translate_gslv_pf_results(
+        grid: MultiCircuit,
+        res: "pg.PowerFlowResults",
+) -> PowerFlowResults:
     """
     Translate the GSLV Power Analytics results back to VeraGrid
     :param grid: MultiCircuit instance
     :param res: GSLV's PowerFlowResults instance
-    :param logger: Logger
     :return: PowerFlowResults instance
     """
     results = PowerFlowResults(
@@ -2522,10 +3046,14 @@ def translate_gslv_pf_results(grid: MultiCircuit, res: "pg.PowerFlowResults", lo
     results.losses_hvdc = res.losses_hvdc[0, :]
 
     results.Pfp_vsc = res.Pf_vsc[0, :]
+    results.Pfn_vsc = res.Pfn_vsc[0, :]
     results.St_vsc = res.St_vsc[0, :]
+    results.If_vsc = res.If_vsc[0, :]
+    results.It_vsc = res.It_vsc[0, :]
     results.loading_vsc = res.loading_vsc[0, :]
     results.losses_vsc = res.losses_vsc[0, :]
-
+    results.gen_p = res.gen_p[0, :]
+    results.battery_p = res.battery_p[0, :]
     results.gen_q = res.gen_q[0, :]
     results.battery_q = res.battery_q[0, :]
     results.shunt_q = res.shunt_q[0, :]
@@ -2543,6 +3071,84 @@ def translate_gslv_pf_results(grid: MultiCircuit, res: "pg.PowerFlowResults", lo
                        elapsed=rep.elapsed[i],
                        iterations=rep.iterations[i])
             results.convergence_reports.append(report)
+
+    return results
+
+
+def translate_gslv_pf_time_series_results(
+        grid: MultiCircuit,
+        res: "pg.PowerFlowResults",
+        options: PowerFlowOptions,
+        time_indices: Union[IntVec, None],
+        clustering_results,
+) -> PowerFlowTimeSeriesResults:
+    """
+    Translate GSLV time-series power-flow results to VeraGrid results.
+
+    :param grid: MultiCircuit instance.
+    :param res: GSLV power-flow results.
+    :param options: Power-flow options used for the run.
+    :param time_indices: Requested global time indices, or ``None`` for all.
+    :param clustering_results: Optional clustering metadata.
+    :return: PowerFlowTimeSeriesResults instance.
+    """
+    if time_indices is None:
+        selected_time_indices: IntVec = np.array(grid.get_all_time_indices(), dtype=int)
+    else:
+        selected_time_indices = np.array(time_indices, dtype=int)
+
+    n_bus: int = grid.get_bus_number()
+    results = PowerFlowTimeSeriesResults(
+        n=n_bus,
+        m=grid.get_branch_number(add_switch=True, add_vsc=False, add_hvdc=False),
+        n_hvdc=grid.get_hvdc_number(),
+        n_vsc=grid.get_vsc_number(),
+        n_gen=grid.get_generators_number(),
+        n_batt=grid.get_batteries_number(),
+        n_sh=grid.get_shunt_like_device_number(),
+        bus_names=grid.get_bus_names(),
+        branch_names=grid.get_branch_names(add_switch=True, add_vsc=False, add_hvdc=False),
+        hvdc_names=grid.get_hvdc_names(),
+        vsc_names=grid.get_vsc_names(),
+        gen_names=grid.get_generator_names(),
+        batt_names=grid.get_battery_names(),
+        sh_names=grid.get_shunt_like_devices_names(),
+        bus_types=np.ones(n_bus, dtype=int),
+        time_array=grid.get_time_array()[selected_time_indices],
+        area_names=grid.get_area_names(),
+        clustering_results=clustering_results,
+    )
+
+    # GSLV returns full-length time-series arrays. Slice them to the requested
+    # time positions so the VeraGrid result object preserves its usual shape.
+    results.voltage = res.voltage[selected_time_indices, :]
+    results.S = res.S[selected_time_indices, :]
+    results.Sf = res.Sf[selected_time_indices, :]
+    results.St = res.St[selected_time_indices, :]
+    results.If = res.If[selected_time_indices, :]
+    results.It = res.It[selected_time_indices, :]
+    results.loading = res.loading[selected_time_indices, :]
+    results.losses = res.losses[selected_time_indices, :]
+    results.tap_module = res.tap_module[selected_time_indices, :]
+    results.tap_angle = res.tap_angle[selected_time_indices, :]
+    results.hvdc_Pf = res.Pf_hvdc[selected_time_indices, :]
+    results.hvdc_Pt = res.Pt_hvdc[selected_time_indices, :]
+    results.hvdc_loading = res.loading_hvdc[selected_time_indices, :]
+    results.hvdc_losses = res.losses_hvdc[selected_time_indices, :]
+    results.Pf_vsc = res.Pf_vsc[selected_time_indices, :]
+    results.Pfn_vsc = res.Pfn_vsc[selected_time_indices, :]
+    results.St_vsc = res.St_vsc[selected_time_indices, :]
+    results.If_vsc = res.If_vsc[selected_time_indices, :]
+    results.It_vsc = res.It_vsc[selected_time_indices, :]
+    results.loading_vsc = res.loading_vsc[selected_time_indices, :]
+    results.losses_vsc = res.losses_vsc[selected_time_indices, :]
+    results.gen_p = res.gen_p[selected_time_indices, :]
+    results.battery_p = res.battery_p[selected_time_indices, :]
+    results.gen_q = res.gen_q[selected_time_indices, :]
+    results.battery_q = res.battery_q[selected_time_indices, :]
+    results.shunt_q = res.shunt_q[selected_time_indices, :]
+    results.error_values = res.error_values[selected_time_indices]
+    results.converged_values = res.converged_values[selected_time_indices]
 
     return results
 
@@ -2615,6 +3221,124 @@ def get_gslv_opf_options(opt: OptimalPowerFlowOptions,
     )
 
 
+def get_gslv_investments_evaluation_options(
+        opt: "InvestmentsEvaluationOptions",
+        circuit: MultiCircuit,
+        gslv_circuit: "pg.MultiCircuit",
+) -> "pg.InvestmentsEvaluationOptions":
+    """
+    Translate VeraGrid investment-evaluation options to GSLV options.
+
+    :param opt: VeraGrid investments-evaluation options.
+    :param circuit: VeraGrid circuit.
+    :param gslv_circuit: Converted GSLV circuit.
+    :return: GSLV investments-evaluation options.
+    """
+    solver_dict = {
+        InvestmentEvaluationMethod.CBA_PINT_TOOT: pg.InvestmentEvaluationMethod.CBA_PINT_TOOT,
+        InvestmentEvaluationMethod.PINT_TOOT_NSGA3: pg.InvestmentEvaluationMethod.PINT_TOOT_NSGA3,
+        InvestmentEvaluationMethod.Hyperopt: pg.InvestmentEvaluationMethod.Hyperopt,
+        InvestmentEvaluationMethod.MVRSM: pg.InvestmentEvaluationMethod.MVRSM,
+        InvestmentEvaluationMethod.NSGA3: pg.InvestmentEvaluationMethod.NSGA3,
+        InvestmentEvaluationMethod.Random: pg.InvestmentEvaluationMethod.Random,
+        InvestmentEvaluationMethod.MixedVariableGA: pg.InvestmentEvaluationMethod.MixedVariableGA,
+        InvestmentEvaluationMethod.FromPlugin: pg.InvestmentEvaluationMethod.FromPlugin,
+    }
+
+    objective_type_dict = {
+        InvestmentsEvaluationObjectives.PowerFlow: pg.InvestmentsEvaluationObjectives.PowerFlow,
+        InvestmentsEvaluationObjectives.TimeSeriesPowerFlow: pg.InvestmentsEvaluationObjectives.TimeSeriesPowerFlow,
+        InvestmentsEvaluationObjectives.LinearOptimalPowerFlowTimeSeries:
+            pg.InvestmentsEvaluationObjectives.TimeSeriesOptimalPowerFlow,
+        InvestmentsEvaluationObjectives.FromPlugin: pg.InvestmentsEvaluationObjectives.FromPlugin,
+    }
+
+    return pg.InvestmentsEvaluationOptions(
+        max_eval=opt.max_eval,
+        solver=solver_dict[opt.solver],
+        objective_type=objective_type_dict[opt.objf_tpe],
+        pf_options=get_gslv_pf_options(opt.pf_options),
+        opf_options=get_gslv_opf_options(opt.opf_options, circuit=circuit, gslv_circuit=gslv_circuit),
+    )
+
+
+def translate_gslv_investments_evaluation_results(
+        res: "pg.InvestmentsEvaluationResults",
+) -> InvestmentsEvaluationResults:
+    """
+    Translate GSLV investment-evaluation results to VeraGrid results.
+
+    :param res: GSLV investments-evaluation results.
+    :return: VeraGrid investments-evaluation results.
+    """
+    from VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results import (
+        InvestmentsEvaluationResults,
+    )
+
+    results = InvestmentsEvaluationResults(
+        f_names=np.array(res.f_names, dtype=str),
+        x_names=np.array(res.x_names, dtype=str),
+        max_eval=int(res.max_eval),
+        plot_x_idx=int(res.plot_x_idx),
+        plot_y_idx=int(res.plot_y_idx),
+    )
+
+    results.x = np.array(res.x, dtype=float)
+    results.f = np.array(res.f, dtype=float)
+    results.f_best = np.array(res.best_combination, dtype=float)
+    results.sorting_indices = np.array(res.sorting_indices, dtype=int)
+    results.max_eval = int(res.eval_count)
+
+    return results
+
+
+def gslv_investments_evaluation(
+        circuit: MultiCircuit,
+        options: "InvestmentsEvaluationOptions",
+        logger: Logger = Logger(),
+) -> InvestmentsEvaluationResults:
+    """
+    Run GSLV investments evaluation and translate its results back to VeraGrid.
+
+    :param circuit: VeraGrid circuit.
+    :param options: VeraGrid investments-evaluation options.
+    :param logger: VeraGrid logger instance.
+    :return: VeraGrid investments-evaluation results.
+    """
+    use_time_series: bool = options.objf_tpe in (
+        InvestmentsEvaluationObjectives.TimeSeriesPowerFlow,
+        InvestmentsEvaluationObjectives.LinearOptimalPowerFlowTimeSeries,
+    )
+
+    if use_time_series:
+        time_indices: IntVec | None = circuit.get_all_time_indices()
+    else:
+        time_indices = None
+
+    gslv_grid, _ = to_gslv(
+        circuit=circuit,
+        use_time_series=use_time_series,
+        time_indices=time_indices,
+    )
+    gslv_options = get_gslv_investments_evaluation_options(
+        opt=options,
+        circuit=circuit,
+        gslv_circuit=gslv_grid,
+    )
+    gslv_logger = pg.Logger()
+
+    t0 = time.time()
+    gslv_results = pg.investments_evaluation(
+        grid=gslv_grid,
+        options=gslv_options,
+        logger=gslv_logger,
+        clustering_results=None,
+    )
+    logger.add_info("gslv time", value=f"{(time.time() - t0)} s")
+
+    return translate_gslv_investments_evaluation_results(res=gslv_results)
+
+
 def gslv_opf(circuit: MultiCircuit,
              opf_options: OptimalPowerFlowOptions,
              time_series: bool = False,
@@ -2638,7 +3362,8 @@ def gslv_opf(circuit: MultiCircuit,
     opf_options = get_gslv_opf_options(opf_options, circuit, gslv_grid)
 
     if time_series:
-        # it is already sliced to the relevant time indices
+        # Keep the GSLV grid at the circuit time resolution and ask the solver
+        # for the requested global time indices explicitly.
         if time_indices is None:
             time_indices = [i for i in range(circuit.get_time_number())]
         else:
@@ -2653,7 +3378,8 @@ def gslv_opf(circuit: MultiCircuit,
     opf_res = pg.optimal_power_flow(
         grid=gslv_grid,
         options=opf_options,
-        n_threads=n_threads
+        n_threads=n_threads,
+        time_indices=time_indices,
     )
 
     logger.add_info("gslv time", value=f"{(time.time() - t0)} s")
@@ -2861,6 +3587,11 @@ def convert_arr(arr, d: Dict):
     return np.array([d[e] for e in arr])
 
 
+def convert_gslv_arr_to_idx(arr, d: Dict):
+    pg_to_idx = {pg_val: gc_val.idx() for gc_val, pg_val in d.items()}
+    return np.array([pg_to_idx[e] for e in arr], dtype=int)
+
+
 def compare_branch_parent_data(gslv_branch_data: pg.BranchParentData,
                                gc_branch_data: BranchParentData,
                                tol: float,
@@ -2947,11 +3678,11 @@ def compare_nc(nc_gslv: "pg.NumericalCircuit", nc_gc: NumericalCircuit, tol: flo
     errors += CheckArr(nc_gslv.vsc_data.alpha2, nc_gc.vsc_data.alpha2, tol, 'VscData', 'alpha2')
     errors += CheckArr(nc_gslv.vsc_data.alpha3, nc_gc.vsc_data.alpha3, tol, 'VscData', 'alpha3')
 
-    errors += CheckArrEq(np.array(nc_gslv.vsc_data.control1),
-                         convert_arr(nc_gc.vsc_data.control1, converter_control_type_dict),
+    errors += CheckArrEq(convert_gslv_arr_to_idx(np.array(nc_gslv.vsc_data.control1), converter_control_type_dict),
+                         nc_gc.vsc_data.control1_int,
                          'VscData', 'control1')
-    errors += CheckArrEq(np.array(nc_gslv.vsc_data.control2),
-                         convert_arr(nc_gc.vsc_data.control2, converter_control_type_dict),
+    errors += CheckArrEq(convert_gslv_arr_to_idx(np.array(nc_gslv.vsc_data.control2), converter_control_type_dict),
+                         nc_gc.vsc_data.control2_int,
                          'VscData', 'control2')
 
     errors += CheckArr(nc_gslv.vsc_data.control1_val, nc_gc.vsc_data.control1_val, tol, 'VscData', 'control1_val')
@@ -2979,8 +3710,8 @@ def compare_nc(nc_gslv: "pg.NumericalCircuit", nc_gc: NumericalCircuit, tol: flo
     errors += CheckArr(nc_gslv.hvdc_data.Vnt, nc_gc.hvdc_data.Vnt, tol, 'HvdcData', 'Vnt')
     errors += CheckArr(nc_gslv.hvdc_data.angle_droop, nc_gc.hvdc_data.angle_droop, tol, 'HvdcData', 'control1_val')
 
-    errors += CheckArrEq(np.array(nc_gslv.hvdc_data.control_mode),
-                         convert_arr(nc_gc.hvdc_data.control_mode, hvdc_control_mode_dict),
+    errors += CheckArrEq(convert_gslv_arr_to_idx(np.array(nc_gslv.hvdc_data.control_mode), hvdc_control_mode_dict),
+                         nc_gc.hvdc_data.control_mode_int,
                          'HvdcData', 'control_mode')
 
     errors += CheckArr(nc_gslv.hvdc_data.Qmin_f, nc_gc.hvdc_data.Qmin_f, tol, 'HvdcData', 'Qmin_f')

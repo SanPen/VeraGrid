@@ -137,6 +137,11 @@ class UcteNode:
         return 0.8, 1.2, 110.0
 
     def _looks_fixed_width(self, row: str) -> bool:
+        """
+
+        :param row:
+        :return:
+        """
         return (
             len(row) >= 26
             and row[8:9].isspace()
@@ -146,8 +151,21 @@ class UcteNode:
         )
 
     def _parse_nominal_voltage(self, logger: Logger) -> float:
+        """
+
+        :param logger:
+        :return:
+        """
         if len(self.node_code) >= 7:
-            return try_parse_voltage(self.node_code[6], self.node_code, logger)
+            inferred_voltage = try_parse_voltage(self.node_code[6], self.node_code, logger)
+            if inferred_voltage > 0:
+                return inferred_voltage
+
+        if is_defined_number(self.voltage_reference) and self.voltage_reference > 0:
+            logger.add_warning("Could not infer nominal voltage from node code, using voltage_reference as nominal voltage",
+                               device=self.node_code,
+                               value=self.voltage_reference)
+            return self.voltage_reference
 
         logger.add_error("Could not infer nominal voltage from node code",
                          device=self.node_code,
@@ -156,15 +174,27 @@ class UcteNode:
         return 1.0
 
     def has_load(self) -> bool:
+        """
+
+        :return:
+        """
         return (
             (is_defined_number(self.active_load) and self.active_load != 0.0)
             or (is_defined_number(self.reactive_load) and self.reactive_load != 0.0)
         )
 
     def is_regulating_voltage(self) -> bool:
+        """
+
+        :return:
+        """
         return self.node_type in (2, 3)
 
     def is_generator(self) -> bool:
+        """
+
+        :return:
+        """
         return (
             self.is_regulating_voltage()
             or (is_defined_number(self.active_gen) and self.active_gen != 0.0)
@@ -184,12 +214,23 @@ class UcteNode:
         )
 
     def has_gen(self) -> bool:
+        """
+
+        :return:
+        """
         return self.is_generator()
 
     def _normalize_limits(self,
                           value: float,
                           min_value: float,
                           max_value: float) -> tuple[float, float]:
+        """
+
+        :param value:
+        :param min_value:
+        :param max_value:
+        :return:
+        """
         if not is_defined_number(min_value):
             min_value = -get_default_power_limit()
 
@@ -208,6 +249,11 @@ class UcteNode:
         return min_value, max_value
 
     def normalize(self, logger: Logger):
+        """
+
+        :param logger:
+        :return:
+        """
         low_voltage_factor, high_voltage_factor, low_nominal_voltage = self._get_voltage_window()
 
         if self.is_generator():

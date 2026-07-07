@@ -8,6 +8,7 @@ from typing import Union, Tuple
 import numpy as np
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType, GCProp
 from VeraGridEngine.Devices.Profiles import ProfileFloat
+from VeraGridEngine.enumerations import PrpCat
 
 
 class EmissionGas(EditableDevice):
@@ -18,9 +19,21 @@ class EmissionGas(EditableDevice):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='cost', units='e/t', tpe=float, definition='Cost of emissions (e / ton)',
-                      profile_name='cost_prof'),
-        GCProp(key='color', units='', tpe=str, definition='Color to paint', is_color=True),
+        GCProp(
+            prop_name='cost',
+            units='e/t',
+            tpe=float,
+            definition='Cost of emissions (e / ton)',
+            profile_name='cost_prof',
+        ),
+        GCProp(
+            prop_name='color',
+            units='',
+            tpe=str,
+            definition='Color to paint',
+            is_color=True,
+            cat=[PrpCat.OPF],
+        ),
     )
 
     def __init__(self,

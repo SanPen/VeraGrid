@@ -1,0 +1,1274 @@
+PREFIX adms:     <http://www.w3.org/ns/adms#>
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dcatcim:  <https://cim4.eu/ns/dcatcim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:f7b94ef6-e043-4d2a-a359-2718e6e20507> {
+    <urn:uuid:b5f07ec3-3a3c-49ec-8e85-02a77d4f79c1>
+            rdf:type                   nc:GridStateAlterationRemedialAction;
+            cim:IdentifiedObject.description
+                    "Curative RA Regulating control action const V target voltage with generator ID : d4e4911b-d87a-4fd5-a7a7-0346c0538db3";
+            cim:IdentifiedObject.mRID  "b5f07ec3-3a3c-49ec-8e85-02a77d4f79c1";
+            cim:IdentifiedObject.name  "CRA6";
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    true;
+            nc:RemedialAction.kind     nc:RemedialActionKind.curative;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:8e60eea4-9c86-4e9d-8012-6645d5efb96d>
+            rdf:type                   nc:RotatingMachineAction;
+            cim:IdentifiedObject.mRID  "8e60eea4-9c86-4e9d-8012-6645d5efb96d";
+            cim:IdentifiedObject.name  "Set generator HÄLLAN_G3 power to Pmin";
+            nc:GridStateAlteration.GridStateAlterationCollection
+                    <urn:uuid:02a420c3-dcc2-413e-9f7d-a4997c42e155>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/RotatingMachine.p>;
+            nc:RotatingMachineAction.RotatingMachine
+                    <urn:uuid:2a35657f-a1a8-45dc-911e-e71535b35d87> .
+    
+    <urn:uuid:14b2b671-e92b-40e6-abf8-ad37811b33c7>
+            rdf:type                   nc:AvailabilityRemedialAction;
+            cim:IdentifiedObject.description
+                    "This is an example of availability remedial action";
+            cim:IdentifiedObject.mRID  "14b2b671-e92b-40e6-abf8-ad37811b33c7";
+            cim:IdentifiedObject.name  "ARA1";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    true;
+            nc:RemedialAction.kind     nc:RemedialActionKind.curative;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:f93388e1-20ec-4643-8952-adfb1c93c6f8>
+            rdf:type                        nc:StaticPropertyRange;
+            cim:IdentifiedObject.description
+                    "NCP 386";
+            cim:IdentifiedObject.mRID       "f93388e1-20ec-4643-8952-adfb1c93c6f8";
+            cim:IdentifiedObject.name       "Static range";
+            nc:RangeConstraint.GridStateAlteration
+                    <urn:uuid:26e73fc0-82d0-4b6a-929d-1bb2c49a24d5>;
+            nc:RangeConstraint.direction    nc:RelativeDirectionKind.none;
+            nc:RangeConstraint.normalValue  "1.0"^^xsd:float;
+            nc:RangeConstraint.valueKind    nc:ValueOffsetKind.absolute;
+            nc:StaticPropertyRange.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open> .
+    
+    <urn:uuid:d45195f1-9b95-44b6-b9d9-47600b855e41>
+            rdf:type                     nc:StageTrigger;
+            cim:IdentifiedObject.mRID    "d45195f1-9b95-44b6-b9d9-47600b855e41";
+            cim:IdentifiedObject.name    "Current flow through the line CL6 is higher than PATL";
+            nc:StageTrigger.GateTrigger  <urn:uuid:299a2a80-eea1-423e-984a-bcd768f711bb>;
+            nc:StageTrigger.Stage        <urn:uuid:950f792b-d761-48f6-8f82-cf40b889a26c>;
+            nc:StageTrigger.normalArmed  true;
+            nc:StageTrigger.priority     0 .
+    
+    <urn:uuid:332b7627-e0ad-4bd5-a678-aebb305727a6>
+            rdf:type                   nc:GridStateAlterationCollection;
+            cim:IdentifiedObject.mRID  "332b7627-e0ad-4bd5-a678-aebb305727a6";
+            cim:IdentifiedObject.name  "Disconnect generator HÄLLAN_G1" .
+    
+    <urn:uuid:0709bc69-baee-41f1-8d00-7e6caaa7636f>
+            rdf:type                       nc:PinOperationalLimit;
+            cim:IdentifiedObject.mRID      "0709bc69-baee-41f1-8d00-7e6caaa7636f";
+            cim:IdentifiedObject.name      "Current flow through the line CL6 is higher than PATL";
+            nc:GateInputPin.Gate           <urn:uuid:299a2a80-eea1-423e-984a-bcd768f711bb>;
+            nc:GateInputPin.absoluteValue  true;
+            nc:GateInputPin.duration       "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:GateInputPin.logicKind      nc:LogicalOperatorsKind.greaterThan;
+            nc:GateInputPin.negate         false;
+            nc:PinOperationalLimit.OperationalLimit
+                    <urn:uuid:02abc849-a241-bd01-ca44-a13e3e46d3bd> .
+    
+    <urn:uuid:34676da6-a62d-4f41-b9bc-0a7e3d95efe7>
+            rdf:type                        nc:StaticPropertyRange;
+            cim:IdentifiedObject.mRID       "34676da6-a62d-4f41-b9bc-0a7e3d95efe7";
+            cim:IdentifiedObject.name       "Generator HÄLLAN_G1 breaker CT72_G3-S OPEN";
+            nc:RangeConstraint.GridStateAlteration
+                    <urn:uuid:0725050a-0ece-49d0-8822-f5e0c8fb99c9>;
+            nc:RangeConstraint.direction    nc:RelativeDirectionKind.none;
+            nc:RangeConstraint.normalValue  "1"^^xsd:float;
+            nc:RangeConstraint.valueKind    nc:ValueOffsetKind.absolute;
+            nc:StaticPropertyRange.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open> .
+    
+    <urn:uuid:3a833fbd-9e2e-42df-919d-7be00de94cbc>
+            rdf:type                       nc:PinOperationalLimit;
+            cim:IdentifiedObject.mRID      "3a833fbd-9e2e-42df-919d-7be00de94cbc";
+            cim:IdentifiedObject.name      "Current flow through the line CL6 is lower than TATL";
+            nc:GateInputPin.Gate           <urn:uuid:a0e20b48-a34b-40e6-8282-538804536985>;
+            nc:GateInputPin.absoluteValue  true;
+            nc:GateInputPin.duration       "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:GateInputPin.logicKind      nc:LogicalOperatorsKind.lessThan;
+            nc:GateInputPin.negate         false;
+            nc:PinOperationalLimit.OperationalLimit
+                    <urn:uuid:0a60b94d-13e6-43ad-1135-09fe81afb5a4> .
+    
+    <urn:uuid:12097f09-e5cc-4fdc-98eb-0675d0f2af11>
+            rdf:type                   nc:GridStateAlterationCollection;
+            cim:IdentifiedObject.mRID  "12097f09-e5cc-4fdc-98eb-0675d0f2af11";
+            cim:IdentifiedObject.name  "Disconnect generator HÄLLAN_G1" .
+    
+    <urn:uuid:eb60d1c0-8bcc-463b-8b91-8dc1833b2a92>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.description
+                    "NCP 386";
+            cim:IdentifiedObject.mRID  "eb60d1c0-8bcc-463b-8b91-8dc1833b2a92";
+            cim:IdentifiedObject.name  " CL6 to Hallan disc";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:fa3e3533-345a-4ef1-a46d-3ab6d251924a>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:GridStateAlteration.maximumPerDay
+                    5;
+            nc:GridStateAlteration.minimumActivation
+                    "PT1H"^^xsd:duration;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:GridStateAlteration.timePerStage
+                    "PT1M"^^xsd:duration;
+            nc:TopologyAction.Switch   <urn:uuid:6c65d466-ee7b-4817-8b10-829cc902a2e7> .
+    
+    <urn:uuid:beee0b9b-588d-4efc-9972-cd4cd25b0b70>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.description
+                    "description";
+            cim:IdentifiedObject.mRID  "beee0b9b-588d-4efc-9972-cd4cd25b0b70";
+            cim:IdentifiedObject.name  "TA3";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:5e401955-387e-45ce-b126-dd142b06b20c>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:TopologyAction.Switch   <urn:uuid:8e55fb9d-e514-4f4b-8a5d-8fd05b1dc02e> .
+    
+    <urn:uuid:13c29cc3-3d99-4c5b-abac-085f0d319eab>
+            rdf:type  nc:RemedialActionDependency;
+            nc:RemedialActionDependency.DependingRemedialActionGroup
+                    <urn:uuid:6a9b5221-bb3f-421b-89c1-886b100aa68a>;
+            nc:RemedialActionDependency.RemedialAction
+                    <urn:uuid:7e422768-207d-455f-976e-0b1cb2338509>;
+            nc:RemedialActionDependency.kind
+                    nc:RemedialActionDependencyKind.exclusive;
+            nc:RemedialActionDependency.mRID
+                    "13c29cc3-3d99-4c5b-abac-085f0d319eab";
+            nc:RemedialActionDependency.normalEnabled
+                    true .
+    
+    <urn:uuid:1dd4c309-ed8b-4bb6-a26d-4888b8e1f009>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.description
+                    "Preventive RA: TopologyAction (load trip)";
+            cim:IdentifiedObject.mRID  "1dd4c309-ed8b-4bb6-a26d-4888b8e1f009";
+            cim:IdentifiedObject.name  "TA5";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:b2555ccc-6562-4887-8abc-19a6e51cfe36>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:TopologyAction.Switch   <urn:uuid:86dff3a9-afae-4122-afeb-651f2c01c795> .
+    
+    <urn:uuid:3a364a5b-7aba-4e48-abd5-4cd79e2e8676>
+            rdf:type  nc:ContingencyWithRemedialAction;
+            nc:ContingencyWithRemedialAction.Contingency
+                    <urn:uuid:5d587c7e-9ced-416a-ad17-6ef9b241a998>;
+            nc:ContingencyWithRemedialAction.RemedialAction
+                    <urn:uuid:347f4f7e-a2b6-4880-846a-8bd1effb00d5>;
+            nc:ContingencyWithRemedialAction.combinationConstraintKind
+                    nc:ElementCombinationConstraintKind.included;
+            nc:ContingencyWithRemedialAction.mRID
+                    "3a364a5b-7aba-4e48-abd5-4cd79e2e8676" .
+    
+    <urn:uuid:cd59bf8e-890c-40e3-a699-041f3111cd99>
+            rdf:type                       nc:Stage;
+            cim:IdentifiedObject.mRID      "cd59bf8e-890c-40e3-a699-041f3111cd99";
+            cim:IdentifiedObject.name      "AutomaticGenerationShedding_CL6_SIPS1_Stage2";
+            nc:Stage.GridStateAlterationCollection
+                    <urn:uuid:ea6979c2-2ad4-484a-9f41-bec157a0eedd>;
+            nc:Stage.RemedialActionScheme  <urn:uuid:f151d691-a13b-4c70-a7e9-e7c272da78bb>;
+            nc:Stage.priority              3 .
+    
+    <urn:uuid:bfa56840-37ff-44e3-9d2d-df5efc3a1b81>
+            rdf:type                       nc:Stage;
+            cim:IdentifiedObject.mRID      "bfa56840-37ff-44e3-9d2d-df5efc3a1b81";
+            cim:IdentifiedObject.name      "AutomaticGenerationShedding_CL6_SIPS1_Stage2b";
+            nc:Stage.GridStateAlterationCollection
+                    <urn:uuid:b7a0d8df-2809-4bd3-952c-474ba032aa46>;
+            nc:Stage.RemedialActionScheme  <urn:uuid:ce962568-cce9-4c5c-8d45-b79694efcf88>;
+            nc:Stage.priority              2 .
+    
+    <urn:uuid:457f111e-43ce-4368-923e-11457cb694f9>
+            rdf:type                   nc:StaticVarCompensatorAction;
+            cim:IdentifiedObject.description
+                    "exemple of static VAR compensator action 1";
+            cim:IdentifiedObject.mRID  "457f111e-43ce-4368-923e-11457cb694f9";
+            cim:IdentifiedObject.name  "staticVARAction1";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:bf8157d8-d787-44f7-a997-751e50e69165>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/StaticVarCompensator.q>;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:StaticVarCompensatorAction.StaticVarCompensator
+                    <urn:uuid:54125a2a-e584-453a-b020-903d23cadd2c> .
+    
+    <urn:uuid:598ab84e-a575-40ad-bf66-c1ab41c65093>
+            rdf:type  nc:RemedialActionDependency;
+            nc:RemedialActionDependency.DependingRemedialActionGroup
+                    <urn:uuid:6a9b5221-bb3f-421b-89c1-886b100aa68a>;
+            nc:RemedialActionDependency.RemedialAction
+                    <urn:uuid:fa3e3533-345a-4ef1-a46d-3ab6d251924a>;
+            nc:RemedialActionDependency.kind
+                    nc:RemedialActionDependencyKind.exclusive;
+            nc:RemedialActionDependency.mRID
+                    "598ab84e-a575-40ad-bf66-c1ab41c65093";
+            nc:RemedialActionDependency.normalEnabled
+                    true .
+    
+    <urn:uuid:0083845c-587c-4b39-8ed1-6a1d076ef9f2>
+            rdf:type  nc:ContingencyWithRemedialAction;
+            nc:ContingencyWithRemedialAction.Contingency
+                    <urn:uuid:475ba18f-cbf5-490b-b65d-e8e03f9bcbc4>;
+            nc:ContingencyWithRemedialAction.RemedialAction
+                    <urn:uuid:5e401955-387e-45ce-b126-dd142b06b20c>;
+            nc:ContingencyWithRemedialAction.combinationConstraintKind
+                    nc:ElementCombinationConstraintKind.included;
+            nc:ContingencyWithRemedialAction.mRID
+                    "0083845c-587c-4b39-8ed1-6a1d076ef9f2" .
+    
+    <urn:uuid:e2a19b7e-6d21-4987-b138-f746bba325e6>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.mRID  "e2a19b7e-6d21-4987-b138-f746bba325e6";
+            cim:IdentifiedObject.name  "Generator HÄLLAN_G1 breaker CT72_G1-S OPEN";
+            nc:GridStateAlteration.GridStateAlterationCollection
+                    <urn:uuid:332b7627-e0ad-4bd5-a678-aebb305727a6>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:TopologyAction.Switch   <urn:uuid:ecc7d452-3cc6-4a6f-ac55-cfc80f3aac53> .
+    
+    <urn:uuid:d9bd3aaf-cda3-4b54-bb2e-b03dd9925817>
+            rdf:type                   nc:GridStateAlterationRemedialAction;
+            cim:IdentifiedObject.description
+                    "This is an example. Preventive RA: TopologyAction (generator trip). Generator ID: _1c29fef9-c40a-40e6-904f-7c24624068c7, switches: _902046a4-40e9-421d-9ef1-9adab0d9d41d, _39428c75-098b-4366-861d-2df2a857a805";
+            cim:IdentifiedObject.mRID  "d9bd3aaf-cda3-4b54-bb2e-b03dd9925817";
+            cim:IdentifiedObject.name  "RA2";
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    true;
+            nc:RemedialAction.kind     nc:RemedialActionKind.preventive;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:55893c3d-b222-40cd-b18b-8941bfb4d9c2>
+            rdf:type                       nc:PinOperationalLimit;
+            cim:IdentifiedObject.mRID      "55893c3d-b222-40cd-b18b-8941bfb4d9c2";
+            cim:IdentifiedObject.name      "Current flow through the line CL6 is higher than TATL";
+            nc:GateInputPin.Gate           <urn:uuid:068d8431-c5b8-4908-8af0-9642779347c0>;
+            nc:GateInputPin.absoluteValue  true;
+            nc:GateInputPin.duration       "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:GateInputPin.logicKind      nc:LogicalOperatorsKind.greaterThan;
+            nc:GateInputPin.negate         false;
+            nc:PinOperationalLimit.OperationalLimit
+                    <urn:uuid:0a60b94d-13e6-43ad-1135-09fe81afb5a4> .
+    
+    <urn:uuid:9aaa5e63-3126-4f9d-930a-2397b97af9d5>
+            rdf:type                     nc:StageTrigger;
+            cim:IdentifiedObject.mRID    "9aaa5e63-3126-4f9d-930a-2397b97af9d5";
+            cim:IdentifiedObject.name    "Current flow through the line CL6 is higher than PATL";
+            nc:StageTrigger.GateTrigger  <urn:uuid:48f7389d-7825-4a5a-a187-29cdd37a4057>;
+            nc:StageTrigger.Stage        <urn:uuid:2efd4f05-da11-4060-8fa4-44b84388d723>;
+            nc:StageTrigger.normalArmed  true;
+            nc:StageTrigger.priority     0 .
+    
+    <urn:uuid:8739648b-662d-46c1-9f51-2965398e6ded>
+            rdf:type                   nc:GridStateAlterationCollection;
+            cim:IdentifiedObject.mRID  "8739648b-662d-46c1-9f51-2965398e6ded";
+            cim:IdentifiedObject.name  "collection 1" .
+    
+    <urn:uuid:950f792b-d761-48f6-8f82-cf40b889a26c>
+            rdf:type                       nc:Stage;
+            cim:IdentifiedObject.mRID      "950f792b-d761-48f6-8f82-cf40b889a26c";
+            cim:IdentifiedObject.name      "AutomaticGenerationShedding_CL6_SIPS1_Stage3";
+            nc:Stage.GridStateAlterationCollection
+                    <urn:uuid:124a56f0-22cc-47b0-a9ab-219641b76e25>;
+            nc:Stage.RemedialActionScheme  <urn:uuid:ce962568-cce9-4c5c-8d45-b79694efcf88>;
+            nc:Stage.priority              3 .
+    
+    <urn:uuid:5e401955-387e-45ce-b126-dd142b06b20c>
+            rdf:type                   nc:GridStateAlterationRemedialAction;
+            cim:IdentifiedObject.description
+                    "This is an example. Curative RA: TopologyAction (switching on CL1). Switch ID: _37b6d57e-d459-422a-8b81-d612a9ead26c";
+            cim:IdentifiedObject.mRID  "5e401955-387e-45ce-b126-dd142b06b20c";
+            cim:IdentifiedObject.name  "RA3";
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    true;
+            nc:RemedialAction.kind     nc:RemedialActionKind.curative;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:31d41e36-11c8-417b-bafb-c410d4391898>
+            rdf:type                   nc:SchemeRemedialAction;
+            cim:IdentifiedObject.description
+                    "Curative RA: SIPS (Substation split). Coupler ID: _2db971f1-ed3d-4ea6-acf5-983c4289d51b";
+            cim:IdentifiedObject.mRID  "31d41e36-11c8-417b-bafb-c410d4391898";
+            cim:IdentifiedObject.name  "CRA";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    true;
+            nc:RemedialAction.kind     nc:RemedialActionKind.curative;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:ce962568-cce9-4c5c-8d45-b79694efcf88>
+            rdf:type                      nc:RemedialActionScheme;
+            cim:IdentifiedObject.description
+                    "UC_7 Automatic Generation Shedding: UC7_SIPS1 armed when line CL6 is overloaded above TATL is Stage 1. SIPS actions when initially line CL6 is overloaded above TATL";
+            cim:IdentifiedObject.mRID     "ce962568-cce9-4c5c-8d45-b79694efcf88";
+            cim:IdentifiedObject.name     "AutomaticGenerationShedding_CL6_SIPS1";
+            nc:RemedialActionScheme.GateArmed
+                    <urn:uuid:068d8431-c5b8-4908-8af0-9642779347c0>;
+            nc:RemedialActionScheme.kind  nc:RemedialActionSchemeKind.sips;
+            nc:RemedialActionScheme.normalArmed
+                    true .
+    
+    <urn:uuid:5d65b3b1-1c66-4045-8d6b-0accc85043ed>
+            rdf:type                        nc:StaticPropertyRange;
+            cim:IdentifiedObject.mRID       "5d65b3b1-1c66-4045-8d6b-0accc85043ed";
+            cim:IdentifiedObject.name       "Generator HÄLLAN_G1 breaker CT72_G1-S OPEN";
+            nc:RangeConstraint.GridStateAlteration
+                    <urn:uuid:e2a19b7e-6d21-4987-b138-f746bba325e6>;
+            nc:RangeConstraint.direction    nc:RelativeDirectionKind.none;
+            nc:RangeConstraint.normalValue  "1"^^xsd:float;
+            nc:RangeConstraint.valueKind    nc:ValueOffsetKind.absolute;
+            nc:StaticPropertyRange.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open> .
+    
+    <urn:uuid:bc460391-dcc1-4ad1-a54c-c6a55f947582>
+            rdf:type                        nc:StaticPropertyRange;
+            cim:IdentifiedObject.description
+                    "NCP 386";
+            cim:IdentifiedObject.mRID       "bc460391-dcc1-4ad1-a54c-c6a55f947582";
+            cim:IdentifiedObject.name       "Static range";
+            nc:RangeConstraint.GridStateAlteration
+                    <urn:uuid:55961174-efb4-44be-8832-b0fb107de235>;
+            nc:RangeConstraint.direction    nc:RelativeDirectionKind.none;
+            nc:RangeConstraint.normalValue  "1.0"^^xsd:float;
+            nc:RangeConstraint.valueKind    nc:ValueOffsetKind.absolute;
+            nc:StaticPropertyRange.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open> .
+    
+    <urn:uuid:ed90cae2-cc84-4c37-a6b7-80cb9fe5c464>
+            rdf:type                   nc:Gate;
+            cim:IdentifiedObject.mRID  "ed90cae2-cc84-4c37-a6b7-80cb9fe5c464";
+            cim:IdentifiedObject.name  "Gate 1";
+            nc:Gate.kind               nc:GateLogicKind.and .
+    
+    <urn:uuid:fe13b0ad-0f87-45d8-a96f-93fdfc33c50b>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.description
+                    "NCP 386";
+            cim:IdentifiedObject.mRID  "fe13b0ad-0f87-45d8-a96f-93fdfc33c50b";
+            cim:IdentifiedObject.name  " CL7 to Hallan disc";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:7e422768-207d-455f-976e-0b1cb2338509>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:GridStateAlteration.maximumPerDay
+                    5;
+            nc:GridStateAlteration.minimumActivation
+                    "PT1H"^^xsd:duration;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:GridStateAlteration.timePerStage
+                    "PT1M"^^xsd:duration;
+            nc:TopologyAction.Switch   <urn:uuid:ceab6391-3b0c-4b01-a6e4-e654ae454807> .
+    
+    <urn:uuid:68316fda-bac0-4c4c-8f91-d7a43153454f>
+            rdf:type                        nc:StaticPropertyRange;
+            cim:IdentifiedObject.description
+                    "NCP 386";
+            cim:IdentifiedObject.mRID       "68316fda-bac0-4c4c-8f91-d7a43153454f";
+            cim:IdentifiedObject.name       "Static range";
+            nc:RangeConstraint.GridStateAlteration
+                    <urn:uuid:1d19ef52-6ed4-4167-aa00-c3deb0ea0005>;
+            nc:RangeConstraint.direction    nc:RelativeDirectionKind.none;
+            nc:RangeConstraint.normalValue  "1.0"^^xsd:float;
+            nc:RangeConstraint.valueKind    nc:ValueOffsetKind.absolute;
+            nc:StaticPropertyRange.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open> .
+    
+    <urn:uuid:cd289bed-6b17-4cb8-8554-61e1aee3453a>
+            rdf:type  nc:ContingencyWithRemedialAction;
+            nc:ContingencyWithRemedialAction.Contingency
+                    <urn:uuid:e05bbe20-9d4a-40da-9777-8424d216785d>;
+            nc:ContingencyWithRemedialAction.RemedialAction
+                    <urn:uuid:31d41e36-11c8-417b-bafb-c410d4391898>;
+            nc:ContingencyWithRemedialAction.combinationConstraintKind
+                    nc:ElementCombinationConstraintKind.included;
+            nc:ContingencyWithRemedialAction.mRID
+                    "cd289bed-6b17-4cb8-8554-61e1aee3453a" .
+    
+    <urn:uuid:7d2d969e-6b11-45c5-ba66-9637072b3be5>
+            rdf:type                       nc:Stage;
+            cim:IdentifiedObject.mRID      "7d2d969e-6b11-45c5-ba66-9637072b3be5";
+            cim:IdentifiedObject.name      "AutomaticGenerationShedding_CL6_SIPS1_Stage2a";
+            nc:Stage.GridStateAlterationCollection
+                    <urn:uuid:124a56f0-22cc-47b0-a9ab-219641b76e25>;
+            nc:Stage.RemedialActionScheme  <urn:uuid:ce962568-cce9-4c5c-8d45-b79694efcf88>;
+            nc:Stage.priority              2 .
+    
+    <urn:uuid:48f7389d-7825-4a5a-a187-29cdd37a4057>
+            rdf:type                   nc:Gate;
+            cim:IdentifiedObject.mRID  "48f7389d-7825-4a5a-a187-29cdd37a4057";
+            cim:IdentifiedObject.name  "Current flow through the line CL6 is higher than PATL";
+            nc:Gate.kind               nc:GateLogicKind.and .
+    
+    <urn:uuid:cfabf356-c5e1-4391-b91b-3330bc24f0c9>
+            rdf:type                   nc:GridStateAlterationRemedialAction;
+            cim:IdentifiedObject.description
+                    "Preventive RA : substation split";
+            cim:IdentifiedObject.mRID  "cfabf356-c5e1-4391-b91b-3330bc24f0c9";
+            cim:IdentifiedObject.name  "RA17";
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    true;
+            nc:RemedialAction.kind     nc:RemedialActionKind.preventive;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:3997ac30-8d9f-432c-9a38-db6a465be999>
+            rdf:type                        nc:StaticPropertyRange;
+            cim:IdentifiedObject.mRID       "3997ac30-8d9f-432c-9a38-db6a465be999";
+            cim:IdentifiedObject.name       "Set generator HÄLLAN_G3 power to Pmin = 10 MW";
+            nc:RangeConstraint.GridStateAlteration
+                    <urn:uuid:8e60eea4-9c86-4e9d-8012-6645d5efb96d>;
+            nc:RangeConstraint.direction    nc:RelativeDirectionKind.none;
+            nc:RangeConstraint.normalValue  "-10"^^xsd:float;
+            nc:RangeConstraint.valueKind    nc:ValueOffsetKind.absolute;
+            nc:StaticPropertyRange.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/RotatingMachine.p> .
+    
+    <urn:uuid:ea6979c2-2ad4-484a-9f41-bec157a0eedd>
+            rdf:type                   nc:GridStateAlterationCollection;
+            cim:IdentifiedObject.mRID  "ea6979c2-2ad4-484a-9f41-bec157a0eedd";
+            cim:IdentifiedObject.name  "Disconnect generator HÄLLAN_G3" .
+    
+    <urn:uuid:3da34bc8-e993-4e9e-81f7-8a97f6d21d9d>
+            rdf:type                       nc:PinOperationalLimit;
+            cim:IdentifiedObject.mRID      "3da34bc8-e993-4e9e-81f7-8a97f6d21d9d";
+            cim:IdentifiedObject.name      "Current flow through the line CL6 is higher than PATL";
+            nc:GateInputPin.Gate           <urn:uuid:1653b751-c9df-4f36-9970-db3bf8e87deb>;
+            nc:GateInputPin.absoluteValue  true;
+            nc:GateInputPin.duration       "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:GateInputPin.logicKind      nc:LogicalOperatorsKind.greaterThan;
+            nc:GateInputPin.negate         false;
+            nc:PinOperationalLimit.OperationalLimit
+                    <urn:uuid:02abc849-a241-bd01-ca44-a13e3e46d3bd> .
+    
+    <urn:uuid:615cdd6e-88f3-4e32-a396-766e171170eb>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.description
+                    "NCP 386";
+            cim:IdentifiedObject.mRID  "615cdd6e-88f3-4e32-a396-766e171170eb";
+            cim:IdentifiedObject.name  " CL6 to Hallan";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:fa3e3533-345a-4ef1-a46d-3ab6d251924a>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:GridStateAlteration.maximumPerDay
+                    5;
+            nc:GridStateAlteration.minimumActivation
+                    "PT1H"^^xsd:duration;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:GridStateAlteration.timePerStage
+                    "PT1M"^^xsd:duration;
+            nc:TopologyAction.Switch   <urn:uuid:e1579b23-b6cf-4b76-a648-ee73185a6d3c> .
+    
+    <urn:uuid:45900365-d38e-443f-abcb-c868265abca2>
+            rdf:type                      nc:RemedialActionScheme;
+            cim:IdentifiedObject.mRID     "45900365-d38e-443f-abcb-c868265abca2";
+            cim:IdentifiedObject.name     "RAS1";
+            nc:RemedialActionScheme.GateArmed
+                    <urn:uuid:ed90cae2-cc84-4c37-a6b7-80cb9fe5c464>;
+            nc:RemedialActionScheme.kind  nc:RemedialActionSchemeKind.sips;
+            nc:RemedialActionScheme.normalArmed
+                    true .
+    
+    <urn:uuid:0bec00cd-cf46-40d8-931a-efb35bc417af>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.mRID  "0bec00cd-cf46-40d8-931a-efb35bc417af";
+            cim:IdentifiedObject.name  "Generator HÄLLAN_G1 breaker CT72_G1-S OPEN";
+            nc:GridStateAlteration.GridStateAlterationCollection
+                    <urn:uuid:12097f09-e5cc-4fdc-98eb-0675d0f2af11>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:TopologyAction.Switch   <urn:uuid:ecc7d452-3cc6-4a6f-ac55-cfc80f3aac53> .
+    
+    <urn:uuid:7e29e44b-85b3-4e93-9e35-00b76f98e9fc>
+            rdf:type                        nc:StaticPropertyRange;
+            cim:IdentifiedObject.description
+                    "NCP 386";
+            cim:IdentifiedObject.mRID       "7e29e44b-85b3-4e93-9e35-00b76f98e9fc";
+            cim:IdentifiedObject.name       "Static range";
+            nc:RangeConstraint.GridStateAlteration
+                    <urn:uuid:fe13b0ad-0f87-45d8-a96f-93fdfc33c50b>;
+            nc:RangeConstraint.direction    nc:RelativeDirectionKind.none;
+            nc:RangeConstraint.normalValue  "1.0"^^xsd:float;
+            nc:RangeConstraint.valueKind    nc:ValueOffsetKind.absolute;
+            nc:StaticPropertyRange.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open> .
+    
+    <urn:uuid:c4861bc3-bc10-4ae7-9f26-e4d5b3bec2c4>
+            rdf:type                       nc:Stage;
+            cim:IdentifiedObject.mRID      "c4861bc3-bc10-4ae7-9f26-e4d5b3bec2c4";
+            cim:IdentifiedObject.name      "stage 1";
+            nc:Stage.GridStateAlterationCollection
+                    <urn:uuid:8739648b-662d-46c1-9f51-2965398e6ded>;
+            nc:Stage.RemedialActionScheme  <urn:uuid:45900365-d38e-443f-abcb-c868265abca2>;
+            nc:Stage.priority              1 .
+    
+    <urn:uuid:884fd5ca-afa6-4b5b-a0f7-2daee3f1959f>
+            rdf:type                   nc:RotatingMachineAction;
+            cim:IdentifiedObject.mRID  "884fd5ca-afa6-4b5b-a0f7-2daee3f1959f";
+            cim:IdentifiedObject.name  "Set generator HÄLLAN_G3 power to Pmin";
+            nc:GridStateAlteration.GridStateAlterationCollection
+                    <urn:uuid:b7a0d8df-2809-4bd3-952c-474ba032aa46>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/RotatingMachine.p>;
+            nc:RotatingMachineAction.RotatingMachine
+                    <urn:uuid:2a35657f-a1a8-45dc-911e-e71535b35d87> .
+    
+    <urn:uuid:77dae0e6-4c18-4318-83c5-292b60179af1>
+            rdf:type                        nc:StaticPropertyRange;
+            cim:IdentifiedObject.description
+                    "NCP 386";
+            cim:IdentifiedObject.mRID       "77dae0e6-4c18-4318-83c5-292b60179af1";
+            cim:IdentifiedObject.name       "Static range";
+            nc:RangeConstraint.GridStateAlteration
+                    <urn:uuid:eb60d1c0-8bcc-463b-8b91-8dc1833b2a92>;
+            nc:RangeConstraint.direction    nc:RelativeDirectionKind.none;
+            nc:RangeConstraint.normalValue  "1.0"^^xsd:float;
+            nc:RangeConstraint.valueKind    nc:ValueOffsetKind.absolute;
+            nc:StaticPropertyRange.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open> .
+    
+    <urn:uuid:bd7aaf12-e6b9-44ef-9e04-3d2992581718>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.description
+                    "description";
+            cim:IdentifiedObject.mRID  "bd7aaf12-e6b9-44ef-9e04-3d2992581718";
+            cim:IdentifiedObject.name  "TA4";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:587cb391-ed16-4a1d-876e-f90241addce5>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:TopologyAction.Switch   <urn:uuid:d5fffe1c-8834-4fcb-ab4a-dba67d2218b8> .
+    
+    <urn:uuid:bf8157d8-d787-44f7-a997-751e50e69165>
+            rdf:type                   nc:GridStateAlterationRemedialAction;
+            cim:IdentifiedObject.description
+                    "Curative RA: StaticVarCompensatorAction";
+            cim:IdentifiedObject.mRID  "bf8157d8-d787-44f7-a997-751e50e69165";
+            cim:IdentifiedObject.name  "RA12";
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    true;
+            nc:RemedialAction.kind     nc:RemedialActionKind.curative;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:2efd4f05-da11-4060-8fa4-44b84388d723>
+            rdf:type                       nc:Stage;
+            cim:IdentifiedObject.mRID      "2efd4f05-da11-4060-8fa4-44b84388d723";
+            cim:IdentifiedObject.name      "AutomaticGenerationShedding_CL6_SIPS1_Stage2";
+            nc:Stage.GridStateAlterationCollection
+                    <urn:uuid:12097f09-e5cc-4fdc-98eb-0675d0f2af11>;
+            nc:Stage.RemedialActionScheme  <urn:uuid:f151d691-a13b-4c70-a7e9-e7c272da78bb>;
+            nc:Stage.priority              2 .
+    
+    <urn:uuid:f151d691-a13b-4c70-a7e9-e7c272da78bb>
+            rdf:type                      nc:RemedialActionScheme;
+            cim:IdentifiedObject.description
+                    "SIPS actions when initially line CL6 is overloaded above PATL but below TATL. UC7_SIPS2 armed when line CL6 is overloaded above PATL but below TATL is Stage 1";
+            cim:IdentifiedObject.mRID     "f151d691-a13b-4c70-a7e9-e7c272da78bb";
+            cim:IdentifiedObject.name     "AutomaticGenerationShedding_CL6_SIPS2";
+            nc:RemedialActionScheme.GateArmed
+                    <urn:uuid:a0e20b48-a34b-40e6-8282-538804536985>;
+            nc:RemedialActionScheme.kind  nc:RemedialActionSchemeKind.sips;
+            nc:RemedialActionScheme.normalArmed
+                    true .
+    
+    <urn:uuid:d101c17c-c67a-4a33-b8ad-aaee4ca6563e>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.mRID  "d101c17c-c67a-4a33-b8ad-aaee4ca6563e";
+            cim:IdentifiedObject.name  "Generator HÄLLAN_G3 breaker CT72_G3-S OPEN";
+            nc:GridStateAlteration.GridStateAlterationCollection
+                    <urn:uuid:124a56f0-22cc-47b0-a9ab-219641b76e25>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:TopologyAction.Switch   <urn:uuid:dafeb217-8a10-4068-b88a-2e884a2bdc32> .
+    
+    <urn:uuid:b7a0d8df-2809-4bd3-952c-474ba032aa46>
+            rdf:type                   nc:GridStateAlterationCollection;
+            cim:IdentifiedObject.mRID  "b7a0d8df-2809-4bd3-952c-474ba032aa46";
+            cim:IdentifiedObject.name  "Set generator HÄLLAN_G3 power to 0 MW" .
+    
+    <urn:uuid:fd834934-8b26-42d6-bc50-512a25498f6d>
+            rdf:type                   nc:TriggerCondition;
+            cim:IdentifiedObject.mRID  "fd834934-8b26-42d6-bc50-512a25498f6d";
+            cim:IdentifiedObject.name  "trig cond 1";
+            nc:TriggerCondition.GateTrigger
+                    <urn:uuid:ed90cae2-cc84-4c37-a6b7-80cb9fe5c464>;
+            nc:TriggerCondition.RemedialActionScheme
+                    <urn:uuid:45900365-d38e-443f-abcb-c868265abca2> .
+    
+    <urn:uuid:4ab66db6-53a4-4ebf-af6e-1ea32b6e77bb>
+            rdf:type                   nc:RegulatingControlAction;
+            cim:IdentifiedObject.description
+                    "RA for generator ID d4e4911b-d87a-4fd5-a7a7-0346c0538db3";
+            cim:IdentifiedObject.mRID  "4ab66db6-53a4-4ebf-af6e-1ea32b6e77bb";
+            cim:IdentifiedObject.name  "CRA6";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:b5f07ec3-3a3c-49ec-8e85-02a77d4f79c1>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/RegulatingControl.targetValue>;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:RegulatingControlAction.RegulatingControl
+                    <urn:uuid:51b004dd-fb43-5c9b-85a8-3b04bd4a7f6c> .
+    
+    <urn:uuid:02517b73-ef6d-4cbf-be94-8fc847ccbff1>
+            rdf:type                        nc:StaticPropertyRange;
+            cim:IdentifiedObject.description
+                    "NCP 386";
+            cim:IdentifiedObject.mRID       "02517b73-ef6d-4cbf-be94-8fc847ccbff1";
+            cim:IdentifiedObject.name       "Static range";
+            nc:RangeConstraint.GridStateAlteration
+                    <urn:uuid:c33f19fd-ed90-4440-a5f8-5b62d1cc559e>;
+            nc:RangeConstraint.direction    nc:RelativeDirectionKind.none;
+            nc:RangeConstraint.normalValue  "1.0"^^xsd:float;
+            nc:RangeConstraint.valueKind    nc:ValueOffsetKind.absolute;
+            nc:StaticPropertyRange.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open> .
+    
+    <urn:uuid:587cb391-ed16-4a1d-876e-f90241addce5>
+            rdf:type                   nc:GridStateAlterationRemedialAction;
+            cim:IdentifiedObject.description
+                    "Curative RA:  TopologyAction (line trip). Switch ID: _21f21596-302e-4e0e-8009-2b8c3c23517f";
+            cim:IdentifiedObject.mRID  "587cb391-ed16-4a1d-876e-f90241addce5";
+            cim:IdentifiedObject.name  "RA5";
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    true;
+            nc:RemedialAction.kind     nc:RemedialActionKind.curative;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:fe2f9b5c-7a78-4f3d-983a-d9602f9e5fe7>
+            rdf:type                        nc:StaticPropertyRange;
+            cim:IdentifiedObject.mRID       "fe2f9b5c-7a78-4f3d-983a-d9602f9e5fe7";
+            cim:IdentifiedObject.name       "Generator HÄLLAN_G3 breaker CT72_G3-S OPEN";
+            nc:RangeConstraint.GridStateAlteration
+                    <urn:uuid:d101c17c-c67a-4a33-b8ad-aaee4ca6563e>;
+            nc:RangeConstraint.direction    nc:RelativeDirectionKind.none;
+            nc:RangeConstraint.normalValue  "1"^^xsd:float;
+            nc:RangeConstraint.valueKind    nc:ValueOffsetKind.absolute;
+            nc:StaticPropertyRange.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open> .
+    
+    <urn:uuid:6d2c8901-d068-4d22-8ce9-7379644b4f17>
+            rdf:type                   nc:GridStateAlterationRemedialAction;
+            cim:IdentifiedObject.description
+                    "Topology remedial action with one topology action and without dependencies";
+            cim:IdentifiedObject.mRID  "6d2c8901-d068-4d22-8ce9-7379644b4f17";
+            cim:IdentifiedObject.name  "Topology RA one Switch";
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.RemedialActionSystemOperator
+                    <https://data.europa.eu/energy/EIC/TSOA------Q>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    true;
+            nc:RemedialAction.kind     nc:RemedialActionKind.preventive;
+            nc:RemedialAction.normalAvailable
+                    true;
+            nc:RemedialAction.timeToImplement
+                    "PT20M0S"^^xsd:duration .
+    
+    <urn:uuid:a9c26c9c-32ab-45bd-bc69-98a136e33799>
+            rdf:type                     nc:StageTrigger;
+            cim:IdentifiedObject.mRID    "a9c26c9c-32ab-45bd-bc69-98a136e33799";
+            cim:IdentifiedObject.name    "stage trig 1";
+            nc:StageTrigger.GateArmed    <urn:uuid:ed90cae2-cc84-4c37-a6b7-80cb9fe5c464>;
+            nc:StageTrigger.GateTrigger  <urn:uuid:ed90cae2-cc84-4c37-a6b7-80cb9fe5c464>;
+            nc:StageTrigger.Stage        <urn:uuid:c4861bc3-bc10-4ae7-9f26-e4d5b3bec2c4>;
+            nc:StageTrigger.normalArmed  true;
+            nc:StageTrigger.priority     1 .
+    
+    <urn:uuid:d316a138-5b75-4a80-bd95-151adfbfe13d>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.description
+                    "NCP 386";
+            cim:IdentifiedObject.mRID  "d316a138-5b75-4a80-bd95-151adfbfe13d";
+            cim:IdentifiedObject.name  " switch";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:7e422768-207d-455f-976e-0b1cb2338509>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:GridStateAlteration.maximumPerDay
+                    5;
+            nc:GridStateAlteration.minimumActivation
+                    "PT1H"^^xsd:duration;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:GridStateAlteration.timePerStage
+                    "PT1M"^^xsd:duration;
+            nc:TopologyAction.Switch   <urn:uuid:d8fe1bde-73fa-4dad-aceb-077b7e60eb05> .
+    
+    <urn:uuid:f4d38a37-bb34-477b-aba3-b68c934077b5>
+            rdf:type                        nc:StaticPropertyRange;
+            cim:IdentifiedObject.mRID       "f4d38a37-bb34-477b-aba3-b68c934077b5";
+            cim:IdentifiedObject.name       "Set generator HÄLLAN_G3 power to Pmin = 10 MW";
+            nc:RangeConstraint.GridStateAlteration
+                    <urn:uuid:884fd5ca-afa6-4b5b-a0f7-2daee3f1959f>;
+            nc:RangeConstraint.direction    nc:RelativeDirectionKind.none;
+            nc:RangeConstraint.normalValue  "-10"^^xsd:float;
+            nc:RangeConstraint.valueKind    nc:ValueOffsetKind.absolute;
+            nc:StaticPropertyRange.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/RotatingMachine.p> .
+    
+    <urn:uuid:b2555ccc-6562-4887-8abc-19a6e51cfe36>
+            rdf:type                   nc:GridStateAlterationRemedialAction;
+            cim:IdentifiedObject.description
+                    "Preventive RA: TopologyAction (load trip)";
+            cim:IdentifiedObject.mRID  "b2555ccc-6562-4887-8abc-19a6e51cfe36";
+            cim:IdentifiedObject.name  "RA11";
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    true;
+            nc:RemedialAction.kind     nc:RemedialActionKind.preventive;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:68255abc-9164-4e9a-89ae-d8c44cf3b2b3>
+            rdf:type                   nc:GridStateAlterationRemedialAction;
+            cim:IdentifiedObject.description
+                    "This is an example. Preventive RA: RegulatingControlAction, Generator voltage from 1.11704 to 1 p.u";
+            cim:IdentifiedObject.mRID  "68255abc-9164-4e9a-89ae-d8c44cf3b2b3";
+            cim:IdentifiedObject.name  "RA1";
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    true;
+            nc:RemedialAction.kind     nc:RemedialActionKind.preventive;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:b61d5cd5-0373-4e58-82c3-b5e4d86147a5>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.description
+                    "Topology remedial action with one topology action and without dependencies";
+            cim:IdentifiedObject.mRID  "b61d5cd5-0373-4e58-82c3-b5e4d86147a5";
+            cim:IdentifiedObject.name  "Topology RA one Switch";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:6d2c8901-d068-4d22-8ce9-7379644b4f17>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:GridStateAlteration.maximumPerDay
+                    5;
+            nc:GridStateAlteration.minimumActivation
+                    "PT1H"^^xsd:duration;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:GridStateAlteration.timePerStage
+                    "PT1M"^^xsd:duration;
+            nc:TopologyAction.Switch   <urn:uuid:176d262c-701c-4ced-99b2-a155c136e787> .
+    
+    <urn:uuid:516cbe68-560d-48ce-8745-f84b90aef2c5>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.description
+                    "Preventive RA : substation split";
+            cim:IdentifiedObject.mRID  "516cbe68-560d-48ce-8745-f84b90aef2c5";
+            cim:IdentifiedObject.name  "RA17";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:cfabf356-c5e1-4391-b91b-3330bc24f0c9>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:TopologyAction.Switch   <urn:uuid:2db971f1-ed3d-4ea6-acf5-983c4289d51b> .
+    
+    <urn:uuid:57fdf76c-1d95-4616-9635-f6a18cfbbdce>
+            rdf:type                       nc:PinOperationalLimit;
+            cim:IdentifiedObject.mRID      "57fdf76c-1d95-4616-9635-f6a18cfbbdce";
+            cim:IdentifiedObject.name      "Current flow through the line CL6 is lower than TATL";
+            nc:GateInputPin.Gate           <urn:uuid:1653b751-c9df-4f36-9970-db3bf8e87deb>;
+            nc:GateInputPin.absoluteValue  true;
+            nc:GateInputPin.duration       "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:GateInputPin.logicKind      nc:LogicalOperatorsKind.lessThan;
+            nc:GateInputPin.negate         false;
+            nc:PinOperationalLimit.OperationalLimit
+                    <urn:uuid:0a60b94d-13e6-43ad-1135-09fe81afb5a4> .
+    
+    <urn:uuid:02a420c3-dcc2-413e-9f7d-a4997c42e155>
+            rdf:type                   nc:GridStateAlterationCollection;
+            cim:IdentifiedObject.mRID  "02a420c3-dcc2-413e-9f7d-a4997c42e155";
+            cim:IdentifiedObject.name  "Set generator HÄLLAN_G3 power to Pmin" .
+    
+    <urn:uuid:5f02c384-863f-44eb-a14c-f80de6cfa091>
+            rdf:type  nc:ContingencyWithRemedialAction;
+            nc:ContingencyWithRemedialAction.Contingency
+                    <urn:uuid:5d587c7e-9ced-416a-ad17-6ef9b241a998>;
+            nc:ContingencyWithRemedialAction.RemedialAction
+                    <urn:uuid:587cb391-ed16-4a1d-876e-f90241addce5>;
+            nc:ContingencyWithRemedialAction.combinationConstraintKind
+                    nc:ElementCombinationConstraintKind.included;
+            nc:ContingencyWithRemedialAction.mRID
+                    "5f02c384-863f-44eb-a14c-f80de6cfa091" .
+    
+    <urn:uuid:6a9b5221-bb3f-421b-89c1-886b100aa68a>
+            rdf:type                   nc:RemedialActionGroup;
+            cim:IdentifiedObject.description
+                    "Group NCP 386";
+            cim:IdentifiedObject.mRID  "6a9b5221-bb3f-421b-89c1-886b100aa68a";
+            cim:IdentifiedObject.name  "GroupSubstationA" .
+    
+    <urn:uuid:445032fc-0efa-4f5c-b36f-333bc2132e68>
+            rdf:type                        nc:StaticPropertyRange;
+            cim:IdentifiedObject.description
+                    "NCP 386";
+            cim:IdentifiedObject.mRID       "445032fc-0efa-4f5c-b36f-333bc2132e68";
+            cim:IdentifiedObject.name       "Static range";
+            nc:RangeConstraint.GridStateAlteration
+                    <urn:uuid:d316a138-5b75-4a80-bd95-151adfbfe13d>;
+            nc:RangeConstraint.direction    nc:RelativeDirectionKind.none;
+            nc:RangeConstraint.normalValue  "1.0"^^xsd:float;
+            nc:RangeConstraint.valueKind    nc:ValueOffsetKind.absolute;
+            nc:StaticPropertyRange.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open> .
+    
+    <urn:uuid:fa3e3533-345a-4ef1-a46d-3ab6d251924a>
+            rdf:type                   nc:GridStateAlterationRemedialAction;
+            cim:IdentifiedObject.description
+                    "RA for SubstationB_2N UC Activation after RAO of topology RA ";
+            cim:IdentifiedObject.mRID  "fa3e3533-345a-4ef1-a46d-3ab6d251924a";
+            cim:IdentifiedObject.name  "RA SubstationB_2N";
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.RemedialActionSystemOperator
+                    <https://energy.referencedata.eu/test/party/Svedala>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    true;
+            nc:RemedialAction.kind     nc:RemedialActionKind.preventive;
+            nc:RemedialAction.normalAvailable
+                    true;
+            nc:RemedialAction.timeToImplement
+                    "PT20M0S"^^xsd:duration .
+    
+    <urn:uuid:caaa9307-efa6-4172-a2c9-7a938b4b94a0>
+            rdf:type                        nc:StaticPropertyRange;
+            cim:IdentifiedObject.description
+                    "Topology remedial action with one topology action and without dependencies";
+            cim:IdentifiedObject.mRID       "caaa9307-efa6-4172-a2c9-7a938b4b94a0";
+            cim:IdentifiedObject.name       "Topology RA one Switch";
+            nc:RangeConstraint.GridStateAlteration
+                    <urn:uuid:b61d5cd5-0373-4e58-82c3-b5e4d86147a5>;
+            nc:RangeConstraint.direction    nc:RelativeDirectionKind.none;
+            nc:RangeConstraint.normalValue  "0.0"^^xsd:float;
+            nc:RangeConstraint.valueKind    nc:ValueOffsetKind.absolute;
+            nc:StaticPropertyRange.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open> .
+    
+    <urn:uuid:55961174-efb4-44be-8832-b0fb107de235>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.description
+                    "NCP 386";
+            cim:IdentifiedObject.mRID  "55961174-efb4-44be-8832-b0fb107de235";
+            cim:IdentifiedObject.name  " CL6 to Jauras C";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:fa3e3533-345a-4ef1-a46d-3ab6d251924a>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:GridStateAlteration.maximumPerDay
+                    5;
+            nc:GridStateAlteration.minimumActivation
+                    "PT1H"^^xsd:duration;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:GridStateAlteration.timePerStage
+                    "PT1M"^^xsd:duration;
+            nc:TopologyAction.Switch   <urn:uuid:7d90dea5-07aa-4abd-949c-125c2842d91d> .
+    
+    <urn:uuid:a0e20b48-a34b-40e6-8282-538804536985>
+            rdf:type                   nc:Gate;
+            cim:IdentifiedObject.mRID  "a0e20b48-a34b-40e6-8282-538804536985";
+            cim:IdentifiedObject.name  "Current flow through the line CL6 is higher than PATL but lower than TATL";
+            nc:Gate.kind               nc:GateLogicKind.and .
+    
+    <urn:uuid:124a56f0-22cc-47b0-a9ab-219641b76e25>
+            rdf:type                   nc:GridStateAlterationCollection;
+            cim:IdentifiedObject.mRID  "124a56f0-22cc-47b0-a9ab-219641b76e25";
+            cim:IdentifiedObject.name  "Disconnect generator HÄLLAN_G3" .
+    
+    <urn:uuid:1653b751-c9df-4f36-9970-db3bf8e87deb>
+            rdf:type                   nc:Gate;
+            cim:IdentifiedObject.mRID  "1653b751-c9df-4f36-9970-db3bf8e87deb";
+            cim:IdentifiedObject.name  "Current flow through the line CL6 is higher than PATL but lower than TATL";
+            nc:Gate.kind               nc:GateLogicKind.and .
+    
+    <urn:uuid:f8722dc4-0b1c-4b36-be29-fe3aa5460549>
+            rdf:type                       nc:Stage;
+            cim:IdentifiedObject.mRID      "f8722dc4-0b1c-4b36-be29-fe3aa5460549";
+            cim:IdentifiedObject.name      "AutomaticGenerationShedding_CL6_SIPS1_Stage1";
+            nc:Stage.GridStateAlterationCollection
+                    <urn:uuid:02a420c3-dcc2-413e-9f7d-a4997c42e155>;
+            nc:Stage.RemedialActionScheme  <urn:uuid:f151d691-a13b-4c70-a7e9-e7c272da78bb>;
+            nc:Stage.priority              1 .
+    
+    <urn:uuid:0725050a-0ece-49d0-8822-f5e0c8fb99c9>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.mRID  "0725050a-0ece-49d0-8822-f5e0c8fb99c9";
+            cim:IdentifiedObject.name  "Generator HÄLLAN_G1 breaker CT72_G3-S OPEN";
+            nc:GridStateAlteration.GridStateAlterationCollection
+                    <urn:uuid:ea6979c2-2ad4-484a-9f41-bec157a0eedd>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:TopologyAction.Switch   <urn:uuid:dafeb217-8a10-4068-b88a-2e884a2bdc32> .
+    
+    <urn:uuid:068d8431-c5b8-4908-8af0-9642779347c0>
+            rdf:type                   nc:Gate;
+            cim:IdentifiedObject.mRID  "068d8431-c5b8-4908-8af0-9642779347c0";
+            cim:IdentifiedObject.name  "Current flow through the line CL6 is higher than TATL";
+            nc:Gate.kind               nc:GateLogicKind.and .
+    
+    <urn:uuid:92195218-f3a3-4cca-af38-1550a91bcd44>
+            rdf:type                     nc:StageTrigger;
+            cim:IdentifiedObject.mRID    "92195218-f3a3-4cca-af38-1550a91bcd44";
+            cim:IdentifiedObject.name    "Current flow through the line CL6 is higher than PATL but lower than TATL";
+            nc:StageTrigger.GateTrigger  <urn:uuid:a0e20b48-a34b-40e6-8282-538804536985>;
+            nc:StageTrigger.Stage        <urn:uuid:f8722dc4-0b1c-4b36-be29-fe3aa5460549>;
+            nc:StageTrigger.normalArmed  true;
+            nc:StageTrigger.priority     0 .
+    
+    <urn:uuid:26e73fc0-82d0-4b6a-929d-1bb2c49a24d5>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.description
+                    "NCP 386";
+            cim:IdentifiedObject.mRID  "26e73fc0-82d0-4b6a-929d-1bb2c49a24d5";
+            cim:IdentifiedObject.name  " CL7 to Hallan";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:7e422768-207d-455f-976e-0b1cb2338509>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:GridStateAlteration.maximumPerDay
+                    5;
+            nc:GridStateAlteration.minimumActivation
+                    "PT1H"^^xsd:duration;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:GridStateAlteration.timePerStage
+                    "PT1M"^^xsd:duration;
+            nc:TopologyAction.Switch   <urn:uuid:f47ebb77-d46c-40b1-bb46-e3662047b68e> .
+    
+    <urn:uuid:958419bd-309d-4946-bf90-b4ce1819b3c7>
+            rdf:type                     nc:StageTrigger;
+            cim:IdentifiedObject.mRID    "958419bd-309d-4946-bf90-b4ce1819b3c7";
+            cim:IdentifiedObject.name    "Current flow through the line CL6 is higher than TATL";
+            nc:StageTrigger.GateTrigger  <urn:uuid:068d8431-c5b8-4908-8af0-9642779347c0>;
+            nc:StageTrigger.Stage        <urn:uuid:7d2d969e-6b11-45c5-ba66-9637072b3be5> , <urn:uuid:2f60b546-dfcf-4e0c-b0d6-40264de45cbd>;
+            nc:StageTrigger.normalArmed  true;
+            nc:StageTrigger.priority     0 .
+    
+    <urn:uuid:011fd5e3-cdcb-46d6-b6b8-a81f9fac8b59>
+            rdf:type                     nc:StageTrigger;
+            cim:IdentifiedObject.mRID    "011fd5e3-cdcb-46d6-b6b8-a81f9fac8b59";
+            cim:IdentifiedObject.name    "Current flow through the line CL6 is higher than PATL but lower than TATL";
+            nc:StageTrigger.GateTrigger  <urn:uuid:1653b751-c9df-4f36-9970-db3bf8e87deb>;
+            nc:StageTrigger.Stage        <urn:uuid:bfa56840-37ff-44e3-9d2d-df5efc3a1b81>;
+            nc:StageTrigger.normalArmed  true;
+            nc:StageTrigger.priority     0 .
+    
+    <urn:uuid:d84509e2-2d21-4c03-9d3e-941e3777d4d6>
+            rdf:type                        nc:StaticPropertyRange;
+            cim:IdentifiedObject.mRID       "d84509e2-2d21-4c03-9d3e-941e3777d4d6";
+            cim:IdentifiedObject.name       "Generator HÄLLAN_G1 breaker CT72_G1-S OPEN";
+            nc:RangeConstraint.GridStateAlteration
+                    <urn:uuid:0bec00cd-cf46-40d8-931a-efb35bc417af>;
+            nc:RangeConstraint.direction    nc:RelativeDirectionKind.none;
+            nc:RangeConstraint.normalValue  "1"^^xsd:float;
+            nc:RangeConstraint.valueKind    nc:ValueOffsetKind.absolute;
+            nc:StaticPropertyRange.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open> .
+    
+    <urn:uuid:55a11475-e39f-4541-accc-d979376bcda3>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.description
+                    "description";
+            cim:IdentifiedObject.mRID  "55a11475-e39f-4541-accc-d979376bcda3";
+            cim:IdentifiedObject.name  "TA2";
+            nc:GridStateAlteration.GridStateAlterationCollection
+                    <urn:uuid:8739648b-662d-46c1-9f51-2965398e6ded>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:TopologyAction.Switch   <urn:uuid:2db971f1-ed3d-4ea6-acf5-983c4289d51b> .
+    
+    <urn:uuid:1d19ef52-6ed4-4167-aa00-c3deb0ea0005>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.description
+                    "NCP 386";
+            cim:IdentifiedObject.mRID  "1d19ef52-6ed4-4167-aa00-c3deb0ea0005";
+            cim:IdentifiedObject.name  " CL7 to Jauras";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:7e422768-207d-455f-976e-0b1cb2338509>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:GridStateAlteration.maximumPerDay
+                    5;
+            nc:GridStateAlteration.minimumActivation
+                    "PT1H"^^xsd:duration;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:GridStateAlteration.timePerStage
+                    "PT1M"^^xsd:duration;
+            nc:TopologyAction.Switch   <urn:uuid:6c737b5f-a13b-42de-8a91-f887162670d3> .
+    
+    <urn:uuid:889535e6-2789-46e7-8ba7-da7be9951914>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.description
+                    "description";
+            cim:IdentifiedObject.mRID  "889535e6-2789-46e7-8ba7-da7be9951914";
+            cim:IdentifiedObject.name  "TA2";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:d9bd3aaf-cda3-4b54-bb2e-b03dd9925817>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:TopologyAction.Switch   <urn:uuid:39428c75-098b-4366-861d-2df2a857a805> .
+    
+    <urn:uuid:2f60b546-dfcf-4e0c-b0d6-40264de45cbd>
+            rdf:type                       nc:Stage;
+            cim:IdentifiedObject.mRID      "2f60b546-dfcf-4e0c-b0d6-40264de45cbd";
+            cim:IdentifiedObject.name      "AutomaticGenerationShedding_CL6_SIPS1_Stage1";
+            nc:Stage.GridStateAlterationCollection
+                    <urn:uuid:332b7627-e0ad-4bd5-a678-aebb305727a6>;
+            nc:Stage.RemedialActionScheme  <urn:uuid:ce962568-cce9-4c5c-8d45-b79694efcf88>;
+            nc:Stage.priority              1 .
+    
+    <urn:uuid:f6bb443a-89fe-4656-84c3-aa4b66b6a9af>
+            rdf:type                       nc:PinOperationalLimit;
+            cim:IdentifiedObject.mRID      "f6bb443a-89fe-4656-84c3-aa4b66b6a9af";
+            cim:IdentifiedObject.name      "Current flow through the line CL6 is higher than PATL";
+            nc:GateInputPin.Gate           <urn:uuid:a0e20b48-a34b-40e6-8282-538804536985>;
+            nc:GateInputPin.absoluteValue  true;
+            nc:GateInputPin.duration       "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:GateInputPin.logicKind      nc:LogicalOperatorsKind.greaterThan;
+            nc:GateInputPin.negate         false;
+            nc:PinOperationalLimit.OperationalLimit
+                    <urn:uuid:02abc849-a241-bd01-ca44-a13e3e46d3bd> .
+    
+    <urn:uuid:7e422768-207d-455f-976e-0b1cb2338509>
+            rdf:type                   nc:GridStateAlterationRemedialAction;
+            cim:IdentifiedObject.description
+                    "RA for SubstationA_quarterbar1B UC Activation after RAO of topology RA ";
+            cim:IdentifiedObject.mRID  "7e422768-207d-455f-976e-0b1cb2338509";
+            cim:IdentifiedObject.name  "RA SubstationA_quarterbar1B";
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.RemedialActionSystemOperator
+                    <https://energy.referencedata.eu/test/party/Svedala>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    true;
+            nc:RemedialAction.kind     nc:RemedialActionKind.preventive;
+            nc:RemedialAction.normalAvailable
+                    true;
+            nc:RemedialAction.timeToImplement
+                    "PT20M0S"^^xsd:duration .
+    
+    <urn:uuid:347f4f7e-a2b6-4880-846a-8bd1effb00d5>
+            rdf:type                   nc:GridStateAlterationRemedialAction;
+            cim:IdentifiedObject.description
+                    "This is an example. Curative RA applied only to a XNE: TopologyAction (switching Transformer RUTHUVUD_G1_TRAFO). Transformer ID: _2ab1b800-0c93-4517-86b5-8fd6a3a24ee7";
+            cim:IdentifiedObject.mRID  "347f4f7e-a2b6-4880-846a-8bd1effb00d5";
+            cim:IdentifiedObject.name  "CRA1";
+            nc:GridStateAlterationRemedialAction.isActivationRestricted
+                    "false";
+            nc:RemedialAction.AppointedToRegion
+                    <urn:uuid:56d81c91-4fb8-47a2-9d7c-baa13dedd605>;
+            nc:RemedialAction.ContingencyWithRemedialAction
+                    <urn:uuid:3a364a5b-7aba-4e48-abd5-4cd79e2e8676>;
+            nc:RemedialAction.RemedialActionSystemOperator
+                    <https://energy.referencedata.eu/test/party/Svedala>;
+            nc:RemedialAction.isCrossBorderRelevant
+                    true;
+            nc:RemedialAction.kind     nc:RemedialActionKind.curative;
+            nc:RemedialAction.normalAvailable
+                    true .
+    
+    <urn:uuid:f7b94ef6-e043-4d2a-a359-2718e6e20507>
+            rdf:type              dcat:Dataset;
+            dct:accessRights      "https://energy.referencedata.eu/Confidentiality/Public";
+            dct:conformsTo        "https://cim.ucaiug.io/ns#" , "https://ap.cim4.eu/RemedialAction/2.4" , "https://cim4.eu/ns/nc/2.4#" , "http://iec.ch/TC57/2013/CIM-schema-cim16#";
+            dct:description       "This is the remedial action dataset for Svedala part of ReliCapGrid."@en;
+            dct:identifier        "f7b94ef6-e043-4d2a-a359-2718e6e20507";
+            dct:issued            "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dct:license           "https://creativecommons.org/licenses/by/4.0/";
+            dct:publisher         "https://energy.referencedata.eu/test/party/Svedala";
+            dct:requires          <urn:uuid:e54a29a9-de39-4ac0-b7c2-8dc935657202>;
+            dct:rights            "Copyright";
+            dct:rightsHolder      "ENTSO-E";
+            dct:spatial           "https://energy.referencedata.eu/Test/Frame/Svedala-Power-Transmission-System";
+            dct:title             "20220615_Svedala_RA_1.0.0";
+            dcat:endDate          "2023-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Svedala-RA>;
+            dcat:keyword          "RA";
+            dcat:startDate        "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:version          "1.0.0";
+            prov:generatedAtTime  "2022-06-10T07:06:25Z"^^xsd:dateTime;
+            prov:wasGeneratedBy   "https://energy.referencedata.eu/Activity/CGM-RA" .
+    
+    <urn:uuid:54174158-33fb-43ad-9c2d-e733165c3acb>
+            rdf:type                   nc:RegulatingControlAction;
+            cim:IdentifiedObject.description
+                    "RA for Generator ID: _fc77b8f5-555e-4990-b913-a71852ddbfb2";
+            cim:IdentifiedObject.mRID  "54174158-33fb-43ad-9c2d-e733165c3acb";
+            cim:IdentifiedObject.name  "RA1";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:68255abc-9164-4e9a-89ae-d8c44cf3b2b3>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/RegulatingControl.targetValue>;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:RegulatingControlAction.RegulatingControl
+                    <urn:uuid:54a39315-5fd5-97e6-7ef8-b6ed3e09ddbf> .
+    
+    <urn:uuid:e5d8b062-b39b-4fea-b329-a2781b8fbac8>
+            rdf:type                     nc:StageTrigger;
+            cim:IdentifiedObject.mRID    "e5d8b062-b39b-4fea-b329-a2781b8fbac8";
+            cim:IdentifiedObject.name    "Current flow through the line CL6 is higher than PATL";
+            nc:StageTrigger.GateTrigger  <urn:uuid:48f7389d-7825-4a5a-a187-29cdd37a4057>;
+            nc:StageTrigger.Stage        <urn:uuid:cd59bf8e-890c-40e3-a699-041f3111cd99>;
+            nc:StageTrigger.normalArmed  true;
+            nc:StageTrigger.priority     0 .
+    
+    <urn:uuid:c33f19fd-ed90-4440-a5f8-5b62d1cc559e>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.description
+                    "NCP 386";
+            cim:IdentifiedObject.mRID  "c33f19fd-ed90-4440-a5f8-5b62d1cc559e";
+            cim:IdentifiedObject.name  " CL6 to Jauras C disc";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:fa3e3533-345a-4ef1-a46d-3ab6d251924a>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:GridStateAlteration.maximumPerDay
+                    5;
+            nc:GridStateAlteration.minimumActivation
+                    "PT1H"^^xsd:duration;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:GridStateAlteration.timePerStage
+                    "PT1M"^^xsd:duration;
+            nc:TopologyAction.Switch   <urn:uuid:621b5b1a-7ef2-4364-963a-9ad302c550b9> .
+    
+    <urn:uuid:00c3d990-7241-4275-8013-7482db3ab05b>
+            rdf:type                        nc:StaticPropertyRange;
+            cim:IdentifiedObject.description
+                    "NCP 386";
+            cim:IdentifiedObject.mRID       "00c3d990-7241-4275-8013-7482db3ab05b";
+            cim:IdentifiedObject.name       "Static range";
+            nc:RangeConstraint.GridStateAlteration
+                    <urn:uuid:615cdd6e-88f3-4e32-a396-766e171170eb>;
+            nc:RangeConstraint.direction    nc:RelativeDirectionKind.none;
+            nc:RangeConstraint.normalValue  "1.0"^^xsd:float;
+            nc:RangeConstraint.valueKind    nc:ValueOffsetKind.absolute;
+            nc:StaticPropertyRange.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open> .
+    
+    <urn:uuid:4b1410d4-3958-4a8c-8289-b3d6b57cfc65>
+            rdf:type                   nc:TopologyAction;
+            cim:IdentifiedObject.description
+                    "description";
+            cim:IdentifiedObject.mRID  "4b1410d4-3958-4a8c-8289-b3d6b57cfc65";
+            cim:IdentifiedObject.name  "TA1";
+            nc:GridStateAlteration.GridStateAlterationRemedialAction
+                    <urn:uuid:d9bd3aaf-cda3-4b54-bb2e-b03dd9925817>;
+            nc:GridStateAlteration.PropertyReference
+                    <https://energy.referencedata.eu/PropertyReference/Switch.open>;
+            nc:GridStateAlteration.normalEnabled
+                    true;
+            nc:TopologyAction.Switch   <urn:uuid:902046a4-40e9-421d-9ef1-9adab0d9d41d> .
+    
+    <urn:uuid:299a2a80-eea1-423e-984a-bcd768f711bb>
+            rdf:type                   nc:Gate;
+            cim:IdentifiedObject.mRID  "299a2a80-eea1-423e-984a-bcd768f711bb";
+            cim:IdentifiedObject.name  "Current flow through the line CL6 is higher than PATL";
+            nc:Gate.kind               nc:GateLogicKind.and .
+    
+    <urn:uuid:a9dd0aed-87c1-49d8-90a1-f17d794c5ab0>
+            rdf:type                       nc:PinOperationalLimit;
+            cim:IdentifiedObject.mRID      "a9dd0aed-87c1-49d8-90a1-f17d794c5ab0";
+            cim:IdentifiedObject.name      "Current flow through the line CL6 is higher than PATL";
+            nc:GateInputPin.Gate           <urn:uuid:48f7389d-7825-4a5a-a187-29cdd37a4057>;
+            nc:GateInputPin.absoluteValue  true;
+            nc:GateInputPin.duration       "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:GateInputPin.logicKind      nc:LogicalOperatorsKind.greaterThan;
+            nc:GateInputPin.negate         false;
+            nc:PinOperationalLimit.OperationalLimit
+                    <urn:uuid:02abc849-a241-bd01-ca44-a13e3e46d3bd> .
+}

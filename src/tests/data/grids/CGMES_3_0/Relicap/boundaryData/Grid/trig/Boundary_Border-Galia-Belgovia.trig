@@ -1,0 +1,234 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:7e5e27b6-cb5a-4168-88bf-f395a19cbec1> {
+    <urn:uuid:f079f04c-604b-e408-5c3a-e93025400df9>
+            rdf:type                       eu:BoundaryPoint;
+            cim:IdentifiedObject.description
+                    "Boundary point 4 between Galia (substation name) and Belgovia (substation name) (380kV).";
+            cim:IdentifiedObject.mRID      "f079f04c-604b-e408-5c3a-e93025400df9";
+            cim:IdentifiedObject.name      "BP_GA-BO4";
+            eu:BoundaryPoint.ConnectivityNode
+                    <urn:uuid:1a14d3b4-b7b5-4b73-9467-04cad5fb6557>;
+            eu:BoundaryPoint.fromEndIsoCode
+                    "GA";
+            eu:BoundaryPoint.fromEndName   "Alfheim4";
+            eu:BoundaryPoint.fromEndNameTso
+                    "TSO-Galia";
+            eu:BoundaryPoint.isExcludedFromAreaInterchange
+                    false;
+            eu:BoundaryPoint.toEndIsoCode  "BO";
+            eu:BoundaryPoint.toEndName     "Brussia4";
+            eu:BoundaryPoint.toEndNameTso  "TSO-Belgovia";
+            eu:IdentifiedObject.shortName  "BP_GA-BO4" .
+    
+    <urn:uuid:e454ebf1-94fd-4513-89e4-23239bdca8eb>
+            rdf:type                       cim:Line;
+            cim:IdentifiedObject.description
+                    "Line BP_GA-BO4";
+            cim:IdentifiedObject.mRID      "e454ebf1-94fd-4513-89e4-23239bdca8eb";
+            cim:IdentifiedObject.name      "BP_GA-BO4";
+            cim:Line.Region                <urn:uuid:fbcc6679-6da5-4cfd-b50c-8ce23f450c78>;
+            eu:IdentifiedObject.shortName  "BP_GA-BO4" .
+    
+    <urn:uuid:7976cd48-d51c-8e4b-9595-56299cb5b4f8>
+            rdf:type                       eu:BoundaryPoint;
+            cim:IdentifiedObject.description
+                    "Boundary point 3 between Galia (substation name) and Belgovia (substation name) (380kV).";
+            cim:IdentifiedObject.mRID      "7976cd48-d51c-8e4b-9595-56299cb5b4f8";
+            cim:IdentifiedObject.name      "BP_GA-BO3";
+            eu:BoundaryPoint.ConnectivityNode
+                    <urn:uuid:b67cf870-cb6e-11e1-bcee-406c8f32ef58>;
+            eu:BoundaryPoint.fromEndIsoCode
+                    "GA";
+            eu:BoundaryPoint.fromEndName   "Alfheim3";
+            eu:BoundaryPoint.fromEndNameTso
+                    "TSO-Galia";
+            eu:BoundaryPoint.isExcludedFromAreaInterchange
+                    false;
+            eu:BoundaryPoint.toEndIsoCode  "BO";
+            eu:BoundaryPoint.toEndName     "Brussia3";
+            eu:BoundaryPoint.toEndNameTso  "TSO-Belgovia";
+            eu:IdentifiedObject.shortName  "BP_GA-BO3" .
+    
+    <urn:uuid:bd25e87a-c626-4dd7-a846-7fba517fbb8f>
+            rdf:type                       cim:Line;
+            cim:IdentifiedObject.description
+                    "Line BP_GA-BO2";
+            cim:IdentifiedObject.mRID      "bd25e87a-c626-4dd7-a846-7fba517fbb8f";
+            cim:IdentifiedObject.name      "BP_GA-BO2";
+            cim:Line.Region                <urn:uuid:fbcc6679-6da5-4cfd-b50c-8ce23f450c78>;
+            eu:IdentifiedObject.shortName  "BP_GA-BO2" .
+    
+    <urn:uuid:b67c8340-cb6e-11e1-bcee-406c8f32ef58>
+            rdf:type                       cim:ConnectivityNode;
+            cim:ConnectivityNode.ConnectivityNodeContainer
+                    <urn:uuid:bd25e87a-c626-4dd7-a846-7fba517fbb8f>;
+            cim:IdentifiedObject.description
+                    "Boundary point 2 between Galia (substation name) and Belgovia (substation name) (220kV).";
+            cim:IdentifiedObject.mRID      "b67c8340-cb6e-11e1-bcee-406c8f32ef58";
+            cim:IdentifiedObject.name      "BP_GA-BO2";
+            eu:IdentifiedObject.shortName  "BP_GA-BO2" .
+    
+    <urn:uuid:1a14d3b4-b7b5-4b73-9467-04cad5fb6557>
+            rdf:type                       cim:ConnectivityNode;
+            cim:ConnectivityNode.ConnectivityNodeContainer
+                    <urn:uuid:e454ebf1-94fd-4513-89e4-23239bdca8eb>;
+            cim:IdentifiedObject.description
+                    "Boundary point 4 between Galia (substation name) and Belgovia (substation name) (380kV).";
+            cim:IdentifiedObject.mRID      "1a14d3b4-b7b5-4b73-9467-04cad5fb6557";
+            cim:IdentifiedObject.name      "BP_GA-BO4";
+            eu:IdentifiedObject.shortName  "BP_GA-BO4" .
+    
+    <urn:uuid:eac31e3d-fdf5-4656-b10e-66481bfcfec5>
+            rdf:type                       cim:Line;
+            cim:IdentifiedObject.description
+                    "Line BP_GA-BO5";
+            cim:IdentifiedObject.mRID      "eac31e3d-fdf5-4656-b10e-66481bfcfec5";
+            cim:IdentifiedObject.name      "BP_GA-BO5";
+            cim:Line.Region                <urn:uuid:fbcc6679-6da5-4cfd-b50c-8ce23f450c78>;
+            eu:IdentifiedObject.shortName  "BP_GA-BO5" .
+    
+    <urn:uuid:b675a570-cb6e-11e1-bcee-406c8f32ef58>
+            rdf:type                       cim:ConnectivityNode;
+            cim:ConnectivityNode.ConnectivityNodeContainer
+                    <urn:uuid:eac31e3d-fdf5-4656-b10e-66481bfcfec5>;
+            cim:IdentifiedObject.description
+                    "Boundary point 5 between Galia (substation name) and Belgovia (substation name) (380kV).";
+            cim:IdentifiedObject.mRID      "b675a570-cb6e-11e1-bcee-406c8f32ef58";
+            cim:IdentifiedObject.name      "BP_GA-BO5";
+            eu:IdentifiedObject.energyIdentCodeEic
+                    "10T-DK-SE-00001D";
+            eu:IdentifiedObject.shortName  "BP_GA-BO5" .
+    
+    <urn:uuid:b67cf870-cb6e-11e1-bcee-406c8f32ef58>
+            rdf:type                       cim:ConnectivityNode;
+            cim:ConnectivityNode.ConnectivityNodeContainer
+                    <urn:uuid:54a2e470-ef70-443f-ae81-bcf2d117caa2>;
+            cim:IdentifiedObject.description
+                    "Boundary point 3 between Galia (substation name) and Belgovia (substation name) (380kV).";
+            cim:IdentifiedObject.mRID      "b67cf870-cb6e-11e1-bcee-406c8f32ef58";
+            cim:IdentifiedObject.name      "BP_GA-BO3";
+            eu:IdentifiedObject.shortName  "BP_GA-BO3" .
+    
+    <urn:uuid:cfb37abe-3dde-4bd3-84a6-b2d8d0df6203>
+            rdf:type                       cim:ConnectivityNode;
+            cim:ConnectivityNode.ConnectivityNodeContainer
+                    <urn:uuid:a581a1d6-dbfe-40b7-9405-bd6303376efc>;
+            cim:IdentifiedObject.description
+                    "Boundary point 1 between Galia (substation name) and Belgovia (substation name) (220kV).";
+            cim:IdentifiedObject.mRID      "cfb37abe-3dde-4bd3-84a6-b2d8d0df6203";
+            cim:IdentifiedObject.name      "BP_GA-BO1";
+            eu:IdentifiedObject.shortName  "BP_GA-BO1" .
+    
+    <urn:uuid:a581a1d6-dbfe-40b7-9405-bd6303376efc>
+            rdf:type                       cim:Line;
+            cim:IdentifiedObject.description
+                    "Line BP_GA-BO1";
+            cim:IdentifiedObject.mRID      "a581a1d6-dbfe-40b7-9405-bd6303376efc";
+            cim:IdentifiedObject.name      "BP_GA-BO1";
+            cim:Line.Region                <urn:uuid:fbcc6679-6da5-4cfd-b50c-8ce23f450c78>;
+            eu:IdentifiedObject.shortName  "BP_GA-BO1" .
+    
+    <urn:uuid:54a2e470-ef70-443f-ae81-bcf2d117caa2>
+            rdf:type                       cim:Line;
+            cim:IdentifiedObject.description
+                    "Line BP_GA-BO3";
+            cim:IdentifiedObject.mRID      "54a2e470-ef70-443f-ae81-bcf2d117caa2";
+            cim:IdentifiedObject.name      "BP_GA-BO3";
+            cim:Line.Region                <urn:uuid:fbcc6679-6da5-4cfd-b50c-8ce23f450c78>;
+            eu:IdentifiedObject.shortName  "BP_GA-BO3" .
+    
+    <urn:uuid:a3e1a51f-cc76-155c-543f-ea7cb0c6db20>
+            rdf:type                       eu:BoundaryPoint;
+            cim:IdentifiedObject.description
+                    "Boundary point 1 between Galia (substation name) and Belgovia (substation name) (220kV).";
+            cim:IdentifiedObject.mRID      "a3e1a51f-cc76-155c-543f-ea7cb0c6db20";
+            cim:IdentifiedObject.name      "BP_GA-BO1";
+            eu:BoundaryPoint.ConnectivityNode
+                    <urn:uuid:cfb37abe-3dde-4bd3-84a6-b2d8d0df6203>;
+            eu:BoundaryPoint.fromEndIsoCode
+                    "GA";
+            eu:BoundaryPoint.fromEndName   "Alfheim1";
+            eu:BoundaryPoint.fromEndNameTso
+                    "TSO-Galia";
+            eu:BoundaryPoint.isExcludedFromAreaInterchange
+                    false;
+            eu:BoundaryPoint.toEndIsoCode  "BO";
+            eu:BoundaryPoint.toEndName     "Brussia1";
+            eu:BoundaryPoint.toEndNameTso  "TSO-Belgovia";
+            eu:IdentifiedObject.shortName  "BP_GA-BO1" .
+    
+    <urn:uuid:8fe8c999-a939-5d43-b857-02dd312f2dea>
+            rdf:type                       eu:BoundaryPoint;
+            cim:IdentifiedObject.description
+                    "Boundary point 5 between Galia (substation name) and Belgovia (substation name) (380kV).";
+            cim:IdentifiedObject.mRID      "8fe8c999-a939-5d43-b857-02dd312f2dea";
+            cim:IdentifiedObject.name      "BP_GA-BO5";
+            eu:BoundaryPoint.ConnectivityNode
+                    <urn:uuid:b675a570-cb6e-11e1-bcee-406c8f32ef58>;
+            eu:BoundaryPoint.fromEndIsoCode
+                    "GA";
+            eu:BoundaryPoint.fromEndName   "Alfheim5";
+            eu:BoundaryPoint.fromEndNameTso
+                    "TSO-Galia";
+            eu:BoundaryPoint.isExcludedFromAreaInterchange
+                    false;
+            eu:BoundaryPoint.toEndIsoCode  "BO";
+            eu:BoundaryPoint.toEndName     "Brussia5";
+            eu:BoundaryPoint.toEndNameTso  "TSO-Belgovia";
+            eu:IdentifiedObject.shortName  "BP_GA-BO5" .
+    
+    <urn:uuid:7e5e27b6-cb5a-4168-88bf-f395a19cbec1>
+            rdf:type           rdfg:Graph , dcat:Dataset;
+            dct:conformsTo     <http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/3.0>;
+            dct:description    "The equipment dataset of the boundary that is used in the ReliCapGrid.";
+            dct:identifier     "7e5e27b6-cb5a-4168-88bf-f395a19cbec1";
+            dct:issued         "2025-02-06"^^xsd:date;
+            dct:requires       <urn:uuid:1b65ada7-39ca-42b8-a278-39c457ed82c3>;
+            dct:temporal       [ rdf:type        dct:PeriodOfTime;
+                                 dcat:startDate  "2022-06-16T23:30:00Z"^^xsd:dateTime
+                               ];
+            dcat:distribution  [ rdf:type    dcat:Distribution;
+                                 dct:issued  "2025-02-06T14:18:22Z"^^xsd:dateTime
+                               ];
+            dcat:isVersionOf   <http://ninerealms.nr/boundary>;
+            dcat:version       "1";
+            json-ld:base       "http://ninerealms.nr/boundary#" .
+    
+    <urn:uuid:af1d901f-98de-574f-abc3-6c3025e7a685>
+            rdf:type                       eu:BoundaryPoint;
+            cim:IdentifiedObject.description
+                    "Boundary point 2 between Galia (substation name) and Belgovia (substation name) (220kV).";
+            cim:IdentifiedObject.mRID      "af1d901f-98de-574f-abc3-6c3025e7a685";
+            cim:IdentifiedObject.name      "BP_GA-BO2";
+            eu:BoundaryPoint.ConnectivityNode
+                    <urn:uuid:b67c8340-cb6e-11e1-bcee-406c8f32ef58>;
+            eu:BoundaryPoint.fromEndIsoCode
+                    "GA";
+            eu:BoundaryPoint.fromEndName   "Alfheim2";
+            eu:BoundaryPoint.fromEndNameTso
+                    "TSO-Galia";
+            eu:BoundaryPoint.isExcludedFromAreaInterchange
+                    false;
+            eu:BoundaryPoint.toEndIsoCode  "BO";
+            eu:BoundaryPoint.toEndName     "Brussia2";
+            eu:BoundaryPoint.toEndNameTso  "TSO-Belgovia";
+            eu:IdentifiedObject.shortName  "BP_GA-BO2" .
+}

@@ -18,7 +18,8 @@ from VeraGridEngine.enumerations import (
     TapChangerTypes,
     TapModuleControl,
     WindingType,
-    ShuntControlMode
+    ShuntControlMode,
+    GeneratorControlMode
 )
 from VeraGridEngine.Devices.Branches.transformer_type import reverse_transformer_short_circuit_study
 
@@ -230,6 +231,7 @@ def _build_sequence_line_type_from_branch(
         line: dev.Line,
         new_id: str,
         sbase_mva: float,
+        t: int | None,
 ) -> TypLne:
     """
     Build a DGS line type from a VeraGrid line object.
@@ -237,14 +239,16 @@ def _build_sequence_line_type_from_branch(
     :param line: VeraGrid line
     :param new_id: DGS type ID
     :param sbase_mva: Circuit base power in MVA
+    :param t: Optional time index
     :return: DGS line type
     """
     export_length: float = _get_line_export_length(line=line)
     line_voltage_kv: float = float(line.get_max_bus_nominal_voltage())
     rated_current_ka: float = 1.0
 
-    if line_voltage_kv > 0.0 and float(line.rate) > 0.0:
-        rated_current_ka = float(line.rate) / (SQRT3 * line_voltage_kv)
+    line_rate_mva: float = float(line.get_rate_at(t))
+    if line_voltage_kv > 0.0 and line_rate_mva > 0.0:
+        rated_current_ka = line_rate_mva / (SQRT3 * line_voltage_kv)
     else:
         pass
 
@@ -276,17 +280,18 @@ def _build_sequence_line_type_from_branch(
     return convert_sequence_line(seq=sequence_line, new_id=new_id)
 
 
-def _get_transformer_export_nominal_power(transformer: dev.Transformer2W, sbase_mva: float) -> float:
+def _get_transformer_export_nominal_power(transformer: dev.Transformer2W, sbase_mva: float, t: int | None) -> float:
     """
     Return the nominal transformer rating to use when exporting short-circuit data.
 
     :param transformer: VeraGrid transformer
     :param sbase_mva: Circuit base power in MVA
+    :param t: Optional time index
     :return: Nominal transformer power in MVA
     """
     nominal_power: float = float(transformer.Sn)
     if nominal_power <= 0.0:
-        nominal_power = float(transformer.rate)
+        nominal_power = float(transformer.get_rate_at(t))
     else:
         pass
     if nominal_power <= 0.0:
@@ -335,6 +340,7 @@ def _convert_switch_to_dgs_type(
         new_id: str,
         fold_id: str,
         sbase_mva: float,
+        t: int | None,
 ) -> TypSwitch:
     """
     Convert a VeraGrid switch electrical data into a DGS ``TypSwitch``.
@@ -343,6 +349,7 @@ def _convert_switch_to_dgs_type(
     :param new_id: DGS type ID
     :param fold_id: Parent folder ID
     :param sbase_mva: Circuit base power in MVA
+    :param t: Optional time index
     :return: DGS switch type
     """
     typ_switch = TypSwitch()
@@ -366,7 +373,7 @@ def _convert_switch_to_dgs_type(
 
     rated_current: float = float(switch.rated_current)
     if rated_current <= 0.0 and bus_voltage_kv > 0.0:
-        rated_current = float(switch.rate) / (SQRT3 * bus_voltage_kv)
+        rated_current = float(switch.get_rate_at(t)) / (SQRT3 * bus_voltage_kv)
     else:
         pass
 
@@ -627,7 +634,7 @@ def convert_generator(gen: dev.Generator, tpe_new_id: str, new_id: str, bus_v_co
 
     if not bus_v_controlled[gen.bus]:
         # NOTE: in power factory, only one generator can control the bus voltage
-        e.av_mode = "constv" if gen.is_controlled else "constq"
+        e.av_mode = "constv" if gen.control_mode == GeneratorControlMode.V else "constq"
         bus_v_controlled[gen.bus] = True
     else:
         # the bus was flagged already
@@ -700,7 +707,7 @@ def convert_transformer_type(tr: dev.TransformerType, new_id: str) -> TypTr2:
     return typtr2
 
 
-def _set_tr2_tap_fields_from_vgrid(tr: dev.Transformer2W, tpe: TypTr2, e: ElmTr2) -> None:
+def _set_tr2_tap_fields_from_vgrid(tr: dev.Transformer2W, tpe: TypTr2, e: ElmTr2, t: int | None) -> None:
     """Set tap fields in TypTr2 and ElmTr2.
 
     This makes the exported DGS coherent with the importer (dgs_to_veragrid),
@@ -750,7 +757,7 @@ def _set_tr2_tap_fields_from_vgrid(tr: dev.Transformer2W, tpe: TypTr2, e: ElmTr2
     else:
         pass
 
-    tap = float(tr.get_tap_module_at(None))
+    tap = float(tr.get_tap_module_at(t))
     tol = 1e-12
     tap_dev = abs(tap - 1.0)
 
@@ -1066,14 +1073,27 @@ def generate_pv_dsl_composite(dgs_grid: DgsCircuit, name: str, net_id: str) -> E
     return elmcomp
 
 
-def circuit_to_dgs(grid: dev.MultiCircuit, t: int | None = None, convert_gen_to_elmgenstat: bool = False) -> DgsCircuit:
+def circuit_to_dgs(
+        grid: dev.MultiCircuit,
+        t_idx: int | None = None,
+        convert_gen_to_elmgenstat: bool = False,
+        t: int | None = None,
+) -> DgsCircuit:
     """
     Convert MultiCircuit to DgsCircuit
+
     :param grid: MultiCircuit
-    :param t: time step (None for snapshot)
+    :param t_idx: time step (None for snapshot)
     :param convert_gen_to_elmgenstat: Convert generators to ElmGenstat depending on the technology assigned
+    :param t: Deprecated compatibility alias for ``t_idx``
     :return: DgsCircuit
     """
+    # Normalize the legacy ``t`` argument into the canonical export time selector.
+    if t_idx is None:
+        export_t_idx: int | None = t
+    else:
+        export_t_idx = t_idx
+
     dgs_grid = DgsCircuit()
 
     # general
@@ -1118,7 +1138,7 @@ def circuit_to_dgs(grid: dev.MultiCircuit, t: int | None = None, convert_gen_to_
     bus2term_dict: Dict[dev.Bus, ElmTerm] = dict()
     bus_v_controlled: Dict[dev.Bus, bool] = dict()
     for bus in grid.buses:
-        elm_term = convert_bus(bus, new_id=dgs_grid.new_id(), t=t)
+        elm_term = convert_bus(bus, new_id=dgs_grid.new_id(), t=export_t_idx)
         dgs_grid.elmterms.append(elm_term)
         bus2term_dict[bus] = elm_term
         bus_v_controlled[bus] = False  # initialization values
@@ -1128,7 +1148,7 @@ def circuit_to_dgs(grid: dev.MultiCircuit, t: int | None = None, convert_gen_to_
 
     # Loads
     for load in grid.loads:
-        e = convert_load(load, new_id=dgs_grid.new_id(), t=t)
+        e = convert_load(load, new_id=dgs_grid.new_id(), t=export_t_idx)
 
         # Folder/type linkage
         e.fold_id = net.ID
@@ -1153,7 +1173,7 @@ def circuit_to_dgs(grid: dev.MultiCircuit, t: int | None = None, convert_gen_to_
     # Shunts
     for shunt in grid.shunts:
         term = bus2term_dict[shunt.bus]
-        e = convert_shunt(shunt, new_id=dgs_grid.new_id(), ushnm_kv=term.uknom, t=t)
+        e = convert_shunt(shunt, new_id=dgs_grid.new_id(), ushnm_kv=term.uknom, t=export_t_idx)
         e.fold_id = net.ID
         dgs_grid.elmshnts.append(e)
         dgs_grid.add_element_cubicles(element_id=e.ID, dgs_buses=[term])
@@ -1165,7 +1185,7 @@ def circuit_to_dgs(grid: dev.MultiCircuit, t: int | None = None, convert_gen_to_
             shunt=shunt,
             new_id=dgs_grid.new_id(),
             fold_id=net.ID,
-            t=t,
+            t=export_t_idx,
         )
 
         if elmshnt is not None:
@@ -1179,7 +1199,7 @@ def circuit_to_dgs(grid: dev.MultiCircuit, t: int | None = None, convert_gen_to_
             pass
 
     for external_grid in grid.external_grids:
-        if external_grid.bus in bus_v_controlled and external_grid.get_active_at(t):
+        if external_grid.bus in bus_v_controlled and external_grid.get_active_at(export_t_idx):
             if external_grid.mode in (ExternalGridMode.VD, ExternalGridMode.PV):
                 bus_v_controlled[external_grid.bus] = True
             else:
@@ -1189,7 +1209,7 @@ def circuit_to_dgs(grid: dev.MultiCircuit, t: int | None = None, convert_gen_to_
 
     # Static generators
     for stagen in grid.static_generators:
-        e = convert_static_gen(stagen, new_id=dgs_grid.new_id(), t=t)
+        e = convert_static_gen(stagen, new_id=dgs_grid.new_id(), t=export_t_idx)
         e.fold_id = net.ID
         term = bus2term_dict[stagen.bus]
         dgs_grid.elmgenstats.append(e)
@@ -1197,7 +1217,7 @@ def circuit_to_dgs(grid: dev.MultiCircuit, t: int | None = None, convert_gen_to_
 
     # Batteries
     for batt in grid.batteries:
-        e = convert_battery(batt, new_id=dgs_grid.new_id(), t=t)
+        e = convert_battery(batt, new_id=dgs_grid.new_id(), t=export_t_idx)
         e.fold_id = net.ID
         term = bus2term_dict[batt.bus]
         dgs_grid.elmgenstats.append(e)
@@ -1209,7 +1229,7 @@ def circuit_to_dgs(grid: dev.MultiCircuit, t: int | None = None, convert_gen_to_
             external_grid=external_grid,
             new_id=dgs_grid.new_id(),
             fold_id=net.ID,
-            t=t,
+            t=export_t_idx,
         )
         dgs_grid.elmxnets.append(element)
         dgs_grid.add_element_cubicles(
@@ -1225,7 +1245,7 @@ def circuit_to_dgs(grid: dev.MultiCircuit, t: int | None = None, convert_gen_to_
 
             if ("pv" in tech_name or "batt" in tech_name or "wind" in tech_name) and convert_gen_to_elmgenstat:
                 # This has to be a ElmGenstat
-                e = convert_gen_to_static_gen(gen=gen, new_id=dgs_grid.new_id(), t=t)
+                e = convert_gen_to_static_gen(gen=gen, new_id=dgs_grid.new_id(), t=export_t_idx)
                 e.fold_id = net.ID
                 dgs_grid.elmgenstats.append(e)
             else:
@@ -1235,7 +1255,7 @@ def circuit_to_dgs(grid: dev.MultiCircuit, t: int | None = None, convert_gen_to_
                                            new_id=dgs_grid.new_id(),
                                            bus_v_controlled=bus_v_controlled,
                                            Sbase=grid.Sbase,
-                                           t=t)
+                                           t=export_t_idx)
                 tpe.fold_id = net.ID
                 e.fold_id = net.ID
                 dgs_grid.typsyms.append(tpe)
@@ -1261,7 +1281,7 @@ def circuit_to_dgs(grid: dev.MultiCircuit, t: int | None = None, convert_gen_to_
                                        new_id=dgs_grid.new_id(),
                                        bus_v_controlled=bus_v_controlled,
                                        Sbase=grid.Sbase,
-                                       t=t)
+                                       t=export_t_idx)
             tpe.fold_id = net.ID
             e.fold_id = net.ID
             dgs_grid.typsyms.append(tpe)
@@ -1294,6 +1314,7 @@ def circuit_to_dgs(grid: dev.MultiCircuit, t: int | None = None, convert_gen_to_
                 line=line,
                 new_id=dgs_grid.new_id(),
                 sbase_mva=float(grid.Sbase),
+                t=export_t_idx,
             )
             tpe.fold_id = net.ID
             dgs_grid.typlnes.append(tpe)
@@ -1306,7 +1327,7 @@ def circuit_to_dgs(grid: dev.MultiCircuit, t: int | None = None, convert_gen_to_
         e.dline = export_length
         e.fline = 1.0
         e.nlnum = 1
-        e.outserv = 0 if line.get_active_at(t) else 1
+        e.outserv = 0 if line.get_active_at(export_t_idx) else 1
 
         dgs_grid.elmlnes.append(e)
         dgs_grid.add_element_cubicles(
@@ -1334,7 +1355,11 @@ def circuit_to_dgs(grid: dev.MultiCircuit, t: int | None = None, convert_gen_to_
         _set_tr2_type_connections_from_branch(tr=tr, tpe=tpe)
 
         # The importer rebuilds transformer R/X from TypTr2.uktr (%) + TypTr2.pcutr (kW).
-        nominal_power: float = _get_transformer_export_nominal_power(transformer=tr, sbase_mva=float(grid.Sbase))
+        nominal_power: float = _get_transformer_export_nominal_power(
+            transformer=tr,
+            sbase_mva=float(grid.Sbase),
+            t=export_t_idx,
+        )
 
         Pfe, Pcu, Vsc, I0, Sn = reverse_transformer_short_circuit_study(
             R=float(tr.R),
@@ -1357,14 +1382,14 @@ def circuit_to_dgs(grid: dev.MultiCircuit, t: int | None = None, convert_gen_to_
         e.typ_id = tpe.ID
         e.ntnum = 1
         e.ratfac = 1
-        e.outserv = 0 if tr.get_active_at(t) else 1
+        e.outserv = 0 if tr.get_active_at(export_t_idx) else 1
 
         # PF-like folder placement
         e.fold_id = net.ID
 
         # Export tap fields from VeraGrid -> TypTr2/ElmTr2
-        _set_tr2_tap_fields_from_vgrid(tr=tr, tpe=tpe, e=e)
-        _set_tr2_tap_control_fields_from_vgrid(tr=tr, element=e, t=t)
+        _set_tr2_tap_fields_from_vgrid(tr=tr, tpe=tpe, e=e, t=export_t_idx)
+        _set_tr2_tap_control_fields_from_vgrid(tr=tr, element=e, t=export_t_idx)
 
         dgs_grid.elmtr2s.append(e)
 
@@ -1382,6 +1407,7 @@ def circuit_to_dgs(grid: dev.MultiCircuit, t: int | None = None, convert_gen_to_
             new_id=dgs_grid.new_id(),
             fold_id=net.ID,
             sbase_mva=float(grid.Sbase),
+            t=export_t_idx,
         )
         dgs_grid.typswitches.append(typ_switch)
 
@@ -1395,7 +1421,7 @@ def circuit_to_dgs(grid: dev.MultiCircuit, t: int | None = None, convert_gen_to_
         element.aUsage = switch_usage
         element.nneutral = 0
         element.nphase = 3
-        element.on_off = 1 if switch.get_active_at(t) else 0
+        element.on_off = 1 if switch.get_active_at(export_t_idx) else 0
 
         dgs_grid.elmcoups.append(element)
         _add_element_cubicles_with_state(
@@ -1415,7 +1441,7 @@ def circuit_to_dgs(grid: dev.MultiCircuit, t: int | None = None, convert_gen_to_
             new_id=dgs_grid.new_id(),
             fold_id=net.ID,
             sbase_mva=float(grid.Sbase),
-            t=t,
+            t=export_t_idx,
         )
         dgs_grid.elmsinds.append(element)
         dgs_grid.add_element_cubicles(
@@ -1430,7 +1456,7 @@ def circuit_to_dgs(grid: dev.MultiCircuit, t: int | None = None, convert_gen_to_
             type_id=dgs_grid.new_id(),
             element_id=dgs_grid.new_id(),
             fold_id=net.ID,
-            t=t,
+            t=export_t_idx,
         )
         dgs_grid.typtr3s.append(typtr3)
         dgs_grid.elmtr3s.append(elmtr3)

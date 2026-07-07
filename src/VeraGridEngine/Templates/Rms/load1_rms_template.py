@@ -3,7 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 
@@ -17,8 +17,8 @@ def get_load1_rms_template(var_factory: VarFactory, name="Load rms template") ->
     templ.tpe = DeviceType.LoadDevice
     templ.name = name
 
-    inputs = [var_factory.add_var("Vm_" + name),
-              var_factory.add_var("Va_" + name)
+    inputs = [var_factory.add_var("Vm"),
+              var_factory.add_var("Va")
               ]
 
     Pl0 = var_factory.add_var("Pl0")
@@ -43,10 +43,10 @@ def get_load1_rms_template(var_factory: VarFactory, name="Load rms template") ->
         Ql - Ql0]
 
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.Va: inputs[0],
-        VarPowerFlowRefferenceType.Vm: inputs[1],
-        VarPowerFlowRefferenceType.P: Pl,
-        VarPowerFlowRefferenceType.Q: Ql
+        VarPowerFlowReferenceType.Va: inputs[1],
+        VarPowerFlowReferenceType.Vm: inputs[0],
+        VarPowerFlowReferenceType.P: Pl,
+        VarPowerFlowReferenceType.Q: Ql
     }
 
     templ.block.in_vars = inputs

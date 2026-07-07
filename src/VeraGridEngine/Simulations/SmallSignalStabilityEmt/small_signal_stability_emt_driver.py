@@ -3,22 +3,23 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Tuple, Any
+from typing import Tuple, Any, Optional, Union
 import numpy as np
 import scipy.sparse.linalg as spla
 import scipy.linalg as la
 
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import EmtProblemTemplate
+from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import EmtProblemDae
 from VeraGridEngine.Simulations.driver_template import DriverTemplate
 from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
 from VeraGridEngine.Simulations.EMT.solvers.StructuralVectorizedSolver import StructuralVectorizedSolver
-
+from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
+from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_results_3ph import PowerFlowResults3Ph
 from VeraGridEngine.Simulations.SmallSignalStabilityEmt.emt_floquet_operator import (EmtFloquetOperator,
                                                                                      BlockEmtFloquetOperator,
                                                                                      AkStackBlockEmtFloquetOperator)
 from VeraGridEngine.Simulations.SmallSignalStabilityEmt.small_signal_stability_emt_options import \
-    EmtSmallSignalStabilityOptions
+    SmallSignalStabilityEmtOptions
 from VeraGridEngine.Simulations.SmallSignalStabilityEmt.small_signal_stability_emt_results import \
     SmallSignalStabilityEmtResults
 from VeraGridEngine.Simulations.SmallSignalStabilityEmt.emt_floquet_numba_kernels import NUMBA_AVAILABLE, \
@@ -243,9 +244,9 @@ class BestPack:
     )
 
     def __init__(self):
-        self.mu_sel: CxVec | None = None
-        self.U_sel: CxVec | None = None
-        self.rel: Vec | None = None
+        self.mu_sel: Optional[CxVec] = None
+        self.U_sel: Optional[CxVec] = None
+        self.rel: Optional[Vec] = None
         self.max_rr: float = np.inf
 
 
@@ -255,30 +256,46 @@ class SmallSignalStabilityEmtDriver(DriverTemplate):
     Orchestrates the entire limit cycle capture and Krylov subspace generation workflow.
     """
     __slots__ = (
+        "pf_results",
         "problem",
         "emt_options",
-        "options",
+        "sss_options",
     )
 
     def __init__(self,
                  grid: MultiCircuit,
-                 problem: EmtProblemTemplate,
                  emt_options: EmtOptions,
-                 options: EmtSmallSignalStabilityOptions):
+                 sss_options: SmallSignalStabilityEmtOptions,
+                 pf_results: Union[PowerFlowResults|PowerFlowResults3Ph]):
         """
         Initializes the EMT Small Signal Stability Driver.
 
         :param grid: The VeraGrid MultiCircuit network representation.
-        :param problem: The underlying EMT DAE mathematical problem.
         :param emt_options: Integration settings for the limit cycle capture.
-        :param options: Specific algorithm settings for the Floquet analysis.
+        :param sss_options: Specific algorithm settings for the Floquet analysis.
+        :param pf_results: 3Ph or balanced power flow results
         """
 
         DriverTemplate.__init__(self, grid=grid)
-        self.problem: EmtProblemTemplate = problem
+        self.pf_results = pf_results
         self.emt_options: EmtOptions = emt_options
-        self.options: EmtSmallSignalStabilityOptions = options
-        self.results: SmallSignalStabilityEmtResults | None = None
+        self.sss_options: SmallSignalStabilityEmtOptions = sss_options
+
+        if isinstance(pf_results, PowerFlowResults) :
+            self.problem = EmtProblemDae(grid=grid,
+                                         options=emt_options,
+                                         pf_results=pf_results)
+        elif isinstance(pf_results, PowerFlowResults3Ph):
+            self.problem = EmtProblemDae(grid=grid,
+                                         options=emt_options,
+                                         pf_results_3Ph=pf_results)
+        
+        # self.results: SmallSignalStabilityEmtResults = SmallSignalStabilityEmtResults(multipliers=np.empty(0),
+        #                                                                               right_vecs=np.empty(0),
+        #                                                                               left_vecs=np.empty(0),
+        #                                                                               period=np.empty(0),
+        #                                                                               stat_vars=list(),)
+        self.results: SmallSignalStabilityEmtResults| None = None
 
     def _capture_limit_cycle_and_evaluator(self,
                                            h: float,
@@ -302,20 +319,24 @@ class SmallSignalStabilityEmtDriver(DriverTemplate):
         solver = StructuralVectorizedSolver(
             problem=self.problem,
             t0=0.0,
-            t_end=self.options.ss_assessment_time,
+            t_end=self.sss_options.ss_assessment_time,
             h=h,
-            integration_method=self.emt_options.integration_method,
-            verbose=self.options.verbose > 0
+            method=self.emt_options.integration_method,
+            verbose=self.sss_options.verbose > 0
         )
-        t_full, y_full = solver.simulate()
+        sim_result = solver.simulate()
+        t_full = sim_result[0]
+        y_full = sim_result[1]
 
-        steps_per_period = int(self.options.target_period / h)
+        steps_per_period = int(self.sss_options.target_period / h)
         y_limit = y_full[-steps_per_period:]
         t_limit = t_full[-steps_per_period:]
 
         static_params = np.array([c.value for c in params_values], dtype=np.float64)
 
-        return y_limit, t_limit, solver.vec_jacobian, static_params, n_event_params
+        jacobian_evaluator = self.problem.get_floquet_jacobian_evaluator(solver.vec_jacobian)
+
+        return y_limit, t_limit, jacobian_evaluator, static_params, n_event_params
 
     def run_arnoldi(self):
         """
@@ -345,8 +366,8 @@ class SmallSignalStabilityEmtDriver(DriverTemplate):
 
         # 3. Eigenvalue Extraction
         # Arnoldi struggles when all eigenvalues have identical magnitudes.
-        if n_states <= max(self.options.k + 1, 20):
-            if self.options.verbose:
+        if n_states <= max(self.sss_options.k + 1, 20):
+            if self.sss_options.verbose:
                 print(f"System size (N={n_states}). Using dense fallback for full spectrum.")
 
             I_dense = np.eye(n_states)
@@ -357,13 +378,13 @@ class SmallSignalStabilityEmtDriver(DriverTemplate):
             mu, v = la.eig(C_M)
         else:
             # High-Performance Sparse Arnoldi
-            search_k = min(self.options.k * 2, n_states - 2)
+            search_k = min(self.sss_options.k * 2, n_states - 2)
             mu, v = spla.eigs(monodromy_op, k=search_k, which='LM', tol=1e-8)
 
         # 4. SPECTRAL SHIFT FILTERING (Resonance Hunt)
-        if self.options.target_frequency_hz is not None:
-            f_target = self.options.target_frequency_hz
-            T = self.options.target_period
+        if self.sss_options.target_frequency_hz is not None:
+            f_target = self.sss_options.target_frequency_hz
+            T = self.sss_options.target_period
             # Target multiplier on the unit circle
             sigma = np.exp(1j * 2 * np.pi * f_target * T)
 
@@ -371,11 +392,11 @@ class SmallSignalStabilityEmtDriver(DriverTemplate):
             distances = np.minimum(np.abs(mu - sigma), np.abs(mu - np.conj(sigma)))
 
             # Sort by distance and truncate to the requested k modes
-            sort_indices = np.argsort(distances)[:self.options.k]
+            sort_indices = np.argsort(distances)[:self.sss_options.k]
             mu = mu[sort_indices]
             v = v[:, sort_indices]
         else:
-            sort_indices = np.argsort(-np.abs(mu))[:self.options.k]
+            sort_indices = np.argsort(-np.abs(mu))[:self.sss_options.k]
             mu = mu[sort_indices]
             v = v[:, sort_indices]
 
@@ -387,7 +408,7 @@ class SmallSignalStabilityEmtDriver(DriverTemplate):
             multipliers=mu,
             right_vecs=v,
             left_vecs=w,
-            period=self.options.target_period,
+            period=self.sss_options.target_period,
             stat_vars=self.problem.get_state_vars()
         )
 
@@ -405,7 +426,7 @@ class SmallSignalStabilityEmtDriver(DriverTemplate):
 
         y_traj, t_traj, jac_eval, stat_params, n_ev_params = self._capture_limit_cycle_and_evaluator(h)
 
-        if self.options.prefer_ak_operator:
+        if self.sss_options.prefer_ak_operator:
             Ak_stack = self.problem.get_floquet_ak_stack(
                 trajectory=y_traj,
                 h=h,
@@ -414,9 +435,9 @@ class SmallSignalStabilityEmtDriver(DriverTemplate):
             )
 
             if Ak_stack is not None:
-                if self.options.verbose:
+                if self.sss_options.verbose:
                     print('Using explicit EMT A_k stack operator (Numba path if available).')
-                return AkStackBlockEmtFloquetOperator(Ak_stack, use_numba=self.options.use_numba_kernels)
+                return AkStackBlockEmtFloquetOperator(Ak_stack, use_numba=self.sss_options.use_numba_kernels)
 
         return BlockEmtFloquetOperator(
             problem=self.problem,
@@ -516,27 +537,27 @@ class SmallSignalStabilityEmtDriver(DriverTemplate):
         monodromy_op = self._make_monodromy_operator(h, n_states)
 
         # Hyperparameters (Clean Code: Native types passed directly from Options)
-        k_target = self.options.k
-        base_max_dim = self.options.max_krylov_dim
-        max_restarts = self.options.max_restarts
-        restart_tol = self.options.restart_tol
-        use_refined = self.options.use_refined_ritz
-        adaptive_restart = self.options.adaptive_restart
-        stagnation_ratio = self.options.stagnation_improve_ratio
-        stagnation_patience = self.options.stagnation_patience
-        deflation_tol = self.options.deflation_tol
+        k_target = self.sss_options.k
+        base_max_dim = self.sss_options.max_krylov_dim
+        max_restarts = self.sss_options.max_restarts
+        restart_tol = self.sss_options.restart_tol
+        use_refined = self.sss_options.use_refined_ritz
+        adaptive_restart = self.sss_options.adaptive_restart
+        stagnation_ratio = self.sss_options.stagnation_improve_ratio
+        stagnation_patience = self.sss_options.stagnation_patience
+        deflation_tol = self.sss_options.deflation_tol
 
         # Handling optional boundaries cleanly
-        p_min = self.options.min_block_size if self.options.min_block_size is not None else max(2, k_target)
-        p_max = self.options.max_block_size if self.options.max_block_size is not None else min(n_states, k_target + 8)
-        max_dim_cap = self.options.max_krylov_dim_cap if self.options.max_krylov_dim_cap is not None else max(
+        p_min = self.sss_options.min_block_size if self.sss_options.min_block_size is not None else max(2, k_target)
+        p_max = self.sss_options.max_block_size if self.sss_options.max_block_size is not None else min(n_states, k_target + 8)
+        max_dim_cap = self.sss_options.max_krylov_dim_cap if self.sss_options.max_krylov_dim_cap is not None else max(
             base_max_dim, int(1.8 * base_max_dim))
 
         p_seed = min(max(k_target + 2, p_min), p_max, n_states)
         max_dim_local = max(base_max_dim, p_seed + 1)
         m_iters = max(2, max_dim_local // p_seed)
 
-        if self.options.verbose:
+        if self.sss_options.verbose:
             # self.report_text()
             # self.report_progress()
             # self.report_progress2()
@@ -552,7 +573,7 @@ class SmallSignalStabilityEmtDriver(DriverTemplate):
         residual_history = []
 
         for ir in range(max_restarts + 1):
-            if self.options.verbose:
+            if self.sss_options.verbose:
                 print(f'   [BIRAM] Restart cycle {ir + 1}/{max_restarts + 1}')
 
             engine = RobustBlockArnoldiEngine(
@@ -579,7 +600,7 @@ class SmallSignalStabilityEmtDriver(DriverTemplate):
             max_rr = float(np.max(rel[topk])) if len(topk) > 0 else np.inf
             residual_history.append(max_rr)
 
-            if self.options.verbose:
+            if self.sss_options.verbose:
                 print(f'   [BIRAM] top-{len(topk)} max rel-res = {max_rr:.3e}')
 
             if max_rr < best_pack.max_rr:
@@ -589,7 +610,7 @@ class SmallSignalStabilityEmtDriver(DriverTemplate):
                 best_pack.max_rr = max_rr
 
             if max_rr <= restart_tol:
-                if self.options.verbose:
+                if self.sss_options.verbose:
                     print('   [BIRAM] Converged by residual tolerance.')
                 break
 
@@ -611,7 +632,7 @@ class SmallSignalStabilityEmtDriver(DriverTemplate):
                             p_seed = p_new
                             V_seed = build_restart_seed(U_sel, p_target=p_seed, seed=99 + ir)
                             changed = True
-                            if self.options.verbose:
+                            if self.sss_options.verbose:
                                 print(f'   [BIRAM] Residual stagnation detected -> shrink block to p={p_seed}.')
                     else:
                         # Increase subspace depth budget if block is already minimal
@@ -619,7 +640,7 @@ class SmallSignalStabilityEmtDriver(DriverTemplate):
                         if max_dim_new > max_dim_local:
                             max_dim_local = max_dim_new
                             changed = True
-                            if self.options.verbose:
+                            if self.sss_options.verbose:
                                 print(
                                     f'   [BIRAM] Residual stagnation detected -> expand max Krylov dim to {max_dim_local}.')
 
@@ -643,7 +664,7 @@ class SmallSignalStabilityEmtDriver(DriverTemplate):
             multipliers=mu,
             right_vecs=v,
             left_vecs=w,
-            period=self.options.target_period,
+            period=self.sss_options.target_period,
             stat_vars=self.problem.get_state_vars()
         )
 
@@ -653,9 +674,9 @@ class SmallSignalStabilityEmtDriver(DriverTemplate):
         """
         Executes the analysis based on the selected builder type in the options.
         """
-        if self.options.build_type == SmallSignalEmtBuildTypes.Arnoldi:
+        if self.sss_options.build_type == SmallSignalEmtBuildTypes.Arnoldi:
             self.run_arnoldi()
-        elif self.options.build_type == SmallSignalEmtBuildTypes.HybridArnoldi:
+        elif self.sss_options.build_type == SmallSignalEmtBuildTypes.HybridArnoldi:
             self.run_arnoldi_hybrid()
         else:
-            raise RuntimeError(f'Unknown build type: {self.options.build_type}')
+            raise RuntimeError(f'Unknown build type: {self.sss_options.build_type}')

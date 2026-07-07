@@ -403,7 +403,7 @@ def get_vsc_data(
                       Pf_set=elm.Pdc_set,
                       vac_set=elm.Vac_set,
                       vdc_set=elm.Vdc_set,
-                      kdp=elm.kdp,
+                      kdp=elm.control1_val_droop,
                       alpha1=elm.alpha1,
                       alpha2=elm.alpha2,
                       alpha3=elm.alpha3)

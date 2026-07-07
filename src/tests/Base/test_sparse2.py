@@ -4,11 +4,12 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 from time import time
+import warnings
 import numpy as np
 import numba as nb
 from scipy.sparse import csc_matrix, random, hstack, vstack
 from scipy.sparse import rand
-from scipy.sparse.linalg import spsolve as spsolve_scipy
+from scipy.sparse.linalg import MatrixRankWarning, spsolve as spsolve_scipy
 from VeraGridEngine.Utils.Sparse.csc2 import (sp_slice, sp_slice_rows, csc_stack_2d_ff, scipy_to_mat, spsolve_csc,
                                               extend, CSC, csc_multiply_ff, csc_add_ff)
 
@@ -102,9 +103,6 @@ def test_stack_4():
     # print('Stacking pass:', stack_test)
     assert stack_test
 
-    return True
-
-
 def test_spsolve() -> None:
     """
     Test the CSC oriented spsolve_csc function
@@ -115,7 +113,9 @@ def test_spsolve() -> None:
         rhs = np.random.rand(m)
 
         try:
-            a = spsolve_scipy(matrix, rhs)
+            with warnings.catch_warnings():
+                warnings.filterwarnings("ignore", category=MatrixRankWarning)
+                a = spsolve_scipy(matrix, rhs)
             ok_a = not np.isnan(a).any()
 
             try:

@@ -11,7 +11,7 @@ import numpy as np
 from VeraGrid.Gui.GridReduce.grid_reduce_gui import Ui_ReduceDialog
 from VeraGrid.Gui.general_dialogues import LogsDialogue
 from VeraGrid.Gui.messages import yes_no_question, warning_msg
-from VeraGrid.Gui.gui_functions import get_list_model, enums_to_model
+from VeraGrid.Gui.gui_functions import ComboModel, get_list_model
 from VeraGrid.Session.session import SimulationSession
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
@@ -45,16 +45,18 @@ class GridReduceDialogue(QtWidgets.QDialog):
 
         self.ui.listView.setModel(get_list_model(list(selected_buses_set)))
 
-        self.methods_dict, methods_mdl = enums_to_model(
-            [GridReductionMethod.PTDF,
-             GridReductionMethod.PTDFProjected,
-             GridReductionMethod.DiShi,
-             GridReductionMethod.Ward]
+        methods_mdl = ComboModel(
+            enum_values=[GridReductionMethod.PTDF,
+                         GridReductionMethod.PTDFProjected,
+                         GridReductionMethod.DiShi,
+                         GridReductionMethod.Ward],
+            translate=self.tr
         )
         self.ui.methodComboBox.setModel(methods_mdl)
 
-        self.bus_methods_dict, bus_methods_mdl = enums_to_model(
-            [BusReductionMethod.Reduce, BusReductionMethod.Keep]
+        bus_methods_mdl = ComboModel(
+            enum_values=[BusReductionMethod.Reduce, BusReductionMethod.Keep],
+            translate=self.tr
         )
         self.ui.busModeComboBox.setModel(bus_methods_mdl)
 
@@ -75,8 +77,8 @@ class GridReduceDialogue(QtWidgets.QDialog):
         """
         if len(self._selected_buses_set):
 
-            reduction_method: GridReductionMethod = self.methods_dict[self.ui.methodComboBox.currentText()]
-            bus_mode: BusReductionMethod = self.bus_methods_dict[self.ui.busModeComboBox.currentText()]
+            reduction_method: GridReductionMethod = self.ui.methodComboBox.currentData()
+            bus_mode: BusReductionMethod = self.ui.busModeComboBox.currentData()
 
             if bus_mode == BusReductionMethod.Reduce:
                 text = f"This will delete the selected buses and reintroduce their influence."

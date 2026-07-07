@@ -10,10 +10,10 @@ import pandas as pd
 from matplotlib import pyplot as plt
 
 from VeraGridEngine.Templates.Rms.load_rms_template import get_load_rms_template
-from VeraGridEngine.enumerations import DeviceType, BuildStatus
+from VeraGridEngine.enumerations import DeviceType, BuildStatus, PrpCat, ParamPowerFlowReferenceType
 from VeraGridEngine.Devices.Parents.load_parent import LoadParent
 from VeraGridEngine.Devices.Profiles import ProfileFloat, ProfileInt
-from VeraGridEngine.Utils.Symbolic.block import VarPowerFlowRefferenceType
+from VeraGridEngine.Utils.Symbolic.block import VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 
 
@@ -60,50 +60,166 @@ class Load(LoadParent):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='Ir', units='MW', tpe=float,
-                      definition='Active power of the current component at V=1.0 p.u.', profile_name='Ir_prof'),
-        GCProp(key='Ir1', units='MW', tpe=float,
-                      definition='Active power of the phase 1 current component at V=1.0 p.u.', profile_name='Ir1_prof'),
-        GCProp(key='Ir2', units='MW', tpe=float,
-                      definition='Active power of the phase 2 current component at V=1.0 p.u.', profile_name='Ir2_prof'),
-        GCProp(key='Ir3', units='MW', tpe=float,
-                      definition='Active power of the phase 3 current component at V=1.0 p.u.', profile_name='Ir3_prof'),
-        GCProp(key='Ii', units='MVAr', tpe=float,
-                      definition='Reactive power of the current component at V=1.0 p.u.', profile_name='Ii_prof'),
-        GCProp(key='Ii1', units='MVAr', tpe=float,
-                      definition='Reactive power of the phase 1 current component at V=1.0 p.u.',
-                      profile_name='Ii1_prof'),
-        GCProp(key='Ii2', units='MVAr', tpe=float,
-                      definition='Reactive power of the phase 2 current component at V=1.0 p.u.',
-                      profile_name='Ii2_prof'),
-        GCProp(key='Ii3', units='MVAr', tpe=float,
-                      definition='Reactive power of the phase 3 current component at V=1.0 p.u.',
-                      profile_name='Ii3_prof'),
-        GCProp(key='G', units='MW', tpe=float,
-                      definition='Active power of the impedance component at V=1.0 p.u.', profile_name='G_prof'),
-        GCProp(key='G1', units='MW', tpe=float,
-                      definition='Active power of the phase 1 impedance component at V=1.0 p.u.',
-                      profile_name='G1_prof'),
-        GCProp(key='G2', units='MW', tpe=float,
-                      definition='Active power of the phase 2 impedance component at V=1.0 p.u.',
-                      profile_name='G2_prof'),
-        GCProp(key='G3', units='MW', tpe=float,
-                      definition='Active power of the phase 3 impedance component at V=1.0 p.u.',
-                      profile_name='G3_prof'),
-        GCProp(key='B', units='MVAr', tpe=float,
-                      definition='Reactive power of the impedance component at V=1.0 p.u.', profile_name='B_prof'),
-        GCProp(key='B1', units='MVAr', tpe=float,
-                      definition='Reactive power of the phase 1 impedance component at V=1.0 p.u.',
-                      profile_name='B1_prof'),
-        GCProp(key='B2', units='MVAr', tpe=float,
-                      definition='Reactive power of the phase 2 impedance component at V=1.0 p.u.',
-                      profile_name='B2_prof'),
-        GCProp(key='B3', units='MVAr', tpe=float,
-                      definition='Reactive power of the phase 3 impedance component at V=1.0 p.u.',
-                      profile_name='B3_prof'),
-        GCProp(key='n_customers', units='unit', tpe=int,
-                      definition='Number of customers represented by this load', profile_name='n_customers_prof'),
-        GCProp(key='contract_power', units='MW', tpe=float, definition='Nominal contracted power', ),
+        GCProp(
+            prop_name='Ir',
+            units='MW',
+            tpe=float,
+            definition='Active power of the current component at V=1.0 p.u.',
+            profile_name='Ir_prof',
+            cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.load_ir_pu,
+        ),
+        GCProp(
+            prop_name='Ir1',
+            units='MW',
+            tpe=float,
+            definition='Active power of the phase 1 current component at V=1.0 p.u.',
+            profile_name='Ir1_prof',
+            cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.load_ira_pu,
+        ),
+        GCProp(
+            prop_name='Ir2',
+            units='MW',
+            tpe=float,
+            definition='Active power of the phase 2 current component at V=1.0 p.u.',
+            profile_name='Ir2_prof',
+            cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.load_irb_pu,
+        ),
+        GCProp(
+            prop_name='Ir3',
+            units='MW',
+            tpe=float,
+            definition='Active power of the phase 3 current component at V=1.0 p.u.',
+            profile_name='Ir3_prof',
+            cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.load_irc_pu,
+        ),
+        GCProp(
+            prop_name='Ii',
+            units='MVAr',
+            tpe=float,
+            definition='Reactive power of the current component at V=1.0 p.u.',
+            profile_name='Ii_prof',
+            cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.load_ii_pu,
+        ),
+        GCProp(
+            prop_name='Ii1',
+            units='MVAr',
+            tpe=float,
+            definition='Reactive power of the phase 1 current component at V=1.0 p.u.',
+            profile_name='Ii1_prof',
+            cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.load_iia_pu,
+        ),
+        GCProp(
+            prop_name='Ii2',
+            units='MVAr',
+            tpe=float,
+            definition='Reactive power of the phase 2 current component at V=1.0 p.u.',
+            profile_name='Ii2_prof',
+            cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.load_iib_pu,
+        ),
+        GCProp(
+            prop_name='Ii3',
+            units='MVAr',
+            tpe=float,
+            definition='Reactive power of the phase 3 current component at V=1.0 p.u.',
+            profile_name='Ii3_prof',
+            cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.load_iic_pu,
+        ),
+        GCProp(
+            prop_name='G',
+            units='MW',
+            tpe=float,
+            definition='Active power of the impedance component at V=1.0 p.u.',
+            profile_name='G_prof',
+            cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.load_g_pu,
+        ),
+        GCProp(
+            prop_name='G1',
+            units='MW',
+            tpe=float,
+            definition='Active power of the phase 1 impedance component at V=1.0 p.u.',
+            profile_name='G1_prof',
+            cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.load_ga_pu,
+        ),
+        GCProp(
+            prop_name='G2',
+            units='MW',
+            tpe=float,
+            definition='Active power of the phase 2 impedance component at V=1.0 p.u.',
+            profile_name='G2_prof',
+            cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.load_gb_pu,
+        ),
+        GCProp(
+            prop_name='G3',
+            units='MW',
+            tpe=float,
+            definition='Active power of the phase 3 impedance component at V=1.0 p.u.',
+            profile_name='G3_prof',
+            cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.load_gc_pu,
+        ),
+        GCProp(
+            prop_name='B',
+            units='MVAr',
+            tpe=float,
+            definition='Reactive power of the impedance component at V=1.0 p.u.',
+            profile_name='B_prof',
+            cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.load_b_pu,
+        ),
+        GCProp(
+            prop_name='B1',
+            units='MVAr',
+            tpe=float,
+            definition='Reactive power of the phase 1 impedance component at V=1.0 p.u.',
+            profile_name='B1_prof',
+            cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.load_ba_pu,
+        ),
+        GCProp(
+            prop_name='B2',
+            units='MVAr',
+            tpe=float,
+            definition='Reactive power of the phase 2 impedance component at V=1.0 p.u.',
+            profile_name='B2_prof',
+            cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.load_bb_pu,
+        ),
+        GCProp(
+            prop_name='B3',
+            units='MVAr',
+            tpe=float,
+            definition='Reactive power of the phase 3 impedance component at V=1.0 p.u.',
+            profile_name='B3_prof',
+            cat=[PrpCat.PF3],
+            dyn_ref=ParamPowerFlowReferenceType.load_bc_pu,
+        ),
+        GCProp(
+            prop_name='n_customers',
+            units='unit',
+            tpe=int,
+            definition='Number of customers represented by this load',
+            profile_name='n_customers_prof',
+            cat=[PrpCat.REL],
+        ),
+        GCProp(
+            prop_name='contract_power',
+            units='MW',
+            tpe=float,
+            definition='Nominal contracted power',
+            cat=[PrpCat.REL],
+            dyn_ref=ParamPowerFlowReferenceType.load_contract_power_pu,
+        ),
     )
 
     def __init__(self, name='Load', idtag=None, code='',
@@ -746,8 +862,8 @@ class Load(LoadParent):
             raise Exception(str(type(val)) + 'not supported to be set into n_customers_prof')
 
     def assign_input_vars_and_params(self):
-        self.Vm = self.bus.rms_model.E(VarPowerFlowRefferenceType.Vm)
-        self.Va = self.bus.rms_model.E(VarPowerFlowRefferenceType.Va)
+        self.Vm = self.bus.rms_model.E(VarPowerFlowReferenceType.Vm)
+        self.Va = self.bus.rms_model.E(VarPowerFlowReferenceType.Va)
 
     def plot_profiles(self, time=None, show_fig=True):
         """
@@ -1097,6 +1213,4 @@ class Load(LoadParent):
         :return: None
         """
         self._B3 = float(val)
-
-
 

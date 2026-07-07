@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.equipment import Equipment
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 if TYPE_CHECKING:
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.base_voltage import BaseVoltage
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.sv_status import SvStatus
@@ -14,9 +15,9 @@ if TYPE_CHECKING:
 
 class ConductingEquipment(Equipment):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='BaseVoltage', class_type='BaseVoltage', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Base voltage of this conducting equipment.  Use only when there is no voltage level container used and only one base voltage applies.  For example, not used for transformers.''', profiles=[]),
-		CgmesProperty(property_name='Terminals', class_type='Terminal', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Conducting equipment have terminals that may be connected to other conducting equipment terminals via connectivity nodes or topological nodes.''', profiles=[]),
-		CgmesProperty(property_name='SvStatus', class_type='SvStatus', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The status state variable associated with this conducting equipment.''', profiles=[]),
+		CgmesProperty(property_name='BaseVoltage', class_type='BaseVoltage', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Base voltage of this conducting equipment.  Use only when there is no voltage level container used and only one base voltage applies.  For example, not used for transformers.''', profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='Terminals', class_type='Terminal', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Conducting equipment have terminals that may be connected to other conducting equipment terminals via connectivity nodes or topological nodes.''', profiles=[CgmesProfileType.DY, CgmesProfileType.EQ, CgmesProfileType.EQ_BD]),
+		CgmesProperty(property_name='SvStatus', class_type='SvStatus', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The status state variable associated with this conducting equipment.''', profiles=[CgmesProfileType.SV]),
 	)
 	__slots__ = ('BaseVoltage', 'Terminals', 'SvStatus')
 	def __init__(self, rdfid='', tpe='ConductingEquipment'):

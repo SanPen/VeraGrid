@@ -5,15 +5,110 @@
 
 import numpy as np
 import pandas as pd
-from VeraGridEngine.Simulations.results_template import ResultsTemplate
+from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
 from VeraGridEngine.Simulations.results_table import ResultsTable
-from VeraGridEngine.enumerations import FaultType
 from VeraGridEngine.basic_structures import IntVec, Vec, StrVec, CxVec
 from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
-from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_basic_formulation_3ph import (expand_indices_3ph)
 
 
 class ShortCircuitResults(ResultsTemplate):
+
+    LOCAL_RESULTS_DECLARATIONS = (
+        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='hvdc_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='sc_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='F', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='T', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='hvdc_F', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='hvdc_T', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='bus_area_indices', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='area_names', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='Sbus1', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='voltage1', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='Sf1', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='St1', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='If1', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='It1', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='Vbranch1', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='loading1', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='losses1', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='Sbus0', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='voltage0', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='Sf0', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='St0', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='If0', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='It0', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='Vbranch0', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='loading0', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='losses0', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='Sbus2', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='voltage2', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='Sf2', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='St2', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='If2', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='It2', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='Vbranch2', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='loading2', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='losses2', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='SbusN', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='voltageN', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='SfN', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='StN', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='IfN', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='ItN', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='VbranchN', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='loadingN', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='lossesN', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='SbusA', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='voltageA', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='SfA', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='StA', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='IfA', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='ItA', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='VbranchA', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='loadingA', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='lossesA', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='SbusB', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='voltageB', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='SfB', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='StB', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='IfB', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='ItB', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='VbranchB', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='loadingB', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='lossesB', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='SbusC', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='voltageC', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='SfC', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='StC', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='IfC', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='ItC', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='VbranchC', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='loadingC', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='lossesC', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='hvdc_losses', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='hvdc_Pf', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='hvdc_Pt', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='hvdc_loading', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='vsc_If', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='vsc_It', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='vsc_Pfp', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='vsc_Pfn', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='vsc_St', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='vsc_losses', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='vsc_loading', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='SCpower', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='SCpowerA', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='SCpowerB', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='SCpowerC', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='ICurrent', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='ICurrentA', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='ICurrentB', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='ICurrentC', tpe=CxVec, old_names=list(), expandable=False),
+    )
+
     __slots__ = (
         "bus_types",
         "bus_names",
@@ -341,111 +436,7 @@ class ShortCircuitResults(ResultsTemplate):
         self.ICurrentC = np.zeros((n, nsc), dtype=np.complex64)
 
         # Register results
-        self.register(name='bus_names', tpe=StrVec)
-        self.register(name='branch_names', tpe=StrVec)
-        self.register(name='hvdc_names', tpe=StrVec)
-        self.register(name='sc_names', tpe=StrVec)
-        self.register(name='bus_types', tpe=IntVec)
 
-        self.register(name='F', tpe=IntVec)
-        self.register(name='T', tpe=IntVec)
-        self.register(name='hvdc_F', tpe=IntVec)
-        self.register(name='hvdc_T', tpe=IntVec)
-        self.register(name='bus_area_indices', tpe=IntVec)
-        self.register(name='area_names', tpe=IntVec)
-
-        self.register(name='Sbus1', tpe=CxVec)
-        self.register(name='voltage1', tpe=CxVec)
-        self.register(name='Sf1', tpe=CxVec)
-        self.register(name='St1', tpe=CxVec)
-        self.register(name='If1', tpe=CxVec)
-        self.register(name='It1', tpe=CxVec)
-        self.register(name='Vbranch1', tpe=CxVec)
-        self.register(name='loading1', tpe=CxVec)
-        self.register(name='losses1', tpe=CxVec)
-
-        self.register(name='Sbus0', tpe=CxVec)
-        self.register(name='voltage0', tpe=CxVec)
-        self.register(name='Sf0', tpe=CxVec)
-        self.register(name='St0', tpe=CxVec)
-        self.register(name='If0', tpe=CxVec)
-        self.register(name='It0', tpe=CxVec)
-        self.register(name='Vbranch0', tpe=CxVec)
-        self.register(name='loading0', tpe=CxVec)
-        self.register(name='losses0', tpe=CxVec)
-
-        self.register(name='Sbus2', tpe=CxVec)
-        self.register(name='voltage2', tpe=CxVec)
-        self.register(name='Sf2', tpe=CxVec)
-        self.register(name='St2', tpe=CxVec)
-        self.register(name='If2', tpe=CxVec)
-        self.register(name='It2', tpe=CxVec)
-        self.register(name='Vbranch2', tpe=CxVec)
-        self.register(name='loading2', tpe=CxVec)
-        self.register(name='losses2', tpe=CxVec)
-
-        self.register(name='SbusN', tpe=CxVec)
-        self.register(name='voltageN', tpe=CxVec)
-        self.register(name='SfN', tpe=CxVec)
-        self.register(name='StN', tpe=CxVec)
-        self.register(name='IfN', tpe=CxVec)
-        self.register(name='ItN', tpe=CxVec)
-        self.register(name='VbranchN', tpe=CxVec)
-        self.register(name='loadingN', tpe=CxVec)
-        self.register(name='lossesN', tpe=CxVec)
-
-        self.register(name='SbusA', tpe=CxVec)
-        self.register(name='voltageA', tpe=CxVec)
-        self.register(name='SfA', tpe=CxVec)
-        self.register(name='StA', tpe=CxVec)
-        self.register(name='IfA', tpe=CxVec)
-        self.register(name='ItA', tpe=CxVec)
-        self.register(name='VbranchA', tpe=CxVec)
-        self.register(name='loadingA', tpe=CxVec)
-        self.register(name='lossesA', tpe=CxVec)
-
-        self.register(name='SbusB', tpe=CxVec)
-        self.register(name='voltageB', tpe=CxVec)
-        self.register(name='SfB', tpe=CxVec)
-        self.register(name='StB', tpe=CxVec)
-        self.register(name='IfB', tpe=CxVec)
-        self.register(name='ItB', tpe=CxVec)
-        self.register(name='VbranchB', tpe=CxVec)
-        self.register(name='loadingB', tpe=CxVec)
-        self.register(name='lossesB', tpe=CxVec)
-
-        self.register(name='SbusC', tpe=CxVec)
-        self.register(name='voltageC', tpe=CxVec)
-        self.register(name='SfC', tpe=CxVec)
-        self.register(name='StC', tpe=CxVec)
-        self.register(name='IfC', tpe=CxVec)
-        self.register(name='ItC', tpe=CxVec)
-        self.register(name='VbranchC', tpe=CxVec)
-        self.register(name='loadingC', tpe=CxVec)
-        self.register(name='lossesC', tpe=CxVec)
-
-        self.register(name='hvdc_losses', tpe=Vec)
-        self.register(name='hvdc_Pf', tpe=Vec)
-        self.register(name='hvdc_Pt', tpe=Vec)
-        self.register(name='hvdc_loading', tpe=Vec)
-
-        self.register(name='vsc_If', tpe=Vec)
-        self.register(name='vsc_It', tpe=CxVec)
-        self.register(name='vsc_Pfp', tpe=Vec)
-        self.register(name='vsc_Pfn', tpe=Vec)
-        self.register(name='vsc_St', tpe=CxVec)
-        self.register(name='vsc_losses', tpe=Vec)
-        self.register(name='vsc_loading', tpe=Vec)
-
-        self.register(name='SCpower', tpe=CxVec)
-        self.register(name='SCpowerA', tpe=CxVec)
-        self.register(name='SCpowerB', tpe=CxVec)
-        self.register(name='SCpowerC', tpe=CxVec)
-
-        self.register(name='ICurrent', tpe=CxVec)
-        self.register(name='ICurrentA', tpe=CxVec)
-        self.register(name='ICurrentB', tpe=CxVec)
-        self.register(name='ICurrentC', tpe=CxVec)
 
     @property
     def elapsed(self):

@@ -1,0 +1,24 @@
+HEADER     21/01/21 5.1
+
+TIME
+            0.000000001            60.             0.
+
+PARAM
+         0  2  0  0                 0 0
+                 0.0001         0.0001          0.001         0.0001         0.0001 1
+
+CONSTANT TETARE               30.
+CONSTANT OMEGRE         0.0999996
+
+CHECKVAR      10.  0 0
+
+TPSCRI
+                N D      0.1     0.74    0.006       0.
+
+EVENTS
+     10. FAULTONL NHVA3   -NHVD1   -1 FUG           50.       0.       0.    0.           D
+   10.14 BRANC OP NHVA3   -NHVD1   -1 S          1                           0.           F       0.
+   10.14 BRANC OP NHVA3   -NHVD1   -1 R          1                           0.           F       0.
+     15. STOP
+
+

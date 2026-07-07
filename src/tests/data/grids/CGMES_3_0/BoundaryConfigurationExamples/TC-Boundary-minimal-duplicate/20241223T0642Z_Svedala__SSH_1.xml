@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:cim="http://iec.ch/TC57/CIM100#" xmlns:eu="http://iec.ch/TC57/CIM100-European#" xmlns:md="http://iec.ch/TC57/61970-552/ModelDescription/1#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <md:FullModel rdf:about="urn:uuid:7b133487-1d4c-4f8a-bf86-833be258a083">
+    <md:Model.DependentOn rdf:resource="urn:uuid:94507ea9-651e-4079-ad93-916b1d20fe2d" />
+    <md:Model.created>2024-12-24T08:01:33Z</md:Model.created>
+    <md:Model.description>This is a test model for boundary.</md:Model.description>
+    <md:Model.modelingAuthoritySet>https://svedala.nr</md:Model.modelingAuthoritySet>
+    <md:Model.profile>http://iec.ch/TC57/ns/CIM/SteadyStateHypothesis-EU/3.0</md:Model.profile>
+    <md:Model.scenarioTime>2024-12-23T06:42:14Z</md:Model.scenarioTime>
+    <md:Model.version>1</md:Model.version>
+  </md:FullModel>
+  <cim:Terminal rdf:about="#_1ae0def3-6dd9-7a7e-78cf-d4a8c1270853">
+    <cim:ACDCTerminal.connected>true</cim:ACDCTerminal.connected>
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_976620af-2017-920b-419d-50b73f3eee25">
+    <cim:ACDCTerminal.connected>true</cim:ACDCTerminal.connected>
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_588171eb-1457-7981-00a8-8fc474f7053b">
+    <cim:ACDCTerminal.connected>true</cim:ACDCTerminal.connected>
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_fb7c93f8-716c-19fc-2f9e-de3da8c80ff7">
+    <cim:ACDCTerminal.connected>true</cim:ACDCTerminal.connected>
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_114bbe5b-5a25-54b7-92c1-e4fd106128ce">
+    <cim:ACDCTerminal.connected>true</cim:ACDCTerminal.connected>
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_281024cb-33dc-a701-a927-e3bc64f633bd">
+    <cim:ACDCTerminal.connected>true</cim:ACDCTerminal.connected>
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_59890a7f-8738-ce76-bf39-bd26eebc26a8">
+    <cim:ACDCTerminal.connected>true</cim:ACDCTerminal.connected>
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_6fb4a827-8e2e-ffa7-6be1-d7f995bc160e">
+    <cim:ACDCTerminal.connected>true</cim:ACDCTerminal.connected>
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_c752c215-31b1-178a-aca0-a6b97195a0fb">
+    <cim:ACDCTerminal.connected>true</cim:ACDCTerminal.connected>
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_196a369e-77c3-51fc-8cd2-89a59011ba83">
+    <cim:ACDCTerminal.connected>true</cim:ACDCTerminal.connected>
+  </cim:Terminal>
+  <cim:Terminal rdf:about="#_bcc73350-210f-1bf4-e7a8-580825584a7e">
+    <cim:ACDCTerminal.connected>true</cim:ACDCTerminal.connected>
+  </cim:Terminal>
+  <cim:Breaker rdf:about="#_d94f97dd-d960-4930-b8a5-a65091d1939a">
+    <cim:Equipment.inService>true</cim:Equipment.inService>
+    <cim:Switch.locked>false</cim:Switch.locked>
+    <cim:Switch.open>false</cim:Switch.open>
+  </cim:Breaker>
+  <cim:CurrentLimit rdf:about="#_14c63553-7fe7-4fe2-8f05-ffa6d713f5a8">
+    <cim:CurrentLimit.value>3600</cim:CurrentLimit.value>
+  </cim:CurrentLimit>
+  <cim:CurrentLimit rdf:about="#_e34af4b0-027b-b1bd-dfa8-07942bd1a7c1">
+    <cim:CurrentLimit.value>3600</cim:CurrentLimit.value>
+  </cim:CurrentLimit>
+  <cim:ControlArea rdf:about="#_a2409326-c163-42e5-86a8-36cfa301e2d0">
+    <cim:ControlArea.netInterchange>-10</cim:ControlArea.netInterchange>
+  </cim:ControlArea>
+  <cim:Equipment rdf:ID="_1db3f258-b436-a036-b3aa-b0d9ddffc8a3">
+    <cim:Equipment.inService>true</cim:Equipment.inService>
+  </cim:Equipment>
+  <cim:Equipment rdf:ID="_83983060-777c-4cfa-bb03-739cbc7c3025">
+    <cim:Equipment.inService>true</cim:Equipment.inService>
+  </cim:Equipment>
+  <cim:ConformLoad rdf:about="#_31189d70-dfd9-4022-a405-b3f2661e845a">
+    <cim:EnergyConsumer.p>10</cim:EnergyConsumer.p>
+    <cim:EnergyConsumer.q>8</cim:EnergyConsumer.q>
+    <cim:Equipment.inService>true</cim:Equipment.inService>
+  </cim:ConformLoad>
+  <cim:Disconnector rdf:about="#_3786d09e-0f27-447b-834f-37b7fbab4072">
+    <cim:Equipment.inService>true</cim:Equipment.inService>
+    <cim:Switch.locked>false</cim:Switch.locked>
+    <cim:Switch.open>false</cim:Switch.open>
+  </cim:Disconnector>
+  <cim:Disconnector rdf:about="#_ed56c213-63b5-4574-8f1b-ab9bd2377a7e">
+    <cim:Equipment.inService>true</cim:Equipment.inService>
+    <cim:Switch.locked>false</cim:Switch.locked>
+    <cim:Switch.open>false</cim:Switch.open>
+  </cim:Disconnector>
+  <cim:EquivalentInjection rdf:about="#_31adf6d5-ffd9-44de-a631-7a6fc691cf8a">
+    <cim:Equipment.inService>true</cim:Equipment.inService>
+    <cim:EquivalentInjection.p>-10</cim:EquivalentInjection.p>
+    <cim:EquivalentInjection.q>3.64101</cim:EquivalentInjection.q>
+  </cim:EquivalentInjection>
+  <cim:VoltageLimit rdf:about="#_441ebf05-161e-5c28-244e-d3d77c3d3773">
+    <cim:VoltageLimit.value>420</cim:VoltageLimit.value>
+  </cim:VoltageLimit>
+</rdf:RDF>

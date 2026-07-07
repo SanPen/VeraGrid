@@ -405,9 +405,9 @@ class Base:
 
     def detect_circular_references(self, visited):
         """
-        Get path, leading to a circular refference
+        Get path, leading to a circular reference
         :param visited: list of visited elements' rdfid (used for recursion)
-        :return: path of circular refferences
+        :return: path of circular references
         """
         visited.append(self.rdfid)
 

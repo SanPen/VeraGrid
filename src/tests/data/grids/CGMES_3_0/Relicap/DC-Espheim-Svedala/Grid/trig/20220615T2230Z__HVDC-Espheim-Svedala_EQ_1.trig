@@ -1,0 +1,980 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:105893e4-668b-4b00-a351-0e436b53cbc9> {
+    <urn:uuid:800afa6a-9910-4fb7-a88b-9fb1e66920ff>
+            rdf:type                      cim:VoltageLevel;
+            cim:IdentifiedObject.mRID     "800afa6a-9910-4fb7-a88b-9fb1e66920ff";
+            cim:IdentifiedObject.name     "VL_400";
+            cim:VoltageLevel.BaseVoltage  <urn:uuid:597e44dc-2a6e-4c62-82f3-f82cc46e0e14>;
+            cim:VoltageLevel.Substation   <urn:uuid:c544d893-1b9a-4363-bacb-e7064f812ec0> .
+    
+    <urn:uuid:e710a2e3-a70f-4261-508f-a4d925d1deb9>
+            rdf:type                   cim:EquivalentInjection;
+            cim:ConductingEquipment.BaseVoltage
+                    <urn:uuid:597e44dc-2a6e-4c62-82f3-f82cc46e0e14>;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:c06d67a0-4984-4661-846c-f42a9b29c049>;
+            cim:EquivalentInjection.regulationCapability
+                    false;
+            cim:IdentifiedObject.mRID  "e710a2e3-a70f-4261-508f-a4d925d1deb9";
+            cim:IdentifiedObject.name  "BoundaryInjectionEq" .
+    
+    <urn:uuid:042e8644-494d-b5a7-1a96-124d42e23131>
+            rdf:type                   cim:BusbarSection;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:3d1874ee-827e-4038-aba2-a5a4a748ff8a>;
+            cim:IdentifiedObject.mRID  "042e8644-494d-b5a7-1a96-124d42e23131";
+            cim:IdentifiedObject.name  "Terminal_EH_125" .
+    
+    <urn:uuid:310d79b6-67c5-b024-de6e-b5510b7b9fb5>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "310d79b6-67c5-b024-de6e-b5510b7b9fb5";
+            cim:IdentifiedObject.name      "Terminal";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:e468e6ca-8776-4c22-8f9b-390df610c2fd>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:30db969e-ed4a-48c2-bc2e-2db0892b485b> .
+    
+    <urn:uuid:e468e6ca-8776-4c22-8f9b-390df610c2fd>
+            rdf:type                    cim:CsConverter;
+            cim:ACDCConverter.baseS     "334.6"^^xsd:float;
+            cim:ACDCConverter.idleLoss  "1e-5"^^xsd:float;
+            cim:ACDCConverter.ratedUdc  "167.3"^^xsd:float;
+            cim:ACDCConverter.resistiveLoss
+                    "1.25"^^xsd:float;
+            cim:ACDCConverter.switchingLoss
+                    "1e-5"^^xsd:float;
+            cim:CsConverter.maxAlpha    "180"^^xsd:float;
+            cim:CsConverter.minAlpha    "10"^^xsd:float;
+            cim:CsConverter.minGamma    "17"^^xsd:float;
+            cim:CsConverter.ratedIdc    "2000"^^xsd:float;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:b959da55-d306-495d-80cf-ba2b25854d8e>;
+            cim:IdentifiedObject.mRID   "e468e6ca-8776-4c22-8f9b-390df610c2fd";
+            cim:IdentifiedObject.name   "DC-3P-Convert-2" .
+    
+    <urn:uuid:3d7c5539-54bc-47ce-ac7c-2bf945797e02>
+            rdf:type                   cim:DCNode;
+            cim:DCNode.DCEquipmentContainer
+                    <urn:uuid:394f936b-1517-4035-b95e-25e305b4c09a>;
+            cim:IdentifiedObject.mRID  "3d7c5539-54bc-47ce-ac7c-2bf945797e02";
+            cim:IdentifiedObject.name  "DC-Node-1-167kV" .
+    
+    <urn:uuid:e4e4e131-5922-404f-9d3d-90a800008cb4>
+            rdf:type                   cim:DCGround;
+            cim:DCConductingEquipment.ratedUdc
+                    "1"^^xsd:float;
+            cim:DCGround.inductance    "0"^^xsd:float;
+            cim:DCGround.r             "0"^^xsd:float;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:394f936b-1517-4035-b95e-25e305b4c09a>;
+            cim:IdentifiedObject.mRID  "e4e4e131-5922-404f-9d3d-90a800008cb4";
+            cim:IdentifiedObject.name  "DC-Ground-1" .
+    
+    <urn:uuid:d09587f0-f3eb-9b0f-f75c-253317d31e2c>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "3002.22"^^xsd:float;
+            cim:IdentifiedObject.mRID     "d09587f0-f3eb-9b0f-f75c-253317d31e2c";
+            cim:IdentifiedObject.name     "patl for EH-SD_Tr1";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:15849da2-18fd-6885-d394-96d9a2a52345>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:26be2df3-1354-3106-43ef-f5d0d807adce> .
+    
+    <urn:uuid:26be2df3-1354-3106-43ef-f5d0d807adce>
+            rdf:type                      cim:OperationalLimitType;
+            cim:IdentifiedObject.mRID     "26be2df3-1354-3106-43ef-f5d0d807adce";
+            cim:IdentifiedObject.name     "patl";
+            cim:OperationalLimitType.direction
+                    cim:OperationalLimitDirectionKind.absoluteValue;
+            cim:OperationalLimitType.isInfiniteDuration
+                    true;
+            eu:OperationalLimitType.kind  eu:LimitKind.patl .
+    
+    <urn:uuid:4d641167-89ab-4491-9f06-3bc74e66618c>
+            rdf:type                   cim:ConnectivityNode;
+            cim:ConnectivityNode.ConnectivityNodeContainer
+                    <urn:uuid:800afa6a-9910-4fb7-a88b-9fb1e66920ff>;
+            cim:IdentifiedObject.mRID  "4d641167-89ab-4491-9f06-3bc74e66618c";
+            cim:IdentifiedObject.name  "Terminal_SD_400";
+            eu:IdentifiedObject.energyIdentCodeEic
+                    "10T-AT-DE-00017X" .
+    
+    <urn:uuid:02f431b9-5939-ed2a-7c52-69db4fc78c48>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "02f431b9-5939-ed2a-7c52-69db4fc78c48";
+            cim:IdentifiedObject.name      "Cub_1";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:0ef4ac67-d665-4d1b-95bf-38a8e696058a>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:4d641167-89ab-4491-9f06-3bc74e66618c> .
+    
+    <urn:uuid:89ecd90a-1898-6de3-b3e4-a85a223ede3f>
+            rdf:type                   cim:ACDCConverterDCTerminal;
+            cim:ACDCConverterDCTerminal.DCConductingEquipment
+                    <urn:uuid:e468e6ca-8776-4c22-8f9b-390df610c2fd>;
+            cim:ACDCConverterDCTerminal.polarity
+                    cim:DCPolarityKind.negative;
+            cim:ACDCTerminal.sequenceNumber
+                    3;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:70d030b0-388c-458f-90d5-90b9e128622c>;
+            cim:IdentifiedObject.mRID  "89ecd90a-1898-6de3-b3e4-a85a223ede3f";
+            cim:IdentifiedObject.name  "C-354479664" .
+    
+    <urn:uuid:48fb660a-ca83-2b14-cbc4-9737eb383c77>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "500"^^xsd:float;
+            cim:IdentifiedObject.mRID     "48fb660a-ca83-2b14-cbc4-9737eb383c77";
+            cim:IdentifiedObject.name     "tatl 600 for TieLine_HVDC_SD_EH-SD_1";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:77843252-e482-b3fc-425b-0fc575c039f9>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:1cffaaa2-50df-47ad-4771-68ab10d14af1> .
+    
+    <urn:uuid:24bee63d-40dc-e5c6-c29c-882e26eb6734>
+            rdf:type                   cim:DCTerminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:90994cd2-afd2-499f-b1b6-ef746ed2cdc6>;
+            cim:DCTerminal.DCConductingEquipment
+                    <urn:uuid:e4e4e131-5922-404f-9d3d-90a800008cb4>;
+            cim:IdentifiedObject.mRID  "24bee63d-40dc-e5c6-c29c-882e26eb6734";
+            cim:IdentifiedObject.name  "C-354479664" .
+    
+    <urn:uuid:c52f871f-a27e-d13d-e15b-2df65029ad66>
+            rdf:type                    cim:TieFlow;
+            cim:IdentifiedObject.mRID   "c52f871f-a27e-d13d-e15b-2df65029ad66";
+            cim:IdentifiedObject.name   "TieFlow";
+            cim:TieFlow.ControlArea     <urn:uuid:76de9db0-6755-4696-8ef8-01b20c3d9ea0>;
+            cim:TieFlow.Terminal        <urn:uuid:7c2c512e-9b33-a938-f0c9-fc7e2b1fcb3f>;
+            cim:TieFlow.positiveFlowIn  true .
+    
+    <urn:uuid:15849da2-18fd-6885-d394-96d9a2a52345>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "15849da2-18fd-6885-d394-96d9a2a52345";
+            cim:IdentifiedObject.name  "Current rating for EH-SD_Tr1";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:f22ac414-60d5-1b7a-f9b3-b1e456441f22> .
+    
+    <urn:uuid:77a71772-2cd6-2f66-a328-631c800f22c3>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "77a71772-2cd6-2f66-a328-631c800f22c3";
+            cim:IdentifiedObject.name      "Terminal";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:038ce404-30dc-4289-b9db-7076cb870b8e>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:9676a028-fde6-4f14-9e43-7603765235fd> .
+    
+    <urn:uuid:c544d893-1b9a-4363-bacb-e7064f812ec0>
+            rdf:type                   cim:Substation;
+            cim:IdentifiedObject.mRID  "c544d893-1b9a-4363-bacb-e7064f812ec0";
+            cim:IdentifiedObject.name  "HVDC Station 1";
+            cim:Substation.Region      <urn:uuid:adf94548-b31d-42a4-aa0e-48d4bc7089a7> .
+    
+    <urn:uuid:3a13e481-c5a6-73d3-861e-c5a4d5a31bc4>
+            rdf:type                   cim:DCLine;
+            cim:IdentifiedObject.mRID  "3a13e481-c5a6-73d3-861e-c5a4d5a31bc4";
+            cim:IdentifiedObject.name  "DC-Line-EH_SD1" .
+    
+    <urn:uuid:7d07d8c6-82c5-d461-1e48-99b93c21938b>
+            rdf:type                   cim:SubLoadArea;
+            cim:IdentifiedObject.mRID  "7d07d8c6-82c5-d461-1e48-99b93c21938b";
+            cim:IdentifiedObject.name  "General Load";
+            cim:SubLoadArea.LoadArea   <urn:uuid:ca3519b6-b6f4-f9ea-0a41-0b9ced3031bd> .
+    
+    <urn:uuid:c078eae7-c2ff-1e21-8fa1-b7fd9a46d1cb>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "c078eae7-c2ff-1e21-8fa1-b7fd9a46d1cb";
+            cim:IdentifiedObject.name  "Current rating for DC-Line-EH_SD1";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:86a0a26d-f3f8-636c-5730-e76af37fcd5f> .
+    
+    <urn:uuid:a7b5db4a-8318-3806-fd75-cf76179a5847>
+            rdf:type                        cim:PowerTransformerEnd;
+            cim:IdentifiedObject.mRID       "a7b5db4a-8318-3806-fd75-cf76179a5847";
+            cim:IdentifiedObject.name       "EH-SD_Tr2";
+            cim:PowerTransformerEnd.PowerTransformer
+                    <urn:uuid:4711e896-d85e-451b-b834-0cfe14564c01>;
+            cim:PowerTransformerEnd.b       "0"^^xsd:float;
+            cim:PowerTransformerEnd.connectionKind
+                    cim:WindingConnection.Y;
+            cim:PowerTransformerEnd.g       "0"^^xsd:float;
+            cim:PowerTransformerEnd.r       "2.70769"^^xsd:float;
+            cim:PowerTransformerEnd.ratedS  "650"^^xsd:float;
+            cim:PowerTransformerEnd.ratedU  "400"^^xsd:float;
+            cim:PowerTransformerEnd.x       "14.5189"^^xsd:float;
+            cim:TransformerEnd.BaseVoltage  <urn:uuid:597e44dc-2a6e-4c62-82f3-f82cc46e0e14>;
+            cim:TransformerEnd.Terminal     <urn:uuid:61cafb07-5d42-a115-0c43-e5cb8b7ffb90>;
+            cim:TransformerEnd.endNumber    1 .
+    
+    <urn:uuid:d024cfa1-f2ba-4ab6-b493-d720199b3111>
+            rdf:type                   cim:DCGround;
+            cim:DCConductingEquipment.ratedUdc
+                    "1"^^xsd:float;
+            cim:DCGround.inductance    "0"^^xsd:float;
+            cim:DCGround.r             "0"^^xsd:float;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:b959da55-d306-495d-80cf-ba2b25854d8e>;
+            cim:IdentifiedObject.mRID  "d024cfa1-f2ba-4ab6-b493-d720199b3111";
+            cim:IdentifiedObject.name  "DC-Ground-2" .
+    
+    <urn:uuid:46e0ad23-1022-cb7d-6715-ef7f23fbf507>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "2100"^^xsd:float;
+            cim:IdentifiedObject.mRID     "46e0ad23-1022-cb7d-6715-ef7f23fbf507";
+            cim:IdentifiedObject.name     "patl for TieLine_HVDC_SD_EH-SD_1";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:30541418-b9a0-538d-a0e3-3a2c7d313d54>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:26be2df3-1354-3106-43ef-f5d0d807adce> .
+    
+    <urn:uuid:fd7e2746-d94a-cdfd-601d-195889f9eed8>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "fd7e2746-d94a-cdfd-601d-195889f9eed8";
+            cim:IdentifiedObject.name  "Current rating for EH-SD_Tr2";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:61cafb07-5d42-a115-0c43-e5cb8b7ffb90> .
+    
+    <urn:uuid:27a845ee-6b82-7c91-5feb-c1777b932e90>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "27a845ee-6b82-7c91-5feb-c1777b932e90";
+            cim:IdentifiedObject.name  "Current rating for TieLine_HVDC_EH_SD-EH_1";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:7c2c512e-9b33-a938-f0c9-fc7e2b1fcb3f> .
+    
+    <urn:uuid:a9af9eff-8dbb-286f-7fda-2693e8b3cab2>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "2100"^^xsd:float;
+            cim:IdentifiedObject.mRID     "a9af9eff-8dbb-286f-7fda-2693e8b3cab2";
+            cim:IdentifiedObject.name     "patl for TieLine_HVDC_EH_SD-EH_1";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:31618494-4d3e-fe73-b5bc-c143f0416f48>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:26be2df3-1354-3106-43ef-f5d0d807adce> .
+    
+    <urn:uuid:86a0a26d-f3f8-636c-5730-e76af37fcd5f>
+            rdf:type                   cim:DCTerminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:3241b7ca-6a91-4675-ba14-2b6c3af03fd1>;
+            cim:DCTerminal.DCConductingEquipment
+                    <urn:uuid:be09fc02-de3f-49e4-aa84-94803bcc5d76>;
+            cim:IdentifiedObject.mRID  "86a0a26d-f3f8-636c-5730-e76af37fcd5f";
+            cim:IdentifiedObject.name  "C-354479664-L1" .
+    
+    <urn:uuid:3ae3a841-fbb4-469e-8d72-9b69c942f197>
+            rdf:type                   cim:ACLineSegment;
+            cim:ACLineSegment.bch      "1e-5"^^xsd:float;
+            cim:ACLineSegment.gch      "1e-5"^^xsd:float;
+            cim:ACLineSegment.r        "1"^^xsd:float;
+            cim:ACLineSegment.x        "2"^^xsd:float;
+            cim:ConductingEquipment.BaseVoltage
+                    <urn:uuid:597e44dc-2a6e-4c62-82f3-f82cc46e0e14>;
+            cim:Conductor.length       "10"^^xsd:float;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:ba130a7b-fb46-4c73-a6cf-ec41812a14c0>;
+            cim:IdentifiedObject.mRID  "3ae3a841-fbb4-469e-8d72-9b69c942f197";
+            cim:IdentifiedObject.name  "TieLine_HVDC_EH_SD-EH_1" .
+    
+    <urn:uuid:73896955-8e4c-d96f-3935-dd564f2d6a77>
+            rdf:type                   cim:ACDCConverterDCTerminal;
+            cim:ACDCConverterDCTerminal.DCConductingEquipment
+                    <urn:uuid:038ce404-30dc-4289-b9db-7076cb870b8e>;
+            cim:ACDCConverterDCTerminal.polarity
+                    cim:DCPolarityKind.negative;
+            cim:ACDCTerminal.sequenceNumber
+                    3;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:90994cd2-afd2-499f-b1b6-ef746ed2cdc6>;
+            cim:IdentifiedObject.mRID  "73896955-8e4c-d96f-3935-dd564f2d6a77";
+            cim:IdentifiedObject.name  "C-354479664(1)" .
+    
+    <urn:uuid:76de9db0-6755-4696-8ef8-01b20c3d9ea0>
+            rdf:type                    cim:ControlArea;
+            cim:ControlArea.EnergyArea  <urn:uuid:ca3519b6-b6f4-f9ea-0a41-0b9ced3031bd>;
+            cim:ControlArea.type        cim:ControlAreaTypeKind.Interchange;
+            cim:IdentifiedObject.mRID   "76de9db0-6755-4696-8ef8-01b20c3d9ea0";
+            cim:IdentifiedObject.name   "Espheim-Svedala" .
+    
+    <urn:uuid:31618494-4d3e-fe73-b5bc-c143f0416f48>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "31618494-4d3e-fe73-b5bc-c143f0416f48";
+            cim:IdentifiedObject.name  "Current rating for TieLine_HVDC_EH_SD-EH_1";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:20f1f947-55cb-5175-0611-8ce82c635a20> .
+    
+    <urn:uuid:3241b7ca-6a91-4675-ba14-2b6c3af03fd1>
+            rdf:type                   cim:DCNode;
+            cim:DCNode.DCEquipmentContainer
+                    <urn:uuid:b959da55-d306-495d-80cf-ba2b25854d8e>;
+            cim:IdentifiedObject.mRID  "3241b7ca-6a91-4675-ba14-2b6c3af03fd1";
+            cim:IdentifiedObject.name  "DC-Node-2-167kV" .
+    
+    <urn:uuid:967b7731-d6f6-fc51-acac-d23329831fd0>
+            rdf:type                   cim:DCTerminal;
+            cim:ACDCTerminal.sequenceNumber
+                    2;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:3d7c5539-54bc-47ce-ac7c-2bf945797e02>;
+            cim:DCTerminal.DCConductingEquipment
+                    <urn:uuid:be09fc02-de3f-49e4-aa84-94803bcc5d76>;
+            cim:IdentifiedObject.mRID  "967b7731-d6f6-fc51-acac-d23329831fd0";
+            cim:IdentifiedObject.name  "C-354479664-L2" .
+    
+    <urn:uuid:f22ac414-60d5-1b7a-f9b3-b1e456441f22>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    2;
+            cim:IdentifiedObject.mRID      "f22ac414-60d5-1b7a-f9b3-b1e456441f22";
+            cim:IdentifiedObject.name      "Terminal(1)";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:81a60401-9391-40e1-9e23-0aa0aff91184>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:9676a028-fde6-4f14-9e43-7603765235fd> .
+    
+    <urn:uuid:51584a9f-914e-4f09-a866-71e2df50150f>
+            rdf:type                       cim:LinearShuntCompensator;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:800afa6a-9910-4fb7-a88b-9fb1e66920ff>;
+            cim:IdentifiedObject.mRID      "51584a9f-914e-4f09-a866-71e2df50150f";
+            cim:IdentifiedObject.name      "Shunt-60429160";
+            cim:LinearShuntCompensator.bPerSection
+                    "0.000826033"^^xsd:float;
+            cim:LinearShuntCompensator.gPerSection
+                    "0"^^xsd:float;
+            cim:ShuntCompensator.grounded  true;
+            cim:ShuntCompensator.maximumSections
+                    1;
+            cim:ShuntCompensator.nomU      "400"^^xsd:float;
+            cim:ShuntCompensator.normalSections
+                    1 .
+    
+    <urn:uuid:ca3519b6-b6f4-f9ea-0a41-0b9ced3031bd>
+            rdf:type                   cim:LoadArea;
+            cim:IdentifiedObject.mRID  "ca3519b6-b6f4-f9ea-0a41-0b9ced3031bd";
+            cim:IdentifiedObject.name  "General Load" .
+    
+    <urn:uuid:7c2c512e-9b33-a938-f0c9-fc7e2b1fcb3f>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    2;
+            cim:IdentifiedObject.mRID      "7c2c512e-9b33-a938-f0c9-fc7e2b1fcb3f";
+            cim:IdentifiedObject.name      "Cub_1";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:3ae3a841-fbb4-469e-8d72-9b69c942f197>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:89caa531-9769-4e1c-9d37-0af93bfada13> .
+    
+    <urn:uuid:52a33733-060b-92e0-1c32-f4d1883a23e3>
+            rdf:type                    cim:TieFlow;
+            cim:IdentifiedObject.mRID   "52a33733-060b-92e0-1c32-f4d1883a23e3";
+            cim:IdentifiedObject.name   "TieFlow";
+            cim:TieFlow.ControlArea     <urn:uuid:76de9db0-6755-4696-8ef8-01b20c3d9ea0>;
+            cim:TieFlow.Terminal        <urn:uuid:fd9c44c1-979a-0b40-0a7d-49008eccf249>;
+            cim:TieFlow.positiveFlowIn  true .
+    
+    <urn:uuid:8840c749-31fa-8090-19be-394e18cc184a>
+            rdf:type                        cim:PowerTransformerEnd;
+            cim:IdentifiedObject.mRID       "8840c749-31fa-8090-19be-394e18cc184a";
+            cim:IdentifiedObject.name       "EH-SD_Tr2";
+            cim:PowerTransformerEnd.PowerTransformer
+                    <urn:uuid:4711e896-d85e-451b-b834-0cfe14564c01>;
+            cim:PowerTransformerEnd.b       "0"^^xsd:float;
+            cim:PowerTransformerEnd.connectionKind
+                    cim:WindingConnection.Y;
+            cim:PowerTransformerEnd.g       "0"^^xsd:float;
+            cim:PowerTransformerEnd.r       "0"^^xsd:float;
+            cim:PowerTransformerEnd.ratedS  "650"^^xsd:float;
+            cim:PowerTransformerEnd.ratedU  "125"^^xsd:float;
+            cim:PowerTransformerEnd.x       "0"^^xsd:float;
+            cim:TransformerEnd.BaseVoltage  <urn:uuid:54191047-8b9e-8735-ed0d-5e1421d2e9dc>;
+            cim:TransformerEnd.Terminal     <urn:uuid:6163d1e1-7904-d404-2a1c-70057f17dc15>;
+            cim:TransformerEnd.endNumber    2 .
+    
+    <urn:uuid:61cafb07-5d42-a115-0c43-e5cb8b7ffb90>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "61cafb07-5d42-a115-0c43-e5cb8b7ffb90";
+            cim:IdentifiedObject.name      "Cub_3";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:4711e896-d85e-451b-b834-0cfe14564c01>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:89e5ddfd-7f59-4d5b-b5fd-fba3a15a2cde> .
+    
+    <urn:uuid:f74b6b4d-bf67-1991-5df6-6ad5662c9be3>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "938.194"^^xsd:float;
+            cim:IdentifiedObject.mRID     "f74b6b4d-bf67-1991-5df6-6ad5662c9be3";
+            cim:IdentifiedObject.name     "patl for EH-SD_Tr1";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:5526e118-c310-a444-99cb-65b01a514b57>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:26be2df3-1354-3106-43ef-f5d0d807adce> .
+    
+    <urn:uuid:9869892a-9292-4428-d15d-d9b6e4000ca2>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "9869892a-9292-4428-d15d-d9b6e4000ca2";
+            cim:IdentifiedObject.name  "Current rating for DC-Line-EH_SD1";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:967b7731-d6f6-fc51-acac-d23329831fd0> .
+    
+    <urn:uuid:1ef12689-4cc9-17ec-affd-7769281007a2>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "2100"^^xsd:float;
+            cim:IdentifiedObject.mRID     "1ef12689-4cc9-17ec-affd-7769281007a2";
+            cim:IdentifiedObject.name     "patl for TieLine_HVDC_SD_EH-SD_1";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:77843252-e482-b3fc-425b-0fc575c039f9>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:26be2df3-1354-3106-43ef-f5d0d807adce> .
+    
+    <urn:uuid:51570b78-d067-772b-4a33-8552e5a871ce>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "51570b78-d067-772b-4a33-8552e5a871ce";
+            cim:IdentifiedObject.name      "Terminal_EH_400";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:cba14822-1c7f-27e1-dd40-dcd789f9c782>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:89e5ddfd-7f59-4d5b-b5fd-fba3a15a2cde> .
+    
+    <urn:uuid:30a12755-25d9-9b1d-e401-b0c881741eef>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "938.194"^^xsd:float;
+            cim:IdentifiedObject.mRID     "30a12755-25d9-9b1d-e401-b0c881741eef";
+            cim:IdentifiedObject.name     "patl for EH-SD_Tr2";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:fd7e2746-d94a-cdfd-601d-195889f9eed8>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:26be2df3-1354-3106-43ef-f5d0d807adce> .
+    
+    <urn:uuid:5526e118-c310-a444-99cb-65b01a514b57>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "5526e118-c310-a444-99cb-65b01a514b57";
+            cim:IdentifiedObject.name  "Current rating for EH-SD_Tr1";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:9a54a535-c88c-7247-37aa-938a9d1f42d9> .
+    
+    <urn:uuid:9a54a535-c88c-7247-37aa-938a9d1f42d9>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "9a54a535-c88c-7247-37aa-938a9d1f42d9";
+            cim:IdentifiedObject.name      "Terminal(3)";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:81a60401-9391-40e1-9e23-0aa0aff91184>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:4d641167-89ab-4491-9f06-3bc74e66618c> .
+    
+    <urn:uuid:04d52a3d-f8cf-33bd-da06-eb900fa71107>
+            rdf:type                   cim:ConformLoadGroup;
+            cim:IdentifiedObject.mRID  "04d52a3d-f8cf-33bd-da06-eb900fa71107";
+            cim:IdentifiedObject.name  "General Load";
+            cim:LoadGroup.SubLoadArea  <urn:uuid:7d07d8c6-82c5-d461-1e48-99b93c21938b> .
+    
+    <urn:uuid:b438186b-5db8-1bb9-1f95-81ee4db865e3>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "b438186b-5db8-1bb9-1f95-81ee4db865e3";
+            cim:IdentifiedObject.name      "BI_Terminal";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:b8a39d36-f5e3-9995-ba5a-e77d3392890f>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:89caa531-9769-4e1c-9d37-0af93bfada13> .
+    
+    <urn:uuid:46be4f3f-ec33-d469-813d-040026679f68>
+            rdf:type                   cim:ACDCConverterDCTerminal;
+            cim:ACDCConverterDCTerminal.DCConductingEquipment
+                    <urn:uuid:e468e6ca-8776-4c22-8f9b-390df610c2fd>;
+            cim:ACDCConverterDCTerminal.polarity
+                    cim:DCPolarityKind.positive;
+            cim:ACDCTerminal.sequenceNumber
+                    2;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:3241b7ca-6a91-4675-ba14-2b6c3af03fd1>;
+            cim:IdentifiedObject.mRID  "46be4f3f-ec33-d469-813d-040026679f68";
+            cim:IdentifiedObject.name  "C-354479664" .
+    
+    <urn:uuid:2d62e3dd-3144-0254-3b62-22479b6724b9>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "2100"^^xsd:float;
+            cim:IdentifiedObject.mRID     "2d62e3dd-3144-0254-3b62-22479b6724b9";
+            cim:IdentifiedObject.name     "patl for TieLine_HVDC_EH_SD-EH_1";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:27a845ee-6b82-7c91-5feb-c1777b932e90>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:26be2df3-1354-3106-43ef-f5d0d807adce> .
+    
+    <urn:uuid:feecaf47-f4ff-9197-fc4f-97f04fdb2455>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "2000"^^xsd:float;
+            cim:IdentifiedObject.mRID     "feecaf47-f4ff-9197-fc4f-97f04fdb2455";
+            cim:IdentifiedObject.name     "patl for DC-Line-EH_SD1";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:9869892a-9292-4428-d15d-d9b6e4000ca2>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:26be2df3-1354-3106-43ef-f5d0d807adce> .
+    
+    <urn:uuid:81a60401-9391-40e1-9e23-0aa0aff91184>
+            rdf:type                   cim:PowerTransformer;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:394f936b-1517-4035-b95e-25e305b4c09a>;
+            cim:IdentifiedObject.mRID  "81a60401-9391-40e1-9e23-0aa0aff91184";
+            cim:IdentifiedObject.name  "EH-SD_Tr1" .
+    
+    <urn:uuid:7dcd98b1-957d-2a26-a5f3-2674a1fda9bd>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "3002.22"^^xsd:float;
+            cim:IdentifiedObject.mRID     "7dcd98b1-957d-2a26-a5f3-2674a1fda9bd";
+            cim:IdentifiedObject.name     "patl for EH-SD_Tr2";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:ae9f29bb-d743-4827-eda9-3479c9b4b129>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:26be2df3-1354-3106-43ef-f5d0d807adce> .
+    
+    <urn:uuid:30541418-b9a0-538d-a0e3-3a2c7d313d54>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "30541418-b9a0-538d-a0e3-3a2c7d313d54";
+            cim:IdentifiedObject.name  "L-354479681";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:fd9c44c1-979a-0b40-0a7d-49008eccf249> .
+    
+    <urn:uuid:ae9f29bb-d743-4827-eda9-3479c9b4b129>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "ae9f29bb-d743-4827-eda9-3479c9b4b129";
+            cim:IdentifiedObject.name  "Current rating for EH-SD_Tr2";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:6163d1e1-7904-d404-2a1c-70057f17dc15> .
+    
+    <urn:uuid:adf94548-b31d-42a4-aa0e-48d4bc7089a7>
+            rdf:type                   cim:SubGeographicalRegion;
+            cim:IdentifiedObject.mRID  "adf94548-b31d-42a4-aa0e-48d4bc7089a7";
+            cim:IdentifiedObject.name  "HVDC Subarea";
+            cim:SubGeographicalRegion.Region
+                    <urn:uuid:75937a43-c47d-4431-9857-7a0333ed50be> .
+    
+    <urn:uuid:30db969e-ed4a-48c2-bc2e-2db0892b485b>
+            rdf:type                   cim:ConnectivityNode;
+            cim:ConnectivityNode.ConnectivityNodeContainer
+                    <urn:uuid:3d1874ee-827e-4038-aba2-a5a4a748ff8a>;
+            cim:IdentifiedObject.mRID  "30db969e-ed4a-48c2-bc2e-2db0892b485b";
+            cim:IdentifiedObject.name  "Terminal_EH_125" .
+    
+    <urn:uuid:90994cd2-afd2-499f-b1b6-ef746ed2cdc6>
+            rdf:type                   cim:DCNode;
+            cim:DCNode.DCEquipmentContainer
+                    <urn:uuid:394f936b-1517-4035-b95e-25e305b4c09a>;
+            cim:IdentifiedObject.mRID  "90994cd2-afd2-499f-b1b6-ef746ed2cdc6";
+            cim:IdentifiedObject.name  "DC-Node-1-Ground" .
+    
+    <urn:uuid:f61ecb33-0267-05fd-994a-cb5c2d2563e2>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "f61ecb33-0267-05fd-994a-cb5c2d2563e2";
+            cim:IdentifiedObject.name      "BI_Terminal";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:e710a2e3-a70f-4261-508f-a4d925d1deb9>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:0a31ada8-2dfc-41c5-a07f-6c2151cea34d> .
+    
+    <urn:uuid:8343e5c5-b77a-4c4e-b074-1cb3777a2f2d>
+            rdf:type                   cim:ACLineSegment;
+            cim:ACLineSegment.bch      "1e-5"^^xsd:float;
+            cim:ACLineSegment.gch      "1e-5"^^xsd:float;
+            cim:ACLineSegment.r        "1"^^xsd:float;
+            cim:ACLineSegment.x        "2"^^xsd:float;
+            cim:ConductingEquipment.BaseVoltage
+                    <urn:uuid:597e44dc-2a6e-4c62-82f3-f82cc46e0e14>;
+            cim:Conductor.length       "10"^^xsd:float;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:c06d67a0-4984-4661-846c-f42a9b29c049>;
+            cim:IdentifiedObject.mRID  "8343e5c5-b77a-4c4e-b074-1cb3777a2f2d";
+            cim:IdentifiedObject.name  "TieLine_HVDC_SD_EH-SD_1" .
+    
+    <urn:uuid:9966cfc9-7e17-0129-6ecc-6290b8f19e3a>
+            rdf:type                        cim:PowerTransformerEnd;
+            cim:IdentifiedObject.mRID       "9966cfc9-7e17-0129-6ecc-6290b8f19e3a";
+            cim:IdentifiedObject.name       "EH-SD_Tr1";
+            cim:PowerTransformerEnd.PowerTransformer
+                    <urn:uuid:81a60401-9391-40e1-9e23-0aa0aff91184>;
+            cim:PowerTransformerEnd.b       "0"^^xsd:float;
+            cim:PowerTransformerEnd.connectionKind
+                    cim:WindingConnection.Y;
+            cim:PowerTransformerEnd.g       "0"^^xsd:float;
+            cim:PowerTransformerEnd.r       "2.70769"^^xsd:float;
+            cim:PowerTransformerEnd.ratedS  "650"^^xsd:float;
+            cim:PowerTransformerEnd.ratedU  "400"^^xsd:float;
+            cim:PowerTransformerEnd.x       "14.5189"^^xsd:float;
+            cim:TransformerEnd.BaseVoltage  <urn:uuid:597e44dc-2a6e-4c62-82f3-f82cc46e0e14>;
+            cim:TransformerEnd.Terminal     <urn:uuid:9a54a535-c88c-7247-37aa-938a9d1f42d9>;
+            cim:TransformerEnd.endNumber    1 .
+    
+    <urn:uuid:db884d13-b941-ea67-670f-29acad9bf7aa>
+            rdf:type                    cim:PhaseTapChangerSymmetrical;
+            cim:IdentifiedObject.mRID   "db884d13-b941-ea67-670f-29acad9bf7aa";
+            cim:IdentifiedObject.name   "EH-SD_Tr1";
+            cim:PhaseTapChanger.TransformerEnd
+                    <urn:uuid:9966cfc9-7e17-0129-6ecc-6290b8f19e3a>;
+            cim:PhaseTapChangerNonLinear.voltageStepIncrement
+                    "1.25"^^xsd:float;
+            cim:PhaseTapChangerNonLinear.xMax
+                    "16.9387"^^xsd:float;
+            cim:PhaseTapChangerNonLinear.xMin
+                    "14.5189"^^xsd:float;
+            cim:TapChanger.highStep     25;
+            cim:TapChanger.lowStep      1;
+            cim:TapChanger.ltcFlag      true;
+            cim:TapChanger.neutralStep  13;
+            cim:TapChanger.neutralU     "400"^^xsd:float;
+            cim:TapChanger.normalStep   7 .
+    
+    <urn:uuid:89e5ddfd-7f59-4d5b-b5fd-fba3a15a2cde>
+            rdf:type                   cim:ConnectivityNode;
+            cim:ConnectivityNode.ConnectivityNodeContainer
+                    <urn:uuid:800afa6a-9910-4fb7-a88b-9fb1e66920ff>;
+            cim:IdentifiedObject.mRID  "89e5ddfd-7f59-4d5b-b5fd-fba3a15a2cde";
+            cim:IdentifiedObject.name  "Terminal_EH_400" .
+    
+    <urn:uuid:b8a39d36-f5e3-9995-ba5a-e77d3392890f>
+            rdf:type                   cim:EquivalentInjection;
+            cim:ConductingEquipment.BaseVoltage
+                    <urn:uuid:597e44dc-2a6e-4c62-82f3-f82cc46e0e14>;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:ba130a7b-fb46-4c73-a6cf-ec41812a14c0>;
+            cim:EquivalentInjection.regulationCapability
+                    false;
+            cim:IdentifiedObject.mRID  "b8a39d36-f5e3-9995-ba5a-e77d3392890f";
+            cim:IdentifiedObject.name  "BoundaryInjectionEq" .
+    
+    <urn:uuid:3d1874ee-827e-4038-aba2-a5a4a748ff8a>
+            rdf:type                      cim:VoltageLevel;
+            cim:IdentifiedObject.mRID     "3d1874ee-827e-4038-aba2-a5a4a748ff8a";
+            cim:IdentifiedObject.name     "VL_125";
+            cim:VoltageLevel.BaseVoltage  <urn:uuid:54191047-8b9e-8735-ed0d-5e1421d2e9dc>;
+            cim:VoltageLevel.Substation   <urn:uuid:c544d893-1b9a-4363-bacb-e7064f812ec0> .
+    
+    <urn:uuid:b959da55-d306-495d-80cf-ba2b25854d8e>
+            rdf:type                        cim:DCConverterUnit;
+            cim:DCConverterUnit.Substation  <urn:uuid:c544d893-1b9a-4363-bacb-e7064f812ec0>;
+            cim:DCConverterUnit.operationMode
+                    cim:DCConverterOperatingModeKind.monopolarGroundReturn;
+            cim:IdentifiedObject.mRID       "b959da55-d306-495d-80cf-ba2b25854d8e";
+            cim:IdentifiedObject.name       "DC 2" .
+    
+    <urn:uuid:77843252-e482-b3fc-425b-0fc575c039f9>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "77843252-e482-b3fc-425b-0fc575c039f9";
+            cim:IdentifiedObject.name  "L-354479681";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:f3603af7-a098-1e2c-431e-8ca22ae76221> .
+    
+    <urn:uuid:105893e4-668b-4b00-a351-0e436b53cbc9>
+            rdf:type           rdfg:Graph , dcat:Dataset;
+            dct:conformsTo     <http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/3.0>;
+            dct:description    "The equipment dataset for Espheim-Svedala, which is part of the ReliCapGrid.";
+            dct:identifier     "105893e4-668b-4b00-a351-0e436b53cbc9";
+            dct:issued         "2025-02-06"^^xsd:date;
+            dct:requires       <urn:uuid:af6450db-fe15-4caf-94a1-e22f3fced32e> , <urn:uuid:1b65ada7-39ca-42b8-a278-39c457ed82c3>;
+            dct:temporal       [ rdf:type        dct:PeriodOfTime;
+                                 dcat:startDate  "2022-06-16T23:30:00Z"^^xsd:dateTime
+                               ];
+            dcat:distribution  [ rdf:type    dcat:Distribution;
+                                 dct:issued  "2025-02-06T14:18:22Z"^^xsd:dateTime
+                               ];
+            dcat:isVersionOf   <http://espheim-svedala.es/CGMES>;
+            dcat:version       "1";
+            json-ld:base       "http://espheim-svedala.es/CGMES#" .
+    
+    <urn:uuid:cb37fd3b-f1c6-e951-b1a8-529a9ea55f1a>
+            rdf:type                      cim:VoltageLimit;
+            cim:IdentifiedObject.mRID     "cb37fd3b-f1c6-e951-b1a8-529a9ea55f1a";
+            cim:IdentifiedObject.name     "high limit for Terminal_EH_400";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:e9e4776a-fff6-5176-8c04-3172505e5dea>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:f39e8a78-e746-5585-aca2-4be0a12a049e>;
+            cim:VoltageLimit.normalValue  "420"^^xsd:float .
+    
+    <urn:uuid:01eee88d-5ec1-56c0-32f1-52e40bc7bcb7>
+            rdf:type                   cim:LoadResponseCharacteristic;
+            cim:IdentifiedObject.mRID  "01eee88d-5ec1-56c0-32f1-52e40bc7bcb7";
+            cim:IdentifiedObject.name  "LRC_ConstantImpedance";
+            cim:LoadResponseCharacteristic.exponentModel
+                    false;
+            cim:LoadResponseCharacteristic.pConstantCurrent
+                    "0"^^xsd:float;
+            cim:LoadResponseCharacteristic.pConstantImpedance
+                    "1"^^xsd:float;
+            cim:LoadResponseCharacteristic.pConstantPower
+                    "0"^^xsd:float;
+            cim:LoadResponseCharacteristic.qConstantCurrent
+                    "0"^^xsd:float;
+            cim:LoadResponseCharacteristic.qConstantImpedance
+                    "1"^^xsd:float;
+            cim:LoadResponseCharacteristic.qConstantPower
+                    "0"^^xsd:float .
+    
+    <urn:uuid:73264696-82bc-cd10-5416-623d2de1e8bc>
+            rdf:type                    cim:PhaseTapChangerSymmetrical;
+            cim:IdentifiedObject.mRID   "73264696-82bc-cd10-5416-623d2de1e8bc";
+            cim:IdentifiedObject.name   "EH-SD_Tr2";
+            cim:PhaseTapChanger.TransformerEnd
+                    <urn:uuid:a7b5db4a-8318-3806-fd75-cf76179a5847>;
+            cim:PhaseTapChangerNonLinear.voltageStepIncrement
+                    "1.25"^^xsd:float;
+            cim:PhaseTapChangerNonLinear.xMax
+                    "16.9387"^^xsd:float;
+            cim:PhaseTapChangerNonLinear.xMin
+                    "14.5189"^^xsd:float;
+            cim:TapChanger.highStep     25;
+            cim:TapChanger.lowStep      1;
+            cim:TapChanger.ltcFlag      true;
+            cim:TapChanger.neutralStep  13;
+            cim:TapChanger.neutralU     "400"^^xsd:float;
+            cim:TapChanger.normalStep   7 .
+    
+    <urn:uuid:d325aff4-e8b6-9b5c-cc0d-16fc1f21fd5c>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "2000"^^xsd:float;
+            cim:IdentifiedObject.mRID     "d325aff4-e8b6-9b5c-cc0d-16fc1f21fd5c";
+            cim:IdentifiedObject.name     "patl for DC-Line-EH_SD1";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:c078eae7-c2ff-1e21-8fa1-b7fd9a46d1cb>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:26be2df3-1354-3106-43ef-f5d0d807adce> .
+    
+    <urn:uuid:4711e896-d85e-451b-b834-0cfe14564c01>
+            rdf:type                   cim:PowerTransformer;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:b959da55-d306-495d-80cf-ba2b25854d8e>;
+            cim:IdentifiedObject.mRID  "4711e896-d85e-451b-b834-0cfe14564c01";
+            cim:IdentifiedObject.name  "EH-SD_Tr2" .
+    
+    <urn:uuid:42f5e776-cd7a-4691-272f-fa63dc6c0d2e>
+            rdf:type                        cim:PowerTransformerEnd;
+            cim:IdentifiedObject.mRID       "42f5e776-cd7a-4691-272f-fa63dc6c0d2e";
+            cim:IdentifiedObject.name       "EH-SD_Tr1";
+            cim:PowerTransformerEnd.PowerTransformer
+                    <urn:uuid:81a60401-9391-40e1-9e23-0aa0aff91184>;
+            cim:PowerTransformerEnd.b       "0"^^xsd:float;
+            cim:PowerTransformerEnd.connectionKind
+                    cim:WindingConnection.Y;
+            cim:PowerTransformerEnd.g       "0"^^xsd:float;
+            cim:PowerTransformerEnd.r       "0"^^xsd:float;
+            cim:PowerTransformerEnd.ratedS  "650"^^xsd:float;
+            cim:PowerTransformerEnd.ratedU  "125"^^xsd:float;
+            cim:PowerTransformerEnd.x       "0"^^xsd:float;
+            cim:TransformerEnd.BaseVoltage  <urn:uuid:54191047-8b9e-8735-ed0d-5e1421d2e9dc>;
+            cim:TransformerEnd.Terminal     <urn:uuid:f22ac414-60d5-1b7a-f9b3-b1e456441f22>;
+            cim:TransformerEnd.endNumber    2 .
+    
+    <urn:uuid:f5bff9f7-be60-2f03-3a87-f8405b623323>
+            rdf:type                   cim:DCTerminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:70d030b0-388c-458f-90d5-90b9e128622c>;
+            cim:DCTerminal.DCConductingEquipment
+                    <urn:uuid:d024cfa1-f2ba-4ab6-b493-d720199b3111>;
+            cim:IdentifiedObject.mRID  "f5bff9f7-be60-2f03-3a87-f8405b623323";
+            cim:IdentifiedObject.name  "C-354479664(1)" .
+    
+    <urn:uuid:70d030b0-388c-458f-90d5-90b9e128622c>
+            rdf:type                   cim:DCNode;
+            cim:DCNode.DCEquipmentContainer
+                    <urn:uuid:b959da55-d306-495d-80cf-ba2b25854d8e>;
+            cim:IdentifiedObject.mRID  "70d030b0-388c-458f-90d5-90b9e128622c";
+            cim:IdentifiedObject.name  "DC-Node-2-Ground" .
+    
+    <urn:uuid:a771ecd4-90ab-37aa-d956-77671399d4f4>
+            rdf:type                      cim:CurrentLimit;
+            cim:CurrentLimit.normalValue  "500"^^xsd:float;
+            cim:IdentifiedObject.mRID     "a771ecd4-90ab-37aa-d956-77671399d4f4";
+            cim:IdentifiedObject.name     "tatl 600 for TieLine_HVDC_SD_EH-SD_1";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:30541418-b9a0-538d-a0e3-3a2c7d313d54>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:1cffaaa2-50df-47ad-4771-68ab10d14af1> .
+    
+    <urn:uuid:a80ec666-1d4b-4f8f-cdc2-efe3486b4a72>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "a80ec666-1d4b-4f8f-cdc2-efe3486b4a72";
+            cim:IdentifiedObject.name      "Terminal(4)";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:51584a9f-914e-4f09-a866-71e2df50150f>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:4d641167-89ab-4491-9f06-3bc74e66618c> .
+    
+    <urn:uuid:be09fc02-de3f-49e4-aa84-94803bcc5d76>
+            rdf:type                       cim:DCLineSegment;
+            cim:DCConductingEquipment.ratedUdc
+                    "167.3"^^xsd:float;
+            cim:DCLineSegment.capacitance  "0"^^xsd:float;
+            cim:DCLineSegment.inductance   "300"^^xsd:float;
+            cim:DCLineSegment.length       "10"^^xsd:float;
+            cim:DCLineSegment.resistance   "25"^^xsd:float;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:3a13e481-c5a6-73d3-861e-c5a4d5a31bc4>;
+            cim:IdentifiedObject.mRID      "be09fc02-de3f-49e4-aa84-94803bcc5d76";
+            cim:IdentifiedObject.name      "DC-Line-EH_SD1" .
+    
+    <urn:uuid:394f936b-1517-4035-b95e-25e305b4c09a>
+            rdf:type                        cim:DCConverterUnit;
+            cim:DCConverterUnit.Substation  <urn:uuid:c544d893-1b9a-4363-bacb-e7064f812ec0>;
+            cim:DCConverterUnit.operationMode
+                    cim:DCConverterOperatingModeKind.monopolarGroundReturn;
+            cim:IdentifiedObject.mRID       "394f936b-1517-4035-b95e-25e305b4c09a";
+            cim:IdentifiedObject.name       "DC 1" .
+    
+    <urn:uuid:f3603af7-a098-1e2c-431e-8ca22ae76221>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    2;
+            cim:IdentifiedObject.mRID      "f3603af7-a098-1e2c-431e-8ca22ae76221";
+            cim:IdentifiedObject.name      "Terminal";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:8343e5c5-b77a-4c4e-b074-1cb3777a2f2d>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:4d641167-89ab-4491-9f06-3bc74e66618c> .
+    
+    <urn:uuid:0ef4ac67-d665-4d1b-95bf-38a8e696058a>
+            rdf:type                   cim:ConformLoad;
+            cim:ConformLoad.LoadGroup  <urn:uuid:04d52a3d-f8cf-33bd-da06-eb900fa71107>;
+            cim:EnergyConsumer.LoadResponse
+                    <urn:uuid:01eee88d-5ec1-56c0-32f1-52e40bc7bcb7>;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:800afa6a-9910-4fb7-a88b-9fb1e66920ff>;
+            cim:IdentifiedObject.mRID  "0ef4ac67-d665-4d1b-95bf-38a8e696058a";
+            cim:IdentifiedObject.name  "General Load" .
+    
+    <urn:uuid:e9e4776a-fff6-5176-8c04-3172505e5dea>
+            rdf:type                   cim:OperationalLimitSet;
+            cim:IdentifiedObject.mRID  "e9e4776a-fff6-5176-8c04-3172505e5dea";
+            cim:IdentifiedObject.name  "Voltage limits for Terminal_EH_400";
+            cim:OperationalLimitSet.Terminal
+                    <urn:uuid:51570b78-d067-772b-4a33-8552e5a871ce> .
+    
+    <urn:uuid:20f1f947-55cb-5175-0611-8ce82c635a20>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "20f1f947-55cb-5175-0611-8ce82c635a20";
+            cim:IdentifiedObject.name      "Cub_5";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:3ae3a841-fbb4-469e-8d72-9b69c942f197>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:89e5ddfd-7f59-4d5b-b5fd-fba3a15a2cde> .
+    
+    <urn:uuid:f39e8a78-e746-5585-aca2-4be0a12a049e>
+            rdf:type                      cim:OperationalLimitType;
+            cim:IdentifiedObject.mRID     "f39e8a78-e746-5585-aca2-4be0a12a049e";
+            cim:IdentifiedObject.name     "highVoltage";
+            cim:OperationalLimitType.direction
+                    cim:OperationalLimitDirectionKind.high;
+            cim:OperationalLimitType.isInfiniteDuration
+                    true;
+            eu:OperationalLimitType.kind  eu:LimitKind.highVoltage .
+    
+    <urn:uuid:dc83e026-1a7f-4984-ee78-6cf190166e9d>
+            rdf:type                   cim:ACDCConverterDCTerminal;
+            cim:ACDCConverterDCTerminal.DCConductingEquipment
+                    <urn:uuid:038ce404-30dc-4289-b9db-7076cb870b8e>;
+            cim:ACDCConverterDCTerminal.polarity
+                    cim:DCPolarityKind.positive;
+            cim:ACDCTerminal.sequenceNumber
+                    2;
+            cim:DCBaseTerminal.DCNode  <urn:uuid:3d7c5539-54bc-47ce-ac7c-2bf945797e02>;
+            cim:IdentifiedObject.mRID  "dc83e026-1a7f-4984-ee78-6cf190166e9d";
+            cim:IdentifiedObject.name  "C-354479664" .
+    
+    <urn:uuid:fd9c44c1-979a-0b40-0a7d-49008eccf249>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "fd9c44c1-979a-0b40-0a7d-49008eccf249";
+            cim:IdentifiedObject.name      "Cub_4";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:8343e5c5-b77a-4c4e-b074-1cb3777a2f2d>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:0a31ada8-2dfc-41c5-a07f-6c2151cea34d> .
+    
+    <urn:uuid:038ce404-30dc-4289-b9db-7076cb870b8e>
+            rdf:type                    cim:CsConverter;
+            cim:ACDCConverter.baseS     "334.6"^^xsd:float;
+            cim:ACDCConverter.idleLoss  "1e-5"^^xsd:float;
+            cim:ACDCConverter.ratedUdc  "167.3"^^xsd:float;
+            cim:ACDCConverter.resistiveLoss
+                    "1.25"^^xsd:float;
+            cim:ACDCConverter.switchingLoss
+                    "1e-5"^^xsd:float;
+            cim:CsConverter.maxAlpha    "180"^^xsd:float;
+            cim:CsConverter.minAlpha    "10"^^xsd:float;
+            cim:CsConverter.minGamma    "17"^^xsd:float;
+            cim:CsConverter.ratedIdc    "2000"^^xsd:float;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:394f936b-1517-4035-b95e-25e305b4c09a>;
+            cim:IdentifiedObject.mRID   "038ce404-30dc-4289-b9db-7076cb870b8e";
+            cim:IdentifiedObject.name   "DC-3P-Convert-1" .
+    
+    <urn:uuid:75937a43-c47d-4431-9857-7a0333ed50be>
+            rdf:type                   cim:GeographicalRegion;
+            cim:IdentifiedObject.mRID  "75937a43-c47d-4431-9857-7a0333ed50be";
+            cim:IdentifiedObject.name  "Espheim-Svedala" .
+    
+    <urn:uuid:6163d1e1-7904-d404-2a1c-70057f17dc15>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    2;
+            cim:IdentifiedObject.mRID      "6163d1e1-7904-d404-2a1c-70057f17dc15";
+            cim:IdentifiedObject.name      "Terminal(1)";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:4711e896-d85e-451b-b834-0cfe14564c01>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:30db969e-ed4a-48c2-bc2e-2db0892b485b> .
+    
+    <urn:uuid:cba14822-1c7f-27e1-dd40-dcd789f9c782>
+            rdf:type                   cim:BusbarSection;
+            cim:Equipment.EquipmentContainer
+                    <urn:uuid:800afa6a-9910-4fb7-a88b-9fb1e66920ff>;
+            cim:IdentifiedObject.mRID  "cba14822-1c7f-27e1-dd40-dcd789f9c782";
+            cim:IdentifiedObject.name  "Terminal_EH_400" .
+    
+    <urn:uuid:1cffaaa2-50df-47ad-4771-68ab10d14af1>
+            rdf:type                      cim:OperationalLimitType;
+            cim:IdentifiedObject.mRID     "1cffaaa2-50df-47ad-4771-68ab10d14af1";
+            cim:IdentifiedObject.name     "tatl";
+            cim:OperationalLimitType.acceptableDuration
+                    "600"^^xsd:float;
+            cim:OperationalLimitType.direction
+                    cim:OperationalLimitDirectionKind.absoluteValue;
+            cim:OperationalLimitType.isInfiniteDuration
+                    false;
+            eu:OperationalLimitType.kind  eu:LimitKind.tatl .
+    
+    <urn:uuid:8cccdfd8-b368-275c-fccb-3a2271a59931>
+            rdf:type                       cim:Terminal;
+            cim:ACDCTerminal.sequenceNumber
+                    1;
+            cim:IdentifiedObject.mRID      "8cccdfd8-b368-275c-fccb-3a2271a59931";
+            cim:IdentifiedObject.name      "Terminal_EH_125";
+            cim:Terminal.ConductingEquipment
+                    <urn:uuid:042e8644-494d-b5a7-1a96-124d42e23131>;
+            cim:Terminal.ConnectivityNode  <urn:uuid:30db969e-ed4a-48c2-bc2e-2db0892b485b> .
+    
+    <urn:uuid:9676a028-fde6-4f14-9e43-7603765235fd>
+            rdf:type                   cim:ConnectivityNode;
+            cim:ConnectivityNode.ConnectivityNodeContainer
+                    <urn:uuid:3d1874ee-827e-4038-aba2-a5a4a748ff8a>;
+            cim:IdentifiedObject.mRID  "9676a028-fde6-4f14-9e43-7603765235fd";
+            cim:IdentifiedObject.name  "Terminal_SD_125" .
+}

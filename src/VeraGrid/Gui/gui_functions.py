@@ -5,19 +5,39 @@
 
 from __future__ import annotations
 import numpy as np
-from typing import Dict, List, Union, Any, Tuple, TYPE_CHECKING, Set, Sequence
+from enum import Enum
+from typing import Callable, Dict, List, Union, Any, Tuple, TYPE_CHECKING, Set, Sequence
 from PySide6 import QtCore, QtWidgets, QtGui
-from collections import defaultdict, OrderedDict
+from collections import defaultdict
 
 from VeraGridEngine.basic_structures import IntVec
 from VeraGridEngine.data_logger import DataLogger
 from VeraGridEngine.IO.cim.cgmes.cgmes_circuit import CgmesCircuit, CGMES_ASSETS
+from VeraGridEngine.IO.cim.cgmes.base import Base as CgmesBase
 from VeraGridEngine.Devices.Branches.line_locations import LineLocations
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
+from VeraGridEngine.enumerations import SimulationTypes, WindingType
 from VeraGrid.Gui.font_config import MENU_FONT_SIZE
 
 if TYPE_CHECKING:
     from VeraGrid.Gui.object_model import ObjectsModel
+
+
+ComboStableKey = Union[str, int, float, bool, None]
+
+
+def translate_context_menu_text(text: str) -> str:
+    """
+    Translate one runtime-created context-menu label.
+
+    :param text: Source label.
+    :return: Translated label or the original text when no catalog entry exists.
+    """
+    if text == "":
+        return text
+
+    translated_text: str = QtCore.QCoreApplication.translate("ContextMenu", text)
+    return translated_text if translated_text != "" else text
 
 
 class TreeDelegate(QtWidgets.QItemDelegate):
@@ -344,6 +364,10 @@ class IntDelegate(QtWidgets.QItemDelegate):
         """
         editor.blockSignals(True)
         val = int(index.model().data(index, role=QtCore.Qt.ItemDataRole.DisplayRole))
+        # try:
+        #     val = int(index.model().data(index, role=QtCore.Qt.ItemDataRole.DisplayRole))
+        # except ValueError:
+        #     val = 1
         editor.setValue(val)
         editor.blockSignals(False)
 
@@ -506,7 +530,6 @@ class LineLocationsDelegate(QtWidgets.QItemDelegate):
         """
         table = editor.children()[1]
         # model.setData(index, val)
-        print()
 
 
 class ColorPickerDelegate(QtWidgets.QItemDelegate):
@@ -697,21 +720,199 @@ def get_chck_list_model(lst: List[str], check_status: List[bool]) -> QtGui.QStan
     return list_model
 
 
-def enums_to_model(enums_lst: List[Any]) -> Tuple[Dict[str, Any], QtGui.QStandardItemModel]:
+class ComboModel(QtGui.QStandardItemModel):
     """
-    Get the model and dict from a list of Enum value
-    :param enums_lst:
-    :return: dictionary, model
+    Combo-box model storing translated display labels separately from runtime
+    values and persistent configuration keys.
     """
-    d = OrderedDict()
-    val_list = list()
-    for e in enums_lst:
-        d[e.value] = e
-        val_list.append(e.value)
 
-    mdl = get_list_model(val_list)
+    __slots__ = ("_translate",)
 
-    return d, mdl
+    SourceTextRole = QtCore.Qt.ItemDataRole.UserRole + 1
+    StableKeyRole = QtCore.Qt.ItemDataRole.UserRole + 2
+
+    def __init__(self,
+                 enum_values: Sequence[Enum] | None = None,
+                 text_items: Sequence[Tuple[str, Any]] | None = None,
+                 icon_enum_values: Sequence[Tuple[Enum, str]] | None = None,
+                 icon_text_items: Sequence[Tuple[str, Any, str]] | None = None,
+                 translate: Callable[[str], str] | None = None) -> None:
+        """
+        Constructor.
+
+        :param enum_values: Optional enum values to add immediately.
+        :param text_items: Optional (label, runtime data) items to add immediately.
+        :param icon_enum_values: Optional (enum value, icon path) items to add immediately.
+        :param icon_text_items: Optional (label, runtime data, icon path) items to add immediately.
+        :param translate: Optional label translation function, typically ``self.tr``.
+        """
+        QtGui.QStandardItemModel.__init__(self)
+        self._translate: Callable[[str], str] | None = translate
+        if enum_values is None:
+            pass
+        else:
+            for enum_value in enum_values:
+                self.add_enum(enum_value=enum_value)
+
+        if text_items is None:
+            pass
+        else:
+            for source_text, data in text_items:
+                stable_key: ComboStableKey
+                if isinstance(data, (str, int, float, bool)):
+                    stable_key = data
+                else:
+                    stable_key = str(source_text)
+                self.add_combo_item(source_text=str(source_text), data=data, stable_key=stable_key)
+
+        if icon_enum_values is None:
+            pass
+        else:
+            for enum_value, icon_path in icon_enum_values:
+                self.add_icon_enum(enum_value=enum_value, icon_path=icon_path)
+
+        if icon_text_items is None:
+            pass
+        else:
+            for source_text, data, icon_path in icon_text_items:
+                stable_key: ComboStableKey
+                if isinstance(data, (str, int, float, bool)):
+                    stable_key = data
+                else:
+                    stable_key = str(source_text)
+                self.add_combo_item(source_text=str(source_text),
+                                    data=data,
+                                    stable_key=stable_key,
+                                    icon_path=icon_path)
+
+    def _get_display_text(self, source_text: str) -> str:
+        """
+        Get the current display text for a source label.
+
+        :param source_text: Untranslated label.
+        :return: Translated label when a translator is available.
+        """
+        if self._translate is None:
+            return source_text
+        else:
+            return self._translate(source_text)
+
+    def add_combo_item(self,
+                       source_text: str,
+                       data: Any,
+                       stable_key: ComboStableKey,
+                       icon_path: str | None = None,
+                       checks: bool = False,
+                       check_value: bool = False) -> None:
+        """
+        Add one item with separate display text, runtime data and stable key.
+
+        :param source_text: Untranslated display label.
+        :param data: Runtime value returned by ``QComboBox.currentData()``.
+        :param stable_key: Serializable value used for settings persistence.
+        :param icon_path: Optional icon resource path.
+        :param checks: Add a check box to the item.
+        :param check_value: Initial check state when checks is true.
+        :return: Nothing.
+        """
+        display_text: str = self._get_display_text(source_text=source_text)
+        item = QtGui.QStandardItem(display_text)
+        item.setEditable(False)
+        item.setData(data, QtCore.Qt.ItemDataRole.UserRole)
+        item.setData(source_text, self.SourceTextRole)
+        item.setData(stable_key, self.StableKeyRole)
+        if icon_path is None:
+            pass
+        else:
+            icon = QtGui.QIcon()
+            icon.addPixmap(QtGui.QPixmap(icon_path))
+            item.setIcon(icon)
+        if checks:
+            item.setCheckable(True)
+            if check_value:
+                item.setCheckState(QtCore.Qt.CheckState.Checked)
+            else:
+                pass
+        else:
+            pass
+        self.appendRow(item)
+
+    def add_text(self,
+                 source_text: str,
+                 data: str,
+                 checks: bool = False,
+                 check_value: bool = False) -> None:
+        """
+        Add one text-backed item.
+
+        :param source_text: Untranslated display label.
+        :param data: Runtime string value.
+        :param checks: Add a check box to the item.
+        :param check_value: Initial check state when checks is true.
+        :return: Nothing.
+        """
+        self.add_combo_item(source_text=source_text,
+                            data=data,
+                            stable_key=data,
+                            checks=checks,
+                            check_value=check_value)
+
+    def add_enum(self,
+                 enum_value: Enum,
+                 checks: bool = False,
+                 check_value: bool = False) -> None:
+        """
+        Add one enum-backed item.
+
+        :param enum_value: Runtime enum value.
+        :param checks: Add a check box to the item.
+        :param check_value: Initial check state when checks is true.
+        :return: Nothing.
+        """
+        source_text: str = str(enum_value.value)
+        self.add_combo_item(source_text=source_text,
+                            data=enum_value,
+                            stable_key=source_text,
+                            checks=checks,
+                            check_value=check_value)
+
+    def add_icon_enum(self,
+                      enum_value: Enum,
+                      icon_path: str,
+                      checks: bool = False,
+                      check_value: bool = False) -> None:
+        """
+        Add one enum-backed item with an icon.
+
+        :param enum_value: Runtime enum value.
+        :param icon_path: Icon resource path.
+        :param checks: Add a check box to the item.
+        :param check_value: Initial check state when checks is true.
+        :return: Nothing.
+        """
+        source_text: str = str(enum_value.value)
+        self.add_combo_item(source_text=source_text,
+                            data=enum_value,
+                            stable_key=source_text,
+                            icon_path=icon_path,
+                            checks=checks,
+                            check_value=check_value)
+
+    def retranslate(self, translate: Callable[[str], str] | None) -> None:
+        """
+        Refresh all display labels from their stored source text.
+
+        :param translate: New translation function.
+        :return: Nothing.
+        """
+        self._translate = translate
+        for row_idx in range(self.rowCount()):
+            item = self.item(row_idx)
+            source_text = item.data(self.SourceTextRole)
+            if isinstance(source_text, str):
+                item.setText(self._get_display_text(source_text=source_text))
+            else:
+                pass
 
 
 class CustomFileSystemModel(QtWidgets.QFileSystemModel):
@@ -927,6 +1128,46 @@ def get_tree_model(d, top='', icons: Dict[str, str] = None) -> QtGui.QStandardIt
     return model
 
 
+def get_simulation_tree_icons() -> Dict[str, str]:
+    """
+    Build the icon map shared by simulation-oriented tree views.
+
+    :return: Mapping from simulation display name to icon resource path.
+    """
+    return {
+        SimulationTypes.PowerFlow_run.value: ':/Icons/icons/pf',
+        SimulationTypes.PowerFlow3ph_run.value: ':/Icons/icons/pf3',
+        SimulationTypes.PowerFlowTimeSeries3ph_run.value: ':/Icons/icons/pf3',
+        SimulationTypes.PowerFlowTimeSeries_run.value: ':/Icons/icons/pf_ts.png',
+        SimulationTypes.OPF_run.value: ':/Icons/icons/dcopf.png',
+        SimulationTypes.OPFTimeSeries_run.value: ':/Icons/icons/dcopf_ts.png',
+        SimulationTypes.ShortCircuit_run.value: ':/Icons/icons/short_circuit.png',
+        SimulationTypes.LinearAnalysis_run.value: ':/Icons/icons/ptdf.png',
+        SimulationTypes.LinearAnalysis_TS_run.value: ':/Icons/icons/ptdf_ts.png',
+        SimulationTypes.SigmaAnalysis_run.value: ':/Icons/icons/sigma.png',
+        SimulationTypes.StochasticPowerFlow.value: ':/Icons/icons/stochastic_power_flow.png',
+        SimulationTypes.ContingencyAnalysis_run.value: ':/Icons/icons/otdf.png',
+        SimulationTypes.ContingencyAnalysisTS_run.value: ':/Icons/icons/otdf_ts.png',
+        SimulationTypes.NetTransferCapacity_run.value: ':/Icons/icons/atc.png',
+        SimulationTypes.NetTransferCapacityTS_run.value: ':/Icons/icons/atc_ts.png',
+        SimulationTypes.OptimalNetTransferCapacityTimeSeries_run.value: ':/Icons/icons/ntc_opf_ts.png',
+        SimulationTypes.InputsAnalysis_run.value: ':/Icons/icons/stats.png',
+        SimulationTypes.NodeGrouping_run.value: ':/Icons/icons/ml.png',
+        SimulationTypes.ContinuationPowerFlow_run.value: ':/Icons/icons/continuation_power_flow.png',
+        SimulationTypes.ClusteringAnalysis_run.value: ':/Icons/icons/clustering.png',
+        SimulationTypes.InvestmentsEvaluation_run.value: ':/Icons/icons/expansion_planning.png',
+        SimulationTypes.NodalCapacityTimeSeries_run.value: ':/Icons/icons/nodal_capacity.png',
+        SimulationTypes.OPF_NTC_run.value: ':/Icons/icons/ntc_opf.png',
+        SimulationTypes.OPF_NTC_TS_run.value: ':/Icons/icons/ntc_opf_ts.png',
+        SimulationTypes.Reliability_run.value: ':/Icons/icons/reliability.png',
+        SimulationTypes.RmsSmallSignal_run.value: ':/Icons/icons/ss_icon.png',
+        SimulationTypes.RmsDynamic_run.value: ':/Icons/icons/dyn.png',
+        SimulationTypes.EmtSmallSignal_run.value: ':/Icons/icons/ss_emt_icon.png',
+        SimulationTypes.EmtDynamic_run.value: ':/Icons/icons/dyn_emt.png',
+        SimulationTypes.StateEstimation_run.value: ':/Icons/icons/SE.png',
+    }
+
+
 def get_tree_item_path(item: QtGui.QStandardItem) -> List[str]:
     """
     Get the path of an item in a tree
@@ -948,21 +1189,19 @@ CIM_LOADED_ROLE = QtCore.Qt.UserRole + 121
 
 
 def _get_cim_object_id(obj: Any):
-    if hasattr(obj, 'rdfid') and obj.rdfid is not None:
+    if isinstance(obj, CgmesBase) and obj.rdfid is not None:
         return obj.rdfid
-    return id(obj)
+    else:
+        return id(obj)
 
 
 def _get_cim_object_label(class_tag, device):
     if class_tag is not None:
         return class_tag
-    if hasattr(device, 'name'):
-        if device.name is not None:
-            if device.name != '':
-                return device.name
-    if hasattr(device, 'rdfid'):
+    elif isinstance(device, CgmesBase):
         return device.rdfid
-    return str(device)
+    else:
+        return str(device)
 
 
 def _collect_cim_ancestor_ids(item: QtGui.QStandardItem) -> Set[Any]:
@@ -1013,7 +1252,7 @@ def populate_cim_item_children(item: QtGui.QStandardItem, editable=False):
 
         property_value = getattr(device, property_name)
 
-        if hasattr(property_value, 'rdfid'):
+        if isinstance(property_value, CgmesBase):
 
             prop_id = _get_cim_object_id(property_value)
             we_are_in_a_recursive_loop = prop_id in ancestor_ids
@@ -1090,7 +1329,7 @@ def add_cim_object_node(class_tag,
 
             property_value = getattr(device, property_name)
 
-            if hasattr(property_value, 'rdfid'):
+            if isinstance(property_value, CgmesBase):
 
                 prop_id = _get_cim_object_id(property_value)
                 we_are_in_a_recursive_loop = prop_id in already_visited
@@ -1182,7 +1421,7 @@ def add_sub_menu(menu: QtWidgets.QMenu,
                  text: str,
                  icon_path: str = "",
                  icon_pixmap: QtGui.QPixmap = None, ):
-    entry = menu.addMenu(text)
+    entry = menu.addMenu(translate_context_menu_text(text))
 
     if icon_pixmap is None:
         if len(icon_path) > 0:
@@ -1219,7 +1458,7 @@ def add_menu_entry(menu: QtWidgets.QMenu,
     :return:
     """
 
-    entry: QtGui.QAction = menu.addAction(text)
+    entry: QtGui.QAction = menu.addAction(translate_context_menu_text(text))
 
     font = QtGui.QFont()
     font.setPointSize(font_size)
@@ -1336,3 +1575,247 @@ def create_menu_button(parent,
             toolbar.removeAction(action)
 
     return button
+
+
+class WaveformPoint:
+    __slots__ = ("time", "value")
+
+    def __init__(self, time: float, value: float):
+        self.time = time
+        self.value = value
+
+    def __repr__(self):
+        return f"WaveformPoint({self.time}, {self.value})"
+
+
+class WaveformEditorDialog(QtWidgets.QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Waveform editor")
+        self.setMinimumSize(600, 500)
+
+        layout = QtWidgets.QVBoxLayout(self)
+
+        button_layout = QtWidgets.QHBoxLayout()
+        self.add_btn = QtWidgets.QPushButton("Add point")
+        self.delete_btn = QtWidgets.QPushButton("Delete point")
+        self.up_btn = QtWidgets.QPushButton("Move up")
+        self.down_btn = QtWidgets.QPushButton("Move down")
+
+        self.add_btn.clicked.connect(self.add_point)
+        self.delete_btn.clicked.connect(self.delete_point)
+        self.up_btn.clicked.connect(self.move_up)
+        self.down_btn.clicked.connect(self.move_down)
+
+        button_layout.addWidget(self.add_btn)
+        button_layout.addWidget(self.delete_btn)
+        button_layout.addWidget(self.up_btn)
+        button_layout.addWidget(self.down_btn)
+        layout.addLayout(button_layout)
+
+        self.table = QtWidgets.QTableWidget(0, 2)
+        self.table.setHorizontalHeaderLabels(["time", "value"])
+        self.table.horizontalHeader().setStretchLastSection(True)
+        self.table.setSelectionBehavior(QtWidgets.QTableWidget.SelectionBehavior.SelectRows)
+        layout.addWidget(self.table)
+
+        try:
+            from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
+            from matplotlib.figure import Figure
+            self.figure = Figure()
+            self.canvas = FigureCanvasQTAgg(self.figure)
+            self.ax = self.figure.add_subplot(111)
+            layout.addWidget(self.canvas)
+        except Exception:
+            self.canvas = None
+            self.ax = None
+
+        button_box = QtWidgets.QDialogButtonBox(
+            QtWidgets.QDialogButtonBox.StandardButton.Ok | QtWidgets.QDialogButtonBox.StandardButton.Cancel
+        )
+        button_box.accepted.connect(self.accept)
+        button_box.rejected.connect(self.reject)
+        layout.addWidget(button_box)
+
+    def add_point(self):
+        row = self.table.rowCount()
+        self.table.insertRow(row)
+        self.table.setItem(row, 0, QtWidgets.QTableWidgetItem("0.0"))
+        self.table.setItem(row, 1, QtWidgets.QTableWidgetItem("0.0"))
+        self.update_plot()
+
+    def delete_point(self):
+        rows = sorted(set(i.row() for i in self.table.selectedIndexes()), reverse=True)
+        for r in rows:
+            self.table.removeRow(r)
+        self.update_plot()
+
+    def move_up(self):
+        rows = sorted(set(i.row() for i in self.table.selectedIndexes()))
+        if len(rows) == 0 or rows[0] == 0:
+            return
+        for r in rows:
+            self.swap_rows(r, r - 1)
+        self.update_plot()
+
+    def move_down(self):
+        rows = sorted(set(i.row() for i in self.table.selectedIndexes()), reverse=True)
+        if len(rows) == 0 or rows[-1] == self.table.rowCount() - 1:
+            return
+        for r in rows:
+            self.swap_rows(r, r + 1)
+        self.update_plot()
+
+    def swap_rows(self, r1: int, r2: int):
+        t1 = self.table.item(r1, 0)
+        v1 = self.table.item(r1, 1)
+        t2 = self.table.item(r2, 0)
+        v2 = self.table.item(r2, 1)
+
+        if t1 is None:
+            t1 = QtWidgets.QTableWidgetItem("0.0")
+            self.table.setItem(r1, 0, t1)
+        if v1 is None:
+            v1 = QtWidgets.QTableWidgetItem("0.0")
+            self.table.setItem(r1, 1, v1)
+        if t2 is None:
+            t2 = QtWidgets.QTableWidgetItem("0.0")
+            self.table.setItem(r2, 0, t2)
+        if v2 is None:
+            v2 = QtWidgets.QTableWidgetItem("0.0")
+            self.table.setItem(r2, 1, v2)
+
+        t1_text = t1.text()
+        v1_text = v1.text()
+        t1.setText(t2.text())
+        v1.setText(v2.text())
+        t2.setText(t1_text)
+        v2.setText(v1_text)
+
+    def update_plot(self):
+        if self.canvas is None:
+            return
+
+        times = []
+        values = []
+        for row in range(self.table.rowCount()):
+            t_item = self.table.item(row, 0)
+            v_item = self.table.item(row, 1)
+            if t_item is not None and v_item is not None:
+                try:
+                    times.append(float(t_item.text()))
+                    values.append(float(v_item.text()))
+                except ValueError:
+                    pass
+
+        self.ax.clear()
+        if times:
+            self.ax.plot(times, values, "o-")
+            self.ax.set_xlabel("time")
+            self.ax.set_ylabel("value")
+            self.ax.grid(True)
+        self.canvas.draw_idle()
+
+    def set_points(self, points):
+        self.table.setRowCount(0)
+        for p in points:
+            row = self.table.rowCount()
+            self.table.insertRow(row)
+            self.table.setItem(row, 0, QtWidgets.QTableWidgetItem(str(p[0])))
+            self.table.setItem(row, 1, QtWidgets.QTableWidgetItem(str(p[1])))
+        self.update_plot()
+
+    def get_points(self):
+        points = []
+        for row in range(self.table.rowCount()):
+            t_item = self.table.item(row, 0)
+            v_item = self.table.item(row, 1)
+            if t_item is not None and v_item is not None:
+                try:
+                    t = float(t_item.text())
+                    v = float(v_item.text())
+                    points.append(np.array([t, v], dtype=np.float64))
+                except ValueError:
+                    pass
+        return points
+
+
+class SequenceDelegate(QtWidgets.QStyledItemDelegate):
+
+    def __init__(self, parent):
+        QtWidgets.QStyledItemDelegate.__init__(self, parent)
+
+    def paint(self, painter, option, index):
+        painter.save()
+
+        btn_option = QtWidgets.QStyleOptionButton()
+        btn_option.rect = option.rect
+
+        val = index.model().data(index, QtCore.Qt.ItemDataRole.EditRole)
+        if val is not None and len(val) > 0:
+            btn_option.text = f"Edit waveform ({len(val)} pts)"
+        else:
+            btn_option.text = "Edit waveform"
+
+        QtWidgets.QApplication.style().drawControl(
+            QtWidgets.QStyle.CE_PushButton, btn_option, painter
+        )
+
+        painter.restore()
+
+    def editorEvent(self, event, model, option, index):
+        if event.type() == QtCore.QEvent.Type.MouseButtonRelease:
+            if not (index.flags() & QtCore.Qt.ItemFlag.ItemIsEditable):
+                return False
+            dialog = WaveformEditorDialog(self.parent())
+            current = index.model().data(index, QtCore.Qt.ItemDataRole.EditRole)
+            if current is not None:
+                dialog.set_points(current)
+            if dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
+                model.setData(index, dialog.get_points())
+            return True
+        return False
+
+class WindingTypeDelegate(QtWidgets.QItemDelegate):
+    commitData = QtCore.Signal(object)
+
+    def __init__(self, parent: QtWidgets.QTableView):
+        QtWidgets.QItemDelegate.__init__(self, parent)
+
+        self._items = [
+            ("Grounded Star (Yg)", WindingType.GroundedStar),
+            ("Neutral Star (Yn)", WindingType.NeutralStar),
+            ("Floating Star (Y)", WindingType.FloatingStar),
+            ("Delta", WindingType.Delta),
+            ("ZigZag (Z)", WindingType.ZigZag),
+        ]
+
+    @QtCore.Slot()
+    def currentIndexChanged(self) -> None:
+        self.commitData.emit(self.sender())
+
+    def createEditor(self, parent, option, index: QtCore.QModelIndex):
+        combo = QtWidgets.QComboBox(parent)
+        for label, _ in self._items:
+            combo.addItem(label)
+        combo.currentIndexChanged.connect(self.currentIndexChanged)
+        return combo
+
+    def setEditorData(self, editor: QtWidgets.QComboBox, index: QtCore.QModelIndex):
+        editor.blockSignals(True)
+        val = index.model().data(index, role=QtCore.Qt.ItemDataRole.DisplayRole)
+        labels = [label for label, _ in self._items]
+        try:
+            idx = labels.index(val)
+            editor.setCurrentIndex(idx)
+        except ValueError:
+            pass
+        editor.blockSignals(False)
+
+    def setModelData(self,
+                     editor: QtWidgets.QComboBox,
+                     model: QtCore.QAbstractItemModel,
+                     index: QtCore.QModelIndex):
+        idx = editor.currentIndex()
+        if 0 <= idx < len(self._items):
+            model.setData(index, self._items[idx][1])

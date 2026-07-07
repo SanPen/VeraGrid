@@ -7,7 +7,6 @@ import numpy as np
 import numba as nb
 import scipy.sparse as sp
 import time
-import hashlib
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, Expr, BinOp, UnOp, Func
 
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import (
@@ -22,8 +21,9 @@ from VeraGridEngine.enumerations import DynamicIntegrationMethod
 from VeraGridEngine.Utils.Symbolic.jit_compiler import EagerEquationCompiler, EquationCompiler
 from VeraGridEngine.Utils.Symbolic.diagnostic import (with_newton_diagnostics, NewtonDiagnosticsConfig,
                                                        NewtonSolveContext, dense_lstsq_fallback,
-                                                        sparse_lsqr_fallback, maybe_check_index1,
-                                                        maybe_apply_backtracking)
+                                                         sparse_lsqr_fallback, maybe_check_index1,
+                                                         maybe_apply_backtracking)
+from VeraGridEngine.Simulations.driver_template import DummySignal
 from VeraGridEngine.basic_structures import Vec, Mat
 from typing import Tuple, Callable, List, Any, Dict, Set, Union
 from scipy.sparse import csc_matrix
@@ -44,34 +44,11 @@ def _safe_njit(py_func: Callable[..., Any], fastmath: bool = True, cache: bool =
     :return: The Numba JIT compiled function.
     :rtype: Callable[..., Any]
     """
-    signature_repr: str
-
-    if signature is None:
-        signature_repr = "none"
-    else:
-        signature_repr = str(signature)
-
-    cache_payload: str = "|".join([py_func.__module__, py_func.__name__, signature_repr, str(fastmath), str(cache)])
-    cache_key: str = hashlib.md5(cache_payload.encode("utf-8")).hexdigest()
-
-    if not hasattr(_safe_njit, "_compiled_cache"):
-        setattr(_safe_njit, "_compiled_cache", dict())
-    else:
-        pass
-
-    compiled_cache: Dict[str, Callable[..., Any]] = getattr(_safe_njit, "_compiled_cache")
-
-    if cache_key in compiled_cache:
-        return compiled_cache[cache_key]
-    else:
-        pass
-
     if signature is not None:
         compiled_kernel: Callable[..., Any] = nb.njit(signature, fastmath=fastmath, cache=cache)(py_func)
     else:
         compiled_kernel = nb.njit(fastmath=fastmath, cache=cache)(py_func)
 
-    compiled_cache[cache_key] = compiled_kernel
     return compiled_kernel
 
 # ==============================================================================
@@ -109,30 +86,66 @@ def _compile_master_jacobian_kernel(ad_kernel: Callable[..., Any], n_colors: int
     :return: Jacobian dispatcher.
     :rtype: Callable[..., Any]
     """
-    def master_jacobian(
-            states: Vec,
-            seed_matrix: Mat,
-            params: Vec,
-            history: Vec,
-            d_history: Vec,
-            h: float,
-            history2: Vec,
-            data: Vec,
-            color_ptr: np.ndarray,
-            col_ptr: np.ndarray,
-            row_idx: np.ndarray,
-            data_idx: np.ndarray,
-            work_jvp: Mat,
-    ) -> None:
+    return SparseAdMasterJacobianDispatcher(ad_kernel=ad_kernel, n_colors=n_colors)
+
+
+class SparseAdMasterJacobianDispatcher:
+    """
+    Callable dispatcher that executes one generic AD kernel across all colors.
+    """
+
+    __slots__ = ("_ad_kernel", "_n_colors")
+
+    def __init__(self, ad_kernel: Callable[..., Any], n_colors: int) -> None:
+        """
+        Store the generic AD kernel and the number of graph colors.
+
+        :param ad_kernel: Generic AD kernel reused across graph colors.
+        :param n_colors: Number of graph colors.
+        :return: None.
+        """
+        self._ad_kernel: Callable[..., Any] = ad_kernel
+        self._n_colors: int = n_colors
+
+    def __call__(self,
+                 states: Vec,
+                 seed_matrix: Mat,
+                 params: Vec,
+                 history: Vec,
+                 d_history: Vec,
+                 h: float,
+                 history2: Vec,
+                 data: Vec,
+                 color_ptr: np.ndarray,
+                 col_ptr: np.ndarray,
+                 row_idx: np.ndarray,
+                 data_idx: np.ndarray,
+                 work_jvp: Mat) -> None:
+        """
+        Evaluate all color JVPs and scatter them into CSC data storage.
+
+        :param states: Current Newton iterate.
+        :param seed_matrix: Coloring seed matrix.
+        :param params: Full parameter vector.
+        :param history: Previous accepted state.
+        :param d_history: Previous derivative vector.
+        :param h: Effective time step.
+        :param history2: Secondary history vector.
+        :param data: CSC numeric data buffer.
+        :param color_ptr: Color-to-column pointer array.
+        :param col_ptr: Column-to-scatter pointer array.
+        :param row_idx: Row indices used by the scatter map.
+        :param data_idx: CSC data positions used by the scatter map.
+        :param work_jvp: Reusable JVP work buffer.
+        :return: None.
+        """
         color_index: int = 0
 
-        while color_index < n_colors:
+        while color_index < self._n_colors:
             local_jvp: Vec = work_jvp[color_index]
-            ad_kernel(states, seed_matrix[color_index], params, history, d_history, h, local_jvp, history2)
+            self._ad_kernel(states, seed_matrix[color_index], params, history, d_history, h, local_jvp, history2)
             _scatter_color_jvp_to_csc_data(local_jvp, data, color_ptr, col_ptr, row_idx, data_idx, color_index)
             color_index += 1
-
-    return master_jacobian
 
 
 def greedy_color_columns(col_rows: List[List[int]], n_rows: int) -> Tuple[np.ndarray, int]:
@@ -645,12 +658,12 @@ class SparseADJacobian:
 
 class JitAdSolver:
     __slots__ = [
-        'problem', 't0', 't_end', 'h', 'method', 'pred_method', 'dense_threshold', 'verbose',
+        'problem', 't0', 't_end', 'h', 'method', 'pred_method', 'dense_threshold', 'verbose', 'newton_max_iter',
         'steps', 't', 'y', 'dy',  'jit_kernels_ad', 'jit_jacobian_ad',
         'state_vars', 'algebraic_vars', 'state_eqs', 'algebraic_eqs', '_newton_diag_config',
         '_predictor', '_runtime_param_count', '_static_parameter_buffer', '_full_parameter_buffer',
         '_residual_buffer', '_trial_state_buffer', '_trial_residual_buffer',
-        '_backend_build_stats', '_last_runtime_stats', '_last_sim_loop_time'
+        '_backend_build_stats', '_last_runtime_stats', '_last_sim_loop_time', '_cancel_checker', '_progress_signal'
     ]
     def __init__(self,
                  problem: EmtProblemTemplate,
@@ -661,7 +674,10 @@ class JitAdSolver:
                  pred_method: DynamicIntegrationMethod = None,
                  dense_threshold: int = 100,
                  verbose: bool = False,
-                 newton_diag_config: NewtonDiagnosticsConfig | None = None)-> None:
+                 newton_max_iter: int = 15,
+                 newton_diag_config: NewtonDiagnosticsConfig | None = None,
+                 progress_signal: DummySignal | None = None,
+                 cancel_checker: Callable[[], bool] | None = None)-> None:
         """
         Initializes the JIT AD Solver.
 
@@ -681,6 +697,10 @@ class JitAdSolver:
         :type dense_threshold: int
         :param verbose: Print compilation and simulation timings.
         :type verbose: bool
+        :param newton_max_iter: Maximum Newton iterations per local EMT substep.
+        :type newton_max_iter: int
+        :param progress_signal: Optional progress signal updated during the simulation loop.
+        :type progress_signal: DummySignal | None
         """
         self.problem = problem
         self.t0 = t0
@@ -689,6 +709,7 @@ class JitAdSolver:
         self.pred_method = pred_method
         self.dense_threshold = dense_threshold
         self.verbose = verbose
+        self.newton_max_iter: int = int(newton_max_iter)
         self.t_end = t_end
         self._newton_diag_config = newton_diag_config or NewtonDiagnosticsConfig(
             compute_dense_cond=False,
@@ -734,6 +755,8 @@ class JitAdSolver:
         )
         self._last_runtime_stats: Dict[str, float] = dict()
         self._last_sim_loop_time: float = 0.0
+        self._progress_signal: DummySignal | None = progress_signal
+        self._cancel_checker = cancel_checker
 
     def build_jit_ad(self, only_jacobian: bool = False)-> None:
         """
@@ -821,7 +844,7 @@ class JitAdSolver:
                  x0: Union[Vec | None] = None,
                  dx0: Union[Vec | None] = None,
                  params0: Union[Vec | None] = None,
-                 boundary_updater: EmtBoundaryUpdateProtocol | None = None) -> Tuple[Vec, Mat, Mat]:
+                 boundary_updater: EmtBoundaryUpdateProtocol | None = None) -> Tuple[Vec, Mat, Mat, bool, bool]:
         """
         Main JIT simulation loop using the Automatic Differentiation (AD) backend.
 
@@ -833,6 +856,9 @@ class JitAdSolver:
         """
         t_start = time.time()
         method = self.method
+
+        converged: bool = True
+        well_initialized: bool = True
 
         if method not in self.jit_kernels_ad:
             self.build_jit_ad()
@@ -936,6 +962,14 @@ class JitAdSolver:
 
         for i in range(self.steps):
 
+            if self._progress_signal is not None:
+                self.problem.report_progress2(i, self.steps)
+            else:
+                pass
+
+            if self._cancel_checker is not None and self._cancel_checker():
+                return t[:i + 1].copy(), self.y[:i + 1, :].copy(), self.dy[:i + 1, :].copy(), well_initialized, converged
+
             t_step_start = float(t[i])
             t_step_target = float(t[i + 1])
 
@@ -999,7 +1033,8 @@ class JitAdSolver:
                 else:
                     pass
 
-                for k in range(15):
+                substep_converged: bool = False
+                for k in range(self.newton_max_iter):
                     total_newton_iterations += 1
                     ctx = NewtonSolveContext(
                         t=float(t_curr),
@@ -1024,6 +1059,7 @@ class JitAdSolver:
                     )
 
                     if res_norm_inf < 1e-5:
+                        substep_converged = True
                         break
                     else:
                         pass
@@ -1076,6 +1112,11 @@ class JitAdSolver:
                     else:
                         x_iter += delta
 
+                if not substep_converged:
+                    converged = False
+                    if i == 0 and is_first_local_step:
+                        well_initialized = False
+
                 if method == DynamicIntegrationMethod.DaeTrapezoidal:
                     dx_prev[:n_states] = (
                             (2.0 / h_eff) * (x_iter[:n_states] - x_prev[:n_states]) - dx_prev[:n_states]
@@ -1096,6 +1137,7 @@ class JitAdSolver:
                 t_local_prev = t_curr
                 is_first_local_step = False
 
+
             self.y[i + 1, :] = x_prev
             self.dy[i + 1, :] = dx_prev
 
@@ -1113,7 +1155,7 @@ class JitAdSolver:
         else:
             pass
 
-        return self.t, self.y, self.dy
+        return self.t, self.y, self.dy, well_initialized, converged
 
     def get_backend_build_stats(self) -> Dict[str, float]:
         """

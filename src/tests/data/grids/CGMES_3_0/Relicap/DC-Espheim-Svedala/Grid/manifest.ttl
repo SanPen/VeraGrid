@@ -1,0 +1,145 @@
+PREFIX adms:    <http://www.w3.org/ns/adms#>
+PREFIX cim:     <https://cim.ucaiug.io/ns#>
+PREFIX dcat:    <http://www.w3.org/ns/dcat#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX eu:      <https://cim.ucaiug.io/ns/eu#>
+PREFIX nc:      <https://cim4.eu/ns/nc#>
+PREFIX prov:    <http://www.w3.org/ns/prov#>
+PREFIX rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+<urn:uuid:1bda19cf-8528-44be-bc94-6c4ca46bfeb4>
+        rdf:type              dcat:Dataset;
+        dcterms:accessRights  <https://energy.referencedata.eu/Confidentiality/Public>;
+        dcterms:conformsTo    "http://iec.ch/TC57/ns/CIM/SteadyStateHypothesis-EU/3.0";
+        dcterms:description   "The steady-state hypothesis dataset for Espheim-Svedala, which is part of the ReliCapGrid.";
+        dcterms:identifier    "bda19cf-8528-44be-bc94-6c4ca46bfeb4";
+        dcterms:issued        "2025-02-06T14:18:22Z";
+        dcterms:license       <urn:placeholder:license>;
+        dcterms:publisher     "http://espheim-svedala.es/CGMES";
+        dcterms:requires      <urn:uuid:105893e4-668b-4b00-a351-0e436b53cbc9>;
+        dcterms:rights        "Copyright";
+        dcterms:rightsHolder  "PLACEHOLDER_RIGHTS_HOLDER";
+        dcterms:spatial       <urn:placeholder:spatial>;
+        dcterms:title         "20220615T2230Z_2D_HVDC-Espheim-Svedala_SSH_1";
+        dcterms:type          <https://energy.referencedata.eu/type/CIM-PowerSystemModel>;
+        dcat:distribution     <urn:uuid:ddcf8d76-3e83-4d4e-8b6e-0f71ab65e98f>;
+        dcat:keyword          "SSH";
+        dcat:startDate        "2022-06-16T23:30:00Z";
+        dcat:version          "1" .
+
+<urn:uuid:95e7a527-d1ed-46a1-88ab-29fcc16eb2e1>
+        rdf:type              dcat:Catalog;
+        dcterms:accessRights  <https://energy.referencedata.eu/Confidentiality/Public>;
+        dcterms:conformsTo    "http://iec.ch/TC57/ns/CIM/Topology-EU/3.0" , "http://iec.ch/TC57/ns/CIM/SteadyStateHypothesis-EU/3.0" , "http://iec.ch/TC57/ns/CIM/StateVariables-EU/3.0" , "http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/3.0";
+        dcterms:description   ""@en;
+        dcterms:identifier    "e7a527-d1ed-46a1-88ab-29fcc16eb2e1";
+        dcterms:issued        "2025-02-06T14:18:22Z" , "2025-02-08T20:17:23Z";
+        dcterms:license       <urn:placeholder:license>;
+        dcterms:publisher     "http://espheim-svedala.es/CGMES";
+        dcterms:rights        "Copyright";
+        dcterms:rightsHolder  "PLACEHOLDER_RIGHTS_HOLDER";
+        dcterms:spatial       <urn:placeholder:spatial>;
+        dcterms:title         "Manifest";
+        adms:versionNotes     "Placeholder version notes."@en;
+        dcat:dataset          <urn:uuid:105893e4-668b-4b00-a351-0e436b53cbc9> , <urn:uuid:1bda19cf-8528-44be-bc94-6c4ca46bfeb4> , <urn:uuid:2ce17c9e-40d5-4530-bf85-d2ffd31d84a0> , <urn:uuid:af335a8e-b8da-4c6e-9ecb-63164f71f9b6>;
+        dcat:version          "1" .
+
+<urn:uuid:2ce17c9e-40d5-4530-bf85-d2ffd31d84a0>
+        rdf:type              dcat:Dataset;
+        dcterms:accessRights  <https://energy.referencedata.eu/Confidentiality/Public>;
+        dcterms:conformsTo    "http://iec.ch/TC57/ns/CIM/StateVariables-EU/3.0";
+        dcterms:description   "The state variables dataset for Espheim-Svedala, which is part of the ReliCapGrid.";
+        dcterms:identifier    "ce17c9e-40d5-4530-bf85-d2ffd31d84a0";
+        dcterms:issued        "2025-02-08T20:17:23Z";
+        dcterms:license       <urn:placeholder:license>;
+        dcterms:publisher     "http://espheim-svedala.es/CGMES";
+        dcterms:requires      <urn:uuid:af335a8e-b8da-4c6e-9ecb-63164f71f9b6>;
+        dcterms:rights        "Copyright";
+        dcterms:rightsHolder  "PLACEHOLDER_RIGHTS_HOLDER";
+        dcterms:spatial       <urn:placeholder:spatial>;
+        dcterms:title         "20220615T2230Z_2D_HVDC-Espheim-Svedala_SV_1";
+        dcterms:type          <https://energy.referencedata.eu/type/CIM-PowerSystemModel>;
+        dcat:distribution     <urn:uuid:30771d38-be8c-4fe1-a9d9-8bc9955730ed>;
+        dcat:keyword          "SV";
+        dcat:startDate        "2022-06-16T23:30:00Z";
+        dcat:version          "1" .
+
+<urn:uuid:40f04c7b-fcfb-4d29-bb57-8bd6558a961f>
+        rdf:type              dcat:Distribution;
+        dcterms:conformsTo    "http://iec.ch/TC57/ns/CIM/Topology-EU/3.0";
+        dcterms:description   "The topology dataset for Espheim-Svedala, which is part of the ReliCapGrid.";
+        dcat:accessURL        <file://cimxml/20220615T2230Z_2D_HVDC-Espheim-Svedala_TP_1.xml>;
+        dcat:distributionOf   <urn:uuid:af335a8e-b8da-4c6e-9ecb-63164f71f9b6>;
+        dcat:mediaType        <http://www.iana.org/assignments/media-types/application/rdf+xml>;
+        prov:generatedAtTime  "2025-02-08T20:17:23Z";
+        prov:wasGeneratedBy   <https://energy.referencedata.eu/Test/Action/PlaceholderGeneration> .
+
+<urn:uuid:105893e4-668b-4b00-a351-0e436b53cbc9>
+        rdf:type              dcat:Dataset;
+        dcterms:accessRights  <https://energy.referencedata.eu/Confidentiality/Public>;
+        dcterms:conformsTo    "http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/3.0";
+        dcterms:description   "The equipment dataset for Espheim-Svedala, which is part of the ReliCapGrid.";
+        dcterms:identifier    "e4-668b-4b00-a351-0e436b53cbc9";
+        dcterms:issued        "2025-02-06T14:18:22Z";
+        dcterms:license       <urn:placeholder:license>;
+        dcterms:publisher     "http://espheim-svedala.es/CGMES";
+        dcterms:requires      <urn:uuid:af6450db-fe15-4caf-94a1-e22f3fced32e> , <urn:uuid:1b65ada7-39ca-42b8-a278-39c457ed82c3>;
+        dcterms:rights        "Copyright";
+        dcterms:rightsHolder  "PLACEHOLDER_RIGHTS_HOLDER";
+        dcterms:spatial       <urn:placeholder:spatial>;
+        dcterms:title         "20220615T2230Z__HVDC-Espheim-Svedala_EQ_1";
+        dcterms:type          <https://energy.referencedata.eu/type/CIM-PowerSystemModel>;
+        dcat:distribution     <urn:uuid:93cc8a1c-10dc-45fa-8cb5-1e5b7e488680>;
+        dcat:keyword          "EQ";
+        dcat:startDate        "2022-06-16T23:30:00Z";
+        dcat:version          "1" .
+
+<urn:uuid:30771d38-be8c-4fe1-a9d9-8bc9955730ed>
+        rdf:type              dcat:Distribution;
+        dcterms:conformsTo    "http://iec.ch/TC57/ns/CIM/StateVariables-EU/3.0";
+        dcterms:description   "The state variables dataset for Espheim-Svedala, which is part of the ReliCapGrid.";
+        dcat:accessURL        <file://cimxml/20220615T2230Z_2D_HVDC-Espheim-Svedala_SV_1.xml>;
+        dcat:distributionOf   <urn:uuid:2ce17c9e-40d5-4530-bf85-d2ffd31d84a0>;
+        dcat:mediaType        <http://www.iana.org/assignments/media-types/application/rdf+xml>;
+        prov:generatedAtTime  "2025-02-08T20:17:23Z";
+        prov:wasGeneratedBy   <https://energy.referencedata.eu/Test/Action/PlaceholderGeneration> .
+
+<urn:uuid:af335a8e-b8da-4c6e-9ecb-63164f71f9b6>
+        rdf:type              dcat:Dataset;
+        dcterms:accessRights  <https://energy.referencedata.eu/Confidentiality/Public>;
+        dcterms:conformsTo    "http://iec.ch/TC57/ns/CIM/Topology-EU/3.0";
+        dcterms:description   "The topology dataset for Espheim-Svedala, which is part of the ReliCapGrid.";
+        dcterms:identifier    "af335a8e-b8da-4c6e-9ecb-63164f71f9b6";
+        dcterms:issued        "2025-02-08T20:17:23Z";
+        dcterms:license       <urn:placeholder:license>;
+        dcterms:publisher     "http://espheim-svedala.es/CGMES";
+        dcterms:requires      <urn:uuid:1bda19cf-8528-44be-bc94-6c4ca46bfeb4>;
+        dcterms:rights        "Copyright";
+        dcterms:rightsHolder  "PLACEHOLDER_RIGHTS_HOLDER";
+        dcterms:spatial       <urn:placeholder:spatial>;
+        dcterms:title         "20220615T2230Z_2D_HVDC-Espheim-Svedala_TP_1";
+        dcterms:type          <https://energy.referencedata.eu/type/CIM-PowerSystemModel>;
+        dcat:distribution     <urn:uuid:40f04c7b-fcfb-4d29-bb57-8bd6558a961f>;
+        dcat:keyword          "TP";
+        dcat:startDate        "2022-06-16T23:30:00Z";
+        dcat:version          "1" .
+
+<urn:uuid:93cc8a1c-10dc-45fa-8cb5-1e5b7e488680>
+        rdf:type              dcat:Distribution;
+        dcterms:conformsTo    "http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/3.0";
+        dcterms:description   "The equipment dataset for Espheim-Svedala, which is part of the ReliCapGrid.";
+        dcat:accessURL        <file://cimxml/20220615T2230Z__HVDC-Espheim-Svedala_EQ_1.xml>;
+        dcat:distributionOf   <urn:uuid:105893e4-668b-4b00-a351-0e436b53cbc9>;
+        dcat:mediaType        <http://www.iana.org/assignments/media-types/application/rdf+xml>;
+        prov:generatedAtTime  "2025-02-06T14:18:22Z";
+        prov:wasGeneratedBy   <https://energy.referencedata.eu/Test/Action/PlaceholderGeneration> .
+
+<urn:uuid:ddcf8d76-3e83-4d4e-8b6e-0f71ab65e98f>
+        rdf:type              dcat:Distribution;
+        dcterms:conformsTo    "http://iec.ch/TC57/ns/CIM/SteadyStateHypothesis-EU/3.0";
+        dcterms:description   "The steady-state hypothesis dataset for Espheim-Svedala, which is part of the ReliCapGrid.";
+        dcat:accessURL        <file://cimxml/20220615T2230Z_2D_HVDC-Espheim-Svedala_SSH_1.xml>;
+        dcat:distributionOf   <urn:uuid:1bda19cf-8528-44be-bc94-6c4ca46bfeb4>;
+        dcat:mediaType        <http://www.iana.org/assignments/media-types/application/rdf+xml>;
+        prov:generatedAtTime  "2025-02-06T14:18:22Z";
+        prov:wasGeneratedBy   <https://energy.referencedata.eu/Test/Action/PlaceholderGeneration> .

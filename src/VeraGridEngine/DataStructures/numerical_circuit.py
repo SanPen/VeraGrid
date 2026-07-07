@@ -13,9 +13,8 @@ import scipy.sparse as sp
 from VeraGridEngine.Devices import RemedialAction
 from VeraGridEngine.Topology.simulation_indices import SimulationIndices
 from VeraGridEngine.Topology.topology import find_islands
-from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.basic_structures import Vec, IntVec, CxVec, BoolVec, Mat, CxMat
-from VeraGridEngine.enumerations import ContingencyOperationTypes
+from VeraGridEngine.basic_structures import Vec, IntVec, CxVec, BoolVec, Mat, CxMat, Logger
+from VeraGridEngine.enumerations import ContingencyOperationTypes, GeneratorControlMode, ShuntControlMode
 import VeraGridEngine.Topology.topology as tp
 import VeraGridEngine.Topology.simulation_indices as si
 import VeraGridEngine.Topology.admittance_matrices as ycalc
@@ -54,10 +53,11 @@ ALL_STRUCTS = Union[
 
 @nb.njit(cache=True)
 def build_q_limits(nbus: int, Sbase: float,
-                   gen_idx, q_min_gen, q_max_gen, active_gen, controllable_gen,
-                   batt_idx, q_min_batt, q_max_batt, active_batt, controllable_batt,
-                   sh_idx, q_min_sh, q_max_sh, active_sh, controllable_sh,
-                   hvdc_f, hvdc_t, q_min_hvdc_f, q_max_hvdc_f, q_min_hvdc_t, q_max_hvdc_t, active_hvdc):
+                   gen_idx, q_min_gen, q_max_gen, active_gen, control_mode_int_gen,
+                   batt_idx, q_min_batt, q_max_batt, active_batt, control_mode_int_batt,
+                   sh_idx, q_min_sh, q_max_sh, active_sh, control_mode_int_sh,
+                   hvdc_f, hvdc_t, q_min_hvdc_f, q_max_hvdc_f, q_min_hvdc_t, q_max_hvdc_t, active_hvdc,
+                   v_ctrl_val_gen: int, v_ctrl_val_sh: int):
     """
 
     :param nbus:
@@ -66,17 +66,17 @@ def build_q_limits(nbus: int, Sbase: float,
     :param q_min_gen:
     :param q_max_gen:
     :param active_gen:
-    :param controllable_gen:
+    :param control_mode_int_gen:
     :param batt_idx:
     :param q_min_batt:
     :param q_max_batt:
     :param active_batt:
-    :param controllable_batt:
+    :param control_mode_int_batt:
     :param sh_idx:
     :param q_min_sh:
     :param q_max_sh:
     :param active_sh:
-    :param controllable_sh:
+    :param control_mode_int_sh:
     :param hvdc_f:
     :param hvdc_t:
     :param q_min_hvdc_f:
@@ -84,6 +84,8 @@ def build_q_limits(nbus: int, Sbase: float,
     :param q_min_hvdc_t:
     :param q_max_hvdc_t:
     :param active_hvdc:
+    :param v_ctrl_val_gen:
+    :param v_ctrl_val_sh
     :return:
     """
     max_mask = np.zeros(nbus, dtype=nb.int32)
@@ -92,9 +94,9 @@ def build_q_limits(nbus: int, Sbase: float,
     min_mask = np.zeros(nbus, dtype=nb.int32)
     Qmin_bus = np.full(nbus, 1e20)
 
-    for i, qmin, qmax, active, controllable in zip(gen_idx, q_min_gen, q_max_gen, active_gen, controllable_gen):
+    for i, qmin, qmax, active, ctrl_mode in zip(gen_idx, q_min_gen, q_max_gen, active_gen, control_mode_int_gen):
 
-        if active and controllable:
+        if active and ctrl_mode == v_ctrl_val_gen:
             if max_mask[i] == 0:
                 Qmax_bus[i] = qmax / Sbase
             else:
@@ -108,9 +110,10 @@ def build_q_limits(nbus: int, Sbase: float,
             max_mask[i] += 1
             min_mask[i] += 1
 
-    for i, qmin, qmax, active, controllable in zip(batt_idx, q_min_batt, q_max_batt, active_batt, controllable_batt):
+    for i, qmin, qmax, active, ctrl_mode in zip(batt_idx, q_min_batt, q_max_batt, active_batt,
+                                                   control_mode_int_batt):
 
-        if active and controllable:
+        if active and ctrl_mode == v_ctrl_val_gen:
             if max_mask[i] == 0:
                 Qmax_bus[i] = qmax / Sbase
             else:
@@ -124,9 +127,9 @@ def build_q_limits(nbus: int, Sbase: float,
             max_mask[i] += 1
             min_mask[i] += 1
 
-    for i, qmin, qmax, active, controllable in zip(sh_idx, q_min_sh, q_max_sh, active_sh, controllable_sh):
+    for i, qmin, qmax, active, ctrl_mode in zip(sh_idx, q_min_sh, q_max_sh, active_sh, control_mode_int_sh):
 
-        if active and controllable:
+        if active and ctrl_mode == v_ctrl_val_sh:
             if max_mask[i] == 0:
                 Qmax_bus[i] = qmax / Sbase
             else:
@@ -214,6 +217,27 @@ def check_arr(arr: Vec | IntVec | BoolVec | CxVec,
         return 1
 
 
+@nb.njit(cache=True)
+def correct_bus_types(gen_idx: IntVec,
+                      control_mode_int: IntVec,
+                      gen_controllable_bus_idx: IntVec,
+                      bus_types: IntVec,
+                      v_ctrl_val: int):
+    """
+    Function to Correct bus types because of generators moving around due to the topology processing
+    :param gen_idx:
+    :param control_mode_int:
+    :param gen_controllable_bus_idx:
+    :param bus_types:
+    :param v_ctrl_val: value for GeneratorControlMode.V
+    :return:
+    """
+    for i, k in enumerate(gen_idx):
+        if control_mode_int[i] == v_ctrl_val:
+            if bus_types[gen_controllable_bus_idx[i]] != 2:
+                bus_types[gen_controllable_bus_idx[i]] = 2
+
+
 class DataStructType(Enum):
     BUSDATA = 1
     BRANCHDATA = 2
@@ -258,12 +282,12 @@ class NumericalCircuit:
         :param nbatt:  Number of calculation battery devices
         :param nshunt:  Number of calculation shunt devices
         :param sbase:  Base power (MVA)
-        :param t_idx:  Time index
+        :param t_idx:  Time index (None for the snapshot or the time series index [0..N-1])
         """
 
         self.nbus: int = nbus
         self.nbr: int = nbr
-        self.t_idx: int = t_idx
+        self.t_idx: int | None = t_idx
 
         self.nload: int = nload
         self.ngen: int = ngen
@@ -838,19 +862,19 @@ class NumericalCircuit:
             q_min_gen=self.generator_data.qmin,
             q_max_gen=self.generator_data.qmax,
             active_gen=self.generator_data.active,
-            controllable_gen=self.generator_data.controllable,
+            control_mode_int_gen=self.generator_data.control_mode_int,
 
             batt_idx=self.battery_data.bus_idx,
             q_min_batt=self.battery_data.qmin,
             q_max_batt=self.battery_data.qmax,
             active_batt=self.battery_data.active,
-            controllable_batt=self.battery_data.controllable,
+            control_mode_int_batt=self.battery_data.control_mode_int,
 
             sh_idx=self.shunt_data.bus_idx,
             q_min_sh=self.shunt_data.qmin,
             q_max_sh=self.shunt_data.qmax,
             active_sh=self.shunt_data.active,
-            controllable_sh=self.shunt_data.is_pv_control,
+            control_mode_int_sh=self.shunt_data.control_mode_int,
 
             hvdc_f=self.hvdc_data.F,
             hvdc_t=self.hvdc_data.T,
@@ -858,7 +882,10 @@ class NumericalCircuit:
             q_max_hvdc_f=self.hvdc_data.Qmax_f,
             q_min_hvdc_t=self.hvdc_data.Qmin_t,
             q_max_hvdc_t=self.hvdc_data.Qmax_t,
-            active_hvdc=self.hvdc_data.active
+            active_hvdc=self.hvdc_data.active,
+
+            v_ctrl_val_gen=GeneratorControlMode.V.idx(),
+            v_ctrl_val_sh = ShuntControlMode.Continuous.idx()
         )
         return Qmax_bus, Qmin_bus
 
@@ -922,15 +949,19 @@ class NumericalCircuit:
                     i0 = island[0]
 
                     if len(island) > 1:
-
+                        sub_island = island[1:]
                         # set the mapping to the first index of the island to the reduced buses
-                        self.__bus_map_arr[island[1:]] = i0
+                        self.__bus_map_arr[sub_island] = i0
 
                         # deactivate the reduced buses
-                        self.bus_data.active[island[1:]] = False
+                        self.bus_data.active[sub_island] = False
+
+                        # preserve the control status and controlled set-points on the surviving bus
+                        self.bus_data.propagate_controls(chosen_idx=i0, other_idx=sub_island)
 
             # remap
             self.passive_branch_data.remap(self.__bus_map_arr)
+            self.active_branch_data.remap(self.__bus_map_arr)
             self.vsc_data.remap(self.__bus_map_arr)
             self.hvdc_data.remap(self.__bus_map_arr)
             self.load_data.remap(self.__bus_map_arr)
@@ -1025,6 +1056,19 @@ class NumericalCircuit:
         nc.vsc_data = self.vsc_data.slice(elm_idx=vsc_idx, bus_idx=bus_idx, bus_map=bus_map, logger=logger)
         nc.hvdc_data = self.hvdc_data.slice(elm_idx=hvdc_idx, bus_idx=bus_idx, bus_map=bus_map, logger=logger)
 
+        # Correct bus types because of generators moving around due to the topology processing
+        if self.topology_performed:
+            correct_bus_types(gen_idx=gen_idx,
+                              control_mode_int=nc.generator_data.control_mode_int,
+                              gen_controllable_bus_idx=nc.generator_data.controllable_bus_idx,
+                              bus_types=nc.bus_data.bus_types,
+                              v_ctrl_val=GeneratorControlMode.V.idx())
+            correct_bus_types(gen_idx=batt_idx,
+                              control_mode_int=nc.battery_data.control_mode_int,
+                              gen_controllable_bus_idx=nc.battery_data.controllable_bus_idx,
+                              bus_types=nc.bus_data.bus_types,
+                              v_ctrl_val=GeneratorControlMode.V.idx())
+
         return nc
 
     def split_into_islands(self,
@@ -1042,7 +1086,7 @@ class NumericalCircuit:
             logger = Logger()
 
         # detect the topology reductions
-        self.process_reducible_branches()
+        n_red = self.process_reducible_branches()
 
         # find the matching islands
         adj = self.compute_adjacency_matrix(consider_hvdc_as_island_links=consider_hvdc_as_island_links)

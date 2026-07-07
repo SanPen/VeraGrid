@@ -596,3 +596,86 @@ def test_all_scheme_types_create_valid_structures():
 
         except Exception as e:
             pytest.fail(f"Failed for {vl_type.value} (disconnectors={add_disconnectors}): {e}")
+
+
+# Reducible/retained switch impedance tests
+
+def test_conversion_marks_all_switches_reducible():
+    """
+    With reducible_branches=True every switch created in the conversion must be
+    reducible, not retained, and receive a small non-zero reactance.
+    """
+    # Small non-zero reactance assigned to every switch created in the conversion.
+    switch_x = 1e-5
+
+    grid, central_bus, lines = create_test_grid_with_bus(n_branches=4)
+
+    transform_bus_into_voltage_level(
+        grid=grid,
+        bus=central_bus,
+        vl_type=VoltageLevelTypes.DoubleBar,
+        add_disconnectors=True,
+        reducible_branches=True
+    )
+
+    switches = grid.switch_devices
+    assert len(switches) > 0, "Conversion should create switches"
+
+    for sw in switches:
+        assert sw.reducible is True, f"Switch {sw.name} should be reducible"
+        assert sw.retained is False, f"Switch {sw.name} should not be retained"
+        assert sw.X == pytest.approx(switch_x), \
+            f"Switch {sw.name} X should be {switch_x}, got {sw.X}"
+
+
+def test_conversion_marks_all_switches_retained():
+    """
+    With reducible_branches=False every switch created in the conversion must be
+    retained, not reducible, and receive a small non-zero reactance.
+    """
+    # Small non-zero reactance assigned to every switch created in the conversion.
+    switch_x = 1e-5
+
+    grid, central_bus, lines = create_test_grid_with_bus(n_branches=4)
+
+    transform_bus_into_voltage_level(
+        grid=grid,
+        bus=central_bus,
+        vl_type=VoltageLevelTypes.DoubleBar,
+        add_disconnectors=True,
+        reducible_branches=False
+    )
+
+    switches = grid.switch_devices
+    assert len(switches) > 0, "Conversion should create switches"
+
+    for sw in switches:
+        assert sw.reducible is False, f"Switch {sw.name} should not be reducible"
+        assert sw.retained is True, f"Switch {sw.name} should be retained"
+        assert sw.X == pytest.approx(switch_x), \
+            f"Switch {sw.name} X should be {switch_x}, got {sw.X}"
+
+
+def test_conversion_reducible_flag_applies_to_jbpt_switches():
+    """The reducible flag must also reach the transfer-bus (JBPT) switches."""
+    # Small non-zero reactance assigned to every switch created in the conversion.
+    switch_x = 1e-5
+
+    grid, central_bus, lines = create_test_grid_with_bus(n_branches=4)
+
+    transform_bus_into_voltage_level(
+        grid=grid,
+        bus=central_bus,
+        vl_type=VoltageLevelTypes.DoubleBar,
+        add_disconnectors=True,
+        enable_transfer_bus=True,
+        reducible_branches=False
+    )
+
+    jbpt_switches = [sw for sw in grid.switch_devices if "JBPT" in sw.name]
+    assert len(jbpt_switches) > 0, "Transfer bus should create JBPT switches"
+
+    for sw in jbpt_switches:
+        assert sw.reducible is False, f"JBPT switch {sw.name} should not be reducible"
+        assert sw.retained is True, f"JBPT switch {sw.name} should be retained"
+        assert sw.X == pytest.approx(switch_x)

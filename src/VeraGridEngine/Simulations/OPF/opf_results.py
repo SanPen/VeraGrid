@@ -9,12 +9,74 @@ import pandas as pd
 from matplotlib import pyplot as plt
 import matplotlib.colors as plt_colors
 from VeraGridEngine.Simulations.results_table import ResultsTable
-from VeraGridEngine.Simulations.results_template import ResultsTemplate
+from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
 from VeraGridEngine.basic_structures import IntVec, Vec, StrVec, CxVec
 from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
 
 
 class OptimalPowerFlowResults(ResultsTemplate):
+
+    LOCAL_RESULTS_DECLARATIONS = (
+        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='load_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='generator_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='shunt_like_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='battery_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='hvdc_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='vsc_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='fluid_node_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='fluid_path_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='fluid_inj_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='voltage', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='Sbus', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='bus_shadow_prices', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='load_power', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='load_shedding', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='load_shedding_cost', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='Sf', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='St', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='overloads', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='overloads_cost', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='loading', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='losses', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='tap_angle', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='tap_module', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='rates', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='contingency_rates', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='hvdc_Pf', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='hvdc_loading', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='hvdc_losses', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='vsc_Pf', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='vsc_loading', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='vsc_losses', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='generator_power', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='generator_reactive_power', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='generator_shedding', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='battery_power', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='shunt_like_reactive_power', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='fluid_node_p2x_flow', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='fluid_node_current_level', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='fluid_node_spillage', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='fluid_node_flow_in', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='fluid_node_flow_out', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='fluid_path_flow', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='fluid_injection_flow', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='non_linear', tpe=bool, old_names=list(), expandable=False),
+        ResultsProperty(name='converged', tpe=bool, old_names=list(), expandable=False),
+        ResultsProperty(name='error', tpe=float, old_names=list(), expandable=False),
+        ResultsProperty(name='contingency_flows_list', tpe=list, old_names=list(), expandable=False),
+        ResultsProperty(name='contingency_indices_list', tpe=list, old_names=list(), expandable=False),
+        ResultsProperty(name='contingency_flows_slacks_list', tpe=list, old_names=list(), expandable=False),
+        ResultsProperty(name='F', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='T', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='hvdc_F', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='hvdc_T', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='bus_area_indices', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='area_names', tpe=IntVec, old_names=list(), expandable=False),
+    )
+
     __slots__ = (
         "bus_names",
         "branch_names",
@@ -241,76 +303,6 @@ class OptimalPowerFlowResults(ResultsTemplate):
         self.bus_area_indices = bus_area_indices
         self.area_names = area_names
 
-        self.register(name='bus_names', tpe=StrVec)
-        self.register(name='branch_names', tpe=StrVec)
-        self.register(name='load_names', tpe=StrVec)
-        self.register(name='generator_names', tpe=StrVec)
-        self.register(name='shunt_like_names', tpe=StrVec)
-        self.register(name='battery_names', tpe=StrVec)
-        self.register(name='hvdc_names', tpe=StrVec)
-
-        self.register(name='fluid_node_names', tpe=StrVec)
-        self.register(name='fluid_path_names', tpe=StrVec)
-        self.register(name='fluid_inj_names', tpe=StrVec)
-
-        self.register(name='bus_types', tpe=IntVec)
-
-        self.register(name='voltage', tpe=CxVec)
-        self.register(name='Sbus', tpe=CxVec)
-        self.register(name='bus_shadow_prices', tpe=Vec)
-
-        self.register(name='load_power', tpe=Vec)
-        self.register(name='load_shedding', tpe=Vec)
-        self.register(name='load_shedding_cost', tpe=Vec)
-
-        self.register(name='Sf', tpe=CxVec)
-        self.register(name='St', tpe=CxVec)
-        self.register(name='overloads', tpe=Vec)
-        self.register(name='overloads_cost', tpe=Vec)
-        self.register(name='loading', tpe=Vec)
-        self.register(name='losses', tpe=Vec)
-        self.register(name='tap_angle', tpe=Vec)
-        self.register(name='tap_module', tpe=Vec)
-        self.register(name='rates', tpe=Vec)
-        self.register(name='contingency_rates', tpe=Vec)
-
-        self.register(name='hvdc_Pf', tpe=Vec)
-        self.register(name='hvdc_loading', tpe=Vec)
-        self.register(name='hvdc_losses', tpe=Vec)
-
-        self.register(name='vsc_Pf', tpe=Vec)
-        self.register(name='vsc_loading', tpe=Vec)
-        self.register(name='vsc_losses', tpe=Vec)
-
-        self.register(name='generator_power', tpe=Vec)
-        self.register(name='generator_reactive_power', tpe=Vec)
-        self.register(name='generator_shedding', tpe=Vec)
-
-        self.register(name='battery_power', tpe=Vec)
-
-        self.register(name='shunt_like_reactive_power', tpe=Vec)
-
-        self.register(name='fluid_node_p2x_flow', tpe=Vec)
-        self.register(name='fluid_node_current_level', tpe=Vec)
-        self.register(name='fluid_node_spillage', tpe=Vec)
-        self.register(name='fluid_node_flow_in', tpe=Vec)
-        self.register(name='fluid_node_flow_out', tpe=Vec)
-        self.register(name='fluid_path_flow', tpe=Vec)
-        self.register(name='fluid_injection_flow', tpe=Vec)
-
-        self.register(name='non_linear', tpe=bool)
-        self.register(name='converged', tpe=bool)
-        self.register(name='error', tpe=float)
-        self.register(name='contingency_flows_list', tpe=list)
-        self.register(name='contingency_indices_list', tpe=list)
-        self.register(name='contingency_flows_slacks_list', tpe=list)
-
-        self.register(name='F', tpe=IntVec)
-        self.register(name='T', tpe=IntVec)
-        self.register(name='hvdc_F', tpe=IntVec)
-        self.register(name='hvdc_T', tpe=IntVec)
-        self.register(name='bus_area_indices', tpe=IntVec)
-        self.register(name='area_names', tpe=IntVec)
 
         self.plot_bars_limit = 100
 

@@ -248,7 +248,8 @@ def process_cgmes_file_data(file_name: str,
                             data: Dict[str, Dict[str, Dict[str, str]]],
                             boundary_set: Dict[str, Dict[str, Dict[str, str]]],
                             logger: DataLogger,
-                            log_overwriting_values: bool) -> Union[CGMESVersions, None]:
+                            log_overwriting_values: bool,
+                            allow_profileless_import: bool = True) -> Union[CGMESVersions, None]:
     """
     Process one parsed CGMES file dictionary and route objects to normal/boundary stores.
 
@@ -261,6 +262,7 @@ def process_cgmes_file_data(file_name: str,
     :param boundary_set: Boundary model dictionary store
     :param logger: Logger instance
     :param log_overwriting_values: Emit one warning for every overwritten value
+    :param allow_profileless_import: Import files without FullModel/DifferenceModel as extension profiles
     :return: Detected CGMES version for this file, or None
     """
     detected_version: Union[CGMESVersions, None] = None
@@ -282,7 +284,7 @@ def process_cgmes_file_data(file_name: str,
                     elif prof in cgmes3_0_0_uri:
                         detected_version = CGMESVersions.v3_0_0
 
-                if len(profile) > 0 and 'Boundary' in profile[0]:
+                if any('Boundary' in str(prof) for prof in profile):
                     merge(boundary_set, file_cgmes_data, logger, log_overwriting_values)
                 else:
                     merge(data, file_cgmes_data, logger, log_overwriting_values)
@@ -310,13 +312,20 @@ def process_cgmes_file_data(file_name: str,
                 parsed_data[file_name] = file_cgmes_data
             profile = model_info.get('priorVersion', '')
 
-            for prof in profile:
+            if isinstance(profile, list):
+                profile_values = profile
+            elif profile:
+                profile_values = [profile]
+            else:
+                profile_values = []
+
+            for prof in profile_values:
                 if prof in cgmes2_4_15_uri:
                     detected_version = CGMESVersions.v2_4_15
                 elif prof in cgmes3_0_0_uri:
                     detected_version = CGMESVersions.v3_0_0
 
-            if 'Boundary' in profile:
+            if any('Boundary' in str(prof) for prof in profile_values):
                 merge(boundary_set, file_cgmes_data, logger, log_overwriting_values)
             else:
                 merge(data, file_cgmes_data, logger, log_overwriting_values)
@@ -327,11 +336,20 @@ def process_cgmes_file_data(file_name: str,
                              device_property='DifferenceModel', value="", expected_value="DifferenceModel",
                              comment="This is not a proper CGMES file")
     else:
-        logger.add_error("File does not contain any FullModel or DifferenceModel",
-                         device=file_name,
-                         device_class="",
-                         device_property='FullModel', value="", expected_value="FullModel",
-                         comment="This is not a proper CGMES file")
+        if allow_profileless_import and len(file_cgmes_data) > 0:
+            merge(data, file_cgmes_data, logger, log_overwriting_values)
+            logger.add_warning("File does not contain any FullModel or DifferenceModel; imported as extension profile",
+                               device=file_name,
+                               device_class="",
+                               device_property='FullModel',
+                               value="",
+                               expected_value="FullModel")
+        else:
+            logger.add_error("File does not contain any FullModel or DifferenceModel",
+                             device=file_name,
+                             device_class="",
+                             device_property='FullModel', value="", expected_value="FullModel",
+                             comment="This is not a proper CGMES file")
 
     return detected_version
 
@@ -346,6 +364,7 @@ class CgmesDataParser(BaseCircuit):
                  progress_func: Union[Callable, None] = None,
                  keep_parsed_data: bool = False,
                  log_overwriting_values: bool = False,
+                 allow_profileless_import: bool = True,
                  logger=DataLogger()):
         """
         CIM circuit constructor
@@ -353,6 +372,7 @@ class CgmesDataParser(BaseCircuit):
         :param progress_func: progress callback function (optional)
         :param keep_parsed_data: Keep per-file parsed dictionaries in memory
         :param log_overwriting_values: Emit one warning for every overwritten value during merge
+        :param allow_profileless_import: Import files without FullModel/DifferenceModel as extension profiles
         :param logger: DataLogger
         """
         BaseCircuit.__init__(self)
@@ -361,6 +381,7 @@ class CgmesDataParser(BaseCircuit):
         self.progress_func = progress_func
         self.keep_parsed_data: bool = keep_parsed_data
         self.log_overwriting_values: bool = log_overwriting_values
+        self.allow_profileless_import: bool = allow_profileless_import
         self.logger: DataLogger = logger
 
         # Optional per-file parsed snapshots. This is useful for debugging,
@@ -456,7 +477,8 @@ class CgmesDataParser(BaseCircuit):
                                                        data=self.data,
                                                        boundary_set=self.boundary_set,
                                                        logger=self.logger,
-                                                       log_overwriting_values=self.log_overwriting_values)
+                                                       log_overwriting_values=self.log_overwriting_values,
+                                                       allow_profileless_import=self.allow_profileless_import)
             if detected_version is not None:
                 self.cgmes_version = detected_version
             if n_items > 0:

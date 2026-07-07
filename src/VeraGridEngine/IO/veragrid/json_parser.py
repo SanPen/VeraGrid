@@ -17,7 +17,8 @@ from VeraGridEngine.Devices.Profiles import AnyProfile
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
 from VeraGridEngine.Simulations.driver_template import DriverToSave
 from VeraGridEngine.enumerations import (DeviceType, HvdcControlType, BuildStatus,
-                                         TapModuleControl, TapPhaseControl, SimulationTypes)
+                                         TapModuleControl, TapPhaseControl, SimulationTypes,
+                                         GeneratorControlMode)
 
 
 def add_to_dict(main_dict: Dict[str, List[Any]], data_to_append: Dict[Any, Any], key: str):
@@ -92,7 +93,7 @@ def json_to_profile(profile: AnyProfile, d: Dict[str, Any]) -> None:
             raise Exception("The passed dictionary is not a profile definition")
     elif isinstance(d, list):
         if len(d) > 0:
-            profile.default_value=d[0]
+            profile.default_value = d[0]
             profile.set(arr=np.array(d))
             return None
     else:
@@ -154,7 +155,7 @@ def parse_json_data(data) -> MultiCircuit:
                               active=True)
 
                 if element["is_slack"]:
-                    elm.type = dev.BusMode.Slack_tpe
+                    elm._bus_type = dev.BusMode.Slack_tpe
                 if element["vmax"] > 0:
                     elm.Vmax = element["vmax"]
                 if element["vmin"] > 0:
@@ -430,20 +431,22 @@ def parse_json_data_v3(data: dict, logger: Logger):
                 has_profiles = False
 
             for jentry in generators:
-                elm = dev.Generator(name=str(jentry['name']),
-                                    idtag=str(jentry['id']),
-                                    P=float(jentry['p']),
-                                    power_factor=float(jentry['pf']),
-                                    vset=float(jentry['vset']),
-                                    is_controlled=bool(jentry['is_controlled']),
-                                    Qmin=float(jentry['qmin']),
-                                    Qmax=float(jentry['qmax']),
-                                    Snom=float(jentry['snom']),
-                                    active=bool(jentry['active']),
-                                    Pmin=float(jentry['pmin']),
-                                    Pmax=float(jentry['pmax']),
-                                    Cost=float(jentry['cost'] if "cost" in jentry else 1.0),
-                                    )
+                control_mode = GeneratorControlMode.V if bool(jentry['is_controlled']) else GeneratorControlMode.Q
+                elm = dev.Generator(
+                    name=str(jentry['name']),
+                    idtag=str(jentry['id']),
+                    P=float(jentry['p']),
+                    power_factor=float(jentry['pf']),
+                    vset=float(jentry['vset']),
+                    control_mode=control_mode,
+                    Qmin=float(jentry['qmin']),
+                    Qmax=float(jentry['qmax']),
+                    Snom=float(jentry['snom']),
+                    active=bool(jentry['active']),
+                    Pmin=float(jentry['pmin']),
+                    Pmax=float(jentry['pmax']),
+                    Cost=float(jentry['cost'] if "cost" in jentry else 1.0),
+                )
 
                 if has_profiles:
                     profile_entry = device_profiles_dict[elm.idtag]
@@ -466,20 +469,22 @@ def parse_json_data_v3(data: dict, logger: Logger):
                 has_profiles = False
 
             for jentry in batteries:
-                elm = dev.Battery(name=str(jentry['name']),
-                                  idtag=str(jentry['id']),
-                                  P=float(jentry['p']),
-                                  power_factor=float(jentry['pf']),
-                                  vset=float(jentry['vset']),
-                                  is_controlled=bool(jentry['is_controlled']),
-                                  Qmin=float(jentry['qmin']),
-                                  Qmax=float(jentry['qmax']),
-                                  Snom=float(jentry['snom']),
-                                  active=bool(jentry['active']),
-                                  Pmin=float(jentry['pmin']),
-                                  Pmax=float(jentry['pmax']),
-                                  Cost=float(jentry['cost']),
-                                  )
+                control_mode = GeneratorControlMode.V if bool(jentry['is_controlled']) else GeneratorControlMode.Q
+                elm = dev.Battery(
+                    name=str(jentry['name']),
+                    idtag=str(jentry['id']),
+                    P=float(jentry['p']),
+                    power_factor=float(jentry['pf']),
+                    vset=float(jentry['vset']),
+                    control_mode=control_mode,
+                    Qmin=float(jentry['qmin']),
+                    Qmax=float(jentry['qmax']),
+                    Snom=float(jentry['snom']),
+                    active=bool(jentry['active']),
+                    Pmin=float(jentry['pmin']),
+                    Pmax=float(jentry['pmax']),
+                    Cost=float(jentry['cost']),
+                )
 
                 if has_profiles:
                     profile_entry = device_profiles_dict[elm.idtag]
@@ -789,13 +794,11 @@ def parse_json_data_v3(data: dict, logger: Logger):
                 circuit.add_winding(elm)
                 windings_dict[elm.idtag] = elm
 
-
         if "Transformer3w" in devices.keys():
 
             transformers = devices["Transformer3w"]
 
             for entry in transformers:
-
                 elm = dev.Transformer3W(idtag=entry['id'],
                                         code=entry['code'],
                                         name=entry['name'],
@@ -1092,12 +1095,18 @@ def parse_json_data_v2(data: dict, logger: Logger):
         if 'Generator' in devices.keys():
             generators = devices["Generator"]
             for jentry in generators:
+
+                if bool(jentry['is_controlled']):
+                    control_mode = GeneratorControlMode.V
+                else:
+                    control_mode = GeneratorControlMode.Q
+
                 gen = dev.Generator(name=str(jentry['name']),
                                     idtag=str(jentry['id']),
                                     P=float(jentry['p']),
                                     power_factor=float(jentry['pf']),
                                     vset=float(jentry['vset']),
-                                    is_controlled=bool(jentry['is_controlled']),
+                                    control_mode=control_mode,
                                     Qmin=float(jentry['qmin']),
                                     Qmax=float(jentry['qmax']),
                                     Snom=float(jentry['snom']),
@@ -1112,12 +1121,18 @@ def parse_json_data_v2(data: dict, logger: Logger):
         if 'Battery' in devices.keys():
             batteries = devices["Battery"]
             for jentry in batteries:
+
+                if bool(jentry['is_controlled']):
+                    control_mode = GeneratorControlMode.V
+                else:
+                    control_mode = GeneratorControlMode.Q
+
                 gen = dev.Battery(name=str(jentry['name']),
                                   idtag=str(jentry['id']),
                                   P=float(jentry['p']),
                                   power_factor=float(jentry['pf']),
                                   vset=float(jentry['vset']),
-                                  is_controlled=bool(jentry['is_controlled']),
+                                  control_mode=control_mode,
                                   Qmin=float(jentry['qmin']),
                                   Qmax=float(jentry['qmax']),
                                   Snom=float(jentry['snom']),
@@ -2018,7 +2033,7 @@ def save_json_file_v3(file_path: str, circuit: MultiCircuit, simulation_drivers:
                         'alpha3': elm.alpha3,
 
                         'k': elm.k,
-                        'kdp': elm.kdp,
+                        'kdp': elm.control1_val_droop,
                         'Pfset': elm.Pset,
                         'Qfset': elm.Qset,
                         'vac_set': elm.vset,

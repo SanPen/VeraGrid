@@ -4,6 +4,7 @@
     <file>icons/message.png</file>
     <file>icons/ss_emt_icon.png</file>
     <file>icons/dyn_emt.png</file>
+    <file>icons/dyn_emt_edit.png</file>
     <file>icons/tree.png</file>
     <file>icons/json.png</file>
     <file>icons/h5.png</file>
@@ -24,6 +25,7 @@
     <file>icons/fix.png</file>
     <file>icons/accept2.png</file>
     <file>icons/dyn_add.png</file>
+    <file>icons/dyn_emt_add.png</file>
     <file>icons/short_circuit_plus.png</file>
     <file>icons/time_series_crop_cluster.png</file>
     <file>icons/time_series_crop.png</file>
@@ -34,6 +36,22 @@
     <file>icons/area.png</file>
     <file>icons/groups.png</file>
     <file>icons/country.png</file>
+    <file>icons/flag_system.png</file>
+    <file>icons/flag_en.png</file>
+    <file>icons/flag_ja.png</file>
+    <file>icons/flag_eu.png</file>
+    <file>icons/flag_gl.png</file>
+    <file>icons/flag_ar.png</file>
+    <file>icons/flag_it.png</file>
+    <file>icons/flag_el.png</file>
+    <file>icons/flag_nl.png</file>
+    <file>icons/flag_ca.png</file>
+    <file>icons/flag_zh.png</file>
+    <file>icons/flag_hi.png</file>
+    <file>icons/flag_de.png</file>
+    <file>icons/flag_fr.png</file>
+    <file>icons/flag_pt.png</file>
+    <file>icons/flag_es.png</file>
     <file>icons/region.png</file>
     <file>icons/rotate.png</file>
     <file>icons/community.png</file>
@@ -67,6 +85,7 @@
     <file>icons/add_remedial_action.png</file>
     <file>icons/plugin.png</file>
     <file>icons/picture.png</file>
+    <file>icons/Catalogue.png</file>
     <file>icons/CataloguePrivate.png</file>
     <file>icons/record.png</file>
     <file>icons/delete_schematic.png</file>
@@ -91,6 +110,7 @@
     <file>icons/map (add).png</file>
     <file>icons/wind_power.png</file>
     <file>icons/solar_power.png</file>
+    <file>icons/load_wizard.png</file>
     <file>icons/expansion_planning.png</file>
     <file>icons/add_external_grid.png</file>
     <file>icons/clustering_use.png</file>
@@ -127,9 +147,11 @@
     <file>icons/cdf.png</file>
     <file>icons/array.png</file>
     <file>icons/upfc.png</file>
+    <file>icons/upfc_gray.png</file>
     <file>icons/to_upfc.png</file>
     <file>icons/color_grid2.png</file>
     <file>icons/vsc.png</file>
+    <file>icons/vsc_gray.png</file>
     <file>icons/dc.png</file>
     <file>icons/CatalogueAdd.png</file>
     <file>icons/clear_runs.png</file>
@@ -179,7 +201,6 @@
     <file>icons/import.png</file>
     <file>icons/piece.png</file>
     <file>icons/schematic.png</file>
-    <file>icons/Catalogue.png</file>
     <file>icons/plot.png</file>
     <file>icons/import_profiles.png</file>
     <file>icons/copy2left.png</file>
@@ -190,6 +211,7 @@
     <file>icons/storage_loc.png</file>
     <file>icons/grid_reduction.png</file>
     <file>icons/dyn.png</file>
+    <file>icons/dyn_edit.png</file>
     <file>icons/map.png</file>
     <file>icons/dcopf2ts.png</file>
     <file>icons/rate_br.png</file>
@@ -237,6 +259,7 @@
     <file>icons/stochastic_power_flow.png</file>
     <file>icons/pf_ts.png</file>
     <file>icons/owner.png</file>
+    <file>icons/matpower.png</file>
   </qresource>
   <qresource prefix="Program icon">
     <file>icons/VeraGrid_icon.png</file>

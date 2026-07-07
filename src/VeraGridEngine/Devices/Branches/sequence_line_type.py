@@ -8,6 +8,7 @@ from VeraGridEngine.Devices.admittance_matrix import AdmittanceMatrix
 from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
 from VeraGridEngine.Devices.Parents.dynamic_parent import DynamicDevice
 from VeraGridEngine.basic_structures import Logger
+from VeraGridEngine.enumerations import PrpCat
 
 
 def get_line_impedances_with_c(r_ohm: float,
@@ -111,21 +112,105 @@ class SequenceLineType(DynamicDevice):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='Imax', units='kA', tpe=float, definition='Current rating of the line', old_names=['rating']),
-        GCProp(key='Vnom', units='kV', tpe=float, definition='Voltage rating of the line'),
-        GCProp(key='R', units='Ohm/km', tpe=float, definition='Positive-sequence resistance per km'),
-        GCProp(key='X', units='Ohm/km', tpe=float, definition='Positive-sequence reactance per km'),
-        GCProp(key='B', units='uS/km', tpe=float, definition='Positive-sequence shunt susceptance per km'),
-        GCProp(key='R0', units='Ohm/km', tpe=float, definition='Zero-sequence resistance per km'),
-        GCProp(key='X0', units='Ohm/km', tpe=float, definition='Zero-sequence reactance per km'),
-        GCProp(key='B0', units='uS/km', tpe=float, definition='Zero-sequence shunt susceptance per km'),
-        GCProp(key='Cnf', units='nF/km', tpe=float, definition='Positive-sequence shunt conductance per km'),
-        GCProp(key='Cnf0', units='nF/km', tpe=float, definition='Zero-sequence shunt conductance per km'),
-        GCProp(key='use_conductance', units='', tpe=bool,
-               definition='Use conductance? else the susceptance is used'),
-        GCProp(key='n_circuits', units='', tpe=int, definition='number of circuits'),
-        GCProp(key='capex', units='currency/km', tpe=float, definition='Capital expenditure per km'),
-        GCProp(key='opex', units='currency/MWh', tpe=float, definition='Operational expenditure'),
+        GCProp(
+            prop_name='Imax',
+            units='kA',
+            tpe=float,
+            definition='Current rating of the line',
+            old_names=['rating'],
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='Vnom',
+            units='kV',
+            tpe=float,
+            definition='Voltage rating of the line',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='R',
+            units='Ohm/km',
+            tpe=float,
+            definition='Positive-sequence resistance per km',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='X',
+            units='Ohm/km',
+            tpe=float,
+            definition='Positive-sequence reactance per km',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='B',
+            units='uS/km',
+            tpe=float,
+            definition='Positive-sequence shunt susceptance per km',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='R0',
+            units='Ohm/km',
+            tpe=float,
+            definition='Zero-sequence resistance per km',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='X0',
+            units='Ohm/km',
+            tpe=float,
+            definition='Zero-sequence reactance per km',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='B0',
+            units='uS/km',
+            tpe=float,
+            definition='Zero-sequence shunt susceptance per km',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='Cnf',
+            units='nF/km',
+            tpe=float,
+            definition='Positive-sequence shunt conductance per km',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='Cnf0',
+            units='nF/km',
+            tpe=float,
+            definition='Zero-sequence shunt conductance per km',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='use_conductance',
+            units='',
+            tpe=bool,
+            definition='Use conductance? else the susceptance is used',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='n_circuits',
+            units='',
+            tpe=int,
+            definition='number of circuits',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='capex',
+            units='currency/km',
+            tpe=float,
+            definition='Capital expenditure per km',
+            cat=[PrpCat.INV],
+        ),
+        GCProp(
+            prop_name='opex',
+            units='currency/MWh',
+            tpe=float,
+            definition='Operational expenditure',
+            cat=[PrpCat.INV],
+        ),
     )
 
     def __init__(self, name='SequenceLine',

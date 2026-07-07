@@ -34,7 +34,13 @@ class GenericEmtProblem(EmtProblemTemplate):
                  sys_block: Block,
                  glob_time: Var):
 
-        super().__init__(sys_block=sys_block, glob_time=glob_time)
+        static_parameter_values_mapping: Dict[Var, Const] = dict(sys_block.parameters)
+
+        super().__init__(
+            sys_block=sys_block,
+            glob_time=glob_time,
+            static_parameter_values_mapping=static_parameter_values_mapping,
+        )
 
         self._run_explicit_initialization()
 
@@ -59,6 +65,7 @@ class GenericEmtProblem(EmtProblemTemplate):
                 variable_parameters=self._variable_parameters,
                 event_parameters_eqs=self._event_parameters_eqs,
                 constant_parameters=self._constant_parameters,
+                constant_parameter_values=self.get_parameters_values(),
                 init_guess=self.init_guess,
                 diff_init_guess=self.diff_init_guess,
                 uid2idx_vars=self.uid2idx_vars,
@@ -350,7 +357,7 @@ def run_test_bergeron(case_name: str, R_load: float) -> Tuple[np.ndarray, np.nda
         verbose=False
     )
 
-    t_arr, y_arr, dy_arr = solver.simulate(boundary_updater=line_updater)
+    t_arr, y_arr, dy_arr, _, _ = solver.simulate(boundary_updater=line_updater)
 
     idx_vf: int = problem.get_var_idx(v_f_var)
     idx_vt: int = problem.get_var_idx(v_t_var)
@@ -471,7 +478,7 @@ def run_case_mechanical_system(backend_str: EmtSolverTypes,
 
     t_start: float = time.time()
 
-    t_arr, y_arr, dy_arr = solver.simulate()
+    t_arr, y_arr, dy_arr, _, _ = solver.simulate()
 
     elapsed: float = time.time() - t_start
 
@@ -609,7 +616,7 @@ def run_case_buck_converter(backend_str: EmtSolverTypes) -> Tuple[np.ndarray, np
 
     t_start: float = time.time()
 
-    t_arr, y_arr, dy_arr = solver.simulate(boundary_updater=pwm_updater)
+    t_arr, y_arr, dy_arr, _, _ = solver.simulate(boundary_updater=pwm_updater)
 
 
     elapsed: float = time.time() - t_start

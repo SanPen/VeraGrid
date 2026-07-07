@@ -6,11 +6,11 @@
 from typing import Tuple, Union
 import numpy as np
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.Devices.Parents.physical_device import PhysicalDevice
+from VeraGridEngine.Devices.Parents.dynamic_parent import DynamicDevice
 from VeraGridEngine.Devices.Branches.winding import Winding
 from VeraGridEngine.Devices.Branches.transformer_type import get_impedances
 from VeraGridEngine.Devices.Profiles import ProfileBool
-from VeraGridEngine.enumerations import DeviceType, BuildStatus
+from VeraGridEngine.enumerations import DeviceType, BuildStatus, PrpCat
 from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 
 
@@ -103,7 +103,7 @@ def star_to_delta(z1: float, z2: float, z3: float) -> Tuple[float, float, float]
     return z12, z23, z31
 
 
-class Transformer3W(PhysicalDevice):
+class Transformer3W(DynamicDevice):
     __slots__ = (
         'bus0',
         'cn0',
@@ -143,37 +143,227 @@ class Transformer3W(PhysicalDevice):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='bus0', units='', tpe=DeviceType.BusDevice, definition='Middle point connection bus.',
-               editable=False),
-        GCProp(key='bus1', units='', tpe=DeviceType.BusDevice, definition='Bus 1.', editable=False),
-        GCProp(key='bus2', units='', tpe=DeviceType.BusDevice, definition='Bus 2.', editable=False),
-        GCProp(key='bus3', units='', tpe=DeviceType.BusDevice, definition='Bus 3.', editable=False),
-        GCProp('active', units="", tpe=bool, definition='Is active?', profile_name="active_prof"),
-        GCProp(key='winding1', units='', tpe=DeviceType.WindingDevice, definition='Winding 1.', editable=False),
-        GCProp(key='winding2', units='', tpe=DeviceType.WindingDevice, definition='Winding 2.', editable=False),
-        GCProp(key='winding3', units='', tpe=DeviceType.WindingDevice, definition='Winding 3.', editable=False),
-        GCProp(key='V1', units='kV', tpe=float, definition='Side 1 rating'),
-        GCProp(key='V2', units='kV', tpe=float, definition='Side 2 rating'),
-        GCProp(key='V3', units='kV', tpe=float, definition='Side 3 rating'),
-        GCProp(key='r12', units='p.u.', tpe=float, definition='Resistance measured from 1->2'),
-        GCProp(key='r23', units='p.u.', tpe=float, definition='Resistance measured from 2->3'),
-        GCProp(key='r31', units='p.u.', tpe=float, definition='Resistance measured from 3->1'),
-        GCProp(key='x12', units='p.u.', tpe=float, definition='Reactance measured from 1->2'),
-        GCProp(key='x23', units='p.u.', tpe=float, definition='Reactance measured from 2->3'),
-        GCProp(key='x31', units='p.u.', tpe=float, definition='Reactance measured from 3->1'),
-        GCProp(key='rate1', units='MVA', tpe=float, definition='Rating 1', old_names=['rate12']),
-        GCProp(key='rate2', units='MVA', tpe=float, definition='Rating 2', old_names=['rate23']),
-        GCProp(key='rate3', units='MVA', tpe=float, definition='Rating 3', old_names=['rate31']),
-        GCProp(key='Pcu12', units='KW', tpe=float, definition='Copper loss between 1->2'),
-        GCProp(key='Pcu23', units='KW', tpe=float, definition='Copper loss between 2->3'),
-        GCProp(key='Pcu31', units='KW', tpe=float, definition='Copper loss between 3->1'),
-        GCProp(key='Vsc12', units='%', tpe=float, definition='Short-circuit voltage between 1->2'),
-        GCProp(key='Vsc23', units='%', tpe=float, definition='Short-circuit voltage between 2->3'),
-        GCProp(key='Vsc31', units='%', tpe=float, definition='Short-circuit voltage between 3->1'),
-        GCProp(key='Pfe', units='KW', tpe=float, definition='Iron loss'),
-        GCProp(key='I0', units='%', tpe=float, definition='No-load current'),
-        GCProp(key='x', units='px', tpe=float, definition='x position'),
-        GCProp(key='y', units='px', tpe=float, definition='y position'),
+        GCProp(
+            prop_name='bus0',
+            units='',
+            tpe=DeviceType.BusDevice,
+            definition='Middle point connection bus.',
+            editable=False,
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='bus1',
+            units='',
+            tpe=DeviceType.BusDevice,
+            definition='Bus 1.',
+            editable=False,
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='bus2',
+            units='',
+            tpe=DeviceType.BusDevice,
+            definition='Bus 2.',
+            editable=False,
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='bus3',
+            units='',
+            tpe=DeviceType.BusDevice,
+            definition='Bus 3.',
+            editable=False,
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='active',
+            units="",
+            tpe=bool,
+            definition='Is active?',
+            profile_name="active_prof",
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='winding1',
+            units='',
+            tpe=DeviceType.WindingDevice,
+            definition='Winding 1.',
+            editable=False,
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='winding2',
+            units='',
+            tpe=DeviceType.WindingDevice,
+            definition='Winding 2.',
+            editable=False,
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='winding3',
+            units='',
+            tpe=DeviceType.WindingDevice,
+            definition='Winding 3.',
+            editable=False,
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='V1',
+            units='kV',
+            tpe=float,
+            definition='Side 1 rating',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='V2',
+            units='kV',
+            tpe=float,
+            definition='Side 2 rating',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='V3',
+            units='kV',
+            tpe=float,
+            definition='Side 3 rating',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='r12',
+            units='p.u.',
+            tpe=float,
+            definition='Resistance measured from 1->2',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='r23',
+            units='p.u.',
+            tpe=float,
+            definition='Resistance measured from 2->3',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='r31',
+            units='p.u.',
+            tpe=float,
+            definition='Resistance measured from 3->1',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='x12',
+            units='p.u.',
+            tpe=float,
+            definition='Reactance measured from 1->2',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='x23',
+            units='p.u.',
+            tpe=float,
+            definition='Reactance measured from 2->3',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='x31',
+            units='p.u.',
+            tpe=float,
+            definition='Reactance measured from 3->1',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='rate1',
+            units='MVA',
+            tpe=float,
+            definition='Rating 1',
+            old_names=['rate12'],
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='rate2',
+            units='MVA',
+            tpe=float,
+            definition='Rating 2',
+            old_names=['rate23'],
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='rate3',
+            units='MVA',
+            tpe=float,
+            definition='Rating 3',
+            old_names=['rate31'],
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='Pcu12',
+            units='KW',
+            tpe=float,
+            definition='Copper loss between 1->2',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='Pcu23',
+            units='KW',
+            tpe=float,
+            definition='Copper loss between 2->3',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='Pcu31',
+            units='KW',
+            tpe=float,
+            definition='Copper loss between 3->1',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='Vsc12',
+            units='%',
+            tpe=float,
+            definition='Short-circuit voltage between 1->2',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='Vsc23',
+            units='%',
+            tpe=float,
+            definition='Short-circuit voltage between 2->3',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='Vsc31',
+            units='%',
+            tpe=float,
+            definition='Short-circuit voltage between 3->1',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='Pfe',
+            units='KW',
+            tpe=float,
+            definition='Iron loss',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='I0',
+            units='%',
+            tpe=float,
+            definition='No-load current',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='x',
+            units='px',
+            tpe=float,
+            definition='x position',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='y',
+            units='px',
+            tpe=float,
+            definition='y position',
+            cat=[PrpCat.TP],
+        ),
     )
 
     def __init__(self, idtag: Union[str, None] = None,
@@ -216,20 +406,20 @@ class Transformer3W(PhysicalDevice):
         :param x: graphical x position (px)
         :param y: graphical y position (px)
         """
-        PhysicalDevice.__init__(self,
-                                name=name,
-                                idtag=idtag,
-                                code=code,
-                                device_type=DeviceType.Transformer3WDevice,
-                                build_status=build_status)
+        DynamicDevice.__init__(self,
+                               name=name,
+                               idtag=idtag,
+                               code=code,
+                               device_type=DeviceType.Transformer3WDevice,
+                               build_status=build_status)
 
         if bus0 is None:
-            self.bus0 = Bus(name=name + '_bus', Vnom=1.0,
+            self.bus0: Bus = Bus(name=name + '_bus', Vnom=1.0,
                             xpos=x, ypos=y, is_internal=True)
         else:
             bus0.internal = True
             bus0.Vnom = 1.0
-            self.bus0 = bus0
+            self.bus0: Bus = bus0
 
         self._bus1 = bus1
         self._bus2 = bus2
@@ -266,14 +456,14 @@ class Transformer3W(PhysicalDevice):
         self._Pfe: float = 0.0
         self._I0: float = 0.0
 
-        self._winding1 = Winding(bus_from=self.bus0, idtag=w1_idtag,
-                                 bus_to=bus1,
+        self._winding1 = Winding(bus_from=bus1, idtag=w1_idtag,
+                                 bus_to=self.bus0,
                                  HV=V1, LV=1.0, name=name + "_W1")
-        self._winding2 = Winding(bus_from=self.bus0, idtag=w2_idtag,
-                                 bus_to=bus2,
+        self._winding2 = Winding(bus_from=bus2, idtag=w2_idtag,
+                                 bus_to=self.bus0,
                                  HV=V2, LV=1.0, name=name + "_W2")
-        self._winding3 = Winding(bus_from=self.bus0, idtag=w3_idtag,
-                                 bus_to=bus3,
+        self._winding3 = Winding(bus_from=bus3, idtag=w3_idtag,
+                                 bus_to=self.bus0,
                                  HV=V3, LV=1.0, name=name + "_W3")
 
         self.x = float(x)
@@ -355,7 +545,8 @@ class Transformer3W(PhysicalDevice):
     @bus1.setter
     def bus1(self, obj: Bus):
         self._bus1 = obj
-        self.winding1.bus_to = obj
+        self.winding1.bus_from = obj
+        self.winding1.bus_to = self.bus0
 
         if obj is not None:
             self.winding1.set_hv_and_lv(self.winding1.HV, self.winding1.LV)
@@ -370,7 +561,8 @@ class Transformer3W(PhysicalDevice):
     @bus2.setter
     def bus2(self, obj: Bus):
         self._bus2 = obj
-        self.winding2.bus_to = obj
+        self.winding2.bus_from = obj
+        self.winding2.bus_to = self.bus0
 
         if obj is not None:
             self.winding2.set_hv_and_lv(self.winding2.HV, self.winding2.LV)
@@ -385,7 +577,8 @@ class Transformer3W(PhysicalDevice):
     @bus3.setter
     def bus3(self, obj: Bus):
         self._bus3 = obj
-        self.winding3.bus_to = obj
+        self.winding3.bus_from = obj
+        self.winding3.bus_to = self.bus0
 
         if obj is not None:
             self.winding3.set_hv_and_lv(self.winding3.HV, self.winding3.LV)
@@ -743,7 +936,7 @@ class Transformer3W(PhysicalDevice):
             # VL_bus=min(self.bus1.Vnom, self.bus2.Vnom),
             VH_bus=max(self.V1, self.V2),
             VL_bus=min(self.V1, self.V2),
-            Sn=self.rate1,
+            Sn=min(self.rate1, self.rate2),
             HV=max(self.V1, self.V2),
             LV=min(self.V1, self.V2),
             Pcu=self.Pcu12,
@@ -759,7 +952,7 @@ class Transformer3W(PhysicalDevice):
             # VL_bus=min(self.bus2.Vnom, self.bus3.Vnom),
             VH_bus=max(self.V2, self.V3),
             VL_bus=min(self.V2, self.V3),
-            Sn=self.rate2,
+            Sn=min(self.rate2, self.rate3),
             HV=max(self.V2, self.V3),
             LV=min(self.V2, self.V3),
             Pcu=self.Pcu23,
@@ -775,7 +968,7 @@ class Transformer3W(PhysicalDevice):
             # VL_bus=min(self.bus3.Vnom, self.bus1.Vnom),
             VH_bus=max(self.V3, self.V1),
             VL_bus=min(self.V3, self.V1),
-            Sn=self.rate3,
+            Sn=min(self.rate3, self.rate1),
             HV=max(self.V3, self.V1),
             LV=min(self.V3, self.V1),
             Pcu=self.Pcu31,

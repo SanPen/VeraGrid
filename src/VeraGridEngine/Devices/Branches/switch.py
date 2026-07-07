@@ -2,11 +2,12 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
+from __future__ import annotations
 
 from typing import Tuple
 
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.enumerations import BuildStatus, SwitchGraphicType
+from VeraGridEngine.enumerations import BuildStatus, SwitchGraphicType, PrpCat
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
 
@@ -26,16 +27,48 @@ class Switch(BranchParent):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='R', units='pu', tpe=float, definition='Positive-sequence resistance'),
-        GCProp(key='X', units='pu', tpe=float, definition='Positive-sequence reactance'),
-        GCProp(key='retained', units="", tpe=bool,
-                      definition='Switch is retained'),
-        GCProp(key='normal_open', units="", tpe=bool,
-                      definition='Normal position of the switch'),
-        GCProp(key='rated_current', units="kA", tpe=float,
-                      definition='Rated current of the switch device.'),
-        GCProp(key='graphic_type', units='', tpe=SwitchGraphicType,
-                      definition='Graphic to use in the schematic.'),
+        GCProp(
+            prop_name='R',
+            units='pu',
+            tpe=float,
+            definition='Positive-sequence resistance',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='X',
+            units='pu',
+            tpe=float,
+            definition='Positive-sequence reactance',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='retained',
+            units="",
+            tpe=bool,
+            definition='Switch is retained',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='normal_open',
+            units="",
+            tpe=bool,
+            definition='Normal position of the switch',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='rated_current',
+            units="kA",
+            tpe=float,
+            definition='Rated current of the switch device.',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='graphic_type',
+            units='',
+            tpe=SwitchGraphicType,
+            definition='Graphic to use in the schematic.',
+            cat=[PrpCat.All],
+        ),
     )
 
     def __init__(self,
@@ -46,7 +79,8 @@ class Switch(BranchParent):
                  code='',
                  r=1e-20,
                  x=1e-20,
-                 rate=1.0,
+                 design_rate: float = 9999,
+                 rate=9999.0,
                  active=True,
                  contingency_factor=1.0,
                  protection_rating_factor: float = 1.4,
@@ -63,6 +97,7 @@ class Switch(BranchParent):
         :param code: secondary ID
         :param r: resistance in p.u.
         :param x: reactance in p.u.
+        :param design_rate: design rate in p.u.
         :param rate: Branch rating (MW)
         :param active: is it active?
         :param contingency_factor: Rating factor in case of contingency
@@ -75,7 +110,8 @@ class Switch(BranchParent):
                               bus_from=bus_from,
                               bus_to=bus_to,
                               active=active,
-                              reducible=not retained,
+                              reducible=True,
+                              design_rate=design_rate,
                               rate=rate,
                               contingency_factor=contingency_factor,
                               protection_rating_factor=protection_rating_factor,
@@ -209,6 +245,4 @@ class Switch(BranchParent):
 
         self.R *= b
         self.X *= b
-
-
 

@@ -1772,10 +1772,10 @@ def add_linear_battery_formulation(t: Union[int, None],
                                                  join("batt_e_", [t, k], "_"))
 
                 if t > 0:
-                    # energy decreases / increases with power · dt
+                    # energy falls when discharging (p_pos) and rises when charging (p_neg)
                     prob.add_cst(cst=(batt_vars.e[t, k] == batt_vars.e[t - 1, k]
-                                      + dt * (batt_data_t.discharge_efficiency[k] * p_pos
-                                              - batt_data_t.charge_efficiency[k] * p_neg)),
+                                      + dt * (batt_data_t.charge_efficiency[k] * p_neg
+                                              - p_pos / batt_data_t.discharge_efficiency[k])),
                                  name=join("batt_energy_", [t, k], "_"))
                 else:
                     # set the initial energy value
@@ -1987,7 +1987,7 @@ def add_linear_branches_formulation(t: int,
                     bk = 1.0 / branch_data_t.X[m]
 
                 # compute the flow
-                if ctrl_branch_data_t.tap_phase_control_mode[m] == TapPhaseControl.Pf:
+                if ctrl_branch_data_t.tap_phase_control_mode[m] == TapPhaseControl.Pf.idx():
 
                     # add angle
                     branch_vars.tap_angles[t, m] = prob.add_var(lb=ctrl_branch_data_t.tap_angle_min[m],
@@ -2253,7 +2253,7 @@ def add_linear_hvdc_formulation(t: int,
 
         if hvdc_data_t.active[m]:
 
-            if hvdc_data_t.control_mode[m] == HvdcControlType.type_0_free:
+            if hvdc_data_t.control_mode_int[m] == HvdcControlType.type_0_free.idx():
 
                 # use improved pmode3 formulation with three operating regions
                 P0 = hvdc_data_t.Pset[m] / Sbase
@@ -2284,7 +2284,7 @@ def add_linear_hvdc_formulation(t: int,
                 bus_vars.Pbalance[t, fr] += - hvdc_vars.flows[t, m]
                 bus_vars.Pbalance[t, to] += hvdc_vars.flows[t, m]
 
-            elif hvdc_data_t.control_mode[m] == HvdcControlType.type_1_Pset:
+            elif hvdc_data_t.control_mode_int[m] == HvdcControlType.type_1_Pset.idx():
 
                 if hvdc_data_t.dispatchable[m]:
 
@@ -2314,7 +2314,7 @@ def add_linear_hvdc_formulation(t: int,
                     bus_vars.Pbalance[t, fr] += - hvdc_vars.flows[t, m]
                     bus_vars.Pbalance[t, to] += hvdc_vars.flows[t, m]
             else:
-                raise Exception('OPF: Unknown HVDC control mode {}'.format(hvdc_data_t.control_mode[m]))
+                raise Exception('OPF: Unknown HVDC control mode {}'.format(hvdc_data_t.control_mode_int[m]))
         else:
             # not active, therefore the flow is exactly zero
             hvdc_vars.flows[t, m] = 0.0
@@ -2359,8 +2359,8 @@ def add_linear_vsc_formulation(t: int,
             bus_vars.Pbalance[t, fr] += - vsc_vars.flows[t, m]
             bus_vars.Pbalance[t, to] += vsc_vars.flows[t, m]
 
-            if (vsc_data_t.control1[m] == ConverterControlType.Vm_dc or
-                    vsc_data_t.control2[m] == ConverterControlType.Vm_dc):
+            if (vsc_data_t.control1_int[m] == ConverterControlType.Vm_dc.idx() or
+                    vsc_data_t.control2_int[m] == ConverterControlType.Vm_dc.idx()):
                 # set the DC slack
                 bus_vars.Vm[t, fr] = 1.0
                 any_dc_slack = True

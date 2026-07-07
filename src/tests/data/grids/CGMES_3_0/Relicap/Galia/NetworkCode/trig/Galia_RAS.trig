@@ -1,0 +1,76 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:dc15a1c0-75ee-49f1-90ac-ccd579376bcd> {
+    <urn:uuid:5890c244-cb1a-4b4a-8919-8bab81e4fd4c>
+            rdf:type                   nc:RemedialActionSchedule;
+            cim:IdentifiedObject.mRID  "5890c244-cb1a-4b4a-8919-8bab81e4fd4c";
+            cim:IdentifiedObject.name  "RAS";
+            nc:RemedialActionSchedule.Contingency
+                    <urn:uuid:bd7bb012-f7b9-45e0-9e15-4e2aa3592829>;
+            nc:RemedialActionSchedule.ProposingEntity
+                    <urn:uuid:5f5820d9-3e05-473e-94c8-3c767be03e1a>;
+            nc:RemedialActionSchedule.RemedialAction
+                    <urn:uuid:f4d57bc2-1cef-46ab-ae13-3ad864813d9c>;
+            nc:RemedialActionSchedule.statusKind
+                    nc:RemedialActionScheduleStatusKind.ordered .
+    
+    <urn:uuid:dc15a1c0-75ee-49f1-90ac-ccd579376bcd>
+            rdf:type              dcat:Dataset;
+            dct:accessRights      <https://energy.referencedata.eu/Confidentiality/Public>;
+            dct:conformsTo        "https://cim.ucaiug.io/ns#" , "https://ap.cim4.eu/RemedialActionSchedule/2.4" , "https://cim4.eu/ns/nc/2.4#" , "http://iec.ch/TC57/2013/CIM-schema-cim16#";
+            dct:description       "This is the remedial action schedule dataset for Galia part of ReliCapGrid."@en;
+            dct:identifier        "dc15a1c0-75ee-49f1-90ac-ccd579376bcd";
+            dct:issued            "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dct:license           "https://creativecommons.org/licenses/by/4.0/";
+            dct:publisher         "https://energy.referencedata.eu/test/party/JOTUNHEIM";
+            dct:requires          <urn:uuid:2ea55b46-ad48-4408-be72-734b475ba18f>;
+            dct:rights            "Copyright";
+            dct:rightsHolder      "ENTSO-E";
+            dct:spatial           "https://energy.referencedata.eu/Test/Frame/Galia-Power-Transmission-System";
+            dct:title             "20220615_Galia_RAS_1.0.0";
+            dcat:endDate          "2023-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Galia-RAS>;
+            dcat:keyword          "RAS";
+            dcat:startDate        "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:version          "1.0.0";
+            prov:generatedAtTime  "2022-06-10T07:06:25Z"^^xsd:dateTime;
+            prov:wasGeneratedBy   "https://energy.referencedata.eu/Activity/CGM-RAS" .
+    
+    <urn:uuid:3bf7b894-12e6-401b-83db-4bb3d35da4b1>
+            rdf:type                        nc:GenericValueTimePoint;
+            nc:GenericValueTimePoint.GenericValueSchedule
+                    <urn:uuid:2391985f-1e21-4184-a2ca-99ec573e5aaf>;
+            nc:GenericValueTimePoint.atTime
+                    "2022-06-15T15:30:00Z"^^xsd:dateTime;
+            nc:GenericValueTimePoint.value  "0.7"^^xsd:float .
+    
+    <urn:uuid:2391985f-1e21-4184-a2ca-99ec573e5aaf>
+            rdf:type                   nc:GridStateIntensitySchedule;
+            cim:IdentifiedObject.mRID  "2391985f-1e21-4184-a2ca-99ec573e5aaf";
+            cim:IdentifiedObject.name  "intensity schedule";
+            nc:BaseTimeSeries.interpolationKind
+                    nc:TimeSeriesInterpolationKind.next;
+            nc:GenericValueSchedule.RemedialActionSchedule
+                    <urn:uuid:5890c244-cb1a-4b4a-8919-8bab81e4fd4c>;
+            nc:GridStateIntensitySchedule.GridStateAlteration
+                    <urn:uuid:7bbb3343-e48b-42dd-9ca5-6ff8945ca5b0>;
+            nc:GridStateIntensitySchedule.valueKind
+                    nc:ValueOffsetKind.absolute .
+}

@@ -1,0 +1,66 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:a2c02149-a114-4b5e-9de5-74dcccd9793a> {
+    <urn:uuid:2a2d438f-41b3-a9ea-f897-20ae9f28fbec>
+            rdf:type                        cim:GeneratingUnit;
+            cim:IdentifiedObject.mRID       "2a2d438f-41b3-a9ea-f897-20ae9f28fbec";
+            nc:GeneratingUnit.maxRampDownCountPerDay
+                    "1";
+            nc:GeneratingUnit.rampLockTime  "P0Y0M0DT2H0M0S" .
+    
+    <urn:uuid:a2c02149-a114-4b5e-9de5-74dcccd9793a>
+            rdf:type              dcat:Dataset;
+            dct:accessRights      "https://energy.referencedata.eu/Confidentiality/Public";
+            dct:conformsTo        "https://cim.ucaiug.io/ns#" , "https://ap.cim4.eu/EquipmentReliability/2.4" , "https://cim4.eu/ns/nc/2.4#" , "http://iec.ch/TC57/2013/CIM-schema-cim16#";
+            dct:description       "This is the equipment reliability dataset for Galia part of ReliCapGrid."@en;
+            dct:identifier        "a2c02149-a114-4b5e-9de5-74dcccd9793a";
+            dct:issued            "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dct:license           "https://creativecommons.org/licenses/by/4.0/";
+            dct:publisher         "https://energy.referencedata.eu/test/party/Galia";
+            dct:requires          <urn:uuid:b89a6150-43bd-442c-8c58-9efd3d537d11>;
+            dct:rights            "Copyright";
+            dct:rightsHolder      "ENTSO-E";
+            dct:spatial           "https://energy.referencedata.eu/Test/Frame/Galia-Power-Transmission-System";
+            dct:title             "20220615_Galia_ER_1.0.0";
+            dcat:endDate          "2023-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Galia-ER>;
+            dcat:keyword          "ER";
+            dcat:startDate        "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:version          "1.0.0";
+            prov:generatedAtTime  "2022-06-10T07:06:25Z"^^xsd:dateTime;
+            prov:wasGeneratedBy   "https://energy.referencedata.eu/Activity/CGM-ER" .
+    
+    <urn:uuid:dec4c660-c30d-425f-bbb4-6a3939f3fec2>
+            rdf:type                       nc:BiddingZone;
+            cim:IdentifiedObject.description
+                    "BZ_GA";
+            cim:IdentifiedObject.mRID      "dec4c660-c30d-425f-bbb4-6a3939f3fec2";
+            cim:IdentifiedObject.name      "Bidding Zone GA";
+            nc:BiddingZone.isTradeEnabled  true .
+    
+    <urn:uuid:64e9a19a-e28c-495c-94c6-b7819ca0e6c4>
+            rdf:type                       nc:SchedulingArea;
+            cim:IdentifiedObject.description
+                    "Galia";
+            cim:IdentifiedObject.mRID      "64e9a19a-e28c-495c-94c6-b7819ca0e6c4";
+            cim:IdentifiedObject.name      "Galia";
+            nc:SchedulingArea.BiddingZone  <urn:uuid:dec4c660-c30d-425f-bbb4-6a3939f3fec2>;
+            nc:SchedulingArea.ControlArea  <urn:uuid:b20c892a-a5d2-4378-8744-c2cfea79d0be> .
+}

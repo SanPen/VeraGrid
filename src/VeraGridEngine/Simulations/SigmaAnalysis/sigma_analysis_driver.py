@@ -10,7 +10,7 @@ from typing import Union
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
 from VeraGridEngine.Simulations.results_table import ResultsTable
-from VeraGridEngine.Simulations.results_template import ResultsTemplate
+from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
 from VeraGridEngine.enumerations import ResultTypes, DeviceType, SimulationTypes, StudyResultsType
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
@@ -24,6 +24,16 @@ class SigmaAnalysisResults(ResultsTemplate):
     """
     SigmaAnalysisResults
     """
+
+    LOCAL_RESULTS_DECLARATIONS = (
+        ResultsProperty(name='lambda_value', tpe=float, old_names=list(), expandable=False),
+        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='Sbus', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='distances', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='sigma_re', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='sigma_im', tpe=Vec, old_names=list(), expandable=False),
+    )
+
     __slots__ = (
         "n",
         "lambda_value",
@@ -74,12 +84,6 @@ class SigmaAnalysisResults(ResultsTemplate):
 
         self.convergence_reports = list()
 
-        self.register(name='lambda_value', tpe=float)
-        self.register(name='bus_names', tpe=StrVec)
-        self.register(name='Sbus', tpe=CxVec)
-        self.register(name='distances', tpe=Vec)
-        self.register(name='sigma_re', tpe=Vec)
-        self.register(name='sigma_im', tpe=Vec)
 
     def apply_from_island(self, results: "SigmaAnalysisResults", b_idx):
         """

@@ -16,15 +16,34 @@ from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.IO.ucte.devices.ucte_base import coalesce_number, is_defined_number
 from VeraGridEngine.IO.ucte.devices.ucte_circuit import UcteCircuit
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.enumerations import TapChangerTypes, TapModuleControl, TapPhaseControl
+from VeraGridEngine.enumerations import TapChangerTypes, TapModuleControl, TapPhaseControl, GeneratorControlMode
 
 
 def is_xnode_code(node_code: str) -> bool:
     return len(node_code) > 0 and node_code[0] == "X"
 
 
-def get_line_min_z() -> float:
-    return 0.05
+def is_fictitious_shunt_code(node_code: str) -> bool:
+    return node_code.strip().endswith("Q")
+
+
+def is_fictitious_shunt_node(ucte_node) -> bool:
+    geo_name = (ucte_node.geo_name or "").strip().lower()
+    return geo_name == "fict. shunt" or is_fictitious_shunt_code(ucte_node.node_code)
+
+
+def is_canonical_ucte_node_code(node_code: str) -> bool:
+    code = (node_code or "")
+    if len(code) != 8:
+        return False
+    if any(ch.isspace() for ch in code):
+        return False
+    return True
+
+
+def is_standard_ucte_country_code(country_code: str) -> bool:
+    code = (country_code or "").strip()
+    return len(code) == 2 and code.isalpha() and code.upper() == code and code != "XX"
 
 
 def get_default_power_limit() -> float:
@@ -81,6 +100,100 @@ def build_technologies(grid: MultiCircuit) -> dict[str, dev.Technology]:
     return tech_dict
 
 
+def discover_nominal_voltages(ucte_grid: UcteCircuit) -> Dict[str, float]:
+    """
+    Attempt to discover the nominal voltage for each level character.
+    """
+    node_vref_by_level: Dict[str, list[float]] = defaultdict(list)
+    trafo_rated_by_level: Dict[str, list[float]] = defaultdict(list)
+
+    for node in ucte_grid.nodes:
+        if is_fictitious_shunt_node(node):
+            continue
+        if len(node.node_code) >= 7 and is_defined_number(node.voltage_reference) and node.voltage_reference > 0:
+            node_vref_by_level[node.node_code[6]].append(float(node.voltage_reference))
+
+    for trafo in ucte_grid.transformers:
+        if len(trafo.node1) >= 7 and trafo.rated_voltage1 > 0:
+            trafo_rated_by_level[trafo.node1[6]].append(float(trafo.rated_voltage1))
+        if len(trafo.node2) >= 7 and trafo.rated_voltage2 > 0:
+            trafo_rated_by_level[trafo.node2[6]].append(float(trafo.rated_voltage2))
+
+    candidate_nominal_levels = np.array(
+        [1.0, 11.0, 15.0, 20.0, 22.0, 27.0, 33.0, 66.0, 70.0, 110.0, 120.0, 132.0,
+         138.0, 150.0, 220.0, 330.0, 380.0, 500.0, 750.0]
+    )
+
+    vnom_map: Dict[str, float] = {}
+    for level, vrefs in node_vref_by_level.items():
+        vrefs_arr = np.array(vrefs, dtype=float)
+        rated_arr = np.array(trafo_rated_by_level.get(level, []), dtype=float)
+
+        best_score = float("inf")
+        best_level = None
+        for nominal in candidate_nominal_levels:
+            # Keep operating voltages around 1.0 p.u.
+            vm_penalty = float(np.median(np.abs(vrefs_arr / nominal - 1.0)))
+
+            # Prefer nominal levels that keep transformer fixed taps in a plausible range.
+            tap_penalty = 0.0
+            if rated_arr.size > 0:
+                tap = rated_arr / nominal
+                tap_penalty = float(
+                    np.mean(np.maximum(0.0, 0.9 - tap) + np.maximum(0.0, tap - 1.1))
+                )
+
+            score = vm_penalty + 4.0 * tap_penalty
+            if score < best_score:
+                best_score = score
+                best_level = float(nominal)
+
+        if best_level is not None:
+            vnom_map[level] = best_level
+
+    return vnom_map
+
+
+def snap_nominal_voltage_from_reference(voltage_reference: float) -> float:
+    # Conservative set of practical nominal levels used in UCTE/ENTSO-E style grids.
+    nominal_levels = np.array([1.0, 11.0, 15.0, 20.0, 22.0, 33.0, 66.0, 70.0, 110.0, 120.0,
+                               132.0, 138.0, 150.0, 220.0, 330.0, 380.0, 400.0, 500.0, 750.0])
+    idx = int(np.argmin(np.abs(nominal_levels - float(voltage_reference))))
+    return float(nominal_levels[idx])
+
+
+def repair_nominal_voltages_from_references(ucte_grid: UcteCircuit, logger: Logger):
+    """
+    Fix clearly inconsistent nominal voltages in non-canonical UCTE variants.
+
+    If Vref/Vnom is outside a realistic range for steady-state operation,
+    infer Vnom from Vref directly using a conservative nominal-level palette.
+    """
+    for node in ucte_grid.nodes:
+        # Keep strict semantics for canonical UCTE IDs in standard country blocks.
+        # Rescue malformed/non-canonical variants (e.g., synthetic IEEE fixtures).
+        if is_canonical_ucte_node_code(node.node_code) and is_standard_ucte_country_code(node.current_country):
+            continue
+
+        if not (is_defined_number(node.voltage_reference) and node.voltage_reference > 0 and node.voltage > 0):
+            continue
+
+        vm0 = float(node.voltage_reference) / float(node.voltage)
+        if 0.8 <= vm0 <= 1.2:
+            continue
+
+        snapped_vnom = snap_nominal_voltage_from_reference(node.voltage_reference)
+        snapped_vm0 = float(node.voltage_reference) / float(snapped_vnom)
+
+        # Apply only when the repaired value becomes plausible.
+        if 0.8 <= snapped_vm0 <= 1.2:
+            logger.add_warning("Adjusted UCTE node nominal voltage from voltage reference",
+                               device=node.node_code,
+                               value=f"{node.voltage} kV -> {snapped_vnom} kV (Vref={node.voltage_reference} kV)")
+            node.voltage = snapped_vnom
+            node.normalize(logger)
+
+
 def parse_nodes(ucte_grid: UcteCircuit, grid: MultiCircuit, logger: Logger) -> Dict[str, dev.Bus]:
     """
     Create buses and their injections.
@@ -90,6 +203,9 @@ def parse_nodes(ucte_grid: UcteCircuit, grid: MultiCircuit, logger: Logger) -> D
     country_dict: dict[str, dev.Country] = dict()
 
     for ucte_elm in ucte_grid.nodes:
+        if is_fictitious_shunt_node(ucte_elm):
+            continue
+
         if ucte_elm.current_country not in ("", "XX"):
             country = country_dict.get(ucte_elm.current_country, None)
 
@@ -141,17 +257,37 @@ def parse_nodes(ucte_grid: UcteCircuit, grid: MultiCircuit, logger: Logger) -> D
             grid.add_load(bus=elm, api_obj=ld)
 
         if ucte_elm.has_gen():
-            is_controlled = ucte_elm.is_regulating_voltage() and is_defined_number(ucte_elm.voltage_reference)
+            if ucte_elm.is_regulating_voltage() and is_defined_number(ucte_elm.voltage_reference):
+                control_mode = GeneratorControlMode.V
+            else:
+                control_mode = GeneratorControlMode.Q
+            pmin = -coalesce_number(ucte_elm.max_gen_mw, get_default_power_limit())
+            pmax = -coalesce_number(ucte_elm.min_gen_mw, -get_default_power_limit())
+
+            qmin_ucte = ucte_elm.min_gen_mvar
+            qmax_ucte = ucte_elm.max_gen_mvar
+
+            # Handle potentially missing reactive limits in non-standard UCTE files
+            if ((control_mode == GeneratorControlMode.V)
+                    and (not is_defined_number(qmin_ucte) or qmin_ucte == 0.0)
+                    and (not is_defined_number(qmax_ucte) or qmax_ucte == 0.0)):
+                qmin = -get_default_power_limit()
+                qmax = get_default_power_limit()
+            else:
+                qmin = -coalesce_number(ucte_elm.max_gen_mvar, get_default_power_limit())
+                qmax = -coalesce_number(ucte_elm.min_gen_mvar, -get_default_power_limit())
+
             gen = dev.Generator(
                 name=elm.code,
                 code=elm.code,
                 P=-coalesce_number(ucte_elm.active_gen, 0.0),
-                Pmin=-coalesce_number(ucte_elm.max_gen_mw, get_default_power_limit()),
-                Pmax=-coalesce_number(ucte_elm.min_gen_mw, -get_default_power_limit()),
-                Qmin=-coalesce_number(ucte_elm.max_gen_mvar, get_default_power_limit()),
-                Qmax=-coalesce_number(ucte_elm.min_gen_mvar, -get_default_power_limit()),
-                vset=vm0 if is_controlled else 1.0,
-                is_controlled=is_controlled,
+                Q=-coalesce_number(ucte_elm.reactive_gen, 0.0),
+                Pmin=pmin,
+                Pmax=pmax,
+                Qmin=qmin,
+                Qmax=qmax,
+                vset=vm0 if (control_mode == GeneratorControlMode.V) else 1.0,
+                control_mode=control_mode,
             )
 
             tech = tech_dict.get(ucte_elm.plant_type, None)
@@ -161,6 +297,7 @@ def parse_nodes(ucte_grid: UcteCircuit, grid: MultiCircuit, logger: Logger) -> D
             grid.add_generator(bus=elm, api_obj=gen)
 
     return bus_dict
+
 
 def add_switch(grid: MultiCircuit,
                code: str,
@@ -243,6 +380,73 @@ def add_standard_line(grid: MultiCircuit, ucte_elm, bus_f: dev.Bus, bus_t: dev.B
     grid.add_line(obj=elm, logger=logger)
 
 
+def is_fictitious_shunt_line(ucte_elm, tol: float = 1e-9) -> bool:
+    return (
+            (is_fictitious_shunt_code(ucte_elm.node1) or is_fictitious_shunt_code(ucte_elm.node2))
+            and abs(ucte_elm.resistance) <= tol
+            and abs(ucte_elm.reactance - 0.05) <= 1e-6
+            and abs(ucte_elm.susceptance) > tol
+    )
+
+
+def add_fixed_shunt_from_ucte_line(grid: MultiCircuit, ucte_elm, bus: dev.Bus):
+    # UCTE branch susceptance is in uS; convert to MVAr at V=1.0 p.u.
+    b_mvar = ucte_elm.susceptance * 1e-6 * (bus.Vnom ** 2)
+    shunt = dev.Shunt(
+        name=ucte_elm.name or f"{bus.code}_shunt",
+        code=ucte_elm.order_code,
+        G=0.0,
+        B=b_mvar,
+        active=True,
+    )
+    grid.add_shunt(bus=bus, api_obj=shunt)
+
+
+def should_import_mismatch_line_as_transformer(ucte_elm, bus_f: dev.Bus, bus_t: dev.Bus) -> bool:
+    node1_is_canonical = is_canonical_ucte_node_code(ucte_elm.node1)
+    node2_is_canonical = is_canonical_ucte_node_code(ucte_elm.node2)
+    country_f = bus_f.country.name if bus_f.country is not None else ""
+    country_t = bus_t.country.name if bus_t.country is not None else ""
+    countries_are_standard = is_standard_ucte_country_code(country_f) and is_standard_ucte_country_code(country_t)
+    return not (node1_is_canonical and node2_is_canonical and countries_are_standard)
+
+
+def use_legacy_ucte_transformer_orientation(ucte_elm, bus_node1: dev.Bus, bus_node2: dev.Bus) -> bool:
+    country_1 = bus_node1.country.name if bus_node1.country is not None else ""
+    country_2 = bus_node2.country.name if bus_node2.country is not None else ""
+    countries_are_standard = is_standard_ucte_country_code(country_1) and is_standard_ucte_country_code(country_2)
+    return countries_are_standard
+
+
+def add_transformer_from_mismatch_line(grid: MultiCircuit, ucte_elm, bus_f: dev.Bus, bus_t: dev.Bus):
+    vbase = bus_f.Vnom if bus_f.Vnom > 0 else max(bus_f.Vnom, bus_t.Vnom)
+    R, X, B, rate = get_line_impedances_with_b(
+        r_ohm=ucte_elm.resistance,
+        x_ohm=ucte_elm.reactance,
+        b_us=ucte_elm.susceptance,
+        length=1.0,
+        Imax=get_current_limit_a(ucte_elm.current_limit),
+        Sbase=grid.Sbase,
+        Vnom=vbase,
+    )
+
+    tr = dev.Transformer2W(
+        bus_from=bus_f,
+        bus_to=bus_t,
+        code=ucte_elm.order_code,
+        active=True,
+        name=ucte_elm.name or f"{ucte_elm.node1} {ucte_elm.node2}",
+        HV=max(bus_f.Vnom, bus_t.Vnom),
+        LV=min(bus_f.Vnom, bus_t.Vnom),
+        nominal_power=100.0,
+        r=R,
+        x=X,
+        b=B,
+        rate=rate,
+    )
+    grid.add_transformer2w(obj=tr)
+
+
 def parse_lines(ucte_grid: UcteCircuit, grid: MultiCircuit, bus_dict: Dict[str, dev.Bus], logger: Logger):
     """
     Parse UCTE lines and couplers.
@@ -253,6 +457,14 @@ def parse_lines(ucte_grid: UcteCircuit, grid: MultiCircuit, bus_dict: Dict[str, 
     for ucte_elm in ucte_grid.lines:
         bus_f = bus_dict.get(ucte_elm.node1, None)
         bus_t = bus_dict.get(ucte_elm.node2, None)
+
+        if is_fictitious_shunt_line(ucte_elm):
+            if bus_f is not None and not is_fictitious_shunt_code(ucte_elm.node1):
+                add_fixed_shunt_from_ucte_line(grid=grid, ucte_elm=ucte_elm, bus=bus_f)
+                continue
+            if bus_t is not None and not is_fictitious_shunt_code(ucte_elm.node2):
+                add_fixed_shunt_from_ucte_line(grid=grid, ucte_elm=ucte_elm, bus=bus_t)
+                continue
 
         if bus_f is None or bus_t is None:
             if bus_f is None:
@@ -294,13 +506,19 @@ def parse_lines(ucte_grid: UcteCircuit, grid: MultiCircuit, bus_dict: Dict[str, 
             continue
 
         if not same_nominal_voltage(bus_f, bus_t):
-            logger.add_error("UCTE line/coupler endpoints have different nominal voltages",
-                             device=ucte_elm.name or f"{ucte_elm.node1} {ucte_elm.node2}",
-                             value=f"{bus_f.Vnom} != {bus_t.Vnom}")
-            continue
+            if should_import_mismatch_line_as_transformer(ucte_elm=ucte_elm, bus_f=bus_f, bus_t=bus_t):
+                logger.add_warning("Importing cross-voltage UCTE line as transformer in non-canonical data",
+                                   device=ucte_elm.name or f"{ucte_elm.node1} {ucte_elm.node2}",
+                                   value=f"{bus_f.Vnom} != {bus_t.Vnom}")
+                add_transformer_from_mismatch_line(grid=grid, ucte_elm=ucte_elm, bus_f=bus_f, bus_t=bus_t)
+                continue
+            else:
+                logger.add_error("UCTE line/coupler endpoints have different nominal voltages",
+                                 device=ucte_elm.name or f"{ucte_elm.node1} {ucte_elm.node2}",
+                                 value=f"{bus_f.Vnom} != {bus_t.Vnom}")
+                continue
 
-        z = math.hypot(ucte_elm.resistance, ucte_elm.reactance)
-        is_switch = reducible or z < get_line_min_z()
+        is_switch = reducible
 
         if is_switch:
             add_switch_from_line(grid, ucte_elm, bus_f, bus_t, active, reducible)
@@ -311,10 +529,10 @@ def parse_lines(ucte_grid: UcteCircuit, grid: MultiCircuit, bus_dict: Dict[str, 
 def has_zero_transformer_impedance(ucte_elm, tol: float = 1e-9) -> bool:
     conductance = ucte_elm.conductance if is_defined_number(ucte_elm.conductance) else 0.0
     return (
-        abs(ucte_elm.resistance) <= tol
-        and abs(ucte_elm.reactance) <= tol
-        and abs(ucte_elm.susceptance) <= tol
-        and abs(conductance) <= tol
+            abs(ucte_elm.resistance) <= tol
+            and abs(ucte_elm.reactance) <= tol
+            and abs(ucte_elm.susceptance) <= tol
+            and abs(conductance) <= tol
     )
 
 
@@ -425,7 +643,13 @@ def apply_tap_table(elm: dev.Transformer2W,
         elm.tap_phase = np.deg2rad(current_row.phase_shift)
 
 
-def build_transformer_tap_data(ucte_elm, regulator, tap_tables, bus_f: dev.Bus, logger: Logger):
+def build_transformer_tap_data(ucte_elm,
+                               regulator,
+                               tap_tables,
+                               bus_f: dev.Bus,
+                               bus_t: dev.Bus,
+                               invert_fixed_tap: bool,
+                               logger: Logger):
     low_tap_position, high_tap_position = compute_tap_span(regulator, tap_tables)
     total_positions = max(high_tap_position - low_tap_position + 1, 1)
     neutral_position = -low_tap_position
@@ -458,6 +682,16 @@ def build_transformer_tap_data(ucte_elm, regulator, tap_tables, bus_f: dev.Bus, 
 
     tap_module, tap_phase = build_current_tap_state(regulator, tap_type)
 
+    # In many practical UCTE files, fixed off-nominal taps are represented only via rated_voltage1.
+    if regulator is None and len(tap_tables) == 0 and ucte_elm.rated_voltage1 > 0:
+        if invert_fixed_tap and bus_t.Vnom > 0:
+            # Legacy orientation places node2 as branch "from" side.
+            # Fixed UCTE taps are encoded from node1 rated voltage, so use the inverse ratio.
+            tap_module = float(bus_t.Vnom) / float(ucte_elm.rated_voltage1)
+        elif (not invert_fixed_tap) and bus_f.Vnom > 0:
+            # Non-canonical IEEE-like datasets map node1->node2 and fixed taps directly.
+            tap_module = float(ucte_elm.rated_voltage1) / float(bus_f.Vnom)
+
     return {
         "tc_total_positions": total_positions,
         "tc_neutral_position": neutral_position,
@@ -482,12 +716,24 @@ def parse_transformer(ucte_grid: UcteCircuit, grid: MultiCircuit, bus_dict: Dict
     Parse UCTE transformers.
     """
     for ucte_elm in ucte_grid.transformers:
-        bus_f = bus_dict.get(ucte_elm.node2, None)  # regulated winding
-        bus_t = bus_dict.get(ucte_elm.node1, None)  # non-regulated winding
+        bus_node1 = bus_dict.get(ucte_elm.node1, None)
+        bus_node2 = bus_dict.get(ucte_elm.node2, None)
 
-        if bus_f is None or bus_t is None:
+        if bus_node1 is None or bus_node2 is None:
             logger.add_error("Disconnected transformer", value=ucte_elm.name)
             continue
+
+        legacy_orientation = use_legacy_ucte_transformer_orientation(
+            ucte_elm=ucte_elm,
+            bus_node1=bus_node1,
+            bus_node2=bus_node2,
+        )
+        if legacy_orientation:
+            bus_f = bus_node2  # regulated winding
+            bus_t = bus_node1  # non-regulated winding
+        else:
+            bus_f = bus_node1
+            bus_t = bus_node2
 
         active, reducible = ucte_elm.is_active_and_reducible(logger=logger)
 
@@ -512,8 +758,9 @@ def parse_transformer(ucte_grid: UcteCircuit, grid: MultiCircuit, bus_dict: Dict
                                    device=ucte_elm.name or ucte_elm.get_primary_key())
 
             if not has_zero_transformer_impedance(ucte_elm):
-                logger.add_warning("UCTE transformer coupler has non-zero impedance/admittance, importing it as a switch",
-                                   device=ucte_elm.name or ucte_elm.get_primary_key())
+                logger.add_warning(
+                    "UCTE transformer coupler has non-zero impedance/admittance, importing it as a switch",
+                    device=ucte_elm.name or ucte_elm.get_primary_key())
 
             add_switch_from_transformer(grid, ucte_elm, bus_f, bus_t, active, reducible)
             continue
@@ -530,7 +777,15 @@ def parse_transformer(ucte_grid: UcteCircuit, grid: MultiCircuit, bus_dict: Dict
 
         regulator = ucte_grid.get_transformer_regulation(elm=ucte_elm)
         tap_tables = ucte_grid.get_transformers_tap_table(elm=ucte_elm)
-        tap_data = build_transformer_tap_data(ucte_elm, regulator, tap_tables, bus_f, logger)
+        tap_data = build_transformer_tap_data(
+            ucte_elm=ucte_elm,
+            regulator=regulator,
+            tap_tables=tap_tables,
+            bus_f=bus_f,
+            bus_t=bus_t,
+            invert_fixed_tap=legacy_orientation,
+            logger=logger,
+        )
 
         elm = dev.Transformer2W(
             bus_from=bus_f,
@@ -578,6 +833,19 @@ def convert_ucte_to_veragrid(ucte_grid: UcteCircuit, logger: Logger) -> MultiCir
     """
     Convert UCTE grid to VeraGrid.
     """
+    # Attempt to discover more accurate nominal voltages for level characters
+    vnom_map = discover_nominal_voltages(ucte_grid)
+    if vnom_map:
+        for node in ucte_grid.nodes:
+            if len(node.node_code) >= 7 and (not is_standard_ucte_country_code(node.current_country)):
+                level = node.node_code[6]
+                if level in vnom_map:
+                    node.voltage = vnom_map[level]
+                    node.normalize(logger)
+
+    # Guard against malformed/non-canonical IDs that break the level-character heuristic.
+    repair_nominal_voltages_from_references(ucte_grid, logger)
+
     grid = MultiCircuit()
     grid.fBase = 50.0
     grid.Sbase = 100.0

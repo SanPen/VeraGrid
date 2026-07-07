@@ -1,0 +1,76 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:7205352b-3af5-4bb1-a008-aba810e8a35d> {
+    <urn:uuid:7205352b-3af5-4bb1-a008-aba810e8a35d>
+            rdf:type           rdfg:Graph , dcat:Dataset;
+            dct:conformsTo     <http://iec.ch/TC57/ns/CIM/CoreEquipment-EU/3.0>;
+            dct:description    "The equipment dataset of the boundary that is used in the ReliCapGrid.";
+            dct:identifier     "7205352b-3af5-4bb1-a008-aba810e8a35d";
+            dct:issued         "2025-02-06"^^xsd:date;
+            dct:requires       <urn:uuid:1b65ada7-39ca-42b8-a278-39c457ed82c3>;
+            dct:temporal       [ rdf:type        dct:PeriodOfTime;
+                                 dcat:startDate  "2022-06-16T23:30:00Z"^^xsd:dateTime
+                               ];
+            dcat:distribution  [ rdf:type    dcat:Distribution;
+                                 dct:issued  "2025-02-06T14:18:22Z"^^xsd:dateTime
+                               ];
+            dcat:isVersionOf   <http://ninerealms.nr/boundary>;
+            dcat:version       "1";
+            json-ld:base       "http://ninerealms.nr/boundary#" .
+    
+    <urn:uuid:dbd82264-a684-4b87-946d-a5a02714daa9>
+            rdf:type                       cim:Line;
+            cim:IdentifiedObject.description
+                    "Line BP_GA-BH1";
+            cim:IdentifiedObject.mRID      "dbd82264-a684-4b87-946d-a5a02714daa9";
+            cim:IdentifiedObject.name      "BP_GA-BH1";
+            cim:Line.Region                <urn:uuid:fbcc6679-6da5-4cfd-b50c-8ce23f450c78>;
+            eu:IdentifiedObject.shortName  "BP_GA-BH1" .
+    
+    <urn:uuid:4905819a-7927-4112-8e3b-4e8178b7daa5>
+            rdf:type                       cim:ConnectivityNode;
+            cim:ConnectivityNode.ConnectivityNodeContainer
+                    <urn:uuid:dbd82264-a684-4b87-946d-a5a02714daa9>;
+            cim:IdentifiedObject.description
+                    "Boundary point 1 between Galia (substation name) and Britheim (substation name) (220kV).";
+            cim:IdentifiedObject.mRID      "4905819a-7927-4112-8e3b-4e8178b7daa5";
+            cim:IdentifiedObject.name      "BP_GA-BH1";
+            eu:IdentifiedObject.shortName  "BP_GA-BH1" .
+    
+    <urn:uuid:e364f3e7-a2a8-3561-5540-6e74801a20ff>
+            rdf:type                       eu:BoundaryPoint;
+            cim:IdentifiedObject.description
+                    "Boundary point 1 between Galia (substation name) and Britheim (substation name) (220kV).";
+            cim:IdentifiedObject.mRID      "e364f3e7-a2a8-3561-5540-6e74801a20ff";
+            cim:IdentifiedObject.name      "BP_GA-BH1";
+            eu:BoundaryPoint.ConnectivityNode
+                    <urn:uuid:4905819a-7927-4112-8e3b-4e8178b7daa5>;
+            eu:BoundaryPoint.fromEndIsoCode
+                    "GA";
+            eu:BoundaryPoint.fromEndName   "Alfheim6";
+            eu:BoundaryPoint.fromEndNameTso
+                    "TSO-Galia";
+            eu:BoundaryPoint.isExcludedFromAreaInterchange
+                    false;
+            eu:BoundaryPoint.toEndIsoCode  "BH";
+            eu:BoundaryPoint.toEndName     "Londgard1";
+            eu:BoundaryPoint.toEndNameTso  "TSO-Britheim";
+            eu:IdentifiedObject.shortName  "BP_GA-BH1" .
+}

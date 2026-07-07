@@ -1,0 +1,53 @@
+PREFIX adms:     <http://www.w3.org/ns/adms#>
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dcatcim:  <https://cim4.eu/ns/dcatcim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:501e6690-60d1-4023-ab35-fe41b7310e03> {
+    <urn:uuid:50d40ee3-7c0c-47e5-a6f9-044e13127626>
+            rdf:type                prov:Activity;
+            dct:description         "Provenance for the Fast Activation Process (FAP) for Individual Grid Model (IGM)."@en;
+            dct:title               "Synthetic_Svedala_IGM-FAP_PV";
+            prov:generatedAtTime    "2025-02-14T11:00:00Z"^^xsd:dateTime;
+            prov:specializationOf   <https://energy.referencedata.eu/Activity/IGM-FAP>;
+            prov:type               "Provenance";
+            prov:wasAssociatedWith  <https://energy.referencedata.eu/CGM/SoftwareAgent/3f4ed5cb-b627-4922-b9ea-19ba419a1c7a>;
+            prov:wasInfluencedBy    <urn:uuid:4129d214-f57e-4a2b-b14c-c5ef458b6703> .
+    
+    <urn:uuid:501e6690-60d1-4023-ab35-fe41b7310e03>
+            rdf:type              dcat:Dataset;
+            dct:accessRights      "https://energy.referencedata.eu/Confidentiality/Public";
+            dct:conformsTo        "https://ap.cim4.eu/Provenance/1.0" , "https://cim.ucaiug.io/ns#" , "https://cim4.eu/ns/nc/2.4#" , "http://iec.ch/TC57/2013/CIM-schema-cim16#";
+            dct:description       "Provenance (PV) dataset for FAP [prototype under discussion]."@en;
+            dct:identifier        "501e6690-60d1-4023-ab35-fe41b7310e03";
+            dct:issued            "2025-02-14T12:00:00Z"^^xsd:dateTime;
+            dct:publisher         "https://energy.referencedata.eu/test/party/TSO-Svedala";
+            dct:rights            "Copyright";
+            dct:rightsHolder      "ENTSO-E";
+            dct:spatial           "https://energy.referencedata.eu/Test/Frame/Svedala-Power-Transmission-System";
+            dct:title             "20250214__Svedala_IGM-FAP_PV_v3-0-0-beta-1";
+            dct:type              <https://energy.referencedata.eu/type/Activity>;
+            adms:versionNotes     "Initial version"@en;
+            dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/TSO-Svedala-FAP-PV>;
+            dcat:keyword          "PV" , "Provenance";
+            dcat:startDate        "2024-12-31T23:00:00Z"^^xsd:dateTime;
+            dcat:version          "3.0.0-beta-1";
+            prov:generatedAtTime  "2025-02-14T11:00:00Z"^^xsd:dateTime;
+            prov:wasGeneratedBy   "https://energy.referencedata.eu/Activity/PV" .
+}

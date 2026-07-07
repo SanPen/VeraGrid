@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:nc="https://cim4.eu/ns/nc#"
+    xmlns:adms="http://www.w3.org/ns/adms#"
+    xmlns:cim="https://cim.ucaiug.io/ns#"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:dcatcim="https://cim4.eu/ns/dcatcim#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#" > 
+  <dcat:Dataset rdf:about="urn:uuid:7508c65c-0ffe-4036-8152-3dea83062287">
+      <dcterms:accessRights>https://energy.referencedata.eu/Confidentiality/Public</dcterms:accessRights>
+    <dcterms:conformsTo>https://ap.cim4.eu/ObjectRegistry/2.2</dcterms:conformsTo>
+    <dcterms:conformsTo>https://cim4.eu/ns/nc/2.4#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/CIM100#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/2013/CIM-schema-cim16#</dcterms:conformsTo>
+    <dcterms:description xml:lang="en">Common data for OPC that includes NameType, NamingAuthority and ObjectType.</dcterms:description>
+    <prov:generatedAtTime>2026-05-05T10:00:00Z</prov:generatedAtTime>
+    <dcterms:identifier>7508c65c-0ffe-4036-8152-3dea83062287</dcterms:identifier>
+    <dcat:isVersionOf rdf:resource="https://energy.referencedata.eu/test/model/Org-NineRealms_CD"/>
+    <dcterms:issued>2026-05-05T10:00:00Z</dcterms:issued>
+    <dcat:keyword>OR</dcat:keyword>
+    <dcterms:publisher>https://energy.referencedata.eu/test/party/Org-NineRealms</dcterms:publisher>
+    <dcterms:rights>Copyright</dcterms:rights>
+    <dcat:keyword>CommonData</dcat:keyword>
+    <dcat:keyword>CD</dcat:keyword>
+    <dcterms:license rdf:resource="https://creativecommons.org/licenses/by/4.0/"/>
+    <dcterms:rightsHolder>ENTSO-E</dcterms:rightsHolder>
+    <dcterms:title>20260505_Org-NineRealms_CD_OR_v1-0-0</dcterms:title>
+    <dcat:version>1.0.0</dcat:version>
+    <adms:versionNotes xml:lang="en">Common data for OPC that includes NameType, NamingAuthority and ObjectType.</adms:versionNotes>
+    <prov:wasGeneratedBy>https://energy.referencedata.eu/activity/CD</prov:wasGeneratedBy>
+    <dcterms:spatial rdf:resource="https://energy.referencedata.eu/test/frame/NineRealms-Transmission"/>
+  </dcat:Dataset>
+
+  <cim:NameType rdf:ID="_e26959c9-19b3-417a-9263-dd87e970fbd4">
+    <nc:NameType.NamingAuthority rdf:resource="#_2fdd0646-4b9c-484b-b7cd-24d497fdfa8e"/>
+    <cim:NameType.description>Codes issued by NineRealms.</cim:NameType.description>
+    <nc:NameType.mRID>e26959c9-19b3-417a-9263-dd87e970fbd4</nc:NameType.mRID>
+    <cim:NameType.name>NineRealms Code</cim:NameType.name>
+  </cim:NameType>
+  <cim:NameType rdf:ID="_7073634a-393e-443c-9d96-f181f861ae4a">
+    <nc:NameType.NamingAuthority rdf:resource="#_ae7f97f4-dc2d-4960-b61b-b75ac9dafb34"/>
+    <cim:NameType.description>Long Name from Element List.</cim:NameType.description>
+    <nc:NameType.mRID>7073634a-393e-443c-9d96-f181f861ae4a</nc:NameType.mRID>
+    <cim:NameType.name>Long Name</cim:NameType.name>
+  </cim:NameType>
+
+  <cim:NamingAuthority rdf:ID="_ae7f97f4-dc2d-4960-b61b-b75ac9dafb34">
+    <nc:NamingAuthority.description>This is the authority for Element ID.</nc:NamingAuthority.description>
+    <nc:NamingAuthority.mRID>ae7f97f4-dc2d-4960-b61b-b75ac9dafb34</nc:NamingAuthority.mRID>
+    <nc:NamingAuthority.name>NineRealms</nc:NamingAuthority.name>
+  </cim:NamingAuthority>
+  <cim:NamingAuthority rdf:ID="_2fdd0646-4b9c-484b-b7cd-24d497fdfa8e">
+    <nc:NamingAuthority.description>The authority that issues NineRealms Codes.</nc:NamingAuthority.description>
+    <nc:NamingAuthority.mRID>2fdd0646-4b9c-484b-b7cd-24d497fdfa8e</nc:NamingAuthority.mRID>
+    <nc:NamingAuthority.name>Jotunheim</nc:NamingAuthority.name>
+  </cim:NamingAuthority>
+
+  <nc:ObjectType rdf:ID="_3dacaa80-ee35-458c-bccd-7b6530a292c9">
+    <nc:ObjectType.type>DSO_Injection</nc:ObjectType.type>
+  </nc:ObjectType>
+
+
+</rdf:RDF>

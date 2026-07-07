@@ -6,7 +6,10 @@ from VeraGridEngine.IO.file_open import FileOpen
 from VeraGridEngine.Simulations.PowerFlow.power_flow_worker import PowerFlowOptions
 
 
-def test_3bus_ps_3ph():
+TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data')
+
+
+def test_3bus_ps_3ph() -> None:
     '''
     This test executes a positive-sequence and a three-phase power flow simulations into a 3-bus simple system
     and compares the results between both solvers.
@@ -32,7 +35,7 @@ def test_3bus_ps_3ph():
     gen_slack = vge.Generator()
     grid.add_generator(bus=bus_slack, api_obj=gen_slack)
 
-    gen_pv = vge.Generator(P=5, is_controlled=True)
+    gen_pv = vge.Generator(P=5, control_mode=vge.GeneratorControlMode.V)
     grid.add_generator(bus=bus_pv, api_obj=gen_pv)
 
     # ----------------------------------------------------------------------------------------------------------------------
@@ -91,7 +94,50 @@ def test_3bus_ps_3ph():
     assert np.allclose(v_ps, v_3ph_c, atol=1e-4)
 
 
-def test_ieee_grids_3ph():
+def test_3bus_ps_3ph_with_q_control_enabled() -> None:
+    """
+    Three-phase NR power flow must keep its internal S0 state when Q control is enabled.
+    """
+    grid = vge.MultiCircuit()
+
+    bus_slack = vge.Bus(name='Slack', xpos=0, ypos=0)
+    bus_slack.is_slack = True
+    grid.add_bus(obj=bus_slack)
+
+    bus_pv = vge.Bus(name='PV', xpos=0, ypos=200)
+    grid.add_bus(obj=bus_pv)
+
+    bus_pq = vge.Bus(name='PQ', xpos=0, ypos=200)
+    grid.add_bus(obj=bus_pq)
+
+    gen_slack = vge.Generator()
+    grid.add_generator(bus=bus_slack, api_obj=gen_slack)
+
+    gen_pv = vge.Generator(P=5.0, control_mode=vge.GeneratorControlMode.V)
+    grid.add_generator(bus=bus_pv, api_obj=gen_pv)
+
+    grid.add_line(obj=vge.Line(bus_from=bus_slack, bus_to=bus_pv, name='Slack-PV', r=0.1, x=1.0, b=0.1))
+    grid.add_line(obj=vge.Line(bus_from=bus_slack, bus_to=bus_pq, name='Slack-PQ', r=0.1, x=1.0, b=0.1))
+    grid.add_line(obj=vge.Line(bus_from=bus_pv, bus_to=bus_pq, name='PV-PQ', r=0.1, x=1.0, b=0.1))
+
+    load = vge.Load(P=10.0, Q=5.0)
+    grid.add_load(bus=bus_pq, api_obj=load)
+
+    options = vge.PowerFlowOptions(
+        solver_type=vge.SolverType.NR,
+        control_q=True,
+        retry_with_other_methods=False,
+        verbose=0,
+    )
+
+    res_3ph = vge.power_flow3ph(grid=grid, options=options)
+
+    assert np.all(np.isfinite(np.abs(res_3ph.voltage_A)))
+    assert np.all(np.isfinite(np.abs(res_3ph.voltage_B)))
+    assert np.all(np.isfinite(np.abs(res_3ph.voltage_C)))
+
+
+def test_ieee_grids_3ph() -> None:
     """
     Checks the .RAW files of IEEE grids against the PSS/e results
     This test checks 2 things:
@@ -112,7 +158,7 @@ def test_ieee_grids_3ph():
     for f1, f2 in files:
         print(f1, end=' ')
 
-        fname = os.path.join('data', 'grids', 'RAW', f1)
+        fname = os.path.join(TEST_DATA_DIR, 'grids', 'RAW', f1)
         main_circuit = FileOpen(fname).open()
 
         # vge.save_file(grid=main_circuit, filename='positive_sequence_3ph_pf.veragrid')
@@ -128,7 +174,7 @@ def test_ieee_grids_3ph():
         v_3ph_c = np.abs(res_3ph.voltage_C)
 
         # load the associated results file
-        df_v = pd.read_excel(os.path.join('data', 'results', f2), sheet_name='Vabs', index_col=0)
+        df_v = pd.read_excel(os.path.join(TEST_DATA_DIR, 'results', f2), sheet_name='Vabs', index_col=0)
         v_psse = df_v.values[:, 0]
 
         # comparison

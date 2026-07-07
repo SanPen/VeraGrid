@@ -162,6 +162,16 @@ class ObjectModelFilterProxy(QtCore.QSortFilterProxyModel):
         :param time_index: None or integer value
         """
         self._mdl.time_index_ = time_index
-        role = 0
-        index = QtCore.QModelIndex()
-        self.dataChanged.emit(index, index, [role])
+        row_count: int = self.rowCount()
+        col_count: int = self.columnCount()
+
+        if row_count > 0 and col_count > 0:
+            top_left: QtCore.QModelIndex = self.index(0, 0)
+            bottom_right: QtCore.QModelIndex = self.index(row_count - 1, col_count - 1)
+            self.dataChanged.emit(
+                top_left,
+                bottom_right,
+                [QtCore.Qt.ItemDataRole.DisplayRole, QtCore.Qt.ItemDataRole.EditRole],
+            )
+        else:
+            pass

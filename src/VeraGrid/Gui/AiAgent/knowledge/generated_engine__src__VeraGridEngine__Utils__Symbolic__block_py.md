@@ -47,7 +47,7 @@ Generate a fresh UUID‑v4 string.
 - `empty(self)`
   Summary: check if a model is empty
 - `E(self, d)`
-  Summary: returns the value of the external mapping corresponding to the VarPowerFlowRefferenceType
+  Summary: returns the value of the external mapping corresponding to the VarPowerFlowReferenceType
 - `V(self, d)`
   Summary: :param d:
 - `add(self, val)`

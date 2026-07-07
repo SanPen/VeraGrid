@@ -10,34 +10,28 @@ https://github.com/pypa/sampleproject
 """
 
 # Always prefer setuptools over distutils
+from pathlib import Path
 from setuptools import setup, find_packages
-import os
-
 from VeraGridServer.__version__ import __VeraGridServer_VERSION__
-
-here = os.path.abspath(os.path.dirname(__file__))
-
-long_description = """# VeraGrid
-
-This software aims to be a complete platform for power systems research and simulation.
-
-[Watch the video https](https://youtu.be/SY66WgLGo54)
-
-[Check out the documentation](https://gridcal.readthedocs.io)
-
-
-## Installation
-
-pip install VeraGridServer
-
-For more options (including a standalone setup one), follow the
-[installation instructions]( https://gridcal.readthedocs.io/en/latest/getting_started/install.html)
-from the project's [documentation](https://gridcal.readthedocs.io)
-"""
 
 description = 'VeraGrid is a Power Systems simulation program intended for professional use and research'
 
-base_path = os.path.join('VeraGridServer')
+
+def read_long_description() -> str:
+    src_root = Path(__file__).resolve().parent
+
+    for candidate in (
+        src_root / 'README.md',
+        src_root.parent / 'README.md',
+        src_root.parent.parent / 'README.md',
+    ):
+        if candidate.exists():
+            return candidate.read_text(encoding='utf-8')
+
+    return description
+
+
+long_description = read_long_description()
 
 pkgs_to_exclude = ['docs', 'research', 'tests', 'tutorials', 'VeraGridEngine']
 
@@ -62,12 +56,13 @@ package_data = {'VeraGridServer': ['*.md',
                                   'data/VeraGrid_icon.ico'],
                 }
 
-dependencies = ['setuptools>=41.0.1',
-                'wheel>=0.37.2',
-                "fastapi",
-                "uvicorn",
-                "websockets",
-                "cryptography",
+dependencies = ["numpy>=2.2.0,<3",
+                "fastapi>=0.109.1",
+                "uvicorn>=0.11.7",
+                "h11>=0.16.0",
+                "requests>=2.33.0",
+                "websockets>=9.1",
+                "cryptography>=46.0.7",
                 "VeraGridEngine==" + __VeraGridServer_VERSION__,  # the VeraGridEngine version must be exactly the same
                 ]
 

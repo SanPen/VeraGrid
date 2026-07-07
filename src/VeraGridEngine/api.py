@@ -23,6 +23,7 @@ from VeraGridEngine.IO.file_save import FileSave, FileSavingOptions, save_veragr
 from VeraGridEngine.IO.veragrid.remote import (gather_model_as_jsons_for_communication, RemoteInstruction,
                                                SimulationTypes, send_json_data, get_certificate_path, get_certificate)
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at, NumericalCircuit
+from VeraGridEngine.Utils.Symbolic.block_helpers import *
 
 
 def open_file(filename: Union[str, List[str]],
@@ -39,6 +40,21 @@ def open_file(filename: Union[str, List[str]],
         drv.logger.print("Error")
         raise Exception("File open error")
     return drv.circuit
+
+def open_multiverse(filename: Union[str, List[str]],
+              options: FileOpenOptions | None = None) -> MultiVerse:
+    """
+    Open file
+    :param filename: name of the file (.veragrid, .ejson, .m, .xml, .zip, etc.) or list of files (.xml, .zip)
+    :param options: FileOpenOptions instance (optional)
+    :return: MultiVerse instance
+    """
+    drv = FileOpen(file_name=filename, options=options)
+    drv.open()
+    if drv.multiverse is None:
+        raise Exception("No multiverse found :(")
+    else:
+        return drv.multiverse
 
 
 def save_file(grid: MultiCircuit, filename: str, drivers_to_save: List[DriverToSave] | None = None):
@@ -57,15 +73,18 @@ def save_file(grid: MultiCircuit, filename: str, drivers_to_save: List[DriverToS
     ).save()
 
 
-def save_multiverse(mv: MultiVerse, filename: str):
+def save_multiverse(mv: MultiVerse, filename: str, drivers_to_save: List[DriverToSave] | None = None):
     """
     Save file
     :param mv: MultiVerse instance
     :param filename: name of the file (.veragrid)
+    :param drivers_to_save: List of drivers to save, this structure can be obtained from driver.get_save_data()
     """
     save_veragrid_multiverse(
         file_name=filename,
-        options=FileSavingOptions(),
+        options=FileSavingOptions(
+            sessions_data=list() if drivers_to_save is None else drivers_to_save,
+        ),
         multiverse=mv
     )
 
@@ -169,6 +188,45 @@ def power_flow3ph(grid: MultiCircuit,
     driver = PowerFlowDriver3Ph(grid=grid, options=options, engine=engine)
 
     driver.run()
+
+    return driver.results
+
+
+def power_flow3ph_ts(grid: MultiCircuit,
+                     options: PowerFlowOptions | None = None,
+                     time_indices: Union[IntVec, None] = None,
+                     clustering_results: Union[ClusteringResults, None] = None,
+                     auto_expand: bool = True,
+                     engine=EngineType.VeraGrid) -> PowerFlowTimeSeriesResults3Ph:
+    """
+    Run three-phase power flow on the time series.
+
+    :param grid: MultiCircuit instance.
+    :param options: PowerFlowOptions instance (optional).
+    :param time_indices: Array of time indices to simulate, if ``None`` all are used.
+    :param clustering_results: ClusteringResults (optional).
+    :param auto_expand: If true the clustering results are expanded if clustering_results is provided.
+    :param engine: Engine to run with.
+    :return: Three-phase time-series power-flow results.
+    """
+    if options is None:
+        options = PowerFlowOptions()
+    else:
+        pass
+
+    ti = grid.get_all_time_indices() if time_indices is None else time_indices
+
+    driver = PowerFlowTimeSeriesDriver3Ph(grid=grid,
+                                          options=options,
+                                          time_indices=ti,
+                                          clustering_results=clustering_results,
+                                          engine=engine)
+    driver.run()
+
+    if auto_expand and clustering_results is not None:
+        driver.results.expand_clustered_results()
+    else:
+        pass
 
     return driver.results
 
@@ -369,10 +427,10 @@ def linear_opf(grid: MultiCircuit,
     """
 
     # declare the snapshot opf
-    opf_driver = OptimalPowerFlowDriver(grid=grid, options=options)
-    opf_driver.run()
+    opf_driver_ = OptimalPowerFlowDriver(grid=grid, options=options)
+    opf_driver_.run()
 
-    return opf_driver.results
+    return opf_driver_.results
 
 
 def simple_opf(grid: MultiCircuit,
@@ -387,48 +445,16 @@ def simple_opf(grid: MultiCircuit,
     """
 
     # declare the snapshot opf
-    opf_driver = OptimalPowerFlowDriver(grid=grid, options=options)
-    opf_driver.run()
+    opf_driver_ = OptimalPowerFlowDriver(grid=grid, options=options)
+    opf_driver_.run()
 
-    return opf_driver.results
+    return opf_driver_.results
 
 
 def balanced_pf(grid: MultiCircuit,
                 options: PowerFlowOptions = None,
                 opf_options: OptimalPowerFlowOptions = None,
                 engine=EngineType.VeraGrid) -> PowerFlowResults:
-    """
-    Run Linear Optimal Power Flow
-    :param engine:
-    :param options:
-    :param grid: MultiCircuit instance
-    :param opf_options: Optimal Power Flow Options instance (optional)
-    :return: PowerFlowResults instance
-    """
-    if opf_options is None:
-        opf_options = OptimalPowerFlowOptions(solver=SolverType.GREEDY_DISPATCH_OPF)
-
-    # declare the snapshot opf
-    opf_driver = OptimalPowerFlowDriver(grid=grid, options=opf_options)
-    opf_driver.run()
-
-    if options is None:
-        options = PowerFlowOptions()
-
-    driver = PowerFlowDriver(grid=grid,
-                             options=options,
-                             opf_results=opf_driver.results,
-                             engine=engine)
-
-    driver.run()
-
-    return driver.results
-
-
-def balanced_pf(grid: MultiCircuit,
-                options: PowerFlowOptions = None,
-                opf_options: OptimalPowerFlowOptions = None,
-                engine=EngineType.VeraGrid) -> OptimalPowerFlowResults:
     """
     Run Linear Optimal Power Flow and feed that to a power flow
     :param grid: MultiCircuit instance
@@ -441,20 +467,20 @@ def balanced_pf(grid: MultiCircuit,
         opf_options = OptimalPowerFlowOptions(solver=SolverType.GREEDY_DISPATCH_OPF)
 
     # declare the snapshot opf
-    opf_driver = OptimalPowerFlowDriver(grid=grid, options=opf_options)
-    opf_driver.run()
+    opf_driver_ = OptimalPowerFlowDriver(grid=grid, options=opf_options)
+    opf_driver_.run()
 
     if options is None:
         options = PowerFlowOptions()
 
-    driver = PowerFlowDriver(grid=grid,
+    driver_ = PowerFlowDriver(grid=grid,
                              options=options,
-                             opf_results=opf_driver.results,
+                             opf_results=opf_driver_.results,
                              engine=engine)
 
-    driver.run()
+    driver_.run()
 
-    return driver.results
+    return driver_.results
 
 
 def contingencies_ts(circuit: MultiCircuit,
@@ -523,6 +549,47 @@ def contingencies_ts(circuit: MultiCircuit,
         driver_contingencies.results.expand_clustered_results()
 
     return driver_contingencies.results
+
+
+def contingency_analysis(grid: MultiCircuit,
+                         options: ContingencyAnalysisOptions | None = None) -> ContingencyAnalysisResults:
+    """
+
+    :param grid:
+    :param options:
+    :return:
+    """
+    pf_options = PowerFlowOptions(solver_type=SolverType.NR)
+
+    # declare the contingency options
+    if options is None:
+        options = ContingencyAnalysisOptions(
+
+            # Contingency method to use
+            contingency_method=ContingencyMethod.PowerFlow,
+
+            # optional, you can send here any contingency groups
+            contingency_groups=grid.get_contingency_groups(),
+
+            # if no power flow options are provided
+            # a linear power flow is used
+            pf_options=pf_options
+        )
+
+    # Get all the defined contingency groups from the circuit
+    contingency_groups = grid.get_contingency_groups()
+
+    # Pass the list of contingency groups as required (optional)
+    linear_multiple_contingencies = LinearMultiContingencies(grid=grid,
+                                                             contingency_groups_used=contingency_groups)
+
+    simulation = ContingencyAnalysisDriver(grid=grid,
+                                           options=options,
+                                           linear_multiple_contingencies=linear_multiple_contingencies)
+
+    simulation.run()
+
+    return simulation.results
 
 
 def clustering(circuit: MultiCircuit, n_points=100) -> ClusteringResults:

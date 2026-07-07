@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import os
 import numpy as np
 
-from VeraGridEngine.enumerations import VarPowerFlowRefferenceType, DynamicIntegrationMethod, RmsInitializationMethod
+from VeraGridEngine.enumerations import VarPowerFlowReferenceType, DynamicIntegrationMethod, RmsInitializationMethod
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.Injections.generator import Generator
 from VeraGridEngine.Devices.Branches.line import Line
@@ -15,7 +16,7 @@ from VeraGridEngine.Templates.Rms.genrow2_rms_template import get_genrow2_rms_te
 from VeraGridEngine.Templates.Rms.genrow3_rms_template import get_genrow3_rms_template
 from VeraGridEngine.Templates.Rms.genrow4_rms_template import get_genrow4_rms_template
 from VeraGridEngine.Utils.Symbolic import Block
-from VeraGridEngine.Templates.Rms.bus_rms_template import initialize_bus_rms
+from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
 
 from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_driver import SmallSignalStabilityRmsDriver
 from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_options import RmsSmallSignalStabilityOptions
@@ -231,131 +232,131 @@ def stability_kundur_no_shunt():
 
     # connection with buses
 
-    genrow_mdl1.connect([genrow_mdl1.in_vars[0]], [bus1.rms_model.out_vars[0]])
-    genrow_mdl1.connect([genrow_mdl1.in_vars[1]], [bus1.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([genrow_mdl1.in_vars[0]], [bus1.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([genrow_mdl1.in_vars[1]], [bus1.rms_model.out_vars[1]])
 
-    genrow_mdl2.connect([genrow_mdl2.in_vars[0]], [bus2.rms_model.out_vars[0]])
-    genrow_mdl2.connect([genrow_mdl2.in_vars[1]], [bus2.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([genrow_mdl2.in_vars[0]], [bus2.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([genrow_mdl2.in_vars[1]], [bus2.rms_model.out_vars[1]])
 
-    genrow_mdl3.connect([genrow_mdl3.in_vars[0]], [bus3.rms_model.out_vars[0]])
-    genrow_mdl3.connect([genrow_mdl3.in_vars[1]], [bus3.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([genrow_mdl3.in_vars[0]], [bus3.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([genrow_mdl3.in_vars[1]], [bus3.rms_model.out_vars[1]])
 
-    genrow_mdl4.connect([genrow_mdl4.in_vars[0]], [bus4.rms_model.out_vars[0]])
-    genrow_mdl4.connect([genrow_mdl4.in_vars[1]], [bus4.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([genrow_mdl4.in_vars[0]], [bus4.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([genrow_mdl4.in_vars[1]], [bus4.rms_model.out_vars[1]])
 
-    line0_mdl.connect([line0_mdl.in_vars[0]], [bus5.rms_model.out_vars[0]])
-    line0_mdl.connect([line0_mdl.in_vars[1]], [bus5.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line0_mdl.in_vars[0]], [bus5.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line0_mdl.in_vars[1]], [bus5.rms_model.out_vars[1]])
 
-    line0_mdl.connect([line0_mdl.in_vars[2]], [bus6.rms_model.out_vars[0]])
-    line0_mdl.connect([line0_mdl.in_vars[3]], [bus6.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line0_mdl.in_vars[2]], [bus6.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line0_mdl.in_vars[3]], [bus6.rms_model.out_vars[1]])
 
-    line1_mdl.connect([line1_mdl.in_vars[0]], [bus5.rms_model.out_vars[0]])
-    line1_mdl.connect([line1_mdl.in_vars[1]], [bus5.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line1_mdl.in_vars[0]], [bus5.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line1_mdl.in_vars[1]], [bus5.rms_model.out_vars[1]])
 
-    line1_mdl.connect([line1_mdl.in_vars[2]], [bus6.rms_model.out_vars[0]])
-    line1_mdl.connect([line1_mdl.in_vars[3]], [bus6.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line1_mdl.in_vars[2]], [bus6.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line1_mdl.in_vars[3]], [bus6.rms_model.out_vars[1]])
 
-    line2_mdl.connect([line2_mdl.in_vars[0]], [bus6.rms_model.out_vars[0]])
-    line2_mdl.connect([line2_mdl.in_vars[1]], [bus6.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line2_mdl.in_vars[0]], [bus6.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line2_mdl.in_vars[1]], [bus6.rms_model.out_vars[1]])
 
-    line2_mdl.connect([line2_mdl.in_vars[2]], [bus7.rms_model.out_vars[0]])
-    line2_mdl.connect([line2_mdl.in_vars[3]], [bus7.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line2_mdl.in_vars[2]], [bus7.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line2_mdl.in_vars[3]], [bus7.rms_model.out_vars[1]])
 
-    line3_mdl.connect([line3_mdl.in_vars[0]], [bus6.rms_model.out_vars[0]])
-    line3_mdl.connect([line3_mdl.in_vars[1]], [bus6.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line3_mdl.in_vars[0]], [bus6.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line3_mdl.in_vars[1]], [bus6.rms_model.out_vars[1]])
 
-    line3_mdl.connect([line3_mdl.in_vars[2]], [bus7.rms_model.out_vars[0]])
-    line3_mdl.connect([line3_mdl.in_vars[3]], [bus7.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line3_mdl.in_vars[2]], [bus7.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line3_mdl.in_vars[3]], [bus7.rms_model.out_vars[1]])
 
-    line4_mdl.connect([line4_mdl.in_vars[0]], [bus6.rms_model.out_vars[0]])
-    line4_mdl.connect([line4_mdl.in_vars[1]], [bus6.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line4_mdl.in_vars[0]], [bus6.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line4_mdl.in_vars[1]], [bus6.rms_model.out_vars[1]])
 
-    line4_mdl.connect([line4_mdl.in_vars[2]], [bus7.rms_model.out_vars[0]])
-    line4_mdl.connect([line4_mdl.in_vars[3]], [bus7.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line4_mdl.in_vars[2]], [bus7.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line4_mdl.in_vars[3]], [bus7.rms_model.out_vars[1]])
 
-    line5_mdl.connect([line5_mdl.in_vars[0]], [bus7.rms_model.out_vars[0]])
-    line5_mdl.connect([line5_mdl.in_vars[1]], [bus7.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line5_mdl.in_vars[0]], [bus7.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line5_mdl.in_vars[1]], [bus7.rms_model.out_vars[1]])
 
-    line5_mdl.connect([line5_mdl.in_vars[2]], [bus8.rms_model.out_vars[0]])
-    line5_mdl.connect([line5_mdl.in_vars[3]], [bus8.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line5_mdl.in_vars[2]], [bus8.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line5_mdl.in_vars[3]], [bus8.rms_model.out_vars[1]])
 
-    line6_mdl.connect([line6_mdl.in_vars[0]], [bus7.rms_model.out_vars[0]])
-    line6_mdl.connect([line6_mdl.in_vars[1]], [bus7.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line6_mdl.in_vars[0]], [bus7.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line6_mdl.in_vars[1]], [bus7.rms_model.out_vars[1]])
 
-    line6_mdl.connect([line6_mdl.in_vars[2]], [bus8.rms_model.out_vars[0]])
-    line6_mdl.connect([line6_mdl.in_vars[3]], [bus8.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line6_mdl.in_vars[2]], [bus8.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line6_mdl.in_vars[3]], [bus8.rms_model.out_vars[1]])
 
-    line7_mdl.connect([line7_mdl.in_vars[0]], [bus8.rms_model.out_vars[0]])
-    line7_mdl.connect([line7_mdl.in_vars[1]], [bus8.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line7_mdl.in_vars[0]], [bus8.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line7_mdl.in_vars[1]], [bus8.rms_model.out_vars[1]])
 
-    line7_mdl.connect([line7_mdl.in_vars[2]], [bus9.rms_model.out_vars[0]])
-    line7_mdl.connect([line7_mdl.in_vars[3]], [bus9.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line7_mdl.in_vars[2]], [bus9.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line7_mdl.in_vars[3]], [bus9.rms_model.out_vars[1]])
 
-    line8_mdl.connect([line8_mdl.in_vars[0]], [bus8.rms_model.out_vars[0]])
-    line8_mdl.connect([line8_mdl.in_vars[1]], [bus8.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line8_mdl.in_vars[0]], [bus8.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line8_mdl.in_vars[1]], [bus8.rms_model.out_vars[1]])
 
-    line8_mdl.connect([line8_mdl.in_vars[2]], [bus9.rms_model.out_vars[0]])
-    line8_mdl.connect([line8_mdl.in_vars[3]], [bus9.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line8_mdl.in_vars[2]], [bus9.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line8_mdl.in_vars[3]], [bus9.rms_model.out_vars[1]])
 
-    line9_mdl.connect([line9_mdl.in_vars[0]], [bus9.rms_model.out_vars[0]])
-    line9_mdl.connect([line9_mdl.in_vars[1]], [bus9.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line9_mdl.in_vars[0]], [bus9.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line9_mdl.in_vars[1]], [bus9.rms_model.out_vars[1]])
 
-    line9_mdl.connect([line9_mdl.in_vars[2]], [bus10.rms_model.out_vars[0]])
-    line9_mdl.connect([line9_mdl.in_vars[3]], [bus10.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line9_mdl.in_vars[2]], [bus10.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line9_mdl.in_vars[3]], [bus10.rms_model.out_vars[1]])
 
-    line10_mdl.connect([line10_mdl.in_vars[0]], [bus9.rms_model.out_vars[0]])
-    line10_mdl.connect([line10_mdl.in_vars[1]], [bus9.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line10_mdl.in_vars[0]], [bus9.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line10_mdl.in_vars[1]], [bus9.rms_model.out_vars[1]])
 
-    line10_mdl.connect([line10_mdl.in_vars[2]], [bus10.rms_model.out_vars[0]])
-    line10_mdl.connect([line10_mdl.in_vars[3]], [bus10.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line10_mdl.in_vars[2]], [bus10.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line10_mdl.in_vars[3]], [bus10.rms_model.out_vars[1]])
 
-    line11_mdl.connect([line11_mdl.in_vars[0]], [bus9.rms_model.out_vars[0]])
-    line11_mdl.connect([line11_mdl.in_vars[1]], [bus9.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line11_mdl.in_vars[0]], [bus9.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line11_mdl.in_vars[1]], [bus9.rms_model.out_vars[1]])
 
-    line11_mdl.connect([line11_mdl.in_vars[2]], [bus10.rms_model.out_vars[0]])
-    line11_mdl.connect([line11_mdl.in_vars[3]], [bus10.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line11_mdl.in_vars[2]], [bus10.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line11_mdl.in_vars[3]], [bus10.rms_model.out_vars[1]])
 
-    line12_mdl.connect([line12_mdl.in_vars[0]], [bus10.rms_model.out_vars[0]])
-    line12_mdl.connect([line12_mdl.in_vars[1]], [bus10.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line12_mdl.in_vars[0]], [bus10.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line12_mdl.in_vars[1]], [bus10.rms_model.out_vars[1]])
 
-    line12_mdl.connect([line12_mdl.in_vars[2]], [bus11.rms_model.out_vars[0]])
-    line12_mdl.connect([line12_mdl.in_vars[3]], [bus11.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line12_mdl.in_vars[2]], [bus11.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line12_mdl.in_vars[3]], [bus11.rms_model.out_vars[1]])
 
-    line13_mdl.connect([line13_mdl.in_vars[0]], [bus10.rms_model.out_vars[0]])
-    line13_mdl.connect([line13_mdl.in_vars[1]], [bus10.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line13_mdl.in_vars[0]], [bus10.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line13_mdl.in_vars[1]], [bus10.rms_model.out_vars[1]])
 
-    line13_mdl.connect([line13_mdl.in_vars[2]], [bus11.rms_model.out_vars[0]])
-    line13_mdl.connect([line13_mdl.in_vars[3]], [bus11.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([line13_mdl.in_vars[2]], [bus11.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([line13_mdl.in_vars[3]], [bus11.rms_model.out_vars[1]])
 
-    trafo1_mdl.connect([trafo1_mdl.in_vars[0]], [bus5.rms_model.out_vars[0]])
-    trafo1_mdl.connect([trafo1_mdl.in_vars[1]], [bus5.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([trafo1_mdl.in_vars[0]], [bus5.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([trafo1_mdl.in_vars[1]], [bus5.rms_model.out_vars[1]])
 
-    trafo1_mdl.connect([trafo1_mdl.in_vars[2]], [bus1.rms_model.out_vars[0]])
-    trafo1_mdl.connect([trafo1_mdl.in_vars[3]], [bus1.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([trafo1_mdl.in_vars[2]], [bus1.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([trafo1_mdl.in_vars[3]], [bus1.rms_model.out_vars[1]])
 
-    trafo2_mdl.connect([trafo2_mdl.in_vars[0]], [bus6.rms_model.out_vars[0]])
-    trafo2_mdl.connect([trafo2_mdl.in_vars[1]], [bus6.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([trafo2_mdl.in_vars[0]], [bus6.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([trafo2_mdl.in_vars[1]], [bus6.rms_model.out_vars[1]])
 
-    trafo2_mdl.connect([trafo2_mdl.in_vars[2]], [bus2.rms_model.out_vars[0]])
-    trafo2_mdl.connect([trafo2_mdl.in_vars[3]], [bus2.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([trafo2_mdl.in_vars[2]], [bus2.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([trafo2_mdl.in_vars[3]], [bus2.rms_model.out_vars[1]])
 
-    trafo3_mdl.connect([trafo3_mdl.in_vars[0]], [bus11.rms_model.out_vars[0]])
-    trafo3_mdl.connect([trafo3_mdl.in_vars[1]], [bus11.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([trafo3_mdl.in_vars[0]], [bus11.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([trafo3_mdl.in_vars[1]], [bus11.rms_model.out_vars[1]])
 
-    trafo3_mdl.connect([trafo3_mdl.in_vars[2]], [bus3.rms_model.out_vars[0]])
-    trafo3_mdl.connect([trafo3_mdl.in_vars[3]], [bus3.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([trafo3_mdl.in_vars[2]], [bus3.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([trafo3_mdl.in_vars[3]], [bus3.rms_model.out_vars[1]])
 
-    trafo4_mdl.connect([trafo4_mdl.in_vars[0]], [bus10.rms_model.out_vars[0]])
-    trafo4_mdl.connect([trafo4_mdl.in_vars[1]], [bus10.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([trafo4_mdl.in_vars[0]], [bus10.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([trafo4_mdl.in_vars[1]], [bus10.rms_model.out_vars[1]])
 
-    trafo4_mdl.connect([trafo4_mdl.in_vars[2]], [bus4.rms_model.out_vars[0]])
-    trafo4_mdl.connect([trafo4_mdl.in_vars[3]], [bus4.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([trafo4_mdl.in_vars[2]], [bus4.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([trafo4_mdl.in_vars[3]], [bus4.rms_model.out_vars[1]])
 
-    load1_mdl.connect([load1_mdl.in_vars[0]], [bus7.rms_model.out_vars[0]])
-    load1_mdl.connect([load1_mdl.in_vars[1]], [bus7.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([load1_mdl.in_vars[0]], [bus7.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([load1_mdl.in_vars[1]], [bus7.rms_model.out_vars[1]])
 
-    load2_mdl.connect([load2_mdl.in_vars[0]], [bus9.rms_model.out_vars[0]])
-    load2_mdl.connect([load2_mdl.in_vars[1]], [bus9.rms_model.out_vars[1]])
+    grid.var_factory.add_connections([load2_mdl.in_vars[0]], [bus9.rms_model.out_vars[0]])
+    grid.var_factory.add_connections([load2_mdl.in_vars[1]], [bus9.rms_model.out_vars[1]])
 
     # external mapping
 
@@ -364,17 +365,17 @@ def stability_kundur_no_shunt():
     big_gen3 = Block(children=[genrow_mdl3])
     big_gen4 = Block(children=[genrow_mdl4])
 
-    big_gen1.external_mapping.update({VarPowerFlowRefferenceType.P: genrow_mdl1.out_vars[0]})
-    big_gen1.external_mapping.update({VarPowerFlowRefferenceType.Q: genrow_mdl1.out_vars[1]})
+    big_gen1.external_mapping.update({VarPowerFlowReferenceType.P: genrow_mdl1.out_vars[0]})
+    big_gen1.external_mapping.update({VarPowerFlowReferenceType.Q: genrow_mdl1.out_vars[1]})
 
-    big_gen2.external_mapping.update({VarPowerFlowRefferenceType.P: genrow_mdl2.out_vars[0]})
-    big_gen2.external_mapping.update({VarPowerFlowRefferenceType.Q: genrow_mdl2.out_vars[1]})
+    big_gen2.external_mapping.update({VarPowerFlowReferenceType.P: genrow_mdl2.out_vars[0]})
+    big_gen2.external_mapping.update({VarPowerFlowReferenceType.Q: genrow_mdl2.out_vars[1]})
 
-    big_gen3.external_mapping.update({VarPowerFlowRefferenceType.P: genrow_mdl3.out_vars[0]})
-    big_gen3.external_mapping.update({VarPowerFlowRefferenceType.Q: genrow_mdl3.out_vars[1]})
+    big_gen3.external_mapping.update({VarPowerFlowReferenceType.P: genrow_mdl3.out_vars[0]})
+    big_gen3.external_mapping.update({VarPowerFlowReferenceType.Q: genrow_mdl3.out_vars[1]})
 
-    big_gen4.external_mapping.update({VarPowerFlowRefferenceType.P: genrow_mdl4.out_vars[0]})
-    big_gen4.external_mapping.update({VarPowerFlowRefferenceType.Q: genrow_mdl4.out_vars[1]})
+    big_gen4.external_mapping.update({VarPowerFlowReferenceType.P: genrow_mdl4.out_vars[0]})
+    big_gen4.external_mapping.update({VarPowerFlowReferenceType.Q: genrow_mdl4.out_vars[1]})
 
     # add models to opi objects
 
@@ -434,6 +435,9 @@ def stability_kundur_no_shunt():
     grid.add_generator(bus=bus2, api_obj=gen2)
     grid.add_generator(bus=bus3, api_obj=gen3)
     grid.add_generator(bus=bus4, api_obj=gen4)
+
+    os.makedirs(os.path.join("data", "output"), exist_ok=True)
+    gce.save_file(grid, os.path.join("data", "output", "kundur.veragrid"))
 
     t_end_setup = time.perf_counter()
 

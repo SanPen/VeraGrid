@@ -9,14 +9,14 @@ from typing import TYPE_CHECKING, Union
 from PySide6.QtCore import Qt, QRectF
 from PySide6.QtGui import QPen, QBrush
 from PySide6.QtWidgets import QMenu, QGraphicsRectItem, QGraphicsSceneContextMenuEvent
-from VeraGrid.Gui.gui_functions import add_menu_entry
+from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
 from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import BarTerminalItem, RoundTerminalItem
-from VeraGrid.Gui.Diagrams.Editors.line_editor import LineEditor
+from VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor import LineDeviceEditorDialog
 from VeraGrid.Gui.messages import yes_no_question, warning_msg
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template import LineGraphicTemplateItem
-from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI, DynamicEditorMode
 from VeraGridEngine.Devices.Branches.line import Line, SequenceLineType
-from VeraGridEngine.enumerations import DeviceType, FmuTemplateDomain
+from VeraGridEngine.enumerations import DeviceType
+from VeraGridEngine.enumerations import DynamicSimulationMode
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
@@ -55,6 +55,18 @@ class LineGraphicItem(LineGraphicTemplateItem):
     def api_object(self) -> Line:
         return self._api_object
 
+    def open_device_editor(self) -> bool:
+        """
+        Open the line editor.
+
+        :return: ``True`` when the editor was opened.
+        """
+        dlg = LineDeviceEditorDialog(api_object=self.api_object, circuit=self.editor.circuit)
+        if dlg.exec():
+            return True
+        else:
+            return True
+
     def make_switch_symbol(self):
         """
         Mathe the switch symbol
@@ -88,8 +100,7 @@ class LineGraphicItem(LineGraphicTemplateItem):
         """
         if self.api_object is not None:
             if self.api_object.device_type in [DeviceType.Transformer2WDevice, DeviceType.LineDevice]:
-                # trigger the editor
-                self.edit()
+                self.open_device_editor()
             elif self.api_object.device_type is DeviceType.SwitchDevice:
                 # change state
                 self.enable_disable_toggle()
@@ -102,69 +113,69 @@ class LineGraphicItem(LineGraphicTemplateItem):
         """
         if self.api_object is not None:
             menu = QMenu()
-            menu.addSection("Line")
+            menu.addSection(translate_context_menu_text("Line"))
 
             add_menu_entry(menu=menu,
-                           text="Active",
+                           text=translate_context_menu_text("Active"),
                            function_ptr=self.enable_disable_toggle,
                            checkeable=True,
                            checked_value=self.api_object.active)
 
             add_menu_entry(menu=menu,
-                           text="Draw labels",
+                           text=translate_context_menu_text("Draw labels"),
                            function_ptr=self.enable_disable_label_drawing,
                            checkeable=True,
                            checked_value=self.draw_labels)
 
             add_menu_entry(menu=menu,
-                           text="Editor",
+                           text=translate_context_menu_text("Editor"),
                            function_ptr=self.edit,
                            icon_path=":/Icons/icons/edit.png")
 
             add_menu_entry(menu=menu,
-                           text="RMS Editor",
-                           function_ptr=self.edit_rms,
-                           icon_path=":/Icons/icons/dyn_gray.png")
+                           text=translate_context_menu_text("RMS Editor"),
+                           function_ptr=self.edit_dynamic_rms,
+                           icon_path=":/Icons/icons/dyn_edit.png")
 
             add_menu_entry(menu=menu,
-                           text="EMT Editor",
-                           function_ptr=self.edit_emt,
-                           icon_path=":/Icons/icons/dyn_gray.png")
+                           text=translate_context_menu_text("EMT Editor"),
+                           function_ptr=self.edit_dynamic_emt,
+                           icon_path=":/Icons/icons/dyn_emt_edit.png")
 
             add_menu_entry(menu=menu,
-                           text="Change bus",
+                           text=translate_context_menu_text("Change bus"),
                            function_ptr=self.change_bus,
                            icon_path=":/Icons/icons/move_bus.png")
 
             menu.addSeparator()
 
             add_menu_entry(menu=menu,
-                           text="Plot profiles",
+                           text=translate_context_menu_text("Plot profiles"),
                            function_ptr=self.plot_profiles,
                            icon_path=":/Icons/icons/plot.png")
 
             add_menu_entry(menu=menu,
-                           text="Assign rate to profile",
+                           text=translate_context_menu_text("Assign rate to profile"),
                            function_ptr=self.assign_rate_to_profile,
                            icon_path=":/Icons/icons/assign_to_profile.png")
 
             add_menu_entry(menu=menu,
-                           text="Assign active state to profile",
+                           text=translate_context_menu_text("Assign active state to profile"),
                            function_ptr=self.assign_status_to_profile,
                            icon_path=":/Icons/icons/assign_to_profile.png")
 
             add_menu_entry(menu=menu,
-                           text="Add to catalogue",
+                           text=translate_context_menu_text("Add to catalogue"),
                            function_ptr=self.add_to_catalogue,
                            icon_path=":/Icons/icons/Catalogue.png")
 
             add_menu_entry(menu=menu,
-                           text="Split line",
+                           text=translate_context_menu_text("Split line"),
                            function_ptr=self.split_line,
                            icon_path=":/Icons/icons/divide.png")
 
             add_menu_entry(menu=menu,
-                           text="Split line with in/out",
+                           text=translate_context_menu_text("Split line with in/out"),
                            function_ptr=self.split_line_in_out,
                            icon_path=":/Icons/icons/divide.png")
 
@@ -173,39 +184,39 @@ class LineGraphicItem(LineGraphicTemplateItem):
             menu.addSeparator()
 
             add_menu_entry(menu=menu,
-                           text="Delete",
+                           text=translate_context_menu_text("Delete"),
                            function_ptr=self.delete,
                            icon_path=":/Icons/icons/delete_schematic.png")
 
-            menu.addSection('Convert to')
+            menu.addSection(translate_context_menu_text("Convert to"))
 
             add_menu_entry(menu=menu,
-                           text="Transformer",
+                           text=translate_context_menu_text("Transformer"),
                            function_ptr=self.to_transformer,
                            icon_path=":/Icons/icons/to_transformer.png")
 
             add_menu_entry(menu=menu,
-                           text="HVDC",
+                           text=translate_context_menu_text("HVDC"),
                            function_ptr=self.to_hvdc,
                            icon_path=":/Icons/icons/to_hvdc.png")
 
             add_menu_entry(menu=menu,
-                           text="VSC",
+                           text=translate_context_menu_text("VSC"),
                            function_ptr=self.to_vsc,
                            icon_path=":/Icons/icons/to_vsc.png")
 
             add_menu_entry(menu=menu,
-                           text="UPFC",
+                           text=translate_context_menu_text("UPFC"),
                            function_ptr=self.to_upfc,
                            icon_path=":/Icons/icons/to_upfc.png")
 
             add_menu_entry(menu=menu,
-                           text="Series reactance",
+                           text=translate_context_menu_text("Series reactance"),
                            function_ptr=self.to_series_reactance,
                            icon_path=":/Icons/icons/to_series_reactance.png")
 
             add_menu_entry(menu=menu,
-                           text="Switch",
+                           text=translate_context_menu_text("Switch"),
                            function_ptr=self.to_switch,
                            icon_path=":/Icons/icons/switch.png")
 
@@ -227,67 +238,23 @@ class LineGraphicItem(LineGraphicTemplateItem):
         Open the appropriate editor dialogue
         :return:
         """
-        dlg = LineEditor(line=self.api_object, grid=self.editor.circuit)
-        if dlg.exec():
-            pass
+        self.open_device_editor()
 
-    def edit_rms(self):
+    def edit_dynamic_rms(self):
+        """
+        Open the unified dynamic editor workspace for this generator.
+        """
 
-        # load templates
-        templates = self.editor.circuit.rms_models
+        self.editor.gui.open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit,
+                                            preferred_mode=DynamicSimulationMode.RMS)
 
-        # select line templates
-        templ_catalogue = dict()
-        templ_list = []
-        for templ in templates:
-            if templ.tpe == DeviceType.LineDevice:
-                templ_list.append(templ.name)
-                templ_catalogue[templ.name] = templ
+    def edit_dynamic_emt(self):
+        """
+        Open the unified dynamic editor workspace for this generator.
+        """
 
-        # prompt RmsModelEditorGUI
-        rms_model_editor = DynamicBlockEditorGUI(
-            var_factory=self.editor.circuit.var_factory,
-            block=self.api_object.rms_model,
-            api_object=self.api_object,
-            mode=DynamicEditorMode.RMS,
-            templates_list=self.editor.circuit.get_rms_models_by_device_type(self.api_object.device_type),
-            # templates_list=self.editor.circuit.get_dynamic_templates_by_device_type_and_domain(
-            #     self.api_object.device_type,
-            #     FmuTemplateDomain.RMS,
-            # ),
-            circuit=self.editor.circuit,
-            main_editor=True,
-        )
-        rms_model_editor.show()
-
-    def edit_emt(self):
-
-        # load templates
-        templates = self.editor.circuit.emt_models
-
-        # select line templates
-        templ_catalogue = dict()
-        templ_list = []
-        for templ in templates:
-            if templ.tpe == DeviceType.LineDevice:
-                templ_list.append(templ.name)
-                templ_catalogue[templ.name] = templ
-
-        # prompt RmsModelEditorGUI
-        rms_model_editor = DynamicBlockEditorGUI(
-            var_factory=self.editor.circuit.var_factory,
-            block=self.api_object.emt_model,
-            api_object=self.api_object,
-            mode=DynamicEditorMode.EMT,
-            templates_list=self.editor.circuit.get_emt_models_by_device_type(self.api_object.device_type),
-            # templates_list=self.editor.circuit.get_dynamic_templates_by_device_type_and_domain(
-            #     self.api_object.device_type,
-            #     FmuTemplateDomain.EMT,
-            # ),
-            circuit=self.editor.circuit,
-            main_editor=True,
-        )
-        rms_model_editor.show()
+        self.editor.gui.open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit,
+                                            preferred_mode=DynamicSimulationMode.EMT)
 
     def add_to_catalogue(self):
         """

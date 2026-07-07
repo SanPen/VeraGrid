@@ -8,7 +8,6 @@ from __future__ import annotations
 
 from pathlib import Path
 import sys
-import types
 
 
 if __package__ is None or __package__ == "":
@@ -17,36 +16,6 @@ if __package__ is None or __package__ == "":
     sys.path.insert(0, str(repo_root / "src"))
 else:
     pass
-
-
-networkx_module = sys.modules.get("networkx", None)
-if networkx_module is None:
-    sys.modules["networkx"] = types.ModuleType("networkx")
-else:
-    pass
-
-matplotlib_module = sys.modules.get("matplotlib", None)
-if matplotlib_module is None:
-    matplotlib_module = types.ModuleType("matplotlib")
-    sys.modules["matplotlib"] = matplotlib_module
-else:
-    pass
-
-for submodule_name in ("pyplot", "colors", "cm"):
-    full_name = f"matplotlib.{submodule_name}"
-    submodule = sys.modules.get(full_name, None)
-    if submodule is None:
-        submodule = types.ModuleType(full_name)
-        sys.modules[full_name] = submodule
-    else:
-        pass
-    setattr(matplotlib_module, submodule_name, submodule)
-
-pyplot_module = sys.modules["matplotlib.pyplot"]
-if hasattr(pyplot_module, "axis"):
-    pass
-else:
-    setattr(pyplot_module, "axis", object)
 
 
 from VeraGridEngine.IO.fmu.importer.examples.common import (

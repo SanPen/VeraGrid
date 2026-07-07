@@ -26,16 +26,42 @@ from VeraGridEngine.Simulations.ContingencyAnalysis.contingency_analysis_ts_driv
 from VeraGridEngine.Simulations.ContinuationPowerFlow.continuation_power_flow_driver import (
     ContinuationPowerFlowDriver
 )
+from VeraGridEngine.Simulations.CatalogueOptimization.catalogue_optimization_driver import (
+    CatalogueOptimizationDriver,
+    CatalogueOptimizationOptions,
+)
+from VeraGridEngine.Simulations.InputsAnalysis.inputs_analysis_driver import InputsAnalysisDriver
 from VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver import (InvestmentsEvaluationDriver)
 from VeraGridEngine.Simulations.LinearFactors.linear_analysis_driver import LinearAnalysisDriver
+from VeraGridEngine.Simulations.LinearFactors.linear_analysis_results import LinearAnalysisResults
 from VeraGridEngine.Simulations.LinearFactors.linear_analysis_ts_driver import (LinearAnalysisTimeSeriesDriver)
+from VeraGridEngine.Simulations.NTC.ntc_driver import OptimalNetTransferCapacityDriver
+from VeraGridEngine.Simulations.NTC.ntc_options import OptimalNetTransferCapacityOptions
+from VeraGridEngine.Simulations.NTC.ntc_ts_driver import OptimalNetTransferCapacityTimeSeriesDriver
 from VeraGridEngine.Simulations.NodalCapacity.nodal_capacity_ts_driver import (NodalCapacityTimeSeriesDriver)
 from VeraGridEngine.Simulations.OPF.opf_driver import OptimalPowerFlowDriver
 from VeraGridEngine.Simulations.OPF.opf_ts_driver import (OptimalPowerFlowTimeSeriesDriver)
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowDriver
+from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
+from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_driver_3ph import PowerFlowDriver3Ph
+from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_ts_driver_3ph import PowerFlowTimeSeriesDriver3Ph
 from VeraGridEngine.Simulations.PowerFlow.power_flow_ts_driver import (PowerFlowTimeSeriesDriver)
+from VeraGridEngine.Simulations.Reliability.blackout_driver import CascadingDriver
+from VeraGridEngine.Simulations.Reliability.reliability_driver import ReliabilityStudyDriver
+from VeraGridEngine.Simulations.Rms.rms_driver import RmsSimulationDriver
+from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
+from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_driver import SmallSignalStabilityRmsDriver
+from VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_options import RmsSmallSignalStabilityOptions
+from VeraGridEngine.Simulations.EMT.emt_driver import EmtSimulationDriver
+from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
+from VeraGridEngine.Simulations.SigmaAnalysis.sigma_analysis_driver import SigmaAnalysisDriver
+from VeraGridEngine.Simulations.StateEstimation.state_stimation_driver import (
+    StateEstimationDriver,
+    StateEstimationOptions,
+)
 from VeraGridEngine.Simulations.ShortCircuitStudies.short_circuit_driver import ShortCircuitDriver
 from VeraGridEngine.Simulations.Stochastic.stochastic_power_flow_driver import (StochasticPowerFlowDriver)
+from VeraGridEngine.Simulations.Topology.node_groups_driver import NodeGroupsDriver
 from VeraGridEngine.Simulations.types import DRIVER_OBJECTS
 from VeraGridEngine.enumerations import SimulationTypes
 from VeraGridEngine.basic_structures import IntVec
@@ -43,7 +69,8 @@ from VeraGridEngine.basic_structures import IntVec
 
 def create_driver(grid: MultiCircuit,
                   driver_tpe: SimulationTypes,
-                  time_indices: IntVec | None) -> DRIVER_OBJECTS | None:
+                  time_indices: IntVec | None,
+                  pf_results: PowerFlowResults | None = None) -> DRIVER_OBJECTS | None:
     """
     Create driver with the results
     :param grid: MultiCircuit instance
@@ -114,11 +141,59 @@ def create_driver(grid: MultiCircuit,
     elif driver_tpe == SimulationTypes.PowerFlow_run:
         drv = PowerFlowDriver(grid=grid, options=PowerFlowOptions())
 
+    elif driver_tpe == SimulationTypes.PowerFlow3ph_run:
+        drv = PowerFlowDriver3Ph(grid=grid, options=PowerFlowOptions())
+
+    elif driver_tpe == SimulationTypes.PowerFlowTimeSeries3ph_run:
+        drv = PowerFlowTimeSeriesDriver3Ph(grid=grid,
+                                           options=PowerFlowOptions(),
+                                           time_indices=time_indices,
+                                           clustering_results=None)
+
     elif driver_tpe == SimulationTypes.PowerFlowTimeSeries_run:
         drv = PowerFlowTimeSeriesDriver(grid=grid,
                                         options=PowerFlowOptions(),
                                         time_indices=time_indices,
                                         clustering_results=None)
+
+    elif driver_tpe == SimulationTypes.StateEstimation_run:
+        drv = StateEstimationDriver(circuit=grid, options=StateEstimationOptions())
+
+    elif driver_tpe == SimulationTypes.SigmaAnalysis_run:
+        drv = SigmaAnalysisDriver(grid=grid, options=PowerFlowOptions())
+
+    elif driver_tpe == SimulationTypes.RmsDynamic_run:
+        # Disk retrieval only needs a driver shell that owns the correct results
+        # class. Saved RMS results already contain the solved traces.
+        drv = RmsSimulationDriver(
+            grid=grid,
+            options=RmsOptions(),
+            pf_results=None
+        )
+
+    elif driver_tpe == SimulationTypes.RmsSmallSignal_run:
+        if pf_results is None:
+            warn("Session RMS Small Signal stability requires loaded Power Flow results for disk retrieval :/")
+            return None
+
+        # Disk retrieval only needs a driver shell that owns the correct results
+        # class. Saved small-signal results already contain the solved modes.
+        drv = SmallSignalStabilityRmsDriver(
+            grid=grid,
+            rms_options=RmsOptions(),
+            sss_options=RmsSmallSignalStabilityOptions(),
+            pf_results=pf_results,
+        )
+
+    elif driver_tpe == SimulationTypes.EmtDynamic_run:
+        # Disk retrieval only needs a driver shell that owns the correct results
+        # class. Saved EMT results already contain the solved traces.
+        drv = EmtSimulationDriver(
+            grid=grid,
+            options=EmtOptions(),
+            pf_results_3ph=None,
+            pf_results=None
+        )
 
     elif driver_tpe == SimulationTypes.ShortCircuit_run:
         drv = ShortCircuitDriver(grid=grid,
@@ -134,6 +209,9 @@ def create_driver(grid: MultiCircuit,
     elif driver_tpe == SimulationTypes.ClusteringAnalysis_run:
         drv = ClusteringDriver(grid=grid, options=ClusteringAnalysisOptions(0))
 
+    elif driver_tpe == SimulationTypes.InputsAnalysis_run:
+        drv = InputsAnalysisDriver(grid=grid)
+
     elif driver_tpe == SimulationTypes.InvestmentsEvaluation_run:
         drv = InvestmentsEvaluationDriver(
             grid=grid,
@@ -142,6 +220,61 @@ def create_driver(grid: MultiCircuit,
                 pf_options=PowerFlowOptions()
             ),
             problem=None
+        )
+
+    elif driver_tpe == SimulationTypes.CatalogueOptimization_run:
+        drv = CatalogueOptimizationDriver(
+            grid=grid,
+            options=CatalogueOptimizationOptions(max_eval=0, pf_options=PowerFlowOptions()),
+            problem=None,
+        )
+
+    elif driver_tpe == SimulationTypes.OPF_NTC_run:
+        drv = OptimalNetTransferCapacityDriver(
+            grid=grid,
+            options=OptimalNetTransferCapacityOptions(
+                sending_bus_idx=np.zeros(0, dtype=int),
+                receiving_bus_idx=np.zeros(0, dtype=int),
+            ),
+        )
+
+    elif (
+            driver_tpe == SimulationTypes.OptimalNetTransferCapacityTimeSeries_run
+            or driver_tpe == SimulationTypes.OPF_NTC_TS_run
+    ):
+        drv = OptimalNetTransferCapacityTimeSeriesDriver(
+            grid=grid,
+            options=OptimalNetTransferCapacityOptions(
+                sending_bus_idx=np.zeros(0, dtype=int),
+                receiving_bus_idx=np.zeros(0, dtype=int),
+            ),
+            time_indices=time_indices,
+            clustering_results=None,
+        )
+
+    elif driver_tpe == SimulationTypes.Reliability_run:
+        drv = ReliabilityStudyDriver(
+            grid=grid,
+            pf_options=PowerFlowOptions(),
+            time_indices=time_indices,
+            n_sim=0,
+        )
+
+    elif driver_tpe == SimulationTypes.Cascade_run:
+        drv = CascadingDriver(grid=grid, options=PowerFlowOptions())
+
+    elif driver_tpe == SimulationTypes.NodeGrouping_run:
+        drv = NodeGroupsDriver(
+            grid=grid,
+            sigmas=1.0,
+            min_group_size=1,
+            ptdf_results=LinearAnalysisResults(
+                br_names=grid.get_branch_names(add_hvdc=False, add_vsc=False, add_switch=True),
+                bus_names=grid.get_bus_names(),
+                hvdc_names=grid.get_hvdc_names(),
+                vsc_names=grid.get_vsc_names(),
+                bus_types=np.ones(grid.get_bus_number(), dtype=int),
+            ),
         )
 
     else:

@@ -6,7 +6,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.power_system_resource import PowerSystemResource
-from VeraGridEngine.IO.cim.cgmes.cgmes_enums import ControlAreaTypeKind, UnitSymbol
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import ControlAreaTypeKind, UnitSymbol, CgmesProfileType
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
 if TYPE_CHECKING:
@@ -16,17 +16,17 @@ if TYPE_CHECKING:
 
 class ControlArea(PowerSystemResource):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='EnergyArea', class_type='EnergyArea', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The energy area that is forecast from this control area specification.''', profiles=[]),
-		CgmesProperty(property_name='type', class_type=ControlAreaTypeKind, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The primary type of control area definition used to determine 
-			if this is used for automatic generation control, for planning interchange control, or other purposes.   
-			A control area specified with primary type of automatic generation control could still be forecast 
-			and used as an interchange area in power flow analysis.''', profiles=[]),
+		CgmesProperty(property_name='EnergyArea', class_type='EnergyArea', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The energy area that is forecast from this control area specification.''', profiles=[CgmesProfileType.OP]),
+			CgmesProperty(property_name='type', class_type=ControlAreaTypeKind, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The primary type of control area definition used to determine 
+				if this is used for automatic generation control, for planning interchange control, or other purposes.   
+				A control area specified with primary type of automatic generation control could still be forecast 
+				and used as an interchange area in power flow analysis.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
 		CgmesProperty(property_name='TieFlow', class_type='TieFlow', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The tie flows associated with the control area.''', profiles=[]),
 		CgmesProperty(property_name='ControlAreaGeneratingUnit', class_type='ControlAreaGeneratingUnit', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The generating unit specifications for the control area.''', profiles=[]),
-		CgmesProperty(property_name='netInterchange', class_type=float, multiplier=UnitMultiplier.M, unit=UnitSymbol.W, description='''Product of RMS value of the voltage and the RMS value of 
-			the in-phase component of the current.''', profiles=[]),
+			CgmesProperty(property_name='netInterchange', class_type=float, multiplier=UnitMultiplier.M, unit=UnitSymbol.W, description='''Product of RMS value of the voltage and the RMS value of 
+				the in-phase component of the current.''', mandatory=True, profiles=[CgmesProfileType.SSH]),
 		CgmesProperty(property_name='pTolerance', class_type=float, multiplier=UnitMultiplier.M, unit=UnitSymbol.W, description='''Product of RMS value of the voltage and the RMS value 
-			of the in-phase component of the current.''', profiles=[]),
+			of the in-phase component of the current.''', profiles=[CgmesProfileType.SSH]),
 	)
 	__slots__ = ('EnergyArea', 'type', 'TieFlow', 'ControlAreaGeneratingUnit', 'netInterchange', 'pTolerance')
 	def __init__(self, rdfid='', tpe='ControlArea'):

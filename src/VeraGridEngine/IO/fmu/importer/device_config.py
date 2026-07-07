@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.enumerations import VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import VarPowerFlowReferenceType
 
 from VeraGridEngine.IO.fmu.importer.bindings import FmuImportConfig
 from VeraGridEngine.IO.fmu.importer.model_description import FmuInterfaceMode
@@ -53,8 +53,8 @@ class FmuCsDeviceConfigRecord:
         preferred_mode: str | None,
         input_bindings: tuple[Any, ...],
         output_bindings: tuple[Any, ...],
-        output_defaults: dict[VarPowerFlowRefferenceType, float],
-        output_param_names: dict[VarPowerFlowRefferenceType, str],
+        output_defaults: dict[VarPowerFlowReferenceType, float],
+        output_param_names: dict[VarPowerFlowReferenceType, str],
         extraction_root: str | None = None,
         communication_step: float | None = None,
         relative_tolerance: float | None = None,
@@ -70,8 +70,8 @@ class FmuCsDeviceConfigRecord:
         self.preferred_mode: str | None = preferred_mode
         self.input_bindings: tuple[Any, ...] = input_bindings
         self.output_bindings: tuple[Any, ...] = output_bindings
-        self.output_defaults: dict[VarPowerFlowRefferenceType, float] = output_defaults
-        self.output_param_names: dict[VarPowerFlowRefferenceType, str] = output_param_names
+        self.output_defaults: dict[VarPowerFlowReferenceType, float] = output_defaults
+        self.output_param_names: dict[VarPowerFlowReferenceType, str] = output_param_names
         self.extraction_root: str | None = extraction_root
         self.communication_step: float | None = communication_step
         self.relative_tolerance: float | None = relative_tolerance
@@ -115,8 +115,8 @@ class FmuMeDeviceConfigRecord:
         preferred_mode: str | None,
         input_bindings: tuple[Any, ...],
         output_bindings: tuple[Any, ...],
-        output_defaults: dict[VarPowerFlowRefferenceType, float],
-        output_param_names: dict[VarPowerFlowRefferenceType, str],
+        output_defaults: dict[VarPowerFlowReferenceType, float],
+        output_param_names: dict[VarPowerFlowReferenceType, str],
         integration_method: str,
         extraction_root: str | None = None,
         relative_tolerance: float | None = None,
@@ -132,15 +132,15 @@ class FmuMeDeviceConfigRecord:
         self.preferred_mode: str | None = preferred_mode
         self.input_bindings: tuple[Any, ...] = input_bindings
         self.output_bindings: tuple[Any, ...] = output_bindings
-        self.output_defaults: dict[VarPowerFlowRefferenceType, float] = output_defaults
-        self.output_param_names: dict[VarPowerFlowRefferenceType, str] = output_param_names
+        self.output_defaults: dict[VarPowerFlowReferenceType, float] = output_defaults
+        self.output_param_names: dict[VarPowerFlowReferenceType, str] = output_param_names
         self.integration_method: str = integration_method
         self.extraction_root: str | None = extraction_root
         self.relative_tolerance: float | None = relative_tolerance
         self.debug_logging: bool = debug_logging
 
 
-def _reference_to_text(reference: VarPowerFlowRefferenceType) -> str:
+def _reference_to_text(reference: VarPowerFlowReferenceType) -> str:
     """Convert one VeraGrid power-flow reference enum into text.
 
     :param reference: VeraGrid reference enum.
@@ -150,14 +150,14 @@ def _reference_to_text(reference: VarPowerFlowRefferenceType) -> str:
     return reference.value
 
 
-def _reference_from_text(value: str) -> VarPowerFlowRefferenceType:
+def _reference_from_text(value: str) -> VarPowerFlowReferenceType:
     """Restore one VeraGrid power-flow reference enum from text.
 
     :param value: Serialized enum value.
     :return: VeraGrid reference enum.
     """
 
-    return VarPowerFlowRefferenceType(value)
+    return VarPowerFlowReferenceType(value)
 
 
 def _build_output_parameter_name(output_var_name: str) -> str:
@@ -203,7 +203,7 @@ def dump_fmu_cs_device_config(record: FmuCsDeviceConfigRecord) -> str:
             }
         )
 
-    reference: VarPowerFlowRefferenceType
+    reference: VarPowerFlowReferenceType
     for reference, value in record.output_defaults.items():
         output_defaults_payload[_reference_to_text(reference)] = float(value)
 
@@ -264,8 +264,8 @@ def load_fmu_cs_device_config(data: str | None) -> FmuCsDeviceConfigRecord | Non
                         )
                     )
 
-                output_defaults: dict[VarPowerFlowRefferenceType, float] = dict()
-                output_param_names: dict[VarPowerFlowRefferenceType, str] = dict()
+                output_defaults: dict[VarPowerFlowReferenceType, float] = dict()
+                output_param_names: dict[VarPowerFlowReferenceType, str] = dict()
                 key: str
                 for key, value in payload.get("output_defaults", dict()).items():
                     output_defaults[_reference_from_text(key)] = float(value)
@@ -321,7 +321,7 @@ def build_record_from_device_arguments(
     config: FmuImportConfig,
     input_bindings: tuple[Any, ...],
     output_bindings: tuple[Any, ...],
-    output_defaults: dict[VarPowerFlowRefferenceType, float],
+    output_defaults: dict[VarPowerFlowReferenceType, float],
     block: Block,
 ) -> FmuCsDeviceConfigRecord:
     """Build a serializable FMU device record from runtime arguments.
@@ -335,7 +335,7 @@ def build_record_from_device_arguments(
     :return: Serialized FMU device record.
     """
 
-    output_param_names: dict[VarPowerFlowRefferenceType, str] = dict()
+    output_param_names: dict[VarPowerFlowReferenceType, str] = dict()
     binding: Any
     for binding in output_bindings:
         output_var = block.external_mapping[binding.reference]
@@ -385,8 +385,8 @@ def restore_fmu_cs_spec_from_record(record: FmuCsDeviceConfigRecord, block: Bloc
     for event_parameter in block.event_dict.keys():
         event_params_by_name[event_parameter.name] = event_parameter
 
-    output_param_uids: dict[VarPowerFlowRefferenceType, int] = dict()
-    reference: VarPowerFlowRefferenceType
+    output_param_uids: dict[VarPowerFlowReferenceType, int] = dict()
+    reference: VarPowerFlowReferenceType
     for reference, parameter_name in record.output_param_names.items():
         event_parameter = event_params_by_name.get(parameter_name, None)
         if event_parameter is None:
@@ -434,7 +434,7 @@ def dump_fmu_me_device_config(record: FmuMeDeviceConfigRecord) -> str:
             }
         )
 
-    reference: VarPowerFlowRefferenceType
+    reference: VarPowerFlowReferenceType
     for reference, value in record.output_defaults.items():
         output_defaults_payload[_reference_to_text(reference)] = float(value)
     for reference, value in record.output_param_names.items():
@@ -495,8 +495,8 @@ def load_fmu_me_device_config(data: str | None) -> FmuMeDeviceConfigRecord | Non
                         )
                     )
 
-                output_defaults: dict[VarPowerFlowRefferenceType, float] = dict()
-                output_param_names: dict[VarPowerFlowRefferenceType, str] = dict()
+                output_defaults: dict[VarPowerFlowReferenceType, float] = dict()
+                output_param_names: dict[VarPowerFlowReferenceType, str] = dict()
                 key: str
                 for key, value in payload.get("output_defaults", dict()).items():
                     output_defaults[_reference_from_text(key)] = float(value)
@@ -523,7 +523,7 @@ def build_me_record_from_device_arguments(
     config: FmuImportConfig,
     input_bindings: tuple[Any, ...],
     output_bindings: tuple[Any, ...],
-    output_defaults: dict[VarPowerFlowRefferenceType, float],
+    output_defaults: dict[VarPowerFlowReferenceType, float],
     integration_method: str,
     block: Block,
 ) -> FmuMeDeviceConfigRecord:
@@ -539,7 +539,7 @@ def build_me_record_from_device_arguments(
     :return: Serialized FMU ME device record.
     """
 
-    output_param_names: dict[VarPowerFlowRefferenceType, str] = dict()
+    output_param_names: dict[VarPowerFlowReferenceType, str] = dict()
     binding: Any
     for binding in output_bindings:
         output_var = block.external_mapping[binding.reference]
@@ -612,8 +612,8 @@ def restore_fmu_me_spec_from_record(record: FmuMeDeviceConfigRecord, block: Bloc
     event_parameter: Any
     for event_parameter in block.event_dict.keys():
         event_params_by_name[event_parameter.name] = event_parameter
-    output_param_uids: dict[VarPowerFlowRefferenceType, int] = dict()
-    reference: VarPowerFlowRefferenceType
+    output_param_uids: dict[VarPowerFlowReferenceType, int] = dict()
+    reference: VarPowerFlowReferenceType
     for reference, parameter_name in record.output_param_names.items():
         event_parameter = event_params_by_name.get(parameter_name, None)
         if event_parameter is None:

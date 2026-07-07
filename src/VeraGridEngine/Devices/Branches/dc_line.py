@@ -10,7 +10,7 @@ import numpy as np
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 from VeraGridEngine.Devices.Profiles import ProfileFloat
-from VeraGridEngine.enumerations import DeviceType, BuildStatus, SubObjectType
+from VeraGridEngine.enumerations import DeviceType, BuildStatus, SubObjectType, PrpCat, ParamPowerFlowReferenceType
 from VeraGridEngine.Devices.Branches.line_locations import LineLocations
 from VeraGridEngine.Devices.Parents.editable_device import GCProp
 
@@ -28,15 +28,53 @@ class DcLine(BranchParent):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='R', units='p.u.', tpe=float, definition='Total positive sequence resistance.'),
-        GCProp(key='length', units='km', tpe=float, definition='Length of the line (not used for calculation)'),
-        GCProp(key='r_fault', units='p.u.', tpe=float,
-                      definition='Resistance of the mid-line fault.Used in short circuit studies.'),
-        GCProp(key='fault_pos', units='p.u.', tpe=float,
-                      definition='Per-unit positioning of the fault:0 would be at the "from" side,1 would '
-                                 'be at the "to" side,therefore 0.5 is at the middle.'),
-        GCProp(key='template', units='', tpe=DeviceType.AnyLineTemplateDevice, definition='', editable=False),
-        GCProp(key='locations', units='', tpe=SubObjectType.LineLocations, definition='', editable=False),
+        GCProp(
+            prop_name='R',
+            units='p.u.',
+            tpe=float,
+            definition='Total positive sequence resistance.',
+            cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.dc_line_r_pu,
+        ),
+        GCProp(
+            prop_name='length',
+            units='km',
+            tpe=float,
+            definition='Length of the line (not used for calculation)',
+            cat=[PrpCat.TP],
+            dyn_ref=ParamPowerFlowReferenceType.dc_line_length_km,
+        ),
+        GCProp(
+            prop_name='r_fault',
+            units='p.u.',
+            tpe=float,
+            definition='Resistance of the mid-line fault.Used in short circuit studies.',
+            cat=[PrpCat.SC],
+        ),
+        GCProp(
+            prop_name='fault_pos',
+            units='p.u.',
+            tpe=float,
+            definition='Per-unit positioning of the fault:0 would be at the "from" side,1 would '
+                                 'be at the "to" side,therefore 0.5 is at the middle.',
+            cat=[PrpCat.SC],
+        ),
+        GCProp(
+            prop_name='template',
+            units='',
+            tpe=DeviceType.AnyLineTemplateDevice,
+            definition='',
+            editable=False,
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='locations',
+            units='',
+            tpe=SubObjectType.LineLocations,
+            definition='',
+            editable=False,
+            cat=[PrpCat.TP],
+        ),
     )
 
     def __init__(self,
@@ -46,7 +84,8 @@ class DcLine(BranchParent):
                  idtag: Union[str, None] = None,
                  code: str = '',
                  r=1e-20,
-                 rate=1.0,
+                 design_rate: float = 9999,
+                 rate=9999.0,
                  active=True,
                  tolerance=0,
                  cost=0.0,
@@ -74,6 +113,7 @@ class DcLine(BranchParent):
         :param idtag: UUID code
         :param code: secondary ID
         :param r: resistance in p.u.
+        :param design_rate: Design rate (MW)
         :param rate: Branch rating (MW)
         :param active: is it active?
         :param tolerance: Tolerance specified for the branch impedance in %
@@ -103,6 +143,7 @@ class DcLine(BranchParent):
                               bus_to=bus_to,
                               active=active,
                               reducible=False,
+                              design_rate=design_rate,
                               rate=rate,
                               contingency_factor=contingency_factor,
                               protection_rating_factor=protection_rating_factor,
@@ -387,5 +428,4 @@ class DcLine(BranchParent):
         :return: None
         """
         self._fault_pos = float(val)
-
 

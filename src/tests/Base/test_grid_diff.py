@@ -196,14 +196,47 @@ def test_grid_collisions_with_save_load() -> None:
     diff1_load = vge.open_file(filename=os.path.join("data", "grids", "differential1.dgridcal"))
     diff2_load = vge.open_file(filename=os.path.join("data", "grids", "differential2.dgridcal"))
 
-    merge_logger1 = original.merge_circuit(diff1)
-    merge_logger2 = original.merge_circuit(diff2)
+    merge_logger1 = original.merge_circuit(diff1_load)
+    merge_logger2 = original.merge_circuit(diff2_load)
     ok_compare, comp_logger = original.compare_circuits(grid2=original_moded, skip_internals=True)
     #
     if not ok_compare:
         comp_logger.print()
     #
     assert ok_compare
+
+
+def test_diff_addition_deselection_persists_across_save_load(tmp_path) -> None:
+    """
+    Deselecting an added element in a differential file must survive a save/load roundtrip.
+    """
+    original = vge.open_file(filename=os.path.join("data", "grids", "case14.gridcal"))
+    modified = vge.open_file(filename=os.path.join("data", "grids", "case14.gridcal"))
+
+    added_bus = vge.Bus(name="Bus_to_skip_from_diff", Vnom=0.0)
+    modified.add_bus(added_bus)
+
+    ok_diff, diff_logger, diff = modified.differentiate_circuits(base_grid=original)
+
+    if not ok_diff:
+        diff_logger.print()
+
+    assert ok_diff
+
+    diff_bus = next(bus for bus in diff.buses if bus.name == "Bus_to_skip_from_diff")
+    diff_bus.selected_to_merge = False
+
+    diff_path = tmp_path / "deselected_addition.dveragrid"
+    vge.save_file(grid=diff, filename=str(diff_path))
+
+    loaded_diff = vge.open_file(filename=str(diff_path))
+    loaded_bus = next(bus for bus in loaded_diff.buses if bus.name == "Bus_to_skip_from_diff")
+
+    assert loaded_bus.selected_to_merge is False
+
+    original.merge_circuit(loaded_diff)
+
+    assert all(bus.name != "Bus_to_skip_from_diff" for bus in original.buses)
 
 
 def test_differentiate_circuits_preserves_time_profile_consistency() -> None:

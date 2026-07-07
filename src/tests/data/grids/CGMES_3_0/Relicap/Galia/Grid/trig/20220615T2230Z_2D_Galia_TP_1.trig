@@ -1,0 +1,543 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:36aa2bbc-5049-44f4-a4e0-46f7da2e8ccc> {
+    <urn:uuid:e4743b84-976a-414d-a888-4362532c39e6>
+            rdf:type  cim:ConnectivityNode;
+            cim:ConnectivityNode.TopologicalNode
+                    <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:859d22af-6c42-0b1e-0c2c-22f9a1e931ab>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:ab6ca587-d6af-d983-40ff-5b54afc6280e> .
+    
+    <urn:uuid:ae4b7cbe-349a-41c8-ace2-25ec26f14a64>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:f93b9c2d-7015-29c1-3390-6541665dcaa7> .
+    
+    <urn:uuid:e12338f8-6e9e-4d06-a29a-e12bdd7bd4d7>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:d6fb3145-c732-126f-79d6-4eb0b34a6b09>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:ab6ca587-d6af-d983-40ff-5b54afc6280e> .
+    
+    <urn:uuid:4f1c405f-07c9-4fb0-b64e-551896a29aa8>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:c0d1ac25-5282-d415-a817-2d5af1b0aaeb> .
+    
+    <urn:uuid:b67c8340-cb6e-11e1-bcee-406c8f32ef58>
+            rdf:type  cim:ConnectivityNode;
+            cim:ConnectivityNode.TopologicalNode
+                    <urn:uuid:82a2fa09-4ed1-f4c8-9872-0542ebf922f9> .
+    
+    <urn:uuid:7a7fd92b-1aaf-49de-b609-1d640e63d49f>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:ab6ca587-d6af-d983-40ff-5b54afc6280e> .
+    
+    <urn:uuid:43e16711-30d6-c2a6-2ff4-6c0e64fa79ee>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:c4b72b36-61d2-3f0d-7da3-0743f74e7b13>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:7c9c425e-5a8f-ca3c-6c8c-96c992a4815f> .
+    
+    <urn:uuid:7c9c425e-5a8f-ca3c-6c8c-96c992a4815f>
+            rdf:type                   cim:TopologicalNode;
+            cim:IdentifiedObject.mRID  "7c9c425e-5a8f-ca3c-6c8c-96c992a4815f";
+            cim:IdentifiedObject.name  "BP_GA-NH1";
+            cim:TopologicalNode.BaseVoltage
+                    <urn:uuid:a7f1d8de-d658-428a-821b-3a5ae5965fd1>;
+            cim:TopologicalNode.ConnectivityNodeContainer
+                    <urn:uuid:82abfaf2-36df-44ac-b4e5-e40a535affa4> .
+    
+    <urn:uuid:bd68fe72-ecac-45cc-9d34-33d95ed9a47a>
+            rdf:type  cim:ConnectivityNode;
+            cim:ConnectivityNode.TopologicalNode
+                    <urn:uuid:c0d1ac25-5282-d415-a817-2d5af1b0aaeb> .
+    
+    <urn:uuid:b3eceabf-3e63-21fe-a5aa-269618235a42>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:ab6ca587-d6af-d983-40ff-5b54afc6280e> .
+    
+    <urn:uuid:f970233f-b573-49d9-9fc3-3a2a59ed3bbb>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:eba87398-75d8-2b81-9100-4af72f728037> .
+    
+    <urn:uuid:ab6ca587-d6af-d983-40ff-5b54afc6280e>
+            rdf:type                   cim:TopologicalNode;
+            cim:IdentifiedObject.mRID  "ab6ca587-d6af-d983-40ff-5b54afc6280e";
+            cim:IdentifiedObject.name  "GA-_Busbar_1";
+            cim:TopologicalNode.BaseVoltage
+                    <urn:uuid:597e44dc-2a6e-4c62-82f3-f82cc46e0e14>;
+            cim:TopologicalNode.ConnectivityNodeContainer
+                    <urn:uuid:b7998ae6-0cc6-4dfe-8fec-0b549b07b6c3> .
+    
+    <urn:uuid:c288a2b8-1e2d-cfc9-03bd-b4bbedd90ccb>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:c0d1ac25-5282-d415-a817-2d5af1b0aaeb> .
+    
+    <urn:uuid:1128e664-0653-448a-9068-e37f1a097c05>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:02d53c0c-6782-d233-3a23-3bbc08b5043c>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:f93b9c2d-7015-29c1-3390-6541665dcaa7> .
+    
+    <urn:uuid:9f984b04-1736-43d2-9122-3a17fc8aea5f>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:c0d1ac25-5282-d415-a817-2d5af1b0aaeb> .
+    
+    <urn:uuid:17eb9e2c-dd0d-4005-ac1c-c7174e3a88e1>
+            rdf:type  cim:ConnectivityNode;
+            cim:ConnectivityNode.TopologicalNode
+                    <urn:uuid:ab6ca587-d6af-d983-40ff-5b54afc6280e> .
+    
+    <urn:uuid:f63e117f-d243-78f0-8d22-071f43c33790>
+            rdf:type                   cim:TopologicalNode;
+            cim:IdentifiedObject.mRID  "f63e117f-d243-78f0-8d22-071f43c33790";
+            cim:IdentifiedObject.name  "BP_GA-BO4";
+            cim:TopologicalNode.BaseVoltage
+                    <urn:uuid:597e44dc-2a6e-4c62-82f3-f82cc46e0e14>;
+            cim:TopologicalNode.ConnectivityNodeContainer
+                    <urn:uuid:e454ebf1-94fd-4513-89e4-23239bdca8eb> .
+    
+    <urn:uuid:7221e0f9-008b-4273-8d40-b5d4c6efa0fe>
+            rdf:type  cim:ConnectivityNode;
+            cim:ConnectivityNode.TopologicalNode
+                    <urn:uuid:ab6ca587-d6af-d983-40ff-5b54afc6280e> .
+    
+    <urn:uuid:d9574184-b375-45f6-8fcc-20ec0470bf93>
+            rdf:type  cim:ConnectivityNode;
+            cim:ConnectivityNode.TopologicalNode
+                    <urn:uuid:7c9c425e-5a8f-ca3c-6c8c-96c992a4815f> .
+    
+    <urn:uuid:1a14d3b4-b7b5-4b73-9467-04cad5fb6557>
+            rdf:type  cim:ConnectivityNode;
+            cim:ConnectivityNode.TopologicalNode
+                    <urn:uuid:f63e117f-d243-78f0-8d22-071f43c33790> .
+    
+    <urn:uuid:3179d96c-7ecd-4f8a-b3f0-f24b62a16e87>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:f93b9c2d-7015-29c1-3390-6541665dcaa7> .
+    
+    <urn:uuid:f461fd2d-1e41-4a3e-8213-7cc33c77a089>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:ab6ca587-d6af-d983-40ff-5b54afc6280e> .
+    
+    <urn:uuid:f937c4ac-b9fc-44a2-82a0-99cb34c89974>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:ab6ca587-d6af-d983-40ff-5b54afc6280e> .
+    
+    <urn:uuid:1520ab3c-9392-41c2-8873-39ec83a76c26>
+            rdf:type  cim:ConnectivityNode;
+            cim:ConnectivityNode.TopologicalNode
+                    <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:5ec060e4-23a5-10f4-36d5-882bead511f5>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:3317f4dc-f338-1478-ec87-c9c66f8f7322>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:f63e117f-d243-78f0-8d22-071f43c33790> .
+    
+    <urn:uuid:331f758d-8750-efb6-cb21-bd35aba1c834>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:b4c57b86-875d-da4a-d6d1-1b30101eaaab> .
+    
+    <urn:uuid:fccfb8c9-e368-402b-d913-a0385c952471>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:eba87398-75d8-2b81-9100-4af72f728037> .
+    
+    <urn:uuid:efd7a42e-e198-1515-da20-27ad265b7430>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:b4c57b86-875d-da4a-d6d1-1b30101eaaab> .
+    
+    <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669>
+            rdf:type                   cim:TopologicalNode;
+            cim:IdentifiedObject.mRID  "7f61f6a1-6be7-869f-5236-b08f78e8b669";
+            cim:IdentifiedObject.name  "N1230822396";
+            cim:TopologicalNode.BaseVoltage
+                    <urn:uuid:a7f1d8de-d658-428a-821b-3a5ae5965fd1>;
+            cim:TopologicalNode.ConnectivityNodeContainer
+                    <urn:uuid:d77b61ef-61aa-4b22-95f6-b56ca080788d> .
+    
+    <urn:uuid:9fc1ca1a-bb62-4982-9358-fa9b4ac5564d>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:f78b88e2-5a99-9353-eb29-16de9f9a7570> .
+    
+    <urn:uuid:ecb6a97e-bd2d-40c0-91f6-99dc1e7f59e2>
+            rdf:type  cim:ConnectivityNode;
+            cim:ConnectivityNode.TopologicalNode
+                    <urn:uuid:f93b9c2d-7015-29c1-3390-6541665dcaa7> .
+    
+    <urn:uuid:cae57656-3fc2-4f5e-9ab9-fa5b118a632a>
+            rdf:type  cim:ConnectivityNode;
+            cim:ConnectivityNode.TopologicalNode
+                    <urn:uuid:f78b88e2-5a99-9353-eb29-16de9f9a7570> .
+    
+    <urn:uuid:546121e7-acf3-4bc2-ae49-446e550a1e5c>
+            rdf:type  cim:ConnectivityNode;
+            cim:ConnectivityNode.TopologicalNode
+                    <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:f04ecab5-1a12-4cc0-ba56-b157ebf11a42>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:f93b9c2d-7015-29c1-3390-6541665dcaa7> .
+    
+    <urn:uuid:36aa2bbc-5049-44f4-a4e0-46f7da2e8ccc>
+            rdf:type                 rdfg:Graph , dcat:Dataset;
+            dct:conformsTo           <http://iec.ch/TC57/ns/CIM/Topology-EU/3.0>;
+            dct:description          "The topology dataset for Galia, which is part of the ReliCapGrid.";
+            dct:identifier           "36aa2bbc-5049-44f4-a4e0-46f7da2e8ccc";
+            dct:issued               "2025-02-08"^^xsd:date;
+            dct:requires             <urn:uuid:29beebb0-c460-4ba3-a4d4-c525f8ae9f6c>;
+            dct:temporal             [ rdf:type        dct:PeriodOfTime;
+                                       dcat:endDate    "2022-06-17T00:30:00Z"^^xsd:dateTime;
+                                       dcat:startDate  "2022-06-16T23:30:00Z"^^xsd:dateTime
+                                     ];
+            dcat:distribution        [ rdf:type    dcat:Distribution;
+                                       dct:issued  "2025-02-08T16:36:21Z"^^xsd:dateTime
+                                     ];
+            dcat:isVersionOf         <http://galia.ga/CGMES>;
+            dcat:temporalResolution  "PT1H"^^xsd:duration;
+            dcat:version             "1";
+            json-ld:base             "http://galia.ga/CGMES#" .
+    
+    <urn:uuid:3c377e5e-65cc-45f1-ba12-e20034df7cb3>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:6dad1a97-6874-4206-a5a5-837e495325f8>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:ab6ca587-d6af-d983-40ff-5b54afc6280e> .
+    
+    <urn:uuid:24dd035c-0a8c-4351-aeb2-08d6622b42ae>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:82a2fa09-4ed1-f4c8-9872-0542ebf922f9> .
+    
+    <urn:uuid:604f45c9-e822-4f2b-89d7-2b4b14763328>
+            rdf:type  cim:ConnectivityNode;
+            cim:ConnectivityNode.TopologicalNode
+                    <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:f04ec73d-b94a-4b7e-a3d6-b1234fc37385>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:f93b9c2d-7015-29c1-3390-6541665dcaa7> .
+    
+    <urn:uuid:82a2fa09-4ed1-f4c8-9872-0542ebf922f9>
+            rdf:type                   cim:TopologicalNode;
+            cim:IdentifiedObject.mRID  "82a2fa09-4ed1-f4c8-9872-0542ebf922f9";
+            cim:IdentifiedObject.name  "BP_GA-BO2";
+            cim:TopologicalNode.BaseVoltage
+                    <urn:uuid:a7f1d8de-d658-428a-821b-3a5ae5965fd1>;
+            cim:TopologicalNode.ConnectivityNodeContainer
+                    <urn:uuid:bd25e87a-c626-4dd7-a846-7fba517fbb8f> .
+    
+    <urn:uuid:8121d4c3-9cb2-47db-b40a-99678602bb2a>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:b4c57b86-875d-da4a-d6d1-1b30101eaaab>
+            rdf:type                   cim:TopologicalNode;
+            cim:IdentifiedObject.mRID  "b4c57b86-875d-da4a-d6d1-1b30101eaaab";
+            cim:IdentifiedObject.name  "BP_GA-BH1";
+            cim:TopologicalNode.BaseVoltage
+                    <urn:uuid:a7f1d8de-d658-428a-821b-3a5ae5965fd1>;
+            cim:TopologicalNode.ConnectivityNodeContainer
+                    <urn:uuid:dbd82264-a684-4b87-946d-a5a02714daa9> .
+    
+    <urn:uuid:e19e01f7-eb9b-4ce5-a6fe-4bb4ef0ce6c3>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:c0d1ac25-5282-d415-a817-2d5af1b0aaeb> .
+    
+    <urn:uuid:b675a570-cb6e-11e1-bcee-406c8f32ef58>
+            rdf:type  cim:ConnectivityNode;
+            cim:ConnectivityNode.TopologicalNode
+                    <urn:uuid:ae180293-c3f5-9a2f-eb7d-99692604da25> .
+    
+    <urn:uuid:8f58793a-c3e0-f18d-8b08-10b62f14a1ec>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:790df530-60c7-40bc-be5f-f90e9c65bab4>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:ab6ca587-d6af-d983-40ff-5b54afc6280e> .
+    
+    <urn:uuid:f78b88e2-5a99-9353-eb29-16de9f9a7570>
+            rdf:type                   cim:TopologicalNode;
+            cim:IdentifiedObject.mRID  "f78b88e2-5a99-9353-eb29-16de9f9a7570";
+            cim:IdentifiedObject.name  "GA-Busbar_2";
+            cim:TopologicalNode.BaseVoltage
+                    <urn:uuid:a7f1d8de-d658-428a-821b-3a5ae5965fd1>;
+            cim:TopologicalNode.ConnectivityNodeContainer
+                    <urn:uuid:d77b61ef-61aa-4b22-95f6-b56ca080788d> .
+    
+    <urn:uuid:b67cf870-cb6e-11e1-bcee-406c8f32ef58>
+            rdf:type  cim:ConnectivityNode;
+            cim:ConnectivityNode.TopologicalNode
+                    <urn:uuid:eba87398-75d8-2b81-9100-4af72f728037> .
+    
+    <urn:uuid:cfb37abe-3dde-4bd3-84a6-b2d8d0df6203>
+            rdf:type  cim:ConnectivityNode;
+            cim:ConnectivityNode.TopologicalNode
+                    <urn:uuid:23c97ccf-d87c-4903-ffa6-bc3bbbfe5fe4> .
+    
+    <urn:uuid:f93b9c2d-7015-29c1-3390-6541665dcaa7>
+            rdf:type                   cim:TopologicalNode;
+            cim:IdentifiedObject.mRID  "f93b9c2d-7015-29c1-3390-6541665dcaa7";
+            cim:IdentifiedObject.name  "GA-Busbar_3";
+            cim:TopologicalNode.BaseVoltage
+                    <urn:uuid:f61a400c-1523-9ab0-b15a-aeb120740bae>;
+            cim:TopologicalNode.ConnectivityNodeContainer
+                    <urn:uuid:8d8a82ba-b5b0-4e94-861a-192af055f2b8> .
+    
+    <urn:uuid:124b9180-9112-4b8a-a651-9c1bb9a031da>
+            rdf:type  cim:ConnectivityNode;
+            cim:ConnectivityNode.TopologicalNode
+                    <urn:uuid:f93b9c2d-7015-29c1-3390-6541665dcaa7> .
+    
+    <urn:uuid:2ee82b99-6c2e-87ad-f1fe-52a9a13ea22e>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:ae180293-c3f5-9a2f-eb7d-99692604da25> .
+    
+    <urn:uuid:61b417a0-5728-fe39-efb7-b1254a46845e>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:28797d21-df04-4be6-806b-3be26b040d6a>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:c0d1ac25-5282-d415-a817-2d5af1b0aaeb> .
+    
+    <urn:uuid:f48d48c7-e9f6-460c-898f-cc68a96efdeb>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:ae180293-c3f5-9a2f-eb7d-99692604da25> .
+    
+    <urn:uuid:7fae7c9d-952f-4321-830d-aa667d21969d>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:f93b9c2d-7015-29c1-3390-6541665dcaa7> .
+    
+    <urn:uuid:c79edc43-4a5e-4ba8-bd08-16fcdd1beee7>
+            rdf:type  cim:ConnectivityNode;
+            cim:ConnectivityNode.TopologicalNode
+                    <urn:uuid:c0d1ac25-5282-d415-a817-2d5af1b0aaeb> .
+    
+    <urn:uuid:c8066549-ac67-4a53-afe8-b0a42b11c629>
+            rdf:type  cim:ConnectivityNode;
+            cim:ConnectivityNode.TopologicalNode
+                    <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:178ba4bf-a11d-6150-c4e2-4167d5986159>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:ab6ca587-d6af-d983-40ff-5b54afc6280e> .
+    
+    <urn:uuid:85ceec9c-21a9-4ef2-b7b0-c2bb9552e799>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:ab6ca587-d6af-d983-40ff-5b54afc6280e> .
+    
+    <urn:uuid:baa7aef1-afcd-4981-97c0-ccec7b5ad4e0>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:f78b88e2-5a99-9353-eb29-16de9f9a7570> .
+    
+    <urn:uuid:4905819a-7927-4112-8e3b-4e8178b7daa5>
+            rdf:type  cim:ConnectivityNode;
+            cim:ConnectivityNode.TopologicalNode
+                    <urn:uuid:b4c57b86-875d-da4a-d6d1-1b30101eaaab> .
+    
+    <urn:uuid:eedefa27-de13-4e6f-91a3-42aa86b539d6>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:f78b88e2-5a99-9353-eb29-16de9f9a7570> .
+    
+    <urn:uuid:b65c6ac5-1316-3d06-9240-48822aa53563>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:59efb1a0-a048-5389-545b-eedeeb304f47>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:e02f8ac9-0c2d-6953-d59d-506cfd5d5626>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:7c9c425e-5a8f-ca3c-6c8c-96c992a4815f> .
+    
+    <urn:uuid:34d41114-3d5c-811d-8e96-65d68963bc6b>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:a015f692-3fc5-4ec3-8d1d-977c7b499e7c>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:ab6ca587-d6af-d983-40ff-5b54afc6280e> .
+    
+    <urn:uuid:c9dbf281-e788-4084-b268-3b5a9473ad72>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:e3e0c496-5837-4f0f-a596-cc421940f73f>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:ab6ca587-d6af-d983-40ff-5b54afc6280e> .
+    
+    <urn:uuid:e525ef9b-2bad-edea-74c2-4d804c35136f>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:82a2fa09-4ed1-f4c8-9872-0542ebf922f9> .
+    
+    <urn:uuid:c0d1ac25-5282-d415-a817-2d5af1b0aaeb>
+            rdf:type                   cim:TopologicalNode;
+            cim:IdentifiedObject.mRID  "c0d1ac25-5282-d415-a817-2d5af1b0aaeb";
+            cim:IdentifiedObject.name  "GA-Busbar_5";
+            cim:TopologicalNode.BaseVoltage
+                    <urn:uuid:f61a400c-1523-9ab0-b15a-aeb120740bae>;
+            cim:TopologicalNode.ConnectivityNodeContainer
+                    <urn:uuid:8d8a82ba-b5b0-4e94-861a-192af055f2b8> .
+    
+    <urn:uuid:74039a16-da9d-46dd-a4f1-dd65fbb09ec4>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:f28134fe-076d-4605-aa92-b9e0bbe96841>
+            rdf:type  cim:ConnectivityNode;
+            cim:ConnectivityNode.TopologicalNode
+                    <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:5cb2cb9a-695c-458b-b63a-a84c025981e4>
+            rdf:type  cim:ConnectivityNode;
+            cim:ConnectivityNode.TopologicalNode
+                    <urn:uuid:ab6ca587-d6af-d983-40ff-5b54afc6280e> .
+    
+    <urn:uuid:41b735f7-da62-4bd3-ac98-fbdec24baeac>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:ab6ca587-d6af-d983-40ff-5b54afc6280e> .
+    
+    <urn:uuid:bd61b1f9-474d-424e-9709-42f75337c477>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:f78b88e2-5a99-9353-eb29-16de9f9a7570> .
+    
+    <urn:uuid:f40ed1de-e61a-83b9-285f-500c1afe41c5>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:23c97ccf-d87c-4903-ffa6-bc3bbbfe5fe4>
+            rdf:type                   cim:TopologicalNode;
+            cim:IdentifiedObject.mRID  "23c97ccf-d87c-4903-ffa6-bc3bbbfe5fe4";
+            cim:IdentifiedObject.name  "BP_GA-BO1";
+            cim:TopologicalNode.BaseVoltage
+                    <urn:uuid:a7f1d8de-d658-428a-821b-3a5ae5965fd1>;
+            cim:TopologicalNode.ConnectivityNodeContainer
+                    <urn:uuid:a581a1d6-dbfe-40b7-9405-bd6303376efc> .
+    
+    <urn:uuid:dd0ef9ed-a4fe-5ac9-f8f9-66450ac68d41>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:da2e2973-f190-2deb-0703-233c57ce9976>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:5f40c3f7-9540-4e1b-aa97-6553d5524877>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:f78b88e2-5a99-9353-eb29-16de9f9a7570> .
+    
+    <urn:uuid:ae180293-c3f5-9a2f-eb7d-99692604da25>
+            rdf:type                   cim:TopologicalNode;
+            cim:IdentifiedObject.mRID  "ae180293-c3f5-9a2f-eb7d-99692604da25";
+            cim:IdentifiedObject.name  "BP_GA-BO5";
+            cim:TopologicalNode.BaseVoltage
+                    <urn:uuid:597e44dc-2a6e-4c62-82f3-f82cc46e0e14>;
+            cim:TopologicalNode.ConnectivityNodeContainer
+                    <urn:uuid:eac31e3d-fdf5-4656-b10e-66481bfcfec5> .
+    
+    <urn:uuid:39d27c17-1e5b-4edc-a7ec-65a2d56542df>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:f63e117f-d243-78f0-8d22-071f43c33790> .
+    
+    <urn:uuid:90f78705-5ef4-479a-8d5a-70efc554e0ba>
+            rdf:type  cim:ConnectivityNode;
+            cim:ConnectivityNode.TopologicalNode
+                    <urn:uuid:ab6ca587-d6af-d983-40ff-5b54afc6280e> .
+    
+    <urn:uuid:14275300-f0a2-8c71-4559-ece779a0e7c1>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:7e9dd682-86cd-4594-b58f-1a0534540aca>
+            rdf:type  cim:ConnectivityNode;
+            cim:ConnectivityNode.TopologicalNode
+                    <urn:uuid:f78b88e2-5a99-9353-eb29-16de9f9a7570> .
+    
+    <urn:uuid:30aa2972-aafb-4c38-912d-a14867d47cec>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:ab6ca587-d6af-d983-40ff-5b54afc6280e> .
+    
+    <urn:uuid:da232169-1c36-495a-8af6-a0d7d2b39f52>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:f93b9c2d-7015-29c1-3390-6541665dcaa7> .
+    
+    <urn:uuid:e62bba29-9a97-f7b1-0ead-27dc46ce1968>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:23c97ccf-d87c-4903-ffa6-bc3bbbfe5fe4> .
+    
+    <urn:uuid:a78aa06b-959f-3b55-b1f7-0fe4699750e6>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:f78b88e2-5a99-9353-eb29-16de9f9a7570> .
+    
+    <urn:uuid:faab7959-f9bf-421b-bc3f-d364e0c1388b>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:c0d1ac25-5282-d415-a817-2d5af1b0aaeb> .
+    
+    <urn:uuid:eba87398-75d8-2b81-9100-4af72f728037>
+            rdf:type                   cim:TopologicalNode;
+            cim:IdentifiedObject.mRID  "eba87398-75d8-2b81-9100-4af72f728037";
+            cim:IdentifiedObject.name  "BP_GA-BO3";
+            cim:TopologicalNode.BaseVoltage
+                    <urn:uuid:597e44dc-2a6e-4c62-82f3-f82cc46e0e14>;
+            cim:TopologicalNode.ConnectivityNodeContainer
+                    <urn:uuid:54a2e470-ef70-443f-ae81-bcf2d117caa2> .
+    
+    <urn:uuid:24c50d7f-b924-0668-687d-e17123d2fb17>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:23c97ccf-d87c-4903-ffa6-bc3bbbfe5fe4> .
+    
+    <urn:uuid:fab54e9c-b12e-4e47-a9f2-fec4ef96c0c0>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:f78b88e2-5a99-9353-eb29-16de9f9a7570> .
+    
+    <urn:uuid:db0f3434-0af3-4f3f-bbd4-ba1723538ab4>
+            rdf:type  cim:ConnectivityNode;
+            cim:ConnectivityNode.TopologicalNode
+                    <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:f5f72022-e55b-e57f-5b46-7a8f604e568a>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:f78b88e2-5a99-9353-eb29-16de9f9a7570> .
+    
+    <urn:uuid:5b469722-78b3-b7cf-015a-659d8f819dd8>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:14f212ae-bcd8-46ae-9366-11dec9602a01>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+    
+    <urn:uuid:abc40269-5f9a-4b13-a5a5-8e3b3929eff5>
+            rdf:type                      cim:Terminal;
+            cim:Terminal.TopologicalNode  <urn:uuid:7f61f6a1-6be7-869f-5236-b08f78e8b669> .
+}

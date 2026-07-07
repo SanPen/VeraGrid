@@ -8,15 +8,16 @@ from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.base import Base
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 if TYPE_CHECKING:
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.curve import Curve
 
 class CurveData(Base):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='Curve', class_type='Curve', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The point data values that define this curve.''', profiles=[]),
-		CgmesProperty(property_name='xvalue', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''A floating point number. The range is unspecified and not limited.''', profiles=[]),
-		CgmesProperty(property_name='y1value', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''A floating point number. The range is unspecified and not limited.''', profiles=[]),
-		CgmesProperty(property_name='y2value', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''A floating point number. The range is unspecified and not limited.''', profiles=[]),
+		CgmesProperty(property_name='Curve', class_type='Curve', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The point data values that define this curve.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='xvalue', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''A floating point number. The range is unspecified and not limited.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='y1value', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''A floating point number. The range is unspecified and not limited.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='y2value', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''A floating point number. The range is unspecified and not limited.''', profiles=[CgmesProfileType.EQ]),
 	)
 	__slots__ = ('Curve', 'xvalue', 'y1value', 'y2value')
 	def __init__(self, rdfid, tpe, resources=list(), class_replacements=dict()):

@@ -10,7 +10,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from VeraGridEngine.Simulations.OPF.opf_results import OptimalPowerFlowResults
 from VeraGridEngine.Simulations.results_table import ResultsTable
-from VeraGridEngine.Simulations.results_template import ResultsTemplate
+from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
 from VeraGridEngine.basic_structures import IntVec, Vec, StrVec, CxMat, Mat, BoolVec
 from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
 
@@ -23,6 +23,73 @@ class OptimalPowerFlowTimeSeriesResults(ResultsTemplate):
     """
     Optimal power flow time series results
     """
+
+    LOCAL_RESULTS_DECLARATIONS = (
+        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='load_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='generator_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='battery_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='shunt_like_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='hvdc_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='vsc_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='fuel_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='emission_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='technology_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='fluid_node_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='fluid_path_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='fluid_injection_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='voltage', tpe=CxMat, old_names=list(), expandable=True),
+        ResultsProperty(name='Sbus', tpe=CxMat, old_names=list(), expandable=True),
+        ResultsProperty(name='bus_shadow_prices', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='load_power', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='load_shedding', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='load_shedding_cost', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='Sf', tpe=CxMat, old_names=list(), expandable=True),
+        ResultsProperty(name='St', tpe=CxMat, old_names=list(), expandable=True),
+        ResultsProperty(name='loading', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='losses', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='tap_angle', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='tap_module', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='overloads', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='overloads_cost', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='rates', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='contingency_rates', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='contingency_flows_list', tpe=list, old_names=list(), expandable=False),
+        ResultsProperty(name='contingency_indices_list', tpe=list, old_names=list(), expandable=False),
+        ResultsProperty(name='contingency_flows_slacks_list', tpe=list, old_names=list(), expandable=False),
+        ResultsProperty(name='hvdc_Pf', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='hvdc_loading', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='vsc_Pf', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='vsc_loading', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='fluid_node_current_level', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='fluid_node_flow_in', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='fluid_node_flow_out', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='fluid_node_p2x_flow', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='fluid_node_spillage', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='fluid_path_flow', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='fluid_injection_flow', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='generator_power', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='generator_reactive_power', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='generator_shedding', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='generator_cost', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='generator_producing', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='generator_starting_up', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='generator_shutting_down', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='generator_invested', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='shunt_like_reactive_power', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='battery_power', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='battery_energy', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='battery_invested', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='system_fuel', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='system_emissions', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='system_energy_cost', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='system_total_energy_cost', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='power_by_technology', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='converged', tpe=BoolVec, old_names=list(), expandable=True),
+    )
+
     __slots__ = (
         "bus_names",
         "branch_names",
@@ -284,73 +351,6 @@ class OptimalPowerFlowTimeSeriesResults(ResultsTemplate):
         self.system_total_energy_cost = np.empty(nt, dtype=float)
         self.power_by_technology = np.empty((nt, ntech), dtype=float)
 
-        self.register(name='bus_names', tpe=StrVec)
-        self.register(name='branch_names', tpe=StrVec)
-        self.register(name='load_names', tpe=StrVec)
-        self.register(name='generator_names', tpe=StrVec)
-        self.register(name='battery_names', tpe=StrVec)
-        self.register(name='shunt_like_names', tpe=StrVec)
-
-        self.register(name='hvdc_names', tpe=StrVec)
-        self.register(name='bus_types', tpe=IntVec)
-
-        self.register(name='voltage', tpe=CxMat)
-        self.register(name='Sbus', tpe=CxMat)
-        self.register(name='bus_shadow_prices', tpe=Mat)
-
-        self.register(name='load_power', tpe=Mat)
-        self.register(name='load_shedding', tpe=Mat)
-        self.register(name='load_shedding_cost', tpe=Mat)
-
-        self.register(name='Sf', tpe=CxMat)
-        self.register(name='St', tpe=CxMat)
-        self.register(name='loading', tpe=Mat)
-        self.register(name='losses', tpe=Mat)
-        self.register(name='tap_angle', tpe=Mat)
-        self.register(name='tap_module', tpe=Mat)
-        self.register(name='overloads', tpe=Mat)
-        self.register(name='overloads_cost', tpe=Mat)
-        self.register(name='rates', tpe=Vec)
-        self.register(name='contingency_rates', tpe=Vec)
-        self.register(name='contingency_flows_list', tpe=list)
-        self.register(name='contingency_indices_list', tpe=list)
-        self.register(name='contingency_flows_slacks_list', tpe=list)
-
-        self.register(name='hvdc_Pf', tpe=Mat)
-        self.register(name='hvdc_loading', tpe=Mat)
-
-        self.register(name='fluid_node_current_level', tpe=Mat)
-        self.register(name='fluid_node_flow_in', tpe=Mat)
-        self.register(name='fluid_node_flow_out', tpe=Mat)
-        self.register(name='fluid_node_p2x_flow', tpe=Mat)
-        self.register(name='fluid_node_spillage', tpe=Mat)
-
-        self.register(name='fluid_path_flow', tpe=Mat)
-        self.register(name='fluid_injection_flow', tpe=Mat)
-
-        self.register(name='generator_power', tpe=Mat)
-        self.register(name='generator_reactive_power', tpe=Mat)
-        self.register(name='generator_shedding', tpe=Mat)
-        self.register(name='generator_cost', tpe=Mat)
-        # self.register(name='generator_fuel', tpe=Mat)
-        # self.register(name='generator_emissions', tpe=Mat)
-        self.register(name='generator_producing', tpe=Mat)
-        self.register(name='generator_starting_up', tpe=Mat)
-        self.register(name='generator_shutting_down', tpe=Mat)
-        self.register(name='generator_invested', tpe=Mat)
-
-        self.register(name='shunt_like_reactive_power', tpe=Mat)
-
-        self.register(name='battery_power', tpe=Mat)
-        self.register(name='battery_energy', tpe=Mat)
-
-        self.register(name='system_fuel', tpe=Mat)
-        self.register(name='system_emissions', tpe=Mat)
-        self.register(name='system_energy_cost', tpe=Mat)
-        self.register(name='system_total_energy_cost', tpe=Mat)
-        self.register(name='power_by_technology', tpe=Mat)
-
-        self.register(name='converged', tpe=BoolVec)
 
     @property
     def phase_shift(self) -> Mat:

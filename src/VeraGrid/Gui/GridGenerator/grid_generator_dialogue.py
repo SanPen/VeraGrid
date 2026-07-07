@@ -25,7 +25,7 @@ class GridGeneratorGUI(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.setWindowTitle('Grid Generator')
+        self.setWindowTitle(self.tr("Grid Generator"))
 
         self.g = RpgAlgorithm()
         self.circuit = MultiCircuit()
@@ -34,17 +34,22 @@ class GridGeneratorGUI(QtWidgets.QDialog):
         self.ui.applyButton.clicked.connect(self.apply)
         self.ui.previewButton.clicked.connect(self.preview)
 
-    def msg(self, text, title="Warning"):
+    def msg(self, text: str, title: str | None = None) -> None:
         """
         Message box
         :param text: Text to display
         :param title: Name of the window
         """
+        if title is None:
+            message_title: str = self.tr("Warning")
+        else:
+            message_title = title
+
         msg = QtWidgets.QMessageBox()
         msg.setIcon(QtWidgets.QMessageBox.Icon.Information)
         msg.setText(text)
         # msg.setInformativeText("This is additional information")
-        msg.setWindowTitle(title)
+        msg.setWindowTitle(message_title)
         # msg.setDetailedText("The details are as follows:")
         msg.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Ok)
         retval = msg.exec()

@@ -31,6 +31,7 @@ class OptimalNetTransferCapacityOptions(OptionsTemplate):
         GCProp(key="branch_rating_contribution", tpe=float),
         GCProp(key="monitor_only_ntc_load_rule_branches", tpe=bool),
         GCProp(key="consider_contingencies", tpe=bool),
+        GCProp(key="corrective_contingencies", tpe=bool),
         GCProp(key="strict_formulation", tpe=bool),
         GCProp(key="opf_options", tpe=DeviceType.SimulationOptionsDevice),
         GCProp(key="lin_options", tpe=DeviceType.SimulationOptionsDevice),
@@ -48,6 +49,7 @@ class OptimalNetTransferCapacityOptions(OptionsTemplate):
                  branch_rating_contribution: float = 70 / 100.0,
                  monitor_only_ntc_load_rule_branches: bool = False,
                  consider_contingencies: bool = False,
+                 corrective_contingencies: bool = True,
                  strict_formulation: bool = False,
                  opf_options: OptimalPowerFlowOptions | None = None,
                  lin_options: LinearAnalysisOptions | None = None, ):
@@ -65,6 +67,9 @@ class OptimalNetTransferCapacityOptions(OptionsTemplate):
         :param monitor_only_ntc_load_rule_branches:
         :param consider_contingencies: if True, the contingency groups needed (contingency_groups_used)
                                        must be passed inside the opf_options
+        :param corrective_contingencies: corrective N-1, meaning VSC/HVDC converters are dispatchable
+                                         Set to False only for a conservative preventive (fixed-set-point) N-1,
+                                         e.g. for a regulatory assessment or to reduce the problem size.
         :param strict_formulation: Use the strict formulation
         :param opf_options: OptimalPowerFlowOptions
         :param lin_options: LinearAnalysisOptions
@@ -83,6 +88,7 @@ class OptimalNetTransferCapacityOptions(OptionsTemplate):
         self.branch_rating_contribution: float = branch_rating_contribution
         self.monitor_only_ntc_load_rule_branches: bool = monitor_only_ntc_load_rule_branches
         self.consider_contingencies: bool = consider_contingencies
+        self.corrective_contingencies: bool = corrective_contingencies
         self.strict_formulation: bool = strict_formulation
 
         if opf_options is None:

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:adms="http://www.w3.org/ns/adms#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+  xml:base="https://energy.referencedata.eu" > 
+  <skos:ConceptScheme rdf:about="https://energy.referencedata.eu/LicenseScheme/NCP/1.0">
+    <dcterms:accessRights rdf:resource="https://energy.referencedata.eu/Confidentiality/Public"/>
+    <skos:definition xml:lang="en">Controlled vocabulary and reference dataset describing dataset license conditions for energy and power system data. The scheme is intended to support consistent tagging of datasets and to help software tools, data catalogues, and language models understand permitted reuse conditions.</skos:definition>
+    <dcterms:description xml:lang="en">Reference dataset containing license concepts for use with dcterms:license on datasets and distributions. The scheme distinguishes between fully open, non-commercial, restricted derivation, restricted share-alike derivation, and informational-use-only license patterns.</dcterms:description>
+    <prov:generatedAtTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-03-22T00:00:00Z</prov:generatedAtTime>
+    <dcterms:hasPart rdf:resource="https://energy.referencedata.eu/LicenseScheme/NCP/1.0#collection_ncp_license"/>
+    <dcterms:identifier>e64345cc-016b-4cc2-a5d1-8beabf97beab</dcterms:identifier>
+    <dcat:isVersionOf rdf:resource="https://energy.referencedata.eu/LicenseScheme"/>
+    <dcterms:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2026-03-22</dcterms:issued>
+    <dcterms:license rdf:resource="https://creativecommons.org/licenses/by/4.0/"/>
+    <skos:prefLabel xml:lang="en">Energy Reference Data License Scheme</skos:prefLabel>
+    <dcterms:publisher rdf:resource="https://www.entsoe.eu/"/>
+    <dcterms:rights>Copyright</dcterms:rights>
+    <dcterms:rightsHolder>ENTSO-E</dcterms:rightsHolder>
+    <dcterms:title>LicenseScheme-NCP-1.0</dcterms:title>
+    <rdf:type rdf:resource="http://www.w3.org/ns/dcat#Dataset"/>
+    <dcat:version>1.0.0</dcat:version>
+    <adms:versionNotes xml:lang="en">Initial version of the Energy Reference Data License Scheme. Provides license concepts intended for use with dcterms:license, aligned where possible with Creative Commons and Open Data Commons license resources.</adms:versionNotes>
+  </skos:ConceptScheme>
+  <dcterms:LicenseDocument rdf:about="https://energy.referencedata.eu/License/InformationalUseOnly">
+    <skos:definition xml:lang="en">Dataset may only be accessed and used for information, reference, or viewing purposes. Redistribution, modification, extraction into other datasets, and creation of derived datasets are not permitted unless explicitly stated otherwise.</skos:definition>
+    <skos:notation>INFO-ONLY</skos:notation>
+    <skos:prefLabel xml:lang="en">Informational Use Only</skos:prefLabel>
+    <skos:scopeNote xml:lang="en">This concept is intended for cases where data is provided for awareness, consultation, or understanding, but not for reuse or republication.</skos:scopeNote>
+  </dcterms:LicenseDocument>
+  <dcterms:LicenseDocument rdf:about="https://energy.referencedata.eu/License/OpenCommercial">
+    <skos:definition xml:lang="en">Dataset may be published, copied, used, transformed, and incorporated into other datasets, including for commercial purposes.</skos:definition>
+    <skos:notation>OPEN-COMMERCIAL</skos:notation>
+    <skos:prefLabel xml:lang="en">Open - Commercial Use Allowed</skos:prefLabel>
+    <owl:sameAs rdf:resource="https://creativecommons.org/licenses/by/4.0/"/>
+    <skos:scopeNote xml:lang="en">This concept is intended for datasets that are openly reusable, including in commercial products and services. Attribution obligations may still apply through the underlying legal license.</skos:scopeNote>
+    <dcterms:source rdf:resource="https://creativecommons.org/licenses/by/4.0/"/>
+  </dcterms:LicenseDocument>
+  <dcterms:LicenseDocument rdf:about="https://energy.referencedata.eu/License/OpenNonCommercial">
+    <skos:definition xml:lang="en">Dataset may be published, copied, used, transformed, and incorporated into other datasets for non-commercial purposes only.</skos:definition>
+    <skos:notation>OPEN-NONCOMMERCIAL</skos:notation>
+    <skos:prefLabel xml:lang="en">Open - Non-Commercial Use Only</skos:prefLabel>
+    <owl:sameAs rdf:resource="https://creativecommons.org/licenses/by-nc/4.0/"/>
+    <skos:scopeNote xml:lang="en">This concept is intended for datasets that are openly reusable except for commercial use. It may be suitable where broad academic, regulatory, or public-interest reuse is allowed, but commercial exploitation is not permitted.</skos:scopeNote>
+    <dcterms:source rdf:resource="https://creativecommons.org/licenses/by-nc/4.0/"/>
+  </dcterms:LicenseDocument>
+  <dcterms:LicenseDocument rdf:about="https://energy.referencedata.eu/License/PublicDomain">
+    <skos:definition xml:lang="en">Dataset is dedicated to the public domain and may be used without any restrictions, including without attribution.</skos:definition>
+    <skos:exactMatch rdf:resource="https://opendatacommons.org/licenses/pddl/1-0/"/>
+    <skos:prefLabel xml:lang="en">Public Domain (No Restrictions)</skos:prefLabel>
+    <dcterms:source rdf:resource="https://opendatacommons.org/licenses/pddl/1-0/"/>
+  </dcterms:LicenseDocument>
+  <dcterms:LicenseDocument rdf:about="https://energy.referencedata.eu/License/RestrictedDerivationAllowed">
+    <skos:definition xml:lang="en">Original dataset is not public and may not be published or redistributed. The dataset may be used as input to create derived datasets, and such derived datasets may be published if permitted by the applicable terms.</skos:definition>
+    <skos:notation>RESTRICTED-DERIVATION</skos:notation>
+    <skos:prefLabel xml:lang="en">Restricted - Derivation Allowed</skos:prefLabel>
+    <skos:scopeNote xml:lang="en">This concept is typically used for confidential or operational datasets where direct redistribution is prohibited, but transformation into a publishable derivative dataset is allowed. This usually requires specific contractual terms rather than a standard public license.</skos:scopeNote>
+  </dcterms:LicenseDocument>
+  <dcterms:LicenseDocument rdf:about="https://energy.referencedata.eu/License/RestrictedDerivationShareAlike">
+    <skos:definition xml:lang="en">Dataset may only be used to derive another dataset. Any derived dataset shall remain subject to the same or equivalent restrictions as the original dataset.</skos:definition>
+    <skos:notation>RESTRICTED-DERIVATION-SA</skos:notation>
+    <skos:prefLabel xml:lang="en">Restricted - Derivation Share Alike</skos:prefLabel>
+    <owl:sameAs rdf:resource="https://opendatacommons.org/licenses/odbl/"/>
+    <skos:scopeNote xml:lang="en">This concept captures a restrictive share-alike pattern for derived datasets. The closest well-known public analogue is ODbL, but this concept is stricter and is normally governed by bespoke contractual terms.</skos:scopeNote>
+    <dcterms:source rdf:resource="https://opendatacommons.org/licenses/odbl/"/>
+  </dcterms:LicenseDocument>
+  <dcterms:LicenseDocument rdf:about="https://energy.referencedata.eu/License/ShareAlikeOpen">
+    <skos:definition xml:lang="en">Dataset may be used and redistributed, including commercially, but derivative works must be licensed under the same terms.</skos:definition>
+    <skos:exactMatch rdf:resource="https://creativecommons.org/licenses/by-sa/4.0/"/>
+    <skos:prefLabel xml:lang="en">Open - Share Alike</skos:prefLabel>
+    <dcterms:source rdf:resource="https://creativecommons.org/licenses/by-sa/4.0/"/>
+  </dcterms:LicenseDocument>
+  <prov:Collection rdf:about="https://energy.referencedata.eu/LicenseScheme/NCP/1.0#collection_ncp_license">
+    <prov:hadMember rdf:resource="https://energy.referencedata.eu/License/OpenCommercial"/>
+    <prov:hadMember rdf:resource="https://energy.referencedata.eu/License/OpenNonCommercial"/>
+    <prov:hadMember rdf:resource="https://energy.referencedata.eu/License/RestrictedDerivationAllowed"/>
+    <prov:hadMember rdf:resource="https://energy.referencedata.eu/License/RestrictedDerivationShareAlike"/>
+    <prov:hadMember rdf:resource="https://energy.referencedata.eu/License/InformationalUseOnly"/>
+    <dcterms:identifier>df7fa2ef-72f8-4c18-b946-e729e5259630</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Collection of License Supported by NCP</skos:prefLabel>
+  </prov:Collection>
+</rdf:RDF>

@@ -16,7 +16,8 @@ class DiagramsModel(QtCore.QAbstractListModel):
     # from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import GridMapWidget
     """
 
-    def __init__(self, list_of_diagrams: List[Union[SchematicWidget, GridMapWidget]]):
+    def __init__(self,
+                 list_of_diagrams: List[Union[SchematicWidget, GridMapWidget]]):
         """
         Enumeration model
         :param list_of_diagrams: list of enumeration values to show

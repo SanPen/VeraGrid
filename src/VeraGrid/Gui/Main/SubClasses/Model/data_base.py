@@ -21,15 +21,18 @@ import VeraGrid.Gui.gui_functions as gf
 from VeraGrid.Gui.object_model import ObjectsModel
 from VeraGrid.Gui.object_proxy_model import ObjectModelFilterProxy
 from VeraGrid.Gui.profiles_model import ProfilesModel
-from VeraGridEngine.enumerations import DeviceType, FmuTemplateDomain, TimeSeriesSearchPoint
+from VeraGridEngine.enumerations import DeviceType, DynamicSimulationMode, TimeSeriesSearchPoint, PrpCat
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.Topology.detect_substations import detect_substations, detect_facilities
 from VeraGrid.Gui.Analysis.object_plot_analysis import object_histogram_analysis
 from VeraGrid.Gui.messages import yes_no_question, warning_msg, info_msg
 from VeraGrid.Gui.Main.SubClasses.Model.diagrams import DiagramsMain
-from VeraGrid.Gui.Diagrams.Editors.line_editor import LineEditor
-from VeraGrid.Gui.TowerBuilder.LineBuilderDialogue import TowerBuilderGUI
-from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI, DynamicEditorMode
+from VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor import LineDeviceEditorDialog
+from VeraGrid.Gui.DeviceEditors.DcLineEditor.dc_line_device_editor import DcLineDeviceEditorDialog
+from VeraGrid.Gui.DeviceEditors.LoadDesigner.load_device_editor import LoadDeviceEditorDialog
+from VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor import GeneratorEditorDialog
+from VeraGrid.Gui.DeviceEditors.VscEditor.vsc_device_editor import VscDeviceEditorDialog
+from VeraGrid.Gui.DeviceEditors.TowerBuilder.LineBuilderDialogue import TowerBuilderGUI
 from VeraGrid.Gui.FmuTemplateEditor.fmu_template_editor import FmuTemplateEditorDialog
 from VeraGrid.Gui.SystemScaler.system_scaler import SystemScaler
 from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import GridMapWidget, generate_map_diagram
@@ -37,9 +40,11 @@ from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidg
 from VeraGrid.Gui.GridReduce.grid_reduce import GridReduceDialogue
 from VeraGrid.Gui.SubstationDesigner.substation_designer import SubstationDesigner
 from VeraGrid.Gui.general_dialogues import LogsDialogue, CustomQuestionDialogue, CheckListDialogue
-from VeraGrid.Gui.Diagrams.Editors.transformer_editor import TransformerEditor
-from VeraGrid.Gui.Diagrams.Editors.transformer3w_editor import Transformer3WEditor
-from VeraGrid.Gui.Diagrams.Editors.controllable_shunt_editor import ControllableShuntEditor
+from VeraGrid.Gui.DeviceEditors.TransformerEditor.transformer_device_editor import TransformerDeviceEditorDialog
+from VeraGrid.Gui.DeviceEditors.Transformer3wEditor.transformer3w_device_editor import Transformer3WDeviceEditorDialog
+from VeraGrid.Gui.DeviceEditors.ControllableShuntEditor.controllable_shunt_device_editor import (
+    ControllableShuntDeviceEditorDialog,
+)
 from VeraGrid.Gui.Icons.icon_associations import device_type_icons
 
 
@@ -66,14 +71,35 @@ class DataBaseTableMain(DiagramsMain):
         # setup the tree for compiled arrays
         self.setup_compiled_arrays_tree()
 
-        (self.ts_search_points_dict,
-         ts_search_points_mdl) = gf.enums_to_model(
-            [TimeSeriesSearchPoint.HighestLoad,
-             TimeSeriesSearchPoint.LowestLoad]
+        ts_search_points_mdl = gf.ComboModel(
+            enum_values=[TimeSeriesSearchPoint.HighestLoad,
+                         TimeSeriesSearchPoint.LowestLoad],
+            translate=self.tr
         )
         self.ui.goToTsPointComboBox.setModel(ts_search_points_mdl)
 
-        self.ui.smart_search_lineEdit.setPlaceholderText("Type the object name or a smart filter expression ...")
+        self.ui.smart_search_lineEdit.setPlaceholderText(
+            self.tr("Type the object name or a smart filter expression ...")
+        )
+
+        prop_filter_mdl = gf.ComboModel(
+            icon_enum_values=[
+                (PrpCat.All,":/Icons/icons/edit.png"),
+                (PrpCat.TP,":/Icons/icons/automatic_layout.png"),
+                (PrpCat.PF,":/Icons/icons/pf.png"),
+                (PrpCat.PF3,":/Icons/icons/pf3.png"),
+                (PrpCat.SC,":/Icons/icons/short_circuit.png"),
+                (PrpCat.OPF,":/Icons/icons/dcopf.png"),
+                (PrpCat.CON,":/Icons/icons/otdf.png"),
+                (PrpCat.REL,":/Icons/icons/reliability.png"),
+                (PrpCat.NTC,":/Icons/icons/ntc_opf.png"),
+                (PrpCat.INV,":/Icons/icons/expansion_planning.png"),
+                (PrpCat.RMS,":/Icons/icons/dyn.png"),
+                (PrpCat.EMT,":/Icons/icons/dyn_emt.png"),
+            ],
+            translate=self.tr
+        )
+        self.ui.dbFilterComboBox.setModel(prop_filter_mdl)
 
         # Buttons
         self.ui.filter_pushButton.clicked.connect(self.objects_smart_search)
@@ -90,6 +116,8 @@ class DataBaseTableMain(DiagramsMain):
         self.ui.actionDetect_facilities.triggered.connect(self.detect_facilities)
         self.ui.actionGrid_reduction.triggered.connect(self.grid_reduction_from_schematic_selection)
         self.ui.actionSubstation_wizard.triggered.connect(self.add_substation_with_wizard)
+        self.ui.actionSet_model_x_y_based_on_lat_lon.triggered.connect(self.set_model_x_y_based_on_lat_lon)
+        self.ui.actionRestore_investments.triggered.connect(self.restore_investments)
 
         # tree click
         self.ui.dataStructuresTreeView.clicked.connect(self.view_objects_data)
@@ -110,6 +138,7 @@ class DataBaseTableMain(DiagramsMain):
 
         # combobox change
         self.ui.associationsComboBox.currentTextChanged.connect(self.on_associations_combo_box_change)
+        self.ui.dbFilterComboBox.currentIndexChanged.connect(self.view_objects_data)
 
     def setup_objects_tree(self):
         """
@@ -143,12 +172,18 @@ class DataBaseTableMain(DiagramsMain):
         """
         template_elm, dictionary_of_lists = self.circuit.get_dictionary_of_lists(elm_type=elm_type)
 
-        mdl = ObjectsModel(objects=elements,
-                           property_list=list(template_elm.property_list),
-                           time_index=self.get_db_slider_index(),
-                           parent=self.ui.dataStructureTableView,
-                           editable=True,
-                           dictionary_of_lists=dictionary_of_lists)
+        filter_prop = self.ui.dbFilterComboBox.currentData()
+
+        mdl = ObjectsModel(
+            objects=elements,
+            property_list=list(template_elm.property_list),
+            time_index=self.get_db_slider_index(),
+            parent=self.ui.dataStructureTableView,
+            editable=True,
+            dictionary_of_lists=dictionary_of_lists,
+            properties_filter=filter_prop,
+            error_msg_ptr=self.show_error_toast
+        )
 
         return mdl
 
@@ -168,6 +203,7 @@ class DataBaseTableMain(DiagramsMain):
                 if len(magnitudes) > 0:
                     # get the enumeration unique association with the device text
                     dev_type = self.circuit.device_type_name_dict[dev_type_text]
+                    _, dictionary_of_lists = self.circuit.get_dictionary_of_lists(elm_type=dev_type)
 
                     idx = self.ui.device_type_magnitude_comboBox.currentIndex()
                     magnitude = magnitudes[idx]
@@ -178,6 +214,7 @@ class DataBaseTableMain(DiagramsMain):
                                         device_type=dev_type,
                                         magnitude=magnitude,
                                         data_format=mtype,
+                                        dictionary_of_lists=dictionary_of_lists,
                                         parent=self.ui.profiles_tableView)
                     self.ui.profiles_tableView.setModel(mdl)
                 else:
@@ -323,7 +360,10 @@ class DataBaseTableMain(DiagramsMain):
             source_model = proxy_model.sourceModel()
 
             sel_idx = self.ui.dataStructureTableView.selectedIndexes()
-            objects: List[ALL_DEV_TYPES] = source_model.objects if hasattr(source_model, 'objects') else []
+            if isinstance(source_model, ObjectsModel):
+                objects: List[ALL_DEV_TYPES] = source_model.objects
+            else:
+                objects = list()
 
             if len(objects) > 0:
 
@@ -557,8 +597,7 @@ class DataBaseTableMain(DiagramsMain):
                 self.show_warning_toast("No substations to draw...")
                 return
 
-            cmap_text = self.ui.palette_comboBox.currentText()
-            cmap = self.cmap_dict[cmap_text]
+            cmap = self.ui.palette_comboBox.currentData()
             subgrid = self.circuit.slice_buses(buses=list(selected_buses))
 
             diagram = generate_map_diagram(
@@ -595,7 +634,7 @@ class DataBaseTableMain(DiagramsMain):
                 default_bus_voltage=self.ui.defaultBusVoltageSpinBox.value()
             )
 
-            default_tile_source = self.tile_name_dict[self.ui.tile_provider_comboBox.currentText()]
+            default_tile_source = self.ui.tile_provider_comboBox.currentData()
             tile_source = self.tile_name_dict.get(diagram.tile_source, default_tile_source)
 
             diagram_widget = GridMapWidget(
@@ -860,6 +899,12 @@ class DataBaseTableMain(DiagramsMain):
                 obj = dev.Facility(name=name)
                 self.circuit.add_facility(obj)
 
+            elif elm_type == DeviceType.MarketUnitDevice.value:
+
+                name = f'Market unit {self.circuit.get_market_unit_number()}'
+                obj = dev.MarketUnit(name=name)
+                self.circuit.add_market_unit(obj)
+
             # elif elm_type == DeviceType.DynamicModelHostDevice.value:
             #
             #     name = f'RMS model {self.circuit.get_rms_models_number()}'
@@ -868,7 +913,7 @@ class DataBaseTableMain(DiagramsMain):
 
             elif elm_type == DeviceType.EmtModelTemplateDevice.value:
 
-                name = f'EMT template {len(self.circuit.rms_events)}'
+                name = f'EMT template {len(self.circuit.emt_models)}'
                 obj = dev.EmtModelTemplate(name=name)
                 self.circuit.add_emt_model(obj)
 
@@ -900,13 +945,13 @@ class DataBaseTableMain(DiagramsMain):
 
             elif elm_type == DeviceType.EmtEventDevice.value:
 
-                name = f'EMT event {len(self.circuit.rms_events)}'
+                name = f'EMT event {len(self.circuit.emt_events)}'
                 obj = dev.EmtEvent(name=name)
                 self.circuit.add_emt_event(obj)
 
             elif elm_type == DeviceType.EmtEventsGroupDevice.value:
 
-                name = f'EMT event group {len(self.circuit.rms_events_groups)}'
+                name = f'EMT event group {len(self.circuit.emt_events_groups)}'
                 obj = dev.EmtEventsGroup(name=name)
                 self.circuit.add_emt_events_group(obj)
 
@@ -978,69 +1023,56 @@ class DataBaseTableMain(DiagramsMain):
                         self.tower_builder_window.exec()
 
                     elif elm_type == DeviceType.LineDevice.value:
-                        dlg = LineEditor(line=elm, grid=self.circuit)
+                        dlg = LineDeviceEditorDialog(api_object=elm, circuit=self.circuit)
                         dlg.exec()
 
+                    elif elm_type == DeviceType.DCLineDevice.value:
+                        dlg = DcLineDeviceEditorDialog(api_object=elm, circuit=self.circuit)
+                        if dlg.exec():
+                            pass
+
+                    elif elm_type == DeviceType.VscDevice.value:
+                        dlg = VscDeviceEditorDialog(api_object=elm, circuit=self.circuit, main_gui=self)
+                        if dlg.exec():
+                            pass
+
                     elif elm_type == DeviceType.Transformer2WDevice.value:
-                        dlg = TransformerEditor(branch=elm, grid=self.circuit, modify_on_accept=True)
+                        dlg = TransformerDeviceEditorDialog(api_object=elm, circuit=self.circuit)
                         if dlg.exec():
                             pass
 
                     elif elm_type == DeviceType.ControllableShuntDevice.value:
-                        dlg = ControllableShuntEditor(api_object=elm)
+                        dlg = ControllableShuntDeviceEditorDialog(api_object=elm, circuit=self.circuit)
+                        if dlg.exec():
+                            pass
+
+                    elif elm_type == DeviceType.LoadDevice.value:
+                        dlg = LoadDeviceEditorDialog(api_object=elm, circuit=self.circuit)
+                        if dlg.exec():
+                            pass
+
+                    elif elm_type == DeviceType.GeneratorDevice.value:
+                        dlg = GeneratorEditorDialog(api_object=elm, circuit=self.circuit)
+                        if dlg.exec():
+                            pass
+
+                    elif elm_type == DeviceType.BatteryDevice.value:
+                        dlg = GeneratorEditorDialog(api_object=elm, circuit=self.circuit)
                         if dlg.exec():
                             pass
 
                     elif elm_type == DeviceType.Transformer3WDevice.value:
-                        Sbase = self.circuit.Sbase
-                        dlg = Transformer3WEditor(elm, Sbase, modify_on_accept=True)
+                        dlg = Transformer3WDeviceEditorDialog(api_object=elm, circuit=self.circuit)
                         if dlg.exec():
                             pass
 
                     elif elm_type == DeviceType.RmsModelTemplateDevice.value:
-                        self.rms_model_Editor_window = DynamicBlockEditorGUI(
-                            var_factory=self.circuit.var_factory,
-                            block=elm.block,
-                            api_object=elm,
-                            mode=DynamicEditorMode.RMS,
-                            templates_list=self.circuit.get_dynamic_templates_by_domain(FmuTemplateDomain.RMS),
-                            circuit=self.circuit,
-                            main_editor=True,
-                        )
-                        # self.rms_model_Editor_window = DynamicBlockEditorGUI(
-                        #     var_factory=self.circuit.var_factory,
-                        #     block=elm.block,
-                        #     api_object=None,
-                        #     mode=DynamicEditorMode.RMS,
-                        #     templates_list=self.circuit.get_dynamic_templates_by_domain(FmuTemplateDomain.RMS),
-                        #     circuit=self.circuit,
-                        #     main_editor=True,
-                        # )
-                        if self.rms_model_Editor_window.show():
-                            elm.block = self.rms_model_Editor_window.main_block
+                        self.open_dynamic_editor(api_object=elm, circuit=self.circuit,
+                                                 preferred_mode=DynamicSimulationMode.RMS)
 
                     elif elm_type == DeviceType.EmtModelTemplateDevice.value:
-                        self.rms_model_Editor_window = DynamicBlockEditorGUI(
-                            var_factory=self.circuit.var_factory,
-                            block=elm.block,
-                            api_object=elm,
-                            mode=DynamicEditorMode.EMT,
-                            templates_list=self.circuit.get_dynamic_templates_by_domain(FmuTemplateDomain.EMT),
-                            circuit=self.circuit,
-                            main_editor=True,
-                        )
-                        # self.rms_model_Editor_window = DynamicBlockEditorGUI(
-                        #     var_factory=self.circuit.var_factory,
-                        #     block=elm.block,
-                        #     api_object=None,
-                        #     mode=DynamicEditorMode.EMT,
-                        #     templates_list=self.circuit.get_dynamic_templates_by_domain(FmuTemplateDomain.EMT),
-                        #     circuit=self.circuit,
-                        #     main_editor=True,
-                        # )
-
-                        if self.rms_model_Editor_window.show():
-                            elm.block = self.rms_model_Editor_window.main_block
+                        self.open_dynamic_editor(api_object=elm, circuit=self.circuit,
+                                                 preferred_mode=DynamicSimulationMode.EMT)
 
                     elif elm_type == DeviceType.FmuTemplateDevice.value:
                         dlg = FmuTemplateEditorDialog(
@@ -1444,97 +1476,97 @@ class DataBaseTableMain(DiagramsMain):
             context_menu = QtWidgets.QMenu(parent=self.ui.diagramsListView)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Edit",
+                              text=self.tr("Edit"),
                               icon_path=":/Icons/icons/edit.png",
                               function_ptr=self.launch_object_editor)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Add",
+                              text=self.tr("Add"),
                               icon_path=":/Icons/icons/plus.png",
                               function_ptr=self.add_objects)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Delete",
+                              text=self.tr("Delete"),
                               icon_path=":/Icons/icons/minus.png",
                               function_ptr=self.delete_selected_db_table_objects)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Duplicate object",
+                              text=self.tr("Duplicate object"),
                               icon_path=":/Icons/icons/copy.png",
                               function_ptr=self.duplicate_selected_db_table_objects)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Merge",
+                              text=self.tr("Merge"),
                               icon_path=":/Icons/icons/fusion.png",
                               function_ptr=self.fuse_selected_db_table_objects)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Copy idtag",
+                              text=self.tr("Copy idtag"),
                               icon_path=":/Icons/icons/copy.png",
                               function_ptr=self.copy_selected_idtag)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Crop model to buses selection",
+                              text=self.tr("Crop model to buses selection"),
                               icon_path=":/Icons/icons/schematic.png",
                               function_ptr=self.crop_model_to_buses_selection)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Grid reduction",
+                              text=self.tr("Grid reduction"),
                               icon_path=":/Icons/icons/schematic.png",
                               function_ptr=self.grid_reduction_from_table_selection)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Copy table",
+                              text=self.tr("Copy table"),
                               icon_path=":/Icons/icons/copy.png",
                               function_ptr=self.copy_objects_data)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Set value to column",
+                              text=self.tr("Set value to column"),
                               icon_path=":/Icons/icons/copy2down.png",
                               function_ptr=self.set_value_to_column)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Assign to profile",
+                              text=self.tr("Assign to profile"),
                               icon_path=":/Icons/icons/assign_to_profile.png",
                               function_ptr=self.assign_to_profile)
 
             if elm_type == DeviceType.BranchGroupDevice.value:
                 gf.add_menu_entry(menu=context_menu,
-                                  text="Colour branches like this",
+                                  text=self.tr("Colour branches like this"),
                                   icon_path=":/Icons/icons/assign_to_profile.png",
                                   function_ptr=self.colour_branches_like_group)
 
             context_menu.addSeparator()
 
             gf.add_menu_entry(menu=context_menu,
-                              text="New vicinity diagram",
+                              text=self.tr("New vicinity diagram"),
                               icon_path=":/Icons/icons/grid_icon.png",
                               function_ptr=self.add_bus_vicinity_diagram_from_model)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="New diagram from selection",
+                              text=self.tr("New diagram from selection"),
                               icon_path=":/Icons/icons/schematicadd_to.png",
                               function_ptr=self.add_new_bus_diagram_from_selection)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Add to current diagram",
+                              text=self.tr("Add to current diagram"),
                               icon_path=":/Icons/icons/schematicadd_to.png",
                               function_ptr=self.add_objects_to_current_diagram)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Highlight buses selection",
+                              text=self.tr("Highlight buses selection"),
                               icon_path=":/Icons/icons/highlight.png",
                               function_ptr=self.highlight_selection_buses)
 
             gf.add_menu_entry(menu=context_menu,
-                              text="Highlight based on property",
+                              text=self.tr("Highlight based on property"),
                               icon_path=":/Icons/icons/highlight2.png",
                               function_ptr=self.highlight_based_on_property)
 
             context_menu.addSeparator()
 
             gf.add_menu_entry(menu=context_menu,
-                              text="New map from selection",
+                              text=self.tr("New map from selection"),
                               icon_path=":/Icons/icons/map.png",
                               function_ptr=self.add_new_map_from_database_selection)
 
@@ -1589,30 +1621,87 @@ class DataBaseTableMain(DiagramsMain):
 
     def search_ts_point(self):
         """
-
-        :return:
+        Search time step point
         """
 
-        txt = self.ui.goToTsPointComboBox.currentText()
-        mode: TimeSeriesSearchPoint = self.ts_search_points_dict[txt]
+        mode: TimeSeriesSearchPoint = self.ui.goToTsPointComboBox.currentData()
 
         if mode == TimeSeriesSearchPoint.LowestLoad:
 
-            total = 0
+            total = np.zeros(self.circuit.get_time_number())
             for elm in self.circuit.loads:
                 total += elm.P_prof.toarray()
 
-            idx = np.argmin(total)
-            self.ui.db_step_slider.setValue(idx)
+            if len(total) > 0:
+                try:
+                    idx = np.argmin(total)
+                except ValueError:
+                    self.show_error_toast(f"{mode.value} could not be found")
+                    return
+
+                self.ui.db_step_slider.setValue(idx)
+            else:
+                self.show_warning_toast("No time steps to navigate to")
 
         elif mode == TimeSeriesSearchPoint.HighestLoad:
 
-            total = 0
+            total = np.zeros(self.circuit.get_time_number())
             for elm in self.circuit.loads:
                 total += elm.P_prof.toarray()
 
-            idx = np.argmax(total)
-            self.ui.db_step_slider.setValue(idx)
+            if len(total) > 0:
+                try:
+                    idx = np.argmax(total)
+                except ValueError:
+                    self.show_error_toast(f"{mode.value} could not be found")
+                    return
+
+                self.ui.db_step_slider.setValue(idx)
+            else:
+                self.show_warning_toast("No time steps to navigate to")
 
         else:
             return
+
+    def set_model_x_y_based_on_lat_lon(self):
+        """
+        Change values of x,y in the database using the latitude and longitude of the buses
+        :return:
+        """
+        ok = yes_no_question(text="Setting the database buses x,y position from their latitude and longitude "
+                                  "values will change the buses values but not the current diagrams. "
+                                  "New diagrams will use the new values",
+                             title="")
+
+        if ok:
+            logger = self.circuit.fill_xy_from_lat_lon()
+
+            if logger.has_logs():
+                self.show_logs(logger=logger, name="set (x,y) from (lat, lon)")
+            else:
+                self.show_info_toast("x, y changed!")
+
+    def restore_investments(self):
+        """
+        Restore investments to the circuit
+        :return:
+        """
+        ok = yes_no_question(text="This action will restore the circuit to the state before the last investment "
+                                  "modification. Do you want to proceed?",
+                             title="Restore investments")
+
+        if ok:
+            self.circuit.restore_investments()
+            for diagram_widget in self.diagram_widgets_list:
+                if isinstance(diagram_widget, SchematicWidget):
+                    diagram_widget.recolour_mode()
+                else:
+                    # map widgets and other diagram types do not encode active state
+                    # via dashed/solid pen styling, so they have nothing to refresh
+                    pass
+
+            # re-apply result-based colouring on top of the active-state styling
+            self.colour_diagrams()
+            self.show_info_toast("Investments restored!")
+
+        return None

@@ -6,7 +6,7 @@ from __future__ import annotations
 import numpy as np
 from typing import List, Union, TYPE_CHECKING
 
-from VeraGridEngine.Simulations.results_template import ResultsTemplate
+from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
 from VeraGridEngine.enumerations import ResultTypes, StudyResultsType
 from VeraGridEngine.Simulations.results_table import ResultsTable, DeviceType
 from VeraGridEngine.basic_structures import StrVec, DateVec, Vec, IntVec, Mat, CxMat, ObjMat, BoolVec
@@ -16,6 +16,48 @@ if TYPE_CHECKING:  # Only imports the below statements during type checking
 
 
 class OptimalNetTransferCapacityTimeSeriesResults(ResultsTemplate):
+
+    LOCAL_RESULTS_DECLARATIONS = (
+        ResultsProperty(name='time_indices', tpe=DateVec, old_names=list(), expandable=True),
+        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='hvdc_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='vsc_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='contingency_group_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='voltage', tpe=CxMat, old_names=list(), expandable=True),
+        ResultsProperty(name='Sbus', tpe=CxMat, old_names=list(), expandable=True),
+        ResultsProperty(name='dSbus', tpe=CxMat, old_names=list(), expandable=True),
+        ResultsProperty(name='bus_shadow_prices', tpe=CxMat, old_names=list(), expandable=True),
+        ResultsProperty(name='load_shedding', tpe=CxMat, old_names=list(), expandable=True),
+        ResultsProperty(name='nodal_balance', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='Sf', tpe=CxMat, old_names=list(), expandable=True),
+        ResultsProperty(name='St', tpe=CxMat, old_names=list(), expandable=True),
+        ResultsProperty(name='overloads', tpe=CxMat, old_names=list(), expandable=True),
+        ResultsProperty(name='loading', tpe=CxMat, old_names=list(), expandable=True),
+        ResultsProperty(name='losses', tpe=CxMat, old_names=list(), expandable=True),
+        ResultsProperty(name='phase_shift', tpe=CxMat, old_names=list(), expandable=True),
+        ResultsProperty(name='rates', tpe=Vec, old_names=list(), expandable=True),
+        ResultsProperty(name='contingency_rates', tpe=Vec, old_names=list(), expandable=True),
+        ResultsProperty(name='alpha', tpe=CxMat, old_names=list(), expandable=True),
+        ResultsProperty(name='monitor_logic', tpe=ObjMat, old_names=list(), expandable=True),
+        ResultsProperty(name='hvdc_Pf', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='hvdc_loading', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='hvdc_losses', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='vsc_Pf', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='vsc_loading', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='vsc_losses', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='sending_bus_idx', tpe=list, old_names=list(), expandable=False),
+        ResultsProperty(name='receiving_bus_idx', tpe=list, old_names=list(), expandable=False),
+        ResultsProperty(name='inter_space_branches', tpe=list, old_names=list(), expandable=False),
+        ResultsProperty(name='inter_space_hvdc', tpe=list, old_names=list(), expandable=False),
+        ResultsProperty(name='inter_space_vsc', tpe=list, old_names=list(), expandable=False),
+        ResultsProperty(name='converged', tpe=BoolVec, old_names=list(), expandable=False),
+        ResultsProperty(name='inter_area_flows', tpe=Vec, old_names=list(), expandable=True),
+        ResultsProperty(name='contingency_flows_list', tpe=list, old_names=list(), expandable=False),
+        ResultsProperty(name='strict_formulation', tpe=bool, old_names=list(), expandable=False),
+    )
+
     __slots__ = (
         "branch_names",
         "bus_names",
@@ -51,6 +93,7 @@ class OptimalNetTransferCapacityTimeSeriesResults(ResultsTemplate):
         "inter_space_hvdc",
         "inter_space_vsc",
         "contingency_flows_list",
+        "strict_formulation",
         "converged",
         "inter_area_flows",
     )
@@ -160,53 +203,16 @@ class OptimalNetTransferCapacityTimeSeriesResults(ResultsTemplate):
         self.inter_space_hvdc: List[tuple[int, float]] = list()  # index, sense
         self.inter_space_vsc: List[tuple[int, float]] = list()
 
-        # t, m, c, contingency, negative_slack, positive_slack
+        # t, m, c, contingency, negative_slack, positive_slack (non-strict)
+        # t, m, c, contingency (strict)
         self.contingency_flows_list = list()
+
+        # whether the results come from the strict formulation (no flow slacks)
+        self.strict_formulation = False
 
         self.converged = np.zeros(nt, dtype=bool)
         self.inter_area_flows = np.zeros(nt, dtype=float)
 
-        self.register(name='time_indices', tpe=DateVec)
-        self.register(name='bus_names', tpe=StrVec)
-        self.register(name='branch_names', tpe=StrVec)
-        self.register(name='hvdc_names', tpe=StrVec)
-        self.register(name='contingency_group_names', tpe=StrVec)
-        self.register(name='bus_types', tpe=IntVec)
-
-        self.register(name='voltage', tpe=CxMat)
-        self.register(name='Sbus', tpe=CxMat)
-        self.register(name='dSbus', tpe=CxMat)
-        self.register(name='bus_shadow_prices', tpe=CxMat)
-        self.register(name='load_shedding', tpe=CxMat)
-
-        self.register(name='Sf', tpe=CxMat)
-        self.register(name='St', tpe=CxMat)
-        self.register(name='overloads', tpe=CxMat)
-        self.register(name='loading', tpe=CxMat)
-        self.register(name='losses', tpe=CxMat)
-        self.register(name='phase_shift', tpe=CxMat)
-        self.register(name='rates', tpe=Vec)
-        self.register(name='contingency_rates', tpe=Vec)
-        self.register(name='alpha', tpe=CxMat)
-        self.register(name='monitor_logic', tpe=ObjMat)
-
-        self.register(name='hvdc_Pf', tpe=Mat)
-        self.register(name='hvdc_loading', tpe=Mat)
-        self.register(name='hvdc_losses', tpe=Mat)
-
-        self.register(name='vsc_Pf', tpe=Mat)
-        self.register(name='vsc_loading', tpe=Mat)
-        self.register(name='vsc_losses', tpe=Mat)
-
-        self.register(name='sending_bus_idx', tpe=list)
-        self.register(name='receiving_bus_idx', tpe=list)
-        self.register(name='inter_space_branches', tpe=list)
-        self.register(name='inter_space_hvdc', tpe=list)
-        self.register(name='inter_space_vsc', tpe=list)
-
-        self.register(name='converged', tpe=BoolVec)
-        self.register(name='inter_area_flows', tpe=Vec)
-        self.register(name='contingency_flows_list', tpe=list)
 
     def mdl(self, result_type) -> ResultsTable:
         """
@@ -420,9 +426,16 @@ class OptimalNetTransferCapacityTimeSeriesResults(ResultsTemplate):
             columns = ['Time index', 'Monitored index', 'Contingency group index',
                        'Time array', 'Contingency branch', 'Contingency group',
                        'Flow (MW)', 'Loading (%)']
-            for t, m, c, contingency, negative_slack, positive_slack in self.contingency_flows_list:
+            for entry in self.contingency_flows_list:
+                # The strict formulation stores (t, m, c, flow) with no slacks,
+                # while the non-strict one stores (t, m, c, flow, neg_slack, pos_slack).
+                if self.strict_formulation:
+                    t, m, c, contingency = entry
+                    flow_c = contingency
+                else:
+                    t, m, c, contingency, negative_slack, positive_slack = entry
+                    flow_c = contingency - negative_slack + positive_slack
                 cols.append("")
-                flow_c = contingency - negative_slack + positive_slack
                 loading_c = abs(flow_c) / self.contingency_rates[m] * 100
                 data.append([
                     t, m, c, str(self.time_array[t]), self.branch_names[m], self.contingency_group_names[c],

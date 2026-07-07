@@ -22,6 +22,41 @@ from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.IO.cim.cgmes.cgmes_enums import LimitTypeKind
 
 
+def sanitize_voltage_setpoint(v_set: float,
+                              cgmes_elm,
+                              logger: DataLogger,
+                              lower_limit: float = 0.5,
+                              upper_limit: float = 1.5) -> float:
+    """
+    Keep voltage setpoint in a physically plausible p.u. range.
+
+    :param v_set: Computed p.u. setpoint.
+    :param cgmes_elm: CGMES regulating equipment object.
+    :param logger: Data logger.
+    :param lower_limit: Minimum acceptable p.u. setpoint.
+    :param upper_limit: Maximum acceptable p.u. setpoint.
+    :return: Sanitized p.u. setpoint.
+    """
+    if np.isfinite(v_set):
+        if lower_limit <= v_set <= upper_limit:
+            return v_set
+        else:
+            logger.add_warning(msg='RegulatingControl targetValue yields unrealistic voltage setpoint; fallback to 1.0 p.u.',
+                               device=cgmes_elm.rdfid,
+                               device_class=cgmes_elm.tpe,
+                               device_property="RegulatingControl.targetValue",
+                               value=v_set,
+                               expected_value=f'[{lower_limit}, {upper_limit}]')
+            return 1.0
+    else:
+        logger.add_warning(msg='RegulatingControl targetValue yields non-finite voltage setpoint; fallback to 1.0 p.u.',
+                           device=cgmes_elm.rdfid,
+                           device_class=cgmes_elm.tpe,
+                           device_property="RegulatingControl.targetValue",
+                           value=v_set)
+        return 1.0
+
+
 def normalize_cgmes_reference_uuid(reference) -> str | None:
     """
     Normalize a CGMES reference into VeraGrid UUID format (no hyphens/underscores).
@@ -360,13 +395,68 @@ def build_cgmes_limit_dicts(cgmes_model: CgmesCircuit,
 # region PowerTransformer ----------------------------------------------------------------------------------------------
 
 
-def get_pu_values_power_transformer(power_transformer: CGMES_POWER_TRANSFORMER, System_Sbase: float):
+def get_power_transformer_ends(power_transformer: CGMES_POWER_TRANSFORMER,
+                               cgmes_model: CgmesCircuit | None = None) -> List[CGMES_POWER_TRANSFORMER_END]:
+    """
+    Return transformer ends as a list for both CGMES 2.4.15 and 3.0.0 object layouts.
+
+    Some parsers leave ``power_transformer.PowerTransformerEnd`` as None and only
+    populate the reverse relation through ``cgmes_assets.PowerTransformerEnd_list``.
+    """
+    if power_transformer is None:
+        raise AttributeError("'NoneType' object has no attribute 'PowerTransformerEnd'")
+
+    raw_ends = getattr(power_transformer, "PowerTransformerEnd", None)
+
+    if raw_ends is None:
+        ends: List[CGMES_POWER_TRANSFORMER_END] = list()
+    elif isinstance(raw_ends, list):
+        ends = [elm for elm in raw_ends if elm is not None]
+    else:
+        try:
+            ends = [elm for elm in list(raw_ends) if elm is not None]
+        except TypeError:
+            ends = [raw_ends]
+
+    if ends or cgmes_model is None:
+        return ends
+
+    pt_uuid = normalize_cgmes_reference_uuid(power_transformer)
+    recovered: List[CGMES_POWER_TRANSFORMER_END] = list()
+    seen_uuid: set[str] = set()
+    for pte in cgmes_model.cgmes_assets.PowerTransformerEnd_list:
+        if pte is None:
+            continue
+
+        pte_uuid = normalize_cgmes_reference_uuid(pte)
+        if pte_uuid is not None and pte_uuid in seen_uuid:
+            continue
+
+        pte_pt = getattr(pte, "PowerTransformer", None)
+        if pte_pt is power_transformer:
+            recovered.append(pte)
+            if pte_uuid is not None:
+                seen_uuid.add(pte_uuid)
+            continue
+
+        if pt_uuid is not None and normalize_cgmes_reference_uuid(pte_pt) == pt_uuid:
+            recovered.append(pte)
+            if pte_uuid is not None:
+                seen_uuid.add(pte_uuid)
+
+    return recovered
+
+
+def get_pu_values_power_transformer(power_transformer: CGMES_POWER_TRANSFORMER,
+                                    System_Sbase: float,
+                                    cgmes_model: CgmesCircuit | None = None):
     """
     Get the transformer p.u. values
     :return: R, X, G, B, R0, X0, G0, B0
     """
     try:
-        windings = list(power_transformer.PowerTransformerEnd)
+        windings = get_power_transformer_ends(power_transformer=power_transformer,
+                                              cgmes_model=cgmes_model)
 
         R, X, G, B = 0, 0, 0, 0
         R0, X0, G0, B0 = 0, 0, 0, 0
@@ -389,14 +479,16 @@ def get_pu_values_power_transformer(power_transformer: CGMES_POWER_TRANSFORMER, 
     return R, X, G, B, R0, X0, G0, B0
 
 
-def get_pu_values_power_transformer3w(power_transformer: CGMES_POWER_TRANSFORMER, System_Sbase: float):
+def get_pu_values_power_transformer3w(power_transformer: CGMES_POWER_TRANSFORMER,
+                                      System_Sbase: float,
+                                      cgmes_model: CgmesCircuit | None = None):
     """
     Get the transformer p.u. values
     :return: r12, r23, r31, x12, x23, x31
     """
     try:
-        # windings = get_windings(power_transformer)
-        windings = list(power_transformer.PowerTransformerEnd)
+        windings = get_power_transformer_ends(power_transformer=power_transformer,
+                                              cgmes_model=cgmes_model)
 
         r12, r23, r31, x12, x23, x31 = 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 
@@ -578,24 +670,44 @@ def get_voltage_shunt(shunt: CGMES_NON_LINEAR_SHUNT_COMPENSATOR | CGMES_EQUIVALE
     :param logger:
     :return:
     """
+
+    #if shunt.BaseVoltage is not None:
+    #    return shunt.BaseVoltage.nominalVoltage
+    # else:  # TODO look at EquipmentContainer/VoltageLevel/BaseVoltage
+    #     if hasattr(shunt, "nomU"):
+    #         if shunt.nomU is not None:
+    #             return shunt.nomU
+    #
+    #     if 'Terminal' in shunt.references_to_me.keys():
+    #         tps = list(shunt.references_to_me['Terminal'])
+    #
+    #         if len(tps) > 0:
+    #             tp = tps[0]
+    #
+    #             return get_voltage_terminal(tp, logger=logger)
+    #         else:
+    #             return None
+    #     else:
+    #         return None
+
     if shunt.BaseVoltage is not None:
         return shunt.BaseVoltage.nominalVoltage
-    else:  # TODO look at EquipmentContainer/VoltageLevel/BaseVoltage
-        if hasattr(shunt, "nomU"):
-            if shunt.nomU is not None:
-                return shunt.nomU
 
-        if 'Terminal' in shunt.references_to_me.keys():
-            tps = list(shunt.references_to_me['Terminal'])
+    if hasattr(shunt, "nomU") and shunt.nomU is not None:
+        return shunt.nomU
 
-            if len(tps) > 0:
-                tp = tps[0]
+    if (hasattr(shunt, "EquipmentContainer")
+            and shunt.EquipmentContainer is not None
+            and hasattr(shunt.EquipmentContainer, "BaseVoltage")
+            and shunt.EquipmentContainer.BaseVoltage is not None):
+        return shunt.EquipmentContainer.BaseVoltage.nominalVoltage
 
-                return get_voltage_terminal(tp, logger=logger)
-            else:
-                return None
-        else:
-            return None
+    if 'Terminal' in shunt.references_to_me.keys():
+        tps = list(shunt.references_to_me['Terminal'])
+        if len(tps) > 0:
+            return get_voltage_terminal(tps[0], logger=logger)
+
+    return None
 
 
 def get_values_shunt(shunt: CGMES_LINEAR_SHUNT_COMPENSATOR,
@@ -1007,6 +1119,7 @@ def get_regulating_control_params(cgmes_elm,
     :param TopologicalNode_tpe:
     :param DCTopologicalNode_tpe:
     :param logger:
+    :param prefer_connectivity_node
     :return:
     """
 
@@ -1038,7 +1151,19 @@ def get_regulating_control_params(cgmes_elm,
 
         if cgmes_elm.RegulatingControl.mode == cgmes_enums.RegulatingControlModeKind.voltage:
 
-            v_control_value = cgmes_elm.RegulatingControl.targetValue  # kV
+            v_control_value = cgmes_elm.RegulatingControl.targetValue  # nominally kV in CGMES voltage mode
+            v_control_value_num = None
+            if v_control_value is not None:
+                # In imported CGMES profiles, targetValue is already represented in the same
+                # engineering voltage scale used by BaseVoltage.nominalVoltage (kV in practice).
+                # Therefore, no additional targetValueUnitMultiplier scaling is applied here.
+                v_control_value_num = float(v_control_value)
+            else:
+                logger.add_warning(msg='RegulatingControl targetValue is missing; fallback to 1.0 p.u.',
+                                   device=cgmes_elm.rdfid,
+                                   device_class=cgmes_elm.tpe,
+                                   device_property="RegulatingControl.targetValue",
+                                   value='None')
 
             # cgmes_elm.EquipmentContainer.BaseVoltage.nominalVoltage
             controlled_terminal = cgmes_elm.RegulatingControl.Terminal
@@ -1054,10 +1179,13 @@ def get_regulating_control_params(cgmes_elm,
                                    device_class=cgmes_elm.tpe,
                                    device_property="RegulatingControl.Terminal")
 
-            if base_voltage != 0:
-                v_set = v_control_value / base_voltage
+            if base_voltage != 0 and v_control_value_num is not None:
+                v_set = v_control_value_num / base_voltage
             else:
                 v_set = 1.0
+            v_set = sanitize_voltage_setpoint(v_set=v_set,
+                                              cgmes_elm=cgmes_elm,
+                                              logger=logger)
 
             equipment_container = cgmes_elm.EquipmentContainer
             control_terminal = cgmes_elm.RegulatingControl.Terminal

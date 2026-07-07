@@ -11,7 +11,7 @@ No docstring provided.
 
 - Class count: 1
 - Top-level function count: 0
-- Representative imports: __future__, typing, numpy, pandas, matplotlib, VeraGridEngine.enumerations, VeraGridEngine.Devices.Parents.load_parent, VeraGridEngine.Devices.Parents.editable_device, VeraGridEngine.Devices.profile
+- Representative imports: __future__, typing, numpy, pandas, matplotlib, VeraGridEngine.enumerations, VeraGridEngine.Devices.Parents.load_parent, VeraGridEngine.Devices.Parents.editable_device, VeraGridEngine.Devices.Profiles
 
 ## Class: CurrentInjection
 

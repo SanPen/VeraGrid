@@ -1,0 +1,209 @@
+PREFIX adms:     <http://www.w3.org/ns/adms#>
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX euvoc:    <http://publications.europa.eu/ontology/euvoc#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:c1413a88-1f17-4b9e-9afe-cd089605c671> {
+    <urn:uuid:d77ad818-fced-4f62-bdf1-ffea09446868>
+            rdf:type                       nc:Stage;
+            cim:IdentifiedObject.mRID      "d77ad818-fced-4f62-bdf1-ffea09446868";
+            cim:IdentifiedObject.name      "Svedala.Sce_1.1_Svedala-Espheim_HVDC_Runback_West_South";
+            nc:Stage.GridStateAlterationCollection
+                    <urn:uuid:4eb0a454-4796-4598-a0af-788cb478d415>;
+            nc:Stage.RemedialActionScheme  <urn:uuid:47eead8b-b257-4e18-9b6a-632e8ad52b8d>;
+            nc:Stage.priority              1 .
+    
+    <urn:uuid:df90ad87-bf20-45e5-a75d-a5df84384e0e>
+            rdf:type                   nc:GridStateAlterationCollection;
+            cim:IdentifiedObject.mRID  "df90ad87-bf20-45e5-a75d-a5df84384e0e";
+            cim:IdentifiedObject.name  "Svedala.Sce_1.2_Svedala-Espheim_HVDC_Runback_East_North" .
+    
+    <urn:uuid:deee0073-0c40-400a-9f91-fb546bab2eac>
+            rdf:type                       nc:PinGate;
+            cim:IdentifiedObject.mRID      "deee0073-0c40-400a-9f91-fb546bab2eac";
+            cim:IdentifiedObject.name      "andGate_0_0_Svedala.Sce_1.2_Svedala-Espheim_HVDC_Runback";
+            nc:GateInputPin.Gate           <urn:uuid:31c7b470-f62a-4dc2-9860-c3efff44bbfd>;
+            nc:GateInputPin.absoluteValue  true;
+            nc:GateInputPin.duration       "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:GateInputPin.logicKind      nc:LogicalOperatorsKind.equals;
+            nc:GateInputPin.negate         false;
+            nc:PinGate.GateOutput          <urn:uuid:93ca77f3-221d-430b-861f-35f144d49002> .
+    
+    <urn:uuid:2bfab637-4437-41a8-a373-d40beadc2fb3>
+            rdf:type                     nc:StageTrigger;
+            cim:IdentifiedObject.mRID    "2bfab637-4437-41a8-a373-d40beadc2fb3";
+            cim:IdentifiedObject.name    "Svedala.Sce_1.2_Svedala-Espheim_HVDC_Runback_East_North";
+            nc:StageTrigger.GateTrigger  <urn:uuid:31c7b470-f62a-4dc2-9860-c3efff44bbfd>;
+            nc:StageTrigger.Stage        <urn:uuid:445b8e33-9aa4-4b8f-b00d-67c9da221c59>;
+            nc:StageTrigger.normalArmed  true;
+            nc:StageTrigger.priority     0 .
+    
+    <urn:uuid:c1413a88-1f17-4b9e-9afe-cd089605c671>
+            rdf:type              dcat:Dataset;
+            dct:conformsTo        "https://cim.ucaiug.io/ns#" , "https://ap.cim4.eu/RemedialAction/2.4" , "https://cim4.eu/ns/nc/2.4#" , "http://iec.ch/TC57/2013/CIM-schema-cim16#";
+            dct:description       "Svedala - HVDC - Espheim  - NC profile";
+            dct:identifier        "c1413a88-1f17-4b9e-9afe-cd089605c671";
+            dct:issued            "2025-06-19T14:00:00Z"^^xsd:dateTime;
+            dct:publisher         "https://ap.cim4.eu/RemedialAction/2.4";
+            dct:spatial           "https://energy.referencedata.eu/Test/Frame/Svedala-Power-Transmission-System";
+            dct:title             "Svedala-Espheim-RA";
+            dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Svedala-Espheim-RA>;
+            dcat:keyword          "RA";
+            dcat:startDate        "2025-06-19T14:00:00Z"^^xsd:dateTime;
+            dcat:version          "1";
+            prov:generatedAtTime  "2025-06-19T14:00:00Z"^^xsd:dateTime;
+            prov:references       <urn:uuid:105893e4-668b-4b00-a351-0e436b53cbc9>;
+            prov:wasGeneratedBy   "\"https://energy.referencedata.eu/Activity/CGM-RA" .
+    
+    <urn:uuid:85826c3d-d25f-4b41-92d4-b2b855f3e96f>
+            rdf:type                        nc:PinTerminal;
+            cim:IdentifiedObject.mRID       "85826c3d-d25f-4b41-92d4-b2b855f3e96f";
+            cim:IdentifiedObject.name       "FlowAt_8455f014-d0a0-4712-ad70-8275de3b2ee8e";
+            nc:GateInputPin.Gate            <urn:uuid:1ca0f26a-8197-44e0-a258-cd886c4fb8fd>;
+            nc:GateInputPin.absoluteValue   true;
+            nc:GateInputPin.duration        "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:GateInputPin.isValuePreFault
+                    true;
+            nc:GateInputPin.logicKind       nc:LogicalOperatorsKind.lessThan;
+            nc:GateInputPin.negate          false;
+            nc:GateInputPin.thresholdValue  "-50"^^xsd:float;
+            nc:PinTerminal.Terminal         <urn:uuid:6872b1c9-9f39-48d5-88c3-25d9d82af2a2>;
+            nc:PinTerminal.kind             nc:PinTerminalKind.activePower .
+    
+    <urn:uuid:47eead8b-b257-4e18-9b6a-632e8ad52b8d>
+            rdf:type                      nc:RemedialActionScheme;
+            cim:IdentifiedObject.mRID     "47eead8b-b257-4e18-9b6a-632e8ad52b8d";
+            cim:IdentifiedObject.name     "Svedala.Sce_1.1_Svedala-Espheim_HVDC_Runback_West_South_and_North_East";
+            nc:RemedialActionScheme.kind  nc:RemedialActionSchemeKind.sips;
+            nc:RemedialActionScheme.normalArmed
+                    true .
+    
+    <urn:uuid:2a58112c-da48-48fd-b1b4-0ad75cc431ae>
+            rdf:type                        nc:PinTerminal;
+            cim:IdentifiedObject.mRID       "2a58112c-da48-48fd-b1b4-0ad75cc431ae";
+            cim:IdentifiedObject.name       "FlowAt_8455f014-d0a0-4712-ad70-8275de3b2ee8e";
+            nc:GateInputPin.Gate            <urn:uuid:93ca77f3-221d-430b-861f-35f144d49002>;
+            nc:GateInputPin.absoluteValue   true;
+            nc:GateInputPin.duration        "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:GateInputPin.isValuePreFault
+                    true;
+            nc:GateInputPin.logicKind       nc:LogicalOperatorsKind.greaterThan;
+            nc:GateInputPin.negate          false;
+            nc:GateInputPin.thresholdValue  "50"^^xsd:float;
+            nc:PinTerminal.Terminal         <urn:uuid:6872b1c9-9f39-48d5-88c3-25d9d82af2a2>;
+            nc:PinTerminal.kind             nc:PinTerminalKind.activePower .
+    
+    <urn:uuid:68accc5a-f946-415e-b65d-34a69c1e17ec>
+            rdf:type                       nc:PinGate;
+            cim:IdentifiedObject.mRID      "68accc5a-f946-415e-b65d-34a69c1e17ec";
+            cim:IdentifiedObject.name      "andGate_0_0_Svedala.Sce_1.1_Svedala-Espheim_HVDC_Runback";
+            nc:GateInputPin.Gate           <urn:uuid:11cae4e5-4cfc-4ac1-a140-fe2db64f8409>;
+            nc:GateInputPin.absoluteValue  true;
+            nc:GateInputPin.duration       "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:GateInputPin.logicKind      nc:LogicalOperatorsKind.equals;
+            nc:GateInputPin.negate         false;
+            nc:PinGate.GateOutput          <urn:uuid:1ca0f26a-8197-44e0-a258-cd886c4fb8fd> .
+    
+    <urn:uuid:5840ee29-9cbe-4ea9-a823-5ed83701c8a3>
+            rdf:type                     nc:StageTrigger;
+            cim:IdentifiedObject.mRID    "5840ee29-9cbe-4ea9-a823-5ed83701c8a3";
+            cim:IdentifiedObject.name    "Svedala.Sce_1.1_Svedala-Espheim_HVDC_Runback_West_South";
+            nc:StageTrigger.GateTrigger  <urn:uuid:11cae4e5-4cfc-4ac1-a140-fe2db64f8409>;
+            nc:StageTrigger.Stage        <urn:uuid:d77ad818-fced-4f62-bdf1-ffea09446868>;
+            nc:StageTrigger.normalArmed  true;
+            nc:StageTrigger.priority     0 .
+    
+    <urn:uuid:445b8e33-9aa4-4b8f-b00d-67c9da221c59>
+            rdf:type                       nc:Stage;
+            cim:IdentifiedObject.mRID      "445b8e33-9aa4-4b8f-b00d-67c9da221c59";
+            cim:IdentifiedObject.name      "Svedala.Sce_1.2_Svedala-Espheim_HVDC_Runback_East_North";
+            nc:Stage.GridStateAlterationCollection
+                    <urn:uuid:df90ad87-bf20-45e5-a75d-a5df84384e0e>;
+            nc:Stage.RemedialActionScheme  <urn:uuid:47eead8b-b257-4e18-9b6a-632e8ad52b8d>;
+            nc:Stage.priority              2 .
+    
+    <urn:uuid:4eb0a454-4796-4598-a0af-788cb478d415>
+            rdf:type                   nc:GridStateAlterationCollection;
+            cim:IdentifiedObject.mRID  "4eb0a454-4796-4598-a0af-788cb478d415";
+            cim:IdentifiedObject.name  "Svedala.Sce_1.1_Svedala-Espheim_HVDC_Runback_West_South" .
+    
+    <urn:uuid:11cae4e5-4cfc-4ac1-a140-fe2db64f8409>
+            rdf:type                   nc:Gate;
+            cim:IdentifiedObject.mRID  "11cae4e5-4cfc-4ac1-a140-fe2db64f8409";
+            cim:IdentifiedObject.name  "Svedala.Sce_1.1_Svedala-Espheim_HVDC_Runback_West_South";
+            nc:Gate.kind               nc:GateLogicKind.and .
+    
+    <urn:uuid:1ca0f26a-8197-44e0-a258-cd886c4fb8fd>
+            rdf:type                   nc:Gate;
+            cim:IdentifiedObject.mRID  "1ca0f26a-8197-44e0-a258-cd886c4fb8fd";
+            cim:IdentifiedObject.name  "andGate_0_0_Svedala.Sce_1.1_Svedala-Espheim_HVDC_Runback";
+            nc:Gate.kind               nc:GateLogicKind.and .
+    
+    <urn:uuid:31c7b470-f62a-4dc2-9860-c3efff44bbfd>
+            rdf:type                   nc:Gate;
+            cim:IdentifiedObject.mRID  "31c7b470-f62a-4dc2-9860-c3efff44bbfd";
+            cim:IdentifiedObject.name  "Svedala.Sce_1.2_Svedala-Espheim_HVDC_Runback_East_North";
+            nc:Gate.kind               nc:GateLogicKind.and .
+    
+    <urn:uuid:fb1b297b-35a8-4e09-a1b5-f35b211d2fda>
+            rdf:type                        nc:PinTerminal;
+            cim:IdentifiedObject.mRID       "fb1b297b-35a8-4e09-a1b5-f35b211d2fda";
+            cim:IdentifiedObject.name       "FlowAt_8343e5c5-b77a-4c4e-b074-1cb3777a2f2d";
+            nc:GateInputPin.Gate            <urn:uuid:93ca77f3-221d-430b-861f-35f144d49002>;
+            nc:GateInputPin.absoluteValue   true;
+            nc:GateInputPin.duration        "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:GateInputPin.isValuePreFault
+                    true;
+            nc:GateInputPin.logicKind       nc:LogicalOperatorsKind.greaterThan;
+            nc:GateInputPin.negate          false;
+            nc:GateInputPin.thresholdValue  "250"^^xsd:float;
+            nc:PinTerminal.Terminal         <urn:uuid:f3603af7-a098-1e2c-431e-8ca22ae76221>;
+            nc:PinTerminal.kind             nc:PinTerminalKind.activePower .
+    
+    <urn:uuid:0e466fa1-6c55-4588-8077-abb6990d72a9>
+            rdf:type                       nc:PinEquipmentTripping;
+            cim:IdentifiedObject.mRID      "0e466fa1-6c55-4588-8077-abb6990d72a9";
+            cim:IdentifiedObject.name      "EquipmentTrip_8455f014-d0a0-4712-ad70-8275de3b2ee8e";
+            nc:GateInputPin.Gate           <urn:uuid:1ca0f26a-8197-44e0-a258-cd886c4fb8fd>;
+            nc:GateInputPin.absoluteValue  true;
+            nc:GateInputPin.duration       "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:GateInputPin.logicKind      nc:LogicalOperatorsKind.equals;
+            nc:GateInputPin.negate         false .
+    
+    <urn:uuid:93ca77f3-221d-430b-861f-35f144d49002>
+            rdf:type                   nc:Gate;
+            cim:IdentifiedObject.mRID  "93ca77f3-221d-430b-861f-35f144d49002";
+            cim:IdentifiedObject.name  "andGate_0_0_Svedala.Sce_1.2_Svedala-Espheim_HVDC_Runback";
+            nc:Gate.kind               nc:GateLogicKind.and .
+    
+    <urn:uuid:5de44bcd-eb77-4f14-8e3b-e0e455937cda>
+            rdf:type                        nc:PinTerminal;
+            cim:IdentifiedObject.mRID       "5de44bcd-eb77-4f14-8e3b-e0e455937cda";
+            cim:IdentifiedObject.name       "FlowAt_8343e5c5-b77a-4c4e-b074-1cb3777a2f2d";
+            nc:GateInputPin.Gate            <urn:uuid:1ca0f26a-8197-44e0-a258-cd886c4fb8fd>;
+            nc:GateInputPin.absoluteValue   true;
+            nc:GateInputPin.duration        "P0Y0M0DT0H0M0S"^^xsd:duration;
+            nc:GateInputPin.isValuePreFault
+                    true;
+            nc:GateInputPin.logicKind       nc:LogicalOperatorsKind.lessThan;
+            nc:GateInputPin.negate          false;
+            nc:GateInputPin.thresholdValue  "-250"^^xsd:float;
+            nc:PinTerminal.Terminal         <urn:uuid:f3603af7-a098-1e2c-431e-8ca22ae76221>;
+            nc:PinTerminal.kind             nc:PinTerminalKind.activePower .
+}

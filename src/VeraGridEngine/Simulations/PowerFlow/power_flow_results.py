@@ -10,7 +10,7 @@ import matplotlib.colors as plt_colors
 from typing import List, Tuple
 
 from VeraGridEngine.Simulations.results_table import ResultsTable
-from VeraGridEngine.Simulations.results_template import ResultsTemplate
+from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 from VeraGridEngine.basic_structures import IntVec, Vec, StrVec, CxVec, ConvergenceReport, Logger
 from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
@@ -33,6 +33,7 @@ class NumericPowerFlowResults:
         "tap_angle",
         "Pfp_vsc",
         "Pfn_vsc",
+        "Vdc_vsc",
         "St_vsc",
         "If_vsc",
         "It_vsc",
@@ -74,7 +75,8 @@ class NumericPowerFlowResults:
                  norm_f: float,
                  converged: bool,
                  iterations: int,
-                 elapsed: float):
+                 elapsed: float,
+                 Vdc_vsc: Vec | None = None):
         """
         Object to store the results returned by a numeric power flow routine
         :param V: Voltage vector
@@ -119,6 +121,7 @@ class NumericPowerFlowResults:
         # VSC
         self.Pfp_vsc = Pfp_vsc
         self.Pfn_vsc = Pfn_vsc
+        self.Vdc_vsc = Vdc_vsc if Vdc_vsc is not None else np.zeros_like(Pfp_vsc)
         self.St_vsc = St_vsc
         self.If_vsc = If_vsc
         self.It_vsc = It_vsc
@@ -140,6 +143,52 @@ class NumericPowerFlowResults:
 
 
 class PowerFlowResults(ResultsTemplate):
+
+    LOCAL_RESULTS_DECLARATIONS = (
+        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='hvdc_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='vsc_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='gen_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='batt_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='sh_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='F', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='T', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='hvdc_F', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='hvdc_T', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='bus_area_indices', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='area_names', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='Sbus', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='voltage', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='Sf', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='St', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='If', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='It', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='tap_module', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='tap_angle', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='Vbranch', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='loading', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='losses', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='losses_hvdc', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='Pf_hvdc', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='Pt_hvdc', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='loading_hvdc', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='losses_vsc', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='Pfp_vsc', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='Pfn_vsc', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='Vdc_vsc', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='St_vsc', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='If_vsc', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='It_vsc', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='loading_vsc', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='gen_p', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='gen_q', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='battery_p', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='battery_q', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='shunt_q', tpe=Vec, old_names=list(), expandable=False),
+    )
+
     __slots__ = (
         "bus_names",
         "branch_names",
@@ -166,17 +215,19 @@ class PowerFlowResults(ResultsTemplate):
         "loading_hvdc",
         "Pfp_vsc",
         "Pfn_vsc",
+        "Vdc_vsc",
         "St_vsc",
         "If_vsc",
         "It_vsc",
         "losses_vsc",
         "loading_vsc",
+        "gen_p",
         "gen_q",
+        "battery_p",
         "battery_q",
         "shunt_q",
         "plot_bars_limit",
         "convergence_reports",
-        "three_phase",
     )
 
     def __init__(
@@ -250,14 +301,18 @@ class PowerFlowResults(ResultsTemplate):
                 ResultTypes.VscResults: [
                     ResultTypes.VscPowerFromPositive,
                     ResultTypes.VscPowerFromNegative,
+                    ResultTypes.VscPdc,
+                    ResultTypes.VscVdc,
                     ResultTypes.VscPowerTo,
                     ResultTypes.VscLosses,
                 ],
                 ResultTypes.GeneratorResults: [
+                    ResultTypes.GeneratorPower,
                     ResultTypes.GeneratorReactivePower,
                 ],
 
                 ResultTypes.BatteryResults: [
+                    ResultTypes.BatteryPower,
                     ResultTypes.BatteryReactivePower,
                 ],
 
@@ -313,69 +368,23 @@ class PowerFlowResults(ResultsTemplate):
         # VSC
         self.Pfp_vsc = np.zeros(n_vsc, dtype=float)
         self.Pfn_vsc = np.zeros(n_vsc, dtype=float)
+        self.Vdc_vsc = np.zeros(n_vsc, dtype=float)
         self.St_vsc = np.zeros(n_vsc, dtype=complex)
         self.If_vsc = np.zeros(n_vsc, dtype=float)
         self.It_vsc = np.zeros(n_vsc, dtype=complex)
         self.losses_vsc = np.zeros(n_vsc, dtype=float)
         self.loading_vsc = np.zeros(n_vsc, dtype=float)
 
+        self.gen_p: Vec = np.zeros(n_gen)
         self.gen_q: Vec = np.zeros(n_gen)
+
+        self.battery_p: Vec = np.zeros(n_batt)
         self.battery_q: Vec = np.zeros(n_batt)
+
         self.shunt_q: Vec = np.zeros(n_sh)
 
         self.plot_bars_limit: int = 100
         self.convergence_reports: List[ConvergenceReport] = list()
-
-        self.three_phase: bool = False
-
-        self.register(name='bus_names', tpe=StrVec)
-        self.register(name='branch_names', tpe=StrVec)
-        self.register(name='hvdc_names', tpe=StrVec)
-
-        self.register(name='gen_names', tpe=StrVec)
-        self.register(name='batt_names', tpe=StrVec)
-        self.register(name='sh_names', tpe=StrVec)
-
-        self.register(name='bus_types', tpe=IntVec)
-
-        self.register(name='F', tpe=IntVec)
-        self.register(name='T', tpe=IntVec)
-        self.register(name='hvdc_F', tpe=IntVec)
-        self.register(name='hvdc_T', tpe=IntVec)
-        self.register(name='bus_area_indices', tpe=IntVec)
-        self.register(name='area_names', tpe=IntVec)
-
-        self.register(name='Sbus', tpe=CxVec)
-        self.register(name='voltage', tpe=CxVec)
-
-        self.register(name='Sf', tpe=CxVec)
-        self.register(name='St', tpe=CxVec)
-        self.register(name='If', tpe=CxVec)
-        self.register(name='It', tpe=CxVec)
-        self.register(name='tap_module', tpe=Vec)
-        self.register(name='tap_angle', tpe=Vec)
-        self.register(name='Vbranch', tpe=CxVec)
-        self.register(name='loading', tpe=CxVec)
-        self.register(name='losses', tpe=CxVec)
-
-        self.register(name='losses_hvdc', tpe=Vec)
-        self.register(name='Pf_hvdc', tpe=Vec)
-        self.register(name='Pt_hvdc', tpe=Vec)
-        self.register(name='loading_hvdc', tpe=Vec)
-
-        self.register(name='losses_vsc', tpe=Vec)
-        self.register(name='Pfp_vsc', tpe=Vec)
-        self.register(name='Pfn_vsc', tpe=Vec)
-        self.register(name='St_vsc', tpe=CxVec)
-        self.register(name='If_vsc', tpe=Vec)
-        self.register(name='It_vsc', tpe=CxVec)
-        self.register(name='loading_vsc', tpe=Vec)
-
-        self.register(name='gen_q', tpe=Vec)
-        self.register(name='battery_q', tpe=Vec)
-        self.register(name='shunt_q', tpe=Vec)
-
-        self.register(name='three_phase', tpe=bool)
 
     def apply_new_rates(self, nc: NumericalCircuit):
         """
@@ -470,6 +479,7 @@ class PowerFlowResults(ResultsTemplate):
         # VSC
         self.Pfp_vsc[vsc_idx] = results.Pfp_vsc
         self.Pfn_vsc[vsc_idx] = results.Pfn_vsc
+        self.Vdc_vsc[vsc_idx] = results.Vdc_vsc
         self.St_vsc[vsc_idx] = results.St_vsc
         self.If_vsc[vsc_idx] = results.If_vsc
         self.It_vsc[vsc_idx] = results.It_vsc
@@ -538,7 +548,7 @@ class PowerFlowResults(ResultsTemplate):
 
     def get_voltage_df(self):
 
-        return pd.DataFrame(data={'Um 1 [p.u.]': np.abs(self.voltage).round(5),
+        return pd.DataFrame(data={'Um 1 [p.u.]': np.abs(self.voltage).round(6),
                                   'Ua 1 [º]': np.angle(self.voltage, deg=True)},
                             index=self.bus_names)
 
@@ -866,6 +876,28 @@ class PowerFlowResults(ResultsTemplate):
                                 ylabel='(MW)',
                                 units='(MW)')
 
+        elif result_type == ResultTypes.VscPdc:
+
+            return ResultsTable(data=self.Pfp_vsc + self.Pfn_vsc,
+                                index=self.vsc_names,
+                                idx_device_type=DeviceType.VscDevice,
+                                columns=np.array([result_type.value]),
+                                cols_device_type=DeviceType.NoDevice,
+                                title=result_type.value,
+                                ylabel='(MW)',
+                                units='(MW)')
+
+        elif result_type == ResultTypes.VscVdc:
+
+            return ResultsTable(data=self.Vdc_vsc,
+                                index=self.vsc_names,
+                                idx_device_type=DeviceType.VscDevice,
+                                columns=np.array([result_type.value]),
+                                cols_device_type=DeviceType.NoDevice,
+                                title=result_type.value,
+                                ylabel='(p.u.)',
+                                units='(p.u.)')
+
         elif result_type == ResultTypes.VscPowerTo:
 
             return ResultsTable(data=self.St_vsc.real,
@@ -978,6 +1010,17 @@ class PowerFlowResults(ResultsTemplate):
                                 ylabel='(MW)',
                                 units='(MW)')
 
+        elif result_type == ResultTypes.GeneratorPower:
+
+            return ResultsTable(data=self.gen_p,
+                                index=self.gen_names,
+                                idx_device_type=DeviceType.GeneratorDevice,
+                                columns=np.array([result_type.value]),
+                                cols_device_type=DeviceType.NoDevice,
+                                title=result_type.value,
+                                ylabel='(MW)',
+                                units='(MW)')
+
         elif result_type == ResultTypes.GeneratorReactivePower:
 
             return ResultsTable(data=self.gen_q,
@@ -988,6 +1031,17 @@ class PowerFlowResults(ResultsTemplate):
                                 title=result_type.value,
                                 ylabel='(MVAr)',
                                 units='(MVAr)')
+
+        elif result_type == ResultTypes.BatteryPower:
+
+            return ResultsTable(data=self.battery_p,
+                                index=self.batt_names,
+                                idx_device_type=DeviceType.BatteryDevice,
+                                columns=np.array([result_type.value]),
+                                cols_device_type=DeviceType.NoDevice,
+                                title=result_type.value,
+                                ylabel='(MW)',
+                                units='(MW)')
 
         elif result_type == ResultTypes.BatteryReactivePower:
 

@@ -530,7 +530,12 @@ def _build_benchmark_case(builder) -> Tuple[GenericEmtProblem, JitSymbolicSolver
     block, _ = builder(vf)
     block.unify_blocks()
 
-    problem = GenericEmtProblem(sys_block=block, glob_time=vf.add_var(f"t_{block.name}"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+    problem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=vf.add_var(f"t_{block.name}"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
     solver = JitSymbolicSolver(
         problem=problem,
         t0=0.0,
@@ -555,7 +560,7 @@ def _run_benchmark_simulation(
     problem.set_newton_trace_collector(collector)
 
     t_start = time.perf_counter()
-    t, y_hist, _ = solver.simulate(
+    t, y_hist, _, _, _ = solver.simulate(
         params0=problem.event_params_values.copy(),
         boundary_updater=updater,
     )
@@ -665,7 +670,12 @@ def test_boundary_updater_builds_from_block_logic() -> None:
     vf = VarFactory()
     block, vars_map = create_integrator_trip_system_with_logic(vf)
     block.unify_blocks()
-    problem = GenericEmtProblem(sys_block=block, glob_time=vf.add_var("t_glob"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+    problem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=vf.add_var("t_glob"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
 
     updater = build_boundary_updater_from_block(problem)
     assert updater is not None
@@ -688,7 +698,12 @@ def test_procedural_logic_demo_path_trips_mode_during_simulation() -> None:
     vf = VarFactory()
     block, vars_map = create_integrator_trip_system_with_logic(vf)
     block.unify_blocks()
-    problem = GenericEmtProblem(sys_block=block, glob_time=vf.add_var("t_glob"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+    problem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=vf.add_var("t_glob"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
 
     solver = JitSymbolicSolver(
         problem=problem,
@@ -704,7 +719,7 @@ def test_procedural_logic_demo_path_trips_mode_during_simulation() -> None:
     logic = updater.logic_entries[0]
 
     params0 = problem.event_params_values.copy()
-    _, y_hist, _ = solver.simulate(params0=params0, boundary_updater=updater)
+    _, y_hist, _, _, _ = solver.simulate(params0=params0, boundary_updater=updater)
 
     assert logic.trip_applied_time is not None
     assert logic.trip_applied_time > 0.0
@@ -719,7 +734,12 @@ def test_helper_based_logic_supports_and_or_picdro_flipflop_reset() -> None:
     vf = VarFactory()
     block, vars_map = create_boolean_operator_system(vf)
     block.unify_blocks()
-    problem = GenericEmtProblem(sys_block=block, glob_time=vf.add_var("t_glob_bool"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+    problem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=vf.add_var("t_glob_bool"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
 
     updater = build_boundary_updater_from_block(problem)
     assert updater is not None
@@ -758,7 +778,12 @@ def test_helper_based_logic_supports_and_branch_pickup() -> None:
     vf = VarFactory()
     block, vars_map = create_boolean_operator_system(vf)
     block.unify_blocks()
-    problem = GenericEmtProblem(sys_block=block, glob_time=vf.add_var("t_glob_bool_2"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+    problem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=vf.add_var("t_glob_bool_2"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
 
     updater = build_boundary_updater_from_block(problem)
     assert updater is not None
@@ -794,7 +819,12 @@ def test_aflipflop_holds_analog_value_until_reset() -> None:
     vf = VarFactory()
     block, vars_map = create_analog_flipflop_system(vf)
     block.unify_blocks()
-    problem = GenericEmtProblem(sys_block=block, glob_time=vf.add_var("t_glob_af"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+    problem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=vf.add_var("t_glob_af"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
 
     updater = build_boundary_updater_from_block(problem)
     assert updater is not None
@@ -845,7 +875,12 @@ def test_protection_chain_freezes_integrator_with_exact_substep_alignment() -> N
     block.unify_blocks()
 
     glob_time: Var = vf.add_var("t_glob")
-    problem = GenericEmtProblem(sys_block=block, glob_time=glob_time)
+    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+    problem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=glob_time,
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
 
     mode_params: List[Var] = problem.get_runtime_mode_parameters()
     assert len(mode_params) == 1
@@ -871,7 +906,7 @@ def test_protection_chain_freezes_integrator_with_exact_substep_alignment() -> N
 
     params0 = problem.event_params_values.copy()
 
-    t, y_hist, dy_hist = solver.simulate(params0=params0, boundary_updater=protection)
+    t, y_hist, dy_hist, _, _ = solver.simulate(params0=params0, boundary_updater=protection)
 
     assert protection.tripped
     assert protection.trip_applied_time is not None
@@ -918,7 +953,12 @@ def test_protection_chain_disables_antiwindup_branch_with_exact_substep_alignmen
     block.unify_blocks()
 
     glob_time: Var = vf.add_var("t_glob")
-    problem = GenericEmtProblem(sys_block=block, glob_time=glob_time)
+    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+    problem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=glob_time,
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
 
     mode_params: List[Var] = problem.get_runtime_mode_parameters()
     assert len(mode_params) == 1
@@ -944,7 +984,7 @@ def test_protection_chain_disables_antiwindup_branch_with_exact_substep_alignmen
 
     params0 = problem.event_params_values.copy()
 
-    t, y_hist, dy_hist = solver.simulate(params0=params0, boundary_updater=protection)
+    t, y_hist, dy_hist, _, _ = solver.simulate(params0=params0, boundary_updater=protection)
 
     assert protection.tripped
     assert protection.trip_applied_time is not None

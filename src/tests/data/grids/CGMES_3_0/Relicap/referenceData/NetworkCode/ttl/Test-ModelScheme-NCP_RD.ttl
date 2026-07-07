@@ -1,0 +1,64 @@
+@prefix adms:   <http://www.w3.org/ns/adms#> .
+@prefix dcat:     <http://www.w3.org/ns/dcat#> .
+@prefix dcterms:  <http://purl.org/dc/terms/> .
+@prefix prov:     <http://www.w3.org/ns/prov#> .
+@prefix provcim:  <https://cim4.eu/ns/provcim#> .
+@prefix skos:     <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:      <http://www.w3.org/2001/XMLSchema#> .
+
+
+#################################################################
+# Model Scheme / Reference Dataset
+#################################################################
+
+<https://energy.referencedata.eu/test/ModelScheme/NCP/1.0>
+    a skos:ConceptScheme , dcat:Dataset ;
+    skos:prefLabel "Energy Reference Data Model Scheme"@en ;
+	skos:definition "Reference dataset and concept scheme listing recognized abstract CIM model identities that may be used as the object of dcat:isVersionOf for versioned datasets."@en ;
+	dcterms:description "Reference dataset containing recognized abstract CIM model identities for use in dataset versioning, provenance, and cataloguing."@en ;
+    dcterms:title "Test-ModelScheme-NCP-1.0" ;
+	dcterms:identifier "f4f9cafc-d146-4275-92b5-6d04f9b26b56" ;
+    dcterms:publisher <https://www.entsoe.eu/> ;
+    dcterms:rights "Copyright" ;
+    dcterms:rightsHolder "ENTSO-E" ;
+    dcterms:issued "2026-03-22"^^xsd:date ;
+    prov:generatedAtTime "2026-03-22T00:00:00Z"^^xsd:dateTime ;
+    dcat:version "1.0.0" ;
+    adms:versionNotes "Initial version of the Energy Reference Data Model Scheme for ReliCapGrid."@en ;
+    dcat:isVersionOf <https://energy.referencedata.eu/test/ModelScheme> ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    dcterms:accessRights <https://energy.referencedata.eu/Confidentiality/Public> ;
+	dcterms:hasPart <https://energy.referencedata.eu/test/ModelScheme/NCP/1.0#collection_ncp_model> .
+
+
+#################################################################
+# Collection of Model
+#################################################################
+
+<https://energy.referencedata.eu/test/ModelScheme/NCP/1.0#collection_ncp_model>
+    a prov:Collection ;
+    dcterms:identifier "3c0d7db0-6380-4ce8-ac1f-39bb5687311c" ;
+    skos:prefLabel "Collection of recognized models for NCP and ReliCapGrid."@en ;
+    prov:hadMember         
+		<https://energy.referencedata.eu/test/model/TSO-Svedala_EQ> ,
+        <https://energy.referencedata.eu/test/model/TSO-Galia_ER> .
+
+#################################################################
+# List of Model
+#################################################################
+
+<https://energy.referencedata.eu/test/model/TSO-Svedala_IGM-EQ>
+    a provcim:Model ;
+    skos:prefLabel "TSO-Svedala IGM-EQ Model of Svedala-Transmission."@en ;
+	dcterms:identifier "bbee31bf-dfb6-456a-9b5e-4d1ff0713000" ;
+	dcterms:description "Abstract identity for the CIM-based Individual Grid Model (IGM) of Equipment (EQ) representation of the Svedala transmission system governed by TSO-Svedala."@en ;
+	provcim:modelAuthority <https://energy.referencedata.eu/test/party/TSO-Svedala> ;
+	dcterms:spatial <https://energy.referencedata.eu/test/frame/Svedala-Transmission> .
+
+<https://energy.referencedata.eu/test/model/TSO-Galia_IGM-ER>
+    a provcim:Model ;
+    skos:prefLabel "TSO-Galia IGM-ER Model of Galia-Transmission."@en ;
+	dcterms:identifier "9db94464-5b71-4f83-8345-e83f3d604761" ;
+	dcterms:description "Abstract identity for the CIM-based Individual Grid Model (IGM) Equipment Reliability (ER) representation of the Galia transmission system governed by TSO-Galia."@en ;
+	provcim:modelAuthority <https://energy.referencedata.eu/test/party/TSO-Galia> ;
+	dcterms:spatial <https://energy.referencedata.eu/test/frame/Galia-Transmission> .

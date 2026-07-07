@@ -10,7 +10,7 @@ from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Devices.Substation.substation import Substation
 from VeraGridEngine.Devices.Substation.voltage_level import VoltageLevel
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.enumerations import BuildStatus, DeviceType
+from VeraGridEngine.enumerations import BuildStatus, DeviceType, PrpCat, ParamPowerFlowReferenceType
 from VeraGridEngine.Devices.Parents.dynamic_parent import DynamicDevice
 from VeraGridEngine.Devices.Aggregation.branch_group import BranchGroup
 from VeraGridEngine.Devices.Profiles import ProfileBool, ProfileFloat
@@ -45,6 +45,7 @@ class BranchParent(DynamicDevice):
         '_capex',
         '_opex',
         'build_status',
+        '_design_rate',
         '_rate',
         '_rate_prof',
         '_contingency_factor',
@@ -58,43 +59,169 @@ class BranchParent(DynamicDevice):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp('bus_from', units="", tpe=DeviceType.BusDevice,
-               definition='Name of the bus at the "from" side', editable=False),
-        GCProp('bus_to', units="", tpe=DeviceType.BusDevice,
-               definition='Name of the bus at the "to" side', editable=False),
-        GCProp('active', units="", tpe=bool, definition='Is active?', profile_name="active_prof"),
-        GCProp('reducible', units="", tpe=bool,
-               definition='Is the branch to be reduced by the topology preprocessor?'),
-        GCProp('rate', units="MVA", tpe=float, definition='Thermal rating power', profile_name="rate_prof"),
-        GCProp('contingency_factor', units="p.u.", tpe=float,
-               definition='Rating multiplier for contingencies', profile_name="contingency_factor_prof"),
-        GCProp('protection_rating_factor', units="p.u.", tpe=float,
-               definition='Rating multiplier that indicates the maximum flow before the protections tripping',
-               profile_name="protection_rating_factor_prof"),
-        GCProp('monitor_loading', units="", tpe=bool,
-               definition="Monitor this device loading for OPF, NTC or contingency studies."),
-        GCProp('mttf', units="h", tpe=float, definition="Mean time to failure"),
-        GCProp('mttr', units="h", tpe=float, definition="Mean time to repair"),
-        GCProp('Cost', units="e/MWh", tpe=float,
-               definition="Cost of overloads. Used in OPF", profile_name="Cost_prof",
-               old_names=("overload_cost",)),
-        GCProp('capex', units="e/MW", tpe=float, definition="Cost of investment. Used in expansion planning."),
-        GCProp('opex', units="e/MWh", tpe=float, definition="Cost of operation. Used in expansion planning."),
-        GCProp('group', units="", tpe=DeviceType.BranchGroupDevice,
-               definition="Group where this branch belongs"),
-        GCProp(key='color', units='', tpe=str, definition='Color to paint the element in the map diagram',
-               is_color=True),
-        GCProp(key='bus_from_pos', units='', tpe=int, definition='Aid to locate devices on a busbar',
-               display=False),
-        GCProp(key='bus_to_pos', units='', tpe=int, definition='Aid to locate devices on a busbar',
-               display=False),
-        GCProp(key='temp_base', units='ºC', tpe=float, definition='Base temperature at which R was measured.'),
-        GCProp(key='temp_oper', units='ºC', tpe=float, definition='Operation temperature to modify R.',
-               profile_name='temp_oper_prof'),
-        GCProp(key='alpha', units='1/ºC', tpe=float,
-               definition='Thermal coefficient to modify R,around a reference temperature using a linear '
+        GCProp(
+            prop_name='bus_from',
+            units="",
+            tpe=DeviceType.BusDevice,
+            definition='Name of the bus at the "from" side',
+            editable=False,
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='bus_to',
+            units="",
+            tpe=DeviceType.BusDevice,
+            definition='Name of the bus at the "to" side',
+            editable=False,
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='active',
+            units="",
+            tpe=bool,
+            definition='Is active?',
+            profile_name="active_prof",
+            cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.device_active,
+        ),
+        GCProp(
+            prop_name='reducible',
+            units="",
+            tpe=bool,
+            definition='Is the branch to be reduced by the topology preprocessor?',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='design_rate',
+            units="MVA",
+            tpe=float,
+            definition='Design thermal rating power that is not modified for operational reasons or otherwise',
+            cat=[PrpCat.TP, PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='rate',
+            units="MVA",
+            tpe=float,
+            definition='Operational thermal rating power',
+            profile_name="rate_prof",
+            cat=[PrpCat.PF, PrpCat.OPF],
+            dyn_ref=ParamPowerFlowReferenceType.branch_rate_mva,
+        ),
+        GCProp(
+            prop_name='contingency_factor',
+            units="p.u.",
+            tpe=float,
+            definition='Rating multiplier for contingencies',
+            profile_name="contingency_factor_prof",
+            cat=[PrpCat.CON, PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='protection_rating_factor',
+            units="p.u.",
+            tpe=float,
+            definition='Rating multiplier that indicates the maximum flow before the protections tripping',
+            profile_name="protection_rating_factor_prof",
+            cat=[PrpCat.CON],
+        ),
+        GCProp(
+            prop_name='monitor_loading',
+            units="",
+            tpe=bool,
+            definition="Monitor this device loading for OPF, NTC or contingency studies.",
+            cat=[PrpCat.CON, PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='mttf',
+            units="h",
+            tpe=float,
+            definition="Mean time to failure",
+            cat=[PrpCat.REL],
+        ),
+        GCProp(
+            prop_name='mttr',
+            units="h",
+            tpe=float,
+            definition="Mean time to repair",
+            cat=[PrpCat.REL],
+        ),
+        GCProp(
+            prop_name='Cost',
+            units="e/MWh",
+            tpe=float,
+            definition="Cost of overloads. Used in OPF",
+            profile_name="Cost_prof",
+            old_names=("overload_cost",),
+            cat=[PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='capex',
+            units="e/MW",
+            tpe=float,
+            definition="Cost of investment. Used in expansion planning.",
+            cat=[PrpCat.INV],
+        ),
+        GCProp(
+            prop_name='opex',
+            units="e/MWh",
+            tpe=float,
+            definition="Cost of operation. Used in expansion planning.",
+            cat=[PrpCat.INV],
+        ),
+        GCProp(
+            prop_name='group',
+            units="",
+            tpe=DeviceType.BranchGroupDevice,
+            definition="Group where this branch belongs",
+            cat=[PrpCat.CON, PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='color',
+            units='',
+            tpe=str,
+            definition='Color to paint the element in the map diagram',
+            is_color=True,
+        ),
+        GCProp(
+            prop_name='bus_from_pos',
+            units='',
+            tpe=int,
+            definition='Aid to locate devices on a busbar',
+            display=False,
+        ),
+        GCProp(
+            prop_name='bus_to_pos',
+            units='',
+            tpe=int,
+            definition='Aid to locate devices on a busbar',
+            display=False,
+        ),
+        GCProp(
+            prop_name='temp_base',
+            units='ºC',
+            tpe=float,
+            definition='Base temperature at which R was measured.',
+            cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.branch_temp_base_deg_c,
+        ),
+        GCProp(
+            prop_name='temp_oper',
+            units='ºC',
+            tpe=float,
+            definition='Operation temperature to modify R.',
+            profile_name='temp_oper_prof',
+            cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.branch_temp_oper_deg_c,
+        ),
+        GCProp(
+            prop_name='alpha',
+            units='1/ºC',
+            tpe=float,
+            definition='Thermal coefficient to modify R,around a reference temperature using a linear '
                           'approximation.For example:Copper @ 20ºC: 0.004041,Copper @ 75ºC: 0.00323,'
-                          'Annealed copper @ 20ºC: 0.00393,Aluminum @ 20ºC: 0.004308,Aluminum @ 75ºC: 0.00330'),
+                          'Annealed copper @ 20ºC: 0.00393,Aluminum @ 20ºC: 0.004308,Aluminum @ 75ºC: 0.00330',
+            cat=[PrpCat.PF],
+            dyn_ref=ParamPowerFlowReferenceType.branch_alpha_per_deg_c,
+        ),
     )
 
     def __init__(self,
@@ -105,6 +232,7 @@ class BranchParent(DynamicDevice):
                  bus_to: Union[Bus, None],
                  active: bool,
                  reducible: bool,
+                 design_rate: float,
                  rate: float,
                  contingency_factor: float,
                  protection_rating_factor: float,
@@ -129,7 +257,8 @@ class BranchParent(DynamicDevice):
         :param bus_from: Name of the bus at the "from" side
         :param bus_to: Name of the bus at the "to" side
         :param active: Is active?
-        :param rate: Branch rating (MVA)
+        :param design_rate: Rate that is not manipulated for operational reasons or otherwise (MVA)
+        :param rate: Branch operational rating (MVA)
         :param contingency_factor: Factor to multiply the rating in case of contingency
         :param contingency_enabled: Enabled contingency (Legacy, better use contingency objects)
         :param monitor_loading: Monitor loading (Legacy)
@@ -144,11 +273,11 @@ class BranchParent(DynamicDevice):
         """
 
         DynamicDevice.__init__(self,
-                                name=name,
-                                idtag=idtag,
-                                code=code,
-                                device_type=device_type,
-                                build_status=build_status)
+                               name=name,
+                               idtag=idtag,
+                               code=code,
+                               device_type=device_type,
+                               build_status=build_status)
 
         # connectivity
         if bus_from is None:
@@ -193,6 +322,8 @@ class BranchParent(DynamicDevice):
         self.capex = capex
 
         self.opex = opex
+
+        self._design_rate = design_rate
 
         # line rating in MVA
         if not isinstance(rate, Union[float, int]):
@@ -397,6 +528,22 @@ class BranchParent(DynamicDevice):
         :return:
         """
         return get_at(self.temp_oper, self._temp_oper_prof, t)
+
+    @property
+    def design_rate(self):
+        """
+        Rate (MVA)
+        :return:
+        """
+        return self._design_rate
+
+    @design_rate.setter
+    def design_rate(self, val: float):
+        val = float(val)
+        if isinstance(val, float):
+            self._design_rate = val
+        else:
+            raise ValueError(f'{val} is not a float')
 
     @property
     def rate(self):

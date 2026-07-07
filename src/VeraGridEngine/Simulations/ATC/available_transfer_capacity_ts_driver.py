@@ -29,6 +29,9 @@ class AvailableTransferCapacityTimeSeriesResults(ResultsTemplate):
     """
     AvailableTransferCapacityTimeSeriesResults
     """
+
+    LOCAL_RESULTS_DECLARATIONS = tuple()
+
     __slots__ = (
         "branch_names",
         "bus_names",

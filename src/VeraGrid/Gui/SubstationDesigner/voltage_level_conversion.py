@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import QModelIndex, QPersistentModelIndex, Qt
 import VeraGridEngine.Devices as dev
 from VeraGridEngine.enumerations import VoltageLevelTypes
+import VeraGrid.Gui.gui_functions as gf
 
 
 class SpinBoxDelegate(QStyledItemDelegate):
@@ -260,10 +261,8 @@ class VoltageLevelConversionWizard(QDialog):
             VoltageLevelTypes.Ring,
         ]
 
-        self.vl_dict = {vl.value: vl for vl in self.vl_list}
-
         self.combo = QComboBox()
-        self.combo.addItems([vl.value for vl in self.vl_list])
+        self.combo.setModel(gf.ComboModel(enum_values=self.vl_list, translate=self.tr))
         scheme_layout.addWidget(self.combo)
         scheme_layout.addStretch()
         main_layout.addLayout(scheme_layout)
@@ -296,8 +295,9 @@ class VoltageLevelConversionWizard(QDialog):
         row2_layout.addWidget(self.enable_transfer_bus_checkbox)
 
         self.reducible_branches_checkbox = QCheckBox("Reducible branches")
-        self.reducible_branches_checkbox.setChecked(False)
-        self.reducible_branches_checkbox.setToolTip("If enabled, new branches are marked as reducible")
+        self.reducible_branches_checkbox.setChecked(True)
+        self.reducible_branches_checkbox.setToolTip("If true, every switch created reducible. If false, "
+                                                    "the switches are kept in the analysis.")
         row2_layout.addWidget(self.reducible_branches_checkbox)
         row2_layout.addStretch()
         options_layout.addLayout(row2_layout)
@@ -519,7 +519,7 @@ class VoltageLevelConversionWizard(QDialog):
         Get the currently selected voltage level type.
         :return: VoltageLevelTypes enum value
         """
-        return self.vl_dict[self.combo.currentText()]
+        return self.combo.currentData()
 
     def validate_configuration(self) -> Tuple[bool, str]:
         """

@@ -1,0 +1,4 @@
+- A RA Profile, defining some different RA composed of different action on switches, and because some RA “touch” the same switches I defined a Group of RA with “excluded” type (this is RAO or operator duty to respect that constraint). It is the offline data provided before the CROSA
+- A RAS Profile, defining the application of the different RA, some apply in the same MTU some don’t because they’re not suppose to (cf above). It is the final output of the CROSA (and, with some minor adjustment, the input during the TOPO RA step of the CROSA in ROSC v1)
+
+Here is a version with no mention of TSO/RCC / substations / real mrid in IGMs that I therefore consider anonymised.

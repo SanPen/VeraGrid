@@ -12,7 +12,8 @@ from PySide6.QtGui import (QPen, QCursor, QPixmap, QBrush, QColor, QTransform, Q
 from PySide6.QtWidgets import (QGraphicsLineItem, QGraphicsRectItem, QGraphicsPolygonItem,
                                QGraphicsEllipseItem, QGraphicsSceneMouseEvent, QGraphicsTextItem,
                                QGraphicsPathItem, QStyleOptionGraphicsItem, QWidget, QMenu)
-from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE, DEACTIVATED, OTHER, GenericDiagramWidget, TRANSPARENT, WHITE
+from VeraGrid.Gui.Diagrams.generic_graphics import (ACTIVE, DEACTIVATED, OTHER, GenericDiagramWidget, TRANSPARENT,
+                                                    WHITE, DraggableLabelItem)
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.route_geometry import (merge_route_with_endpoints,
                                                                            move_polyline_route_segment,
                                                                            move_polyline_route_vertex,
@@ -27,6 +28,7 @@ from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import BarTerminalItem,
 from VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics import BusGraphicItem
 from VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_node_graphics import FluidNodeGraphicItem
 from VeraGrid.Gui.messages import yes_no_question
+from VeraGrid.Gui.gui_functions import translate_context_menu_text
 
 from VeraGridEngine.Devices.Diagrams.schematic_layout import build_default_branch_route
 from VeraGridEngine.Devices.Substation.bus import Bus
@@ -44,6 +46,7 @@ from VeraGridEngine.Devices.Fluid.fluid_node import FluidNode
 from VeraGridEngine.Devices.Fluid.fluid_path import FluidPath
 from VeraGridEngine.Devices.types import BRANCH_TYPES
 from VeraGridEngine.enumerations import SchematicAutoRouteStyle, SchematicRouteKind, SwitchGraphicType
+
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
@@ -70,20 +73,25 @@ class TransformerSymbol(QGraphicsRectItem):
         self.pen_width = pen_width
         self.color = ACTIVE['color']
         self.style = ACTIVE['style']
+        self.setAcceptedMouseButtons(Qt.MouseButton.NoButton)
 
-        self.setPen(QPen(TRANSPARENT))
+        QGraphicsRectItem.setPen(self, QPen(TRANSPARENT))
         self.setRect(QRectF(0, 0, w, h))
 
         self.c0 = QGraphicsEllipseItem(0, 0, d, d, parent=self)
         self.c1 = QGraphicsEllipseItem(0, 0, d, d, parent=self)
         self.c2 = QGraphicsEllipseItem(0, 0, d, d, parent=self)
+        self.c0.setAcceptedMouseButtons(Qt.MouseButton.NoButton)
+        self.c1.setAcceptedMouseButtons(Qt.MouseButton.NoButton)
+        self.c2.setAcceptedMouseButtons(Qt.MouseButton.NoButton)
 
         self.c0.setPen(QPen(TRANSPARENT, self.width, self.style))
         self.c2.setPen(QPen(self.color, self.width, self.style))
         self.c1.setPen(QPen(self.color, self.width, self.style))
 
-        self.c0.setBrush(QBrush(WHITE))
-        self.c2.setBrush(QBrush(WHITE))
+        fill_brush = QBrush(Qt.BrushStyle.NoBrush)
+        self.c0.setBrush(fill_brush)
+        self.c2.setBrush(fill_brush)
 
         self.c0.setPos(w * 0.35 - d / 2, h * 0.5 - d / 2)
         self.c1.setPos(w * 0.35 - d / 2, h * 0.5 - d / 2)
@@ -101,8 +109,12 @@ class TransformerSymbol(QGraphicsRectItem):
         :param style: PenStyle instance
         :return:
         """
-        self.c2.setPen(QPen(color, w, style))
-        self.c1.setPen(QPen(color, w, style))
+        line_w = float(w)
+        pen = QPen(color, line_w, style)
+        self.c2.setPen(pen)
+        self.c1.setPen(pen)
+        self.c0.setBrush(QBrush(Qt.BrushStyle.NoBrush))
+        self.c2.setBrush(QBrush(Qt.BrushStyle.NoBrush))
 
     def set_pen(self, pen: QPen):
         """
@@ -110,7 +122,27 @@ class TransformerSymbol(QGraphicsRectItem):
         :param pen:
         :return:
         """
-        self.setPen(pen)
+        self.set_colour(color=pen.color(),
+                        w=max(1.2, pen.widthF()),
+                        style=pen.style())
+
+    def setBrush(self, brush: QBrush | QColor) -> None:
+        """
+        Keep transformer coils hollow regardless of external fill requests.
+
+        :param brush: Brush or color.
+        :return: ``None``.
+        """
+        self.c0.setBrush(QBrush(Qt.BrushStyle.NoBrush))
+        self.c2.setBrush(QBrush(Qt.BrushStyle.NoBrush))
+
+    def setPen(self, pen: QPen) -> None:
+        """
+        Apply one pen to the visible transformer coils.
+
+        :param pen: Pen to apply.
+        :return: ``None``.
+        """
         self.c1.setPen(pen)
         self.c2.setPen(pen)
 
@@ -299,24 +331,187 @@ class SeriesReactanceSymbol(VscSymbol):
                            icon_route=":/Icons/icons/reactance.png")
 
 
-class SwitchSymbol(VscSymbol):
+class BranchVectorSymbolBase(QGraphicsRectItem):
+    """
+    Shared vector base for compact branch symbols.
+    """
+
+    def __init__(self, parent, pen_width: float | int, h: float, w: float) -> None:
+        """
+        Build one compact vector branch symbol.
+
+        :param parent: Parent branch graphic.
+        :param pen_width: Reference pen width.
+        :param h: Symbol height.
+        :param w: Symbol width.
+        :return: ``None``.
+        """
+        QGraphicsRectItem.__init__(self, parent=parent)
+
+        self.parent = parent
+        self.width = pen_width
+        self.pen_width = pen_width
+        self.color = ACTIVE['color']
+        self.style = ACTIVE['style']
+        self._stroke_items: list[QGraphicsLineItem | QGraphicsEllipseItem | QGraphicsPathItem] = list()
+        self._fill_items: list[QGraphicsEllipseItem | QGraphicsPathItem] = list()
+
+        self.setPen(QPen(TRANSPARENT))
+        self.setRect(QRectF(0, 0, w, h))
+
+    def _register(self,
+                  item: QGraphicsLineItem | QGraphicsEllipseItem | QGraphicsPathItem,
+                  fill_item: bool = False) -> QGraphicsLineItem | QGraphicsEllipseItem | QGraphicsPathItem:
+        """
+        Track child items that follow the symbol stroke and fill.
+
+        :param item: Registered primitive.
+        :param fill_item: Register it for fill updates too.
+        :return: The same registered item.
+        """
+        self._stroke_items.append(item)
+
+        if fill_item:
+            self._fill_items.append(item)
+        else:
+            pass
+
+        return item
+
+    @staticmethod
+    def _contrast_fill(color: QColor) -> QColor:
+        """
+        Keep a readable body fill in light and dark themes.
+        """
+        if color.lightness() > 127:
+            fill = QColor(32, 32, 32, 255)
+        else:
+            fill = QColor(245, 245, 245, 255)
+
+        fill.setAlpha(210)
+        return fill
+
+    def set_colour(self, color: QColor, w: float | int, style: Qt.PenStyle) -> None:
+        """
+        Set the branch symbol stroke and fill.
+
+        :param color: Target stroke color.
+        :param w: Requested width.
+        :param style: Requested line style.
+        :return: ``None``.
+        """
+        pen = QPen(color, max(1.8, float(w) * 0.42), style, Qt.PenCapStyle.RoundCap, Qt.PenJoinStyle.RoundJoin)
+        item: QGraphicsLineItem | QGraphicsEllipseItem | QGraphicsPathItem
+
+        for item in self._stroke_items:
+            item.setPen(pen)
+
+        fill_brush = QBrush(self._contrast_fill(color))
+        fill_item: QGraphicsEllipseItem | QGraphicsPathItem
+        for fill_item in self._fill_items:
+            fill_item.setBrush(fill_brush)
+
+    def set_pen(self, pen: QPen) -> None:
+        """
+        Apply one pen without changing the fill intent.
+
+        :param pen: Symbol pen.
+        :return: ``None``.
+        """
+        self.set_colour(color=pen.color(),
+                        w=max(1.2, pen.widthF()),
+                        style=pen.style())
+
+    def setBrush(self, brush: QBrush | QColor) -> None:
+        """
+        Allow external callers to refresh only the body fill.
+
+        :param brush: Fill brush or color.
+        :return: ``None``.
+        """
+        brush_obj: QBrush = brush if isinstance(brush, QBrush) else QBrush(brush)
+        item: QGraphicsEllipseItem | QGraphicsPathItem
+
+        for item in self._fill_items:
+            item.setBrush(brush_obj)
+
+    def setToolTipText(self, toolTip: str) -> None:
+        """
+        Set branch tool tip text.
+
+        :param toolTip: Tooltip text.
+        :return: ``None``.
+        """
+        self.setToolTip(toolTip)
+
+    def redraw(self) -> None:
+        """
+        Redraw using the parent line transform.
+
+        :return: ``None``.
+        """
+        self.setTransform(self.parent.get_symbol_transform(self.rect()))
+
+
+class SwitchSymbol(BranchVectorSymbolBase):
     """
     SwitchSymbol
     """
 
-    def __init__(self, parent, pen_width, h=30, w=30):
-        VscSymbol.__init__(self, parent=parent, pen_width=pen_width, h=h, w=w,
-                           icon_route=":/Icons/icons/switch.png")
+    def __init__(self, parent, pen_width: float | int, h: float = 36, w: float = 44) -> None:
+        """
+        Build one vector switch symbol.
+
+        :param parent: Parent branch graphic.
+        :param pen_width: Reference pen width.
+        :param h: Symbol height.
+        :param w: Symbol width.
+        :return: ``None``.
+        """
+        BranchVectorSymbolBase.__init__(self, parent=parent, pen_width=pen_width, h=h, w=w)
+
+        mid_y = h * 0.5
+        left_line = QGraphicsLineItem(0.0, mid_y, w * 0.12, mid_y, parent=self)
+        right_line = QGraphicsLineItem(w * 0.88, mid_y, w, mid_y, parent=self)
+        self._register(left_line)
+        self._register(right_line)
+
+        body_path = QPainterPath()
+        body_path.addRoundedRect(w * 0.12, h * 0.18, w * 0.76, h * 0.64, 6.0, 6.0)
+        body = QGraphicsPathItem(body_path, parent=self)
+        self._register(body, fill_item=True)
 
 
-class DisconnectorSymbol(VscSymbol):
+class DisconnectorSymbol(BranchVectorSymbolBase):
     """
     DisconnectorSymbol
     """
 
-    def __init__(self, parent, pen_width, h=30, w=30):
-        VscSymbol.__init__(self, parent=parent, pen_width=pen_width, h=h, w=w,
-                           icon_route=":/Icons/icons/disconnector.png")
+    def __init__(self, parent, pen_width: float | int, h: float = 36, w: float = 44) -> None:
+        """
+        Build one vector disconnector symbol.
+
+        :param parent: Parent branch graphic.
+        :param pen_width: Reference pen width.
+        :param h: Symbol height.
+        :param w: Symbol width.
+        :return: ``None``.
+        """
+        BranchVectorSymbolBase.__init__(self, parent=parent, pen_width=pen_width, h=h, w=w)
+
+        mid_y = h * 0.5
+        left_line = QGraphicsLineItem(0.0, mid_y, w * 0.36, mid_y, parent=self)
+        right_line = QGraphicsLineItem(w * 0.64, mid_y, w, mid_y, parent=self)
+        self._register(left_line)
+        self._register(right_line)
+
+        left_contact = QGraphicsEllipseItem(w * 0.28, h * 0.42, w * 0.08, h * 0.16, parent=self)
+        right_contact = QGraphicsEllipseItem(w * 0.64, h * 0.42, w * 0.08, h * 0.16, parent=self)
+        self._register(left_contact, fill_item=True)
+        self._register(right_contact, fill_item=True)
+
+        knife = QGraphicsLineItem(w * 0.34, h * 0.50, w * 0.66, h * 0.24, parent=self)
+        self._register(knife)
 
 
 class HvdcSymbol(QGraphicsRectItem):
@@ -421,8 +616,9 @@ class ArrowHead(QGraphicsPolygonItem):
         self.backwards: float = backwards
         self.sep = separation
 
-        self.label = QGraphicsTextItem(self)
-        self.label.setPlainText("")
+        self.label = DraggableLabelItem(self)
+        self.label.document().setDocumentMargin(0.0)
+        self.label.setHtml('<div style="font-size:9pt; font-weight:600; text-align:center;"></div>')
         self.show_text = show_text
 
         self.setPen(Qt.PenStyle.NoPen)
@@ -471,7 +667,7 @@ class ArrowHead(QGraphicsPolygonItem):
         if draw_label:
             x = format_str.format(value)
             msg = f'{name}:{x} {units}'
-            self.label.setPlainText(msg)
+            self.label.setHtml(f'<div style="font-size:9pt; font-weight:600; text-align:center;">{msg}</div>')
             self.setToolTip(msg)
 
         if redraw:
@@ -515,8 +711,7 @@ class ArrowHead(QGraphicsPolygonItem):
             else:
                 label_p = base_pt - QTransform().rotate(angle).map(QPointF(40, -10 if self.under else 35))
                 self.label.setRotation(angle)
-
-            self.label.setPos(label_p)
+            self.label.set_anchor_position(label_p)
 
 
 class RouteSegmentHandleItem(QGraphicsEllipseItem):
@@ -781,11 +976,11 @@ class LineGraphicTemplateItem(GenericDiagramWidget, QGraphicsLineItem):
             self.symbol = SeriesReactanceSymbol(parent=self, pen_width=width, h=30, w=30)
         elif isinstance(api_object, Switch):
             if api_object.graphic_type == SwitchGraphicType.CircuitBreaker:
-                self.symbol = SwitchSymbol(parent=self, pen_width=width, h=30, w=30)
+                self.symbol = SwitchSymbol(parent=self, pen_width=width, h=36, w=44)
             elif api_object.graphic_type == SwitchGraphicType.Disconnector:
-                self.symbol = DisconnectorSymbol(parent=self, pen_width=width, h=30, w=30)
+                self.symbol = DisconnectorSymbol(parent=self, pen_width=width, h=36, w=44)
             else:
-                self.symbol = DisconnectorSymbol(parent=self, pen_width=width, h=30, w=30)
+                self.symbol = DisconnectorSymbol(parent=self, pen_width=width, h=36, w=44)
         else:
             self.symbol = None
 
@@ -802,6 +997,9 @@ class LineGraphicTemplateItem(GenericDiagramWidget, QGraphicsLineItem):
         self._route_item = QGraphicsPathItem(parent=self)
         self._route_item.setAcceptedMouseButtons(Qt.MouseButton.NoButton)
         self._route_item.setFlag(self.GraphicsItemFlag.ItemIsSelectable, False)
+        # Render the branch stroke below symbols/arrows so converter/transformer
+        # glyphs are not visually traversed by the line.
+        self._route_item.setZValue(-5)
         self._rendered_path = QPainterPath()
         self._route_points: list[tuple[float, float]] = list()
         self._route_handles: list[RouteSegmentHandleItem] = list()
@@ -914,6 +1112,30 @@ class LineGraphicTemplateItem(GenericDiagramWidget, QGraphicsLineItem):
         super().recolour_mode()
 
         self.set_colour(self.color, self.width, self.style)
+
+    def enable_label_drawing(self) -> None:
+        """
+        Enable branch power labels immediately for visible arrows.
+
+        :return: ``None``.
+        """
+        super().enable_label_drawing()
+        self.arrow_p_from.label.setVisible(self.arrow_p_from.isVisible())
+        self.arrow_q_from.label.setVisible(self.arrow_q_from.isVisible())
+        self.arrow_p_to.label.setVisible(self.arrow_p_to.isVisible())
+        self.arrow_q_to.label.setVisible(self.arrow_q_to.isVisible())
+
+    def disable_label_drawing(self) -> None:
+        """
+        Disable branch power labels immediately.
+
+        :return: ``None``.
+        """
+        super().disable_label_drawing()
+        self.arrow_p_from.label.setVisible(False)
+        self.arrow_q_from.label.setVisible(False)
+        self.arrow_p_to.label.setVisible(False)
+        self.arrow_q_to.label.setVisible(False)
 
     def load_route_points_from_diagram(self) -> None:
         """
@@ -1086,16 +1308,16 @@ class LineGraphicTemplateItem(GenericDiagramWidget, QGraphicsLineItem):
         if self.api_object is None:
             if self.is_vsc3_terminal_connection():
                 current_route_style = self.get_branch_auto_route_style()
-                route_style_menu = menu.addMenu("Auto route style")
-                reticular_action = route_style_menu.addAction("Reticular")
-                straight_action = route_style_menu.addAction("Straight")
+                route_style_menu = menu.addMenu(translate_context_menu_text("Auto route style"))
+                reticular_action = route_style_menu.addAction(translate_context_menu_text("Reticular"))
+                straight_action = route_style_menu.addAction(translate_context_menu_text("Straight"))
             else:
                 return
         else:
             current_route_style = self.get_branch_auto_route_style()
-            route_style_menu = menu.addMenu("Auto route style")
-            reticular_action = route_style_menu.addAction("Reticular")
-            straight_action = route_style_menu.addAction("Straight")
+            route_style_menu = menu.addMenu(translate_context_menu_text("Auto route style"))
+            reticular_action = route_style_menu.addAction(translate_context_menu_text("Reticular"))
+            straight_action = route_style_menu.addAction(translate_context_menu_text("Straight"))
 
         reticular_action.setCheckable(True)
         straight_action.setCheckable(True)
@@ -1852,10 +2074,19 @@ class LineGraphicTemplateItem(GenericDiagramWidget, QGraphicsLineItem):
             self.color = OTHER['color']
 
         if self.symbol:
-            self.symbol.setBrush(self.color)
             if self.api_object.active:
+                if isinstance(self.symbol, SwitchSymbol):
+                    self.symbol.setBrush(QColor(self.color))
+                else:
+                    self.symbol.setBrush(self.color)
                 self.symbol.setPen(QPen(ACTIVE['color']))
             else:
+                if isinstance(self.symbol, SwitchSymbol):
+                    self.symbol.setBrush(QColor(0, 0, 0, 0))
+                else:
+                    inactive_fill = QColor(DEACTIVATED['color'])
+                    inactive_fill.setAlpha(72)
+                    self.symbol.setBrush(inactive_fill)
                 self.symbol.setPen(QPen(DEACTIVATED['color']))
 
         # Set pen for everyone
@@ -1971,14 +2202,24 @@ class LineGraphicTemplateItem(GenericDiagramWidget, QGraphicsLineItem):
         """
         Use the rendered route path for hit testing so routed branches remain selectable.
         """
-        if self._rendered_path.isEmpty():
-            return super().shape()
+        path = QPainterPath()
 
-        stroker = QPainterPathStroker()
-        stroker.setWidth(max(8.0, float(self.pen_width) + 4.0))
-        stroker.setCapStyle(Qt.PenCapStyle.RoundCap)
-        stroker.setJoinStyle(Qt.PenJoinStyle.RoundJoin)
-        return stroker.createStroke(self._rendered_path)
+        if self._rendered_path.isEmpty():
+            path = super().shape()
+        else:
+            stroker = QPainterPathStroker()
+            stroker.setWidth(max(8.0, float(self.pen_width) + 4.0))
+            stroker.setCapStyle(Qt.PenCapStyle.RoundCap)
+            stroker.setJoinStyle(Qt.PenJoinStyle.RoundJoin)
+            path = stroker.createStroke(self._rendered_path)
+
+        if self.symbol is None:
+            return path
+        else:
+            symbol_bounds = self.symbol.mapRectToParent(self.symbol.boundingRect()).adjusted(-6.0, -6.0, 6.0, 6.0)
+            symbol_path = QPainterPath()
+            symbol_path.addRoundedRect(symbol_bounds, 8.0, 8.0)
+            return path.united(symbol_path)
 
     def boundingRect(self) -> QRectF:
         """
@@ -2032,22 +2273,45 @@ class LineGraphicTemplateItem(GenericDiagramWidget, QGraphicsLineItem):
         :return:
         """
 
-        self.pen_style = pen.style()
-        self.pen_color = pen.color()
-        self.pen_width = pen.width()
+        route_pen = QPen(pen)
+        self.pen_style = route_pen.style()
+        self.pen_color = route_pen.color()
+        self.pen_width = route_pen.width()
         self.scale = scale
 
-        pen.setWidth(self.pen_width / scale)
+        if self.api_object is not None and not self.api_object.active:
+            inactive_color = QColor(route_pen.color())
+            inactive_color.setAlpha(185)
+            route_pen.setColor(inactive_color)
+            route_pen.setDashPattern([4.0, 3.0])
+            self._route_item.setOpacity(0.82)
+            if self.symbol is None:
+                pass
+            else:
+                self.symbol.setOpacity(0.88)
+        else:
+            self._route_item.setOpacity(1.0)
+            if self.symbol is None:
+                pass
+            else:
+                self.symbol.setOpacity(1.0)
 
-        self._route_item.setPen(pen)
+        route_pen.setWidth(self.pen_width / scale)
+
+        self._route_item.setPen(route_pen)
         self.setPen(QPen(TRANSPARENT,
                          max(1, int(round(self.pen_width / scale))),
-                         pen.style(),
+                         route_pen.style(),
                          Qt.PenCapStyle.RoundCap,
                          Qt.PenJoinStyle.RoundJoin))
 
         if self.symbol:
-            self.symbol.set_pen(pen)
+            self.symbol.set_pen(route_pen)
+            if isinstance(self.symbol, SwitchSymbol):
+                if self.api_object is not None and self.api_object.active:
+                    self.symbol.setBrush(QColor(route_pen.color()))
+                else:
+                    self.symbol.setBrush(QColor(0, 0, 0, 0))
 
     def assign_rate_to_profile(self):
         """

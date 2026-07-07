@@ -6,17 +6,17 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.generating_unit import GeneratingUnit
-from VeraGridEngine.IO.cim.cgmes.cgmes_enums import HydroEnergyConversionKind, HydroTurbineKind, UnitSymbol
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import HydroEnergyConversionKind, HydroTurbineKind, UnitSymbol, CgmesProfileType
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 if TYPE_CHECKING:
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.hydro_power_plant import HydroPowerPlant
 
 class HydroGeneratingUnit(GeneratingUnit):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='energyConversionCapability', class_type=HydroEnergyConversionKind, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Energy conversion capability for generating.''', profiles=[]),
-		CgmesProperty(property_name='dropHeight', class_type=float, multiplier=UnitMultiplier.k, unit=UnitSymbol.m, description='''Unit of length. It shall be a positive value or zero.''', profiles=[]),
-		CgmesProperty(property_name='turbineType', class_type=HydroTurbineKind, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Type of turbine.''', profiles=[]),
-		CgmesProperty(property_name='HydroPowerPlant', class_type='HydroPowerPlant', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The hydro generating unit belongs to a hydro power plant.''', profiles=[]),
+		CgmesProperty(property_name='energyConversionCapability', class_type=HydroEnergyConversionKind, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Energy conversion capability for generating.''', profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='dropHeight', class_type=float, multiplier=UnitMultiplier.k, unit=UnitSymbol.m, description='''Unit of length. It shall be a positive value or zero.''', profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='turbineType', class_type=HydroTurbineKind, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Type of turbine.''', profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='HydroPowerPlant', class_type='HydroPowerPlant', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The hydro generating unit belongs to a hydro power plant.''', profiles=[CgmesProfileType.EQ]),
 	)
 	__slots__ = ('energyConversionCapability', 'dropHeight', 'turbineType', 'HydroPowerPlant')
 	def __init__(self, rdfid='', tpe='HydroGeneratingUnit'):

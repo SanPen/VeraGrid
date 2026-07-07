@@ -7,13 +7,14 @@ from typing import TYPE_CHECKING
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.shunt_compensator import ShuntCompensator
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 if TYPE_CHECKING:
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.nonlinear_shunt_compensator_point import \
 		NonlinearShuntCompensatorPoint
 
 class NonlinearShuntCompensator(ShuntCompensator):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='NonlinearShuntCompensatorPoints', class_type='NonlinearShuntCompensatorPoint', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''All points of the non-linear shunt compensator.''', profiles=[]),
+		CgmesProperty(property_name='NonlinearShuntCompensatorPoints', class_type='NonlinearShuntCompensatorPoint', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''All points of the non-linear shunt compensator.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
 	)
 	__slots__ = ('NonlinearShuntCompensatorPoints',)
 	def __init__(self, rdfid='', tpe='NonlinearShuntCompensator'):

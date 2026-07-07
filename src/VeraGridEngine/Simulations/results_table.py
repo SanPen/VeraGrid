@@ -110,6 +110,15 @@ class ResultsTable:
         self._idx_devices = list()
 
     @property
+    def data(self):
+        """
+        Backward-compatible alias for the table numeric payload.
+
+        :return: Table data array.
+        """
+        return self.data_c
+
+    @property
     def col_devices(self):
         """
 

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:nc="https://cim4.eu/ns/nc#"
+    xmlns:cim="https://cim.ucaiug.io/ns#"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:eumd="https://cim4.eu/ns/Metadata-European#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#" > 
+  <dcat:Dataset rdf:about="urn:uuid:e3453a3c-8639-4648-a662-d6c15f512965">
+    <dcterms:accessRights>https://energy.referencedata.eu/Confidentiality/Public</dcterms:accessRights>
+    <dcterms:conformsTo>https://ap.cim4.eu/EquipmentReliability/2.4</dcterms:conformsTo>
+    <dcterms:conformsTo>https://cim4.eu/ns/nc/2.4#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/CIM100#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/2013/CIM-schema-cim16#</dcterms:conformsTo>
+    <dcterms:description xml:lang="en">This is the equipment reliability dataset for Espheim part of ReliCapGrid.</dcterms:description>
+    <dcat:endDate>2023-06-15T22:30:00Z</dcat:endDate>
+    <prov:generatedAtTime>2022-06-10T07:06:25Z</prov:generatedAtTime>
+    <dcterms:identifier>e3453a3c-8639-4648-a662-d6c15f512965</dcterms:identifier>
+    <dcat:isVersionOf rdf:resource="https://energy.referencedata.eu/Test/Model/Espheim-ER"/>
+    <dcat:keyword>ER</dcat:keyword>
+    <dcterms:license>https://creativecommons.org/licenses/by/4.0/</dcterms:license>
+    <dcterms:publisher>https://energy.referencedata.eu/test/party/Espheim</dcterms:publisher>
+    <dcterms:rights>Copyright</dcterms:rights>
+    <dcterms:rightsHolder>ENTSO-E</dcterms:rightsHolder>	[]
+    <dcterms:requires rdf:resource="urn:uuid:e3beb946-afc6-4304-9660-517d5115cbb0"/>
+    <dcat:startDate>2022-06-15T22:30:00Z</dcat:startDate>
+    <dcterms:title>20220615_Espheim_ER_1.0.0</dcterms:title>
+    <dcat:version>1.0.0</dcat:version>
+    <prov:wasGeneratedBy>https://energy.referencedata.eu/Activity/CGM-ER</prov:wasGeneratedBy>
+    <dcterms:spatial>https://energy.referencedata.eu/Test/Frame/Espheim-Power-Transmission-System</dcterms:spatial>
+    <dcterms:issued>2022-06-15T22:30:00Z</dcterms:issued>
+  </dcat:Dataset>
+  <nc:BiddingZone rdf:ID="_7acbe48a-be54-4cd7-af2e-87768468c55a">
+    <nc:BiddingZone.isTradeEnabled>true</nc:BiddingZone.isTradeEnabled>
+    <cim:IdentifiedObject.description>BZ_EH</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>7acbe48a-be54-4cd7-af2e-87768468c55a</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>Bidding Zone EH</cim:IdentifiedObject.name>
+  </nc:BiddingZone>
+  <nc:SchedulingArea rdf:ID="_3da1dae2-cc95-4c48-a6b7-81cca0e6c465">
+    <cim:IdentifiedObject.description>Espheim</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>3da1dae2-cc95-4c48-a6b7-81cca0e6c465</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>Espheim</cim:IdentifiedObject.name>
+    <nc:SchedulingArea.BiddingZone rdf:resource="#_7acbe48a-be54-4cd7-af2e-87768468c55a"/>
+    <nc:SchedulingArea.ControlArea rdf:resource="#_1f9ecd81-e069-4040-bd64-f34b0fac3a60"/>
+  </nc:SchedulingArea>
+
+  <nc:EquivalentGeneratingUnit rdf:ID="_0b23d814-7559-4edf-8c55-40af585209e6">
+    <cim:IdentifiedObject.mRID>0b23d814-7559-4edf-8c55-40af585209e6</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>EquivalentGeneratingUnit_1</cim:IdentifiedObject.name>
+  </nc:EquivalentGeneratingUnit>
+  <cim:ExternalNetworkInjection rdf:about="_e349f93c-3685-4ea9-a791-a8c1ed359737">
+    <nc:ExternalNetworkInjection.EquivalentGeneratingUnit rdf:resource="#_0b23d814-7559-4edf-8c55-40af585209e6"/>
+  </cim:ExternalNetworkInjection>
+  <cim:ExternalNetworkInjection rdf:about="_6843c26a-5265-4cc7-b88b-6346257770bd">
+    <nc:ExternalNetworkInjection.EquivalentGeneratingUnit rdf:resource="#_0b23d814-7559-4edf-8c55-40af585209e6"/>
+  </cim:ExternalNetworkInjection>
+</rdf:RDF>

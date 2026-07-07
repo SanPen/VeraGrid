@@ -548,8 +548,10 @@ class GreedyDispatchInputs:
 
         # loads
         self.load_profile = np.zeros((nt, nl), dtype=float)
+        self.load_shedding_cost = np.zeros((nt, nl), dtype=float)
         for i, elm in enumerate(grid.loads):
             self.load_profile[:, i] = elm.P_prof.toarray()[time_indices]
+            self.load_shedding_cost[:, i] = elm.Cost_prof.toarray()[time_indices]
 
         # generators
         self.gen_profile = np.zeros((nt, ng), dtype=float)
@@ -676,7 +678,7 @@ def run_greedy_dispatch_ts(grid: MultiCircuit,
                            time_indices: IntVec | None,
                            logger: Logger,
                            text_prog=None,
-                           prog_func=None) -> Tuple[Mat, Mat, Mat, Mat, Mat, Mat]:
+                           prog_func=None) -> Tuple[Mat, Mat, Mat, Mat, Mat, Mat, GreedyDispatchInputs]:
     """
     Run a simple (greedy) dispatch
     :param grid: MultiCircuit
@@ -726,7 +728,13 @@ def run_greedy_dispatch_ts(grid: MultiCircuit,
     if text_prog is not None:
         text_prog("Done!")
 
-    return inpts.load_profile, gen_dispatch, batt_dispatch, batt_energy, load_shedding, ndg_curtailment_per_gen
+    return (inpts.load_profile,
+            gen_dispatch,
+            batt_dispatch,
+            batt_energy,
+            load_shedding,
+            ndg_curtailment_per_gen,
+            inpts)
 
 
 if __name__ == '__main__':
@@ -741,6 +749,7 @@ if __name__ == '__main__':
      gen_dispatch_,
      batt_dispatch_,
      batt_energy_,
-     load_shedding_) = run_greedy_dispatch_ts(grid=grid_, time_indices=None, logger=Logger())
+     load_shedding_,
+     greedy_inpts_) = run_greedy_dispatch_ts(grid=grid_, time_indices=None, logger=Logger())
 
-    print()
+    # print()

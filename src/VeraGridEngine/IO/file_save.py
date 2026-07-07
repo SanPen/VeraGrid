@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 import os
+import re
+import tempfile
+import zipfile
 from datetime import datetime
 from typing import Union, List, Any, Dict
 
@@ -18,8 +21,10 @@ from VeraGridEngine.IO.veragrid.json_parser import save_json_file_v3
 from VeraGridEngine.IO.veragrid.excel_interface import (save_excel_v4)
 from VeraGridEngine.IO.veragrid.pack_unpack import gather_model_as_data_frames
 from VeraGridEngine.IO.dgs.veragrid_to_dgs import circuit_to_dgs
+from VeraGridEngine.IO.matpower.veragrid_to_matpower import write_matpower_case_file
 from VeraGridEngine.IO.raw.raw_parser_writer import write_raw
 from VeraGridEngine.IO.raw.veragrid_to_raw import veragrid_to_raw
+from VeraGridEngine.IO.ucte.veragrid_to_ucte import write_ucte
 from VeraGridEngine.IO.cim.cim16.cim_parser import CIMExport
 from VeraGridEngine.IO.cim.cgmes.cgmes_circuit import CgmesCircuit
 from VeraGridEngine.IO.veragrid.zip_interface import save_veragrid_data_to_zip, save_veragrid_multiverse_data_to_zip
@@ -31,13 +36,15 @@ from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Devices.multiverse import MultiVerse
 from VeraGridEngine.Simulations.driver_template import DriverToSave
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
-from VeraGridEngine.enumerations import CGMESVersions, SimulationTypes, FileType
+from VeraGridEngine.enumerations import (CGMESVersions, SimulationTypes, FileType,
+                                         PsseTopologyExportMode, PsseExportMode, DgsExportMode,
+                                         MatpowerExportMode, UcteExportMode, CgmesExportMode)
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 
 
 class FileSavingOptions:
     """
-    This class is to store the extra stuff that needs to be passed to save more complex files
+    Store the extra data required by the richer file-export paths.
     """
 
     def __init__(self,
@@ -49,17 +56,34 @@ class FileSavingOptions:
                  cgmes_profiles: Union[None, List[CgmesProfileType]] = None,
                  cgmes_one_file_per_profile: bool = False,
                  cgmes_map_areas_like_raw: bool = False,
-                 raw_version: str = "33"):
+                 raw_version: str = "33",
+                 psse_topology_mode: PsseTopologyExportMode = PsseTopologyExportMode.BusBranch,
+                 psse_export_mode: PsseExportMode = PsseExportMode.SingleFile,
+                 dgs_export_mode: DgsExportMode = DgsExportMode.SingleFile,
+                 matpower_export_mode: MatpowerExportMode = MatpowerExportMode.SingleFile,
+                 ucte_export_mode: UcteExportMode = UcteExportMode.SingleFile,
+                 cgmes_export_mode: CgmesExportMode = CgmesExportMode.SingleFile,
+                 t_idx: int | None = None):
         """
-        Constructor
-        :param cgmes_boundary_set: CGMES boundary set zip file path
-        :param sessions_data: List of sessions_data
-        :param dictionary_of_json_files: Dictionary of json files
-        :param cgmes_version: Version to use with CGMES
-        :param cgmes_profiles: CGMES profile list to export
-        :param cgmes_one_file_per_profile: use one file per profile?
-        :param cgmes_map_areas_like_raw: use map areas like raw?
-        :param raw_version: Version to use when exporting raw/rawx files
+        Build one file-save options container.
+
+        :param file_type: Explicit file type override.
+        :param sessions_data: Session payloads to persist with VeraGrid files.
+        :param dictionary_of_json_files: Extra JSON payloads to embed.
+        :param cgmes_boundary_set: CGMES boundary set zip file path.
+        :param cgmes_version: CGMES export version.
+        :param cgmes_profiles: CGMES profile list to export.
+        :param cgmes_one_file_per_profile: Export one CGMES file per profile when ``True``.
+        :param cgmes_map_areas_like_raw: Reuse RAW-like area mapping for CGMES.
+        :param raw_version: Version to use when exporting RAW/RAWX files.
+        :param psse_topology_mode: RAW topology export strategy for PSSE 34+.
+        :param psse_export_mode: PSSE single-file or batch-zip export strategy.
+        :param dgs_export_mode: DGS single-file or batch-zip export strategy.
+        :param matpower_export_mode: MATPOWER single-file or batch-zip export strategy.
+        :param ucte_export_mode: UCTE single-file or batch-zip export strategy.
+        :param cgmes_export_mode: CGMES single-file or batch-zip export strategy.
+        :param t_idx: Optional time index used by file formats that support snapshot/profile exports.
+        :return: None.
         """
 
         self.file_type: FileType | None = file_type
@@ -92,6 +116,13 @@ class FileSavingOptions:
         self.cgmes_map_areas_like_raw = cgmes_map_areas_like_raw
 
         self.raw_version = raw_version
+        self.psse_topology_mode: PsseTopologyExportMode = psse_topology_mode
+        self.psse_export_mode: PsseExportMode = psse_export_mode
+        self.dgs_export_mode: DgsExportMode = dgs_export_mode
+        self.matpower_export_mode: MatpowerExportMode = matpower_export_mode
+        self.ucte_export_mode: UcteExportMode = ucte_export_mode
+        self.cgmes_export_mode: CgmesExportMode = cgmes_export_mode
+        self.t_idx: int | None = t_idx
 
     def get_power_flow_results(self) -> Union[None, PowerFlowResults]:
         """
@@ -135,9 +166,17 @@ def save_veragrid_multiverse(file_name: str,
         # this is to make the leaf the actual diff for saving
         multiverse.commit_current()
 
+        active_grid_idtag: str | None = None
+        if multiverse.current_node is not None:
+            active_grid_idtag = multiverse.current_node.circuit.idtag
+        else:
+            pass
+
         save_veragrid_multiverse_data_to_zip(filename_zip=file_name,
                                              multiverse=multiverse,
                                              json_files=options.dictionary_of_json_files,
+                                             active_grid_idtag=active_grid_idtag,
+                                             active_sessions_data=options.sessions_data,
                                              text_func=text_func,
                                              progress_func=progress_func,
                                              logger=logger)
@@ -242,14 +281,20 @@ def save_cim(circuit: MultiCircuit, file_name: str, ) -> Logger:
     return cim.logger
 
 
-def save_cgmes(circuit: MultiCircuit,
-               file_name: str,
-               options: FileSavingOptions,
-               text_func=None,
-               progress_func=None) -> Logger:
+def save_cgmes_single(circuit: MultiCircuit,
+                      file_name: str,
+                      options: FileSavingOptions,
+                      text_func=None,
+                      progress_func=None) -> Logger:
     """
-    Save the circuit information in CGMES format
-    :return: logger with information
+    Save one CGMES export artifact for one snapshot or one time-series point.
+
+    :param circuit: Circuit to export.
+    :param file_name: Target file path.
+    :param options: Export options.
+    :param text_func: Optional progress-text callback.
+    :param progress_func: Optional progress-value callback.
+    :return: Logger with export messages.
     """
     logger = Logger()
     if options.cgmes_boundary_set == "":
@@ -271,14 +316,15 @@ def save_cgmes(circuit: MultiCircuit,
 
     profiles_to_export = options.cgmes_profiles
     one_file_per_profile = options.cgmes_one_file_per_profile
-    nc = compile_numerical_circuit_at(circuit)
+    nc = compile_numerical_circuit_at(circuit, t_idx=options.t_idx)
     pf_results = options.get_power_flow_results()
     cgmes_logger = DataLogger()
     cgmes_circuit = veragrid_to_cgmes(gc_model=circuit,
                                       num_circ=nc,
                                       cgmes_model=cgmes_circuit,
                                       pf_results=pf_results,
-                                      logger=cgmes_logger)
+                                      logger=cgmes_logger,
+                                      t_idx=options.t_idx)
 
     fn, _ = os.path.splitext(os.path.basename(file_name))
     filename_in_parts = fn.split('_')
@@ -315,6 +361,156 @@ def save_cgmes(circuit: MultiCircuit,
     return logger
 
 
+def compose_cgmes_batch_folder_name(t_idx: int, time_label: str) -> str:
+    """
+    Compose one deterministic folder name for a CGMES batch-export member set.
+
+    :param t_idx: Time index of the exported profile point.
+    :param time_label: Human-readable time label.
+    :return: Sanitized folder name.
+    """
+    safe_time_label: str = re.sub(r"[^0-9A-Za-z._-]+", "_", time_label).strip("_")
+
+    if safe_time_label == "":
+        safe_time_label = "time"
+    else:
+        pass
+
+    return f"t{t_idx:05d}_{safe_time_label}"
+
+
+def save_cgmes_batch_zip(circuit: MultiCircuit,
+                         file_name: str,
+                         options: FileSavingOptions,
+                         text_func=None,
+                         progress_func=None) -> Logger:
+    """
+    Export every time-series point into one ZIP archive with one CGMES export set per step.
+
+    :param circuit: Circuit to export.
+    :param file_name: Target ZIP path.
+    :param options: Export options.
+    :param text_func: Optional progress-text callback.
+    :param progress_func: Optional progress-value callback.
+    :return: Logger with export messages.
+    """
+    logger = Logger()
+
+    if options.cgmes_boundary_set == "":
+        logger.add_error(msg="Missing Boundary set path.")
+        return logger
+    else:
+        pass
+
+    if not circuit.has_time_series:
+        logger.add_error(msg="CGMES batch export requires time-series data.")
+        return logger
+    else:
+        pass
+
+    total_steps: int = circuit.get_time_number()
+    if total_steps <= 0:
+        logger.add_error(msg="CGMES batch export requires at least one time-series point.")
+        return logger
+    else:
+        pass
+
+    _, zip_extension = os.path.splitext(file_name)
+    if zip_extension.lower() == ".zip":
+        zip_file_name: str = file_name
+    else:
+        zip_file_name = file_name + ".zip"
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        with zipfile.ZipFile(zip_file_name, "w", zipfile.ZIP_DEFLATED) as zip_ptr:
+            for t_idx in range(total_steps):
+                if text_func is not None:
+                    text_func(f"Exporting CGMES profile [{t_idx}] {circuit.time_profile[t_idx]}...")
+                else:
+                    pass
+
+                if progress_func is not None:
+                    progress_value: float = (100.0 * float(t_idx)) / float(total_steps)
+                    progress_func(progress_value)
+                else:
+                    pass
+
+                time_label: str = str(circuit.time_profile[t_idx])
+                batch_folder_name: str = compose_cgmes_batch_folder_name(t_idx=t_idx,
+                                                                         time_label=time_label)
+                export_dir: str = os.path.join(temp_dir, batch_folder_name)
+                os.mkdir(export_dir)
+
+                temp_options = FileSavingOptions(
+                    file_type=options.file_type,
+                    sessions_data=options.sessions_data,
+                    dictionary_of_json_files=options.dictionary_of_json_files,
+                    cgmes_boundary_set=options.cgmes_boundary_set,
+                    cgmes_version=options.cgmes_version,
+                    cgmes_profiles=options.cgmes_profiles,
+                    cgmes_one_file_per_profile=options.cgmes_one_file_per_profile,
+                    cgmes_map_areas_like_raw=options.cgmes_map_areas_like_raw,
+                    raw_version=options.raw_version,
+                    psse_topology_mode=options.psse_topology_mode,
+                    psse_export_mode=options.psse_export_mode,
+                    dgs_export_mode=options.dgs_export_mode,
+                    cgmes_export_mode=CgmesExportMode.SingleFile,
+                    t_idx=t_idx
+                )
+                temp_options.type_selected = options.type_selected
+
+                temp_file_name: str = os.path.join(export_dir, os.path.basename(zip_file_name))
+                logger += save_cgmes_single(circuit=circuit,
+                                            file_name=temp_file_name,
+                                            options=temp_options,
+                                            text_func=text_func,
+                                            progress_func=progress_func)
+
+                for generated_name in sorted(os.listdir(export_dir)):
+                    generated_path: str = os.path.join(export_dir, generated_name)
+                    if os.path.isfile(generated_path):
+                        arc_name: str = os.path.join(batch_folder_name, generated_name)
+                        zip_ptr.write(generated_path, arcname=arc_name)
+                    else:
+                        pass
+
+    if progress_func is not None:
+        progress_func(100.0)
+    else:
+        pass
+
+    return logger
+
+
+def save_cgmes(circuit: MultiCircuit,
+               file_name: str,
+               options: FileSavingOptions,
+               text_func=None,
+               progress_func=None) -> Logger:
+    """
+    Save the circuit information in CGMES format.
+
+    :param circuit: Circuit to export.
+    :param file_name: Target file path.
+    :param options: Export options.
+    :param text_func: Optional progress-text callback.
+    :param progress_func: Optional progress-value callback.
+    :return: Logger with export messages.
+    """
+    if options.cgmes_export_mode == CgmesExportMode.BatchZip:
+        return save_cgmes_batch_zip(circuit=circuit,
+                                    file_name=file_name,
+                                    options=options,
+                                    text_func=text_func,
+                                    progress_func=progress_func)
+    else:
+        return save_cgmes_single(circuit=circuit,
+                                 file_name=file_name,
+                                 options=options,
+                                 text_func=text_func,
+                                 progress_func=progress_func)
+
+
 def save_veragrid_h5(circuit: MultiCircuit,
                      file_name: str,
                      text_func=None,
@@ -334,25 +530,185 @@ def save_veragrid_h5(circuit: MultiCircuit,
 
 def save_psse_raw(circuit: MultiCircuit,
                   file_name: str,
-                  options: FileSavingOptions) -> Logger:
+                  options: FileSavingOptions,
+                  text_func=None,
+                  progress_func=None) -> Logger:
     """
-    Save the circuit information in json format
-    :return:logger with information
+    Save the circuit information in PSSE RAW format.
+
+    :param circuit: Circuit to export.
+    :param file_name: Target file path.
+    :param options: Export options, including the optional profile selector.
+    :param text_func: Optional progress-text callback.
+    :param progress_func: Optional progress-value callback.
+    :return: Logger with export messages.
     """
-    logger = Logger()
-    raw_circuit = veragrid_to_raw(circuit, logger=logger)
-    logger += write_raw(file_name, raw_circuit, version=int(options.raw_version))
-    return logger
+    if options.psse_export_mode == PsseExportMode.BatchZip:
+        return save_psse_batch_zip(circuit=circuit,
+                                   file_name=file_name,
+                                   options=options,
+                                   text_func=text_func,
+                                   progress_func=progress_func)
+    else:
+        logger = Logger()
+        raw_version: int = int(options.raw_version)
+
+        # Forward the selected time index so the RAW writer exports either the
+        # snapshot state or one explicit time-series point.
+        raw_circuit = veragrid_to_raw(circuit,
+                                      version=raw_version,
+                                      logger=logger,
+                                      topology_mode=options.psse_topology_mode,
+                                      t_idx=options.t_idx)
+        logger += write_raw(file_name, raw_circuit, version=raw_version)
+        return logger
 
 
-def save_psse_rawx(circuit: MultiCircuit, file_name: str) -> Logger:
+def save_psse_rawx(circuit: MultiCircuit,
+                   file_name: str,
+                   options: FileSavingOptions,
+                   text_func=None,
+                   progress_func=None) -> Logger:
     """
-    Save the circuit information in json format
-    :return:logger with information
+    Save the circuit information in PSSE RAWX format.
+
+    :param circuit: Circuit to export.
+    :param file_name: Target file path.
+    :param options: Export options, including the optional profile selector.
+    :param text_func: Optional progress-text callback.
+    :param progress_func: Optional progress-value callback.
+    :return: Logger with export messages.
+    """
+    if options.psse_export_mode == PsseExportMode.BatchZip:
+        return save_psse_batch_zip(circuit=circuit,
+                                   file_name=file_name,
+                                   options=options,
+                                   text_func=text_func,
+                                   progress_func=progress_func)
+    else:
+        logger = Logger()
+
+        # RAWX shares the same intermediate RAW circuit, so the time selector
+        # must be forwarded here as well.
+        raw_circuit = veragrid_to_raw(circuit,
+                                      version=int(options.raw_version),
+                                      logger=logger,
+                                      topology_mode=options.psse_topology_mode,
+                                      t_idx=options.t_idx)
+        logger += write_rawx(file_name, raw_circuit)
+        return logger
+
+
+def compose_psse_batch_file_name(base_name: str,
+                                 t_idx: int,
+                                 time_label: str,
+                                 extension: str) -> str:
+    """
+    Compose one deterministic file name for a PSSE batch export member.
+
+    :param base_name: Base archive name without extension.
+    :param t_idx: Time index of the exported profile point.
+    :param time_label: Human-readable time label.
+    :param extension: PSSE file extension, including the leading dot.
+    :return: Sanitized internal file name.
+    """
+    safe_time_label: str = re.sub(r"[^0-9A-Za-z._-]+", "_", time_label).strip("_")
+
+    if safe_time_label == "":
+        safe_time_label = "time"
+    else:
+        pass
+
+    return f"{base_name}_t{t_idx:05d}_{safe_time_label}{extension}"
+
+
+def save_psse_batch_zip(circuit: MultiCircuit,
+                        file_name: str,
+                        options: FileSavingOptions,
+                        text_func=None,
+                        progress_func=None) -> Logger:
+    """
+    Export every time-series point into one ZIP archive with one PSSE file per step.
+
+    :param circuit: Circuit to export.
+    :param file_name: Target ZIP path.
+    :param options: Export options, including version, topology and internal PSSE format.
+    :param text_func: Optional progress-text callback.
+    :param progress_func: Optional progress-value callback.
+    :return: Logger with export messages.
     """
     logger = Logger()
-    raw_circuit = veragrid_to_raw(circuit, logger=logger)
-    logger += write_rawx(file_name, raw_circuit)
+
+    if not circuit.has_time_series:
+        logger.add_error(msg="PSS/e batch export requires time-series data.")
+        return logger
+    else:
+        pass
+
+    total_steps: int = circuit.get_time_number()
+    if total_steps <= 0:
+        logger.add_error(msg="PSS/e batch export requires at least one time-series point.")
+        return logger
+    else:
+        pass
+
+    raw_version: int = int(options.raw_version)
+    zip_extension: str
+    _, zip_extension = os.path.splitext(file_name)
+    if zip_extension.lower() == ".zip":
+        zip_file_name: str = file_name
+    else:
+        zip_file_name = file_name + ".zip"
+
+    if options.file_type == FileType.PSSE_rawx:
+        internal_extension: str = ".rawx"
+    else:
+        internal_extension = ".raw"
+
+    archive_base_name: str = os.path.splitext(os.path.basename(zip_file_name))[0]
+
+    # Reuse one temporary file path for every time step. Each generated file is
+    # zipped immediately afterwards, so only one export artifact exists on disk
+    # at a time while the worker thread runs.
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_file_name: str = os.path.join(temp_dir, "psse_batch_export" + internal_extension)
+
+        with zipfile.ZipFile(zip_file_name, "w", zipfile.ZIP_DEFLATED) as zip_ptr:
+            for t_idx in range(total_steps):
+                if text_func is not None:
+                    text_func(f"Exporting PSS/e profile [{t_idx}] {circuit.time_profile[t_idx]}...")
+                else:
+                    pass
+
+                if progress_func is not None:
+                    progress_value: float = (100.0 * float(t_idx)) / float(total_steps)
+                    progress_func(progress_value)
+                else:
+                    pass
+
+                raw_circuit = veragrid_to_raw(circuit,
+                                              version=raw_version,
+                                              logger=logger,
+                                              topology_mode=options.psse_topology_mode,
+                                              t_idx=t_idx)
+
+                if options.file_type == FileType.PSSE_rawx:
+                    logger += write_rawx(temp_file_name, raw_circuit)
+                else:
+                    logger += write_raw(temp_file_name, raw_circuit, version=raw_version)
+
+                time_label: str = str(circuit.time_profile[t_idx])
+                internal_file_name: str = compose_psse_batch_file_name(base_name=archive_base_name,
+                                                                       t_idx=t_idx,
+                                                                       time_label=time_label,
+                                                                       extension=internal_extension)
+                zip_ptr.write(temp_file_name, arcname=internal_file_name)
+
+    if progress_func is not None:
+        progress_func(100.0)
+    else:
+        pass
+
     return logger
 
 
@@ -399,15 +755,364 @@ def save_pgm(circuit: MultiCircuit, file_name: str) -> Logger:
     return logger
 
 
-def save_dgs(circuit: MultiCircuit, file_name: str) -> Logger:
+def compose_dgs_batch_file_name(base_name: str,
+                                t_idx: int,
+                                time_label: str) -> str:
     """
+    Compose one deterministic file name for a DGS batch-export member.
 
-    :return:
+    :param base_name: Base archive name without extension.
+    :param t_idx: Time index of the exported profile point.
+    :param time_label: Human-readable time label.
+    :return: Sanitized internal file name.
+    """
+    safe_time_label: str = re.sub(r"[^0-9A-Za-z._-]+", "_", time_label).strip("_")
+
+    if safe_time_label == "":
+        safe_time_label = "time"
+    else:
+        pass
+
+    return f"{base_name}_t{t_idx:05d}_{safe_time_label}.dgs"
+
+
+def save_dgs_batch_zip(circuit: MultiCircuit,
+                       file_name: str,
+                       text_func=None,
+                       progress_func=None) -> Logger:
+    """
+    Export every time-series point into one ZIP archive with one DGS file per step.
+
+    :param circuit: Circuit to export.
+    :param file_name: Target ZIP path.
+    :param text_func: Optional progress-text callback.
+    :param progress_func: Optional progress-value callback.
+    :return: Logger with export messages.
     """
     logger = Logger()
-    dgs = circuit_to_dgs(grid=circuit)
-    dgs.write_dgs(path=file_name)
+
+    if not circuit.has_time_series:
+        logger.add_error(msg="DGS batch export requires time-series data.")
+        return logger
+    else:
+        pass
+
+    total_steps: int = circuit.get_time_number()
+    if total_steps <= 0:
+        logger.add_error(msg="DGS batch export requires at least one time-series point.")
+        return logger
+    else:
+        pass
+
+    _, zip_extension = os.path.splitext(file_name)
+    if zip_extension.lower() == ".zip":
+        zip_file_name: str = file_name
+    else:
+        zip_file_name = file_name + ".zip"
+
+    archive_base_name: str = os.path.splitext(os.path.basename(zip_file_name))[0]
+
+    # Reuse one temporary file path for every time step. Each generated file is
+    # zipped immediately afterwards, so only one export artifact exists on disk
+    # at a time while the worker thread runs.
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_file_name: str = os.path.join(temp_dir, "dgs_batch_export.dgs")
+
+        with zipfile.ZipFile(zip_file_name, "w", zipfile.ZIP_DEFLATED) as zip_ptr:
+            for t_idx in range(total_steps):
+                if text_func is not None:
+                    text_func(f"Exporting DGS profile [{t_idx}] {circuit.time_profile[t_idx]}...")
+                else:
+                    pass
+
+                if progress_func is not None:
+                    progress_value: float = (100.0 * float(t_idx)) / float(total_steps)
+                    progress_func(progress_value)
+                else:
+                    pass
+
+                dgs = circuit_to_dgs(grid=circuit, t_idx=t_idx)
+                dgs.write_dgs(path=temp_file_name)
+
+                time_label: str = str(circuit.time_profile[t_idx])
+                internal_file_name: str = compose_dgs_batch_file_name(base_name=archive_base_name,
+                                                                      t_idx=t_idx,
+                                                                      time_label=time_label)
+                zip_ptr.write(temp_file_name, arcname=internal_file_name)
+
+    if progress_func is not None:
+        progress_func(100.0)
+    else:
+        pass
+
     return logger
+
+
+def save_dgs(circuit: MultiCircuit,
+             file_name: str,
+             options: FileSavingOptions,
+             text_func=None,
+             progress_func=None) -> Logger:
+    """
+    Save the circuit information in DGS format.
+
+    :param circuit: Circuit to export.
+    :param file_name: Target file path.
+    :param options: Export options, including the optional profile selector.
+    :param text_func: Optional progress-text callback.
+    :param progress_func: Optional progress-value callback.
+    :return: Logger with export messages.
+    """
+    if options.dgs_export_mode == DgsExportMode.BatchZip:
+        return save_dgs_batch_zip(circuit=circuit,
+                                  file_name=file_name,
+                                  text_func=text_func,
+                                  progress_func=progress_func)
+    else:
+        logger = Logger()
+
+        # Forward the selected time index so the DGS writer exports either the
+        # snapshot state or one explicit time-series point.
+        dgs = circuit_to_dgs(grid=circuit, t_idx=options.t_idx)
+        dgs.write_dgs(path=file_name)
+        return logger
+
+
+def compose_matpower_batch_file_name(base_name: str,
+                                     t_idx: int,
+                                     time_label: str) -> str:
+    """
+    Compose one deterministic file name for a MATPOWER batch-export member.
+
+    :param base_name: Base archive name without extension.
+    :param t_idx: Time index of the exported profile point.
+    :param time_label: Human-readable time label.
+    :return: Sanitized internal file name.
+    """
+    safe_time_label: str = re.sub(r"[^0-9A-Za-z._-]+", "_", time_label).strip("_")
+
+    if safe_time_label == "":
+        safe_time_label = "time"
+    else:
+        pass
+
+    return f"{base_name}_t{t_idx:05d}_{safe_time_label}.m"
+
+
+def save_matpower_batch_zip(circuit: MultiCircuit,
+                            file_name: str,
+                            text_func=None,
+                            progress_func=None) -> Logger:
+    """
+    Export every time-series point into one ZIP archive with one MATPOWER file per step.
+
+    :param circuit: Circuit to export.
+    :param file_name: Target ZIP path.
+    :param text_func: Optional progress-text callback.
+    :param progress_func: Optional progress-value callback.
+    :return: Logger with export messages.
+    """
+    logger = Logger()
+
+    if not circuit.has_time_series:
+        logger.add_error(msg="MATPOWER batch export requires time-series data.")
+        return logger
+    else:
+        pass
+
+    total_steps: int = circuit.get_time_number()
+    if total_steps <= 0:
+        logger.add_error(msg="MATPOWER batch export requires at least one time-series point.")
+        return logger
+    else:
+        pass
+
+    _, zip_extension = os.path.splitext(file_name)
+    if zip_extension.lower() == ".zip":
+        zip_file_name: str = file_name
+    else:
+        zip_file_name = file_name + ".zip"
+
+    archive_base_name: str = os.path.splitext(os.path.basename(zip_file_name))[0]
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_file_name: str = os.path.join(temp_dir, "matpower_batch_export.m")
+
+        with zipfile.ZipFile(zip_file_name, "w", zipfile.ZIP_DEFLATED) as zip_ptr:
+            for t_idx in range(total_steps):
+                if text_func is not None:
+                    text_func(f"Exporting MATPOWER profile [{t_idx}] {circuit.time_profile[t_idx]}...")
+                else:
+                    pass
+
+                if progress_func is not None:
+                    progress_value: float = (100.0 * float(t_idx)) / float(total_steps)
+                    progress_func(progress_value)
+                else:
+                    pass
+
+                time_label: str = str(circuit.time_profile[t_idx])
+                internal_file_name: str = compose_matpower_batch_file_name(base_name=archive_base_name,
+                                                                           t_idx=t_idx,
+                                                                           time_label=time_label)
+                case_name: str = os.path.splitext(internal_file_name)[0]
+                write_matpower_case_file(file_name=temp_file_name,
+                                         circuit=circuit,
+                                         t_idx=t_idx,
+                                         logger=logger,
+                                         case_name=case_name)
+                zip_ptr.write(temp_file_name, arcname=internal_file_name)
+
+    if progress_func is not None:
+        progress_func(100.0)
+    else:
+        pass
+
+    return logger
+
+
+def save_matpower(circuit: MultiCircuit,
+                  file_name: str,
+                  options: FileSavingOptions,
+                  text_func=None,
+                  progress_func=None) -> Logger:
+    """
+    Save the circuit information in MATPOWER format.
+
+    :param circuit: Circuit to export.
+    :param file_name: Target file path.
+    :param options: Export options, including the optional profile selector.
+    :param text_func: Optional progress-text callback.
+    :param progress_func: Optional progress-value callback.
+    :return: Logger with export messages.
+    """
+    if options.matpower_export_mode == MatpowerExportMode.BatchZip:
+        return save_matpower_batch_zip(circuit=circuit,
+                                       file_name=file_name,
+                                       text_func=text_func,
+                                       progress_func=progress_func)
+    else:
+        return write_matpower_case_file(file_name=file_name,
+                                        circuit=circuit,
+                                        t_idx=options.t_idx)
+
+
+def compose_ucte_batch_file_name(base_name: str,
+                                 t_idx: int,
+                                 time_label: str) -> str:
+    """
+    Compose one deterministic file name for a UCTE batch-export member.
+
+    :param base_name: Base archive name without extension.
+    :param t_idx: Time index of the exported profile point.
+    :param time_label: Human-readable time label.
+    :return: Sanitized internal file name.
+    """
+    safe_time_label: str = re.sub(r"[^0-9A-Za-z._-]+", "_", time_label).strip("_")
+
+    if safe_time_label == "":
+        safe_time_label = "time"
+    else:
+        pass
+
+    return f"{base_name}_t{t_idx:05d}_{safe_time_label}.uct"
+
+
+def save_ucte_batch_zip(circuit: MultiCircuit,
+                        file_name: str,
+                        text_func=None,
+                        progress_func=None) -> Logger:
+    """
+    Export every time-series point into one ZIP archive with one UCTE file per step.
+
+    :param circuit: Circuit to export.
+    :param file_name: Target ZIP path.
+    :param text_func: Optional progress-text callback.
+    :param progress_func: Optional progress-value callback.
+    :return: Logger with export messages.
+    """
+    logger: Logger = Logger()
+
+    if not circuit.has_time_series:
+        logger.add_error(msg="UCTE batch export requires time-series data.")
+        return logger
+    else:
+        pass
+
+    total_steps: int = circuit.get_time_number()
+    if total_steps <= 0:
+        logger.add_error(msg="UCTE batch export requires at least one time-series point.")
+        return logger
+    else:
+        pass
+
+    _, zip_extension = os.path.splitext(file_name)
+    if zip_extension.lower() == ".zip":
+        zip_file_name: str = file_name
+    else:
+        zip_file_name = file_name + ".zip"
+
+    archive_base_name: str = os.path.splitext(os.path.basename(zip_file_name))[0]
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_file_name: str = os.path.join(temp_dir, "ucte_batch_export.uct")
+
+        with zipfile.ZipFile(zip_file_name, "w", zipfile.ZIP_DEFLATED) as zip_ptr:
+            t_idx: int
+            for t_idx in range(total_steps):
+                if text_func is not None:
+                    text_func(f"Exporting UCTE profile [{t_idx}] {circuit.time_profile[t_idx]}...")
+                else:
+                    pass
+
+                if progress_func is not None:
+                    progress_value: float = (100.0 * float(t_idx)) / float(total_steps)
+                    progress_func(progress_value)
+                else:
+                    pass
+
+                time_label: str = str(circuit.time_profile[t_idx])
+                internal_file_name: str = compose_ucte_batch_file_name(base_name=archive_base_name,
+                                                                       t_idx=t_idx,
+                                                                       time_label=time_label)
+                write_ucte(file_name=temp_file_name,
+                           circuit=circuit,
+                           t_idx=t_idx,
+                           logger=logger)
+                zip_ptr.write(temp_file_name, arcname=internal_file_name)
+
+    if progress_func is not None:
+        progress_func(100.0)
+    else:
+        pass
+
+    return logger
+
+
+def save_ucte(circuit: MultiCircuit,
+              file_name: str,
+              options: FileSavingOptions,
+              text_func=None,
+              progress_func=None) -> Logger:
+    """
+    Save the circuit information in UCTE format.
+
+    :param circuit: Circuit to export.
+    :param file_name: Target file path.
+    :param options: Export options, including the optional profile selector.
+    :param text_func: Optional progress-text callback.
+    :param progress_func: Optional progress-value callback.
+    :return: Logger with export messages.
+    """
+    if options.ucte_export_mode == UcteExportMode.BatchZip:
+        return save_ucte_batch_zip(circuit=circuit,
+                                   file_name=file_name,
+                                   text_func=text_func,
+                                   progress_func=progress_func)
+    else:
+        return write_ucte(file_name=file_name,
+                          circuit=circuit,
+                          t_idx=options.t_idx)
 
 
 class FileSave:
@@ -477,6 +1182,15 @@ class FileSave:
                     progress_func=self.progress_func
                 )
 
+        elif self.options.file_type == FileType.VeraGridScenario:
+            logger = save_veragrid_circuit(
+                circuit=self.circuit,
+                file_name=self.file_name,
+                options=self.options,
+                text_func=self.text_func,
+                progress_func=self.progress_func
+            )
+
         elif self.options.file_type == FileType.VeraGrid_delta:
             logger = save_veragrid_delta(
                 circuit=self.circuit,
@@ -523,7 +1237,10 @@ class FileSave:
         elif self.options.file_type == FileType.PSSE_rawx:
             logger = save_psse_rawx(
                 circuit=self.circuit,
-                file_name=self.file_name
+                file_name=self.file_name,
+                options=self.options,
+                text_func=self.text_func,
+                progress_func=self.progress_func,
             )
 
         elif self.options.file_type == FileType.PSSE_raw:
@@ -532,6 +1249,8 @@ class FileSave:
                 circuit=self.circuit,
                 file_name=self.file_name,
                 options=self.options,
+                text_func=self.text_func,
+                progress_func=self.progress_func,
             )
 
         elif self.options.file_type == FileType.PGM:
@@ -544,6 +1263,27 @@ class FileSave:
             logger = save_dgs(
                 circuit=self.circuit,
                 file_name=self.file_name,
+                options=self.options,
+                text_func=self.text_func,
+                progress_func=self.progress_func,
+            )
+
+        elif self.options.file_type == FileType.Matpower:
+            logger = save_matpower(
+                circuit=self.circuit,
+                file_name=self.file_name,
+                options=self.options,
+                text_func=self.text_func,
+                progress_func=self.progress_func,
+            )
+
+        elif self.options.file_type == FileType.UCTE:
+            logger = save_ucte(
+                circuit=self.circuit,
+                file_name=self.file_name,
+                options=self.options,
+                text_func=self.text_func,
+                progress_func=self.progress_func,
             )
 
         else:

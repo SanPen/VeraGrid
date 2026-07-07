@@ -1,0 +1,175 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:886d71fa-6ca7-4be9-a55d-04c3c49c987c> {
+    <urn:uuid:bf17bcf4-fee4-4108-a22f-2ead83edb55c>
+            rdf:type                   nc:VoltageAngleLimit;
+            cim:IdentifiedObject.description
+                    "Limit for voltage angle at a specific terminal";
+            cim:IdentifiedObject.mRID  "bf17bcf4-fee4-4108-a22f-2ead83edb55c";
+            cim:IdentifiedObject.name  "VoltageAngleLimit1";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:6fe5c43b-621c-88ac-1d90-22f075cdb50e>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:0be2bf15-903e-37c9-9d8b-2fd3b0220ea3>;
+            nc:VoltageAngleLimit.AngleReferenceTerminal
+                    <urn:uuid:5c206db8-ef8c-4e53-b2b9-38b52b194c5a>;
+            nc:VoltageAngleLimit.normalValue
+                    "10.0"^^xsd:float .
+    
+    <urn:uuid:ffbabc27-1ccd-4fdc-b037-e341706c8d29>
+            rdf:type              cim:Equipment;
+            nc:Equipment.Circuit  <urn:uuid:cef9011e-3753-453b-93bd-fb36eb3daac1> .
+    
+    <urn:uuid:cef9011e-3753-453b-93bd-fb36eb3daac1>
+            rdf:type                   nc:LineCircuit;
+            cim:IdentifiedObject.mRID  "cef9011e-3753-453b-93bd-fb36eb3daac1";
+            nc:Circuit.positiveFlowIn  "true"^^xsd:boolean .
+    
+    <urn:uuid:52a42184-83c4-4d03-853a-e92b1a7dc79a>
+            rdf:type               cim:CurveData;
+            cim:CurveData.Curve    <urn:uuid:59ff1e53-0e1a-44c0-ada5-7a0b3a660170>;
+            cim:CurveData.xvalue   "0"^^xsd:float;
+            cim:CurveData.y1value  "100"^^xsd:float .
+    
+    <urn:uuid:02fc97a9-3ed4-4a85-9e29-742bff1d52e1>
+            rdf:type                        nc:InfeedTerminal;
+            nc:InfeedTerminal.ACDCTerminal  <urn:uuid:131b654f-eec6-eb63-5084-3fcc46921cfe>;
+            nc:InfeedTerminal.InfeedConstraint
+                    <urn:uuid:c06b2f38-c6c6-4fec-8ddb-234eebaea8ec>;
+            nc:InfeedTerminal.mRID          "02fc97a9-3ed4-4a85-9e29-742bff1d52e1" .
+    
+    <urn:uuid:4a053fac-126a-4a13-8a74-781c11517fae>
+            rdf:type                   nc:AreaDispatchableUnit;
+            cim:IdentifiedObject.description
+                    "Area Dispatchable Unit 1";
+            cim:IdentifiedObject.mRID  "4a053fac-126a-4a13-8a74-781c11517fae";
+            cim:IdentifiedObject.name  "ADU 1";
+            nc:AreaDispatchableUnit.GeneratingUnit
+                    <urn:uuid:413bbc8a-683c-7e07-4fb9-aa6ec83278e0>;
+            nc:AreaDispatchableUnit.SchedulingArea
+                    <urn:uuid:58f0bd4b-c949-4189-8319-1a5f5bb3a1ce>;
+            nc:AreaDispatchableUnit.normalEnabled
+                    true .
+    
+    <urn:uuid:59ff1e53-0e1a-44c0-ada5-7a0b3a660170>
+            rdf:type                   cim:ReactiveCapabilityCurve;
+            cim:Curve.curveStyle       cim:CurveStyle.constantYValue;
+            cim:Curve.xUnit            cim:UnitSymbol.W;
+            cim:Curve.y1Unit           cim:UnitSymbol.VAr;
+            cim:IdentifiedObject.description
+                    "Example of additional Reactive capability curve for different reference voltage";
+            cim:IdentifiedObject.mRID  "59ff1e53-0e1a-44c0-ada5-7a0b3a660170";
+            cim:IdentifiedObject.name  "Reactive Capability Curve 10kV";
+            nc:ReactiveCapabilityCurve.SynchronousMachine2
+                    <urn:uuid:3a3b27be-b18b-4385-b557-6735d733baf0>;
+            nc:ReactiveCapabilityCurve.referenceVoltage
+                    "10"^^xsd:float .
+    
+    <urn:uuid:58f0bd4b-c949-4189-8319-1a5f5bb3a1ce>
+            rdf:type                   nc:SchedulingArea;
+            cim:IdentifiedObject.description
+                    "Scheduling Area 1";
+            cim:IdentifiedObject.mRID  "58f0bd4b-c949-4189-8319-1a5f5bb3a1ce";
+            cim:IdentifiedObject.name  "SA 1";
+            nc:SchedulingArea.isIslandingEnabled
+                    false;
+            nc:SchedulingArea.isMeteringGridArea
+                    true;
+            nc:SchedulingArea.normalParticipationFactor
+                    "0.1"^^xsd:float .
+    
+    <urn:uuid:c06b2f38-c6c6-4fec-8ddb-234eebaea8ec>
+            rdf:type                     nc:InfeedLimit;
+            cim:IdentifiedObject.mRID    "c06b2f38-c6c6-4fec-8ddb-234eebaea8ec";
+            cim:IdentifiedObject.name    "Infeed limit";
+            cim:OperationalLimit.OperationalLimitSet
+                    <urn:uuid:ee1e0ee2-edf6-8968-9c4c-83fa12446800>;
+            cim:OperationalLimit.OperationalLimitType
+                    <urn:uuid:82639e97-ec8d-59c3-3af6-0fcc05fa3eb4>;
+            nc:InfeedLimit.normalValueA  "1000.0"^^xsd:float .
+    
+    <urn:uuid:349f0364-d28d-442e-abbb-c868255abc92>
+            rdf:type                       nc:SchedulingArea;
+            cim:IdentifiedObject.description
+                    "Belgovia";
+            cim:IdentifiedObject.mRID      "349f0364-d28d-442e-abbb-c868255abc92";
+            cim:IdentifiedObject.name      "Belgovia";
+            nc:SchedulingArea.BiddingZone  <urn:uuid:91e89a38-ca68-44c1-8ed4-a7db8e435f4f>;
+            nc:SchedulingArea.ControlArea  <urn:uuid:50487bb8-be6d-42a8-9358-cc0bbfe6cfa7> .
+    
+    <urn:uuid:413bbc8a-683c-7e07-4fb9-aa6ec83278e0>
+            rdf:type                        cim:GeneratingUnit;
+            cim:IdentifiedObject.mRID       "413bbc8a-683c-7e07-4fb9-aa6ec83278e0";
+            nc:GeneratingUnit.maxRampDownCountPerDay
+                    "2";
+            nc:GeneratingUnit.rampLockTime  "PT2H" .
+    
+    <urn:uuid:c31ae69b-423d-47c0-bacc-083d64e34d4a>
+            rdf:type                   nc:PowerTransformerCircuit;
+            cim:IdentifiedObject.mRID  "c31ae69b-423d-47c0-bacc-083d64e34d4a";
+            nc:Circuit.positiveFlowIn  "true"^^xsd:boolean .
+    
+    <urn:uuid:91e89a38-ca68-44c1-8ed4-a7db8e435f4f>
+            rdf:type                       nc:BiddingZone;
+            cim:IdentifiedObject.description
+                    "BZ_BO";
+            cim:IdentifiedObject.mRID      "91e89a38-ca68-44c1-8ed4-a7db8e435f4f";
+            cim:IdentifiedObject.name      "Bidding Zone BO";
+            nc:BiddingZone.isTradeEnabled  true .
+    
+    <urn:uuid:886d71fa-6ca7-4be9-a55d-04c3c49c987c>
+            rdf:type              dcat:Dataset;
+            dct:accessRights      "https://energy.referencedata.eu/Confidentiality/Public";
+            dct:conformsTo        "https://cim.ucaiug.io/ns#" , "https://ap.cim4.eu/EquipmentReliability/2.4" , "https://cim4.eu/ns/nc/2.4#" , "http://iec.ch/TC57/2013/CIM-schema-cim16#";
+            dct:description       "This is the equipment reliability dataset for Belgovia part of ReliCapGrid."@en;
+            dct:identifier        "886d71fa-6ca7-4be9-a55d-04c3c49c987c";
+            dct:issued            "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dct:license           "https://creativecommons.org/licenses/by/4.0/";
+            dct:publisher         "https://energy.referencedata.eu/test/party/Belgovia";
+            dct:requires          <urn:uuid:15c8a8ad-08d5-4b59-8417-db80e273bd1a>;
+            dct:rights            "Copyright";
+            dct:rightsHolder      "ENTSO-E";
+            dct:spatial           "https://energy.referencedata.eu/Test/Frame/Belgovia-Power-Transmission-System";
+            dct:title             "20220615_Belgovia_ER_1.0.0";
+            dcat:endDate          "2023-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Belgovia-ER>;
+            dcat:keyword          "ER";
+            dcat:startDate        "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:version          "1.0.0";
+            prov:generatedAtTime  "2022-06-10T07:06:25Z"^^xsd:dateTime;
+            prov:wasGeneratedBy   "https://energy.referencedata.eu/Activity/CGM-ER" .
+    
+    <urn:uuid:9287b1c3-3747-47e6-8918-d82c7a0d7718>
+            rdf:type                   nc:PowerShiftKeyStrategy;
+            cim:IdentifiedObject.description
+                    "Power Shift Key Strategy 1";
+            cim:IdentifiedObject.mRID  "9287b1c3-3747-47e6-8918-d82c7a0d7718";
+            cim:IdentifiedObject.name  "PSKS1";
+            nc:PowerShiftKeyStrategy.SchedulingArea
+                    <urn:uuid:58f0bd4b-c949-4189-8319-1a5f5bb3a1ce>;
+            nc:PowerShiftKeyStrategy.dispatchableUnitOnly
+                    true;
+            nc:PowerShiftKeyStrategy.method
+                    nc:ShiftMethodKind.shared;
+            nc:PowerShiftKeyStrategy.normalEnabled
+                    false;
+            nc:PowerShiftKeyStrategy.powerShiftKey
+                    nc:PowerShiftKeyKind.explicitDistribution .
+}

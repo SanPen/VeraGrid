@@ -1,0 +1,295 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:1bda19cf-8528-44be-bc94-6c4ca46bfeb4> {
+    <urn:uuid:e710a2e3-a70f-4261-508f-a4d925d1deb9>
+            rdf:type                   cim:EquivalentInjection;
+            cim:Equipment.inService    true;
+            cim:EquivalentInjection.p  "-21.712"^^xsd:float;
+            cim:EquivalentInjection.q  "130.37"^^xsd:float .
+    
+    <urn:uuid:042e8644-494d-b5a7-1a96-124d42e23131>
+            rdf:type                   cim:Equipment;
+            cim:Equipment.inService    true;
+            cim:IdentifiedObject.mRID  "042e8644-494d-b5a7-1a96-124d42e23131" .
+    
+    <urn:uuid:310d79b6-67c5-b024-de6e-b5510b7b9fb5>
+            rdf:type                    cim:Terminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:e468e6ca-8776-4c22-8f9b-390df610c2fd>
+            rdf:type                       cim:CsConverter;
+            cim:ACDCConverter.p            "-9.89017"^^xsd:float;
+            cim:ACDCConverter.q            "7.5592"^^xsd:float;
+            cim:ACDCConverter.targetPpcc   "-10"^^xsd:float;
+            cim:ACDCConverter.targetUdc    "158.55"^^xsd:float;
+            cim:CsConverter.operatingMode  cim:CsOperatingModeKind.inverter;
+            cim:CsConverter.pPccControl    cim:CsPpccControlKind.dcVoltage;
+            cim:CsConverter.targetAlpha    "10"^^xsd:float;
+            cim:CsConverter.targetIdc      "1000"^^xsd:float;
+            cim:Equipment.inService        true .
+    
+    <urn:uuid:e4e4e131-5922-404f-9d3d-90a800008cb4>
+            rdf:type                   cim:Equipment;
+            cim:Equipment.inService    true;
+            cim:IdentifiedObject.mRID  "e4e4e131-5922-404f-9d3d-90a800008cb4" .
+    
+    <urn:uuid:d09587f0-f3eb-9b0f-f75c-253317d31e2c>
+            rdf:type                cim:CurrentLimit;
+            cim:CurrentLimit.value  "3002.22"^^xsd:float .
+    
+    <urn:uuid:02f431b9-5939-ed2a-7c52-69db4fc78c48>
+            rdf:type                    cim:Terminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:89ecd90a-1898-6de3-b3e4-a85a223ede3f>
+            rdf:type                    cim:ACDCConverterDCTerminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:48fb660a-ca83-2b14-cbc4-9737eb383c77>
+            rdf:type                cim:CurrentLimit;
+            cim:CurrentLimit.value  "500"^^xsd:float .
+    
+    <urn:uuid:24bee63d-40dc-e5c6-c29c-882e26eb6734>
+            rdf:type                    cim:DCTerminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:77a71772-2cd6-2f66-a328-631c800f22c3>
+            rdf:type                    cim:Terminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:d024cfa1-f2ba-4ab6-b493-d720199b3111>
+            rdf:type                   cim:Equipment;
+            cim:Equipment.inService    true;
+            cim:IdentifiedObject.mRID  "d024cfa1-f2ba-4ab6-b493-d720199b3111" .
+    
+    <urn:uuid:46e0ad23-1022-cb7d-6715-ef7f23fbf507>
+            rdf:type                cim:CurrentLimit;
+            cim:CurrentLimit.value  "2100"^^xsd:float .
+    
+    <urn:uuid:1bda19cf-8528-44be-bc94-6c4ca46bfeb4>
+            rdf:type                 rdfg:Graph , dcat:Dataset;
+            dct:conformsTo           <http://iec.ch/TC57/ns/CIM/SteadyStateHypothesis-EU/3.0>;
+            dct:description          "The steady-state hypothesis dataset for Espheim-Svedala, which is part of the ReliCapGrid.";
+            dct:identifier           "1bda19cf-8528-44be-bc94-6c4ca46bfeb4";
+            dct:issued               "2025-02-06"^^xsd:date;
+            dct:requires             <urn:uuid:105893e4-668b-4b00-a351-0e436b53cbc9>;
+            dct:temporal             [ rdf:type        dct:PeriodOfTime;
+                                       dcat:endDate    "2022-06-17T00:30:00Z"^^xsd:dateTime;
+                                       dcat:startDate  "2022-06-16T23:30:00Z"^^xsd:dateTime
+                                     ];
+            dcat:distribution        [ rdf:type    dcat:Distribution;
+                                       dct:issued  "2025-02-06T14:18:22Z"^^xsd:dateTime
+                                     ];
+            dcat:isVersionOf         <http://espheim-svedala.es/CGMES>;
+            dcat:temporalResolution  "PT1H"^^xsd:duration;
+            dcat:version             "1";
+            json-ld:base             "http://espheim-svedala.es/CGMES#" .
+    
+    <urn:uuid:a9af9eff-8dbb-286f-7fda-2693e8b3cab2>
+            rdf:type                cim:CurrentLimit;
+            cim:CurrentLimit.value  "2100"^^xsd:float .
+    
+    <urn:uuid:86a0a26d-f3f8-636c-5730-e76af37fcd5f>
+            rdf:type                    cim:DCTerminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:3ae3a841-fbb4-469e-8d72-9b69c942f197>
+            rdf:type                   cim:Equipment;
+            cim:Equipment.inService    true;
+            cim:IdentifiedObject.mRID  "3ae3a841-fbb4-469e-8d72-9b69c942f197" .
+    
+    <urn:uuid:73896955-8e4c-d96f-3935-dd564f2d6a77>
+            rdf:type                    cim:ACDCConverterDCTerminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:76de9db0-6755-4696-8ef8-01b20c3d9ea0>
+            rdf:type                        cim:ControlArea;
+            cim:ControlArea.netInterchange  "11.1"^^xsd:float .
+    
+    <urn:uuid:967b7731-d6f6-fc51-acac-d23329831fd0>
+            rdf:type                    cim:DCTerminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:f22ac414-60d5-1b7a-f9b3-b1e456441f22>
+            rdf:type                    cim:Terminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:51584a9f-914e-4f09-a866-71e2df50150f>
+            rdf:type                       cim:LinearShuntCompensator;
+            cim:Equipment.inService        true;
+            cim:RegulatingCondEq.controlEnabled
+                    false;
+            cim:ShuntCompensator.sections  "1"^^xsd:float .
+    
+    <urn:uuid:7c2c512e-9b33-a938-f0c9-fc7e2b1fcb3f>
+            rdf:type                    cim:Terminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:61cafb07-5d42-a115-0c43-e5cb8b7ffb90>
+            rdf:type                    cim:Terminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:f74b6b4d-bf67-1991-5df6-6ad5662c9be3>
+            rdf:type                cim:CurrentLimit;
+            cim:CurrentLimit.value  "938.194"^^xsd:float .
+    
+    <urn:uuid:1ef12689-4cc9-17ec-affd-7769281007a2>
+            rdf:type                cim:CurrentLimit;
+            cim:CurrentLimit.value  "2100"^^xsd:float .
+    
+    <urn:uuid:51570b78-d067-772b-4a33-8552e5a871ce>
+            rdf:type                    cim:Terminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:30a12755-25d9-9b1d-e401-b0c881741eef>
+            rdf:type                cim:CurrentLimit;
+            cim:CurrentLimit.value  "938.194"^^xsd:float .
+    
+    <urn:uuid:9a54a535-c88c-7247-37aa-938a9d1f42d9>
+            rdf:type                    cim:Terminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:b438186b-5db8-1bb9-1f95-81ee4db865e3>
+            rdf:type                    cim:Terminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:46be4f3f-ec33-d469-813d-040026679f68>
+            rdf:type                    cim:ACDCConverterDCTerminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:2d62e3dd-3144-0254-3b62-22479b6724b9>
+            rdf:type                cim:CurrentLimit;
+            cim:CurrentLimit.value  "2100"^^xsd:float .
+    
+    <urn:uuid:feecaf47-f4ff-9197-fc4f-97f04fdb2455>
+            rdf:type                cim:CurrentLimit;
+            cim:CurrentLimit.value  "2000"^^xsd:float .
+    
+    <urn:uuid:81a60401-9391-40e1-9e23-0aa0aff91184>
+            rdf:type                   cim:Equipment;
+            cim:Equipment.inService    true;
+            cim:IdentifiedObject.mRID  "81a60401-9391-40e1-9e23-0aa0aff91184" .
+    
+    <urn:uuid:7dcd98b1-957d-2a26-a5f3-2674a1fda9bd>
+            rdf:type                cim:CurrentLimit;
+            cim:CurrentLimit.value  "3002.22"^^xsd:float .
+    
+    <urn:uuid:f61ecb33-0267-05fd-994a-cb5c2d2563e2>
+            rdf:type                    cim:Terminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:8343e5c5-b77a-4c4e-b074-1cb3777a2f2d>
+            rdf:type                   cim:Equipment;
+            cim:Equipment.inService    true;
+            cim:IdentifiedObject.mRID  "8343e5c5-b77a-4c4e-b074-1cb3777a2f2d" .
+    
+    <urn:uuid:db884d13-b941-ea67-670f-29acad9bf7aa>
+            rdf:type                       cim:PhaseTapChangerSymmetrical;
+            cim:TapChanger.controlEnabled  false;
+            cim:TapChanger.step            "7"^^xsd:float .
+    
+    <urn:uuid:b8a39d36-f5e3-9995-ba5a-e77d3392890f>
+            rdf:type                   cim:EquivalentInjection;
+            cim:Equipment.inService    true;
+            cim:EquivalentInjection.p  "7.68194"^^xsd:float;
+            cim:EquivalentInjection.q  "-5.36525"^^xsd:float .
+    
+    <urn:uuid:cb37fd3b-f1c6-e951-b1a8-529a9ea55f1a>
+            rdf:type                cim:VoltageLimit;
+            cim:VoltageLimit.value  "420"^^xsd:float .
+    
+    <urn:uuid:73264696-82bc-cd10-5416-623d2de1e8bc>
+            rdf:type                       cim:PhaseTapChangerSymmetrical;
+            cim:TapChanger.controlEnabled  false;
+            cim:TapChanger.step            "7"^^xsd:float .
+    
+    <urn:uuid:d325aff4-e8b6-9b5c-cc0d-16fc1f21fd5c>
+            rdf:type                cim:CurrentLimit;
+            cim:CurrentLimit.value  "2000"^^xsd:float .
+    
+    <urn:uuid:4711e896-d85e-451b-b834-0cfe14564c01>
+            rdf:type                   cim:Equipment;
+            cim:Equipment.inService    true;
+            cim:IdentifiedObject.mRID  "4711e896-d85e-451b-b834-0cfe14564c01" .
+    
+    <urn:uuid:f5bff9f7-be60-2f03-3a87-f8405b623323>
+            rdf:type                    cim:DCTerminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:a771ecd4-90ab-37aa-d956-77671399d4f4>
+            rdf:type                cim:CurrentLimit;
+            cim:CurrentLimit.value  "500"^^xsd:float .
+    
+    <urn:uuid:a80ec666-1d4b-4f8f-cdc2-efe3486b4a72>
+            rdf:type                    cim:Terminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:be09fc02-de3f-49e4-aa84-94803bcc5d76>
+            rdf:type                   cim:Equipment;
+            cim:Equipment.inService    true;
+            cim:IdentifiedObject.mRID  "be09fc02-de3f-49e4-aa84-94803bcc5d76" .
+    
+    <urn:uuid:f3603af7-a098-1e2c-431e-8ca22ae76221>
+            rdf:type                    cim:Terminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:0ef4ac67-d665-4d1b-95bf-38a8e696058a>
+            rdf:type                 cim:ConformLoad;
+            cim:EnergyConsumer.p     "10"^^xsd:float;
+            cim:EnergyConsumer.q     "0"^^xsd:float;
+            cim:Equipment.inService  true .
+    
+    <urn:uuid:20f1f947-55cb-5175-0611-8ce82c635a20>
+            rdf:type                    cim:Terminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:dc83e026-1a7f-4984-ee78-6cf190166e9d>
+            rdf:type                    cim:ACDCConverterDCTerminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:fd9c44c1-979a-0b40-0a7d-49008eccf249>
+            rdf:type                    cim:Terminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:038ce404-30dc-4289-b9db-7076cb870b8e>
+            rdf:type                       cim:CsConverter;
+            cim:ACDCConverter.p            "10"^^xsd:float;
+            cim:ACDCConverter.q            "3.5657"^^xsd:float;
+            cim:ACDCConverter.targetPpcc   "10"^^xsd:float;
+            cim:ACDCConverter.targetUdc    "152.81"^^xsd:float;
+            cim:CsConverter.operatingMode  cim:CsOperatingModeKind.rectifier;
+            cim:CsConverter.pPccControl    cim:CsPpccControlKind.activePower;
+            cim:CsConverter.targetGamma    "17"^^xsd:float;
+            cim:CsConverter.targetIdc      "500"^^xsd:float;
+            cim:Equipment.inService        true .
+    
+    <urn:uuid:6163d1e1-7904-d404-2a1c-70057f17dc15>
+            rdf:type                    cim:Terminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:cba14822-1c7f-27e1-dd40-dcd789f9c782>
+            rdf:type                   cim:Equipment;
+            cim:Equipment.inService    true;
+            cim:IdentifiedObject.mRID  "cba14822-1c7f-27e1-dd40-dcd789f9c782" .
+    
+    <urn:uuid:8cccdfd8-b368-275c-fccb-3a2271a59931>
+            rdf:type                    cim:Terminal;
+            cim:ACDCTerminal.connected  true .
+}

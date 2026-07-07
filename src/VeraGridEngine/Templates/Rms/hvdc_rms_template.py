@@ -6,8 +6,8 @@
 import numpy as np
 import math
 
-from VeraGridEngine.Templates.templates_common_functions import tf_to_block
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
+from VeraGridEngine.Utils.Symbolic.block_helpers import tf_to_block
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Branches.hvdc_line import HvdcLine
@@ -48,10 +48,10 @@ class HvdcRmsTemplate(RmsModelTemplate):
             
             # Get voltage magnitude references from connected buses
             # These are symbolic variables linked to bus voltages via .E()
-            Vmf = vf.add_var(f"Vmf_{hvdc.name}")
-            Vaf = vf.add_var(f"Vaf_{hvdc.name}")
-            Vmt = vf.add_var(f"Vmt_{hvdc.name}")
-            Vat = vf.add_var(f"Vat_{hvdc.name}")    
+            Vmf = vf.add_var(f"Vmf")
+            Vaf = vf.add_var(f"Vaf")
+            Vmt = vf.add_var(f"Vmt")
+            Vat = vf.add_var(f"Vat")
             
             #Parameters
             Ti = vf.add_var('Ti')  # Time constant for control dynamics
@@ -74,16 +74,16 @@ class HvdcRmsTemplate(RmsModelTemplate):
             }
             #Internal HVDC states
             pi = math.pi
-            phi_f = vf.add_var(f"phi_h_{hvdc.name}")  #Phase for reactive power control
-            alpha = vf.add_var(f"alpha_{hvdc.name}")  # Firing angle for reactive power control
-            gamma = vf.add_var(f"gamma_{hvdc.name}")  # Firing angle for reactive power control
-            phi_t = vf.add_var(f"phi_t_{hvdc.name}")  #Phase for reactive power control
-            ir_dc = vf.add_var(f"ir_dc_{hvdc.name}")  # DC current variable
+            phi_f = vf.add_var(f"phi_h")  #Phase for reactive power control
+            alpha = vf.add_var(f"alpha")  # Firing angle for reactive power control
+            gamma = vf.add_var(f"gamma")  # Firing angle for reactive power control
+            phi_t = vf.add_var(f"phi_t")  #Phase for reactive power control
+            ir_dc = vf.add_var(f"ir_dc")  # DC current variable
             k = vf.add_const(0.9995*3/pi)*sqrt(2)
             K_droop = vf.add_const(0.05)  # Droop gain for frequency control
             
-            x_r = vf.add_var(f"m_f_{hvdc.name}")  # Tap for from side (rectifier control)
-            x_i = vf.add_var(f"m_t_{hvdc.name}")  # Tap for to side (inverter control)
+            x_r = vf.add_var(f"m_f")  # Tap for from side (rectifier control)
+            x_i = vf.add_var(f"m_t")  # Tap for to side (inverter control)
             ii_dc = ir_dc
             m_f = x_r  
             m_t = x_i 
@@ -147,10 +147,10 @@ class HvdcRmsTemplate(RmsModelTemplate):
 
             # External mapping for power flow references
             block.external_mapping = {
-                VarPowerFlowRefferenceType.Pf: Pf,
-                VarPowerFlowRefferenceType.Pt: Pt,
-                VarPowerFlowRefferenceType.Qf: Qf,
-                VarPowerFlowRefferenceType.Qt: Qt,
+                VarPowerFlowReferenceType.Pf: Pf,
+                VarPowerFlowReferenceType.Pt: Pt,
+                VarPowerFlowReferenceType.Qf: Qf,
+                VarPowerFlowReferenceType.Qt: Qt,
             }
             block.unify_blocks()
             self._block = block

@@ -12,12 +12,12 @@ from VeraGrid.Gui.object_proxy_model import ObjectModelFilterProxy
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.enumerations import DeviceType, SimulationTypes
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
-from VeraGrid.Gui.general_dialogues import (NewProfilesStructureDialogue, TimeReIndexDialogue, LogsDialogue,
+from VeraGrid.Gui.general_dialogues import (NewProfilesStructureDialogue, TimeReIndexDialogue,
                                             StartEndSelectionDialogue)
 from VeraGrid.Gui.messages import yes_no_question, warning_msg, info_msg, error_msg
 from VeraGrid.Gui.Main.SubClasses.Model.data_base import DataBaseTableMain
-from VeraGrid.Gui.ProfilesInput.models_dialogue import ModelsInputGUI
-from VeraGrid.Gui.ProfilesInput.profile_dialogue import ProfileInputGUI, GeneratorsProfileOptionsDialogue
+from VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue import ModelsInputGUI
+from VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue import ProfileInputGUI, GeneratorsProfileOptionsDialogue
 from VeraGrid.Gui.profiles_model import ProfilesModel
 
 
@@ -425,8 +425,7 @@ class TimeEventsMain(DataBaseTableMain):
                 pass
 
         if logger.has_logs():
-            dlg = LogsDialogue("Set profile", logger=logger)
-            dlg.exec()
+            self.show_logs(name="Set profile", logger=logger)
 
     def re_index_time(self):
         """
@@ -441,7 +440,7 @@ class TimeEventsMain(DataBaseTableMain):
         if dlg.is_accepted:
             self.circuit.re_index_time2(t0=dlg.date_time_editor.dateTime().toPython(),
                                         step_size=dlg.step_length.value(),
-                                        step_unit=dlg.units.currentText())
+                                        step_unit=dlg.units.currentData())
 
             self.update_date_dependent_combos()
 
@@ -528,8 +527,7 @@ class TimeEventsMain(DataBaseTableMain):
                 self.display_profiles(proxy_mdl=self.get_current_objects_model_view())
 
                 if logger.has_logs():
-                    dialogue = LogsDialogue(name="Import profiles", logger=logger)
-                    dialogue.exec()
+                    self.show_logs(name="Import profiles", logger=logger)
 
         else:
             warning_msg("The import of profiles from many grid models "
@@ -600,4 +598,3 @@ class TimeEventsMain(DataBaseTableMain):
             mdl.paste_from_clipboard(row_idx=row_idx, col_idx=col_idx)
         else:
             warning_msg('There is no profile displayed, please display one', 'Paste profile to clipboard')
-

@@ -4,13 +4,11 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from typing import Union, Any, Tuple
-from VeraGridEngine import SubObjectType
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp
 from VeraGridEngine.Devices.Parents.pointer_device_parent import PointerDeviceParent
 from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
-from VeraGridEngine.enumerations import DeviceType
-
+from VeraGridEngine.enumerations import DeviceType, DynamicEventTransitionType, SubObjectType, PrpCat
 
 class RmsEvent(PointerDeviceParent):
     """
@@ -19,30 +17,74 @@ class RmsEvent(PointerDeviceParent):
     __slots__ = (
         'parameter',
         '_time',
+        '_end_time',
         '_value',
         '_group',
         '_force_step_alignment',
+        '_transition_type',
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='parameter', units='', tpe=SubObjectType.VarType,
-                      definition='parameter that the event changes'),
-        GCProp(key='time', units='', tpe=float,
-                      definition='Time when the event occurs'),
-        GCProp(key='value', units='', tpe=float,
-                      definition='New value for the parameter'),
-        GCProp(key='group', units='', tpe=DeviceType.RmsEventsGroupDevice, definition='RmsEvent group'),
-        GCProp(key='force_step_alignment', units='', tpe=bool,
-               definition='Force step alignment'),
+        GCProp(
+            prop_name='parameter',
+            units='',
+            tpe=SubObjectType.VarType,
+            definition='parameter that the event changes',
+            cat=[PrpCat.RMS],
+        ),
+        GCProp(
+            prop_name='time',
+            units='',
+            tpe=float,
+            definition='Time when the event occurs',
+            cat=[PrpCat.RMS],
+        ),
+        GCProp(
+            prop_name='end_time',
+            units='',
+            tpe=float,
+            definition='End time used by ramp events',
+            cat=[PrpCat.RMS],
+        ),
+        GCProp(
+            prop_name='value',
+            units='',
+            tpe=float,
+            definition='New value for the parameter',
+            cat=[PrpCat.RMS],
+        ),
+        GCProp(
+            prop_name='group',
+            units='',
+            tpe=DeviceType.RmsEventsGroupDevice,
+            definition='RmsEvent group',
+            cat=[PrpCat.RMS],
+        ),
+        GCProp(
+            prop_name='force_step_alignment',
+            units='',
+            tpe=bool,
+            definition='Force step alignment',
+            cat=[PrpCat.RMS],
+        ),
+        GCProp(
+            prop_name='transition_type',
+            units='',
+            tpe=DynamicEventTransitionType,
+            definition='Transition profile for the event',
+            cat=[PrpCat.RMS],
+        ),
     )
 
     def __init__(self,
                  device: EditableDevice | None = None,
                  parameter: Var = None,
                  time: float = None,
+                 end_time: float | None = None,
                  value: float = None,
                  group: RmsEventsGroup = None,
                  force_step_alignment: bool = False,
+                 transition_type: DynamicEventTransitionType = DynamicEventTransitionType.Step,
                  idtag: Union[str, None] = None,
                  name="RmsEvent",
                  code='',
@@ -53,8 +95,10 @@ class RmsEvent(PointerDeviceParent):
         :param device: Some device to point at
         :param parameter: parameter
         :param time: time
+        :param end_time: end time used by ramp events
         :param value: value
-        :param force_step_alignment: Trigger time-step subdivision for this event (EMT)
+        :param force_step_alignment: Trigger time-step subdivision for this event (RMS)
+        :param transition_type: Step or ramp transition profile
         :param idtag: String. Element unique identifier
         :param name: String. Event name
         :param code: String. Event code name
@@ -74,8 +118,10 @@ class RmsEvent(PointerDeviceParent):
         self._group: RmsEventsGroup = group
         self.parameter: Any = parameter
         self.time: float = float(time) if time is not None else 0.0
+        self.end_time: float | None = float(end_time) if end_time is not None else self.time+1e-20
         self.value: float = float(value) if value is not None else 0.0
         self.force_step_alignment: bool = bool(force_step_alignment)
+        self.transition_type: DynamicEventTransitionType = transition_type
 
 
     @property
@@ -110,6 +156,28 @@ class RmsEvent(PointerDeviceParent):
         :return: None
         """
         self._time = float(val)
+
+    @property
+    def end_time(self) -> float | None:
+        """
+        Get ``end_time``.
+
+        :return: Optional ramp end time.
+        """
+        return self._end_time
+
+    @end_time.setter
+    def end_time(self, val: float | None) -> None:
+        """
+        Set ``end_time``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        if val is None:
+            self._end_time = None
+        else:
+            self._end_time = float(val)
 
     @property
     def value(self) -> float:
@@ -148,3 +216,25 @@ class RmsEvent(PointerDeviceParent):
         :return: None
         """
         self._force_step_alignment = bool(val)
+
+    @property
+    def transition_type(self) -> DynamicEventTransitionType:
+        """
+        Get ``transition_type``.
+
+        :return: Dynamic event transition type.
+        """
+        return self._transition_type
+
+    @transition_type.setter
+    def transition_type(self, val: DynamicEventTransitionType) -> None:
+        """
+        Set ``transition_type``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        if isinstance(val, DynamicEventTransitionType):
+            self._transition_type = val
+        else:
+            raise TypeError("transition_type must be DynamicEventTransitionType")

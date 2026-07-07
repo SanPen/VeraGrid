@@ -9,7 +9,7 @@ from typing import Union
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp
 from VeraGridEngine.Devices.Aggregation.modelling_authority import ModellingAuthority
 from VeraGridEngine.Devices.Associations.association import Associations
-from VeraGridEngine.enumerations import DeviceType, BuildStatus, SubObjectType
+from VeraGridEngine.enumerations import DeviceType, BuildStatus, SubObjectType, PrpCat
 
 if TYPE_CHECKING:
     from VeraGridEngine.Devices.Associations.owner import Owner
@@ -29,16 +29,44 @@ class PhysicalDevice(EditableDevice):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='modelling_authority', units='', tpe=DeviceType.ModellingAuthority,
-                      definition='Modelling authority of this asset'),
-        GCProp(key='commissioned_date', units='', tpe=int, definition='Commissioned date of the asset',
-                      is_date=True),
-        GCProp(key='decommissioned_date', units='', tpe=int, definition='Decommissioned date of the asset',
-                      is_date=True),
-        GCProp('build_status', units="", tpe=BuildStatus,
-                      definition="Device build status. Used in expansion planning."),
-        GCProp(key='owners', units='p.u.', tpe=SubObjectType.Associations,
-                      definition='Owners associations to injections', display=False),
+        GCProp(
+            prop_name='modelling_authority',
+            units='',
+            tpe=DeviceType.ModellingAuthority,
+            definition='Modelling authority of this asset',
+            cat=[PrpCat.TP]
+        ),
+        GCProp(
+            prop_name='commissioned_date',
+            units='',
+            tpe=int,
+            definition='Commissioned date of the asset',
+            is_date=True,
+            cat=[PrpCat.INV]
+        ),
+        GCProp(
+            prop_name='decommissioned_date',
+            units='',
+            tpe=int,
+            definition='Decommissioned date of the asset',
+            is_date=True,
+            cat=[PrpCat.INV]
+        ),
+        GCProp(
+            prop_name='build_status',
+            units="",
+            tpe=BuildStatus,
+            definition="Device build status. Used in expansion planning.",
+            cat=[PrpCat.INV]
+        ),
+        GCProp(
+            prop_name='owners',
+            units='p.u.',
+            tpe=SubObjectType.Associations,
+            definition='Owners associations to injections',
+            display=False,
+            cat=[PrpCat.TP]
+        ),
     )
 
     def __init__(self,

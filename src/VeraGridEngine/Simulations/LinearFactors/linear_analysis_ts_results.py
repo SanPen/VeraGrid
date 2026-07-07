@@ -5,13 +5,24 @@
 
 import numpy as np
 from VeraGridEngine.Simulations.results_table import ResultsTable
-from VeraGridEngine.Simulations.results_template import ResultsTemplate
+from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 from VeraGridEngine.basic_structures import DateVec, IntVec, StrVec, CxMat, Mat
 from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
 
 
 class LinearAnalysisTimeSeriesResults(ResultsTemplate):
+    LOCAL_RESULTS_DECLARATIONS = (
+        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='voltage', tpe=CxMat, old_names=list(), expandable=True),
+        ResultsProperty(name='Sf', tpe=CxMat, old_names=list(), expandable=True),
+        ResultsProperty(name='S', tpe=CxMat, old_names=list(), expandable=True),
+        ResultsProperty(name='losses', tpe=CxMat, old_names=list(), expandable=True),
+        ResultsProperty(name='loading', tpe=CxMat, old_names=list(), expandable=True),
+    )
+
     __slots__ = (
         "bus_names",
         "bus_types",
@@ -44,11 +55,15 @@ class LinearAnalysisTimeSeriesResults(ResultsTemplate):
         ResultsTemplate.__init__(
             self,
             name='Linear Analysis time series',
-            available_results=[
-                ResultTypes.BusActivePower,
-                ResultTypes.BranchActivePowerFrom,
-                ResultTypes.BranchLoading
-            ],
+            available_results={
+                ResultTypes.BusResults: [
+                    ResultTypes.BusActivePower,
+                ],
+                ResultTypes.BranchResults: [
+                    ResultTypes.BranchActivePowerFrom,
+                    ResultTypes.BranchLoading
+                ]
+            },
             time_array=time_array,
             clustering_results=clustering_results,
             study_results_type=StudyResultsType.LinearAnalysisTimeSeries
@@ -65,16 +80,6 @@ class LinearAnalysisTimeSeriesResults(ResultsTemplate):
         self.Sf: CxMat = np.zeros((nt, m), dtype=complex)
         self.loading: Mat = np.zeros((nt, m), dtype=float)
         self.losses: CxMat = np.zeros((nt, m), dtype=float)
-
-        self.register(name='branch_names', tpe=StrVec)
-        self.register(name='bus_names', tpe=StrVec)
-        self.register(name='bus_types', tpe=IntVec)
-
-        self.register(name='voltage', tpe=CxMat)
-        self.register(name='Sf', tpe=CxMat)
-        self.register(name='S', tpe=CxMat)
-        self.register(name='losses', tpe=CxMat)
-        self.register(name='loading', tpe=CxMat)
 
     def apply_new_time_series_rates(self, nc: NumericalCircuit) -> None:
         rates = nc.Rates.T
@@ -119,19 +124,6 @@ class LinearAnalysisTimeSeriesResults(ResultsTemplate):
                 units='(MW)'
             )
 
-        elif result_type == ResultTypes.BusVoltageModule:
-
-            return ResultsTable(
-                data=np.abs(self.voltage),
-                index=self.time_array,
-                idx_device_type=DeviceType.TimeDevice,
-                columns=self.bus_names,
-                cols_device_type=DeviceType.BusDevice,
-                title=result_type.value,
-                ylabel='(p.u.)',
-                units='(p.u.)'
-            )
-
         elif result_type == ResultTypes.BranchActivePowerFrom:
 
             return ResultsTable(
@@ -158,20 +150,5 @@ class LinearAnalysisTimeSeriesResults(ResultsTemplate):
                 units='(%)'
             )
 
-        elif result_type == ResultTypes.BranchLosses:
-
-            return ResultsTable(
-                data=self.losses,
-                index=self.time_array,
-                idx_device_type=DeviceType.TimeDevice,
-                columns=self.branch_names,
-                cols_device_type=DeviceType.BranchDevice,
-                title=result_type.value,
-                ylabel='(MW)',
-                units='(MW)'
-            )
-
         else:
             raise Exception('Result type not understood:' + str(result_type))
-
-

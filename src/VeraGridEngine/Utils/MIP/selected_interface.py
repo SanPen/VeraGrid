@@ -6,7 +6,7 @@
 """
 Uncomment the appropriate interface imports to use: Pulp or OrTools
 """
-from typing import List, Union, Tuple
+from typing import List, Union, Tuple, TypeAlias, TYPE_CHECKING
 import numpy as np
 from scipy.sparse import csc_matrix
 from VeraGridEngine.basic_structures import ObjVec, ObjMat
@@ -17,24 +17,34 @@ from VeraGridEngine.Utils.MIP.pulp_interface import (LpExp as PulpLpExp,
                                                      PulpLpModel,
                                                      get_pulp_available_mip_solvers)
 
-try:
+if TYPE_CHECKING:
+    # For static type checking always import the concrete OrTools types so that the LpExp / LpVar / LpModel
+    # aliases below are valid type forms (and usable as annotations). At run time the try/except just below
+    # provides the same names, falling back to None when OrTools is not installed.
     from VeraGridEngine.Utils.MIP.ortools_interface import (LpExp as OrToolsLpExp,
                                                             LpVar as OrToolsLpVar,
                                                             OrToolsLpModel,
                                                             get_ortools_available_mip_solvers)
-
     ORTOOLS_AVAILABLE = True
-    print("ortools available")
-except ImportError:
-    ORTOOLS_AVAILABLE = False
-    OrToolsLpModel = None
-    OrToolsLpExp = None
-    OrToolsLpVar = None
-    get_ortools_available_mip_solvers = None
+else:
+    try:
+        from VeraGridEngine.Utils.MIP.ortools_interface import (LpExp as OrToolsLpExp,
+                                                                LpVar as OrToolsLpVar,
+                                                                OrToolsLpModel,
+                                                                get_ortools_available_mip_solvers)
 
-LpExp = Union[PulpLpExp, OrToolsLpExp]
-LpVar = Union[PulpLpVar, OrToolsLpVar]
-LpModel = Union[PulpLpModel, OrToolsLpModel]
+        ORTOOLS_AVAILABLE = True
+    except ImportError:
+        ORTOOLS_AVAILABLE = False
+        OrToolsLpModel = None
+        OrToolsLpExp = None
+        OrToolsLpVar = None
+        get_ortools_available_mip_solvers = None
+
+# explicit type aliases so they can be used as annotations across the engine
+LpExp: TypeAlias = Union[PulpLpExp, OrToolsLpExp]
+LpVar: TypeAlias = Union[PulpLpVar, OrToolsLpVar]
+LpModel: TypeAlias = Union[PulpLpModel, OrToolsLpModel]
 
 
 def get_available_mip_frameworks() -> List[MIPFramework]:

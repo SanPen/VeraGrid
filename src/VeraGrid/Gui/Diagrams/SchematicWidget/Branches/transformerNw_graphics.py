@@ -11,10 +11,11 @@ from PySide6.QtCore import Qt, QPoint, QPointF
 from PySide6.QtGui import QPen, QCursor, QColor
 from PySide6.QtWidgets import QGraphicsItem, QGraphicsEllipseItem, QGraphicsRectItem, QMenu, QGraphicsSceneMouseEvent
 
+from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
 from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE, DEACTIVATED, GenericDiagramWidget
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.winding_graphics import WindingGraphicItem
 from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import RoundTerminalItem
-from VeraGrid.Gui.gui_functions import add_menu_entry
+from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
 from VeraGrid.Gui.messages import yes_no_question
 from VeraGridEngine.Devices.Branches.transformerNw import TransformerNW
 from VeraGridEngine.Devices.Branches.winding import Winding
@@ -118,6 +119,16 @@ class TransformerNWGraphicItem(GenericDiagramWidget, QGraphicsRectItem):
     def editor(self) -> SchematicWidget:
         return self._editor
 
+    def open_device_editor(self) -> bool:
+        """
+        Open the generic device editor for this transformer.
+
+        :return: ``True`` when the editor was opened.
+        """
+        dialog = TemplateDeviceEditor(api_object=self.api_object, circuit=self.editor.circuit)
+        dialog.exec()
+        return True
+
     def get_associated_widgets(self) -> List[WindingGraphicItem | None]:
         return self.connection_lines
 
@@ -174,27 +185,43 @@ class TransformerNWGraphicItem(GenericDiagramWidget, QGraphicsRectItem):
             self.editor.set_editor_model(api_object=self.api_object)
 
     def mouseDoubleClickEvent(self, event):
-        return None
+        if self.api_object is not None:
+            self.open_device_editor()
+        else:
+            pass
 
     def contextMenuEvent(self, event):
         if self.api_object is not None:
             menu = QMenu()
-            menu.addSection("nw-Transformer")
+            menu.addSection(translate_context_menu_text("Transformer NW"))
 
             add_menu_entry(menu=menu,
-                           text="Active",
+                           text=translate_context_menu_text("Active"),
                            function_ptr=self.enable_disable_toggle,
                            checkeable=True,
                            checked_value=self.api_object.active)
 
+            add_menu_entry(menu=menu,
+                           text=translate_context_menu_text("Editor"),
+                           function_ptr=self.edit,
+                           icon_path=":/Icons/icons/edit.png")
+
             menu.addSeparator()
 
             add_menu_entry(menu=menu,
-                           text="Delete",
+                           text=translate_context_menu_text("Delete"),
                            function_ptr=self.delete,
                            icon_path=":/Icons/icons/delete_schematic.png")
 
             menu.exec_(event.screenPos())
+
+    def edit(self) -> None:
+        """
+        Open the appropriate editor dialogue.
+
+        :return: ``None``.
+        """
+        self.open_device_editor()
 
     def enable_disable_toggle(self):
         if self.api_object is not None:

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:cim="https://cim.ucaiug.io/ns#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+    xmlns:dcatcim="https://cim4.eu/ns/dcatcim#" 
+    xmlns:dcterms="http://purl.org/dc/terms/" 
+ 	xmlns:eu="https://cim.ucaiug.io/ns/eu#"
+    xmlns:nc="https://cim4.eu/ns/nc#"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+  xmlns:adms="http://www.w3.org/ns/adms#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  >
+
+<dcat:Dataset rdf:about="urn:uuid:e0c4eb98-fac8-4c16-8c66-67b15653ba09">
+  <adms:versionNotes xml:lang="en">Initial version</adms:versionNotes>
+  <dcat:isVersionOf rdf:resource="https://energy.referencedata.eu/Test/Model"/>
+  <dcat:keyword>MO</dcat:keyword>
+  <dcat:keyword>Model</dcat:keyword>
+  <dcat:startDate>2025-05-14T23:00:00Z</dcat:startDate>
+  <dcat:version>1.0.0-alpha-1</dcat:version>
+  <dcterms:accessRights rdf:resource="https://energy.referencedata.eu/Confidentiality/Public"/>
+  <dcterms:description xml:lang="en">All model that is defined in the ReliCapGrid test cases.</dcterms:description>
+  <dcterms:identifier>e0c4eb98-fac8-4c16-8c66-67b15653ba09</dcterms:identifier>
+  <dcterms:issued>2025-02-14T12:00:00Z</dcterms:issued>
+  <dcterms:publisher rdf:resource="https://energy.referencedata.eu/test/party/NineRealms"/>
+  <dcterms:rights>Copyright</dcterms:rights>
+  <dcterms:rightsHolder>ENTSO-E</dcterms:rightsHolder>
+  <dcterms:title>20250214_Model_CGM-MO_v1-0-0-alpha-1</dcterms:title>
+  <dcterms:type rdf:resource="https://energy.referencedata.eu/type/ReferenceData"/>
+    <prov:generatedAtTime>2025-05-20T09:00:00Z</prov:generatedAtTime>
+  <prov:wasGeneratedBy rdf:resource="https://energy.referencedata.eu/Activity/CGM-MO"/>
+</dcat:Dataset>
+
+<dcat:Dataset rdf:ID="_9788d3a5-ff66-4178-a1fe-f147cee3a7cf">
+  <dcterms:title>Test/Model/ReliCapGrid_CGM-CD</dcterms:title>
+  <dcterms:description xml:lang="en">The abstract instance of the ReliCapGrid Common Data.</dcterms:description>
+  <dcterms:type rdf:resource="https://energy.referencedata.eu/type/ReferenceData"/>
+</dcat:Dataset>
+
+<dcat:Dataset rdf:ID="_6c514ff4-3a76-4d51-ad49-b27968453592">
+  <dcterms:title>Activity/Activity_CGM-PV</dcterms:title>
+  <dcterms:description xml:lang="en">The abstract instance of the Common Grid Model (CGM) Activities.</dcterms:description>
+  <dcterms:type rdf:resource="https://energy.referencedata.eu/type/ReferenceData"/>
+</dcat:Dataset>
+
+  </rdf:RDF>

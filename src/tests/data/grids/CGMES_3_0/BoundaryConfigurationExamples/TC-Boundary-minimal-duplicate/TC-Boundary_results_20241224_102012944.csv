@@ -1,0 +1,7 @@
+created with ValiMate 1.2.6
+Copyright © 2020-2024 Associmates GmbH
+not conform
+errors,warnings,info
+1,0,0
+Focus node,Path,Value,Source,Constraint Component,details,Message,Severity,Description,Order,Name,Group
+cim:GeographicalRegion,,,eq600:GeographicalRegion-EQ__4,sh:MaxCountConstraintComponent,,Muliple GeographicalRegion-s are present.,sh:Violation,"Only one GeographicalRegion shall be exchanged per MAS. In case multiple Model Authority have a need to have the same GeographicalRegion (i.e. multiple TSOs in a country) the class GeographicalRegion shall be present in all Model Authority models and shall have different rdf:ID, but can have same name/description. There is no specific naming convention defined. Note that this is mainly applicable for exchanging transmission data. Additional clarifications when dealing with distribution data are not defined currently.",4^^xsd:integer,C:600:EQ:GeographicalRegion:EQ__4,http://iec.ch/TC57/ns/CIM/Equipment-EU/constraints/IEC61970-600-2/3.0#6002EQGroup

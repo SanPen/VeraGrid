@@ -4,10 +4,24 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.enumerations import ParamPowerFlowRefferenceType, VarPowerFlowRefferenceType, DeviceType
+from VeraGridEngine.Templates.template_definiton import TemplateDefinition, TemplateProp
+from VeraGridEngine.enumerations import ParamPowerFlowReferenceType, VarPowerFlowReferenceType, DeviceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Utils.Symbolic.block import Block
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
+
+
+class PvLoadRmsTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        super().__init__(vf, params=[
+            TemplateProp(name="Pg0_val", units="pu", descr="Initial active power.", tpe=float),
+            TemplateProp(name="Vg0_val", units="pu", descr="Initial voltage reference.", tpe=float),
+            TemplateProp(name="name", units="", descr="Name of the rms model.", tpe=str),
+        ])
+
+    def eval(self) -> RmsModelTemplate:
+        return PVLoadBuild(self.vf, self.get_value("name"), self.get_value("Pg0_val"), self.get_value("Vg0_val"))
 
 
 def PVLoadBuild(vfactory: VarFactory, name: str = "", Pg0_val=1.0, Vg0_val=1.0) -> RmsModelTemplate:
@@ -39,7 +53,7 @@ def PVLoadBuild(vfactory: VarFactory, name: str = "", Pg0_val=1.0, Vg0_val=1.0) 
     templ.tpe = DeviceType.LoadDevice
     
     # Input: Vm (voltage magnitude)
-    Vm = vfactory.add_var("Vm_" + name)
+    Vm = vfactory.add_var("Vm")
     inputs = [Vm]
     
     # Variables
@@ -56,8 +70,8 @@ def PVLoadBuild(vfactory: VarFactory, name: str = "", Pg0_val=1.0, Vg0_val=1.0) 
     event_dict = {
         Pg0: vfactory.add_const(Pg0_val),
         Vg0: vfactory.add_const(None),
-        Qmax_G: vfactory.add_const(0.5),
-        Qmin_G: vfactory.add_const(-0.5),
+        Qmax_G: vfactory.add_const(1.0),
+        Qmin_G: vfactory.add_const(-1.0),
     }
     
     # Initialize Q to Qg0
@@ -84,13 +98,13 @@ def PVLoadBuild(vfactory: VarFactory, name: str = "", Pg0_val=1.0, Vg0_val=1.0) 
     
     templ.block.name = 'PV Load'
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.P: P,
-        VarPowerFlowRefferenceType.Q: Q,
-        VarPowerFlowRefferenceType.Vm: inputs[0],
+        VarPowerFlowReferenceType.P: P,
+        VarPowerFlowReferenceType.Q: Q,
+        VarPowerFlowReferenceType.Vm: inputs[0],
     }
     
     templ.block.api_obj_mapping = {
-        ParamPowerFlowRefferenceType.Pl0: Pg0,
+        ParamPowerFlowReferenceType.Pl0: Pg0,
     }
     
     templ.block.in_vars = inputs

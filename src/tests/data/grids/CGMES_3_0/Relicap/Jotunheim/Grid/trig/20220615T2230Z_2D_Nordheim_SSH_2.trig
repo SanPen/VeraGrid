@@ -1,0 +1,98 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:957210cd-d30b-4d7a-a0c3-ab6ad918646e> {
+    <urn:uuid:4fbcc3b5-af30-4940-a0f4-686ad1439467>
+            rdf:type                 cim:SynchronousMachine;
+            cim:Equipment.inService  true;
+            cim:RegulatingCondEq.controlEnabled
+                    true;
+            cim:RotatingMachine.p    "-60"^^xsd:float;
+            cim:RotatingMachine.q    "-20"^^xsd:float;
+            cim:SynchronousMachine.operatingMode
+                    cim:SynchronousMachineOperatingMode.generator;
+            cim:SynchronousMachine.referencePriority
+                    1 .
+    
+    <urn:uuid:957210cd-d30b-4d7a-a0c3-ab6ad918646e>
+            rdf:type                 rdfg:Graph , dcat:Dataset;
+            dct:conformsTo           <http://iec.ch/TC57/ns/CIM/SteadyStateHypothesis-EU/3.0>;
+            dct:description          "The steady-state hypothesis dataset for Nordheim, updated by Jotunheim.";
+            dct:identifier           "957210cd-d30b-4d7a-a0c3-ab6ad918646e";
+            dct:issued               "2025-02-08"^^xsd:date;
+            dct:requires             <urn:uuid:b2d38b16-0d3a-4d6d-8bf2-e894632a2912>;
+            dct:temporal             [ rdf:type        dct:PeriodOfTime;
+                                       dcat:endDate    "2022-06-17T00:30:00Z"^^xsd:dateTime;
+                                       dcat:startDate  "2022-06-16T23:30:00Z"^^xsd:dateTime
+                                     ];
+            dcat:distribution        [ rdf:type    dcat:Distribution;
+                                       dct:issued  "2025-02-08T21:20:31Z"^^xsd:dateTime
+                                     ];
+            dcat:isVersionOf         <http://nordheim.nh/CGMES>;
+            dcat:previousVersion     <urn:uuid:994972cb-891c-4ad3-a06d-abaa9a5c4a03>;
+            dcat:temporalResolution  "PT1H"^^xsd:duration;
+            dcat:version             "2";
+            json-ld:base             "http://nordheim.nh/CGMES#" .
+    
+    <urn:uuid:aaccbbc9-1adc-433f-bc74-672c5a2383a9>
+            rdf:type                        cim:ControlArea;
+            cim:ControlArea.netInterchange  "-140"^^xsd:float .
+    
+    <urn:uuid:d478d71c-ebb1-1e9d-e66d-6f247cea34be>
+            rdf:type                    cim:Terminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:93b9b0c4-7a45-0457-72e0-a57e58af0f90>
+            rdf:type                cim:VoltageLimit;
+            cim:VoltageLimit.value  "231"^^xsd:float .
+    
+    <urn:uuid:70a8601c-3cbc-76fb-bea8-96a644f3915c>
+            rdf:type                    cim:Terminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:8c633952-d902-21af-1b3c-873296e155af>
+            rdf:type                     cim:GeneratingUnit;
+            cim:Equipment.inService      true;
+            cim:GeneratingUnit.normalPF  "100"^^xsd:float .
+    
+    <urn:uuid:164b8e97-5936-443a-bfda-6a9e75243aea>
+            rdf:type                   cim:EquivalentInjection;
+            cim:Equipment.inService    true;
+            cim:EquivalentInjection.p  "-140"^^xsd:float;
+            cim:EquivalentInjection.q  "20"^^xsd:float .
+    
+    <urn:uuid:457baf0b-122c-475d-a36e-76f1b79a3f15>
+            rdf:type                 cim:NonConformLoad;
+            cim:EnergyConsumer.p     "200"^^xsd:float;
+            cim:EnergyConsumer.q     "0"^^xsd:float;
+            cim:Equipment.inService  true .
+    
+    <urn:uuid:905685de-4a1a-51d2-1037-aa222a289fe7>
+            rdf:type                    cim:Terminal;
+            cim:ACDCTerminal.connected  true .
+    
+    <urn:uuid:fb5e8f5e-52b0-e2e8-92cb-e556cbffea03>
+            rdf:type                        cim:RegulatingControl;
+            cim:RegulatingControl.discrete  false;
+            cim:RegulatingControl.enabled   true;
+            cim:RegulatingControl.targetValue
+                    "220"^^xsd:float;
+            cim:RegulatingControl.targetValueUnitMultiplier
+                    cim:UnitMultiplier.k .
+}

@@ -1423,7 +1423,7 @@ def add_linear_branches_formulation(local_t: int,
                     bk = 1.0 / elm.X
 
                 # compute the flow
-                if elm.get_tap_phase_control_mode_at(global_t) == TapPhaseControl.Pf:
+                if elm.get_tap_phase_control_mode_at(global_t) == TapPhaseControl.Pf.idx():
 
                     # add angle
                     branch_vars.tap_angles[local_t, m] = prob.add_var(
@@ -1634,7 +1634,7 @@ def add_linear_hvdc_formulation(local_t: int,
             rate_pu = hvdc_vars.rates[local_t, m] / Sbase
             overload_cost_pu = elm.get_Cost_at(global_t) / Sbase
 
-            if elm.control_mode == HvdcControlType.type_0_free:
+            if elm.control_mode == HvdcControlType.type_0_free.idx():
 
                 # set the flow based on the angular difference
                 P0 = Pset_pu
@@ -1645,7 +1645,7 @@ def add_linear_hvdc_formulation(local_t: int,
                 bus_vars.Pbalance[local_t, fr] += - hvdc_vars.flows[local_t, m]
                 bus_vars.Pbalance[local_t, to] += hvdc_vars.flows[local_t, m]
 
-            elif elm.control_mode == HvdcControlType.type_1_Pset:
+            elif elm.control_mode == HvdcControlType.type_1_Pset.idx():
 
                 if elm.dispatchable[m]:
 
@@ -1731,7 +1731,8 @@ def add_linear_vsc_formulation(local_t: int,
             bus_vars.Pbalance[local_t, fr] += - vsc_vars.flows[local_t, m]
             bus_vars.Pbalance[local_t, to] += vsc_vars.flows[local_t, m]
 
-            if elm.control1 == ConverterControlType.Vm_dc or elm.control2 == ConverterControlType.Vm_dc:
+            if (elm.control1 == ConverterControlType.Vm_dc.idx()
+                    or elm.control2 == ConverterControlType.Vm_dc.idx()):
                 # set the DC slack
                 bus_vars.Vm[local_t, fr] = 1.0
                 any_dc_slack = True

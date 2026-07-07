@@ -17,6 +17,7 @@ from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import (
     get_solver_forced_event_time,
     resolve_solver_boundary_updater,
 )
+from VeraGridEngine.Utils.emt_boundary_update_wrapper import BoundaryUpdateWrapper
 from VeraGridEngine.enumerations import DynamicIntegrationMethod
 
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, Const, Expr, BinOp, UnOp, Func
@@ -24,8 +25,9 @@ from VeraGridEngine.Utils.Symbolic.jit_compiler import EquationCompiler
 
 from VeraGridEngine.Utils.Symbolic.diagnostic import (with_newton_diagnostics, NewtonDiagnosticsConfig,
                                                        NewtonSolveContext, dense_lstsq_fallback,
-                                                       sparse_lsqr_fallback, maybe_check_index1,
-                                                       maybe_apply_backtracking)
+                                                        sparse_lsqr_fallback, maybe_check_index1,
+                                                        maybe_apply_backtracking)
+from VeraGridEngine.Simulations.driver_template import DummySignal
 from VeraGridEngine.basic_structures import Vec, Mat, IntVec, CscMat
 
 
@@ -92,7 +94,7 @@ def _safe_njit(py_func: Callable[..., Any], fastmath: bool = True, cache: bool =
     :rtype: Callable[..., Any]
     """
     cache_payload: str = "|".join([py_func.__module__, py_func.__name__, str(fastmath), str(cache)])
-    cache_key: str = hashlib.md5(cache_payload.encode("utf-8")).hexdigest()
+    cache_key: str = hashlib.sha256(cache_payload.encode("utf-8")).hexdigest()
     cached_kernel: Callable[..., Any] | None = SYMBOLIC_NUMBA_KERNEL_CACHE.get(cache_key)
 
     if cached_kernel is None:
@@ -103,6 +105,59 @@ def _safe_njit(py_func: Callable[..., Any], fastmath: bool = True, cache: bool =
     compiled_kernel: Callable[..., Any] = nb.njit(cache=cache, fastmath=fastmath)(py_func)
     SYMBOLIC_NUMBA_KERNEL_CACHE.set(cache_key, compiled_kernel)
     return compiled_kernel
+
+
+def _should_use_numba_residual_backend(total_equation_count: int) -> bool:
+    """
+    Decide whether one residual backend should be wrapped with Numba.
+
+    Small and medium EMT systems often spend much more wall time in the first
+    lazy Numba compilation than in the actual Newton loop. For those systems the
+    generated Python kernel gives a better end-to-end turnaround, especially for
+    interactive debugging and tests.
+
+    :param total_equation_count: Total number of residual equations.
+    :type total_equation_count: int
+    :return: ``True`` when the residual backend should use Numba.
+    :rtype: bool
+    """
+    small_system_threshold: int = 160
+
+    if total_equation_count <= small_system_threshold:
+        return False
+    else:
+        return True
+
+
+def _should_use_numba_jacobian_backend(total_variable_count: int, jacobian_expression_count: int) -> bool:
+    """
+    Decide whether one Jacobian backend should be wrapped with Numba.
+
+    The Jacobian kernel is usually much larger than the residual kernel. Moderate
+    EMT systems can therefore hit a severe cold-start penalty when the generated
+    kernel is compiled lazily on the first Newton iteration. Keeping those cases
+    in eager Python form avoids that startup cliff while preserving the exact
+    numerical formulation.
+
+    :param total_variable_count: Number of state plus algebraic variables.
+    :type total_variable_count: int
+    :param jacobian_expression_count: Number of generated Jacobian expressions.
+    :type jacobian_expression_count: int
+    :return: ``True`` when the Jacobian backend should use Numba.
+    :rtype: bool
+    """
+    small_variable_threshold: int = 160
+    medium_variable_threshold: int = 220
+    moderate_jacobian_threshold: int = 4000
+
+    # Small EMT systems are faster and more predictable when they avoid the first
+    # lazy Numba compilation altogether, even if the Jacobian is assembled densely.
+    if total_variable_count <= small_variable_threshold:
+        return False
+    elif total_variable_count <= medium_variable_threshold and jacobian_expression_count <= moderate_jacobian_threshold:
+        return False
+    else:
+        return True
 
 
 def get_vars_in_expr(expr: Expr) -> Set[int]:
@@ -283,37 +338,69 @@ def evaluate_batched_residual(
     return float(np.linalg.norm(residual_out, np.inf))
 
 
-class BoundaryUpdateWrapper:
+def _dense_lu_bundle_solve(bundle: DenseSolveBundle, rhs: Vec) -> Vec:
     """
-    Interface for injecting boundary conditions and events before the Newton step.
-    Users must inherit from this class to update parameters safely.
+    Solve one dense LU system.
+
+    :param bundle: Dense LU bundle ``(factorization, matrix)``.
+    :param rhs: Right-hand side vector.
+    :return: Solution vector.
     """
-    __slots__ = []  # No state allowed in the base class
+    return lu_solve(bundle[0], rhs)
 
-    def update(self, t: float, x: Vec, params: Vec) -> None:
-        """
-        Updates the parameters vector in place based on the current time and state.
 
-        :param t: The current simulation time.
-        :type t: float
-        :param x: The current state vector.
-        :type x: Vec
-        :param params: The parameter vector to be modified.
-        :type params: Vec
-        :rtype: None
-        """
-        pass  # Explicit no-op for base class
+def _dense_lu_bundle_fallback(bundle: DenseSolveBundle, rhs: Vec) -> Vec:
+    """
+    Solve one dense fallback least-squares system.
 
-    def get_next_forced_event_time(self, t_prev: float, t_target: float) -> Optional[float]:
-        """
-        Return the earliest forced-alignment event time in the interval (t_prev, t_target].
+    :param bundle: Dense LU bundle ``(factorization, matrix)``.
+    :param rhs: Right-hand side vector.
+    :return: Fallback solution vector.
+    """
+    return dense_lstsq_fallback(bundle[1], rhs)
 
-        :param t_prev: Previous solver time.
-        :param t_target: Nominal target time.
-        :return: Earliest forced event time or None.
-        """
-        _unused: Tuple["BoundaryUpdateWrapper", float, float] = (self, t_prev, t_target)
-        return None
+
+def _dense_lu_bundle_matrix(bundle: DenseSolveBundle) -> np.ndarray:
+    """
+    Return the dense Jacobian matrix stored in one LU bundle.
+
+    :param bundle: Dense LU bundle ``(factorization, matrix)``.
+    :return: Dense Jacobian matrix.
+    """
+    return bundle[1]
+
+
+def _sparse_lu_bundle_solve(bundle: SparseSolveBundle, rhs: Vec) -> Vec:
+    """
+    Solve one sparse LU system.
+
+    :param bundle: Sparse LU bundle ``(factorization, matrix)``.
+    :param rhs: Right-hand side vector.
+    :return: Solution vector.
+    """
+    return bundle[0].solve(rhs)
+
+
+def _sparse_lu_bundle_fallback(bundle: SparseSolveBundle, rhs: Vec) -> Vec:
+    """
+    Solve one sparse fallback least-squares system.
+
+    :param bundle: Sparse LU bundle ``(factorization, matrix)``.
+    :param rhs: Right-hand side vector.
+    :return: Fallback solution vector.
+    """
+    return sparse_lsqr_fallback(bundle[1], rhs)
+
+
+def _sparse_lu_bundle_matrix(bundle: SparseSolveBundle) -> CscMat:
+    """
+    Return the sparse Jacobian matrix stored in one LU bundle.
+
+    :param bundle: Sparse LU bundle ``(factorization, matrix)``.
+    :return: Sparse Jacobian matrix.
+    """
+    return bundle[1]
+
 
 class HybridJacobianEvaluator:
     """
@@ -492,13 +579,14 @@ class ResidualTrialEvaluator:
 class JitSymbolicSolver:
 
     __slots__ = [
-        'problem', 't0', 't_end', 'h', 'method', 'pred_method', 'dense_threshold', 'verbose',
+        'problem', 't0', 't_end', 'h', 'method', 'pred_method', 'dense_threshold', 'verbose', 'newton_max_iter',
         'steps', 't', 'y', 'dy', 'jit_kernels', 'jit_jacobian_symbolic',
         'state_vars', 'algebraic_vars', 'state_eqs', 'algebraic_eqs', 'diff_vars',
         'jit_compiler', '_residual_debug_info', '_newton_diag_config',
         '_predictor', '_runtime_param_count', '_static_parameter_buffer', '_full_parameter_buffer',
         '_residual_buffer', '_trial_state_buffer', '_trial_residual_buffer', '_trial_residual_evaluator',
-        '_backend_build_stats', '_last_runtime_stats', '_last_sim_loop_time'
+        '_backend_build_stats', '_last_runtime_stats', '_last_sim_loop_time',
+        '_max_residual_inf_fail', '_max_state_residual_inf_fail', '_cancel_checker', '_progress_signal'
     ]
 
     def __init__(self,
@@ -510,7 +598,12 @@ class JitSymbolicSolver:
                  pred_method:DynamicIntegrationMethod = None,
                  dense_threshold: int = 100,
                  verbose: bool = False,
-                 newton_diag_config: NewtonDiagnosticsConfig | None = None)-> None:
+                 newton_max_iter: int = 15,
+                 newton_diag_config: NewtonDiagnosticsConfig | None = None,
+                 max_residual_inf_fail: float = np.inf,
+                 max_state_residual_inf_fail: float = np.inf,
+                 progress_signal: DummySignal | None = None,
+                 cancel_checker: Callable[[], bool] | None = None)-> None:
         """
         :param problem: The DAE problem definition.
         :param t0: Initial time.
@@ -520,6 +613,9 @@ class JitSymbolicSolver:
         :param pred_method: DynamicIntegrationMethod used in the predictor step if method is explicit.
         :param dense_threshold: Threshold to switch between dense and sparse linear solvers.
         :param verbose: Print compilation and simulation timings.
+        :param newton_max_iter: Maximum Newton iterations per local EMT substep.
+        :param progress_signal: Optional progress signal updated during the simulation loop.
+        :type progress_signal: DummySignal | None
         """
         self.jit_compiler = None
         self.problem = problem
@@ -529,6 +625,9 @@ class JitSymbolicSolver:
         self.pred_method = pred_method
         self.dense_threshold = dense_threshold
         self.verbose = verbose
+        self.newton_max_iter: int = int(newton_max_iter)
+        self._max_residual_inf_fail: float = float(max_residual_inf_fail)
+        self._max_state_residual_inf_fail: float = float(max_state_residual_inf_fail)
         self._newton_diag_config = newton_diag_config or NewtonDiagnosticsConfig(
             compute_dense_cond=False,
             enable_fallback=False,
@@ -573,8 +672,10 @@ class JitSymbolicSolver:
             jacobian_builds=0.0,
             total_s=0.0,
         )
-        self._last_runtime_stats: Dict[str, float] = dict()
+        self._last_runtime_stats: Dict[str, Any] = dict()
         self._last_sim_loop_time: float = 0.0
+        self._progress_signal: DummySignal | None = progress_signal
+        self._cancel_checker = cancel_checker
 
     # ==============================================================================
     # 2. JIT IMPLICIT ENGINE (Optimized with Batching)
@@ -655,16 +756,33 @@ class JitSymbolicSolver:
         # Batch compilation strategy
         BATCH_SIZE = 100
         n_eqs = len(equations)
-        batched_kernels = []
+        batched_kernels: List[Callable[..., Any]] = list()
+        use_numba_residual_backend: bool = _should_use_numba_residual_backend(total_equation_count=n_eqs)
+
+        if self.verbose:
+            if use_numba_residual_backend:
+                print("   [JIT] Residual backend uses Numba kernels.")
+            else:
+                print("   [JIT] Residual backend uses generated Python kernels to avoid cold-start compilation cost.")
+        else:
+            pass
 
         for i in range(0, n_eqs, BATCH_SIZE):
             chunk = equations[i: i + BATCH_SIZE]
             f_name = f"jit_step_{method}_part_{i}"
+            py_func: Callable[..., Any]
+            wrapped_kernel: Callable[..., Any]
 
             # Compile inplace: the function writes directly to the 'residuals' array
             py_func = self.jit_compiler.compile(chunk, func_name=f_name, use_cse=True, offset=i, inplace=True)
-            jit_func = _safe_njit(py_func, cache=True, fastmath=True)
-            batched_kernels.append(jit_func)
+
+            # Small systems are faster end-to-end when they avoid the first lazy Numba compilation.
+            if use_numba_residual_backend:
+                wrapped_kernel = _safe_njit(py_func, cache=True, fastmath=True)
+            else:
+                wrapped_kernel = py_func
+
+            batched_kernels.append(wrapped_kernel)
 
         self.jit_kernels[method] = batched_kernels
         elapsed_s: float = time.perf_counter() - t_start_build
@@ -772,10 +890,25 @@ class JitSymbolicSolver:
         compiler = EquationCompiler(variables=sorted_vars, parameters=compile_params, method=method)
         func_name = f"jac_eval_{method.name}_{N}_{'sparse' if use_sparse else 'dense'}"
         kernel_py = compiler.compile(jac_expression, func_name=func_name, use_cse=True)
+        use_numba_jacobian_backend: bool = _should_use_numba_jacobian_backend(
+            total_variable_count=N,
+            jacobian_expression_count=len(jac_expression),
+        )
 
         # The symbolic Jacobian structure is deterministic for a given method and
         # sparsity mode, so persistent caching is safe and accelerates warm runs.
-        kernel_jit = _safe_njit(kernel_py, cache=True, fastmath=True)
+        if use_numba_jacobian_backend:
+            kernel_jit = _safe_njit(kernel_py, cache=True, fastmath=True)
+        else:
+            kernel_jit = kernel_py
+
+        if self.verbose:
+            if use_numba_jacobian_backend:
+                print("   [JIT-SD] Jacobian backend uses Numba kernels.")
+            else:
+                print("   [JIT-SD] Jacobian backend uses generated Python kernels to avoid cold-start compilation cost.")
+        else:
+            pass
 
         if method == DynamicIntegrationMethod.DaeTrapezoidal:
             alpha_mult = 2.0
@@ -811,7 +944,7 @@ class JitSymbolicSolver:
                  x0: Union[Vec | None] = None,
                  dx0: Union[Vec | None] = None,
                  params0: Union[Vec | None] = None,
-                 boundary_updater: EmtBoundaryUpdateProtocol | None = None) -> Tuple[Vec, Mat, Mat]:
+                 boundary_updater: EmtBoundaryUpdateProtocol | None = None) -> Tuple[Vec, Mat, Mat, bool, bool]:
         """
         Main JIT simulation loop using the Symbolic Differentiation (SD) backend.
         :param x0: Initial state vector.
@@ -822,6 +955,9 @@ class JitSymbolicSolver:
         """
         t_start = time.time()
         method = self.method
+
+        converged: bool = True
+        well_initialized: bool = True
 
         n_eqs = self.problem.get_all_vars_number()
         n_states = self.problem.get_states_number()
@@ -898,20 +1034,20 @@ class JitSymbolicSolver:
 
         if diagnostics_enabled:
             dense_solve = with_newton_diagnostics(
-                lambda bundle, rhs: lu_solve(bundle[0], rhs),
-                fallback_solve=lambda bundle, rhs: dense_lstsq_fallback(bundle[1], rhs),
+                _dense_lu_bundle_solve,
+                fallback_solve=_dense_lu_bundle_fallback,
                 collector=trace_collector,
                 config=diag_cfg,
                 solver_name="dense_lu",
-                matrix_getter=lambda bundle: bundle[1],
+                matrix_getter=_dense_lu_bundle_matrix,
             )
             sparse_solve = with_newton_diagnostics(
-                lambda bundle, rhs: bundle[0].solve(rhs),
-                fallback_solve=lambda bundle, rhs: sparse_lsqr_fallback(bundle[1], rhs),
+                _sparse_lu_bundle_solve,
+                fallback_solve=_sparse_lu_bundle_fallback,
                 collector=trace_collector,
                 config=diag_cfg,
                 solver_name="superlu",
-                matrix_getter=lambda bundle: bundle[1],
+                matrix_getter=_sparse_lu_bundle_matrix,
             )
         else:
             pass
@@ -925,8 +1061,19 @@ class JitSymbolicSolver:
         total_newton_iterations: int = 0
         jacobian_evaluation_count: int = 0
         aligned_substep_count: int = 0
+        failed_substep_count: int = 0
+        first_failed_time_s: float = float("nan")
+        failed_substep_times_s: list[float] = list()
 
         for i in range(self.steps):
+
+            if self._progress_signal is not None:
+                self.problem.report_progress2(i, self.steps)
+            else:
+                pass
+
+            if self._cancel_checker is not None and self._cancel_checker():
+                return self.t[:i + 1].copy(), self.y[:i + 1, :].copy(), self.dy[:i + 1, :].copy(), well_initialized, converged
 
             t_step_start: float = self.t0 + i * self.h
             t_step_target: float = self.t0 + (i + 1) * self.h
@@ -1006,7 +1153,9 @@ class JitSymbolicSolver:
                 else:
                     pass
 
-                for k in range(15):
+                substep_converged: bool = False
+                substep_numerical_failure: bool = False
+                for k in range(self.newton_max_iter):
                     total_newton_iterations += 1
                     ctx = NewtonSolveContext(
                         t=float(t_curr),
@@ -1019,16 +1168,52 @@ class JitSymbolicSolver:
                     # The residual buffer is reused across Newton iterations to
                     # remove one full-size allocation from the hot loop.
                     res = residual_buffer
-                    res_norm_inf = evaluate_batched_residual(
-                        kernel_list=kernel_list_eff,
-                        x_iter=x_iter,
-                        full_params=full_params,
-                        x_prev=x_prev,
-                        dx_prev=dx_prev,
-                        h_eff=h_eff,
-                        x_prev2=x_prev2,
-                        residual_out=res,
-                    )
+                    try:
+                        res_norm_inf = evaluate_batched_residual(
+                            kernel_list=kernel_list_eff,
+                            x_iter=x_iter,
+                            full_params=full_params,
+                            x_prev=x_prev,
+                            dx_prev=dx_prev,
+                            h_eff=h_eff,
+                            x_prev2=x_prev2,
+                            residual_out=res,
+                        )
+                    except (FloatingPointError, OverflowError, ZeroDivisionError, ValueError, RuntimeError):
+                        substep_numerical_failure = True
+                        break
+
+                    if np.isfinite(res_norm_inf) and np.all(np.isfinite(res)):
+                        pass
+                    else:
+                        substep_numerical_failure = True
+                        break
+
+                    if res_norm_inf > self._max_residual_inf_fail:
+                        #raise RuntimeError(
+                        #    "JIT solver aborted due to large nonlinear residual: "
+                        #    f"res_inf={res_norm_inf:.6e} at t={t_curr:.6e}, step={i}, iter={k}, "
+                        #    f"limit={self._max_residual_inf_fail:.6e}."
+                        #)
+                        _ = 0
+
+                    if n_states > 0:
+                        state_res_inf = float(np.max(np.abs(res[:n_states])))
+                        if state_res_inf > self._max_state_residual_inf_fail:
+                            raise RuntimeError(
+                                "JIT solver aborted due to large state residual: "
+                                f"state_res_inf={state_res_inf:.6e} at t={t_curr:.6e}, step={i}, iter={k}, "
+                                f"limit={self._max_state_residual_inf_fail:.6e}."
+                            )
+
+                    ctx.res_norm_inf = float(res_norm_inf)
+                    if trace_collector is not None and hasattr(trace_collector, "record_residual_vector"):
+                        trace_collector.record_residual_vector(
+                            ctx=ctx,
+                            residual=res,
+                            top_k=5,
+                            debug_info=self._residual_debug_info,
+                        )
 
                     if i == 0 and self.verbose:
                         _print_residual_debug_table(
@@ -1043,6 +1228,7 @@ class JitSymbolicSolver:
                         )
 
                     if res_norm_inf < 1e-6:
+                        substep_converged = True
                         break
                     else:
                         pass
@@ -1081,21 +1267,35 @@ class JitSymbolicSolver:
                         pass
 
                     if use_dense_solver:
-                        if diagnostics_enabled:
-                            assert dense_solve is not None
-                            assert cached_lu_dense is not None
-                            delta = dense_solve(cached_lu_dense, -res, ctx)
-                        else:
-                            assert cached_lu_dense is not None
-                            delta = lu_solve(cached_lu_dense[0], -res)
+                        try:
+                            if diagnostics_enabled:
+                                assert dense_solve is not None
+                                assert cached_lu_dense is not None
+                                delta = dense_solve(cached_lu_dense, -res, ctx)
+                            else:
+                                assert cached_lu_dense is not None
+                                delta = lu_solve(cached_lu_dense[0], -res)
+                        except (FloatingPointError, OverflowError, ZeroDivisionError, ValueError, RuntimeError):
+                            substep_numerical_failure = True
+                            break
                     else:
-                        if diagnostics_enabled:
-                            assert sparse_solve is not None
-                            assert cached_lu_sparse is not None
-                            delta = sparse_solve(cached_lu_sparse, -res, ctx)
-                        else:
-                            assert cached_lu_sparse is not None
-                            delta = cached_lu_sparse[0].solve(-res)
+                        try:
+                            if diagnostics_enabled:
+                                assert sparse_solve is not None
+                                assert cached_lu_sparse is not None
+                                delta = sparse_solve(cached_lu_sparse, -res, ctx)
+                            else:
+                                assert cached_lu_sparse is not None
+                                delta = cached_lu_sparse[0].solve(-res)
+                        except (FloatingPointError, OverflowError, ZeroDivisionError, ValueError, RuntimeError):
+                            substep_numerical_failure = True
+                            break
+
+                    if np.all(np.isfinite(delta)):
+                        pass
+                    else:
+                        substep_numerical_failure = True
+                        break
 
                     if diag_cfg.enable_backtracking:
                         self._trial_residual_evaluator.set_context(
@@ -1119,30 +1319,58 @@ class JitSymbolicSolver:
                     else:
                         x_iter += delta
 
+                    if np.all(np.isfinite(x_iter)):
+                        pass
+                    else:
+                        substep_numerical_failure = True
+                        break
+
                     last_res_norm = res_norm_inf
 
-                if method == DynamicIntegrationMethod.DaeTrapezoidal:
-                    dx_prev[:n_states] = (
-                            (2.0 / h_eff) * (x_iter[:n_states] - x_prev[:n_states])
-                            - dx_prev[:n_states]
-                    )
-                elif method == DynamicIntegrationMethod.DaeBackEuler:
-                    dx_prev[:n_states] = (
-                            (x_iter[:n_states] - x_prev[:n_states]) / h_eff
-                    )
-                elif method == DynamicIntegrationMethod.DaeBDF2:
-                    x_prev2[:] = x_prev
-                    dx_prev[:n_states] = (
-                                                 1.5 * x_iter[:n_states]
-                                                 - 2.0 * x_prev[:n_states]
-                                                 + 0.5 * x_prev2[:n_states]
-                                         ) / h_eff
-                else:
-                    dx_prev[:n_states] = (
-                            (x_iter[:n_states] - x_prev[:n_states]) / h_eff
-                    )
+                if not substep_converged:
+                    converged = False
+                    failed_substep_count += 1
+                    failed_substep_times_s.append(float(t_curr))
+                    if np.isnan(first_failed_time_s):
+                        first_failed_time_s = float(t_curr)
+                    else:
+                        pass
+                    if i == 0 and is_first_local_step:
+                        well_initialized = False
 
-                if method != DynamicIntegrationMethod.DaeBDF2:
+                if substep_numerical_failure:
+                    # Preserve the last accepted solution when Newton breaks down
+                    # numerically so the EMT driver can report a failed substep
+                    # instead of crashing the whole simulation.
+                    x_iter[:] = x_prev
+                else:
+                    pass
+
+                if substep_numerical_failure:
+                    pass
+                else:
+                    if method == DynamicIntegrationMethod.DaeTrapezoidal:
+                        dx_prev[:n_states] = (
+                                (2.0 / h_eff) * (x_iter[:n_states] - x_prev[:n_states])
+                                - dx_prev[:n_states]
+                        )
+                    elif method == DynamicIntegrationMethod.DaeBackEuler:
+                        dx_prev[:n_states] = (
+                                (x_iter[:n_states] - x_prev[:n_states]) / h_eff
+                        )
+                    elif method == DynamicIntegrationMethod.DaeBDF2:
+                        x_prev2[:] = x_prev
+                        dx_prev[:n_states] = (
+                                                     1.5 * x_iter[:n_states]
+                                                     - 2.0 * x_prev[:n_states]
+                                                     + 0.5 * x_prev2[:n_states]
+                                             ) / h_eff
+                    else:
+                        dx_prev[:n_states] = (
+                                (x_iter[:n_states] - x_prev[:n_states]) / h_eff
+                        )
+
+                if method != DynamicIntegrationMethod.DaeBDF2 and not substep_numerical_failure:
                     x_prev2[:] = x_prev
                 else:
                     pass
@@ -1150,6 +1378,8 @@ class JitSymbolicSolver:
                 x_prev[:] = x_iter
                 t_local_prev = t_curr
                 is_first_local_step = False
+
+
 
             self.y[i + 1, :] = x_prev
             self.dy[i + 1, :] = dx_prev
@@ -1166,9 +1396,12 @@ class JitSymbolicSolver:
             jacobian_evaluations=float(jacobian_evaluation_count),
             aligned_substeps=float(aligned_substep_count),
             macro_steps=float(self.steps),
+            failed_substeps=float(failed_substep_count),
+            first_failed_time_s=float(first_failed_time_s),
+            failed_substep_times_s=list(failed_substep_times_s),
         )
 
-        return self.t, self.y, self.dy
+        return self.t, self.y, self.dy, well_initialized, converged
 
     def get_backend_build_stats(self) -> Dict[str, float]:
         """
@@ -1179,12 +1412,12 @@ class JitSymbolicSolver:
         """
         return dict(self._backend_build_stats)
 
-    def get_last_runtime_stats(self) -> Dict[str, float]:
+    def get_last_runtime_stats(self) -> Dict[str, Any]:
         """
         Return runtime statistics collected during the latest simulation.
 
         :return: Runtime statistics.
-        :rtype: Dict[str, float]
+        :rtype: Dict[str, Any]
         """
         return dict(self._last_runtime_stats)
 
@@ -1243,17 +1476,15 @@ def _format_debug_number(value: Any, width: int = 13) -> str:
 
 def _print_full_params_debug(full_params: Vec) -> None:
     """
-    Print the order and values of the assembled solver parameter vector.
+    Print the numeric contents of the assembled solver parameter vector.
 
     :param full_params: Full parameter vector passed to the residual kernels.
     :type full_params: Vec
     :rtype: None
     """
-    print("\nFULL params[] ORDER (objects + values):")
+    print("\nFULL params[] ORDER (numeric values):")
     for idx, param_value in enumerate(full_params):
-        name = getattr(param_value, "name", str(param_value))
-        uid = getattr(param_value, "uid", None)
-        print(f"{idx:3d}  {name:40s}  uid={uid}  val={param_value}")
+        print(f"{idx:3d}  val={float(param_value)}")
 
 
 def _print_residual_debug_table(res: Vec,

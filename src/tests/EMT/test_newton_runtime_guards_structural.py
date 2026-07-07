@@ -3,7 +3,7 @@
 # file, You can see it at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Any, cast
+from typing import Any, Dict, cast
 
 import numpy as np
 import pytest
@@ -245,7 +245,12 @@ class SingularVectorizedJacobian:
 )
 def test_structural_solver_defaults_keep_expensive_diagnostics_disabled(solver_class: type) -> None:
     block = build_scalar_state_block()
-    problem = GenericEmtProblem(block, Var(f"t_{solver_class.__name__}"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+    problem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=Var(f"t_{solver_class.__name__}"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
 
     if solver_class is StructuralVectorizedSolver:
         solver = solver_class(
@@ -361,7 +366,12 @@ def test_backtracking_helper_keeps_full_step_when_disabled() -> None:
 
 def test_structural_vectorized_records_newton_trace() -> None:
     block = build_decay_block(n_states=2)
-    problem = GenericEmtProblem(block, Var("t_trace_vec"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+    problem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=Var("t_trace_vec"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
     collector = NewtonTraceCollector()
     problem.set_newton_trace_collector(collector)
 
@@ -388,7 +398,12 @@ def test_structural_vectorized_records_newton_trace() -> None:
 
 def test_structural_compiled_records_newton_trace() -> None:
     block = build_decay_block(n_states=2)
-    problem = GenericEmtProblem(block, Var("t_trace_compiled"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+    problem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=Var("t_trace_compiled"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
     collector = NewtonTraceCollector()
     problem.set_newton_trace_collector(collector)
 
@@ -415,7 +430,12 @@ def test_structural_compiled_records_newton_trace() -> None:
 
 def test_structural_vectorized_runtime_index1_guard_raises() -> None:
     block = build_singular_dae_block()
-    problem = GenericEmtProblem(block, Var("t_idx_vec"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+    problem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=Var("t_idx_vec"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
     cfg = NewtonDiagnosticsConfig(
         enable_index1_check=True,
         index1_max_block_n=8,
@@ -449,7 +469,12 @@ def test_structural_vectorized_runtime_index1_guard_raises() -> None:
 
 def test_structural_compiled_runtime_index1_guard_raises() -> None:
     block = build_singular_dae_block()
-    problem = GenericEmtProblem(block, Var("t_idx_compiled"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+    problem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=Var("t_idx_compiled"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
     cfg = NewtonDiagnosticsConfig(
         enable_index1_check=True,
         index1_max_block_n=8,
@@ -482,7 +507,12 @@ def test_structural_compiled_runtime_index1_guard_raises() -> None:
 
 def test_structural_vectorized_backtracking_improves_inexact_newton_residual() -> None:
     block = build_scalar_state_block()
-    problem = GenericEmtProblem(block, Var("t_bt_vec"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+    problem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=Var("t_bt_vec"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
 
     solver_plain = StructuralVectorizedSolver(
         problem=problem,
@@ -523,12 +553,12 @@ def test_structural_vectorized_backtracking_improves_inexact_newton_residual() -
     solver_bt.fused_residual = inexact_vectorized_residual
     solver_bt.vec_jacobian = InexactVectorizedJacobian()
 
-    _, y_plain, _ = solver_plain.simulate(
+    _, y_plain, _, _, _ = solver_plain.simulate(
         x0=np.array([0.1], dtype=np.float64),
         dx0=np.array([0.0], dtype=np.float64),
         params0=np.zeros(0, dtype=np.float64),
     )
-    _, y_bt, _ = solver_bt.simulate(
+    _, y_bt, _, _, _ = solver_bt.simulate(
         x0=np.array([0.1], dtype=np.float64),
         dx0=np.array([0.0], dtype=np.float64),
         params0=np.zeros(0, dtype=np.float64),
@@ -544,7 +574,12 @@ def test_structural_vectorized_backtracking_improves_inexact_newton_residual() -
 
 def test_structural_compiled_backtracking_improves_inexact_newton_residual() -> None:
     block = build_scalar_state_block()
-    problem = GenericEmtProblem(block, Var("t_bt_compiled"))
+    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+    problem = GenericEmtProblem(
+        sys_block=block,
+        glob_time=Var("t_bt_compiled"),
+        static_parameter_values_mapping=static_parameter_values_mapping,
+    )
 
     solver_plain = StructuralCompiledSolver(
         problem=problem,
@@ -583,12 +618,12 @@ def test_structural_compiled_backtracking_improves_inexact_newton_residual() -> 
     solver_bt._residual_assembler = cast(Any, InexactCompiledResidualAssembler())
     solver_bt._jacobian_evaluator = cast(Any, InexactCompiledJacobian())
 
-    _, y_plain, _ = solver_plain.simulate(
+    _, y_plain, _, _, _ = solver_plain.simulate(
         x0=np.array([0.1], dtype=np.float64),
         dx0=np.array([0.0], dtype=np.float64),
         params0=np.zeros(0, dtype=np.float64),
     )
-    _, y_bt, _ = solver_bt.simulate(
+    _, y_bt, _, _, _ = solver_bt.simulate(
         x0=np.array([0.1], dtype=np.float64),
         dx0=np.array([0.0], dtype=np.float64),
         params0=np.zeros(0, dtype=np.float64),

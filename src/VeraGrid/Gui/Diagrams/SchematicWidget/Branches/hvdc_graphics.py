@@ -6,11 +6,13 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Union
 from PySide6.QtWidgets import QMenu
-from VeraGrid.Gui.gui_functions import add_menu_entry
+from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
+from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
 from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import BarTerminalItem, RoundTerminalItem
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template import LineGraphicTemplateItem
 from VeraGridEngine.Devices.Branches.hvdc_line import HvdcLine
 from VeraGrid.Gui.messages import yes_no_question
+from VeraGridEngine.enumerations import DynamicSimulationMode
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
@@ -45,6 +47,16 @@ class HvdcGraphicItem(LineGraphicTemplateItem):
     def api_object(self) -> HvdcLine:
         return self._api_object
 
+    def open_device_editor(self) -> bool:
+        """
+        Open the generic device editor for this HVDC line.
+
+        :return: ``True`` when the editor was opened.
+        """
+        dialog = TemplateDeviceEditor(api_object=self.api_object, circuit=self.editor.circuit)
+        dialog.exec()
+        return True
+
     def contextMenuEvent(self, event):
         """
         Show context menu
@@ -53,47 +65,59 @@ class HvdcGraphicItem(LineGraphicTemplateItem):
         """
         if self.api_object is not None:
             menu = QMenu()
-            menu.addSection("HVDC line")
+            menu.addSection(translate_context_menu_text("HVDC line"))
 
-            pe = menu.addAction('Active')
+            pe = menu.addAction(translate_context_menu_text("Active"))
             pe.setCheckable(True)
             pe.setChecked(self.api_object.active)
             pe.triggered.connect(self.enable_disable_toggle)
 
             add_menu_entry(menu=menu,
-                           text="Draw labels",
+                           text=translate_context_menu_text("Draw labels"),
                            icon_path="",
                            function_ptr=self.enable_disable_label_drawing,
                            checkeable=True,
                            checked_value=self.draw_labels)
 
-            # pe2 = menu.addAction('Convert to Multi-terminal')
-            # pe2.triggered.connect(self.convert_to_multi_terminal)
+            add_menu_entry(menu=menu,
+                           text=translate_context_menu_text("Editor"),
+                           function_ptr=self.edit,
+                           icon_path=":/Icons/icons/edit.png")
 
             add_menu_entry(menu=menu,
-                           text="Change bus",
+                           text=translate_context_menu_text("RMS Editor"),
+                           function_ptr=self.edit_dynamic_rms,
+                           icon_path=":/Icons/icons/dyn_edit.png")
+
+            add_menu_entry(menu=menu,
+                           text=translate_context_menu_text("EMT Editor"),
+                           function_ptr=self.edit_dynamic_emt,
+                           icon_path=":/Icons/icons/dyn_emt_edit.png")
+
+            add_menu_entry(menu=menu,
+                           text=translate_context_menu_text("Change bus"),
                            icon_path=":/Icons/icons/move_bus.png",
                            function_ptr=self.change_bus)
 
             add_menu_entry(menu=menu,
-                           text="Convert to VSC multi-terminal",
+                           text=translate_context_menu_text("Convert to VSC multi-terminal"),
                            icon_path=":/Icons/icons/vsc.png",
                            function_ptr=self.convert_to_multi_terminal)
 
             menu.addSeparator()
 
             add_menu_entry(menu=menu,
-                           text="Plot profiles",
+                           text=translate_context_menu_text("Plot profiles"),
                            icon_path=":/Icons/icons/plot.png",
                            function_ptr=self.plot_profiles)
 
             add_menu_entry(menu=menu,
-                           text="Assign rate to profile",
+                           text=translate_context_menu_text("Assign rate to profile"),
                            icon_path=":/Icons/icons/assign_to_profile.png",
                            function_ptr=self.assign_rate_to_profile)
 
             add_menu_entry(menu=menu,
-                           text="Assign active state to profile",
+                           text=translate_context_menu_text("Assign active state to profile"),
                            icon_path=":/Icons/icons/assign_to_profile.png",
                            function_ptr=self.assign_status_to_profile)
 
@@ -102,13 +126,33 @@ class HvdcGraphicItem(LineGraphicTemplateItem):
             menu.addSeparator()
 
             add_menu_entry(menu=menu,
-                           text="Delete",
+                           text=translate_context_menu_text("Delete"),
                            icon_path=":/Icons/icons/delete3.png",
                            function_ptr=self.delete)
 
             menu.exec_(event.screenPos())
         else:
             pass
+
+    def mouseDoubleClickEvent(self, event) -> None:
+        """
+        Open the HVDC editor on double click.
+
+        :param event: Mouse event.
+        :return: ``None``.
+        """
+        if self.api_object is not None:
+            self.open_device_editor()
+        else:
+            pass
+
+    def edit(self) -> None:
+        """
+        Open the appropriate editor dialogue.
+
+        :return: ``None``.
+        """
+        self.open_device_editor()
 
     def convert_to_multi_terminal(self):
         """
@@ -128,3 +172,21 @@ class HvdcGraphicItem(LineGraphicTemplateItem):
         # get the index of this object
         i = self.editor.circuit.get_hvdc().index(self.api_object)
         self.editor.plot_hvdc_branch(i, self.api_object)
+
+    def edit_dynamic_rms(self):
+        """
+        Open the unified dynamic editor workspace for this generator.
+        """
+
+        self.editor.gui.open_dynamic_editor(api_object=self.api_object,
+                                            circuit=self.editor.circuit,
+                                            preferred_mode=DynamicSimulationMode.RMS)
+
+    def edit_dynamic_emt(self):
+        """
+        Open the unified dynamic editor workspace for this generator.
+        """
+
+        self.editor.gui.open_dynamic_editor(api_object=self.api_object,
+                                            circuit=self.editor.circuit,
+                                            preferred_mode=DynamicSimulationMode.EMT)

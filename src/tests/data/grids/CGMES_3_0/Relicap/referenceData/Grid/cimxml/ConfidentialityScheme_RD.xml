@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:adms="http://www.w3.org/ns/adms#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#"
+  xml:base="https://energy.referencedata.eu" > 
+  <skos:ConceptScheme rdf:about="https://energy.referencedata.eu/ConfidentialityScheme/NCP/1.0">
+    <dcterms:accessRights rdf:resource="https://energy.referencedata.eu/Confidentiality/Public"/>
+    <dcterms:description xml:lang="en">Reference dataset containing confidentiality and access-right statements for energy and power system datasets. The dataset is intended for use with dcterms:accessRights and aligns where possible with the Publications Office of the European Union access-right authority table.</dcterms:description>
+    <prov:generatedAtTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2026-03-22T00:00:00Z</prov:generatedAtTime>
+    <dcterms:hasPart rdf:resource="https://energy.referencedata.eu/Confidentiality/NCP/1.0#collection_confidentiality"/>
+    <dcterms:identifier>b2348853-06c1-401e-b845-193ffa948919</dcterms:identifier>
+    <dcat:isVersionOf rdf:resource="https://energy.referencedata.eu/Confidentiality/"/>
+    <dcterms:issued rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2026-03-22</dcterms:issued>
+    <dcterms:license rdf:resource="https://creativecommons.org/licenses/by/4.0/"/>
+    <skos:prefLabel xml:lang="en">Energy Reference Data Confidentiality Scheme</skos:prefLabel>
+    <dcterms:publisher rdf:resource="https://www.entsoe.eu/"/>
+    <dcterms:rights>Copyright</dcterms:rights>
+    <dcterms:rightsHolder>ENTSO-E</dcterms:rightsHolder>
+    <dcterms:title>ConfidentialityScheme_NCP_v1.0</dcterms:title>
+    <rdf:type rdf:resource="http://www.w3.org/ns/dcat#Dataset"/>
+    <dcat:version>1.0.0</dcat:version>
+    <adms:versionNotes xml:lang="en">Initial consolidated version of the confidentiality reference dataset, preserving the existing confidentiality instance URIs and aligning them where possible to the EU access-right authority table.</adms:versionNotes>
+  </skos:ConceptScheme>
+  <dcterms:RightsStatement rdf:about="https://energy.referencedata.eu/Confidentiality/InternalOpen">
+    <skos:definition xml:lang="en">Dataset is open for use within the organisation that has published it. It may be shared and reused internally without confidentiality restriction inside that organisation, but it is not public and shall not be disclosed externally unless explicitly permitted.</skos:definition>
+    <skos:exactMatch rdf:resource="http://publications.europa.eu/resource/authority/access-right/RESTRICTED"/>
+    <dcterms:identifier>0080531c-fa18-4d51-8832-4bcbced77c90</dcterms:identifier>
+    <skos:notation>INTERNAL_OPEN</skos:notation>
+    <skos:prefLabel xml:lang="en">Internal Open</skos:prefLabel>
+    <owl:sameAs rdf:resource="http://publications.europa.eu/resource/authority/access-right/RESTRICTED"/>
+  </dcterms:RightsStatement>
+  <dcterms:RightsStatement rdf:about="https://energy.referencedata.eu/Confidentiality/MarketSensitive">
+    <dcat:applicableLegislation rdf:resource="http://data.europa.eu/eli/reg/2013/543/oj"/>
+    <dcat:applicableLegislation rdf:resource="http://data.europa.eu/eli/reg/2011/1227/oj"/>
+    <skos:broadMatch rdf:resource="http://publications.europa.eu/resource/authority/access-right/NON_PUBLIC"/>
+    <skos:definition xml:lang="en">Dataset contains commercially or regulatorily sensitive market information, including information that may influence competition, market behaviour, trading positions, prices, or transparency obligations if disclosed inappropriately.</skos:definition>
+    <dcterms:identifier>4cd9b326-1275-4da7-9724-28c5e1deeb87</dcterms:identifier>
+    <dcterms:isPartOf rdf:resource="https://energy.referencedata.eu/Confidentiality/Sensitive"/>
+    <skos:notation>MARKET_SENSITIVE</skos:notation>
+    <skos:prefLabel xml:lang="en">Market Sensitive Data</skos:prefLabel>
+    <skos:scopeNote xml:lang="en">Includes inside information as defined in REMIT. Some data may be confidential prior to publication but become mandatory public under transparency obligations.</skos:scopeNote>
+  </dcterms:RightsStatement>
+  <dcterms:RightsStatement rdf:about="https://energy.referencedata.eu/Confidentiality/OPDEConfidential">
+    <skos:broadMatch rdf:resource="http://publications.europa.eu/resource/authority/access-right/NON_PUBLIC"/>
+    <skos:definition xml:lang="en">Dataset contains sensitive information and shall be protected against unauthorised access, disclosure, or redistribution.</skos:definition>
+    <dcterms:identifier>4cd9b326-1275-4da7-9724-28c5e1deeb87</dcterms:identifier>
+    <dcterms:isPartOf rdf:resource="https://energy.referencedata.eu/Confidentiality/Sensitive"/>
+    <skos:notation>OPDE_CONFIDENTIAL</skos:notation>
+    <skos:prefLabel xml:lang="en">OPDE Confidential</skos:prefLabel>
+  </dcterms:RightsStatement>
+  <dcterms:RightsStatement rdf:about="https://energy.referencedata.eu/Confidentiality/OPDESecret">
+    <skos:broadMatch rdf:resource="http://publications.europa.eu/resource/authority/access-right/NON_PUBLIC"/>
+    <skos:broader rdf:resource="https://energy.referencedata.eu/Confidentiality/OPDEConfidential"/>
+    <skos:definition xml:lang="en">Dataset contains sensitive information and shall be protected against unauthorised access, disclosure, or redistribution.</skos:definition>
+    <dcterms:identifier>ec8c443e-edab-4256-80b2-4a7824f754ab</dcterms:identifier>
+    <dcterms:isPartOf rdf:resource="https://energy.referencedata.eu/Confidentiality/Sensitive"/>
+    <skos:notation>OPDE_SECRET</skos:notation>
+    <skos:prefLabel xml:lang="en">OPDE Secret</skos:prefLabel>
+  </dcterms:RightsStatement>
+  <dcterms:RightsStatement rdf:about="https://energy.referencedata.eu/Confidentiality/Public">
+    <skos:definition xml:lang="en">Dataset is publicly accessible and may be made available without confidentiality restriction, subject to the applicable license and any other legal obligations.</skos:definition>
+    <skos:exactMatch rdf:resource="http://publications.europa.eu/resource/authority/access-right/PUBLIC"/>
+    <dcterms:identifier>91797843-ebb8-4f55-9b76-243e53f49092</dcterms:identifier>
+    <skos:notation>PUBLIC</skos:notation>
+    <skos:prefLabel xml:lang="en">Public</skos:prefLabel>
+    <owl:sameAs rdf:resource="http://publications.europa.eu/resource/authority/access-right/PUBLIC"/>
+  </dcterms:RightsStatement>
+  <dcterms:RightsStatement rdf:about="https://energy.referencedata.eu/Confidentiality/Sensitive">
+    <skos:definition xml:lang="en">Dataset contains sensitive information and shall be protected against unauthorised access, disclosure, or redistribution.</skos:definition>
+    <skos:exactMatch rdf:resource="http://publications.europa.eu/resource/authority/access-right/NON_PUBLIC"/>
+    <dcterms:identifier>c28079e4-02ba-4a08-9093-8247ebe57f21</dcterms:identifier>
+    <skos:notation>SENSITIVE</skos:notation>
+    <skos:prefLabel xml:lang="en">Sensitive</skos:prefLabel>
+    <owl:sameAs rdf:resource="http://publications.europa.eu/resource/authority/access-right/NON_PUBLIC"/>
+  </dcterms:RightsStatement>
+  <dcterms:RightsStatement rdf:about="https://energy.referencedata.eu/Confidentiality/SensitiveEnergy">
+    <dcat:applicableLegislation rdf:resource="https://lovdata.no/dokument/SF/forskrift/2002-05-07-448"/>
+    <dcat:applicableLegislation rdf:resource="http://data.europa.eu/eli/dir/2022/2555/oj"/>
+    <dcat:applicableLegislation rdf:resource="https://lovdata.no/dokument/SF/forskrift/2012-12-07-1157"/>
+    <dcat:applicableLegislation rdf:resource="https://lovdata.no/dokument/NL/lov/2018-06-01-24"/>
+    <dcat:applicableLegislation rdf:resource="https://lovdata.no/dokument/NL/lov/1990-06-29-50"/>
+    <skos:broadMatch rdf:resource="http://publications.europa.eu/resource/authority/access-right/NON_PUBLIC"/>
+    <skos:broader rdf:resource="https://energy.referencedata.eu/Confidentiality/SensitiveInfrastructure"/>
+    <skos:definition xml:lang="en">Dataset contains concrete and detailed information about the energy system that can be exploited to damage the power system or weaken the ability to handle extraordinary situations, in accordance with the European or National regulation.</skos:definition>
+    <dcterms:identifier>7be116e1-a70f-40b5-922e-25a53f0449dd</dcterms:identifier>
+    <dcterms:isPartOf rdf:resource="https://energy.referencedata.eu/Confidentiality/SensitiveInfrastructure"/>
+    <skos:notation>SENSITIVE_ENERGY</skos:notation>
+    <skos:prefLabel xml:lang="en">Sensitive Energy Infrastructure Data</skos:prefLabel>
+    <skos:scopeNote xml:lang="en">Includes operational and planning data whose disclosure could impact power system security, system balance, or security of supply.</skos:scopeNote>
+  </dcterms:RightsStatement>
+  <dcterms:RightsStatement rdf:about="https://energy.referencedata.eu/Confidentiality/SensitiveInfrastructure">
+    <dcat:applicableLegislation rdf:resource="http://data.europa.eu/eli/dir/2022/2557/oj"/>
+    <dcat:applicableLegislation rdf:resource="http://data.europa.eu/eli/dir/2022/2555/oj"/>
+    <dcat:applicableLegislation rdf:resource="https://lovdata.no/dokument/NL/lov/2018-06-01-24"/>
+    <skos:broadMatch rdf:resource="http://publications.europa.eu/resource/authority/access-right/NON_PUBLIC"/>
+    <skos:broader rdf:resource="https://energy.referencedata.eu/Confidentiality/Sensitive"/>
+    <skos:definition xml:lang="en">Dataset contains information about critical or sensitive infrastructure and shall be protected against unauthorised access, disclosure, or redistribution.</skos:definition>
+    <dcterms:identifier>251e7f88-dbd3-48e0-aea6-669f8cd67e8c</dcterms:identifier>
+    <dcterms:isPartOf rdf:resource="https://energy.referencedata.eu/Confidentiality/Sensitive"/>
+    <skos:notation>SENSITIVE_INFRASTRUCTURE</skos:notation>
+    <skos:prefLabel xml:lang="en">Sensitive Infrastructure Data</skos:prefLabel>
+  </dcterms:RightsStatement>
+  <dcterms:RightsStatement rdf:about="https://energy.referencedata.eu/Confidentiality/SensitivePersonal">
+    <dcat:applicableLegislation rdf:resource="http://data.europa.eu/eli/reg/2016/679/oj"/>
+    <skos:broadMatch rdf:resource="http://publications.europa.eu/resource/authority/access-right/NON_PUBLIC"/>
+    <skos:definition xml:lang="en">Dataset contains personal data, including special categories of personal data, and shall be processed in accordance with Regulation (EU) 2016/679 (GDPR), including strict controls on access, processing, disclosure, and retention.</skos:definition>
+    <dcterms:identifier>ec8c443e-edab-4256-80b2-4a7824f754ab</dcterms:identifier>
+    <dcterms:isPartOf rdf:resource="https://energy.referencedata.eu/Confidentiality/Sensitive"/>
+    <skos:notation>SENSITIVE_PERSONAL_DATA</skos:notation>
+    <skos:prefLabel xml:lang="en">Sensitive Personal Data</skos:prefLabel>
+    <skos:scopeNote xml:lang="en">Includes special categories of personal data as defined in Article 9 of Regulation (EU) 2016/679 (GDPR).</skos:scopeNote>
+  </dcterms:RightsStatement>
+  <dcterms:RightsStatement rdf:about="https://energy.referencedata.eu/Confidentiality/Unclassified">
+    <skos:definition xml:lang="en">No confidentiality classification has been assigned to the dataset.</skos:definition>
+    <dcterms:identifier>ef58471e-08a0-4c8b-b488-3e5ef4a21422</dcterms:identifier>
+    <skos:notation>UNCLASSIFIED</skos:notation>
+    <skos:prefLabel xml:lang="en">Unclassified</skos:prefLabel>
+    <skos:scopeNote xml:lang="en">This value records that classification has not been performed. It does not by itself imply public, restricted, or non-public access.</skos:scopeNote>
+  </dcterms:RightsStatement>
+  <dcterms:RightsStatement rdf:about="https://energy.referencedata.eu/Confidentiality/UnknownExternalClassification">
+    <skos:definition xml:lang="en">The dataset is owned or originated by another organisation, and no confidentiality classification is available to the publishing or cataloguing party. The applicable access rights are therefore not known.</skos:definition>
+    <dcterms:identifier>51378918-8ef6-4cce-9711-4af4539f1ef5</dcterms:identifier>
+    <skos:notation>UNKNOWN_EXTERNAL_CLASSIFICATION</skos:notation>
+    <skos:prefLabel xml:lang="en">Unknown External Classification</skos:prefLabel>
+    <skos:scopeNote xml:lang="en">This value records lack of known classification because responsibility lies with another organisation. It should not be interpreted as permission to disclose the dataset.</skos:scopeNote>
+  </dcterms:RightsStatement>
+  <prov:Collection rdf:about="https://energy.referencedata.eu/Confidentiality/NCP/1.0#collection_confidentiality">
+    <prov:hadMember rdf:resource="https://energy.referencedata.eu/Confidentiality/Public"/>
+    <prov:hadMember rdf:resource="https://energy.referencedata.eu/Confidentiality/SensitiveEnergy"/>
+    <prov:hadMember rdf:resource="https://energy.referencedata.eu/Confidentiality/Unclassified"/>
+    <prov:hadMember rdf:resource="https://energy.referencedata.eu/Confidentiality/MarketSensitive"/>
+    <prov:hadMember rdf:resource="https://energy.referencedata.eu/Confidentiality/OPDEConfidential"/>
+    <prov:hadMember rdf:resource="https://energy.referencedata.eu/Confidentiality/InternalOpen"/>
+    <prov:hadMember rdf:resource="https://energy.referencedata.eu/Confidentiality/Sensitive"/>
+    <prov:hadMember rdf:resource="https://energy.referencedata.eu/Confidentiality/SensitiveInfrastructure"/>
+    <prov:hadMember rdf:resource="https://energy.referencedata.eu/Confidentiality/OPDESecret"/>
+    <prov:hadMember rdf:resource="https://energy.referencedata.eu/Confidentiality/SensitivePersonal"/>
+    <prov:hadMember rdf:resource="https://energy.referencedata.eu/Confidentiality/UnknownExternalClassification"/>
+    <dcterms:identifier>d0cc62d9-800b-4ba5-b8cb-a95d5c4e0dae</dcterms:identifier>
+    <skos:prefLabel xml:lang="en">Collection of confidentiality and access-right statements</skos:prefLabel>
+  </prov:Collection>
+</rdf:RDF>

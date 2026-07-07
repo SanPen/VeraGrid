@@ -7,24 +7,21 @@ import numpy as np
 import math
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowRefferenceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowReferenceType, VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Utils.Symbolic.block import (Block, find_name_in_block )
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
-from VeraGridEngine.Templates.templates_common_functions import (tf_to_block, tf_to_diffblock_with_output,
-                                                                 tf_to_diffblock_with_antiwindup,
-                                                                 tf_to_block_with_states, 
-                                                                 to_implicit)
+from VeraGridEngine.Utils.Symbolic.templates_common_functions import connect_models
+from VeraGridEngine.Utils.Symbolic.block_helpers import tf_to_block, tf_to_diffblock_with_output, \
+    tf_to_block_with_states, to_implicit, tf_to_diffblock_with_antiwindup
 
 
-
-
-
-def get_genqec_rms(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
+def get_genqec_rms(vfactory: VarFactory, name: str = "Genqec_rms_template") -> RmsModelTemplate:
     """
      generator with quadratic saturation
     """
     pi = math.pi
+
     templ = RmsModelTemplate(name=name)
     templ.tpe = DeviceType.GeneratorDevice
 
@@ -34,45 +31,42 @@ def get_genqec_rms(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
     # Tm: mechanical torque (from governor)
     # Vf: excitation voltage (from exciter)
 
-    inputs = [vfactory.add_var("Vm_" + name, VarPowerFlowRefferenceType.Vm),
-              vfactory.add_var("Va_" + name, VarPowerFlowRefferenceType.Va),
-              vfactory.add_var("Tm_" + name),
-              vfactory.add_var("Vf_" + name)]
+    inputs = [vfactory.add_var("Vm", reference=VarPowerFlowReferenceType.Vm),
+              vfactory.add_var("Va", reference=VarPowerFlowReferenceType.Va),
+              vfactory.add_var("Tm", shared_reference="tm_reference"),
+              vfactory.add_var("Vf", shared_reference="vf_reference")]
 
     # ______________________________________________________________________________________
     #                                    variables
     # ______________________________________________________________________________________
 
     # State variables
-    delta = vfactory.add_var("delta" + name)  # rotor angle
-    omega = vfactory.add_var("omega" + name)  # rotor electrical speed
-    Eq1 = vfactory.add_var("Eq1" + name)  # internal emf behind Xd'
-    Ed1 = vfactory.add_var("Ed1" + name)
-    Eq_prime = vfactory.add_var("Eq_prime" + name)  # transient voltage q-axis
-    Ed_prime = vfactory.add_var("Ed_prime" + name)  # transient voltage d-axis
-    Psid_prime = vfactory.add_var("Psid_prime" + name)  # transient voltage d-axis
-    Psiq_prime = vfactory.add_var("Psiq_prime" + name)  # transient voltage d-axis
+    delta = vfactory.add_var("delta")  # rotor angle
+    omega = vfactory.add_var("omega", shared_reference="omega_reference")  # rotor electrical speed
+    Eq1 = vfactory.add_var("Eq1")  # internal emf behind Xd'
+    Ed1 = vfactory.add_var("Ed1")
+    Eq_prime = vfactory.add_var("Eq_prime")  # transient voltage q-axis
+    Ed_prime = vfactory.add_var("Ed_prime")  # transient voltage d-axis
+    Psid_prime = vfactory.add_var("Psid_prime")  # transient voltage d-axis
+    Psiq_prime = vfactory.add_var("Psiq_prime")  # transient voltage d-axis
 
     # Algebraic variables
-    Pg = vfactory.add_var('Pg' + name)
-    Qg = vfactory.add_var('Qg' + name)
-    Id = vfactory.add_var("Id" + name)
-    Iq = vfactory.add_var("Iq" + name)
-    Vd = vfactory.add_var("Vd" + name)
-    Vq = vfactory.add_var("Vq" + name)
-    Psid = vfactory.add_var("Psid" + name)
-    Psiq = vfactory.add_var("Psiq" + name)
-    Te = vfactory.add_var("Te" + name)
-    IRPu = vfactory.add_var("IRPu" + name)
+    Pg = vfactory.add_var('Pg', reference=VarPowerFlowReferenceType.P)
+    Qg = vfactory.add_var('Qg', reference=VarPowerFlowReferenceType.Q)
+    Id = vfactory.add_var("Id")
+    Iq = vfactory.add_var("Iq")
+    Vd = vfactory.add_var("Vd")
+    Vq = vfactory.add_var("Vq")
+    Psid = vfactory.add_var("Psid")
+    Psiq = vfactory.add_var("Psiq")
+    Te = vfactory.add_var("Te", shared_reference="te_reference")
+    IRPu = vfactory.add_var("IRPu", shared_reference="irpu_reference")
 
     # Saturated resistances
-    Xd_2prime_sat = vfactory.add_var('Xd_2prime_sat' + name)
-    Xq_2prime_sat = vfactory.add_var('Xq_2prime_sat' + name)
-    Sa = vfactory.add_var('Sa' + name)
-    Sat = vfactory.add_var('Sat' + name)
-    V_qag = vfactory.add_var('V_qag' + name)
-    V_dag = vfactory.add_var('V_dag' + name)
-    Psi_ag = vfactory.add_var('Psi_ag' + name)
+    Xd_2prime_sat = vfactory.add_var('Xd_2prime_sat')
+    Xq_2prime_sat = vfactory.add_var('Xq_2prime_sat')
+    Sa = vfactory.add_const(0)
+    Sat = vfactory.add_const(1)
 
     # ______________________________________________________________________________________
     #                                    parameters
@@ -99,16 +93,6 @@ def get_genqec_rms(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
     Td0_2prime = vfactory.add_var('Td0_2prime')
     Tq0_2prime = vfactory.add_var('Tq0_2prime')
 
-    # Auxiliary expressions
-    Viag_expr = inputs[0] * sym.sin(inputs[1]) + sym.imag(
-        sym.conj(Pg + 1j * Qg) / sym.conj(inputs[0] * sym.exp(1j * inputs[1]))) * Ra + sym.real(
-        sym.conj(Pg + 1j * Qg) / sym.conj(inputs[0] * sym.exp(1j * inputs[1]))) * Xl
-    Vrag_expr = inputs[0] * sym.cos(inputs[1]) + sym.real(
-        sym.conj(Pg + 1j * Qg) / sym.conj(inputs[0] * sym.exp(1j * inputs[1]))) * Ra - sym.imag(
-        sym.conj(Pg + 1j * Qg) / sym.conj(inputs[0] * sym.exp(1j * inputs[1]))) * (Xl)
-
-    A = vfactory.add_var('A')
-    B = vfactory.add_var("B")
     Xd_prime_minus_Xl = vfactory.add_var('Xd_prime_minus_Xl')
     Xq_prime_minus_Xl = vfactory.add_var('Xq_prime_minus_Xl')
     Xdaux = vfactory.add_var('Xdaux')
@@ -144,14 +128,12 @@ def get_genqec_rms(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
 
         Xd_prime_minus_Xl: Xd_prime - Xl,
         Xq_prime_minus_Xl: Xq_prime - Xl,
-        Xdaux: ((Xd_prime - Xd_2prime) / (Xd_prime_minus_Xl) ** 2),
-        Xdaux2: ((Xd_prime - Xd_2prime) / (Xd_prime_minus_Xl)),
-        Xdaux3: ((Xd_2prime - Xl) / (Xd_prime_minus_Xl)),
-        Xqaux: ((Xq_prime - Xq_2prime) / (Xq_prime_minus_Xl) ** 2),
-        Xqaux2: (Xq_prime - Xq_2prime) / (Xq_prime_minus_Xl),
-        Xqaux3: ((Xq_2prime - Xl) / (Xq_prime_minus_Xl)),
-        A: vfactory.add_const(5.0),
-        B: vfactory.add_const(1.0)
+        Xdaux: ((Xd_prime - Xd_2prime) / (((Xd_prime - Xl) ** 2) + sym.Const(1e-12))),
+        Xdaux2: ((Xd_prime - Xd_2prime) / ((Xd_prime - Xl) + sym.Const(1e-12))),
+        Xdaux3: ((Xd_2prime - Xl) / ((Xd_prime - Xl) + sym.Const(1e-12))),
+        Xqaux: ((Xq_prime - Xq_2prime) / (((Xq_prime - Xl) ** 2) + sym.Const(1e-12))),
+        Xqaux2: (Xq_prime - Xq_2prime) / ((Xq_prime - Xl) + sym.Const(1e-12)),
+        Xqaux3: ((Xq_2prime - Xl) / ((Xq_prime - Xl) + sym.Const(1e-12))),
     }
     # Xdaux = ((Xd_prime - Xd_2prime) / (Xd_prime_minus_Xl) ** 2).simplify()
     # Xdaux2 = ((Xd_prime - Xd_2prime) / (Xd_prime_minus_Xl)).simplify()
@@ -195,19 +177,10 @@ def get_genqec_rms(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
             Eq1 - (Eq_prime + (Xd - Xd_prime) * (
                     Id_sat + (Eq_prime - Psid_prime - Id_sat * (Xd_prime_minus_Xl)) * Xdaux)),
 
-            # saturated resistance
-            Sat - (vfactory.add_const(1) + Sa),
             Id - Id_sat * Sat,
             Iq - Iq_sat * Sat,
             Sat * Xd_2prime_sat - (Xd_2prime + Xl * Sa),
             Sat * Xq_2prime_sat - (Xq_2prime + Xl * Sa),
-
-            # flux
-            V_dag - (Vd + Id * Ra - Iq * Xl),
-            V_qag - (Vq + Iq * Ra + Id * Xl),
-            omega * Psi_ag - sym.sqrt(V_qag * V_qag + V_dag * V_dag),
-            # saturations (quadratic)
-            Sa - A / 2 * ((Psi_ag - B) + sym.sqrt((Psi_ag - B) ** 2 + vfactory.add_const(1e-5))) ** 2,
 
             # Eq1, Eq2, Ed1, Ed2 exciter
             IRPu - Eq1 * Sat,
@@ -215,15 +188,10 @@ def get_genqec_rms(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
         algebraic_vars=[Pg, Qg, Vd, Vq, Psid, Psiq, Te, Ed1, Eq1, Id, Iq,
                         # saturated resistance
                         Xq_2prime_sat, Xd_2prime_sat, Id_sat, Iq_sat,
-                        # flux
-                        Sa, Sat, V_dag, V_qag, Psi_ag,
                         IRPu],
         init_eqs={
             # Air Gap Voltages and delta
             omega: vfactory.add_const(1),
-            Psi_ag: sym.sqrt(Viag_expr ** 2 + Vrag_expr ** 2),
-            Sa: A / 2 * ((Psi_ag - B) + sym.sqrt((Psi_ag - B) ** 2 + vfactory.add_const(1e-5))) ** 2,
-            Sat: vfactory.add_const(1) + Sa,
             delta: sym.atan(
                 (inputs[0] * sym.sin(inputs[1]) + sym.imag(
                     sym.conj(Pg + 1j * Qg) / sym.conj(inputs[0] * sym.exp(1j * inputs[1]))) * Ra + sym.real(
@@ -243,8 +211,6 @@ def get_genqec_rms(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
             Vq: (inputs[0] * sym.cos(inputs[1] - delta)),
             Id: (Pg * Vd + Qg * Vq) / (Vd ** 2 + Vq ** 2),
             Iq: (Pg * Vq - Qg * Vd) / (Vd ** 2 + Vq ** 2),
-            V_dag: (Vd + Id * Ra - Iq * Xl),
-            V_qag: (Vq + Iq * Ra + Id * Xl),
 
             # We initialize the states Eq', Ed', Psid', Psiq'
             Psid_prime: (Vq + Xd_2prime_sat * Id + Ra * Iq) / omega - (Xd_2prime - Xl) * Id / Sat,
@@ -255,23 +221,21 @@ def get_genqec_rms(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
                     Iq / Sat - (Ed_prime - Psiq_prime + Iq * (Xq_prime - Xl) / Sat) * Xqaux)),
             Eq1: (Eq_prime + (Xd - Xd_prime) * (
                     Id / Sat + (Eq_prime - Psid_prime - Id * (Xd_prime - Xl) / Sat) * Xdaux)),
-
             Psid: (Eq_2prime_expr - Id * Xd_2prime_sat),
             Psiq: (-Ed_2prime_expr - Iq * Xq_2prime_sat),
             Te: (Psid * Iq - Psiq * Id),
 
             IRPu: Eq1 * (1 + Sa),
-            Sat: vfactory.add_const(1) + Sa,
             Iq_sat: Iq / Sat,
             Id_sat: Id / Sat,
 
             # We initialize some specific parameters:
         },
         external_mapping={
-            VarPowerFlowRefferenceType.P: Pg,
-            VarPowerFlowRefferenceType.Q: Qg,
-            VarPowerFlowRefferenceType.Vm: inputs[0],
-            VarPowerFlowRefferenceType.Va: inputs[1],
+            VarPowerFlowReferenceType.P: Pg,
+            VarPowerFlowReferenceType.Q: Qg,
+            VarPowerFlowReferenceType.Vm: inputs[0],
+            VarPowerFlowReferenceType.Va: inputs[1],
         },
 
         api_obj_mapping={  },
@@ -309,13 +273,14 @@ def get_governor_rms(vfactory: VarFactory, name: str = "Governor") -> RmsModelTe
         "K8": vfactory.add_const(0.0),
     }
 
-    inputs = [vfactory.add_var("omega_"), vfactory.add_var('Te_')]
+    inputs = [vfactory.add_var("omega_", shared_reference="omega_reference"),
+              vfactory.add_var('Te_', shared_reference="te_reference")]
 
     # ______________________________________________________________________________________
     #                                    variables
     # ______________________________________________________________________________________
 
-    Tm = vfactory.add_var("Tm")  # Mechanical power input (pu
+    Tm = vfactory.add_var("Tm", shared_reference="tm_reference")  # Mechanical power input (pu
     et = vfactory.add_var("et")
 
     # reference
@@ -344,7 +309,7 @@ def get_governor_rms(vfactory: VarFactory, name: str = "Governor") -> RmsModelTe
 
     events_dict = {
         # control parameters
-        Pm_ref: inputs[1],
+        Pm_ref: vfactory.add_const(None),
         Kp: vfactory.add_const(-0.01),
         Ki: vfactory.add_const(-0.01),
         p0: vfactory.add_const(1.0),
@@ -443,6 +408,7 @@ def get_governor_rms(vfactory: VarFactory, name: str = "Governor") -> RmsModelTe
         name="governor",
 
         init_eqs={
+            Pm_ref: inputs[1],
             y1: vfactory.add_const(0.0),
             x1: inputs[0] - omega_ref,
             u_gov1: vfactory.add_const(0),
@@ -456,19 +422,19 @@ def get_governor_rms(vfactory: VarFactory, name: str = "Governor") -> RmsModelTe
         },
         api_obj_mapping={
             # Gains and limits
-            ParamPowerFlowRefferenceType.K: K,  # governor gain (inverse droop)
-            ParamPowerFlowRefferenceType.Pmax: Pmax,  # max mechanical power (pu)
-            ParamPowerFlowRefferenceType.Pmin: Pmin,  # min mechanical power (pu)
-            ParamPowerFlowRefferenceType.Uc: Uc,  # max valve closing rate (pu/s)
-            ParamPowerFlowRefferenceType.Uo: Uo,  # max valve opening rate (pu/s)
-            ParamPowerFlowRefferenceType.T_aux: T_aux,
+            ParamPowerFlowReferenceType.K: K,  # governor gain (inverse droop)
+            ParamPowerFlowReferenceType.Pmax: Pmax,  # max mechanical power (pu)
+            ParamPowerFlowReferenceType.Pmin: Pmin,  # min mechanical power (pu)
+            ParamPowerFlowReferenceType.Uc: Uc,  # max valve closing rate (pu/s)
+            ParamPowerFlowReferenceType.Uo: Uo,  # max valve opening rate (pu/s)
+            ParamPowerFlowReferenceType.T_aux: T_aux,
 
             # Control
-            ParamPowerFlowRefferenceType.Kp: Kp,
-            ParamPowerFlowRefferenceType.Ki: Ki,
-            ParamPowerFlowRefferenceType.omega_ref: omega_ref,
-            ParamPowerFlowRefferenceType.p0: p0,
-            ParamPowerFlowRefferenceType.P0: P0,
+            ParamPowerFlowReferenceType.Kp: Kp,
+            ParamPowerFlowReferenceType.Ki: Ki,
+            ParamPowerFlowReferenceType.omega_ref: omega_ref,
+            ParamPowerFlowReferenceType.p0: p0,
+            ParamPowerFlowReferenceType.P0: P0,
         }
 
     )
@@ -494,7 +460,7 @@ def get_stabilizer_rms(vfactory: VarFactory, name: str = "stabilizer") -> RmsMod
     # input variables
     # omega: omega from generator
 
-    inputs = [vfactory.add_var("omega_")]
+    inputs = [vfactory.add_var("omega_", shared_reference="omega_reference")]
 
     # PSS parameters with typical values
 
@@ -512,7 +478,7 @@ def get_stabilizer_rms(vfactory: VarFactory, name: str = "stabilizer") -> RmsMod
     }
 
     # variables
-    Vpss = vfactory.add_var('V_pss')
+    Vpss = vfactory.add_var('V_pss', shared_reference="vpss_reference")
 
     vars_block = Block(
         algebraic_vars=[],
@@ -619,7 +585,7 @@ def get_exciter_rms(vfactory: VarFactory, name: str = "exciter") -> RmsModelTemp
     # Va: measured stator voltage (from generator) (pu)
     # Vpss: output from power system stabilizer (pu)
 
-    inputs = [vfactory.add_var("IRPu_"), vfactory.add_var("Vm_"), vfactory.add_var("Vpss_")]
+    inputs = [vfactory.add_var("IRPu_", shared_reference="irpu_reference"), vfactory.add_var("Vm_", reference=VarPowerFlowReferenceType.Vm), vfactory.add_var("Vpss_", shared_reference="vpss_reference")]
 
     algebraic_vars = []
 
@@ -627,7 +593,7 @@ def get_exciter_rms(vfactory: VarFactory, name: str = "exciter") -> RmsModelTemp
     #                                    variables
     # ______________________________________________________________________________________
 
-    Vf = vfactory.add_var("Vf")
+    Vf = vfactory.add_var("Vf", shared_reference="vf_reference")
     Efe = vfactory.add_var('Efe')
     UsRefPu = vfactory.add_var(name="UsRefPu")  # reference voltage (pu)
 
@@ -664,7 +630,7 @@ def get_exciter_rms(vfactory: VarFactory, name: str = "exciter") -> RmsModelTemp
 
     events_dict = {
         # Exciter (AVR) parameters
-        UsRefPu: Efe / parameters['Ka'].value + inputs[1],  # reference voltage (pu)
+        UsRefPu: vfactory.add_const(None),  # reference voltage (pu)
         AEz: vfactory.add_const(0.02),  # saturation gain
         BEz: vfactory.add_const(1.5),  # saturation exponential coefficient
         Se_threshold: vfactory.add_const(1.0),  # saturation threshold
@@ -675,7 +641,7 @@ def get_exciter_rms(vfactory: VarFactory, name: str = "exciter") -> RmsModelTemp
         TolLi: vfactory.add_const(0.05),  # limiter crossing tolerance (fraction)
 
         # Limits
-        VaMaxPu: vfactory.add_const(2.0),  # AVR output max (pu)
+        VaMaxPu: vfactory.add_const(2.5),  # AVR output max (pu)
         VaMinPu: vfactory.add_const(-2.0),  # AVR output min (pu)
         VeMinPu: vfactory.add_const(-2.0),  # min exciter output voltage (pu)
         VfeMaxPu: vfactory.add_const(5.0),  # max exciter field current signal (pu)
@@ -801,7 +767,7 @@ def get_exciter_rms(vfactory: VarFactory, name: str = "exciter") -> RmsModelTemp
                 Ve - Se_threshold)),
             u_aux: aux_expr,
             Efe: inputs[0] * parameters["Kd"].value + u_aux,
-            # UsRefPu: Efe / parameters['Ka'].value + inputs[1],
+            UsRefPu: Efe / parameters['Ka'].value + inputs[1],
             y1: inputs[1],
             y2: vfactory.add_const(0.0),
             y3: -y1 + UsRefPu,
@@ -1051,7 +1017,7 @@ def OELBuild(vfactory: VarFactory, name: str = "OEL") -> RmsModelTemplate:
     return oel_block, V_oel_sat
 
 
-def get_complete_generator_template_rms(vfactory: VarFactory, name="complete generator rms template") -> RmsModelTemplate:
+def get_complete_generator_template_rms(vfactory: VarFactory, name="complete_generator_rms_template") -> RmsModelTemplate:
     """
     
     :return: 
@@ -1067,18 +1033,22 @@ def get_complete_generator_template_rms(vfactory: VarFactory, name="complete gen
     stabilizer_mdl = get_stabilizer_rms(vfactory=vfactory).block
 
     # connect models
-    genqec_mdl.connect([genqec_mdl.in_vars[3]], [exciter_mdl.out_vars[0]])
-    exciter_mdl.connect([exciter_mdl.in_vars[0]], [genqec_mdl.out_vars[3]])
-    exciter_mdl.connect([exciter_mdl.in_vars[1]], [genqec_mdl.in_vars[0]])
-    exciter_mdl.connect([exciter_mdl.in_vars[2]], [stabilizer_mdl.out_vars[0]])
+    vfactory.add_connection(genqec_mdl.in_vars[3], exciter_mdl.out_vars[0])
 
-    stabilizer_mdl.connect([stabilizer_mdl.in_vars[0]], [genqec_mdl.out_vars[2]])
+    vfactory.add_connection(exciter_mdl.in_vars[0], genqec_mdl.out_vars[3])
 
-    genqec_mdl.connect([genqec_mdl.in_vars[2]], [governor_mdl.out_vars[0]])
+    vfactory.add_connection(exciter_mdl.in_vars[1], genqec_mdl.in_vars[0])
 
-    governor_mdl.connect([governor_mdl.in_vars[0]], [genqec_mdl.out_vars[2]])
+    vfactory.add_connection(exciter_mdl.in_vars[2], stabilizer_mdl.out_vars[0])
 
-    governor_mdl.connect([governor_mdl.in_vars[1]], [genqec_mdl.out_vars[4]])
+    vfactory.add_connection(stabilizer_mdl.in_vars[0], genqec_mdl.out_vars[2])
+
+    vfactory.add_connection(genqec_mdl.in_vars[2], governor_mdl.out_vars[0])
+
+    vfactory.add_connection(governor_mdl.in_vars[0], genqec_mdl.out_vars[2])
+
+    vfactory.add_connection(governor_mdl.in_vars[1], genqec_mdl.out_vars[4])
+
 
     templ.block.children.append(genqec_mdl)
     templ.block.children.append(governor_mdl)
@@ -1088,13 +1058,15 @@ def get_complete_generator_template_rms(vfactory: VarFactory, name="complete gen
     # templ.block = to_implicit(templ.block, vfactory=vfactory)
     # templ.block.unify_blocks()
     templ.block.external_mapping = {
-        VarPowerFlowRefferenceType.Vm: genqec_mdl.in_vars[0],
-        VarPowerFlowRefferenceType.Va: genqec_mdl.in_vars[1],
-        VarPowerFlowRefferenceType.P: genqec_mdl.out_vars[0],
-        VarPowerFlowRefferenceType.Q: genqec_mdl.out_vars[1],
+        VarPowerFlowReferenceType.Vm: genqec_mdl.in_vars[0],
+        VarPowerFlowReferenceType.Va: genqec_mdl.in_vars[1],
+        VarPowerFlowReferenceType.P: genqec_mdl.out_vars[0],
+        VarPowerFlowReferenceType.Q: genqec_mdl.out_vars[1],
     }
 
     templ.block.in_vars = [genqec_mdl.in_vars[0], genqec_mdl.in_vars[1]]
     templ.block.out_vars = [genqec_mdl.out_vars[0], genqec_mdl.out_vars[1]]
+
+    templ.block.name = name
 
     return templ

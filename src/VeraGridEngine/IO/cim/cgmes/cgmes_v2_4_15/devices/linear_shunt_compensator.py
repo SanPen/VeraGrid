@@ -10,10 +10,10 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
 class LinearShuntCompensator(ShuntCompensator):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='b0PerSection', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.S, description='''Imaginary part of admittance.''', profiles=[]),
-		CgmesProperty(property_name='bPerSection', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.S, description='''Imaginary part of admittance.''', profiles=[]),
-		CgmesProperty(property_name='g0PerSection', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.S, description='''Factor by which voltage must be multiplied to give corresponding power lost from a circuit. Real part of admittance.''', profiles=[]),
-		CgmesProperty(property_name='gPerSection', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.S, description='''Factor by which voltage must be multiplied to give corresponding power lost from a circuit. Real part of admittance.''', profiles=[]),
+		CgmesProperty(property_name='b0PerSection', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.S, description='''Imaginary part of admittance.''', mandatory=True, profiles=[CgmesProfileType.SC]),
+		CgmesProperty(property_name='bPerSection', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.S, description='''Imaginary part of admittance.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='g0PerSection', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.S, description='''Factor by which voltage must be multiplied to give corresponding power lost from a circuit. Real part of admittance.''', mandatory=True, profiles=[CgmesProfileType.SC]),
+		CgmesProperty(property_name='gPerSection', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.S, description='''Factor by which voltage must be multiplied to give corresponding power lost from a circuit. Real part of admittance.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
 	)
 	__slots__ = ('b0PerSection', 'bPerSection', 'g0PerSection', 'gPerSection')
 	def __init__(self, rdfid='', tpe='LinearShuntCompensator'):

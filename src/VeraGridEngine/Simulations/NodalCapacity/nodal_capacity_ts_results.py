@@ -9,6 +9,7 @@ import pandas as pd
 from typing import Union, TYPE_CHECKING
 from VeraGridEngine.basic_structures import IntVec, StrVec, Mat
 from VeraGridEngine.Simulations.results_table import ResultsTable
+from VeraGridEngine.Simulations.results_template import ResultsProperty
 from VeraGridEngine.Simulations.OPF.opf_ts_results import OptimalPowerFlowTimeSeriesResults
 from VeraGridEngine.enumerations import DeviceType, ResultTypes
 
@@ -20,6 +21,12 @@ class NodalCapacityTimeSeriesResults(OptimalPowerFlowTimeSeriesResults):
     """
     Optimal power flow time series results
     """
+
+    LOCAL_RESULTS_DECLARATIONS = (
+        ResultsProperty(name='capacity_nodes_idx', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='nodal_capacity', tpe=Mat, old_names=list(), expandable=True),
+    )
+
     __slots__ = (
         "capacity_nodes_idx",
         "nodal_capacity",
@@ -100,8 +107,6 @@ class NodalCapacityTimeSeriesResults(OptimalPowerFlowTimeSeriesResults):
         # hack the available results to add another entry
         self.available_results[ResultTypes.BusResults].append(ResultTypes.BusNodalCapacity)
 
-        self.register(name='capacity_nodes_idx', tpe=IntVec)
-        self.register(name='nodal_capacity', tpe=Mat)
 
     def mdl(self, result_type) -> "ResultsTable":
         """

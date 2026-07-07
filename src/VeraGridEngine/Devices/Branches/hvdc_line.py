@@ -2,6 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
+from __future__ import annotations
 
 import pandas as pd
 import numpy as np
@@ -11,7 +12,7 @@ from matplotlib import pyplot as plt
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.enumerations import DeviceType, BuildStatus, SubObjectType
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
-from VeraGridEngine.enumerations import HvdcControlType
+from VeraGridEngine.enumerations import HvdcControlType, PrpCat
 from VeraGridEngine.Devices.Profiles import ProfileBool, ProfileFloat
 from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
 from VeraGridEngine.Devices.Branches.line_locations import LineLocations
@@ -153,28 +154,109 @@ class HvdcLine(BranchParent):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='dispatchable', units='', tpe=bool, definition='Is the line power optimizable?'),
-        GCProp(key='control_mode', units='-', tpe=HvdcControlType, definition='Control type.'),
-        GCProp(key='Pset', units='MW', tpe=float, definition='Set power flow.', profile_name='Pset_prof'),
-        GCProp(key='r', units='Ohm', tpe=float, definition='line resistance.'),
-        GCProp(key='dc_link_voltage', units='kV', tpe=float,
-                      definition='line voltage (only for compatibility, not used in calcs.)'),
-        GCProp(key='angle_droop', units='MW/deg', tpe=float, definition='Power/angle rate control',
-                      profile_name='angle_droop_prof'),
-        GCProp(key='Vset_f', units='p.u.', tpe=float, definition='Set voltage at the from side',
-                      profile_name='Vset_f_prof'),
-        GCProp(key='Vset_t', units='p.u.', tpe=float, definition='Set voltage at the to side',
-                      profile_name='Vset_t_prof'),
-        GCProp(key='min_firing_angle_f', units='rad', tpe=float,
-                      definition='minimum firing angle at the "from" side.'),
-        GCProp(key='max_firing_angle_f', units='rad', tpe=float,
-                      definition='maximum firing angle at the "from" side.'),
-        GCProp(key='min_firing_angle_t', units='rad', tpe=float,
-                      definition='minimum firing angle at the "to" side.'),
-        GCProp(key='max_firing_angle_t', units='rad', tpe=float,
-                      definition='maximum firing angle at the "to" side.'),
-        GCProp(key='length', units='km', tpe=float, definition='Length of the branch (not used for calculation)'),
-        GCProp(key='locations', units='', tpe=SubObjectType.LineLocations, definition='', editable=False),
+        GCProp(
+            prop_name='dispatchable',
+            units='',
+            tpe=bool,
+            definition='Is the line power optimizable?',
+            cat=[PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='control_mode',
+            units='-',
+            tpe=HvdcControlType,
+            definition='Control type.',
+            cat=[PrpCat.PF, PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='Pset',
+            units='MW',
+            tpe=float,
+            definition='Set power flow.',
+            profile_name='Pset_prof',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='r',
+            units='Ohm',
+            tpe=float,
+            definition='line resistance.',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='dc_link_voltage',
+            units='kV',
+            tpe=float,
+            definition='line voltage (only for compatibility, not used in calcs.)',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='angle_droop',
+            units='MW/deg',
+            tpe=float,
+            definition='Power/angle rate control',
+            profile_name='angle_droop_prof',
+            cat=[PrpCat.PF, PrpCat.OPF],
+        ),
+        GCProp(
+            prop_name='Vset_f',
+            units='p.u.',
+            tpe=float,
+            definition='Set voltage at the from side',
+            profile_name='Vset_f_prof',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='Vset_t',
+            units='p.u.',
+            tpe=float,
+            definition='Set voltage at the to side',
+            profile_name='Vset_t_prof',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='min_firing_angle_f',
+            units='rad',
+            tpe=float,
+            definition='minimum firing angle at the "from" side.',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='max_firing_angle_f',
+            units='rad',
+            tpe=float,
+            definition='maximum firing angle at the "from" side.',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='min_firing_angle_t',
+            units='rad',
+            tpe=float,
+            definition='minimum firing angle at the "to" side.',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='max_firing_angle_t',
+            units='rad',
+            tpe=float,
+            definition='maximum firing angle at the "to" side.',
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name='length',
+            units='km',
+            tpe=float,
+            definition='Length of the branch (not used for calculation)',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name='locations',
+            units='',
+            tpe=SubObjectType.LineLocations,
+            definition='',
+            editable=False,
+            cat=[PrpCat.TP],
+        ),
     )
 
     def __init__(self,
@@ -184,7 +266,8 @@ class HvdcLine(BranchParent):
                  idtag=None,
                  active=True,
                  code='',
-                 rate=1.0,
+                 design_rate: float=9999.0,
+                 rate=9999.0,
                  Pset=0.0,
                  r=1e-20,
                  loss_factor=0.0,
@@ -210,6 +293,7 @@ class HvdcLine(BranchParent):
         :param idtag:  id tag of the line
         :param active:  Is the line active?
         :param code: Secondary code for compatibility
+        :param design_rate: Design rate (MVA)
         :param rate:  Line rate in MVA
         :param Pset:  Active power set point
         :param r: Line resistance (Ohm)
@@ -243,6 +327,7 @@ class HvdcLine(BranchParent):
                               bus_to=bus_to,
                               active=active,
                               reducible=False,
+                              design_rate=design_rate,
                               rate=rate,
                               contingency_factor=contingency_factor,
                               protection_rating_factor=protection_rating_factor,
@@ -303,102 +388,6 @@ class HvdcLine(BranchParent):
 
         # Line locations
         self._locations: LineLocations = LineLocations()
-
-    @property
-    def active_prof(self) -> ProfileBool:
-        """
-        Cost profile
-        :return: Profile
-        """
-        return self._active_prof
-
-    @active_prof.setter
-    def active_prof(self, val: Union[ProfileBool, np.ndarray]):
-        if isinstance(val, ProfileBool):
-            self._active_prof = val
-        elif isinstance(val, np.ndarray):
-            self._active_prof.set(arr=val)
-        else:
-            raise Exception(str(type(val)) + 'not supported to be set into a active_prof')
-
-    def get_active_at(self, t: int | None) -> float:
-        """
-        :param t:
-        :return:
-        """
-        return get_at(self.active, self.active_prof, t)
-
-    @property
-    def rate_prof(self) -> ProfileFloat:
-        """
-        Cost profile
-        :return: Profile
-        """
-        return self._rate_prof
-
-    @rate_prof.setter
-    def rate_prof(self, val: Union[ProfileFloat, np.ndarray]):
-        if isinstance(val, ProfileFloat):
-            self._rate_prof = val
-        elif isinstance(val, np.ndarray):
-            self._rate_prof.set(arr=val)
-        else:
-            raise Exception(str(type(val)) + 'not supported to be set into a rate_prof')
-
-    def get_rate_at(self, t: int | None) -> float:
-        """
-        :param t:
-        :return:
-        """
-        return get_at(self.rate, self.rate_prof, t)
-
-    @property
-    def contingency_factor_prof(self) -> ProfileFloat:
-        """
-        Cost profile
-        :return: Profile
-        """
-        return self._contingency_factor_prof
-
-    @contingency_factor_prof.setter
-    def contingency_factor_prof(self, val: Union[ProfileFloat, np.ndarray]):
-        if isinstance(val, ProfileFloat):
-            self._contingency_factor_prof = val
-        elif isinstance(val, np.ndarray):
-            self._contingency_factor_prof.set(arr=val)
-        else:
-            raise Exception(str(type(val)) + 'not supported to be set into a contingency_factor_prof')
-
-    def get_contingency_factor_at(self, t: int | None) -> float:
-        """
-        :param t:
-        :return:
-        """
-        return get_at(self.contingency_factor, self.contingency_factor_prof, t)
-
-    @property
-    def Cost_prof(self) -> ProfileFloat:
-        """
-        Cost profile
-        :return: Profile
-        """
-        return self._Cost_prof
-
-    @Cost_prof.setter
-    def Cost_prof(self, val: Union[ProfileFloat, np.ndarray]):
-        if isinstance(val, ProfileFloat):
-            self._Cost_prof = val
-        elif isinstance(val, np.ndarray):
-            self._Cost_prof.set(arr=val)
-        else:
-            raise Exception(str(type(val)) + 'not supported to be set into a Cost_prof')
-
-    def get_Cost_at(self, t: int | None) -> float:
-        """
-        :param t:
-        :return:
-        """
-        return get_at(self.Cost, self.Cost_prof, t)
 
     @property
     def Pset_prof(self) -> ProfileFloat:
@@ -556,7 +545,7 @@ class HvdcLine(BranchParent):
                                                  r1=self.r,
                                                  angle_droop=self.angle_droop,
                                                  rate=self.rate,
-                                                 free=self.control_mode == HvdcControlType.type_0_free,
+                                                 free=self.control_mode == HvdcControlType.type_0_free.idx(),
                                                  in_pu=in_pu)
 
             return Pf, Pt, losses
@@ -580,7 +569,7 @@ class HvdcLine(BranchParent):
                                                  r1=self.r,
                                                  angle_droop=self.angle_droop,
                                                  rate=self.rate_prof[t],
-                                                 free=self.control_mode == HvdcControlType.type_0_free,
+                                                 free=self.control_mode == HvdcControlType.type_0_free.idx(),
                                                  in_pu=in_pu)
 
             return Pf, Pt, losses

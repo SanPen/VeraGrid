@@ -4,3 +4,4 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from VeraGridEngine.IO.matpower.legacy.matpower_parser import parse_matpower_file, get_matpower_case_data, to_matpower
+from VeraGridEngine.IO.matpower.veragrid_to_matpower import build_matpower_case, build_matpower_case_dict, write_matpower_case_file

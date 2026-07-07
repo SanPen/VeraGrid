@@ -10,6 +10,7 @@ from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.power_system_resource import PowerSystemResource
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 if TYPE_CHECKING:
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.equipment_container import EquipmentContainer
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.operational_limit_set import OperationalLimitSet
@@ -17,11 +18,11 @@ if TYPE_CHECKING:
 class Equipment(PowerSystemResource):
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
         CgmesProperty(property_name='aggregate', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The aggregate flag provides an alternative way of representing an aggregated (equivalent) element. It is applicable in cases when the dedicated classes for equivalent equipment do not have all of the attributes necessary to represent the required level of detail.  In case the flag is set to �true� the single instance of equipment represents multiple pieces of equipment that have been modelled together as an aggregate equivalent obtained by a network reduction procedure. Examples would be power transformers or synchronous machines operating in parallel modelled as a single aggregate power transformer or aggregate synchronous machine.  
-The attribute is not used for EquivalentBranch, EquivalentShunt and EquivalentInjection.''', profiles=[]),
-        CgmesProperty(property_name='normallyInService', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Specifies the availability of the equipment under normal operating conditions. True means the equipment is available for topology processing, which determines if the equipment is energized or not. False means that the equipment is treated by network applications as if it is not in the model.''', profiles=[]),
-        CgmesProperty(property_name='EquipmentContainer', class_type='EquipmentContainer', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Container of this equipment.''', profiles=[]),
-        CgmesProperty(property_name='OperationalLimitSet', class_type='OperationalLimitSet', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The operational limit sets associated with this equipment.''', profiles=[]),
-        CgmesProperty(property_name='inService', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Specifies the availability of the equipment. True means the equipment is available for topology processing, which determines if the equipment is energized or not. False means that the equipment is treated by network applications as if it is not in the model.''', profiles=[]),
+The attribute is not used for EquivalentBranch, EquivalentShunt and EquivalentInjection.''', profiles=[CgmesProfileType.EQ]),
+        CgmesProperty(property_name='normallyInService', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Specifies the availability of the equipment under normal operating conditions. True means the equipment is available for topology processing, which determines if the equipment is energized or not. False means that the equipment is treated by network applications as if it is not in the model.''', profiles=[CgmesProfileType.EQ]),
+        CgmesProperty(property_name='EquipmentContainer', class_type='EquipmentContainer', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Container of this equipment.''', profiles=[CgmesProfileType.EQ, CgmesProfileType.EQ_BD]),
+        CgmesProperty(property_name='OperationalLimitSet', class_type='OperationalLimitSet', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The operational limit sets associated with this equipment.''', profiles=[CgmesProfileType.EQ]),
+        CgmesProperty(property_name='inService', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Specifies the availability of the equipment. True means the equipment is available for topology processing, which determines if the equipment is energized or not. False means that the equipment is treated by network applications as if it is not in the model.''', mandatory=True, profiles=[CgmesProfileType.SSH]),
     )
     __slots__ = ('aggregate', 'normallyInService', 'EquipmentContainer', 'OperationalLimitSet', 'inService')
     def __init__(self, rdfid='', tpe='Equipment'):

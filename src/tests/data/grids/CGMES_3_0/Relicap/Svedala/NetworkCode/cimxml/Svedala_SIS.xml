@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:nc="https://cim4.eu/ns/nc#"
+    xmlns:cim="https://cim.ucaiug.io/ns#"
+    xmlns:eumd="https://cim4.eu/ns/Metadata-European#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:adms="http://www.w3.org/ns/adms#"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:dcatcim="https://cim4.eu/ns/dcatcim#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#" > 
+  <dcat:Dataset rdf:about="urn:uuid:2426ac74-18f0-441c-9814-3f06655302e6">
+    <dcterms:accessRights>https://energy.referencedata.eu/Confidentiality/Public</dcterms:accessRights>
+    <dcterms:conformsTo>https://ap.cim4.eu/StateInstructionSchedule/2.4</dcterms:conformsTo>
+    <dcterms:conformsTo>https://cim4.eu/ns/nc/2.4#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/CIM100#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/2013/CIM-schema-cim16#</dcterms:conformsTo>
+    <dcterms:description xml:lang="en">This is the state instruction schedule dataset for Svedala part of ReliCapGrid.</dcterms:description>
+    <dcat:startDate>2022-06-15T22:30:00Z</dcat:startDate>
+    <dcat:endDate>2023-06-15T22:30:00Z</dcat:endDate>
+    <prov:generatedAtTime>2022-06-10T07:06:25Z</prov:generatedAtTime>
+    <dcterms:identifier>2426ac74-18f0-441c-9814-3f06655302e6</dcterms:identifier>
+    <dcat:isVersionOf rdf:resource="https://energy.referencedata.eu/Test/Model/Svedala-SIS"/>
+    <dcat:keyword>SIS</dcat:keyword>
+    <dcterms:license>https://creativecommons.org/licenses/by/4.0/</dcterms:license>
+    <dcterms:publisher>https://energy.referencedata.eu/test/party/Svedala</dcterms:publisher>
+    <dcterms:rights>Copyright</dcterms:rights>
+    <dcterms:rightsHolder>ENTSO-E</dcterms:rightsHolder>
+    <dcterms:requires rdf:resource="urn:uuid:f7b94ef6-e043-4d2a-a359-2718e6e20507"/>
+    <dcterms:title>20220615_Svedala_SIS_1.0.0</dcterms:title> 
+    <dcat:version>1.0.0</dcat:version>
+    <prov:wasGeneratedBy>https://energy.referencedata.eu/Activity/CGM-SIS</prov:wasGeneratedBy>
+    <dcterms:spatial>https://energy.referencedata.eu/Test/Frame/Svedala-Power-Transmission-System</dcterms:spatial>
+    <dcterms:issued>2022-06-15T22:30:00Z</dcterms:issued>
+  </dcat:Dataset>
+  <nc:GridStateAlterationSchedule rdf:ID="_a951d00f-5f48-4fb9-9194-7fd88193529e">
+    <nc:BaseTimeSeries.interpolationKind rdf:resource="https://cim4.eu/ns/nc#TimeSeriesInterpolationKind.none"/>
+    <nc:BaseTimeSeries.timeSeriesKind rdf:resource="https://cim4.eu/ns/nc#BaseTimeSeriesKind.schedule"/>
+    <nc:GridStateAlterationSchedule.GridStateAlteration rdf:resource="#_eb60d1c0-8bcc-463b-8b91-8dc1833b2a92"/>
+    <cim:IdentifiedObject.mRID>a951d00f-5f48-4fb9-9194-7fd88193529e</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>Modification prior RAO</cim:IdentifiedObject.name>
+  </nc:GridStateAlterationSchedule>
+  <nc:GridStateAlterationTimePoint rdf:ID="_3a21613b-e43a-4df0-a17a-4561fa94f79a">
+    <nc:GridStateAlterationTimePoint.GridStateAlterationSchedule rdf:resource="#_a951d00f-5f48-4fb9-9194-7fd88193529e"/>
+    <nc:GridStateAlterationTimePoint.atTime>2023-06-15T22:30:00Z</nc:GridStateAlterationTimePoint.atTime>
+    <nc:GridStateAlterationTimePoint.enabled>true</nc:GridStateAlterationTimePoint.enabled>
+  </nc:GridStateAlterationTimePoint>
+  <nc:GridStateAlterationTimePoint rdf:ID="_c86ff268-d324-42b6-a8f3-3c09c48aa4f2">
+    <nc:GridStateAlterationTimePoint.GridStateAlterationSchedule rdf:resource="#_a951d00f-5f48-4fb9-9194-7fd88193529e"/>
+    <nc:GridStateAlterationTimePoint.atTime>2023-06-15T21:30:00Z</nc:GridStateAlterationTimePoint.atTime>
+    <nc:GridStateAlterationTimePoint.enabled>false</nc:GridStateAlterationTimePoint.enabled>
+  </nc:GridStateAlterationTimePoint>
+ 
+</rdf:RDF>

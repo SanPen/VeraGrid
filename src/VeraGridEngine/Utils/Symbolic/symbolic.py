@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from __future__ import annotations
+import copy
 import json
 import math
 import ast
@@ -15,7 +16,8 @@ import numba as nb
 
 from typing import Any, Dict, Mapping, Union, List, Sequence, Tuple, Set, Optional
 
-from VeraGridEngine.enumerations import VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import VarPowerFlowReferenceType
+
 
 NUMBER = Union[int, float, complex]
 
@@ -56,6 +58,29 @@ def _to_expr(val: Any) -> "Expr":
 # ----------------------------------------------------------------------------
 # Function helpers
 # ----------------------------------------------------------------------------
+
+
+class SharedVarReferenceType:
+    __slots__ = ("name", "uid")
+    # this class is related to var factory, and a dictionary contains all the "shared vars" that have a certain reference.
+    def __init__(self, name: str, uid: int| None = None):
+
+        self.uid: int = _new_uid() if uid is None else uid
+        self.name = name
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return str(self)
+
+    def __eq__(self, other):
+        if not isinstance(other, SharedVarReferenceType):
+            return NotImplemented
+        return self.uid == other.uid
+
+    def __hash__(self):
+        return hash(self.uid)
 
 
 class CmpOp(Enum):
@@ -100,18 +125,37 @@ class Comparison:
         :return: Equivalent symbolic expression.
         """
         rhs_expr: Expr = _to_expr(self.rhs)
-        if self.op == CmpOp.LE or self.op == CmpOp.LT:
-            return heaviside(rhs_expr - self.lhs)
-        elif self.op == CmpOp.GE or self.op == CmpOp.GT:
-            return heaviside(self.lhs - rhs_expr)
+        eps: Const = Const(1e-6)
+        if self.op == CmpOp.LT:
+            return heaviside(rhs_expr - self.lhs - eps)
+        elif self.op == CmpOp.LE:
+            return heaviside(rhs_expr - self.lhs + eps)
+        elif self.op == CmpOp.GT:
+            return heaviside(self.lhs - rhs_expr - eps)
+        elif self.op == CmpOp.GE:
+            return heaviside(self.lhs - rhs_expr + eps)
         elif self.op == CmpOp.EQ:
-            eps: Const = Const(1e-6)
             return heaviside(self.lhs - rhs_expr + eps) * heaviside(rhs_expr - self.lhs + eps)
         else:
             raise ValueError(f"operator not supported {self.op}")
 
     def __repr__(self) -> str:
         return f"Comparison(lhs={self.lhs!r}, op={self.op!r}, rhs={self.rhs!r})"
+
+    def subs(self, mapping: Dict[Any, "Expr"]) -> "Comparison":
+        rhs_expr: Expr = _to_expr(self.rhs)
+        return Comparison(self.lhs.subs(mapping), self.op, rhs_expr.subs(mapping))
+
+    def to_residual(self) -> "Expr":
+        rhs_expr: Expr = _to_expr(self.rhs)
+        if self.op in (CmpOp.LE, CmpOp.LT):
+            return self.lhs - rhs_expr
+        elif self.op in (CmpOp.GE, CmpOp.GT):
+            return rhs_expr - self.lhs
+        elif self.op == CmpOp.EQ:
+            return self.lhs - rhs_expr
+        else:
+            raise ValueError(f"operator not supported {self.op}")
 
 
 class Expr:
@@ -180,6 +224,14 @@ class Expr:
         :rtype:
         """
         return mapping.get(self, self)
+
+    def contains_var(self, var: Var) -> bool:
+        """
+        Check if this expression contains the given variable.
+        :param var: Variable to search for.
+        :return: True if var is in this expression.
+        """
+        return False
 
     def to_dict(self) -> Dict[str, Any]:
         """
@@ -293,8 +345,19 @@ class Const(Expr):
         self.value: NUMBER | None = value
         self.name: str = name
 
-    def __deepcopy__(self, memo) -> "Const":
-        return Const(self.value, self.uid, self.name)
+    def __deepcopy__(self, memo: Dict[int, Any]) -> "Const":
+        """
+        Copy the constant while preserving its symbolic UID.
+
+        :param memo: Standard deepcopy memo table.
+        :return: Copied constant.
+        """
+        if id(self) in memo:
+            return memo[id(self)]
+        else:
+            result: Const = Const(self.value, self.uid, self.name)
+            memo[id(self)] = result
+            return result
 
     def eval(self, **bindings: NUMBER) -> NUMBER | None:
         return self.value
@@ -324,6 +387,9 @@ class Const(Expr):
                     return mapping[key]
 
         return self
+
+    def contains_var(self, var: Var) -> bool:
+        return False
 
     def __str__(self) -> str:
         return str(self.value)
@@ -366,11 +432,13 @@ class Var(Expr):
     Any variable
     """
 
-    __slots__ = ("name", "_ref", "_network_conn", "uid", "diff_var", "base_var", "_origin_var")
+    __slots__ = ("name", "_ref", "_network_conn", "_shared_ref", "uid", "non_mutable_uid", "diff_var", "base_var", "_origin_var")
 
     def __init__(self, name: str,
-                 reference: VarPowerFlowRefferenceType | None = None,
+                 reference: VarPowerFlowReferenceType | None = None,
                  network_conn: bool = False,
+                 shared_reference: SharedVarReferenceType | None = None,
+                 non_mutable_uid: int | None = None,
                  uid: int | None = None,
                  diff_var: Var | None = None,
                  base_var: Var | None = None):
@@ -378,15 +446,19 @@ class Var(Expr):
         """
 
         :param name:
-        :param reference:
+        :param shared_reference:
+        :param reference
         :param network_conn:
         :param uid:
         :param diff_var:
         """
         super().__init__(uid=uid)
+        self.non_mutable_uid: int = _new_uid() if uid is None else uid
         self.name: str = name
-        self._ref: VarPowerFlowRefferenceType | None = reference
+        self._ref: VarPowerFlowReferenceType | None = reference
         self._network_conn: bool = network_conn
+        self._shared_ref: SharedVarReferenceType | None = shared_reference
+
         self.diff_var = diff_var
         self.base_var: Var | None = base_var  # assign reference to base var
         self._origin_var: Var | None = None
@@ -394,15 +466,33 @@ class Var(Expr):
         if base_var is not None:
             self.base_var.diff_var = self  # assign reference to me in the base var
 
-    def __deepcopy__(self, memo) -> "Var":
-        return Var(
-            name=self.name,
-            reference=self._ref,
-            network_conn=self._network_conn,
-            uid=self.uid,
-            diff_var=self.diff_var,
-            base_var=self.base_var,
-        )
+    def __deepcopy__(self, memo: Dict[int, Any]) -> "Var":
+        """
+        Copy a symbolic variable without reusing derivative-chain pointers.
+
+        :param memo: Standard deepcopy memo table.
+        :return: Copied variable.
+        """
+        if id(self) in memo:
+            return memo[id(self)]
+        else:
+            result: Var = Var.__new__(Var)
+            memo[id(self)] = result
+            if isinstance(self._shared_ref, bool):
+                print("")
+
+            result.uid = self.uid
+            result.non_mutable_uid = self.non_mutable_uid
+            result.name = self.name
+            result._shared_ref = self._shared_ref
+            result._ref = self._ref
+            result._network_conn = self._network_conn
+            result.diff_var = copy.deepcopy(self.diff_var, memo)
+            result.base_var = copy.deepcopy(self.base_var, memo)
+            result._origin_var = None
+            if isinstance(result._shared_ref, bool):
+                print("")
+            return result
 
     def eval(self, **bindings: float) -> float:
         """
@@ -437,6 +527,9 @@ class Var(Expr):
         if self.name in mapping:
             return mapping[self.name]
         return self
+
+    def contains_var(self, var: Var) -> bool:
+        return self.uid == var.uid
 
     def __str__(self) -> str:
         return self.name
@@ -497,7 +590,18 @@ class Var(Expr):
         return self._origin_var
 
     @property
-    def ref(self) -> VarPowerFlowRefferenceType | None:
+    def shared_ref(self) -> SharedVarReferenceType | None:
+        return self._shared_ref
+
+    @shared_ref.setter
+    def shared_ref(self, val: SharedVarReferenceType) -> None:
+        if isinstance(val, SharedVarReferenceType):
+            self._shared_ref = val
+        else:
+            raise ValueError(f"RMS model cannot accept {val}")
+
+    @property
+    def ref(self) -> VarPowerFlowReferenceType | None:
         return self._ref
 
     def _diff1(self, var: Var | str, dt: Var | None = None) -> Expr:
@@ -687,6 +791,25 @@ class BinOp(Expr):
         else:
             raise ValueError(f"operation {self.op} not implemented")
 
+    def __deepcopy__(self, memo: Dict[int, Any]) -> "BinOp":
+        """
+        Copy the binary operation while preserving shared child identity.
+
+        :param memo: Standard deepcopy memo table.
+        :return: Copied binary operation.
+        """
+        if id(self) in memo:
+            return memo[id(self)]
+        else:
+            result: BinOp = BinOp(
+                left=copy.deepcopy(self.left, memo),
+                op=self.op,
+                right=copy.deepcopy(self.right, memo),
+                uid=self.uid,
+            )
+            memo[id(self)] = result
+            return result
+
     def eval_uid(self, uid_bindings: Dict[int, float]) -> NUMBER:
         """
         Evaluate using uuid's
@@ -824,6 +947,9 @@ class BinOp(Expr):
             return mapping[self]
         return BinOp(self.left.subs(mapping), self.op, self.right.subs(mapping))
 
+    def contains_var(self, var: Var) -> bool:
+        return self.left.contains_var(var) or self.right.contains_var(var)
+
     def __str__(self) -> str:
         return f"({self.left}) {self.op} ({self.right})"
 
@@ -879,6 +1005,24 @@ class UnOp(Expr):
         val = self.operand.eval(**bindings)
         return -val if self.op == "-" else math.nan
 
+    def __deepcopy__(self, memo: Dict[int, Any]) -> "UnOp":
+        """
+        Copy the unary operation while preserving shared child identity.
+
+        :param memo: Standard deepcopy memo table.
+        :return: Copied unary operation.
+        """
+        if id(self) in memo:
+            return memo[id(self)]
+        else:
+            result: UnOp = UnOp(
+                op=self.op,
+                operand=copy.deepcopy(self.operand, memo),
+                uid=self.uid,
+            )
+            memo[id(self)] = result
+            return result
+
     def eval_uid(self, uid_bindings: Dict[int, NUMBER]) -> NUMBER:
         """
 
@@ -922,6 +1066,9 @@ class UnOp(Expr):
             return mapping[self]
         return UnOp(self.op, self.operand.subs(mapping))
 
+    def contains_var(self, var: Var) -> bool:
+        return self.operand.contains_var(var)
+
     def __str__(self) -> str:
         return f"{self.op}({self.operand})"
 
@@ -950,8 +1097,8 @@ class UnOp(Expr):
 # Functional nodes
 # ----------------------------------------------------------------------------------------------------------------------
 @nb.njit
-def heaviside_num(x: float) -> float:
-    return 0.0 if x <= 0 else 1.0
+def heaviside_num(x):
+    return (x > 0) * 1.0
 
 
 def get_namespace() -> Dict[str, Any]:
@@ -989,6 +1136,11 @@ def _evaluate_unary_function(op: str, value: NUMBER) -> NUMBER:
             return np.log(value)
         else:
             return math.log(value)
+    elif op == "log10":
+        if np.iscomplexobj(value):
+            return np.log10(value)
+        else:
+            return math.log10(value)
     elif op == "sqrt":
         return math.sqrt(value)
     elif op == "asin":
@@ -1001,6 +1153,14 @@ def _evaluate_unary_function(op: str, value: NUMBER) -> NUMBER:
         return math.sinh(value)
     elif op == "cosh":
         return math.cosh(value)
+    elif op == "tanh":
+        return math.tanh(value)
+    elif op == "floor":
+        return math.floor(value)
+    elif op == "ceil":
+        return math.ceil(value)
+    elif op == "round":
+        return builtins.round(value)
     elif op == "real":
         return np.real(value)
     elif op == "imag":
@@ -1036,6 +1196,8 @@ def _differentiate_unary_function(op: str, u: Expr, du: Expr) -> Expr:
         return exp_diff(u, du)
     elif op == "log":
         return log_diff(u, du)
+    elif op == "log10":
+        return log10_diff(u, du)
     elif op == "sqrt":
         return sqrt_diff(u, du)
     elif op == "asin":
@@ -1048,6 +1210,10 @@ def _differentiate_unary_function(op: str, u: Expr, du: Expr) -> Expr:
         return sinh_diff(u, du)
     elif op == "cosh":
         return cosh_diff(u, du)
+    elif op == "tanh":
+        return tanh_diff(u, du)
+    elif op in {"floor", "ceil", "round"}:
+        return Const(0.0)
     elif op == "abs":
         return abs_diff(u, du)
     elif op == "heaviside":
@@ -1066,7 +1232,7 @@ def _evaluate_binary_function(name: str, arg1: NUMBER, arg2: NUMBER) -> NUMBER:
     :return: Numeric function result.
     """
     if name == "atan2":
-        return np.arctan2(arg2, arg1)
+        return np.arctan2(arg1, arg2)
     elif name == "min":
         return np.minimum(arg1, arg2)
     elif name == "max":
@@ -1091,6 +1257,24 @@ class Func(Expr):
     # --- evaluation ----------------------------------------------------------
     def eval(self, **bindings: NUMBER) -> NUMBER:
         return _evaluate_unary_function(self.op, self.arg.eval(**bindings))
+
+    def __deepcopy__(self, memo: Dict[int, Any]) -> "Func":
+        """
+        Copy the unary function node while preserving shared child identity.
+
+        :param memo: Standard deepcopy memo table.
+        :return: Copied unary function node.
+        """
+        if id(self) in memo:
+            return memo[id(self)]
+        else:
+            result: Func = Func(
+                arg=copy.deepcopy(self.arg, memo),
+                op=self.op,
+                uid=self.uid,
+            )
+            memo[id(self)] = result
+            return result
 
     def eval_uid(self, uid_bindings: Dict[int, NUMBER]) -> NUMBER:
         return _evaluate_unary_function(self.op, self.arg.eval_uid(uid_bindings))
@@ -1128,6 +1312,9 @@ class Func(Expr):
         if self in mapping:
             return mapping[self]
         return Func(self.arg.subs(mapping), self.op)
+
+    def contains_var(self, var: Var) -> bool:
+        return self.arg.contains_var(var)
 
     def __str__(self) -> str:
         return f"{self.op}({self.arg})"
@@ -1210,6 +1397,14 @@ def log_diff(u: Expr, du: Expr) -> Expr:
     return du / u
 
 
+def log10(x: Expr) -> Expr:
+    return Func(_to_expr(x), "log10")
+
+
+def log10_diff(u: Expr, du: Expr) -> Expr:
+    return du / (u * Const(math.log(10.0)))
+
+
 def sqrt(x: Expr) -> Expr:
     return Func(_to_expr(x), "sqrt")
 
@@ -1258,6 +1453,35 @@ def cosh_diff(u: Expr, du: Expr) -> Expr:
     return sinh(u) * du
 
 
+def tanh(x: Expr) -> Expr:
+    return Func(_to_expr(x), "tanh")
+
+
+def tanh_diff(u: Expr, du: Expr) -> Expr:
+    return (Const(1) - tanh(u) ** Const(2)) * du
+
+
+def floor(x: Expr) -> Expr:
+    return Func(_to_expr(x), "floor")
+
+
+def ceil(x: Expr) -> Expr:
+    return Func(_to_expr(x), "ceil")
+
+
+def round_expr(x: Expr) -> Expr:
+    return Func(_to_expr(x), "round")
+
+
+def round(x: Expr) -> Expr:
+    return round_expr(x)
+
+
+def frac(x: Expr) -> Expr:
+    expr = _to_expr(x)
+    return expr - floor(expr)
+
+
 def heaviside(x: Expr) -> Expr:
     return Func(_to_expr(x), "heaviside")
 
@@ -1268,7 +1492,7 @@ def heaviside(x: Expr) -> Expr:
 
 
 def heaviside_diff(u: Expr, du: Expr) -> Expr:
-    return du * heaviside(u)
+    return Const(0)
 
 
 def _symbolic_max(x: Expr | NUMBER, y: Expr | NUMBER) -> Expr:
@@ -1404,6 +1628,25 @@ class Func2(Expr):
     def eval(self, **bindings: NUMBER) -> NUMBER:
         return _evaluate_binary_function(self.name, self.arg1.eval(**bindings), self.arg2.eval(**bindings))
 
+    def __deepcopy__(self, memo: Dict[int, Any]) -> "Func2":
+        """
+        Copy the binary function node while preserving shared child identity.
+
+        :param memo: Standard deepcopy memo table.
+        :return: Copied binary function node.
+        """
+        if id(self) in memo:
+            return memo[id(self)]
+        else:
+            result: Func2 = Func2(
+                name=self.name,
+                arg1=copy.deepcopy(self.arg1, memo),
+                arg2=copy.deepcopy(self.arg2, memo),
+                uid=self.uid,
+            )
+            memo[id(self)] = result
+            return result
+
     def eval_uid(self, uid_bindings: Dict[int, NUMBER]) -> NUMBER:
         return _evaluate_binary_function(self.name, self.arg1.eval_uid(uid_bindings), self.arg2.eval_uid(uid_bindings))
 
@@ -1433,7 +1676,7 @@ class Func2(Expr):
             return Const(0)
 
         if self.name == "atan2":
-            return (x * dy - y * dx) / (x ** Const(2) + y ** Const(2))
+            return (y * dx - x * dy) / (x ** Const(2) + y ** Const(2))
         if self.name == "min":
             return heaviside(y - x) * dx + heaviside(x - y) * dy
         if self.name == "max":
@@ -1485,7 +1728,11 @@ class Func2(Expr):
             self.arg2.subs(mapping),
         )
 
+    def contains_var(self, var: Var) -> bool:
+        return self.arg1.contains_var(var) or self.arg2.contains_var(var)
+
     def __str__(self) -> str:
+        return f"{self.name}({self.arg1}, {self.arg2})"
         return f"{self.name}({self.arg1}, {self.arg2})"
 
     def __repr__(self) -> str:
@@ -1497,7 +1744,7 @@ class Func2(Expr):
 # -----------------------------------------------------------------------------
 
 
-def _expr_to_dict(expr: Expr) -> Dict[str, Any]:
+def _expr_to_dict(expr: Expr | Comparison) -> Dict[str, Any]:
     """
     Serialise any `Expr` tree into a plain Python dictionary that’s
     JSON-friendly.  Each node type becomes a small dict that records:
@@ -1572,13 +1819,21 @@ def _expr_to_dict(expr: Expr) -> Dict[str, Any]:
             "uid": expr.uid,
         }
 
+    if isinstance(expr, Comparison):
+        return {
+            "type": "Comparison",
+            "lhs": _expr_to_dict(expr.lhs),
+            "op": expr.op.value,
+            "rhs": _expr_to_dict(_to_expr(expr.rhs)),
+        }
+
     # ------------------------------------------------------------------
     # Anything else is an API bug
     # ------------------------------------------------------------------
     raise TypeError(f"Unsupported Expr subclass: {type(expr).__name__}")
 
 
-def _dict_to_expr(data: Dict[str, Any]) -> Expr | Var | Const:
+def _dict_to_expr(data: Dict[str, Any]) -> Expr | Var | Const | Comparison:
     """
     De-Serialize expression from dictionary
     :param data:
@@ -1620,6 +1875,26 @@ def _dict_to_expr(data: Dict[str, Any]) -> Expr | Var | Const:
 
     elif t == "Func2":
         obj = Func2(data["name"], _dict_to_expr(data["arg1"]), _dict_to_expr(data["arg2"]))
+    elif t == "Comparison":
+        lhs_expr = _dict_to_expr(data["lhs"])
+        rhs_expr = _dict_to_expr(data["rhs"])
+        if not isinstance(lhs_expr, Expr) or not isinstance(rhs_expr, Expr):
+            raise TypeError("Comparison serialization expects symbolic Expr operands")
+
+        op_value = data["op"]
+        if op_value == CmpOp.LE.value:
+            op = CmpOp.LE
+        elif op_value == CmpOp.GE.value:
+            op = CmpOp.GE
+        elif op_value == CmpOp.LT.value:
+            op = CmpOp.LT
+        elif op_value == CmpOp.GT.value:
+            op = CmpOp.GT
+        elif op_value == CmpOp.EQ.value:
+            op = CmpOp.EQ
+        else:
+            raise ValueError(f"Unknown comparison operator '{op_value}'")
+        return Comparison(lhs_expr, op, rhs_expr)
 
     else:
         raise ValueError(f"Unknown type '{t}' in deserialisation")
@@ -2202,5 +2477,6 @@ __all__ = [
     '_expr_to_dict',
     'abs',
     '_to_expr',
-    'get_namespace'
+    'get_namespace',
+    'SharedVarReferenceType'
 ]

@@ -9,27 +9,26 @@ from VeraGridEngine.IO.fmu.exporter.api import export_fmu
 from VeraGridEngine.IO.fmu.exporter.build import host_build_capable
 from VeraGridEngine.IO.fmu.exporter.config import ExportConfig as CsExportConfig, detect_target_platform as detect_cs_target_platform
 from VeraGridEngine.IO.fmu.exporter.compat import Block, Const, Var
-from VeraGridEngine.IO.fmu.importer import (
+from VeraGridEngine.IO.fmu.importer.bindings import FmuImportConfig
+from VeraGridEngine.IO.fmu.importer.experimental_cs import FmuRefBinding
+from VeraGridEngine.IO.fmu.importer.experimental_me import FmuMeIntegrationMethod
+from VeraGridEngine.IO.fmu.importer.model_description import FmuInterfaceMode
+from VeraGridEngine.IO.fmu.importer.user_api import (
     FmuDeviceAttachmentRequest,
     FmuDeviceDomain,
-    FmuImportConfig,
-    FmuInterfaceMode,
-    FmuMeIntegrationMethod,
     FmuReferenceValue,
-    FmuRefBinding,
 )
 from VeraGridEngine.IO.fmu.importer.user_api import attach_fmu_to_device
 from VeraGridEngine.IO.fmu.exporter_me.api import export_fmu_me
 from VeraGridEngine.IO.fmu.exporter_me.config import ExportConfig as MeExportConfig, detect_target_platform as detect_me_target_platform
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 
 
 class FakeGrid:
-    __slots__ = ("var_factory")
+    __slots__ = ("var_factory",)
 
     def __init__(self) -> None:
-
 
         self.var_factory = VarFactory(name="UserApiVarFactory")
 
@@ -99,8 +98,8 @@ def test_user_api_attaches_rms_cs_device() -> None:
             domain=FmuDeviceDomain.RMS,
             mode=FmuInterfaceMode.CO_SIMULATION,
             input_bindings=tuple(),
-            output_bindings=(FmuRefBinding(reference=VarPowerFlowRefferenceType.P, fmu_variable_name="y"),),
-            output_defaults=(FmuReferenceValue(reference=VarPowerFlowRefferenceType.P, value=0.0),),
+            output_bindings=(FmuRefBinding(reference=VarPowerFlowReferenceType.P, fmu_variable_name="y"),),
+            output_defaults=(FmuReferenceValue(reference=VarPowerFlowReferenceType.P, value=0.0),),
         )
         attach_fmu_to_device(device, grid, request)
 
@@ -134,8 +133,8 @@ def test_user_api_attaches_emt_me_device() -> None:
             domain=FmuDeviceDomain.EMT,
             mode=FmuInterfaceMode.MODEL_EXCHANGE,
             input_bindings=tuple(),
-            output_bindings=(FmuRefBinding(reference=VarPowerFlowRefferenceType.i_A, fmu_variable_name="y"),),
-            output_defaults=(FmuReferenceValue(reference=VarPowerFlowRefferenceType.i_A, value=0.0),),
+            output_bindings=(FmuRefBinding(reference=VarPowerFlowReferenceType.i_A, fmu_variable_name="y"),),
+            output_defaults=(FmuReferenceValue(reference=VarPowerFlowReferenceType.i_A, value=0.0),),
             integration_method=FmuMeIntegrationMethod.EXPLICIT_EULER,
         )
         attach_fmu_to_device(device, grid, request)

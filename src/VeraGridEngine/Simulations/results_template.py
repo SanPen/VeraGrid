@@ -7,7 +7,7 @@ from __future__ import annotations
 import json
 import numpy as np
 import pandas as pd
-from typing import List, Dict, Any, Union, TYPE_CHECKING
+from typing import List, Dict, Any, Union, TYPE_CHECKING, Tuple
 
 from VeraGridEngine.Simulations.results_table import ResultsTable
 from VeraGridEngine.basic_structures import (IntVec, IntMat, Vec, CxVec, StrVec, StrMat, Mat, DateVec, CxMat, BoolVec,
@@ -27,11 +27,13 @@ class ResultsProperty:
         "name",
         "tpe",
         "old_names",
+        "expandable"
     )
 
     def __init__(self, name: str,
-                 tpe: Union[Vec, Mat, CxVec, CxMat],
-                 old_names: List[str]):
+                 tpe: Any,
+                 old_names: Union[List[str], Tuple[str, ...]],
+                 expandable: bool) -> None:
         """
         ResultsProperty
         :param name: name of the property
@@ -39,14 +41,53 @@ class ResultsProperty:
         :param old_names: list of previous names. Use in case of renaming a registered property
         """
 
-        self.name = name
+        self.name: str = name
 
-        self.tpe = tpe
+        self.tpe: Any = tpe
 
-        self.old_names = old_names
+        self.old_names: Tuple[str, ...] = tuple(old_names)
+
+        self.expandable = expandable
 
 
-class ResultsTemplate:
+class ResultsTemplateMeta(type):
+    """
+    Metaclass that pre-builds inherited results schema declarations.
+    """
+
+    def __new__(mcs: type, name: str, bases: Tuple[type, ...], namespace: Dict[str, Any]) -> type:
+        """
+        Build a new class and aggregate result declarations from base to child.
+        :param name: Class name
+        :param bases: Base classes
+        :param namespace: Class namespace
+        :return: New class
+        """
+        cls: type = super().__new__(mcs, name, bases, namespace)
+
+        aggregated_declarations: List[ResultsProperty] = list()
+        for base in bases:
+            base_declarations: Tuple[ResultsProperty, ...] = base.__dict__.get("CLASS_RESULTS_DECLARATIONS", tuple())
+            for declaration in base_declarations:
+                aggregated_declarations.append(declaration)
+
+        local_declarations: Tuple[ResultsProperty, ...] = namespace.get("LOCAL_RESULTS_DECLARATIONS", tuple())
+        for declaration in local_declarations:
+            aggregated_declarations.append(declaration)
+
+        cls.CLASS_RESULTS_DECLARATIONS = tuple(aggregated_declarations)
+
+        class_data_variables: Dict[str, ResultsProperty] = dict()
+        for declaration in cls.CLASS_RESULTS_DECLARATIONS:
+            prop: ResultsProperty = declaration
+            class_data_variables[prop.name] = prop
+
+        cls.CLASS_DATA_VARIABLES = class_data_variables
+
+        return cls
+
+
+class ResultsTemplate(metaclass=ResultsTemplateMeta):
     """
     ResultsTemplate
     """
@@ -97,7 +138,7 @@ class ResultsTemplate:
 
         self.available_results: Dict[ResultTypes, List[ResultTypes]] = available_results
 
-        self._data_variables: Dict[str, ResultsProperty] = dict()
+        self._data_variables: Dict[str, ResultsProperty] = type(self).CLASS_DATA_VARIABLES
 
         self._time_array: Union[DateVec, None] = time_array
 
@@ -127,15 +168,15 @@ class ResultsTemplate:
         self.__show_plot = True
 
     @property
-    def data_variables(self):
+    def data_variables(self) -> Dict[str, ResultsProperty]:
         """
 
         :return:
         """
-        return self._data_variables
+        return type(self).CLASS_DATA_VARIABLES
 
     @property
-    def time_array(self) -> DateVec:
+    def time_array(self) -> DateVec | None:
         """
         Array of time steps
         :return:
@@ -171,23 +212,30 @@ class ResultsTemplate:
         """
         self.__show_plot = False
 
-    def register(self, name: str, tpe: Union[Vec, Mat, CxVec, CxMat], old_names: Union[None, List[str]] = None):
+    def register(self, name: str, tpe: Union[Vec, Mat, CxVec, CxMat], old_names: Union[None, List[str]] = None) -> None:
         """
-        Register a results variable for disk persistence
+        Runtime registration is intentionally disabled.
         :param name: name of the variable to register (is checked)
         :param tpe: type of the variable
         :param old_names: list of old names for retro compatibility (optional)
+        :return: None
         """
-
-        assert (hasattr(self, name))  # the property must exist, this avoids bugs when registering
-
-        self._data_variables[name] = ResultsProperty(name=name,
-                                                     tpe=tpe,
-                                                     old_names=list() if old_names is None else old_names)
+        raise RuntimeError(
+            "Runtime results registration is disabled. "
+            "Declare results in LOCAL_RESULTS_DECLARATIONS."
+        )
 
     def consolidate_after_loading(self):
         """
         Consolidate
+        """
+        pass
+
+    def prepare_for_saving(self) -> None:
+        """
+        Refresh any derived payload that must be serialized with the results.
+
+        :return: None.
         """
         pass
 
@@ -474,23 +522,25 @@ class ResultsTemplate:
 
         if self.using_clusters:
 
-            self.time_array = self.clustering_results.time_array
+            if self.clustering_results is not None:
 
-            # NOTE: You might be tempted to change this loop to use the registered properties.
-            #       Don't do it, there may be unregistered properties that will fail if this doesn't
-            #       traverse all te actual properties of the class... this may be a future topic
-            for prop, value in self._iter_instance_items():
+                # Replace the reduced time array by the expanded time array
+                self.time_array = self.clustering_results.time_array
 
-                if isinstance(value, np.ndarray):
+                # NOTE: You might be tempted to change this loop to use the registered properties.
+                #       Don't do it, there may be unregistered properties that will fail if this doesn't
+                #       traverse all the actual properties of the class... this may be a future topic
+                for prop in self.CLASS_RESULTS_DECLARATIONS:
+                    if prop.expandable:
 
-                    if value.dtype in [float, complex, bool]:  # only expand float, complex and bool
+                        value: np.ndarray = getattr(self, prop.name)
 
                         if value.ndim == 1:
 
                             if len(value) > 0:
                                 try:
                                     arr = value[self.original_sample_idx]  # expand
-                                    setattr(self, prop, arr)  # overwrite the array
+                                    setattr(self, prop.name, arr)  # overwrite the array
                                 except IndexError as e:
                                     print(f"Index error in expand_clustered_results (1D) for {prop}")
 
@@ -499,18 +549,16 @@ class ResultsTemplate:
                             if value.shape[0] > 0:
                                 try:
                                     arr = value[self.original_sample_idx, :]  # expand
-                                    setattr(self, prop, arr)  # overwrite the array
+                                    setattr(self, prop.name, arr)  # overwrite the array
                                 except IndexError as e:
                                     print(f"Index error in expand_clustered_results (2D) for {prop}")
                         else:
                             pass
-                            # print(prop, value.ndim, value.dtype)
-                    else:
-                        pass
-                        # print(prop, value.ndim, value.dtype)
+            else:
+                print("No clusters!")
 
     def parse_saved_data(self, grid: MultiCircuit,
-                         data_dict: Dict[str, pd.DataFrame],
+                         data_dict: Dict[str, pd.DataFrame | np.ndarray],
                          logger: Logger = Logger()) -> None:
         """
 
@@ -521,7 +569,7 @@ class ResultsTemplate:
         """
         self.time_array = grid.get_time_array()
 
-        for arr_name, df in data_dict.items():
+        for arr_name, stored_data in data_dict.items():
 
             is_complex = '__complex__' in arr_name
             arr_name = arr_name.replace('__complex__', '')
@@ -529,19 +577,36 @@ class ResultsTemplate:
             # try to get the property of the saved file
             res_prop: ResultsProperty = self._data_variables.get(arr_name, None)
 
-            if df is not None and res_prop is not None:
+            if stored_data is not None and res_prop is not None:
 
                 # it may be complex...
                 if is_complex:
-                    split_pt = int(df.columns.size / 2)
-                    r = df.values[:, :split_pt]
-                    i = df.values[:, split_pt:]
+                    values_2d: np.ndarray
+                    if isinstance(stored_data, pd.DataFrame):
+                        values_2d = stored_data.values
+                    else:
+                        values_2d = np.asarray(stored_data)
+
+                    split_pt = int(values_2d.shape[1] / 2)
+                    r = values_2d[:, :split_pt]
+                    i = values_2d[:, split_pt:]
                     array = r + 1j * i
                 else:
-                    # keep the 2D shape
-                    array = df.values
+                    if isinstance(stored_data, pd.DataFrame):
+                        # Keep the 2-D shape for the historical parquet path.
+                        array = stored_data.values
+                    else:
+                        # NumPy payloads are already restored with their native shape.
+                        array = np.asarray(stored_data)
 
-                if array.shape[1] == 1:
+                vector_like_types = (Vec, IntVec, StrVec, BoolVec, CxVec)
+
+                if (
+                        isinstance(array, np.ndarray)
+                        and array.ndim == 2
+                        and array.shape[1] == 1
+                        and res_prop.tpe in vector_like_types
+                ):
                     # if there is only one column, convert to array directly
                     array = array[:, 0]
 
@@ -550,22 +615,34 @@ class ResultsTemplate:
                     if array.size == 1:
                         array = array[0]
 
+                if res_prop.tpe == DateVec:
+                    array = pd.to_datetime(np.asarray(array).reshape(-1))
+                else:
+                    pass
+
                 curr_value = getattr(self, res_prop.name)
 
-                if isinstance(curr_value, np.ndarray):
+                if isinstance(curr_value, (np.ndarray, pd.Index)):
 
                     # if results arrays are exactly 0, don't check
-                    dont_check = sum(curr_value.shape) == 0
+                    curr_shape = np.shape(curr_value)
+                    dont_check = len(curr_shape) > 0 and sum(curr_shape) == 0
+                    both_empty = (
+                        isinstance(array, np.ndarray)
+                        and isinstance(curr_value, np.ndarray)
+                        and array.size == 0
+                        and curr_value.size == 0
+                    )
 
-                    if curr_value.shape == array.shape or dont_check:
+                    if np.shape(curr_value) == np.shape(array) or dont_check:
                         setattr(self, res_prop.name, array)
+                    elif both_empty:
+                        pass
                     else:
                         logger.add_error(msg="Wrong array shape",
                                          device_class=self.name,
                                          device_property=res_prop.name,
-                                         value=str(array.shape),
-                                         expected_value=str(curr_value.shape))
+                                         value=str(np.shape(array)),
+                                         expected_value=str(np.shape(curr_value)))
                 else:
                     setattr(self, res_prop.name, array)
-
-

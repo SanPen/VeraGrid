@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from typing import Union, Tuple
-from VeraGridEngine.enumerations import DeviceType, BuildStatus
+from VeraGridEngine.enumerations import DeviceType, BuildStatus, PrpCat
 from VeraGridEngine.Devices.Parents.physical_device import PhysicalDevice
 from VeraGridEngine.Devices.Substation.substation import Substation
 from VeraGridEngine.Devices.Parents.editable_device import GCProp
@@ -17,9 +17,19 @@ class VoltageLevel(PhysicalDevice):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='Vnom', units='kV', tpe=float, definition='Nominal voltage'),
-        GCProp(key="substation", tpe=DeviceType.SubstationDevice,
-               definition="Substation of this Voltage level (optional)"),
+        GCProp(
+            prop_name='Vnom',
+            units='kV',
+            tpe=float,
+            definition='Nominal voltage',
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name="substation",
+            tpe=DeviceType.SubstationDevice,
+            definition="Substation of this Voltage level (optional)",
+            cat=[PrpCat.TP],
+        ),
     )
 
     def __init__(self, name='VoltageLevel',

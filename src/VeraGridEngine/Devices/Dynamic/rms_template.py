@@ -3,6 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
+import copy
 from typing import Tuple
 
 from VeraGridEngine.Devices.Parents.pointer_device_parent import PointerDeviceParent
@@ -22,10 +23,22 @@ class RmsModelTemplate(PointerDeviceParent):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp('block', units="", tpe=SubObjectType.DaeBlockType,
-                      definition='DAE block', editable=False, display=False),
-        GCProp('tpe', units="", tpe=DeviceType,
-               definition='Device type', editable=True, display=True),
+        GCProp(
+            prop_name='block',
+            units="",
+            tpe=SubObjectType.DaeBlockType,
+            definition='DAE block',
+            editable=False,
+            display=False,
+        ),
+        GCProp(
+            prop_name='tpe',
+            units="",
+            tpe=DeviceType,
+            definition='Device type',
+            editable=True,
+            display=True,
+        ),
     )
 
     def __init__(self, idtag="", name: str = ""):
@@ -53,7 +66,7 @@ class RmsModelTemplate(PointerDeviceParent):
         result.comment = self.comment
         result.action = self.action
         result.selected_to_merge = self.selected_to_merge
-        result.diff_changes = self.diff_changes
+        result.diff_changes = copy.deepcopy(self.diff_changes, memo)
         result._EditableDevice__auto_update_enabled = self._EditableDevice__auto_update_enabled
 
         result._device_idtag = self._device_idtag
@@ -61,7 +74,7 @@ class RmsModelTemplate(PointerDeviceParent):
         result._device_name = self._device_name
         result._device = self._device
 
-        result._block = self._block
+        result._block = copy.deepcopy(self._block, memo)
 
         return result
 

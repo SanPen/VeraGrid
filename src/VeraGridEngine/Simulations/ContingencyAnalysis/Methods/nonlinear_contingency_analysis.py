@@ -64,6 +64,8 @@ def nonlinear_contingency_analysis(nc: NumericalCircuit,
     # run 0
     base_res = multi_island_pf_nc(nc=nc, options=options.pf_options)
 
+    results.Sf_base = base_res.Sf
+
     if options.use_srap:
 
         # we need the PTDF for this

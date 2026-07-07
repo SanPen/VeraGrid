@@ -5,12 +5,14 @@
 
 from abc import ABC
 import numpy as np
-from typing import Dict, List, Optional, Any, Protocol
+from typing import Any, Dict, List, Optional, Protocol
 
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var, piecewise
+from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var, hard_sat, heaviside, piecewise
 from VeraGridEngine.basic_structures import Vec
 from VeraGridEngine.Simulations.driver_template import DummySignal
+from VeraGridEngine.Devices.Events.emt_events_group import EmtEventsGroup
+from VeraGridEngine.enumerations import DynamicEventTransitionType, VarPowerFlowReferenceType
 
 
 def _get_diff_var_sort_key(diff_var: Var) -> int:
@@ -56,11 +58,40 @@ class EmtBoundaryUpdateProtocol(Protocol):
         ...
 
 
+def _implements_forced_event_time_api(boundary_updater: Any) -> bool:
+    """
+    Return whether one boundary updater type implements ``get_next_forced_event_time``.
+
+    :param boundary_updater: Boundary updater instance.
+    :return: ``True`` when the API is implemented.
+    """
+    updater_type: type = type(boundary_updater)
+    base_type: type
+
+    for base_type in updater_type.__mro__:
+        if "get_next_forced_event_time" in base_type.__dict__:
+            return True
+        else:
+            pass
+
+    return False
+
+
+def _emt_event_spec_time_sort_key(event_spec: Dict[str, float | str | None]) -> float:
+    """
+    Return the sorting key of one EMT runtime-event specification.
+
+    :param event_spec: EMT runtime-event specification.
+    :return: Event start time.
+    """
+    return float(event_spec["time"])
+
+
 def resolve_solver_boundary_updater(
         problem: "EmtProblemTemplate",
-        boundary_updater: Any,
+        boundary_updater: EmtBoundaryUpdateProtocol | None,
         t0: float,
-) -> Any:
+) -> EmtBoundaryUpdateProtocol | None:
     """
     Resolve the boundary updater consumed by an EMT solver.
 
@@ -74,8 +105,11 @@ def resolve_solver_boundary_updater(
 
     return boundary_updater
 
-
-def get_solver_forced_event_time(boundary_updater: Any, t_prev: float, t_target: float) -> float | None:
+def get_solver_forced_event_time(
+        boundary_updater: EmtBoundaryUpdateProtocol | None,
+        t_prev: float,
+        t_target: float,
+) -> float | None:
     """
     Query the next forced-alignment event time if the updater exposes it.
 
@@ -84,21 +118,24 @@ def get_solver_forced_event_time(boundary_updater: Any, t_prev: float, t_target:
     """
     if boundary_updater is None:
         return None
+    else:
+        pass
 
-    get_next_time = getattr(boundary_updater, "get_next_forced_event_time", None)
+    if _implements_forced_event_time_api(boundary_updater):
+        pass
+    else:
+        return None
 
-    if callable(get_next_time):
-        next_time: Any = get_next_time(float(t_prev), float(t_target))
+    next_time: float | None = boundary_updater.get_next_forced_event_time(float(t_prev), float(t_target))
 
-        if next_time is None:
-            return None
-
+    if next_time is None:
+        return None
+    else:
         return float(next_time)
 
-    return None
 
-
-def is_problem_owned_boundary_updater(problem: "EmtProblemTemplate", boundary_updater: Any) -> bool:
+def is_problem_owned_boundary_updater(problem: "EmtProblemTemplate",
+                                     boundary_updater: EmtBoundaryUpdateProtocol | None) -> bool:
     """
     Return whether the updater is owned by the EMT problem itself.
 
@@ -119,6 +156,50 @@ def is_problem_owned_boundary_updater(problem: "EmtProblemTemplate", boundary_up
     return boundary_updater is problem_boundary_updater
 
 
+def _freeze_runtime_expr_at_time(expr: Any, time_var: Var, sample_time: float) -> Any:
+    """
+    Freeze one runtime expression at an explicit time value.
+
+    :param expr: Runtime expression to freeze.
+    :param time_var: Global symbolic time variable.
+    :param sample_time: Time used to evaluate the expression boundary.
+    :return: Time-frozen symbolic expression.
+    """
+    if isinstance(expr, (Expr, Var, Const)):
+        return expr.subs(dict({time_var: Const(float(sample_time))})).simplify()
+    else:
+        return expr
+
+
+def _build_ramp_runtime_expr(
+    time_var: Var,
+    start_time: float,
+    end_time: float,
+    before_expr: Any,
+    final_value: float,
+) -> Any:
+    """
+    Build one linear ramp transition on top of an existing runtime expression.
+
+    :param time_var: Global symbolic time variable.
+    :param start_time: Ramp start time.
+    :param end_time: Ramp end time.
+    :param before_expr: Expression active before the ramp starts.
+    :param final_value: Final runtime value after the ramp ends.
+    :return: Combined symbolic expression.
+    """
+    start_expr: Any = _freeze_runtime_expr_at_time(before_expr, time_var, start_time)
+    duration_expr: Const = Const(float(end_time - start_time))
+    time_offset_expr: Any = time_var - Const(float(start_time))
+    progress_expr: Any = hard_sat(time_offset_expr / duration_expr, Const(0.0), Const(1.0))
+    ramp_expr: Any = start_expr + progress_expr * (Const(float(final_value)) - start_expr)
+    started_expr: Any = heaviside(time_var - Const(float(start_time)))
+    ended_expr: Any = heaviside(time_var - Const(float(end_time)))
+    return (Const(1.0) - started_expr) * before_expr + started_expr * (
+        (Const(1.0) - ended_expr) * ramp_expr + ended_expr * Const(float(final_value))
+    )
+
+
 class EmtProblemTemplate(ABC):
     """
     Intermediate layer that manages DAE plumbing including indexing, variable mapping,
@@ -132,7 +213,9 @@ class EmtProblemTemplate(ABC):
     DIFF_NAME = "diff"
     TIME_NAME = "glob_time"
 
-    def __init__(self, sys_block: Block,
+    def __init__(self,
+                 sys_block: Block,
+                 static_parameter_values_mapping: Dict[Var, Const],
                  glob_time: Var,
                  progress_signal: DummySignal | None = None,
                  progress_text: DummySignal | None = None,
@@ -155,8 +238,9 @@ class EmtProblemTemplate(ABC):
         self._algebraic_eqs: List[Any] = self.sys_block.algebraic_eqs
         self._diff_vars: List[Var] = self.sys_block.diff_vars
 
-        self._constant_parameters: List[Var] = list(self.sys_block.parameters.keys())
-        self._parameters_values: List[Const] = list(self.sys_block.parameters.values())
+        self._static_parameter_values: Dict[Var, Const] = static_parameter_values_mapping
+        self._constant_parameters: List[Var] = list(self._static_parameter_values.keys())
+        self._parameters_values: List[Const] = list(self._static_parameter_values.values())
 
         self._variable_parameters: List[Var] = list()
         self._event_parameters_eqs: List[Any] = list()
@@ -189,6 +273,7 @@ class EmtProblemTemplate(ABC):
         self._rebuild_runtime_parameter_partition()
 
         self.init_guess: Dict[int, float] = dict()
+        self.event_params_init_dict: Dict[int, float | int | complex | None] = dict()
         self.diff_init_guess: Dict[int, float] = dict()
         # self._vars_info: Dict[Any, List[Var]] = dict()
 
@@ -217,6 +302,37 @@ class EmtProblemTemplate(ABC):
         Problems without endogenous boundary logic return ``None``.
         """
         return None
+
+    def report_progress(self, val: float) -> None:
+        """
+        Emit one absolute progress update.
+
+        :param val: Progress value in percent.
+        :type val: float
+        :return: None
+        :rtype: None
+        """
+        if self.progress_signal is not None:
+            self.progress_signal.emit(val)
+        else:
+            pass
+
+    def report_progress2(self, current: int, total: int) -> None:
+        """
+        Emit one progress update from a zero-based iteration index.
+
+        :param current: Zero-based iteration index.
+        :type current: int
+        :param total: Total number of iterations.
+        :type total: int
+        :return: None
+        :rtype: None
+        """
+        if self.progress_signal is not None:
+            val: float = ((current + 1) / total) * 100
+            self.progress_signal.emit(val)
+        else:
+            pass
 
     def _finalize_order_and_maps(self)->None:
         """
@@ -312,7 +428,7 @@ class EmtProblemTemplate(ABC):
         """
         self._build_runtime_param_vectors()
 
-    def set_events_group(self, emt_events_group) -> None:
+    def set_events_group(self, emt_events_group: EmtEventsGroup | None) -> None:
         """Apply a selected EMT events group to the runtime parameter equations.
 
         The method is generic with respect to the specific EMT templates used in the
@@ -320,33 +436,81 @@ class EmtProblemTemplate(ABC):
         can be reassigned with a piecewise time function driven by the selected
         group of `grid.emt_events`.
         """
-        self._event_parameters_eqs = list(self._runtime_all_eqs_source)
+        active_runtime_eqs = list(self._runtime_all_eqs_source)
 
-        collect_events = {param: {"times": [], "values": []} for param in self._variable_parameters}
-        emt_events = getattr(self.grid, "emt_events", [])
-        selected_events = [
-            evt for evt in emt_events
-            if getattr(getattr(evt, "group", None), "idtag", None) == emt_events_group.idtag
-        ]
+        collect_events = {param.uid: list() for param in self._variable_parameters}
+        uid_to_parameter = {param.uid: param for param in self._variable_parameters}
+        emt_events = self.grid.emt_events
+
+        if emt_events_group is None:
+            selected_events = list()
+        else:
+            selected_events = [
+                evt for evt in emt_events
+                if evt.group is not None and evt.group.idtag == emt_events_group.idtag
+            ]
 
         for emt_evt in selected_events:
             parameter = emt_evt.parameter
-            if parameter in collect_events:
-                collect_events[parameter]["times"].append(float(emt_evt.time))
-                collect_events[parameter]["values"].append(float(emt_evt.value))
+            parameter_uid = parameter.uid if isinstance(parameter, Var) else None
 
-        for parameter, info in collect_events.items():
-            if len(info["times"]) == 0:
-                continue
-            param_index = self._variable_parameters.index(parameter)
-            default_value = self._event_parameters_eqs[param_index]
-            self._event_parameters_eqs[param_index] = piecewise(
-                time_var=self._glob_time,
-                t_events=np.asarray(info["times"], dtype=np.float64),
-                new_values=np.asarray(info["values"], dtype=np.float64),
-                default_value=default_value,
-            )
+            if parameter_uid in collect_events:
+                transition_type: DynamicEventTransitionType = emt_evt.transition_type
+                end_time = emt_evt.end_time
 
+                collect_events[parameter_uid].append(
+                    dict({
+                        "time": float(emt_evt.time),
+                        "value": float(emt_evt.value),
+                        "end_time": None if end_time is None else float(end_time),
+                        "transition_type": transition_type,
+                    })
+                )
+
+        for parameter_uid, event_specs in collect_events.items():
+            if len(event_specs) == 0:
+                pass
+            else:
+                parameter = uid_to_parameter[parameter_uid]
+                param_index = self._variable_parameters.index(parameter)
+                active_expr = active_runtime_eqs[param_index]
+                sorted_specs = sorted(event_specs, key=_emt_event_spec_time_sort_key)
+
+                for event_spec in sorted_specs:
+                    if event_spec["transition_type"] == DynamicEventTransitionType.Ramp:
+                        start_time = float(event_spec["time"])
+                        end_time_raw = event_spec["end_time"]
+
+                        if end_time_raw is None:
+                            raise ValueError("Ramp EMT events require an end_time")
+                        else:
+                            pass
+
+                        end_time = float(end_time_raw)
+
+                        if end_time > start_time:
+                            pass
+                        else:
+                            raise ValueError("Ramp EMT events require end_time greater than time")
+
+                        active_expr = _build_ramp_runtime_expr(
+                            time_var=self._glob_time,
+                            start_time=start_time,
+                            end_time=end_time,
+                            before_expr=active_expr,
+                            final_value=float(event_spec["value"]),
+                        )
+                    else:
+                        active_expr = piecewise(
+                            time_var=self._glob_time,
+                            t_events=np.asarray([float(event_spec["time"])], dtype=np.float64),
+                            new_values=np.asarray([float(event_spec["value"] )], dtype=np.float64),
+                            default_value=active_expr,
+                        )
+
+                active_runtime_eqs[param_index] = active_expr
+
+        self._runtime_all_eqs_source = active_runtime_eqs
         self._rebuild_runtime_parameter_partition()
         self._build_runtime_param_vectors()
 
@@ -519,10 +683,31 @@ class EmtProblemTemplate(ABC):
                     if idx_const is not None:
                         return float(self._parameters_values[idx_const].value)
                     else:
-                        raise KeyError(f"Unknown runtime expression variable uid={expression.uid}")
+                        idx_var: int | None = self._uid2idx_vars.get(expression.uid, None)
+                        if idx_var is not None:
+                            init_value: float | int | complex | None = self.init_guess.get(expression.uid, None)
+                            if init_value is None:
+                                return 0.0
+                            else:
+                                return float(init_value)
+                        else:
+                            idx_diff: int | None = self._uid2idx_diff.get(expression.uid, None)
+                            if idx_diff is not None:
+                                diff_init_value: float | int | complex | None = self.diff_init_guess.get(expression.uid, None)
+                                if diff_init_value is None:
+                                    return 0.0
+                                else:
+                                    return float(diff_init_value)
+                            else:
+                                return 0.0
 
         elif isinstance(expression, Expr):
             uid_bindings: Dict[int, float] = dict()
+            uid: int
+            idx: int
+            init_value: float | int | complex | None
+            diff_init_value: float | int | complex | None
+            var: Var
 
             for uid, idx in self._uid2idx_event_params.items():
                 uid_bindings[uid] = float(runtime_params[idx])
@@ -530,12 +715,26 @@ class EmtProblemTemplate(ABC):
             for uid, idx in self._uid2idx_params.items():
                 uid_bindings[uid] = float(self._parameters_values[idx].value)
 
-            #TODO is this okkkk?
-            # for uid, idx in self._uid2idx_vars.items():
-            #     uid_bindings[uid] = float(self.init_guess[uid])
-            #
-            # for uid, idx in self._uid2idx_diff.items():
-            #     uid_bindings[uid] = float(self.diff_init_guess[uid])
+            # Runtime mode parameters such as delayed outputs may depend on the
+            # already initialized algebraic, state, and differential values of
+            # the EMT problem. The broader explicit-initialization algorithm has
+            # already assembled those guesses before this runtime initialization
+            # stage runs, so we expose them here as UID bindings. This lets one
+            # retained mode variable start from the same operating point as the
+            # algebraic signal it delays.
+            for uid, idx in self._uid2idx_vars.items():
+                init_value = self.init_guess.get(uid, None)
+                if init_value is None:
+                    pass
+                else:
+                    uid_bindings[uid] = float(init_value)
+
+            for uid, idx in self._uid2idx_diff.items():
+                diff_init_value = self.diff_init_guess.get(uid, None)
+                if diff_init_value is None:
+                    pass
+                else:
+                    uid_bindings[uid] = float(diff_init_value)
 
             uid_bindings[self._glob_time.uid] = float(tm)
             for var in expression.get_vars():
@@ -797,32 +996,34 @@ class EmtProblemTemplate(ABC):
         return self._uid2idx_diff[dv.uid]
 
     @property
-    def vars_glob_name2uid(self):
+    def vars_glob_name2uid(self) -> Dict[str, int]:
         """
         :return:
         """
         return self._vars_glob_name2uid
 
-    def set_init_guess(self, mdl: Block, reference_powerflow: Any, val: float) -> None:
-        """
-        Set the initialization guess associated with a model external mapping.
+    # def set_init_guess(self, mdl: Block, reference_powerflow: VarPowerFlowReferenceType, val: float) -> None:
+    #     """
+    #     Set the initialization guess associated with a model external mapping.
+    #
+    #     :param mdl: Model block containing the external mapping.
+    #     :param reference_powerflow: Reference key used to locate the mapped variable.
+    #     :param val: Initialization value.
+    #     :return: None
+    #     """
+    #     external_mapping: Optional[Dict[Any, Var]] = _get_external_mapping(mdl)
+    #
+    #     if external_mapping is None:
+    #         pass
+    #     else:
+    #         var: Optional[Var] = external_mapping.get(reference_powerflow, None)
+    #
+    #         if var is None:
+    #             pass
+    #         else:
+    #             self.init_guess[var.uid] = float(val)
 
-        :param mdl: Model block containing the external mapping.
-        :param reference_powerflow: Reference key used to locate the mapped variable.
-        :param val: Initialization value.
-        :return: None
-        """
-        external_mapping: Optional[Dict[Any, Var]] = _get_external_mapping(mdl)
 
-        if external_mapping is None:
-            pass
-        else:
-            var: Optional[Var] = external_mapping.get(reference_powerflow, None)
-
-            if var is None:
-                pass
-            else:
-                self.init_guess[var.uid] = float(val)
 
     def get_floquet_ak_stack(
             self,
@@ -920,7 +1121,7 @@ class EmtProblemTemplate(ABC):
         return self._event_params_values
 
     @property
-    def event_parameters_eqs(self):
+    def event_parameters_eqs(self) -> List[Any]:
         return self._event_parameters_eqs
 
 

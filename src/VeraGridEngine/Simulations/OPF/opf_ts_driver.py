@@ -10,7 +10,7 @@ from typing import Union
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.enumerations import SolverType, TimeGrouping, EngineType, SimulationTypes
 from VeraGridEngine.Simulations.OPF.opf_options import OptimalPowerFlowOptions
-from VeraGridEngine.Simulations.OPF.Formulations.linear_opf_ts import run_linear_opf_ts
+from VeraGridEngine.Simulations.OPF.Formulations.linear_opf_ts import run_linear_opf_ts, SystemVars
 from VeraGridEngine.Simulations.OPF.simple_dispatch_ts import run_greedy_dispatch_ts
 from VeraGridEngine.Simulations.OPF.ac_opf_worker import run_nonlinear_opf
 from VeraGridEngine.Simulations.OPF.opf_ts_results import OptimalPowerFlowTimeSeriesResults
@@ -270,7 +270,7 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
         # AC optimal power flow
         (load_profile, gen_dispatch,
          batt_dispatch, battery_energy,
-         load_shedding, gen_curtailment) = run_greedy_dispatch_ts(
+         load_shedding, gen_curtailment, greedy_inpts) = run_greedy_dispatch_ts(
             grid=self.grid,
             time_indices=self.time_indices,
             text_prog=self.report_text,
@@ -288,6 +288,31 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
 
         self.results.converged[self.time_indices] = True
 
+        gen_emissions_rates_matrix = self.grid.get_gen_emission_rates_sparse_matrix()
+        gen_fuel_rates_matrix = self.grid.get_gen_fuel_rates_sparse_matrix()
+        gen_tech_shares_matrix = self.grid.get_gen_technology_connectivity_matrix()
+        batt_tech_shares_matrix = self.grid.get_batt_technology_connectivity_matrix()
+
+        gen_cost = gen_dispatch * greedy_inpts.gen_cost
+        shedding_cost = load_shedding * greedy_inpts.load_shedding_cost
+
+        sys_calc = SystemVars(nt=len(self.time_indices))
+        sys_calc.compute(gen_emissions_rates_matrix=gen_emissions_rates_matrix,
+                    gen_fuel_rates_matrix=gen_fuel_rates_matrix,
+                    gen_tech_shares_matrix=gen_tech_shares_matrix,
+                    batt_tech_shares_matrix=batt_tech_shares_matrix,
+                    gen_p=gen_dispatch,
+                    batt_p=batt_dispatch,
+                    gen_cost=gen_cost,
+                    shedding_cost=shedding_cost)
+
+        self.results.system_fuel[self.time_indices, :] = sys_calc.system_fuel
+        self.results.system_emissions[self.time_indices, :] = sys_calc.system_emissions
+        self.results.system_energy_cost[self.time_indices] = sys_calc.system_unit_energy_cost
+        self.results.system_total_energy_cost[self.time_indices] = sys_calc.system_total_energy_cost
+        self.results.power_by_technology[self.time_indices, :] = sys_calc.power_by_technology
+
+
     def run_greedy_dispatch_indices(self, time_indices: IntVec):
         """
 
@@ -297,7 +322,7 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
         # Greedy dispatch
         (load_profile, gen_dispatch,
          batt_dispatch, battery_energy,
-         load_shedding, gen_curtailment) = run_greedy_dispatch_ts(
+         load_shedding, gen_curtailment, greedy_inpts) = run_greedy_dispatch_ts(
             grid=self.grid,
             time_indices=time_indices,
             text_prog=self.report_text,
@@ -314,6 +339,30 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
         self.results.load_power[time_indices, :] = load_profile
 
         self.results.converged[time_indices] = True
+
+        gen_emissions_rates_matrix = self.grid.get_gen_emission_rates_sparse_matrix()
+        gen_fuel_rates_matrix = self.grid.get_gen_fuel_rates_sparse_matrix()
+        gen_tech_shares_matrix = self.grid.get_gen_technology_connectivity_matrix()
+        batt_tech_shares_matrix = self.grid.get_batt_technology_connectivity_matrix()
+
+        gen_cost = gen_dispatch * greedy_inpts.gen_cost
+        shedding_cost = load_shedding * greedy_inpts.load_shedding_cost
+
+        sys_calc = SystemVars(nt=len(time_indices))
+        sys_calc.compute(gen_emissions_rates_matrix=gen_emissions_rates_matrix,
+                         gen_fuel_rates_matrix=gen_fuel_rates_matrix,
+                         gen_tech_shares_matrix=gen_tech_shares_matrix,
+                         batt_tech_shares_matrix=batt_tech_shares_matrix,
+                         gen_p=gen_dispatch,
+                         batt_p=batt_dispatch,
+                         gen_cost=gen_cost,
+                         shedding_cost=shedding_cost)
+
+        self.results.system_fuel[time_indices, :] = sys_calc.system_fuel
+        self.results.system_emissions[time_indices, :] = sys_calc.system_emissions
+        self.results.system_energy_cost[time_indices] = sys_calc.system_unit_energy_cost
+        self.results.system_total_energy_cost[time_indices] = sys_calc.system_total_energy_cost
+        self.results.power_by_technology[time_indices, :] = sys_calc.power_by_technology
 
     def run_non_linear_opf(self):
         """
@@ -593,6 +642,19 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
 
         self.tic()
 
+        if self.engine == EngineType.GSLV:
+            if not gslv.GSLV_AVAILABLE:
+                self.engine = EngineType.VeraGrid
+                self.logger.add_warning('GSLV not available, falling back to VeraGrid')
+            else:
+                if self.options.solver != SolverType.LINEAR_OPF:
+                    self.engine = EngineType.VeraGrid
+                    self.logger.add_warning('GSLV OPF time series only supports LINEAR_OPF, falling back to VeraGrid')
+                else:
+                    pass
+        else:
+            pass
+
         if self.engine == EngineType.VeraGrid:
 
             if self.options.time_grouping == TimeGrouping.NoGrouping:
@@ -622,10 +684,10 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
                 self.report_text('Running Linear OPF with Newton...')
 
                 gslv_res = newton_pa_linear_opf(circuit=self.grid,
-                                               opf_options=self.options,
-                                               pf_opt=PowerFlowOptions(),
-                                               time_series=use_time_series,
-                                               time_indices=self.time_indices)
+                                                opf_options=self.options,
+                                                pf_opt=PowerFlowOptions(),
+                                                time_series=use_time_series,
+                                                time_indices=self.time_indices)
 
                 self.results.voltage[ti, :] = gslv_res.voltage_module * np.exp(1j * gslv_res.voltage_angle)
                 self.results.bus_shadow_prices[ti, :] = gslv_res.nodal_shadow_prices
@@ -656,10 +718,10 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
 
                 # pack the results
                 gslv_res = newton_pa_nonlinear_opf(circuit=self.grid,
-                                                  pf_opt=self.pf_options,
-                                                  opf_opt=self.options,
-                                                  time_series=use_time_series,
-                                                  time_indices=self.time_indices)
+                                                   pf_opt=self.pf_options,
+                                                   opf_opt=self.options,
+                                                   time_series=use_time_series,
+                                                   time_indices=self.time_indices)
 
                 self.results.voltage[ti, :] = gslv_res.voltage
                 self.results.Sbus[ti, :] = gslv_res.Scalc
@@ -689,48 +751,131 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
         elif self.engine == EngineType.GSLV:
 
             if self.time_indices is None:
-                ti = 0
                 use_time_series = False
+                source_time_indices: IntVec = np.array([0], dtype=int)
+                result_time_indices: IntVec = np.array([0], dtype=int)
             else:
                 use_time_series = True
-                if self.using_clusters:
-                    ti = np.arange(0, len(self.time_indices))
-                else:
-                    ti = self.time_indices
+                source_time_indices = np.array(self.time_indices, dtype=int)
+                result_time_indices = np.arange(0, len(self.time_indices), dtype=int)
 
             if self.options.solver == SolverType.LINEAR_OPF:
                 self.report_text('Running Linear OPF with GSLV...')
 
                 gslv_res = gslv.gslv_opf(circuit=self.grid,
-                                        opf_options=self.options,
-                                        time_series=use_time_series,
-                                        time_indices=self.time_indices,
-                                        logger=self.logger)
+                                         opf_options=self.options,
+                                         time_series=use_time_series,
+                                         time_indices=self.time_indices,
+                                         logger=self.logger)
 
-                self.results.voltage[ti, :] = gslv_res.voltage
-                self.results.Sbus[ti, :] = gslv_res.Sbus.real
-                self.results.bus_shadow_prices[ti, :] = gslv_res.bus_shadow_prices
+                self.results.voltage[result_time_indices, :] = gslv_res.voltage[source_time_indices, :]
+                self.results.Sbus[result_time_indices, :] = gslv_res.Sbus[source_time_indices, :].real
+                self.results.bus_shadow_prices[result_time_indices, :] = gslv_res.bus_shadow_prices[
+                    source_time_indices, :
+                ]
 
-                self.results.load_shedding[ti, :] = gslv_res.load_shedding
-                self.results.battery_power[ti, :] = gslv_res.battery_power
-                self.results.battery_energy[ti, :] = gslv_res.battery_energy
-                self.results.generator_power[ti, :] = gslv_res.generator_power
-                self.results.Sf[ti, :] = gslv_res.Sf.real
-                self.results.St[ti, :] = gslv_res.St.real
-                self.results.overloads[ti, :] = gslv_res.overloads.real
-                self.results.loading[ti, :] = gslv_res.loading.real
-                self.results.tap_angle[ti, :] = gslv_res.tap_angle
+                self.results.load_power[result_time_indices, :] = gslv_res.load_power[source_time_indices, :]
+                self.results.load_shedding[result_time_indices, :] = gslv_res.load_shedding[source_time_indices, :]
+                self.results.load_shedding_cost[result_time_indices, :] = gslv_res.load_shedding_cost[
+                    source_time_indices, :
+                ]
 
-                self.results.hvdc_Pf[ti, :] = gslv_res.hvdc_Pf
-                self.results.hvdc_loading[ti, :] = gslv_res.hvdc_loading
+                self.results.battery_power[result_time_indices, :] = gslv_res.battery_power[source_time_indices, :]
+                self.results.battery_energy[result_time_indices, :] = gslv_res.battery_energy[source_time_indices, :]
+                self.results.battery_invested[result_time_indices, :] = gslv_res.battery_invested[
+                    source_time_indices, :
+                ]
 
-                self.results.fluid_node_current_level[ti, :] = gslv_res.fluid_node_current_level
-                self.results.fluid_node_flow_in[ti, :] = gslv_res.fluid_node_flow_in
-                self.results.fluid_node_flow_out[ti, :] = gslv_res.fluid_node_flow_out
-                self.results.fluid_node_p2x_flow[ti, :] = gslv_res.fluid_node_p2x_flow
-                self.results.fluid_node_spillage[ti, :] = gslv_res.fluid_node_spillage
-                self.results.fluid_path_flow[ti, :] = gslv_res.fluid_path_flow
-                self.results.fluid_injection_flow[ti, :] = gslv_res.fluid_injection_flow
+                self.results.generator_power[result_time_indices, :] = gslv_res.generator_power[
+                    source_time_indices, :
+                ]
+                self.results.generator_reactive_power[result_time_indices, :] = gslv_res.generator_reactive_power[
+                    source_time_indices, :
+                ]
+                self.results.generator_shedding[result_time_indices, :] = gslv_res.generator_shedding[
+                    source_time_indices, :
+                ]
+                self.results.generator_cost[result_time_indices, :] = gslv_res.generator_cost[
+                    source_time_indices, :
+                ]
+                self.results.generator_producing[result_time_indices, :] = gslv_res.generator_producing[
+                    source_time_indices, :
+                ]
+                self.results.generator_starting_up[result_time_indices, :] = gslv_res.generator_starting_up[
+                    source_time_indices, :
+                ]
+                self.results.generator_shutting_down[result_time_indices, :] = gslv_res.generator_shutting_down[
+                    source_time_indices, :
+                ]
+                self.results.generator_invested[result_time_indices, :] = gslv_res.generator_invested[
+                    source_time_indices, :
+                ]
+
+                self.results.shunt_like_reactive_power[result_time_indices, :] = gslv_res.shunt_like_reactive_power[
+                    source_time_indices, :
+                ]
+
+                self.results.Sf[result_time_indices, :] = gslv_res.Sf[source_time_indices, :].real
+                self.results.St[result_time_indices, :] = gslv_res.St[source_time_indices, :].real
+                self.results.loading[result_time_indices, :] = gslv_res.loading[source_time_indices, :].real
+                self.results.losses[result_time_indices, :] = gslv_res.losses[source_time_indices, :]
+                self.results.tap_angle[result_time_indices, :] = gslv_res.tap_angle[source_time_indices, :]
+                self.results.tap_module[result_time_indices, :] = gslv_res.tap_module[source_time_indices, :]
+                self.results.overloads[result_time_indices, :] = gslv_res.overloads[source_time_indices, :].real
+                self.results.overloads_cost[result_time_indices, :] = gslv_res.overloads_cost[
+                    source_time_indices, :
+                ]
+
+                self.results.hvdc_Pf[result_time_indices, :] = gslv_res.hvdc_Pf[source_time_indices, :]
+                self.results.hvdc_loading[result_time_indices, :] = gslv_res.hvdc_loading[
+                    source_time_indices, :
+                ]
+
+                self.results.vsc_Pf[result_time_indices, :] = gslv_res.vsc_Pf[source_time_indices, :]
+                self.results.vsc_loading[result_time_indices, :] = gslv_res.vsc_loading[
+                    source_time_indices, :
+                ]
+
+                self.results.fluid_node_current_level[result_time_indices, :] = gslv_res.fluid_node_current_level[
+                    source_time_indices, :
+                ]
+                self.results.fluid_node_flow_in[result_time_indices, :] = gslv_res.fluid_node_flow_in[
+                    source_time_indices, :
+                ]
+                self.results.fluid_node_flow_out[result_time_indices, :] = gslv_res.fluid_node_flow_out[
+                    source_time_indices, :
+                ]
+                self.results.fluid_node_p2x_flow[result_time_indices, :] = gslv_res.fluid_node_p2x_flow[
+                    source_time_indices, :
+                ]
+                self.results.fluid_node_spillage[result_time_indices, :] = gslv_res.fluid_node_spillage[
+                    source_time_indices, :
+                ]
+                self.results.fluid_path_flow[result_time_indices, :] = gslv_res.fluid_path_flow[
+                    source_time_indices, :
+                ]
+                self.results.fluid_injection_flow[result_time_indices, :] = gslv_res.fluid_injection_flow[
+                    source_time_indices, :
+                ]
+
+                self.results.system_fuel[result_time_indices, :] = gslv_res.system_fuel[source_time_indices, :]
+                self.results.system_emissions[result_time_indices, :] = gslv_res.system_emissions[
+                    source_time_indices, :
+                ]
+                self.results.system_energy_cost[result_time_indices] = gslv_res.system_energy_cost[
+                    source_time_indices
+                ]
+                self.results.system_total_energy_cost[result_time_indices] = gslv_res.system_total_energy_cost[
+                    source_time_indices
+                ]
+                if self.results.power_by_technology.shape[1] == gslv_res.power_by_technology.shape[1]:
+                    self.results.power_by_technology[result_time_indices, :] = gslv_res.power_by_technology[
+                        source_time_indices, :
+                    ]
+                else:
+                    self.results.power_by_technology[result_time_indices, :] = 0.0
+
+                self.results.converged[result_time_indices] = gslv_res.converged[source_time_indices]
 
         else:
             if self.options.time_grouping == TimeGrouping.NoGrouping:

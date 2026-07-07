@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import Sequence, Tuple, Union
+from typing import Sequence, Tuple, Union, List
 
 import numpy as np
 
@@ -14,7 +14,35 @@ from VeraGridEngine.Devices.Parents.editable_device import GCProp, get_at
 from VeraGridEngine.Devices.Parents.physical_device import PhysicalDevice
 from VeraGridEngine.Devices.Substation.bus import Bus
 from VeraGridEngine.Devices.Profiles import ProfileBool
-from VeraGridEngine.enumerations import BuildStatus, DeviceType
+from VeraGridEngine.enumerations import BuildStatus, DeviceType, PrpCat, SubObjectType
+
+class ImpedanceTriplet:
+    __slots__ = ("i", "j", "imp")
+    def __init__(self, i: int = 0, j: int = 0, imp:complex = complex(0,0)) -> None:
+        self.i = i
+        self.j = j
+        self.imp = imp
+
+    def to_list(self) -> List[int|float]:
+        return [self.i, self.j, self.imp.real, self.imp.imag]
+
+    def from_list(self, value: List[int|float]) -> "ImpedanceTriplet":
+        self.i = int(value[0])
+        self.j = int(value[1])
+        self.imp = complex(value[2], value[3])
+        return self
+
+class ImpedanceTripletList:
+    def __init__(self):
+        self.__list = []
+    def append(self, imp: ImpedanceTriplet) -> None:
+        self.__list.append(imp)
+    def to_list(self) -> List[ImpedanceTripletList]:
+        return [x.to_list() for x in self.__list]
+    def parse(self, data: List[List[int|float]]) -> None:
+        for entry in data:
+            self.append(ImpedanceTriplet().from_list(entry))
+
 
 
 class TransformerNW(PhysicalDevice):
@@ -39,17 +67,69 @@ class TransformerNW(PhysicalDevice):
         "_I0",
         "_x",
         "_y",
+        "_internal_impedances"
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key="bus0", units="", tpe=DeviceType.BusDevice, definition="Middle point connection bus.",
-               editable=False),
-        GCProp("active", units="", tpe=bool, definition="Is active?", profile_name="active_prof"),
-        GCProp(key="winding_count", units="", tpe=int, definition="Number of windings.", editable=False),
-        GCProp(key="Pfe", units="kW", tpe=float, definition="Iron loss"),
-        GCProp(key="I0", units="%", tpe=float, definition="No-load current"),
-        GCProp(key="x", units="px", tpe=float, definition="x position"),
-        GCProp(key="y", units="px", tpe=float, definition="y position"),
+        GCProp(
+            prop_name="bus0",
+            units="",
+            tpe=DeviceType.BusDevice,
+            definition="Middle point connection bus.",
+            editable=False,
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name="active",
+            units="",
+            tpe=bool,
+            definition="Is active?",
+            profile_name="active_prof",
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name="winding_count",
+            units="",
+            tpe=int,
+            definition="Number of windings.",
+            editable=False,
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name="Pfe",
+            units="kW",
+            tpe=float,
+            definition="Iron loss",
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name="I0",
+            units="%",
+            tpe=float,
+            definition="No-load current",
+            cat=[PrpCat.PF],
+        ),
+        GCProp(
+            prop_name="x",
+            units="px",
+            tpe=float,
+            definition="x position",
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name="y",
+            units="px",
+            tpe=float,
+            definition="y position",
+            cat=[PrpCat.TP],
+        ),
+        GCProp(
+            prop_name="internal_impedances",
+            units="p.u.",
+            tpe= SubObjectType.ImpedanceTripletList,
+            definition="Internal Impedance List",
+            cat=[PrpCat.TP],
+        ),
     )
 
     def __init__(self,
@@ -109,7 +189,11 @@ class TransformerNW(PhysicalDevice):
         self.x = float(x)
         self.y = float(y)
 
+        self._internal_impedances = ImpedanceTripletList()
+
         self.initialize_windings(winding_count=winding_count, buses=buses)
+
+
 
     @property
     def active_prof(self) -> ProfileBool:
@@ -160,6 +244,20 @@ class TransformerNW(PhysicalDevice):
         """
         return tuple(self._windings)
 
+    @property
+    def internal_impedances(self) -> ImpedanceTripletList:
+        """
+        Internal impedances of transformer model
+        """
+        return self._internal_impedances
+
+    @internal_impedances.setter
+    def internal_impedances(self, val: ImpedanceTripletList):
+        if isinstance(val, ImpedanceTripletList):
+            self._internal_impedances = val
+        else:
+            raise ValueError("Internal impedances in incorrect format")
+
     def all_connected(self) -> bool:
         """
         Check that all windings are connected to a terminal bus.
@@ -179,8 +277,8 @@ class TransformerNW(PhysicalDevice):
         return self._windings[i]
 
     def _prepare_winding(self, winding: Winding, bus: Bus | None, index: int) -> Winding:
-        winding.bus_from = self.bus0
-        winding.bus_to = bus
+        winding.bus_from = bus
+        winding.bus_to = self.bus0
 
         if winding.name == "Winding":
             winding.name = f"{self.name}_W{index + 1}"
@@ -202,9 +300,9 @@ class TransformerNW(PhysicalDevice):
         else:
             winding.set_hv_and_lv(HV=hv, LV=lv)
 
-        if winding.Sn <= 0.0 and winding.rate > 0.0:
+        if winding.Sn <= 0.0 < winding.rate:
             winding.Sn = winding.rate
-        elif winding.rate <= 0.0 and winding.Sn > 0.0:
+        elif winding.rate <= 0.0 < winding.Sn:
             winding.rate = winding.Sn
 
         return winding
@@ -215,7 +313,8 @@ class TransformerNW(PhysicalDevice):
         """
         self._buses[i] = bus
         winding = self._windings[i]
-        winding.bus_to = bus
+        winding.bus_from = bus
+        winding.bus_to = self.bus0
 
         if bus is not None:
             winding.set_hv_and_lv(HV=winding.HV, LV=winding.LV)
@@ -224,7 +323,7 @@ class TransformerNW(PhysicalDevice):
         """
         Replace a winding at position ``i``.
         """
-        target_bus = winding.bus_to if bus is None else bus
+        target_bus = winding.bus_from if bus is None else bus
         prepared = self._prepare_winding(winding=winding, bus=target_bus, index=i)
         self._windings[i] = prepared
         self._buses[i] = target_bus
@@ -244,8 +343,8 @@ class TransformerNW(PhysicalDevice):
             hv = nominal_voltage if nominal_voltage is not None else (bus.Vnom if bus is not None else 1.0)
             rate = nominal_power if nominal_power > 0.0 else 1.0
             sn = nominal_power if nominal_power > 0.0 else 0.001
-            winding = Winding(bus_from=self.bus0,
-                              bus_to=bus,
+            winding = Winding(bus_from=bus,
+                              bus_to=self.bus0,
                               name=f"{self.name}_W{index + 1}",
                               idtag=w_idtag,
                               HV=hv,
@@ -254,9 +353,11 @@ class TransformerNW(PhysicalDevice):
                               rate=rate,
                               active=self.active)
 
-        prepared = self._prepare_winding(winding=winding, bus=bus if bus is not None else winding.bus_to, index=index)
+        prepared = self._prepare_winding(winding=winding,
+                                         bus=bus if bus is not None else winding.bus_from,
+                                         index=index)
         self._windings.append(prepared)
-        self._buses.append(prepared.bus_to)
+        self._buses.append(prepared.bus_from)
         return prepared
 
     def delete_winding(self, i: int) -> Winding:
@@ -318,7 +419,7 @@ class TransformerNW(PhysicalDevice):
             if winding.rate <= 0.0:
                 winding.rate = nominal_power
 
-            hv = winding.HV if winding.HV is not None else (winding.bus_to.Vnom if winding.bus_to is not None else 1.0)
+            hv = winding.HV if winding.HV is not None else (winding.bus_from.Vnom if winding.bus_from is not None else 1.0)
             lv = winding.LV if winding.LV is not None and winding.LV > 0.0 else 1.0
 
             z_series, y_shunt = get_impedances(

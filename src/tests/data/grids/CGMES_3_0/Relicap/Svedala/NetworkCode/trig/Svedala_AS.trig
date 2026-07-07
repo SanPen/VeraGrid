@@ -1,0 +1,149 @@
+PREFIX adms:     <http://www.w3.org/ns/adms#>
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:dc9fc9d1-bb73-4b36-a5a6-7fbb9ed5b354> {
+    <urn:uuid:cbe49fbe-64dd-48e0-8e9b-bbc468265abc>
+            rdf:type                   nc:AvailabilityEquipment;
+            cim:IdentifiedObject.description
+                    "ACLineSegment out";
+            cim:IdentifiedObject.mRID  "cbe49fbe-64dd-48e0-8e9b-bbc468265abc";
+            cim:IdentifiedObject.name  "line out";
+            nc:AvailabilityEquipment.Equipment
+                    <urn:uuid:536f4b84-db4c-4545-96e9-bb5a87f65d13>;
+            nc:AvailabilityPowerSystemFunction.AvailabilitySchedule
+                    <urn:uuid:31c77d68-cf6a-462a-8194-956d697dc3a2>;
+            nc:AvailabilityPowerSystemFunction.kind
+                    nc:AvailabilityFunctionKind.outOfService .
+    
+    <urn:uuid:dc9fc9d1-bb73-4b36-a5a6-7fbb9ed5b354>
+            rdf:type                 dcat:Dataset;
+            dct:accessRights         "https://energy.referencedata.eu/Confidentiality/Public";
+            dct:conformsTo           "https://cim.ucaiug.io/ns#" , "https://ap.cim4.eu/AvailabilitySchedule/2.3" , "https://cim4.eu/ns/nc/2.4#" , "http://iec.ch/TC57/2013/CIM-schema-cim16#";
+            dct:description          "This is the example for availability schedule dataset for Svedala part of ReliCapGrid";
+            dct:identifier           "dc9fc9d1-bb73-4b36-a5a6-7fbb9ed5b354";
+            dct:issued               "2024-12-03T10:00:00Z"^^xsd:dateTime;
+            dct:license              "https://creativecommons.org/licenses/by/4.0/";
+            dct:publisher            "https://energy.referencedata.eu/test/party/Svedala";
+            dct:requires             <urn:uuid:e54a29a9-de39-4ac0-b7c2-8dc935657202>;
+            dct:rights               "Copyright";
+            dct:rightsHolder         "ENTSO-E";
+            dct:spatial              <https://energy.referencedata.eu/Frame/Svedala-Power-Transmission-System>;
+            dct:title                "20241203_Svedala_AS_1.0.0";
+            adms:versionNotes        "This is an example of Availability schedule dataset for SvK.";
+            dcat:isVersionOf         <https://energy.referencedata.eu/Test/Model/Svedala-AS>;
+            dcat:keyword             "AS";
+            dcat:startDate           "2024-12-03T10:00:00Z"^^xsd:dateTime;
+            dcat:version             "1.0.0";
+            prov:wasGeneratedAtTime  "2024-12-03T10:00:00Z";
+            prov:wasGeneratedBy      "https://energy.referencedata.eu/Activity/OPC-AS" .
+    
+    <urn:uuid:0d4d4078-f3ad-409d-8882-73dafef11b80>
+            rdf:type                   nc:AvailabilityContainer;
+            cim:IdentifiedObject.description
+                    "Commissioning of new station";
+            cim:IdentifiedObject.mRID  "0d4d4078-f3ad-409d-8882-73dafef11b80";
+            cim:IdentifiedObject.name  "Availability Container example";
+            nc:AvailabilityContainer.EquipmentContainer
+                    <urn:uuid:1b629878-2c6f-41e9-b562-04b4782a5e1c>;
+            nc:AvailabilityPowerSystemFunction.AvailabilitySchedule
+                    <urn:uuid:9fa5e26d-d64e-4bfb-afb8-fb6dbe884b48>;
+            nc:AvailabilityPowerSystemFunction.kind
+                    nc:AvailabilityFunctionKind.outOfService .
+    
+    <urn:uuid:9fa5e26d-d64e-4bfb-afb8-fb6dbe884b48>
+            rdf:type                   nc:AvailabilitySchedule;
+            cim:IdentifiedObject.description
+                    "Example schedule for Availability Container example";
+            cim:IdentifiedObject.mRID  "9fa5e26d-d64e-4bfb-afb8-fb6dbe884b48";
+            cim:IdentifiedObject.name  "Test schedule for Availability Container example";
+            nc:AvailabilitySchedule.PlannedSchedule
+                    <urn:uuid:7acbe49b-be64-4dd8-a02e-87778468d55a>;
+            nc:AvailabilitySchedule.causeDescription
+                    "Preparation to start Project B";
+            nc:AvailabilitySchedule.causeKind
+                    nc:AvailabilityScheduleCauseKind.maintenance;
+            nc:AvailabilitySchedule.priority
+                    1 .
+    
+    <urn:uuid:4a69b9d3-39ac-44e7-a68d-1d76657202b4>
+            rdf:type                    nc:EventTimePoint;
+            nc:EventTimePoint.EventSchedule
+                    <urn:uuid:7acbe49b-be64-4dd8-a02e-87778468d55a>;
+            nc:EventTimePoint.atTime    "2025-02-27T23:50:00Z"^^xsd:dateTime;
+            nc:EventTimePoint.isActive  true .
+    
+    <urn:uuid:7acbe49b-be64-4dd8-a02e-87778468d55a>
+            rdf:type                   nc:EventSchedule;
+            cim:IdentifiedObject.description
+                    "event schedule example";
+            cim:IdentifiedObject.mRID  "7acbe49b-be64-4dd8-a02e-87778468d55a";
+            cim:IdentifiedObject.name  "event ";
+            nc:BaseTimeSeries.interpolationKind
+                    nc:TimeSeriesInterpolationKind.previous;
+            nc:BaseTimeSeries.kind     nc:BaseTimeSeriesKind.schedule .
+    
+    <urn:uuid:389a8f82-cb8e-4b8c-8aa7-3b26a4957eba>
+            rdf:type                    nc:EventTimePoint;
+            nc:EventTimePoint.EventSchedule
+                    <urn:uuid:7acbe49b-be64-4dd8-a02e-87778468d55a>;
+            nc:EventTimePoint.atTime    "2025-03-30T23:50:00Z"^^xsd:dateTime;
+            nc:EventTimePoint.isActive  false .
+    
+    <urn:uuid:ab81932c-9fc9-4d1b-a770-36e5e6bfbb9e>
+            rdf:type                    nc:EventTimePoint;
+            nc:EventTimePoint.EventSchedule
+                    <urn:uuid:7acbe49b-be64-4dd8-a02e-87778468d55a>;
+            nc:EventTimePoint.atTime    "2025-01-30T23:50:00Z"^^xsd:dateTime;
+            nc:EventTimePoint.isActive  true .
+    
+    <urn:uuid:31c77d68-cf6a-462a-8194-956d697dc3a2>
+            rdf:type                   nc:AvailabilitySchedule;
+            cim:IdentifiedObject.description
+                    "Example schedule";
+            cim:IdentifiedObject.mRID  "31c77d68-cf6a-462a-8194-956d697dc3a2";
+            cim:IdentifiedObject.name  "Test schedule";
+            nc:AvailabilitySchedule.PlannedSchedule
+                    <urn:uuid:7acbe49b-be64-4dd8-a02e-87778468d55a>;
+            nc:AvailabilitySchedule.causeDescription
+                    "Preparation to start Project A";
+            nc:AvailabilitySchedule.causeKind
+                    nc:AvailabilityScheduleCauseKind.maintenance;
+            nc:AvailabilitySchedule.priority
+                    1 .
+    
+    <urn:uuid:d394295f-9d18-4d9f-9808-bd23282bf60f>
+            rdf:type                   nc:AvailabilitySchedule;
+            cim:IdentifiedObject.description
+                    "Sample Availability Schedule";
+            cim:IdentifiedObject.mRID  "d394295f-9d18-4d9f-9808-bd23282bf60f";
+            cim:IdentifiedObject.name  "Availability Schedule 1";
+            nc:AvailabilitySchedule.RemedialAction
+                    <urn:uuid:14b2b671-e92b-40e6-abf8-ad37811b33c7>;
+            nc:AvailabilitySchedule.cancelledDateTime
+                    "2022-06-16T08:34:00Z"^^xsd:dateTime;
+            nc:AvailabilitySchedule.causeDescription
+                    "Maintenance performed from 10:00h to 18:00h";
+            nc:AvailabilitySchedule.causeKind
+                    nc:AvailabilityScheduleCauseKind.maintenance;
+            nc:AvailabilitySchedule.maxRestitutionDuration
+                    "PT10M40S"^^xsd:duration;
+            nc:AvailabilitySchedule.priority
+                    1 .
+}

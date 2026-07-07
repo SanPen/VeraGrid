@@ -90,7 +90,12 @@ class TestSVSJacobianBackends(unittest.TestCase):
         vf: VarFactory = VarFactory()
         block: Block = build_buck(vf)
         t_sys: Var = Var("t_sys")
-        problem: GenericEmtProblem = GenericEmtProblem(block, t_sys)
+        static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+        problem: GenericEmtProblem = GenericEmtProblem(
+            sys_block=block,
+            glob_time=t_sys,
+            static_parameter_values_mapping=static_parameter_values_mapping,
+        )
 
         solver: StructuralVectorizedSolver = StructuralVectorizedSolver(
             problem, t0=0.0, t_end=1e-3, h=1e-6, method=DynamicIntegrationMethod.DaeTrapezoidal
@@ -116,7 +121,12 @@ class TestSVSJacobianBackends(unittest.TestCase):
         vf: VarFactory = VarFactory()
         block: Block = build_buck(vf)
         t_sys: Var = Var("t_sys")
-        problem: GenericEmtProblem = GenericEmtProblem(block, t_sys)
+        static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
+        problem: GenericEmtProblem = GenericEmtProblem(
+            sys_block=block,
+            glob_time=t_sys,
+            static_parameter_values_mapping=static_parameter_values_mapping,
+        )
 
         x0: np.ndarray = problem.get_x0()
         p0: np.ndarray = np.zeros(problem.get_variable_parameter_number(), dtype=np.float64)
@@ -125,7 +135,7 @@ class TestSVSJacobianBackends(unittest.TestCase):
             problem, t0=0.0, t_end=50e-6, h=1e-6, method=DynamicIntegrationMethod.DaeTrapezoidal
         )
 
-        t_arr, y_arr, _ = solver.simulate(x0=x0, params0=p0)
+        t_arr, y_arr, _, _, _ = solver.simulate(x0=x0, params0=p0)
 
         self.assertEqual(len(t_arr), y_arr.shape[0])
         self.assertTrue(bool(np.all(np.isfinite(y_arr))))

@@ -4,9 +4,13 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from typing import Union, Tuple
+from typing import Union, Tuple, TYPE_CHECKING
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp
 from VeraGridEngine.enumerations import DeviceType
+
+if TYPE_CHECKING:
+    from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
+    from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 
 
 class PointerDeviceParent(EditableDevice):
@@ -22,14 +26,32 @@ class PointerDeviceParent(EditableDevice):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='device_idtag', units='', tpe=str, definition='Unique ID', editable=False),
-        GCProp(key='tpe', units='', tpe=DeviceType, definition='Device type', editable=False),
-        GCProp(key='device_name', units='', tpe=str, definition='Device name', editable=False),
+        GCProp(
+            prop_name='device_idtag',
+            units='',
+            tpe=str,
+            definition='Unique ID',
+            editable=False,
+        ),
+        GCProp(
+            prop_name='tpe',
+            units='',
+            tpe=DeviceType,
+            definition='Device type',
+            editable=False,
+        ),
+        GCProp(
+            prop_name='device_name',
+            units='',
+            tpe=str,
+            definition='Device name',
+            editable=False,
+        ),
     )
 
     def __init__(self,
                  idtag: Union[str, None],
-                 device: EditableDevice | None,
+                 device: InjectionParent | BranchParent | None,
                  name: str,
                  code: str,
                  comment: str,
@@ -53,7 +75,7 @@ class PointerDeviceParent(EditableDevice):
         self._device_idtag: str = device.idtag if device is not None else ""
         self._tpe: DeviceType = device.device_type if device is not None else DeviceType.NoDevice
         self._device_name: str = device.name if device is not None else "No device"
-        self._device = device
+        self._device: InjectionParent | BranchParent | None = device
 
     @property
     def device_idtag(self) -> str:
@@ -101,7 +123,7 @@ class PointerDeviceParent(EditableDevice):
             raise ValueError(f"tpe must be a string not {val}")
 
     @property
-    def device(self) -> EditableDevice:
+    def device(self) -> InjectionParent | BranchParent | None:
         """
         device getter
         :return:
@@ -109,7 +131,7 @@ class PointerDeviceParent(EditableDevice):
         return self._device
 
     @device.setter
-    def device(self, val: EditableDevice):
+    def device(self, val: InjectionParent | BranchParent | None):
         if isinstance(val, EditableDevice):
             if val is not None:
                 self._tpe = val.device_type
@@ -121,9 +143,43 @@ class PointerDeviceParent(EditableDevice):
         else:
             raise ValueError(f"tpe must be a EditableDevice not {val}")
 
-    def set_device(self, elm: EditableDevice):
+    def set_device(self, elm: InjectionParent | BranchParent | None):
         """
         Set the device
         :param elm: Device to be pointed
         """
         self.device = elm
+
+    def rebind_device_references(self, objects_by_idtag, props=None) -> None:
+        """
+        Rebind the pointed device to an equivalent object from a target lookup.
+
+        :param objects_by_idtag: idtag -> target object lookup.
+        :param props: Optional subset of registered properties to process.
+        """
+        super().rebind_device_references(objects_by_idtag=objects_by_idtag, props=props)
+
+        pointed = None
+        if self._device is not None and hasattr(self._device, "idtag"):
+            pointed = objects_by_idtag.get(self._device.idtag, None)
+
+        if pointed is None and self._device_idtag:
+            pointed: InjectionParent | BranchParent | None = objects_by_idtag.get(self._device_idtag, None)
+
+        if pointed is not None:
+            self._device = pointed
+            self._device_idtag = pointed.idtag
+            self._device_name = pointed.name
+            self._tpe = pointed.device_type
+
+    def copy(self, forced_new_idtag: bool = False) -> "PointerDeviceParent":
+        """
+        Overload to handle the copy of the device pointer
+        :param forced_new_idtag:
+        :return: PointerDeviceParent
+        """
+        cpy = super().copy(forced_new_idtag=True)
+
+        cpy.device = self.device
+
+        return cpy

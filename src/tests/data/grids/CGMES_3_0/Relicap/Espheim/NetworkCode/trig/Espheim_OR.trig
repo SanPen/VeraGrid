@@ -1,0 +1,68 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:c29d23f7-1955-46dc-8bfd-56e082ce9b18> {
+    <urn:uuid:3dacaa80-ee35-458c-bccd-7b6530a292c9>
+            rdf:type                   nc:ObjectType;
+            cim:IdentifiedObject.mRID  "3dacaa80-ee35-458c-bccd-7b6530a292c9";
+            cim:IdentifiedObject.name  "DSO_Injection type";
+            nc:ObjectType.type         "DSO_Injection" .
+    
+    <urn:uuid:c29d23f7-1955-46dc-8bfd-56e082ce9b18>
+            rdf:type              dcat:Dataset;
+            dct:accessRights      "https://energy.referencedata.eu/Confidentiality/Public";
+            dct:conformsTo        "https://cim.ucaiug.io/ns#" , "https://cim4.eu/ns/nc/2.4#" , "https://ap.cim4.eu/ObjectRegistry/2.2" , "http://iec.ch/TC57/2013/CIM-schema-cim16#";
+            dct:description       "This is the object registry profile dataset for Espheim part of ReliCapGrid."@en;
+            dct:identifier        "c29d23f7-1955-46dc-8bfd-56e082ce9b18";
+            dct:issued            "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dct:license           "https://creativecommons.org/licenses/by/4.0/";
+            dct:publisher         "https://energy.referencedata.eu/test/party/Espheim";
+            dct:requires          <urn:uuid:e3beb946-afc6-4304-9660-517d5115cbb0>;
+            dct:rights            "Copyright";
+            dct:rightsHolder      "ENTSO-E";
+            dct:spatial           "https://energy.referencedata.eu/Test/Frame/Espheim-Power-Transmission-System";
+            dct:title             "20220615_Espheim_OR_1.0.0";
+            dcat:endDate          "2023-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Espheim-OR>;
+            dcat:keyword          "OR";
+            dcat:startDate        "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:version          "1.0.0";
+            prov:generatedAtTime  "2022-06-10T07:06:25Z"^^xsd:dateTime;
+            prov:wasGeneratedBy   "https://energy.referencedata.eu/Activity/CGM-OR" .
+    
+    <urn:uuid:ff970cac-0b4d-4f55-b2b0-13bbbda3a669>
+            rdf:type                        cim:Name;
+            cim:Name.name                   "External Network Injection 1";
+            nc:Name.NameType                <https://energy.referencedata.eu/NameType/3787b057-7a20-4994-9bda-53334f249216>;
+            nc:Name.UniqueIdentifiedObject  <urn:uuid:984d2aa1-1c0c-432a-acc8-c8e35133aee9>;
+            nc:Name.mRID                    "ff970cac-0b4d-4f55-b2b0-13bbbda3a669" .
+    
+    <urn:uuid:04fc9afe-07cd-40ba-a670-661d8a7b5c21>
+            rdf:type                        cim:Name;
+            cim:Name.name                   "27V-EGD-DSO----R";
+            nc:Name.NameType                <https://energy.referencedata.eu/NameType/9d59a35c-573c-4f61-877d-ddb8e3f3c153>;
+            nc:Name.UniqueIdentifiedObject  <urn:uuid:984d2aa1-1c0c-432a-acc8-c8e35133aee9>;
+            nc:Name.mRID                    "04fc9afe-07cd-40ba-a670-661d8a7b5c21" .
+    
+    <urn:uuid:984d2aa1-1c0c-432a-acc8-c8e35133aee9>
+            rdf:type                        cim:IdentifiedObject;
+            cim:IdentifiedObject.mRID       "984d2aa1-1c0c-432a-acc8-c8e35133aee9";
+            cim:IdentifiedObject.name       "EquivalentGeneratingUnit";
+            nc:IdentifiedObject.ObjectType  <urn:uuid:3dacaa80-ee35-458c-bccd-7b6530a292c9> .
+}

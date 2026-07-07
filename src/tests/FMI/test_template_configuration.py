@@ -8,10 +8,10 @@ from VeraGridEngine.enumerations import (
     DeviceType,
     FmuTemplateDomain,
     FmuTemplateMode,
-    ParamPowerFlowRefferenceType,
-    VarPowerFlowRefferenceType,
+    ParamPowerFlowReferenceType,
+    VarPowerFlowReferenceType,
 )
-from VeraGridEngine.IO.fmu.importer import load_fmu_cs_device_config
+from VeraGridEngine.IO.fmu.importer.device_config import load_fmu_cs_device_config
 from VeraGridEngine.IO.fmu.importer.template_api import configure_fmu_template
 
 
@@ -33,13 +33,11 @@ def test_configure_fmu_template_builds_visual_ports_and_auto_bindings() -> None:
     """
 
     template = FmuTemplate(name="")
-    rms_var_factory = VarFactory(name="RmsFmuTemplateFactory")
-    emt_var_factory = VarFactory(name="EmtFmuTemplateFactory")
+    var_factory = VarFactory(name="RmsFmuTemplateFactory")
 
     configured_template = configure_fmu_template(
         template=template,
-        rms_var_factory=rms_var_factory,
-        emt_var_factory=emt_var_factory,
+        var_factory=var_factory,
         fmu_path=_artifact_path(),
         device_tpe=DeviceType.LoadDevice,
         domain=FmuTemplateDomain.RMS,
@@ -58,16 +56,16 @@ def test_configure_fmu_template_builds_visual_ports_and_auto_bindings() -> None:
     assert "y_frequency_measure" in output_names
     assert "Pl0" in parameter_names
     assert "Ql0" in parameter_names
-    assert configured_template.block.api_obj_mapping[ParamPowerFlowRefferenceType.Pl0].name == "Pl0"
-    assert configured_template.block.api_obj_mapping[ParamPowerFlowRefferenceType.Ql0].name == "Ql0"
+    assert configured_template.block.api_obj_mapping[ParamPowerFlowReferenceType.Pl0].name == "Pl0"
+    assert configured_template.block.api_obj_mapping[ParamPowerFlowReferenceType.Ql0].name == "Ql0"
 
     serialized_record = load_fmu_cs_device_config(configured_template.serialized_config)
     assert serialized_record is not None
     assert {binding.reference for binding in serialized_record.input_bindings} == {
-        VarPowerFlowRefferenceType.Va,
-        VarPowerFlowRefferenceType.Vm,
+        VarPowerFlowReferenceType.Va,
+        VarPowerFlowReferenceType.Vm,
     }
     assert {binding.reference for binding in serialized_record.output_bindings} == {
-        VarPowerFlowRefferenceType.P,
-        VarPowerFlowRefferenceType.Q,
+        VarPowerFlowReferenceType.P,
+        VarPowerFlowReferenceType.Q,
     }

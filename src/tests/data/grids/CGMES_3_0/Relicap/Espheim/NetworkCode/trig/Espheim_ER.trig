@@ -1,0 +1,68 @@
+PREFIX cim:      <https://cim.ucaiug.io/ns#>
+PREFIX dcat:     <http://www.w3.org/ns/dcat#>
+PREFIX dcat-cim: <https://cim4.eu/ns/dcat-cim#>
+PREFIX dct:      <http://purl.org/dc/terms/>
+PREFIX dcterms:  <http://purl.org/dc/terms/>
+PREFIX dm:       <http://iec.ch/TC57/61970-552/DifferenceModel/1#>
+PREFIX entsoe2:  <http://entsoe.eu/CIM/SchemaExtension/3/2#>
+PREFIX eu:       <https://cim.ucaiug.io/ns/eu#>
+PREFIX eumd:     <https://cim4.eu/ns/Metadata-European#>
+PREFIX icim:     <http://iec.ch/TC57/2013/CIM-schema-cim16-info#>
+PREFIX json-ld:  <https://www.w3.org/ns/json-ld#>
+PREFIX md:       <http://iec.ch/TC57/61970-552/ModelDescription/1#>
+PREFIX nc:       <https://cim4.eu/ns/nc#>
+PREFIX prov:     <http://www.w3.org/ns/prov#>
+PREFIX pti:      <http://www.pti-us.com/PTI_CIM-schema-cim16#>
+PREFIX rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfg:     <http://www.w3.org/2004/03/trix/rdfg-1/>
+PREFIX xsd:      <http://www.w3.org/2001/XMLSchema#>
+
+<urn:uuid:e3453a3c-8639-4648-a662-d6c15f512965> {
+    <urn:uuid:0b23d814-7559-4edf-8c55-40af585209e6>
+            rdf:type                     nc:EquivalentGeneratingUnit;
+            cim:Equipment.inService      true;
+            cim:EquivalentGeneratingUnit.ExternalNetworkInjection
+                    <urn:uuid:e349f93c-3685-4ea9-a791-a8c1ed359737> , <urn:uuid:6843c26a-5265-4cc7-b88b-6346257770bd>;
+            cim:IdentifiedObject.mRID    "0b23d814-7559-4edf-8c55-40af585209e6";
+            cim:IdentifiedObject.name    "EquivalentGeneratingUnit_1";
+            nc:GeneratingUnit.isRamping  "false" .
+    
+    <urn:uuid:3da1dae2-cc95-4c48-a6b7-81cca0e6c465>
+            rdf:type                       nc:SchedulingArea;
+            cim:IdentifiedObject.description
+                    "Espheim";
+            cim:IdentifiedObject.mRID      "3da1dae2-cc95-4c48-a6b7-81cca0e6c465";
+            cim:IdentifiedObject.name      "Espheim";
+            nc:SchedulingArea.BiddingZone  <urn:uuid:7acbe48a-be54-4cd7-af2e-87768468c55a>;
+            nc:SchedulingArea.ControlArea  <urn:uuid:1f9ecd81-e069-4040-bd64-f34b0fac3a60> .
+    
+    <urn:uuid:7acbe48a-be54-4cd7-af2e-87768468c55a>
+            rdf:type                       nc:BiddingZone;
+            cim:IdentifiedObject.description
+                    "BZ_EH";
+            cim:IdentifiedObject.mRID      "7acbe48a-be54-4cd7-af2e-87768468c55a";
+            cim:IdentifiedObject.name      "Bidding Zone EH";
+            nc:BiddingZone.isTradeEnabled  true .
+    
+    <urn:uuid:e3453a3c-8639-4648-a662-d6c15f512965>
+            rdf:type              dcat:Dataset;
+            dct:accessRights      "https://energy.referencedata.eu/Confidentiality/Public";
+            dct:conformsTo        "https://cim.ucaiug.io/ns#" , "https://ap.cim4.eu/EquipmentReliability/2.4" , "https://cim4.eu/ns/nc/2.4#" , "http://iec.ch/TC57/2013/CIM-schema-cim16#";
+            dct:description       "This is the equipment reliability dataset for Espheim part of ReliCapGrid."@en;
+            dct:identifier        "e3453a3c-8639-4648-a662-d6c15f512965";
+            dct:issued            "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dct:license           "https://creativecommons.org/licenses/by/4.0/";
+            dct:publisher         "https://energy.referencedata.eu/test/party/Espheim";
+            dct:requires          <urn:uuid:e3beb946-afc6-4304-9660-517d5115cbb0>;
+            dct:rights            "Copyright";
+            dct:rightsHolder      "ENTSO-E";
+            dct:spatial           "https://energy.referencedata.eu/Test/Frame/Espheim-Power-Transmission-System";
+            dct:title             "20220615_Espheim_ER_1.0.0";
+            dcat:endDate          "2023-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:isVersionOf      <https://energy.referencedata.eu/Test/Model/Espheim-ER>;
+            dcat:keyword          "ER";
+            dcat:startDate        "2022-06-15T22:30:00Z"^^xsd:dateTime;
+            dcat:version          "1.0.0";
+            prov:generatedAtTime  "2022-06-10T07:06:25Z"^^xsd:dateTime;
+            prov:wasGeneratedBy   "https://energy.referencedata.eu/Activity/CGM-ER" .
+}

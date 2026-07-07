@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:nc="https://cim4.eu/ns/nc#"
+    xmlns:cim="https://cim.ucaiug.io/ns#"
+    xmlns:prov="http://www.w3.org/ns/prov#"
+    xmlns:eumd="https://cim4.eu/ns/Metadata-European#"
+    xmlns:dcat="http://www.w3.org/ns/dcat#" > 
+  <dcat:Dataset rdf:about="urn:uuid:60e2df9d-1e05-4066-950e-4fb051a273f5">
+    <dcterms:accessRights rdf:resource="https://energy.referencedata.eu/Confidentiality/Public"/>
+    <dcterms:conformsTo rdf:resource="https://ap.cim4.eu/Contingency/2.3"/>
+    <dcterms:conformsTo>https://cim4.eu/ns/nc/2.4#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/CIM100#</dcterms:conformsTo>
+    <dcterms:conformsTo>http://iec.ch/TC57/2013/CIM-schema-cim16#</dcterms:conformsTo>
+    <dcterms:description xml:lang="en">This is an example of a contingency dataset update. We observe one contingency studying the loss of G1 and L2.</dcterms:description>
+    <prov:generatedAtTime>2025-05-12T07:06:25Z</prov:generatedAtTime>
+    <dcterms:identifier>60e2df9d-1e05-4066-950e-4fb051a273f5</dcterms:identifier>
+    <dcat:isVersionOf rdf:resource="https://energy.referencedata.eu/Test/Model/Belgovia-CO"/>
+    <dcat:previousVersion rdf:resource="urn:uuid:772dc3d3-6526-48fd-a26c-cc40d7fb8083"/>
+    <dcat:startDate>2025-05-17T18:00:00Z</dcat:startDate>
+    <dcat:keyword>CO</dcat:keyword>
+    <dcterms:license>https://creativecommons.org/licenses/by/4.0/</dcterms:license>
+    <dcterms:publisher rdf:resource="https://energy.referencedata.eu/test/party/Belgovia"/>
+    <dcterms:rights>Copyright</dcterms:rights>
+    <dcterms:rightsHolder>ENTSO-E</dcterms:rightsHolder>	
+    <dcterms:requires rdf:resource="urn:uuid:886d71fa-6ca7-4be9-a55d-04c3c49c987c"/>
+    <dcterms:title>20250512_Belgovia_CO_2.0.0</dcterms:title>
+    <dcat:version>2.0.0</dcat:version>
+    <prov:wasGeneratedBy rdf:resource="https://energy.referencedata.eu/Activity/CGM-CO"/>
+    <dcterms:spatial>https://energy.referencedata.eu/Test/Frame/Belgovia-Power-Transmission-System</dcterms:spatial>
+    <dcterms:issued>2025-05-17T18:00:00Z</dcterms:issued>
+  </dcat:Dataset>
+  <cim:ContingencyEquipment rdf:ID="_19bfe9d5-5d04-4c3c-9919-ca1b2d1215ae">
+    <cim:ContingencyElement.Contingency rdf:resource="#_37997e71-cb7d-4a8c-baa6-2a1594956da9"/>
+    <cim:ContingencyEquipment.Equipment rdf:resource="#_550ebe0d-f2b2-48c1-991f-cebea43a21aa"/>
+    <cim:ContingencyEquipment.contingentStatus rdf:resource="https://cim.ucaiug.io/ns#ContingencyEquipmentStatusKind.outOfService"/>
+    <cim:IdentifiedObject.description>The equipment for this contingency; Loss of generation</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>19bfe9d5-5d04-4c3c-9919-ca1b2d1215ae</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>G1</cim:IdentifiedObject.name>
+  </cim:ContingencyEquipment>
+  <cim:ContingencyEquipment rdf:ID="_7ec56068-a714-4445-ae19-dd34429ec722">
+    <cim:ContingencyElement.Contingency rdf:resource="#_7e31c67d-67ba-4592-8ac1-9e806d697c8e"/>
+    <cim:ContingencyEquipment.Equipment rdf:resource="#_d9622e7f-5bf0-4e7e-b766-b8596c6fe4ae"/>
+    <cim:ContingencyEquipment.contingentStatus rdf:resource="https://cim.ucaiug.io/ns#ContingencyEquipmentStatusKind.outOfService"/>
+    <cim:IdentifiedObject.description>The equipment for this contingency; Tie Line loss</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>7ec56068-a714-4445-ae19-dd34429ec722</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>L2</cim:IdentifiedObject.name>
+  </cim:ContingencyEquipment>
+  
+  <nc:OrdinaryContingency rdf:ID="_37997e71-cb7d-4a8c-baa6-2a1594956da9">
+    <nc:Contingency.EquipmentOperator rdf:resource="#_a9dba80c-9dfb-4ebf-b383-446ddc2c4adf"/>
+    <nc:Contingency.normalMustStudy>true</nc:Contingency.normalMustStudy>
+    <cim:IdentifiedObject.description>This is an example of an ordinary contingency; Loss of generation</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>37997e71-cb7d-4a8c-baa6-2a1594956da9</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>CO3</cim:IdentifiedObject.name>
+  </nc:OrdinaryContingency>
+  <nc:OrdinaryContingency rdf:ID="_7e31c67d-67ba-4592-8ac1-9e806d697c8e">
+    <nc:Contingency.EquipmentOperator rdf:resource="#_a9dba80c-9dfb-4ebf-b383-446ddc2c4adf"/>
+    <nc:Contingency.normalMustStudy>true</nc:Contingency.normalMustStudy>
+    <cim:IdentifiedObject.description>This is an example of an ordinary contingency;Tie Line loss</cim:IdentifiedObject.description>
+    <cim:IdentifiedObject.mRID>7e31c67d-67ba-4592-8ac1-9e806d697c8e</cim:IdentifiedObject.mRID>
+    <cim:IdentifiedObject.name>CO2</cim:IdentifiedObject.name>
+  </nc:OrdinaryContingency>
+  
+</rdf:RDF>

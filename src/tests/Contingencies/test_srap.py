@@ -161,6 +161,5 @@ def test_srap():
 
     test_summary = (test1_result * (not test2_result_a) * test2_result_b * (not test3_result) * test4_result * (
         not test5_result_a) * test5_result_b * (not test6_result))
-
-    return test_summary
+    assert bool(test_summary)
 

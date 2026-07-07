@@ -23,6 +23,8 @@ from typing import Any, Optional, TYPE_CHECKING
 
 import numpy as np
 
+from VeraGridEngine.enumerations import EngineType
+
 if TYPE_CHECKING:
     from VeraGrid.Gui.Main.SubClasses.simulations import SimulationsMain
 
@@ -1135,12 +1137,15 @@ def build_holistic_overview_lines(
     selected_labels: list[str] = list()
     driver_index: int = 0
     selected_index: int = 0
-    active_study_name: str = app.ui.available_results_to_color_comboBox.currentText().strip()
+    active_study_data: str | None = app.ui.available_results_to_color_comboBox.currentData()
+    active_study_name: str = str(active_study_data) if active_study_data is not None else ""
 
     lines.append("This record merges the current grid inputs, session state, and study-result availability.")
     lines.append(f"project_name: {app.circuit.name}")
     lines.append(f"active_study: {active_study_name}")
-    lines.append(f"solver_name: {app.ui.engineComboBox.currentText().strip()}")
+    solver_data: EngineType | None = app.ui.engineComboBox.currentData()
+    solver_name: str = solver_data.value if isinstance(solver_data, EngineType) else ""
+    lines.append(f"solver_name: {solver_name}")
     lines.append(f"bus_count: {app.circuit.get_bus_number()}")
     lines.append(
         f"branch_count: {app.circuit.get_branch_number(add_hvdc=False, add_vsc=False, add_switch=True)}"
@@ -1264,8 +1269,12 @@ def build_runtime_knowledge_snapshot(app: "SimulationsMain") -> RuntimeKnowledge
     index: int = 0
 
     summary_lines.append(f"project_name: {app.circuit.name}")
-    summary_lines.append(f"active_study: {app.ui.available_results_to_color_comboBox.currentText().strip()}")
-    summary_lines.append(f"solver_name: {app.ui.engineComboBox.currentText().strip()}")
+    active_study_data: str | None = app.ui.available_results_to_color_comboBox.currentData()
+    active_study_name: str = str(active_study_data) if active_study_data is not None else ""
+    summary_lines.append(f"active_study: {active_study_name}")
+    solver_data: EngineType | None = app.ui.engineComboBox.currentData()
+    solver_name: str = solver_data.value if isinstance(solver_data, EngineType) else ""
+    summary_lines.append(f"solver_name: {solver_name}")
     summary_lines.append(f"bus_count: {app.circuit.get_bus_number()}")
     summary_lines.append(
         f"branch_count: {app.circuit.get_branch_number(add_hvdc=False, add_vsc=False, add_switch=True)}"

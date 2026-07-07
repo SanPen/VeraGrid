@@ -8,7 +8,7 @@ import numpy as np
 from VeraGridEngine.api import *
 
 
-def test_multi_circuit_deep_copy() -> bool:
+def test_multi_circuit_deep_copy() -> None:
     """
     In this test we are going to:
     - make a deep copy of the original circuit
@@ -44,5 +44,5 @@ def test_multi_circuit_deep_copy() -> bool:
     for elm, elm_copy in zip(main_circuit.get_generators(), main_circuit_cpy.get_generators()):
         assert np.all(np.isclose(elm.P_prof.toarray() * 3.0, elm_copy.P_prof.toarray()))
 
-    return True
+    pass
 

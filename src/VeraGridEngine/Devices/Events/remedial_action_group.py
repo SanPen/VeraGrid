@@ -7,6 +7,7 @@ from __future__ import annotations
 from typing import Union, Tuple
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType, GCProp
 from VeraGridEngine.Devices.Events.contingency_group import ContingencyGroup
+from VeraGridEngine.enumerations import PrpCat
 
 
 class RemedialActionGroup(EditableDevice):
@@ -16,8 +17,20 @@ class RemedialActionGroup(EditableDevice):
     __slots__ = ('category', '_conn_group')
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(key='category', units='', tpe=str, definition='Some tag to category the contingency group'),
-        GCProp(key='conn_group', units='', tpe=DeviceType.ContingencyGroupDevice, definition='Contingency group'),
+        GCProp(
+            prop_name='category',
+            units='',
+            tpe=str,
+            definition='Some tag to category the contingency group',
+            cat=[PrpCat.REL],
+        ),
+        GCProp(
+            prop_name='conn_group',
+            units='',
+            tpe=DeviceType.ContingencyGroupDevice,
+            definition='Contingency group',
+            cat=[PrpCat.REL],
+        ),
     )
 
     def __init__(self,

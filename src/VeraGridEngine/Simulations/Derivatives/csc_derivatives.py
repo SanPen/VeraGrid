@@ -1862,12 +1862,13 @@ def dLossvsc_dQtvsc_csc(nvsc, u_vsc_qt, alpha2, alpha3, Vm, Pt, Qt, T_vsc) -> CS
     return mat
 
 @njit()
-def dIvsc_dPfpvsc_csc(k_vsc_has_dc_n, u_vsc_pfp, Vm, Fdcn_vsc) -> CSC:
+def dIvsc_dPfpvsc_csc(k_vsc_has_dc_n, u_vsc_pfp, Vm, Va, Fdcn_vsc) -> CSC:
     """
     Compute dIvsc_dPfpvsc in CSC format.
     :param k_vsc_has_dc_n: array of VSC indices with negative poles.
     :param u_vsc_pfp: Column indices for the sparse matrix.
     :param Vm: Voltage magnitudes at buses.
+    :param Va: Voltage angles at buses (used for the signed DC voltage Vm*cos(Va)).
     :param Fdcn_vsc: From negative bus indices for VSCs.
     :return: Sparse matrix in CSC format.
     """
@@ -1887,7 +1888,7 @@ def dIvsc_dPfpvsc_csc(k_vsc_has_dc_n, u_vsc_pfp, Vm, Fdcn_vsc) -> CSC:
         fn = Fdcn_vsc[vsc]
 
         if fn > -1:
-            val = Vm[fn]
+            val = Vm[fn] * np.cos(Va[fn])  # signed DC voltage of the neutral bus
 
             # Populate COO format arrays
             Tx[nnz] = val
@@ -1901,12 +1902,13 @@ def dIvsc_dPfpvsc_csc(k_vsc_has_dc_n, u_vsc_pfp, Vm, Fdcn_vsc) -> CSC:
     return mat
 
 @njit()
-def dIvsc_dPfnvsc_csc(k_vsc_has_dc_n, u_vsc_pfn, Vm, Fdcp_vsc) -> CSC:
+def dIvsc_dPfnvsc_csc(k_vsc_has_dc_n, u_vsc_pfn, Vm, Va, Fdcp_vsc) -> CSC:
     """
     Compute dIvsc_dPfnvsc in CSC format.
     :param k_vsc_has_dc_n: array of VSC indices with negative poles.
     :param u_vsc_pfn: Column indices for the sparse matrix.
     :param Vm: Voltage magnitudes at buses.
+    :param Va: Voltage angles at buses (used for the signed DC voltage Vm*cos(Va)).
     :param Fdcp_vsc: From positive bus indices for VSCs.
     :return: Sparse matrix in CSC format.
     """
@@ -1923,7 +1925,7 @@ def dIvsc_dPfnvsc_csc(k_vsc_has_dc_n, u_vsc_pfn, Vm, Fdcp_vsc) -> CSC:
 
     for k, vsc in enumerate(u_vsc_pfn):
         fp = Fdcp_vsc[vsc]
-        val = Vm[fp]
+        val = Vm[fp] * np.cos(Va[fp])  # signed DC voltage of the pole bus
 
         # Populate COO format arrays
         Tx[nnz] = val
@@ -1940,7 +1942,7 @@ def dIvsc_dPfnvsc_csc(k_vsc_has_dc_n, u_vsc_pfn, Vm, Fdcp_vsc) -> CSC:
 @njit()
 def dIvsc_dVm_csc(k_vsc_has_dc_n: IntVec,
                   nbus: int,
-                  i_u_vm: IntVec, Pfp_vsc, Pfn_vsc, Fdcp_vsc, Fdcn_vsc) -> CSC:
+                  i_u_vm: IntVec, Pfp_vsc, Pfn_vsc, Va, Fdcp_vsc, Fdcn_vsc) -> CSC:
     """
     Compute dIvsc_dVm in CSC format.
     :param k_vsc_has_dc_n: array of VSC indices with negative poles.
@@ -1948,6 +1950,7 @@ def dIvsc_dVm_csc(k_vsc_has_dc_n: IntVec,
     :param i_u_vm: Column indices for the sparse matrix.
     :param Pfp_vsc: Active power flows from positive bus to VSC.
     :param Pfn_vsc: Active power flows from negative bus to VSC.
+    :param Va: Voltage angles at buses (used for the signed DC voltage Vm*cos(Va)).
     :param Fdcp_vsc: From positive bus indices for VSCs.
     :param Fdcn_vsc: From negative bus indices for VSCs.
     :return: Sparse matrix in CSC format.
@@ -1971,14 +1974,14 @@ def dIvsc_dVm_csc(k_vsc_has_dc_n: IntVec,
         fn = Fdcn_vsc[kidx]
 
         if j_lookup[fp] >= 0:
-            Tx[nnz] = Pfn_vsc[kidx]
+            Tx[nnz] = Pfn_vsc[kidx] * np.cos(Va[fp])  # d(balance)/dVm[pole], signed
             Ti[nnz] = kidx
             Tj[nnz] = j_lookup[fp]
             nnz += 1
 
         if fn > -1:
             if j_lookup[fn] >= 0:
-                Tx[nnz] = Pfp_vsc[kidx]
+                Tx[nnz] = Pfp_vsc[kidx] * np.cos(Va[fn])  # d(balance)/dVm[neutral], signed
                 Ti[nnz] = kidx
                 Tj[nnz] = j_lookup[fn]
                 nnz += 1
@@ -1986,6 +1989,109 @@ def dIvsc_dVm_csc(k_vsc_has_dc_n: IntVec,
     # # convert to csc
     mat.fill_from_coo(Ti, Tj, Tx, nnz)
 
+    return mat
+
+
+@njit()
+def dDroopvsc_dVm_csc(n_droop: int, nbus: int, i_u_vm, k_vsc_pfp_droop, Fdcp_vsc, dpfp_droop_slope) -> CSC:
+    """
+    Compute the d(droop equation)/dVm block
+    :param n_droop: number of droop equations (rows)
+    :param nbus: number of buses
+    :param i_u_vm: unknown-Vm bus indices (column space)
+    :param k_vsc_pfp_droop: VSC index of each droop equation
+    :param Fdcp_vsc: from (positive pole) bus index of each VSC
+    :param dpfp_droop_slope: d(Pfp)/dVm slope of each droop equation
+    :return: CSC block.
+    """
+    j_lookup = make_lookup(nbus, i_u_vm)
+    mat = CSC(n_droop, len(i_u_vm), n_droop, False)
+    Tx = np.empty(n_droop, dtype=np.float64)
+    Ti = np.empty(n_droop, dtype=np.int32)
+    Tj = np.empty(n_droop, dtype=np.int32)
+    nnz = 0
+    for i in range(n_droop):
+        slope = dpfp_droop_slope[i]
+        if slope != 0.0:
+            jc = j_lookup[Fdcp_vsc[k_vsc_pfp_droop[i]]]
+            if jc >= 0:
+                Tx[nnz] = -slope
+                Ti[nnz] = i
+                Tj[nnz] = jc
+                nnz += 1
+    mat.fill_from_coo(Ti, Tj, Tx, nnz)
+    return mat
+
+
+@njit()
+def dVmdcDiff_dVm_csc(n_diff: int, nbus: int, i_u_vm, k_vsc_vmdc_diff, Fdcp_vsc, Fdcn_vsc, Va) -> CSC:
+    """
+    Compute the d/dVm block of the bipolar Vm_dc pole-to-pole equation
+    (V[F].real - V[F_dcn].real) - Udc_set = 0. Using V.real = Vm*cos(Va):
+    d/dVm[F] = cos(Va[F]) and d/dVm[F_dcn] = -cos(Va[F_dcn]).
+    :param n_diff: number of pole-to-pole equations (rows)
+    :param nbus: number of buses
+    :param i_u_vm: unknown-Vm bus indices (column space)
+    :param k_vsc_vmdc_diff: VSC index of each pole-to-pole equation
+    :param Fdcp_vsc: from (positive pole) bus index of each VSC
+    :param Fdcn_vsc: negative pole bus index of each VSC
+    :param Va: voltage angles at buses (used for the signed DC voltage Vm*cos(Va))
+    :return: CSC block.
+    """
+    j_lookup = make_lookup(nbus, i_u_vm)
+    max_nnz = 2 * n_diff
+    mat = CSC(n_diff, len(i_u_vm), max_nnz, False)
+    Tx = np.empty(max_nnz, dtype=np.float64)
+    Ti = np.empty(max_nnz, dtype=np.int32)
+    Tj = np.empty(max_nnz, dtype=np.int32)
+    nnz = 0
+    for i in range(n_diff):
+        k = k_vsc_vmdc_diff[i]
+        fp = Fdcp_vsc[k]
+        fn = Fdcn_vsc[k]
+        jp = j_lookup[fp]
+        if jp >= 0:
+            Tx[nnz] = np.cos(Va[fp])  # d(V[F].real)/dVm[F]
+            Ti[nnz] = i
+            Tj[nnz] = jp
+            nnz += 1
+        if fn > -1:
+            jn = j_lookup[fn]
+            if jn >= 0:
+                Tx[nnz] = -np.cos(Va[fn])  # -d(V[F_dcn].real)/dVm[F_dcn]
+                Ti[nnz] = i
+                Tj[nnz] = jn
+                nnz += 1
+    mat.fill_from_coo(Ti, Tj, Tx, nnz)
+    return mat
+
+
+@njit()
+def dunit_vsc_csc(n_eq: int, nvsc: int, k_vsc_eq, u_vsc_col) -> CSC:
+    """
+    Block for a VSC equation that depends linearly (coefficient +1) on one unknown
+    Row i relates to the equation, column to the unknown 
+    To recycle some code.
+    :param n_eq: number of equations (rows)
+    :param nvsc: total number of VSCs (domain size for the lookup)
+    :param k_vsc_eq: VSC index of each equation
+    :param u_vsc_col: unknown VSC indices
+    :return: CSC block
+    """
+    col_lookup = make_lookup(nvsc, u_vsc_col)
+    mat = CSC(n_eq, len(u_vsc_col), n_eq, False)
+    Tx = np.empty(n_eq, dtype=np.float64)
+    Ti = np.empty(n_eq, dtype=np.int32)
+    Tj = np.empty(n_eq, dtype=np.int32)
+    nnz = 0
+    for i in range(n_eq):
+        c = col_lookup[k_vsc_eq[i]]
+        if c >= 0:
+            Tx[nnz] = 1.0
+            Ti[nnz] = i
+            Tj[nnz] = c
+            nnz += 1
+    mat.fill_from_coo(Ti, Tj, Tx, nnz)
     return mat
 
 

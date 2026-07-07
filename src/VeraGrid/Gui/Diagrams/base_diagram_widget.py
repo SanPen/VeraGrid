@@ -4,14 +4,15 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 from typing import List, Set, Dict, Union, Tuple, Generator, TYPE_CHECKING
+from time import perf_counter
 import numpy as np
 import cv2
 from matplotlib import pyplot as plt
 
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QImage
+from PySide6 import QtCore
+from PySide6.QtGui import QIcon, QImage
 from PySide6.QtWidgets import (QListView, QTableView, QVBoxLayout, QHBoxLayout, QFrame, QSplitter, QAbstractItemView,
-                               QGraphicsItem)
+                               QGraphicsItem, QToolBox, QComboBox)
 
 from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
@@ -30,13 +31,14 @@ from VeraGridEngine.Devices.Diagrams.schematic_diagram import SchematicDiagram
 from VeraGridEngine.Devices.Diagrams.map_diagram import MapDiagram
 from VeraGridEngine.Simulations.types import DRIVER_OBJECTS
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.enumerations import SimulationTypes, ResultTypes
+from VeraGridEngine.enumerations import SimulationTypes, ResultTypes, PrpCat
 import VeraGridEngine.Devices.Diagrams.palettes as palettes
 
 from VeraGrid.Gui.Diagrams.graphics_manager import GraphicsManager, ALL_GRAPHICS
 from VeraGrid.Gui.general_dialogues import DeleteDialogue
 from VeraGrid.Gui.messages import yes_no_question, info_msg
 from VeraGrid.Gui.object_model import ObjectsModel
+import VeraGrid.Gui.gui_functions as gf
 
 if TYPE_CHECKING:
     from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import MapLibraryModel
@@ -96,36 +98,35 @@ def qimage_to_cv(qimage: QImage, logger: Logger, force_disk=False) -> np.ndarray
         return opencv_image
     else:
         try:
-            # convert picture using the memory
-            # we need to delete the alpha channel, otherwise the video frame is not saved
-            cv_mat = np.array(qimage.constBits()).reshape(height, width, 4).astype(np.uint8)[:, :, :3]
+            # Convert to a 4-byte-per-pixel format so row padding stays aligned and predictable.
+            if qimage.format() != QImage.Format.Format_RGBA8888:
+                qimage = qimage.convertToFormat(QImage.Format.Format_RGBA8888)
+
+            stride = qimage.bytesPerLine()
+            ptr = qimage.constBits()
+            buffer = np.frombuffer(ptr, dtype=np.uint8, count=height * stride)
+            rgba_mat = buffer.reshape((height, stride // 4, 4))[:, :width, :]
+            cv_mat = cv2.cvtColor(rgba_mat, cv2.COLOR_RGBA2BGR)
 
             return cv_mat
 
-        except ValueError as e:
+        except (ValueError, TypeError, BufferError) as e:
 
             logger.add_error(msg=f"Could not convert frame: {e}, failed over to second image conversion method.")
 
             try:
-                # Convert the QImage to RGB format if it is not already in that format
-                qimage = qimage.convertToFormat(QImage.Format.Format_RGB888)
+                # Fallback to a 4-byte RGB32 image and then drop the alpha channel explicitly.
+                qimage = qimage.convertToFormat(QImage.Format.Format_RGB32)
 
-                # Get the pointer to the data and stride (bytes per line)
-                ptr = qimage.bits()
-                # ptr.itemsize = qimage.sizeInBytes()  # Set the size of the memoryview
-                stride = qimage.bytesPerLine()  # Get the number of bytes per line (width * channels + padding)
+                ptr = qimage.constBits()
+                stride = qimage.bytesPerLine()
 
-                # Create a numpy array with the correct shape based on the stride
-                arr = np.array(ptr).reshape((height, stride // 3, 3)).astype(np.uint8)  # Adjust for stride
-
-                # Crop the width to the actual image width (in case stride > width * channels)
+                arr = np.frombuffer(ptr, dtype=np.uint8, count=height * stride).reshape((height, stride // 4, 4))
                 arr = arr[:, :width, :]
-
-                # Convert RGB to BGR for OpenCV
-                cv_mat = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
+                cv_mat = cv2.cvtColor(arr, cv2.COLOR_BGRA2BGR)
 
                 return cv_mat
-            except ValueError as e2:
+            except (ValueError, TypeError, BufferError) as e2:
                 logger.add_error(msg=f"Could not convert frame: {e2}, failed over to disk converison method")
 
                 # try the last method, saving to disk and reading again
@@ -141,6 +142,9 @@ class BaseDiagramWidget(QSplitter):
     for the schematic and the map
     """
 
+    LIBRARY_TRANSLATION_CONTEXT: str = "BlockEditorWindow"
+    PROPERTIES_TRANSLATION_CONTEXT: str = "TemplateDeviceEditorDialog"
+
     def __init__(self,
                  gui: VeraGridMainGUI | DiagramsMain,
                  diagram: Union[SchematicDiagram, MapDiagram],
@@ -148,8 +152,9 @@ class BaseDiagramWidget(QSplitter):
                  time_index: Union[None, int] = None):
         """
         Constructor
-        :param circuit:
+        :param gui:
         :param diagram:
+        :param library_model:
         :param time_index:
         """
         QSplitter.__init__(self)
@@ -168,6 +173,26 @@ class BaseDiagramWidget(QSplitter):
         # change_font_size(self.object_editor_table.verticalHeader(), 9)
         # change_font_size(self.object_editor_table.horizontalHeader(), 9)
 
+        self.filter_combo = QComboBox()
+        prop_filter_mdl = gf.ComboModel(
+            icon_enum_values=[
+                (PrpCat.All,":/Icons/icons/edit.png"),
+                (PrpCat.TP,":/Icons/icons/automatic_layout.png"),
+                (PrpCat.PF,":/Icons/icons/pf.png"),
+                (PrpCat.PF3,":/Icons/icons/pf3.png"),
+                (PrpCat.SC,":/Icons/icons/short_circuit.png"),
+                (PrpCat.OPF,":/Icons/icons/dcopf.png"),
+                (PrpCat.CON,":/Icons/icons/otdf.png"),
+                (PrpCat.REL,":/Icons/icons/reliability.png"),
+                (PrpCat.NTC,":/Icons/icons/ntc_opf.png"),
+                (PrpCat.INV,":/Icons/icons/expansion_planning.png"),
+                (PrpCat.RMS,":/Icons/icons/dyn.png"),
+                (PrpCat.EMT,":/Icons/icons/dyn_emt.png"),
+            ],
+            translate=self.tr
+        )
+        self.filter_combo.setModel(prop_filter_mdl)
+
         # Actual libraryView object
         self.library_view = QListView(self)
         self.library_view.setViewMode(self.library_view.ViewMode.ListMode)
@@ -178,7 +203,7 @@ class BaseDiagramWidget(QSplitter):
         self.library_model = library_model
         self.library_view.setModel(self.library_model)
 
-        # create the grid name editor
+        # create library frame
         self.frame1 = QFrame()
         self.frame1_layout = QVBoxLayout()
         self.frame1_layout.setContentsMargins(0, 0, 0, 0)
@@ -186,22 +211,39 @@ class BaseDiagramWidget(QSplitter):
         self.frame1_layout.addWidget(self.library_view)
         self.frame1.setLayout(self.frame1_layout)
 
-        # Add the two objects into a layout
-        splitter2 = QSplitter(self)
-        splitter2.addWidget(self.frame1)
-        splitter2.addWidget(self.object_editor_table)
-        splitter2.setOrientation(Qt.Orientation.Vertical)
-        self.addWidget(splitter2)
-        # self.addWidget(self.editor_graphics_view)
+        # create properties frame
+        self.frame2 = QFrame()
+        self.frame2_layout = QVBoxLayout()
+        self.frame2_layout.setContentsMargins(0, 0, 0, 0)
 
-        # factor 1:10
-        splitter2.setStretchFactor(0, 2)
-        splitter2.setStretchFactor(1, 5)
+        self.frame2.setLayout(self.frame2_layout)
+        self.frame2_layout.addWidget(self.filter_combo)
+        self.frame2_layout.addWidget(self.object_editor_table)
+
+        # Add the library and properties views as toolbox pages.
+        self.left_panel_toolbox: QToolBox = QToolBox(self)
+        self.left_panel_toolbox.addItem(
+            self.frame1,
+            QIcon(":/Icons/icons/Catalogue.png"),
+            self._translate_library_label(),
+        )
+        self.left_panel_toolbox.addItem(
+            self.frame2,
+            QIcon(":/Icons/icons/data.png"),
+            self._translate_properties_label(),
+        )
+        self.addWidget(self.left_panel_toolbox)
+        # self.addWidget(self.editor_graphics_view)
 
         # self.setStretchFactor(0, 0)
         # self.setStretchFactor(1, 2000)
+
+        self.api_object: ALL_DEV_TYPES | None = None
         # --------------------------------------------------------------------------------------------------------------
 
+        self.filter_combo.currentIndexChanged.connect(self.refresh_editor_model)
+
+        # --------------------------------------------------------------------------------------------------------------
         # diagram to store the objects locations
         self.diagram: Union[SchematicDiagram, MapDiagram] = diagram
 
@@ -218,6 +260,68 @@ class BaseDiagramWidget(QSplitter):
 
         # video pointer
         self._video: Union[None, cv2.VideoWriter] = None
+        self._video_export_active: bool = False
+
+    def changeEvent(self, event: QtCore.QEvent) -> None:
+        """
+        Refresh runtime-owned diagram strings after a Qt language change.
+
+        :param event: Incoming Qt change event.
+        :return: None.
+        """
+        QSplitter.changeEvent(self, event)
+
+        if event.type() == QtCore.QEvent.Type.LanguageChange:
+            self.refresh_runtime_translations()
+        else:
+            pass
+
+    def _translate_library_label(self) -> str:
+        """
+        Return the translated label used by the shared diagram library tab.
+
+        :return: User-facing library label.
+        """
+        return QtCore.QCoreApplication.translate(
+            self.LIBRARY_TRANSLATION_CONTEXT,
+            "Library",
+        )
+
+    def _translate_properties_label(self) -> str:
+        """
+        Return the translated label used by the shared diagram properties tab.
+
+        :return: User-facing properties label.
+        """
+        return QtCore.QCoreApplication.translate(
+            self.PROPERTIES_TRANSLATION_CONTEXT,
+            "Properties",
+        )
+
+    def refresh_runtime_translations(self) -> None:
+        """
+        Refresh the diagram strings created directly from Python code.
+
+        :return: None.
+        """
+        self.left_panel_toolbox.setItemText(0, self._translate_library_label())
+        self.left_panel_toolbox.setItemText(1, self._translate_properties_label())
+
+    def set_video_export_active(self, value: bool) -> None:
+        """
+        Set whether the diagram is being updated for video export.
+
+        :param value: Export mode flag
+        """
+        self._video_export_active = value
+
+    def is_video_export_active(self) -> bool:
+        """
+        Get whether the diagram is being updated for video export.
+
+        :return: Export mode flag
+        """
+        return self._video_export_active
 
     def items(self) -> Generator[ALL_GRAPHICS, None, None]:
         """
@@ -254,7 +358,7 @@ class BaseDiagramWidget(QSplitter):
         """
         self.diagram.name = val
 
-    def _get_selected(self) -> List[GenericDiagramWidget]:
+    def get_selected(self) -> List[GenericDiagramWidget]:
         """
 
         :return:
@@ -415,7 +519,7 @@ class BaseDiagramWidget(QSplitter):
         Delete the selected items from the diagram
         :param delete_from_db:
         """
-        self.delete_with_dialogue(selected=self._get_selected(),
+        self.delete_with_dialogue(selected=self.get_selected(),
                                   delete_from_db=delete_from_db)
 
     def delete_diagram_elements(self, elements: List[ALL_DEV_TYPES]):
@@ -452,19 +556,34 @@ class BaseDiagramWidget(QSplitter):
         """
         return self._time_index
 
+    def refresh_editor_model(self):
+        """
+        Function to call when the objects' filter changes
+        """
+        if self.api_object is not None:
+            self.set_editor_model(api_object=self.api_object)
+
     def set_editor_model(self, api_object: ALL_DEV_TYPES):
         """
         Set an api object to appear in the editable table view of the editor
         :param api_object: any EditableDevice
         """
         template_elm, dictionary_of_lists = self.circuit.get_dictionary_of_lists(api_object.device_type)
-        mdl = ObjectsModel(objects=[api_object],
-                           property_list=list(api_object.property_list),
-                           time_index=self.get_time_index(),
-                           parent=self.object_editor_table,
-                           editable=True,
-                           transposed=True,
-                           dictionary_of_lists=dictionary_of_lists)
+
+        filter_prop = self.filter_combo.currentData()
+        self.api_object = api_object
+
+        mdl = ObjectsModel(
+            objects=[api_object],
+            property_list=list(api_object.property_list),
+            time_index=self.get_time_index(),
+            parent=self.object_editor_table,
+            editable=True,
+            transposed=True,
+            dictionary_of_lists=dictionary_of_lists,
+            properties_filter=filter_prop,
+            error_msg_ptr=self.gui.show_error_toast
+        )
 
         self.object_editor_table.setModel(mdl)
 
@@ -661,6 +780,19 @@ class BaseDiagramWidget(QSplitter):
         """
         self.graphics_manager.clear()
 
+    def prepare_to_delete(self) -> None:
+        """
+        Release widget-owned state before the Qt widget itself is destroyed.
+        """
+        self.clear()
+        self.object_editor_table.setModel(None)
+        self.api_object = None
+        self.results_dictionary.clear()
+
+        if self._video is not None:
+            self._video.release()
+            self._video = None
+
     def set_data(self, diagram: SchematicDiagram):
         """
         Set the diagram layout and redraw.
@@ -695,6 +827,14 @@ class BaseDiagramWidget(QSplitter):
                        vsc_active: IntVec = None,
                        ma: Vec = None,
                        tau: Vec = None,
+                       gen_p: Vec = None,
+                       gen_q: Vec = None,
+                       gen_names: np.ndarray | list[str] | None = None,
+                       battery_p: Vec = None,
+                       battery_q: Vec = None,
+                       battery_names: np.ndarray | list[str] | None = None,
+                       shunt_q: Vec = None,
+                       shunt_names: np.ndarray | list[str] | None = None,
                        fluid_node_p2x_flow: Vec = None,
                        fluid_node_current_level: Vec = None,
                        fluid_node_spillage: Vec = None,
@@ -702,6 +842,7 @@ class BaseDiagramWidget(QSplitter):
                        fluid_node_flow_out: Vec = None,
                        fluid_path_flow: Vec = None,
                        fluid_injection_flow: Vec = None,
+                       t_idx: int | None = None,
                        use_flow_based_width: bool = False,
                        min_branch_width: int = 5,
                        max_branch_width=5,
@@ -734,6 +875,14 @@ class BaseDiagramWidget(QSplitter):
         :param vsc_active:
         :param ma:
         :param tau:
+        :param gen_p:
+        :param gen_q:
+        :param gen_names:
+        :param battery_p:
+        :param battery_q:
+        :param battery_names:
+        :param shunt_q:
+        :param shunt_names:
         :param fluid_node_p2x_flow:
         :param fluid_node_current_level:
         :param fluid_node_spillage:
@@ -801,7 +950,8 @@ class BaseDiagramWidget(QSplitter):
                            max_branch_width=5,
                            min_bus_width=20,
                            max_bus_width=20,
-                           cmap: palettes.Colormaps = None):
+                           cmap: palettes.Colormaps = None,
+                           t_idx: int | None = None):
         pass
 
     def disable_all_results_tags(self):
@@ -861,8 +1011,6 @@ class BaseDiagramWidget(QSplitter):
         image = self.get_image()
         w = image.width()
         h = image.height()
-        cv2_image = qimage_to_cv(image, logger)
-        w2, h2, _ = cv2_image.shape
 
         if fname.endswith('.mp4'):
             self._video = cv2.VideoWriter(filename=fname,
@@ -897,6 +1045,46 @@ class BaseDiagramWidget(QSplitter):
 
         if cv2_image is not None:
             self._video.write(cv2_image)
+        else:
+            pass
+
+    def capture_video_frame_timed(self, w: int, h: int, logger: Logger) -> Tuple[float, float]:
+        """
+        Save a video frame and report the capture and encoder durations separately.
+
+        :param w: Expected frame width
+        :param h: Expected frame height
+        :param logger: Logger instance
+        :return: Tuple ``(capture_time_s, write_time_s)``
+        """
+        capture_start_time: float = perf_counter()
+        image = self.get_image()
+        w2: int = image.width()
+        h2: int = image.height()
+
+        if w != w2:
+            logger.add_error(f"Width {w2} different from expected width {w}")
+        else:
+            pass
+
+        if h != h2:
+            logger.add_error(f"Height {h2} different from expected width {h}")
+        else:
+            pass
+
+        cv2_image: np.ndarray | None = qimage_to_cv(image, logger)
+        capture_end_time: float = perf_counter()
+
+        write_start_time: float = capture_end_time
+        if cv2_image is not None:
+            self._video.write(cv2_image)
+        else:
+            pass
+        write_end_time: float = perf_counter()
+
+        capture_elapsed_time: float = capture_end_time - capture_start_time
+        write_elapsed_time: float = write_end_time - write_start_time
+        return capture_elapsed_time, write_elapsed_time
 
     def end_video_recording(self):
         """

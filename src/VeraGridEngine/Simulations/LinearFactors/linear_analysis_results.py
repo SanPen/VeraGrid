@@ -6,7 +6,7 @@
 import numpy as np
 import pandas as pd
 from VeraGridEngine.Simulations.results_table import ResultsTable
-from VeraGridEngine.Simulations.results_template import ResultsTemplate
+from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
 from VeraGridEngine.basic_structures import IntVec, Vec, StrVec, Mat, CxVec
 from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
 
@@ -15,6 +15,25 @@ class LinearAnalysisResults(ResultsTemplate):
     """
     LinearAnalysisResults
     """
+
+    LOCAL_RESULTS_DECLARATIONS = (
+        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='hvdc_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='vsc_names', tpe=StrVec, old_names=list(), expandable=False),
+        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list(), expandable=False),
+        ResultsProperty(name='PTDF', tpe=Mat, old_names=list(), expandable=False),
+        ResultsProperty(name='LODF', tpe=Mat, old_names=list(), expandable=False),
+        ResultsProperty(name='HvdcDF', tpe=Mat, old_names=list(), expandable=False),
+        ResultsProperty(name='HvdcODF', tpe=Mat, old_names=list(), expandable=False),
+        ResultsProperty(name='VscDF', tpe=Mat, old_names=list(), expandable=False),
+        ResultsProperty(name='VscODF', tpe=Mat, old_names=list(), expandable=False),
+        ResultsProperty(name='Sf', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='Sbus', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='voltage', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='loading', tpe=Vec, old_names=list(), expandable=False),
+    )
+
     __slots__ = (
         "branch_names",
         "bus_names",
@@ -46,14 +65,24 @@ class LinearAnalysisResults(ResultsTemplate):
         """
         ResultsTemplate.__init__(self,
                                  name='Linear Analysis',
-                                 available_results=[ResultTypes.PTDF,
-                                                    ResultTypes.LODF,
-                                                    ResultTypes.HvdcPTDF,
-                                                    ResultTypes.HvdcODF,
-                                                    ResultTypes.VscPTDF,
-                                                    ResultTypes.VscODF,
-                                                    ResultTypes.BranchActivePowerFrom,
-                                                    ResultTypes.BranchLoading],
+                                 available_results={
+                                     ResultTypes.BusResults: [
+                                         ResultTypes.PTDF,
+                                         ResultTypes.BusActivePower
+                                     ],
+                                     ResultTypes.BranchResults: [
+                                         ResultTypes.LODF,
+                                         ResultTypes.BranchActivePowerFrom,
+                                         ResultTypes.BranchLoading],
+                                     ResultTypes.HvdcResults: [
+                                         ResultTypes.HvdcPTDF,
+                                         ResultTypes.HvdcODF,
+                                     ],
+                                     ResultTypes.VscResults: [
+                                         ResultTypes.VscPTDF,
+                                         ResultTypes.VscODF,
+                                     ]
+                                 },
                                  time_array=None,
                                  clustering_results=None,
                                  study_results_type=StudyResultsType.LinearAnalysis)
@@ -83,23 +112,6 @@ class LinearAnalysisResults(ResultsTemplate):
         self.Sbus: Vec = np.zeros(self.n_bus)
         self.voltage: CxVec = np.ones(self.n_bus, dtype=complex)
         self.loading: Vec = np.zeros(self.n_br)
-
-        self.register(name='branch_names', tpe=StrVec)
-        self.register(name='bus_names', tpe=StrVec)
-        self.register(name='bus_types', tpe=IntVec)
-        self.register(name='PTDF', tpe=Mat)
-        self.register(name='LODF', tpe=Mat)
-
-        self.register(name='HvdcDF', tpe=Mat)
-        self.register(name='HvdcODF', tpe=Mat)
-
-        self.register(name='VscDF', tpe=Mat)
-        self.register(name='VscODF', tpe=Mat)
-
-        self.register(name='Sf', tpe=Vec)
-        self.register(name='Sbus', tpe=Vec)
-        self.register(name='voltage', tpe=CxVec)
-        self.register(name='loading', tpe=Vec)
 
     @property
     def n_br(self):
@@ -239,6 +251,16 @@ class LinearAnalysisResults(ResultsTemplate):
                                 ylabel='(%)',
                                 units='(%)')
 
+        elif result_type == ResultTypes.BusActivePower:
+
+            return ResultsTable(data=self.Sbus,
+                                index=self.bus_names,
+                                idx_device_type=DeviceType.BusDevice,
+                                columns=[result_type.value],
+                                cols_device_type=DeviceType.NoDevice,
+                                title=result_type.value,
+                                ylabel='(MW)',
+                                units='(MW)')
+
         else:
             raise Exception('Result type not understood:' + str(result_type))
-

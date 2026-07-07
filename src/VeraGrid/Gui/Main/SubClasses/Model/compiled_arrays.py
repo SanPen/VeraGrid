@@ -32,10 +32,12 @@ class CompiledArraysMain(ServerMain):
         self.compiled_arrays: CompiledArraysModule | None = None
 
         # array modes
-        self.ui.arrayModeComboBox.addItem('real')
-        self.ui.arrayModeComboBox.addItem('imag')
-        self.ui.arrayModeComboBox.addItem('abs')
-        self.ui.arrayModeComboBox.addItem('complex')
+        self.ui.arrayModeComboBox.setModel(
+            gf.ComboModel(text_items=[('real', 'real'),
+                                      ('imag', 'imag'),
+                                      ('abs', 'abs'),
+                                      ('complex', 'complex')])
+        )
 
         # Buttons
         self.ui.compute_simulation_data_pushButton.clicked.connect(self.update_islands_to_display)
@@ -85,7 +87,7 @@ class CompiledArraysMain(ServerMain):
         Copy the arrays of the compiled arrays view to the clipboard
         """
         mdl = self.ui.simulationDataStructureTableView.model()
-        mode = self.ui.arrayModeComboBox.currentText()
+        mode = self.ui.arrayModeComboBox.currentData()
         mdl.copy_to_clipboard(mode=mode)
         self.show_info_toast('Copied!')
 

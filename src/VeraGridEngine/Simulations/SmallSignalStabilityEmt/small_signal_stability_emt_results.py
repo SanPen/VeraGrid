@@ -8,8 +8,8 @@ from matplotlib import pyplot as plt
 from typing import List, Tuple
 
 from VeraGridEngine.Simulations.results_table import ResultsTable
-from VeraGridEngine.Simulations.results_template import ResultsTemplate
-from VeraGridEngine.basic_structures import Vec, Mat, CxVec, CxMat, BoolVec
+from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
+from VeraGridEngine.basic_structures import Vec, Mat, CxVec, CxMat, BoolVec, StrVec
 from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
 
@@ -29,6 +29,19 @@ class SmallSignalStabilityEmtResults(ResultsTemplate):
     :param period: Cycle period T (s)
     :param stat_vars: List of state variables
     """
+
+    LOCAL_RESULTS_DECLARATIONS = (
+        ResultsProperty(name='multipliers', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='right_vecs', tpe=CxMat, old_names=list(), expandable=False),
+        ResultsProperty(name='left_vecs', tpe=CxMat, old_names=list(), expandable=False),
+        ResultsProperty(name='period', tpe=float, old_names=list(), expandable=False),
+        ResultsProperty(name='eigenvalues', tpe=CxVec, old_names=list(), expandable=False),
+        ResultsProperty(name='damping_ratios', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='conjugate_frequencies', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='participation_factors', tpe=Mat, old_names=list(), expandable=False),
+        ResultsProperty(name='stat_vars_array', tpe=StrVec, old_names=list(), expandable=False),
+    )
+
     __slots__ = (
         "multipliers",
         "right_vecs",
@@ -93,9 +106,6 @@ class SmallSignalStabilityEmtResults(ResultsTemplate):
         stat_names = [f"{v}" for v in stat_vars]
         self.stat_vars_array = np.array(stat_names, dtype=np.str_)
 
-        self.register(name='multipliers', tpe=CxVec)
-        self.register(name='eigenvalues', tpe=CxVec)
-        self.register(name='participation_factors', tpe=Mat)
 
     def _compute_pf(self) -> Mat:
         """

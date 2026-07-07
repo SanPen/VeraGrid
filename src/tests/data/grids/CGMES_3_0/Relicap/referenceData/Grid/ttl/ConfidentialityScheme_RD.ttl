@@ -1,0 +1,215 @@
+@prefix dcat:    <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix prov:    <http://www.w3.org/ns/prov#> .
+@prefix adms:    <http://www.w3.org/ns/adms#> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+
+#################################################################
+# Confidentiality / Access Rights Reference Dataset
+#################################################################
+
+<https://energy.referencedata.eu/ConfidentialityScheme/NCP/1.0>
+    a skos:ConceptScheme , dcat:Dataset ;
+    dcterms:identifier "b2348853-06c1-401e-b845-193ffa948919" ;
+	dcterms:title "ConfidentialityScheme_NCP_v1.0" ;
+    skos:prefLabel "Energy Reference Data Confidentiality Scheme"@en ;
+    dcterms:description "Reference dataset containing confidentiality and access-right statements for energy and power system datasets. The dataset is intended for use with dcterms:accessRights and aligns where possible with the Publications Office of the European Union access-right authority table."@en ;
+    dcterms:publisher <https://www.entsoe.eu/> ;
+    dcterms:rights "Copyright" ;
+    dcterms:rightsHolder "ENTSO-E" ;
+    dcterms:issued "2026-03-22"^^xsd:date ;
+    prov:generatedAtTime "2026-03-22T00:00:00Z"^^xsd:dateTime ;
+    dcat:version "1.0.0" ;
+    adms:versionNotes "Initial consolidated version of the confidentiality reference dataset, preserving the existing confidentiality instance URIs and aligning them where possible to the EU access-right authority table."@en ;
+    dcat:isVersionOf <https://energy.referencedata.eu/Confidentiality/> ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    dcterms:accessRights <https://energy.referencedata.eu/Confidentiality/Public> ;
+    dcterms:hasPart <https://energy.referencedata.eu/Confidentiality/NCP/1.0#collection_confidentiality> .
+
+
+#################################################################
+# Collection of confidentiality / access-right statements
+#################################################################
+
+<https://energy.referencedata.eu/Confidentiality/NCP/1.0#collection_confidentiality>
+    a prov:Collection ;
+    dcterms:identifier "d0cc62d9-800b-4ba5-b8cb-a95d5c4e0dae" ;
+    skos:prefLabel "Collection of confidentiality and access-right statements"@en ;
+    prov:hadMember
+        <https://energy.referencedata.eu/Confidentiality/Public> ,
+        <https://energy.referencedata.eu/Confidentiality/InternalOpen> ,
+        <https://energy.referencedata.eu/Confidentiality/Unclassified> ,
+        <https://energy.referencedata.eu/Confidentiality/UnknownExternalClassification> ,
+        <https://energy.referencedata.eu/Confidentiality/Sensitive> ,
+        <https://energy.referencedata.eu/Confidentiality/SensitiveEnergy> ,
+        <https://energy.referencedata.eu/Confidentiality/SensitiveInfrastructure> ,
+        <https://energy.referencedata.eu/Confidentiality/MarketSensitive> ,
+        <https://energy.referencedata.eu/Confidentiality/SensitivePersonal> ,
+		<https://energy.referencedata.eu/Confidentiality/OPDEConfidential> ,
+		<https://energy.referencedata.eu/Confidentiality/OPDESecret> .
+
+#################################################################
+# Public
+#################################################################
+
+<https://energy.referencedata.eu/Confidentiality/Public>
+    a dcterms:RightsStatement ;
+    dcterms:identifier "91797843-ebb8-4f55-9b76-243e53f49092" ;
+    skos:prefLabel "Public"@en ;
+    skos:notation "PUBLIC" ;
+    skos:definition "Dataset is publicly accessible and may be made available without confidentiality restriction, subject to the applicable license and any other legal obligations."@en ;
+    skos:exactMatch <http://publications.europa.eu/resource/authority/access-right/PUBLIC> ;
+    owl:sameAs <http://publications.europa.eu/resource/authority/access-right/PUBLIC> .
+
+#################################################################
+# Open to be used inside the organisation that has published it
+#################################################################
+
+<https://energy.referencedata.eu/Confidentiality/InternalOpen>
+    a dcterms:RightsStatement ;
+    dcterms:identifier "0080531c-fa18-4d51-8832-4bcbced77c90" ;
+    skos:prefLabel "Internal Open"@en ;
+    skos:notation "INTERNAL_OPEN" ;
+    skos:definition "Dataset is open for use within the organisation that has published it. It may be shared and reused internally without confidentiality restriction inside that organisation, but it is not public and shall not be disclosed externally unless explicitly permitted."@en ;
+    skos:exactMatch <http://publications.europa.eu/resource/authority/access-right/RESTRICTED> ;
+    owl:sameAs <http://publications.europa.eu/resource/authority/access-right/RESTRICTED> .
+
+#################################################################
+# No classification has been given
+#################################################################
+
+<https://energy.referencedata.eu/Confidentiality/Unclassified>
+    a dcterms:RightsStatement ;
+    dcterms:identifier "ef58471e-08a0-4c8b-b488-3e5ef4a21422" ;
+    skos:prefLabel "Unclassified"@en ;
+    skos:notation "UNCLASSIFIED" ;
+    skos:definition "No confidentiality classification has been assigned to the dataset."@en ;
+    skos:scopeNote "This value records that classification has not been performed. It does not by itself imply public, restricted, or non-public access."@en .
+
+#################################################################
+# No classification has been given since the dataset is owned by another organisation
+#################################################################
+
+<https://energy.referencedata.eu/Confidentiality/UnknownExternalClassification>
+    a dcterms:RightsStatement ;
+    dcterms:identifier "51378918-8ef6-4cce-9711-4af4539f1ef5" ;
+    skos:prefLabel "Unknown External Classification"@en ;
+    skos:notation "UNKNOWN_EXTERNAL_CLASSIFICATION" ;
+    skos:definition "The dataset is owned or originated by another organisation, and no confidentiality classification is available to the publishing or cataloguing party. The applicable access rights are therefore not known."@en ;
+    skos:scopeNote "This value records lack of known classification because responsibility lies with another organisation. It should not be interpreted as permission to disclose the dataset."@en .
+
+#################################################################
+# Sensitive (generic)
+#################################################################
+
+<https://energy.referencedata.eu/Confidentiality/Sensitive>
+    a dcterms:RightsStatement ;
+    dcterms:identifier "c28079e4-02ba-4a08-9093-8247ebe57f21" ;
+    skos:prefLabel "Sensitive"@en ;
+    skos:notation "SENSITIVE" ;
+    skos:definition "Dataset contains sensitive information and shall be protected against unauthorised access, disclosure, or redistribution."@en ;
+    skos:exactMatch <http://publications.europa.eu/resource/authority/access-right/NON_PUBLIC> ;
+    owl:sameAs <http://publications.europa.eu/resource/authority/access-right/NON_PUBLIC> .
+
+#################################################################
+# Sensitive infrastructure data
+#################################################################
+
+<https://energy.referencedata.eu/Confidentiality/SensitiveInfrastructure>
+    a dcterms:RightsStatement ;
+    dcterms:identifier "251e7f88-dbd3-48e0-aea6-669f8cd67e8c" ;
+    skos:prefLabel "Sensitive Infrastructure Data"@en ;
+    skos:notation "SENSITIVE_INFRASTRUCTURE" ;
+    skos:definition "Dataset contains information about critical or sensitive infrastructure and shall be protected against unauthorised access, disclosure, or redistribution."@en ;
+    dcat:applicableLegislation
+        <https://lovdata.no/dokument/NL/lov/2018-06-01-24> ,   # Security Act
+        <http://data.europa.eu/eli/dir/2022/2555/oj> ,         # NIS2
+        <http://data.europa.eu/eli/dir/2022/2557/oj> ;         # CER	
+    dcterms:isPartOf <https://energy.referencedata.eu/Confidentiality/Sensitive> ;
+    skos:broader <https://energy.referencedata.eu/Confidentiality/Sensitive> ;
+    skos:broadMatch <http://publications.europa.eu/resource/authority/access-right/NON_PUBLIC> .
+
+
+#################################################################
+# Sensitive energy data
+#################################################################
+
+<https://energy.referencedata.eu/Confidentiality/SensitiveEnergy>
+    a dcterms:RightsStatement ;
+    dcterms:identifier "7be116e1-a70f-40b5-922e-25a53f0449dd" ;
+    skos:prefLabel "Sensitive Energy Infrastructure Data"@en ;
+    skos:notation "SENSITIVE_ENERGY" ;
+	skos:definition "Dataset contains concrete and detailed information about the energy system that can be exploited to damage the power system or weaken the ability to handle extraordinary situations, in accordance with the European or National regulation."@en ;
+	skos:scopeNote "Includes operational and planning data whose disclosure could impact power system security, system balance, or security of supply."@en ;
+    dcat:applicableLegislation
+        <https://lovdata.no/dokument/NL/lov/1990-06-29-50> ,   # Energy Act
+        <https://lovdata.no/dokument/SF/forskrift/2002-05-07-448> ,  # Kraftsystemforskriften
+		<https://lovdata.no/dokument/SF/forskrift/2012-12-07-1157> , 
+        <https://lovdata.no/dokument/NL/lov/2018-06-01-24> ,   # Security Act
+        <http://data.europa.eu/eli/dir/2022/2555/oj> ;         # NIS2	
+    dcterms:isPartOf <https://energy.referencedata.eu/Confidentiality/SensitiveInfrastructure> ;
+    skos:broader <https://energy.referencedata.eu/Confidentiality/SensitiveInfrastructure> ;
+    skos:broadMatch <http://publications.europa.eu/resource/authority/access-right/NON_PUBLIC> .
+
+
+#################################################################
+# Market sensitive data
+#################################################################
+
+<https://energy.referencedata.eu/Confidentiality/MarketSensitive>
+    a dcterms:RightsStatement ;
+    dcterms:identifier "4cd9b326-1275-4da7-9724-28c5e1deeb87" ;
+    skos:prefLabel "Market Sensitive Data"@en ;
+    skos:notation "MARKET_SENSITIVE" ;
+    skos:definition "Dataset contains commercially or regulatorily sensitive market information, including information that may influence competition, market behaviour, trading positions, prices, or transparency obligations if disclosed inappropriately."@en ;
+	skos:scopeNote "Includes inside information as defined in REMIT. Some data may be confidential prior to publication but become mandatory public under transparency obligations."@en ;
+    dcat:applicableLegislation 
+        <http://data.europa.eu/eli/reg/2011/1227/oj> ,   # REMIT
+        <http://data.europa.eu/eli/reg/2013/543/oj> ;    # Transparency Regulation
+	dcterms:isPartOf <https://energy.referencedata.eu/Confidentiality/Sensitive> ;
+    skos:broadMatch <http://publications.europa.eu/resource/authority/access-right/NON_PUBLIC> .
+
+#################################################################
+# Sensitive personal data
+#################################################################
+
+<https://energy.referencedata.eu/Confidentiality/SensitivePersonal>
+    a dcterms:RightsStatement ;
+    dcterms:identifier "ec8c443e-edab-4256-80b2-4a7824f754ab" ;
+    skos:prefLabel "Sensitive Personal Data"@en ;
+    skos:notation "SENSITIVE_PERSONAL_DATA" ;
+    skos:definition "Dataset contains personal data, including special categories of personal data, and shall be processed in accordance with Regulation (EU) 2016/679 (GDPR), including strict controls on access, processing, disclosure, and retention."@en ;
+    skos:scopeNote "Includes special categories of personal data as defined in Article 9 of Regulation (EU) 2016/679 (GDPR)."@en ;
+    dcat:applicableLegislation <http://data.europa.eu/eli/reg/2016/679/oj> ;
+	dcterms:isPartOf <https://energy.referencedata.eu/Confidentiality/Sensitive> ;
+    skos:broadMatch <http://publications.europa.eu/resource/authority/access-right/NON_PUBLIC> .
+
+#################################################################
+# OPDE Confidential
+#################################################################
+
+<https://energy.referencedata.eu/Confidentiality/OPDEConfidential>
+    a dcterms:RightsStatement ;
+    dcterms:identifier "4cd9b326-1275-4da7-9724-28c5e1deeb87" ;
+    skos:prefLabel "OPDE Confidential"@en ;
+    skos:notation "OPDE_CONFIDENTIAL" ;
+    skos:definition "Dataset contains sensitive information and shall be protected against unauthorised access, disclosure, or redistribution."@en ;
+	dcterms:isPartOf <https://energy.referencedata.eu/Confidentiality/Sensitive> ;
+    skos:broadMatch <http://publications.europa.eu/resource/authority/access-right/NON_PUBLIC> .
+	
+#################################################################
+# OPDE Secret
+#################################################################
+
+<https://energy.referencedata.eu/Confidentiality/OPDESecret>
+    a dcterms:RightsStatement ;
+    dcterms:identifier "ec8c443e-edab-4256-80b2-4a7824f754ab" ;
+    skos:prefLabel "OPDE Secret"@en ;
+    skos:notation "OPDE_SECRET" ;
+    skos:definition "Dataset contains sensitive information and shall be protected against unauthorised access, disclosure, or redistribution."@en ;
+	dcterms:isPartOf <https://energy.referencedata.eu/Confidentiality/Sensitive> ;
+	skos:broader <https://energy.referencedata.eu/Confidentiality/OPDEConfidential> ;
+    skos:broadMatch <http://publications.europa.eu/resource/authority/access-right/NON_PUBLIC> .

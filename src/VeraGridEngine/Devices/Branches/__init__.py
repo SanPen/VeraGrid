@@ -10,7 +10,7 @@ from VeraGridEngine.Devices.Branches.hvdc_line import HvdcLine
 from VeraGridEngine.Devices.Branches.switch import Switch
 from VeraGridEngine.Devices.Branches.transformer import Transformer2W
 from VeraGridEngine.Devices.Branches.transformer3w import Transformer3W
-from VeraGridEngine.Devices.Branches.transformerNw import TransformerNW
+from VeraGridEngine.Devices.Branches.transformerNw import TransformerNW, ImpedanceTripletList
 from VeraGridEngine.Devices.Branches.series_reactance import SeriesReactance
 from VeraGridEngine.Devices.Branches.upfc import UPFC
 from VeraGridEngine.Devices.Branches.vsc import VSC

@@ -25,6 +25,62 @@ from VeraGridEngine.IO.veragrid.pack_unpack import gather_model_as_data_frames, 
 import VeraGridEngine.Devices as dev
 
 
+def _get_active_multiverse_grid_idtag(zip_file_pointer: zipfile.ZipFile) -> str | None:
+    """
+    Resolve the active multiverse scenario circuit idtag from the archive metadata.
+
+    :param zip_file_pointer: Open VeraGrid archive.
+    :return: Active scenario circuit idtag, or ``None`` when unavailable.
+    """
+    metadata_name: str = "multiverse/metadata.json"
+
+    if metadata_name not in zip_file_pointer.namelist():
+        return None
+    else:
+        pass
+
+    metadata: dict[str, Any] = load_json_from_file_pointer(zip_file_pointer.open(metadata_name))
+    active_node_id_raw: Any = metadata.get("active_node_id", None)
+
+    if active_node_id_raw is None:
+        return None
+    else:
+        pass
+
+    nodes_data: Any = metadata.get("nodes", dict())
+    active_node_key: str = str(active_node_id_raw)
+    active_node_data: Any = nodes_data.get(active_node_key, None)
+
+    if active_node_data is None:
+        return None
+    else:
+        return str(active_node_data.get("circuit_idtag", None))
+
+
+def _split_session_entry_path(path: List[str], active_grid_idtag: str | None) -> Tuple[str, str, str] | None:
+    """
+    Normalize one archive path to the generic ``session/study/array`` tuple.
+
+    :param path: Archive path split by ``/``.
+    :param active_grid_idtag: Active multiverse scenario idtag, when applicable.
+    :return: Normalized tuple, or ``None`` when the path is not a supported session entry.
+    """
+    if len(path) < 4:
+        return None
+    elif path[0].lower() == "sessions":
+        return path[1], path[2], path[3]
+    elif (
+        active_grid_idtag is not None
+        and len(path) >= 6
+        and path[0].lower() == "multiverse"
+        and path[1] == active_grid_idtag
+        and path[2].lower() == "sessions"
+    ):
+        return path[3], path[4], path[5]
+    else:
+        return None
+
+
 def load_json_from_file_pointer(file_pointer) -> dict:
     """
     Load JSON from a file pointer using orjson if available, falling back to json.
@@ -60,6 +116,7 @@ def save_results_in_zip(f_zip_ptr: zipfile.ZipFile,
     for i, session_data in enumerate(sessions_data):
 
         if session_data.results is not None:
+            session_data.results.prepare_for_saving()
 
             # traverse the registered results
             for arr_name, arr_prop in session_data.results.data_variables.items():
@@ -76,14 +133,28 @@ def save_results_in_zip(f_zip_ptr: zipfile.ZipFile,
                     # pack the array into a DataFrame
 
                     try:
-                        if np.iscomplexobj(arr):
+                        if np.isscalar(arr):
+                            if np.iscomplexobj(arr):
+                                filename += "__complex__"
+                                pd.DataFrame(data=[[np.real(arr), np.imag(arr)]]).to_parquet(buffer)
+                                f_zip_ptr.writestr(filename + ".parquet", buffer.getvalue())
+                            else:
+                                pd.DataFrame(data=[[arr]]).to_parquet(buffer)
+                                f_zip_ptr.writestr(filename + ".parquet", buffer.getvalue())
+                        elif isinstance(arr, np.ndarray) and arr.ndim > 2:
+                            # Dynamic simulations store tensor-shaped traces.
+                            # Those arrays do not fit the historical 2-D parquet
+                            # path, so persist them as raw NumPy payloads.
+                            np.save(buffer, arr)
+                            f_zip_ptr.writestr(filename + ".npy", buffer.getvalue())
+                        elif np.iscomplexobj(arr):
                             filename += "__complex__"
                             pd.DataFrame(data=np.c_[arr.real, arr.imag]).to_parquet(buffer)
+                            f_zip_ptr.writestr(filename + ".parquet", buffer.getvalue())
                         else:
                             pd.DataFrame(data=arr).to_parquet(buffer)
-
-                        # save the buffer to the zip file
-                        f_zip_ptr.writestr(filename + ".parquet", buffer.getvalue())
+                            # save the buffer to the zip file
+                            f_zip_ptr.writestr(filename + ".parquet", buffer.getvalue())
 
                     except ValueError as e:
                         warn(str(e))
@@ -93,7 +164,7 @@ def save_results_in_zip(f_zip_ptr: zipfile.ZipFile,
 
         # save logger
         if session_data.logger is not None:
-            filename = 'sessions/' + session_data.name + '/' + session_data.tpe.value + '/logger.parquet'
+            filename = folder + '/' + session_data.name + '/' + session_data.tpe.value + '/logger.parquet'
             with BytesIO() as buffer:
                 # save the DataFrame to the buffer, protocol4 is to be compatible with python 3.6
                 session_data.logger.to_df().to_parquet(buffer)
@@ -104,6 +175,8 @@ def save_results_in_zip(f_zip_ptr: zipfile.ZipFile,
 def save_multiverse_data_to_zip(f_zip_ptr: zipfile.ZipFile,
                                 multiverse: dev.MultiVerse,
                                 filename_zip: str,
+                                active_grid_idtag: str | None = None,
+                                active_sessions_data: List[DriverToSave] | None = None,
                                 text_func: Union[None, Callable[[str], None]] = None,
                                 progress_func: Union[None, Callable[[float], None]] = None,
                                 logger=Logger()) -> None:
@@ -117,6 +190,15 @@ def save_multiverse_data_to_zip(f_zip_ptr: zipfile.ZipFile,
 
     for grid_idtag, diff_grid in multiverse_model_data.items():
         base_path = f"multiverse/{grid_idtag}"
+        sessions_data: List[DriverToSave] | None = multiverse_drivers_data.get(grid_idtag, None)
+
+        if active_grid_idtag == grid_idtag and active_sessions_data is not None:
+            # The GUI save flow provides the active scenario session payload explicitly.
+            # Use that payload for the active scenario instead of assuming node.drivers
+            # has already been synchronized with the session object.
+            sessions_data = active_sessions_data
+        else:
+            pass
 
         for key, data in gather_model_as_jsons(diff_grid, project_directory=Path(filename_zip).resolve().parent).items():
             if key == "model_data":
@@ -136,15 +218,13 @@ def save_multiverse_data_to_zip(f_zip_ptr: zipfile.ZipFile,
                     logger.add_error(msg=str(e), device_class=object_type_name)
                     warn(f"{object_type_name}: {e}")
 
-            base_path = f"multiverse/{grid_idtag}"
-            sessions_data: List[DriverToSave] | None = multiverse_drivers_data.get(grid_idtag, None)
-            if sessions_data is not None:
-                save_results_in_zip(f_zip_ptr=f_zip_ptr,
-                                    filename_zip=filename_zip,
-                                    folder=f"{base_path}/{sub_folder}/sessions",
-                                    sessions_data=sessions_data,
-                                    text_func=text_func,
-                                    progress_func=progress_func)
+        if sessions_data is not None:
+            save_results_in_zip(f_zip_ptr=f_zip_ptr,
+                                filename_zip=filename_zip,
+                                folder=f"{base_path}/sessions",
+                                sessions_data=sessions_data,
+                                text_func=text_func,
+                                progress_func=progress_func)
 
         for diagram in diff_grid.diagrams:
             filename = f"{base_path}/diagrams/{diagram.idtag}.diagram"
@@ -273,11 +353,13 @@ def save_veragrid_data_to_zip(filename_zip: str,
 
 
 def save_veragrid_multiverse_data_to_zip(filename_zip: str,
-                              json_files: Dict[str, dict],
-                              multiverse: dev.MultiVerse,
-                              text_func: Union[None, Callable[[str], None]] = None,
-                              progress_func: Union[None, Callable[[float], None]] = None,
-                              logger=Logger()):
+                                         json_files: Dict[str, dict],
+                                         multiverse: dev.MultiVerse,
+                                         active_grid_idtag: str | None = None,
+                                         active_sessions_data: List[DriverToSave] | None = None,
+                                         text_func: Union[None, Callable[[str], None]] = None,
+                                         progress_func: Union[None, Callable[[float], None]] = None,
+                                         logger=Logger()):
     """
     Save a list of DataFrames to a zip file without saving to disk the csv files
     :param filename_zip: file name where to save all
@@ -301,6 +383,8 @@ def save_veragrid_multiverse_data_to_zip(filename_zip: str,
         save_multiverse_data_to_zip(f_zip_ptr=f_zip_ptr,
                                     multiverse=multiverse,
                                     filename_zip=filename_zip,
+                                    active_grid_idtag=active_grid_idtag,
+                                    active_sessions_data=active_sessions_data,
                                     text_func=text_func,
                                     progress_func=progress_func,
                                     logger=logger)
@@ -622,25 +706,31 @@ def get_session_tree(file_name_zip: str):
         return dict()
 
     names = zip_file_pointer.namelist()
+    active_grid_idtag: str | None = _get_active_multiverse_grid_idtag(zip_file_pointer)
 
     data = dict()
 
     for name in names:
         if '/' in name:
             path = name.split('/')
-            if path[0].lower() == 'sessions':
+            session_entry = _split_session_entry_path(path=path, active_grid_idtag=active_grid_idtag)
 
-                session_name = path[1]
-                study_name = path[2]
-                array_name = path[3]
+            if session_entry is not None:
+                session_name, study_name, array_name = session_entry
 
                 if session_name not in data.keys():
                     data[session_name] = dict()
+                else:
+                    pass
 
                 if study_name not in data[session_name].keys():
                     data[session_name][study_name] = list()
+                else:
+                    pass
 
                 data[session_name][study_name].append(array_name)
+            else:
+                pass
 
     return data
 
@@ -661,22 +751,32 @@ def load_session_driver_objects(file_name_zip: str,
         return dict()
 
     data = dict()
+    active_grid_idtag: str | None = _get_active_multiverse_grid_idtag(zip_file_pointer)
 
-    # traverse the zip names and pick all those that start with sessions_data/session_name/study_name
+    # Traverse the zip names and pick all those that belong to the standard
+    # session tree or to the active multiverse scenario session tree.
     for name in zip_file_pointer.namelist():
         if '/' in name:
             path = name.split('/')
-            if len(path) > 3:
-                if path[0].lower() == 'sessions' and session_name == path[1] and study_name == path[2]:
+            session_entry = _split_session_entry_path(path=path, active_grid_idtag=active_grid_idtag)
+
+            if session_entry is not None:
+                path_session_name, path_study_name, path_array_name = session_entry
+
+                if session_name == path_session_name and study_name == path_study_name:
                     # create a buffer to read the file
                     file_pointer = zip_file_pointer.open(name)
 
                     # split the file name into name and extension
                     _, extension = os.path.splitext(name)
-                    arr_name = path[3].replace(extension, '')
+                    arr_name = path_array_name.replace(extension, '')
 
                     # read the data
                     data[arr_name] = read_data_frame_from_zip(file_pointer, extension)
+                else:
+                    pass
+            else:
+                pass
 
     return data
 

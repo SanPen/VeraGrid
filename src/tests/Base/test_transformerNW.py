@@ -77,8 +77,8 @@ def test_transformer_nw_constructor_creates_requested_windings():
 
     assert transformer.winding_count == 5
     assert len(transformer.windings) == 5
-    assert all(winding.bus_from == transformer.bus0 for winding in transformer.windings)
-    assert all(winding.bus_to is None for winding in transformer.windings)
+    assert all(winding.bus_to == transformer.bus0 for winding in transformer.windings)
+    assert all(winding.bus_from is None for winding in transformer.windings)
 
 
 def test_assets_only_add_connected_transformer_nw_windings():

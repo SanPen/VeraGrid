@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 from typing import Dict, List, Type, Optional, Tuple
 from VeraGridEngine.IO.dgs.dgs_objects import *
+from VeraGridEngine.basic_structures import Logger
 
 
 def _populate_from_pf_object(pf_obj: DGSElement, dgs_cls: Type[DGSElement]):
@@ -71,23 +72,27 @@ class DgsCircuit:
         ElmGenstat,
         ElmLne,
         ElmTow,
+        ElmZpu,
+        ElmScap,
         ElmSind,
         ElmLnesec,
+        ElmVac,
         ElmLod,
         ElmLodlv,
         ElmLodlvp,
         ElmNet,
         ElmShnt,
         ElmSvs,
-        ElmSind,
         ElmSite,
         ElmSubstat,
         ElmSym,
         ElmTerm,
         ElmTr2,
         ElmTr3,
+        ElmTr4,
         ElmXnet,
         ElmZone,
+        ElmArea,
         General,
         IntFolder,
         IntRef,
@@ -114,6 +119,7 @@ class DgsCircuit:
         TypSym,
         TypTr2,
         TypTr3,
+        TypTr4,
         TypVt,
     ]
 
@@ -146,21 +152,25 @@ class DgsCircuit:
         self.elmtows: List[ElmTow] = list()
         self.elmsinds: List[ElmSind] = list()
         self.elmlnesecs: List[ElmLnesec] = list()
+        self.elmvacs: List[ElmVac] = list()
         self.elmlods: List[ElmLod] = list()
         self.elmlodlvs: List[ElmLodlv] = list()
         self.elmlodlvps: List[ElmLodlvp] = list()
         self.elmnets: List[ElmNet] = list()
         self.elmshnts: List[ElmShnt] = list()
         self.elmsvss: List[ElmSvs] = list()
-        self.elmsinds: List[ElmSind] = list()
+        self.elmzpus: List[ElmZpu] = list()
+        self.elmscaps: List[ElmScap] = list()
         self.elmsites: List[ElmSite] = list()
         self.elmsubstats: List[ElmSubstat] = list()
         self.elmsyms: List[ElmSym] = list()
         self.elmterms: List[ElmTerm] = list()
         self.elmtr2s: List[ElmTr2] = list()
         self.elmtr3s: List[ElmTr3] = list()
+        self.elmtr4s: List[ElmTr4] = list()
         self.elmxnets: List[ElmXnet] = list()
         self.elmzones: List[ElmZone] = list()
+        self.elmareas: List[ElmArea] = list()
         self.intfolders: List[IntFolder] = list()
         self.intrefs: List[IntRef] = list()
         self.inttemplates: List[IntTemplate] = list()
@@ -186,6 +196,7 @@ class DgsCircuit:
         self.typsyms: List[TypSym] = list()
         self.typtr2s: List[TypTr2] = list()
         self.typtr3s: List[TypTr3] = list()
+        self.typtr4s: List[TypTr4] = list()
         self.typvts: List[TypVt] = list()
 
         self._CLASS_TO_LIST: Dict[Type[DGSElement], List[DGSElement]] = {
@@ -208,8 +219,11 @@ class DgsCircuit:
             ElmGenstat: self.elmgenstats,
             ElmLne: self.elmlnes,
             ElmTow: self.elmtows,
+            ElmZpu: self.elmzpus,
+            ElmScap: self.elmscaps,
             ElmSind: self.elmsinds,
             ElmLnesec: self.elmlnesecs,
+            ElmVac: self.elmvacs,
             ElmLod: self.elmlods,
             ElmLodlv: self.elmlodlvs,
             ElmLodlvp: self.elmlodlvps,
@@ -222,8 +236,10 @@ class DgsCircuit:
             ElmTerm: self.elmterms,
             ElmTr2: self.elmtr2s,
             ElmTr3: self.elmtr3s,
+            ElmTr4: self.elmtr4s,
             ElmXnet: self.elmxnets,
             ElmZone: self.elmzones,
+            ElmArea: self.elmareas,
             IntFolder: self.intfolders,
             IntRef: self.intrefs,
             IntTemplate: self.inttemplates,
@@ -249,8 +265,11 @@ class DgsCircuit:
             TypSym: self.typsyms,
             TypTr2: self.typtr2s,
             TypTr3: self.typtr3s,
+            TypTr4: self.typtr4s,
             TypVt: self.typvts,
         }
+
+        self.logger = Logger()
 
     def new_id(self) -> str:
         """
@@ -293,11 +312,11 @@ class DgsCircuit:
         """
         Parse a DGS file and populate the typed lists.
         """
-        path = Path(path)
+        path2 = Path(path)
         current_cls: Optional[Type[DGSElement]] = None
         header_map: Dict[str, int] | None = None
 
-        with path.open("r", encoding="utf-8", errors="ignore") as f:
+        with path2.open("r", encoding="utf-8", errors="ignore") as f:
             for raw_line in f:
                 line = raw_line.strip()
 
@@ -323,9 +342,9 @@ class DgsCircuit:
         """
         Write the circuit back to a DGS file.
         """
-        path = Path(path)
+        path2 = Path(path)
 
-        with path.open("w", encoding="utf-8") as f:
+        with path2.open("w", encoding="utf-8") as f:
 
             comment = "*" * 80 + "\n"
             comment += "* Created with VeraGrid\n"
